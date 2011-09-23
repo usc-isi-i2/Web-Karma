@@ -3,6 +3,8 @@
  */
 package edu.isi.karma.view.tableheadings;
 
+import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.cells;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,9 +13,6 @@ import org.json.JSONWriter;
 
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.view.ViewFactory;
-
-import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.cells;
 
 ;
 
