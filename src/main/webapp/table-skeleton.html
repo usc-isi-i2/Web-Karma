@@ -1,0 +1,163 @@
+<html>
+	<head>
+		<style type="text/css">
+			.solid1px{
+				border: solid 1px;
+			}
+			td{
+				text-align:center;
+			}
+		</style>
+		
+		<script src="js/jquery-1.6.2.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery.jeditable.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+     			$('.edit').editable('http://www.example.com/save.php');
+ 			});
+		</script>
+		
+	</head>
+	
+	<body>
+		<table border="0" style="border-width: 0px; border-spacing: 0px; border-collapse: collapse" cellspacing="4">
+			<tr>
+				<th></th>
+				<th colspan="5" class="solid1px">Web Karma Source Name</th>
+			</tr>
+			<tr>
+				<th></th>
+				<th class="solid1px">
+					<img src="images/chat.png" width="20" height="20"/>
+					<img src="images/copy.png" width="20" height="20"/>
+					<img src="images/clear.png" width="20" height="20"/>
+					<img src="images/remove.png" width="20" height="20"/>
+				</th>
+				<th class="solid1px">
+					<img src="images/chat.png" width="20" height="20"/>
+					<img src="images/copy.png" width="20" height="20"/>
+					<img src="images/clear.png" width="20" height="20"/>
+					<img src="images/remove.png" width="20" height="20"/>
+				</th>
+				<th class="solid1px">
+					<img src="images/chat.png" width="20" height="20"/>
+					<img src="images/copy.png" width="20" height="20"/>
+					<img src="images/clear.png" width="20" height="20"/>
+					<img src="images/remove.png" width="20" height="20"/>
+				</th>
+				<th class="solid1px">
+					<img src="images/chat.png" width="20" height="20"/>
+					<img src="images/copy.png" width="20" height="20"/>
+					<img src="images/clear.png" width="20" height="20"/>
+					<img src="images/remove.png" width="20" height="20"/>
+				</th>
+				<th class="solid1px">
+					<img src="images/chat.png" width="20" height="20"/>
+					<img src="images/copy.png" width="20" height="20"/>
+					<img src="images/clear.png" width="20" height="20"/>
+					<img src="images/remove.png" width="20" height="20"/>
+				</th>
+				<th></th>
+			</tr>
+			<tr>
+				<th></th>
+				<th class="solid1px">Column 1</th>
+				<th class="solid1px">Column 2</th>
+				<th class="solid1px">Column 3</th>
+				<th class="solid1px">Column 4</th>
+				<th class="solid1px">Column 5</th>
+				<th></th>
+			</tr>
+			<tr>
+				<td class="solid1px">1</td>
+				<td class="solid1px edit">Edit me</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="solid1px">2</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="solid1px">3</td>
+				<td class="solid1px" rowspan="2">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="solid1px">4</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="solid1px">5</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">
+					<table border="0" style="border-width: 2px; border-spacing: 0px; border-collapse: collapse" cellpadding="4" cellspacing="0" align="center" width="100%">
+						<tr>
+							<td style="border-bottom:solid 1px; border-right: dashed 1px">Mary</td>
+							<td style="border-bottom:solid 1px">Jane</td>
+						</tr>
+						<tr>
+							<td style="border-right: dashed 1px">Peter</td>
+							<td>Par</td>
+						</tr>
+					</table>
+				</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="solid1px">6</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td style="border-right: dashed 1px";>lorem ipsum</td>
+				<td>
+					<table border="0" width="100%" style="border-width: 2px; border-spacing: 0px; border-collapse: collapse" cellpadding="4" cellspacing="0">
+						<tr>
+							<td style="border-bottom: solid 1px">test1</td>
+						</tr>
+						<tr>
+							<td>test2</td>
+						</tr>
+					</table>
+				</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="solid1px">7</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px" colspan="2">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td class="solid1px">8</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td class="solid1px">lorem ipsum</td>
+				<td></td>
+			</tr>
+		</table>
+	</body>
+</html>

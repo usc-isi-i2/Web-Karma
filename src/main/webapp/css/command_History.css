@@ -1,0 +1,66 @@
+#commHistoryAndWorkspace{
+	position:relative;
+}
+#commandHistory{
+	background-color: #F0F0F0;
+	position:absolute;
+	top:10px;
+	left: 0px;
+	margin-bottom: 10px;
+	padding: 5px;
+	height:500px;
+	width: 250px;
+	
+	overflow:auto;
+}
+#titleCommand{
+	background-color: #050505;
+	font-size: 18px;
+	color: white;
+	margin-bottom:8px;
+	text-align: center;
+	padding: 5px;
+}
+
+.CommandDiv.undo-state {
+	background-color: #3D3D3D;
+	padding: 4px;
+	border: solid 1px;
+	border-color:white;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+	color: white;
+}
+.CommandDiv.undoselected {
+	background-color: #ADADAD;
+}
+
+.CommandDiv.redo-state {
+	background-color: #ADADAD;
+	padding: 4px;
+	border: solid 1px;
+	border-color:white;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+	color: white;
+}
+
+.CommandDiv.redoselected {
+	background-color: #3D3D3D;
+}
+
+.CommandDiv.notUndoable {
+	background-color: black;
+}
+.iconDiv img {
+	height: 20px; 
+	width:20px;
+}
+
+.iconDiv {
+	position: absolute;
+	top:2px; 
+	right:3px; 
+	visibility: hidden;
+	cursor: pointer;
+}

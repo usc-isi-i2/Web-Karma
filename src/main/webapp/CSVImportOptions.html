@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>CSV Import Div Example</title>
+		<link rel="stylesheet" type="text/css" href="./css/CSVImport.css" />
+		<link rel="stylesheet" type="text/css" href="./css/jquery-ui-1.8.16.custom.css" />
+	
+	
+	<script type="text/javascript" src="js/jquery-1.6.2.js"></script>
+	<script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript">
+	
+	jQuery.extend({
+	    csv: function(delim, quote, linedelim) {
+	        delim = typeof delim == "string" ? new RegExp( "[" + (delim || ","   ) + "]" ) : typeof delim == "undefined" ? ","    : delim;
+	        quote = typeof quote == "string" ? new RegExp("^[" + (quote || '"'   ) + "]" ) : typeof quote == "undefined" ? '"'    : quote;
+	        lined = typeof lined == "string" ? new RegExp( "[" + (lined || "\r\n") + "]+") : typeof lined == "undefined" ? "\r\n" : lined;
+	
+	        function splitline (v) {
+	            // Split the line using the delimitor
+	            var arr  = v.split(delim),
+	                out = [], q;
+	                console.log(arr.length);
+	            for (var i=0, l=arr.length; i<l; i++) {
+	                if (q = arr[i].match(quote)) {
+	                    for (j=i; j<l; j++) {
+	                        if (arr[j].charAt(arr[j].length-1) == q[0]) { break; }
+	                    }
+	                    var s = arr.slice(i,j+1).join(delim);
+	                    out.push(s.substr(1,s.length-2));
+	                    i = j;
+	                }
+	                else { out.push(arr[i]); }
+	            }
+	
+	            return out;
+	        }
+	
+	        return function(text) {
+	            var lines = text.split("\r\n");
+	            for (var i=0, l=lines.length; i<l; i++) {
+	                lines[i] = splitline(lines[i]);
+	            }
+	            return lines;
+	        };
+	    }
+	})
+	
+		$(function() {
+			$("#cancelButton").button();
+			$("#importButton").button();
+			
+			$("#CSVPreviewTable").data("csvData", '\r\n\r\n\r\n\"Name\",\"Category\",\"Phone\",\"Number\",\"Street\",\"City\"\r\n\"Drzavna Lutrija Srbije\",\"igre na srecu\",\"011 202 9292\",\"6\",\"Uskocka\",\"Beograd\"\r\n\"Fun casino\",\"kazina\",\"011 627 605\",\"4\",\"Uskocka\",\"Beograd\"\r\n\"Grand t.t.\",\"turisticke agencije\",\"011 328 4955\",\"7\",\"Uskocka\",\"Beograd\"\r\n\"Menjacnica srbijalot\",\"menjacnice\",\"011 263 1846\",\"4\",\"Uskocka\",\"Beograd\"\r\n\"Optika\",\"optika\",\"011 263 3625\",\"7\",\"Uskocka\",\"Beograd\"');
+			$("#CSVPreviewTable").data("cellDelimiter", ",");
+			$("#CSVPreviewTable").data("headerIndex", 1);
+			$("#CSVPreviewTable").data("startRowIndex", 1);
+			$("#CSVPreviewTable").data("textQualifier", "\"");
+			$("#CSVPreviewTable").data("lineDelimiter", "\n");
+			
+			generatePreviewTable();
+			
+			// When the user changes header line index
+			$('#headerLineIndex').change(function() {
+				$("#previewTable").data("headerIndex", $(this).attr("value"));
+				generatePreviewTable();
+			});
+			
+			// When the user changes text delimiter
+			$('#delimiterSelector').change(function() {
+				if($(this).attr("value") == "tab") {
+					$("#CSVPreviewTable").data("cellDelimiter", "\t");
+					generatePreviewTable();
+				} else if($(this).attr("value") == "space") {
+					$("#CSVPreviewTable").data("cellDelimiter", '\\s');
+					generatePreviewTable();
+				} else {
+					$("#CSVPreviewTable").data("cellDelimiter", $(this).attr("value"));
+					generatePreviewTable();
+				}
+			});
+		});
+		
+		function generatePreviewTable () {		
+			//var lines = jQuery.csv($("#previewTable").data("cellDelimiter"), $("#previewTable").data("textQualifier"),$("#previewTable").data("lineDelimiter"))($("#previewTable").data("csvData"));
+			$("#previewTable tr").remove();
+			var lines = jQuery.csv($("#CSVPreviewTable").data("cellDelimiter"), $("#CSVPreviewTable").data("textQualifier"), "\r\n")($("#CSVPreviewTable").data("csvData"));
+			$("#CSVPreviewTable").append($("<tr>").append($("<td>").addClass("rowIndexCell").text("Row Index")));
+			
+			$.each(lines, function(index, value) {
+				if(index < $("#CSVPreviewTable").data("headerIndex")-1)
+					return true;
+					
+				var trTag = $("<tr>");
+				// Add the row index
+				trTag.append($("<td>").addClass("rowIndexCell").text(index+1));
+				
+				// Header row
+				if(index == $("#CSVPreviewTable").data("headerIndex")-1) {
+					$.each(value, function (cellIndex, cellValue){
+						var thTag = $("<th>").text(cellValue);
+						trTag.append(thTag);
+					});
+					$("#CSVPreviewTable").append(trTag);
+					return true;
+				}
+				
+				// Data rows
+				$.each(value, function (cellIndex, cellValue){
+						var tdTag = $("<td>").text(cellValue);
+						trTag.append(tdTag);
+					});
+					$("#CSVPreviewTable").append(trTag);
+			});
+		}
+		
+	</script>
+	
+	</head>
+	<body>
+		<div id="CSVImportDiv">
+			<table>
+				<tbody>
+					<tr>
+						<td id="importOptionsCell" colspan="5">
+							<span id="sourceName">Example.csv</span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<span id="importOptionsHeader">Import Options</span>
+						</td>
+						<td>
+							Column Delimiter: 
+							<select id="delimiterSelector" class="CSVImportOption">
+							  	<option>comma</option>
+							  	<option>tab</option>
+							  	<option>space</option>
+							  	<option>other</option>
+							</select>
+						</td>
+						<td>
+							Header Line Index:
+							<input type="textarea" value="1" id="CSVHeaderLineIndex" class="CSVImportOption" maxlength="3" size="2"/>
+						</td>
+						<td>
+							Data Start Row Index:
+							<input type="textarea" id="startRowIndex" class="CSVImportOption" maxlength="3" size="2" value="2"/>
+						</td>
+						<td>
+							Text Qualifier:
+							<input type="textarea" id="textQualifier" class="CSVImportOption" maxlength="3" size="2" value='"'/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<br>
+			<div id="previewTableDiv">
+				<span id="previewTableHeader">Preview (Only 5 rows shown)</span><br><br>
+				<table id="CSVPreviewTable"></table>
+			</div>
+		</div>
+	</body>
+</html>

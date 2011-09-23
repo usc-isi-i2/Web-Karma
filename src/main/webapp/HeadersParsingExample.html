@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>HeadersParsingExample</title>
+		<meta name="author" content="Shubham Gupta" />
+		<!-- Date: 2011-09-22 -->
+		<link rel="stylesheet" type="text/css" href="./css/headerParsingExample.css" />
+		
+		<script type="text/javascript" src="js/jquery-1.6.2.js"></script>
+		
+		<script type="text/javascript">
+			$(function () {
+				$.getJSON("/getExampleNestedJSON", function(data) {
+					$.each(data["elements"], function(i, element){
+						if(element["updateType"] == "WorksheetHierarchicalHeadersUpdate") {
+							var heading = $("<div>").text(element.worksheetId);
+							$("body").append(heading);
+							
+							var table = $("<table>");
+							$.each(element["rows"], function(index, row) {
+								var trTag = $("<tr>");
+								$.each(row["cells"], function(index2, cell){
+									var tdTag = $("<td>");
+									
+									// Add the background information
+									tdTag.addClass("fill" + cell["fillId"]);
+										
+									// Add the left border
+									tdTag.addClass("leftBorder" + cell["leftBorder"].replace(":", ""));
+									
+									// Add the right border
+									tdTag.addClass("rightBorder" + cell["rightBorder"].replace(":", ""));
+									
+									// Add the top border
+									tdTag.addClass("topBorder" + cell["topBorder"].replace(":", ""));	
+									
+									if(cell["cellType"] == "border") {
+										tdTag.addClass("bordertdTags")
+										
+									}
+									else if (cell["cellType"] == "heading") {
+										// Add the colspan
+										tdTag.attr("colspan", cell["colSpan"]);
+										
+										//Add the name
+										tdTag.text(cell["columnNameFull"]);
+									} else if(cell["cellType"] == "headingPadding") {
+										// Add the colspan
+										tdTag.attr("colspan", cell["colSpan"]);
+									}
+									tdTag.data("jsonInfo", cell).hover(showConsoleInfo);
+									
+									trTag.append(tdTag);
+								});
+								table.append(trTag);
+							});
+							$("body").append(table);
+						}
+					});
+				});
+			});
+			
+			function showConsoleInfo() {
+				if (console && console.log) {
+					console.clear();
+					var elem = $(this).data("jsonInfo");
+					$.each(elem, function(key, value){
+						console.log(key + " : " + value);
+					})
+				}
+			}
+			
+		</script>
+	</head>
+	<body>
+		
+	</body>
+</html>

@@ -1,0 +1,83 @@
+#CSVImportDiv {
+	margin:10px;
+	width: 60%;
+}
+
+#CSVImportDiv.button-form {
+	height: 24px;
+	width: 60px;
+}
+
+#CSVImportDiv table {
+	border-width: 0px; 
+	border-spacing: 0px; 
+	border-collapse: collapse;
+}
+
+#CSVImportOptionsTable td {
+	font-family: Helvetica, sans-serif;
+	text-align: left;
+	font-size: 12px;
+	color: yellow;
+	height: 20px;
+	padding: 5px;
+}
+
+#CSVPreviewTable td {
+	font-family: Arial, sans-serif;
+	text-align: left;
+	font-size: 12px;
+	color: white;
+	padding: 5px;
+}
+
+#CSVPreviewTable {
+	margin: 5px;
+}
+
+#CSVPreviewTable th {
+	font-family: Arial, sans-serif;
+	text-align: left;
+	font-size: 14px;
+	border-collapse: collapse;
+	color: #00FFFF;
+	border: solid 1px #6495ED;
+	padding: 5px;
+}
+
+#CSVPreviewTable th.ItalicColumnNames {
+	font-style: italic;
+}
+
+#CSVPreviewTable td {
+	border: 1px solid white;
+	border-collapse: collapse;
+}
+
+#CSVPreviewTable td.rowIndexCell {
+	border: 1px dashed blue;
+	width: 60px;
+	text-align: center;
+}
+
+#CSVImportDiv td.inputElement {
+	text-align: right;
+	padding-left: 20px;
+}
+
+#CSVSourceName {
+	font-family: Helvetica;
+	font-size: 16px;
+	color: #6495ED;
+}
+
+#importOptionsHeader {
+	font-weight: 700;
+}
+
+#previewTableHeader {
+	color: #6495ED;
+	padding: 5px;
+	font-size: 16px;
+}
+

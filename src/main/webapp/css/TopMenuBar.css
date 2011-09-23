@@ -1,0 +1,32 @@
+#topMenuBar {
+	margin-top: 20px;
+	margin-left: 10px;
+	/*position:relative;
+	width: 260px;
+	height: 80px;*/
+}
+.ui-button-text {
+	font-size: 0.5em;
+	font-family: Arial, "MS Trebuchet", sans-serif;
+}
+
+/*#uploadFile_JSONUploader {
+	width: 200px;
+	position:absolute;
+	top: 10px;
+	left: 20px;
+}
+
+#uploadFile_CSVUploader {
+	width: 200px;
+	position:absolute;
+	top: 10px;
+	left: 200px;
+}*/
+#fileupload {
+	/*font-size: 1.50em;
+	/*position: absolute;
+	top: 50px;
+	left: 0px;*/
+/*	height: 50px;*/
+}

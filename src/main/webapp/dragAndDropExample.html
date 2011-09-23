@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>HTML5</title>
+	<style>
+	body {
+		font-family: Verdana;
+	}
+	#box {
+		background-color: #f60;
+		width: 208px;
+		border: 1px solid #f60;
+		-webkit-border-radius: 6px;
+		-moz-border-radius: 6px;
+		border-radius: 6px;
+		padding-bottom: 10px;
+		float: left;
+	}
+	#box p {
+		font-size: 10px;
+		padding: 5px;
+		margin: 0px;
+	}
+	#drop {
+		width: 208px;
+		height: 200px;
+		background-color: #f90;
+	}
+	#status {
+		width: 200px;
+		height: 25px;
+		font-size: 10px;
+		color: #fff;
+		padding: 5px;
+	}
+	#list {
+		width: 210px;
+		font-size: 10px;
+		float: left;
+		margin-left: 10px;
+	}
+	.addedIMG {
+		width: 100px;
+		height: 100px;
+	}
+	</style>
+	<script src="js/html5uploader.js"></script>
+</head>
+
+<body onload="new uploader('drop', 'status', 'RequestController', 'list');">
+	<div id="box">
+		<div id="status">Drag the images from a folder to a selected area ...</div>
+		<div id="drop"></div>
+		<p>Files are not stored on the server Weeby, you see only a preview.</p>
+	</div>
+	<div id="list"></div>
+</body>
+</html>

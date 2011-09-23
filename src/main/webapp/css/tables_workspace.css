@@ -1,0 +1,231 @@
+#tablesWorkspace {
+	position:absolute;
+	top: 0px;
+	left: 280px;
+	width: 850px;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	overflow: auto;
+}
+
+.Worksheet {
+	margin-bottom: 20px;
+}
+
+.fg-toolbar { padding: .1em; margin: 0; }
+.fg-toolbar .fg-buttonset { margin-right:1.5em; padding-left: 0.1px; }
+.fg-toolbar .fg-button { font-size: 1em;  }
+
+.nestedTablePager {
+	width: 250px;
+	background-color: #C0C0C0;
+	font-family: Helvetica;
+	font-size: 11px;
+	padding:5px;
+	z-index: 0;
+}
+
+.WorksheetTitleDiv{
+/*	background-color: #B7B7B7;*/
+	background-image: url("../images/navBG.png");
+	background-repeat: repeat-x;
+	color:black;
+}
+
+.nestedTableLastRow img{
+	height : 10px;
+	width: 100%;
+}
+
+.nestedTableLastRow {
+	position: relative;
+	padding: 0px;
+	margin: 0px;
+	height: 10px;
+}
+
+.tableTitleTextDiv {
+	font-size: 18px;
+	font-family: arial;
+	font-weight: bold;
+	padding: 5px;
+	padding-bottom: 0px;
+}
+.solid1px {
+	border: solid 1px;
+}
+
+.minimizeWorksheetImg {
+	height: 20px;
+	width:20px;
+	cursor: pointer;
+}
+
+.TableDiv {
+	background-color: #F5F5F5;
+}
+
+#commHistoryAndWorkspace thead tr td {
+	background-color: #7EC0EE;
+	color:black;
+	font-family: Helvetica;
+	font-size: 14px;
+	font-weight: bold;
+	border-left: 2px;
+	border: solid 1px;
+}
+
+#commHistoryAndWorkspace td{
+	text-align:center;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	height: 20px;
+	padding: 3px;
+}
+
+#commHistoryAndWorkspace div.nestedTableLastRow img {
+	height: 5px;
+	width: 100%;
+}
+
+div.editedValue {
+	color: #CD3700;
+	border-color: black;
+}
+.noLineBelow {
+	border: solid 1px;
+	border-bottom: none;
+}
+.noLineAboveAndBelow {
+	border: solid 1px;
+	border-top: none;
+	border-bottom: none;
+}
+#commHistoryAndWorkspace table {
+	border-width: 0px; 
+	border-spacing: 0px; 
+	border-collapse: collapse;
+	border-bottom: solid 1px;
+}
+.table01cell {
+	background-color: #E0EEEE ;
+}
+.table02cell {
+	background-color: #FFE4C4;
+}
+.table03cell {
+	background-color: #AEEEEE;
+}
+.table04cell {
+	background-color: #C1CDCD;
+}
+.table05cell {
+	background-color: #7FFFD4;
+}
+.table06cell {
+	background-color: #FFD39B;
+}
+.table07cell {
+	background-color: #98F5FF;
+}
+.table08cell {
+	background-color: #CDC8B1;
+}
+.table09cell {
+	background-color: #BDB76B;
+}
+.table10cell {
+	background-color: #E6E6FA;
+}
+.topLevelTableCell {
+	background-color: #FFFFFF;
+}
+
+.topLevelpagerOptions {
+	background-color: #D4D4D4;
+	position: relative;
+	font-family: Helvetica;
+	font-size: 11px;
+	padding:5px;
+	top:0px;
+	left:0px;
+}
+
+.prevNextRowsDiv {
+	position:absolute;
+	padding:5px;
+	top:0px;
+	right:0px;
+}
+
+a.pagerResizeLink {
+	color: blue;
+	text-decoration: none;
+}
+
+a.pagerSizeSelected {
+	color:black;
+	text-decoration: none;
+	cursor: default;
+}
+
+.inactiveLink {
+   text-decoration:none;
+   color: #828282;
+   cursor: default;
+}
+
+.activeLink {
+   text-decoration:none;
+   color: blue;
+   cursor: pointer;
+}
+
+#triangle {
+    border: 1px solid #4C4C4C;
+    border-width: 2px 0 0 2px;
+    width:7px;
+    height:7px;
+    /* for firefox, safari, chrome, etc. */
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -o-transform:rotate(45deg);
+    z-index: 0;
+    position: relative;
+    bottom: -4px;
+    margin-left: 70px;
+    background: #4C4C4C;
+}
+
+#tableCellMenutriangle {
+	border: 1px solid #4C4C4C;
+    border-width: 2px 0 0 2px;
+    width:7px;
+    height:7px;
+    /* for firefox, safari, chrome, etc. */
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -o-transform:rotate(45deg);
+    z-index: 0;
+    position: relative;
+    bottom: -4px;
+    margin-left: 32px;
+    background: #4C4C4C;
+}
+
+#CellValueDialog {
+	font-size: 12px;
+}
+
+#editCellTextArea {
+	width: 95%;
+	height: 75%;
+	resize: none;
+	font-family: Helvetica;
+	font-size: 12px;
+}
+
+.ui-dialog-titlebar {
+        font-family: Verdana,Arial,sans-serif;
+        font-size: 0.6em;
+}

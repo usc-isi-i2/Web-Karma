@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Karma</title>
+		<meta name="generator" content="Studio 3 http://aptana.com/">
+		<meta name="author" content="Shubham Gupta">
+		<!-- Date: 2011-08-01 -->
+		
+		<!-- CSS -->
+		<link rel="stylesheet" type="text/css" href="./css/jquery-ui-1.8.16.custom.css" />
+		<link rel="stylesheet" type="text/css" href="./css/TopMenuBar.css" />
+		<link rel="stylesheet" type="text/css" href="./css/command_History.css" />
+		<link rel="stylesheet" type="text/css" href="./css/tables_workspace.css" />
+		<link rel="stylesheet" type="text/css" href="./css/jquery.fileupload-ui.css" />
+		<link rel="stylesheet" type="text/css" href="./css/uploadify.css" />
+		<link rel="stylesheet" type="text/css" href="./css/CSVImport.css" />
+		
+		<!-- Third Party JavaScript files		 -->
+		<script type="text/javascript" src="js/jquery-1.6.2.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+		<script type="text/javascript" src="js/jquery.tmpl.min.js"></script>
+		<script type="text/javascript" src="js/jquery.hoverIntent.js"></script>
+		<script type="text/javascript" src="js/jquery.uploadify.v2.1.4.js"></script>
+		<script type="text/javascript" src="js/swfobject.js"></script>
+		
+		<!-- Home grown JavaScript files -->
+		<script type="text/javascript" src="js/table_manipulation.js"></script>
+		<script type="text/javascript" src="js/ServerResponseObjectParsing.js"></script>
+		<script type="text/javascript" src="js/commandHistory.js"></script>
+		<script type="text/javascript" src="js/tableWorkspace.js"></script>
+		
+		<script type="text/javascript">
+			
+			/*
+			 * This code part is responsible for scrolling down the command history
+			 * window when the user scrolls down the page.
+			 */
+			$().ready(function() {
+				var scrollingDiv = $("#commandHistory");
+				$(window).scroll(function(){			
+					scrollingDiv
+						.stop()
+						.animate({"marginTop": ($(window).scrollTop()) + "px"}, "fast" );			
+				});
+			});
+			
+			$.getJSON("/getExampleNestedJSON", function(data) {
+				parse(data);
+				
+				 $('#uploadFile_JSON').uploadify({
+    				'uploader'  : '/images/uploadify.swf',
+    				'cancelImg' : '/images/cancel.png',
+    				'script'	: 'RequestController',
+    				'buttonText': 'Import JSON',
+    				'scriptData': {'command': 'ImportJSONFileCommand', 
+    								'workspaceId': $.workspaceGlobalInformation.id},
+    				'method'	: 'GET',
+    				'auto': true,
+    				'onComplete'  : function(event, ID, fileObj, response, data) {
+				    	// alert(response);
+				    	parse($.parseJSON(response));
+				    }
+  				})
+  				
+  				$('#uploadFile_CSV').uploadify({
+    				'uploader'  : '/images/uploadify.swf',
+    				'cancelImg' : '/images/cancel.png',
+    				'script'	: 'RequestController',
+    				'buttonText': 'Import CSV',
+    				'scriptData': {'command': 'ImportCSVFileCommand', 
+    								'workspaceId': $.workspaceGlobalInformation.id},
+    				'method'	: 'GET',
+    				'auto': true,
+    				'onComplete'  : function(event, ID, fileObj, response, data) {
+						resetCSVDialogOptions();
+				    	showCSVImportOptions(response);
+				    }
+  				})
+				}
+				
+			).error(function() { alert("Error geting sample JSON!"); });
+				
+		</script>
+		<script>
+			// JQueryify the column tool bar
+			$(function() {
+				$( "#renameColumnButton" ).button({
+				});
+				$( "#deleteColumnButton" ).button({
+				});
+				$( "#hideColumnButton" ).button({
+				})
+				
+				$("#toolBarMenu").hide().mouseenter(function(){
+					$("#toolBarMenu").show();
+				}).mouseleave(function(){
+					$("#toolBarMenu").hide();
+				});
+			});
+			
+			// JQueryify the table cell tool bar
+			$(function() {
+				$("#editCellButton" ).button();
+				$("#editCellButton").click(function(event){
+					handleTableCellEditButton(event);
+				});
+				
+				$("#viewValueButton" ).button();
+				$("#viewValueButton" ).click(function(){
+					var tdTagId = $("#tableCellToolBarMenu").data("parentCellId");
+					var value = $("td#" + tdTagId).data("fullValue");
+					if(value) {
+						$("#CellValueDialog").text(value).dialog({height: 300, width: 400, show:'blind'
+							});
+					}
+				});
+				
+				$("#tableCellToolBarMenu").hide().mouseenter(function(){
+					$("#tableCellToolBarMenu").show();
+				}).mouseleave(function(){
+					$("#tableCellToolBarMenu").hide();
+				});
+			});
+			
+			// Hide the CSV Import div
+			$(function() {
+				$("#CSVImportDiv").hide();
+				
+				// When the user changes header line index
+				$('.CSVImportOption').change(function() {
+					CSVImportOptionsChanged("preview");
+				});
+			});
+			
+			// Hide the table cell edit div
+			// Hide the CSV Import div
+			$(function() {
+				$("#tableCellEditDiv").hide();
+			});
+		</script>
+	</head>
+	
+	
+	<body>
+		<table id="topMenuBar">
+			<tr>
+				<td>
+					<input type="file" name="file1" id="uploadFile_JSON">
+				</td>
+				<td>
+					<input type="file" name="file2" id="uploadFile_CSV">
+				</td>
+			</tr>
+		</table>
+		<div id="commHistoryAndWorkspace">
+			<div id="commandHistory" class="ui-corner-top">
+				<div id="titleCommand" class="ui-corner-top">
+					<span>Command History</span>
+				</div>
+			</div>
+			<div id="tablesWorkspace"></div>
+		</div>
+		<div id="toolBarMenu">
+			<div id="triangle"></div>
+			<div class="fg-toolbar ui-widget-header ui-corner-all ui-helper-clearfix" id="testToolbar">
+					<button class="fg-button ui-state-default" id="renameColumnButton">Rename</button>
+					<button class="fg-button ui-state-default" id="deleteColumnButton">Delete</button>
+					<button class="fg-button ui-state-default" id="hideColumnButton">Hide</button>
+			</div>
+		</div>
+		<div id="tableCellToolBarMenu">
+			<div id="tableCellMenutriangle"></div>
+			<div class="fg-toolbar ui-widget-header ui-corner-all ui-helper-clearfix" id="tableCellTestToolbar">
+					<button class="fg-button ui-state-default" id="editCellButton">Edit</button>
+					<button class="fg-button ui-state-default" id="viewValueButton">Expand</button>
+			</div>
+		</div>
+		<div id="CellValueDialog" title="Cell Value">
+		</div>
+		<div id="CSVImportDiv">
+			<table id="CSVImportOptionsTable">
+				<tbody>
+					<tr>
+						<td id="importOptionsCell" colspan="5">
+							<span id="CSVSourceName"></span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<span id="importOptionsHeader">Import Options</span>
+						</td>
+						<td>
+							Column Delimiter: 
+							<select id="delimiterSelector" class="CSVImportOption">
+							  	<option>comma</option>
+							  	<option>tab</option>
+							  	<option>space</option>
+							</select>
+						</td>
+						<td>
+							Header Line Index:
+							<input type="textarea" value="1" id="CSVHeaderLineIndex" class="CSVImportOption" maxlength="3" size="2"/>
+						</td>
+						<td>
+							Data Start Row Index:
+							<input type="textarea" id="startRowIndex" class="CSVImportOption" maxlength="3" size="2" value="2"/>
+						</td>
+						<td>
+							Text Qualifier:
+							<input type="textarea" id="textQualifier" class="CSVImportOption" maxlength="3" size="2" value='"'/>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<br>
+			<div id="previewTableDiv">
+				<span id="previewTableHeader">Preview (Only 5 rows shown)</span><br><br>
+				<table id="CSVPreviewTable"></table>
+			</div>
+		</div>
+		<div id="tableCellEditDiv">
+		</div>
+	</body>
+</html>

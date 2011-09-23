@@ -1,0 +1,33 @@
+.solid1px {
+	border: solid 1px;
+}
+td{
+	text-align:center;
+}
+.noLineBelow {
+	border: solid 1px;
+	border-bottom: none;
+}
+.noLineAboveAndBelow {
+	border: solid 1px;
+	border-top: none;
+	border-bottom: none;
+}
+#nested {
+	border-width: 0px; 
+	border-spacing: 0px; 
+	border-collapse: collapse;
+	border-bottom: solid 1px;
+}
+.table01cell {
+	background-color: #E0EEEE ;
+}
+.table02cell {
+	background-color: #FFE4C4;
+}
+.table03cell {
+	background-color: #AEEEEE;
+}
+.topLevelTableCell {
+	background-color: #FFFFFF;
+}
