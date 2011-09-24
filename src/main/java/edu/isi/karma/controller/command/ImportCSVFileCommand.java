@@ -239,6 +239,7 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 					// TODO Our model does not allow a value to be added to a row without its
 					// associated HNode. In CSVs, there could be case where values in rows are
 					// greater than number of column names.
+					logger.error("More data elements detected in the row than number of headers!");
 				}
 			}
 		} catch (IOException e) {
