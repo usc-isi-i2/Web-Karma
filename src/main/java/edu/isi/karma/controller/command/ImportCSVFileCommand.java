@@ -49,6 +49,7 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 	
 	VWorkspace vWorkspace;
 	
+	// Logger object
 	private static Logger logger = LoggerFactory.getLogger(ImportCSVFileCommand.class.getSimpleName());
 	
 	public void setHeaderRowIndex(int headerRowIndex) {
