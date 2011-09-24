@@ -17,6 +17,8 @@ import edu.isi.karma.view.VWorkspace;
 ;
 
 /**
+ * Contains the levels of headings.
+ * 
  * @author szekely
  * 
  */
