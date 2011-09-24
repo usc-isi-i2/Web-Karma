@@ -17,7 +17,7 @@ import edu.isi.karma.view.VWorkspace;
 ;
 
 /**
- * Contains the levels of headings.
+ * Contains the levels of headings, except for the root of the tree.
  * 
  * @author szekely
  * 
