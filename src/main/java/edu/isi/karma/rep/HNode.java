@@ -34,6 +34,9 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 		this.columnName = columnName;
 	}
 
+	/**
+	 * @return the ID of the HTable containing this HNode.
+	 */
 	public String getHTableId() {
 		return hTableId;
 	}

@@ -48,7 +48,7 @@ public class VDTreeNodeTest extends TestCase {
 		// new JSONStringer()).toString()));
 
 		VDTableData vData = new VDTableData(vHeadings, vwsp.getVWorksheet(ws
-				.getId()));
+				.getId()), vwsp);
 		System.err.println(Util.prettyPrintJson(vData.prettyPrintJson(
 				new JSONStringer()).toString()));
 	}

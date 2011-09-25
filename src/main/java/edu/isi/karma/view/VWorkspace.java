@@ -3,6 +3,7 @@
  */
 package edu.isi.karma.view;
 
+import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Workspace;
 
 /**
@@ -28,6 +29,10 @@ public class VWorkspace {
 		return workspace;
 	}
 
+	public RepFactory getRepFactory() {
+		return getWorkspace().getFactory();
+	}
+	
 	public ViewFactory getViewFactory() {
 		return viewFactory;
 	}

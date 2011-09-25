@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import edu.isi.karma.view.VWorksheet;
+import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.tableheadings.VTableHeadings;
 
 /**
@@ -24,12 +25,16 @@ public class VDTableData {
 
 	private final List<VDRow> rows = new LinkedList<VDRow>();
 
-	public VDTableData(VTableHeadings vtHeadings, VWorksheet vWorksheet) {
+	public VDTableData(VTableHeadings vtHeadings, VWorksheet vWorksheet,
+			VWorkspace vWorkspace) {
 		super();
 		// this.vtHeadings = vtHeadings;
 		this.rootTableId = vWorksheet.getWorksheet().getDataTable().getId();
 		vtHeadings.getRootVHNode().populateVDRows(rows,
 				vWorksheet.getTopTablePager(), vWorksheet);
+		for (VDRow r : rows) {
+			r.firstTopDownPass(null, vWorkspace);
+		}
 	}
 
 	JSONWriter prettyPrintJson(JSONWriter jw) throws JSONException {
