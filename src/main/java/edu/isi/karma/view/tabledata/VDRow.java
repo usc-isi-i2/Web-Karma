@@ -21,9 +21,17 @@ public class VDRow {
 
 	private final List<VDTreeNode> nodes = new LinkedList<VDTreeNode>();
 
-	public VDRow(Row row) {
+	private final boolean isFirst, isLast;
+
+	public VDRow(Row row, boolean isFirst, boolean isLast) {
 		super();
 		this.row = row;
+		this.isFirst = isFirst;
+		this.isLast = isLast;
+	}
+
+	boolean isMiddle() {
+		return !isFirst && !isLast;
 	}
 
 	public void add(VDTreeNode vdNode) {
@@ -34,6 +42,7 @@ public class VDRow {
 		jw.object()//
 				.key("isA").value("VDRow")//
 				.key("rowId").value(row.getId())//
+				.key("isFirst/isLast").value("" + isFirst + "/" + isLast)//
 				.key("nodes").array();
 		for (VDTreeNode n : nodes) {
 			n.prettyPrintJson(jw);

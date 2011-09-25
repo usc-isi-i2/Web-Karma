@@ -21,9 +21,11 @@ public class VDTreeNode {
 
 	private final List<VDRow> nestedTableRows = new LinkedList<VDRow>();
 
+
 	public VDTreeNode(Node node) {
 		super();
 		this.node = node;
+
 	}
 
 	public List<VDRow> getNestedTableRows() {

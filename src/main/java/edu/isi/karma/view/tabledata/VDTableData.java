@@ -18,7 +18,7 @@ import edu.isi.karma.view.tableheadings.VTableHeadings;
  */
 public class VDTableData {
 
-	private final VTableHeadings vtHeadings;
+	// private final VTableHeadings vtHeadings;
 
 	private final String rootTableId;
 
@@ -26,7 +26,7 @@ public class VDTableData {
 
 	public VDTableData(VTableHeadings vtHeadings, VWorksheet vWorksheet) {
 		super();
-		this.vtHeadings = vtHeadings;
+		// this.vtHeadings = vtHeadings;
 		this.rootTableId = vWorksheet.getWorksheet().getDataTable().getId();
 		vtHeadings.getRootVHNode().populateVDRows(rows,
 				vWorksheet.getTopTablePager(), vWorksheet);
