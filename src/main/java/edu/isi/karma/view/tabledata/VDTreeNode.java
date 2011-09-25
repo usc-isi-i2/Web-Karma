@@ -22,6 +22,8 @@ public class VDTreeNode {
 
 	private final Node node;
 
+	private final VDRow containerVDRow;
+
 	private final List<VDRow> nestedTableRows = new LinkedList<VDRow>();
 
 	/**
@@ -35,9 +37,15 @@ public class VDTreeNode {
 	 */
 	private Margin margin = null;
 
-	public VDTreeNode(Node node) {
+	/**
+	 * List of margins around nested tables.
+	 */
+	private List<Margin> marginList = new LinkedList<Margin>();
+
+	public VDTreeNode(Node node, VDRow containerVDRow) {
 		super();
 		this.node = node;
+		this.containerVDRow = containerVDRow;
 
 	}
 
@@ -69,15 +77,32 @@ public class VDTreeNode {
 		return vWorkspace.getRepFactory().getHNode(node.gethNodeId());
 	}
 
-	void firstTopDownPass(VDRow containerVDRow, VWorkspace vWorkspace) {
+	void firstPassTopDown(VWorkspace vWorkspace) {
 		if (hasNestedTable()) {
 			margin = new Margin(getHNode(vWorkspace).getHTableId(), 0);
+			marginList.add(margin);
 		}
 
 		depth = containerVDRow.getDepth();
-		
+
+		// Now go top down.
 		for (VDRow r : nestedTableRows) {
-			r.firstTopDownPass(this, vWorkspace);
+			r.firstPassTopDown(vWorkspace);
+		}
+	}
+
+	void secondPassBottomUp(VWorkspace vWorkspace) {
+		// First recurse.
+		for (VDRow r : nestedTableRows) {
+			r.firstPassTopDown(vWorkspace);
+		}
+
+		if (containerVDRow != null) {
+			// Propagate the margin list up.
+			if (containerVDRow != null) {
+				VDTreeNode parent = containerVDRow.getContainerVDNode();
+				parent.marginList.addAll(marginList);
+			}
 		}
 	}
 
@@ -100,6 +125,7 @@ public class VDTreeNode {
 				.key("node").value(node.toString())//
 				.key("depth").value(depth)//
 				.key("margin").value(getMarginsString())//
+				.key("marginList").value(Margin.toString(marginList))//
 		;
 		if (!nestedTableRows.isEmpty()) {
 			jw.key("rows").array();

@@ -30,10 +30,10 @@ public class VDTableData {
 		super();
 		// this.vtHeadings = vtHeadings;
 		this.rootTableId = vWorksheet.getWorksheet().getDataTable().getId();
-		vtHeadings.getRootVHNode().populateVDRows(rows,
+		vtHeadings.getRootVHNode().populateVDRows(null, rows,
 				vWorksheet.getTopTablePager(), vWorksheet);
 		for (VDRow r : rows) {
-			r.firstTopDownPass(null, vWorkspace);
+			r.firstPassTopDown(vWorkspace);
 		}
 	}
 

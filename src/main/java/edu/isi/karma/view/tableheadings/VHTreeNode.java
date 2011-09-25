@@ -561,13 +561,13 @@ public class VHTreeNode {
 	 * @param vDRows
 	 * @param tablePager
 	 */
-	public void populateVDRows(List<VDRow> vDRows, TablePager tablePager,
-			VWorksheet vWorksheet) {
+	public void populateVDRows(VDTreeNode parent, List<VDRow> vDRows,
+			TablePager tablePager, VWorksheet vWorksheet) {
 		boolean isFirst = true;
 		Iterator<Row> it = tablePager.getRows().iterator();
 		while (it.hasNext()) {
 			Row r = it.next();
-			VDRow vdRow = new VDRow(r, isFirst, !it.hasNext());
+			VDRow vdRow = new VDRow(r, parent, isFirst, !it.hasNext());
 			isFirst = false;
 			vDRows.add(vdRow);
 			populateVDDataRow(vdRow, r, vWorksheet);
@@ -580,11 +580,11 @@ public class VHTreeNode {
 		while (it.hasNext()) {
 			VHTreeNode vhNode = it.next();
 			Node n = dataRow.getNode(vhNode.hNode.getId());
-			VDTreeNode vdNode = new VDTreeNode(n);
+			VDTreeNode vdNode = new VDTreeNode(n, vdRow);
 			vdRow.add(vdNode);
 
 			if (vhNode.hasChildren()) {
-				vhNode.populateVDRows(vdNode.getNestedTableRows(),
+				vhNode.populateVDRows(vdNode, vdNode.getNestedTableRows(),
 						vWorksheet.getTablePager(n.getNestedTable().getId()),
 						vWorksheet);
 			}

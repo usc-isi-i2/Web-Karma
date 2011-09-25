@@ -18,6 +18,8 @@ import edu.isi.karma.view.VWorkspace;
  */
 public class VDRow {
 
+	private final VDTreeNode containerVDNode;
+
 	private final Row row;
 
 	private final List<VDTreeNode> nodes = new LinkedList<VDTreeNode>();
@@ -34,15 +36,21 @@ public class VDRow {
 	 */
 	private int depth = 0;
 
-	public VDRow(Row row, boolean isFirst, boolean isLast) {
+	public VDRow(Row row, VDTreeNode containerVDNode, boolean isFirst,
+			boolean isLast) {
 		super();
 		this.row = row;
+		this.containerVDNode = containerVDNode;
 		this.isFirst = isFirst;
 		this.isLast = isLast;
 	}
 
 	Row getRow() {
 		return row;
+	}
+
+	VDTreeNode getContainerVDNode() {
+		return containerVDNode;
 	}
 
 	boolean isFirst() {
@@ -65,13 +73,21 @@ public class VDRow {
 		nodes.add(vdNode);
 	}
 
-	void firstTopDownPass(VDTreeNode containerVDNode, VWorkspace vWorkspace) {
+	void firstPassTopDown(VWorkspace vWorkspace) {
 		if (containerVDNode != null) {
 			depth = containerVDNode.getDepth() + 1;
 		}
 
+		// Now go top down.
 		for (VDTreeNode n : nodes) {
-			n.firstTopDownPass(this, vWorkspace);
+			n.firstPassTopDown(vWorkspace);
+		}
+	}
+
+	void secondPassBottomUp(VWorkspace vWorkspace) {
+		// First go bottom up.
+		for (VDTreeNode n : nodes) {
+			n.secondPassBottomUp(vWorkspace);
 		}
 	}
 
