@@ -39,6 +39,10 @@ public class VTableHeadings {
 		this.rootVHNode.computeDerivedInformation();
 	}
 
+	public VHTreeNode getRootVHNode() {
+		return rootVHNode;
+	}
+
 	public void generateJson(JSONWriter jw, VWorksheet vWorksheet,
 			VWorkspace vWorkspace) {
 		try {
@@ -71,5 +75,15 @@ public class VTableHeadings {
 		}
 		level.generateJson(jw, vWorksheet, vWorkspace);
 		jw.endArray();
+	}
+	
+	public JSONWriter prettyPrintJson(JSONWriter jw) throws JSONException {
+		jw.object()//
+		.key("hTableId").value(hTableId)//
+		.key("root")//
+		;
+		rootVHNode.prettyPrintJson(jw);
+		jw.endObject();
+		return jw;
 	}
 }

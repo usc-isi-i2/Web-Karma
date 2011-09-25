@@ -30,6 +30,9 @@ import org.json.JSONWriter;
 
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.util.Util;
 import edu.isi.karma.view.Border;
 import edu.isi.karma.view.Margin;
@@ -38,6 +41,8 @@ import edu.isi.karma.view.Stroke.StrokeStyle;
 import edu.isi.karma.view.VTableCssTags;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.tabledata.VDRow;
+import edu.isi.karma.view.tabledata.VDTreeNode;
 
 /**
  * @author szekely
@@ -429,12 +434,12 @@ public class VHTreeNode {
 					.equals(hNode.getHTableId());
 			b.setHasTopStroke(sameColor);
 		}
-		
+
 		for (VHTreeNode n : children) {
 			n.assignTopBorderStrokes();
 		}
 	}
-	
+
 	void computeDerivedInformation() {
 		if (isRoot()) {
 			assignPositions();
@@ -448,103 +453,6 @@ public class VHTreeNode {
 			assignTopBorderStrokes();
 		} else {
 			throw new Error("Should be called on the tree root.");
-		}
-	}
-
-	@SuppressWarnings("unused")
-	private String getPositionString() {
-		if (isFirst() && isLast()) {
-			return "first/last";
-		} else if (isFirst()) {
-			return "first";
-		} else if (isLast()) {
-			return "last";
-		} else {
-			return "BAD_POSITION_STRING";
-		}
-	}
-
-	private String getStrokesString() {
-		return leftStroke.toString() + "||" + rightStroke.toString();
-	}
-
-	private String getInnerStrokesString() {
-		return leftInnerStroke.toString() + "||" + rightInnerStroke.toString();
-	}
-
-	private String getSubtreeStrokesString() {
-		return Stroke.toString(leftSubtreeStrokes) + "||"
-				+ Stroke.toString(rightSubtreeStrokes);
-	}
-
-	@SuppressWarnings("unused")
-	private String getMarginsString() {
-		return leftMargin.toString() + "||" + rightMargin.toString();
-	}
-
-	private String getSubtreeMarginsString() {
-		return Margin.toString(leftSubtreeMargins) + "||"
-				+ Margin.toString(rightSubtreeMargins);
-	}
-
-	private String getFullMarginsString() {
-		return Margin.toString(leftFullMargins) + "||"
-				+ Margin.toString(rightFullMargins);
-	}
-
-	private String getBordersString() {
-		return Border.getBordersString(leftBorders) + "||"
-				+ Border.getBordersString(rightBorders);
-	}
-
-	void toJson(JSONStringer w) {
-		try {
-			String hNodeId = "NH__";
-			String containingTable = "root";
-			String columnName = "root";
-			if (hNode != null) {
-				hNodeId = hNode.getId();
-				columnName = hNode.getColumnName();
-				containingTable = hNode.getHTableId();
-			}
-			JSONWriter a = w.object().key("hNode")
-					.value(hNodeId + "(" + containingTable + ")")//
-					.key("hTableId").value(hTableId)//
-					.key("column").value(columnName)//
-					.key("width").value(width)//
-					.key("depth").value(depth)//
-					// .key("position").value(getPositionString())//
-					.key("strokes").value(getStrokesString())//
-					.key("subtreeStrokes").value(getSubtreeStrokesString())//
-					// .key("margins").value(getMarginsString())//
-					.key("subtreeMargins").value(getSubtreeMarginsString())//
-					.key("fullMargins").value(getFullMarginsString())//
-					.key("innerStrokes").value(getInnerStrokesString())//
-					.key("borders").value(getBordersString())//
-					.key("numMargins").value(numSubtreeMargins)//
-			;
-			if (!isLeaf()) {
-				a.key("xchildren").array();
-				for (VHTreeNode n : children) {
-					n.toJson(w);
-				}
-				a.endArray();
-			}
-			a.endObject();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
-
-	String prettyPrint() {
-		JSONStringer js = new JSONStringer();
-		toJson(js);
-		try {
-			JSONObject o = new JSONObject(js.toString());
-			return o.toString(3);
-		} catch (JSONException e) {
-			e.printStackTrace();
-			return "error";
 		}
 	}
 
@@ -645,4 +553,140 @@ public class VHTreeNode {
 						css.getCssTag(rightInnerStroke.gethTableId())))//
 		;
 	}
+
+	/**
+	 * For each row in the TablePager, create a VDRow and fill it in. Deals with
+	 * nested tables.
+	 * 
+	 * @param vDRows
+	 * @param tablePager
+	 */
+	public void populateVDRows(List<VDRow> vDRows, TablePager tablePager,
+			VWorksheet vWorksheet) {
+		for (Row r : tablePager.getRows()) {
+			VDRow vdRow = new VDRow(r);
+			vDRows.add(vdRow);
+			populateVDDataRow(vdRow, r, vWorksheet);
+		}
+	}
+
+	private void populateVDDataRow(VDRow vdRow, Row dataRow,
+			VWorksheet vWorksheet) {
+		for (VHTreeNode vhNode : children) {
+			Node n = dataRow.getNode(vhNode.hNode.getId());
+			VDTreeNode vdNode = new VDTreeNode(n);
+			vdRow.add(vdNode);
+
+			if (vhNode.hasChildren()) {
+				vhNode.populateVDRows(vdNode.getNestedTableRows(),
+						vWorksheet.getTablePager(n.getNestedTable().getId()),
+						vWorksheet);
+			}
+		}
+
+	}
+
+	/*****************************************************************
+	 * 
+	 * Debugging Support
+	 * 
+	 *****************************************************************/
+
+	@SuppressWarnings("unused")
+	private String getPositionString() {
+		if (isFirst() && isLast()) {
+			return "first/last";
+		} else if (isFirst()) {
+			return "first";
+		} else if (isLast()) {
+			return "last";
+		} else {
+			return "BAD_POSITION_STRING";
+		}
+	}
+
+	private String getStrokesString() {
+		return leftStroke.toString() + "||" + rightStroke.toString();
+	}
+
+	private String getInnerStrokesString() {
+		return leftInnerStroke.toString() + "||" + rightInnerStroke.toString();
+	}
+
+	private String getSubtreeStrokesString() {
+		return Stroke.toString(leftSubtreeStrokes) + "||"
+				+ Stroke.toString(rightSubtreeStrokes);
+	}
+
+	@SuppressWarnings("unused")
+	private String getMarginsString() {
+		return leftMargin.toString() + "||" + rightMargin.toString();
+	}
+
+	private String getSubtreeMarginsString() {
+		return Margin.toString(leftSubtreeMargins) + "||"
+				+ Margin.toString(rightSubtreeMargins);
+	}
+
+	private String getFullMarginsString() {
+		return Margin.toString(leftFullMargins) + "||"
+				+ Margin.toString(rightFullMargins);
+	}
+
+	private String getBordersString() {
+		return Border.getBordersString(leftBorders) + "||"
+				+ Border.getBordersString(rightBorders);
+	}
+
+	void prettyPrintJson(JSONWriter w) {
+		try {
+			String hNodeId = "NH__";
+			String containingTable = "root";
+			String columnName = "root";
+			if (hNode != null) {
+				hNodeId = hNode.getId();
+				columnName = hNode.getColumnName();
+				containingTable = hNode.getHTableId();
+			}
+			JSONWriter a = w.object().key("hNode")
+					.value(hNodeId + "(" + containingTable + ")")//
+					.key("hTableId").value(hTableId)//
+					.key("column").value(columnName)//
+					.key("width").value(width)//
+					.key("depth").value(depth)//
+					// .key("position").value(getPositionString())//
+					.key("strokes").value(getStrokesString())//
+					.key("subtreeStrokes").value(getSubtreeStrokesString())//
+					// .key("margins").value(getMarginsString())//
+					.key("subtreeMargins").value(getSubtreeMarginsString())//
+					.key("fullMargins").value(getFullMarginsString())//
+					.key("innerStrokes").value(getInnerStrokesString())//
+					.key("borders").value(getBordersString())//
+					.key("numMargins").value(numSubtreeMargins)//
+			;
+			if (!isLeaf()) {
+				a.key("xchildren").array();
+				for (VHTreeNode n : children) {
+					n.prettyPrintJson(w);
+				}
+				a.endArray();
+			}
+			a.endObject();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	String prettyPrint() {
+		JSONStringer js = new JSONStringer();
+		prettyPrintJson(js);
+		try {
+			JSONObject o = new JSONObject(js.toString());
+			return o.toString(3);
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return "error";
+		}
+	}
+
 }

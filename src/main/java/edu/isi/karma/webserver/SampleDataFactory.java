@@ -280,14 +280,13 @@ public class SampleDataFactory {
 			JSONStringer x = new JSONStringer();
 
 			JSONWriter topA = x.array();
-			topA.object().key("a").value("a_1").key("b")
-					.array()
+			topA.object().key("a").value("a_1").key("b").array()
 					//
 					.object().key("b.1").value("b.1_1").key("b.2")
 					.value("b.2_1").endObject()
 					//
-					//.object().key("b.1").value("b.1_2").key("b.2")
-					//.value("b.2_2").endObject()
+					// .object().key("b.1").value("b.1_2").key("b.2")
+					// .value("b.2_2").endObject()
 					//
 					.endArray().endObject();
 
@@ -304,7 +303,7 @@ public class SampleDataFactory {
 			return null;
 		}
 	}
-	
+
 	public static Worksheet createSampleJsonWithEmptyNestedTable2(
 			Workspace workspace) {
 		try {
@@ -312,8 +311,7 @@ public class SampleDataFactory {
 			JSONStringer x = new JSONStringer();
 
 			JSONWriter topA = x.array();
-			topA.object().key("a").value("a_1").key("b")
-					.array()
+			topA.object().key("a").value("a_1").key("b").array()
 					//
 					.object().key("b.1").value("b.1_1").key("b.2")
 					.value("b.2_1").endObject()
@@ -335,7 +333,7 @@ public class SampleDataFactory {
 			return null;
 		}
 	}
-	
+
 	public static Worksheet createSampleJsonWithEmptyNestedTable3(
 			Workspace workspace) {
 		try {
@@ -343,8 +341,7 @@ public class SampleDataFactory {
 			JSONStringer x = new JSONStringer();
 
 			JSONWriter topA = x.array();
-			topA.object().key("a").value("a_1").key("b")
-					.array()
+			topA.object().key("a").value("a_1").key("b").array()
 					//
 					.object().key("b.1").value("b.1_1").key("b.2")
 					.value("b.2_1").endObject()
@@ -364,7 +361,7 @@ public class SampleDataFactory {
 			return null;
 		}
 	}
-	
+
 	public static Worksheet createSampleJsonWithEmptyNestedTable4(
 			Workspace workspace) {
 		try {
@@ -372,8 +369,7 @@ public class SampleDataFactory {
 			JSONStringer x = new JSONStringer();
 
 			JSONWriter topA = x.array();
-			topA.object().key("a").value("a_1").key("b")
-					.array()
+			topA.object().key("a").value("a_1").key("b").array()
 					//
 					.object().key("b.1").value("b.1_1").key("b.2")
 					.value("b.2_1").endObject()
@@ -390,6 +386,46 @@ public class SampleDataFactory {
 
 			JsonImport ji = new JsonImport(Util.createJson(x.toString()),
 					"Empty Nested Table 4", workspace);
+			Worksheet w = ji.generateWorksheet();
+			return w;
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static Worksheet createSampleJsonWithNestedTable1(Workspace workspace) {
+		try {
+
+			JSONStringer x = new JSONStringer();
+
+			JSONWriter topA = x.array();
+			topA.object().key("a").value("a/1").key("b")
+					.array()
+					//
+					.object().key("b.1").value("b.1/1,1").key("b.2")
+					.value("b.2/1,1").endObject()
+					//
+					.object().key("b.1").value("b.1/1,2").key("b.2")
+					.value("b.2/1,2").endObject()
+					//
+					.endArray().endObject();
+
+			topA.object().key("a").value("a/2").key("b")
+					.array()
+					//
+					.object().key("b.1").value("b.1/2,1").key("b.2")
+					.value("b.2/2,1").endObject()
+					//
+					.object().key("b.1").value("b.1/2,2").key("b.2")
+					.value("b.2/2,2").endObject()
+					//
+					.endArray().endObject();
+
+			topA.endArray();
+
+			JsonImport ji = new JsonImport(Util.createJson(x.toString()),
+					"Nested Table 1", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
 		} catch (JSONException e) {

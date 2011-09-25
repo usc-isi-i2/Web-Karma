@@ -126,14 +126,14 @@ public class Util {
 		String x = readerToString(reader);
 		return createJson(x);
 	}
-
+	
 	public static String prettyPrintJson(String jsonString) {
 		try {
 			Object o = createJson(jsonString);
 			if (o instanceof JSONObject) {
-				return ((JSONObject) o).toString(2);
+				return ((JSONObject) o).toString(4);
 			} else if (o instanceof JSONArray) {
-				return ((JSONArray) o).toString(2);
+				return ((JSONArray) o).toString(4);
 			} else {
 				return "not JSON";
 			}

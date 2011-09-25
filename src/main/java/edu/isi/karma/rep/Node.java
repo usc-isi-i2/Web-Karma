@@ -32,12 +32,12 @@ public class Node extends RepEntity {
 	private Table nestedTable = null;
 
 	private NodeStatus status = NodeStatus.original;
-	
+
 	// The value stored in this cell.
 	private CellValue value = StringCellValue.getEmptyString();
 
 	private CellValue originalValue = StringCellValue.getEmptyString();
-	
+
 	Node(String id, String hNodeId) {
 		super(id);
 		this.hNodeId = hNodeId;
@@ -78,6 +78,19 @@ public class Node extends RepEntity {
 
 	public boolean hasNestedTable() {
 		return nestedTable != null;
+	}
+
+	public String toString() {
+		StringBuffer b = new StringBuffer();
+		b.append("N(");
+		b.append(getId() + ",");
+		b.append(hNodeId + ",");
+		if (nestedTable != null) {
+			b.append("*)");
+		} else {
+			b.append(value.asString() + ")");
+		}
+		return b.toString();
 	}
 
 	@Override
