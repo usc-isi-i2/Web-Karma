@@ -53,7 +53,8 @@ public class Table extends RepEntity {
 	}
 
 	/**
-	 * The HNode acquired a nested HTable, so we need to add placeholders on all rows for it.
+	 * The HNode acquired a nested HTable, so we need to add placeholders on all
+	 * rows for it.
 	 * 
 	 * @param hNode
 	 * @param factory
@@ -97,7 +98,7 @@ public class Table extends RepEntity {
 	@Override
 	public void prettyPrint(String prefix, PrintWriter pw, RepFactory factory) {
 		pw.print(prefix);
-		pw.print("Table/" + id + ": ");
+		pw.print("Table/" + id + "/" + hTableId + ": ");
 		pw.println(factory.getHTable(hTableId).getTableName());
 
 		for (Row r : rows) {

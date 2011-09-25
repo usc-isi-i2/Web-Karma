@@ -37,11 +37,6 @@ public class VDTreeNode {
 	 */
 	private Margin margin = null;
 
-	/**
-	 * List of margins around nested tables.
-	 */
-	private List<Margin> marginList = new LinkedList<Margin>();
-
 	public VDTreeNode(Node node, VDRow containerVDRow) {
 		super();
 		this.node = node;
@@ -77,16 +72,26 @@ public class VDTreeNode {
 		return vWorkspace.getRepFactory().getHNode(node.gethNodeId());
 	}
 
-	void firstPassTopDown(VWorkspace vWorkspace) {
-		if (hasNestedTable()) {
-			margin = new Margin(getHNode(vWorkspace).getHTableId(), 0);
-			marginList.add(margin);
-		}
+	/**
+	 * @param vWorkspace
+	 * @return if this is a leaf node, then the HTableId of the containing
+	 *         HTable. If this is a nested table, then it is the HTableId of the
+	 *         parent table of the nested table.
+	 */
+	String getContainerHTableId(VWorkspace vWorkspace) {
+		return getHNode(vWorkspace).getHTableId();
+	}
 
+	void firstPassTopDown(VWorkspace vWorkspace) {
 		depth = containerVDRow.getDepth();
+
+		if (hasNestedTable()) {
+			margin = new Margin(getContainerHTableId(vWorkspace), depth);
+		}
 
 		// Now go top down.
 		for (VDRow r : nestedTableRows) {
+			r.setFillHTableId(getHNode(vWorkspace).getNestedTable().getId());
 			r.firstPassTopDown(vWorkspace);
 		}
 	}
@@ -94,15 +99,12 @@ public class VDTreeNode {
 	void secondPassBottomUp(VWorkspace vWorkspace) {
 		// First recurse.
 		for (VDRow r : nestedTableRows) {
-			r.firstPassTopDown(vWorkspace);
+			r.secondPassBottomUp(vWorkspace);
 		}
 
 		if (containerVDRow != null) {
-			// Propagate the margin list up.
-			if (containerVDRow != null) {
-				VDTreeNode parent = containerVDRow.getContainerVDNode();
-				parent.marginList.addAll(marginList);
-			}
+			// Propagate the margin up.
+			containerVDRow.accumulateMargin(margin);
 		}
 	}
 
@@ -112,20 +114,11 @@ public class VDTreeNode {
 	 * 
 	 *****************************************************************/
 
-	private String getMarginsString() {
-		if (margin == null) {
-			return "none";
-		} else {
-			return margin.toString();
-		}
-	}
-
 	void prettyPrintJson(JSONWriter jw) throws JSONException {
 		jw.object()//
 				.key("node").value(node.toString())//
 				.key("depth").value(depth)//
-				.key("margin").value(getMarginsString())//
-				.key("marginList").value(Margin.toString(marginList))//
+				.key("margin").value(Margin.getMarginsString(margin))//
 		;
 		if (!nestedTableRows.isEmpty()) {
 			jw.key("rows").array();

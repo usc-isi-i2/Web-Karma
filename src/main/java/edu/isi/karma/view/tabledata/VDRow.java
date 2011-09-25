@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import edu.isi.karma.rep.Row;
+import edu.isi.karma.view.Margin;
 import edu.isi.karma.view.VWorkspace;
 
 /**
@@ -34,7 +35,18 @@ public class VDRow {
 	 * The depth of the table that contains this row. The root table has depth
 	 * 0.
 	 */
-	private int depth = 0;
+	private int depth = 1;
+
+	/**
+	 * This row requires a margin if this value is non-null, in which case it
+	 * means that at least one of the nodes in the row is a nested table.
+	 */
+	private Margin margin = null;
+
+	/**
+	 * The HTableId that defines the fill color for this row.
+	 */
+	private String fillHTableId = "UNDEFINED";
 
 	public VDRow(Row row, VDTreeNode containerVDNode, boolean isFirst,
 			boolean isLast) {
@@ -63,6 +75,24 @@ public class VDRow {
 
 	int getDepth() {
 		return depth;
+	}
+
+	Margin getMargin() {
+		return margin;
+	}
+
+	String getFillHTableId() {
+		return fillHTableId;
+	}
+
+	void setFillHTableId(String fillHTableId) {
+		this.fillHTableId = fillHTableId;
+	}
+
+	void accumulateMargin(Margin margin) {
+		if (margin != null) {
+			this.margin = margin;
+		}
 	}
 
 	boolean isMiddle() {
@@ -100,9 +130,11 @@ public class VDRow {
 	void prettyPrintJson(JSONWriter jw) throws JSONException {
 		jw.object()//
 				.key("isA").value("VDRow")//
-				.key("rowId").value(row.getId())//
+				.key("_rowId").value(row.getId())//
 				.key("isFirst/isLast").value("" + isFirst + "/" + isLast)//
 				.key("depth").value(depth)//
+				.key("margin").value(Margin.getMarginsString(margin))//
+				.key("fillHTableId").value(fillHTableId)//
 				.key("nodes").array();
 		for (VDTreeNode n : nodes) {
 			n.prettyPrintJson(jw);

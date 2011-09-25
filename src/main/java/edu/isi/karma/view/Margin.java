@@ -60,4 +60,12 @@ public class Margin {
 		}
 		return b.toString();
 	}
+
+	public static String getMarginsString(Margin margin) {
+		if (margin == null) {
+			return "none";
+		} else {
+			return margin.toString();
+		}
+	}
 }

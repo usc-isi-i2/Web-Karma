@@ -66,6 +66,9 @@ public class RepFactory {
 		return worksheets.get(id);
 	}
 	
+	public Table getTable(String id){
+		return tables.get(id);
+	}
 	
 	HTable createHTable(String tableName) {
 		String id = getNewId("HT");

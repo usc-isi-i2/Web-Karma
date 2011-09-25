@@ -33,8 +33,14 @@ public class VDTableData {
 		vtHeadings.getRootVHNode().populateVDRows(null, rows,
 				vWorksheet.getTopTablePager(), vWorksheet);
 		for (VDRow r : rows) {
+			r.setFillHTableId(vWorkspace.getRepFactory().getTable(rootTableId)
+					.gethTableId());
 			r.firstPassTopDown(vWorkspace);
 		}
+		for (VDRow r : rows) {
+			r.secondPassBottomUp(vWorkspace);
+		}
+
 	}
 
 	JSONWriter prettyPrintJson(JSONWriter jw) throws JSONException {
