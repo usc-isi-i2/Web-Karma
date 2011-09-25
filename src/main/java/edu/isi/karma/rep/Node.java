@@ -86,7 +86,8 @@ public class Node extends RepEntity {
 		b.append(getId() + ",");
 		b.append(hNodeId + ",");
 		if (nestedTable != null) {
-			b.append("*)");
+			b.append("*" + nestedTable.getId() + "/"
+					+ nestedTable.gethTableId() + ")");
 		} else {
 			b.append(value.asString() + ")");
 		}
