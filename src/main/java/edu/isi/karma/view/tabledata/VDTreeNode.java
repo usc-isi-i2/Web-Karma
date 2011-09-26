@@ -40,6 +40,11 @@ public class VDTreeNode {
 	 */
 	private Margin margin = null;
 
+	/**
+	 * Number of levels of data needed to show this node.
+	 */
+	private int numLevels = -1;
+
 	public VDTreeNode(Node node, VHTreeNode vhTreeNode, VDRow containerVDRow) {
 		super();
 		this.node = node;
@@ -70,6 +75,10 @@ public class VDTreeNode {
 
 	Margin getMargin() {
 		return margin;
+	}
+
+	int getNumLevels() {
+		return numLevels;
 	}
 
 	HNode getHNode(VWorkspace vWorkspace) {
@@ -110,6 +119,17 @@ public class VDTreeNode {
 			// Propagate the margin up.
 			containerVDRow.accumulateMargin(margin);
 		}
+
+		// Calculate numLevels.
+		if (hasNestedTable()) {
+			int totalLevels = 0;
+			for (VDRow r : nestedTableRows) {
+				totalLevels += r.getNumLevels();
+			}
+			numLevels = totalLevels;
+		} else {
+			numLevels = 1;
+		}
 	}
 
 	/*****************************************************************
@@ -118,12 +138,12 @@ public class VDTreeNode {
 	 * 
 	 *****************************************************************/
 
-
 	void prettyPrintJson(JSONWriter jw, boolean verbose) throws JSONException {
 		jw.object()//
-				.key("node").value(node.toString())//
-				.key("depth").value(depth)//
-				.key("margin").value(Margin.getMarginsString(margin))//
+				.key("_node").value(node.toString())//
+				.key("_depth").value(depth)//
+				.key("_margin").value(Margin.getMarginsString(margin))//
+				.key("_numLevels").value(numLevels)//
 		;
 		if (verbose) {
 			jw.key("hTreeNode");

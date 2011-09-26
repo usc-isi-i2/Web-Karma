@@ -434,7 +434,8 @@ public class SampleDataFactory {
 		}
 	}
 
-	public static Worksheet createSampleJsonWithNestedTable2(Workspace workspace) {
+	public static Worksheet createSampleJsonWithNestedTable2(
+			boolean hasTwoRows, Workspace workspace) {
 		try {
 
 			JSONStringer x = new JSONStringer();
@@ -467,31 +468,34 @@ public class SampleDataFactory {
 					.endObject();//
 			topA.endArray().endObject();
 
-//			topA.object().key("a").value("a/2").key("b").array()
-//			//
-//					.object()//
-//					.key("b.1").value("b.1/2,1")//
-//					.key("b.2").array()//
-//					.object()//
-//					.key("b.2.1").value("b.2.1/2,1,1")//
-//					.key("b.2.2").value("b.2.2/2,1,1")//
-//					.endObject()//
-//					.endArray()//
-//					.endObject()//
-//					//
-//					.object()//
-//					.key("b.1").value("b.1/2,2")//
-//					.key("b.2").array()//
-//					.object()//
-//					.key("b.2.1").value("b.2.1/2,2,1")//
-//					.key("b.2.2").value("b.2.2/2,2,1")//
-//					.endObject()//
-//					.endArray()//
-//					.endObject()//
-//			//
-//			;
-//
-//			topA.endArray().endObject();
+			if (hasTwoRows) {
+				topA.object().key("a").value("a/2").key("b").array()
+				//
+						.object()//
+						.key("b.1").value("b.1/2,1")//
+						.key("b.2").array()//
+						.object()//
+						.key("b.2.1").value("b.2.1/2,1,1")//
+						.key("b.2.2").value("b.2.2/2,1,1")//
+						.endObject()//
+						.endArray()//
+						.endObject()//
+						//
+						.object()//
+						.key("b.1").value("b.1/2,2")//
+						.key("b.2").array()//
+						.object()//
+						.key("b.2.1").value("b.2.1/2,2,1")//
+						.key("b.2.2").value("b.2.2/2,2,1")//
+						.endObject()//
+						.endArray()//
+						.endObject()//
+				//
+				;
+
+				topA.endArray().endObject();
+			}
+
 			topA.endArray();
 
 			JsonImport ji = new JsonImport(Util.createJson(x.toString()),

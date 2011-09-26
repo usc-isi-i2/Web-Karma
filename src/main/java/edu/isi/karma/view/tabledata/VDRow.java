@@ -51,6 +51,11 @@ public class VDRow {
 	 */
 	private String fillHTableId = "UNDEFINED";
 
+	/**
+	 * Number of levels of data in this row.
+	 */
+	private int numLevels = -1;
+
 	public VDRow(Row row, VHTreeNode vhTreeNode, VDTreeNode containerVDNode,
 			boolean isFirst, boolean isLast) {
 		super();
@@ -93,6 +98,10 @@ public class VDRow {
 		this.fillHTableId = fillHTableId;
 	}
 
+	int getNumLevels() {
+		return numLevels;
+	}
+
 	void accumulateMargin(Margin margin) {
 		if (margin != null) {
 			this.margin = margin;
@@ -123,6 +132,13 @@ public class VDRow {
 		for (VDTreeNode n : nodes) {
 			n.secondPassBottomUp(vWorkspace);
 		}
+
+		// Calculate numLevels.
+		int maxLevels = 0;
+		for (VDTreeNode n : nodes) {
+			maxLevels = Math.max(maxLevels, n.getNumLevels());
+		}
+		numLevels = maxLevels;
 	}
 
 	/*****************************************************************
@@ -133,12 +149,13 @@ public class VDRow {
 
 	void prettyPrintJson(JSONWriter jw, boolean verbose) throws JSONException {
 		jw.object()//
-				.key("isA").value("VDRow")//
+				.key("_isA").value("VDRow")//
 				.key("_rowId").value(row.getId())//
-				.key("isFirst/isLast").value("" + isFirst + "/" + isLast)//
-				.key("depth").value(depth)//
-				.key("margin").value(Margin.getMarginsString(margin))//
-				.key("fillHTableId").value(fillHTableId)//
+				.key("_isFirst/isLast").value("" + isFirst + "/" + isLast)//
+				.key("_depth").value(depth)//
+				.key("_numLevels").value(numLevels)//
+				.key("_margin").value(Margin.getMarginsString(margin))//
+				.key("_fillHTableId").value(fillHTableId)//
 				.key("nodes").array();
 		for (VDTreeNode n : nodes) {
 			n.prettyPrintJson(jw, verbose);

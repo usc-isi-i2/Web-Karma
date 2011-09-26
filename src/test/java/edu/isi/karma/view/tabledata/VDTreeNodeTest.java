@@ -33,7 +33,7 @@ public class VDTreeNodeTest extends TestCase {
 	public void testPopulateVDRows() throws JSONException {
 		Worksheet ws = SampleDataFactory//
 				// .createSampleJsonWithNestedTable1(vwsp.getWorkspace())//
-				.createSampleJsonWithNestedTable2(vwsp.getWorkspace())//
+				.createSampleJsonWithNestedTable2(false, vwsp.getWorkspace())//
 		// .createSampleJson(vwsp.getWorkspace(), 1)//
 		// .createJsonWithFunnyCharacters(vwsp.getWorkspace())//
 		;
