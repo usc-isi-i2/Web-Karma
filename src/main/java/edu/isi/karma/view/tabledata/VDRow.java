@@ -47,6 +47,11 @@ public class VDRow {
 	private Margin margin = null;
 
 	/**
+	 * List of margins from all containers, ordered from top to bottom.
+	 */
+	private final List<Margin> allMargins = new LinkedList<Margin>();
+	
+	/**
 	 * The HTableId that defines the fill color for this row.
 	 */
 	private String fillHTableId = "UNDEFINED";
@@ -90,6 +95,10 @@ public class VDRow {
 		return margin;
 	}
 
+	List<Margin> getAllMargins() {
+		return allMargins;
+	}
+
 	String getFillHTableId() {
 		return fillHTableId;
 	}
@@ -119,6 +128,7 @@ public class VDRow {
 	void firstPassTopDown(VWorkspace vWorkspace) {
 		if (containerVDNode != null) {
 			depth = containerVDNode.getDepth() + 1;
+			allMargins.addAll(containerVDNode.getAllMargins());
 		}
 
 		// Now go top down.
@@ -150,11 +160,12 @@ public class VDRow {
 	void prettyPrintJson(JSONWriter jw, boolean verbose) throws JSONException {
 		jw.object()//
 				.key("_isA").value("VDRow")//
-				.key("_rowId").value(row.getId())//
+				.key("__rowId").value(row.getId())//
 				.key("_isFirst/isLast").value("" + isFirst + "/" + isLast)//
 				.key("_depth").value(depth)//
 				.key("_numLevels").value(numLevels)//
 				.key("_margin").value(Margin.getMarginsString(margin))//
+				.key("_allMargins").value(Margin.toString(allMargins))//
 				.key("_fillHTableId").value(fillHTableId)//
 				.key("nodes").array();
 		for (VDTreeNode n : nodes) {
