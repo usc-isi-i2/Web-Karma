@@ -82,7 +82,7 @@ public class VTableHeadings {
 		.key("hTableId").value(hTableId)//
 		.key("root")//
 		;
-		rootVHNode.prettyPrintJson(jw);
+		rootVHNode.prettyPrintJson(jw, true, true);
 		jw.endObject();
 		return jw;
 	}

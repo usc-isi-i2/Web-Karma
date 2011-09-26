@@ -12,6 +12,7 @@ import org.json.JSONWriter;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.view.Margin;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.tableheadings.VHTreeNode;
 
 /**
  * @author szekely
@@ -22,6 +23,8 @@ public class VDRow {
 	private final VDTreeNode containerVDNode;
 
 	private final Row row;
+
+	private final VHTreeNode vhTreeNode;
 
 	private final List<VDTreeNode> nodes = new LinkedList<VDTreeNode>();
 
@@ -48,10 +51,11 @@ public class VDRow {
 	 */
 	private String fillHTableId = "UNDEFINED";
 
-	public VDRow(Row row, VDTreeNode containerVDNode, boolean isFirst,
-			boolean isLast) {
+	public VDRow(Row row, VHTreeNode vhTreeNode, VDTreeNode containerVDNode,
+			boolean isFirst, boolean isLast) {
 		super();
 		this.row = row;
+		this.vhTreeNode = vhTreeNode;
 		this.containerVDNode = containerVDNode;
 		this.isFirst = isFirst;
 		this.isLast = isLast;
@@ -139,6 +143,9 @@ public class VDRow {
 		for (VDTreeNode n : nodes) {
 			n.prettyPrintJson(jw);
 		}
-		jw.endArray().endObject();
+		jw.endArray();
+		jw.key("hTreeNode");
+		vhTreeNode.prettyPrintJson(jw, false, false);
+		jw.endObject();
 	}
 }

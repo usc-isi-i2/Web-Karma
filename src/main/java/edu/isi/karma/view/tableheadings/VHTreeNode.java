@@ -567,7 +567,7 @@ public class VHTreeNode {
 		Iterator<Row> it = tablePager.getRows().iterator();
 		while (it.hasNext()) {
 			Row r = it.next();
-			VDRow vdRow = new VDRow(r, parent, isFirst, !it.hasNext());
+			VDRow vdRow = new VDRow(r, this, parent, isFirst, !it.hasNext());
 			isFirst = false;
 			vDRows.add(vdRow);
 			populateVDDataRow(vdRow, r, vWorksheet);
@@ -580,7 +580,7 @@ public class VHTreeNode {
 		while (it.hasNext()) {
 			VHTreeNode vhNode = it.next();
 			Node n = dataRow.getNode(vhNode.hNode.getId());
-			VDTreeNode vdNode = new VDTreeNode(n, vdRow);
+			VDTreeNode vdNode = new VDTreeNode(n, vhNode, vdRow);
 			vdRow.add(vdNode);
 
 			if (vhNode.hasChildren()) {
@@ -644,7 +644,8 @@ public class VHTreeNode {
 				+ Border.getBordersString(rightBorders);
 	}
 
-	void prettyPrintJson(JSONWriter w) {
+	public void prettyPrintJson(JSONWriter w, boolean printChildren,
+			boolean verbose) {
 		try {
 			String hNodeId = "NH__";
 			String containingTable = "root";
@@ -660,20 +661,24 @@ public class VHTreeNode {
 					.key("column").value(columnName)//
 					.key("width").value(width)//
 					.key("depth").value(depth)//
-					// .key("position").value(getPositionString())//
-					.key("strokes").value(getStrokesString())//
-					.key("subtreeStrokes").value(getSubtreeStrokesString())//
-					// .key("margins").value(getMarginsString())//
-					.key("subtreeMargins").value(getSubtreeMarginsString())//
-					.key("fullMargins").value(getFullMarginsString())//
-					.key("innerStrokes").value(getInnerStrokesString())//
-					.key("borders").value(getBordersString())//
-					.key("numMargins").value(numSubtreeMargins)//
 			;
-			if (!isLeaf()) {
+			if (verbose) {
+				a//
+					// .key("position").value(getPositionString())//
+				.key("strokes").value(getStrokesString())//
+						.key("subtreeStrokes").value(getSubtreeStrokesString())//
+						// .key("margins").value(getMarginsString())//
+						.key("subtreeMargins").value(getSubtreeMarginsString())//
+						.key("fullMargins").value(getFullMarginsString())//
+						.key("innerStrokes").value(getInnerStrokesString())//
+						.key("borders").value(getBordersString())//
+						.key("numMargins").value(numSubtreeMargins)//
+				;
+			}
+			if (!isLeaf() && printChildren) {
 				a.key("xchildren").array();
 				for (VHTreeNode n : children) {
-					n.prettyPrintJson(w);
+					n.prettyPrintJson(w, printChildren, verbose);
 				}
 				a.endArray();
 			}
@@ -685,7 +690,7 @@ public class VHTreeNode {
 
 	String prettyPrint() {
 		JSONStringer js = new JSONStringer();
-		prettyPrintJson(js);
+		prettyPrintJson(js, true, true);
 		try {
 			JSONObject o = new JSONObject(js.toString());
 			return o.toString(3);

@@ -13,6 +13,7 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.view.Margin;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.tableheadings.VHTreeNode;
 
 /**
  * @author szekely
@@ -21,6 +22,8 @@ import edu.isi.karma.view.VWorkspace;
 public class VDTreeNode {
 
 	private final Node node;
+
+	private final VHTreeNode vhTreeNode;
 
 	private final VDRow containerVDRow;
 
@@ -37,9 +40,10 @@ public class VDTreeNode {
 	 */
 	private Margin margin = null;
 
-	public VDTreeNode(Node node, VDRow containerVDRow) {
+	public VDTreeNode(Node node, VHTreeNode vhTreeNode, VDRow containerVDRow) {
 		super();
 		this.node = node;
+		this.vhTreeNode = vhTreeNode;
 		this.containerVDRow = containerVDRow;
 
 	}
@@ -120,6 +124,8 @@ public class VDTreeNode {
 				.key("depth").value(depth)//
 				.key("margin").value(Margin.getMarginsString(margin))//
 		;
+		jw.key("hTreeNode");
+		vhTreeNode.prettyPrintJson(jw, false, false);
 		if (!nestedTableRows.isEmpty()) {
 			jw.key("rows").array();
 			for (VDRow r : nestedTableRows) {
