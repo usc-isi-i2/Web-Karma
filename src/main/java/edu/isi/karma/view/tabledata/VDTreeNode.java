@@ -44,11 +44,17 @@ public class VDTreeNode {
 	 * List of margins from all containers, ordered from top to bottom.
 	 */
 	private final List<Margin> allMargins = new LinkedList<Margin>();
-	
+
 	/**
 	 * Number of levels of data needed to show this node.
 	 */
 	private int numLevels = -1;
+
+	/**
+	 * The level where this node (if a leaf) or the nested tables will start.
+	 * Zero based.
+	 */
+	private int startLevel = -1;
 
 	public VDTreeNode(Node node, VHTreeNode vhTreeNode, VDRow containerVDRow) {
 		super();
@@ -86,6 +92,14 @@ public class VDTreeNode {
 		return numLevels;
 	}
 
+	int getStartLevel() {
+		return startLevel;
+	}
+
+	void setStartLevel(int startLevel) {
+		this.startLevel = startLevel;
+	}
+
 	List<Margin> getAllMargins() {
 		return allMargins;
 	}
@@ -112,7 +126,7 @@ public class VDTreeNode {
 			margin = new Margin(getContainerHTableId(vWorkspace), depth);
 			allMargins.add(margin);
 		}
-		
+
 		// Now go top down.
 		for (VDRow r : nestedTableRows) {
 			r.setFillHTableId(getHNode(vWorkspace).getNestedTable().getId());
@@ -142,6 +156,18 @@ public class VDTreeNode {
 			numLevels = 1;
 		}
 	}
+	
+	void thirdPassTopDown(VWorkspace vWorkspace) {
+		
+		// Now go top down.
+		int currentLevel = startLevel;
+		for (VDRow r : nestedTableRows) {
+			r.setStartLevel(currentLevel);
+			currentLevel += r.getNumLevels();
+			
+			r.thirdPassTopDown(vWorkspace);
+		}
+	}
 
 	/*****************************************************************
 	 * 
@@ -156,6 +182,7 @@ public class VDTreeNode {
 				.key("_margin").value(Margin.getMarginsString(margin))//
 				.key("_allMargins").value(Margin.toString(allMargins))//
 				.key("_numLevels").value(numLevels)//
+				.key("_startLevel").value(startLevel)//
 		;
 		if (verbose) {
 			jw.key("hTreeNode");

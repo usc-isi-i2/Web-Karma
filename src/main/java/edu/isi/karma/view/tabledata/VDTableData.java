@@ -40,10 +40,16 @@ public class VDTableData {
 		for (VDRow r : rows) {
 			r.secondPassBottomUp(vWorkspace);
 		}
-
+		int startLevel = 0;
+		for (VDRow r : rows) {
+			r.setStartLevel(startLevel);
+			r.thirdPassTopDown(vWorkspace);
+			startLevel += r.getNumLevels();
+		}
 	}
 
-	JSONWriter prettyPrintJson(JSONWriter jw, boolean verbose) throws JSONException {
+	JSONWriter prettyPrintJson(JSONWriter jw, boolean verbose)
+			throws JSONException {
 		jw.object()//
 				.key("rootTableId").value(rootTableId)//
 				.key("rows").array();

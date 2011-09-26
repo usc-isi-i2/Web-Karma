@@ -50,7 +50,7 @@ public class VDRow {
 	 * List of margins from all containers, ordered from top to bottom.
 	 */
 	private final List<Margin> allMargins = new LinkedList<Margin>();
-	
+
 	/**
 	 * The HTableId that defines the fill color for this row.
 	 */
@@ -60,6 +60,12 @@ public class VDRow {
 	 * Number of levels of data in this row.
 	 */
 	private int numLevels = -1;
+
+	/**
+	 * The level where the first TR of nodes in this level with start. Zero
+	 * based.
+	 */
+	private int startLevel = -1;
 
 	public VDRow(Row row, VHTreeNode vhTreeNode, VDTreeNode containerVDNode,
 			boolean isFirst, boolean isLast) {
@@ -111,6 +117,14 @@ public class VDRow {
 		return numLevels;
 	}
 
+	int getStartLevel() {
+		return startLevel;
+	}
+
+	void setStartLevel(int startLevel) {
+		this.startLevel = startLevel;
+	}
+
 	void accumulateMargin(Margin margin) {
 		if (margin != null) {
 			this.margin = margin;
@@ -151,6 +165,18 @@ public class VDRow {
 		numLevels = maxLevels;
 	}
 
+	void thirdPassTopDown(VWorkspace vWorkspace) {
+		if (containerVDNode != null) {
+
+		}
+
+		// Now go top down.
+		for (VDTreeNode n : nodes) {
+			n.setStartLevel(startLevel);
+			n.thirdPassTopDown(vWorkspace);
+		}
+	}
+
 	/*****************************************************************
 	 * 
 	 * Debugging Support
@@ -164,6 +190,7 @@ public class VDRow {
 				.key("_isFirst/isLast").value("" + isFirst + "/" + isLast)//
 				.key("_depth").value(depth)//
 				.key("_numLevels").value(numLevels)//
+				.key("_startLevel").value(startLevel)//
 				.key("_margin").value(Margin.getMarginsString(margin))//
 				.key("_allMargins").value(Margin.toString(allMargins))//
 				.key("_fillHTableId").value(fillHTableId)//
