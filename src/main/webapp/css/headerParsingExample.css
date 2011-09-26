@@ -4,6 +4,7 @@ td {
 	font-size: 16px;
 	height: 40px;
 	width: 100px;
+	border-width: 1px;
 }
 
 table {
