@@ -43,12 +43,12 @@ public class VDTableData {
 
 	}
 
-	JSONWriter prettyPrintJson(JSONWriter jw) throws JSONException {
+	JSONWriter prettyPrintJson(JSONWriter jw, boolean verbose) throws JSONException {
 		jw.object()//
 				.key("rootTableId").value(rootTableId)//
 				.key("rows").array();
 		for (VDRow r : rows) {
-			r.prettyPrintJson(jw);
+			r.prettyPrintJson(jw, verbose);
 		}
 		jw.endArray().endObject();
 		return jw;

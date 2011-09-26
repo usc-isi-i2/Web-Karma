@@ -38,7 +38,7 @@ public class VDRow {
 	 * The depth of the table that contains this row. The root table has depth
 	 * 0.
 	 */
-	private int depth = 1;
+	private int depth = 0;
 
 	/**
 	 * This row requires a margin if this value is non-null, in which case it
@@ -131,7 +131,7 @@ public class VDRow {
 	 * 
 	 *****************************************************************/
 
-	void prettyPrintJson(JSONWriter jw) throws JSONException {
+	void prettyPrintJson(JSONWriter jw, boolean verbose) throws JSONException {
 		jw.object()//
 				.key("isA").value("VDRow")//
 				.key("_rowId").value(row.getId())//
@@ -141,11 +141,13 @@ public class VDRow {
 				.key("fillHTableId").value(fillHTableId)//
 				.key("nodes").array();
 		for (VDTreeNode n : nodes) {
-			n.prettyPrintJson(jw);
+			n.prettyPrintJson(jw, verbose);
 		}
 		jw.endArray();
-		jw.key("hTreeNode");
-		vhTreeNode.prettyPrintJson(jw, false, false);
+		if (verbose) {
+			jw.key("hTreeNode");
+			vhTreeNode.prettyPrintJson(jw, false, false);
+		}
 		jw.endObject();
 	}
 }

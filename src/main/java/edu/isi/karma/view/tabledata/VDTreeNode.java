@@ -118,18 +118,21 @@ public class VDTreeNode {
 	 * 
 	 *****************************************************************/
 
-	void prettyPrintJson(JSONWriter jw) throws JSONException {
+
+	void prettyPrintJson(JSONWriter jw, boolean verbose) throws JSONException {
 		jw.object()//
 				.key("node").value(node.toString())//
 				.key("depth").value(depth)//
 				.key("margin").value(Margin.getMarginsString(margin))//
 		;
-		jw.key("hTreeNode");
-		vhTreeNode.prettyPrintJson(jw, false, false);
+		if (verbose) {
+			jw.key("hTreeNode");
+			vhTreeNode.prettyPrintJson(jw, false, false);
+		}
 		if (!nestedTableRows.isEmpty()) {
 			jw.key("rows").array();
 			for (VDRow r : nestedTableRows) {
-				r.prettyPrintJson(jw);
+				r.prettyPrintJson(jw, verbose);
 			}
 			jw.endArray();
 		}
