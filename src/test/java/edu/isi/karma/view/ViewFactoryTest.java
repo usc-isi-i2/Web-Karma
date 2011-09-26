@@ -41,7 +41,7 @@ public class ViewFactoryTest extends TestCase {
 		this.f = new RepFactory();
 		this.workspace = f.createWorkspace();
 		this.vf = new ViewFactory();
-		this.pref = new ViewPreferences();
+		this.pref = new ViewPreferences(workspace.getId());
 	}
 
 	/**

@@ -1,6 +1,13 @@
 package edu.isi.karma.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -10,6 +17,8 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,12 +68,36 @@ public class FileUtil {
 					item.write(uploadedFile);
 				}
 			}
-		}catch(FileUploadException ex) {
+		} catch(FileUploadException ex) {
 			logger.error("Error encountered while parsing the request",ex);
 		} catch(Exception ex) {
 			logger.error("Error encountered while uploading file",ex);
 		}
 		return uploadedFile;
+	}
+
+	public static void copyFiles(File destination, File source) throws FileNotFoundException, IOException{
+		InputStream in = new FileInputStream(source);
+		OutputStream out = new FileOutputStream(destination);
+
+		byte[] buf = new byte[1024];
+		int len;
+		
+		while ((len = in.read(buf)) > 0){
+			out.write(buf, 0, len);
+		}
+		in.close();
+		out.close();
+		logger.debug("Done copying contents of " + source.getName() + " to " + destination.getName());
+	}
+
+	public static void writePrettyPrintedJSONObjectToFile(JSONObject json, File jsonFile) 
+		throws JSONException, IOException{
+		String prettyPrintedJSONString = json.toString(4);
+		FileWriter writer = new FileWriter(jsonFile);
+		writer.write(prettyPrintedJSONString);
+		writer.close();
+		logger.debug("Done writing JSON Object into a File: " + jsonFile.getAbsolutePath());
 	}
 	
 }

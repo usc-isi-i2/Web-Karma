@@ -18,11 +18,12 @@ public class VWorkspace {
 
 	private final VWorksheetList vWorksheets = new VWorksheetList();
 
-	private final ViewPreferences preferences = new ViewPreferences();
+	private final ViewPreferences preferences;
 
 	public VWorkspace(Workspace workspace) {
 		super();
 		this.workspace = workspace;
+		preferences = new ViewPreferences(workspace.getId());
 	}
 
 	public Workspace getWorkspace() {
