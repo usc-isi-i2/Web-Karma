@@ -47,23 +47,32 @@ public class VDTableCells {
 
 		for (int i = vdRow.getStartLevel(); i <= vdRow.getLastLevel(); i++) {
 			for (int j = lr.getLeft(); j <= lr.getRight(); j++) {
-				cells[i][j].setFillHTableId(fill);
+				VDCell c = cells[i][j];
+				c.setFillHTableId(fill);
+				c.setDepth(vdRow.getDepth());
 			}
 		}
-		
+
 		for (VDTreeNode n : vdRow.getNodes()) {
 			populateFromVDTreeNode(n, vWorkspace);
 		}
 	}
 
 	private void populateFromVDTreeNode(VDTreeNode n, VWorkspace vWorkspace) {
-		
-		if (n.hasNestedTable()){
-			for (VDRow vdRow : n.getNestedTableRows()){
+
+		if (n.hasNestedTable()) {
+			for (VDRow vdRow : n.getNestedTableRows()) {
 				populateFromVDRow(vdRow, vWorkspace);
 			}
 		}
-		
+		// It is a leaf node.
+		else {
+			LeftRight lr = vdIndexTable.get(n.getHNode(vWorkspace).getId());
+			VDCell c = cells[n.getStartLevel()][lr.getLeft()];
+			c.setDepth(n.getDepth());
+			c.setValue(n.getNode().getValue());
+		}
+
 	}
 
 	/*****************************************************************
@@ -78,8 +87,8 @@ public class VDTableCells {
 		for (int i = 0; i < numRows; i++) {
 			for (int j = 0; j < numCols; j++) {
 				jw.object()//
-						.key("row").value(i)//
-						.key("col").value(j)//
+						.key("_row").value(i)//
+						.key("_col").value(j)//
 				;
 				cells[i][j].prettyPrintJson(jw);
 				jw.endObject();
