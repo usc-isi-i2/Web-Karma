@@ -56,6 +56,7 @@ public class ViewPreferences {
 	
 	private void populatePreferences() {
 		try {
+			// TODO Mke this path to user preferences configurable through web.xml
 			jsonFile = new File("./UserPrefs/" + workspaceId + ".json");
 			if(jsonFile.exists()){
 				// Populate from the existing preferences JSON file
@@ -63,7 +64,7 @@ public class ViewPreferences {
 			} else {
 				// Create a new JSON preference file using the template preferences file
 				jsonFile.createNewFile();
-				File template_file = new File("./UserPrefs/WorkspacePref_template.json");
+				File template_file = new File("./UserPrefs/WorkspacePref.template");
 				FileUtil.copyFiles(jsonFile, template_file);
 				json = (JSONObject) Util.createJson(new FileReader(jsonFile));
 			} 

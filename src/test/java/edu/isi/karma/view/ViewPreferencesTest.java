@@ -32,7 +32,7 @@ public class ViewPreferencesTest extends TestCase {
 	}
 	
 	public void testPopulatePreferences() throws FileNotFoundException, JSONException {
-		File templateFile = new File("./UserPrefs/WorkspacePref_template.json");
+		File templateFile = new File("./UserPrefs/WorkspacePref.template");
 		JSONObject obj = (JSONObject) Util.createJson(new FileReader(templateFile));
 		
 		// Testing if a new preference file is generated with the right values
