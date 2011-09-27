@@ -125,6 +125,19 @@ public class VDRow {
 		this.startLevel = startLevel;
 	}
 
+	int getLastLevel() {
+		return getStartLevel() + getNumLevels() - 1;
+	}
+
+	String getContainerHNodeId(VWorkspace vWorkspace) {
+		return containerVDNode == null ? "root" : containerVDNode.getHNode(
+				vWorkspace).getId();
+	}
+
+	List<VDTreeNode> getNodes() {
+		return nodes;
+	}
+
 	void accumulateMargin(Margin margin) {
 		if (margin != null) {
 			this.margin = margin;

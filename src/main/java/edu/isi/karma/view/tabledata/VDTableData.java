@@ -28,7 +28,9 @@ public class VDTableData {
 
 	private final List<VHTreeNode> frontier = new LinkedList<VHTreeNode>();
 
-	private VDIndexTable vdIndexTable = new VDIndexTable();
+	private final VDIndexTable vdIndexTable = new VDIndexTable();
+
+	private final VDTableCells vdTableCells;
 
 	public VDTableData(VTableHeadings vtHeadings, VWorksheet vWorksheet,
 			VWorkspace vWorkspace) {
@@ -58,6 +60,25 @@ public class VDTableData {
 			r.thirdPassTopDown(vWorkspace);
 			startLevel += r.getNumLevels();
 		}
+
+		vdTableCells = new VDTableCells(this, vWorkspace);
+	}
+
+	String getRootTableId() {
+		return rootTableId;
+	}
+
+	VDIndexTable getVdIndexTable() {
+		return vdIndexTable;
+	}
+
+	int getNumLevels() {
+		return rows.size() == 0 ? 0
+				: rows.get(rows.size() - 1).getLastLevel() + 1;
+	}
+
+	List<VDRow> getRows() {
+		return rows;
 	}
 
 	JSONWriter prettyPrintJson(JSONWriter jw, boolean verbose)
@@ -78,7 +99,10 @@ public class VDTableData {
 
 		jw.key("indexTable");
 		vdIndexTable.prettyPrintJson(jw);
-		
+
+		jw.key("cells");
+		vdTableCells.prettyPrintJson(jw);
+
 		jw.endObject();
 		return jw;
 	}

@@ -4,7 +4,6 @@
 package edu.isi.karma.view.tabledata;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,18 +19,51 @@ import edu.isi.karma.view.tableheadings.VHTreeNode;
  */
 public class VDIndexTable {
 
-	private final Map<String, List<Integer>> hNodeId2Indices = new HashMap<String, List<Integer>>();
+	class LeftRight {
+		private final int left, right;
+
+		public LeftRight(int left, int right) {
+			super();
+			this.left = left;
+			this.right = right;
+		}
+
+		int getLeft() {
+			return left;
+		}
+
+		int getRight() {
+			return right;
+		}
+	}
+
+	private final Map<String, LeftRight> hNodeId2Indices = new HashMap<String, LeftRight>();
+
+	private int numColumns;
 
 	VDIndexTable() {
 		super();
 	}
 
+	int getNumColumns() {
+		return numColumns;
+	}
+
+	LeftRight get(String hNodeId) {
+		return hNodeId2Indices.get(hNodeId);
+	}
+
 	public void putFrontier(List<VHTreeNode> vhTreeNodes) {
+		numColumns = vhTreeNodes.size();
+
 		int index = 0;
 		for (VHTreeNode n : vhTreeNodes) {
-			putHNode(n.getHNode(), index);
+			hNodeId2Indices.put(n.getHNode().getId(), new LeftRight(index,
+					index));
 			index++;
 		}
+		
+		hNodeId2Indices.put("root", new LeftRight(0, numColumns-1));
 	}
 
 	/**
@@ -42,28 +74,31 @@ public class VDIndexTable {
 	 * @param vhTreeNodes
 	 */
 	public void addIndex(HNode hNode, List<VHTreeNode> vhTreeNodes) {
-		List<Integer> indices = new LinkedList<Integer>();
+		int min = 0;
+		int max = 0;
 		for (VHTreeNode n : vhTreeNodes) {
-			indices.add(hNodeId2Indices.get(n.getHNode().getId()).get(0));
+			LeftRight lr = hNodeId2Indices.get(n.getHNode().getId());
+			min = Math.min(min, lr.left);
+			max = Math.max(max, lr.right);
 		}
-		hNodeId2Indices.put(hNode.getId(), indices);
+		hNodeId2Indices.put(hNode.getId(), new LeftRight(min, max));
 	}
 
-	private void putHNode(HNode hNode, int index) {
-		List<Integer> list = new LinkedList<Integer>();
-		list.add(index);
-		hNodeId2Indices.put(hNode.getId(), list);
-	}
+	/*****************************************************************
+	 * 
+	 * Debugging Support
+	 * 
+	 *****************************************************************/
 
 	void prettyPrintJson(JSONWriter jw) throws JSONException {
 		jw.array();
 		for (String key : hNodeId2Indices.keySet()) {
+			LeftRight lr = hNodeId2Indices.get(key);
 			jw.object()//
-					.key(key).array();
-			for (Integer i : hNodeId2Indices.get(key)) {
-				jw.value(i);
-			}
-			jw.endArray().endObject();
+					.key(key).object()//
+					.key("left").value(lr.left).key("right").value(lr.right)//
+					.endObject()//
+					.endObject();
 		}
 		jw.endArray();
 	}
