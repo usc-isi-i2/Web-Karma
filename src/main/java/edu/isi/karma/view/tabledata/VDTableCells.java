@@ -6,6 +6,8 @@ package edu.isi.karma.view.tabledata;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import edu.isi.karma.view.Stroke;
+import edu.isi.karma.view.Stroke.StrokeStyle;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.tabledata.VDIndexTable.LeftRight;
 
@@ -38,7 +40,6 @@ public class VDTableCells {
 		for (VDRow vdRow : vdTableData.getRows()) {
 			populateFromVDRow(vdRow, vWorkspace);
 		}
-
 	}
 
 	private void populateFromVDRow(VDRow vdRow, VWorkspace vWorkspace) {
@@ -50,6 +51,19 @@ public class VDTableCells {
 				VDCell c = cells[i][j];
 				c.setFillHTableId(fill);
 				c.setDepth(vdRow.getDepth());
+			}
+
+		}
+
+		if (vdRow.isFirst()) {
+		}
+		// Not the first row.
+		else {
+			Stroke separator = new Stroke(StrokeStyle.inner, fill,
+					vdRow.getDepth());
+			for (int j = lr.getLeft(); j <= lr.getRight(); j++) {
+				VDCell c = cells[vdRow.getStartLevel()][j];
+				c.addTopStroke(separator);
 			}
 		}
 
@@ -87,8 +101,9 @@ public class VDTableCells {
 		for (int i = 0; i < numRows; i++) {
 			for (int j = 0; j < numCols; j++) {
 				jw.object()//
-						.key("_row").value(i)//
-						.key("_col").value(j)//
+						.key("_ row").value(i)// //Want rows displayed before in
+												// the JSON output.
+						.key("__col").value(j)//
 				;
 				cells[i][j].prettyPrintJson(jw);
 				jw.endObject();
