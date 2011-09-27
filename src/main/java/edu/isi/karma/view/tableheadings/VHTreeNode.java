@@ -42,6 +42,7 @@ import edu.isi.karma.view.ViewPreferences.ViewPreference;
 import edu.isi.karma.view.VTableCssTags;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.tabledata.VDIndexTable;
 import edu.isi.karma.view.tabledata.VDRow;
 import edu.isi.karma.view.tabledata.VDTreeNode;
 
@@ -498,8 +499,10 @@ public class VHTreeNode {
 				.value(hNode.getColumnName())
 				//
 				.key(columnNameShort.name())
-				.value(shorten(hNode.getColumnName(), vWorkspace
-						.getPreferences().getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader)))
+				.value(shorten(
+						hNode.getColumnName(),
+						vWorkspace.getPreferences().getIntViewPreferenceValue(
+								ViewPreference.maxCharactersInHeader)))
 				//
 				.key(topBorder.name())
 				.value(Border.encodeBorder(StrokeStyle.outer, topBorderCss))//
@@ -605,6 +608,17 @@ public class VHTreeNode {
 			for (VHTreeNode n : children) {
 				n.collectLeaves(result);
 			}
+		}
+	}
+
+	public void populateVDIndexTable(VDIndexTable vdIndexTable) {
+		for (VHTreeNode n : children) {
+			if (!n.isLeaf()) {
+				List<VHTreeNode> list = new LinkedList<VHTreeNode>();
+				n.collectLeaves(list);
+				vdIndexTable.addIndex(n.getHNode(), list);
+			}
+			n.populateVDIndexTable(vdIndexTable);
 		}
 	}
 

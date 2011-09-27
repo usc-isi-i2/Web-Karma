@@ -28,12 +28,20 @@ public class VDTableData {
 
 	private final List<VHTreeNode> frontier = new LinkedList<VHTreeNode>();
 
+	private VDIndexTable vdIndexTable = new VDIndexTable();
+
 	public VDTableData(VTableHeadings vtHeadings, VWorksheet vWorksheet,
 			VWorkspace vWorkspace) {
 		super();
 		// this.vtHeadings = vtHeadings;
 		this.rootTableId = vWorksheet.getWorksheet().getDataTable().getId();
+
+		// Record the column indices for all HNodes, except the fake root HNode.
 		vtHeadings.getRootVHNode().collectLeaves(frontier);
+		vdIndexTable.putFrontier(frontier);
+		vtHeadings.getRootVHNode().populateVDIndexTable(vdIndexTable);
+
+		// Build the VDRows and their content.
 		vtHeadings.getRootVHNode().populateVDRows(null, rows,
 				vWorksheet.getTopTablePager(), vWorksheet);
 		for (VDRow r : rows) {
@@ -61,12 +69,15 @@ public class VDTableData {
 			r.prettyPrintJson(jw, verbose);
 		}
 		jw.endArray();
-		
+
 		jw.key("frontier").array();
-		for (VHTreeNode vhn :frontier){
+		for (VHTreeNode vhn : frontier) {
 			jw.value(vhn.getHNode().getId());
 		}
 		jw.endArray();
+
+		jw.key("indexTable");
+		vdIndexTable.prettyPrintJson(jw);
 		
 		jw.endObject();
 		return jw;
