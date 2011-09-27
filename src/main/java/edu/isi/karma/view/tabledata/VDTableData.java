@@ -11,6 +11,7 @@ import org.json.JSONWriter;
 
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.tableheadings.VHTreeNode;
 import edu.isi.karma.view.tableheadings.VTableHeadings;
 
 /**
@@ -25,11 +26,14 @@ public class VDTableData {
 
 	private final List<VDRow> rows = new LinkedList<VDRow>();
 
+	private final List<VHTreeNode> frontier = new LinkedList<VHTreeNode>();
+
 	public VDTableData(VTableHeadings vtHeadings, VWorksheet vWorksheet,
 			VWorkspace vWorkspace) {
 		super();
 		// this.vtHeadings = vtHeadings;
 		this.rootTableId = vWorksheet.getWorksheet().getDataTable().getId();
+		vtHeadings.getRootVHNode().collectLeaves(frontier);
 		vtHeadings.getRootVHNode().populateVDRows(null, rows,
 				vWorksheet.getTopTablePager(), vWorksheet);
 		for (VDRow r : rows) {
@@ -56,7 +60,15 @@ public class VDTableData {
 		for (VDRow r : rows) {
 			r.prettyPrintJson(jw, verbose);
 		}
-		jw.endArray().endObject();
+		jw.endArray();
+		
+		jw.key("frontier").array();
+		for (VHTreeNode vhn :frontier){
+			jw.value(vhn.getHNode().getId());
+		}
+		jw.endArray();
+		
+		jw.endObject();
 		return jw;
 	}
 

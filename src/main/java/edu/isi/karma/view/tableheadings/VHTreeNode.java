@@ -136,7 +136,7 @@ public class VHTreeNode {
 		this(null, hTableId);
 	}
 
-	HNode getHNode() {
+	public HNode getHNode() {
 		return hNode;
 	}
 
@@ -590,6 +590,21 @@ public class VHTreeNode {
 			}
 		}
 
+	}
+
+	/**
+	 * Collect all the leaves of the tree in left to right order.
+	 * 
+	 * @param result
+	 */
+	public void collectLeaves(List<VHTreeNode> result) {
+		if (isLeaf()) {
+			result.add(this);
+		} else {
+			for (VHTreeNode n : children) {
+				n.collectLeaves(result);
+			}
+		}
 	}
 
 	/*****************************************************************
