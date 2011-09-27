@@ -35,19 +35,23 @@ public class ViewPreferences {
 	private JSONObject json;
 	
 	private static Logger logger = LoggerFactory.getLogger(ViewPreferences.class.getSimpleName());
+	
+	public enum ViewPreference {
+		maxCharactersInHeader, maxRowsToShowInNestedTables, defaultRowsToShowInTopTables;
+		
+		public int getIntDefaultValue() {
+			switch(this) {
+			case maxCharactersInHeader: return 10;
+			case maxRowsToShowInNestedTables: return 5;
+			case defaultRowsToShowInTopTables: return 10;
+			}
+			return -1;
+		}
+	}
 
 	public ViewPreferences(String workspaceId) {
 		this.workspaceId = workspaceId;
 		populatePreferences();
-	}
-	
-	public static void main(String[] args) {
-		ViewPreferences vprf = new ViewPreferences("VWSP1");
-		System.out.println(vprf.getDefaultRowsToShowInTopTables() + " " 
-				+ vprf.getMaxCharactersInHeader() + " " + vprf.getMaxRowsToShowInNestedTables());
-		vprf.setMaxCharactersInHeader(30);
-		vprf.setDefaultRowsToShowInTopTables(50);
-		vprf.setMaxRowsToShowInNestedTables(2);
 	}
 	
 	private void populatePreferences() {
@@ -70,43 +74,29 @@ public class ViewPreferences {
 		}
 	}
 
-	public int getMaxCharactersInHeader() {
-		return getIntViewPreferenceValue("maxCharactersInHeader");
-	}
-
-	public void setMaxCharactersInHeader(int maxCharactersInHeader) {
-		setViewPreferenceIntValue("maxCharactersInHeader", maxCharactersInHeader);
-	}
-
-	public int getMaxRowsToShowInNestedTables() {
-		return getIntViewPreferenceValue("maxRowsToShowInNestedTables");
-	}
-
-	public void setMaxRowsToShowInNestedTables(int maxRowsToShowInNestedTables) {
-		setViewPreferenceIntValue("maxRowsToShowInNestedTables", maxRowsToShowInNestedTables);
-	}
-
-	public int getDefaultRowsToShowInTopTables() {
-		return getIntViewPreferenceValue("defaultRowsToShowInTopTables");
-	}
-
-	public void setDefaultRowsToShowInTopTables(int defaultRowsToShowInTopTables) {
-		setViewPreferenceIntValue("defaultRowsToShowInTopTables", defaultRowsToShowInTopTables);
-	}
-
-	public int getIntViewPreferenceValue(String key) {
+	public int getIntViewPreferenceValue(ViewPreference pref) {
 		try {
-			return json.getJSONObject("ViewPreferences").getInt(key);
+			return json.getJSONObject("ViewPreferences").getInt(pref.name());
 		} catch (JSONException e) {
-			logger.error("Error getting int value!", e);
+			logger.info("Preference key not found in the JSON Object. Going to add it ...");
+			try {
+				if(json.getJSONObject("ViewPreferences").optJSONObject(pref.name()) == null) {
+					// Add it to the JSON Object and write it
+					setIntViewPreferenceValue(pref, pref.getIntDefaultValue());
+					logger.debug("New preference added to the user's file.");
+					return pref.getIntDefaultValue();
+				}
+			} catch (JSONException e1) {
+				logger.error("Error occured while adding a new key to the preferences JSON object!", e1);
+			}
 		}
 		return -1;
 	}
 	
-	private void setViewPreferenceIntValue(String key,
+	public void setIntViewPreferenceValue(ViewPreference pref,
 			int value) {
 		try {
-			json.getJSONObject("ViewPreferences").put(key, value);
+			json.getJSONObject("ViewPreferences").put(pref.name(), value);
 			FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
 		} catch (JSONException e) {
 			logger.error("Error setting int value!", e);
@@ -114,5 +104,4 @@ public class ViewPreferences {
 			logger.error("Error writing the changed preferences to file!" + jsonFile.getName(), e);
 		}
 	}
-	
 }

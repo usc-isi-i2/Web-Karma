@@ -38,6 +38,7 @@ import edu.isi.karma.view.Border;
 import edu.isi.karma.view.Margin;
 import edu.isi.karma.view.Stroke;
 import edu.isi.karma.view.Stroke.StrokeStyle;
+import edu.isi.karma.view.ViewPreferences.ViewPreference;
 import edu.isi.karma.view.VTableCssTags;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
@@ -498,7 +499,7 @@ public class VHTreeNode {
 				//
 				.key(columnNameShort.name())
 				.value(shorten(hNode.getColumnName(), vWorkspace
-						.getPreferences().getMaxCharactersInHeader()))
+						.getPreferences().getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader)))
 				//
 				.key(topBorder.name())
 				.value(Border.encodeBorder(StrokeStyle.outer, topBorderCss))//

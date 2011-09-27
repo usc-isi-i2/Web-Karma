@@ -11,6 +11,7 @@ import junit.framework.TestCase;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.Util;
+import edu.isi.karma.view.ViewPreferences.ViewPreference;
 
 public class ViewPreferencesTest extends TestCase {
 	private RepFactory f;
@@ -36,16 +37,24 @@ public class ViewPreferencesTest extends TestCase {
 		
 		// Testing if a new preference file is generated with the right values
 		int maxCharactersInHeader = obj.getJSONObject("ViewPreferences").getInt("maxCharactersInHeader");
-		assertEquals(maxCharactersInHeader, vPref.getMaxCharactersInHeader());
+		assertEquals(maxCharactersInHeader, vPref.getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader));
 		
 		// Testing if values are set properly
-		vPref.setMaxCharactersInHeader(40);
-		assertEquals(40, vPref.getMaxCharactersInHeader());
+		vPref.setIntViewPreferenceValue(ViewPreference.maxCharactersInHeader, 40);
+		assertEquals(40, vPref.getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader));
 		
 		// Check if the file is being generated properly
 		File prefFile = new File("./UserPrefs/" + ws.getId() + ".json");
 		JSONObject newPrefObj = (JSONObject) Util.createJson(new FileReader(prefFile));
 		assertEquals(40, newPrefObj.getJSONObject("ViewPreferences").getInt("maxCharactersInHeader"));
+		
+		// Check if a property that is not in file but present in code is added to the updated 
+		// preferences file. To make this test work, add a preference object to the ViewPreference
+		// and its default value. Then try to get it and check if it is written to the file.
+		
+//		assertEquals(20, vPref.getIntViewPreferenceValue(ViewPreference.notInYet));
+//		newPrefObj = (JSONObject) Util.createJson(new FileReader(prefFile));
+//		assertEquals(20, newPrefObj.getJSONObject("ViewPreferences").getInt("notInYet"));
 	}
 
 }

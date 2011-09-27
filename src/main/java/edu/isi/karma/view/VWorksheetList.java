@@ -13,6 +13,7 @@ import java.util.List;
 
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.view.ViewPreferences.ViewPreference;
 
 /**
  * @author szekely
@@ -75,7 +76,7 @@ public class VWorksheetList {
 						w,
 						w.getHeaders().getAllPaths(),
 						w.getDataTable().getRows(0,
-								pref.getDefaultRowsToShowInTopTables()), pref));
+								pref.getIntViewPreferenceValue(ViewPreference.defaultRowsToShowInTopTables)), pref));
 			}
 		}
 		Collections.sort(newWorksheets, new VWorksheetTitleComparator(

@@ -19,6 +19,7 @@ import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.util.Util;
+import edu.isi.karma.view.ViewPreferences.ViewPreference;
 import edu.isi.karma.view.tableheadings.VColumnHeader;
 import edu.isi.karma.view.tableheadings.VTableHeadings;
 
@@ -73,8 +74,7 @@ public class VWorksheet extends ViewEntity {
 			ViewPreferences preferences, ViewFactory viewFactory) {
 		super(id);
 		this.worksheet = worksheet;
-		this.maxRowsToShowInNestedTables = preferences
-				.getMaxRowsToShowInNestedTables();
+		this.maxRowsToShowInNestedTables = preferences.getIntViewPreferenceValue(ViewPreference.maxRowsToShowInNestedTables);
 		this.viewDataTable = new VTable(worksheet.getDataTable().getId());
 		this.columns = columns;
 		this.viewTableHeadings = new VTableHeadings(columns, worksheet
@@ -86,7 +86,7 @@ public class VWorksheet extends ViewEntity {
 
 		// Force creation of the TablePager for the top table.
 		getTablePager(worksheet.getDataTable(),
-				preferences.getDefaultRowsToShowInTopTables());
+				preferences.getIntViewPreferenceValue(ViewPreference.defaultRowsToShowInTopTables));
 
 		udateDataTable(viewFactory);
 	}
