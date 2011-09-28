@@ -81,6 +81,18 @@ public class VDTableData {
 		return rows;
 	}
 
+	public void generateJson(JSONWriter jw, VWorksheet vWorksheet,
+			VWorkspace vWorkspace) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/*****************************************************************
+	 * 
+	 * Debugging Support
+	 * 
+	 *****************************************************************/
+
 	JSONWriter prettyPrintJson(JSONWriter jw, boolean verbose)
 			throws JSONException {
 		jw.object()//

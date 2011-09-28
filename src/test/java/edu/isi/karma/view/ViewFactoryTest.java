@@ -22,7 +22,7 @@ public class ViewFactoryTest extends TestCase {
 	private RepFactory f;
 	private Workspace workspace;
 	private ViewFactory vf;
-	private ViewPreferences pref;
+	private VWorkspace vwsp;
 
 	/**
 	 * @param name
@@ -41,7 +41,7 @@ public class ViewFactoryTest extends TestCase {
 		this.f = new RepFactory();
 		this.workspace = f.createWorkspace();
 		this.vf = new ViewFactory();
-		this.pref = new ViewPreferences(workspace.getId());
+		this.vwsp = new VWorkspace(workspace);
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class ViewFactoryTest extends TestCase {
 		List<HNodePath> cols = w.getHeaders().getAllPaths();
 		List<Row> rows = w.getDataTable().getRows(0, 10);
 
-		VWorksheet vw = vf.createVWorksheet(w, cols, rows, pref);
+		VWorksheet vw = vf.createVWorksheet(w, cols, rows, vwsp);
 
 		assertEquals(10, vw.getDataTable().getRows().size());
 		// TODO: test that it has the right data.

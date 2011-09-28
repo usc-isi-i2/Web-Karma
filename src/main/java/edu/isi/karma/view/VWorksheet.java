@@ -20,6 +20,7 @@ import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.util.Util;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
+import edu.isi.karma.view.tabledata.VDTableData;
 import edu.isi.karma.view.tableheadings.VColumnHeader;
 import edu.isi.karma.view.tableheadings.VTableHeadings;
 
@@ -57,7 +58,8 @@ public class VWorksheet extends ViewEntity {
 	/**
 	 * Here we store the data.
 	 */
-	private final VTable viewDataTable;
+	private final VTable viewDataTable; /* obsolete */
+	private final VDTableData vdTableData;
 
 	/**
 	 * Here we store the table headings.
@@ -71,24 +73,34 @@ public class VWorksheet extends ViewEntity {
 	private final Map<String, TablePager> tableId2TablePager = new HashMap<String, TablePager>();
 
 	VWorksheet(String id, Worksheet worksheet, List<HNodePath> columns,
-			ViewPreferences preferences, ViewFactory viewFactory) {
+			VWorkspace vWorkspace) {
 		super(id);
 		this.worksheet = worksheet;
-		this.maxRowsToShowInNestedTables = preferences.getIntViewPreferenceValue(ViewPreference.maxRowsToShowInNestedTables);
+		this.maxRowsToShowInNestedTables = vWorkspace.getPreferences()
+				.getIntViewPreferenceValue(
+						ViewPreference.maxRowsToShowInNestedTables);
+
 		this.viewDataTable = new VTable(worksheet.getDataTable().getId());
+
 		this.columns = columns;
+
 		this.viewTableHeadings = new VTableHeadings(columns, worksheet
 				.getHeaders().getId());
-
 		for (HNodePath p : columns) {
-			addColumnHeader(viewFactory.createVColumnHeader(p, preferences));
+			addColumnHeader(vWorkspace.getViewFactory().createVColumnHeader(p,
+					vWorkspace.getPreferences()));
 		}
 
 		// Force creation of the TablePager for the top table.
-		getTablePager(worksheet.getDataTable(),
-				preferences.getIntViewPreferenceValue(ViewPreference.defaultRowsToShowInTopTables));
+		getTablePager(
+				worksheet.getDataTable(),
+				vWorkspace.getPreferences().getIntViewPreferenceValue(
+						ViewPreference.defaultRowsToShowInTopTables));
 
-		udateDataTable(viewFactory);
+		udateDataTable(vWorkspace.getViewFactory());
+		
+		this.vdTableData = new VDTableData(viewTableHeadings, this, vWorkspace);
+
 	}
 
 	private TablePager getTablePager(Table table, int size) {
@@ -236,5 +248,10 @@ public class VWorksheet extends ViewEntity {
 	public void generateWorksheetHierarchicalHeadersJson(Writer w,
 			VWorkspace vWorkspace) {
 		viewTableHeadings.generateJson(new JSONWriter(w), this, vWorkspace);
+	}
+	
+	public void generateWorksheetHierarchicalDataJson(Writer w,
+			VWorkspace vWorkspace) {
+		vdTableData.generateJson(new JSONWriter(w), this, vWorkspace);
 	}
 }

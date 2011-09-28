@@ -59,10 +59,9 @@ public class ViewFactory {
 	}
 
 	public VWorksheet createVWorksheet(Worksheet worksheet,
-			List<HNodePath> columns, List<Row> rows, ViewPreferences preferences) {
+			List<HNodePath> columns, List<Row> rows, VWorkspace vWorkspace) {
 		String id = getId(ID_TYPE_VW);
-		VWorksheet vw = new VWorksheet(id, worksheet, columns, preferences,
-				this);
+		VWorksheet vw = new VWorksheet(id, worksheet, columns, vWorkspace);
 		vWorksheets.put(id, vw);
 		return vw;
 	}

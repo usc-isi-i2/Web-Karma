@@ -72,11 +72,17 @@ public class VWorksheetList {
 		for (Worksheet w : worksheets) {
 			if (!contains(w)) {
 				ViewPreferences pref = vWorkspace.getPreferences();
-				newWorksheets.add(vWorkspace.getViewFactory().createVWorksheet(
-						w,
-						w.getHeaders().getAllPaths(),
-						w.getDataTable().getRows(0,
-								pref.getIntViewPreferenceValue(ViewPreference.defaultRowsToShowInTopTables)), pref));
+				newWorksheets
+						.add(vWorkspace
+								.getViewFactory()
+								.createVWorksheet(
+										w,
+										w.getHeaders().getAllPaths(),
+										w.getDataTable()
+												.getRows(
+														0,
+														pref.getIntViewPreferenceValue(ViewPreference.defaultRowsToShowInTopTables)),
+										vWorkspace));
 			}
 		}
 		Collections.sort(newWorksheets, new VWorksheetTitleComparator(

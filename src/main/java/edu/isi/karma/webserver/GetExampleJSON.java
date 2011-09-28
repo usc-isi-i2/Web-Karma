@@ -35,7 +35,7 @@ public class GetExampleJSON extends HttpServlet {
 		WorkspaceRegistry.getInstance().register(new ExecutionController(vwsp));
 
 		//SampleDataFactory.createSample1(workspace);
-		////SampleDataFactory.createFlatWorksheet(workspace, 10000, 6);
+		SampleDataFactory.createFlatWorksheet(workspace, 10000, 6);
 		//SampleDataFactory.createFlatWorksheet(workspace, 2, 2);
 		//SampleDataFactory.createFromJsonTextFile(workspace, "samplejson-1.txt");
 		//SampleDataFactory.createJsonWithFunnyCharacters(workspace);
