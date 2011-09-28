@@ -57,8 +57,7 @@ public class VDTableCells {
 
 		{// top strokes
 			Stroke topStroke = new Stroke(vdRow.isFirst() ? StrokeStyle.outer
-
-			: StrokeStyle.inner, fill, vdRow.getDepth());
+					: StrokeStyle.inner, fill, vdRow.getDepth());
 			for (int j = lr.getLeft(); j <= lr.getRight(); j++) {
 				VDCell c = cells[vdRow.getStartLevel()][j];
 				c.addTopStroke(topStroke);
@@ -76,12 +75,35 @@ public class VDTableCells {
 			}
 		}
 
+		{// left/right outer strokes
+			// Inner strokes are computed in populateFromVDTreeNode.
+			Stroke outerStroke = new Stroke(StrokeStyle.outer, fill,
+					vdRow.getDepth());
+			for (int i = vdRow.getStartLevel(); i <= vdRow.getLastLevel(); i++) {
+				cells[i][lr.getLeft()].addLeftStroke(outerStroke);
+				cells[i][lr.getRight()].addRightStroke(outerStroke);
+			}
+		}
+
 		for (VDTreeNode n : vdRow.getNodes()) {
 			populateFromVDTreeNode(n, vWorkspace);
 		}
 	}
 
 	private void populateFromVDTreeNode(VDTreeNode n, VWorkspace vWorkspace) {
+
+		LeftRight lr = vdIndexTable.get(n.getHNode(vWorkspace).getId());
+
+		{// inner separator strokes
+			Stroke innerStroke = new Stroke(StrokeStyle.inner,
+					n.getContainerHTableId(vWorkspace), n.getDepth());
+			if (!n.isFirst() && n.getNumLevels() > 0) {
+				for (int i = n.getStartLevel(); i <= n.getLastLevel(); i++) {
+					VDCell c = cells[i][lr.getLeft()];
+					c.addLeftStroke(innerStroke);
+				}
+			}
+		}
 
 		if (n.hasNestedTable()) {
 			for (VDRow vdRow : n.getNestedTableRows()) {
@@ -90,7 +112,6 @@ public class VDTableCells {
 		}
 		// It is a leaf node.
 		else {
-			LeftRight lr = vdIndexTable.get(n.getHNode(vWorkspace).getId());
 			VDCell c = cells[n.getStartLevel()][lr.getLeft()];
 			c.setDepth(n.getDepth());
 			c.setValue(n.getNode().getValue());

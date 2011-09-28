@@ -69,6 +69,11 @@ public class VHTreeNode {
 	private boolean isFirst, isLast;
 
 	/**
+	 * The (left/right) index within it's parent.
+	 */
+	private int index;
+
+	/**
 	 * Number of leaf children.
 	 */
 	private int width = 0;
@@ -178,20 +183,24 @@ public class VHTreeNode {
 		return newVHNode;
 	}
 
-	boolean isFirst() {
+	public boolean isFirst() {
 		return isFirst;
 	}
 
-	boolean isLast() {
+	public boolean isLast() {
 		return isLast;
 	}
 
-	boolean isMiddle() {
+	public boolean isMiddle() {
 		return !isFirst && !isLast;
 	}
 
 	boolean isFirstAndLast() {
 		return isFirst() && isLast();
+	}
+
+	int getIndex() {
+		return index;
 	}
 
 	/**
@@ -251,11 +260,15 @@ public class VHTreeNode {
 		if (isRoot()) {
 			isFirst = true;
 			isLast = true;
+			index = 0;
 		}
 		boolean isFirstChild = true;
+		int currentIndex = 0;
 		Iterator<VHTreeNode> it = children.iterator();
 		while (it.hasNext()) {
 			VHTreeNode child = it.next();
+			child.index = currentIndex;
+			currentIndex++;
 			child.isFirst = isFirstChild;
 			isFirstChild = false;
 			child.isLast = !it.hasNext();

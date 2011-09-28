@@ -96,6 +96,10 @@ public class VDTreeNode {
 		return startLevel;
 	}
 
+	int getLastLevel() {
+		return startLevel + numLevels - 1;
+	}
+
 	void setStartLevel(int startLevel) {
 		this.startLevel = startLevel;
 	}
@@ -106,6 +110,18 @@ public class VDTreeNode {
 
 	HNode getHNode(VWorkspace vWorkspace) {
 		return vWorkspace.getRepFactory().getHNode(node.gethNodeId());
+	}
+
+	boolean isFirst() {
+		return vhTreeNode.isFirst();
+	}
+
+	boolean isLast() {
+		return vhTreeNode.isLast();
+	}
+
+	boolean isMiddle() {
+		return vhTreeNode.isMiddle();
 	}
 
 	/**
@@ -156,15 +172,15 @@ public class VDTreeNode {
 			numLevels = 1;
 		}
 	}
-	
+
 	void thirdPassTopDown(VWorkspace vWorkspace) {
-		
+
 		// Now go top down.
 		int currentLevel = startLevel;
 		for (VDRow r : nestedTableRows) {
 			r.setStartLevel(currentLevel);
 			currentLevel += r.getNumLevels();
-			
+
 			r.thirdPassTopDown(vWorkspace);
 		}
 	}

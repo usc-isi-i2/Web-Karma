@@ -26,6 +26,8 @@ public class VDCell {
 
 	private List<Stroke> topStrokes = new LinkedList<Stroke>();
 	private List<Stroke> bottomStrokes = new LinkedList<Stroke>();
+	private List<Stroke> leftStrokes = new LinkedList<Stroke>();
+	private List<Stroke> rightStrokes = new LinkedList<Stroke>();
 
 	VDCell() {
 		super();
@@ -51,6 +53,14 @@ public class VDCell {
 		bottomStrokes.add(stroke);
 	}
 
+	void addLeftStroke(Stroke stroke) {
+		leftStrokes.add(stroke);
+	}
+
+	void addRightStroke(Stroke stroke) {
+		rightStrokes.add(stroke);
+	}
+
 	/*****************************************************************
 	 * 
 	 * Debugging Support
@@ -64,6 +74,8 @@ public class VDCell {
 				.key("value").value(value == null ? "null" : value.asString())//
 				.key("strokes (top)").value(Stroke.toString(topStrokes))//
 				.key("strokes (bottom)").value(Stroke.toString(bottomStrokes))//
+				.key("strokes (left)").value(Stroke.toString(leftStrokes))//
+				.key("strokes (right)").value(Stroke.toString(rightStrokes))//
 		//
 		;
 	}
