@@ -3,9 +3,16 @@
  */
 package edu.isi.karma.view.tabledata;
 
+import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.worksheetId;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.rows;
+
+
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import edu.isi.karma.controller.update.AbstractUpdate;
+import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
+import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.view.Stroke;
 import edu.isi.karma.view.VWorksheet;
@@ -157,6 +164,26 @@ public class VDTableCells {
 
 	}
 
+	public void generateJson(JSONWriter jw, VWorksheet vWorksheet,
+			VWorkspace vWorkspace) {
+		try {
+			jw.object()
+					.key(AbstractUpdate.GenericJsonKeys.updateType.name())
+					.value(WorksheetHierarchicalDataUpdate.class
+							.getSimpleName())
+					//
+					.key(worksheetId.name())
+					.value(vWorksheet.getWorksheet().getId())//
+					.key(rows.name()).array()//
+			;
+			jw.endArray();
+			jw.endObject();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	/*****************************************************************
 	 * 
 	 * Debugging Support
@@ -180,4 +207,5 @@ public class VDTableCells {
 
 		jw.endArray();
 	}
+
 }

@@ -83,8 +83,7 @@ public class VDTableData {
 
 	public void generateJson(JSONWriter jw, VWorksheet vWorksheet,
 			VWorkspace vWorkspace) {
-		// TODO Auto-generated method stub
-
+		vdTableCells.generateJson(jw, vWorksheet, vWorkspace);
 	}
 
 	/*****************************************************************
