@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import edu.isi.karma.rep.CellValue;
+import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.view.Stroke;
 
 /**
@@ -28,6 +29,10 @@ public class VDCell {
 	private List<Stroke> bottomStrokes = new LinkedList<Stroke>();
 	private List<Stroke> leftStrokes = new LinkedList<Stroke>();
 	private List<Stroke> rightStrokes = new LinkedList<Stroke>();
+
+	private List<VDTriangle> triangles = new LinkedList<VDTriangle>();
+
+	private List<TablePager> pagers = new LinkedList<TablePager>();
 
 	VDCell() {
 		super();
@@ -61,6 +66,14 @@ public class VDCell {
 		rightStrokes.add(stroke);
 	}
 
+	void addTriangle(VDTriangle triangle) {
+		triangles.add(triangle);
+	}
+
+	void addPager(TablePager pager) {
+		pagers.add(pager);
+	}
+
 	/*****************************************************************
 	 * 
 	 * Debugging Support
@@ -78,5 +91,20 @@ public class VDCell {
 				.key("strokes (right)").value(Stroke.toString(rightStrokes))//
 		//
 		;
+		if (!triangles.isEmpty()) {
+			jw.key("triangles").array();
+			for (VDTriangle t : triangles) {
+				t.prettyPrintJson(jw);
+			}
+			jw.endArray();
+		}
+
+		if (!pagers.isEmpty()) {
+			jw.key("tablePagers").array();
+			for (TablePager p : pagers) {
+				p.prettyPrintJson(jw);
+			}
+			jw.endArray();
+		}
 	}
 }

@@ -61,7 +61,7 @@ public class VDTableData {
 			startLevel += r.getNumLevels();
 		}
 
-		vdTableCells = new VDTableCells(this, vWorkspace);
+		vdTableCells = new VDTableCells(this, vWorksheet, vWorkspace);
 	}
 
 	String getRootTableId() {

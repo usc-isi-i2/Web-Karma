@@ -6,10 +6,13 @@ package edu.isi.karma.view.tabledata;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.view.Stroke;
+import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.Stroke.StrokeStyle;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.tabledata.VDIndexTable.LeftRight;
+import edu.isi.karma.view.tabledata.VDTriangle.TriangleLocation;
 
 /**
  * @author szekely
@@ -23,7 +26,10 @@ public class VDTableCells {
 
 	private final VDIndexTable vdIndexTable;
 
-	VDTableCells(VDTableData vdTableData, VWorkspace vWorkspace) {
+	private final String rootTableId;
+
+	VDTableCells(VDTableData vdTableData, VWorksheet vWorksheet,
+			VWorkspace vWorkspace) {
 		this.numCols = vdTableData.getVdIndexTable().getNumColumns();
 		this.numRows = vdTableData.getNumLevels();
 		cells = new VDCell[numRows][numCols];
@@ -33,16 +39,20 @@ public class VDTableCells {
 			}
 		}
 		this.vdIndexTable = vdTableData.getVdIndexTable();
-		populate(vdTableData, vWorkspace);
+		this.rootTableId = vWorksheet.getWorksheet().getDataTable().getId();
+
+		populate(vdTableData, vWorksheet, vWorkspace);
 	}
 
-	private void populate(VDTableData vdTableData, VWorkspace vWorkspace) {
+	private void populate(VDTableData vdTableData, VWorksheet vWorksheet,
+			VWorkspace vWorkspace) {
 		for (VDRow vdRow : vdTableData.getRows()) {
-			populateFromVDRow(vdRow, vWorkspace);
+			populateFromVDRow(vdRow, vWorksheet, vWorkspace);
 		}
 	}
 
-	private void populateFromVDRow(VDRow vdRow, VWorkspace vWorkspace) {
+	private void populateFromVDRow(VDRow vdRow, VWorksheet vWorksheet,
+			VWorkspace vWorkspace) {
 		String fill = vdRow.getFillHTableId();
 		LeftRight lr = vdIndexTable.get(vdRow.getContainerHNodeId(vWorkspace));
 
@@ -85,16 +95,44 @@ public class VDTableCells {
 			}
 		}
 
+		{// triangles
+			cells[vdRow.getStartLevel()][lr.getLeft()]
+					.addTriangle(new VDTriangle(fill, vdRow.getRow().getId(),
+							vdRow.getDepth(), TriangleLocation.topLeft));
+			cells[vdRow.getStartLevel()][lr.getRight()]
+					.addTriangle(new VDTriangle(fill, vdRow.getRow().getId(),
+							vdRow.getDepth(), TriangleLocation.topRight));
+			cells[vdRow.getLastLevel()][lr.getLeft()]
+					.addTriangle(new VDTriangle(fill, vdRow.getRow().getId(),
+							vdRow.getDepth(), TriangleLocation.bottomLeft));
+			cells[vdRow.getLastLevel()][lr.getRight()]
+					.addTriangle(new VDTriangle(fill, vdRow.getRow().getId(),
+							vdRow.getDepth(), TriangleLocation.bottomRight));
+		}
+
+		{// table pagers
+			if (vdRow.isLast()) {
+				VDTreeNode vdNode = vdRow.getContainerVDNode();
+				String tableId = (vdNode == null) ? rootTableId : vdNode
+						.getNode().getNestedTable().getId();
+				TablePager pager = vWorksheet.getTablePager(tableId);
+				if (!pager.isAllRowsShown()) {
+					cells[vdRow.getLastLevel()][lr.getLeft()].addPager(pager);
+				}
+			}
+		}
+
 		for (VDTreeNode n : vdRow.getNodes()) {
-			populateFromVDTreeNode(n, vWorkspace);
+			populateFromVDTreeNode(n, vWorksheet, vWorkspace);
 		}
 	}
 
-	private void populateFromVDTreeNode(VDTreeNode n, VWorkspace vWorkspace) {
+	private void populateFromVDTreeNode(VDTreeNode n, VWorksheet vWorksheet,
+			VWorkspace vWorkspace) {
 
 		LeftRight lr = vdIndexTable.get(n.getHNode(vWorkspace).getId());
 
-		{// inner separator strokes
+		{// inner vertical separator strokes
 			Stroke innerStroke = new Stroke(StrokeStyle.inner,
 					n.getContainerHTableId(vWorkspace), n.getDepth());
 			if (!n.isFirst() && n.getNumLevels() > 0) {
@@ -107,7 +145,7 @@ public class VDTableCells {
 
 		if (n.hasNestedTable()) {
 			for (VDRow vdRow : n.getNestedTableRows()) {
-				populateFromVDRow(vdRow, vWorkspace);
+				populateFromVDRow(vdRow, vWorksheet, vWorkspace);
 			}
 		}
 		// It is a leaf node.

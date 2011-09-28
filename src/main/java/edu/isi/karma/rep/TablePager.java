@@ -6,6 +6,9 @@ package edu.isi.karma.rep;
 import java.io.PrintWriter;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONWriter;
+
 import edu.isi.karma.controller.update.WorksheetDataUpdate;
 import edu.isi.karma.util.Util;
 
@@ -111,5 +114,20 @@ public class TablePager {
 				+ Util.jsonLast(WorksheetDataUpdate.JsonKeys.tableId,
 						table.getId()));
 		pw.println(prefix + "}");
+	}
+
+	/*****************************************************************
+	 * 
+	 * Debugging Support
+	 * 
+	 *****************************************************************/
+
+	public void prettyPrintJson(JSONWriter jw) throws JSONException {
+		jw.object()//
+				.key("size").value(size)//
+				.key("desiredSize").value(desiredSize)//
+				.key("startIndex").value(desiredSize)//
+				.key("_tableId").value(table.getId())//
+				.endObject();
 	}
 }
