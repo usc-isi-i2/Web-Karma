@@ -55,15 +55,24 @@ public class VDTableCells {
 
 		}
 
-		if (vdRow.isFirst()) {
-		}
-		// Not the first row.
-		else {
-			Stroke separator = new Stroke(StrokeStyle.inner, fill,
-					vdRow.getDepth());
+		{// top strokes
+			Stroke topStroke = new Stroke(vdRow.isFirst() ? StrokeStyle.outer
+
+			: StrokeStyle.inner, fill, vdRow.getDepth());
 			for (int j = lr.getLeft(); j <= lr.getRight(); j++) {
 				VDCell c = cells[vdRow.getStartLevel()][j];
-				c.addTopStroke(separator);
+				c.addTopStroke(topStroke);
+			}
+		}
+
+		{// bottom strokes
+			if (vdRow.isLast()) {
+				Stroke bottomStroke = new Stroke(StrokeStyle.outer, fill,
+						vdRow.getDepth());
+				for (int j = lr.getLeft(); j <= lr.getRight(); j++) {
+					VDCell c = cells[vdRow.getLastLevel()][j];
+					c.addBottomStroke(bottomStroke);
+				}
 			}
 		}
 

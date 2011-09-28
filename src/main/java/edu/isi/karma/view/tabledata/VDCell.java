@@ -25,6 +25,7 @@ public class VDCell {
 	private CellValue value = null;
 
 	private List<Stroke> topStrokes = new LinkedList<Stroke>();
+	private List<Stroke> bottomStrokes = new LinkedList<Stroke>();
 
 	VDCell() {
 		super();
@@ -41,9 +42,13 @@ public class VDCell {
 	void setValue(CellValue value) {
 		this.value = value;
 	}
-	
-	void addTopStroke(Stroke stroke){
+
+	void addTopStroke(Stroke stroke) {
 		topStrokes.add(stroke);
+	}
+
+	void addBottomStroke(Stroke stroke) {
+		bottomStrokes.add(stroke);
 	}
 
 	/*****************************************************************
@@ -58,6 +63,7 @@ public class VDCell {
 				.key("depth").value(depth)//
 				.key("value").value(value == null ? "null" : value.asString())//
 				.key("strokes (top)").value(Stroke.toString(topStrokes))//
+				.key("strokes (bottom)").value(Stroke.toString(bottomStrokes))//
 		//
 		;
 	}
