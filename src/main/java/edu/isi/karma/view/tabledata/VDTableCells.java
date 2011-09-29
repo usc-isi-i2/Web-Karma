@@ -12,11 +12,15 @@ import java.util.List;
 
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.separatorRow;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.contentRow;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.normalCell;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.valueCell;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.cellType;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.verticalPaddingCell;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.valuePaddingCell;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.horizontalPaddingCell;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.fillId;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.hTableId;
-//import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.value;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.status;
 
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.rowType;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.rowCells;
@@ -26,6 +30,7 @@ import org.json.JSONWriter;
 
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
+import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.view.Stroke;
 import edu.isi.karma.view.Stroke.StrokeStyle;
@@ -175,7 +180,7 @@ public class VDTableCells {
 		else {
 			VDCell c = cells[n.getStartLevel()][lr.getLeft()];
 			c.setDepth(n.getDepth());
-			c.setValue(n.getNode().getValue());
+			c.setNode(n.getNode());
 		}
 
 	}
@@ -334,6 +339,7 @@ public class VDTableCells {
 					.key(getStrokePositionKey(positionOfNoBorder))
 					.value(StrokeStyle.none)//
 					.key(rowType.name()).value(separatorRow.name())//
+					.key(cellType.name()).value(horizontalPaddingCell.name())//
 					.key("_row").value(index)//
 					.key("_col").value(j)//
 					.key("_separatorDepth").value(separatorDepth)//
@@ -349,7 +355,44 @@ public class VDTableCells {
 		jw.object().key(rowType.name()).value(contentRow.name())//
 				.key("_row").value(index)//
 		;
-		jw.endObject();
+
+		jw.key(rowCells.name()).array();
+		for (int j = 0; j < numCols; j++) {
+			generateJsonContentCell(index, j, jw, vWorksheet, vWorkspace);
+		}
+
+		jw.endArray().endObject();
+	}
+
+	private void generateJsonContentCell(int rowIndex, int colIndex,
+			JSONWriter jw, VWorksheet vWorksheet, VWorkspace vWorkspace)
+			throws JSONException {
+		VTableCssTags css = vWorkspace.getViewFactory().getTableCssTags();
+
+		VDCell c = cells[rowIndex][colIndex];
+		CellValue cellValue = c.getNode() == null ? null : c.getNode()
+				.getValue();
+		String valueString = cellValue == null ? "" : cellValue.asString();
+		String codedStatus = c.getNode() == null ? "" : c.getNode().getStatus()
+				.getCodedStatus();
+
+		jw.object()
+				.key(rowType.name())
+				.value(contentRow.name())
+				//
+				.key(cellType.name())
+				.value(c.getNode() == null ? valuePaddingCell.name()
+						: valueCell.name())
+				//
+				.key(value.name()).value(valueString)
+				//
+				.key(status.name()).value(codedStatus)//
+				.key(hTableId.name()).value(c.getFillHTableId())
+				//
+				.key(fillId.name()).value(css.getCssTag(c.getFillHTableId()))//
+				.key("_row").value(rowIndex)//
+				.key("_col").value(colIndex)//
+				.endObject();
 	}
 
 	/*****************************************************************

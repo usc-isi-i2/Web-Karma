@@ -26,7 +26,9 @@ public class WorksheetHierarchicalDataUpdate extends AbstractUpdate {
 		// row types
 		rowType/* key */, separatorRow, contentRow,
 		// cell types
-		normalCell, verticalPaddingCell
+		valueCell, verticalPaddingCell, valuePaddingCell, horizontalPaddingCell,
+		// for content cells
+		value, status
 	}
 
 	public WorksheetHierarchicalDataUpdate(VWorksheet vWorksheet) {

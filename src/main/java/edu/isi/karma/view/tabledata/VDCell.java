@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import edu.isi.karma.rep.CellValue;
+import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.view.Stroke;
 
@@ -74,7 +75,7 @@ public class VDCell {
 
 	private int depth = -1;
 
-	private CellValue value = null;
+	private Node node = null;
 
 	private List<Stroke> topStrokes = new LinkedList<Stroke>();
 	private List<Stroke> bottomStrokes = new LinkedList<Stroke>();
@@ -105,8 +106,12 @@ public class VDCell {
 		this.depth = depth;
 	}
 
-	void setValue(CellValue value) {
-		this.value = value;
+	Node getNode() {
+		return node;
+	}
+
+	void setNode(Node node) {
+		this.node = node;
 	}
 
 	List<Stroke> getTopStrokes() {
@@ -219,9 +224,14 @@ public class VDCell {
 
 	void prettyPrintJson(JSONWriter jw) throws JSONException {
 		jw//
-		.key("fillTableId").value(fillHTableId)//
-				.key("depth").value(depth)//
-				.key("value").value(value == null ? "null" : value.asString())//
+		.key("fillTableId").value(fillHTableId)
+				//
+				.key("depth")
+				.value(depth)
+				//
+				.key("value")
+				.value(node.getValue() == null ? "null" : node.getValue()
+						.asString())//
 				.key("strokes (top)").value(Stroke.toString(topStrokes))//
 				.key("strokes (bottom)").value(Stroke.toString(bottomStrokes))//
 				.key("strokes (left)").value(Stroke.toString(leftStrokes))//
