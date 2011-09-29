@@ -563,11 +563,11 @@ public class VHTreeNode {
 				//
 				.key(leftBorder.name())
 				.value(Border.encodeBorder(leftInnerStroke.getStyle(),
-						css.getCssTag(leftInnerStroke.gethTableId())))
+						css.getCssTag(leftInnerStroke.getHTableId())))
 				//
 				.key(rightBorder.name())
 				.value(Border.encodeBorder(rightInnerStroke.getStyle(),
-						css.getCssTag(rightInnerStroke.gethTableId())))//
+						css.getCssTag(rightInnerStroke.getHTableId())))//
 		;
 	}
 

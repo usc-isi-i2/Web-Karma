@@ -176,10 +176,10 @@ public class Border {
 				.value(encodeBorder(topStroke, css.getCssTag(margin.getHTableId())))
 				//
 				.key(leftBorder.name())
-				.value(encodeBorder(leftStroke, css.getCssTag(stroke.gethTableId())))
+				.value(encodeBorder(leftStroke, css.getCssTag(stroke.getHTableId())))
 				//
 				.key(rightBorder.name())
-				.value(encodeBorder(rightStroke, css.getCssTag(stroke.gethTableId())))//
+				.value(encodeBorder(rightStroke, css.getCssTag(stroke.getHTableId())))//
 		;
 		jw.endObject();
 	}

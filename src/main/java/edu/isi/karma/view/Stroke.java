@@ -35,15 +35,15 @@ public class Stroke {
 		this.depth = depth;
 	}
 
-	public Stroke(int depth){
+	public Stroke(int depth) {
 		this(StrokeStyle.none, "dummy", depth);
 	}
-	
+
 	public StrokeStyle getStyle() {
 		return style;
 	}
 
-	public String gethTableId() {
+	public String getHTableId() {
 		return hTableId;
 	}
 
@@ -66,4 +66,8 @@ public class Stroke {
 		}
 		return b.toString();
 	}
+
+//	public static StrokeStyle getStrokeStyle(Stroke stroke) {
+//		return stroke == null ? StrokeStyle.none : stroke.style;
+//	}
 }

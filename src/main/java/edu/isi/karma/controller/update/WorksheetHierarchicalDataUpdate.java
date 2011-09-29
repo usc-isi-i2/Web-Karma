@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.tabledata.VDCell;
 
 /**
  * @author szekely
@@ -19,7 +20,7 @@ public class WorksheetHierarchicalDataUpdate extends AbstractUpdate {
 	public enum JsonKeys {
 		worksheetId, rows, hTableId,
 		//
-		cells,
+		rowCells,
 		//
 		cellType, fillId, topBorder, leftBorder, rightBorder,
 		// row types
@@ -37,6 +38,10 @@ public class WorksheetHierarchicalDataUpdate extends AbstractUpdate {
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
 		vWorksheet.generateWorksheetHierarchicalDataJson(pw, vWorkspace);
+	}
+	
+	public static String getStrokePositionKey(VDCell.Position position){
+		return position.name()+"Stroke";
 	}
 
 }
