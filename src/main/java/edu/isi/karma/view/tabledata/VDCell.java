@@ -42,6 +42,10 @@ public class VDCell {
 		this.fillHTableId = fillHTableId;
 	}
 
+	int getDepth() {
+		return depth;
+	}
+
 	void setDepth(int depth) {
 		this.depth = depth;
 	}

@@ -3,20 +3,25 @@
  */
 package edu.isi.karma.view.tabledata;
 
-import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.worksheetId;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.rows;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.rows;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.worksheetId;
 
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.separatorRow;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.contentRow;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.normalCell;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.verticalPaddingCell;
+
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.rowType;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
 
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
-import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.view.Stroke;
-import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.Stroke.StrokeStyle;
+import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.tabledata.VDIndexTable.LeftRight;
 import edu.isi.karma.view.tabledata.VDTriangle.TriangleLocation;
@@ -176,12 +181,118 @@ public class VDTableCells {
 					.value(vWorksheet.getWorksheet().getId())//
 					.key(rows.name()).array()//
 			;
+			generateAllJsonRows(jw, vWorksheet, vWorkspace);
 			jw.endArray();
 			jw.endObject();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Generate all the TRs for content and separators.
+	 * 
+	 * @param jw
+	 * @param vWorksheet
+	 * @param vWorkspace
+	 * @throws JSONException
+	 */
+	private void generateAllJsonRows(JSONWriter jw, VWorksheet vWorksheet,
+			VWorkspace vWorkspace) throws JSONException {
+		int index = 0;
+		while (index < numRows) {
+			generateJsonRows(index, jw, vWorksheet, vWorkspace);
+			index++;
+		}
+	}
+
+	/**
+	 * Generate the TR rows for a specific row in the cells array.
+	 * 
+	 * @param index
+	 *            in the cells array.
+	 * @param jw
+	 * @param vWorksheet
+	 * @param vWorkspace
+	 * @throws JSONException
+	 */
+	private void generateJsonRows(int index, JSONWriter jw,
+			VWorksheet vWorksheet, VWorkspace vWorkspace) throws JSONException {
+		generateJsonSeparatorRows(index, true /* top */, jw, vWorksheet,
+				vWorkspace);
+		generateJsonContentRow(index, jw, vWorksheet, vWorkspace);
+		generateJsonSeparatorRows(index, false/* bottom */, jw, vWorksheet,
+				vWorkspace);
+	}
+
+	/**
+	 * Generate the separator rows for a specific row in the cells array.
+	 * 
+	 * @param index
+	 *            in the cells array.
+	 * @param isTopSeparator
+	 *            , if true, the separators go on top, otherwise in the bottom.
+	 * @param jw
+	 * @param vWorksheet
+	 * @param vWorkspace
+	 * @throws JSONException
+	 */
+	private void generateJsonSeparatorRows(int index, boolean isTopSeparator,
+			JSONWriter jw, VWorksheet vWorksheet, VWorkspace vWorkspace)
+			throws JSONException {
+		// The number of separator rows is determined by the delta between the
+		// max and min depth of the cells in the row.
+		int maxDepth = 0;
+		int minDepth = 0;
+		for (int j = 0; j < numCols; j++) {
+			int depth = cells[index][j].getDepth();
+			maxDepth = Math.max(maxDepth, depth);
+			minDepth = Math.min(minDepth, depth);
+		}
+		int numSeparatorRows = maxDepth - minDepth;
+
+		// the top separators start with the minimum depth, and the ones below
+		// correspond to larger depths. There is no top separator for the
+		// max depth, as those strokes are part of the content. For bottom
+		// margins it is the other way around.
+		int currentDepth = isTopSeparator ? minDepth : maxDepth - 1;
+		int depthIncrementer = isTopSeparator ? 1 : -1;
+		int i = 0;
+		while (i < numSeparatorRows) {
+			generateJsonOneSeparatorRow(index, currentDepth, isTopSeparator,
+					jw, vWorksheet, vWorkspace);
+			i++;
+			currentDepth += depthIncrementer;
+		}
+	}
+
+	/**
+	 * Generate a single separator TR row for a specific row in the cells array.
+	 * 
+	 * @param index
+	 *            of the cells row we are generating separators for.
+	 * @param separatorDepth
+	 *            used to find the corresponding Stroke in the cell.
+	 * @param isTopSeparator
+	 * @param jw
+	 * @param vWorksheet
+	 * @param vWorkspace
+	 * @throws JSONException
+	 */
+	private void generateJsonOneSeparatorRow(int index, int separatorDepth,
+			boolean isTopSeparator, JSONWriter jw, VWorksheet vWorksheet,
+			VWorkspace vWorkspace) throws JSONException {
+		jw.object().key(rowType.name()).value(separatorRow.name());
+
+		jw.endObject();
+	}
+
+	private void generateJsonContentRow(int index, JSONWriter jw,
+			VWorksheet vWorksheet, VWorkspace vWorkspace) throws JSONException {
+		jw.object().key(rowType.name()).value(contentRow.name());
+
+		jw.endObject();
 	}
 
 	/*****************************************************************

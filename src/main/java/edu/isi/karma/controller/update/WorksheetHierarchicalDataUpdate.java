@@ -10,7 +10,7 @@ import edu.isi.karma.view.VWorkspace;
 
 /**
  * @author szekely
- *
+ * 
  */
 public class WorksheetHierarchicalDataUpdate extends AbstractUpdate {
 
@@ -22,15 +22,17 @@ public class WorksheetHierarchicalDataUpdate extends AbstractUpdate {
 		cells,
 		//
 		cellType, fillId, topBorder, leftBorder, rightBorder,
-		//
-		hSeparator, vSeparator, valueCell, paddingCell
+		// row types
+		rowType/* key */, separatorRow, contentRow,
+		// cell types
+		normalCell, verticalPaddingCell
 	}
 
 	public WorksheetHierarchicalDataUpdate(VWorksheet vWorksheet) {
 		super();
 		this.vWorksheet = vWorksheet;
 	}
-	
+
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
