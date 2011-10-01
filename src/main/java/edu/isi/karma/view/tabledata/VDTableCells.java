@@ -296,6 +296,17 @@ public class VDTableCells {
 		}
 	}
 
+	/**
+	 * Analyze the whole row and find the depths of all the strokes on all the
+	 * cells. We need to know how many separator rows we need to generate.
+	 * 
+	 * @param index
+	 *            of a row.
+	 * @param position
+	 *            either top or bottom.
+	 * @return objet containing the minimum and maximum depths of all the
+	 *         strokes (in a given position) in all the cells of a row.
+	 */
 	private MinMaxDepth getMinMaxDepth(int index, Position position) {
 		List<MinMaxDepth> rowMinMaxDepths = new LinkedList<MinMaxDepth>();
 		for (int j = 0; j < numCols; j++) {
@@ -358,6 +369,18 @@ public class VDTableCells {
 		jw.endObject();
 	}
 
+	/**
+	 * The content rows are the TRs that hold the cell values.
+	 * 
+	 * @param index
+	 *            of the row to be generated.
+	 * @param jw
+	 * @param topCombinedMinMaxDepth
+	 * @param bottomCombinedMinMaxDepth
+	 * @param vWorksheet
+	 * @param vWorkspace
+	 * @throws JSONException
+	 */
 	private void generateJsonContentRow(int index, JSONWriter jw,
 			MinMaxDepth topCombinedMinMaxDepth,
 			MinMaxDepth bottomCombinedMinMaxDepth, VWorksheet vWorksheet,
@@ -375,6 +398,18 @@ public class VDTableCells {
 		jw.endArray().endObject();
 	}
 
+	/**
+	 * Generate the representation of what will be a TD in the browser.
+	 * 
+	 * @param rowIndex
+	 * @param colIndex
+	 * @param topCombinedMinMaxDepth
+	 * @param bottomCombinedMinMaxDepth
+	 * @param jw
+	 * @param vWorksheet
+	 * @param vWorkspace
+	 * @throws JSONException
+	 */
 	private void generateJsonContentCell(int rowIndex, int colIndex,
 			MinMaxDepth topCombinedMinMaxDepth,
 			MinMaxDepth bottomCombinedMinMaxDepth, JSONWriter jw,
@@ -388,6 +423,10 @@ public class VDTableCells {
 		String codedStatus = c.getNode() == null ? "" : c.getNode().getStatus()
 				.getCodedStatus();
 
+		// Even though the TDCell has top strokes, we need to figure out whether
+		// those are being drawn in the separators or there is one that should
+		// be drawn by the cell itself. We draw such a stroke if the depth of
+		// the cell is the same as the depth of the stroke.
 		StrokeStyle topStrokeStyle = StrokeStyle.none;
 		if (topCombinedMinMaxDepth.getMaxDepth() == c.getDepth()) {
 			Stroke topStroke = c.getStroke(c.getDepth(), Position.top);
