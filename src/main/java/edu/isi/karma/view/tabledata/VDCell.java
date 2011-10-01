@@ -60,6 +60,10 @@ public class VDCell {
 			return maxDepth - minDepth;
 		}
 
+		public String toString() {
+			return "Min=" + minDepth + ", Max=" + maxDepth;
+		}
+
 		static MinMaxDepth combine(List<MinMaxDepth> list) {
 			int maxDepth = 0;
 			int minDepth = Integer.MAX_VALUE;
@@ -226,12 +230,10 @@ public class VDCell {
 		jw//
 		.key("fillTableId").value(fillHTableId)
 				//
-				.key("depth")
-				.value(depth)
+				.key("depth").value(depth)
 				//
 				.key("value")
-				.value(node.getValue() == null ? "null" : node.getValue()
-						.asString())//
+				.value(node == null ? "null" : node.getValue().asString())//
 				.key("strokes (top)").value(Stroke.toString(topStrokes))//
 				.key("strokes (bottom)").value(Stroke.toString(bottomStrokes))//
 				.key("strokes (left)").value(Stroke.toString(leftStrokes))//

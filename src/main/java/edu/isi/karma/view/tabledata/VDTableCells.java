@@ -235,11 +235,15 @@ public class VDTableCells {
 	 */
 	private void generateJsonRows(int index, JSONWriter jw,
 			VWorksheet vWorksheet, VWorkspace vWorkspace) throws JSONException {
-		generateJsonSeparatorRows(index, Position.top, jw, vWorksheet,
-				vWorkspace);
-		generateJsonContentRow(index, jw, vWorksheet, vWorkspace);
-		generateJsonSeparatorRows(index, Position.bottom, jw, vWorksheet,
-				vWorkspace);
+		MinMaxDepth topCombinedMinMaxDepth = getMinMaxDepth(index, Position.top);
+		MinMaxDepth bottomCombinedMinMaxDepth = getMinMaxDepth(index,
+				Position.bottom);
+		generateJsonSeparatorRows(index, Position.top, topCombinedMinMaxDepth,
+				jw, vWorksheet, vWorkspace);
+		generateJsonContentRow(index, jw, topCombinedMinMaxDepth,
+				bottomCombinedMinMaxDepth, vWorksheet, vWorkspace);
+		generateJsonSeparatorRows(index, Position.bottom,
+				bottomCombinedMinMaxDepth, jw, vWorksheet, vWorkspace);
 	}
 
 	/**
@@ -255,16 +259,11 @@ public class VDTableCells {
 	 * @throws JSONException
 	 */
 	private void generateJsonSeparatorRows(int index, Position position,
-			JSONWriter jw, VWorksheet vWorksheet, VWorkspace vWorkspace)
-			throws JSONException {
+			MinMaxDepth combinedMinMaxDepth, JSONWriter jw,
+			VWorksheet vWorksheet, VWorkspace vWorkspace) throws JSONException {
 
 		// The number of separator rows is determined by the delta between the
 		// max and min depth of the cells in the row.
-		List<MinMaxDepth> rowMinMaxDepths = new LinkedList<MinMaxDepth>();
-		for (int j = 0; j < numCols; j++) {
-			rowMinMaxDepths.add(cells[index][j].getMinMaxStrokeDepth(position));
-		}
-		MinMaxDepth combinedMinMaxDepth = MinMaxDepth.combine(rowMinMaxDepths);
 		int numSeparatorRows = Math.max(0, combinedMinMaxDepth.getDelta());
 
 		// the top separators start with the minimum depth, and the ones below
@@ -295,6 +294,15 @@ public class VDTableCells {
 				currentDepth += increment;
 			}
 		}
+	}
+
+	private MinMaxDepth getMinMaxDepth(int index, Position position) {
+		List<MinMaxDepth> rowMinMaxDepths = new LinkedList<MinMaxDepth>();
+		for (int j = 0; j < numCols; j++) {
+			rowMinMaxDepths.add(cells[index][j].getMinMaxStrokeDepth(position));
+		}
+		MinMaxDepth combinedMinMaxDepth = MinMaxDepth.combine(rowMinMaxDepths);
+		return combinedMinMaxDepth;
 	}
 
 	/**
@@ -351,22 +359,26 @@ public class VDTableCells {
 	}
 
 	private void generateJsonContentRow(int index, JSONWriter jw,
-			VWorksheet vWorksheet, VWorkspace vWorkspace) throws JSONException {
+			MinMaxDepth topCombinedMinMaxDepth,
+			MinMaxDepth bottomCombinedMinMaxDepth, VWorksheet vWorksheet,
+			VWorkspace vWorkspace) throws JSONException {
 		jw.object().key(rowType.name()).value(contentRow.name())//
 				.key("_row").value(index)//
 		;
 
 		jw.key(rowCells.name()).array();
 		for (int j = 0; j < numCols; j++) {
-			generateJsonContentCell(index, j, jw, vWorksheet, vWorkspace);
+			generateJsonContentCell(index, j, topCombinedMinMaxDepth,
+					bottomCombinedMinMaxDepth, jw, vWorksheet, vWorkspace);
 		}
 
 		jw.endArray().endObject();
 	}
 
 	private void generateJsonContentCell(int rowIndex, int colIndex,
-			JSONWriter jw, VWorksheet vWorksheet, VWorkspace vWorkspace)
-			throws JSONException {
+			MinMaxDepth topCombinedMinMaxDepth,
+			MinMaxDepth bottomCombinedMinMaxDepth, JSONWriter jw,
+			VWorksheet vWorksheet, VWorkspace vWorkspace) throws JSONException {
 		VTableCssTags css = vWorkspace.getViewFactory().getTableCssTags();
 
 		VDCell c = cells[rowIndex][colIndex];
@@ -376,6 +388,22 @@ public class VDTableCells {
 		String codedStatus = c.getNode() == null ? "" : c.getNode().getStatus()
 				.getCodedStatus();
 
+		StrokeStyle topStrokeStyle = StrokeStyle.none;
+		if (topCombinedMinMaxDepth.getMaxDepth() == c.getDepth()) {
+			Stroke topStroke = c.getStroke(c.getDepth(), Position.top);
+			if (topStroke != null) {
+				topStrokeStyle = topStroke.getStyle();
+			}
+		}
+
+		StrokeStyle bottomStrokeStyle = StrokeStyle.none;
+		if (bottomCombinedMinMaxDepth.getMaxDepth() == c.getDepth()) {
+			Stroke bottomStroke = c.getStroke(c.getDepth(), Position.bottom);
+			if (bottomStroke != null) {
+				bottomStrokeStyle = bottomStroke.getStyle();
+			}
+		}
+
 		jw.object()
 				.key(rowType.name())
 				.value(contentRow.name())
@@ -384,14 +412,30 @@ public class VDTableCells {
 				.value(c.getNode() == null ? valuePaddingCell.name()
 						: valueCell.name())
 				//
-				.key(value.name()).value(valueString)
+				.key(value.name())
+				.value(valueString)
 				//
-				.key(status.name()).value(codedStatus)//
-				.key(hTableId.name()).value(c.getFillHTableId())
+				.key(status.name())
+				.value(codedStatus)
 				//
-				.key(fillId.name()).value(css.getCssTag(c.getFillHTableId()))//
-				.key("_row").value(rowIndex)//
-				.key("_col").value(colIndex)//
+				.key(hTableId.name())
+				.value(c.getFillHTableId())
+				//
+				.key(getStrokePositionKey(Position.top))
+				.value(topStrokeStyle)
+				//
+				.key(getStrokePositionKey(Position.bottom))
+				.value(bottomStrokeStyle)
+				//
+				.key(fillId.name()).value(css.getCssTag(c.getFillHTableId()))
+				//
+				.key("_row").value(rowIndex)
+				//
+				.key("_col").value(colIndex)
+				//
+				.key("_topCombinedMinMaxDepth")
+				.value(topCombinedMinMaxDepth.toString())//
+				.key("_depth").value(c.getDepth())//
 				.endObject();
 	}
 

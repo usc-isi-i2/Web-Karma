@@ -30,10 +30,10 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		@SuppressWarnings("unused")
 		Worksheet ws = SampleDataFactory//
 				// .createSampleJsonWithNestedTable1(vwsp.getWorkspace())//
-				.createSampleJsonWithNestedTable2(true/* true: 2 rows */,
-						vwsp.getWorkspace())//
+				//.createSampleJsonWithNestedTable2(true/* true: 2 rows */, vwsp.getWorkspace())//
 		// .createSampleJson(vwsp.getWorkspace(), 1)//
 		// .createJsonWithFunnyCharacters(vwsp.getWorkspace())//
+		.createFlatWorksheet(vwsp.getWorkspace(), 2, 2)
 		;
 
 		vwsp.addAllWorksheets();
