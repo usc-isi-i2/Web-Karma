@@ -111,6 +111,16 @@ public class VDTableCells {
 					c.addBottomStroke(bottomStroke);
 				}
 			}
+			// All other rows but the last one.
+			else { // a none border at the bottom to create a space when there
+					// is a nested table.
+				Stroke noneStroke = new Stroke(StrokeStyle.none, fill,
+						vdRow.getDepth());
+				for (int j = lr.getLeft(); j <= lr.getRight(); j++) {
+					cells[vdRow.getLastLevel()][j].addBottomStroke(noneStroke);
+				}
+
+			}
 		}
 
 		{// left/right outer strokes
@@ -167,6 +177,18 @@ public class VDTableCells {
 				for (int i = n.getStartLevel(); i <= n.getLastLevel(); i++) {
 					VDCell c = cells[i][lr.getLeft()];
 					c.addLeftStroke(innerStroke);
+				}
+			}
+		}
+
+		{// A none stroke on the righht to create a space when there are nested
+			// tables.
+			Stroke noneStroke = new Stroke(StrokeStyle.none,
+					n.getContainerHTableId(vWorkspace), n.getDepth());
+			if (!n.isLast() && n.getNumLevels() > 0) {
+				for (int i = n.getStartLevel(); i <= n.getLastLevel(); i++) {
+					VDCell c = cells[i][lr.getRight()];
+					c.addRightStroke(noneStroke);
 				}
 			}
 		}
@@ -288,8 +310,8 @@ public class VDTableCells {
 
 			int i = 0;
 			while (i < numSeparatorRows) {
-				generateJsonOneSeparatorRow(index, currentDepth, position, jw,
-						vWorksheet, vWorkspace);
+				generateJsonOneSeparatorRow(index, currentDepth, position,
+						combinedMinMaxDepth, jw, vWorksheet, vWorkspace);
 				i++;
 				currentDepth += increment;
 			}
@@ -322,16 +344,16 @@ public class VDTableCells {
 	 * @param index
 	 *            of the cells row we are generating separators for.
 	 * @param separatorDepth
-	 *            used to find the corresponding Stroke in the cell.
-	 * @param isTopSeparator
+	 * @param position
+	 * @param combinedMinMaxDepth
 	 * @param jw
 	 * @param vWorksheet
 	 * @param vWorkspace
 	 * @throws JSONException
 	 */
 	private void generateJsonOneSeparatorRow(int index, int separatorDepth,
-			Position position, JSONWriter jw, VWorksheet vWorksheet,
-			VWorkspace vWorkspace) throws JSONException {
+			Position position, MinMaxDepth combinedMinMaxDepth, JSONWriter jw,
+			VWorksheet vWorksheet, VWorkspace vWorkspace) throws JSONException {
 		jw.object().key(rowType.name()).value(separatorRow.name());
 
 		Position strokePosition = position;
@@ -348,6 +370,9 @@ public class VDTableCells {
 			if (stroke != null && stroke.getDepth() == separatorDepth) {
 				style = stroke.getStyle();
 			}
+
+			generateJsonVerticalSeparators(Position.left, index, j,
+					separatorDepth, jw, vWorksheet, vWorkspace);
 
 			jw.object().key(hTableId.name()).value(strokeHTableId)
 					//
@@ -367,6 +392,13 @@ public class VDTableCells {
 		}
 		jw.endArray();
 		jw.endObject();
+	}
+
+	private void generateJsonVerticalSeparators(Position position,
+			int rowIndex, int columnIndex, int separatorDepth, JSONWriter jw,
+			VWorksheet vWorksheet, VWorkspace vWorkspace) {
+		VDCell c = cells[rowIndex][columnIndex];
+		List<Stroke> strokes = c.getStrokeList(position);
 	}
 
 	/**
