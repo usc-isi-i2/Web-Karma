@@ -17,6 +17,20 @@ public class WorksheetHierarchicalDataUpdate extends AbstractUpdate {
 
 	private final VWorksheet vWorksheet;
 
+	public enum CellType {
+		content("c"), columnSpace("cs"), dummyContent("_"), rowSpace("rs");
+
+		private String code;
+
+		private CellType(String code) {
+			this.code = code;
+		}
+
+		public String code() {
+			return code;
+		}
+	}
+
 	public enum JsonKeys {
 		worksheetId, rows, hTableId,
 		//
@@ -25,10 +39,8 @@ public class WorksheetHierarchicalDataUpdate extends AbstractUpdate {
 		cellType, fillId, topBorder, leftBorder, rightBorder,
 		// row types
 		rowType/* key */, separatorRow, contentRow,
-		// cell types
-		valueCell, verticalPaddingCell, valuePaddingCell, horizontalPaddingCell,
 		// for content cells
-		value, status
+		value, status, attr
 	}
 
 	public WorksheetHierarchicalDataUpdate(VWorksheet vWorksheet) {
@@ -41,9 +53,9 @@ public class WorksheetHierarchicalDataUpdate extends AbstractUpdate {
 			VWorkspace vWorkspace) {
 		vWorksheet.generateWorksheetHierarchicalDataJson(pw, vWorkspace);
 	}
-	
-	public static String getStrokePositionKey(VDCell.Position position){
-		return position.name()+"Stroke";
+
+	public static String getStrokePositionKey(VDCell.Position position) {
+		return position.name() + "Stroke";
 	}
 
 }

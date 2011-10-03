@@ -19,7 +19,17 @@ public class Stroke {
 	}
 
 	public enum StrokeStyle {
-		outer, inner, none
+		outer("o"), inner("i"), none("_");
+
+		private String code;
+
+		private StrokeStyle(String code) {
+			this.code = code;
+		}
+		
+		public String code() {
+			return code;
+		}
 	}
 
 	private final StrokeStyle style;
@@ -67,7 +77,7 @@ public class Stroke {
 		return b.toString();
 	}
 
-//	public static StrokeStyle getStrokeStyle(Stroke stroke) {
-//		return stroke == null ? StrokeStyle.none : stroke.style;
-//	}
+	// public static StrokeStyle getStrokeStyle(Stroke stroke) {
+	// return stroke == null ? StrokeStyle.none : stroke.style;
+	// }
 }

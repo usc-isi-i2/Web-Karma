@@ -9,7 +9,6 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
-import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.view.Stroke;
@@ -166,7 +165,20 @@ public class VDCell {
 	 *         lower depth.
 	 */
 	Stroke getStroke(int depth, Position position) {
-		return getStroke(getStrokeList(position), depth);
+		return getStroke(getStrokeList(position), depth, true);
+	}
+
+	Stroke getStrokeOrNull(int depth, Position position) {
+		return getStroke(getStrokeList(position), depth, false);
+	}
+
+	Stroke getNthStroke(int index, Position position) {
+		List<Stroke> list = getStrokeList(position);
+		if (index < list.size()) {
+			return list.get(index);
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -205,17 +217,23 @@ public class VDCell {
 	/**
 	 * @param list
 	 * @param depth
+	 * @param returnPrevious
+	 *            , if true and there is no stroke at the given depth, return
+	 *            the stroke from the largest previous depth.
 	 * @return the stroke at the given depth, if there is one. If not, return
 	 *         the stroke at the previous depth. This assumes the list is sorted
 	 *         in increasing depth.
 	 */
-	private Stroke getStroke(List<Stroke> list, int depth) {
+	private Stroke getStroke(List<Stroke> list, int depth,
+			boolean returnPrevious) {
 		Stroke previousStroke = null;
 		for (Stroke s : list) {
 			if (s.getDepth() == depth) {
 				return s;
 			}
-			previousStroke = s;
+			if (returnPrevious) {
+				previousStroke = s;
+			}
 		}
 		return previousStroke;
 	}

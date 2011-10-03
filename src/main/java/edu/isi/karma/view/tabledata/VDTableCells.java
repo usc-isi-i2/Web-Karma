@@ -3,33 +3,25 @@
  */
 package edu.isi.karma.view.tabledata;
 
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.getStrokePositionKey;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.contentRow;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.rowCells;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.rowType;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.rows;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.separatorRow;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.status;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.value;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.worksheetId;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.separatorRow;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.contentRow;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.valueCell;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.cellType;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.verticalPaddingCell;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.valuePaddingCell;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.horizontalPaddingCell;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.fillId;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.hTableId;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.value;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.status;
-
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.rowType;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.rowCells;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
 
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
+import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.CellType;
+import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys;
 import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.view.Stroke;
@@ -133,6 +125,24 @@ public class VDTableCells {
 			}
 		}
 
+		{// inner vertical separator strokes.
+			// We do them here to make sure they span the hight of the row even
+			// if each node is not as tall as the whole row.
+			Stroke innerStroke = new Stroke(StrokeStyle.inner, fill,
+					vdRow.getDepth());
+			for (VDTreeNode n : vdRow.getNodes()) {
+				LeftRight nodeLr = vdIndexTable.get(n.getHNode(vWorkspace)
+						.getId());
+				if (!n.isFirst() && n.getNumLevels() > 0) {
+					for (int i = vdRow.getStartLevel(); i <= vdRow
+							.getLastLevel(); i++) {
+						VDCell c = cells[i][nodeLr.getLeft()];
+						c.addLeftStroke(innerStroke);
+					}
+				}
+			}
+		}
+
 		{// triangles
 			cells[vdRow.getStartLevel()][lr.getLeft()]
 					.addTriangle(new VDTriangle(fill, vdRow.getRow().getId(),
@@ -170,19 +180,10 @@ public class VDTableCells {
 
 		LeftRight lr = vdIndexTable.get(n.getHNode(vWorkspace).getId());
 
-		{// inner vertical separator strokes
-			Stroke innerStroke = new Stroke(StrokeStyle.inner,
-					n.getContainerHTableId(vWorkspace), n.getDepth());
-			if (!n.isFirst() && n.getNumLevels() > 0) {
-				for (int i = n.getStartLevel(); i <= n.getLastLevel(); i++) {
-					VDCell c = cells[i][lr.getLeft()];
-					c.addLeftStroke(innerStroke);
-				}
-			}
-		}
-
-		{// A none stroke on the righht to create a space when there are nested
+		{// A none stroke on the right to create a space when there are nested
 			// tables.
+			// TODO: I suspect this needs to be done in the ROW part, the same
+			// way that the inner strokes are being done.
 			Stroke noneStroke = new Stroke(StrokeStyle.none,
 					n.getContainerHTableId(vWorkspace), n.getDepth());
 			if (!n.isLast() && n.getNumLevels() > 0) {
@@ -357,12 +358,17 @@ public class VDTableCells {
 		jw.object().key(rowType.name()).value(separatorRow.name());
 
 		Position strokePosition = position;
-		Position positionOfNoBorder = position.getOpposite();
 		VTableCssTags css = vWorkspace.getViewFactory().getTableCssTags();
 
 		jw.key(rowCells.name()).array();
 		for (int j = 0; j < numCols; j++) {
 			VDCell c = cells[index][j];
+
+			// vertical separators.
+			generateJsonVerticalSeparators(Position.left, position, index, j,
+					separatorDepth, jw, vWorksheet, vWorkspace);
+
+			// Now the horizontal separator cell top/bottom strokes.
 			Stroke stroke = c.getStroke(separatorDepth, strokePosition);
 			String strokeHTableId = (stroke == null) ? c.getFillHTableId()
 					: stroke.getHTableId();
@@ -371,34 +377,189 @@ public class VDTableCells {
 				style = stroke.getStyle();
 			}
 
-			generateJsonVerticalSeparators(Position.left, index, j,
-					separatorDepth, jw, vWorksheet, vWorkspace);
+			// Now calculate the left and right strokes.
+			StrokeStyle leftStrokeStyle = StrokeStyle.none;
+			if (separatorDepth >= c.getDepth()) {
+				Stroke leftStroke = c.getStroke(separatorDepth, Position.left);
+				if (leftStroke != null) {
+					leftStrokeStyle = leftStroke.getStyle();
+				}
+			}
 
-			jw.object().key(hTableId.name()).value(strokeHTableId)
+			StrokeStyle rightStrokeStyle = StrokeStyle.none;
+			if (separatorDepth >= c.getDepth()) {
+				Stroke rightStroke = c
+						.getStroke(separatorDepth, Position.right);
+				if (rightStroke != null) {
+					rightStrokeStyle = rightStroke.getStyle();
+				}
+			}
+
+			StrokeStyles strokeStyles = new StrokeStyles();
+			strokeStyles.setStrokeStyle(strokePosition, style);
+			strokeStyles.setStrokeStyle(Position.left, leftStrokeStyle);
+			strokeStyles.setStrokeStyle(Position.right, rightStrokeStyle);
+
+			String attributes = encodeForJson(CellType.rowSpace,
+					strokeHTableId, css.getCssTag(strokeHTableId), strokeStyles);
+
+			jw.object()
+					.key(JsonKeys.attr.name())
+					.value(attributes)
 					//
-					.key(fillId.name()).value(css.getCssTag(strokeHTableId))
+					.key("_row")
+					.value(index)
 					//
-					.key(getStrokePositionKey(strokePosition)).value(style)
+					.key("_col")
+					.value(j)
 					//
-					.key(getStrokePositionKey(positionOfNoBorder))
-					.value(StrokeStyle.none)//
-					.key(rowType.name()).value(separatorRow.name())//
-					.key(cellType.name()).value(horizontalPaddingCell.name())//
-					.key("_row").value(index)//
-					.key("_col").value(j)//
-					.key("_separatorDepth").value(separatorDepth)//
+					.key("_depth")
+					.value(c.getDepth())
+					//
+					.key("_separatorDepth")
+					.value(separatorDepth)
+					//
+					.key("_leftStrokes")
+					.value(Stroke.toString(c.getLeftStrokes()))
+					//
+					.key("_rightStrokes")
+					.value(Stroke.toString(c.getRightStrokes()))
+					//
+					.key("_topStrokes")
+					.value(Stroke.toString(c.getTopStrokes()))
+					//
+					.key("_bottomStrokes")
+					.value(Stroke.toString(c.getBottomStrokes()))//
+					.key("_position").value(position.name())//
 			;
 			jw.endObject();
+
+			// Now the vertical separators on the right.
+			generateJsonVerticalSeparators(Position.right, position, index, j,
+					separatorDepth, jw, vWorksheet, vWorkspace);
 		}
 		jw.endArray();
 		jw.endObject();
 	}
 
-	private void generateJsonVerticalSeparators(Position position,
-			int rowIndex, int columnIndex, int separatorDepth, JSONWriter jw,
-			VWorksheet vWorksheet, VWorkspace vWorkspace) {
+	/**
+	 * Generate the vertical separators, both in the horizontal separator rows
+	 * and content rows.
+	 * 
+	 * @param leftRight
+	 *            , is this separator left or right from its base cell.
+	 * @param topBottom
+	 *            , is this separator top or bottom from its base cell.
+	 * @param rowIndex
+	 *            , the row index of the base cell.
+	 * @param columnIndex
+	 *            , the column index of the base cell.
+	 * @param horizontalSeparatorDepth
+	 *            , when there are multiple horizontal separators, each one has
+	 *            a depth.
+	 * @param jw
+	 * @param vWorksheet
+	 * @param vWorkspace
+	 * @throws JSONException
+	 */
+	private void generateJsonVerticalSeparators(Position leftRight,
+			Position topBottom, int rowIndex, int columnIndex,
+			int horizontalSeparatorDepth, JSONWriter jw, VWorksheet vWorksheet,
+			VWorkspace vWorkspace) throws JSONException {
 		VDCell c = cells[rowIndex][columnIndex];
-		List<Stroke> strokes = c.getStrokeList(position);
+		MinMaxDepth minMaxDepth = c.getMinMaxStrokeDepth(leftRight);
+
+		int currentDepth;
+		int increment;
+		{
+			switch (leftRight) {
+			case left:
+				currentDepth = minMaxDepth.getMinDepth();
+				increment = 1;
+				break;
+			case right:
+				currentDepth = minMaxDepth.getMaxDepth() - 1;
+				increment = -1;
+				break;
+			default:
+				throw new Error("Should call only with left or right");
+			}
+
+			int i = 0;
+			int numSeparatorCells = Math.max(0, minMaxDepth.getDelta());
+			while (i < numSeparatorCells) {
+				generateJsonOneVerticalSeparators(leftRight, topBottom,
+						rowIndex, columnIndex, horizontalSeparatorDepth,
+						currentDepth, jw, vWorksheet, vWorkspace);
+				i++;
+				currentDepth += increment;
+			}
+		}
+	}
+
+	private void generateJsonOneVerticalSeparators(Position leftRight,
+			Position topBottom, int rowIndex, int colIndex,
+			int horizontalSeparatorDepth, int verticalSeparatorDepth,
+			JSONWriter jw, VWorksheet vWorksheet, VWorkspace vWorkspace)
+			throws JSONException {
+		VTableCssTags css = vWorkspace.getViewFactory().getTableCssTags();
+
+		VDCell c = cells[rowIndex][colIndex];
+
+		boolean isCorner = (verticalSeparatorDepth == horizontalSeparatorDepth);
+		boolean isLeftRightOfCorner = (verticalSeparatorDepth > horizontalSeparatorDepth);
+		boolean isTopBottomOfCorner = (horizontalSeparatorDepth > verticalSeparatorDepth);
+
+		StrokeStyle leftRightStrokeStyle = StrokeStyle.none;
+		StrokeStyle topBottomStrokeStyle = StrokeStyle.none;
+		String hTableId = "BAD_VALUE";
+
+		if (isCorner) {
+			Stroke strokeLR = c.getStroke(horizontalSeparatorDepth, leftRight);
+			Stroke strokeTB = c.getStroke(verticalSeparatorDepth, topBottom);
+			leftRightStrokeStyle = strokeLR.getStyle();
+			topBottomStrokeStyle = strokeTB.getStyle();
+			hTableId = strokeLR.getHTableId();
+		}
+
+		else if (isLeftRightOfCorner) {
+			Stroke stroke = c.getStroke(horizontalSeparatorDepth, topBottom);
+			leftRightStrokeStyle = StrokeStyle.none;
+			topBottomStrokeStyle = stroke.getStyle();
+			hTableId = stroke.getHTableId();
+		}
+
+		else if (isTopBottomOfCorner) {
+			Stroke stroke = c.getStroke(verticalSeparatorDepth, leftRight);
+			leftRightStrokeStyle = stroke.getStyle();
+			topBottomStrokeStyle = StrokeStyle.none;
+			hTableId = stroke.getHTableId();
+		}
+
+		StrokeStyles strokeStyles = new StrokeStyles();
+		strokeStyles.setStrokeStyle(leftRight, leftRightStrokeStyle);
+		strokeStyles.setStrokeStyle(topBottom, topBottomStrokeStyle);
+
+		String attributes = encodeForJson(CellType.columnSpace, hTableId,
+				css.getCssTag(hTableId), strokeStyles);
+
+		jw.object().key(JsonKeys.attr.name()).value(attributes)
+				//
+				.key("_row").value(rowIndex)
+				//
+				.key("_col").value(colIndex)
+				//
+				.key("_Depth_H").value(horizontalSeparatorDepth)
+				//
+				.key("_Depth_V").value(verticalSeparatorDepth)
+				//
+				.key("_LR").value(leftRight.name())
+				//
+				.key("_LR_strokes")
+				.value(Stroke.toString(c.getStrokeList(leftRight)))//
+		;
+		jw.endObject();
+
 	}
 
 	/**
@@ -449,6 +610,13 @@ public class VDTableCells {
 		VTableCssTags css = vWorkspace.getViewFactory().getTableCssTags();
 
 		VDCell c = cells[rowIndex][colIndex];
+
+		// vertical separators.
+		// Using Position.top is arbitrary, just testing to see whether it
+		// works.
+		generateJsonVerticalSeparators(Position.left, Position.top, rowIndex,
+				colIndex, c.getDepth(), jw, vWorksheet, vWorkspace);
+
 		CellValue cellValue = c.getNode() == null ? null : c.getNode()
 				.getValue();
 		String valueString = cellValue == null ? "" : cellValue.asString();
@@ -475,13 +643,31 @@ public class VDTableCells {
 			}
 		}
 
-		jw.object()
-				.key(rowType.name())
-				.value(contentRow.name())
-				//
-				.key(cellType.name())
-				.value(c.getNode() == null ? valuePaddingCell.name()
-						: valueCell.name())
+		StrokeStyle leftStrokeStyle = StrokeStyle.none;
+		Stroke leftStroke = c.getStrokeOrNull(c.getDepth(), Position.left);
+		if (leftStroke != null) {
+			leftStrokeStyle = leftStroke.getStyle();
+		}
+
+		StrokeStyle rightStrokeStyle = StrokeStyle.none;
+		Stroke rightStroke = c.getStrokeOrNull(c.getDepth(), Position.right);
+		if (rightStroke != null) {
+			rightStrokeStyle = rightStroke.getStyle();
+		}
+
+		StrokeStyles strokeStyles = new StrokeStyles();
+		strokeStyles.setStrokeStyle(Position.top, topStrokeStyle);
+		strokeStyles.setStrokeStyle(Position.bottom, bottomStrokeStyle);
+		strokeStyles.setStrokeStyle(Position.left, leftStrokeStyle);
+		strokeStyles.setStrokeStyle(Position.right, rightStrokeStyle);
+
+		String attributes = encodeForJson(
+				c.getNode() == null ? CellType.dummyContent : CellType.content,
+				c.getFillHTableId(), css.getCssTag(c.getFillHTableId()),
+				strokeStyles);
+
+		jw.object().key(JsonKeys.attr.name())
+				.value(attributes)
 				//
 				.key(value.name())
 				.value(valueString)
@@ -489,25 +675,36 @@ public class VDTableCells {
 				.key(status.name())
 				.value(codedStatus)
 				//
-				.key(hTableId.name())
-				.value(c.getFillHTableId())
+				.key("_row")
+				.value(rowIndex)
 				//
-				.key(getStrokePositionKey(Position.top))
-				.value(topStrokeStyle)
-				//
-				.key(getStrokePositionKey(Position.bottom))
-				.value(bottomStrokeStyle)
-				//
-				.key(fillId.name()).value(css.getCssTag(c.getFillHTableId()))
-				//
-				.key("_row").value(rowIndex)
-				//
-				.key("_col").value(colIndex)
+				.key("_col")
+				.value(colIndex)
 				//
 				.key("_topCombinedMinMaxDepth")
-				.value(topCombinedMinMaxDepth.toString())//
-				.key("_depth").value(c.getDepth())//
+				.value(topCombinedMinMaxDepth.toString())
+				//
+				.key("_depth").value(c.getDepth())
+				//
+				.key("_leftStrokes").value(Stroke.toString(c.getLeftStrokes()))
+				//
+				.key("_rightStrokes")
+				.value(Stroke.toString(c.getRightStrokes()))//
 				.endObject();
+
+		// vertical separators.
+		// Using Position.top is arbitrary, just testing to see whether it
+		// works.
+		// Need to clean up the code.
+		generateJsonVerticalSeparators(Position.right, Position.top, rowIndex,
+				colIndex, c.getDepth(), jw, vWorksheet, vWorkspace);
+	}
+
+	private String encodeForJson(CellType cellType, String hTableId,
+			String fillId, StrokeStyles strokeStyles) {
+		return cellType.code()//
+				+ ":" + hTableId + ":" + fillId//
+				+ ":" + strokeStyles.getJsonEncoding();
 	}
 
 	/*****************************************************************
