@@ -13,12 +13,13 @@
 		<script type="text/javascript">
 			$(function () {
 				$.getJSON("/getExampleNestedJSON", function(data) {
-					var table = $("<table>");
+					
 					$.each(data["elements"], function(i, element){
+						
 						if(element["updateType"] == "WorksheetHierarchicalHeadersUpdate") {
+							var table = $("<table>").attr("id", element["worksheetId"]);
 							var heading = $("<div>").text(element.worksheetId);
 							$("body").append(heading);
-							
 							
 							$.each(element["rows"], function(index, row) {
 								var trTag = $("<tr>");
@@ -56,11 +57,14 @@
 									trTag.append(tdTag);
 								});
 								table.append(trTag);
+								
 							});
 							$("body").append(table);
+							$("body").append("<br>");
 						}
 						
 						if(element["updateType"] == "WorksheetHierarchicalDataUpdate") {
+							var table = $("#" + element["worksheetId"]);
 							$.each(element["rows"], function(index, row) {
 								var trTag = $("<tr>");
 								trTag.addClass(row["rowType"]);
@@ -135,6 +139,7 @@
 							});
 						}
 					});
+					
 				});
 			});
 			
