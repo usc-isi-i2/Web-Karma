@@ -13,12 +13,13 @@
 		<script type="text/javascript">
 			$(function () {
 				$.getJSON("/getExampleNestedJSON", function(data) {
+					var table = $("<table>");
 					$.each(data["elements"], function(i, element){
 						if(element["updateType"] == "WorksheetHierarchicalHeadersUpdate") {
 							var heading = $("<div>").text(element.worksheetId);
 							$("body").append(heading);
 							
-							var table = $("<table>");
+							
 							$.each(element["rows"], function(index, row) {
 								var trTag = $("<tr>");
 								$.each(row["cells"], function(index2, cell){
@@ -57,6 +58,81 @@
 								table.append(trTag);
 							});
 							$("body").append(table);
+						}
+						
+						if(element["updateType"] == "WorksheetHierarchicalDataUpdate") {
+							$.each(element["rows"], function(index, row) {
+								var trTag = $("<tr>");
+								trTag.addClass(row["rowType"]);
+								$.each(row["rowCells"], function(index2, cell){
+									var tdTag = $("<td>");
+									
+									// Split the attr attribute of the row cell
+									var attr = cell["attr"];
+									var attrVals = attr.split(":");
+									console.log(attrVals.length);
+									
+									// Populate the td with value if the cell is of content type
+									if(attrVals[0] == "c") {
+										console.log(cell["value"]);
+										if(cell["value"] == null)
+											console.log("Value not found in a content cell!");
+										tdTag.text(cell["value"]);
+									}
+									
+									tdTag.addClass(attrVals[0]);
+									var cssClass = attrVals[2];
+									
+									// Add the left border
+									if(attrVals[3] != "_") {
+										if(attrVals[3] == "o") {
+											tdTag.addClass("leftBorderouter" + cssClass);
+										} else if (attrVals[3] == "i") {
+											tdTag.addClass("leftBorderinner" + cssClass);
+										} else {
+											console.log("Unknown border type detected!");
+										}
+									}
+									
+									// Add the right border
+									if(attrVals[4] != "_") {
+										if(attrVals[4] == "o") {
+											tdTag.addClass("rightBorderouter" + cssClass);
+										} else if (attrVals[4] == "i") {
+											tdTag.addClass("rightBorderinner" + cssClass);
+										} else {
+											console.log("Unknown border type detected!");
+										}
+									}
+									
+									// Add the top border
+									if(attrVals[5] != "_") {
+										if(attrVals[5] == "o") {
+											tdTag.addClass("topBorderouter" + cssClass);
+										} else if (attrVals[5] == "i") {
+											tdTag.addClass("topBorderinner" + cssClass);
+										} else {
+											console.log("Unknown border type detected!");
+										}
+									}
+									
+									// Add the bottom border
+									if(attrVals[6] != "_") {
+										if(attrVals[6] == "o") {
+											tdTag.addClass("bottomBorderouter" + cssClass);
+										} else if (attrVals[6] == "i") {
+											tdTag.addClass("bottomBorderinner" + cssClass);
+										} else {
+											console.log("Unknown border type detected!");
+										}
+									}
+									
+									tdTag.data("jsonInfo", cell).hover(showConsoleInfo);
+									
+									trTag.append(tdTag);
+								});
+								table.append(trTag);
+							});
 						}
 					});
 				});

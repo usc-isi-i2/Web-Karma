@@ -2,18 +2,27 @@ td {
 	text-align:center;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 16px;
-	height: 40px;
-	width: 100px;
 	border-width: 1px;
+	width: 10px;
+	height: 10px;
 }
 
 table {
 	border-collapse: collapse;
 }
 
-.bordertdTags {
-	width: 5px;
+/*tr.separatorRow td {
+	height: 10px;
 }
+
+td.cs {
+	width: 10px;
+	height: 10px;
+}*/
+
+/*.bordertdTags {
+	width: 5px;
+}*/
 
 /* TopLevelTable classes */
 .filltopLevelTableCell {
