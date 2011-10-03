@@ -9,6 +9,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.RepFactory;
@@ -64,6 +65,7 @@ public class VHTreeNodeTest extends TestCase {
 		UpdateContainer c = new UpdateContainer();
 		for (VWorksheet vw : vwsp.getVWorksheetList().getVWorksheets()) {
 			c.add(new WorksheetHierarchicalHeadersUpdate(vw));
+			c.add(new WorksheetHierarchicalDataUpdate(vw));
 		}
 
 		StringWriter sw1 = new StringWriter();
