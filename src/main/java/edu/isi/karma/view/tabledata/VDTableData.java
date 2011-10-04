@@ -32,6 +32,8 @@ public class VDTableData {
 
 	private final VDTableCells vdTableCells;
 
+	private final VDVerticalSeparators vdVerticalSeparators = new VDVerticalSeparators();
+
 	public VDTableData(VTableHeadings vtHeadings, VWorksheet vWorksheet,
 			VWorkspace vWorkspace) {
 		super();
@@ -42,6 +44,8 @@ public class VDTableData {
 		vtHeadings.getRootVHNode().collectLeaves(frontier);
 		vdIndexTable.putFrontier(frontier);
 		vtHeadings.getRootVHNode().populateVDIndexTable(vdIndexTable);
+
+		vtHeadings.populateVDVerticalSeparators(vdVerticalSeparators);
 
 		// Build the VDRows and their content.
 		vtHeadings.getRootVHNode().populateVDRows(null, rows,
@@ -92,8 +96,8 @@ public class VDTableData {
 	 * 
 	 *****************************************************************/
 
-	public JSONWriter prettyPrintJson(JSONWriter jw, boolean verbose)
-			throws JSONException {
+	public JSONWriter prettyPrintJson(JSONWriter jw, boolean verbose,
+			VWorkspace vWorkspace) throws JSONException {
 		jw.object()//
 				.key("rootTableId").value(rootTableId)//
 				.key("rows").array();
@@ -110,6 +114,9 @@ public class VDTableData {
 
 		jw.key("indexTable");
 		vdIndexTable.prettyPrintJson(jw);
+
+		jw.key("verticalSeparators");
+		vdVerticalSeparators.prettyPrintJson(jw, vWorkspace);
 
 		jw.key("cells");
 		vdTableCells.prettyPrintJson(jw);

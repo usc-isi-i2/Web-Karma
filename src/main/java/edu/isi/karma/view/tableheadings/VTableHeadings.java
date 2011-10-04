@@ -16,6 +16,8 @@ import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.tabledata.VDVerticalSeparator;
+import edu.isi.karma.view.tabledata.VDVerticalSeparators;
 
 /**
  * @author szekely
@@ -41,6 +43,14 @@ public class VTableHeadings {
 
 	public VHTreeNode getRootVHNode() {
 		return rootVHNode;
+	}
+
+	public void populateVDVerticalSeparators(
+			VDVerticalSeparators vdVerticalSeparators) {
+		VDVerticalSeparator vs = new VDVerticalSeparator();
+		vs.add(0, hTableId);
+		vdVerticalSeparators.put(rootVHNode.getHNodeId(), vs);
+		rootVHNode.populateVDVerticalSeparators(vdVerticalSeparators);
 	}
 
 	public void generateJson(JSONWriter jw, VWorksheet vWorksheet,
@@ -76,11 +86,11 @@ public class VTableHeadings {
 		level.generateJson(jw, vWorksheet, vWorkspace);
 		jw.endArray();
 	}
-	
+
 	public JSONWriter prettyPrintJson(JSONWriter jw) throws JSONException {
 		jw.object()//
-		.key("hTableId").value(hTableId)//
-		.key("root")//
+				.key("hTableId").value(hTableId)//
+				.key("root")//
 		;
 		rootVHNode.prettyPrintJson(jw, true, true);
 		jw.endObject();

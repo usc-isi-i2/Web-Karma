@@ -180,6 +180,10 @@ public class VWorksheet extends ViewEntity {
 		return vdTableData;
 	}
 
+	public VTableHeadings getViewTableHeadings() {
+		return viewTableHeadings;
+	}
+
 	void addColumnHeader(VColumnHeader vch) {
 		columnHeaders.add(vch);
 	}

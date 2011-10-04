@@ -71,8 +71,6 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		assertEquals(styles[3], elements[6]);
 	}
 
-
-
 	public void testGenerateJson1() throws JSONException {
 		@SuppressWarnings("unused")
 		Worksheet ws = SampleDataFactory//
@@ -90,10 +88,17 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			uc.add(new WorksheetHierarchicalDataUpdate(vw));
 		}
 
+		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
+		// System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
+		// .prettyPrintJson(new JSONStringer()).toString()));
+		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
+				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
+				.toString()));
+
 		StringWriter sw1 = new StringWriter();
 		PrintWriter pw1 = new PrintWriter(sw1);
 		uc.generateJson("", pw1, vwsp);
-		//System.err.println(Util.prettyPrintJson(sw1.toString()));
+		// System.err.println(Util.prettyPrintJson(sw1.toString()));
 
 		JSONObject o = new JSONObject(sw1.toString());
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
@@ -514,7 +519,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		}
 		//
 	}
-	
+
 	public void testGenerateJson2() throws JSONException {
 		@SuppressWarnings("unused")
 		Worksheet ws = SampleDataFactory
@@ -527,9 +532,12 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		}
 
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
-		System.err.println(Util.prettyPrintJson(vw.getVDTableData().prettyPrintJson(
-				new JSONStringer(), /* verbose */false).toString()));
-		
+		// System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
+		// .prettyPrintJson(new JSONStringer()).toString()));
+		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
+				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
+				.toString()));
+
 		StringWriter sw1 = new StringWriter();
 		PrintWriter pw1 = new PrintWriter(sw1);
 		uc.generateJson("", pw1, vwsp);
@@ -540,5 +548,4 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 				.getJSONArray(JsonKeys.rows.name());
 		assertEquals(9, rows.length());
 	}
-
 }

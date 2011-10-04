@@ -33,10 +33,11 @@ public class VDTreeNodeTest extends TestCase {
 	public void testPopulateVDRows() throws JSONException {
 		Worksheet ws = SampleDataFactory//
 				// .createSampleJsonWithNestedTable1(vwsp.getWorkspace())//
-				.createSampleJsonWithNestedTable2(true/* true: 2 rows */, vwsp.getWorkspace())//
+				.createSampleJsonWithNestedTable2(true/* true: 2 rows */,
+						vwsp.getWorkspace())//
 		// .createSampleJson(vwsp.getWorkspace(), 1)//
 		// .createJsonWithFunnyCharacters(vwsp.getWorkspace())//
-		//.createFlatWorksheet(vwsp.getWorkspace(), 2, 2)
+		// .createFlatWorksheet(vwsp.getWorkspace(), 2, 2)
 		;
 
 		System.err.println(ws.getDataTable().prettyPrint(f));
@@ -52,6 +53,6 @@ public class VDTreeNodeTest extends TestCase {
 		VDTableData vData = new VDTableData(vHeadings, vwsp.getVWorksheet(ws
 				.getId()), vwsp);
 		System.err.println(Util.prettyPrintJson(vData.prettyPrintJson(
-				new JSONStringer(), /* verbose */false).toString()));
+				new JSONStringer(), /* verbose */false, vwsp).toString()));
 	}
 }

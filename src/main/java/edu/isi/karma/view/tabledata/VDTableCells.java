@@ -126,7 +126,7 @@ public class VDTableCells {
 		}
 
 		{// inner vertical separator strokes.
-			// We do them here to make sure they span the hight of the row even
+			// We do them here to make sure they span the height of the row even
 			// if each node is not as tall as the whole row.
 			Stroke innerStroke = new Stroke(StrokeStyle.inner, fill,
 					vdRow.getDepth());

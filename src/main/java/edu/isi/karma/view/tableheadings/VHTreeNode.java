@@ -45,6 +45,8 @@ import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.tabledata.VDIndexTable;
 import edu.isi.karma.view.tabledata.VDRow;
 import edu.isi.karma.view.tabledata.VDTreeNode;
+import edu.isi.karma.view.tabledata.VDVerticalSeparator;
+import edu.isi.karma.view.tabledata.VDVerticalSeparators;
 
 /**
  * @author szekely
@@ -157,6 +159,14 @@ public class VHTreeNode {
 
 	boolean isRoot() {
 		return hNode == null;
+	}
+
+	String getHNodeId() {
+		if (isRoot()) {
+			return "root";
+		} else {
+			return hNode.getId();
+		}
 	}
 
 	ArrayList<VHTreeNode> getChildren() {
@@ -634,6 +644,33 @@ public class VHTreeNode {
 				vdIndexTable.addIndex(n.getHNode(), list);
 			}
 			n.populateVDIndexTable(vdIndexTable);
+		}
+	}
+
+	public void populateVDVerticalSeparators(
+			VDVerticalSeparators vdVerticalSeparators) {
+		VDVerticalSeparator s = vdVerticalSeparators.get(getHNodeId());
+
+		for (VHTreeNode n : children) {
+
+			VDVerticalSeparator vs = new VDVerticalSeparator();
+			if (n.isFirst) {
+				vs.addLeft(s.getLeftSeparators());
+			} else {
+				vs.addLeft(depth, hTableId);
+			}
+			if (n.isLast) {
+				vs.addRight(s.getRightSeparators());
+			} else {
+				vs.addRight(depth, hTableId);
+			}
+
+			if (!n.isLeaf()) {
+				vs.add(n.depth, n.hTableId);
+			}
+			vdVerticalSeparators.put(n.hNode.getId(), vs);
+
+			n.populateVDVerticalSeparators(vdVerticalSeparators);
 		}
 	}
 
