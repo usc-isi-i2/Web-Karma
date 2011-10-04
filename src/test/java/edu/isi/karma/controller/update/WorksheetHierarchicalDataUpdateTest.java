@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.CellType;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys;
@@ -70,7 +71,9 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		assertEquals(styles[3], elements[6]);
 	}
 
-	public void testGenerateJson() throws JSONException {
+
+
+	public void testGenerateJson1() throws JSONException {
 		@SuppressWarnings("unused")
 		Worksheet ws = SampleDataFactory//
 				// .createSampleJsonWithNestedTable1(vwsp.getWorkspace())//
@@ -90,7 +93,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		StringWriter sw1 = new StringWriter();
 		PrintWriter pw1 = new PrintWriter(sw1);
 		uc.generateJson("", pw1, vwsp);
-		System.err.println(Util.prettyPrintJson(sw1.toString()));
+		//System.err.println(Util.prettyPrintJson(sw1.toString()));
 
 		JSONObject o = new JSONObject(sw1.toString());
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
@@ -510,6 +513,32 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			}
 		}
 		//
+	}
+	
+	public void testGenerateJson2() throws JSONException {
+		@SuppressWarnings("unused")
+		Worksheet ws = SampleDataFactory
+				.createSample1small(vwsp.getWorkspace());
+
+		vwsp.addAllWorksheets();
+		UpdateContainer uc = new UpdateContainer();
+		for (VWorksheet vw : vwsp.getVWorksheetList().getVWorksheets()) {
+			uc.add(new WorksheetHierarchicalDataUpdate(vw));
+		}
+
+		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
+		System.err.println(Util.prettyPrintJson(vw.getVDTableData().prettyPrintJson(
+				new JSONStringer(), /* verbose */false).toString()));
+		
+		StringWriter sw1 = new StringWriter();
+		PrintWriter pw1 = new PrintWriter(sw1);
+		uc.generateJson("", pw1, vwsp);
+		System.err.println(Util.prettyPrintJson(sw1.toString()));
+
+		JSONObject o = new JSONObject(sw1.toString());
+		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
+				.getJSONArray(JsonKeys.rows.name());
+		assertEquals(9, rows.length());
 	}
 
 }

@@ -92,7 +92,7 @@ public class VDTableData {
 	 * 
 	 *****************************************************************/
 
-	JSONWriter prettyPrintJson(JSONWriter jw, boolean verbose)
+	public JSONWriter prettyPrintJson(JSONWriter jw, boolean verbose)
 			throws JSONException {
 		jw.object()//
 				.key("rootTableId").value(rootTableId)//

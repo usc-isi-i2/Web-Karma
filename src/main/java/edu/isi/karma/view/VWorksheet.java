@@ -175,6 +175,10 @@ public class VWorksheet extends ViewEntity {
 	public VTable getDataTable() {
 		return viewDataTable;
 	}
+	
+	public VDTableData getVDTableData() {
+		return vdTableData;
+	}
 
 	void addColumnHeader(VColumnHeader vch) {
 		columnHeaders.add(vch);

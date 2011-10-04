@@ -116,6 +116,55 @@ public class SampleDataFactory {
 		return w;
 	}
 
+	public static Worksheet createSample1small(Workspace workspace) {
+		RepFactory f = workspace.getFactory();
+
+		Worksheet w = f.createWorksheet("Complex Smaple Table", workspace);
+		String ss = w.addHNode("Social Security", f).getId();
+		String personContainer = w.addHNode("Person", f).getId();
+		String addressContainer = w.addHNode("Address", f).getId();
+		String relativesContainer = w.addHNode("Relatives", f).getId();
+
+		HTable personTable = w.getHeaders().getHNode(personContainer)
+				.addNestedTable("Person Table", w, f);
+		String firstName = personTable.addHNode("First Name", w, f).getId();
+		String lastName = personTable.addHNode("Last Name", w, f).getId();
+
+		HTable addressTable = w.getHeaders().getHNode(addressContainer)
+				.addNestedTable("Address Table", w, f);
+		String what = addressTable.addHNode("What", w, f).getId();
+		String address = addressTable.addHNode("Address", w, f).getId();
+
+		HTable relativesTable = w.getHeaders().getHNode(relativesContainer)
+				.addNestedTable("Relatives Person Table", w, f);
+		String relFirstName = relativesTable.addHNode("Relatives First Name",
+				w, f).getId();
+		String relLastName = relativesTable.addHNode("Relatives Last Name", w,
+				f).getId();
+
+		// Row 1
+		Row r1 = w.addRow(f);
+		r1.setValue(ss, "123-45-6789");
+		r1.addNestedRow(personContainer, f).setValue(firstName, "Pedro")
+				.setValue(lastName, "Szekely");
+		r1.addNestedRow(addressContainer, f).setValue(what, "home")
+				.setValue(address, "1401 E Maple Ave");
+		r1.addNestedRow(addressContainer, f)
+				.setValue(what, "work")
+				.setValue(address,
+						"4676 Admiralty");
+		r1.addNestedRow(relativesContainer, f)
+				.setValue(relFirstName, "Claudia")
+				.setValue(relLastName, "Szekely");
+		r1.addNestedRow(relativesContainer, f).setValue(relFirstName, "Susana")
+				.setValue(relLastName, "Szekely");
+		r1.addNestedRow(relativesContainer, f)
+				.setValue(relFirstName, "Cristina")
+				.setValue(relLastName, "Sierra");
+
+		return w;
+	}
+	
 	public static Worksheet createFlatWorksheet(Workspace wsp, int numRows,
 			int numColumns) {
 

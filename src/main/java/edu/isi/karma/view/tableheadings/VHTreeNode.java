@@ -546,8 +546,8 @@ public class VHTreeNode {
 			VWorksheet vWorksheet, VWorkspace vWorkspace) throws JSONException {
 		VTableCssTags css = vWorkspace.getViewFactory().getTableCssTags();
 
-		String fillCssTag = isRoot() ? css.getCssTag("root") : css
-				.getCssTag(hNode.getHTableId());
+		String hTableId = isRoot() ? "root" : hNode.getHTableId();
+		String fillCssTag = css.getCssTag(hTableId);
 
 		int span = 1;
 		if (hasChildren()) {
@@ -568,6 +568,8 @@ public class VHTreeNode {
 				.key(rightBorder.name())
 				.value(Border.encodeBorder(rightInnerStroke.getStyle(),
 						css.getCssTag(rightInnerStroke.getHTableId())))//
+				//
+				.key("_hTableId").value(hTableId);
 		;
 	}
 
