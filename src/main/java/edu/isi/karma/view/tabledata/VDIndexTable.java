@@ -74,7 +74,7 @@ public class VDIndexTable {
 	 * @param vhTreeNodes
 	 */
 	public void addIndex(HNode hNode, List<VHTreeNode> vhTreeNodes) {
-		int min = 0;
+		int min = Integer.MAX_VALUE;
 		int max = 0;
 		for (VHTreeNode n : vhTreeNodes) {
 			LeftRight lr = hNodeId2Indices.get(n.getHNode().getId());
