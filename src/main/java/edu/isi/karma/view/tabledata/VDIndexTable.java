@@ -43,6 +43,8 @@ public class VDIndexTable {
 
 	private String[] hNodeIds;
 
+	private int[] columnDepths;
+
 	VDIndexTable() {
 		super();
 	}
@@ -59,13 +61,19 @@ public class VDIndexTable {
 		return hNodeIds[columnIndex];
 	}
 
+	public int getColumnDepth(int columnIndex) {
+		return columnDepths[columnIndex];
+	}
+
 	public void putFrontier(List<VHTreeNode> vhTreeNodes) {
 		numColumns = vhTreeNodes.size();
 		hNodeIds = new String[numColumns];
+		columnDepths = new int[numColumns];
 
 		int index = 0;
 		for (VHTreeNode n : vhTreeNodes) {
 			hNodeIds[index] = n.getHNode().getId();
+			columnDepths[index] = n.getDepth();
 			hNodeId2Indices.put(n.getHNode().getId(), new LeftRight(index,
 					index));
 			index++;

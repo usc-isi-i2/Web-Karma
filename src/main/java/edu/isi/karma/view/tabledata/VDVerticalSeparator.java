@@ -3,7 +3,7 @@
  */
 package edu.isi.karma.view.tabledata;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONException;
@@ -11,6 +11,7 @@ import org.json.JSONWriter;
 
 import edu.isi.karma.view.Stroke;
 import edu.isi.karma.view.Stroke.StrokeStyle;
+import edu.isi.karma.view.tabledata.VDCell.Position;
 
 /**
  * Store strokes with a none border that define the separators for a cell in
@@ -22,8 +23,8 @@ import edu.isi.karma.view.Stroke.StrokeStyle;
  */
 public class VDVerticalSeparator {
 
-	private final List<Stroke> leftSeparators = new LinkedList<Stroke>();
-	private final List<Stroke> rightSeparators = new LinkedList<Stroke>();
+	private final ArrayList<Stroke> leftSeparators = new ArrayList<Stroke>();
+	private final ArrayList<Stroke> rightSeparators = new ArrayList<Stroke>();
 
 	public VDVerticalSeparator() {
 		super();
@@ -45,12 +46,23 @@ public class VDVerticalSeparator {
 		rightSeparators.add(s);
 	}
 
-	public List<Stroke> getLeftSeparators() {
+	public ArrayList<Stroke> getLeftStrokes() {
 		return leftSeparators;
 	}
 
-	public List<Stroke> getRightSeparators() {
+	public ArrayList<Stroke> getRightStrokes() {
 		return rightSeparators;
+	}
+
+	public ArrayList<Stroke> getStrokes(Position position) {
+		switch (position) {
+		case left:
+			return leftSeparators;
+		case right:
+			return rightSeparators;
+		default:
+			return null; // cause caller to crash.
+		}
 	}
 
 	public void addLeft(List<Stroke> list) {

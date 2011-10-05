@@ -85,6 +85,10 @@ public class VDTableData {
 		return rows;
 	}
 
+	VDVerticalSeparators getVdVerticalSeparators() {
+		return vdVerticalSeparators;
+	}
+
 	public void generateJson(JSONWriter jw, VWorksheet vWorksheet,
 			VWorkspace vWorkspace) {
 		vdTableCells.generateJson(jw, vWorksheet, vWorkspace);

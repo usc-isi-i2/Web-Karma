@@ -12,12 +12,16 @@ import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.Js
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.value;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.worksheetId;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.ImportJSONFileCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.CellType;
@@ -40,11 +44,14 @@ import edu.isi.karma.view.tabledata.VDTriangle.TriangleLocation;
  */
 public class VDTableCells {
 
+	Logger logger = LoggerFactory.getLogger(VDTableCells.class);
+
 	private final VDCell[][] cells;
 	private final int numRows;
 	private final int numCols;
 
 	private final VDIndexTable vdIndexTable;
+	private final VDVerticalSeparators vdVerticalSeparators;
 
 	private final String rootTableId;
 
@@ -60,7 +67,7 @@ public class VDTableCells {
 		}
 		this.vdIndexTable = vdTableData.getVdIndexTable();
 		this.rootTableId = vWorksheet.getWorksheet().getDataTable().getId();
-
+		this.vdVerticalSeparators = vdTableData.getVdVerticalSeparators();
 		populate(vdTableData, vWorksheet, vWorkspace);
 	}
 
@@ -466,60 +473,83 @@ public class VDTableCells {
 			Position topBottom, int rowIndex, int columnIndex,
 			int horizontalSeparatorDepth, JSONWriter jw, VWorksheet vWorksheet,
 			VWorkspace vWorkspace) throws JSONException {
-		VDCell c = cells[rowIndex][columnIndex];
-		MinMaxDepth minMaxDepth = c.getMinMaxStrokeDepth(leftRight);
+		// VDCell c = cells[rowIndex][columnIndex];
 
-		int currentDepth;
+		VDVerticalSeparator vSep = vdVerticalSeparators.get(vdIndexTable
+				.getHNodeId(columnIndex));
+
+		ArrayList<Stroke> strokeSeparators = vSep.getStrokes(leftRight);
+		int firstSeparatorIndex;
 		int increment;
 		{
 			switch (leftRight) {
 			case left:
-				currentDepth = minMaxDepth.getMinDepth();
+				firstSeparatorIndex = 0;
 				increment = 1;
 				break;
 			case right:
-				currentDepth = minMaxDepth.getMaxDepth() - 1;
+				firstSeparatorIndex = strokeSeparators.size() - 2;
 				increment = -1;
 				break;
 			default:
 				throw new Error("Should call only with left or right");
 			}
-
-			int i = 0;
-			int numSeparatorCells = Math.max(0, minMaxDepth.getDelta());
-			while (i < numSeparatorCells) {
-				generateJsonOneVerticalSeparators(leftRight, topBottom,
-						rowIndex, columnIndex, horizontalSeparatorDepth,
-						currentDepth, jw, vWorksheet, vWorkspace);
-				i++;
-				currentDepth += increment;
-			}
 		}
+
+		// One fewer column that the size of the list because the list always
+		// contains a stroke for the cell itself.
+		int numSeparatorCells = strokeSeparators.size() - 1;
+		int i = 0;
+		int currentStrokeIndex = firstSeparatorIndex;
+		while (i < numSeparatorCells) {
+			generateJsonOneVerticalSeparators(leftRight, topBottom, rowIndex,
+					columnIndex, horizontalSeparatorDepth,
+					strokeSeparators.get(currentStrokeIndex), jw, vWorksheet,
+					vWorkspace);
+			i++;
+			currentStrokeIndex += increment;
+		}
+
 	}
 
 	private void generateJsonOneVerticalSeparators(Position leftRight,
 			Position topBottom, int rowIndex, int colIndex,
-			int horizontalSeparatorDepth, int verticalSeparatorDepth,
+			int horizontalSeparatorDepth, Stroke columnSeparatorStroke,
 			JSONWriter jw, VWorksheet vWorksheet, VWorkspace vWorkspace)
 			throws JSONException {
 		VTableCssTags css = vWorkspace.getViewFactory().getTableCssTags();
 
 		VDCell c = cells[rowIndex][colIndex];
 
-		boolean isCorner = (verticalSeparatorDepth == horizontalSeparatorDepth);
-		boolean isLeftRightOfCorner = (verticalSeparatorDepth > horizontalSeparatorDepth);
-		boolean isTopBottomOfCorner = (horizontalSeparatorDepth > verticalSeparatorDepth);
+		boolean isCorner = (columnSeparatorStroke.getDepth() == horizontalSeparatorDepth);
+		boolean isLeftRightOfCorner = (columnSeparatorStroke.getDepth() > horizontalSeparatorDepth);
+		boolean isTopBottomOfCorner = (horizontalSeparatorDepth > columnSeparatorStroke
+				.getDepth());
 
 		StrokeStyle leftRightStrokeStyle = StrokeStyle.none;
 		StrokeStyle topBottomStrokeStyle = StrokeStyle.none;
-		String hTableId = "BAD_VALUE";
+		String hTableId = columnSeparatorStroke.getHTableId();
 
 		if (isCorner) {
 			Stroke strokeLR = c.getStroke(horizontalSeparatorDepth, leftRight);
-			Stroke strokeTB = c.getStroke(verticalSeparatorDepth, topBottom);
-			leftRightStrokeStyle = strokeLR.getStyle();
-			topBottomStrokeStyle = strokeTB.getStyle();
-			hTableId = strokeLR.getHTableId();
+			Stroke strokeTB = c.getStroke(columnSeparatorStroke.getDepth(),
+					topBottom);
+			if (strokeLR != null) {
+				leftRightStrokeStyle = strokeLR.getStyle();
+				hTableId = strokeLR.getHTableId();
+			} else {
+				logger.error("CRASH_isCorner_LR: row=" + rowIndex + ", column="
+						+ colIndex + ", horizontalSeparatorDepth="
+						+ horizontalSeparatorDepth);
+			}
+			if (strokeTB != null) {
+				topBottomStrokeStyle = strokeTB.getStyle();
+			} else {
+				logger.error("CRASH_isCorner_TB: row" + rowIndex + ", column="
+						+ colIndex + ", horizontalSeparatorDepth="
+						+ horizontalSeparatorDepth);
+			}
+
 		}
 
 		else if (isLeftRightOfCorner) {
@@ -530,10 +560,17 @@ public class VDTableCells {
 		}
 
 		else if (isTopBottomOfCorner) {
-			Stroke stroke = c.getStroke(verticalSeparatorDepth, leftRight);
+			Stroke stroke = c.getStroke(columnSeparatorStroke.getDepth(),
+					leftRight);
+			if (stroke !=null){
 			leftRightStrokeStyle = stroke.getStyle();
 			topBottomStrokeStyle = StrokeStyle.none;
 			hTableId = stroke.getHTableId();
+			}else{
+				logger.error("CRASH_isTopBottomOfCorner: row" + rowIndex + ", column="
+						+ colIndex + ", horizontalSeparatorDepth="
+						+ horizontalSeparatorDepth);
+			}
 		}
 
 		StrokeStyles strokeStyles = new StrokeStyles();
@@ -543,20 +580,30 @@ public class VDTableCells {
 		String attributes = encodeForJson(CellType.columnSpace, hTableId,
 				css.getCssTag(hTableId), strokeStyles);
 
-		jw.object().key(JsonKeys.attr.name()).value(attributes)
+		jw.object()
+				.key(JsonKeys.attr.name())
+				.value(attributes)
 				//
-				.key("_row").value(rowIndex)
+				.key("_row")
+				.value(rowIndex)
 				//
-				.key("_col").value(colIndex)
+				.key("_col")
+				.value(colIndex)
 				//
-				.key("_Depth_H").value(horizontalSeparatorDepth)
+				.key("_horizontalSeparatorDepth")
+				.value(horizontalSeparatorDepth)
 				//
-				.key("_Depth_V").value(verticalSeparatorDepth)
+				.key("columnSeparatorStroke")
+				.value(columnSeparatorStroke.toString())
 				//
-				.key("_LR").value(leftRight.name())
+				.key("_LR")
+				.value(leftRight.name())
 				//
 				.key("_LR_strokes")
-				.value(Stroke.toString(c.getStrokeList(leftRight)))//
+				.value(Stroke.toString(c.getStrokeList(leftRight)))
+				//
+				.key("_TB_Strokes")
+				.value(Stroke.toString(c.getStrokeList(topBottom)))//
 		;
 		jw.endObject();
 
@@ -643,14 +690,19 @@ public class VDTableCells {
 			}
 		}
 
+		// We use column depth because in the case of empty cells, the VDCell
+		// has its true depth rather than the one that corresponds to what it
+		// would have if it was not empty.
+		int columnDepth = vdIndexTable.getColumnDepth(colIndex) - 1;
+
 		StrokeStyle leftStrokeStyle = StrokeStyle.none;
-		Stroke leftStroke = c.getStrokeOrNull(c.getDepth(), Position.left);
+		Stroke leftStroke = c.getStrokeOrNull(columnDepth, Position.left);
 		if (leftStroke != null) {
 			leftStrokeStyle = leftStroke.getStyle();
 		}
 
 		StrokeStyle rightStrokeStyle = StrokeStyle.none;
-		Stroke rightStroke = c.getStrokeOrNull(c.getDepth(), Position.right);
+		Stroke rightStroke = c.getStrokeOrNull(columnDepth, Position.right);
 		if (rightStroke != null) {
 			rightStrokeStyle = rightStroke.getStyle();
 		}

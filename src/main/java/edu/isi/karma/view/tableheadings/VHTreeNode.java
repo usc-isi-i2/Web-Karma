@@ -161,6 +161,10 @@ public class VHTreeNode {
 		return hNode == null;
 	}
 
+	public int getDepth() {
+		return depth;
+	}
+
 	String getHNodeId() {
 		if (isRoot()) {
 			return "root";
@@ -655,12 +659,12 @@ public class VHTreeNode {
 
 			VDVerticalSeparator vs = new VDVerticalSeparator();
 			if (n.isFirst) {
-				vs.addLeft(s.getLeftSeparators());
+				vs.addLeft(s.getLeftStrokes());
 			} else {
 				vs.addLeft(depth, hTableId);
 			}
 			if (n.isLast) {
-				vs.addRight(s.getRightSeparators());
+				vs.addRight(s.getRightStrokes());
 			} else {
 				vs.addRight(depth, hTableId);
 			}

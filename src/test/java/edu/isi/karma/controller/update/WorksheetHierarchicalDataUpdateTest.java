@@ -91,14 +91,15 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
 		// System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
 		// .prettyPrintJson(new JSONStringer()).toString()));
-		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
-				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
-				.toString()));
+		//
+		// System.err.println(Util.prettyPrintJson(vw.getVDTableData()
+		// .prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
+		// .toString()));
 
 		StringWriter sw1 = new StringWriter();
 		PrintWriter pw1 = new PrintWriter(sw1);
 		uc.generateJson("", pw1, vwsp);
-		// System.err.println(Util.prettyPrintJson(sw1.toString()));
+		//System.err.println(Util.prettyPrintJson(sw1.toString()));
 
 		JSONObject o = new JSONObject(sw1.toString());
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
@@ -546,6 +547,216 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		JSONObject o = new JSONObject(sw1.toString());
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
-		assertEquals(9, rows.length());
+		assertEquals(5, rows.length());
+		
+		{ // r0 top separator 1.
+			JSONObject r = rows.getJSONObject(0);
+			assertSeparatorRow(r);
+			{ // c0
+				JSONObject c = getCell(r, 0);
+				assertPosition(c, 0, 0);
+				assertAttributes(c, CellType.rowSpace, "HT3", "o:_:o:_");
+			}
+			{ // c0/c1 vertical separator
+				JSONObject c = getCell(r, 1);
+				assertPosition(c, 0, 1);
+				assertAttributes(c, CellType.columnSpace, "HT3", "i:_:o:_");
+			}
+			{ // c1
+				JSONObject c = getCell(r, 2);
+				assertPosition(c, 0, 1);
+				assertAttributes(c, CellType.rowSpace, "HT3", "_:_:o:_");
+			}
+			{ // c2
+				JSONObject c = getCell(r, 3);
+				assertPosition(c, 0, 2);
+				assertAttributes(c, CellType.rowSpace, "HT3", "_:_:o:_");
+			}
+			{ // c1/c2 vertical separator
+				JSONObject c = getCell(r, 4);
+				assertPosition(c, 0, 2);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:_:o:_");
+			}
+			{ // c1/c2 vertical separator
+				JSONObject c = getCell(r, 5);
+				assertPosition(c, 0, 3);
+				assertAttributes(c, CellType.columnSpace, "HT3", "i:_:o:_");
+			}
+			{ // c3
+				JSONObject c = getCell(r, 6);
+				assertPosition(c, 0, 3);
+				assertAttributes(c, CellType.rowSpace, "HT3", "_:_:o:_");
+			}
+			{ // c4
+				JSONObject c = getCell(r, 7);
+				assertPosition(c, 0, 4);
+				assertAttributes(c, CellType.rowSpace, "HT3", "_:_:o:_");
+			}
+			{ // c4/c5 vertical separator
+				JSONObject c = getCell(r, 8);
+				assertPosition(c, 0, 4);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:_:o:_");
+			}
+			{ // c4/c5 vertical separator
+				JSONObject c = getCell(r, 9);
+				assertPosition(c, 0, 5);
+				assertAttributes(c, CellType.columnSpace, "HT3", "i:_:o:_");
+			}
+			{ // c5
+				JSONObject c = getCell(r, 10);
+				assertPosition(c, 0, 5);
+				assertAttributes(c, CellType.rowSpace, "HT3", "_:_:o:_");
+			}
+			{ // c6
+				JSONObject c = getCell(r, 11);
+				assertPosition(c, 0, 6);
+				assertAttributes(c, CellType.rowSpace, "HT3", "_:_:o:_");
+			}
+			{ // c6 vertical separator
+				JSONObject c = getCell(r, 12);
+				assertPosition(c, 0, 6);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:o:o:_");
+			}
+		}
+		
+		{ // r0 
+			JSONObject r = rows.getJSONObject(1);
+			assertContentRow(r);
+			{ // c0
+				JSONObject c = getCell(r, 0);
+				assertPosition(c, 0, 0);
+				assertAttributes(c, CellType.content, "HT3", "o:_:_:_");
+			}
+			{ // c0/c1 vertical separator
+				JSONObject c = getCell(r, 1);
+				assertPosition(c, 0, 1);
+				assertAttributes(c, CellType.columnSpace, "HT3", "i:_:_:_");
+			}
+			{ // c1
+				JSONObject c = getCell(r, 2);
+				assertPosition(c, 0, 1);
+				assertAttributes(c, CellType.content, "HT9", "o:_:o:o");
+			}
+			{ // c2
+				JSONObject c = getCell(r, 3);
+				assertPosition(c, 0, 2);
+				assertAttributes(c, CellType.content, "HT9", "i:o:o:o");
+			}
+			{ // c2/c3 vertical separator
+				JSONObject c = getCell(r, 4);
+				assertPosition(c, 0, 2);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:_:_:_");
+			}
+			{ // c2/c3 vertical separator
+				JSONObject c = getCell(r, 5);
+				assertPosition(c, 0, 3);
+				assertAttributes(c, CellType.columnSpace, "HT3", "i:_:_:_");
+			}
+			{ // c3
+				JSONObject c = getCell(r, 6);
+				assertPosition(c, 0, 3);
+				assertAttributes(c, CellType.content, "HT12", "o:_:o:_");
+			}
+			{ // c4
+				JSONObject c = getCell(r, 7);
+				assertPosition(c, 0, 4);
+				assertAttributes(c, CellType.content, "HT12", "i:o:o:_");
+			}
+			{ // c4/c5 vertical separator
+				JSONObject c = getCell(r, 8);
+				assertPosition(c, 0, 4);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:_:_:_");
+			}
+			{ // c4/c5 vertical separator
+				JSONObject c = getCell(r, 9);
+				assertPosition(c, 0, 5);
+				assertAttributes(c, CellType.columnSpace, "HT3", "i:_:_:_");
+			}
+			{ // c5
+				JSONObject c = getCell(r, 10);
+				assertPosition(c, 0, 5);
+				assertAttributes(c, CellType.content, "HT15", "o:_:o:_");
+			}
+			{ // c6
+				JSONObject c = getCell(r, 11);
+				assertPosition(c, 0, 6);
+				assertAttributes(c, CellType.content, "HT15", "i:o:o:_");
+			}
+			{ // c6 vertical separator
+				JSONObject c = getCell(r, 12);
+				assertPosition(c, 0, 6);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:o:_:_");
+			}
+		}
+		
+		{ // r1
+			JSONObject r = rows.getJSONObject(2);
+			assertContentRow(r);
+			{ // c0
+				JSONObject c = getCell(r, 0);
+				assertPosition(c, 1, 0);
+				assertAttributes(c, CellType.dummyContent, "HT3", "o:_:_:_");
+			}
+			{ // c0/c1 vertical separator
+				JSONObject c = getCell(r, 1);
+				assertPosition(c, 1, 1);
+				assertAttributes(c, CellType.columnSpace, "HT3", "i:_:_:_");
+			}
+			{ // c1
+				JSONObject c = getCell(r, 2);
+				assertPosition(c, 1, 1);
+				assertAttributes(c, CellType.dummyContent, "HT3", "_:_:_:_");
+			}
+			{ // c2
+				JSONObject c = getCell(r, 3);
+				assertPosition(c, 1, 2);
+				assertAttributes(c, CellType.dummyContent, "HT3", "_:_:_:_");
+			}
+			{ // c2/c3 vertical separator
+				JSONObject c = getCell(r, 4);
+				assertPosition(c, 1, 2);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:_:_:_");
+			}
+			{ // c2/c3 vertical separator
+				JSONObject c = getCell(r, 5);
+				assertPosition(c, 1, 3);
+				assertAttributes(c, CellType.columnSpace, "HT3", "i:_:_:_");
+			}
+			{ // c3
+				JSONObject c = getCell(r, 6);
+				assertPosition(c, 1, 3);
+				assertAttributes(c, CellType.content, "HT12", "o:_:i:o");
+			}
+			{ // c4
+				JSONObject c = getCell(r, 7);
+				assertPosition(c, 1, 4);
+				assertAttributes(c, CellType.content, "HT12", "i:o:i:o");
+			}
+			{ // c4/c5 vertical separator
+				JSONObject c = getCell(r, 8);
+				assertPosition(c, 1, 4);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:_:_:_");
+			}
+			{ // c4/c5 vertical separator
+				JSONObject c = getCell(r, 9);
+				assertPosition(c, 1, 5);
+				assertAttributes(c, CellType.columnSpace, "HT3", "i:_:_:_");
+			}
+			{ // c5
+				JSONObject c = getCell(r, 10);
+				assertPosition(c, 1, 5);
+				assertAttributes(c, CellType.content, "HT15", "o:_:i:_");
+			}
+			{ // c6
+				JSONObject c = getCell(r, 11);
+				assertPosition(c, 1, 6);
+				assertAttributes(c, CellType.content, "HT15", "i:o:i:_");
+			}
+			{ // c6 vertical separator
+				JSONObject c = getCell(r, 12);
+				assertPosition(c, 1, 6);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:o:_:_");
+			}
+		}
 	}
 }

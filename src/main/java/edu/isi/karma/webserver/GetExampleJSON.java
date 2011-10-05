@@ -34,15 +34,16 @@ public class GetExampleJSON extends HttpServlet {
 		VWorkspace vwsp = new VWorkspace(workspace);
 
 		WorkspaceRegistry.getInstance().register(new ExecutionController(vwsp));
-
+	
+	// Null Pointer
 		SampleDataFactory.createSample1small(workspace);
-//		SampleDataFactory.createSampleJsonWithNestedTable2(false/* true: 2 rows */,
-//				vwsp.getWorkspace());
+		SampleDataFactory.createSampleJsonWithNestedTable2(false/* true: 2 rows */,
+				vwsp.getWorkspace());
 		//SampleDataFactory.createFlatWorksheet(workspace, 10000, 6);
-		//SampleDataFactory.createFlatWorksheet(workspace, 2, 2);
+	//	SampleDataFactory.createFlatWorksheet(workspace, 2, 2);
 		//SampleDataFactory.createFromJsonTextFile(workspace, "samplejson-1.txt");
 		//SampleDataFactory.createJsonWithFunnyCharacters(workspace);
-		//SampleDataFactory.createSampleJson(workspace, 3);
+		SampleDataFactory.createSampleJson(workspace, 3);
 		//SampleDataFactory.createSampleJsonWithEmptyNestedTable1(workspace);
 		//SampleDataFactory.createSampleJsonWithEmptyNestedTable2(workspace);
 		//.createSampleJsonWithEmptyNestedTable3(workspace);
