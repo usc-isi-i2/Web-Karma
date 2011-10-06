@@ -1,7 +1,9 @@
 package edu.isi.karma.util;
 
 import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Reader;
 
 import org.json.JSONArray;
@@ -141,5 +143,24 @@ public class Util {
 			e.printStackTrace();
 			return "not JSON";
 		}
+	}
+
+	public static void writeJsonFile(Object o, String name) {
+		try {
+			FileWriter outFile = new FileWriter("lastJsonImport.json");
+			PrintWriter pw = new PrintWriter(outFile);
+			if (o instanceof JSONObject) {
+				JSONObject x = (JSONObject) o;
+				pw.println(x.toString(2));
+			} else if (o instanceof JSONArray){
+				JSONArray x = (JSONArray) o;
+				pw.println(x.toString(2));
+			}
+			outFile.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
 	}
 }

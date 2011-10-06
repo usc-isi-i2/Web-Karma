@@ -3,8 +3,6 @@
  */
 package edu.isi.karma.imp.json;
 
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.Iterator;
 
 import org.json.JSONArray;
@@ -69,25 +67,10 @@ public class JsonImport {
 		return worksheet;
 	}
 
-	private void writeJsonFile(Object o) {
-		try {
-			FileWriter outFile = new FileWriter("lastJsonImport.json");
-			PrintWriter pw = new PrintWriter(outFile);
-			if (o instanceof JSONObject) {
-				JSONObject x = (JSONObject) o;
-				pw.println(x.toString(2));
-			} else if (o instanceof JSONArray){
-				JSONArray x = (JSONArray) o;
-				pw.println(x.toString(2));
-			}
-			outFile.close();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+	private static void writeJsonFile(Object o) {
+		Util.writeJsonFile(o, "lastJsonImport.json");
 	}
-
+	
 	private void addObjectElement(String key, Object value, HTable headers,
 			Row row) throws JSONException {
 		HNode hNode = addHNode(headers, key);
