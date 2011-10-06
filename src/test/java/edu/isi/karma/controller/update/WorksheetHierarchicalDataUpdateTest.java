@@ -88,6 +88,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			uc.add(new WorksheetHierarchicalDataUpdate(vw));
 		}
 
+		@SuppressWarnings("unused")
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
 		// System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
 		// .prettyPrintJson(new JSONStringer()).toString()));
@@ -99,11 +100,11 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		StringWriter sw1 = new StringWriter();
 		PrintWriter pw1 = new PrintWriter(sw1);
 		uc.generateJson("", pw1, vwsp);
-		//System.err.println(Util.prettyPrintJson(sw1.toString()));
+		// System.err.println(Util.prettyPrintJson(sw1.toString()));
 
 		JSONObject o = new JSONObject(sw1.toString());
 		Util.writeJsonFile(o, "./unit-test-json.json");
-		
+
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
 		assertEquals(9, rows.length());
@@ -534,23 +535,22 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			uc.add(new WorksheetHierarchicalDataUpdate(vw));
 		}
 
+		@SuppressWarnings("unused")
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
 		// System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
 		// .prettyPrintJson(new JSONStringer()).toString()));
-		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
-				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
-				.toString()));
+		// System.err.println(Util.prettyPrintJson(vw.getVDTableData()
+		// .prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
+		// .toString()));
 
-		StringWriter sw1 = new StringWriter();
-		PrintWriter pw1 = new PrintWriter(sw1);
-		uc.generateJson("", pw1, vwsp);
-		System.err.println(Util.prettyPrintJson(sw1.toString()));
+		String ucJson = uc.generateJson(vwsp);
+		// System.err.println(Util.prettyPrintJson(ucJson));
 
-		JSONObject o = new JSONObject(sw1.toString());
+		JSONObject o = new JSONObject(ucJson);
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
 		assertEquals(5, rows.length());
-		
+
 		{ // r0 top separator 1.
 			JSONObject r = rows.getJSONObject(0);
 			assertSeparatorRow(r);
@@ -620,8 +620,8 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 				assertAttributes(c, CellType.columnSpace, "HT3", "_:o:o:_");
 			}
 		}
-		
-		{ // r0 
+
+		{ // r0
 			JSONObject r = rows.getJSONObject(1);
 			assertContentRow(r);
 			{ // c0
@@ -690,7 +690,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 				assertAttributes(c, CellType.columnSpace, "HT3", "_:o:_:_");
 			}
 		}
-		
+
 		{ // r1
 			JSONObject r = rows.getJSONObject(2);
 			assertContentRow(r);
@@ -760,7 +760,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 				assertAttributes(c, CellType.columnSpace, "HT3", "_:o:_:_");
 			}
 		}
-		
+
 		{ // r2
 			JSONObject r = rows.getJSONObject(3);
 			assertContentRow(r);
@@ -830,7 +830,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 				assertAttributes(c, CellType.columnSpace, "HT3", "_:o:_:_");
 			}
 		}
-		
+
 		{ // r2 bottom separator 1.
 			JSONObject r = rows.getJSONObject(4);
 			assertSeparatorRow(r);
@@ -898,6 +898,134 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 				JSONObject c = getCell(r, 12);
 				assertPosition(c, 2, 6);
 				assertAttributes(c, CellType.columnSpace, "HT3", "_:o:_:o");
+			}
+		}
+	}
+
+	public void testGenerateUnitTest2() throws JSONException {
+		@SuppressWarnings("unused")
+		Worksheet ws = SampleDataFactory.createUnitTest2(vwsp.getWorkspace());
+
+		vwsp.addAllWorksheets();
+		UpdateContainer uc = new UpdateContainer();
+		for (VWorksheet vw : vwsp.getVWorksheetList().getVWorksheets()) {
+			uc.add(new WorksheetHierarchicalDataUpdate(vw));
+		}
+
+		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
+//		System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
+//				.prettyPrintJson(new JSONStringer()).toString()));
+		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
+				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
+				.toString()));
+
+		String ucJson = uc.generateJson(vwsp);
+		System.err.println(Util.prettyPrintJson(ucJson));
+
+		JSONObject o = new JSONObject(ucJson);
+		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
+				.getJSONArray(JsonKeys.rows.name());
+		assertEquals(6, rows.length());
+
+		{ // r0 top separator 1.
+			JSONObject r = rows.getJSONObject(0);
+			assertSeparatorRow(r);
+			{ // c0 vertical separator
+				JSONObject c = getCell(r, 0);
+				assertPosition(c, 0, 0);
+				assertAttributes(c, CellType.columnSpace, "HT3", "o:_:o:_");
+			}
+			{ // c0
+				JSONObject c = getCell(r, 1);
+				assertPosition(c, 0, 0);
+				assertAttributes(c, CellType.rowSpace, "HT3", "_:_:o:_");
+			}
+			{ // c0/c1 vertical separator
+				JSONObject c = getCell(r, 2);
+				assertPosition(c, 0, 0);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:_:o:_");
+			}
+			{ // c0/c1 vertical separator
+				JSONObject c = getCell(r, 3);
+				assertPosition(c, 0, 1);
+				assertAttributes(c, CellType.columnSpace, "HT3", "i:_:o:_");
+			}
+			{ // c1
+				JSONObject c = getCell(r, 4);
+				assertPosition(c, 0, 1);
+				assertAttributes(c, CellType.rowSpace, "HT3", "_:_:o:_");
+			}
+			{ // c1/c2 vertical separator
+				JSONObject c = getCell(r, 5);
+				assertPosition(c, 0, 1);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:_:o:_");
+			}
+			{ // c1/c2 vertical separator
+				JSONObject c = getCell(r, 6);
+				assertPosition(c, 0, 2);
+				assertAttributes(c, CellType.columnSpace, "HT3", "i:_:o:_");
+			}
+			{ // c2
+				JSONObject c = getCell(r, 7);
+				assertPosition(c, 0, 2);
+				assertAttributes(c, CellType.rowSpace, "HT3", "_:_:o:_");
+			}
+			{ // c2 vertical separator
+				JSONObject c = getCell(r, 8);
+				assertPosition(c, 0, 2);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:o:o:_");
+			}
+		}
+
+		{ // r0
+			JSONObject r = rows.getJSONObject(0);
+			assertSeparatorRow(r);
+			{ // c0 vertical separator
+				JSONObject c = getCell(r, 0);
+				assertPosition(c, 0, 0);
+				assertAttributes(c, CellType.columnSpace, "HT3", "o:_:_:_");
+			}
+			// TODO: unit test values below need to be set, they were currently
+			// copy pasted from somewhere else.
+			{ // c0
+				JSONObject c = getCell(r, 1);
+				assertPosition(c, 0, 0);
+				assertAttributes(c, CellType.content, "HT3", "_:_:o:_");
+			}
+			{ // c0/c1 vertical separator
+				JSONObject c = getCell(r, 2);
+				assertPosition(c, 0, 0);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:_:o:_");
+			}
+			{ // c0/c1 vertical separator
+				JSONObject c = getCell(r, 3);
+				assertPosition(c, 0, 1);
+				assertAttributes(c, CellType.columnSpace, "HT3", "i:_:o:_");
+			}
+			{ // c1
+				JSONObject c = getCell(r, 4);
+				assertPosition(c, 0, 1);
+				assertAttributes(c, CellType.content, "HT3", "_:_:o:_");
+			}
+			{ // c1/c2 vertical separator
+				JSONObject c = getCell(r, 5);
+				assertPosition(c, 0, 1);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:_:o:_");
+			}
+			{ // c1/c2 vertical separator
+				JSONObject c = getCell(r, 6);
+				assertPosition(c, 0, 2);
+				assertAttributes(c, CellType.columnSpace, "HT3", "i:_:o:_");
+			}
+			{ // c2
+				JSONObject c = getCell(r, 7);
+				assertPosition(c, 0, 2);
+				assertAttributes(c, CellType.content, "HT3", "_:_:o:_");
+			}
+			{ // c2 vertical separator
+				JSONObject c = getCell(r, 8);
+				assertPosition(c, 0, 2);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:o:o:_");
 			}
 		}
 	}
