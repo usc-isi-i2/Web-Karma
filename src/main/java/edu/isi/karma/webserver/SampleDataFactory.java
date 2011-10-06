@@ -149,10 +149,8 @@ public class SampleDataFactory {
 				.setValue(lastName, "Szekely");
 		r1.addNestedRow(addressContainer, f).setValue(what, "home")
 				.setValue(address, "1401 E Maple Ave");
-		r1.addNestedRow(addressContainer, f)
-				.setValue(what, "work")
-				.setValue(address,
-						"4676 Admiralty");
+		r1.addNestedRow(addressContainer, f).setValue(what, "work")
+				.setValue(address, "4676 Admiralty");
 		r1.addNestedRow(relativesContainer, f)
 				.setValue(relFirstName, "Claudia")
 				.setValue(relLastName, "Szekely");
@@ -164,7 +162,7 @@ public class SampleDataFactory {
 
 		return w;
 	}
-	
+
 	public static Worksheet createFlatWorksheet(Workspace wsp, int numRows,
 			int numColumns) {
 
@@ -193,8 +191,9 @@ public class SampleDataFactory {
 		try {
 			r = new FileReader(fileName);
 			Object o = Util.createJson(r);
-			System.err.println("JSON:" + o.toString());
-			JsonImport ji = new JsonImport(o, "Test04", workspace);
+			// System.err.println("JSON:" + o.toString());
+			// System.err.println("JSON:" + JSONObject.quote(o.toString()));
+			JsonImport ji = new JsonImport(o, fileName, workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
 		} catch (FileNotFoundException e) {
@@ -284,6 +283,95 @@ public class SampleDataFactory {
 		}
 
 		return x.toString();
+	}
+
+	/**
+	 * DON"T EDIT, NED FOR UNIT TEST>
+	 * @return
+	 */
+	public static String getSampleJsonForUnitTestString() {
+		JSONStringer x = new JSONStringer();
+		Random rand = new Random(0);
+		try {
+			JSONWriter top = x.array();
+			for (int i = 1; i <= 2; i++) {
+				JSONWriter o = top.object();
+				o.key("a").value("a" + i);
+
+				o.key("b").value("b" + i);
+
+				JSONWriter c = o.key("c").array();
+				for (int ci = 1; ci <= 10; ci++) {
+					JSONWriter co = c.object();
+					co.key("c.1").value("c.1_" + ci);
+					if (rand.nextBoolean()) {
+						co.key("c.2").value("c.2_" + ci);
+					}
+
+					if (rand.nextBoolean()) {
+						//
+					}
+
+					co.endObject();
+				}
+				c.endArray();
+
+				// List of primitive values.
+				JSONWriter d = o.key("d").array();
+				for (int di = 1; di < rand.nextInt(10) + 1; di++) {
+					d.value("d" + di);
+				}
+				d.endArray();
+
+				JSONWriter e = o.key("e").array();
+				for (int ei = 1; ei < rand.nextInt(10) + 1; ei++) {
+					if (rand.nextBoolean()) {
+						e.value("e" + ei + "+" + i);
+					} else {
+						e.object().key("e.1").value("e.1_" + ei).key("e.2")
+								.value("e.2_" + ei).endObject();
+					}
+				}
+				e.endArray();
+
+				o.endObject();
+			}
+			top.endArray();
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return x.toString();
+	}
+
+	public static Worksheet createUnitTest1(Workspace workspace) {
+		return createWorksheetFromJsonString("unit-test-1",
+				getSampleJsonForUnitTestString(), workspace);
+	}
+
+	public static Worksheet createUnitTest2(Workspace workspace) {
+		String s = "[{\"e\":[],\"c\":[{\"c.1\":\"c.1_1\"}]},{\"d\":[\"d1\"],\"e\":[\"e1+2\"],\"c\":[{\"c.1\":\"c.1_1\"}]}]";
+		return createWorksheetFromJsonString("unit-test-2", s, workspace);
+	}
+
+	public static Worksheet createUnitTest3(Workspace workspace) {
+		String s = "[{\"d\":[\"d4\"],\"e\":[],\"c\":[{\"c.1\":\"c.1_1\"}]},{\"d\":[\"d1\"],\"e\":[\"e1+2\"],\"c\":[{\"c.1\":\"c.1_1\"}]}]";
+		return createWorksheetFromJsonString("unit-test-3", s, workspace);
+	}
+
+	public static Worksheet createWorksheetFromJsonString(String name,
+			String jsonString, Workspace workspace) {
+		try {
+			Object o = Util.createJson(jsonString);
+			Util.writeJsonFile(o, name + ".json");
+			JsonImport ji = new JsonImport(o, name, workspace);
+			Worksheet w = ji.generateWorksheet();
+			return w;
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public static Worksheet createSampleJson(Workspace workspace, int numRows) {
