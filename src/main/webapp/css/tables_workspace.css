@@ -225,6 +225,9 @@ a.pagerSizeSelected {
 	font-size: 12px;
 }
 
+#importDatabaseTableButton {
+	font-size: 26px;
+}
 .ui-dialog-titlebar {
         font-family: Verdana,Arial,sans-serif;
         font-size: 0.6em;

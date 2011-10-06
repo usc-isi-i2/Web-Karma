@@ -15,6 +15,8 @@ import edu.isi.karma.controller.command.EditCellCommand;
 import edu.isi.karma.controller.command.EditCellCommandFactory;
 import edu.isi.karma.controller.command.ImportCSVFileCommand;
 import edu.isi.karma.controller.command.ImportCSVFileCommandFactory;
+import edu.isi.karma.controller.command.ImportDatabaseTableCommand;
+import edu.isi.karma.controller.command.ImportDatabaseTableCommandFactory;
 import edu.isi.karma.controller.command.ImportJSONFileCommand;
 import edu.isi.karma.controller.command.ImportJSONFileCommandFactory;
 import edu.isi.karma.controller.command.TablePagerCommand;
@@ -63,6 +65,8 @@ public class ExecutionController {
 				new ImportJSONFileCommandFactory());
 		commandFactoryMap.put(ImportCSVFileCommand.class.getSimpleName(),
 				new ImportCSVFileCommandFactory());
+		commandFactoryMap.put(ImportDatabaseTableCommand.class.getSimpleName(),
+				new ImportDatabaseTableCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

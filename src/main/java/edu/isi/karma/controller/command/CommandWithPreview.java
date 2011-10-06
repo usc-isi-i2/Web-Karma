@@ -14,5 +14,5 @@ public abstract class CommandWithPreview extends Command {
 	public abstract UpdateContainer showPreview(VWorkspace vWorkspace)
 			throws CommandException;
 
-	public abstract String handleUserActions(HttpServletRequest request);
+	public abstract UpdateContainer handleUserActions(HttpServletRequest request);
 }

@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -56,7 +57,7 @@ public class ViewPreferences {
 	
 	private void populatePreferences() {
 		try {
-			// TODO Mke this path to user preferences configurable through web.xml
+			// TODO Make this path to user preferences configurable through web.xml
 			jsonFile = new File("./UserPrefs/" + workspaceId + ".json");
 			if(jsonFile.exists()){
 				// Populate from the existing preferences JSON file
@@ -94,6 +95,63 @@ public class ViewPreferences {
 		return -1;
 	}
 	
+	
+	public JSONObject getCommandPreferencesJSONObject(String commandName){
+		System.out.println("Command name:" + commandName);
+		try {
+			JSONArray commArray = json.getJSONArray("Commands");
+			for(int i=0; i<commArray.length(); i++) {
+				JSONObject obj = commArray.getJSONObject(i);
+				if(obj.getString("Command").equals(commandName)) {
+					return obj.getJSONObject("PreferenceValues");
+				}
+			}
+		} catch (JSONException e) {
+			return null;
+		}
+		return null;
+	}
+	
+	public void setCommandPreferences(String commandName, JSONObject prefValues) {
+		try {
+			JSONArray commArray = null;
+			
+			// Check if the Commands element exists
+			try{
+				commArray = json.getJSONArray("Commands");
+			} catch (JSONException e) {
+				commArray = new JSONArray();
+				e.printStackTrace();
+			}
+			
+			// Check if the command already exists. In that case, we overwrite the values
+			for(int i=0; i<commArray.length(); i++) {
+				JSONObject obj = commArray.getJSONObject(i);
+				if(obj.getString("Command").equals(commandName)) {
+					obj.put("PreferenceValues", prefValues);
+					// Save the new preferences to the file
+					FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
+					return;
+				}
+			}
+			
+			// If the command does not exists, create a new element
+			JSONObject commObj = new JSONObject();
+			commObj.put("Command", commandName);
+			commObj.put("PreferenceValues", prefValues);
+			commArray.put(commObj);
+			json.put("Commands", commArray);
+			
+			// Write the new preferences to the file
+			FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+		
 	public void setIntViewPreferenceValue(ViewPreference pref,
 			int value) {
 		try {

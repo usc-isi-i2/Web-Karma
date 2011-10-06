@@ -16,6 +16,7 @@
 		<link rel="stylesheet" type="text/css" href="./css/jquery.fileupload-ui.css" />
 		<link rel="stylesheet" type="text/css" href="./css/uploadify.css" />
 		<link rel="stylesheet" type="text/css" href="./css/CSVImport.css" />
+		<link rel="stylesheet" type="text/css" href="./css/DatabaseImport.css" />
 		
 		<!-- Third Party JavaScript files		 -->
 		<script type="text/javascript" src="js/jquery-1.6.2.js"></script>
@@ -24,6 +25,8 @@
 		<script type="text/javascript" src="js/jquery.hoverIntent.js"></script>
 		<script type="text/javascript" src="js/jquery.uploadify.v2.1.4.js"></script>
 		<script type="text/javascript" src="js/swfobject.js"></script>
+		<script type="text/javascript" src="js/databaseImportDialog.js"></script>
+		
 		
 		<!-- Home grown JavaScript files -->
 		<script type="text/javascript" src="js/table_manipulation.js"></script>
@@ -84,6 +87,7 @@
 				
 		</script>
 		<script>
+		// TODO NEED TO CLEAN UP!
 			// JQueryify the column tool bar
 			$(function() {
 				$( "#renameColumnButton" ).button({
@@ -134,8 +138,17 @@
 				});
 			});
 			
+			// Database Import div options 
+			// Hide the database import div
+			$(function() {
+				$("#DatabaseImportDiv").hide();
+				$("#importDatabaseTableButton").button();
+				styleDatabaseDialogObjects();
+				addDatabaseImportClickHandlers();
+				$("#importDatabaseTableButton").click(openDatabaseTableImportDialog);
+			});
+			
 			// Hide the table cell edit div
-			// Hide the CSV Import div
 			$(function() {
 				$("#tableCellEditDiv").hide();
 			});
@@ -151,6 +164,9 @@
 				</td>
 				<td>
 					<input type="file" name="file2" id="uploadFile_CSV">
+				</td>
+				<td>
+					<button id="importDatabaseTableButton">Import Database Table</button>
 				</td>
 			</tr>
 		</table>
@@ -221,6 +237,80 @@
 			</div>
 		</div>
 		<div id="tableCellEditDiv">
+		</div>
+		<div id="DatabaseImportDiv">
+			<table>
+				<tbody>
+					<tr>
+						<td>
+							Database Type: 
+							<select id="databaseTypeSelector" class="DatabaseImportOption">
+							  	<option>MySQL</option>
+							  	<option>Oracle</option>
+							</select>
+						</td>
+						<td>
+							Host Name:
+							<input type="textarea" id="DatabaseHostName" class="DatabaseImportOption" maxlength="40" size="10"/>
+						</td>
+						<td>
+							Port Number:
+							<input type="textarea" id="DatabasePortNumber" class="DatabaseImportOption" maxlength="6" size="5"/>
+						</td>
+						<td>
+							Username:
+							<input type="textarea" id="DatabaseUsername" class="DatabaseImportOption" maxlength="20" size="10"/>
+						</td>
+						<td>
+							Password:
+							<input type="password" id="DatabasePassword" class="DatabaseImportOption" maxlength="20" size="10"/>
+						</td>
+						<td id="DBNameCell">
+							<span>Database Name:</span>
+							<input type="textarea" id="DatabaseName" class="DatabaseImportOption" maxlength="20" size="10"/>
+						</td>
+						<td>
+							<button id="DatabaseImportFieldsButton" type="button">OK</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<br>
+			<div class="ui-widget" id="DatabaseImportErrorWindow">
+				<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"> 
+					<p id="databaseImportErrorWindow"><span class="ui-icon ui-icon-alert" 
+							style="float: left; margin-right: .3em;"></span> 
+					<span id="DatabaseImportErrorWindowText"></span></p>
+				</div>
+			</div>
+			<br />
+			<!-- For showing databases and the tables -->
+			<table id="DatabaseImportTableListAndPreview">
+				<tr>
+					<td>
+						Choose Table:
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="textarea" id="databaseTableFilterTable" class="DatabaseImportOption dbTableColumn" maxlength="40" size="15"/>
+					</td>
+					<td rowspan=2 id="DatabasePreviewCell">
+						<span id="dbPreviewTableName"></span>
+						<div id="DatabaseTablePreview">
+							<table></table>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div id="DatabaseTablesList">
+							<table></table>
+						</div>						
+					</td>
+				</tr>
+			</table>
+			<br>
 		</div>
 	</body>
 </html>
