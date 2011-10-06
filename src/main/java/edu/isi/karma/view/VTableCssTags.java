@@ -17,7 +17,7 @@ public class VTableCssTags {
 
 	private static String cssTags[] = { "table01cell", "table02cell",
 			"table03cell", "table04cell", "table05cell", "table06cell",
-			"table07cell", "table08cell", "table09cell", "table10cell" };
+			"table07cell", "table08cell", "table09cell" };
 	static final String CSS_TOP_LEVEL_TABLE_CELL = "topLevelTableCell";
 
 	/**
