@@ -369,6 +369,7 @@ public class VDTableCells {
 		jw.key(rowCells.name()).array();
 		for (int j = 0; j < numCols; j++) {
 			VDCell c = cells[index][j];
+			int columnDepth = vdIndexTable.getColumnDepth(j) - 1;
 
 			// vertical separators.
 			generateJsonVerticalSeparators(Position.left, position, index, j,
@@ -382,10 +383,11 @@ public class VDTableCells {
 			if (stroke != null && stroke.getDepth() == separatorDepth) {
 				style = stroke.getStyle();
 			}
-
+			// ///////////////////// This is incorrect when the cell is empty.
 			// Now calculate the left and right strokes.
 			StrokeStyle leftStrokeStyle = StrokeStyle.none;
-			if (separatorDepth >= c.getDepth()) {
+			if (separatorDepth >= columnDepth) {
+				// if (separatorDepth >= c.getDepth()) {
 				Stroke leftStroke = c.getStroke(separatorDepth, Position.left);
 				if (leftStroke != null) {
 					leftStrokeStyle = leftStroke.getStyle();
@@ -393,7 +395,8 @@ public class VDTableCells {
 			}
 
 			StrokeStyle rightStrokeStyle = StrokeStyle.none;
-			if (separatorDepth >= c.getDepth()) {
+			if (separatorDepth >= columnDepth) {
+				// if (separatorDepth >= c.getDepth()) {
 				Stroke rightStroke = c
 						.getStroke(separatorDepth, Position.right);
 				if (rightStroke != null) {
@@ -421,6 +424,9 @@ public class VDTableCells {
 					//
 					.key("_depth")
 					.value(c.getDepth())
+					//
+					.key("_columnDepth")
+					.value(columnDepth)
 					//
 					.key("_separatorDepth")
 					.value(separatorDepth)
@@ -561,13 +567,14 @@ public class VDTableCells {
 		else if (isTopBottomOfCorner) {
 			Stroke stroke = c.getStroke(columnSeparatorStroke.getDepth(),
 					leftRight);
-			if (stroke !=null){
-			leftRightStrokeStyle = stroke.getStyle();
-			topBottomStrokeStyle = StrokeStyle.none;
-			hTableId = stroke.getHTableId();
-			}else{
-				logger.error("CRASH_isTopBottomOfCorner: row" + rowIndex + ", column="
-						+ colIndex + ", horizontalSeparatorDepth="
+			if (stroke != null) {
+				leftRightStrokeStyle = stroke.getStyle();
+				topBottomStrokeStyle = StrokeStyle.none;
+				hTableId = stroke.getHTableId();
+			} else {
+				logger.error("CRASH_isTopBottomOfCorner: row" + rowIndex
+						+ ", column=" + colIndex
+						+ ", horizontalSeparatorDepth="
 						+ horizontalSeparatorDepth);
 			}
 		}

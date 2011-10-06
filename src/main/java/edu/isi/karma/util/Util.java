@@ -147,7 +147,7 @@ public class Util {
 
 	public static void writeJsonFile(Object o, String name) {
 		try {
-			FileWriter outFile = new FileWriter("lastJsonImport.json");
+			FileWriter outFile = new FileWriter(name);
 			PrintWriter pw = new PrintWriter(outFile);
 			if (o instanceof JSONObject) {
 				JSONObject x = (JSONObject) o;

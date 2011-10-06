@@ -71,7 +71,7 @@ public class Stroke {
 		while (it.hasNext()) {
 			b.append(it.next().toString());
 			if (it.hasNext()) {
-				b.append("/");
+				b.append("/ ");
 			}
 		}
 		return b.toString();

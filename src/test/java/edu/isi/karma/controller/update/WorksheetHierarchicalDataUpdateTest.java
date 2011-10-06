@@ -102,6 +102,8 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		//System.err.println(Util.prettyPrintJson(sw1.toString()));
 
 		JSONObject o = new JSONObject(sw1.toString());
+		Util.writeJsonFile(o, "./unit-test-json.json");
+		
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
 		assertEquals(9, rows.length());
