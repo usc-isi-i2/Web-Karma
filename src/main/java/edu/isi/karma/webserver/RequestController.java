@@ -32,10 +32,15 @@ public class RequestController extends HttpServlet{
 		// If the current request is a part of a command that requires user-interaction
 		if(request.getParameter("commandId") != null && !request.getParameter("command").equals("UndoRedoCommand")) {
 			Command currentCommand = ctrl.getvWorkspace().getWorkspace().getCommandHistory().getCurrentCommand();
-			if(currentCommand != null && request.getParameter("commandId").equals(currentCommand.getId())){
+			
+			if(currentCommand != null && request.getParameter("commandId").equals(currentCommand.getId())){	
 				// Check if the command needs to be executed
 				if(request.getParameter("execute") != null && request.getParameter("execute").equals("true")){
 					try {
+						
+						// Set the parameters if any changed after the user preview
+						((CommandWithPreview) currentCommand).handleUserActions(request);
+						
 						UpdateContainer updateContainer = ctrl.getvWorkspace().getWorkspace()
 						.getCommandHistory().doCommand(currentCommand, ctrl.getvWorkspace());
 						
@@ -44,7 +49,8 @@ public class RequestController extends HttpServlet{
 						logger.error("Error occured while executing command: " + currentCommand.getCommandName(), e);
 					}
 				} else
-					responseString = ((CommandWithPreview) currentCommand).handleUserActions(request);
+					responseString = ((CommandWithPreview) currentCommand).handleUserActions(request)
+							.generateJson(ctrl.getvWorkspace());
 			}
 		} else {
 			responseString = ctrl.invokeCommand(ctrl.getCommand(request));

@@ -30,7 +30,7 @@ import edu.isi.karma.view.VWorkspace;
 
 public class ImportCSVFileCommand extends CommandWithPreview {
 	
-	File csvFile = null;
+	File csvFile;
 	
 	// Index of the column headers row 
 	private int headerRowIndex = 1;
@@ -47,7 +47,11 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 	// Escape character
 	private char escapeCharacter = '\\';
 	
-	VWorkspace vWorkspace;
+	private VWorkspace vWorkspace;
+	
+	protected enum InteractionType {
+		generatePreview, importTable
+	}
 	
 	// Logger object
 	private static Logger logger = LoggerFactory.getLogger(ImportCSVFileCommand.class.getSimpleName());
@@ -264,7 +268,8 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 	}
 
 	@Override
-	public String handleUserActions(HttpServletRequest request) {
+	public UpdateContainer handleUserActions(HttpServletRequest request) {
+		/** Set the parameters **/
 		// Set the delimiter
 		if(request.getParameter("delimiter").equals("comma"))
 			setDelimiter(',');
@@ -303,12 +308,21 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 		} else
 			setDataStartRowIndex(2);
 		
+		/** Send response based on the interaction type **/
 		UpdateContainer c = null;
-		try {
-			c = showPreview(vWorkspace);
-		} catch (CommandException e) {
-			logger.error("Error occured while creating utput JSON for CSV Import", e);
+		InteractionType type = InteractionType.valueOf(request.getParameter("interactionType"));
+		switch (type) {
+		case generatePreview: {
+			try {
+				c = showPreview(vWorkspace);
+			} catch (CommandException e) {
+				logger.error("Error occured while creating utput JSON for CSV Import", e);
+			}
+			return c;
 		}
-		return c.generateJson(vWorkspace);
+		case importTable: 
+			return c;
+		}
+		return c;
 	}
 }

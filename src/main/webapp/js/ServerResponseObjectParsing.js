@@ -352,6 +352,10 @@ function parse(data) {
 				tdTag.children("div.cellValue").removeClass("editedValue");
 			}
 		}
+		
+		if(element["updateType"] == "NewImportDatabaseTableCommandUpdate") {
+			$("#DatabaseImportDiv").data("commandId", element["commandId"]);
+		}
 	});
 }
 

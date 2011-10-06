@@ -136,10 +136,14 @@ function CSVImportOptionsChanged(flag) {
 	options["startRowIndex"] = $("#startRowIndex").val();
 	options["textQualifier"] = $("#textQualifier").val();
 	options["workspaceId"] = $.workspaceGlobalInformation.id;
+	options["interactionType"] = "generatePreview";
 	
 	// Import the CSV if Import button invoked this function
-	if(typeof(flag) == "object")
+	if(typeof(flag) == "object") {
 		options["execute"] = true;
+		options["interactionType"] = "importTable";
+	}
+		
 
 	var returned = $.ajax({
 	   	url: "/RequestController", 

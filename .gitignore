@@ -3,3 +3,4 @@ target
 .DS_Store
 lastJsonImport.json
 UserPrefs/*.json
+UserUploadedFiles

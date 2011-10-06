@@ -1,0 +1,82 @@
+#DatabaseImportDiv td {
+	padding: 3px;
+	color: yellow;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+td#DatabaseImportErrorWindow {
+	border: none;
+}
+
+#DatabaseImportDiv table {
+	border-width: 0px; 
+	border-spacing: 0px; 
+	border-collapse: collapse;
+}
+
+#DatabaseImportDiv {
+	background-color: black;
+}
+
+#DatabaseTablesList {
+	max-height: 400px;
+	max-width: 600px;
+	overflow: auto;
+}
+
+#DatabaseImportFieldsButton {
+	font-size:18px;
+}
+#DatabaseTablesList table td{
+	color: black;
+	background-color: #D4D4D4;
+	border-bottom: 1px solid white;
+	height: 25px;
+	
+}
+
+#DatabaseImportTableListAndPreview td {
+	vertical-align: top;
+}
+
+#DatabaseTablePreview table th {
+	border: 1px solid black;
+	color: black;
+	background-color: #7EC0EE;
+	font-size: 12px;
+}
+
+#DatabasePreviewCell {
+	border-left: 20px solid black;
+}
+
+#DatabaseTablePreview table td {
+	color: black;
+	border: 1px solid black;
+	background-color: #F0F0F0;
+}
+
+#DatabaseTablePreview {
+	max-width: 620px;
+	max-height: 415px;
+	overflow: auto;
+}
+
+.databaseTableImportButton {
+	cursor: pointer;
+}
+
+#DatabaseTablesList table td.highlightDatabaseTableList {
+	background-color: #7EC0EE;
+}
+
+#DatabaseImportErrorWindow.ui-widget{
+	font-size: 0.6em;
+	width: 340px;
+}
+
+
+
+
+
