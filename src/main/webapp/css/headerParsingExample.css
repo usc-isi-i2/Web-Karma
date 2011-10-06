@@ -30,6 +30,11 @@ td.cs {
 	color: #E6EDFF;
 }
 
+.datatopLevelTableCell {
+	background: #F0F3FF;
+	color: #002D94;
+}
+
 .topBorderoutertopLevelTableCell {
 	border-top-style: solid;
 	border-top-color: #80A6FF;
@@ -96,70 +101,80 @@ td.cs {
 	color: #FFFDE6;
 }
 
+.datatable01cell {
+	background: #FEFFFC;
+	color: #455A2D;
+}
+
 .topBorderoutertable01cell {
 	border-top-style: solid;
-	border-top-color: #FFF780;
+	border-top-color: #C0B512;
 }
 
 .topBorderinnertable01cell {
 	border-top-style: dotted;
-	border-top-color: #FFF780;
+	border-top-color: #C0B512;
 }
 
 .topBordernonetable01cell {
 	border-top-style: none;
-	border-top-color: #FFF780;
+	border-top-color: #C0B512;
 }
 
 .leftBorderoutertable01cell {
 	border-left-style: solid;
-	border-left-color: #FFF780;
+	border-left-color: #C0B512;
 }
 
 .leftBorderinnertable01cell {
 	border-left-style: dotted;
-	border-left-color: #FFF780;
+	border-left-color: #C0B512;
 }
 
 .leftBordernonetable01cell {
 	border-left-style: none;
-	border-left-color: #FFF780;
+	border-left-color: #C0B512;
 }
 
 .rightBorderoutertable01cell {
 	border-right-style: solid;
-	border-right-color: #FFF780;
+	border-right-color: #C0B512;
 }
 
 .rightBorderinnertable01cell {
 	border-right-style: dotted;
-	border-right-color: #FFF780;
+	border-right-color: #C0B512;
 }
 
 .rightBordernonetable01cell {
 	border-right-style: none;
-	border-right-color: #FFF780;
+	border-right-color: #C0B512;
 }
 
 .bottomBorderoutertable01cell {
 	border-bottom-style: solid;
-	border-bottom-color: #FFF780;
+	border-bottom-color: #C0B512;
 }
 
 .bottomBorderinnertable01cell {
 	border-bottom-style: dotted;
-	border-bottom-color: #FFF780;
+	border-bottom-color: #C0B512;
 }
 
 .bottomBordernonetable01cell {
 	border-bottom-style: none;
-	border-bottom-color: #FFF780;
+	border-bottom-color: #C0B512;
 }
 
 /* Table02Cell classes */
 .filltable02cell {
 	background: #4D1000;
 	color: #FFFDE6;
+}
+
+.datatable02cell {
+	background: #FFF7F5;
+	color: #6F4338;
 }
 
 .topBorderoutertable02cell {
@@ -228,6 +243,11 @@ td.cs {
 	color: #F5E6FF;
 }
 
+.datatable03cell {
+	background: #F8EDFF;
+	color: #674080;
+}
+
 .topBorderoutertable03cell {
 	border-top-style: solid;
 	border-top-color: #CE80FF;
@@ -292,6 +312,11 @@ td.cs {
 .filltable04cell {
 	background: #1E4D00;
 	color: #F0FFE6;
+}
+
+.datatable04cell {
+	background: #F9FFF5;
+	color: #385128;
 }
 
 .topBorderoutertable04cell {
@@ -360,6 +385,11 @@ td.cs {
 	color: #FFF8E6;
 }
 
+.datatable05cell {
+	background: #FFFAF0;
+	color: #584B2C;
+}
+
 .topBorderoutertable05cell {
 	border-top-style: solid;
 	border-top-color: #FFDA80;
@@ -424,6 +454,11 @@ td.cs {
 .filltable06cell {
 	background: #4D0037;
 	color: #FFE6F8;
+}
+
+.datatable06cell {
+	background: #FFF4FC;
+	color: #5E2F51;
 }
 
 .topBorderoutertable06cell {
@@ -492,70 +527,80 @@ td.cs {
 	color: #E6FFFC;
 }
 
+.datatable07cell {
+	background: #EFFFFD;
+	color: #284F4B;
+}
+
 .topBorderoutertable07cell {
 	border-top-style: solid;
-	border-top-color: #80FFF1;
+	border-top-color: #6C9995;
 }
 
 .topBorderinnertable07cell {
 	border-top-style: dotted;
-	border-top-color: #80FFF1;
+	border-top-color: #6C9995;
 }
 
 .topBordernonetable07cell {
 	border-top-style: none;
-	border-top-color: #80FFF1;
+	border-top-color: #6C9995;
 }
 
 .leftBorderoutertable07cell {
 	border-left-style: solid;
-	border-left-color: #80FFF1;
+	border-left-color: #6C9995;
 }
 
 .leftBorderinnertable07cell {
 	border-left-style: dotted;
-	border-left-color: #80FFF1;
+	border-left-color: #6C9995;
 }
 
 .leftBordernonetable07cell {
 	border-left-style: none;
-	border-left-color: #80FFF1;
+	border-left-color: #6C9995;
 }
 
 .rightBorderoutertable07cell {
 	border-right-style: solid;
-	border-right-color: #80FFF1;
+	border-right-color: #6C9995;
 }
 
 .rightBorderinnertable07cell {
 	border-right-style: dotted;
-	border-right-color: #80FFF1;
+	border-right-color: #6C9995;
 }
 
 .rightBordernonetable07cell {
 	border-right-style: none;
-	border-right-color: #80FFF1;
+	border-right-color: #6C9995;
 }
 
 .bottomBorderoutertable07cell {
 	border-bottom-style: solid;
-	border-bottom-color: #80FFF1;
+	border-bottom-color: #6C9995;
 }
 
 .bottomBorderinnertable07cell {
 	border-bottom-style: dotted;
-	border-bottom-color: #80FFF1;
+	border-bottom-color: #6C9995;
 }
 
 .bottomBordernonetable07cell {
 	border-bottom-style: none;
-	border-bottom-color: #80FFF1;
+	border-bottom-color: #6C9995;
 }
 
 /* Table08Cell classes */
 .filltable08cell {
 	background: #794080;
 	color: #FDE6FF;
+}
+
+.datatable08cell {
+	background: #FFF5FF;
+	color: #5A005E;
 }
 
 .topBorderoutertable08cell {
@@ -622,6 +667,11 @@ td.cs {
 .filltable09cell {
 	background: #804040;
 	color: #FFE6E6;
+}
+
+.datatable09cell {
+	background: #FFFCFC;
+	color: #670005;
 }
 
 .topBorderoutertable09cell {

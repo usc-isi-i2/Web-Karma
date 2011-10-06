@@ -74,7 +74,9 @@
 									// Split the attr attribute of the row cell
 									var attr = cell["attr"];
 									var attrVals = attr.split(":");
+									var cssClass = attrVals[2];
 									console.log(attrVals.length);
+									tdTag.addClass("data"+cssClass);
 									
 									// Populate the td with value if the cell is of content type
 									if(attrVals[0] == "c") {
@@ -85,7 +87,6 @@
 									}
 									
 									tdTag.addClass(attrVals[0]);
-									var cssClass = attrVals[2];
 									
 									// Add the left border
 									if(attrVals[3] != "_") {
