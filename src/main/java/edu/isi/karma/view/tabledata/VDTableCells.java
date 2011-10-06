@@ -428,7 +428,7 @@ public class VDTableCells {
 					.key("_columnDepth")
 					.value(columnDepth)
 					//
-					.key("_separatorDepth")
+					.key("_horizontalSeparatorDepth")
 					.value(separatorDepth)
 					//
 					.key("_leftStrokes")
@@ -443,6 +443,7 @@ public class VDTableCells {
 					.key("_bottomStrokes")
 					.value(Stroke.toString(c.getBottomStrokes()))//
 					.key("_position").value(position.name())//
+					.key("_minMaxDepth").value(combinedMinMaxDepth.toString())//
 			;
 			jw.endObject();
 
@@ -525,6 +526,7 @@ public class VDTableCells {
 		VTableCssTags css = vWorkspace.getViewFactory().getTableCssTags();
 
 		VDCell c = cells[rowIndex][colIndex];
+		int columnDepth = vdIndexTable.getColumnDepth(colIndex) - 1;
 
 		boolean isCorner = (columnSeparatorStroke.getDepth() == horizontalSeparatorDepth);
 		boolean isLeftRightOfCorner = (columnSeparatorStroke.getDepth() > horizontalSeparatorDepth);
@@ -586,6 +588,8 @@ public class VDTableCells {
 		String attributes = encodeForJson(CellType.columnSpace, hTableId,
 				css.getCssTag(hTableId), strokeStyles);
 
+		String debugCorners = isCorner ? "corner"
+				: (isLeftRightOfCorner ? "leftRight" : "topBottom");
 		jw.object()
 				.key(JsonKeys.attr.name())
 				.value(attributes)
@@ -596,11 +600,20 @@ public class VDTableCells {
 				.key("_col")
 				.value(colIndex)
 				//
+				.key("_columnDepth")
+				.value(columnDepth)
+				//
+				.key("_depth")
+				.value(c.getDepth())
+				//
 				.key("_horizontalSeparatorDepth")
 				.value(horizontalSeparatorDepth)
 				//
 				.key("columnSeparatorStroke")
 				.value(columnSeparatorStroke.toString())
+				//
+				.key("_corner")
+				.value(debugCorners)
 				//
 				.key("_LR")
 				.value(leftRight.name())
@@ -663,13 +676,14 @@ public class VDTableCells {
 		VTableCssTags css = vWorkspace.getViewFactory().getTableCssTags();
 
 		VDCell c = cells[rowIndex][colIndex];
-
+		int columnDepth = vdIndexTable.getColumnDepth(colIndex) - 1;
+		
 		// vertical separators.
 		// Using Position.top is arbitrary, just testing to see whether it
 		// works.
 		generateJsonVerticalSeparators(Position.left, Position.top, rowIndex,
-				colIndex, c.getDepth(), jw, vWorksheet, vWorkspace);
-
+				colIndex, columnDepth, jw, vWorksheet, vWorkspace);
+		
 		CellValue cellValue = c.getNode() == null ? null : c.getNode()
 				.getValue();
 		String valueString = cellValue == null ? "" : cellValue.asString();
@@ -699,8 +713,6 @@ public class VDTableCells {
 		// We use column depth because in the case of empty cells, the VDCell
 		// has its true depth rather than the one that corresponds to what it
 		// would have if it was not empty.
-		int columnDepth = vdIndexTable.getColumnDepth(colIndex) - 1;
-
 		StrokeStyle leftStrokeStyle = StrokeStyle.none;
 		Stroke leftStroke = c.getStrokeOrNull(columnDepth, Position.left);
 		if (leftStroke != null) {
@@ -755,7 +767,7 @@ public class VDTableCells {
 		// works.
 		// Need to clean up the code.
 		generateJsonVerticalSeparators(Position.right, Position.top, rowIndex,
-				colIndex, c.getDepth(), jw, vWorksheet, vWorkspace);
+				colIndex, columnDepth, jw, vWorksheet, vWorkspace);
 	}
 
 	private String encodeForJson(CellType cellType, String hTableId,

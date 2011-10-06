@@ -103,7 +103,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		// System.err.println(Util.prettyPrintJson(sw1.toString()));
 
 		JSONObject o = new JSONObject(sw1.toString());
-		Util.writeJsonFile(o, "./unit-test-json.json");
+		Util.writeJsonFile(o, "./testGenerateJson1.json");
 
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
@@ -923,6 +923,8 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
+		Util.writeJsonFile(o, "./testGenerateUnitTest2.json");
+		
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
 		assertEquals(6, rows.length());
