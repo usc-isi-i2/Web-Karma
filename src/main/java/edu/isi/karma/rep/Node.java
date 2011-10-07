@@ -102,7 +102,7 @@ public class Node extends RepEntity {
 			pw.println();
 			nestedTable.prettyPrint(prefix + "      ", pw, factory);
 		} else {
-			pw.println(value.asString());
+			pw.println("<" + value.asString() + ">");
 		}
 	}
 }
