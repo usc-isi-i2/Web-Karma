@@ -97,7 +97,8 @@ public class Node extends RepEntity {
 	@Override
 	public void prettyPrint(String prefix, PrintWriter pw, RepFactory factory) {
 		pw.print(prefix + "  - ");
-		pw.print(factory.getHNode(hNodeId).getColumnName() + ":");
+		pw.print(factory.getHNode(hNodeId).getColumnName() + "/" + id + "/"
+				+ hNodeId + ":");
 		if (nestedTable != null) {
 			pw.println();
 			nestedTable.prettyPrint(prefix + "      ", pw, factory);
