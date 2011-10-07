@@ -285,11 +285,8 @@ public class SampleDataFactory {
 		return x.toString();
 	}
 
-	/**
-	 * DON"T EDIT, NED FOR UNIT TEST>
-	 * @return
-	 */
-	public static String getSampleJsonForUnitTestString() {
+
+	public static String getJsonForUnitTest1() {
 		JSONStringer x = new JSONStringer();
 		Random rand = new Random(0);
 		try {
@@ -345,9 +342,62 @@ public class SampleDataFactory {
 		return x.toString();
 	}
 
+	public static String getJsonForUnitTest4() {
+		JSONStringer x = new JSONStringer();
+		Random rand = new Random(0);
+		try {
+			JSONWriter top = x.array();
+			for (int i = 1; i <= 1; i++) {
+				JSONWriter o = top.object();
+
+				JSONWriter c = o.key("c").array();
+				for (int ci = 1; ci <= 3; ci++) {
+					JSONWriter co = c.object();
+					if (rand.nextBoolean()) {
+						co.key("c.2").value("c.2_" + ci);
+					}
+
+					if (rand.nextBoolean()) {
+						JSONWriter c3a = co.key("c.3").array();
+
+						for (int c3i = 1; c3i < 3; c3i++) {
+							JSONWriter c3o = c3a.object();
+							if (rand.nextBoolean()) {
+								co.key("c.3.1").value(
+										"c.3.1_" + c3i + "+" + ci + "+" + i);
+							}
+							if (rand.nextBoolean()) {
+								co.key("c.3.3").value("c.3.3_" + c3i);
+							}
+							if (rand.nextBoolean()) {
+								JSONWriter c34o = co.key("c.3.4").object();
+								c34o.key("c.3.4.2").value("c.3.4.1_Y");
+								c34o.endObject();
+							}
+							c3o.endObject();
+						}
+
+						c3a.endArray();
+					}
+
+					co.endObject();
+				}
+				c.endArray();
+
+				o.endObject();
+			}
+			top.endArray();
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return x.toString();
+	}
+
 	public static Worksheet createUnitTest1(Workspace workspace) {
 		return createWorksheetFromJsonString("unit-test-1",
-				getSampleJsonForUnitTestString(), workspace);
+				getJsonForUnitTest1(), workspace);
 	}
 
 	public static Worksheet createUnitTest2(Workspace workspace) {
@@ -360,6 +410,11 @@ public class SampleDataFactory {
 		return createWorksheetFromJsonString("unit-test-3", s, workspace);
 	}
 
+	public static Worksheet createUnitTest4(Workspace workspace) {
+		return createWorksheetFromJsonString("unit-test-4",
+				getJsonForUnitTest4(), workspace);
+	}
+	
 	public static Worksheet createWorksheetFromJsonString(String name,
 			String jsonString, Workspace workspace) {
 		try {
