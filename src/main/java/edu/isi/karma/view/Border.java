@@ -170,16 +170,16 @@ public class Border {
 				.value(border.name())
 				//
 				.key(fillId.name())
-				.value(css.getCssTag(margin.getHTableId()))
+				.value(css.getCssTag(margin.getHTableId(), margin.getDepth()))
 				//
 				.key(topBorder.name())
-				.value(encodeBorder(topStroke, css.getCssTag(margin.getHTableId())))
+				.value(encodeBorder(topStroke, css.getCssTag(margin.getHTableId(), margin.getDepth())))
 				//
 				.key(leftBorder.name())
-				.value(encodeBorder(leftStroke, css.getCssTag(stroke.getHTableId())))
+				.value(encodeBorder(leftStroke, css.getCssTag(stroke.getHTableId(), margin.getDepth())))
 				//
 				.key(rightBorder.name())
-				.value(encodeBorder(rightStroke, css.getCssTag(stroke.getHTableId())))//
+				.value(encodeBorder(rightStroke, css.getCssTag(stroke.getHTableId(), margin.getDepth())))//
 		;
 		jw.endObject();
 	}

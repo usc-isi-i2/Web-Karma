@@ -431,7 +431,7 @@ public class VDTableCells {
 			strokeStyles.setStrokeStyle(Position.right, rightStrokeStyle);
 
 			String attributes = encodeForJson(CellType.rowSpace,
-					strokeHTableId, css.getCssTag(strokeHTableId), strokeStyles);
+					strokeHTableId, css.getCssTag(strokeHTableId, c.getDepth()), strokeStyles);
 
 			jw.object()
 					.key(JsonKeys.attr.name())
@@ -607,7 +607,7 @@ public class VDTableCells {
 		strokeStyles.setStrokeStyle(topBottom, topBottomStrokeStyle);
 
 		String attributes = encodeForJson(CellType.columnSpace, hTableId,
-				css.getCssTag(hTableId), strokeStyles);
+				css.getCssTag(hTableId, c.getDepth()), strokeStyles);
 
 		String debugCorners = isCorner ? "corner"
 				: (isLeftRightOfCorner ? "leftRight" : "topBottom");
@@ -754,7 +754,7 @@ public class VDTableCells {
 
 		String attributes = encodeForJson(
 				c.getNode() == null ? CellType.dummyContent : CellType.content,
-				c.getFillHTableId(), css.getCssTag(c.getFillHTableId()),
+				c.getFillHTableId(), css.getCssTag(c.getFillHTableId(), c.getDepth()),
 				strokeStyles);
 
 		jw.object().key(JsonKeys.attr.name())

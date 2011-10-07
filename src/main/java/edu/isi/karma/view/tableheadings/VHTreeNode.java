@@ -514,8 +514,8 @@ public class VHTreeNode {
 			VWorkspace vWorkspace) throws JSONException {
 		VTableCssTags css = vWorkspace.getViewFactory().getTableCssTags();
 
-		String topBorderCss = isRoot() ? css.getCssTag("root") : css
-				.getCssTag(hNode.getHTableId());
+		String topBorderCss = isRoot() ? css.getCssTag("root", 0) : css
+				.getCssTag(hNode.getHTableId(), depth);
 
 		jw.object()
 				//
@@ -549,7 +549,7 @@ public class VHTreeNode {
 				//
 				.key(topBorder.name())
 				.value(Border.encodeBorder(StrokeStyle.none,
-						css.getCssTag(hTableId)))
+						css.getCssTag(hTableId, depth)))
 		//
 		;
 		generateHeadingCommonField(jw, vWorksheet, vWorkspace);
@@ -561,7 +561,7 @@ public class VHTreeNode {
 		VTableCssTags css = vWorkspace.getViewFactory().getTableCssTags();
 
 		String hTableId = isRoot() ? "root" : hNode.getHTableId();
-		String fillCssTag = css.getCssTag(hTableId);
+		String fillCssTag = css.getCssTag(hTableId, depth);
 
 		int span = 1;
 		if (hasChildren()) {
@@ -577,11 +577,11 @@ public class VHTreeNode {
 				//
 				.key(leftBorder.name())
 				.value(Border.encodeBorder(leftInnerStroke.getStyle(),
-						css.getCssTag(leftInnerStroke.getHTableId())))
+						css.getCssTag(leftInnerStroke.getHTableId(), depth)))
 				//
 				.key(rightBorder.name())
 				.value(Border.encodeBorder(rightInnerStroke.getStyle(),
-						css.getCssTag(rightInnerStroke.getHTableId())))//
+						css.getCssTag(rightInnerStroke.getHTableId(), depth)))//
 				//
 				.key("_hTableId").value(hTableId);
 		;
