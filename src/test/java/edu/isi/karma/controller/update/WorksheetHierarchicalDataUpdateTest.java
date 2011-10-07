@@ -1072,9 +1072,9 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		System.err.println(vw.getWorksheet().getDataTable().prettyPrint(f));
 //		System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
 //				.prettyPrintJson(new JSONStringer()).toString()));
-//		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
-//				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
-//				.toString()));
+		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
+				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
+				.toString()));
 
 		String ucJson = uc.generateJson(vwsp);
 //		System.err.println(Util.prettyPrintJson(ucJson));

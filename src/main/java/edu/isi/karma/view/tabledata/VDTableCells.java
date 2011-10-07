@@ -26,6 +26,7 @@ import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.CellType;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys;
 import edu.isi.karma.rep.CellValue;
+import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.view.Stroke;
 import edu.isi.karma.view.Stroke.StrokeStyle;
@@ -200,9 +201,29 @@ public class VDTableCells {
 			}
 		}
 
-		if (n.hasNestedTable()) {
-			for (VDRow vdRow : n.getNestedTableRows()) {
-				populateFromVDRow(vdRow, vWorksheet, vWorkspace);
+		Table nestedTable = n.getNode().getNestedTable();
+		if (nestedTable != null) {
+			// if (n.hasNestedTable()) {
+			// The table is empty
+			if (n.getNestedTableRows().isEmpty()) {
+				String fillHTableId = n.getNode().getNestedTable()
+						.gethTableId();
+				Stroke topStroke = new Stroke(StrokeStyle.outer, fillHTableId,
+						n.getDepth() + 1);
+				for (int j = lr.getLeft(); j <= lr.getRight(); j++) {
+					VDCell c = cells[n.getStartLevel()][j];
+					// System.err.println("EMPTY TABLE row=" + n.getStartLevel()
+					// + ", col=" + j);
+					c.setDepth(n.getDepth() + 1);
+					c.setFillHTableId(fillHTableId);
+					c.addTopStroke(topStroke);
+				}
+			}
+			// The table is not empty.
+			else {
+				for (VDRow vdRow : n.getNestedTableRows()) {
+					populateFromVDRow(vdRow, vWorksheet, vWorkspace);
+				}
 			}
 		}
 		// It is a leaf node.
@@ -677,13 +698,13 @@ public class VDTableCells {
 
 		VDCell c = cells[rowIndex][colIndex];
 		int columnDepth = vdIndexTable.getColumnDepth(colIndex) - 1;
-		
+
 		// vertical separators.
 		// Using Position.top is arbitrary, just testing to see whether it
 		// works.
 		generateJsonVerticalSeparators(Position.left, Position.top, rowIndex,
 				colIndex, columnDepth, jw, vWorksheet, vWorkspace);
-		
+
 		CellValue cellValue = c.getNode() == null ? null : c.getNode()
 				.getValue();
 		String valueString = cellValue == null ? "" : cellValue.asString();
