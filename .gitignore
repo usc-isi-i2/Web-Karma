@@ -4,4 +4,5 @@ target
 lastJsonImport.json
 UserPrefs/*.json
 UserUploadedFiles
+UserUploadedFiles/*.json
 *.json
