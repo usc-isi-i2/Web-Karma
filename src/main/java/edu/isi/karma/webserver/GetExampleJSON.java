@@ -35,7 +35,6 @@ public class GetExampleJSON extends HttpServlet {
 
 		WorkspaceRegistry.getInstance().register(new ExecutionController(vwsp));
 	
-	// Null Pointer
 		SampleDataFactory.createSample1small(workspace);
 		SampleDataFactory.createSample1(workspace);
 		SampleDataFactory.createSampleJsonWithNestedTable2(false/* true: 2 rows */,
@@ -57,6 +56,8 @@ public class GetExampleJSON extends HttpServlet {
 	//	SampleDataFactory.createFromJsonTextFile(workspace, "testGenerateUnitTest1.json");
 		SampleDataFactory.createFromJsonTextFile(workspace, "testGenerateUnitTest2.json");
 	//	SampleDataFactory.createFromJsonTextFile(workspace, "testGenerateUnitTest4.json");
+		SampleDataFactory.createFromJsonTextFile(workspace, "testSampleJsonWithEmptyNestedTable1.json");
+
 		// Put all created worksheet models in the view.
 		vwsp.addAllWorksheets();
 

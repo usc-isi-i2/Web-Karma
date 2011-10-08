@@ -218,6 +218,7 @@ public class VDTableCells {
 					//Uncomment to show the color of the nested table.
 					c.setFillHTableId(fillHTableId);
 					c.addTopStroke(topStroke);
+					c.addBottomStroke(topStroke);
 				}
 			}
 			// The table is not empty.
