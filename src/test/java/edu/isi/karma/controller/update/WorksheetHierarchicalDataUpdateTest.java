@@ -8,7 +8,6 @@ import junit.framework.TestCase;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.CellType;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys;
@@ -1095,6 +1094,15 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 				JSONObject c = getCell(r, 5);
 				assertPosition(c, 1, 2);
 				assertAttributes(c, CellType.dummyContent, "HT22", "o:o:o:o");
+			}
+		}
+		{ // r5 content
+			JSONObject r = rows.getJSONObject(18);
+			assertContentRow(r);
+			{ // c0 vertical separator
+				JSONObject c = getCell(r, 4);
+				assertPosition(c, 4, 2);
+				assertAttributes(c, CellType.columnSpace, "HT15", "_:_:o:o");
 			}
 		}
 	}
