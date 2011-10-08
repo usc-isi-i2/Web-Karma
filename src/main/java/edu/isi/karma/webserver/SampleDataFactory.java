@@ -395,6 +395,78 @@ public class SampleDataFactory {
 		return x.toString();
 	}
 
+	public static String getJsonForUnitTest5() {
+		JSONStringer x = new JSONStringer();
+		Random rand = new Random(0);
+		try {
+			JSONWriter top = x.array();
+			for (int i = 1; i <= 1; i++) {
+				JSONWriter o = top.object();
+
+				JSONWriter c = o.key("c").array();
+				for (int ci = 1; ci <= 4; ci++) {
+					JSONWriter co = c.object();
+					co.key("c.1").value("c.1_" + ci);
+					if (rand.nextBoolean()) {
+						co.key("c.2").value("c.2_" + ci);
+					}
+
+					if (rand.nextBoolean()) {
+						JSONWriter c3a = co.key("c.3").array();
+
+						for (int c3i = 1; c3i < rand.nextInt(10) + 1; c3i++) {
+							JSONWriter c3o = c3a.object();
+							if (rand.nextBoolean()) {
+								co.key("c.3.1").value(
+										"c.3.1_" + c3i + "+" + ci + "+" + i);
+							}
+							if (rand.nextBoolean()) {
+								co.key("c.3.2").value("c.3.2_" + c3i);
+							}
+							if (rand.nextBoolean()) {
+								co.key("c.3.3").value("c.3.3_" + c3i);
+							}
+							if (rand.nextBoolean()) {
+								JSONWriter c34o = co.key("c.3.4").object();
+								c34o.key("c.3.4.1").value("c.3.4.1_X");
+								c34o.key("c.3.4.2").value("c.3.4.1_Y");
+								c34o.endObject();
+							}
+							c3o.endObject();
+						}
+
+						c3a.endArray();
+					}
+
+					co.endObject();
+				}
+				c.endArray();
+
+				JSONWriter e = o.key("e").array();
+				for (int ei = 1; ei < 6; ei++) {
+					if (rand.nextBoolean()) {
+						e.value("e" + ei + "+" + i);
+					} else {
+						e.object().key("e.1").value("e.1_" + ei).key("e.2")
+								.value("e.2_" + ei).endObject();
+					}
+				}
+				e.endArray();
+
+				o.endObject();
+			}
+			top.endArray();
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return x.toString();
+	}
+
+	
+	
+	
 	public static Worksheet createUnitTest1(Workspace workspace) {
 		return createWorksheetFromJsonString("unit-test-1",
 				getJsonForUnitTest1(), workspace);
@@ -413,6 +485,11 @@ public class SampleDataFactory {
 	public static Worksheet createUnitTest4(Workspace workspace) {
 		return createWorksheetFromJsonString("unit-test-4",
 				getJsonForUnitTest4(), workspace);
+	}
+
+	public static Worksheet createUnitTest5(Workspace workspace) {
+		return createWorksheetFromJsonString("unit-test-5",
+				getJsonForUnitTest5(), workspace);
 	}
 	
 	public static Worksheet createWorksheetFromJsonString(String name,
