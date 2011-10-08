@@ -1019,7 +1019,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			{ // c0
 				JSONObject c = getCell(r, 1);
 				assertPosition(c, 0, 0);
-				assertAttributes(c, CellType.dummyContent, "HT8", "_:_:o:o");
+				assertAttributes(c, CellType.dummyContent, "HT8", "o:o:o:o");
 			}
 			{ // c0/c1 vertical separator
 				JSONObject c = getCell(r, 2);
@@ -1049,7 +1049,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			{ // c2
 				JSONObject c = getCell(r, 7);
 				assertPosition(c, 0, 2);
-				assertAttributes(c, CellType.dummyContent, "HT25", "_:_:o:o");
+				assertAttributes(c, CellType.dummyContent, "HT25", "o:o:o:o");
 			}
 			{ // c2 vertical separator
 				JSONObject c = getCell(r, 8);
@@ -1094,7 +1094,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			{ // c0 vertical separator
 				JSONObject c = getCell(r, 5);
 				assertPosition(c, 1, 2);
-				assertAttributes(c, CellType.dummyContent, "HT22", "_:_:o:o");
+				assertAttributes(c, CellType.dummyContent, "HT22", "o:o:o:o");
 			}
 		}
 	}
@@ -1139,7 +1139,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			{ // c0 empty content
 				JSONObject c = getCell(r, 1);
 				assertPosition(c, 1, 0);
-				assertAttributes(c, CellType.dummyContent, "HT8", "_:_:o:o");
+				assertAttributes(c, CellType.dummyContent, "HT8", "o:_:o:o");
 			}
 		}
 	}

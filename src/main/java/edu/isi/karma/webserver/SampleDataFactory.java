@@ -408,7 +408,7 @@ public class SampleDataFactory {
 					JSONWriter co = c.object();
 					co.key("c.1").value("c.1_" + ci);
 					if (rand.nextBoolean()) {
-//						co.key("c.2").value("c.2_" + ci);
+						// Need the call to rand to make the test come out right.
 					}
 
 					if (rand.nextBoolean()) {
