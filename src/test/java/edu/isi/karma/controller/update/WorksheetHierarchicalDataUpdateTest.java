@@ -927,7 +927,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
-		assertEquals(24, rows.length());
+		assertEquals(16, rows.length());
 	}
 	
 	public void testGenerateUnitTest2() throws JSONException {
@@ -943,12 +943,12 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
 //		System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
 //				.prettyPrintJson(new JSONStringer()).toString()));
-//		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
-//				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
-//				.toString()));
+		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
+				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
+				.toString()));
 
 		String ucJson = uc.generateJson(vwsp);
-//		System.err.println(Util.prettyPrintJson(ucJson));
+		System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
 		Util.writeJsonFile(o, "./testGenerateUnitTest2.json");
@@ -1018,7 +1018,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			{ // c0
 				JSONObject c = getCell(r, 1);
 				assertPosition(c, 0, 0);
-				assertAttributes(c, CellType.content, "HT3", "_:_:_:_");
+				assertAttributes(c, CellType.dummyContent, "HT8", "_:_:o:_");
 			}
 			{ // c0/c1 vertical separator
 				JSONObject c = getCell(r, 2);
@@ -1048,7 +1048,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			{ // c2
 				JSONObject c = getCell(r, 7);
 				assertPosition(c, 0, 2);
-				assertAttributes(c, CellType.content, "HT3", "_:_:_:_");
+				assertAttributes(c, CellType.dummyContent, "HT25", "_:_:o:_");
 			}
 			{ // c2 vertical separator
 				JSONObject c = getCell(r, 8);
@@ -1069,12 +1069,12 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		}
 
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
-		System.err.println(vw.getWorksheet().getDataTable().prettyPrint(f));
+//		System.err.println(vw.getWorksheet().getDataTable().prettyPrint(f));
 //		System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
 //				.prettyPrintJson(new JSONStringer()).toString()));
-		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
-				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
-				.toString()));
+//		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
+//				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
+//				.toString()));
 
 		String ucJson = uc.generateJson(vwsp);
 //		System.err.println(Util.prettyPrintJson(ucJson));
@@ -1084,15 +1084,15 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
-		assertEquals(15, rows.length());
+		assertEquals(18, rows.length());
 		
 		{ // r0 top separator 1.
-			JSONObject r = rows.getJSONObject(5);
+			JSONObject r = rows.getJSONObject(6);
 			assertContentRow(r);
 			{ // c0 vertical separator
-				JSONObject c = getCell(r, 4);
+				JSONObject c = getCell(r, 5);
 				assertPosition(c, 1, 2);
-				assertAttributes(c, CellType.columnSpace, "HT15", "i:_:i:o");
+				assertAttributes(c, CellType.dummyContent, "HT22", "_:_:o:_");
 			}
 		}
 	}

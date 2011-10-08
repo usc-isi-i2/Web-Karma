@@ -207,7 +207,7 @@ public class VDTableCells {
 			// The table is empty
 			if (n.getNestedTableRows().isEmpty()) {
 				String fillHTableId = n.getNode().getNestedTable()
-						.gethTableId();
+						.getHTableId();
 				Stroke topStroke = new Stroke(StrokeStyle.outer, fillHTableId,
 						n.getDepth() + 1);
 				for (int j = lr.getLeft(); j <= lr.getRight(); j++) {
@@ -215,6 +215,7 @@ public class VDTableCells {
 					// System.err.println("EMPTY TABLE row=" + n.getStartLevel()
 					// + ", col=" + j);
 					c.setDepth(n.getDepth() + 1);
+					//Uncomment to show the color of the nested table.
 					c.setFillHTableId(fillHTableId);
 					c.addTopStroke(topStroke);
 				}

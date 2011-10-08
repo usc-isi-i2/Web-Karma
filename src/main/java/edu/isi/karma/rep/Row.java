@@ -80,7 +80,7 @@ public class Row extends RepEntity {
 	}
 
 	void addNodeToDataTable(HNode newHNode, Table table, RepFactory factory) {
-		HTable ht = factory.getHTable(table.gethTableId());
+		HTable ht = factory.getHTable(table.getHTableId());
 		if (ht.contains(newHNode)) {
 			Node newNode = factory.createNode(newHNode.getId());
 			addNode(newNode);

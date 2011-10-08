@@ -52,7 +52,7 @@ public class VDTableData {
 				vWorksheet.getTopTablePager(), vWorksheet);
 		for (VDRow r : rows) {
 			r.setFillHTableId(vWorkspace.getRepFactory().getTable(rootTableId)
-					.gethTableId());
+					.getHTableId());
 			r.firstPassTopDown(vWorkspace);
 		}
 		for (VDRow r : rows) {

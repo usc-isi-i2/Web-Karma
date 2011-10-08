@@ -24,7 +24,7 @@ public class Table extends RepEntity {
 		this.hTableId = hTableId;
 	}
 
-	public String gethTableId() {
+	public String getHTableId() {
 		return hTableId;
 	}
 
