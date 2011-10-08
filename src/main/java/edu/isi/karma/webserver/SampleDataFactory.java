@@ -408,7 +408,7 @@ public class SampleDataFactory {
 					JSONWriter co = c.object();
 					co.key("c.1").value("c.1_" + ci);
 					if (rand.nextBoolean()) {
-						co.key("c.2").value("c.2_" + ci);
+//						co.key("c.2").value("c.2_" + ci);
 					}
 
 					if (rand.nextBoolean()) {
@@ -447,8 +447,7 @@ public class SampleDataFactory {
 					if (rand.nextBoolean()) {
 						e.value("e" + ei + "+" + i);
 					} else {
-						e.object().key("e.1").value("e.1_" + ei).key("e.2")
-								.value("e.2_" + ei).endObject();
+						e.object().key("e.1").value("e.1_" + ei).endObject();
 					}
 				}
 				e.endArray();
