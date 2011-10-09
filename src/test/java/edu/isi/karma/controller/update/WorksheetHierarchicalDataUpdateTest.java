@@ -547,6 +547,8 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		// System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
+		Util.writeJsonFile(o, "./testGenerateJson2.json");
+
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
 		assertEquals(5, rows.length());
@@ -914,23 +916,23 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 
 		@SuppressWarnings("unused")
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
-//		System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
-//				.prettyPrintJson(new JSONStringer()).toString()));
-//		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
-//				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
-//				.toString()));
+		// System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
+		// .prettyPrintJson(new JSONStringer()).toString()));
+		// System.err.println(Util.prettyPrintJson(vw.getVDTableData()
+		// .prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
+		// .toString()));
 
 		String ucJson = uc.generateJson(vwsp);
-//		System.err.println(Util.prettyPrintJson(ucJson));
+		// System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
 		Util.writeJsonFile(o, "./testGenerateUnitTest1.json");
-		
+
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
 		assertEquals(24, rows.length());
 	}
-	
+
 	public void testGenerateUnitTest2() throws JSONException {
 		@SuppressWarnings("unused")
 		Worksheet ws = SampleDataFactory.createUnitTest2(vwsp.getWorkspace());
@@ -943,18 +945,18 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 
 		@SuppressWarnings("unused")
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
-//		System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
-//				.prettyPrintJson(new JSONStringer()).toString()));
-//		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
-//				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
-//				.toString()));
+		// System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
+		// .prettyPrintJson(new JSONStringer()).toString()));
+		// System.err.println(Util.prettyPrintJson(vw.getVDTableData()
+		// .prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
+		// .toString()));
 
 		String ucJson = uc.generateJson(vwsp);
-//		System.err.println(Util.prettyPrintJson(ucJson));
+		// System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
 		Util.writeJsonFile(o, "./testGenerateUnitTest2.json");
-		
+
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
 		assertEquals(6, rows.length());
@@ -1059,7 +1061,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			}
 		}
 	}
-	
+
 	public void testGenerateUnitTest4() throws JSONException {
 		@SuppressWarnings("unused")
 		Worksheet ws = SampleDataFactory.createUnitTest4(vwsp.getWorkspace());
@@ -1080,15 +1082,15 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 				.toString()));
 
 		String ucJson = uc.generateJson(vwsp);
-//		System.err.println(Util.prettyPrintJson(ucJson));
+		// System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
 		Util.writeJsonFile(o, "./testGenerateUnitTest4.json");
-		
+
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
 		assertEquals(21, rows.length());
-		
+
 		{ // r0 top separator 1.
 			JSONObject r = rows.getJSONObject(6);
 			assertContentRow(r);
@@ -1108,10 +1110,11 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			}
 		}
 	}
-	
+
 	public void testSampleJsonWithEmptyNestedTable1() throws JSONException {
 		@SuppressWarnings("unused")
-		Worksheet ws = SampleDataFactory.createSampleJsonWithEmptyNestedTable1(vwsp.getWorkspace());
+		Worksheet ws = SampleDataFactory
+				.createSampleJsonWithEmptyNestedTable1(vwsp.getWorkspace());
 
 		vwsp.addAllWorksheets();
 		UpdateContainer uc = new UpdateContainer();
@@ -1121,23 +1124,23 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 
 		@SuppressWarnings("unused")
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
-//		System.err.println(vw.getWorksheet().getDataTable().prettyPrint(f));
-//		System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
-//				.prettyPrintJson(new JSONStringer()).toString()));
-//		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
-//				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
-//				.toString()));
+		// System.err.println(vw.getWorksheet().getDataTable().prettyPrint(f));
+		// System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
+		// .prettyPrintJson(new JSONStringer()).toString()));
+		// System.err.println(Util.prettyPrintJson(vw.getVDTableData()
+		// .prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
+		// .toString()));
 
 		String ucJson = uc.generateJson(vwsp);
-//		System.err.println(Util.prettyPrintJson(ucJson));
+		// System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
 		Util.writeJsonFile(o, "./testSampleJsonWithEmptyNestedTable1.json");
-		
+
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
 		assertEquals(6, rows.length());
-		
+
 		{ // r0 top separator 1.
 			JSONObject r = rows.getJSONObject(4);
 			assertContentRow(r);

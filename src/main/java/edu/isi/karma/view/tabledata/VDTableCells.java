@@ -742,8 +742,8 @@ public class VDTableCells {
 		// has the potential to have further nested tables. When the table is
 		// empty, the columnDepth may be larger than the actual depth of the
 		// cell.
-		int cellDepth = c.getDepth();
 		int columnDepth = vdIndexTable.getColumnDepth(colIndex) - 1;
+		int cellDepth = c.isForEmptyTable() ? c.getDepth() : columnDepth;
 
 		// vertical separators.
 		// Using Position.top is arbitrary, just testing to see whether it
