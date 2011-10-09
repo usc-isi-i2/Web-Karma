@@ -109,7 +109,7 @@ public class VDTreeNode {
 	}
 
 	HNode getHNode(VWorkspace vWorkspace) {
-		return vWorkspace.getRepFactory().getHNode(node.gethNodeId());
+		return vWorkspace.getRepFactory().getHNode(node.getHNodeId());
 	}
 
 	boolean isFirst() {

@@ -80,6 +80,11 @@ public class VDCell {
 
 	private Node node = null;
 
+	/**
+	 * When not null, the NodeId that contains the empty table. 
+	 */
+	private Node nodeWhenPartOfEmptyTable = null;
+
 	private List<Stroke> topStrokes = new LinkedList<Stroke>();
 	private List<Stroke> bottomStrokes = new LinkedList<Stroke>();
 	private List<Stroke> leftStrokes = new LinkedList<Stroke>();
@@ -115,6 +120,18 @@ public class VDCell {
 
 	void setNode(Node node) {
 		this.node = node;
+	}
+
+	boolean isForEmptyTable() {
+		return nodeWhenPartOfEmptyTable != null;
+	}
+
+	Node getNodeIdWhenPartOfEmptyTable() {
+		return nodeWhenPartOfEmptyTable;
+	}
+	
+	void setNodeIdWhenPartOfEmptyTable(Node node) {
+		this.nodeWhenPartOfEmptyTable = node;
 	}
 
 	List<Stroke> getTopStrokes() {

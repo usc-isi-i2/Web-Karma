@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.CellType;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys;
@@ -911,6 +912,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			uc.add(new WorksheetHierarchicalDataUpdate(vw));
 		}
 
+		@SuppressWarnings("unused")
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
 //		System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
 //				.prettyPrintJson(new JSONStringer()).toString()));
@@ -926,7 +928,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
-		assertEquals(16, rows.length());
+		assertEquals(24, rows.length());
 	}
 	
 	public void testGenerateUnitTest2() throws JSONException {
@@ -1070,12 +1072,12 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 
 		@SuppressWarnings("unused")
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
-//		System.err.println(vw.getWorksheet().getDataTable().prettyPrint(f));
-//		System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
-//				.prettyPrintJson(new JSONStringer()).toString()));
-//		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
-//				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
-//				.toString()));
+		System.err.println(vw.getWorksheet().getDataTable().prettyPrint(f));
+		System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
+				.prettyPrintJson(new JSONStringer()).toString()));
+		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
+				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
+				.toString()));
 
 		String ucJson = uc.generateJson(vwsp);
 //		System.err.println(Util.prettyPrintJson(ucJson));

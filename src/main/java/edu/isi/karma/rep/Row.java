@@ -30,7 +30,7 @@ public class Row extends RepEntity {
 	}
 
 	void addNode(Node node) {
-		nodes.put(node.gethNodeId(), node);
+		nodes.put(node.getHNodeId(), node);
 	}
 
 	/**

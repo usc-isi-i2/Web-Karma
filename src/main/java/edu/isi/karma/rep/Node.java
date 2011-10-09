@@ -43,7 +43,7 @@ public class Node extends RepEntity {
 		this.hNodeId = hNodeId;
 	}
 
-	public String gethNodeId() {
+	public String getHNodeId() {
 		return hNodeId;
 	}
 
