@@ -19,6 +19,7 @@ import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.SampleDataFactory;
 
+@SuppressWarnings("unused")
 public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 
 	private RepFactory f;
@@ -72,7 +73,6 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 	}
 
 	public void testGenerateJson1() throws JSONException {
-		@SuppressWarnings("unused")
 		Worksheet ws = SampleDataFactory//
 				// .createSampleJsonWithNestedTable1(vwsp.getWorkspace())//
 				.createSampleJsonWithNestedTable2(false/* true: 2 rows */,
@@ -88,7 +88,6 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			uc.add(new WorksheetHierarchicalDataUpdate(vw));
 		}
 
-		@SuppressWarnings("unused")
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
 		// System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
 		// .prettyPrintJson(new JSONStringer()).toString()));
@@ -525,7 +524,6 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 	}
 
 	public void testGenerateJson2() throws JSONException {
-		@SuppressWarnings("unused")
 		Worksheet ws = SampleDataFactory
 				.createSample1small(vwsp.getWorkspace());
 
@@ -535,7 +533,6 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			uc.add(new WorksheetHierarchicalDataUpdate(vw));
 		}
 
-		@SuppressWarnings("unused")
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
 		// System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
 		// .prettyPrintJson(new JSONStringer()).toString()));
@@ -904,8 +901,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		}
 	}
 
-	public void testGenerateUnitTest1() throws JSONException {
-		@SuppressWarnings("unused")
+	public void testUnitTest1() throws JSONException {
 		Worksheet ws = SampleDataFactory.createUnitTest1(vwsp.getWorkspace());
 
 		vwsp.addAllWorksheets();
@@ -914,7 +910,6 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			uc.add(new WorksheetHierarchicalDataUpdate(vw));
 		}
 
-		@SuppressWarnings("unused")
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
 		// System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
 		// .prettyPrintJson(new JSONStringer()).toString()));
@@ -926,15 +921,14 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		// System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
-		Util.writeJsonFile(o, "./testGenerateUnitTest1.json");
+		Util.writeJsonFile(o, "./testUnitTest1.json");
 
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
 		assertEquals(24, rows.length());
 	}
 
-	public void testGenerateUnitTest2() throws JSONException {
-		@SuppressWarnings("unused")
+	public void testUnitTest2() throws JSONException {
 		Worksheet ws = SampleDataFactory.createUnitTest2(vwsp.getWorkspace());
 
 		vwsp.addAllWorksheets();
@@ -943,7 +937,6 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			uc.add(new WorksheetHierarchicalDataUpdate(vw));
 		}
 
-		@SuppressWarnings("unused")
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
 		// System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
 		// .prettyPrintJson(new JSONStringer()).toString()));
@@ -955,7 +948,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		// System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
-		Util.writeJsonFile(o, "./testGenerateUnitTest2.json");
+		Util.writeJsonFile(o, "./testUnitTest2.json");
 
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
@@ -1062,8 +1055,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		}
 	}
 
-	public void testGenerateUnitTest4() throws JSONException {
-		@SuppressWarnings("unused")
+	public void testUnitTest4() throws JSONException {
 		Worksheet ws = SampleDataFactory.createUnitTest4(vwsp.getWorkspace());
 
 		vwsp.addAllWorksheets();
@@ -1072,20 +1064,19 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			uc.add(new WorksheetHierarchicalDataUpdate(vw));
 		}
 
-		@SuppressWarnings("unused")
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
-		System.err.println(vw.getWorksheet().getDataTable().prettyPrint(f));
-		System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
-				.prettyPrintJson(new JSONStringer()).toString()));
-		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
-				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
-				.toString()));
+//		System.err.println(vw.getWorksheet().getDataTable().prettyPrint(f));
+//		System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
+//				.prettyPrintJson(new JSONStringer()).toString()));
+//		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
+//				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
+//				.toString()));
 
 		String ucJson = uc.generateJson(vwsp);
 		// System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
-		Util.writeJsonFile(o, "./testGenerateUnitTest4.json");
+		Util.writeJsonFile(o, "./testUnitTest4.json");
 
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
@@ -1111,8 +1102,45 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		}
 	}
 
+	public void testUnitTest5() throws JSONException {
+		Worksheet ws = SampleDataFactory.createUnitTest5(vwsp.getWorkspace());
+
+		vwsp.addAllWorksheets();
+		UpdateContainer uc = new UpdateContainer();
+		for (VWorksheet vw : vwsp.getVWorksheetList().getVWorksheets()) {
+			uc.add(new WorksheetHierarchicalDataUpdate(vw));
+		}
+
+		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
+//		System.err.println(vw.getWorksheet().getDataTable().prettyPrint(f));
+//		System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
+//				.prettyPrintJson(new JSONStringer()).toString()));
+//		System.err.println(Util.prettyPrintJson(vw.getVDTableData()
+//				.prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
+//				.toString()));
+
+		String ucJson = uc.generateJson(vwsp);
+		// System.err.println(Util.prettyPrintJson(ucJson));
+
+		JSONObject o = new JSONObject(ucJson);
+		Util.writeJsonFile(o, "./testUnitTest5.json");
+
+		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
+				.getJSONArray(JsonKeys.rows.name());
+		assertEquals(28, rows.length());
+
+		{ // r0 top separator 1.
+			JSONObject r = rows.getJSONObject(26);
+			assertSeparatorRow(r);
+			{ // c0 vertical separator
+				JSONObject c = getCell(r, 1);
+				assertPosition(c, 5, 0);
+				assertAttributes(c, CellType.rowSpace, "HT3", "_:_:_:_");
+			}
+		}
+	}
+	
 	public void testSampleJsonWithEmptyNestedTable1() throws JSONException {
-		@SuppressWarnings("unused")
 		Worksheet ws = SampleDataFactory
 				.createSampleJsonWithEmptyNestedTable1(vwsp.getWorkspace());
 
@@ -1122,7 +1150,6 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 			uc.add(new WorksheetHierarchicalDataUpdate(vw));
 		}
 
-		@SuppressWarnings("unused")
 		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
 		// System.err.println(vw.getWorksheet().getDataTable().prettyPrint(f));
 		// System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
