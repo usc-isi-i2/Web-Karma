@@ -681,10 +681,22 @@ public class VDTableCells {
 				.key("_LR_strokes")
 				.value(Stroke.toString(c.getStrokeList(leftRight)) + lrMessage)
 				//
-				.key("_TB").value(topBottom.name())
+				.key("_TB")
+				.value(topBottom.name())
 				//
 				.key("_TB_Strokes")
-				.value(Stroke.toString(c.getStrokeList(topBottom)) + tbMessage)//
+				.value(Stroke.toString(c.getStrokeList(topBottom)) + tbMessage)
+				//
+				.key("_leftStrokes")
+				.value(Stroke.toString(c.getLeftStrokes()))
+				//
+				.key("_rightStrokes")
+				.value(Stroke.toString(c.getRightStrokes()))
+				//
+				.key("_topStrokes").value(Stroke.toString(c.getTopStrokes()))
+				//
+				.key("_bottomStrokes")
+				.value(Stroke.toString(c.getBottomStrokes()))//
 		;
 		jw.endObject();
 

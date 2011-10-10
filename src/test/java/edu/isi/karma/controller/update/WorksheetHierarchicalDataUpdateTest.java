@@ -72,7 +72,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		assertEquals(styles[3], elements[6]);
 	}
 
-	public void testGenerateJson1() throws JSONException {
+	public void testCreateSampleJsonWithNestedTable2() throws JSONException {
 		Worksheet ws = SampleDataFactory//
 				// .createSampleJsonWithNestedTable1(vwsp.getWorkspace())//
 				.createSampleJsonWithNestedTable2(false/* true: 2 rows */,
@@ -102,7 +102,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		// System.err.println(Util.prettyPrintJson(sw1.toString()));
 
 		JSONObject o = new JSONObject(sw1.toString());
-		Util.writeJsonFile(o, "./testGenerateJson1.json");
+		Util.writeJsonFile(o, "./createSampleJsonWithNestedTable2.json");
 
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
