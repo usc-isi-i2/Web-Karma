@@ -184,6 +184,10 @@ public class VDCell {
 		this.vdCellStrokes = vdCellStrokes;
 	}
 
+	void setDefaultStrokes(Stroke stroke) {
+		vdCellStrokes.setDefault(stroke);
+	}
+
 	/**
 	 * @param depth
 	 * @param position

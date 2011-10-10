@@ -3,6 +3,7 @@
  */
 package edu.isi.karma.view.tabledata;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import edu.isi.karma.view.Stroke;
+import edu.isi.karma.view.Stroke.StrokeStyle;
 import edu.isi.karma.view.tabledata.VDCell.Position;
 
 /**
@@ -17,6 +19,42 @@ import edu.isi.karma.view.tabledata.VDCell.Position;
  * 
  */
 public class VDCellStrokes {
+
+	public class StrokeIterator implements Iterator<Stroke> {
+
+		private final Position position;
+		private int index = 0;
+		private int increment = 1;
+		private int limit;
+
+		StrokeIterator(Position position) {
+			this.position = position;
+			this.limit = strokes[position.ordinal()].length - 1;
+			if (position == Position.right || position == Position.bottom) {
+				this.index = strokes[position.ordinal()].length - 2;
+				this.increment = -1;
+				limit = 0;
+			}
+		}
+
+		@Override
+		public boolean hasNext() {
+			return increment == 1 ? index != limit : index >= limit;
+		}
+
+		@Override
+		public Stroke next() {
+			Stroke result = strokes[position.ordinal()][index];
+			index += increment;
+			return result;
+		}
+
+		@Override
+		public void remove() {
+			throw new Error("Cannot remove!");
+		}
+
+	}
 
 	private int[] minDepth = new int[4];
 
@@ -56,6 +94,14 @@ public class VDCellStrokes {
 		}
 	}
 
+	int getNumStrokes(Position position) {
+		return strokes[position.ordinal()].length - 1;
+	}
+
+	StrokeIterator iterator(Position position) {
+		return new StrokeIterator(position);
+	}
+
 	private void addStroke(Stroke stroke, Position position) {
 		strokes[position.ordinal()][stroke.getDepth()
 				- minDepth[position.ordinal()]] = stroke;
@@ -67,8 +113,7 @@ public class VDCellStrokes {
 		}
 	}
 
-	public void populateFromVDCell(VDVerticalSeparator vdVerticalSeparator,
-			VDCell c) {
+	void populateFromVDCell(VDVerticalSeparator vdVerticalSeparator, VDCell c) {
 		// Add the vertical strokes as defaults, so we get the correct colors
 		// and no lines.
 		addStrokes(vdVerticalSeparator.getLeftStrokes(), Position.left);
@@ -81,11 +126,23 @@ public class VDCellStrokes {
 		addStrokes(c.getBottomStrokes(), Position.bottom);
 	}
 
-	public Stroke getStroke(Position position, int depth) {
+	void setDefault(Stroke stroke) {
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < strokes[i].length; j++) {
+				Stroke s = strokes[i][j];
+				if (s == null || s.getStyle() == StrokeStyle.none) {
+					strokes[i][j] = new Stroke(StrokeStyle.none,
+							stroke.getHTableId(), j + minDepth[i]);
+				}
+			}
+		}
+	}
+
+	Stroke getStroke(Position position, int depth) {
 		return strokes[position.ordinal()][depth - minDepth[position.ordinal()]];
 	}
 
-	public List<Stroke> getList(Position position) {
+	List<Stroke> getList(Position position) {
 		List<Stroke> result = new LinkedList<Stroke>();
 		for (int i = 0; i < strokes[position.ordinal()].length; i++) {
 			Stroke s = strokes[position.ordinal()][i];
@@ -103,7 +160,7 @@ public class VDCellStrokes {
 	 * 
 	 *****************************************************************/
 
-	void prettyPrintJson(JSONWriter jw) throws JSONException {
+	JSONWriter prettyPrintJson(JSONWriter jw) throws JSONException {
 		jw.object()
 				//
 				.key("minTop").value(minDepth[Position.top.ordinal()])
@@ -119,6 +176,7 @@ public class VDCellStrokes {
 				.key("bottom_S")
 				.value(Stroke.toString(getList(Position.bottom)))//
 				.endObject();
+		return jw;
 	}
 
 }

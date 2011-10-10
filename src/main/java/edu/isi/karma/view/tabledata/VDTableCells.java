@@ -12,7 +12,6 @@ import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.Js
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.value;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.worksheetId;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,6 +34,7 @@ import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.tabledata.VDCell.MinMaxDepth;
 import edu.isi.karma.view.tabledata.VDCell.Position;
+import edu.isi.karma.view.tabledata.VDCellStrokes.StrokeIterator;
 import edu.isi.karma.view.tabledata.VDIndexTable.LeftRight;
 import edu.isi.karma.view.tabledata.VDTriangle.TriangleLocation;
 
@@ -69,6 +69,28 @@ public class VDTableCells {
 		this.rootTableId = vWorksheet.getWorksheet().getDataTable().getId();
 		this.vdVerticalSeparators = vdTableData.getVdVerticalSeparators();
 		populate(vdTableData, vWorksheet, vWorkspace);
+		setDefaultStrokes(vdTableData, vWorkspace);
+	}
+
+	int getNumRows() {
+		return numRows;
+	}
+
+	int getNumCols() {
+		return numCols;
+	}
+
+	VDCell get(int rowIndex, int columnIndex) {
+		return cells[rowIndex][columnIndex];
+	}
+
+	public int getNumHorizontalSeparators(int rowIndex, Position position) {
+		int num = 0;
+		for (int j = 0; j < numCols; j++) {
+			VDCell c = cells[rowIndex][j];
+			num = Math.max(num, c.getVdCellStrokes().getNumStrokes(position));
+		}
+		return num;
 	}
 
 	private void populate(VDTableData vdTableData, VWorksheet vWorksheet,
@@ -225,7 +247,7 @@ public class VDTableCells {
 
 		Table nestedTable = n.getNode().getNestedTable();
 		if (nestedTable != null) {
-			// if (n.hasNestedTable()) {
+
 			// The table is empty
 			if (n.getNestedTableRows().isEmpty()) {
 				String fillHTableId = n.getNode().getNestedTable()
@@ -259,6 +281,55 @@ public class VDTableCells {
 			c.setNode(n.getNode());
 		}
 
+	}
+
+	private void setDefaultStrokes(VDTableData vdTableData,
+			VWorkspace vWorkspace) {
+		for (VDRow vdRow : vdTableData.getRows()) {
+			setDefaultStrokesVDRow(vdRow, vWorkspace);
+		}
+	}
+
+	private void setDefaultStrokesVDRow(VDRow vdRow, VWorkspace vWorkspace) {
+		String fill = vdRow.getFillHTableId();
+		LeftRight lr = vdIndexTable.get(vdRow.getContainerHNodeId(vWorkspace));
+		Stroke stroke = new Stroke(StrokeStyle.none, fill, vdRow.getDepth());
+		for (int i = vdRow.getStartLevel(); i <= vdRow.getLastLevel(); i++) {
+			for (int j = lr.getLeft(); j <= lr.getRight(); j++) {
+				cells[i][j].setDefaultStrokes(stroke);
+			}
+		}
+
+		for (VDTreeNode n : vdRow.getNodes()) {
+			setDefaultStrokesFromVDTreeNode(n, vWorkspace);
+		}
+	}
+
+	private void setDefaultStrokesFromVDTreeNode(VDTreeNode n,
+			VWorkspace vWorkspace) {
+		Table nestedTable = n.getNode().getNestedTable();
+		LeftRight lr = vdIndexTable.get(n.getHNode(vWorkspace).getId());
+		if (nestedTable != null) {
+			if (n.getNestedTableRows().isEmpty()) {
+				String fill = n.getNode().getNestedTable().getHTableId();
+				Stroke stroke = new Stroke(StrokeStyle.none, fill,
+						n.getDepth() + 1);
+				for (int j = lr.getLeft(); j <= lr.getRight(); j++) {
+					cells[n.getStartLevel()][j].setDefaultStrokes(stroke);
+				}
+			} else {
+				for (VDRow vdRow : n.getNestedTableRows()) {
+					setDefaultStrokesVDRow(vdRow, vWorkspace);
+				}
+			}
+		}
+
+		// The table is not empty.
+		else {
+			Stroke stroke = new Stroke(StrokeStyle.none,
+					n.getContainerHTableId(vWorkspace), n.getDepth());
+			cells[n.getStartLevel()][lr.getLeft()].setDefaultStrokes(stroke);
+		}
 	}
 
 	public void generateJson(JSONWriter jw, VWorksheet vWorksheet,
@@ -338,37 +409,13 @@ public class VDTableCells {
 			MinMaxDepth combinedMinMaxDepth, JSONWriter jw,
 			VWorksheet vWorksheet, VWorkspace vWorkspace) throws JSONException {
 
-		// The number of separator rows is determined by the delta between the
-		// max and min depth of the cells in the row.
-		int numSeparatorRows = Math.max(0, combinedMinMaxDepth.getDelta());
+		VDCell c = cells[index][0];
+		VDCellStrokes vdcs = c.getVdCellStrokes();
+		StrokeIterator it = vdcs.iterator(position);
 
-		// the top separators start with the minimum depth, and the ones below
-		// correspond to larger depths. There is no top separator for the
-		// max depth, as those strokes are part of the content. For bottom
-		// margins it is the other way around.
-		int currentDepth;
-		int increment;
-		{
-			switch (position) {
-			case top:
-				currentDepth = combinedMinMaxDepth.getMinDepth();
-				increment = 1;
-				break;
-			case bottom:
-				currentDepth = combinedMinMaxDepth.getMaxDepth() - 1;
-				increment = -1;
-				break;
-			default:
-				throw new Error("Should call only with top or bottom");
-			}
-
-			int i = 0;
-			while (i < numSeparatorRows) {
-				generateJsonOneSeparatorRow(index, currentDepth, position,
-						combinedMinMaxDepth, jw, vWorksheet, vWorkspace);
-				i++;
-				currentDepth += increment;
-			}
+		while (it.hasNext()) {
+			generateJsonOneSeparatorRow(index, it.next().getDepth(), position,
+					combinedMinMaxDepth, jw, vWorksheet, vWorkspace);
 		}
 	}
 
@@ -527,43 +574,15 @@ public class VDTableCells {
 			Position topBottom, int rowIndex, int columnIndex,
 			int horizontalSeparatorDepth, JSONWriter jw, VWorksheet vWorksheet,
 			VWorkspace vWorkspace) throws JSONException {
-		// VDCell c = cells[rowIndex][columnIndex];
+		VDCell c = cells[rowIndex][columnIndex];
+		VDCellStrokes vdcs = c.getVdCellStrokes();
+		StrokeIterator it = vdcs.iterator(leftRight);
 
-		VDVerticalSeparator vSep = vdVerticalSeparators.get(vdIndexTable
-				.getHNodeId(columnIndex));
-
-		ArrayList<Stroke> strokeSeparators = vSep.getStrokes(leftRight);
-		int firstSeparatorIndex;
-		int increment;
-		{
-			switch (leftRight) {
-			case left:
-				firstSeparatorIndex = 0;
-				increment = 1;
-				break;
-			case right:
-				firstSeparatorIndex = strokeSeparators.size() - 2;
-				increment = -1;
-				break;
-			default:
-				throw new Error("Should call only with left or right");
-			}
-		}
-
-		// One fewer column that the size of the list because the list always
-		// contains a stroke for the cell itself.
-		int numSeparatorCells = strokeSeparators.size() - 1;
-		int i = 0;
-		int currentStrokeIndex = firstSeparatorIndex;
-		while (i < numSeparatorCells) {
+		while (it.hasNext()) {
 			generateJsonOneVerticalSeparators(leftRight, topBottom, rowIndex,
-					columnIndex, horizontalSeparatorDepth,
-					strokeSeparators.get(currentStrokeIndex), jw, vWorksheet,
-					vWorkspace);
-			i++;
-			currentStrokeIndex += increment;
+					columnIndex, horizontalSeparatorDepth, it.next(), jw,
+					vWorksheet, vWorkspace);
 		}
-
 	}
 
 	private void generateJsonOneVerticalSeparators(Position leftRight,
