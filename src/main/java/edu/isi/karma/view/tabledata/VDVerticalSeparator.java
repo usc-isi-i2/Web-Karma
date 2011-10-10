@@ -65,6 +65,14 @@ public class VDVerticalSeparator {
 		}
 	}
 
+	public int getMinDepth(Position position) {
+		int min = Integer.MAX_VALUE;
+		for (Stroke l : getStrokes(position)) {
+			min = Math.min(min, l.getDepth());
+		}
+		return min;
+	}
+
 	public void addLeft(List<Stroke> list) {
 		leftSeparators.addAll(list);
 	}

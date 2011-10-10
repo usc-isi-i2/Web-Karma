@@ -76,6 +76,28 @@ public class VDTableCells {
 		for (VDRow vdRow : vdTableData.getRows()) {
 			populateFromVDRow(vdRow, vWorksheet, vWorkspace);
 		}
+		initializeVDCellStrokes();
+	}
+
+	private void initializeVDCellStrokes() {
+		for (int i = 0; i < numRows; i++) {
+			MinMaxDepth topCombinedMinMaxDepth = getMinMaxDepth(i, Position.top);
+			MinMaxDepth bottomCombinedMinMaxDepth = getMinMaxDepth(i,
+					Position.bottom);
+
+			int numTop = Math.max(0, topCombinedMinMaxDepth.getDelta()) + 1;
+			int minTop = topCombinedMinMaxDepth.getMinDepth();
+			int numBottom = Math.max(0, bottomCombinedMinMaxDepth.getDelta()) + 1;
+			int minBottom = bottomCombinedMinMaxDepth.getMinDepth();
+			for (int j = 0; j < numCols; j++) {
+				VDVerticalSeparator vdVS = vdVerticalSeparators
+						.get(vdIndexTable.getHNodeId(j));
+				VDCellStrokes vdcs = VDCellStrokes.create(vdVS, numTop, minTop,
+						numBottom, minBottom);
+				vdcs.populateFromVDCell(vdVS, cells[i][j]);
+				cells[i][j].setVdCellStrokes(vdcs);
+			}
+		}
 	}
 
 	private void populateFromVDRow(VDRow vdRow, VWorksheet vWorksheet,
@@ -83,13 +105,13 @@ public class VDTableCells {
 		String fill = vdRow.getFillHTableId();
 		LeftRight lr = vdIndexTable.get(vdRow.getContainerHNodeId(vWorkspace));
 
+		// Set the depth and color of each cell.
 		for (int i = vdRow.getStartLevel(); i <= vdRow.getLastLevel(); i++) {
 			for (int j = lr.getLeft(); j <= lr.getRight(); j++) {
 				VDCell c = cells[i][j];
 				c.setFillHTableId(fill);
 				c.setDepth(vdRow.getDepth());
 			}
-
 		}
 
 		{// top strokes
@@ -614,8 +636,10 @@ public class VDTableCells {
 		else if (isLeftRightOfCorner) {
 			Stroke stroke = c.getStroke(horizontalSeparatorDepth, topBottom);
 			leftRightStrokeStyle = StrokeStyle.none;
-			topBottomStrokeStyle = stroke.getStyle();
-			hTableId = stroke.getHTableId();
+			if (stroke != null) {
+				topBottomStrokeStyle = stroke.getStyle();
+				hTableId = stroke.getHTableId();
+			}
 		}
 
 		else if (isTopBottomOfCorner) {

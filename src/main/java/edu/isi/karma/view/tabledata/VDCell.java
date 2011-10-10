@@ -81,7 +81,7 @@ public class VDCell {
 	private Node node = null;
 
 	/**
-	 * When not null, the NodeId that contains the empty table. 
+	 * When not null, the NodeId that contains the empty table.
 	 */
 	private Node nodeWhenPartOfEmptyTable = null;
 
@@ -89,6 +89,8 @@ public class VDCell {
 	private List<Stroke> bottomStrokes = new LinkedList<Stroke>();
 	private List<Stroke> leftStrokes = new LinkedList<Stroke>();
 	private List<Stroke> rightStrokes = new LinkedList<Stroke>();
+
+	private VDCellStrokes vdCellStrokes;
 
 	private List<VDTriangle> triangles = new LinkedList<VDTriangle>();
 
@@ -129,7 +131,7 @@ public class VDCell {
 	Node getNodeIdWhenPartOfEmptyTable() {
 		return nodeWhenPartOfEmptyTable;
 	}
-	
+
 	void setNodeIdWhenPartOfEmptyTable(Node node) {
 		this.nodeWhenPartOfEmptyTable = node;
 	}
@@ -172,6 +174,14 @@ public class VDCell {
 
 	void addPager(TablePager pager) {
 		pagers.add(pager);
+	}
+
+	VDCellStrokes getVdCellStrokes() {
+		return vdCellStrokes;
+	}
+
+	void setVdCellStrokes(VDCellStrokes vdCellStrokes) {
+		this.vdCellStrokes = vdCellStrokes;
 	}
 
 	/**
@@ -290,5 +300,8 @@ public class VDCell {
 			}
 			jw.endArray();
 		}
+
+		jw.key("vdStrokes");
+		vdCellStrokes.prettyPrintJson(jw);
 	}
 }
