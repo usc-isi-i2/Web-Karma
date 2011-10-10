@@ -415,7 +415,7 @@ public class VDTableCells {
 
 		while (it.hasNext()) {
 			generateJsonOneSeparatorRow(index, it.next().getDepth(), position,
-					combinedMinMaxDepth, jw, vWorksheet, vWorkspace);
+					jw, vWorksheet, vWorkspace);
 		}
 	}
 
@@ -453,8 +453,8 @@ public class VDTableCells {
 	 * @throws JSONException
 	 */
 	private void generateJsonOneSeparatorRow(int index, int separatorDepth,
-			Position position, MinMaxDepth combinedMinMaxDepth, JSONWriter jw,
-			VWorksheet vWorksheet, VWorkspace vWorkspace) throws JSONException {
+			Position position, JSONWriter jw, VWorksheet vWorksheet,
+			VWorkspace vWorkspace) throws JSONException {
 		jw.object().key(rowType.name()).value(separatorRow.name());
 
 		Position strokePosition = position;
@@ -538,7 +538,6 @@ public class VDTableCells {
 					.key("_bottomStrokes")
 					.value(Stroke.toString(c.getBottomStrokes()))//
 					.key("_position").value(position.name())//
-					.key("_minMaxDepth").value(combinedMinMaxDepth.toString())//
 			;
 			jw.endObject();
 
