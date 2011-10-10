@@ -141,7 +141,20 @@ public class VDCellStrokes {
 	}
 
 	Stroke getStroke(Position position, int depth) {
-		return strokes[position.ordinal()][depth - minDepth[position.ordinal()]];
+		int index = depth - minDepth[position.ordinal()];
+		if (index >= 0 && index < strokes[position.ordinal()].length) {
+			return strokes[position.ordinal()][index];
+		} else {
+			if (depth > 0) {
+				return getStroke(position, depth - 1);
+			}
+			return null;
+		}
+	}
+
+	Stroke getMaxStroke(Position position) {
+		Stroke[] x = strokes[position.ordinal()];
+		return x[x.length - 1];
 	}
 
 	List<Stroke> getList(Position position) {
@@ -191,5 +204,4 @@ public class VDCellStrokes {
 				.endObject();
 		return jw;
 	}
-
 }

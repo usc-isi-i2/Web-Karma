@@ -26,7 +26,7 @@ public class Stroke {
 		private StrokeStyle(String code) {
 			this.code = code;
 		}
-		
+
 		public String code() {
 			return code;
 		}
@@ -76,8 +76,4 @@ public class Stroke {
 		}
 		return b.toString();
 	}
-
-	// public static StrokeStyle getStrokeStyle(Stroke stroke) {
-	// return stroke == null ? StrokeStyle.none : stroke.style;
-	// }
 }
