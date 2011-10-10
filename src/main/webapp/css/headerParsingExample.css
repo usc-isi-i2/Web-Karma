@@ -3,8 +3,14 @@ td {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 16px;
 	border-width: 1px;
-	width: 10px;
-	height: 10px;
+}
+
+td.cs {
+	width: 3px;
+}
+
+td.rs {
+	height:5px;
 }
 
 table {
