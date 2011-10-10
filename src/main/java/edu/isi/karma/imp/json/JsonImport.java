@@ -127,6 +127,7 @@ public class JsonImport {
 			JSONObject o = (JSONObject) listValue;
 			@SuppressWarnings("unchecked")
 			Iterator<String> it = o.keys();
+			//TODO: should be replaced by Iterator<String> it = o.sortedKeys();
 			while (it.hasNext()) {
 				String key = it.next();
 				addObjectElement(key, o.get(key), headers, row);
