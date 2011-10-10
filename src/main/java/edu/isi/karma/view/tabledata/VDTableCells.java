@@ -767,8 +767,7 @@ public class VDTableCells {
 
 		jw.key(rowCells.name()).array();
 		for (int j = 0; j < numCols; j++) {
-			generateJsonContentCell(index, j, topCombinedMinMaxDepth,
-					bottomCombinedMinMaxDepth, jw, vWorksheet, vWorkspace);
+			generateJsonContentCell(index, j, jw, vWorksheet, vWorkspace);
 		}
 
 		jw.endArray().endObject();
@@ -787,9 +786,8 @@ public class VDTableCells {
 	 * @throws JSONException
 	 */
 	private void generateJsonContentCell(int rowIndex, int colIndex,
-			MinMaxDepth topCombinedMinMaxDepth,
-			MinMaxDepth bottomCombinedMinMaxDepth, JSONWriter jw,
-			VWorksheet vWorksheet, VWorkspace vWorkspace) throws JSONException {
+			JSONWriter jw, VWorksheet vWorksheet, VWorkspace vWorkspace)
+			throws JSONException {
 		VTableCssTags css = vWorkspace.getViewFactory().getTableCssTags();
 
 		VDCell c = cells[rowIndex][colIndex];
