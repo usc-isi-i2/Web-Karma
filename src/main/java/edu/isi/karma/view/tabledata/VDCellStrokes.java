@@ -154,6 +154,13 @@ public class VDCellStrokes {
 		return result;
 	}
 
+	void populateStrokeStyles(StrokeStyles strokeStyles) {
+		for (Position p : Position.values()) {
+			strokeStyles.setStrokeStyle(p, strokes[p.ordinal()][strokes[p
+					.ordinal()].length - 1].getStyle());
+		}
+	}
+
 	/*****************************************************************
 	 * 
 	 * Debugging Support
@@ -163,9 +170,13 @@ public class VDCellStrokes {
 	JSONWriter prettyPrintJson(JSONWriter jw) throws JSONException {
 		jw.object()
 				//
-				.key("minTop").value(minDepth[Position.top.ordinal()])
+				.key("_minT").value(minDepth[Position.top.ordinal()])
 				//
-				.key("minBottom").value(minDepth[Position.bottom.ordinal()])
+				.key("_minB").value(minDepth[Position.bottom.ordinal()])
+				//
+				.key("_minL").value(minDepth[Position.left.ordinal()])
+				//
+				.key("_minR").value(minDepth[Position.right.ordinal()])
 				//
 				.key("left_S").value(Stroke.toString(getList(Position.left)))
 				//

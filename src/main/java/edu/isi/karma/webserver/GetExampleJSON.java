@@ -59,7 +59,7 @@ public class GetExampleJSON extends HttpServlet {
 //		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest4.json");
 //		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest5.json");
 //		SampleDataFactory.createFromJsonTextFile(workspace, "testSampleJsonWithEmptyNestedTable1.json");
-//		SampleDataFactory.createFromJsonTextFile(workspace, "createSampleJsonWithNestedTable2.json");
+		SampleDataFactory.createFromJsonTextFile(workspace, "createSampleJsonWithNestedTable2.json");
 //		SampleDataFactory.createFromJsonTextFile(workspace, "createSampleJsonWithNestedTable2_VD.json");
 		// Put all created worksheet models in the view.
 		vwsp.addAllWorksheets();

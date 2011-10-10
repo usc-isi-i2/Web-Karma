@@ -812,46 +812,8 @@ public class VDTableCells {
 		String codedStatus = c.getNode() == null ? "" : c.getNode().getStatus()
 				.getCodedStatus();
 
-		// Even though the TDCell has top strokes, we need to figure out whether
-		// those are being drawn in the separators or there is one that should
-		// be drawn by the cell itself. We draw such a stroke if the depth of
-		// the cell is the same as the depth of the stroke.
-		StrokeStyle topStrokeStyle = StrokeStyle.none;
-		if (topCombinedMinMaxDepth.getMaxDepth() == c.getDepth()) {
-			Stroke topStroke = c.getStroke(c.getDepth(), Position.top);
-			if (topStroke != null) {
-				topStrokeStyle = topStroke.getStyle();
-			}
-		}
-
-		StrokeStyle bottomStrokeStyle = StrokeStyle.none;
-		if (bottomCombinedMinMaxDepth.getMaxDepth() == c.getDepth()) {
-			Stroke bottomStroke = c.getStroke(c.getDepth(), Position.bottom);
-			if (bottomStroke != null) {
-				bottomStrokeStyle = bottomStroke.getStyle();
-			}
-		}
-
-		// We use column depth because in the case of empty cells, the VDCell
-		// has its true depth rather than the one that corresponds to what it
-		// would have if it was not empty.
-		StrokeStyle leftStrokeStyle = StrokeStyle.none;
-		Stroke leftStroke = c.getStrokeOrNull(cellDepth, Position.left);
-		if (leftStroke != null) {
-			leftStrokeStyle = leftStroke.getStyle();
-		}
-
-		StrokeStyle rightStrokeStyle = StrokeStyle.none;
-		Stroke rightStroke = c.getStrokeOrNull(cellDepth, Position.right);
-		if (rightStroke != null) {
-			rightStrokeStyle = rightStroke.getStyle();
-		}
-
 		StrokeStyles strokeStyles = new StrokeStyles();
-		strokeStyles.setStrokeStyle(Position.top, topStrokeStyle);
-		strokeStyles.setStrokeStyle(Position.bottom, bottomStrokeStyle);
-		strokeStyles.setStrokeStyle(Position.left, leftStrokeStyle);
-		strokeStyles.setStrokeStyle(Position.right, rightStrokeStyle);
+		c.getVdCellStrokes().populateStrokeStyles(strokeStyles);
 
 		String attributes = encodeForJson(
 				c.getNode() == null ? CellType.dummyContent : CellType.content,
@@ -872,11 +834,11 @@ public class VDTableCells {
 				//
 				.key("_col")
 				.value(colIndex)
-				//
-				.key("_topCombinedMinMaxDepth")
-				.value(topCombinedMinMaxDepth.toString())
-				//
-				.key("_columnDepth").value(columnDepth)
+				// //
+				// .key("_topCombinedMinMaxDepth")
+				// .value(topCombinedMinMaxDepth.toString())
+				// //
+				// .key("_columnDepth").value(columnDepth)
 				//
 				.key("_depth").value(c.getDepth())
 				//
@@ -884,7 +846,12 @@ public class VDTableCells {
 				//
 				.key("_rightStrokes")
 				.value(Stroke.toString(c.getRightStrokes()))//
-				.endObject();
+		;
+
+		jw.key("_vdCellStrokes");
+		c.getVdCellStrokes().prettyPrintJson(jw);
+
+		jw.endObject();
 
 		// vertical separators.
 		// Using Position.top is arbitrary, just testing to see whether it
