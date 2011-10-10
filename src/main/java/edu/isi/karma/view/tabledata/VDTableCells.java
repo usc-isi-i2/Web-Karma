@@ -479,7 +479,6 @@ public class VDTableCells {
 			Stroke strokeTB = c.getVdCellStrokes().getStroke(strokePosition,
 					separatorDepth);
 
-			// ///////////////////// This is incorrect when the cell is empty.
 			// Now calculate the left and right strokes.
 			StrokeStyle leftStrokeStyle = StrokeStyle.none;
 			if (separatorDepth >= columnDepth) {
