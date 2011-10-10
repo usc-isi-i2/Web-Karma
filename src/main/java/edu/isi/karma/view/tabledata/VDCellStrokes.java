@@ -6,6 +6,7 @@ package edu.isi.karma.view.tabledata;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
@@ -126,13 +127,14 @@ public class VDCellStrokes {
 		addStrokes(c.getBottomStrokes(), Position.bottom);
 	}
 
-	void setDefault(Stroke stroke) {
+	void setDefault(Stroke stroke, Set<Stroke> defaultStrokes) {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < strokes[i].length; j++) {
 				Stroke s = strokes[i][j];
-				if (s == null || s.getStyle() == StrokeStyle.none) {
+				if (s == null || defaultStrokes.contains(s)) {
 					strokes[i][j] = new Stroke(StrokeStyle.none,
 							stroke.getHTableId(), j + minDepth[i]);
+					defaultStrokes.add(strokes[i][j]);
 				}
 			}
 		}

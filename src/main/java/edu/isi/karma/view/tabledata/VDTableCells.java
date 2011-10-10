@@ -12,8 +12,10 @@ import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.Js
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.value;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.worksheetId;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
@@ -54,6 +56,8 @@ public class VDTableCells {
 	private final VDVerticalSeparators vdVerticalSeparators;
 
 	private final String rootTableId;
+
+	private final Set<Stroke> defaultStrokes = new HashSet<Stroke>();
 
 	VDTableCells(VDTableData vdTableData, VWorksheet vWorksheet,
 			VWorkspace vWorkspace) {
@@ -296,7 +300,7 @@ public class VDTableCells {
 		Stroke stroke = new Stroke(StrokeStyle.none, fill, vdRow.getDepth());
 		for (int i = vdRow.getStartLevel(); i <= vdRow.getLastLevel(); i++) {
 			for (int j = lr.getLeft(); j <= lr.getRight(); j++) {
-				cells[i][j].setDefaultStrokes(stroke);
+				cells[i][j].setDefaultStrokes(stroke, defaultStrokes);
 			}
 		}
 
@@ -315,7 +319,8 @@ public class VDTableCells {
 				Stroke stroke = new Stroke(StrokeStyle.none, fill,
 						n.getDepth() + 1);
 				for (int j = lr.getLeft(); j <= lr.getRight(); j++) {
-					cells[n.getStartLevel()][j].setDefaultStrokes(stroke);
+					cells[n.getStartLevel()][j].setDefaultStrokes(stroke,
+							defaultStrokes);
 				}
 			} else {
 				for (VDRow vdRow : n.getNestedTableRows()) {
@@ -324,11 +329,12 @@ public class VDTableCells {
 			}
 		}
 
-		// The table is not empty.
+		// The table is not empty. Not sure this is needed.
 		else {
 			Stroke stroke = new Stroke(StrokeStyle.none,
 					n.getContainerHTableId(vWorkspace), n.getDepth());
-			cells[n.getStartLevel()][lr.getLeft()].setDefaultStrokes(stroke);
+			cells[n.getStartLevel()][lr.getLeft()].setDefaultStrokes(stroke,
+					defaultStrokes);
 		}
 	}
 
@@ -470,13 +476,9 @@ public class VDTableCells {
 					separatorDepth, jw, vWorksheet, vWorkspace);
 
 			// Now the horizontal separator cell top/bottom strokes.
-			Stroke stroke = c.getStroke(separatorDepth, strokePosition);
-			String strokeHTableId = (stroke == null) ? c.getFillHTableId()
-					: stroke.getHTableId();
-			StrokeStyle style = StrokeStyle.none;
-			if (stroke != null && stroke.getDepth() == separatorDepth) {
-				style = stroke.getStyle();
-			}
+			Stroke strokeTB = c.getVdCellStrokes().getStroke(strokePosition,
+					separatorDepth);
+
 			// ///////////////////// This is incorrect when the cell is empty.
 			// Now calculate the left and right strokes.
 			StrokeStyle leftStrokeStyle = StrokeStyle.none;
@@ -499,13 +501,14 @@ public class VDTableCells {
 			}
 
 			StrokeStyles strokeStyles = new StrokeStyles();
-			strokeStyles.setStrokeStyle(strokePosition, style);
+			strokeStyles.setStrokeStyle(strokePosition, strokeTB.getStyle());
 			strokeStyles.setStrokeStyle(Position.left, leftStrokeStyle);
 			strokeStyles.setStrokeStyle(Position.right, rightStrokeStyle);
 
 			String attributes = encodeForJson(CellType.rowSpace,
-					strokeHTableId,
-					css.getCssTag(strokeHTableId, c.getDepth()), strokeStyles);
+					strokeTB.getHTableId(),
+					css.getCssTag(strokeTB.getHTableId(), c.getDepth()),
+					strokeStyles);
 
 			jw.object()
 					.key(JsonKeys.attr.name())
@@ -539,6 +542,10 @@ public class VDTableCells {
 					.value(Stroke.toString(c.getBottomStrokes()))//
 					.key("_position").value(position.name())//
 			;
+
+			jw.key("_vdCellStrokes");
+			c.getVdCellStrokes().prettyPrintJson(jw);
+
 			jw.endObject();
 
 			// Now the vertical separators on the right.

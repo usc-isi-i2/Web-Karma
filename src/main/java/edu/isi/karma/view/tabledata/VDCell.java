@@ -5,6 +5,7 @@ package edu.isi.karma.view.tabledata;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONWriter;
@@ -184,8 +185,8 @@ public class VDCell {
 		this.vdCellStrokes = vdCellStrokes;
 	}
 
-	void setDefaultStrokes(Stroke stroke) {
-		vdCellStrokes.setDefault(stroke);
+	void setDefaultStrokes(Stroke stroke, Set<Stroke> defaultStrokes) {
+		vdCellStrokes.setDefault(stroke, defaultStrokes);
 	}
 
 	/**
