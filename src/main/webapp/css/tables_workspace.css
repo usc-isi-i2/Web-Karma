@@ -2,7 +2,7 @@
 	position:absolute;
 	top: 0px;
 	left: 280px;
-	width: 850px;
+/*	width: 850px;*/
 	margin-bottom: 10px;
 	margin-top: 10px;
 	overflow: auto;
@@ -10,6 +10,10 @@
 
 .Worksheet {
 	margin-bottom: 20px;
+	margin-right: 50px;
+/*	display: table;*/
+	display: inline-block;
+	min-width:350px;
 }
 
 .fg-toolbar { padding: .1em; margin: 0; }
@@ -34,7 +38,7 @@
 
 .nestedTableLastRow img{
 	height : 10px;
-	width: 100%;
+	/*width: 100%;*/
 }
 
 .nestedTableLastRow {
@@ -86,6 +90,7 @@
 #commHistoryAndWorkspace div.nestedTableLastRow img {
 	height: 5px;
 	width: 100%;
+	max-width: 80px;
 }
 
 div.editedValue {
@@ -181,6 +186,11 @@ a.pagerSizeSelected {
    cursor: pointer;
 }
 
+.ui-dialog-titlebar {
+        font-family: Verdana,Arial,sans-serif;
+        font-size: 0.6em;
+}
+
 #triangle {
     border: 1px solid #4C4C4C;
     border-width: 2px 0 0 2px;
@@ -193,7 +203,7 @@ a.pagerSizeSelected {
     z-index: 0;
     position: relative;
     bottom: -4px;
-    margin-left: 70px;
+    margin-left: 80px;
     background: #4C4C4C;
 }
 
@@ -228,7 +238,4 @@ a.pagerSizeSelected {
 #importDatabaseTableButton {
 	font-size: 26px;
 }
-.ui-dialog-titlebar {
-        font-family: Verdana,Arial,sans-serif;
-        font-size: 0.6em;
-}
+

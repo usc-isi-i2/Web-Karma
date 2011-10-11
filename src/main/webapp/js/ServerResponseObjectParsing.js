@@ -117,7 +117,7 @@ function parse(data) {
 										);
 					mainDiv.append(pagerOptionsDiv);
 					
-					$("#tablesWorkspace").append(mainDiv);
+					$("#tablesWorkspace").append(mainDiv).append("<br>");
 				} else {
 					
 				}
@@ -446,9 +446,11 @@ function showTableCellMenu() {
 	if($(this).parents("td").hasClass("expandValueCell")){
 		$("#viewValueButton").show();
 		$("#tableCellMenutriangle").css({"margin-left" : "32px"});
+		$("div#tableCellToolBarMenu").css({"width": "105px"});
 	} else {
 		$("#viewValueButton").hide();
 		$("#tableCellMenutriangle").css({"margin-left" : "10px"});
+		$("div#tableCellToolBarMenu").css({"width": "48px"});
 	}
 	$("div#tableCellToolBarMenu").css({"position":"absolute",
     					"top":$(this).offset().top + 10, 
@@ -461,9 +463,11 @@ function hideTableCellMenu() {
 
 function config(event) {
 	$("#toolBarMenu").data("parent", $(this));
-    $("#toolBarMenu").css({"position":"absolute",
+    $("#toolBarMenu").css({"position":"absolute","width":"165px",
     					"top":$(this).offset().top + $(this).height(), 
-    					"left": $(this).offset().left + $(this).width()/2 - $("#toolBarMenu").width()/2}).show();    
+    					//"left":event.clientX-150	,
+    					"left": $(this).offset().left + $(this).width()/2 - $("#toolBarMenu").width()/2}).show();
+    					//"top": event.clientY-10}).show();    
 };
 
 function configOut() {    
