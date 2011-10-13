@@ -8,6 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.List;
 
@@ -98,6 +101,19 @@ public class FileUtil {
 		writer.write(prettyPrintedJSONString);
 		writer.close();
 		logger.debug("Done writing JSON Object into a File: " + jsonFile.getAbsolutePath());
+	}
+	
+	public static String readFileContentsToString (File file) throws IOException {
+		 FileInputStream stream = new FileInputStream(file);
+		  try {
+		    FileChannel fc = stream.getChannel();
+		    MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+		    /* Instead of using default, pass in a decoder. */
+		    return Charset.defaultCharset().decode(bb).toString();
+		  }
+		  finally {
+		    stream.close();
+		  }
 	}
 	
 }
