@@ -347,7 +347,7 @@ public class VDTableCells {
 							.getSimpleName())
 					//
 					.key(worksheetId.name())
-					.value(vWorksheet.getWorksheet().getId())//
+					.value(vWorksheet.getId())//
 					.key(rows.name()).array()//
 			;
 			generateAllJsonRows(jw, vWorksheet, vWorkspace);
@@ -480,6 +480,7 @@ public class VDTableCells {
 					separatorDepth);
 
 			// Now calculate the left and right strokes.
+			int cssDepth = 0;
 			StrokeStyle leftStrokeStyle = StrokeStyle.none;
 			if (separatorDepth >= columnDepth) {
 				leftStrokeStyle = c.getVdCellStrokes()
@@ -497,9 +498,14 @@ public class VDTableCells {
 			strokeStyles.setStrokeStyle(Position.left, leftStrokeStyle);
 			strokeStyles.setStrokeStyle(Position.right, rightStrokeStyle);
 
+			if(separatorDepth >= columnDepth)
+				cssDepth = columnDepth;
+			else
+				cssDepth = separatorDepth;
+			
 			String attributes = encodeForJson(CellType.rowSpace,
 					strokeTB.getHTableId(),
-					css.getCssTag(strokeTB.getHTableId(), c.getDepth()),
+					css.getCssTag(strokeTB.getHTableId(), cssDepth),
 					strokeStyles);
 
 			jw.object()
@@ -684,7 +690,7 @@ public class VDTableCells {
 				topBottomOppositeStrokeStyle);
 
 		String attributes = encodeForJson(CellType.columnSpace, hTableId,
-				css.getCssTag(hTableId, c.getDepth()), strokeStyles);
+				css.getCssTag(hTableId, columnSeparatorStroke.getDepth()), strokeStyles);
 
 		String debugCorners = isCorner ? "corner"
 				: (isLeftRightOfCorner ? "leftRight" : "topBottom");
