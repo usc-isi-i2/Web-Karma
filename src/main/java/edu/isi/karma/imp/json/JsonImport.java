@@ -83,6 +83,14 @@ public class JsonImport {
 		else if (value instanceof Integer) {
 			row.setValue(hNodeId, value.toString());
 		}
+		
+		else if (value instanceof Double) {
+			row.setValue(hNodeId, value.toString());
+		}
+		
+		else if (value instanceof Long) {
+			row.setValue(hNodeId, value.toString());
+		}
 
 		else if (value instanceof Boolean) {
 			row.setValue(hNodeId, value.toString());
