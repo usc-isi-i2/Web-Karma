@@ -11,8 +11,11 @@ import java.util.Map;
 import org.json.JSONWriter;
 
 import edu.isi.karma.controller.update.AbstractUpdate;
+import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHeadersUpdate;
+import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
+import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Table;
@@ -79,7 +82,8 @@ public class VWorksheet extends ViewEntity {
 		this.maxRowsToShowInNestedTables = vWorkspace.getPreferences()
 				.getIntViewPreferenceValue(
 						ViewPreference.maxRowsToShowInNestedTables);
-
+		
+		//TODO: delete VTable for the new table display.
 		this.viewDataTable = new VTable(worksheet.getDataTable().getId());
 
 		this.columns = columns;
@@ -115,6 +119,7 @@ public class VWorksheet extends ViewEntity {
 	}
 
 	public void udateDataTable(ViewFactory viewFactory) {
+		//TODO: do the same thing with the vdTableData.
 		viewDataTable.clear();
 		viewDataTable.addRows(getTopTablePager().getRows(), columns, this,
 				viewFactory);
@@ -188,6 +193,19 @@ public class VWorksheet extends ViewEntity {
 		columnHeaders.add(vch);
 	}
 
+	public void update(UpdateContainer c) {
+		c.add(new WorksheetHierarchicalHeadersUpdate(this));
+		c.add(new WorksheetHierarchicalDataUpdate(this));
+	}
+
+	public void updateHeaders(UpdateContainer c) {
+		c.add(new WorksheetHierarchicalHeadersUpdate(this));
+	}
+
+	public void updateContent(UpdateContainer c) {
+		c.add(new WorksheetHierarchicalDataUpdate(this));
+	}
+	
 	public void generateWorksheetHeadersJson(String prefix, PrintWriter pw,
 			ViewFactory factory) {
 		pw.println(prefix + "{");
@@ -262,4 +280,5 @@ public class VWorksheet extends ViewEntity {
 			VWorkspace vWorkspace) {
 		vdTableData.generateJson(new JSONWriter(w), this, vWorkspace);
 	}
+
 }

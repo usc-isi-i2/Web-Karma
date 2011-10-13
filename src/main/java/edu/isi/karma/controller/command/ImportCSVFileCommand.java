@@ -15,10 +15,6 @@ import org.slf4j.LoggerFactory;
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.controller.update.CSVImportPreviewUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetDataUpdate;
-import edu.isi.karma.controller.update.WorksheetHeadersUpdate;
-import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
-import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
@@ -118,11 +114,7 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 		
 		c.add(new WorksheetListUpdate(vWorkspace.getVWorksheetList()));
 		VWorksheet vw = vWorkspace.getVWorksheet(wsht.getId());
-		c.add(new WorksheetHeadersUpdate(vw));
-		c.add(new WorksheetDataUpdate(vw));
-		c.add(new WorksheetHierarchicalHeadersUpdate(vw));
-		c.add(new WorksheetHierarchicalDataUpdate(vw));
-		
+		vw.update(c);
 		return c;
 	}
 
