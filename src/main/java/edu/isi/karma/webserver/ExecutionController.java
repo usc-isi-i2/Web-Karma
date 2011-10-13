@@ -19,6 +19,8 @@ import edu.isi.karma.controller.command.ImportDatabaseTableCommand;
 import edu.isi.karma.controller.command.ImportDatabaseTableCommandFactory;
 import edu.isi.karma.controller.command.ImportJSONFileCommand;
 import edu.isi.karma.controller.command.ImportJSONFileCommandFactory;
+import edu.isi.karma.controller.command.ImportXMLFileCommand;
+import edu.isi.karma.controller.command.ImportXMLFileCommandFactory;
 import edu.isi.karma.controller.command.TablePagerCommand;
 import edu.isi.karma.controller.command.TablePagerCommandFactory;
 import edu.isi.karma.controller.command.TablePagerResizeCommand;
@@ -67,6 +69,8 @@ public class ExecutionController {
 				new ImportCSVFileCommandFactory());
 		commandFactoryMap.put(ImportDatabaseTableCommand.class.getSimpleName(),
 				new ImportDatabaseTableCommandFactory());
+		commandFactoryMap.put(ImportXMLFileCommand.class.getSimpleName(),
+				new ImportXMLFileCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {
