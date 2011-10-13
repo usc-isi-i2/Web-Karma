@@ -17,6 +17,7 @@
 		<link rel="stylesheet" type="text/css" href="./css/uploadify.css" />
 		<link rel="stylesheet" type="text/css" href="./css/CSVImport.css" />
 		<link rel="stylesheet" type="text/css" href="./css/DatabaseImport.css" />
+		<link rel="stylesheet" type="text/css" href="./css/headerParsingExample.css" />
 		
 		<!-- Third Party JavaScript files		 -->
 		<script type="text/javascript" src="js/jquery-1.6.2.js"></script>
@@ -80,7 +81,22 @@
 						resetCSVDialogOptions();
 				    	showCSVImportOptions(response);
 				    }
-  				})
+  				});
+  				
+  				$('#uploadFile_XML').uploadify({
+    				'uploader'  : '/images/uploadify.swf',
+    				'cancelImg' : '/images/cancel.png',
+    				'script'	: 'RequestController',
+    				'buttonText': 'Import XML',
+    				'scriptData': {'command': 'ImportXMLFileCommand', 
+    								'workspaceId': $.workspaceGlobalInformation.id},
+    				'method'	: 'GET',
+    				'auto': true,
+    				'onComplete'  : function(event, ID, fileObj, response, data) {
+						parse($.parseJSON(response));
+				    }
+  				});
+  				
 				}
 				
 			).error(function() { alert("Error geting sample JSON!"); });
@@ -164,6 +180,9 @@
 				</td>
 				<td>
 					<input type="file" name="file2" id="uploadFile_CSV">
+				</td>
+				<td>
+					<input type="file" name="file3" id="uploadFile_XML">
 				</td>
 				<td>
 					<button id="importDatabaseTableButton">Import Database Table</button>

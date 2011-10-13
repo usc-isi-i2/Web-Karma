@@ -75,12 +75,11 @@
 									var attr = cell["attr"];
 									var attrVals = attr.split(":");
 									var cssClass = attrVals[2];
-									console.log(attrVals.length);
 									tdTag.addClass("data"+cssClass);
 									
 									// Populate the td with value if the cell is of content type
 									if(attrVals[0] == "c") {
-										console.log(cell["value"]);
+										//console.log(cell["value"]);
 										if(cell["value"] == null)
 											console.log("Value not found in a content cell!");
 										tdTag.text(cell["value"]);
