@@ -14,6 +14,13 @@
   
   <dependencies>
     <dependency>
+		<groupId>jgrapht</groupId>
+		<artifactId>jgrapht</artifactId>
+		<version>0.8.2</version>
+		<scope>system</scope>
+		<systemPath>${project.basedir}/lib/jgrapht-jdk1.6.jar</systemPath>
+	</dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
