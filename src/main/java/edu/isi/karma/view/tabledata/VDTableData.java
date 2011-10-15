@@ -47,6 +47,8 @@ public class VDTableData {
 
 		vtHeadings.populateVDVerticalSeparators(vdVerticalSeparators);
 
+		// When the rows change, we need to recompute all the stuff below
+		
 		// Build the VDRows and their content.
 		vtHeadings.getRootVHNode().populateVDRows(null, rows,
 				vWorksheet.getTopTablePager(), vWorksheet);

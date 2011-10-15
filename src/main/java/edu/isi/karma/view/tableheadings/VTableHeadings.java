@@ -62,7 +62,7 @@ public class VTableHeadings {
 							.getSimpleName())
 					//
 					.key(worksheetId.name())
-					.value(vWorksheet.getWorksheet().getId())//
+					.value(vWorksheet.getId())//
 					.key(WorksheetHierarchicalHeadersUpdate.JsonKeys.hTableId
 							.name()).value(hTableId)//
 					.key(rows.name());

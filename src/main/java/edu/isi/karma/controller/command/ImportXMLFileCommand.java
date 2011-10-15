@@ -2,9 +2,11 @@ package edu.isi.karma.controller.command;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.IOException;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,34 +19,34 @@ import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
-public class ImportJSONFileCommand extends Command {
-	File jsonFile;
-	
-	private static Logger logger = LoggerFactory.getLogger(ImportJSONFileCommand.class);
+public class ImportXMLFileCommand extends Command {
+	File xmlFile;
 
-	public ImportJSONFileCommand(String id, File file) {
+	private static Logger logger = LoggerFactory.getLogger(ImportXMLFileCommand.class);
+	
+	protected ImportXMLFileCommand(String id, File uploadedFile) {
 		super(id);
-		this.jsonFile = file;
+		this.xmlFile = uploadedFile;
 	}
 
 	@Override
 	public String getCommandName() {
-		return this.getClass().getSimpleName();
+		return "ImportXMLFileCommand";
 	}
 
 	@Override
 	public String getTitle() {
-		return "Import JSON File";
+		return "Import XML File";
 	}
 
 	@Override
 	public String getDescription() {
 		if (isExecuted()) {
-			return jsonFile.getName() + " imported";
+			return xmlFile.getName() + " imported";
 		} else {
 			return "";
 		}
@@ -60,9 +62,12 @@ public class ImportJSONFileCommand extends Command {
 		Workspace ws = vWorkspace.getWorkspace();
 		UpdateContainer c = new UpdateContainer();
 		try {
-			FileReader reader = new FileReader(jsonFile);
-			Object json = Util.createJson(reader);
-			JsonImport imp = new JsonImport(json, jsonFile.getName(), ws);
+			String fileContents = FileUtil.readFileContentsToString(xmlFile);
+//			System.out.println(fileContents);
+			// Converting the XML to JSON
+			JSONObject json = XML.toJSONObject(fileContents);
+//			System.out.println(json.toString(4));
+			JsonImport imp = new JsonImport(json, xmlFile.getName(), ws);
 			
 			Worksheet wsht = imp.generateWorksheet();
 			vWorkspace.addAllWorksheets();
@@ -73,11 +78,12 @@ public class ImportJSONFileCommand extends Command {
 			c.add(new WorksheetDataUpdate(vw));
 			c.add(new WorksheetHierarchicalHeadersUpdate(vw));
 			c.add(new WorksheetHierarchicalDataUpdate(vw));
-			
 		} catch (FileNotFoundException e) {
 			logger.error("File Not Found", e);
 		} catch (JSONException e) {
 			logger.error("JSON Exception!", e);
+		} catch (IOException e) {
+			logger.error("I/O Exception occured while reading file contents!", e);
 		}
 		
 		return c;
@@ -88,4 +94,5 @@ public class ImportJSONFileCommand extends Command {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }

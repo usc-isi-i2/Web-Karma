@@ -1,12 +1,16 @@
 package edu.isi.karma.webserver;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Random;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONWriter;
+import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +21,7 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.Util;
 
 public class SampleDataFactory {
@@ -201,6 +206,32 @@ public class SampleDataFactory {
 			e.printStackTrace();
 		} catch (JSONException e) {
 			logger.error("Could not parse JSON in file " + fileName + ".");
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static Worksheet createFromXMLTextFile(Workspace workspace,
+			String fileName) {
+		File xmlFile = new File(fileName);
+		try {
+			String fileContents = FileUtil.readFileContentsToString(xmlFile);
+//			System.out.println(fileContents);
+			// Converting the XML to JSON
+			JSONObject json = XML.toJSONObject(fileContents);
+			// System.err.println("JSON:" + o.toString());
+			// System.err.println("JSON:" + JSONObject.quote(o.toString()));
+			JsonImport ji = new JsonImport(json, fileName, workspace);
+			Worksheet w = ji.generateWorksheet();
+			return w;
+		} catch (FileNotFoundException e) {
+			logger.error("Cannot read file " + fileName + ".");
+			e.printStackTrace();
+		} catch (JSONException e) {
+			logger.error("Could not parse JSON in file " + fileName + ".");
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

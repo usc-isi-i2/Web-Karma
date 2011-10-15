@@ -1,10 +1,9 @@
-td {
+/*td {
 	text-align:center;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 16px;
 	border-width: 1px;
-}
-
+}*/
 td.cs {
 	width: 3px;
 }
@@ -13,10 +12,9 @@ td.rs {
 	height:5px;
 }
 
-table {
+/*table {
 	border-collapse: collapse;
-}
-
+}*/
 /*tr.separatorRow td {
 	height: 10px;
 }

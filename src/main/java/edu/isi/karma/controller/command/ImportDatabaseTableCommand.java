@@ -10,6 +10,8 @@ import edu.isi.karma.controller.update.NewDatabaseCommandUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHeadersUpdate;
+import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
+import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.imp.database.DatabaseTableImport;
 import edu.isi.karma.rep.Worksheet;
@@ -156,7 +158,9 @@ public class ImportDatabaseTableCommand extends CommandWithPreview {
 			c.add(new WorksheetListUpdate(vWorkspace.getVWorksheetList()));
 			VWorksheet vw = vWorkspace.getVWorksheet(wsht.getId());
 			c.add(new WorksheetHeadersUpdate(vw));
-			c.add(new WorksheetDataUpdate(vw));	
+			c.add(new WorksheetDataUpdate(vw));
+			c.add(new WorksheetHierarchicalHeadersUpdate(vw));
+			c.add(new WorksheetHierarchicalDataUpdate(vw));
 			
 			// Create a new Database Import Command. The interface allows the user to import multiple tables
 			ImportDatabaseTableCommand comm = new ImportDatabaseTableCommand(vWorkspace.getRepFactory().getNewId("C"), 

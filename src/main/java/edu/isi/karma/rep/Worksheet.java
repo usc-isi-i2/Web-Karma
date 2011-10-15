@@ -5,6 +5,8 @@ package edu.isi.karma.rep;
 
 import java.io.PrintWriter;
 
+import edu.isi.karma.rep.semantictypes.SemanticTypes;
+
 /**
  * @author szekely
  * 
@@ -13,6 +15,7 @@ public class Worksheet extends RepEntity {
 
 	private HTable headers;
 	private Table dataTable;
+	private SemanticTypes semanticTypes;
 
 	@Override
 	public void prettyPrint(String prefix, PrintWriter pw, RepFactory factory) {
@@ -81,6 +84,14 @@ public class Worksheet extends RepEntity {
 	 */
 	public void addNestedTableToDataTable(HNode hNode, RepFactory factory) {
 		dataTable.addNestedTableToDataTable(hNode, factory);
+	}
+
+	public void setSemanticTypes(SemanticTypes semanticTypes) {
+		this.semanticTypes = semanticTypes;
+	}
+
+	public SemanticTypes getSemanticTypes() {
+		return semanticTypes;
 	}
 
 }
