@@ -210,13 +210,13 @@ public class SampleDataFactory {
 		}
 		return null;
 	}
-	
+
 	public static Worksheet createFromXMLTextFile(Workspace workspace,
 			String fileName) {
 		File xmlFile = new File(fileName);
 		try {
 			String fileContents = FileUtil.readFileContentsToString(xmlFile);
-//			System.out.println(fileContents);
+			// System.out.println(fileContents);
 			// Converting the XML to JSON
 			JSONObject json = XML.toJSONObject(fileContents);
 			// System.err.println("JSON:" + o.toString());
@@ -315,7 +315,6 @@ public class SampleDataFactory {
 
 		return x.toString();
 	}
-
 
 	public static String getJsonForUnitTest1() {
 		JSONStringer x = new JSONStringer();
@@ -439,7 +438,8 @@ public class SampleDataFactory {
 					JSONWriter co = c.object();
 					co.key("c.1").value("c.1_" + ci);
 					if (rand.nextBoolean()) {
-						// Need the call to rand to make the test come out right.
+						// Need the call to rand to make the test come out
+						// right.
 					}
 
 					if (rand.nextBoolean()) {
@@ -494,9 +494,63 @@ public class SampleDataFactory {
 		return x.toString();
 	}
 
-	
-	
-	
+	public static String getJsonForUnitTest6() {
+		JSONStringer x = new JSONStringer();
+		Random rand = new Random(0);
+		try {
+			JSONWriter top = x.array();
+			for (int i = 1; i <= 1; i++) {
+				JSONWriter o = top.object();
+
+				JSONWriter c = o.key("c").array();
+				for (int ci = 1; ci <= 1; ci++) {
+					JSONWriter co = c.object();
+					// co.key("c.1").value("c.1_" + ci);
+					if (rand.nextBoolean()) {
+						// Need the call to rand to make the test come out
+						// right.
+					}
+
+					if (rand.nextBoolean()) {
+						JSONWriter c3a = co.key("c.3").array();
+						for (int c3i = 1; c3i <= 2; c3i++) {
+							JSONWriter c3o = c3a.object();
+							if (rand.nextBoolean()) {
+								co.key("c.3.1").value(
+										"c.3.1_" + c3i + "+" + ci + "+" + i);
+							}
+							if (rand.nextBoolean()) {
+								JSONWriter c34o = co.key("c.3.4").object();
+								c34o.key("c.3.4.1").value("c.3.4.1_X");
+								c34o.endObject();
+							}
+							c3o.endObject();
+						}
+
+						c3a.endArray();
+					}
+
+					co.endObject();
+				}
+				c.endArray();
+
+				JSONWriter e = o.key("e").array();
+				for (int ei = 1; ei <= 3; ei++) {
+					e.object().key("e.1").value("e.1_" + ei).endObject();
+				}
+				e.endArray();
+
+				o.endObject();
+			}
+			top.endArray();
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return x.toString();
+	}
+
 	public static Worksheet createUnitTest1(Workspace workspace) {
 		return createWorksheetFromJsonString("unit-test-1",
 				getJsonForUnitTest1(), workspace);
@@ -521,7 +575,12 @@ public class SampleDataFactory {
 		return createWorksheetFromJsonString("unit-test-5",
 				getJsonForUnitTest5(), workspace);
 	}
-	
+
+	public static Worksheet createUnitTest6(Workspace workspace) {
+		return createWorksheetFromJsonString("unit-test-6",
+				getJsonForUnitTest6(), workspace);
+	}
+
 	public static Worksheet createWorksheetFromJsonString(String name,
 			String jsonString, Workspace workspace) {
 		try {

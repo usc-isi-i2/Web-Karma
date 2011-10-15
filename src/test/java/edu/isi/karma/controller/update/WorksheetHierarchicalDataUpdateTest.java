@@ -1130,8 +1130,48 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
+		//TODO: assertEquals(23, rows.length());
 		assertEquals(28, rows.length());
 
+		{ // r0 top separator 1.
+			JSONObject r = rows.getJSONObject(26);
+			assertSeparatorRow(r);
+			{ // c0 vertical separator
+				JSONObject c = getCell(r, 1);
+				assertPosition(c, 5, 0);
+				assertAttributes(c, CellType.rowSpace, "HT3", "_:_:_:_");
+			}
+		}
+	}
+	
+	public void testUnitTest6() throws JSONException {
+		Worksheet ws = SampleDataFactory.createUnitTest6(vwsp.getWorkspace());
+
+		vwsp.addAllWorksheets();
+		UpdateContainer uc = new UpdateContainer();
+		for (VWorksheet vw : vwsp.getVWorksheetList().getVWorksheets()) {
+			uc.add(new WorksheetHierarchicalDataUpdate(vw));
+		}
+
+		VWorksheet vw = vwsp.getVWorksheetList().getVWorksheets().get(0);
+		// System.err.println(vw.getWorksheet().getDataTable().prettyPrint(f));
+		// System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
+		// .prettyPrintJson(new JSONStringer()).toString()));
+		// System.err.println(Util.prettyPrintJson(vw.getVDTableData()
+		// .prettyPrintJson(new JSONStringer(), /* verbose */false, vwsp)
+		// .toString()));
+
+		String ucJson = uc.generateJson(vwsp);
+		// System.err.println(Util.prettyPrintJson(ucJson));
+
+		JSONObject o = new JSONObject(ucJson);
+		Util.writeJsonFile(o, "./testUnitTest6.json");
+
+		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
+				.getJSONArray(JsonKeys.rows.name());
+		assertEquals(10, rows.length());
+		
+		//TODO: set up correct tests after I get the number of rows correct.
 		{ // r0 top separator 1.
 			JSONObject r = rows.getJSONObject(26);
 			assertSeparatorRow(r);
