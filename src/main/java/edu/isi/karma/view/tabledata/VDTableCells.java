@@ -346,8 +346,7 @@ public class VDTableCells {
 					.value(WorksheetHierarchicalDataUpdate.class
 							.getSimpleName())
 					//
-					.key(worksheetId.name())
-					.value(vWorksheet.getId())//
+					.key(worksheetId.name()).value(vWorksheet.getId())//
 					.key(rows.name()).array()//
 			;
 			generateAllJsonRows(jw, vWorksheet, vWorkspace);
@@ -498,11 +497,11 @@ public class VDTableCells {
 			strokeStyles.setStrokeStyle(Position.left, leftStrokeStyle);
 			strokeStyles.setStrokeStyle(Position.right, rightStrokeStyle);
 
-			if(separatorDepth >= columnDepth)
+			if (separatorDepth >= columnDepth)
 				cssDepth = columnDepth;
 			else
 				cssDepth = separatorDepth;
-			
+
 			String attributes = encodeForJson(CellType.rowSpace,
 					strokeTB.getHTableId(),
 					css.getCssTag(strokeTB.getHTableId(), cssDepth),
@@ -610,31 +609,16 @@ public class VDTableCells {
 		StrokeStyle topBottomOppositeStrokeStyle = StrokeStyle.none;
 		String hTableId = columnSeparatorStroke.getHTableId();
 
-		String lrMessage = "";
-		String tbMessage = "";
 		if (isCorner) {
-			Stroke strokeLR = c.getStroke(horizontalSeparatorDepth, leftRight);
-			Stroke strokeTB = c.getStroke(columnSeparatorStroke.getDepth(),
-					topBottom);
-			if (strokeLR != null) {
-				leftRightStrokeStyle = strokeLR.getStyle();
-				hTableId = strokeLR.getHTableId();
-			} else {
-				logger.error("CRASH_isCorner_LR: row=" + rowIndex + ", column="
-						+ colIndex + ", horizontalSeparatorDepth="
-						+ horizontalSeparatorDepth);
-				lrMessage = "*** ERROR, LR is empty for "
-						+ horizontalSeparatorDepth;
-			}
-			if (strokeTB != null) {
-				topBottomStrokeStyle = strokeTB.getStyle();
-			} else {
-				logger.error("CRASH_isCorner_TB: row" + rowIndex + ", column="
-						+ colIndex + ", horizontalSeparatorDepth="
-						+ horizontalSeparatorDepth);
-				tbMessage = "*** ERROR, TB is empty for "
-						+ columnSeparatorStroke.getDepth();
-			}
+
+			Stroke strokeLR = c.getVdCellStrokes().getStroke(leftRight,
+					horizontalSeparatorDepth);
+			leftRightStrokeStyle = strokeLR.getStyle();
+			hTableId = strokeLR.getHTableId();
+
+			Stroke strokeTB = c.getVdCellStrokes().getStroke(topBottom,
+					columnSeparatorStroke.getDepth());
+			topBottomStrokeStyle = strokeTB.getStyle();
 
 			// For empty tables we need to draw the whole thing all around.
 			if (c.isForEmptyTable() && horizontalSeparatorDepth == c.getDepth()) {
@@ -657,28 +641,19 @@ public class VDTableCells {
 		}
 
 		else if (isLeftRightOfCorner) {
-			Stroke stroke = c.getStroke(horizontalSeparatorDepth, topBottom);
 			leftRightStrokeStyle = StrokeStyle.none;
-			if (stroke != null) {
-				topBottomStrokeStyle = stroke.getStyle();
-				hTableId = stroke.getHTableId();
-			}
+			Stroke stroke = c.getVdCellStrokes().getStroke(topBottom,
+					horizontalSeparatorDepth);
+			topBottomStrokeStyle = stroke.getStyle();
+			hTableId = stroke.getHTableId();
 		}
 
 		else if (isTopBottomOfCorner) {
-			Stroke stroke = c.getStroke(columnSeparatorStroke.getDepth(),
-					leftRight);
-			if (stroke != null) {
-				leftRightStrokeStyle = stroke.getStyle();
-				topBottomStrokeStyle = StrokeStyle.none;
-				hTableId = stroke.getHTableId();
-			} else {
-				logger.error("CRASH_isTopBottomOfCorner: row" + rowIndex
-						+ ", column=" + colIndex
-						+ ", horizontalSeparatorDepth="
-						+ horizontalSeparatorDepth);
-				lrMessage = "*** ERROR, LR is empty";
-			}
+			topBottomStrokeStyle = StrokeStyle.none;
+			Stroke stroke = c.getVdCellStrokes().getStroke(leftRight,
+					columnSeparatorStroke.getDepth());
+			leftRightStrokeStyle = stroke.getStyle();
+			hTableId = stroke.getHTableId();
 		}
 
 		StrokeStyles strokeStyles = new StrokeStyles();
@@ -690,7 +665,8 @@ public class VDTableCells {
 				topBottomOppositeStrokeStyle);
 
 		String attributes = encodeForJson(CellType.columnSpace, hTableId,
-				css.getCssTag(hTableId, columnSeparatorStroke.getDepth()), strokeStyles);
+				css.getCssTag(hTableId, columnSeparatorStroke.getDepth()),
+				strokeStyles);
 
 		String debugCorners = isCorner ? "corner"
 				: (isLeftRightOfCorner ? "leftRight" : "topBottom");
@@ -726,13 +702,13 @@ public class VDTableCells {
 				.value(leftRight.name())
 				//
 				.key("_LR_strokes")
-				.value(Stroke.toString(c.getStrokeList(leftRight)) + lrMessage)
+				.value(Stroke.toString(c.getStrokeList(leftRight)))
 				//
 				.key("_TB")
 				.value(topBottom.name())
 				//
 				.key("_TB_Strokes")
-				.value(Stroke.toString(c.getStrokeList(topBottom)) + tbMessage)
+				.value(Stroke.toString(c.getStrokeList(topBottom)))
 				//
 				.key("_leftStrokes")
 				.value(Stroke.toString(c.getLeftStrokes()))
