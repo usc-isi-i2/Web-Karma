@@ -1,25 +1,23 @@
 package edu.isi.karma.modeling.alignment;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.BellmanFordShortestPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.alg.KruskalMinimumSpanningTree;
-import org.jgrapht.event.VertexTraversalEvent;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.WeightedMultigraph;
-import org.jgrapht.util.WeightCombiner;
 
 
 public class SteinerTree {
 	
-	WeightedMultigraph<Vertex, DefaultWeightedEdge> graph;
+	UndirectedGraph<Vertex, DefaultWeightedEdge> graph;
 	List<Vertex> steinerNodes;
 	
-	public SteinerTree(WeightedMultigraph<Vertex, DefaultWeightedEdge> graph, List<Vertex> steinerNodes) {
+	public SteinerTree(UndirectedGraph<Vertex, DefaultWeightedEdge> graph, List<Vertex> steinerNodes) {
 		this.graph = graph;
 		this.steinerNodes = steinerNodes;
 	}
@@ -72,7 +70,7 @@ public class SteinerTree {
 		
 		for (DefaultWeightedEdge edge : edges) {
 
-//			just for test, forcing to select another equal minimal spanning tree
+//			//just for test, forcing to select another equal minimal spanning tree
 //			if (g1.getEdgeSource(edge).getLabel().equalsIgnoreCase("v1") && 
 //					g1.getEdgeTarget(edge).getLabel().equalsIgnoreCase("v3") ) {
 //				Vertex v2 = steinerNodes.get(1);
@@ -187,36 +185,23 @@ public class SteinerTree {
 	public WeightedMultigraph<Vertex, DefaultWeightedEdge> getSteinerTree() {
 		
 		WeightedMultigraph<Vertex, DefaultWeightedEdge> g1 = step1();
-		printGraph(g1.edgeSet());
+		GraphUtil.printGraph(this.graph, g1.edgeSet());
 		
 		WeightedMultigraph<Vertex, DefaultWeightedEdge> g2 = step2(g1);
-		printGraph(g2.edgeSet());
+		GraphUtil.printGraph(this.graph, g2.edgeSet());
 		
 		WeightedMultigraph<Vertex, DefaultWeightedEdge> g3 = step3(g2);
-		printGraph(g3.edgeSet());
+		GraphUtil.printGraph(this.graph, g3.edgeSet());
 		
 		WeightedMultigraph<Vertex, DefaultWeightedEdge> g4 = step4(g3);
-		printGraph(g4.edgeSet());
+		GraphUtil.printGraph(this.graph, g4.edgeSet());
 		
 		WeightedMultigraph<Vertex, DefaultWeightedEdge> g5 = step5(g4);
-		printGraph(g5.edgeSet());
+		GraphUtil.printGraph(this.graph, g5.edgeSet());
 		
 		return g5;
 	}
 	
-	private void printGraph(Set<DefaultWeightedEdge> edges) {
-        
-		for (DefaultWeightedEdge edge : edges) {
-        	System.out.print( ((LabeledWeightedEdge)edge).getLabel());
-        	System.out.print(" (w= ");
-        	System.out.print(graph.getEdgeWeight(edge));
-        	System.out.print(") : ");
-        	System.out.print(graph.getEdgeSource(edge).getLabel());
-        	System.out.print(" --- ");
-        	System.out.println(graph.getEdgeTarget(edge).getLabel());
-        }
-		System.out.println("------------------------------------------");
-	}
 	
 	public static void main(String[] args) {
 		
