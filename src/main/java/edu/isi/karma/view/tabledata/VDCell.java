@@ -3,6 +3,7 @@
  */
 package edu.isi.karma.view.tabledata;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -307,6 +308,7 @@ public class VDCell {
 		}
 
 		jw.key("vdStrokes");
-		vdCellStrokes.prettyPrintJson(jw);
+		Set<Stroke> empty = Collections.emptySet();
+		vdCellStrokes.prettyPrintJson(jw, empty);
 	}
 }
