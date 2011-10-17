@@ -4,7 +4,9 @@
 package edu.isi.karma.view;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @author szekely
@@ -66,10 +68,20 @@ public class Stroke {
 	}
 
 	public static String toString(Collection<Stroke> strokeList) {
+		Set<Stroke> empty = Collections.emptySet();
+		return toString(strokeList, empty);
+	}
+
+	public static String toString(Collection<Stroke> strokeList,
+			Set<Stroke> defaultStrokes) {
 		StringBuffer b = new StringBuffer();
 		Iterator<Stroke> it = strokeList.iterator();
 		while (it.hasNext()) {
-			b.append(it.next().toString());
+			Stroke s = it.next();
+			if (defaultStrokes.contains(s)) {
+				b.append("**");
+			}
+			b.append(s.toString());
 			if (it.hasNext()) {
 				b.append("/ ");
 			}

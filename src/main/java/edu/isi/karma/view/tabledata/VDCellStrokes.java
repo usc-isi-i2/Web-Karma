@@ -65,8 +65,10 @@ public class VDCellStrokes {
 	 */
 	private Stroke[][] strokes = new Stroke[4][];
 
-	public static VDCellStrokes create(VDVerticalSeparator vdVS, int numTop,
-			int minTop, int numBottom, int minBottom) {
+	private final int cellDepth;
+
+	public static VDCellStrokes create(int cellDepth, VDVerticalSeparator vdVS,
+			int numTop, int minTop, int numBottom, int minBottom) {
 
 		int numLeft = vdVS.getLeftStrokes().size();
 		int minLeft = vdVS.getMinDepth(Position.left);
@@ -74,12 +76,13 @@ public class VDCellStrokes {
 		int numRight = vdVS.getRightStrokes().size();
 		int minRight = vdVS.getMinDepth(Position.right);
 
-		return new VDCellStrokes(numLeft, numRight, numTop, numBottom, minLeft,
-				minRight, minTop, minBottom);
+		return new VDCellStrokes(cellDepth, numLeft, numRight, numTop,
+				numBottom, minLeft, minRight, minTop, minBottom);
 	}
 
-	VDCellStrokes(int numLeft, int numRight, int numTop, int numBottom,
-			int minLeft, int minRight, int minTop, int minBottom) {
+	VDCellStrokes(int cellDepth, int numLeft, int numRight, int numTop,
+			int numBottom, int minLeft, int minRight, int minTop, int minBottom) {
+		this.cellDepth = cellDepth;
 		minDepth[Position.left.ordinal()] = minLeft;
 		minDepth[Position.right.ordinal()] = minRight;
 		minDepth[Position.top.ordinal()] = minTop;
@@ -131,13 +134,26 @@ public class VDCellStrokes {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < strokes[i].length; j++) {
 				Stroke s = strokes[i][j];
-				if (s == null || defaultStrokes.contains(s)) {
-					strokes[i][j] = new Stroke(StrokeStyle.none,
-							stroke.getHTableId(), j + minDepth[i]);
-					defaultStrokes.add(strokes[i][j]);
+				if (j + minDepth[i] + cellDepth >= stroke.getDepth()) {
+					if (s == null || defaultStrokes.contains(s)) {
+						strokes[i][j] = new Stroke(StrokeStyle.none,
+								stroke.getHTableId(), j + minDepth[i]
+										+ cellDepth);
+						defaultStrokes.add(strokes[i][j]);
+					}
 				}
 			}
 		}
+	}
+
+	public String getHTableId(int depth) {
+		for (int i = 0; i < 4; i++) {
+			int index = depth - minDepth[i];
+			if (index >= 0 && index < strokes[i].length) {
+				return strokes[i][index].getHTableId();
+			}
+		}
+		return null;
 	}
 
 	Stroke getStroke(Position position, int depth) {
@@ -149,6 +165,31 @@ public class VDCellStrokes {
 				return getStroke(position, depth - 1);
 			}
 			return null;
+		}
+	}
+
+	Stroke getStrokeByIndex(Position position, int index) {
+		if (index >= 0 && index < strokes[position.ordinal()].length) {
+			return strokes[position.ordinal()][index];
+		} else {
+			return new Stroke(StrokeStyle.none, "" + position.name() + "/"
+					+ index, index + minDepth[position.ordinal()]);
+		}
+	}
+
+	int ordinalToIndex(Position position, int ordinal) {
+		int index = ordinal - 1;
+		if (position == Position.right || position == Position.bottom) {
+			index = strokes[position.ordinal()].length - ordinal - 1;
+		}
+		return index;
+	}
+
+	int getDistanceFromCell(Position position, int ordinal) {
+		if (position == Position.left || position == Position.top) {
+			return strokes[position.ordinal()].length - ordinal;
+		} else {
+			return ordinal;
 		}
 	}
 
@@ -182,25 +223,37 @@ public class VDCellStrokes {
 	 * 
 	 *****************************************************************/
 
-	JSONWriter prettyPrintJson(JSONWriter jw) throws JSONException {
+	JSONWriter prettyPrintJson(JSONWriter jw, Set<Stroke> defaultStrokes)
+			throws JSONException {
 		jw.object()
 				//
-				.key("_minT").value(minDepth[Position.top.ordinal()])
+				.key("_D")
+				.value(cellDepth)
 				//
-				.key("_minB").value(minDepth[Position.bottom.ordinal()])
+				.key("_minT")
+				.value(minDepth[Position.top.ordinal()])
 				//
-				.key("_minL").value(minDepth[Position.left.ordinal()])
+				.key("_minB")
+				.value(minDepth[Position.bottom.ordinal()])
 				//
-				.key("_minR").value(minDepth[Position.right.ordinal()])
+				.key("_minL")
+				.value(minDepth[Position.left.ordinal()])
 				//
-				.key("left_S").value(Stroke.toString(getList(Position.left)))
+				.key("_minR")
+				.value(minDepth[Position.right.ordinal()])
 				//
-				.key("right_S").value(Stroke.toString(getList(Position.right)))
+				.key("left_S")
+				.value(Stroke.toString(getList(Position.left), defaultStrokes))
 				//
-				.key("top_S").value(Stroke.toString(getList(Position.top)))
+				.key("right_S")
+				.value(Stroke.toString(getList(Position.right), defaultStrokes))
+				//
+				.key("top_S")
+				.value(Stroke.toString(getList(Position.top), defaultStrokes))
 				//
 				.key("bottom_S")
-				.value(Stroke.toString(getList(Position.bottom)))//
+				.value(Stroke
+						.toString(getList(Position.bottom), defaultStrokes))//
 				.endObject();
 		return jw;
 	}

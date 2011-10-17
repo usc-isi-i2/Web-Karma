@@ -37,10 +37,10 @@ public class GetExampleJSON extends HttpServlet {
 	
 //		SampleDataFactory.createSample1small(workspace);
 		SampleDataFactory.createSample1(workspace);
-		SampleDataFactory.createSampleJsonWithNestedTable2(false/* true: 2 rows */,
-				vwsp.getWorkspace());
+//		SampleDataFactory.createSampleJsonWithNestedTable2(false/* true: 2 rows */,
+//				vwsp.getWorkspace());
 //		//SampleDataFactory.createFlatWorksheet(workspace, 10000, 6);
-//	//	SampleDataFactory.createFlatWorksheet(workspace, 2, 2);
+//		SampleDataFactory.createFlatWorksheet(workspace, 2, 2);
 //		//SampleDataFactory.createFromJsonTextFile(workspace, "samplejson-1.txt");
 //		SampleDataFactory.createJsonWithFunnyCharacters(workspace);
 		SampleDataFactory.createSampleJson(workspace, 3);
@@ -51,16 +51,18 @@ public class GetExampleJSON extends HttpServlet {
 //		SampleDataFactory.createUnitTest1(workspace);
 //		SampleDataFactory.createUnitTest2(workspace);
 //		SampleDataFactory.createUnitTest3(workspace);
-//		SampleDataFactory.createUnitTest4(workspace);
-//		SampleDataFactory.createUnitTest5(workspace);
+		SampleDataFactory.createUnitTest4(workspace);
+		SampleDataFactory.createUnitTest5(workspace);
+		SampleDataFactory.createUnitTest6(workspace);
 //		//	SampleDataFactory.createFromJsonTextFile(workspace, "unit-test-json.json");
 //	//	SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest1.json");
 //		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest2.json");
-//		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest4.json");
+		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest4.json");
 //		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest5.json");
+//		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest6.json");
 //		SampleDataFactory.createFromJsonTextFile(workspace, "testSampleJsonWithEmptyNestedTable1.json");
 //		SampleDataFactory.createFromJsonTextFile(workspace, "createSampleJsonWithNestedTable2.json");
-		SampleDataFactory.createFromJsonTextFile(workspace, "f6.json");
+//		SampleDataFactory.createFromJsonTextFile(workspace, "f6.json");
 //		SampleDataFactory.createFromJsonTextFile(workspace, "createSampleJsonWithNestedTable2_VD.json");
 		// Put all created worksheet models in the view.
 		vwsp.addAllWorksheets();

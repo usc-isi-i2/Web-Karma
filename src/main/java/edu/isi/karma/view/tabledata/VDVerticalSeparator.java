@@ -65,6 +65,15 @@ public class VDVerticalSeparator {
 		}
 	}
 
+	public Stroke getStroke(Position position, int depth) {
+		for (Stroke s : getStrokes(position)) {
+			if (s.getDepth() == depth) {
+				return s;
+			}
+		}
+		return null;
+	}
+
 	public int getMinDepth(Position position) {
 		int min = Integer.MAX_VALUE;
 		for (Stroke l : getStrokes(position)) {
