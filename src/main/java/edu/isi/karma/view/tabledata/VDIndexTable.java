@@ -72,7 +72,18 @@ public class VDIndexTable {
 
 		int index = 0;
 		for (VHTreeNode n : vhTreeNodes) {
-			hNodeIds[index] = n.getHNode().getId();
+			hNodeIds[index] = n.getHNode().getId(); // TODO: null pointer in
+													// this line while loading
+													// the F6.json file.
+			// java.lang.NullPointerException
+			// at
+			// edu.isi.karma.view.tabledata.VDIndexTable.putFrontier(VDIndexTable.java:75)
+			// at
+			// edu.isi.karma.view.tabledata.VDTableData.<init>(VDTableData.java:45)
+			// at edu.isi.karma.view.VWorksheet.<init>(VWorksheet.java:106)
+			// at
+			// edu.isi.karma.view.ViewFactory.createVWorksheet(ViewFactory.java:64)
+
 			columnDepths[index] = n.getDepth();
 			hNodeId2Indices.put(n.getHNode().getId(), new LeftRight(index,
 					index));
