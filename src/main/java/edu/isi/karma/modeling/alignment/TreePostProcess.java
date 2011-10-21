@@ -109,4 +109,8 @@ public class TreePostProcess {
 	public DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getTree() {
 		return this.tree;
 	}
+	
+	public Vertex getRoot() {
+		return this.root;
+	}
 }

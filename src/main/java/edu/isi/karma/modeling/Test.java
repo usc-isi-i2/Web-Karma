@@ -33,27 +33,27 @@ public class Test {
 //		semanticTypes.add(new NameSet(ns1, "Country"));
 //		semanticTypes.add(new NameSet(ns1, "Country"));
 		semanticTypes.add(new NameSet(ns1, "zipCode"));
-//		semanticTypes.add(new NameSet(ns1, "City"));
-//		semanticTypes.add(new NameSet(ns1, "hasName"));
-//		semanticTypes.add(new NameSet(ns1, "hasName"));
-//		semanticTypes.add(new NameSet(ns1, "live"));
-//		semanticTypes.add(new NameSet(ns1, "Place"));
-//		semanticTypes.add(new NameSet(ns1, "Person"));
-//		semanticTypes.add(new NameSet(ns1, "Plant"));
+		semanticTypes.add(new NameSet(ns1, "City"));
+		semanticTypes.add(new NameSet(ns1, "hasName"));
+		semanticTypes.add(new NameSet(ns1, "hasName"));
+		semanticTypes.add(new NameSet(ns1, "live"));
+		semanticTypes.add(new NameSet(ns1, "Place"));
+		semanticTypes.add(new NameSet(ns1, "Person"));
+		semanticTypes.add(new NameSet(ns1, "Plant"));
 //		semanticTypes.add(new NameSet(ns2, "Thing"));
 //		semanticTypes.add(new NameSet(ns2, "Thing"));
 		
-		String e1 = ns1 + "hasName_1";
-		String e2 = ns1 + "hasName_2";
-		String e3 = ns2 + "hasSubClass_10";
-		String e4 = ns1 + "zipCode_2";
+		String e1 = ns1 + "hasName1";
+		String e2 = ns1 + "hasName2";
+		String e3 = ns2 + "hasSubClass10";
+		String e4 = ns1 + "zipCode2";
 		
 		Alignment alignment = new Alignment(semanticTypes);
 		alignment.duplicateDomainOfLink(e4);
 		GraphUtil.printGraph(alignment.getSteinerTree());
 
-		alignment.reset();
-		GraphUtil.printGraph(alignment.getSteinerTree());
+//		alignment.reset();
+//		GraphUtil.printGraph(alignment.getSteinerTree());
 		
 		
 //		List<String> selectedLinks = new ArrayList<String>();

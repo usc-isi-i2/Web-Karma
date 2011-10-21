@@ -82,14 +82,6 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		
 		String result = id.substring(index + 1);
 		
-		// FIXME
-		if (this.inverse) {
-			//if (this.type == LinkType.HasSubClass)
-				//result = "isa";
-			//else
-				result = "inverseOf(" + result + ")";
-		}
-		
 		return result;
 	}
 	
