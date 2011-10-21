@@ -20,7 +20,7 @@ public class VTableCssTags {
 			"table07cell", "table08cell", "table09cell" };
 	static final String CSS_TOP_LEVEL_TABLE_CELL = "topLevelTableCell";
 
-	public static boolean useDepthBasedCSSTags = false;
+	public static boolean useDepthBasedCSSTags = true;
 	private static final HashMap<Integer, String> depthCssMap = new HashMap<Integer, String>();
 	static {
 		depthCssMap.put(0, "topLevelTableCell");

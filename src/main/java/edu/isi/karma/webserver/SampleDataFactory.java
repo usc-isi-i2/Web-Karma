@@ -22,7 +22,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.FileUtil;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 
 public class SampleDataFactory {
 
@@ -195,7 +195,7 @@ public class SampleDataFactory {
 		FileReader r;
 		try {
 			r = new FileReader(fileName);
-			Object o = Util.createJson(r);
+			Object o = JSONUtil.createJson(r);
 			// System.err.println("JSON:" + o.toString());
 			// System.err.println("JSON:" + JSONObject.quote(o.toString()));
 			JsonImport ji = new JsonImport(o, fileName, workspace);
@@ -584,8 +584,8 @@ public class SampleDataFactory {
 	public static Worksheet createWorksheetFromJsonString(String name,
 			String jsonString, Workspace workspace) {
 		try {
-			Object o = Util.createJson(jsonString);
-			Util.writeJsonFile(o, name + ".json");
+			Object o = JSONUtil.createJson(jsonString);
+			JSONUtil.writeJsonFile(o, name + ".json");
 			JsonImport ji = new JsonImport(o, name, workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -597,7 +597,7 @@ public class SampleDataFactory {
 
 	public static Worksheet createSampleJson(Workspace workspace, int numRows) {
 		try {
-			Object o = Util.createJson(getSampleJsonString(numRows));
+			Object o = JSONUtil.createJson(getSampleJsonString(numRows));
 			JsonImport ji = new JsonImport(o, "Sample JSON", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -621,7 +621,7 @@ public class SampleDataFactory {
 					.key("HTML").value(html).key("URL").value("http://cnn.com")
 					.endObject();
 
-			JsonImport ji = new JsonImport(Util.createJson(x.toString()),
+			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
 					"Funny Characters", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -652,7 +652,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(Util.createJson(x.toString()),
+			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
 					"Empty Nested Table 1", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -682,7 +682,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(Util.createJson(x.toString()),
+			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
 					"Empty Nested Table 2", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -710,7 +710,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(Util.createJson(x.toString()),
+			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
 					"Empty Nested Table 3", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -742,7 +742,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(Util.createJson(x.toString()),
+			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
 					"Empty Nested Table 4", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -782,7 +782,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(Util.createJson(x.toString()),
+			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
 					"Nested Table 1", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -856,7 +856,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(Util.createJson(x.toString()),
+			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
 					"Nested Table 2", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;

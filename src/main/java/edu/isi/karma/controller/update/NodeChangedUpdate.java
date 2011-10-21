@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 
 import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.Node;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
 
 /**
@@ -43,11 +43,11 @@ public class NodeChangedUpdate extends AbstractUpdate {
 	public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
 		pw.println(prefix + "{");
 		String newPref = prefix + "  ";
-		pw.println(newPref + Util.json(GenericJsonKeys.updateType, getUpdateType()));
-		pw.println(newPref + Util.json(JsonKeys.worksheet, worksheetId));
-		pw.println(newPref + Util.json(JsonKeys.nodeId, nodeId));
-		pw.println(newPref + Util.json(JsonKeys.newStatus, newStatus.getCodedStatus()));
-		pw.println(newPref + Util.jsonLast(JsonKeys.newValue, newValue.asString()));
+		pw.println(newPref + JSONUtil.json(GenericJsonKeys.updateType, getUpdateType()));
+		pw.println(newPref + JSONUtil.json(JsonKeys.worksheet, worksheetId));
+		pw.println(newPref + JSONUtil.json(JsonKeys.nodeId, nodeId));
+		pw.println(newPref + JSONUtil.json(JsonKeys.newStatus, newStatus.getCodedStatus()));
+		pw.println(newPref + JSONUtil.jsonLast(JsonKeys.newValue, newValue.asString()));
 		pw.println(prefix + "}");
 	}
 }

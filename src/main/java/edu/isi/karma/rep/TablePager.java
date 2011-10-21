@@ -10,7 +10,7 @@ import org.json.JSONException;
 import org.json.JSONWriter;
 
 import edu.isi.karma.controller.update.WorksheetDataUpdate;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 
 /**
  * @author szekely
@@ -99,19 +99,19 @@ public class TablePager {
 		pw.println(prefix + "{");
 		String newPref = prefix + "  ";
 		pw.println(newPref
-				+ Util.json(WorksheetDataUpdate.JsonKeys.numRecordsShown, size));
+				+ JSONUtil.json(WorksheetDataUpdate.JsonKeys.numRecordsShown, size));
 		pw.println(newPref
-				+ Util.json(WorksheetDataUpdate.JsonKeys.numRecordsBefore,
+				+ JSONUtil.json(WorksheetDataUpdate.JsonKeys.numRecordsBefore,
 						getNumRecordsBefore()));
 		pw.println(newPref
-				+ Util.json(WorksheetDataUpdate.JsonKeys.numRecordsAfter,
+				+ JSONUtil.json(WorksheetDataUpdate.JsonKeys.numRecordsAfter,
 						getNumRecordsAfter()));
 		pw.println(newPref
-				+ Util.json(
+				+ JSONUtil.json(
 						WorksheetDataUpdate.JsonKeys.desiredNumRecordsShown,
 						desiredSize));
 		pw.println(newPref
-				+ Util.jsonLast(WorksheetDataUpdate.JsonKeys.tableId,
+				+ JSONUtil.jsonLast(WorksheetDataUpdate.JsonKeys.tableId,
 						table.getId()));
 		pw.println(prefix + "}");
 	}

@@ -6,7 +6,7 @@ package edu.isi.karma.view.tableheadings;
 import java.io.PrintWriter;
 
 import edu.isi.karma.controller.update.WorksheetHeadersUpdate;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.ViewFactory;
 
 /**
@@ -53,10 +53,10 @@ public class VColumnHeader {
 	public void generateJson(String prefix, PrintWriter pw,
 			ViewFactory factory, boolean generateComma) {
 		pw.print(prefix + "{ ");
-		pw.print(Util.json(WorksheetHeadersUpdate.JsonKeys.path, hNodePathId));
-		pw.print(Util.json(WorksheetHeadersUpdate.JsonKeys.columnNameFull,
+		pw.print(JSONUtil.json(WorksheetHeadersUpdate.JsonKeys.path, hNodePathId));
+		pw.print(JSONUtil.json(WorksheetHeadersUpdate.JsonKeys.columnNameFull,
 				columnNameFull));
-		pw.print(Util.jsonLast(WorksheetHeadersUpdate.JsonKeys.columnNameShort,
+		pw.print(JSONUtil.jsonLast(WorksheetHeadersUpdate.JsonKeys.columnNameShort,
 				columnNameShort));
 		pw.print(" }");
 		if (generateComma) {

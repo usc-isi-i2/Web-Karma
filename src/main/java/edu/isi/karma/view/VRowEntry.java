@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import edu.isi.karma.controller.update.WorksheetDataUpdate;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 
 /**
  * Entries are generated for "cells" in the top table. Each cell may be a fat
@@ -91,8 +91,8 @@ public class VRowEntry {
 					factory, generateComma);
 		} else {
 			pw.print(prefix + "{");
-			pw.print(Util.json(WorksheetDataUpdate.JsonKeys.isDummy, true));
-			pw.print(Util.jsonLast(WorksheetDataUpdate.JsonKeys.tableCssTag,
+			pw.print(JSONUtil.json(WorksheetDataUpdate.JsonKeys.isDummy, true));
+			pw.print(JSONUtil.jsonLast(WorksheetDataUpdate.JsonKeys.tableCssTag,
 					tableCssTag));
 			if (generateComma) {
 				pw.println(" } ,");

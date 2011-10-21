@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
 
 /**
@@ -46,9 +46,9 @@ public class UpdateContainer {
 		pw.println(prefix + "{");
 		String newPref = prefix + "  ";
 		pw.println(newPref
-				+ Util.json(JsonKeys.workspaceId, vWorkspace.getWorkspace()
+				+ JSONUtil.json(JsonKeys.workspaceId, vWorkspace.getWorkspace()
 						.getId()));
-		pw.println(newPref + Util.jsonStartList(JsonKeys.elements));
+		pw.println(newPref + JSONUtil.jsonStartList(JsonKeys.elements));
 		Iterator<AbstractUpdate> it = updates.iterator();
 		while (it.hasNext()) {
 			it.next().generateJson(newPref + "  ", pw, vWorkspace);

@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import edu.isi.karma.controller.update.WorksheetDataUpdate;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.TablePager;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 
 /**
  * @author szekely
@@ -89,23 +89,23 @@ public class VCell {
 			boolean generateComma) {
 
 		pw.print(prefix + "{");
-		pw.print(Util.json(WorksheetDataUpdate.JsonKeys.path, hNodePath));
-		pw.print(Util.json(WorksheetDataUpdate.JsonKeys.nodeId, nodeId));
-		pw.print(Util.json(WorksheetDataUpdate.JsonKeys.value, value));
-		pw.print(Util.json(WorksheetDataUpdate.JsonKeys.status, status));
-		pw.print(Util.json(WorksheetDataUpdate.JsonKeys.isDummy, false));
-		pw.print(Util.json(WorksheetDataUpdate.JsonKeys.isFirstRow, isFirstRow));
-		pw.print(Util.json(WorksheetDataUpdate.JsonKeys.isLastRow, isLastRow));
-		pw.print(Util.json(WorksheetDataUpdate.JsonKeys.rowSpan, rowSpan));
-		pw.print(Util.json(WorksheetDataUpdate.JsonKeys.rowIndex, rowIndex));
-		pw.print(Util.json(WorksheetDataUpdate.JsonKeys.rowPath, rowPath));
+		pw.print(JSONUtil.json(WorksheetDataUpdate.JsonKeys.path, hNodePath));
+		pw.print(JSONUtil.json(WorksheetDataUpdate.JsonKeys.nodeId, nodeId));
+		pw.print(JSONUtil.json(WorksheetDataUpdate.JsonKeys.value, value));
+		pw.print(JSONUtil.json(WorksheetDataUpdate.JsonKeys.status, status));
+		pw.print(JSONUtil.json(WorksheetDataUpdate.JsonKeys.isDummy, false));
+		pw.print(JSONUtil.json(WorksheetDataUpdate.JsonKeys.isFirstRow, isFirstRow));
+		pw.print(JSONUtil.json(WorksheetDataUpdate.JsonKeys.isLastRow, isLastRow));
+		pw.print(JSONUtil.json(WorksheetDataUpdate.JsonKeys.rowSpan, rowSpan));
+		pw.print(JSONUtil.json(WorksheetDataUpdate.JsonKeys.rowIndex, rowIndex));
+		pw.print(JSONUtil.json(WorksheetDataUpdate.JsonKeys.rowPath, rowPath));
 
 		if (isLastRow && !tablePager.isAllRowsShown()
 				&& tablePager != vWorksheet.getTopTablePager()) {
 			String newPref = prefix + "  ";
 			pw.println();
 			pw.println(newPref
-					+ Util.jsonStartObject(WorksheetDataUpdate.JsonKeys.pager));
+					+ JSONUtil.jsonStartObject(WorksheetDataUpdate.JsonKeys.pager));
 			tablePager.generateJson(newPref + "  ", pw);
 			pw.println(newPref + ", ");
 			pw.print(newPref);
@@ -113,7 +113,7 @@ public class VCell {
 
 		//pw.println(Util.json(WorksheetDataUpdate.JsonKeys.counts, counts));
 
-		pw.print(Util.jsonLast(WorksheetDataUpdate.JsonKeys.tableCssTag,
+		pw.print(JSONUtil.jsonLast(WorksheetDataUpdate.JsonKeys.tableCssTag,
 				tableCssTag));
 		if (generateComma) {
 			pw.println(" } ,");

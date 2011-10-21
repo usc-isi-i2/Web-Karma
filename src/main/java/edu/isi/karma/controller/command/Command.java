@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Entity;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
 
 /**
@@ -85,13 +85,13 @@ public abstract class Command extends Entity {
 			VWorkspace vWorkspace, HistoryType historyType) {
 		pw.println(prefix + "{");
 		String newPref = prefix + "  ";
-		pw.println(newPref + Util.json(JsonKeys.commandId, getId()));
-		pw.println(newPref + Util.json(JsonKeys.title, getTitle()));
-		pw.println(newPref + Util.json(JsonKeys.description, getDescription()));
+		pw.println(newPref + JSONUtil.json(JsonKeys.commandId, getId()));
+		pw.println(newPref + JSONUtil.json(JsonKeys.title, getTitle()));
+		pw.println(newPref + JSONUtil.json(JsonKeys.description, getDescription()));
 		pw.println(newPref
-				+ Util.json(JsonKeys.historyType, historyType.name()));
+				+ JSONUtil.json(JsonKeys.historyType, historyType.name()));
 		pw.println(newPref
-				+ Util.jsonLast(JsonKeys.commandType, getCommandType().name()));
+				+ JSONUtil.jsonLast(JsonKeys.commandType, getCommandType().name()));
 		pw.println(prefix + "}");
 	}
 }

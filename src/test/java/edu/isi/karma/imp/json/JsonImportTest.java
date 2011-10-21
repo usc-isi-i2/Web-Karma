@@ -13,7 +13,7 @@ import org.json.JSONObject;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 
 public class JsonImportTest extends TestCase {
 
@@ -64,7 +64,7 @@ public class JsonImportTest extends TestCase {
 	@SuppressWarnings("unused")
 	public void testGenerateWorksheet03() throws JSONException {
 		pw.println("{");
-		pw.println(Util.doubleQuote("l") + ":");
+		pw.println(JSONUtil.doubleQuote("l") + ":");
 		pw.println("[");
 		printAB(pw, "1");
 		pw.println(",");
@@ -88,7 +88,7 @@ public class JsonImportTest extends TestCase {
 		// System.err.println(JSONObject.quote(o.toString()));
 		String jsonString = "{\"c\":[{\"d\":[{\"f\":\"_0_\"},{\"f\":\"_0_\"}],\"h\":\"_h0_\"},{\"d\":[{\"f\":\"_1_\"},{\"f\":\"_1_\"}],\"h\":\"_h1_\"}],\"a\":\"_a_\"}";
 
-		Object o = Util.createJson(jsonString);
+		Object o = JSONUtil.createJson(jsonString);
 		// Object o = Util.createJson(new JSONTokener(r));
 
 		// System.err.println("JSON:" + o.toString());
@@ -99,16 +99,16 @@ public class JsonImportTest extends TestCase {
 
 	private void printAB(PrintWriter pw, String value) {
 		pw.println("{");
-		pw.println(Util.doubleQuote("a") + ":" + Util.doubleQuote(value) + " ,");
-		pw.println(Util.doubleQuote("b") + ":" + Util.doubleQuote(value));
+		pw.println(JSONUtil.doubleQuote("a") + ":" + JSONUtil.doubleQuote(value) + " ,");
+		pw.println(JSONUtil.doubleQuote("b") + ":" + JSONUtil.doubleQuote(value));
 		pw.println("}");
 	}
 
 	private void printABC(PrintWriter pw, String value) {
 		pw.println("{");
-		pw.println(Util.doubleQuote("a") + ":" + Util.doubleQuote(value) + " ,");
-		pw.println(Util.doubleQuote("b") + ":" + Util.doubleQuote(value) + " ,");
-		pw.println(Util.doubleQuote("c") + ":" + Util.doubleQuote(value));
+		pw.println(JSONUtil.doubleQuote("a") + ":" + JSONUtil.doubleQuote(value) + " ,");
+		pw.println(JSONUtil.doubleQuote("b") + ":" + JSONUtil.doubleQuote(value) + " ,");
+		pw.println(JSONUtil.doubleQuote("c") + ":" + JSONUtil.doubleQuote(value));
 		pw.println("}");
 	}
 
