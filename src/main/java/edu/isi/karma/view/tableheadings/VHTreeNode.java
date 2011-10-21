@@ -13,6 +13,7 @@ import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate
 import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.leftBorder;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.rightBorder;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.topBorder;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.hNodeId;
 import static edu.isi.karma.view.Stroke.StrokeStyle.inner;
 import static edu.isi.karma.view.Stroke.StrokeStyle.none;
 import static edu.isi.karma.view.Stroke.StrokeStyle.outer;
@@ -33,7 +34,7 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.TablePager;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.Border;
 import edu.isi.karma.view.Margin;
 import edu.isi.karma.view.Stroke;
@@ -505,7 +506,7 @@ public class VHTreeNode {
 	private String shorten(String string, int maxLength) {
 		String result = string;
 		if (string.length() > maxLength) {
-			result = Util.truncateForHeader(string, maxLength);
+			result = JSONUtil.truncateForHeader(string, maxLength);
 		}
 		return result;
 	}
@@ -521,6 +522,9 @@ public class VHTreeNode {
 				//
 				.key(cellType.name())
 				.value(heading.name())
+				//
+				.key(hNodeId.name())
+				.value(hNode.getId())
 				//
 				.key(columnNameFull.name())
 				.value(hNode.getColumnName())

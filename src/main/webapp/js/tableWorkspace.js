@@ -1,3 +1,67 @@
+function changeSemanticType(event) {
+	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
+	$("#ChangeSemanticTypesDialogBox").data("currentNodeId",$(this).data("hNodeId"));
+	$("table#CRFSuggestedLabelsTable tr",optionsDiv).remove();
+	
+	var positionArray = [event.clientX-150		// distance from left
+					, event.clientY+10];	// distance from top
+	
+	// Populate with possible labels that CRF Model suggested
+	var labelsElem = $(this).data("crfInfo");
+	var labelsTable = $("<table>").attr("id", "CRFSuggestedLabelsTable");
+	$.each(labelsElem["Labels"], function(index, label) {
+		// Turning the probability into percentage
+		var prob = label["Probability"];
+		var percentage = Math.floor(prob*100);
+		
+		var trTag = $("<tr>");
+		
+		var radioButton = $("<input>")
+						.attr("type", "radio")
+						.attr("id", label["Type"])
+						.attr("name", "semanticTypeGroup")
+						.attr("value", label["Type"])
+						.val(label["Type"]);
+		if(index == labelsElem["Labels"].length-1)
+			radioButton.attr('checked',true);
+		trTag.append(radioButton).append($("<td>").text(label["Type"]))
+			.append($("<td>").text("Probability: " + percentage+"%"));
+		labelsTable.prepend(trTag);
+	});
+	optionsDiv.append(labelsTable);
+	optionsDiv.dialog({width: 300, height: 300, position: positionArray
+		, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitSemanticTypeChange }});
+}
+
+function submitSemanticTypeChange() {
+	var info = new Object();
+	info["command"] = "SetSemanticType";
+	info["vWorksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
+	info["hNodeId"] = $("#ChangeSemanticTypesDialogBox").data("currentNodeId");
+	info["newType"] = $("input[@name='semanticTypeGroup']:checked").val();
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	
+	var returned = $.ajax({
+	   	url: "/RequestController", 
+	   	type: "POST",
+	   	data : info,
+	   	dataType : "json",
+	   	complete : 
+	   		function (xhr, textStatus) {
+	   			//alert(xhr.responseText);
+	    		var json = $.parseJSON(xhr.responseText);
+	    		//parse(json);
+		   	},
+		error :
+			function (xhr, textStatus) {
+	   			alert("Error occured with fetching new rows! " + textStatus);
+		   	}
+	});
+	
+	$("#ChangeSemanticTypesDialogBox").dialog("close");
+}
+
+
 function handlePrevNextLink() {
 	if($(this).hasClass("inactiveLink"))
 		return;
@@ -190,3 +254,61 @@ function handleTableCellEditButton(event) {
 			buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitEdit }, width: 300, height: 150, position: positionArray});
 	$("#tableCellEditDiv").data("tdTagId", tdTagId);
 }
+
+function openWorksheetOptions(event) {
+	$("#WorksheetOptionsDiv").css({'position':'fixed', 
+			'left':(event.clientX - 75) + 'px', 'top':(event.clientY+4)+'px'});
+	$("#WorksheetOptionsDiv").show();
+	
+	$("#WorksheetOptionsDiv").data("worksheetId", $(this).parents("div.Worksheet").attr("id"));
+}
+
+function styleAndAssignHandlersToWorksheetOptionButtons() {
+	// Styling the elements
+	$("#WorksheetOptionsDiv").hide().addClass("ui-corner-all");
+	$("#WorksheetOptionsDiv button").button();
+	
+	// Adding mouse handlers to the div
+	$("#WorksheetOptionsDiv").mouseenter(function() {
+		$(this).show();
+	});
+	$("#WorksheetOptionsDiv").mouseleave(function() {
+		$(this).hide();
+	});
+	
+	// Adding handlers to the buttons
+	$("#generateSemanticTypesButton").click(function(){
+		$("#WorksheetOptionsDiv").hide();
+		
+		console.log("Generating semantic types for table with ID: " + $("#WorksheetOptionsDiv").data("worksheetId"));
+		var info = new Object();
+		info["vWorksheetId"] = $("#WorksheetOptionsDiv").data("worksheetId");
+		info["workspaceId"] = $.workspaceGlobalInformation.id;
+		info["command"] = "GenerateSemanticTypesCommand";
+			
+		var returned = $.ajax({
+		   	url: "/RequestController", 
+		   	type: "POST",
+		   	data : info,
+		   	dataType : "json",
+		   	complete : 
+		   		function (xhr, textStatus) {
+		   			//alert(xhr.responseText);
+		    		var json = $.parseJSON(xhr.responseText);
+		    		parse(json);
+			   	},
+			error :
+				function (xhr, textStatus) {
+		   			//alert("Error occured while generating semantic types!" + textStatus);
+			   	}		   
+		});
+		
+	})
+}
+
+
+
+
+
+
+

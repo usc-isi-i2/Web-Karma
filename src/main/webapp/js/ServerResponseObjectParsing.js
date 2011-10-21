@@ -23,40 +23,57 @@ function parse(data) {
 					titleDiv.append($("<div>")
 									.text(worksheet["title"])
 									.addClass("tableTitleTextDiv")
-									.append($("<div>")
-											.addClass("showHideWorkSheet")
-											.attr("id", "hideShow"+worksheet["worksheetId"])
-											.css({"float": "right"})
-											.append(
-												$("<img>").addClass("minimizeWorksheetImg")
-														.attr("src", "../images/blue-box-minimize.png")
-														.data("state", "open")
-											)
-											.click(function() {
-												$("#" + worksheet["worksheetId"] + "TableDiv").toggle(400);
-												$("#topLevelpagerOptions" + worksheet["worksheetId"]).toggle(400);
-												// Change the corners
-												titleDiv.toggleClass("ui-corner-top");
-												titleDiv.toggleClass("ui-corner-all");
-												
-												// Change the icon
-												var img = $(this).find("img");
-												if(img.data("state") == "open") {
-													img.attr("src", "../images/orange-maximize.png")
-													img.data("state", "close")
-												}
-												else {
-													img.attr("src", "../images/blue-box-minimize.png")
-													img.data("state", "open")
-												}
-											})
-											)
-									);
+								)
+								.append($("<div>")
+									.addClass("WorksheetOptionsButtonDiv")
+									.attr("id", "optionsButton" + worksheet["worksheetId"])
+									.data("worksheetId", worksheet["worksheetId"])
+									.click(openWorksheetOptions)
+								)
+								.append($("<div>")
+										.addClass("showHideWorkSheet")
+										.attr("id", "hideShow"+worksheet["worksheetId"])
+										.append(
+											$("<img>").addClass("minimizeWorksheetImg")
+													.attr("src", "../images/blue-box-minimize.png")
+													.data("state", "open")
+										)
+										.click(function() {
+											$("#" + worksheet["worksheetId"] + "TableDiv").toggle(400);
+											$("#topLevelpagerOptions" + worksheet["worksheetId"]).toggle(400);
+											// Change the corners
+											titleDiv.toggleClass("ui-corner-top");
+											titleDiv.toggleClass("ui-corner-all");
+											
+											// Change the icon
+											var img = $(this).find("img");
+											if(img.data("state") == "open") {
+												img.attr("src", "../images/orange-maximize.png")
+												img.data("state", "close")
+											}
+											else {
+												img.attr("src", "../images/blue-box-minimize.png")
+												img.data("state", "open")
+											}
+										})
+								);
 					mainDiv.append(titleDiv);
+
+					$("#optionsButton" + worksheet["worksheetId"], mainDiv).button({
+					    icons: {
+					        primary: 'ui-icon-triangle-1-s'
+					    },
+					    text: false
+					});
+					
+					$("#optionsButton" + worksheet["worksheetId"], mainDiv).mouseleave(function(){
+						$("#WorksheetOptionsDiv").hide();
+					});
+
 					
 					// Add the table (if it does not exists)
 					var tableDiv = $("<div>").attr("id", worksheet["worksheetId"] + "TableDiv").addClass("TableDiv");
-					var table = $("<table>").attr("id", worksheet["worksheetId"]);
+					var table = $("<table>").attr("id", worksheet["worksheetId"]).addClass("WorksheetTable");
 					tableDiv.append(table);
 					mainDiv.append(tableDiv);
 					
@@ -125,7 +142,7 @@ function parse(data) {
 		}
 		
 		/* Update the worksheet column headers */
-		if(element["updateType"] == "WorksheetHeadersUpdate") {
+		else if(element["updateType"] == "WorksheetHeadersUpdate") {
 			
 			// var table = $("table#" + element["worksheetId"]);
 			// // Check if the table has column header row. if not, then create one.
@@ -155,8 +172,7 @@ function parse(data) {
 			// });
 		}
 		
-		if(element["updateType"] == "WorksheetHierarchicalHeadersUpdate") {
-			console.log("COME HERE!");
+		else if(element["updateType"] == "WorksheetHierarchicalHeadersUpdate") {
 			var table = $("table#" + element["worksheetId"]);
 			
 			var thead = $("thead", table);
@@ -187,16 +203,28 @@ function parse(data) {
 						
 					}
 					else if (cell["cellType"] == "heading") {
+						tdTag.addClass("columnHeadingCell")
 						// Add the colspan
 						tdTag.attr("colspan", cell["colSpan"]);
 						
+						// Store the node ID
+						tdTag.attr("id", cell["hNodeId"]);
+						
 						//Add the name
-						tdTag.text(cell["columnNameFull"]);
+						tdTag.append($("<div>").addClass("ColumnHeadingNameDiv")
+							.text(cell["columnNameFull"])
+							.mouseenter(config)
+							.mouseleave(configOut)
+						);
+						
+						// tdTag.text(cell["columnNameFull"])
+							// .mouseenter(config)
+							// .mouseleave(configOut);
 					} else if(cell["cellType"] == "headingPadding") {
 						// Add the colspan
 						tdTag.attr("colspan", cell["colSpan"]);
 					}
-					tdTag.data("jsonInfo", cell).hover(showConsoleInfo);
+					tdTag.data("jsonElement", cell).hover(showConsoleInfo);
 					
 					trTag.append(tdTag);
 				});
@@ -204,7 +232,7 @@ function parse(data) {
 			});
 		}
 		
-		if(element["updateType"] == "WorksheetHierarchicalDataUpdate") {
+		else if(element["updateType"] == "WorksheetHierarchicalDataUpdate") {
 			var table = $("table#" + element["worksheetId"]);
 			
 			// Check if the table has tbody for data rows. if not, then create one.
@@ -235,7 +263,12 @@ function parse(data) {
 						//console.log(cell["value"]);
 						if(cell["value"] == null)
 							console.log("Value not found in a content cell!");
-						tdTag.text(cell["value"]);
+						//tdTag.text(cell["value"]);
+						tdTag.append($("<div>").addClass("cellValue")
+										.text(cell["value"])
+										.mouseenter(showTableCellMenu)
+										.mouseleave(hideTableCellMenu))
+							.attr('id', cell["nodeId"]);
 					}
 					
 					tdTag.addClass(attrVals[0]);
@@ -284,7 +317,7 @@ function parse(data) {
 						}
 					}
 					
-					tdTag.data("jsonInfo", cell).hover(showConsoleInfo);
+					tdTag.data("jsonElement", cell).hover(showConsoleInfo);
 					
 					trTag.append(tdTag);
 				});
@@ -293,6 +326,10 @@ function parse(data) {
 			
 			// Delete the old rows
 			$("tr.deleteMe", tbody).remove();
+			
+			// // TODO DELETE ME
+			if($("div#" + element["worksheetId"] + "bottomAnchor").length == 0)
+				$("div#" + element["worksheetId"]).append($("<div>").attr("id", element["worksheetId"] + "bottomAnchor"));
 		}
 		
 		/* Update the worksheet data */
@@ -404,7 +441,7 @@ function parse(data) {
 		// }
 // 		
 		/* Update the commands list */
-		if(element["updateType"] == "HistoryAddCommandUpdate") {
+		else if(element["updateType"] == "HistoryAddCommandUpdate") {
 			var commandDiv = $("<div>")
 							.addClass("CommandDiv undo-state " + element.command.commandType)
 							.attr("id", element.command.commandId)
@@ -433,7 +470,7 @@ function parse(data) {
 			commandHistoryDiv.append(commandDiv);
 		}
 		
-		if(element["updateType"] == "HistoryUpdate") {
+		else if(element["updateType"] == "HistoryUpdate") {
 			$("div#commandHistory div.CommandDiv").remove();
 			$.each(element["commands"], function(index, command){
 				var commandDiv = $("<div>")
@@ -469,7 +506,7 @@ function parse(data) {
 		}
 		
 		/* Update the cell value */
-		if(element["updateType"] == "NodeChangedUpdate") {
+		else if(element["updateType"] == "NodeChangedUpdate") {
 			var tdTag = $("td#" + element.nodeId); 
 			if(element.newValue.length > 20) {
 				var valueToShow = element.newValue.substring(0,20);
@@ -493,28 +530,64 @@ function parse(data) {
 			}
 		}
 		
-		if(element["updateType"] == "NewImportDatabaseTableCommandUpdate") {
+		else if(element["updateType"] == "NewImportDatabaseTableCommandUpdate") {
 			$("#DatabaseImportDiv").data("commandId", element["commandId"]);
+		}
+		
+		else if(element["updateType"] == "SemanticTypesUpdate") {
+			var table = $("table#" + element["worksheetId"]);
+			$.each(element["Types"], function(index, type) {
+				var tdTag = $("td.columnHeadingCell#" + type["HNodeID"], table);
+				
+				// Remove any existing semantic type div
+				$("br", tdTag).remove();
+				$("div.semanticTypeDiv", tdTag).remove();
+				
+				var semDiv = $("<div>").addClass("semanticTypeDiv " + 
+						type["ConfidenceLevel"]+"ConfidenceLevel")
+						.text(type["Type"]);
+				semDiv.data("crfInfo",type["FullCRFModel"])
+					.data("hNodeId", type["HNodeID"]);
+				//semDiv.hover(showSemanticTypeInfo, hideSemanticTypeInfo);
+				semDiv.click(changeSemanticType);
+				tdTag.append(semDiv);
+			});
 		}
 	});
 }
 
+function showSemanticTypeInfo() {
+	// var crfData = $(this).data("crfInfo");
+	// var table = $("div#ColumnCRFModelInfoBox table");
+	// $("tr", table).remove();
+// 	
+	// $.each(crfData["Labels"], function(index, label) {
+		// var trTag = $("<tr>");
+		// trTag.append($("<td>").text(label["Type"]))
+			// .append($("<td>").text(label["Probability"]));
+	// });
+}
+
+function hideSemanticTypeInfo() {
+	
+}
+
 function showConsoleInfo() {
-	if (console && console.log) {
-		console.clear();
-		var elem = $(this).data("jsonElement");
-		$.each(elem, function(key, value){
-			if(key == "pager"){
-				console.log("Pager Information:")
-				$.each(value, function(key2,value2){
-					console.log(key2 +" : " + value2)
-				})
-				console.log("Pager Information Finished.")
-			}
-			else
-				console.log(key + " : " + value);
-		})
-	}
+	// if (console && console.log) {
+		// console.clear();
+		// var elem = $(this).data("jsonElement");
+		// $.each(elem, function(key, value){
+			// if(key == "pager"){
+				// console.log("Pager Information:")
+				// $.each(value, function(key2,value2){
+					// console.log(key2 +" : " + value2)
+				// })
+				// console.log("Pager Information Finished.")
+			// }
+			// else
+				// console.log(key + " : " + value);
+		// })
+	// }
 }
 
 function showNestedTablePager() {

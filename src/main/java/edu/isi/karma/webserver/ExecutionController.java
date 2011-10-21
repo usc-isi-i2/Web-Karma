@@ -13,6 +13,8 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.CommandWithPreview;
 import edu.isi.karma.controller.command.EditCellCommand;
 import edu.isi.karma.controller.command.EditCellCommandFactory;
+import edu.isi.karma.controller.command.GenerateSemanticTypesCommand;
+import edu.isi.karma.controller.command.GenerateSemanticTypesCommandFactory;
 import edu.isi.karma.controller.command.ImportCSVFileCommand;
 import edu.isi.karma.controller.command.ImportCSVFileCommandFactory;
 import edu.isi.karma.controller.command.ImportDatabaseTableCommand;
@@ -71,6 +73,8 @@ public class ExecutionController {
 				new ImportDatabaseTableCommandFactory());
 		commandFactoryMap.put(ImportXMLFileCommand.class.getSimpleName(),
 				new ImportXMLFileCommandFactory());
+		commandFactoryMap.put(GenerateSemanticTypesCommand.class.getSimpleName(),
+				new GenerateSemanticTypesCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {
