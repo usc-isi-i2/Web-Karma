@@ -9,15 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetDataUpdate;
-import edu.isi.karma.controller.update.WorksheetHeadersUpdate;
-import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
-import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
@@ -61,7 +57,7 @@ public class ImportJSONFileCommand extends Command {
 		UpdateContainer c = new UpdateContainer();
 		try {
 			FileReader reader = new FileReader(jsonFile);
-			Object json = Util.createJson(reader);
+			Object json = JSONUtil.createJson(reader);
 			JsonImport imp = new JsonImport(json, jsonFile.getName(), ws);
 			
 			Worksheet wsht = imp.generateWorksheet();
@@ -69,10 +65,7 @@ public class ImportJSONFileCommand extends Command {
 			
 			c.add(new WorksheetListUpdate(vWorkspace.getVWorksheetList()));
 			VWorksheet vw = vWorkspace.getVWorksheet(wsht.getId());
-			c.add(new WorksheetHeadersUpdate(vw));
-			c.add(new WorksheetDataUpdate(vw));
-			c.add(new WorksheetHierarchicalHeadersUpdate(vw));
-			c.add(new WorksheetHierarchicalDataUpdate(vw));
+			vw.update(c);
 			
 		} catch (FileNotFoundException e) {
 			logger.error("File Not Found", e);
