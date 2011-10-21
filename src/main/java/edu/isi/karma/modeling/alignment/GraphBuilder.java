@@ -41,31 +41,37 @@ public class GraphBuilder {
 	}
 	
 	private String createNodeID(String label) {
-		String result = "";
+		
 		int index;
+		String id;
+		
 		if (nodesLabelCounter.containsKey(label)) {
 			index = nodesLabelCounter.get(label).intValue();
 			nodesLabelCounter.put(label, ++index);
+			id = label + "" + index;
 		} else {
 			index = 1;
 			nodesLabelCounter.put(label, index);
+			id = label;
 		}
-		result = label + "_" + index;
-		return result;
+		return id;
 	}
 	
 	private String createLinkID(String label) {
-		String result = "";
+
+		String id;
 		int index;
+		
 		if (linksLabelCounter.containsKey(label)) {
 			index = linksLabelCounter.get(label).intValue();
 			linksLabelCounter.put(label, ++index);
+			id = label + "" + index;
 		} else {
 			index = 1;
 			linksLabelCounter.put(label, index);
+			id = label;
 		}
-		result = label + "_" + index;
-		return result;
+		return id;
 	}
 	
 	private void addSemanticTypesToGraph() {

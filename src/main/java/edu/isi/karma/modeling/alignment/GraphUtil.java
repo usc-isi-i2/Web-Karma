@@ -42,6 +42,10 @@ public class GraphUtil {
 	
 	public static void printEdge(LabeledWeightedEdge edge) {
     	System.out.print("(");
+		// FIXME
+		if (edge.isInverse()) {
+			System.out.print( "inverseOf(" + edge.getLocalID() + ")" );
+		}
     	System.out.print( edge.getLocalID());
 //    	System.out.print( edge.getID());
 //    	System.out.print(", ");

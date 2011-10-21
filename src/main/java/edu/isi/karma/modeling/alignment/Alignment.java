@@ -22,6 +22,7 @@ public class Alignment {
 	private List<LabeledWeightedEdge> selectedLinks;
 
 	private DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = null;
+	private Vertex root = null;
 	
 	private GraphBuilder graphBuilder;
 	
@@ -196,8 +197,13 @@ public class Alignment {
 		TreePostProcess treePostProcess = new TreePostProcess(tree);
 		
 		this.steinerTree = treePostProcess.getTree();
+		this.root = treePostProcess.getRoot();
 	}
 
+	public Vertex GetTreeRoot() {
+		return this.root;
+	}
+	
 	public DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getSteinerTree() {
 		if (this.steinerTree == null)
 			align();
