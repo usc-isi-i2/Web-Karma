@@ -3,22 +3,24 @@ package edu.isi.karma.modeling.alignment;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
-import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
-public class PrepareGraph {
+public class GraphPreProcess {
 
-	DirectedWeightedMultigraph<Vertex, DefaultWeightedEdge> graph;
-	DirectedWeightedMultigraph<Vertex, DefaultWeightedEdge> gPrime;
+	static Logger logger = Logger.getLogger(GraphPreProcess.class);
+
+	DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> graph;
+	DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> gPrime;
 	List<Vertex> semanticNodes;
-	List<DefaultWeightedEdge> selectedLinks;
+	List<LabeledWeightedEdge> selectedLinks;
 	List<Vertex> steinerNodes;
-	double epsilon = 0.00001; // need to be fixed later
+	private static double MIN_WEIGHT = 0.000001; // need to be fixed later	
 	
-	public PrepareGraph(DirectedWeightedMultigraph<Vertex, DefaultWeightedEdge> graph, 
-			List<Vertex> semanticNodes, List<DefaultWeightedEdge> selectedLinks) {
+	public GraphPreProcess(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> graph, 
+			List<Vertex> semanticNodes, List<LabeledWeightedEdge> selectedLinks) {
 		this.graph = graph;
 		this.semanticNodes = semanticNodes;
 		this.selectedLinks = selectedLinks;
@@ -28,15 +30,22 @@ public class PrepareGraph {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private DirectedWeightedMultigraph<Vertex, DefaultWeightedEdge> createDirectedGPrime() {
+	private DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> createDirectedGPrime() {
 		
-		gPrime = (DirectedWeightedMultigraph<Vertex, DefaultWeightedEdge>)this.graph.clone();
+		logger.debug("<enter");
 		
+		gPrime = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>)this.graph.clone();
+		
+		if (selectedLinks == null || selectedLinks.size() == 0) {
+			logger.debug("exit>");
+			return gPrime;
+		}
+
 		LabeledWeightedEdge e;
 		
 		for (int i = 0; i < selectedLinks.size(); i++) {
-			Vertex source = gPrime.getEdgeSource(selectedLinks.get(i));
-			Vertex target = gPrime.getEdgeTarget(selectedLinks.get(i));
+			Vertex source = selectedLinks.get(i).getSource();
+			Vertex target = selectedLinks.get(i).getTarget();
 			
 			if (!steinerNodes.contains(source))
 				steinerNodes.add(source);
@@ -45,19 +54,43 @@ public class PrepareGraph {
 				steinerNodes.add(target);
 			
 			e = (LabeledWeightedEdge)selectedLinks.get(i).clone();
-			System.out.println(e.getLabel());
+			
+			// removing all links to target
+			LabeledWeightedEdge[] incomingLinks = gPrime.incomingEdgesOf(target).toArray(new LabeledWeightedEdge[0]); 
+			for (LabeledWeightedEdge inLink: incomingLinks) {
+				gPrime.removeAllEdges( inLink.getSource(), inLink.getTarget() );
+			}
 			
 			// removing all links from source to target
-			gPrime.removeAllEdges(source, target);
+//			gPrime.removeAllEdges(source, target);
 			
+			// adding the user selected link
 			gPrime.addEdge(source, target, e);
 			
 			// if it is a subclass link, change the weight to epsilon
-			//if (e.getType() == EdgeType.HasSubClass)
-				gPrime.setEdgeWeight(e, epsilon);
+			//if (e.getType() == LinkType.HasSubClass)
+			gPrime.setEdgeWeight(e, MIN_WEIGHT);
 			
 		}
 		
+		// if there are 2 DataProperties go to one node, we have to select only one of them. 
+		// The target is definitely one of the source columns and we cannot have two classes pointed to that.
+		// User can change our selected link later.
+		
+		for (Vertex v: gPrime.vertexSet()) {
+			
+			if (v.getType() != NodeType.DataProperty)
+				continue;
+			
+			LabeledWeightedEdge[] incomingLinks = gPrime.incomingEdgesOf(v).toArray(new LabeledWeightedEdge[0]);
+			if (incomingLinks != null && incomingLinks.length != 0) {
+				// keeping only the first link and remove the others.
+				for (int i = 1; i < incomingLinks.length; i++)
+					gPrime.removeEdge(incomingLinks[i]);
+			}
+		}
+		
+		logger.debug("exit>");
 		return gPrime;
 	}
 	
@@ -65,18 +98,18 @@ public class PrepareGraph {
 		return this.steinerNodes;
 	}
 	
-	public UndirectedGraph<Vertex, DefaultWeightedEdge> getUndirectedGraph() {
+	public UndirectedGraph<Vertex, LabeledWeightedEdge> getUndirectedGraph() {
 		
-		return  new AsUndirectedGraph<Vertex, DefaultWeightedEdge>(this.gPrime);
+		return  new AsUndirectedGraph<Vertex, LabeledWeightedEdge>(this.gPrime);
 	}
 	
 	public static void main(String[] args) {
 
-		DirectedWeightedMultigraph<Vertex, DefaultWeightedEdge> g = 
-			new DirectedWeightedMultigraph<Vertex, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> g = 
+			new DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>(LabeledWeightedEdge.class);
 		
 		LabeledWeightedEdge e1 = new LabeledWeightedEdge("e1");
-		LabeledWeightedEdge e2 = new LabeledWeightedEdge("e2", EdgeType.HasSubClass);
+		LabeledWeightedEdge e2 = new LabeledWeightedEdge("e2", "e2", LinkType.HasSubClass);
 		LabeledWeightedEdge e3 = new LabeledWeightedEdge("e3");
 		LabeledWeightedEdge e4 = new LabeledWeightedEdge("e4");
 		LabeledWeightedEdge e5 = new LabeledWeightedEdge("e5");
@@ -112,7 +145,7 @@ public class PrepareGraph {
 		semanticNodes.add(v2);
 		semanticNodes.add(v3);
 
-		List<DefaultWeightedEdge> selectedLinks = new ArrayList<DefaultWeightedEdge>();
+		List<LabeledWeightedEdge> selectedLinks = new ArrayList<LabeledWeightedEdge>();
 		selectedLinks.add(e2);
 		selectedLinks.add(e4);
 		selectedLinks.add(e10);
@@ -140,7 +173,7 @@ public class PrepareGraph {
 		g.setEdgeWeight(e9, 0.01);
 		g.setEdgeWeight(e10, 0.033);
 		
-		PrepareGraph p = new PrepareGraph(g, semanticNodes, selectedLinks);
+		GraphPreProcess p = new GraphPreProcess(g, semanticNodes, selectedLinks);
 		
 		GraphUtil.printGraph(p.getUndirectedGraph());
 		

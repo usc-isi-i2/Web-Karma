@@ -4,37 +4,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.BellmanFordShortestPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.alg.KruskalMinimumSpanningTree;
-import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.WeightedMultigraph;
 
 
 public class SteinerTree {
 	
-	UndirectedGraph<Vertex, DefaultWeightedEdge> graph;
+	static Logger logger = Logger.getLogger(SteinerTree.class);
+
+	UndirectedGraph<Vertex, LabeledWeightedEdge> graph;
+	WeightedMultigraph<Vertex, LabeledWeightedEdge> tree;
 	List<Vertex> steinerNodes;
 	
-	public SteinerTree(UndirectedGraph<Vertex, DefaultWeightedEdge> graph, List<Vertex> steinerNodes) {
+	public SteinerTree(UndirectedGraph<Vertex, LabeledWeightedEdge> graph, List<Vertex> steinerNodes) {
 		this.graph = graph;
 		this.steinerNodes = steinerNodes;
+		
+		runAlgorithm();
 	}
 	
-	private WeightedMultigraph<Vertex, DefaultWeightedEdge> step1() {
+	private WeightedMultigraph<Vertex, LabeledWeightedEdge> step1() {
 		
-		WeightedMultigraph<Vertex, DefaultWeightedEdge> g = 
-			new WeightedMultigraph<Vertex, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+		logger.debug("<enter");
+
+		WeightedMultigraph<Vertex, LabeledWeightedEdge> g = 
+			new WeightedMultigraph<Vertex, LabeledWeightedEdge>(LabeledWeightedEdge.class);
 		
 		for (int i = 0; i < steinerNodes.size(); i++) {
 			g.addVertex(steinerNodes.get(i));
 		}
 		
-		BellmanFordShortestPath<Vertex, DefaultWeightedEdge> path;
+		BellmanFordShortestPath<Vertex, LabeledWeightedEdge> path;
 		
 		for (int i = 0; i < steinerNodes.size(); i++) {
-			path = new BellmanFordShortestPath<Vertex, DefaultWeightedEdge>(this.graph, steinerNodes.get(i));
+			path = new BellmanFordShortestPath<Vertex, LabeledWeightedEdge>(this.graph, steinerNodes.get(i));
 			
 			for (int j = 0; j < steinerNodes.size(); j++) {
 				
@@ -52,23 +59,27 @@ public class SteinerTree {
 
 		}
 		
+		logger.debug("exit>");
+
 		return g;
 
 	}
 	
-	private WeightedMultigraph<Vertex, DefaultWeightedEdge> step2(WeightedMultigraph<Vertex, DefaultWeightedEdge> g1) {
+	private WeightedMultigraph<Vertex, LabeledWeightedEdge> step2(WeightedMultigraph<Vertex, LabeledWeightedEdge> g1) {
 
-		KruskalMinimumSpanningTree<Vertex, DefaultWeightedEdge> mst =
-            new KruskalMinimumSpanningTree<Vertex, DefaultWeightedEdge>(g1);
+		logger.debug("<enter");
+
+		KruskalMinimumSpanningTree<Vertex, LabeledWeightedEdge> mst =
+            new KruskalMinimumSpanningTree<Vertex, LabeledWeightedEdge>(g1);
 
 //    	System.out.println("Total MST Cost: " + mst.getSpanningTreeCost());
 
-        Set<DefaultWeightedEdge> edges = mst.getEdgeSet();
+        Set<LabeledWeightedEdge> edges = mst.getEdgeSet();
 
-		WeightedMultigraph<Vertex, DefaultWeightedEdge> g2 = 
-			new WeightedMultigraph<Vertex, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+		WeightedMultigraph<Vertex, LabeledWeightedEdge> g2 = 
+			new WeightedMultigraph<Vertex, LabeledWeightedEdge>(LabeledWeightedEdge.class);
 		
-		for (DefaultWeightedEdge edge : edges) {
+		for (LabeledWeightedEdge edge : edges) {
 
 //			//just for test, forcing to select another equal minimal spanning tree
 //			if (g1.getEdgeSource(edge).getLabel().equalsIgnoreCase("v1") && 
@@ -81,45 +92,43 @@ public class SteinerTree {
 //				g2.addEdge(g1.getEdgeTarget(edge), v2, e);
 //			} else 
 			{
-				g2.addVertex(g1.getEdgeSource(edge));
-				g2.addVertex(g1.getEdgeTarget(edge));
-				g2.addEdge( g1.getEdgeSource(edge), g1.getEdgeTarget(edge), edge); 
+				g2.addVertex(edge.getSource());
+				g2.addVertex(edge.getTarget());
+				g2.addEdge( edge.getSource(), edge.getTarget(), edge); 
 			}
 		}
 		
+		logger.debug("exit>");
+
 		return g2;
 	}
 	
-	private WeightedMultigraph<Vertex, DefaultWeightedEdge> step3(WeightedMultigraph<Vertex, DefaultWeightedEdge> g2) {
+	private WeightedMultigraph<Vertex, LabeledWeightedEdge> step3(WeightedMultigraph<Vertex, LabeledWeightedEdge> g2) {
 		
-		WeightedMultigraph<Vertex, DefaultWeightedEdge> g3 = 
-			new WeightedMultigraph<Vertex, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+		logger.debug("<enter");
+
+		WeightedMultigraph<Vertex, LabeledWeightedEdge> g3 = 
+			new WeightedMultigraph<Vertex, LabeledWeightedEdge>(LabeledWeightedEdge.class);
 		
-		Set<DefaultWeightedEdge> edges = g2.edgeSet();
-		DijkstraShortestPath<Vertex, DefaultWeightedEdge> path;
-		
-//		List<String> addedEdgesLabels = new ArrayList<String>();
-//		List<String> addedVerticesLabels = new ArrayList<String>();
-//		
-//		String edgeLabel;
+		Set<LabeledWeightedEdge> edges = g2.edgeSet();
+		DijkstraShortestPath<Vertex, LabeledWeightedEdge> path;
 		
 		Vertex source, target;
 		
-		for (DefaultWeightedEdge edge : edges) {
-			source = g2.getEdgeSource(edge);
-			target = g2.getEdgeTarget(edge);
+		for (LabeledWeightedEdge edge : edges) {
+			source = edge.getSource();
+			target = edge.getTarget();
 			
-			path = new DijkstraShortestPath<Vertex, DefaultWeightedEdge>(this.graph, source, target);
-			List<DefaultWeightedEdge> pathEdges = path.getPathEdgeList();
+			path = new DijkstraShortestPath<Vertex, LabeledWeightedEdge>(this.graph, source, target);
+			List<LabeledWeightedEdge> pathEdges = path.getPathEdgeList();
 			
 			for (int i = 0; i < pathEdges.size(); i++) {
-//				edgeLabel = ((LabeledWeightedEdge) pathEdges.get(i)).getLabel(); 
 				
-				if (g3.edgeSet().contains((LabeledWeightedEdge) pathEdges.get(i)))
+				if (g3.edgeSet().contains(pathEdges.get(i)))
 					continue;
 				
-				source = this.graph.getEdgeSource(pathEdges.get(i));
-				target = this.graph.getEdgeTarget(pathEdges.get(i));
+				source = pathEdges.get(i).getSource();
+				target = pathEdges.get(i).getTarget();
 				
 				if (!g3.vertexSet().contains(source) )
 					g3.addVertex(source);
@@ -127,30 +136,31 @@ public class SteinerTree {
 				if (!g3.vertexSet().contains(target) )
 					g3.addVertex(target);
 
-//				if (addedEdgesLabels.indexOf(edgeLabel) != -1)
-//				continue;
-//				
-//				if (addedVerticesLabels.indexOf(source.getLabel()) == -1)
-//					g3.addVertex(source);
-//				
-//				if (addedVerticesLabels.indexOf(target.getLabel()) == -1)
-//					g3.addVertex(target);
-				
 				g3.addEdge(source, target, pathEdges.get(i));
 			}
 		}
 
+		logger.debug("exit>");
+
 		return g3;
 	}
 	
-	private WeightedMultigraph<Vertex, DefaultWeightedEdge> step4(WeightedMultigraph<Vertex, DefaultWeightedEdge> g3) {
+	private WeightedMultigraph<Vertex, LabeledWeightedEdge> step4(WeightedMultigraph<Vertex, LabeledWeightedEdge> g3) {
 
-		return step2(g3);
+		logger.debug("<enter");
+		
+		WeightedMultigraph<Vertex, LabeledWeightedEdge> g4 = step2(g3);
+		
+		logger.debug("exit>");
+		
+		return g4;
 	}
 	
-	private WeightedMultigraph<Vertex, DefaultWeightedEdge> step5(WeightedMultigraph<Vertex, DefaultWeightedEdge> g4) {
+	private WeightedMultigraph<Vertex, LabeledWeightedEdge> step5(WeightedMultigraph<Vertex, LabeledWeightedEdge> g4) {
 		
-		WeightedMultigraph<Vertex, DefaultWeightedEdge> g5 = g4; 
+		logger.debug("<enter");
+
+		WeightedMultigraph<Vertex, LabeledWeightedEdge> g5 = g4; 
 
 		List<Vertex> nonSteinerLeaves = new ArrayList<Vertex>();
 		
@@ -165,12 +175,12 @@ public class SteinerTree {
 		for (int i = 0; i < nonSteinerLeaves.size(); i++) {
 			source = nonSteinerLeaves.get(i);
 			do {
-				DefaultWeightedEdge e = g5.edgesOf(source).toArray(new DefaultWeightedEdge[0])[0];
+				LabeledWeightedEdge e = g5.edgesOf(source).toArray(new LabeledWeightedEdge[0])[0];
 				target = this.graph.getEdgeTarget(e);
 				
 				// this should not happen, but just in case of ...
 				if (target.equals(source)) 
-					target = this.graph.getEdgeSource(e);
+					target = e.getSource();
 				
 				g5.removeVertex(source);
 				source = target;
@@ -178,35 +188,48 @@ public class SteinerTree {
 			
 		}
 		
+		logger.debug("exit>");
 
 		return g5;
 	}
 	
-	public WeightedMultigraph<Vertex, DefaultWeightedEdge> getSteinerTree() {
+	private void runAlgorithm() {
 		
-		WeightedMultigraph<Vertex, DefaultWeightedEdge> g1 = step1();
-		GraphUtil.printGraph(this.graph, g1.edgeSet());
+		logger.debug("<enter");
+
+		WeightedMultigraph<Vertex, LabeledWeightedEdge> g1 = step1();
+//		GraphUtil.printGraph(g1);
 		
-		WeightedMultigraph<Vertex, DefaultWeightedEdge> g2 = step2(g1);
-		GraphUtil.printGraph(this.graph, g2.edgeSet());
+		if (g1.vertexSet().size() < 2) {
+			this.tree = g1;
+			return;
+		}
 		
-		WeightedMultigraph<Vertex, DefaultWeightedEdge> g3 = step3(g2);
-		GraphUtil.printGraph(this.graph, g3.edgeSet());
+		WeightedMultigraph<Vertex, LabeledWeightedEdge> g2 = step2(g1);
+//		GraphUtil.printGraph(g2);
 		
-		WeightedMultigraph<Vertex, DefaultWeightedEdge> g4 = step4(g3);
-		GraphUtil.printGraph(this.graph, g4.edgeSet());
+		WeightedMultigraph<Vertex, LabeledWeightedEdge> g3 = step3(g2);
+//		GraphUtil.printGraph(g3);
 		
-		WeightedMultigraph<Vertex, DefaultWeightedEdge> g5 = step5(g4);
-		GraphUtil.printGraph(this.graph, g5.edgeSet());
+		WeightedMultigraph<Vertex, LabeledWeightedEdge> g4 = step4(g3);
+//		GraphUtil.printGraph(g4);
 		
-		return g5;
+		WeightedMultigraph<Vertex, LabeledWeightedEdge> g5 = step5(g4);
+//		GraphUtil.printGraph(g5);
+		
+		this.tree = g5;
+		logger.debug("exit>");
+
 	}
 	
+	public WeightedMultigraph<Vertex, LabeledWeightedEdge> getSteinerTree() {
+		return this.tree;
+	}
 	
 	public static void main(String[] args) {
 		
-		WeightedMultigraph<Vertex, DefaultWeightedEdge> g = 
-			new WeightedMultigraph<Vertex, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+		WeightedMultigraph<Vertex, LabeledWeightedEdge> g = 
+			new WeightedMultigraph<Vertex, LabeledWeightedEdge>(LabeledWeightedEdge.class);
 		
 		LabeledWeightedEdge e1 = new LabeledWeightedEdge("e1");
 		LabeledWeightedEdge e2 = new LabeledWeightedEdge("e2");
@@ -274,9 +297,9 @@ public class SteinerTree {
 		g.setEdgeWeight(e12, 2.0);
 
 		SteinerTree st = new SteinerTree(g, steinerNodes);
-		WeightedMultigraph<Vertex, DefaultWeightedEdge> steiner = st.getSteinerTree();
+		WeightedMultigraph<Vertex, LabeledWeightedEdge> steiner = st.getSteinerTree();
 		double sum = 0.0;
-		for (DefaultWeightedEdge edge : steiner.edgeSet()) {
+		for (LabeledWeightedEdge edge : steiner.edgeSet()) {
 			sum += steiner.getEdgeWeight(edge);
         }
 		
