@@ -40,13 +40,7 @@
     <dependency>
     	<groupId>com.hp.hpl.jena</groupId>
     	<artifactId>jena</artifactId>
-    	<version>2.6.2</version>
-    	<exclusions>
-    		<exclusion>
-    			<artifactId>slf4j-log4j12</artifactId>
-    			<groupId>org.slf4j</groupId>
-    		</exclusion>
-    	</exclusions>
+    	<version>2.6.4</version>
     </dependency>
     <dependency>
 		<groupId>jgrapht</groupId>

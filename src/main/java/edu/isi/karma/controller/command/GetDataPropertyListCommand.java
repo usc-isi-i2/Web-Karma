@@ -1,47 +1,41 @@
 package edu.isi.karma.controller.command;
 
+import edu.isi.karma.controller.update.DataPropertyListUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
 
-public class SetSemanticType extends Command {
+public class GetDataPropertyListCommand extends Command {
 
-	//private final String hNodeId;
-	
-	
-	protected SetSemanticType(String id, String hNodeId) {
+	protected GetDataPropertyListCommand(String id) {
 		super(id);
-		//this.hNodeId = hNodeId;
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public String getCommandName() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getClass().getSimpleName();
 	}
 
 	@Override
 	public String getTitle() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Get Data Property List";
 	}
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 	@Override
 	public CommandType getCommandType() {
-		// TODO Auto-generated method stub
-		return null;
+		return CommandType.notInHistory;
 	}
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		// TODO Auto-generated method stub
-		return null;
+		UpdateContainer c = new UpdateContainer();
+		c.add(new DataPropertyListUpdate());
+		return c;
 	}
 
 	@Override

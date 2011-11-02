@@ -23,10 +23,10 @@ public class ImportOntology {
 	public ImportOntology(OntModel ontologyModel, File sourceFile) {
 		this.ontologyModel = ontologyModel;
 		this.sourceFile = sourceFile;
-		doImport();
+		//doImport();
 	}
 	
-	private boolean doImport() {
+	public boolean doImport() {
 
 		logger.debug("Importing " +sourceFile.getName() + " OWL Ontology ...");
 

@@ -337,6 +337,11 @@ table#CRFSuggestedLabelsTable {
 	border-collapse: collapse;
 }
 
+div#ontologyOptionsTable {
+	font-size: 10px;
+	display: block;
+}
+
 table#CRFSuggestedLabelsTable td {
 	padding: 4px;
 	font-size: 10px;

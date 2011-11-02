@@ -24,6 +24,10 @@ public class DatabaseTablesListUpdate extends AbstractUpdate {
 	private String dBorSIDName;
 	private String commandId;
 
+	public enum JsonKeys {
+		commandId, headers, rows, fileName, dbType, hostname, portnumber, username, dBorSIDName, TableList
+	}
+
 	public DatabaseTablesListUpdate(AbstractJDBCUtil.DBType dbType,
 			String hostname, int portnumber, String username, String password,
 			String dBorSIDName, String commandId) {
@@ -54,23 +58,23 @@ public class DatabaseTablesListUpdate extends AbstractUpdate {
 
 			// Save the database connection preferences
 			JSONObject prefObject = new JSONObject();
-			prefObject.put("dbType", dbType.name());
-			prefObject.put("hostname", hostname);
-			prefObject.put("portnumber", portnumber);
-			prefObject.put("username", username);
-			prefObject.put("dBorSIDName", dBorSIDName);
+			prefObject.put(JsonKeys.dbType.name(), dbType.name());
+			prefObject.put(JsonKeys.hostname.name(), hostname);
+			prefObject.put(JsonKeys.portnumber.name(), portnumber);
+			prefObject.put(JsonKeys.username.name(), username);
+			prefObject.put(JsonKeys.dBorSIDName.name(), dBorSIDName);
 			vWorkspace.getPreferences().setCommandPreferences(
 					"ImportDatabaseTableCommand", prefObject);
 
 			JSONStringer jsonStr = new JSONStringer();
-			JSONWriter writer = jsonStr.object().key("commandId")
-					.value(commandId).key("updateType")
+			JSONWriter writer = jsonStr.object().key(JsonKeys.commandId.name())
+					.value(commandId).key(GenericJsonKeys.updateType.name())
 					.value("GetDatabaseTableList");
 
 			JSONArray dataRows = new JSONArray();
 			dataRows.put(listOfTables);
 
-			writer.key("TableList").value(dataRows);
+			writer.key(JsonKeys.TableList.name()).value(dataRows);
 			writer.endObject();
 			pw.print(jsonStr.toString());
 

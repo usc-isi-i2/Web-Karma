@@ -20,7 +20,7 @@ import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
 public class ImportXMLFileCommand extends Command {
-	File xmlFile;
+	private File xmlFile;
 
 	private static Logger logger = LoggerFactory.getLogger(ImportXMLFileCommand.class);
 	

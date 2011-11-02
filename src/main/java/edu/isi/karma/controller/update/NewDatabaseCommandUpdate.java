@@ -14,6 +14,10 @@ import edu.isi.karma.view.VWorkspace;
 public class NewDatabaseCommandUpdate extends AbstractUpdate{
 	private Command command;
 	private static Logger logger = LoggerFactory.getLogger(NewDatabaseCommandUpdate.class);
+	
+	public enum JsonKeys {
+		commandId
+	}
 
 	public NewDatabaseCommandUpdate(ImportDatabaseTableCommand command) {
 		this.command = command;
@@ -24,8 +28,8 @@ public class NewDatabaseCommandUpdate extends AbstractUpdate{
 			VWorkspace vWorkspace) {
 		JSONObject responseObj = new JSONObject();
 		try {
-			responseObj.put("commandId", command.getId());
-			responseObj.put("updateType", "NewImportDatabaseTableCommandUpdate");
+			responseObj.put(JsonKeys.commandId.name(), command.getId());
+			responseObj.put(GenericJsonKeys.updateType.name(), "NewImportDatabaseTableCommandUpdate");
 			pw.print(responseObj.toString(4));
 		} catch (JSONException e) {
 			logger.error("Error generating JSON!", e);

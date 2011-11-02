@@ -18,7 +18,7 @@ import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
 public class ImportJSONFileCommand extends Command {
-	File jsonFile;
+	private File jsonFile;
 	
 	private static Logger logger = LoggerFactory.getLogger(ImportJSONFileCommand.class);
 

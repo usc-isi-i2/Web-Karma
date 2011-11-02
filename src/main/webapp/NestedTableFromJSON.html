@@ -28,6 +28,7 @@
 		<script type="text/javascript" src="js/jquery.uploadify.v2.1.4.js"></script>
 		<script type="text/javascript" src="js/swfobject.js"></script>
 		<script type="text/javascript" src="js/databaseImportDialog.js"></script>
+		<script type="text/javascript" src="js/jquery.jstree.js"></script>
 		
 		
 		<!-- Home grown JavaScript files -->
@@ -90,6 +91,20 @@
     				'script'	: 'RequestController',
     				'buttonText': 'Import XML',
     				'scriptData': {'command': 'ImportXMLFileCommand', 
+    								'workspaceId': $.workspaceGlobalInformation.id},
+    				'method'	: 'GET',
+    				'auto': true,
+    				'onComplete'  : function(event, ID, fileObj, response, data) {
+						parse($.parseJSON(response));
+				    }
+  				});
+  				
+  				$('#uploadFile_Ontology').uploadify({
+    				'uploader'  : '/images/uploadify.swf',
+    				'cancelImg' : '/images/cancel.png',
+    				'script'	: 'RequestController',
+    				'buttonText': 'Import Ontology',
+    				'scriptData': {'command': 'ImportOntologyCommand', 
     								'workspaceId': $.workspaceGlobalInformation.id},
     				'method'	: 'GET',
     				'auto': true,
@@ -173,6 +188,12 @@
 			// Stylize the worksheet options div panel
 			$(function() {
 				styleAndAssignHandlersToWorksheetOptionButtons();
+			});
+			
+			// Hide the ontology options table
+			$(function() {
+				$("#ontologyOptionsTable").hide();
+				attachOntologyOptionsRadioButtonHandlers();
 			});
 			
 			
@@ -363,6 +384,9 @@
 					<input type="file" name="file3" id="uploadFile_XML">
 				</td>
 				<td>
+					<input type="file" name="file4" id="uploadFile_Ontology">
+				</td>
+				<td>
 					<button id="importDatabaseTableButton">Import Database Table</button>
 				</td>
 			</tr>
@@ -516,7 +540,31 @@
 			<button href="#" id="removeFromWorkspaceButton">Remove from workspace</button>
 		</div>
 		<div id="ChangeSemanticTypesDialogBox">
-			<table></table>
+			<table id="CRFSuggestedLabelsTable"></table>
+			<div id="ontologyOptionsTable">
+				<table>
+				<tr>
+					<td><input type="radio" id="chooseClass" name="ontologyOptionGroup" value="Choose Class"/>
+						<label for="chooseClass">Choose Class</label>
+					</td>
+					<td><input type="radio" id="chooseDataProperty" name="ontologyOptionGroup" value="Choose Data Property"/>
+						<label for="chooseDataProperty">Choose Data Property</label>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<input type="textarea" id="searchQueryOntologyList" maxlength="100" size="35"/>
+						<button id="searchOntologyList">Search</button>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div id="ontologyOptionsList"></div>		
+					</td>
+				</tr>
+				</table>
+				
+			</div>
 		</div>
 	</body>
 </html>

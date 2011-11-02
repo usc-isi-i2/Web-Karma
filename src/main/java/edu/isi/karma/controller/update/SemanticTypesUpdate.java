@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
@@ -19,6 +20,10 @@ import edu.isi.karma.view.VWorkspace;
 public class SemanticTypesUpdate extends AbstractUpdate {
 	private Worksheet worksheet;
 	private String vWorksheetId;
+
+	public enum JsonKeys {
+		HNodeId, FullType, ConfidenceLevel, Origin, FullCRFModel, DisplayLabel
+	}
 
 	private static Logger logger = LoggerFactory
 			.getLogger(SemanticTypesUpdate.class);
@@ -38,8 +43,8 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		try {
 			JSONWriter writer = jsonStr.object();
 
-			writer.key("worksheetId").value(vWorksheetId)
-					.key("updateType").value("SemanticTypesUpdate");
+			writer.key("worksheetId").value(vWorksheetId).key("updateType")
+					.value("SemanticTypesUpdate");
 
 			writer.key("Types");
 			writer.array();
@@ -53,23 +58,30 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 				// Check if a semantic type exists for the HNode
 				SemanticType type = types.getSemanticTypeByHNodeId(nodeId);
 				if (type != null) {
-					writer.key("HNodeID").value(type.getHNodeId()).key("Type")
-							.value(type.getType()).key("Origin")
+					writer.key(JsonKeys.HNodeId.name())
+							.value(type.getHNodeId())
+							.key(JsonKeys.FullType.name())
+							.value(type.getType())
+							.key(JsonKeys.Origin.name())
 							.value(type.getOrigin().name())
-							.key("ConfidenceLevel")
-							.value(type.getConfidenceLevel().name());
+							.key(JsonKeys.ConfidenceLevel.name())
+							.value(type.getConfidenceLevel().name())
+							.key(JsonKeys.DisplayLabel.name())
+							.value(SemanticTypeUtil.removeNamespace(type
+									.getType()));
 				} else {
-					writer.key("HNodeId").value(nodeId).key("Type").value("")
-							.key("Origin").value("").key("ConfidenceLevel")
-							.value("");
+					writer.key(JsonKeys.HNodeId.name()).value(nodeId)
+							.key(JsonKeys.FullType.name()).value("")
+							.key(JsonKeys.Origin.name()).value("")
+							.key(JsonKeys.ConfidenceLevel.name()).value("");
 				}
 
 				// Populate the CRF Model
 				if (type != null) {
 					CRFColumnModel colModel = worksheet.getCrfModel()
 							.getModelByHNodeId(nodeId);
-					writer.key("FullCRFModel")
-							.value(colModel.getAsJSONObject());
+					writer.key(JsonKeys.FullCRFModel.name()).value(
+							colModel.getAsJSONObject());
 				}
 
 				writer.endObject();

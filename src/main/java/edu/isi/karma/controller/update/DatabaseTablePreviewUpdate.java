@@ -25,6 +25,10 @@ public class DatabaseTablePreviewUpdate extends AbstractUpdate {
 	private String 			commandId;
 	private String 			tableName;
 	
+	public enum JsonKeys {
+		commandId, tableName, headers, rows
+	}
+	
 	public DatabaseTablePreviewUpdate(DBType dbType, String hostname,
 			int portnumber, String username, String password, String tableName,
 			String dBorSIDName, String commandId) {
@@ -49,19 +53,19 @@ public class DatabaseTablePreviewUpdate extends AbstractUpdate {
 					portnumber, username, password, tableName, dBorSIDName, 10);
 			
 			JSONStringer jsonStr = new JSONStringer();
-			JSONWriter writer = jsonStr.object().key("commandId").value(commandId)
-				.key("updateType").value("ImportDatabaseTablePreview").key("tableName").value(tableName);
+			JSONWriter writer = jsonStr.object().key(JsonKeys.commandId.name()).value(commandId)
+				.key(GenericJsonKeys.updateType.name()).value("ImportDatabaseTablePreview").key(JsonKeys.tableName.name()).value(tableName);
 			
 			// Add the headers
 			JSONArray arr = new JSONArray(data.get(0));
-			writer.key("headers").value(arr);
+			writer.key(JsonKeys.headers.name()).value(arr);
 			
 			// Add the data
 			JSONArray dataRows = new JSONArray();
 			for(int i = 1; i<data.size(); i++) {
 				dataRows.put(data.get(i));
 			}
-			writer.key("rows").value(dataRows);
+			writer.key(JsonKeys.rows.name()).value(dataRows);
 			
 			writer.endObject();
 			pw.println(jsonStr.toString());

@@ -537,21 +537,34 @@ function parse(data) {
 		else if(element["updateType"] == "SemanticTypesUpdate") {
 			var table = $("table#" + element["worksheetId"]);
 			$.each(element["Types"], function(index, type) {
-				var tdTag = $("td.columnHeadingCell#" + type["HNodeID"], table);
-				
+				var tdTag = $("td.columnHeadingCell#" + type["HNodeId"], table);
 				// Remove any existing semantic type div
 				$("br", tdTag).remove();
 				$("div.semanticTypeDiv", tdTag).remove();
 				
 				var semDiv = $("<div>").addClass("semanticTypeDiv " + 
-						type["ConfidenceLevel"]+"ConfidenceLevel")
-						.text(type["Type"]);
-				semDiv.data("crfInfo",type["FullCRFModel"])
-					.data("hNodeId", type["HNodeID"]);
+						type["ConfidenceLevel"]+"ConfidenceLevel");
+				
+				if(type["FullType"] == ""){
+					$(semDiv).text("Click To Assign!").addClass("LowConfidenceLevel")
+						.data("hNodeId", type["HNodeId"]);
+				} else {
+					semDiv.text(type["DisplayLabel"]);
+					semDiv.data("crfInfo",type["FullCRFModel"])
+						.data("hNodeId", type["HNodeId"]);
+				}
+					
 				//semDiv.hover(showSemanticTypeInfo, hideSemanticTypeInfo);
 				semDiv.click(changeSemanticType);
 				tdTag.append(semDiv);
 			});
+		}
+		
+		else if(element["updateType"] == "ImportOntologyCommand") {
+			if(element["Import"])
+				alert("Ontology successfully imported.");
+			else
+				alert("Ontology import failed! Please try again.");
 		}
 	});
 }

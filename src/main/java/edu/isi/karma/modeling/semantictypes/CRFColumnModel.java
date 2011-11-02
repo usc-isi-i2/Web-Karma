@@ -53,6 +53,7 @@ public class CRFColumnModel implements Jsonizable {
 		for (String label : sortedMap.keySet()) {
 			JSONObject oj = new JSONObject();
 			oj.put("Type", label);
+			oj.put("DisplayLabel", SemanticTypeUtil.removeNamespace(label));
 			oj.put("Probability", scoreMap.get(label));
 			arr.put(oj);
 		}
