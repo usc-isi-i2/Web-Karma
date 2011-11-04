@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.util.FileUtil;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 
 /**
  * @author szekely
@@ -61,13 +61,13 @@ public class ViewPreferences {
 			jsonFile = new File("./UserPrefs/" + workspaceId + ".json");
 			if(jsonFile.exists()){
 				// Populate from the existing preferences JSON file
-				json = (JSONObject) Util.createJson(new FileReader(jsonFile));
+				json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
 			} else {
 				// Create a new JSON preference file using the template preferences file
 				jsonFile.createNewFile();
 				File template_file = new File("./UserPrefs/WorkspacePref.template");
 				FileUtil.copyFiles(jsonFile, template_file);
-				json = (JSONObject) Util.createJson(new FileReader(jsonFile));
+				json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
 			} 
 		} catch(FileNotFoundException f) {
 			logger.error("Preferences file not found! ", f);

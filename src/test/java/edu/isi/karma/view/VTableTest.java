@@ -12,7 +12,7 @@ import org.json.JSONException;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 
 public class VTableTest extends TestCase {
 
@@ -32,7 +32,7 @@ public class VTableTest extends TestCase {
 	@SuppressWarnings("unused")
 	public void testAddRows() throws JSONException {
 		String jsonString = "{\"c\":[{\"d\":[{\"f\":\"_0_\"},{\"f\":\"_0_\"}],\"h\":\"_h0_\"},{\"d\":[{\"f\":\"_1_\"},{\"f\":\"_1_\"}],\"h\":\"_h1_\"}],\"a\":\"_a_\"}";
-		Object o = Util.createJson(jsonString);
+		Object o = JSONUtil.createJson(jsonString);
 		JsonImport ji = new JsonImport(o, "Table-01", vwsp.getWorkspace());
 		Worksheet w = ji.generateWorksheet();
 		vwsp.addAllWorksheets();

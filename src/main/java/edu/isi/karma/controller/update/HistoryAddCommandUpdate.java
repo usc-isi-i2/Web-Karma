@@ -6,7 +6,7 @@ package edu.isi.karma.controller.update;
 import java.io.PrintWriter;
 
 import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
 
 /**
@@ -34,8 +34,8 @@ public class HistoryAddCommandUpdate extends AbstractUpdate {
 		pw.println(prefix + "{");
 		String newPref = prefix + "  ";
 		pw.println(newPref
-				+ Util.json(GenericJsonKeys.updateType, getUpdateType()));
-		pw.println(newPref + Util.jsonStartObject(JsonKeys.command));
+				+ JSONUtil.json(GenericJsonKeys.updateType, getUpdateType()));
+		pw.println(newPref + JSONUtil.jsonStartObject(JsonKeys.command));
 		command.generateJson(newPref + "  ", pw, vWorkspace, Command.HistoryType.undo);
 		pw.println(prefix + "}");
 	}

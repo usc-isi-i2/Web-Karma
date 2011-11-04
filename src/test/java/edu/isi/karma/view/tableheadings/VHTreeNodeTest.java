@@ -14,7 +14,7 @@ import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.SampleDataFactory;
@@ -71,7 +71,7 @@ public class VHTreeNodeTest extends TestCase {
 		StringWriter sw1 = new StringWriter();
 		PrintWriter pw1 = new PrintWriter(sw1);
 		c.generateJson("", pw1, vwsp);
-		System.err.println(Util.prettyPrintJson(sw1.toString()));
+		System.err.println(JSONUtil.prettyPrintJson(sw1.toString()));
 
 		assertTrue(true);
 	}

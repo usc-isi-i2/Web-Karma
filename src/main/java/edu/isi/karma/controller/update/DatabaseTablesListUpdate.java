@@ -16,18 +16,21 @@ import edu.isi.karma.view.VWorkspace;
 
 public class DatabaseTablesListUpdate extends AbstractUpdate {
 
-	private AbstractJDBCUtil.DBType 	dbType;
-	private String 			hostname;
-	private int 			portnumber;
-	private String 			username;
-	private String 			password;
-	private String 			dBorSIDName;
-	private String 			commandId;
-	
-	
+	private AbstractJDBCUtil.DBType dbType;
+	private String hostname;
+	private int portnumber;
+	private String username;
+	private String password;
+	private String dBorSIDName;
+	private String commandId;
 
-	public DatabaseTablesListUpdate(AbstractJDBCUtil.DBType dbType, String hostname,
-			int portnumber, String username, String password, String dBorSIDName, String commandId) {
+	public enum JsonKeys {
+		commandId, headers, rows, fileName, dbType, hostname, portnumber, username, dBorSIDName, TableList
+	}
+
+	public DatabaseTablesListUpdate(AbstractJDBCUtil.DBType dbType,
+			String hostname, int portnumber, String username, String password,
+			String dBorSIDName, String commandId) {
 		super();
 		this.dbType = dbType;
 		this.hostname = hostname;
@@ -44,39 +47,42 @@ public class DatabaseTablesListUpdate extends AbstractUpdate {
 		ArrayList<String> listOfTables = null;
 		try {
 			AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
-			
-			listOfTables = dbUtil.getListOfTables(dbType, hostname, portnumber
-					, username, password, dBorSIDName);
-			
-			if(listOfTables == null) {
+
+			listOfTables = dbUtil.getListOfTables(dbType, hostname, portnumber,
+					username, password, dBorSIDName);
+
+			if (listOfTables == null) {
 				// TODO Send special update
 				return;
 			}
-			
-			// Save the database connection preferences 
+
+			// Save the database connection preferences
 			JSONObject prefObject = new JSONObject();
-			prefObject.put("dbType", dbType.name());
-			prefObject.put("hostname", hostname);
-			prefObject.put("portnumber", portnumber);
-			prefObject.put("username", username);
-			prefObject.put("dBorSIDName", dBorSIDName);
-			vWorkspace.getPreferences().setCommandPreferences("ImportDatabaseTableCommand", prefObject);
-			
+			prefObject.put(JsonKeys.dbType.name(), dbType.name());
+			prefObject.put(JsonKeys.hostname.name(), hostname);
+			prefObject.put(JsonKeys.portnumber.name(), portnumber);
+			prefObject.put(JsonKeys.username.name(), username);
+			prefObject.put(JsonKeys.dBorSIDName.name(), dBorSIDName);
+			vWorkspace.getPreferences().setCommandPreferences(
+					"ImportDatabaseTableCommand", prefObject);
+
 			JSONStringer jsonStr = new JSONStringer();
-			JSONWriter writer = jsonStr.object().key("commandId").value(commandId)
-				.key("updateType").value("GetDatabaseTableList");
-			
+			JSONWriter writer = jsonStr.object().key(JsonKeys.commandId.name())
+					.value(commandId).key(GenericJsonKeys.updateType.name())
+					.value("GetDatabaseTableList");
+
 			JSONArray dataRows = new JSONArray();
 			dataRows.put(listOfTables);
-			
-			writer.key("TableList").value(dataRows);
+
+			writer.key(JsonKeys.TableList.name()).value(dataRows);
 			writer.endObject();
 			pw.print(jsonStr.toString());
-			
+
 		} catch (SQLException e) {
 			// TODO Send error update
 			e.printStackTrace();
-			String message = e.getMessage().replaceAll("\n", "").replaceAll("\"","\\\"");
+			String message = e.getMessage().replaceAll("\n", "")
+					.replaceAll("\"", "\\\"");
 			ErrorUpdate er = new ErrorUpdate("databaseImportError", message);
 			er.generateJson(prefix, pw, vWorkspace);
 		} catch (ClassNotFoundException e) {

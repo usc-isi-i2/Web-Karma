@@ -11,7 +11,7 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
 import edu.isi.karma.view.tableheadings.VColumnHeader;
 
@@ -50,7 +50,7 @@ public class ViewFactory {
 		String columnNameFull = hn.getColumnName();
 		String columnNameShort = columnNameFull;
 		if (columnNameFull.length() > preferences.getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader)) {
-			columnNameShort = Util.truncateForHeader(columnNameFull,
+			columnNameShort = JSONUtil.truncateForHeader(columnNameFull,
 					preferences.getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader));
 		}
 		tableCssTags.registerTablesInPath(path);

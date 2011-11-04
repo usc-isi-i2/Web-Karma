@@ -11,10 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetDataUpdate;
-import edu.isi.karma.controller.update.WorksheetHeadersUpdate;
-import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
-import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.rep.Worksheet;
@@ -24,7 +20,7 @@ import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
 public class ImportXMLFileCommand extends Command {
-	File xmlFile;
+	private File xmlFile;
 
 	private static Logger logger = LoggerFactory.getLogger(ImportXMLFileCommand.class);
 	
@@ -74,10 +70,7 @@ public class ImportXMLFileCommand extends Command {
 			
 			c.add(new WorksheetListUpdate(vWorkspace.getVWorksheetList()));
 			VWorksheet vw = vWorkspace.getVWorksheet(wsht.getId());
-			c.add(new WorksheetHeadersUpdate(vw));
-			c.add(new WorksheetDataUpdate(vw));
-			c.add(new WorksheetHierarchicalHeadersUpdate(vw));
-			c.add(new WorksheetHierarchicalDataUpdate(vw));
+			vw.update(c);
 		} catch (FileNotFoundException e) {
 			logger.error("File Not Found", e);
 		} catch (JSONException e) {

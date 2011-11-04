@@ -5,7 +5,7 @@
 function submitEdit(value, settings) {
 	$("#tableCellEditDiv").dialog("close");
 	var edits = new Object();
-	
+	console.log($("#tableCellEditDiv").data("tdTagId"));
 	var tdTag = $("#" + $("#tableCellEditDiv").data("tdTagId"));
 	
 	edits["value"] = $("#editCellTextArea").val();

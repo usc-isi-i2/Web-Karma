@@ -14,8 +14,10 @@ public class Test {
 	private static void loadOntologies() {
 		File f1 = new File("D:\\Academic\\ISI\\_SVN\\karma\\trunk\\WS Modeling\\Ontologies\\myont.owl");
 		File f2 = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\sample.owl");
-		new ImportOntology(OntologyManager.Instance().getOntModel(), f1);
-		new ImportOntology(OntologyManager.Instance().getOntModel(), f2);
+		ImportOntology imp1 = new ImportOntology(OntologyManager.Instance().getOntModel(), f1);
+		imp1.doImport();
+		ImportOntology imp2 = new ImportOntology(OntologyManager.Instance().getOntModel(), f2);
+		imp2.doImport();
 	}
 	
 	public static void main(String[] args) {
@@ -23,7 +25,7 @@ public class Test {
 		loadOntologies();
 		
 		String ns1 = "http://mohsen.isi.edu/sample.owl#";
-		String ns2 = "http://www.w3.org/2002/07/owl#";
+//		String ns2 = "http://www.w3.org/2002/07/owl#";
 		
 		List<NameSet> semanticTypes = new ArrayList<NameSet>();
 //		semanticTypes.add(new NameSet(ns1, "City"));
@@ -44,9 +46,9 @@ public class Test {
 //		semanticTypes.add(new NameSet(ns2, "Thing"));
 //		semanticTypes.add(new NameSet(ns2, "Thing"));
 		
-		String e1 = ns1 + "hasName1";
-		String e2 = ns1 + "hasName2";
-		String e3 = ns2 + "hasSubClass10";
+//		String e1 = ns1 + "hasName1";
+//		String e2 = ns1 + "hasName2";
+//		String e3 = ns2 + "hasSubClass10";
 		String e4 = ns1 + "zipCode2";
 		
 		Alignment alignment = new Alignment(semanticTypes);

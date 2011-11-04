@@ -19,6 +19,7 @@
 		<link rel="stylesheet" type="text/css" href="./css/DatabaseImport.css" />
 		<link rel="stylesheet" type="text/css" href="./css/headerParsingExample.css" />
 		
+		
 		<!-- Third Party JavaScript files		 -->
 		<script type="text/javascript" src="js/jquery-1.6.2.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
@@ -27,6 +28,7 @@
 		<script type="text/javascript" src="js/jquery.uploadify.v2.1.4.js"></script>
 		<script type="text/javascript" src="js/swfobject.js"></script>
 		<script type="text/javascript" src="js/databaseImportDialog.js"></script>
+		<script type="text/javascript" src="js/jquery.jstree.js"></script>
 		
 		
 		<!-- Home grown JavaScript files -->
@@ -41,14 +43,14 @@
 			 * This code part is responsible for scrolling down the command history
 			 * window when the user scrolls down the page.
 			 */
-			$().ready(function() {
-				var scrollingDiv = $("#commandHistory");
-				$(window).scroll(function(){			
-					scrollingDiv
-						.stop()
-						.animate({"marginTop": ($(window).scrollTop()) + "px"}, "fast" );			
-				});
-			});
+			// $().ready(function() {
+				// var scrollingDiv = $("#commandHistory");
+				// $(window).scroll(function(){		
+					// scrollingDiv
+						// .stop()
+						// .animate({"marginTop": ($(window).scrollTop()) + "px"}, "fast" );			
+				// });
+			// });
 			
 			$.getJSON("/getExampleNestedJSON", function(data) {
 				parse(data);
@@ -89,6 +91,20 @@
     				'script'	: 'RequestController',
     				'buttonText': 'Import XML',
     				'scriptData': {'command': 'ImportXMLFileCommand', 
+    								'workspaceId': $.workspaceGlobalInformation.id},
+    				'method'	: 'GET',
+    				'auto': true,
+    				'onComplete'  : function(event, ID, fileObj, response, data) {
+						parse($.parseJSON(response));
+				    }
+  				});
+  				
+  				$('#uploadFile_Ontology').uploadify({
+    				'uploader'  : '/images/uploadify.swf',
+    				'cancelImg' : '/images/cancel.png',
+    				'script'	: 'RequestController',
+    				'buttonText': 'Import Ontology',
+    				'scriptData': {'command': 'ImportOntologyCommand', 
     								'workspaceId': $.workspaceGlobalInformation.id},
     				'method'	: 'GET',
     				'auto': true,
@@ -168,6 +184,189 @@
 			$(function() {
 				$("#tableCellEditDiv").hide();
 			});
+			
+			// Stylize the worksheet options div panel
+			$(function() {
+				styleAndAssignHandlersToWorksheetOptionButtons();
+			});
+			
+			// Hide the ontology options table
+			$(function() {
+				$("#ontologyOptionsTable").hide();
+				attachOntologyOptionsRadioButtonHandlers();
+			});
+			
+			
+			$(function() {
+				var timer = null;
+				$(window).scroll(function() {
+				    if(timer !== null) {
+				        clearTimeout(timer);        
+				    }
+				    timer = setTimeout(function() {
+				    	
+				    	// Scroll the command history
+						$("#commandHistory")
+							.stop()
+							.animate({"marginTop": ($(window).scrollTop()) + "px"}, "fast" );
+				        
+				        
+				        // Scroll the table headers if required
+				        var scroll = $(window).scrollTop();
+						var x = 0 - $(this).scrollLeft();
+						
+						$.each($("div.TableDiv"), function(index, tableDivElement){
+							var anchor_top = $(tableDivElement).offset().top;
+							var tableID = $("table", tableDivElement).attr("id");
+							var anchor_bottom = $("div#" + tableID + "bottomAnchor").offset().top;
+							// console.log("Working with" + tableID)
+							// console.log("Anchor Bottom" + anchor_bottom);
+							// console.log("Scroll" + scroll);
+							
+							
+							if(scroll > anchor_bottom)
+								return true;
+							
+							if (scroll>anchor_top && scroll<(anchor_bottom -
+									$("table#"+tableID +" thead").height() - 
+									$("div#topLevelpagerOptions" + tableID).height())) {
+								// console.log("Checking for table: " + tableID);
+								var cloneTable = $("table#HeaderScrollPanel");
+								// console.log(cloneTable.length);
+								// console.log("Current Table:" + cloneTable.data("currentTable"));
+								if(cloneTable.length == 0) {
+									cloneTable = $("<table>").attr("id","HeaderScrollPanel");
+								}
+								
+								if(cloneTable.data("currentTable") == tableID) {
+									cloneTable.css({position:'fixed',
+							                 //'pointer-events': 'none',
+							                 top:0, left:289+x});
+									return false;
+								} else {
+									$("table#HeaderScrollPanel tr").remove();
+							    	// console.log("Creating clone!");
+							        var theadClone = $("table#"+tableID +" thead").clone();
+							        cloneTable.append(theadClone);
+							        cloneTable.css({position:'fixed',
+							                 //'pointer-events': 'none',
+							                 top:0, left:288+x});
+							                 
+							        $.each($("table#"+tableID+" thead tr"), function(trIndex, originalRow){
+							        	//console.log("Row Index: " + trIndex);
+							        	var dupRow = $("thead tr", cloneTable).get(trIndex);
+							        	//console.log($(dupRow).length);
+							        	$.each($("td", $(originalRow)), function(tdIndex, originalTD){
+							        		//console.log("TD Index: " + tdIndex);
+							        		var dupTD = $("td", $(dupRow)).get(tdIndex);
+							        		//console.log($(dupTD).length);
+							        		//console.log("Original Width: " + $(originalTD).width());
+							        		//console.log("DUP Width: " + $(dupTD).width())
+							        		$(dupTD).width($(originalTD).width());
+							        	});
+							        });
+							        
+							        cloneTable.data("currentTable", tableID);
+							                 
+							        //console.log("Orig Table Width: " + $("table#VW1").width());
+							        //cloneTable.width($("table#VW1").width());
+							        cloneTable.width($("table#" + tableID).width());
+							        $("div#ScrollHeadersPlaceholder").append(cloneTable);
+								}
+								return false;
+							} else {
+								// console.log("REMOVING!");
+								$("table#HeaderScrollPanel").remove();
+							}
+							
+						});
+				          
+				    }, 100);
+				});
+				// var timer = null;
+				// $(window).addEventListener('scroll', function() {
+				    // if(timer !== null) {
+				        // clearTimeout(timer);        
+				    // }
+// 				    
+				    // timer = startTimeout(function() {
+// 				    	      
+				    // }, 500);
+				// }, false);
+				
+				
+				// $(window).scroll(function(){
+					// var scroll = $(window).scrollTop();
+					// var x = 0 - $(this).scrollLeft();
+// 					
+					// $.each($("div.TableDiv"), function(index, tableDivElement){
+						// var anchor_top = $(tableDivElement).offset().top;
+						// var tableID = $("table", tableDivElement).attr("id");
+						// var anchor_bottom = $("div#" + tableID + "bottomAnchor").offset().top;
+						// console.log("Working with" + tableID)
+						// // console.log("Anchor Bottom" + anchor_bottom);
+						// // console.log("Scroll" + scroll);
+// 						
+// 						
+						// if(scroll > anchor_bottom)
+							// return true;
+// 						
+						// if (scroll>anchor_top && scroll<(anchor_bottom -
+								// $("table#"+tableID +" thead").height() - 
+								// $("div#topLevelpagerOptions" + tableID).height())) {
+							// // console.log("Checking for table: " + tableID);
+							// var cloneTable = $("table#HeaderScrollPanel");
+							// // console.log(cloneTable.length);
+							// // console.log("Current Table:" + cloneTable.data("currentTable"));
+							// if(cloneTable.length == 0) {
+								// cloneTable = $("<table>").attr("id","HeaderScrollPanel");
+							// }
+// 							
+							// if(cloneTable.data("currentTable") == tableID) {
+								// cloneTable.css({position:'fixed',
+						                 // //'pointer-events': 'none',
+						                 // top:0, left:288+x});
+								// return false;
+							// } else {
+						    	// console.log("Creating clone!******************************");
+						        // var theadClone = $("table#"+tableID +" thead").clone();
+						        // cloneTable.append(theadClone);
+						        // cloneTable.css({position:'fixed',
+						                 // //'pointer-events': 'none',
+						                 // top:0, left:288+x});
+// 						                 
+						        // $.each($("table#"+tableID+" thead tr"), function(trIndex, originalRow){
+						        	// //console.log("Row Index: " + trIndex);
+						        	// var dupRow = $("thead tr", cloneTable).get(trIndex);
+						        	// //console.log($(dupRow).length);
+						        	// $.each($("td", $(originalRow)), function(tdIndex, originalTD){
+						        		// //console.log("TD Index: " + tdIndex);
+						        		// var dupTD = $("td", $(dupRow)).get(tdIndex);
+						        		// //console.log($(dupTD).length);
+						        		// //console.log("Original Width: " + $(originalTD).width());
+						        		// //console.log("DUP Width: " + $(dupTD).width())
+						        		// $(dupTD).width($(originalTD).width());
+						        	// });
+						        // });
+// 						        
+						        // cloneTable.data("currentTable", tableID);
+// 						                 
+						        // //console.log("Orig Table Width: " + $("table#VW1").width());
+						        // //cloneTable.width($("table#VW1").width());
+						        // cloneTable.width($("table#" + tableID).width());
+						        // $("div#ScrollHeadersPlaceholder table").remove();
+						        // $("div#ScrollHeadersPlaceholder").append(cloneTable);
+							// }
+							// return false;
+						// } else {
+							// // console.log("REMOVING!");
+							// $("table#HeaderScrollPanel").remove();
+						// }
+// 						
+					// });
+				// });
+			});
+			
 		</script>
 	</head>
 	
@@ -183,6 +382,9 @@
 				</td>
 				<td>
 					<input type="file" name="file3" id="uploadFile_XML">
+				</td>
+				<td>
+					<input type="file" name="file4" id="uploadFile_Ontology">
 				</td>
 				<td>
 					<button id="importDatabaseTableButton">Import Database Table</button>
@@ -330,6 +532,39 @@
 				</tr>
 			</table>
 			<br>
+		</div>
+		<div id="ScrollHeadersPlaceholder"></div>
+		<div id="WorksheetOptionsDiv">
+			<button href="#" id="generateSemanticTypesButton">Generate semantic types</button>
+			<button href="#" id="alignToOntologyButton">Align to ontology</button>
+			<button href="#" id="removeFromWorkspaceButton">Remove from workspace</button>
+		</div>
+		<div id="ChangeSemanticTypesDialogBox">
+			<table id="CRFSuggestedLabelsTable"></table>
+			<div id="ontologyOptionsTable">
+				<table>
+				<tr>
+					<td><input type="radio" id="chooseClass" name="ontologyOptionGroup" value="Choose Class"/>
+						<label for="chooseClass">Choose Class</label>
+					</td>
+					<td><input type="radio" id="chooseDataProperty" name="ontologyOptionGroup" value="Choose Data Property"/>
+						<label for="chooseDataProperty">Choose Data Property</label>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<input type="textarea" id="searchQueryOntologyList" maxlength="100" size="35"/>
+						<button id="searchOntologyList">Search</button>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div id="ontologyOptionsList"></div>		
+					</td>
+				</tr>
+				</table>
+				
+			</div>
 		</div>
 	</body>
 </html>

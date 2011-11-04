@@ -10,7 +10,7 @@ import org.json.JSONStringer;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.tableheadings.VTableHeadings;
 import edu.isi.karma.webserver.SampleDataFactory;
@@ -52,7 +52,7 @@ public class VDTreeNodeTest extends TestCase {
 
 		VDTableData vData = new VDTableData(vHeadings, vwsp.getVWorksheet(ws
 				.getId()), vwsp);
-		System.err.println(Util.prettyPrintJson(vData.prettyPrintJson(
+		System.err.println(JSONUtil.prettyPrintJson(vData.prettyPrintJson(
 				new JSONStringer(), /* verbose */false, vwsp).toString()));
 	}
 }

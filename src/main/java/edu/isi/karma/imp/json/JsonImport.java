@@ -18,7 +18,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 
 /**
  * @author szekely
@@ -41,7 +41,7 @@ public class JsonImport {
 
 	public JsonImport(String jsonString, String worksheetName,
 			Workspace workspace) {
-		this(Util.createJson(jsonString), worksheetName, workspace);
+		this(JSONUtil.createJson(jsonString), worksheetName, workspace);
 	}
 
 	public Worksheet generateWorksheet() throws JSONException {
@@ -68,7 +68,7 @@ public class JsonImport {
 	}
 
 	private static void writeJsonFile(Object o) {
-		Util.writeJsonFile(o, "lastJsonImport.json");
+		JSONUtil.writeJsonFile(o, "lastJsonImport.json");
 	}
 	
 	private void addObjectElement(String key, Object value, HTable headers,

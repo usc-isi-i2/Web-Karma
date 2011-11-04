@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.isi.karma.controller.update.WorksheetDataUpdate;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 
 /**
  * @author szekely
@@ -62,7 +62,7 @@ public class VRow {
 
 		String newPref = prefix + "  ";
 		pw.println(newPref
-				+ Util.jsonStartList(WorksheetDataUpdate.JsonKeys.cells));
+				+ JSONUtil.jsonStartList(WorksheetDataUpdate.JsonKeys.cells));
 		Iterator<VRowEntry> it = entries.iterator();
 		while (it.hasNext()) {
 			VRowEntry re = it.next();

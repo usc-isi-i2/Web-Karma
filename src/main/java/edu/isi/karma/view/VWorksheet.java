@@ -21,7 +21,7 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
 import edu.isi.karma.view.tabledata.VDTableData;
 import edu.isi.karma.view.tableheadings.VColumnHeader;
@@ -212,13 +212,13 @@ public class VWorksheet extends ViewEntity {
 		String newPref = prefix + "  ";
 
 		pw.println(newPref
-				+ Util.json(AbstractUpdate.GenericJsonKeys.updateType,
+				+ JSONUtil.json(AbstractUpdate.GenericJsonKeys.updateType,
 						WorksheetHeadersUpdate.class.getSimpleName()));
 		pw.println(newPref
-				+ Util.json(WorksheetDataUpdate.JsonKeys.worksheetId, getId()));
+				+ JSONUtil.json(WorksheetDataUpdate.JsonKeys.worksheetId, getId()));
 
 		pw.println(newPref
-				+ Util.jsonStartList(WorksheetHeadersUpdate.JsonKeys.columns));
+				+ JSONUtil.jsonStartList(WorksheetHeadersUpdate.JsonKeys.columns));
 		Iterator<VColumnHeader> itCols = columnHeaders.iterator();
 		while (itCols.hasNext()) {
 			VColumnHeader ch = itCols.next();
@@ -235,19 +235,19 @@ public class VWorksheet extends ViewEntity {
 		String newPref = prefix + "  ";
 
 		pw.println(newPref
-				+ Util.json(AbstractUpdate.GenericJsonKeys.updateType,
+				+ JSONUtil.json(AbstractUpdate.GenericJsonKeys.updateType,
 						WorksheetDataUpdate.class.getSimpleName()));
 		pw.println(newPref
-				+ Util.json(WorksheetDataUpdate.JsonKeys.worksheetId, getId()));
+				+ JSONUtil.json(WorksheetDataUpdate.JsonKeys.worksheetId, getId()));
 
 		pw.println(newPref
-				+ Util.jsonStartList(WorksheetDataUpdate.JsonKeys.rows));
+				+ JSONUtil.jsonStartList(WorksheetDataUpdate.JsonKeys.rows));
 
 		viewDataTable.generateJson(newPref, pw, this, factory);
 
 		pw.println(newPref + "],");
 		pw.println(newPref
-				+ Util.jsonStartObject(WorksheetDataUpdate.JsonKeys.pager));
+				+ JSONUtil.jsonStartObject(WorksheetDataUpdate.JsonKeys.pager));
 		getTopTablePager().generateJson(newPref + "  ", pw);
 		pw.println(prefix + "}");
 	}
@@ -258,14 +258,14 @@ public class VWorksheet extends ViewEntity {
 		String newPref = prefix + "  ";
 
 		pw.println(newPref
-				+ Util.json(WorksheetListUpdate.JsonKeys.worksheetId, getId()));
+				+ JSONUtil.json(WorksheetListUpdate.JsonKeys.worksheetId, getId()));
 		pw.println(newPref
-				+ Util.json(WorksheetListUpdate.JsonKeys.isUpToDate, upToDate));
+				+ JSONUtil.json(WorksheetListUpdate.JsonKeys.isUpToDate, upToDate));
 		pw.println(newPref
-				+ Util.json(WorksheetListUpdate.JsonKeys.isCollapsed, collapsed));
+				+ JSONUtil.json(WorksheetListUpdate.JsonKeys.isCollapsed, collapsed));
 
 		pw.println(newPref
-				+ Util.jsonLast(WorksheetListUpdate.JsonKeys.title,
+				+ JSONUtil.jsonLast(WorksheetListUpdate.JsonKeys.title,
 						worksheet.getTitle()));
 
 		pw.println(prefix + "}");

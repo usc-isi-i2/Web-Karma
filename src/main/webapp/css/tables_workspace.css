@@ -8,6 +8,10 @@
 	overflow: auto;
 }
 
+#ScrollHeadersPlaceholder table{
+	overflow: auto;
+}
+
 .Worksheet {
 	margin-bottom: 20px;
 	margin-right: 50px;
@@ -16,9 +20,17 @@
 	min-width:350px;
 }
 
-.fg-toolbar { padding: .1em; margin: 0; }
-.fg-toolbar .fg-buttonset { margin-right:1.5em; padding-left: 0.1px; }
-.fg-toolbar .fg-button { font-size: 1em;  }
+.fg-toolbar { 
+	padding: .1em; 
+	margin: 0; 
+}
+.fg-toolbar .fg-buttonset { 
+	margin-right:1.5em; 
+	padding-left: 0.1px; 
+}
+.fg-toolbar .fg-button { 
+	font-size: 1em;  
+}
 
 .nestedTablePager {
 	width: 250px;
@@ -30,9 +42,9 @@
 }
 
 .WorksheetTitleDiv{
-/*	background-color: #B7B7B7;*/
-	background-image: url("../images/navBG.png");
-	background-repeat: repeat-x;
+	background-color: #C0C0C0;
+	/*background-image: url("../images/navBG.png");
+	background-repeat: repeat-x;*/
 	color:black;
 }
 
@@ -49,14 +61,31 @@
 }
 
 .tableTitleTextDiv {
+	display: inline-block;
 	font-size: 18px;
 	font-family: arial;
 	font-weight: bold;
-	padding: 5px;
-	padding-bottom: 0px;
+	margin-left: 2px;
+	margin-top: 2px;
 }
 .solid1px {
 	border: solid 1px;
+}
+
+.WorksheetOptionsButtonDiv {
+	float: left;
+	/*display: inline-block;*/
+	cursor: pointer;
+    width: 20px;
+    height: 14px;
+    margin-left:4px;
+    margin-top: 5px;
+    margin-right: 4px;
+}
+
+.showHideWorkSheet {
+	float: right;
+	margin-top: 3px;
 }
 
 .minimizeWorksheetImg {
@@ -67,6 +96,45 @@
 
 .TableDiv {
 	background-color: #F5F5F5;
+}
+
+div.ColumnHeadingNameDiv {
+	margin-top: 2px;
+}
+div.semanticTypeDiv {
+	cursor: pointer;
+	font-size: 10px;
+	display:inline-block;
+	width: auto;
+	padding: 2px;
+	margin: 2px;
+}
+div.HighConfidenceLevel {
+	background-color: #32CD32;
+	color: black;
+}
+
+div.MediumConfidenceLevel {
+	background-color: #FFA500;
+	color: black;
+}
+
+div.LowConfidenceLevel {
+	background-color: #FF0000;
+	color: black;
+}
+
+div.HighConfidenceLevel:hover {
+	background-color: #239023;
+}
+
+div.MediumConfidenceLevel:hover {
+	background-color: #CC8400;
+}
+
+div.LowConfidenceLevel:hover {
+	background-color: #CC0000;
+	color: black;
 }
 
 /*#commHistoryAndWorkspace thead tr td {
@@ -239,4 +307,48 @@ a.pagerSizeSelected {
 #importDatabaseTableButton {
 	font-size: 26px;
 }
+
+div#ScrollHeadersPlaceholder table {
+	border-width: 0px; 
+	border-spacing: 0px; 
+	border-collapse: collapse;
+	border-bottom: solid 1px;
+}
+
+div#ScrollHeadersPlaceholder table td {
+	text-align:center;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	border-width: 1px;
+}
+
+div#WorksheetOptionsDiv {
+	width: 135px;
+	padding: 4px;
+	background-color: #3B3B3B;
+}
+
+div#WorksheetOptionsDiv button {
+	margin: 2px;
+	width: 130px;
+}
+
+table#CRFSuggestedLabelsTable {
+	border-collapse: collapse;
+}
+
+div#ontologyOptionsTable {
+	font-size: 10px;
+	display: block;
+}
+
+table#CRFSuggestedLabelsTable td {
+	padding: 4px;
+	font-size: 10px;
+}
+
+
+
+
+
 

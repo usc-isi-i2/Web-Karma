@@ -7,20 +7,32 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.AlignToOntologyCommand;
+import edu.isi.karma.controller.command.AlignToOntologyCommandFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.CommandWithPreview;
 import edu.isi.karma.controller.command.EditCellCommand;
 import edu.isi.karma.controller.command.EditCellCommandFactory;
+import edu.isi.karma.controller.command.GenerateSemanticTypesCommand;
+import edu.isi.karma.controller.command.GenerateSemanticTypesCommandFactory;
+import edu.isi.karma.controller.command.GetDataPropertyListCommand;
+import edu.isi.karma.controller.command.GetDataPropertyListCommandFactory;
+import edu.isi.karma.controller.command.GetOntologyClassHierarchyCommand;
+import edu.isi.karma.controller.command.GetOntologyClassHierarchyCommandFactory;
 import edu.isi.karma.controller.command.ImportCSVFileCommand;
 import edu.isi.karma.controller.command.ImportCSVFileCommandFactory;
 import edu.isi.karma.controller.command.ImportDatabaseTableCommand;
 import edu.isi.karma.controller.command.ImportDatabaseTableCommandFactory;
 import edu.isi.karma.controller.command.ImportJSONFileCommand;
 import edu.isi.karma.controller.command.ImportJSONFileCommandFactory;
+import edu.isi.karma.controller.command.ImportOntologyCommand;
+import edu.isi.karma.controller.command.ImportOntologyCommandFactory;
 import edu.isi.karma.controller.command.ImportXMLFileCommand;
 import edu.isi.karma.controller.command.ImportXMLFileCommandFactory;
+import edu.isi.karma.controller.command.SetSemanticTypeCommand;
+import edu.isi.karma.controller.command.SetSemanticTypeCommandFactory;
 import edu.isi.karma.controller.command.TablePagerCommand;
 import edu.isi.karma.controller.command.TablePagerCommandFactory;
 import edu.isi.karma.controller.command.TablePagerResizeCommand;
@@ -71,6 +83,18 @@ public class ExecutionController {
 				new ImportDatabaseTableCommandFactory());
 		commandFactoryMap.put(ImportXMLFileCommand.class.getSimpleName(),
 				new ImportXMLFileCommandFactory());
+		commandFactoryMap.put(GenerateSemanticTypesCommand.class.getSimpleName(),
+				new GenerateSemanticTypesCommandFactory());
+		commandFactoryMap.put(GetOntologyClassHierarchyCommand.class.getSimpleName(),
+				new GetOntologyClassHierarchyCommandFactory());
+		commandFactoryMap.put(GetDataPropertyListCommand.class.getSimpleName(),
+				new GetDataPropertyListCommandFactory());
+		commandFactoryMap.put(SetSemanticTypeCommand.class.getSimpleName(),
+				new SetSemanticTypeCommandFactory());
+		commandFactoryMap.put(AlignToOntologyCommand.class.getSimpleName(),
+				new AlignToOntologyCommandFactory());
+		commandFactoryMap.put(ImportOntologyCommand.class.getSimpleName(),
+				new ImportOntologyCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

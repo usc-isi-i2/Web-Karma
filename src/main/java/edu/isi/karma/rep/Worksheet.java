@@ -5,6 +5,8 @@ package edu.isi.karma.rep;
 
 import java.io.PrintWriter;
 
+import edu.isi.karma.modeling.semantictypes.FullCRFModel;
+import edu.isi.karma.rep.metadata.MetadataContainer;
 import edu.isi.karma.rep.semantictypes.SemanticTypes;
 
 /**
@@ -15,7 +17,10 @@ public class Worksheet extends RepEntity {
 
 	private HTable headers;
 	private Table dataTable;
-	private SemanticTypes semanticTypes;
+
+	private SemanticTypes semanticTypes = new SemanticTypes();
+	private FullCRFModel crfModel = new FullCRFModel();
+	private MetadataContainer metadataContainer;
 
 	@Override
 	public void prettyPrint(String prefix, PrintWriter pw, RepFactory factory) {
@@ -31,17 +36,6 @@ public class Worksheet extends RepEntity {
 		this.dataTable = dataTable;
 	}
 
-	/**
-	 * When a new HNode is added to a table or one of the nested tables, we need
-	 * to go through and add place holders in the data table to hold the values
-	 * for the new HNode.
-	 * 
-	 * @param newHNode
-	 */
-	void addNodeToDataTable(HNode newHNode, RepFactory factory) {
-		dataTable.addNodeToDataTable(newHNode, factory);
-	}
-
 	public HTable getHeaders() {
 		return headers;
 	}
@@ -52,6 +46,29 @@ public class Worksheet extends RepEntity {
 
 	public String getTitle() {
 		return headers.getTableName();
+	}
+
+	public SemanticTypes getSemanticTypes() {
+		return semanticTypes;
+	}
+
+	public FullCRFModel getCrfModel() {
+		return crfModel;
+	}
+
+	public MetadataContainer getMetadataContainer() {
+		return metadataContainer;
+	}
+
+	/**
+	 * When a new HNode is added to a table or one of the nested tables, we need
+	 * to go through and add place holders in the data table to hold the values
+	 * for the new HNode.
+	 * 
+	 * @param newHNode
+	 */
+	void addNodeToDataTable(HNode newHNode, RepFactory factory) {
+		dataTable.addNodeToDataTable(newHNode, factory);
 	}
 
 	/**
@@ -85,13 +102,4 @@ public class Worksheet extends RepEntity {
 	public void addNestedTableToDataTable(HNode hNode, RepFactory factory) {
 		dataTable.addNestedTableToDataTable(hNode, factory);
 	}
-
-	public void setSemanticTypes(SemanticTypes semanticTypes) {
-		this.semanticTypes = semanticTypes;
-	}
-
-	public SemanticTypes getSemanticTypes() {
-		return semanticTypes;
-	}
-
 }

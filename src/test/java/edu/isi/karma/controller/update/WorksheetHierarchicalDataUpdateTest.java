@@ -14,7 +14,7 @@ import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.CellType;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.SampleDataFactory;
@@ -92,7 +92,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		// System.err.println(Util.prettyPrintJson(vw.getViewTableHeadings()
 		// .prettyPrintJson(new JSONStringer()).toString()));
 		//
-		Util.writeJsonFile(
+		JSONUtil.writeJsonFile(
 				new JSONObject(vw
 						.getVDTableData()
 						.prettyPrintJson(new JSONStringer(), /* verbose */false,
@@ -105,7 +105,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		// System.err.println(Util.prettyPrintJson(sw1.toString()));
 
 		JSONObject o = new JSONObject(sw1.toString());
-		Util.writeJsonFile(o, "./createSampleJsonWithNestedTable2.json");
+		JSONUtil.writeJsonFile(o, "./createSampleJsonWithNestedTable2.json");
 
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
@@ -547,7 +547,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		// System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
-		Util.writeJsonFile(o, "./testGenerateJson2.json");
+		JSONUtil.writeJsonFile(o, "./testGenerateJson2.json");
 
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
@@ -924,7 +924,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		// System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
-		Util.writeJsonFile(o, "./testUnitTest1.json");
+		JSONUtil.writeJsonFile(o, "./testUnitTest1.json");
 
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
@@ -951,7 +951,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		// System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
-		Util.writeJsonFile(o, "./testUnitTest2.json");
+		JSONUtil.writeJsonFile(o, "./testUnitTest2.json");
 
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
@@ -1079,7 +1079,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		// System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
-		Util.writeJsonFile(o, "./testUnitTest4.json");
+		JSONUtil.writeJsonFile(o, "./testUnitTest4.json");
 
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
@@ -1126,7 +1126,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		// System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
-		Util.writeJsonFile(o, "./testUnitTest5.json");
+		JSONUtil.writeJsonFile(o, "./testUnitTest5.json");
 
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
@@ -1165,7 +1165,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		// System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
-		Util.writeJsonFile(o, "./testUnitTest6.json");
+		JSONUtil.writeJsonFile(o, "./testUnitTest6.json");
 
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
@@ -1205,7 +1205,7 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		// System.err.println(Util.prettyPrintJson(ucJson));
 
 		JSONObject o = new JSONObject(ucJson);
-		Util.writeJsonFile(o, "./testSampleJsonWithEmptyNestedTable1.json");
+		JSONUtil.writeJsonFile(o, "./testSampleJsonWithEmptyNestedTable1.json");
 
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());

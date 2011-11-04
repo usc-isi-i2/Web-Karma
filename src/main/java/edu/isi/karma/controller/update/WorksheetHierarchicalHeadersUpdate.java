@@ -19,7 +19,7 @@ public class WorksheetHierarchicalHeadersUpdate extends AbstractUpdate {
 	public enum JsonKeys {
 		worksheetId, rows, hTableId,
 		//
-		columnNameFull, columnNameShort, path,
+		hNodeId, columnNameFull, columnNameShort, path,
 		//
 		cells,
 		//

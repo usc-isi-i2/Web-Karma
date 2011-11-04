@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import junit.framework.TestCase;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.util.Util;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
 
 public class ViewPreferencesTest extends TestCase {
@@ -33,7 +33,7 @@ public class ViewPreferencesTest extends TestCase {
 	
 	public void testPopulatePreferences() throws FileNotFoundException, JSONException {
 		File templateFile = new File("./UserPrefs/WorkspacePref.template");
-		JSONObject obj = (JSONObject) Util.createJson(new FileReader(templateFile));
+		JSONObject obj = (JSONObject) JSONUtil.createJson(new FileReader(templateFile));
 		
 		// Testing if a new preference file is generated with the right values
 		int maxCharactersInHeader = obj.getJSONObject("ViewPreferences").getInt("maxCharactersInHeader");
@@ -45,7 +45,7 @@ public class ViewPreferencesTest extends TestCase {
 		
 		// Check if the file is being generated properly
 		File prefFile = new File("./UserPrefs/" + ws.getId() + ".json");
-		JSONObject newPrefObj = (JSONObject) Util.createJson(new FileReader(prefFile));
+		JSONObject newPrefObj = (JSONObject) JSONUtil.createJson(new FileReader(prefFile));
 		assertEquals(40, newPrefObj.getJSONObject("ViewPreferences").getInt("maxCharactersInHeader"));
 		
 		// Check if a property that is not in file but present in code is added to the updated 
