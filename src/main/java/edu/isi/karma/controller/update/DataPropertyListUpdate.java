@@ -17,7 +17,6 @@ import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
-import edu.isi.karma.modeling.NameSet;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.view.VWorkspace;
 
@@ -45,14 +44,14 @@ public class DataPropertyListUpdate extends AbstractUpdate {
 		while (props.hasNext()) {
 			DatatypeProperty prop = props.next();
 			System.out.println("Prop: " + prop.getURI());
-			List<NameSet> domains = OntologyManager.Instance()
+			List<String> domains = OntologyManager.Instance()
 					.getDomainsGivenProperty(prop.getURI(), true);
-			for (NameSet name : domains) {
-				Set<String> map = domainMap.get(name.getLabel());
+			for (String label : domains) {
+				Set<String> map = domainMap.get(label);
 
 				if (map == null) {
 					map = new HashSet<String>();
-					domainMap.put(name.getLabel(), map);
+					domainMap.put(label, map);
 				}
 				map.add(prop.getURI());
 			}

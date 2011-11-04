@@ -1,39 +1,36 @@
 package edu.isi.karma.modeling.alignment;
 
-import edu.isi.karma.modeling.NameSet;
+import edu.isi.karma.rep.semantictypes.SemanticType;
 
 public class Vertex {
 
 	private String id;
-	private NodeType type;
-	private NameSet name;
+	private NodeType nodeType;
+	private String label;
+	private SemanticType semanticType;
 	
 	public Vertex(String id) {
 		this.id = id;
-		this.name = new NameSet(id);
+		this.label = id;
 	}
 	
-	public Vertex(String id, String localName) {
+	public Vertex(String id, String label) {
 		this.id = id;
-		this.name = new NameSet(localName);
+		this.label = label;
+	}
+
+	public Vertex(String id, SemanticType semanticType, NodeType nodeType) {
+		this.id = id;
+		this.nodeType = nodeType;
+		this.semanticType = semanticType;
+		this.label = semanticType.getType();
 	}
 	
-	public Vertex(String id, String localName, NodeType type) {
+	public Vertex(String id, String label, NodeType nodeType) {
 		this.id = id;
-		this.type = type;
-		this.name = new NameSet(localName);
-	}
-
-	public Vertex(String id, String ns, String localName, NodeType type) {
-		this.id = id;
-		this.type = type;
-		this.name = new NameSet(ns, localName);
-	}
-
-	public Vertex(String id, NameSet name, NodeType type) {
-		this.id = id;
-		this.type = type;
-		this.name = name;
+		this.label = label;
+		this.nodeType = nodeType;
+		this.semanticType = null;
 	}
 	
 	public String getLocalID() {
@@ -47,21 +44,21 @@ public class Vertex {
 		String result = id.substring(index + 1);
 		return result;
 	}
-	
-	public NameSet getName() {
-		return name;
-	}
 
 	public String getID() {
 		return this.id;
 	}
 	
 	public String getLabel() {
-		return name.getLabel();
+		return this.label;
 	}
 	
-	public NodeType getType() {
-		return this.type;
+	public NodeType getNodeType() {
+		return this.nodeType;
+	}
+	
+	public SemanticType getSemanticType() {
+		return this.semanticType;
 	}
 	
     public boolean equals(Object obj){

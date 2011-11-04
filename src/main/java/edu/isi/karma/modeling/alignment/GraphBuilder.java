@@ -7,28 +7,30 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
-import edu.isi.karma.modeling.NameSet;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.semantictypes.SemanticType;
 
 public class GraphBuilder {
 
 	static Logger logger = Logger.getLogger(GraphBuilder.class);
 	
 
-	private List<NameSet> semanticTypes;
+	private List<SemanticType> semanticTypes;
 	private List<Vertex> semanticNodes;
 	private DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> graph;
+	
+	private List<LabeledWeightedEdge> linksForcedByDomains = new ArrayList<LabeledWeightedEdge>();
 
 	private HashMap<String, Integer> nodesLabelCounter;
 	private HashMap<String, Integer> linksLabelCounter;
 	
-	private static String OWL_NameSpace = "http://www.w3.org/2002/07/owl#";
-	private static String Thing_CLASS = "Thing";
-	private static String SUBCLASS_LINKNAME = "hasSubClass";
+	private static String THING_URI = "http://www.w3.org/2002/07/owl#Thing";
+	private static String SUBCLASS_URI = "hasSubClass";
 	private static double DEFAULT_WEIGHT = 1.0;	
-	private static double MAX_WEIGHT = 1000000;
+	public static double MIN_WEIGHT = 0.000001; // need to be fixed later	
+	public static double MAX_WEIGHT = 1000000;
 	
-	public GraphBuilder(List<NameSet> semanticTypes) {
+	public GraphBuilder(List<SemanticType> semanticTypes) {
 		nodesLabelCounter = new HashMap<String, Integer>();
 		linksLabelCounter = new HashMap<String, Integer>();
 
@@ -52,7 +54,8 @@ public class GraphBuilder {
 		} else {
 			index = 1;
 			nodesLabelCounter.put(label, index);
-			id = label;
+			id = label + "" + index;
+//			id = label;
 		}
 		return id;
 	}
@@ -69,7 +72,8 @@ public class GraphBuilder {
 		} else {
 			index = 1;
 			linksLabelCounter.put(label, index);
-			id = label;
+			id = label + "" + index;
+//			id = label;
 		}
 		return id;
 	}
@@ -78,28 +82,29 @@ public class GraphBuilder {
 		
 		logger.debug("<enter");
 		String id;
-		NameSet name;
-		NodeType type;
+		SemanticType semanticType;
+		NodeType nodeType;
 		String label;
 		
 		for (int i = 0; i < this.semanticTypes.size(); i++) {
-			name = semanticTypes.get(i);
-			label = name.getLabel();
+			
+			semanticType =semanticTypes.get(i); 
+			label = semanticType.getType();
 			id = createNodeID(label);
 			
 			if (OntologyManager.Instance().isClass(label))
-				type = NodeType.Class;
+				nodeType = NodeType.Class;
 			else if (OntologyManager.Instance().isDataProperty(label))
-				type = NodeType.DataProperty;
+				nodeType = NodeType.DataProperty;
 			else
-				type = null;
+				nodeType = null;
 			
-			if (type == null) {
+			if (nodeType == null) {
 				logger.debug("could not find type of " + label + " in the ontology.");
 				continue;
 			}
 			
-			Vertex v = new Vertex(id, name, type);
+			Vertex v = new Vertex(id, semanticType, nodeType);
 			semanticNodes.add(v);
 			graph.addVertex(v);
 		}
@@ -107,10 +112,8 @@ public class GraphBuilder {
 
 		// Add Thing to Graph if it is not added before.
 		// Preventing from have an unconnected graph
-		NameSet thingName = new NameSet(OWL_NameSpace, Thing_CLASS);
-		String thingLabel = thingName.getLabel();
-		if (!nodesLabelCounter.containsKey(thingLabel)) {
-			Vertex v = new Vertex(createNodeID(thingLabel), thingName, NodeType.Class);			
+		if (!nodesLabelCounter.containsKey(THING_URI)) {
+			Vertex v = new Vertex(createNodeID(THING_URI), THING_URI, NodeType.Class);			
 			this.graph.addVertex(v);
 		}
 		
@@ -124,10 +127,10 @@ public class GraphBuilder {
 		String label;
 		List<Vertex> recentlyAddedNodes = new ArrayList<Vertex>(graph.vertexSet());
 		List<Vertex> newNodes;
-		List<NameSet> dpDomainClasses = new ArrayList<NameSet>();
-		List<NameSet> opDomainClasses = new ArrayList<NameSet>();
-		List<NameSet> superClasses = new ArrayList<NameSet>();
-		List<NameSet> newAddedClasses = new ArrayList<NameSet>();
+		List<String> dpDomainClasses = new ArrayList<String>();
+		List<String> opDomainClasses = new ArrayList<String>();
+		List<String> superClasses = new ArrayList<String>();
+		List<String> newAddedClasses = new ArrayList<String>();
 
 		// We don't need to add subclasses of each class separately.
 		// The only place in which we add children is where we are looking for domain class of a property.
@@ -145,10 +148,10 @@ public class GraphBuilder {
 				
 				processedLabels.add(label);
 				
-				if (recentlyAddedNodes.get(i).getType() == NodeType.Class) {
-						opDomainClasses = OntologyManager.Instance().getDomainsGivenRange(label, true);
-						superClasses = OntologyManager.Instance().getSuperClasses(label, false);
-				} else if (recentlyAddedNodes.get(i).getType() == NodeType.DataProperty) {
+				if (recentlyAddedNodes.get(i).getNodeType() == NodeType.Class) {
+					opDomainClasses = OntologyManager.Instance().getDomainsGivenRange(label, true);
+					superClasses = OntologyManager.Instance().getSuperClasses(label, false);
+				} else if (recentlyAddedNodes.get(i).getNodeType() == NodeType.DataProperty) {
 					dpDomainClasses = OntologyManager.Instance().getDomainsGivenProperty(label, true);
 				}
 				
@@ -157,8 +160,8 @@ public class GraphBuilder {
 				newAddedClasses.addAll(superClasses);
 				
 				for (int j = 0; j < newAddedClasses.size(); j++) {
-					if (!nodesLabelCounter.containsKey(newAddedClasses.get(j).getLabel())) { // if node is not in graph yet
-						label = newAddedClasses.get(j).getLabel();
+					if (!nodesLabelCounter.containsKey(newAddedClasses.get(j))) { // if node is not in graph yet
+						label = newAddedClasses.get(j);
 						Vertex v = new Vertex(createNodeID(label), newAddedClasses.get(j), NodeType.Class);
 						newNodes.add(v);
 						this.graph.addVertex(v);
@@ -181,8 +184,8 @@ public class GraphBuilder {
 		logger.debug("<enter");
 
 		Vertex[] vertices = this.graph.vertexSet().toArray(new Vertex[0]);
-		List<NameSet> objectProperties = new ArrayList<NameSet>();
-		List<NameSet> dataProperties = new ArrayList<NameSet>();
+		List<String> objectProperties = new ArrayList<String>();
+		List<String> dataProperties = new ArrayList<String>();
 		
 		Vertex source;
 		Vertex target;
@@ -190,7 +193,7 @@ public class GraphBuilder {
 		String targetLabel;
 		
 		String id;
-		NameSet name;
+		String label;
 		
 		for (int i = 0; i < vertices.length; i++) {
 			for (int j = 0; j < vertices.length; j++) {
@@ -203,43 +206,53 @@ public class GraphBuilder {
 				sourceLabel = source.getLabel();
 				targetLabel = target.getLabel();
 				
+				String targetDomain = "";
+				
+				if (target.getSemanticType() != null)
+					targetDomain = target.getSemanticType().getDomain();
+				
 				// There is no outgoing link from DataProperty nodes
-				if (source.getType() == NodeType.DataProperty)
+				if (source.getNodeType() == NodeType.DataProperty)
 					break;
 				
 				// create a link from the domain and all its subclasses of this DataProperty to range
-				if (target.getType() == NodeType.DataProperty) {
+				if (target.getNodeType() == NodeType.DataProperty) {
+					
 					dataProperties = OntologyManager.Instance().getDataProperties(sourceLabel, targetLabel, true);
 					
 					for (int k = 0; k < dataProperties.size(); k++) {
-						name = new NameSet(dataProperties.get(k).getNs(), dataProperties.get(k).getLocalName());
-						id = createLinkID(name.getLabel());
-						LabeledWeightedEdge e = new LabeledWeightedEdge(id, name, LinkType.DataProperty);
+						label = dataProperties.get(k);
+						id = createLinkID(label);
+						LabeledWeightedEdge e = new LabeledWeightedEdge(id, label, LinkType.DataProperty);
 						this.graph.addEdge(source, target, e);
 						this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
+
+						// put epsilon as weights of the links from domains that specified by user 
+						if (targetDomain != null && targetDomain.trim().length() > 0) 
+							if (targetDomain.trim().equalsIgnoreCase(sourceLabel))  // the source is not the domain specified by user
+								this.linksForcedByDomains.add(e);
 					}
 				}
 
 				// create a link from the domain and all its subclasses of ObjectProperties to range and all its subclasses
-				if (target.getType() == NodeType.Class) {
+				if (target.getNodeType() == NodeType.Class) {
 					objectProperties = OntologyManager.Instance().getObjectProperties(sourceLabel, targetLabel, true);
 					
 					for (int k = 0; k < objectProperties.size(); k++) {
-						name = new NameSet(objectProperties.get(k).getNs(), objectProperties.get(k).getLocalName());
-						id = createLinkID(name.getLabel());
-						LabeledWeightedEdge e = new LabeledWeightedEdge(id, name, LinkType.DataProperty);
+						label = objectProperties.get(k);
+						id = createLinkID(label);
+						LabeledWeightedEdge e = new LabeledWeightedEdge(id, label, LinkType.DataProperty);
 						this.graph.addEdge(source, target, e);
 						this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
 					}
 				}
 				
-				if (target.getType() == NodeType.Class) {
+				if (target.getNodeType() == NodeType.Class) {
 					// we have to check both sides.
 					if (OntologyManager.Instance().isSubClass(targetLabel, sourceLabel, false) ||
 							OntologyManager.Instance().isSuperClass(sourceLabel, targetLabel, false)) {
-						name = new NameSet(OWL_NameSpace, SUBCLASS_LINKNAME);
-						id = createLinkID(name.getLabel());
-						LabeledWeightedEdge e = new LabeledWeightedEdge(id, name, LinkType.HasSubClass);
+						id = createLinkID(SUBCLASS_URI);
+						LabeledWeightedEdge e = new LabeledWeightedEdge(id, SUBCLASS_URI, LinkType.HasSubClass);
 						this.graph.addEdge(source, target, e);
 						this.graph.setEdgeWeight(e, MAX_WEIGHT);					
 					}
@@ -263,11 +276,6 @@ public class GraphBuilder {
 		String targetLabel;
 		
 		String id;
-		NameSet thingLinkName = new NameSet(OWL_NameSpace, SUBCLASS_LINKNAME);
-
-		
-		NameSet thingName = new NameSet(OWL_NameSpace, Thing_CLASS);
-		String thingLabel = thingName.getLabel();
 
 		for (int i = 0; i < vertices.length; i++) {
 			for (int j = 0; j < vertices.length; j++) {
@@ -281,22 +289,22 @@ public class GraphBuilder {
 				targetLabel = target.getLabel();
 				
 				// There is no outgoing link from DataProperty nodes
-				if (source.getType() != NodeType.Class)
+				if (source.getNodeType() != NodeType.Class)
 					break;
 				
-				if (target.getType() != NodeType.Class)
+				if (target.getNodeType() != NodeType.Class)
 					continue;
 				
-				if (!sourceLabel.equalsIgnoreCase(thingLabel))
+				if (!sourceLabel.equalsIgnoreCase(THING_URI))
 					continue;
 				
 				if (OntologyManager.Instance().getSuperClasses(targetLabel, false).size() != 0)
 					continue;
 				
 				// create a link from all Thing nodes to nodes who don't have any superclasses
-				if (target.getType() == NodeType.Class) {
-					id = createLinkID(thingLinkName.getLabel());
-					LabeledWeightedEdge e = new LabeledWeightedEdge(id, thingLinkName, LinkType.HasSubClass);
+				if (target.getNodeType() == NodeType.Class) {
+					id = createLinkID(SUBCLASS_URI);
+					LabeledWeightedEdge e = new LabeledWeightedEdge(id, SUBCLASS_URI, LinkType.HasSubClass);
 					this.graph.addEdge(source, target, e);
 					this.graph.setEdgeWeight(e, MAX_WEIGHT);					
 				}
@@ -309,18 +317,18 @@ public class GraphBuilder {
 	
 	public Vertex copyNode(Vertex node) {
 		
-		if (node.getType() != NodeType.Class) {
+		if (node.getNodeType() != NodeType.Class) {
 			logger.debug("nodes other than type of Class cannot be duplicated.");
 			return null;
 		}
 		
 		String id;
-		NameSet name;
+		String label;
 		
-		name = node.getName();
-		id = createNodeID(name.getLabel());
+		label = node.getLabel();
+		id = createNodeID(label);
 		
-		Vertex newNode = new Vertex(id, name, node.getType());
+		Vertex newNode = new Vertex(id, label, node.getNodeType());
 		
 		this.graph.addVertex(newNode);
 		
@@ -333,15 +341,15 @@ public class GraphBuilder {
 		LabeledWeightedEdge[] incoming = graph.incomingEdgesOf(source).toArray(new LabeledWeightedEdge[0]);
 		
 		String id;
-		NameSet name;
+		String label;
 		
 		Vertex s, t;
 		
 		if (outgoing != null)
 			for (int i = 0; i < outgoing.length; i++) {
-				name = outgoing[i].getName();
-				id = createLinkID(name.getLabel());
-				LabeledWeightedEdge e = new LabeledWeightedEdge(id, name, outgoing[i].getType());
+				label = outgoing[i].getLabel();
+				id = createLinkID(label);
+				LabeledWeightedEdge e = new LabeledWeightedEdge(id, label, outgoing[i].getLinkType());
 				s = target;
 				t = outgoing[i].getTarget();
 				this.graph.addEdge(s, t, e);
@@ -350,26 +358,26 @@ public class GraphBuilder {
 		
 		if (incoming != null)
 			for (int i = 0; i < incoming.length; i++) {
-				name = incoming[i].getName();
-				id = createLinkID(name.getLabel());
-				LabeledWeightedEdge e = new LabeledWeightedEdge(id, name, incoming[i].getType());
+				label = incoming[i].getLabel();
+				id = createLinkID(label);
+				LabeledWeightedEdge e = new LabeledWeightedEdge(id, label, incoming[i].getLinkType());
 				s = incoming[i].getSource();
 				t = target;
 				this.graph.addEdge(s, t, e);
 				this.graph.setEdgeWeight(e, incoming[i].getWeight());
 			}
 		
-		if (source.getType() != NodeType.Class || target.getType() != NodeType.Class) 
+		if (source.getNodeType() != NodeType.Class || target.getNodeType() != NodeType.Class) 
 			return;
 
 		// interlinks from source to target
 		s = source; t= target;
-		List<NameSet> objectProperties = OntologyManager.Instance().getObjectProperties(s.getLabel(), t.getLabel(), true);
+		List<String> objectProperties = OntologyManager.Instance().getObjectProperties(s.getLabel(), t.getLabel(), true);
 			
 		for (int k = 0; k < objectProperties.size(); k++) {
-			name = new NameSet(objectProperties.get(k).getNs(), objectProperties.get(k).getLocalName());
-			id = createLinkID(name.getLabel());
-			LabeledWeightedEdge e = new LabeledWeightedEdge(id, name, LinkType.DataProperty);
+			label = objectProperties.get(k);
+			id = createLinkID(label);
+			LabeledWeightedEdge e = new LabeledWeightedEdge(id, label, LinkType.DataProperty);
 			this.graph.addEdge(s, t, e);
 			this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
 		}
@@ -379,9 +387,9 @@ public class GraphBuilder {
 		objectProperties = OntologyManager.Instance().getObjectProperties(s.getLabel(), t.getLabel(), true);
 			
 		for (int k = 0; k < objectProperties.size(); k++) {
-			name = new NameSet(objectProperties.get(k).getNs(), objectProperties.get(k).getLocalName());
-			id = createLinkID(name.getLabel());
-			LabeledWeightedEdge e = new LabeledWeightedEdge(id, name, LinkType.DataProperty);
+			label = objectProperties.get(k);
+			id = createLinkID(label);
+			LabeledWeightedEdge e = new LabeledWeightedEdge(id, label, LinkType.DataProperty);
 			this.graph.addEdge(s, t, e);
 			this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
 		}
@@ -407,5 +415,9 @@ public class GraphBuilder {
 	
 	public List<Vertex> getSemanticNodes() {
 		return this.semanticNodes;
+	}
+	
+	public List<LabeledWeightedEdge> getLinksForcedByDomain() {
+		return this.linksForcedByDomains;
 	}
 }

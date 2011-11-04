@@ -17,7 +17,6 @@ public class GraphPreProcess {
 	List<Vertex> semanticNodes;
 	List<LabeledWeightedEdge> selectedLinks;
 	List<Vertex> steinerNodes;
-	private static double MIN_WEIGHT = 0.000001; // need to be fixed later	
 	
 	public GraphPreProcess(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> graph, 
 			List<Vertex> semanticNodes, List<LabeledWeightedEdge> selectedLinks) {
@@ -44,6 +43,7 @@ public class GraphPreProcess {
 		LabeledWeightedEdge e;
 		
 		for (int i = 0; i < selectedLinks.size(); i++) {
+			
 			Vertex source = selectedLinks.get(i).getSource();
 			Vertex target = selectedLinks.get(i).getTarget();
 			
@@ -69,7 +69,7 @@ public class GraphPreProcess {
 			
 			// if it is a subclass link, change the weight to epsilon
 			//if (e.getType() == LinkType.HasSubClass)
-			gPrime.setEdgeWeight(e, MIN_WEIGHT);
+			gPrime.setEdgeWeight(e, GraphBuilder.MIN_WEIGHT);
 			
 		}
 		
@@ -79,7 +79,7 @@ public class GraphPreProcess {
 		
 		for (Vertex v: gPrime.vertexSet()) {
 			
-			if (v.getType() != NodeType.DataProperty)
+			if (v.getNodeType() != NodeType.DataProperty)
 				continue;
 			
 			LabeledWeightedEdge[] incomingLinks = gPrime.incomingEdgesOf(v).toArray(new LabeledWeightedEdge[0]);

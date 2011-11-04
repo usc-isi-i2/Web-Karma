@@ -8,22 +8,22 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 public class GraphUtil {
 
 	private static String getNodeTypeString(Vertex vertex) {
-    	if (vertex.getType() == NodeType.Class)
+    	if (vertex.getNodeType() == NodeType.Class)
     		return "Class";
-    	else if (vertex.getType() == NodeType.DataProperty)
+    	else if (vertex.getNodeType() == NodeType.DataProperty)
     		return "DataProperty";
     	else
     		return null;
 	}
 
 	private static String getLinkTypeString(LabeledWeightedEdge link) {
-    	if (link.getType() == LinkType.ObjectProperty)
+    	if (link.getLinkType() == LinkType.ObjectProperty)
     		return "ObjectProperty";
-    	if (link.getType() == LinkType.DataProperty)
+    	if (link.getLinkType() == LinkType.DataProperty)
     		return "DataProperty";
-    	if (link.getType() == LinkType.HasSubClass)
+    	if (link.getLinkType() == LinkType.HasSubClass)
     		return "HasSubClass";
-    	if (link.getType() == LinkType.None)
+    	if (link.getLinkType() == LinkType.None)
     		return "None";
     	else
     		return null;

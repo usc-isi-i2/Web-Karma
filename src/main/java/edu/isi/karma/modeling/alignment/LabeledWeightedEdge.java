@@ -2,8 +2,6 @@ package edu.isi.karma.modeling.alignment;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 
-import edu.isi.karma.modeling.NameSet;
-
 public class LabeledWeightedEdge extends DefaultWeightedEdge {
 	
 	/**
@@ -12,63 +10,39 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 	private static final long serialVersionUID = 1L;
 	
 	private String id;
-	private LinkType type;
-	private NameSet name;
+	private LinkType linkType;
+	private String label;
 	private boolean inverse;
 	
 	public LabeledWeightedEdge(String id) {
 		super();
 		this.id = id;
-		this.type = LinkType.None;
-		this.name = new NameSet(id);
+		this.linkType = LinkType.None;
+		this.label = id;
 		this.inverse = false;
 	}
 
-	public LabeledWeightedEdge(String id, String localName) {
+	public LabeledWeightedEdge(String id, String label) {
 		super();
 		this.id = id;
-		this.type = LinkType.None;
-		this.name = new NameSet(localName);
+		this.linkType = LinkType.None;
+		this.label = label;
 		this.inverse = false;
 	}
 	
-	public LabeledWeightedEdge(String id, String localName, LinkType type) {
+	public LabeledWeightedEdge(String id, String label, LinkType linkType) {
 		super();
 		this.id = id;
-		this.type = type;
-		this.name = new NameSet(localName);
+		this.linkType = linkType;
+		this.label = label;
 		this.inverse = false;
 	}
 	
-	public LabeledWeightedEdge(String id, String ns, String localName, LinkType type) {
+	public LabeledWeightedEdge(String id, String label, LinkType linkType, boolean inverse) {
 		super();
 		this.id = id;
-		this.type = type;
-		this.name = new NameSet(ns, localName);
-		this.inverse = false;
-	}
-	
-	public LabeledWeightedEdge(String id, String ns, String localName, LinkType type, boolean inverse) {
-		super();
-		this.id = id;
-		this.type = type;
-		this.name = new NameSet(ns, localName);
-		this.inverse = inverse;
-	}
-	
-	public LabeledWeightedEdge(String id, NameSet name, LinkType type) {
-		super();
-		this.id = id;
-		this.type = type;
-		this.name = name;
-		this.inverse = false;
-	}
-	
-	public LabeledWeightedEdge(String id, NameSet name, LinkType type, boolean inverse) {
-		super();
-		this.id = id;
-		this.type = type;
-		this.name = name;
+		this.linkType = linkType;
+		this.label = label;
 		this.inverse = inverse;;
 	}
 	
@@ -89,20 +63,16 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		return this.inverse;
 	}
 
-	public NameSet getName() {
-		return name;
-	}
-
 	public String getID() {
 		return this.id;
 	}
 	
 	public String getLabel() {
-		return name.getLabel();
+		return this.label;
 	}
 	
-	public LinkType getType() {
-		return this.type;
+	public LinkType getLinkType() {
+		return this.linkType;
 	}
 	
 	public Vertex getSource() {

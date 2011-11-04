@@ -19,8 +19,6 @@ import com.hp.hpl.jena.ontology.UnionClass;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
-import edu.isi.karma.modeling.NameSet;
-
 public class OntologyManager {
 	
 	static Logger logger = Logger.getLogger(OntologyManager.class.getName());
@@ -232,10 +230,10 @@ public class OntologyManager {
 	
 	public boolean isSuperClass(String superClassUri, String subClassUri, boolean recursive) {
 		
-		List<NameSet> superClasses = getSuperClasses(subClassUri, recursive);
+		List<String> superClasses = getSuperClasses(subClassUri, recursive);
 		
 		for (int i = 0; i < superClasses.size(); i++) {
-			if (superClassUri.equalsIgnoreCase(superClasses.get(i).getNs() + superClasses.get(i).getLocalName() )) {
+			if (superClassUri.equalsIgnoreCase(superClasses.get(i).toString() )) {
 				return true;
 			}
 		}
@@ -245,10 +243,10 @@ public class OntologyManager {
 	
 	public boolean isSubClass(String subClassUri, String superClassUri, boolean recursive) {
 		
-		List<NameSet> subClasses = getSubClasses(superClassUri, recursive);
+		List<String> subClasses = getSubClasses(superClassUri, recursive);
 		
 		for (int i = 0; i < subClasses.size(); i++) {
-			if (subClassUri.equalsIgnoreCase(subClasses.get(i).getNs() + subClasses.get(i).getLocalName() )) {
+			if (subClassUri.equalsIgnoreCase(subClasses.get(i).toString() )) {
 				return true;
 			}
 		}
@@ -256,32 +254,32 @@ public class OntologyManager {
 		return false;
 	}
 	
-	public List<NameSet> getSubClasses(String classUri, boolean recursive) {
+	public List<String> getSubClasses(String classUri, boolean recursive) {
 
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntClass(classUri);
 		getChildren(r, resources, recursive);
-		return getResourcesNameSet(resources);
+		return getResourcesURIs(resources);
 	}
 	
-	public List<NameSet> getSuperClasses(String classUri, boolean recursive) {
+	public List<String> getSuperClasses(String classUri, boolean recursive) {
 		
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntClass(classUri);
 		getParents(r, resources, recursive);
-		return getResourcesNameSet(resources);
+		return getResourcesURIs(resources);
 	}
 	
-	private List<NameSet> getResourcesNameSet(List<OntResource> resources) {
-		List<NameSet> resourcesNameSet = new ArrayList<NameSet>();
+	private List<String> getResourcesURIs(List<OntResource> resources) {
+		List<String> resourcesNameSet = new ArrayList<String>();
 		if (resources != null)
 			for (OntResource r: resources) {
-				resourcesNameSet.add(new NameSet(r.getNameSpace(), r.getLocalName()));
+				resourcesNameSet.add(r.getURI());
 			}
 		return resourcesNameSet;
 	}
 	
-	public List<NameSet> getDomainsGivenProperty(String propertyUri, boolean recursive) {
+	public List<String> getDomainsGivenProperty(String propertyUri, boolean recursive) {
 		// should add all subclasses to the results
 		List<OntResource> classes = new ArrayList<OntResource>();
 		DatatypeProperty dp = ontModel.getDatatypeProperty(propertyUri);
@@ -293,10 +291,10 @@ public class OntologyManager {
 			}
 		}
 
-		return getResourcesNameSet(classes);
+		return getResourcesURIs(classes);
 	}
 
-	public List<NameSet> getDomainsGivenRange(String rangeClassUri, boolean recursive) {
+	public List<String> getDomainsGivenRange(String rangeClassUri, boolean recursive) {
 		// should add all subclasses to the results
 		List<OntResource> domains = new ArrayList<OntResource>();
 		List<OntResource> ranges = new ArrayList<OntResource>();
@@ -336,10 +334,10 @@ public class OntologyManager {
 			}
 		}
 		
-		return getResourcesNameSet(domains);
+		return getResourcesURIs(domains);
 	}
 	
-	public List<NameSet> getDataProperties(String domainClassUri, String propertyUri, boolean recursive) {
+	public List<String> getDataProperties(String domainClassUri, String propertyUri, boolean recursive) {
 		
 		List<OntResource> properties = new ArrayList<OntResource>();
 		List<OntResource> directDomains = new ArrayList<OntResource>();
@@ -377,10 +375,10 @@ public class OntologyManager {
 			}
 		}
 		
-		return getResourcesNameSet(properties);
+		return getResourcesURIs(properties);
 	}
 	
-	public List<NameSet> getObjectProperties(String domainClassUri, String rangeClassUri, boolean recursive) {
+	public List<String> getObjectProperties(String domainClassUri, String rangeClassUri, boolean recursive) {
 		
 		List<OntResource> properties = new ArrayList<OntResource>();
 		List<OntResource> directDomains = new ArrayList<OntResource>();
@@ -443,7 +441,7 @@ public class OntologyManager {
 			}
 		}
 		
-		return getResourcesNameSet(properties);
+		return getResourcesURIs(properties);
 	}
 	
 
