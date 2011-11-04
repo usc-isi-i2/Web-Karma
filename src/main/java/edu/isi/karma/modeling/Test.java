@@ -32,14 +32,15 @@ public class Test {
 //		semanticTypes.add(new NameSet(ns1, "hasModel"));
 //		semanticTypes.add(new NameSet(ns1, "Country"));
 //		semanticTypes.add(new NameSet(ns1, "Country"));
-		semanticTypes.add(new NameSet(ns1, "zipCode"));
-		semanticTypes.add(new NameSet(ns1, "City"));
-		semanticTypes.add(new NameSet(ns1, "hasName"));
-		semanticTypes.add(new NameSet(ns1, "hasName"));
-		semanticTypes.add(new NameSet(ns1, "live"));
-		semanticTypes.add(new NameSet(ns1, "Place"));
+//		semanticTypes.add(new NameSet(ns1, "zipCode"));
+//		semanticTypes.add(new NameSet(ns1, "City"));
+//		semanticTypes.add(new NameSet(ns1, "hasName"));
+//		semanticTypes.add(new NameSet(ns1, "hasName"));
+//		semanticTypes.add(new NameSet(ns1, "live"));
+//		semanticTypes.add(new NameSet(ns1, "Place"));
+//		semanticTypes.add(new NameSet(ns1, "Plant"));
 		semanticTypes.add(new NameSet(ns1, "Person"));
-		semanticTypes.add(new NameSet(ns1, "Plant"));
+		semanticTypes.add(new NameSet(ns1, "Animal"));
 //		semanticTypes.add(new NameSet(ns2, "Thing"));
 //		semanticTypes.add(new NameSet(ns2, "Thing"));
 		

@@ -8,6 +8,7 @@ import edu.isi.karma.util.Jsonizable;
 public class SemanticType implements Jsonizable{
 	private final String hNodeId;
 	private final String type;
+	private final String domain;
 	private final Origin origin;
 	
 	public enum Origin {
@@ -18,6 +19,14 @@ public class SemanticType implements Jsonizable{
 		this.hNodeId = hNodeId;
 		this.type = type;
 		this.origin = origin;
+		this.domain = "";
+	}
+
+	public SemanticType(String hNodeId, String type, String domain, Origin origin) {
+		this.hNodeId = hNodeId;
+		this.type = type;
+		this.origin = origin;
+		this.domain = domain;
 	}
 
 	public String gethNodeId() {
@@ -26,6 +35,10 @@ public class SemanticType implements Jsonizable{
 
 	public String getType() {
 		return type;
+	}
+	
+	public String getDomain() {
+		return domain;
 	}
 	
 	public Origin getOrigin() {
