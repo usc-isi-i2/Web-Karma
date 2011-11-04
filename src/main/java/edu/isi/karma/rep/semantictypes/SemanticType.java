@@ -29,7 +29,7 @@ public class SemanticType implements Jsonizable{
 		this.domain = domain;
 	}
 
-	public String gethNodeId() {
+	public String getHNodeId() {
 		return hNodeId;
 	}
 
