@@ -52,6 +52,10 @@ public class SemanticType implements Jsonizable {
 		return hNodeId;
 	}
 
+	public String getDomain() {
+		return domain;
+	}
+	
 	public String getType() {
 		return type;
 	}
