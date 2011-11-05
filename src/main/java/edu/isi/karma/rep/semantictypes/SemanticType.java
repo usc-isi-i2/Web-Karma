@@ -5,76 +5,52 @@ import org.json.JSONWriter;
 
 import edu.isi.karma.util.Jsonizable;
 
-public class SemanticType implements Jsonizable {
-	private final String hNodeId;
-	private final String type;
-	private final String domain;
-	private final Origin origin;
-	private final ConfidenceLevel confidenceLevel;
+public class SemanticType implements Jsonizable{
+private final String hNodeId;
+private final String type;
+private final String domain;
+private final Origin origin;
 
-	public enum Origin {
-		User, CRFModel
-	}
+public enum Origin {
+User, CRFModel
+}
 
-	public enum ConfidenceLevel {
-		High, Medium, Low
-	}
+public SemanticType(String hNodeId, String type, Origin origin) {
+this.hNodeId = hNodeId;
+this.type = type;
+this.origin = origin;
+this.domain = "";
+}
 
-	public SemanticType(String hNodeId, String type, Origin origin, Double probability) {
-		this.hNodeId = hNodeId;
-		this.type = type;
-		this.origin = origin;
-		this.domain = "";
-		
-		if(probability > 0.8)
-			confidenceLevel = ConfidenceLevel.High;
-		else if (probability < 0.8 && probability > 0.4)
-			confidenceLevel = ConfidenceLevel.Medium;
-		else
-			confidenceLevel = ConfidenceLevel.Low;
-	}
-	
-	public SemanticType(String hNodeId, String type, String domain, Origin origin, Double probability) {
-		this.hNodeId = hNodeId;
-		this.type = type;
-		this.origin = origin;
-		this.domain = domain;
-		
-		if(probability > 0.8)
-			confidenceLevel = ConfidenceLevel.High;
-		else if (probability < 0.8 && probability > 0.4)
-			confidenceLevel = ConfidenceLevel.Medium;
-		else
-			confidenceLevel = ConfidenceLevel.Low;
-	}
+public SemanticType(String hNodeId, String type, String domain, Origin origin) {
+this.hNodeId = hNodeId;
+this.type = type;
+this.origin = origin;
+this.domain = domain;
+}
 
-	public String getHNodeId() {
-		return hNodeId;
-	}
+public String gethNodeId() {
+return hNodeId;
+}
 
-	public String getDomain() {
-		return domain;
-	}
-	
-	public String getType() {
-		return type;
-	}
+public String getType() {
+return type;
+}
 
-	public Origin getOrigin() {
-		return origin;
-	}
+public String getDomain() {
+return domain;
+}
 
-	public ConfidenceLevel getConfidenceLevel() {
-		return confidenceLevel;
-	}
+public Origin getOrigin() {
+return origin;
+}
 
-	@Override
-	public void write(JSONWriter writer) throws JSONException {
-		writer.object();
-		writer.key("HNodeId").value(hNodeId);
-		writer.key("Type").value(type);
-		writer.key("Origin").value(origin.name());
-		writer.key("ConfidenceLevel").value(confidenceLevel.name());
-		writer.endObject();
-	}
+@Override
+public void write(JSONWriter writer) throws JSONException {
+writer.object();
+writer.key("HNodeId").value(hNodeId);
+writer.key("Type").value(type);
+writer.key("Origin").value(origin.name());
+writer.endObject();
+}
 }

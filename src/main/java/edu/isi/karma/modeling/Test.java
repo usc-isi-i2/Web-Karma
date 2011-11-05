@@ -47,7 +47,7 @@ public class Test {
 		
 		return semanticTypes;
 	}
-	
+
 	public static void main(String[] args) {
 		
 		loadOntologies();

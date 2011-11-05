@@ -271,12 +271,12 @@ public class OntologyManager {
 	}
 	
 	private List<String> getResourcesURIs(List<OntResource> resources) {
-		List<String> resourcesNameSet = new ArrayList<String>();
+		List<String> resourcesURIs = new ArrayList<String>();
 		if (resources != null)
 			for (OntResource r: resources) {
-				resourcesNameSet.add(r.getURI());
+				resourcesURIs.add(r.getURI());
 			}
-		return resourcesNameSet;
+		return resourcesURIs;
 	}
 	
 	public List<String> getDomainsGivenProperty(String propertyUri, boolean recursive) {
