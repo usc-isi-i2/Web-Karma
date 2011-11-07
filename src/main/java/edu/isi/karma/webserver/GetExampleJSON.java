@@ -57,7 +57,7 @@ public class GetExampleJSON extends HttpServlet {
 //		//	SampleDataFactory.createFromJsonTextFile(workspace, "unit-test-json.json");
 //	//	SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest1.json");
 //		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest2.json");
-		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest4.json");
+//		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest4.json");
 //		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest5.json");
 //		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest6.json");
 //		SampleDataFactory.createFromJsonTextFile(workspace, "testSampleJsonWithEmptyNestedTable1.json");
