@@ -444,5 +444,82 @@ public class OntologyManager {
 		return getResourcesURIs(properties);
 	}
 	
+	public List<String> getDataPropertiesOfClass(String domainClassUri, boolean includeInheritedProperties) {
+		
+		List<OntResource> properties = new ArrayList<OntResource>();
+		List<OntResource> directDomains = new ArrayList<OntResource>();
+		List<OntResource> allDomains = new ArrayList<OntResource>();
+
+		ExtendedIterator<DatatypeProperty> itrDP = ontModel.listDatatypeProperties();
+		OntResource r;
+		while (itrDP.hasNext()) {
+			
+			directDomains.clear();
+			allDomains.clear();
+			
+			DatatypeProperty dp = itrDP.next();
+			
+			ExtendedIterator<? extends OntResource> itrDomains = dp.listDomain();
+			while (itrDomains.hasNext()) {
+				OntResource d = itrDomains.next();
+				getMembers(d, directDomains, false);
+			}
+
+			for (int i = 0; i < directDomains.size(); i++) {
+				allDomains.add(directDomains.get(i));
+				if (includeInheritedProperties)
+					getChildren(directDomains.get(i), allDomains, true);
+			}
+			
+			for (int i = 0; i < allDomains.size(); i++) {
+				r = allDomains.get(i);
+				if (domainClassUri.equalsIgnoreCase(r.getNameSpace() + r.getLocalName())) {
+					properties.add(dp);
+					break;
+				}
+			}
+		}
+		
+		return getResourcesURIs(properties);
+	}
+
+	public List<String> getObjectPropertiesOfClass(String domainClassUri, boolean includeInheritedProperties) {
+		
+		List<OntResource> properties = new ArrayList<OntResource>();
+		List<OntResource> directDomains = new ArrayList<OntResource>();
+		List<OntResource> allDomains = new ArrayList<OntResource>();
+
+		ExtendedIterator<ObjectProperty> itrOP = ontModel.listObjectProperties();
+		OntResource r;
+		while (itrOP.hasNext()) {
+			
+			directDomains.clear();
+			allDomains.clear();
+			
+			ObjectProperty op = itrOP.next();
+			
+			ExtendedIterator<? extends OntResource> itrDomains = op.listDomain();
+			while (itrDomains.hasNext()) {
+				OntResource d = itrDomains.next();
+				getMembers(d, directDomains, false);
+			}
+
+			for (int i = 0; i < directDomains.size(); i++) {
+				allDomains.add(directDomains.get(i));
+				if (includeInheritedProperties)
+					getChildren(directDomains.get(i), allDomains, true);
+			}
+			
+			for (int i = 0; i < allDomains.size(); i++) {
+				r = allDomains.get(i);
+				if (domainClassUri.equalsIgnoreCase(r.getNameSpace() + r.getLocalName())) {
+					properties.add(op);
+					break;
+				}
+			}
+		}
+		
+		return getResourcesURIs(properties);
+	}
 
 }

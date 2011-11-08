@@ -51,6 +51,11 @@ public class Test {
 	public static void main(String[] args) {
 		
 		loadOntologies();
+		
+		List<String> test = OntologyManager.Instance().getDataPropertiesOfClass("http://mohsen.isi.edu/sample.owl#Address", false);
+		for (int i = 0; i < test.size(); i++) System.out.println(test.get(i));
+		if (true)
+			return;
 				
 //		String e1 = "http://mohsen.isi.edu/sample.owl#hasName1";
 //		String e2 = "http://mohsen.isi.edu/sample.owl#hasName2";
