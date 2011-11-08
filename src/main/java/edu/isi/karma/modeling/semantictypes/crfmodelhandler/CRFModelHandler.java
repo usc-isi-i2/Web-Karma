@@ -475,7 +475,7 @@ public abstract class CRFModelHandler {
 		if (exampleProbs != null) {
 			exampleProbs.clear() ;
 			int minPreds = Math.min(numPredictions, globalData.labels.size()) ;
-			for(String eg : examples) {
+			for(int i=0;i<examples.size();i++) {
 				exampleProbs.add(new double[minPreds]) ;
 			}
 		}

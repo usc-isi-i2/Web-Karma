@@ -9,7 +9,6 @@ public class RegexFeatureExtractor {
 	
 	public static ArrayList<String> getFieldFeatures(String field) {
 		ArrayList<String> feature_list = new ArrayList<String>() ;
-		String new_feature = "" ;
 		
 		if(field == null)
 			return feature_list ;
