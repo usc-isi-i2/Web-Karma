@@ -14,7 +14,7 @@ import edu.isi.karma.rep.semantictypes.SemanticType;
 public class Test {
 
 	private static void loadOntologies() {
-		File f1 = new File("D:\\Academic\\ISI\\_SVN\\karma\\trunk\\WS Modeling\\Ontologies\\myont.owl");
+		File f1 = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\vivo-core.owl");
 		File f2 = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\sample.owl");
 		ImportOntology imp1 = new ImportOntology(OntologyManager.Instance().getOntModel(), f1);
 		imp1.doImport();
@@ -51,7 +51,17 @@ public class Test {
 	public static void main(String[] args) {
 		
 		loadOntologies();
-				
+		
+//		List<String> dataProperties = OntologyManager.Instance().getDataPropertiesOfClass( "http://mohsen.isi.edu/sample.owl#Place", false);
+//		List<String> dataProperties = OntologyManager.Instance().getDataPropertiesOfClass( "http://xmlns.com/foaf/0.1/Group", true);
+//		List<String> dataProperties = OntologyManager.Instance().getDataPropertiesOfClass( "http://vivoweb.org/ontology/core#Committee", true);
+//		for (int i = 0; i < dataProperties.size(); i++) {
+//			System.out.println(dataProperties.get(i));
+//		}
+//				
+//		if (true)
+//			return;
+		
 //		String e1 = "http://mohsen.isi.edu/sample.owl#hasName1";
 //		String e2 = "http://mohsen.isi.edu/sample.owl#hasName2";
 //		String e3 = "http://www.w3.org/2002/07/owl#hasSubClass10";

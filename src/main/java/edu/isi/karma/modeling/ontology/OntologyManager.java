@@ -124,9 +124,11 @@ public class OntologyManager {
 			
             for (; i.hasNext();) {
                 OntProperty superP = (OntProperty) i.next();
-                if (superP.isURIResource())
+                if (superP.isURIResource()) {
                 	resources.add(superP);
-                else {
+                	if (recursive)
+                		getParents(superP, resources, recursive);
+                } else {
             		List<OntResource> members = new ArrayList<OntResource>();
                 	getMembers(superP, members, false);
                 	for (int j = 0; j < members.size(); j++) {
@@ -169,15 +171,17 @@ public class OntologyManager {
 				i = c.listSubClasses(true);
             for (; i.hasNext();) {
                 OntClass subC = (OntClass) i.next();
-                if (subC.isURIResource())
+                if (subC.isURIResource()) {
                 	resources.add(subC);
-                else {
+                	if (recursive)
+                		getChildren(subC, resources, recursive);
+                } else {
             		List<OntResource> members = new ArrayList<OntResource>();
                 	getMembers(subC, members, false);
                 	for (int j = 0; j < members.size(); j++) {
                 		resources.add(members.get(j));
                 		if (recursive)
-                			getParents(members.get(j), resources, recursive);
+                			getChildren(members.get(j), resources, recursive);
                 	}
                 }
             }
