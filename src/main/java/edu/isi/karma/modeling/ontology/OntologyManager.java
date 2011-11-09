@@ -39,7 +39,45 @@ public class OntologyManager {
 		}
 		return _InternalInstance;
 	}
+	
+	public OntModel getOntModel() {
+		return ontModel;
+	}
 
+	public boolean isClass(String label) {
+		
+		OntClass c = ontModel.getOntClass(label);
+		if (c != null)
+			return true;
+		
+		return false;
+	}
+	
+	public boolean isDataProperty(String label) {
+
+		DatatypeProperty dp = ontModel.getDatatypeProperty(label);
+		if (dp != null)
+			return true;
+		
+		return false;
+	}
+		
+	public boolean isObjectProperty(String label) {
+
+		ObjectProperty op = ontModel.getObjectProperty(label);
+		if (op != null)
+			return true;
+		
+		return false;
+	}
+	
+	/**
+	 * This method gets a resource (class or property) and adds the parents of the resource to the second parameter.
+	 * If third parameter is set to true, it adds the parents recursively.
+	 * @param r
+	 * @param resources
+	 * @param recursive
+	 */
 	private void getParents(OntResource r, List<OntResource> resources, boolean recursive) {
 		
 		OntClass c = null;
@@ -101,6 +139,13 @@ public class OntologyManager {
 		}
 	}
 
+	/**
+	 * This method gets a resource (class or property) and adds the children of the resource to the second parameter.
+	 * If third parameter is set to true, it adds the children recursively.
+	 * @param r
+	 * @param resources
+	 * @param recursive
+	 */
 	private void getChildren(OntResource r, List<OntResource> resources, boolean recursive) {
 		
 		OntClass c = null;
@@ -162,6 +207,14 @@ public class OntologyManager {
 		}
 	}
 
+	/**
+	 * This method gets a resource and adds the members of the resource to the second parameter.
+	 * For example, for a resource like "A or (B and C)", it extracts three elements A, B, C.
+	 * If third parameter is set to true, it also adds the children of each member.
+	 * @param r
+	 * @param resources
+	 * @param recursive
+	 */
 	private void getMembers(OntResource r, List<OntResource> resources, boolean recursive) {
 
 		if (r == null || resources == null)
@@ -197,37 +250,14 @@ public class OntologyManager {
 		}
 	}
 	
-	public OntModel getOntModel() {
-		return ontModel;
-	}
-
-	public boolean isClass(String label) {
-		
-		OntClass c = ontModel.getOntClass(label);
-		if (c != null)
-			return true;
-		
-		return false;
-	}
-	
-	public boolean isDataProperty(String label) {
-
-		DatatypeProperty dp = ontModel.getDatatypeProperty(label);
-		if (dp != null)
-			return true;
-		
-		return false;
-	}
-		
-	public boolean isObjectProperty(String label) {
-
-		ObjectProperty op = ontModel.getObjectProperty(label);
-		if (op != null)
-			return true;
-		
-		return false;
-	}
-	
+	/**
+	 * If @param superClassUri is a superclass of @param subClassUri, it returns true; otherwise, false.
+	 * If third parameter is set to true, it also considers indirect superclasses.
+	 * @param superClassUri
+	 * @param subClassUri
+	 * @param recursive
+	 * @return
+	 */
 	public boolean isSuperClass(String superClassUri, String subClassUri, boolean recursive) {
 		
 		List<String> superClasses = getSuperClasses(subClassUri, recursive);
@@ -241,6 +271,14 @@ public class OntologyManager {
 		return false;
 	}
 	
+	/**
+	 * If @param subClassUri is a subclass of @param superClassUri, it returns true; otherwise, false.
+	 * If third parameter is set to true, it also considers indirect subclaases.
+	 * @param subClassUri
+	 * @param superClassUri
+	 * @param recursive
+	 * @return
+	 */
 	public boolean isSubClass(String subClassUri, String superClassUri, boolean recursive) {
 		
 		List<String> subClasses = getSubClasses(superClassUri, recursive);
@@ -254,6 +292,12 @@ public class OntologyManager {
 		return false;
 	}
 	
+	/**
+	 * returns URIs of all subclasses of @param classUri (also considers indirect subclasses if second parameter is true).
+	 * @param classUri
+	 * @param recursive
+	 * @return
+	 */
 	public List<String> getSubClasses(String classUri, boolean recursive) {
 
 		List<OntResource> resources = new ArrayList<OntResource>();
@@ -262,6 +306,12 @@ public class OntologyManager {
 		return getResourcesURIs(resources);
 	}
 	
+	/**
+	 * returns URIs of all superclasses of @param classUri (also considers indirect superclasses if second parameter is true).
+	 * @param classUri
+	 * @param recursive
+	 * @return
+	 */
 	public List<String> getSuperClasses(String classUri, boolean recursive) {
 		
 		List<OntResource> resources = new ArrayList<OntResource>();
@@ -270,6 +320,11 @@ public class OntologyManager {
 		return getResourcesURIs(resources);
 	}
 	
+	/**
+	 * returns URIs of given resources.
+	 * @param resources
+	 * @return
+	 */
 	private List<String> getResourcesURIs(List<OntResource> resources) {
 		List<String> resourcesURIs = new ArrayList<String>();
 		if (resources != null)
@@ -279,6 +334,13 @@ public class OntologyManager {
 		return resourcesURIs;
 	}
 	
+	/**
+	 * This method takes a property URI and returns all domains of that property.
+	 * If @param recursive is true, it also returns the children of the domains.
+	 * @param propertyUri
+	 * @param recursive
+	 * @return
+	 */
 	public List<String> getDomainsGivenProperty(String propertyUri, boolean recursive) {
 		// should add all subclasses to the results
 		List<OntResource> classes = new ArrayList<OntResource>();
@@ -294,6 +356,15 @@ public class OntologyManager {
 		return getResourcesURIs(classes);
 	}
 
+	/**
+	 * This method takes @param rangeClassUri and for object properties whose ranges includes this parameter, 
+	 * returns all of their domains.
+	 * returns the domains of all properties whose domains include all domains of that property.
+	 * If @param recursive is true, it also returns the children of the domains.
+	 * @param rangeClassUri
+	 * @param recursive
+	 * @return
+	 */
 	public List<String> getDomainsGivenRange(String rangeClassUri, boolean recursive) {
 		// should add all subclasses to the results
 		List<OntResource> domains = new ArrayList<OntResource>();
@@ -337,7 +408,17 @@ public class OntologyManager {
 		return getResourcesURIs(domains);
 	}
 	
-	public List<String> getDataProperties(String domainClassUri, String propertyUri, boolean recursive) {
+	/**
+	 * This function takes a class and a data property and says if the class is in domain of that data property or not.
+	 * If @param includeinheritance is true, it also returns the data properties inherited from parents, for example, 
+	 * if A is superclass of B, and we have a datatype property P from A to xsd:int, then calling this function with 
+	 * (B, P, false) returns nothing, but calling with (B, P, true) returns the property P.
+	 * @param domainClassUri
+	 * @param propertyUri
+	 * @param recursive
+	 * @return
+	 */
+	public List<String> getDataProperties(String domainClassUri, String propertyUri, boolean includeInheritance) {
 		
 		List<OntResource> properties = new ArrayList<OntResource>();
 		List<OntResource> directDomains = new ArrayList<OntResource>();
@@ -363,7 +444,8 @@ public class OntologyManager {
 
 			for (int i = 0; i < directDomains.size(); i++) {
 				allDomains.add(directDomains.get(i));
-				getChildren(directDomains.get(i), allDomains, true);
+				if (includeInheritance)
+					getChildren(directDomains.get(i), allDomains, true);
 			}
 			
 			for (int i = 0; i < allDomains.size(); i++) {
@@ -378,7 +460,16 @@ public class OntologyManager {
 		return getResourcesURIs(properties);
 	}
 	
-	public List<String> getObjectProperties(String domainClassUri, String rangeClassUri, boolean recursive) {
+	/**
+	 * This method extracts all the object properties between two classes (object properties 
+	 * who have @param domainClassUri in their domain and @param rangeClassUri in their range).
+	 * If @param includeinheritance is true, it also returns the object properties inherited from parents.
+	 * @param domainClassUri
+	 * @param rangeClassUri
+	 * @param recursive
+	 * @return
+	 */
+	public List<String> getObjectProperties(String domainClassUri, String rangeClassUri, boolean includeInheritance) {
 		
 		List<OntResource> properties = new ArrayList<OntResource>();
 		List<OntResource> directDomains = new ArrayList<OntResource>();
@@ -408,7 +499,8 @@ public class OntologyManager {
 
 			for (int i = 0; i < directDomains.size(); i++) {
 				allDomains.add(directDomains.get(i));
-				getChildren(directDomains.get(i), allDomains, true);
+				if (includeInheritance)
+					getChildren(directDomains.get(i), allDomains, true);
 			}
 			
 			// getting ranges and subclasses
@@ -420,7 +512,8 @@ public class OntologyManager {
 
 			for (int i = 0; i < directRanges.size(); i++) {
 				allRanges.add(directRanges.get(i));
-				getChildren(directRanges.get(i), allRanges, true);
+				if (includeInheritance)
+					getChildren(directRanges.get(i), allRanges, true);
 			}
 			
 			boolean found = false;
@@ -444,6 +537,13 @@ public class OntologyManager {
 		return getResourcesURIs(properties);
 	}
 	
+	/**
+	 * This function takes a class uri and returns the datatype properties who have this class in their domain. 
+	 * If second parameter set to True, it also returns the datatype properties inherited from parents of the given class.
+	 * @param domainClassUri
+	 * @param includeInheritedProperties
+	 * @return
+	 */
 	public List<String> getDataPropertiesOfClass(String domainClassUri, boolean includeInheritedProperties) {
 		
 		List<OntResource> properties = new ArrayList<OntResource>();
@@ -483,6 +583,13 @@ public class OntologyManager {
 		return getResourcesURIs(properties);
 	}
 
+	/**
+	 * This function takes a class uri and returns the object properties who have this class in their domain. 
+	 * If second parameter set to True, it also returns the object properties inherited from parents of the given class.
+	 * @param domainClassUri
+	 * @param includeInheritedProperties
+	 * @return
+	 */
 	public List<String> getObjectPropertiesOfClass(String domainClassUri, boolean includeInheritedProperties) {
 		
 		List<OntResource> properties = new ArrayList<OntResource>();
