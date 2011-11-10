@@ -1,8 +1,10 @@
-package edu.isi.karma.controller.command;
+package edu.isi.karma.controller.command.alignment;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
@@ -23,10 +25,11 @@ public class SetSemanticTypeCommand extends Command {
 	private final SemanticType newType;
 
 	protected SetSemanticTypeCommand(String id, String vWorksheetId,
-			String hNodeId, String type) {
+			String hNodeId, String type, String domain) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
-		newType = new SemanticType(hNodeId, type, SemanticType.Origin.User, 1.0);
+		newType = new SemanticType(hNodeId, type, domain,
+				SemanticType.Origin.User, 1.0);
 	}
 
 	@Override
@@ -59,7 +62,7 @@ public class SetSemanticTypeCommand extends Command {
 				newType.getHNodeId());
 		oldColumnModel = worksheet.getCrfModel().getModelByHNodeId(
 				newType.getHNodeId());
-		
+
 		// Update the SemanticTypes data structure for the worksheet
 		worksheet.getSemanticTypes().addType(newType);
 
@@ -77,13 +80,18 @@ public class SetSemanticTypeCommand extends Command {
 		// Train the model with the new type
 		ArrayList<String> trainingExamples = SemanticTypeUtil
 				.getTrainingExamples(worksheet, currentColumnPath);
-		CRFModelHandler.addOrUpdateLabel(newType.getType(), trainingExamples);
+		if (newType.getDomain().equals(""))
+			CRFModelHandler.addOrUpdateLabel(newType.getType(),
+					trainingExamples);
+		else
+			CRFModelHandler.addOrUpdateLabel(newType.getDomain() + "|"
+					+ newType.getType(), trainingExamples);
 
 		// Add the new CRF column model for this column
 		ArrayList<String> labels = new ArrayList<String>();
-		labels.add(newType.getType());
 		ArrayList<Double> scores = new ArrayList<Double>();
-		scores.add(1.00);
+		CRFModelHandler.predictLabelForExamples(trainingExamples, 4, labels,
+				scores);
 		CRFColumnModel newModel = new CRFColumnModel(labels, scores);
 		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), newModel);
 

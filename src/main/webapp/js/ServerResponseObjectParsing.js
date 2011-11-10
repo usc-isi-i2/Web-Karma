@@ -548,10 +548,17 @@ function parse(data) {
 				if(type["FullType"] == ""){
 					$(semDiv).text("Click To Assign!").addClass("LowConfidenceLevel")
 						.data("hNodeId", type["HNodeId"]);
+				} else if (type["ConfidenceLevel"] == "Low") {
+					$(semDiv).text("Click To Assign!").addClass("LowConfidenceLevel")
+						.data("hNodeId", type["HNodeId"])
+						.data("crfInfo",type["FullCRFModel"]);
 				} else {
-					semDiv.text(type["DisplayLabel"]);
+					semDiv.text(type["DisplayLabel"]);;
 					semDiv.data("crfInfo",type["FullCRFModel"])
-						.data("hNodeId", type["HNodeId"]);
+						.data("hNodeId", type["HNodeId"])
+						.data("fullType", type["FullType"])
+						.data("domain", type["Domain"])
+						.data("origin", type["Origin"]);
 				}
 					
 				//semDiv.hover(showSemanticTypeInfo, hideSemanticTypeInfo);

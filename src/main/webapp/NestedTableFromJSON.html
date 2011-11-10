@@ -192,7 +192,7 @@
 			
 			// Hide the ontology options table
 			$(function() {
-				$("#ontologyOptionsTable").hide();
+				$("#ChangeSemanticTypesDialogBox").hide();
 				attachOntologyOptionsRadioButtonHandlers();
 			});
 			
@@ -540,28 +540,48 @@
 			<button href="#" id="removeFromWorkspaceButton">Remove from workspace</button>
 		</div>
 		<div id="ChangeSemanticTypesDialogBox">
+			<span class="mediumSizedFont">Suggested semantic types:</span>
 			<table id="CRFSuggestedLabelsTable"></table>
+			<br>
+			<span class="mediumSizedFont">Choose from ontology</span>
 			<div id="ontologyOptionsTable">
 				<table>
 				<tr>
-					<td><input type="radio" id="chooseClass" name="ontologyOptionGroup" value="Choose Class"/>
-						<label for="chooseClass">Choose Class</label>
-					</td>
-					<td><input type="radio" id="chooseDataProperty" name="ontologyOptionGroup" value="Choose Data Property"/>
-						<label for="chooseDataProperty">Choose Data Property</label>
-					</td>
-				</tr>
-				<tr>
 					<td colspan="2">
-						<input type="textarea" id="searchQueryOntologyList" maxlength="100" size="35"/>
-						<button id="searchOntologyList">Search</button>
+						Search by: 
+							<select id="toggleOntologyHierarchy">
+								<option value="class">Class</option>
+								<option value="dataProperty">Data Property</option>
+							</select>
 					</td>
 				</tr>
 				<tr>
+					<td id="firstColumnLabel">Class</td>
+					<td id="secondColumnLabel">Data Property</td>
+				</tr>
+				<tr>
+					<td valign="top">
+						<div id="firstColumnOntologyBox">
+							<input type="text" id="firstColumnKeyword" maxlength="100" size="20"/>
+							<button id="submitFirstColumnSearch">Search</button>
+							<br /><br />
+							<div id="firstColumnTree"></div>
+						</div>
+					</td>
+					<td valign="top">
+						<div id="secondColumnOntologyBox">
+							<input type="text" id="secondColumnKeyword" maxlength="100" size="20"/>
+							<button id="submitSecondColumnSearch">Search</button>
+							<br /><br />
+							<div id="secondColumnTree"></div>
+						</div>
+					</td>
+				</tr>
+				<!-- <tr>
 					<td colspan="2">
 						<div id="ontologyOptionsList"></div>		
 					</td>
-				</tr>
+				</tr> -->
 				</table>
 				
 			</div>

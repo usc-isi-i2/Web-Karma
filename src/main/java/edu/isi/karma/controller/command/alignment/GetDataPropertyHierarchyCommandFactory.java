@@ -1,0 +1,17 @@
+package edu.isi.karma.controller.command.alignment;
+
+import javax.servlet.http.HttpServletRequest;
+
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.view.VWorkspace;
+
+public class GetDataPropertyHierarchyCommandFactory extends CommandFactory {
+
+	@Override
+	public Command createCommand(HttpServletRequest request,
+			VWorkspace vWorkspace) {
+		return new GetDataPropertyHierarchyCommand(getNewId(vWorkspace));
+	}
+
+}

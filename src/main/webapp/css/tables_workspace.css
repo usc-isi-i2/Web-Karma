@@ -342,8 +342,30 @@ div#ontologyOptionsTable {
 	display: block;
 }
 
+div#ontologyOptionsTable td{
+	padding: 5px;
+}
+
+div#firstColumnTree {
+	overflow: auto;
+	max-height: 245px;
+}
+
+div#secondColumnTree {
+	overflow: auto;
+	max-height: 245px;
+}
+
 table#CRFSuggestedLabelsTable td {
 	padding: 4px;
+	font-size: 10px;
+}
+
+span.mediumSizedFont {
+	font-size: 14px;
+}
+
+span.smallSizedFont {
 	font-size: 10px;
 }
 

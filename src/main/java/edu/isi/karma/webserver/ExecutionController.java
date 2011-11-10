@@ -7,20 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.AlignToOntologyCommand;
-import edu.isi.karma.controller.command.AlignToOntologyCommandFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.CommandWithPreview;
 import edu.isi.karma.controller.command.EditCellCommand;
 import edu.isi.karma.controller.command.EditCellCommandFactory;
-import edu.isi.karma.controller.command.GenerateSemanticTypesCommand;
-import edu.isi.karma.controller.command.GenerateSemanticTypesCommandFactory;
-import edu.isi.karma.controller.command.GetDataPropertyListCommand;
-import edu.isi.karma.controller.command.GetDataPropertyListCommandFactory;
-import edu.isi.karma.controller.command.GetOntologyClassHierarchyCommand;
-import edu.isi.karma.controller.command.GetOntologyClassHierarchyCommandFactory;
 import edu.isi.karma.controller.command.ImportCSVFileCommand;
 import edu.isi.karma.controller.command.ImportCSVFileCommandFactory;
 import edu.isi.karma.controller.command.ImportDatabaseTableCommand;
@@ -31,14 +23,26 @@ import edu.isi.karma.controller.command.ImportOntologyCommand;
 import edu.isi.karma.controller.command.ImportOntologyCommandFactory;
 import edu.isi.karma.controller.command.ImportXMLFileCommand;
 import edu.isi.karma.controller.command.ImportXMLFileCommandFactory;
-import edu.isi.karma.controller.command.SetSemanticTypeCommand;
-import edu.isi.karma.controller.command.SetSemanticTypeCommandFactory;
 import edu.isi.karma.controller.command.TablePagerCommand;
 import edu.isi.karma.controller.command.TablePagerCommandFactory;
 import edu.isi.karma.controller.command.TablePagerResizeCommand;
 import edu.isi.karma.controller.command.TablePagerResizeCommandFactory;
 import edu.isi.karma.controller.command.UndoRedoCommand;
 import edu.isi.karma.controller.command.UndoRedoCommandFactory;
+import edu.isi.karma.controller.command.alignment.AlignToOntologyCommand;
+import edu.isi.karma.controller.command.alignment.AlignToOntologyCommandFactory;
+import edu.isi.karma.controller.command.alignment.GenerateSemanticTypesCommand;
+import edu.isi.karma.controller.command.alignment.GenerateSemanticTypesCommandFactory;
+import edu.isi.karma.controller.command.alignment.GetDataPropertiesForClassCommand;
+import edu.isi.karma.controller.command.alignment.GetDataPropertiesForClassCommandFactory;
+import edu.isi.karma.controller.command.alignment.GetDataPropertyHierarchyCommand;
+import edu.isi.karma.controller.command.alignment.GetDataPropertyHierarchyCommandFactory;
+import edu.isi.karma.controller.command.alignment.GetDomainsForDataPropertyCommand;
+import edu.isi.karma.controller.command.alignment.GetDomainsForDataPropertyCommandFactory;
+import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyCommand;
+import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyCommandFactory;
+import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommand;
+import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
 
@@ -87,14 +91,18 @@ public class ExecutionController {
 				new GenerateSemanticTypesCommandFactory());
 		commandFactoryMap.put(GetOntologyClassHierarchyCommand.class.getSimpleName(),
 				new GetOntologyClassHierarchyCommandFactory());
-		commandFactoryMap.put(GetDataPropertyListCommand.class.getSimpleName(),
-				new GetDataPropertyListCommandFactory());
+		commandFactoryMap.put(GetDataPropertyHierarchyCommand.class.getSimpleName(),
+				new GetDataPropertyHierarchyCommandFactory());
 		commandFactoryMap.put(SetSemanticTypeCommand.class.getSimpleName(),
 				new SetSemanticTypeCommandFactory());
 		commandFactoryMap.put(AlignToOntologyCommand.class.getSimpleName(),
 				new AlignToOntologyCommandFactory());
 		commandFactoryMap.put(ImportOntologyCommand.class.getSimpleName(),
 				new ImportOntologyCommandFactory());
+		commandFactoryMap.put(GetDomainsForDataPropertyCommand.class.getSimpleName(),
+				new GetDomainsForDataPropertyCommandFactory());
+		commandFactoryMap.put(GetDataPropertiesForClassCommand.class.getSimpleName(),
+				new GetDataPropertiesForClassCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

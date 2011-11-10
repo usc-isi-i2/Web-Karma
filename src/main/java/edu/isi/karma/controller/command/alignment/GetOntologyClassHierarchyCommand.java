@@ -1,7 +1,12 @@
-package edu.isi.karma.controller.command;
+package edu.isi.karma.controller.command.alignment;
 
-import edu.isi.karma.controller.update.OntologyClassHieararchyUpdate;
+import com.hp.hpl.jena.ontology.OntModel;
+
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.update.OntologyClassHierarchyUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetOntologyClassHierarchyCommand extends Command {
@@ -33,7 +38,9 @@ public class GetOntologyClassHierarchyCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
-		c.add(new OntologyClassHieararchyUpdate());
+		
+		OntModel model = OntologyManager.Instance().getOntModel();
+		c.add(new OntologyClassHierarchyUpdate(model));
 		return c;
 	}
 

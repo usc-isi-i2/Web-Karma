@@ -1,12 +1,17 @@
-package edu.isi.karma.controller.command;
+package edu.isi.karma.controller.command.alignment;
 
-import edu.isi.karma.controller.update.DataPropertyListUpdate;
+import com.hp.hpl.jena.ontology.OntModel;
+
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.update.DataPropertyHierarchyUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.view.VWorkspace;
 
-public class GetDataPropertyListCommand extends Command {
+public class GetDataPropertyHierarchyCommand extends Command {
 
-	protected GetDataPropertyListCommand(String id) {
+	protected GetDataPropertyHierarchyCommand(String id) {
 		super(id);
 		// TODO Auto-generated constructor stub
 	}
@@ -18,7 +23,7 @@ public class GetDataPropertyListCommand extends Command {
 
 	@Override
 	public String getTitle() {
-		return "Get Data Property List";
+		return "Get Data Property Hierarchy";
 	}
 
 	@Override
@@ -34,7 +39,9 @@ public class GetDataPropertyListCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
-		c.add(new DataPropertyListUpdate());
+		
+		OntModel model = OntologyManager.Instance().getOntModel();
+		c.add(new DataPropertyHierarchyUpdate(model));
 		return c;
 	}
 

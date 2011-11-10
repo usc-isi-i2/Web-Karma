@@ -93,7 +93,7 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 	@Override
 	public String getDescription() {
 		if (isExecuted()) {
-			return csvFile.getName() + " imported";
+			return csvFile.getName();
 		} else {
 			return "";
 		}

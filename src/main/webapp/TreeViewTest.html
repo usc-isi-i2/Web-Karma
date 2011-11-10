@@ -36,996 +36,758 @@ $(function () {
 			"data" : 
 [
     {
+        "data": "mimeType",
+        "metadata": {"URI": "http://vitro.mannlib.cornell.edu/ns/vitro/public#mimeType"}
+    },
+    {
+        "data": "majorField",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#majorField"}
+    },
+    {
+        "data": "placeOfPublication",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#placeOfPublication"}
+    },
+    {
+        "data": "addressCountry",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#addressCountry"}
+    },
+    {
+        "data": "hrJobTitle",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#hrJobTitle"}
+    },
+    {
+        "data": "linkURI",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#linkURI"}
+    },
+    {
+        "data": "courseCredits",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#courseCredits"}
+    },
+    {
+        "data": "issue",
+        "metadata": {"URI": "http://purl.org/ontology/bibo/issue"}
+    },
+    {
+        "data": "addressPostalCode",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#addressPostalCode"}
+    },
+    {
+        "data": "isCorrespondingAuthor",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#isCorrespondingAuthor"}
+    },
+    {
+        "data": "firstName",
+        "metadata": {"URI": "http://xmlns.com/foaf/0.1/firstName"}
+    },
+    {
+        "data": "departmentOrSchool",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#departmentOrSchool"}
+    },
+    {
+        "data": "overview",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#overview"}
+    },
+    {
+        "children": [
+            {
+                "data": "nameListZH",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameListZH"}
+            },
+            {
+                "data": "nameListRU",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameListRU"}
+            },
+            {
+                "data": "nameListIT",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameListIT"}
+            },
+            {
+                "data": "nameListFR",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameListFR"}
+            },
+            {
+                "data": "nameListES",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameListES"}
+            },
+            {
+                "data": "nameListEN",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameListEN"}
+            },
+            {
+                "data": "nameListAR",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameListAR"}
+            }
+        ],
+        "data": "hasListName",
+        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#hasListName"}
+    },
+    {
+        "data": "contactInformation",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#contactInformation"}
+    },
+    {
+        "data": "sourceModified",
+        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#sourceModified"}
+    },
+    {
+        "data": "scopeNote",
+        "metadata": {"URI": "http://www.w3.org/2008/05/skos#scopeNote"}
+    },
+    {
+        "children": [
+            {
+                "data": "nationalityZH",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nationalityZH"}
+            },
+            {
+                "data": "nationalityRU",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nationalityRU"}
+            },
+            {
+                "data": "nationalityIT",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nationalityIT"}
+            },
+            {
+                "data": "nationalityFR",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nationalityFR"}
+            },
+            {
+                "data": "nationalityES",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nationalityES"}
+            },
+            {
+                "data": "nationalityEN",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nationalityEN"}
+            },
+            {
+                "data": "nationalityAR",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nationalityAR"}
+            }
+        ],
+        "data": "hasNationality",
+        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#hasNationality"}
+    },
+    {
+        "data": "licenseNumber",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#licenseNumber"}
+    },
+    {
+        "data": "cclCode",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#cclCode"}
+    },
+    {
+        "data": "sourceIdentifier",
+        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#sourceIdentifier"}
+    },
+    {
+        "data": "validUntil",
+        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#validUntil"}
+    },
+    {
+        "data": "addressCity",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#addressCity"}
+    },
+    {
+        "data": "uri",
+        "metadata": {"URI": "http://purl.org/ontology/bibo/uri"}
+    },
+    {
+        "data": "suffixName",
+        "metadata": {"URI": "http://purl.org/ontology/bibo/suffixName"}
+    },
+    {
+        "data": "middleName",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#middleName"}
+    },
+    {
         "children": [{
-            "data": "Project",
-            "metadata": {"URI": "http://vivoweb.org/ontology/core#Project"}
+            "data": "primaryEmail",
+            "metadata": {"URI": "http://vivoweb.org/ontology/core#primaryEmail"}
         }],
-        "data": "Process",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#Process"}
+        "data": "email",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#email"}
     },
     {
-        "children": [
-            {
-                "data": "Software",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#Software"}
-            },
-            {
-                "children": [{
-                    "data": "Map",
-                    "metadata": {"URI": "http://purl.org/ontology/bibo/Map"}
-                }],
-                "data": "Image",
-                "metadata": {"URI": "http://purl.org/ontology/bibo/Image"}
-            },
-            {
-                "children": [
-                    {
-                        "data": "Webpage",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/Webpage"}
-                    },
-                    {
-                        "data": "Thesis",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/Thesis"}
-                    },
-                    {
-                        "data": "Screenplay",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Screenplay"}
-                    },
-                    {
-                        "data": "Slideshow",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/Slideshow"}
-                    },
-                    {
-                        "data": "NewsRelease",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#NewsRelease"}
-                    },
-                    {
-                        "data": "AudioDocument",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/AudioDocument"}
-                    },
-                    {
-                        "data": "Speech",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Speech"}
-                    },
-                    {
-                        "data": "Score",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Score"}
-                    },
-                    {
-                        "data": "Manual",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/Manual"}
-                    },
-                    {
-                        "data": "ConferencePoster",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#ConferencePoster"}
-                    },
-                    {
-                        "children": [
-                            {
-                                "data": "Video",
-                                "metadata": {"URI": "http://vivoweb.org/ontology/core#Video"}
-                            },
-                            {
-                                "data": "Film",
-                                "metadata": {"URI": "http://purl.org/ontology/bibo/Film"}
-                            }
-                        ],
-                        "data": "AudioVisualDocument",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/AudioVisualDocument"}
-                    },
-                    {
-                        "data": "Catalog",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Catalog"}
-                    },
-                    {
-                        "children": [
-                            {
-                                "data": "Review",
-                                "metadata": {"URI": "http://vivoweb.org/ontology/core#Review"}
-                            },
-                            {
-                                "data": "EditorialArticle",
-                                "metadata": {"URI": "http://vivoweb.org/ontology/core#EditorialArticle"}
-                            },
-                            {
-                                "data": "ConferencePaper",
-                                "metadata": {"URI": "http://vivoweb.org/ontology/core#ConferencePaper"}
-                            },
-                            {
-                                "data": "BlogPosting",
-                                "metadata": {"URI": "http://vivoweb.org/ontology/core#BlogPosting"}
-                            },
-                            {
-                                "data": "AcademicArticle",
-                                "metadata": {"URI": "http://purl.org/ontology/bibo/AcademicArticle"}
-                            }
-                        ],
-                        "data": "Article",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/Article"}
-                    },
-                    {
-                        "data": "Report",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/Report"}
-                    },
-                    {
-                        "data": "Standard",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/Standard"}
-                    },
-                    {
-                        "data": "CaseStudy",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#CaseStudy"}
-                    },
-                    {
-                        "children": [{
-                            "data": "Proceedings",
-                            "metadata": {"URI": "http://purl.org/ontology/bibo/Proceedings"}
-                        }],
-                        "data": "Book",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/Book"}
-                    },
-                    {
-                        "data": "Translation",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Translation"}
-                    },
-                    {
-                        "data": "Note",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/Note"}
-                    },
-                    {
-                        "data": "WorkingPaper",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#WorkingPaper"}
-                    },
-                    {
-                        "children": [
-                            {
-                                "children": [
-                                    {
-                                        "data": "Statute",
-                                        "metadata": {"URI": "http://purl.org/ontology/bibo/Statute"}
-                                    },
-                                    {
-                                        "data": "Bill",
-                                        "metadata": {"URI": "http://purl.org/ontology/bibo/Bill"}
-                                    }
-                                ],
-                                "data": "Legislation",
-                                "metadata": {"URI": "http://purl.org/ontology/bibo/Legislation"}
-                            },
-                            {
-                                "children": [
-                                    {
-                                        "data": "LegalDecision",
-                                        "metadata": {"URI": "http://purl.org/ontology/bibo/LegalDecision"}
-                                    },
-                                    {
-                                        "data": "Brief",
-                                        "metadata": {"URI": "http://purl.org/ontology/bibo/Brief"}
-                                    }
-                                ],
-                                "data": "LegalCaseDocument",
-                                "metadata": {"URI": "http://purl.org/ontology/bibo/LegalCaseDocument"}
-                            }
-                        ],
-                        "data": "LegalDocument",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/LegalDocument"}
-                    },
-                    {
-                        "children": [
-                            {
-                                "data": "Slide",
-                                "metadata": {"URI": "http://purl.org/ontology/bibo/Slide"}
-                            },
-                            {
-                                "children": [{
-                                    "data": "Quote",
-                                    "metadata": {"URI": "http://purl.org/ontology/bibo/Quote"}
-                                }],
-                                "data": "Excerpt",
-                                "metadata": {"URI": "http://purl.org/ontology/bibo/Excerpt"}
-                            },
-                            {
-                                "children": [{
-                                    "data": "Chapter",
-                                    "metadata": {"URI": "http://purl.org/ontology/bibo/Chapter"}
-                                }],
-                                "data": "BookSection",
-                                "metadata": {"URI": "http://purl.org/ontology/bibo/BookSection"}
-                            }
-                        ],
-                        "data": "DocumentPart",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/DocumentPart"}
-                    },
-                    {
-                        "children": [{
-                            "data": "Map",
-                            "metadata": {"URI": "http://purl.org/ontology/bibo/Map"}
-                        }],
-                        "data": "Image",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/Image"}
-                    },
-                    {
-                        "data": "ResearchProposal",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#ResearchProposal"}
-                    },
-                    {
-                        "data": "ReferenceSource",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/ReferenceSource"}
-                    },
-                    {
-                        "children": [
-                            {
-                                "data": "Database",
-                                "metadata": {"URI": "http://vivoweb.org/ontology/core#Database"}
-                            },
-                            {
-                                "data": "Issue",
-                                "metadata": {"URI": "http://purl.org/ontology/bibo/Issue"}
-                            },
-                            {
-                                "data": "EditedBook",
-                                "metadata": {"URI": "http://purl.org/ontology/bibo/EditedBook"}
-                            }
-                        ],
-                        "data": "CollectedDocument",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/CollectedDocument"}
-                    },
-                    {
-                        "data": "Patent",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/Patent"}
-                    },
-                    {
-                        "data": "Manuscript",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/Manuscript"}
-                    }
-                ],
-                "data": "Document",
-                "metadata": {"URI": "http://purl.org/ontology/bibo/Document"}
-            },
-            {
-                "data": "Image",
-                "metadata": {"URI": "http://xmlns.com/foaf/0.1/Image"}
-            },
-            {
-                "children": [
-                    {
-                        "children": [{
-                            "data": "Blog",
-                            "metadata": {"URI": "http://vivoweb.org/ontology/core#Blog"}
-                        }],
-                        "data": "Website",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/Website"}
-                    },
-                    {
-                        "data": "Series",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/Series"}
-                    },
-                    {
-                        "children": [
-                            {
-                                "data": "Newsletter",
-                                "metadata": {"URI": "http://vivoweb.org/ontology/core#Newsletter"}
-                            },
-                            {
-                                "data": "Newspaper",
-                                "metadata": {"URI": "http://purl.org/ontology/bibo/Newspaper"}
-                            },
-                            {
-                                "data": "Magazine",
-                                "metadata": {"URI": "http://purl.org/ontology/bibo/Magazine"}
-                            },
-                            {
-                                "data": "Journal",
-                                "metadata": {"URI": "http://purl.org/ontology/bibo/Journal"}
-                            },
-                            {
-                                "data": "CourtReporter",
-                                "metadata": {"URI": "http://purl.org/ontology/bibo/CourtReporter"}
-                            },
-                            {
-                                "data": "Code",
-                                "metadata": {"URI": "http://purl.org/ontology/bibo/Code"}
-                            }
-                        ],
-                        "data": "Periodical",
-                        "metadata": {"URI": "http://purl.org/ontology/bibo/Periodical"}
-                    }
-                ],
-                "data": "Collection",
-                "metadata": {"URI": "http://purl.org/ontology/bibo/Collection"}
-            },
-            {
-                "data": "Dataset",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#Dataset"}
-            }
-        ],
-        "data": "InformationResource",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#InformationResource"}
-    },
-    {
-        "children": [
-            {
-                "children": [{
-                    "data": "PostdocPosition",
-                    "metadata": {"URI": "http://vivoweb.org/ontology/core#PostdocPosition"}
-                }],
-                "data": "NonFacultyAcademicPosition",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#NonFacultyAcademicPosition"}
-            },
-            {
-                "data": "FacultyPosition",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#FacultyPosition"}
-            },
-            {
-                "data": "LibrarianPosition",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#LibrarianPosition"}
-            },
-            {
-                "data": "NonAcademicPosition",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#NonAcademicPosition"}
-            },
-            {
-                "data": "FacultyAdministrativePosition",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#FacultyAdministrativePosition"}
-            }
-        ],
-        "data": "Position",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#Position"}
-    },
-    {
-        "children": [
-            {
-                "data": "Licensure",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#Licensure"}
-            },
-            {
-                "data": "Certification",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#Certification"}
-            }
-        ],
-        "data": "IssuedCredential",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#IssuedCredential"}
-    },
-    {
-        "children": [
-            {
-                "data": "Internship",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#Internship"}
-            },
-            {
-                "data": "MedicalResidency",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#MedicalResidency"}
-            },
-            {
-                "data": "PostdoctoralTraining",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#PostdoctoralTraining"}
-            }
-        ],
-        "data": "EducationalTraining",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#EducationalTraining"}
-    },
-    {
-        "data": "Award",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#Award"}
-    },
-    {
-        "data": "Equipment",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#Equipment"}
-    },
-    {
-        "data": "File",
-        "metadata": {"URI": "http://vitro.mannlib.cornell.edu/ns/vitro/public#File"}
-    },
-    {
-        "children": [
-            {
-                "data": "Interview",
-                "metadata": {"URI": "http://purl.org/ontology/bibo/Interview"}
-            },
-            {
-                "data": "Workshop",
-                "metadata": {"URI": "http://purl.org/ontology/bibo/Workshop"}
-            },
-            {
-                "data": "Conference",
-                "metadata": {"URI": "http://purl.org/ontology/bibo/Conference"}
-            },
-            {
-                "data": "Course",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#Course"}
-            },
-            {
-                "data": "Performance",
-                "metadata": {"URI": "http://purl.org/ontology/bibo/Performance"}
-            },
-            {
-                "data": "Exhibit",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#Exhibit"}
-            },
-            {
-                "data": "Competition",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#Competition"}
-            },
-            {
-                "data": "Hearing",
-                "metadata": {"URI": "http://purl.org/ontology/bibo/Hearing"}
-            },
-            {
-                "children": [{
-                    "data": "InvitedTalk",
-                    "metadata": {"URI": "http://vivoweb.org/ontology/core#InvitedTalk"}
-                }],
-                "data": "Presentation",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#Presentation"}
-            },
-            {
-                "data": "Meeting",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#Meeting"}
-            }
-        ],
-        "data": "Event",
-        "metadata": {"URI": "http://purl.org/NET/c4dm/event.owl#Event"}
+        "data": "filename",
+        "metadata": {"URI": "http://vitro.mannlib.cornell.edu/ns/vitro/public#filename"}
     },
     {
         "children": [
             {
                 "children": [
                     {
-                        "data": "Program",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Program"}
+                        "data": "populationYear",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#populationYear"}
                     },
                     {
-                        "data": "School",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#School"}
+                        "data": "populationUnit",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#populationUnit"}
                     },
                     {
-                        "data": "Foundation",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Foundation"}
+                        "data": "populationTotal",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#populationTotal"}
                     },
                     {
-                        "data": "PrivateCompany",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#PrivateCompany"}
-                    },
-                    {
-                        "data": "Division",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Division"}
-                    },
-                    {
-                        "data": "ResearchOrganization",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#ResearchOrganization"}
-                    },
-                    {
-                        "data": "ExtensionUnit",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#ExtensionUnit"}
-                    },
-                    {
-                        "data": "Library",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Library"}
-                    },
-                    {
-                        "data": "College",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#College"}
-                    },
-                    {
-                        "data": "FundingOrganization",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#FundingOrganization"}
-                    },
-                    {
-                        "data": "Publisher",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Publisher"}
-                    },
-                    {
-                        "data": "GovernmentAgency",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#GovernmentAgency"}
-                    },
-                    {
-                        "data": "Association",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Association"}
-                    },
-                    {
-                        "children": [{
-                            "data": "AcademicDepartment",
-                            "metadata": {"URI": "http://vivoweb.org/ontology/core#AcademicDepartment"}
-                        }],
-                        "data": "Department",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Department"}
-                    },
-                    {
-                        "data": "ClinicalOrganization",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#ClinicalOrganization"}
-                    },
-                    {
-                        "data": "StudentOrganization",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#StudentOrganization"}
-                    },
-                    {
-                        "data": "Museum",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Museum"}
-                    },
-                    {
-                        "children": [
-                            {
-                                "data": "ResearchLaboratory",
-                                "metadata": {"URI": "http://vivoweb.org/ontology/core#ResearchLaboratory"}
-                            },
-                            {
-                                "data": "CoreLaboratory",
-                                "metadata": {"URI": "http://vivoweb.org/ontology/core#CoreLaboratory"}
-                            }
-                        ],
-                        "data": "Laboratory",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Laboratory"}
-                    },
-                    {
-                        "data": "Center",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Center"}
-                    },
-                    {
-                        "data": "Hospital",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Hospital"}
-                    },
-                    {
-                        "data": "Consortium",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Consortium"}
-                    },
-                    {
-                        "data": "Institute",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Institute"}
-                    },
-                    {
-                        "data": "University",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#University"}
+                        "data": "populationNotes",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#populationNotes"}
                     }
                 ],
-                "data": "Organization",
-                "metadata": {"URI": "http://xmlns.com/foaf/0.1/Organization"}
+                "data": "population",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#population"}
             },
             {
                 "children": [
                     {
-                        "data": "Team",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Team"}
+                        "data": "landAreaYear",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#landAreaYear"}
                     },
                     {
-                        "data": "Committee",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Committee"}
+                        "data": "landAreaUnit",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#landAreaUnit"}
+                    },
+                    {
+                        "data": "landAreaTotal",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#landAreaTotal"}
+                    },
+                    {
+                        "data": "landAreaNotes",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#landAreaNotes"}
                     }
                 ],
-                "data": "Group",
-                "metadata": {"URI": "http://xmlns.com/foaf/0.1/Group"}
+                "data": "landArea",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#landArea"}
             },
             {
                 "children": [
                     {
-                        "data": "Librarian",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Librarian"}
+                        "data": "countryAreaYear",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#countryAreaYear"}
                     },
                     {
-                        "children": [
-                            {
-                                "data": "UndergraduateStudent",
-                                "metadata": {"URI": "http://vivoweb.org/ontology/core#UndergraduateStudent"}
-                            },
-                            {
-                                "data": "GraduateStudent",
-                                "metadata": {"URI": "http://vivoweb.org/ontology/core#GraduateStudent"}
-                            }
-                        ],
-                        "data": "Student",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#Student"}
+                        "data": "countryAreaUnit",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#countryAreaUnit"}
                     },
                     {
-                        "data": "PersonAsListed",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/provenance-support#PersonAsListed"}
+                        "data": "countryAreaTotal",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#countryAreaTotal"}
                     },
                     {
-                        "data": "EmeritusLibrarian",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#EmeritusLibrarian"}
-                    },
-                    {
-                        "data": "NonAcademic",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#NonAcademic"}
-                    },
-                    {
-                        "children": [{
-                            "data": "Postdoc",
-                            "metadata": {"URI": "http://vivoweb.org/ontology/core#Postdoc"}
-                        }],
-                        "data": "NonFacultyAcademic",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#NonFacultyAcademic"}
-                    },
-                    {
-                        "children": [{
-                            "data": "EmeritusProfessor",
-                            "metadata": {"URI": "http://vivoweb.org/ontology/core#EmeritusProfessor"}
-                        }],
-                        "data": "EmeritusFaculty",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#EmeritusFaculty"}
-                    },
-                    {
-                        "data": "FacultyMember",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#FacultyMember"}
-                    },
-                    {
-                        "data": "EmeritusProfessor",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#EmeritusProfessor"}
+                        "data": "countryAreaNotes",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#countryAreaNotes"}
                     }
                 ],
-                "data": "Person",
-                "metadata": {"URI": "http://xmlns.com/foaf/0.1/Person"}
-            }
-        ],
-        "data": "Agent",
-        "metadata": {"URI": "http://xmlns.com/foaf/0.1/Agent"}
-    },
-    {
-        "children": [{
-            "children": [
-                {
-                    "children": [
-                        {
-                            "children": [
-                                {
-                                    "data": "StateOrProvince",
-                                    "metadata": {"URI": "http://vivoweb.org/ontology/core#StateOrProvince"}
-                                },
-                                {
-                                    "data": "PopulatedPlace",
-                                    "metadata": {"URI": "http://vivoweb.org/ontology/core#PopulatedPlace"}
-                                },
-                                {
-                                    "data": "County",
-                                    "metadata": {"URI": "http://vivoweb.org/ontology/core#County"}
-                                },
-                                {
-                                    "data": "Country",
-                                    "metadata": {"URI": "http://vivoweb.org/ontology/core#Country"}
-                                },
-                                {
-                                    "children": [
-                                        {
-                                            "data": "self_governing",
-                                            "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#self_governing"}
-                                        },
-                                        {
-                                            "data": "non_self_governing",
-                                            "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#non_self_governing"}
-                                        },
-                                        {
-                                            "data": "disputed",
-                                            "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#disputed"}
-                                        },
-                                        {
-                                            "data": "other",
-                                            "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#other"}
-                                        }
-                                    ],
-                                    "data": "territory",
-                                    "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#territory"}
-                                }
-                            ],
-                            "data": "GeopoliticalEntity",
-                            "metadata": {"URI": "http://vivoweb.org/ontology/core#GeopoliticalEntity"}
-                        },
-                        {
-                            "children": [
-                                {
-                                    "data": "Continent",
-                                    "metadata": {"URI": "http://vivoweb.org/ontology/core#Continent"}
-                                },
-                                {
-                                    "data": "geographical_region",
-                                    "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#geographical_region"}
-                                }
-                            ],
-                            "data": "TransnationalRegion",
-                            "metadata": {"URI": "http://vivoweb.org/ontology/core#TransnationalRegion"}
-                        },
-                        {
-                            "data": "SubnationalRegion",
-                            "metadata": {"URI": "http://vivoweb.org/ontology/core#SubnationalRegion"}
-                        }
-                    ],
-                    "data": "GeographicRegion",
-                    "metadata": {"URI": "http://vivoweb.org/ontology/core#GeographicRegion"}
-                },
-                {
-                    "children": [
-                        {
-                            "data": "Room",
-                            "metadata": {"URI": "http://vivoweb.org/ontology/core#Room"}
-                        },
-                        {
-                            "data": "Building",
-                            "metadata": {"URI": "http://vivoweb.org/ontology/core#Building"}
-                        }
-                    ],
-                    "data": "Facility",
-                    "metadata": {"URI": "http://vivoweb.org/ontology/core#Facility"}
-                },
-                {
-                    "data": "Campus",
-                    "metadata": {"URI": "http://vivoweb.org/ontology/core#Campus"}
-                }
-            ],
-            "data": "GeographicLocation",
-            "metadata": {"URI": "http://vivoweb.org/ontology/core#GeographicLocation"}
-        }],
-        "data": "Location",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#Location"}
-    },
-    {
-        "data": "DocumentStatus",
-        "metadata": {"URI": "http://purl.org/ontology/bibo/DocumentStatus"}
-    },
-    {
-        "data": "FileByteStream",
-        "metadata": {"URI": "http://vitro.mannlib.cornell.edu/ns/vitro/public#FileByteStream"}
-    },
-    {
-        "children": [
-            {
-                "data": "Grant",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#Grant"}
-            },
-            {
-                "data": "Contract",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#Contract"}
-            }
-        ],
-        "data": "Agreement",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#Agreement"}
-    },
-    {
-        "data": "ERO_0000595",
-        "metadata": {"URI": "http://purl.obolibrary.org/obo/ERO_0000595"}
-    },
-    {
-        "data": "DateTimeValue",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#DateTimeValue"}
-    },
-    {
-        "children": [{
-            "children": [
-                {
-                    "children": [
-                        {
-                            "data": "special_group",
-                            "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#special_group"}
-                        },
-                        {
-                            "data": "organization",
-                            "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#organization"}
-                        },
-                        {
-                            "data": "geographical_region",
-                            "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#geographical_region"}
-                        },
-                        {
-                            "data": "economic_region",
-                            "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#economic_region"}
-                        }
-                    ],
-                    "data": "group",
-                    "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#group"}
-                },
-                {
-                    "children": [
-                        {
-                            "data": "self_governing",
-                            "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#self_governing"}
-                        },
-                        {
-                            "data": "non_self_governing",
-                            "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#non_self_governing"}
-                        },
-                        {
-                            "data": "disputed",
-                            "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#disputed"}
-                        },
-                        {
-                            "data": "other",
-                            "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#other"}
-                        }
-                    ],
-                    "data": "territory",
-                    "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#territory"}
-                }
-            ],
-            "data": "area",
-            "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#area"}
-        }],
-        "data": "Thing",
-        "metadata": {"URI": "http://www.w3.org/2002/07/owl#Thing"}
-    },
-    {
-        "data": "DateTimeValuePrecision",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#DateTimeValuePrecision"}
-    },
-    {
-        "children": [{
-            "data": "ThesisDegree",
-            "metadata": {"URI": "http://purl.org/ontology/bibo/ThesisDegree"}
-        }],
-        "data": "AcademicDegree",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#AcademicDegree"}
-    },
-    {
-        "data": "Service",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#Service"}
-    },
-    {
-        "children": [
-            {
-                "data": "WorkshopSeries",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#WorkshopSeries"}
-            },
-            {
-                "data": "SeminarSeries",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#SeminarSeries"}
-            },
-            {
-                "data": "ConferenceSeries",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#ConferenceSeries"}
-            }
-        ],
-        "data": "EventSeries",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#EventSeries"}
-    },
-    {
-        "data": "SubjectArea",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#SubjectArea"}
-    },
-    {
-        "children": [{
-            "data": "USPostalAddress",
-            "metadata": {"URI": "http://vivoweb.org/ontology/core#USPostalAddress"}
-        }],
-        "data": "Address",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#Address"}
-    },
-    {
-        "children": [
-            {
-                "data": "Authorship",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#Authorship"}
+                "data": "countryArea",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#countryArea"}
             },
             {
                 "children": [
                     {
-                        "data": "UndergraduateAdvisingRelationship",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#UndergraduateAdvisingRelationship"}
+                        "data": "agriculturalAreaYear",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#agriculturalAreaYear"}
                     },
                     {
-                        "data": "FacultyMentoringRelationship",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#FacultyMentoringRelationship"}
+                        "data": "agriculturalAreaUnit",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#agriculturalAreaUnit"}
                     },
                     {
-                        "data": "PostdocOrFellowAdvisingRelationship",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#PostdocOrFellowAdvisingRelationship"}
+                        "data": "agriculturalAreaTotal",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#agriculturalAreaTotal"}
                     },
                     {
-                        "data": "GraduateAdvisingRelationship",
-                        "metadata": {"URI": "http://vivoweb.org/ontology/core#GraduateAdvisingRelationship"}
+                        "data": "agriculturalAreaNotes",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#agriculturalAreaNotes"}
                     }
                 ],
-                "data": "AdvisingRelationship",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#AdvisingRelationship"}
+                "data": "agriculturalArea",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#agriculturalArea"}
+            },
+            {
+                "children": [
+                    {
+                        "data": "GDPYear",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#GDPYear"}
+                    },
+                    {
+                        "data": "GDPUnit",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#GDPUnit"}
+                    },
+                    {
+                        "data": "GDPTotalInCurrentPrices",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#GDPTotalInCurrentPrices"}
+                    },
+                    {
+                        "data": "GDPNotes",
+                        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#GDPNotes"}
+                    }
+                ],
+                "data": "GDP",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#GDP"}
             }
         ],
-        "data": "Relationship",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#Relationship"}
+        "data": "hasStatistics",
+        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#hasStatistics"}
+    },
+    {
+        "children": [
+            {
+                "data": "volume",
+                "metadata": {"URI": "http://purl.org/ontology/bibo/volume"}
+            },
+            {
+                "data": "section",
+                "metadata": {"URI": "http://purl.org/ontology/bibo/section"}
+            },
+            {
+                "data": "pageStart",
+                "metadata": {"URI": "http://purl.org/ontology/bibo/pageStart"}
+            },
+            {
+                "data": "pageEnd",
+                "metadata": {"URI": "http://purl.org/ontology/bibo/pageEnd"}
+            },
+            {
+                "data": "chapter",
+                "metadata": {"URI": "http://purl.org/ontology/bibo/chapter"}
+            }
+        ],
+        "data": "locator",
+        "metadata": {"URI": "http://purl.org/ontology/bibo/locator"}
+    },
+    {
+        "data": "rank",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#rank"}
+    },
+    {
+        "data": "teachingOverview",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#teachingOverview"}
     },
     {
         "children": [{
-            "data": "VocabularySourceReference",
-            "metadata": {"URI": "http://vivoweb.org/ontology/core#VocabularySourceReference"}
+            "data": "primaryPhoneNumber",
+            "metadata": {"URI": "http://vivoweb.org/ontology/core#primaryPhoneNumber"}
         }],
-        "data": "URLLink",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#URLLink"}
+        "data": "phoneNumber",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#phoneNumber"}
+    },
+    {
+        "data": "addressDepartment",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#addressDepartment"}
+    },
+    {
+        "data": "outreachOverview",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#outreachOverview"}
+    },
+    {
+        "data": "editorialNote",
+        "metadata": {"URI": "http://www.w3.org/2008/05/skos#editorialNote"}
+    },
+    {
+        "data": "number",
+        "metadata": {"URI": "http://purl.org/ontology/bibo/number"}
     },
     {
         "children": [
             {
-                "data": "AcademicYear",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#AcademicYear"}
+                "data": "codeUNDP",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#codeUNDP"}
             },
             {
-                "data": "AcademicTerm",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#AcademicTerm"}
+                "data": "codeUN",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#codeUN"}
+            },
+            {
+                "data": "codeISO3",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#codeISO3"}
+            },
+            {
+                "data": "codeISO2",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#codeISO2"}
+            },
+            {
+                "data": "codeGAUL",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#codeGAUL"}
+            },
+            {
+                "data": "codeFAOTERM",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#codeFAOTERM"}
+            },
+            {
+                "data": "codeFAOSTAT",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#codeFAOSTAT"}
+            },
+            {
+                "data": "codeDBPediaID",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#codeDBPediaID"}
+            },
+            {
+                "data": "codeAGROVOC",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#codeAGROVOC"}
             }
         ],
-        "data": "DateTimeInterval",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#DateTimeInterval"}
+        "data": "hasCode",
+        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#hasCode"}
     },
     {
         "children": [
             {
-                "data": "License",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#License"}
+                "data": "nameCurrencyZH",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameCurrencyZH"}
             },
             {
-                "data": "Certificate",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#Certificate"}
+                "data": "nameCurrencyRU",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameCurrencyRU"}
+            },
+            {
+                "data": "nameCurrencyIT",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameCurrencyIT"}
+            },
+            {
+                "data": "nameCurrencyFR",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameCurrencyFR"}
+            },
+            {
+                "data": "nameCurrencyES",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameCurrencyES"}
+            },
+            {
+                "data": "nameCurrencyEN",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameCurrencyEN"}
+            },
+            {
+                "data": "nameCurrencyAR",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameCurrencyAR"}
+            },
+            {
+                "data": "codeCurrency",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#codeCurrency"}
             }
         ],
-        "data": "Credential",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#Credential"}
+        "data": "hasCurrency",
+        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#hasCurrency"}
+    },
+    {
+        "data": "linkAnchorText",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#linkAnchorText"}
     },
     {
         "children": [
             {
-                "data": "ClinicalRole",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#ClinicalRole"}
+                "data": "sponsorAwardId",
+                "metadata": {"URI": "http://vivoweb.org/ontology/core#sponsorAwardId"}
             },
             {
-                "data": "PresenterRole",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#PresenterRole"}
+                "data": "scopusId",
+                "metadata": {"URI": "http://vivoweb.org/ontology/core#scopusId"}
             },
             {
-                "data": "AttendeeRole",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#AttendeeRole"}
+                "data": "researcherId",
+                "metadata": {"URI": "http://vivoweb.org/ontology/core#researcherId"}
             },
             {
-                "children": [{
-                    "children": [
-                        {
-                            "data": "PrincipalInvestigatorRole",
-                            "metadata": {"URI": "http://vivoweb.org/ontology/core#PrincipalInvestigatorRole"}
-                        },
-                        {
-                            "data": "CoPrincipalInvestigatorRole",
-                            "metadata": {"URI": "http://vivoweb.org/ontology/core#CoPrincipalInvestigatorRole"}
-                        }
-                    ],
-                    "data": "InvestigatorRole",
-                    "metadata": {"URI": "http://vivoweb.org/ontology/core#InvestigatorRole"}
-                }],
-                "data": "ResearcherRole",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#ResearcherRole"}
+                "data": "orcidId",
+                "metadata": {"URI": "http://vivoweb.org/ontology/core#orcidId"}
             },
             {
-                "data": "ServiceProviderRole",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#ServiceProviderRole"}
+                "data": "localAwardId",
+                "metadata": {"URI": "http://vivoweb.org/ontology/core#localAwardId"}
             },
             {
-                "data": "MemberRole",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#MemberRole"}
+                "data": "eRACommonsId",
+                "metadata": {"URI": "http://vivoweb.org/ontology/core#eRACommonsId"}
             },
             {
-                "children": [{
-                    "data": "PeerReviewerRole",
-                    "metadata": {"URI": "http://vivoweb.org/ontology/core#PeerReviewerRole"}
-                }],
-                "data": "ReviewerRole",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#ReviewerRole"}
-            },
-            {
-                "data": "EditorRole",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#EditorRole"}
-            },
-            {
-                "data": "OrganizerRole",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#OrganizerRole"}
-            },
-            {
-                "data": "LeaderRole",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#LeaderRole"}
-            },
-            {
-                "data": "OutreachProviderRole",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#OutreachProviderRole"}
-            },
-            {
-                "data": "TeacherRole",
-                "metadata": {"URI": "http://vivoweb.org/ontology/core#TeacherRole"}
+                "children": [
+                    {
+                        "data": "nihmsid",
+                        "metadata": {"URI": "http://vivoweb.org/ontology/core#nihmsid"}
+                    },
+                    {
+                        "data": "pmid",
+                        "metadata": {"URI": "http://purl.org/ontology/bibo/pmid"}
+                    },
+                    {
+                        "data": "isbn10",
+                        "metadata": {"URI": "http://purl.org/ontology/bibo/isbn10"}
+                    },
+                    {
+                        "data": "sici",
+                        "metadata": {"URI": "http://purl.org/ontology/bibo/sici"}
+                    },
+                    {
+                        "data": "upc",
+                        "metadata": {"URI": "http://purl.org/ontology/bibo/upc"}
+                    },
+                    {
+                        "data": "asin",
+                        "metadata": {"URI": "http://purl.org/ontology/bibo/asin"}
+                    },
+                    {
+                        "data": "issn",
+                        "metadata": {"URI": "http://purl.org/ontology/bibo/issn"}
+                    },
+                    {
+                        "data": "lccn",
+                        "metadata": {"URI": "http://purl.org/ontology/bibo/lccn"}
+                    },
+                    {
+                        "data": "doi",
+                        "metadata": {"URI": "http://purl.org/ontology/bibo/doi"}
+                    },
+                    {
+                        "data": "reportId",
+                        "metadata": {"URI": "http://vivoweb.org/ontology/core#reportId"}
+                    },
+                    {
+                        "data": "eissn",
+                        "metadata": {"URI": "http://purl.org/ontology/bibo/eissn"}
+                    },
+                    {
+                        "data": "eanucc13",
+                        "metadata": {"URI": "http://purl.org/ontology/bibo/eanucc13"}
+                    },
+                    {
+                        "data": "patentNumber",
+                        "metadata": {"URI": "http://vivoweb.org/ontology/core#patentNumber"}
+                    },
+                    {
+                        "data": "oclcnum",
+                        "metadata": {"URI": "http://purl.org/ontology/bibo/oclcnum"}
+                    },
+                    {
+                        "data": "pmcid",
+                        "metadata": {"URI": "http://vivoweb.org/ontology/core#pmcid"}
+                    },
+                    {
+                        "data": "gtin14",
+                        "metadata": {"URI": "http://purl.org/ontology/bibo/gtin14"}
+                    },
+                    {
+                        "data": "isbn13",
+                        "metadata": {"URI": "http://purl.org/ontology/bibo/isbn13"}
+                    }
+                ],
+                "data": "identifier",
+                "metadata": {"URI": "http://purl.org/ontology/bibo/identifier"}
             }
         ],
-        "data": "Role",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#Role"}
+        "data": "identifier",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#identifier"}
     },
     {
-        "data": "AwardReceipt",
-        "metadata": {"URI": "http://vivoweb.org/ontology/core#AwardReceipt"}
+        "children": [
+            {
+                "data": "nameOfficialZH",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameOfficialZH"}
+            },
+            {
+                "data": "nameOfficialRU",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameOfficialRU"}
+            },
+            {
+                "data": "nameOfficialIT",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameOfficialIT"}
+            },
+            {
+                "data": "nameOfficialFR",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameOfficialFR"}
+            },
+            {
+                "data": "nameOfficialES",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameOfficialES"}
+            },
+            {
+                "data": "nameOfficialEN",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameOfficialEN"}
+            },
+            {
+                "data": "nameOfficialAR",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameOfficialAR"}
+            }
+        ],
+        "data": "hasOfficialName",
+        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#hasOfficialName"}
+    },
+    {
+        "data": "prefixName",
+        "metadata": {"URI": "http://purl.org/ontology/bibo/prefixName"}
+    },
+    {
+        "data": "grantDirectCosts",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#grantDirectCosts"}
+    },
+    {
+        "children": [
+            {
+                "data": "nameShortZH",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameShortZH"}
+            },
+            {
+                "data": "nameShortRU",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameShortRU"}
+            },
+            {
+                "data": "nameShortIT",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameShortIT"}
+            },
+            {
+                "data": "nameShortFR",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameShortFR"}
+            },
+            {
+                "data": "nameShortES",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameShortES"}
+            },
+            {
+                "data": "nameShortEN",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameShortEN"}
+            },
+            {
+                "data": "nameShortAR",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#nameShortAR"}
+            }
+        ],
+        "data": "hasShortName",
+        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#hasShortName"}
+    },
+    {
+        "data": "preferredNamespaceUri",
+        "metadata": {"URI": "http://purl.org/vocab/vann/preferredNamespaceUri"}
+    },
+    {
+        "data": "edition",
+        "metadata": {"URI": "http://purl.org/ontology/bibo/edition"}
+    },
+    {
+        "data": "validSince",
+        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#validSince"}
+    },
+    {
+        "data": "faxNumber",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#faxNumber"}
+    },
+    {
+        "children": [
+            {
+                "data": "hasMinLongitude",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#hasMinLongitude"}
+            },
+            {
+                "data": "hasMinLatitude",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#hasMinLatitude"}
+            },
+            {
+                "data": "hasMaxLongitude",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#hasMaxLongitude"}
+            },
+            {
+                "data": "hasMaxLatitude",
+                "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#hasMaxLatitude"}
+            }
+        ],
+        "data": "hasCoordinate",
+        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#hasCoordinate"}
+    },
+    {
+        "data": "freetextKeyword",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#freetextKeyword"}
+    },
+    {
+        "data": "addressState",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#addressState"}
+    },
+    {
+        "data": "authorRank",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#authorRank"}
+    },
+    {
+        "data": "lastName",
+        "metadata": {"URI": "http://xmlns.com/foaf/0.1/lastName"}
+    },
+    {
+        "data": "abbreviation",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#abbreviation"}
+    },
+    {
+        "data": "preferredTitle",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#preferredTitle"}
+    },
+    {
+        "data": "preferredNamespacePrefix",
+        "metadata": {"URI": "http://purl.org/vocab/vann/preferredNamespacePrefix"}
+    },
+    {
+        "children": [
+            {
+                "data": "abstract",
+                "metadata": {"URI": "http://purl.org/ontology/bibo/abstract"}
+            },
+            {
+                "data": "shortDescription",
+                "metadata": {"URI": "http://purl.org/ontology/bibo/shortDescription"}
+            }
+        ],
+        "data": "description",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#description"}
+    },
+    {
+        "data": "example",
+        "metadata": {"URI": "http://www.w3.org/2008/05/skos#example"}
+    },
+    {
+        "data": "directDownloadUrl",
+        "metadata": {"URI": "http://vitro.mannlib.cornell.edu/ns/vitro/public#directDownloadUrl"}
+    },
+    {
+        "data": "coden",
+        "metadata": {"URI": "http://purl.org/ontology/bibo/coden"}
+    },
+    {
+        "data": "term_status",
+        "metadata": {"URI": "http://www.w3.org/2006/12/owl2-xml#term_status"}
+    },
+    {
+        "data": "iclCode",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#iclCode"}
+    },
+    {
+        "data": "attribution",
+        "metadata": {"URI": "http://vitro.mannlib.cornell.edu/ns/vitro/public#attribution"}
+    },
+    {
+        "data": "shortDef",
+        "metadata": {"URI": "http://vitro.mannlib.cornell.edu/ns/vitro/0.7#shortDef"}
+    },
+    {
+        "data": "dateTime",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#dateTime"}
+    },
+    {
+        "data": "numPages",
+        "metadata": {"URI": "http://purl.org/ontology/bibo/numPages"}
+    },
+    {
+        "data": "seatingCapacity",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#seatingCapacity"}
+    },
+    {
+        "data": "supplementalInformation",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#supplementalInformation"}
+    },
+    {
+        "data": "addressStreet",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#addressStreet"}
+    },
+    {
+        "data": "researchOverview",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#researchOverview"}
+    },
+    {
+        "data": "totalAwardAmount",
+        "metadata": {"URI": "http://vivoweb.org/ontology/core#totalAwardAmount"}
+    },
+    {
+        "data": "sourceCreator",
+        "metadata": {"URI": "http://aims.fao.org/aos/geopolitical.owl#sourceCreator"}
     }
 ]
 		},

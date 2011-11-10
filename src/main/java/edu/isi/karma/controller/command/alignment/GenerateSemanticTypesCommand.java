@@ -1,4 +1,4 @@
-package edu.isi.karma.controller.command;
+package edu.isi.karma.controller.command.alignment;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,6 +7,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
@@ -20,6 +22,7 @@ import edu.isi.karma.view.VWorkspace;
 public class GenerateSemanticTypesCommand extends Command {
 
 	private final String vWorksheetIdArg;
+	private String worksheetName;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(GenerateSemanticTypesCommand.class);
@@ -41,7 +44,7 @@ public class GenerateSemanticTypesCommand extends Command {
 
 	@Override
 	public String getDescription() {
-		return null;
+		return worksheetName;
 	}
 
 	@Override
@@ -61,6 +64,7 @@ public class GenerateSemanticTypesCommand extends Command {
 		// Populating (or re-populating) the semantic types for the worksheet
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetIdArg).getWorksheet();
+		worksheetName = worksheet.getTitle();
 		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
 
 		for (HNodePath path : paths) {
@@ -84,9 +88,18 @@ public class GenerateSemanticTypesCommand extends Command {
 
 			// Create and add the semantic type to the semantic types set of the
 			// worksheet
-			SemanticType type = new SemanticType(path.getLeaf().getId(),
-					labels.get(0), SemanticType.Origin.CRFModel, scores.get(0));
-			worksheet.getSemanticTypes().addType(type);
+			String topLabel = labels.get(0);
+			String domain = "";
+			String type = topLabel;
+			// Check if it contains domain information
+			if(topLabel.contains("|")) {
+				domain = topLabel.split("\\|")[0];
+				type = topLabel.split("\\|")[1];
+			}
+				
+			SemanticType semtype = new SemanticType(path.getLeaf().getId(),
+					type, domain, SemanticType.Origin.CRFModel, scores.get(0));
+			worksheet.getSemanticTypes().addType(semtype);
 		}
 
 		// Update the container

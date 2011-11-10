@@ -14,34 +14,34 @@ import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.view.VWorkspace;
 
-public class OntologyClassHieararchyUpdate extends AbstractUpdate {
+public class OntologyClassHierarchyUpdate extends AbstractUpdate {
 
+	private OntModel model;
+	
 	private static Logger logger = LoggerFactory
-			.getLogger(OntologyClassHieararchyUpdate.class.getSimpleName());
+			.getLogger(OntologyClassHierarchyUpdate.class.getSimpleName());
 
 	public enum JsonKeys {
 		data, URI, metadata, children
 	}
-	
+
+	public OntologyClassHierarchyUpdate(OntModel model) {
+		this.model = model;
+	}
+
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
-		OntModel model = OntologyManager.Instance().getOntModel();
 		Set<String> classesAdded = new HashSet<String>();
 
-//		File f1 = new File("./Sample Data/OWL/Wiki.owl");
-//		new ImportOntology(model, f1);
-		
 		try {
 			JSONArray dataArray = new JSONArray();
-			
+
 			ExtendedIterator<OntClass> iter = model.listNamedClasses();
 			while (iter.hasNext()) {
 				OntClass cls = iter.next();
-//				System.out.println("Class: " + cls.getURI());
 				if ((cls.hasSuperClass())
 						|| classesAdded.contains(cls.getLocalName())) {
 					// Need to check if it has a non-anonymous superclass
@@ -54,11 +54,10 @@ public class OntologyClassHieararchyUpdate extends AbstractUpdate {
 							flag = true;
 					}
 					if (flag) {
-//						System.out.println("Skipping!");
 						continue;
 					}
 				}
-				
+
 				JSONObject classObject = new JSONObject();
 
 				if (cls.hasSubClass()) {
@@ -69,18 +68,19 @@ public class OntologyClassHieararchyUpdate extends AbstractUpdate {
 
 				classObject.put(JsonKeys.data.name(), cls.getLocalName());
 				classesAdded.add(cls.getLocalName());
-				
+
 				JSONObject metadataObject = new JSONObject();
 				metadataObject.put(JsonKeys.URI.name(), cls.getURI());
 				classObject.put(JsonKeys.metadata.name(), metadataObject);
-				
+
 				dataArray.put(classObject);
 
 			}
 
 			// Prepare the output JSON
 			JSONObject outputObject = new JSONObject();
-			outputObject.put(GenericJsonKeys.updateType.name(), "OntologyClassHieararchyUpdate");
+			outputObject.put(GenericJsonKeys.updateType.name(),
+					"OntologyClassHierarchyUpdate");
 			outputObject.put(JsonKeys.data.name(), dataArray);
 
 			pw.println(outputObject.toString(4));
@@ -94,7 +94,7 @@ public class OntologyClassHieararchyUpdate extends AbstractUpdate {
 	private void addSubclassChildren(OntClass clazz, JSONArray childrenArray,
 			int level, Set<String> classesAdded) throws JSONException {
 
-		// System.out.println("Adding children for " + clazz.getLocalName() +
+		// logger.debug("Adding children for " + clazz.getLocalName() +
 		// " at level " + level);
 
 		ExtendedIterator<OntClass> subclasses = clazz.listSubClasses();
@@ -107,12 +107,13 @@ public class OntologyClassHieararchyUpdate extends AbstractUpdate {
 			JSONObject metadataObject = new JSONObject();
 			metadataObject.put(JsonKeys.URI.name(), subclass.getURI());
 			classObject.put(JsonKeys.metadata.name(), metadataObject);
-			
+
 			if (subclass.hasSubClass()) {
 				JSONArray childrenArraySubClass = new JSONArray();
 				addSubclassChildren(subclass, childrenArraySubClass, level + 1,
 						classesAdded);
-				classObject.put(JsonKeys.children.name(), childrenArraySubClass);
+				classObject
+						.put(JsonKeys.children.name(), childrenArraySubClass);
 			}
 			childrenArray.put(classObject);
 		}

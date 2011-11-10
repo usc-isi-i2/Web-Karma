@@ -1,102 +1,160 @@
+function attachOntologyOptionsRadioButtonHandlers() {
+	$("select#toggleOntologyHierarchy").change(function(){
+		if($("select#toggleOntologyHierarchy").val() == "class"){
+			$("td#firstColumnLabel").text("Class");
+			$("td#secondColumnLabel").text("Data Property").hide();
+		} else {
+			$("td#firstColumnLabel").text("Data Property");
+			$("td#secondColumnLabel").text("Domain (Class)").hide();
+		}
+		
+		populatefirstColumnOntologyBox();
+		$("div#secondColumnOntologyBox").hide();
+	});
+
+	$("div#secondColumnOntologyBox").hide();
+	
+	// Add handler for the search button
+	$("#firstColumnKeyword").keyup(function(event) {
+		if(event.keyCode == 13){
+    		$("#submitFirstColumnSearch").click();
+  		}
+	});
+	$("#secondColumnKeyword").keyup(function(event) {
+		if(event.keyCode == 13){
+    		$("#submitSecondColumnSearch").click();
+  		}
+	});
+	$("#submitFirstColumnSearch").click(function(){
+		$("div#firstColumnTree").jstree("search", $("#firstColumnKeyword").val());
+	});
+	$("#submitSecondColumnSearch").click(function(){
+		$("div#secondColumnTree").jstree("search", $("#secondColumnKeyword").val());
+	});
+}
+
 function changeSemanticType(event) {
 	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
 	
-	console.log($(this).data("hNodeId"));
 	$("#ChangeSemanticTypesDialogBox").data("currentNodeId",$(this).data("hNodeId"));
 	$("table#CRFSuggestedLabelsTable tr",optionsDiv).remove();
-	$("div#ontologyOptionsTable", optionsDiv).hide();
+	$("#firstColumnKeyword").val("");
+	$("#secondColumnKeyword").val("");
+	$("div#secondColumnOntologyBox").hide();
+	//$("div#ontologyOptionsTable", optionsDiv).hide();
 	
-	var positionArray = [event.clientX-150		// distance from left
+	var positionArray = [event.clientX+20		// distance from left
 					, event.clientY+10];	// distance from top
 	
 	// Populate with possible labels that CRF Model suggested
 	var labelsTable = $("table#CRFSuggestedLabelsTable");
 	var labelsElem = $(this).data("crfInfo");
+	var fullType = $(this).data("fullType");
+	var domain = $(this).data("domain");
+	var origin = $(this).data("origin");
+	
 	if(labelsElem != null){
+		$("span", labelsTable).remove();
 		$.each(labelsElem["Labels"], function(index, label) {
 			// Turning the probability into percentage
 			var prob = label["Probability"];
 			var percentage = Math.floor(prob*100);
-			
 			var trTag = $("<tr>");
-			
 			var radioButton = $("<input>")
 							.attr("type", "radio")
 							.attr("id", label["Type"])
 							.attr("name", "semanticTypeGroup")
 							.attr("value", label["Type"])
 							.val(label["Type"]);
-			if(index == labelsElem["Labels"].length-1)
-				radioButton.attr('checked',true);
+				
+			var selectedFlag = false;
+			if(fullType == label["Type"]) {
+				if(domain == "") {
+					radioButton.attr('checked',true);
+					selectedFlag = true;
+				} else {
+					if(label["Domain"].length != 0) {
+						if(domain == label["Domain"]){
+							radioButton.attr('checked',true);
+							selectedFlag = true;
+						}
+					}
+				}
+			}
+				
+				
+			var typeLabel = $("<label>").attr("for",label["Type"]);
 			
+			// Check if the domain needs to be displayed
+			if($.trim(label["Domain"]) == "")
+				typeLabel.text(label["DisplayLabel"]);
+			else
+				typeLabel.text(label["DisplayLabel"] + " of " + label['Domain']);
+				
+			// Check if the label was assigned by the user
+			var score = "";
+			if(selectedFlag && origin == "User")
+				score = "Probability: " + percentage+"% (User Assigned)"
+			else
+				score = "Probability: " + percentage+"%";
+				
 			trTag.append($("<td>").append(radioButton))
-				.append($("<td>").append($("<label>").text(label["DisplayLabel"]).attr("for",label["Type"])))
-				.append($("<td>").text("Probability: " + percentage+"%"));
+				.append($("<td>").append(typeLabel))
+				.append($("<td>").text(score));
 			labelsTable.prepend(trTag);
 		});
+	} else {
+		labelsTable.html("<span class='smallSizedFont'><i>&nbsp;&nbsp;none</i></span>");
 	}
-	
-	
-	// Adding the choose from ontology radio button
-	var radioButton = $("<input>")
-						.attr("type", "radio")
-						.attr("id", "chooseFromOnotologyRadioButton")
-						.attr("name", "semanticTypeGroup")
-						.attr("value", "ChooseFromOntology")
-						.val("ChooseFromOntology");
-	labelsTable.append($("<tr>")
-		.append($("<td>")
-			.append(radioButton))
-		.append($("<td>")
-			.append($("<label>").text("Choose From Ontology").attr("for","chooseFromOnotologyRadioButton")))
-	);
 	
 	// Adding the handlers to the radio buttons
 	$("input:radio[@name='semanticTypeGroup']").change(function(){
-		if($(this).val() == "ChooseFromOntology"){
-			$("div#ontologyOptionsTable").show();
-			$("#chooseClass").attr('checked', false);
-			$("#chooseDataProperty").attr('checked', false);
-		} else if ($(this).val()=="Choose Class" || $(this).val() == "Choose Data Property"){
-			// Dont know why this is also reached in some cases!
-		}
-		else{
-			$("#ChangeSemanticTypesDialogBox").data("currentSelection", $(this).val());
-			$("div#ontologyOptionsTable").hide();
-		}
+		$("#ChangeSemanticTypesDialogBox").data("currentSelection", $(this).val());
+		$("div#firstColumnTree").jstree("deselect_all");
+		$("div#secondColumnTree").jstree("deselect_all");
 	});
 	
+	// Populate the class tree
+	$("#toggleOntologyHierarchy").val("class");
+	$("td#firstColumnLabel").text("Class");
+	$("td#secondColumnLabel").text("Data Property").hide();
+	// Send a request to get the JSON for displaying the list of classes
+	$("#ChangeSemanticTypesDialogBox").data("secondColumnSelection","");
+	$("#ChangeSemanticTypesDialogBox").data("firstColumnSelection","");
+	populatefirstColumnOntologyBox();
+	
+	
 	// Show the dialog box
-	optionsDiv.dialog({width: 300, height: 600, position: positionArray
+	optionsDiv.dialog({width: 400, height: 620, position: positionArray
 		, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitSemanticTypeChange }});
 }
 
-function attachOntologyOptionsRadioButtonHandlers() {
-	$("input:radio[@name='ontologyOptionGroup']").change(function(){
-		// Send a request to get the JSON for displaying the list of classes
-		var info = new Object();
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
+function populatefirstColumnOntologyBox(){
+	var info = new Object();
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	
+	if($("#toggleOntologyHierarchy").val() == "class")
+		info["command"] = "GetOntologyClassHierarchyCommand";
+	else 
+		info["command"] = "GetDataPropertyHierarchyCommand";
 		
-		
-		if($(this).val()=="Choose Class") {
-			info["command"] = "GetOntologyClassHierarchyCommand";
-		} else if($(this).val()=="Choose Data Property")
-			info["command"] = "GetDataPropertyListCommand";
-		else {}
-			
-		var returned = $.ajax({
-		   	url: "/RequestController", 
-		   	type: "POST",
-		   	data : info,
-		   	dataType : "json",
-		   	complete : 
-		   		function (xhr, textStatus) {
-		   			//alert(xhr.responseText);
-		    		var json = $.parseJSON(xhr.responseText);
-		    		var dataArray = json["elements"][0]["data"];
-		    		
-		    		var listDiv = $("div#ontologyOptionsList");
-		    		$(listDiv).jstree({ 
+	var returned = $.ajax({
+	   	url: "/RequestController", 
+	   	type: "POST",
+	   	data : info,
+	   	dataType : "json",
+	   	complete : 
+	   		function (xhr, textStatus) {
+	   			//alert(xhr.responseText);
+	    		var json = $.parseJSON(xhr.responseText);
+	    		var dataArray = json["elements"][0]["data"];
+	    		
+	    		var listDiv = $("div#firstColumnTree");
+	    		
+	    		if(dataArray.length == 0) {
+	    			$(listDiv).html("<i>none</i>")
+	    		} else {
+	    			$(listDiv).jstree({ 
 						"json_data" : {
 							"data" : dataArray
 						},
@@ -109,33 +167,100 @@ function attachOntologyOptionsRadioButtonHandlers() {
 						
 						"plugins" : [ "themes", "json_data", "ui" ,"sort", "search"]
 					}).bind("select_node.jstree", function (e, data) { 
-						$("#ChangeSemanticTypesDialogBox").data("currentSelection",data.rslt.obj.data("URI"));
+						$("#ChangeSemanticTypesDialogBox").data("firstColumnSelection",data.rslt.obj.data("URI"));
 						//alert(data.rslt.obj.data("URI"));
+						$("input:radio[@name='semanticTypeGroup']").attr("checked", false);
+						populateSecondColumnOntologyBox();
 					});
-			   	},
-			error :
-				function (xhr, textStatus) {
-		   			alert("Error occured while fetching ontology data!" + textStatus);
-			   	}		   
-		});
-	});
-	
-	// Add handler for the search button
-	$("#searchOntologyList").click(function(){
-		$("div#ontologyOptionsList").jstree("search", $("#searchQueryOntologyList").val());
+	    		} 
+		   	},
+		error :
+			function (xhr, textStatus) {
+	   			alert("Error occured while fetching ontology data!" + textStatus);
+		   	}		   
 	});
 }
 
+function populateSecondColumnOntologyBox() {
+	var info = new Object();
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["URI"] = $("#ChangeSemanticTypesDialogBox").data("firstColumnSelection");
+	
+	if($("#toggleOntologyHierarchy").val() == "class")
+		info["command"] = "GetDataPropertiesForClassCommand";
+	else 
+		info["command"] = "GetDomainsForDataPropertyCommand";
+		
+	var returned = $.ajax({
+	   	url: "/RequestController", 
+	   	type: "POST",
+	   	data : info,
+	   	dataType : "json",
+	   	complete : 
+	   		function (xhr, textStatus) {
+	   			//alert(xhr.responseText);
+	    		var json = $.parseJSON(xhr.responseText);
+	    		var dataArray = json["elements"][0]["data"];
+	    		var listDiv = $("div#secondColumnTree");
+	    		
+	    		if(dataArray.length == 0) {
+	    			$(listDiv).html("<i>none</i>")
+	    		} else {
+	    			$(listDiv).jstree({ 
+						"json_data" : {
+							"data" : dataArray
+						},
+						"themes" : {
+							"theme" : "apple",
+							"url": "css/jstree-themes/apple/style.css",
+							"dots" : true,
+							"icons" : false
+						},
+						
+						"plugins" : [ "themes", "json_data", "ui" ,"sort", "search"]
+					}).bind("select_node.jstree", function (e, data) { 
+						$("#ChangeSemanticTypesDialogBox").data("secondColumnSelection",data.rslt.obj.data("URI"));
+					});
+	    		}
+	    		
+				$("div#secondColumnOntologyBox").show();
+				$("td#secondColumnLabel").show();
+		   	},
+		error :
+			function (xhr, textStatus) {
+	   			alert("Error occured while fetching ontology data!" + textStatus);
+		   	}		   
+	});
+}
 
 function submitSemanticTypeChange() {
+	if($("#toggleOntologyHierarchy").val() == "dataProperty" 
+		&& $("#ChangeSemanticTypesDialogBox").data("secondColumnSelection") == "") {
+		alert("Please specify the domain for the data property!");
+		return;
+	}
+	
 	var info = new Object();
 	var hNodeId = $("#ChangeSemanticTypesDialogBox").data("currentNodeId");
 	info["command"] = "SetSemanticTypeCommand";
 	info["vWorksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
 	info["hNodeId"] = hNodeId;
-	console.log("Node ID: " + info["hNodeId"]);
-	info["newType"] = $("#ChangeSemanticTypesDialogBox").data("currentSelection");
-	console.log("Type: " + info["newType"]);
+	
+	
+	if($("#toggleOntologyHierarchy").val() == "class") {
+		if($("#ChangeSemanticTypesDialogBox").data("secondColumnSelection") == "") {
+			info["resourceType"] = "Class";
+			info["type"] = $("#ChangeSemanticTypesDialogBox").data("firstColumnSelection");
+		} else {
+			info["resourceType"] = "DataProperty";
+			info["domain"] = $("#ChangeSemanticTypesDialogBox").data("firstColumnSelection");
+			info["type"] = $("#ChangeSemanticTypesDialogBox").data("secondColumnSelection");
+		}
+	} else {
+		info["resourceType"] = "DataProperty";
+		info["type"] = $("#ChangeSemanticTypesDialogBox").data("firstColumnSelection");
+		info["domain"] = $("#ChangeSemanticTypesDialogBox").data("secondColumnSelection");
+	}
 	
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	
@@ -146,7 +271,6 @@ function submitSemanticTypeChange() {
 	   	dataType : "json",
 	   	complete : 
 	   		function (xhr, textStatus) {
-	   			console.log(xhr.responseText);
 	    		var json = $.parseJSON(xhr.responseText);
 	    		parse(json);
 		   	},
