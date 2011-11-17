@@ -122,6 +122,9 @@ public class SteinerTree {
 			path = new DijkstraShortestPath<Vertex, LabeledWeightedEdge>(this.graph, source, target);
 			List<LabeledWeightedEdge> pathEdges = path.getPathEdgeList();
 			
+			if (pathEdges == null)
+				continue;
+			
 			for (int i = 0; i < pathEdges.size(); i++) {
 				
 				if (g3.edgeSet().contains(pathEdges.get(i)))

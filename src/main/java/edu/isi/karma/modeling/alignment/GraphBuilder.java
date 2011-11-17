@@ -34,13 +34,19 @@ public class GraphBuilder {
 		nodesLabelCounter = new HashMap<String, Integer>();
 		linksLabelCounter = new HashMap<String, Integer>();
 
+		long start = System.currentTimeMillis();
+		
 		this.semanticTypes = semanticTypes;
 		graph = new DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>(LabeledWeightedEdge.class);
 		semanticNodes = new ArrayList<Vertex>();
 			
-		// create Thing Node
 		buildInitialGraph();
+
+		long elapsedTimeMillis = System.currentTimeMillis() - start;
+		float elapsedTimeSec = elapsedTimeMillis/1000F;
+		logger.info("total time to build the graph: " + elapsedTimeSec);
 	}
+
 	
 	private String createNodeID(String label) {
 		
@@ -117,6 +123,7 @@ public class GraphBuilder {
 			this.graph.addVertex(v);
 		}
 		
+		logger.info("number of initial nodes: " + this.graph.vertexSet().size());
 		logger.debug("exit>");
 	}
 	
@@ -170,12 +177,10 @@ public class GraphBuilder {
 			}
 			
 			recentlyAddedNodes = newNodes;
-			opDomainClasses.clear();
-			dpDomainClasses.clear();
-			superClasses.clear();
 			newAddedClasses.clear();
 		}
 
+		logger.info("total number of nodes: " + this.graph.vertexSet().size());
 		logger.debug("exit>");
 	}
 	
@@ -261,6 +266,7 @@ public class GraphBuilder {
 			}
 		}
 		
+		logger.info("number of links added to graph: " + this.graph.edgeSet().size());
 		logger.debug("exit>");
 	}
 	
@@ -311,6 +317,7 @@ public class GraphBuilder {
 			}
 		}
 		
+		logger.info("total number of links (includes links added from Thing): " + this.graph.edgeSet().size());
 		logger.debug("exit>");
 
 	}
@@ -403,10 +410,30 @@ public class GraphBuilder {
 			return;
 		}
 
+		long start = System.currentTimeMillis();
+		float elapsedTimeSec;
+		
 		addSemanticTypesToGraph();
+		long addSemanticTypes = System.currentTimeMillis();
+		elapsedTimeSec = (addSemanticTypes - start)/1000F;
+		logger.info("time to add initial semantic types: " + elapsedTimeSec);
+
+		
 		addNodesClosure();
+		long addNodesClosure = System.currentTimeMillis();
+		elapsedTimeSec = (addNodesClosure - addSemanticTypes)/1000F;
+		logger.info("time to add nodes closure: " + elapsedTimeSec);
+		
 		addLinks();
+		long addLinks = System.currentTimeMillis();
+		elapsedTimeSec = (addLinks - addNodesClosure)/1000F;
+		logger.info("time to add links to graph: " + elapsedTimeSec);
+
 		addLinksFromThing();
+		long addLinksFromThing = System.currentTimeMillis();
+		elapsedTimeSec = (addLinksFromThing - addLinks)/1000F;
+		logger.info("time to add links from Thing (root): " + elapsedTimeSec);
+
 	}
 
 	public DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getGraph() {

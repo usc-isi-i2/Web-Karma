@@ -24,7 +24,7 @@ public class OntologyManager {
 	static Logger logger = Logger.getLogger(OntologyManager.class.getName());
 
 	private static OntModel ontModel = null;
-	
+
 	private static OntologyManager _InternalInstance = null;
 	public static OntologyManager Instance()
 	{
@@ -44,6 +44,7 @@ public class OntologyManager {
 		return ontModel;
 	}
 
+	
 	public boolean isClass(String label) {
 		
 		OntClass c = ontModel.getOntClass(label);
@@ -78,7 +79,7 @@ public class OntologyManager {
 	 * @param resources
 	 * @param recursive
 	 */
-	private void getParents(OntResource r, List<OntResource> resources, boolean recursive) {
+	public void getParents(OntResource r, List<OntResource> resources, boolean recursive) {
 		
 		OntClass c = null;
 		OntProperty p = null;
@@ -148,7 +149,7 @@ public class OntologyManager {
 	 * @param resources
 	 * @param recursive
 	 */
-	private void getChildren(OntResource r, List<OntResource> resources, boolean recursive) {
+	public void getChildren(OntResource r, List<OntResource> resources, boolean recursive) {
 		
 		OntClass c = null;
 		OntProperty p = null;
@@ -219,7 +220,7 @@ public class OntologyManager {
 	 * @param resources
 	 * @param recursive
 	 */
-	private void getMembers(OntResource r, List<OntResource> resources, boolean recursive) {
+	public void getMembers(OntResource r, List<OntResource> resources, boolean recursive) {
 
 		if (r == null || resources == null)
 			return;
@@ -329,7 +330,7 @@ public class OntologyManager {
 	 * @param resources
 	 * @return
 	 */
-	private List<String> getResourcesURIs(List<OntResource> resources) {
+	public List<String> getResourcesURIs(List<OntResource> resources) {
 		List<String> resourcesURIs = new ArrayList<String>();
 		if (resources != null)
 			for (OntResource r: resources) {
@@ -347,69 +348,47 @@ public class OntologyManager {
 	 */
 	public List<String> getDomainsGivenProperty(String propertyUri, boolean recursive) {
 		// should add all subclasses to the results
-		List<OntResource> classes = new ArrayList<OntResource>();
-		DatatypeProperty dp = ontModel.getDatatypeProperty(propertyUri);
-		if (dp != null) {
-			ExtendedIterator<? extends OntResource> itrDomains = dp.listDomain();
-			while (itrDomains.hasNext()) {
-				OntResource r = itrDomains.next();
-				getMembers(r, classes, recursive);
-			}
-		}
+		List<String> results;
 
-		return getResourcesURIs(classes);
+		if (!recursive)
+			results = OntologyCache.Instance().getPropertyDirectDomains().get(propertyUri);
+		else
+			results = OntologyCache.Instance().getPropertyIndirectDomains().get(propertyUri);
+		
+		if (results == null)
+			return new ArrayList<String>();
+		
+		return results;
+
 	}
 
 	/**
 	 * This method takes @param rangeClassUri and for object properties whose ranges includes this parameter, 
 	 * returns all of their domains.
-	 * returns the domains of all properties whose domains include all domains of that property.
 	 * If @param recursive is true, it also returns the children of the domains.
 	 * @param rangeClassUri
 	 * @param recursive
 	 * @return
 	 */
 	public List<String> getDomainsGivenRange(String rangeClassUri, boolean recursive) {
-		// should add all subclasses to the results
-		List<OntResource> domains = new ArrayList<OntResource>();
-		List<OntResource> ranges = new ArrayList<OntResource>();
 		
-		ExtendedIterator<ObjectProperty> itrOP = ontModel.listObjectProperties();
-		OntResource r;
-		OntResource domain;
-		while (itrOP.hasNext()) {
-			ranges.clear();
-			ObjectProperty op = itrOP.next();
-			
-			ExtendedIterator<? extends OntResource> itrRanges = op.listRange();
-			while (itrRanges.hasNext()) {
-				OntResource range = itrRanges.next();
-				getMembers(range, ranges, false);
-			}
-			
-			for (int i = 0; i < ranges.size(); i++) {
-				r = ranges.get(i);
-				if (rangeClassUri.equalsIgnoreCase(r.getNameSpace() + r.getLocalName())) {
-					
-					List<OntResource> thisPropertyDomains = new ArrayList<OntResource>();
-					ExtendedIterator<? extends OntResource> itrDomains = op.listDomain();
-					while (itrDomains.hasNext()) {
-						domain = itrDomains.next();
-						getMembers(domain, thisPropertyDomains, false);
-					}
-					
-					for (int j = 0; j < thisPropertyDomains.size(); j++) {
-						domain = thisPropertyDomains.get(j);
-						domains.add(domain);
-						getChildren(domain, domains, recursive);
-					}
-					
-					break;
-				}
-			}
+		List<String> objectProperties = OntologyCache.Instance().getDirectInObjectProperties().get(rangeClassUri);
+		List<String> domains = new ArrayList<String>();
+		List<String> temp;
+		
+		if (objectProperties == null)
+			return domains;
+		
+		for (int i = 0; i < objectProperties.size(); i++) {
+			if (!recursive) 
+				temp = OntologyCache.Instance().getPropertyDirectDomains().get(objectProperties.get(i));
+			else
+				temp = OntologyCache.Instance().getPropertyIndirectDomains().get(objectProperties.get(i));
+			if (temp != null)
+				domains.addAll(temp);
 		}
 		
-		return getResourcesURIs(domains);
+		return domains;
 	}
 	
 	/**
@@ -419,218 +398,91 @@ public class OntologyManager {
 	 * (B, P, false) returns nothing, but calling with (B, P, true) returns the property P.
 	 * @param domainClassUri
 	 * @param propertyUri
-	 * @param recursive
+	 * @param inheritance
 	 * @return
 	 */
-	public List<String> getDataProperties(String domainClassUri, String propertyUri, boolean includeInheritance) {
-		
-		List<OntResource> properties = new ArrayList<OntResource>();
-		List<OntResource> directDomains = new ArrayList<OntResource>();
-		List<OntResource> allDomains = new ArrayList<OntResource>();
-		
-		ExtendedIterator<DatatypeProperty> itrDP = ontModel.listDatatypeProperties();
-		OntResource r;
-		while (itrDP.hasNext()) {
-			
-			directDomains.clear();
-			allDomains.clear();
-			
-			DatatypeProperty dp = itrDP.next();
-			
-			if (!propertyUri.equalsIgnoreCase(dp.getNameSpace() + dp.getLocalName()))
-				continue;
-			
-			ExtendedIterator<? extends OntResource> itrDomains = dp.listDomain();
-			while (itrDomains.hasNext()) {
-				OntResource d = itrDomains.next();
-				getMembers(d, directDomains, false);
-			}
+	public List<String> getDataProperties(String domainClassUri, String propertyUri, boolean inheritance) {
 
-			for (int i = 0; i < directDomains.size(); i++) {
-				allDomains.add(directDomains.get(i));
-				if (includeInheritance)
-					getChildren(directDomains.get(i), allDomains, true);
-			}
-			
-			for (int i = 0; i < allDomains.size(); i++) {
-				r = allDomains.get(i);
-				if (domainClassUri.equalsIgnoreCase(r.getNameSpace() + r.getLocalName())) {
-					properties.add(dp);
-					break;
-				}
-			}
-		}
+		List<String> propertyDomains;
+		List<String> results = new ArrayList<String>();
+
+		if (!inheritance)
+			propertyDomains = OntologyCache.Instance().getPropertyDirectDomains().get(propertyUri);
+		else
+			propertyDomains = OntologyCache.Instance().getPropertyIndirectDomains().get(propertyUri);
 		
-		return getResourcesURIs(properties);
+		if (propertyDomains != null && propertyDomains.indexOf(domainClassUri) != -1)
+			results.add(propertyUri);
+		
+		return results;
+
 	}
 	
 	/**
 	 * This method extracts all the object properties between two classes (object properties 
 	 * who have @param domainClassUri in their domain and @param rangeClassUri in their range).
-	 * If @param includeinheritance is true, it also returns the object properties inherited from parents.
+	 * If @param inheritance is true, it also returns the object properties inherited from parents.
 	 * @param domainClassUri
 	 * @param rangeClassUri
-	 * @param recursive
+	 * @param inheritance
 	 * @return
 	 */
-	public List<String> getObjectProperties(String domainClassUri, String rangeClassUri, boolean includeInheritance) {
+	public List<String> getObjectProperties(String domainClassUri, String rangeClassUri, boolean inheritance) {
 		
-		List<OntResource> properties = new ArrayList<OntResource>();
-		List<OntResource> directDomains = new ArrayList<OntResource>();
-		List<OntResource> allDomains = new ArrayList<OntResource>();
-		List<OntResource> directRanges = new ArrayList<OntResource>();
-		List<OntResource> allRanges = new ArrayList<OntResource>();
-		
-		ExtendedIterator<ObjectProperty> itrOP = ontModel.listObjectProperties();
-		OntResource d;
-		OntResource r;
-		
-		while (itrOP.hasNext()) {
-			
-			directDomains.clear();
-			allDomains.clear();
-			directRanges.clear();
-			allRanges.clear();
-			
-			ObjectProperty op = itrOP.next();
+		List<String> results;
 
-			// getting domains and subclasses
-			ExtendedIterator<? extends OntResource> itrDomains = op.listDomain();
-			while (itrDomains.hasNext()) {
-				d = itrDomains.next();
-				getMembers(d, directDomains, false);
-			}
-
-			for (int i = 0; i < directDomains.size(); i++) {
-				allDomains.add(directDomains.get(i));
-				if (includeInheritance)
-					getChildren(directDomains.get(i), allDomains, true);
-			}
-			
-			// getting ranges and subclasses
-			ExtendedIterator<? extends OntResource> itrRanges = op.listRange();
-			while (itrRanges.hasNext()) {
-				r = itrRanges.next();
-				getMembers(r, directRanges, false);
-			}
-
-			for (int i = 0; i < directRanges.size(); i++) {
-				allRanges.add(directRanges.get(i));
-				if (includeInheritance)
-					getChildren(directRanges.get(i), allRanges, true);
-			}
-			
-			boolean found = false;
-			for (int i = 0; i < allDomains.size(); i++) {
-				d = allDomains.get(i);
-				if (domainClassUri.equalsIgnoreCase(d.getNameSpace() + d.getLocalName())) {
-					for (int j = 0; j < allRanges.size(); j++) {
-						r = allRanges.get(j);
-						if (rangeClassUri.equalsIgnoreCase(r.getNameSpace() + r.getLocalName())) {
-							properties.add(op);
-							found = true;
-							break;
-						}
-					}
-					if (found)
-						break;
-				}
-			}
-		}
+		if (!inheritance)
+			results = OntologyCache.Instance().getDirectDomainRangeProperties().get(domainClassUri+rangeClassUri);
+		else
+			results = OntologyCache.Instance().getIndirectDomainRangeProperties().get(domainClassUri+rangeClassUri);
 		
-		return getResourcesURIs(properties);
-	}
+		if (results == null)
+			return new ArrayList<String>();
+		
+		return results;	}
 	
 	/**
 	 * This function takes a class uri and returns the datatype properties who have this class in their domain. 
 	 * If second parameter set to True, it also returns the datatype properties inherited from parents of the given class.
 	 * @param domainClassUri
-	 * @param includeInheritedProperties
+	 * @param inheritance
 	 * @return
 	 */
-	public List<String> getDataPropertiesOfClass(String domainClassUri, boolean includeInheritedProperties) {
+	public List<String> getDataPropertiesOfClass(String domainClassUri, boolean inheritance) {
 		
-		List<OntResource> properties = new ArrayList<OntResource>();
-		List<OntResource> directDomains = new ArrayList<OntResource>();
-		List<OntResource> allDomains = new ArrayList<OntResource>();
+		List<String> results;
 
-		ExtendedIterator<DatatypeProperty> itrDP = ontModel.listDatatypeProperties();
-		OntResource r;
-		while (itrDP.hasNext()) {
-			
-			directDomains.clear();
-			allDomains.clear();
-			
-			DatatypeProperty dp = itrDP.next();
-			
-			ExtendedIterator<? extends OntResource> itrDomains = dp.listDomain();
-			while (itrDomains.hasNext()) {
-				OntResource d = itrDomains.next();
-				getMembers(d, directDomains, false);
-			}
-
-			for (int i = 0; i < directDomains.size(); i++) {
-				allDomains.add(directDomains.get(i));
-				if (includeInheritedProperties)
-					getChildren(directDomains.get(i), allDomains, true);
-			}
-			
-			for (int i = 0; i < allDomains.size(); i++) {
-				r = allDomains.get(i);
-				if (domainClassUri.equalsIgnoreCase(r.getNameSpace() + r.getLocalName())) {
-					properties.add(dp);
-					break;
-				}
-			}
-		}
+		if (!inheritance)
+			results = OntologyCache.Instance().getDirectOutDataProperties().get(domainClassUri);
+		else
+			results = OntologyCache.Instance().getIndirectOutDataProperties().get(domainClassUri);
 		
-		return getResourcesURIs(properties);
+		if (results == null)
+			return new ArrayList<String>();
+		
+		return results;
 	}
 
 	/**
 	 * This function takes a class uri and returns the object properties who have this class in their domain. 
 	 * If second parameter set to True, it also returns the object properties inherited from parents of the given class.
 	 * @param domainClassUri
-	 * @param includeInheritedProperties
+	 * @param inheritance
 	 * @return
 	 */
-	public List<String> getObjectPropertiesOfClass(String domainClassUri, boolean includeInheritedProperties) {
+	public List<String> getObjectPropertiesOfClass(String domainClassUri, boolean inheritance) {
 		
-		List<OntResource> properties = new ArrayList<OntResource>();
-		List<OntResource> directDomains = new ArrayList<OntResource>();
-		List<OntResource> allDomains = new ArrayList<OntResource>();
+		List<String> results;
 
-		ExtendedIterator<ObjectProperty> itrOP = ontModel.listObjectProperties();
-		OntResource r;
-		while (itrOP.hasNext()) {
-			
-			directDomains.clear();
-			allDomains.clear();
-			
-			ObjectProperty op = itrOP.next();
-			
-			ExtendedIterator<? extends OntResource> itrDomains = op.listDomain();
-			while (itrDomains.hasNext()) {
-				OntResource d = itrDomains.next();
-				getMembers(d, directDomains, false);
-			}
-
-			for (int i = 0; i < directDomains.size(); i++) {
-				allDomains.add(directDomains.get(i));
-				if (includeInheritedProperties)
-					getChildren(directDomains.get(i), allDomains, true);
-			}
-			
-			for (int i = 0; i < allDomains.size(); i++) {
-				r = allDomains.get(i);
-				if (domainClassUri.equalsIgnoreCase(r.getNameSpace() + r.getLocalName())) {
-					properties.add(op);
-					break;
-				}
-			}
-		}
+		if (!inheritance)
+			results = OntologyCache.Instance().getDirectOutObjectProperties().get(domainClassUri);
+		else
+			results = OntologyCache.Instance().getIndirectOutObjectProperties().get(domainClassUri);
 		
-		return getResourcesURIs(properties);
+		if (results == null)
+			return new ArrayList<String>();
+		
+		return results;
 	}
 
 }

@@ -185,6 +185,8 @@ public class Alignment {
 		
 //		GraphUtil.printGraph(this.graph);
 
+		long start = System.currentTimeMillis();
+		
 		logger.debug("preparing G Prime for steiner algorithm input ...");
 		
 		List<LabeledWeightedEdge> selectedLinks = new ArrayList<LabeledWeightedEdge>();
@@ -205,6 +207,10 @@ public class Alignment {
 		
 		this.steinerTree = treePostProcess.getTree();
 		this.root = treePostProcess.getRoot();
+
+		long elapsedTimeMillis = System.currentTimeMillis() - start;
+		float elapsedTimeSec = elapsedTimeMillis/1000F;
+		logger.info("time to compute steiner tree: " + elapsedTimeSec);
 	}
 
 	public Vertex GetTreeRoot() {
@@ -219,4 +225,5 @@ public class Alignment {
 		
 		return this.steinerTree;
 	}
+
 }

@@ -8,6 +8,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.ontology.ImportOntology;
+import edu.isi.karma.modeling.ontology.OntologyCache;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 
@@ -42,7 +43,7 @@ public class Test {
 //		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Plant", null, 0.0) );
 		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Person", null, 0.0) );
 		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Animal", null, 0.0) );
-		semanticTypes.add( new SemanticType(null, "http://www.w3.org/2002/07/owl#Thing", null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, "http://www.w3.org/2002/07/owl#Thing", null, 0.0) );
 //		semanticTypes.add( new SemanticType(null, "http://www.w3.org/2002/07/owl#Thing", null, 0.0) );
 		
 		return semanticTypes;
@@ -51,10 +52,12 @@ public class Test {
 	public static void main(String[] args) {
 		
 		loadOntologies();
+		OntologyCache.Instance();
 		
-//		List<String> dataProperties = OntologyManager.Instance().getDataPropertiesOfClass( "http://mohsen.isi.edu/sample.owl#Place", false);
-//		List<String> dataProperties = OntologyManager.Instance().getDataPropertiesOfClass( "http://xmlns.com/foaf/0.1/Group", true);
+//		List<String> dataProperties = OntologyManager.Instance().getDataPropertiesOfClass( "http://mohsen.isi.edu/sample.owl#Address", false);
+//		List<String> dataProperties = OntologyManager.Instance().getDataPropertiesOfClass( "http://xmlns.com/foaf/0.1/Agent", true);
 //		List<String> dataProperties = OntologyManager.Instance().getDataPropertiesOfClass( "http://vivoweb.org/ontology/core#Committee", true);
+//		List<String> dataProperties = OntologyManager.Instance().getDataPropertiesOfClass( "http://vivoweb.org/ontology/core#Address", true);
 //		for (int i = 0; i < dataProperties.size(); i++) {
 //			System.out.println(dataProperties.get(i));
 //		}
