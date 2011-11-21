@@ -25,6 +25,7 @@ import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
 import edu.isi.karma.view.tabledata.VDTableData;
 import edu.isi.karma.view.tableheadings.VColumnHeader;
+import edu.isi.karma.view.tableheadings.VTHeaderForest;
 import edu.isi.karma.view.tableheadings.VTableHeadings;
 
 public class VWorksheet extends ViewEntity {
@@ -69,6 +70,7 @@ public class VWorksheet extends ViewEntity {
 	 */
 	private final VTableHeadings viewTableHeadings;
 
+	private final VTHeaderForest vHeaderForest;
 	/**
 	 * We create a TablePager for the top level table and every nested table we
 	 * see. It records how the table is scrolled.
@@ -90,6 +92,10 @@ public class VWorksheet extends ViewEntity {
 
 		this.viewTableHeadings = new VTableHeadings(columns, worksheet
 				.getHeaders().getId());
+		
+		vHeaderForest = new VTHeaderForest();
+		vHeaderForest.constructFromHNodePaths(columns);
+		
 		for (HNodePath p : columns) {
 			addColumnHeader(vWorkspace.getViewFactory().createVColumnHeader(p,
 					vWorkspace.getPreferences()));
@@ -187,6 +193,10 @@ public class VWorksheet extends ViewEntity {
 
 	public VTableHeadings getViewTableHeadings() {
 		return viewTableHeadings;
+	}
+
+	public VTHeaderForest getvHeaderForest() {
+		return vHeaderForest;
 	}
 
 	void addColumnHeader(VColumnHeader vch) {

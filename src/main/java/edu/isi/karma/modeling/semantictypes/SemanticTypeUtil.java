@@ -51,7 +51,7 @@ public class SemanticTypeUtil {
 			return subset;
 		}
 
-		System.out.println("Examples: " + nodeValues);
+//		System.out.println("Examples: " + nodeValues);
 		return nodeValues;
 	}
 

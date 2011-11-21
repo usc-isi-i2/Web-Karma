@@ -5,8 +5,11 @@ package edu.isi.karma.controller.update;
 
 import java.io.PrintWriter;
 
+import edu.isi.karma.rep.hierarchicalheadings.HHTable;
+import edu.isi.karma.rep.hierarchicalheadings.HHTree;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.alignmentHeadings.AlignmentColorKeyTranslator;
 
 /**
  * @author szekely
@@ -36,7 +39,23 @@ public class WorksheetHierarchicalHeadersUpdate extends AbstractUpdate {
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
-		vWorksheet.generateWorksheetHierarchicalHeadersJson(pw, vWorkspace);
+		//vWorksheet.generateWorksheetHierarchicalHeadersJson(pw, vWorkspace);
+		
+		HHTree hHtree = new HHTree();
+		hHtree.constructHHTree(vWorksheet.getvHeaderForest());
+
+		HHTable table = new HHTable();
+		table.constructCells(hHtree);
+
+		AlignmentColorKeyTranslator trans = new AlignmentColorKeyTranslator();
+		pw.println(prefix + "{");
+		pw.println("\"" + GenericJsonKeys.updateType.name()
+				+ "\": \"TestWorksheetHierarchicalHeadersUpdate\",");
+		pw.println("\"" + JsonKeys.worksheetId.name() + "\": \"" + vWorksheet.getId()
+				+ "\",");
+		pw.println("\""+JsonKeys.rows.name()+ "\":");
+		table.generateJson(pw, trans);
+		pw.println(prefix + "}");
 	}
 
 }

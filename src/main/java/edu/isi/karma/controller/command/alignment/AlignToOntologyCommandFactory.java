@@ -7,7 +7,7 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.view.VWorkspace;
 
 public class AlignToOntologyCommandFactory extends CommandFactory {
-	
+
 	public enum Arguments {
 		vWorksheetId
 	}
@@ -15,7 +15,10 @@ public class AlignToOntologyCommandFactory extends CommandFactory {
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
-		return new AlignToOntologyCommand(getNewId(vWorkspace), getWorksheetId(request, vWorkspace));
+		String vWorksheetId = request.getParameter(Arguments.vWorksheetId
+				.name());
+		return new AlignToOntologyCommand(getNewId(vWorkspace), getWorksheetId(
+				request, vWorkspace), vWorksheetId);
 	}
 
 }

@@ -543,9 +543,9 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		   	dataType : "json",
 		   	complete : 
 		   		function (xhr, textStatus) {
-		   			alert(xhr.responseText);
-		    		// var json = $.parseJSON(xhr.responseText);
-		    		// parse(json);
+		   			//alert(xhr.responseText);
+		    		var json = $.parseJSON(xhr.responseText);
+		    		parse(json);
 			   	},
 			error :
 				function (xhr, textStatus) {
