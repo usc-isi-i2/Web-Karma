@@ -39,17 +39,17 @@ public class HHTable {
 		populateHHCells(hHtree.getRootNodes(), 0);
 
 		// Debug, Print the cells array
-		for (int i = 0; i < cells.length; i++) {
-			System.out.println("Row: " + i);
-			for (int j = 0; j < cells[i].length; j++) {
-				System.out.println("Column: " + j);
-				// System.out.println(cells[i][j]);
-				if (cells[i][j] != null)
-					System.out.println(cells[i][j]);
-				else
-					System.out.println("null");
-			}
-		}
+//		for (int i = 0; i < cells.length; i++) {
+//			System.out.println("Row: " + i);
+//			for (int j = 0; j < cells[i].length; j++) {
+//				System.out.println("Column: " + j);
+//				// System.out.println(cells[i][j]);
+//				if (cells[i][j] != null)
+//					System.out.println(cells[i][j]);
+//				else
+//					System.out.println("null");
+//			}
+//		}
 	}
 
 	private void populateHHCells(List<HHTNode> nodes, int rowIndex) {
