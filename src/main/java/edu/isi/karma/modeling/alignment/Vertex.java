@@ -32,6 +32,13 @@ public class Vertex {
 		this.nodeType = nodeType;
 		this.semanticType = null;
 	}
+		
+	public Vertex(Vertex v) {
+		this.id = v.id;
+		this.label = v.label;
+		this.nodeType = v.nodeType;
+		this.semanticType = v.semanticType;
+	}
 	
 	public String getLocalID() {
 		if (id == null)
@@ -45,6 +52,19 @@ public class Vertex {
 		return result;
 	}
 
+	public String getLocalLabel() {
+		if (label == null)
+			return "";
+		
+		int index = label.indexOf('#');
+		if (index == -1)
+			return label;
+		
+		String result = label.substring(index + 1);
+		
+		return result;
+	}
+	
 	public String getID() {
 		return this.id;
 	}

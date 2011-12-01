@@ -46,6 +46,14 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		this.inverse = inverse;;
 	}
 	
+	public LabeledWeightedEdge(LabeledWeightedEdge e) {
+		super();
+		this.id = e.id;
+		this.linkType = e.linkType;
+		this.label = e.label;
+		this.inverse = e.inverse;;
+	}
+	
 	public String getLocalID() {
 		if (id == null)
 			return "";
@@ -55,6 +63,19 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 			return id;
 		
 		String result = id.substring(index + 1);
+		
+		return result;
+	}
+	
+	public String getLocalLabel() {
+		if (label == null)
+			return "";
+		
+		int index = label.indexOf('#');
+		if (index == -1)
+			return label;
+		
+		String result = label.substring(index + 1);
 		
 		return result;
 	}

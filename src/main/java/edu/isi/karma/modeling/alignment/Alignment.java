@@ -196,11 +196,16 @@ public class Alignment {
 		GraphPreProcess graphPreProcess = new GraphPreProcess(this.graphBuilder.getGraph(), semanticNodes, selectedLinks );
 		UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedGraph = graphPreProcess.getUndirectedGraph();
 		List<Vertex> steinerNodes = graphPreProcess.getSteinerNodes();
-//		GraphUtil.printGraph(undirectedGraph);
 
 		logger.debug("computing steiner tree ...");
+
 		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodes);
 		WeightedMultigraph<Vertex, LabeledWeightedEdge> tree = steinerTree.getSteinerTree();
+		if (tree == null) {
+			logger.debug("resulting tree is null ...");
+			return;
+		}
+//		GraphUtil.printGraphSimple(tree);
 		
 		logger.debug("updating link directions ...");
 		TreePostProcess treePostProcess = new TreePostProcess(tree);
@@ -222,7 +227,6 @@ public class Alignment {
 			align();
 		
 //		GraphUtil.printGraph(this.graphBuilder.getGraph());
-		
 		return this.steinerTree;
 	}
 

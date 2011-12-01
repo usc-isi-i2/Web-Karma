@@ -1,6 +1,7 @@
 package edu.isi.karma.modeling.alignment;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +38,13 @@ public class SteinerTree {
 		for (int i = 0; i < steinerNodes.size(); i++) {
 			g.addVertex(steinerNodes.get(i));
 		}
+		
+		for (LabeledWeightedEdge e: this.graph.edgeSet()) {
+			g.addVertex(e.getSource());
+			g.addVertex(e.getTarget());
+			g.addEdge(e.getSource(), e.getTarget(), e);
+		}
+		
 		
 		BellmanFordShortestPath<Vertex, LabeledWeightedEdge> path;
 		
@@ -79,7 +87,14 @@ public class SteinerTree {
 		WeightedMultigraph<Vertex, LabeledWeightedEdge> g2 = 
 			new WeightedMultigraph<Vertex, LabeledWeightedEdge>(LabeledWeightedEdge.class);
 		
-		for (LabeledWeightedEdge edge : edges) {
+		List<LabeledWeightedEdge> edgesSortedByLabel = new ArrayList<LabeledWeightedEdge>();
+		
+		for (LabeledWeightedEdge e : edges) 
+			edgesSortedByLabel.add(e);
+		
+		Collections.sort(edgesSortedByLabel, new EdgeComparatorByLabel());
+		
+		for (LabeledWeightedEdge edge : edgesSortedByLabel) {
 
 //			//just for test, forcing to select another equal minimal spanning tree
 //			if (g1.getEdgeSource(edge).getLabel().equalsIgnoreCase("v1") && 
@@ -202,6 +217,7 @@ public class SteinerTree {
 
 		WeightedMultigraph<Vertex, LabeledWeightedEdge> g1 = step1();
 //		GraphUtil.printGraph(g1);
+//		GraphUtil.printGraphSimple(g1);
 		
 		if (g1.vertexSet().size() < 2) {
 			this.tree = g1;
@@ -210,15 +226,21 @@ public class SteinerTree {
 		
 		WeightedMultigraph<Vertex, LabeledWeightedEdge> g2 = step2(g1);
 //		GraphUtil.printGraph(g2);
+//		GraphUtil.printGraphSimple(g2);
+
 		
 		WeightedMultigraph<Vertex, LabeledWeightedEdge> g3 = step3(g2);
 //		GraphUtil.printGraph(g3);
+//		GraphUtil.printGraphSimple(g3);
 		
 		WeightedMultigraph<Vertex, LabeledWeightedEdge> g4 = step4(g3);
 //		GraphUtil.printGraph(g4);
+//		GraphUtil.printGraphSimple(g4);
+
 		
 		WeightedMultigraph<Vertex, LabeledWeightedEdge> g5 = step5(g4);
 //		GraphUtil.printGraph(g5);
+//		GraphUtil.printGraphSimple(g5);
 		
 		this.tree = g5;
 		logger.debug("exit>");

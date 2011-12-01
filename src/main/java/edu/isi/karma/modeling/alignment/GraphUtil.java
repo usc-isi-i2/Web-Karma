@@ -89,4 +89,22 @@ public class GraphUtil {
 		
 	}
 	
+	public static void printGraphSimple(Graph<Vertex, LabeledWeightedEdge> graph) {
+		
+//    	System.out.println("*** Nodes ***");
+//		for (Vertex vertex : graph.vertexSet()) {
+//			printVertex(vertex);
+//			System.out.println();
+//        }
+    	System.out.println("*** Graph ***");
+		for (LabeledWeightedEdge edge : graph.edgeSet()) {
+			System.out.print(edge.getSource().getLocalLabel());
+			System.out.print(" -> ");
+			System.out.print(edge.getTarget().getLocalLabel());
+			System.out.println();
+        }
+		System.out.println("------------------------------------------");
+		
+	}
+	
 }
