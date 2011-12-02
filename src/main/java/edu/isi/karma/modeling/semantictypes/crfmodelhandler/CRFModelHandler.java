@@ -5,8 +5,13 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 import edu.isi.karma.modeling.semantictypes.mycrf.crfmodel.CRFModelFieldOnly;
 import edu.isi.karma.modeling.semantictypes.mycrf.fieldonly.LblFtrPair;
@@ -25,10 +30,17 @@ import edu.isi.karma.modeling.semantictypes.sl.RegexFeatureExtractor;
 
 public abstract class CRFModelHandler {
 
+	public static enum ColumnFeature {
+		ColumnHeaderName
+	} ;
+	
+	
 	static String file = null ;
 	static HashMap<String, ArrayList<String>> labelToExamplesMap ;
 	static GlobalDataFieldOnly globalData ;
 
+	
+	
 
 	// This function takes the path of file as input and
 	// creates an environment that consists of globalData, crfModel, list of examples of each label, etc.
@@ -132,25 +144,34 @@ public abstract class CRFModelHandler {
 		}
 	}
 
-	public static boolean addOrUpdateLabel(String label, ArrayList<String> examples) {
+	public static boolean addOrUpdateLabel(String label, List<String> examples) {
+		return addOrUpdateLabel(label, examples, null) ;
+	}
 
+	public static boolean addOrUpdateLabel(String label, List<String> examples, Map<ColumnFeature, Collection<String>> columnFeatures) {
+		ArrayList<String> cleanedExamples, allowedCharacters ;
+		int labelIndex ;
+		HashSet<String> newFeatures, existingFeatures ;
+		OptimizeFieldOnly optimizationObject;
+		double[] newWeights;
+		boolean savingSuccessful ;
+		// running basic sanity checks in the input arguments
 		label = label.trim() ;
 		if (label.length() == 0 || examples.size() == 0) {
 			Prnt.prn("label argument cannot be an empty string and the examples list cannot be empty.") ;
 			return false ;
 		}
-
-		ArrayList<String> cleanedExamples = new ArrayList<String>() ;
-		ArrayList<String> allowedCharacters = allowedCharacters() ;
-		String trimmedExample = "" ;    
-
+		cleanedExamples = new ArrayList<String>() ;
+		allowedCharacters = allowedCharacters() ;
 		for(String example : examples) {
+			String trimmedExample ;
 			if (example != null) {
 				trimmedExample = "" ;
 				for(int i=0;i<example.length();i++) {
-					String charAtIndex = example.substring(i,i+1) ;
+					String charAtIndex;
+					charAtIndex = example.substring(i,i+1) ;
 					if (allowedCharacters.contains(charAtIndex)) {
-						trimmedExample = trimmedExample + charAtIndex ;
+						trimmedExample+=charAtIndex ;
 					}
 				}
 				if (trimmedExample.length() != 0) {
@@ -159,68 +180,60 @@ public abstract class CRFModelHandler {
 			}
 		}
 		examples = cleanedExamples ;
+		// making sure that the condition where the examples list is not empty but contains junk only is not accepted
 		if (examples.size() == 0) {
 			Prnt.prn("examples list contains forbidden characters only. the allowed characters are " + allowedCharacters) ;
 			return false ;
 		}
-
-		int labelIndex = globalData.labels.indexOf(label) ;
-		ArrayList<String> existingFeatures = null ;
-		if (labelIndex == -1) {
-			labelIndex = globalData.labels.size() ;
-			globalData.labels.add(label) ;
-			labelToExamplesMap.put(label, new ArrayList<String>()) ;
-		}
-		else {
-			existingFeatures = new ArrayList<String>() ;
+		existingFeatures = new HashSet<String>() ;
+		newFeatures = new HashSet<String>() ;
+		labelIndex = globalData.labels.indexOf(label) ;
+		if (globalData.labels.contains(label)) {
 			for(LblFtrPair ff : globalData.crfModel.ffs) {
 				if (ff.labelIndex == labelIndex) {
 					existingFeatures.add(ff.feature) ;
 				}
 			}
 		}
+		// if label does not already exist in the model, add new label. Also, add an entry in the map for the new label.
+		if (labelIndex == -1) {
+			globalData.labels.add(label) ;
+			labelIndex = globalData.labels.indexOf(label) ;
+			labelToExamplesMap.put(label, new ArrayList<String>()) ;
+		}
 		// add examples to the existing list of examples
 		// create new Graph for each example and add it to the list of trainingGraphs in globalData
 		// save a list of new features so that we can create new feature functions for the label
-		ArrayList<String> labelExamples = labelToExamplesMap.get(label) ;	
-		HashSet<String> newFeatures = new HashSet<String>() ;
 		for(String example : examples) {
-			labelExamples.add(example) ;
-			HashSet<String> featuresOfExample = featureSet(example) ;
-			GraphFieldOnly newGraph = new GraphFieldOnly(example, label, new ArrayList<String>(featuresOfExample), globalData) ;
+			HashSet<String> exampleFtrs;
+			GraphFieldOnly newGraph ;
+			labelToExamplesMap.get(label).add(example) ;
+			exampleFtrs = featureSet(example, columnFeatures) ;
+			newGraph = new GraphFieldOnly(example, label, new ArrayList<String>(exampleFtrs), globalData) ;
 			globalData.trainingGraphs.add(newGraph) ;
-			newFeatures.addAll(featuresOfExample) ;
+			newFeatures.addAll(exampleFtrs) ;
 		}
 		// add new feature functions to the crfModel
-		if (existingFeatures == null) {
-			for(String ftr : newFeatures) {
-				globalData.crfModel.ffs.add(new LblFtrPair(labelIndex, ftr)) ;
-			}
-		}
-		else {
-			for(String ftr : newFeatures) {
-				if (!existingFeatures.contains(ftr)) {
-					globalData.crfModel.ffs.add(new LblFtrPair(labelIndex, ftr)) ;
-				}
-			}
+		newFeatures.removeAll(existingFeatures) ;
+		for(String ftr : newFeatures) {
+			globalData.crfModel.ffs.add(new LblFtrPair(labelIndex, ftr)) ;
 		}
 		// If we added any new feature functions, then we expand the weights array to match the length of the ff list in CRFModelFieldOnly
 		// we copy the old values of weights for the old ffs and set the new weights to be zero.
 		if (globalData.crfModel.ffs.size() != globalData.crfModel.weights.length) {
-			double[] newWeights = new double[globalData.crfModel.ffs.size()] ;
+			newWeights = new double[globalData.crfModel.ffs.size()] ;
 			System.arraycopy(globalData.crfModel.weights, 0, newWeights, 0, globalData.crfModel.weights.length) ;
 			globalData.crfModel.weights = newWeights ;
 		}
 		// optimize the model to adjust to the new label/examples/ffs
-		OptimizeFieldOnly optimizationObject = new OptimizeFieldOnly(globalData.crfModel, globalData) ;
+		optimizationObject = new OptimizeFieldOnly(globalData.crfModel, globalData) ;
 		optimizationObject.optimize(5) ;
 		// save the model to file with the new weights
-		boolean savingSuccessful = false ;
 		savingSuccessful = saveModel() ;
 		return savingSuccessful ;
 	}
-
-	static ArrayList<String> allowedCharacters() {
+	
+	private static ArrayList<String> allowedCharacters() {
 		ArrayList<String> allowed = new ArrayList<String>() ;
 
 		// Adding A-Z
@@ -369,131 +382,115 @@ public abstract class CRFModelHandler {
 	}
 
 	public static boolean predictLabelForExamples(
-			ArrayList<String> examples,
+			List<String> examples,
 			int numPredictions,
-			ArrayList<String> predictedLabels,
-			ArrayList<Double> confidenceScores
+			List<String> predictedLabels,
+			List<Double> confidenceScores
 			) {
-		if (examples == null || examples.size() == 0 || numPredictions <= 0 || predictedLabels == null || confidenceScores == null) {
-			Prnt.prn("Invalid arguments. Possible problems: examples list size is zero, numPredictions is non-positive, predictedLabels or confidenceScores list is null.") ;
-			return false ;
-		}
-		if(file == null || globalData.labels.size() == 0) {
-			Prnt.prn("The model is not ready to make predictions. Either a model has not been created from a file, or the file was empty.") ;
-			return false ;
-		}
-
-		MAPFieldOnly MAPPredictor = new MAPFieldOnly(globalData) ;
-		double[] probabilities = new double[globalData.labels.size()] ;
-		// for each example, get the probability of each label.
-		// add the probabilities to an accumulator probabilities array
-		// the label that gets highest accumulated probability, is the most likely label for all examples combined
-		for(String example : examples) {
-			GraphFieldOnly graph = new GraphFieldOnly(example, null, new ArrayList<String>(featureSet(example)), globalData) ;
-			double[] probabilitiesForExample = MAPPredictor.probabilitiesForLabels(graph) ;
-			Matrix.plusEquals(probabilities, probabilitiesForExample, 1.0) ;
-		}
-		// the sum of all values in the probabilies array is going to be examples.size()
-		// normalize to get values that have a probabilistic interpretation
-		for(int i=0;i<globalData.labels.size();i++) {
-			probabilities[i]/=examples.size() ;
-		}
-		ArrayList<String> labels = new ArrayList<String>(globalData.labels) ;
-		ArrayList<Double> probabilityList = new ArrayList<Double>() ;
-		for(int i=0;i<globalData.labels.size();i++) {
-			probabilityList.add(probabilities[i]) ;
-		}
-		// Sort both lists such that labels are listed according to their descending order of probability
-		// and probabilityList has the probabilities in the descending order 
-		// The label at index i has the probability at index i
-		ListOps.sortListOnValues(labels, probabilityList) ;
-		predictedLabels.clear() ;
-		confidenceScores.clear() ;
-		for(int index=0;index < globalData.labels.size() && index < numPredictions;index++) {
-			predictedLabels.add(labels.get(index)) ;
-			confidenceScores.add(probabilityList.get(index)) ;
-		}
-		return true ;
+		return predictLabelForExamples(examples, numPredictions, predictedLabels, confidenceScores, null) ;
 	}
 
 
 
+	/**
+	 * @param examples
+	 * @param numPredictions
+	 * @param predictedLabels
+	 * @param confidenceScores
+	 * @param exampleProbabilities
+	 * @return
+	 */
 	public static boolean predictLabelForExamples(
-			ArrayList<String> examples,
+			List<String> examples,
 			int numPredictions, 
-			ArrayList<String> predictedLabels, 
-			ArrayList<Double> confidenceScores, 
-			ArrayList<double[]> exampleProbs
+			List<String> predictedLabels, 
+			List<Double> confidenceScores, 
+			List<double[]> exampleProbabilities
 			) {
+		return predictLabelForExamples(examples, numPredictions, predictedLabels, confidenceScores, exampleProbabilities, null) ;
+	}
 
-		ArrayList<ArrayList<Double>> exampleProbsList = new ArrayList<ArrayList<Double>>() ;
-
+	/**
+	 * @param examples
+	 * @param numPredictions
+	 * @param predictedLabels
+	 * @param confidenceScores
+	 * @param exampleProbs
+	 * @param columnFeatures
+	 * @return
+	 */
+	public static boolean predictLabelForExamples(
+	           List<String> examples,
+	           int numPredictions,
+	           List<String> predictedLabels,
+	           List<Double> confidenceScores,
+	           List<double[]> exampleProbabilities,
+	           Map<ColumnFeature, Collection<String>> columnFeatures
+	      ) {
+		ArrayList<ArrayList<Double>> exampleProbabilitiesFullList ;
+		MAPFieldOnly MAPPredictor ;
+		double[] columnProbabilities ;
+		ArrayList<String> labels ;
+		ArrayList<Double> columnProbabilitiesList ;
+		// Sanity checks for arguments
 		if (examples == null || examples.size() == 0 || numPredictions <= 0 || predictedLabels == null || confidenceScores == null) {
 			Prnt.prn("Invalid arguments. Possible problems: examples list size is zero, numPredictions is non-positive, predictedLabels or confidenceScores list is null.") ;
 			return false ;
 		}
+		// Making sure that there exists a model.
 		if(file == null || globalData.labels.size() == 0) {
 			Prnt.prn("The model is not ready to make predictions. Either a model has not been created from a file, or the file was empty.") ;
 			return false ;
 		}
-
-
-
-		MAPFieldOnly MAPPredictor = new MAPFieldOnly(globalData) ;
-		double[] probabilities = new double[globalData.labels.size()] ;
+		exampleProbabilitiesFullList = new ArrayList<ArrayList<Double>>() ;
+		MAPPredictor = new MAPFieldOnly(globalData) ;
+		columnProbabilities = new double[globalData.labels.size()] ;
 		// for each example, get the probability of each label.
 		// add the probabilities to an accumulator probabilities array
 		// the label that gets highest accumulated probability, is the most likely label for all examples combined
 		for(String example : examples) {
-			GraphFieldOnly graph = new GraphFieldOnly(example, null, new ArrayList<String>(featureSet(example)), globalData) ;
-			double[] probabilitiesForExample = MAPPredictor.probabilitiesForLabels(graph) ;
-			Matrix.plusEquals(probabilities, probabilitiesForExample, 1.0) ;
-			if (exampleProbs != null) {
-				ArrayList<Double> tmpProbs = new ArrayList<Double>(globalData.labels.size()) ;
-				for(double d : probabilitiesForExample) {
-					tmpProbs.add(d) ;
-				}	
-				exampleProbsList.add(tmpProbs) ;
+			GraphFieldOnly exampleGraph ;
+			double[] probabilitiesForExample ;
+			exampleGraph = new GraphFieldOnly(example, null, new ArrayList<String>(featureSet(example, columnFeatures)), globalData) ;
+			probabilitiesForExample = MAPPredictor.probabilitiesForLabels(exampleGraph) ;
+			Matrix.plusEquals(columnProbabilities, probabilitiesForExample, 1.0) ;
+			if (exampleProbabilities != null) {
+				exampleProbabilitiesFullList.add(newListFromDoubleArray(probabilitiesForExample)) ;
 			}
 		}
 		// the sum of all values in the probabilies array is going to be examples.size()
 		// normalize to get values that have a probabilistic interpretation
 		for(int i=0;i<globalData.labels.size();i++) {
-			probabilities[i]/=examples.size() ;
-		}
-		ArrayList<String> labels = new ArrayList<String>(globalData.labels) ;
-		ArrayList<Double> probabilityList = new ArrayList<Double>() ;
-		for(int i=0;i<globalData.labels.size();i++) {
-			probabilityList.add(probabilities[i]) ;
+			columnProbabilities[i]/=examples.size() ;
 		}
 		// Sort both lists such that labels are listed according to their descending order of probability
 		// and probabilityList has the probabilities in the descending order 
 		// The label at index i has the probability at index i
-		ListOps.sortListOnValues(labels, probabilityList) ;
+		labels = new ArrayList<String>(globalData.labels) ;
+		columnProbabilitiesList = newListFromDoubleArray(columnProbabilities) ;
+		ListOps.sortListOnValues(labels, columnProbabilitiesList) ;
+		// Preparing to return values now
 		predictedLabels.clear() ;
 		confidenceScores.clear() ;
-		if (exampleProbs != null) {
-			exampleProbs.clear() ;
+		if (exampleProbabilities != null) {
+			exampleProbabilities.clear() ;
 			int minPreds = Math.min(numPredictions, globalData.labels.size()) ;
 			for(int i=0;i<examples.size();i++) {
-				exampleProbs.add(new double[minPreds]) ;
+				exampleProbabilities.add(new double[minPreds]) ;
 			}
 		}
 		for(int index=0;index < globalData.labels.size() && index < numPredictions;index++) {
 			predictedLabels.add(labels.get(index)) ;
-			confidenceScores.add(probabilityList.get(index)) ;
-			if (exampleProbs != null) {
+			confidenceScores.add(columnProbabilitiesList.get(index)) ;
+			if (exampleProbabilities != null) {
 				int li = globalData.labels.indexOf(labels.get(index)) ;
 				for(int i=0;i<examples.size();i++) {
-					exampleProbs.get(i)[index] = exampleProbsList.get(i).get(li) ;
+					exampleProbabilities.get(i)[index] = exampleProbabilitiesFullList.get(i).get(li) ;
 				}
 			}
 		}
 		return true ;
 	}
-
-
-
 
 
 	public static boolean getLabels(ArrayList<String> labels) {
@@ -534,7 +531,36 @@ public abstract class CRFModelHandler {
 		return features ;
 	}
 
+	
+	private static HashSet<String> featureSet(String field, Map<ColumnFeature, Collection<String>> columnFeatures) {
+		String columnName ;
+		HashSet<String> features ;
+		Collection<String> columnNameList ;
+		String[] tokens ;
+		columnName = null ;
+		features = featureSet(field) ;
+		if (columnFeatures != null && columnFeatures.containsKey(ColumnFeature.ColumnHeaderName)) {
+			columnNameList = columnFeatures.get(ColumnFeature.ColumnHeaderName) ;
+			if (columnNameList != null && columnNameList.size() == 1) {
+				for(String str : columnNameList) {
+					columnName = str ;
+				}
+				tokens = columnName.split("\\s+") ;
+				for(String token : tokens) {
+					features.add(token) ;
+				}
+			}
+		}
+		return features ;
+	}
 
+	private static ArrayList<Double> newListFromDoubleArray(double[] array) {
+		ArrayList<Double> newList = new ArrayList<Double>() ;
+		for(double element : array) {
+			newList.add(element) ;
+		}
+		return newList ;
+	}
 
 
 }
