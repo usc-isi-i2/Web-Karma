@@ -82,8 +82,7 @@ public class SetSemanticTypeCommand extends Command {
 		}
 
 		// Prepare the column name for training
-		String columnName = worksheet.getHeaders()
-				.getHNode(currentColumnPath.getLeaf().getId()).getColumnName();
+		String columnName = currentColumnPath.getLeaf().getColumnName();
 		Collection<String> columnNameList = new ArrayList<String>();
 		columnNameList.add(columnName);
 		Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
@@ -103,7 +102,7 @@ public class SetSemanticTypeCommand extends Command {
 		ArrayList<String> labels = new ArrayList<String>();
 		ArrayList<Double> scores = new ArrayList<Double>();
 		CRFModelHandler.predictLabelForExamples(trainingExamples, 4, labels,
-				scores);
+				scores, null, columnFeatures);
 		CRFColumnModel newModel = new CRFColumnModel(labels, scores);
 		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), newModel);
 

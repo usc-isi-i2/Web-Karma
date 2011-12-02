@@ -76,8 +76,7 @@ public class GenerateSemanticTypesCommand extends Command {
 					.getTrainingExamples(worksheet, path);
 
 			// Prepare the column name feature
-			String columnName = worksheet.getHeaders()
-					.getHNode(path.getLeaf().getId()).getColumnName();
+			String columnName = path.getLeaf().getColumnName();
 			Collection<String> columnNameList = new ArrayList<String>();
 			columnNameList.add(columnName);
 			Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
