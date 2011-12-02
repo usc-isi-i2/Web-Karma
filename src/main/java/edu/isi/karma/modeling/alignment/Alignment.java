@@ -107,66 +107,6 @@ public class Alignment {
 	}
 	
 	
-	public void addUILink(String linkId) {
-		LabeledWeightedEdge[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new LabeledWeightedEdge[0]);
-		for (int i = 0; i < allLinks.length; i++) {
-			if (allLinks[i].getID().equalsIgnoreCase(linkId)) {
-				linksPreferredByUI.add(allLinks[i]);
-				logger.info("link " + linkId + " has been added to preferred UI links.");
-				align();
-				return;
-			}
-		}
-		
-		logger.info("link with ID " + linkId + " does not exist in graph.");
-	}
-	
-	public void addUILinks(List<String> linkIds) {
-		LabeledWeightedEdge[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new LabeledWeightedEdge[0]);
-		for (int j = 0; j < linkIds.size(); j++) {
-			boolean found = false;
-			for (int i = 0; i < allLinks.length; i++) {
-				if (allLinks[i].getID().equalsIgnoreCase(linkIds.get(j))) {
-					linksPreferredByUI.add(allLinks[i]);
-					found = true;
-					logger.info("link " + linkIds.get(j) + " has been added to preferred UI links.");
-				}
-			}
-			if (!found)
-				logger.info("link with ID " + linkIds.get(j) + " does not exist in graph.");
-		}
-		align();
-	}
-	
-	public void clearUILink(String linkId) {
-		for (int i = 0; i < linksPreferredByUI.size(); i++) {
-			if (linksPreferredByUI.get(i).getID().equalsIgnoreCase(linkId)) {
-				linksPreferredByUI.remove(i);
-				logger.info("link " + linkId + " has been removed from preferred UI links.");
-				align();
-				return;
-			}
-		}
-	}
-	
-	public void clearUILinks(List<String> linkIds) {
-		for (int j = 0; j < linkIds.size(); j++) {
-			for (int i = 0; i < linksPreferredByUI.size(); i++) {
-				if (linksPreferredByUI.get(i).getID().equalsIgnoreCase(linkIds.get(j))) {
-					linksPreferredByUI.remove(i);
-					logger.info("link " + linkIds.get(j) + " has been removed from preferred UI links.");
-				}
-			}
-		}
-		align();
-	}
-	
-	public void clearAllUILinks() {
-		linksPreferredByUI.clear();
-		logger.info("UI preferred links have been cleared.");
-		align();
-	}
-	
 	public void duplicateDomainOfLink(String linkId) {
 		
 //		GraphUtil.printGraph(this.graphBuilder.getGraph());
@@ -254,6 +194,31 @@ public class Alignment {
 			e.setLinkStatus(LinkStatus.PreferredByUI);
 	}
 	
+	private void addUILink(String linkId) {
+		LabeledWeightedEdge[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new LabeledWeightedEdge[0]);
+		for (int i = 0; i < allLinks.length; i++) {
+			if (allLinks[i].getID().equalsIgnoreCase(linkId)) {
+				linksPreferredByUI.add(allLinks[i]);
+				logger.debug("link " + linkId + " has been added to preferred UI links.");
+				return;
+			}
+		}
+		
+		logger.info("link with ID " + linkId + " does not exist in graph.");
+	}
+	
+	
+	private void addUILinksFromTree() {
+		linksPreferredByUI.clear();
+		
+		if (this.steinerTree == null)
+			return;
+		
+		for (LabeledWeightedEdge e: this.steinerTree.edgeSet()) {
+			addUILink(e.getID());
+		}
+	}
+	
 	private void align() {
 		
 //		GraphUtil.printGraph(this.graph);
@@ -262,8 +227,9 @@ public class Alignment {
 		
 		logger.info("preparing G Prime for steiner algorithm input ...");
 		
-		List<LabeledWeightedEdge> selectedLinks = new ArrayList<LabeledWeightedEdge>();
+		addUILinksFromTree();
 		updateLinksStatus();
+		List<LabeledWeightedEdge> selectedLinks = new ArrayList<LabeledWeightedEdge>();
 		// order of adding lists is important: linksPreferredByUI should be first 
 		selectedLinks.addAll(linksPreferredByUI);
 		selectedLinks.addAll(linksForcedByDomain);

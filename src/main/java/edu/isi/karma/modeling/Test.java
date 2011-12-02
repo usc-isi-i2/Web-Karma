@@ -116,12 +116,15 @@ public class Test {
 //		alignment.getSteinerTree();
 		
 		GraphUtil.printGraph(alignment.getSteinerTree());
-		
 		alignment.addUserLink("http://halowiki/ob/property#PharmGKBId5");
 		GraphUtil.printGraph(alignment.getSteinerTree());
+
 		
-		alignment.addUILink("http://halowiki/ob/property#Causes1");
-		GraphUtil.printGraph(alignment.getSteinerTree());
+//		alignment.getSteinerTree();
+//		GraphUtil.printGraph(alignment.getSteinerTree());
+		
+//		alignment.addUILink("http://halowiki/ob/property#Causes1");
+//		GraphUtil.printGraph(alignment.getSteinerTree());
 
 //		GraphUtil.printGraphSimple(alignment.getSteinerTree());
 //		GraphUtil.printGraph(alignment.getSteinerTree());

@@ -45,14 +45,16 @@ public class GraphPreProcess {
 		
 		for (int i = 0; i < selectedLinks.size(); i++) {
 			
-			e = (LabeledWeightedEdge)selectedLinks.get(i).clone();
+			e = (LabeledWeightedEdge)selectedLinks.get(i);
 			status = e.getLinkStatus();
 			
 			if (status == LinkStatus.PreferredByUI) {
-
 				gPrime.setEdgeWeight(e, GraphBuilder.DEFAULT_WEIGHT - GraphBuilder.MIN_WEIGHT);
 				
 			} else if (status == LinkStatus.ForcedByUser || status == LinkStatus.ForcedByDomain) {
+				
+				e = (LabeledWeightedEdge)selectedLinks.get(i);
+				
 				Vertex source = selectedLinks.get(i).getSource();
 				Vertex target = selectedLinks.get(i).getTarget();
 				
@@ -77,6 +79,8 @@ public class GraphPreProcess {
 			}			
 		}
 		
+//		GraphUtil.printGraph(gPrime);
+		
 		// if there are 2 DataProperties go to one node, we have to select only one of them. 
 		// The target is definitely one of the source columns and we cannot have two classes pointed to that.
 		// User can change our selected link later.
@@ -86,16 +90,32 @@ public class GraphPreProcess {
 			if (v.getNodeType() != NodeType.DataProperty)
 				continue;
 			
+			double weight;
+			int minIndex;
+			double minWeight;
+			
 			LabeledWeightedEdge[] incomingLinks = gPrime.incomingEdgesOf(v).toArray(new LabeledWeightedEdge[0]);
 			if (incomingLinks != null && incomingLinks.length != 0) {
-				// keeping only the first link and remove the others.
-				for (int i = 1; i < incomingLinks.length; i++)
+				
+				minWeight = GraphBuilder.MAX_WEIGHT;
+				minIndex = 0;
+				// keeping only the link with minimum weight and remove the others.
+				// we select minimum to prefer the UI links in previous model.
+				for (int i = 0; i < incomingLinks.length; i++) {
+					weight = gPrime.getEdgeWeight(incomingLinks[i]);
+					if (weight < minWeight) {
+						minWeight = weight;
+						minIndex = i;
+					}
+				}
+				for (int i = 0; i < incomingLinks.length; i++)
+					if (i != minIndex)
 					gPrime.removeEdge(incomingLinks[i]);
 			}
 		}
 		
 		logger.debug("exit>");
-//		GraphUtil.printGraphSimple(gPrime);
+//		GraphUtil.printGraph(gPrime);
 	}
 	
 	public List<Vertex> getSteinerNodes() {
