@@ -1,7 +1,10 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
@@ -10,6 +13,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
+import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler.ColumnFeature;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
@@ -77,15 +81,23 @@ public class SetSemanticTypeCommand extends Command {
 			}
 		}
 
+		// Prepare the column name for training
+		String columnName = worksheet.getHeaders()
+				.getHNode(currentColumnPath.getLeaf().getId()).getColumnName();
+		Collection<String> columnNameList = new ArrayList<String>();
+		columnNameList.add(columnName);
+		Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
+		columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
+
 		// Train the model with the new type
 		ArrayList<String> trainingExamples = SemanticTypeUtil
 				.getTrainingExamples(worksheet, currentColumnPath);
 		if (newType.getDomain().equals(""))
 			CRFModelHandler.addOrUpdateLabel(newType.getType(),
-					trainingExamples);
+					trainingExamples, columnFeatures);
 		else
 			CRFModelHandler.addOrUpdateLabel(newType.getDomain() + "|"
-					+ newType.getType(), trainingExamples);
+					+ newType.getType(), trainingExamples, columnFeatures);
 
 		// Add the new CRF column model for this column
 		ArrayList<String> labels = new ArrayList<String>();
