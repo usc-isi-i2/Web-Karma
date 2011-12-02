@@ -26,7 +26,7 @@ public class GraphBuilder {
 	
 	private static String THING_URI = "http://www.w3.org/2002/07/owl#Thing";
 	private static String SUBCLASS_URI = "hasSubClass";
-	private static double DEFAULT_WEIGHT = 1.0;	
+	public static double DEFAULT_WEIGHT = 1.0;	
 	public static double MIN_WEIGHT = 0.000001; // need to be fixed later	
 	public static double MAX_WEIGHT = 1000000;
 	

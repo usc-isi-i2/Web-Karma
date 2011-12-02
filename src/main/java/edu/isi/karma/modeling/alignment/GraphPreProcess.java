@@ -39,37 +39,42 @@ public class GraphPreProcess {
 			logger.debug("exit>");
 			return;
 		}
+		
 		LabeledWeightedEdge e;
+		LinkStatus status;
 		
 		for (int i = 0; i < selectedLinks.size(); i++) {
 			
-			Vertex source = selectedLinks.get(i).getSource();
-			Vertex target = selectedLinks.get(i).getTarget();
-			
-			if (!steinerNodes.contains(source))
-				steinerNodes.add(source);
-
-			if (!steinerNodes.contains(target))
-				steinerNodes.add(target);
-			
 			e = (LabeledWeightedEdge)selectedLinks.get(i).clone();
+			status = e.getLinkStatus();
 			
-			// removing all links to target
-			LabeledWeightedEdge[] incomingLinks = gPrime.incomingEdgesOf(target).toArray(new LabeledWeightedEdge[0]); 
-			for (LabeledWeightedEdge inLink: incomingLinks) {
-				gPrime.removeAllEdges( inLink.getSource(), inLink.getTarget() );
-			}
-			
-			// removing all links from source to target
-//			gPrime.removeAllEdges(source, target);
-			
-			// adding the user selected link
-			gPrime.addEdge(source, target, e);
-			
-			// if it is a subclass link, change the weight to epsilon
-			//if (e.getType() == LinkType.HasSubClass)
-			gPrime.setEdgeWeight(e, GraphBuilder.MIN_WEIGHT);
-			
+			if (status == LinkStatus.PreferredByUI) {
+
+				gPrime.setEdgeWeight(e, GraphBuilder.DEFAULT_WEIGHT - GraphBuilder.MIN_WEIGHT);
+				
+			} else if (status == LinkStatus.ForcedByUser || status == LinkStatus.ForcedByDomain) {
+				Vertex source = selectedLinks.get(i).getSource();
+				Vertex target = selectedLinks.get(i).getTarget();
+				
+				if (!steinerNodes.contains(source))
+					steinerNodes.add(source);
+	
+				if (!steinerNodes.contains(target))
+					steinerNodes.add(target);
+				
+				// removing all links to target
+				LabeledWeightedEdge[] incomingLinks = gPrime.incomingEdgesOf(target).toArray(new LabeledWeightedEdge[0]); 
+				for (LabeledWeightedEdge inLink: incomingLinks) {
+					gPrime.removeAllEdges( inLink.getSource(), inLink.getTarget() );
+				}
+	
+				// adding the user selected link
+				gPrime.addEdge(source, target, e);
+				
+				// if it is a subclass link, change the weight to epsilon
+				//if (e.getType() == LinkType.HasSubClass)
+				gPrime.setEdgeWeight(e, GraphBuilder.MIN_WEIGHT);
+			}			
 		}
 		
 		// if there are 2 DataProperties go to one node, we have to select only one of them. 

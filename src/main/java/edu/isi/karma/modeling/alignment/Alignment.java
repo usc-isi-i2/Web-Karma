@@ -19,8 +19,9 @@ public class Alignment {
 	private List<SemanticType> semanticTypes;
 	private List<Vertex> semanticNodes;
 
-	private List<LabeledWeightedEdge> linksForcedByPencil;
-	private List<LabeledWeightedEdge> linksForcedByDomains;
+	private List<LabeledWeightedEdge> linksForcedByUser;
+	private List<LabeledWeightedEdge> linksForcedByDomain;
+	private List<LabeledWeightedEdge> linksPreferredByUI;
 
 	private DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = null;
 	private Vertex root = null;
@@ -30,11 +31,12 @@ public class Alignment {
 	public Alignment(List<SemanticType> semanticTypes) {
 		this.semanticTypes = semanticTypes;
 
-		logger.debug("building initial graph ...");
+		logger.info("building initial graph ...");
 		graphBuilder = new GraphBuilder(this.semanticTypes);
-		linksForcedByDomains = graphBuilder.getLinksForcedByDomain();
+		linksForcedByDomain = graphBuilder.getLinksForcedByDomain();
 		
-		linksForcedByPencil = new ArrayList<LabeledWeightedEdge>();
+		linksForcedByUser = new ArrayList<LabeledWeightedEdge>();
+		linksPreferredByUI = new ArrayList<LabeledWeightedEdge>();
 		
 		semanticNodes = graphBuilder.getSemanticNodes();
 		
@@ -48,14 +50,14 @@ public class Alignment {
 		LabeledWeightedEdge[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new LabeledWeightedEdge[0]);
 		for (int i = 0; i < allLinks.length; i++) {
 			if (allLinks[i].getID().equalsIgnoreCase(linkId)) {
-				linksForcedByPencil.add(allLinks[i]);
-				logger.debug("link " + linkId + " has been added.");
+				linksForcedByUser.add(allLinks[i]);
+				logger.info("link " + linkId + " has been added to user selected links.");
 				align();
 				return;
 			}
 		}
 		
-		logger.debug("link with ID " + linkId + " does not exist in graph.");
+		logger.info("link with ID " + linkId + " does not exist in graph.");
 	}
 	
 	public void addUserLinks(List<String> linkIds) {
@@ -64,22 +66,22 @@ public class Alignment {
 			boolean found = false;
 			for (int i = 0; i < allLinks.length; i++) {
 				if (allLinks[i].getID().equalsIgnoreCase(linkIds.get(j))) {
-					linksForcedByPencil.add(allLinks[i]);
+					linksForcedByUser.add(allLinks[i]);
 					found = true;
-					logger.debug("link " + linkIds.get(j) + " has been added.");
+					logger.info("link " + linkIds.get(j) + " has been added to user selected links.");
 				}
 			}
 			if (!found)
-				logger.debug("link with ID " + linkIds.get(j) + " does not exist in graph.");
+				logger.info("link with ID " + linkIds.get(j) + " does not exist in graph.");
 		}
 		align();
 	}
 	
 	public void clearUserLink(String linkId) {
-		for (int i = 0; i < linksForcedByPencil.size(); i++) {
-			if (linksForcedByPencil.get(i).getID().equalsIgnoreCase(linkId)) {
-				linksForcedByPencil.remove(i);
-				logger.debug("link " + linkId + " has been removed.");
+		for (int i = 0; i < linksForcedByUser.size(); i++) {
+			if (linksForcedByUser.get(i).getID().equalsIgnoreCase(linkId)) {
+				linksForcedByUser.remove(i);
+				logger.info("link " + linkId + " has been removed from  user selected links.");
 				align();
 				return;
 			}
@@ -88,10 +90,10 @@ public class Alignment {
 	
 	public void clearUserLinks(List<String> linkIds) {
 		for (int j = 0; j < linkIds.size(); j++) {
-			for (int i = 0; i < linksForcedByPencil.size(); i++) {
-				if (linksForcedByPencil.get(i).getID().equalsIgnoreCase(linkIds.get(j))) {
-					linksForcedByPencil.remove(i);
-					logger.debug("link " + linkIds.get(j) + " has been removed.");
+			for (int i = 0; i < linksForcedByUser.size(); i++) {
+				if (linksForcedByUser.get(i).getID().equalsIgnoreCase(linkIds.get(j))) {
+					linksForcedByUser.remove(i);
+					logger.info("link " + linkIds.get(j) + " has been removed from user selected links.");
 				}
 			}
 		}
@@ -99,7 +101,69 @@ public class Alignment {
 	}
 	
 	public void clearAllUserLinks() {
-		linksForcedByPencil.clear();
+		linksForcedByUser.clear();
+		logger.info("user selected links have been cleared.");
+		align();
+	}
+	
+	
+	public void addUILink(String linkId) {
+		LabeledWeightedEdge[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new LabeledWeightedEdge[0]);
+		for (int i = 0; i < allLinks.length; i++) {
+			if (allLinks[i].getID().equalsIgnoreCase(linkId)) {
+				linksPreferredByUI.add(allLinks[i]);
+				logger.info("link " + linkId + " has been added to preferred UI links.");
+				align();
+				return;
+			}
+		}
+		
+		logger.info("link with ID " + linkId + " does not exist in graph.");
+	}
+	
+	public void addUILinks(List<String> linkIds) {
+		LabeledWeightedEdge[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new LabeledWeightedEdge[0]);
+		for (int j = 0; j < linkIds.size(); j++) {
+			boolean found = false;
+			for (int i = 0; i < allLinks.length; i++) {
+				if (allLinks[i].getID().equalsIgnoreCase(linkIds.get(j))) {
+					linksPreferredByUI.add(allLinks[i]);
+					found = true;
+					logger.info("link " + linkIds.get(j) + " has been added to preferred UI links.");
+				}
+			}
+			if (!found)
+				logger.info("link with ID " + linkIds.get(j) + " does not exist in graph.");
+		}
+		align();
+	}
+	
+	public void clearUILink(String linkId) {
+		for (int i = 0; i < linksPreferredByUI.size(); i++) {
+			if (linksPreferredByUI.get(i).getID().equalsIgnoreCase(linkId)) {
+				linksPreferredByUI.remove(i);
+				logger.info("link " + linkId + " has been removed from preferred UI links.");
+				align();
+				return;
+			}
+		}
+	}
+	
+	public void clearUILinks(List<String> linkIds) {
+		for (int j = 0; j < linkIds.size(); j++) {
+			for (int i = 0; i < linksPreferredByUI.size(); i++) {
+				if (linksPreferredByUI.get(i).getID().equalsIgnoreCase(linkIds.get(j))) {
+					linksPreferredByUI.remove(i);
+					logger.info("link " + linkIds.get(j) + " has been removed from preferred UI links.");
+				}
+			}
+		}
+		align();
+	}
+	
+	public void clearAllUILinks() {
+		linksPreferredByUI.clear();
+		logger.info("UI preferred links have been cleared.");
 		align();
 	}
 	
@@ -121,24 +185,24 @@ public class Alignment {
 				this.graphBuilder.copyLinks(source, v);
 				
 //				GraphUtil.printGraph(this.graphBuilder.getGraph());
-				linksForcedByPencil.add(this.graphBuilder.getGraph().getEdge(v, target));
+				linksForcedByUser.add(this.graphBuilder.getGraph().getEdge(v, target));
 				
 				// do we need to keep the outgoing links of the source which are already in the tree? 
 				
-				logger.debug("domain of the link " + linkId + " has been replicated and graph has been changed successfully.");
+				logger.info("domain of the link " + linkId + " has been replicated and graph has been changed successfully.");
 				align();
 				return;
 				
 			}
 		}
 		
-		logger.debug("link with ID " + linkId + " does not exist in graph.");
+		logger.info("link with ID " + linkId + " does not exist in graph.");
 	}
 	
 	public void reset() {
 		
 		graphBuilder = new GraphBuilder(this.semanticTypes);
-		linksForcedByPencil.clear();
+		linksForcedByUser.clear();
 		semanticNodes = graphBuilder.getSemanticNodes();
 		align();
 	}
@@ -181,33 +245,45 @@ public class Alignment {
 		return alternatives;
 	}
 	
+	private void updateLinksStatus() {
+		for (LabeledWeightedEdge e : linksForcedByUser)
+			e.setLinkStatus(LinkStatus.ForcedByUser);
+		for (LabeledWeightedEdge e : linksForcedByDomain)
+			e.setLinkStatus(LinkStatus.ForcedByDomain);
+		for (LabeledWeightedEdge e : linksPreferredByUI)
+			e.setLinkStatus(LinkStatus.PreferredByUI);
+	}
+	
 	private void align() {
 		
 //		GraphUtil.printGraph(this.graph);
 
 		long start = System.currentTimeMillis();
 		
-		logger.debug("preparing G Prime for steiner algorithm input ...");
+		logger.info("preparing G Prime for steiner algorithm input ...");
 		
 		List<LabeledWeightedEdge> selectedLinks = new ArrayList<LabeledWeightedEdge>();
-		selectedLinks.addAll(linksForcedByDomains);
-		selectedLinks.addAll(linksForcedByPencil);
+		updateLinksStatus();
+		// order of adding lists is important: linksPreferredByUI should be first 
+		selectedLinks.addAll(linksPreferredByUI);
+		selectedLinks.addAll(linksForcedByDomain);
+		selectedLinks.addAll(linksForcedByUser);
 		
 		GraphPreProcess graphPreProcess = new GraphPreProcess(this.graphBuilder.getGraph(), semanticNodes, selectedLinks );
 		UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedGraph = graphPreProcess.getUndirectedGraph();
 		List<Vertex> steinerNodes = graphPreProcess.getSteinerNodes();
 
-		logger.debug("computing steiner tree ...");
+		logger.info("computing steiner tree ...");
 
 		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodes);
 		WeightedMultigraph<Vertex, LabeledWeightedEdge> tree = steinerTree.getSteinerTree();
 		if (tree == null) {
-			logger.debug("resulting tree is null ...");
+			logger.info("resulting tree is null ...");
 			return;
 		}
 //		GraphUtil.printGraphSimple(tree);
 		
-		logger.debug("updating link directions ...");
+		logger.info("updating link directions ...");
 		TreePostProcess treePostProcess = new TreePostProcess(tree);
 		
 		this.steinerTree = treePostProcess.getTree();

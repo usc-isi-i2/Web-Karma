@@ -13,6 +13,7 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 	private LinkType linkType;
 	private String label;
 	private boolean inverse;
+	private LinkStatus linkStatus;
 	
 	public LabeledWeightedEdge(String id) {
 		super();
@@ -20,6 +21,7 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		this.linkType = LinkType.None;
 		this.label = id;
 		this.inverse = false;
+		this.linkStatus = LinkStatus.None;
 	}
 
 	public LabeledWeightedEdge(String id, String label) {
@@ -28,6 +30,7 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		this.linkType = LinkType.None;
 		this.label = label;
 		this.inverse = false;
+		this.linkStatus = LinkStatus.None;
 	}
 	
 	public LabeledWeightedEdge(String id, String label, LinkType linkType) {
@@ -36,6 +39,7 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		this.linkType = linkType;
 		this.label = label;
 		this.inverse = false;
+		this.linkStatus = LinkStatus.None;
 	}
 	
 	public LabeledWeightedEdge(String id, String label, LinkType linkType, boolean inverse) {
@@ -44,6 +48,7 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		this.linkType = linkType;
 		this.label = label;
 		this.inverse = inverse;;
+		this.linkStatus = LinkStatus.None;
 	}
 	
 	public LabeledWeightedEdge(LabeledWeightedEdge e) {
@@ -52,6 +57,7 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		this.linkType = e.linkType;
 		this.label = e.label;
 		this.inverse = e.inverse;;
+		this.linkStatus = LinkStatus.None;
 	}
 	
 	public String getLocalID() {
@@ -80,6 +86,15 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		return result;
 	}
 	
+	
+	public LinkStatus getLinkStatus() {
+		return linkStatus;
+	}
+
+	public void setLinkStatus(LinkStatus linkStatus) {
+		this.linkStatus = linkStatus;
+	}
+	
 	public boolean isInverse() {
 		return this.inverse;
 	}
@@ -99,7 +114,7 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 	public Vertex getSource() {
 		return (Vertex)super.getSource();
 	}
-	
+
 	public Vertex getTarget() {
 		return (Vertex)super.getTarget();
 	}
