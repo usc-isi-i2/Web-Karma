@@ -186,12 +186,13 @@ public class Alignment {
 	}
 	
 	private void updateLinksStatus() {
-		for (LabeledWeightedEdge e : linksForcedByUser)
-			e.setLinkStatus(LinkStatus.ForcedByUser);
-		for (LabeledWeightedEdge e : linksForcedByDomain)
-			e.setLinkStatus(LinkStatus.ForcedByDomain);
+		// order of adding lists is important: linksPreferredByUI should be first 
 		for (LabeledWeightedEdge e : linksPreferredByUI)
 			e.setLinkStatus(LinkStatus.PreferredByUI);
+		for (LabeledWeightedEdge e : linksForcedByDomain)
+			e.setLinkStatus(LinkStatus.ForcedByDomain);
+		for (LabeledWeightedEdge e : linksForcedByUser)
+			e.setLinkStatus(LinkStatus.ForcedByUser);
 	}
 	
 	private void addUILink(String linkId) {
@@ -221,7 +222,6 @@ public class Alignment {
 	
 	private void align() {
 		
-//		GraphUtil.printGraph(this.graph);
 
 		long start = System.currentTimeMillis();
 		
@@ -237,6 +237,7 @@ public class Alignment {
 		
 		GraphPreProcess graphPreProcess = new GraphPreProcess(this.graphBuilder.getGraph(), semanticNodes, selectedLinks );
 		UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedGraph = graphPreProcess.getUndirectedGraph();
+//		GraphUtil.printGraph(undirectedGraph);
 		List<Vertex> steinerNodes = graphPreProcess.getSteinerNodes();
 
 		logger.info("computing steiner tree ...");
