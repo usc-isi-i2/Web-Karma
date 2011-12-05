@@ -56,6 +56,7 @@ public abstract class CRFModelHandler {
 		ArrayList<LblFtrPair> ffs ;
 		double[] weights ;
 		CRFModelFieldOnly crfModel  ;
+		// beginning execution
 		br = null ;
 		line = null ;
 		numLabels = -1 ;
@@ -271,6 +272,9 @@ public abstract class CRFModelHandler {
 		optimizationObject.optimize(5) ;
 		// save the model to file with the new weights
 		savingSuccessful = saveModel() ;
+		if (!savingSuccessful) {
+			CRFModelHandler.file = null ;
+		}
 		return savingSuccessful ;
 	}
 
@@ -370,6 +374,9 @@ public abstract class CRFModelHandler {
 		optimizationObject = new OptimizeFieldOnly(globalData.crfModel, globalData) ;
 		optimizationObject.optimize(10) ;
 		savingSuccessful = saveModel() ;
+		if (!savingSuccessful) {
+			CRFModelHandler.file = null ;
+		}
 		return savingSuccessful ;
 	}
 
@@ -387,6 +394,7 @@ public abstract class CRFModelHandler {
 		}
 		catch(Exception e) {
 			logger.debug("Clearing the contents of the model file failed.") ;
+			CRFModelHandler.file = null ;
 			return false ;
 		}
 		labelToExamplesMap = new HashMap<String, ArrayList<String>>() ;
