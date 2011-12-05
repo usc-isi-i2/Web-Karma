@@ -55,7 +55,8 @@ public class CRFColumnModel implements Jsonizable {
 			
 			// Check if the type contains domain
 			if(label.contains("|")){
-				oj.put("Domain", SemanticTypeUtil.removeNamespace(label.split("\\|")[0]));
+				oj.put("DisplayDomainLabel", SemanticTypeUtil.removeNamespace(label.split("\\|")[0]));
+				oj.put("Domain", label.split("\\|")[0]);
 				oj.put("DisplayLabel", SemanticTypeUtil.removeNamespace(label.split("\\|")[1]));
 				oj.put("Type", label.split("\\|")[1]);
 			} else {

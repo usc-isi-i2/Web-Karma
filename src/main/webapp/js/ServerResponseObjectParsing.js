@@ -273,8 +273,8 @@ function parse(data) {
 						//Add the name
 						tdTag.append($("<div>").addClass("ColumnHeadingNameDiv")
 							.text(cell["contentCell"]["label"])
-							.mouseenter(config)
-							.mouseleave(configOut)
+							//.mouseenter(config)
+							//.mouseleave(configOut)
 						);
 						
 						// tdTag.text(cell["columnNameFull"])
@@ -294,12 +294,15 @@ function parse(data) {
 		
 		else if(element["updateType"] == "AlignmentHeadersUpdate") {
 			var table = $("table#" + element["worksheetId"]);
+			table.data("alignmentId", element["alignmentId"]);
 			
 			var thead = $("thead", table);
 			$("tr", thead).remove();
+			var columnHeaders = $("tr", thead).clone(true);
+			$("tr", thead).remove();
 			
 			$.each(element["rows"], function(index, row) {
-				var trTag = $("<tr>");
+				var trTag = $("<tr>").addClass("AlignmentRow");
 				$.each(row["cells"], function(index2, cell){
 					var tdTag = $("<td>");
 					
@@ -327,12 +330,25 @@ function parse(data) {
 						// Store the node ID
 						//tdTag.attr("id", cell["hNodeId"]);
 						
-						//Add the name
-						tdTag.append($("<div>").addClass("ColumnHeadingNameDiv")
-							.text(cell["contentCell"]["label"])
-							.mouseenter(config)
-							.mouseleave(configOut)
-						);
+						// Add the label
+						var labelDiv = $("<div>").addClass("ColumnHeadingNameDiv")
+							.text(cell["contentCell"]["label"]);
+						
+						// Add the pencil
+						if(cell["contentCell"]["parentLinkId"] != null) {
+							var pencilDiv = $("<div>").addClass("AlignmentLinkConfigDiv")
+								.append($("<img>").attr("src","../images/configure-icon.png"))
+								.append($("<span>").text(cell["contentCell"]["parentLinkLabel"]))
+								.click(showAlternativeParents);
+								
+							tdTag.append(pencilDiv);
+							if(cell["contentCell"]["parentLinkLabel"] != cell["contentCell"]["label"])
+								tdTag.append(labelDiv);
+						} else {
+							labelDiv.prepend($("<img>").attr("src","../images/configure-icon.png")).click(showAlternativeParents);
+							tdTag.append(labelDiv);
+						}
+						
 						
 						// tdTag.text(cell["columnNameFull"])
 							// .mouseenter(config)
@@ -347,6 +363,7 @@ function parse(data) {
 				});
 				thead.append(trTag);
 			});
+			thead.append(columnHeaders);
 		}
 		
 		else if(element["updateType"] == "WorksheetHierarchicalDataUpdate") {
@@ -675,7 +692,7 @@ function parse(data) {
 						.data("hNodeId", type["HNodeId"])
 						.data("fullType", type["FullType"])
 						.data("domain", type["Domain"])
-						.data("origin", type["Origin"]);
+						.data("origin", type["Origin"]);	
 				}
 					
 				//semDiv.hover(showSemanticTypeInfo, hideSemanticTypeInfo);

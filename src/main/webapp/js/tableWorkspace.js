@@ -36,7 +36,7 @@ function attachOntologyOptionsRadioButtonHandlers() {
 function changeSemanticType(event) {
 	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
 	
-	$("#ChangeSemanticTypesDialogBox").data("currentNodeId",$(this).data("hNodeId"));
+	optionsDiv.data("currentNodeId",$(this).data("hNodeId"));
 	$("table#CRFSuggestedLabelsTable tr",optionsDiv).remove();
 	$("#firstColumnKeyword").val("");
 	$("#secondColumnKeyword").val("");
@@ -60,12 +60,15 @@ function changeSemanticType(event) {
 			var prob = label["Probability"];
 			var percentage = Math.floor(prob*100);
 			var trTag = $("<tr>");
+			console.log("JSON Domain:" + label["Domain"]);
+			console.log("JSON Type" + label["Type"]);
 			var radioButton = $("<input>")
 							.attr("type", "radio")
-							.attr("id", label["Type"])
+							.attr("id", label["Type"] + "|" + label["Domain"])
 							.attr("name", "semanticTypeGroup")
 							.attr("value", label["Type"])
-							.val(label["Type"]);
+							.val(label["Type"])
+							.data("domain", label["Domain"]);
 				
 			var selectedFlag = false;
 			if(fullType == label["Type"]) {
@@ -83,13 +86,13 @@ function changeSemanticType(event) {
 			}
 				
 				
-			var typeLabel = $("<label>").attr("for",label["Type"]);
+			var typeLabel = $("<label>").attr("for",label["Type"] + "|" + label["Domain"]);
 			
 			// Check if the domain needs to be displayed
-			if($.trim(label["Domain"]) == "")
+			if($.trim(label["DisplayDomainLabel"]) == "")
 				typeLabel.text(label["DisplayLabel"]);
 			else
-				typeLabel.text(label["DisplayLabel"] + " of " + label['Domain']);
+				typeLabel.text(label["DisplayLabel"] + " of " + label['DisplayDomainLabel']);
 				
 			// Check if the label was assigned by the user
 			var score = "";
@@ -109,7 +112,11 @@ function changeSemanticType(event) {
 	
 	// Adding the handlers to the radio buttons
 	$("input:radio[@name='semanticTypeGroup']").change(function(){
-		$("#ChangeSemanticTypesDialogBox").data("currentSelection", $(this).val());
+		optionsDiv.data("currentSelection", $(this).val());
+		optionsDiv.data("type", $(this).val());
+		optionsDiv.data("domain", $(this).data("domain"));
+		optionsDiv.data("source", "RadioButtonList");
+		
 		$("div#firstColumnTree").jstree("deselect_all");
 		$("div#secondColumnTree").jstree("deselect_all");
 	});
@@ -119,8 +126,8 @@ function changeSemanticType(event) {
 	$("td#firstColumnLabel").text("Class");
 	$("td#secondColumnLabel").text("Data Property").hide();
 	// Send a request to get the JSON for displaying the list of classes
-	$("#ChangeSemanticTypesDialogBox").data("secondColumnSelection","");
-	$("#ChangeSemanticTypesDialogBox").data("firstColumnSelection","");
+	optionsDiv.data("secondColumnSelection","");
+	optionsDiv.data("firstColumnSelection","");
 	populatefirstColumnOntologyBox();
 	
 	
@@ -167,6 +174,7 @@ function populatefirstColumnOntologyBox(){
 						
 						"plugins" : [ "themes", "json_data", "ui" ,"sort", "search"]
 					}).bind("select_node.jstree", function (e, data) { 
+						$("#ChangeSemanticTypesDialogBox").data("source","OntologyHierarchy");
 						$("#ChangeSemanticTypesDialogBox").data("firstColumnSelection",data.rslt.obj.data("URI"));
 						//alert(data.rslt.obj.data("URI"));
 						$("input:radio[@name='semanticTypeGroup']").attr("checked", false);
@@ -234,33 +242,45 @@ function populateSecondColumnOntologyBox() {
 }
 
 function submitSemanticTypeChange() {
+	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
 	if($("#toggleOntologyHierarchy").val() == "dataProperty" 
-		&& $("#ChangeSemanticTypesDialogBox").data("secondColumnSelection") == "") {
+		&& optionsDiv.data("secondColumnSelection") == "") {
 		alert("Please specify the domain for the data property!");
 		return;
 	}
 	
 	var info = new Object();
-	var hNodeId = $("#ChangeSemanticTypesDialogBox").data("currentNodeId");
+	var hNodeId = optionsDiv.data("currentNodeId");
 	info["command"] = "SetSemanticTypeCommand";
 	info["vWorksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
 	info["hNodeId"] = hNodeId;
 	
-	
-	if($("#toggleOntologyHierarchy").val() == "class") {
-		if($("#ChangeSemanticTypesDialogBox").data("secondColumnSelection") == "") {
+	if(optionsDiv.data("source") == "RadioButtonList") {
+		info["type"] = optionsDiv.data("type");
+		info["domain"] = optionsDiv.data("domain");
+		
+		if(info["domain"] == "")
 			info["resourceType"] = "Class";
-			info["type"] = $("#ChangeSemanticTypesDialogBox").data("firstColumnSelection");
+		else
+			info["resourceType"] = "DataProperty";
+			
+	} else if (optionsDiv.data("source") == "OntologyHierarchy") {
+		if($("#toggleOntologyHierarchy").val() == "class") {
+			if(optionsDiv.data("secondColumnSelection") == "") {
+				info["resourceType"] = "Class";
+				info["type"] = optionsDiv.data("firstColumnSelection");
+			} else {
+				info["resourceType"] = "DataProperty";
+				info["domain"] = optionsDiv.data("firstColumnSelection");
+				info["type"] = optionsDiv.data("secondColumnSelection");
+			}
 		} else {
 			info["resourceType"] = "DataProperty";
-			info["domain"] = $("#ChangeSemanticTypesDialogBox").data("firstColumnSelection");
-			info["type"] = $("#ChangeSemanticTypesDialogBox").data("secondColumnSelection");
+			info["type"] = optionsDiv.data("firstColumnSelection");
+			info["domain"] = optionsDiv.data("secondColumnSelection");
 		}
-	} else {
-		info["resourceType"] = "DataProperty";
-		info["type"] = $("#ChangeSemanticTypesDialogBox").data("firstColumnSelection");
-		info["domain"] = $("#ChangeSemanticTypesDialogBox").data("secondColumnSelection");
 	}
+	
 	
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	
@@ -280,9 +300,8 @@ function submitSemanticTypeChange() {
 		   	}
 	});
 	
-	$("#ChangeSemanticTypesDialogBox").dialog("close");
+	optionsDiv.dialog("close");
 }
-
 
 function handlePrevNextLink() {
 	if($(this).hasClass("inactiveLink"))
@@ -476,6 +495,98 @@ function handleTableCellEditButton(event) {
 			buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitEdit }, width: 300, height: 150, position: positionArray});
 	console.log(tdTagId);
 	$("#tableCellEditDiv").data("tdTagId", tdTagId);
+}
+
+function showAlternativeParents(event) {
+	var info = new Object();
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["nodeId"] = $(this).parents("td.columnHeadingCell").data("jsonElement")["contentCell"]["id"];
+	info["command"] = "GetAlternativeLinksCommand";
+	info["alignmentId"] = $(this).parents("table.WorksheetTable").data("alignmentId");
+	info["worksheetId"] = $(this).parents("table.WorksheetTable").attr("id");
+		
+	var returned = $.ajax({
+	   	url: "/RequestController", 
+	   	type: "POST",
+	   	data : info,
+	   	dataType : "json",
+	   	complete : 
+	   		function (xhr, textStatus) {
+	   			// alert(xhr.responseText);
+	    		var json = $.parseJSON(xhr.responseText);
+	    		$.each(json["elements"], function(index, element) {
+	    			if(element["updateType"] == "GetAlternativeLinks") {
+	    				var optionsDiv = $("div#OntologyAlternativeLinksPanel");
+	    				var table = $("table", optionsDiv);
+	    				$("tr", table).remove();
+	    				var positionArray = [event.clientX+20		// distance from left
+									, event.clientY+10];	// distance from top
+						
+						$.each(element["Edges"], function(index2, edge) {
+							var trTag = $("<tr>");
+							
+							var radioButton = $("<input>")
+								.attr("type", "radio")
+								.attr("id", edge["edgeId"])
+								.attr("name", "AlternativeLinksGroup")
+								.attr("value", edge["edgeId"])
+								.val(edge["edgeLabel"]);
+								
+							var linkLabel = $("<label>").attr("for",edge["edgeId"]).text(edge["edgeSource"] + " " + edge["edgeLabel"]);
+							
+							trTag.append($("<td>").append(radioButton))
+								.append($("<td>").append(linkLabel));
+								
+							table.append(trTag);
+						});
+						// Show the dialog box
+						optionsDiv.dialog({width: 300, height: 300, position: positionArray
+							, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitAlignmentLinkChange }});
+							
+						$("input:radio[@name='AlternativeLinksGroup']").change(function(){
+							optionsDiv.data("currentSelection", $(this).attr("id"));
+							optionsDiv.data("alignmentId", info["alignmentId"]);
+							optionsDiv.data("worksheetId", info["worksheetId"]);
+						});
+	    			}
+	    		});
+		   	},
+		error :
+			function (xhr, textStatus) {
+	   			alert("Error occured while getting alternative links!" + textStatus);
+		   	}		   
+	});
+}
+
+function submitAlignmentLinkChange() {
+	var optionsDiv = $("div#OntologyAlternativeLinksPanel");
+	
+	var info = new Object();
+	info["command"] = "AddUserLinkToAlignmentCommand";
+	info["vWorksheetId"] = optionsDiv.data("worksheetId");
+	info["alignmentId"] = optionsDiv.data("alignmentId");
+	info["edgeId"] = optionsDiv.data("currentSelection");
+	
+	
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	
+	var returned = $.ajax({
+	   	url: "/RequestController", 
+	   	type: "POST",
+	   	data : info,
+	   	dataType : "json",
+	   	complete : 
+	   		function (xhr, textStatus) {
+	   			var json = $.parseJSON(xhr.responseText);
+	    		parse(json);
+		   	},
+		error :
+			function (xhr, textStatus) {
+	   			alert("Error occured with fetching new rows! " + textStatus);
+		   	}
+	});
+	
+	optionsDiv.dialog("close");
 }
 
 function openWorksheetOptions(event) {

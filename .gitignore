@@ -6,7 +6,7 @@ UserPrefs/*.json
 UserUploadedFiles
 UserUploadedFiles/*
 *.json
-Sample Data
+SampleData
 CRF_Model.txt
 tmp
 log/*
