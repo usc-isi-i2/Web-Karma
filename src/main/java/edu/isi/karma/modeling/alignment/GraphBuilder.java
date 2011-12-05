@@ -246,7 +246,7 @@ public class GraphBuilder {
 					for (int k = 0; k < objectProperties.size(); k++) {
 						label = objectProperties.get(k);
 						id = createLinkID(label);
-						LabeledWeightedEdge e = new LabeledWeightedEdge(id, label, LinkType.DataProperty);
+						LabeledWeightedEdge e = new LabeledWeightedEdge(id, label, LinkType.ObjectProperty);
 						this.graph.addEdge(source, target, e);
 						this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
 					}
