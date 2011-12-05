@@ -6,7 +6,6 @@ import java.util.Map;
 
 import edu.isi.karma.view.Stroke;
 import edu.isi.karma.view.Stroke.StrokeStyle;
-import edu.isi.karma.view.alignmentHeadings.AlignmentForest;
 
 public class HHTree {
 	private List<HHTNode> rootNodes = new ArrayList<HHTNode>();
@@ -35,7 +34,7 @@ public class HHTree {
 		calculateLeftAndRightStrokes();
 
 		// Debug
-		printHHTree();
+		// printHHTree();
 	}
 	
 	public int countRootNodes() {
@@ -175,11 +174,11 @@ public class HHTree {
 		}
 	}
 
-	private void printHHTree() {
-		for (HHTNode root : rootNodes) {
-			root.prettyprint("");
-		}
-	}
+//	private void printHHTree() {
+//		for (HHTNode root : rootNodes) {
+//			root.prettyprint("");
+//		}
+//	}
 
 	private void populateChildren(TNode node, HHTNode rootNode) {
 		List<TNode> children = node.getChildren();
@@ -199,18 +198,6 @@ public class HHTree {
 			return true;
 		else
 			return false;
-	}
-
-	public static void main(String[] args) {
-		HHTree hHtree = new HHTree();
-		AlignmentForest forest = new AlignmentForest();
-		forest.initializeTestForest();
-		hHtree.constructHHTree(forest);
-		
-		HHTable table = new HHTable();
-		table.constructCells(hHtree);
-		//AlignmentColorKeyTranslator trans = new AlignmentColorKeyTranslator();
-		//table.generateJson(trans);
 	}
 
 	public int getMaxDepth() {

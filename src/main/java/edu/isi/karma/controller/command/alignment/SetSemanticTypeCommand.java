@@ -32,6 +32,8 @@ public class SetSemanticTypeCommand extends Command {
 			String hNodeId, String type, String domain) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
+		System.out.println("Domain: " + domain);
+		System.out.println("type: " + type);
 		newType = new SemanticType(hNodeId, type, domain,
 				SemanticType.Origin.User, 1.0);
 	}
@@ -97,6 +99,9 @@ public class SetSemanticTypeCommand extends Command {
 		else
 			CRFModelHandler.addOrUpdateLabel(newType.getDomain() + "|"
 					+ newType.getType(), trainingExamples, columnFeatures);
+		
+		System.out.println("Using type:" + newType.getDomain() + "|"
+				+ newType.getType());
 
 		// Add the new CRF column model for this column
 		ArrayList<String> labels = new ArrayList<String>();

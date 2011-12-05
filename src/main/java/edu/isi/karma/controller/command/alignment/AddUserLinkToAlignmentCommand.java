@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AlignmentHeadersUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -18,20 +18,23 @@ import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.semantictypes.SemanticType;
-import edu.isi.karma.rep.semantictypes.SemanticTypes;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.alignmentHeadings.AlignmentForest;
 
-public class AlignToOntologyCommand extends WorksheetCommand {
+public class AddUserLinkToAlignmentCommand extends Command {
 
 	private final String vWorksheetId;
-	private String worksheetName;
+	private final String edgeId;
+	private final String alignmentId;
 
-	protected AlignToOntologyCommand(String id, String worksheetId,
-			String vWorksheetId) {
-		super(id, worksheetId);
+	// private String edgeLabel;
+
+	public AddUserLinkToAlignmentCommand(String id, String edgeId,
+			String alignmentId, String vWorksheetId) {
+		super(id);
+		this.edgeId = edgeId;
+		this.alignmentId = alignmentId;
 		this.vWorksheetId = vWorksheetId;
 	}
 
@@ -42,57 +45,62 @@ public class AlignToOntologyCommand extends WorksheetCommand {
 
 	@Override
 	public String getTitle() {
-		return "Align to Ontology";
+		return "Add User Link";
 	}
 
 	@Override
 	public String getDescription() {
-		return worksheetName;
+		return "";
 	}
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.notUndoable;
+		return CommandType.undoable;
 	}
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Worksheet worksheet = vWorkspace.getRepFactory().getWorksheet(
-				worksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(
+				alignmentId);
+		Worksheet worksheet = vWorkspace.getViewFactory()
+				.getVWorksheet(vWorksheetId).getWorksheet();
+		// Add the user provided edge
+		alignment.addUserLink(edgeId);
 
-		worksheetName = worksheet.getTitle();
-		// Creating a list of NameSet
-		// ArrayList<SemanticType> semanticTypes = new
-		// ArrayList<SemanticType>();
-		SemanticTypes semTypes = worksheet.getSemanticTypes();
+		return getAlignmentUpdateContainer(alignment, worksheet, vWorkspace);
+	}
 
-		// Get the list of sorted column names
-		List<HNode> sortedHeaderNodes = worksheet.getHeaders()
-				.getSortedHNodes();
+	@Override
+	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+		Alignment alignment = AlignmentManager.Instance().getAlignment(
+				alignmentId);
+		Worksheet worksheet = vWorkspace.getViewFactory()
+				.getVWorksheet(vWorksheetId).getWorksheet();
 
-		// Get the list of semantic types
-		List<SemanticType> types = new ArrayList<SemanticType>();
-		for (SemanticType type : semTypes.getTypes().values()) {
-			types.add(type);
-		}
+		// Clear the user provided edge
+		alignment.clearUserLink(edgeId);
 
-		// Get the Alignment
-		Alignment alignment = new Alignment(types);
+		// Get the alignment update
+		return getAlignmentUpdateContainer(alignment, worksheet, vWorkspace);
+	}
+
+	private UpdateContainer getAlignmentUpdateContainer(Alignment alignment,
+			Worksheet worksheet, VWorkspace vWorkspace) {
 		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
 				.getSteinerTree();
 		Vertex root = alignment.GetTreeRoot();
-		String alignmentId = Integer.toString(alignment.hashCode());
-		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 
+		List<HNode> sortedHeaders = worksheet.getHeaders().getSortedHNodes();
 		// Convert the tree into a AlignmentForest
 		AlignmentForest forest = AlignmentForest.constructFromSteinerTree(tree,
-				root, sortedHeaderNodes);
+				root, sortedHeaders);
 		AlignmentHeadersUpdate alignmentUpdate = new AlignmentHeadersUpdate(
 				forest, vWorksheetId, alignmentId);
-
+		GraphUtil.printGraph(tree);
+		
 		// Create new vWorksheet using the new header order
 		List<HNodePath> columnPaths = new ArrayList<HNodePath>();
-		for (HNode node : sortedHeaderNodes) {
+		for (HNode node : sortedHeaders) {
 			HNodePath path = new HNodePath(node);
 			columnPaths.add(path);
 		}
@@ -100,18 +108,10 @@ public class AlignToOntologyCommand extends WorksheetCommand {
 				columnPaths, vWorkspace);
 		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 
-		GraphUtil.printGraph(tree);
-
 		UpdateContainer c = new UpdateContainer();
 		c.add(alignmentUpdate);
 		vw.update(c);
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 		return c;
-	}
-
-	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		// Not required
-		return null;
 	}
 }

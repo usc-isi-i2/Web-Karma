@@ -12,6 +12,7 @@ import edu.isi.karma.view.Stroke.StrokeStyle;
 
 public class HHTable {
 	private HHCell[][] cells;
+	private boolean NO_SEPARATORS_FLAG = true;
 
 	public enum CellJsonKeys {
 		cellType, hNodeId, colSpan, fillId, heading, headingPadding, contentCell, cells
@@ -187,7 +188,12 @@ public class HHTable {
 						+ translator.getCssTag("", cell.getDepth()));
 			}
 
-			cellObj.put(CellJsonKeys.colSpan.name(), cell.getHtmlTableColSpan());
+			if(!NO_SEPARATORS_FLAG)
+				cellObj.put(CellJsonKeys.colSpan.name(), cell.getHtmlTableColSpan());
+			else {
+				cellObj.put(CellJsonKeys.colSpan.name(), cell.getColspan());
+			}
+			
 			cellObj.put(CellJsonKeys.fillId.name(),
 					translator.getCssTag("", cell.getDepth()));
 
@@ -210,10 +216,17 @@ public class HHTable {
 						rightBorder.getStyle().name() + ":"
 								+ translator.getCssTag("", cell.getDepth()));
 			} else {
-				cellObj.put(BorderJsonKeys.leftBorder.name(), "none:"
-						+ translator.getCssTag("", cell.getDepth()));
-				cellObj.put(BorderJsonKeys.rightBorder.name(), "none:"
-						+ translator.getCssTag("", cell.getDepth()));
+				if(!NO_SEPARATORS_FLAG) {
+					cellObj.put(BorderJsonKeys.leftBorder.name(), "none:"
+							+ translator.getCssTag("", cell.getDepth()));
+					cellObj.put(BorderJsonKeys.rightBorder.name(), "none:"
+							+ translator.getCssTag("", cell.getDepth()));
+				} else {
+					cellObj.put(BorderJsonKeys.leftBorder.name(), "outer:"
+							+ translator.getCssTag("", cell.getDepth()));
+					cellObj.put(BorderJsonKeys.rightBorder.name(), "outer:"
+							+ translator.getCssTag("", cell.getDepth()));
+				}
 			}
 
 			cellArray.put(cellObj);
@@ -268,7 +281,8 @@ public class HHTable {
 		}
 	}
 
-	public void generateJson(PrintWriter pw, ColorKeyTranslator translator) {
+	public void generateJson(PrintWriter pw, ColorKeyTranslator translator, boolean NO_SEPARATOR_FLAG_VALUE) {
+		NO_SEPARATORS_FLAG = NO_SEPARATOR_FLAG_VALUE;
 		JSONArray rows = new JSONArray();
 		try {
 			for (int row = 0; row < cells.length; row++) {
@@ -279,13 +293,15 @@ public class HHTable {
 					HHCell cell = cells[row][col];
 
 					// Print the left borders
-					populateLeftBorders(cell, cellArray, translator, row);
+					if(!NO_SEPARATORS_FLAG)
+						populateLeftBorders(cell, cellArray, translator, row);
 
 					// Print the content cell (if any)
 					populateContentCell(cell, cellArray, translator);
 
 					// Print the right borders
-					populateRightBorders(cell, cellArray, translator, row);
+					if(!NO_SEPARATORS_FLAG)
+						populateRightBorders(cell, cellArray, translator, row);
 
 					col += cell.getColspan();
 				}

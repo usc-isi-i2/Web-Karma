@@ -361,6 +361,11 @@ table#CRFSuggestedLabelsTable td {
 	font-size: 10px;
 }
 
+table#AlternativeParentLinksTable td {
+	padding: 4px;
+	font-size: 10px;
+}
+
 span.mediumSizedFont {
 	font-size: 14px;
 }

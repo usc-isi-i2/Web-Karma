@@ -22,7 +22,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 	private String vWorksheetId;
 
 	public enum JsonKeys {
-		HNodeId, FullType, ConfidenceLevel, Origin, FullCRFModel, DisplayLabel, Domain
+		HNodeId, FullType, ConfidenceLevel, Origin, FullCRFModel, DisplayLabel, DisplayDomainLabel, Domain
 	}
 
 	private static Logger logger = LoggerFactory
@@ -70,6 +70,8 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 							.value(SemanticTypeUtil.removeNamespace(type
 									.getType()))
 							.key(JsonKeys.Domain.name())
+							.value(type.getDomain())
+							.key(JsonKeys.DisplayDomainLabel.name())
 							.value(SemanticTypeUtil.removeNamespace(type
 									.getDomain()));
 				} else {

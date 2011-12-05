@@ -11,15 +11,17 @@ import edu.isi.karma.view.alignmentHeadings.AlignmentForest;
 public class AlignmentHeadersUpdate extends AbstractUpdate {
 
 	private String vWorksheetId;
+	private String alignmentId;
 	AlignmentForest forest;
 
 	private enum JsonKeys {
-		worksheetId, rows
+		worksheetId, rows, alignmentId
 	}
 
-	public AlignmentHeadersUpdate(AlignmentForest forest, String worksheetId) {
+	public AlignmentHeadersUpdate(AlignmentForest forest, String worksheetId, String alignmentId) {
 		this.forest = forest;
 		this.vWorksheetId = worksheetId;
+		this.alignmentId = alignmentId;
 	}
 
 	@Override
@@ -37,8 +39,10 @@ public class AlignmentHeadersUpdate extends AbstractUpdate {
 				+ "\": \"AlignmentHeadersUpdate\",");
 		pw.println("\"" + JsonKeys.worksheetId.name() + "\": \"" + vWorksheetId
 				+ "\",");
+		pw.println("\"" + JsonKeys.alignmentId.name() + "\": \"" + alignmentId
+				+ "\",");
 		pw.println("\""+JsonKeys.rows.name()+ "\":");
-		table.generateJson(pw, trans);
+		table.generateJson(pw, trans, true);
 		pw.println(prefix + "}");
 	}
 

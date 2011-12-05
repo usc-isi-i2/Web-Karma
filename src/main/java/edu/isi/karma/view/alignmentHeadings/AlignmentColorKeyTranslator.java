@@ -8,11 +8,11 @@ public class AlignmentColorKeyTranslator implements ColorKeyTranslator {
 
 	private static final HashMap<Integer, String> depthCssMap = new HashMap<Integer, String>();
 	static {
-		depthCssMap.put(0, "topLevelTableCell");
-		depthCssMap.put(1, "table01cell");
-		depthCssMap.put(2, "table02cell");
-		depthCssMap.put(3, "table03cell");
-		depthCssMap.put(4, "table04cell");
+		depthCssMap.put(0, "topLevelAlignmentTableCell");
+		depthCssMap.put(1, "AlignmentTable01cell");
+		depthCssMap.put(2, "AlignmentTable02cell");
+		depthCssMap.put(3, "AlignmentTable03cell");
+		depthCssMap.put(4, "AlignmentTable04cell");
 	}
 	
 	@Override
