@@ -46,12 +46,18 @@ public class AlignmentForest implements TForest {
 
 		forest.reorderTreeNodes(sortedHeaders);
 
-		// Get the final order of the columns from the forest.
-		// Put it in the same list in which we got the column order
+		/*** Get the final order of the columns from the forest ***/
+		// The same list sortedHeaders is used to communicate the final order
 		List<HNode> finalOrder = forest.getFinalColumnOrder(sortedHeaders);
+		// Need to preserve the unaligned columns
+		ArrayList<HNode> unalignedColumns = new ArrayList<HNode>();
+		unalignedColumns.addAll(sortedHeaders);
+		unalignedColumns.removeAll(finalOrder);
+		// Add the aligned columns
 		sortedHeaders.clear();
 		sortedHeaders.addAll(finalOrder);
-		
+		// Add the unaligned columns
+		sortedHeaders.addAll(unalignedColumns);
 		return forest;
 	}
 
@@ -91,12 +97,12 @@ public class AlignmentForest implements TForest {
 		}
 
 		logger.info("Node Map: " + nodeIndexMap);
-//		for (TNode node : nodeIndexMap.keySet()) {
-//			AlignmentNode nodeAl = (AlignmentNode) node;
-//			logger.info(nodeAl.getType().getType() + " of "
-//					+ nodeAl.getType().getDomain() + " : "
-//					+ nodeIndexMap.get(node));
-//		}
+		// for (TNode node : nodeIndexMap.keySet()) {
+		// AlignmentNode nodeAl = (AlignmentNode) node;
+		// logger.info(nodeAl.getType().getType() + " of "
+		// + nodeAl.getType().getDomain() + " : "
+		// + nodeIndexMap.get(node));
+		// }
 
 		// For each root, sort at each level
 		for (TNode root : roots) {
