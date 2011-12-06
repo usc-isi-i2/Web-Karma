@@ -682,11 +682,15 @@ function parse(data) {
 						type["ConfidenceLevel"]+"ConfidenceLevel");
 				
 				if(type["FullType"] == ""){
-					$(semDiv).text("Unassigned").addClass("LowConfidenceLevel")
-						.data("hNodeId", type["HNodeId"]);
-				} else if (type["ConfidenceLevel"] == "Low") {
-					$(semDiv).text("Unassigned").addClass("LowConfidenceLevel")
+					semDiv.text("Unassigned").addClass("LowConfidenceLevel")
 						.data("hNodeId", type["HNodeId"])
+						.data("fullType", "Unassigned");
+					if(type["FullCRFModel"] != null)
+						semDiv.data("crfInfo",type["FullCRFModel"]);		
+				} else if (type["ConfidenceLevel"] == "Low") {
+					semDiv.text("Unassigned").addClass("LowConfidenceLevel")
+						.data("hNodeId", type["HNodeId"])
+						.data("fullType", "Unassigned")
 						.data("crfInfo",type["FullCRFModel"]);
 				} else {
 					if(type["Domain"] != null && type["Domain"] != "")

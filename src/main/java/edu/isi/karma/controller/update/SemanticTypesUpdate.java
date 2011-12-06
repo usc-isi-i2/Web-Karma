@@ -82,9 +82,9 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 				}
 
 				// Populate the CRF Model
-				if (type != null) {
-					CRFColumnModel colModel = worksheet.getCrfModel()
-							.getModelByHNodeId(nodeId);
+				CRFColumnModel colModel = worksheet.getCrfModel()
+						.getModelByHNodeId(nodeId);
+				if (colModel != null) {
 					writer.key(JsonKeys.FullCRFModel.name()).value(
 							colModel.getAsJSONObject());
 				}

@@ -31,6 +31,9 @@ function attachOntologyOptionsRadioButtonHandlers() {
 	$("#submitSecondColumnSearch").click(function(){
 		$("div#secondColumnTree").jstree("search", $("#secondColumnKeyword").val());
 	});
+	
+	// Assign empty domain to the Unassigned radio button
+	$("input#UnassignTypeButton").data("Domain", "");
 }
 
 function changeSemanticType(event) {
@@ -60,8 +63,6 @@ function changeSemanticType(event) {
 			var prob = label["Probability"];
 			var percentage = Math.floor(prob*100);
 			var trTag = $("<tr>");
-			console.log("JSON Domain:" + label["Domain"]);
-			console.log("JSON Type" + label["Type"]);
 			var radioButton = $("<input>")
 							.attr("type", "radio")
 							.attr("id", label["Type"] + "|" + label["Domain"])
@@ -110,13 +111,15 @@ function changeSemanticType(event) {
 		labelsTable.html("<span class='smallSizedFont'><i>&nbsp;&nbsp;none</i></span>");
 	}
 	
+	if(fullType == "Unassigned") {
+		$("input#UnassignTypeButton").attr("checked", true);
+	}
+	
 	// Adding the handlers to the radio buttons
 	$("input:radio[@name='semanticTypeGroup']").change(function(){
-		optionsDiv.data("currentSelection", $(this).val());
 		optionsDiv.data("type", $(this).val());
 		optionsDiv.data("domain", $(this).data("domain"));
 		optionsDiv.data("source", "RadioButtonList");
-		
 		$("div#firstColumnTree").jstree("deselect_all");
 		$("div#secondColumnTree").jstree("deselect_all");
 	});
@@ -176,8 +179,8 @@ function populatefirstColumnOntologyBox(){
 					}).bind("select_node.jstree", function (e, data) { 
 						$("#ChangeSemanticTypesDialogBox").data("source","OntologyHierarchy");
 						$("#ChangeSemanticTypesDialogBox").data("firstColumnSelection",data.rslt.obj.data("URI"));
-						//alert(data.rslt.obj.data("URI"));
 						$("input:radio[@name='semanticTypeGroup']").attr("checked", false);
+						$("#UnassignTypeButton").attr('checked',false);
 						populateSecondColumnOntologyBox();
 					});
 	    		} 
@@ -258,6 +261,11 @@ function submitSemanticTypeChange() {
 	if(optionsDiv.data("source") == "RadioButtonList") {
 		info["type"] = optionsDiv.data("type");
 		info["domain"] = optionsDiv.data("domain");
+		
+		// Check if the user selected the unassigned  option
+		if(info["type"] == "UnassignType") {
+			info["command"] = "UnassignSemanticTypeCommand";
+		}
 		
 		if(info["domain"] == "")
 			info["resourceType"] = "Class";
@@ -414,10 +422,14 @@ function showCSVImportOptions(response) {
 	$.each(rows, function(index, row) {
 		var trTag = $("<tr>");
 		$.each(row, function(index2, val) {
+			var displayVal = val;
+			if(displayVal.length > 20) {
+				displayVal = displayVal.substring(0,20) + "...";
+			}
 			if(index2 == 0) {
-				trTag.append($("<td>").addClass("rowIndexCell").text(val));
+				trTag.append($("<td>").addClass("rowIndexCell").text(displayVal));
 			} else {
-				trTag.append($("<td>").text(val));
+				trTag.append($("<td>").text(displayVal));
 			}
 		});
 		$("#CSVPreviewTable").append(trTag);

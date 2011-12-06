@@ -23,9 +23,7 @@ public class SetSemanticTypeCommand extends Command {
 
 	private SemanticType oldType;
 	private final String vWorksheetId;
-
 	private CRFColumnModel oldColumnModel;
-
 	private final SemanticType newType;
 
 	protected SetSemanticTypeCommand(String id, String vWorksheetId,

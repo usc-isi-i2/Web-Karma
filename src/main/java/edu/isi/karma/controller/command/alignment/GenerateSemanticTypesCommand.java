@@ -110,7 +110,8 @@ public class GenerateSemanticTypesCommand extends Command {
 
 			SemanticType semtype = new SemanticType(path.getLeaf().getId(),
 					type, domain, SemanticType.Origin.CRFModel, scores.get(0));
-			worksheet.getSemanticTypes().addType(semtype);
+			if(semtype.getConfidenceLevel() != SemanticType.ConfidenceLevel.Low)
+				worksheet.getSemanticTypes().addType(semtype);
 		}
 
 		// Update the container
