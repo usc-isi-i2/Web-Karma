@@ -342,6 +342,8 @@ function parse(data) {
 								.click(showAlternativeParents);
 								
 							tdTag.append(pencilDiv);
+							
+							// Special case for data properties
 							if(cell["contentCell"]["parentLinkLabel"] != cell["contentCell"]["label"])
 								tdTag.append(labelDiv);
 						} else {
@@ -680,14 +682,17 @@ function parse(data) {
 						type["ConfidenceLevel"]+"ConfidenceLevel");
 				
 				if(type["FullType"] == ""){
-					$(semDiv).text("Click To Assign!").addClass("LowConfidenceLevel")
+					$(semDiv).text("Unassigned").addClass("LowConfidenceLevel")
 						.data("hNodeId", type["HNodeId"]);
 				} else if (type["ConfidenceLevel"] == "Low") {
-					$(semDiv).text("Click To Assign!").addClass("LowConfidenceLevel")
+					$(semDiv).text("Unassigned").addClass("LowConfidenceLevel")
 						.data("hNodeId", type["HNodeId"])
 						.data("crfInfo",type["FullCRFModel"]);
 				} else {
-					semDiv.text(type["DisplayLabel"]);;
+					if(type["Domain"] != null && type["Domain"] != "")
+						semDiv.text(type["DisplayDomainLabel"] + ":" + type["DisplayLabel"]);
+					else
+						semDiv.text(type["DisplayLabel"]);
 					semDiv.data("crfInfo",type["FullCRFModel"])
 						.data("hNodeId", type["HNodeId"])
 						.data("fullType", type["FullType"])
