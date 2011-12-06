@@ -48,7 +48,12 @@ public class SetSemanticTypeCommand extends Command {
 
 	@Override
 	public String getDescription() {
-		return newType.getType();
+		String domainLabel = SemanticTypeUtil.removeNamespace(newType.getDomain());
+		String typeLabel = SemanticTypeUtil.removeNamespace(newType.getType());
+		if (domainLabel.equals(""))
+			return typeLabel;
+		else
+			return typeLabel + " of " + domainLabel;
 	}
 
 	@Override
@@ -97,7 +102,7 @@ public class SetSemanticTypeCommand extends Command {
 		else
 			CRFModelHandler.addOrUpdateLabel(newType.getDomain() + "|"
 					+ newType.getType(), trainingExamples, columnFeatures);
-		
+
 		System.out.println("Using type:" + newType.getDomain() + "|"
 				+ newType.getType());
 

@@ -63,13 +63,16 @@ function changeSemanticType(event) {
 			var prob = label["Probability"];
 			var percentage = Math.floor(prob*100);
 			var trTag = $("<tr>");
+			console.log(label["Domain"]);
 			var radioButton = $("<input>")
 							.attr("type", "radio")
 							.attr("id", label["Type"] + "|" + label["Domain"])
 							.attr("name", "semanticTypeGroup")
 							.attr("value", label["Type"])
-							.val(label["Type"])
-							.data("domain", label["Domain"]);
+							.val(label["Type"]);
+			
+			if(label["Domain"] != null)
+				radioButton.data("domain", label["Domain"]);
 				
 			var selectedFlag = false;
 			if(fullType == label["Type"]) {
@@ -77,7 +80,7 @@ function changeSemanticType(event) {
 					radioButton.attr('checked',true);
 					selectedFlag = true;
 				} else {
-					if(label["Domain"].length != 0) {
+					if(label["Domain"] != null) {
 						if(domain == label["Domain"]){
 							radioButton.attr('checked',true);
 							selectedFlag = true;
@@ -118,7 +121,8 @@ function changeSemanticType(event) {
 	// Adding the handlers to the radio buttons
 	$("input:radio[@name='semanticTypeGroup']").change(function(){
 		optionsDiv.data("type", $(this).val());
-		optionsDiv.data("domain", $(this).data("domain"));
+		if($(this).data("domain") != null)
+			optionsDiv.data("domain", $(this).data("domain"));
 		optionsDiv.data("source", "RadioButtonList");
 		$("div#firstColumnTree").jstree("deselect_all");
 		$("div#secondColumnTree").jstree("deselect_all");
@@ -260,7 +264,10 @@ function submitSemanticTypeChange() {
 	
 	if(optionsDiv.data("source") == "RadioButtonList") {
 		info["type"] = optionsDiv.data("type");
-		info["domain"] = optionsDiv.data("domain");
+		if(optionsDiv.data("domain") != null)
+			info["domain"] = optionsDiv.data("domain");
+		else
+			info["domain"] = "";
 		
 		// Check if the user selected the unassigned  option
 		if(info["type"] == "UnassignType") {

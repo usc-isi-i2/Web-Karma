@@ -76,68 +76,68 @@
 }
 
 .dataAlignmentTable01cell {
-	background: #E5E5E5;
+	background: #FFFFFF;
 	color: #000000;
 }
 
 .topBorderouterAlignmentTable01cell {
 	border-top-style: solid;
-	border-top-color: #8E8D8D;
+	border-top-color: #FFFFFF;
 }
 
 .topBorderinnerAlignmentTable01cell {
 	border-top-style: dotted;
-	border-top-color: #8E8D8D;
+	border-top-color: #FFFFFF;
 }
 
 .topBordernoneAlignmentTable01cell {
 	border-top-style: none;
-	border-top-color: #8E8D8D;
+	border-top-color: #FFFFFF;
 }
 
 .leftBorderouterAlignmentTable01cell {
 	border-left-style: solid;
-	border-left-color: #8E8D8D;
+	border-left-color: #FFFFFF;
 }
 
 .leftBorderinnerAlignmentTable01cell {
 	border-left-style: dotted;
-	border-left-color: #8E8D8D;
+	border-left-color: #FFFFFF;
 }
 
 .leftBordernoneAlignmentTable01cell {
 	border-left-style: none;
-	border-left-color: #8E8D8D;
+	border-left-color: #FFFFFF;
 }
 
 .rightBorderouterAlignmentTable01cell {
 	border-right-style: solid;
-	border-right-color: #8E8D8D;
+	border-right-color: #FFFFFF;
 }
 
 .rightBorderinnerAlignmentTable01cell {
 	border-right-style: dotted;
-	border-right-color: #8E8D8D;
+	border-right-color: #FFFFFF;
 }
 
 .rightBordernoneAlignmentTable01cell {
 	border-right-style: none;
-	border-right-color: #8E8D8D;
+	border-right-color: #FFFFFF;
 }
 
 .bottomBorderouterAlignmentTable01cell {
 	border-bottom-style: solid;
-	border-bottom-color: #8E8D8D;
+	border-bottom-color: #FFFFFF;
 }
 
 .bottomBorderinnerAlignmentTable01cell {
 	border-bottom-style: dotted;
-	border-bottom-color: #8E8D8D;
+	border-bottom-color: #FFFFFF;
 }
 
 .bottomBordernoneAlignmentTable01cell {
 	border-bottom-style: none;
-	border-bottom-color: #8E8D8D;
+	border-bottom-color: #FFFFFF;
 }
 
 /* AlignmentTable02Cell classes */
@@ -153,62 +153,62 @@
 
 .topBorderouterAlignmentTable02cell {
 	border-top-style: solid;
-	border-top-color: #6F6F6F;
+	border-top-color: #FFFFFF;
 }
 
 .topBorderinnerAlignmentTable02cell {
 	border-top-style: dotted;
-	border-top-color: #6F6F6F;
+	border-top-color: #FFFFFF;
 }
 
 .topBordernoneAlignmentTable02cell {
 	border-top-style: none;
-	border-top-color: #6F6F6F;
+	border-top-color: #FFFFFF;
 }
 
 .leftBorderouterAlignmentTable02cell {
 	border-left-style: solid;
-	border-left-color: #6F6F6F;
+	border-left-color: #FFFFFF;
 }
 
 .leftBorderinnerAlignmentTable02cell {
 	border-left-style: dotted;
-	border-left-color: #6F6F6F;
+	border-left-color: #FFFFFF;
 }
 
 .leftBordernoneAlignmentTable02cell {
 	border-left-style: none;
-	border-left-color: #6F6F6F;
+	border-left-color: #FFFFFF;
 }
 
 .rightBorderouterAlignmentTable02cell {
 	border-right-style: solid;
-	border-right-color: #6F6F6F;
+	border-right-color: #FFFFFF;
 }
 
 .rightBorderinnerAlignmentTable02cell {
 	border-right-style: dotted;
-	border-right-color: #6F6F6F;
+	border-right-color: #FFFFFF;
 }
 
 .rightBordernoneAlignmentTable02cell {
 	border-right-style: none;
-	border-right-color: #6F6F6F;
+	border-right-color: #FFFFFF;
 }
 
 .bottomBorderouterAlignmentTable02cell {
 	border-bottom-style: solid;
-	border-bottom-color: #6F6F6F;
+	border-bottom-color: #FFFFFF;
 }
 
 .bottomBorderinnerAlignmentTable02cell {
 	border-bottom-style: dotted;
-	border-bottom-color: #6F6F6F;
+	border-bottom-color: #FFFFFF;
 }
 
 .bottomBordernoneAlignmentTable02cell {
 	border-bottom-style: none;
-	border-bottom-color: #6F6F6F;
+	border-bottom-color: #FFFFFF;
 }
 
 /* AlignmentTable03Cell classes */
@@ -224,62 +224,62 @@
 
 .topBorderouterAlignmentTable03cell {
 	border-top-style: solid;
-	border-top-color: #E5E5E5;
+	border-top-color: #FFFFFF;
 }
 
 .topBorderinnerAlignmentTable03cell {
 	border-top-style: dotted;
-	border-top-color: #E5E5E5;
+	border-top-color: #FFFFFF;
 }
 
 .topBordernoneAlignmentTable03cell {
 	border-top-style: none;
-	border-top-color: #E5E5E5;
+	border-top-color: #FFFFFF;
 }
 
 .leftBorderouterAlignmentTable03cell {
 	border-left-style: solid;
-	border-left-color: #E5E5E5;
+	border-left-color: #FFFFFF;
 }
 
 .leftBorderinnerAlignmentTable03cell {
 	border-left-style: dotted;
-	border-left-color: #E5E5E5;
+	border-left-color: #FFFFFF;
 }
 
 .leftBordernoneAlignmentTable03cell {
 	border-left-style: none;
-	border-left-color: #E5E5E5;
+	border-left-color: #FFFFFF;
 }
 
 .rightBorderouterAlignmentTable03cell {
 	border-right-style: solid;
-	border-right-color: #E5E5E5;
+	border-right-color: #FFFFFF;
 }
 
 .rightBorderinnerAlignmentTable03cell {
 	border-right-style: dotted;
-	border-right-color: #E5E5E5;
+	border-right-color: #FFFFFF;
 }
 
 .rightBordernoneAlignmentTable03cell {
 	border-right-style: none;
-	border-right-color: #E5E5E5;
+	border-right-color: #FFFFFF;
 }
 
 .bottomBorderouterAlignmentTable03cell {
 	border-bottom-style: solid;
-	border-bottom-color: #E5E5E5;
+	border-bottom-color: #FFFFFF;
 }
 
 .bottomBorderinnerAlignmentTable03cell {
 	border-bottom-style: dotted;
-	border-bottom-color: #E5E5E5;
+	border-bottom-color: #FFFFFF;
 }
 
 .bottomBordernoneAlignmentTable03cell {
 	border-bottom-style: none;
-	border-bottom-color: #E5E5E5;
+	border-bottom-color: #FFFFFF;
 }
 
 /* AlignmentTable04Cell classes */
@@ -295,60 +295,60 @@
 
 .topBorderouterAlignmentTable04cell {
 	border-top-style: solid;
-	border-top-color: #EDEDED;
+	border-top-color: #FFFFFF;
 }
 
 .topBorderinnerAlignmentTable04cell {
 	border-top-style: dotted;
-	border-top-color: #EDEDED;
+	border-top-color: #FFFFFF;
 }
 
 .topBordernoneAlignmentTable04cell {
 	border-top-style: none;
-	border-top-color: #EDEDED;
+	border-top-color: #FFFFFF;
 }
 
 .leftBorderouterAlignmentTable04cell {
 	border-left-style: solid;
-	border-left-color: #EDEDED;
+	border-left-color: #FFFFFF;
 }
 
 .leftBorderinnerAlignmentTable04cell {
 	border-left-style: dotted;
-	border-left-color: #EDEDED;
+	border-left-color: #FFFFFF;
 }
 
 .leftBordernoneAlignmentTable04cell {
 	border-left-style: none;
-	border-left-color: #EDEDED;
+	border-left-color: #FFFFFF;
 }
 
 .rightBorderouterAlignmentTable04cell {
 	border-right-style: solid;
-	border-right-color: #EDEDED;
+	border-right-color: #FFFFFF;
 }
 
 .rightBorderinnerAlignmentTable04cell {
 	border-right-style: dotted;
-	border-right-color: #EDEDED;
+	border-right-color: #FFFFFF;
 }
 
 .rightBordernoneAlignmentTable04cell {
 	border-right-style: none;
-	border-right-color: #EDEDED;
+	border-right-color: #FFFFFF;
 }
 
 .bottomBorderouterAlignmentTable04cell {
 	border-bottom-style: solid;
-	border-bottom-color: #EDEDED;
+	border-bottom-color: #FFFFFF;
 }
 
 .bottomBorderinnerAlignmentTable04cell {
 	border-bottom-style: dotted;
-	border-bottom-color: #EDEDED;
+	border-bottom-color: #FFFFFF;
 }
 
 .bottomBordernoneAlignmentTable04cell {
 	border-bottom-style: none;
-	border-bottom-color: #EDEDED;
+	border-bottom-color: #FFFFFF;
 }

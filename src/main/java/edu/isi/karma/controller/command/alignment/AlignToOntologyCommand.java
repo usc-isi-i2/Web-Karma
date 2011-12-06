@@ -85,28 +85,37 @@ public class AlignToOntologyCommand extends WorksheetCommand {
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 
 		// Convert the tree into a AlignmentForest
-		AlignmentForest forest = AlignmentForest.constructFromSteinerTree(tree,
-				root, sortedHeaderNodes);
-		AlignmentHeadersUpdate alignmentUpdate = new AlignmentHeadersUpdate(
-				forest, vWorksheetId, alignmentId);
+		if (root != null) {
+			AlignmentForest forest = AlignmentForest.constructFromSteinerTree(
+					tree, root, sortedHeaderNodes);
+			AlignmentHeadersUpdate alignmentUpdate = new AlignmentHeadersUpdate(
+					forest, vWorksheetId, alignmentId);
 
-		// Create new vWorksheet using the new header order
-		List<HNodePath> columnPaths = new ArrayList<HNodePath>();
-		for (HNode node : sortedHeaderNodes) {
-			HNodePath path = new HNodePath(node);
-			columnPaths.add(path);
+			// Create new vWorksheet using the new header order
+			List<HNodePath> columnPaths = new ArrayList<HNodePath>();
+			for (HNode node : sortedHeaderNodes) {
+				HNodePath path = new HNodePath(node);
+				columnPaths.add(path);
+			}
+			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
+					worksheet, columnPaths, vWorkspace);
+			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(
+					vWorksheetId);
+
+			GraphUtil.printGraph(tree);
+
+			UpdateContainer c = new UpdateContainer();
+			c.add(alignmentUpdate);
+			vw.update(c);
+			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+			return c;
+		} else {
+			// TODO Return an error update showing that no columns were
+			// semantically typed
+			UpdateContainer c = new UpdateContainer();
+			return c;
 		}
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,
-				columnPaths, vWorkspace);
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 
-		GraphUtil.printGraph(tree);
-
-		UpdateContainer c = new UpdateContainer();
-		c.add(alignmentUpdate);
-		vw.update(c);
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
-		return c;
 	}
 
 	@Override

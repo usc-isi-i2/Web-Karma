@@ -1,9 +1,12 @@
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.List;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.rep.semantictypes.SemanticTypes;
@@ -52,6 +55,15 @@ public class UnassignSemanticTypeCommand extends Command {
 		SemanticTypes types = worksheet.getSemanticTypes();
 		oldSemanticType = types.getSemanticTypeByHNodeId(hNodeId);
 		types.unassignColumnSemanticType(hNodeId);
+		
+		// Get the column name
+		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
+		for(HNodePath path: columnPaths) {
+			if(path.getLeaf().getId().equals(hNodeId)) {
+				columnName  = path.getLeaf().getColumnName();
+				break;
+			}
+		}
 
 		// Update the container
 		UpdateContainer c = new UpdateContainer();
