@@ -63,14 +63,13 @@ function changeSemanticType(event) {
 			var prob = label["Probability"];
 			var percentage = Math.floor(prob*100);
 			var trTag = $("<tr>");
-			console.log(label["Domain"]);
 			var radioButton = $("<input>")
 							.attr("type", "radio")
 							.attr("id", label["Type"] + "|" + label["Domain"])
 							.attr("name", "semanticTypeGroup")
 							.attr("value", label["Type"])
 							.val(label["Type"]);
-			
+				
 			if(label["Domain"] != null)
 				radioButton.data("domain", label["Domain"]);
 				
@@ -139,7 +138,7 @@ function changeSemanticType(event) {
 	
 	
 	// Show the dialog box
-	optionsDiv.dialog({width: 400, height: 620, position: positionArray
+	optionsDiv.dialog({width: 400, height: 650, position: positionArray
 		, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitSemanticTypeChange }});
 }
 
@@ -512,7 +511,7 @@ function handleTableCellEditButton(event) {
 	
 	$("#tableCellEditDiv").dialog({ title: 'Edit Cell Value',
 			buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitEdit }, width: 300, height: 150, position: positionArray});
-	console.log(tdTagId);
+	// console.log(tdTagId);
 	$("#tableCellEditDiv").data("tdTagId", tdTagId);
 }
 
@@ -655,6 +654,40 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		   			alert("Error occured while generating semantic types!" + textStatus);
 			   	}		   
 		});
+	});
+	
+	$("button#showModel").click(function(){
+		$("#WorksheetOptionsDiv").hide();
+		
+		console.log("Showing model for table with ID: " + $("#WorksheetOptionsDiv").data("worksheetId"));
+		var info = new Object();
+		info["vWorksheetId"] = $("#WorksheetOptionsDiv").data("worksheetId");
+		info["workspaceId"] = $.workspaceGlobalInformation.id;
+		info["command"] = "ShowModelCommand";
+			
+		var returned = $.ajax({
+		   	url: "/RequestController", 
+		   	type: "POST",
+		   	data : info,
+		   	dataType : "json",
+		   	complete : 
+		   		function (xhr, textStatus) {
+		   			//alert(xhr.responseText);
+		    		var json = $.parseJSON(xhr.responseText);
+		    		parse(json);
+			   	},
+			error :
+				function (xhr, textStatus) {
+		   			alert("Error occured while generating semantic types!" + textStatus);
+			   	}		   
+		});
+	});
+	
+	$("button#hideModel").click(function(){
+		$("#WorksheetOptionsDiv").hide();
+		var table = $("table#" + $("#WorksheetOptionsDiv").data("worksheetId"));
+		$("tr.AlignmentRow", table).remove();
+		$("div.semanticTypeDiv", table).remove();
 	});
 	
 	$("#alignToOntologyButton").click(function(){

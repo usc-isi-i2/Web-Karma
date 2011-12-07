@@ -6,6 +6,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.alignment.AlignToOntology;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
@@ -68,6 +69,11 @@ public class UnassignSemanticTypeCommand extends Command {
 		// Update the container
 		UpdateContainer c = new UpdateContainer();
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+		
+		// Update the alignment
+		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
+		align.update(c, true);
+		
 		return c;
 	}
 
@@ -84,6 +90,10 @@ public class UnassignSemanticTypeCommand extends Command {
 		// Update the container
 		UpdateContainer c = new UpdateContainer();
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+		
+		// Update the alignment
+		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
+		align.update(c, true);
 		return c;
 	}
 
