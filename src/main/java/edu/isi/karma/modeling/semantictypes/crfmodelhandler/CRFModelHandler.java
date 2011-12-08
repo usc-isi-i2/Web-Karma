@@ -24,6 +24,7 @@ import edu.isi.karma.modeling.semantictypes.mycrf.math.Matrix;
 import edu.isi.karma.modeling.semantictypes.mycrf.optimization.OptimizeFieldOnly;
 import edu.isi.karma.modeling.semantictypes.myutils.ListOps;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
+import edu.isi.karma.modeling.semantictypes.myutils.RandOps;
 import edu.isi.karma.modeling.semantictypes.sl.Lexer;
 import edu.isi.karma.modeling.semantictypes.sl.Part;
 import edu.isi.karma.modeling.semantictypes.sl.RegexFeatureExtractor;
@@ -193,9 +194,10 @@ public abstract class CRFModelHandler {
 		}
 		ArrayList<String> cleanedExamples, allowedCharacters ;
 		int labelIndex ;
-		HashSet<String> newFeatures, existingFeatures ;
+		HashSet<String> allFeatures;
+		ArrayList<LblFtrPair> ffsOfLabel, otherFFs;
+		ArrayList<Double> weightsOfFFsOfLabel, weightsOfOtherFFs;
 		OptimizeFieldOnly optimizationObject;
-		double[] newWeights;
 		boolean savingSuccessful ;
 		// running basic sanity checks in the input arguments
 		label = label.trim() ;
@@ -227,21 +229,17 @@ public abstract class CRFModelHandler {
 			logger.debug("@examples list contains forbidden characters only. The allowed characters are " + allowedCharacters) ;
 			return false ;
 		}
-		existingFeatures = new HashSet<String>() ;
-		newFeatures = new HashSet<String>() ;
-		labelIndex = globalData.labels.indexOf(label) ;
-		if (globalData.labels.contains(label)) {
-			for(LblFtrPair ff : globalData.crfModel.ffs) {
-				if (ff.labelIndex == labelIndex) {
-					existingFeatures.add(ff.feature) ;
-				}
-			}
-		}
 		// if label does not already exist in the model, add new label. Also, add an entry in the map for the new label.
+		labelIndex = globalData.labels.indexOf(label) ;
 		if (labelIndex == -1) {
 			globalData.labels.add(label) ;
 			labelIndex = globalData.labels.indexOf(label) ;
 			labelToExamplesMap.put(label, new ArrayList<String>()) ;
+		}
+		allFeatures = new HashSet<String>() ;
+		// get features of existing examples
+		for(String example: labelToExamplesMap.get(label)) {
+			allFeatures.addAll(featureSet(example)) ;
 		}
 		// add examples to the existing list of examples
 		// create new Graph for each example and add it to the list of trainingGraphs in globalData
@@ -253,19 +251,58 @@ public abstract class CRFModelHandler {
 			exampleFtrs = featureSet(example, columnFeatures) ;
 			newGraph = new GraphFieldOnly(example, label, new ArrayList<String>(exampleFtrs), globalData) ;
 			globalData.trainingGraphs.add(newGraph) ;
-			newFeatures.addAll(exampleFtrs) ;
+			allFeatures.addAll(exampleFtrs) ;
 		}
-		// add new feature functions to the crfModel
-		newFeatures.removeAll(existingFeatures) ;
-		for(String ftr : newFeatures) {
-			globalData.crfModel.ffs.add(new LblFtrPair(labelIndex, ftr)) ;
+		// if the total number of features is > 100, then randomly select 100 from them.
+		if (allFeatures.size() > 100) {
+			ArrayList<Integer> randomIntegers;
+			HashSet<String> selectedFeatures;
+			ArrayList<String> listOfFeatures;
+			randomIntegers = RandOps.randomNumbers(allFeatures.size(), 100) ;
+			selectedFeatures = new HashSet<String>();
+			listOfFeatures = new ArrayList<String>(allFeatures) ;
+			for(Integer i : randomIntegers) {
+				selectedFeatures.add(listOfFeatures.get(i));
+			}
+			allFeatures = selectedFeatures ;
 		}
-		// If we added any new feature functions, then we expand the weights array to match the length of the ff list in CRFModelFieldOnly
-		// we copy the old values of weights for the old ffs and set the new weights to be zero.
-		if (globalData.crfModel.ffs.size() != globalData.crfModel.weights.length) {
-			newWeights = new double[globalData.crfModel.ffs.size()] ;
-			System.arraycopy(globalData.crfModel.weights, 0, newWeights, 0, globalData.crfModel.weights.length) ;
-			globalData.crfModel.weights = newWeights ;
+		// separate the label ffs and weights from other ffs and weights
+		ffsOfLabel = new ArrayList<LblFtrPair>() ;
+		otherFFs = new ArrayList<LblFtrPair>() ;
+		weightsOfFFsOfLabel = new ArrayList<Double>() ;
+		weightsOfOtherFFs = new ArrayList<Double>() ;
+		for(int ffIndex=0;ffIndex<globalData.crfModel.ffs.size();ffIndex++) {
+			LblFtrPair ff;
+			ff = globalData.crfModel.ffs.get(ffIndex);
+			if (ff.labelIndex == labelIndex) {
+				ffsOfLabel.add(ff) ;
+				weightsOfFFsOfLabel.add(globalData.crfModel.weights[ffIndex]);
+			}
+			else {
+				otherFFs.add(ff) ;
+				weightsOfOtherFFs.add(globalData.crfModel.weights[ffIndex]);
+			}
+		}
+		// from the existing ffs of this label, if any of them have a selected feature, then add it to the other ffs and its learned weight
+		for(int ffIndex=0;ffIndex<ffsOfLabel.size();ffIndex++) {
+			LblFtrPair ff;
+			ff = ffsOfLabel.get(ffIndex);
+			if (allFeatures.contains(ff.feature)) {
+				otherFFs.add(ff);
+				weightsOfOtherFFs.add(weightsOfFFsOfLabel.get(ffIndex)) ;
+				allFeatures.remove(ff.feature);
+			}
+		}
+		// create new ffs for all other selected features and add zero as their weight
+		for(String ftr : allFeatures) {
+			otherFFs.add(new LblFtrPair(labelIndex, ftr));
+			weightsOfOtherFFs.add(0.0);
+		}
+		// reset the ffs and the weights array
+		globalData.crfModel.ffs = otherFFs ;
+		globalData.crfModel.weights = new double[otherFFs.size()];
+		for(int i=0;i<otherFFs.size();i++) {
+			globalData.crfModel.weights[i] = weightsOfOtherFFs.get(i) ;
 		}
 		// optimize the model to adjust to the new label/examples/ffs
 		optimizationObject = new OptimizeFieldOnly(globalData.crfModel, globalData) ;
