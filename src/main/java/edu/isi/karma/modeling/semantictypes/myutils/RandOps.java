@@ -7,6 +7,13 @@ import java.util.Random;
 
 public class RandOps {
 	
+	
+	
+	/**
+	 * @param limit - max limit (exclusive)
+	 * @param nNumbers - number of integers to be returned
+	 * @return - a list of integers randomly selected from 0 to limit-1 (both inclusive)
+	 */
 	public static ArrayList<Integer> randomNumbers(int limit, int nNumbers) {
 		if(limit < nNumbers) {
 			Prnt.endIt("RandOps.randomNumbers: limit < nNumbers") ;

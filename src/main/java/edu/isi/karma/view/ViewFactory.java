@@ -49,9 +49,13 @@ public class ViewFactory {
 		HNode hn = path.getLeaf();
 		String columnNameFull = hn.getColumnName();
 		String columnNameShort = columnNameFull;
-		if (columnNameFull.length() > preferences.getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader)) {
-			columnNameShort = JSONUtil.truncateForHeader(columnNameFull,
-					preferences.getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader));
+		if (columnNameFull.length() > preferences
+				.getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader)) {
+			columnNameShort = JSONUtil
+					.truncateForHeader(
+							columnNameFull,
+							preferences
+									.getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader));
 		}
 		tableCssTags.registerTablesInPath(path);
 		return new VColumnHeader(path.toString(), columnNameFull,
@@ -64,6 +68,12 @@ public class ViewFactory {
 		VWorksheet vw = new VWorksheet(id, worksheet, columns, vWorkspace);
 		vWorksheets.put(id, vw);
 		return vw;
+	}
+
+	public void updateWorksheet(String vWorksheetId, Worksheet worksheet, List<HNodePath> columns,
+			VWorkspace vWorkspace) {
+		VWorksheet vw = new VWorksheet(vWorksheetId, worksheet, columns, vWorkspace);
+		vWorksheets.put(vWorksheetId, vw);
 	}
 
 	public VWorksheet getVWorksheet(String vWorksheetId) {

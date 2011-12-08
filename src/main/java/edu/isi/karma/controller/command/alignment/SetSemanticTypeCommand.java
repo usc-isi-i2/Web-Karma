@@ -10,6 +10,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.alignment.AlignToOntology;
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
@@ -23,15 +24,15 @@ public class SetSemanticTypeCommand extends Command {
 
 	private SemanticType oldType;
 	private final String vWorksheetId;
-
 	private CRFColumnModel oldColumnModel;
-
 	private final SemanticType newType;
 
 	protected SetSemanticTypeCommand(String id, String vWorksheetId,
 			String hNodeId, String type, String domain) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
+		System.out.println("Domain: " + domain);
+		System.out.println("type: " + type);
 		newType = new SemanticType(hNodeId, type, domain,
 				SemanticType.Origin.User, 1.0);
 	}
@@ -48,7 +49,13 @@ public class SetSemanticTypeCommand extends Command {
 
 	@Override
 	public String getDescription() {
-		return newType.getType();
+		String domainLabel = SemanticTypeUtil.removeNamespace(newType
+				.getDomain());
+		String typeLabel = SemanticTypeUtil.removeNamespace(newType.getType());
+		if (domainLabel.equals(""))
+			return typeLabel;
+		else
+			return typeLabel + " of " + domainLabel;
 	}
 
 	@Override
@@ -58,6 +65,7 @@ public class SetSemanticTypeCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
@@ -98,6 +106,9 @@ public class SetSemanticTypeCommand extends Command {
 			CRFModelHandler.addOrUpdateLabel(newType.getDomain() + "|"
 					+ newType.getType(), trainingExamples, columnFeatures);
 
+		System.out.println("Using type:" + newType.getDomain() + "|"
+				+ newType.getType());
+
 		// Add the new CRF column model for this column
 		ArrayList<String> labels = new ArrayList<String>();
 		ArrayList<Double> scores = new ArrayList<Double>();
@@ -106,12 +117,18 @@ public class SetSemanticTypeCommand extends Command {
 		CRFColumnModel newModel = new CRFColumnModel(labels, scores);
 		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), newModel);
 
-		return new UpdateContainer(new SemanticTypesUpdate(worksheet,
-				vWorksheetId));
+		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+
+		// Get the alignment update if any
+		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
+				vWorksheetId);
+		align.update(c, true);
+		return c;
 	}
 
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
 		if (oldType == null)
@@ -123,7 +140,10 @@ public class SetSemanticTypeCommand extends Command {
 		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(),
 				oldColumnModel);
 
-		return new UpdateContainer(new SemanticTypesUpdate(worksheet,
-				vWorksheetId));
+		// Get the alignment update if any
+		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
+				vWorksheetId);
+		align.update(c, true);
+		return c;
 	}
 }

@@ -19,6 +19,10 @@ public class SemanticTypes implements Jsonizable {
 	public SemanticType getSemanticTypeByHNodeId(String hNodeId) {
 		return types.get(hNodeId);
 	}
+	
+	public void unassignColumnSemanticType(String hNodeId) {
+		types.remove(hNodeId);
+	}
 
 	@Override
 	public void write(JSONWriter writer) throws JSONException {

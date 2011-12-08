@@ -29,10 +29,14 @@ import edu.isi.karma.controller.command.TablePagerResizeCommand;
 import edu.isi.karma.controller.command.TablePagerResizeCommandFactory;
 import edu.isi.karma.controller.command.UndoRedoCommand;
 import edu.isi.karma.controller.command.UndoRedoCommandFactory;
+import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommand;
+import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommandFactory;
 import edu.isi.karma.controller.command.alignment.AlignToOntologyCommand;
 import edu.isi.karma.controller.command.alignment.AlignToOntologyCommandFactory;
 import edu.isi.karma.controller.command.alignment.GenerateSemanticTypesCommand;
 import edu.isi.karma.controller.command.alignment.GenerateSemanticTypesCommandFactory;
+import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommand;
+import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetDataPropertiesForClassCommand;
 import edu.isi.karma.controller.command.alignment.GetDataPropertiesForClassCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetDataPropertyHierarchyCommand;
@@ -43,6 +47,10 @@ import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyComma
 import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyCommandFactory;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommandFactory;
+import edu.isi.karma.controller.command.alignment.ShowModelCommand;
+import edu.isi.karma.controller.command.alignment.ShowModelCommandFactory;
+import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommand;
+import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
 
@@ -103,6 +111,14 @@ public class ExecutionController {
 				new GetDomainsForDataPropertyCommandFactory());
 		commandFactoryMap.put(GetDataPropertiesForClassCommand.class.getSimpleName(),
 				new GetDataPropertiesForClassCommandFactory());
+		commandFactoryMap.put(GetAlternativeLinksCommand.class.getSimpleName(),
+				new GetAlternativeLinksCommandFactory());
+		commandFactoryMap.put(AddUserLinkToAlignmentCommand.class.getSimpleName(),
+				new AddUserLinkToAlignmentCommandFactory());
+		commandFactoryMap.put(UnassignSemanticTypeCommand.class.getSimpleName(),
+				new UnassignSemanticTypeCommandFactory());
+		commandFactoryMap.put(ShowModelCommand.class.getSimpleName(),
+				new ShowModelCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {
@@ -134,7 +150,7 @@ public class ExecutionController {
 				}
 				
 				String responseJson = updateContainer.generateJson(vWorkspace);
-				logger.info(responseJson);
+				//logger.info(responseJson);
 				return responseJson;
 			} catch (CommandException e) {
 				logger.error(

@@ -9,7 +9,7 @@ import edu.isi.karma.rep.hierarchicalheadings.HHTable;
 import edu.isi.karma.rep.hierarchicalheadings.HHTree;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.view.alignmentHeadings.AlignmentColorKeyTranslator;
+import edu.isi.karma.view.tableheadings.HeadersColorKeyTranslator;
 
 /**
  * @author szekely
@@ -47,14 +47,14 @@ public class WorksheetHierarchicalHeadersUpdate extends AbstractUpdate {
 		HHTable table = new HHTable();
 		table.constructCells(hHtree);
 
-		AlignmentColorKeyTranslator trans = new AlignmentColorKeyTranslator();
+		HeadersColorKeyTranslator trans = new HeadersColorKeyTranslator();
 		pw.println(prefix + "{");
 		pw.println("\"" + GenericJsonKeys.updateType.name()
 				+ "\": \"TestWorksheetHierarchicalHeadersUpdate\",");
 		pw.println("\"" + JsonKeys.worksheetId.name() + "\": \"" + vWorksheet.getId()
 				+ "\",");
 		pw.println("\""+JsonKeys.rows.name()+ "\":");
-		table.generateJson(pw, trans);
+		table.generateJson(pw, trans, false);
 		pw.println(prefix + "}");
 	}
 

@@ -18,6 +18,7 @@
 		<link rel="stylesheet" type="text/css" href="./css/CSVImport.css" />
 		<link rel="stylesheet" type="text/css" href="./css/DatabaseImport.css" />
 		<link rel="stylesheet" type="text/css" href="./css/headerParsingExample.css" />
+		<link rel="stylesheet" type="text/css" href="./css/AlignmentHeaders.css" />
 		
 		
 		<!-- Third Party JavaScript files		 -->
@@ -170,30 +171,28 @@
 				});
 			});
 			
-			// Database Import div options 
-			// Hide the database import div
+			
 			$(function() {
+				// Database Import div options 
+				// Hide the database import div
 				$("#DatabaseImportDiv").hide();
 				$("#importDatabaseTableButton").button();
 				styleDatabaseDialogObjects();
 				addDatabaseImportClickHandlers();
 				$("#importDatabaseTableButton").click(openDatabaseTableImportDialog);
-			});
-			
-			// Hide the table cell edit div
-			$(function() {
+				
+				// Hide the table cell edit div
 				$("#tableCellEditDiv").hide();
-			});
-			
-			// Stylize the worksheet options div panel
-			$(function() {
+				
+				// Stylize the worksheet options div panel
 				styleAndAssignHandlersToWorksheetOptionButtons();
-			});
-			
-			// Hide the ontology options table
-			$(function() {
+				
+				// Hide the ontology options table
 				$("#ChangeSemanticTypesDialogBox").hide();
 				attachOntologyOptionsRadioButtonHandlers();
+				
+				// Hide the ontology alternative parent links div
+				$("#OntologyAlternativeLinksPanel").hide();
 			});
 			
 			
@@ -241,7 +240,7 @@
 								if(cloneTable.data("currentTable") == tableID) {
 									cloneTable.css({position:'fixed',
 							                 //'pointer-events': 'none',
-							                 top:0, left:289+x});
+							                 top:0, left:288+x});
 									return false;
 								} else {
 									$("table#HeaderScrollPanel tr").remove();
@@ -283,88 +282,6 @@
 				          
 				    }, 100);
 				});
-				// var timer = null;
-				// $(window).addEventListener('scroll', function() {
-				    // if(timer !== null) {
-				        // clearTimeout(timer);        
-				    // }
-// 				    
-				    // timer = startTimeout(function() {
-// 				    	      
-				    // }, 500);
-				// }, false);
-				
-				
-				// $(window).scroll(function(){
-					// var scroll = $(window).scrollTop();
-					// var x = 0 - $(this).scrollLeft();
-// 					
-					// $.each($("div.TableDiv"), function(index, tableDivElement){
-						// var anchor_top = $(tableDivElement).offset().top;
-						// var tableID = $("table", tableDivElement).attr("id");
-						// var anchor_bottom = $("div#" + tableID + "bottomAnchor").offset().top;
-						// console.log("Working with" + tableID)
-						// // console.log("Anchor Bottom" + anchor_bottom);
-						// // console.log("Scroll" + scroll);
-// 						
-// 						
-						// if(scroll > anchor_bottom)
-							// return true;
-// 						
-						// if (scroll>anchor_top && scroll<(anchor_bottom -
-								// $("table#"+tableID +" thead").height() - 
-								// $("div#topLevelpagerOptions" + tableID).height())) {
-							// // console.log("Checking for table: " + tableID);
-							// var cloneTable = $("table#HeaderScrollPanel");
-							// // console.log(cloneTable.length);
-							// // console.log("Current Table:" + cloneTable.data("currentTable"));
-							// if(cloneTable.length == 0) {
-								// cloneTable = $("<table>").attr("id","HeaderScrollPanel");
-							// }
-// 							
-							// if(cloneTable.data("currentTable") == tableID) {
-								// cloneTable.css({position:'fixed',
-						                 // //'pointer-events': 'none',
-						                 // top:0, left:288+x});
-								// return false;
-							// } else {
-						    	// console.log("Creating clone!******************************");
-						        // var theadClone = $("table#"+tableID +" thead").clone();
-						        // cloneTable.append(theadClone);
-						        // cloneTable.css({position:'fixed',
-						                 // //'pointer-events': 'none',
-						                 // top:0, left:288+x});
-// 						                 
-						        // $.each($("table#"+tableID+" thead tr"), function(trIndex, originalRow){
-						        	// //console.log("Row Index: " + trIndex);
-						        	// var dupRow = $("thead tr", cloneTable).get(trIndex);
-						        	// //console.log($(dupRow).length);
-						        	// $.each($("td", $(originalRow)), function(tdIndex, originalTD){
-						        		// //console.log("TD Index: " + tdIndex);
-						        		// var dupTD = $("td", $(dupRow)).get(tdIndex);
-						        		// //console.log($(dupTD).length);
-						        		// //console.log("Original Width: " + $(originalTD).width());
-						        		// //console.log("DUP Width: " + $(dupTD).width())
-						        		// $(dupTD).width($(originalTD).width());
-						        	// });
-						        // });
-// 						        
-						        // cloneTable.data("currentTable", tableID);
-// 						                 
-						        // //console.log("Orig Table Width: " + $("table#VW1").width());
-						        // //cloneTable.width($("table#VW1").width());
-						        // cloneTable.width($("table#" + tableID).width());
-						        // $("div#ScrollHeadersPlaceholder table").remove();
-						        // $("div#ScrollHeadersPlaceholder").append(cloneTable);
-							// }
-							// return false;
-						// } else {
-							// // console.log("REMOVING!");
-							// $("table#HeaderScrollPanel").remove();
-						// }
-// 						
-					// });
-				// });
 			});
 			
 		</script>
@@ -535,13 +452,27 @@
 		</div>
 		<div id="ScrollHeadersPlaceholder"></div>
 		<div id="WorksheetOptionsDiv">
-			<button href="#" id="generateSemanticTypesButton">Generate semantic types</button>
-			<button href="#" id="alignToOntologyButton">Align to ontology</button>
-			<button href="#" id="removeFromWorkspaceButton">Remove from workspace</button>
+			<!-- <button href="#" id="generateSemanticTypesButton">Generate semantic types</button>
+			<button href="#" id="alignToOntologyButton">Align to ontology</button> -->
+			<button href="#" id="showModel">Show Model</button>
+			<button href="#" id="hideModel">Hide Model</button>
+<!-- 			<button href="#" id="removeFromWorkspaceButton">Remove from workspace</button> -->
 		</div>
 		<div id="ChangeSemanticTypesDialogBox">
 			<span class="mediumSizedFont">Suggested semantic types:</span>
 			<table id="CRFSuggestedLabelsTable"></table>
+			<br>
+			<span class="mediumSizedFont">Mark as unassigned</span>
+			<table id="UnassignedLabelTable">
+				<tr>
+					<td>
+						<input type="radio" id="UnassignTypeButton" name="semanticTypeGroup" value="UnassignType"/>
+					</td>
+					<td>
+						<label for="UnassignTypeButton">Unassigned</label>
+					</td>
+				</tr>
+			</table>
 			<br>
 			<span class="mediumSizedFont">Choose from ontology</span>
 			<div id="ontologyOptionsTable">
@@ -585,6 +516,10 @@
 				</table>
 				
 			</div>
+		</div>
+		<div id="OntologyAlternativeLinksPanel">
+			<span class="mediumSizedFont">Choose parent relationship:</span>
+			<table id="AlternativeParentLinksTable"></table>
 		</div>
 	</body>
 </html>

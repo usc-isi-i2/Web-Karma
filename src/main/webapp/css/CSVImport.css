@@ -28,7 +28,7 @@
 	text-align: left;
 	font-size: 12px;
 	color: white;
-	padding: 5px;
+	padding: 2px;
 }
 
 #CSVPreviewTable {
@@ -40,9 +40,9 @@
 	text-align: left;
 	font-size: 14px;
 	border-collapse: collapse;
-	color: #00FFFF;
+	color: #6495ED;
 	border: solid 1px #6495ED;
-	padding: 5px;
+	padding: 2px;
 }
 
 #CSVPreviewTable th.ItalicColumnNames {

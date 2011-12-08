@@ -9,9 +9,12 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.ontology.OntModel;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
+import edu.isi.karma.controller.update.OntologyClassHierarchyUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
@@ -58,6 +61,13 @@ public class GetDomainsForDataPropertyCommand extends Command {
 		final List<String> domains = OntologyManager.Instance()
 				.getDomainsGivenProperty(dataPropertyURI, true);
 
+		// Show all he classes when none are present
+		if(domains == null || domains.size() == 0) {
+			OntModel model = OntologyManager.Instance().getOntModel();
+			return new UpdateContainer(new OntologyClassHierarchyUpdate(model));
+		}
+			
+		
 		return new UpdateContainer(new AbstractUpdate() {
 			@Override
 			public void generateJson(String prefix, PrintWriter pw,
