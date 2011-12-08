@@ -336,16 +336,21 @@ function parse(data) {
 						
 						// Add the pencil
 						if(cell["contentCell"]["parentLinkId"] != null) {
-							var pencilDiv = $("<div>").addClass("AlignmentLinkConfigDiv")
+							// Special case for the key attribute which have the link and node named BlankNode
+							if(cell["contentCell"]["parentLinkLabel"] == "BlankNode") {
+								tdTag.append($("<span>").text("key").addClass("KeyAtrributeLabel"));
+							} else {
+								var pencilDiv = $("<div>").addClass("AlignmentLinkConfigDiv")
 								.append($("<img>").attr("src","../images/configure-icon.png"))
 								.append($("<span>").text(cell["contentCell"]["parentLinkLabel"]))
 								.click(showAlternativeParents);
 								
-							tdTag.append(pencilDiv);
+								tdTag.append(pencilDiv);
 							
-							// Special case for data properties
-							if(cell["contentCell"]["parentLinkLabel"] != cell["contentCell"]["label"])
-								tdTag.append(labelDiv);
+								// Special case for data properties
+								if(cell["contentCell"]["parentLinkLabel"] != cell["contentCell"]["label"])
+									tdTag.append(labelDiv);
+								}
 						} else {
 							labelDiv.prepend($("<img>").attr("src","../images/configure-icon.png")).click(showAlternativeParents);
 							tdTag.append(labelDiv);

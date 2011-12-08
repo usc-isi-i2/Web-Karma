@@ -89,20 +89,26 @@ public class AlignmentForest implements TForest {
 		for (HNode hNode : sortedHeaders) {
 			String id = hNode.getId();
 			TNode node = getAlignmentNodeWithHNodeId(roots, id);
+
+			// Check for the special case where the intermediate node is
+			// attached to a column. We added the same semantic type object to
+			// one of its child
+			if (node.getChildren() != null && node.getChildren().size() != 0) {
+				node = getAlignmentNodeWithHNodeId(node.getChildren(), id);
+			}
 			nodeIndexMap.put(node, counter++);
 
-			// Store the node in a map as it helps in determining final column
-			// order
+			// Store the node in a map as it helps in determining final order
 			TNodeToHNodeMap.put(node, hNode);
 		}
 
 		logger.info("Node Map: " + nodeIndexMap);
-		// for (TNode node : nodeIndexMap.keySet()) {
-		// AlignmentNode nodeAl = (AlignmentNode) node;
-		// logger.info(nodeAl.getType().getType() + " of "
-		// + nodeAl.getType().getDomain() + " : "
-		// + nodeIndexMap.get(node));
-		// }
+		for (TNode node : nodeIndexMap.keySet()) {
+			AlignmentNode nodeAl = (AlignmentNode) node;
+			logger.info(nodeAl.getType().getType() + " of "
+					+ nodeAl.getType().getDomain() + " : "
+					+ nodeIndexMap.get(node));
+		}
 
 		// For each root, sort at each level
 		for (TNode root : roots) {
@@ -113,7 +119,6 @@ public class AlignmentForest implements TForest {
 			// Calculate the max depth
 			Set<Integer> depths = depthMap.keySet();
 			Integer maxDepth = Collections.max(depths);
-			logger.info("Max Depth: " + maxDepth);
 
 			// Sort the nodes at each level starting from second last to top
 			int startingLevel = maxDepth - 1;
@@ -206,8 +211,9 @@ public class AlignmentForest implements TForest {
 		for (TNode node : nodes) {
 			AlignmentNode alNode = (AlignmentNode) node;
 			if (alNode.hasSemanticType()) {
-				if (alNode.getSemanticTypeHNodeId().equals(hNodeId))
+				if (alNode.getSemanticTypeHNodeId().equals(hNodeId)) {
 					return alNode;
+				}
 			}
 
 			if (alNode.hasChildren()) {
@@ -234,17 +240,15 @@ public class AlignmentForest implements TForest {
 		List<TNode> children = new ArrayList<TNode>();
 
 		// Check if the vertex is an intermediate node that should be attached
-		// to a column
-		// In such case add a blank child node
+		// to a column. In such case add a blank child node
 		if (vertex.getSemanticType() != null
 				&& tree.outgoingEdgesOf(vertex).size() != 0) {
 			logger.info("Intermediate Node with column attached to it: "
 					+ vertex.getLabel());
 			AlignmentLink link = new AlignmentLink(vertex.getSemanticType()
-					.getHNodeId() + "BlankLink", "BlankNodeLink");
-			TNode node = new AlignmentNode(vertex.getSemanticType()
-					.getHNodeId() + "BlankNode", null, link, "BlankNode",
-					vertex.getSemanticType());
+					.getHNodeId() + "BlankLink", "BlankNode");
+			TNode node = new AlignmentNode(vertex.getID() + "BlankNodeId",
+					null, link, "BlankNode", vertex.getSemanticType());
 			children.add(node);
 		}
 

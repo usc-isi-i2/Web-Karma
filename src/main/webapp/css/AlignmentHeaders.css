@@ -1,3 +1,7 @@
+span.KeyAtrributeLabel {
+	font-style: italic;
+	font-size: 10px;
+}
 /* TopLevelAlignmentTable classes */
 .filltopLevelAlignmentTableCell {
 	background: #1A1A1A;
