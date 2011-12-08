@@ -57,8 +57,6 @@ public class GetDataPropertiesForClassCommand extends Command {
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		final List<String> properties = OntologyManager.Instance().getDataPropertiesOfClass(classURI, true);
 
-		System.out.println("Properties: " + properties);
-
 		// Generate and return the JSON
 		return new UpdateContainer(new AbstractUpdate() {
 			@Override

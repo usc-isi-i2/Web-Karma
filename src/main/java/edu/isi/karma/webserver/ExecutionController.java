@@ -47,6 +47,8 @@ import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyComma
 import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyCommandFactory;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommandFactory;
+import edu.isi.karma.controller.command.alignment.ShowModelCommand;
+import edu.isi.karma.controller.command.alignment.ShowModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -115,6 +117,8 @@ public class ExecutionController {
 				new AddUserLinkToAlignmentCommandFactory());
 		commandFactoryMap.put(UnassignSemanticTypeCommand.class.getSimpleName(),
 				new UnassignSemanticTypeCommandFactory());
+		commandFactoryMap.put(ShowModelCommand.class.getSimpleName(),
+				new ShowModelCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

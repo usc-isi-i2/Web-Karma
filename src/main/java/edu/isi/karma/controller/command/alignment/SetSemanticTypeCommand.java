@@ -10,6 +10,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.alignment.AlignToOntology;
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
@@ -48,7 +49,8 @@ public class SetSemanticTypeCommand extends Command {
 
 	@Override
 	public String getDescription() {
-		String domainLabel = SemanticTypeUtil.removeNamespace(newType.getDomain());
+		String domainLabel = SemanticTypeUtil.removeNamespace(newType
+				.getDomain());
 		String typeLabel = SemanticTypeUtil.removeNamespace(newType.getType());
 		if (domainLabel.equals(""))
 			return typeLabel;
@@ -63,6 +65,7 @@ public class SetSemanticTypeCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
@@ -114,12 +117,18 @@ public class SetSemanticTypeCommand extends Command {
 		CRFColumnModel newModel = new CRFColumnModel(labels, scores);
 		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), newModel);
 
-		return new UpdateContainer(new SemanticTypesUpdate(worksheet,
-				vWorksheetId));
+		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+
+		// Get the alignment update if any
+		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
+				vWorksheetId);
+		align.update(c, true);
+		return c;
 	}
 
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
 		if (oldType == null)
@@ -131,7 +140,10 @@ public class SetSemanticTypeCommand extends Command {
 		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(),
 				oldColumnModel);
 
-		return new UpdateContainer(new SemanticTypesUpdate(worksheet,
-				vWorksheetId));
+		// Get the alignment update if any
+		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
+				vWorksheetId);
+		align.update(c, true);
+		return c;
 	}
 }
