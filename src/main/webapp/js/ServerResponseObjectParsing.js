@@ -405,11 +405,12 @@ function parse(data) {
 						if(cell["value"] == null)
 							console.log("Value not found in a content cell!");
 						//tdTag.text(cell["value"]);
-						tdTag.append($("<div>").addClass("cellValue")
+						if(cell["value"] != null)
+							tdTag.append($("<div>").addClass("cellValue")
 										.text(cell["value"])
 										.mouseenter(showTableCellMenu)
 										.mouseleave(hideTableCellMenu))
-							.attr('id', cell["nodeId"]);
+									.attr('id', cell["nodeId"]);
 					}
 					
 					tdTag.addClass(attrVals[0]);
