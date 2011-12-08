@@ -405,12 +405,21 @@ function parse(data) {
 						if(cell["value"] == null)
 							console.log("Value not found in a content cell!");
 						//tdTag.text(cell["value"]);
-						if(cell["value"] != null)
+						if(cell["value"] != null){
+							var valueToShow = "";
+							if(cell["value"].length > 25) {
+								valueToShow = cell["value"].substring(0,25) + "...";
+							} else {
+								valueToShow = cell["value"];
+							}
+								
 							tdTag.append($("<div>").addClass("cellValue")
-										.text(cell["value"])
+										.text(valueToShow)
 										.mouseenter(showTableCellMenu)
 										.mouseleave(hideTableCellMenu))
 									.attr('id', cell["nodeId"]);
+						}
+							
 					}
 					
 					tdTag.addClass(attrVals[0]);
@@ -469,7 +478,7 @@ function parse(data) {
 			// Delete the old rows
 			$("tr.deleteMe", tbody).remove();
 			
-			// // TODO DELETE ME
+			// Bottom anchor for scrolling page
 			if($("div#" + element["worksheetId"] + "bottomAnchor").length == 0)
 				$("div#" + element["worksheetId"]).append($("<div>").attr("id", element["worksheetId"] + "bottomAnchor"));
 		}

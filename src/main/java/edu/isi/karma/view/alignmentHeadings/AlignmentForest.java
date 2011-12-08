@@ -90,6 +90,12 @@ public class AlignmentForest implements TForest {
 			String id = hNode.getId();
 			TNode node = getAlignmentNodeWithHNodeId(roots, id);
 
+			// For the columns that did not have a semantic type defined
+			// For e.g. the ones that do not have data
+			if (node == null) {
+				continue;
+			}
+
 			// Check for the special case where the intermediate node is
 			// attached to a column. We added the same semantic type object to
 			// one of its child
