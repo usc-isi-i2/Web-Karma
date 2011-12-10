@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class MySQLUtil extends AbstractJDBCUtil {
 
@@ -27,7 +28,7 @@ public class MySQLUtil extends AbstractJDBCUtil {
 		ResultSet rs = dmd.getTables(null, null, null, new String[] {"TABLE"});
 		while (rs.next())
 			tableNames.add(rs.getString(3));
-		
+		Collections.sort(tableNames);
 		return tableNames;
 	}
 

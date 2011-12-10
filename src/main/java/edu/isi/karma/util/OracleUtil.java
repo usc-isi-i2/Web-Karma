@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class OracleUtil extends AbstractJDBCUtil {
 	
@@ -31,6 +32,7 @@ public class OracleUtil extends AbstractJDBCUtil {
 	      String tableName = rs.getString(1);
 	      tableNames.add(tableName);
 	    }
+	    Collections.sort(tableNames);
 		return tableNames;
 	}
 
