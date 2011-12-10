@@ -336,7 +336,7 @@ function parse(data) {
 						
 						// Add the pencil
 						if(cell["contentCell"]["parentLinkId"] != null) {
-							// Special case for the key attribute which have the link and node named BlankNode
+							// Special case for the key attribute which has the link and node named BlankNode
 							if(cell["contentCell"]["parentLinkLabel"] == "BlankNode") {
 								tdTag.append($("<span>").text("key").addClass("KeyAtrributeLabel"));
 							} else {
@@ -414,9 +414,9 @@ function parse(data) {
 							}
 								
 							tdTag.append($("<div>").addClass("cellValue")
-										.text(valueToShow)
-										.mouseenter(showTableCellMenu)
-										.mouseleave(hideTableCellMenu))
+										.text(valueToShow))
+										//.mouseenter(showTableCellMenu)
+										//.mouseleave(hideTableCellMenu))
 									.attr('id', cell["nodeId"]);
 						}
 							

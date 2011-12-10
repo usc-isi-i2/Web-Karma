@@ -4,7 +4,7 @@ function openDatabaseTableImportDialog() {
 	$("#dbPreviewTableName").text("");
 	$("#DatabasePassword").val("");
 	sendDBTableImportCommandCreateRequest();
-	$("#DatabaseImportDiv").dialog({ modal: true , title: 'Import Database Table', width: 1100,
+	$("#DatabaseImportDiv").dialog({ modal: true , title: 'Import Database Table', width: 900,
 		height: 650, buttons: { "Cancel": function() { $(this).dialog("close"); }, 
 			"OK":function() { $(this).dialog("close"); }}});
 }

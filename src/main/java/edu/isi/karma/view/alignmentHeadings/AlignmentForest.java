@@ -93,6 +93,7 @@ public class AlignmentForest implements TForest {
 			// For the columns that did not have a semantic type defined
 			// For e.g. the ones that do not have data
 			if (node == null) {
+				//System.out.println("Alignment node returned null!");
 				continue;
 			}
 
@@ -108,10 +109,10 @@ public class AlignmentForest implements TForest {
 			TNodeToHNodeMap.put(node, hNode);
 		}
 
-		logger.info("Node Map: " + nodeIndexMap);
+		logger.debug("Node Map: " + nodeIndexMap);
 		for (TNode node : nodeIndexMap.keySet()) {
 			AlignmentNode nodeAl = (AlignmentNode) node;
-			logger.info(nodeAl.getType().getType() + " of "
+			logger.debug(nodeAl.getType().getType() + " of "
 					+ nodeAl.getType().getDomain() + " : "
 					+ nodeIndexMap.get(node));
 		}
@@ -145,15 +146,15 @@ public class AlignmentForest implements TForest {
 			HashMap<TNode, Integer> nodeIndexMap) {
 		List<TNode> children = parent.getChildren();
 
-		logger.info("Parent: " + parent.getId());
+		logger.debug("Parent: " + parent.getId());
 		// Case of 1 child
 		if (children.size() == 1) {
 			return nodeIndexMap.get(children.get(0));
 		}
 
-		logger.info("Initial Order:");
+		logger.debug("Initial Order:");
 		for (int i = 0; i < children.size(); i++) {
-			logger.info(children.get(i).getId() + "   ");
+			logger.debug(children.get(i).getId() + "   ");
 		}
 
 		int minSeqIndex = Integer.MAX_VALUE;
@@ -161,7 +162,7 @@ public class AlignmentForest implements TForest {
 			TNode child = children.get(i);
 
 			int seqIndex = nodeIndexMap.get(child);
-			logger.info("Working on " + child.getId() + " Index:" + seqIndex);
+			logger.debug("Working on " + child.getId() + " Index:" + seqIndex);
 
 			if (seqIndex < minSeqIndex)
 				minSeqIndex = seqIndex;
@@ -170,26 +171,26 @@ public class AlignmentForest implements TForest {
 				TNode currChild = children.get(j);
 
 				int currSeqIndex = nodeIndexMap.get(currChild);
-				logger.info("Current Child: " + currChild.getId() + " Index: "
+				logger.debug("Current Child: " + currChild.getId() + " Index: "
 						+ currSeqIndex);
 				if (currSeqIndex > seqIndex) {
-					logger.info("SWAPPING!!!" + child.getId() + " with "
+					logger.debug("SWAPPING!!!" + child.getId() + " with "
 							+ currChild.getId());
 
 					Collections.swap(children, children.indexOf(child), j);
 				}
-				logger.info("Order:");
+				logger.debug("Order:");
 				for (int z = 0; z < children.size(); z++) {
-					logger.info(children.get(z).getId() + "   ");
+					logger.debug(children.get(z).getId() + "   ");
 				}
 			}
 		}
 
-		logger.info("Final Order:");
+		logger.debug("Final Order:");
 		for (int i = 0; i < children.size(); i++) {
-			logger.info(children.get(i).getId() + "   ");
+			logger.debug(children.get(i).getId() + "   ");
 		}
-		logger.info("Min Index: " + minSeqIndex);
+		logger.debug("Min Index: " + minSeqIndex);
 		return minSeqIndex;
 	}
 
@@ -217,6 +218,7 @@ public class AlignmentForest implements TForest {
 		for (TNode node : nodes) {
 			AlignmentNode alNode = (AlignmentNode) node;
 			if (alNode.hasSemanticType()) {
+//				System.out.println("Cheking on sem type: " + alNode.getType().getType());
 				if (alNode.getSemanticTypeHNodeId().equals(hNodeId)) {
 					return alNode;
 				}
@@ -235,7 +237,7 @@ public class AlignmentForest implements TForest {
 	private TNode populateWithVertex(Vertex vertex,
 			DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree,
 			LabeledWeightedEdge parentEdge) {
-		// Add the information about the parent link
+		// Add the debugrmation about the parent link
 		AlignmentLink parentLink = null;
 		if (parentEdge != null) {
 			parentLink = new AlignmentLink(parentEdge.getID(),
@@ -249,12 +251,13 @@ public class AlignmentForest implements TForest {
 		// to a column. In such case add a blank child node
 		if (vertex.getSemanticType() != null
 				&& tree.outgoingEdgesOf(vertex).size() != 0) {
-			logger.info("Intermediate Node with column attached to it: "
+			logger.debug("Intermediate Node with column attached to it: "
 					+ vertex.getLabel());
 			AlignmentLink link = new AlignmentLink(vertex.getSemanticType()
 					.getHNodeId() + "BlankLink", "BlankNode");
 			TNode node = new AlignmentNode(vertex.getID() + "BlankNodeId",
 					null, link, "BlankNode", vertex.getSemanticType());
+//			System.out.println("Created blank node: " + node.getId());
 			children.add(node);
 		}
 
@@ -267,6 +270,7 @@ public class AlignmentForest implements TForest {
 
 		AlignmentNode node = new AlignmentNode(vertex.getID(), children,
 				parentLink, vertex.getLabel(), vertex.getSemanticType());
+//		System.out.println("Created node: " + node.getId());
 		return node;
 	}
 }

@@ -2,6 +2,17 @@ span.KeyAtrributeLabel {
 	font-style: italic;
 	font-size: 10px;
 }
+
+div.ColumnHeadingNameDiv {
+	display: inline;
+}
+
+div.AlignmentLinkConfigDiv {
+	padding-right: 5px;
+	font-family: Times;
+	font-style: italic;
+	display: inline;
+}
 /* TopLevelAlignmentTable classes */
 .filltopLevelAlignmentTableCell {
 	background: #1A1A1A;

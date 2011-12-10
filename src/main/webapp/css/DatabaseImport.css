@@ -1,8 +1,7 @@
 #DatabaseImportDiv td {
 	padding: 3px;
-	color: yellow;
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
+	font-size: 10px;
 }
 
 td#DatabaseImportErrorWindow {
@@ -15,13 +14,13 @@ td#DatabaseImportErrorWindow {
 	border-collapse: collapse;
 }
 
-#DatabaseImportDiv {
+/*#DatabaseImportDiv {
 	background-color: black;
-}
+}*/
 
 #DatabaseTablesList {
 	max-height: 400px;
-	max-width: 600px;
+	max-width: 300px;
 	overflow: auto;
 }
 
@@ -48,7 +47,7 @@ td#DatabaseImportErrorWindow {
 }
 
 #DatabasePreviewCell {
-	border-left: 20px solid black;
+	border-left: 20px solid white;
 }
 
 #DatabaseTablePreview table td {
@@ -67,6 +66,10 @@ td#DatabaseImportErrorWindow {
 	cursor: pointer;
 }
 
+input#databaseTableFilterTable {
+	max-width: 280px;
+}
+
 #DatabaseTablesList table td.highlightDatabaseTableList {
 	background-color: #7EC0EE;
 }
@@ -75,8 +78,3 @@ td#DatabaseImportErrorWindow {
 	font-size: 0.6em;
 	width: 340px;
 }
-
-
-
-
-
