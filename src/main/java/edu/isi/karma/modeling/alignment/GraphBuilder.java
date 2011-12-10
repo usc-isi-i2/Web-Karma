@@ -241,7 +241,7 @@ public class GraphBuilder {
 					}
 				}
 
-				boolean inherited = false;
+				boolean inherited = true;
 				// create a link from the domain and all its subclasses of ObjectProperties to range and all its subclasses
 				if (target.getNodeType() == NodeType.Class) {
 					objectProperties = OntologyManager.Instance().getObjectProperties(sourceLabel, targetLabel, true);
@@ -251,6 +251,7 @@ public class GraphBuilder {
 						
 						List<String> dirDomains = OntologyCache.Instance().getPropertyDirectDomains().get(label);
 						List<String> dirRanges = OntologyCache.Instance().getPropertyDirectRanges().get(label);
+				
 						if (dirDomains != null && dirDomains.indexOf(sourceLabel) != -1 &&
 								dirRanges != null && dirRanges.indexOf(targetLabel) != -1)
 							inherited = false;
