@@ -30,8 +30,8 @@ public class SemanticTypeUtil {
 
 		ArrayList<String> nodeValues = new ArrayList<String>();
 		for (Node n : nodes) {
-			String nodeValue = n.getValue().asString().trim();
-			if (!nodeValue.equals(""))
+			String nodeValue = n.getValue().asString();
+			if (nodeValue != null && !nodeValue.equals(""))
 				nodeValues.add(nodeValue);
 		}
 
@@ -51,7 +51,7 @@ public class SemanticTypeUtil {
 			return subset;
 		}
 
-//		System.out.println("Examples: " + nodeValues);
+		// System.out.println("Examples: " + nodeValues);
 		return nodeValues;
 	}
 
@@ -67,10 +67,10 @@ public class SemanticTypeUtil {
 	}
 
 	public static String removeNamespace(String uri) {
-		if(uri.contains("#"))
+		if (uri.contains("#"))
 			uri = uri.split("#")[1];
-		else if(uri.contains("/"))
-			uri = uri.substring(uri.lastIndexOf("/")+1);
+		else if (uri.contains("/"))
+			uri = uri.substring(uri.lastIndexOf("/") + 1);
 		return uri;
 	}
 

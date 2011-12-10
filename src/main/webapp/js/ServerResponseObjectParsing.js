@@ -336,16 +336,21 @@ function parse(data) {
 						
 						// Add the pencil
 						if(cell["contentCell"]["parentLinkId"] != null) {
-							var pencilDiv = $("<div>").addClass("AlignmentLinkConfigDiv")
+							// Special case for the key attribute which have the link and node named BlankNode
+							if(cell["contentCell"]["parentLinkLabel"] == "BlankNode") {
+								tdTag.append($("<span>").text("key").addClass("KeyAtrributeLabel"));
+							} else {
+								var pencilDiv = $("<div>").addClass("AlignmentLinkConfigDiv")
 								.append($("<img>").attr("src","../images/configure-icon.png"))
 								.append($("<span>").text(cell["contentCell"]["parentLinkLabel"]))
 								.click(showAlternativeParents);
 								
-							tdTag.append(pencilDiv);
+								tdTag.append(pencilDiv);
 							
-							// Special case for data properties
-							if(cell["contentCell"]["parentLinkLabel"] != cell["contentCell"]["label"])
-								tdTag.append(labelDiv);
+								// Special case for data properties
+								if(cell["contentCell"]["parentLinkLabel"] != cell["contentCell"]["label"])
+									tdTag.append(labelDiv);
+								}
 						} else {
 							labelDiv.prepend($("<img>").attr("src","../images/configure-icon.png")).click(showAlternativeParents);
 							tdTag.append(labelDiv);
@@ -400,11 +405,21 @@ function parse(data) {
 						if(cell["value"] == null)
 							console.log("Value not found in a content cell!");
 						//tdTag.text(cell["value"]);
-						tdTag.append($("<div>").addClass("cellValue")
-										.text(cell["value"])
+						if(cell["value"] != null){
+							var valueToShow = "";
+							if(cell["value"].length > 25) {
+								valueToShow = cell["value"].substring(0,25) + "...";
+							} else {
+								valueToShow = cell["value"];
+							}
+								
+							tdTag.append($("<div>").addClass("cellValue")
+										.text(valueToShow)
 										.mouseenter(showTableCellMenu)
 										.mouseleave(hideTableCellMenu))
-							.attr('id', cell["nodeId"]);
+									.attr('id', cell["nodeId"]);
+						}
+							
 					}
 					
 					tdTag.addClass(attrVals[0]);
@@ -463,7 +478,7 @@ function parse(data) {
 			// Delete the old rows
 			$("tr.deleteMe", tbody).remove();
 			
-			// // TODO DELETE ME
+			// Bottom anchor for scrolling page
 			if($("div#" + element["worksheetId"] + "bottomAnchor").length == 0)
 				$("div#" + element["worksheetId"]).append($("<div>").attr("id", element["worksheetId"] + "bottomAnchor"));
 		}

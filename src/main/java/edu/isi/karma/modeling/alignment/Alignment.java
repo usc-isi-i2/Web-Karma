@@ -258,6 +258,8 @@ public class Alignment {
 
 		long elapsedTimeMillis = System.currentTimeMillis() - start;
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
+		logger.info("total number of nodes in steiner tree: " + this.steinerTree.vertexSet().size());
+		logger.info("total number of edges in steiner tree: " + this.steinerTree.edgeSet().size());
 		logger.info("time to compute steiner tree: " + elapsedTimeSec);
 	}
 

@@ -44,6 +44,9 @@ public class GraphBuilder {
 
 		long elapsedTimeMillis = System.currentTimeMillis() - start;
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
+
+		logger.info("total number of nodes in the graph: " + this.graph.vertexSet().size());
+		logger.info("total number of links in the graph: " + this.graph.edgeSet().size());
 		logger.info("total time to build the graph: " + elapsedTimeSec);
 	}
 
@@ -123,7 +126,6 @@ public class GraphBuilder {
 			this.graph.addVertex(v);
 		}
 		
-		logger.info("number of initial nodes: " + this.graph.vertexSet().size());
 		logger.debug("exit>");
 	}
 	
@@ -180,7 +182,6 @@ public class GraphBuilder {
 			newAddedClasses.clear();
 		}
 
-		logger.info("total number of nodes: " + this.graph.vertexSet().size());
 		logger.debug("exit>");
 	}
 	
@@ -266,7 +267,7 @@ public class GraphBuilder {
 			}
 		}
 		
-		logger.info("number of links added to graph: " + this.graph.edgeSet().size());
+//		logger.info("number of links added to graph: " + this.graph.edgeSet().size());
 		logger.debug("exit>");
 	}
 	
@@ -317,7 +318,6 @@ public class GraphBuilder {
 			}
 		}
 		
-		logger.info("total number of links (includes links added from Thing): " + this.graph.edgeSet().size());
 		logger.debug("exit>");
 
 	}
@@ -416,6 +416,7 @@ public class GraphBuilder {
 		addSemanticTypesToGraph();
 		long addSemanticTypes = System.currentTimeMillis();
 		elapsedTimeSec = (addSemanticTypes - start)/1000F;
+		logger.info("number of initial nodes: " + this.graph.vertexSet().size());
 		logger.info("time to add initial semantic types: " + elapsedTimeSec);
 
 		
@@ -432,7 +433,7 @@ public class GraphBuilder {
 		addLinksFromThing();
 		long addLinksFromThing = System.currentTimeMillis();
 		elapsedTimeSec = (addLinksFromThing - addLinks)/1000F;
-		logger.info("time to add links from Thing (root): " + elapsedTimeSec);
+//		logger.info("time to add links from Thing (root): " + elapsedTimeSec);
 
 	}
 
