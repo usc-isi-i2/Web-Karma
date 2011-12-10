@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -194,7 +195,8 @@ public abstract class CRFModelHandler {
 		}
 		ArrayList<String> cleanedExamples, allowedCharacters ;
 		int labelIndex ;
-		HashSet<String> allFeatures;
+		ArrayList<String> allFeatures;
+		HashSet<String> selectedFeatures;
 		ArrayList<LblFtrPair> ffsOfLabel, otherFFs;
 		ArrayList<Double> weightsOfFFsOfLabel, weightsOfOtherFFs;
 		OptimizeFieldOnly optimizationObject;
@@ -236,7 +238,7 @@ public abstract class CRFModelHandler {
 			labelIndex = globalData.labels.indexOf(label) ;
 			labelToExamplesMap.put(label, new ArrayList<String>()) ;
 		}
-		allFeatures = new HashSet<String>() ;
+		allFeatures = new ArrayList<String>();
 		// get features of existing examples
 		for(String example: labelToExamplesMap.get(label)) {
 			allFeatures.addAll(featureSet(example)) ;
@@ -254,17 +256,21 @@ public abstract class CRFModelHandler {
 			allFeatures.addAll(exampleFtrs) ;
 		}
 		// if the total number of features is > 100, then randomly select 100 from them.
-		if (allFeatures.size() > 100) {
-			ArrayList<Integer> randomIntegers;
-			HashSet<String> selectedFeatures;
-			ArrayList<String> listOfFeatures;
-			randomIntegers = RandOps.randomNumbers(allFeatures.size(), 100) ;
+		selectedFeatures = new HashSet<String>(allFeatures);
+		if (selectedFeatures.size() > 100) {
+			ArrayList<String> tmpAllFeatures;
+			Random random ;
+			tmpAllFeatures = new ArrayList<String>(allFeatures);
+			random = new Random();
 			selectedFeatures = new HashSet<String>();
-			listOfFeatures = new ArrayList<String>(allFeatures) ;
-			for(Integer i : randomIntegers) {
-				selectedFeatures.add(listOfFeatures.get(i));
+			for(int i=0;i<100;i++) {
+				String ftr;
+				ftr = tmpAllFeatures.get(random.nextInt(tmpAllFeatures.size()));
+				selectedFeatures.add(ftr);
+				while (tmpAllFeatures.contains(ftr)) {
+					tmpAllFeatures.remove(ftr);
+				}
 			}
-			allFeatures = selectedFeatures ;
 		}
 		// separate the label ffs and weights from other ffs and weights
 		ffsOfLabel = new ArrayList<LblFtrPair>() ;
@@ -287,14 +293,14 @@ public abstract class CRFModelHandler {
 		for(int ffIndex=0;ffIndex<ffsOfLabel.size();ffIndex++) {
 			LblFtrPair ff;
 			ff = ffsOfLabel.get(ffIndex);
-			if (allFeatures.contains(ff.feature)) {
+			if (selectedFeatures.contains(ff.feature)) {
 				otherFFs.add(ff);
 				weightsOfOtherFFs.add(weightsOfFFsOfLabel.get(ffIndex)) ;
-				allFeatures.remove(ff.feature);
+				selectedFeatures.remove(ff.feature);
 			}
 		}
 		// create new ffs for all other selected features and add zero as their weight
-		for(String ftr : allFeatures) {
+		for(String ftr : selectedFeatures) {
 			otherFFs.add(new LblFtrPair(labelIndex, ftr));
 			weightsOfOtherFFs.add(0.0);
 		}
