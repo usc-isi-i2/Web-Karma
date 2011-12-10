@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.modeling.ontology.OntologyCache;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 
@@ -240,16 +241,29 @@ public class GraphBuilder {
 					}
 				}
 
+				boolean inherited = false;
 				// create a link from the domain and all its subclasses of ObjectProperties to range and all its subclasses
 				if (target.getNodeType() == NodeType.Class) {
 					objectProperties = OntologyManager.Instance().getObjectProperties(sourceLabel, targetLabel, true);
 					
 					for (int k = 0; k < objectProperties.size(); k++) {
 						label = objectProperties.get(k);
+						
+						List<String> dirDomains = OntologyCache.Instance().getPropertyDirectDomains().get(label);
+						List<String> dirRanges = OntologyCache.Instance().getPropertyDirectRanges().get(label);
+						if (dirDomains != null && dirDomains.indexOf(sourceLabel) != -1 &&
+								dirRanges != null && dirRanges.indexOf(targetLabel) != -1)
+							inherited = false;
+						
 						id = createLinkID(label);
 						LabeledWeightedEdge e = new LabeledWeightedEdge(id, label, LinkType.ObjectProperty);
 						this.graph.addEdge(source, target, e);
-						this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
+						
+						// prefer the links which are actually defined between source and target in ontology over inherited ones.
+						if (inherited)
+							this.graph.setEdgeWeight(e, DEFAULT_WEIGHT + MIN_WEIGHT);
+						else
+							this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
 					}
 				}
 				
