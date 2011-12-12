@@ -116,10 +116,10 @@ public class Test {
 //		alignment.getSteinerTree();
 		
 		GraphUtil.printGraph(alignment.getSteinerTree());
-		alignment.addUserLink("http://halowiki/ob/property#IsTargetedBy1");
+		alignment.addUserLink("http://halowiki/ob/property#involves1");
 		GraphUtil.printGraph(alignment.getSteinerTree());
-		alignment.addUserLink("http://halowiki/ob/property#IsInvolvedIn1");
-		GraphUtil.printGraph(alignment.getSteinerTree());
+//		alignment.addUserLink("http://halowiki/ob/property#IsInvolvedIn1");
+//		GraphUtil.printGraph(alignment.getSteinerTree());
 
 		
 //		alignment.getSteinerTree();

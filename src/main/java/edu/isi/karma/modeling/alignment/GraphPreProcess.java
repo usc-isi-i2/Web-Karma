@@ -85,34 +85,34 @@ public class GraphPreProcess {
 		// The target is definitely one of the source columns and we cannot have two classes pointed to that.
 		// User can change our selected link later.
 		
-		for (Vertex v: gPrime.vertexSet()) {
-			
-			if (v.getNodeType() != NodeType.DataProperty)
-				continue;
-			
-			double weight;
-			int minIndex;
-			double minWeight;
-			
-			LabeledWeightedEdge[] incomingLinks = gPrime.incomingEdgesOf(v).toArray(new LabeledWeightedEdge[0]);
-			if (incomingLinks != null && incomingLinks.length != 0) {
-				
-				minWeight = GraphBuilder.MAX_WEIGHT;
-				minIndex = 0;
-				// keeping only the link with minimum weight and remove the others.
-				// we select minimum to prefer the UI links in previous model.
-				for (int i = 0; i < incomingLinks.length; i++) {
-					weight = gPrime.getEdgeWeight(incomingLinks[i]);
-					if (weight < minWeight) {
-						minWeight = weight;
-						minIndex = i;
-					}
-				}
-				for (int i = 0; i < incomingLinks.length; i++)
-					if (i != minIndex)
-					gPrime.removeEdge(incomingLinks[i]);
-			}
-		}
+//		for (Vertex v: gPrime.vertexSet()) {
+//			
+//			if (v.getNodeType() != NodeType.DataProperty)
+//				continue;
+//			
+//			double weight;
+//			int minIndex;
+//			double minWeight;
+//			
+//			LabeledWeightedEdge[] incomingLinks = gPrime.incomingEdgesOf(v).toArray(new LabeledWeightedEdge[0]);
+//			if (incomingLinks != null && incomingLinks.length != 0) {
+//				
+//				minWeight = GraphBuilder.MAX_WEIGHT;
+//				minIndex = 0;
+//				// keeping only the link with minimum weight and remove the others.
+//				// we select minimum to prefer the UI links in previous model.
+//				for (int i = 0; i < incomingLinks.length; i++) {
+//					weight = gPrime.getEdgeWeight(incomingLinks[i]);
+//					if (weight < minWeight) {
+//						minWeight = weight;
+//						minIndex = i;
+//					}
+//				}
+//				for (int i = 0; i < incomingLinks.length; i++)
+//					if (i != minIndex)
+//					gPrime.removeEdge(incomingLinks[i]);
+//			}
+//		}
 		
 		logger.debug("exit>");
 //		GraphUtil.printGraph(gPrime);
