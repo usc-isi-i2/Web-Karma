@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,7 +26,6 @@ import edu.isi.karma.modeling.semantictypes.mycrf.math.Matrix;
 import edu.isi.karma.modeling.semantictypes.mycrf.optimization.OptimizeFieldOnly;
 import edu.isi.karma.modeling.semantictypes.myutils.ListOps;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
-import edu.isi.karma.modeling.semantictypes.myutils.RandOps;
 import edu.isi.karma.modeling.semantictypes.sl.Lexer;
 import edu.isi.karma.modeling.semantictypes.sl.Part;
 import edu.isi.karma.modeling.semantictypes.sl.RegexFeatureExtractor;
@@ -34,13 +34,14 @@ import edu.isi.karma.modeling.semantictypes.sl.RegexFeatureExtractor;
 public abstract class CRFModelHandler {
 
 	public static enum ColumnFeature {
-		ColumnHeaderName
+		ColumnHeaderName ,
+		TableName
 	} ;
 	static String file = null ;
 	static HashMap<String, ArrayList<String>> labelToExamplesMap = null ;
 	static GlobalDataFieldOnly globalData = null ;
 	static Logger logger = LoggerFactory.getLogger(CRFModelHandler.class.getSimpleName()) ;
-
+	
 	// This function takes the path of file as input and
 	// creates an environment that consists of globalData, crfModel, list of examples of each label, etc.
 	// It reads an empty file also.
@@ -676,23 +677,46 @@ public abstract class CRFModelHandler {
 		return features ;
 	}
 
-
+	
+	/**
+	 * @param field - field for which features are to be extracted
+	 * @param columnFeatures - the columnFeatures passed along
+	 * @return - a set of features based on syntax as well as column features
+	 */
 	private static HashSet<String> featureSet(String field, Map<ColumnFeature, Collection<String>> columnFeatures) {
-		String columnName ;
 		HashSet<String> features ;
-		Collection<String> columnNameList ;
-		String[] tokens ;
-		columnName = null ;
 		features = featureSet(field) ;
-		if (columnFeatures != null && columnFeatures.containsKey(ColumnFeature.ColumnHeaderName)) {
-			columnNameList = columnFeatures.get(ColumnFeature.ColumnHeaderName) ;
-			if (columnNameList != null && columnNameList.size() == 1) {
-				for(String str : columnNameList) {
-					columnName = str ;
+		if (columnFeatures != null) {
+			if (columnFeatures.containsKey(ColumnFeature.ColumnHeaderName)) {
+				Collection<String> columnNameList ;
+				columnNameList = columnFeatures.get(ColumnFeature.ColumnHeaderName) ;
+				if (columnNameList != null && columnNameList.size() == 1) {
+					String columnName ;
+					List<String> parts;
+					columnName = null ;
+					for(String str : columnNameList) {
+						columnName = str ;
+					}
+					parts = splitString(columnName);
+					for(String part : parts) {
+						features.add(part.toLowerCase()) ;
+					}
 				}
-				tokens = columnName.split("\\s+") ;
-				for(String token : tokens) {
-					features.add(token) ;
+			}
+			if (columnFeatures.containsKey(ColumnFeature.TableName)) {
+				Collection<String> tableNamesList;
+				tableNamesList = columnFeatures.get(ColumnFeature.TableName);
+				if (tableNamesList != null && tableNamesList.size() == 1) {
+					String tableName;
+					List<String> parts;
+					tableName = null ;
+					for(String s : tableNamesList) {
+						tableName = s;
+					}
+					parts = splitString(tableName);
+					for(String part : parts) {
+						features.add(part.toLowerCase());
+					}
 				}
 			}
 		}
@@ -707,5 +731,37 @@ public abstract class CRFModelHandler {
 		return newList ;
 	}
 
+	/**
+	 * This method is a custom tokenizer meant to tokenize column and table names
+	 * @param str - string to be split
+	 * @return list of parts of str
+	 */
+	private static ArrayList<String> splitString(String str) {
+		HashSet<String> splitters;
+		ArrayList<String> parts;
+		// basic argument sanity check
+		if (str == null) {
+			return null ;
+		}
+		// creating the preset splitters
+		splitters = new HashSet<String>();
+		splitters.add("\\s+");
+		splitters.add("_");
+		parts = new ArrayList<String>();
+		// setting up the arraylist for iterative processing 
+		parts.add(str);
+		// iterate over all splitters
+		for(String splitter : splitters) {
+			ArrayList<String> tmpParts;
+			tmpParts = new ArrayList<String>();
+			for(String part : parts) {
+				String[] tokens;
+				tokens = part.split(splitter);
+				tmpParts.addAll(Arrays.asList(tokens));
+			}
+			parts = tmpParts;
+		}
+		return parts;
+	}
 
 }
