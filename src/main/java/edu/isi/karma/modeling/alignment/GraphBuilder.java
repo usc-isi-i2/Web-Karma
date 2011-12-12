@@ -192,7 +192,7 @@ public class GraphBuilder {
 
 		Vertex[] vertices = this.graph.vertexSet().toArray(new Vertex[0]);
 		List<String> objectProperties = new ArrayList<String>();
-		List<String> dataProperties = new ArrayList<String>();
+		//List<String> dataProperties = new ArrayList<String>();
 		
 		Vertex source;
 		Vertex target;
@@ -225,10 +225,18 @@ public class GraphBuilder {
 				// create a link from the domain and all its subclasses of this DataProperty to range
 				if (target.getNodeType() == NodeType.DataProperty) {
 					
-					dataProperties = OntologyManager.Instance().getDataProperties(sourceLabel, targetLabel, true);
+					String domain = "";
+					if (target.getSemanticType() != null)
+						domain = target.getSemanticType().getDomain();
 					
-					for (int k = 0; k < dataProperties.size(); k++) {
-						label = dataProperties.get(k);
+					if (domain != null && domain.trim().equalsIgnoreCase(sourceLabel.trim()))
+					
+					//dataProperties = OntologyManager.Instance().getDataProperties(sourceLabel, targetLabel, true);
+					//for (int k = 0; k < dataProperties.size(); k++) 
+					
+					{
+						// label of the data property nodes is equal to name of the data properties
+						label = targetLabel; // dataProperties.get(k);
 						id = createLinkID(label);
 						LabeledWeightedEdge e = new LabeledWeightedEdge(id, label, LinkType.DataProperty);
 						this.graph.addEdge(source, target, e);
