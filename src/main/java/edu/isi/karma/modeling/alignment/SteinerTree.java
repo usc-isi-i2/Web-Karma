@@ -39,13 +39,6 @@ public class SteinerTree {
 			g.addVertex(steinerNodes.get(i));
 		}
 		
-		for (LabeledWeightedEdge e: this.graph.edgeSet()) {
-			g.addVertex(e.getSource());
-			g.addVertex(e.getTarget());
-			g.addEdge(e.getSource(), e.getTarget(), e);
-		}
-		
-		
 		BellmanFordShortestPath<Vertex, LabeledWeightedEdge> path;
 		
 		for (int i = 0; i < steinerNodes.size(); i++) {

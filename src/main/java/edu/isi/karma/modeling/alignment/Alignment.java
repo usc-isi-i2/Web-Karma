@@ -237,7 +237,7 @@ public class Alignment {
 		
 		GraphPreProcess graphPreProcess = new GraphPreProcess(this.graphBuilder.getGraph(), semanticNodes, selectedLinks );
 		UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedGraph = graphPreProcess.getUndirectedGraph();
-		GraphUtil.printGraph(undirectedGraph);
+//		GraphUtil.printGraph(undirectedGraph);
 		List<Vertex> steinerNodes = graphPreProcess.getSteinerNodes();
 
 		logger.info("computing steiner tree ...");
