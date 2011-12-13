@@ -15,7 +15,7 @@ import edu.isi.mediator.rule.FunctionTerm;
 import edu.isi.mediator.rule.RelationPredicate;
 import edu.isi.mediator.rule.Term;
 import edu.isi.mediator.rule.VarTerm;
-import edu.isi.mediator.gav.source.SourceAttribute;
+import edu.isi.mediator.domain.SourceAttribute;
 
 public class SimpleDataAccessNode extends SimpleBaseNode
 {

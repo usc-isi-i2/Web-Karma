@@ -16,8 +16,8 @@ import edu.isi.mediator.domain.DomainModel;
 import edu.isi.mediator.domain.DomainSchema;
 import edu.isi.mediator.gav.util.MediatorConstants;
 import edu.isi.mediator.gav.main.MediatorException;
-import edu.isi.mediator.gav.source.SourceAttribute;
-import edu.isi.mediator.gav.source.SourceSchema;
+import edu.isi.mediator.domain.SourceAttribute;
+import edu.isi.mediator.domain.SourceSchema;
 
 /**
  * Domain File: Schema parser.

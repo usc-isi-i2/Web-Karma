@@ -13,7 +13,7 @@ import edu.isi.mediator.rule.ConstTerm;
 import edu.isi.mediator.rule.FunctionPredicate;
 import edu.isi.mediator.rule.FunctionTerm;
 import edu.isi.mediator.rule.Term;
-import edu.isi.mediator.gav.source.SourceAttribute;
+import edu.isi.mediator.domain.SourceAttribute;
 
 public abstract class SimpleBaseNode
 {

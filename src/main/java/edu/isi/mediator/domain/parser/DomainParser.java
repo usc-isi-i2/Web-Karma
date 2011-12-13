@@ -13,10 +13,10 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
 
-import edu.isi.mediator.domain.DomainModel;
 import edu.isi.mediator.gav.util.ANTLRNoCaseStringStream;
 import edu.isi.mediator.gav.util.MediatorConstants;
 import edu.isi.mediator.gav.util.ParserRecognitionException;
+import edu.isi.mediator.domain.DomainModel;
 import edu.isi.mediator.domain.parser.grammar.DomainModelLexer;
 import edu.isi.mediator.domain.parser.grammar.DomainModelParser;
 import edu.isi.mediator.gav.main.MediatorException;
