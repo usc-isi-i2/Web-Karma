@@ -21,6 +21,7 @@ import java.util.Set;
 
 import edu.isi.mediator.domain.parser.DomainParser;
 import edu.isi.mediator.gav.main.MediatorException;
+import edu.isi.mediator.gav.util.MediatorLogger;
 import edu.isi.mediator.rule.FunctionTerm;
 import edu.isi.mediator.rule.LAVRule;
 import edu.isi.mediator.rule.Predicate;
@@ -94,6 +95,9 @@ public class TableRDFGenerator {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
+	
+	private static final MediatorLogger logger = MediatorLogger.getLogger(TableRDFGenerator.class.getName());
+
 	public TableRDFGenerator(String domainStr, String outputFile) 
 				throws MediatorException, ClassNotFoundException, IOException{
 		initParams(domainStr,outputFile);
@@ -116,12 +120,12 @@ public class TableRDFGenerator {
 		RDFDomainModel dm = (RDFDomainModel)sp.parseDomain(domainStr);
 
 		sourceNamespaces = dm.getSourceNamespaces();
-		//System.out.println("SN="+sourceNamespaces);
 		ontologyNamespaces = dm.getOntologyNamespaces();
+		logger.debug("SourceNamespaces="+sourceNamespaces);
+		logger.debug("OntologyNamespaces="+ontologyNamespaces);
 		//output file
 		if(outputFile!=null){
 			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFile),"UTF-8");
-			//FileWriter fw = new FileWriter (outputFile);
 			BufferedWriter bw = new BufferedWriter (fw);
 			outWriter = new PrintWriter (bw);
 		}else{
@@ -149,7 +153,7 @@ public class TableRDFGenerator {
 		for(String v:allVars){
 			rdfVariables.put(v,new HashSet<String>());
 			Rule subRule = generateSubrule(tableRule,v);
-			System.out.println("Rule for "+ v + ":" + subRule);
+			logger.debug("Rule for "+ v + ":" + subRule);
         	RuleRDFGenerator rgen = new RuleRDFGenerator(subRule, sourceNamespaces,
         			ontologyNamespaces, outWriter, uniqueId+"");
         	rdfGenerators.put(v,rgen);
@@ -199,7 +203,7 @@ public class TableRDFGenerator {
 	 * @throws MediatorException 
 	 */
 	private Rule generateSubrule(Rule rule, String v) throws MediatorException {
-		System.out.println("Generate subrule for=" + v);
+		logger.debug("Generate subrule for=" + v);
 		LAVRule subrule = new LAVRule();
 		RelationPredicate antecedent = new RelationPredicate("Subrule");
 		ArrayList<Predicate> consequent = new ArrayList<Predicate>();
@@ -210,7 +214,7 @@ public class TableRDFGenerator {
 		ArrayList<Predicate> binaryP = findAllBinaryPredicates(v, preds);
 		if(!binaryP.isEmpty()){
 			for(Predicate p:binaryP){
-				System.out.println("Binary Pred="+p);
+				//System.out.println("Binary Pred="+p);
 				//find the varbiable on the first position
 				//this var is needed to construct this rule
 				String firstVar = getFirstVariableName(p);
@@ -274,13 +278,13 @@ public class TableRDFGenerator {
 			//it is a uri();
 			//find the unary predicate for this URI
 			Predicate p2 = findUnaryPredicate(term, preds);
-			System.out.println("Unary Pred ...="+p2);
+			//System.out.println("Unary Pred ...="+p2);
 			if(!consequent.contains(p2))
 				consequent.add(p2.clone());
 			if(gensymPredicate(p2)){
 				//if it is a gensym see if you can find other related 
 				Predicate p1 = findBinaryPredicate(p2.getTerms().get(0),preds);
-				System.out.println("Binary Pred="+p1);
+				//System.out.println("Binary Pred="+p1);
 				if(p1!=null){
 					//find the varbiable on the first position
 					//this var is needed to construct this rule

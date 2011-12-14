@@ -15,6 +15,7 @@ import org.antlr.runtime.tree.CommonTree;
 
 import edu.isi.mediator.gav.util.ANTLRNoCaseStringStream;
 import edu.isi.mediator.gav.util.MediatorConstants;
+import edu.isi.mediator.gav.util.MediatorLogger;
 import edu.isi.mediator.gav.util.ParserRecognitionException;
 import edu.isi.mediator.domain.DomainModel;
 import edu.isi.mediator.domain.parser.grammar.DomainModelLexer;
@@ -33,6 +34,8 @@ import edu.isi.mediator.rdf.RDFDomainModel;
  */
 public class DomainParser {
 	
+	private static final MediatorLogger logger = MediatorLogger.getLogger(DomainParser.class.getName());
+
 	/**
 	 * Parse domain file and populate Mediator data structures.
 	 * @param domainStr
@@ -46,7 +49,7 @@ public class DomainParser {
 		DomainModel dm = new DomainModel();
 		CommonTree t = parse(domainStr);
 		
-		System.out.println("AST=" + t.toStringTree());
+		logger.debug("AST=" + t.toStringTree());
 
 		SchemaParser schemaParser = new SchemaParser();
 		GAVRuleParser gavRuleParser = new GAVRuleParser();
