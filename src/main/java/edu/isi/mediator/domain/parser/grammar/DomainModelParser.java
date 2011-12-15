@@ -3,14 +3,10 @@ package edu.isi.mediator.domain.parser.grammar;
 // $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\Documents and Settings\\mariam\\My Documents\\mediator-new\\workspace\\domainparser\\DomainModel.g 2011-07-20 11:01:06
 
 import org.antlr.runtime.*;
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
 
 import org.antlr.runtime.tree.*;
 
+@SuppressWarnings("all")
 public class DomainModelParser extends Parser {
     public static final String[] tokenNames = new String[] {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "DOMAIN_MODEL", "SOURCE_SCHEMA", "DOMAIN_SCHEMA", "GAV_RULES", "LAV_RULES", "GLAV_RULES", "UAC_RULES", "QUERIES", "RULE", "ANTECEDENT", "CONSEQUENT", "RELATION_PRED", "FUNCTION_PRED", "BUILTIN_PRED", "FUNCTIONS", "NAMESPACES", "IS_NULL", "ISNOT_NULL", "IN", "NOT_IN", "STRING", "INT", "FLOAT", "ID", "NUMERIC", "WS", "COMMENT", "'SOURCE_SCHEMA:'", "'DOMAIN_SCHEMA:'", "'FUNCTIONS:'", "'NAMESPACES:'", "':'", "'('", "','", "')'", "'LAV_RULES:'", "'GLAV_RULES:'", "'GAV_RULES:'", "'UAC_RULES:'", "'QUERIES:'", "'<-'", "'::'", "':.'", "'->'", "'^'", "'NULL'", "'['", "']'", "'='", "'!='", "'<'", "'>'", "'>='", "'<='", "'<>'", "'LIKE'", "'IS'", "'NOT'", "'IN'"

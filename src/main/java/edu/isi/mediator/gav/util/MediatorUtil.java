@@ -37,7 +37,7 @@ public class MediatorUtil {
 		if(!var.startsWith("\"") && !var.startsWith("'")){
 			//if it's not between quotes AND is not a number
 			try{
-				BigDecimal b = new BigDecimal(var);
+				new BigDecimal(var);
 				return false;
 			}
 			catch(Exception e){
@@ -60,13 +60,13 @@ public class MediatorUtil {
      * 			name of file (location independent)
      * @return
      */
-    static public BufferedReader getReaderForFile(String name, Class theClass){
+    static public BufferedReader getReaderForFile(String name, Class<?> theClass){
     	try{
 		URL u = theClass.getResource(name);
-		BufferedReader raf = new BufferedReader(new InputStreamReader(u.openStream()));
 		if(u == null){
 			System.out.println("File not found::" + name);
 		}
+		BufferedReader raf = new BufferedReader(new InputStreamReader(u.openStream()));
 		System.out.println("File::" + name);
 		return raf;
     	}catch(Exception e){
@@ -136,7 +136,7 @@ public class MediatorUtil {
 	 * 		    content of file.
 	 * @throws MediatorException
 	 */
-	public static String getFileAsStringFromResource(String fileAsResource, Class theClass) throws MediatorException{
+	public static String getFileAsStringFromResource(String fileAsResource, Class<?> theClass) throws MediatorException{
 
 		//System.out.println("F=" + fileAsResource + " " + theClass);
 		BufferedReader br = getReaderForFile(fileAsResource, theClass);

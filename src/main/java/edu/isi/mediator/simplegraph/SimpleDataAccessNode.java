@@ -67,7 +67,7 @@ public class SimpleDataAccessNode extends SimpleBaseNode
 			//System.out.println(" commonAttrs " + commonAttrs);
 		}
 		else{
-			ArrayList subnodes = dn.getSubNodes();
+			ArrayList<SimpleBaseNode> subnodes = dn.getSubNodes();
 			for(int i=0; i<subnodes.size(); i++){
 				SimpleBaseNode child = (SimpleBaseNode)subnodes.get(i);
 				findCommonAttrs(child, commonAttrs);

@@ -8,7 +8,6 @@ package edu.isi.mediator.rdf;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -18,12 +17,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.Map;
 
 import edu.isi.mediator.domain.parser.DomainParser;
 import edu.isi.mediator.gav.main.MediatorException;
-import edu.isi.mediator.rule.GAVRule;
 import edu.isi.mediator.rule.Rule;
 import edu.isi.mediator.gav.util.MediatorUtil;
 

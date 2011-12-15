@@ -7,18 +7,11 @@
 package edu.isi.mediator.domain.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
 
-import edu.isi.mediator.domain.DomainModel;
 import edu.isi.mediator.domain.parser.DomainParser;
 import edu.isi.mediator.domain.parser.RuleParser;
-import edu.isi.mediator.domain.parser.grammar.DomainModelLexer;
-import edu.isi.mediator.domain.parser.grammar.DomainModelParser;
 import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.rule.GLAVRule;
 import edu.isi.mediator.rule.Predicate;

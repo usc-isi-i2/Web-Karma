@@ -24,7 +24,7 @@ public class SimpleJoinNode extends SimpleBaseNode
     }
     
     public ArrayList<SimpleBaseNode> getSubNodes() {
-        ArrayList<SimpleBaseNode> subnodes = new ArrayList();
+        ArrayList<SimpleBaseNode> subnodes = new ArrayList<SimpleBaseNode>();
 	if (child1 != null)
 	    subnodes.add(child1);
 	if (child2 != null)

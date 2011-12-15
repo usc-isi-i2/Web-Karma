@@ -227,7 +227,7 @@ public class ConstTerm extends Term{
 				return MediatorConstants.NULL_VALUE;
 			}
 			else{
-				BigDecimal b = new BigDecimal(newV);
+				new BigDecimal(newV);
 			}
 		}catch(NumberFormatException ne){
 			throw new MediatorException(newV + " should be a number!" + ne.getMessage());			

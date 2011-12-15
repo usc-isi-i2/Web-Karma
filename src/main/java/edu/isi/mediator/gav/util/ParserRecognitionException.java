@@ -36,7 +36,8 @@ import org.antlr.runtime.RecognitionException;
 public class ParserRecognitionException 
     extends Exception 
 {
-    protected String mToken;
+	private static final long serialVersionUID = 1L;
+	protected String mToken;
     protected int mLine;
     protected int mPositionInLine;
     protected String mErrorID;

@@ -9,7 +9,6 @@ package edu.isi.mediator.rdf;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +57,7 @@ public class RuleRDFGeneratorCSV extends RuleRDFGenerator {
 	 * @throws MediatorException
 	 * @throws SQLException
 	 */
+	@SuppressWarnings("all")
 	public void generateTriplesCSV(String inputFile) throws MediatorException, IOException{
 
 		//outWriter.println();

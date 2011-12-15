@@ -143,10 +143,10 @@ public class FunctionPredicate extends RelationPredicate{
     	String className = "edu.isi.mediator.rule.FunctionRepository";
 
     	try{
-    		Class funcClass = Class.forName(className);
+    		Class<?> funcClass = Class.forName(className);
     		//set parameter types; all are String types for now
     		int paramSize = terms.size();
-    		Class paramTypes[] = new Class[paramSize];
+    		Class<?> paramTypes[] = new Class[paramSize];
     		for(int i=0; i<paramSize; i++){
     			paramTypes[i]=String.class;
     		}

@@ -3,9 +3,6 @@ package edu.isi.mediator.domain.parser.grammar;
 // $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\Documents and Settings\\mariam\\My Documents\\mediator-new\\workspace\\domainparser\\DomainModel.g 2011-07-20 11:01:07
 
 import org.antlr.runtime.*;
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
 
 public class DomainModelLexer extends Lexer {
     public static final int GLAV_RULES=9;

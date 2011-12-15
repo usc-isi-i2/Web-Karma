@@ -168,7 +168,7 @@ public abstract class SimpleBaseNode
     }
     
     public void getDataAccessNodes(ArrayList<SimpleDataAccessNode> dan){
-    	ArrayList nodes = getSubNodes();
+    	ArrayList<SimpleBaseNode> nodes = getSubNodes();
     	if(nodes==null) return;
     	for(int i=0; i<nodes.size(); i++){
     		SimpleBaseNode pn = (SimpleBaseNode)nodes.get(i);

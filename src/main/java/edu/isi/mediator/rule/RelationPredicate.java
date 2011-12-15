@@ -310,7 +310,7 @@ public class RelationPredicate extends Predicate{
 		//System.out.println("Position of attrs=" + pos + " Constants=  " + constants);
 	
 		//deal with var equality x0=x2
-		Iterator it = pos.keySet().iterator();
+		Iterator<String> it = pos.keySet().iterator();
 		while(it.hasNext()){
 			String key = (String)it.next();
 			ArrayList<String> vals = pos.get(key);

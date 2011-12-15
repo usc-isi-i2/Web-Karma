@@ -8,7 +8,6 @@ package edu.isi.mediator.rule;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Random;
 
 import edu.isi.mediator.rdf.RuleRDFMapper;
 

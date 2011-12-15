@@ -47,7 +47,7 @@ public class Binding{
 	public Binding clone(){
 		Binding newB = new Binding();
 		Set<String> keys = bindingList.keySet();
-		Iterator it = keys.iterator();
+		Iterator<String> it = keys.iterator();
 		while(it.hasNext()){
 			String key = (String)it.next();
 			String val = bindingList.get(key);

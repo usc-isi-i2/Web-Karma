@@ -28,10 +28,7 @@ import org.antlr.runtime.CharStream;
 public class ANTLRNoCaseStringStream  extends ANTLRStringStream 
 {
     
-    /** Copyright statement */
-    private static final String COPYRIGHT_NOTICE = 
-        "Copyright (c) The University of Edinburgh 2008";
-    
+   
     /**
      * Constructor.
      * @param string
