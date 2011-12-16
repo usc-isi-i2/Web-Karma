@@ -9,10 +9,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.view.VWorksheet;
@@ -23,6 +27,9 @@ public class GetExampleJSON extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private static Logger logger = LoggerFactory
+			.getLogger(GetExampleJSON.class);
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
@@ -80,6 +87,13 @@ public class GetExampleJSON extends HttpServlet {
 		c.generateJson("", pw, vwsp);
 
 		System.err.println(sw.toString());
+		
+		// Prepare the CRF Model
+		try {
+			SemanticTypeUtil.prepareCRFModelHandler();
+		} catch (IOException e) {
+			logger.error("Error creating CRF Model file!", e);
+		}
 
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_OK);

@@ -6,9 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -27,8 +24,8 @@ public class GenerateSemanticTypesCommand extends Command {
 	private final String vWorksheetIdArg;
 	private String worksheetName;
 
-	private static Logger logger = LoggerFactory
-			.getLogger(GenerateSemanticTypesCommand.class);
+//	private static Logger logger = LoggerFactory
+//			.getLogger(GenerateSemanticTypesCommand.class);
 
 	protected GenerateSemanticTypesCommand(String id, String vWorksheetId) {
 		super(id);
