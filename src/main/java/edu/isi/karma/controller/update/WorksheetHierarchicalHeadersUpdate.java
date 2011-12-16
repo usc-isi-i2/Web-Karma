@@ -50,7 +50,7 @@ public class WorksheetHierarchicalHeadersUpdate extends AbstractUpdate {
 		HeadersColorKeyTranslator trans = new HeadersColorKeyTranslator();
 		pw.println(prefix + "{");
 		pw.println("\"" + GenericJsonKeys.updateType.name()
-				+ "\": \"TestWorksheetHierarchicalHeadersUpdate\",");
+				+ "\": \"WorksheetHierarchicalHeadersUpdate\",");
 		pw.println("\"" + JsonKeys.worksheetId.name() + "\": \"" + vWorksheet.getId()
 				+ "\",");
 		pw.println("\""+JsonKeys.rows.name()+ "\":");

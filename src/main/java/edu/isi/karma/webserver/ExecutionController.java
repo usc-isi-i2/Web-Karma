@@ -23,6 +23,8 @@ import edu.isi.karma.controller.command.ImportOntologyCommand;
 import edu.isi.karma.controller.command.ImportOntologyCommandFactory;
 import edu.isi.karma.controller.command.ImportXMLFileCommand;
 import edu.isi.karma.controller.command.ImportXMLFileCommandFactory;
+import edu.isi.karma.controller.command.SplitByCommaCommand;
+import edu.isi.karma.controller.command.SplitByCommaCommandFactory;
 import edu.isi.karma.controller.command.TablePagerCommand;
 import edu.isi.karma.controller.command.TablePagerCommandFactory;
 import edu.isi.karma.controller.command.TablePagerResizeCommand;
@@ -119,6 +121,8 @@ public class ExecutionController {
 				new UnassignSemanticTypeCommandFactory());
 		commandFactoryMap.put(ShowModelCommand.class.getSimpleName(),
 				new ShowModelCommandFactory());
+		commandFactoryMap.put(SplitByCommaCommand.class.getSimpleName(),
+				new SplitByCommaCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

@@ -1,6 +1,5 @@
 package edu.isi.karma.controller.command.alignment;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -59,11 +58,11 @@ public class GenerateSemanticTypesCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		// Prepare the CRF Model
-		try {
-			SemanticTypeUtil.prepareCRFModelHandler();
-		} catch (IOException e) {
-			logger.error("Error creating CRF Model file!", e);
-		}
+//		try {
+//			SemanticTypeUtil.prepareCRFModelHandler();
+//		} catch (IOException e) {
+//			logger.error("Error creating CRF Model file!", e);
+//		}
 
 		// Populating (or re-populating) the semantic types for the worksheet
 		Worksheet worksheet = vWorkspace.getViewFactory()
@@ -75,12 +74,19 @@ public class GenerateSemanticTypesCommand extends Command {
 			ArrayList<String> trainingExamples = SemanticTypeUtil
 					.getTrainingExamples(worksheet, path);
 
+			Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
+			
 			// Prepare the column name feature
 			String columnName = path.getLeaf().getColumnName();
 			Collection<String> columnNameList = new ArrayList<String>();
 			columnNameList.add(columnName);
-			Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
 			columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
+			
+			// Prepare the table name feature
+			String tableName = worksheetName;
+			Collection<String> tableNameList = new ArrayList<String>();
+			tableNameList.add(tableName);
+			columnFeatures.put(ColumnFeature.TableName, tableNameList);
 
 			// Stores the probability scores
 			ArrayList<Double> scores = new ArrayList<Double>();

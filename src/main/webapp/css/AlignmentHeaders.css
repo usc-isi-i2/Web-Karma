@@ -3,13 +3,16 @@ span.KeyAtrributeLabel {
 	font-size: 10px;
 }
 
-div.ColumnHeadingNameDiv {
+span.italic {
+	font-style: italic;
+}
+
+div.AlignmentHeadingNameDiv {
 	display: inline;
 }
 
 div.AlignmentLinkConfigDiv {
 	padding-right: 5px;
-	font-family: Times;
 	font-style: italic;
 	display: inline;
 }

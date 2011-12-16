@@ -176,73 +176,15 @@ function parse(data) {
 			var table = $("table#" + element["worksheetId"]);
 			
 			var thead = $("thead", table);
+			
 			if(thead.length == 0) {
 				thead = $("<thead>").addClass("tableHeader");
 				table.append(thead);			
 			}
+			$("tr.ColumnHeaders", thead).remove();
 			
 			$.each(element["rows"], function(index, row) {
-				var trTag = $("<tr>");
-				$.each(row["cells"], function(index2, cell){
-					var tdTag = $("<td>");
-					
-					// Add the background information
-					tdTag.addClass("fill" + cell["fillId"]);
-						
-					// Add the left border
-					tdTag.addClass("leftBorder" + cell["leftBorder"].replace(":", ""));
-					
-					// Add the right border
-					tdTag.addClass("rightBorder" + cell["rightBorder"].replace(":", ""));
-					
-					// Add the top border
-					tdTag.addClass("topBorder" + cell["topBorder"].replace(":", ""));	
-					
-					if(cell["cellType"] == "border") {
-						tdTag.addClass("bordertdTags")
-						
-					}
-					else if (cell["cellType"] == "heading") {
-						tdTag.addClass("columnHeadingCell")
-						// Add the colspan
-						tdTag.attr("colspan", cell["colSpan"]);
-						
-						// Store the node ID
-						tdTag.attr("id", cell["hNodeId"]);
-						
-						//Add the name
-						tdTag.append($("<div>").addClass("ColumnHeadingNameDiv")
-							.text(cell["columnNameFull"])
-							.mouseenter(config)
-							.mouseleave(configOut)
-						);
-						
-						// tdTag.text(cell["columnNameFull"])
-							// .mouseenter(config)
-							// .mouseleave(configOut);
-					} else if(cell["cellType"] == "headingPadding") {
-						// Add the colspan
-						tdTag.attr("colspan", cell["colSpan"]);
-					}
-					tdTag.data("jsonElement", cell).hover(showConsoleInfo);
-					
-					trTag.append(tdTag);
-				});
-				thead.append(trTag);
-			});
-		}
-		
-		else if(element["updateType"] == "TestWorksheetHierarchicalHeadersUpdate") {
-			var table = $("table#" + element["worksheetId"]);
-			
-			var thead = $("thead", table);
-			if(thead.length == 0) {
-				thead = $("<thead>").addClass("tableHeader");
-				table.append(thead);			
-			}
-			
-			$.each(element["rows"], function(index, row) {
-				var trTag = $("<tr>");
+				var trTag = $("<tr>").addClass("ColumnHeaders");
 				$.each(row["cells"], function(index2, cell){
 					var tdTag = $("<td>");
 					
@@ -331,7 +273,7 @@ function parse(data) {
 						//tdTag.attr("id", cell["hNodeId"]);
 						
 						// Add the label
-						var labelDiv = $("<div>").addClass("ColumnHeadingNameDiv")
+						var labelDiv = $("<div>").addClass("AlignmentHeadingNameDiv")
 							.text(cell["contentCell"]["label"]);
 						
 						// Add the pencil
@@ -708,8 +650,11 @@ function parse(data) {
 						.data("fullType", "Unassigned")
 						.data("crfInfo",type["FullCRFModel"]);
 				} else {
-					if(type["Domain"] != null && type["Domain"] != "")
-						semDiv.text(type["DisplayDomainLabel"] + ":" + type["DisplayLabel"]);
+					if(type["Domain"] != null && type["Domain"] != ""){
+						var typeItalicSpan = $("<span>").addClass("italic").text(type["DisplayLabel"]);
+						// semDiv.text(type["DisplayDomainLabel"] + ":" + type["DisplayLabel"]);
+						semDiv.text(type["DisplayDomainLabel"] + ":").append(typeItalicSpan);
+					}
 					else
 						semDiv.text(type["DisplayLabel"]);
 					semDiv.data("crfInfo",type["FullCRFModel"])

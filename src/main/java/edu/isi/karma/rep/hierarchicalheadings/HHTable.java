@@ -32,8 +32,8 @@ public class HHTable {
 		int rootNodesCount = hHtree.countRootNodes();
 		int maxDepth = hHtree.getMaxDepth();
 
-		System.out.println("Constructing matrix of height: " + (maxDepth + 1)
-				+ " and width: " + rootNodesCount);
+//		System.out.println("Constructing matrix of height: " + (maxDepth + 1)
+//				+ " and width: " + rootNodesCount);
 		cells = new HHCell[maxDepth + 1][rootNodesCount];
 
 		/*** Create HHCells using the HHTNode traversing HHTree top down ***/

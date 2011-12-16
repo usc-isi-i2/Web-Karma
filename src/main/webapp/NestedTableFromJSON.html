@@ -182,17 +182,20 @@
 				$("#importDatabaseTableButton").click(openDatabaseTableImportDialog);
 				
 				// Hide the table cell edit div
-				$("#tableCellEditDiv").hide();
+				$("div#tableCellEditDiv").hide();
 				
 				// Stylize the worksheet options div panel
 				styleAndAssignHandlersToWorksheetOptionButtons();
 				
 				// Hide the ontology options table
-				$("#ChangeSemanticTypesDialogBox").hide();
+				$("div#ChangeSemanticTypesDialogBox").hide();
 				attachOntologyOptionsRadioButtonHandlers();
 				
 				// Hide the ontology alternative parent links div
-				$("#OntologyAlternativeLinksPanel").hide();
+				$("div#OntologyAlternativeLinksPanel").hide();
+				
+				// Hide the split by comma column list
+				$("div#SplitByCommaColumnListPanel").hide();
 			});
 			
 			
@@ -455,6 +458,7 @@
 			<button href="#" id="alignToOntologyButton">Align to ontology</button> -->
 			<button href="#" id="showModel">Show Model</button>
 			<button href="#" id="hideModel">Hide Model</button>
+			<button href="#" id="splitByComma">Split Column By Comma</button>
 <!-- 			<button href="#" id="removeFromWorkspaceButton">Remove from workspace</button> -->
 		</div>
 		<div id="ChangeSemanticTypesDialogBox">
@@ -519,6 +523,10 @@
 		<div id="OntologyAlternativeLinksPanel">
 			<span class="mediumSizedFont">Choose parent relationship:</span>
 			<table id="AlternativeParentLinksTable"></table>
+		</div>
+		<div id="SplitByCommaColumnListPanel">
+			<span class="mediumSizedFont">Choose column:</span>
+			<select id="splitByCommaColumnList"></select>
 		</div>
 	</body>
 </html>

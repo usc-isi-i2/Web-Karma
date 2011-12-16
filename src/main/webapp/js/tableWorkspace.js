@@ -94,8 +94,12 @@ function changeSemanticType(event) {
 			// Check if the domain needs to be displayed
 			if($.trim(label["DisplayDomainLabel"]) == "")
 				typeLabel.text(label["DisplayLabel"]);
-			else
-				typeLabel.text(label["DisplayLabel"] + " of " + label['DisplayDomainLabel']);
+			else {
+				var typeItalicSpan = $("<span>").addClass("italic").text(label["DisplayLabel"]);
+				console.log(label["DisplayLabel"]);
+				typeLabel.text(" of " + label['DisplayDomainLabel']);
+				typeLabel.prepend($(typeItalicSpan));
+			}
 				
 			// Check if the label was assigned by the user
 			var score = "";
@@ -549,8 +553,9 @@ function showAlternativeParents(event) {
 								.attr("name", "AlternativeLinksGroup")
 								.attr("value", edge["edgeId"])
 								.val(edge["edgeLabel"]);
-								
-							var linkLabel = $("<label>").attr("for",edge["edgeId"]).text(edge["edgeSource"] + " " + edge["edgeLabel"]);
+							
+							var typeItalicSpan = $("<span>").addClass("italic").text(edge["edgeLabel"]);	
+							var linkLabel = $("<label>").attr("for",edge["edgeId"]).text(edge["edgeSource"] + " ").append(typeItalicSpan);
 							
 							trTag.append($("<td>").append(radioButton))
 								.append($("<td>").append(linkLabel));
@@ -716,8 +721,79 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 			   	}		   
 		});
 	});
+	
+	$("button#splitByComma").click(function(){
+		$("#WorksheetOptionsDiv").hide();
+		
+		console.log("Splitting by comma for table: " + $("#WorksheetOptionsDiv").data("worksheetId"));
+		var table = $("table#" + $("#WorksheetOptionsDiv").data("worksheetId"));
+		var cols = $('td.columnHeadingCell[colspan="1"]', table);
+		
+		var columnListDiv = $("div#SplitByCommaColumnListPanel");
+		var columnList = $("select#splitByCommaColumnList", columnListDiv);
+		
+		// Remove any existing option from the list
+		$("option", columnList).remove();
+		
+		$.each(cols, function(index, col){
+			if($("div.ColumnHeadingNameDiv",col).length != 0)
+				columnList.append($("<option>").val($(col).attr("id")).text($("div.ColumnHeadingNameDiv",col).text()));
+		});
+		
+		// Show the dialog box
+		columnListDiv.dialog({width: 300, height: 150
+			, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": splitColumnByComma }});
+		// var info = new Object();
+		// info["vWorksheetId"] = $("#WorksheetOptionsDiv").data("worksheetId");
+		// info["workspaceId"] = $.workspaceGlobalInformation.id;
+		// info["command"] = "ShowModelCommand";
+			
+		// var returned = $.ajax({
+		   	// url: "/RequestController", 
+		   	// type: "POST",
+		   	// data : info,
+		   	// dataType : "json",
+		   	// complete : 
+		   		// function (xhr, textStatus) {
+		   			// //alert(xhr.responseText);
+		    		// var json = $.parseJSON(xhr.responseText);
+		    		// parse(json);
+			   	// },
+			// error :
+				// function (xhr, textStatus) {
+		   			// alert("Error occured while generating semantic types!" + textStatus);
+			   	// }		   
+		// });
+	});
 }
 
+function splitColumnByComma() {
+	$("div#SplitByCommaColumnListPanel").dialog("close");
+	var selectedHNodeId = $("select#splitByCommaColumnList option:selected").val();
+	
+	var info = new Object();
+	info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["hNodeId"] = selectedHNodeId;
+	info["command"] = "SplitByCommaCommand";
+			
+	var returned = $.ajax({
+	   	url: "/RequestController", 
+	   	type: "POST",
+	   	data : info,
+	   	dataType : "json",
+	   	complete : 
+	   		function (xhr, textStatus) {
+	   			// alert(xhr.responseText);
+	    		var json = $.parseJSON(xhr.responseText);
+	    		parse(json);
+		   	},
+		error :
+			function (xhr, textStatus) {
+	   			alert("Error occured while splitting a column by comma! " + textStatus);
+		   	}		   
+	});
+}
 
 
 

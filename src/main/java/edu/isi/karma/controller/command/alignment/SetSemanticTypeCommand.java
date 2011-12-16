@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -26,6 +29,9 @@ public class SetSemanticTypeCommand extends Command {
 	private final String vWorksheetId;
 	private CRFColumnModel oldColumnModel;
 	private final SemanticType newType;
+
+	private final Logger logger = LoggerFactory.getLogger(this.getClass()
+			.getSimpleName());
 
 	protected SetSemanticTypeCommand(String id, String vWorksheetId,
 			String hNodeId, String type, String domain) {
@@ -89,13 +95,23 @@ public class SetSemanticTypeCommand extends Command {
 			}
 		}
 
+		Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
+
 		// Prepare the column name for training
 		String columnName = currentColumnPath.getLeaf().getColumnName();
 		Collection<String> columnNameList = new ArrayList<String>();
 		columnNameList.add(columnName);
-		Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
 		columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
 
+//		// Prepare the worksheet name for training
+//		String tableName = worksheet.getTitle();
+//		Collection<String> tableNameList = new ArrayList<String>();
+//		tableNameList.add(tableName);
+//		columnFeatures.put(ColumnFeature.TableName, tableNameList);
+
+		// Calculating the time required for training the semantic type
+		long start = System.currentTimeMillis();
+		
 		// Train the model with the new type
 		ArrayList<String> trainingExamples = SemanticTypeUtil
 				.getTrainingExamples(worksheet, currentColumnPath);
@@ -106,8 +122,12 @@ public class SetSemanticTypeCommand extends Command {
 			CRFModelHandler.addOrUpdateLabel(newType.getDomain() + "|"
 					+ newType.getType(), trainingExamples, columnFeatures);
 
-		System.out.println("Using type:" + newType.getDomain() + "|"
+		logger.debug("Using type:" + newType.getDomain() + "|"
 				+ newType.getType());
+		
+		long elapsedTimeMillis = System.currentTimeMillis() - start;
+		float elapsedTimeSec = elapsedTimeMillis/1000F;
+		System.out.println("Time required for training the semantic type: " + elapsedTimeSec);
 
 		// Add the new CRF column model for this column
 		ArrayList<String> labels = new ArrayList<String>();
@@ -120,9 +140,9 @@ public class SetSemanticTypeCommand extends Command {
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 
 		// Get the alignment update if any
-		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
-				vWorksheetId);
-		align.update(c, true);
+		 AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
+		 vWorksheetId);
+		 align.update(c, true);
 		return c;
 	}
 

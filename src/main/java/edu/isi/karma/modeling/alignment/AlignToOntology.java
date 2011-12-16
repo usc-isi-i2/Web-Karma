@@ -45,9 +45,9 @@ public class AlignToOntology {
 		}
 
 		// Get the list of sorted column names
-		List<HNode> sortedHeaderNodes = worksheet.getHeaders()
-				.getSortedHNodes();
-
+		List<HNode> sortedHeaderNodes = new ArrayList<HNode>(); 
+		worksheet.getHeaders().getSortedLeafHNodes(sortedHeaderNodes);
+		
 		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
 				.getSteinerTree();
 		Vertex root = alignment.GetTreeRoot();

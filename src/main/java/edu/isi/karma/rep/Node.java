@@ -63,6 +63,11 @@ public class Node extends RepEntity {
 		this.value = value;
 		this.status = status;
 	}
+	
+	public void clearValue(NodeStatus status) {
+		this.value = null;
+		this.status = status;
+	}
 
 	public void setValue(String value, NodeStatus status) {
 		setValue(new StringCellValue(value), status);
