@@ -76,6 +76,17 @@ public class HTable extends RepEntity {
 		return allHNodes;
 	}
 
+	public void getSortedLeafHNodes(List<HNode> sortedLeafHNodes) {
+		for (String hNodeId : orderedNodeIds) {
+			HNode node = nodes.get(hNodeId);
+			if (node.hasNestedTable()) {
+				node.getNestedTable().getSortedLeafHNodes(sortedLeafHNodes);
+			} else {
+				sortedLeafHNodes.add(node);
+			}
+		}
+	}
+
 	@Override
 	public void prettyPrint(String prefix, PrintWriter pw, RepFactory factory) {
 		pw.print(prefix);
