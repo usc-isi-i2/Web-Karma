@@ -40,7 +40,7 @@ public class SetSemanticTypeCommand extends Command {
 		System.out.println("Domain: " + domain);
 		System.out.println("type: " + type);
 		newType = new SemanticType(hNodeId, type, domain,
-				SemanticType.Origin.User, 1.0);
+				SemanticType.Origin.User, 1.0, false);
 	}
 
 	@Override
@@ -103,46 +103,56 @@ public class SetSemanticTypeCommand extends Command {
 		columnNameList.add(columnName);
 		columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
 
-//		// Prepare the worksheet name for training
-//		String tableName = worksheet.getTitle();
-//		Collection<String> tableNameList = new ArrayList<String>();
-//		tableNameList.add(tableName);
-//		columnFeatures.put(ColumnFeature.TableName, tableNameList);
+		// // Prepare the worksheet name for training
+		// String tableName = worksheet.getTitle();
+		// Collection<String> tableNameList = new ArrayList<String>();
+		// tableNameList.add(tableName);
+		// columnFeatures.put(ColumnFeature.TableName, tableNameList);
 
 		// Calculating the time required for training the semantic type
 		long start = System.currentTimeMillis();
-		
+
 		// Train the model with the new type
 		ArrayList<String> trainingExamples = SemanticTypeUtil
 				.getTrainingExamples(worksheet, currentColumnPath);
+		boolean trainingResult = false;
 		if (newType.getDomain().equals(""))
-			CRFModelHandler.addOrUpdateLabel(newType.getType(),
-					trainingExamples, columnFeatures);
+			trainingResult = CRFModelHandler.addOrUpdateLabel(
+					newType.getType(), trainingExamples, columnFeatures);
 		else
-			CRFModelHandler.addOrUpdateLabel(newType.getDomain() + "|"
-					+ newType.getType(), trainingExamples, columnFeatures);
+			trainingResult = CRFModelHandler.addOrUpdateLabel(
+					newType.getDomain() + "|" + newType.getType(),
+					trainingExamples, columnFeatures);
+
+		if (!trainingResult) {
+			logger.error("Error occured while training CRF Model.");
+		}
 
 		logger.debug("Using type:" + newType.getDomain() + "|"
 				+ newType.getType());
-		
+
 		long elapsedTimeMillis = System.currentTimeMillis() - start;
-		float elapsedTimeSec = elapsedTimeMillis/1000F;
-		System.out.println("Time required for training the semantic type: " + elapsedTimeSec);
+		float elapsedTimeSec = elapsedTimeMillis / 1000F;
+		System.out.println("Time required for training the semantic type: "
+				+ elapsedTimeSec);
 
 		// Add the new CRF column model for this column
 		ArrayList<String> labels = new ArrayList<String>();
 		ArrayList<Double> scores = new ArrayList<Double>();
-		CRFModelHandler.predictLabelForExamples(trainingExamples, 4, labels,
+		trainingResult = CRFModelHandler.predictLabelForExamples(trainingExamples, 4, labels,
 				scores, null, columnFeatures);
+		if (!trainingResult) {
+			logger.error("Error occured while predicting labels");
+		}
 		CRFColumnModel newModel = new CRFColumnModel(labels, scores);
 		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), newModel);
 
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 
 		// Get the alignment update if any
-		 AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
-		 vWorksheetId);
-		 align.update(c, true);
+		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
+				vWorksheetId);
+		align.update(c, true);
 		return c;
 	}
 

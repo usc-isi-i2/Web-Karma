@@ -63,7 +63,7 @@ public class SemanticTypeUtil {
 		boolean result = CRFModelHandler.readModelFromFile("CRF_Model.txt");
 
 		if (!result)
-			logger.error("Error occured while reading CRF Model!");
+			logger.error("Error occured while reading CRF Model!Aman will allow reading model repeatedly in future.");
 	}
 
 	public static String removeNamespace(String uri) {

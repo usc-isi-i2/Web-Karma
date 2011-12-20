@@ -35,22 +35,22 @@ public class Test {
 		
 		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
 		
-		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#City", null, 0.0) );
+		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#City", null, 0.0, false) );
 //		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#hasCode", null, 0.0) );
-		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#zipCode", null, 0.0) );
+		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#zipCode", null, 0.0, false) );
 //		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#hasModel", null, 0.0) );
 //		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Country", null, 0.0) );
 //		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Country", null, 0.0) );
 //		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#zipCode", null, 0.0) );
 //		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#City", null, 0.0) );
-		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#hasName", "http://mohsen.isi.edu/sample.owl#Person", null, 0.0) );
+		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#hasName", "http://mohsen.isi.edu/sample.owl#Person", null, 0.0, false) );
 //		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#hasName", null, 0.0) );
 //		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#hasName", null, 0.0) );
 //		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#live", null, 0.0) );
 //		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Place", null, 0.0) );
 //		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Plant", null, 0.0) );
-		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Person", null, 0.0) );
-		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Animal", null, 0.0) );
+		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Person", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Animal", null, 0.0, false) );
 //		semanticTypes.add( new SemanticType(null, "http://www.w3.org/2002/07/owl#Thing", null, 0.0) );
 //		semanticTypes.add( new SemanticType(null, "http://www.w3.org/2002/07/owl#Thing", null, 0.0) );
 		
@@ -62,29 +62,29 @@ public class Test {
 		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
 		
 		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#PharmGKBId", 
-				"http://halowiki/ob/category#Gene", null, 0.0) );
+				"http://halowiki/ob/category#Gene", null, 0.0, false) );
 		
 		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#PharmGKBId", 
-				"http://halowiki/ob/category#Pathway", null, 0.0) );
+				"http://halowiki/ob/category#Pathway", null, 0.0, false) );
 		
 		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#PharmGKBId", 
-				"http://halowiki/ob/category#Disease", null, 0.0) );
+				"http://halowiki/ob/category#Disease", null, 0.0, false) );
 		
 		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#PharmGKBId", 
-				"http://halowiki/ob/category#Drug", null, 0.0) );
+				"http://halowiki/ob/category#Drug", null, 0.0, false) );
 		
 		
 		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#Label", 
-				"http://halowiki/ob/category#Gene", null, 0.0) );
+				"http://halowiki/ob/category#Gene", null, 0.0, false) );
 		
 		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#Label", 
-				"http://halowiki/ob/category#Pathway", null, 0.0) );
+				"http://halowiki/ob/category#Pathway", null, 0.0, false) );
 		
 		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#Label", 
-				"http://halowiki/ob/category#Disease", null, 0.0) );
+				"http://halowiki/ob/category#Disease", null, 0.0, false) );
 		
 		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#Label", 
-				"http://halowiki/ob/category#Drug", null, 0.0) );
+				"http://halowiki/ob/category#Drug", null, 0.0, false) );
 		
 //		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/category#Disease", null, 0.0) );
 //		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/category#Drug", null, 0.0) );
@@ -98,8 +98,8 @@ public class Test {
 		
 		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
 		
-		semanticTypes.add( new SemanticType(null, "http://www.sri.com/ontologies/DovetailOnto.owl#Attack", null, 0.0) );
-		semanticTypes.add( new SemanticType(null, "http://www.sri.com/ontologies/DovetailOnto.owl#Nation", null, 0.0) );
+		semanticTypes.add( new SemanticType(null, "http://www.sri.com/ontologies/DovetailOnto.owl#Attack", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, "http://www.sri.com/ontologies/DovetailOnto.owl#Nation", null, 0.0, false) );
 		
 		return semanticTypes;
 	}
