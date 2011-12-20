@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -26,8 +29,8 @@ public class ShowModelCommand extends WorksheetCommand {
 	private final String vWorksheetId;
 	private String worksheetName;
 
-//	private static Logger logger = LoggerFactory
-//			.getLogger(ShowModelCommand.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(ShowModelCommand.class);
 
 	protected ShowModelCommand(String id, String worksheetId,
 			String vWorksheetId) {
@@ -77,11 +80,11 @@ public class ShowModelCommand extends WorksheetCommand {
 	private boolean populateSemanticTypes(Worksheet worksheet) {
 		boolean semanticTypesChangedOrAdded = false;
 		// Prepare the CRF Model
-//		try {
-//			SemanticTypeUtil.prepareCRFModelHandler();
-//		} catch (IOException e) {
-//			logger.error("Error creating CRF Model file!", e);
-//		}
+		// try {
+		// SemanticTypeUtil.prepareCRFModelHandler();
+		// } catch (IOException e) {
+		// logger.error("Error creating CRF Model file!", e);
+		// }
 
 		SemanticTypes types = worksheet.getSemanticTypes();
 
@@ -92,25 +95,28 @@ public class ShowModelCommand extends WorksheetCommand {
 					.getTrainingExamples(worksheet, path);
 
 			Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
-			
+
 			// Prepare the column name feature
 			String columnName = path.getLeaf().getColumnName();
 			Collection<String> columnNameList = new ArrayList<String>();
 			columnNameList.add(columnName);
 			columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
-			
-//			// Prepare the table name feature
-//			String tableName = worksheetName;
-//			Collection<String> tableNameList = new ArrayList<String>();
-//			tableNameList.add(tableName);
-//			columnFeatures.put(ColumnFeature.TableName, tableNameList);
+
+			// // Prepare the table name feature
+			// String tableName = worksheetName;
+			// Collection<String> tableNameList = new ArrayList<String>();
+			// tableNameList.add(tableName);
+			// columnFeatures.put(ColumnFeature.TableName, tableNameList);
 
 			// Stores the probability scores
 			ArrayList<Double> scores = new ArrayList<Double>();
 			// Stores the predicted labels
 			ArrayList<String> labels = new ArrayList<String>();
-			CRFModelHandler.predictLabelForExamples(trainingExamples, 4,
-					labels, scores, null, columnFeatures);
+			boolean predictResult = CRFModelHandler.predictLabelForExamples(
+					trainingExamples, 4, labels, scores, null, columnFeatures);
+			if (!predictResult) {
+				logger.error("Error occured while predicting label.");
+			}
 			if (labels.size() == 0) {
 				continue;
 			}
@@ -132,7 +138,7 @@ public class ShowModelCommand extends WorksheetCommand {
 			}
 
 			SemanticType semtype = new SemanticType(path.getLeaf().getId(),
-					type, domain, SemanticType.Origin.CRFModel, scores.get(0));
+					type, domain, SemanticType.Origin.CRFModel, scores.get(0), false);
 
 			// Check if the user already provided a semantic type manually
 			SemanticType existingType = types.getSemanticTypeByHNodeId(path
@@ -145,8 +151,9 @@ public class ShowModelCommand extends WorksheetCommand {
 			} else {
 				if (existingType.getOrigin() != SemanticType.Origin.User) {
 					worksheet.getSemanticTypes().addType(semtype);
-					
-					// Check if the new semantic type is different from the older one
+
+					// Check if the new semantic type is different from the
+					// older one
 					if (!existingType.getType().equals(semtype.getType())
 							|| !existingType.getDomain().equals(
 									semtype.getDomain()))

@@ -16,6 +16,12 @@ div.AlignmentLinkConfigDiv {
 	font-style: italic;
 	display: inline;
 }
+
+button.duplicateClass {
+	font-size: 1.6em !important;
+	margin-left: 5px;
+}
+
 /* TopLevelAlignmentTable classes */
 .filltopLevelAlignmentTableCell {
 	background: #1A1A1A;

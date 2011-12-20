@@ -545,20 +545,30 @@ function showAlternativeParents(event) {
 									, event.clientY+10];	// distance from top
 						
 						$.each(element["Edges"], function(index2, edge) {
-							var trTag = $("<tr>");
+							var trTag = $("<tr>").addClass("AlternativeLink");
 							
 							var radioButton = $("<input>")
 								.attr("type", "radio")
 								.attr("id", edge["edgeId"])
 								.attr("name", "AlternativeLinksGroup")
 								.attr("value", edge["edgeId"])
-								.val(edge["edgeLabel"]);
-							
+								.val(edge["edgeLabel"])
+								.data("isDuplicate", false);
+								
 							var typeItalicSpan = $("<span>").addClass("italic").text(edge["edgeLabel"]);	
 							var linkLabel = $("<label>").attr("for",edge["edgeId"]).text(edge["edgeSource"] + " ").append(typeItalicSpan);
+							var linkLabelTd = $("<td>").append(linkLabel); 
 							
 							trTag.append($("<td>").append(radioButton))
-								.append($("<td>").append(linkLabel));
+								.append(linkLabelTd);
+								
+							if(edge["selected"]) {
+								radioButton.attr("checked", true);
+								// Add the Duplicate button
+								var dupButton = $("<button>").addClass("duplicateClass").text("Duplicate").click(duplicateLink);
+								$(dupButton).button();
+								linkLabelTd.append(dupButton);
+							}
 								
 							table.append(trTag);
 						});
@@ -567,9 +577,14 @@ function showAlternativeParents(event) {
 							, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitAlignmentLinkChange }});
 							
 						$("input:radio[@name='AlternativeLinksGroup']").change(function(){
-							optionsDiv.data("currentSelection", $(this).attr("id"));
+							if($(this).data("isDuplicate"))
+								optionsDiv.data("currentSelection", $(this).data("edgeId"));
+							else
+								optionsDiv.data("currentSelection", $(this).attr("id"));
+								
 							optionsDiv.data("alignmentId", info["alignmentId"]);
 							optionsDiv.data("worksheetId", info["worksheetId"]);
+							optionsDiv.data("isDuplicate", $(this).data("isDuplicate"));
 						});
 	    			}
 	    		});
@@ -581,11 +596,37 @@ function showAlternativeParents(event) {
 	});
 }
 
+function duplicateLink() {
+	var optionsPanel = $("div#OntologyAlternativeLinksPanel");
+	var currentRow = $(this).parents("tr.AlternativeLink", optionsPanel);
+	
+	// Create a clone row
+	var dupRow = $(currentRow).clone(true);
+	
+	// Hide the duplicate button from the duplicate row
+	$("button", dupRow).hide();
+	
+	// Change the id etc for the dup row
+	var numRand = Math.floor(Math.random()*101);
+	$("input", dupRow).attr("id", numRand);
+	$("label", dupRow).attr("for", numRand);
+	$("label", dupRow).attr("value", numRand);
+	$("input", dupRow).data("edgeId", $("input", currentRow).attr("id"));
+
+	currentRow.after(dupRow);
+	$("input", dupRow).attr("checked", false);
+	$("input", dupRow).data("isDuplicate", true);
+	$("input", currentRow).attr("checked", true);
+}
+
 function submitAlignmentLinkChange() {
 	var optionsDiv = $("div#OntologyAlternativeLinksPanel");
 	
 	var info = new Object();
-	info["command"] = "AddUserLinkToAlignmentCommand";
+	if(optionsDiv.data("isDuplicate"))
+		info["command"] = "DuplicateDomainOfLinkCommand";
+	else
+		info["command"] = "AddUserLinkToAlignmentCommand";
 	info["vWorksheetId"] = optionsDiv.data("worksheetId");
 	info["alignmentId"] = optionsDiv.data("alignmentId");
 	info["edgeId"] = optionsDiv.data("currentSelection");

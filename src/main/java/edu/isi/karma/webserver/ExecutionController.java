@@ -35,6 +35,8 @@ import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommand;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommandFactory;
 import edu.isi.karma.controller.command.alignment.AlignToOntologyCommand;
 import edu.isi.karma.controller.command.alignment.AlignToOntologyCommandFactory;
+import edu.isi.karma.controller.command.alignment.DuplicateDomainOfLinkCommand;
+import edu.isi.karma.controller.command.alignment.DuplicateDomainOfLinkCommandFactory;
 import edu.isi.karma.controller.command.alignment.GenerateSemanticTypesCommand;
 import edu.isi.karma.controller.command.alignment.GenerateSemanticTypesCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommand;
@@ -123,6 +125,8 @@ public class ExecutionController {
 				new ShowModelCommandFactory());
 		commandFactoryMap.put(SplitByCommaCommand.class.getSimpleName(),
 				new SplitByCommaCommandFactory());
+		commandFactoryMap.put(DuplicateDomainOfLinkCommand.class.getSimpleName(),
+				new DuplicateDomainOfLinkCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {
