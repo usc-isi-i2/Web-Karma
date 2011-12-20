@@ -696,21 +696,21 @@ function hideSemanticTypeInfo() {
 }
 
 function showConsoleInfo() {
-	// if (console && console.log) {
-		// console.clear();
-		// var elem = $(this).data("jsonElement");
-		// $.each(elem, function(key, value){
-			// if(key == "pager"){
-				// console.log("Pager Information:")
-				// $.each(value, function(key2,value2){
-					// console.log(key2 +" : " + value2)
-				// })
-				// console.log("Pager Information Finished.")
-			// }
-			// else
-				// console.log(key + " : " + value);
-		// })
-	// }
+	if (console && console.log) {
+		console.clear();
+		var elem = $(this).data("jsonElement");
+		$.each(elem, function(key, value){
+			if(key == "pager"){
+				console.log("Pager Information:")
+				$.each(value, function(key2,value2){
+					console.log(key2 +" : " + value2)
+				})
+				console.log("Pager Information Finished.")
+			}
+			else
+				console.log(key + " : " + value);
+		})
+	}
 }
 
 function showNestedTablePager() {
