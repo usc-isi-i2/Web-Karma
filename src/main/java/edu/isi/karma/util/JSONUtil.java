@@ -72,6 +72,14 @@ public class JSONUtil {
 		}
 	}
 
+	public static String truncateCellValue(String x, int maxChars) {
+		if (x.length() > maxChars) {
+			return x.substring(0, Math.max(3, maxChars)) + " ...";
+		} else {
+			return x;
+		}
+	}
+
 	private static String readerToString(Reader reader) {
 		StringBuffer fileData = new StringBuffer(1000);
 		BufferedReader bufferedReader = new BufferedReader(reader);
@@ -128,7 +136,7 @@ public class JSONUtil {
 		String x = readerToString(reader);
 		return createJson(x);
 	}
-	
+
 	public static String prettyPrintJson(String jsonString) {
 		try {
 			Object o = createJson(jsonString);
@@ -152,7 +160,7 @@ public class JSONUtil {
 			if (o instanceof JSONObject) {
 				JSONObject x = (JSONObject) o;
 				pw.println(x.toString(2));
-			} else if (o instanceof JSONArray){
+			} else if (o instanceof JSONArray) {
 				JSONArray x = (JSONArray) o;
 				pw.println(x.toString(2));
 			}
@@ -161,6 +169,6 @@ public class JSONUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
+
 	}
 }
