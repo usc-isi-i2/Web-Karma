@@ -37,8 +37,8 @@ public class SetSemanticTypeCommand extends Command {
 			String hNodeId, String type, String domain) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
-		System.out.println("Domain: " + domain);
-		System.out.println("type: " + type);
+		logger.info("Domain: " + domain);
+		logger.info("type: " + type);
 		newType = new SemanticType(hNodeId, type, domain,
 				SemanticType.Origin.User, 1.0, false);
 	}

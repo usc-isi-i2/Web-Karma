@@ -866,7 +866,7 @@ public class SampleDataFactory {
 		}
 	}
 	
-	public static Worksheet createPathwaysWorksheet(Workspace workspace) {
+	public static Worksheet createSamplePathwaysWorksheet(Workspace workspace) {
 		String json = "[" +
 		               "{" +
 		                   "\"ACCESSION_ID\": \"PA2039\"," +

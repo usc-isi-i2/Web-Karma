@@ -34,7 +34,7 @@ public class GenerateSourceDescriptionTest extends TestCase {
 		super.setUp();
 		this.f = new RepFactory();
 		this.workspace = f.createWorkspace();
-		this.worksheet = SampleDataFactory.createPathwaysWorksheet(workspace);
+		this.worksheet = SampleDataFactory.createSamplePathwaysWorksheet(workspace);
 		
 		// Setup semantic types
 		String c1_ID = worksheet.getHeaders().getHNodeFromColumnName("ACCESSION_ID").getId();
@@ -47,13 +47,13 @@ public class GenerateSourceDescriptionTest extends TestCase {
 		String c8_ID = worksheet.getHeaders().getHNodeFromColumnName("DISEASE_NAME").getId();
 		
 		worksheet.getSemanticTypes().addType(new SemanticType(c1_ID, "http://halowiki/ob/property#pharmGKBId", "http://halowiki/ob/category#Pathway",Origin.User, 1.0, true));
-		worksheet.getSemanticTypes().addType(new SemanticType(c2_ID, "http://halowiki/ob/property#name", "http://halowiki/ob/category#Pathway",Origin.User, 1.0, true));
+		worksheet.getSemanticTypes().addType(new SemanticType(c2_ID, "http://halowiki/ob/property#name", "http://halowiki/ob/category#Pathway",Origin.User, 1.0, false));
 		worksheet.getSemanticTypes().addType(new SemanticType(c3_ID, "http://halowiki/ob/property#pharmGKBId", "http://halowiki/ob/category#Drug",Origin.User, 1.0, true));
-		worksheet.getSemanticTypes().addType(new SemanticType(c4_ID, "http://halowiki/ob/property#name", "http://halowiki/ob/category#Drug",Origin.User, 1.0, true));
+		worksheet.getSemanticTypes().addType(new SemanticType(c4_ID, "http://halowiki/ob/property#name", "http://halowiki/ob/category#Drug",Origin.User, 1.0, false));
 		worksheet.getSemanticTypes().addType(new SemanticType(c5_ID, "http://halowiki/ob/property#pharmGKBId", "http://halowiki/ob/category#Gene",Origin.User, 1.0, true));
-		worksheet.getSemanticTypes().addType(new SemanticType(c6_ID, "http://halowiki/ob/property#name", "http://halowiki/ob/category#Gene",Origin.User, 1.0, true));
+		worksheet.getSemanticTypes().addType(new SemanticType(c6_ID, "http://halowiki/ob/property#name", "http://halowiki/ob/category#Gene",Origin.User, 1.0, false));
 		worksheet.getSemanticTypes().addType(new SemanticType(c7_ID, "http://halowiki/ob/property#pharmGKBId", "http://halowiki/ob/category#Disease",Origin.User, 1.0, true));
-		worksheet.getSemanticTypes().addType(new SemanticType(c8_ID, "http://halowiki/ob/property#name", "http://halowiki/ob/category#Disease",Origin.User, 1.0, true));
+		worksheet.getSemanticTypes().addType(new SemanticType(c8_ID, "http://halowiki/ob/property#name", "http://halowiki/ob/category#Disease",Origin.User, 1.0, false));
 		
 		// Import the ontology
 		OntModel model = OntologyManager.Instance().getOntModel();
