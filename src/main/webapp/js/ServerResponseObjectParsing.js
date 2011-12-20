@@ -348,12 +348,12 @@ function parse(data) {
 							console.log("Value not found in a content cell!");
 						//tdTag.text(cell["value"]);
 						if(cell["value"] != null){
-							var valueToShow = "";
-							if(cell["value"].length > 25) {
-								valueToShow = cell["value"].substring(0,25) + "...";
-							} else {
-								valueToShow = cell["value"];
-							}
+							var valueToShow = cell["value"];
+							// if(cell["value"].length > 25) {
+								// valueToShow = cell["value"].substring(0,25) + "...";
+							// } else {
+								// valueToShow = cell["value"];
+							// }
 								
 							tdTag.append($("<div>").addClass("cellValue")
 										.text(valueToShow))
