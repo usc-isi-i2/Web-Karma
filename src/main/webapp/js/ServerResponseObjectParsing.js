@@ -29,15 +29,34 @@ function parse(data) {
 									.attr("id", "optionsButton" + worksheet["worksheetId"])
 									.data("worksheetId", worksheet["worksheetId"])
 									.click(openWorksheetOptions)
+									.button({
+									    icons: {
+									        primary: 'ui-icon-triangle-1-s'
+									    },
+									    text: false
+									}).mouseleave(function(){
+										$("#WorksheetOptionsDiv").hide();
+									})
 								)
-								.append($("<div>")
+								.append($("<div>").addClass("rightOptionsToolbar")
+									.append($("<div>").addClass("mapView")
+										.append($("<img>").attr("src","../images/google-earth-32.png")
+										).qtip({
+										   content: {
+										      text: 'View on map'
+										   },
+										   position: {
+										      my: 'top center',  // Position my top left...
+										      at: 'bottom center', // at the bottom right of...
+										   },
+										   style: {
+										      classes: 'ui-tooltip-light ui-tooltip-shadow'
+										   }
+										})
+									)
+									.append($("<div>")
 										.addClass("showHideWorkSheet")
 										.attr("id", "hideShow"+worksheet["worksheetId"])
-										.append(
-											$("<img>").addClass("minimizeWorksheetImg")
-													.attr("src", "../images/blue-box-minimize.png")
-													.data("state", "open")
-										)
 										.click(function() {
 											$("#" + worksheet["worksheetId"] + "TableDiv").toggle(400);
 											$("#topLevelpagerOptions" + worksheet["worksheetId"]).toggle(400);
@@ -46,30 +65,32 @@ function parse(data) {
 											titleDiv.toggleClass("ui-corner-all");
 											
 											// Change the icon
-											var img = $(this).find("img");
-											if(img.data("state") == "open") {
-												img.attr("src", "../images/orange-maximize.png")
-												img.data("state", "close")
+											if($(this).data("state") == "open") {
+												$(this).data("state", "close");
+												$(this).button({
+												    icons: {
+												        primary: 'ui-icon-plusthick'
+												    },
+												    text: false
+												});
+											} else if ($(this).data("state") == "close") {
+												$(this).data("state", "open");
+												$(this).button({
+												    icons: {
+												        primary: 'ui-icon-minusthick'
+												    },
+												    text: false
+												});
 											}
-											else {
-												img.attr("src", "../images/blue-box-minimize.png")
-												img.data("state", "open")
-											}
-										})
+										}).button({
+										    icons: {
+										        primary: 'ui-icon-minusthick'
+										    },
+										    text: false
+										}).data("state", "open")
+									)
 								);
 					mainDiv.append(titleDiv);
-
-					$("#optionsButton" + worksheet["worksheetId"], mainDiv).button({
-					    icons: {
-					        primary: 'ui-icon-triangle-1-s'
-					    },
-					    text: false
-					});
-					
-					$("#optionsButton" + worksheet["worksheetId"], mainDiv).mouseleave(function(){
-						$("#WorksheetOptionsDiv").hide();
-					});
-
 					
 					// Add the table (if it does not exists)
 					var tableDiv = $("<div>").attr("id", worksheet["worksheetId"] + "TableDiv").addClass("TableDiv");
