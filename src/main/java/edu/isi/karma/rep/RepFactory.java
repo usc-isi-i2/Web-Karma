@@ -38,6 +38,10 @@ public class RepFactory {
 		worksheets.put(id, ws);
 		return ws;
 	}
+	
+	public void removeWorkspace(String workspaceId) {
+		workspaces.remove(workspaceId);
+	}
 
 	public String getNewId(String prefix) {
 		return prefix + (nextId++);

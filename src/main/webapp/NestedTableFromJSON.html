@@ -135,7 +135,34 @@
 				}).mouseleave(function(){
 					$("#toolBarMenu").hide();
 				});
+				
+
 			});
+			
+			// Clear the workspace when closing the window
+			$(function() {
+				$(window).bind("beforeunload", function() {
+					var info = new Object();
+					info["workspaceId"] = $.workspaceGlobalInformation.id;
+					info["command"] = "CloseWorkspaceCommand";
+					
+					var returned = $.ajax({
+					   	url: "/RequestController", 
+						type: "POST",
+						data : info,
+						dataType : "json",
+						complete : 
+							function (xhr, textStatus) {
+								// do nothing
+					   		},
+						error :
+							function (xhr, textStatus) {
+								alert("Error while removing the workspace from server memory! " + textStatus);
+							}
+					});
+				});
+			});
+				
 			
 			// JQueryify the table cell tool bar
 			$(function() {
