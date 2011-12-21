@@ -1,0 +1,681 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY a "http://halowiki/ob/a#" >
+    <!ENTITY property "http://halowiki/ob/property#" >
+    <!ENTITY category "http://halowiki/ob/category#" >
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY dc "http://purl.org/dc/elements/1.1/" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="http://halowiki/ob#"
+     xml:base="http://halowiki/ob"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:category="http://halowiki/ob/category#"
+     xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
+     xmlns:a="http://halowiki/ob/a#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:property="http://halowiki/ob/property#">
+    <owl:Ontology rdf:about="http://halowiki/ob">
+        <rdfs:comment rdf:datatype="&xsd;string">v07: ontology based  on the ABA xml schemas</rdfs:comment>
+        <rdfs:comment rdf:datatype="&xsd;string">v08: links between  objects now only use relations (although in the xml schema relations were modeled via ID references)</rdfs:comment>
+        <rdfs:comment rdf:datatype="&xsd;string">v09: changed all namespaces to the proper wiki namespaces. http://halowiki/ob/... catagory|property|a</rdfs:comment>
+        <rdfs:comment rdf:datatype="&xsd;string">v10:
+* added Chinh&#39;s main-relations
+* renamed class Structure to Region
+* renamed property Imageseries to belongsTo</rdfs:comment>
+        <rdfs:comment rdf:datatype="&xsd;string">v11: Added Pathway class and properties</rdfs:comment>
+        <rdfs:comment rdf:datatype="&xsd;string">v12: Refined pathway classes and properties; converted domain/range restrictions to OWL class restrictions</rdfs:comment>
+        <rdfs:comment rdf:datatype="&xsd;string">v13: removed a lot of classes and properties which are not mandatory for the use case demo. Added relevant properties, esp. many different IDs and the relationships between Disease, Drug, Gene, and Pathway.</rdfs:comment>
+        <rdfs:comment rdf:datatype="&xsd;string">v14: replaced &quot;pathway canPedict disease&quot; with &quot;pathway isDisruptedBy disease&quot;.</rdfs:comment>
+        <rdfs:comment rdf:datatype="&xsd;string">v15: added the green properties from UC6 prototype requirement document (v2)</rdfs:comment>
+        <rdfs:comment rdf:datatype="&xsd;string">v16: changed property names to uppercase (according to SMW requirements)</rdfs:comment>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <owl:AnnotationProperty rdf:about="&rdfs;label"/>
+    <owl:AnnotationProperty rdf:about="&rdfs;comment"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Datatypes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#date -->
+
+    <rdfs:Datatype rdf:about="&xsd;date"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#gYear -->
+
+    <rdfs:Datatype rdf:about="&xsd;gYear"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#gYearMonth -->
+
+    <rdfs:Datatype rdf:about="&xsd;gYearMonth"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://halowiki/ob/property#TopObjectProperty -->
+
+    <owl:ObjectProperty rdf:about="&property;TopObjectProperty"/>
+    
+
+
+    <!-- http://halowiki/ob/property#canPredict -->
+
+    <owl:ObjectProperty rdf:about="&property;canPredict">
+        <rdfs:subPropertyOf rdf:resource="&property;TopObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#causes -->
+
+    <owl:ObjectProperty rdf:about="&property;causes">
+        <rdfs:range rdf:resource="&category;Disease"/>
+        <rdfs:domain rdf:resource="&category;Gene"/>
+        <rdfs:subPropertyOf rdf:resource="&property;TopObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#disrupts -->
+
+    <owl:ObjectProperty rdf:about="&property;disrupts">
+        <rdfs:domain rdf:resource="&category;Disease"/>
+        <rdfs:range rdf:resource="&category;Pathway"/>
+        <rdfs:subPropertyOf rdf:resource="&property;TopObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#involves -->
+
+    <owl:ObjectProperty rdf:about="&property;involves">
+        <rdfs:range rdf:resource="&category;Gene"/>
+        <rdfs:domain rdf:resource="&category;Pathway"/>
+        <rdfs:subPropertyOf rdf:resource="&property;TopObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#isCausedBy -->
+
+    <owl:ObjectProperty rdf:about="&property;isCausedBy">
+        <rdfs:domain rdf:resource="&category;Disease"/>
+        <rdfs:range rdf:resource="&category;Gene"/>
+        <rdfs:subPropertyOf rdf:resource="&property;TopObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#isDisruptedBy -->
+
+    <owl:ObjectProperty rdf:about="&property;isDisruptedBy">
+        <rdfs:range rdf:resource="&category;Disease"/>
+        <rdfs:domain rdf:resource="&category;Pathway"/>
+        <rdfs:subPropertyOf rdf:resource="&property;TopObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#isHomologTo -->
+
+    <owl:ObjectProperty rdf:about="&property;isHomologTo">
+        <rdfs:subPropertyOf rdf:resource="&property;TopObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#isInvolvedIn -->
+
+    <owl:ObjectProperty rdf:about="&property;isInvolvedIn">
+        <rdfs:domain rdf:resource="&category;Gene"/>
+        <rdfs:range rdf:resource="&category;Pathway"/>
+        <rdfs:subPropertyOf rdf:resource="&property;TopObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#isTargetedBy -->
+
+    <owl:ObjectProperty rdf:about="&property;isTargetedBy">
+        <rdfs:range rdf:resource="&category;Drug"/>
+        <rdfs:domain rdf:resource="&category;Pathway"/>
+        <rdfs:subPropertyOf rdf:resource="&property;TopObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#isTreatedBy -->
+
+    <owl:ObjectProperty rdf:about="&property;isTreatedBy">
+        <rdfs:domain rdf:resource="&category;Disease"/>
+        <rdfs:range rdf:resource="&category;Drug"/>
+        <rdfs:subPropertyOf rdf:resource="&property;TopObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#targets -->
+
+    <owl:ObjectProperty rdf:about="&property;targets">
+        <rdfs:domain rdf:resource="&category;Drug"/>
+        <rdfs:range rdf:resource="&category;Pathway"/>
+        <rdfs:subPropertyOf rdf:resource="&property;TopObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://halowiki/ob/property#TopDataProperty -->
+
+    <owl:DatatypeProperty rdf:about="&property;TopDataProperty"/>
+    
+
+
+    <!-- http://halowiki/ob/property#abaGeneId -->
+
+    <owl:DatatypeProperty rdf:about="&property;abaGeneId">
+        <rdfs:domain rdf:resource="&category;Gene"/>
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#alternativeLabel -->
+
+    <owl:DatatypeProperty rdf:about="&property;alternativeLabel">
+        <rdfs:domain rdf:resource="&category;Disease"/>
+        <rdfs:domain rdf:resource="&category;Drug"/>
+        <rdfs:domain rdf:resource="&category;Gene"/>
+        <rdfs:subPropertyOf rdf:resource="&property;TopDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#alternativeSymbol -->
+
+    <owl:DatatypeProperty rdf:about="&property;alternativeSymbol">
+        <rdfs:domain rdf:resource="&category;Gene"/>
+        <rdfs:subPropertyOf rdf:resource="&property;TopDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#description -->
+
+    <owl:DatatypeProperty rdf:about="&property;description">
+        <rdfs:domain rdf:resource="&category;Pathway"/>
+        <rdfs:subPropertyOf rdf:resource="&property;TopDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#ensemblId -->
+
+    <owl:DatatypeProperty rdf:about="&property;ensemblId">
+        <rdfs:domain rdf:resource="&category;Gene"/>
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#entrezGeneId -->
+
+    <owl:DatatypeProperty rdf:about="&property;entrezGeneId">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="&category;Gene"/>
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#geneSymbol -->
+
+    <owl:DatatypeProperty rdf:about="&property;geneSymbol">
+        <rdfs:domain rdf:resource="&category;Gene"/>
+        <rdfs:subPropertyOf rdf:resource="&property;TopDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#hGNCId -->
+
+    <owl:DatatypeProperty rdf:about="&property;hGNCId">
+        <rdfs:label rdf:datatype="&xsd;string">HGNCId</rdfs:label>
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#hPRDId -->
+
+    <owl:DatatypeProperty rdf:about="&property;hPRDId">
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#iMGTId -->
+
+    <owl:DatatypeProperty rdf:about="&property;iMGTId">
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#idProperty -->
+
+    <owl:DatatypeProperty rdf:about="&property;idProperty">
+        <rdfs:subPropertyOf rdf:resource="&property;TopDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#keggDiseaseId -->
+
+    <owl:DatatypeProperty rdf:about="&property;keggDiseaseId">
+        <rdfs:domain rdf:resource="&category;Disease"/>
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#keggDrugId -->
+
+    <owl:DatatypeProperty rdf:about="&property;keggDrugId">
+        <rdfs:domain rdf:resource="&category;Drug"/>
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#keggGeneId -->
+
+    <owl:DatatypeProperty rdf:about="&property;keggGeneId">
+        <rdfs:domain rdf:resource="&category;Gene"/>
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#keggPathwayId -->
+
+    <owl:DatatypeProperty rdf:about="&property;keggPathwayId">
+        <rdfs:domain rdf:resource="&category;Pathway"/>
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#meSHId -->
+
+    <owl:DatatypeProperty rdf:about="&property;meSHId">
+        <rdfs:domain rdf:resource="&category;Disease"/>
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#mgiMarkerAccessionId -->
+
+    <owl:DatatypeProperty rdf:about="&property;mgiMarkerAccessionId">
+        <rdfs:domain rdf:resource="&category;Gene"/>
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#nCBIGIId -->
+
+    <owl:DatatypeProperty rdf:about="&property;nCBIGIId">
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#nCBIGeneId -->
+
+    <owl:DatatypeProperty rdf:about="&property;nCBIGeneId">
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#name -->
+
+    <owl:DatatypeProperty rdf:about="&property;name">
+        <rdfs:domain rdf:resource="&category;Disease"/>
+        <rdfs:domain rdf:resource="&category;Drug"/>
+        <rdfs:domain rdf:resource="&category;Gene"/>
+        <rdfs:domain rdf:resource="&category;Pathway"/>
+        <rdfs:subPropertyOf rdf:resource="&property;TopDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#oMIMId -->
+
+    <owl:DatatypeProperty rdf:about="&property;oMIMId">
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#pharmGKBId -->
+
+    <owl:DatatypeProperty rdf:about="&property;pharmGKBId">
+        <rdfs:domain rdf:resource="&category;Top"/>
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://halowiki/ob/property#uniprotId -->
+
+    <owl:DatatypeProperty rdf:about="&property;uniprotId">
+        <rdfs:domain rdf:resource="&category;Gene"/>
+        <rdfs:subPropertyOf rdf:resource="&property;idProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://halowiki/ob/category#Disease -->
+
+    <owl:Class rdf:about="&category;Disease">
+        <rdfs:subClassOf rdf:resource="&category;DiseaseOrGeneOrPathway"/>
+        <rdfs:subClassOf rdf:resource="&category;Top"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;isTreatedBy"/>
+                <owl:allValuesFrom rdf:resource="&category;Drug"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;isCausedBy"/>
+                <owl:allValuesFrom rdf:resource="&category;Gene"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;keggDiseaseId"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;disrupts"/>
+                <owl:allValuesFrom rdf:resource="&category;Pathway"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://halowiki/ob/category#DiseaseOrGeneOrPathway -->
+
+    <owl:Class rdf:about="&category;DiseaseOrGeneOrPathway"/>
+    
+
+
+    <!-- http://halowiki/ob/category#Drug -->
+
+    <owl:Class rdf:about="&category;Drug">
+        <rdfs:subClassOf rdf:resource="&category;Top"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;keggDrugId"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;targets"/>
+                <owl:allValuesFrom rdf:resource="&category;DiseaseOrGeneOrPathway"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://halowiki/ob/category#Gene -->
+
+    <owl:Class rdf:about="&category;Gene">
+        <rdfs:subClassOf rdf:resource="&category;Top"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;iMGTId"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;mgiMarkerAccessionId"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;hGNCId"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;abaGeneId"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;uniprotId"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;isInvolvedIn"/>
+                <owl:allValuesFrom rdf:resource="&category;Pathway"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;oMIMId"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;isTargetedBy"/>
+                <owl:allValuesFrom rdf:resource="&category;Drug"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;isHomologTo"/>
+                <owl:allValuesFrom rdf:resource="&category;Gene"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;causes"/>
+                <owl:allValuesFrom rdf:resource="&category;Disease"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;nCBIGeneId"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;keggGeneId"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;geneSymbol"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;entrezGeneId"/>
+                <owl:allValuesFrom rdf:resource="&xsd;int"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;ensemblId"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;hPRDId"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;nCBIGIId"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://halowiki/ob/category#Pathway -->
+
+    <owl:Class rdf:about="&category;Pathway">
+        <rdfs:subClassOf rdf:resource="&category;DiseaseOrGeneOrPathway"/>
+        <rdfs:subClassOf rdf:resource="&category;Top"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;involves"/>
+                <owl:allValuesFrom rdf:resource="&category;Gene"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;isDisruptedBy"/>
+                <owl:allValuesFrom rdf:resource="&category;Disease"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;keggPathwayId"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;isTargetedBy"/>
+                <owl:allValuesFrom rdf:resource="&category;Drug"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://halowiki/ob/category#Top -->
+
+    <owl:Class rdf:about="&category;Top">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;alternativeLabel"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;description"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&property;name"/>
+                <owl:allValuesFrom rdf:resource="&xsd;string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#Thing -->
+
+    <owl:Class rdf:about="&owl;Thing"/>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.1.0.1602) http://owlapi.sourceforge.net -->
+

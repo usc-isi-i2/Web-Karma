@@ -50,15 +50,14 @@ public class RDFUtil {
 	 */
 	static public String getPrefix(Map<String,String> namespaces){
 		Set<Entry<String,String>> entries = namespaces.entrySet();
-		if(entries.size()>1){
-			//I have more than one entry
-			return null;
-		}
-		else{
+		if(entries.size()==1){
 			//return the unique key
 			Iterator<Entry<String,String>> it = entries.iterator();
 			Entry<String,String> e = it.next();
 			return (String)e.getKey();
+		}
+		else{
+			return null;
 		}
 	}
 

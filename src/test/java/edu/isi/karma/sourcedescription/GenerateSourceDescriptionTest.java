@@ -16,12 +16,14 @@ import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.modeling.ontology.ImportOntology;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rdf.SourceDescription;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.rep.semantictypes.SemanticType.Origin;
 import edu.isi.karma.rep.semantictypes.SemanticTypes;
+import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.SampleDataFactory;
 
 public class GenerateSourceDescriptionTest extends TestCase {
@@ -46,23 +48,23 @@ public class GenerateSourceDescriptionTest extends TestCase {
 		String c7_ID = worksheet.getHeaders().getHNodeFromColumnName("DISEASE_ID").getId();
 		String c8_ID = worksheet.getHeaders().getHNodeFromColumnName("DISEASE_NAME").getId();
 		
-		worksheet.getSemanticTypes().addType(new SemanticType(c1_ID, "http://halowiki/ob/property#pharmGKBId", "http://halowiki/ob/category#Pathway",Origin.User, 1.0, true));
+		worksheet.getSemanticTypes().addType(new SemanticType(c1_ID, "http://halowiki/ob/property#pharmGKBId", "http://halowiki/ob/category#Pathway",Origin.User, 1.0, false));
 		worksheet.getSemanticTypes().addType(new SemanticType(c2_ID, "http://halowiki/ob/property#name", "http://halowiki/ob/category#Pathway",Origin.User, 1.0, false));
 		worksheet.getSemanticTypes().addType(new SemanticType(c3_ID, "http://halowiki/ob/property#pharmGKBId", "http://halowiki/ob/category#Drug",Origin.User, 1.0, true));
 		worksheet.getSemanticTypes().addType(new SemanticType(c4_ID, "http://halowiki/ob/property#name", "http://halowiki/ob/category#Drug",Origin.User, 1.0, false));
 		worksheet.getSemanticTypes().addType(new SemanticType(c5_ID, "http://halowiki/ob/property#pharmGKBId", "http://halowiki/ob/category#Gene",Origin.User, 1.0, true));
 		worksheet.getSemanticTypes().addType(new SemanticType(c6_ID, "http://halowiki/ob/property#name", "http://halowiki/ob/category#Gene",Origin.User, 1.0, false));
-		worksheet.getSemanticTypes().addType(new SemanticType(c7_ID, "http://halowiki/ob/property#pharmGKBId", "http://halowiki/ob/category#Disease",Origin.User, 1.0, true));
+		worksheet.getSemanticTypes().addType(new SemanticType(c7_ID, "http://halowiki/ob/property#pharmGKBId", "http://halowiki/ob/category#Disease",Origin.User, 1.0, false));
 		worksheet.getSemanticTypes().addType(new SemanticType(c8_ID, "http://halowiki/ob/property#name", "http://halowiki/ob/category#Disease",Origin.User, 1.0, false));
 		
 		// Import the ontology
 		OntModel model = OntologyManager.Instance().getOntModel();
 		ImportOntology imp = new ImportOntology(model, new File(
-				"./SampleData/OWL/Wiki.owl"));
+				"./src/test/karma-data/Wiki.owl"));
 		imp.doImport();
 	}
 	
-	public void testGenerate() {
+	public void testGenerate() throws KarmaException {
 		SemanticTypes semTypes = worksheet.getSemanticTypes();
 		// Get the list of semantic types
 		List<SemanticType> types = new ArrayList<SemanticType>();
@@ -73,7 +75,11 @@ public class GenerateSourceDescriptionTest extends TestCase {
 		Alignment alignment = new Alignment(types);
 		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
 				.getSteinerTree();
+		
 		GraphUtil.printGraph(tree);
 		
+		SourceDescription sd = new SourceDescription(f, tree, alignment.GetTreeRoot());
+		String rule = sd.generateSourceDescription();
+		System.out.println("SourceDescription:\n" + rule);
 	}
 }
