@@ -582,6 +582,11 @@ function showAlternativeParents(event) {
 							else
 								optionsDiv.data("currentSelection", $(this).attr("id"));
 								
+							// Remove the button from the previously selected radio button and add it to the current one
+							var buttonClone = $("button", optionsDiv).clone(true);
+							$("button", optionsDiv).remove();
+							$("td:eq(1)",$(this).parents("tr")).append(buttonClone);
+								
 							optionsDiv.data("alignmentId", info["alignmentId"]);
 							optionsDiv.data("worksheetId", info["worksheetId"]);
 							optionsDiv.data("isDuplicate", $(this).data("isDuplicate"));

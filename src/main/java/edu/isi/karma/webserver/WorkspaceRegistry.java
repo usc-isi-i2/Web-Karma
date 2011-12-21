@@ -27,4 +27,8 @@ public class WorkspaceRegistry {
 	public ExecutionController getExecutionController(String workspaceId) {
 		return workspaceId2ExecutionController.get(workspaceId);
 	}
+	
+	public void deregister(String workspaceId) {
+		workspaceId2ExecutionController.remove(workspaceId);
+	}
 }

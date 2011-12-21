@@ -83,9 +83,26 @@
     margin-right: 4px;
 }
 
-.showHideWorkSheet {
+div.rightOptionsToolbar {
 	float: right;
-	margin-top: 3px;
+}
+.showHideWorkSheet {
+	cursor: pointer;
+    width: 20px;
+    height: 14px;
+    margin-left:4px;
+    margin-top: 4px;
+    margin-right: 4px;
+}
+
+div.mapView {
+	display: inline;
+	cursor: pointer;
+}
+
+div.mapView img {
+	width: 18px;
+    height: 18px;
 }
 
 .minimizeWorksheetImg {

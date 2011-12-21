@@ -56,10 +56,6 @@ public class ImportOntology {
 			return false;
 		}
 		
-		// TODO ??!!
-		/* Parse the new ontology and update our Graph data structure */
-		//editor.getOntologyManager().updateGraph();
-		
 		/* Record the operation */
 		logger.debug("done.");
 		return true;

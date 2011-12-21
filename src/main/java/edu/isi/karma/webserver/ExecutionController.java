@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.CloseWorkspaceCommand;
+import edu.isi.karma.controller.command.CloseWorkspaceCommandFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
@@ -127,6 +129,8 @@ public class ExecutionController {
 				new SplitByCommaCommandFactory());
 		commandFactoryMap.put(DuplicateDomainOfLinkCommand.class.getSimpleName(),
 				new DuplicateDomainOfLinkCommandFactory());
+		commandFactoryMap.put(CloseWorkspaceCommand.class.getSimpleName(),
+				new CloseWorkspaceCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

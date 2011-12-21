@@ -9,14 +9,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.view.VWorksheet;
@@ -27,58 +23,64 @@ public class GetExampleJSON extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	private static Logger logger = LoggerFactory
-			.getLogger(GetExampleJSON.class);
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
-		WorkspaceManager mgr = new WorkspaceManager();
-		Workspace workspace = mgr.getFactory().createWorkspace();
+		Workspace workspace = WorkspaceManager.getInstance().getFactory()
+				.createWorkspace();
 		VWorkspace vwsp = new VWorkspace(workspace);
 
 		WorkspaceRegistry.getInstance().register(new ExecutionController(vwsp));
-	
-//		SampleDataFactory.createSample1small(workspace);
+
+		// SampleDataFactory.createSample1small(workspace);
 		SampleDataFactory.createSample1(workspace);
-//		SampleDataFactory.createSampleJsonWithNestedTable2(false/* true: 2 rows */,
-//				vwsp.getWorkspace());
-//		//SampleDataFactory.createFlatWorksheet(workspace, 10000, 6);
-//		SampleDataFactory.createFlatWorksheet(workspace, 2, 2);
-//		//SampleDataFactory.createFromJsonTextFile(workspace, "samplejson-1.txt");
-//		SampleDataFactory.createJsonWithFunnyCharacters(workspace);
-		SampleDataFactory.createSampleJson(workspace, 3);
-//		SampleDataFactory.createSampleJsonWithEmptyNestedTable1(workspace);
-//		SampleDataFactory.createSampleJsonWithEmptyNestedTable2(workspace);
-//		SampleDataFactory.createSampleJsonWithEmptyNestedTable3(workspace);
-//		SampleDataFactory.createSampleJsonWithEmptyNestedTable4(workspace);
-//		SampleDataFactory.createUnitTest1(workspace);
-//		SampleDataFactory.createUnitTest2(workspace);
-//		SampleDataFactory.createUnitTest3(workspace);
-//		SampleDataFactory.createUnitTest4(workspace);
-//		SampleDataFactory.createUnitTest5(workspace);
-//		SampleDataFactory.createUnitTest6(workspace);
-//		//	SampleDataFactory.createFromJsonTextFile(workspace, "unit-test-json.json");
-//	//	SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest1.json");
-//		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest2.json");
-//		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest4.json");
-//		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest5.json");
-//		SampleDataFactory.createFromJsonTextFile(workspace, "testUnitTest6.json");
-//		SampleDataFactory.createFromJsonTextFile(workspace, "testSampleJsonWithEmptyNestedTable1.json");
-//		SampleDataFactory.createFromJsonTextFile(workspace, "createSampleJsonWithNestedTable2.json");
-//		SampleDataFactory.createFromJsonTextFile(workspace, "f6.json");
-//		SampleDataFactory.createFromJsonTextFile(workspace, "createSampleJsonWithNestedTable2_VD.json");
+		// SampleDataFactory.createSampleJsonWithNestedTable2(false/* true: 2
+		// rows */,
+		// vwsp.getWorkspace());
+		// //SampleDataFactory.createFlatWorksheet(workspace, 10000, 6);
+		// SampleDataFactory.createFlatWorksheet(workspace, 2, 2);
+		// //SampleDataFactory.createFromJsonTextFile(workspace,
+		// "samplejson-1.txt");
+		// SampleDataFactory.createJsonWithFunnyCharacters(workspace);
+		// SampleDataFactory.createSampleJson(workspace, 3);
+		// SampleDataFactory.createSampleJsonWithEmptyNestedTable1(workspace);
+		// SampleDataFactory.createSampleJsonWithEmptyNestedTable2(workspace);
+		// SampleDataFactory.createSampleJsonWithEmptyNestedTable3(workspace);
+		// SampleDataFactory.createSampleJsonWithEmptyNestedTable4(workspace);
+		// SampleDataFactory.createUnitTest1(workspace);
+		// SampleDataFactory.createUnitTest2(workspace);
+		// SampleDataFactory.createUnitTest3(workspace);
+		// SampleDataFactory.createUnitTest4(workspace);
+		// SampleDataFactory.createUnitTest5(workspace);
+		// SampleDataFactory.createUnitTest6(workspace);
+		// // SampleDataFactory.createFromJsonTextFile(workspace,
+		// "unit-test-json.json");
+		// // SampleDataFactory.createFromJsonTextFile(workspace,
+		// "testUnitTest1.json");
+		// SampleDataFactory.createFromJsonTextFile(workspace,
+		// "testUnitTest2.json");
+		// SampleDataFactory.createFromJsonTextFile(workspace,
+		// "testUnitTest4.json");
+		// SampleDataFactory.createFromJsonTextFile(workspace,
+		// "testUnitTest5.json");
+		// SampleDataFactory.createFromJsonTextFile(workspace,
+		// "testUnitTest6.json");
+		// SampleDataFactory.createFromJsonTextFile(workspace,
+		// "testSampleJsonWithEmptyNestedTable1.json");
+		// SampleDataFactory.createFromJsonTextFile(workspace,
+		// "createSampleJsonWithNestedTable2.json");
+		// SampleDataFactory.createFromJsonTextFile(workspace, "f6.json");
+		// SampleDataFactory.createFromJsonTextFile(workspace,
+		// "createSampleJsonWithNestedTable2_VD.json");
 		// Put all created worksheet models in the view.
 		vwsp.addAllWorksheets();
 
 		UpdateContainer c = new UpdateContainer();
 		c.add(new WorksheetListUpdate(vwsp.getVWorksheetList()));
 		for (VWorksheet vw : vwsp.getVWorksheetList().getVWorksheets()) {
-			//c.add(new WorksheetHeadersUpdate(vw));
 			c.add(new WorksheetHierarchicalHeadersUpdate(vw));
 			c.add(new WorksheetHierarchicalDataUpdate(vw));
-			//c.add(new WorksheetDataUpdate(vw));
 		}
 
 		StringWriter sw = new StringWriter();
@@ -87,13 +89,6 @@ public class GetExampleJSON extends HttpServlet {
 		c.generateJson("", pw, vwsp);
 
 		System.err.println(sw.toString());
-		
-		// Prepare the CRF Model
-		try {
-			SemanticTypeUtil.prepareCRFModelHandler();
-		} catch (IOException e) {
-			logger.error("Error creating CRF Model file!", e);
-		}
 
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_OK);
