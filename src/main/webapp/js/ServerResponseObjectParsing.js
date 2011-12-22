@@ -53,6 +53,8 @@ function parse(data) {
 										      classes: 'ui-tooltip-light ui-tooltip-shadow'
 										   }
 										})
+										.data("worksheetId", worksheet["worksheetId"])
+										.click(showMapViewForWorksheet)
 									)
 									.append($("<div>")
 										.addClass("showHideWorkSheet")

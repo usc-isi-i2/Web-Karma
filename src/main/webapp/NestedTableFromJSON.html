@@ -32,6 +32,10 @@
 		<script type="text/javascript" src="js/databaseImportDialog.js"></script>
 		<script type="text/javascript" src="js/jquery.jstree.js"></script>
 		<script type="text/javascript" src="js/jquery.qtip.min.js"></script>
+		<script type="text/javascript" src="js/geospatial.js"></script>
+		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+		<script type="text/javascript" src="js/geoxml14Jun2011.js"></script>
+		<script type="text/javascript" src="js/json.js"></script>
 		
 		
 		<!-- Home grown JavaScript files -->
@@ -118,7 +122,9 @@
   				
 				}
 				
-			).error(function() { alert("Error geting sample JSON!"); });
+			).error(function() { 
+				alert("Error geting sample JSON!"); 
+			});
 				
 		</script>
 		<script>
@@ -159,7 +165,7 @@
 					   		},
 						error :
 							function (xhr, textStatus) {
-								alert("Error while removing the workspace from server memory! " + textStatus);
+								// alert("Error while removing the workspace from server memory! " + textStatus);
 							}
 					});
 				});
