@@ -39,7 +39,7 @@ function parse(data) {
 									})
 								)
 								.append($("<div>").addClass("rightOptionsToolbar")
-									.append($("<div>").addClass("mapView")
+									.append($("<div>").addClass("toggleMapView")
 										.append($("<img>").attr("src","../images/google-earth-32.png")
 										).qtip({
 										   content: {
@@ -54,6 +54,7 @@ function parse(data) {
 										   }
 										})
 										.data("worksheetId", worksheet["worksheetId"])
+										.data("state", "table")
 										.click(showMapViewForWorksheet)
 									)
 									.append($("<div>")

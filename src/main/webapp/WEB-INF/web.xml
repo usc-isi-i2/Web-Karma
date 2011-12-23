@@ -4,6 +4,10 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+	<context-param>
+		<param-name>publicIPAddress</param-name>
+		<param-value>128.9.216.233</param-value>
+	</context-param>
   
   	<servlet>
     	<servlet-name>ServletStart</servlet-name>

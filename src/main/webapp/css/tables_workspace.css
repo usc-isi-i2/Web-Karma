@@ -95,12 +95,12 @@ div.rightOptionsToolbar {
     margin-right: 4px;
 }
 
-div.mapView {
+div.toggleMapView {
 	display: inline;
 	cursor: pointer;
 }
 
-div.mapView img {
+div.toggleMapView img {
 	width: 18px;
     height: 18px;
 }

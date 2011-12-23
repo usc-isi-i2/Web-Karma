@@ -3,7 +3,10 @@ package edu.isi.karma.geospatial;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +16,8 @@ import de.micromata.opengis.kml.v_2_2_0.Folder;
 import de.micromata.opengis.kml.v_2_2_0.Kml;
 import de.micromata.opengis.kml.v_2_2_0.KmlFactory;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
@@ -21,7 +26,7 @@ public class WorksheetGeospatialContent {
 	private Worksheet worksheet;
 
 	private List<Point> points = new ArrayList<Point>();
-	 private List<LineString> lines = new ArrayList<LineString>();
+	private List<LineString> lines = new ArrayList<LineString>();
 
 	private static String WGS84_LAT_PROPERTY = "http://www.w3.org/2003/01/geo/wgs84_pos#lat";
 	private static String WGS84_LNG_PROPERTY = "http://www.w3.org/2003/01/geo/wgs84_pos#long";
@@ -105,7 +110,16 @@ public class WorksheetGeospatialContent {
 			CoordinateCase currentCase) {
 		int numRows = worksheet.getDataTable().getNumRows();
 		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, numRows);
-		
+
+		// Prepare a map of the column names that we use for descriptions
+		List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
+		worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
+		Map<String, String> columnNameMap = new HashMap<String, String>();
+		for (HNode hNode : sortedLeafHNodes) {
+			columnNameMap.put(hNode.getId(), hNode.getColumnName());
+		}
+
+		// Extract the latitude, longitude and the other description data
 		String lng = "";
 		String lat = "";
 		for (Row row : rows) {
@@ -148,6 +162,17 @@ public class WorksheetGeospatialContent {
 				double lngF = Double.parseDouble(lng.trim());
 				double latF = Double.parseDouble(lat.trim());
 				Point point = new Point(lngF, latF);
+
+				// Get the data from the other columns for description
+				Collection<Node> nodes = row.getNodes();
+				for (Node node : nodes) {
+					if (!(coordinateHNodeIds.contains(node.getHNodeId()))
+							&& !(node.hasNestedTable())) {
+						point.addColumnToDescription(columnNameMap.get(node
+								.getHNodeId()), node.getValue().asString());
+					}
+				}
+
 				points.add(point);
 			} catch (Exception e) {
 				logger.error("Error creating point! Skipping it.", e);
@@ -156,13 +181,16 @@ public class WorksheetGeospatialContent {
 		}
 	}
 
-	public void publishKML() throws FileNotFoundException {
+	public File publishKML() throws FileNotFoundException {
+		File outputFile = new File("./src/main/webapp/KML/"
+				+ worksheet.getTitle() + ".kml");
 		final Kml kml = KmlFactory.createKml();
 		final Folder folder = kml.createAndSetFolder()
 				.withName(worksheet.getTitle()).withOpen(true);
 
 		for (Point point : points) {
 			folder.createAndAddPlacemark()
+					.withDescription(point.getHTMLDescription())
 					.withVisibility(true)
 					.createAndSetPoint()
 					.withAltitudeMode(AltitudeMode.CLAMP_TO_GROUND)
@@ -170,11 +198,12 @@ public class WorksheetGeospatialContent {
 							point.getLongitude() + "," + point.getLatitude());
 
 		}
-		kml.marshal(new File("test.kml"));
+		kml.marshal(outputFile);
+		return outputFile;
 	}
-	
+
 	public boolean hasNoGeospatialData() {
-		if(points.size() == 0 && lines.size() == 0)
+		if (points.size() == 0 && lines.size() == 0)
 			return true;
 		return false;
 	}

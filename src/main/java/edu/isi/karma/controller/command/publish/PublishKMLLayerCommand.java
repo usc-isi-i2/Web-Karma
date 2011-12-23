@@ -1,9 +1,17 @@
 package edu.isi.karma.controller.command.publish;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.geospatial.WorksheetGeospatialContent;
@@ -12,10 +20,20 @@ import edu.isi.karma.view.VWorkspace;
 
 public class PublishKMLLayerCommand extends Command {
 	private final String vWorksheetId;
+	private String publicIPAddress;
 
-	protected PublishKMLLayerCommand(String id, String vWorksheetId) {
+	public enum JsonKeys {
+		updateType, fileName
+	}
+
+	private static Logger logger = LoggerFactory
+			.getLogger(PublishKMLLayerCommand.class);
+
+	protected PublishKMLLayerCommand(String id, String vWorksheetId,
+			String ipAddress) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
+		this.publicIPAddress = ipAddress;
 	}
 
 	@Override
@@ -52,7 +70,25 @@ public class PublishKMLLayerCommand extends Command {
 		}
 
 		try {
-			geo.publishKML();
+			final File file = geo.publishKML();
+			return new UpdateContainer(new AbstractUpdate() {
+
+				@Override
+				public void generateJson(String prefix, PrintWriter pw,
+						VWorkspace vWorkspace) {
+					JSONObject outputObject = new JSONObject();
+					try {
+						outputObject.put(JsonKeys.updateType.name(),
+								"PublishKMLUpdate");
+						outputObject.put(JsonKeys.fileName.name(),
+								"http://" + publicIPAddress + ":8080/KML/"
+										+ file.getName());
+						pw.println(outputObject.toString(4));
+					} catch (JSONException e) {
+						logger.error("Error occured while generating JSON!");
+					}
+				}
+			});
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
