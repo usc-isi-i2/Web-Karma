@@ -85,6 +85,14 @@ public class TableRDFGenerator {
 	Map<String,String> ontologyNamespaces;
 	
 	/**
+	 * Prefix used for inverse properties. When we see an inverse property 
+	 * we have to change the order of the 2 attributes.
+	 */
+	public static String inverseProperty = "inverse__of___";
+
+	private static final MediatorLogger logger = MediatorLogger.getLogger(TableRDFGenerator.class.getName());
+
+	/**
 	 * Constructs a TableRDFGenerator.
 	 * @param domainStr
 	 * 		The domain file as a string. Should contain "NAMESPACES" 
@@ -95,9 +103,6 @@ public class TableRDFGenerator {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	
-	private static final MediatorLogger logger = MediatorLogger.getLogger(TableRDFGenerator.class.getName());
-
 	public TableRDFGenerator(String domainStr, String outputFile) 
 				throws MediatorException, ClassNotFoundException, IOException{
 		initParams(domainStr,outputFile);
@@ -221,7 +226,7 @@ public class TableRDFGenerator {
 				if(firstVar!=null){
 					antecedent.addTerm(firstVar);
 				}
-				consequent.add(p.clone());
+				consequent.add(getInverse(p.clone()));
 
 				//both terms could be a URI
 				findAllRelatedPredicates(p.getTerms().get(0), preds, antecedent, consequent);
@@ -267,10 +272,11 @@ public class TableRDFGenerator {
 	 * @param consequent
 	 * 		a list of predicates used as the body of the final rule; new found 
 	 * 		predicates are being added to this
+	 * @throws MediatorException 
 	 */
 	private void findAllRelatedPredicates(Term term,
 			ArrayList<Predicate> preds, RelationPredicate antecedent,
-			ArrayList<Predicate> consequent) {
+			ArrayList<Predicate> consequent) throws MediatorException {
 
 		if(term instanceof VarTerm)
 			return;
@@ -293,7 +299,7 @@ public class TableRDFGenerator {
 						antecedent.addTerm(firstVar);
 					}
 					if(!consequent.contains(p1))
-						consequent.add(p1.clone());
+						consequent.add(getInverse(p1.clone()));
 					findAllRelatedPredicates(p1.getTerms().get(0),preds,antecedent,consequent);
 				}
 			}
@@ -431,7 +437,32 @@ public class TableRDFGenerator {
 				return t.getFunction().getTerms().get(0).getVar();
 		else return null;
 	}
-	
+
+	/**
+	 * Returns a predicate that is the inverse of the input predicate.
+	 * @param p
+	 * @return
+	 * 		a predicate that is the inverse of the input predicate.
+	 * @throws MediatorException
+	 * <br> Example:
+	 * inverse__of___hasName(Name, uri(Name)) -> hasName(uri(Name), Name))
+	 */
+	private Predicate getInverse(Predicate p) throws MediatorException {
+		//see if the name of this predicate starts with inverse__of
+		if(p.getName().startsWith("`" + inverseProperty)){
+			//change order of attributes
+			if(p.getTerms().size()!=2)
+				throw new MediatorException("Only a binary predicate can be inversed:"+p);
+			Term t0 = p.getTerms().get(0);
+			Term t1 = p.getTerms().get(1);
+			p.setTerm(t0, 1);
+			p.setTerm(t1, 0);
+			p.setName("`" + p.getName().substring(inverseProperty.length()+1));
+			return p;
+		}
+		else return p;
+	}
+
 	/**
 	 * Close Output Writer.
 	 */

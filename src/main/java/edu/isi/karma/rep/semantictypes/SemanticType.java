@@ -10,6 +10,7 @@ public class SemanticType implements Jsonizable {
 	private final String type;
 	private final String domain;
 	private final Origin origin;
+	private final boolean isPartOfKey; 
 	private final ConfidenceLevel confidenceLevel;
 
 	public enum Origin {
@@ -20,11 +21,12 @@ public class SemanticType implements Jsonizable {
 		High, Medium, Low
 	}
 
-	public SemanticType(String hNodeId, String type, Origin origin, Double probability) {
+	public SemanticType(String hNodeId, String type, Origin origin, Double probability, boolean isPartOfKey) {
 		this.hNodeId = hNodeId;
 		this.type = type;
 		this.origin = origin;
 		this.domain = "";
+		this.isPartOfKey = isPartOfKey;
 		
 		if(probability > 0.8)
 			confidenceLevel = ConfidenceLevel.High;
@@ -34,11 +36,12 @@ public class SemanticType implements Jsonizable {
 			confidenceLevel = ConfidenceLevel.Low;
 	}
 	
-	public SemanticType(String hNodeId, String type, String domain, Origin origin, Double probability) {
+	public SemanticType(String hNodeId, String type, String domain, Origin origin, Double probability, boolean isPartOfKey) {
 		this.hNodeId = hNodeId;
 		this.type = type;
 		this.origin = origin;
 		this.domain = domain;
+		this.isPartOfKey = isPartOfKey;
 		
 		if(probability > 0.8)
 			confidenceLevel = ConfidenceLevel.High;
@@ -66,6 +69,10 @@ public class SemanticType implements Jsonizable {
 
 	public ConfidenceLevel getConfidenceLevel() {
 		return confidenceLevel;
+	}
+
+	public boolean isPartOfKey() {
+		return isPartOfKey;
 	}
 
 	@Override

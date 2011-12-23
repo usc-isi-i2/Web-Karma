@@ -5,6 +5,12 @@
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
   
+  	<servlet>
+    	<servlet-name>ServletStart</servlet-name>
+    	<servlet-class>edu.isi.karma.webserver.ServerStart</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+  
    <servlet>
     <servlet-name>exampleJSON</servlet-name>
     <servlet-class>edu.isi.karma.webserver.GetExampleJSON</servlet-class>

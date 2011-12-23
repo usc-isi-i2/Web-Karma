@@ -22,7 +22,7 @@ public class GetAlternativeLinksCommand extends Command {
 	private final String alignmentId;
 
 	private enum JsonKeys {
-		updateType, edgeLabel, edgeId, edgeSource, Edges
+		updateType, edgeLabel, edgeId, edgeSource, Edges, selected
 	}
 
 	public String getNodeId() {
@@ -62,6 +62,7 @@ public class GetAlternativeLinksCommand extends Command {
 				alignmentId);
 		final List<LabeledWeightedEdge> edges = alignment.getAlternatives(
 				nodeId, true);
+		final LabeledWeightedEdge currentLink = alignment.getAssignedLink(nodeId); 
 
 		UpdateContainer upd = new UpdateContainer(new AbstractUpdate() {
 			@Override
@@ -80,6 +81,11 @@ public class GetAlternativeLinksCommand extends Command {
 						edgeObj.put(JsonKeys.edgeSource.name(),
 								SemanticTypeUtil.removeNamespace(edge
 										.getSource().getLabel()));
+						if(currentLink != null && edge.getID().equals(currentLink.getID()))
+							edgeObj.put(JsonKeys.selected.name(), true);
+						else
+							edgeObj.put(JsonKeys.selected.name(), false);
+
 						edgesArray.put(edgeObj);
 					}
 					obj.put(JsonKeys.Edges.name(), edgesArray);

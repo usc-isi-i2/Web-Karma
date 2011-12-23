@@ -33,7 +33,7 @@ public class ErrorUpdate extends AbstractUpdate {
 		try {
 			obj.put(GenericJsonKeys.updateType.name(), updateType);
 			obj.put(JsonKeys.Error.name(), errorMessage);
-			pw.println(obj.toString(4));
+			pw.println(obj.toString());
 		} catch (JSONException e) {
 			logger.error("Error generating JSON for ErrorUpdate", e);
 		}

@@ -33,8 +33,8 @@ public class GraphUtil {
     	System.out.print("(");
     	System.out.print( vertex.getLocalID());
 //    	System.out.print( vertex.getID());
-//    	System.out.print(", ");
-//    	System.out.print(vertex.getLabel());
+    	System.out.print(", ");
+    	System.out.print(vertex.getLabel());
     	System.out.print(", ");
     	System.out.print(getNodeTypeString(vertex));
     	System.out.print(")");
@@ -48,8 +48,8 @@ public class GraphUtil {
 		}
     	System.out.print( edge.getLocalID());
 //    	System.out.print( edge.getID());
-//    	System.out.print(", ");
-//    	System.out.print(edge.getLabel());
+    	System.out.print(", ");
+    	System.out.print(edge.getLabel());
     	System.out.print(", ");
     	System.out.print(getLinkTypeString(edge));
     	System.out.print(", ");

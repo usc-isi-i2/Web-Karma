@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.CloseWorkspaceCommand;
+import edu.isi.karma.controller.command.CloseWorkspaceCommandFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
@@ -35,6 +37,8 @@ import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommand;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommandFactory;
 import edu.isi.karma.controller.command.alignment.AlignToOntologyCommand;
 import edu.isi.karma.controller.command.alignment.AlignToOntologyCommandFactory;
+import edu.isi.karma.controller.command.alignment.DuplicateDomainOfLinkCommand;
+import edu.isi.karma.controller.command.alignment.DuplicateDomainOfLinkCommandFactory;
 import edu.isi.karma.controller.command.alignment.GenerateSemanticTypesCommand;
 import edu.isi.karma.controller.command.alignment.GenerateSemanticTypesCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommand;
@@ -53,6 +57,8 @@ import edu.isi.karma.controller.command.alignment.ShowModelCommand;
 import edu.isi.karma.controller.command.alignment.ShowModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommandFactory;
+import edu.isi.karma.controller.command.publish.PublishKMLLayerCommand;
+import edu.isi.karma.controller.command.publish.PublishKMLLayerCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
 
@@ -123,6 +129,12 @@ public class ExecutionController {
 				new ShowModelCommandFactory());
 		commandFactoryMap.put(SplitByCommaCommand.class.getSimpleName(),
 				new SplitByCommaCommandFactory());
+		commandFactoryMap.put(DuplicateDomainOfLinkCommand.class.getSimpleName(),
+				new DuplicateDomainOfLinkCommandFactory());
+		commandFactoryMap.put(CloseWorkspaceCommand.class.getSimpleName(),
+				new CloseWorkspaceCommandFactory());
+		commandFactoryMap.put(PublishKMLLayerCommand.class.getSimpleName(),
+				new PublishKMLLayerCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

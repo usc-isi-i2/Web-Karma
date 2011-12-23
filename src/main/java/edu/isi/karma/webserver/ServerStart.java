@@ -1,33 +1,39 @@
 package edu.isi.karma.webserver;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
+import java.io.File;
 import java.io.IOException;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
- 
-public class ServerStart extends AbstractHandler
-{
-    public void handle(String target,
-                       Request baseRequest,
-                       HttpServletRequest request,
-                       HttpServletResponse response) 
-        throws IOException, ServletException
-    {
-        response.setContentType("text/html;charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
-        baseRequest.setHandled(true);
-        response.getWriter().println("<h1>Welcome to Web Karma Web App</h1>");
-    }
- 
-    public static void main(String[] args) throws Exception
-    {
-        Server server = new Server(8087);
-        server.setHandler(new ServerStart());
- 
-        server.start();
-        server.join();
-    }
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.modeling.ontology.ImportOntology;
+import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+
+public class ServerStart extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	private static Logger logger = LoggerFactory.getLogger(ServerStart.class);
+
+	public void init() throws ServletException {
+		System.out.println("************");
+		System.out
+				.println("*** Server start servlet initialized successfully ***..");
+		System.out.println("***********");
+
+		// Prepare the CRF Model
+		try {
+			SemanticTypeUtil.prepareCRFModelHandler();
+		} catch (IOException e) {
+			logger.error("Error creating CRF Model file!", e);
+		}
+
+		// Load the geospatial ontology
+		ImportOntology imp = new ImportOntology(OntologyManager.Instance()
+				.getOntModel(), new File("./Preloaded_Ontologies/geo_2007.owl"));
+		imp.doImport();
+	}
 }

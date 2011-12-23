@@ -865,4 +865,60 @@ public class SampleDataFactory {
 			return null;
 		}
 	}
+	
+	public static Worksheet createSamplePathwaysWorksheet(Workspace workspace) {
+		String json = "[" +
+		               "{" +
+		                   "\"ACCESSION_ID\": \"PA2039\"," +
+		                   "\"NAME\": \"Methotrexate Pathway\"," +
+		                   "\"DRUG_ID\": \"PA452621\"," +
+		                   "\"DRUG_NAME\": \"antineoplastic agents\"," +
+		                   "\"GENE_ID\": \"PA267\"," +
+		                   "\"GENE_NAME\": \"ABCB1\"," +
+		                   "\"DISEASE_ID\": \"PA443434\"," +
+		                   "\"DISEASE_NAME\": \"Arthritis, Rheumatoid\"" +
+		               "}," +
+		               "{" +
+		                  "\"ACCESSION_ID\": \"PA2040\"," +
+		                   "\"NAME\": \"Thiopurine Pathway\"," +
+		                   "\"DRUG_ID\": \"PA452621\"," +
+		                   "\"DRUG_NAME\": \"antineoplastic agents\"," +
+		                   "\"GENE_ID\": \"PA397\"," +
+		                   "\"GENE_NAME\": \"ABCC4\"," +
+		                   "\"DISEASE_ID\": \"PA446116\"," +
+		                   "\"DISEASE_NAME\": \"Inflammatory Bowel Diseases\"" +
+		               "}," +
+		               "{" +
+		                   "\"ACCESSION_ID\": \"PA145011108\"," +
+		                   "\"NAME\": \"Statin Pathway (PK)\"," +
+		                   "\"DRUG_ID\": \"PA448500\"," +
+		                   "\"DRUG_NAME\": \"atorvastatin\"," +
+		                   "\"GENE_ID\": \"PA267\"," +
+		                   "\"GENE_NAME\": \"ABCB1\"," +
+		                   "\"DISEASE_ID\": \"PA443635\"," +
+		                   "\"DISEASE_NAME\": \"Cardiovascular Diseases\"" +
+		               "}," +
+		               "{" +
+		                   "\"ACCESSION_ID\": \"PA145011115\"," +
+		                   "\"NAME\": \"Phenytoin Pathway (PK)\"," +
+		                   "\"DRUG_ID\": \"PA450947\"," +
+		                   "\"DRUG_NAME\": \"phenytoin\"," +
+		                   "\"GENE_ID\": \"PA27093\"," +
+		                   "\"GENE_NAME\": \"CYP1A2\"," +
+		                   "\"DISEASE_ID\": \"PA444065\"," +
+		                   "\"DISEASE_NAME\": \"Epilepsy\"" +
+		               "}," +
+		               "{" +
+		                   "\"ACCESSION_ID\": \"PA164713560\"," +
+		                   "\"NAME\": \"il22 soluble receptor signaling pathway - (BioCarta via Pathway Interaction Database)\"," +
+		                   "\"DRUG_ID\": \"\"," +
+		                   "\"DRUG_NAME\": \"\"," +
+		                   "\"GENE_ID\": \"PA29779\"," +
+		                   "\"GENE_NAME\": \"IL10RA\"," +
+		                   "\"DISEASE_ID\": \"\"," +
+		                   "\"DISEASE_NAME\": \"\"" +
+		               "}" +
+		           "];";
+		return createWorksheetFromJsonString("PathwaysPharmGKB", json, workspace);
+	}
 }

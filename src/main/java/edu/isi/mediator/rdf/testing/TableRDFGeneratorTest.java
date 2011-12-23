@@ -32,11 +32,59 @@ public class TableRDFGeneratorTest {
 		   vals3.put("INCIDENT_ID","67");
 		   vals3.put("FACILITY_ID","89");
 
-		   TableRDFGenerator rdfGen = new TableRDFGenerator(domainFile, null);
-		   rdfGen.generateTriples("NATIONALITY_ID", vals3, "t123");
-		   rdfGen.generateTriples("NATIONALITY_ID", vals3, "t123");
-		   rdfGen.closeWriter();
+		   //TableRDFGenerator rdfGen = new TableRDFGenerator(domainFile, null);
+		   //rdfGen.generateTriples("NATIONALITY_ID", vals3, "t123");
+		   //rdfGen.generateTriples("NATIONALITY_ID", vals3, "t123");
+		   //rdfGen.closeWriter();
 		   
+		   String dF1 = "NAMESPACES: s:'http://www.isi.edu/' LAV_RULES:" +
+		   "SourceDescription(GENE_NAME, NAME, DISEASE_NAME, GENE_ID, DISEASE_ID, DRUG_ID, DRUG_NAME, ACCESSION_ID) -> " +
+		   "`http://halowiki/ob/category#Disease`(uri(DISEASE_ID))" +
+			"^ `http://halowiki/ob/property#isCausedBy`(uri(DISEASE_ID),uri(GENE_ID)) ^ `http://halowiki/ob/category#Gene`(uri(GENE_ID))" +
+		   "^ `http://halowiki/ob/property#name`(uri(GENE_ID),GENE_NAME)" +
+		   "^ `http://halowiki/ob/property#pharmGKBId`(uri(GENE_ID),GENE_ID)" +
+		   "^ `inverse__of___http://halowiki/ob/property#involves`(uri(GENE_ID),uri(ACCESSION_ID)) ^ `http://halowiki/ob/category#Pathway`(uri(ACCESSION_ID))" +
+		   " ^ `http://halowiki/ob/property#name`(uri(ACCESSION_ID),NAME)" +
+		   "	^ `http://halowiki/ob/property#pharmGKBId`(uri(ACCESSION_ID),ACCESSION_ID)" +
+		   "^ `http://halowiki/ob/property#isTreatedBy`(uri(DISEASE_ID),uri(DRUG_ID)) ^ `http://halowiki/ob/category#Drug`(uri(DRUG_ID))" +
+		   "^ `http://halowiki/ob/property#name`(uri(DRUG_ID),DRUG_NAME)" +
+		   "^ `http://halowiki/ob/property#pharmGKBId`(uri(DRUG_ID),DRUG_ID)" +
+		   "^ `http://halowiki/ob/property#name`(uri(DISEASE_ID),DISEASE_NAME)" +
+		   "^ `http://halowiki/ob/property#pharmGKBId`(uri(DISEASE_ID),DISEASE_ID)";
+
+		   String dF2 = "NAMESPACES: s:'http://www.isi.edu/' LAV_RULES:" +
+		   "SourceDescription(GENE_NAME, NAME, DISEASE_NAME, GENE_ID, DISEASE_ID, DRUG_ID, DRUG_NAME, ACCESSION_ID) ->" + 
+		   "`http://halowiki/ob/category#Disease`(uri(0))" +
+		   " ^ `http://halowiki/ob/property#isCausedBy`(uri(0),uri(GENE_ID)) ^ `http://halowiki/ob/category#Gene`(uri(GENE_ID))" +
+		   " ^ `http://halowiki/ob/property#name`(uri(GENE_ID),GENE_NAME)" +
+		   " ^ `http://halowiki/ob/property#pharmGKBId`(uri(GENE_ID),GENE_ID)" +
+		   " ^ `inverse__of___http://halowiki/ob/property#involves`(uri(GENE_ID),uri(1)) ^ `http://halowiki/ob/category#Pathway`(uri(1))" +
+		   " ^ `http://halowiki/ob/property#name`(uri(1),NAME)" +
+		   " ^ `http://halowiki/ob/property#pharmGKBId`(uri(1),ACCESSION_ID)" +
+		   " ^ `http://halowiki/ob/property#isTreatedBy`(uri(0),uri(DRUG_ID)) ^ `http://halowiki/ob/category#Drug`(uri(DRUG_ID))" +
+		   " ^ `http://halowiki/ob/property#name`(uri(DRUG_ID),DRUG_NAME)" +
+		   " ^ `http://halowiki/ob/property#pharmGKBId`(uri(DRUG_ID),DRUG_ID)" +
+		   " ^ `http://halowiki/ob/property#name`(uri(0),DISEASE_NAME)" +
+		   " ^ `http://halowiki/ob/property#pharmGKBId`(uri(0),DISEASE_ID)";
+		   
+		   HashMap<String,String> vals1 = new HashMap<String,String>();
+		   vals1.put("GENE_NAME","20");
+		   vals1.put("NAME","67");
+		   vals1.put("DISEASE_NAME","89");
+		   vals1.put("GENE_ID","1");
+		   vals1.put("DISEASE_ID","2");
+		   vals1.put("DRUG_ID","3");
+		   vals1.put("DRUG_NAME","4");
+		   vals1.put("ACCESSION_ID","5");
+
+		   //TableRDFGenerator rdfGen = new TableRDFGenerator(dF1, null);
+		   TableRDFGenerator rdfGen = new TableRDFGenerator(dF2, null);
+		   rdfGen.generateTriples("GENE_NAME", vals1, "t123");
+		   rdfGen.generateTriples("GENE_ID", vals1, "t123");
+		   rdfGen.generateTriples("DISEASE_NAME", vals1, "t123");
+		   rdfGen.generateTriples("ACCESSION_ID", vals1, "t123");
+		   rdfGen.closeWriter();
+
 		   }catch(Exception e){e.printStackTrace();}
 	   }
 
