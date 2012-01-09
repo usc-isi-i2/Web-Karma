@@ -47,7 +47,12 @@ public class TableRDFGenerator {
 	/**
 	 * The source description defined in the domain model.
 	 */
-	protected Rule tableRule;
+	private Rule tableRule;
+	
+	/**
+	 * The RDFGenerator corresponding to the tableRule
+	 */
+	private RuleRDFGenerator rdfGenerator;
 	/**
 	 * HashMap that contains <Variable, Rule> pairs, where "Rule" is a
 	 * subrule that corresponds to the given variable (determined from the initial rule).
@@ -65,7 +70,7 @@ public class TableRDFGenerator {
 	/**
 	 * Output writer. Either to a file or to System.out
 	 */
-	protected PrintWriter outWriter;
+	private PrintWriter outWriter;
 	
 	/**
 	 * Unique id, used for generating gensym URIs.
@@ -76,13 +81,13 @@ public class TableRDFGenerator {
 	 * If prefix is not used in the source desc we have only one source namespace.
 	 * key=prefix; value=namespace;
 	 */
-	protected Map<String,String> sourceNamespaces;
+	private Map<String,String> sourceNamespaces;
 	/**
 	 * Contains mapping of prefix name to ontology namespace.
 	 * If prefix is not used in the source desc we have only one ontology namespace.
 	 * key=prefix; value=namespace;
 	 */
-	protected Map<String,String> ontologyNamespaces;
+	private Map<String,String> ontologyNamespaces;
 	
 	/**
 	 * Prefix used for inverse properties. When we see an inverse property 
@@ -144,7 +149,8 @@ public class TableRDFGenerator {
 			throw new MediatorException("Only one rule should be present in the domain file.");
 		}
 		tableRule = dm.getAllRules().get(0);
-		
+		rdfGenerator = new RuleRDFGenerator(tableRule, sourceNamespaces,
+    			ontologyNamespaces, outWriter, uniqueId+"");
 	}
 
 	/**
@@ -195,6 +201,16 @@ public class TableRDFGenerator {
 		rdfGen.generateTriples(values);
 	}
 	
+	/**
+	 * Generates triples and writes them to output.
+	 * @param values
+	 * 		map containing <column_name,value> where "column_name" are attribute names used in the rule.
+	 * @throws MediatorException
+	 * @throws UnsupportedEncodingException 
+	 */
+	public void generateTriples(Map<String,String> values) throws MediatorException, UnsupportedEncodingException{
+		rdfGenerator.generateTriples(values);
+	}
 
 	/**
 	 * Generates the subrule corresponding to variable v.
