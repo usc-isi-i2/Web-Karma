@@ -47,7 +47,7 @@ public class TableRDFGenerator {
 	/**
 	 * The source description defined in the domain model.
 	 */
-	private Rule tableRule;
+	protected Rule tableRule;
 	/**
 	 * HashMap that contains <Variable, Rule> pairs, where "Rule" is a
 	 * subrule that corresponds to the given variable (determined from the initial rule).
@@ -65,7 +65,7 @@ public class TableRDFGenerator {
 	/**
 	 * Output writer. Either to a file or to System.out
 	 */
-	private PrintWriter outWriter;
+	protected PrintWriter outWriter;
 	
 	/**
 	 * Unique id, used for generating gensym URIs.
@@ -76,13 +76,13 @@ public class TableRDFGenerator {
 	 * If prefix is not used in the source desc we have only one source namespace.
 	 * key=prefix; value=namespace;
 	 */
-	Map<String,String> sourceNamespaces;
+	protected Map<String,String> sourceNamespaces;
 	/**
 	 * Contains mapping of prefix name to ontology namespace.
 	 * If prefix is not used in the source desc we have only one ontology namespace.
 	 * key=prefix; value=namespace;
 	 */
-	Map<String,String> ontologyNamespaces;
+	protected Map<String,String> ontologyNamespaces;
 	
 	/**
 	 * Prefix used for inverse properties. When we see an inverse property 
