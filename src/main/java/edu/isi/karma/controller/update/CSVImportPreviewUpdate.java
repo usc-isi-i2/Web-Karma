@@ -117,9 +117,12 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 							delimiter, quoteCharacter, escapeCharacter);
 					String[] rowValues = reader.readNext();
 					ArrayList<String> vals = new ArrayList<String>();
-					for (String val : rowValues) {
-						vals.add(val);
-					}
+					if(rowValues != null) {
+						for (String val : rowValues) {
+							vals.add(val);
+						}
+					} else 
+						vals.add("");
 					// Add the row index
 					vals.add(0, Integer.toString(rowCount + 1));
 
