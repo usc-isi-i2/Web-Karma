@@ -1,5 +1,6 @@
 package edu.isi.karma.rep;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,6 +55,15 @@ public class RepFactory {
 		return hn;
 	}
 
+	//added for testing (mariam)
+	/**
+	 * Returns all HNodes.
+	 * @return
+	 */
+	public Collection<HNode> getAllHNodes(){
+		return hNodes.values();
+	}
+	
 	public HNode getHNode(String id) {
 		return hNodes.get(id);
 	}

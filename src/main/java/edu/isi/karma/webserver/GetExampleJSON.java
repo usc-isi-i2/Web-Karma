@@ -88,7 +88,7 @@ public class GetExampleJSON extends HttpServlet {
 
 		c.generateJson("", pw, vwsp);
 
-		System.err.println(sw.toString());
+		//System.err.println(sw.toString());
 
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_OK);

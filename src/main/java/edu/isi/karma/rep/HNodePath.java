@@ -32,6 +32,24 @@ public class HNodePath {
 		}
 	}
 
+	/** 
+	 * Adds an HNode to this path.
+	 * @param n
+	 * @author mariam
+	 */
+	public void addHNode(HNode n){
+		hNodes.add(n);
+	}
+	
+	/** 
+	 * Adds an HNodePath to this path.
+	 * @param np
+	 * @author mariam
+	 */
+	public void addHNodePath(HNodePath np){
+		hNodes.addAll(np.hNodes);
+	}
+
 	public boolean isEmpty() {
 		return hNodes.isEmpty();
 	}
@@ -53,6 +71,26 @@ public class HNodePath {
 		Iterator<HNode> it = hNodes.iterator();
 		while (it.hasNext()) {
 			b.append(it.next().getId());
+			if (it.hasNext()){
+				b.append("/");
+			}
+		}
+		return b.toString();
+	}
+
+	//mariam
+	/**
+	 * Returns the HNodePath as a String containing the column names of the nodes.
+	 * @return
+	 * 		the HNodePath as a String containing the column names of the nodes.
+	 */
+	public String toColumnNames(RepFactory f) {
+		StringBuffer b = new StringBuffer();
+		Iterator<HNode> it = hNodes.iterator();
+		while (it.hasNext()) {
+			HNode n = it.next();
+			HTable t = n.getHTable(f);
+			b.append(t.getTableName()+ "." + n.getColumnName());
 			if (it.hasNext()){
 				b.append("/");
 			}

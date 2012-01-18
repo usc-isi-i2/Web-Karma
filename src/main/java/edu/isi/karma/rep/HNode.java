@@ -51,16 +51,52 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 
 	public void setNestedTable(HTable nestedTable) {
 		this.nestedTable = nestedTable;
+		//mariam
+		nestedTable.setParentHNode(this);
 	}
 	
 	public void removeNestedTable() {
 		this.nestedTable = null;
+		//mariam
+		nestedTable.setParentHNode(null);
 	}
 
 	public HTable addNestedTable(String tableName, Worksheet worksheet, RepFactory factory) {
 		nestedTable = factory.createHTable(tableName);
+		//mariam
+		nestedTable.setParentHNode(this);
 		worksheet.addNestedTableToDataTable(this, factory);
 		return nestedTable;
+	}
+
+	//mariam
+	/**
+	 * Returns the HTable that this node belongs to.
+	 * @param f
+	 * @return
+	 * 		the HTable that this node belongs to.
+	 */
+	public HTable getHTable(RepFactory f){
+		return f.getHTable(hTableId);
+	}
+	
+	//mariam
+	/**
+	 * Returns the HNodePath for this node.
+	 * @param factory
+	 * @return
+	 * 		the HNodePath for this node.
+	 */
+	public HNodePath getHNodePath(RepFactory factory){
+		HNodePath p1 = new HNodePath(this);
+		//get the table that it belongs to
+		HTable t = factory.getHTable(hTableId);
+		HNode parentNode = t.getParentHNode();
+		if(parentNode!=null){
+			HNodePath p2 = parentNode.getHNodePath(factory);
+			p1 = HNodePath.concatenate(p2, p1);
+		}
+		return p1;
 	}
 
 	@Override

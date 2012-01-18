@@ -2,16 +2,18 @@ package edu.isi.karma.rdf;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
-import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.LinkType;
 import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.modeling.alignment.Vertex;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.mediator.rdf.TableRDFGenerator;
@@ -89,12 +91,14 @@ public class SourceDescription {
 	 * 		the string that represents the source description (start with empty string).
 	 * @throws KarmaException
 	 * The Algorithm:
-	 * 1. for each outgoing edge e of v
-	 * 2. if e is DataProperty, generateDataPropertyStatement (hasName(uri(Name), Name))
-	 * 3. if e is ObjectProperty, generateObjectPropertyStatement (isAddress(uri(Name), uri(Address)))
-	 * 4. if e is HasSubClass do nothing
-	 * 5. generateSourceDescription(getEdgeTarget(e))
-	 * 6. stop when v is DataProperty (leaves are reached)
+	 * 1. While v is a Class nodes
+	 * 2. generate a class statement (generateClassStatement(v) - Person(uri(Name)))
+	 * 2. for each outgoing edge e of v
+	 * 3. if e is DataProperty, generateDataPropertyStatement (hasName(uri(Name), Name))
+	 * 4. if e is ObjectProperty, generateObjectPropertyStatement (isAddress(uri(Name), uri(Address)))
+	 * 5. if e is HasSubClass do nothing
+	 * 6. generateSourceDescription(getEdgeTarget(e))
+	 * 7. stop when v is DataProperty (leaves are reached)
 	 */
 	private void generateSourceDescription(Vertex v, StringBuffer s) throws KarmaException{
 		if(v.getNodeType()==NodeType.Class){
@@ -180,6 +184,18 @@ public class SourceDescription {
 		if(key==null){
 			throw new KarmaException("Key for " + v.getLabel() + " is NULL. This should not happen!");
 		}
+		
+		////////
+		/*
+		String tableId = factory.getHNode(child.getSemanticType().getHNodeId()).getHTableId();
+		HTable t = factory.getHTable(tableId);
+		List<HNodePath> ps = t.getAllPaths();
+		for(HNodePath p:ps){
+			System.out.println("PATH:"+p.toString());
+		}
+		*/
+		/////////
+		
 		String dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName();
 		ruleAttributes.add(dataAttribute);
 		String propertyName = e.getLabel();

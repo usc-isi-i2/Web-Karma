@@ -21,6 +21,12 @@ public class HTable extends RepEntity {
 
 	private ArrayList<String> orderedNodeIds = new ArrayList<String>();
 
+	//mariam
+	/**
+	 * the HNode that contains this table (useful for backwards traversing)
+	 */
+	private HNode parentHNode=null;
+	
 	public HTable(String id, String tableName) {
 		super(id);
 		this.tableName = tableName;
@@ -58,6 +64,33 @@ public class HTable extends RepEntity {
 		}
 		return null;
 	}
+	
+	//mariam
+	/**
+	 * Returns the HNode that contains this table.
+	 * @return
+	 * 		the HNode that contains this table.
+	 */
+	public HNode getParentHNode(){
+		return parentHNode;
+	}
+
+	//mariam
+	/**
+	 * Returns the HNodeId for the first HNode with the given columnName.
+	 * @param columnName
+	 * @return
+	 * 		the HNodeId given a columnName.
+	 * Should be used only with worksheets that do not contain nested tables.
+	 */
+	public String getHNodeIdFromColumnName(String columnName) {
+		for (Map.Entry<String, HNode> n : nodes.entrySet()) {
+			if (columnName.equals(n.getValue().getColumnName())) {
+				return n.getKey();
+			}
+		}
+		return null;
+	}
 
 	public HNode addHNode(String columnName, Worksheet worksheet,
 			RepFactory factory) {
@@ -87,6 +120,15 @@ public class HTable extends RepEntity {
 		}
 	}
 
+	/** Returns ordered nodeIds.
+	 * @return
+	 * 		ordered nodeIds.
+	 * @author mariam
+	 */
+	public ArrayList<String> getOrderedNodeIds(){
+		return orderedNodeIds;
+	}
+	
 	@Override
 	public void prettyPrint(String prefix, PrintWriter pw, RepFactory factory) {
 		pw.print(prefix);
@@ -119,5 +161,14 @@ public class HTable extends RepEntity {
 			}
 		}
 		return x;
+	}
+
+	/**
+	 * Sets the parent HNode.
+	 * @param hNode
+	 * @author mariam
+	 */
+	public void setParentHNode(HNode hNode) {
+		parentHNode = hNode;
 	}
 }
