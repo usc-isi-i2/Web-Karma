@@ -43,26 +43,15 @@
 		<script type="text/javascript" src="js/tableWorkspace.js"></script>
 		<script type="text/javascript" src="js/geospatial.js"></script>
 		<script type="text/javascript" src="js/databaseImportDialog.js"></script>
+		<script type="text/javascript" src="js/alignment.js"></script>
 		
 		<script type="text/javascript">
-			
-			/*
-			 * This code part is responsible for scrolling down the command history
-			 * window when the user scrolls down the page.
-			 */
-			// $().ready(function() {
-				// var scrollingDiv = $("#commandHistory");
-				// $(window).scroll(function(){		
-					// scrollingDiv
-						// .stop()
-						// .animate({"marginTop": ($(window).scrollTop()) + "px"}, "fast" );			
-				// });
-			// });
-			
+			// Load and parse initial JSON
 			$.getJSON("/getExampleNestedJSON", function(data) {
 				parse(data);
 				
-				 $('#uploadFile_JSON').uploadify({
+				// Attach upload handlers to the import file buttons
+				$('#uploadFile_JSON').uploadify({
     				'uploader'  : '/images/uploadify.swf',
     				'cancelImg' : '/images/cancel.png',
     				'script'	: 'RequestController',
@@ -72,7 +61,6 @@
     				'method'	: 'GET',
     				'auto': true,
     				'onComplete'  : function(event, ID, fileObj, response, data) {
-				    	// alert(response);
 				    	parse($.parseJSON(response));
 				    }
   				})
@@ -119,36 +107,133 @@
 						parse($.parseJSON(response));
 				    }
   				});
-  				
-				}
-				
-			).error(function() { 
+			}).error(function() { 
 				alert("Error geting sample JSON!"); 
 			});
 				
 		</script>
 		<script>
-		// TODO NEED TO CLEAN UP!
-			// JQueryify the column tool bar
 			$(function() {
+				// JQueryify the column tool bar
 				$( "#renameColumnButton" ).button({
 				});
 				$( "#deleteColumnButton" ).button({
 				});
 				$( "#hideColumnButton" ).button({
 				})
-				
 				$("#toolBarMenu").hide().mouseenter(function(){
 					$("#toolBarMenu").show();
 				}).mouseleave(function(){
 					$("#toolBarMenu").hide();
 				});
 				
-
-			});
-			
-			// Clear the workspace when closing the window
-			$(function() {
+				// JQueryify the table cell tool bar
+				$("#editCellButton" ).button();
+				$("#editCellButton").click(function(event){
+					handleTableCellEditButton(event);
+				});
+				$("#viewValueButton" ).button();
+				$("#viewValueButton" ).click(function(){
+					var tdTagId = $("#tableCellToolBarMenu").data("parentCellId");
+					var value = $("td#" + tdTagId).data("fullValue");
+					if(value) {
+						$("#CellValueDialog").text(value).dialog({height: 300, width: 400, show:'blind'
+							});
+					}
+				});
+				$("#tableCellToolBarMenu").hide().mouseenter(function(){
+					$("#tableCellToolBarMenu").show();
+				}).mouseleave(function(){
+					$("#tableCellToolBarMenu").hide();
+				});
+				
+				// Database Import div options 
+				$("#importDatabaseTableButton").button();
+				styleDatabaseDialogObjects();
+				addDatabaseImportClickHandlers();
+				$("#importDatabaseTableButton").click(openDatabaseTableImportDialog);
+				
+				// Stylize the worksheet options div panel
+				styleAndAssignHandlersToWorksheetOptionButtons();
+				
+				// Attach handlers to the ontology options table
+				attachOntologyOptionsRadioButtonHandlers();
+				
+				// When the user changes header line index
+				$('.CSVImportOption').change(function() {
+					CSVImportOptionsChanged("preview");
+				});
+				
+				// Function responsible for scrolling the headers when the user scrolls in the window
+				var timer = null;
+				$(window).scroll(function() {
+				    if(timer !== null) {
+				        clearTimeout(timer);        
+				    }
+				    timer = setTimeout(function() {
+				    	
+				    	// Scroll the command history
+						$("div#commandHistory")
+							.stop()
+							.animate({"marginTop": ($(window).scrollTop()) + "px"}, "fast" );
+				        
+				        
+				        // Scroll the table headers if required
+				        var scroll = $(window).scrollTop();
+						var x = 0 - $(this).scrollLeft();
+						
+						$.each($("div.TableDiv"), function(index, tableDivElement){
+							var anchor_top = $(tableDivElement).offset().top;
+							var tableID = $("table", tableDivElement).attr("id");
+							var anchor_bottom = $("div#" + tableID + "bottomAnchor").offset().top;
+							
+							if(scroll > anchor_bottom)
+								return true;
+							
+							if (scroll>anchor_top && scroll<(anchor_bottom -
+									$("table#"+tableID +" thead").height() - 
+									$("div#topLevelpagerOptions" + tableID).height())) {
+								var cloneTable = $("table#HeaderScrollPanel");
+								
+								if(cloneTable.length == 0) {
+									cloneTable = $("<table>").attr("id","HeaderScrollPanel");
+								}
+								
+								if(cloneTable.data("currentTable") == tableID) {
+									cloneTable.css({position:'fixed',
+							                 top:0, left:288+x});
+									return false;
+								} else {
+									$("table#HeaderScrollPanel tr").remove();
+							        var theadClone = $("table#"+tableID +" thead").clone();
+							        cloneTable.append(theadClone);
+							        cloneTable.css({position:'fixed',
+							                 top:0, left:288+x});
+							                 
+							        $.each($("table#"+tableID+" thead tr"), function(trIndex, originalRow){
+							        	var dupRow = $("thead tr", cloneTable).get(trIndex);
+							        	$.each($("td", $(originalRow)), function(tdIndex, originalTD){
+							        		var dupTD = $("td", $(dupRow)).get(tdIndex);
+							        		$(dupTD).width($(originalTD).width());
+							        	});
+							        });
+							        
+							        cloneTable.data("currentTable", tableID);
+							                 
+							        cloneTable.width($("table#" + tableID).width());
+							        $("div#ScrollHeadersPlaceholder").append(cloneTable);
+								}
+								return false;
+							} else {
+								$("table#HeaderScrollPanel").remove();
+							}
+							
+						});
+				          
+				    }, 100);
+				});
+				
+				// Clear the workspace when closing the window
 				$(window).bind("beforeunload", function() {
 					var info = new Object();
 					info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -170,158 +255,6 @@
 					});
 				});
 			});
-				
-			
-			// JQueryify the table cell tool bar
-			$(function() {
-				$("#editCellButton" ).button();
-				$("#editCellButton").click(function(event){
-					handleTableCellEditButton(event);
-				});
-				
-				$("#viewValueButton" ).button();
-				$("#viewValueButton" ).click(function(){
-					var tdTagId = $("#tableCellToolBarMenu").data("parentCellId");
-					var value = $("td#" + tdTagId).data("fullValue");
-					if(value) {
-						$("#CellValueDialog").text(value).dialog({height: 300, width: 400, show:'blind'
-							});
-					}
-				});
-				
-				$("#tableCellToolBarMenu").hide().mouseenter(function(){
-					$("#tableCellToolBarMenu").show();
-				}).mouseleave(function(){
-					$("#tableCellToolBarMenu").hide();
-				});
-			});
-			
-			// Hide the CSV Import div
-			$(function() {
-				$("#CSVImportDiv").hide();
-				
-				// When the user changes header line index
-				$('.CSVImportOption').change(function() {
-					CSVImportOptionsChanged("preview");
-				});
-			});
-			
-			
-			$(function() {
-				// Database Import div options 
-				// Hide the database import div
-				$("#DatabaseImportDiv").hide();
-				$("#importDatabaseTableButton").button();
-				styleDatabaseDialogObjects();
-				addDatabaseImportClickHandlers();
-				$("#importDatabaseTableButton").click(openDatabaseTableImportDialog);
-				
-				// Hide the table cell edit div
-				$("div#tableCellEditDiv").hide();
-				
-				// Stylize the worksheet options div panel
-				styleAndAssignHandlersToWorksheetOptionButtons();
-				
-				// Hide the ontology options table
-				$("div#ChangeSemanticTypesDialogBox").hide();
-				attachOntologyOptionsRadioButtonHandlers();
-				
-				// Hide the ontology alternative parent links div
-				$("div#OntologyAlternativeLinksPanel").hide();
-				
-				// Hide the split by comma column list
-				$("div#SplitByCommaColumnListPanel").hide();
-			});
-			
-			
-			$(function() {
-				var timer = null;
-				$(window).scroll(function() {
-				    if(timer !== null) {
-				        clearTimeout(timer);        
-				    }
-				    timer = setTimeout(function() {
-				    	
-				    	// Scroll the command history
-						$("#commandHistory")
-							.stop()
-							.animate({"marginTop": ($(window).scrollTop()) + "px"}, "fast" );
-				        
-				        
-				        // Scroll the table headers if required
-				        var scroll = $(window).scrollTop();
-						var x = 0 - $(this).scrollLeft();
-						
-						$.each($("div.TableDiv"), function(index, tableDivElement){
-							var anchor_top = $(tableDivElement).offset().top;
-							var tableID = $("table", tableDivElement).attr("id");
-							var anchor_bottom = $("div#" + tableID + "bottomAnchor").offset().top;
-							// console.log("Working with" + tableID)
-							// console.log("Anchor Bottom" + anchor_bottom);
-							// console.log("Scroll" + scroll);
-							
-							
-							if(scroll > anchor_bottom)
-								return true;
-							
-							if (scroll>anchor_top && scroll<(anchor_bottom -
-									$("table#"+tableID +" thead").height() - 
-									$("div#topLevelpagerOptions" + tableID).height())) {
-								// console.log("Checking for table: " + tableID);
-								var cloneTable = $("table#HeaderScrollPanel");
-								// console.log(cloneTable.length);
-								// console.log("Current Table:" + cloneTable.data("currentTable"));
-								if(cloneTable.length == 0) {
-									cloneTable = $("<table>").attr("id","HeaderScrollPanel");
-								}
-								
-								if(cloneTable.data("currentTable") == tableID) {
-									cloneTable.css({position:'fixed',
-							                 //'pointer-events': 'none',
-							                 top:0, left:288+x});
-									return false;
-								} else {
-									$("table#HeaderScrollPanel tr").remove();
-							    	// console.log("Creating clone!");
-							        var theadClone = $("table#"+tableID +" thead").clone();
-							        cloneTable.append(theadClone);
-							        cloneTable.css({position:'fixed',
-							                 //'pointer-events': 'none',
-							                 top:0, left:288+x});
-							                 
-							        $.each($("table#"+tableID+" thead tr"), function(trIndex, originalRow){
-							        	//console.log("Row Index: " + trIndex);
-							        	var dupRow = $("thead tr", cloneTable).get(trIndex);
-							        	//console.log($(dupRow).length);
-							        	$.each($("td", $(originalRow)), function(tdIndex, originalTD){
-							        		//console.log("TD Index: " + tdIndex);
-							        		var dupTD = $("td", $(dupRow)).get(tdIndex);
-							        		//console.log($(dupTD).length);
-							        		//console.log("Original Width: " + $(originalTD).width());
-							        		//console.log("DUP Width: " + $(dupTD).width())
-							        		$(dupTD).width($(originalTD).width());
-							        	});
-							        });
-							        
-							        cloneTable.data("currentTable", tableID);
-							                 
-							        //console.log("Orig Table Width: " + $("table#VW1").width());
-							        //cloneTable.width($("table#VW1").width());
-							        cloneTable.width($("table#" + tableID).width());
-							        $("div#ScrollHeadersPlaceholder").append(cloneTable);
-								}
-								return false;
-							} else {
-								// console.log("REMOVING!");
-								$("table#HeaderScrollPanel").remove();
-							}
-							
-						});
-				          
-				    }, 100);
-				});
-			});
-			
 		</script>
 	</head>
 	
@@ -354,7 +287,7 @@
 			</div>
 			<div id="tablesWorkspace"></div>
 		</div>
-		<div id="toolBarMenu">
+		<div id="toolBarMenu" style="display: none">
 			<div id="triangle" align="center"></div>
 			<div class="fg-toolbar ui-widget-header ui-corner-all ui-helper-clearfix" align="center" id="testToolbar">
 					<button class="fg-button ui-state-default" id="renameColumnButton">Rename</button>
@@ -362,7 +295,7 @@
 					<button class="fg-button ui-state-default" id="hideColumnButton">Hide</button>
 			</div>
 		</div>
-		<div id="tableCellToolBarMenu">
+		<div id="tableCellToolBarMenu" style="display: none">
 			<div id="tableCellMenutriangle"></div>
 			<div class="fg-toolbar ui-widget-header ui-corner-all ui-helper-clearfix" align="center" id="tableCellTestToolbar">
 					<button class="fg-button ui-state-default" id="editCellButton">Edit</button>
@@ -371,7 +304,7 @@
 		</div>
 		<div id="CellValueDialog" title="Cell Value">
 		</div>
-		<div id="CSVImportDiv">
+		<div id="CSVImportDiv" style="display: none">
 			<table id="CSVImportOptionsTable">
 				<tbody>
 					<tr>
@@ -411,9 +344,9 @@
 				<table id="CSVPreviewTable"></table>
 			</div>
 		</div>
-		<div id="tableCellEditDiv">
+		<div id="tableCellEditDiv" style="display: none">
 		</div>
-		<div id="DatabaseImportDiv">
+		<div id="DatabaseImportDiv" style="display: none">
 			<table>
 				<tbody>
 					<tr>
@@ -488,15 +421,12 @@
 			<br>
 		</div>
 		<div id="ScrollHeadersPlaceholder"></div>
-		<div id="WorksheetOptionsDiv">
-			<!-- <button href="#" id="generateSemanticTypesButton">Generate semantic types</button>
-			<button href="#" id="alignToOntologyButton">Align to ontology</button> -->
+		<div id="WorksheetOptionsDiv" style="display: none">
 			<button href="#" id="showModel">Show Model</button>
 			<button href="#" id="hideModel">Hide Model</button>
 			<button href="#" id="splitByComma">Split Column By Comma</button>
-<!-- 			<button href="#" id="removeFromWorkspaceButton">Remove from workspace</button> -->
 		</div>
-		<div id="ChangeSemanticTypesDialogBox">
+		<div id="ChangeSemanticTypesDialogBox" style="display: none">
 			<span class="mediumSizedFont">Suggested semantic types:</span>
 			<table id="CRFSuggestedLabelsTable"></table>
 			<br>
@@ -546,20 +476,15 @@
 						</div>
 					</td>
 				</tr>
-				<!-- <tr>
-					<td colspan="2">
-						<div id="ontologyOptionsList"></div>		
-					</td>
-				</tr> -->
 				</table>
 				
 			</div>
 		</div>
-		<div id="OntologyAlternativeLinksPanel">
+		<div id="OntologyAlternativeLinksPanel" style="display: none">
 			<span class="mediumSizedFont">Choose parent relationship:</span>
 			<table id="AlternativeParentLinksTable"></table>
 		</div>
-		<div id="SplitByCommaColumnListPanel">
+		<div id="SplitByCommaColumnListPanel" style="display: none">
 			<span class="mediumSizedFont">Choose column:</span>
 			<select id="splitByCommaColumnList"></select>
 		</div>
