@@ -65,7 +65,8 @@ public class WorksheetGeospatialContent {
 				if (lngFound) {
 					currentCase = CoordinateCase.POINT_LAT_LNG;
 					coordinateHNodeIds.add(type.getHNodeId());
-					populatePoints(coordinateHNodeIds, currentCase);
+					populatePoints(coordinateHNodeIds, currentCase, getRows(),
+							getColumnMap());
 					latFound = lngFound = false;
 					coordinateHNodeIds.clear();
 				} else {
@@ -81,7 +82,8 @@ public class WorksheetGeospatialContent {
 				if (latFound) {
 					coordinateHNodeIds.set(0, type.getHNodeId());
 					currentCase = CoordinateCase.POINT_LAT_LNG;
-					populatePoints(coordinateHNodeIds, currentCase);
+					populatePoints(coordinateHNodeIds, currentCase, getRows(),
+							getColumnMap());
 					latFound = lngFound = false;
 					coordinateHNodeIds.clear();
 				} else {
@@ -95,30 +97,30 @@ public class WorksheetGeospatialContent {
 					&& type.getDomain().equals(POINT_CLASS)) {
 				coordinateHNodeIds.add(0, type.getHNodeId());
 				currentCase = CoordinateCase.POINT_POS;
-				populatePoints(coordinateHNodeIds, currentCase);
+				populatePoints(coordinateHNodeIds, currentCase, getRows(),
+						getColumnMap());
 			}
 			// PosList of a Line case. E.g. for a column containing list of
 			// coordinates for a line string
 			else if (type.getType().equals(POS_LIST_PROPERTY)
 					&& type.getDomain().equals(LINE_CLASS)) {
 				coordinateHNodeIds.add(0, type.getHNodeId());
+				currentCase = CoordinateCase.LINE_POS_LIST;
+				populateLines(coordinateHNodeIds, getRows(), getColumnMap());
 			}
 		}
 	}
 
+	private void populateLines(List<String> coordinateHNodeIds,
+			ArrayList<Row> rows, Map<String, String> columnMap) {
+//		for (Row row : rows) {
+//			
+//		}
+	}
+
 	private void populatePoints(List<String> coordinateHNodeIds,
-			CoordinateCase currentCase) {
-		int numRows = worksheet.getDataTable().getNumRows();
-		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, numRows);
-
-		// Prepare a map of the column names that we use for descriptions
-		List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
-		worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
-		Map<String, String> columnNameMap = new HashMap<String, String>();
-		for (HNode hNode : sortedLeafHNodes) {
-			columnNameMap.put(hNode.getId(), hNode.getColumnName());
-		}
-
+			CoordinateCase currentCase, ArrayList<Row> rows,
+			Map<String, String> columnNameMap) {
 		// Extract the latitude, longitude and the other description data
 		String lng = "";
 		String lat = "";
@@ -179,6 +181,22 @@ public class WorksheetGeospatialContent {
 				continue;
 			}
 		}
+	}
+
+	private ArrayList<Row> getRows() {
+		int numRows = worksheet.getDataTable().getNumRows();
+		return worksheet.getDataTable().getRows(0, numRows);
+	}
+
+	private Map<String, String> getColumnMap() {
+		// Prepare a map of the column names that we use for descriptions
+		List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
+		worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
+		Map<String, String> columnNameMap = new HashMap<String, String>();
+		for (HNode hNode : sortedLeafHNodes) {
+			columnNameMap.put(hNode.getId(), hNode.getColumnName());
+		}
+		return columnNameMap;
 	}
 
 	public File publishKML() throws FileNotFoundException {
