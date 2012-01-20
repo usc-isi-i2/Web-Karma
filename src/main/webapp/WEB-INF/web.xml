@@ -5,8 +5,12 @@
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
 	<context-param>
-		<param-name>publicIPAddress</param-name>
-		<param-value>128.9.216.233</param-value>
+		<param-name>publicKMLAddress</param-name>
+		<param-value>http://128.9.216.81:8080/KML/</param-value>
+	</context-param>
+	<context-param>
+		<param-name>KMLTransferService</param-name>
+		<param-value>http://128.9.216.81:8080/KMLFileTransferHandler</param-value>
 	</context-param>
   
   	<servlet>
@@ -31,6 +35,15 @@
   <servlet-mapping>
     <servlet-name>requestController</servlet-name>
     <url-pattern>/RequestController</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>KMLFileTransferHandler</servlet-name>
+    <servlet-class>edu.isi.karma.webserver.KMLFileTransferHandler</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>KMLFileTransferHandler</servlet-name>
+    <url-pattern>/KMLFileTransferHandler</url-pattern>
   </servlet-mapping>
   
 </web-app>

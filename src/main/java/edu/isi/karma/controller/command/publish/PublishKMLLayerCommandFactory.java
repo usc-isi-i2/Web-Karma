@@ -20,7 +20,9 @@ public class PublishKMLLayerCommandFactory extends CommandFactory {
 				.name());
 		return new PublishKMLLayerCommand(getNewId(vWorkspace), vWorksheetId,
 				ServletContextParameterMap
-						.getParameterValue(ContextParameter.publicIPAddress));
+						.getParameterValue(ContextParameter.publicKMLAddress),
+				ServletContextParameterMap
+						.getParameterValue(ContextParameter.KMLTransferService));
 	}
 
 }

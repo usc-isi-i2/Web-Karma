@@ -113,9 +113,9 @@ public class WorksheetGeospatialContent {
 
 	private void populateLines(List<String> coordinateHNodeIds,
 			ArrayList<Row> rows, Map<String, String> columnMap) {
-//		for (Row row : rows) {
-//			
-//		}
+		// for (Row row : rows) {
+		//
+		// }
 	}
 
 	private void populatePoints(List<String> coordinateHNodeIds,
@@ -200,8 +200,9 @@ public class WorksheetGeospatialContent {
 	}
 
 	public File publishKML() throws FileNotFoundException {
-		File outputFile = new File("./src/main/webapp/KML/"
-				+ worksheet.getTitle() + ".kml");
+		// File outputFile = new File("./src/main/webapp/KML/"
+		// + worksheet.getTitle() + ".kml");
+		File outputFile = new File(worksheet.getTitle() + ".kml");
 		final Kml kml = KmlFactory.createKml();
 		final Folder folder = kml.createAndSetFolder()
 				.withName(worksheet.getTitle()).withOpen(true);

@@ -1,8 +1,14 @@
 package edu.isi.karma.controller.command.publish;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,7 +26,8 @@ import edu.isi.karma.view.VWorkspace;
 
 public class PublishKMLLayerCommand extends Command {
 	private final String vWorksheetId;
-	private String publicIPAddress;
+	private String publicKMLAddress;
+	private String kMLTransferServiceURL;
 
 	public enum JsonKeys {
 		updateType, fileName
@@ -30,10 +37,11 @@ public class PublishKMLLayerCommand extends Command {
 			.getLogger(PublishKMLLayerCommand.class);
 
 	protected PublishKMLLayerCommand(String id, String vWorksheetId,
-			String ipAddress) {
+			String ipAddress, String kMLTransferServiceURL) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
-		this.publicIPAddress = ipAddress;
+		this.publicKMLAddress = ipAddress;
+		this.kMLTransferServiceURL = kMLTransferServiceURL; 
 	}
 
 	@Override
@@ -71,8 +79,16 @@ public class PublishKMLLayerCommand extends Command {
 
 		try {
 			final File file = geo.publishKML();
-			return new UpdateContainer(new AbstractUpdate() {
+			// Transfer the file to a public server
+			boolean transfer = transferFileToPublicServer(file);
+			if (!transfer) {
+				return new UpdateContainer(
+						new ErrorUpdate(
+								"PublishKMLError",
+								"Published KML file could not be moved to a public server to display on Google Maps!"));
+			}
 
+			return new UpdateContainer(new AbstractUpdate() {
 				@Override
 				public void generateJson(String prefix, PrintWriter pw,
 						VWorkspace vWorkspace) {
@@ -81,8 +97,7 @@ public class PublishKMLLayerCommand extends Command {
 						outputObject.put(JsonKeys.updateType.name(),
 								"PublishKMLUpdate");
 						outputObject.put(JsonKeys.fileName.name(),
-								"http://" + publicIPAddress + ":8080/KML/"
-										+ file.getName());
+								publicKMLAddress + file.getName());
 						pw.println(outputObject.toString(4));
 					} catch (JSONException e) {
 						logger.error("Error occured while generating JSON!");
@@ -91,9 +106,82 @@ public class PublishKMLLayerCommand extends Command {
 			});
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		} catch (IOException e) {
+
 		}
 
 		return new UpdateContainer();
+	}
+
+	@SuppressWarnings("deprecation")
+	private boolean transferFileToPublicServer(File file) throws IOException {
+		HttpURLConnection conn = null;
+		DataOutputStream dos = null;
+		DataInputStream inStream = null;
+
+		String lineEnd = "\r\n";
+		String twoHyphens = "--";
+		String boundary = "*****";
+
+		int bytesRead, bytesAvailable, bufferSize;
+		byte[] buffer;
+		int maxBufferSize = 1 * 1024 * 1024;
+
+		// Request the client
+		FileInputStream fileInputStream = new FileInputStream(file);
+
+		URL url = new URL(kMLTransferServiceURL);
+		conn = (HttpURLConnection) url.openConnection();
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+		conn.setUseCaches(false);
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Connection", "Keep-Alive");
+		conn.setRequestProperty("Content-Type", "multipart/form-data;boundary="
+				+ boundary);
+
+		dos = new DataOutputStream(conn.getOutputStream());
+
+		dos.writeBytes(twoHyphens + boundary + lineEnd);
+		dos.writeBytes("Content-Disposition: form-data; name=\"upload\";"
+				+ " filename=\"" + file.getName() + "\"" + lineEnd);
+		dos.writeBytes(lineEnd);
+
+		// Creating a buffer of maximum size
+		bytesAvailable = fileInputStream.available();
+		bufferSize = Math.min(bytesAvailable, maxBufferSize);
+		buffer = new byte[bufferSize];
+
+		// Write the file into the form
+		bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+		while (bytesRead > 0) {
+			dos.write(buffer, 0, bufferSize);
+			bytesAvailable = fileInputStream.available();
+			bufferSize = Math.min(bytesAvailable, maxBufferSize);
+			bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+		}
+
+		// Attach the necessary multipart form data after file data...
+		dos.writeBytes(lineEnd);
+		dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+		// Close streams
+		fileInputStream.close();
+		dos.flush();
+		dos.close();
+
+		// Get the response from the server to check if the file was copied
+		inStream = new DataInputStream(conn.getInputStream());
+		String str;
+		while ((str = inStream.readLine()) != null) {
+			if (str.equalsIgnoreCase("done")) {
+				inStream.close();
+				return true;
+			} else
+				return false;
+		}
+		inStream.close();
+		return false;
 	}
 
 	@Override

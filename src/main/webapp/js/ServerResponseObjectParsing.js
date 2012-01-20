@@ -681,10 +681,8 @@ function parse(data) {
 		}
 		
 		else if(element["updateType"] == "ImportOntologyCommand") {
-			if(element["Import"])
-				alert("Ontology successfully imported.");
-			else
-				alert("Ontology import failed! Please try again.");
+			if(!element["Import"])
+				alert("Ontology import failed!");
 		}
 	});
 }

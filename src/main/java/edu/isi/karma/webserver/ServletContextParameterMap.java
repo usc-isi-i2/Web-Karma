@@ -10,7 +10,7 @@ public class ServletContextParameterMap {
 	
 	private static Logger logger = LoggerFactory.getLogger(ServletContextParameterMap.class);
 	public enum ContextParameter {
-		publicIPAddress
+		publicKMLAddress, KMLTransferService
 	}
 	
 	public static void setParameterValue(ContextParameter param, String value) {
