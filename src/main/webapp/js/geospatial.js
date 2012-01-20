@@ -46,7 +46,6 @@ function showMapViewForWorksheet() {
 
 function displayKMLandToggleIcon(worksheetId, fileName, worksheetPanel) {
 	var mapPanel = $("<div>").addClass("mapViewPanel").width(800).height(650).attr("id","map_canvas_" + worksheetId);
-	console.log($("div.WorksheetTitleDiv", worksheetPanel).length);
 	mapPanel.insertAfter($("div.WorksheetTitleDiv", worksheetPanel));
 	
 	var myOptions = {

@@ -21,6 +21,8 @@ import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class WorksheetGeospatialContent {
 	private Worksheet worksheet;
@@ -28,13 +30,19 @@ public class WorksheetGeospatialContent {
 	private List<Point> points = new ArrayList<Point>();
 	private List<LineString> lines = new ArrayList<LineString>();
 
-	private static String WGS84_LAT_PROPERTY = "http://www.w3.org/2003/01/geo/wgs84_pos#lat";
-	private static String WGS84_LNG_PROPERTY = "http://www.w3.org/2003/01/geo/wgs84_pos#long";
-	private static String POINT_POS_PROPERTY = "http://www.opengis.net/gml/pos";
-	private static String POS_LIST_PROPERTY = "http://www.opengis.net/gml/posList";
+	private static String WGS84_LAT_PROPERTY = ServletContextParameterMap
+			.getParameterValue(ContextParameter.WGS84_LAT_PROPERTY);
+	private static String WGS84_LNG_PROPERTY = ServletContextParameterMap
+			.getParameterValue(ContextParameter.WGS84_LNG_PROPERTY);
+	private static String POINT_POS_PROPERTY = ServletContextParameterMap
+			.getParameterValue(ContextParameter.POINT_POS_PROPERTY);
+	private static String POS_LIST_PROPERTY = ServletContextParameterMap
+			.getParameterValue(ContextParameter.POS_LIST_PROPERTY);
 
-	private static String POINT_CLASS = "http://www.opengis.net/gml/Point";
-	private static String LINE_CLASS = "http://www.opengis.net/gml/LineString";
+	private static String POINT_CLASS = ServletContextParameterMap
+			.getParameterValue(ContextParameter.POINT_CLASS);
+	private static String LINE_CLASS = ServletContextParameterMap
+			.getParameterValue(ContextParameter.LINE_CLASS);
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(WorksheetGeospatialContent.class);

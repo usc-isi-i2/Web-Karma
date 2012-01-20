@@ -77,11 +77,16 @@ function changeSemanticType(event) {
 			if(fullType == label["Type"]) {
 				if(domain == "") {
 					radioButton.attr('checked',true);
+					optionsDiv.data("type", fullType);
+					optionsDiv.data("source", "RadioButtonList");
 					selectedFlag = true;
 				} else {
 					if(label["Domain"] != null) {
 						if(domain == label["Domain"]){
 							radioButton.attr('checked',true);
+							optionsDiv.data("source", "RadioButtonList");
+							optionsDiv.data("domain", domain);
+							optionsDiv.data("type", fullType);
 							selectedFlag = true;
 						}
 					}
