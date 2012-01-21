@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:xal="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+    <Folder>
+        <name>streetData.csv</name>
+        <open>1</open>
+        <Placemark>
+            <visibility>1</visibility>
+            <description>&lt;b&gt;Name&lt;/b&gt;: CARA LAZARA &lt;br /&gt;&lt;b&gt;PlacemarkType&lt;/b&gt;: Line String &lt;br /&gt;&lt;b&gt;Description&lt;/b&gt;:  &lt;br /&gt;</description>
+            <LineString>
+                <altitudeMode>clampToGround</altitudeMode>
+                <coordinates>20.453399419784546,44.81908450825149 20.453946590423584,44.81878009346497 20.454440116882324,44.818239753260784 20.45501947402954,44.81726560601496</coordinates>
+            </LineString>
+        </Placemark>
+        <Placemark>
+            <visibility>1</visibility>
+            <description>&lt;b&gt;Name&lt;/b&gt;: NIKOLE SPASIƒÜA &lt;br /&gt;&lt;b&gt;PlacemarkType&lt;/b&gt;: Line String &lt;br /&gt;&lt;b&gt;Description&lt;/b&gt;:  &lt;br /&gt;</description>
+            <LineString>
+                <altitudeMode>clampToGround</altitudeMode>
+                <coordinates>20.45507311820984,44.818772483074746 20.454343557357788,44.818308247369714 20.45383930206299,44.81813320670734</coordinates>
+            </LineString>
+        </Placemark>
+        <Placemark>
+            <visibility>1</visibility>
+            <description>&lt;b&gt;Name&lt;/b&gt;: USKOƒåKA &lt;br /&gt;&lt;b&gt;PlacemarkType&lt;/b&gt;: Line String &lt;br /&gt;&lt;b&gt;Description&lt;/b&gt;:  &lt;br /&gt;</description>
+            <LineString>
+                <altitudeMode>clampToGround</altitudeMode>
+                <coordinates>20.45578122138977,44.81843001447362 20.454729795455933,44.817745071169185</coordinates>
+            </LineString>
+        </Placemark>
+    </Folder>
+</kml>

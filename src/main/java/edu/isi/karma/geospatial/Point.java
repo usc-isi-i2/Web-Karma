@@ -29,7 +29,8 @@ public class Point {
 	public String getHTMLDescription() {
 		StringBuilder str = new StringBuilder();
 		for (String name : popupData.keySet()) {
-			str.append("<b>" + name + "</b>: " + popupData.get(name) + " <br />");
+			str.append("<b>" + name + "</b>: " + popupData.get(name)
+					+ " <br />");
 		}
 		return str.toString();
 	}

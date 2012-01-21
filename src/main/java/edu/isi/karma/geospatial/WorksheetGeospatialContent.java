@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.micromata.opengis.kml.v_2_2_0.AltitudeMode;
+import de.micromata.opengis.kml.v_2_2_0.Coordinate;
 import de.micromata.opengis.kml.v_2_2_0.Folder;
 import de.micromata.opengis.kml.v_2_2_0.Kml;
 import de.micromata.opengis.kml.v_2_2_0.KmlFactory;
@@ -120,10 +121,36 @@ public class WorksheetGeospatialContent {
 	}
 
 	private void populateLines(List<String> coordinateHNodeIds,
-			ArrayList<Row> rows, Map<String, String> columnMap) {
-		// for (Row row : rows) {
-		//
-		// }
+			ArrayList<Row> rows, Map<String, String> columnNameMap) {
+		for (Row row : rows) {
+			try {
+				String posList = row.getNode(coordinateHNodeIds.get(0)).getValue()
+						.asString();
+				String[] coords = posList.split(" ");
+				List<Coordinate> coordsList = new ArrayList<Coordinate>();
+				for(String coordStr:coords) {
+					Coordinate coord = new Coordinate(coordStr);
+					coordsList.add(coord);
+				}
+
+				if(coordsList.size() == 0)
+					continue;
+				
+				LineString line = new LineString(coordsList);
+				Collection<Node> nodes = row.getNodes();
+				for (Node node : nodes) {
+					if (!(coordinateHNodeIds.contains(node.getHNodeId()))
+							&& !(node.hasNestedTable())) {
+						line.addColumnToDescription(columnNameMap.get(node
+								.getHNodeId()), node.getValue().asString());
+					}
+				}
+				lines.add(line);
+			} catch (Exception e) {
+				logger.error("Error creating line! Skipping it.", e);
+				continue;
+			}
+		}
 	}
 
 	private void populatePoints(List<String> coordinateHNodeIds,
@@ -208,9 +235,7 @@ public class WorksheetGeospatialContent {
 	}
 
 	public File publishKML() throws FileNotFoundException {
-		// File outputFile = new File("./src/main/webapp/KML/"
-		// + worksheet.getTitle() + ".kml");
-		File outputFile = new File(worksheet.getTitle() + ".kml");
+		File outputFile = new File("./publish/KML/" + worksheet.getTitle() + ".kml");
 		final Kml kml = KmlFactory.createKml();
 		final Folder folder = kml.createAndSetFolder()
 				.withName(worksheet.getTitle()).withOpen(true);
@@ -225,6 +250,16 @@ public class WorksheetGeospatialContent {
 							point.getLongitude() + "," + point.getLatitude());
 
 		}
+
+		for (LineString line : lines) {
+			folder.createAndAddPlacemark()
+					.withDescription(line.getHTMLDescription())
+					.withVisibility(true)
+					.createAndSetLineString()
+					.withAltitudeMode(AltitudeMode.CLAMP_TO_GROUND)
+					.setCoordinates(line.getCoordinatesList());
+		}
+
 		kml.marshal(outputFile);
 		return outputFile;
 	}

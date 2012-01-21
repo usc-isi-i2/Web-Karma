@@ -65,7 +65,7 @@ public class AlignToOntology {
 			// Write the source description
 			SourceDescription desc = new SourceDescription(vWorkspace.getRepFactory(), tree, root);
 			String descString = desc.generateSourceDescription();
-			String fileName = "./log/"+worksheet.getTitle()+".txt";
+			String fileName = "./publish/Source Description/"+worksheet.getTitle()+".txt";
 			FileUtil.writeStringToFile(descString, fileName);
 			logger.info("Source description written to file: " + fileName);
 
