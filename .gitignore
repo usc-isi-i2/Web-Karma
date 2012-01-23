@@ -11,3 +11,5 @@ CRF_Model.txt
 tmp
 log/*
 !.gitignore
+publish/KML/*.*
+publish/Source Description/*.*

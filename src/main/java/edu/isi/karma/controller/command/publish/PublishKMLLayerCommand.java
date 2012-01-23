@@ -41,7 +41,7 @@ public class PublishKMLLayerCommand extends Command {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
 		this.publicKMLAddress = ipAddress;
-		this.kMLTransferServiceURL = kMLTransferServiceURL; 
+		this.kMLTransferServiceURL = kMLTransferServiceURL;
 	}
 
 	@Override
@@ -106,82 +106,88 @@ public class PublishKMLLayerCommand extends Command {
 			});
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-
 		}
 
 		return new UpdateContainer();
 	}
 
 	@SuppressWarnings("deprecation")
-	private boolean transferFileToPublicServer(File file) throws IOException {
-		HttpURLConnection conn = null;
-		DataOutputStream dos = null;
-		DataInputStream inStream = null;
+	private boolean transferFileToPublicServer(File file) {
+		try {
+			logger.info("Starting transfer of the published KML file to a public server to view it on Google Maps ...");
+			HttpURLConnection conn = null;
+			DataOutputStream dos = null;
+			DataInputStream inStream = null;
 
-		String lineEnd = "\r\n";
-		String twoHyphens = "--";
-		String boundary = "*****";
+			String lineEnd = "\r\n";
+			String twoHyphens = "--";
+			String boundary = "*****";
 
-		int bytesRead, bytesAvailable, bufferSize;
-		byte[] buffer;
-		int maxBufferSize = 1 * 1024 * 1024;
+			int bytesRead, bytesAvailable, bufferSize;
+			byte[] buffer;
+			int maxBufferSize = 1 * 1024 * 1024;
 
-		// Request the client
-		FileInputStream fileInputStream = new FileInputStream(file);
+			// Request the client
+			FileInputStream fileInputStream = new FileInputStream(file);
 
-		URL url = new URL(kMLTransferServiceURL);
-		conn = (HttpURLConnection) url.openConnection();
-		conn.setDoInput(true);
-		conn.setDoOutput(true);
-		conn.setUseCaches(false);
-		conn.setRequestMethod("POST");
-		conn.setRequestProperty("Connection", "Keep-Alive");
-		conn.setRequestProperty("Content-Type", "multipart/form-data;boundary="
-				+ boundary);
+			URL url = new URL(kMLTransferServiceURL);
+			conn = (HttpURLConnection) url.openConnection();
+			conn.setConnectTimeout(5000);
+			conn.setReadTimeout(5000);
+			conn.setDoInput(true);
+			conn.setDoOutput(true);
+			conn.setUseCaches(false);
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Connection", "Keep-Alive");
+			conn.setRequestProperty("Content-Type",
+					"multipart/form-data;boundary=" + boundary);
 
-		dos = new DataOutputStream(conn.getOutputStream());
+			dos = new DataOutputStream(conn.getOutputStream());
+			dos.writeBytes(twoHyphens + boundary + lineEnd);
+			dos.writeBytes("Content-Disposition: form-data; name=\"upload\";"
+					+ " filename=\"" + file.getName() + "\"" + lineEnd);
+			dos.writeBytes(lineEnd);
 
-		dos.writeBytes(twoHyphens + boundary + lineEnd);
-		dos.writeBytes("Content-Disposition: form-data; name=\"upload\";"
-				+ " filename=\"" + file.getName() + "\"" + lineEnd);
-		dos.writeBytes(lineEnd);
-
-		// Creating a buffer of maximum size
-		bytesAvailable = fileInputStream.available();
-		bufferSize = Math.min(bytesAvailable, maxBufferSize);
-		buffer = new byte[bufferSize];
-
-		// Write the file into the form
-		bytesRead = fileInputStream.read(buffer, 0, bufferSize);
-		while (bytesRead > 0) {
-			dos.write(buffer, 0, bufferSize);
+			// Creating a buffer of maximum size
 			bytesAvailable = fileInputStream.available();
 			bufferSize = Math.min(bytesAvailable, maxBufferSize);
+			buffer = new byte[bufferSize];
+
+			// Write the file into the form
 			bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+			while (bytesRead > 0) {
+				dos.write(buffer, 0, bufferSize);
+				bytesAvailable = fileInputStream.available();
+				bufferSize = Math.min(bytesAvailable, maxBufferSize);
+				bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+			}
+
+			// Attach the necessary multipart form data after file data...
+			dos.writeBytes(lineEnd);
+			dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+			// Close streams
+			fileInputStream.close();
+			dos.flush();
+			dos.close();
+
+			// Get the response from the server to check if the file was copied
+			inStream = new DataInputStream(conn.getInputStream());
+			String str;
+			while ((str = inStream.readLine()) != null) {
+				if (str.equalsIgnoreCase("done")) {
+					logger.info("Transfer complete.");
+					inStream.close();
+					return true;
+				} else
+					return false;
+			}
+			inStream.close();
+			return false;
+		} catch (IOException e) {
+			logger.error("Error occured while transferring the KML file!", e);
+			return false;
 		}
-
-		// Attach the necessary multipart form data after file data...
-		dos.writeBytes(lineEnd);
-		dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-
-		// Close streams
-		fileInputStream.close();
-		dos.flush();
-		dos.close();
-
-		// Get the response from the server to check if the file was copied
-		inStream = new DataInputStream(conn.getInputStream());
-		String str;
-		while ((str = inStream.readLine()) != null) {
-			if (str.equalsIgnoreCase("done")) {
-				inStream.close();
-				return true;
-			} else
-				return false;
-		}
-		inStream.close();
-		return false;
 	}
 
 	@Override

@@ -261,6 +261,7 @@ public class WorksheetGeospatialContent {
 		}
 
 		kml.marshal(outputFile);
+		logger.info("KML file published. Location:" + outputFile.getAbsolutePath());
 		return outputFile;
 	}
 
