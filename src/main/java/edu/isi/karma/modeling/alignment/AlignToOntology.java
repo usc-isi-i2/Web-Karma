@@ -63,7 +63,9 @@ public class AlignToOntology {
 
 		if (root != null) {
 			// Write the source description
-			SourceDescription desc = new SourceDescription(vWorkspace.getRepFactory(), tree, root);
+			//use true to generate a SD with column names (for use "outside" of Karma)
+			//use false for internal use
+			SourceDescription desc = new SourceDescription(vWorkspace.getRepFactory(), tree, root,true);
 			String descString = desc.generateSourceDescription();
 			String fileName = "./publish/Source Description/"+worksheet.getTitle()+".txt";
 			FileUtil.writeStringToFile(descString, fileName);
