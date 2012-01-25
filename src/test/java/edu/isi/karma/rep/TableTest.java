@@ -46,6 +46,21 @@ public class TableTest extends TestCase {
 		HNodePath nestedTestPath = nestedWS.getHeaders().getAllPaths().get(9);
 		Collection<Node> nestedNodes = new ArrayList<Node>();
 		nestedWS.getDataTable().collectNodes(nestedTestPath, nestedNodes);
+		
+		//mariam:just to test
+		/*
+		System.out.println("Get node iDS="+nestedWS.getHeaders().getOrderedNodeIds());
+		List<HNodePath> ps = nestedWS.getHeaders().getAllPaths();
+		for(HNodePath p:ps){
+			System.out.println("PATH:"+p.toString());
+		}
+		for(HNode n: f.getAllHNodes()){
+			System.out.println("Path for " + n.getId() + n.getColumnName() + ":" + n.getHNodePath(f));
+			System.out.println("Path for " + n.getId() + n.getColumnName() + ":" + n.getHNodePath(f).toColumnNames(f));
+		}
+		*/
+		//////////////////////
+		
 		// Check for the size
 		assertEquals(14,nestedNodes.size());
 		// Check for the values

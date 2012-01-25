@@ -12,6 +12,7 @@ import edu.isi.karma.controller.update.AlignmentHeadersUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rdf.SourceDescription;
+import edu.isi.karma.rdf.WorksheetRDFGenerator;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
@@ -22,6 +23,7 @@ import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.alignmentHeadings.AlignmentForest;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.mediator.gav.main.MediatorException;
 
 public class AlignToOntology {
 	private Worksheet worksheet;
@@ -38,7 +40,7 @@ public class AlignToOntology {
 		this.vWorksheetId = vWorksheetId;
 	}
 
-	public void update(UpdateContainer c, boolean replaceExistingAlignment) throws KarmaException, IOException {
+	public void update(UpdateContainer c, boolean replaceExistingAlignment) throws KarmaException, IOException, MediatorException, ClassNotFoundException {
 		String alignmentId = getAlignmentId();
 		// Get the previous alignment
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
@@ -67,6 +69,11 @@ public class AlignToOntology {
 			//use false for internal use
 			SourceDescription desc = new SourceDescription(vWorkspace.getRepFactory(), tree, root,true);
 			String descString = desc.generateSourceDescription();
+			//generate RDF for the first 3 rows: mariam
+			WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(vWorkspace.getRepFactory(), descString, "./publish/RDF/rdftest.rdf");
+			//wrg.generateTriplesRow(worksheet);
+			wrg.generateTriplesCellLimit(worksheet);
+			////////////////////
 			String fileName = "./publish/Source Description/"+worksheet.getTitle()+".txt";
 			FileUtil.writeStringToFile(descString, fileName);
 			logger.info("Source description written to file: " + fileName);

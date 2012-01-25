@@ -91,6 +91,12 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		//all triples written, so close the writer
 		closeWriter();		
 	}
+	//used for testing; generate only for first 3 rows
+	public void generateTriplesCellLimit(Worksheet w) throws MediatorException, IOException, KarmaException{
+		generateTriplesCellLimit(w.getDataTable());
+		//all triples written, so close the writer
+		closeWriter();		
+	}
 	
 	/** Generates RDF for the given data table by invoking the RDF generator cell by cell.
 	 * @param dataTable
@@ -106,6 +112,30 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		//generate all triples cell by cell
 		//for each row
 		ArrayList<Row> rows = dataTable.getRows(0, dataTable.getNumRows());
+		//int i=0;
+		for(Row r:rows){
+			//for each node in the row
+			//logger.debug("Process ROW="+i++);
+			for (Node n : r.getNodes()) {
+				if(!n.hasNestedTable()){
+					//no nested table
+					generateTriplesCell(n);
+					//I want to see the triples as they are generated 
+					outWriter.flush();
+				}
+				else{
+					//this node has a nested table, so I have to go inside the nested table
+					generateTriplesCell(n.getNestedTable());
+				}
+			}
+		}
+	}
+
+	//same as generateTriplesCell: used for testing; generate only for first 3 rows
+	public void generateTriplesCellLimit(Table dataTable) throws MediatorException, IOException, KarmaException{
+		//generate all triples cell by cell
+		//for each row
+		ArrayList<Row> rows = dataTable.getRows(0, 3);
 		//int i=0;
 		for(Row r:rows){
 			//for each node in the row
