@@ -94,21 +94,6 @@ public class HNodePath {
 		return path;
 	}
 	
-	/*
-	public String toColumnNames(RepFactory f) {
-		StringBuffer b = new StringBuffer();
-		Iterator<HNode> it = hNodes.iterator();
-		while (it.hasNext()) {
-			HNode n = it.next();
-			HTable t = n.getHTable(f);
-			b.append(t.getTableName()+ "." + n.getColumnName());
-			if (it.hasNext()){
-				b.append("/");
-			}
-		}
-		return b.toString();
-	}
-	 */
 	public static HNodePath concatenate(HNodePath prefix, HNodePath suffix) {
 		HNodePath result = new HNodePath(prefix);
 		for (HNode hn : suffix.hNodes){
