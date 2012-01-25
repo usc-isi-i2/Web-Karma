@@ -55,7 +55,15 @@ public class MediatorUtil {
 		return s;
 	}
 	
-    /**
+	static public String addBacktick(String s){
+		s = s.trim();
+		if(s.startsWith("`")){
+			return s;
+		}
+		else return "`"+s+"`";
+	}
+
+	/**
      * @param name
      * 			name of file (location independent)
      * @return

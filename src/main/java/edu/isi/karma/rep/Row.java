@@ -17,6 +17,12 @@ public class Row extends RepEntity {
 	// to Node.
 	private final Map<String, Node> nodes = new HashMap<String, Node>();
 
+	//mariam
+	/**
+	 * The table that this row belongs to 
+	 */
+	private Table belongsToTable;
+	
 	Row(String id) {
 		super(id);
 	}
@@ -29,8 +35,26 @@ public class Row extends RepEntity {
 		return nodes.values();
 	}
 
+	//mariam
+	/** Returns all nodes and associated HNodeIds.
+	 * @return
+	 * 		all nodes and associated HNodeIds.
+	 */
+	public Map<String, Node> getNodesMap() {
+		return nodes;
+	}
+	public void setBelongsToTable(Table t){
+		belongsToTable=t;
+	}
+	public Table getBelongsToTable(){
+		return belongsToTable;
+	}
+	/////////////////
+	
 	void addNode(Node node) {
 		nodes.put(node.getHNodeId(), node);
+		//mariam
+		node.setBelongsToRow(this);
 	}
 
 	/**
@@ -79,6 +103,15 @@ public class Row extends RepEntity {
 		}
 	}
 
+	//mariam
+	public String toString(){
+		String s = "ROW:\n";
+		for (Node n : nodes.values()) {
+			s +=n.toString();
+		}
+		return s;
+	}
+	
 	void addNodeToDataTable(HNode newHNode, Table table, RepFactory factory) {
 		HTable ht = factory.getHTable(table.getHTableId());
 		if (ht.contains(newHNode)) {

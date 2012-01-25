@@ -62,8 +62,8 @@ public class RuleRDFGeneratorDB extends RuleRDFGenerator{
 			throw new MediatorException("Connection to database was not established");
 		}
 		//get the rule head
-		outWriter.println();
-		outWriter.println("# Table: " + rule.antecedentToString());
+		//outWriter.println();
+		//outWriter.println("# Table: " + rule.antecedentToString());
 
 		java.sql.Statement s = conn.createStatement();
 		//if table has a backtick in the domain file leave it like that in the query

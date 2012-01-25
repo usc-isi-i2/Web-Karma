@@ -103,7 +103,10 @@ public class RuleParser {
 					//System.out.println("Var==" + var + " predI=" + predIndex + "id=" + id);
 				}
 				
-				var = MediatorUtil.removeBacktick(var);
+				//why do I remove the backtick for the variables? If they have a backtick I must
+				//need them mariam:01/24/2012
+				//remove the backtick when you need to use it
+				//var = MediatorUtil.removeBacktick(var);
 				p.addTerm(var);
 			}
 		}
@@ -134,7 +137,10 @@ public class RuleParser {
 			}
 			else{
 				//regular variable
-				var = MediatorUtil.removeBacktick(var);
+				//why do I remove the backtick for the variables? If they have a backtick I must
+				//need them mariam:01/24/2012
+				//remove the backtick when you need to use it
+				//var = MediatorUtil.removeBacktick(var);
 				p.addTerm(var);
 			}
 		}

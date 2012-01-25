@@ -2,7 +2,6 @@ package edu.isi.karma.rdf;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -12,10 +11,9 @@ import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.LinkType;
 import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.modeling.alignment.Vertex;
-import edu.isi.karma.rep.HNodePath;
-import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.mediator.gav.util.MediatorUtil;
 import edu.isi.mediator.rdf.TableRDFGenerator;
 
 /**
@@ -50,6 +48,12 @@ public class SourceDescription {
 	private HashMap<String, String> uriMap = new HashMap<String, String>();
 	private int uriIndex = 0;
 	
+	/**
+	 * true if column names should be used in the Rule; 
+	 * false if HNodePath should be used instead of the column names.
+	 */
+	private boolean useColumnNames = false;
+	
 	static Logger logger = Logger.getLogger(SourceDescription.class);
 
 	/**
@@ -57,11 +61,21 @@ public class SourceDescription {
 	 * @param steinerTree
 	 * @param root
 	 * 		the root of the Steiner tree.
+	 * @param useColumnNames
+	 * 		true if column names should be used in the Rule
+	 * 		false if HNodePath should be used instead of the column names.
+	 * 
+	 * <br>If the SD will be used "outside" of Karma to generate RDF from a datasource use 
+	 * useColumnNames=true as the SD should contain column names that are in the
+	 * datasource to be modeled.
+	 * <br>useColumnNames=false if the SD is used internally.
 	 */
-	public SourceDescription(RepFactory factory, DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree, Vertex root){
+	public SourceDescription(RepFactory factory, DirectedWeightedMultigraph<Vertex, 
+			LabeledWeightedEdge> steinerTree, Vertex root, boolean useColumnNames){
 		this.factory=factory;
 		this.steinerTree = steinerTree;
 		this.root=root;
+		this.useColumnNames = useColumnNames;
 	}
 	
 	/**
@@ -70,12 +84,20 @@ public class SourceDescription {
 	 * @return
 	 * 		a source description.
 	 * @throws KarmaException
+	 * For a table without nested tables the source description contains column names.
+	 * SD(ColumnName1, ColumnName2)
+	 * For a table with nested tables the source description contains HNodePaths.
+	 * SD(HN1/HN2/HN3, HN1/HN2/HN4) - the ids of the HNodes.
 	 */
 	public String generateSourceDescription() throws KarmaException{
 		StringBuffer s = new StringBuffer();
 		generateSourceDescription(root, s);
 		String rule =  "SourceDescription(";
-		rule += ruleAttributes.toString().substring(1,ruleAttributes.toString().length()-1);
+		int i=0;
+		for(String attr:ruleAttributes){
+			if(i++>0) rule +=",";
+			rule += addBacktick(attr);
+		}
 		rule += ") -> \n" + s.toString();
 		String namespace = "s:'http://www.isi.edu/'";
 		String sourceDescription = "NAMESPACES:\n\n" + namespace + "\n\nLAV_RULES:\n\n" + rule;
@@ -150,11 +172,11 @@ public class SourceDescription {
 	 */
 	private String generateClassStatement(Vertex v) {
 		String key = findKey(v);
-		String s = "`" + v.getLabel() + "`(uri(" + key + "))"; 
+		String s = "`" + v.getLabel() + "`(uri(" + addBacktick(key) + "))"; 
 		//System.out.println("Class:" + s);
 		return s;
 	}
-	
+
 	/**
 	 * Generates a binary predicate for a DataProperty.
 	 * @param v
@@ -197,11 +219,14 @@ public class SourceDescription {
 		/////////
 		
 		String dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName();
+		if(!useColumnNames){
+			dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNames();
+		}
 		ruleAttributes.add(dataAttribute);
 		String propertyName = e.getLabel();
 		if(e.isInverse())
 			propertyName = TableRDFGenerator.inverseProperty + propertyName;
-		String s = "`" + propertyName + "`(uri(" + key + ")," + dataAttribute + ")";
+		String s = "`" + propertyName + "`(uri(" + addBacktick(key) + ")," + addBacktick(dataAttribute) + ")";
 		//System.out.println("DataProperty:" + s);
 		return s;
 	}
@@ -239,14 +264,14 @@ public class SourceDescription {
 		String propertyName = e.getLabel();
 		if(e.isInverse())
 			propertyName = TableRDFGenerator.inverseProperty + propertyName;
-		String s = "`" + propertyName + "`(uri(" + key1 + "),uri(" + key2 + "))";
+		String s = "`" + propertyName + "`(uri(" + addBacktick(key1) + "),uri(" + addBacktick(key2) + "))";
 		//System.out.println("ObjectProperty:" + s);
 		return s;
 	}
 
 	/**
 	 * For a node that is a Class, find the key(column name) associated with this class.
-	 * <br> If node is associated with a column, that column is the key.
+	 * <br> If node is associated with a column, that column is the key (the column was mapped to a Class)
 	 * <br> Else, look at all this node's children, and see which one is a key. If
 	 * <br> no key is found generate a gensym URI (return a uri index for this class)
 	 * @param v
@@ -275,7 +300,11 @@ public class SourceDescription {
 					if(n.getSemanticType().isPartOfKey()){
 						//it's a key
 						//System.out.println("part of a key ... " + n.getLabel() + n.getID());
-						key = factory.getHNode(n.getSemanticType().getHNodeId()).getColumnName();
+						if(useColumnNames){
+							key = factory.getHNode(n.getSemanticType().getHNodeId()).getColumnName();
+						}else{
+							key=factory.getHNode(n.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNames();
+						}
 						ruleAttributes.add(key);
 						break;
 					}
@@ -288,11 +317,24 @@ public class SourceDescription {
 			}
 		}
 		else{
-			key = factory.getHNode(v.getSemanticType().getHNodeId()).getColumnName();
+			//the node is associated with a column => it's the key
+			if(useColumnNames){
+				key = factory.getHNode(v.getSemanticType().getHNodeId()).getColumnName();
+			}else{
+				key=factory.getHNode(v.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNames();				
+			}
 			ruleAttributes.add(key);
 		}
 		uriMap.put(v.getLabel(), key);
 		logger.debug("Key for " + v.getLabel() + " is " + key);
 		return key;
+	}
+	
+	private String addBacktick(String s){
+		//this method has to be enhanced to add backtick if we have columns with
+		//"strange" chars
+		if(!useColumnNames)
+			return MediatorUtil.addBacktick(s);
+		else return s;
 	}
 }

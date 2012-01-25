@@ -20,11 +20,25 @@ public class Table extends RepEntity {
 	// My rows.
 	private final ArrayList<Row> rows = new ArrayList<Row>();
 
+	//mariam
+	/**
+	 * The node that this table is a nested table in.
+	 */
+	private Node nestedTableInNode;
+	
 	Table(String id, String hTableId) {
 		super(id);
 		this.hTableId = hTableId;
 	}
 
+	//mariam
+	public void setNestedTableInNode(Node n){
+		nestedTableInNode=n;
+	}
+	public Node getNestedTableInNode(){
+		return nestedTableInNode;
+	}
+	
 	public String getHTableId() {
 		return hTableId;
 	}
@@ -32,6 +46,8 @@ public class Table extends RepEntity {
 	public Row addRow(RepFactory factory) {
 		Row r = factory.createRow(hTableId);
 		rows.add(r);
+		//mariam
+		r.setBelongsToTable(this);
 		return r;
 	}
 

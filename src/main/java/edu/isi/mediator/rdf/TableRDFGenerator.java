@@ -22,6 +22,7 @@ import java.util.Set;
 import edu.isi.mediator.domain.parser.DomainParser;
 import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.gav.util.MediatorLogger;
+import edu.isi.mediator.gav.util.MediatorUtil;
 import edu.isi.mediator.rule.FunctionTerm;
 import edu.isi.mediator.rule.LAVRule;
 import edu.isi.mediator.rule.Predicate;
@@ -70,7 +71,7 @@ public class TableRDFGenerator {
 	/**
 	 * Output writer. Either to a file or to System.out
 	 */
-	private PrintWriter outWriter;
+	protected PrintWriter outWriter;
 	
 	/**
 	 * Unique id, used for generating gensym URIs.
@@ -162,12 +163,12 @@ public class TableRDFGenerator {
 		//get head of the rule
 		ArrayList<String> allVars = tableRule.getAllAntecedentVars();
 		for(String v:allVars){
-			rdfVariables.put(v,new HashSet<String>());
+			rdfVariables.put(MediatorUtil.removeBacktick(v),new HashSet<String>());
 			Rule subRule = generateSubrule(tableRule,v);
-			logger.debug("Rule for "+ v + ":" + subRule);
+			logger.debug("Rule for "+ MediatorUtil.removeBacktick(v) + ":" + subRule);
         	RuleRDFGenerator rgen = new RuleRDFGenerator(subRule, sourceNamespaces,
         			ontologyNamespaces, outWriter, uniqueId+"");
-        	rdfGenerators.put(v,rgen);
+        	rdfGenerators.put(MediatorUtil.removeBacktick(v),rgen);
 		}
 	}
 	
@@ -240,7 +241,7 @@ public class TableRDFGenerator {
 				//this var is needed to construct this rule
 				String firstVar = getFirstVariableName(p);
 				if(firstVar!=null){
-					antecedent.addTerm(firstVar);
+					antecedent.addTermIfUnique(firstVar);
 				}
 				consequent.add(getInverse(p.clone()));
 
@@ -261,9 +262,9 @@ public class TableRDFGenerator {
 		}
 
 		//add all related variables
-		rdfVariables.get(v).addAll(antecedent.getVars());
+		rdfVariables.get(MediatorUtil.removeBacktick(v)).addAll(antecedent.getVars());
 		//add the initial variable
-		antecedent.addTerm(v);
+		antecedent.addTermIfUnique(v);
 		subrule.addAntecedentPredicate(antecedent);
 		subrule.addConsequent(consequent);
 		return subrule;
@@ -312,7 +313,7 @@ public class TableRDFGenerator {
 					//this var is needed to construct this rule
 					String firstVar = getFirstVariableName(p1);
 					if(firstVar!=null){
-						antecedent.addTerm(firstVar);
+						antecedent.addTermIfUnique(firstVar);
 					}
 					if(!consequent.contains(p1))
 						consequent.add(getInverse(p1.clone()));

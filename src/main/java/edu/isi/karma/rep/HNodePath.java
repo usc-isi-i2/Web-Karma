@@ -80,10 +80,21 @@ public class HNodePath {
 
 	//mariam
 	/**
-	 * Returns the HNodePath as a String containing the column names of the nodes.
+	 * Returns the HNodePath as a String containing the column name of the child node at the end.
 	 * @return
-	 * 		the HNodePath as a String containing the column names of the nodes.
+	 * 		the HNodePath as a String containing the column name of the child node at the end.
+	 * Example:
+	 * HN1/HN2/ColumnName
 	 */
+	public String toColumnNames() {
+		String path = toString() + "/";
+		//get the last node
+		HNode n = hNodes.get(hNodes.size()-1);
+		path += n.getColumnName();
+		return path;
+	}
+	
+	/*
 	public String toColumnNames(RepFactory f) {
 		StringBuffer b = new StringBuffer();
 		Iterator<HNode> it = hNodes.iterator();
@@ -97,7 +108,7 @@ public class HNodePath {
 		}
 		return b.toString();
 	}
-
+	 */
 	public static HNodePath concatenate(HNodePath prefix, HNodePath suffix) {
 		HNodePath result = new HNodePath(prefix);
 		for (HNode hn : suffix.hNodes){

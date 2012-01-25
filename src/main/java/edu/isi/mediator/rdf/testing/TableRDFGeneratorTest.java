@@ -67,6 +67,13 @@ public class TableRDFGeneratorTest {
 		   " ^ `http://halowiki/ob/property#name`(uri(0),DISEASE_NAME)" +
 		   " ^ `http://halowiki/ob/property#pharmGKBId`(uri(0),DISEASE_ID)";
 		   
+		   String dF3 = "NAMESPACES: s:'http://www.isi.edu/' LAV_RULES:" +
+		   "SourceDescription(`GENE_NAME`, `GENE_ID`) ->" + 
+		   "`http://halowiki/ob/category#Disease`(uri(0))" +
+		   " ^ `http://halowiki/ob/property#isCausedBy`(uri(0),uri(`GENE_ID`)) ^ `http://halowiki/ob/category#Gene`(uri(`GENE_ID`))" +
+		   " ^ `http://halowiki/ob/property#name`(uri(`GENE_ID`),`GENE_NAME`)" +
+		   " ^ `http://halowiki/ob/property#pharmGKBId`(uri(`GENE_ID`),`GENE_ID`)";
+
 		   HashMap<String,String> vals1 = new HashMap<String,String>();
 		   vals1.put("GENE_NAME","20");
 		   vals1.put("NAME","67");
@@ -78,11 +85,11 @@ public class TableRDFGeneratorTest {
 		   vals1.put("ACCESSION_ID","5");
 
 		   //TableRDFGenerator rdfGen = new TableRDFGenerator(dF1, null);
-		   TableRDFGenerator rdfGen = new TableRDFGenerator(dF2, null);
+		   TableRDFGenerator rdfGen = new TableRDFGenerator(dF3, null);
 		   rdfGen.generateTriples("GENE_NAME", vals1, "t123");
 		   rdfGen.generateTriples("GENE_ID", vals1, "t123");
-		   rdfGen.generateTriples("DISEASE_NAME", vals1, "t123");
-		   rdfGen.generateTriples("ACCESSION_ID", vals1, "t123");
+		   //rdfGen.generateTriples("DISEASE_NAME", vals1, "t123");
+		   //rdfGen.generateTriples("ACCESSION_ID", vals1, "t123");
 		   rdfGen.closeWriter();
 
 		   }catch(Exception e){e.printStackTrace();}

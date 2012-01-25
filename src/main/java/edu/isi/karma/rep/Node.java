@@ -38,11 +38,34 @@ public class Node extends RepEntity {
 
 	private CellValue originalValue = StringCellValue.getEmptyString();
 
+	//mariam
+	/**
+	 * The row that this node belongs to
+	 */
+	private Row belongsToRow;
+	
 	Node(String id, String hNodeId) {
 		super(id);
 		this.hNodeId = hNodeId;
 	}
 
+	//mariam
+	public void setBelongsToRow(Row row){
+		belongsToRow=row;
+	}
+	public Row getBelongsToRow(){
+		return belongsToRow;
+	}
+	/**
+	 * Return the table that this node belongs to.
+	 * @return
+	 * 		the table that this node belongs to.
+	 */
+	public Table getParentTable(){
+		return belongsToRow.getBelongsToTable();
+	}
+	///////////////
+	
 	public String getHNodeId() {
 		return hNodeId;
 	}
@@ -79,6 +102,8 @@ public class Node extends RepEntity {
 
 	public void setNestedTable(Table nestedTable) {
 		this.nestedTable = nestedTable;
+		//mariam
+		nestedTable.setNestedTableInNode(this);
 	}
 
 	public boolean hasNestedTable() {

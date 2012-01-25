@@ -66,6 +66,21 @@ public abstract class Predicate{
 	}
 	
 	/**
+	 * Adds a term to the predicate if the term is not a duplicate of an existing term.
+	 * @param var
+	 * 		variable name for {@link edu.isi.mediator.gav.domain.VarTerm}
+	 * 		<br>constant value for {@link edu.isi.mediator.gav.domain.ConstTerm}
+	 */
+	public void addTermIfUnique(String var){
+		Term t;
+		if(!MediatorUtil.isVar(var))
+			t=new ConstTerm(var);
+		else t = new VarTerm(var);
+		if(!containsTerm(t))
+			terms.add(t);
+	}
+
+	/**
 	 * Adds a term to the predicate.
 	 * @param t the term
 	 */
