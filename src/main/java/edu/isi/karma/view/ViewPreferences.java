@@ -38,11 +38,12 @@ public class ViewPreferences {
 	private static Logger logger = LoggerFactory.getLogger(ViewPreferences.class.getSimpleName());
 	
 	public enum ViewPreference {
-		maxCharactersInHeader, maxRowsToShowInNestedTables, defaultRowsToShowInTopTables;
+		maxCharactersInHeader, maxCharactersInCell, maxRowsToShowInNestedTables, defaultRowsToShowInTopTables;
 		
 		public int getIntDefaultValue() {
 			switch(this) {
 			case maxCharactersInHeader: return 10;
+			case maxCharactersInCell: return 100;
 			case maxRowsToShowInNestedTables: return 5;
 			case defaultRowsToShowInTopTables: return 10;
 			}

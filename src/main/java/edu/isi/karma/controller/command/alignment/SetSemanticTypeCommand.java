@@ -1,5 +1,6 @@
 package edu.isi.karma.controller.command.alignment;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.KarmaException;
 
 public class SetSemanticTypeCommand extends Command {
 
@@ -133,14 +135,14 @@ public class SetSemanticTypeCommand extends Command {
 
 		long elapsedTimeMillis = System.currentTimeMillis() - start;
 		float elapsedTimeSec = elapsedTimeMillis / 1000F;
-		System.out.println("Time required for training the semantic type: "
+		logger.info("Time required for training the semantic type: "
 				+ elapsedTimeSec);
 
 		// Add the new CRF column model for this column
 		ArrayList<String> labels = new ArrayList<String>();
 		ArrayList<Double> scores = new ArrayList<Double>();
-		trainingResult = CRFModelHandler.predictLabelForExamples(trainingExamples, 4, labels,
-				scores, null, columnFeatures);
+		trainingResult = CRFModelHandler.predictLabelForExamples(
+				trainingExamples, 4, labels, scores, null, columnFeatures);
 		if (!trainingResult) {
 			logger.error("Error occured while predicting labels");
 		}
@@ -152,7 +154,13 @@ public class SetSemanticTypeCommand extends Command {
 		// Get the alignment update if any
 		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
 				vWorksheetId);
-		align.update(c, true);
+		try {
+			align.update(c, true);
+		} catch (KarmaException e) {
+			logger.error("Error generating source description.", e);
+		} catch (IOException e) {
+			logger.error("Error writing source description file.", e);
+		}
 		return c;
 	}
 
@@ -173,7 +181,13 @@ public class SetSemanticTypeCommand extends Command {
 		// Get the alignment update if any
 		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
 				vWorksheetId);
-		align.update(c, true);
+		try {
+			align.update(c, true);
+		} catch (KarmaException e) {
+			logger.error("Error generating source description.", e);
+		} catch (IOException e) {
+			logger.error("Error writing source description file.", e);
+		}
 		return c;
 	}
 }

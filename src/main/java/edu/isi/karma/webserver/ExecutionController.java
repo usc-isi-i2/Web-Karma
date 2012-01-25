@@ -57,6 +57,8 @@ import edu.isi.karma.controller.command.alignment.ShowModelCommand;
 import edu.isi.karma.controller.command.alignment.ShowModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommandFactory;
+import edu.isi.karma.controller.command.publish.PublishKMLLayerCommand;
+import edu.isi.karma.controller.command.publish.PublishKMLLayerCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
 
@@ -131,6 +133,8 @@ public class ExecutionController {
 				new DuplicateDomainOfLinkCommandFactory());
 		commandFactoryMap.put(CloseWorkspaceCommand.class.getSimpleName(),
 				new CloseWorkspaceCommandFactory());
+		commandFactoryMap.put(PublishKMLLayerCommand.class.getSimpleName(),
+				new PublishKMLLayerCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

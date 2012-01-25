@@ -4,6 +4,38 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+	<context-param>
+		<param-name>PUBLIC_KML_ADDRESS</param-name>
+		<param-value>http://128.9.216.81:8080/KML/</param-value>
+	</context-param>
+	<context-param>
+		<param-name>KML_TRANSFER_SERVICE</param-name>
+		<param-value>http://128.9.216.81:8080/KMLFileTransferHandler</param-value>
+	</context-param>
+	<context-param>
+		<param-name>WGS84_LAT_PROPERTY</param-name>
+		<param-value>http://www.w3.org/2003/01/geo/wgs84_pos#lat</param-value>
+	</context-param>
+	<context-param>
+		<param-name>WGS84_LNG_PROPERTY</param-name>
+		<param-value>http://www.w3.org/2003/01/geo/wgs84_pos#long</param-value>
+	</context-param>
+	<context-param>
+		<param-name>POINT_POS_PROPERTY</param-name>
+		<param-value>http://www.opengis.net/gml/pos</param-value>
+	</context-param>
+	<context-param>
+		<param-name>POS_LIST_PROPERTY</param-name>
+		<param-value>http://www.opengis.net/gml/posList</param-value>
+	</context-param>
+	<context-param>
+		<param-name>POINT_CLASS</param-name>
+		<param-value>http://www.opengis.net/gml/Point</param-value>
+	</context-param>
+	<context-param>
+		<param-name>LINE_CLASS</param-name>
+		<param-value>http://www.opengis.net/gml/LineString</param-value>
+	</context-param>
   
   	<servlet>
     	<servlet-name>ServletStart</servlet-name>
@@ -27,6 +59,15 @@
   <servlet-mapping>
     <servlet-name>requestController</servlet-name>
     <url-pattern>/RequestController</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>KMLFileTransferHandler</servlet-name>
+    <servlet-class>edu.isi.karma.webserver.KMLFileTransferHandler</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>KMLFileTransferHandler</servlet-name>
+    <url-pattern>/KMLFileTransferHandler</url-pattern>
   </servlet-mapping>
   
 </web-app>

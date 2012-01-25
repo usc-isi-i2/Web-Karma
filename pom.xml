@@ -23,6 +23,15 @@
       <id>JGraphT Repository</id>
       <url>http://tanesha.net/maven2/</url>
  	</repository>
+ 	<repository>
+      <id>maven2-repository.dev.java.net</id>
+      <name>Java.net Maven 2 Repository</name>
+      <url>http://download.java.net/maven/2</url>
+      <layout>default</layout>
+      <snapshots>
+         <enabled>true</enabled>
+      </snapshots>
+      </repository>
    </repositories>
   
   <dependencies>
@@ -37,6 +46,12 @@
     		</exclusion>
     	</exclusions>
     </dependency>
+    <!-- The Java API for KML -->
+   <dependency>
+      <groupId>de.micromata.jak</groupId>
+      <artifactId>JavaAPIforKml</artifactId>
+      <version>2.2.0-SNAPSHOT</version>
+   </dependency>
     <dependency>
     	<groupId>com.hp.hpl.jena</groupId>
     	<artifactId>jena</artifactId>
@@ -101,6 +116,29 @@
         	<groupId>com.healthmarketscience.jackcess</groupId>
         	<artifactId>jackcess</artifactId>
         	<version>1.2.4</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.jdom</groupId>
+        	<artifactId>jdom</artifactId>
+        	<version>1.1.2</version>
+        	<exclusions>
+        		<exclusion>
+        			<artifactId>maven-cobertura-plugin</artifactId>
+        			<groupId>maven-plugins</groupId>
+        		</exclusion>
+        		<exclusion>
+        			<artifactId>maven-findbugs-plugin</artifactId>
+        			<groupId>maven-plugins</groupId>
+        		</exclusion>
+        		<exclusion>
+        			<artifactId>dom4j</artifactId>
+        			<groupId>dom4j</groupId>
+        		</exclusion>
+        		<exclusion>
+        			<artifactId>xom</artifactId>
+        			<groupId>xom</groupId>
+        		</exclusion>
+        	</exclusions>
         </dependency>
   </dependencies>
   

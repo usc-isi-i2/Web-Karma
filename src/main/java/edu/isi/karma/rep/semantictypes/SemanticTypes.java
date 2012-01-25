@@ -1,5 +1,6 @@
 package edu.isi.karma.rep.semantictypes;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,10 @@ public class SemanticTypes implements Jsonizable {
 
 	public Map<String, SemanticType> getTypes() {
 		return types;
+	}
+	
+	public Collection<SemanticType> getListOfTypes() {
+		return types.values();
 	}
 
 	public SemanticType getSemanticTypeByHNodeId(String hNodeId) {

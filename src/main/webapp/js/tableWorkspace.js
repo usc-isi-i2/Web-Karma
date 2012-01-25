@@ -1,326 +1,3 @@
-function attachOntologyOptionsRadioButtonHandlers() {
-	$("select#toggleOntologyHierarchy").change(function(){
-		if($("select#toggleOntologyHierarchy").val() == "class"){
-			$("td#firstColumnLabel").text("Class");
-			$("td#secondColumnLabel").text("Data Property").hide();
-		} else {
-			$("td#firstColumnLabel").text("Data Property");
-			$("td#secondColumnLabel").text("Domain (Class)").hide();
-		}
-		
-		populatefirstColumnOntologyBox();
-		$("div#secondColumnOntologyBox").hide();
-	});
-
-	$("div#secondColumnOntologyBox").hide();
-	
-	// Add handler for the search button
-	$("#firstColumnKeyword").keyup(function(event) {
-		if(event.keyCode == 13){
-    		$("#submitFirstColumnSearch").click();
-  		}
-	});
-	$("#secondColumnKeyword").keyup(function(event) {
-		if(event.keyCode == 13){
-    		$("#submitSecondColumnSearch").click();
-  		}
-	});
-	$("#submitFirstColumnSearch").click(function(){
-		$("div#firstColumnTree").jstree("search", $("#firstColumnKeyword").val());
-	});
-	$("#submitSecondColumnSearch").click(function(){
-		$("div#secondColumnTree").jstree("search", $("#secondColumnKeyword").val());
-	});
-	
-	// Assign empty domain to the Unassigned radio button
-	$("input#UnassignTypeButton").data("Domain", "");
-}
-
-function changeSemanticType(event) {
-	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
-	
-	optionsDiv.data("currentNodeId",$(this).data("hNodeId"));
-	$("table#CRFSuggestedLabelsTable tr",optionsDiv).remove();
-	$("#firstColumnKeyword").val("");
-	$("#secondColumnKeyword").val("");
-	$("div#secondColumnOntologyBox").hide();
-	//$("div#ontologyOptionsTable", optionsDiv).hide();
-	
-	var positionArray = [event.clientX+20		// distance from left
-					, event.clientY+10];	// distance from top
-	
-	// Populate with possible labels that CRF Model suggested
-	var labelsTable = $("table#CRFSuggestedLabelsTable");
-	var labelsElem = $(this).data("crfInfo");
-	var fullType = $(this).data("fullType");
-	var domain = $(this).data("domain");
-	var origin = $(this).data("origin");
-	
-	if(labelsElem != null){
-		$("span", labelsTable).remove();
-		$.each(labelsElem["Labels"], function(index, label) {
-			// Turning the probability into percentage
-			var prob = label["Probability"];
-			var percentage = Math.floor(prob*100);
-			var trTag = $("<tr>");
-			var radioButton = $("<input>")
-							.attr("type", "radio")
-							.attr("id", label["Type"] + "|" + label["Domain"])
-							.attr("name", "semanticTypeGroup")
-							.attr("value", label["Type"])
-							.val(label["Type"]);
-				
-			if(label["Domain"] != null)
-				radioButton.data("domain", label["Domain"]);
-				
-			var selectedFlag = false;
-			if(fullType == label["Type"]) {
-				if(domain == "") {
-					radioButton.attr('checked',true);
-					selectedFlag = true;
-				} else {
-					if(label["Domain"] != null) {
-						if(domain == label["Domain"]){
-							radioButton.attr('checked',true);
-							selectedFlag = true;
-						}
-					}
-				}
-			}
-				
-				
-			var typeLabel = $("<label>").attr("for",label["Type"] + "|" + label["Domain"]);
-			
-			// Check if the domain needs to be displayed
-			if($.trim(label["DisplayDomainLabel"]) == "")
-				typeLabel.text(label["DisplayLabel"]);
-			else {
-				var typeItalicSpan = $("<span>").addClass("italic").text(label["DisplayLabel"]);
-				console.log(label["DisplayLabel"]);
-				typeLabel.text(" of " + label['DisplayDomainLabel']);
-				typeLabel.prepend($(typeItalicSpan));
-			}
-				
-			// Check if the label was assigned by the user
-			var score = "";
-			if(selectedFlag && origin == "User")
-				score = "Probability: " + percentage+"% (User Assigned)"
-			else
-				score = "Probability: " + percentage+"%";
-				
-			trTag.append($("<td>").append(radioButton))
-				.append($("<td>").append(typeLabel))
-				.append($("<td>").text(score));
-			labelsTable.prepend(trTag);
-		});
-	} else {
-		labelsTable.html("<span class='smallSizedFont'><i>&nbsp;&nbsp;none</i></span>");
-	}
-	
-	if(fullType == "Unassigned") {
-		$("input#UnassignTypeButton").attr("checked", true);
-	}
-	
-	// Adding the handlers to the radio buttons
-	$("input:radio[@name='semanticTypeGroup']").change(function(){
-		optionsDiv.data("type", $(this).val());
-		if($(this).data("domain") != null)
-			optionsDiv.data("domain", $(this).data("domain"));
-		optionsDiv.data("source", "RadioButtonList");
-		$("div#firstColumnTree").jstree("deselect_all");
-		$("div#secondColumnTree").jstree("deselect_all");
-	});
-	
-	// Populate the class tree
-	$("#toggleOntologyHierarchy").val("class");
-	$("td#firstColumnLabel").text("Class");
-	$("td#secondColumnLabel").text("Data Property").hide();
-	// Send a request to get the JSON for displaying the list of classes
-	optionsDiv.data("secondColumnSelection","");
-	optionsDiv.data("firstColumnSelection","");
-	populatefirstColumnOntologyBox();
-	
-	
-	// Show the dialog box
-	optionsDiv.dialog({width: 400, height: 650, position: positionArray
-		, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitSemanticTypeChange }});
-}
-
-function populatefirstColumnOntologyBox(){
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	
-	if($("#toggleOntologyHierarchy").val() == "class")
-		info["command"] = "GetOntologyClassHierarchyCommand";
-	else 
-		info["command"] = "GetDataPropertyHierarchyCommand";
-		
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			//alert(xhr.responseText);
-	    		var json = $.parseJSON(xhr.responseText);
-	    		var dataArray = json["elements"][0]["data"];
-	    		
-	    		var listDiv = $("div#firstColumnTree");
-	    		
-	    		if(dataArray.length == 0) {
-	    			$(listDiv).html("<i>none</i>")
-	    		} else {
-	    			$(listDiv).jstree({ 
-						"json_data" : {
-							"data" : dataArray
-						},
-						"themes" : {
-							"theme" : "apple",
-							"url": "css/jstree-themes/apple/style.css",
-							"dots" : true,
-							"icons" : false
-						},
-						
-						"plugins" : [ "themes", "json_data", "ui" ,"sort", "search"]
-					}).bind("select_node.jstree", function (e, data) { 
-						$("#ChangeSemanticTypesDialogBox").data("source","OntologyHierarchy");
-						$("#ChangeSemanticTypesDialogBox").data("firstColumnSelection",data.rslt.obj.data("URI"));
-						$("input:radio[@name='semanticTypeGroup']").attr("checked", false);
-						$("#UnassignTypeButton").attr('checked',false);
-						populateSecondColumnOntologyBox();
-					});
-	    		} 
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured while fetching ontology data!" + textStatus);
-		   	}		   
-	});
-}
-
-function populateSecondColumnOntologyBox() {
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["URI"] = $("#ChangeSemanticTypesDialogBox").data("firstColumnSelection");
-	
-	if($("#toggleOntologyHierarchy").val() == "class")
-		info["command"] = "GetDataPropertiesForClassCommand";
-	else 
-		info["command"] = "GetDomainsForDataPropertyCommand";
-		
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			//alert(xhr.responseText);
-	    		var json = $.parseJSON(xhr.responseText);
-	    		var dataArray = json["elements"][0]["data"];
-	    		var listDiv = $("div#secondColumnTree");
-	    		
-	    		if(dataArray.length == 0) {
-	    			$(listDiv).html("<i>none</i>")
-	    		} else {
-	    			$(listDiv).jstree({ 
-						"json_data" : {
-							"data" : dataArray
-						},
-						"themes" : {
-							"theme" : "apple",
-							"url": "css/jstree-themes/apple/style.css",
-							"dots" : true,
-							"icons" : false
-						},
-						
-						"plugins" : [ "themes", "json_data", "ui" ,"sort", "search"]
-					}).bind("select_node.jstree", function (e, data) { 
-						$("#ChangeSemanticTypesDialogBox").data("secondColumnSelection",data.rslt.obj.data("URI"));
-					});
-	    		}
-	    		
-				$("div#secondColumnOntologyBox").show();
-				$("td#secondColumnLabel").show();
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured while fetching ontology data!" + textStatus);
-		   	}		   
-	});
-}
-
-function submitSemanticTypeChange() {
-	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
-	if($("#toggleOntologyHierarchy").val() == "dataProperty" 
-		&& optionsDiv.data("secondColumnSelection") == "") {
-		alert("Please specify the domain for the data property!");
-		return;
-	}
-	
-	var info = new Object();
-	var hNodeId = optionsDiv.data("currentNodeId");
-	info["command"] = "SetSemanticTypeCommand";
-	info["vWorksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
-	info["hNodeId"] = hNodeId;
-	
-	if(optionsDiv.data("source") == "RadioButtonList") {
-		info["type"] = optionsDiv.data("type");
-		if(optionsDiv.data("domain") != null)
-			info["domain"] = optionsDiv.data("domain");
-		else
-			info["domain"] = "";
-		
-		// Check if the user selected the unassigned  option
-		if(info["type"] == "UnassignType") {
-			info["command"] = "UnassignSemanticTypeCommand";
-		}
-		
-		if(info["domain"] == "")
-			info["resourceType"] = "Class";
-		else
-			info["resourceType"] = "DataProperty";
-			
-	} else if (optionsDiv.data("source") == "OntologyHierarchy") {
-		if($("#toggleOntologyHierarchy").val() == "class") {
-			if(optionsDiv.data("secondColumnSelection") == "") {
-				info["resourceType"] = "Class";
-				info["type"] = optionsDiv.data("firstColumnSelection");
-			} else {
-				info["resourceType"] = "DataProperty";
-				info["domain"] = optionsDiv.data("firstColumnSelection");
-				info["type"] = optionsDiv.data("secondColumnSelection");
-			}
-		} else {
-			info["resourceType"] = "DataProperty";
-			info["type"] = optionsDiv.data("firstColumnSelection");
-			info["domain"] = optionsDiv.data("secondColumnSelection");
-		}
-	}
-	
-	
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	    		var json = $.parseJSON(xhr.responseText);
-	    		parse(json);
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured with fetching new rows! " + textStatus);
-		   	}
-	});
-	
-	optionsDiv.dialog("close");
-}
-
 function handlePrevNextLink() {
 	if($(this).hasClass("inactiveLink"))
 		return;
@@ -392,15 +69,17 @@ function handlePagerResize() {
 }
 
 function showCSVImportOptions(response) {
+	var csvPreviewTable = $("#CSVPreviewTable");
+	var csvImportDiv = $("#CSVImportDiv");
 	// TODO Reset the CSV import options
-	$("#CSVPreviewTable tr").remove();
-	$("#CSVPreviewTable").append($("<tr>").append($("<td>").addClass("rowIndexCell").text("File Row Number")));
+	$("tr", csvPreviewTable).remove();
+	csvPreviewTable.append($("<tr>").append($("<td>").addClass("rowIndexCell").text("File Row Number")));
 	
 	var responseJSON = $.parseJSON(response);
 	var headers = responseJSON["elements"][0]["headers"];
 	
 	//Change the source name
-	$("#CSVSourceName").text(responseJSON["elements"][0]["fileName"]);
+	$("#CSVSourceName", csvImportDiv).text(responseJSON["elements"][0]["fileName"]);
 	
 	// Populate the headers
 	if(headers != null)  {
@@ -412,7 +91,7 @@ function showCSVImportOptions(response) {
 				trTag.append($("<th>").text(val));
 			}
 		});
-		$("#CSVPreviewTable").append(trTag);
+		csvPreviewTable.append(trTag);
 	} else {
 		// Put empty column names
 		var trTag = $("<tr>");
@@ -424,7 +103,7 @@ function showCSVImportOptions(response) {
 			}
 			
 		});
-		$("#CSVPreviewTable").append(trTag);
+		csvPreviewTable.append(trTag);
 	}
 	
 	// Populate the data
@@ -442,22 +121,22 @@ function showCSVImportOptions(response) {
 				trTag.append($("<td>").text(displayVal));
 			}
 		});
-		$("#CSVPreviewTable").append(trTag);
+		csvPreviewTable.append(trTag);
 	});
 	
 	// Attach the command ID
-	$("#CSVImportDiv").data("commandId", responseJSON["elements"][0]["commandId"]);
+	csvImportDiv.data("commandId", responseJSON["elements"][0]["commandId"]);
 	
 	// Open the dialog
-	$("#CSVImportDiv").dialog({ modal: true , width: 820, title: 'Import CSV File Options',
+	csvImportDiv.dialog({ modal: true , width: 820, title: 'Import CSV File Options',
 		buttons: { "Cancel": function() { $(this).dialog("close"); }, "Import":CSVImportOptionsChanged}});
 }
 
 function CSVImportOptionsChanged(flag) {
-	
+	var csvImportDiv = $("#CSVImportDiv");
 	var options = new Object();
 	options["command"] = "ImportCSVFileCommand";
-	options["commandId"] = $("#CSVImportDiv").data("commandId");
+	options["commandId"] = csvImportDiv.data("commandId");
 	options["delimiter"] = $("#delimiterSelector").val();
 	options["CSVHeaderLineIndex"] = $("#CSVHeaderLineIndex").val();
 	options["startRowIndex"] = $("#startRowIndex").val();
@@ -483,29 +162,36 @@ function CSVImportOptionsChanged(flag) {
 	    			showCSVImportOptions(xhr.responseText);
 	    		else{
 	    			$("#CSVImportDiv").dialog("close");
-	    			parse($.parseJSON(xhr.responseText));
+	    			var json = $.parseJSON(xhr.responseText);
+	    			
+	    			if(json["elements"][0]["updateType"] == "CSVImportError") {
+		   				alert(json["elements"][0]["Error"]);
+		   			} else
+	    				parse(json);
 	    		}		
 		   	}
 		});	
 }
 
 function resetCSVDialogOptions() {
-	$("#delimiterSelector :nth-child(1)").attr('selected', 'selected');
-	$("#CSVHeaderLineIndex").val("1");
-	$("#startRowIndex").val("2");
-	$("#textQualifier").val("\"");
+	var csvImportDiv = $("div#CSVImportDiv");
+	$("#delimiterSelector :nth-child(1)", csvImportDiv).attr('selected', 'selected');
+	$("#CSVHeaderLineIndex", csvImportDiv).val("1");
+	$("#startRowIndex", csvImportDiv).val("2");
+	$("#textQualifier", csvImportDiv).val("\"");
 }
 
 function handleTableCellEditButton(event) {
+	var tableCellDiv = $("#tableCellEditDiv");
 	var tdTagId = $("#tableCellToolBarMenu").data("parentCellId");
-	$("#tableCellEditDiv #editCellTextArea").remove();
+	$("#editCellTextArea", tableCellDiv).remove();
 	
 	if($("#"+tdTagId).hasClass("expandValueCell")) {
-		$("#tableCellEditDiv").append($("<textarea>")
+		tableCellDiv.append($("<textarea>")
 						.attr("id", "editCellTextArea")
 						.text($("#"+tdTagId).data("fullValue")));
 	} else {
-		$("#tableCellEditDiv").append($("<textarea>")
+		tableCellDiv.append($("<textarea>")
 						.attr("id", "editCellTextArea")
 						.text($("#"+tdTagId + " div.cellValue").text()));
 	}
@@ -513,179 +199,41 @@ function handleTableCellEditButton(event) {
 	var positionArray = [event.clientX-150		// distance from left
 					, event.clientY-10];	// distance from top
 	
-	$("#tableCellEditDiv").dialog({ title: 'Edit Cell Value',
+	tableCellDiv.dialog({ title: 'Edit Cell Value',
 			buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitEdit }, width: 300, height: 150, position: positionArray});
-	// console.log(tdTagId);
-	$("#tableCellEditDiv").data("tdTagId", tdTagId);
+	tableCellDiv.data("tdTagId", tdTagId);
 }
 
-function showAlternativeParents(event) {
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["nodeId"] = $(this).parents("td.columnHeadingCell").data("jsonElement")["contentCell"]["id"];
-	info["command"] = "GetAlternativeLinksCommand";
-	info["alignmentId"] = $(this).parents("table.WorksheetTable").data("alignmentId");
-	info["worksheetId"] = $(this).parents("table.WorksheetTable").attr("id");
-		
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			// alert(xhr.responseText);
-	    		var json = $.parseJSON(xhr.responseText);
-	    		$.each(json["elements"], function(index, element) {
-	    			if(element["updateType"] == "GetAlternativeLinks") {
-	    				var optionsDiv = $("div#OntologyAlternativeLinksPanel");
-	    				var table = $("table", optionsDiv);
-	    				$("tr", table).remove();
-	    				var positionArray = [event.clientX+20		// distance from left
-									, event.clientY+10];	// distance from top
-						
-						$.each(element["Edges"], function(index2, edge) {
-							var trTag = $("<tr>").addClass("AlternativeLink");
-							
-							var radioButton = $("<input>")
-								.attr("type", "radio")
-								.attr("id", edge["edgeId"])
-								.attr("name", "AlternativeLinksGroup")
-								.attr("value", edge["edgeId"])
-								.val(edge["edgeLabel"])
-								.data("isDuplicate", false);
-								
-							var typeItalicSpan = $("<span>").addClass("italic").text(edge["edgeLabel"]);	
-							var linkLabel = $("<label>").attr("for",edge["edgeId"]).text(edge["edgeSource"] + " ").append(typeItalicSpan);
-							var linkLabelTd = $("<td>").append(linkLabel); 
-							
-							trTag.append($("<td>").append(radioButton))
-								.append(linkLabelTd);
-								
-							if(edge["selected"]) {
-								radioButton.attr("checked", true);
-								// Add the Duplicate button
-								var dupButton = $("<button>").addClass("duplicateClass").text("Duplicate").click(duplicateLink);
-								$(dupButton).button();
-								linkLabelTd.append(dupButton);
-							}
-								
-							table.append(trTag);
-						});
-						// Show the dialog box
-						optionsDiv.dialog({width: 300, height: 300, position: positionArray
-							, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitAlignmentLinkChange }});
-							
-						$("input:radio[@name='AlternativeLinksGroup']").change(function(){
-							if($(this).data("isDuplicate"))
-								optionsDiv.data("currentSelection", $(this).data("edgeId"));
-							else
-								optionsDiv.data("currentSelection", $(this).attr("id"));
-								
-							// Remove the button from the previously selected radio button and add it to the current one
-							var buttonClone = $("button", optionsDiv).clone(true);
-							$("button", optionsDiv).remove();
-							$("td:eq(1)",$(this).parents("tr")).append(buttonClone);
-								
-							optionsDiv.data("alignmentId", info["alignmentId"]);
-							optionsDiv.data("worksheetId", info["worksheetId"]);
-							optionsDiv.data("isDuplicate", $(this).data("isDuplicate"));
-						});
-	    			}
-	    		});
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured while getting alternative links!" + textStatus);
-		   	}		   
-	});
-}
 
-function duplicateLink() {
-	var optionsPanel = $("div#OntologyAlternativeLinksPanel");
-	var currentRow = $(this).parents("tr.AlternativeLink", optionsPanel);
-	
-	// Create a clone row
-	var dupRow = $(currentRow).clone(true);
-	
-	// Hide the duplicate button from the duplicate row
-	$("button", dupRow).hide();
-	
-	// Change the id etc for the dup row
-	var numRand = Math.floor(Math.random()*101);
-	$("input", dupRow).attr("id", numRand);
-	$("label", dupRow).attr("for", numRand);
-	$("label", dupRow).attr("value", numRand);
-	$("input", dupRow).data("edgeId", $("input", currentRow).attr("id"));
-
-	currentRow.after(dupRow);
-	$("input", dupRow).attr("checked", false);
-	$("input", dupRow).data("isDuplicate", true);
-	$("input", currentRow).attr("checked", true);
-}
-
-function submitAlignmentLinkChange() {
-	var optionsDiv = $("div#OntologyAlternativeLinksPanel");
-	
-	var info = new Object();
-	if(optionsDiv.data("isDuplicate"))
-		info["command"] = "DuplicateDomainOfLinkCommand";
-	else
-		info["command"] = "AddUserLinkToAlignmentCommand";
-	info["vWorksheetId"] = optionsDiv.data("worksheetId");
-	info["alignmentId"] = optionsDiv.data("alignmentId");
-	info["edgeId"] = optionsDiv.data("currentSelection");
-	
-	
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			var json = $.parseJSON(xhr.responseText);
-	    		parse(json);
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured with fetching new rows! " + textStatus);
-		   	}
-	});
-	
-	optionsDiv.dialog("close");
-}
 
 function openWorksheetOptions(event) {
-	$("#WorksheetOptionsDiv").css({'position':'fixed', 
-			'left':(event.clientX - 75) + 'px', 'top':(event.clientY+4)+'px'});
-	$("#WorksheetOptionsDiv").show();
-	
-	$("#WorksheetOptionsDiv").data("worksheetId", $(this).parents("div.Worksheet").attr("id"));
+	$("div#WorksheetOptionsDiv")
+			.css({'position':'fixed', 'left':(event.clientX - 75) + 'px', 'top':(event.clientY+4)+'px'})
+			.data("worksheetId", $(this).parents("div.Worksheet").attr("id"))
+			.show();
 }
 
 function styleAndAssignHandlersToWorksheetOptionButtons() {
+	var optionsDiv = $("div#WorksheetOptionsDiv");
 	// Styling the elements
-	$("#WorksheetOptionsDiv").hide().addClass("ui-corner-all");
-	$("#WorksheetOptionsDiv button").button();
+	optionsDiv.addClass("ui-corner-all");
+	$("button", optionsDiv).button();
 	
 	// Adding mouse handlers to the div
-	$("#WorksheetOptionsDiv").mouseenter(function() {
+	optionsDiv.mouseenter(function() {
 		$(this).show();
 	});
-	$("#WorksheetOptionsDiv").mouseleave(function() {
+	optionsDiv.mouseleave(function() {
 		$(this).hide();
 	});
 	
 	// Adding handlers to the buttons
 	$("#generateSemanticTypesButton").click(function(){
-		$("#WorksheetOptionsDiv").hide();
+		optionsDiv.hide();
 		
 		console.log("Generating semantic types for table with ID: " + $("#WorksheetOptionsDiv").data("worksheetId"));
 		var info = new Object();
-		info["vWorksheetId"] = $("#WorksheetOptionsDiv").data("worksheetId");
+		info["vWorksheetId"] = optionsDiv.data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
 		info["command"] = "GenerateSemanticTypesCommand";
 			
@@ -708,11 +256,11 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	});
 	
 	$("button#showModel").click(function(){
-		$("#WorksheetOptionsDiv").hide();
+		optionsDiv.hide();
 		
-		console.log("Showing model for table with ID: " + $("#WorksheetOptionsDiv").data("worksheetId"));
+		console.log("Showing model for table with ID: " +optionsDiv.data("worksheetId"));
 		var info = new Object();
-		info["vWorksheetId"] = $("#WorksheetOptionsDiv").data("worksheetId");
+		info["vWorksheetId"] = optionsDiv.data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
 		info["command"] = "ShowModelCommand";
 			
@@ -735,18 +283,18 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	});
 	
 	$("button#hideModel").click(function(){
-		$("#WorksheetOptionsDiv").hide();
-		var table = $("table#" + $("#WorksheetOptionsDiv").data("worksheetId"));
+		optionsDiv.hide();
+		var table = $("table#" + optionsDiv.data("worksheetId"));
 		$("tr.AlignmentRow", table).remove();
 		$("div.semanticTypeDiv", table).remove();
 	});
 	
 	$("#alignToOntologyButton").click(function(){
-		$("#WorksheetOptionsDiv").hide();
+		optionsDiv.hide();
 		
-		console.log("Aligning the table with ID: " + $("#WorksheetOptionsDiv").data("worksheetId"));
+		console.log("Aligning the table with ID: " + optionsDiv.data("worksheetId"));
 		var info = new Object();
-		info["vWorksheetId"] = $("#WorksheetOptionsDiv").data("worksheetId");
+		info["vWorksheetId"] = optionsDiv.data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
 		info["command"] = "AlignToOntologyCommand";
 			
@@ -769,10 +317,10 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	});
 	
 	$("button#splitByComma").click(function(){
-		$("#WorksheetOptionsDiv").hide();
+		optionsDiv.hide();
 		
-		console.log("Splitting by comma for table: " + $("#WorksheetOptionsDiv").data("worksheetId"));
-		var table = $("table#" + $("#WorksheetOptionsDiv").data("worksheetId"));
+		console.log("Splitting by comma for table: " + optionsDiv.data("worksheetId"));
+		var table = $("table#" + optionsDiv.data("worksheetId"));
 		var cols = $('td.columnHeadingCell[colspan="1"]', table);
 		
 		var columnListDiv = $("div#SplitByCommaColumnListPanel");
@@ -840,9 +388,3 @@ function splitColumnByComma() {
 		   	}		   
 	});
 }
-
-
-
-
-
-

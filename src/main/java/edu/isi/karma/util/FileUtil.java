@@ -1,5 +1,6 @@
 package edu.isi.karma.util;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -114,6 +115,13 @@ public class FileUtil {
 		  finally {
 		    stream.close();
 		  }
+	}
+
+	public static void writeStringToFile(String string, String fileName) throws IOException {
+		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+		writer.write(string);
+		writer.flush();
+		writer.close();
 	}
 	
 }

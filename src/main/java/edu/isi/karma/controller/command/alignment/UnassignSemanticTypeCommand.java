@@ -1,6 +1,10 @@
 package edu.isi.karma.controller.command.alignment;
 
+import java.io.IOException;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
@@ -12,6 +16,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.rep.semantictypes.SemanticTypes;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.KarmaException;
 
 public class UnassignSemanticTypeCommand extends Command {
 
@@ -19,6 +24,9 @@ public class UnassignSemanticTypeCommand extends Command {
 	private final String hNodeId;
 	private String columnName;
 	private SemanticType oldSemanticType;
+
+	private static Logger logger = LoggerFactory
+			.getLogger(UnassignSemanticTypeCommand.class);
 
 	public UnassignSemanticTypeCommand(String id, String hNodeId,
 			String vWorksheetId) {
@@ -56,12 +64,12 @@ public class UnassignSemanticTypeCommand extends Command {
 		SemanticTypes types = worksheet.getSemanticTypes();
 		oldSemanticType = types.getSemanticTypeByHNodeId(hNodeId);
 		types.unassignColumnSemanticType(hNodeId);
-		
+
 		// Get the column name
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
-		for(HNodePath path: columnPaths) {
-			if(path.getLeaf().getId().equals(hNodeId)) {
-				columnName  = path.getLeaf().getColumnName();
+		for (HNodePath path : columnPaths) {
+			if (path.getLeaf().getId().equals(hNodeId)) {
+				columnName = path.getLeaf().getColumnName();
 				break;
 			}
 		}
@@ -69,11 +77,18 @@ public class UnassignSemanticTypeCommand extends Command {
 		// Update the container
 		UpdateContainer c = new UpdateContainer();
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
-		
+
 		// Update the alignment
-		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
-		align.update(c, true);
-		
+		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
+				vWorksheetId);
+		try {
+			align.update(c, true);
+		} catch (KarmaException e) {
+			logger.error("Error generating source description.", e);
+		} catch (IOException e) {
+			logger.error("Error writing source description file.", e);
+		}
+
 		return c;
 	}
 
@@ -90,10 +105,17 @@ public class UnassignSemanticTypeCommand extends Command {
 		// Update the container
 		UpdateContainer c = new UpdateContainer();
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
-		
+
 		// Update the alignment
-		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
-		align.update(c, true);
+		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
+				vWorksheetId);
+		try {
+			align.update(c, true);
+		} catch (KarmaException e) {
+			logger.error("Error generating source description.", e);
+		} catch (IOException e) {
+			logger.error("Error writing source description file.", e);
+		}
 		return c;
 	}
 

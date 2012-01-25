@@ -29,11 +29,13 @@ import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys;
 import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.TablePager;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.Stroke;
 import edu.isi.karma.view.Stroke.StrokeStyle;
 import edu.isi.karma.view.VTableCssTags;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.ViewPreferences.ViewPreference;
 import edu.isi.karma.view.tabledata.VDCell.MinMaxDepth;
 import edu.isi.karma.view.tabledata.VDCell.Position;
 import edu.isi.karma.view.tabledata.VDCellStrokes.StrokeIterator;
@@ -507,7 +509,7 @@ public class VDTableCells {
 			}
 
 			// Now calculate the left and right strokes.
-			//TODO: refactor separatorDepth, should not be using it.
+			// TODO: refactor separatorDepth, should not be using it.
 			int cssDepth = 0;
 			StrokeStyle leftStrokeStyle = StrokeStyle.none;
 			if (separatorDepth >= columnDepth) {
@@ -886,6 +888,10 @@ public class VDTableCells {
 		CellValue cellValue = c.getNode() == null ? null : c.getNode()
 				.getValue();
 		String valueString = cellValue == null ? "" : cellValue.asString();
+		valueString = JSONUtil.truncateCellValue(
+				valueString,
+				vWorkspace.getPreferences().getIntViewPreferenceValue(
+						ViewPreference.maxCharactersInCell));
 		String codedStatus = c.getNode() == null ? "" : c.getNode().getStatus()
 				.getCodedStatus();
 
