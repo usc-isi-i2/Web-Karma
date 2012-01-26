@@ -7,6 +7,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.LinkType;
 import edu.isi.karma.modeling.alignment.NodeType;
@@ -90,6 +91,9 @@ public class SourceDescription {
 	 * SD(HN1/HN2/HN3, HN1/HN2/HN4) - the ids of the HNodes.
 	 */
 	public String generateSourceDescription() throws KarmaException{
+		//System.out.println("THE TREE");
+		//GraphUtil.printGraph(steinerTree);
+		
 		StringBuffer s = new StringBuffer();
 		generateSourceDescription(root, s);
 		String rule =  "SourceDescription(";
@@ -172,7 +176,7 @@ public class SourceDescription {
 	 */
 	private String generateClassStatement(Vertex v) {
 		String key = findKey(v);
-		String s = "`" + v.getLabel() + "`(uri(" + addBacktick(key) + "))"; 
+		String s = "`" + v.getLabel() + "`(uri(" + key + "))"; 
 		//System.out.println("Class:" + s);
 		return s;
 	}
@@ -226,7 +230,7 @@ public class SourceDescription {
 		String propertyName = e.getLabel();
 		if(e.isInverse())
 			propertyName = TableRDFGenerator.inverseProperty + propertyName;
-		String s = "`" + propertyName + "`(uri(" + addBacktick(key) + ")," + addBacktick(dataAttribute) + ")";
+		String s = "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
 		//System.out.println("DataProperty:" + s);
 		return s;
 	}
@@ -264,7 +268,7 @@ public class SourceDescription {
 		String propertyName = e.getLabel();
 		if(e.isInverse())
 			propertyName = TableRDFGenerator.inverseProperty + propertyName;
-		String s = "`" + propertyName + "`(uri(" + addBacktick(key1) + "),uri(" + addBacktick(key2) + "))";
+		String s = "`" + propertyName + "`(uri(" + key1 + "),uri(" + key2 + "))";
 		//System.out.println("ObjectProperty:" + s);
 		return s;
 	}
@@ -283,6 +287,7 @@ public class SourceDescription {
 	private String findKey(Vertex v){
 		//check if it is not in the map
 		logger.debug("Get Key for " + v.getLabel() + " ...");
+		boolean isGensym=false;
 		String key = uriMap.get(v.getLabel());
 		if(key!=null)
 			return key;
@@ -314,6 +319,7 @@ public class SourceDescription {
 				//I looked at all children and I did not find a key
 				//generate gensym index
 				key = String.valueOf(uriIndex++);
+				isGensym=true;
 			}
 		}
 		else{
@@ -325,6 +331,9 @@ public class SourceDescription {
 			}
 			ruleAttributes.add(key);
 		}
+		//I have to do it here because I don't want backticks for the gensyms
+		if(!isGensym)
+			key = addBacktick(key);
 		uriMap.put(v.getLabel(), key);
 		logger.debug("Key for " + v.getLabel() + " is " + key);
 		return key;

@@ -67,12 +67,18 @@ public class AlignToOntology {
 			// Write the source description
 			//use true to generate a SD with column names (for use "outside" of Karma)
 			//use false for internal use
-			SourceDescription desc = new SourceDescription(vWorkspace.getRepFactory(), tree, root,true);
+			SourceDescription desc = new SourceDescription(vWorkspace.getRepFactory(), tree, root,false);
 			String descString = desc.generateSourceDescription();
+			System.out.println("SD="+ descString);
 			//generate RDF for the first 3 rows: mariam
 			WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(vWorkspace.getRepFactory(), descString, "./publish/RDF/rdftest.rdf");
-			//wrg.generateTriplesRow(worksheet);
-			wrg.generateTriplesCellLimit(worksheet);
+			if(worksheet.getHeaders().hasNestedTables()){
+				wrg.generateTriplesCellLimit(worksheet);
+			}
+			else{
+				wrg.generateTriplesRowLimit(worksheet);
+				wrg.generateTriplesCellLimit(worksheet);	
+			}
 			////////////////////
 			String fileName = "./publish/Source Description/"+worksheet.getTitle()+".txt";
 			FileUtil.writeStringToFile(descString, fileName);

@@ -78,6 +78,23 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		//all triples written, so close the writer
 		closeWriter();
 	}
+	//used for testing
+	public void generateTriplesRowLimit(Worksheet w) throws MediatorException, IOException{
+		//generate all triples for this worksheet (row by row)
+		//the RuleRDFGenerator for SD is rdfGenerator (from the superclass)
+		
+		//for each row
+		//logger.debug("Number of rows="+w.getDataTable().getNumRows());
+		ArrayList<Row> rows = w.getDataTable().getRows(0, 3);
+		for(Row r:rows){
+			//construct the values map
+			Map<String,String> values = getValueMap(r);
+			logger.debug("Values=" + values);
+			generateTriples(values);
+		}
+		//all triples written, so close the writer
+		closeWriter();
+	}
 
 	/** Generates RDF for the given worksheet by invoking the RDF generator cell by cell.
 	 * @param w
@@ -180,17 +197,21 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		String val = n.getValue().asString();
 		//get the column name of this node
 		String columnName = factory.getHNode(n.getHNodeId()).getHNodePath(factory).toColumnNames();
-		logger.debug("Generate triples for node:"+columnName +" with value=" + val);
+		logger.info("Generate triples for node:"+columnName +" with value=" + val);
 		values.put(columnName, val);
 		//get other columns used in the RDF rule associated with columnName
 		Set<String> relatedVars = getRelatedRDFVariables(columnName);
+		if(relatedVars==null){
+			//this node was not included in the SD;the semantic type was unassigned.
+			return;
+		}
 		for(String var:relatedVars){
 			var = MediatorUtil.removeBacktick(var);
-			//logger.debug("Value for:"+var);
+			logger.info("Value for:"+var);
 			//var is a HNodePath+columnName
 			//look for values in the row that this node belongs to or in the parent row...
 			String varValue = getValueInRow(var,n.getBelongsToRow());
-			//logger.debug("Value for:"+varValue);
+			logger.info("Value:"+varValue);
 			if(varValue==null){
 				//try the parent row; this node could be in a nested table, so we can look at nodes
 				//that are in the same row as this nested table

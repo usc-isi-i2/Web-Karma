@@ -41,8 +41,8 @@ public class GenerateSourceDescriptionTest extends TestCase {
 		this.f = new RepFactory();
 		this.workspace = f.createWorkspace();
 		//uncomment for nesting tables
-		//this.worksheet = SampleDataFactory.createSamplePathwaysWithNestingWorksheet(workspace);
-		this.worksheet = SampleDataFactory.createSamplePathwaysWorksheet(workspace);
+		this.worksheet = SampleDataFactory.createSamplePathwaysWithNestingWorksheet(workspace);
+		//this.worksheet = SampleDataFactory.createSamplePathwaysWorksheet(workspace);
 		
 		//for(HNode n: worksheet.getHeaders().getHNodes())
 		//System.out.println("Columns = "+ n.getHNodePath(f).toColumnNames());
@@ -55,12 +55,12 @@ public class GenerateSourceDescriptionTest extends TestCase {
 		String c1_ID = worksheet.getHeaders().getHNodeFromColumnName("ACCESSION_ID").getId();
 		String c2_ID = worksheet.getHeaders().getHNodeFromColumnName("NAME").getId();
 		//no nesting
-		String c3_ID = worksheet.getHeaders().getHNodeFromColumnName("DRUG_ID").getId();
-		String c4_ID = worksheet.getHeaders().getHNodeFromColumnName("DRUG_NAME").getId();
+		//String c3_ID = worksheet.getHeaders().getHNodeFromColumnName("DRUG_ID").getId();
+		//String c4_ID = worksheet.getHeaders().getHNodeFromColumnName("DRUG_NAME").getId();
 		//uncomment for nesting tables
 		//with nesting; the ID for values column
-		//String c4_ID = "HN17";
-		//String c3_ID = "HN11";
+		String c4_ID = "HN17";
+		String c3_ID = "HN11";
 		/////////////////
 		String c5_ID = worksheet.getHeaders().getHNodeFromColumnName("GENE_ID").getId();
 		String c6_ID = worksheet.getHeaders().getHNodeFromColumnName("GENE_NAME").getId();

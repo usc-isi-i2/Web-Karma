@@ -165,7 +165,7 @@ public class TableRDFGenerator {
 		for(String v:allVars){
 			rdfVariables.put(MediatorUtil.removeBacktick(v),new HashSet<String>());
 			Rule subRule = generateSubrule(tableRule,v);
-			logger.debug("Rule for "+ MediatorUtil.removeBacktick(v) + ":" + subRule);
+			logger.info("Rule for "+ MediatorUtil.removeBacktick(v) + ":" + subRule);
         	RuleRDFGenerator rgen = new RuleRDFGenerator(subRule, sourceNamespaces,
         			ontologyNamespaces, outWriter, uniqueId+"");
         	rdfGenerators.put(MediatorUtil.removeBacktick(v),rgen);

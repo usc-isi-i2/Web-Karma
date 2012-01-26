@@ -75,7 +75,6 @@ public class HTable extends RepEntity {
 		return parentHNode;
 	}
 
-	//mariam
 	/**
 	 * Returns the HNodeId for the first HNode with the given columnName.
 	 * @param columnName
@@ -92,6 +91,20 @@ public class HTable extends RepEntity {
 		return null;
 	}
 
+	/**
+	 * Returns true if this table contains nested tables, false otherwise.
+	 * @return
+	 * 		true if this table contains nested tables, false otherwise.
+	 */
+	public boolean hasNestedTables(){
+		for(HNode n: getHNodes()){
+			if(n.hasNestedTable())
+				return true;
+		}
+		return false;
+	}
+//////////////////////////////////////////////
+	
 	public HNode addHNode(String columnName, Worksheet worksheet,
 			RepFactory factory) {
 		HNode hn = factory.createHNode(id, columnName);

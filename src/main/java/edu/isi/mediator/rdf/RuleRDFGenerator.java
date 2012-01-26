@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import edu.isi.mediator.gav.main.MediatorException;
+import edu.isi.mediator.gav.util.MediatorUtil;
 import edu.isi.mediator.rule.ConstTerm;
 import edu.isi.mediator.rule.FunctionPredicate;
 import edu.isi.mediator.rule.FunctionTerm;
@@ -440,7 +441,7 @@ public class RuleRDFGenerator {
 		else{
 			//it's a VarTerm
 			String varName = t2.getVar();
-			String varValue = values.get(varName);
+			String varValue = values.get(MediatorUtil.removeBacktick(varName));
 			if(varValue==null)
 				throw new MediatorException("The values map does not contain variable: " + varName + " Map is:" + values);
 
@@ -530,7 +531,7 @@ public class RuleRDFGenerator {
 				Term term = uri.getTerms().get(i);
 				varName = term.getVar();
 				//get its value
-				String val = values.get(varName);
+				String val = values.get(MediatorUtil.removeBacktick(varName));
 				if(val==null)
 					throw new MediatorException("The values map does not contain variable: " + varName + " Map is:" + values);
 				if(i>0){ varValue += "_"; allVarNames += "_";}
