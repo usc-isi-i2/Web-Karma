@@ -49,7 +49,7 @@ public class WorksheetHierarchicalDataUpdate extends AbstractUpdate {
 		// row types
 		rowType/* key */, separatorRow, contentRow,
 		// for content cells
-		value, status, attr
+		value, status, attr, nodeId
 	}
 
 	public WorksheetHierarchicalDataUpdate(VWorksheet vWorksheet) {

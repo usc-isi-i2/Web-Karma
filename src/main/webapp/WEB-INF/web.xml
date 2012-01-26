@@ -36,13 +36,16 @@
 		<param-name>LINE_CLASS</param-name>
 		<param-value>http://www.opengis.net/gml/LineString</param-value>
 	</context-param>
+	<context-param>
+		<param-name>TRAINING_EXAMPLE_MAX_COUNT</param-name>
+		<param-value>100</param-value>
+	</context-param>
   
   	<servlet>
     	<servlet-name>ServletStart</servlet-name>
     	<servlet-class>edu.isi.karma.webserver.ServerStart</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-  
    <servlet>
     <servlet-name>exampleJSON</servlet-name>
     <servlet-class>edu.isi.karma.webserver.GetExampleJSON</servlet-class>

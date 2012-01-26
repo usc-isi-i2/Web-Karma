@@ -258,7 +258,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	$("button#showModel").click(function(){
 		optionsDiv.hide();
 		
-		console.log("Showing model for table with ID: " +optionsDiv.data("worksheetId"));
+		// console.log("Showing model for table with ID: " +optionsDiv.data("worksheetId"));
 		var info = new Object();
 		info["vWorksheetId"] = optionsDiv.data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -273,7 +273,10 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		   		function (xhr, textStatus) {
 		   			//alert(xhr.responseText);
 		    		var json = $.parseJSON(xhr.responseText);
-		    		parse(json);
+		    		if(json["elements"][1]["updateType"] == "ShowModelError") {
+		   				alert(json["elements"][1]["Error"]);
+		   			} else
+		    			parse(json);
 			   	},
 			error :
 				function (xhr, textStatus) {

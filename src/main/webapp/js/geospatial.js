@@ -110,6 +110,8 @@ function displayKMLandToggleIcon(worksheetId, fileName, worksheetPanel) {
 	$(iconDiv).qtip({
 	   content: {
 	      text: 'View as table'
+	   }, style: {
+	      classes: 'ui-tooltip-light ui-tooltip-shadow'
 	   }
 	});
 }

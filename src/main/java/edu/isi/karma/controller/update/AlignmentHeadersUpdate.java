@@ -36,7 +36,7 @@ public class AlignmentHeadersUpdate extends AbstractUpdate {
 		AlignmentColorKeyTranslator trans = new AlignmentColorKeyTranslator();
 		pw.println(prefix + "{");
 		pw.println("\"" + GenericJsonKeys.updateType.name()
-				+ "\": \"AlignmentHeadersUpdate\",");
+				+ "\": \""+AlignmentHeadersUpdate.class.getSimpleName()+"\",");
 		pw.println("\"" + JsonKeys.worksheetId.name() + "\": \"" + vWorksheetId
 				+ "\",");
 		pw.println("\"" + JsonKeys.alignmentId.name() + "\": \"" + alignmentId

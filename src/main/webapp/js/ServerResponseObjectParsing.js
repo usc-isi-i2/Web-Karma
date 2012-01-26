@@ -683,6 +683,31 @@ function parse(data) {
 		else if(element["updateType"] == "ImportOntologyCommand") {
 			if(!element["Import"])
 				alert("Ontology import failed!");
+		} 
+		
+		else if(element["updateType"] == "TagsUpdate") {
+			$.each(element["Tags"], function(index, tag) {
+				$.each(tag["Nodes"], function(index2, node){
+					var tdTag = $("td#"+node);
+					console.log(node);
+					if(tdTag.length != 0) {
+						console.log("Enter!")
+						var tagDivBox = $("<div>")
+							.css({backgroundColor:tag["Color"]})
+							.addClass("tag")
+							.qtip({
+							   content: {
+							      text: tag["Label"]
+							   },
+							   style: {
+							      classes: 'ui-tooltip-light ui-tooltip-shadow'
+							   }
+							});
+						console.log(tagDivBox);
+						tdTag.append(tagDivBox);
+					}
+				});
+			});
 		}
 	});
 }

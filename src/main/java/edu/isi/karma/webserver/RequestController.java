@@ -56,7 +56,7 @@ public class RequestController extends HttpServlet{
 			responseString = ctrl.invokeCommand(ctrl.getCommand(request));
 		}
 		
-		System.out.println(responseString);
+		//System.out.println(responseString);
 		
 		response.getWriter().write(responseString);
 		response.flushBuffer();

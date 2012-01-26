@@ -1,26 +1,28 @@
 package edu.isi.karma.controller.command.alignment;
 
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
+import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.AlignToOntology;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.metadata.Tag;
+import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.webserver.KarmaException;
 
 public class ShowModelCommand extends WorksheetCommand {
 
 	private final String vWorksheetId;
 	private String worksheetName;
-	
-	private static Logger logger = LoggerFactory.getLogger(ShowModelCommand.class);
+
+	private static Logger logger = LoggerFactory
+			.getLogger(ShowModelCommand.class);
 
 	protected ShowModelCommand(String id, String worksheetId,
 			String vWorksheetId) {
@@ -55,23 +57,28 @@ public class ShowModelCommand extends WorksheetCommand {
 				.getVWorksheet(vWorksheetId).getWorksheet();
 		worksheetName = worksheet.getTitle();
 
+		// Get the Outlier Tag
+		Tag outlierTag = vWorkspace.getWorkspace().getTagsContainer()
+				.getTag(TagName.Outlier);
+
 		// Generate the semantic types for the worksheet
 		boolean semanticTypesChangedOrAdded = SemanticTypeUtil
-				.populateSemanticTypesUsingCRF(worksheet);
+				.populateSemanticTypesUsingCRF(worksheet, outlierTag);
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 
 		// Get the alignment update if any
 		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
 				vWorksheetId);
+		
 		try {
 			align.update(c, semanticTypesChangedOrAdded);
-		} catch (KarmaException e) {
-			logger.error("Error generating source description.", e);
-		} catch (IOException e) {
-			logger.error("Error writing source description file.", e);
+		} catch (Exception e) {
+			logger.error("Error occured while generating the model Reason:.", e);
+			return new UpdateContainer(new ErrorUpdate("ShowModelError",
+					"Error occured while generating the model for the source."));
 		}
-		
 
+		c.add(new TagsUpdate());
 		return c;
 	}
 

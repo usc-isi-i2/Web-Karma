@@ -404,6 +404,17 @@ div.ColumnHeadingNameDiv {
 	display: inline;
 }
 
+div.tag {
+	width: 6px;
+	height: 15px;
+	float:right;
+}
+
+div.cellValue {
+	display: inline;
+}
+
+
 
 
 

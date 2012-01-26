@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.isi.karma.controller.history.CommandHistory;
+import edu.isi.karma.rep.metadata.TagsContainer;
 
 /**
  * Contains all the data to support a single instance of Karma, called a
@@ -32,6 +33,11 @@ public class Workspace extends Entity {
 	 * Record all the worksheets defined in this workspace.
 	 */
 	private final Map<String, Worksheet> worksheets = new HashMap<String, Worksheet>();
+	
+	/**
+	 * Saves all the tagging information
+	 */
+	private final TagsContainer tagsContainer = new TagsContainer();
 
 	/**
 	 * In the future we may need to keep track of user info.
@@ -59,5 +65,9 @@ public class Workspace extends Entity {
 
 	public RepFactory getFactory() {
 		return factory;
+	}
+
+	public TagsContainer getTagsContainer() {
+		return tagsContainer;
 	}
 }
