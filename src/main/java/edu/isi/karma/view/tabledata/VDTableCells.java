@@ -902,7 +902,7 @@ public class VDTableCells {
 				c.getNode() == null ? CellType.dummyContent : CellType.content,
 				c.getFillHTableId(),
 				css.getCssTag(c.getFillHTableId(), c.getDepth()), strokeStyles);
-
+		
 		jw.object()
 				.key(JsonKeys.attr.name())
 				.value(attributes)
@@ -939,6 +939,12 @@ public class VDTableCells {
 				.key("_bottomStrokes")
 				.value("BOT " + Stroke.toString(c.getBottomStrokes()))//
 		;
+		
+		// Add the node id
+		if(c.getNode() != null){
+			jw.key(JsonKeys.nodeId.name())
+				.value(c.getNode().getId());
+		}
 
 		jw.key("_vdCellStrokes");
 		c.getVdCellStrokes().prettyPrintJson(jw, defaultStrokes);

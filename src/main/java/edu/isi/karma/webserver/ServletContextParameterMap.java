@@ -12,7 +12,7 @@ public class ServletContextParameterMap {
 			.getLogger(ServletContextParameterMap.class);
 
 	public enum ContextParameter {
-		PUBLIC_KML_ADDRESS, KML_TRANSFER_SERVICE, WGS84_LAT_PROPERTY, WGS84_LNG_PROPERTY, POINT_POS_PROPERTY, POS_LIST_PROPERTY, POINT_CLASS, LINE_CLASS
+		PUBLIC_KML_ADDRESS, KML_TRANSFER_SERVICE, WGS84_LAT_PROPERTY, WGS84_LNG_PROPERTY, POINT_POS_PROPERTY, POS_LIST_PROPERTY, POINT_CLASS, LINE_CLASS, TRAINING_EXAMPLE_MAX_COUNT
 	}
 
 	public static void setParameterValue(ContextParameter param, String value) {

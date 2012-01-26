@@ -18,50 +18,51 @@ import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler.Colu
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.metadata.Tag;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.rep.semantictypes.SemanticTypes;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class SemanticTypeUtil {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(SemanticTypeUtil.class);
 
-	// TODO Make this parameter configurable through web.xml
-	private final static int TRAINING_EXAMPLE_MAX_COUNT = 100;
+	private final static int TRAINING_EXAMPLE_MAX_COUNT = Integer
+			.parseInt(ServletContextParameterMap
+					.getParameterValue(ContextParameter.TRAINING_EXAMPLE_MAX_COUNT));
 
 	public static ArrayList<String> getTrainingExamples(Worksheet worksheet,
 			HNodePath path) {
 		Collection<Node> nodes = new ArrayList<Node>();
 		worksheet.getDataTable().collectNodes(path, nodes);
 
-		ArrayList<String> nodeValues = new ArrayList<String>();
+		// Use HashSet to avoid duplicates
+		HashSet<String> nodeValues = new HashSet<String>();
 		for (Node n : nodes) {
 			String nodeValue = n.getValue().asString();
 			if (nodeValue != null && !nodeValue.equals(""))
 				nodeValues.add(nodeValue);
 		}
 
-		// Get rid of duplicate strings by creating a set over the list
-		HashSet<String> valueSet = new HashSet<String>(nodeValues);
-		nodeValues.clear();
-		nodeValues.addAll(valueSet);
+		ArrayList<String> nodeValuesList = new ArrayList<String>(nodeValues);
 
 		// Shuffling the values so that we get randomly chosen values to train
-		Collections.shuffle(nodeValues);
+		Collections.shuffle(nodeValuesList);
 
-		if (nodeValues.size() > TRAINING_EXAMPLE_MAX_COUNT) {
+		if (nodeValuesList.size() > TRAINING_EXAMPLE_MAX_COUNT) {
 			ArrayList<String> subset = new ArrayList<String>();
 			// SubList method of ArrayList causes ClassCast exception
 			for (int i = 0; i < TRAINING_EXAMPLE_MAX_COUNT; i++)
-				subset.add(nodeValues.get(i));
+				subset.add(nodeValuesList.get(i));
 			return subset;
 		}
-
-		// System.out.println("Examples: " + nodeValues);
-		return nodeValues;
+		return nodeValuesList;
 	}
 
-	public static boolean populateSemanticTypesUsingCRF(Worksheet worksheet) {
+	public static boolean populateSemanticTypesUsingCRF(Worksheet worksheet,
+			Tag outlierTag) {
 		boolean semanticTypesChangedOrAdded = false;
 
 		SemanticTypes types = worksheet.getSemanticTypes();
@@ -94,10 +95,16 @@ public class SemanticTypeUtil {
 					trainingExamples, 4, labels, scores, null, columnFeatures);
 			if (!predictResult) {
 				logger.error("Error occured while predicting semantic type.");
+				continue;
 			}
 			if (labels.size() == 0) {
 				continue;
 			}
+
+			// Identify the outliers
+			identifyOutliers(worksheet, labels.get(0), path, outlierTag);
+			
+			logger.info("Outliers:" + outlierTag.getNodeIdList());
 
 			// Add the scores information to the Full CRF Model of the worksheet
 			CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
@@ -141,6 +148,36 @@ public class SemanticTypeUtil {
 			}
 		}
 		return semanticTypesChangedOrAdded;
+	}
+
+	private static void identifyOutliers(Worksheet worksheet,
+			String predictedType, HNodePath path, Tag outlierTag) {
+		Collection<Node> nodes = new ArrayList<Node>();
+		worksheet.getDataTable().collectNodes(path, nodes);
+
+		// Identify the top semantic type for each node
+		// It it does not matches the predicted type, it is a outlier.
+		for (Node node : nodes) {
+			List<String> examples = new ArrayList<String>();
+			List<String> predictedLabels = new ArrayList<String>();
+			List<Double> confidenceScores = new ArrayList<Double>();
+
+			String nodeVal = node.getValue().asString();
+			if (nodeVal != null && !nodeVal.equals("")) {
+				examples.add(nodeVal);
+				boolean result = CRFModelHandler.predictLabelForExamples(
+						examples, 1, predictedLabels, confidenceScores);
+				if (!result) {
+					logger.error("Error while predicting type for " + nodeVal);
+					continue;
+				}
+
+				// Check here if it is an outlier
+				if (!predictedLabels.get(0).equalsIgnoreCase(predictedType)) {
+					outlierTag.addNodeId(node.getId());
+				}
+			}
+		}
 	}
 
 	public static void prepareCRFModelHandler() throws IOException {

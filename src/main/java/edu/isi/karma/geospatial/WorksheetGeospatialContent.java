@@ -21,6 +21,8 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.metadata.TagsContainer;
+import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -52,19 +54,22 @@ public class WorksheetGeospatialContent {
 		POINT_LAT_LNG, POINT_POS, LINE_POS_LIST, POLYGON_POS_LIST, NOT_PRESENT
 	}
 
-	public WorksheetGeospatialContent(Worksheet worksheet) {
+	public WorksheetGeospatialContent(Worksheet worksheet,
+			TagsContainer tagsContainer) {
 		this.worksheet = worksheet;
-		populateGeospatialData();
+		populateGeospatialData(tagsContainer);
 	}
 
-	private void populateGeospatialData() {
+	private void populateGeospatialData(TagsContainer tagsContainer) {
 		List<String> coordinateHNodeIds = new ArrayList<String>();
 		CoordinateCase currentCase = CoordinateCase.NOT_PRESENT;
 		boolean latFound = false;
 		boolean lngFound = false;
 
-		if (worksheet.getSemanticTypes().getListOfTypes().size() == 0)
-			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet);
+		if (worksheet.getSemanticTypes().getListOfTypes().size() == 0) {
+			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet,
+					tagsContainer.getTag(TagName.Outlier));
+		}
 
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
 			// Latitude of a Point case. E.g. For a column with only latitude
@@ -124,18 +129,18 @@ public class WorksheetGeospatialContent {
 			ArrayList<Row> rows, Map<String, String> columnNameMap) {
 		for (Row row : rows) {
 			try {
-				String posList = row.getNode(coordinateHNodeIds.get(0)).getValue()
-						.asString();
+				String posList = row.getNode(coordinateHNodeIds.get(0))
+						.getValue().asString();
 				String[] coords = posList.split(" ");
 				List<Coordinate> coordsList = new ArrayList<Coordinate>();
-				for(String coordStr:coords) {
+				for (String coordStr : coords) {
 					Coordinate coord = new Coordinate(coordStr);
 					coordsList.add(coord);
 				}
 
-				if(coordsList.size() == 0)
+				if (coordsList.size() == 0)
 					continue;
-				
+
 				LineString line = new LineString(coordsList);
 				Collection<Node> nodes = row.getNodes();
 				for (Node node : nodes) {
@@ -235,7 +240,8 @@ public class WorksheetGeospatialContent {
 	}
 
 	public File publishKML() throws FileNotFoundException {
-		File outputFile = new File("./publish/KML/" + worksheet.getTitle() + ".kml");
+		File outputFile = new File("./publish/KML/" + worksheet.getTitle()
+				+ ".kml");
 		final Kml kml = KmlFactory.createKml();
 		final Folder folder = kml.createAndSetFolder()
 				.withName(worksheet.getTitle()).withOpen(true);
@@ -254,14 +260,14 @@ public class WorksheetGeospatialContent {
 		for (LineString line : lines) {
 			folder.createAndAddPlacemark()
 					.withDescription(line.getHTMLDescription())
-					.withVisibility(true)
-					.createAndSetLineString()
+					.withVisibility(true).createAndSetLineString()
 					.withAltitudeMode(AltitudeMode.CLAMP_TO_GROUND)
 					.setCoordinates(line.getCoordinatesList());
 		}
 
 		kml.marshal(outputFile);
-		logger.info("KML file published. Location:" + outputFile.getAbsolutePath());
+		logger.info("KML file published. Location:"
+				+ outputFile.getAbsolutePath());
 		return outputFile;
 	}
 

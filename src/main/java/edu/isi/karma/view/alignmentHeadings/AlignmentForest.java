@@ -87,13 +87,15 @@ public class AlignmentForest implements TForest {
 		HashMap<TNode, Integer> nodeIndexMap = new HashMap<TNode, Integer>();
 		int counter = 0;
 		for (HNode hNode : sortedHeaders) {
+			// logger.info("Checking for HNODE: " + hNode.getColumnName() + " "
+			// + hNode.getId());
 			String id = hNode.getId();
 			TNode node = getAlignmentNodeWithHNodeId(roots, id);
 
 			// For the columns that did not have a semantic type defined
 			// For e.g. the ones that do not have data
 			if (node == null) {
-				//System.out.println("Alignment node returned null!");
+				logger.info("Alignment node returned null!");
 				continue;
 			}
 
@@ -218,7 +220,9 @@ public class AlignmentForest implements TForest {
 		for (TNode node : nodes) {
 			AlignmentNode alNode = (AlignmentNode) node;
 			if (alNode.hasSemanticType()) {
-//				System.out.println("Cheking on sem type: " + alNode.getType().getType());
+				logger.debug("Cheking on sem type: "
+						+ alNode.getType().getType() + " ID: "
+						+ alNode.getSemanticTypeHNodeId());
 				if (alNode.getSemanticTypeHNodeId().equals(hNodeId)) {
 					return alNode;
 				}
@@ -237,7 +241,7 @@ public class AlignmentForest implements TForest {
 	private TNode populateWithVertex(Vertex vertex,
 			DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree,
 			LabeledWeightedEdge parentEdge) {
-		// Add the debugrmation about the parent link
+		// Add the information about the parent link
 		AlignmentLink parentLink = null;
 		if (parentEdge != null) {
 			parentLink = new AlignmentLink(parentEdge.getID(),
@@ -257,7 +261,7 @@ public class AlignmentForest implements TForest {
 					.getHNodeId() + "BlankLink", "BlankNode");
 			TNode node = new AlignmentNode(vertex.getID() + "BlankNodeId",
 					null, link, "BlankNode", vertex.getSemanticType());
-//			System.out.println("Created blank node: " + node.getId());
+			 logger.debug("Created blank node: " + node.getId());
 			children.add(node);
 		}
 
@@ -270,7 +274,7 @@ public class AlignmentForest implements TForest {
 
 		AlignmentNode node = new AlignmentNode(vertex.getID(), children,
 				parentLink, vertex.getLabel(), vertex.getSemanticType());
-//		System.out.println("Created node: " + node.getId());
+		logger.debug("Created node: " + node.getId());
 		return node;
 	}
 }

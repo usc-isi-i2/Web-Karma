@@ -15,6 +15,9 @@ import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
+import edu.isi.karma.rep.metadata.Tag;
+import edu.isi.karma.rep.metadata.TagsContainer.Color;
+import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
@@ -32,6 +35,10 @@ public class GetExampleJSON extends HttpServlet {
 		VWorkspace vwsp = new VWorkspace(workspace);
 
 		WorkspaceRegistry.getInstance().register(new ExecutionController(vwsp));
+		
+		// Initialize the Outlier tag
+		Tag outlierTag = new Tag(TagName.Outlier, Color.Red);
+		workspace.getTagsContainer().addTag(outlierTag);
 
 		// SampleDataFactory.createSample1small(workspace);
 		SampleDataFactory.createSample1(workspace);
@@ -88,7 +95,7 @@ public class GetExampleJSON extends HttpServlet {
 
 		c.generateJson("", pw, vwsp);
 
-		//System.err.println(sw.toString());
+//		System.err.println(sw.toString());
 
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_OK);
