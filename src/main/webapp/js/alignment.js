@@ -315,7 +315,10 @@ function submitSemanticTypeChange() {
 	   	complete : 
 	   		function (xhr, textStatus) {
 	    		var json = $.parseJSON(xhr.responseText);
-	    		parse(json);
+	    		if(json["elements"][0]["updateType"] == "SetSemanticTypeError" || json["elements"][0]["updateType"] == "UnassignSemanticTypeError")
+		   			alert(json["elements"][0]["Error"]);
+		   		else
+	    			parse(json);
 		   	},
 		error :
 			function (xhr, textStatus) {

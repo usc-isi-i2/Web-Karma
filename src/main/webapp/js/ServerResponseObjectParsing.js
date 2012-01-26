@@ -340,7 +340,7 @@ function parse(data) {
 						if(cell["value"] != null){
 							var valueToShow = cell["value"];
 								
-							tdTag.append($("<div>").addClass("cellValue")
+							tdTag.append($("<span>").addClass("cellValue")
 										.text(valueToShow))
 										//.mouseenter(showTableCellMenu)
 										//.mouseleave(hideTableCellMenu))
@@ -434,7 +434,7 @@ function parse(data) {
 									// .addClass(cell["tableCssTag"])
 									// .addClass("editable")
 									// //.text(cell["value"])
-									// .append($("<div>").addClass("cellValue")
+									// .append($("<span>").addClass("cellValue")
 										// //.text(cell["value"])
 										// .mouseenter(showTableCellMenu)
 										// .mouseleave(hideTableCellMenu)
@@ -446,15 +446,15 @@ function parse(data) {
 									// ;			
 						// // Mark the edited cells			
 						// if(cell["status"] == "E")
-							// $(tdTag).children("div.cellValue").addClass("editedValue")
+							// $(tdTag).children("span.cellValue").addClass("editedValue")
 // 							
 						// if(cell["value"].length > 20) {
 							// var valueToShow = cell["value"].substring(0,20);
-							// $(tdTag).children("div.cellValue").text(valueToShow + "...");
+							// $(tdTag).children("span.cellValue").text(valueToShow + "...");
 							// $(tdTag).data("fullValue", cell["value"]);
 							// $(tdTag).addClass("expandValueCell");
 						// } else {
-							// $(tdTag).children("div.cellValue").text(cell["value"]);
+							// $(tdTag).children("span.cellValue").text(cell["value"]);
 						// }
 // 							
 						// // Check if the cell has pager associated with it
@@ -614,7 +614,7 @@ function parse(data) {
 			var tdTag = $("td#" + element.nodeId); 
 			if(element.newValue.length > 20) {
 				var valueToShow = element.newValue.substring(0,20);
-				$(tdTag).children("div.cellValue").text(valueToShow + "...");
+				$(tdTag).children("span.cellValue").text(valueToShow + "...");
 				$(tdTag).data("fullValue", element.newValue);
 				$(tdTag).addClass("expandValueCell");
 			} else {
@@ -622,14 +622,14 @@ function parse(data) {
 					$(tdTag).removeClass("expandValueCell");
 					$.removeData($(tdTag), "fullValue");
 				}
-				$(tdTag).children("div.cellValue").text(element.newValue);
+				$(tdTag).children("span.cellValue").text(element.newValue);
 			}
 			
 			if(element.newStatus == "E"){
-				tdTag.children("div.cellValue").addClass("editedValue");
+				tdTag.children("span.cellValue").addClass("editedValue");
 			}
 			else {
-				tdTag.children("div.cellValue").removeClass("editedValue");
+				tdTag.children("span.cellValue").removeClass("editedValue");
 			}
 		}
 		
@@ -689,10 +689,8 @@ function parse(data) {
 			$.each(element["Tags"], function(index, tag) {
 				$.each(tag["Nodes"], function(index2, node){
 					var tdTag = $("td#"+node);
-					console.log(node);
 					if(tdTag.length != 0) {
-						console.log("Enter!")
-						var tagDivBox = $("<div>")
+						var tagSpanBox = $("<span>")
 							.css({backgroundColor:tag["Color"]})
 							.addClass("tag")
 							.qtip({
@@ -703,8 +701,8 @@ function parse(data) {
 							      classes: 'ui-tooltip-light ui-tooltip-shadow'
 							   }
 							});
-						console.log(tagDivBox);
-						tdTag.append(tagDivBox);
+						tdTag.append(tagSpanBox);
+						$(tagSpanBox).show();
 					}
 				});
 			});
