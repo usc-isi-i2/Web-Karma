@@ -165,7 +165,7 @@ public class ImportDatabaseTableCommand extends CommandWithPreview {
 		} catch (Throwable e) {
 			e.printStackTrace();
 			String message = e.getMessage().replaceAll("\n", "").replaceAll("\"","\\\"");
-			ErrorUpdate errUpdt = new ErrorUpdate("databaseImportError", message);
+			ErrorUpdate errUpdt = new ErrorUpdate(message);
 			c.add(errUpdt);
 		}
 		return c;

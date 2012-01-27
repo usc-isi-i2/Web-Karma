@@ -113,7 +113,7 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 			vw.update(c);
 		} catch (IOException e) {
 			logger.error("Error occured while importing CSV file.", e);
-			return new UpdateContainer(new ErrorUpdate("CSVImportError",
+			return new UpdateContainer(new ErrorUpdate(
 					"Error occured while importing CSV File."));
 		}
 		return c;

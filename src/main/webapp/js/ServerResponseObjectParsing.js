@@ -8,7 +8,16 @@ function parse(data) {
 		"id" : data["workspaceId"]
 	}
 	
+	// Check for errors
 	$.each(data["elements"], function(i, element){
+		if(element["updateType"] == "KarmaError") {
+			alert(element["Error"]);
+			return false;
+		}
+	});
+	
+	$.each(data["elements"], function(i, element){
+		
 		/* Update the worksheet list */
 		if(element["updateType"] == "WorksheetListUpdate") {
 			
@@ -686,6 +695,8 @@ function parse(data) {
 		} 
 		
 		else if(element["updateType"] == "TagsUpdate") {
+			// Remove all the existing tags
+			$("span.tag").remove();
 			$.each(element["Tags"], function(index, tag) {
 				$.each(tag["Nodes"], function(index2, node){
 					var tdTag = $("td#"+node);
@@ -710,21 +721,7 @@ function parse(data) {
 	});
 }
 
-function showSemanticTypeInfo() {
-	// var crfData = $(this).data("crfInfo");
-	// var table = $("div#ColumnCRFModelInfoBox table");
-	// $("tr", table).remove();
-// 	
-	// $.each(crfData["Labels"], function(index, label) {
-		// var trTag = $("<tr>");
-		// trTag.append($("<td>").text(label["Type"]))
-			// .append($("<td>").text(label["Probability"]));
-	// });
-}
 
-function hideSemanticTypeInfo() {
-	
-}
 
 function showConsoleInfo() {
 	if (console && console.log) {
@@ -744,99 +741,4 @@ function showConsoleInfo() {
 	}
 }
 
-function showNestedTablePager() {
-	// Get the parent table
-	var tableId = $(this).parents("table").attr("id");
-	var nestedTablePager = $("#nestedTablePager" + tableId);
-	
-	var pagerElem = $(this).data("pagerElem");
-	changePagerOptions(pagerElem, nestedTablePager);
-	
-	nestedTablePager.css({"position":"absolute",
-    					"top":$(this).offset().top + 10, 
-    					"left": $(this).offset().left + $(this).width()/2 - nestedTablePager.width()/2}).show();
-}
 
-function changePagerOptions(pagerJSONElement, pagerDOMElement) {
-	// Store the table Id information
-	$(pagerDOMElement).data("tableId", pagerJSONElement["tableId"]);
-	
-	// Change the ___ of ___ rows information
-	var totalRows = pagerJSONElement["numRecordsShown"] + pagerJSONElement["numRecordsBefore"] 
-								+ pagerJSONElement["numRecordsAfter"];  
-	var currentRowInfo = "" + (pagerJSONElement["numRecordsBefore"] +1) + " - " + 
-				(pagerJSONElement["numRecordsShown"] + pagerJSONElement["numRecordsBefore"]);
-	$("span.previousNextText", pagerDOMElement).text(currentRowInfo + " of " + totalRows);
-	
-	// Make the Previous link active/inactive as required
-	if(pagerJSONElement["numRecordsBefore"] != 0) {
-		var previousLink = $("a", pagerDOMElement)[3]; 
-		if($(previousLink).hasClass("inactiveLink"))
-			$(previousLink).removeClass("inactiveLink").addClass("activeLink");
-	} else {
-		if($(previousLink).hasClass("activeLink"))
-			$(previousLink).removeClass("activeLink").addClass("inactiveLink");
-	}
-	
-	// Make the Next link active/inactive as required
-	if(pagerJSONElement["numRecordsAfter"] != 0){
-		var nextLink = $("a", pagerDOMElement)[4];
-		if($(nextLink).hasClass("inactiveLink"))
-			$(nextLink).removeClass("inactiveLink").addClass("activeLink");
-	} else {
-		if($(nextLink).hasClass("activeLink"))
-			$(nextLink).removeClass("activeLink").addClass("inactiveLink");
-	}
-	
-	// Select the correct pager resize links
-	$.each($("a.pagerResizeLink", pagerDOMElement), function(index, link) {
-		if($(link).data("rowCount") == pagerJSONElement["desiredNumRecordsShown"]){
-			$(link).addClass("pagerSizeSelected");
-		} else {
-			$(link).removeClass("pagerSizeSelected");
-		}
-	});
-	
-	return true;
-}
-
-function hideNestedTablePager() {
-	// Get the parent table
-	var table = $(this).parents("table");
-	var nestedTablePager = $("#nestedTablePager" + table.attr("id"));
-	nestedTablePager.hide();
-}
-
-function showTableCellMenu() {
-	// Get the parent table
-	$("div#tableCellToolBarMenu").data("parentCellId", $(this).parents("td").attr("id"));
-	if($(this).parents("td").hasClass("expandValueCell")){
-		$("#viewValueButton").show();
-		$("#tableCellMenutriangle").css({"margin-left" : "32px"});
-		$("div#tableCellToolBarMenu").css({"width": "105px"});
-	} else {
-		$("#viewValueButton").hide();
-		$("#tableCellMenutriangle").css({"margin-left" : "10px"});
-		$("div#tableCellToolBarMenu").css({"width": "48px"});
-	}
-	$("div#tableCellToolBarMenu").css({"position":"absolute",
-    					"top":$(this).offset().top + 10, 
-    					"left": $(this).offset().left + $(this).width()/2 - $("div#tableCellToolBarMenu").width()/2}).show();
-}
-
-function hideTableCellMenu() {
-	$("div#tableCellToolBarMenu").hide();
-}
-
-function config(event) {
-	$("#toolBarMenu").data("parent", $(this));
-    $("#toolBarMenu").css({"position":"absolute","width":"165px",
-    					"top":$(this).offset().top + $(this).height(), 
-    					//"left":event.clientX-150	,
-    					"left": $(this).offset().left + $(this).width()/2 - $("#toolBarMenu").width()/2}).show();
-    					//"top": event.clientY-10}).show();    
-};
-
-function configOut() {    
-	$("#toolBarMenu").hide();    
-};

@@ -83,8 +83,9 @@ public class UnassignSemanticTypeCommand extends Command {
 		try {
 			align.update(c, true);
 		} catch (Exception e) {
-			logger.error("Error occured while unassigning the semantic type!", e);
-			return new UpdateContainer(new ErrorUpdate("UnassignSemanticTypeError",
+			logger.error("Error occured while unassigning the semantic type!",
+					e);
+			return new UpdateContainer(new ErrorUpdate(
 					"Error occured while unassigning the semantic type!"));
 		}
 
@@ -111,8 +112,9 @@ public class UnassignSemanticTypeCommand extends Command {
 		try {
 			align.update(c, true);
 		} catch (Exception e) {
-			logger.error("Error occured while unassigning the semantic type!", e);
-			return new UpdateContainer(new ErrorUpdate("UnassignSemanticTypeError",
+			logger.error("Error occured while unassigning the semantic type!",
+					e);
+			return new UpdateContainer(new ErrorUpdate(
 					"Error occured while unassigning the semantic type!"));
 		}
 		return c;

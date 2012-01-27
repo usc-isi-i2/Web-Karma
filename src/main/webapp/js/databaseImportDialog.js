@@ -186,7 +186,7 @@ function sendGenerateTableListRequest() {
 	   		function (xhr, textStatus) {
 	   			//alert(xhr.responseText);
 	    		var json = $.parseJSON(xhr.responseText);
-	    		if( json["elements"][0]["updateType"] == "databaseImportError")
+	    		if( json["elements"][0]["updateType"] == "KarmaError")
 	    			showDatabaseImportError(json);
 	    		else if (json["elements"][0]["updateType"] == "GetDatabaseTableList")
 	    			populateTableList(json);
@@ -220,7 +220,7 @@ function sendImportTableRequest() {
 	   			var json = $.parseJSON(xhr.responseText);
 	   			var flag = 0;
 	   			$.each(json["elements"], function(index, element) {
-	   				if( element["updateType"] == "databaseImportError") {
+	   				if( element["updateType"] == "KarmaError") {
 	    				showDatabaseImportError(json);
 	    				flag = -1;
 	    			}
@@ -304,7 +304,7 @@ function showDatabaseImportError(json) {
 	$("#DatabaseImportTableListAndPreview tr").hide();
 	
 	$.each(json["elements"], function(index, element) {
-		if( element["updateType"] == "databaseImportError") {
+		if( element["updateType"] == "KarmaError") {
 			$("#DatabaseImportErrorWindowText").text(element["Error"]);
 			$("#DatabaseImportErrorWindow").show();
 		}
