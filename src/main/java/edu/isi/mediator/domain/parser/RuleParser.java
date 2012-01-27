@@ -15,7 +15,6 @@ import edu.isi.mediator.rule.BuiltInPredicate;
 import edu.isi.mediator.rule.FunctionPredicate;
 import edu.isi.mediator.rule.Predicate;
 import edu.isi.mediator.gav.util.MediatorConstants;
-import edu.isi.mediator.gav.util.MediatorUtil;
 import edu.isi.mediator.rule.FunctionTerm;
 import edu.isi.mediator.rule.RelationPredicate;
 import edu.isi.mediator.domain.SourceSchema;
