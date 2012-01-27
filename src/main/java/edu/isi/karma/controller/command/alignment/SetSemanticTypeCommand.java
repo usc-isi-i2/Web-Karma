@@ -24,6 +24,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.mediator.gav.main.MediatorException;
 
 public class SetSemanticTypeCommand extends Command {
 
