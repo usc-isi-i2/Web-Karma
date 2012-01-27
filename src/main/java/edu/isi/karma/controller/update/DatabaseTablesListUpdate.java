@@ -83,7 +83,7 @@ public class DatabaseTablesListUpdate extends AbstractUpdate {
 			e.printStackTrace();
 			String message = e.getMessage().replaceAll("\n", "")
 					.replaceAll("\"", "\\\"");
-			ErrorUpdate er = new ErrorUpdate("databaseImportError", message);
+			ErrorUpdate er = new ErrorUpdate(message);
 			er.generateJson(prefix, pw, vWorkspace);
 		} catch (ClassNotFoundException e) {
 			// TODO Send error update

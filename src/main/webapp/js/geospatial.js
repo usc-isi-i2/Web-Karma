@@ -19,7 +19,7 @@ function showMapViewForWorksheet() {
 		   		function (xhr, textStatus) {
 		   			console.log(xhr.responseText);
 		   			var json = $.parseJSON(xhr.responseText);
-		   			if(json["elements"][0]["updateType"] == "PublishKMLError") {
+		   			if(json["elements"][0]["updateType"] == "KarmaError") {
 		   				alert(json["elements"][0]["Error"]);
 		   			} else if(json["elements"][0]["updateType"] == "PublishKMLUpdate") {
 		   				var fileName = json["elements"][0]["fileName"];

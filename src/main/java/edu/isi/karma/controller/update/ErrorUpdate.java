@@ -11,18 +11,20 @@ import edu.isi.karma.view.VWorkspace;
 
 public class ErrorUpdate extends AbstractUpdate {
 
-	String updateType;
 	String errorMessage;
 
-	public enum JsonKeys {
+	private enum JsonKeys {
 		Error
+	}
+	
+	private enum JsonValues {
+		KarmaError
 	}
 	
 	private static Logger logger = LoggerFactory.getLogger(ErrorUpdate.class);
 	
-	public ErrorUpdate(String updateType, String errorMessage) {
+	public ErrorUpdate(String errorMessage) {
 		super();
-		this.updateType = updateType;
 		this.errorMessage = errorMessage;
 	}
 
@@ -31,7 +33,7 @@ public class ErrorUpdate extends AbstractUpdate {
 			VWorkspace vWorkspace) {
 		JSONObject obj = new JSONObject();
 		try {
-			obj.put(GenericJsonKeys.updateType.name(), updateType);
+			obj.put(GenericJsonKeys.updateType.name(), JsonValues.KarmaError.name());
 			obj.put(JsonKeys.Error.name(), errorMessage);
 			pw.println(obj.toString());
 		} catch (JSONException e) {

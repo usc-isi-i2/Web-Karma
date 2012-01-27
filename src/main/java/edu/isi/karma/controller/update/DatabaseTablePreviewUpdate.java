@@ -72,13 +72,13 @@ public class DatabaseTablePreviewUpdate extends AbstractUpdate {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			String message = e.getMessage().replaceAll("\n", "").replaceAll("\"","\\\"");
-			ErrorUpdate er = new ErrorUpdate("databaseImportError", message);
+			ErrorUpdate er = new ErrorUpdate(message);
 			er.generateJson(prefix, pw, vWorkspace);
 		} catch (ClassNotFoundException e) {
 			// TODO Send error update
 			e.printStackTrace();
 			String message = e.getMessage().replaceAll("\n", "").replaceAll("\"","\\\"");
-			ErrorUpdate er = new ErrorUpdate("databaseImportError", message);
+			ErrorUpdate er = new ErrorUpdate(message);
 			er.generateJson(prefix, pw, vWorkspace);
 		} catch (JSONException e) {
 			// TODO Send Error update

@@ -69,12 +69,12 @@ public class ShowModelCommand extends WorksheetCommand {
 		// Get the alignment update if any
 		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
 				vWorksheetId);
-		
+
 		try {
 			align.update(c, semanticTypesChangedOrAdded);
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
-			return new UpdateContainer(new ErrorUpdate("ShowModelError",
+			return new UpdateContainer(new ErrorUpdate(
 					"Error occured while generating the model for the source."));
 		}
 

@@ -157,7 +157,7 @@ public class SetSemanticTypeCommand extends Command {
 			align.update(c, true);
 		} catch (Exception e) {
 			logger.error("Error occured while setting the semantic type!", e);
-			return new UpdateContainer(new ErrorUpdate("SetSemanticTypeError",
+			return new UpdateContainer(new ErrorUpdate(
 					"Error occured while setting the semantic type!"));
 		}
 		return c;
@@ -184,7 +184,7 @@ public class SetSemanticTypeCommand extends Command {
 			align.update(c, true);
 		} catch (Exception e) {
 			logger.error("Error occured while unsetting the semantic type!", e);
-			return new UpdateContainer(new ErrorUpdate("SetSemanticTypeError",
+			return new UpdateContainer(new ErrorUpdate(
 					"Error occured while unsetting the semantic type!"));
 		}
 		return c;

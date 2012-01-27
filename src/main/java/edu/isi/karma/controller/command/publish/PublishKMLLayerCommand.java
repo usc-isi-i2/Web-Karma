@@ -73,7 +73,7 @@ public class PublishKMLLayerCommand extends Command {
 				worksheet, vWorkspace.getWorkspace().getTagsContainer());
 		// Send an error update if no geospatial data found!
 		if (geo.hasNoGeospatialData()) {
-			return new UpdateContainer(new ErrorUpdate("PublishKMLError",
+			return new UpdateContainer(new ErrorUpdate(
 					"No geospatial data found in the worksheet!"));
 		}
 
@@ -84,7 +84,6 @@ public class PublishKMLLayerCommand extends Command {
 			if (!transfer) {
 				return new UpdateContainer(
 						new ErrorUpdate(
-								"PublishKMLError",
 								"Published KML file could not be moved to a public server to display on Google Maps!"));
 			}
 
