@@ -22,7 +22,6 @@ function submitEdit(value, settings) {
 	   	dataType : "json",
 	   	complete : 
 	   		function (xhr, textStatus) {
-	   			//alert(xhr.responseText);
 	    		var json = $.parseJSON(xhr.responseText);
 	    		parse(json);
 		   	}

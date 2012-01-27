@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,9 +101,11 @@ public class SemanticTypeUtil {
 			if (labels.size() == 0) {
 				continue;
 			}
+			
+			logger.debug("Examples: " + trainingExamples + " Type: " + labels + " ProbL " + scores);
 
 			// Identify the outliers
-			identifyOutliers(worksheet, labels.get(0), path, outlierTag);
+			identifyOutliers(worksheet, labels.get(0), path, outlierTag, columnFeatures);
 			
 			logger.info("Outliers:" + outlierTag.getNodeIdList());
 
@@ -151,13 +154,19 @@ public class SemanticTypeUtil {
 	}
 
 	private static void identifyOutliers(Worksheet worksheet,
-			String predictedType, HNodePath path, Tag outlierTag) {
+			String predictedType, HNodePath path, Tag outlierTag, Map<ColumnFeature, Collection<String>> columnFeatures) {
 		Collection<Node> nodes = new ArrayList<Node>();
 		worksheet.getDataTable().collectNodes(path, nodes);
 
 		// Identify the top semantic type for each node
 		// It it does not matches the predicted type, it is a outlier.
+		Set<String> allNodeIds = new HashSet<String>();
+		Set<String> outlierNodeIds = new HashSet<String>();
+		
 		for (Node node : nodes) {
+			allNodeIds.add(node.getId());
+			
+			// Compute the semantic type for the node value
 			List<String> examples = new ArrayList<String>();
 			List<String> predictedLabels = new ArrayList<String>();
 			List<Double> confidenceScores = new ArrayList<Double>();
@@ -166,7 +175,7 @@ public class SemanticTypeUtil {
 			if (nodeVal != null && !nodeVal.equals("")) {
 				examples.add(nodeVal);
 				boolean result = CRFModelHandler.predictLabelForExamples(
-						examples, 1, predictedLabels, confidenceScores);
+						examples, 1, predictedLabels, confidenceScores, null, columnFeatures);
 				if (!result) {
 					logger.error("Error while predicting type for " + nodeVal);
 					continue;
@@ -174,10 +183,15 @@ public class SemanticTypeUtil {
 
 				// Check here if it is an outlier
 				if (!predictedLabels.get(0).equalsIgnoreCase(predictedType)) {
-					outlierTag.addNodeId(node.getId());
+					logger.debug(nodeVal + ": " + predictedLabels + " Prob: " + confidenceScores);
+					outlierNodeIds.add(node.getId());
 				}
 			}
 		}
+		// Remove the existing ones
+		outlierTag.removeNodeIds(allNodeIds);
+		// Add the new ones
+		outlierTag.addNodeIds(outlierNodeIds);
 	}
 
 	public static void prepareCRFModelHandler() throws IOException {

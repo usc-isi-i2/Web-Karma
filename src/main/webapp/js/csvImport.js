@@ -93,11 +93,7 @@ function CSVImportOptionsChanged(flag) {
 	    		else{
 	    			$("#CSVImportDiv").dialog("close");
 	    			var json = $.parseJSON(xhr.responseText);
-	    			
-	    			if(json["elements"][0]["updateType"] == "CSVImportError") {
-		   				alert(json["elements"][0]["Error"]);
-		   			} else
-	    				parse(json);
+	    			parse(json);
 	    		}		
 		   	}
 		});	

@@ -1,8 +1,7 @@
 package edu.isi.karma.rep.metadata;
 
 import java.util.HashSet;
-
-import com.sun.tools.javac.util.List;
+import java.util.Set;
 
 import edu.isi.karma.rep.metadata.TagsContainer.Color;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
@@ -36,11 +35,15 @@ public class Tag {
 		nodeIdList.add(nodeId);
 	}
 	
-	public void addNodeList(List<String> nodeList) {
-		nodeList.addAll(nodeList);
+	public void addNodeIds(Set<String> nodes) {
+		nodeIdList.addAll(nodes);
 	}
 	
 	public void removeNodeId(String nodeId) {
 		nodeIdList.add(nodeId);
+	}
+	
+	public void removeNodeIds(Set<String> nodes) {
+		nodeIdList.removeAll(nodes);
 	}
 }

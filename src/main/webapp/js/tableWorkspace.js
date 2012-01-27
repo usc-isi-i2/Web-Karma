@@ -161,10 +161,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		   		function (xhr, textStatus) {
 		   			//alert(xhr.responseText);
 		    		var json = $.parseJSON(xhr.responseText);
-		    		if(json["elements"][1]["updateType"] == "ShowModelError") {
-		   				alert(json["elements"][1]["Error"]);
-		   			} else
-		    			parse(json);
+		    		parse(json);
 			   	},
 			error :
 				function (xhr, textStatus) {
