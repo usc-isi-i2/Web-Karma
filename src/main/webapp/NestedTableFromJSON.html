@@ -31,9 +31,7 @@
 		<script type="text/javascript" src="js/swfobject.js"></script>
 		<script type="text/javascript" src="js/jquery.jstree.js"></script>
 		<script type="text/javascript" src="js/jquery.qtip.min.js"></script>
-<!-- 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script> -->
 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script>
-<!-- 		<script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg"></script> -->
 		
 		
 		<!-- Home grown JavaScript files -->
@@ -52,7 +50,7 @@
 				parse(data);
 				
 				// Attach upload handlers to the import file buttons
-				$('#uploadFile_JSON').uploadify({
+				$('input#uploadFile_JSON').uploadify({
     				'uploader'  : '/images/uploadify.swf',
     				'cancelImg' : '/images/cancel.png',
     				'script'	: 'RequestController',
@@ -66,7 +64,7 @@
 				    }
   				})
   				
-  				$('#uploadFile_CSV').uploadify({
+  				$('input#uploadFile_CSV').uploadify({
     				'uploader'  : '/images/uploadify.swf',
     				'cancelImg' : '/images/cancel.png',
     				'script'	: 'RequestController',
@@ -81,7 +79,7 @@
 				    }
   				});
   				
-  				$('#uploadFile_XML').uploadify({
+  				$('input#uploadFile_XML').uploadify({
     				'uploader'  : '/images/uploadify.swf',
     				'cancelImg' : '/images/cancel.png',
     				'script'	: 'RequestController',
@@ -95,7 +93,7 @@
 				    }
   				});
   				
-  				$('#uploadFile_Ontology').uploadify({
+  				$('input#uploadFile_Ontology').uploadify({
     				'uploader'  : '/images/uploadify.swf',
     				'cancelImg' : '/images/cancel.png',
     				'script'	: 'RequestController',
@@ -108,6 +106,21 @@
 						parse($.parseJSON(response));
 				    }
   				});
+  				
+  				$('input#uploadFile_Excel').uploadify({
+    				'uploader'  : '/images/uploadify.swf',
+    				'cancelImg' : '/images/cancel.png',
+    				'script'	: 'RequestController',
+    				'buttonText': 'Import Excel',
+    				'scriptData': {'command': 'ImportExcelFileCommand', 
+    								'workspaceId': $.workspaceGlobalInformation.id},
+    				'method'	: 'GET',
+    				'auto': true,
+    				'onComplete'  : function(event, ID, fileObj, response, data) {
+						parse($.parseJSON(response));
+				    }
+  				});
+  				
 			}).error(function() { 
 				alert("Error geting sample JSON!"); 
 			});
@@ -274,6 +287,9 @@
 				</td>
 				<td>
 					<input type="file" name="file4" id="uploadFile_Ontology">
+				</td>
+				<td>
+					<input type="file" name="file5" id="uploadFile_Excel">
 				</td>
 				<td>
 					<button id="importDatabaseTableButton">Import Database Table</button>

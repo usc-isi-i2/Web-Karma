@@ -95,7 +95,7 @@ public class AlignmentForest implements TForest {
 			// For the columns that did not have a semantic type defined
 			// For e.g. the ones that do not have data
 			if (node == null) {
-				logger.info("Alignment node returned null!");
+				logger.debug("Alignment node returned null!");
 				continue;
 			}
 

@@ -19,6 +19,8 @@ import edu.isi.karma.controller.command.ImportCSVFileCommand;
 import edu.isi.karma.controller.command.ImportCSVFileCommandFactory;
 import edu.isi.karma.controller.command.ImportDatabaseTableCommand;
 import edu.isi.karma.controller.command.ImportDatabaseTableCommandFactory;
+import edu.isi.karma.controller.command.ImportExcelFileCommand;
+import edu.isi.karma.controller.command.ImportExcelFileCommandFactory;
 import edu.isi.karma.controller.command.ImportJSONFileCommand;
 import edu.isi.karma.controller.command.ImportJSONFileCommandFactory;
 import edu.isi.karma.controller.command.ImportOntologyCommand;
@@ -135,6 +137,8 @@ public class ExecutionController {
 				new CloseWorkspaceCommandFactory());
 		commandFactoryMap.put(PublishKMLLayerCommand.class.getSimpleName(),
 				new PublishKMLLayerCommandFactory());
+		commandFactoryMap.put(ImportExcelFileCommand.class.getSimpleName(),
+				new ImportExcelFileCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

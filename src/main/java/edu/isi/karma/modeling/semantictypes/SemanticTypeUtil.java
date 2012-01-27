@@ -107,7 +107,7 @@ public class SemanticTypeUtil {
 			// Identify the outliers
 			identifyOutliers(worksheet, labels.get(0), path, outlierTag, columnFeatures);
 			
-			logger.info("Outliers:" + outlierTag.getNodeIdList());
+			logger.debug("Outliers:" + outlierTag.getNodeIdList());
 
 			// Add the scores information to the Full CRF Model of the worksheet
 			CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
