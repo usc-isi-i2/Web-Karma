@@ -1,4 +1,4 @@
- // __COPYRIGHT_START__
+// __COPYRIGHT_START__
 //
 // Copyright 2009 University of Southern California. All Rights Reserved.
 //
@@ -13,20 +13,20 @@ import edu.isi.mediator.rdf.TableRDFGenerator;
  * @author Maria Muslea(USC/ISI)
  *
  */
-
+@SuppressWarnings("all")
 public class TableRDFGeneratorTest {
 
 	   public static void main(String[] args){
   
 		   try{
-/*
+
 		   String domainFile = "NAMESPACES:\n s:'http://www.dovetail.org/WITS/' \n dv:'http://www.dovetail.org/ontology/'\n" +
 		   "LAV_RULES:\n WITS_Facility(NATIONALITY_ID, INCIDENT_ID, FACILITY_ID) -> `dv:Country`(uri(NATIONALITY_ID)) ^ `dv:hasNationality`(uri(1), uri(NATIONALITY_ID)) ^" +
 		   "`dv:Person`(uri(1)) ^ `dv:belongsTo`(uri(2), uri(1)) ^" +
 		   "`dv:Organization`(uri(2)) ^ `dv:carriedBy`(uri(INCIDENT_ID), uri(2)) ^" +
 		   "`dv:Attack`(uri(INCIDENT_ID)) ^ `dv:causes`(uri(INCIDENT_ID), uri(FACILITY_ID)) ^" +
 		   "`dv:Damage`(uri(FACILITY_ID))";
-	*/	   
+		   
 		   HashMap<String,String> vals3 = new HashMap<String,String>();
 		   vals3.put("NATIONALITY_ID","20");
 		   vals3.put("INCIDENT_ID","67");
@@ -36,7 +36,7 @@ public class TableRDFGeneratorTest {
 		   //rdfGen.generateTriples("NATIONALITY_ID", vals3, "t123");
 		   //rdfGen.generateTriples("NATIONALITY_ID", vals3, "t123");
 		   //rdfGen.closeWriter();
-		/*   
+		   
 		   String dF1 = "NAMESPACES: s:'http://www.isi.edu/' LAV_RULES:" +
 		   "SourceDescription(GENE_NAME, NAME, DISEASE_NAME, GENE_ID, DISEASE_ID, DRUG_ID, DRUG_NAME, ACCESSION_ID) -> " +
 		   "`http://halowiki/ob/category#Disease`(uri(DISEASE_ID))" +
@@ -66,7 +66,7 @@ public class TableRDFGeneratorTest {
 		   " ^ `http://halowiki/ob/property#pharmGKBId`(uri(DRUG_ID),DRUG_ID)" +
 		   " ^ `http://halowiki/ob/property#name`(uri(0),DISEASE_NAME)" +
 		   " ^ `http://halowiki/ob/property#pharmGKBId`(uri(0),DISEASE_ID)";
-		  */ 
+		   
 		   String dF3 = "NAMESPACES: s:'http://www.isi.edu/' LAV_RULES:" +
 		   "SourceDescription(`GENE_NAME`, `GENE_ID`) ->" + 
 		   "`http://halowiki/ob/category#Disease`(uri(0))" +
