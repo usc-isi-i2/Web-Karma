@@ -1,6 +1,5 @@
 package edu.isi.karma.controller.command.alignment;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -8,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.AlignToOntology;
@@ -16,7 +16,6 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.rep.semantictypes.SemanticTypes;
 import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.webserver.KarmaException;
 
 public class UnassignSemanticTypeCommand extends Command {
 
@@ -83,10 +82,10 @@ public class UnassignSemanticTypeCommand extends Command {
 				vWorksheetId);
 		try {
 			align.update(c, true);
-		} catch (KarmaException e) {
-			logger.error("Error generating source description.", e);
-		} catch (IOException e) {
-			logger.error("Error writing source description file.", e);
+		} catch (Exception e) {
+			logger.error("Error occured while unassigning the semantic type!", e);
+			return new UpdateContainer(new ErrorUpdate("UnassignSemanticTypeError",
+					"Error occured while unassigning the semantic type!"));
 		}
 
 		return c;
@@ -111,10 +110,10 @@ public class UnassignSemanticTypeCommand extends Command {
 				vWorksheetId);
 		try {
 			align.update(c, true);
-		} catch (KarmaException e) {
-			logger.error("Error generating source description.", e);
-		} catch (IOException e) {
-			logger.error("Error writing source description file.", e);
+		} catch (Exception e) {
+			logger.error("Error occured while unassigning the semantic type!", e);
+			return new UpdateContainer(new ErrorUpdate("UnassignSemanticTypeError",
+					"Error occured while unassigning the semantic type!"));
 		}
 		return c;
 	}

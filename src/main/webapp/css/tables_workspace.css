@@ -404,15 +404,16 @@ div.ColumnHeadingNameDiv {
 	display: inline;
 }
 
-div.tag {
+span.tag {;
 	width: 6px;
 	height: 15px;
-	float:right;
+	float: right;
+	margin-left: 5px;
 }
 
-div.cellValue {
+/*span.cellValue {
 	display: inline;
-}
+}*/
 
 
 

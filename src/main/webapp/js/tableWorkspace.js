@@ -193,7 +193,7 @@ function handleTableCellEditButton(event) {
 	} else {
 		tableCellDiv.append($("<textarea>")
 						.attr("id", "editCellTextArea")
-						.text($("#"+tdTagId + " div.cellValue").text()));
+						.text($("#"+tdTagId + " span.cellValue").text()));
 	}
 	
 	var positionArray = [event.clientX-150		// distance from left
