@@ -31,41 +31,42 @@ function handlePrevNextLink() {
 }
 
 function handlePagerResize() {
-	if($(this).hasClass("pagerSizeSelected"))
-		return;
-		
-	// $(this).siblings().removeClass("pagerSizeSelected");	
-	// $(this).addClass("pagerSizeSelected");	
-	
-	// Prepare the data to be sent to the server	
-	var info = new Object();
-	
-	var worksheetId = $(this).data("vWorksheetId");
-	info["newPageSize"] = $(this).data("rowCount");
-	info["tableId"] = $(this).parents("div.pager").data("tableId");
-	info["vWorksheetId"] = worksheetId;
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "TablePagerResizeCommand";
-		
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			//alert(xhr.responseText);
-	    		var json = $.parseJSON(xhr.responseText);
-	    		parse(json);
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured with fetching new rows! " + textStatus);
-	   			
-		   	}		   
-	});
-	return false;
-	$(this).preventDefault();
+	$.sticky("Under construction!");
+	// if($(this).hasClass("pagerSizeSelected"))
+		// return;
+// 		
+	// // $(this).siblings().removeClass("pagerSizeSelected");	
+	// // $(this).addClass("pagerSizeSelected");	
+// 	
+	// // Prepare the data to be sent to the server	
+	// var info = new Object();
+// 	
+	// var worksheetId = $(this).data("vWorksheetId");
+	// info["newPageSize"] = $(this).data("rowCount");
+	// info["tableId"] = $(this).parents("div.pager").data("tableId");
+	// info["vWorksheetId"] = worksheetId;
+	// info["workspaceId"] = $.workspaceGlobalInformation.id;
+	// info["command"] = "TablePagerResizeCommand";
+// 		
+	// var returned = $.ajax({
+	   	// url: "/RequestController", 
+	   	// type: "POST",
+	   	// data : info,
+	   	// dataType : "json",
+	   	// complete : 
+	   		// function (xhr, textStatus) {
+	   			// //alert(xhr.responseText);
+	    		// var json = $.parseJSON(xhr.responseText);
+	    		// parse(json);
+		   	// },
+		// error :
+			// function (xhr, textStatus) {
+	   			// alert("Error occured with fetching new rows! " + textStatus);
+// 	   			
+		   	// }		   
+	// });
+	// return false;
+	// $(this).preventDefault();
 }
 
 

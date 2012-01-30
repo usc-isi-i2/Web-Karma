@@ -123,7 +123,7 @@ public class SetSemanticTypeCommand extends Command {
 		if (newType.getDomain().equals("")) {
 			newTypeString = newType.getType();
 		} else {
-			newTypeString = newType.getType() + "|" + newType.getDomain();
+			newTypeString = newType.getDomain() + "|" + newType.getType();
 		}
 		trainingResult = CRFModelHandler.addOrUpdateLabel(newTypeString,
 				trainingExamples, columnFeatures);
