@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.AlignmentHeadersUpdate;
-import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rdf.SourceDescription;
@@ -110,7 +109,6 @@ public class AlignToOntology {
 			vw.update(c);
 			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 		} else {
-			c.add(new ErrorUpdate("Error occured while doing the alignment."));
 			logger.error("Alignment returned null root!");
 		}
 	}
