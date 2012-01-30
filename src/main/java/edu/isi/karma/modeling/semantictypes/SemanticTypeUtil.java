@@ -71,6 +71,7 @@ public class SemanticTypeUtil {
 		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
 
 		for (HNodePath path : paths) {
+			boolean semanticTypeAdded = false;
 			ArrayList<String> trainingExamples = getTrainingExamples(worksheet,
 					path);
 
@@ -101,18 +102,9 @@ public class SemanticTypeUtil {
 			if (labels.size() == 0) {
 				continue;
 			}
-			
-			logger.debug("Examples: " + trainingExamples + " Type: " + labels + " ProbL " + scores);
 
-			// Identify the outliers
-			identifyOutliers(worksheet, labels.get(0), path, outlierTag, columnFeatures);
-			
-			logger.debug("Outliers:" + outlierTag.getNodeIdList());
-
-			// Add the scores information to the Full CRF Model of the worksheet
-			CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
-			worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(),
-					columnModel);
+			logger.debug("Examples: " + trainingExamples + " Type: " + labels
+					+ " ProbL " + scores);
 
 			// Create and add the semantic type to the semantic types set of the
 			// worksheet
@@ -135,11 +127,13 @@ public class SemanticTypeUtil {
 			if (existingType == null) {
 				if (semtype.getConfidenceLevel() != SemanticType.ConfidenceLevel.Low) {
 					worksheet.getSemanticTypes().addType(semtype);
+					semanticTypeAdded = true;
 					semanticTypesChangedOrAdded = true;
 				}
 			} else {
 				if (existingType.getOrigin() != SemanticType.Origin.User) {
 					worksheet.getSemanticTypes().addType(semtype);
+					semanticTypeAdded = true;
 
 					// Check if the new semantic type is different from the
 					// older one
@@ -149,12 +143,28 @@ public class SemanticTypeUtil {
 						semanticTypesChangedOrAdded = true;
 				}
 			}
+
+			// If the semantic type was added, then identify the outliers and
+			// add the CRF model information for that column
+			if (semanticTypeAdded) {
+				// Identify the outliers
+				identifyOutliers(worksheet, labels.get(0), path, outlierTag,
+						columnFeatures);
+				logger.debug("Outliers:" + outlierTag.getNodeIdList());
+
+				// Add the scores information to the Full CRF Model of the
+				// worksheet
+				CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
+				worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(),
+						columnModel);
+			}
 		}
 		return semanticTypesChangedOrAdded;
 	}
 
-	private static void identifyOutliers(Worksheet worksheet,
-			String predictedType, HNodePath path, Tag outlierTag, Map<ColumnFeature, Collection<String>> columnFeatures) {
+	public static void identifyOutliers(Worksheet worksheet,
+			String predictedType, HNodePath path, Tag outlierTag,
+			Map<ColumnFeature, Collection<String>> columnFeatures) {
 		Collection<Node> nodes = new ArrayList<Node>();
 		worksheet.getDataTable().collectNodes(path, nodes);
 
@@ -162,10 +172,10 @@ public class SemanticTypeUtil {
 		// It it does not matches the predicted type, it is a outlier.
 		Set<String> allNodeIds = new HashSet<String>();
 		Set<String> outlierNodeIds = new HashSet<String>();
-		
+
 		for (Node node : nodes) {
 			allNodeIds.add(node.getId());
-			
+
 			// Compute the semantic type for the node value
 			List<String> examples = new ArrayList<String>();
 			List<String> predictedLabels = new ArrayList<String>();
@@ -175,7 +185,11 @@ public class SemanticTypeUtil {
 			if (nodeVal != null && !nodeVal.equals("")) {
 				examples.add(nodeVal);
 				boolean result = CRFModelHandler.predictLabelForExamples(
-						examples, 1, predictedLabels, confidenceScores, null, columnFeatures);
+						examples, 1, predictedLabels, confidenceScores, null,
+						columnFeatures);
+//				logger.debug("Example: " + examples.get(0) + " Label: "
+//						+ predictedLabels.get(0) + " Score: "
+//						+ confidenceScores.get(0));
 				if (!result) {
 					logger.error("Error while predicting type for " + nodeVal);
 					continue;
@@ -183,7 +197,8 @@ public class SemanticTypeUtil {
 
 				// Check here if it is an outlier
 				if (!predictedLabels.get(0).equalsIgnoreCase(predictedType)) {
-					logger.debug(nodeVal + ": " + predictedLabels + " Prob: " + confidenceScores);
+					logger.debug(nodeVal + ": " + predictedLabels + " Prob: "
+							+ confidenceScores);
 					outlierNodeIds.add(node.getId());
 				}
 			}

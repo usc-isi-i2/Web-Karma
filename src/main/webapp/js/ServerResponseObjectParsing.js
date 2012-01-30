@@ -11,7 +11,7 @@ function parse(data) {
 	// Check for errors
 	$.each(data["elements"], function(i, element){
 		if(element["updateType"] == "KarmaError") {
-			alert(element["Error"]);
+			$.sticky(element["Error"]);
 			return false;
 		}
 	});

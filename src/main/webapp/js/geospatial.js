@@ -20,7 +20,7 @@ function showMapViewForWorksheet() {
 		   			console.log(xhr.responseText);
 		   			var json = $.parseJSON(xhr.responseText);
 		   			if(json["elements"][0]["updateType"] == "KarmaError") {
-		   				alert(json["elements"][0]["Error"]);
+		   				$.sticky(json["elements"][0]["Error"]);
 		   			} else if(json["elements"][0]["updateType"] == "PublishKMLUpdate") {
 		   				var fileName = json["elements"][0]["fileName"];
 		   				displayKMLandToggleIcon(worksheetId, fileName, worksheetPanel);

@@ -13,6 +13,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
+import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.AlignToOntology;
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
@@ -21,8 +22,10 @@ import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler.ColumnFeature;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.view.VWorkspace;
+
 public class SetSemanticTypeCommand extends Command {
 
 	private SemanticType oldType;
@@ -116,13 +119,14 @@ public class SetSemanticTypeCommand extends Command {
 		ArrayList<String> trainingExamples = SemanticTypeUtil
 				.getTrainingExamples(worksheet, currentColumnPath);
 		boolean trainingResult = false;
-		if (newType.getDomain().equals(""))
-			trainingResult = CRFModelHandler.addOrUpdateLabel(
-					newType.getType(), trainingExamples, columnFeatures);
-		else
-			trainingResult = CRFModelHandler.addOrUpdateLabel(
-					newType.getDomain() + "|" + newType.getType(),
-					trainingExamples, columnFeatures);
+		String newTypeString = "";
+		if (newType.getDomain().equals("")) {
+			newTypeString = newType.getType();
+		} else {
+			newTypeString = newType.getType() + "|" + newType.getDomain();
+		}
+		trainingResult = CRFModelHandler.addOrUpdateLabel(newTypeString,
+				trainingExamples, columnFeatures);
 
 		if (!trainingResult) {
 			logger.error("Error occured while training CRF Model.");
@@ -147,6 +151,11 @@ public class SetSemanticTypeCommand extends Command {
 		CRFColumnModel newModel = new CRFColumnModel(labels, scores);
 		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), newModel);
 
+		// Identify the outliers for the column
+		SemanticTypeUtil.identifyOutliers(worksheet, newTypeString,
+				currentColumnPath, vWorkspace.getWorkspace().getTagsContainer()
+						.getTag(TagName.Outlier), columnFeatures);
+
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 
 		// Get the alignment update if any
@@ -159,6 +168,8 @@ public class SetSemanticTypeCommand extends Command {
 			return new UpdateContainer(new ErrorUpdate(
 					"Error occured while setting the semantic type!"));
 		}
+
+		c.add(new TagsUpdate());
 		return c;
 	}
 
