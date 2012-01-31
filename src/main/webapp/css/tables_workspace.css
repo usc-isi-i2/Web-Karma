@@ -278,7 +278,7 @@ a.pagerSizeSelected {
 }
 
 #triangle {
-    border: 1px solid #4C4C4C;
+    border: 1px solid #DCDCDC;
     border-width: 2px 0 0 2px;
     width:7px;
     height:7px;
@@ -290,11 +290,11 @@ a.pagerSizeSelected {
     position: relative;
     bottom: -4px;
     margin-left: 80px;
-    background: #4C4C4C;
+    background: #DCDCDC;
 }
 
 #tableCellMenutriangle {
-	border: 1px solid #4C4C4C;
+	border: 0.5px solid #8E9095;
     border-width: 2px 0 0 2px;
     width:7px;
     height:7px;
@@ -306,7 +306,7 @@ a.pagerSizeSelected {
     position: relative;
     bottom: -4px;
     margin-left: 32px;
-    background: #4C4C4C;
+    background: #DCDCDC;
 }
 
 #CellValueDialog {
