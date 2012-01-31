@@ -350,9 +350,9 @@ function parse(data) {
 							var valueToShow = cell["value"];
 								
 							tdTag.append($("<span>").addClass("cellValue")
-										.text(valueToShow))
-										//.mouseenter(showTableCellMenu)
-										//.mouseleave(hideTableCellMenu))
+										.text(valueToShow)
+										.mouseenter(showTableCellMenu)
+										.mouseleave(hideTableCellMenu))
 									.attr('id', cell["nodeId"]);
 						}
 							
@@ -640,6 +640,9 @@ function parse(data) {
 			else {
 				tdTag.children("span.cellValue").removeClass("editedValue");
 			}
+			
+			// Remove any tags
+			$("span.tag", tdTag).remove();
 		}
 		
 		else if(element["updateType"] == "NewImportDatabaseTableCommandUpdate") {
@@ -724,21 +727,21 @@ function parse(data) {
 
 
 function showConsoleInfo() {
-	if (console && console.log) {
-		console.clear();
-		var elem = $(this).data("jsonElement");
-		$.each(elem, function(key, value){
-			if(key == "pager"){
-				console.log("Pager Information:")
-				$.each(value, function(key2,value2){
-					console.log(key2 +" : " + value2)
-				})
-				console.log("Pager Information Finished.")
-			}
-			else
-				console.log(key + " : " + value);
-		})
-	}
+	// if (console && console.log) {
+		// console.clear();
+		// var elem = $(this).data("jsonElement");
+		// $.each(elem, function(key, value){
+			// if(key == "pager"){
+				// console.log("Pager Information:")
+				// $.each(value, function(key2,value2){
+					// console.log(key2 +" : " + value2)
+				// })
+				// console.log("Pager Information Finished.")
+			// }
+			// else
+				// console.log(key + " : " + value);
+		// })
+	// }
 }
 
 

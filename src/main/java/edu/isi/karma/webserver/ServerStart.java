@@ -54,6 +54,10 @@ public class ServerStart extends HttpServlet {
 		ImportOntology imp = new ImportOntology(OntologyManager.Instance()
 				.getOntModel(), new File("./Preloaded_Ontologies/geo_2007.owl"));
 		imp.doImport();
+		// Load the Chevron ontology
+		imp = new ImportOntology(OntologyManager.Instance()
+				.getOntModel(), new File("./Preloaded_Ontologies/oilwell.owl"));
+		imp.doImport();
 
 		System.out.println("************");
 		System.out.println("Server start servlet initialized successfully..");

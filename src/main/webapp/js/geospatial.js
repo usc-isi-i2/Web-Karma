@@ -88,13 +88,15 @@ function displayKMLandToggleIcon(worksheetId, fileName, worksheetPanel) {
       	mapTypeId: google.maps.MapTypeId.ROADMAP
 	};
   	var map = new google.maps.Map(document.getElementById('map_canvas_' + worksheetId), myOptions);
-  	var layer = new google.maps.KmlLayer(fileName);
+  	var filePath = fileName+"?rand="+(new Date()).valueOf();
+  	var layer = new google.maps.KmlLayer(filePath);
+  	console.log(filePath)
 	layer.setMap(map);
 	
 	// Create the DIV to hold the control and call the DownloadKMLControl() constructor
 	// passing in this DIV.
   	var kmlDownloadDiv = document.createElement('DIV');
-  	var kmlDownloadControl = new DownloadKMLControl(kmlDownloadDiv, map, fileName);
+  	var kmlDownloadControl = new DownloadKMLControl(kmlDownloadDiv, map, fileName+"?rand="+(new Date()).valueOf());
 
   	kmlDownloadDiv.index = 1;
   	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(kmlDownloadDiv);
