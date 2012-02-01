@@ -178,6 +178,33 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		$("div.semanticTypeDiv", table).remove();
 	});
 	
+	$("button#publishRDF").click(function(){
+		optionsDiv.hide();
+		
+		// console.log("Generate RDF for table with ID: " +optionsDiv.data("worksheetId"));
+		var info = new Object();
+		info["vWorksheetId"] = optionsDiv.data("worksheetId");
+		info["workspaceId"] = $.workspaceGlobalInformation.id;
+		info["command"] = "PublishRDFCommand";
+			
+		var returned = $.ajax({
+		   	url: "/RequestController", 
+		   	type: "POST",
+		   	data : info,
+		   	dataType : "json",
+		   	complete : 
+		   		function (xhr, textStatus) {
+		   			//alert("RDF Generated!");
+		    		var json = $.parseJSON(xhr.responseText);
+		    		parse(json);
+			   	},
+			error :
+				function (xhr, textStatus) {
+		   			alert("Error occured while generating RDF!" + textStatus);
+			   	}		   
+		});
+	});
+
 	$("#alignToOntologyButton").click(function(){
 		optionsDiv.hide();
 		

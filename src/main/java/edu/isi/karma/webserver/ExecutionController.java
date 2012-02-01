@@ -61,6 +61,8 @@ import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommand;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommandFactory;
+import edu.isi.karma.controller.command.publish.PublishRDFCommand;
+import edu.isi.karma.controller.command.publish.PublishRDFCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
 
@@ -139,6 +141,8 @@ public class ExecutionController {
 				new PublishKMLLayerCommandFactory());
 		commandFactoryMap.put(ImportExcelFileCommand.class.getSimpleName(),
 				new ImportExcelFileCommandFactory());
+		commandFactoryMap.put(PublishRDFCommand.class.getSimpleName(),
+				new PublishRDFCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

@@ -1,0 +1,866 @@
+@prefix s: <http://localhost:8080/source/> .
+
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r1_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r1_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.403468" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r1_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.311653" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r2_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r2_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.417839" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r2_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.304932" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r3_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r3_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.396851" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r3_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.322159" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r4_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r4_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.357027" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r4_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.312096" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r5_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r5_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.39955" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r5_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.310018" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r6_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r6_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.386503" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r6_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.301219" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r7_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r7_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.420568" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r7_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.286751" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r8_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r8_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.356871" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r8_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.312042" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r9_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r9_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.390004" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r9_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.302328" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r10_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r10_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.358105" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r10_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.314842" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r11_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r11_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.419807" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r11_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.3209" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r12_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r12_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.373188" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r12_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.306488" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r13_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r13_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.408808" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r13_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.282875" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r14_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r14_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.406321" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r14_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.319839" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r15_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r15_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.356354" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r15_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.314285" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r16_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r16_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.417045" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r16_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.315686" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r17_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r17_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.357635" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r17_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.316887" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r18_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r18_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.42626" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r18_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.30446" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r19_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r19_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.416141" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r19_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.319797" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r20_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r20_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.355886" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r20_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.316322" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r21_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r21_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.378168" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r21_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.296387" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r22_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r22_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.44149" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r22_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.32697" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r23_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r23_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.36775" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r23_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.322319" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r24_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r24_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43977" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r24_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.33083" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r25_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r25_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.368217" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r25_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.320274" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r26_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r26_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.44198" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r26_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.32492" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r27_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r27_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.418188" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r27_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.281929" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r28_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r28_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.369154" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r28_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.316185" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r29_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r29_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.44237" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r29_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.32283" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r30_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r30_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.369642" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r30_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.314049" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r31_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r31_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.41482" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r31_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.28078" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r32_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r32_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.44013" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r32_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.32541" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r33_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r33_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.370602" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r33_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.309891" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r34_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r34_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43998" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r34_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.333" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r35_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r35_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.411087" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r35_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.279602" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r36_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r36_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.371048" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r36_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.307915" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r37_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r37_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43918" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r37_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.32943" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r38_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r38_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43948" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r38_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.33513" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r39_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r39_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.42943" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r39_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.307541" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r40_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r40_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.365999" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r40_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.321762" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r41_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r41_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.42057" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r41_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.304558" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r42_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r42_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.417299" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r42_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.286041" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r43_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r43_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43952" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r43_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.32744" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r44_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r44_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.366468" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r44_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.319717" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r45_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r45_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.422619" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r45_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.305244" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r46_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r46_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.366938" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r46_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.317673" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r47_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r47_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.431259" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r47_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.30632" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r48_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r48_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.42169" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r48_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.283081" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r49_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r49_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.441092" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r49_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.321441" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r50_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r50_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.427389" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r50_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.306854" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r51_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r51_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.422579" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r51_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.279022" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r52_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r52_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.368208" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r52_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.31208" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r53_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r53_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43851" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r53_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.33915" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r54_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r54_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.373997" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r54_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.302545" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r55_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r55_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.368668" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r55_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.310066" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r56_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r56_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.4382" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r56_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.3336" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r57_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r57_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.376432" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r57_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.30751" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r58_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r58_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.378691" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r58_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.306313" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r59_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r59_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.419088" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r59_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.277832" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r60_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r60_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43727" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r60_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.33768" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r61_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r61_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.412171" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r61_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.3174" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r62_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r62_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.408422" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r62_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.316512" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r63_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r63_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.404987" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r63_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.315024" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r64_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r64_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.414186" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r64_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.315876" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r65_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r65_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.41098" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r65_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.315111" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r66_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r66_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.439552" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r66_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.319839" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r67_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r67_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.365093" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r67_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.30925" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r68_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r68_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.415383" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r68_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.309867" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r69_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r69_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.41864" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r69_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "Crier McElroy" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r70_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r70_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43862" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r70_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "Crier McElroy" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r71_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r71_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.413546" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r71_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "Crier McElroy" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r72_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r72_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.416449" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r72_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "Crier McElroy" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r73_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r73_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.411512" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r73_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.310417" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r74_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r74_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.414127" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r74_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.282799" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r75_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r75_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.412799" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r75_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.30462" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r76_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r76_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.42083" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r76_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.278419" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r77_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r77_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.44056" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r77_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.31571" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r78_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r78_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.411209" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r78_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.30587" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r79_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r79_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.414968" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r79_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.279007" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r80_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r80_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43667" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r80_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.33201" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r81_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r81_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.411938" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r81_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.284271" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r82_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r82_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43712" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r82_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.32234" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r83_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r83_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.360668" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r83_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.320053" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r84_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r84_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.403976" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r84_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.303536" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r85_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r85_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.423019" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r85_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.276962" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r86_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r86_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.361082" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r86_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.318275" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r87_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r87_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.380449" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r87_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.298256" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r88_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r88_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.41721" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r88_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.277191" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r89_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r89_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.393389" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r89_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.32431" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r90_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r90_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.361506" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r90_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.316376" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r91_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r91_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.41312" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r91_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.2802" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r92_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r92_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.4357" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r92_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.3361" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r93_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r93_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.419538" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r93_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.27578" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r94_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r94_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.422379" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r94_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.296333" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r95_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r95_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.363186" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r95_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.31115" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r96_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r96_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.413748" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r96_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.276009" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r97_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r97_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43615" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r97_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.32629" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r98_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r98_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.375248" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r98_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.28775" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r99_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r99_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.363981" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r99_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.305588" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r100_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r100_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.410639" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r100_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.281639" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r101_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r101_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.411539" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r101_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.27755" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r102_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r102_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.363491" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r102_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.307724" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r103_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r103_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43515" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r103_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.33039" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r104_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r104_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.404558" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r104_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.308083" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r105_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r105_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.410189" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r105_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.283691" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r106_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r106_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.438049" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r106_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.318241" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r107_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r107_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.42506" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r107_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.297218" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r108_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r108_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.41598" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r108_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.27452" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r109_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r109_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.388165" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r109_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.314016" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r110_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r110_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.410269" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r110_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.274834" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r111_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r111_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.358919" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r111_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.319489" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r112_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r112_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.37274" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r112_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.30854" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r113_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r113_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.409479" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r113_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.27906" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r114_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r114_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.359385" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r114_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.317451" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r115_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r115_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.359896" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r115_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.315239" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r116_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r116_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43561" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r116_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.32061" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r117_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r117_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.406838" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r117_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.31444" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r118_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r118_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.360363" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r118_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.313194" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r119_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r119_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43906" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r119_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.3141" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r120_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r120_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.426859" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r120_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.302269" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r121_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r121_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.361202" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r121_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.309525" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r122_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r122_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.361767" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r122_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.30706" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r123_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r123_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.423889" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r123_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.299446" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r124_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r124_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.44306" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r124_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.31329" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r125_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r125_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.378585" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r125_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.299495" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r126_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r126_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.434831" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r126_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.340111" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r127_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r127_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.403498" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r127_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.305916" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r128_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r128_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.36002" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r128_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.30648" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r129_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r129_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43953" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r129_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.31216" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r130_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r130_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.431799" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r130_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.303932" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r131_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r131_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.386417" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r131_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.322083" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r132_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r132_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43996" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r132_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.31008" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r133_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r133_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.385584" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r133_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.308769" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r134_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r134_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.39081" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r134_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.31902" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r135_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r135_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.383009" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r135_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.296524" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r136_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r136_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.429043" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r136_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.325163" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r137_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r137_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.408372" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r137_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.307553" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r138_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r138_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.386419" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r138_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.314964" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r139_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r139_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.436545" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r139_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.316636" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r140_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r140_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.358273" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r140_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.305908" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r141_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r141_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43462" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r141_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.32469" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r142_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r142_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.404195" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r142_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.316749" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r143_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r143_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.362511" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r143_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.312302" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r144_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r144_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.391548" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r144_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.325607" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r145_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r145_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43274" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r145_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.34056" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r146_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r146_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43364" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r146_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.32876" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r147_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r147_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.3846" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r147_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.323303" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r148_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r148_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.409058" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r148_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.338181" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r149_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r149_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.43272" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r149_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.33284" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r150_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r150_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.397259" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r150_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.33429" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r151_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r151_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.437988" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r151_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.312622" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r152_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r152_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.372231" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r152_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.31057" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r153_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r153_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.403109" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r153_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.342453" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r154_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r154_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.369698" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r154_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.305328" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r155_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r155_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.362648" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r155_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.302979" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r156_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r156_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.399988" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r156_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.344383" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r157_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r157_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.426958" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r157_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.291809" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r158_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r158_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.365919" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r158_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.271332" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r159_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r159_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.395119" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r159_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.3424" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r160_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r160_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.391658" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r160_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.311689" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r161_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r161_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.427219" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r161_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.312492" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r162_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r162_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.407681" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r162_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.312958" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r163_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r163_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.413622" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r163_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.312958" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r164_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r164_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.410981" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r164_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.31223" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r165_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r165_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.401537" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r165_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.316533" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r166_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r166_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.413173" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r166_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.307858" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r167_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r167_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.406167" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r167_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.305549" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r168_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r168_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.404408" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r168_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.313522" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r169_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r169_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.414845" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r169_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.305304" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r170_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r170_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.415912" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r170_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.307472" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r171_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r171_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.410429" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r171_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.308241" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r172_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r172_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.408979" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r172_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.305138" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r173_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r173_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.406549" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r173_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.30877" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r174_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r174_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.405983" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r174_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.302172" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r175_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r175_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.402427" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r175_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.309757" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r176_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r176_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.414455" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r176_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.310479" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r177_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r177_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.402326" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r177_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.312679" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r178_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r178_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.407734" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r178_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.302755" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r179_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r179_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.40213" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r179_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.315138" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r180_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r180_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.405701" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r180_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.316116" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r181_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r181_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.415396" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r181_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.306393" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r182_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r182_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.412381" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r182_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.311524" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r183_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r183_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.414107" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r183_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.303769" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r184_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r184_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.410591" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r184_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.314048" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r185_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r185_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.410995" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r185_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.309322" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r186_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r186_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.409362" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r186_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.306549" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r187_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r187_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.40757" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r187_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.315155" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r188_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r188_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.407111" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r188_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.301449" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r189_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r189_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.4051" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r189_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.30902" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r190_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r190_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.404898" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r190_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.302912" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r191_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r191_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.402748" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r191_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.304382" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r192_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r192_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.403807" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r192_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.312164" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r193_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r193_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.411891" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r193_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.305257" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r194_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r194_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.406559" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r194_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.312668" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r195_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r195_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.407436" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r195_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.307702" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r196_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r196_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.408396" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r196_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.304064" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r197_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r197_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.403967" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r197_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.306969" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r198_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r198_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.413274" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r198_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.319973" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r199_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r199_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.411849" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r199_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.319496" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r200_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r200_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.409546" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r200_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.318732" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r201_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r201_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.406112" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r201_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.317595" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r202_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r202_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.402935" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r202_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.316292" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r203_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r203_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.401041" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r203_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.315912" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r204_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r204_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.413729" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r204_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.317921" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r205_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r205_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.410372" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r205_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.316807" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r206_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r206_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.406675" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r206_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.315838" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r207_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r207_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.403379" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r207_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.315178" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r208_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r208_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.412667" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r208_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.315375" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r209_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r209_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.40544" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r209_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.312975" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r210_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r210_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.402105" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r210_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.31119" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r211_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r211_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.414714" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r211_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.313517" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r212_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r212_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.404284" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r212_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.309792" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r213_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r213_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.403933" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r213_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.302992" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r214_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r214_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.41231" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r214_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.31411" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r215_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r215_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.409228" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r215_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.313729" .
+
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r216_0> a http://www.opengis.net/gml/Point .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r216_0> http://www.w3.org/2003/01/geo/wgs84_pos#lat "31.40974" .
+<http://localhost:8080/source/2F2Fwww_opengis_net2Fgml2FPoint_1328136932390r216_0> http://www.w3.org/2003/01/geo/wgs84_pos#long "-102.30882" .

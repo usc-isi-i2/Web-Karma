@@ -49,6 +49,10 @@ public class SourceDescription {
 	private int uriIndex = 0;
 	
 	/**
+	 * The source prefix used during RDF generation.
+	 */
+	private String rdfSourcePrefix;
+	/**
 	 * true if column names should be used in the Rule; 
 	 * false if HNodePath should be used instead of the column names.
 	 */
@@ -71,11 +75,12 @@ public class SourceDescription {
 	 * <br>useColumnNames=false if the SD is used internally.
 	 */
 	public SourceDescription(RepFactory factory, DirectedWeightedMultigraph<Vertex, 
-			LabeledWeightedEdge> steinerTree, Vertex root, boolean useColumnNames){
+			LabeledWeightedEdge> steinerTree, Vertex root, String rdfSourcePrefix, boolean useColumnNames){
 		this.factory=factory;
 		this.steinerTree = steinerTree;
 		this.root=root;
 		this.useColumnNames = useColumnNames;
+		this.rdfSourcePrefix=rdfSourcePrefix;
 	}
 	
 	/**
@@ -102,7 +107,12 @@ public class SourceDescription {
 			rule += addBacktick(attr);
 		}
 		rule += ") -> \n" + s.toString();
-		String namespace = "s:'http://www.isi.edu/'";
+		if(rdfSourcePrefix==null)
+			rdfSourcePrefix = "http://localhost:8080/";
+		//add a delimiter if it doesn't exist, otherwise the URIs will not be well formed
+		if(!rdfSourcePrefix.endsWith("/") && !rdfSourcePrefix.endsWith("#"))
+			rdfSourcePrefix += "/";
+		String namespace = "s:'" + rdfSourcePrefix + "'";
 		String sourceDescription = "NAMESPACES:\n\n" + namespace + "\n\nLAV_RULES:\n\n" + rule;
 		logger.debug("SourceDescription:\n"+sourceDescription);
 		return sourceDescription;
@@ -126,6 +136,7 @@ public class SourceDescription {
 	 * 7. stop when v is DataProperty (leaves are reached)
 	 */
 	private void generateSourceDescription(Vertex v, StringBuffer s) throws KarmaException{
+		//System.out.println("Generate SD for node:" + v.getLabel() + " type:" + v.getNodeType());
 		if(v.getNodeType()==NodeType.Class){
 			String stmt = generateClassStatement(v);
 			if(s.length()!=0) s.append(" ^ ");
