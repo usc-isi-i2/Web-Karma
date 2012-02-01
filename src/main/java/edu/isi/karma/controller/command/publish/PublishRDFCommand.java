@@ -97,7 +97,6 @@ public class PublishRDFCommand extends Command {
 				}
 				else{
 					wrg.generateTriplesRow(worksheet);
-					wrg.generateTriplesCell(worksheet);	
 				}
 				String fileName = "./publish/Source Description/"+worksheet.getTitle()+".txt";
 				FileUtil.writeStringToFile(descString, fileName);
