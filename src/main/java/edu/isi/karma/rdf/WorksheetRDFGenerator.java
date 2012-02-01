@@ -197,7 +197,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		String val = n.getValue().asString();
 		//get the column name of this node
 		String columnName = factory.getHNode(n.getHNodeId()).getHNodePath(factory).toColumnNames();
-		logger.info("Generate triples for node:"+columnName +" with value=" + val);
+		//logger.info("Generate triples for node:"+columnName +" with value=" + val);
 		values.put(columnName, val);
 		//get other columns used in the RDF rule associated with columnName
 		Set<String> relatedVars = getRelatedRDFVariables(columnName);
@@ -295,7 +295,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 			String val = node.getValue().getValue().asString();
 			//the HNodePath for this node is used in the SD
 			String columnName = factory.getHNode(node.getKey()).getHNodePath(factory).toColumnNames();
-			System.out.println("val for " + columnName + "=" + val);
+			//System.out.println("val for " + columnName + "=" + val);
 			values.put(columnName,val);
 		}
 		return values;

@@ -98,7 +98,7 @@ public class GenerateSourceDescriptionTest extends TestCase {
 		GraphUtil.printGraph(tree);
 		
 		//false=use HNodePath in the SD
-		SourceDescription sd = new SourceDescription(f, tree, alignment.GetTreeRoot(),false);
+		SourceDescription sd = new SourceDescription(f, tree, alignment.GetTreeRoot(),"http://localhost:8080/source/", false);
 		String domainFile = sd.generateSourceDescription();
 		System.out.println("SourceDescription:\n" + domainFile);
 		System.out.println("Headers=" + worksheet.getHeaders().prettyPrint(f));

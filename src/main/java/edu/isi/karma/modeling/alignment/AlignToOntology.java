@@ -23,6 +23,8 @@ import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.alignmentHeadings.AlignmentForest;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 import edu.isi.mediator.gav.main.MediatorException;
 
 public class AlignToOntology {
@@ -67,7 +69,10 @@ public class AlignToOntology {
 			// Write the source description
 			//use true to generate a SD with column names (for use "outside" of Karma)
 			//use false for internal use
-			SourceDescription desc = new SourceDescription(vWorkspace.getRepFactory(), tree, root,false);
+			
+			SourceDescription desc = new SourceDescription(vWorkspace.getRepFactory(), tree, root,
+					ServletContextParameterMap
+					.getParameterValue(ContextParameter.RDF_SOURCE_PREFIX),false);
 			String descString = desc.generateSourceDescription();
 			System.out.println("SD="+ descString);
 			//generate RDF for the first 3 rows: mariam
@@ -79,11 +84,11 @@ public class AlignToOntology {
 				wrg.generateTriplesRowLimit(worksheet);
 				wrg.generateTriplesCellLimit(worksheet);	
 			}
-			////////////////////
 			String fileName = "./publish/Source Description/"+worksheet.getTitle()+".txt";
 			FileUtil.writeStringToFile(descString, fileName);
-			logger.info("Source description written to file: " + fileName);
-
+			logger.info("Source description written to file: " + fileName);			
+			////////////////////
+			
 			// Convert the tree into a AlignmentForest			
 			AlignmentForest forest = AlignmentForest.constructFromSteinerTree(
 					tree, root, sortedHeaderNodes);
