@@ -232,7 +232,7 @@ public class Alignment {
 		List<LabeledWeightedEdge> selectedLinks = new ArrayList<LabeledWeightedEdge>();
 		// order of adding lists is important: linksPreferredByUI should be first 
 		selectedLinks.addAll(linksPreferredByUI);
-//		selectedLinks.addAll(linksForcedByDomain);
+		selectedLinks.addAll(linksForcedByDomain);
 		selectedLinks.addAll(linksForcedByUser);
 		
 		GraphPreProcess graphPreProcess = new GraphPreProcess(this.graphBuilder.getGraph(), semanticNodes, selectedLinks );
