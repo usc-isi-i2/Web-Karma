@@ -275,4 +275,8 @@ public class Alignment {
 		return this.steinerTree;
 	}
 
+	public DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getAlignmentGraph() {
+		return this.graphBuilder.getGraph();
+	}
+	
 }
