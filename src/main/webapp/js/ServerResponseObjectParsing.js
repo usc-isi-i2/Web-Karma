@@ -3,7 +3,7 @@
  */
 
 function parse(data) {
-
+	
 	$.workspaceGlobalInformation = {
 		"id" : data["workspaceId"]
 	}
@@ -344,8 +344,9 @@ function parse(data) {
 					
 					// Populate the td with value if the cell is of content type
 					if(attrVals[0] == "c") {
-						if(cell["value"] == null)
-							console.log("Value not found in a content cell!");
+						if(cell["value"] == null) {
+							// console.log("Value not found in a content cell!");
+						}
 						if(cell["value"] != null){
 							var valueToShow = cell["value"];
 								
@@ -367,7 +368,7 @@ function parse(data) {
 						} else if (attrVals[3] == "i") {
 							tdTag.addClass("leftBorderinner" + cssClass);
 						} else {
-							console.log("Unknown border type detected!");
+							//console.log("Unknown border type detected!");
 						}
 					}
 					
@@ -378,7 +379,7 @@ function parse(data) {
 						} else if (attrVals[4] == "i") {
 							tdTag.addClass("rightBorderinner" + cssClass);
 						} else {
-							console.log("Unknown border type detected!");
+							// console.log("Unknown border type detected!");
 						}
 					}
 					
@@ -389,7 +390,7 @@ function parse(data) {
 						} else if (attrVals[5] == "i") {
 							tdTag.addClass("topBorderinner" + cssClass);
 						} else {
-							console.log("Unknown border type detected!");
+							// console.log("Unknown border type detected!");
 						}
 					}
 					
@@ -400,7 +401,7 @@ function parse(data) {
 						} else if (attrVals[6] == "i") {
 							tdTag.addClass("bottomBorderinner" + cssClass);
 						} else {
-							console.log("Unknown border type detected!");
+							// console.log("Unknown border type detected!");
 						}
 					}
 					

@@ -13,3 +13,4 @@ log/*
 !.gitignore
 publish/KML/*.*
 publish/Source Description/*.*
+publish/CSV/*

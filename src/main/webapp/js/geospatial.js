@@ -17,7 +17,7 @@ function showMapViewForWorksheet() {
 		   	dataType : "json",
 		   	complete : 
 		   		function (xhr, textStatus) {
-		   			console.log(xhr.responseText);
+		   			// console.log(xhr.responseText);
 		   			var json = $.parseJSON(xhr.responseText);
 		   			if(json["elements"][0]["updateType"] == "KarmaError") {
 		   				$.sticky(json["elements"][0]["Error"]);
@@ -90,7 +90,7 @@ function displayKMLandToggleIcon(worksheetId, fileName, worksheetPanel) {
   	var map = new google.maps.Map(document.getElementById('map_canvas_' + worksheetId), myOptions);
   	var filePath = fileName+"?rand="+(new Date()).valueOf();
   	var layer = new google.maps.KmlLayer(filePath);
-  	console.log(filePath)
+  	// console.log(filePath)
 	layer.setMap(map);
 	
 	// Create the DIV to hold the control and call the DownloadKMLControl() constructor

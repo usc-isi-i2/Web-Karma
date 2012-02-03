@@ -47,7 +47,7 @@
 		
 		<script type="text/javascript">
 			// Load and parse initial JSON
-			$.getJSON("/getExampleNestedJSON", function(data) {
+			$.getJSON("/getExampleNestedJSON?rand="+(new Date()).valueOf(), function(data) {
 				parse(data);
 				
 				// Attach upload handlers to the import file buttons

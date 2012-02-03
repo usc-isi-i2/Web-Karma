@@ -302,6 +302,10 @@ a.pagerSizeSelected {
     -webkit-transform: rotate(45deg);
     -moz-transform: rotate(45deg);
     -o-transform:rotate(45deg);
+    -ms-transform: rotate(45deg);
+    filter: progid:DXImageTransform.Microsoft.Matrix(
+                     M11=0.7071067811865476, M12=-0.7071067811865475, M21=0.7071067811865475, M22=0.7071067811865476, sizingMethod='auto expand');
+    zoom: 1;
     z-index: 0;
     position: relative;
     bottom: -4px;

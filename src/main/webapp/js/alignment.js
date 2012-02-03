@@ -101,7 +101,7 @@ function changeSemanticType(event) {
 				typeLabel.text(label["DisplayLabel"]);
 			else {
 				var typeItalicSpan = $("<span>").addClass("italic").text(label["DisplayLabel"]);
-				console.log(label["DisplayLabel"]);
+				// console.log(label["DisplayLabel"]);
 				typeLabel.text(" of " + label['DisplayDomainLabel']);
 				typeLabel.prepend($(typeItalicSpan));
 			}

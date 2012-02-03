@@ -120,7 +120,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	$("#generateSemanticTypesButton").click(function(){
 		optionsDiv.hide();
 		
-		console.log("Generating semantic types for table with ID: " + $("#WorksheetOptionsDiv").data("worksheetId"));
+		// console.log("Generating semantic types for table with ID: " + $("#WorksheetOptionsDiv").data("worksheetId"));
 		var info = new Object();
 		info["vWorksheetId"] = optionsDiv.data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -208,7 +208,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	$("#alignToOntologyButton").click(function(){
 		optionsDiv.hide();
 		
-		console.log("Aligning the table with ID: " + optionsDiv.data("worksheetId"));
+		// console.log("Aligning the table with ID: " + optionsDiv.data("worksheetId"));
 		var info = new Object();
 		info["vWorksheetId"] = optionsDiv.data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -235,7 +235,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	$("button#splitByComma").click(function(){
 		optionsDiv.hide();
 		
-		console.log("Splitting by comma for table: " + optionsDiv.data("worksheetId"));
+		// console.log("Splitting by comma for table: " + optionsDiv.data("worksheetId"));
 		var table = $("table#" + optionsDiv.data("worksheetId"));
 		var cols = $('td.columnHeadingCell[colspan="1"]', table);
 		

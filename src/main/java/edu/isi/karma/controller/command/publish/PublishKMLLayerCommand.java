@@ -104,10 +104,11 @@ public class PublishKMLLayerCommand extends Command {
 				}
 			});
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("KML File not found!", e);
+			return new UpdateContainer(
+					new ErrorUpdate(
+							"Error occurred while publishing KML layer!"));
 		}
-
-		return new UpdateContainer();
 	}
 
 	@SuppressWarnings("deprecation")
