@@ -37,12 +37,8 @@ import edu.isi.karma.controller.command.UndoRedoCommand;
 import edu.isi.karma.controller.command.UndoRedoCommandFactory;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommand;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommandFactory;
-import edu.isi.karma.controller.command.alignment.AlignToOntologyCommand;
-import edu.isi.karma.controller.command.alignment.AlignToOntologyCommandFactory;
 import edu.isi.karma.controller.command.alignment.DuplicateDomainOfLinkCommand;
 import edu.isi.karma.controller.command.alignment.DuplicateDomainOfLinkCommandFactory;
-import edu.isi.karma.controller.command.alignment.GenerateSemanticTypesCommand;
-import edu.isi.karma.controller.command.alignment.GenerateSemanticTypesCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommand;
 import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetDataPropertiesForClassCommand;
@@ -107,16 +103,12 @@ public class ExecutionController {
 				new ImportDatabaseTableCommandFactory());
 		commandFactoryMap.put(ImportXMLFileCommand.class.getSimpleName(),
 				new ImportXMLFileCommandFactory());
-		commandFactoryMap.put(GenerateSemanticTypesCommand.class.getSimpleName(),
-				new GenerateSemanticTypesCommandFactory());
 		commandFactoryMap.put(GetOntologyClassHierarchyCommand.class.getSimpleName(),
 				new GetOntologyClassHierarchyCommandFactory());
 		commandFactoryMap.put(GetDataPropertyHierarchyCommand.class.getSimpleName(),
 				new GetDataPropertyHierarchyCommandFactory());
 		commandFactoryMap.put(SetSemanticTypeCommand.class.getSimpleName(),
 				new SetSemanticTypeCommandFactory());
-		commandFactoryMap.put(AlignToOntologyCommand.class.getSimpleName(),
-				new AlignToOntologyCommandFactory());
 		commandFactoryMap.put(ImportOntologyCommand.class.getSimpleName(),
 				new ImportOntologyCommandFactory());
 		commandFactoryMap.put(GetDomainsForDataPropertyCommand.class.getSimpleName(),

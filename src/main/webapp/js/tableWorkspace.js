@@ -117,33 +117,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	});
 	
 	// Adding handlers to the buttons
-	$("#generateSemanticTypesButton").click(function(){
-		optionsDiv.hide();
-		
-		// console.log("Generating semantic types for table with ID: " + $("#WorksheetOptionsDiv").data("worksheetId"));
-		var info = new Object();
-		info["vWorksheetId"] = optionsDiv.data("worksheetId");
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "GenerateSemanticTypesCommand";
-			
-		var returned = $.ajax({
-		   	url: "/RequestController", 
-		   	type: "POST",
-		   	data : info,
-		   	dataType : "json",
-		   	complete : 
-		   		function (xhr, textStatus) {
-		   			//alert(xhr.responseText);
-		    		var json = $.parseJSON(xhr.responseText);
-		    		parse(json);
-			   	},
-			error :
-				function (xhr, textStatus) {
-		   			alert("Error occured while generating semantic types!" + textStatus);
-			   	}		   
-		});
-	});
-	
 	$("button#showModel").click(function(){
 		optionsDiv.hide();
 		
@@ -205,33 +178,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		});
 	});
 
-	$("#alignToOntologyButton").click(function(){
-		optionsDiv.hide();
-		
-		// console.log("Aligning the table with ID: " + optionsDiv.data("worksheetId"));
-		var info = new Object();
-		info["vWorksheetId"] = optionsDiv.data("worksheetId");
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "AlignToOntologyCommand";
-			
-		var returned = $.ajax({
-		   	url: "/RequestController", 
-		   	type: "POST",
-		   	data : info,
-		   	dataType : "json",
-		   	complete : 
-		   		function (xhr, textStatus) {
-		   			//alert(xhr.responseText);
-		    		var json = $.parseJSON(xhr.responseText);
-		    		parse(json);
-			   	},
-			error :
-				function (xhr, textStatus) {
-		   			//alert("Error occured while generating semantic types!" + textStatus);
-			   	}		   
-		});
-	});
-	
 	$("button#splitByComma").click(function(){
 		optionsDiv.hide();
 		
@@ -384,36 +330,147 @@ function hideNestedTablePager() {
 	nestedTablePager.hide();
 }
 
-function showTableCellMenu() {
+function styleAndAssignHandlersToTableCellMenu() {
+	var optionsDiv = $("div#tableCellMenuButtonDiv");
+	var tableCellMenu = $("div#tableCellToolBarMenu");
+	
+	// Stylize the buttons
+	$("button", tableCellMenu).button();
+	
+	// Assign handlers
+	optionsDiv.click(openTableCellOptions)
+		.button({
+			icons: {
+				primary: 'ui-icon-triangle-1-s'
+		    },
+			text: false
+			})
+		.mouseenter(function(){
+			$(this).show();
+		})	
+		.mouseleave(function(){
+			tableCellMenu.hide();
+	})
+	
+	$("button#editCellButton").click(function(event){
+		handleTableCellEditButton(event);
+	});
+	
+	$("button#viewValueButton" ).click(function(){
+		var tdTagId = $("#tableCellToolBarMenu").data("parentCellId");
+		var value = $("td#" + tdTagId).data("fullValue");
+		if(value) {
+			$("#CellValueDialog").text(value).dialog({height: 300, width: 400, show:'blind'
+				});
+		}
+	});
+	
+	// Hide the option button when mouse leaves the menu
+	tableCellMenu.mouseenter(function(){
+		$(this).show();
+	})
+	.mouseleave(function() {
+		optionsDiv.hide();
+		$(this).hide();
+	});
+}
+
+function openTableCellOptions() {
+	var tableCellMenu = $("div#tableCellToolBarMenu");
+	tableCellMenu.data("parentCellId", $(this).data("parentCellId"));
+	tableCellMenu.css({"position":"absolute",
+		"top":$(this).offset().top + 15, 
+		"left": $(this).offset().left + $(this).width()/2 - $(tableCellMenu).width()/2}).show();
+    					
+	// if($(this).parents("td").hasClass("expandValueCell")){
+		// $("#viewValueButton").show();
+		// $("#tableCellMenutriangle").css({"margin-left" : "32px"});
+		// $("div#tableCellToolBarMenu").css({"width": "105px"});
+	// } else {
+		// $("#viewValueButton").hide();
+		// $("#tableCellMenutriangle").css({"margin-left" : "10px"});
+		// $("div#tableCellToolBarMenu").css({"width": "48px"});
+	// }
+	// $("div#tableCellToolBarMenu").css({"position":"absolute",
+    					// "top":$(this).offset().top + 10, 
+    					// "left": $(this).offset().left + $(this).width()/2 - $("div#tableCellToolBarMenu").width()/2}).show();
+}
+
+function showTableCellMenuButton() {
 	// Get the parent table
-	$("div#tableCellToolBarMenu").data("parentCellId", $(this).parents("td").attr("id"));
-	if($(this).parents("td").hasClass("expandValueCell")){
-		$("#viewValueButton").show();
-		$("#tableCellMenutriangle").css({"margin-left" : "32px"});
-		$("div#tableCellToolBarMenu").css({"width": "105px"});
-	} else {
-		$("#viewValueButton").hide();
-		$("#tableCellMenutriangle").css({"margin-left" : "10px"});
-		$("div#tableCellToolBarMenu").css({"width": "48px"});
-	}
-	$("div#tableCellToolBarMenu").css({"position":"absolute",
-    					"top":$(this).offset().top + 10, 
-    					"left": $(this).offset().left + $(this).width()/2 - $("div#tableCellToolBarMenu").width()/2}).show();
+	var tdTag = $(this);
+	var optionsDiv = $("div#tableCellMenuButtonDiv");
+	optionsDiv.data("parentCellId", tdTag.attr("id"));
+	
+	// Show it at the right place
+	var top = $(tdTag).offset().top + $(tdTag).height()-18;
+	var left = $(tdTag).offset().left + $(tdTag).width()-25;
+	optionsDiv.css({"position":"absolute",
+		"top":top, 
+		"left": left}).show();
 }
 
-function hideTableCellMenu() {
-	$("div#tableCellToolBarMenu").hide();
+function hideTableCellMenuButton() {
+	$("div#tableCellMenuButtonDiv").hide();
 }
 
-function config(event) {
-	$("#toolBarMenu").data("parent", $(this));
-    $("#toolBarMenu").css({"position":"absolute","width":"165px",
-    					"top":$(this).offset().top + $(this).height(), 
-    					//"left":event.clientX-150	,
-    					"left": $(this).offset().left + $(this).width()/2 - $("#toolBarMenu").width()/2}).show();
-    					//"top": event.clientY-10}).show();    
+function styleAndAssignHandlersToColumnHeadingMenu() {
+	var optionsDiv = $("div#columnHeadingMenuButtonDiv");
+	var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+	
+	$("button", columnHeadingMenu).button();
+	
+	optionsDiv.click(openColumnHeadingOptions)
+		.button({
+			icons: {
+				primary: 'ui-icon-triangle-1-s'
+		    },
+			text: false
+			})
+		.mouseenter(function(){
+			$(this).show();
+		})	
+		.mouseleave(function(){
+				columnHeadingMenu.hide();
+	})
+	// Hide the option button when mouse leaves the menu
+	columnHeadingMenu.mouseleave(function() {
+		optionsDiv.hide();
+		columnHeadingMenu.hide();
+	}).mouseenter(function(){
+		$(this).show();
+	});
+	
+	// Assign handler to column rename button
+	$("button#renameColumnButton").click(function() {
+		
+	});
+}
+
+function openColumnHeadingOptions() {
+	var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+	columnHeadingMenu.data("parentCellId", $(this).data("parentCellId"));
+	columnHeadingMenu.css({"position":"absolute",
+		"top":$(this).offset().top + 15, 
+		"left": $(this).offset().left + $(this).width()/2 - $(columnHeadingMenu).width()/2}).show();
+}
+
+function showColumnOptionButton(event) {
+	var tdTag = $(this);
+	var optionsDiv = $("div#columnHeadingMenuButtonDiv");
+	
+	optionsDiv.data("parentCellId", tdTag.attr("id"));
+    
+    // Show it at the right place
+	var top = $(tdTag).offset().top + $(tdTag).height()-18;
+	var left = $(tdTag).offset().left + $(tdTag).width()-25;
+	optionsDiv.css({"position":"absolute",
+		"top":top, 
+		"left": left}).show();
 };
 
-function configOut() {    
-	$("#toolBarMenu").hide();    
+function hideColumnOptionButton() {    
+	$("div#columnHeadingMenuButtonDiv").hide();    
 };
+
+

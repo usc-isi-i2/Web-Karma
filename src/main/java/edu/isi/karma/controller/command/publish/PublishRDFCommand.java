@@ -29,18 +29,18 @@ public class PublishRDFCommand extends Command {
 	private String rdfSourcePrefix;
 
 	public enum JsonKeys {
-		updateType, fileUrl
+		updateType, fileUrl, vWorksheetId
 	}
 
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishRDFCommand.class);
 
-	protected PublishRDFCommand(String id, String vWorksheetId, String publicRDFAddress,
-								String rdfSourcePrefix) {
+	protected PublishRDFCommand(String id, String vWorksheetId,
+			String publicRDFAddress, String rdfSourcePrefix) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
-		this.publicRDFAddress=publicRDFAddress;
-		this.rdfSourcePrefix=rdfSourcePrefix;
+		this.publicRDFAddress = publicRDFAddress;
+		this.rdfSourcePrefix = rdfSourcePrefix;
 	}
 
 	@Override
@@ -68,47 +68,52 @@ public class PublishRDFCommand extends Command {
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
-		final String rdfFileName = "./src/main/webapp/RDF/" + vWorksheetId + ".rdf";
-		
-		//get alignment for this worksheet
-		System.out.println("Get alignment for " + vWorksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorksheetId + "AL");
-		if(alignment==null){
-			System.out.println("Alignment is NULL for " + vWorksheetId);
+		final String rdfFileName = "./src/main/webapp/RDF/" + vWorksheetId
+				+ ".rdf";
+
+		// get alignment for this worksheet
+		logger.info("Get alignment for " + vWorksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(
+				vWorkspace.getWorkspace().getId() + ":" + vWorksheetId + "AL");
+		if (alignment == null) {
+			logger.info("Alignment is NULL for " + vWorksheetId);
 			return new UpdateContainer(new ErrorUpdate(
-			"Please align the worksheet before generating RDF!"));			
+					"Please align the worksheet before generating RDF!"));
 		}
 
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = 
-			alignment.getSteinerTree();
+		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
+				.getSteinerTree();
 		Vertex root = alignment.GetTreeRoot();
 
-		try{
+		try {
 			if (root != null) {
 				// Write the source description
-				//use true to generate a SD with column names (for use "outside" of Karma)
-				//use false for internal use
-				SourceDescription desc = new SourceDescription(vWorkspace.getRepFactory(), tree, root,rdfSourcePrefix, false);
+				// use true to generate a SD with column names (for use
+				// "outside" of Karma)
+				// use false for internal use
+				SourceDescription desc = new SourceDescription(
+						vWorkspace.getRepFactory(), tree, root,
+						rdfSourcePrefix, false);
 				String descString = desc.generateSourceDescription();
-				System.out.println("SD="+ descString);
-				WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(vWorkspace.getRepFactory(), descString, rdfFileName);
-				if(worksheet.getHeaders().hasNestedTables()){
+				logger.info("SD=" + descString);
+				WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(
+						vWorkspace.getRepFactory(), descString, rdfFileName);
+				if (worksheet.getHeaders().hasNestedTables()) {
 					wrg.generateTriplesCell(worksheet);
-				}
-				else{
+				} else {
 					wrg.generateTriplesRow(worksheet);
 				}
-				String fileName = "./publish/Source Description/"+worksheet.getTitle()+".txt";
+				String fileName = "./publish/Source Description/"
+						+ worksheet.getTitle() + ".txt";
 				FileUtil.writeStringToFile(descString, fileName);
 				logger.info("Source description written to file: " + fileName);
 				logger.info("RDF written to file: " + rdfFileName);
-				////////////////////
+				// //////////////////
 
 			} else {
 				return new UpdateContainer(new ErrorUpdate(
-				"Alignment returned null root!!"));			
+						"Alignment returned null root!!"));
 			}
-
 
 			return new UpdateContainer(new AbstractUpdate() {
 				@Override
@@ -117,17 +122,19 @@ public class PublishRDFCommand extends Command {
 					JSONObject outputObject = new JSONObject();
 					try {
 						outputObject.put(JsonKeys.updateType.name(),
-						"PublishRDFUpdate");
+								"PublishRDFUpdate");
 						outputObject.put(JsonKeys.fileUrl.name(),
-								publicRDFAddress + vWorksheetId +".rdf");
+								publicRDFAddress + vWorksheetId + ".rdf");
+						outputObject.put(JsonKeys.vWorksheetId.name(),
+								vWorksheetId);
 						pw.println(outputObject.toString(4));
 					} catch (JSONException e) {
 						logger.error("Error occured while generating JSON!");
 					}
 				}
 			});
-		}catch(Exception e){
-			return new UpdateContainer(new ErrorUpdate(e.getMessage()));						
+		} catch (Exception e) {
+			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}
 	}
 

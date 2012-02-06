@@ -130,6 +130,6 @@ public class AlignToOntology {
 	}
 
 	private String getAlignmentId() {
-		return vWorksheetId + "AL";
+		return vWorkspace.getWorkspace().getId() + ":" + vWorksheetId + "AL";
 	}
 }
