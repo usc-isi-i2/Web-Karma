@@ -719,7 +719,7 @@ function parse(data) {
 		}
 		else if(element["updateType"] == "PublishRDFUpdate") {
 			var titleDiv = $("div#" + element["vWorksheetId"] +" div.WorksheetTitleDiv");
-			var downloadLink = $("<a>").attr("href",element["fileUrl"]).text("RDF").addClass("RdfDownloadLink");
+			var downloadLink = $("<a>").attr("href",element["fileUrl"]).text("RDF").addClass("RdfDownloadLink").attr("target","_blank");
 			$("div.tableTitleTextDiv", titleDiv).after(downloadLink);
 		}
 	});
