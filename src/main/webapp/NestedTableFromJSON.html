@@ -129,50 +129,20 @@
 		</script>
 		<script>
 			$(function() {
-				// JQueryify the column tool bar
-				$( "#renameColumnButton" ).button({
-				});
-				$( "#deleteColumnButton" ).button({
-				});
-				$( "#hideColumnButton" ).button({
-				})
-				$("#toolBarMenu").hide().mouseenter(function(){
-					$("#toolBarMenu").show();
-				}).mouseleave(function(){
-					$("#toolBarMenu").hide();
-				});
-				
-				// JQueryify the table cell tool bar
-				$("#editCellButton" ).button();
-				$("#editCellButton").click(function(event){
-					handleTableCellEditButton(event);
-				});
-				$("#viewValueButton" ).button();
-				$("#viewValueButton" ).click(function(){
-					var tdTagId = $("#tableCellToolBarMenu").data("parentCellId");
-					var value = $("td#" + tdTagId).data("fullValue");
-					if(value) {
-						$("#CellValueDialog").text(value).dialog({height: 300, width: 400, show:'blind'
-							});
-					}
-				});
-				$("#tableCellToolBarMenu").hide().mouseenter(function(){
-					$("#tableCellToolBarMenu").show();
-				}).mouseleave(function(){
-					$("#tableCellToolBarMenu").hide();
-				});
-				
 				// Database Import div options 
-				$("#importDatabaseTableButton").button();
-				styleDatabaseDialogObjects();
-				addDatabaseImportClickHandlers();
-				$("#importDatabaseTableButton").click(openDatabaseTableImportDialog);
+				styleAndAssignHandlerstoDatabaseImportObjects();
 				
 				// Stylize the worksheet options div panel
 				styleAndAssignHandlersToWorksheetOptionButtons();
 				
 				// Attach handlers to the ontology options table
 				attachOntologyOptionsRadioButtonHandlers();
+				
+				// Assign style and handlers to table cell menu
+				styleAndAssignHandlersToTableCellMenu();
+				
+				// Assign style and handlers to column heading menu
+				styleAndAssignHandlersToColumnHeadingMenu();
 				
 				// When the user changes header line index
 				$('.CSVImportOption').change(function() {
@@ -305,20 +275,14 @@
 			</div>
 			<div id="tablesWorkspace"></div>
 		</div>
-		<div id="toolBarMenu" style="display: none">
-			<div id="triangle" align="center"></div>
-			<div class="fg-toolbar ui-widget-header ui-corner-all ui-helper-clearfix" align="center" id="testToolbar">
-					<button class="fg-button ui-state-default" id="renameColumnButton">Rename</button>
-					<button class="fg-button ui-state-default" id="deleteColumnButton">Delete</button>
-					<button class="fg-button ui-state-default" id="hideColumnButton">Hide</button>
-			</div>
+		<div id="columnHeadingDropDownMenu" class="ui-corner-all" style="display: none">
+			<button id="renameColumnButton">Rename</button>
+			<button id="deleteColumnButton">Delete</button>
+			<button id="hideColumnButton">Hide</button>
 		</div>
-		<div id="tableCellToolBarMenu" style="display: none">
-			<div id="tableCellMenutriangle"></div>
-			<div class="fg-toolbar ui-widget-header ui-corner-all ui-helper-clearfix" align="center" id="tableCellTestToolbar">
-					<button class="fg-button ui-state-default" id="editCellButton">Edit</button>
-					<button class="fg-button ui-state-default" id="viewValueButton">Expand</button>
-			</div>
+		<div id="tableCellToolBarMenu" class="ui-corner-all" style="display: none">
+			<button id="editCellButton">Edit</button>
+			<button id="viewValueButton">Expand</button>
 		</div>
 		<div id="CellValueDialog" title="Cell Value">
 		</div>
@@ -402,7 +366,7 @@
 				</tbody>
 			</table>
 			<br>
-			<div class="ui-widget" id="DatabaseImportErrorWindow">
+			<div class="ui-widget" id="DatabaseImportErrorWindow" style="display: none">
 				<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"> 
 					<p id="databaseImportErrorWindow"><span class="ui-icon ui-icon-alert" 
 							style="float: left; margin-right: .3em;"></span> 
@@ -507,5 +471,7 @@
 			<span class="mediumSizedFont">Choose column:</span>
 			<select id="splitByCommaColumnList"></select>
 		</div>
+		<div id="tableCellMenuButtonDiv" style="display: none"></div>
+		<div id="columnHeadingMenuButtonDiv" style="display: none"></div>
 	</body>
 </html>

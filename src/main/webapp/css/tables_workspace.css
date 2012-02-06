@@ -83,6 +83,28 @@
     margin-right: 4px;
 }
 
+div#tableCellMenuButtonDiv {
+	float: left;
+	/*display: inline-block;*/
+	cursor: pointer;
+    width: 20px;
+    height: 12px;
+    margin-left:4px;
+    margin-top: 5px;
+    margin-right: 4px;
+}
+
+div#columnHeadingMenuButtonDiv {
+	float: left;
+	/*display: inline-block;*/
+	cursor: pointer;
+    width: 20px;
+    height: 12px;
+    margin-left:4px;
+    margin-top: 5px;
+    margin-right: 4px;
+}
+
 div.rightOptionsToolbar {
 	float: right;
 }
@@ -302,9 +324,8 @@ a.pagerSizeSelected {
     -webkit-transform: rotate(45deg);
     -moz-transform: rotate(45deg);
     -o-transform:rotate(45deg);
+    filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.7071067811865476, M12=-0.7071067811865475, M21=0.7071067811865475, M22=0.7071067811865476, sizingMethod='auto expand');
     -ms-transform: rotate(45deg);
-    filter: progid:DXImageTransform.Microsoft.Matrix(
-                     M11=0.7071067811865476, M12=-0.7071067811865475, M21=0.7071067811865475, M22=0.7071067811865476, sizingMethod='auto expand');
     zoom: 1;
     z-index: 0;
     position: relative;
@@ -352,6 +373,28 @@ div#WorksheetOptionsDiv {
 div#WorksheetOptionsDiv button {
 	margin: 2px;
 	width: 130px;
+}
+
+div#tableCellToolBarMenu {
+	width: 48px;
+	padding: 2px;
+	background-color: #A3A3A3;
+}
+
+div#tableCellToolBarMenu button {
+	margin: 2px;
+	width: 44px;
+}
+
+div#columnHeadingDropDownMenu {
+	width: 64px;
+	padding: 2px;
+	background-color: #A3A3A3;
+}
+
+div#columnHeadingDropDownMenu button {
+	margin: 2px;
+	width: 60px;
 }
 
 table#CRFSuggestedLabelsTable {

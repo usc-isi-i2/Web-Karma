@@ -71,10 +71,10 @@ public class PublishRDFCommand extends Command {
 		final String rdfFileName = "./src/main/webapp/RDF/" + vWorksheetId + ".rdf";
 		
 		//get alignment for this worksheet
-		System.out.println("Get alignment for " + vWorksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorksheetId + "AL");
+		logger.info("Get alignment for " + vWorksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId() + ":" + vWorksheetId + "AL");
 		if(alignment==null){
-			System.out.println("Alignment is NULL for " + vWorksheetId);
+			logger.info("Alignment is NULL for " + vWorksheetId);
 			return new UpdateContainer(new ErrorUpdate(
 			"Please align the worksheet before generating RDF!"));			
 		}
@@ -90,7 +90,7 @@ public class PublishRDFCommand extends Command {
 				//use false for internal use
 				SourceDescription desc = new SourceDescription(vWorkspace.getRepFactory(), tree, root,rdfSourcePrefix, false);
 				String descString = desc.generateSourceDescription();
-				System.out.println("SD="+ descString);
+				logger.info("SD="+ descString);
 				WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(vWorkspace.getRepFactory(), descString, rdfFileName);
 				if(worksheet.getHeaders().hasNestedTables()){
 					wrg.generateTriplesCell(worksheet);

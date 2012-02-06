@@ -37,8 +37,6 @@ import edu.isi.karma.controller.command.UndoRedoCommand;
 import edu.isi.karma.controller.command.UndoRedoCommandFactory;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommand;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommandFactory;
-import edu.isi.karma.controller.command.alignment.AlignToOntologyCommand;
-import edu.isi.karma.controller.command.alignment.AlignToOntologyCommandFactory;
 import edu.isi.karma.controller.command.alignment.DuplicateDomainOfLinkCommand;
 import edu.isi.karma.controller.command.alignment.DuplicateDomainOfLinkCommandFactory;
 import edu.isi.karma.controller.command.alignment.GenerateSemanticTypesCommand;
@@ -115,8 +113,6 @@ public class ExecutionController {
 				new GetDataPropertyHierarchyCommandFactory());
 		commandFactoryMap.put(SetSemanticTypeCommand.class.getSimpleName(),
 				new SetSemanticTypeCommandFactory());
-		commandFactoryMap.put(AlignToOntologyCommand.class.getSimpleName(),
-				new AlignToOntologyCommandFactory());
 		commandFactoryMap.put(ImportOntologyCommand.class.getSimpleName(),
 				new ImportOntologyCommandFactory());
 		commandFactoryMap.put(GetDomainsForDataPropertyCommand.class.getSimpleName(),

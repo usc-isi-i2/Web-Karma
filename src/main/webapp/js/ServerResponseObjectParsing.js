@@ -215,14 +215,9 @@ function parse(data) {
 						
 						//Add the name
 						tdTag.append($("<div>").addClass("ColumnHeadingNameDiv")
-							.text(cell["contentCell"]["label"])
-							//.mouseenter(config)
-							//.mouseleave(configOut)
-						);
-						
-						// tdTag.text(cell["columnNameFull"])
-							// .mouseenter(config)
-							// .mouseleave(configOut);
+							.text(cell["contentCell"]["label"]))
+							.mouseenter(showColumnOptionButton)
+							.mouseleave(hideColumnOptionButton);
 					} else if(cell["cellType"] == "headingPadding") {
 						// Add the colspan
 						tdTag.attr("colspan", cell["colSpan"]);
@@ -351,9 +346,9 @@ function parse(data) {
 							var valueToShow = cell["value"];
 								
 							tdTag.append($("<span>").addClass("cellValue")
-										.text(valueToShow)
-										.mouseenter(showTableCellMenu)
-										.mouseleave(hideTableCellMenu))
+										.text(valueToShow))
+									.mouseenter(showTableCellMenuButton)
+									.mouseleave(hideTableCellMenuButton)
 									.attr('id', cell["nodeId"]);
 						}
 							

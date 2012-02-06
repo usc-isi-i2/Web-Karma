@@ -9,12 +9,12 @@ function openDatabaseTableImportDialog() {
 			"OK":function() { $(this).dialog("close"); }}});
 }
 
-function styleDatabaseDialogObjects() {
-	$("#DatabaseImportErrorWindow").hide();
-	$("#DatabaseImportFieldsButton").button();
-}
-
-function addDatabaseImportClickHandlers() {
+function styleAndAssignHandlerstoDatabaseImportObjects(){
+	$("button#importDatabaseTableButton").button();
+	$("button#DatabaseImportFieldsButton").button();
+	
+	$("#importDatabaseTableButton").click(openDatabaseTableImportDialog);
+	
 	// Click handler for button that loads the databases or tables
 	$("#DatabaseImportFieldsButton").click(function (){
 		// Check if any field has been left empty
