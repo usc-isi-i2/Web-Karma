@@ -117,33 +117,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	});
 	
 	// Adding handlers to the buttons
-	$("#generateSemanticTypesButton").click(function(){
-		optionsDiv.hide();
-		
-		// console.log("Generating semantic types for table with ID: " + $("#WorksheetOptionsDiv").data("worksheetId"));
-		var info = new Object();
-		info["vWorksheetId"] = optionsDiv.data("worksheetId");
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "GenerateSemanticTypesCommand";
-			
-		var returned = $.ajax({
-		   	url: "/RequestController", 
-		   	type: "POST",
-		   	data : info,
-		   	dataType : "json",
-		   	complete : 
-		   		function (xhr, textStatus) {
-		   			//alert(xhr.responseText);
-		    		var json = $.parseJSON(xhr.responseText);
-		    		parse(json);
-			   	},
-			error :
-				function (xhr, textStatus) {
-		   			alert("Error occured while generating semantic types!" + textStatus);
-			   	}		   
-		});
-	});
-	
 	$("button#showModel").click(function(){
 		optionsDiv.hide();
 		
@@ -205,33 +178,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		});
 	});
 
-	$("#alignToOntologyButton").click(function(){
-		optionsDiv.hide();
-		
-		// console.log("Aligning the table with ID: " + optionsDiv.data("worksheetId"));
-		var info = new Object();
-		info["vWorksheetId"] = optionsDiv.data("worksheetId");
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "AlignToOntologyCommand";
-			
-		var returned = $.ajax({
-		   	url: "/RequestController", 
-		   	type: "POST",
-		   	data : info,
-		   	dataType : "json",
-		   	complete : 
-		   		function (xhr, textStatus) {
-		   			//alert(xhr.responseText);
-		    		var json = $.parseJSON(xhr.responseText);
-		    		parse(json);
-			   	},
-			error :
-				function (xhr, textStatus) {
-		   			//alert("Error occured while generating semantic types!" + textStatus);
-			   	}		   
-		});
-	});
-	
 	$("button#splitByComma").click(function(){
 		optionsDiv.hide();
 		

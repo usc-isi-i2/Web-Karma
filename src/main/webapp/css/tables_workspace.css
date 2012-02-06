@@ -458,6 +458,11 @@ span.tag {;
 	margin-left: 5px;
 }
 
+a.RdfDownloadLink {
+	margin-left: 8px;
+	font-size: 0.8em;
+}
+
 /*span.cellValue {
 	display: inline;
 }*/

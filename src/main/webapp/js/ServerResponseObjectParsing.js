@@ -717,6 +717,11 @@ function parse(data) {
 				});
 			});
 		}
+		else if(element["updateType"] == "PublishRDFUpdate") {
+			var titleDiv = $("div#" + element["vWorksheetId"] +" div.WorksheetTitleDiv");
+			var downloadLink = $("<a>").attr("href",element["fileUrl"]).text("RDF").addClass("RdfDownloadLink");
+			$("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+		}
 	});
 }
 
