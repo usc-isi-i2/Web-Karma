@@ -32,7 +32,7 @@ public class OntologyManager {
 		{
 			OntDocumentManager mgr = new OntDocumentManager();
 			mgr.setProcessImports(false);
-//			OntModelSpec s = new OntModelSpec( OntModelSpec.OWL_MEM_RDFS_INF );
+			OntModelSpec s = new OntModelSpec( OntModelSpec.OWL_MEM_RDFS_INF );
 			s.setDocumentManager( mgr );
 			ontModel = ModelFactory.createOntologyModel(s);
 			_InternalInstance = new OntologyManager();
