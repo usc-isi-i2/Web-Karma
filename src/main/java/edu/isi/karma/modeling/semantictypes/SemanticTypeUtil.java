@@ -39,27 +39,24 @@ public class SemanticTypeUtil {
 		Collection<Node> nodes = new ArrayList<Node>();
 		worksheet.getDataTable().collectNodes(path, nodes);
 
-		// Use HashSet to avoid duplicates
-		HashSet<String> nodeValues = new HashSet<String>();
+		ArrayList<String> nodeValues = new ArrayList<String>();
 		for (Node n : nodes) {
 			String nodeValue = n.getValue().asString();
 			if (nodeValue != null && !nodeValue.equals(""))
 				nodeValues.add(nodeValue);
 		}
 
-		ArrayList<String> nodeValuesList = new ArrayList<String>(nodeValues);
-
 		// Shuffling the values so that we get randomly chosen values to train
-		Collections.shuffle(nodeValuesList);
+		Collections.shuffle(nodeValues);
 
-		if (nodeValuesList.size() > TRAINING_EXAMPLE_MAX_COUNT) {
+		if (nodeValues.size() > TRAINING_EXAMPLE_MAX_COUNT) {
 			ArrayList<String> subset = new ArrayList<String>();
 			// SubList method of ArrayList causes ClassCast exception
 			for (int i = 0; i < TRAINING_EXAMPLE_MAX_COUNT; i++)
-				subset.add(nodeValuesList.get(i));
+				subset.add(nodeValues.get(i));
 			return subset;
 		}
-		return nodeValuesList;
+		return nodeValues;
 	}
 
 	public static boolean populateSemanticTypesUsingCRF(Worksheet worksheet,
@@ -188,8 +185,8 @@ public class SemanticTypeUtil {
 						examples, 1, predictedLabels, confidenceScores, null,
 						columnFeatures);
 //				logger.debug("Example: " + examples.get(0) + " Label: "
-//						+ predictedLabels.get(0) + " Score: "
-//						+ confidenceScores.get(0));
+//						+ predictedLabels + " Score: "
+//						+ confidenceScores);
 				if (!result) {
 					logger.error("Error while predicting type for " + nodeVal);
 					continue;

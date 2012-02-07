@@ -690,7 +690,9 @@ function parse(data) {
 		
 		else if(element["updateType"] == "ImportOntologyCommand") {
 			if(!element["Import"])
-				alert("Ontology import failed!");
+				$.sticky("Ontology import failed!");
+			else
+				$.sticky("Ontology successfully imported!");
 		} 
 		
 		else if(element["updateType"] == "TagsUpdate") {

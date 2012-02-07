@@ -3,6 +3,6 @@
         "maxCharactersInHeader": 10,
         "maxCharactersInCell": 100,
         "maxRowsToShowInNestedTables": 5,
-		"defaultRowsToShowInTopTables":200
+		"defaultRowsToShowInTopTables":50
     }
 }
