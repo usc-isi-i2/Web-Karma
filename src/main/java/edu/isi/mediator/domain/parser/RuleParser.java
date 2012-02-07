@@ -104,6 +104,9 @@ public class RuleParser {
 				
 				//why do I remove the backtick for the variables? If they have a backtick I must
 				//need them mariam:01/24/2012
+				//at least I should record that it had a backtick
+				//I especially need this for the RDF generation; If I loose the info when I generate
+				//subrules I can't preserve the backtick
 				//remove the backtick when you need to use it
 				//var = MediatorUtil.removeBacktick(var);
 				p.addTerm(var);

@@ -1,6 +1,7 @@
 package edu.isi.karma.rdf;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +54,33 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		super(domainStr, outputFile);
 		this.factory=factory;
 	}
+	/*
+	 * Example:
+	 * 	StringWriter outS = new StringWriter();
+	 *  PrintWriter pw = new PrintWriter(outS);
+	 *  
+	 *  new PrintWriter(System.out) 
+	 */
 
+	/** Creates a WorksheetRDFGenerator.
+	 * @param factory
+	 * @param domainStr
+	 * 		a string in the format of a mediator domain file that contains namespaces and the 
+	 * 		source description for this worksheet.Should contain "NAMESPACES" 
+	 * 		and "LAV_RULES" sections (containing one rule).
+	 * @param writer
+	 * 		PrintWriter to a String or to System.out
+	 * @throws MediatorException
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
+	public WorksheetRDFGenerator(RepFactory factory, String domainStr, PrintWriter writer)
+		throws MediatorException, ClassNotFoundException, IOException {
+		super(domainStr, writer);
+		this.factory=factory;
+	}
+
+	
 	/** Generates RDF for the given worksheet by invoking the RDF generator row by row.
 	 * <br>Only for tables WITHOUT nested tables.
 	 * <br>The source description for the entire table is used.
@@ -136,7 +163,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 			for (Node n : r.getNodes()) {
 				if(!n.hasNestedTable()){
 					//no nested table
-					generateTriplesCell(n);
+					generateTriplesCell(n.getId());
 					//I want to see the triples as they are generated 
 					outWriter.flush();
 				}
@@ -160,7 +187,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 			for (Node n : r.getNodes()) {
 				if(!n.hasNestedTable()){
 					//no nested table
-					generateTriplesCell(n);
+					generateTriplesCell(n.getId());
 					//I want to see the triples as they are generated 
 					outWriter.flush();
 				}
@@ -178,13 +205,14 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 	 *  <br> either in the same row as the current node (at the same level in the row, not in a nested table)
 	 *  <br> OR, if n belongs  to a nested table, the values for other vars can come from the row that this
 	 *  <br> nested table belongs to.
-	 * @param n
-	 * 		a Node
+	 * @param nodeId
+	 * 		a nodeId
 	 * @throws MediatorException
 	 * @throws IOException
 	 * @throws KarmaException 
 	 */
-	public void generateTriplesCell(Node n) throws MediatorException, IOException, KarmaException{
+	public void generateTriplesCell(String nodeId) throws MediatorException, IOException, KarmaException{
+		Node n = factory.getNode(nodeId);
 		//logger.debug("Generate triples for node:"+n);
 		if(n.hasNestedTable()){
 			//This should not happen

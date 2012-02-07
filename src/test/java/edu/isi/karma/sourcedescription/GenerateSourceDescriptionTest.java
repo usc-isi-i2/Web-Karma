@@ -2,6 +2,7 @@ package edu.isi.karma.sourcedescription;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,7 +103,7 @@ public class GenerateSourceDescriptionTest extends TestCase {
 		String domainFile = sd.generateSourceDescription();
 		System.out.println("SourceDescription:\n" + domainFile);
 		System.out.println("Headers=" + worksheet.getHeaders().prettyPrint(f));
-		WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(f, domainFile, null);
+		WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(f, domainFile, new PrintWriter(System.out));
 		//wrg.generateTriplesRow(worksheet);
 		wrg.generateTriplesCell(worksheet);
 	}

@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -104,7 +105,7 @@ public class TableRDFGenerator {
 	 * 		The domain file as a string. Should contain "NAMESPACES" 
 	 * 		and "LAV_RULES" sections (containing one rule).
 	 * @param outputFile
-	 * 		location of output file OR null if output to Stdout
+	 * 		location of output file
 	 * @throws MediatorException
 	 * @throws IOException
 	 * @throws ClassNotFoundException
@@ -112,6 +113,30 @@ public class TableRDFGenerator {
 	public TableRDFGenerator(String domainStr, String outputFile) 
 				throws MediatorException, ClassNotFoundException, IOException{
 		initParams(domainStr,outputFile);
+		generateSubrules();
+	}
+
+	/*
+	 * Example:
+	 * 	StringWriter outS = new StringWriter();
+	 *  PrintWriter pw = new PrintWriter(outS);
+	 *  
+	 *  new PrintWriter(System.out) 
+	 */
+	/**
+	 * Constructs a TableRDFGenerator.
+	 * @param domainStr
+	 * 		The domain file as a string. Should contain "NAMESPACES" 
+	 * 		and "LAV_RULES" sections (containing one rule).
+	 * @param writer
+	 * 		PrintWriter to a String or to System.out
+	 * @throws MediatorException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	public TableRDFGenerator(String domainStr, PrintWriter writer) 
+	throws MediatorException, ClassNotFoundException, IOException{
+		initParams(domainStr,writer);
 		generateSubrules();
 	}
 
@@ -126,7 +151,30 @@ public class TableRDFGenerator {
 	 * @throws ClassNotFoundException
 	 */
 	private void initParams(String domainStr, String outputFile)
-							throws MediatorException, ClassNotFoundException, IOException{
+	throws MediatorException, ClassNotFoundException, IOException{
+		PrintWriter outputWriter = null;
+		if(outputFile!=null){
+			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFile),"UTF-8");
+			BufferedWriter bw = new BufferedWriter (fw);
+			outputWriter = new PrintWriter (bw);
+		}else{
+			outputWriter = new PrintWriter (System.out);			
+		}
+		initParams(domainStr, outputWriter);
+	}
+
+	/**
+	 * Initialize class members.
+	 * @param domainStr
+	 * 		The domain file as string. Should contain "NAMESPACES" and "LAV_RULES" sections.
+	 * @param writer
+	 * 			the RDF will be written to this writer
+	 * @throws MediatorException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	private void initParams(String domainStr, PrintWriter writer)
+	throws MediatorException, ClassNotFoundException, IOException{
 		DomainParser sp = new DomainParser();
 		RDFDomainModel dm = (RDFDomainModel)sp.parseDomain(domainStr);
 
@@ -135,14 +183,8 @@ public class TableRDFGenerator {
 		logger.debug("SourceNamespaces="+sourceNamespaces);
 		logger.debug("OntologyNamespaces="+ontologyNamespaces);
 		//output file
-		if(outputFile!=null){
-			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFile),"UTF-8");
-			BufferedWriter bw = new BufferedWriter (fw);
-			outWriter = new PrintWriter (bw);
-		}else{
-			outWriter = new PrintWriter (System.out);			
-		}
-		
+		outWriter=writer;
+
 		//write namespaces to out file
 		RDFUtil.setNamespace(sourceNamespaces,ontologyNamespaces,outWriter);
 
@@ -151,8 +193,9 @@ public class TableRDFGenerator {
 		}
 		tableRule = dm.getAllRules().get(0);
 		rdfGenerator = new RuleRDFGenerator(tableRule, sourceNamespaces,
-    			ontologyNamespaces, outWriter, uniqueId+"");
+				ontologyNamespaces, outWriter, uniqueId+"");
 	}
+
 
 	/**
 	 * Takes the initial rule and generates subrules that correspond to each variable

@@ -6,6 +6,7 @@
 
 package edu.isi.mediator.rdf.testing;
 
+import java.io.PrintWriter;
 import java.util.HashMap;
 import edu.isi.mediator.rdf.TableRDFGenerator;
 
@@ -85,7 +86,7 @@ public class TableRDFGeneratorTest {
 		   vals1.put("ACCESSION_ID","5");
 
 		   //TableRDFGenerator rdfGen = new TableRDFGenerator(dF1, null);
-		   TableRDFGenerator rdfGen = new TableRDFGenerator(dF3, null);
+		   TableRDFGenerator rdfGen = new TableRDFGenerator(dF3, new PrintWriter(System.out));
 		   rdfGen.generateTriples("GENE_NAME", vals1, "t123");
 		   rdfGen.generateTriples("GENE_ID", vals1, "t123");
 		   //rdfGen.generateTriples("DISEASE_NAME", vals1, "t123");
