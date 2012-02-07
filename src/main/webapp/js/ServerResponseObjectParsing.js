@@ -690,7 +690,9 @@ function parse(data) {
 		
 		else if(element["updateType"] == "ImportOntologyCommand") {
 			if(!element["Import"])
-				alert("Ontology import failed!");
+				$.sticky("Ontology import failed!");
+			else
+				$.sticky("Ontology successfully imported!");
 		} 
 		
 		else if(element["updateType"] == "TagsUpdate") {
@@ -719,7 +721,7 @@ function parse(data) {
 		}
 		else if(element["updateType"] == "PublishRDFUpdate") {
 			var titleDiv = $("div#" + element["vWorksheetId"] +" div.WorksheetTitleDiv");
-			var downloadLink = $("<a>").attr("href",element["fileUrl"]).text("RDF").addClass("RdfDownloadLink");
+			var downloadLink = $("<a>").attr("href",element["fileUrl"]).text("RDF").addClass("RdfDownloadLink").attr("target","_blank");
 			$("div.tableTitleTextDiv", titleDiv).after(downloadLink);
 		}
 	});

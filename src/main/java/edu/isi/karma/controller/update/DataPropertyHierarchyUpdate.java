@@ -45,6 +45,7 @@ public class DataPropertyHierarchyUpdate extends AbstractUpdate {
 
 			while (propsIter.hasNext()) {
 				DatatypeProperty prop = propsIter.next();
+//				System.out.println(prop.getURI());
 				if ((prop.listSuperProperties().toList().size() != 0)
 						|| propertiesAdded.contains(prop.getLocalName())) {
 //					System.out.println("Skipping " + prop.getURI());
@@ -89,6 +90,9 @@ public class DataPropertyHierarchyUpdate extends AbstractUpdate {
 				.listSubProperties();
 		while (subProperties.hasNext()) {
 			OntProperty subProp = subProperties.next();
+			if(subProp.getURI().equals(prop.getURI())) {
+				continue;
+			}
 			
 //			System.out.println("Working with sub prop " + subProp.getURI() + " at level " + level);
 			propertiesAdded.add(subProp.getLocalName());

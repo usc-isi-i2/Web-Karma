@@ -69,32 +69,6 @@ function handlePagerResize() {
 	// $(this).preventDefault();
 }
 
-
-function handleTableCellEditButton(event) {
-	var tableCellDiv = $("#tableCellEditDiv");
-	var tdTagId = $("#tableCellToolBarMenu").data("parentCellId");
-	$("#editCellTextArea", tableCellDiv).remove();
-	
-	if($("#"+tdTagId).hasClass("expandValueCell")) {
-		tableCellDiv.append($("<textarea>")
-						.attr("id", "editCellTextArea")
-						.text($("#"+tdTagId).data("fullValue")));
-	} else {
-		tableCellDiv.append($("<textarea>")
-						.attr("id", "editCellTextArea")
-						.text($("#"+tdTagId + " span.cellValue").text()));
-	}
-	
-	var positionArray = [event.clientX-150		// distance from left
-					, event.clientY-10];	// distance from top
-	
-	tableCellDiv.dialog({ title: 'Edit Cell Value',
-			buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitEdit }, width: 300, height: 150, position: positionArray});
-	tableCellDiv.data("tdTagId", tdTagId);
-}
-
-
-
 function openWorksheetOptions(event) {
 	$("div#WorksheetOptionsDiv")
 			.css({'position':'fixed', 'left':(event.clientX - 75) + 'px', 'top':(event.clientY+4)+'px'})
@@ -356,13 +330,8 @@ function styleAndAssignHandlersToTableCellMenu() {
 		handleTableCellEditButton(event);
 	});
 	
-	$("button#viewValueButton" ).click(function(){
-		var tdTagId = $("#tableCellToolBarMenu").data("parentCellId");
-		var value = $("td#" + tdTagId).data("fullValue");
-		if(value) {
-			$("#CellValueDialog").text(value).dialog({height: 300, width: 400, show:'blind'
-				});
-		}
+	$("button#expandValueButton" ).click(function(event){
+		handleEableCellExpandButton(event);
 	});
 	
 	// Hide the option button when mouse leaves the menu
@@ -375,6 +344,39 @@ function styleAndAssignHandlersToTableCellMenu() {
 	});
 }
 
+function handleEableCellExpandButton(event) {
+	var tdTagId = $("#tableCellToolBarMenu").data("parentCellId");
+	// Get the full expanded value
+	var value = $("td#" + tdTagId).data("fullValue");
+	
+	// Get the RDF text (if it exists)
+	var rdfText = "";
+	var info = new Object();
+	info["nodeId"] = tdTagId;
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "GetRDFCellValueCommand";
+	var returned = $.ajax({
+	   	url: "/RequestController", 
+	   	type: "POST",
+	   	data : info,
+	   	dataType : "json",
+	   	complete : 
+	   		function (xhr, textStatus) {
+	    		var json = $.parseJSON(xhr.responseText);
+		   	},
+		error :
+			function (xhr, textStatus) {
+	   			$.sticky("Error occured while getting RDF triples for the cell! " + textStatus);
+		   	}		   
+	});
+	
+	
+	if(value) {
+		// NEED TO ADD THE RDF TEXT
+		$("#CellValueDialog").text(value).dialog({height: 300, width: 400, show:'blind'});
+	}
+}
+
 function openTableCellOptions() {
 	var tableCellMenu = $("div#tableCellToolBarMenu");
 	tableCellMenu.data("parentCellId", $(this).data("parentCellId"));
@@ -383,11 +385,11 @@ function openTableCellOptions() {
 		"left": $(this).offset().left + $(this).width()/2 - $(tableCellMenu).width()/2}).show();
     					
 	// if($(this).parents("td").hasClass("expandValueCell")){
-		// $("#viewValueButton").show();
+		// $("#expandValueButton").show();
 		// $("#tableCellMenutriangle").css({"margin-left" : "32px"});
 		// $("div#tableCellToolBarMenu").css({"width": "105px"});
 	// } else {
-		// $("#viewValueButton").hide();
+		// $("#expandValueButton").hide();
 		// $("#tableCellMenutriangle").css({"margin-left" : "10px"});
 		// $("div#tableCellToolBarMenu").css({"width": "48px"});
 	// }

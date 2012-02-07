@@ -50,7 +50,7 @@ public class OntologyClassHierarchyUpdate extends AbstractUpdate {
 							.listSuperClasses();
 					while (superClasses.hasNext()) {
 						OntClass clss = superClasses.next();
-						if (!clss.isAnon())
+						if (!clss.isAnon() && !clss.getURI().equals("http://www.w3.org/2000/01/rdf-schema#Resource"))
 							flag = true;
 					}
 					if (flag) {
