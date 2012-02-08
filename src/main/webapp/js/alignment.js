@@ -44,6 +44,7 @@ function changeSemanticType(event) {
 	$("#firstColumnKeyword").val("");
 	$("#secondColumnKeyword").val("");
 	$("div#secondColumnOntologyBox").hide();
+	$("input#chooseClassKey").attr("checked", false);
 	//$("div#ontologyOptionsTable", optionsDiv).hide();
 	
 	var positionArray = [event.clientX+20		// distance from left
@@ -147,7 +148,7 @@ function changeSemanticType(event) {
 	
 	
 	// Show the dialog box
-	optionsDiv.dialog({width: 400, height: 650, position: positionArray
+	optionsDiv.dialog({width: 420, height: 700, position: positionArray
 		, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitSemanticTypeChange }});
 }
 
@@ -269,6 +270,7 @@ function submitSemanticTypeChange() {
 	info["command"] = "SetSemanticTypeCommand";
 	info["vWorksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
 	info["hNodeId"] = hNodeId;
+	info["isKey"] = $("input#chooseClassKey").is(":checked");
 	
 	if(optionsDiv.data("source") == "RadioButtonList") {
 		info["type"] = optionsDiv.data("type");

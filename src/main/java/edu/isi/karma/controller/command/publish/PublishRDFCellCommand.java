@@ -62,7 +62,7 @@ public class PublishRDFCellCommand extends Command {
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.notUndoable;
+		return CommandType.notInHistory;
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public class PublishRDFCellCommand extends Command {
 		if (alignment == null) {
 			logger.info("Alignment is NULL for " + vWorksheetId);
 			return new UpdateContainer(new ErrorUpdate(
-					"Please align the worksheet before generating RDF!"));
+					"Worksheet not modeled!"));
 		}
 
 		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
@@ -111,9 +111,9 @@ public class PublishRDFCellCommand extends Command {
 					JSONObject outputObject = new JSONObject();
 					try {
 						outputObject.put(JsonKeys.updateType.name(),
-								"PublishRDFUpdate");
+								"PublishCellRDFUpdate");
 						outputObject.put(JsonKeys.cellRdf.name(),
-								outRdf.toString());
+								outRdf.toString().replaceAll("\\n", "<br />"));
 						outputObject.put(JsonKeys.vWorksheetId.name(),
 								vWorksheetId);
 						pw.println(outputObject.toString(4));

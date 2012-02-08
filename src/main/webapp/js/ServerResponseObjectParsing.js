@@ -344,7 +344,12 @@ function parse(data) {
 						}
 						if(cell["value"] != null){
 							var valueToShow = cell["value"];
-								
+							
+							if(cell["isTruncated"]) {
+								tdTag.addClass("hasTruncatedValue")
+									.data("fullValue", cell["fullValue"]);
+							}
+							
 							tdTag.append($("<span>").addClass("cellValue")
 										.text(valueToShow))
 									.mouseenter(showTableCellMenuButton)

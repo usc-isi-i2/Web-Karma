@@ -9,9 +9,9 @@ import edu.isi.karma.view.VWorkspace;
 public class SetSemanticTypeCommandFactory extends CommandFactory {
 
 	public enum Arguments {
-		vWorksheetId, hNodeId, type, domain, resourceType
+		vWorksheetId, hNodeId, type, domain, resourceType, isKey
 	}
-	
+
 	private enum ResourceType {
 		Class, DataProperty
 	}
@@ -25,15 +25,16 @@ public class SetSemanticTypeCommandFactory extends CommandFactory {
 				.name());
 		String resourceType = request.getParameter(Arguments.resourceType
 				.name());
-		String type = request.getParameter(Arguments.type
-				.name());
-		String domain = "";	// Included with Data Property type resource only
-		if(resourceType.equals(ResourceType.DataProperty.name())) {
-			domain = request.getParameter(Arguments.domain
-					.name());
+		String type = request.getParameter(Arguments.type.name());
+		boolean isPartOfKey = Boolean.parseBoolean(request
+				.getParameter(Arguments.isKey.name()));
+
+		String domain = ""; // Included with Data Property type resource only
+		if (resourceType.equals(ResourceType.DataProperty.name())) {
+			domain = request.getParameter(Arguments.domain.name());
 		}
-		
+
 		return new SetSemanticTypeCommand(getNewId(vWorkspace), vWorksheetId,
-				hNodeId, type, domain);
+				hNodeId, type, domain, isPartOfKey);
 	}
 }
