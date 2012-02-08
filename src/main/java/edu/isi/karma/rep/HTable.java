@@ -132,6 +132,27 @@ public class HTable extends RepEntity {
 			}
 		}
 	}
+	
+	public void addNewHNodeAfter(String hNodeId, RepFactory factory, String columnName, Worksheet worksheet) {
+		HNode hNode = getHNode(hNodeId);
+		if(hNode == null) {
+			for(HNode node : nodes.values()) {
+				if(node.hasNestedTable()) {
+					node.getNestedTable().addNewHNodeAfter(hNodeId, factory, columnName, worksheet);
+				}
+			}
+		} else {
+			HNode newNode = factory.createHNode(getId(), columnName);
+			nodes.put(newNode.getId(), newNode);
+			int index = orderedNodeIds.indexOf(hNodeId);
+			
+			if(index == orderedNodeIds.size()-1)
+				orderedNodeIds.add(newNode.getId());
+			else
+				orderedNodeIds.add(index+1, newNode.getId());
+			worksheet.addNodeToDataTable(newNode, factory);
+		}
+	}
 
 	/** Returns ordered nodeIds.
 	 * @return

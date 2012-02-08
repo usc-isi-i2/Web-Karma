@@ -412,12 +412,12 @@ div#ontologyOptionsTable td{
 
 div#firstColumnTree {
 	overflow: auto;
-	max-height: 245px;
+	max-height: 200px;
 }
 
 div#secondColumnTree {
 	overflow: auto;
-	max-height: 245px;
+	max-height: 200px;
 }
 
 table#CRFSuggestedLabelsTable td {
@@ -435,11 +435,11 @@ table#AlternativeParentLinksTable td {
 	font-size: 10px;
 }
 
-span.mediumSizedFont {
+.mediumSizedFont {
 	font-size: 14px;
 }
 
-span.smallSizedFont {
+.smallSizedFont {
 	font-size: 10px;
 }
 
@@ -466,6 +466,20 @@ a.RdfDownloadLink {
 /*span.cellValue {
 	display: inline;
 }*/
+
+div#ExpandCellValueDialog div#cellExpandedValue {
+	font-size: 0.6em;
+/*	font-family: Times;*/
+	background-color: #F5F5F5;
+	padding: 5px;
+}
+
+div#ExpandCellValueDialog div#rdfValue {
+	font-size: 0.6em;
+/*	font-family: Times;*/
+	background-color: #F5F5F5;
+	padding: 5px;
+}
 
 
 

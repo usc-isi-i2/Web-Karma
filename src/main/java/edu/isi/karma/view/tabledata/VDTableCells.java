@@ -11,6 +11,8 @@ import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.Js
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.status;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.value;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.worksheetId;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.isTruncated;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.fullValue;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -885,13 +887,19 @@ public class VDTableCells {
 		generateJsonVerticalSeparators(Position.left, Position.top, rowIndex,
 				colIndex, cellDepth, 0, jw, vWorksheet, vWorkspace);
 
+		boolean isValueTruncated = false;
 		CellValue cellValue = c.getNode() == null ? null : c.getNode()
 				.getValue();
 		String valueString = cellValue == null ? "" : cellValue.asString();
-		valueString = JSONUtil.truncateCellValue(
-				valueString,
-				vWorkspace.getPreferences().getIntViewPreferenceValue(
-						ViewPreference.maxCharactersInCell));
+		if(valueString.length() > vWorkspace.getPreferences().getIntViewPreferenceValue(
+						ViewPreference.maxCharactersInCell)) {
+			valueString = JSONUtil.truncateCellValue(
+					valueString,
+					vWorkspace.getPreferences().getIntViewPreferenceValue(
+							ViewPreference.maxCharactersInCell));
+			isValueTruncated = true;
+		}
+		
 		String codedStatus = c.getNode() == null ? "" : c.getNode().getStatus()
 				.getCodedStatus();
 
@@ -944,6 +952,14 @@ public class VDTableCells {
 		if(c.getNode() != null){
 			jw.key(JsonKeys.nodeId.name())
 				.value(c.getNode().getId());
+		}
+		
+		// Add the full value if the display value was truncated
+		jw.key(isTruncated.name())
+			.value(isValueTruncated);
+		if(isValueTruncated) {
+			jw.key(fullValue.name())
+				.value(cellValue.asString());
 		}
 
 		jw.key("_vdCellStrokes");

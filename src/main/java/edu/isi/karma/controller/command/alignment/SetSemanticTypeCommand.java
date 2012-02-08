@@ -37,13 +37,12 @@ public class SetSemanticTypeCommand extends Command {
 			.getSimpleName());
 
 	protected SetSemanticTypeCommand(String id, String vWorksheetId,
-			String hNodeId, String type, String domain) {
+			String hNodeId, String type, String domain, boolean isPartOfKey) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
-		logger.info("Domain: " + domain);
-		logger.info("type: " + type);
+		logger.debug("Setting semantic type. Domain: " + domain + " Type: " + type);
 		newType = new SemanticType(hNodeId, type, domain,
-				SemanticType.Origin.User, 1.0, false);
+				SemanticType.Origin.User, 1.0, isPartOfKey);
 	}
 
 	@Override

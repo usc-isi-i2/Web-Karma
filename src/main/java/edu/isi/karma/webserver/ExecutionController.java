@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.AddNewColumnCommand;
+import edu.isi.karma.controller.command.AddNewColumnCommandFactory;
 import edu.isi.karma.controller.command.CloseWorkspaceCommand;
 import edu.isi.karma.controller.command.CloseWorkspaceCommandFactory;
 import edu.isi.karma.controller.command.Command;
@@ -59,6 +61,8 @@ import edu.isi.karma.controller.command.publish.PublishKMLLayerCommand;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishRDFCommand;
 import edu.isi.karma.controller.command.publish.PublishRDFCommandFactory;
+import edu.isi.karma.controller.command.publish.PublishRDFCellCommand;
+import edu.isi.karma.controller.command.publish.PublishRDFCellCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
 
@@ -135,6 +139,10 @@ public class ExecutionController {
 				new ImportExcelFileCommandFactory());
 		commandFactoryMap.put(PublishRDFCommand.class.getSimpleName(),
 				new PublishRDFCommandFactory());
+		commandFactoryMap.put(AddNewColumnCommand.class.getSimpleName(),
+				new AddNewColumnCommandFactory());
+		commandFactoryMap.put(PublishRDFCellCommand.class.getSimpleName(),
+				new PublishRDFCellCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

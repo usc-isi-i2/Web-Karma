@@ -40,6 +40,7 @@
 		<script type="text/javascript" src="js/ServerResponseObjectParsing.js"></script>
 		<script type="text/javascript" src="js/commandHistory.js"></script>
 		<script type="text/javascript" src="js/tableWorkspace.js"></script>
+		<script type="text/javascript" src="js/pager.js"></script>
 		<script type="text/javascript" src="js/geospatial.js"></script>
 		<script type="text/javascript" src="js/databaseImportDialog.js"></script>
 		<script type="text/javascript" src="js/alignment.js"></script>
@@ -276,6 +277,7 @@
 			<div id="tablesWorkspace"></div>
 		</div>
 		<div id="columnHeadingDropDownMenu" class="ui-corner-all" style="display: none">
+			<button id="cleanColumnButton">Clean</button>
 			<button id="renameColumnButton">Rename</button>
 			<button id="deleteColumnButton">Delete</button>
 			<button id="hideColumnButton">Hide</button>
@@ -284,7 +286,15 @@
 			<button id="editCellButton">Edit</button>
 			<button id="expandValueButton">Expand</button>
 		</div>
-		<div id="CellValueDialog" title="Cell Value">
+		<div id="ExpandCellValueDialog" title="Cell Value" style="display: none">
+			<div id="cellExpandedValueDiv">
+				<span class="mediumSizedFont">Cell Value:</span><br />
+				<div id="cellExpandedValue"></div>
+			</div> <br />
+			<div id="RDFValueDiv">
+				<span class="mediumSizedFont">RDF triples:</span><br />
+				<div id="rdfValue"></div>
+			</div>
 		</div>
 		<div id="CSVImportDiv" style="display: none">
 			<table id="CSVImportOptionsTable">
@@ -413,6 +423,9 @@
 			<span class="mediumSizedFont">Suggested semantic types:</span>
 			<table id="CRFSuggestedLabelsTable"></table>
 			<br>
+			<input type="checkbox" id="chooseClassKey" />
+			<label for="chooseClassKey" class="smallSizedFont">Mark as key for the class.</label><br />
+			<br />
 			<span class="mediumSizedFont">Mark as unassigned</span>
 			<table id="UnassignedLabelTable">
 				<tr>

@@ -1,81 +1,3 @@
-function handlePrevNextLink() {
-	if($(this).hasClass("inactiveLink"))
-		return;
-	// Prepare the data to be sent to the server	
-	var info = new Object();
-	var worksheetId = $(this).data("vWorksheetId");
-	info["tableId"] = $(this).parents("div.pager").data("tableId");
-	info["direction"] = $(this).data("direction");
-	info["vWorksheetId"] = worksheetId;
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "TablePagerCommand";
-		
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			//alert(xhr.responseText);
-	    		var json = $.parseJSON(xhr.responseText);
-	    		parse(json);
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured with fetching new rows! " + textStatus);
-		   	}		   
-	});
-	return false;
-	$(this).preventDefault();
-}
-
-function handlePagerResize() {
-	$.sticky("Under construction!");
-	// if($(this).hasClass("pagerSizeSelected"))
-		// return;
-// 		
-	// // $(this).siblings().removeClass("pagerSizeSelected");	
-	// // $(this).addClass("pagerSizeSelected");	
-// 	
-	// // Prepare the data to be sent to the server	
-	// var info = new Object();
-// 	
-	// var worksheetId = $(this).data("vWorksheetId");
-	// info["newPageSize"] = $(this).data("rowCount");
-	// info["tableId"] = $(this).parents("div.pager").data("tableId");
-	// info["vWorksheetId"] = worksheetId;
-	// info["workspaceId"] = $.workspaceGlobalInformation.id;
-	// info["command"] = "TablePagerResizeCommand";
-// 		
-	// var returned = $.ajax({
-	   	// url: "/RequestController", 
-	   	// type: "POST",
-	   	// data : info,
-	   	// dataType : "json",
-	   	// complete : 
-	   		// function (xhr, textStatus) {
-	   			// //alert(xhr.responseText);
-	    		// var json = $.parseJSON(xhr.responseText);
-	    		// parse(json);
-		   	// },
-		// error :
-			// function (xhr, textStatus) {
-	   			// alert("Error occured with fetching new rows! " + textStatus);
-// 	   			
-		   	// }		   
-	// });
-	// return false;
-	// $(this).preventDefault();
-}
-
-function openWorksheetOptions(event) {
-	$("div#WorksheetOptionsDiv")
-			.css({'position':'fixed', 'left':(event.clientX - 75) + 'px', 'top':(event.clientY+4)+'px'})
-			.data("worksheetId", $(this).parents("div.Worksheet").attr("id"))
-			.show();
-}
-
 function styleAndAssignHandlersToWorksheetOptionButtons() {
 	var optionsDiv = $("div#WorksheetOptionsDiv");
 	// Styling the elements
@@ -197,6 +119,13 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	});
 }
 
+function openWorksheetOptions(event) {
+	$("div#WorksheetOptionsDiv")
+			.css({'position':'fixed', 'left':(event.clientX - 75) + 'px', 'top':(event.clientY+4)+'px'})
+			.data("worksheetId", $(this).parents("div.Worksheet").attr("id"))
+			.show();
+}
+
 function splitColumnByComma() {
 	$("div#SplitByCommaColumnListPanel").dialog("close");
 	var selectedHNodeId = $("select#splitByCommaColumnList option:selected").val();
@@ -239,69 +168,6 @@ function showSemanticTypeInfo() {
 
 function hideSemanticTypeInfo() {
 	
-}
-
-function showNestedTablePager() {
-	// Get the parent table
-	var tableId = $(this).parents("table").attr("id");
-	var nestedTablePager = $("#nestedTablePager" + tableId);
-	
-	var pagerElem = $(this).data("pagerElem");
-	changePagerOptions(pagerElem, nestedTablePager);
-	
-	nestedTablePager.css({"position":"absolute",
-    					"top":$(this).offset().top + 10, 
-    					"left": $(this).offset().left + $(this).width()/2 - nestedTablePager.width()/2}).show();
-}
-
-function changePagerOptions(pagerJSONElement, pagerDOMElement) {
-	// Store the table Id information
-	$(pagerDOMElement).data("tableId", pagerJSONElement["tableId"]);
-	
-	// Change the ___ of ___ rows information
-	var totalRows = pagerJSONElement["numRecordsShown"] + pagerJSONElement["numRecordsBefore"] 
-								+ pagerJSONElement["numRecordsAfter"];  
-	var currentRowInfo = "" + (pagerJSONElement["numRecordsBefore"] +1) + " - " + 
-				(pagerJSONElement["numRecordsShown"] + pagerJSONElement["numRecordsBefore"]);
-	$("span.previousNextText", pagerDOMElement).text(currentRowInfo + " of " + totalRows);
-	
-	// Make the Previous link active/inactive as required
-	if(pagerJSONElement["numRecordsBefore"] != 0) {
-		var previousLink = $("a", pagerDOMElement)[3]; 
-		if($(previousLink).hasClass("inactiveLink"))
-			$(previousLink).removeClass("inactiveLink").addClass("activeLink");
-	} else {
-		if($(previousLink).hasClass("activeLink"))
-			$(previousLink).removeClass("activeLink").addClass("inactiveLink");
-	}
-	
-	// Make the Next link active/inactive as required
-	if(pagerJSONElement["numRecordsAfter"] != 0){
-		var nextLink = $("a", pagerDOMElement)[4];
-		if($(nextLink).hasClass("inactiveLink"))
-			$(nextLink).removeClass("inactiveLink").addClass("activeLink");
-	} else {
-		if($(nextLink).hasClass("activeLink"))
-			$(nextLink).removeClass("activeLink").addClass("inactiveLink");
-	}
-	
-	// Select the correct pager resize links
-	$.each($("a.pagerResizeLink", pagerDOMElement), function(index, link) {
-		if($(link).data("rowCount") == pagerJSONElement["desiredNumRecordsShown"]){
-			$(link).addClass("pagerSizeSelected");
-		} else {
-			$(link).removeClass("pagerSizeSelected");
-		}
-	});
-	
-	return true;
-}
-
-function hideNestedTablePager() {
-	// Get the parent table
-	var table = $(this).parents("table");
-	var nestedTablePager = $("#nestedTablePager" + table.attr("id"));
-	nestedTablePager.hide();
 }
 
 function styleAndAssignHandlersToTableCellMenu() {
@@ -347,14 +213,21 @@ function styleAndAssignHandlersToTableCellMenu() {
 function handleEableCellExpandButton(event) {
 	var tdTagId = $("#tableCellToolBarMenu").data("parentCellId");
 	// Get the full expanded value
-	var value = $("td#" + tdTagId).data("fullValue");
+	var value = ""
+	var tdTag = $("td#"+tdTagId);
+	if(tdTag.hasClass("hasTruncatedValue")) {
+		value = tdTag.data("fullValue");
+	} else {
+		value = $("span.cellValue", tdTag).text();
+	}
 	
 	// Get the RDF text (if it exists)
-	var rdfText = "";
 	var info = new Object();
 	info["nodeId"] = tdTagId;
+	info["vWorksheetId"] = tdTag.parents("div.Worksheet").attr("id");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "GetRDFCellValueCommand";
+	info["command"] = "PublishRDFCellCommand";
+	
 	var returned = $.ajax({
 	   	url: "/RequestController", 
 	   	type: "POST",
@@ -363,6 +236,13 @@ function handleEableCellExpandButton(event) {
 	   	complete : 
 	   		function (xhr, textStatus) {
 	    		var json = $.parseJSON(xhr.responseText);
+	    		if(json["elements"][0]["updateType"] == "PublishCellRDFUpdate") {
+	    			var rdfText = json["elements"][0]["cellRdf"];
+	    			$("div#rdfValue", expandDiv).html(rdfText);
+	    		} else if (json["elements"][0]["updateType"] == "KarmaError") {
+	    			var rdfText = "<i>" + json["elements"][0]["Error"] + "<i>";
+	    			$("div#rdfValue", expandDiv).html(rdfText);
+	    		}
 		   	},
 		error :
 			function (xhr, textStatus) {
@@ -371,10 +251,11 @@ function handleEableCellExpandButton(event) {
 	});
 	
 	
-	if(value) {
-		// NEED TO ADD THE RDF TEXT
-		$("#CellValueDialog").text(value).dialog({height: 300, width: 400, show:'blind'});
-	}
+	var expandDiv = $("div#ExpandCellValueDialog");
+	// Add the cell value
+	$("div#cellExpandedValue", expandDiv).text(value);
+	
+	expandDiv.show().dialog({height: 300, width: 500, show:'blind'});
 }
 
 function openTableCellOptions() {
@@ -433,7 +314,7 @@ function styleAndAssignHandlersToColumnHeadingMenu() {
 			$(this).show();
 		})	
 		.mouseleave(function(){
-				columnHeadingMenu.hide();
+			columnHeadingMenu.hide();
 	})
 	// Hide the option button when mouse leaves the menu
 	columnHeadingMenu.mouseleave(function() {
@@ -443,9 +324,36 @@ function styleAndAssignHandlersToColumnHeadingMenu() {
 		$(this).show();
 	});
 	
-	// Assign handler to column rename button
-	$("button#renameColumnButton").click(function() {
+	// Assign handler to column clean button
+	$("button#cleanColumnButton").click(function() {
+		columnHeadingMenu.dialog("close");
+		var selectedHNodeId = columnHeadingMenu.data("parentCellId");
 		
+		// Get the worksheet id
+		var tdTag = $("td#"+selectedHNodeId);
+		var vWorksheetId = tdTag.parents("div.Worksheet").attr("id");
+		
+		var info = new Object();
+		info["vWorksheetId"] = vWorksheetId;
+		info["workspaceId"] = $.workspaceGlobalInformation.id;
+		info["hNodeId"] = selectedHNodeId;
+		info["command"] = "AddNewColumnCommand";
+				
+		var returned = $.ajax({
+		   	url: "/RequestController", 
+		   	type: "POST",
+		   	data : info,
+		   	dataType : "json",
+		   	complete : 
+		   		function (xhr, textStatus) {
+		    		var json = $.parseJSON(xhr.responseText);
+		    		parse(json);
+			   	},
+			error :
+				function (xhr, textStatus) {
+		   			alert("Error occured while creating a new column! " + textStatus);
+			   	}		   
+		});
 	});
 }
 
@@ -460,7 +368,6 @@ function openColumnHeadingOptions() {
 function showColumnOptionButton(event) {
 	var tdTag = $(this);
 	var optionsDiv = $("div#columnHeadingMenuButtonDiv");
-	
 	optionsDiv.data("parentCellId", tdTag.attr("id"));
     
     // Show it at the right place
