@@ -11,7 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -286,7 +285,8 @@ public class TableRDFGenerator {
 				if(firstVar!=null){
 					antecedent.addTermIfUnique(firstVar);
 				}
-				consequent.add(getInverse(p.clone()));
+				//consequent.add(getInverse(p.clone()));
+				consequent.add(p.clone());
 
 				//both terms could be a URI
 				findAllRelatedPredicates(p.getTerms().get(0), preds, antecedent, consequent);
@@ -358,8 +358,10 @@ public class TableRDFGenerator {
 					if(firstVar!=null){
 						antecedent.addTermIfUnique(firstVar);
 					}
-					if(!consequent.contains(p1))
-						consequent.add(getInverse(p1.clone()));
+					if(!consequent.contains(p1)){
+						//consequent.add(getInverse(p1.clone()));
+						consequent.add(p1.clone());
+					}
 					findAllRelatedPredicates(p1.getTerms().get(0),preds,antecedent,consequent);
 				}
 			}
@@ -498,6 +500,7 @@ public class TableRDFGenerator {
 		else return null;
 	}
 
+	//not used
 	/**
 	 * Returns a predicate that is the inverse of the input predicate.
 	 * @param p
