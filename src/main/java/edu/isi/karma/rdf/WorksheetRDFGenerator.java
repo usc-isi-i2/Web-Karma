@@ -107,6 +107,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 	}
 	//used for testing
 	public void generateTriplesRowLimit(Worksheet w) throws MediatorException, IOException{
+		logger.info("Generate RDF row by row ...");
 		//generate all triples for this worksheet (row by row)
 		//the RuleRDFGenerator for SD is rdfGenerator (from the superclass)
 		
@@ -137,6 +138,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 	}
 	//used for testing; generate only for first 3 rows
 	public void generateTriplesCellLimit(Worksheet w) throws MediatorException, IOException, KarmaException{
+		logger.info("Generate RDF cell by cell ...");
 		generateTriplesCellLimit(w.getDataTable());
 		//all triples written, so close the writer
 		closeWriter();		

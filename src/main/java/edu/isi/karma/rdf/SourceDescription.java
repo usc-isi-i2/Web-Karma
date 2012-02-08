@@ -14,7 +14,6 @@ import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.mediator.gav.util.MediatorUtil;
-import edu.isi.mediator.rdf.TableRDFGenerator;
 
 /**
  * Class that generates a source description given a Steiner tree 
@@ -216,7 +215,7 @@ public class SourceDescription {
 			throw new KarmaException("Node " + v.getLabel() + " should be of type NodeType.Class");
 		}
 		//find the key of Class v
-		String key = uriMap.get(v.getLabel());
+		String key = findKey(v);
 		if(key==null){
 			throw new KarmaException("Key for " + v.getLabel() + " is NULL. This should not happen!");
 		}
@@ -238,8 +237,10 @@ public class SourceDescription {
 		}
 		ruleAttributes.add(dataAttribute);
 		String propertyName = e.getLabel();
-		if(e.isInverse())
-			propertyName = TableRDFGenerator.inverseProperty + propertyName;
+		if(e.isInverse()){
+			//propertyName = TableRDFGenerator.inverseProperty + propertyName;
+			throw new KarmaException("A data property cannot be an inverse_of:" + propertyName);
+		}
 		String s = "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
 		//System.out.println("DataProperty:" + s);
 		return s;
@@ -270,15 +271,17 @@ public class SourceDescription {
 			throw new KarmaException("Edge " + e.getLabel() + " should be of type LinkType.ObjectProperty");
 		}
 		//find the key of Class v
-		String key1 = uriMap.get(v.getLabel());
+		String key1 = findKey(v);
 		if(key1==null){
 			throw new KarmaException("Key for " + v.getLabel() + " is NULL. This should not happen!");
 		}
 		String key2 = findKey(child);
 		String propertyName = e.getLabel();
-		if(e.isInverse())
-			propertyName = TableRDFGenerator.inverseProperty + propertyName;
 		String s = "`" + propertyName + "`(uri(" + key1 + "),uri(" + key2 + "))";
+		if(e.isInverse()){
+			//propertyName = TableRDFGenerator.inverseProperty + propertyName;
+			s = "`" + propertyName + "`(uri(" + key2 + "),uri(" + key1 + "))";
+		}
 		//System.out.println("ObjectProperty:" + s);
 		return s;
 	}
@@ -296,11 +299,15 @@ public class SourceDescription {
 	 */
 	private String findKey(Vertex v){
 		//check if it is not in the map
-		logger.debug("Get Key for " + v.getLabel() + " ...");
+		//I use the vertex IDs because there can be several columns mapped to the same
+		//class, so we have to distinguish between the key for these classes
+		//logger.info("Get Key for " + v.getLabel() + " with ID=" + v.getID());
 		boolean isGensym=false;
-		String key = uriMap.get(v.getLabel());
-		if(key!=null)
+		String key = uriMap.get(v.getID());
+		if(key!=null){
+			//logger.info("Key for " + v.getID() + " is " + key);
 			return key;
+		}
 		//it's not there, so look for it
 		//System.out.println("Semantic Type="+v.getSemanticType());
 		if(v.getSemanticType()==null){
@@ -344,8 +351,8 @@ public class SourceDescription {
 		//I have to do it here because I don't want backticks for the gensyms
 		if(!isGensym)
 			key = addBacktick(key);
-		uriMap.put(v.getLabel(), key);
-		logger.debug("Key for " + v.getLabel() + " is " + key);
+		uriMap.put(v.getID(), key);
+		//logger.info("Key for " + v.getID() + " is " + key);
 		return key;
 	}
 	
