@@ -58,6 +58,7 @@ public class ServerStart extends HttpServlet {
 		imp = new ImportOntology(OntologyManager.Instance()
 				.getOntModel(), new File("./Preloaded_Ontologies/oilwell.owl"));
 		imp.doImport();
+		/*
 		//vivo ontology
 		imp = new ImportOntology(OntologyManager.Instance()
 				.getOntModel(), new File("../demofiles/vivo1.4-protege.owl"));
@@ -67,7 +68,7 @@ public class ServerStart extends HttpServlet {
 		imp = new ImportOntology(OntologyManager.Instance()
 				.getOntModel(), new File("../demofiles/rdfs-small.owl"));
 		imp.doImport();
-
+		*/
 		System.out.println("************");
 		System.out.println("Server start servlet initialized successfully..");
 		System.out.println("***********");
