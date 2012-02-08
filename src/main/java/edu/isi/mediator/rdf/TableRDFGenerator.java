@@ -510,6 +510,7 @@ public class TableRDFGenerator {
 	 * <br> Example:
 	 * inverse__of___hasName(Name, uri(Name)) -> hasName(uri(Name), Name))
 	 */
+	/*
 	private Predicate getInverse(Predicate p) throws MediatorException {
 		//see if the name of this predicate starts with inverse__of
 		if(p.getName().startsWith("`" + inverseProperty)){
@@ -525,7 +526,7 @@ public class TableRDFGenerator {
 		}
 		else return p;
 	}
-
+	 */
 	/**
 	 * Close Output Writer.
 	 */
