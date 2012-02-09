@@ -5,12 +5,13 @@
 function handleTableCellEditButton(event) {
 	var tableCellDiv = $("div#tableCellEditDiv");
 	var tdTagId = $("div#tableCellToolBarMenu").data("parentCellId");
+	var tdTag = $("td#"+tdTagId);
 	$("#editCellTextArea", tableCellDiv).remove();
 	
-	if($("#"+tdTagId).hasClass("expandValueCell")) {
+	if(tdTag.hasClass("hasTruncatedValue")) {
 		tableCellDiv.append($("<textarea>")
 						.attr("id", "editCellTextArea")
-						.text($("#"+tdTagId).data("fullValue")));
+						.text(tdTag.data("fullValue")));
 	} else {
 		tableCellDiv.append($("<textarea>")
 						.attr("id", "editCellTextArea")

@@ -80,7 +80,8 @@ function DownloadKMLControl(controlDiv, map, fileName) {
 
 function displayKMLandToggleIcon(worksheetId, fileName, worksheetPanel) {
 	var mapPanel = $("<div>").addClass("mapViewPanel").width(800).height(650).attr("id","map_canvas_" + worksheetId);
-	mapPanel.insertAfter($("div.WorksheetTitleDiv", worksheetPanel));
+	var tableDiv = $("div#"+worksheetId+"TableDiv", worksheetPanel); 
+	mapPanel.insertAfter(tableDiv);
 	
 	var myOptions = {
 		zoom: 8,
@@ -101,7 +102,7 @@ function displayKMLandToggleIcon(worksheetId, fileName, worksheetPanel) {
   	kmlDownloadDiv.index = 1;
   	map.controls[google.maps.ControlPosition.TOP_RIGHT].push(kmlDownloadDiv);
 	
-	$("div#"+worksheetId + "TableDiv").hide();
+	tableDiv.hide();
 	
 	// Toggle the icon and state of the div
 	var iconDiv = $("div.toggleMapView", worksheetPanel);	

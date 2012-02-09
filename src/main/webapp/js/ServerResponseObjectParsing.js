@@ -29,6 +29,8 @@ function parse(data) {
 									.addClass("Worksheet");
 					mainDiv.data("isCollapsed", worksheet["isCollapsed"]);
 					
+					var showHideDiv = $("<div>").attr("id","showHideSpace_" + worksheet["worksheetId"]);
+					
 					// Div for adding title of that worksheet
 					var titleDiv = $("<div>")
 									.addClass("WorksheetTitleDiv ui-corner-top");
@@ -74,8 +76,8 @@ function parse(data) {
 										.addClass("showHideWorkSheet")
 										.attr("id", "hideShow"+worksheet["worksheetId"])
 										.click(function() {
-											$("#" + worksheet["worksheetId"] + "TableDiv").toggle(400);
-											$("#topLevelpagerOptions" + worksheet["worksheetId"]).toggle(400);
+											$("div#showHideSpace_" + worksheet["worksheetId"]).toggle(400);
+											
 											// Change the corners
 											titleDiv.toggleClass("ui-corner-top");
 											titleDiv.toggleClass("ui-corner-all");
@@ -112,7 +114,7 @@ function parse(data) {
 					var tableDiv = $("<div>").attr("id", worksheet["worksheetId"] + "TableDiv").addClass("TableDiv");
 					var table = $("<table>").attr("id", worksheet["worksheetId"]).addClass("WorksheetTable");
 					tableDiv.append(table);
-					mainDiv.append(tableDiv);
+					showHideDiv.append(tableDiv);
 					
 					// Add the row options
 					var pagerOptionsDiv = 
@@ -164,7 +166,8 @@ function parse(data) {
 									.text("  Next")
 									.bind("click", handlePrevNextLink))
 							);
-					mainDiv.append(pagerOptionsDiv);
+					showHideDiv.append(pagerOptionsDiv);
+					mainDiv.append(showHideDiv);
 					
 					$("#tablesWorkspace").append(mainDiv).append("<br>");
 				} else {
