@@ -1084,7 +1084,61 @@ public class WorksheetHierarchicalDataUpdateTest extends TestCase {
 		JSONArray rows = o.getJSONArray("elements").getJSONObject(0)
 				.getJSONArray(JsonKeys.rows.name());
 		assertEquals(21, rows.length());
-
+		{ // r0 top separator 1.
+			JSONObject r = rows.getJSONObject(0);
+			assertSeparatorRow(r);
+			{ // c0 vertical separator
+				JSONObject c = getCell(r, 0);
+				assertPosition(c, 0, 0);
+				assertAttributes(c, CellType.columnSpace, "HT3", "o:_:o:_");
+			}
+			{ // c0
+				JSONObject c = getCell(r, 1);
+				assertPosition(c, 0, 0);
+				assertAttributes(c, CellType.rowSpace, "HT3", "_:_:o:_");
+			}
+			{ // c0/c1 vertical separator
+				JSONObject c = getCell(r, 2);
+				assertPosition(c, 0, 1);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:_:o:_");
+			}
+			{ // c1
+				JSONObject c = getCell(r, 3);
+				assertPosition(c, 0, 1);
+				assertAttributes(c, CellType.rowSpace, "HT3", "_:_:o:_");
+			}
+			{ // c1/c2 vertical separator
+				JSONObject c = getCell(r, 4);
+				assertPosition(c, 0, 2);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:_:o:_");
+			}
+			{ // c2
+				JSONObject c = getCell(r, 5);
+				assertPosition(c, 0, 2);
+				assertAttributes(c, CellType.rowSpace, "HT3", "_:_:o:_");
+			}
+			{ // c2/c3 vertical separator
+				JSONObject c = getCell(r, 6);
+				assertPosition(c, 0, 3);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:_:o:_");
+			}
+			{ // c3
+				JSONObject c = getCell(r, 7);
+				assertPosition(c, 0, 3);
+				assertAttributes(c, CellType.rowSpace, "HT3", "_:_:o:_");
+			}
+			{ // c3 vertical separator
+				JSONObject c = getCell(r, 8);
+				assertPosition(c, 0, 3);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:_:o:_");
+			}
+			{ // c3 vertical separator
+				JSONObject c = getCell(r, 9);
+				assertPosition(c, 0, 3);
+				assertAttributes(c, CellType.columnSpace, "HT3", "_:o:o:_");
+			}
+		}
+		
 		{ // r0 top separator 1.
 			JSONObject r = rows.getJSONObject(6);
 			assertContentRow(r);

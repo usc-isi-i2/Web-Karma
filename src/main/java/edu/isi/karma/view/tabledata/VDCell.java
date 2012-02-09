@@ -190,29 +190,29 @@ public class VDCell {
 		vdCellStrokes.setDefault(stroke, defaultStrokes);
 	}
 
-	/**
-	 * @param depth
-	 * @param position
-	 * @return the stroke for the given position and depth. If no stroke is
-	 *         defined at the given depth, return the one defined at the closest
-	 *         lower depth.
-	 */
-	Stroke getStroke(int depth, Position position) {
-		return getStroke(getStrokeList(position), depth, true);
-	}
+//	/**
+//	 * @param depth
+//	 * @param position
+//	 * @return the stroke for the given position and depth. If no stroke is
+//	 *         defined at the given depth, return the one defined at the closest
+//	 *         lower depth.
+//	 */
+//	Stroke getStroke(int depth, Position position) {
+//		return getStroke(getStrokeList(position), depth, true);
+//	}
 
-	Stroke getStrokeOrNull(int depth, Position position) {
-		return getStroke(getStrokeList(position), depth, false);
-	}
+//	Stroke getStrokeOrNull(int depth, Position position) {
+//		return getStroke(getStrokeList(position), depth, false);
+//	}
 
-	Stroke getNthStroke(int index, Position position) {
-		List<Stroke> list = getStrokeList(position);
-		if (index < list.size()) {
-			return list.get(index);
-		} else {
-			return null;
-		}
-	}
+//	Stroke getNthStroke(int index, Position position) {
+//		List<Stroke> list = getStrokeList(position);
+//		if (index < list.size()) {
+//			return list.get(index);
+//		} else {
+//			return null;
+//		}
+//	}
 
 	/**
 	 * @param position
@@ -247,29 +247,29 @@ public class VDCell {
 		return new MinMaxDepth(minDepth, maxDepth);
 	}
 
-	/**
-	 * @param list
-	 * @param depth
-	 * @param returnPrevious
-	 *            , if true and there is no stroke at the given depth, return
-	 *            the stroke from the largest previous depth.
-	 * @return the stroke at the given depth, if there is one. If not, return
-	 *         the stroke at the previous depth. This assumes the list is sorted
-	 *         in increasing depth.
-	 */
-	private Stroke getStroke(List<Stroke> list, int depth,
-			boolean returnPrevious) {
-		Stroke previousStroke = null;
-		for (Stroke s : list) {
-			if (s.getDepth() == depth) {
-				return s;
-			}
-			if (returnPrevious) {
-				previousStroke = s;
-			}
-		}
-		return previousStroke;
-	}
+//	/**
+//	 * @param list
+//	 * @param depth
+//	 * @param returnPrevious
+//	 *            , if true and there is no stroke at the given depth, return
+//	 *            the stroke from the largest previous depth.
+//	 * @return the stroke at the given depth, if there is one. If not, return
+//	 *         the stroke at the previous depth. This assumes the list is sorted
+//	 *         in increasing depth.
+//	 */
+//	private Stroke getStroke(List<Stroke> list, int depth,
+//			boolean returnPrevious) {
+//		Stroke previousStroke = null;
+//		for (Stroke s : list) {
+//			if (s.getDepth() == depth) {
+//				return s;
+//			}
+//			if (returnPrevious) {
+//				previousStroke = s;
+//			}
+//		}
+//		return previousStroke;
+//	}
 
 	/*****************************************************************
 	 * 

@@ -185,18 +185,18 @@ public class VDCellStrokes {
 		return index;
 	}
 
-	int getDistanceFromCell(Position position, int ordinal) {
-		if (position == Position.left || position == Position.top) {
-			return strokes[position.ordinal()].length - ordinal;
-		} else {
-			return ordinal;
-		}
-	}
+//	int getDistanceFromCell(Position position, int ordinal) {
+//		if (position == Position.left || position == Position.top) {
+//			return strokes[position.ordinal()].length - ordinal;
+//		} else {
+//			return ordinal;
+//		}
+//	}
 
-	Stroke getMaxStroke(Position position) {
-		Stroke[] x = strokes[position.ordinal()];
-		return x[x.length - 1];
-	}
+//	Stroke getMaxStroke(Position position) {
+//		Stroke[] x = strokes[position.ordinal()];
+//		return x[x.length - 1];
+//	}
 
 	List<Stroke> getList(Position position) {
 		List<Stroke> result = new LinkedList<Stroke>();

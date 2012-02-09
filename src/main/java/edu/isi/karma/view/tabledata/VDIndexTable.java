@@ -19,6 +19,12 @@ import edu.isi.karma.view.tableheadings.VHTreeNode;
  */
 public class VDIndexTable {
 
+	/**
+	 * Records the indices of the leftmost and rightmost column of an HNode.
+	 * 
+	 * @author szekely
+	 *
+	 */
 	class LeftRight {
 		private final int left, right;
 
