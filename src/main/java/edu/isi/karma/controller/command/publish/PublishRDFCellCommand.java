@@ -90,7 +90,7 @@ public class PublishRDFCellCommand extends Command {
 				// use false for internal use
 				SourceDescription desc = new SourceDescription(
 						vWorkspace.getRepFactory(), tree, root,
-						rdfSourcePrefix, false);
+						rdfSourcePrefix, true,false);
 				String descString = desc.generateSourceDescription();
 				logger.info("SD=" + descString);
 			    PrintWriter outWriter = new PrintWriter (outRdf);

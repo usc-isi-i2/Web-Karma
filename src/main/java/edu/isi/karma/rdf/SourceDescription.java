@@ -7,10 +7,15 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import com.hp.hpl.jena.ontology.ObjectProperty;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntProperty;
+
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.LinkType;
 import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.modeling.alignment.Vertex;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.mediator.gav.util.MediatorUtil;
@@ -57,6 +62,19 @@ public class SourceDescription {
 	 */
 	private boolean useColumnNames = false;
 	
+	/**
+	 * if equals to true the SD will contain all inverse properties 
+	 * for the properties present in the alignment;
+	 * add this: 
+		OntProperty inverseProp = model.getObjectProperty(propertyName).getInverse();
+	 */
+	private boolean generateInverse = true;
+	
+	/**
+	 * the ontology model
+	 */
+	private OntModel model;
+	
 	static Logger logger = Logger.getLogger(SourceDescription.class);
 
 	/**
@@ -64,6 +82,10 @@ public class SourceDescription {
 	 * @param steinerTree
 	 * @param root
 	 * 		the root of the Steiner tree.
+	 * @param generateInverse
+	 * 		true - add all inverse properties to the SD
+	 * 		false - do not add inverse properties to the SD;
+	 * 				SD will contain ONLY properties defined in the alignment
 	 * @param useColumnNames
 	 * 		true if column names should be used in the Rule
 	 * 		false if HNodePath should be used instead of the column names.
@@ -74,12 +96,15 @@ public class SourceDescription {
 	 * <br>useColumnNames=false if the SD is used internally.
 	 */
 	public SourceDescription(RepFactory factory, DirectedWeightedMultigraph<Vertex, 
-			LabeledWeightedEdge> steinerTree, Vertex root, String rdfSourcePrefix, boolean useColumnNames){
+			LabeledWeightedEdge> steinerTree, Vertex root, String rdfSourcePrefix, boolean generateInverse, 
+			boolean useColumnNames){
 		this.factory=factory;
 		this.steinerTree = steinerTree;
 		this.root=root;
 		this.useColumnNames = useColumnNames;
 		this.rdfSourcePrefix=rdfSourcePrefix;
+		this.generateInverse = generateInverse;
+		model = OntologyManager.Instance().getOntModel();
 	}
 	
 	/**
@@ -238,7 +263,6 @@ public class SourceDescription {
 		ruleAttributes.add(dataAttribute);
 		String propertyName = e.getLabel();
 		if(e.isInverse()){
-			//propertyName = TableRDFGenerator.inverseProperty + propertyName;
 			throw new KarmaException("A data property cannot be an inverse_of:" + propertyName);
 		}
 		String s = "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
@@ -277,11 +301,26 @@ public class SourceDescription {
 		}
 		String key2 = findKey(child);
 		String propertyName = e.getLabel();
+
+		//see if this property has an inverse property, and if it does add that too
+		ObjectProperty op = model.getObjectProperty(propertyName);
+		OntProperty inverseProp = op.getInverse();
+
 		String s = "`" + propertyName + "`(uri(" + key1 + "),uri(" + key2 + "))";
+		if(inverseProp!=null && generateInverse){
+			//add the inverse property
+			s += " \n ^" + "`" + inverseProp + "`(uri(" + key2 + "),uri(" + key1 + "))";
+		}
+		
 		if(e.isInverse()){
 			//propertyName = TableRDFGenerator.inverseProperty + propertyName;
 			s = "`" + propertyName + "`(uri(" + key2 + "),uri(" + key1 + "))";
+			if(inverseProp!=null && generateInverse){
+				//add the inverse property
+				s += " \n ^" + "`" + inverseProp + "`(uri(" + key1 + "),uri(" + key2 + "))";
+			}
 		}
+
 		//System.out.println("ObjectProperty:" + s);
 		return s;
 	}

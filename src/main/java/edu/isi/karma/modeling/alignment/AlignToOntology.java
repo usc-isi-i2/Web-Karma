@@ -72,7 +72,7 @@ public class AlignToOntology {
 			
 			SourceDescription desc = new SourceDescription(vWorkspace.getRepFactory(), tree, root,
 					ServletContextParameterMap
-					.getParameterValue(ContextParameter.RDF_SOURCE_PREFIX),false);
+					.getParameterValue(ContextParameter.RDF_SOURCE_PREFIX),true,false);
 			String descString = desc.generateSourceDescription();
 			System.out.println("SD="+ descString);
 			//generate RDF for the first 3 rows: mariam
