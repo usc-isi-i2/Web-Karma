@@ -98,9 +98,19 @@ public class GraphUtil {
 //        }
     	System.out.println("*** Graph ***");
 		for (LabeledWeightedEdge edge : graph.edgeSet()) {
-			System.out.print(edge.getSource().getLocalLabel());
-			System.out.print(" -> ");
-			System.out.print(edge.getTarget().getLocalLabel());
+			System.out.print("(");
+			System.out.print(edge.getSource().getLocalID());
+			System.out.print(")");
+			System.out.print(" - ");
+			System.out.print("(");
+			if (edge.isInverse())
+				System.out.print("invOf:");
+			System.out.print(edge.getLocalID());
+			System.out.print(")");
+			System.out.print(" - ");
+			System.out.print("(");
+			System.out.print(edge.getTarget().getLocalID());
+			System.out.print(")");
 			System.out.println();
         }
 		System.out.println("------------------------------------------");

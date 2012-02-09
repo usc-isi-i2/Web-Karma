@@ -1,6 +1,7 @@
 package edu.isi.karma.modeling.alignment;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -62,6 +63,13 @@ public class TreePostProcess {
 		
 		if (possibleRoots == null || possibleRoots.size() == 0)
 			return;
+		
+		VertexComparatorByID vComp = new VertexComparatorByID();
+		Collections.sort(possibleRoots, vComp);
+		
+//		for (int i = 0; i < possibleRoots.size(); i++)
+//			System.out.print(possibleRoots.get(i).getLocalID());
+//		System.out.println();
 		
 		this.root = possibleRoots.get(0);
 	}

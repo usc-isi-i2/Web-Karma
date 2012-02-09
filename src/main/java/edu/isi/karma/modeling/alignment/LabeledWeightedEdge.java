@@ -64,11 +64,20 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		if (id == null)
 			return "";
 		
-		int index = id.indexOf('#');
-		if (index == -1)
-			return id;
+		String result = "";
+		String temp = id;
 		
-		String result = id.substring(index + 1);
+		if (temp.endsWith("/"))
+			temp = temp.substring(0, temp.length() - 1);
+		
+		int index = temp.indexOf('#');
+		if (index == -1) {
+			index = temp.lastIndexOf('/');
+			if (index == -1)
+				return temp;
+			result = temp.substring(index + 1);
+		} else
+			result = temp.substring(index + 1);
 		
 		return result;
 	}
@@ -76,12 +85,21 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 	public String getLocalLabel() {
 		if (label == null)
 			return "";
+
+		String result = "";
+		String temp = label;
 		
-		int index = label.indexOf('#');
-		if (index == -1)
-			return label;
+		if (temp.endsWith("/"))
+			temp = temp.substring(0, temp.length() - 1);
 		
-		String result = label.substring(index + 1);
+		int index = temp.indexOf('#');
+		if (index == -1) {
+			index = temp.lastIndexOf('/');
+			if (index == -1)
+				return temp;
+			result = temp.substring(index + 1);
+		} else
+			result = temp.substring(index + 1);
 		
 		return result;
 	}
