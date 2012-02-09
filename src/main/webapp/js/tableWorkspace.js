@@ -255,7 +255,9 @@ function handleEableCellExpandButton(event) {
 	// Add the cell value
 	$("div#cellExpandedValue", expandDiv).text(value);
 	
-	expandDiv.show().dialog({height: 300, width: 500, show:'blind'});
+	var positionArray = [event.clientX-150		// distance from left
+					, event.clientY-10];	// distance from top
+	expandDiv.show().dialog({height: 300, width: 500, show:'blind', position: positionArray});
 }
 
 function openTableCellOptions() {
