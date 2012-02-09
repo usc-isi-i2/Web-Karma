@@ -82,6 +82,21 @@ public class GenerateSourceDescriptionTest extends TestCase {
 		ImportOntology imp = new ImportOntology(model, new File(
 				"./src/test/karma-data/Wiki.owl"));
 		imp.doImport();
+		
+		/*
+		imp = new ImportOntology(model, new File("../demofiles/vivo1.4-protege.owl"));
+		imp.doImport();
+
+		ObjectProperty op = model.getObjectProperty("http://vivoweb.org/ontology/core#organizationForPosition");
+		OntProperty inv1 = op.getInverseOf();
+		OntProperty inv2 = op.getInverse();
+		System.out.println("Inverse is:;;;;;;;;;;;;;;;;;;;;;;;;" + inv1);
+		System.out.println("Inverse is:;;;;;;;;;;;;;;;;;;;;;;;;" + inv2);
+		*/
+		//test inverse
+		//InverseFunctionalProperty p = model.getInverseFunctionalProperty("http://vivoweb.org/ontology/core#organizationForPosition");
+		//System.out.println("Inverse is:;;;;;;;;;;;;;;;;;;;;;;;;" + p);
+
 	}
 	
 	public void testGenerate() throws KarmaException, MediatorException, ClassNotFoundException, IOException {
@@ -98,8 +113,9 @@ public class GenerateSourceDescriptionTest extends TestCase {
 		
 		GraphUtil.printGraph(tree);
 		
+		
 		//false=use HNodePath in the SD
-		SourceDescription sd = new SourceDescription(f, tree, alignment.GetTreeRoot(),"http://localhost:8080/source/", false);
+		SourceDescription sd = new SourceDescription(f, tree, alignment.GetTreeRoot(),"http://localhost:8080/source/", true, false);
 		String domainFile = sd.generateSourceDescription();
 		System.out.println("SourceDescription:\n" + domainFile);
 		System.out.println("Headers=" + worksheet.getHeaders().prettyPrint(f));
