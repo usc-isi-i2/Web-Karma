@@ -39,9 +39,11 @@ public class GetExampleJSON extends HttpServlet {
 		WorkspaceRegistry.getInstance().register(new ExecutionController(vwsp));
 
 		//mariam
+		/*
 		File file = new File("../demofiles/peopleFaculty.csv");
 		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
 		imp.generateWorksheet();
+		*/
 		//////////////
 		
 		// Initialize the Outlier tag
