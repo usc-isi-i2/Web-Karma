@@ -22,6 +22,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
 		info["command"] = "ShowModelCommand";
 			
+		showLoading(info["vWorksheetId"]);
 		var returned = $.ajax({
 		   	url: "/RequestController", 
 		   	type: "POST",
@@ -32,10 +33,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		   			//alert(xhr.responseText);
 		    		var json = $.parseJSON(xhr.responseText);
 		    		parse(json);
+		    		hideLoading(info["vWorksheetId"]);
 			   	},
 			error :
 				function (xhr, textStatus) {
 		   			alert("Error occured while generating semantic types!" + textStatus);
+		   			hideLoading(info["vWorksheetId"]);
 			   	}		   
 		});
 	});
@@ -55,7 +58,8 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		info["vWorksheetId"] = optionsDiv.data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
 		info["command"] = "PublishRDFCommand";
-			
+		
+		showLoading(info["vWorksheetId"]);
 		var returned = $.ajax({
 		   	url: "/RequestController", 
 		   	type: "POST",
@@ -66,10 +70,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		   			//alert("RDF Generated!");
 		    		var json = $.parseJSON(xhr.responseText);
 		    		parse(json);
+		    		hideLoading(info["vWorksheetId"]);
 			   	},
 			error :
 				function (xhr, textStatus) {
 		   			alert("Error occured while generating RDF!" + textStatus);
+		   			hideLoading(info["vWorksheetId"]);
 			   	}		   
 		});
 	});
@@ -136,6 +142,7 @@ function splitColumnByComma() {
 	info["hNodeId"] = selectedHNodeId;
 	info["command"] = "SplitByCommaCommand";
 			
+	showLoading(info["vWorksheetId"]);
 	var returned = $.ajax({
 	   	url: "/RequestController", 
 	   	type: "POST",
@@ -146,10 +153,12 @@ function splitColumnByComma() {
 	   			// alert(xhr.responseText);
 	    		var json = $.parseJSON(xhr.responseText);
 	    		parse(json);
+	    		hideLoading(info["vWorksheetId"]);
 		   	},
 		error :
 			function (xhr, textStatus) {
 	   			alert("Error occured while splitting a column by comma! " + textStatus);
+	   			hideLoading(info["vWorksheetId"]);
 		   	}		   
 	});
 }
@@ -266,19 +275,6 @@ function openTableCellOptions() {
 	tableCellMenu.css({"position":"absolute",
 		"top":$(this).offset().top + 15, 
 		"left": $(this).offset().left + $(this).width()/2 - $(tableCellMenu).width()/2}).show();
-    					
-	// if($(this).parents("td").hasClass("expandValueCell")){
-		// $("#expandValueButton").show();
-		// $("#tableCellMenutriangle").css({"margin-left" : "32px"});
-		// $("div#tableCellToolBarMenu").css({"width": "105px"});
-	// } else {
-		// $("#expandValueButton").hide();
-		// $("#tableCellMenutriangle").css({"margin-left" : "10px"});
-		// $("div#tableCellToolBarMenu").css({"width": "48px"});
-	// }
-	// $("div#tableCellToolBarMenu").css({"position":"absolute",
-    					// "top":$(this).offset().top + 10, 
-    					// "left": $(this).offset().left + $(this).width()/2 - $("div#tableCellToolBarMenu").width()/2}).show();
 }
 
 function showTableCellMenuButton() {
@@ -378,10 +374,37 @@ function showColumnOptionButton(event) {
 	optionsDiv.css({"position":"absolute",
 		"top":top, 
 		"left": left}).show();
-};
+}
 
 function hideColumnOptionButton() {    
 	$("div#columnHeadingMenuButtonDiv").hide();    
-};
+}
+
+function showLoading(worksheetId) {
+    var coverDiv = $("<div>").attr("id","WaitingDiv_"+worksheetId).addClass('waitingDiv')
+        .append($("<div>").html('<b>Please wait</b>')
+            .append($('<img>').attr("src","images/ajax-loader.gif"))
+    );
+     
+    var spaceToCoverDiv = $("div#"+worksheetId);
+    spaceToCoverDiv.append(coverDiv.css({"position":"absolute", "height":spaceToCoverDiv.height(), 
+        "width": spaceToCoverDiv.width(), "top":spaceToCoverDiv.position().top, "left":spaceToCoverDiv.position().left}).show());
+}
+
+function hideLoading(worksheetId) {
+	$("div#WaitingDiv_"+worksheetId).hide();
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 

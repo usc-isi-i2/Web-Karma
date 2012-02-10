@@ -33,7 +33,12 @@ function parse(data) {
 					
 					// Div for adding title of that worksheet
 					var titleDiv = $("<div>")
-									.addClass("WorksheetTitleDiv ui-corner-top");
+									.addClass("WorksheetTitleDiv ui-corner-top")
+									.mouseleave(function() {
+										// Hiding the option buttons for the heading and the data cell
+										$("div#tableCellMenuButtonDiv").hide();
+										$("div#columnHeadingMenuButtonDiv").hide();
+									});
 					titleDiv.append($("<div>")
 								.text(worksheet["title"])
 								.addClass("tableTitleTextDiv")
@@ -111,7 +116,11 @@ function parse(data) {
 					mainDiv.append(titleDiv);
 					
 					// Add the table (if it does not exists)
-					var tableDiv = $("<div>").attr("id", worksheet["worksheetId"] + "TableDiv").addClass("TableDiv");
+					var tableDiv = $("<div>").attr("id", worksheet["worksheetId"] + "TableDiv").addClass("TableDiv")
+						.mouseleave(function() {
+							$("div#tableCellMenuButtonDiv").hide();
+							$("div#columnHeadingMenuButtonDiv").hide();
+						});
 					var table = $("<table>").attr("id", worksheet["worksheetId"]).addClass("WorksheetTable");
 					tableDiv.append(table);
 					showHideDiv.append(tableDiv);
@@ -165,7 +174,11 @@ function parse(data) {
 									.addClass("inactiveLink")
 									.text("  Next")
 									.bind("click", handlePrevNextLink))
-							);
+							).mouseleave(function() {
+								// Hiding the option buttons for the heading and the data cell
+								$("div#tableCellMenuButtonDiv").hide();
+								$("div#columnHeadingMenuButtonDiv").hide();
+							});
 					showHideDiv.append(pagerOptionsDiv);
 					mainDiv.append(showHideDiv);
 					
@@ -727,8 +740,12 @@ function parse(data) {
 				});
 			});
 		}
+		
 		else if(element["updateType"] == "PublishRDFUpdate") {
 			var titleDiv = $("div#" + element["vWorksheetId"] +" div.WorksheetTitleDiv");
+			// Remove existing link if any
+			$("a.RdfDownloadLink", titleDiv).remove();
+			
 			var downloadLink = $("<a>").attr("href",element["fileUrl"]).text("RDF").addClass("RdfDownloadLink").attr("target","_blank");
 			$("div.tableTitleTextDiv", titleDiv).after(downloadLink);
 		}

@@ -1,0 +1,20 @@
+
+target
+.DS_Store
+lastJsonImport.json
+UserPrefs/*.json
+UserUploadedFiles
+UserUploadedFiles/*
+*.json
+SampleData
+CRF_Model.txt
+tmp
+log/*
+!.gitignore
+publish/KML/*.*
+publish/Source Description/*.*
+publish/CSV/*
+publish/RDF/*
+Preloaded_Ontologies/catalog-v001.xml
+src/main/webapp/RDF/*.rdf
+src/main/webapp/RDF/*.n3
