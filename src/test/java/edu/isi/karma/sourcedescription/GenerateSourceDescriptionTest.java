@@ -10,7 +10,9 @@ import junit.framework.TestCase;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntProperty;
 
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
@@ -83,16 +85,17 @@ public class GenerateSourceDescriptionTest extends TestCase {
 				"./src/test/karma-data/Wiki.owl"));
 		imp.doImport();
 		
-		/*
+		
 		imp = new ImportOntology(model, new File("../demofiles/vivo1.4-protege.owl"));
 		imp.doImport();
 
-		ObjectProperty op = model.getObjectProperty("http://vivoweb.org/ontology/core#organizationForPosition");
+		//ObjectProperty op = model.getObjectProperty("http://vivoweb.org/ontology/core#organizationForPosition");
+		ObjectProperty op = model.getObjectProperty("http://vivoweb.org/ontology/core#positionInOrganization");
 		OntProperty inv1 = op.getInverseOf();
 		OntProperty inv2 = op.getInverse();
 		System.out.println("Inverse is:;;;;;;;;;;;;;;;;;;;;;;;;" + inv1);
 		System.out.println("Inverse is:;;;;;;;;;;;;;;;;;;;;;;;;" + inv2);
-		*/
+		
 		//test inverse
 		//InverseFunctionalProperty p = model.getInverseFunctionalProperty("http://vivoweb.org/ontology/core#organizationForPosition");
 		//System.out.println("Inverse is:;;;;;;;;;;;;;;;;;;;;;;;;" + p);

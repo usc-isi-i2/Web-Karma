@@ -119,7 +119,7 @@ public class SourceDescription {
 	 * SD(HN1/HN2/HN3, HN1/HN2/HN4) - the ids of the HNodes.
 	 */
 	public String generateSourceDescription() throws KarmaException{
-		//System.out.println("THE TREE");
+		System.out.println("THE TREE******************");
 		//GraphUtil.printGraph(steinerTree);
 		
 		StringBuffer s = new StringBuffer();
@@ -302,29 +302,52 @@ public class SourceDescription {
 		String key2 = findKey(child);
 		String propertyName = e.getLabel();
 
-		//see if this property has an inverse property, and if it does add that too
-		ObjectProperty op = model.getObjectProperty(propertyName);
-		OntProperty inverseProp = op.getInverse();
-
 		String s = "`" + propertyName + "`(uri(" + key1 + "),uri(" + key2 + "))";
-		if(inverseProp!=null && generateInverse){
-			//add the inverse property
-			s += " \n ^" + "`" + inverseProp + "`(uri(" + key2 + "),uri(" + key1 + "))";
-		}
+		s += addInverseProperty(propertyName, key1,key2);
 		
 		if(e.isInverse()){
 			//propertyName = TableRDFGenerator.inverseProperty + propertyName;
 			s = "`" + propertyName + "`(uri(" + key2 + "),uri(" + key1 + "))";
-			if(inverseProp!=null && generateInverse){
-				//add the inverse property
-				s += " \n ^" + "`" + inverseProp + "`(uri(" + key1 + "),uri(" + key2 + "))";
-			}
+			s += addInverseProperty(propertyName, key2,key1);
 		}
 
 		//System.out.println("ObjectProperty:" + s);
 		return s;
 	}
 
+	/** Returns a binary predicate corresponding to the inverse of propertyName, if the inverse exists.
+	 * @param propertyName
+	 * 		a property name
+	 * @param key1
+	 * 		value used for second URI
+	 * @param key2
+	 * 		value used for first URI
+	 * @return
+	 * 		a binary predicate corresponding to the inverse of propertyName, if the inverse exists.
+	 * Example: inversePredicate(uri(key2), uri(key1))
+	 */
+	private String addInverseProperty(String propertyName, String key1, String key2){
+		String s = "";
+		//see if this property has an inverse property, and if it does add it to the SD
+		ObjectProperty op = model.getObjectProperty(propertyName);
+		//one or the other will be null
+		OntProperty inverseProp1 = op.getInverse();
+		OntProperty inverseProp2 = op.getInverseOf();
+
+		//logger.info("Inverse prop for " + propertyName + " is " + inverseProp1 + " " + inverseProp2);
+		
+		if(inverseProp1!=null && generateInverse){
+			//add the inverse property
+			s += " \n ^ " + "`" + inverseProp1 + "`(uri(" + key2 + "),uri(" + key1 + "))";
+		}
+		if(inverseProp2!=null && generateInverse){
+			//add the inverse property
+			s += " \n ^ " + "`" + inverseProp2 + "`(uri(" + key2 + "),uri(" + key1 + "))";
+		}
+		
+		return s;
+	}
+	
 	/**
 	 * For a node that is a Class, find the key(column name) associated with this class.
 	 * <br> If node is associated with a column, that column is the key (the column was mapped to a Class)

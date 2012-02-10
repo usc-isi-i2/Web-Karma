@@ -23,6 +23,7 @@ public class RepFactory {
 	private final Map<String, Row> rows = new HashMap<String, Row>();
 	private final Map<String, Node> nodes = new HashMap<String, Node>();
 
+	
 	public Workspace createWorkspace() {
 		String id = getNewId("WSP");
 		Workspace wsp = new Workspace(id, this);

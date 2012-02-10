@@ -92,7 +92,7 @@ public class PublishRDFCellCommand extends Command {
 						vWorkspace.getRepFactory(), tree, root,
 						rdfSourcePrefix, true,false);
 				String descString = desc.generateSourceDescription();
-				logger.info("SD=" + descString);
+				//logger.info("SD=" + descString);
 			    PrintWriter outWriter = new PrintWriter (outRdf);
 				WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(
 						vWorkspace.getRepFactory(), descString, outWriter);
@@ -109,6 +109,7 @@ public class PublishRDFCellCommand extends Command {
 				public void generateJson(String prefix, PrintWriter pw,
 						VWorkspace vWorkspace) {
 					JSONObject outputObject = new JSONObject();
+					
 					try {
 						outputObject.put(JsonKeys.updateType.name(),
 								"PublishCellRDFUpdate");

@@ -69,7 +69,7 @@ public class PublishRDFCommand extends Command {
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
 		final String rdfFileName = "./src/main/webapp/RDF/" + vWorksheetId
-				+ ".rdf";
+				+ ".n3";
 
 		// get alignment for this worksheet
 		logger.info("Get alignment for " + vWorksheetId);
@@ -124,7 +124,7 @@ public class PublishRDFCommand extends Command {
 						outputObject.put(JsonKeys.updateType.name(),
 								"PublishRDFUpdate");
 						outputObject.put(JsonKeys.fileUrl.name(),
-								publicRDFAddress + vWorksheetId + ".rdf");
+								publicRDFAddress + vWorksheetId + ".n3");
 						outputObject.put(JsonKeys.vWorksheetId.name(),
 								vWorksheetId);
 						pw.println(outputObject.toString(4));

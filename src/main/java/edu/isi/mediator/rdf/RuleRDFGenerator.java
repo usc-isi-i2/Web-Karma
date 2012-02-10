@@ -212,7 +212,7 @@ public class RuleRDFGenerator {
 	 * @throws MediatorException
 	 * @throws UnsupportedEncodingException 
 	 */
-	protected boolean generateTriples(Map<String,String> values) throws MediatorException, UnsupportedEncodingException{
+	public boolean generateTriples(Map<String,String> values) throws MediatorException, UnsupportedEncodingException{
 		
 		//System.out.println("VALUES=" + values);
 		

@@ -1,3 +1,4 @@
+
 package edu.isi.karma.view.alignmentHeadings;
 
 import java.util.ArrayList;
@@ -58,6 +59,7 @@ public class AlignmentForest implements TForest {
 		sortedHeaders.addAll(finalOrder);
 		// Add the unaligned columns
 		sortedHeaders.addAll(unalignedColumns);
+
 		return forest;
 	}
 

@@ -4,11 +4,12 @@
 //
 // __COPYRIGHT_END__
 
-package edu.isi.mediator.rdf.testing;
+package edu.isi.karma.rdf.testing;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
-import edu.isi.mediator.rdf.TableRDFGenerator;
+
+import edu.isi.karma.rdf.TableRDFGenerator;
 
 /**
  * @author Maria Muslea(USC/ISI)

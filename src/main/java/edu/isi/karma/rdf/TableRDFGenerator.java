@@ -4,7 +4,7 @@
 //
 // __COPYRIGHT_END__
 
-package edu.isi.mediator.rdf;
+package edu.isi.karma.rdf;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -23,6 +23,9 @@ import edu.isi.mediator.domain.parser.DomainParser;
 import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.gav.util.MediatorLogger;
 import edu.isi.mediator.gav.util.MediatorUtil;
+import edu.isi.mediator.rdf.RDFDomainModel;
+import edu.isi.mediator.rdf.RDFUtil;
+import edu.isi.mediator.rdf.RuleRDFGenerator;
 import edu.isi.mediator.rule.FunctionTerm;
 import edu.isi.mediator.rule.LAVRule;
 import edu.isi.mediator.rule.Predicate;
@@ -207,7 +210,7 @@ public class TableRDFGenerator {
 		for(String v:allVars){
 			rdfVariables.put(MediatorUtil.removeBacktick(v),new HashSet<String>());
 			Rule subRule = generateSubrule(tableRule,v);
-			logger.info("Rule for "+ MediatorUtil.removeBacktick(v) + ":" + subRule);
+			//logger.info("Rule for "+ MediatorUtil.removeBacktick(v) + ":" + subRule);
         	RuleRDFGenerator rgen = new RuleRDFGenerator(subRule, sourceNamespaces,
         			ontologyNamespaces, outWriter, uniqueId+"");
         	rdfGenerators.put(MediatorUtil.removeBacktick(v),rgen);
@@ -272,7 +275,9 @@ public class TableRDFGenerator {
 		RelationPredicate antecedent = new RelationPredicate("Subrule");
 		ArrayList<Predicate> consequent = new ArrayList<Predicate>();
 		//get all predicates for this rule
-		ArrayList<Predicate> preds = rule.getConsequent();
+		//I want to clone the rule because I am removing predicates in findAllRelatedPredicates
+		//and I don't want to remove them from the initial rule
+		ArrayList<Predicate> preds = rule.clone().getConsequent();
 		//find a binary predicate that has "v" as the second variable
 		//this is the predicate that I start from (hasV(uri(N), V) or hasV(uri(N), uri(V))
 		ArrayList<Predicate> binaryP = findAllBinaryPredicates(v, preds);
@@ -351,6 +356,8 @@ public class TableRDFGenerator {
 				//if it is a gensym see if you can find other related 
 				Predicate p1 = findBinaryPredicate(p2.getTerms().get(0),preds);
 				//System.out.println("Binary Pred="+p1);
+				//remove it from the list of predicates so that I don't get into a infinite loop
+				preds.remove(p1);
 				if(p1!=null){
 					//find the varbiable on the first position
 					//this var is needed to construct this rule
