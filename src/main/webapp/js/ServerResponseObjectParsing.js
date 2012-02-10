@@ -740,10 +740,12 @@ function parse(data) {
 				});
 			});
 		}
+		
 		else if(element["updateType"] == "PublishRDFUpdate") {
 			var titleDiv = $("div#" + element["vWorksheetId"] +" div.WorksheetTitleDiv");
 			// Remove existing link if any
 			$("a.RdfDownloadLink", titleDiv).remove();
+			
 			var downloadLink = $("<a>").attr("href",element["fileUrl"]).text("RDF").addClass("RdfDownloadLink").attr("target","_blank");
 			$("div.tableTitleTextDiv", titleDiv).after(downloadLink);
 		}

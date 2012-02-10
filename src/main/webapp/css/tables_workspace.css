@@ -20,18 +20,6 @@
 	min-width:350px;
 }
 
-.fg-toolbar { 
-	padding: .1em; 
-	margin: 0; 
-}
-.fg-toolbar .fg-buttonset { 
-	margin-right:1.5em; 
-	padding-left: 0.1px; 
-}
-.fg-toolbar .fg-button { 
-	font-size: 1em;  
-}
-
 .nestedTablePager {
 	width: 250px;
 	background-color: #C0C0C0;
@@ -479,9 +467,23 @@ div#ExpandCellValueDialog div#rdfValue {
 	padding: 5px;
 }
 
+div.waitingDiv {
+	background-color: #828282;
+	opacity:          0.70;
+	filter: alpha(opacity=70); /* IE lt 8 */
+    -ms-filter: "alpha(opacity=70)"; /* IE 8 */
+    -khtml-opacity: .70; /* Safari 1.x */
+   	color: #000000;
+   	text-align: center;
+}
 
+div.waitingDiv div {
+	margin-top: 4px;
+}
 
-
+div.waitingDiv img {
+	margin-left: 4px;
+}
 
 
 

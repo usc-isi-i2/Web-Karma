@@ -15,3 +15,5 @@ publish/KML/*.*
 publish/Source Description/*.*
 publish/CSV/*
 Preloaded_Ontologies/catalog-v001.xml
+src/main/webapp/RDF/*.rdf
+src/main/webapp/RDF/*.n3

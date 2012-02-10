@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.publish;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,9 +27,8 @@ public class PublishRDFCellCommand extends Command {
 	private final String vWorksheetId;
 	private final String nodeId;
 	private String rdfSourcePrefix;
-	//rdf for this cell
+	// rdf for this cell
 	private StringWriter outRdf = new StringWriter();
-
 
 	public enum JsonKeys {
 		updateType, cellRdf, vWorksheetId
@@ -74,15 +74,15 @@ public class PublishRDFCellCommand extends Command {
 				vWorkspace.getWorkspace().getId() + ":" + vWorksheetId + "AL");
 		if (alignment == null) {
 			logger.info("Alignment is NULL for " + vWorksheetId);
-			return new UpdateContainer(new ErrorUpdate(
-					"Worksheet not modeled!"));
+			return new UpdateContainer(
+					new ErrorUpdate("Worksheet not modeled!"));
 		}
 
 		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
 				.getSteinerTree();
 		Vertex root = alignment.GetTreeRoot();
 
-        try {
+		try {
 			if (root != null) {
 				// Write the source description
 				// use true to generate a SD with column names (for use
@@ -90,10 +90,10 @@ public class PublishRDFCellCommand extends Command {
 				// use false for internal use
 				SourceDescription desc = new SourceDescription(
 						vWorkspace.getRepFactory(), tree, root,
-						rdfSourcePrefix, true,false);
+						rdfSourcePrefix, true, false);
 				String descString = desc.generateSourceDescription();
 				logger.info("SD=" + descString);
-			    PrintWriter outWriter = new PrintWriter (outRdf);
+				PrintWriter outWriter = new PrintWriter(outRdf);
 				WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(
 						vWorkspace.getRepFactory(), descString, outWriter);
 				wrg.generateTriplesCell(nodeId);
@@ -112,8 +112,10 @@ public class PublishRDFCellCommand extends Command {
 					try {
 						outputObject.put(JsonKeys.updateType.name(),
 								"PublishCellRDFUpdate");
+						String rdfCellEscapeString = StringEscapeUtils
+								.escapeHtml(outRdf.toString());
 						outputObject.put(JsonKeys.cellRdf.name(),
-								outRdf.toString().replaceAll("\\n", "<br />"));
+								rdfCellEscapeString.replaceAll("\\n", "<br />"));
 						outputObject.put(JsonKeys.vWorksheetId.name(),
 								vWorksheetId);
 						pw.println(outputObject.toString(4));

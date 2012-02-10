@@ -309,6 +309,7 @@ function submitSemanticTypeChange() {
 	
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	
+	showLoading(info["vWorksheetId"]);
 	var returned = $.ajax({
 	   	url: "/RequestController", 
 	   	type: "POST",
@@ -318,10 +319,12 @@ function submitSemanticTypeChange() {
 	   		function (xhr, textStatus) {
 	    		var json = $.parseJSON(xhr.responseText);
 	    		parse(json);
+	    		hideLoading(info["vWorksheetId"]);
 		   	},
 		error :
 			function (xhr, textStatus) {
 	   			alert("Error occured with fetching new rows! " + textStatus);
+	   			hideLoading(info["vWorksheetId"]);
 		   	}
 	});
 	
@@ -448,6 +451,7 @@ function submitAlignmentLinkChange() {
 	
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	
+	showLoading(info["vWorksheetId"]);
 	var returned = $.ajax({
 	   	url: "/RequestController", 
 	   	type: "POST",
@@ -457,10 +461,12 @@ function submitAlignmentLinkChange() {
 	   		function (xhr, textStatus) {
 	   			var json = $.parseJSON(xhr.responseText);
 	    		parse(json);
+	    		hideLoading(info["vWorksheetId"]);
 		   	},
 		error :
 			function (xhr, textStatus) {
 	   			alert("Error occured with fetching new rows! " + textStatus);
+	   			hideLoading(info["vWorksheetId"]);
 		   	}
 	});
 	
