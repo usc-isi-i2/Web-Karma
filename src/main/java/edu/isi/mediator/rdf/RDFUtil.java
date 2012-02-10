@@ -36,7 +36,7 @@ public class RDFUtil {
 			String prefix = "@prefix " + key + ": <" + sourceNamespaces.get(key) + "> .";
 			outWriter.println(prefix);
 		}
-		outWriter.println();
+		//outWriter.println();
 	}
 
 
