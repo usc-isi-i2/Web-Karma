@@ -244,23 +244,10 @@
 			});
 		</script>
 		<script type="text/javascript">
-			// var ge;
-	      	google.load("earth", "1");
-// 	      	
-			// function init() {
-	        	// google.earth.createInstance('map_canvas_VW1', initCB, failureCB);
-	        	// $('div#map_canvas_VW1').hide();
-	      	// }
-// 	
-	      	// function initCB(instance) {
-	         	// ge = instance;
-	         	// ge.getWindow().setVisibility(true);
-	      	// }
-// 	
-	      	// function failureCB(errorCode) {
-	      	// }
-// 	
-	      	// google.setOnLoadCallback(init);
+	      	google.load("earth", "1", {"callback":earthCallback});
+	      	function earthCallback() {
+	      		// alert("Earth namespace loaded!");
+	      	}
 		</script>
 	</head>
 	
