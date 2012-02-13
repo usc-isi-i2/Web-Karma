@@ -9,7 +9,8 @@ function showMapViewForWorksheet() {
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
 		info["vWorksheetId"] = worksheetId;
 		info["command"] = "PublishKMLLayerCommand";
-	
+		
+		showLoading(worksheetId);
 		var returned = $.ajax({
 		   	url: "/RequestController", 
 		   	type: "POST",
@@ -20,10 +21,37 @@ function showMapViewForWorksheet() {
 		   			// console.log(xhr.responseText);
 		   			var json = $.parseJSON(xhr.responseText);
 		   			if(json["elements"][0]["updateType"] == "KarmaError") {
+		   			    hideLoading(worksheetId);
 		   				$.sticky(json["elements"][0]["Error"]);
+		   				
+		   				//google.setOnLoadCallback(displayKMLOnGoogleEarth(worksheetId, "", worksheetPanel));
 		   			} else if(json["elements"][0]["updateType"] == "PublishKMLUpdate") {
+		   				// google.setOnLoadCallback(displayKMLOnGoogleEarth(worksheetId, fileName, worksheetPanel));
+		   				// displayKMLandToggleIcon(worksheetId, fileName, worksheetPanel);
+		   				hideLoading(worksheetId);
+		   				
 		   				var fileName = json["elements"][0]["fileName"];
-		   				displayKMLandToggleIcon(worksheetId, fileName, worksheetPanel);
+		   				$("div#tablesWorkspace").data("currentKMLFile", fileName);
+                        var mapPanel = $("<div>").addClass("mapViewPanel").width(800).height(650).attr("id","map_canvas_" + worksheetId);
+                        var tableDiv = $("div#"+worksheetId+"TableDiv", worksheetPanel);
+                        mapPanel.insertAfter(tableDiv);
+                        
+                        google.earth.createInstance('map_canvas_'+worksheetId, initCB, failureCB);
+		   				
+		   				tableDiv.hide();
+	                    // Toggle the icon and state of the div
+                        var iconDiv = $("div.toggleMapView", worksheetPanel);   
+                        $("img", iconDiv).attr("src","../images/table.png")
+                        $(iconDiv).data("state", "map");
+                        
+                        // Change the tooltip
+                        $(iconDiv).qtip({
+                           content: {
+                              text: 'View as table'
+                           }, style: {
+                              classes: 'ui-tooltip-light ui-tooltip-shadow'
+                           }
+                        });
 		   			}
 			   	},
 			error :
@@ -118,3 +146,51 @@ function displayKMLandToggleIcon(worksheetId, fileName, worksheetPanel) {
 	   }
 	});
 }
+
+function displayKMLOnGoogleEarth(worksheetId, fileName, worksheetPanel) {
+	// Create the canvas for map
+	var mapPanel = $("<div>").addClass("mapViewPanel").width(800).height(650).attr("id","map_canvas_" + worksheetId);
+	var tableDiv = $("div#"+worksheetId+"TableDiv", worksheetPanel); 
+	mapPanel.insertAfter(tableDiv);
+	
+	google.earth.createInstance("map_canvas_" + worksheetId, initCB, failureCB);
+	
+	tableDiv.hide();
+	
+	// Toggle the icon and state of the div
+	var iconDiv = $("div.toggleMapView", worksheetPanel);	
+	$("img", iconDiv).attr("src","../images/table.png")
+	$(iconDiv).data("state", "map");
+	
+	// Change the tooltip
+	$(iconDiv).qtip({
+	   content: {
+	      text: 'View as table'
+	   }, style: {
+	      classes: 'ui-tooltip-light ui-tooltip-shadow'
+	   }
+	});
+}
+
+function initCB(instance) {
+    ge = instance;
+    ge.getWindow().setVisibility(true);
+    
+    var link = ge.createLink('');
+    var href = $("div#tablesWorkspace").data("currentKMLFile");
+    link.setHref(href);
+    
+    var networkLink = ge.createNetworkLink('');
+    networkLink.set(link, true, true); // Sets the link, refreshVisibility, and flyToView
+    
+    ge.getFeatures().appendChild(networkLink);
+}
+
+function failureCB(errorCode) {
+    alert("Error loading Google Earth: " + errorCode);
+}
+
+
+
+
+
