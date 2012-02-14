@@ -39,25 +39,36 @@ public class MAPFieldOnly {
 	}
 	
 	public double[] probabilitiesForLabels(GraphFieldOnly graph) {
-		CRFModelFieldOnly crfModel = globalData.crfModel ;
-		double[] exps = new double[globalData.labels.size()] ;
-		for(int ffIndex = 0 ; ffIndex < crfModel.ffs.size(); ffIndex++) {
-			LblFtrPair ff = crfModel.ffs.get(ffIndex) ;
-			if (graph.node.features.contains(ff.feature)) {
-				exps[ff.labelIndex]+=crfModel.weights[ffIndex] ;
-			}
-		}
-		LargeNumber[] potentials = new LargeNumber[globalData.labels.size()] ;
-		LargeNumber totalPotential = new LargeNumber(0.0, 0) ;
+		double[] exps, prob;
+		LargeNumber[] potentials;
+		LargeNumber totalPotential ;
+		exps = weightedFeatureFunctionSums(graph);
+		potentials = new LargeNumber[globalData.labels.size()] ;
+		totalPotential = new LargeNumber(0.0, 0) ;
 		for(int i=0;i<globalData.labels.size();i++) {
 			potentials[i] = LargeNumber.makeLargeNumberUsingExponent(exps[i]) ;
 			totalPotential.plusEquals(potentials[i]) ;
 		}
-		double[] prob = new double[globalData.labels.size()] ;
+		prob = new double[globalData.labels.size()] ;
 		for(int i=0;i<globalData.labels.size();i++) {
 			prob[i] = LargeNumber.divide(potentials[i], totalPotential) ;
 		}
 		return prob ;
+	}
+	
+	public double[] weightedFeatureFunctionSums(GraphFieldOnly graph) {
+		CRFModelFieldOnly crfModel;
+		double[] exps;
+		crfModel = globalData.crfModel ;
+		exps = new double[globalData.labels.size()] ;
+		for(int ffIndex = 0 ; ffIndex < crfModel.ffs.size(); ffIndex++) {
+			LblFtrPair ff;
+			ff = crfModel.ffs.get(ffIndex) ;
+			if (graph.node.features.contains(ff.feature)) {
+				exps[ff.labelIndex]+=crfModel.weights[ffIndex] ;
+			}
+		}
+		return exps;
 	}
 	
 	

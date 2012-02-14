@@ -31,7 +31,7 @@ import edu.isi.karma.modeling.semantictypes.sl.Part;
 import edu.isi.karma.modeling.semantictypes.sl.RegexFeatureExtractor;
 
 
-public abstract class CRFModelHandler {
+public class CRFModelHandler {
 
 	public static enum ColumnFeature {
 		ColumnHeaderName ,
@@ -41,6 +41,24 @@ public abstract class CRFModelHandler {
 	static HashMap<String, ArrayList<String>> labelToExamplesMap = null ;
 	static GlobalDataFieldOnly globalData = null ;
 	static Logger logger = LoggerFactory.getLogger(CRFModelHandler.class.getSimpleName()) ;
+	
+	/**
+	 * Making the empty constructor private to prevent instantiation of this class.
+	 * This class should only be used to access its static methods.
+	 */
+	private CRFModelHandler() {
+		
+	}
+
+	
+	/**
+	 * @param args
+	 * For testing purposes. Not meant to be run as a new process.
+	 */
+	public static void main(String[] args) {
+		final String modelFileName = "/Users/amangoel/Desktop/crfmodel.txt";
+		CRFModelHandler.readModelFromFile(modelFileName);
+	}
 	
 	// This function takes the path of file as input and
 	// creates an environment that consists of globalData, crfModel, list of examples of each label, etc.
@@ -179,7 +197,7 @@ public abstract class CRFModelHandler {
 	 * @param examples
 	 * @return
 	 */
-	public static boolean addOrUpdateLabel(String label, List<String> examples) {
+	private static boolean addOrUpdateLabel(String label, List<String> examples) {
 		if (file == null) {
 			logger.debug("CRF Model is not ready, either because it was never read or an error happened while reading it previously. Please try reading the model file again.");
 			return false ;
@@ -322,6 +340,22 @@ public abstract class CRFModelHandler {
 		return savingSuccessful ;
 	}
 
+	
+	public boolean getWeightedFeatureFunctionSums(String example, Map<ColumnFeature, Collection<String>> columnFeatures, List<Double> sums) {
+		GraphFieldOnly exampleGraph ;
+		double[] ffSums;
+		MAPFieldOnly mapPredictor;
+		exampleGraph = new GraphFieldOnly(example, null, new ArrayList<String>(featureSet(example, columnFeatures)), globalData) ;
+		mapPredictor = new MAPFieldOnly(globalData);
+		ffSums = mapPredictor.weightedFeatureFunctionSums(exampleGraph);
+		sums.clear();
+		for(double sum : ffSums) {
+			sums.add(sum);
+		}
+		return true;
+	}
+	
+	
 	private static ArrayList<String> allowedCharacters() {
 		ArrayList<String> allowed = new ArrayList<String>() ;
 		// Adding A-Z
@@ -494,7 +528,7 @@ public abstract class CRFModelHandler {
 	 * @param confidenceScores - the probability of the examples belonging to the labels returned.
 	 * @return
 	 */
-	public static boolean predictLabelForExamples(
+	private static boolean predictLabelForExamples(
 			List<String> examples,
 			int numPredictions,
 			List<String> predictedLabels,
@@ -521,7 +555,7 @@ public abstract class CRFModelHandler {
 	 * 									of belonging to the labels returned in predictedLabels.
 	 * @return
 	 */
-	public static boolean predictLabelForExamples(
+	private static boolean predictLabelForExamples(
 			List<String> examples,
 			int numPredictions, 
 			List<String> predictedLabels, 
