@@ -1,11 +1,17 @@
-package edu.isi.karma.modeling.semantictypes.myutils ;
+package edu.isi.karma.modeling.semantictypes.myutils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+
 
 public class Test {
 	
 	public static void main(String[] args) {
-		test2() ;
+		HashSet<String> list = new HashSet<String>() ;
+		list.add("aman") ;
+		list.add("goel") ;
+		list.add("ruchi") ;
+		Prnt.prnCollection(list, "These are the names ") ;
 	}
 	
 	
@@ -15,7 +21,7 @@ public class Test {
 		int[] count = new int[10] ;
 		
 		for(int iter = 0 ; iter < 10000 ; iter++) {
-			ArrayList<Integer> randNumbers = RandOps.randomNumbers(10, 2) ;
+			ArrayList<Integer> randNumbers = RandOps.uniqSortedRandNums(10, 2) ;
 			for	(Integer r : randNumbers) {
 				count[r]++ ;
 			}
@@ -28,7 +34,7 @@ public class Test {
 		
 	
 	static void test2() {
-		ArrayList<Integer> randNumbers = RandOps.randomNumbers(100, 10) ;
+		ArrayList<Integer> randNumbers = RandOps.uniqSortedRandNums(100, 10) ;
 		Prnt.prn(randNumbers) ;
 	}
 		

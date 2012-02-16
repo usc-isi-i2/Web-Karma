@@ -24,6 +24,7 @@ import edu.isi.karma.modeling.semantictypes.mycrf.graph.GraphInterface;
 import edu.isi.karma.modeling.semantictypes.mycrf.map.MAPFieldOnly;
 import edu.isi.karma.modeling.semantictypes.mycrf.math.Matrix;
 import edu.isi.karma.modeling.semantictypes.mycrf.optimization.OptimizeFieldOnly;
+import edu.isi.karma.modeling.semantictypes.myutils.DBTable;
 import edu.isi.karma.modeling.semantictypes.myutils.ListOps;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
 import edu.isi.karma.modeling.semantictypes.sl.Lexer;
@@ -51,15 +52,7 @@ public class CRFModelHandler {
 	}
 
 	
-	/**
-	 * @param args
-	 * For testing purposes. Not meant to be run as a new process.
-	 */
-	public static void main(String[] args) {
-		final String modelFileName = "/Users/amangoel/Desktop/crfmodel.txt";
-		CRFModelHandler.readModelFromFile(modelFileName);
-	}
-	
+		
 	// This function takes the path of file as input and
 	// creates an environment that consists of globalData, crfModel, list of examples of each label, etc.
 	// It reads an empty file also.
@@ -341,7 +334,7 @@ public class CRFModelHandler {
 	}
 
 	
-	public boolean getWeightedFeatureFunctionSums(String example, Map<ColumnFeature, Collection<String>> columnFeatures, List<Double> sums) {
+	public static boolean getWeightedFeatureFunctionSums(String example, Map<ColumnFeature, Collection<String>> columnFeatures, List<Double> sums) {
 		GraphFieldOnly exampleGraph ;
 		double[] ffSums;
 		MAPFieldOnly mapPredictor;

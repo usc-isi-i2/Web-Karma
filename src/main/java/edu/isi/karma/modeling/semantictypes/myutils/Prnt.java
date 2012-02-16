@@ -1,19 +1,23 @@
-package edu.isi.karma.modeling.semantictypes.myutils ;
+package edu.isi.karma.modeling.semantictypes.myutils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class Prnt {
-	static Logger logger = LoggerFactory.getLogger(Prnt.class.getName());
 	
 	public static void prn(Object obj) {
-		// System.out.println(obj) ;
-		logger.info(obj.toString());
+		System.out.println(obj) ;
 	}
 	
 	public static void endIt(String msg) {
 		prn(msg);
 		System.exit(1) ;
+	}
+	
+	public static void prnCollection(Collection<String> list, String prefix) {
+		for(String str : list) {
+			prn((prefix == null ? "" : prefix) + str) ;
+		}
 	}
 
 }
