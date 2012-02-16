@@ -17,10 +17,6 @@
 		<param-value>http://localhost:8080/RDF/</param-value>
 	</context-param>
 	<context-param>
-		<param-name>RDF_SOURCE_PREFIX</param-name>
-		<param-value>http://localhost:8080/source/</param-value>
-	</context-param>
-	<context-param>
 		<param-name>WGS84_LAT_PROPERTY</param-name>
 		<param-value>http://www.w3.org/2003/01/geo/wgs84_pos#lat</param-value>
 	</context-param>

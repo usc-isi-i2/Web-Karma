@@ -19,10 +19,10 @@ public class PublishRDFCellCommandFactory extends CommandFactory {
 			VWorkspace vWorkspace) {
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId
 				.name());
+		String rdfPrefix = "http://localhost/source/";
 		String nodeId = request.getParameter(Arguments.nodeId.name());
 		return new PublishRDFCellCommand(getNewId(vWorkspace), vWorksheetId, nodeId,
-				ServletContextParameterMap
-				.getParameterValue(ContextParameter.RDF_SOURCE_PREFIX));
+				rdfPrefix);
 	}
 
 }

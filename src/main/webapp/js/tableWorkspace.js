@@ -52,32 +52,13 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	
 	$("button#publishRDF").click(function(){
 		optionsDiv.hide();
+		$("div#rdfStoreInfo").hide();
 		
-		// console.log("Generate RDF for table with ID: " +optionsDiv.data("worksheetId"));
-		var info = new Object();
-		info["vWorksheetId"] = optionsDiv.data("worksheetId");
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "PublishRDFCommand";
-		
-		showLoading(info["vWorksheetId"]);
-		var returned = $.ajax({
-		   	url: "/RequestController", 
-		   	type: "POST",
-		   	data : info,
-		   	dataType : "json",
-		   	complete : 
-		   		function (xhr, textStatus) {
-		   			//alert("RDF Generated!");
-		    		var json = $.parseJSON(xhr.responseText);
-		    		parse(json);
-		    		hideLoading(info["vWorksheetId"]);
-			   	},
-			error :
-				function (xhr, textStatus) {
-		   			alert("Error occured while generating RDF!" + textStatus);
-		   			hideLoading(info["vWorksheetId"]);
-			   	}		   
-		});
+		var rdfDialogBox = $("div#PublishRDFDialogBox");
+		// Show the dialog box
+		rdfDialogBox.dialog({width: 300, height: 325
+			, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": publishRDFFunction }});
+
 	});
 
 	$("button#splitByComma").click(function(){
@@ -161,6 +142,47 @@ function splitColumnByComma() {
 	   			hideLoading(info["vWorksheetId"]);
 		   	}		   
 	});
+}
+
+function showHideRdfInfo() {
+		if( $("input#saveToRDFStore").is(":checked")) {
+			$("div#rdfStoreInfo").show();
+		}
+		else {
+			$("div#rdfStoreInfo").hide();
+		}
+}
+
+function publishRDFFunction() {
+		$("div#PublishRDFDialogBox").dialog("close");
+
+		var info = new Object();
+		info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
+		info["workspaceId"] = $.workspaceGlobalInformation.id;
+		info["command"] = "PublishRDFCommand";
+		info["addInverseProperties"] = $("input#addInverseProperties").is(":checked");
+		info["rdfPrefix"] = $("input#rdfPrefix").data("value");
+		
+		
+		showLoading(info["vWorksheetId"]);
+		var returned = $.ajax({
+		   	url: "/RequestController", 
+		   	type: "POST",
+		   	data : info,
+		   	dataType : "json",
+		   	complete : 
+		   		function (xhr, textStatus) {
+		   			//alert("RDF Generated!");
+		    		var json = $.parseJSON(xhr.responseText);
+		    		parse(json);
+		    		hideLoading(info["vWorksheetId"]);
+			   	},
+			error :
+				function (xhr, textStatus) {
+		   			alert("Error occured while generating RDF!" + textStatus);
+		   			hideLoading(info["vWorksheetId"]);
+			   	}		   
+		});
 }
 
 function showSemanticTypeInfo() {

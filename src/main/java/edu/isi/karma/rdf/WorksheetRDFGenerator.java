@@ -345,8 +345,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 			//use false for internal use
 
 			SourceDescription desc = new SourceDescription(factory, tree, root,
-					ServletContextParameterMap
-					.getParameterValue(ContextParameter.RDF_SOURCE_PREFIX),true,false);
+					"http://localhost/source/",true,false);
 			String descString = desc.generateSourceDescription();
 			System.out.println("SD="+ descString);
 			//generate RDF for the first 3 rows: mariam

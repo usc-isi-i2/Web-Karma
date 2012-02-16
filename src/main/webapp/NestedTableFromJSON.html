@@ -493,5 +493,38 @@
 		</div>
 		<div id="tableCellMenuButtonDiv" style="display: none"></div>
 		<div id="columnHeadingMenuButtonDiv" style="display: none"></div>
+		<div id="PublishRDFDialogBox" style="display: none">
+			<span class="smallSizedFont">RDF prefix:
+			<input type="text" id="rdfPrefix" value="http://localhost:8080/source/" maxlength="100" size="30"/>
+			</span>
+			<br><br>
+			<input type="checkbox" id="addInverseProperties" checked />
+			<label for="addInverseProperties" class="smallSizedFont">Add Inverse Properties</label>
+			<br><br>
+			<input type="checkbox" id="saveToRDFStore" onChange = "showHideRdfInfo()"/>
+			<label for="saveToRDFStore" class="smallSizedFont">Save to Jena RDF Store</label><br />
+			<br />
+			<div class="smallSizedFont" id="rdfStoreInfo">
+			<table>
+			<tr>
+				<td>Host Name:</td>
+				<td>Database Name:</td>
+			</tr>
+			<tr>
+				<td><input type="text" id="hostName" value="host:port" maxlength="100" size="20"/></td>
+				<td><input type="text" id="dbName" maxlength="100" size="20"/></td>
+			</tr>
+			<tr>
+				<td>User Name:</td>
+				<td>Password:</td>
+			</tr>
+			<tr>
+				<td><input type="text" id="userName" maxlength="100" size="20"/></td>
+				<td><input type="password" id="password" maxlength="100" size="20"/></td>
+			</tr>
+			</table>
+			</div>
+			<br />
+		</div>
 	</body>
 </html>

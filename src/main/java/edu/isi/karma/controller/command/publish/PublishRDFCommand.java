@@ -27,7 +27,8 @@ public class PublishRDFCommand extends Command {
 	private final String vWorksheetId;
 	private String publicRDFAddress;
 	private String rdfSourcePrefix;
-
+	private String addInverseProperties;
+	
 	public enum JsonKeys {
 		updateType, fileUrl, vWorksheetId
 	}
@@ -36,11 +37,12 @@ public class PublishRDFCommand extends Command {
 			.getLogger(PublishRDFCommand.class);
 
 	protected PublishRDFCommand(String id, String vWorksheetId,
-			String publicRDFAddress, String rdfSourcePrefix) {
+			String publicRDFAddress, String rdfSourcePrefix, String addInverseProperties) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
 		this.publicRDFAddress = publicRDFAddress;
 		this.rdfSourcePrefix = rdfSourcePrefix;
+		this.addInverseProperties = addInverseProperties;
 	}
 
 	@Override
@@ -93,7 +95,7 @@ public class PublishRDFCommand extends Command {
 				// use false for internal use
 				SourceDescription desc = new SourceDescription(
 						vWorkspace.getRepFactory(), tree, root,
-						rdfSourcePrefix, true,false);
+						rdfSourcePrefix, Boolean.valueOf(addInverseProperties),false);
 				String descString = desc.generateSourceDescription();
 				logger.info("SD=" + descString);
 				WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(
