@@ -12,6 +12,7 @@ import edu.isi.karma.util.Jsonizable;
 public class SemanticTypes implements Jsonizable {
 	// Map from the HNodeIds (for each column) to the semantic type
 	private Map<String, SemanticType> types = new HashMap<String, SemanticType>();
+	private Map<String, SynonymSemanticType> synonymTypes = new HashMap<String, SynonymSemanticType>();
 
 	public Map<String, SemanticType> getTypes() {
 		return types;
@@ -25,9 +26,15 @@ public class SemanticTypes implements Jsonizable {
 		return types.get(hNodeId);
 	}
 	
-	public void unassignColumnSemanticType(String hNodeId) {
-		types.remove(hNodeId);
+	public SynonymSemanticType getSynonymTypesByHNodeId(String hNodeId) {
+		return synonymTypes.get(hNodeId);
 	}
+
+	public void unassignColumnSemanticType(String hNodeId) {
+		types.remove(hNodeId);		
+		synonymTypes.remove(hNodeId);
+	}
+
 
 	@Override
 	public void write(JSONWriter writer) throws JSONException {
@@ -46,4 +53,5 @@ public class SemanticTypes implements Jsonizable {
 	public void addType(SemanticType type) {
 		types.put(type.getHNodeId(), type);
 	}
+
 }
