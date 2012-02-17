@@ -52,7 +52,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	
 	$("button#publishRDF").click(function(){
 		optionsDiv.hide();
-		$("div#rdfStoreInfo").hide();
+		showHideRdfInfo();
 		
 		var rdfDialogBox = $("div#PublishRDFDialogBox");
 		// Show the dialog box
