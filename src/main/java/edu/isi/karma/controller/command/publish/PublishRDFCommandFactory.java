@@ -10,7 +10,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PublishRDFCommandFactory extends CommandFactory {
 	private enum Arguments {
-		vWorksheetId, addInverseProperties, rdfPrefix
+		vWorksheetId, addInverseProperties, rdfPrefix, saveToStore,hostName,dbName,userName,password,modelName
 	}
 
 	@Override
@@ -25,7 +25,13 @@ public class PublishRDFCommandFactory extends CommandFactory {
 		return new PublishRDFCommand(getNewId(vWorkspace), vWorksheetId,
 				ServletContextParameterMap
 				.getParameterValue(ContextParameter.PUBLIC_RDF_ADDRESS),
-				rdfPrefix, addInverseProperties);
+				rdfPrefix, addInverseProperties,
+				request.getParameter(Arguments.saveToStore.name()),
+				request.getParameter(Arguments.hostName.name()),
+				request.getParameter(Arguments.dbName.name()),
+				request.getParameter(Arguments.userName.name()),
+				request.getParameter(Arguments.password.name()),
+				request.getParameter(Arguments.modelName.name()));
 	}
 
 }

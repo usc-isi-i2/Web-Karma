@@ -1,5 +1,8 @@
 package edu.isi.karma.controller.command.publish;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -7,6 +10,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.hp.hpl.jena.db.DBConnection;
+import com.hp.hpl.jena.db.IDBConnection;
+import com.hp.hpl.jena.db.ModelRDB;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.ModelMaker;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
@@ -28,6 +37,12 @@ public class PublishRDFCommand extends Command {
 	private String publicRDFAddress;
 	private String rdfSourcePrefix;
 	private String addInverseProperties;
+	private boolean saveToStore;
+	private String hostName;
+	private String dbName;
+	private String userName;
+	private String password;
+	private String modelName;
 	
 	public enum JsonKeys {
 		updateType, fileUrl, vWorksheetId
@@ -37,12 +52,22 @@ public class PublishRDFCommand extends Command {
 			.getLogger(PublishRDFCommand.class);
 
 	protected PublishRDFCommand(String id, String vWorksheetId,
-			String publicRDFAddress, String rdfSourcePrefix, String addInverseProperties) {
+			String publicRDFAddress, String rdfSourcePrefix, String addInverseProperties,
+			String saveToStore,String hostName,String dbName,String userName,String password, String modelName) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
 		this.publicRDFAddress = publicRDFAddress;
 		this.rdfSourcePrefix = rdfSourcePrefix;
 		this.addInverseProperties = addInverseProperties;
+		this.saveToStore=Boolean.valueOf(saveToStore);
+		this.hostName=hostName;
+		this.dbName=dbName;
+		this.userName=userName;
+		this.password=password;
+		if(modelName==null || modelName.trim().isEmpty())
+			this.modelName="karma";
+		else
+			this.modelName=modelName;
 	}
 
 	@Override
@@ -110,6 +135,11 @@ public class PublishRDFCommand extends Command {
 				FileUtil.writeStringToFile(descString, fileName);
 				logger.info("Source description written to file: " + fileName);
 				logger.info("RDF written to file: " + rdfFileName);
+				if(saveToStore){
+					//take the contents of the RDF file and save them to the store
+					logger.info("Using Jena DB:" + hostName + "/"+dbName + " user="+userName);
+					saveToStore(rdfFileName);
+				}
 				// //////////////////
 
 			} else {
@@ -138,6 +168,24 @@ public class PublishRDFCommand extends Command {
 		} catch (Exception e) {
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}
+	}
+
+	private void saveToStore(String rdfFileName) throws ClassNotFoundException, IOException {
+		String M_DBDRIVER_CLASS = "com.mysql.jdbc.Driver";
+		// load the the driver class
+		Class.forName(M_DBDRIVER_CLASS);
+		
+		String dbUrl = "jdbc:mysql://" + hostName + "/" + dbName;
+		// create a database connection
+		IDBConnection conn = new DBConnection(dbUrl, userName, password, "MySQL");
+		
+		// create a model maker with the given connection parameters
+		ModelMaker maker = ModelFactory.createModelRDBMaker(conn);
+		
+		ModelRDB model = (ModelRDB) maker.openModel(modelName);
+		InputStream file = new FileInputStream(rdfFileName);
+		model.read(file,null,"N3");
+		file.close();
 	}
 
 	@Override

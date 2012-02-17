@@ -41,6 +41,7 @@
 		<script type="text/javascript" src="js/ServerResponseObjectParsing.js"></script>
 		<script type="text/javascript" src="js/commandHistory.js"></script>
 		<script type="text/javascript" src="js/tableWorkspace.js"></script>
+		<script type="text/javascript" src="js/publishRDF.js"></script>
 		<script type="text/javascript" src="js/pager.js"></script>
 		<script type="text/javascript" src="js/geospatial.js"></script>
 		<script type="text/javascript" src="js/databaseImportDialog.js"></script>
@@ -511,16 +512,24 @@
 				<td>Database Name:</td>
 			</tr>
 			<tr>
-				<td><input type="text" id="hostName" value="host:port" maxlength="100" size="20"/></td>
-				<td><input type="text" id="dbName" maxlength="100" size="20"/></td>
+				<td><input type="text" id="hostName" value="localhost:3306" maxlength="100" size="20"/></td>
+				<td><input type="text" id="dbName" value= "jenadb" maxlength="100" size="20"/></td>
 			</tr>
 			<tr>
 				<td>User Name:</td>
 				<td>Password:</td>
 			</tr>
 			<tr>
-				<td><input type="text" id="userName" maxlength="100" size="20"/></td>
-				<td><input type="password" id="password" maxlength="100" size="20"/></td>
+				<td><input type="text" id="userName" value="root" maxlength="100" size="20"/></td>
+				<td><input type="password" id="password" value="isi4676" maxlength="100" size="20"/></td>
+			</tr>
+			<tr>
+				<td>Model Name:</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td><input type="text" id="modelName" value="karma" maxlength="100" size="20"/></td>
+				<td></td>
 			</tr>
 			</table>
 			</div>
