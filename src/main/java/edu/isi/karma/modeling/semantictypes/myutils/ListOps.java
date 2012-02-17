@@ -4,31 +4,51 @@ import java.util.ArrayList;
 
 public class ListOps {
 
+	public static void main(String[] args) {
+		ArrayList<String> stringList;
+		ArrayList<Double> doubleList;
+		stringList = new ArrayList<String>();
+		doubleList = new ArrayList<Double>();
+		stringList.add("aman");
+		doubleList.add(1.5);
+		stringList.add("goel");
+		doubleList.add(3.6);
+		stringList.add("xyz");
+		doubleList.add(-2.5);
+		stringList.add("alpha");
+		doubleList.add(10.1);
+		stringList.add("beta");
+		doubleList.add(35.9);
+		Prnt.prn(stringList);
+		Prnt.prn(doubleList);
+		sortListOnValues(stringList, doubleList);
+		Prnt.prn(stringList);
+		Prnt.prn(doubleList);
+	}
+	
 	// Sorts values in descending order
-	// Rearranges the list so that the objects are at the same index as their
-	// corresponding values
-	// So, the item that had highest corresponding score will be at position
-	// zero and
+	// Rearranges the list so that the objects are at the same index as their corresponding values
+	// So, the item that had highest corresponding score will be at position zero and
 	// item with the lowest score will be at the end of the list
-	public static <T> void sortListOnValues(ArrayList<T> list,
-			ArrayList<Double> values) {
-		int pos = 0;
-
-		for (int i = 0; i < list.size() - 1; i++) {
-			pos = i;
-			for (int j = i + 1; j < list.size(); j++) {
-				if (values.get(j) > values.get(pos)) {
-					pos = j;
+	public static <T> void sortListOnValues(ArrayList<T> list, ArrayList<Double> values) {
+		int pos = 0 ;
+		
+		for(int i=0;i<list.size()-1;i++) {
+			pos = i ;
+			for(int j=i+1;j<list.size();j++) {
+				if(values.get(j) > values.get(pos)) {
+					pos = j ;
 				}
 			}
-			double maxVal = values.get(pos);
-			values.set(pos, values.get(i));
-			values.set(i, maxVal);
-
-			T obj = list.get(pos);
-			list.set(pos, list.get(i));
-			list.set(i, obj);
+			double maxVal = values.get(pos) ;
+			values.set(pos, values.get(i)) ;
+			values.set(i, maxVal) ;
+			
+			T obj = list.get(pos) ;
+			list.set(pos, list.get(i)) ;
+			list.set(i, obj) ;
 		}
 	}
-
+	
+	
 }

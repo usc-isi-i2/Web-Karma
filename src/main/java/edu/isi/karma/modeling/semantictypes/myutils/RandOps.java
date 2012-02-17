@@ -1,20 +1,37 @@
 package edu.isi.karma.modeling.semantictypes.myutils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 
 
 public class RandOps {
 	
-	
+	public static void main(String[] args) throws Exception {
+		ArrayList<String> stringList, newList;
+		stringList = new ArrayList<String>();
+		newList = new ArrayList<String>();
+		stringList.add("aman");
+		stringList.add("goel2");
+		stringList.add("xyz");
+		stringList.add("alpha");
+		stringList.add("beta");
+		Prnt.prn(stringList);
+		Prnt.prn(newList);
+		getRandomlySelectedItemsFromList(stringList, newList, 3);
+		Prnt.prn(stringList);
+		Prnt.prn(newList);
+		
+	}
 	
 	/**
-	 * @param limit - max limit (exclusive)
-	 * @param nNumbers - number of integers to be returned
-	 * @return - a list of integers randomly selected from 0 to limit-1 (both inclusive)
+	 * @param limit Max limit. Numbers will be returned from 0 (inclusive) and limit (exclusive)
+	 * @param nNumbers Number of random numbers to be returned (cannot be greater than limit)
+	 * @return A list of integers randomly selected within the above mentioned limit
 	 */
-	public static ArrayList<Integer> randomNumbers(int limit, int nNumbers) {
+	public static ArrayList<Integer> uniqSortedRandNums(int limit, int nNumbers) {
+		// returns nNumbers unique random numbers between 0 (inclusive) and limit (exclusive)
 		if(limit < nNumbers) {
 			Prnt.endIt("RandOps.randomNumbers: limit < nNumbers") ;
 		}
@@ -36,27 +53,24 @@ public class RandOps {
 		return numbersList ;
 	}
 	
-	/*
-	while(numbersList.size() < nNumbers) {
-		int num = rand.nextInt(limit - numbersList.size()) ;
-		int min = 0 ;
-		int max = num ;
-		while(true) {
-			int a = 0 ;
-			for(Integer i : numbersList) {
-				if(i <= max && i >= min)
-					a++ ;
-			}
-			num+=a ;
-			if(a == 0)
-				break ;
-			else {
-				min = max + 1 ; 
-				max = num ;
-			}
+	
+	/**
+	 * @param <T> The type of the lists
+	 * @param originalList The original list containing all the items
+	 * @param selectedList The list in which randomly selected items will be returned
+	 * @param numItems Number of items to be randomly selected from originallist
+	 */
+	public static <T> void getRandomlySelectedItemsFromList(List<T> originalList, List<T> selectedList, int numItems) {
+		ArrayList<Integer> randomIndices;
+		if (numItems > originalList.size()) {
+			Prnt.endIt("Invalid argument @numItems. It is larger than the size of the list");
 		}
-		numbersList.add(num) ;			
+		randomIndices = uniqSortedRandNums(originalList.size(), numItems);
+		selectedList.clear();
+		for(Integer index: randomIndices) {
+			selectedList.add(originalList.get(index));
+		}
 	}
-	*/
+	
 	
 }
