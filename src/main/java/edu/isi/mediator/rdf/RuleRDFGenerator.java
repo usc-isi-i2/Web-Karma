@@ -332,14 +332,18 @@ public class RuleRDFGenerator {
 	 */
 	protected boolean addClassStatement(Predicate p, Map<String,String> values) throws MediatorException, UnsupportedEncodingException{
 		String className = p.getName();
+		//remove backtick
+		if(className.startsWith("`"))
+			className = className.substring(1,className.length()-1);
+		
 		//System.out.println("Class Name=" + className);
 		String ontologyPrefixName = ontologyPrefix;
 		//split class name
 		int ind = className.indexOf(PREFIX_SEPARATOR);
-		if(ind>0){
-			//remove the back-tick
-			ontologyPrefixName = className.substring(1,ind); 
-			className = className.substring(ind+1, className.length()-1); 
+		//http: is not a prefix
+		if(ind>0 && !className.startsWith("http:")){
+			ontologyPrefixName = className.substring(0,ind); 
+			className = className.substring(ind+1); 
 		}
 		
 		//get the uri
@@ -357,6 +361,9 @@ public class RuleRDFGenerator {
 		//className = URLEncoder.encode(className, "UTF-8");
 		//String classFullName = "<" + ontologyPrefixName + ":" + className + ">";
 		String classFullName = ontologyPrefixName + ":" + className;
+		if(className.startsWith("http:")){
+			classFullName = "<" + className + ">";
+		}
 		
 		String statement = subject.toString() + " a " + classFullName + " .";
 		
@@ -390,20 +397,27 @@ public class RuleRDFGenerator {
 		//remove back-tick
 		String predicateName = p.getName();
 		//System.out.println("Predicate Name=" + predicateName);
+		if(predicateName.startsWith("`"))
+			predicateName = predicateName.substring(1,predicateName.length()-1);
+		
 		String ontologyPrefixName = ontologyPrefix;
 
 		//split predicate name
 		int ind = predicateName.indexOf(PREFIX_SEPARATOR);
-		if(ind>0){
+		//http: is not a prefix
+		if(ind>0 && !predicateName.startsWith("http:")){
 			//remove the back-tick
-			ontologyPrefixName = predicateName.substring(1,ind); 
-			predicateName = predicateName.substring(ind+1, predicateName.length()-1); 
+			ontologyPrefixName = predicateName.substring(0,ind); 
+			predicateName = predicateName.substring(ind+1); 
 		}
 		
 		//we assume that predicate names do not have spaces or other "strange" chars
 		//predicateName = URLEncoder.encode(predicateName, "UTF-8");
 		//String predicate = "<" + ontologyPrefixName + ":" +  predicateName + ">";
 		String predicate = ontologyPrefixName + ":" +  predicateName;
+		if(predicateName.startsWith("http:")){
+			predicate = "<" + predicateName +">";
+		}
 		
 		ArrayList<Term> terms = p.getTerms();
 		//should have exactly 2 terms
