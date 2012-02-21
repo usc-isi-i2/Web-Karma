@@ -26,6 +26,7 @@ function publishRDFToFile() {
 		info["rdfPrefix"] = $("input#rdfPrefix").val();
 		info["saveToStore"] = "false";
 
+		showLoadingRDF(info["vWorksheetId"],"Saving to file...");
 		returnFunc(info);
 }
 
@@ -45,11 +46,11 @@ function publishRDFToStore() {
 		info["password"] = $("input#password").val();
 		info["modelName"] = $("input#modelName").val();
 		
+		showLoadingRDF(info["vWorksheetId"],"Saving to RDF store...");
 		returnFunc(info);		
 }
 
 function returnFunc(info) {
-		showLoading(info["vWorksheetId"]);
 		var returned = $.ajax({
 		   	url: "/RequestController", 
 		   	type: "POST",
@@ -68,4 +69,15 @@ function returnFunc(info) {
 		   			hideLoading(info["vWorksheetId"]);
 			   	}		   
 		});
+}
+
+function showLoadingRDF(worksheetId, message) {
+    var coverDiv = $("<div>").attr("id","WaitingDiv_"+worksheetId).addClass('waitingDiv')
+        .append($("<div>").html('<b>'+message+'</b>')
+            .append($('<img>').attr("src","images/ajax-loader.gif"))
+    );
+     
+    var spaceToCoverDiv = $("div#"+worksheetId);
+    spaceToCoverDiv.append(coverDiv.css({"position":"absolute", "height":spaceToCoverDiv.height(), 
+        "width": spaceToCoverDiv.width(), "top":spaceToCoverDiv.position().top, "left":spaceToCoverDiv.position().left}).show());
 }
