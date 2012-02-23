@@ -22,6 +22,13 @@ button.duplicateClass {
 	margin-left: 5px;
 }
 
+div#CurrentSemanticTypesBox {
+}
+
+div#CurrentSemanticTypesBox td {
+	font-size: 10px;
+}
+
 /* TopLevelAlignmentTable classes */
 .filltopLevelAlignmentTableCell {
 	background: #1A1A1A;

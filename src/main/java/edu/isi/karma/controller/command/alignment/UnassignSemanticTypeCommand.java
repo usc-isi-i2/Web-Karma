@@ -68,7 +68,7 @@ public class UnassignSemanticTypeCommand extends Command {
 
 		// Save the old SemanticType object for undo
 		SemanticTypes types = worksheet.getSemanticTypes();
-		oldSemanticType = types.getSemanticTypeByHNodeId(hNodeId);
+		oldSemanticType = types.getSemanticTypeForHNodeId(hNodeId);
 		types.unassignColumnSemanticType(hNodeId);
 
 		// Get the column name

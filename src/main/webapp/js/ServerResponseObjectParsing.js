@@ -668,42 +668,35 @@ function parse(data) {
 		
 		else if(element["updateType"] == "SemanticTypesUpdate") {
 			var table = $("table#" + element["worksheetId"]);
+			
 			$.each(element["Types"], function(index, type) {
-				var tdTag = $("td.columnHeadingCell#" + type["HNodeId"], table);
-				// Remove any existing semantic type div
-				$("br", tdTag).remove();
-				$("div.semanticTypeDiv", tdTag).remove();
-				
-				var semDiv = $("<div>").addClass("semanticTypeDiv " + 
-						type["ConfidenceLevel"]+"ConfidenceLevel");
-				
-				if(type["FullType"] == ""){
-					semDiv.text("Unassigned").addClass("LowConfidenceLevel")
-						.data("hNodeId", type["HNodeId"])
-						.data("fullType", "Unassigned");
-					if(type["FullCRFModel"] != null)
-						semDiv.data("crfInfo",type["FullCRFModel"]);		
-				} else if (type["ConfidenceLevel"] == "Low") {
-					semDiv.text("Unassigned").addClass("LowConfidenceLevel")
-						.data("hNodeId", type["HNodeId"])
-						.data("fullType", "Unassigned")
-						.data("crfInfo",type["FullCRFModel"]);
-				} else {
-					if(type["Domain"] != null && type["Domain"] != ""){
-						var typeItalicSpan = $("<span>").addClass("italic").text(type["DisplayLabel"]);
-						// semDiv.text(type["DisplayDomainLabel"] + ":" + type["DisplayLabel"]);
-						semDiv.text(type["DisplayDomainLabel"] + ":").append(typeItalicSpan);
-					}
-					else
-						semDiv.text(type["DisplayLabel"]);
-					semDiv.data("crfInfo",type["FullCRFModel"])
-						.data("hNodeId", type["HNodeId"])
-						.data("fullType", type["FullType"])
-						.data("domain", type["Domain"])
-						.data("origin", type["Origin"]);	
-				}
-					
-				//semDiv.hover(showSemanticTypeInfo, hideSemanticTypeInfo);
+			    var tdTag = $("td.columnHeadingCell#" + type["HNodeId"], table);
+			    // Remove any existing semantic type div
+                $("br", tdTag).remove();
+                $("div.semanticTypeDiv", tdTag).remove();
+                
+                var semDiv = $("<div>");
+                
+			    if(type["SemanticTypesArray"].length == 0) {
+			        semDiv.text("Unassigned")
+                        .addClass("LowConfidenceLevel semanticTypeDiv")
+                        .data("typeJsonObject", type);
+			    } else {
+			        var index2 = getPrimarySemTypeObject(type["SemanticTypesArray"]);
+			        var primarySemTypeObject = type["SemanticTypesArray"][index2];
+			        
+			        semDiv.addClass("semanticTypeDiv " + primarySemTypeObject["ConfidenceLevel"]+"ConfidenceLevel");
+                        
+                    if(primarySemTypeObject["Domain"] != ""){
+                        var typeItalicSpan = $("<span>").addClass("italic").text(primarySemTypeObject["DisplayLabel"]);
+                        semDiv.text(primarySemTypeObject["DisplayDomainLabel"] + ":").append(typeItalicSpan);
+                    }
+                    else {
+                        semDiv.text(primarySemTypeObject["DisplayLabel"]);
+                    }
+			    }
+			    
+				semDiv.data("typesJsonObject", type);
 				semDiv.click(changeSemanticType);
 				tdTag.append(semDiv);
 			});

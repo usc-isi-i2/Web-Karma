@@ -82,27 +82,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		// Show the dialog box
 		columnListDiv.dialog({width: 300, height: 150
 			, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": splitColumnByComma }});
-		// var info = new Object();
-		// info["vWorksheetId"] = $("#WorksheetOptionsDiv").data("worksheetId");
-		// info["workspaceId"] = $.workspaceGlobalInformation.id;
-		// info["command"] = "ShowModelCommand";
-			
-		// var returned = $.ajax({
-		   	// url: "/RequestController", 
-		   	// type: "POST",
-		   	// data : info,
-		   	// dataType : "json",
-		   	// complete : 
-		   		// function (xhr, textStatus) {
-		   			// //alert(xhr.responseText);
-		    		// var json = $.parseJSON(xhr.responseText);
-		    		// parse(json);
-			   	// },
-			// error :
-				// function (xhr, textStatus) {
-		   			// alert("Error occured while generating semantic types!" + textStatus);
-			   	// }		   
-		// });
 	});
 }
 
@@ -303,37 +282,8 @@ function styleAndAssignHandlersToColumnHeadingMenu() {
 		$(this).show();
 	});
 	
-	// Assign handler to column clean button
-	$("button#cleanColumnButton").click(function() {
-		columnHeadingMenu.dialog("close");
-		var selectedHNodeId = columnHeadingMenu.data("parentCellId");
-		
-		// Get the worksheet id
-		var tdTag = $("td#"+selectedHNodeId);
-		var vWorksheetId = tdTag.parents("div.Worksheet").attr("id");
-		
-		var info = new Object();
-		info["vWorksheetId"] = vWorksheetId;
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["hNodeId"] = selectedHNodeId;
-		info["command"] = "AddNewColumnCommand";
-				
-		var returned = $.ajax({
-		   	url: "/RequestController", 
-		   	type: "POST",
-		   	data : info,
-		   	dataType : "json",
-		   	complete : 
-		   		function (xhr, textStatus) {
-		    		var json = $.parseJSON(xhr.responseText);
-		    		parse(json);
-			   	},
-			error :
-				function (xhr, textStatus) {
-		   			alert("Error occured while creating a new column! " + textStatus);
-			   	}		   
-		});
-	});
+	// Assign handler to column clean button (in cleaning.js)
+    assignHandlersToCleaningPanelObjects();
 }
 
 function openColumnHeadingOptions() {

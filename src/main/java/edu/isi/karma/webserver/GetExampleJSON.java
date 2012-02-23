@@ -1,6 +1,5 @@
 package edu.isi.karma.webserver;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -23,6 +22,10 @@ import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetExampleJSON extends HttpServlet {
+	private enum Arguments {
+		hasPreferenceId, workspacePreferencesId
+	}
+
 	/**
 	 * 
 	 */
@@ -33,10 +36,14 @@ public class GetExampleJSON extends HttpServlet {
 
 		Workspace workspace = WorkspaceManager.getInstance().getFactory()
 				.createWorkspace();
-		VWorkspace vwsp = new VWorkspace(workspace);
+
+		/* Check and set the preferences key if required */
+		VWorkspace vwsp = request.getParameter(Arguments.hasPreferenceId.name()).equals("true") ? 
+			new VWorkspace(workspace, request.getParameter(Arguments.workspacePreferencesId.name())) : 
+			new VWorkspace(workspace);
 
 		WorkspaceRegistry.getInstance().register(new ExecutionController(vwsp));
-
+		
 		//mariam
 		/*
 		File file = new File("../demofiles/peopleFaculty.csv");
@@ -44,7 +51,7 @@ public class GetExampleJSON extends HttpServlet {
 		imp.generateWorksheet();
 		*/
 		//////////////
-		
+
 		// Initialize the Outlier tag
 		Tag outlierTag = new Tag(TagName.Outlier, Color.Red);
 		workspace.getTagsContainer().addTag(outlierTag);
@@ -103,13 +110,8 @@ public class GetExampleJSON extends HttpServlet {
 		PrintWriter pw = new PrintWriter(sw);
 
 		c.generateJson("", pw, vwsp);
-
-//		System.err.println(sw.toString());
-
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.getWriter().println(sw.toString());
-		// response.getWriter().println("session=" +
-		// request.getSession(true).getId());
 	}
 }

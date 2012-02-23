@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
+import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.util.Jsonizable;
 import edu.isi.karma.util.Util;
 
@@ -35,7 +36,7 @@ public class CRFColumnModel implements Jsonizable {
 		writer.array();
 		for (String label : scoreMap.keySet()) {
 			writer.object();
-			writer.key("type").value(label);
+			writer.key(SemanticTypesUpdate.JsonKeys.FullType.name()).value(label);
 			writer.key("probability").value(scoreMap.get(label));
 			writer.endObject();
 		}
@@ -55,13 +56,15 @@ public class CRFColumnModel implements Jsonizable {
 			
 			// Check if the type contains domain
 			if(label.contains("|")){
-				oj.put("DisplayDomainLabel", SemanticTypeUtil.removeNamespace(label.split("\\|")[0]));
-				oj.put("Domain", label.split("\\|")[0]);
-				oj.put("DisplayLabel", SemanticTypeUtil.removeNamespace(label.split("\\|")[1]));
-				oj.put("Type", label.split("\\|")[1]);
+				oj.put(SemanticTypesUpdate.JsonKeys.DisplayDomainLabel.name(), SemanticTypeUtil.removeNamespace(label.split("\\|")[0]));
+				oj.put(SemanticTypesUpdate.JsonKeys.Domain.name(), label.split("\\|")[0]);
+				oj.put(SemanticTypesUpdate.JsonKeys.DisplayLabel.name(), SemanticTypeUtil.removeNamespace(label.split("\\|")[1]));
+				oj.put(SemanticTypesUpdate.JsonKeys.FullType.name(), label.split("\\|")[1]);
 			} else {
-				oj.put("Type", label);
-				oj.put("DisplayLabel", SemanticTypeUtil.removeNamespace(label));
+				oj.put(SemanticTypesUpdate.JsonKeys.FullType.name(), label);
+				oj.put(SemanticTypesUpdate.JsonKeys.DisplayLabel.name(), SemanticTypeUtil.removeNamespace(label));
+				oj.put(SemanticTypesUpdate.JsonKeys.DisplayDomainLabel.name(), "");
+				oj.put(SemanticTypesUpdate.JsonKeys.Domain.name(), "");
 			}
 			
 			oj.put("Probability", scoreMap.get(label));

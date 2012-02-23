@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.AlignToOntology;
@@ -64,7 +63,7 @@ public class ShowModelCommand extends WorksheetCommand {
 		// Generate the semantic types for the worksheet
 		boolean semanticTypesChangedOrAdded = SemanticTypeUtil
 				.populateSemanticTypesUsingCRF(worksheet, outlierTag);
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+//		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 
 		// Get the alignment update if any
 		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
