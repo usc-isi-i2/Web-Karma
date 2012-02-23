@@ -75,7 +75,7 @@ public class ImportDatabaseTableCommand extends CommandWithPreview {
 			throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		if(requestedInteractionType == InteractionType.getPreferencesValues) {
-			c.add(new FetchPreferencesUpdate(vWorkspace, ImportDatabaseTableCommand.class.getSimpleName()));
+			c.add(new FetchPreferencesUpdate(vWorkspace, ImportDatabaseTableCommand.class.getSimpleName()+"Preferences"));
 			return c;
 		}
 		

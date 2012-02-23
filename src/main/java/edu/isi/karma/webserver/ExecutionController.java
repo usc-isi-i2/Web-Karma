@@ -17,6 +17,8 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.CommandWithPreview;
 import edu.isi.karma.controller.command.EditCellCommand;
 import edu.isi.karma.controller.command.EditCellCommandFactory;
+import edu.isi.karma.controller.command.FetchPreferencesCommand;
+import edu.isi.karma.controller.command.FetchPreferencesCommandFactory;
 import edu.isi.karma.controller.command.ImportCSVFileCommand;
 import edu.isi.karma.controller.command.ImportCSVFileCommandFactory;
 import edu.isi.karma.controller.command.ImportDatabaseTableCommand;
@@ -143,6 +145,8 @@ public class ExecutionController {
 				new AddNewColumnCommandFactory());
 		commandFactoryMap.put(PublishRDFCellCommand.class.getSimpleName(),
 				new PublishRDFCellCommandFactory());
+		commandFactoryMap.put(FetchPreferencesCommand.class.getSimpleName(),
+				new FetchPreferencesCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

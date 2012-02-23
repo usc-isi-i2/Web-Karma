@@ -31,6 +31,7 @@ import edu.isi.karma.rdf.WorksheetRDFGenerator;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.ViewPreferences;
 
 public class PublishRDFCommand extends Command {
 	private final String vWorksheetId;
@@ -50,6 +51,10 @@ public class PublishRDFCommand extends Command {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishRDFCommand.class);
+
+	public enum PreferencesKeys {
+		rdfPrefix, addInverseProperties, saveToStore, dbName, hostName, userName, modelName
+	}
 
 	protected PublishRDFCommand(String id, String vWorksheetId,
 			String publicRDFAddress, String rdfSourcePrefix, String addInverseProperties,
@@ -92,6 +97,13 @@ public class PublishRDFCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+		
+		//save the preferences 
+		savePreferences(vWorkspace);
+
+		System.out.println("do it..." + vWorkspace);
+		System.out.println("id=..." + vWorksheetId);
+
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
@@ -170,6 +182,30 @@ public class PublishRDFCommand extends Command {
 		}
 	}
 
+	private void savePreferences(VWorkspace vWorkspace){
+		try{
+			JSONObject prefObject = new JSONObject();
+			prefObject.put(PreferencesKeys.addInverseProperties.name(), addInverseProperties);
+			prefObject.put(PreferencesKeys.rdfPrefix.name(), rdfSourcePrefix);
+			prefObject.put(PreferencesKeys.saveToStore.name(), saveToStore);
+			prefObject.put(PreferencesKeys.dbName.name(), dbName);
+			prefObject.put(PreferencesKeys.hostName.name(), hostName);
+			prefObject.put(PreferencesKeys.modelName.name(), modelName);
+			prefObject.put(PreferencesKeys.userName.name(), userName);
+			vWorkspace.getPreferences().setCommandPreferences(
+					"PublishRDFCommandPreferences", prefObject);
+			
+			System.out.println("I Saved .....");
+			ViewPreferences prefs = vWorkspace.getPreferences();
+			JSONObject prefObject1 = prefs.getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
+			System.out.println("I Saved ....."+prefObject1);
+
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void saveToStore(String rdfFileName) throws ClassNotFoundException, IOException {
 		String M_DBDRIVER_CLASS = "com.mysql.jdbc.Driver";
 		// load the the driver class
@@ -190,7 +226,6 @@ public class PublishRDFCommand extends Command {
 
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

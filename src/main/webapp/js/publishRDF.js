@@ -31,8 +31,6 @@ function publishRDFToFile() {
 }
 
 function publishRDFToStore() {
-		$("div#PublishRDFDialogBox").dialog("close");
-
 		var info = new Object();
 		info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -58,7 +56,6 @@ function returnFunc(info) {
 		   	dataType : "json",
 		   	complete : 
 		   		function (xhr, textStatus) {
-		   			//alert("RDF Generated!");
 		    		var json = $.parseJSON(xhr.responseText);
 		    		parse(json);
 		    		hideLoading(info["vWorksheetId"]);
@@ -80,4 +77,41 @@ function showLoadingRDF(worksheetId, message) {
     var spaceToCoverDiv = $("div#"+worksheetId);
     spaceToCoverDiv.append(coverDiv.css({"position":"absolute", "height":spaceToCoverDiv.height(), 
         "width": spaceToCoverDiv.width(), "top":spaceToCoverDiv.position().top, "left":spaceToCoverDiv.position().left}).show());
+}
+
+function getPreferences() {
+	var info = new Object();
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "FetchPreferencesCommand";
+	info["preferenceCommand"] = "PublishRDFCommand";
+	var returned = $.ajax({
+	   	url: "/RequestController", 
+	   	type: "POST",
+	   	data : info,
+	   	dataType : "json",
+	   	complete : 
+	   		function (xhr, textStatus) {
+	   			var json = $.parseJSON(xhr.responseText);
+	    		$.each(json["elements"], function(index, element) {
+	    			if(element["updateType"] == "PublishRDFCommandPreferences") {
+	    				
+	    				if(element["PreferenceValues"]) {
+	    					$("input#hostName").val(element["PreferenceValues"]["hostName"]);
+	    					$("input#dbName").val(element["PreferenceValues"]["dbName"]);
+	    					$("input#userName").val(element["PreferenceValues"]["userName"]);
+	    					$("input#modelName").val(element["PreferenceValues"]["modelName"]);
+	    					$("input#rdfPrefix").val(element["PreferenceValues"]["rdfPrefix"]);
+	    					$("input#saveToRDFStore").val(element["PreferenceValues"]["saveToStore"]);
+	    					$("input#saveToRDFStore").val(element["PreferenceValues"]["saveToStore"]);
+	    					$("input#addInverseProperties").val(element["PreferenceValues"]["addInverseProperties"]);
+	    				}
+	    			}
+	    		});
+	    		
+		   	},
+		error :
+			function (xhr, textStatus) {
+	   			alert("Error occured with fetching new rows! " + textStatus);
+		   	}		   
+	});
 }

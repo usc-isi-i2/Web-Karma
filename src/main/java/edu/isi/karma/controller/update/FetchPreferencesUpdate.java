@@ -26,11 +26,11 @@ public class FetchPreferencesUpdate extends AbstractUpdate {
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
 		ViewPreferences prefs = vWorkspace.getPreferences();
-		JSONObject prefObject = prefs.getCommandPreferencesJSONObject(ImportDatabaseTableCommand.class.getSimpleName());
+		JSONObject prefObject = prefs.getCommandPreferencesJSONObject(commandName);
 		JSONObject responseObj = new JSONObject();
 		try {
 			responseObj.put("commandId", vWorkspace.getWorkspace().getCommandHistory().getCurrentCommand().getId());
-			responseObj.put("updateType", "ImportDatabaseTableCommandPreferences");
+			responseObj.put("updateType", commandName);
 			
 			// Populate the preferences if there are any
 			if(prefObject != null) {
