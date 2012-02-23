@@ -199,7 +199,6 @@ function changeSemanticType(event) {
 }
 
 function addSemTypeObjectToCurrentTable(semTypeObject, isFirst) {
-    console.log(semTypeObject);
     var table = $("#currentSemanticTypesTable");
     // Add the row that says Primary
     if(isFirst) {
@@ -291,7 +290,6 @@ function addTypeToArrayAndShowInTable() {
     
     /* Insert it into the array */
     var semTypesArray = optionsDiv.data("SemanticTypesArray");
-    console.log(semTypesArray);
     // Check if same type already exists
     var exists = false;
     $.each(semTypesArray, function(index, semType) {
@@ -473,11 +471,6 @@ function populateSecondColumnOntologyBox() {
 
 function submitSemanticTypeChange() {
 	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
-	if($("#toggleOntologyHierarchy").val() == "dataProperty" 
-		&& optionsDiv.data("secondColumnSelection") == "") {
-		alert("Please specify the domain for the data property!");
-		return;
-	}
 	
 	var info = new Object();
 	var hNodeId = optionsDiv.data("currentNodeId");
