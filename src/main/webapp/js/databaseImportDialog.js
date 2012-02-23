@@ -172,7 +172,7 @@ function sendGenerateTableListRequest() {
 	info["username"] = $.trim($("#DatabaseUsername").val());
 	info["password"] = $.trim($("#DatabasePassword").val());
 	info["dBorSIDName"] = $.trim($("#DatabaseName").val());
-	info["workspaceId"] = "WSP1";
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["commandId"] = $("#DatabaseImportDiv").data("commandId");
 	info["command"] = "ImportDatabaseTableCommand";
 	info["interactionType"] = "generateTableList";
@@ -184,7 +184,6 @@ function sendGenerateTableListRequest() {
 	   	dataType : "json",
 	   	complete : 
 	   		function (xhr, textStatus) {
-	   			//alert(xhr.responseText);
 	    		var json = $.parseJSON(xhr.responseText);
 	    		if( json["elements"][0]["updateType"] == "KarmaError")
 	    			showDatabaseImportError(json);
