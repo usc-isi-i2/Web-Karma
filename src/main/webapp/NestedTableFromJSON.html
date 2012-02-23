@@ -21,6 +21,7 @@
 		<link rel="stylesheet" type="text/css" href="./css/AlignmentHeaders.css" />
 		<link rel="stylesheet" type="text/css" href="./css/jquery.qtip.min.css" />
 		<link rel="stylesheet" type="text/css" href="./css/sticky.min.css" />
+		<link rel="stylesheet" type="text/css" href="./css/cleaning.css" />
 		
 		
 		<!-- Third Party JavaScript files		 -->
@@ -35,6 +36,9 @@
 <!-- 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script> -->
 		<script type="text/javascript" src="https://www.google.com/jsapi?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script>
 		<script type="text/javascript" src="js/sticky.min.js"></script>
+		<script type="text/javascript" src="js/jquery.jeditable.js"></script>
+		<script type="text/javascript" src="js/json2.js"></script>
+		<script type="text/javascript" src="js/jquery.cookie.js"></script>
 		
 		<!-- Home grown JavaScript files -->
 		<script type="text/javascript" src="js/table_manipulation.js"></script>
@@ -47,11 +51,24 @@
 		<script type="text/javascript" src="js/databaseImportDialog.js"></script>
 		<script type="text/javascript" src="js/alignment.js"></script>
 		<script type="text/javascript" src="js/csvImport.js"></script>
+		<script type="text/javascript" src="js/cleaning.js"></script>
 		
 		<script type="text/javascript">
-			// Load and parse initial JSON
-			$.getJSON("/getExampleNestedJSON?rand="+(new Date()).valueOf(), function(data) {
+			/* Load and parse initial JSON */
+			// Get the preferences Id from cookies if present
+			var bootupURL = "/getExampleNestedJSON?rand="+(new Date()).valueOf();
+			if($.cookie("workspacePreferencesId") != null) {
+				bootupURL += "&hasPreferenceId=" + true + "&workspacePreferencesId="+$.cookie("workspacePreferencesId");
+			} else {
+				bootupURL += "&hasPreferenceId=" + false;
+			}
+			
+			$.getJSON(bootupURL, function(data) {
 				parse(data);
+				
+				// Set the preferences workspace cookie if null
+				if($.cookie("workspacePreferencesId") == null)
+					$.cookie("workspacePreferencesId", $.workspaceGlobalInformation.id, { expires: 7000 });
 				
 				// Attach upload handlers to the import file buttons
 				$('input#uploadFile_JSON').uploadify({
@@ -428,23 +445,14 @@
 			<button href="#" id="publishRDF">Publish RDF</button>
 		</div>
 		<div id="ChangeSemanticTypesDialogBox" style="display: none">
+			<div id="CurrentSemanticTypesBox" class="ui-corner-all">
+				<span class="mediumSizedFont">Current semantic types:</span>
+				<table id="currentSemanticTypesTable"></table>
+				<span id="NoSemanticTypeText" style="display: none" class="italic smallSizedFont">&nbsp;&nbsp;none.</span>
+			</div>
+			
 			<span class="mediumSizedFont">Suggested semantic types:</span>
 			<table id="CRFSuggestedLabelsTable"></table>
-			<br>
-			<input type="checkbox" id="chooseClassKey" />
-			<label for="chooseClassKey" class="smallSizedFont">Mark as key for the class.</label><br />
-			<br />
-			<span class="mediumSizedFont">Mark as unassigned</span>
-			<table id="UnassignedLabelTable">
-				<tr>
-					<td>
-						<input type="radio" id="UnassignTypeButton" name="semanticTypeGroup" value="UnassignType"/>
-					</td>
-					<td>
-						<label for="UnassignTypeButton">Unassigned</label>
-					</td>
-				</tr>
-			</table>
 			<br>
 			<span class="mediumSizedFont">Choose from ontology</span>
 			<div id="ontologyOptionsTable">
@@ -481,8 +489,9 @@
 					</td>
 				</tr>
 				</table>
-				
 			</div>
+			<input type="checkbox" id="chooseClassKey" />
+			<label for="chooseClassKey" class="smallSizedFont">Mark as key for the class.</label><br />
 		</div>
 		<div id="OntologyAlternativeLinksPanel" style="display: none">
 			<span class="mediumSizedFont">Choose parent relationship:</span>
@@ -534,6 +543,13 @@
 			</table>
 			</div>
 			<br />
+		</div>
+		<div id="ColumnCleaningPanel" style="display: none">
+			<table id="cleaningExamplesTable"></table>
+			<div id="rulesInfoPanel"></div>
+			<div id="cleaningButtonsPanel">
+				<button id="generateCleaningRules">Generate Rules</button>
+			</div>
 		</div>
 	</body>
 </html>

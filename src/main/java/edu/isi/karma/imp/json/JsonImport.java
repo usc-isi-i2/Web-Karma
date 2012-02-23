@@ -110,6 +110,10 @@ public class JsonImport {
 				addListElement(a.get(i), nestedHTable, nestedTable);
 			}
 		}
+		
+		else if(value == JSONObject.NULL) {
+			// Ignore
+		}
 
 		else {
 			throw new Error("Cannot handle " + key + ": " + value + " yet.");

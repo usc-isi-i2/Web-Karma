@@ -119,7 +119,7 @@ public class SemanticTypeUtil {
 					false);
 
 			// Check if the user already provided a semantic type manually
-			SemanticType existingType = types.getSemanticTypeByHNodeId(path
+			SemanticType existingType = types.getSemanticTypeForHNodeId(path
 					.getLeaf().getId());
 			if (existingType == null) {
 				if (semtype.getConfidenceLevel() != SemanticType.ConfidenceLevel.Low) {

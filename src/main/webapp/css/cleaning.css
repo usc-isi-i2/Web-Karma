@@ -1,0 +1,32 @@
+table#cleaningExamplesTable {
+	border-width: 0px; 
+	border-spacing: 0px; 
+	border-collapse: collapse;
+}
+
+table#cleaningExamplesTable td {
+	font-size: 12px;
+	border: solid 1px;
+	height: 15px;
+	padding: 2px;
+}
+
+table#cleaningExamplesTable td.noBorder {
+	border: none;
+}
+
+table#cleaningExamplesTable td.examplesDivider {
+	width:20px;
+	border: none;
+}
+
+table#cleaningExamplesTable td.cleaningTableHeading {
+	font-weight: 900;
+	padding-bottom:4px;
+}
+
+div.cleanExampleDiv {
+	border: solid #8C8C8C 1px;
+	min-height: 12px;
+	padding-left: 2px;
+}

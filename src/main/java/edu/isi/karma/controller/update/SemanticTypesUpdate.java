@@ -15,6 +15,7 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.rep.semantictypes.SemanticTypes;
+import edu.isi.karma.rep.semantictypes.SynonymSemanticTypes;
 import edu.isi.karma.view.VWorkspace;
 
 public class SemanticTypesUpdate extends AbstractUpdate {
@@ -22,7 +23,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 	private String vWorksheetId;
 
 	public enum JsonKeys {
-		HNodeId, FullType, ConfidenceLevel, Origin, FullCRFModel, DisplayLabel, DisplayDomainLabel, Domain
+		HNodeId, FullType, ConfidenceLevel, Origin, FullCRFModel, DisplayLabel, DisplayDomainLabel, Domain, SemanticTypesArray, isPrimary
 	}
 
 	private static Logger logger = LoggerFactory
@@ -56,10 +57,14 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 				writer.object();
 
 				// Check if a semantic type exists for the HNode
-				SemanticType type = types.getSemanticTypeByHNodeId(nodeId);
-				if (type != null) {
+				SemanticType type = types.getSemanticTypeForHNodeId(nodeId);
+				if (type != null
+						&& type.getConfidenceLevel() != SemanticType.ConfidenceLevel.Low) {
 					writer.key(JsonKeys.HNodeId.name())
 							.value(type.getHNodeId())
+							.key(JsonKeys.SemanticTypesArray.name()).array();
+					// Add the primary semantic type
+					writer.object()
 							.key(JsonKeys.FullType.name())
 							.value(type.getType())
 							.key(JsonKeys.Origin.name())
@@ -73,12 +78,44 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 							.value(type.getDomain())
 							.key(JsonKeys.DisplayDomainLabel.name())
 							.value(SemanticTypeUtil.removeNamespace(type
-									.getDomain()));
+									.getDomain()))
+							.key(JsonKeys.isPrimary.name()).value(true);
+					writer.endObject();
+
+					// Iterate through the synonym semantic types
+					SynonymSemanticTypes synTypes = types
+							.getSynonymTypesForHNodeId(nodeId);
+
+					if (synTypes != null) {
+						for (SemanticType synType : synTypes.getSynonyms()) {
+							writer.object()
+									.key(JsonKeys.HNodeId.name())
+									.value(synType.getHNodeId())
+									.key(JsonKeys.FullType.name())
+									.value(synType.getType())
+									.key(JsonKeys.Origin.name())
+									.value(synType.getOrigin().name())
+									.key(JsonKeys.ConfidenceLevel.name())
+									.value(synType.getConfidenceLevel().name())
+									.key(JsonKeys.DisplayLabel.name())
+									.value(SemanticTypeUtil
+											.removeNamespace(synType.getType()))
+									.key(JsonKeys.Domain.name())
+									.value(synType.getDomain())
+									.key(JsonKeys.DisplayDomainLabel.name())
+									.value(SemanticTypeUtil
+											.removeNamespace(synType
+													.getDomain()))
+									.key(JsonKeys.isPrimary.name())
+									.value(false);
+							writer.endObject();
+						}
+					}
+					writer.endArray();
 				} else {
-					writer.key(JsonKeys.HNodeId.name()).value(nodeId)
-							.key(JsonKeys.FullType.name()).value("")
-							.key(JsonKeys.Origin.name()).value("")
-							.key(JsonKeys.ConfidenceLevel.name()).value("");
+					writer.key(JsonKeys.HNodeId.name()).value(nodeId);
+					writer.key(JsonKeys.SemanticTypesArray.name()).array()
+							.endArray();
 				}
 
 				// Populate the CRF Model

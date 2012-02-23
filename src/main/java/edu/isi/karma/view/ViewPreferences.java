@@ -31,7 +31,7 @@ public class ViewPreferences {
 	/**
 	 * Id of the workspace. Each workspace has its own view preference object.
 	 */
-	private String workspaceId;
+	private String preferencesId;
 	
 	private JSONObject json;
 	
@@ -51,15 +51,15 @@ public class ViewPreferences {
 		}
 	}
 
-	public ViewPreferences(String workspaceId) {
-		this.workspaceId = workspaceId;
+	public ViewPreferences(String preferencesId) {
+		this.preferencesId = preferencesId;
 		populatePreferences();
 	}
 	
 	private void populatePreferences() {
 		try {
 			// TODO Make this path to user preferences configurable through web.xml
-			jsonFile = new File("./UserPrefs/" + workspaceId + ".json");
+			jsonFile = new File("./UserPrefs/" + preferencesId + ".json");
 			if(jsonFile.exists()){
 				// Populate from the existing preferences JSON file
 				json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));

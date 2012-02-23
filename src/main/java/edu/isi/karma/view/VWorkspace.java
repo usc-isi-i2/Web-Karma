@@ -25,6 +25,12 @@ public class VWorkspace {
 		this.workspace = workspace;
 		preferences = new ViewPreferences(workspace.getId());
 	}
+	
+	public VWorkspace(Workspace workspace, String workspacePreferencesId) {
+		super();
+		this.workspace = workspace;
+		preferences = new ViewPreferences(workspacePreferencesId);
+	}
 
 	public Workspace getWorkspace() {
 		return workspace;

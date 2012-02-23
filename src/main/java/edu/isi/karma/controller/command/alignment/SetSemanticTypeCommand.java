@@ -24,25 +24,28 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.rep.semantictypes.SemanticType;
+import edu.isi.karma.rep.semantictypes.SynonymSemanticTypes;
 import edu.isi.karma.view.VWorkspace;
 
 public class SetSemanticTypeCommand extends Command {
 
 	private SemanticType oldType;
+	private SynonymSemanticTypes oldSynonymTypes;
 	private final String vWorksheetId;
 	private CRFColumnModel oldColumnModel;
 	private final SemanticType newType;
+	private final SynonymSemanticTypes newSynonymTypes;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass()
 			.getSimpleName());
 
 	protected SetSemanticTypeCommand(String id, String vWorksheetId,
-			String hNodeId, String type, String domain, boolean isPartOfKey) {
+			String hNodeId, boolean isPartOfKey, SemanticType type,
+			SynonymSemanticTypes synTypes) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
-		logger.debug("Setting semantic type. Domain: " + domain + " Type: " + type);
-		newType = new SemanticType(hNodeId, type, domain,
-				SemanticType.Origin.User, 1.0, isPartOfKey);
+		this.newType = type;
+		this.newSynonymTypes = synTypes;
 	}
 
 	@Override
@@ -78,13 +81,19 @@ public class SetSemanticTypeCommand extends Command {
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
 		// Save the old SemanticType object and CRF Model for undo
-		oldType = worksheet.getSemanticTypes().getSemanticTypeByHNodeId(
+		oldType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(
 				newType.getHNodeId());
 		oldColumnModel = worksheet.getCrfModel().getModelByHNodeId(
 				newType.getHNodeId());
+		oldSynonymTypes = worksheet.getSemanticTypes()
+				.getSynonymTypesForHNodeId(newType.getHNodeId());
 
 		// Update the SemanticTypes data structure for the worksheet
 		worksheet.getSemanticTypes().addType(newType);
+
+		// Update the synonym semanticTypes
+		worksheet.getSemanticTypes().addSynonymTypesForHNodeId(
+				newType.getHNodeId(), newSynonymTypes);
 
 		// Find the corresponding hNodePath. Used to find examples for training
 		// the CRF Model.
@@ -177,11 +186,14 @@ public class SetSemanticTypeCommand extends Command {
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
-		if (oldType == null)
-			worksheet.getSemanticTypes().getTypes()
-					.remove(newType.getHNodeId());
-		else
+		if (oldType == null) {
+			worksheet.getSemanticTypes().unassignColumnSemanticType(
+					newType.getHNodeId());
+		} else {
 			worksheet.getSemanticTypes().addType(oldType);
+			worksheet.getSemanticTypes().addSynonymTypesForHNodeId(
+					newType.getHNodeId(), oldSynonymTypes);
+		}
 
 		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(),
 				oldColumnModel);
