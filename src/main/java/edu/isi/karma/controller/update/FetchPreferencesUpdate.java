@@ -7,7 +7,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.ImportDatabaseTableCommand;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.ViewPreferences;
 

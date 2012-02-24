@@ -31,7 +31,6 @@ import edu.isi.karma.rdf.WorksheetRDFGenerator;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.view.ViewPreferences;
 
 public class PublishRDFCommand extends Command {
 	private final String vWorksheetId;
@@ -100,9 +99,6 @@ public class PublishRDFCommand extends Command {
 		
 		//save the preferences 
 		savePreferences(vWorkspace);
-
-		System.out.println("do it..." + vWorkspace);
-		System.out.println("id=..." + vWorksheetId);
 
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
@@ -195,11 +191,12 @@ public class PublishRDFCommand extends Command {
 			vWorkspace.getPreferences().setCommandPreferences(
 					"PublishRDFCommandPreferences", prefObject);
 			
+			/*
 			System.out.println("I Saved .....");
 			ViewPreferences prefs = vWorkspace.getPreferences();
 			JSONObject prefObject1 = prefs.getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
 			System.out.println("I Saved ....."+prefObject1);
-
+			 */
 			
 		} catch (JSONException e) {
 			e.printStackTrace();

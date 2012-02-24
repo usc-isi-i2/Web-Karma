@@ -19,8 +19,6 @@ import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.webserver.KarmaException;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.gav.util.MediatorUtil;
 

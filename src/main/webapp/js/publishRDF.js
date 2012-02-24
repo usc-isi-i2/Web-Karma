@@ -9,40 +9,35 @@ function showHideRdfInfo() {
 
 function publishRDFFunction() {
 		$("div#PublishRDFDialogBox").dialog("close");
-		if( $("input#saveToRDFStore").is(":checked")) {
-			publishRDFToStore();
-		}
-		else {
-			publishRDFToFile();		
-		}
-}
 
-function publishRDFToFile() {
 		var info = new Object();
 		info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
 		info["command"] = "PublishRDFCommand";
 		info["addInverseProperties"] = $("input#addInverseProperties").is(":checked");
 		info["rdfPrefix"] = $("input#rdfPrefix").val();
-		info["saveToStore"] = "false";
-
-		showLoadingRDF(info["vWorksheetId"],"Saving to file...");
-		returnFunc(info);
-}
-
-function publishRDFToStore() {
-		var info = new Object();
-		info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "PublishRDFCommand";
-		info["addInverseProperties"] = $("input#addInverseProperties").is(":checked");
-		info["rdfPrefix"] = $("input#rdfPrefix").val();
-		info["saveToStore"] = "true";
+		info["saveToStore"] = $("input#saveToStore").is(":checked");;
 		info["hostName"] = $("input#hostName").val();
 		info["dbName"] = $("input#dbName").val();
 		info["userName"] = $("input#userName").val();
 		info["password"] = $("input#password").val();
 		info["modelName"] = $("input#modelName").val();
+
+		if( $("input#saveToRDFStore").is(":checked")) {
+			publishRDFToStore(info);
+		}
+		else {
+			publishRDFToFile(info);		
+		}
+}
+
+function publishRDFToFile(info) {
+
+		showLoadingRDF(info["vWorksheetId"],"Saving to file...");
+		returnFunc(info);
+}
+
+function publishRDFToStore(info) {
 		
 		showLoadingRDF(info["vWorksheetId"],"Saving to RDF store...");
 		returnFunc(info);		
