@@ -127,7 +127,7 @@ public class PublishRDFCommand extends Command {
 				// "outside" of Karma)
 				// use false for internal use
 				SourceDescription desc = new SourceDescription(
-						vWorkspace.getRepFactory(), tree, root,
+						vWorkspace.getRepFactory(), tree, root, worksheet,
 						rdfSourcePrefix, Boolean.valueOf(addInverseProperties),false);
 				String descString = desc.generateSourceDescription();
 				logger.info("SD=" + descString);

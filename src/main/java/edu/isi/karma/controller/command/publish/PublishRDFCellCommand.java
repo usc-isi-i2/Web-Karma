@@ -21,6 +21,7 @@ import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rdf.SourceDescription;
 import edu.isi.karma.rdf.WorksheetRDFGenerator;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.view.VWorkspace;
 
 public class PublishRDFCellCommand extends Command {
@@ -70,6 +71,10 @@ public class PublishRDFCellCommand extends Command {
 
 		// get alignment for this worksheet
 		logger.info("Get alignment for " + vWorksheetId);
+
+		Worksheet worksheet = vWorkspace.getViewFactory()
+		.getVWorksheet(vWorksheetId).getWorksheet();
+
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				vWorkspace.getWorkspace().getId() + ":" + vWorksheetId + "AL");
 		if (alignment == null) {
@@ -89,7 +94,7 @@ public class PublishRDFCellCommand extends Command {
 				// "outside" of Karma)
 				// use false for internal use
 				SourceDescription desc = new SourceDescription(
-						vWorkspace.getRepFactory(), tree, root,
+						vWorkspace.getRepFactory(), tree, root, worksheet,
 						rdfSourcePrefix, true, false);
 				String descString = desc.generateSourceDescription();
 				logger.info("SD=" + descString);

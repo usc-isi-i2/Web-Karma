@@ -67,6 +67,18 @@ public class SemanticType implements Jsonizable {
 		return origin;
 	}
 
+	//mariam
+	/**
+	 * Returns true if this type is a Class; false if it is a data property.
+	 * @return
+	 * 		true if this type is a Class; false if it is a data property.
+	 */
+	public boolean isClass(){
+		if(domain==null || domain.trim().isEmpty())
+			return true;
+		//it is a data property
+		return false;
+	}
 	public ConfidenceLevel getConfidenceLevel() {
 		return confidenceLevel;
 	}

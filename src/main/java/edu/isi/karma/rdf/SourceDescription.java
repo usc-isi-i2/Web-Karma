@@ -1,7 +1,31 @@
+/**
+ * Copyright 2012 University of Southern California
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *  This code was developed by the Information Integration Group as part 
+ *  of the Karma project at the Information Sciences Institute of the 
+ *  University of Southern California.  For more information, publications, 
+ *  and related projects, please see: http://www.isi.edu/integration
+ *
+ */
+
 package edu.isi.karma.rdf;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -17,6 +41,9 @@ import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.semantictypes.SemanticType;
+import edu.isi.karma.rep.semantictypes.SynonymSemanticTypes;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.mediator.gav.util.MediatorUtil;
 
@@ -40,6 +67,11 @@ public class SourceDescription {
 	private Vertex root;
 	
 	/**
+	 * Needed in order to get synonym semantic types.
+	 */
+	private Worksheet worksheet;
+	
+	/**
 	 * List of attributes that appear in the rule.
 	 * Will be added to the rules head.
 	 */
@@ -50,6 +82,22 @@ public class SourceDescription {
 	 * key=a class; value=the index used for the gensym uri (e.g., 1 for uri(1), 2 for uri(2)
 	 */
 	private HashMap<String, String> uriMap = new HashMap<String, String>();
+
+	/**
+	 * key=name of a class; value = the id of a vertex for that class; save just the first ID that you find for a class node
+	 * this is needed for synonym semantic types where we just have the type without having the
+	 * link in a steiner tree, so all we have are class names and property names. In order to generate
+	 * a URI for a class I need to know the ID of a vertex in the steiner tree for that class, so I can get the key.
+	 */
+	private HashMap<String, String> classNameToId = new HashMap<String, String>();
+
+	/**
+	 * All data property nodes. At the very end I check if any of the data property nodes (the leaves of the tree)
+	 * have synonym sem types. If they do, I add them. I check this at the very end not during the tree traversal 
+	 * because I want to make sure that I have computed all possible keys. I need the URIs of the classes at this point.
+	 */
+	private ArrayList<Vertex> dataProperties = new ArrayList<Vertex>();
+	
 	private int uriIndex = 0;
 	
 	/**
@@ -96,7 +144,7 @@ public class SourceDescription {
 	 * <br>useColumnNames=false if the SD is used internally.
 	 */
 	public SourceDescription(RepFactory factory, DirectedWeightedMultigraph<Vertex, 
-			LabeledWeightedEdge> steinerTree, Vertex root, String rdfSourcePrefix, boolean generateInverse, 
+			LabeledWeightedEdge> steinerTree, Vertex root, Worksheet worksheet, String rdfSourcePrefix, boolean generateInverse, 
 			boolean useColumnNames){
 		this.factory=factory;
 		this.steinerTree = steinerTree;
@@ -105,6 +153,7 @@ public class SourceDescription {
 		this.rdfSourcePrefix=rdfSourcePrefix;
 		this.generateInverse = generateInverse;
 		model = OntologyManager.Instance().getOntModel();
+		this.worksheet=worksheet;
 	}
 	
 	/**
@@ -124,6 +173,11 @@ public class SourceDescription {
 		
 		StringBuffer s = new StringBuffer();
 		generateSourceDescription(root, s);
+		//generate statements for synonym sem types
+		//do this only at the end, so I make sure that I already have all keys computed
+		String stmt = generateSynonymStatements();
+		s.append(stmt);
+		
 		String rule =  "SourceDescription(";
 		int i=0;
 		for(String attr:ruleAttributes){
@@ -176,6 +230,10 @@ public class SourceDescription {
 					else{
 						stmt = generateDataPropertyStatement(v,e,child);
 						s.append("\n ^ " + stmt);
+						//data property nodes can have synonym sem types
+						//generate statements for the synonyms too
+						//do this only at the end, so I make sure that I already have a keys computed
+						dataProperties.add(child);
 					}
 				}
 				else if(e.getLinkType()==LinkType.ObjectProperty){
@@ -315,6 +373,63 @@ public class SourceDescription {
 		return s;
 	}
 
+	/**
+	 * Given all the data property nodes, computes the statements for synonym semantic types.
+	 * @return
+	 * 	the statements for synonym semantic types.
+	 */
+	private String generateSynonymStatements() {
+		String s = "";
+		//for each leaf of the tree
+		for(Vertex child: dataProperties){
+			SynonymSemanticTypes synonyms = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(child.getSemanticType().getHNodeId());
+			if(synonyms!=null){
+				List<SemanticType> semT = synonyms.getSynonyms();
+				for(SemanticType st: semT){
+					String stmt = generateSynonymStatement(child,st);
+					if(stmt!=null)
+						s += "\n ^ " + stmt;
+				}
+			}
+		}
+		if(s.trim().isEmpty())
+			return null;
+		else return s;
+	}
+
+
+	/**
+	 * Returns the statement for one semantic type.
+	 * @param child
+	 * 		a DataProperty node in the tree.
+	 * @param st
+	 * 		a SemanticType
+	 * @return
+	 */
+	private String generateSynonymStatement(Vertex child, SemanticType st) {
+		if(st.isClass()){
+			//semantic type is a Class
+			String key = findKey(child);
+			String s = "`" + st.getType() + "`(uri(" + key + "))"; 
+			return s;
+		}
+		else{
+			//it's a data property
+			//find the key of this property's domain
+			String key = findKey(st.getDomain());
+			
+			String dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName();
+			if(!useColumnNames){
+				dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNames();
+			}
+			ruleAttributes.add(dataAttribute);
+			String propertyName = st.getType();
+			String s = "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
+			//System.out.println("DataProperty:" + s);
+			return s;
+		}
+	}
+
 	/** Returns a binary predicate corresponding to the inverse of propertyName, if the inverse exists.
 	 * @param propertyName
 	 * 		a property name
@@ -413,8 +528,35 @@ public class SourceDescription {
 		//I have to do it here because I don't want backticks for the gensyms
 		if(!isGensym)
 			key = addBacktick(key);
+		
+		classNameToId.put(v.getLabel(), v.getID());
 		uriMap.put(v.getID(), key);
 		//logger.info("Key for " + v.getID() + " is " + key);
+		return key;
+	}
+	
+	/**
+	 * Returns the key for the given Class. If this Class is not present in the Steiner tree,
+	 * return a gensym.
+	 * @param domain
+	 * 		a class.
+	 * @return
+	 * 		the key for the given Class.
+	 */
+	private String findKey(String domain){
+		//get the id of a class node that corresponds to this class
+		String id = classNameToId.get(domain);
+		if(id==null){
+			//no class found , so generate a gensym
+			String gensym = String.valueOf(uriIndex++);
+			return gensym;
+		}
+		String key = uriMap.get(id);
+		if(key==null){
+			//no class found , so generate a gensym
+			String gensym = String.valueOf(uriIndex++);
+			return gensym;			
+		}
 		return key;
 	}
 	
