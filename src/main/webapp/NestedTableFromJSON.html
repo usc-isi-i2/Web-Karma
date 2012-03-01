@@ -545,11 +545,18 @@
 			<br />
 		</div>
 		<div id="ColumnCleaningPanel" style="display: none">
-			<table id="cleaningExamplesTable"></table>
-			<div id="rulesInfoPanel"></div>
-			<div id="cleaningButtonsPanel">
-				<button id="generateCleaningRules">Generate Rules</button>
-			</div>
+			<table id="cleaningExamplesTable">
+				<tr>
+					<td class="cleaningTableHeading noBorder">Original Values</td>
+					<td class="examplesDivider noBorder"></td>
+					<td class="cleaningTableHeading noBorder" colspan=3>Provide Examples</td>
+				</tr>
+				<tr id="buttonsAndRuleInfoRow">
+					<td colspan="2" class="noBorder">
+						<div id="rulesInfoPanel"></div>
+					</td>
+				</tr>
+			</table>
 		</div>
 	</body>
 </html>
