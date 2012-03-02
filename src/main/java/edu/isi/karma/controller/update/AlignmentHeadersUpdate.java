@@ -14,7 +14,7 @@ public class AlignmentHeadersUpdate extends AbstractUpdate {
 	private String alignmentId;
 	AlignmentForest forest;
 
-	private enum JsonKeys {
+	public enum JsonKeys {
 		worksheetId, rows, alignmentId
 	}
 
