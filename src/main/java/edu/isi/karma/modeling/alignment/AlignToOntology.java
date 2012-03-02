@@ -1,12 +1,17 @@
 package edu.isi.karma.modeling.alignment;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.AlignmentHeadersUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -28,6 +33,10 @@ public class AlignToOntology {
 	
 	private static Logger logger = LoggerFactory.getLogger(AlignToOntology.class);
 
+	private enum EmptyHeadersUpdateJsonKeys {
+		worksheetId, alignmentId, rows
+	}
+	
 	public AlignToOntology(Worksheet worksheet, VWorkspace vWorkspace,
 			String vWorksheetId) {
 		super();
@@ -37,7 +46,7 @@ public class AlignToOntology {
 	}
 
 	public void update(UpdateContainer c, boolean replaceExistingAlignment) throws KarmaException {
-		String alignmentId = getAlignmentId();
+		final String alignmentId = getAlignmentId();
 		// Get the previous alignment
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		// If we need to use the previous alignment (if it exists)
@@ -60,7 +69,6 @@ public class AlignToOntology {
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 
 		if (root != null) {			
-			
 			//mariam
 			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getRepFactory(), worksheet, tree, root);
 			/////////////////////////
@@ -90,6 +98,25 @@ public class AlignToOntology {
 			vw.update(c);
 			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 		} else {
+			// Add an empty alignment headers update
+			c.add(new AbstractUpdate() {
+			@Override
+			public void generateJson(String prefix, PrintWriter pw,
+					VWorkspace vWorkspace) {
+				JSONObject obj = new JSONObject();
+				JSONArray emptyEdgesArray = new JSONArray();
+
+				try {
+					obj.put(AbstractUpdate.GenericJsonKeys.updateType.name(), AlignmentHeadersUpdate.class.getSimpleName());
+					obj.put(EmptyHeadersUpdateJsonKeys.worksheetId.name(), vWorksheetId);
+					obj.put(EmptyHeadersUpdateJsonKeys.alignmentId.name(), alignmentId);
+					obj.put(EmptyHeadersUpdateJsonKeys.rows.name(), emptyEdgesArray);
+					pw.println(obj.toString(4));
+				} catch (JSONException e) {
+					logger.error("Error generating JSON!");
+				}
+			}
+		});
 			logger.error("Alignment returned null root!");
 		}
 	}

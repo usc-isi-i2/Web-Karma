@@ -251,9 +251,16 @@ function parse(data) {
 			table.data("alignmentId", element["alignmentId"]);
 			
 			var thead = $("thead", table);
+			
+			if(element["rows"] && element["rows"].length == 0) {
+                $("tr.AlignmentRow", thead).remove();
+                return true;
+            }
+			
 			$("tr", thead).remove();
 			var columnHeaders = $("tr", thead).clone(true);
 			$("tr", thead).remove();
+			
 			
 			$.each(element["rows"], function(index, row) {
 				var trTag = $("<tr>").addClass("AlignmentRow");
