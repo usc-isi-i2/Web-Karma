@@ -23,6 +23,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.rep.semantictypes.SemanticTypes;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.mediator.gav.util.MediatorUtil;
 
 public class ResetModelCommand extends Command {
 
@@ -30,6 +31,7 @@ public class ResetModelCommand extends Command {
 	private SemanticTypes oldTypes;
 	private Alignment oldAlignment;
 	private String alignmentId;
+	private String oldCRFModel;
 	
 	private static Logger logger = LoggerFactory
 			.getLogger(ResetModelCommand.class);
@@ -64,14 +66,20 @@ public class ResetModelCommand extends Command {
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
+		//save CRF model for undo
+		try{
+			oldCRFModel=MediatorUtil.getFileAsString("./CRF_Model.txt");
+		} catch (Exception e) {
+			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
+		}
 		//reset CRF model
-		//CRFModelHandler.removeAllLabels();
+		CRFModelHandler.removeAllLabels();
 		
 		// Save the old SemanticType object for undo
 		SemanticTypes types = worksheet.getSemanticTypes();
 		oldTypes = types;
 		worksheet.clearSemanticTypes();
-		System.out.println("OLD TYPES=" + oldTypes.getTypes());
+		//System.out.println("OLD TYPES=" + oldTypes.getTypes());
 		
 		//save old alignment for undo operation
 		alignmentId = vWorkspace.getWorkspace().getId() + ":" + vWorksheetId + "AL";
@@ -115,6 +123,13 @@ public class ResetModelCommand extends Command {
 		Worksheet worksheet = vWorkspace.getViewFactory()
 		.getVWorksheet(vWorksheetId).getWorksheet();
 
+		//reset CRF model
+		try{
+			MediatorUtil.saveStringToFile(oldCRFModel, "./CRF_Model.txt");
+			CRFModelHandler.readModelFromFile("./CRF_Model.txt");
+		} catch (Exception e) {
+			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
+		}
 		//reset old semantic types
 		worksheet.setSemanticTypes(oldTypes);
 
