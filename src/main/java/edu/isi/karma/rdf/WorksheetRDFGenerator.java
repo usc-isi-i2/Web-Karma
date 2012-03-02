@@ -240,7 +240,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 	 */
 	public void generateTriplesCell(String nodeId) throws MediatorException, IOException, KarmaException{
 		Node n = factory.getNode(nodeId);
-		//logger.debug("Generate triples for node:"+n);
+		logger.info("Generate triples for node:"+n);
 		if(n.hasNestedTable()){
 			//This should not happen
 			throw new KarmaException("Node " + n.getHNodeId() + " contains a nested table. " +
@@ -252,8 +252,9 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		String val = n.getValue().asString();
 		//get the column name of this node
 		String columnName = factory.getHNode(n.getHNodeId()).getHNodePath(factory).toColumnNames();
-		//logger.info("Generate triples for node:"+columnName +" with value=" + val);
+		logger.info("Generate triples for node:"+columnName +" with value=" + val);
 		values.put(columnName, val);
+		
 		//get other columns used in the RDF rule associated with columnName
 		Set<String> relatedVars = getRelatedRDFVariables(columnName);
 		if(relatedVars==null){
@@ -262,11 +263,11 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		}
 		for(String var:relatedVars){
 			var = MediatorUtil.removeBacktick(var);
-			//logger.info("Value for:"+var);
+			logger.info("Value for related var:"+var);
 			//var is a HNodePath+columnName
 			//look for values in the row that this node belongs to or in the parent row...
 			String varValue = getValueInRow(var,n.getBelongsToRow());
-			//logger.info("Value:"+varValue);
+			logger.info("Value:"+varValue);
 			if(varValue==null){
 				//try the parent row; this node could be in a nested table, so we can look at nodes
 				//that are in the same row as this nested table
@@ -275,7 +276,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 				Row parentRow = n.getParentTable().getNestedTableInNode().getBelongsToRow();
 				varValue = getValueInRow(var,parentRow);
 				if(varValue==null){
-					throw new KarmaException("No value was found for node:" + var);
+					throw new KarmaException("No value was found for node:" + var + ". Alignment of table is not correct!");
 				}
 			}
 			values.put(var,varValue);
@@ -319,7 +320,8 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 				//this is the node
 				if(n.hasNestedTable()){
 					//not good; I cannot get the value from a nested table, it has to be part of this row
-					throw new KarmaException("Node " + nodePath + " contains a nested table. This node should contain a value.");
+					throw new KarmaException("Node " + nodePath + " contains a nested table. This node should contain a value not a nested table."  +
+							" Alignment of table is not correct!");
 				}
 				else{
 					//contains a value

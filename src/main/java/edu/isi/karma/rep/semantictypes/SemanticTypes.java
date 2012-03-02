@@ -39,7 +39,6 @@ public class SemanticTypes implements Jsonizable {
 		synonymTypes.remove(hNodeId);
 	}
 
-
 	@Override
 	public void write(JSONWriter writer) throws JSONException {
 		writer.array();

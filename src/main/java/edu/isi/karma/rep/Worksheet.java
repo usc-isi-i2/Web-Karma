@@ -51,6 +51,12 @@ public class Worksheet extends RepEntity {
 	public SemanticTypes getSemanticTypes() {
 		return semanticTypes;
 	}
+	public void clearSemanticTypes() {
+		semanticTypes=new SemanticTypes();
+	}
+	public void setSemanticTypes(SemanticTypes t){
+		semanticTypes=t;
+	}
 
 	public FullCRFModel getCrfModel() {
 		return crfModel;

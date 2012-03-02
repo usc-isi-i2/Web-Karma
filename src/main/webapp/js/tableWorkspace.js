@@ -50,6 +50,35 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		$("div.semanticTypeDiv", table).remove();
 	});
 	
+	$("button#resetModel").click(function(){
+		optionsDiv.hide();
+		
+		var info = new Object();
+		info["vWorksheetId"] = optionsDiv.data("worksheetId");
+		info["workspaceId"] = $.workspaceGlobalInformation.id;
+		info["command"] = "ResetModelCommand";
+			
+		showLoading(info["vWorksheetId"]);
+		var returned = $.ajax({
+		   	url: "/RequestController", 
+		   	type: "POST",
+		   	data : info,
+		   	dataType : "json",
+		   	complete : 
+		   		function (xhr, textStatus) {
+		   			//alert(xhr.responseText);
+		    		var json = $.parseJSON(xhr.responseText);
+		    		parse(json);
+		    		hideLoading(info["vWorksheetId"]);
+			   	},
+			error :
+				function (xhr, textStatus) {
+		   			alert("Error occured while removing semantic types!" + textStatus);
+		   			hideLoading(info["vWorksheetId"]);
+			   	}		   
+		});
+	});
+
 	$("button#publishRDF").click(function(){
 		optionsDiv.hide();
 		showHideRdfInfo();

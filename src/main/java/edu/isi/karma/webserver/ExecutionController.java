@@ -53,6 +53,8 @@ import edu.isi.karma.controller.command.alignment.GetDomainsForDataPropertyComma
 import edu.isi.karma.controller.command.alignment.GetDomainsForDataPropertyCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyCommand;
 import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyCommandFactory;
+import edu.isi.karma.controller.command.alignment.ResetModelCommand;
+import edu.isi.karma.controller.command.alignment.ResetModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommandFactory;
 import edu.isi.karma.controller.command.alignment.ShowModelCommand;
@@ -147,6 +149,8 @@ public class ExecutionController {
 				new PublishRDFCellCommandFactory());
 		commandFactoryMap.put(FetchPreferencesCommand.class.getSimpleName(),
 				new FetchPreferencesCommandFactory());
+		commandFactoryMap.put(ResetModelCommand.class.getSimpleName(),
+				new ResetModelCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

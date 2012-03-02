@@ -59,6 +59,9 @@ public class AlignToOntology {
 		Vertex root = alignment.GetTreeRoot();
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 
+		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(
+				vWorksheetId);
+
 		if (root != null) {			
 			
 			//mariam
@@ -80,8 +83,6 @@ public class AlignToOntology {
 
 			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
 					worksheet, columnPaths, vWorkspace);
-			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(
-					vWorksheetId);
 
 			// Debug
 			GraphUtil.printGraph(tree);
