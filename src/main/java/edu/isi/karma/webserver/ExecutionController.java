@@ -61,6 +61,8 @@ import edu.isi.karma.controller.command.alignment.ShowModelCommand;
 import edu.isi.karma.controller.command.alignment.ShowModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommandFactory;
+import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommand;
+import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommand;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishRDFCommand;
@@ -151,6 +153,8 @@ public class ExecutionController {
 				new FetchPreferencesCommandFactory());
 		commandFactoryMap.put(ResetModelCommand.class.getSimpleName(),
 				new ResetModelCommandFactory());
+		commandFactoryMap.put(GenerateCleaningRulesCommand.class.getSimpleName(),
+				new GenerateCleaningRulesCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {
