@@ -32,10 +32,6 @@ public class AlignToOntology {
 	private final String vWorksheetId;
 	
 	private static Logger logger = LoggerFactory.getLogger(AlignToOntology.class);
-
-	private enum EmptyHeadersUpdateJsonKeys {
-		worksheetId, alignmentId, rows
-	}
 	
 	public AlignToOntology(Worksheet worksheet, VWorkspace vWorkspace,
 			String vWorksheetId) {
@@ -108,9 +104,9 @@ public class AlignToOntology {
 
 				try {
 					obj.put(AbstractUpdate.GenericJsonKeys.updateType.name(), AlignmentHeadersUpdate.class.getSimpleName());
-					obj.put(EmptyHeadersUpdateJsonKeys.worksheetId.name(), vWorksheetId);
-					obj.put(EmptyHeadersUpdateJsonKeys.alignmentId.name(), alignmentId);
-					obj.put(EmptyHeadersUpdateJsonKeys.rows.name(), emptyEdgesArray);
+					obj.put(AlignmentHeadersUpdate.JsonKeys.worksheetId.name(), vWorksheetId);
+					obj.put(AlignmentHeadersUpdate.JsonKeys.alignmentId.name(), alignmentId);
+					obj.put(AlignmentHeadersUpdate.JsonKeys.rows.name(), emptyEdgesArray);
 					pw.println(obj.toString(4));
 				} catch (JSONException e) {
 					logger.error("Error generating JSON!");
