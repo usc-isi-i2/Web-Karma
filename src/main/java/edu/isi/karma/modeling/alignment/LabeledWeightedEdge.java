@@ -11,42 +11,42 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 	
 	private String id;
 	private LinkType linkType;
-	private String label;
 	private boolean inverse;
+	private Name name;
 	private LinkStatus linkStatus;
 	
-	public LabeledWeightedEdge(String id) {
+//	public LabeledWeightedEdge(String id) {
+//		super();
+//		this.id = id;
+//		this.linkType = LinkType.None;
+//		this.label = id;
+//		this.inverse = false;
+//		this.linkStatus = LinkStatus.None;
+//	}
+//
+//	public LabeledWeightedEdge(String id, String label) {
+//		super();
+//		this.id = id;
+//		this.linkType = LinkType.None;
+//		this.label = label;
+//		this.inverse = false;
+//		this.linkStatus = LinkStatus.None;
+//	}
+	
+	public LabeledWeightedEdge(String id, Name name, LinkType linkType) {
 		super();
 		this.id = id;
-		this.linkType = LinkType.None;
-		this.label = id;
-		this.inverse = false;
-		this.linkStatus = LinkStatus.None;
-	}
-
-	public LabeledWeightedEdge(String id, String label) {
-		super();
-		this.id = id;
-		this.linkType = LinkType.None;
-		this.label = label;
+		this.linkType = linkType;
+		this.name = name;
 		this.inverse = false;
 		this.linkStatus = LinkStatus.None;
 	}
 	
-	public LabeledWeightedEdge(String id, String label, LinkType linkType) {
+	public LabeledWeightedEdge(String id, Name name, LinkType linkType, boolean inverse) {
 		super();
 		this.id = id;
 		this.linkType = linkType;
-		this.label = label;
-		this.inverse = false;
-		this.linkStatus = LinkStatus.None;
-	}
-	
-	public LabeledWeightedEdge(String id, String label, LinkType linkType, boolean inverse) {
-		super();
-		this.id = id;
-		this.linkType = linkType;
-		this.label = label;
+		this.name = name;
 		this.inverse = inverse;;
 		this.linkStatus = LinkStatus.None;
 	}
@@ -55,53 +55,21 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		super();
 		this.id = e.id;
 		this.linkType = e.linkType;
-		this.label = e.label;
+		this.name = new Name(e.name);
 		this.inverse = e.inverse;;
 		this.linkStatus = LinkStatus.None;
 	}
 	
 	public String getLocalID() {
-		if (id == null)
-			return "";
-		
-		String result = "";
-		String temp = id;
-		
-		if (temp.endsWith("/"))
-			temp = temp.substring(0, temp.length() - 1);
-		
-		int index = temp.indexOf('#');
-		if (index == -1) {
-			index = temp.lastIndexOf('/');
-			if (index == -1)
-				return temp;
-			result = temp.substring(index + 1);
-		} else
-			result = temp.substring(index + 1);
-		
-		return result;
+		String s = this.id;
+		s = s.replaceAll(this.name.getNs(), "");
+		return s;
 	}
 	
 	public String getLocalLabel() {
-		if (label == null)
-			return "";
-
-		String result = "";
-		String temp = label;
-		
-		if (temp.endsWith("/"))
-			temp = temp.substring(0, temp.length() - 1);
-		
-		int index = temp.indexOf('#');
-		if (index == -1) {
-			index = temp.lastIndexOf('/');
-			if (index == -1)
-				return temp;
-			result = temp.substring(index + 1);
-		} else
-			result = temp.substring(index + 1);
-		
-		return result;
+		String s = this.name.getUri();
+		s = s.replaceAll(this.name.getNs(), "");
+		return s;
 	}
 	
 	
@@ -121,8 +89,16 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		return this.id;
 	}
 	
-	public String getLabel() {
-		return this.label;
+	public String getUri() {
+		return this.name.getUri();
+	}
+	
+	public String getNs() {
+		return this.name.getNs();
+	}
+	
+	public String getPrefix() {
+		return this.name.getPrefix();
 	}
 	
 	public LinkType getLinkType() {

@@ -94,7 +94,7 @@ public class TreePostProcess {
 				if (inLink.getID().equalsIgnoreCase(e.getID()))
 					continue;
 				
-				LabeledWeightedEdge inverseLink = new LabeledWeightedEdge(inLink.getID(), inLink.getLabel(), inLink.getLinkType(), true);
+				LabeledWeightedEdge inverseLink = new LabeledWeightedEdge(inLink.getID(), new Name(inLink.getUri(), inLink.getNs(), inLink.getPrefix()), inLink.getLinkType(), true);
 				
 				this.tree.addEdge(target, source, inverseLink);
 				this.tree.setEdgeWeight(inverseLink, inLink.getWeight());

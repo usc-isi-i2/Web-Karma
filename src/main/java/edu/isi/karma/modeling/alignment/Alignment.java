@@ -8,6 +8,7 @@ import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
 
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 
 
@@ -15,6 +16,8 @@ import edu.isi.karma.rep.semantictypes.SemanticType;
 public class Alignment {
 
 	static Logger logger = Logger.getLogger(Alignment.class);
+
+	private OntologyManager ontologyManager;
 
 	private List<SemanticType> semanticTypes;
 	private List<Vertex> semanticNodes;
@@ -28,11 +31,13 @@ public class Alignment {
 	
 	private GraphBuilder graphBuilder;
 	
-	public Alignment(List<SemanticType> semanticTypes) {
+	public Alignment(OntologyManager ontologyManager, List<SemanticType> semanticTypes) {
+		this.ontologyManager = ontologyManager;
+		
 		this.semanticTypes = semanticTypes;
 
 		logger.info("building initial graph ...");
-		graphBuilder = new GraphBuilder(this.semanticTypes);
+		graphBuilder = new GraphBuilder(ontologyManager, this.semanticTypes);
 		linksForcedByDomain = graphBuilder.getLinksForcedByDomain();
 		
 		linksForcedByUser = new ArrayList<LabeledWeightedEdge>();
@@ -141,7 +146,7 @@ public class Alignment {
 	
 	public void reset() {
 		
-		graphBuilder = new GraphBuilder(this.semanticTypes);
+		graphBuilder = new GraphBuilder(ontologyManager, this.semanticTypes);
 		linksForcedByUser.clear();
 		semanticNodes = graphBuilder.getSemanticNodes();
 		align();

@@ -6,90 +6,49 @@ public class Vertex {
 
 	private String id;
 	private NodeType nodeType;
-	private String label;
+	private Name name;
 	private SemanticType semanticType;
 	
-	public Vertex(String id) {
+	public Vertex(String id, Name name, NodeType nodeType) {
 		this.id = id;
-		this.label = id;
-	}
-	
-	public Vertex(String id, String label) {
-		this.id = id;
-		this.label = label;
-	}
-
-	public Vertex(String id, SemanticType semanticType, NodeType nodeType) {
-		this.id = id;
-		this.nodeType = nodeType;
-		this.semanticType = semanticType;
-		this.label = semanticType.getType();
-	}
-	
-	public Vertex(String id, String label, NodeType nodeType) {
-		this.id = id;
-		this.label = label;
+		this.name = name;
 		this.nodeType = nodeType;
 		this.semanticType = null;
 	}
 		
 	public Vertex(Vertex v) {
 		this.id = v.id;
-		this.label = v.label;
+		this.name = new Name(v.name);
 		this.nodeType = v.nodeType;
 		this.semanticType = v.semanticType;
 	}
 	
 	public String getLocalID() {
-		if (id == null)
-			return "";
-
-		String result = "";
-		String temp = id;
-		
-		if (temp.endsWith("/"))
-			temp = temp.substring(0, temp.length() - 1);
-		
-		int index = temp.indexOf('#');
-		if (index == -1) {
-			index = temp.lastIndexOf('/');
-			if (index == -1)
-				return temp;
-			result = temp.substring(index + 1);
-		} else
-			result = temp.substring(index + 1);
-		
-		return result;
+		String s = id;
+		s = s.replaceAll(this.name.getNs(), "");
+		return s;
 	}
 
 	public String getLocalLabel() {
-		if (label == null)
-			return "";
-
-		String result = "";
-		String temp = label;
-		
-		if (temp.endsWith("/"))
-			temp = temp.substring(0, temp.length() - 1);
-		
-		int index = temp.indexOf('#');
-		if (index == -1) {
-			index = temp.lastIndexOf('/');
-			if (index == -1)
-				return temp;
-			result = temp.substring(index + 1);
-		} else
-			result = temp.substring(index + 1);
-		
-		return result;
+		String s = this.name.getUri();
+		s = s.replaceAll(this.name.getNs(), "");
+		return s;
 	}
 	
 	public String getID() {
 		return this.id;
 	}
 	
-	public String getLabel() {
-		return this.label;
+	public String getUri() {
+		return this.name.getUri();
+	}
+	
+	public String getNs() {
+		return this.name.getNs();
+	}
+	
+	public String getPrefix() {
+		return this.name.getPrefix();
 	}
 	
 	public NodeType getNodeType() {

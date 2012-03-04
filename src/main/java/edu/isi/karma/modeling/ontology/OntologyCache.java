@@ -14,26 +14,28 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 public class OntologyCache {
 	
 	static Logger logger = Logger.getLogger(OntologyCache.class.getName());
+	
+	private OntologyManager ontologyManager = null;
 
 	// hashmap: class -> properties whose domain(direct) includes this class 
-	private static HashMap<String, List<String>> directOutDataProperties; 
-	private static HashMap<String, List<String>> indirectOutDataProperties; 
-	private static HashMap<String, List<String>> directOutObjectProperties; 
-	private static HashMap<String, List<String>> indirectOutObjectProperties; 
+	private HashMap<String, List<String>> directOutDataProperties; 
+	private HashMap<String, List<String>> indirectOutDataProperties; 
+	private HashMap<String, List<String>> directOutObjectProperties; 
+	private HashMap<String, List<String>> indirectOutObjectProperties; 
 	// hashmap: class -> properties whose range(direct) includes this class 
-	private static HashMap<String, List<String>> directInObjectProperties; 
-	private static HashMap<String, List<String>> indirectInObjectProperties;
+	private HashMap<String, List<String>> directInObjectProperties; 
+	private HashMap<String, List<String>> indirectInObjectProperties;
 	
 	// hashmap: property -> direct domains
-	private static HashMap<String, List<String>> propertyDirectDomains;
-	private static HashMap<String, List<String>> propertyIndirectDomains;
+	private HashMap<String, List<String>> propertyDirectDomains;
+	private HashMap<String, List<String>> propertyIndirectDomains;
 	// hashmap: property -> direct ranges
-	private static HashMap<String, List<String>> propertyDirectRanges;
-	private static HashMap<String, List<String>> propertyIndirectRanges;
+	private HashMap<String, List<String>> propertyDirectRanges;
+	private HashMap<String, List<String>> propertyIndirectRanges;
 	
 	// hashmap: domain+range -> object properties
-	private static HashMap<String, List<String>> directDomainRangeProperties;
-	private static HashMap<String, List<String>> indirectDomainRangeProperties;
+	private HashMap<String, List<String>> directDomainRangeProperties;
+	private HashMap<String, List<String>> indirectDomainRangeProperties;
 
 	public HashMap<String, List<String>> getDirectOutDataProperties() {
 		return directOutDataProperties;
@@ -84,35 +86,56 @@ public class OntologyCache {
 		return indirectDomainRangeProperties;
 	}
 	
-	private static OntologyCache _InternalInstance = null;
-	public static OntologyCache Instance()
-	{
-		if (_InternalInstance == null)
-		{
-			directOutDataProperties = new HashMap<String, List<String>>();
-			indirectOutDataProperties = new HashMap<String, List<String>>();
-			directOutObjectProperties = new HashMap<String, List<String>>();
-			indirectOutObjectProperties = new HashMap<String, List<String>>();
-			directInObjectProperties = new HashMap<String, List<String>>();
-			indirectInObjectProperties = new HashMap<String, List<String>>();
-			
-			propertyDirectDomains = new HashMap<String, List<String>>();
-			propertyIndirectDomains = new HashMap<String, List<String>>();
-			propertyDirectRanges = new HashMap<String, List<String>>();
-			propertyIndirectRanges = new HashMap<String, List<String>>();
-			
-			directDomainRangeProperties = new HashMap<String, List<String>>();
-			indirectDomainRangeProperties = new HashMap<String, List<String>>();
-			
-			_InternalInstance = new OntologyCache();
-			
-			_InternalInstance.init();
-			
-		}
-		return _InternalInstance;
+	public OntologyCache() {
 	}
 
-	private void init() {
+//	private static OntologyCache _InternalInstance = null;
+//	public static OntologyCache Instance()
+//	{
+//		if (_InternalInstance == null)
+//		{
+//			directOutDataProperties = new HashMap<String, List<String>>();
+//			indirectOutDataProperties = new HashMap<String, List<String>>();
+//			directOutObjectProperties = new HashMap<String, List<String>>();
+//			indirectOutObjectProperties = new HashMap<String, List<String>>();
+//			directInObjectProperties = new HashMap<String, List<String>>();
+//			indirectInObjectProperties = new HashMap<String, List<String>>();
+//			
+//			propertyDirectDomains = new HashMap<String, List<String>>();
+//			propertyIndirectDomains = new HashMap<String, List<String>>();
+//			propertyDirectRanges = new HashMap<String, List<String>>();
+//			propertyIndirectRanges = new HashMap<String, List<String>>();
+//			
+//			directDomainRangeProperties = new HashMap<String, List<String>>();
+//			indirectDomainRangeProperties = new HashMap<String, List<String>>();
+//			
+//			_InternalInstance = new OntologyCache();
+//			
+//			_InternalInstance.init();
+//			
+//		}
+//		return _InternalInstance;
+//	}
+
+	public void init(OntologyManager ontologyManager) {
+
+		this.ontologyManager = ontologyManager;
+		
+		directOutDataProperties = new HashMap<String, List<String>>();
+		indirectOutDataProperties = new HashMap<String, List<String>>();
+		directOutObjectProperties = new HashMap<String, List<String>>();
+		indirectOutObjectProperties = new HashMap<String, List<String>>();
+		directInObjectProperties = new HashMap<String, List<String>>();
+		indirectInObjectProperties = new HashMap<String, List<String>>();
+		
+		propertyDirectDomains = new HashMap<String, List<String>>();
+		propertyIndirectDomains = new HashMap<String, List<String>>();
+		propertyDirectRanges = new HashMap<String, List<String>>();
+		propertyIndirectRanges = new HashMap<String, List<String>>();
+		
+		directDomainRangeProperties = new HashMap<String, List<String>>();
+		indirectDomainRangeProperties = new HashMap<String, List<String>>();
+		
 
 		long start = System.currentTimeMillis();
 		fillDataPropertiesHashMaps();
@@ -130,7 +153,7 @@ public class OntologyCache {
 		List<OntResource> allRanges = new ArrayList<OntResource>();
 		List<String> temp; 
 		
-		ExtendedIterator<ObjectProperty> itrOP = OntologyManager.Instance().getOntModel().listObjectProperties();
+		ExtendedIterator<ObjectProperty> itrOP = ontologyManager.getOntModel().listObjectProperties();
 		OntResource d;
 		OntResource r;
 		
@@ -147,10 +170,10 @@ public class OntologyCache {
 			ExtendedIterator<? extends OntResource> itrDomains = op.listDomain();
 			while (itrDomains.hasNext()) {
 				d = itrDomains.next();
-				OntologyManager.Instance().getMembers(d, directDomains, false);
+				ontologyManager.getMembers(d, directDomains, false);
 			}
 
-			propertyDirectDomains.put(op.getURI(), OntologyManager.Instance().getResourcesURIs(directDomains));
+			propertyDirectDomains.put(op.getURI(), ontologyManager.getResourcesURIs(directDomains));
 			
 			for (int i = 0; i < directDomains.size(); i++) {
 				temp = directOutObjectProperties.get(directDomains.get(i).getURI());
@@ -163,10 +186,10 @@ public class OntologyCache {
 
 			for (int i = 0; i < directDomains.size(); i++) {
 				allDomains.add(directDomains.get(i));
-				OntologyManager.Instance().getChildren(directDomains.get(i), allDomains, true);
+				ontologyManager.getChildren(directDomains.get(i), allDomains, true);
 			}
 
-			propertyIndirectDomains.put(op.getURI(), OntologyManager.Instance().getResourcesURIs(allDomains));
+			propertyIndirectDomains.put(op.getURI(), ontologyManager.getResourcesURIs(allDomains));
 
 			for (int i = 0; i < allDomains.size(); i++) {
 				temp = indirectOutObjectProperties.get(allDomains.get(i).getURI());
@@ -181,10 +204,10 @@ public class OntologyCache {
 			ExtendedIterator<? extends OntResource> itrRanges = op.listRange();
 			while (itrRanges.hasNext()) {
 				r = itrRanges.next();
-				OntologyManager.Instance().getMembers(r, directRanges, false);
+				ontologyManager.getMembers(r, directRanges, false);
 			}
 
-			propertyDirectRanges.put(op.getURI(), OntologyManager.Instance().getResourcesURIs(directRanges));
+			propertyDirectRanges.put(op.getURI(), ontologyManager.getResourcesURIs(directRanges));
 			
 			for (int i = 0; i < directRanges.size(); i++) {
 				temp = directInObjectProperties.get(directRanges.get(i).getURI());
@@ -197,10 +220,10 @@ public class OntologyCache {
 			
 			for (int i = 0; i < directRanges.size(); i++) {
 				allRanges.add(directRanges.get(i));
-				OntologyManager.Instance().getChildren(directRanges.get(i), allRanges, true);
+				ontologyManager.getChildren(directRanges.get(i), allRanges, true);
 			}
 			
-			propertyIndirectRanges.put(op.getURI(), OntologyManager.Instance().getResourcesURIs(allRanges));
+			propertyIndirectRanges.put(op.getURI(), ontologyManager.getResourcesURIs(allRanges));
 			
 			for (int i = 0; i < allRanges.size(); i++) {
 				temp = indirectInObjectProperties.get(allRanges.get(i).getURI());
@@ -249,7 +272,7 @@ public class OntologyCache {
 		List<OntResource> allRanges = new ArrayList<OntResource>();
 		List<String> temp; 
 		
-		ExtendedIterator<DatatypeProperty> itrDP = OntologyManager.Instance().getOntModel().listDatatypeProperties();
+		ExtendedIterator<DatatypeProperty> itrDP = ontologyManager.getOntModel().listDatatypeProperties();
 		OntResource d;
 		OntResource r;
 		
@@ -266,10 +289,10 @@ public class OntologyCache {
 			ExtendedIterator<? extends OntResource> itrDomains = dp.listDomain();
 			while (itrDomains.hasNext()) {
 				d = itrDomains.next();
-				OntologyManager.Instance().getMembers(d, directDomains, false);
+				ontologyManager.getMembers(d, directDomains, false);
 			}
 
-			propertyDirectDomains.put(dp.getURI(), OntologyManager.Instance().getResourcesURIs(directDomains));
+			propertyDirectDomains.put(dp.getURI(), ontologyManager.getResourcesURIs(directDomains));
 			
 			for (int i = 0; i < directDomains.size(); i++) {
 				temp = directOutDataProperties.get(directDomains.get(i).getURI());
@@ -282,10 +305,10 @@ public class OntologyCache {
 
 			for (int i = 0; i < directDomains.size(); i++) {
 				allDomains.add(directDomains.get(i));
-				OntologyManager.Instance().getChildren(directDomains.get(i), allDomains, true);
+				ontologyManager.getChildren(directDomains.get(i), allDomains, true);
 			}
 
-			propertyIndirectDomains.put(dp.getURI(), OntologyManager.Instance().getResourcesURIs(allDomains));
+			propertyIndirectDomains.put(dp.getURI(), ontologyManager.getResourcesURIs(allDomains));
 
 			for (int i = 0; i < allDomains.size(); i++) {
 				temp = indirectOutDataProperties.get(allDomains.get(i).getURI());
@@ -300,18 +323,18 @@ public class OntologyCache {
 			ExtendedIterator<? extends OntResource> itrRanges = dp.listRange();
 			while (itrRanges.hasNext()) {
 				r = itrRanges.next();
-				OntologyManager.Instance().getMembers(r, directRanges, false);
+				ontologyManager.getMembers(r, directRanges, false);
 			}
 
-			propertyDirectRanges.put(dp.getURI(), OntologyManager.Instance().getResourcesURIs(directRanges));
+			propertyDirectRanges.put(dp.getURI(), ontologyManager.getResourcesURIs(directRanges));
 
 			
 			for (int i = 0; i < directRanges.size(); i++) {
 				allRanges.add(directRanges.get(i));
-				OntologyManager.Instance().getChildren(directRanges.get(i), allRanges, true);
+				ontologyManager.getChildren(directRanges.get(i), allRanges, true);
 			}
 			
-			propertyIndirectRanges.put(dp.getURI(), OntologyManager.Instance().getResourcesURIs(allRanges));
+			propertyIndirectRanges.put(dp.getURI(), ontologyManager.getResourcesURIs(allRanges));
 
 		}		
 	}

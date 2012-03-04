@@ -5,7 +5,7 @@ import java.util.Comparator;
 public class EdgeComparatorByLabel implements Comparator<LabeledWeightedEdge> {
 
 	public int compare(LabeledWeightedEdge o1, LabeledWeightedEdge o2) {
-		return o1.getLabel().compareTo(o2.getLabel());
+		return o1.getUri().compareTo(o2.getUri());
 	}
 
 }

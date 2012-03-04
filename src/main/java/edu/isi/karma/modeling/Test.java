@@ -6,14 +6,12 @@ import java.util.List;
 
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
-import edu.isi.karma.modeling.ontology.ImportOntology;
-import edu.isi.karma.modeling.ontology.OntologyCache;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 
 public class Test {
 
-	private static void loadOntologies() {
+	private static void loadOntologies(OntologyManager ontManager) {
 
 		int size = 5;
 		File[] f = new File[size];
@@ -26,8 +24,7 @@ public class Test {
 		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\Dovetail_ISI_mod.owl");
 		
 		for (int i = 0; i < 1; i++) {
-			ImportOntology imp = new ImportOntology(OntologyManager.Instance().getOntModel(), f[i]);
-			imp.doImport();
+			ontManager.doImport(f[i]);
 		}
 	}
 	
@@ -130,9 +127,12 @@ public class Test {
 	
 	public static void main(String[] args) {
 		
-		loadOntologies();
-		OntologyCache.Instance();
-		
+		OntologyManager ontManagar = new OntologyManager();
+		loadOntologies(ontManagar);
+//		System.out.println(ontManagar.getOntModel().getNsURIPrefix("http://vivoweb.org/ontology/core#"));
+//		System.out.println(ontManagar.getOntModel().getNsPrefixURI("vivo"));
+//		System.out.println(ontManagar.getOntModel().get("vivo"));
+//		if (true) return;
 
 		List<SemanticType> semTypes1 = createTestInput1();
 		List<SemanticType> semTypes2 = createTestInput2();
@@ -140,20 +140,20 @@ public class Test {
 		List<SemanticType> semTypes4 = createTestInput4();
 
 		Alignment alignment = null;
-		alignment = new Alignment(semTypes1);
-		alignment = new Alignment(semTypes2);
-		alignment = new Alignment(semTypes3);
-		alignment = new Alignment(semTypes4);
+		alignment = new Alignment(ontManagar, semTypes1);
+		alignment = new Alignment(ontManagar, semTypes2);
+		alignment = new Alignment(ontManagar, semTypes3);
+		alignment = new Alignment(ontManagar, semTypes4);
 		
 		
 //		alignment.getSteinerTree();
-//		GraphUtil.printGraph(alignment.getAlignmentGraph());
-		GraphUtil.printGraphSimple(alignment.getSteinerTree());
+		GraphUtil.printGraph(alignment.getSteinerTree());
+//		GraphUtil.printGraphSimple(alignment.getSteinerTree());
 
-		Alignment alignment2 = new Alignment(semTypes4);
-		GraphUtil.printGraphSimple(alignment2.getSteinerTree());
-		Alignment alignment3 = new Alignment(semTypes4);
-		GraphUtil.printGraphSimple(alignment3.getSteinerTree());
+//		Alignment alignment2 = new Alignment(ontManagar, semTypes4);
+//		GraphUtil.printGraphSimple(alignment2.getSteinerTree());
+//		Alignment alignment3 = new Alignment(ontManagar, semTypes4);
+//		GraphUtil.printGraphSimple(alignment3.getSteinerTree());
 
 
 //		alignment.addUserLink("http://halowiki/ob/property#involves1");
