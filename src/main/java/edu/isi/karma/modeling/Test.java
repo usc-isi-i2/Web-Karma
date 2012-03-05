@@ -134,19 +134,20 @@ public class Test {
 //		System.out.println(ontManagar.getOntModel().get("vivo"));
 //		if (true) return;
 
-		List<SemanticType> semTypes1 = createTestInput1();
-		List<SemanticType> semTypes2 = createTestInput2();
-		List<SemanticType> semTypes3 = createTestInput3();
+//		List<SemanticType> semTypes1 = createTestInput1();
+//		List<SemanticType> semTypes2 = createTestInput2();
+//		List<SemanticType> semTypes3 = createTestInput3();
 		List<SemanticType> semTypes4 = createTestInput4();
 
 		Alignment alignment = null;
-		alignment = new Alignment(ontManagar, semTypes1);
-		alignment = new Alignment(ontManagar, semTypes2);
-		alignment = new Alignment(ontManagar, semTypes3);
+//		alignment = new Alignment(ontManagar, semTypes1);
+//		alignment = new Alignment(ontManagar, semTypes2);
+//		alignment = new Alignment(ontManagar, semTypes3);
 		alignment = new Alignment(ontManagar, semTypes4);
 		
 		
 //		alignment.getSteinerTree();
+//		GraphUtil.printGraph(alignment.getAlignmentGraph());
 		GraphUtil.printGraph(alignment.getSteinerTree());
 //		GraphUtil.printGraphSimple(alignment.getSteinerTree());
 

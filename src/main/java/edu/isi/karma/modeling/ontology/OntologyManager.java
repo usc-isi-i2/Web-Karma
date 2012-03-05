@@ -390,12 +390,12 @@ public class OntologyManager {
 	 * @return
 	 */
 	public List<String> getResourcesURIs(List<OntResource> resources) {
-		List<String> resourcesNames = new ArrayList<String>();
+		List<String> resourcesURIs = new ArrayList<String>();
 		if (resources != null)
 			for (OntResource r: resources) {
-				resourcesNames.add(r.getURI());
+				resourcesURIs.add(r.getURI());
 			}
-		return resourcesNames;
+		return resourcesURIs;
 	}
 	
 	/**

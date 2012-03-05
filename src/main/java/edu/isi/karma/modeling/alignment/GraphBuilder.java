@@ -122,7 +122,7 @@ public class GraphBuilder {
 				continue;
 			}
 			
-			Vertex v = new Vertex(id, ontologyManager.getNameFromURI(semanticType.getType()), nodeType);
+			Vertex v = new Vertex(id, ontologyManager.getNameFromURI(semanticType.getType()), semanticType, nodeType);
 			semanticNodes.add(v);
 			graph.addVertex(v);
 		}
@@ -137,6 +137,7 @@ public class GraphBuilder {
 		
 		logger.debug("exit>");
 	}
+	
 	
 	private void addNodesClosure() {
 		
@@ -194,6 +195,36 @@ public class GraphBuilder {
 		logger.debug("exit>");
 	}
 	
+	private void addUnaddedDomainsToGraph() {
+		
+		logger.debug("<enter");
+		String id;
+		
+		for (int i = 0; i < this.semanticTypes.size(); i++) {
+			
+			if (!ontologyManager.isDataProperty(semanticTypes.get(i).getType().trim()))
+				continue;
+
+			String domainClass = semanticTypes.get(i).getDomain().trim();
+			if (domainClass == null || domainClass.trim().length() == 0)
+				continue;
+		
+			if (!ontologyManager.isClass(domainClass))
+				return;
+			
+			if (nodesLabelCounter.get(domainClass) == null) {
+				id = createNodeID(domainClass);
+				Vertex v = new Vertex(id, ontologyManager.getNameFromURI(domainClass), NodeType.Class);
+				semanticNodes.add(v);
+				graph.addVertex(v);
+				
+			}
+		}
+		
+		logger.debug("exit>");
+	}
+	
+
 	private void addLinks() {
 		
 		logger.debug("<enter");
@@ -460,6 +491,7 @@ public class GraphBuilder {
 		elapsedTimeSec = (addNodesClosure - addSemanticTypes)/1000F;
 		logger.info("time to add nodes closure: " + elapsedTimeSec);
 		
+		addUnaddedDomainsToGraph();
 		addLinks();
 		long addLinks = System.currentTimeMillis();
 		elapsedTimeSec = (addLinks - addNodesClosure)/1000F;

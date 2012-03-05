@@ -15,7 +15,14 @@ public class Vertex {
 		this.nodeType = nodeType;
 		this.semanticType = null;
 	}
-		
+	
+	public Vertex(String id, Name name, SemanticType semanticType, NodeType nodeType) {
+		this.id = id;
+		this.name = name;
+		this.nodeType = nodeType;
+		this.semanticType = semanticType;
+	}
+	
 	public Vertex(Vertex v) {
 		this.id = v.id;
 		this.name = new Name(v.name);
