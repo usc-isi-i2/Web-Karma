@@ -57,8 +57,6 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 	
 	public void removeNestedTable() {
 		this.nestedTable = null;
-		//mariam
-		nestedTable.setParentHNode(null);
 	}
 
 	public HTable addNestedTable(String tableName, Worksheet worksheet, RepFactory factory) {
