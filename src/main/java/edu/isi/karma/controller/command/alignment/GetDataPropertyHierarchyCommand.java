@@ -1,7 +1,5 @@
 package edu.isi.karma.controller.command.alignment;
 
-import com.hp.hpl.jena.ontology.OntModel;
-
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.DataPropertyHierarchyUpdate;
@@ -40,8 +38,8 @@ public class GetDataPropertyHierarchyCommand extends Command {
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		
-		OntModel model = OntologyManager.Instance().getOntModel();
-		c.add(new DataPropertyHierarchyUpdate(model));
+		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+		c.add(new DataPropertyHierarchyUpdate(ontMgr.getOntModel()));
 		return c;
 	}
 

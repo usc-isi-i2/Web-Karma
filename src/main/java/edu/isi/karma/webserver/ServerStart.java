@@ -1,6 +1,5 @@
 package edu.isi.karma.webserver;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -12,8 +11,6 @@ import javax.servlet.http.HttpServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.modeling.ontology.ImportOntology;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -51,13 +48,17 @@ public class ServerStart extends HttpServlet {
 		}
 
 		// Load the geospatial ontology
-		ImportOntology imp = new ImportOntology(OntologyManager.Instance()
-				.getOntModel(), new File("./Preloaded_Ontologies/geo_2007.owl"));
-		imp.doImport();
-		// Load the Chevron ontology
-		imp = new ImportOntology(OntologyManager.Instance()
-				.getOntModel(), new File("./Preloaded_Ontologies/oilwell.owl"));
-		imp.doImport();
+//		ImportOntology imp = new ImportOntology(OntologyManager.Instance()
+//				.getOntModel(), new File("./Preloaded_Ontologies/geo_2007.owl"));
+//		imp.doImport();
+//		// Load the Chevron ontology
+//		imp = new ImportOntology(OntologyManager.Instance()
+//				.getOntModel(), new File("./Preloaded_Ontologies/oilwell.owl"));
+//		imp.doImport();
+		
+//		ImportOntology imp = new ImportOntology(OntologyManager.Instance()
+//				.getOntModel(), new File("./SampleData/OWL/Wiki.owl"));
+//		imp.doImport();
 		/*
 		//vivo ontology
 		imp = new ImportOntology(OntologyManager.Instance()

@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.HNode;
@@ -87,6 +88,7 @@ public class SplitByCommaCommand extends WorksheetCommand {
 		// The column should not have a nested table but check to make sure!
 		if (hNode.hasNestedTable()) {
 			logger.error("The column already has a nested table!");
+			c.add(new ErrorUpdate("The column already has a nested table!"));
 			return c;
 		}
 

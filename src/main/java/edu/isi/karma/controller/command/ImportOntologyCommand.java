@@ -3,11 +3,8 @@ package edu.isi.karma.controller.command;
 import java.io.File;
 import java.io.PrintWriter;
 
-import com.hp.hpl.jena.ontology.OntModel;
-
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.ontology.ImportOntology;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.view.VWorkspace;
 
@@ -49,11 +46,9 @@ public class ImportOntologyCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		OntModel model = OntologyManager.Instance().getOntModel();
-
-		ImportOntology imp = new ImportOntology(model, ontologyFile);
-		final boolean success = imp.doImport();
-
+		OntologyManager ontManager = vWorkspace.getWorkspace().getOntologyManager();
+		final boolean success = ontManager.doImport(ontologyFile);
+		
 		return new UpdateContainer(new AbstractUpdate(){
 			@Override
 			public void generateJson(String prefix, PrintWriter pw,

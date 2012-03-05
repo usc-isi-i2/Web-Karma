@@ -23,4 +23,12 @@ public class AlignmentManager {
 	public Alignment getAlignment(String alignmentId) {
 		return alignmentMap.get(alignmentId);
 	}
+
+	public void removeWorkspaceAlignments(String workspaceId) {
+		for(String key:alignmentMap.keySet()) {
+			if(key.startsWith(workspaceId+":")) {
+				alignmentMap.remove(key);
+			}
+		}
+	}
 }
