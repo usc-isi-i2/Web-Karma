@@ -541,8 +541,14 @@ function showAlternativeParents(event) {
 						if(element["Edges"] && element["Edges"].length != 0) {
 						    element["Edges"].sort(function(a,b){
 						        var aName = a.edgeSource.toLowerCase();
-                                var bName = b.edgeSource.toLowerCase(); 
-                                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));   
+                                var bName = b.edgeSource.toLowerCase();
+                                
+                                if(aName == bName) {
+                                    var aEdge = a.edgeLabel.toLowerCase();
+                                    var bEdge = b.edgeLabel.toLowerCase();
+                                    return ((aEdge < bEdge) ? -1 : ((aEdge > bEdge) ? 1 : 0));
+                                } else
+                                    return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));   
 						    });
 						}
 						
