@@ -134,7 +134,8 @@ public class PublishRDFCommand extends Command {
 				WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(
 						vWorkspace.getRepFactory(), descString, rdfFileName);
 				if (worksheet.getHeaders().hasNestedTables()) {
-					wrg.generateTriplesCell(worksheet);
+					logger.info("Alignment of nested tables is work in progress. No RDF generated!");
+					//wrg.generateTriplesCell(worksheet);
 				} else {
 					wrg.generateTriplesRow(worksheet);
 				}
