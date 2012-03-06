@@ -1,5 +1,6 @@
 package edu.isi.karma.webserver;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -13,7 +14,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
-import edu.isi.karma.imp.csv.CSVFileImport;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.rep.metadata.Tag;
@@ -45,6 +46,11 @@ public class GetExampleJSON extends HttpServlet {
 
 		WorkspaceRegistry.getInstance().register(new ExecutionController(vwsp));
 		
+
+		// Loading ontology to be preloaded
+		OntologyManager mgr = workspace.getOntologyManager();
+		mgr.doImport(new File("./Preloaded_Ontologies/geo_2007.owl"));
+		
 		//mariam
 		/*
 		File file = new File("../demofiles/peopleFaculty.csv");
@@ -58,7 +64,7 @@ public class GetExampleJSON extends HttpServlet {
 		workspace.getTagsContainer().addTag(outlierTag);
 
 		// SampleDataFactory.createSample1small(workspace);
-		SampleDataFactory.createSample1(workspace);
+//		SampleDataFactory.createSample1(workspace);
 		// SampleDataFactory.createSampleJsonWithNestedTable2(false/* true: 2
 		// rows */,
 		// vwsp.getWorkspace());
