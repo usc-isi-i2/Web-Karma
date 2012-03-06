@@ -55,6 +55,13 @@ public class ShowModelCommand extends WorksheetCommand {
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
+		
+		// Show error update for aligning hierarchical sources
+		if(worksheet.getHeaders().hasNestedTables()) {
+			return new UpdateContainer(new ErrorUpdate(
+					"Karma cannot align hierarchical sources yet!"));
+		}
+		
 		worksheetName = worksheet.getTitle();
 
 		// Get the Outlier Tag

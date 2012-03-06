@@ -1,6 +1,5 @@
 package edu.isi.karma.webserver;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -12,8 +11,6 @@ import javax.servlet.http.HttpServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.modeling.ontology.ImportOntology;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -58,19 +55,5 @@ public class ServerStart extends HttpServlet {
 		imp = new ImportOntology(OntologyManager.Instance()
 				.getOntModel(), new File("./Preloaded_Ontologies/oilwell.owl"));
 		imp.doImport();
-		
-		//vivo ontology
-		imp = new ImportOntology(OntologyManager.Instance()
-				.getOntModel(), new File("../demofiles/vivo1.4-protege.owl"));
-		imp.doImport();
-
-		//rdfs ontology
-		imp = new ImportOntology(OntologyManager.Instance()
-				.getOntModel(), new File("../demofiles/rdfs-small.owl"));
-		imp.doImport();
-		
-		System.out.println("************");
-		System.out.println("Server start servlet initialized successfully..");
-		System.out.println("***********");
-	}
+	}		
 }

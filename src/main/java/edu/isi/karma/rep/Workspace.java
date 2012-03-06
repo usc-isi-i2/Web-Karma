@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.isi.karma.controller.history.CommandHistory;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.metadata.TagsContainer;
 
 /**
@@ -40,6 +41,11 @@ public class Workspace extends Entity {
 	private final TagsContainer tagsContainer = new TagsContainer();
 
 	/**
+	 * Manages the model constructed from the imported ontologies
+	 */
+	private final OntologyManager ontologyManager = new OntologyManager();
+	
+	/**
 	 * In the future we may need to keep track of user info.
 	 */
 	protected Workspace(String id, RepFactory factory) {
@@ -69,5 +75,9 @@ public class Workspace extends Entity {
 
 	public TagsContainer getTagsContainer() {
 		return tagsContainer;
+	}
+
+	public OntologyManager getOntologyManager() {
+		return ontologyManager;
 	}
 }

@@ -14,7 +14,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetAlternativeLinksCommand extends Command {
@@ -74,13 +74,24 @@ public class GetAlternativeLinksCommand extends Command {
 				try {
 					obj.put(JsonKeys.updateType.name(), "GetAlternativeLinks");
 					for (LabeledWeightedEdge edge : edges) {
+						
+						String edgeLabel = "";
+//						if(edge.getPrefix() != null && !edge.getPrefix().equals(""))
+//							edgeLabel = edge.getPrefix() + ":" + edge.getLocalLabel();
+//						else
+							edgeLabel = edge.getLocalLabel();
+						
+						String edgeSourceLabel = "";
+						Vertex edgeSource = edge.getSource();
+//						if(edgeSource.getPrefix() != null && !edgeSource.getPrefix().equals(""))
+//							edgeSourceLabel = edgeSource.getPrefix() + ":" + edgeSource.getLocalLabel();
+//						else
+							edgeSourceLabel = edgeSource.getLocalLabel();
+						
 						JSONObject edgeObj = new JSONObject();
 						edgeObj.put(JsonKeys.edgeId.name(), edge.getID());
-						edgeObj.put(JsonKeys.edgeLabel.name(), SemanticTypeUtil
-								.removeNamespace(edge.getLabel()));
-						edgeObj.put(JsonKeys.edgeSource.name(),
-								SemanticTypeUtil.removeNamespace(edge
-										.getSource().getLabel()));
+						edgeObj.put(JsonKeys.edgeLabel.name(), edgeLabel);
+						edgeObj.put(JsonKeys.edgeSource.name(),edgeSourceLabel);
 						if(currentLink != null && edge.getID().equals(currentLink.getID()))
 							edgeObj.put(JsonKeys.selected.name(), true);
 						else
@@ -89,7 +100,7 @@ public class GetAlternativeLinksCommand extends Command {
 						edgesArray.put(edgeObj);
 					}
 					obj.put(JsonKeys.Edges.name(), edgesArray);
-					pw.println(obj.toString(4));
+					pw.println(obj.toString());
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

@@ -49,10 +49,10 @@ public class AlignToOntology {
 		if (!replaceExistingAlignment) {
 			// If the alignment does not exists, create a new one
 			if (alignment == null) {
-				alignment = getNewAlignment(worksheet);
+				alignment = getNewAlignment();
 			}
 		} else {
-			alignment = getNewAlignment(worksheet);
+			alignment = getNewAlignment();
 		}
 
 		// Get the list of sorted column names
@@ -67,7 +67,7 @@ public class AlignToOntology {
 		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(
 				vWorksheetId);
 
-		if (root != null) {			
+		if (root != null) {
 			//mariam
 			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getRepFactory(), worksheet, tree, root);
 			/////////////////////////
@@ -97,28 +97,28 @@ public class AlignToOntology {
 		} else {
 			// Add an empty alignment headers update
 			c.add(new AbstractUpdate() {
-			@Override
-			public void generateJson(String prefix, PrintWriter pw,
-					VWorkspace vWorkspace) {
-				JSONObject obj = new JSONObject();
-				JSONArray emptyEdgesArray = new JSONArray();
-
-				try {
-					obj.put(AbstractUpdate.GenericJsonKeys.updateType.name(), AlignmentHeadersUpdate.class.getSimpleName());
-					obj.put(AlignmentHeadersUpdate.JsonKeys.worksheetId.name(), vWorksheetId);
-					obj.put(AlignmentHeadersUpdate.JsonKeys.alignmentId.name(), alignmentId);
-					obj.put(AlignmentHeadersUpdate.JsonKeys.rows.name(), emptyEdgesArray);
-					pw.println(obj.toString(4));
-				} catch (JSONException e) {
-					logger.error("Error generating JSON!");
+				@Override
+				public void generateJson(String prefix, PrintWriter pw,
+						VWorkspace vWorkspace) {
+					JSONObject obj = new JSONObject();
+					JSONArray emptyEdgesArray = new JSONArray();
+	
+					try {
+						obj.put(AbstractUpdate.GenericJsonKeys.updateType.name(), AlignmentHeadersUpdate.class.getSimpleName());
+						obj.put(AlignmentHeadersUpdate.JsonKeys.worksheetId.name(), vWorksheetId);
+						obj.put(AlignmentHeadersUpdate.JsonKeys.alignmentId.name(), alignmentId);
+						obj.put(AlignmentHeadersUpdate.JsonKeys.rows.name(), emptyEdgesArray);
+						pw.println(obj.toString());
+					} catch (JSONException e) {
+						logger.error("Error generating JSON!");
+					}
 				}
-			}
-		});
+			});
 			logger.error("Alignment returned null root!");
 		}
 	}
 
-	private Alignment getNewAlignment(Worksheet worksheet2) {
+	private Alignment getNewAlignment() {
 		SemanticTypes semTypes = worksheet.getSemanticTypes();
 		// Get the list of semantic types
 		List<SemanticType> types = new ArrayList<SemanticType>();
@@ -126,7 +126,7 @@ public class AlignToOntology {
 			types.add(type);
 		}
 
-		return new Alignment(types);
+		return new Alignment(vWorkspace.getWorkspace().getOntologyManager(), types);
 	}
 
 	private String getAlignmentId() {

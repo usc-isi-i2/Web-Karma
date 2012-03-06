@@ -101,6 +101,10 @@ function changeSemanticType(event) {
             else
                 addSemTypeObjectToCurrentTable(type, false);
         });
+        
+        // Check/uncheck the "Mark as key for the class." option depending on the existing status
+        if(primTypeObject["isPartOfKey"] == true)
+            $("input#chooseClassKey").attr("checked", true);
     }
 	
 	// Use an array to store all the selected semantic types
@@ -532,6 +536,21 @@ function showAlternativeParents(event) {
 	    				$("tr", table).remove();
 	    				var positionArray = [event.clientX+20		// distance from left
 									, event.clientY+10];	// distance from top
+						
+						// Sort the edges by class names
+						if(element["Edges"] && element["Edges"].length != 0) {
+						    element["Edges"].sort(function(a,b){
+						        var aName = a.edgeSource.toLowerCase();
+                                var bName = b.edgeSource.toLowerCase();
+                                
+                                if(aName == bName) {
+                                    var aEdge = a.edgeLabel.toLowerCase();
+                                    var bEdge = b.edgeLabel.toLowerCase();
+                                    return ((aEdge < bEdge) ? -1 : ((aEdge > bEdge) ? 1 : 0));
+                                } else
+                                    return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));   
+						    });
+						}
 						
 						$.each(element["Edges"], function(index2, edge) {
 							var trTag = $("<tr>").addClass("AlternativeLink");
