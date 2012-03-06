@@ -47,6 +47,11 @@ public class GetExampleJSON extends HttpServlet {
 
 		WorkspaceRegistry.getInstance().register(new ExecutionController(vwsp));
 		
+
+		// Loading ontology to be preloaded
+		OntologyManager mgr = workspace.getOntologyManager();
+		mgr.doImport(new File("./Preloaded_Ontologies/geo_2007.owl"));
+		
 		//mariam
 		File file = new File("../demofiles/peopleFaculty.csv");
 		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
@@ -65,7 +70,7 @@ public class GetExampleJSON extends HttpServlet {
 		workspace.getTagsContainer().addTag(outlierTag);
 
 		// SampleDataFactory.createSample1small(workspace);
-		SampleDataFactory.createSample1(workspace);
+//		SampleDataFactory.createSample1(workspace);
 		// SampleDataFactory.createSampleJsonWithNestedTable2(false/* true: 2
 		// rows */,
 		// vwsp.getWorkspace());

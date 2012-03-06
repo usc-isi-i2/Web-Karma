@@ -87,6 +87,7 @@ public class AlignToOntology {
 
 			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
 					worksheet, columnPaths, vWorkspace);
+			vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 
 			// Debug
 			GraphUtil.printGraph(tree);
@@ -123,6 +124,7 @@ public class AlignToOntology {
 		// Get the list of semantic types
 		List<SemanticType> types = new ArrayList<SemanticType>();
 		for (SemanticType type : semTypes.getTypes().values()) {
+//			System.out.println("Type: " + type.getType()+ " of " + type.getDomain() + "HNode ID: " + type.getHNodeId());
 			types.add(type);
 		}
 

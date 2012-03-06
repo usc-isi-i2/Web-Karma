@@ -55,13 +55,13 @@ public class ShowModelCommand extends WorksheetCommand {
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
-		
+
 		// Show error update for aligning hierarchical sources
-		if(worksheet.getHeaders().hasNestedTables()) {
+		if (worksheet.getHeaders().hasNestedTables()) {
 			return new UpdateContainer(new ErrorUpdate(
 					"Karma cannot align hierarchical sources yet!"));
 		}
-		
+
 		worksheetName = worksheet.getTitle();
 
 		// Get the Outlier Tag
@@ -69,8 +69,7 @@ public class ShowModelCommand extends WorksheetCommand {
 				.getTag(TagName.Outlier);
 
 		// Generate the semantic types for the worksheet
-		boolean semanticTypesChangedOrAdded = SemanticTypeUtil
-				.populateSemanticTypesUsingCRF(worksheet, outlierTag);
+		SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, outlierTag);
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 
 		// Get the alignment update if any
@@ -78,7 +77,7 @@ public class ShowModelCommand extends WorksheetCommand {
 				vWorksheetId);
 
 		try {
-			align.update(c, semanticTypesChangedOrAdded);
+			align.update(c, true);
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(
