@@ -53,6 +53,7 @@ public class GetExampleJSON extends HttpServlet {
 		mgr.doImport(new File("./Preloaded_Ontologies/geo_2007.owl"));
 		
 		//mariam
+		/*
 		File file = new File("../demofiles/peopleFaculty.csv");
 		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
 		imp.generateWorksheet();
@@ -63,6 +64,7 @@ public class GetExampleJSON extends HttpServlet {
 		om.doImport(new File("../demofiles/vivo1.4-protege.owl"));
 		//rdfs ontology
 		om.doImport(new File("../demofiles/rdfs-small.owl"));
+		*/
 		//////////////
 
 		// Initialize the Outlier tag
