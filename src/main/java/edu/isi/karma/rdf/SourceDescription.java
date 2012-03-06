@@ -25,6 +25,7 @@ package edu.isi.karma.rdf;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -104,6 +105,21 @@ public class SourceDescription {
 	 * The source prefix used during RDF generation.
 	 */
 	private String rdfSourcePrefix;
+		
+	/**
+	 * All namespaces used in thie SD.
+	 * key=prefix; val=namespace
+	 * If the same prefix appears again with a different 
+	 * namespace assigned to it, prefix is renamed.
+	 */
+	private HashMap<String, String> namespaces = new HashMap<String, String>();
+	/**
+	 * If the same prefix appears again with a different 
+	 * namespace assigned to it, prefix is renamed.
+	 */
+	private int prefixIndex = 0;
+	
+
 	/**
 	 * true if column names should be used in the Rule; 
 	 * false if HNodePath should be used instead of the column names.
@@ -143,7 +159,7 @@ public class SourceDescription {
 	 * datasource to be modeled.
 	 * <br>useColumnNames=false if the SD is used internally.
 	 */
-	public SourceDescription(RepFactory factory, DirectedWeightedMultigraph<Vertex, 
+	public SourceDescription(OntologyManager ontologyManager, RepFactory factory, DirectedWeightedMultigraph<Vertex, 
 			LabeledWeightedEdge> steinerTree, Vertex root, Worksheet worksheet, String rdfSourcePrefix, boolean generateInverse, 
 			boolean useColumnNames){
 		this.factory=factory;
@@ -152,8 +168,16 @@ public class SourceDescription {
 		this.useColumnNames = useColumnNames;
 		this.rdfSourcePrefix=rdfSourcePrefix;
 		this.generateInverse = generateInverse;
-		model = OntologyManager.Instance().getOntModel();
+		model = ontologyManager.getOntModel();
 		this.worksheet=worksheet;
+		
+		//add source prefix
+		if(rdfSourcePrefix==null)
+			rdfSourcePrefix = "http://localhost:8080/";
+		//add a delimiter if it doesn't exist, otherwise the URIs will not be well formed
+		if(!rdfSourcePrefix.endsWith("/") && !rdfSourcePrefix.endsWith("#"))
+			rdfSourcePrefix += "/";
+		namespaces.put("s", rdfSourcePrefix);
 	}
 	
 	/**
@@ -185,13 +209,8 @@ public class SourceDescription {
 			rule += addBacktick(attr);
 		}
 		rule += ") -> \n" + s.toString();
-		if(rdfSourcePrefix==null)
-			rdfSourcePrefix = "http://localhost:8080/";
-		//add a delimiter if it doesn't exist, otherwise the URIs will not be well formed
-		if(!rdfSourcePrefix.endsWith("/") && !rdfSourcePrefix.endsWith("#"))
-			rdfSourcePrefix += "/";
-		String namespace = "s:'" + rdfSourcePrefix + "'";
-		String sourceDescription = "NAMESPACES:\n\n" + namespace + "\n\nLAV_RULES:\n\n" + rule;
+
+		String sourceDescription = "NAMESPACES:\n\n" + getAllNamespaces() + "\n\nLAV_RULES:\n\n" + rule;
 		logger.debug("SourceDescription:\n"+sourceDescription);
 		return sourceDescription;
 	}
@@ -214,7 +233,7 @@ public class SourceDescription {
 	 * 7. stop when v is DataProperty (leaves are reached)
 	 */
 	private void generateSourceDescription(Vertex v, StringBuffer s) throws KarmaException{
-		//System.out.println("Generate SD for node:" + v.getLabel() + " type:" + v.getNodeType());
+		//System.out.println("Generate SD for node:" + v.getUri() + " type:" + v.getNodeType());
 		if(v.getNodeType()==NodeType.Class){
 			String stmt = generateClassStatement(v);
 			if(s.length()!=0) s.append(" ^ ");
@@ -225,7 +244,7 @@ public class SourceDescription {
 				if(e.getLinkType()==LinkType.DataProperty){
 					//get the child node, which should be a DataProperty node
 					if(child.getNodeType()!=NodeType.DataProperty){
-						throw new KarmaException("Node " + child.getLabel() + " should be of type NodeType.DataProperty");
+						throw new KarmaException("Node " + child.getUri() + " should be of type NodeType.DataProperty");
 					}
 					else{
 						stmt = generateDataPropertyStatement(v,e,child);
@@ -239,7 +258,7 @@ public class SourceDescription {
 				else if(e.getLinkType()==LinkType.ObjectProperty){
 					//get the child node, which should be a DataProperty node
 					if(child.getNodeType()!=NodeType.Class){
-						throw new KarmaException("Node " + child.getLabel() + " should be of type NodeType.Class");
+						throw new KarmaException("Node " + child.getUri() + " should be of type NodeType.Class");
 					}
 					else{
 						stmt = generateObjectPropertyStatement(v,e,child);
@@ -268,7 +287,7 @@ public class SourceDescription {
 	 */
 	private String generateClassStatement(Vertex v) {
 		String key = findKey(v);
-		String s = "`" + v.getLabel() + "`(uri(" + key + "))"; 
+		String s = "`" + v.getUri() + "`(uri(" + key + "))"; 
 		//System.out.println("Class:" + s);
 		return s;
 	}
@@ -289,18 +308,18 @@ public class SourceDescription {
 	private String generateDataPropertyStatement(Vertex v,
 			LabeledWeightedEdge e, Vertex child) throws KarmaException {
 		if(child.getNodeType()!=NodeType.DataProperty){
-			throw new KarmaException("Node " + child.getLabel()+ " should be of type NodeType.DataProperty");
+			throw new KarmaException("Node " + child.getUri()+ " should be of type NodeType.DataProperty");
 		}
 		if(e.getLinkType()!=LinkType.DataProperty){
-			throw new KarmaException("Edge " + e.getLabel() + " should be of type LinkType.DataProperty");
+			throw new KarmaException("Edge " + e.getUri() + " should be of type LinkType.DataProperty");
 		}
 		if(v.getNodeType()!=NodeType.Class){
-			throw new KarmaException("Node " + v.getLabel() + " should be of type NodeType.Class");
+			throw new KarmaException("Node " + v.getUri() + " should be of type NodeType.Class");
 		}
 		//find the key of Class v
 		String key = findKey(v);
 		if(key==null){
-			throw new KarmaException("Key for " + v.getLabel() + " is NULL. This should not happen!");
+			throw new KarmaException("Key for " + v.getUri() + " is NULL. This should not happen!");
 		}
 		
 		////////
@@ -319,7 +338,7 @@ public class SourceDescription {
 			dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNames();
 		}
 		ruleAttributes.add(dataAttribute);
-		String propertyName = e.getLabel();
+		String propertyName = e.getUri();
 		if(e.isInverse()){
 			throw new KarmaException("A data property cannot be an inverse_of:" + propertyName);
 		}
@@ -344,21 +363,21 @@ public class SourceDescription {
 	private String generateObjectPropertyStatement(Vertex v,
 			LabeledWeightedEdge e, Vertex child) throws KarmaException {
 		if(v.getNodeType()!=NodeType.Class){
-			throw new KarmaException("Node " + v.getLabel() + " should be of type NodeType.Class");
+			throw new KarmaException("Node " + v.getUri() + " should be of type NodeType.Class");
 		}
 		if(child.getNodeType()!=NodeType.Class){
-			throw new KarmaException("Node " + child.getLabel() + " should be of type NodeType.Class");
+			throw new KarmaException("Node " + child.getUri() + " should be of type NodeType.Class");
 		}
 		if(e.getLinkType()!=LinkType.ObjectProperty){
-			throw new KarmaException("Edge " + e.getLabel() + " should be of type LinkType.ObjectProperty");
+			throw new KarmaException("Edge " + e.getUri() + " should be of type LinkType.ObjectProperty");
 		}
 		//find the key of Class v
 		String key1 = findKey(v);
 		if(key1==null){
-			throw new KarmaException("Key for " + v.getLabel() + " is NULL. This should not happen!");
+			throw new KarmaException("Key for " + v.getUri() + " is NULL. This should not happen!");
 		}
 		String key2 = findKey(child);
-		String propertyName = e.getLabel();
+		String propertyName = e.getUri();
 
 		String s = "`" + propertyName + "`(uri(" + key1 + "),uri(" + key2 + "))";
 		s += addInverseProperty(propertyName, key1,key2);
@@ -478,7 +497,7 @@ public class SourceDescription {
 		//check if it is not in the map
 		//I use the vertex IDs because there can be several columns mapped to the same
 		//class, so we have to distinguish between the key for these classes
-		//logger.info("Get Key for " + v.getLabel() + " with ID=" + v.getID());
+		//logger.info("Get Key for " + v.getUri() + " with ID=" + v.getID());
 		boolean isGensym=false;
 		String key = uriMap.get(v.getID());
 		if(key!=null){
@@ -498,7 +517,7 @@ public class SourceDescription {
 					//see if it is a key
 					if(n.getSemanticType().isPartOfKey()){
 						//it's a key
-						//System.out.println("part of a key ... " + n.getLabel() + n.getID());
+						//System.out.println("part of a key ... " + n.getUri() + n.getID());
 						if(useColumnNames){
 							key = factory.getHNode(n.getSemanticType().getHNodeId()).getColumnName();
 						}else{
@@ -529,7 +548,7 @@ public class SourceDescription {
 		if(!isGensym)
 			key = addBacktick(key);
 		
-		classNameToId.put(v.getLabel(), v.getID());
+		classNameToId.put(v.getUri(), v.getID());
 		uriMap.put(v.getID(), key);
 		//logger.info("Key for " + v.getID() + " is " + key);
 		return key;
@@ -558,6 +577,40 @@ public class SourceDescription {
 			return gensym;			
 		}
 		return key;
+	}
+	
+	private String getAllNamespaces(){
+		String allNs="";
+		Iterator<String> prefixes = namespaces.keySet().iterator();
+		while(prefixes.hasNext()){
+			String pref = prefixes.next();
+			String namespace = namespaces.get(pref);
+			String ns = "\n" + pref + ":'" + namespace + "'";
+			allNs += ns;
+		}
+
+		return allNs;
+	}
+	
+	private String getPrefix(String prefix, String namespace){
+		String ns = namespaces.get(prefix);
+		//if prefix doesn't exist, add it to the map and return it
+		if(ns==null){
+			namespaces.put(prefix, namespace);
+			return prefix;
+		}
+		else{
+			//if it is the same namespace, return the prefix
+			if(namespace.trim().equals(ns.trim())){
+				return prefix;
+			}
+			else{
+				//I have to generate a new prefix
+				String newPref = prefix + (prefixIndex++);
+				namespaces.put(newPref, namespace);
+				return newPref;
+			}
+		}
 	}
 	
 	private String addBacktick(String s){
