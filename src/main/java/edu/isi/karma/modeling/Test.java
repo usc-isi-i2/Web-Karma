@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
 package edu.isi.karma.modeling;
 
 import java.io.File;
@@ -134,15 +154,15 @@ public class Test {
 //		System.out.println(ontManagar.getOntModel().get("vivo"));
 //		if (true) return;
 
-//		List<SemanticType> semTypes1 = createTestInput1();
-//		List<SemanticType> semTypes2 = createTestInput2();
-//		List<SemanticType> semTypes3 = createTestInput3();
+		List<SemanticType> semTypes1 = createTestInput1();
+		List<SemanticType> semTypes2 = createTestInput2();
+		List<SemanticType> semTypes3 = createTestInput3();
 		List<SemanticType> semTypes4 = createTestInput4();
 
 		Alignment alignment = null;
-//		alignment = new Alignment(ontManagar, semTypes1);
-//		alignment = new Alignment(ontManagar, semTypes2);
-//		alignment = new Alignment(ontManagar, semTypes3);
+		alignment = new Alignment(ontManagar, semTypes1);
+		alignment = new Alignment(ontManagar, semTypes2);
+		alignment = new Alignment(ontManagar, semTypes3);
 		alignment = new Alignment(ontManagar, semTypes4);
 		
 		
