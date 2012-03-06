@@ -35,6 +35,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
+import com.hp.hpl.jena.ontology.OntResource;
 
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.LinkType;
@@ -92,13 +93,6 @@ public class SourceDescription {
 	 */
 	private HashMap<String, String> classNameToId = new HashMap<String, String>();
 
-	/**
-	 * All data property nodes. At the very end I check if any of the data property nodes (the leaves of the tree)
-	 * have synonym sem types. If they do, I add them. I check this at the very end not during the tree traversal 
-	 * because I want to make sure that I have computed all possible keys. I need the URIs of the classes at this point.
-	 */
-	private ArrayList<Vertex> dataProperties = new ArrayList<Vertex>();
-	
 	private int uriIndex = 0;
 	
 	/**
@@ -192,7 +186,7 @@ public class SourceDescription {
 	 * SD(HN1/HN2/HN3, HN1/HN2/HN4) - the ids of the HNodes.
 	 */
 	public String generateSourceDescription() throws KarmaException{
-		System.out.println("THE TREE******************");
+		//System.out.println("THE TREE******************");
 		//GraphUtil.printGraph(steinerTree);
 		
 		StringBuffer s = new StringBuffer();
@@ -250,10 +244,6 @@ public class SourceDescription {
 					else{
 						stmt = generateDataPropertyStatement(v,e,child);
 						s.append("\n ^ " + stmt);
-						//data property nodes can have synonym sem types
-						//generate statements for the synonyms too
-						//do this only at the end, so I make sure that I already have a keys computed
-						dataProperties.add(child);
 					}
 				}
 				else if(e.getLinkType()==LinkType.ObjectProperty){
@@ -401,9 +391,9 @@ public class SourceDescription {
 	private String generateSynonymStatements() {
 		String s = "";
 		//for each leaf of the tree
-		for(Vertex child: dataProperties){
+		for(Vertex child: steinerTree.vertexSet()){
 			SynonymSemanticTypes synonyms = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(child.getSemanticType().getHNodeId());
-			//logger.info("Syn for " + child.getUri() + " is " + synonyms);
+			//logger.info("Syn for " + factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName() + " is " + synonyms);
 			if(synonyms!=null){
 				List<SemanticType> semT = synonyms.getSynonyms();
 				for(SemanticType st: semT){
@@ -431,7 +421,9 @@ public class SourceDescription {
 		if(st.isClass()){
 			//semantic type is a Class
 			String key = findKey(child);
-			String s = "`" + st.getType() + "`(uri(" + key + "))"; 
+			//logger.info("Sem Type is a class:"+st.getType());
+			String className = getPropertyWithPrefix(model.getOntResource(st.getType()));
+			String s = "`" + className + "`(uri(" + key + "))"; 
 			return s;
 		}
 		else{
@@ -444,7 +436,7 @@ public class SourceDescription {
 				dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNames();
 			}
 			ruleAttributes.add(dataAttribute);
-			String propertyName = st.getType();
+			String propertyName = getPropertyWithPrefix(model.getOntProperty(st.getType()));
 			String s = "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
 			//System.out.println("DataProperty:" + s);
 			return s;
@@ -474,20 +466,31 @@ public class SourceDescription {
 		
 		if(inverseProp1!=null && generateInverse){
 			//add the inverse property
-			String namespace1 = inverseProp1.getNameSpace();
-			String prefix1 = model.getNsURIPrefix(namespace1);
-			String prop1 = getPrefix(prefix1, namespace1) + ":" + inverseProp1.getLocalName();
-			s += " \n ^ " + "`" + prop1 + "`(uri(" + key2 + "),uri(" + key1 + "))";
+			String prop = getPropertyWithPrefix(inverseProp1);
+			s += " \n ^ " + "`" + prop + "`(uri(" + key2 + "),uri(" + key1 + "))";
 		}
 		if(inverseProp2!=null && generateInverse){
 			//add the inverse property
-			String namespace2 = inverseProp1.getNameSpace();
-			String prefix2 = model.getNsURIPrefix(namespace2);
-			String prop2 = getPrefix(prefix2, namespace2) + ":" + inverseProp2.getLocalName();
-			s += " \n ^ " + "`" + prop2 + "`(uri(" + key2 + "),uri(" + key1 + "))";
+			String prop = getPropertyWithPrefix(inverseProp2);
+			s += " \n ^ " + "`" + prop + "`(uri(" + key2 + "),uri(" + key1 + "))";
 		}
 		
 		return s;
+	}
+	
+	/** Finds the namespace & prefix for this property, adds namespace to namespaces map,
+	 * and returns "prefix:propertyName".
+	 * @param prop
+	 * 		a property
+	 * @return
+	 */
+	private String getPropertyWithPrefix(OntResource prop){
+		if(prop==null)
+			return null;
+		String namespace = prop.getNameSpace();
+		String prefix = model.getNsURIPrefix(namespace);
+		String propWithPrefix = getPrefix(prefix, namespace) + ":" + prop.getLocalName();
+		return propWithPrefix;
 	}
 	
 	/**
@@ -584,10 +587,15 @@ public class SourceDescription {
 			String gensym = String.valueOf(uriIndex++);
 			return gensym;			
 		}
-		logger.info("key for " + domain + " is " + key);
+		//logger.info("key for " + domain + " is " + key);
 		return key;
 	}
 	
+	/**
+	 * Returns all namespaces used in the SD in the format needed by the domain model.
+	 * @return
+	 * 		all namespaces used in the SD in the format needed by the domain model.
+	 */
 	private String getAllNamespaces(){
 		String allNs="";
 		Iterator<String> prefixes = namespaces.keySet().iterator();
@@ -601,6 +609,22 @@ public class SourceDescription {
 		return allNs;
 	}
 	
+	/**
+	 * Returns the prefix of the given namespace.
+	 * @param prefix
+	 * 		the prefix of the namespace given as argument.
+	 * @param namespace
+	 * 		the namespace that corresponds to the prefix given as argument
+	 * @return
+	 * 		the prefix of the given namespace.
+	 * 1. If prefix is not present in the "namespaces" map, add it and return the same prefix
+	 * 2. if prefix is already present in the namespaces map
+	 * 	2.a the namespace corresponding to this prefix is the same as the input arg, return this prefix
+	 * 	2.b the namespace corresponding to this prefix is different, rename the prefix,
+	 * 	add it to the map, and return the new prefix
+	 * (we do this to ensure that we don't have the same prefix mapped to different namespaces; this
+	 * can happen if we import several ontologies, with overlapping prefix names)
+	 */
 	private String getPrefix(String prefix, String namespace){
 		String ns = namespaces.get(prefix);
 		//if prefix doesn't exist, add it to the map and return it

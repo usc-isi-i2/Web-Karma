@@ -90,9 +90,11 @@ public class FunctionRepository {
 		else{
 			//treat "value" as a value, not a seed
 			String newValue = className +"_" + value;
-			String encodedValue = URLEncoder.encode(newValue, "UTF-8");
 			//in VIVO + is not allowed in the URI, so I replace the + (equiv to the space) with _
 			//also replace the % (not allowed in VIVO
+			newValue = newValue.replaceAll(" ", "_");
+			String encodedValue = URLEncoder.encode(newValue, "UTF-8");
+			//these have to be after the encode
 			encodedValue = encodedValue.replaceAll("\\+", "_");
 			encodedValue = encodedValue.replaceAll("\\%", "");
 			encodedValue = encodedValue.replaceAll("\\.", "_");
