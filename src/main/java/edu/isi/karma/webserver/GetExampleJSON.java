@@ -1,5 +1,6 @@
 package edu.isi.karma.webserver;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -14,6 +15,7 @@ import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.imp.csv.CSVFileImport;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.rep.metadata.Tag;
@@ -46,11 +48,16 @@ public class GetExampleJSON extends HttpServlet {
 		WorkspaceRegistry.getInstance().register(new ExecutionController(vwsp));
 		
 		//mariam
-		/*
 		File file = new File("../demofiles/peopleFaculty.csv");
 		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
 		imp.generateWorksheet();
-		*/
+		
+		//load ontologies
+		OntologyManager om = workspace.getOntologyManager();
+		//vivo ontology
+		om.doImport(new File("../demofiles/vivo1.4-protege.owl"));
+		//rdfs ontology
+		om.doImport(new File("../demofiles/rdfs-small.owl"));
 		//////////////
 
 		// Initialize the Outlier tag
