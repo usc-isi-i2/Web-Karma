@@ -46,6 +46,13 @@
     		</exclusion>
     	</exclusions>
     </dependency>
+    <dependency>
+	    <groupId>weka</groupId>
+	    <artifactId>weka</artifactId>
+	    <version>3.6</version>
+	    <scope>system</scope>
+	    <systemPath>${project.basedir}/lib/weka.jar</systemPath>
+	</dependency>
     <!-- The Java API for KML -->
    <dependency>
       <groupId>de.micromata.jak</groupId>
