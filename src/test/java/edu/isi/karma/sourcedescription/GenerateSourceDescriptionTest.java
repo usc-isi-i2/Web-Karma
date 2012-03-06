@@ -11,14 +11,12 @@ import junit.framework.TestCase;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
 
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rdf.SourceDescription;
 import edu.isi.karma.rdf.WorksheetRDFGenerator;
 import edu.isi.karma.rep.HNode;
