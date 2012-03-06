@@ -39,7 +39,9 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.FileUtil;
+import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.gav.util.MediatorUtil;
@@ -263,7 +265,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		}
 		for(String var:relatedVars){
 			var = MediatorUtil.removeBacktick(var);
-			logger.info("Value for related var:"+var);
+			//logger.info("Value for related var:"+var);
 			//var is a HNodePath+columnName
 			//look for values in the row that this node belongs to or in the parent row...
 			String varValue = getValueInRow(var,n.getBelongsToRow());
@@ -359,20 +361,20 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 	}	
 	
 	//test the RDF generation
-	static public void testRDFGeneration(RepFactory factory, Worksheet worksheet, DirectedWeightedMultigraph<Vertex, 
+	static public void testRDFGeneration(Workspace workspace, Worksheet worksheet, DirectedWeightedMultigraph<Vertex, 
 			LabeledWeightedEdge> tree, Vertex root) throws KarmaException{
 		try{
 			// Write the source description
 			//use true to generate a SD with column names (for use "outside" of Karma)
 			//use false for internal use
 
-			SourceDescription desc = new SourceDescription(factory, tree, root, worksheet,
+			SourceDescription desc = new SourceDescription(workspace, tree, root, worksheet,
 					"http://localhost/source/",true,false);
 			String descString = desc.generateSourceDescription();
 			System.out.println("SD="+ descString);
 			//generate RDF for the first 3 rows: mariam
-			WorksheetRDFGenerator wrg1 = new WorksheetRDFGenerator(factory, descString, "./publish/RDF/rdftestrow.n3");
-			WorksheetRDFGenerator wrg2 = new WorksheetRDFGenerator(factory, descString, "./publish/RDF/rdftestcell.n3");
+			WorksheetRDFGenerator wrg1 = new WorksheetRDFGenerator(workspace.getFactory(), descString, "./publish/RDF/rdftestrow.n3");
+			WorksheetRDFGenerator wrg2 = new WorksheetRDFGenerator(workspace.getFactory(), descString, "./publish/RDF/rdftestcell.n3");
 			if(worksheet.getHeaders().hasNestedTables()){
 				logger.info("Has nested tables!!!");
 				//wrg2.generateTriplesCellLimit(worksheet);
@@ -386,6 +388,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 			logger.info("Source description written to file: " + fileName);			
 			////////////////////
 		}catch(Exception e){
+			e.printStackTrace();
 			throw new KarmaException(e.getMessage());
 		}
 

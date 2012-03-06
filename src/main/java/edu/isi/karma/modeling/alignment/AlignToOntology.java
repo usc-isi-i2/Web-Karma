@@ -69,7 +69,7 @@ public class AlignToOntology {
 
 		if (root != null) {
 			//mariam
-			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getRepFactory(), worksheet, tree, root);
+			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, tree, root);
 			/////////////////////////
 			
 			// Convert the tree into a AlignmentForest			

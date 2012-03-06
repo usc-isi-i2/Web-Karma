@@ -40,9 +40,9 @@ import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.LinkType;
 import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.modeling.alignment.Vertex;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.rep.semantictypes.SynonymSemanticTypes;
 import edu.isi.karma.webserver.KarmaException;
@@ -159,16 +159,16 @@ public class SourceDescription {
 	 * datasource to be modeled.
 	 * <br>useColumnNames=false if the SD is used internally.
 	 */
-	public SourceDescription(OntologyManager ontologyManager, RepFactory factory, DirectedWeightedMultigraph<Vertex, 
-			LabeledWeightedEdge> steinerTree, Vertex root, Worksheet worksheet, String rdfSourcePrefix, boolean generateInverse, 
+	public SourceDescription(Workspace workspace, DirectedWeightedMultigraph<Vertex, 
+			LabeledWeightedEdge> steinerTree, Vertex root, Worksheet worksheet, String sourcePrefix, boolean generateInverse, 
 			boolean useColumnNames){
-		this.factory=factory;
+		this.factory=workspace.getFactory();
 		this.steinerTree = steinerTree;
 		this.root=root;
 		this.useColumnNames = useColumnNames;
-		this.rdfSourcePrefix=rdfSourcePrefix;
+		this.rdfSourcePrefix=sourcePrefix;
 		this.generateInverse = generateInverse;
-		model = ontologyManager.getOntModel();
+		model = workspace.getOntologyManager().getOntModel();
 		this.worksheet=worksheet;
 		
 		//add source prefix
@@ -200,7 +200,8 @@ public class SourceDescription {
 		//generate statements for synonym sem types
 		//do this only at the end, so I make sure that I already have all keys computed
 		String stmt = generateSynonymStatements();
-		s.append(stmt);
+		if(stmt!=null)
+			s.append(stmt);
 		
 		String rule =  "SourceDescription(";
 		int i=0;
@@ -287,7 +288,7 @@ public class SourceDescription {
 	 */
 	private String generateClassStatement(Vertex v) {
 		String key = findKey(v);
-		String s = "`" + v.getUri() + "`(uri(" + key + "))"; 
+		String s = "`" + getPrefix(v.getPrefix(), v.getNs()) + ":" + v.getLocalLabel() + "`(uri(" + key + "))"; 
 		//System.out.println("Class:" + s);
 		return s;
 	}
@@ -338,9 +339,9 @@ public class SourceDescription {
 			dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNames();
 		}
 		ruleAttributes.add(dataAttribute);
-		String propertyName = e.getUri();
+		String propertyName = getPrefix(e.getPrefix(), e.getNs()) + ":" + e.getLocalLabel();
 		if(e.isInverse()){
-			throw new KarmaException("A data property cannot be an inverse_of:" + propertyName);
+			throw new KarmaException("A data property cannot be an inverse_of:" + e.getUri());
 		}
 		String s = "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
 		//System.out.println("DataProperty:" + s);
@@ -377,15 +378,15 @@ public class SourceDescription {
 			throw new KarmaException("Key for " + v.getUri() + " is NULL. This should not happen!");
 		}
 		String key2 = findKey(child);
-		String propertyName = e.getUri();
+		String propertyName = getPrefix(e.getPrefix(), e.getNs()) + ":" + e.getLocalLabel();
 
 		String s = "`" + propertyName + "`(uri(" + key1 + "),uri(" + key2 + "))";
-		s += addInverseProperty(propertyName, key1,key2);
+		s += addInverseProperty(e.getUri(), key1,key2);
 		
 		if(e.isInverse()){
 			//propertyName = TableRDFGenerator.inverseProperty + propertyName;
 			s = "`" + propertyName + "`(uri(" + key2 + "),uri(" + key1 + "))";
-			s += addInverseProperty(propertyName, key2,key1);
+			s += addInverseProperty(e.getUri(), key2,key1);
 		}
 
 		//System.out.println("ObjectProperty:" + s);
@@ -402,6 +403,7 @@ public class SourceDescription {
 		//for each leaf of the tree
 		for(Vertex child: dataProperties){
 			SynonymSemanticTypes synonyms = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(child.getSemanticType().getHNodeId());
+			//logger.info("Syn for " + child.getUri() + " is " + synonyms);
 			if(synonyms!=null){
 				List<SemanticType> semT = synonyms.getSynonyms();
 				for(SemanticType st: semT){
@@ -472,11 +474,17 @@ public class SourceDescription {
 		
 		if(inverseProp1!=null && generateInverse){
 			//add the inverse property
-			s += " \n ^ " + "`" + inverseProp1 + "`(uri(" + key2 + "),uri(" + key1 + "))";
+			String namespace1 = inverseProp1.getNameSpace();
+			String prefix1 = model.getNsURIPrefix(namespace1);
+			String prop1 = getPrefix(prefix1, namespace1) + ":" + inverseProp1.getLocalName();
+			s += " \n ^ " + "`" + prop1 + "`(uri(" + key2 + "),uri(" + key1 + "))";
 		}
 		if(inverseProp2!=null && generateInverse){
 			//add the inverse property
-			s += " \n ^ " + "`" + inverseProp2 + "`(uri(" + key2 + "),uri(" + key1 + "))";
+			String namespace2 = inverseProp1.getNameSpace();
+			String prefix2 = model.getNsURIPrefix(namespace2);
+			String prop2 = getPrefix(prefix2, namespace2) + ":" + inverseProp2.getLocalName();
+			s += " \n ^ " + "`" + prop2 + "`(uri(" + key2 + "),uri(" + key1 + "))";
 		}
 		
 		return s;
@@ -576,6 +584,7 @@ public class SourceDescription {
 			String gensym = String.valueOf(uriIndex++);
 			return gensym;			
 		}
+		logger.info("key for " + domain + " is " + key);
 		return key;
 	}
 	

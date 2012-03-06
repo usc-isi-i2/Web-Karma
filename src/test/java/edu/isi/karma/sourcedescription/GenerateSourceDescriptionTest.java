@@ -18,7 +18,6 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
-import edu.isi.karma.modeling.ontology.ImportOntology;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rdf.SourceDescription;
 import edu.isi.karma.rdf.WorksheetRDFGenerator;
@@ -79,18 +78,13 @@ public class GenerateSourceDescriptionTest extends TestCase {
 		worksheet.getSemanticTypes().addType(new SemanticType(c7_ID, "http://halowiki/ob/property#pharmGKBId", "http://halowiki/ob/category#Disease",Origin.User, 1.0, true));
 		worksheet.getSemanticTypes().addType(new SemanticType(c8_ID, "http://halowiki/ob/property#name", "http://halowiki/ob/category#Disease",Origin.User, 1.0, false));
 		
-		// Import the ontology
-		OntModel model = OntologyManager.Instance().getOntModel();
-		ImportOntology imp = new ImportOntology(model, new File(
+		workspace.getOntologyManager().doImport(new File(
 				"./src/test/karma-data/Wiki.owl"));
-		imp.doImport();
-		
-		
-		imp = new ImportOntology(model, new File("../demofiles/vivo1.4-protege.owl"));
-		imp.doImport();
+		workspace.getOntologyManager().doImport(new File(
+				"../demofiles/vivo1.4-protege.owl"));
 
 		//ObjectProperty op = model.getObjectProperty("http://vivoweb.org/ontology/core#organizationForPosition");
-		ObjectProperty op = model.getObjectProperty("http://vivoweb.org/ontology/core#positionInOrganization");
+		ObjectProperty op = workspace.getOntologyManager().getOntModel().getObjectProperty("http://vivoweb.org/ontology/core#positionInOrganization");
 		OntProperty inv1 = op.getInverseOf();
 		OntProperty inv2 = op.getInverse();
 		System.out.println("Inverse is:;;;;;;;;;;;;;;;;;;;;;;;;" + inv1);
@@ -110,7 +104,7 @@ public class GenerateSourceDescriptionTest extends TestCase {
 			types.add(type);
 		}
 		
-		Alignment alignment = new Alignment(types);
+		Alignment alignment = new Alignment(workspace.getOntologyManager(),types);
 		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
 				.getSteinerTree();
 		
@@ -118,7 +112,7 @@ public class GenerateSourceDescriptionTest extends TestCase {
 		
 		
 		//false=use HNodePath in the SD
-		SourceDescription sd = new SourceDescription(f, tree, alignment.GetTreeRoot(),worksheet,"http://localhost:8080/source/", true, false);
+		SourceDescription sd = new SourceDescription(workspace, tree, alignment.GetTreeRoot(),worksheet,"http://localhost:8080/source/", true, false);
 		String domainFile = sd.generateSourceDescription();
 		System.out.println("SourceDescription:\n" + domainFile);
 		System.out.println("Headers=" + worksheet.getHeaders().prettyPrint(f));

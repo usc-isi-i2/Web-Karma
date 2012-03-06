@@ -91,7 +91,7 @@ public class DuplicateDomainOfLinkCommand extends Command {
 
 		//mariam
 		try{
-		WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getRepFactory(), worksheet, tree, root);
+		WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, tree, root);
 		}catch(KarmaException e){
 			e.printStackTrace();
 		}

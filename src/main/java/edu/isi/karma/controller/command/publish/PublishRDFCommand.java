@@ -126,8 +126,7 @@ public class PublishRDFCommand extends Command {
 				// use true to generate a SD with column names (for use
 				// "outside" of Karma)
 				// use false for internal use
-				SourceDescription desc = new SourceDescription(
-						vWorkspace.getRepFactory(), tree, root, worksheet,
+				SourceDescription desc = new SourceDescription(vWorkspace.getWorkspace(), tree, root, worksheet,
 						rdfSourcePrefix, Boolean.valueOf(addInverseProperties),false);
 				String descString = desc.generateSourceDescription();
 				logger.info("SD=" + descString);
