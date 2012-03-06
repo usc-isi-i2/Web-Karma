@@ -63,18 +63,28 @@ public class ViewPreferences {
 			if(jsonFile.exists()){
 				// Populate from the existing preferences JSON file
 				json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
+				if(json == null) {
+					// If error occurred with preferences file, create a new one
+					logger.error("Preferences file corrupt! Creating new from template.");
+					createNewPreferencesFileFromTemplate();
+					
+				}
 			} else {
 				// Create a new JSON preference file using the template preferences file
-				jsonFile.createNewFile();
-				File template_file = new File("./UserPrefs/WorkspacePref.template");
-				FileUtil.copyFiles(jsonFile, template_file);
-				json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
+				createNewPreferencesFileFromTemplate();
 			} 
 		} catch(FileNotFoundException f) {
 			logger.error("Preferences file not found! ", f);
 		} catch (IOException e) {
 			logger.error("Error occured while creating preferences file!", e);
 		}
+	}
+	
+	private void createNewPreferencesFileFromTemplate() throws IOException {
+		jsonFile.createNewFile();
+		File template_file = new File("./UserPrefs/WorkspacePref.template");
+		FileUtil.copyFiles(jsonFile, template_file);
+		json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
 	}
 
 	public int getIntViewPreferenceValue(ViewPreference pref) {
