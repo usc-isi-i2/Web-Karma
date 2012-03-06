@@ -14,6 +14,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
@@ -56,6 +57,13 @@ public class GetExampleJSON extends HttpServlet {
 		File file = new File("../demofiles/peopleFaculty.csv");
 		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
 		imp.generateWorksheet();
+		
+		//load ontologies
+		OntologyManager om = workspace.getOntologyManager();
+		//vivo ontology
+		om.doImport(new File("../demofiles/vivo1.4-protege.owl"));
+		//rdfs ontology
+		om.doImport(new File("../demofiles/rdfs-small.owl"));
 		*/
 		//////////////
 
