@@ -48,30 +48,31 @@ public class ServerStart extends HttpServlet {
 		}
 
 		// Load the geospatial ontology
-//		ImportOntology imp = new ImportOntology(OntologyManager.Instance()
-//				.getOntModel(), new File("./Preloaded_Ontologies/geo_2007.owl"));
-//		imp.doImport();
-//		// Load the Chevron ontology
-//		imp = new ImportOntology(OntologyManager.Instance()
-//				.getOntModel(), new File("./Preloaded_Ontologies/oilwell.owl"));
-//		imp.doImport();
-		
-//		ImportOntology imp = new ImportOntology(OntologyManager.Instance()
-//				.getOntModel(), new File("./SampleData/OWL/Wiki.owl"));
-//		imp.doImport();
+		// ImportOntology imp = new ImportOntology(OntologyManager.Instance()
+		// .getOntModel(), new File("./Preloaded_Ontologies/geo_2007.owl"));
+		// imp.doImport();
+		// // Load the Chevron ontology
+		// imp = new ImportOntology(OntologyManager.Instance()
+		// .getOntModel(), new File("./Preloaded_Ontologies/oilwell.owl"));
+		// imp.doImport();
+
+		// ImportOntology imp = new ImportOntology(OntologyManager.Instance()
+		// .getOntModel(), new File("./SampleData/OWL/Wiki.owl"));
+		// imp.doImport();
 		/*
 		//vivo ontology
 		imp = new ImportOntology(OntologyManager.Instance()
-				.getOntModel(), new File("../demofiles/vivo1.4-protege.owl"));
+		.getOntModel(), new File("../demofiles/vivo1.4-protege.owl"));
 		imp.doImport();
 
 		//rdfs ontology
 		imp = new ImportOntology(OntologyManager.Instance()
-				.getOntModel(), new File("../demofiles/rdfs-small.owl"));
+		.getOntModel(), new File("../demofiles/rdfs-small.owl"));
 		imp.doImport();
 		*/
 		System.out.println("************");
 		System.out.println("Server start servlet initialized successfully..");
 		System.out.println("***********");
-	}
+
+	}		
 }

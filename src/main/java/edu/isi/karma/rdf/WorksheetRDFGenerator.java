@@ -375,7 +375,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 			WorksheetRDFGenerator wrg2 = new WorksheetRDFGenerator(factory, descString, "./publish/RDF/rdftestcell.n3");
 			if(worksheet.getHeaders().hasNestedTables()){
 				logger.info("Has nested tables!!!");
-				wrg2.generateTriplesCellLimit(worksheet);
+				//wrg2.generateTriplesCellLimit(worksheet);
 			}
 			else{
 				wrg1.generateTriplesRowLimit(worksheet);
