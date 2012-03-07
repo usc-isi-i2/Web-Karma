@@ -286,7 +286,7 @@ public class TableRDFGenerator {
 	 * @throws MediatorException 
 	 */
 	private Rule generateSubrule(Rule rule, String v) throws MediatorException {
-		logger.debug("Generate subrule for=" + v);
+		logger.debug("Generate subrule for=" + v);		
 		LAVRule subrule = new LAVRule();
 		RelationPredicate antecedent = new RelationPredicate("Subrule");
 		ArrayList<Predicate> consequent = new ArrayList<Predicate>();
@@ -306,7 +306,6 @@ public class TableRDFGenerator {
 				if(firstVar!=null){
 					antecedent.addTermIfUnique(firstVar);
 				}
-				//consequent.add(getInverse(p.clone()));
 				consequent.add(p.clone());
 
 				//both terms could be a URI
@@ -314,17 +313,14 @@ public class TableRDFGenerator {
 				findAllRelatedPredicates(p.getTerms().get(1), preds, antecedent, consequent);
 			}
 		}
-		else{
-			//find a unary predicate hasName(uri(N))
-			Predicate p = findUnaryPredicate(v, preds);
-			if(p!=null){
+		//see if there are any unary predicates ex: hasName(uri(N))
+		Predicate p = findUnaryPredicate(v, preds);
+		if(p!=null){
+			if(!consequent.contains(p))
 				consequent.add(p.clone());				
-			}
-			else{
-				throw new MediatorException("No rule found for variable: " + v);
-			}
 		}
-
+		//////////////////
+		
 		//add all related variables
 		rdfVariables.get(MediatorUtil.removeBacktick(v)).addAll(antecedent.getVars());
 		//add the initial variable
@@ -382,7 +378,6 @@ public class TableRDFGenerator {
 						antecedent.addTermIfUnique(firstVar);
 					}
 					if(!consequent.contains(p1)){
-						//consequent.add(getInverse(p1.clone()));
 						consequent.add(p1.clone());
 					}
 					findAllRelatedPredicates(p1.getTerms().get(0),preds,antecedent,consequent);

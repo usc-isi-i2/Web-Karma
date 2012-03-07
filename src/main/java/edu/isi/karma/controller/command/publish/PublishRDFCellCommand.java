@@ -102,6 +102,7 @@ public class PublishRDFCellCommand extends Command {
 				WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(
 						vWorkspace.getRepFactory(), descString, outWriter);
 				wrg.generateTriplesCell(nodeId);
+				//logger.info("OUT RDF="+outRdf);
 				// //////////////////
 
 			} else {
