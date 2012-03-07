@@ -20,6 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AlignmentManager {
@@ -45,10 +46,15 @@ public class AlignmentManager {
 	}
 
 	public void removeWorkspaceAlignments(String workspaceId) {
+		ArrayList<String> keysToBeRemoved = new ArrayList<String>();
 		for(String key:alignmentMap.keySet()) {
 			if(key.startsWith(workspaceId+":")) {
-				alignmentMap.remove(key);
+				keysToBeRemoved.add(key);
 			}
+		}
+		// Remove the keys
+		for(String key:keysToBeRemoved) {
+			alignmentMap.remove(key);
 		}
 	}
 }
