@@ -417,7 +417,7 @@ public class MarkovDP {
 				l.add(gt.size());
 				sr.add(1);
 			}
-			for(int c=0; c<50;c++)
+			for(int c=0; c<200;c++)
 			{
 				int index = MarkovDP.sampleByScore(l,sr);
 				Vector<GrammarParseTree> gt = trees.get(index);

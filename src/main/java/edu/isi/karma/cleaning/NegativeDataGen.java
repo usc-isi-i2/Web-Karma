@@ -28,20 +28,63 @@ import java.io.FileWriter;
 import java.util.Random;
 import java.util.Vector;
 
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
+
 
 //generate randomly mixed data for training
+//the negative data generation process is as belows
+//randomly perform a ins operation
+//randomly perform a mov operation
+//randomly perform a del operation
 public class NegativeDataGen {
-	public static void randremove(Vector<TNode> x)
+	public static Vector<TNode> randomEdit(Vector<TNode> x,Vector<TNode> y)
 	{
-		Random r = new Random();
-		int cnt = (int)(x.size()*0.7)+r.nextInt((int)(x.size()*0.3));
-		int i = 0;
-		while(i<cnt)
+		Random rd = new Random();
+		Ruler r = new Ruler();
+		r.setNewInput(x);
+		//randomly perform a ins operation
+		Vector<TNode> toks = new Vector<TNode>();
+		if(x.size() == 0)
+			return r.vec;
+		int dpos = rd.nextInt(x.size());
+		if(y.size() == 0)
+			return r.vec;
+		toks.add(y.get(rd.nextInt(y.size())));
+		r.ins(toks, dpos);
+		//randomly perform a mov operation
+		if(r.vec.size() == 0)
+			return r.vec;
+		toks.add(y.get(rd.nextInt(y.size())));
+		if(r.vec.size() == 0)
+			return r.vec;
+		int spos = rd.nextInt(r.vec.size());
+		if(spos == r.vec.size()-1)
+			spos = r.vec.size()-2;
+		int epos = rd.nextInt(2)+spos;
+		if(epos >= r.vec.size()-1)
+			epos = r.vec.size()-1;
+		if(r.vec.size() == 0)
+			return r.vec;
+		int dpos1 = rd.nextInt(r.vec.size());
+		while(dpos1<=epos && dpos1 >= spos)
 		{
-			int pos =r.nextInt((int)(x.size()-1));
-			x.remove(pos);
-			i++;
+			//System.out.println(r.vec.size()+","+dpos1);
+			dpos1 = rd.nextInt(r.vec.size());
 		}
+		r.mov(null, dpos1, spos, epos);
+		System.out.println(""+r.vec);
+		//randomly perform a del operation
+		if(r.vec.size() == 0)
+			return r.vec;
+		int st = rd.nextInt(r.vec.size());
+		if(st == r.vec.size())
+			st = r.vec.size()-2;
+		if(r.vec.size()-st <= 0)
+			return r.vec;
+		int ed = rd.nextInt(r.vec.size()-st)+st;
+		r.det(1, null, st, ed);
+		return r.vec;
 	}
 
 	// fetch all the files under a dir
@@ -49,43 +92,41 @@ public class NegativeDataGen {
 	//token the string and randomly remove random number < size tokens
 	public static void main(String[] args)
 	{
-		File dir = new File("/Users/bowu/Research/dataclean/data/RuleData/rawdata");
-		
-		File[] flist = dir.listFiles();
+		File dir = new File("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs");	
+		File[] allfiles = dir.listFiles();
 		try
 		{
-			BufferedWriter bw = new BufferedWriter(new FileWriter("/Users/bowu/Research/dataclean/data/negadata0.txt"));
-			BufferedReader[] brlist = new BufferedReader[flist.length];
-			for(int i = 0 ; i<flist.length;i++)
+			CSVWriter cw = new CSVWriter(new FileWriter(new File("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/test/negdata.csv")),'\t');
+			for(File f:allfiles)
 			{
-				BufferedReader br = new BufferedReader(new FileReader(flist[i]));
-				brlist[i] = br;
-				//br.close();
+					if(f.getName().indexOf(".csv")==(f.getName().length()-4))
+					{
+						
+						CSVReader cr = new CSVReader(new FileReader(f),'\t');
+						String[] pair;
+						while ((pair=cr.readNext())!=null)
+						{
+							Ruler r1 = new Ruler();
+							r1.setNewInput(pair[0]);
+							Ruler r2 = new Ruler();
+							r2.setNewInput(pair[1]);
+							Vector<TNode> res = NegativeDataGen.randomEdit(r1.vec,r2.vec);
+							String x = "";
+							for(int i = 0; i<res.size();i++)
+							{
+								x+= res.get(i).text;
+							}
+							pair[1] = x;
+							cw.writeNext(pair);
+						}
+					}
+				
 			}
-			while(true)
-			{
-				String line = "";
-				for(int i = 0 ; i<flist.length;i++)
-				{
-					line += brlist[i].readLine();
-					//br.close();
-				}
-				Ruler r = new Ruler();
-				r.setNewInput(line);
-				NegativeDataGen.randremove(r.vec);
-				String res = r.toString();
-				if(res == null)
-					break;
-				bw.write(res+"\n");
-				bw.flush();
-				System.out.println(""+res);
-				if(line.compareTo("")==0)
-					break;
-			}
+			cw.flush();
 		}
-		catch(Exception ex)
+		catch(Exception e)
 		{
-			System.out.println(""+ex.toString());
+			System.out.println(""+e.toString());
 		}
 	}
 }
