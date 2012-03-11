@@ -70,6 +70,7 @@ public class GetExampleJSON extends HttpServlet {
 		// Loading ontology to be preloaded
 		OntologyManager mgr = workspace.getOntologyManager();
 		mgr.doImport(new File("./Preloaded_Ontologies/geo_2007.owl"));
+		mgr.doImport(new File("./Preloaded_Ontologies/oilwell.owl"));
 		
 		//mariam
 		/*
