@@ -49,6 +49,7 @@ public class CRFModelHandlerTest extends TestCase {
 	}
 	
 	public void testNewFormat() throws Exception {
+		CRFModelHandler crfModelHandler;
 		DBTable dbTable;
 		ArrayList<String> dataFiles, labels, colValues, selectedColValues, predictedLabels;
 		ArrayList<Double> columnProbs;
@@ -56,7 +57,8 @@ public class CRFModelHandlerTest extends TestCase {
 		int correct ;
 		dataFiles = FileSystemOps.filesFromFolder("/data/biodb/", ".txt");
 		dataFiles.removeAll(FileSystemOps.filesFromFolder("/data/biodb/", "-labels.txt"));
-		success = CRFModelHandler.readModelFromFile("/Users/amangoel/Desktop/crfmodel.txt");
+		crfModelHandler = new CRFModelHandler();
+		success = crfModelHandler.readModelFromFile("/Users/amangoel/Desktop/crfmodel.txt");
 		if (!success) {
 			Prnt.prn("Reading model file failed.");
 		}
@@ -86,13 +88,13 @@ public class CRFModelHandlerTest extends TestCase {
 				columnNameCollection.add("ColumnNameIs" + labels.get(colIndex));
 				columnFeatures.put(CRFModelHandler.ColumnFeature.ColumnHeaderName, columnNameCollection);
 				/*
-				success = CRFModelHandler.addOrUpdateLabel(labels.get(colIndex), selectedColValues, columnFeatures);
+				success = crfModelHandler.addOrUpdateLabel(labels.get(colIndex), selectedColValues, columnFeatures);
 				if (!success) {
 					Prnt.prn("Adding column failed.");
 				}
 				*/
 					
-				success = CRFModelHandler.predictLabelForExamples(selectedColValues, 4, predictedLabels, columnProbs, null, columnFeatures);
+				success = crfModelHandler.predictLabelForExamples(selectedColValues, 4, predictedLabels, columnProbs, null, columnFeatures);
 				if (!success) {
 					Prnt.prn("Predicting failed.");
 				}
@@ -106,6 +108,7 @@ public class CRFModelHandlerTest extends TestCase {
 					}
 				}
 				
+				
 			}
 		}
 		Prnt.prn("Correct = " + correct);
@@ -114,11 +117,13 @@ public class CRFModelHandlerTest extends TestCase {
 	
 	private void testTrain() throws Exception {
 		DBTable dbTable;
+		CRFModelHandler crfModelHandler;
 		ArrayList<String> dataFileNames, colValues, selectedColValues1, selectedColValues2, columnLabels;
 		ArrayList<ArrayList<String>> columns1, columns2;
 		final String modelFileName1 = "/Users/amangoel/Desktop/crfmodel1.txt";
 		final String modelFileName2 = "/Users/amangoel/Desktop/crfmodel2.txt";
 		final String dataDir = "/data/biodb/";
+		crfModelHandler = new CRFModelHandler();
 		colValues = new ArrayList<String>();
 		selectedColValues1 = new ArrayList<String>();
 		selectedColValues2 = new ArrayList<String>();
@@ -145,33 +150,33 @@ public class CRFModelHandlerTest extends TestCase {
 		}
 		// 2 fold cross validation
 		// 1st fold
-		CRFModelHandler.readModelFromFile(modelFileName1);
-		addColumnsToModel(columns1, columnLabels);
-		labelColumns(columns2, columnLabels, 1);
+		crfModelHandler.readModelFromFile(modelFileName1);
+		addColumnsToModel(crfModelHandler, columns1, columnLabels);
+		labelColumns(crfModelHandler, columns2, columnLabels, 1);
 		Prnt.prn("");
-		labelColumns(columns2, columnLabels, 2);
+		labelColumns(crfModelHandler, columns2, columnLabels, 2);
 		Prnt.prn("");
-		labelColumns(columns2, columnLabels, 3);
+		labelColumns(crfModelHandler, columns2, columnLabels, 3);
 		// 2nd fold
-		CRFModelHandler.readModelFromFile(modelFileName2);
-		addColumnsToModel(columns2, columnLabels);
-		labelColumns(columns1, columnLabels, 1);
+		crfModelHandler.readModelFromFile(modelFileName2);
+		addColumnsToModel(crfModelHandler, columns2, columnLabels);
+		labelColumns(crfModelHandler, columns1, columnLabels, 1);
 		Prnt.prn("");
-		labelColumns(columns1, columnLabels, 2);
+		labelColumns(crfModelHandler, columns1, columnLabels, 2);
 		Prnt.prn("");
-		labelColumns(columns1, columnLabels, 3);
+		labelColumns(crfModelHandler, columns1, columnLabels, 3);
 		Prnt.prn("Done CRFModelHandlerTest.");
 	}
 	
 	
-	private static void addColumnsToModel(ArrayList<ArrayList<String>> columns, ArrayList<String> columnsLabels) {
+	private static void addColumnsToModel(CRFModelHandler crfModelHandler, ArrayList<ArrayList<String>> columns, ArrayList<String> columnsLabels) {
 		for(int i=0;i<columns.size();i++) {
 			Prnt.prn(new Date() + ": Adding column: " + i + " with label: " + columnsLabels.get(i) + " and number of values = " + columns.get(i).size());
-			CRFModelHandler.addOrUpdateLabel(columnsLabels.get(i), columns.get(i), null);
+			crfModelHandler.addOrUpdateLabel(columnsLabels.get(i), columns.get(i), null);
 		}
 	}
 	
-	private static void labelColumns(ArrayList<ArrayList<String>> columns, ArrayList<String> columnLabels, int topN) {
+	private static void labelColumns(CRFModelHandler crfModelHandler, ArrayList<ArrayList<String>> columns, ArrayList<String> columnLabels, int topN) {
 		ArrayList<String> predictedLabels;
 		ArrayList<Double> confidenceScores;
 		ArrayList<double[]> exampleConfidenceScores;
@@ -185,7 +190,7 @@ public class CRFModelHandlerTest extends TestCase {
 			String label;
 			column = columns.get(index);
 			label = columnLabels.get(index);
-			CRFModelHandler.predictLabelForExamples(column, 4, predictedLabels, confidenceScores, exampleConfidenceScores, null);
+			crfModelHandler.predictLabelForExamples(column, 4, predictedLabels, confidenceScores, exampleConfidenceScores, null);
 			Prnt.prn("Prediction for column " + index + " having " + column.size() + " values, with true label " + label + " --- " + predictedLabels);
 			total++;
 			Prnt.prn("Column prediction confidence scores = " + confidenceScores);
@@ -243,36 +248,22 @@ public class CRFModelHandlerTest extends TestCase {
 		}
 	}
 	
-	private static double sumOfFFSumForLabel(List<String> examples, String label) {
-		ArrayList<Double> sums;
-		ArrayList<String> allLabels;
-		int labelIndex;
-		double sum;
-		sums = new ArrayList<Double>();
-		allLabels = new ArrayList<String>();
-		CRFModelHandler.getLabels(allLabels);
-		labelIndex = allLabels.indexOf(label);
-		sum = 0.0 ;
-		for(String value : examples) {
-			//CRFModelHandler.getWeightedFeatureFunctionSums(value, null, sums); ERROR ERROR ERROR
-			sum+=sums.get(labelIndex);
-		}
-		return sum;
-	}
 	
 	
 	private void testLabel() throws Exception {
 		DBTable dbTable;
+		CRFModelHandler crfModelHandler;
 		ArrayList<String> dataFileNames, colValues, selectedColValues, predictedLabels;
 		ArrayList<Double> confidenceScores;
 		int total, correct;
 		final String modelFileName = "/Users/amangoel/Desktop/crfmodel.txt";
 		final String dataDir = "/data/biodb/";
+		crfModelHandler = new CRFModelHandler();
 		colValues = new ArrayList<String>();
 		predictedLabels = new ArrayList<String>();
 		selectedColValues = new ArrayList<String>();
 		confidenceScores = new ArrayList<Double>();
-		CRFModelHandler.readModelFromFile(modelFileName);
+		crfModelHandler.readModelFromFile(modelFileName);
 		dataFileNames = FileSystemOps.filesFromFolder(dataDir, ".txt");
 		dataFileNames.removeAll(FileSystemOps.filesFromFolder(dataDir, "-labels.txt"));
 		total = correct = 0 ;
@@ -288,7 +279,7 @@ public class CRFModelHandlerTest extends TestCase {
 				dbTable.getColumn(colIndex, colValues);
 				selectValues(colValues, selectedColValues);
 				Prnt.prn(new Date() + ": Labeling column: " + colIndex + " with label: " + label + " from file " + dataFile);
-				CRFModelHandler.predictLabelForExamples(selectedColValues, 4, predictedLabels, confidenceScores, null, null);
+				crfModelHandler.predictLabelForExamples(selectedColValues, 4, predictedLabels, confidenceScores, null, null);
 				Prnt.prn("Prediction for file " + dataFile + " column " + colIndex + " with true label " + label + " --- " + predictedLabels);
 				total++;
 				if (predictedLabels.indexOf(label) >= 0 && predictedLabels.indexOf(label) < 3) {
@@ -311,3 +302,24 @@ public class CRFModelHandlerTest extends TestCase {
 	
 	
 }
+
+/*
+
+private static double sumOfFFSumForLabel(List<String> examples, String label) {
+ArrayList<Double> sums;
+ArrayList<String> allLabels;
+int labelIndex;
+double sum;
+sums = new ArrayList<Double>();
+allLabels = new ArrayList<String>();
+CRFModelHandler.getLabels(allLabels);
+labelIndex = allLabels.indexOf(label);
+sum = 0.0 ;
+for(String value : examples) {
+	//CRFModelHandler.getWeightedFeatureFunctionSums(value, null, sums); ERROR ERROR ERROR
+	sum+=sums.get(labelIndex);
+}
+return sum;
+}
+
+*/

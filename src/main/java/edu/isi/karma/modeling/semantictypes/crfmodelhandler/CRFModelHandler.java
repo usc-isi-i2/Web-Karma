@@ -59,7 +59,7 @@ public class CRFModelHandler {
 	 * The ColumnFeature enum with members representing the possible features that could be passed.
 	 *
 	 */
-	public static enum ColumnFeature {
+	public enum ColumnFeature {
 		ColumnHeaderName ,
 		TableName
 	} ;
@@ -141,19 +141,22 @@ public class CRFModelHandler {
 	}
 	
 	// ***********************************************************************************************
-	
-	static String file = null ;
-	static HashMap<String, ArrayList<Example>> labelToExamplesMap = null ;
-	static GlobalDataFieldOnly globalData = null ;
-	static ArrayList<String> allowedCharacters = allowedCharacters();
+	// instance variables
+	String file;
+	HashMap<String, ArrayList<Example>> labelToExamplesMap;
+	GlobalDataFieldOnly globalData;
+	ArrayList<String> allowedCharacters;
 	static Logger logger = LoggerFactory.getLogger(CRFModelHandler.class.getSimpleName()) ;
 	
 	/**
 	 * Making the empty constructor private to prevent instantiation of this class.
 	 * This class should only be used to access its static methods.
 	 */
-	private CRFModelHandler() {
-		
+	public CRFModelHandler() {
+		file = null ;
+		labelToExamplesMap = null ;
+		globalData = null ;
+		allowedCharacters = allowedCharacters();
 	}
 
 	
@@ -166,7 +169,7 @@ public class CRFModelHandler {
 	 * Regenerates 100 feature functions to represent the label, 
 	 * if examples of this label already exist in the model.
 	 */
-	public static boolean addOrUpdateLabel(String label, List<String> examples, Map<ColumnFeature, Collection<String>> columnFeatures) {
+	public boolean addOrUpdateLabel(String label, List<String> examples, Map<ColumnFeature, Collection<String>> columnFeatures) {
 		ArrayList<String> cleanedExamples, allFeatures;
 		int labelIndex ;
 		HashSet<String> selectedFeatures, tmpFeatures;
@@ -189,7 +192,7 @@ public class CRFModelHandler {
 		examples = cleanedExamples ;
 		// making sure that the condition where the examples list is not empty but contains junk only is not accepted
 		if (examples.size() == 0) {
-			Prnt.prn("@examples list contains forbidden characters only. The allowed characters are " + allowedCharacters()) ;
+			Prnt.prn("@examples list contains forbidden characters only. The allowed characters are " + allowedCharacters) ;
 			return false ;
 		}
 		// if label does not already exist in the model, add new label. Also, add an entry in the map for the new label.
@@ -280,7 +283,7 @@ public class CRFModelHandler {
 		// save the model to file with the new weights
 		savingSuccessful = saveModel() ;
 		if (!savingSuccessful) {
-			CRFModelHandler.file = null ;
+			file = null ;
 		}
 		return savingSuccessful ;
 	}
@@ -291,9 +294,9 @@ public class CRFModelHandler {
 	 * @param examples The list argument that will be used to return the list of examples in the model for the supplied label.
 	 * @return
 	 */
-	public static boolean getExamplesForLabel(String label, ArrayList<String> examples) {
+	public boolean getExamplesForLabel(String label, ArrayList<String> examples) {
 		ArrayList<Example> examplesOfLabel;
-		if (CRFModelHandler.file == null) {
+		if (file == null) {
 			Prnt.prn("CRF Model is not ready, either because it was never read or an error happened while reading it previously. Please try reading the model file again.");
 			return false ;
 		}
@@ -319,8 +322,8 @@ public class CRFModelHandler {
 	 * @param labels The ordered list of labels is returned in this argument.
 	 * @return
 	 */
-	public static boolean getLabels(List<String> labels) {
-		if (CRFModelHandler.file == null) {
+	public boolean getLabels(List<String> labels) {
+		if (file == null) {
 			Prnt.prn("CRF Model is not ready, either because it was never read or an error happened while reading it previously. Please try reading the model file again.");
 			return false ;
 		}
@@ -345,7 +348,7 @@ public class CRFModelHandler {
 	 * @param columnFeatures - this Map supplies ColumnFeatures such as ColumnName, etc.
 	 * @return
 	 */
-	public static boolean predictLabelForExamples(
+	public boolean predictLabelForExamples(
 			List<String> examples,
 			int numPredictions,
 			List<String> predictedLabels,
@@ -359,7 +362,7 @@ public class CRFModelHandler {
 		ArrayList<String> labels ;
 		ArrayList<Double> columnProbabilitiesList ;
 		HashSet<String> features;
-		if (CRFModelHandler.file == null) {
+		if (file == null) {
 			Prnt.prn("CRF Model is not ready, either because it was never read or an error happened while reading it previously. Please try reading the model file again.");
 			return false ;
 		}
@@ -440,7 +443,7 @@ public class CRFModelHandler {
 	 * creates an environment that consists of globalData, crfModel, list of examples of each label, etc.
 	 * It reads an empty file also.
 	 */
-	public static boolean readModelFromFile(String file) {
+	public boolean readModelFromFile(String modelFile) {
 		BufferedReader br ;
 		String line ;
 		int numLabels ;
@@ -450,9 +453,9 @@ public class CRFModelHandler {
 		HashSet<String> features;
 		double[] weights ;
 		CRFModelFieldOnly crfModel  ;
-		if (file == null) {
+		if (modelFile == null) {
 			Prnt.prn("Invalid argument value. Argument @file is null.") ;
-			CRFModelHandler.file = null ;
+			file = null ;
 			return false ;
 		}
 		// beginning execution
@@ -460,7 +463,7 @@ public class CRFModelHandler {
 		line = null ;
 		numLabels = -1 ;
 		try {
-			br = new BufferedReader(new FileReader(file)) ;
+			br = new BufferedReader(new FileReader(modelFile)) ;
 			emptyFile = true ;
 			while((line = br.readLine()) != null) {
 				if (line.trim().length() != 0) {
@@ -471,8 +474,8 @@ public class CRFModelHandler {
 			br.close() ;
 		}
 		catch(Exception e) {
-			Prnt.prn("Error reading model file " + file + ".") ;
-			CRFModelHandler.file = null ;
+			Prnt.prn("Error reading model file " + modelFile + ".") ;
+			file = null ;
 			return false ;
 		}
 		if (emptyFile) {
@@ -483,7 +486,7 @@ public class CRFModelHandler {
 			crfModel.ffs = new ArrayList<LblFtrPair>() ;
 			crfModel.weights = new double[0] ;
 			globalData.crfModel = crfModel ;
-			CRFModelHandler.file = file ;
+			file = modelFile ;
 			return true ;
 		}
 		else {
@@ -491,7 +494,7 @@ public class CRFModelHandler {
 			globalData = new GlobalDataFieldOnly() ;
 			labelToExamplesMap = new HashMap<String, ArrayList<Example>>() ;
 			try {
-				br = new BufferedReader(new FileReader(file)) ;
+				br = new BufferedReader(new FileReader(modelFile)) ;
 				// Read the number of labels in the model file
 				numLabels = Integer.parseInt(br.readLine().trim()) ;
 				br.readLine();
@@ -505,7 +508,7 @@ public class CRFModelHandler {
 						Prnt.prn("The label " + newLabel + " was already added to the model. " +
 								"Later in the file, we found another list that had the same label and a set of examples underneath it. This is an error. " + 
 								"A label can only occur one in the file. All its examples have to be listed underneath it at one place.") ;
-						CRFModelHandler.file = null ;
+						file = null ;
 						br.close() ;
 						return false ;
 					}
@@ -518,7 +521,7 @@ public class CRFModelHandler {
 						if (example == null) {
 							Prnt.prn("Parsing of file failed. Could not parse an example.");
 							br.close();
-							CRFModelHandler.file = null;
+							file = null;
 							return false;
 						}
 						else {
@@ -546,7 +549,7 @@ public class CRFModelHandler {
 					if (line.length() == 0) {
 						Prnt.prn("While reading " + numFFs + " feature functions, we encountered an empty line. This is an error. " +
 								"All feature functions have to be listed continuously without any blank lines in between.") ;
-						CRFModelHandler.file = null ;
+						file = null ;
 						br.close() ;
 						return false ;
 					}
@@ -559,12 +562,12 @@ public class CRFModelHandler {
 				crfModel.weights = weights ;
 				globalData.crfModel = crfModel ;
 				br.close() ;
-				CRFModelHandler.file = file ;
+				file = modelFile ;
 				return true ;
 			}
 			catch(Exception e) {
-				Prnt.prn("Error parsing model file " + file + ".") ;
-				CRFModelHandler.file = null ;
+				Prnt.prn("Error parsing model file " + modelFile + ".") ;
+				file = null ;
 				// SHOULD I CLOSE br HERE ?
 				return false ;
 			}
@@ -582,7 +585,7 @@ public class CRFModelHandler {
 	 * model file.
 	 * 
 	 */
-	public static boolean removeAllLabels() {
+	public boolean removeAllLabels() {
 		BufferedWriter bw;
 		CRFModelFieldOnly crfModel;
 		if (file == null) {
@@ -596,7 +599,7 @@ public class CRFModelHandler {
 		}
 		catch(Exception e) {
 			Prnt.prn("Clearing the contents of the model file failed.") ;
-			CRFModelHandler.file = null ;
+			file = null ;
 			return false ;
 		}
 		labelToExamplesMap = new HashMap<String, ArrayList<Example>>() ;
@@ -611,7 +614,7 @@ public class CRFModelHandler {
 	
 	
 	
-	public static boolean removeLabel(String label) {
+	public boolean removeLabel(String label) {
 		int labelIndex;
 		ArrayList<Double> weightsList;
 		ArrayList<LblFtrPair> otherFFs ;
@@ -673,7 +676,7 @@ public class CRFModelHandler {
 		optimizationObject.optimize(10) ;
 		savingSuccessful = saveModel() ;
 		if (!savingSuccessful) {
-			CRFModelHandler.file = null ;
+			file = null ;
 		}
 		return savingSuccessful ;
 	}
@@ -684,7 +687,7 @@ public class CRFModelHandler {
 	/**
 	 * @return Returns list of allowed Characters
 	 */
-	private static ArrayList<String> allowedCharacters() {
+	private ArrayList<String> allowedCharacters() {
 		ArrayList<String> allowed = new ArrayList<String>() ;
 		// Adding A-Z
 		for(int c=65;c<=90;c++) {
@@ -726,7 +729,7 @@ public class CRFModelHandler {
 	 * @param cleanedList List with examples that dont have unallowed chars and others such as nulls or empty strings
 	 * This method cleans the examples list passed to it. Generally, it is used by other methods to sanitize lists passed from outside.
 	 */
-	private static void cleanedExamplesList(List<String> uncleanList, List<String> cleanedList) {
+	private void cleanedExamplesList(List<String> uncleanList, List<String> cleanedList) {
 		cleanedList.clear();
 		for(String example : uncleanList) {
 			if (example != null) {
@@ -744,7 +747,7 @@ public class CRFModelHandler {
 	 * @param columnName The value passed for the ColumnFeature ColumnHeaderName
 	 * @param features The set in which the features extracted about this value will be returned.
 	 */
-	private static void extractFeaturesFromColumnName(String columnName, HashSet<String> features) {
+	private void extractFeaturesFromColumnName(String columnName, HashSet<String> features) {
 		ArrayList<String> parts;
 		HashSet<String> nonDupParts;
 		parts = new ArrayList<String>();
@@ -764,7 +767,7 @@ public class CRFModelHandler {
 	 * @param tableName The value passed for the ColumnFeature TableName
 	 * @param features The set in which the features extracted about this value will be returned.
 	 */
-	private static void extractFeaturesFromTableName(String tableName, HashSet<String> features) {
+	private void extractFeaturesFromTableName(String tableName, HashSet<String> features) {
 		ArrayList<String> parts;
 		HashSet<String> nonDupParts;
 		parts = new ArrayList<String>();
@@ -784,7 +787,7 @@ public class CRFModelHandler {
 	 * @param field A string from which syntactic features will be extracted
 	 * @param features The arg used to return those features.
 	 */
-	private static void featureSet(String field, HashSet<String> features) {
+	private void featureSet(String field, HashSet<String> features) {
 		ArrayList<Part> tokens;
 		tokens = Lexer.tokenizeField(field);
 		features.clear();
@@ -798,7 +801,7 @@ public class CRFModelHandler {
 	 * @param example The example for which the features have to extracted
 	 * @param features The arg used to return those features.
 	 */
-	private static void featureSet(Example example, HashSet<String> features) {
+	private void featureSet(Example example, HashSet<String> features) {
 		HashSet<String> tmpFeatures;
 		String featureValue;
 		tmpFeatures = new HashSet<String>();
@@ -828,7 +831,7 @@ public class CRFModelHandler {
 	 * This method just uses the first string in every collection to construct an Example.
 	 * It then uses featureSet(Example, HashSet<String>) method to return the features for this created example.
 	 */
-	private static void featureSet(String field, Map<ColumnFeature, Collection<String>> columnFeatures, HashSet<String> features) {
+	private void featureSet(String field, Map<ColumnFeature, Collection<String>> columnFeatures, HashSet<String> features) {
 		Example example;
 		example = new Example(field);
 		for(Map.Entry<ColumnFeature, Collection<String>> entry : columnFeatures.entrySet()) {
@@ -850,7 +853,7 @@ public class CRFModelHandler {
 	 * @return A list containing the same doubles in the same order
 	 * A utility method to get a new list having the same values as an array
 	 */
-	private static ArrayList<Double> newListFromDoubleArray(double[] array) {
+	private ArrayList<Double> newListFromDoubleArray(double[] array) {
 		ArrayList<Double> newList ;
 		newList = new ArrayList<Double>() ;
 		for(double element : array) {
@@ -867,7 +870,7 @@ public class CRFModelHandler {
 	 * This method starts from wherever the BufferedReader is and keeps reading till it has parsed an entire Example.
 	 * Then it returns it.
 	 */
-	private static Example parseExample(BufferedReader br) throws Exception {
+	private Example parseExample(BufferedReader br) throws Exception {
 		Example example;
 		String exampleString;
 		int contentLen;
@@ -930,7 +933,7 @@ public class CRFModelHandler {
 	 * @return The int value of the string.
 	 * @throws Exception
 	 */
-	private static int parseLengthHeader(BufferedReader br) throws Exception {
+	private int parseLengthHeader(BufferedReader br) throws Exception {
 		String lenHeader;
 		char c ;
 		int numDigits;
@@ -961,7 +964,7 @@ public class CRFModelHandler {
 	}
 		
 	
-	static private String getSanitizedString(String unsanitizedString) {
+	private String getSanitizedString(String unsanitizedString) {
 		String sanitizedString ;
 		sanitizedString = "" ;
 		for(int i=0;i<unsanitizedString.length();i++) {
@@ -979,7 +982,7 @@ public class CRFModelHandler {
 	 * This method writes the model in memory to the file that it was read from.
 	 * @return true, if writing is successful, else return, false
 	 */
-	static private boolean saveModel() {
+	private boolean saveModel() {
 		try {
 			BufferedWriter bw;
 			bw = new BufferedWriter(new FileWriter(file)) ;
@@ -1029,7 +1032,7 @@ public class CRFModelHandler {
 	 * @param parts The list in which the parts will be returned
 	 * @return True, if successful. False, if errors like null args.
 	 */
-	private static boolean splitString(String str, ArrayList<String> parts) {
+	private boolean splitString(String str, ArrayList<String> parts) {
 		HashSet<String> splitters;
 		ArrayList<String> tmpParts;
 		// basic argument sanity check
