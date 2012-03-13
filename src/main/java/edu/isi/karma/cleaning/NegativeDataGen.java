@@ -92,16 +92,15 @@ public class NegativeDataGen {
 	//token the string and randomly remove random number < size tokens
 	public static void main(String[] args)
 	{
-		File dir = new File("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs");	
+		File dir = new File("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/pos");	
 		File[] allfiles = dir.listFiles();
 		try
-		{
-			CSVWriter cw = new CSVWriter(new FileWriter(new File("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/test/negdata.csv")),'\t');
+		{	
 			for(File f:allfiles)
 			{
-					if(f.getName().indexOf(".csv")==(f.getName().length()-4))
+					if(f.getName().indexOf(".csv")==(f.getName().length()-4)&&f.isFile())
 					{
-						
+						CSVWriter cw = new CSVWriter(new FileWriter(new File("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/neg/"+f.getName().substring(0, f.getName().indexOf("."))+"_neg.csv")),'\t');
 						CSVReader cr = new CSVReader(new FileReader(f),'\t');
 						String[] pair;
 						while ((pair=cr.readNext())!=null)
@@ -119,10 +118,12 @@ public class NegativeDataGen {
 							pair[1] = x;
 							cw.writeNext(pair);
 						}
+						cw.flush();
+						cw.close();
 					}
 				
 			}
-			cw.flush();
+			
 		}
 		catch(Exception e)
 		{
