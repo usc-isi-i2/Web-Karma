@@ -52,7 +52,7 @@ public class Lexer {
 		
 		if(field.equals("") || field == null) {
 			Prnt.prn("Lexer got empty string or null string in tokenizeField") ;
-			return part_list ;
+			System.exit(1) ;
 		}
 			
 		if(field.equals("NULLNULL")) {
