@@ -713,7 +713,7 @@ function parse(data) {
                         
                     if(primarySemTypeObject["Domain"] != ""){
                         var typeItalicSpan = $("<span>").addClass("italic").text(primarySemTypeObject["DisplayLabel"]);
-                        semDiv.text(primarySemTypeObject["DisplayDomainLabel"] + ":").append(typeItalicSpan);
+                        semDiv.text(primarySemTypeObject["DisplayDomainLabel"] + ".").append(typeItalicSpan);
                     }
                     else {
                         semDiv.text(primarySemTypeObject["DisplayLabel"]);

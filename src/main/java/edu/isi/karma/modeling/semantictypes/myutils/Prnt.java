@@ -20,7 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.semantictypes.myutils;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class Prnt {

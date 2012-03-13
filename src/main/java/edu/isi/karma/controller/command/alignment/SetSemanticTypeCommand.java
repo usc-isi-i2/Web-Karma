@@ -99,6 +99,8 @@ public class SetSemanticTypeCommand extends Command {
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
+		CRFModelHandler crfModelHandler = vWorkspace.getWorkspace()
+				.getCrfModelHandler();
 
 		// Save the old SemanticType object and CRF Model for undo
 		oldType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(
@@ -153,7 +155,7 @@ public class SetSemanticTypeCommand extends Command {
 		} else {
 			newTypeString = newType.getDomain() + "|" + newType.getType();
 		}
-		trainingResult = CRFModelHandler.addOrUpdateLabel(newTypeString,
+		trainingResult = crfModelHandler.addOrUpdateLabel(newTypeString,
 				trainingExamples, columnFeatures);
 
 		if (!trainingResult) {
@@ -171,7 +173,7 @@ public class SetSemanticTypeCommand extends Command {
 		// Add the new CRF column model for this column
 		ArrayList<String> labels = new ArrayList<String>();
 		ArrayList<Double> scores = new ArrayList<Double>();
-		trainingResult = CRFModelHandler.predictLabelForExamples(
+		trainingResult = crfModelHandler.predictLabelForExamples(
 				trainingExamples, 4, labels, scores, null, columnFeatures);
 		if (!trainingResult) {
 			logger.error("Error occured while predicting labels");
@@ -182,7 +184,7 @@ public class SetSemanticTypeCommand extends Command {
 		// Identify the outliers for the column
 		SemanticTypeUtil.identifyOutliers(worksheet, newTypeString,
 				currentColumnPath, vWorkspace.getWorkspace().getTagsContainer()
-						.getTag(TagName.Outlier), columnFeatures);
+						.getTag(TagName.Outlier), columnFeatures, crfModelHandler);
 
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 

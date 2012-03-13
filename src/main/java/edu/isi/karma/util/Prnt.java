@@ -1,8 +1,5 @@
 package edu.isi.karma.util ;
 
-
-
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class Prnt {

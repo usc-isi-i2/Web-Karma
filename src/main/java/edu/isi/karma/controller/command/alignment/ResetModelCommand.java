@@ -36,7 +36,6 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.AlignToOntology;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
@@ -52,6 +51,7 @@ public class ResetModelCommand extends Command {
 	private Alignment oldAlignment;
 	private String alignmentId;
 	private String oldCRFModel;
+	private String crfModelFilePath;
 	
 	private static Logger logger = LoggerFactory
 			.getLogger(ResetModelCommand.class);
@@ -88,12 +88,13 @@ public class ResetModelCommand extends Command {
 
 		//save CRF model for undo
 		try{
-			oldCRFModel=MediatorUtil.getFileAsString("./CRF_Model.txt");
+			crfModelFilePath = vWorkspace.getWorkspace().getCrfModelHandler().getModelFilePath();
+			oldCRFModel=MediatorUtil.getFileAsString(crfModelFilePath);
 		} catch (Exception e) {
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}
 		//reset CRF model
-		CRFModelHandler.removeAllLabels();
+		vWorkspace.getWorkspace().getCrfModelHandler().removeAllLabels();
 		
 		// Save the old SemanticType object for undo
 		SemanticTypes types = worksheet.getSemanticTypes();
@@ -145,8 +146,8 @@ public class ResetModelCommand extends Command {
 
 		//reset CRF model
 		try{
-			MediatorUtil.saveStringToFile(oldCRFModel, "./CRF_Model.txt");
-			CRFModelHandler.readModelFromFile("./CRF_Model.txt");
+			MediatorUtil.saveStringToFile(oldCRFModel, crfModelFilePath);
+			vWorkspace.getWorkspace().getCrfModelHandler().readModelFromFile(crfModelFilePath);
 		} catch (Exception e) {
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}

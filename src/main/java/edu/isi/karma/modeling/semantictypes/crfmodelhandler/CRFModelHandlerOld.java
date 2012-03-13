@@ -45,7 +45,6 @@ import edu.isi.karma.modeling.semantictypes.mycrf.graph.GraphInterface;
 import edu.isi.karma.modeling.semantictypes.mycrf.map.MAPFieldOnly;
 import edu.isi.karma.modeling.semantictypes.mycrf.math.Matrix;
 import edu.isi.karma.modeling.semantictypes.mycrf.optimization.OptimizeFieldOnly;
-import edu.isi.karma.modeling.semantictypes.myutils.DBTable;
 import edu.isi.karma.modeling.semantictypes.myutils.ListOps;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
 import edu.isi.karma.modeling.semantictypes.sl.Lexer;

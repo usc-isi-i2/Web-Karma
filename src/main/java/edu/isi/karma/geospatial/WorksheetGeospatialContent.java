@@ -21,6 +21,7 @@ import de.micromata.opengis.kml.v_2_2_0.Folder;
 import de.micromata.opengis.kml.v_2_2_0.Kml;
 import de.micromata.opengis.kml.v_2_2_0.KmlFactory;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
@@ -33,6 +34,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class WorksheetGeospatialContent {
 	private Worksheet worksheet;
+	private CRFModelHandler crfModelHandler;
 
 	private List<Point> points = new ArrayList<Point>();
 	private List<LineString> lines = new ArrayList<LineString>();
@@ -59,8 +61,9 @@ public class WorksheetGeospatialContent {
 	}
 
 	public WorksheetGeospatialContent(Worksheet worksheet,
-			TagsContainer tagsContainer) {
+			TagsContainer tagsContainer, CRFModelHandler crfModelHandler) {
 		this.worksheet = worksheet;
+		this.crfModelHandler = crfModelHandler;
 		populateGeospatialData(tagsContainer);
 	}
 
@@ -72,7 +75,7 @@ public class WorksheetGeospatialContent {
 
 		if (worksheet.getSemanticTypes().getListOfTypes().size() == 0) {
 			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet,
-					tagsContainer.getTag(TagName.Outlier));
+					tagsContainer.getTag(TagName.Outlier), crfModelHandler);
 		}
 
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
