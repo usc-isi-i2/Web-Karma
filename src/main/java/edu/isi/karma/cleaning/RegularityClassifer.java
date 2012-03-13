@@ -94,8 +94,8 @@ public class RegularityClassifer {
 		try
 		{
 			RegularityClassifer rc = new RegularityClassifer();
-			SimpleLogistic c = rc.train("./cleaning_dataset/ftrs_file.txt");
-			rc.Classify("./cleaning_dataset/ftrs_file1.txt", c);
+			SimpleLogistic c = rc.train("/Users/bowu/Research/features.arff");
+			rc.Classify("/Users/bowu/Research/features.arff", c);
 		}
 		catch(Exception ex)
 		{

@@ -43,6 +43,7 @@ public class RegularityFeatureSet implements FeatureSet {
 	public ArrayList<Vector<TNode>> tokenseqs;
 	public ArrayList<Vector<TNode>> otokenseqs;
 	public Vector<String> fnames;
+	public static String[] targets = {"#",";",",","!","~","@","$","%","^","&","*","(",")","_","-","{","}","[","]","\"","\'",":","?","<",">",".","bnk","syb","wrd","num"};
 	public RegularityFeatureSet()
 	{
 		tokenseqs = new ArrayList<Vector<TNode>>();
@@ -207,62 +208,6 @@ public class RegularityFeatureSet implements FeatureSet {
 		
 		return fnames;
 		
-	}
-	//test the class
-	public static void main(String[] args)
-	{
-		File dir = new File("/Users/bowu/Research/dataclean/data/RuleData");
-		File[] flist = dir.listFiles();
-		try
-		{
-			//BufferedWriter bw = new BufferedWriter(new FileWriter("/Users/bowu/Research/dataclean/data/negadata.out"));
-			ResultViewer rv = new ResultViewer();
-			boolean isfirstRun = true;
-			for(int i = 0 ; i<flist.length;i++)
-			{
-				Vector<String> row = new Vector<String>();
-				Vector<String> oexamples = new Vector<String>();
-				Vector<String> examples = new Vector<String>();
-				System.out.println(flist[i].getName());
-				if(!flist[i].getName().contains(".csv"))
-					continue;
-				CSVReader re = new CSVReader(new FileReader(flist[i]), '\t');
-				String[] line = null;
-				re.readNext();//discard the first line
-				while((line=re.readNext() )!= null)
-				{
-					oexamples.add(line[0]);
-					examples.add(line[1]);
-				}
-				RegularityFeatureSet rf = new RegularityFeatureSet();
-				Collection<Feature> cf = rf.computeFeatures(oexamples,examples);
-				Feature[] x = (Feature[])cf.toArray();
-				if(isfirstRun)
-				{
-					row.add("Featurename");
-					for(int l=0;l<x.length;l++)
-					{
-						row.add(x[i].getName());
-					}
-					row.add("label");
-					isfirstRun = false;
-				}
-				if(!isfirstRun)
-				{
-					row.add(flist[i].getName());
-					for(int k=0;k<cf.size();k++)
-					{
-						row.add(String.valueOf(x[k].getScore()));
-					}
-					row.add("1"); // change this according to the dataset.
-				}
-				rv.addRow(row);
-			}
-		}
-		catch(Exception ex)
-		{
-			System.out.println(""+ex.toString());
-		}
 	}
 }
 class CntFeature implements Feature{
