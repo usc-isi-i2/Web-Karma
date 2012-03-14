@@ -317,6 +317,46 @@ public class JsonManager {
 		}
     }
     
+    public static void union(List<List<String>> srcColumns, List<List<String>> srcTypes, List<List<List<String>>> srcValues, 
+    		List<String> columns, List<String> types, List<List<String>> values) {
+    	
+		String colName = "";
+		for (int i = 0; i < srcColumns.size(); i++) {
+			for (int j = 0; j < srcColumns.get(i).size(); j++)
+			{
+				colName = srcColumns.get(i).get(j).toString();
+				if (columns.indexOf(colName) == -1) {
+					columns.add(colName);
+					types.add(srcTypes.get(i).get(j));
+				}
+			}
+		}
+		
+		List<String> rawNames = null;
+		List<String> rawValues = null;
+		String singleValue = null;
+		for (int i = 0; i < srcColumns.size(); i++) {
+			rawNames = srcColumns.get(i);
+			for (int j = 0; j < srcValues.get(i).size(); j++) {
+				
+				List<String> populatedValues = new ArrayList<String>();
+				rawValues = srcValues.get(i).get(j);
+				
+				for (int k = 0; k < columns.size(); k++) {
+					int index = rawNames.indexOf(columns.get(k).toString());
+					if (index == -1)
+						singleValue = null;
+					else
+						singleValue = rawValues.get(index);
+					populatedValues.add(singleValue);
+				}
+				
+				values.add(populatedValues);
+			}
+			
+		}
+    }
+    
     public static void getJsonFlat(String json, List<String> columns, List<List<String>> values) {
     	
     	Element element = JsonManager.getJsonElements(json);

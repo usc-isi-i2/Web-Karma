@@ -18,28 +18,38 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-/**
- * 
- */
+
 package edu.isi.karma.controller.command.service;
+
+import java.net.MalformedURLException;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.service.ServiceManager;
+import edu.isi.karma.service.Table;
+import edu.isi.karma.service.URLManager;
+import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
 /**
- * @author szekely
+ * @author taheriyan
  * 
  */
 public class InvokeServiceCommand extends WorksheetCommand {
 
+	static Logger logger = Logger.getLogger(InvokeServiceCommand.class);
 	private final String requestURLsJSONArray;
 
 	InvokeServiceCommand(String id, String worksheetId, String requestURLsJSONArray) {
 		super(id, worksheetId);
 		this.requestURLsJSONArray = requestURLsJSONArray;
-		//TODO
 	}
 
 	@Override
@@ -49,7 +59,29 @@ public class InvokeServiceCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		return null;
+		UpdateContainer c = new UpdateContainer();
+		Workspace ws = vWorkspace.getWorkspace();
+		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
+		
+		ServiceManager sm = new ServiceManager(requestURLsJSONArray);
+		Table result = null;
+		
+		try {
+			result = sm.getResponse();
+		} catch (MalformedURLException e) {
+			logger.error("Malformed service request URL.");
+			return new UpdateContainer(new ErrorUpdate("Malformed service request URL."));
+		} catch (JSONException e) {
+			logger.error("Error in parsing the JSON sent by GUI.");
+			return new UpdateContainer(new ErrorUpdate("Error in parsing the JSON sent by GUI."));
+		}
+
+		new PopulateWorksheetFromTable(ws, wk, result).populate();
+		
+		VWorksheet vw = vWorkspace.getVWorksheet(wk.getId());
+		vw.update(c);
+		
+		return c;
 	}
 
 	@Override

@@ -34,7 +34,7 @@ import edu.isi.karma.service.json.JsonManager;
 
 public class Invocation {
 
-	private static final String REQUEST_COLUMN_NAME = "request";
+//	private static final String REQUEST_COLUMN_NAME = "request";
 	
 	public Invocation(Request request) {
 		this.request = request;
@@ -163,11 +163,12 @@ public class Invocation {
 				for (int k = 0; k < this.response.getTable().getValues().size(); k++)
 					this.response.getTable().getValues().get(k).add(0, p.getValue());
 		}
-		
-		jointInputAndOutput.getColumns().add(0, REQUEST_COLUMN_NAME);
-		jointInputAndOutput.getTypes().add(0, IOType.NONE);
-		for (int k = 0; k < this.response.getTable().getValues().size(); k++)
-			this.response.getTable().getValues().get(k).add(0, this.request.getUrl().toString());
+
+//		// Include the request URLs in the invocation table
+//		jointInputAndOutput.getColumns().add(0, REQUEST_COLUMN_NAME);
+//		jointInputAndOutput.getTypes().add(0, IOType.NONE);
+//		for (int k = 0; k < this.response.getTable().getValues().size(); k++)
+//			this.response.getTable().getValues().get(k).add(0, this.request.getUrl().toString());
 		
 	}
 }

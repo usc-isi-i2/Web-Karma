@@ -43,9 +43,8 @@ public class InvokeServiceCommandFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
 
-		String vWorksheetId =request.getParameter(Arguments.vWorksheetId.name());
 		String requestURLsJSONArray =request.getParameter(Arguments.requestURLsJSONArray.toString());
 		return new InvokeServiceCommand(getNewId(vWorkspace), 
-				vWorksheetId, requestURLsJSONArray);
+				getWorksheetId(request, vWorkspace), requestURLsJSONArray);
 	}
 }
