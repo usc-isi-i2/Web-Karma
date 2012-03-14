@@ -22,19 +22,20 @@
 package edu.isi.karma.controller.command.service;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.service.ServiceManager;
 import edu.isi.karma.service.Table;
-import edu.isi.karma.service.URLManager;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
@@ -45,11 +46,11 @@ import edu.isi.karma.view.VWorkspace;
 public class InvokeServiceCommand extends WorksheetCommand {
 
 	static Logger logger = Logger.getLogger(InvokeServiceCommand.class);
-	private final String requestURLsJSONArray;
+	private final String hNodeId;
 
-	InvokeServiceCommand(String id, String worksheetId, String requestURLsJSONArray) {
+	InvokeServiceCommand(String id, String worksheetId, String hNodeId) {
 		super(id, worksheetId);
-		this.requestURLsJSONArray = requestURLsJSONArray;
+		this.hNodeId = hNodeId;
 	}
 
 	@Override
@@ -63,7 +64,18 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		Workspace ws = vWorkspace.getWorkspace();
 		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
 		
-		ServiceManager sm = new ServiceManager(requestURLsJSONArray);
+		List<String> requestURLStrings = new ArrayList<String>();
+		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows());
+		if (rows == null || rows.size() == 0) {
+			logger.error("Data table does not have any row.");
+			return new UpdateContainer(new ErrorUpdate("Data table does not have any row."));	
+		}
+		
+		for (int i = 0; i < rows.size(); i++) {
+			requestURLStrings.add(rows.get(i).getNode(hNodeId).getValue().asString());
+		}
+
+		ServiceManager sm = new ServiceManager(requestURLStrings);
 		Table result = null;
 		
 		try {
@@ -71,11 +83,8 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		} catch (MalformedURLException e) {
 			logger.error("Malformed service request URL.");
 			return new UpdateContainer(new ErrorUpdate("Malformed service request URL."));
-		} catch (JSONException e) {
-			logger.error("Error in parsing the JSON sent by GUI.");
-			return new UpdateContainer(new ErrorUpdate("Error in parsing the JSON sent by GUI."));
 		}
-
+		
 		new PopulateWorksheetFromTable(ws, wk, result).populate();
 		
 		VWorksheet vw = vWorkspace.getVWorksheet(wk.getId());
@@ -83,6 +92,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		
 		return c;
 	}
+	
 
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {

@@ -26,22 +26,18 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import edu.isi.karma.service.json.JsonManager;
 
 public class ServiceManager {//extends Thread {
 	
-	String vWorksheetId;
-	String requestURLsJSONArray;
+	List<String> requestURLStrings;
 	
-	public ServiceManager(String requestURLsJSONArray) {
-		this.requestURLsJSONArray = requestURLsJSONArray;
+	public ServiceManager(List<String> requestURLStrings) {
+		this.requestURLStrings = requestURLStrings;
 	}
 	
-	public Table getResponse() throws MalformedURLException, JSONException {
-		List<URL> requestURLs = URLManager.getURLsFromJSON(requestURLsJSONArray);
+	public Table getResponse() throws MalformedURLException {
+		List<URL> requestURLs = URLManager.getURLsFromStrings(requestURLStrings);
 		List<Invocation> invocations = new ArrayList<Invocation>();
 		
 		for (URL url : requestURLs) {
@@ -94,13 +90,16 @@ public class ServiceManager {//extends Thread {
 //		String s2 = "http://api.geonames.org/neighbourhood?lat=37.78&lng=-75.95&username=taheriyan";
 //		String s3 = "http://api.geonames.org/neighbourhood?lat=35.79&lng=-77.97&username=taheriyan";
 
-		JSONArray jsonArray = new JSONArray();
-		jsonArray.put(s1);
+		List<String> urls = new ArrayList<String>();
+		urls.add(s1);
+		
+//		JSONArray jsonArray = new JSONArray();
+//		jsonArray.put(s1);
 //		jsonArray.put(s2);
 //		jsonArray.put(s3);
 		
 		try {
-			ServiceManager sm = new ServiceManager(jsonArray.toString());
+			ServiceManager sm = new ServiceManager(urls);
 			sm.getResponse();
 		} catch (Exception e) {
 			
