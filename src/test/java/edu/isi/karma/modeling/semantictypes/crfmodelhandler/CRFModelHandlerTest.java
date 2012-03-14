@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler.ColumnFeature;
 import edu.isi.karma.modeling.semantictypes.myutils.DBTable;
 import edu.isi.karma.modeling.semantictypes.myutils.FileIOOps;
 import edu.isi.karma.modeling.semantictypes.myutils.FileSystemOps;

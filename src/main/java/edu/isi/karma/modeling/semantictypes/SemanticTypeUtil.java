@@ -20,8 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.semantictypes;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -111,12 +109,14 @@ public class SemanticTypeUtil {
 	 *            The target worksheet
 	 * @param outlierTag
 	 *            Tag object that stores outlier nodes
+	 * @param crfModelHandler
+	 *            The CRF Model Handler to use
 	 * @return Returns a boolean value that shows if a semantic type object was
 	 *         replaced or added for the worksheet. If nothing changed, false is
 	 *         returned.
 	 */
 	public static boolean populateSemanticTypesUsingCRF(Worksheet worksheet,
-			Tag outlierTag) {
+			Tag outlierTag, CRFModelHandler crfModelHandler) {
 		boolean semanticTypesChangedOrAdded = false;
 
 		SemanticTypes types = worksheet.getSemanticTypes();
@@ -146,7 +146,7 @@ public class SemanticTypeUtil {
 			ArrayList<Double> scores = new ArrayList<Double>();
 			// Stores the predicted labels
 			ArrayList<String> labels = new ArrayList<String>();
-			boolean predictResult = CRFModelHandler.predictLabelForExamples(
+			boolean predictResult = crfModelHandler.predictLabelForExamples(
 					trainingExamples, 4, labels, scores, null, columnFeatures);
 			if (!predictResult) {
 				logger.error("Error occured while predicting semantic type.");
@@ -202,7 +202,7 @@ public class SemanticTypeUtil {
 			if (semanticTypeAdded) {
 				// Identify the outliers
 				identifyOutliers(worksheet, labels.get(0), path, outlierTag,
-						columnFeatures);
+						columnFeatures, crfModelHandler);
 				logger.debug("Outliers:" + outlierTag.getNodeIdList());
 
 				// Add the scores information to the Full CRF Model of the
@@ -233,10 +233,11 @@ public class SemanticTypeUtil {
 	 *            Features such as column name, table name that are required by
 	 *            the CRF Model to predict the semantic type for a node (table
 	 *            cell)
+	 * @param crfModelHandler 
 	 */
 	public static void identifyOutliers(Worksheet worksheet,
 			String predictedType, HNodePath path, Tag outlierTag,
-			Map<ColumnFeature, Collection<String>> columnFeatures) {
+			Map<ColumnFeature, Collection<String>> columnFeatures, CRFModelHandler crfModelHandler) {
 		Collection<Node> nodes = new ArrayList<Node>();
 		worksheet.getDataTable().collectNodes(path, nodes);
 
@@ -256,7 +257,7 @@ public class SemanticTypeUtil {
 			String nodeVal = node.getValue().asString();
 			if (nodeVal != null && !nodeVal.equals("")) {
 				examples.add(nodeVal);
-				boolean result = CRFModelHandler.predictLabelForExamples(
+				boolean result = crfModelHandler.predictLabelForExamples(
 						examples, 1, predictedLabels, confidenceScores, null,
 						columnFeatures);
 				// logger.debug("Example: " + examples.get(0) + " Label: "
@@ -279,22 +280,6 @@ public class SemanticTypeUtil {
 		outlierTag.removeNodeIds(allNodeIds);
 		// Add the new ones
 		outlierTag.addNodeIds(outlierNodeIds);
-	}
-
-	/**
-	 * Reads the CRF Model from a file and builds it into the memory.
-	 * 
-	 * @throws IOException
-	 */
-	public static void prepareCRFModelHandler() throws IOException {
-		File file = new File("CRF_Model.txt");
-		if (!file.exists()) {
-			file.createNewFile();
-		}
-		boolean result = CRFModelHandler.readModelFromFile("CRF_Model.txt");
-
-		if (!result)
-			logger.error("Error occured while reading CRF Model! Aman will allow reading model repeatedly in future.");
 	}
 
 	/**

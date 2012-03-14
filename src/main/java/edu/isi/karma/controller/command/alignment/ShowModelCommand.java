@@ -89,7 +89,7 @@ public class ShowModelCommand extends WorksheetCommand {
 				.getTag(TagName.Outlier);
 
 		// Generate the semantic types for the worksheet
-		SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, outlierTag);
+		SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, outlierTag, vWorkspace.getWorkspace().getCrfModelHandler());
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 
 		// Get the alignment update if any

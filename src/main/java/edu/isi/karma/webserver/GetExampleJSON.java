@@ -30,6 +30,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
@@ -52,6 +55,8 @@ public class GetExampleJSON extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private static Logger logger = LoggerFactory.getLogger(GetExampleJSON.class);
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
@@ -59,14 +64,28 @@ public class GetExampleJSON extends HttpServlet {
 		Workspace workspace = WorkspaceManager.getInstance().getFactory()
 				.createWorkspace();
 
-		/* Check and set the preferences key if required */
-		VWorkspace vwsp = request.getParameter(Arguments.hasPreferenceId.name()).equals("true") ? 
-			new VWorkspace(workspace, request.getParameter(Arguments.workspacePreferencesId.name())) : 
-			new VWorkspace(workspace);
-
+		/* Check if any workspace id is set in cookies. */
+		boolean hasWorkspaceCookieId = request.getParameter(Arguments.hasPreferenceId.name()).equals("true");
+		VWorkspace vwsp = null;
+		File crfModelFile = null;
+		
+		/* If set, pick the right preferences and CRF Model file */
+		if(hasWorkspaceCookieId) {
+			String cachedWorkspaceId = request.getParameter(Arguments.workspacePreferencesId.name());
+			vwsp = new VWorkspace(workspace, cachedWorkspaceId);
+			crfModelFile = new File("./CRF_Models/"+cachedWorkspaceId+"_CRFModel.txt");
+		} else {
+			vwsp = new VWorkspace(workspace);
+		}
+		/* Read and populate CRF Model from a file */
+		if(!crfModelFile.exists())
+			crfModelFile.createNewFile();
+		boolean result = workspace.getCrfModelHandler().readModelFromFile(crfModelFile.getAbsolutePath());
+		if (!result)
+			logger.error("Error occured while reading CRF Model!");
+		
 		WorkspaceRegistry.getInstance().register(new ExecutionController(vwsp));
 		
-
 		// Loading ontology to be preloaded
 		OntologyManager mgr = workspace.getOntologyManager();
 		mgr.doImport(new File("./Preloaded_Ontologies/geo_2007.owl"));
@@ -74,7 +93,7 @@ public class GetExampleJSON extends HttpServlet {
 		
 		//mariam
 		/*
-		File file = new File("../demofiles/peopleFaculty.csv");
+		File file = new File("./SampleData/CSV/peopleFaculty.csv");
 		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
 		imp.generateWorksheet();
 		

@@ -45,7 +45,6 @@ import edu.isi.karma.modeling.semantictypes.mycrf.graph.GraphInterface;
 import edu.isi.karma.modeling.semantictypes.mycrf.map.MAPFieldOnly;
 import edu.isi.karma.modeling.semantictypes.mycrf.math.Matrix;
 import edu.isi.karma.modeling.semantictypes.mycrf.optimization.OptimizeFieldOnly;
-import edu.isi.karma.modeling.semantictypes.myutils.DBTable;
 import edu.isi.karma.modeling.semantictypes.myutils.ListOps;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
 import edu.isi.karma.modeling.semantictypes.sl.Lexer;
@@ -191,7 +190,7 @@ public class CRFModelHandlerOld {
 		// save the model to file with the new weights
 		savingSuccessful = saveModel() ;
 		if (!savingSuccessful) {
-			CRFModelHandler.file = null ;
+			CRFModelHandlerOld.file = null ;
 		}
 		return savingSuccessful ;
 	}
@@ -203,12 +202,12 @@ public class CRFModelHandlerOld {
 	 * @return
 	 */
 	public static boolean getExamplesForLabel(String label, ArrayList<String> examples) {
-		if (CRFModelHandler.file == null) {
+		if (CRFModelHandlerOld.file == null) {
 			logger.debug("CRF Model is not ready, either because it was never read or an error happened while reading it previously. Please try reading the model file again.");
 			return false ;
 		}
 		if (label == null || label.trim().length() == 0 || examples == null) {
-			Prnt.prn("CRFModelHandler.getExamplesForLabel: Either the label is null, or it is an empty string or examples is null") ;
+			Prnt.prn("CRFModelHandlerOld.getExamplesForLabel: Either the label is null, or it is an empty string or examples is null") ;
 			return false ;
 		}
 		label = label.trim();
@@ -227,7 +226,7 @@ public class CRFModelHandlerOld {
 	 * @return
 	 */
 	public static boolean getLabels(List<String> labels) {
-		if (CRFModelHandler.file == null) {
+		if (CRFModelHandlerOld.file == null) {
 			logger.debug("CRF Model is not ready, either because it was never read or an error happened while reading it previously. Please try reading the model file again.");
 			return false ;
 		}
@@ -281,7 +280,7 @@ public class CRFModelHandlerOld {
 		double[] columnProbabilities ;
 		ArrayList<String> labels ;
 		ArrayList<Double> columnProbabilitiesList ;
-		if (CRFModelHandler.file == null) {
+		if (CRFModelHandlerOld.file == null) {
 			logger.debug("CRF Model is not ready, either because it was never read or an error happened while reading it previously. Please try reading the model file again.");
 			return false ;
 		}
@@ -354,7 +353,7 @@ public class CRFModelHandlerOld {
 	public static boolean readModelFromFile(String file) {
 		if (file == null) {
 			logger.debug("Invalid argument value. Argument @file is null.") ;
-			CRFModelHandler.file = null ;
+			CRFModelHandlerOld.file = null ;
 			return false ;
 		}
 		BufferedReader br ;
@@ -382,7 +381,7 @@ public class CRFModelHandlerOld {
 		}
 		catch(Exception e) {
 			logger.debug("Error reading model file " + file + ".") ;
-			CRFModelHandler.file = null ;
+			CRFModelHandlerOld.file = null ;
 			return false ;
 		}
 		if (emptyFile) {
@@ -393,7 +392,7 @@ public class CRFModelHandlerOld {
 			crfModel.ffs = new ArrayList<LblFtrPair>() ;
 			crfModel.weights = new double[0] ;
 			globalData.crfModel = crfModel ;
-			CRFModelHandler.file = file ;
+			CRFModelHandlerOld.file = file ;
 			return true ;
 		}
 		else {
@@ -415,7 +414,7 @@ public class CRFModelHandlerOld {
 						logger.debug("The label " + newLabel + " was already added to the model. " +
 								"Later in the file, we found another list that had the same label and a set of examples underneath it. This is an error. " + 
 								"A label can only occur one in the file. All its examples have to be listed underneath it at one place.") ;
-						CRFModelHandler.file = null ;
+						CRFModelHandlerOld.file = null ;
 						br.close() ;
 						return false ;
 					}
@@ -429,7 +428,7 @@ public class CRFModelHandlerOld {
 							logger.debug("While reading " + numExamples + " examples for the label " + newLabel + ", we encountered an empty line before all the examples before read. " +
 									"This is an error. All examples for a label have to appear together under the name of the label. "+
 									"No blank lines are allowed between examples of a label.");
-							CRFModelHandler.file = null ;
+							CRFModelHandlerOld.file = null ;
 							br.close() ;
 							return false ;
 						}
@@ -455,7 +454,7 @@ public class CRFModelHandlerOld {
 					if (line.length() == 0) {
 						logger.debug("While reading " + numFFs + " feature functions, we encountered an empty line. This is an error. " +
 								"All feature functions have to be listed continuously without any blank lines in between.") ;
-						CRFModelHandler.file = null ;
+						CRFModelHandlerOld.file = null ;
 						br.close() ;
 						return false ;
 					}
@@ -468,12 +467,12 @@ public class CRFModelHandlerOld {
 				crfModel.weights = weights ;
 				globalData.crfModel = crfModel ;
 				br.close() ;
-				CRFModelHandler.file = file ;
+				CRFModelHandlerOld.file = file ;
 				return true ;
 			}
 			catch(Exception e) {
 				logger.debug("Error parsing model file " + file + ".") ;
-				CRFModelHandler.file = null ;
+				CRFModelHandlerOld.file = null ;
 				return false ;
 			}
 		}
@@ -494,7 +493,7 @@ public class CRFModelHandlerOld {
 		}
 		catch(Exception e) {
 			logger.debug("Clearing the contents of the model file failed.") ;
-			CRFModelHandler.file = null ;
+			CRFModelHandlerOld.file = null ;
 			return false ;
 		}
 		labelToExamplesMap = new HashMap<String, ArrayList<String>>() ;
@@ -571,7 +570,7 @@ public class CRFModelHandlerOld {
 		optimizationObject.optimize(10) ;
 		savingSuccessful = saveModel() ;
 		if (!savingSuccessful) {
-			CRFModelHandler.file = null ;
+			CRFModelHandlerOld.file = null ;
 		}
 		return savingSuccessful ;
 	}
@@ -744,7 +743,7 @@ public class CRFModelHandlerOld {
 			List<String> predictedLabels,
 			List<Double> confidenceScores
 			) {
-		if (CRFModelHandler.file == null) {
+		if (CRFModelHandlerOld.file == null) {
 			logger.debug("CRF Model is not ready, either because it was never read or an error happened while reading it previously. Please try reading the model file again.");
 			return false ;
 		}
@@ -770,7 +769,7 @@ public class CRFModelHandlerOld {
 			List<Double> confidenceScores, 
 			List<double[]> exampleProbabilities
 			) {
-		if (CRFModelHandler.file == null) {
+		if (CRFModelHandlerOld.file == null) {
 			logger.debug("CRF Model is not ready, either because it was never read or an error happened while reading it previously. Please try reading the model file again.");
 			return false ;
 		}

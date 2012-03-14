@@ -26,6 +26,7 @@ import java.util.Map;
 
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.metadata.TagsContainer;
 
 /**
@@ -63,6 +64,11 @@ public class Workspace extends Entity {
 	private final OntologyManager ontologyManager = new OntologyManager();
 	
 	/**
+	 * The CRF Model for the workspace
+	 */
+	private final CRFModelHandler crfModelHandler = new CRFModelHandler();
+	
+	/**
 	 * In the future we may need to keep track of user info.
 	 */
 	protected Workspace(String id, RepFactory factory) {
@@ -96,5 +102,9 @@ public class Workspace extends Entity {
 
 	public OntologyManager getOntologyManager() {
 		return ontologyManager;
+	}
+
+	public CRFModelHandler getCrfModelHandler() {
+		return crfModelHandler;
 	}
 }

@@ -158,6 +158,14 @@ public class CRFModelHandler {
 		globalData = null ;
 		allowedCharacters = allowedCharacters();
 	}
+	
+	/**
+	 * Returns the path to the file that the CRF Model is using
+	 * @return Path to the Model file 
+	 */
+	public String getModelFilePath() {
+		return file;
+	}
 
 	
 	/**

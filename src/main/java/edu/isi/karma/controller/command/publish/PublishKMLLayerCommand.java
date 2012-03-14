@@ -74,7 +74,7 @@ public class PublishKMLLayerCommand extends Command {
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
 		WorksheetGeospatialContent geo = new WorksheetGeospatialContent(
-				worksheet, vWorkspace.getWorkspace().getTagsContainer());
+				worksheet, vWorkspace.getWorkspace().getTagsContainer(), vWorkspace.getWorkspace().getCrfModelHandler());
 		// Send an error update if no geospatial data found!
 		if (geo.hasNoGeospatialData()) {
 			return new UpdateContainer(new ErrorUpdate(
