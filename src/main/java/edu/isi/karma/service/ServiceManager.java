@@ -87,8 +87,8 @@ public class ServiceManager {//extends Thread {
 	
 	public static void main(String[] args) {
 		String s1 = "http://api.geonames.org/neighbourhood?lat=40.78343&lng=-73.96625&username=taheriyan";
-//		String s2 = "http://api.geonames.org/neighbourhood?lat=37.78&lng=-75.95&username=taheriyan";
-//		String s3 = "http://api.geonames.org/neighbourhood?lat=35.79&lng=-77.97&username=taheriyan";
+//		String s2 = "http://api.geonames.org/neighbourhood?lat=40.7&lng=-73.9&username=taheriyan";
+//		String s3 = "http://api.geonames.org/neighbourhood?lat=40.9&lng=-73.9&username=taheriyan";
 
 		List<String> urls = new ArrayList<String>();
 		urls.add(s1);
