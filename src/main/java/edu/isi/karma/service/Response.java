@@ -23,6 +23,7 @@ package edu.isi.karma.service;
 
 public class Response {
 	private String type;
+	private int code;
 	private String stream;
 	private Table table;
 	
@@ -43,6 +44,12 @@ public class Response {
 	}
 	public void setTable(Table table) {
 		this.table = table;
+	}
+	public int getCode() {
+		return code;
+	}
+	public void setCode(int code) {
+		this.code = code;
 	}
 	
 	

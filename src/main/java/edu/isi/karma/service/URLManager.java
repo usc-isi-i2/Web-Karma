@@ -45,14 +45,14 @@ public class URLManager {
 		List<URL> urls = new ArrayList<URL>();
 		JSONArray jsonArray = new JSONArray(requestURLsJSONArray);
 		
-		String firstEndpoint = "";
+//		String firstEndpoint = "";
 		for (int i = 0; i < jsonArray.length(); i++) {
 			URL url = new URL(jsonArray.getString(i).trim());
-			if (i == 0) firstEndpoint = getEndPoint(url);
+//			if (i == 0) firstEndpoint = getEndPoint(url);
 			
 			// only urls with the same endpoints will be added to the list.
-			if (firstEndpoint.equalsIgnoreCase(getEndPoint(url)))
-				urls.add(url);
+//			if (firstEndpoint.equalsIgnoreCase(getEndPoint(url)))
+			urls.add(url);
 		}
 		
 		return urls;
@@ -62,14 +62,14 @@ public class URLManager {
 
 		List<URL> urls = new ArrayList<URL>();
 		
-		String firstEndpoint = "";
+//		String firstEndpoint = "";
 		for (int i = 0; i < requestURLStrings.size(); i++) {
 			URL url = new URL(requestURLStrings.get(i).trim());
-			if (i == 0) firstEndpoint = getEndPoint(url);
+//			if (i == 0) firstEndpoint = getEndPoint(url);
 			
 			// only urls with the same endpoints will be added to the list.
-			if (firstEndpoint.equalsIgnoreCase(getEndPoint(url)))
-				urls.add(url);
+//			if (firstEndpoint.equalsIgnoreCase(getEndPoint(url)))
+			urls.add(url);
 		}
 		
 		return urls;
