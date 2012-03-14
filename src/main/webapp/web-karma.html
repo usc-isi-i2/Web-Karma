@@ -74,6 +74,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<script type="text/javascript" src="js/alignment.js"></script>
 		<script type="text/javascript" src="js/csvImport.js"></script>
 		<script type="text/javascript" src="js/cleaning.js"></script>
+		<script type="text/javascript" src="js/services.js"></script>
 		
 		<script type="text/javascript">
 			/* Load and parse initial JSON */
@@ -326,7 +327,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<div id="columnHeadingDropDownMenu" class="ui-corner-all" style="display: none">
 			<button id="cleanColumnButton">Clean</button>
 			<button id="renameColumnButton">Rename</button>
-			<button id="deleteColumnButton">Delete</button>
+			<button id="invokeServiceButton">Invoke Service</button>
 			<button id="hideColumnButton">Hide</button>
 		</div>
 		<div id="tableCellToolBarMenu" class="ui-corner-all" style="display: none">
@@ -469,7 +470,7 @@ and related projects, please see: http://www.isi.edu/integration
 		</div>
 		<div id="ChangeSemanticTypesDialogBox" style="display: none">
 			<div id="CurrentSemanticTypesBox" class="ui-corner-all">
-				<span class="mediumSizedFont">Current semantic types:</span>
+				<span class="mediumSizedFont">Semantic types:</span>
 				<table id="currentSemanticTypesTable"></table>
 				<span id="NoSemanticTypeText" style="display: none" class="italic smallSizedFont">&nbsp;&nbsp;none.</span>
 			</div>

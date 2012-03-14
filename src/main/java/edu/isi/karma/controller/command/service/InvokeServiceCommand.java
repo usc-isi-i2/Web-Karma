@@ -31,6 +31,8 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -47,10 +49,12 @@ public class InvokeServiceCommand extends WorksheetCommand {
 
 	static Logger logger = Logger.getLogger(InvokeServiceCommand.class);
 	private final String hNodeId;
+	private final String vWorksheetId;
 
-	InvokeServiceCommand(String id, String worksheetId, String hNodeId) {
+	InvokeServiceCommand(String id, String worksheetId, String vWorksheetId, String hNodeId) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
+		this.vWorksheetId = vWorksheetId;
 	}
 
 	@Override
@@ -87,7 +91,15 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		
 		new PopulateWorksheetFromTable(ws, wk, result).populate();
 		
-		VWorksheet vw = vWorkspace.getVWorksheet(wk.getId());
+		// Create new vWorksheet using the new header order
+		List<HNodePath> columnPaths = new ArrayList<HNodePath>();
+		for (HNode node : wk.getHeaders().getSortedHNodes()) {
+			HNodePath path = new HNodePath(node);
+			columnPaths.add(path);
+		}
+		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
+				wk, columnPaths, vWorkspace);
+		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 		vw.update(c);
 		
 		return c;

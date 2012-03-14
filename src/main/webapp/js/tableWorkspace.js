@@ -334,6 +334,9 @@ function styleAndAssignHandlersToColumnHeadingMenu() {
 	
 	// Assign handler to column clean button (in cleaning.js)
     assignHandlersToCleaningPanelObjects();
+    
+    // Assign handler to service invocation button (in services.js)
+    assignHandlersToServiceInvocationObjects();
 }
 
 function openColumnHeadingOptions() {

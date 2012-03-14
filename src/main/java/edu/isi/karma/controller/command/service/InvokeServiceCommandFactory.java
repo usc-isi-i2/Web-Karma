@@ -29,22 +29,16 @@ import edu.isi.karma.view.VWorkspace;
 public class InvokeServiceCommandFactory extends CommandFactory {
 
 	public enum Arguments {
-		vWorksheetId, requestURLsJSONArray
+		vWorksheetId, hNodeId
 	}
-
-//	The way that UI creates the json object 
-//	JSONArray jsonArray = new JSONArray();
-//	jsonArray.put(url1);
-//	jsonArray.put(url2);
-//	jsonArray.put(url2);
-//	System.out.println(jsonArray.toString());
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
 
-		String requestURLsJSONArray =request.getParameter(Arguments.requestURLsJSONArray.toString());
+		String vWorksheetId =request.getParameter(Arguments.vWorksheetId.name());
+		String hNodeId =request.getParameter(Arguments.hNodeId.name());
 		return new InvokeServiceCommand(getNewId(vWorkspace), 
-				getWorksheetId(request, vWorkspace), requestURLsJSONArray);
+				getWorksheetId(request, vWorkspace), vWorksheetId, hNodeId);
 	}
 }
