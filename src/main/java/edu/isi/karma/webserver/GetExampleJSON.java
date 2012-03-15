@@ -37,6 +37,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
@@ -76,6 +77,7 @@ public class GetExampleJSON extends HttpServlet {
 			crfModelFile = new File("./CRF_Models/"+cachedWorkspaceId+"_CRFModel.txt");
 		} else {
 			vwsp = new VWorkspace(workspace);
+			crfModelFile = new File("./CRF_Models/"+workspace.getId()+"_CRFModel.txt");
 		}
 		/* Read and populate CRF Model from a file */
 		if(!crfModelFile.exists())
@@ -96,7 +98,7 @@ public class GetExampleJSON extends HttpServlet {
 		File file = new File("./SampleData/CSV/peopleFaculty.csv");
 		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
 		imp.generateWorksheet();
-		
+		/*
 		//load ontologies
 		OntologyManager om = workspace.getOntologyManager();
 		//vivo ontology
