@@ -29,13 +29,16 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import edu.isi.karma.service.json.JsonManager;
 
 
 public class Invocation {
 
 //	private static final String REQUEST_COLUMN_NAME = "request";
-	
+	static Logger logger = Logger.getLogger(Invocation.class);
+
 	public Invocation(Request request) {
 		this.request = request;
 		updateRequest();
@@ -95,6 +98,8 @@ public class Invocation {
 	}
 
 	public void invokeAPI() {
+		
+		int code = -1;
 		try{
 			this.response = new Response();
 			
@@ -110,7 +115,7 @@ public class Invocation {
 			   HttpURLConnection httpConnection = (HttpURLConnection) connection;
 //			   connection.setRequestProperty("Content-Type", "application/json");
 
-			   int code = httpConnection.getResponseCode();
+			   code = httpConnection.getResponseCode();
 
 			   System.out.println(type);
 			   System.out.println(code);
@@ -134,14 +139,26 @@ public class Invocation {
 			
 //			System.out.println(outString);
 			this.response.setType(type);
+			this.response.setCode(code);
 			this.response.setStream(outString.toString());
 			
+		}catch(Exception e){
+
+			logger.error("Error in invoking the service with request " + this.request.getUrl().toString());
+			
+			this.response.setType("application/json");
+			this.response.setCode(code);
+			this.response.setStream("{\"code\":" + code + ",\"msg\":\"Cannot invoke this request. \"}");
+			
+			System.out.println(e.getMessage());
+			
+		} finally {
+
 			updateResponse();
 			
 			joinInputAndOutput();
 			
-		}catch(Exception e){
-			System.out.println(e.getMessage());
+			
 		}
 		
 	}

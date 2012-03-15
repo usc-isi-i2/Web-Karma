@@ -345,7 +345,8 @@ public class JsonManager {
 				for (int k = 0; k < columns.size(); k++) {
 					int index = rawNames.indexOf(columns.get(k).toString());
 					if (index == -1)
-						singleValue = null;
+//						singleValue = null;
+						singleValue = "";
 					else
 						singleValue = rawValues.get(index);
 					populatedValues.add(singleValue);
