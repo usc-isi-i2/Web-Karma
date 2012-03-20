@@ -34,6 +34,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
@@ -68,22 +69,33 @@ public class GetExampleJSON extends HttpServlet {
 		
 
 		// Loading ontology to be preloaded
+		/*
 		OntologyManager mgr = workspace.getOntologyManager();
 		mgr.doImport(new File("./Preloaded_Ontologies/geo_2007.owl"));
-		
+		*/
 		//mariam
+		
+//		File file = new File("../demofiles/peopleFaculty.csv");
 		/*
-		File file = new File("../demofiles/peopleFaculty.csv");
+		File file = new File("../demofiles/usc_faculty.csv");
 		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
 		imp.generateWorksheet();
-		
+		*/
 		//load ontologies
 		OntologyManager om = workspace.getOntologyManager();
+		
 		//vivo ontology
+/*
 		om.doImport(new File("../demofiles/vivo1.4-protege.owl"));
 		//rdfs ontology
 		om.doImport(new File("../demofiles/rdfs-small.owl"));
-		*/
+*/
+		/*
+		om.doImport(new File("../demofiles/vivo-core-public-1.4.owl"));
+		//rdfs ontology
+		om.doImport(new File("../demofiles/rdfs_subset.owl"));
+		om.doImport(new File("../demofiles/uscont.owl"));
+*/
 		//////////////
 
 		// Initialize the Outlier tag
