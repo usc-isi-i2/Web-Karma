@@ -81,6 +81,7 @@ public class AlignToOntology {
 		
 		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
 				.getSteinerTree();
+		//GraphUtil.printGraph(tree);
 		Vertex root = alignment.GetTreeRoot();
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 
@@ -144,7 +145,7 @@ public class AlignToOntology {
 		// Get the list of semantic types
 		List<SemanticType> types = new ArrayList<SemanticType>();
 		for (SemanticType type : semTypes.getTypes().values()) {
-//			System.out.println("Type: " + type.getType()+ " of " + type.getDomain() + "HNode ID: " + type.getHNodeId());
+		//System.out.println("Type: " + type.getType()+ " of " + type.getDomain() + "HNode ID: " + type.getHNodeId());
 			types.add(type);
 		}
 
