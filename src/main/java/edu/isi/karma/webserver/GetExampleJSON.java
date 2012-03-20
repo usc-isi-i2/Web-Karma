@@ -37,7 +37,6 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
-import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
@@ -90,7 +89,7 @@ public class GetExampleJSON extends HttpServlet {
 		
 		// Loading ontology to be preloaded
 		OntologyManager mgr = workspace.getOntologyManager();
-		//mgr.doImport(new File("./Preloaded_Ontologies/geo_2007.owl"));
+		mgr.doImport(new File("./Preloaded_Ontologies/geo_2007.owl"));
 		mgr.doImport(new File("./Preloaded_Ontologies/oilwell.owl"));
 		//mariam
 		
