@@ -100,9 +100,6 @@ public class GetExampleJSON extends HttpServlet {
 		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
 		imp.generateWorksheet();
 		*/
-		File file = new File("./SampleData/CSV/peopleFaculty.csv");
-		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
-		imp.generateWorksheet();
 		/*
 		//load ontologies
 		OntologyManager om = workspace.getOntologyManager();
