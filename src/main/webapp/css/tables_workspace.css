@@ -472,6 +472,9 @@ div.waitingDiv img {
 	margin-left: 4px;
 }
 
+div#WaitingDiv {
+	margin: auto;
+}
 
 
 

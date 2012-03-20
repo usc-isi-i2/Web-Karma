@@ -99,9 +99,11 @@ function CSVImportOptionsChanged(flag) {
 	if(typeof(flag) == "object") {
 		options["execute"] = true;
 		options["interactionType"] = "importTable";
+		$("#CSVImportDiv").dialog("close");
+		showWaitingSignOnScreen();
 	}
-		
-
+	
+    
 	var returned = $.ajax({
 	   	url: "/RequestController", 
 	   	type: "POST",
@@ -109,12 +111,12 @@ function CSVImportOptionsChanged(flag) {
 	   	dataType : "json",
 	   	complete : 
 	   		function (xhr, textStatus) {
-	   			if(!options["execute"])
-	    			showCSVImportOptions(xhr.responseText);
-	    		else{
-	    			$("#CSVImportDiv").dialog("close");
+	   			if(!options["execute"]) {
+	   			    showCSVImportOptions(xhr.responseText);
+	   			} else {
 	    			var json = $.parseJSON(xhr.responseText);
 	    			parse(json);
+	    			hideWaitingSignOnScreen();
 	    		}		
 		   	}
 		});	
