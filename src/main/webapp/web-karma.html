@@ -1,3 +1,25 @@
+<!--
+	
+Copyright 2012 University of Southern California
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+This code was developed by the Information Integration Group as part 
+of the Karma project at the Information Sciences Institute of the 
+University of Southern California.  For more information, publications, 
+and related projects, please see: http://www.isi.edu/integration
+
+-->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
 "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
@@ -22,6 +44,8 @@
 		<link rel="stylesheet" type="text/css" href="./css/jquery.qtip.min.css" />
 		<link rel="stylesheet" type="text/css" href="./css/sticky.min.css" />
 		<link rel="stylesheet" type="text/css" href="./css/cleaning.css" />
+		<link rel="stylesheet" type="text/css" href="./css/alignment.css" />
+		<link rel="stylesheet" type="text/css" href="./css/jquery.autocomplete.css" />
 		
 		
 		<!-- Third Party JavaScript files		 -->
@@ -39,6 +63,7 @@
 		<script type="text/javascript" src="js/jquery.jeditable.js"></script>
 		<script type="text/javascript" src="js/json2.js"></script>
 		<script type="text/javascript" src="js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="js/jquery.autocomplete.js"></script>
 		
 		<!-- Home grown JavaScript files -->
 		<script type="text/javascript" src="js/table_manipulation.js"></script>
@@ -52,6 +77,7 @@
 		<script type="text/javascript" src="js/alignment.js"></script>
 		<script type="text/javascript" src="js/csvImport.js"></script>
 		<script type="text/javascript" src="js/cleaning.js"></script>
+		<script type="text/javascript" src="js/services.js"></script>
 		
 		<script type="text/javascript">
 			/* Load and parse initial JSON */
@@ -304,7 +330,7 @@
 		<div id="columnHeadingDropDownMenu" class="ui-corner-all" style="display: none">
 			<button id="cleanColumnButton">Clean</button>
 			<button id="renameColumnButton">Rename</button>
-			<button id="deleteColumnButton">Delete</button>
+			<button id="invokeServiceButton">Invoke Service</button>
 			<button id="hideColumnButton">Hide</button>
 		</div>
 		<div id="tableCellToolBarMenu" class="ui-corner-all" style="display: none">
@@ -447,52 +473,41 @@
 		</div>
 		<div id="ChangeSemanticTypesDialogBox" style="display: none">
 			<div id="CurrentSemanticTypesBox" class="ui-corner-all">
-				<span class="mediumSizedFont">Current semantic types:</span>
-				<table id="currentSemanticTypesTable"></table>
-				<span id="NoSemanticTypeText" style="display: none" class="italic smallSizedFont">&nbsp;&nbsp;none.</span>
-			</div>
-			
-			<span class="mediumSizedFont">Suggested semantic types:</span>
-			<table id="CRFSuggestedLabelsTable"></table>
-			<br>
-			<span class="mediumSizedFont">Choose from ontology</span>
-			<div id="ontologyOptionsTable">
-				<table>
-				<tr>
-					<td colspan="2">
-						Search by: 
-							<select id="toggleOntologyHierarchy">
-								<option value="class">Class</option>
-								<option value="dataProperty">Data Property</option>
-							</select>
-					</td>
-				</tr>
-				<tr>
-					<td id="firstColumnLabel">Class</td>
-					<td id="secondColumnLabel">Data Property</td>
-				</tr>
-				<tr>
-					<td valign="top">
-						<div id="firstColumnOntologyBox">
-							<input type="text" id="firstColumnKeyword" maxlength="100" size="20"/>
-							<button id="submitFirstColumnSearch">Search</button>
-							<br /><br />
-							<div id="firstColumnTree"></div>
-						</div>
-					</td>
-					<td valign="top">
-						<div id="secondColumnOntologyBox">
-							<input type="text" id="secondColumnKeyword" maxlength="100" size="20"/>
-							<button id="submitSecondColumnSearch">Search</button>
-							<br /><br />
-							<div id="secondColumnTree"></div>
-						</div>
-					</td>
-				</tr>
+				<span class="mediumSizedFont">Semantic types:</span>
+				<table id="currentSemanticTypesTable">
+					<tr><td /><td /><td>Primary</td><td /></tr>
 				</table>
+				<br />
+				<button id="addSemanticType">Add synonym semantic type</button>
+			</div>
+			<div class="ui-widget" id="SemanticTypeErrorWindow" style="display: none">
+				<br />
+				<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"> 
+					<p id="semanticTypeErrorWindow"><span class="ui-icon ui-icon-alert" 
+							style="float: left; margin-right: .3em;"></span> 
+					<span id="SemanticTypeErrorWindowText"></span></p>
+					<br />
+				</div>
+				<br />
 			</div>
 			<input type="checkbox" id="chooseClassKey" />
 			<label for="chooseClassKey" class="smallSizedFont">Mark as key for the class.</label><br />
+		</div>
+		<div id="propertyOntologyBox" style="display: none">
+			<input id="filterPropertyByDomain" type="checkbox"/>
+			<label for="filterPropertyByDomain">Show properties with domain</label><span id="className"></span><br /><br />
+			<input type="text" id="propertyKeyword" maxlength="100" size="20"/>
+			<button id="propertySearch">Search</button>
+			<br /><br />
+			<div id="propertyTree"></div>
+		</div>
+		<div id="classOntologyBox" style="display: none">
+			<input id="filterClassByDomain" type="checkbox"/>
+			<label for="filterClassByDomain">Show domain classes for property</label><span id="propertyName"></span><br /><br />
+			<input type="text" id="classKeyword" maxlength="100" size="20"/>
+			<button id="classSearch">Search</button>
+			<br /><br />
+			<div id="classTree"></div>
 		</div>
 		<div id="OntologyAlternativeLinksPanel" style="display: none">
 			<span class="mediumSizedFont">Choose parent relationship:</span>

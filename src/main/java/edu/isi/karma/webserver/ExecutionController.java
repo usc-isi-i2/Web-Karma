@@ -73,6 +73,8 @@ import edu.isi.karma.controller.command.alignment.GetDomainsForDataPropertyComma
 import edu.isi.karma.controller.command.alignment.GetDomainsForDataPropertyCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyCommand;
 import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyCommandFactory;
+import edu.isi.karma.controller.command.alignment.GetPropertiesAndClassesList;
+import edu.isi.karma.controller.command.alignment.GetPropertiesAndClassesListCommandFactory;
 import edu.isi.karma.controller.command.alignment.ResetModelCommand;
 import edu.isi.karma.controller.command.alignment.ResetModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommand;
@@ -89,6 +91,8 @@ import edu.isi.karma.controller.command.publish.PublishRDFCommand;
 import edu.isi.karma.controller.command.publish.PublishRDFCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishRDFCellCommand;
 import edu.isi.karma.controller.command.publish.PublishRDFCellCommandFactory;
+import edu.isi.karma.controller.command.service.InvokeServiceCommand;
+import edu.isi.karma.controller.command.service.InvokeServiceCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
 
@@ -175,6 +179,10 @@ public class ExecutionController {
 				new ResetModelCommandFactory());
 		commandFactoryMap.put(GenerateCleaningRulesCommand.class.getSimpleName(),
 				new GenerateCleaningRulesCommandFactory());
+		commandFactoryMap.put(InvokeServiceCommand.class.getSimpleName(),
+				new InvokeServiceCommandFactory());
+		commandFactoryMap.put(GetPropertiesAndClassesList.class.getSimpleName(),
+				new GetPropertiesAndClassesListCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

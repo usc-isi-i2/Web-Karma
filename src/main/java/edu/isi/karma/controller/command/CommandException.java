@@ -38,7 +38,7 @@ public class CommandException extends Exception {
 	
 	private final String message;
 	
-	CommandException(Command command, String message) {
+	public CommandException(Command command, String message) {
 		super();
 		this.command = command;
 		this.message = message;

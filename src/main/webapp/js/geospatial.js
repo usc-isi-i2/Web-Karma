@@ -1,3 +1,8 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ ******************************************************************************/
+
 function showMapViewForWorksheet() {
 	var state = $(this).data("state");
 	var worksheetId = $(this).data("worksheetId");

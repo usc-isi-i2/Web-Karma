@@ -29,6 +29,7 @@ import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.ViewPreferences.ViewPreference;
 
 /**
  * Provides information about a value update to a single node.
@@ -39,7 +40,7 @@ import edu.isi.karma.view.VWorkspace;
 public class NodeChangedUpdate extends AbstractUpdate {
 
 	public enum JsonKeys {
-		worksheet, nodeId, newValue, newStatus
+		worksheet, nodeId, newStatus, displayValue, fullValue, isTruncated
 	}
 	
 	private final String worksheetId;
@@ -67,7 +68,19 @@ public class NodeChangedUpdate extends AbstractUpdate {
 		pw.println(newPref + JSONUtil.json(JsonKeys.worksheet, worksheetId));
 		pw.println(newPref + JSONUtil.json(JsonKeys.nodeId, nodeId));
 		pw.println(newPref + JSONUtil.json(JsonKeys.newStatus, newStatus.getCodedStatus()));
-		pw.println(newPref + JSONUtil.jsonLast(JsonKeys.newValue, newValue.asString()));
+		pw.println(newPref + JSONUtil.json(JsonKeys.fullValue, newValue.asString()));
+		
+		String displayValueString = newValue.asString();
+		boolean isTruncated = false;
+		int maxValueLength = vWorkspace.getPreferences().getIntViewPreferenceValue(
+				ViewPreference.maxCharactersInCell);
+		if(displayValueString.length() > maxValueLength) {
+			displayValueString = JSONUtil.truncateCellValue(
+					displayValueString,maxValueLength);
+			isTruncated = true;
+		}
+		pw.println(newPref + JSONUtil.json(JsonKeys.isTruncated, isTruncated));
+		pw.println(newPref + JSONUtil.jsonLast(JsonKeys.displayValue, displayValueString));
 		pw.println(prefix + "}");
 	}
 }

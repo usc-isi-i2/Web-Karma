@@ -1,6 +1,23 @@
-/**
- * @author Shubham Gupta
- */
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
 
 function parse(data) {
 	
@@ -644,21 +661,18 @@ function parse(data) {
 		
 		/* Update the cell value */
 		else if(element["updateType"] == "NodeChangedUpdate") {
-			var tdTag = $("td#" + element.nodeId); 
-			if(element.newValue.length > 20) {
-				var valueToShow = element.newValue.substring(0,20);
-				$(tdTag).children("span.cellValue").text(valueToShow + "...");
-				$(tdTag).data("fullValue", element.newValue);
-				$(tdTag).addClass("expandValueCell");
-			} else {
-				if($(tdTag).hasClass("expandValueCell")){
-					$(tdTag).removeClass("expandValueCell");
-					$.removeData($(tdTag), "fullValue");
-				}
-				$(tdTag).children("span.cellValue").text(element.newValue);
-			}
+			var tdTag = $("td#" + element.nodeId);
+			$(tdTag).children("span.cellValue").text(element.displayValue);
 			
-			if(element.newStatus == "E"){
+			$(tdTag).removeClass('hasTruncatedValue');
+			$.removeData($(tdTag), 'fullValue');
+			
+			if(element["isTruncated"]) {
+                tdTag.addClass("hasTruncatedValue")
+                    .data("fullValue", element["fullValue"]);
+            }
+            
+            if(element.newStatus == "E"){
 				tdTag.children("span.cellValue").addClass("editedValue");
 			}
 			else {
@@ -696,7 +710,7 @@ function parse(data) {
                         
                     if(primarySemTypeObject["Domain"] != ""){
                         var typeItalicSpan = $("<span>").addClass("italic").text(primarySemTypeObject["DisplayLabel"]);
-                        semDiv.text(primarySemTypeObject["DisplayDomainLabel"] + ":").append(typeItalicSpan);
+                        semDiv.text(primarySemTypeObject["DisplayDomainLabel"] + ".").append(typeItalicSpan);
                     }
                     else {
                         semDiv.text(primarySemTypeObject["DisplayLabel"]);

@@ -72,7 +72,6 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 				selectedPath = path;
 			}
 		}
-		
 		Collection<Node> nodes = new ArrayList<Node>();
 		wk.getDataTable().collectNodes(selectedPath, nodes);
 

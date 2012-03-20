@@ -43,7 +43,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 	private String vWorksheetId;
 
 	public enum JsonKeys {
-		HNodeId, FullType, ConfidenceLevel, Origin, FullCRFModel, DisplayLabel, DisplayDomainLabel, Domain, SemanticTypesArray, isPrimary, isPartOfKey
+		HNodeId, FullType, ConfidenceLevel, Origin, FullCRFModel, DisplayLabel, DisplayDomainLabel, Domain, SemanticTypesArray, isPrimary, isPartOfKey, Types
 	}
 
 	private static Logger logger = LoggerFactory
@@ -67,7 +67,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 			writer.key("worksheetId").value(vWorksheetId).key("updateType")
 					.value("SemanticTypesUpdate");
 
-			writer.key("Types");
+			writer.key(JsonKeys.Types.name());
 			writer.array();
 			// Iterate through all the columns
 			for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
