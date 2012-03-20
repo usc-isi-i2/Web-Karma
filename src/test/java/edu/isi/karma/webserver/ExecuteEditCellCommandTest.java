@@ -1,8 +1,8 @@
 package edu.isi.karma.webserver;
 
 import static edu.isi.karma.controller.update.AbstractUpdate.GenericJsonKeys.updateType;
-import static edu.isi.karma.controller.update.NodeChangedUpdate.JsonKeys.newValue;
 import static edu.isi.karma.controller.update.UpdateContainer.JsonKeys.elements;
+import static edu.isi.karma.controller.update.NodeChangedUpdate.JsonKeys.fullValue;
 
 import java.util.ArrayList;
 
@@ -56,7 +56,7 @@ public class ExecuteEditCellCommandTest extends AbstractExecuteCommandTester {
 		JSONObject nodeChangeUpdate = ja.getJSONObject(1);
 		assertEquals(NodeChangedUpdate.class.getSimpleName(),
 				nodeChangeUpdate.getString(updateType.name()));
-		assertEquals("x", nodeChangeUpdate.getString(newValue.name()));
+		assertEquals("x", nodeChangeUpdate.getString(fullValue.name()));
 
 		CommandHistory ch = vwsp.getWorkspace().getCommandHistory();
 		assertTrue(ch.isUndoEnabled());
@@ -72,6 +72,6 @@ public class ExecuteEditCellCommandTest extends AbstractExecuteCommandTester {
 		assertEquals(1, ja2.length());
 
 		JSONObject nodeChangeUpdate2 = ja2.getJSONObject(0);
-		assertEquals("Value 2", nodeChangeUpdate2.getString(newValue.name()));
+		assertEquals("Value 2", nodeChangeUpdate2.getString(fullValue.name()));
 	}
 }

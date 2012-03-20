@@ -1,4 +1,4 @@
-/*******************************************************************************
+ /*******************************************************************************
  * Copyright 2012 University of Southern California
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,219 +22,204 @@
 function attachOntologyOptionsRadioButtonHandlers() {
     var optionsDiv = $("#ChangeSemanticTypesDialogBox");
     
-	$("select#toggleOntologyHierarchy").change(function(){
-		if($("select#toggleOntologyHierarchy").val() == "class"){
-			$("td#firstColumnLabel").text("Class");
-			$("td#secondColumnLabel").text("Data Property").hide();
-		} else {
-			$("td#firstColumnLabel").text("Data Property");
-			$("td#secondColumnLabel").text("Domain (Class)").hide();
-		}
-		
-		populatefirstColumnOntologyBox();
-		$("div#secondColumnOntologyBox").hide();
-	});
-
-	$("div#secondColumnOntologyBox").hide();
-	
 	// Add handler for the search button
-	$("#firstColumnKeyword").keyup(function(event) {
+	$("#classKeyword").keyup(function(event) {
 		if(event.keyCode == 13){
-    		$("#submitFirstColumnSearch").click();
+    		$("#classSearch").click();
   		}
 	});
-	$("#secondColumnKeyword").keyup(function(event) {
+	$("#propertyKeyword").keyup(function(event) {
 		if(event.keyCode == 13){
-    		$("#submitSecondColumnSearch").click();
+    		$("#propertySearch").click();
   		}
 	});
-	$("#submitFirstColumnSearch").click(function(){
-		$("div#firstColumnTree").jstree("search", $("#firstColumnKeyword").val());
+	
+	$("input[name='isPrimaryGroup']:radio").live("change", (function(){
+	    // Make the semantic type as selected if it has not been yet
+	    var tr = $(this).parents("tr");
+	    if(!$("input[name='currentSemanticTypeCheckBoxGroup']:checkbox", tr).is(':checked')) {
+	        $("input[name='currentSemanticTypeCheckBoxGroup']:checkbox", tr).prop('checked', true);
+	        $(tr).addClass("selected");
+	    }
+	}));
+	
+	$("#classSearch").click(function(){
+		$("div#classTree").jstree("search", $("#classKeyword").val());
 	});
-	$("#submitSecondColumnSearch").click(function(){
-		$("div#secondColumnTree").jstree("search", $("#secondColumnKeyword").val());
+	$("#propertySearch").click(function(){
+		$("div#propertyTree").jstree("search", $("#propertyKeyword").val());
 	});
 	
-	// Assign empty domain to the Unassigned radio button
-	$("input#UnassignTypeButton").data("Domain", "");
-	
-	// Adding the handlers to the radio buttons
-    $("input[name='semanticTypeGroup']:radio").live("change", (function(){
-        optionsDiv.data("FullType", $(this).val());
-        optionsDiv.data("Domain", $(this).data("Domain"));
-        optionsDiv.data("DisplayLabel", $(this).data("DisplayLabel"));
-        optionsDiv.data("DisplayDomainLabel", $(this).data("DisplayDomainLabel"));
+	$("input#filterPropertyByDomain").change(handleDataPropertyFilter);
+	$("input#filterClassByDomain").change(handleClassFilter);
+	$("button#addSemanticType").button().click(addEmptySemanticType);
+}
+
+function handleDataPropertyFilter() {
+    var uriClass = $("div#propertyOntologyBox").data("classUri");
         
-        // optionsDiv.data("DisplayLabel",$("label",$($("td", $(this).parents("tr"))[1])).html());
-        optionsDiv.data("source", "RadioButtonList");
-        $("div#firstColumnTree").jstree("deselect_all");
-        $("div#secondColumnTree").jstree("deselect_all");
-    }));
-	
-	$("input[name='currentSemanticTypeGroup']:radio").live("change", (function(){
-	    var semTypesArray = optionsDiv.data("SemanticTypesArray");
-	    var type = $(this).parents("tr").data("FullType");
-	    var domain = $(this).parents("tr").data("Domain");
-        $.each(semTypesArray, function(index, semType) {
-            if(semType["FullType"] == type && semType["Domain"] == domain) {
-                semType["isPrimary"] = true;
-            } else
-                semType["isPrimary"] = false;
+    if(uriClass  != "" && uriClass != "fakeDomainURI") {
+        var info = new Object();
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        
+        if ($("input#filterPropertyByDomain").is(":checked")) {
+            info["URI"] = uriClass;
+            info["command"] = "GetDataPropertiesForClassCommand";
+        } else {
+            info["command"] = "GetDataPropertyHierarchyCommand";
+        }
+        
+        var returned = $.ajax({
+            url: "/RequestController", 
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete : 
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    var dataArray = json["elements"][0]["data"];
+                    // populatePropertyTreeHierarchy(dataArray);
+                    populateTreeHierarchy(dataArray, $("div#propertyTree"), $("div#propertyOntologyBox"), submitPropertyFromHierarchyWindow);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while fetching ontology data!" + textStatus);
+                }          
         });
-        //console.log(JSON.stringify(semTypesArray));
-    }));
+    }
+}
+
+function handleClassFilter() {
+    var uriProperty = $("div#propertyOntologyBox").data("propertyUri");
+    
+    if(uriProperty  != "" && uriProperty != "fakePropertyURI") {
+        var info = new Object();
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        
+        if ($("input#filterClassByDomain").is(":checked")) {
+            info["URI"] = uriProperty;
+            info["command"] = "GetDomainsForDataPropertyCommand";
+        } else {
+            info["command"] = "GetOntologyClassHierarchyCommand";
+        }
+        
+        var returned = $.ajax({
+            url: "/RequestController", 
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete : 
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    var dataArray = json["elements"][0]["data"];
+                    // populateClassTreeHierarchy(dataArray);
+                    populateTreeHierarchy(dataArray, $("div#classTree"), $("div#classOntologyBox"), submitClassFromHierarchyWindow);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while fetching ontology data!" + textStatus);
+                }          
+        });
+    }
+}
+
+function addEmptySemanticType() {
+    // Create a fake sem type object to how in the table
+    var fakeSemType = new Object();
+    fakeSemType["FullType"] = "fakePropertyURI";
+    fakeSemType["Domain"] = "fakeDomainURI";
+    fakeSemType["DisplayLabel"] = "property";
+    fakeSemType["DisplayDomainLabel"] = "Class";
+    // Add it to the table
+    addSemTypeObjectToCurrentTable(fakeSemType, false, false);
 }
 
 function changeSemanticType(event) {
-	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
-	
-	var typeJsonObject = $(this).data("typesJsonObject");
-	optionsDiv.data("currentNodeId",typeJsonObject["HNodeId"]);
-	$("table#CRFSuggestedLabelsTable tr",optionsDiv).remove();
-	$("table#currentSemanticTypesTable tr",optionsDiv).remove();
-	$("#firstColumnKeyword").val("");
-	$("#secondColumnKeyword").val("");
-	$("div#secondColumnOntologyBox").hide();
-	$("input#chooseClassKey").attr("checked", false);
-	//$("div#ontologyOptionsTable", optionsDiv).hide();
-	
-    var labelsTable = $("table#CRFSuggestedLabelsTable");
-	var existingTypes = typeJsonObject["SemanticTypesArray"];
-	var CRFInfo = typeJsonObject["FullCRFModel"];
-	var fullType = "";
-	var domain = "";
-	
-	if(existingTypes.length == 0) {
-        $("span#NoSemanticTypeText", optionsDiv).show();
-    } else {
-        var primIndex = getPrimarySemTypeObject(existingTypes);
-        var primTypeObject = existingTypes[primIndex];
-        
-        // Populate with possible labels that CRF Model suggested
-        fullType = primTypeObject["FullType"];
-        domain = primTypeObject["Domain"];
-        var origin = primTypeObject["Origin"];
-        
-        // Populate the table to show the current semantic types
-        $.each(existingTypes, function(index, type) {
-            if(index == 0)
-                addSemTypeObjectToCurrentTable(type, true);
-            else
-                addSemTypeObjectToCurrentTable(type, false);
+    var optionsDiv = $("#ChangeSemanticTypesDialogBox");
+    
+    var typeJsonObject = $(this).data("typesJsonObject");
+    optionsDiv.data("currentNodeId",typeJsonObject["HNodeId"]);
+    $("table#currentSemanticTypesTable tr.semTypeRow",optionsDiv).remove();
+    $("table#currentSemanticTypesTable tr.editRow",optionsDiv).remove();
+    $("input#chooseClassKey").attr("checked", false);
+    $("div#SemanticTypeErrorWindow").hide();
+    
+    // Store a copy of the existing types.
+    // This is tha JSON array which is changed when the user adds/changes through GUI and is submitted to the server.
+    var existingTypes = typeJsonObject["SemanticTypesArray"];
+    var existingTypesCopy = jQuery.extend(true, [], existingTypes);
+    optionsDiv.data("existingTypes", existingTypesCopy);
+
+    var CRFInfo = typeJsonObject["FullCRFModel"];
+    
+    // Populate the table with existing types and CRF suggested types
+    $.each(existingTypes, function(index, type){
+        addSemTypeObjectToCurrentTable(type, true, false);
+    });
+    if(CRFInfo != null) {
+        $.each(CRFInfo["Labels"], function(index, type){
+            addSemTypeObjectToCurrentTable(type, false, true);
         });
-        
-        // Check/uncheck the "Mark as key for the class." option depending on the existing status
-        if(primTypeObject["isPartOfKey"] == true)
-            $("input#chooseClassKey").attr("checked", true);
     }
-	
-	// Use an array to store all the selected semantic types
-	optionsDiv.data("SemanticTypesArray", existingTypes);
-	
-	/* Show the suggested semantic types with radio button choices */
-	if(CRFInfo != null) {
-		$("span", labelsTable).remove();
-		$.each(CRFInfo["Labels"], function(index, label) {
-			// Turning the probability into percentage
-			var prob = label["Probability"];
-			var percentage = Math.floor(prob*100);
-			var trTag = $("<tr>");
-			var radioButton = $("<input>")
-							.attr("type", "radio")
-							.attr("id", label["FullType"] + "|" + label["Domain"])
-							.attr("name", "semanticTypeGroup")
-							.attr("value", label["FullType"])
-							.val(label["FullType"]);
-		  
-		    radioButton.data("FullType", label["FullType"]);
-            radioButton.data("Domain", label["Domain"]);
-            radioButton.data("DisplayLabel", label["DisplayLabel"]);
-            radioButton.data("DisplayDomainLabel", label["DisplayDomainLabel"]);
-				
-			var selectedFlag = false;
-			if(fullType == label["FullType"]) {
-				if(domain == "") {
-					radioButton.attr('checked',true);
-					optionsDiv.data("FullType", fullType);
-					optionsDiv.data("source", "RadioButtonList");
-					selectedFlag = true;
-					optionsDiv.data("DisplayLabel", label["DisplayLabel"]);
-				} else {
-					if(label["Domain"] != null) {
-						if(domain == label["Domain"]){
-							radioButton.attr('checked',true);
-							optionsDiv.data("source", "RadioButtonList");
-							optionsDiv.data("Domain", domain);
-							optionsDiv.data("FullType", fullType);
-							selectedFlag = true;
-							optionsDiv.data("DisplayLabel", "<span class='italic'>" + label["DisplayLabel"] + "</span> of " + label["DisplayDomainLabel"]);
-						}
-					}
-				}
-			}
-				
-			var typeLabel = $("<label>").attr("for",label["FullType"] + "|" + label["Domain"]);
-			
-			// Check if the domain needs to be displayed
-			if($.trim(label["DisplayDomainLabel"]) == "")
-				typeLabel.text(label["DisplayLabel"]);
-			else {
-				var typeItalicSpan = $("<span>").addClass("italic").text(label["DisplayLabel"]);
-				typeLabel.text(" of " + label['DisplayDomainLabel']);
-				typeLabel.prepend($(typeItalicSpan));
-			}
-				
-			// Check if the label was assigned by the user
-			var score = "";
-			if(selectedFlag && origin == "User")
-				score = "Probability: " + percentage+"% (User Assigned)"
-			else
-				score = "Probability: " + percentage+"%";
-				
-			trTag.append($("<td>").append(radioButton))
-				.append($("<td>").append(typeLabel))
-				.append($("<td>").text(score));
-			labelsTable.prepend(trTag);
-		});
-	} else {
-		labelsTable.html("<span class='smallSizedFont'><i>&nbsp;&nbsp;none</i></span>");
-	}
-	
-	// Populate the class tree
-	$("#toggleOntologyHierarchy").val("class");
-	$("td#firstColumnLabel").text("Class");
-	$("td#secondColumnLabel").text("Data Property").hide();
-	// Send a request to get the JSON for displaying the list of classes
-	optionsDiv.data("secondColumnSelection","");
-	optionsDiv.data("firstColumnSelection","");
-	populatefirstColumnOntologyBox();
-	
-	// Show the dialog box
-	var positionArray = [event.clientX+20, event.clientY+10];
-	optionsDiv.dialog({width: 500, height: 700, position: positionArray
-		, buttons: { 
-    		"Cancel": function() { $(this).dialog("close"); }, 
-    		"Add": function(){
-                $("div#firstColumnTree").jstree("deselect_all");
-                $("div#secondColumnTree").jstree("deselect_all");
-                addTypeToArrayAndShowInTable();
-    		}, 
+    
+    // Get the whole list of classes and properties from the server for autocompletion
+    var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "GetPropertiesAndClassesList";
+    info["vWorksheetId"] = optionsDiv.data("worksheetId");
+    var returned = $.ajax({
+        url: "/RequestController", 
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete : 
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                optionsDiv.data("classAndPropertyListJson", json);
+                
+                // Special case when no training has been done to CRF model
+                // Shows an empty semantic type
+                if((!CRFInfo && existingTypes.length == 0) || 
+                    ((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo.length == 0))) {
+                    addEmptySemanticType();
+                    $("table#currentSemanticTypesTable tr td button").click();
+                }
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while fetching classes and properties list! " + textStatus);
+            }
+    });
+    
+    // Show the dialog box
+    var positionArray = [event.clientX+20, event.clientY+10];
+    optionsDiv.dialog({width: 350, position: positionArray
+        , buttons: { 
+            "Cancel": function() { $(this).dialog("close"); }, 
             "Submit":submitSemanticTypeChange }
-        });
+    });
 }
 
-function addSemTypeObjectToCurrentTable(semTypeObject, isFirst) {
+function addSemTypeObjectToCurrentTable(semTypeObject, isSelected, isCrfModelSuggested) {
     var table = $("#currentSemanticTypesTable");
-    // Add the row that says Primary
-    if(isFirst) {
-        $("span#NoSemanticTypeText").hide();
-        table.append($("<tr>")
-            .append($("<td>").text('Primary'))
-            .append($("<td>"))
-        );
-    }
+    
+    // Check if it is eligible to be added to the table
+    var isValid = true;
+    $.each($("tr", table), function(index, row){
+        if($(row).data("FullType") == semTypeObject["FullType"] && $(row).data("Domain") == semTypeObject["Domain"]) {
+            // We allow multiple fake semantic type objects to be added
+            if(!(semTypeObject["FullType"] == "fakePropertyURI" && semTypeObject["Domain"] == "fakeDomainURI"))
+                isValid = false;
+        }
+    });
+    if(!isValid)
+        return false;
+    
+    // Add it to the table
     var displayLabel = "";
-    if(semTypeObject["Domain"].length == 0 || semTypeObject["Domain"] == "") 
+    if(semTypeObject["Domain"].length == 0 || semTypeObject["Domain"] == "")
         displayLabel = semTypeObject["DisplayLabel"];
     else
         displayLabel = "<span class='italic'>" + semTypeObject["DisplayLabel"] + "</span> of " + semTypeObject["DisplayDomainLabel"];
@@ -242,271 +227,453 @@ function addSemTypeObjectToCurrentTable(semTypeObject, isFirst) {
     var trTag = $("<tr>").addClass("semTypeRow")
         .data("FullType", semTypeObject["FullType"])
         .data("Domain", semTypeObject["Domain"])
+        .data("DisplayDomainLabel", semTypeObject["DisplayDomainLabel"])
+        .data("DisplayLabel", semTypeObject["DisplayLabel"])
+        .append($("<td>").append($("<input>")
+            .attr("type", "checkbox")
+            .attr("name", "currentSemanticTypeCheckBoxGroup")
+            .attr("value", semTypeObject["DisplayLabel"])
+            .val(semTypeObject["DisplayLabel"])
+            .prop("checked", isSelected)
+            .change(semanticTypesTableCheckBoxHandler)))
+        .append($("<td>")
+            .append($("<label>").html(displayLabel).addClass('displayLabel')))
         .append($("<td>").append($("<input>")
             .attr("type", "radio")
-            .attr("id", semTypeObject["FullType"] + "|" + semTypeObject["Domain"] + "_cur")
-            .attr("name", "currentSemanticTypeGroup")
+            .attr("name", "isPrimaryGroup")
             .attr("value", semTypeObject["DisplayLabel"])
             .val(semTypeObject["DisplayLabel"])))
-        .append($("<td>")
-            .append($("<label>")
-                .attr("for",semTypeObject["FullType"] + "|" + semTypeObject["Domain"]+ "_cur").html(displayLabel)))
-        .append($("<td>").append($("<span>").addClass("ui-icon ui-icon-closethick")).click(deleteSemanticTypeFromArrayAndTable));
-    
-    if(isFirst)
-        $("input", trTag).attr('checked', true);
+        .append($("<td>").append($("<button>").button().text("Edit").click(showSemanticTypeEditOptions)));
+
+    if(isCrfModelSuggested)
+        trTag.append($("<td>").addClass("CRFSuggestedText").text("  (CRF Suggested)"));
+    if(isSelected)
+        trTag.addClass("selected");
+        
+    if(semTypeObject["isPrimary"])
+        $("input[name='isPrimaryGroup']:radio", trTag).prop('checked', true);
+        
+    // Check if it was marked as key for a class
+    if(semTypeObject["isPartOfKey"]) {
+        $("input#chooseClassKey").attr("checked", true);
+    }
+        
+    if(semTypeObject["Domain"].length == 0 || semTypeObject["Domain"] == "")
+        trTag.data("ResourceType", "Class");
+    else
+        trTag.data("ResourceType", "DataProperty");
+        
     table.append(trTag);
 }
 
-function addTypeToArrayAndShowInTable() {
+function showSemanticTypeEditOptions() {
     var optionsDiv = $("#ChangeSemanticTypesDialogBox");
-    if($("#toggleOntologyHierarchy").val() == "dataProperty" 
-        && optionsDiv.data("secondColumnSelection") == "") {
-        alert("Please specify the domain for the data property!");
-        return;
-    }
-    
-    var info = new Object();
-    var hNodeId = optionsDiv.data("currentNodeId");
-
-    if(optionsDiv.data("source") == "RadioButtonList") {
-        info["FullType"] = optionsDiv.data("FullType");
-        info["Domain"] = optionsDiv.data("Domain");
-        info["DisplayLabel"] = optionsDiv.data("DisplayLabel");
-        info["DisplayDomainLabel"] = optionsDiv.data("DisplayDomainLabel");
-
-        if(info["Domain"] == "")
-            info["ResourceType"] = "Class";
-        else
-            info["ResourceType"] = "DataProperty";
-            
-    } else if (optionsDiv.data("source") == "OntologyHierarchy") {
-        if($("#toggleOntologyHierarchy").val() == "class") {
-            if(optionsDiv.data("secondColumnSelection") == "") {
-                info["ResourceType"] = "Class";
-                info["FullType"] = optionsDiv.data("firstColumnSelection");
-                info["Domain"] = ""
-                info["DisplayLabel"] = optionsDiv.data("firstColumnDisplayLabel");
-                info["DisplayDomainLabel"] = "";
-                // optionsDiv.data("DisplayLabel", optionsDiv.data("firstColumnDisplayLabel"));
-            } else {
-                info["ResourceType"] = "DataProperty";
-                info["Domain"] = optionsDiv.data("firstColumnSelection");
-                info["FullType"] = optionsDiv.data("secondColumnSelection");
-                info["DisplayLabel"] = optionsDiv.data("secondColumnDisplayLabel");
-                info["DisplayDomainLabel"] = optionsDiv.data("firstColumnDisplayLabel");
-                // optionsDiv.data("DisplayLabel", 
-                    // "<span class='italic'>" + optionsDiv.data("secondColumnDisplayLabel") + "</span> of " + optionsDiv.data("firstColumnDisplayLabel"));
-            }
-        } else {
-            info["ResourceType"] = "DataProperty";
-            info["FullType"] = optionsDiv.data("firstColumnSelection");
-            info["Domain"] = optionsDiv.data("secondColumnSelection");
-            info["DisplayLabel"] = optionsDiv.data("firstColumnDisplayLabel");
-            info["DisplayDomainLabel"] = optionsDiv.data("secondColumnDisplayLabel");
-            // optionsDiv.data("DisplayLabel", 
-                // "<span class='italic'>" + optionsDiv.data("firstColumnDisplayLabel") + "</span> of " + optionsDiv.data("secondColumnDisplayLabel"));
-        }
-    }
-    
-    // Sanity check
-    if(info["FullType"] == "" && info["Domain"] == "")
-        return false;
-    
-    /* Insert it into the array */
-    var semTypesArray = optionsDiv.data("SemanticTypesArray");
-    // Check if same type already exists
-    var exists = false;
-    $.each(semTypesArray, function(index, semType) {
-        if(semType["FullType"] == info["FullType"]) {
-            if(semType["ResourceType"] == info["ResourceType"] && info["ResourceType"] == "Class") {
-                //console.log("Type already exists!");
-                exists = true;
-                return false;
-            } else if (semType["Domain"] == info["Domain"]) {
-                //console.log("Type already exists!");
-                exists = true;
-                return false;                
-            }
-        }
-    });
-    
-    if(exists)
-        return false;
-    semTypesArray.push(info);
-    
-    /* Show it in the table */
     var table = $("#currentSemanticTypesTable");
-    if(semTypesArray.length == 1) {
-        info["isPrimary"] = true;
-        addSemTypeObjectToCurrentTable(info, true);
+    var parentTrTag = $(this).parents("tr");
+    $("tr", table).removeClass('currentEditRow');
+    $("td.CRFSuggestedText", parentTrTag).text("");
+    
+    $(parentTrTag).addClass("currentEditRow");
+    
+    if($(optionsDiv).data("classAndPropertyListJson") == null){
+        alert("Class and property list not yet loaded from the server!");
+        return false;
+    }
+         
+    var classArray = $(optionsDiv).data("classAndPropertyListJson")["elements"][0]["classList"];
+    var propertyArray = $(optionsDiv).data("classAndPropertyListJson")["elements"][0]["propertyList"];
+    
+    // Remove any existing edit window open for other semantic type
+    $("tr.editRow", table).remove();
+    
+    var editTr = $("<tr>").addClass("editRow")
+        .append($("<td>").attr("colspan",5)
+            .append($("<table>")
+                .append($("<tr>")
+                    .append($("<td>")
+                        .append($("<span>").text('Property: '))
+                        .append($("<input>").attr("id","propertyInputBox").attr("type","text").attr("size",14).val($(parentTrTag))))
+                    .append($("<td>")
+                        .append($("<span>").text('  Class: '))
+                        .append($("<input>").attr("id","classInputBox").attr("type","text").attr("size",14))))
+                .append($("<tr>")
+                    .append($("<td>")
+                        .append($("<button>").button().attr("id","browsePropertyList").text("Browse...").click(showPropertyHierarchyWindow)))
+                    .append($("<td>")
+                        .append($("<button>").button().attr("id","browseClassList").text("Browse...").click(showClassHierarchyWindow)))))
+         );
+    
+    editTr.insertAfter(parentTrTag);
+    editTr.addClass("currentEditRow");
+    editTr.data("editRowObject", parentTrTag);
+    
+    if($(parentTrTag).data("ResourceType") == "Class") {
+        $("input#classInputBox").val($(parentTrTag).data("DisplayLabel"));
+        $("input#propertyInputBox").val("");
     } else {
-        info["isPrimary"] = false;
-        addSemTypeObjectToCurrentTable(info, false);
+        $("input#classInputBox").val($(parentTrTag).data("DisplayDomainLabel"));
+        $("input#propertyInputBox").val($(parentTrTag).data("DisplayLabel"));
     }
     
-    // Clear all values
-    optionsDiv.data("secondColumnSelection","");
-    optionsDiv.data("firstColumnSelection","");
+    $("input#propertyInputBox").autocompleteArray(propertyArray, {"autoFill":true, "delay":40});
+    $("input#classInputBox").autocompleteArray(classArray, {"autoFill":true, "delay":40});
+    
+    // Validate the value once the input loses focus
+    $("input#propertyInputBox").blur(validatePropertyInputValue);
+    $("input#classInputBox").blur(validateClassInputValue);
 }
 
-function deleteSemanticTypeFromArrayAndTable() {
-    /* Get the associated type and domain */
-    var trTag = $(this).parents("tr.semTypeRow");
-    var type = $(trTag).data("FullType");
-    var domain = $(trTag).data("Domain");
-    // Remove from table
-    trTag.remove();
+function validatePropertyInputValue() {
+    var optionsDiv = $("#ChangeSemanticTypesDialogBox");
+    var propertyMap = $(optionsDiv).data("classAndPropertyListJson")["elements"][0]["propertyMap"]
+    var propertyInputBox = $("input#propertyInputBox"); 
+    var inputVal = $(propertyInputBox).val();
+    $("div#SemanticTypeErrorWindow").hide();
+    $("table#currentSemanticTypesTable tr").removeClass("fixMe");
     
-    // Delete from the array
-    semTypesArray = $("#ChangeSemanticTypesDialogBox").data("SemanticTypesArray");
-    
-    var selectedIndex = -1;
-    $.each(semTypesArray, function(index, semType){
-        if(semType["FullType"] == type && (semType["Domain"] == domain)) {
-                selectedIndex = index;
-                return false;
+    var found = false;
+    var uri = "";
+    $.each(propertyMap, function(index, prop){
+        for(var key in prop) {
+            if(prop.hasOwnProperty(key)) {
+                if(key == inputVal) {
+                    found = true;
+                    uri = prop[key];
+                }
+            }
         }
     });
-    if(selectedIndex != -1)
-        semTypesArray.splice(selectedIndex, 1);
-    if(semTypesArray.length == 0) {
-        $("table#currentSemanticTypesTable tr").remove();
-        $("span#NoSemanticTypeText").show();
+    
+    if(!found && $.trim(inputVal) != "") {
+        $("span#SemanticTypeErrorWindowText").text("Input data property not valid!");
+        $("div#SemanticTypeErrorWindow").show();
+        return false;
     }
     
-    // Check if it was marked as primary
-    if($("input", trTag).is(":checked") && (semTypesArray.length != 0)){
-        // Mark the first one as primary and trigger the change event
-        var table = $("table#currentSemanticTypesTable");
-        $("input", table).first().attr("checked", true);
-        
-        $("input[name='currentSemanticTypeGroup'][id='"+$("input", table).first().attr('id')+"']:radio").trigger('change');
+    var rowToChange = $(propertyInputBox).parents("tr.editRow").data("editRowObject");
+    var displayLabel = "";
+    
+    if($(rowToChange).data("ResourceType") == "Class") {
+        if($.trim(inputVal) == "")
+            return false;
+        // existing fullType (which was a class) becomes the domain of the chosen data property. So changing from class sem type to data prop sem type
+        var domain = $(rowToChange).data("FullType");
+        var displayDomainLabel = $(rowToChange).data("DisplayLabel");
+        $(rowToChange).data("FullType",uri).data("DisplayLabel",inputVal)
+            .data("Domain", domain).data("DisplayDomainLabel",displayDomainLabel)
+            .data("ResourceType","DataProperty");
+            
+        displayLabel = "<span class='italic'>" + $(rowToChange).data("DisplayLabel") + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
+    } else {
+        // Special case when the property input box is empty (data property sem type changed to class sem type)
+        if($.trim(inputVal) == "" && $(rowToChange).data("Domain") != "") {
+            var newFullType = $(rowToChange).data("Domain");
+            var newDisplayLabel = $(rowToChange).data("DisplayDomainLabel");
+            
+            $(rowToChange).data("ResourceType", "Class").data("FullType",newFullType).data("DisplayLabel", newDisplayLabel).data("Domain","").data("DisplayDomainLabel","");
+            displayLabel = $(rowToChange).data("DisplayLabel");
+        } else {
+            $(rowToChange).data("FullType",uri).data("DisplayLabel",inputVal);
+            displayLabel = "<span class='italic'>" + $(rowToChange).data("DisplayLabel") + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
+        }
+    }
+    $("label.displayLabel", rowToChange).html(displayLabel);
+    
+}
+
+function validateClassInputValue() {
+    var optionsDiv = $("#ChangeSemanticTypesDialogBox");
+    var classMap = $(optionsDiv).data("classAndPropertyListJson")["elements"][0]["classMap"]
+    var classInputBox = $("input#classInputBox");
+    var inputVal = $(classInputBox).val();
+    $("div#SemanticTypeErrorWindow").hide();
+    $("table#currentSemanticTypesTable tr").removeClass("fixMe");
+    
+    var found = false;
+    var uri = "";
+    $.each(classMap, function(index, clazz){
+        for(var key in clazz) {
+            if(clazz.hasOwnProperty(key)) {
+                if(key == inputVal) {
+                    found = true;
+                    uri = clazz[key];
+                }
+            }
+        }
+    });
+    
+    if(!found) {
+        $("span#SemanticTypeErrorWindowText").text("Input class not valid!");
+        $("div#SemanticTypeErrorWindow").show();
+        return false;
+    }
+    
+    var rowToChange = $(classInputBox).parents("tr.editRow").data("editRowObject");
+    var displayLabel = "";
+    if($(rowToChange).data("ResourceType") == "Class") {
+        $(rowToChange).data("FullType",uri).data("DisplayLabel",inputVal);
+        displayLabel = $(rowToChange).data("DisplayLabel");
+    } else {
+        // If no value has been input in the data property box, change from data property sem type to class sem type
+        if($.trim($("input#propertyInputBox").val()) == "") {
+            $(rowToChange).data("ResourceType", "Class").data("FullType",uri).data("DisplayLabel",inputVal);
+            displayLabel = $(rowToChange).data("DisplayLabel");
+        } else {
+            $(rowToChange).data("Domain",uri).data("DisplayDomainLabel",inputVal);
+            displayLabel = "<span class='italic'>" + $(rowToChange).data("DisplayLabel") + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
+        }
+    }
+    $("label.displayLabel", rowToChange).html(displayLabel);
+}
+
+function showClassHierarchyWindow(event) {
+    var classDialogBox = $("div#classOntologyBox");
+    classDialogBox.data("uri","").data("label","");
+    $("input#filterClassByDomain").attr("checked", false);
+    
+    // Get the URI of the class for which we can filter by domain
+    var editRow = $(this).parents("tr.editRow");
+    var typeRow = $(editRow).data("editRowObject");
+    var uriProperty = "";
+    var labelProperty = "";
+    if(typeRow.data("ResourceType") == "DataProperty") {
+        uriProperty = typeRow.data("FullType");
+        labelProperty = typeRow.data("DisplayLabel");
+    } else {
+        uriProperty = typeRow.data("Domain");
+        labelProperty = typeRow.data("DisplayDomainLabel");
+    }
+    $("div#propertyOntologyBox").data("propertyUri", uriProperty);
+    $("div#propertyOntologyBox").data("propertyLabel", labelProperty);
+    if(labelProperty != "")
+        $("span#propertyName").text(":" + labelProperty);
+    
+    // Send the AJAX request
+    var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "GetOntologyClassHierarchyCommand";
+    
+    var returned = $.ajax({
+        url: "/RequestController", 
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete : 
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                var dataArray = json["elements"][0]["data"];
+                // populateClassTreeHierarchy(dataArray);
+                populateTreeHierarchy(dataArray, $("div#classTree"), classDialogBox, submitClassFromHierarchyWindow);
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while fetching ontology data!" + textStatus);
+            }
+    });
+}
+
+function showPropertyHierarchyWindow(event) {
+    var propertyDialogBox = $("div#propertyOntologyBox");
+    propertyDialogBox.data("uri","").data("label","");
+    $("input#filterPropertyByDomain").attr("checked", false);
+    
+    // Get the URI of the class for which we can filter by domain
+    var editRow = $(this).parents("tr.editRow");
+    var typeRow = $(editRow).data("editRowObject");
+    var uriClass = "";
+    var labelClass = "";
+    if(typeRow.data("ResourceType") == "Class") {
+        uriClass = typeRow.data("FullType");
+        labelClass = typeRow.data("DisplayLabel");
+    } else {
+        uriClass = typeRow.data("Domain");
+        labelClass = typeRow.data("DisplayDomainLabel");
+    }
+    $("div#propertyOntologyBox").data("classUri", uriClass);
+    $("div#propertyOntologyBox").data("classLabel", labelClass);
+    if(labelClass != "")
+        $("span#className").text(":" + labelClass);
+    
+    // Send the AJAX request
+    var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "GetDataPropertyHierarchyCommand";
+    
+    var returned = $.ajax({
+        url: "/RequestController", 
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete : 
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                var dataArray = json["elements"][0]["data"];
+                // populatePropertyTreeHierarchy(dataArray);
+                populateTreeHierarchy(dataArray, $("div#propertyTree"), propertyDialogBox, submitPropertyFromHierarchyWindow);
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while fetching ontology data!" + textStatus);
+            }
+    });
+}
+
+function populateTreeHierarchy(dataArray, treeDiv , dialogBox, submitHandler) {
+    if(dataArray.length == 0) {
+        $(treeDiv).html("<i>none</i>")
+    } else {
+        $(treeDiv).jstree({
+            "json_data" : {
+                "data" : dataArray
+            },
+            "themes" : {
+                "theme" : "apple",
+                "url": "css/jstree-themes/apple/style.css",
+                "dots" : true,
+                "icons" : false
+            },
+            "search" : {
+                "show_only_matches": true
+            },
+            "plugins" : [ "themes", "json_data", "ui" ,"sort", "search"]
+        }).bind("select_node.jstree", function (e, data) { 
+            dialogBox.data("uri",data.rslt.obj.data("URI"))
+                  .data("label",data.rslt.obj.context.lastChild.wholeText);
+        });
+        dialogBox.dialog({height: 450, buttons: { 
+                "Cancel": function() { $(this).dialog("close"); },  
+                "Submit":submitHandler }
+        });
     }
 }
 
-function populatefirstColumnOntologyBox(){
-	var optionsDiv = $("#ChangeSemanticTypesDialogBox")
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	
-	if($("#toggleOntologyHierarchy").val() == "class")
-		info["command"] = "GetOntologyClassHierarchyCommand";
-	else 
-		info["command"] = "GetDataPropertyHierarchyCommand";
-		
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			//alert(xhr.responseText);
-	    		var json = $.parseJSON(xhr.responseText);
-	    		var dataArray = json["elements"][0]["data"];
-	    		
-	    		var listDiv = $("div#firstColumnTree");
-	    		
-	    		if(dataArray.length == 0) {
-	    			$(listDiv).html("<i>none</i>")
-	    		} else {
-	    			$(listDiv).jstree({ 
-						"json_data" : {
-							"data" : dataArray
-						},
-						"themes" : {
-							"theme" : "apple",
-							"url": "css/jstree-themes/apple/style.css",
-							"dots" : true,
-							"icons" : false
-						},
-						
-						"plugins" : [ "themes", "json_data", "ui" ,"sort", "search"]
-					}).bind("select_node.jstree", function (e, data) { 
-						optionsDiv.data("source","OntologyHierarchy")
-						      .data("firstColumnSelection",data.rslt.obj.data("URI"))
-						      .data("firstColumnDisplayLabel",data.rslt.obj.context.lastChild.wholeText);
-						
-						$("input[name='semanticTypeGroup']:radio").attr("checked", false);
-						$("#UnassignTypeButton").attr('checked',false);
-						populateSecondColumnOntologyBox();
-					});
-	    		} 
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured while fetching ontology data!" + textStatus);
-		   	}
-	});
+function submitPropertyFromHierarchyWindow() {
+    var propertyDialogBox = $("div#propertyOntologyBox");
+    var uri = propertyDialogBox.data("uri");
+    var label = propertyDialogBox.data("label");
+    
+    if(uri == "") {
+        alert("Nothing to submit! Please select from the hierarchy!");
+        return false;
+    }
+    
+    var propertyInputBox = $("input#propertyInputBox");
+    propertyInputBox.val(label);
+    validatePropertyInputValue();
+    
+    $(this).dialog("close");
 }
 
-function populateSecondColumnOntologyBox() {
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["URI"] = $("#ChangeSemanticTypesDialogBox").data("firstColumnSelection");
-	
-	if($("#toggleOntologyHierarchy").val() == "class")
-		info["command"] = "GetDataPropertiesForClassCommand";
-	else 
-		info["command"] = "GetDomainsForDataPropertyCommand";
-		
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			//alert(xhr.responseText);
-	    		var json = $.parseJSON(xhr.responseText);
-	    		var dataArray = json["elements"][0]["data"];
-	    		var listDiv = $("div#secondColumnTree");
-	    		
-	    		if(dataArray.length == 0) {
-	    			$(listDiv).html("<i>none</i>")
-	    		} else {
-	    			$(listDiv).jstree({ 
-						"json_data" : {
-							"data" : dataArray
-						},
-						"themes" : {
-							"theme" : "apple",
-							"url": "css/jstree-themes/apple/style.css",
-							"dots" : true,
-							"icons" : false
-						},
-						
-						"plugins" : [ "themes", "json_data", "ui" ,"sort", "search"]
-					}).bind("select_node.jstree", function (e, data) {
-						$("#ChangeSemanticTypesDialogBox").data("secondColumnSelection",data.rslt.obj.data("URI"))
-						  .data("secondColumnDisplayLabel",data.rslt.obj.context.lastChild.wholeText);
-					});
-	    		}
-	    		
-				$("div#secondColumnOntologyBox").show();
-				$("td#secondColumnLabel").show();
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured while fetching ontology data!" + textStatus);
-		   	}		   
-	});
+function submitClassFromHierarchyWindow() {
+    var classDialogBox = $("div#classOntologyBox");
+    var uri = classDialogBox.data("uri");
+    var label = classDialogBox.data("label");
+    
+    if(uri == "") {
+        alert("Nothing to submit! Please select from the hierarchy!");
+        return false;
+    }
+    
+    var classInputBox = $("input#classInputBox");
+    classInputBox.val(label);
+    validateClassInputValue();
+    
+    $(this).dialog("close");
+}
+
+function semanticTypesTableCheckBoxHandler() {
+    var optionsDiv = $("#ChangeSemanticTypesDialogBox");
+    var existingTypesArray = optionsDiv.data("existingTypes");
+    var parentTr = $(this).parents("tr");
+    var table = $("table#currentSemanticTypesTable");
+    
+    // If it was checked
+    if($(this).is(':checked')) {
+        parentTr.addClass("selected");
+        
+        if($("tr.selected", table).length == 1)
+            $("input[name='isPrimaryGroup']:radio", parentTr).prop('checked',true);
+    }
+    // If it was unchecked
+    else {     
+        parentTr.removeClass("selected");
+        // If the row was marked as primary, make some other selected row as primary
+        if($("input[name='isPrimaryGroup']:radio", parentTr).is(':checked')) {
+            if($("tr.selected",table).length == 0)
+                $("input[name='isPrimaryGroup']:radio", parentTr).prop('checked',false);
+            else {
+                $.each($("tr.selected",table), function(index, row){
+                    if(index == 0) {
+                        $("input[name='isPrimaryGroup']:radio", row).prop('checked',true);
+                        return false;
+                    }       
+                });
+            }
+        }
+    }
+}
+
+function getCurrentSelectedTypes() {
+    var existingTypes = new Array();
+    var table = $("#currentSemanticTypesTable");
+    
+    var notValid = false;
+    // Loop through each selected row in the table
+    $.each($("tr.selected",table), function(index, row){
+        var fullType = $(row).data("FullType");
+        var domain = $(row).data("Domain");
+        
+        // Check if the user selected a fake semantic type object
+        if(domain == "fakeDomainURI" || fullType == "fakePropertyURI") {
+            $(row).addClass("fixMe");
+            $("span#SemanticTypeErrorWindowText").text("Semantic type not valid!");
+            $("div#SemanticTypeErrorWindow").show();
+            notValid = true;
+            return false;
+        }
+        // Check if the type already exists (like the user had same type in a previous row)
+        var exists = false;
+        $.each(existingTypes, function(index2, type){
+            if(type["Domain"] == domain && fullType == type["FullType"]) {
+                exists = true;
+                return false;
+            }
+        })
+        if(exists)
+            return false;
+            
+        // Create a new object and push it into the array
+        var newType = new Object();
+        newType["FullType"] = fullType;
+        newType["Domain"] = domain;
+        
+        // Check if it was chosen primary
+        newType["isPrimary"] = $("input[name='isPrimaryGroup']:radio", $(row)).is(":checked");
+        existingTypes.push(newType);
+    });
+    if(notValid)
+        return null;
+        
+    return existingTypes;
 }
 
 function submitSemanticTypeChange() {
 	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
 	
+	// Get the JSON Array that captures all the currently selected semantic types
+	var semTypesArray = getCurrentSelectedTypes();
+	if(semTypesArray == null)
+	   return false;
+	
 	var info = new Object();
 	var hNodeId = optionsDiv.data("currentNodeId");
-	info["command"] = "SetSemanticTypeCommand";
 	info["vWorksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
 	info["hNodeId"] = hNodeId;
 	info["isKey"] = $("input#chooseClassKey").is(":checked");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["SemanticTypesArray"] = JSON.stringify(optionsDiv.data("SemanticTypesArray"));
+	info["SemanticTypesArray"] = JSON.stringify(semTypesArray);
 	
-	if(optionsDiv.data("SemanticTypesArray").length == 0)
+	if(semTypesArray.length == 0)
 	    info["command"] = "UnassignSemanticTypeCommand";
     else
         info["command"] = "SetSemanticTypeCommand";
@@ -521,6 +688,7 @@ function submitSemanticTypeChange() {
 	   		function (xhr, textStatus) {
 	    		var json = $.parseJSON(xhr.responseText);
 	    		parse(json);
+	    		$(optionsDiv).removeData("classAndPropertyListJson");
 	    		hideLoading(info["vWorksheetId"]);
 		   	},
 		error :

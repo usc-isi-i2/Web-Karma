@@ -44,6 +44,8 @@ and related projects, please see: http://www.isi.edu/integration
 		<link rel="stylesheet" type="text/css" href="./css/jquery.qtip.min.css" />
 		<link rel="stylesheet" type="text/css" href="./css/sticky.min.css" />
 		<link rel="stylesheet" type="text/css" href="./css/cleaning.css" />
+		<link rel="stylesheet" type="text/css" href="./css/alignment.css" />
+		<link rel="stylesheet" type="text/css" href="./css/jquery.autocomplete.css" />
 		
 		
 		<!-- Third Party JavaScript files		 -->
@@ -61,6 +63,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<script type="text/javascript" src="js/jquery.jeditable.js"></script>
 		<script type="text/javascript" src="js/json2.js"></script>
 		<script type="text/javascript" src="js/jquery.cookie.js"></script>
+		<script type="text/javascript" src="js/jquery.autocomplete.js"></script>
 		
 		<!-- Home grown JavaScript files -->
 		<script type="text/javascript" src="js/table_manipulation.js"></script>
@@ -471,51 +474,40 @@ and related projects, please see: http://www.isi.edu/integration
 		<div id="ChangeSemanticTypesDialogBox" style="display: none">
 			<div id="CurrentSemanticTypesBox" class="ui-corner-all">
 				<span class="mediumSizedFont">Semantic types:</span>
-				<table id="currentSemanticTypesTable"></table>
-				<span id="NoSemanticTypeText" style="display: none" class="italic smallSizedFont">&nbsp;&nbsp;none.</span>
-			</div>
-			
-			<span class="mediumSizedFont">Suggested semantic types:</span>
-			<table id="CRFSuggestedLabelsTable"></table>
-			<br>
-			<span class="mediumSizedFont">Choose from ontology</span>
-			<div id="ontologyOptionsTable">
-				<table>
-				<tr>
-					<td colspan="2">
-						Search by: 
-							<select id="toggleOntologyHierarchy">
-								<option value="class">Class</option>
-								<option value="dataProperty">Data Property</option>
-							</select>
-					</td>
-				</tr>
-				<tr>
-					<td id="firstColumnLabel">Class</td>
-					<td id="secondColumnLabel">Data Property</td>
-				</tr>
-				<tr>
-					<td valign="top">
-						<div id="firstColumnOntologyBox">
-							<input type="text" id="firstColumnKeyword" maxlength="100" size="20"/>
-							<button id="submitFirstColumnSearch">Search</button>
-							<br /><br />
-							<div id="firstColumnTree"></div>
-						</div>
-					</td>
-					<td valign="top">
-						<div id="secondColumnOntologyBox">
-							<input type="text" id="secondColumnKeyword" maxlength="100" size="20"/>
-							<button id="submitSecondColumnSearch">Search</button>
-							<br /><br />
-							<div id="secondColumnTree"></div>
-						</div>
-					</td>
-				</tr>
+				<table id="currentSemanticTypesTable">
+					<tr><td /><td /><td>Primary</td><td /></tr>
 				</table>
+				<br />
+				<button id="addSemanticType">Add synonym semantic type</button>
+			</div>
+			<div class="ui-widget" id="SemanticTypeErrorWindow" style="display: none">
+				<br />
+				<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"> 
+					<p id="semanticTypeErrorWindow"><span class="ui-icon ui-icon-alert" 
+							style="float: left; margin-right: .3em;"></span> 
+					<span id="SemanticTypeErrorWindowText"></span></p>
+					<br />
+				</div>
+				<br />
 			</div>
 			<input type="checkbox" id="chooseClassKey" />
 			<label for="chooseClassKey" class="smallSizedFont">Mark as key for the class.</label><br />
+		</div>
+		<div id="propertyOntologyBox" style="display: none">
+			<input id="filterPropertyByDomain" type="checkbox"/>
+			<label for="filterPropertyByDomain">Show properties with domain</label><span id="className"></span><br /><br />
+			<input type="text" id="propertyKeyword" maxlength="100" size="20"/>
+			<button id="propertySearch">Search</button>
+			<br /><br />
+			<div id="propertyTree"></div>
+		</div>
+		<div id="classOntologyBox" style="display: none">
+			<input id="filterClassByDomain" type="checkbox"/>
+			<label for="filterClassByDomain">Show domain classes for property</label><span id="propertyName"></span><br /><br />
+			<input type="text" id="classKeyword" maxlength="100" size="20"/>
+			<button id="classSearch">Search</button>
+			<br /><br />
+			<div id="classTree"></div>
 		</div>
 		<div id="OntologyAlternativeLinksPanel" style="display: none">
 			<span class="mediumSizedFont">Choose parent relationship:</span>

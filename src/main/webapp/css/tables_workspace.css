@@ -404,40 +404,7 @@ div#columnHeadingDropDownMenu button {
 	width: 60px;
 }
 
-table#CRFSuggestedLabelsTable {
-	border-collapse: collapse;
-}
-
-div#ontologyOptionsTable {
-	font-size: 10px;
-	display: block;
-}
-
-div#ontologyOptionsTable td{
-	padding: 5px;
-}
-
-div#firstColumnTree {
-	overflow: auto;
-	max-height: 200px;
-}
-
-div#secondColumnTree {
-	overflow: auto;
-	max-height: 200px;
-}
-
-table#CRFSuggestedLabelsTable td {
-	padding: 4px;
-	font-size: 10px;
-}
-
 table#UnassignedLabelTable td {
-	padding: 4px;
-	font-size: 10px;
-}
-
-table#AlternativeParentLinksTable td {
 	padding: 4px;
 	font-size: 10px;
 }

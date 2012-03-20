@@ -661,21 +661,18 @@ function parse(data) {
 		
 		/* Update the cell value */
 		else if(element["updateType"] == "NodeChangedUpdate") {
-			var tdTag = $("td#" + element.nodeId); 
-			if(element.newValue.length > 20) {
-				var valueToShow = element.newValue.substring(0,20);
-				$(tdTag).children("span.cellValue").text(valueToShow + "...");
-				$(tdTag).data("fullValue", element.newValue);
-				$(tdTag).addClass("expandValueCell");
-			} else {
-				if($(tdTag).hasClass("expandValueCell")){
-					$(tdTag).removeClass("expandValueCell");
-					$.removeData($(tdTag), "fullValue");
-				}
-				$(tdTag).children("span.cellValue").text(element.newValue);
-			}
+			var tdTag = $("td#" + element.nodeId);
+			$(tdTag).children("span.cellValue").text(element.displayValue);
 			
-			if(element.newStatus == "E"){
+			$(tdTag).removeClass('hasTruncatedValue');
+			$.removeData($(tdTag), 'fullValue');
+			
+			if(element["isTruncated"]) {
+                tdTag.addClass("hasTruncatedValue")
+                    .data("fullValue", element["fullValue"]);
+            }
+            
+            if(element.newStatus == "E"){
 				tdTag.children("span.cellValue").addClass("editedValue");
 			}
 			else {
