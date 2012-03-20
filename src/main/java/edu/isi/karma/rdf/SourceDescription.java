@@ -390,6 +390,11 @@ public class SourceDescription {
 		String s = "";
 		//for each leaf of the tree
 		for(Vertex child: steinerTree.vertexSet()){
+			if(child.getSemanticType()==null){
+				//only if the node id mapped to a column it will have a semantic type
+				return null;
+			}
+			//logger.info("Syn for3 " + child.getSemanticType().getHNodeId());
 			SynonymSemanticTypes synonyms = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(child.getSemanticType().getHNodeId());
 			//logger.info("Syn for " + factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName() + " is " + synonyms);
 			if(synonyms!=null){
