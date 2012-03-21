@@ -23,7 +23,6 @@ package edu.isi.karma.service;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jetty.http.HttpMethods;
@@ -34,7 +33,6 @@ public class Request {
 	private URL url;
 	private String endPoint;
 	private List<Param> params;
-	private Table paramTable;
 
 	public Request(URL url) {
 		this.type = HttpMethods.GET;
@@ -77,28 +75,19 @@ public class Request {
 
 	public void setParams(List<Param> params) {
 		this.params = params;
-		updateTableFromParamList();
 	}
 
-	public Table getParamTable() {
-		return paramTable;
-	}
-
-	public void setParamTable(Table paramTable) {
-		this.paramTable = paramTable;
-	}
-
-	public void updateTableFromParamList() {
-		
-		this.paramTable = new Table();
-		
-		for (Param p : params) {
-			paramTable.getColumns().add(p.getName());
-			paramTable.getTypes().add(IOType.INPUT);
-			List<String> values = new ArrayList<String>();
-			values.add(p.getValue());
-			paramTable.getValues().add(values);
-		}
-	}
+//	public void createTableFromParamList() {
+//		
+//		this.paramTable = new Table();
+//		
+//		for (Param p : params) {
+//			paramTable.getColumns().add(p.getName());
+//			paramTable.getTypes().add(IOType.INPUT);
+//			List<String> values = new ArrayList<String>();
+//			values.add(p.getValue());
+//			paramTable.getValues().add(values);
+//		}
+//	}
 	
 }
