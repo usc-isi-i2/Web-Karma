@@ -39,6 +39,6 @@ public class GenerateCleaningRulesCommandFactory extends CommandFactory {
 		String examples = request.getParameter(Arguments.examples.name());
 		
 		System.out.println("Examples:" + examples);
-		return new GenerateCleaningRulesCommand(getNewId(vWorkspace), getWorksheetId(request, vWorkspace), hNodeId);
+		return new GenerateCleaningRulesCommand(getNewId(vWorkspace), getWorksheetId(request, vWorkspace), hNodeId, examples);
 	}
 }

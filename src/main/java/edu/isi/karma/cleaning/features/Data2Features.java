@@ -80,10 +80,15 @@ public class Data2Features {
 		{
 			CSVWriter cw = new CSVWriter(new FileWriter(new File(fpath)),',');
 			//wrtie header into the csvfile
-			String[] syms = RegularityFeatureSet.targets;
-			String[] xyz = new String[syms.length+2];
+			
 			//xyz[0] = "name";
-			for(int i = 0; i<syms.length; i++)
+			
+			Vector<String> oexamples = new Vector<String>();
+			Vector<String> examples = new Vector<String>();
+			RegularityFeatureSet rfs = new RegularityFeatureSet();
+			Collection<Feature> cols = rfs.computeFeatures(examples, oexamples);
+			String[] xyz = new String[rfs.fnames.size()+1];
+			for(int i = 0; i<xyz.length-1; i++)
 			{
 				xyz[i] ="a_"+i;
 			}
