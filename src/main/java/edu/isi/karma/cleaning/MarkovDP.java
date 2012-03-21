@@ -189,6 +189,7 @@ public class MarkovDP {
 	public Vector<String> sampleAction(int index)
 	{
 		Vector<String> result = new Vector<String>();
+		Vector<String> tmpresult = new Vector<String>(); // if no consistent intermediate rule, use the rest
 		if(index >= spaces.size())
 		{
 			return null;
@@ -203,11 +204,12 @@ public class MarkovDP {
 				gtree.buildTree("rule", gn);
 				gtree.root = gn;
 				String r = gtree.toString();
-				//if(gtree.isRuleConsistent(r))
-				//{	
+				tmpresult.add(r);
+				if(gtree.isRuleConsistent(r))
+				{	
 					result.add(r);
 					//i++;
-				//}
+				}
 				i++;
 			}
 			//System.out.println("vv");
@@ -217,6 +219,8 @@ public class MarkovDP {
 			System.out.println("sampling error:"+ex.toString());
 			System.exit(1);
 		}
+		if(result.size()==0)
+			return tmpresult;
 		return result;
 	}
 	//search algorithm: the least value of cost
@@ -295,11 +299,11 @@ public class MarkovDP {
 	}	
 	public int getWidth()
 	{
-		return 10;
+		return 8;
 	}
 	public int getDeepth()
 	{
-		return 4;
+		return 3;
 	}
 	//sample the index according to length, the short the better
 	//length value = 1/Length

@@ -63,11 +63,11 @@ public class MovFeature implements Feature {
 			}
 			if(tmp.containsKey(direction))
 			{
-				tmp.put(cnt, tmp.get(cnt)+1);
+				tmp.put(direction, tmp.get(direction)+1);
 			}
 			else
 			{
-				tmp.put(cnt, 1);
+				tmp.put(direction, 1);
 			}
 		}
 		Integer a[] = new Integer[tmp.keySet().size()];
@@ -92,7 +92,7 @@ public class MovFeature implements Feature {
 	@Override
 	public double getScore() {
 		// TODO Auto-generated method stub
-		return 0;
+		return this.score;
 	}
 
 }

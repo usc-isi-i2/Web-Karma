@@ -30,8 +30,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.Vector;
 
 import org.antlr.runtime.ANTLRStringStream;
@@ -663,14 +665,18 @@ public class Main {
 		Vector<Integer> exampleCnt = new Vector<Integer>();
 		Vector<Double> timeleng = new Vector<Double>();
 		Vector<Integer> cRuleNum = new Vector<Integer>();
+		Vector<Vector<Integer>> ranks = new Vector<Vector<Integer>>();
+		Vector<Vector<Integer>> consisRules = new Vector<Vector<Integer>>();
 		Vector<String> cRules = new Vector<String>();
 		//list all the csv file under the dir
-		
 		for(File f:allfiles)
 		{
 			String cx = "";
+			
 			Vector<String[]> examples = new Vector<String[]>();
 			Vector<String[]> entries = new Vector<String[]>();	
+			Vector<Integer> rank = new Vector<Integer>();
+			Vector<Integer> consRule = new Vector<Integer>();
 			try
 			{
 				if(f.getName().indexOf(".csv")==(f.getName().length()-4))
@@ -678,19 +684,22 @@ public class Main {
 					
 					CSVReader cr = new CSVReader(new FileReader(f),'\t');
 					String[] pair;
+					String corrResult = "";
 					while ((pair=cr.readNext())!=null)
 					{
 						pair[0] = "%"+pair[0]+"@";
 						entries.add(pair);
+						corrResult += pair[1]+"\n";
 					}
+					HashMap<Integer,Boolean> indicators = new HashMap<Integer,Boolean>();
 					examples.add(entries.get(0));
 					boolean isend = false;
-					int corrNum = 0;
 					double timespan = 0.0;
-					
-					while(corrNum==0)
+					int Ranktermin = 10;
+					while(Ranktermin>=3||Ranktermin == -1)
 					{
 						cx = "";
+						HashMap<String,Integer> dic = new HashMap<String,Integer>();
 						long st = System.currentTimeMillis();
 						Vector<String> pls = RuleUtil.genRule(examples);
 						System.out.println("Consistent Rules :"+pls.size());
@@ -698,13 +707,13 @@ public class Main {
 						{
 							System.out.println(examples.get(k)[0]+"    "+examples.get(k)[1]);
 						}
-						/*for(int n = 0; n<pls.size();n++)
-						{
-							System.out.println(pls.get(n));
-						}*/
+						int corrNum = 0;
 						String[] wexam = null;
+						if(pls.size()==0)
+							continue;
 						for(int i = 0; i<pls.size(); i++)
 						{		
+							String tranresult = "";
 							cx +="\n\n"+pls.get(i);
 							String[] rules = pls.get(i).split("#");
 							//System.out.println(""+s1);
@@ -718,25 +727,113 @@ public class Main {
 							for(int j = 0; j<entries.size(); j++)
 							{
 								String s = RuleUtil.applyRule(xr, entries.get(j)[0]);
-								if(s== null)
+								if(s== null||s.length()==0)
 								{
 									isend = false;
 									wexam = entries.get(j);
-									break;
+									s = entries.get(j)[0];
+									//break;
 								}
 								if(s.compareTo(entries.get(j)[1])!=0)
 								{
 									isend = false;
 									wexam = entries.get(j);
-									break;
+									//break;
 								}
+								tranresult += s+"\n";								
+							}
+							if(dic.containsKey(tranresult))
+							{
+								dic.put(tranresult, dic.get(tranresult)+1);
+							}
+							else
+							{
+								dic.put(tranresult, 1);
 							}
 							if(isend)
 								corrNum++;
-						}
+						}	
 						long ed = System.currentTimeMillis();
 						timespan = (ed -st)*1.0/60000;
-						if(wexam!=null&&corrNum<=0)
+						
+						String trainPath = "/Users/bowu/Research/features.arff";
+						int trnk = UtilTools.rank(dic, corrResult, trainPath);
+						Ranktermin = trnk;
+						if(!indicators.containsKey(examples.size()))
+						{
+							if(!recdic.containsKey(f.getName()))
+							{
+								HashMap<String,Vector<Double>> tmp = new HashMap<String,Vector<Double>>();
+								if(tmp.containsKey(""+examples.size()))
+								{
+									Vector<Double> x = tmp.get(""+examples.size());
+									x.set(0, x.get(0)+RuleUtil.sgsnum);
+									x.set(1, x.get(1)+pls.size());
+									x.set(2, x.get(2)+corrNum);
+									if(trnk<=3 && trnk>=0)
+										x.set(3, x.get(3)+1);
+									x.set(4, x.get(4)+dic.keySet().size());
+									x.set(5,x.get(5)+1);
+								}
+								else
+								{
+									Vector<Double> x = new Vector<Double>();
+									x.add(1.0*RuleUtil.sgsnum);
+									x.add(1.0*pls.size());
+									x.add(1.0*corrNum);
+									if(trnk<=3 && trnk>=0)
+									{	x.add(1.0);}
+									else
+									{
+										x.add(0.0);}
+									x.add(1.0*dic.keySet().size());
+									x.add(1.0);
+									tmp.put(""+examples.size(), x);
+								}
+								recdic.put(f.getName(), tmp);
+							}
+							else
+							{
+								HashMap<String,Vector<Double>> tmp = recdic.get(f.getName());
+								if(tmp.containsKey(""+examples.size()))
+								{
+									Vector<Double> x = tmp.get(""+examples.size());
+									x.set(0, x.get(0)+RuleUtil.sgsnum);
+									x.set(1, x.get(1)+pls.size());
+									x.set(2, x.get(2)+corrNum);
+									if(trnk<=3 && trnk>=0)
+										x.set(3, x.get(3)+1);
+									x.set(4, x.get(4)+dic.keySet().size());
+									x.set(5,x.get(5)+1);
+								}
+								else
+								{
+									Vector<Double> x = new Vector<Double>();
+									x.add(1.0*RuleUtil.sgsnum);
+									x.add(1.0*pls.size());
+									x.add(1.0*corrNum);
+									if(trnk<=3 && trnk>=0)
+									{	x.add(1.0);}
+									else
+									{
+										x.add(0.0);}
+									x.add(1.0*dic.keySet().size());
+									x.add(1.0);
+									tmp.put(""+examples.size(), x);
+								}
+							}
+						}
+						indicators.put(examples.size(), true); 
+						String[] choice = UtilTools.results.get(UtilTools.index).split("\n");
+						for(int n = 0; n<choice.length;n++)
+						{
+							if(choice[n].compareTo(entries.get(n)[1])!=0)
+							{
+								wexam = entries.get(n);
+								break;
+							}
+						}
+						if(wexam!=null)
 						{
 							examples.add(wexam);
 						}
@@ -744,8 +841,11 @@ public class Main {
 					names.add(f.getName());
 					exampleCnt.add(examples.size());
 					timeleng.add(timespan);
-					cRuleNum.add(corrNum);
+					//cRuleNum.add(corrNum);
 					cRules.add(cx);
+					ranks.add(rank);
+					consisRules.add(consRule);
+					
 				}
 			}
 			catch(Exception ex)
@@ -764,6 +864,8 @@ public class Main {
 			bw.write("\n");
 			bw.write(""+cRules.get(x));
 			System.out.println(names.get(x)+":"+exampleCnt.get(x)+","+timeleng.get(x)+","+cRuleNum.get(x));
+			System.out.println(ranks.get(x));
+			System.out.println(consisRules.get(x));
 		}
 		bw.flush();
 		}
@@ -773,17 +875,56 @@ public class Main {
 		}
 		
 	}
+	public HashMap<String,HashMap<String,Vector<Double>>> recdic = new HashMap<String,HashMap<String,Vector<Double>>>();
+	public void write2CSV()
+	{
+		try
+		{
+			CSVWriter cw = new CSVWriter(new FileWriter(new File("./exper.csv")));
+			Set<String> sy = recdic.keySet();
+			Iterator<String> iter = sy.iterator();
+			while(iter.hasNext())
+			{
+				String key = iter.next();
+				System.out.println(""+key);
+				HashMap<String,Vector<Double>> values = recdic.get(key);
+				Set<String> ks = values.keySet();
+				Iterator<String> iter1 = ks.iterator();
+				while(iter1.hasNext())
+				{
+					String[] row = new String[8];
+					String expcnt = iter1.next();
+					Vector<Double> vs = values.get(expcnt);
+					for(int j = 0; j<vs.size();j++)
+					{
+						row[j+2] = vs.get(j)+"";
+					}
+					row[0] = key;
+					row[1] = expcnt;
+					System.out.println(""+row);
+					cw.writeNext(row);
+				}
+			}
+			cw.flush();
+			cw.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println(""+e.toString());
+		}
+	}
 	public static void main(String[] args)
 	{
 		Main m = new Main();
 		Vector<Double> xy = new Vector<Double>();
-		for(int x = 0;x < 1;x++)
+		for(int x = 0;x < 10;x++)
 		{
 			double st = System.currentTimeMillis();
-			m.exper_2("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/test");
+			m.exper_2("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/pos");
 			double ed = System.currentTimeMillis();
 			xy.add((ed-st)*1.0/60000);
 		}
+		m.write2CSV();
 		for(int i= 0; i<xy.size();i++)
 		{
 			System.out.println(""+xy.get(i));
