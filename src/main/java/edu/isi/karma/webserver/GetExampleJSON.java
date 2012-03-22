@@ -100,7 +100,7 @@ public class GetExampleJSON extends HttpServlet {
 		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
 		imp.generateWorksheet();
 		*/
-		/*
+		
 		//load ontologies
 		OntologyManager om = workspace.getOntologyManager();
 		
@@ -115,7 +115,7 @@ public class GetExampleJSON extends HttpServlet {
 		//rdfs ontology
 		om.doImport(new File("../demofiles/rdfs_subset.owl"));
 		om.doImport(new File("../demofiles/uscont.owl"));
-*/
+	*/
 		//////////////
 
 		// Initialize the Outlier tag
