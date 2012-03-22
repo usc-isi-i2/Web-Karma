@@ -100,6 +100,8 @@ public class RegularityFeatureSet implements FeatureSet {
 		//counting feature
 		String[] symbol = {"#",";",",","!","~","@","$","%","^","&","*","(",")","_","-","{","}","[","]","\"","'",":","?","<",">","."};
 		Vector<CntFeature> cntfs = new Vector<CntFeature>(symbol.length);
+		//moving feature
+		Vector<MovFeature> movfs = new Vector<MovFeature>(symbol.length);
 		for(int i=0; i<symbol.length;i++)
 		{
 			TNode t = new TNode(TNode.SYBSTYP,symbol[i]);
@@ -107,6 +109,8 @@ public class RegularityFeatureSet implements FeatureSet {
 			li.add(t);
 			cntfs.add(i,new CntFeature(this.otokenseqs,this.tokenseqs,li));
 			cntfs.get(i).setName("entr_cnt_"+symbol[i]);
+			movfs.add(i,new MovFeature(this.otokenseqs,this.tokenseqs,li));
+			movfs.get(i).setName("entr_mov"+symbol[i]);
 		}
 		//count the blank, symbol  wrd and number token
 		TNode t = new TNode(TNode.BNKTYP,TNode.ANYTOK);
@@ -134,6 +138,7 @@ public class RegularityFeatureSet implements FeatureSet {
 		cntfs.add(cf2);
 		cntfs.add(cf3);
 		r.addAll(cntfs);
+		r.addAll(movfs);
 		for(int i= 0; i<r.size();i++)
 		{
 			fnames.add(r.get(i).getName());

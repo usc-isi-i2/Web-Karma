@@ -36,14 +36,17 @@ public class Test {
 		int size = 5;
 		File[] f = new File[size];
 		
+		f[0] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\vivo-core-public-1.4.owl");
+		f[1] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\uscont.owl");
+		f[2] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\rdfs_subset.owl");
 		
-		f[0] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\vivo1.4-protege.owl");
-		f[1] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\sample.owl");
-		f[2] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\Wiki.owl");
-		f[3] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\DoveTailOntoRDF.owl");
-		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\Dovetail_ISI_mod.owl");
+//		f[0] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\vivo1.4-protege.owl");
+//		f[1] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\sample.owl");
+//		f[2] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\Wiki.owl");
+//		f[3] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\DoveTailOntoRDF.owl");
+//		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\Dovetail_ISI_mod.owl");
 		
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 3; i++) {
 			ontManager.doImport(f[i]);
 		}
 	}
@@ -125,22 +128,34 @@ public class Test {
 		
 		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
 		
-		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
 		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#email", 
 				"http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
 		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#phoneNumber", 
-				"http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#faxNumber", 
 				"http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
 		semanticTypes.add( new SemanticType(null, "http://xmlns.com/foaf/0.1/firstName", 
 				"http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
 		semanticTypes.add( new SemanticType(null, "http://xmlns.com/foaf/0.1/lastName", 
 				"http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#Position", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, "http://www.w3.org/2000/01/rdf-schema#label", 
+				"http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#preferredTitle", 
+				"http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, "http://www.usc.edu/ontology/local#organizationID", 
+				"http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, "http://www.w3.org/2000/01/rdf-schema#label", 
+				"http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, "http://www.usc.edu/ontology/local#personID", 
+				"http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
+
+
+
+
+//		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#Position", null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
 		
 		return semanticTypes;
 	}
@@ -160,15 +175,26 @@ public class Test {
 		List<SemanticType> semTypes4 = createTestInput4();
 
 		Alignment alignment = null;
-		alignment = new Alignment(ontManagar, semTypes1);
-		alignment = new Alignment(ontManagar, semTypes2);
-		alignment = new Alignment(ontManagar, semTypes3);
+//		alignment = new Alignment(ontManagar, semTypes1);
+//		alignment = new Alignment(ontManagar, semTypes2);
+//		alignment = new Alignment(ontManagar, semTypes3);
 		alignment = new Alignment(ontManagar, semTypes4);
 		
 		
 //		alignment.getSteinerTree();
 //		GraphUtil.printGraph(alignment.getAlignmentGraph());
-		GraphUtil.printGraph(alignment.getSteinerTree());
+		for (int i = 0; i < 50 ; i++) {
+//			alignment.align();
+			System.out.println(alignment.GetTreeRoot().getID());
+		}
+//		GraphUtil.printGraphSimple(alignment.getSteinerTree());
+//		System.out.println(alignment.GetTreeRoot().getID());
+//		GraphUtil.printGraphSimple(alignment.getSteinerTree());
+//		System.out.println(alignment.GetTreeRoot().getID());
+//		alignment.align();
+//		GraphUtil.printGraphSimple(alignment.getSteinerTree());
+//		System.out.println(alignment.GetTreeRoot().getID());
+
 //		GraphUtil.printGraphSimple(alignment.getSteinerTree());
 
 //		Alignment alignment2 = new Alignment(ontManagar, semTypes4);

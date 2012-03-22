@@ -23,6 +23,7 @@ package edu.isi.karma.controller.command.cleaning;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Vector;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -35,11 +36,15 @@ import edu.isi.karma.view.VWorkspace;
 public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	final String hNodeId;
 
-	public GenerateCleaningRulesCommand(String id, String worksheetId, String hNodeId) {
+	public GenerateCleaningRulesCommand(String id, String worksheetId, String hNodeId, String examples) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 	}
-
+	public Vector<String[]> parseExample(String example)
+	{
+		Vector<String[]> x = new Vector<String[]>();
+		return x;
+	}
 	@Override
 	public String getCommandName() {
 		return GenerateCleaningRulesCommand.class.getSimpleName();

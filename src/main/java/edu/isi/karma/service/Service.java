@@ -23,8 +23,37 @@ package edu.isi.karma.service;
 
 public class Service {
 	
+	private String id;
 	private String name;
 	private String description;
+
+	private Request request;
+	private Response response;
+	
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public Request getRequest() {
+		return request;
+	}
+
+	public void setRequest(Request request) {
+		this.request = request;
+	}
+
+	public Response getResponse() {
+		return response;
+	}
+
+	public void setResponse(Response response) {
+		this.response = response;
+	}
 
 	public String getName() {
 		return name;

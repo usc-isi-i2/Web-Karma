@@ -379,8 +379,20 @@ function hideLoading(worksheetId) {
 	$("div#WaitingDiv_"+worksheetId).hide();
 }
 
+function showWaitingSignOnScreen() {
+    var coverDiv = $("<div>").attr("id","WaitingDiv").addClass('waitingDiv')
+        .append($("<div>").html('<b>Please wait</b>')
+            .append($('<img>').attr("src","images/ajax-loader.gif"))
+    );
+     
+    var spaceToCoverDiv = $('body');
+    spaceToCoverDiv.append(coverDiv.css({"position":"fixed", "height":$(document).height(), 
+        "width": $(document).width(), "zIndex":100,"top":spaceToCoverDiv.position().top, "left":spaceToCoverDiv.position().left}).show());
+}
 
-
+function hideWaitingSignOnScreen() {
+    $("div#WaitingDiv").hide();
+}
 
 
 

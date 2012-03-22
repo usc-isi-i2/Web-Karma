@@ -27,6 +27,7 @@ function clickUndoButton() {
 	edits["workspaceId"] = $.workspaceGlobalInformation.id;
 	
 	// Invoke the UNDO command on the server
+	showWaitingSignOnScreen();
 	$.ajax({
 	   	url: "/RequestController", 
 	   	type: "POST",
@@ -36,7 +37,13 @@ function clickUndoButton() {
 	   		function (xhr, textStatus) {
 	    		var json = $.parseJSON(xhr.responseText);
 	    		parse(json);
-		   	}
+	    		hideWaitingSignOnScreen();
+		   	},
+		error :
+            function (xhr, textStatus) {
+                alert("Error occured while undo!");
+                hideWaitingSignOnScreen();
+            }
 		});
 	// Change the state
 	var index =  $(".CommandDiv").index($(commandDivElem));

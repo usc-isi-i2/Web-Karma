@@ -335,6 +335,7 @@ public class RuleUtil {
 	{
 		return;
 	}
+	public static int sgsnum = 0;
 	//ops is corresponding editoperation of multiple sequence
 	public static Vector<String> genRule(Vector<String[]> examples)
 	{
@@ -353,6 +354,7 @@ public class RuleUtil {
 				tar.add(r1.vec);
 			}
 			Vector<Vector<GrammarParseTree>> trees = RuleUtil.genGrammarTrees(org, tar);
+			sgsnum = trees.size();
 			Vector<Integer> l = new Vector<Integer>();
 			Vector<Integer> sr = new Vector<Integer>();
 			Vector<String> pls = new Vector<String>();
@@ -379,7 +381,7 @@ public class RuleUtil {
 				System.out.print(gt.size()+","+index+" ");	
 				HashMap<MDPState,MDPState> his = new HashMap<MDPState,MDPState>();
 				int sccnt = 0;
-				for(int ct = 0;ct <200;ct++)
+				for(int ct = 0;ct <100;ct++)
 				{
 					MarkovDP mdp = new MarkovDP(org,tar,gt);
 					mdp.setHistory(his);
@@ -786,7 +788,7 @@ public class RuleUtil {
 				if(!isvalid)
 					break;
 				tmptrees.add(gt);
-				gt.diagPrint();
+				//gt.diagPrint();
 			}
 			if(isvalid)
 			{

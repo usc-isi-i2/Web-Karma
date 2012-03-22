@@ -21,6 +21,8 @@
 package edu.isi.karma.modeling.alignment;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -37,6 +39,15 @@ public class Alignment {
 
 	static Logger logger = Logger.getLogger(Alignment.class);
 
+	private class SemanticTypeComparator implements Comparator<SemanticType> {
+	    @Override
+	    public int compare(SemanticType o1, SemanticType o2) {
+	    	String s1 = (o1.getDomain() != null?o1.getDomain():"") + o1.getType();
+	    	String s2 = (o2.getDomain() != null?o2.getDomain():"") + o2.getType();
+	        return s1.compareTo(s2);
+	    }
+	}
+	
 	private OntologyManager ontologyManager;
 
 	private List<SemanticType> semanticTypes;
@@ -55,6 +66,7 @@ public class Alignment {
 		this.ontologyManager = ontologyManager;
 		
 		this.semanticTypes = semanticTypes;
+		Collections.sort(this.semanticTypes, new SemanticTypeComparator());
 
 		logger.info("building initial graph ...");
 		graphBuilder = new GraphBuilder(ontologyManager, this.semanticTypes);

@@ -82,7 +82,7 @@ public class JsonImport {
 		else {
 			throw new Error("Can only import objects or arrays.");
 		}
-		
+
 		writeJsonFile(json);
 		return worksheet;
 	}
@@ -90,7 +90,7 @@ public class JsonImport {
 	private static void writeJsonFile(Object o) {
 		JSONUtil.writeJsonFile(o, "lastJsonImport.json");
 	}
-	
+
 	private void addObjectElement(String key, Object value, HTable headers,
 			Row row) throws JSONException {
 		HNode hNode = addHNode(headers, key);
@@ -103,11 +103,11 @@ public class JsonImport {
 		else if (value instanceof Integer) {
 			row.setValue(hNodeId, value.toString());
 		}
-		
+
 		else if (value instanceof Double) {
 			row.setValue(hNodeId, value.toString());
 		}
-		
+
 		else if (value instanceof Long) {
 			row.setValue(hNodeId, value.toString());
 		}
@@ -130,8 +130,8 @@ public class JsonImport {
 				addListElement(a.get(i), nestedHTable, nestedTable);
 			}
 		}
-		
-		else if(value == JSONObject.NULL) {
+
+		else if (value == JSONObject.NULL) {
 			// Ignore
 		}
 
@@ -159,7 +159,7 @@ public class JsonImport {
 			JSONObject o = (JSONObject) listValue;
 			@SuppressWarnings("unchecked")
 			Iterator<String> it = o.keys();
-			//TODO: should be replaced by Iterator<String> it = o.sortedKeys();
+			// TODO: should be replaced by Iterator<String> it = o.sortedKeys();
 			while (it.hasNext()) {
 				String key = it.next();
 				addObjectElement(key, o.get(key), headers, row);
@@ -171,7 +171,16 @@ public class JsonImport {
 			String hNodeId = hNode.getId();
 			Row row = dataTable.addRow(factory);
 			// TODO, conserve the types of the primitive types.
-			row.setValue(hNodeId, (String) listValue);
+			String value = "";
+			if (listValue instanceof String || listValue instanceof Boolean)
+				value = (String) listValue;
+			else if (listValue instanceof Double)
+				value = Double.toString((Double) listValue);
+			else if (listValue instanceof Integer)
+				value = Integer.toString((Integer) listValue);
+			else if (listValue instanceof Long)
+				value = Long.toString((Long) listValue);
+			row.setValue(hNodeId, value);
 		}
 
 		else if (listValue instanceof JSONArray) {
@@ -194,7 +203,8 @@ public class JsonImport {
 
 	private boolean isPrimitiveValue(Object value) {
 		return value instanceof String || value instanceof Boolean
-				|| value instanceof String;
+				|| value instanceof Integer || value instanceof Double
+				|| value instanceof Long;
 	}
 
 	private HTable addNestedHTable(HNode hNode, String key) {
