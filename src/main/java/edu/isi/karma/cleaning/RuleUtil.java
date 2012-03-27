@@ -406,7 +406,7 @@ public class RuleUtil {
 	{
 		try
 		{
-			String fname = "/Users/bowu/mysoft/grammar.txt";
+			String fname = "./grammar/grammar.txt";
 			FileInputStream   file   =   new   FileInputStream(fname); 
 			byte[]   buf   =   new   byte[file.available()];     
 			file.read(buf,   0,   file.available());   // 

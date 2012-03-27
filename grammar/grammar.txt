@@ -1,0 +1,33 @@
+
+rule	:	operator what where ;
+
+what	:	quantifier tokenspec;
+
+quantifier 
+	:	ANYNUM |NUM ;
+	
+tokenspec  
+	:	singletokenspec |singletokenspec tokenspec ;
+
+singletokenspec : token |type | ANYTOK;
+
+
+operator:	DEL;
+
+type	:	NUMTYP |WRDTYP |SYBTYP |BNKTYP ;
+
+token	:	TOKEN ;
+
+where	:	start end;
+
+scanningOrder
+	:	FRMB|FRME;
+	
+start	:	 scanningOrder wherequantifier ;
+
+
+end	:	 scanningOrder wherequantifier ;
+
+wherequantifier 
+	:	FST INCLD? tokenspec |NUM ;
+
