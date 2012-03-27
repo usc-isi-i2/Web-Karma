@@ -391,7 +391,6 @@ function showWaitingSignOnScreen() {
 }
 
 function hideWaitingSignOnScreen() {
-    console.log($("div#WaitingDiv"));
     $("div#WaitingDiv").hide();
 }
 

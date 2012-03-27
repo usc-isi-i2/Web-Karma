@@ -77,5 +77,11 @@ div#propertyTree {
 	overflow: auto;
 }
 
+span#propertyName {
+	
+}
 
+.ui-menu-item {
+	font-size: 10px;
+}
 

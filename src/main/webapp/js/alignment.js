@@ -41,6 +41,14 @@ function attachOntologyOptionsRadioButtonHandlers() {
 	        $("input[name='currentSemanticTypeCheckBoxGroup']:checkbox", tr).prop('checked', true);
 	        $(tr).addClass("selected");
 	    }
+	    
+	    // Unselect the previous one
+	    var previousTr = $(optionsDiv).data("selectedPrimaryRow");
+	    if(previousTr != null) {
+	        $("input[name='currentSemanticTypeCheckBoxGroup']:checkbox", previousTr).prop('checked', false);
+	        $(previousTr).removeClass('selected');
+	    }
+	    $(optionsDiv).data("selectedPrimaryRow", tr);
 	}));
 	
 	$("#classSearch").click(function(){
@@ -145,6 +153,7 @@ function changeSemanticType(event) {
     $("table#currentSemanticTypesTable tr.editRow",optionsDiv).remove();
     $("input#chooseClassKey").attr("checked", false);
     $("div#SemanticTypeErrorWindow").hide();
+    $(optionsDiv).removeData("selectedPrimaryRow");
     
     // Store a copy of the existing types.
     // This is tha JSON array which is changed when the user adds/changes through GUI and is submitted to the server.
@@ -184,6 +193,9 @@ function changeSemanticType(event) {
                 if((!CRFInfo && existingTypes.length == 0) || 
                     ((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo.length == 0))) {
                     addEmptySemanticType();
+                    $("table#currentSemanticTypesTable input").prop("checked", true);
+                    $("table#currentSemanticTypesTable tr.semTypeRow").addClass("selected");
+                    optionsDiv.data("selectedPrimaryRow",$("table#currentSemanticTypesTable tr.semTypeRow"));
                     $("table#currentSemanticTypesTable tr td button").click();
                 }
             },
@@ -193,9 +205,13 @@ function changeSemanticType(event) {
             }
     });
     
+    // Get the column name to show in dalog box
+    var td = $(this).parents("td");
+    var columnName = $("div.ColumnHeadingNameDiv", td).text();
+    
     // Show the dialog box
     var positionArray = [event.clientX+20, event.clientY+10];
-    optionsDiv.dialog({width: 350, position: positionArray
+    optionsDiv.dialog({width: 350, position: positionArray, title:columnName
         , buttons: { 
             "Cancel": function() { $(this).dialog("close"); }, 
             "Submit":submitSemanticTypeChange }
@@ -247,11 +263,17 @@ function addSemTypeObjectToCurrentTable(semTypeObject, isSelected, isCrfModelSug
 
     if(isCrfModelSuggested)
         trTag.append($("<td>").addClass("CRFSuggestedText").text("  (CRF Suggested)"));
+    else
+        trTag.append($("<td>"));
+        
     if(isSelected)
         trTag.addClass("selected");
         
-    if(semTypeObject["isPrimary"])
+    if(semTypeObject["isPrimary"]) {
         $("input[name='isPrimaryGroup']:radio", trTag).prop('checked', true);
+        $("#ChangeSemanticTypesDialogBox").data("selectedPrimaryRow", trTag);
+    }
+        
         
     // Check if it was marked as key for a class
     if(semTypeObject["isPartOfKey"]) {
@@ -315,30 +337,55 @@ function showSemanticTypeEditOptions() {
         $("input#propertyInputBox").val($(parentTrTag).data("DisplayLabel"));
     }
     
-    $("input#propertyInputBox").autocompleteArray(propertyArray, {"autoFill":true, "delay":40});
-    $("input#classInputBox").autocompleteArray(classArray, {"autoFill":true, "delay":40});
-    
+    $("input#propertyInputBox").autocomplete({autoFocus: true, select:function(event, ui){
+            $("input#propertyInputBox").val(ui.item.value);
+            validatePropertyInputValue();
+    }, source: function( request, response ) {
+        var matches = $.map( propertyArray, function(prop) {
+            if ( prop.toUpperCase().indexOf(request.term.toUpperCase()) === 0 ) {
+                return prop;
+            }
+        });
+            response(matches);
+        }
+    });
+    $("input#classInputBox").autocomplete({autoFocus: true, select:function(event, ui){
+        $("input#classInputBox").val(ui.item.value);
+        validateClassInputValue();
+    }, source: function( request, response ) {
+        var matches = $.map( classArray, function(cls) {
+            if ( cls.toUpperCase().indexOf(request.term.toUpperCase()) === 0 ) {
+                return cls;
+            }
+        });
+            response(matches);
+        }
+    });
     // Validate the value once the input loses focus
     $("input#propertyInputBox").blur(validatePropertyInputValue);
     $("input#classInputBox").blur(validateClassInputValue);
 }
 
 function validatePropertyInputValue() {
+    
     var optionsDiv = $("#ChangeSemanticTypesDialogBox");
     var propertyMap = $(optionsDiv).data("classAndPropertyListJson")["elements"][0]["propertyMap"]
     var propertyInputBox = $("input#propertyInputBox"); 
     var inputVal = $(propertyInputBox).val();
+    
     $("div#SemanticTypeErrorWindow").hide();
     $("table#currentSemanticTypesTable tr").removeClass("fixMe");
     
     var found = false;
     var uri = "";
+    var properCasedKey = "";
     $.each(propertyMap, function(index, prop){
         for(var key in prop) {
             if(prop.hasOwnProperty(key)) {
-                if(key == inputVal) {
+                if(key.toLowerCase() == inputVal.toLowerCase()) {
                     found = true;
                     uri = prop[key];
+                    properCasedKey = key;
                 }
             }
         }
@@ -350,6 +397,9 @@ function validatePropertyInputValue() {
         return false;
     }
     
+    // Use the value in proper case as input value
+    $(propertyInputBox).val(properCasedKey);
+    
     var rowToChange = $(propertyInputBox).parents("tr.editRow").data("editRowObject");
     var displayLabel = "";
     
@@ -359,7 +409,7 @@ function validatePropertyInputValue() {
         // existing fullType (which was a class) becomes the domain of the chosen data property. So changing from class sem type to data prop sem type
         var domain = $(rowToChange).data("FullType");
         var displayDomainLabel = $(rowToChange).data("DisplayLabel");
-        $(rowToChange).data("FullType",uri).data("DisplayLabel",inputVal)
+        $(rowToChange).data("FullType",uri).data("DisplayLabel",properCasedKey)
             .data("Domain", domain).data("DisplayDomainLabel",displayDomainLabel)
             .data("ResourceType","DataProperty");
             
@@ -373,7 +423,7 @@ function validatePropertyInputValue() {
             $(rowToChange).data("ResourceType", "Class").data("FullType",newFullType).data("DisplayLabel", newDisplayLabel).data("Domain","").data("DisplayDomainLabel","");
             displayLabel = $(rowToChange).data("DisplayLabel");
         } else {
-            $(rowToChange).data("FullType",uri).data("DisplayLabel",inputVal);
+            $(rowToChange).data("FullType",uri).data("DisplayLabel",properCasedKey);
             displayLabel = "<span class='italic'>" + $(rowToChange).data("DisplayLabel") + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
         }
     }
@@ -391,12 +441,14 @@ function validateClassInputValue() {
     
     var found = false;
     var uri = "";
+    var properCasedKey = "";
     $.each(classMap, function(index, clazz){
         for(var key in clazz) {
             if(clazz.hasOwnProperty(key)) {
-                if(key == inputVal) {
+                if(key.toLowerCase() == inputVal.toLowerCase()) {
                     found = true;
                     uri = clazz[key];
+                    properCasedKey = key;
                 }
             }
         }
@@ -407,19 +459,21 @@ function validateClassInputValue() {
         $("div#SemanticTypeErrorWindow").show();
         return false;
     }
+    // Use the value in proper case as input value
+    $(classInputBox).val(properCasedKey);
     
     var rowToChange = $(classInputBox).parents("tr.editRow").data("editRowObject");
     var displayLabel = "";
     if($(rowToChange).data("ResourceType") == "Class") {
-        $(rowToChange).data("FullType",uri).data("DisplayLabel",inputVal);
+        $(rowToChange).data("FullType",uri).data("DisplayLabel",properCasedKey);
         displayLabel = $(rowToChange).data("DisplayLabel");
     } else {
         // If no value has been input in the data property box, change from data property sem type to class sem type
         if($.trim($("input#propertyInputBox").val()) == "") {
-            $(rowToChange).data("ResourceType", "Class").data("FullType",uri).data("DisplayLabel",inputVal);
+            $(rowToChange).data("ResourceType", "Class").data("FullType",uri).data("DisplayLabel",properCasedKey);
             displayLabel = $(rowToChange).data("DisplayLabel");
         } else {
-            $(rowToChange).data("Domain",uri).data("DisplayDomainLabel",inputVal);
+            $(rowToChange).data("Domain",uri).data("DisplayDomainLabel",properCasedKey);
             displayLabel = "<span class='italic'>" + $(rowToChange).data("DisplayLabel") + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
         }
     }
@@ -430,6 +484,7 @@ function showClassHierarchyWindow(event) {
     var classDialogBox = $("div#classOntologyBox");
     classDialogBox.data("uri","").data("label","");
     $("input#filterClassByDomain").attr("checked", false);
+    $("#classKeyword").val("");
     
     // Get the URI of the class for which we can filter by domain
     var editRow = $(this).parents("tr.editRow");
@@ -446,7 +501,9 @@ function showClassHierarchyWindow(event) {
     $("div#propertyOntologyBox").data("propertyUri", uriProperty);
     $("div#propertyOntologyBox").data("propertyLabel", labelProperty);
     if(labelProperty != "")
-        $("span#propertyName").text(":" + labelProperty);
+        $("span#propertyName").text("  " + labelProperty);
+    else
+        $("span#propertyName").text("none selected");
     
     // Send the AJAX request
     var info = new Object();
@@ -476,6 +533,7 @@ function showPropertyHierarchyWindow(event) {
     var propertyDialogBox = $("div#propertyOntologyBox");
     propertyDialogBox.data("uri","").data("label","");
     $("input#filterPropertyByDomain").attr("checked", false);
+    $("#propertyKeyword").val("");
     
     // Get the URI of the class for which we can filter by domain
     var editRow = $(this).parents("tr.editRow");
@@ -492,7 +550,7 @@ function showPropertyHierarchyWindow(event) {
     $("div#propertyOntologyBox").data("classUri", uriClass);
     $("div#propertyOntologyBox").data("classLabel", labelClass);
     if(labelClass != "")
-        $("span#className").text(":" + labelClass);
+        $("span#className").text(" " + labelClass);        
     
     // Send the AJAX request
     var info = new Object();
@@ -619,7 +677,7 @@ function getCurrentSelectedTypes() {
     
     var notValid = false;
     // Loop through each selected row in the table
-    $.each($("tr.selected",table), function(index, row){
+    $.each($("tr.selected.semTypeRow",table), function(index, row){
         var fullType = $(row).data("FullType");
         var domain = $(row).data("Domain");
         

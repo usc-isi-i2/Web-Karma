@@ -476,5 +476,9 @@ div#WaitingDiv {
 	margin: auto;
 }
 
+span.bold {
+	font-weight: 900;
+}
+
 
 

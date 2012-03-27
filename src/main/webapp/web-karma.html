@@ -45,7 +45,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<link rel="stylesheet" type="text/css" href="./css/sticky.min.css" />
 		<link rel="stylesheet" type="text/css" href="./css/cleaning.css" />
 		<link rel="stylesheet" type="text/css" href="./css/alignment.css" />
-		<link rel="stylesheet" type="text/css" href="./css/jquery.autocomplete.css" />
+<!-- 		<link rel="stylesheet" type="text/css" href="./css/jquery.autocomplete.css" /> -->
 		
 		
 		<!-- Third Party JavaScript files		 -->
@@ -63,7 +63,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<script type="text/javascript" src="js/jquery.jeditable.js"></script>
 		<script type="text/javascript" src="js/json2.js"></script>
 		<script type="text/javascript" src="js/jquery.cookie.js"></script>
-		<script type="text/javascript" src="js/jquery.autocomplete.js"></script>
+<!-- 		<script type="text/javascript" src="js/jquery.autocomplete.js"></script> -->
 		
 		<!-- Home grown JavaScript files -->
 		<script type="text/javascript" src="js/table_manipulation.js"></script>
@@ -495,7 +495,7 @@ and related projects, please see: http://www.isi.edu/integration
 		</div>
 		<div id="propertyOntologyBox" style="display: none">
 			<input id="filterPropertyByDomain" type="checkbox"/>
-			<label for="filterPropertyByDomain">Show properties with domain</label><span id="className"></span><br /><br />
+			<label for="filterPropertyByDomain">Show properties with domain</label><span id="className" class="bold"></span><br /><br />
 			<input type="text" id="propertyKeyword" maxlength="100" size="20"/>
 			<button id="propertySearch">Search</button>
 			<br /><br />
@@ -503,7 +503,7 @@ and related projects, please see: http://www.isi.edu/integration
 		</div>
 		<div id="classOntologyBox" style="display: none">
 			<input id="filterClassByDomain" type="checkbox"/>
-			<label for="filterClassByDomain">Show domain classes for property</label><span id="propertyName"></span><br /><br />
+			<label for="filterClassByDomain">Show domains for property</label><span id="propertyName" class="italic"></span><br /><br />
 			<input type="text" id="classKeyword" maxlength="100" size="20"/>
 			<button id="classSearch">Search</button>
 			<br /><br />
