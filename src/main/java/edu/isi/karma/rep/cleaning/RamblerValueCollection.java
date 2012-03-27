@@ -22,9 +22,11 @@ package edu.isi.karma.rep.cleaning;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Vector;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 public class RamblerValueCollection implements ValueCollection {
@@ -64,9 +66,24 @@ public class RamblerValueCollection implements ValueCollection {
 	}
 
 	@Override
-	public JSONArray getJson() {
+	public JSONObject getJson() {
 		// TODO Auto-generated method stub
-		return null;
+		try
+		{
+			JSONObject jb = new JSONObject();
+			Set<String> ss = data.keySet();
+			for(String key:ss)
+			{
+				String val = data.get(key);
+				jb.put(key, val);
+			}
+			return jb;
+		}
+		catch(Exception ex)
+		{
+			System.out.println(""+ex.toString());
+			return null;
+		}
 	}
 
 }

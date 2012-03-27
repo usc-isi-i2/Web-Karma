@@ -42,7 +42,7 @@ public class UtilTools {
 		UtilTools.clearTmpVars();
 		try
 		{
-			CSVWriter cw = new CSVWriter(new FileWriter(new File("./tmp.csv")),',');
+			CSVWriter cw = new CSVWriter(new FileWriter(new File("./tmp/tmp.csv")),',');
 			//write header into the csv file
 			Vector<String> tmp = new Vector<String>();
 			Vector<String> tmp1 = new Vector<String>();
@@ -119,8 +119,8 @@ public class UtilTools {
 			}
 			cw.flush();
 			cw.close();
-			Data2Features.csv2arff("./tmp.csv", "./tmp.arff");
-			return "./tmp.arff";
+			Data2Features.csv2arff("./tmp/tmp.csv", "./tmp/tmp.arff");
+			return "./tmp/tmp.arff";
 		}
 		catch(Exception e)
 		{

@@ -665,7 +665,7 @@ public class Main {
 		Vector<Integer> exampleCnt = new Vector<Integer>();
 		Vector<Double> timeleng = new Vector<Double>();
 		Vector<Integer> cRuleNum = new Vector<Integer>();
-		Vector<Vector<Integer>> ranks = new Vector<Vector<Integer>>();
+		Vector<Vector<String>> ranks = new Vector<Vector<String>>();
 		Vector<Vector<Integer>> consisRules = new Vector<Vector<Integer>>();
 		Vector<String> cRules = new Vector<String>();
 		//list all the csv file under the dir
@@ -675,7 +675,7 @@ public class Main {
 			
 			Vector<String[]> examples = new Vector<String[]>();
 			Vector<String[]> entries = new Vector<String[]>();	
-			Vector<Integer> rank = new Vector<Integer>();
+			Vector<String> rank = new Vector<String>();
 			Vector<Integer> consRule = new Vector<Integer>();
 			try
 			{
@@ -758,6 +758,7 @@ public class Main {
 						
 						String trainPath = "/Users/bowu/Research/features.arff";
 						int trnk = UtilTools.rank(dic, corrResult, trainPath);
+						rank.add(trnk+"/"+dic.keySet().size());
 						Ranktermin = trnk;
 						if(!indicators.containsKey(examples.size()))
 						{
@@ -771,8 +772,10 @@ public class Main {
 									x.set(1, x.get(1)+pls.size());
 									x.set(2, x.get(2)+corrNum);
 									if(trnk<=3 && trnk>=0)
+									{
 										x.set(3, x.get(3)+1);
-									x.set(4, x.get(4)+dic.keySet().size());
+										x.set(4, x.get(4)+dic.keySet().size());
+									}
 									x.set(5,x.get(5)+1);
 								}
 								else
@@ -782,11 +785,15 @@ public class Main {
 									x.add(1.0*pls.size());
 									x.add(1.0*corrNum);
 									if(trnk<=3 && trnk>=0)
-									{	x.add(1.0);}
+									{	
+										x.add(1.0);
+										x.add(1.0*dic.keySet().size());
+									}
 									else
 									{
-										x.add(0.0);}
-									x.add(1.0*dic.keySet().size());
+										x.add(0.0);
+										x.add(0.0);
+									}
 									x.add(1.0);
 									tmp.put(""+examples.size(), x);
 								}
@@ -802,8 +809,10 @@ public class Main {
 									x.set(1, x.get(1)+pls.size());
 									x.set(2, x.get(2)+corrNum);
 									if(trnk<=3 && trnk>=0)
+									{
 										x.set(3, x.get(3)+1);
-									x.set(4, x.get(4)+dic.keySet().size());
+										x.set(4, x.get(4)+dic.keySet().size());
+									}
 									x.set(5,x.get(5)+1);
 								}
 								else
@@ -813,11 +822,16 @@ public class Main {
 									x.add(1.0*pls.size());
 									x.add(1.0*corrNum);
 									if(trnk<=3 && trnk>=0)
-									{	x.add(1.0);}
+									{	
+										x.add(1.0);
+										x.add(1.0*dic.keySet().size());
+									}
 									else
 									{
-										x.add(0.0);}
-									x.add(1.0*dic.keySet().size());
+										x.add(0.0);
+										x.add(0.0);
+									}
+									
 									x.add(1.0);
 									tmp.put(""+examples.size(), x);
 								}
@@ -844,8 +858,7 @@ public class Main {
 					//cRuleNum.add(corrNum);
 					cRules.add(cx);
 					ranks.add(rank);
-					consisRules.add(consRule);
-					
+					consisRules.add(consRule);		
 				}
 			}
 			catch(Exception ex)
@@ -854,20 +867,24 @@ public class Main {
 			}
 		}
 		Random r = new Random();
-		int ind = r.nextInt(1000);
 		try
 		{
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/Users/bowu/mysoft/log"+ind+".txt")));
-		for(int x = 0; x<exampleCnt.size();x++)
-		{
-			bw.write(names.get(x)+":"+exampleCnt.get(x)+","+timeleng.get(x)+","+cRuleNum.get(x));
-			bw.write("\n");
-			bw.write(""+cRules.get(x));
-			System.out.println(names.get(x)+":"+exampleCnt.get(x)+","+timeleng.get(x)+","+cRuleNum.get(x));
-			System.out.println(ranks.get(x));
-			System.out.println(consisRules.get(x));
-		}
-		bw.flush();
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/Users/bowu/mysoft/xx/logx.txt")));
+			for(int x = 0; x<ranks.size();x++)
+			{
+//				bw.write(names.get(x)+":"+exampleCnt.get(x)+","+timeleng.get(x));
+//				bw.write("\n");
+//				System.out.println(names.get(x)+":"+exampleCnt.get(x)+","+timeleng.get(x));
+				
+				bw.write(names.get(x)+"\n");
+				for(String d:ranks.get(x))
+				{
+					bw.write(d+",");
+				}
+				bw.write("\n");
+//				System.out.println(consisRules.get(x));
+			}
+			bw.flush();
 		}
 		catch(Exception ex)
 		{
@@ -917,7 +934,7 @@ public class Main {
 	{
 		Main m = new Main();
 		Vector<Double> xy = new Vector<Double>();
-		for(int x = 0;x < 10;x++)
+		for(int x = 0;x <10;x++)
 		{
 			double st = System.currentTimeMillis();
 			m.exper_2("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/pos");
