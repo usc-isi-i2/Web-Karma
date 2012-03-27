@@ -22,7 +22,6 @@ package edu.isi.karma.rep.cleaning;
 
 import java.util.Collection;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public interface ValueCollection {

@@ -21,19 +21,15 @@
 package edu.isi.karma.controller.command.cleaning;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import edu.isi.karma.cleaning.RuleUtil;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.CleaningResultUpdate;
@@ -41,7 +37,12 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.cleaning.*;
+import edu.isi.karma.rep.cleaning.RamblerTransformationExample;
+import edu.isi.karma.rep.cleaning.RamblerTransformationInputs;
+import edu.isi.karma.rep.cleaning.RamblerTransformationOutput;
+import edu.isi.karma.rep.cleaning.RamblerValueCollection;
+import edu.isi.karma.rep.cleaning.TransformationExample;
+import edu.isi.karma.rep.cleaning.ValueCollection;
 import edu.isi.karma.view.VWorkspace;
 
 public class GenerateCleaningRulesCommand extends WorksheetCommand {
@@ -142,12 +143,8 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		//generate the program
 		RamblerTransformationOutput rtf = new RamblerTransformationOutput(inputs);
 		Vector<ValueCollection> vvc = getTopK(rtf, 3);
-		CleaningResultUpdate cru = new CleaningResultUpdate(this.id,this.worksheetId,this.hNodeId);
-		for(ValueCollection v:vvc)
-		{
-			cru.addValueCollection(v);
-		}
-		return new UpdateContainer(cru);
+		
+		return new UpdateContainer(new CleaningResultUpdate(hNodeId, vvc));
 	}
 
 	@Override
