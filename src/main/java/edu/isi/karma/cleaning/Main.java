@@ -934,10 +934,10 @@ public class Main {
 	{
 		Main m = new Main();
 		Vector<Double> xy = new Vector<Double>();
-		for(int x = 0;x <10;x++)
+		for(int x = 0;x <1;x++)
 		{
 			double st = System.currentTimeMillis();
-			m.exper_2("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/pos");
+			m.exper_2("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/test");
 			double ed = System.currentTimeMillis();
 			xy.add((ed-st)*1.0/60000);
 		}
