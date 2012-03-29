@@ -1,0 +1,32 @@
+rule	:	operator what where;
+what	:	quantifier tokenspec|ANYTOKS;
+quantifier :	qnum|ANYNUM;
+qnum	:	NUM;
+	
+tokenspec  :	singletokenspec | singletokenspec tokenspec;
+stokenspec :	singletokenspec | singletokenspec stokenspec;
+etokenspec  :	singletokenspec | singletokenspec etokenspec;
+
+singletokenspec: token|type;
+
+operator:	DEL;
+
+
+type	:	ANYTYP |NUMTYP |WRDTYP |SYBTYP|BNKTYP ;
+
+token:	ANYTOK |TOKEN ;
+
+
+where	:	start end;
+
+scanningOrder 	:	FRMB |FRME;
+	
+start:	 scanningOrder swherequantifier;
+end:	 scanningOrder ewherequantifier;
+
+
+swherequantifier :	FST INCLD? stokenspec |snum;
+ewherequantifier :	FST INCLD? etokenspec |tnum;
+snum	:	NUM;
+tnum	:	NUM;
+

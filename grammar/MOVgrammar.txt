@@ -1,0 +1,31 @@
+rule	:	operator what where dest;
+what	:	tokenspec|ANYTOKS;
+
+	
+tokenspec	:	singletokenspec| singletokenspec tokenspec;
+stokenspec	:	singletokenspec| singletokenspec stokenspec;
+etokenspec	:	singletokenspec| singletokenspec etokenspec;
+dtokenspec	:	singletokenspec| singletokenspec dtokenspec;
+singletokenspec	: token|type;
+
+
+operator	:	MOV;
+
+
+type		:	NUMTYP |WRDTYP |SYBTYP|BNKTYP;
+
+token		:	TOKEN ;
+
+where		:	start end;
+
+scanningOrder	:	FRMB|FRME;
+	
+start		:	 scanningOrder swherequantifier;
+end		:	 scanningOrder ewherequantifier;
+dest		:	 scanningOrder dwherequantifier;
+dwherequantifier :	FST INCLD? dtokenspec|dnum;
+swherequantifier :	FST INCLD? stokenspec|snum;
+ewherequantifier :	FST INCLD? etokenspec|tnum;
+snum		 :	NUM;
+tnum		 :	NUM;
+dnum		 :	NUM;

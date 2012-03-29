@@ -20,12 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.cleaning.features;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
-
-import edu.isi.karma.cleaning.TNode;
 class Varfeature implements Feature {
 
 	String name = "";

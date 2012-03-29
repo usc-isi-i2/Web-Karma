@@ -22,12 +22,10 @@ package edu.isi.karma.cleaning.features;
 import java.io.File;
 import java.io.FileReader;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Vector;
 
-import edu.isi.karma.cleaning.*;
-
 import au.com.bytecode.opencsv.CSVReader;
+import edu.isi.karma.cleaning.ResultViewer;
 
 public class Main {
 	public static void main(String[] args)

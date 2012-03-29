@@ -337,19 +337,42 @@ function showSemanticTypeEditOptions() {
         $("input#propertyInputBox").val($(parentTrTag).data("DisplayLabel"));
     }
     
-    $("input#propertyInputBox").autocompleteArray(propertyArray, {"autoFill":true, "delay":40});
-    $("input#classInputBox").autocompleteArray(classArray, {"autoFill":true, "delay":40});
-    
+    $("input#propertyInputBox").autocomplete({autoFocus: true, select:function(event, ui){
+            $("input#propertyInputBox").val(ui.item.value);
+            validatePropertyInputValue();
+    }, source: function( request, response ) {
+        var matches = $.map( propertyArray, function(prop) {
+            if ( prop.toUpperCase().indexOf(request.term.toUpperCase()) === 0 ) {
+                return prop;
+            }
+        });
+            response(matches);
+        }
+    });
+    $("input#classInputBox").autocomplete({autoFocus: true, select:function(event, ui){
+        $("input#classInputBox").val(ui.item.value);
+        validateClassInputValue();
+    }, source: function( request, response ) {
+        var matches = $.map( classArray, function(cls) {
+            if ( cls.toUpperCase().indexOf(request.term.toUpperCase()) === 0 ) {
+                return cls;
+            }
+        });
+            response(matches);
+        }
+    });
     // Validate the value once the input loses focus
     $("input#propertyInputBox").blur(validatePropertyInputValue);
     $("input#classInputBox").blur(validateClassInputValue);
 }
 
 function validatePropertyInputValue() {
+    
     var optionsDiv = $("#ChangeSemanticTypesDialogBox");
     var propertyMap = $(optionsDiv).data("classAndPropertyListJson")["elements"][0]["propertyMap"]
     var propertyInputBox = $("input#propertyInputBox"); 
     var inputVal = $(propertyInputBox).val();
+    
     $("div#SemanticTypeErrorWindow").hide();
     $("table#currentSemanticTypesTable tr").removeClass("fixMe");
     

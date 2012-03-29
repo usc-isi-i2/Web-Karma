@@ -107,8 +107,7 @@ public class RegularityClassifer {
 					//do nothing
 				}
 			}
-		}
-		
+		}	
 		fileReader.close() ;
 		//Prnt.prn(cf) ;
 		//no correct transformation result
@@ -123,7 +122,7 @@ public class RegularityClassifer {
 			double d = posConfid.get(i);
 			if(d>=confidence)
 			{
-				if( instances.get(i).value(instances.numAttributes()-1)!=3)
+				if(instances.get(i).value(instances.numAttributes()-1)!=3)
 				{
 					rank ++;
 					UtilTools.index = i;
