@@ -36,10 +36,10 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.service.ServiceManager;
-import edu.isi.karma.service.Table;
+import edu.isi.karma.service.ServiceBuilder;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.KarmaException;
 
 /**
  * @author taheriyan
@@ -79,17 +79,17 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			requestURLStrings.add(rows.get(i).getNode(hNodeId).getValue().asString());
 		}
 
-		ServiceManager sm = new ServiceManager(requestURLStrings);
-		Table result = null;
-		
+		ServiceBuilder sb;
 		try {
-			result = sm.getResponse();
+			sb = new ServiceBuilder(wk.getTitle(), requestURLStrings);
+			sb.populateWorksheet(wk, ws.getFactory(), this.hNodeId);
 		} catch (MalformedURLException e) {
 			logger.error("Malformed service request URL.");
 			return new UpdateContainer(new ErrorUpdate("Malformed service request URL."));
+		} catch (KarmaException e) {
+			logger.error(e.getMessage());
+			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}
-		
-		new PopulateWorksheetFromTable(ws, wk, result).populate();
 		
 		// Create new vWorksheet using the new header order
 		List<HNodePath> columnPaths = new ArrayList<HNodePath>();

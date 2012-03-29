@@ -24,8 +24,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
+import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 
@@ -182,10 +186,11 @@ public class Test {
 		
 		
 //		alignment.getSteinerTree();
-//		GraphUtil.printGraph(alignment.getAlignmentGraph());
-		for (int i = 0; i < 50 ; i++) {
-//			alignment.align();
-			System.out.println(alignment.GetTreeRoot().getID());
+		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = alignment.getSteinerTree();
+//		GraphUtil.printGraph(steinerTree);
+		for (Vertex v : steinerTree.vertexSet()) {
+			if (v.getSemanticType() != null)
+				System.out.println(v.getSemanticType().getHNodeId());
 		}
 //		GraphUtil.printGraphSimple(alignment.getSteinerTree());
 //		System.out.println(alignment.GetTreeRoot().getID());

@@ -27,6 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -36,7 +37,7 @@ import edu.isi.karma.service.json.JsonManager;
 
 public class Invocation {
 
-//	private static final String REQUEST_COLUMN_NAME = "request";
+	private static final String REQUEST_COLUMN_NAME = "request";
 	static Logger logger = Logger.getLogger(Invocation.class);
 
 	public Invocation(Request request) {
@@ -68,7 +69,8 @@ public class Invocation {
 	}
 
 
-	public Table getJointInputAndOutput() {
+	public Table getJointInputAndOutput(boolean includeURL) {
+		joinInputAndOutput(includeURL);
 		return jointInputAndOutput;
 	}
 
@@ -78,25 +80,43 @@ public class Invocation {
 		request.setParams(URLManager.getQueryParams(request.getUrl()));
 	}
 	
+	private static String getId(String name, HashMap<String, Integer> nameCounter) {
+		if (nameCounter == null)
+			return null;
+
+		Integer count = nameCounter.get(name);
+		if (count == null) {
+			nameCounter.put(name, 1);
+			return "output_" + name + "_1";
+		} else {
+			nameCounter.put(name, count.intValue() + 1);
+			return ("output_" + name + "_" + String.valueOf(count.intValue() + 1));
+		}
+	}
+	
 	private void updateResponse() {
 		
 		Table results = new Table();
-		
+		List<String> columns = new ArrayList<String>();
+        HashMap<String, Integer> paramNameCounter = new HashMap<String, Integer>();
+
 		if (response.getType().indexOf("xml") != -1) { // XML content
 			String json = JsonManager.convertXML2JSON(response.getStream());
-	        JsonManager.getJsonFlat(json, results.getColumns(), results.getValues());
+	        JsonManager.getJsonFlat(json, columns, results.getValues());
 		} else if (response.getType().indexOf("json") != -1) { // JSON content
-	        JsonManager.getJsonFlat(response.getStream(), results.getColumns(), results.getValues());
+	        JsonManager.getJsonFlat(response.getStream(), columns, results.getValues());
+		} else {
+			logger.debug("The output is neither JSON nor XML.");
 		}
-		
-		List<String> types = new ArrayList<String>();
-		for (int i = 0; i < results.getColumns().size(); i++)
-			types.add(IOType.OUTPUT);
-		results.setTypes(types);
+
+		for (String c : columns) {
+			Param p = new Param(getId(c, paramNameCounter), c, IOType.OUTPUT);
+			results.getHeaders().add(p);
+		}
 		
 		this.response.setTable(results);
 	}
-
+	
 	public void invokeAPI() {
 		
 		int code = -1;
@@ -117,8 +137,8 @@ public class Invocation {
 
 			   code = httpConnection.getResponseCode();
 
-			   System.out.println(type);
-			   System.out.println(code);
+//			   System.out.println(type);
+//			   System.out.println(code);
 			   // do something with code .....
 			}
 			else
@@ -156,36 +176,32 @@ public class Invocation {
 
 			updateResponse();
 			
-			joinInputAndOutput();
-			
-			
 		}
 		
 	}
 	
-	public void joinInputAndOutput() {
+	public void joinInputAndOutput(boolean includeURL) {
     	
 		jointInputAndOutput = new Table(this.response.getTable());
 		
-		String column = "";
+		if (this.request.getParams() != null)
 		for (int j = this.request.getParams().size() - 1; j >= 0; j--) {
 			
 			Param p = this.request.getParams().get(j);
 			if (p != null && p.getName() != null && p.getName().toString().trim().length() == 0)
 				continue;
 				
-				column = p.getName().toString().trim();
-				jointInputAndOutput.getColumns().add(0, column);
-				jointInputAndOutput.getTypes().add(0, IOType.INPUT);
+				jointInputAndOutput.getHeaders().add(0, p);
 				for (int k = 0; k < this.response.getTable().getValues().size(); k++)
 					this.response.getTable().getValues().get(k).add(0, p.getValue());
 		}
 
-//		// Include the request URLs in the invocation table
-//		jointInputAndOutput.getColumns().add(0, REQUEST_COLUMN_NAME);
-//		jointInputAndOutput.getTypes().add(0, IOType.NONE);
-//		for (int k = 0; k < this.response.getTable().getValues().size(); k++)
-//			this.response.getTable().getValues().get(k).add(0, this.request.getUrl().toString());
+		if (includeURL) {
+			// Include the request URLs in the invocation table
+			jointInputAndOutput.getHeaders().add(0, new Param(REQUEST_COLUMN_NAME, REQUEST_COLUMN_NAME,IOType.NONE));
+			for (int k = 0; k < this.response.getTable().getValues().size(); k++)
+				this.response.getTable().getValues().get(k).add(0, this.request.getUrl().toString());
+		}
 		
 	}
 }

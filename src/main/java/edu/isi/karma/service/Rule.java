@@ -21,51 +21,22 @@
 
 package edu.isi.karma.service;
 
-import java.util.ArrayList;
-import java.util.List;
+public class Rule {
 
+	private Clause head;
+	private Clause body;
 
-public class Response {
-	private String type;
-	private int code;
-	private String stream;
-	private Table table;
-	private List<Param> params;
+	public Clause getHead() {
+		return head;
+	}
+	public void setHead(Clause head) {
+		this.head = head;
+	}
+	public Clause getBody() {
+		return body;
+	}
+	public void setBody(Clause body) {
+		this.body = body;
+	}
 	
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public String getStream() {
-		return stream;
-	}
-	public void setStream(String stream) {
-		this.stream = stream;
-	}
-	public Table getTable() {
-		return table;
-	}
-	public void setTable(Table table) {
-		this.table = table;
-		buildParamListFromTable();
-	}
-	public int getCode() {
-		return code;
-	}
-	public void setCode(int code) {
-		this.code = code;
-	}
-	public List<Param> getParams() {
-		return this.params;
-	}
-	private void buildParamListFromTable() {
-		this.params = new ArrayList<Param>();
-		if (table == null)
-			return;
-		for (Param p : table.getHeaders()) {
-			this.params.add(new Param(p));
-		}
-	}
 }

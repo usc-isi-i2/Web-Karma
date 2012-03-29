@@ -18,33 +18,18 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.service.json;
 
+package edu.isi.karma.service;
 
+public interface Namespaces {
 
-public class Param {
-
-	private String name;
-	private String type;
-	private String value;
-	
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public String getValue() {
-		return value;
-	}
-	public void setValue(String value) {
-		this.value = value;
-	}
+	public static final String XSD = com.hp.hpl.jena.vocabulary.XSD.getURI(); //"http://www.w3.org/2001/XMLSchema#"; 
+	public static final String RDF = com.hp.hpl.jena.vocabulary.RDF.getURI(); //"http://www.w3.org/1999/02/22-rdf-syntax-ns#"; 
+	public static final String RDFS = com.hp.hpl.jena.vocabulary.RDFS.getURI(); // "http://www.w3.org/2000/01/rdf-schema#"; 
+	public static final String OWL = com.hp.hpl.jena.vocabulary.OWL.getURI(); //"http://www.w3.org/2002/07/owl#"; 
+	public static final String SAWSDL = "http://www.w3.org/ns/sawsdl#"; 
+	public static final String MSM = "http://cms-wg.sti2.org/ns/minimal-service-model#"; 
+	public static final String HRESTS = "http://purl.org/hRESTS/current#";
+	public static final String KARMA = "http://isi.edu/karma/services/";
 
 }

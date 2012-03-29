@@ -23,6 +23,7 @@ package edu.isi.karma.service;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jetty.http.HttpMethods;
@@ -34,6 +35,13 @@ public class Request {
 	private String endPoint;
 	private List<Param> params;
 
+	public Request(Request request) {
+		this.type = request.type;
+		this.url = request.url;
+		this.endPoint = request.endPoint;
+		this.params = new ArrayList<Param>(request.getParams());
+	}
+	
 	public Request(URL url) {
 		this.type = HttpMethods.GET;
 		this.url = url;

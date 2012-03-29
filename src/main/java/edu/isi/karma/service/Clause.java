@@ -24,48 +24,25 @@ package edu.isi.karma.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
+import edu.isi.karma.modeling.alignment.Vertex;
 
-public class Response {
-	private String type;
-	private int code;
-	private String stream;
-	private Table table;
-	private List<Param> params;
+public class Clause {
 	
-	public String getType() {
-		return type;
+	private List<Vertex> concepts = new ArrayList<Vertex>();
+	private List<LabeledWeightedEdge> relations = new ArrayList<LabeledWeightedEdge>();
+	
+	public List<Vertex> getConcepts() {
+		return concepts;
 	}
-	public void setType(String type) {
-		this.type = type;
+	public void setConcepts(List<Vertex> concepts) {
+		this.concepts = concepts;
 	}
-	public String getStream() {
-		return stream;
+	public List<LabeledWeightedEdge> getRelations() {
+		return relations;
 	}
-	public void setStream(String stream) {
-		this.stream = stream;
+	public void setRelations(List<LabeledWeightedEdge> relations) {
+		this.relations = relations;
 	}
-	public Table getTable() {
-		return table;
-	}
-	public void setTable(Table table) {
-		this.table = table;
-		buildParamListFromTable();
-	}
-	public int getCode() {
-		return code;
-	}
-	public void setCode(int code) {
-		this.code = code;
-	}
-	public List<Param> getParams() {
-		return this.params;
-	}
-	private void buildParamListFromTable() {
-		this.params = new ArrayList<Param>();
-		if (table == null)
-			return;
-		for (Param p : table.getHeaders()) {
-			this.params.add(new Param(p));
-		}
-	}
+	
 }
