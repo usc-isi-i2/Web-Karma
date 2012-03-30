@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright 2012 University of Southern California
- * 
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,69 +19,30 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-table#currentSemanticTypesTable tr.currentEditRow {
-	background-color: #E2E2E2;
-	border-collapse: collapse;
-	border-spacing: 0px;
-}
+package edu.isi.karma.service;
 
-table#currentSemanticTypesTable tr.fixMe {
-	background-color: #CD3700;
-	border-collapse: collapse;
-	border-spacing: 0px;
-}
+import java.util.ArrayList;
+import java.util.List;
 
-table#currentSemanticTypesTable {
-	border-collapse: collapse;
-	border-width: 0px;
-	border-spacing: 0px;
-}
+import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
+import edu.isi.karma.modeling.alignment.Vertex;
 
-table#currentSemanticTypesTable table td {
-	text-align: right;
-}
-
-table#currentSemanticTypesTable button {
-	font-size: 0.8em;
-	padding: 2px;
-}
-
-div#SemanticTypeErrorWindow span {
-	font-size: 10px;
-	display: block;
-}
-
-div#SemanticTypeErrorWindow.ui-widget {
-	font-size: 0.4em;
-	width: 250px;
-}
-
-table#AlternativeParentLinksTable td {
-	padding: 4px;
-	font-size: 10px;
-}
-
-div#classOntologyBox {
-	font-size: 0.6em;
-}
-
-div#propertyOntologyBox {
-	font-size: 0.6em;
-}
-
-div#classTree {
-	overflow: auto;
-}
-
-div#propertyTree {
-	overflow: auto;
-}
-
-span#propertyName {
+public class Clause {
+	
+	private List<Vertex> concepts = new ArrayList<Vertex>();
+	private List<LabeledWeightedEdge> relations = new ArrayList<LabeledWeightedEdge>();
+	
+	public List<Vertex> getConcepts() {
+		return concepts;
+	}
+	public void setConcepts(List<Vertex> concepts) {
+		this.concepts = concepts;
+	}
+	public List<LabeledWeightedEdge> getRelations() {
+		return relations;
+	}
+	public void setRelations(List<LabeledWeightedEdge> relations) {
+		this.relations = relations;
+	}
 	
 }
-
-.ui-menu-item {
-	font-size: 10px;
-}
-

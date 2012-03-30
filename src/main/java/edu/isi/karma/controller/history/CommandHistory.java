@@ -249,13 +249,12 @@ public class CommandHistory {
 			}
 		}
 
-		Iterator<Command> redoIt = redoStack.iterator();
-		while (redoIt.hasNext()) {
-			redoIt.next().generateJson(prefix, pw, vWorkspace,
+		for(int i = redoStack.size()-1; i>=0; i--) {
+			Command redoComm = redoStack.get(i);
+			redoComm.generateJson(prefix, pw, vWorkspace,
 					Command.HistoryType.redo);
-			if (redoIt.hasNext()) {
+			if(i != 0)
 				pw.println(prefix + ",");
-			}
 		}
 	}
 }

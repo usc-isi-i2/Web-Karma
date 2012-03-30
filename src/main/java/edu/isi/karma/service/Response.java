@@ -24,12 +24,13 @@ package edu.isi.karma.service;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Response {
 	private String type;
 	private int code;
 	private String stream;
-	private List<Param> params;
 	private Table table;
+	private List<Param> params;
 	
 	public String getType() {
 		return type;
@@ -48,7 +49,7 @@ public class Response {
 	}
 	public void setTable(Table table) {
 		this.table = table;
-		createParamListFromTable();
+		buildParamListFromTable();
 	}
 	public int getCode() {
 		return code;
@@ -56,23 +57,15 @@ public class Response {
 	public void setCode(int code) {
 		this.code = code;
 	}
-	
 	public List<Param> getParams() {
-		return params;
+		return this.params;
 	}
-
-	public void createParamListFromTable() {
-		
+	private void buildParamListFromTable() {
+		this.params = new ArrayList<Param>();
 		if (table == null)
 			return;
-				
-		this.params = new ArrayList<Param>();
-		for (String col : this.table.getColumns()) {
-			Param p = new Param(col);
-			this.params.add(p);
+		for (Param p : table.getHeaders()) {
+			this.params.add(new Param(p));
 		}
-		
 	}
-	
-	
 }

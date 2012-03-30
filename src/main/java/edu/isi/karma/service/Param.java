@@ -23,28 +23,50 @@ package edu.isi.karma.service;
 
 
 
+
 public class Param {
 
+	private String id;
 	private String name;
-	private String type;
+	private String IOType;
 	private String value;
+	private String hNodeId;
+
+	public Param(Param param) {
+		this.id = param.id;
+		this.name = param.name;
+		this.IOType = param.IOType;
+		this.value = param.value;
+		this.hNodeId = param.hNodeId;
+	}
 	
-	public Param() {
+	public Param(String id, String name, String IOType) {
+		this.id = id;
+		this.name = name;
+		this.IOType = IOType;
 	}
 
-	public Param(String name) {
+	public Param(String id, String name, String IOType, String value) {
+		this.id = id;
 		this.name = name;
-	}
-
-	public Param(String name, String type) {
-		this.name = name;
-		this.type = type;
-	}
-
-	public Param(String name, String type, String value) {
-		this.name = name;
-		this.type = type;
+		this.IOType = IOType;
 		this.value = value;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String gethNodeId() {
+		return hNodeId;
+	}
+
+	public void sethNodeId(String hNodeId) {
+		this.hNodeId = hNodeId;
 	}
 
 	public String getName() {
@@ -59,11 +81,17 @@ public class Param {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	public String getType() {
-		return type;
+	public String getIOType() {
+		return IOType;
 	}
-	public void setType(String type) {
-		this.type = type;
+	public void setIOType(String IOType) {
+		this.IOType = IOType;
 	}
 
+	public void print() {
+		if (this.id != null && this.id.length() > 0) System.out.println("id: " + this.id);
+		if (this.name != null && this.name.length() > 0) System.out.println("name: " + this.name);
+		if (this.IOType != null && this.IOType.length() > 0) System.out.println("IOType: " + this.IOType);
+		if (this.value != null && this.value.length() > 0) System.out.println("value: " + this.value);
+	}
 }

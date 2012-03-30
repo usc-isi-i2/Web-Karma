@@ -20,8 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.cleaning.features;
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,8 +29,6 @@ import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.Token;
 
-import au.com.bytecode.opencsv.CSVReader;
-import edu.isi.karma.cleaning.ResultViewer;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
 import edu.isi.karma.cleaning.Tokenizer;

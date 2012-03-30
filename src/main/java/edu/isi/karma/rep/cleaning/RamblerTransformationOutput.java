@@ -25,6 +25,7 @@ import java.io.FileReader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -85,6 +86,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 			String val = v.getValue(k);
 			val = t.transform(val);
 			v.setValue(k, val);
+			//System.out.println(k+","+val);
 		}
 		return v;
 	}
@@ -100,15 +102,8 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		String dirpath = "/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/test";
 		File nf = new File(dirpath);
 		File[] allfiles = nf.listFiles();
-		//statistics
-		Vector<String> names = new Vector<String>();
-		Vector<Integer> exampleCnt = new Vector<Integer>();
-		Vector<Double> timeleng = new Vector<Double>();
-		Vector<Integer> cRuleNum = new Vector<Integer>();
 		for(File f:allfiles)
 		{
-			Vector<String[]> examples = new Vector<String[]>();
-			Vector<String[]> entries = new Vector<String[]>();	
 			try
 			{
 				if(f.getName().indexOf(".csv")==(f.getName().length()-4))
@@ -116,81 +111,43 @@ public class RamblerTransformationOutput implements TransformationOutput {
 					
 					CSVReader cr = new CSVReader(new FileReader(f),'\t');
 					String[] pair;
+					int isadded = 0;
+					HashMap<String,String> tx = new HashMap<String,String>();
+					int i = 0;
+					Vector<TransformationExample> vrt = new Vector<TransformationExample>();
 					while ((pair=cr.readNext())!=null)
 					{
+						
 						pair[0] = "%"+pair[0]+"@";
-						entries.add(pair);
+						tx.put(i+"", pair[0]);
+						if(isadded<3)
+						{
+							RamblerTransformationExample rtf = new RamblerTransformationExample(pair[0], pair[1], i+"");
+							vrt.add(rtf);
+							isadded ++;
+						}
+						i++;
 					}
-					examples.add(entries.get(0));
-					boolean isend = false;
-					int corrNum = 0;
-					double timespan = 0.0;
-					
-					while(corrNum==0)
+					RamblerValueCollection vc = new RamblerValueCollection(tx);
+					RamblerTransformationInputs inputs = new RamblerTransformationInputs(vrt, vc);
+					//generate the program
+					RamblerTransformationOutput rtf = new RamblerTransformationOutput(inputs);
+					Set<String> keys = rtf.getTransformations().keySet();
+					Iterator<String> iter = keys.iterator();
+					int index = 0;
+					while(iter.hasNext() && index<3)
 					{
-						long st = System.currentTimeMillis();
-						Vector<String> pls = RuleUtil.genRule(examples);
-						System.out.println("Consistent Rules :"+pls.size());
-						for(int k = 0; k<examples.size();k++)
-						{
-							System.out.println(examples.get(k)[0]+"    "+examples.get(k)[1]);
-						}
-						String[] wexam = null;
-						for(int i = 0; i<pls.size(); i++)
-						{			
-							String[] rules = pls.get(i).split("#");
-							//System.out.println(""+s1);
-							Vector<String> xr = new Vector<String>();
-							for(int t = 0; t< rules.length; t++)
-							{
-								if(rules[t].length()!=0)
-									xr.add(rules[t]);
-							}
-							isend = true;
-							for(int j = 0; j<entries.size(); j++)
-							{
-								String s = RuleUtil.applyRule(xr, entries.get(j)[0]);
-								if(s== null)
-								{
-									isend = false;
-									wexam = entries.get(j);
-									break;
-								}
-								if(s.compareTo(entries.get(j)[1])!=0)
-								{
-									isend = false;
-									wexam = entries.get(j);
-									break;
-								}
-							}
-							if(isend)
-								corrNum++;
-						}
-						/*if(wexam == null)
-						{
-							examples.add(entries.get())
-						}*/
-						long ed = System.currentTimeMillis();
-						timespan = (ed -st)*1.0/60000;
-						if(wexam!=null&&corrNum<=0)
-						{
-							examples.add(wexam);
-						}
-					}
-					names.add(f.getName());
-					exampleCnt.add(examples.size());
-					timeleng.add(timespan);
-					cRuleNum.add(corrNum);
-				}
-				
+						ValueCollection rvco = rtf.getTransformedValues(iter.next());
+						System.out.println(rvco.getValues());
+						index ++;
+					}					
+				}			
 			}
 			catch(Exception ex)
 			{
 				System.out.println(""+ex.toString());
-			}
-			
+			}	
 		}
-		Vector<TransformationExample> vt = new Vector<TransformationExample>();
 		
 		//RamblerTransformationInputs ri = new RamblerTransformationInputs(examples, inputValues) 
 	}

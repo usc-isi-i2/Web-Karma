@@ -5,12 +5,11 @@ import java.io.FileWriter;
 import java.util.Collection;
 import java.util.Vector;
 
+import weka.core.Instances;
+import weka.core.converters.ArffSaver;
+import weka.core.converters.CSVLoader;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
-import edu.isi.karma.cleaning.ResultViewer;
-
-import weka.core.*;
-import weka.core.converters.*;
 public class Data2Features {
 	//convert the csv file to arff file
 	//return the fpath of arff file
