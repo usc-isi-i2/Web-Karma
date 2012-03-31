@@ -22,15 +22,7 @@
 package edu.isi.karma.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HTable;
-import edu.isi.karma.rep.Node;
-import edu.isi.karma.rep.RepFactory;
-import edu.isi.karma.rep.Row;
-import edu.isi.karma.rep.Worksheet;
 
 public class Table {
 	
@@ -87,114 +79,6 @@ public class Table {
 		}
 	}
 
-	public void populateEmptyWorksheet(Worksheet worksheet, RepFactory factory) {
-		
-		List<String> hNodeIdList = new ArrayList<String>();
-		hNodeIdList = addHeaders(worksheet, factory, true);
-
-		edu.isi.karma.rep.Table dataTable = worksheet.getDataTable();
-		addRows(worksheet, factory, hNodeIdList, dataTable);
-
-	}
-	
-	public void populateWorksheet(Worksheet worksheet, RepFactory factory, String urlHNodeId) {
-		
-		List<String> oldHNodeIdList = new ArrayList<String>(worksheet.getHeaders().getHNodeIds());
-
-		List<String> hNodeIdList = new ArrayList<String>();
-		hNodeIdList = addHeaders(worksheet, factory, false);
-
-		edu.isi.karma.rep.Table dataTable = worksheet.getDataTable();
-		updateRows(worksheet, factory, oldHNodeIdList, hNodeIdList, dataTable, urlHNodeId);
-
-	}
-	
-	private List<String> addHeaders(Worksheet worksheet, RepFactory factory, boolean includeURL) {
-		HTable headers = worksheet.getHeaders();
-		List<String> headersList = new ArrayList<String>();
-		
-		// eliminate the url header if the flag is true
-		int startIndex = 0;
-		if (!includeURL) startIndex = 1;
-		for (int i = startIndex; i < this.getHeaders().size(); i++) {
-			Param p = this.getHeaders().get(i);
-			HNode hNode = headers.addHNode(p.getName(), worksheet, factory);
-			headersList.add(hNode.getId());
-			
-			// update the table headers
-			// We use these hNodeIds in table params to link the service object parameters to the semantic types
-			p.sethNodeId(hNode.getId());
-		}
-		return headersList;
-	}
-
-	private void addRows(Worksheet worksheet, RepFactory factory, 
-			List<String> hNodeIdList, edu.isi.karma.rep.Table dataTable) {
-		
-		for (List<String> rowValues : this.getValues()) {
-			if (rowValues == null || rowValues.size() == 0)
-				continue;
-			Row row = dataTable.addRow(factory);
-			for (int i = 0; i < rowValues.size(); i++) 
-				row.setValue(hNodeIdList.get(i), rowValues.get(i));
-		}
-		
-	}
-
-	private void updateRows(Worksheet worksheet, RepFactory factory, 
-			List<String> oldHNodeIdList, List<String> hNodeIdList, 
-			edu.isi.karma.rep.Table dataTable, String urlHNodeId) {
-		
-		int rowsCount = dataTable.getNumRows();
-		List<Row> oldRows = dataTable.getRows(0, rowsCount);
-		List<HashMap<String, String>> oldRowValues = new ArrayList<HashMap<String,String>>();
-		for (Row r : oldRows) {
-			HashMap<String, String> vals = new HashMap<String, String>();
-			for (Node n : r.getNodes()) {
-				vals.put(n.getHNodeId(), n.getValue().asString());
-			}
-			oldRowValues.add(vals);
-		}
-		
-		HashMap<String, String> currentRow = null;
-		String currentRowURL = "";
-		
-		int addedRowsCount = 0; 
-		for (int i = 0; i < oldRowValues.size(); i++) {
-			currentRow = oldRowValues.get(i);
-			currentRowURL = currentRow.get(urlHNodeId);
-			
-			for (List<String> rowValues : this.getValues()) {
-				if (rowValues == null || rowValues.size() == 0)
-					continue;
-				
-				String urlValue = rowValues.get(0);
-				if (!urlValue.trim().equalsIgnoreCase(currentRowURL.trim())) {
-					continue;
-				}
-				
-				addedRowsCount ++;
-				
-				Row row = null;
-				if (addedRowsCount <= rowsCount)
-					row = dataTable.getRows(addedRowsCount - 1, 1).get(0);
-				else 
-					row = dataTable.addRow(factory);
-				
-				for (int j = 0; j < hNodeIdList.size(); j++) {
-					// the first column in the table is the url column which should not be added t the table
-					row.setValue(hNodeIdList.get(j), rowValues.get(j + 1));
-				}
-				
-				for (String id: oldHNodeIdList) {
-					row.setValue(id, currentRow.get(id).toString());
-				}
-				
-			}
-			
-		}
-		
-	}
 
 	/**
 	 * Each service invocation might have different columns than other other invocations.

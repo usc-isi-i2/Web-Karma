@@ -164,6 +164,14 @@ public class Test {
 		return semanticTypes;
 	}
 	
+	public static DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getTestTree() {
+		OntologyManager ontManagar = new OntologyManager();
+		loadOntologies(ontManagar);
+		List<SemanticType> semTypes4 = createTestInput4();
+		Alignment alignment = new Alignment(ontManagar, semTypes4);
+		return alignment.getSteinerTree();
+	}
+	
 	public static void main(String[] args) {
 		
 		OntologyManager ontManagar = new OntologyManager();

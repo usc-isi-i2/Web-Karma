@@ -21,6 +21,7 @@
 package edu.isi.karma.rep.metadata;
 
 import edu.isi.karma.rep.semantictypes.SemanticTypes;
+import edu.isi.karma.service.Service;
 
 public class MetadataContainer {
 	
@@ -28,6 +29,8 @@ public class MetadataContainer {
 	private String 			worksheetName;
 	@SuppressWarnings("unused")
 	private SemanticTypes 	semanticTypes;
+	
+	private Service service;
 	
 //	private String 
 
@@ -39,4 +42,14 @@ public class MetadataContainer {
 	public void save() {
 		
 	}
+
+	public Service getService() {
+		return service;
+	}
+
+	public void setService(Service service) {
+		this.service = service;
+	}
+	
+	
 }
