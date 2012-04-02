@@ -21,6 +21,7 @@
 
 package edu.isi.karma.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -37,9 +38,17 @@ public class Operation {
 
 	private List<Param> inputParams;
 	private List<Param> outputParams;
-
-	private DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> operationTreeModel = null;
 	
+	private Rule rule;
+	
+	public void setRule(Rule rule) {
+		this.rule = rule;
+	}
+
+	public Rule getRule() {
+		return rule;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -80,43 +89,40 @@ public class Operation {
 		this.outputParams = outputParams;
 	}
 
-	public DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getOperationTreeModel() {
-		return operationTreeModel;
-	}
-
-	public void setOperationTreeModel(
-			DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> operationTreeModel) {
-		this.operationTreeModel = operationTreeModel;
-	}
-
-	public Rule getRule() {
+	public void updateRule(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> operationTreeModel) {
 		
-		if (this.operationTreeModel == null)
-			return null;
+		if (operationTreeModel == null)
+			return;
 		
-		Rule rule = new Rule();
+		this.rule = new Rule();
 		
-		rule.setHead(getRuleHead());
-		rule.setBody(getRuleBody());
+		rule.setHead(getRuleHead(operationTreeModel));
+		rule.setBody(getRuleBody(operationTreeModel));
 		
-		return rule;
 	}
 	
-	private Clause getRuleHead() {
+	private Clause getRuleHead(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> operationTreeModel) {
 
-		if (this.operationTreeModel == null)
+		if (operationTreeModel == null)
 			return null;
 		
 		Clause head = new Clause();
 		return head;
 	}
 
-	private Clause getRuleBody() {
+	private Clause getRuleBody(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> operationTreeModel) {
 
-		if (this.operationTreeModel == null)
+		if (operationTreeModel == null)
+			return null;
+		
+		if (operationTreeModel.vertexSet() == null)
 			return null;
 		
 		Clause body = new Clause();
+		
+		body.setConcepts( new ArrayList<Vertex>(operationTreeModel.vertexSet()));
+		body.setRelations( new ArrayList<LabeledWeightedEdge>(operationTreeModel.edgeSet()));
+
 		return body;
 	}
 

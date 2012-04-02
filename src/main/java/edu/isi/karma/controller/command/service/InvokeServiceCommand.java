@@ -21,6 +21,7 @@
 
 package edu.isi.karma.controller.command.service;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,10 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.MetadataContainer;
+import edu.isi.karma.service.Service;
 import edu.isi.karma.service.ServiceBuilder;
+import edu.isi.karma.service.Table;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
@@ -82,7 +86,14 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		ServiceBuilder sb;
 		try {
 			sb = new ServiceBuilder(wk.getTitle(), requestURLStrings);
-			sb.populateWorksheet(wk, ws.getFactory(), this.hNodeId);
+			Table serviceTable = sb.getServiceData();
+			ServiceTableUtil.populateWorksheet(serviceTable, wk, ws.getFactory(), hNodeId);
+			
+			Service service = sb.getInitialServiceModel();
+			MetadataContainer metaData = wk.getMetadataContainer();
+			if (metaData == null) metaData = new MetadataContainer();
+			metaData.setService(service);
+
 		} catch (MalformedURLException e) {
 			logger.error("Malformed service request URL.");
 			return new UpdateContainer(new ErrorUpdate("Malformed service request URL."));
@@ -105,7 +116,16 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		return c;
 	}
 	
+	public Worksheet generateWorksheet(Workspace workspace, String title) throws KarmaException, IOException {
 
+		if (workspace == null)
+			throw new KarmaException("Workspace is null.");
+		
+		Worksheet worksheet = workspace.getFactory().createWorksheet(title, workspace);
+		
+		return worksheet;
+	}
+	
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
 		return null;

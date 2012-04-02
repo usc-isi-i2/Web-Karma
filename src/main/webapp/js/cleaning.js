@@ -49,78 +49,126 @@ function handleCleanColumnButton() {
     // Populate the table of cleaning preview table
     var cleaningTable = $("table#cleaningExamplesTable");
     $("tr.nonHeading", cleaningTable).remove();
+    $("tr.radioButtons", cleaningTable).remove();
+    
+    var initialResultsValues = [];
     
     $.each(values, function(index, val) {
         var tr = $("<tr>")
+            .attr("id", val["nodeId"]+"_cl_row")
             .addClass("nonHeading")
             .append($("<td>").text(val["nodeValue"]))
-            .append($("<td>").addClass("noBorder"))
-            .append($("<td>")
-                .append($("<table>").addClass("cleaningExampleDivTable").append($("<tr>")
-                    .append($("<td>")
-                        .append($("<div>")
-                            .data("nodeId", val["nodeId"])
-                            .addClass("cleanExampleDiv")
-                            .text(val["nodeValue"])
-                            .attr("id",val["nodeId"]+"_c1")
-                            .editable(function(value, settings) {
-                                var editDiv = $(this);
-                                var revertButton = $("<div>").addClass("undoEditButton").button({
-                                    icons: {
-                                        primary: 'ui-icon-arrowreturnthick-1-w'
-                                    },
-                                    text: false
-                                }).click(function(){
-                                    editDiv.text(val["nodeValue"]);
-                                    $(this).parent().remove();
-                                    
-                                    // Remove the user provided example from the examples JSON object
-                                    var delInd = -1;
-                                    $.each(examples, function(index2, example){
-                                        if(example["nodeId"] == editDiv.data("nodeId"))
-                                            delInd = index2; 
-                                    });
-                                    if(delInd != -1)
-                                        examples.splice(delInd, 1);
-                                }).qtip({
-                                   content: {
-                                      text: 'Undo'
-                                   },
-                                   style: {
-                                      classes: 'ui-tooltip-light ui-tooltip-shadow'
-                                   }
-                                });
-                                
-                                // Remove existing button
-                                $("td.noBorder", $(this).parent().parent()).remove();
-                                $(this).parent().parent().append($("<td>").addClass("noBorder").append(revertButton));
-                                
-                                examples.push(
-                                    {
-                                        "nodeId":$(this).data("nodeId"),
-                                        "before": val["nodeValue"],
-                                        "after":value
-                                    });
-                                return(value);
-                            }, { 
-                                type    : 'textarea',
-                                submit  : 'OK',
-                                cancel  : 'Cancel',
-                                width: 140,
-                                onblur: 'ignore',
-                            })
-                        )
-                    )
-                )
-            )
-        );
-        $("tr#buttonsAndRuleInfoRow").before(tr);
+            .append($("<td>").addClass("noBorder"));
+        
+        var res = new Object();
+        res[val["nodeId"]] = val["nodeValue"];
+        initialResultsValues.push(res);
+            
+        cleaningTable.append(tr);
     });
+    
+    populateResultsInCleaningTable(initialResultsValues);
+    
+    // Add the radio button row
+    cleaningTable.append($("<tr>").addClass("radioButtons")
+        .append($("<td>").addClass("noBorder"))
+        .append($("<td>").addClass("noBorder"))
+        .append($("<td>")
+            .append($("<input>").attr("type", "radio")
+                .attr("name", "cleaningRuleSelect")
+                .attr("value", "rule0")
+                .prop("checked", true)
+        )
+    ));
     
     $("div#ColumnCleaningPanel").dialog({title: 'Clean', width: 500,
         height: 500, buttons: { "Cancel": function() { $(this).dialog("close"); },  
             "Generate Rules": handleGenerateCleaningRulesButton,
             "Submit":function() { $(this).dialog("close"); }}});
+}
+
+function populateResultsInCleaningTable(data) {
+    var examples = $("div#columnHeadingDropDownMenu").data("cleaningExamples", examples);
+    var cleaningTable = $("table#cleaningExamplesTable");
+    
+    // Remove the old results
+    $("td.ruleResultsValue", cleaningTable).remove();
+    $("tr.radioButtons", cleaningTable).remove();
+    
+    $.each(data, function(index, ruleResult){
+        for(var nodeId in ruleResult) {
+            var trTag = $("tr#"+nodeId + "_cl_row");
+            if(trTag != null) {
+                trTag.append($("<td>").addClass('Rule'+index)
+                    .addClass("ruleResultsValue")
+                    .append($("<table>").addClass("cleaningExampleDivTable").append($("<tr>")
+                        .append($("<td>")
+                            .append($("<div>")
+                                .data("nodeId", nodeId)
+                                .data("originalVal", ruleResult[nodeId])
+                                .addClass("cleanExampleDiv")
+                                .text(ruleResult[nodeId])
+                                .attr("id",nodeId+"_c"+index)
+                                .editable(function(value, settings) {
+                                    var editDiv = $(this);
+                                    
+                                    // Add the revert button
+                                    var revertButton = $("<div>").addClass("undoEditButton").button({
+                                        icons: {
+                                            primary: 'ui-icon-arrowreturnthick-1-w'
+                                        },
+                                        text: false
+                                    }).click(function(){
+                                        editDiv.text(editDiv.data("originalVal"));
+                                        $(this).parent().remove();
+                                        
+                                        // Remove the user provided example from the examples JSON object
+                                        var delInd = -1;
+                                        $.each(examples, function(index2, example){
+                                            if(example["nodeId"] == editDiv.data("nodeId"))
+                                                delInd = index2; 
+                                        });
+                                        if(delInd != -1)
+                                            examples.splice(delInd, 1);
+                                    }).qtip({
+                                       content: {
+                                          text: 'Undo'
+                                       },
+                                       style: {
+                                          classes: 'ui-tooltip-light ui-tooltip-shadow'
+                                       }
+                                    });
+                                    
+                                    // Remove existing button
+                                    $("td.noBorder", $(this).parent().parent()).remove();
+                                    $(this).parent().parent().append($("<td>").addClass("noBorder").append(revertButton));
+                                    
+                                    examples.push(
+                                        {
+                                            "nodeId":$(this).data("nodeId"),
+                                            "before": $(this).data("originalVal"),
+                                            "after":value
+                                        });
+                                    return(value);
+                                }, { 
+                                    type    : 'textarea',
+                                    submit  : 'OK',
+                                    cancel  : 'Cancel',
+                                    width: 140,
+                                    onblur: 'ignore',
+                                })
+                            )
+                        )
+                    )
+                )
+            )
+            }
+        }
+    });
+    
+    // Add radio buttons
+    
+    
 }
 
 function handleGenerateCleaningRulesButton() {
@@ -146,7 +194,7 @@ function handleGenerateCleaningRulesButton() {
         complete : 
             function (xhr, textStatus) {
                 var json = $.parseJSON(xhr.responseText);
-                //parse(json);
+                parse(json);
             },
         error :
             function (xhr, textStatus) {

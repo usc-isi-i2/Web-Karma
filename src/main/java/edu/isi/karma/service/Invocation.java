@@ -69,8 +69,8 @@ public class Invocation {
 	}
 
 
-	public Table getJointInputAndOutput(boolean includeURL) {
-		joinInputAndOutput(includeURL);
+	public Table getJointInputAndOutput() {
+		joinInputAndOutput();
 		return jointInputAndOutput;
 	}
 
@@ -180,7 +180,7 @@ public class Invocation {
 		
 	}
 	
-	public void joinInputAndOutput(boolean includeURL) {
+	public void joinInputAndOutput() {
     	
 		jointInputAndOutput = new Table(this.response.getTable());
 		
@@ -196,12 +196,10 @@ public class Invocation {
 					this.response.getTable().getValues().get(k).add(0, p.getValue());
 		}
 
-		if (includeURL) {
-			// Include the request URLs in the invocation table
-			jointInputAndOutput.getHeaders().add(0, new Param(REQUEST_COLUMN_NAME, REQUEST_COLUMN_NAME,IOType.NONE));
-			for (int k = 0; k < this.response.getTable().getValues().size(); k++)
-				this.response.getTable().getValues().get(k).add(0, this.request.getUrl().toString());
-		}
+		// Include the request URLs in the invocation table
+		jointInputAndOutput.getHeaders().add(0, new Param(REQUEST_COLUMN_NAME, REQUEST_COLUMN_NAME,IOType.NONE));
+		for (int k = 0; k < this.response.getTable().getValues().size(); k++)
+			this.response.getTable().getValues().get(k).add(0, this.request.getUrl().toString());
 		
 	}
 }

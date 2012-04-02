@@ -762,7 +762,14 @@ function parse(data) {
 			
 			var downloadLink = $("<a>").attr("href",element["fileUrl"]).text("RDF").addClass("RdfDownloadLink").attr("target","_blank");
 			$("div.tableTitleTextDiv", titleDiv).after(downloadLink);
-		}
+		} 
+		
+		else if(element["updateType"] == "CleaningResultUpdate") {
+            if(element["result"] != null) {
+                populateResultsInCleaningTable(element["result"]);  // in cleaning.js
+            }
+                
+        }
 	});
 }
 
