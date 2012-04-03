@@ -39,17 +39,21 @@ public class VWorkspace {
 	private final VWorksheetList vWorksheets = new VWorksheetList();
 
 	private final ViewPreferences preferences;
+	
+	private final String preferencesId;
 
 	public VWorkspace(Workspace workspace) {
 		super();
 		this.workspace = workspace;
 		preferences = new ViewPreferences(workspace.getId());
+		preferencesId=workspace.getId();
 	}
 	
 	public VWorkspace(Workspace workspace, String workspacePreferencesId) {
 		super();
 		this.workspace = workspace;
 		preferences = new ViewPreferences(workspacePreferencesId);
+		preferencesId=workspacePreferencesId;
 	}
 
 	public Workspace getWorkspace() {
@@ -70,6 +74,9 @@ public class VWorkspace {
 
 	public ViewPreferences getPreferences() {
 		return preferences;
+	}
+	public String getPreferencesId() {
+		return preferencesId;
 	}
 	
 	/**
