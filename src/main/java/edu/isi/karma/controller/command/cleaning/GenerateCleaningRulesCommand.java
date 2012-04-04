@@ -20,16 +20,23 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.cleaning;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import au.com.bytecode.opencsv.CSVReader;
+
+import edu.isi.karma.cleaning.UtilTools;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.CleaningResultUpdate;
@@ -103,19 +110,20 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		return CommandType.undoable;
 	}
 	
-	private Vector<ValueCollection> getTopK(RamblerTransformationOutput rtf,int k)
+	private static Vector<String> getTopK(Set<String> res,int k)
 	{
-		Iterator<String> iter = rtf.getTransformations().keySet().iterator();
-		Vector<ValueCollection> vvc = new Vector<ValueCollection>();
-		int index = 0;
-		while(iter.hasNext() && index<k)
+		String trainPath = "/Users/bowu/Research/features.arff";
+		Vector<String> vs = new Vector<String>();
+		//
+		String[] x = (String[])res.toArray(new String[res.size()]);
+		Vector<Double> scores = UtilTools.getScores(x, trainPath);
+		Vector<Integer> ins =UtilTools.topKindexs(scores, k);
+		Vector<String> y = new Vector<String>();
+		for(Integer i:ins)
 		{
-			ValueCollection rvco = rtf.getTransformedValues(iter.next());
-			vvc.add(rvco);
-			System.out.println(rvco.getJson());
-			index ++;
+			y.add(x[i]);
 		}
-		return vvc;
+		return y;
 	}
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
@@ -142,15 +150,108 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		inputs = new RamblerTransformationInputs(examples, vc);
 		//generate the program
 		RamblerTransformationOutput rtf = new RamblerTransformationOutput(inputs);
-		Vector<ValueCollection> vvc = getTopK(rtf, 3);
+		HashMap<String,Vector<String>> js2tps = new HashMap<String,Vector<String>>();
+		Iterator<String> iter = rtf.getTransformations().keySet().iterator();
+		Vector<ValueCollection> vvc = new Vector<ValueCollection>();
+		int index = 0;
+		while(iter.hasNext())
+		{
+			String tpid = iter.next();
+			ValueCollection rvco = rtf.getTransformedValues(tpid);
+			vvc.add(rvco);
+			String reps = rvco.getJson().toString();
+			if(js2tps.containsKey(reps))
+			{
+				js2tps.get(reps).add(tpid); // update the variance dic
+			}
+			else
+			{
+				Vector<String> tps = new Vector<String>();
+				tps.add(tpid);
+				js2tps.put(reps, tps);
+			}
+		}
+		////////
+		Vector<String> jsons = getTopK(js2tps.keySet(), 3);
 		
-		return new UpdateContainer(new CleaningResultUpdate(hNodeId, vvc));
+		return new UpdateContainer(new CleaningResultUpdate(hNodeId, jsons,js2tps));
 	}
 
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	public static void main(String[] args)
+	{
+		String dirpath = "/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/test";
+		File nf = new File(dirpath);
+		File[] allfiles = nf.listFiles();
+		for(File f:allfiles)
+		{
+			try
+			{
+				if(f.getName().indexOf(".csv")==(f.getName().length()-4))
+				{
+					
+					CSVReader cr = new CSVReader(new FileReader(f),'\t');
+					String[] pair;
+					int isadded = 0;
+					HashMap<String,String> tx = new HashMap<String,String>();
+					int i = 0;
+					Vector<TransformationExample> vrt = new Vector<TransformationExample>();
+					while ((pair=cr.readNext())!=null)
+					{
+						
+						pair[0] = "%"+pair[0]+"@";
+						tx.put(i+"", pair[0]);
+						if(isadded<3)
+						{
+							RamblerTransformationExample tmp = new RamblerTransformationExample(pair[0], pair[1], i+"");
+							vrt.add(tmp);
+							isadded ++;
+						}
+						i++;
+					}
+					
+					RamblerValueCollection vc = new RamblerValueCollection(tx);
+					RamblerTransformationInputs inputs = new RamblerTransformationInputs(vrt, vc);
+					//generate the program
+					RamblerTransformationOutput rtf = new RamblerTransformationOutput(inputs);
+					HashMap<String,Vector<String>> js2tps = new HashMap<String,Vector<String>>();
+					Iterator<String> iter = rtf.getTransformations().keySet().iterator();
+					Vector<ValueCollection> vvc = new Vector<ValueCollection>();
+					int index = 0;
+					while(iter.hasNext())
+					{
+						String tpid = iter.next();
+						ValueCollection rvco = rtf.getTransformedValues(tpid);
+						vvc.add(rvco);
+						String reps = rvco.getJson().toString();
+						if(js2tps.containsKey(reps))
+						{
+							js2tps.get(reps).add(tpid); // update the variance dic
+						}
+						else
+						{
+							Vector<String> tps = new Vector<String>();
+							tps.add(tpid);
+							js2tps.put(reps, tps);
+						}
+					}
+					////////
+					Vector<String> jsons = getTopK(js2tps.keySet(), 3);
+					for(String s:jsons)
+					{
+						System.out.println(""+s);
+					}
+				}			
+			}
+			catch(Exception ex)
+			{
+				System.out.println(""+ex.toString());
+			}	
+		}
 	}
 
 }

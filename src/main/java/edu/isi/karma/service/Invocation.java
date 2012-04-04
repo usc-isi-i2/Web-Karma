@@ -190,6 +190,7 @@ public class Invocation {
     	
 		jointInputAndOutput = new Table(this.response.getTable());
 		
+		List<String> inputValues = new ArrayList<String>();
 		if (this.request.getParams() != null)
 		for (int j = this.request.getParams().size() - 1; j >= 0; j--) {
 			
@@ -198,14 +199,21 @@ public class Invocation {
 				continue;
 				
 				jointInputAndOutput.getHeaders().add(0, p);
+				inputValues.add(0, p.getValue());
 				for (int k = 0; k < this.response.getTable().getValues().size(); k++)
 					this.response.getTable().getValues().get(k).add(0, p.getValue());
 		}
+		
+		// there is no output
+		if (this.response.getTable().getHeaders().size() == 0) {
+			jointInputAndOutput.getValues().add(inputValues);
+		}
+
 
 		// Include the request URLs in the invocation table
 		jointInputAndOutput.getHeaders().add(0, new Param(REQUEST_COLUMN_NAME, REQUEST_COLUMN_NAME,IOType.NONE));
-		for (int k = 0; k < this.response.getTable().getValues().size(); k++)
-			this.response.getTable().getValues().get(k).add(0, this.request.getUrl().toString());
+		for (int k = 0; k < jointInputAndOutput.getValues().size(); k++)
+			jointInputAndOutput.getValues().get(k).add(0, this.request.getUrl().toString());
 		
 	}
 }

@@ -35,9 +35,17 @@ public class RamblerValueCollection implements ValueCollection {
 	{
 		this.data = data;
 	}
+	public RamblerValueCollection()
+	{
+		data = new HashMap<String,String>();
+	}
 	public void setValue(String id, String val)
 	{
 		if(data.containsKey(id))
+		{
+			data.put(id, val);
+		}
+		else
 		{
 			data.put(id, val);
 		}
@@ -85,5 +93,15 @@ public class RamblerValueCollection implements ValueCollection {
 			return null;
 		}
 	}
-
+	public String representation()
+	{
+		String result = "";
+		Set<String> res = data.keySet();
+		for(String s:res)
+		{
+			result += data.get(s);
+			result += " ";
+		}
+		return result;
+	}
 }

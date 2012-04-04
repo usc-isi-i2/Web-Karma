@@ -30,4 +30,5 @@ public interface ValueCollection {
 	public abstract Collection<String> getNodeIDs();
 	public abstract void setValue(String id, String val);
 	public abstract JSONObject getJson();
+	public abstract String representation();
 }

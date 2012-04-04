@@ -77,6 +77,25 @@ public class RegularityClassifer {
 		fileReader.close() ;
 		Prnt.prn(cf) ;
 	}
+	//return the confidence score for positive class label
+	public Vector<Double> getScores(String fpath) throws Exception
+	{
+		BufferedReader fileReader = new BufferedReader(new FileReader(fpath));
+		Instances instances = new Instances(fileReader) ;
+		instances.setClassIndex(instances.numAttributes() -1) ;
+		Prnt.prn(instances.numAttributes()) ;
+		double confidence = -1;
+		Vector<Double> posConfid = new Vector<Double>();
+		for(int i=0;i<instances.size();i++) {			
+			Instance instance = instances.get(i) ;
+			double label = instance.value(instances.numAttributes()-1);
+			double[] dist = cf.distributionForInstance(instance) ;
+			posConfid.add(dist[1]);//keep history of all the confidence
+		}	
+		fileReader.close() ;
+		return posConfid;
+	}
+	
 	public int getRank(String fpath) throws Exception
 	{
 		int rank = 0;
