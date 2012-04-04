@@ -24,8 +24,12 @@ package edu.isi.karma.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 public class Table {
 	
+	static Logger logger = Logger.getLogger(Table.class);
+
 	private List<Param> headers;
 	private List<List<String>> values;
 	
@@ -56,6 +60,7 @@ public class Table {
 	}
 	
 	public void print() {
+		
 		for (Param p: headers) {
 			System.out.print(p.getIOType() + ",");
 		}
@@ -79,6 +84,34 @@ public class Table {
 		}
 	}
 
+	public String getPrintInfo() {
+		
+		String s = "";
+		s += "Table data: \n";
+		for (Param p: headers) {
+			s += p.getIOType() + ",";
+		}
+		s += "\n";
+		
+		for (Param p: headers) {
+			s += p.getName() + ",";
+		}
+		s += "\n";
+
+//		for (Param p: headers) {
+//			s += p.getId() + ",";
+//		}
+//		s += "\n";
+
+		for (List<String> value: values) {
+			for (String v:value) {
+				s += v + ",";
+			}
+			s += "\n";
+		}
+		
+		return s;
+	}
 
 	/**
 	 * Each service invocation might have different columns than other other invocations.

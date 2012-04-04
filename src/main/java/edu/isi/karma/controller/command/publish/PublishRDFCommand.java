@@ -123,7 +123,9 @@ public class PublishRDFCommand extends Command {
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
-		final String rdfFileName = "./src/main/webapp/RDF/" + vWorkspace.getWorkspace().getId() + vWorksheetId
+		//use the unique workspace id saved for this user
+		//I want to have only one RDF file per user/browser
+		final String rdfFileName = "./src/main/webapp/RDF/" + vWorkspace.getPreferencesId() + vWorksheetId
 				+ ".n3";
 
 		// get alignment for this worksheet
@@ -184,7 +186,7 @@ public class PublishRDFCommand extends Command {
 						outputObject.put(JsonKeys.updateType.name(),
 								"PublishRDFUpdate");
 						outputObject.put(JsonKeys.fileUrl.name(),
-								publicRDFAddress + vWorkspace.getWorkspace().getId() + vWorksheetId + ".n3");
+								publicRDFAddress + vWorkspace.getPreferencesId() + vWorksheetId + ".n3");
 						outputObject.put(JsonKeys.vWorksheetId.name(),
 								vWorksheetId);
 						pw.println(outputObject.toString(4));

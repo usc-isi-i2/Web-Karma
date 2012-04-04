@@ -63,7 +63,7 @@ public class CRFModelHandler {
 		ColumnHeaderName ,
 		TableName
 	} ;
-	
+
 	// ***********************************************************************************************
 
 	// ***********************************************************************************************
@@ -74,7 +74,7 @@ public class CRFModelHandler {
 	static class Example {
 		String exampleString;
 		HashMap<ColumnFeature, String> columnFeatures;
-	
+
 		/**
 		 * @param exampleString The string that the example represents
 		 * No ColumnFeatures specified.
@@ -83,7 +83,7 @@ public class CRFModelHandler {
 			this.exampleString = exampleString;
 			columnFeatures = new HashMap<CRFModelHandler.ColumnFeature, String>();
 		}
-		
+
 		/**
 		 * @param exampleString The example string
 		 * @param columnFeatures Associated ColumnFeatures
@@ -110,7 +110,7 @@ public class CRFModelHandler {
 				}
 			}
 		}
-		
+
 		/**
 		 * @param columnFeature A ColumnFeature
 		 * @param featureValue Corresponding Value to the ColumnFeature
@@ -120,11 +120,11 @@ public class CRFModelHandler {
 				columnFeatures.put(columnFeature, featureValue);
 			}
 		}
-		
+
 		public String getString() {
 			return exampleString;
 		}
-		
+
 		/**
 		 * @param colFeature ColumnFeature for which the value is required.
 		 * @return The value corresponding to the ColumnFeature, or null if the example doesn't have the passed ColumnFeature. 
@@ -139,7 +139,7 @@ public class CRFModelHandler {
 			}
 		}
 	}
-	
+
 	// ***********************************************************************************************
 	// instance variables
 	String file;
@@ -147,7 +147,7 @@ public class CRFModelHandler {
 	GlobalDataFieldOnly globalData;
 	ArrayList<String> allowedCharacters;
 	static Logger logger = LoggerFactory.getLogger(CRFModelHandler.class.getSimpleName()) ;
-	
+
 	/**
 	 * Making the empty constructor private to prevent instantiation of this class.
 	 * This class should only be used to access its static methods.
@@ -158,7 +158,7 @@ public class CRFModelHandler {
 		globalData = null ;
 		allowedCharacters = allowedCharacters();
 	}
-	
+
 	/**
 	 * Returns the path to the file that the CRF Model is using
 	 * @return Path to the Model file 
@@ -167,7 +167,7 @@ public class CRFModelHandler {
 		return file;
 	}
 
-	
+
 	/**
 	 * @param label True label for the list of example.
 	 * @param examples List of example strings.
@@ -296,7 +296,7 @@ public class CRFModelHandler {
 		return savingSuccessful ;
 	}
 
-	
+
 	/**
 	 * @param label The label for which examples are being requested.
 	 * @param examples The list argument that will be used to return the list of examples in the model for the supplied label.
@@ -325,7 +325,7 @@ public class CRFModelHandler {
 		return true ;
 	}
 
-	
+
 	/**
 	 * @param labels The ordered list of labels is returned in this argument.
 	 * @return
@@ -344,7 +344,7 @@ public class CRFModelHandler {
 		return true ;
 	}
 
-	
+
 	/**
 	 * @param examples - list of examples of an unknown type
 	 * @param numPredictions - required number of predictions in descending order
@@ -442,8 +442,8 @@ public class CRFModelHandler {
 	}
 
 
-	
-		
+
+
 	/**
 	 * @param file The path of the file from which the model should be read.
 	 * @return True is successfully read. False, otherwise.
@@ -582,7 +582,7 @@ public class CRFModelHandler {
 		}
 	}
 
-	
+
 	/**
 	 * @return True if successfully cleared the model. False, otherwise.
 	 * This method removes all labels from the CRF model. 
@@ -619,9 +619,9 @@ public class CRFModelHandler {
 		globalData.crfModel = crfModel ;
 		return true ;
 	}
-	
-	
-	
+
+
+
 	public boolean removeLabel(String label) {
 		int labelIndex;
 		ArrayList<Double> weightsList;
@@ -689,9 +689,9 @@ public class CRFModelHandler {
 		return savingSuccessful ;
 	}
 
-	
 
-	
+
+
 	/**
 	 * @return Returns list of allowed Characters
 	 */
@@ -730,8 +730,8 @@ public class CRFModelHandler {
 		return allowed ;
 	}
 
-	
-	
+
+
 	/**
 	 * @param uncleanList List of all examples
 	 * @param cleanedList List with examples that dont have unallowed chars and others such as nulls or empty strings
@@ -749,8 +749,8 @@ public class CRFModelHandler {
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * @param columnName The value passed for the ColumnFeature ColumnHeaderName
 	 * @param features The set in which the features extracted about this value will be returned.
@@ -770,7 +770,7 @@ public class CRFModelHandler {
 			}
 		}
 	}
-	
+
 	/**
 	 * @param tableName The value passed for the ColumnFeature TableName
 	 * @param features The set in which the features extracted about this value will be returned.
@@ -790,7 +790,7 @@ public class CRFModelHandler {
 			}
 		}
 	}
-	
+
 	/**
 	 * @param field A string from which syntactic features will be extracted
 	 * @param features The arg used to return those features.
@@ -831,7 +831,7 @@ public class CRFModelHandler {
 		}
 	}
 
-	
+
 	/**
 	 * @param field Field for which features are to be extracted
 	 * @param columnFeatures The columnFeatures of the field.
@@ -842,20 +842,22 @@ public class CRFModelHandler {
 	private void featureSet(String field, Map<ColumnFeature, Collection<String>> columnFeatures, HashSet<String> features) {
 		Example example;
 		example = new Example(field);
-		for(Map.Entry<ColumnFeature, Collection<String>> entry : columnFeatures.entrySet()) {
-			Collection<String> ftrValues;
-			ftrValues = entry.getValue();
-			if (ftrValues != null && ftrValues.size() > 0) {
-				for(String ftrValue : ftrValues) {
-					example.addColumnFeature(entry.getKey(), ftrValue);
-					break;
+		if (columnFeatures != null) {
+			for(Map.Entry<ColumnFeature, Collection<String>> entry : columnFeatures.entrySet()) {
+				Collection<String> ftrValues;
+				ftrValues = entry.getValue();
+				if (ftrValues != null && ftrValues.size() > 0) {
+					for(String ftrValue : ftrValues) {
+						example.addColumnFeature(entry.getKey(), ftrValue);
+						break;
+					}
 				}
 			}
 		}
 		featureSet(example, features);
 	}
-	
-	
+
+
 	/**
 	 * @param array The array of doubles
 	 * @return A list containing the same doubles in the same order
@@ -869,8 +871,8 @@ public class CRFModelHandler {
 		}
 		return newList ;
 	}
-	
-	
+
+
 	/**
 	 * @param br A BufferedReader instance
 	 * @return Parsed Example instance.
@@ -934,8 +936,8 @@ public class CRFModelHandler {
 		}
 		return example;
 	}
-	
-	
+
+
 	/**
 	 * @param br BufferedReader reading the model file.
 	 * @return The int value of the string.
@@ -970,8 +972,8 @@ public class CRFModelHandler {
 			}
 		}
 	}
-		
-	
+
+
 	private String getSanitizedString(String unsanitizedString) {
 		String sanitizedString ;
 		sanitizedString = "" ;
@@ -984,8 +986,8 @@ public class CRFModelHandler {
 		}
 		return sanitizedString;
 	}
-	
-	
+
+
 	/**
 	 * This method writes the model in memory to the file that it was read from.
 	 * @return true, if writing is successful, else return, false
@@ -1033,8 +1035,8 @@ public class CRFModelHandler {
 		}
 	}
 
-	
-	
+
+
 	/**
 	 * @param str The string to be split
 	 * @param parts The list in which the parts will be returned
@@ -1072,7 +1074,7 @@ public class CRFModelHandler {
 		}
 		return true;
 	}
-	
+
 } // end of class CRFModelHandlerNew
 
 
@@ -1154,6 +1156,6 @@ private static boolean predictLabelForExamples(
 	}
 }
 
-*/
+ */
 
 
