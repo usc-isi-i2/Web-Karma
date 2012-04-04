@@ -73,8 +73,6 @@ public class ServiceBuilder {
 	
 	public Table getServiceData(boolean includeURL, boolean includeInputParams, boolean includeOutputParams) {
 		
-		logger.info("Requesting service data with includeURL=" + includeURL + ",includeInput=" + includeInputParams + ",includeOutput=" + includeOutputParams);
-		
 		if (this.serviceData == null)
 			invokeAndGetResponse();
 		
