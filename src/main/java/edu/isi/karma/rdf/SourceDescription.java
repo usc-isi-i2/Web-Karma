@@ -387,16 +387,18 @@ public class SourceDescription {
 	 * 	the statements for synonym semantic types.
 	 */
 	private String generateSynonymStatements() {
+		//System.out.println("Generate synonym statements ....");
 		String s = "";
 		//for each leaf of the tree
 		for(Vertex child: steinerTree.vertexSet()){
+			//System.out.println("Get semantic type for " + child.getLocalLabel());
 			if(child.getSemanticType()==null){
 				//only if the node id mapped to a column it will have a semantic type
-				return null;
+				//System.out.println("No semantic type for " + child.getLocalLabel());
+				continue;
 			}
-			//logger.info("Syn for3 " + child.getSemanticType().getHNodeId());
 			SynonymSemanticTypes synonyms = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(child.getSemanticType().getHNodeId());
-			//logger.info("Syn for " + factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName() + " is " + synonyms);
+			//System.out.println("Syn for " + factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName() + " is " + synonyms);
 			if(synonyms!=null){
 				List<SemanticType> semT = synonyms.getSynonyms();
 				for(SemanticType st: semT){
@@ -430,9 +432,25 @@ public class SourceDescription {
 			return s;
 		}
 		else{
+			String domainClass = st.getDomain();
+			logger.info("Domain=" + domainClass);
+			String s = "";
+			String id = classNameToId.get(domainClass);
+			if(id==null){
+				//there is no class statement for this class (it is a class used in synonym property but nowhere else)
+				//this class is not present in the Steiner tree
+				//generate a gensym key
+				String key = String.valueOf(uriIndex++);
+				uriMap.put(domainClass,key);
+				//I don't have an id for this class because I don't have a vertex in the graph for it
+				classNameToId.put(domainClass,domainClass);
+				id=st.getDomain();
+				//add a class statement for this class
+				s += "`" + domainClass + "`(uri(" + key + ")) \n ^ "; 
+			}
 			//it's a data property
 			//find the key of this property's domain
-			String key = findKey(st.getDomain());
+			String key = uriMap.get(id);
 			
 			String dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName();
 			if(!useColumnNames){
@@ -440,7 +458,7 @@ public class SourceDescription {
 			}
 			ruleAttributes.add(dataAttribute);
 			String propertyName = getPropertyWithPrefix(model.getOntProperty(st.getType()));
-			String s = "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
+			s += "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
 			//System.out.println("DataProperty:" + s);
 			return s;
 		}
@@ -567,33 +585,7 @@ public class SourceDescription {
 		//logger.info("Key for " + v.getID() + " is " + key);
 		return key;
 	}
-	
-	/**
-	 * Returns the key for the given Class. If this Class is not present in the Steiner tree,
-	 * return a gensym.
-	 * @param domain
-	 * 		a class.
-	 * @return
-	 * 		the key for the given Class.
-	 */
-	private String findKey(String domain){
-		//get the id of a class node that corresponds to this class
-		String id = classNameToId.get(domain);
-		if(id==null){
-			//no class found , so generate a gensym
-			String gensym = String.valueOf(uriIndex++);
-			return gensym;
-		}
-		String key = uriMap.get(id);
-		if(key==null){
-			//no class found , so generate a gensym
-			String gensym = String.valueOf(uriIndex++);
-			return gensym;			
-		}
-		//logger.info("key for " + domain + " is " + key);
-		return key;
-	}
-	
+		
 	/**
 	 * Returns all namespaces used in the SD in the format needed by the domain model.
 	 * @return

@@ -47,7 +47,7 @@ public class CRFModelHandlerTest extends TestCase {
 		super.tearDown();
 	}
 	
-	public void testNewFormat() throws Exception {
+	private void testNewFormat() throws Exception {
 		CRFModelHandler crfModelHandler;
 		DBTable dbTable;
 		ArrayList<String> dataFiles, labels, colValues, selectedColValues, predictedLabels;
@@ -114,14 +114,14 @@ public class CRFModelHandlerTest extends TestCase {
 	}
 
 	
-	private void testTrain() throws Exception {
+	public void testTrain() throws Exception {
 		DBTable dbTable;
 		CRFModelHandler crfModelHandler;
 		ArrayList<String> dataFileNames, colValues, selectedColValues1, selectedColValues2, columnLabels;
 		ArrayList<ArrayList<String>> columns1, columns2;
 		final String modelFileName1 = "/Users/amangoel/Desktop/crfmodel1.txt";
 		final String modelFileName2 = "/Users/amangoel/Desktop/crfmodel2.txt";
-		final String dataDir = "/data/biodb/";
+		final String dataDir = "/data/dovetail/";
 		crfModelHandler = new CRFModelHandler();
 		colValues = new ArrayList<String>();
 		selectedColValues1 = new ArrayList<String>();
