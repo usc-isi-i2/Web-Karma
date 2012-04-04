@@ -21,6 +21,7 @@
 
 package edu.isi.karma.rdf;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -105,6 +106,10 @@ public class SourceDescription {
 	 * namespace assigned to it, prefix is renamed.
 	 */
 	private HashMap<String, String> namespaces = new HashMap<String, String>();
+	/**
+	 * key=namespace; val=prefix.
+	 */
+	private HashMap<String, String> prefixes = new HashMap<String, String>();
 	/**
 	 * If the same prefix appears again with a different 
 	 * namespace assigned to it, prefix is renamed.
@@ -612,7 +617,7 @@ public class SourceDescription {
 	 * 		the namespace that corresponds to the prefix given as argument
 	 * @return
 	 * 		the prefix of the given namespace.
-	 * 1. If prefix is not present in the "namespaces" map, add it and return the same prefix
+	 * 1. If prefix is not present in the "namespaces" map, see if this namespace already has an assigned prefix, otherwise add it and return the same prefix
 	 * 2. if prefix is already present in the namespaces map
 	 * 	2.a the namespace corresponding to this prefix is the same as the input arg, return this prefix
 	 * 	2.b the namespace corresponding to this prefix is different, rename the prefix,
@@ -621,11 +626,24 @@ public class SourceDescription {
 	 * can happen if we import several ontologies, with overlapping prefix names)
 	 */
 	private String getPrefix(String prefix, String namespace){
+		if(prefix==null || prefix.trim().isEmpty()){
+			//generate a prefix
+			prefix = "ont" + (prefixIndex++);				
+		}
 		String ns = namespaces.get(prefix);
-		//if prefix doesn't exist, add it to the map and return it
+		//if prefix doesn't exist, see if this namespace already has an assigned prefix
+		// if not add it to the map and return it
 		if(ns==null){
-			namespaces.put(prefix, namespace);
-			return prefix;
+			//check to see if I already assigned a prefix to this namespace
+			if(namespaces.containsValue(namespace)){
+				//return the already saved namespace
+				return prefixes.get(namespace);
+			}
+			else{
+				namespaces.put(prefix, namespace);
+				prefixes.put(namespace, prefix);
+				return prefix;
+			}
 		}
 		else{
 			//if it is the same namespace, return the prefix
@@ -636,6 +654,7 @@ public class SourceDescription {
 				//I have to generate a new prefix
 				String newPref = prefix + (prefixIndex++);
 				namespaces.put(newPref, namespace);
+				prefixes.put(namespace, newPref);
 				return newPref;
 			}
 		}

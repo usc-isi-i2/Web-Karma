@@ -160,8 +160,8 @@ public class PublishRDFCommand extends Command {
 				} else {
 					wrg.generateTriplesRow(worksheet);
 				}
-				String fileName = "./publish/Source Description/"
-						+ worksheet.getTitle() + ".txt";
+				String fileName = "./publish/Source Description/W"
+						+ worksheet.getId() + ".txt";
 				FileUtil.writeStringToFile(descString, fileName);
 				logger.info("Source description written to file: " + fileName);
 				logger.info("RDF written to file: " + rdfFileName);
