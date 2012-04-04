@@ -184,7 +184,7 @@ public class ServiceBuilder {
 	
 	
 	public static void main(String[] args) {
-//		String s1 = "http://api.geonames.org/neighbourhood";
+//		String s1 = "http://colo-vm10.isi.edu:8080/DovetailService/GetSampleData?sourceName=KDD-02-B-TOSIG";
 		String s1 = "http://api.geonames.org/neighbourhood?lat=40.78343&lng=-73.96625&username=taheriyan";
 //		String s2 = "http://api.geonames.org/neighbourhood?lat=40.7&lng=-73.9&username=taheriyan";
 //		String s3 = "http://api.geonames.org/neighbourhood?lat=40.9&lng=-73.9&username=taheriyan";
@@ -197,7 +197,7 @@ public class ServiceBuilder {
 			ServiceBuilder sb = new ServiceBuilder("myService", urls);
 			Table tb = sb.getServiceData(true, true, true);
 
-			logger.info(tb.getPrintInfo());
+			logger.debug(tb.getPrintInfo());
 
 //			Service service = sb.getInitialServiceModel();
 //			service.print();
