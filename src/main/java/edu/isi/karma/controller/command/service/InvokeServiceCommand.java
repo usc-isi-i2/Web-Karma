@@ -87,6 +87,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		try {
 			sb = new ServiceBuilder(wk.getTitle(), requestURLStrings);
 			Table serviceTable = sb.getServiceData();
+			logger.debug(serviceTable.getPrintInfo());
 			ServiceTableUtil.populateWorksheet(serviceTable, wk, ws.getFactory(), hNodeId);
 			
 			Service service = sb.getInitialServiceModel();

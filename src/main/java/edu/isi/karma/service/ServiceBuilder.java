@@ -27,11 +27,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpMethods;
 
 import edu.isi.karma.webserver.KarmaException;
 
 public class ServiceBuilder {
+
+	static Logger logger = Logger.getLogger(ServiceBuilder.class);
 
 	private List<URL> requestURLs;
 	private List<Invocation> invocations;
@@ -54,6 +57,7 @@ public class ServiceBuilder {
 		for (URL url : requestURLs) {
 			Request request = new Request(url);
 			Invocation invocation = new Invocation(request);
+			logger.info("Invoking the service " + request.getUrl().toString() + " ...");
 			invocation.invokeAPI();
 			invocations.add(invocation);
 		}
@@ -62,11 +66,15 @@ public class ServiceBuilder {
 			invocationData.add(inv.getJointInputAndOutput());
 		}
 		
+		logger.info("Integrating the results of all invocations ...");
 		Table result = Table.union(invocationData);
 		this.serviceData = result;
 	}
 	
 	public Table getServiceData(boolean includeURL, boolean includeInputParams, boolean includeOutputParams) {
+		
+		logger.info("Requesting service data with includeURL=" + includeURL + ",includeInput=" + includeInputParams + ",includeOutput=" + includeOutputParams);
+		
 		if (this.serviceData == null)
 			invokeAndGetResponse();
 		
@@ -180,17 +188,18 @@ public class ServiceBuilder {
 	public static void main(String[] args) {
 //		String s1 = "http://api.geonames.org/neighbourhood";
 		String s1 = "http://api.geonames.org/neighbourhood?lat=40.78343&lng=-73.96625&username=taheriyan";
-		String s2 = "http://api.geonames.org/neighbourhood?lat=40.7&lng=-73.9&username=taheriyan";
+//		String s2 = "http://api.geonames.org/neighbourhood?lat=40.7&lng=-73.9&username=taheriyan";
 //		String s3 = "http://api.geonames.org/neighbourhood?lat=40.9&lng=-73.9&username=taheriyan";
 
 		List<String> urls = new ArrayList<String>();
 		urls.add(s1);
-		urls.add(s2);
+//		urls.add(s2);
 		
 		try {
 			ServiceBuilder sb = new ServiceBuilder("myService", urls);
-			Table tb = sb.getServiceData(false, false, true);
-			tb.print();
+			Table tb = sb.getServiceData(true, true, true);
+
+			logger.info(tb.getPrintInfo());
 
 //			Service service = sb.getInitialServiceModel();
 //			service.print();

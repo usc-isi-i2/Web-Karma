@@ -30,6 +30,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
+import edu.isi.karma.modeling.ontology.OntologyCache;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 
@@ -43,6 +44,8 @@ public class Test {
 		f[0] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\vivo-core-public-1.4.owl");
 		f[1] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\uscont.owl");
 		f[2] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\rdfs_subset.owl");
+		f[3] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\geonames\\wgs84_pos.xml");
+		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\geonames\\ontology_v3.01.rdf");
 		
 //		f[0] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\vivo1.4-protege.owl");
 //		f[1] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\sample.owl");
@@ -50,7 +53,7 @@ public class Test {
 //		f[3] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\DoveTailOntoRDF.owl");
 //		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\Dovetail_ISI_mod.owl");
 		
-		for (int i = 0; i < 3; i++) {
+		for (int i = 3; i < 4; i++) {
 			ontManager.doImport(f[i]);
 		}
 	}
@@ -172,7 +175,22 @@ public class Test {
 		return alignment.getSteinerTree();
 	}
 	
+	public static void testOntologyImport() {
+		
+		OntologyManager ontManager = new OntologyManager();
+		loadOntologies(ontManager);
+		
+//		OntologyCache cache =  ontManager.getOntCache();
+		List<String> list = ontManager.getDataPropertiesOfClass("http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing", false);
+		
+		System.out.println(list.size());
+		for (String s : list)
+			System.out.println(s);
+	}
 	public static void main(String[] args) {
+		
+		testOntologyImport();
+		if (true) return;
 		
 		OntologyManager ontManagar = new OntologyManager();
 		loadOntologies(ontManagar);

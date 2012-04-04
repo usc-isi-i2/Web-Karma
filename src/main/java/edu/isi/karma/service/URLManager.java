@@ -196,6 +196,7 @@ public class URLManager {
 			                paramValue = values.get(0);
 			                Param p = new Param(paramId, paramName, IOType.INPUT, paramValue);
 			                paramList.add(p);
+			                logger.debug(p.getPrintInfo());
 		                }
 	                } catch (Exception e) {
 	                	//e.printStackTrace();
@@ -207,7 +208,8 @@ public class URLManager {
 	        	logger.error("parameters have not been extracted successfully.");
 	        	return null;
 	        }
-
+	        
+	        logger.debug("Parameters extracted successfully from " + url.toString());
 	        return paramList;
 	        
 	    } catch (Exception ex) {
