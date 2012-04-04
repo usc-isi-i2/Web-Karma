@@ -174,7 +174,7 @@ public class Invocation {
 			
 			this.response.setType("application/json");
 			this.response.setCode(code);
-			this.response.setStream("{\"code\":" + code + ",\"msg\":\"Cannot invoke this request. \"}");
+			this.response.setStream("{\"code\":" + code + ",\"msg\":\"" + e.getMessage() +  "\"}");
 			
 			System.out.println(e.getMessage());
 			
