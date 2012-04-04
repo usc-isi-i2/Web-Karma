@@ -57,7 +57,7 @@ function handleCleanColumnButton() {
         var tr = $("<tr>")
             .attr("id", val["nodeId"]+"_cl_row")
             .addClass("nonHeading")
-            .append($("<td>").text(val["nodeValue"]))
+            .append($("<td>").text(val["nodeValue"]).attr('id',val['nodeId']+"_origVal"))
             .append($("<td>").addClass("noBorder"));
         
         var res = new Object();
@@ -105,7 +105,8 @@ function populateResultsInCleaningTable(data) {
                         .append($("<td>")
                             .append($("<div>")
                                 .data("nodeId", nodeId)
-                                .data("originalVal", ruleResult[nodeId])
+                                .data("originalVal", $("td#" + nodeId +"_origVal",cleaningTable).text())
+                                .data("cellValue", ruleResult[nodeId])
                                 .addClass("cleanExampleDiv")
                                 .text(ruleResult[nodeId])
                                 .attr("id",nodeId+"_c"+index)
@@ -119,7 +120,7 @@ function populateResultsInCleaningTable(data) {
                                         },
                                         text: false
                                     }).click(function(){
-                                        editDiv.text(editDiv.data("originalVal"));
+                                        editDiv.text(editDiv.data("cellValue"));
                                         $(this).parent().remove();
                                         
                                         // Remove the user provided example from the examples JSON object
