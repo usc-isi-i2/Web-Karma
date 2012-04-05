@@ -26,6 +26,7 @@ import java.util.Map;
 
 import edu.isi.karma.view.Stroke;
 import edu.isi.karma.view.Stroke.StrokeStyle;
+import edu.isi.karma.view.alignmentHeadings.AlignmentNode;
 
 public class HHTree {
 	private List<HHTNode> rootNodes = new ArrayList<HHTNode>();
@@ -226,5 +227,55 @@ public class HHTree {
 
 	public List<HHTNode> getRootNodes() {
 		return rootNodes;
+	}
+
+	public void computeHTMLColSpanUsingColCoordinates(ColumnCoordinateSet ccMap, ColspanMap cspanmap) {
+		for(HHTNode root:rootNodes) {
+			computeHTMLColSpan(root, ccMap, cspanmap);
+		}
+	}
+
+	private void computeHTMLColSpan(HHTNode node, ColumnCoordinateSet ccMap, ColspanMap cspanmap) {
+		int startIndex = cspanmap.getSpan(node).getStartIndex();
+		int endIndex = cspanmap.getSpan(node).getEndIndex();
+
+		int numHtmlColsBetween = ccMap.getNumberOfCoordinatesBetweenTwoIndexes(startIndex, endIndex, node.getDepth());
+		node.setHtmlColSpan(numHtmlColsBetween);
+		
+		if(!node.isLeaf()) {
+			for(HHTNode child:node.getChildren()) {
+				computeHTMLColSpan(child, ccMap, cspanmap);
+			}
+		}
+	}
+	
+	public void computeHTMLColSpanUsingLeafColumnIndices(ColumnCoordinateSet ccMap, LeafColumnIndexMap indexMap) {
+		for(HHTNode root:rootNodes) {
+			computeHTMLColSpanUsingLeafColumnIndices(root, ccMap, indexMap);
+		}
+	}
+	
+	private int computeHTMLColSpanUsingLeafColumnIndices(HHTNode node, ColumnCoordinateSet ccMap, LeafColumnIndexMap indexMap) {
+		if(node.isLeaf()) {
+			TNode tNode = node.gettNode();
+			if(tNode instanceof AlignmentNode) {
+				AlignmentNode aNode = (AlignmentNode) tNode;
+				String hNodeId = aNode.getSemanticTypeHNodeId();
+				int colIndex = indexMap.getColumnIndex(hNodeId);
+				int htmlColSpan = ccMap.getCoordinatesCountForIndex(colIndex);
+				node.setHtmlColSpan(htmlColSpan);
+				return htmlColSpan;
+			} else 
+				return 0;
+		} else {
+			int htmlColSpan = 0;
+			List<HHTNode> children = node.getChildren();
+			for(HHTNode child:children) {
+				int c = computeHTMLColSpanUsingLeafColumnIndices(child, ccMap, indexMap);
+				htmlColSpan += c;
+			}
+			node.setHtmlColSpan(htmlColSpan);
+			return htmlColSpan;
+		}
 	}
 }

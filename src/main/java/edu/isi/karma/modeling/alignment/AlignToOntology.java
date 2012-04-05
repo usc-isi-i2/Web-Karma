@@ -37,7 +37,6 @@ import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rdf.WorksheetRDFGenerator;
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.rep.semantictypes.SemanticTypes;
@@ -90,7 +89,7 @@ public class AlignToOntology {
 
 		if (root != null) {
 			//mariam
-			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, tree, root);
+			// WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, tree, root);
 			/////////////////////////
 			
 			// Convert the tree into a AlignmentForest			
@@ -100,15 +99,20 @@ public class AlignToOntology {
 					forest, vWorksheetId, alignmentId);
 
 			// Create new vWorksheet using the new header order
-			List<HNodePath> columnPaths = new ArrayList<HNodePath>();
-			for (HNode node : sortedHeaderNodes) {
-				HNodePath path = new HNodePath(node);
-				columnPaths.add(path);
-			}
-
-			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
-					worksheet, columnPaths, vWorkspace);
-			vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+//			List<HNodePath> columnPaths = new ArrayList<HNodePath>();
+//			List<HNodePath> existingPaths = worksheet.getHeaders().getAllPaths();
+//			for (HNode node : sortedHeaderNodes) {
+//				for(HNodePath path:existingPaths){
+//					if(path.getLeaf().getId().equals(node.getId())) {
+//						columnPaths.add(path);
+//						break;
+//					}
+//				}
+//			}
+//
+//			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
+//					worksheet, columnPaths, vWorkspace);
+//			vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 
 			// Debug
 			GraphUtil.printGraph(tree);

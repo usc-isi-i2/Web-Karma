@@ -208,11 +208,11 @@ public class HHTable {
 						+ translator.getCssTag("", cell.getDepth()));
 			}
 
-			if(!NO_SEPARATORS_FLAG)
+			// if(!NO_SEPARATORS_FLAG)
 				cellObj.put(CellJsonKeys.colSpan.name(), cell.getHtmlTableColSpan());
-			else {
-				cellObj.put(CellJsonKeys.colSpan.name(), cell.getColspan());
-			}
+//			else {
+//				cellObj.put(CellJsonKeys.colSpan.name(), cell.getColspan());
+//			}
 			
 			cellObj.put(CellJsonKeys.fillId.name(),
 					translator.getCssTag("", cell.getDepth()));
