@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
@@ -36,8 +38,12 @@ import edu.isi.karma.service.Table;
 
 public class ServiceTableUtil {
 
+	static Logger logger = Logger.getLogger(ServiceTableUtil.class);
+
 	public static void populateEmptyWorksheet(Table table, Worksheet worksheet, RepFactory factory) {
-		
+
+		logger.info("Populating an empty worksheet with the service data ...");
+
 		List<String> hNodeIdList = new ArrayList<String>();
 		hNodeIdList = addHeaders(table.getHeaders(), worksheet, factory, true);
 
@@ -47,6 +53,8 @@ public class ServiceTableUtil {
 	}
 	
 	public static void populateWorksheet(Table table, Worksheet worksheet, RepFactory factory, String urlHNodeId) {
+		
+		logger.info("Populating existing worksheet with the service data ...");
 		
 		List<String> oldHNodeIdList = new ArrayList<String>(worksheet.getHeaders().getHNodeIds());
 

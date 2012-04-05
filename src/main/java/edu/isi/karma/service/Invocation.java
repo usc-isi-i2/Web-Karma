@@ -101,12 +101,13 @@ public class Invocation {
         HashMap<String, Integer> paramNameCounter = new HashMap<String, Integer>();
 
 		if (response.getType().indexOf("xml") != -1) { // XML content
+			// The library has a bug, some values are wrong, e.g., adminCode2: 061 --> 49 			
 			String json = JsonManager.convertXML2JSON(response.getStream());
 	        JsonManager.getJsonFlat(json, columns, results.getValues());
 		} else if (response.getType().indexOf("json") != -1) { // JSON content
 	        JsonManager.getJsonFlat(response.getStream(), columns, results.getValues());
 		} else {
-			logger.debug("The output is neither JSON nor XML.");
+			logger.info("The output is neither JSON nor XML.");
 		}
 
 		for (String c : columns) {
@@ -114,6 +115,7 @@ public class Invocation {
 			results.getHeaders().add(p);
 		}
 		
+		logger.info("Service response converted to a flat table.");
 		this.response.setTable(results);
 	}
 	
@@ -143,7 +145,7 @@ public class Invocation {
 			}
 			else
 			{
-			   System.err.println ("error - not a http request!");
+			  logger.error("error - not a http request!");
 			}
 			
 			StringBuffer outString = new StringBuffer();
@@ -158,9 +160,13 @@ public class Invocation {
 			in.close();
 			
 //			System.out.println(outString);
+			
 			this.response.setType(type);
 			this.response.setCode(code);
 			this.response.setStream(outString.toString());
+			
+			logger.debug(response.getStream());
+			logger.info("Service response is ready as string stream.");
 			
 		}catch(Exception e){
 
@@ -168,7 +174,7 @@ public class Invocation {
 			
 			this.response.setType("application/json");
 			this.response.setCode(code);
-			this.response.setStream("{\"code\":" + code + ",\"msg\":\"Cannot invoke this request. \"}");
+			this.response.setStream("{\"code\":" + code + ",\"msg\":\"" + e.getMessage() +  "\"}");
 			
 			System.out.println(e.getMessage());
 			
@@ -184,6 +190,7 @@ public class Invocation {
     	
 		jointInputAndOutput = new Table(this.response.getTable());
 		
+		List<String> inputValues = new ArrayList<String>();
 		if (this.request.getParams() != null)
 		for (int j = this.request.getParams().size() - 1; j >= 0; j--) {
 			
@@ -192,14 +199,21 @@ public class Invocation {
 				continue;
 				
 				jointInputAndOutput.getHeaders().add(0, p);
+				inputValues.add(0, p.getValue());
 				for (int k = 0; k < this.response.getTable().getValues().size(); k++)
 					this.response.getTable().getValues().get(k).add(0, p.getValue());
 		}
+		
+		// there is no output
+		if (this.response.getTable().getHeaders().size() == 0) {
+			jointInputAndOutput.getValues().add(inputValues);
+		}
+
 
 		// Include the request URLs in the invocation table
 		jointInputAndOutput.getHeaders().add(0, new Param(REQUEST_COLUMN_NAME, REQUEST_COLUMN_NAME,IOType.NONE));
-		for (int k = 0; k < this.response.getTable().getValues().size(); k++)
-			this.response.getTable().getValues().get(k).add(0, this.request.getUrl().toString());
+		for (int k = 0; k < jointInputAndOutput.getValues().size(); k++)
+			jointInputAndOutput.getValues().get(k).add(0, this.request.getUrl().toString());
 		
 	}
 }

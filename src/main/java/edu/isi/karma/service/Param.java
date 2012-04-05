@@ -94,4 +94,13 @@ public class Param {
 		if (this.IOType != null && this.IOType.length() > 0) System.out.println("IOType: " + this.IOType);
 		if (this.value != null && this.value.length() > 0) System.out.println("value: " + this.value);
 	}
+	
+	public String getPrintInfo() {
+		String s = "";
+//		if (this.id != null && this.id.length() > 0) s += "id: " + this.id + ",";
+		if (this.name != null && this.name.length() > 0) s += "param name: " + this.name + ", ";
+		if (this.IOType != null && this.IOType.length() > 0) s += "IOType: " + this.IOType + ", ";
+		if (this.value != null && this.value.length() > 0) s += "value: " + this.value;
+		return s;
+	}
 }

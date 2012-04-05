@@ -2,11 +2,16 @@ package edu.isi.karma.cleaning;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import edu.isi.karma.cleaning.features.Data2Features;
 import edu.isi.karma.cleaning.features.Feature;
@@ -37,7 +42,7 @@ public class UtilTools {
 			dic.put(s, 1);
 		}
 	}
-	public static String dic2Arff(HashMap<String,Integer> dic,String s)
+	public static String dic2Arff(String[] dic,String s)
 	{
 		UtilTools.clearTmpVars();
 		try
@@ -56,23 +61,23 @@ public class UtilTools {
 			xyz[xyz.length-1] = "label";
 			cw.writeNext(xyz);
 			//write the data
-			Set<String> ss = dic.keySet();
-			Iterator<String> iter = ss.iterator();
 			Vector<String> examples = new Vector<String>();
-			String[] z = s.split("\n");
-			for(String elem:z)
+			if(s!=null && s.length()>0)
 			{
-				if(elem.trim().length()>0)
+				String[] z = s.split("\n");
+				for(String elem:z)
 				{
-					examples.add(elem.trim());
+					if(elem.trim().length()>0)
+					{
+						examples.add(elem.trim());
+					}
 				}
 			}
-			while(iter.hasNext())
+			for(String o:dic)
 			{
-				String o = iter.next();
 				UtilTools.results.add(o);
 				Vector<String> row = new Vector<String>();
-				if(o.compareTo(s)==0)
+				if(s!=null && o.compareTo(s)==0)
 				{
 					RegularityFeatureSet rf = new RegularityFeatureSet();
 					Vector<String> oexamples = new Vector<String>();
@@ -129,9 +134,29 @@ public class UtilTools {
 		}
 		
 	}
+	public static Vector<Integer> topKindexs(Vector<Double> scores, int k)
+	{
+		int cnt = 0;
+		Vector<Integer> res = new Vector<Integer>();
+		ScoreObj[] sas = new ScoreObj[scores.size()];
+		for(int i= 0; i<scores.size(); i++)
+		{
+			sas[i] = new ScoreObj(i,scores.get(i));
+		}
+		sas[0].score = 0.1;
+		Arrays.sort(sas,new DoubleCompare());
+		while(cnt<k && cnt<sas.length)
+		{
+			res.add(sas[cnt].index);
+			cnt++;
+		}
+		return res;
+	}
 	public static int rank(HashMap<String,Integer> dic,String s,String trainPath)
 	{
-		String fpath = UtilTools.dic2Arff(dic, s);
+		Set<String> keys = dic.keySet();
+		String[] ks = (String[])keys.toArray(new String[keys.size()]);
+		String fpath = UtilTools.dic2Arff(ks, s);
 		RegularityClassifer rc = new RegularityClassifer(trainPath);
 		try
 		{
@@ -149,4 +174,72 @@ public class UtilTools {
 			return -1;
 		}
 	}
+	public static Vector<Double> getScores(String[] res,String trainPath)
+	{
+		Vector<Double> vds = new Vector<Double>();
+		//convert the json format to \n seperated format
+		try
+		{
+			String[] csvres = new String[res.length];
+			for(int i = 0; i<res.length; i++)
+			{
+				JSONObject jso = new JSONObject(res[i]);
+				Iterator<String> iter = jso.keys();
+				String lines ="";
+				while(iter.hasNext())
+				{
+					lines += jso.getString(iter.next())+"\n";
+				}
+				csvres[i] = lines;
+			}
+			String fpath = UtilTools.dic2Arff(csvres, null);
+			RegularityClassifer rc = new RegularityClassifer(trainPath);
+			try
+			{
+				vds = rc.getScores(fpath);
+				return vds;
+			}
+			catch(Exception ex)
+			{
+				System.out.println(""+ex.toString());
+				return null;
+			}
+		}
+		catch(Exception ex)
+		{
+			System.out.println(""+ex.toString());
+		}
+		return vds;
+	}
 }
+//used to sort the score in decend order
+class ScoreObj
+{
+	int index;
+	double score;
+	public ScoreObj(int index,double score)
+	{
+		this.index = index;
+		this.score = score;
+	}
+	
+}
+class DoubleCompare implements Comparator
+{
+	public int compare(Object x1,Object x2)
+	{
+		ScoreObj a1 = (ScoreObj)x1;
+		ScoreObj a2 = (ScoreObj)x2;
+		if(a1.score > a2.score)
+		{
+			return -1;
+		}
+		else if(a1.score<a2.score)
+		{
+			return 1;
+		}
+		else
+			return 0;
+	}
+}
+
