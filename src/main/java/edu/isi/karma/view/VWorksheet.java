@@ -41,6 +41,8 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.hierarchicalheadings.ColumnCoordinateSet;
+import edu.isi.karma.rep.hierarchicalheadings.LeafColumnIndexMap;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
 import edu.isi.karma.view.tabledata.VDTableData;
@@ -96,6 +98,9 @@ public class VWorksheet extends ViewEntity {
 	 * see. It records how the table is scrolled.
 	 */
 	private final Map<String, TablePager> tableId2TablePager = new HashMap<String, TablePager>();
+	
+	private ColumnCoordinateSet columnCoordinatesSet;
+	private LeafColumnIndexMap leafColIndexMap;
 
 	VWorksheet(String id, Worksheet worksheet, List<HNodePath> columns,
 			VWorkspace vWorkspace) {
@@ -217,6 +222,22 @@ public class VWorksheet extends ViewEntity {
 
 	public VTHeaderForest getvHeaderForest() {
 		return vHeaderForest;
+	}
+
+	public ColumnCoordinateSet getColumnCoordinatesSet() {
+		return columnCoordinatesSet;
+	}
+
+	public void setColumnCoordinatesSet(ColumnCoordinateSet columnCoordinatesSet) {
+		this.columnCoordinatesSet = columnCoordinatesSet;
+	}
+
+	public LeafColumnIndexMap getLeafColIndexMap() {
+		return leafColIndexMap;
+	}
+
+	public void setLeafColIndexMap(LeafColumnIndexMap leafColIndexMap) {
+		this.leafColIndexMap = leafColIndexMap;
 	}
 
 	void addColumnHeader(VColumnHeader vch) {
