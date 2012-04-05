@@ -37,7 +37,6 @@ import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rdf.WorksheetRDFGenerator;
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
@@ -112,10 +111,13 @@ public class AddUserLinkToAlignmentCommand extends Command {
 				.getSteinerTree();
 		Vertex root = alignment.GetTreeRoot();
 
-		List<HNode> sortedHeaders = worksheet.getHeaders().getSortedHNodes();
+//		List<HNode> sortedHeaders = worksheet.getHeaders().getSortedHNodes();
+		List<HNode> sortedHeaderNodes = new ArrayList<HNode>(); 
+		worksheet.getHeaders().getSortedLeafHNodes(sortedHeaderNodes);
+		
 		// Convert the tree into a AlignmentForest
 		AlignmentForest forest = AlignmentForest.constructFromSteinerTree(tree,
-				root, sortedHeaders);
+				root, sortedHeaderNodes);
 		AlignmentHeadersUpdate alignmentUpdate = new AlignmentHeadersUpdate(
 				forest, vWorksheetId, alignmentId);
 		GraphUtil.printGraph(tree);
@@ -129,13 +131,13 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		/////////////////////////
 
 		// Create new vWorksheet using the new header order
-		List<HNodePath> columnPaths = new ArrayList<HNodePath>();
-		for (HNode node : sortedHeaders) {
-			HNodePath path = new HNodePath(node);
-			columnPaths.add(path);
-		}
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,
-				columnPaths, vWorkspace);
+//		List<HNodePath> columnPaths = new ArrayList<HNodePath>();
+//		for (HNode node : sortedHeaderNodes) {
+//			HNodePath path = new HNodePath(node);
+//			columnPaths.add(path);
+//		}
+//		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,
+//				columnPaths, vWorkspace);
 		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 
 		UpdateContainer c = new UpdateContainer();
