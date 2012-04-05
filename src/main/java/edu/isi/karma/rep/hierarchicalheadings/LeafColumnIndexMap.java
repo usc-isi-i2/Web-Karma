@@ -22,14 +22,13 @@ public class LeafColumnIndexMap {
 			}
 		}
 		
-		System.out.println("Index Map:");
-		for(String key : hNodeIdToIndexMap.keySet()) {
-			System.out.println("HNode ID: " + key + " Index: " + hNodeIdToIndexMap.get(key));
-		}
+//		System.out.println("Index Map:");
+//		for(String key : hNodeIdToIndexMap.keySet()) {
+//			System.out.println("HNode ID: " + key + " Index: " + hNodeIdToIndexMap.get(key));
+//		}
 	}
 	
 	public int getColumnIndex (String hNodeId) {
-		System.out.println("HNode ID requested: " + hNodeId);
 		return hNodeIdToIndexMap.get(hNodeId);
 	}
 }
