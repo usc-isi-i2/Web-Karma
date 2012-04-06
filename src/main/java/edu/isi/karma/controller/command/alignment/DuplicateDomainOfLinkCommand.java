@@ -37,6 +37,7 @@ import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rdf.WorksheetRDFGenerator;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
@@ -119,15 +120,23 @@ public class DuplicateDomainOfLinkCommand extends Command {
 		/////////////////////////
 
 		
-		// Create new vWorksheet using the new header order
-//		List<HNodePath> columnPaths = new ArrayList<HNodePath>();
-//		for (HNode node : sortedHeaders) {
-//			HNodePath path = new HNodePath(node);
-//			columnPaths.add(path);
-//		}
-//		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,
-//				columnPaths, vWorkspace);
+		// Create new vWorksheet using the new header order for flat sources
 		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+		if(!worksheet.getHeaders().hasNestedTables()) {
+			List<HNodePath> columnPaths = new ArrayList<HNodePath>();
+			List<HNodePath> existingPaths = worksheet.getHeaders().getAllPaths();
+			for (HNode node : sortedHeaderNodes) {
+				for(HNodePath path:existingPaths){
+					if(path.getLeaf().getId().equals(node.getId())) {
+						columnPaths.add(path);
+						break;
+					}
+				}
+			}
+			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
+					worksheet, columnPaths, vWorkspace);
+			vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+		}
 
 		UpdateContainer c = new UpdateContainer();
 		c.add(alignmentUpdate);
