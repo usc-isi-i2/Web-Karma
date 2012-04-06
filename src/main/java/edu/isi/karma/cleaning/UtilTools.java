@@ -143,7 +143,6 @@ public class UtilTools {
 		{
 			sas[i] = new ScoreObj(i,scores.get(i));
 		}
-		sas[0].score = 0.1;
 		Arrays.sort(sas,new DoubleCompare());
 		while(cnt<k && cnt<sas.length)
 		{

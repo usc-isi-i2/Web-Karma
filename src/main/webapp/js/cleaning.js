@@ -81,7 +81,7 @@ function handleCleanColumnButton() {
         )
     ));
     
-    $("div#ColumnCleaningPanel").dialog({title: 'Clean', width: 500,
+    $("div#ColumnCleaningPanel").dialog({title: 'Transform', width: 500,
         height: 500, buttons: { "Cancel": function() { $(this).dialog("close"); },  
             "Generate Rules": handleGenerateCleaningRulesButton,
             "Submit":function() { $(this).dialog("close"); }}});
