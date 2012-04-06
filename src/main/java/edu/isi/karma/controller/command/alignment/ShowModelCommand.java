@@ -77,10 +77,10 @@ public class ShowModelCommand extends WorksheetCommand {
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
 		// Show error update for aligning hierarchical sources
-		if (worksheet.getHeaders().hasNestedTables()) {
-			return new UpdateContainer(new ErrorUpdate(
-					"Karma cannot align hierarchical sources yet!"));
-		}
+//		if (worksheet.getHeaders().hasNestedTables()) {
+//			return new UpdateContainer(new ErrorUpdate(
+//					"Karma cannot align hierarchical sources yet!"));
+//		}
 
 		worksheetName = worksheet.getTitle();
 

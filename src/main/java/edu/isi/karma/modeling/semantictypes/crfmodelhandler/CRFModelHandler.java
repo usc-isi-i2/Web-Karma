@@ -185,6 +185,7 @@ public class CRFModelHandler {
 		ArrayList<Double> weightsOfFFsOfLabel, weightsOfOtherFFs;
 		OptimizeFieldOnly optimizationObject;
 		boolean savingSuccessful ;
+		final int NUM_FFs = 50;
 		if (file == null) {
 			Prnt.prn("CRF Model is not ready, either because it was never read or an error happened while reading it previously. Please try reading the model file again.");
 			return false ;
@@ -230,15 +231,15 @@ public class CRFModelHandler {
 			globalData.trainingGraphs.add(newGraph) ;
 			allFeatures.addAll(tmpFeatures) ;
 		}
-		// if the total number of features is > 100, then randomly select 100 from them.
+		// if the total number of features is > NUM_FFs, then randomly select NUM_FFs from them.
 		selectedFeatures = new HashSet<String>(allFeatures);
-		if (selectedFeatures.size() > 100) {
+		if (selectedFeatures.size() > NUM_FFs) {
 			ArrayList<String> tmpAllFeatures;
 			Random random ;
 			tmpAllFeatures = new ArrayList<String>(allFeatures);
 			random = new Random();
 			selectedFeatures = new HashSet<String>();
-			for(int i=0;i<100;i++) {
+			for(int i=0;i<NUM_FFs;i++) {
 				String ftr;
 				ftr = tmpAllFeatures.get(random.nextInt(tmpAllFeatures.size()));
 				selectedFeatures.add(ftr);
@@ -287,7 +288,7 @@ public class CRFModelHandler {
 		}
 		// optimize the model to adjust to the new label/examples/ffs
 		optimizationObject = new OptimizeFieldOnly(globalData.crfModel, globalData) ;
-		optimizationObject.optimize(5) ;
+		optimizationObject.optimize(3) ;
 		// save the model to file with the new weights
 		savingSuccessful = saveModel() ;
 		if (!savingSuccessful) {

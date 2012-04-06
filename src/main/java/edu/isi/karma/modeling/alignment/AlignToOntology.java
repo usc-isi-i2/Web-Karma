@@ -99,20 +99,27 @@ public class AlignToOntology {
 			AlignmentHeadersUpdate alignmentUpdate = new AlignmentHeadersUpdate(
 					forest, vWorksheetId, alignmentId);
 
-			// Create new vWorksheet using the new header order
-			List<HNodePath> columnPaths = new ArrayList<HNodePath>();
-			for (HNode node : sortedHeaderNodes) {
-				HNodePath path = new HNodePath(node);
-				columnPaths.add(path);
+			// Create new vWorksheet using the new header order for flat sources
+			if(!worksheet.getHeaders().hasNestedTables()) {
+				List<HNodePath> columnPaths = new ArrayList<HNodePath>();
+				List<HNodePath> existingPaths = worksheet.getHeaders().getAllPaths();
+				for (HNode node : sortedHeaderNodes) {
+					for(HNodePath path:existingPaths){
+						if(path.getLeaf().getId().equals(node.getId())) {
+							columnPaths.add(path);
+							break;
+						}
+					}
+				}
+				vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
+						worksheet, columnPaths, vWorkspace);
+				vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 			}
-
-			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
-					worksheet, columnPaths, vWorkspace);
-			vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-
+			
+			
 			// Debug
-			GraphUtil.printGraph(tree);
-
+			 GraphUtil.printGraph(tree);
+			
 			c.add(alignmentUpdate);
 			vw.update(c);
 			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));

@@ -39,6 +39,8 @@ public class HHTNode {
 	private List<HHTNode> children;
 	
 	private final TNode tNode;
+	
+	private int htmlColSpan;
 
 	public HHTNode(TNode tNode) {
 		super();
@@ -121,19 +123,33 @@ public class HHTNode {
 	}
 	
 	public int getHTMLColSpan() {
-		if(isLeaf())
-			return 1;
-		else {
-			int span = 0;
-			for(HHTNode child:children){
-				span += child.getHTMLColSpan();
-				if(!child.isLeaf())
-					span += 2;
-			}
-			return span;
-		}
+//		int corr = 0;
+//		if(isLeaf())
+//			corr = 1;
+//		else {
+//			int span = 0;
+//			for(HHTNode child:children){
+//				span += child.getHTMLColSpan();
+//				if(!child.isLeaf())
+//					span += 2;
+//			}
+//			corr = span;
+////			return span;
+//		}
+//		System.out.println("Correct HTML Col span: " + corr);
+//		System.out.println("Coordinate based: " + htmlColSpan);
+		//return corr;
+		return htmlColSpan;
 	}
 	
+	public int getHtmlColSpan() {
+		return htmlColSpan;
+	}
+
+	public void setHtmlColSpan(int htmlColSpan) {
+		this.htmlColSpan = htmlColSpan;
+	}
+
 	public void prettyprint(String prefix) {
 		System.out.print(prefix + "HHTNode [startCol=" + startCol + ", endCol=" + endCol
 				+ ", depth=" + depth + ", leftStroke=" + leftStroke

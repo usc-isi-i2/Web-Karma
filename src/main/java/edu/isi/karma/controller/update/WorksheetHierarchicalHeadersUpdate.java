@@ -18,15 +18,16 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-/**
- * 
- */
+
 package edu.isi.karma.controller.update;
 
 import java.io.PrintWriter;
 
+import edu.isi.karma.rep.hierarchicalheadings.ColspanMap;
+import edu.isi.karma.rep.hierarchicalheadings.ColumnCoordinateSet;
 import edu.isi.karma.rep.hierarchicalheadings.HHTable;
 import edu.isi.karma.rep.hierarchicalheadings.HHTree;
+import edu.isi.karma.rep.hierarchicalheadings.LeafColumnIndexMap;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.tableheadings.HeadersColorKeyTranslator;
@@ -63,7 +64,15 @@ public class WorksheetHierarchicalHeadersUpdate extends AbstractUpdate {
 		
 		HHTree hHtree = new HHTree();
 		hHtree.constructHHTree(vWorksheet.getvHeaderForest());
-
+		
+		ColspanMap cspanmap = new ColspanMap(hHtree);
+		ColumnCoordinateSet ccSet = new ColumnCoordinateSet(hHtree, cspanmap);
+		vWorksheet.setColumnCoordinatesSet(ccSet);
+		LeafColumnIndexMap lfMap = new LeafColumnIndexMap(hHtree);
+		vWorksheet.setLeafColIndexMap(lfMap);
+		
+		hHtree.computeHTMLColSpanUsingColCoordinates(ccSet, cspanmap);
+		
 		HHTable table = new HHTable();
 		table.constructCells(hHtree);
 
@@ -77,5 +86,4 @@ public class WorksheetHierarchicalHeadersUpdate extends AbstractUpdate {
 		table.generateJson(pw, trans, false);
 		pw.println(prefix + "}");
 	}
-
 }
