@@ -55,8 +55,8 @@ public class LAVRuleParser{
 			String namespace = child.getChild(0).getText();
 			//remove the quotes
 			namespace = namespace.substring(1, namespace.length()-1);
-			//prefixes that start with "s" are source namespaces
-			if(prefix.startsWith(RDFDomainModel.SOURCE_PREFIX)){
+			//there is only one source NS and that has prefix "s"
+			if(prefix.equals(RDFDomainModel.SOURCE_PREFIX)){
 				dm.addSourceNamespace(prefix, namespace);
 			}
 			else

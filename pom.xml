@@ -196,6 +196,16 @@
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jettyVersion}</version>
+<!-- change user/pwd in config/jettyrealm.properties -->
+  <configuration>
+    <loginServices>
+      <loginService implementation="org.eclipse.jetty.security.HashLoginService">
+        <name>TestRealm</name>
+        <config>${project.basedir}/config/jettyrealm.properties</config>
+      </loginService>
+    </loginServices>
+  </configuration>
+
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
