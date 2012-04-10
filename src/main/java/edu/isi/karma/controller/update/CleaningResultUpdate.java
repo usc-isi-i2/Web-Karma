@@ -43,8 +43,18 @@ public class CleaningResultUpdate extends AbstractUpdate {
 			JSONArray jsa = new JSONArray();
 			for(String s:jsons)
 			{
+				JSONObject pac = new JSONObject();
 				JSONObject jo = new JSONObject(s);
-				jsa.put(jo);
+				Vector<String> tps = js2tps.get(s);
+				JSONArray jstps = new JSONArray();
+				JSONObject tpsjo = new JSONObject();
+				for(int i = 0; i<tps.size();i++)
+				{		
+					tpsjo.put("rule"+i, tps.get(i));
+				}
+				pac.put("data", jo);
+				pac.put("tps", tpsjo);
+				jsa.put(pac);
 			}
 			obj.put(JsonKeys.result.name(), jsa);
 			pw.print(obj.toString(4));

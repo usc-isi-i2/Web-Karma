@@ -159,9 +159,9 @@ public class PublishRDFCommand extends Command {
 					//logger.info("Alignment of nested tables is work in progress. No RDF generated!");
 					wrg.generateTriplesCell(worksheet);
 				} else {
-					System.out.println("RDF start="+ Calendar.getInstance().getTimeInMillis());
+					//System.out.println("RDF start="+ Calendar.getInstance().getTimeInMillis());
 					wrg.generateTriplesRow(worksheet);
-					System.out.println("RDF end="+ Calendar.getInstance().getTimeInMillis());
+					//System.out.println("RDF end="+ Calendar.getInstance().getTimeInMillis());
 				}
 				String fileName = "./publish/Source Description/W"
 						+ worksheet.getId() + ".txt";

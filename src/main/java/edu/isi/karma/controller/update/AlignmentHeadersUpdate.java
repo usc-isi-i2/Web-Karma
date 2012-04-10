@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 
 import edu.isi.karma.rep.hierarchicalheadings.HHTable;
 import edu.isi.karma.rep.hierarchicalheadings.HHTree;
+import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.alignmentHeadings.AlignmentColorKeyTranslator;
 import edu.isi.karma.view.alignmentHeadings.AlignmentForest;
@@ -49,6 +50,9 @@ public class AlignmentHeadersUpdate extends AbstractUpdate {
 			VWorkspace vWorkspace) {
 		HHTree hHtree = new HHTree();
 		hHtree.constructHHTree(forest);
+		
+		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+		hHtree.computeHTMLColSpanUsingLeafColumnIndices(vw.getColumnCoordinatesSet(), vw.getLeafColIndexMap());
 
 		HHTable table = new HHTable();
 		table.constructCells(hHtree);

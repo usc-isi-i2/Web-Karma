@@ -116,8 +116,11 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		Vector<String> vs = new Vector<String>();
 		//
 		String[] x = (String[])res.toArray(new String[res.size()]);
+		System.out.println(""+x);
 		Vector<Double> scores = UtilTools.getScores(x, trainPath);
+		System.out.println("Scores: "+scores);
 		Vector<Integer> ins =UtilTools.topKindexs(scores, k);
+		System.out.println("Indexs: "+ins);
 		Vector<String> y = new Vector<String>();
 		for(Integer i:ins)
 		{
@@ -205,7 +208,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 						
 						pair[0] = "%"+pair[0]+"@";
 						tx.put(i+"", pair[0]);
-						if(isadded<3)
+						if(isadded<30)
 						{
 							RamblerTransformationExample tmp = new RamblerTransformationExample(pair[0], pair[1], i+"");
 							vrt.add(tmp);
@@ -253,5 +256,4 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			}	
 		}
 	}
-
 }

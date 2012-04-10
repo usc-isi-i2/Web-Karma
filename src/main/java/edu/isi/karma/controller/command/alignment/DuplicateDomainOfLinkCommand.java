@@ -110,13 +110,11 @@ public class DuplicateDomainOfLinkCommand extends Command {
 		GraphUtil.printGraph(tree);
 
 		//mariam
-		/*
 		try{
 		WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, tree, root);
 		}catch(KarmaException e){
 			e.printStackTrace();
 		}
-		*/
 		/////////////////////////
 
 		

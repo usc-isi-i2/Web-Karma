@@ -57,13 +57,14 @@ function handleCleanColumnButton() {
         var tr = $("<tr>")
             .attr("id", val["nodeId"]+"_cl_row")
             .addClass("nonHeading")
-            .append($("<td>").text(val["nodeValue"]).attr('id',val['nodeId']+"_origVal"))
-            .append($("<td>").addClass("noBorder"));
+            .append($("<td>").text(val["nodeValue"]).attr('id',val['nodeId']+"_origVal")) //add text and id to the td
+            .append($("<td>").addClass("noBorder")); //add td to seperate org and result
         
         var res = new Object();
         res[val["nodeId"]] = val["nodeValue"];
-        initialResultsValues.push(res);
-            
+		var pac = new Object();
+		pac["data"] = res;
+        initialResultsValues.push(pac);
         cleaningTable.append(tr);
     });
     
@@ -80,8 +81,8 @@ function handleCleanColumnButton() {
                 .prop("checked", true)
         )
     ));
-    
-    $("div#ColumnCleaningPanel").dialog({title: 'Clean', width: 500,
+    //
+    $("div#ColumnCleaningPanel").dialog({title: 'Transform', width: 500,
         height: 500, buttons: { "Cancel": function() { $(this).dialog("close"); },  
             "Generate Rules": handleGenerateCleaningRulesButton,
             "Submit":function() { $(this).dialog("close"); }}});
@@ -95,9 +96,10 @@ function populateResultsInCleaningTable(data) {
     $("td.ruleResultsValue", cleaningTable).remove();
     $("tr.radioButtons", cleaningTable).remove();
     
-    $.each(data, function(index, ruleResult){
-        for(var nodeId in ruleResult) {
-            var trTag = $("tr#"+nodeId + "_cl_row");
+    $.each(data, function(index, pacdata){
+		ruleResult = pacdata["data"];
+        for(var nodeId in ruleResult) {  // 
+            var trTag = $("tr#"+nodeId + "_cl_row"); // this row is the whole line accross the panel
             if(trTag != null) {
                 trTag.append($("<td>").addClass('Rule'+index)
                     .addClass("ruleResultsValue")
@@ -105,14 +107,13 @@ function populateResultsInCleaningTable(data) {
                         .append($("<td>")
                             .append($("<div>")
                                 .data("nodeId", nodeId)
-                                .data("originalVal", $("td#" + nodeId +"_origVal",cleaningTable).text())
-                                .data("cellValue", ruleResult[nodeId])
+                                .data("originalVal", $("td#" + nodeId +"_origVal",cleaningTable).text()) // set the original value for the example
+                                .data("cellValue", ruleResult[nodeId])//set the ground truth value for that entry.
                                 .addClass("cleanExampleDiv")
-                                .text(ruleResult[nodeId])
+                                .text(ruleResult[nodeId]) //set the result here
                                 .attr("id",nodeId+"_c"+index)
                                 .editable(function(value, settings) {
                                     var editDiv = $(this);
-                                    
                                     // Add the revert button
                                     var revertButton = $("<div>").addClass("undoEditButton").button({
                                         icons: {
@@ -166,12 +167,8 @@ function populateResultsInCleaningTable(data) {
             }
         }
     });
-    
-    // Add radio buttons
-    
-    
+    // Add radio button   
 }
-
 function handleGenerateCleaningRulesButton() {
     var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
     var selectedHNodeId = columnHeadingMenu.data("parentCellId");

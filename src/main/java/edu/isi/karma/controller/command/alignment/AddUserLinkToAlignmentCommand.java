@@ -121,14 +121,11 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		GraphUtil.printGraph(tree);
 		
 		//mariam
-		/*
 		try{
 		WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, tree, root);
 		}catch(KarmaException e){
 			e.printStackTrace();
-		}
-		*/
-		
+		}		
 		/////////////////////////
 
 		// Create new vWorksheet using the new header order
