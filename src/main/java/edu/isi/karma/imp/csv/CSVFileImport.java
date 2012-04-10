@@ -37,6 +37,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.KarmaException;
 
 public class CSVFileImport {
 	private final int headerRowIndex;
@@ -63,7 +64,7 @@ public class CSVFileImport {
 		this.worksheet = factory.createWorksheet(csvFile.getName(), workspace);
 	}
 
-	public Worksheet generateWorksheet() throws IOException {
+	public Worksheet generateWorksheet() throws IOException, KarmaException {
 		Table dataTable = worksheet.getDataTable();
 
 		// Prepare the scanner for reading file line by line
@@ -74,8 +75,14 @@ public class CSVFileImport {
 		ArrayList<String> hNodeIdList = new ArrayList<String>();
 
 		// If no row is present for the column headers
-		if (headerRowIndex == 0)
+		if (headerRowIndex == 0){
 			hNodeIdList = addEmptyHeaders(worksheet, factory);
+			if(hNodeIdList == null || hNodeIdList.size() == 0){
+				throw new KarmaException("Error occured while counting header " +
+						"nodes for the worksheet!");
+			}				
+		}
+			
 
 		// Populate the worksheet model
 		while (scanner.hasNextLine()) {
@@ -171,9 +178,11 @@ public class CSVFileImport {
 							worksheet, fac);
 					headersList.add(hNode.getId());
 				}
+				break;
 			}
 			rowCount++;
-			scanner.nextLine();
+			if(scanner.hasNext())
+				scanner.nextLine();
 		}
 		return headersList;
 	}

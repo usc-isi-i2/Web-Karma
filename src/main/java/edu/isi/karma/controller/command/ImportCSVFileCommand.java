@@ -21,7 +21,6 @@
 package edu.isi.karma.controller.command;
 
 import java.io.File;
-import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -131,7 +130,7 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 			c.add(new WorksheetListUpdate(vWorkspace.getVWorksheetList()));
 			VWorksheet vw = vWorkspace.getVWorksheet(wsht.getId());
 			vw.update(c);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error("Error occured while importing CSV file.", e);
 			return new UpdateContainer(new ErrorUpdate(
 					"Error occured while importing CSV File."));
