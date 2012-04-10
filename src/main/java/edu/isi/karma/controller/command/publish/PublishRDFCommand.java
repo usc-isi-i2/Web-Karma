@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.Calendar;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONException;
@@ -155,10 +156,12 @@ public class PublishRDFCommand extends Command {
 				WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(
 						vWorkspace.getRepFactory(), descString, rdfFileName);
 				if (worksheet.getHeaders().hasNestedTables()) {
-					logger.info("Alignment of nested tables is work in progress. No RDF generated!");
-					//wrg.generateTriplesCell(worksheet);
+					//logger.info("Alignment of nested tables is work in progress. No RDF generated!");
+					wrg.generateTriplesCell(worksheet);
 				} else {
+					System.out.println("RDF start="+ Calendar.getInstance().getTimeInMillis());
 					wrg.generateTriplesRow(worksheet);
+					System.out.println("RDF end="+ Calendar.getInstance().getTimeInMillis());
 				}
 				String fileName = "./publish/Source Description/W"
 						+ worksheet.getId() + ".txt";
