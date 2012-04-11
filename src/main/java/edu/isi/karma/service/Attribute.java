@@ -21,36 +21,42 @@
 
 package edu.isi.karma.service;
 
-
-
-
-public class Param {
+public class Attribute {
 
 	private String id;
 	private String name;
 	private String IOType;
 	private String value;
 	private String hNodeId;
+	private String groundedIn;
+	private AttributeRequirement requirement;
+	
+	public static final String INPUT_PREFIX = "in_"; 
+	public static final String OUTPUT_PREFIX = "out_"; 
 
-	public Param(Param param) {
-		this.id = param.id;
-		this.name = param.name;
-		this.IOType = param.IOType;
-		this.value = param.value;
-		this.hNodeId = param.hNodeId;
+	public Attribute(Attribute attribute) {
+		this.id = attribute.id;
+		this.name = attribute.name;
+		this.IOType = attribute.IOType;
+		this.value = attribute.value;
+		this.requirement = attribute.requirement;
+		this.groundedIn = attribute.groundedIn;
+		this.hNodeId = attribute.hNodeId;
 	}
 	
-	public Param(String id, String name, String IOType) {
+	public Attribute(String id, String name, String IOType) {
 		this.id = id;
 		this.name = name;
 		this.IOType = IOType;
+		this.requirement = AttributeRequirement.NONE;
 	}
 
-	public Param(String id, String name, String IOType, String value) {
+	public Attribute(String id, String name, String IOType, String value) {
 		this.id = id;
 		this.name = name;
 		this.IOType = IOType;
 		this.value = value;
+		this.requirement = AttributeRequirement.NONE;
 	}
 
 	public String getId() {
@@ -86,6 +92,23 @@ public class Param {
 	}
 	public void setIOType(String IOType) {
 		this.IOType = IOType;
+	}
+
+
+	public AttributeRequirement getRequirement() {
+		return requirement;
+	}
+
+	public void setRequirement(AttributeRequirement requirement) {
+		this.requirement = requirement;
+	}
+
+	public String getGroundedIn() {
+		return groundedIn;
+	}
+
+	public void setGroundedIn(String groundedIn) {
+		this.groundedIn = groundedIn;
 	}
 
 	public void print() {

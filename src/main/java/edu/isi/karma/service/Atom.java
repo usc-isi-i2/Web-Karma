@@ -21,22 +21,6 @@
 
 package edu.isi.karma.service;
 
-public class Rule {
+public abstract class Atom {
 
-	private Clause head;
-	private Clause body;
-
-	public Clause getHead() {
-		return head;
-	}
-	public void setHead(Clause head) {
-		this.head = head;
-	}
-	public Clause getBody() {
-		return body;
-	}
-	public void setBody(Clause body) {
-		this.body = body;
-	}
-	
 }

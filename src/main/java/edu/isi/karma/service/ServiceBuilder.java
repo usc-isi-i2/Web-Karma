@@ -30,6 +30,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpMethods;
 
+import edu.isi.karma.modeling.Test;
 import edu.isi.karma.webserver.KarmaException;
 
 public class ServiceBuilder {
@@ -71,19 +72,19 @@ public class ServiceBuilder {
 		this.serviceData = result;
 	}
 	
-	public Table getServiceData(boolean includeURL, boolean includeInputParams, boolean includeOutputParams) {
+	public Table getServiceData(boolean includeURL, boolean includeInputAttributes, boolean includeOutputAttributes) {
 		
 		if (this.serviceData == null)
 			invokeAndGetResponse();
 		
-		if (includeURL && includeInputParams && includeOutputParams)
+		if (includeURL && includeInputAttributes && includeOutputAttributes)
 			return this.serviceData;
 		
-		List<Param> headers = this.serviceData.getHeaders();
+		List<Attribute> headers = this.serviceData.getHeaders();
 		List<List<String>> values = this.serviceData.getValues();
 
 		Table newTable = new Table();
-		List<Param> newHeader = new ArrayList<Param>();
+		List<Attribute> newHeader = new ArrayList<Attribute>();
 		List<List<String>> newValues = new ArrayList<List<String>>();
 		
 		List<Integer> includingColumns = new ArrayList<Integer>();
@@ -93,9 +94,9 @@ public class ServiceBuilder {
 				includingColumns.add(0);
 			
 			for (int i = 1; i < this.serviceData.getHeaders().size(); i++) {
-				if (includeInputParams && headers.get(i).getIOType() == IOType.INPUT)
+				if (includeInputAttributes && headers.get(i).getIOType() == IOType.INPUT)
 					includingColumns.add(i);
-				if (includeOutputParams && headers.get(i).getIOType() == IOType.OUTPUT)
+				if (includeOutputAttributes && headers.get(i).getIOType() == IOType.OUTPUT)
 					includingColumns.add(i);
 			}
 		}
@@ -120,33 +121,33 @@ public class ServiceBuilder {
 		return getServiceData(true, true, true);
 	}
 	
-	private List<Param> getInputParams() {
-		List<Param> inParams = new ArrayList<Param>();
+	private List<Attribute> getInputAttributes() {
+		List<Attribute> inAttributes = new ArrayList<Attribute>();
 		
 		Table serviceTable = getServiceData();
-		for (Param p : serviceTable.getHeaders()) {
+		for (Attribute p : serviceTable.getHeaders()) {
 			if (p.getIOType().equalsIgnoreCase(IOType.INPUT))
-				inParams.add(p);
+				inAttributes.add(p);
 		}
 
-		return inParams;
+		return inAttributes;
 	}
 	
-	private List<Param> getOutputParams() {
-		List<Param> outParams = new ArrayList<Param>();
+	private List<Attribute> getOutputAttributes() {
+		List<Attribute> outAttributes = new ArrayList<Attribute>();
 		
 		Table serviceTable = getServiceData();
-		for (Param p : serviceTable.getHeaders()) {
+		for (Attribute p : serviceTable.getHeaders()) {
 			if (p.getIOType().equalsIgnoreCase(IOType.OUTPUT))
-				outParams.add(p);
+				outAttributes.add(p);
 		}
 
-		return outParams;
+		return outAttributes;
 	}
 	
 	/**
 	 * This method creates a new service model which includes only the 
-	 * service endpoint, http method, input and output parameters
+	 * service endpoint, http method, input and output attributes
 	 * @return
 	 */
 	public Service getInitialServiceModel() {
@@ -160,6 +161,7 @@ public class ServiceBuilder {
 		
 		String address = URLManager.getServiceAddress(sampleUrl);
 		
+		service.setId(this.serviceName);
 		service.setName(this.serviceName);
 		service.setDescription("");
 		service.setAddress(address);
@@ -167,13 +169,15 @@ public class ServiceBuilder {
 		Operation op = new Operation();
 		
 		String operationName = URLManager.getOperationName(sampleUrl);
+		String operationAddress = URLManager.getOperationAddress(sampleUrl);
 
+		op.setId("op1");
 		op.setName(operationName);
+		op.setAddress(operationAddress);
 		op.setDescription("");
-
 		op.setMethod(HttpMethods.GET);
-		op.setInputParams(getInputParams());
-		op.setOutputParams(getOutputParams());
+		op.setInputAttributes(getInputAttributes());
+		op.setOutputAttributes(getOutputAttributes());
 		
 		List<Operation> opList = new ArrayList<Operation>();
 		opList.add(op);
@@ -199,12 +203,12 @@ public class ServiceBuilder {
 
 			logger.debug(tb.getPrintInfo());
 
-//			Service service = sb.getInitialServiceModel();
-//			service.print();
-//			
-//			service.getOperations().get(0).updateRule(Test.getTestTree());
-//			
-//			service.publish(ServiceRepository.Instance().SERVICE_REPOSITORY_DIR);
+			Service service = sb.getInitialServiceModel();
+			service.print();
+			
+			service.getOperations().get(0).updateModel(Test.getTestTree());
+			
+			service.publish(ServiceRepository.Instance().SERVICE_REPOSITORY_DIR);
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -21,51 +21,25 @@
 
 package edu.isi.karma.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import edu.isi.karma.modeling.alignment.Name;
 
+public class ClassAtom extends Atom {
 
-public class Response {
-	private String type;
-	private int code;
-	private String stream;
-	private Table table;
-	private List<Attribute> attributes;
+	private Name classPredicate;
+	private Name argument1;
 	
-	public String getType() {
-		return type;
+	public ClassAtom(Name classPredicate, Name argument1) {
+		this.classPredicate = classPredicate;
+		this.argument1 = argument1;
 	}
-	public void setType(String type) {
-		this.type = type;
+
+	public Name getClassPredicate() {
+		return classPredicate;
 	}
-	public String getStream() {
-		return stream;
+
+	public Name getArgument1() {
+		return argument1;
 	}
-	public void setStream(String stream) {
-		this.stream = stream;
-	}
-	public Table getTable() {
-		return table;
-	}
-	public void setTable(Table table) {
-		this.table = table;
-		buildAttributeListFromTable();
-	}
-	public int getCode() {
-		return code;
-	}
-	public void setCode(int code) {
-		this.code = code;
-	}
-	public List<Attribute> getAttributes() {
-		return this.attributes;
-	}
-	private void buildAttributeListFromTable() {
-		this.attributes = new ArrayList<Attribute>();
-		if (table == null)
-			return;
-		for (Attribute p : table.getHeaders()) {
-			this.attributes.add(new Attribute(p));
-		}
-	}
+	
+	
 }

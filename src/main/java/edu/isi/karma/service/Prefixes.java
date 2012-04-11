@@ -29,6 +29,7 @@ public interface Prefixes {
 	public static final String OWL = "owl"; 
 	public static final String SAWSDL = "sawsdl"; 
 	public static final String MSM = "msm"; 
+	public static final String WSMO_LITE = "wsmo-lite"; 
 	public static final String HRESTS = "hrests";
 	public static final String KARMA = "karma";
 	public static final String RULEML = "ruleml";

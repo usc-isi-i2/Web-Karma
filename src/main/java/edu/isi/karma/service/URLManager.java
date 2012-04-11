@@ -82,7 +82,7 @@ public class URLManager {
 	/**
 	 * Example: "http://www.test.com/getVideos?user=demo" returns "http://www.test.com/getVideos"
 	 * Example: "http://www.test.com/getVideos/" returns "http://www.test.com/getVideos"
-	 * @param url
+	 * @attribute url
 	 * @return
 	 */
 	public static String getEndPoint(URL url) {
@@ -95,7 +95,7 @@ public class URLManager {
 	/**
 	 * Example: "http://www.test.com/getVideos?user=demo" returns "http://www.test.com"
 	 * Example: "http://www.test.com/getVideos/" returns "http://www.test.com/getVideos/"
-	 * @param url
+	 * @attribute url
 	 * @return
 	 */
 	public static String getServiceAddress(URL url) {
@@ -104,13 +104,15 @@ public class URLManager {
 		if (index != -1) {
 			address = address.substring(0, index);
 		}
+		address += "/";
+		
 		return address;
 	}
 	
 	/**
 	 * Example: "http://www.test.com/getVideos?user=demo" returns "getVideos"
 	 * Example: "http://www.test.com/getVideos/" returns "unknown"
-	 * @param url
+	 * @attribute url
 	 * @return
 	 */
 	public static String getOperationName(URL url) {
@@ -118,20 +120,37 @@ public class URLManager {
 		if (operationName.indexOf("/") != -1) 
 			operationName = operationName.substring(operationName.lastIndexOf("/") + 1, operationName.length());
 		if (operationName.trim().length() == 0)
-			operationName = "noname";
+			operationName = "";
 		return operationName;
 	}		
 	
-	private static boolean verifyParamExtraction(URL url, List<Param> paramList) {
-		if (url.getQuery() == null && (paramList == null || paramList.size() == 0))
+	/**
+	 * Example: "http://www.test.com/getVideos?user=demo" returns "user=demo"
+	 * Example: "http://www.test.com/getVideos/" returns ""
+	 * @attribute url
+	 * @return
+	 */
+	public static String getOperationAddress(URL url) {
+		String address = "";
+
+		address += getOperationName(url);
+		
+		if (url.getQuery() != null)
+			address += "?" + url.getQuery().trim();
+		
+		return address;
+	}
+
+	private static boolean verifyAttributeExtraction(URL url, List<Attribute> attributeList) {
+		if (url.getQuery() == null && (attributeList == null || attributeList.size() == 0))
 			return true;
 		
 		if (url.getQuery() != null && url.getQuery().trim().length() == 0 && 
-				(paramList == null || paramList.size() == 0))
+				(attributeList == null || attributeList.size() == 0))
 			return true;
 		
 		String query = "";
-		for (Param p:paramList) {
+		for (Attribute p:attributeList) {
 			query += p.getName().trim();
 			query += "=";
 			query += p.getValue().trim();
@@ -146,30 +165,30 @@ public class URLManager {
 		return false;
 	}
 	
-	public static List<Param> getQueryParams(String urlString) throws MalformedURLException {
+	public static List<Attribute> getQueryAttributes(String urlString) throws MalformedURLException {
 		URL url = new URL(urlString);
-		return getQueryParams(url);
+		return getQueryAttributes(url);
 	}	    	
 
-	public static List<Param> getQueryParams(URL url) {
+	public static List<Attribute> getQueryAttributes(URL url) {
 	    try {
 	    	
 	    	String urlString = url.toString();
 	    	
-	        Map<String, List<String>> params = new HashMap<String, List<String>>();
+	        Map<String, List<String>> attributes = new HashMap<String, List<String>>();
 	        
-	        List<Param> paramList = new ArrayList<Param>();
-	        HashMap<String, Integer> paramNameCounter = new HashMap<String, Integer>();
-	        String paramName = "";
-	        String paramId = "";
-	        String paramValue = "";
+	        List<Attribute> attributeList = new ArrayList<Attribute>();
+	        HashMap<String, Integer> attributeNameCounter = new HashMap<String, Integer>();
+	        String attributeName = "";
+	        String attributeId = "";
+	        String attributeValue = "";
 	        
 	        String[] urlParts = urlString.split("\\?");
 	        if (urlParts.length > 1) {
 	            String query = urlParts[1];
-	            for (String param : query.split("&")) {
+	            for (String attribute : query.split("&")) {
 	                try {
-		            	String[] pair = param.split("=");
+		            	String[] pair = attribute.split("=");
 		                String key = URLDecoder.decode(pair[0], "UTF-8");
 		                String value = "";
 		                if (pair.length > 1) {
@@ -179,23 +198,23 @@ public class URLManager {
 		                	}
 		                }
 	
-		                List<String> values = params.get(key);
+		                List<String> values = attributes.get(key);
 		                if (values == null) {
 		                    values = new ArrayList<String>();
-		                    params.put(key, values);
+		                    attributes.put(key, values);
 		                }
 		                values.add(value);
 		                
-		    	    	// remember that we can have multiple values for a single parameter
-		    	    	// example: /path/to/my/resource?param1=value1&param1=value2&param1=value3
+		    	    	// remember that we can have multiple values for a single attributeeter
+		    	    	// example: /path/to/my/resource?attribute1=value1&attribute1=value2&attribute1=value3
 		    	    	// we are currently ignoring these types of urls
 		    	    	
 		                if (values.size() > 0) {
-			                paramName = key;
-		                	paramId = getId(paramName, paramNameCounter); 
-			                paramValue = values.get(0);
-			                Param p = new Param(paramId, paramName, IOType.INPUT, paramValue);
-			                paramList.add(p);
+			                attributeName = key;
+		                	attributeId = getId(attributeName, attributeNameCounter); 
+			                attributeValue = values.get(0);
+			                Attribute p = new Attribute(attributeId, attributeName, IOType.INPUT, attributeValue);
+			                attributeList.add(p);
 			                logger.debug(p.getPrintInfo());
 		                }
 	                } catch (Exception e) {
@@ -204,13 +223,13 @@ public class URLManager {
 	            }
 	        }
 	        
-	        if (!verifyParamExtraction(url, paramList)) {
-	        	logger.error("parameters have not been extracted successfully.");
+	        if (!verifyAttributeExtraction(url, attributeList)) {
+	        	logger.error("attributeeters have not been extracted successfully.");
 	        	return null;
 	        }
 	        
-	        logger.debug("Parameters extracted successfully from " + url.toString());
-	        return paramList;
+	        logger.debug("Attributeeters extracted successfully from " + url.toString());
+	        return attributeList;
 	        
 	    } catch (Exception ex) {
 	        throw new AssertionError(ex);
@@ -224,115 +243,115 @@ public class URLManager {
 		Integer count = nameCounter.get(name);
 		if (count == null) {
 			nameCounter.put(name, 1);
-			return "input_" + name + "_1";
+			return Attribute.INPUT_PREFIX + name;
 		} else {
 			nameCounter.put(name, count.intValue() + 1);
-			return ("input_" + name + "_" + String.valueOf(count.intValue() + 1));
+			return (Attribute.INPUT_PREFIX + name + "_" + String.valueOf(count.intValue()));
 		}
 	}
 	
 	/**
 	 * 
-	 * @param urlList
-	 * @return a list of parameter names
+	 * @attribute urlList
+	 * @return a list of attributeeter names
 	 * @throws MalformedURLException 
 	 */
-	public static List<String>  extractParameterNames(List<String> urlList) throws MalformedURLException {
-		List<String> paramsNameList = new ArrayList<String>();
+	public static List<String>  extractAttributeeterNames(List<String> urlList) throws MalformedURLException {
+		List<String> attributesNameList = new ArrayList<String>();
 
-		Param p = null;
+		Attribute p = null;
 		String key = null;
 		for (int i = 0; i < urlList.size(); i++) {
 			//System.out.println(urlList.get(i));
-			List<Param> paramList = getQueryParams(urlList.get(i));
-			for (int j = 0; j < paramList.size(); j++) {
-				p = paramList.get(j);
+			List<Attribute> attributeList = getQueryAttributes(urlList.get(i));
+			for (int j = 0; j < attributeList.size(); j++) {
+				p = attributeList.get(j);
 				key = p.getName();
 				//FIXME
-				if (key.equalsIgnoreCase("parameters"))
+				if (key.equalsIgnoreCase("attributeeters"))
 					continue;
-				if (key.trim().length() > 0 && paramsNameList.indexOf(key) == -1) {
-					paramsNameList.add(key);
+				if (key.trim().length() > 0 && attributesNameList.indexOf(key) == -1) {
+					attributesNameList.add(key);
 				}
 
 			}
 		}
-		return paramsNameList;
+		return attributesNameList;
 	}
 	
 	
-	public static List<List<String>>  paramValuesInTable(List<String> urlList, List<String> paramNames) throws MalformedURLException {
-		List<List<String>> allParams = new ArrayList<List<String>>();
+	public static List<List<String>>  attributeValuesInTable(List<String> urlList, List<String> attributeNames) throws MalformedURLException {
+		List<List<String>> allAttributes = new ArrayList<List<String>>();
 
-		Param p = null;
+		Attribute p = null;
 		String key = null;
 		int index = -1;
 		
 		for (int i = 0; i < urlList.size(); i++) {
 			//System.out.println(urlList.get(i));
-			allParams.add(new ArrayList<String>());
+			allAttributes.add(new ArrayList<String>());
 
-			List<Param> paramList = getQueryParams(urlList.get(i));
+			List<Attribute> attributeList = getQueryAttributes(urlList.get(i));
 			
-			for (int j = 0; j < paramNames.size(); j++)
-				allParams.get(i).add("");
+			for (int j = 0; j < attributeNames.size(); j++)
+				allAttributes.get(i).add("");
 			
-			for (int j = 0; j < paramList.size(); j++) {
-				p = paramList.get(j);
+			for (int j = 0; j < attributeList.size(); j++) {
+				p = attributeList.get(j);
 				key = p.getName();
-				index = paramNames.indexOf(key);
+				index = attributeNames.indexOf(key);
 				if (p.getValue() != null && p.getValue().trim().length() > 0)
 					if (index != -1)
-						allParams.get(i).set(index, p.getValue().trim());
+						allAttributes.get(i).set(index, p.getValue().trim());
 			}
 		}
-		return allParams;
+		return allAttributes;
 	}
 	
-	public static List<List<String>>  paramValuesInSets(List<String> urlList, List<String> paramNames) throws MalformedURLException {
-		List<List<String>> allParams = new ArrayList<List<String>>();
+	public static List<List<String>>  attributeValuesInSets(List<String> urlList, List<String> attributeNames) throws MalformedURLException {
+		List<List<String>> allAttributes = new ArrayList<List<String>>();
 
-		Param p = null;
+		Attribute p = null;
 		String key = null;
 		int index = -1;
 		
-		for (int j = 0; j < paramNames.size(); j++) {
-			allParams.add(new ArrayList<String>());
+		for (int j = 0; j < attributeNames.size(); j++) {
+			allAttributes.add(new ArrayList<String>());
 			
 			// Add empty value to each list
-			allParams.get(j).add("");
+			allAttributes.get(j).add("");
 		}
 		
 		for (int i = 0; i < urlList.size(); i++) {
 			//System.out.println(urlList.get(i));
-			//allParams.add(new ArrayList<String>());
+			//allAttributes.add(new ArrayList<String>());
 
-			List<Param> paramList = getQueryParams(urlList.get(i));
+			List<Attribute> attributeList = getQueryAttributes(urlList.get(i));
 			
-			for (int j = 0; j < paramList.size(); j++) {
-				p = paramList.get(j);
+			for (int j = 0; j < attributeList.size(); j++) {
+				p = attributeList.get(j);
 				key = p.getName();
-				index = paramNames.indexOf(key);
+				index = attributeNames.indexOf(key);
 				if (p.getValue() != null && p.getValue().trim().length() > 0)
 					if (index != -1)
-						if (allParams.get(index).indexOf(p.getValue().trim()) == -1)
-							allParams.get(index).add(p.getValue().trim());
+						if (allAttributes.get(index).indexOf(p.getValue().trim()) == -1)
+							allAttributes.get(index).add(p.getValue().trim());
 			}
 		}
-		return allParams;
+		return allAttributes;
 	}
 	
-	public static void printParamsTabular(List<String> paramNames, List<List<String>> paramValuesInTable) {
+	public static void printAttributesTabular(List<String> attributeNames, List<List<String>> attributeValuesInTable) {
 	
 		try {
 			
-			for (int i = 0; i < paramValuesInTable.size(); i++) {
+			for (int i = 0; i < attributeValuesInTable.size(); i++) {
 				//System.out.println(urlList.get(i));
 				System.out.println("******************************************");
-				for (int j = 0; j < paramValuesInTable.get(i).size(); j++) {
-					System.out.write(paramNames.get(j).getBytes());
+				for (int j = 0; j < attributeValuesInTable.get(i).size(); j++) {
+					System.out.write(attributeNames.get(j).getBytes());
 					System.out.write(":\t".getBytes());
-					System.out.write(paramValuesInTable.get(i).get(j).getBytes());
+					System.out.write(attributeValuesInTable.get(i).get(j).getBytes());
 					System.out.write("\n".getBytes());
 				}
 				System.out.write("\n".getBytes());
@@ -342,24 +361,24 @@ public class URLManager {
 		}
 	}
 	
-	public static String printParamsCSV(List<String> urlList, List<String> paramNames, List<List<String>> paramValues) {
+	public static String printAttributesCSV(List<String> urlList, List<String> attributeNames, List<List<String>> attributeValues) {
 		String csv = "";
 		
 		try {
 			
 			
-			for (int i = 0; i < paramNames.size(); i++) {
+			for (int i = 0; i < attributeNames.size(); i++) {
 				if (i != 0)
 					csv += ",";
-				csv += "\"" + paramNames.get(i) + "\"";
+				csv += "\"" + attributeNames.get(i) + "\"";
 			}
 			csv += "\n";
 
-			for (int i = 0; i < paramValues.size(); i++) {
-				for (int j = 0; j < paramValues.get(i).size(); j++) {
+			for (int i = 0; i < attributeValues.size(); i++) {
+				for (int j = 0; j < attributeValues.get(i).size(); j++) {
 					if (j != 0)
 						csv += ",";
-					csv += "\"" + paramValues.get(i).get(j) + "\"";
+					csv += "\"" + attributeValues.get(i).get(j) + "\"";
 				}
 				csv += "\n";
 			}
@@ -372,13 +391,13 @@ public class URLManager {
 
 	}
 	
-	public static void printParamsSets(List<String> paramNames, List<List<String>> paramValuesInSets) {
+	public static void printAttributesSets(List<String> attributeNames, List<List<String>> attributeValuesInSets) {
 		
-		for (int i = 0; i < paramValuesInSets.size(); i++) {
-			System.out.println(paramNames.get(i));
+		for (int i = 0; i < attributeValuesInSets.size(); i++) {
+			System.out.println(attributeNames.get(i));
 			
-			for (int j = 0; j < paramValuesInSets.get(i).size(); j++) {
-				System.out.println(paramValuesInSets.get(i).get(j).trim());
+			for (int j = 0; j < attributeValuesInSets.get(i).size(); j++) {
+				System.out.println(attributeValuesInSets.get(i).get(j).trim());
 			}
 			
 			System.out.println("******************");
@@ -386,24 +405,24 @@ public class URLManager {
 
 	}
 	
-	public static String createApiLink(String apiEndPoint, List<String> paramNames, List<String> paramValues) {
+	public static String createApiLink(String apiEndPoint, List<String> attributeNames, List<String> attributeValues) {
 		String invocationURL = apiEndPoint.trim();
 			
 		if (!invocationURL.endsWith("?"))
 			invocationURL += "?";
 
 		String value = "";
-		for (int i = 0; i < paramNames.size(); i++) {
-			value = paramValues.get(i).trim();
+		for (int i = 0; i < attributeNames.size(); i++) {
+			value = attributeValues.get(i).trim();
 			
 			if (value == null || value.length() == 0 || value.equalsIgnoreCase(null))
 				continue;
 			if (!invocationURL.endsWith("?"))
 				invocationURL += "&";
 			
-			invocationURL += paramNames.get(i);
+			invocationURL += attributeNames.get(i);
 			invocationURL += "=";
-			String refinedValue = paramValues.get(i).replaceAll("\\ ", "\\+");
+			String refinedValue = attributeValues.get(i).replaceAll("\\ ", "\\+");
 			invocationURL += refinedValue;
 		}
 		
@@ -439,10 +458,11 @@ public class URLManager {
 	public static void main(String[] args) throws MalformedURLException {
 
 //		URL url = new URL("http://www.test.com/getVideos?user=demo");
-		URL url = new URL("http://www.test.com");
+		URL url = new URL("http://www.test.com/?test=1");
+		System.out.println(getEndPoint(url));
 		System.out.println(getServiceAddress(url));
 		System.out.println(getOperationName(url));
-		System.out.println(getEndPoint(url));
+		System.out.println(getOperationAddress(url));
 
 		
 //		String serviceName = "";
@@ -528,24 +548,24 @@ public class URLManager {
 		
 //		List<String> urlList = getUrlListFromFile(pathPrefix + serviceName + ".txt");
 //
-//		List<String> paramNames = extractParameterNames(urlList);
-//		List<List<String>> paramValuesInTable = paramValuesInTable(urlList, paramNames);
-//		List<List<String>> paramValuesInSets = paramValuesInSets(urlList, paramNames);
-//		List<List<String>> crossProductTable = Permutation.permuteAll(paramValuesInSets);
+//		List<String> attributeNames = extractAttributeeterNames(urlList);
+//		List<List<String>> attributeValuesInTable = attributeValuesInTable(urlList, attributeNames);
+//		List<List<String>> attributeValuesInSets = attributeValuesInSets(urlList, attributeNames);
+//		List<List<String>> crossProductTable = Permutation.permuteAll(attributeValuesInSets);
 //
-////		printParamsCSV(urlList, paramNames, paramValuesInTable, pathPrefix + serviceName +  ".csv");
-////		printParamsTabular(paramNames, paramValuesInTable);
-////		printParamsSets(paramNames, paramValuesInSets);
-////		printParamsTabular(paramNames, crossProductTable);
+////		printAttributesCSV(urlList, attributeNames, attributeValuesInTable, pathPrefix + serviceName +  ".csv");
+////		printAttributesTabular(attributeNames, attributeValuesInTable);
+////		printAttributesSets(attributeNames, attributeValuesInSets);
+////		printAttributesTabular(attributeNames, crossProductTable);
 //		
-//		printParamsCSV(urlList, paramNames, crossProductTable, pathPrefix + serviceName +  "-cross.csv");
+//		printAttributesCSV(urlList, attributeNames, crossProductTable, pathPrefix + serviceName +  "-cross.csv");
 //		
 //		String url = "";
 //		String output = "";
 ////		for (int i = 0; i < 10; i++) {
 //		System.out.println(crossProductTable.size());
 //		for (int i = 0; i < crossProductTable.size(); i++) {
-//			url = createApiLink(apiEndPoint, paramNames, crossProductTable.get(i));
+//			url = createApiLink(apiEndPoint, attributeNames, crossProductTable.get(i));
 //			System.out.println(url);
 //			//url = "http://maps.googleapis.com/maps/api/geocode/json?address=1600 Amphitheatre Parkway, Mountain View, CA&sensor=true";
 ////			url = "http://weather.yahooapis.com/forecastrss?w=location&u=c&p=000";

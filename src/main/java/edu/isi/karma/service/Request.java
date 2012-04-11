@@ -33,13 +33,13 @@ public class Request {
 	private String type;
 	private URL url;
 	private String endPoint;
-	private List<Param> params;
+	private List<Attribute> attributes;
 
 	public Request(Request request) {
 		this.type = request.type;
 		this.url = request.url;
 		this.endPoint = request.endPoint;
-		this.params = new ArrayList<Param>(request.getParams());
+		this.attributes = new ArrayList<Attribute>(request.getAttributes());
 	}
 	
 	public Request(URL url) {
@@ -77,24 +77,24 @@ public class Request {
 		this.endPoint = endPoint;
 	}
 
-	public List<Param> getParams() {
-		return params;
+	public List<Attribute> getAttributes() {
+		return attributes;
 	}
 
-	public void setParams(List<Param> params) {
-		this.params = params;
+	public void setAttributes(List<Attribute> attributes) {
+		this.attributes = attributes;
 	}
 
-//	public void createTableFromParamList() {
+//	public void createTableFromAttributeList() {
 //		
-//		this.paramTable = new Table();
+//		this.attributeTable = new Table();
 //		
-//		for (Param p : params) {
-//			paramTable.getColumns().add(p.getName());
-//			paramTable.getTypes().add(IOType.INPUT);
+//		for (Attribute p : attributes) {
+//			attributeTable.getColumns().add(p.getName());
+//			attributeTable.getTypes().add(IOType.INPUT);
 //			List<String> values = new ArrayList<String>();
 //			values.add(p.getValue());
-//			paramTable.getValues().add(values);
+//			attributeTable.getValues().add(values);
 //		}
 //	}
 	

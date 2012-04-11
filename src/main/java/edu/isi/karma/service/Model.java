@@ -24,25 +24,20 @@ package edu.isi.karma.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.Vertex;
+public class Model {
+	
+	private List<Atom> atoms;
 
-public class Clause {
+	public Model() {
+		atoms = new ArrayList<Atom>();
+	}
 	
-	private List<Vertex> concepts = new ArrayList<Vertex>();
-	private List<LabeledWeightedEdge> relations = new ArrayList<LabeledWeightedEdge>();
-	
-	public List<Vertex> getConcepts() {
-		return concepts;
+	public List<Atom> getAtoms() {
+		return atoms;
 	}
-	public void setConcepts(List<Vertex> concepts) {
-		this.concepts = concepts;
-	}
-	public List<LabeledWeightedEdge> getRelations() {
-		return relations;
-	}
-	public void setRelations(List<LabeledWeightedEdge> relations) {
-		this.relations = relations;
+
+	public void setAtoms(List<Atom> atoms) {
+		this.atoms = atoms;
 	}
 	
 }

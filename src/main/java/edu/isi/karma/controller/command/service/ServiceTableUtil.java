@@ -33,7 +33,7 @@ import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.service.Param;
+import edu.isi.karma.service.Attribute;
 import edu.isi.karma.service.Table;
 
 public class ServiceTableUtil {
@@ -66,7 +66,7 @@ public class ServiceTableUtil {
 
 	}
 	
-	private static List<String> addHeaders(List<Param> tableHeader, Worksheet worksheet, RepFactory factory, boolean includeURL) {
+	private static List<String> addHeaders(List<Attribute> tableHeader, Worksheet worksheet, RepFactory factory, boolean includeURL) {
 		HTable headers = worksheet.getHeaders();
 		List<String> headersList = new ArrayList<String>();
 		
@@ -74,8 +74,8 @@ public class ServiceTableUtil {
 		int startIndex = 0;
 		if (!includeURL) startIndex = 1;
 		for (int i = startIndex; i < tableHeader.size(); i++) {
-			Param p = tableHeader.get(i);
-			HNode hNode = headers.addHNode(p.getName(), worksheet, factory);
+			Attribute att = tableHeader.get(i);
+			HNode hNode = headers.addHNode(att.getName(), worksheet, factory);
 			headersList.add(hNode.getId());
 		}
 		return headersList;

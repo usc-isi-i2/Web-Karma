@@ -77,7 +77,7 @@ public class Invocation {
 
 	private void updateRequest() {
 		request.setEndPoint(URLManager.getEndPoint(request.getUrl()));
-		request.setParams(URLManager.getQueryParams(request.getUrl()));
+		request.setAttributes(URLManager.getQueryAttributes(request.getUrl()));
 	}
 	
 	private static String getId(String name, HashMap<String, Integer> nameCounter) {
@@ -87,10 +87,10 @@ public class Invocation {
 		Integer count = nameCounter.get(name);
 		if (count == null) {
 			nameCounter.put(name, 1);
-			return "output_" + name + "_1";
+			return Attribute.OUTPUT_PREFIX + name;
 		} else {
 			nameCounter.put(name, count.intValue() + 1);
-			return ("output_" + name + "_" + String.valueOf(count.intValue() + 1));
+			return (Attribute.OUTPUT_PREFIX + name + "_" + String.valueOf(count.intValue()));
 		}
 	}
 	
@@ -98,7 +98,7 @@ public class Invocation {
 		
 		Table results = new Table();
 		List<String> columns = new ArrayList<String>();
-        HashMap<String, Integer> paramNameCounter = new HashMap<String, Integer>();
+        HashMap<String, Integer> attributeNameCounter = new HashMap<String, Integer>();
 
 		if (response.getType().indexOf("xml") != -1) { // XML content
 			// The library has a bug, some values are wrong, e.g., adminCode2: 061 --> 49 			
@@ -111,7 +111,7 @@ public class Invocation {
 		}
 
 		for (String c : columns) {
-			Param p = new Param(getId(c, paramNameCounter), c, IOType.OUTPUT);
+			Attribute p = new Attribute(getId(c, attributeNameCounter), c, IOType.OUTPUT);
 			results.getHeaders().add(p);
 		}
 		
@@ -191,10 +191,10 @@ public class Invocation {
 		jointInputAndOutput = new Table(this.response.getTable());
 		
 		List<String> inputValues = new ArrayList<String>();
-		if (this.request.getParams() != null)
-		for (int j = this.request.getParams().size() - 1; j >= 0; j--) {
+		if (this.request.getAttributes() != null)
+		for (int j = this.request.getAttributes().size() - 1; j >= 0; j--) {
 			
-			Param p = this.request.getParams().get(j);
+			Attribute p = this.request.getAttributes().get(j);
 			if (p != null && p.getName() != null && p.getName().toString().trim().length() == 0)
 				continue;
 				
@@ -211,7 +211,7 @@ public class Invocation {
 
 
 		// Include the request URLs in the invocation table
-		jointInputAndOutput.getHeaders().add(0, new Param(REQUEST_COLUMN_NAME, REQUEST_COLUMN_NAME,IOType.NONE));
+		jointInputAndOutput.getHeaders().add(0, new Attribute(REQUEST_COLUMN_NAME, REQUEST_COLUMN_NAME,IOType.NONE));
 		for (int k = 0; k < jointInputAndOutput.getValues().size(); k++)
 			jointInputAndOutput.getValues().get(k).add(0, this.request.getUrl().toString());
 		
