@@ -872,10 +872,9 @@ public class Main {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/Users/bowu/mysoft/xx/logx.txt")));
 			for(int x = 0; x<ranks.size();x++)
 			{
-//				bw.write(names.get(x)+":"+exampleCnt.get(x)+","+timeleng.get(x));
-//				bw.write("\n");
-//				System.out.println(names.get(x)+":"+exampleCnt.get(x)+","+timeleng.get(x));
-				
+				bw.write(names.get(x)+":"+exampleCnt.get(x)+","+timeleng.get(x));
+				bw.write("\n");
+				System.out.println(names.get(x)+":"+exampleCnt.get(x)+","+timeleng.get(x));
 				bw.write(names.get(x)+"\n");
 				for(String d:ranks.get(x))
 				{
@@ -937,7 +936,7 @@ public class Main {
 		for(int x = 0;x <1;x++)
 		{
 			double st = System.currentTimeMillis();
-			m.exper_2("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/test");
+			m.exper_2("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/pos");
 			double ed = System.currentTimeMillis();
 			xy.add((ed-st)*1.0/60000);
 		}
