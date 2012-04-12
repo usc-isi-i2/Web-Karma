@@ -30,7 +30,6 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
-import edu.isi.karma.modeling.ontology.OntologyCache;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 
@@ -219,6 +218,7 @@ public class Test {
 		
 //		GraphUtil.printGraphSimple(alignment.getAlignmentGraph());
 //		GraphUtil.printGraphSimple(alignment.getSteinerTree());
+		steinerTree = alignment.getSteinerTree();
 		return steinerTree;
 	}
 	
@@ -236,8 +236,8 @@ public class Test {
 	}
 	public static void main(String[] args) {
 		
-		getGeoNamesNeighbourhoodTree();
-		if (true) return;
+//		getGeoNamesNeighbourhoodTree();
+//		if (true) return;
 		
 		OntologyManager ontManagar = new OntologyManager();
 		loadOntologies(ontManagar);
@@ -250,16 +250,27 @@ public class Test {
 		List<SemanticType> semTypes2 = createTestInput2();
 		List<SemanticType> semTypes3 = createTestInput3();
 		List<SemanticType> semTypes4 = createTestInput4();
+		List<SemanticType> semTypes5 = createTestInput5();
 
-		Alignment alignment = null;
-//		alignment = new Alignment(ontManagar, semTypes1);
-//		alignment = new Alignment(ontManagar, semTypes2);
-//		alignment = new Alignment(ontManagar, semTypes3);
-		alignment = new Alignment(ontManagar, semTypes4);
+		Alignment alignment1 = null;
+		Alignment alignment2 = null;
+		Alignment alignment3 = null;
+		Alignment alignment4 = null;
+		Alignment alignment5 = null;
+		alignment1 = new Alignment(ontManagar, semTypes1);
+		alignment2 = new Alignment(ontManagar, semTypes2);
+		alignment3 = new Alignment(ontManagar, semTypes3);
+		alignment4 = new Alignment(ontManagar, semTypes4);
+		alignment5 = new Alignment(ontManagar, semTypes5);
 		
+		GraphUtil.printGraphSimple(alignment1.getSteinerTree());
+		GraphUtil.printGraphSimple(alignment2.getSteinerTree());
+		GraphUtil.printGraphSimple(alignment3.getSteinerTree());
+		GraphUtil.printGraphSimple(alignment4.getSteinerTree());
+		GraphUtil.printGraphSimple(alignment5.getSteinerTree());
 		
 //		alignment.getSteinerTree();
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = alignment.getSteinerTree();
+		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = alignment5.getSteinerTree();
 //		GraphUtil.printGraph(steinerTree);
 		for (Vertex v : steinerTree.vertexSet()) {
 			if (v.getSemanticType() != null)

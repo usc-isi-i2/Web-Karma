@@ -199,8 +199,8 @@ public class Operation {
 		if (operationTreeModel == null)
 			return;
 		
-		List<Vertex> inputNodes = new ArrayList<Vertex>();
-		List<Vertex> outputNodes = new ArrayList<Vertex>();
+		List<Vertex> inputAttributesNodes = new ArrayList<Vertex>();
+		List<Vertex> outputAttributesNodes = new ArrayList<Vertex>();
 
 		this.hNodeIdToAttribute.clear();
 		buildHNodeId2AttributeMapping();
@@ -228,23 +228,26 @@ public class Operation {
 			v.setRdfId(att.getId());
 			
 			if (att.getIOType() == IOType.INPUT) {
-				inputNodes.add(v);
+				inputAttributesNodes.add(v);
 			}
 			if (att.getIOType() == IOType.OUTPUT) {
-				outputNodes.add(v);
+				outputAttributesNodes.add(v);
 			}
 		}
 
 		
-		Model inputModel = getInputModel(operationTreeModel, inputNodes);
+		List<String> inputModelVertexes = new ArrayList<String>();
+		List<String> inputModelEdges = new ArrayList<String>();		
+		Model inputModel = getInputModel(operationTreeModel, inputAttributesNodes, inputModelVertexes, inputModelEdges);
 		this.setInputModel(inputModel);
 		
-		Model outputModel = getOutputModel(operationTreeModel, inputModel);
+		Model outputModel = getOutputModel(operationTreeModel, inputModelVertexes, inputModelEdges);
 		this.setOutputModel(outputModel);
 		
 	}
 	
-	private Model getInputModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> operationTreeModel, List<Vertex> inputNodes) {
+	private Model getInputModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> operationTreeModel, 
+			List<Vertex> inputNodes, List<String> inputModelVertexes, List<String> inputModelEdges) {
 
 		if (operationTreeModel == null)
 			return null;
@@ -258,6 +261,9 @@ public class Operation {
 
 		Model m = new Model();
 		for (Vertex v : steinerTree.getSteinerTree().vertexSet()) {
+			
+			inputModelVertexes.add(v.getID());
+			
 			if (v.getNodeType() == NodeType.DataProperty)
 				continue;
 			
@@ -269,6 +275,9 @@ public class Operation {
 		}
 		
 		for (LabeledWeightedEdge e : steinerTree.getSteinerTree().edgeSet()) {
+			
+			inputModelEdges.add(e.getID());
+			
 			Name propertyPredicate = new Name(e.getUri(), e.getNs(), e.getPrefix());
 			Name argument1 = new Name(e.getSource().getRdfId(), null, null);
 			Name argument2 = new Name(e.getTarget().getRdfId(), null, null);
@@ -280,35 +289,41 @@ public class Operation {
 		return m;
 	}
 
-	private Model getOutputModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> operationTreeModel, Model inputModel) {
+	private Model getOutputModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> operationTreeModel, 
+			List<String> inputModelVertexes, List<String> inputModelEdges) {
 
 		if (operationTreeModel == null)
 			return null;
-		
-		if (operationTreeModel.vertexSet() == null)
-			return null;
-		
+
 		Model m = new Model();
 		
-//		for (Vertex v : operationTreeModel.vertexSet()) {
-//			if (v.getNodeType() == NodeType.DataProperty)
-//				continue;
-//			
-//			Name classPredicate = new Name(v.getUri(), v.getNs(), v.getPrefix());
-//			Name argument1 = new Name(v.getLocalID(), "", "");
-//
-//			ClassAtom classAtom = new ClassAtom(classPredicate, argument1);
-//			m.getAtoms().add(classAtom);
-//		}
-//		
-//		for (LabeledWeightedEdge e : operationTreeModel.edgeSet()) {
-//			Name propertyPredicate = new Name(e.getUri(), e.getNs(), e.getPrefix());
-//			Name argument1 = new Name(e.getSource().getLocalID(), "", "");
-//			Name argument2 = new Name(e.getTarget().getLocalID(), "", "");
-//
-//			PropertyAtom propertyAtom = new PropertyAtom(propertyPredicate, argument1, argument2);
-//			m.getAtoms().add(propertyAtom);
-//		}
+		for (Vertex v : operationTreeModel.vertexSet()) {
+			
+			if (inputModelVertexes.indexOf(v.getID()) != -1)
+				continue;
+			
+			if (v.getNodeType() == NodeType.DataProperty)
+				continue;
+			
+			Name classPredicate = new Name(v.getUri(), v.getNs(), v.getPrefix());
+			Name argument1 = new Name(v.getRdfId(), null, null);
+
+			ClassAtom classAtom = new ClassAtom(classPredicate, argument1);
+			m.getAtoms().add(classAtom);
+		}
+		
+		for (LabeledWeightedEdge e : operationTreeModel.edgeSet()) {
+			
+			if (inputModelEdges.indexOf(e.getID()) != -1)
+				continue;
+			
+			Name propertyPredicate = new Name(e.getUri(), e.getNs(), e.getPrefix());
+			Name argument1 = new Name(e.getSource().getRdfId(), null, null);
+			Name argument2 = new Name(e.getTarget().getRdfId(), null, null);
+
+			PropertyAtom propertyAtom = new PropertyAtom(propertyPredicate, argument1, argument2);
+			m.getAtoms().add(propertyAtom);
+		}
 		
 		return m;
 	}

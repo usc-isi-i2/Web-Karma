@@ -104,9 +104,12 @@ public class Service {
 
 		addInvocationPart(model);
 		
-		String service_desc_file = ServiceRepository.Instance().SERVICE_REPOSITORY_DIR + serviceGUID + ".n3";
+		String service_desc_file = ServiceRepository.Instance().SERVICE_REPOSITORY_DIR + serviceGUID + ".rdf";
 		OutputStreamWriter output = new OutputStreamWriter(new FileOutputStream(service_desc_file));
 
+//		model.write(output,"RDF/XML-ABBREV");
+//		model.write(output,"N-TRIPLE");
+//		model.write(output,"RDF/XML");
 		model.write(output,"N3");
 		return model;
 		
@@ -121,7 +124,7 @@ public class Service {
 		Resource input_resource = model.createResource(Namespaces.KARMA + "Input");
 		Resource output_resource = model.createResource(Namespaces.KARMA + "Output");
 		Resource attribute_resource = model.createResource(Namespaces.KARMA + "Attribute");
-		Resource variavle_resource = model.createResource(Namespaces.KARMA + "Variable");
+		Resource variavle_resource = model.createResource(Namespaces.SWRL + "Variable");
 
 		// properties
 		Property rdf_type = model.createProperty(Namespaces.RDF , "type");
@@ -166,8 +169,6 @@ public class Service {
 			}
 			
 			
-//			String operation_address = "";
-			
 			if (op.getInputAttributes() != null) {
 				Resource my_input = model.createResource(defaultNS + op.getId() + "_input");  
 				if (op.getInputAttributes().size() > 0) {
@@ -181,11 +182,6 @@ public class Service {
 				for (int i = 0; i < op.getInputAttributes().size(); i++) {
 					
 					Attribute att = op.getInputAttributes().get(i);
-					// building the operation address template
-//					String groundVar = "p" + String.valueOf(i+1);
-//					if (operation_address.trim().length() > 0) operation_address += "&";
-//					operation_address += att.getName();
-//					operation_address += "={" + groundVar + "}";
 					
 					Resource my_attribute = model.createResource(defaultNS + att.getId());
 					
