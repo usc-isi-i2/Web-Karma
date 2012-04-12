@@ -25,18 +25,18 @@ import edu.isi.karma.modeling.alignment.Name;
 
 public class PropertyAtom extends Atom {
 
-	private Name classPredicate;
+	private Name propertyPredicate;
 	private Name argument1;
 	private Name argument2;
 	
-	public PropertyAtom(Name classPredicate, Name argument1, Name argument2) {
-		this.classPredicate = classPredicate;
+	public PropertyAtom(Name propertyPredicate, Name argument1, Name argument2) {
+		this.propertyPredicate = propertyPredicate;
 		this.argument1 = argument1;
 		this.argument2 = argument2;
 	}
 
-	public Name getClassPredicate() {
-		return classPredicate;
+	public Name getPropertyPredicate() {
+		return propertyPredicate;
 	}
 
 	public Name getArgument1() {

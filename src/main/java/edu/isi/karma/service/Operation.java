@@ -21,16 +21,24 @@
 
 package edu.isi.karma.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.modeling.alignment.GraphPreProcess;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Name;
 import edu.isi.karma.modeling.alignment.NodeType;
+import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.modeling.alignment.Vertex;
 
 public class Operation {
+
+	static Logger logger = Logger.getLogger(Operation.class);
 
 	private String id;
 	private String name;
@@ -42,9 +50,20 @@ public class Operation {
 
 	private List<Attribute> inputAttributes;
 	private List<Attribute> outputAttributes;
-	
+
+	private List<String> variables;
+
 	private Model inputModel;
 	private Model outputModel;
+	
+	private HashMap<String, Attribute> hNodeIdToAttribute;
+	
+	public Operation() {
+		hNodeIdToAttribute = new HashMap<String, Attribute>();
+		variables = new ArrayList<String>();
+		inputAttributes = new ArrayList<Attribute>();
+		outputAttributes = new ArrayList<Attribute>();
+	}
 	
 	public String getId() {
 		return id;
@@ -100,6 +119,9 @@ public class Operation {
 
 	public void setInputAttributes(List<Attribute> inputAttributes) {
 		this.inputAttributes = inputAttributes;
+		for (Attribute att : this.inputAttributes)
+			att.setId(this.getId() + "_" + att.getId());
+
 	}
 
 	public List<Attribute> getOutputAttributes() {
@@ -108,6 +130,8 @@ public class Operation {
 
 	public void setOutputAttributes(List<Attribute> outputAttributes) {
 		this.outputAttributes = outputAttributes;
+		for (Attribute att : this.outputAttributes)
+			att.setId(this.getId() + "_" + att.getId());
 	}
 
 	public String getAddress() {
@@ -124,6 +148,19 @@ public class Operation {
 			doGrounding();
 		
 		return addressTemplate;
+	}
+
+	
+	public List<String> getVariables() {
+		return variables;
+	}
+
+	public HashMap<String, Attribute> gethNodeIdToAttribute() {
+		return hNodeIdToAttribute;
+	}
+
+	public void sethNodeIdToAttribute(HashMap<String, Attribute> hNodeIdToAttribute) {
+		this.hNodeIdToAttribute = hNodeIdToAttribute;
 	}
 
 	private void doGrounding() {
@@ -162,7 +199,44 @@ public class Operation {
 		if (operationTreeModel == null)
 			return;
 		
-		Model inputModel = getInputModel(operationTreeModel);
+		List<Vertex> inputNodes = new ArrayList<Vertex>();
+		List<Vertex> outputNodes = new ArrayList<Vertex>();
+
+		this.hNodeIdToAttribute.clear();
+		buildHNodeId2AttributeMapping();
+		
+		// set the rdf ids of all the vertices. The rdf id of leaf vertices are the attribute ids. 
+		String hNodeId = "";
+		for (Vertex v : operationTreeModel.vertexSet()) {
+			if (v.getSemanticType() != null && v.getSemanticType().getHNodeId() != null) {
+				logger.debug("Vertex " + v.getLocalID() + " is a semantic type associated to a source columns.");
+				hNodeId = v.getSemanticType().getHNodeId();
+			} else {
+				logger.debug("Vertex " + v.getLocalID() + " is an intermediate node.");
+				String variable = this.getId() + "_v" + String.valueOf(variables.size() + 1);
+				variables.add(variable);
+				v.setRdfId(variable);
+				continue;
+			}
+			
+			Attribute att = this.hNodeIdToAttribute.get(hNodeId);
+			if (att == null) {
+				logger.error("No attribute is associated to the column with semantic type " + v.getID());
+				continue;
+			}
+			
+			v.setRdfId(att.getId());
+			
+			if (att.getIOType() == IOType.INPUT) {
+				inputNodes.add(v);
+			}
+			if (att.getIOType() == IOType.OUTPUT) {
+				outputNodes.add(v);
+			}
+		}
+
+		
+		Model inputModel = getInputModel(operationTreeModel, inputNodes);
 		this.setInputModel(inputModel);
 		
 		Model outputModel = getOutputModel(operationTreeModel, inputModel);
@@ -170,12 +244,39 @@ public class Operation {
 		
 	}
 	
-	private Model getInputModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> operationTreeModel) {
+	private Model getInputModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> operationTreeModel, List<Vertex> inputNodes) {
 
 		if (operationTreeModel == null)
 			return null;
-		
+				
+		logger.debug("compute the steiner tree from the alignment tree with input nodes as steiner nodes ...");
+		GraphPreProcess graphPreProcess = new GraphPreProcess(operationTreeModel, inputNodes, null);
+		UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedGraph = graphPreProcess.getUndirectedGraph();
+		List<Vertex> steinerNodes = graphPreProcess.getSteinerNodes();
+		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodes);
+
+
 		Model m = new Model();
+		for (Vertex v : steinerTree.getSteinerTree().vertexSet()) {
+			if (v.getNodeType() == NodeType.DataProperty)
+				continue;
+			
+			Name classPredicate = new Name(v.getUri(), v.getNs(), v.getPrefix());
+			Name argument1 = new Name(v.getRdfId(), null, null);
+
+			ClassAtom classAtom = new ClassAtom(classPredicate, argument1);
+			m.getAtoms().add(classAtom);
+		}
+		
+		for (LabeledWeightedEdge e : steinerTree.getSteinerTree().edgeSet()) {
+			Name propertyPredicate = new Name(e.getUri(), e.getNs(), e.getPrefix());
+			Name argument1 = new Name(e.getSource().getRdfId(), null, null);
+			Name argument2 = new Name(e.getTarget().getRdfId(), null, null);
+
+			PropertyAtom propertyAtom = new PropertyAtom(propertyPredicate, argument1, argument2);
+			m.getAtoms().add(propertyAtom);
+		}
+
 		return m;
 	}
 
@@ -189,29 +290,38 @@ public class Operation {
 		
 		Model m = new Model();
 		
-		for (Vertex v : operationTreeModel.vertexSet()) {
-			if (v.getNodeType() == NodeType.DataProperty)
-				continue;
-			
-			Name classPredicate = new Name(v.getUri(), v.getNs(), v.getPrefix());
-			Name argument1 = new Name(v.getLocalID(), "", "");
-
-			ClassAtom classAtom = new ClassAtom(classPredicate, argument1);
-			m.getAtoms().add(classAtom);
-		}
-		
-		for (LabeledWeightedEdge e : operationTreeModel.edgeSet()) {
-			Name propertyPredicate = new Name(e.getUri(), e.getNs(), e.getPrefix());
-			Name argument1 = new Name(e.getSource().getLocalID(), "", "");
-			Name argument2 = new Name(e.getTarget().getLocalID(), "", "");
-
-			PropertyAtom propertyAtom = new PropertyAtom(propertyPredicate, argument1, argument2);
-			m.getAtoms().add(propertyAtom);
-		}
+//		for (Vertex v : operationTreeModel.vertexSet()) {
+//			if (v.getNodeType() == NodeType.DataProperty)
+//				continue;
+//			
+//			Name classPredicate = new Name(v.getUri(), v.getNs(), v.getPrefix());
+//			Name argument1 = new Name(v.getLocalID(), "", "");
+//
+//			ClassAtom classAtom = new ClassAtom(classPredicate, argument1);
+//			m.getAtoms().add(classAtom);
+//		}
+//		
+//		for (LabeledWeightedEdge e : operationTreeModel.edgeSet()) {
+//			Name propertyPredicate = new Name(e.getUri(), e.getNs(), e.getPrefix());
+//			Name argument1 = new Name(e.getSource().getLocalID(), "", "");
+//			Name argument2 = new Name(e.getTarget().getLocalID(), "", "");
+//
+//			PropertyAtom propertyAtom = new PropertyAtom(propertyPredicate, argument1, argument2);
+//			m.getAtoms().add(propertyAtom);
+//		}
 		
 		return m;
 	}
 
+	public void buildHNodeId2AttributeMapping() {
+		for (Attribute att : getInputAttributes()) 
+			if (att.gethNodeId() != null)
+				this.hNodeIdToAttribute.put(att.gethNodeId(), att);
+		for (Attribute att : getOutputAttributes()) 
+			if (att.gethNodeId() != null)
+				this.hNodeIdToAttribute.put(att.gethNodeId(), att);
+	}
+	
 	public void print() {
 		System.out.println("name: " + this.getName());
 		System.out.println("description: " + this.getDescription());

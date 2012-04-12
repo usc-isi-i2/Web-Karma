@@ -121,6 +121,7 @@ public class Service {
 		Resource input_resource = model.createResource(Namespaces.KARMA + "Input");
 		Resource output_resource = model.createResource(Namespaces.KARMA + "Output");
 		Resource attribute_resource = model.createResource(Namespaces.KARMA + "Attribute");
+		Resource variavle_resource = model.createResource(Namespaces.KARMA + "Variable");
 
 		// properties
 		Property rdf_type = model.createProperty(Namespaces.RDF , "type");
@@ -173,6 +174,10 @@ public class Service {
 					my_operation.addProperty(has_input, my_input);
 					my_input.addProperty(rdf_type, input_resource);
 				}
+				for (int i = 0; i < op.getVariables().size(); i++) {
+					Resource my_variable = model.createResource(defaultNS + op.getVariables().get(i).toString());
+					my_variable.addProperty(rdf_type, variavle_resource);
+				}
 				for (int i = 0; i < op.getInputAttributes().size(); i++) {
 					
 					Attribute att = op.getInputAttributes().get(i);
@@ -182,7 +187,7 @@ public class Service {
 //					operation_address += att.getName();
 //					operation_address += "={" + groundVar + "}";
 					
-					Resource my_attribute = model.createResource(defaultNS + op.getId() + "_" + att.getId());
+					Resource my_attribute = model.createResource(defaultNS + att.getId());
 					
 					if (att.getRequirement() == AttributeRequirement.NONE)
 						my_input.addProperty(has_attribute, my_attribute);
@@ -213,7 +218,7 @@ public class Service {
 					
 					Attribute att = op.getOutputAttributes().get(i);
 					
-					Resource my_attribute = model.createResource(defaultNS + op.getId() + "_" + att.getId());
+					Resource my_attribute = model.createResource(defaultNS + att.getId());
 
 					if (att.getRequirement() == AttributeRequirement.NONE)
 						my_output.addProperty(has_attribute, my_attribute);
@@ -264,11 +269,13 @@ public class Service {
 					Resource r = model.createResource();
 					r.addProperty(rdf_type, class_atom_resource);
 					
-					model.setNsPrefix(classAtom.getClassPredicate().getPrefix(), classAtom.getClassPredicate().getNs());
-					r.addProperty(class_predicate, classAtom.getClassPredicate().getUri());
+					if (classAtom.getClassPredicate().getPrefix() != null && classAtom.getClassPredicate().getNs() != null)
+						model.setNsPrefix(classAtom.getClassPredicate().getPrefix(), classAtom.getClassPredicate().getNs());
+					Resource className = model.createResource(classAtom.getClassPredicate().getUri());
+					r.addProperty(class_predicate, className);
 					
-					model.setNsPrefix(classAtom.getArgument1().getPrefix(), classAtom.getArgument1().getNs());
-					r.addProperty(has_argument1, classAtom.getArgument1().getUri());
+					Resource arg1 = model.getResource(defaultNS + classAtom.getArgument1().getUri());
+					r.addProperty(has_argument1, arg1);
 					
 					my_model.addProperty(has_atom, r);
 				}
@@ -278,14 +285,16 @@ public class Service {
 					Resource r = model.createResource();
 					r.addProperty(rdf_type, individual_property_atom_resource);
 					
-					model.setNsPrefix(propertyAtom.getClassPredicate().getPrefix(), propertyAtom.getClassPredicate().getNs());
-					r.addProperty(property_predicate, propertyAtom.getClassPredicate().getUri());
+					if (propertyAtom.getPropertyPredicate().getPrefix() != null && propertyAtom.getPropertyPredicate().getNs() != null)
+						model.setNsPrefix(propertyAtom.getPropertyPredicate().getPrefix(), propertyAtom.getPropertyPredicate().getNs());
+					Resource propertyName = model.createResource(propertyAtom.getPropertyPredicate().getUri());
+					r.addProperty(property_predicate, propertyName);
 					
-					model.setNsPrefix(propertyAtom.getArgument1().getPrefix(), propertyAtom.getArgument1().getNs());
-					r.addProperty(has_argument1, propertyAtom.getArgument1().getUri());
+					Resource arg1 = model.getResource(defaultNS + propertyAtom.getArgument1().getUri());
+					r.addProperty(has_argument1, arg1);
 					
-					model.setNsPrefix(propertyAtom.getArgument2().getPrefix(), propertyAtom.getArgument2().getNs());
-					r.addProperty(has_argument2, propertyAtom.getArgument2().getUri());
+					Resource arg2 = model.getResource(defaultNS + propertyAtom.getArgument2().getUri());
+					r.addProperty(has_argument2, arg2);
 					
 					my_model.addProperty(has_atom, r);
 				}

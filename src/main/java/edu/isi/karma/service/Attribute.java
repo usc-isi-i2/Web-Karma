@@ -113,6 +113,7 @@ public class Attribute {
 
 	public void print() {
 		if (this.id != null && this.id.length() > 0) System.out.println("id: " + this.id);
+		if (this.hNodeId != null && this.hNodeId.length() > 0) System.out.println("hNodeId: " + this.hNodeId);
 		if (this.name != null && this.name.length() > 0) System.out.println("name: " + this.name);
 		if (this.IOType != null && this.IOType.length() > 0) System.out.println("IOType: " + this.IOType);
 		if (this.value != null && this.value.length() > 0) System.out.println("value: " + this.value);

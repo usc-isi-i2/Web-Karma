@@ -126,8 +126,9 @@ public class ServiceBuilder {
 		
 		Table serviceTable = getServiceData();
 		for (Attribute p : serviceTable.getHeaders()) {
-			if (p.getIOType().equalsIgnoreCase(IOType.INPUT))
+			if (p.getIOType().equalsIgnoreCase(IOType.INPUT)) {
 				inAttributes.add(p);
+			}
 		}
 
 		return inAttributes;
@@ -204,9 +205,17 @@ public class ServiceBuilder {
 			logger.debug(tb.getPrintInfo());
 
 			Service service = sb.getInitialServiceModel();
+			
+			// just for test
+			service.getOperations().get(0).getInputAttributes().get(0).sethNodeId("h1");
+			service.getOperations().get(0).getInputAttributes().get(1).sethNodeId("h2");
+			service.getOperations().get(0).getOutputAttributes().get(4).sethNodeId("h3");
+			service.getOperations().get(0).getOutputAttributes().get(6).sethNodeId("h4");
+			service.getOperations().get(0).getOutputAttributes().get(5).sethNodeId("h5");
+			service.getOperations().get(0).getOutputAttributes().get(3).sethNodeId("h6");
 			service.print();
 			
-			service.getOperations().get(0).updateModel(Test.getTestTree());
+			service.getOperations().get(0).updateModel(Test.getGeoNamesNeighbourhoodTree());
 			
 			service.publish(ServiceRepository.Instance().SERVICE_REPOSITORY_DIR);
 
