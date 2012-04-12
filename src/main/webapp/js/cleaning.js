@@ -81,6 +81,8 @@ function handleCleanColumnButton() {
                 .prop("checked", true)
         )
     ));
+	//add transformation programs into the panel
+	
     //
     $("div#ColumnCleaningPanel").dialog({title: 'Transform', width: 500,
         height: 500, buttons: { "Cancel": function() { $(this).dialog("close"); },  
@@ -166,7 +168,30 @@ function populateResultsInCleaningTable(data) {
             )
             }
         }
-    });
+	    });
+        //add the transformation programs here
+		var allTPs = $("<table>").attr("id", "allTPs");
+		var ttr = $("<tr>");
+        $.each(data, function(index, pacdata)
+		{
+            if("tps" in pacdata)
+            {
+				var ttd = $("<td>");
+              	var tptable = $("<table>").addClass("tptable");
+                var resulttps = pacdata["tps"];
+                for(var xid in resulttps) 
+                {
+					var ds= $("<div>").attr("id",index+""+xid).text(resulttps[xid]).hide();
+                    var tartp = $("<tr>").append($("<td>")).append($("<Button>").text(xid).click(function(){ds.dialog({modal:true})}));
+                    tptable.append(tartp);
+                }
+				ttd.append(tptable);
+				ttr.append(ttd);
+            }
+        });
+		allTPs.append(ttr);
+		$("div#ColumnCleaningPanel").append(allTPs);
+
     // Add radio button   
 }
 function handleGenerateCleaningRulesButton() {
