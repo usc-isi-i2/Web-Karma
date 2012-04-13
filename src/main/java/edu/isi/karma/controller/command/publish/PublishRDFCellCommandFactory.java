@@ -43,7 +43,10 @@ public class PublishRDFCellCommandFactory extends CommandFactory {
 		//get the rdf prefix from the preferences
 		ViewPreferences prefs = vWorkspace.getPreferences();
 		JSONObject prefObject = prefs.getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
-		String rdfPrefix = prefObject.optString("rdfPrefix");
+		String rdfPrefix = "http://localhost/source/";
+		if(prefObject!=null){
+			rdfPrefix = prefObject.optString("rdfPrefix");
+		}
 		if(rdfPrefix==null || rdfPrefix.trim().isEmpty())
 			rdfPrefix = "http://localhost/source/"; 
 		String nodeId = request.getParameter(Arguments.nodeId.name());

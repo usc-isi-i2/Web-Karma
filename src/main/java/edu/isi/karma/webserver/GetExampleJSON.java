@@ -63,6 +63,8 @@ public class GetExampleJSON extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
+		System.out.println("In GetExampleJSON.....");
+		
 		Workspace workspace = WorkspaceManager.getInstance().getFactory()
 				.createWorkspace();
 
@@ -102,7 +104,7 @@ public class GetExampleJSON extends HttpServlet {
 		//CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
 		//imp.generateWorksheet();
 
-		File file = new File("C:\\Documents and Settings\\mariam\\My Documents\\dovetail-phase2\\tosig.json");
+		//File file = new File("C:\\Documents and Settings\\mariam\\My Documents\\dovetail-phase2\\tosig.json");
 		//SampleDataFactory.createFromJsonTextFile(workspace,"C:\\Documents and Settings\\mariam\\My Documents\\dovetail-phase2\\tosig.json");
 
 		

@@ -198,6 +198,9 @@
         <version>${jettyVersion}</version>
 <!-- change user/pwd in config/jettyrealm.properties -->
   <configuration>
+   <webAppConfig>
+      <contextPath>/*</contextPath>
+    </webAppConfig>
     <loginServices>
       <loginService implementation="org.eclipse.jetty.security.HashLoginService">
         <name>TestRealm</name>
