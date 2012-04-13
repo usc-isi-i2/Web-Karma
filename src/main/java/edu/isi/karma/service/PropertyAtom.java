@@ -21,22 +21,30 @@
 
 package edu.isi.karma.service;
 
-public class Rule {
+import edu.isi.karma.modeling.alignment.Name;
 
-	private Clause head;
-	private Clause body;
+public class PropertyAtom extends Atom {
 
-	public Clause getHead() {
-		return head;
+	private Name propertyPredicate;
+	private Name argument1;
+	private Name argument2;
+	
+	public PropertyAtom(Name propertyPredicate, Name argument1, Name argument2) {
+		this.propertyPredicate = propertyPredicate;
+		this.argument1 = argument1;
+		this.argument2 = argument2;
 	}
-	public void setHead(Clause head) {
-		this.head = head;
+
+	public Name getPropertyPredicate() {
+		return propertyPredicate;
 	}
-	public Clause getBody() {
-		return body;
-	}
-	public void setBody(Clause body) {
-		this.body = body;
-	}
+
+	public Name getArgument1() {
+		return argument1;
+	}	
+	
+	public Name getArgument2() {
+		return argument2;
+	}	
 	
 }

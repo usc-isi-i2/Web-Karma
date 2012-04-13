@@ -30,7 +30,6 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
-import edu.isi.karma.modeling.ontology.OntologyCache;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 
@@ -44,7 +43,7 @@ public class Test {
 		f[0] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\vivo-core-public-1.4.owl");
 		f[1] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\uscont.owl");
 		f[2] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\rdfs_subset.owl");
-		f[3] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\geonames\\wgs84_pos.xml");
+		f[3] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\geonames\\wgs84_pos-updated.xml");
 		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\geonames\\ontology_v3.01.rdf");
 		
 //		f[0] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\vivo1.4-protege.owl");
@@ -53,7 +52,7 @@ public class Test {
 //		f[3] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\DoveTailOntoRDF.owl");
 //		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\Dovetail_ISI_mod.owl");
 		
-		for (int i = 3; i < 4; i++) {
+		for (int i = 3; i < 5; i++) {
 			ontManager.doImport(f[i]);
 		}
 	}
@@ -167,12 +166,60 @@ public class Test {
 		return semanticTypes;
 	}
 	
-	public static DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getTestTree() {
+	private static List<SemanticType> createTestInput5() {
+		
+		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
+		
+		semanticTypes.add( new SemanticType("h1", "http://www.w3.org/2003/01/geo/wgs84_pos#lat", 
+				"http://www.geonames.org/ontology#Feature", null, 0.0, false) );
+		semanticTypes.add( new SemanticType("h2", "http://www.w3.org/2003/01/geo/wgs84_pos#long", 
+				"http://www.geonames.org/ontology#Feature", null, 0.0, false) );
+		semanticTypes.add( new SemanticType("h3", "http://www.geonames.org/ontology#name", 
+				"http://www.geonames.org/ontology#Feature", null, 0.0, false) );
+		semanticTypes.add( new SemanticType("h4", "http://www.geonames.org/ontology#name", 
+				"http://www.geonames.org/ontology#Feature", null, 0.0, false) );
+		semanticTypes.add( new SemanticType("h5", "http://www.geonames.org/ontology#countryCode", 
+				"http://www.geonames.org/ontology#Feature", null, 0.0, false) );
+		semanticTypes.add( new SemanticType("h6", "http://www.geonames.org/ontology#name", 
+				"http://www.geonames.org/ontology#Feature", null, 0.0, false) );
+
+
+		return semanticTypes;
+	}
+	
+	public static DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getVivoTree() {
 		OntologyManager ontManagar = new OntologyManager();
 		loadOntologies(ontManagar);
 		List<SemanticType> semTypes4 = createTestInput4();
 		Alignment alignment = new Alignment(ontManagar, semTypes4);
 		return alignment.getSteinerTree();
+	}
+
+	public static DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getGeoNamesNeighbourhoodTree() {
+		OntologyManager ontManagar = new OntologyManager();
+		loadOntologies(ontManagar);
+		List<SemanticType> semTypes5 = createTestInput5();
+		Alignment alignment = new Alignment(ontManagar, semTypes5);
+		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = alignment.getSteinerTree();
+//		GraphUtil.printGraph(steinerTree);
+		
+		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name1");
+		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name1");
+		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name1");
+		
+		alignment.addUserLink("http://www.geonames.org/ontology#name4");
+		alignment.addUserLink("http://www.geonames.org/ontology#name8");
+		alignment.addUserLink("http://www.geonames.org/ontology#name12");
+		alignment.addUserLink("http://www.geonames.org/ontology#countryCode4");
+
+		alignment.addUserLink("http://www.geonames.org/ontology#neighbour1");
+		alignment.addUserLink("http://www.geonames.org/ontology#nearby4");
+		alignment.addUserLink("http://www.geonames.org/ontology#parentFeature10");
+		
+//		GraphUtil.printGraphSimple(alignment.getAlignmentGraph());
+//		GraphUtil.printGraphSimple(alignment.getSteinerTree());
+		steinerTree = alignment.getSteinerTree();
+		return steinerTree;
 	}
 	
 	public static void testOntologyImport() {
@@ -189,8 +236,8 @@ public class Test {
 	}
 	public static void main(String[] args) {
 		
-		testOntologyImport();
-		if (true) return;
+//		getGeoNamesNeighbourhoodTree();
+//		if (true) return;
 		
 		OntologyManager ontManagar = new OntologyManager();
 		loadOntologies(ontManagar);
@@ -203,16 +250,27 @@ public class Test {
 		List<SemanticType> semTypes2 = createTestInput2();
 		List<SemanticType> semTypes3 = createTestInput3();
 		List<SemanticType> semTypes4 = createTestInput4();
+		List<SemanticType> semTypes5 = createTestInput5();
 
-		Alignment alignment = null;
-//		alignment = new Alignment(ontManagar, semTypes1);
-//		alignment = new Alignment(ontManagar, semTypes2);
-//		alignment = new Alignment(ontManagar, semTypes3);
-		alignment = new Alignment(ontManagar, semTypes4);
+		Alignment alignment1 = null;
+		Alignment alignment2 = null;
+		Alignment alignment3 = null;
+		Alignment alignment4 = null;
+		Alignment alignment5 = null;
+		alignment1 = new Alignment(ontManagar, semTypes1);
+		alignment2 = new Alignment(ontManagar, semTypes2);
+		alignment3 = new Alignment(ontManagar, semTypes3);
+		alignment4 = new Alignment(ontManagar, semTypes4);
+		alignment5 = new Alignment(ontManagar, semTypes5);
 		
+		GraphUtil.printGraphSimple(alignment1.getSteinerTree());
+		GraphUtil.printGraphSimple(alignment2.getSteinerTree());
+		GraphUtil.printGraphSimple(alignment3.getSteinerTree());
+		GraphUtil.printGraphSimple(alignment4.getSteinerTree());
+		GraphUtil.printGraphSimple(alignment5.getSteinerTree());
 		
 //		alignment.getSteinerTree();
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = alignment.getSteinerTree();
+		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = alignment5.getSteinerTree();
 //		GraphUtil.printGraph(steinerTree);
 		for (Vertex v : steinerTree.vertexSet()) {
 			if (v.getSemanticType() != null)

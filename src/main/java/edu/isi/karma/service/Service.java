@@ -24,7 +24,6 @@ package edu.isi.karma.service;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.hp.hpl.jena.ontology.OntModel;
@@ -32,21 +31,27 @@ import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFList;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.NodeType;
-import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.util.RandomGUID;
 
 public class Service {
 	
+	private String id;
 	private String name;
 	private String address;
 	private String description;
 
 	private List<Operation> operations;
+
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public void setAddress(String address) {
 		this.address = address;
@@ -85,189 +90,216 @@ public class Service {
 		OntModel model = ModelFactory.createOntologyModel();
 		
 		String serviceGUID = new RandomGUID().toString();
-		String defaultNS = Namespaces.KARMA + serviceGUID + "#";
+		String defaultNS = Namespaces.KARMA_SERVICE_NS + serviceGUID + "/";
 		model.setNsPrefix("", defaultNS);
+		model.setNsPrefix(Prefixes.KARMA, Namespaces.KARMA);
 		model.setNsPrefix(Prefixes.RDF, Namespaces.RDF);
+		model.setNsPrefix(Prefixes.WSMO_LITE, Namespaces.WSMO_LITE);
 		model.setNsPrefix(Prefixes.RDFS, Namespaces.RDFS);
-		model.setNsPrefix(Prefixes.SAWSDL, Namespaces.SAWSDL);
-		model.setNsPrefix(Prefixes.MSM, Namespaces.MSM);
+//		model.setNsPrefix(Prefixes.SAWSDL, Namespaces.SAWSDL);
+//		model.setNsPrefix(Prefixes.MSM, Namespaces.MSM);
 		model.setNsPrefix(Prefixes.HRESTS, Namespaces.HRESTS);
 		model.setNsPrefix(Prefixes.SWRL, Namespaces.SWRL);
-		model.setNsPrefix(Prefixes.RULEML, Namespaces.RULEML);
+//		model.setNsPrefix(Prefixes.RULEML, Namespaces.RULEML);
 
-		addMSMParts(model);
+		addInvocationPart(model);
 		
-		String service_desc_file = ServiceRepository.Instance().SERVICE_REPOSITORY_DIR + serviceGUID + ".n3";
+		String service_desc_file = ServiceRepository.Instance().SERVICE_REPOSITORY_DIR + serviceGUID + ".rdf";
 		OutputStreamWriter output = new OutputStreamWriter(new FileOutputStream(service_desc_file));
 
+//		model.write(output,"RDF/XML-ABBREV");
+//		model.write(output,"N-TRIPLE");
+//		model.write(output,"RDF/XML");
 		model.write(output,"N3");
 		return model;
 		
 	}
 	
-	public void addMSMParts(Model model) {
+	public void addInvocationPart(Model model) {
 		
 		String defaultNS = model.getNsPrefixURI("");
 		// resources
-		Resource service = model.createResource(Namespaces.MSM + "Service");
-		Resource operation = model.createResource(Namespaces.MSM + "Operation");
-		Resource message_content = model.createResource(Namespaces.MSM + "MessageContent");
-		Resource message_part = model.createResource(Namespaces.MSM + "MessagePart");
+		Resource service_resource = model.createResource(Namespaces.WSMO_LITE + "Service");
+		Resource operation_resource = model.createResource(Namespaces.WSMO_LITE + "Operation");
+		Resource input_resource = model.createResource(Namespaces.KARMA + "Input");
+		Resource output_resource = model.createResource(Namespaces.KARMA + "Output");
+		Resource attribute_resource = model.createResource(Namespaces.KARMA + "Attribute");
+		Resource variavle_resource = model.createResource(Namespaces.SWRL + "Variable");
 
 		// properties
 		Property rdf_type = model.createProperty(Namespaces.RDF , "type");
-		Property has_operation = model.createProperty(Namespaces.MSM, "hasOperation");
-		Property has_address = model.createProperty(Namespaces.MSM, "hasAddress");
-		Property has_input = model.createProperty(Namespaces.MSM, "hasInput");
-		Property has_output = model.createProperty(Namespaces.MSM, "hasOutput");
-		Property has_part = model.createProperty(Namespaces.MSM, "hasPart");
-		Property has_name = model.createProperty(Namespaces.MSM, "hasName");
+		Property has_operation = model.createProperty(Namespaces.WSMO_LITE, "hasOperation");
+		Property has_address = model.createProperty(Namespaces.HRESTS, "hasAddress");
+		Property has_method = model.createProperty(Namespaces.HRESTS, "hasMethod");
+		Property has_input = model.createProperty(Namespaces.KARMA, "hasInput");
+		Property has_output = model.createProperty(Namespaces.KARMA, "hasOutput");
+		Property has_attribute = model.createProperty(Namespaces.KARMA, "hasAttribute");
+		Property has_mandatory_attribute = model.createProperty(Namespaces.KARMA, "hasMandatoryAttribute");
+		Property has_optional_attribute = model.createProperty(Namespaces.KARMA, "hasOptionalAttribute");
+		Property has_name = model.createProperty(Namespaces.KARMA, "hasName");
 //		Property model_reference = model.createProperty(Namespaces.SAWSDL, "modelReference");
-		Property is_grounded_in = model.createProperty(Namespaces.MSM, "isGroundedIn");
+		Property is_grounded_in = model.createProperty(Namespaces.HRESTS, "isGroundedIn");
 		
 		// rdf datatypes
 		String uri_template = Namespaces.HRESTS + "URITemplate";
 		String rdf_plain_literal = Namespaces.RDF + "PlainLiteral";
 
-		Resource my_service = model.createResource(defaultNS + this.getName());
+		Resource my_service = model.createResource(defaultNS + this.getId());
 		Literal service_address = model.createTypedLiteral(this.getAddress(), uri_template);
-		my_service.addProperty(rdf_type, service);
+		my_service.addProperty(rdf_type, service_resource);
 		my_service.addProperty(has_address, service_address);
+		if (this.getName().length() > 0)
+			my_service.addProperty(has_name, this.getName());
 		
 		if (this.getOperations() != null)
-		for (Operation op: this.getOperations()) {
-			Resource my_operation = model.createResource(defaultNS + op.getName());
+		for (int k = 0; k < this.getOperations().size(); k++) {
+			Operation op = this.getOperations().get(k);
+			Resource my_operation = model.createResource(defaultNS + op.getId());
+			if (op.getName().length() > 0)
+				my_operation.addProperty(has_name, op.getName());
 			my_service.addProperty(has_operation, my_operation);
-			my_operation.addProperty(rdf_type, operation);
+			my_operation.addProperty(rdf_type, operation_resource);
+
+			// operation name, address, and method
+			my_operation.addProperty(has_name, op.getName());
+			my_operation.addProperty(has_method, op.getMethod());
+			if (op.getAddressTemplate().length() > 0) {
+				Literal operation_address_literal = model.createTypedLiteral(op.getAddressTemplate(), uri_template);
+				my_operation.addLiteral(has_address, operation_address_literal);
+			}
 			
-			String operation_address = "";
 			
-			if (op.getInputParams() != null) {
-				Resource my_input = model.createResource(defaultNS + op.getName() + "_input");  
-				if (op.getInputParams().size() > 0) {
+			if (op.getInputAttributes() != null) {
+				Resource my_input = model.createResource(defaultNS + op.getId() + "_input");  
+				if (op.getInputAttributes().size() > 0) {
 					my_operation.addProperty(has_input, my_input);
-					my_input.addProperty(rdf_type, message_content);
+					my_input.addProperty(rdf_type, input_resource);
 				}
-				for (int i = 0; i < op.getInputParams().size(); i++) {
+				for (int i = 0; i < op.getVariables().size(); i++) {
+					Resource my_variable = model.createResource(defaultNS + op.getVariables().get(i).toString());
+					my_variable.addProperty(rdf_type, variavle_resource);
+				}
+				for (int i = 0; i < op.getInputAttributes().size(); i++) {
 					
-					// building the operation address template
-					String groundVar = "p" + String.valueOf(i+1);
-					if (operation_address.trim().length() > 0) operation_address += "&";
-					operation_address += op.getInputParams().get(i).getName();
-					operation_address += "={" + groundVar + "}";
+					Attribute att = op.getInputAttributes().get(i);
 					
-					Resource my_part = model.createResource(my_input.getURI() + "_part" + String.valueOf(i+1));
-					my_input.addProperty(has_part, my_part);
-					my_part.addProperty(rdf_type, message_part);
-					my_part.addProperty(has_name, op.getInputParams().get(i).getName());
+					Resource my_attribute = model.createResource(defaultNS + att.getId());
+					
+					if (att.getRequirement() == AttributeRequirement.NONE)
+						my_input.addProperty(has_attribute, my_attribute);
+					else if (att.getRequirement() == AttributeRequirement.MANDATORY)
+						my_input.addProperty(has_mandatory_attribute, my_attribute);
+					else if (att.getRequirement() == AttributeRequirement.OPTIONAL)
+						my_input.addProperty(has_optional_attribute, my_attribute);
+					
+					my_attribute.addProperty(rdf_type, attribute_resource);
+					my_attribute.addProperty(has_name, att.getName());
 //					my_part.addProperty(model_reference, XSDDatatype.XSDstring.getURI());
 					
-					Literal ground_literal = model.createTypedLiteral(groundVar, rdf_plain_literal);
-					my_part.addLiteral(is_grounded_in, ground_literal);
+					Literal ground_literal = model.createTypedLiteral(
+							op.getInputAttributes().get(i).getGroundedIn(), rdf_plain_literal);
+					my_attribute.addLiteral(is_grounded_in, ground_literal);
 				}
+
+				addModelPart(model, my_input, op.getInputModel(), op.getId() + "_inputModel");
 			}
-			if (op.getOutputParams() != null) {
-				Resource my_output = model.createResource(defaultNS + op.getName() + "_output");  
-				if (op.getOutputParams().size() > 0) {
+
+			if (op.getOutputAttributes() != null) {
+				Resource my_output = model.createResource(defaultNS + op.getId() + "_output");  
+				if (op.getOutputAttributes().size() > 0) {
 					my_operation.addProperty(has_output, my_output);
-					my_output.addProperty(rdf_type, message_content);
+					my_output.addProperty(rdf_type, output_resource);
 				}
-				for (int i = 0; i < op.getOutputParams().size(); i++) {
-					Resource my_part = model.createResource(my_output.getURI() + "_part" + String.valueOf(i+1));
-					my_output.addProperty(has_part, my_part);
-					my_part.addProperty(rdf_type, message_part);
-					my_part.addProperty(has_name, op.getOutputParams().get(i).getName());
+				for (int i = 0; i < op.getOutputAttributes().size(); i++) {
+					
+					Attribute att = op.getOutputAttributes().get(i);
+					
+					Resource my_attribute = model.createResource(defaultNS + att.getId());
+
+					if (att.getRequirement() == AttributeRequirement.NONE)
+						my_output.addProperty(has_attribute, my_attribute);
+					else if (att.getRequirement() == AttributeRequirement.MANDATORY)
+						my_output.addProperty(has_mandatory_attribute, my_attribute);
+					else if (att.getRequirement() == AttributeRequirement.OPTIONAL)
+						my_output.addProperty(has_optional_attribute, my_attribute);
+
+					my_attribute.addProperty(rdf_type, attribute_resource);
+					my_attribute.addProperty(has_name, op.getOutputAttributes().get(i).getName());
 //					my_part.addProperty(model_reference, XSDDatatype.XSDstring.getURI());
 				}
+				addModelPart(model, my_output, op.getOutputModel(), op.getId() + "_outputModel");
 			}
-			
-			Literal operation_address_literal = model.createTypedLiteral(operation_address, uri_template);
-			my_operation.addLiteral(has_address, operation_address_literal);
-			
-			addSWRLParts(model, my_operation, op.getRule());
+
 		}
 	}
 	
-	public void addSWRLParts(Model model, Resource operation, Rule rule) {
+	public void addModelPart(Model model, Resource resource, edu.isi.karma.service.Model semanticModel, String modelName) {
 
-		if (rule == null)
+		if (semanticModel == null)
 			return;
 		
 		String defaultNS = model.getNsPrefixURI("");
-
-		Property rdf_type = model.createProperty(Namespaces.RDF , "type");
-		Property has_rule = model.createProperty(defaultNS, "hasRule");
-		Property has_head = model.createProperty(Namespaces.SWRL, "head");
-		Property has_body = model.createProperty(Namespaces.SWRL, "body");
-
-		Resource imp = model.createResource(Namespaces.SWRL + "Imp");
-		Resource my_imp = model.createResource();
-		my_imp.addProperty(rdf_type, imp);
-		operation.addProperty(has_rule, my_imp);
 		
-		if (rule != null) {
-			List<Resource> head_list = addClauseToResource(model, rule.getHead());
-			RDFList my_head = null;
-			if (head_list == null) my_head = model.createList();
-			else my_head = model.createList(head_list.toArray(new Resource[0]));
-			my_imp.addProperty(has_head, my_head);
-			
-		}
+		Resource model_resource = model.createResource(Namespaces.KARMA + "Model");
+		Resource class_atom_resource = model.createResource(Namespaces.SWRL + "ClassAtom");
+		Resource individual_property_atom_resource = model.createResource(Namespaces.SWRL + "IndividualPropertyAtom");
 
-		if (rule != null) {
-			List<Resource> body_list = addClauseToResource(model, rule.getBody());
-			RDFList my_body = null;
-			if (body_list == null) my_body = model.createList();
-			else my_body = model.createList(body_list.toArray(new Resource[0]));
-			my_imp.addProperty(has_body, my_body);
-			
-		}
-
-	}
-
-	private List<Resource> addClauseToResource(Model model, Clause clause) {
-		if (clause == null)
-			return null;
-
-		List<Resource> resourceList = new ArrayList<Resource>();
-				
-//		String defaultNS = model.getNsPrefixURI("");
 		Property rdf_type = model.createProperty(Namespaces.RDF , "type");
+		Property has_model = model.createProperty(Namespaces.KARMA, "hasModel");
+		Property has_atom = model.createProperty(Namespaces.KARMA, "hasAtom");
+
 		Property class_predicate = model.createProperty(Namespaces.SWRL, "classPredicate");
 		Property property_predicate = model.createProperty(Namespaces.SWRL, "propertyPredicate");
 		Property has_argument1 = model.createProperty(Namespaces.SWRL, "argument1");
 		Property has_argument2 = model.createProperty(Namespaces.SWRL, "argument2");
 
-		Resource class_atom = model.createResource(Namespaces.SWRL + "ClassAtom");
-		Resource individual_property_atom = model.createResource(Namespaces.SWRL + "IndividualPropertyAtom");
-
-		if (clause.getConcepts() != null)
-		for (Vertex v : clause.getConcepts()) {
-			if (v.getNodeType() == NodeType.DataProperty)
-				continue;
-			
-			Resource r = model.createResource();
-			r.addProperty(rdf_type, class_atom);
-			model.setNsPrefix(v.getPrefix(), v.getNs());
-			r.addProperty(class_predicate, v.getUri());
-			r.addProperty(has_argument1, v.getLocalID());
-			resourceList.add(r);
-		}
-
-		if (clause.getRelations() != null)
-		for (LabeledWeightedEdge e : clause.getRelations()) {
-			Resource r = model.createResource();
-			r.addProperty(rdf_type, individual_property_atom);
-			model.setNsPrefix(e.getPrefix(), e.getNs());
-			r.addProperty(property_predicate, e.getUri());
-			r.addProperty(has_argument1, e.getSource().getLocalID());		
-			r.addProperty(has_argument2, e.getTarget().getLocalID());		
-			resourceList.add(r);
-		}
+		Resource my_model = model.createResource(defaultNS + modelName);
+		my_model.addProperty(rdf_type, model_resource);
+		resource.addProperty(has_model, my_model);
 		
-		return resourceList;
+		if (semanticModel != null) {
+			for (Atom atom : semanticModel.getAtoms()) {
+				if (atom instanceof ClassAtom) {
+					ClassAtom classAtom = (ClassAtom)atom;
+					
+					Resource r = model.createResource();
+					r.addProperty(rdf_type, class_atom_resource);
+					
+					if (classAtom.getClassPredicate().getPrefix() != null && classAtom.getClassPredicate().getNs() != null)
+						model.setNsPrefix(classAtom.getClassPredicate().getPrefix(), classAtom.getClassPredicate().getNs());
+					Resource className = model.createResource(classAtom.getClassPredicate().getUri());
+					r.addProperty(class_predicate, className);
+					
+					Resource arg1 = model.getResource(defaultNS + classAtom.getArgument1().getUri());
+					r.addProperty(has_argument1, arg1);
+					
+					my_model.addProperty(has_atom, r);
+				}
+				else if (atom instanceof PropertyAtom) {
+					PropertyAtom propertyAtom = (PropertyAtom)atom;
+					
+					Resource r = model.createResource();
+					r.addProperty(rdf_type, individual_property_atom_resource);
+					
+					if (propertyAtom.getPropertyPredicate().getPrefix() != null && propertyAtom.getPropertyPredicate().getNs() != null)
+						model.setNsPrefix(propertyAtom.getPropertyPredicate().getPrefix(), propertyAtom.getPropertyPredicate().getNs());
+					Resource propertyName = model.createResource(propertyAtom.getPropertyPredicate().getUri());
+					r.addProperty(property_predicate, propertyName);
+					
+					Resource arg1 = model.getResource(defaultNS + propertyAtom.getArgument1().getUri());
+					r.addProperty(has_argument1, arg1);
+					
+					Resource arg2 = model.getResource(defaultNS + propertyAtom.getArgument2().getUri());
+					r.addProperty(has_argument2, arg2);
+					
+					my_model.addProperty(has_atom, r);
+				}
+			}
+		}
+
 	}
-	
+
+
 	public void print() {
 		System.out.println("address: " + this.getAddress());
 		System.out.println("name: " + this.getName());

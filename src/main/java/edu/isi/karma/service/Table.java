@@ -30,25 +30,25 @@ public class Table {
 	
 	static Logger logger = Logger.getLogger(Table.class);
 
-	private List<Param> headers;
+	private List<Attribute> headers;
 	private List<List<String>> values;
 	
 	public Table() {
-		headers = new ArrayList<Param>();
+		headers = new ArrayList<Attribute>();
 		values = new ArrayList<List<String>>();
 	}
 	
 	public Table(Table table) {
-		this.headers = new ArrayList<Param>(table.headers);
+		this.headers = new ArrayList<Attribute>(table.headers);
 		this.values = new ArrayList<List<String>>(table.values);
 	}
 	
 
-	public List<Param> getHeaders() {
+	public List<Attribute> getHeaders() {
 		return headers;
 	}
 
-	public void setHeaders(List<Param> headers) {
+	public void setHeaders(List<Attribute> headers) {
 		this.headers = headers;
 	}
 
@@ -61,17 +61,17 @@ public class Table {
 	
 	public void print() {
 		
-		for (Param p: headers) {
+		for (Attribute p: headers) {
 			System.out.print(p.getIOType() + ",");
 		}
 		System.out.println();
 
-		for (Param p: headers) {
+		for (Attribute p: headers) {
 			System.out.print(p.getName() + ",");
 		}
 		System.out.println();
 
-		for (Param p: headers) {
+		for (Attribute p: headers) {
 			System.out.print(p.getId() + ",");
 		}
 		System.out.println();
@@ -88,17 +88,17 @@ public class Table {
 		
 		String s = "";
 		s += "Table data: \n";
-		for (Param p: headers) {
+		for (Attribute p: headers) {
 			s += p.getIOType() + ",";
 		}
 		s += "\n";
 		
-		for (Param p: headers) {
+		for (Attribute p: headers) {
 			s += p.getName() + ",";
 		}
 		s += "\n";
 
-//		for (Param p: headers) {
+//		for (Attribute p: headers) {
 //			s += p.getId() + ",";
 //		}
 //		s += "\n";
@@ -126,49 +126,49 @@ public class Table {
     	
     	Table resultTable = new Table();
     	
-		String paramId = "";
-		List<String> uniqueParamIDs = new ArrayList<String>();
+		String attributeId = "";
+		List<String> uniqueAttributeIDs = new ArrayList<String>();
 		
-		List<List<Param>> srcParams = new ArrayList<List<Param>>();
+		List<List<Attribute>> srcAttributes = new ArrayList<List<Attribute>>();
 		List<List<List<String>>> srcValues = new ArrayList<List<List<String>>>();
 		
-		List<Param> resultParams = new ArrayList<Param>();
+		List<Attribute> resultAttributes = new ArrayList<Attribute>();
 		List<List<String>> resultValues = new ArrayList<List<String>>();
 		
 		for (Table t : srcTables) {
-			srcParams.add(t.getHeaders());
+			srcAttributes.add(t.getHeaders());
 			srcValues.add(t.getValues());
 		}
 
-		for (int i = 0; i < srcParams.size(); i++) {
-			for (int j = 0; j < srcParams.get(i).size(); j++)
+		for (int i = 0; i < srcAttributes.size(); i++) {
+			for (int j = 0; j < srcAttributes.get(i).size(); j++)
 			{
-				paramId = srcParams.get(i).get(j).getId().toString();
-				if (uniqueParamIDs.indexOf(paramId) == -1) {
-					uniqueParamIDs.add(paramId);
-					resultParams.add(srcParams.get(i).get(j));
+				attributeId = srcAttributes.get(i).get(j).getId().toString();
+				if (uniqueAttributeIDs.indexOf(attributeId) == -1) {
+					uniqueAttributeIDs.add(attributeId);
+					resultAttributes.add(srcAttributes.get(i).get(j));
 				}
 			}
 		}
 		
-		List<Param> rawParams = null;
-		List<String> rawParamIDs = new ArrayList<String>();
+		List<Attribute> rawAttributes = null;
+		List<String> rawAttributeIDs = new ArrayList<String>();
 		List<String> rawValues = null;
 		String singleValue = null;
-		for (int i = 0; i < srcParams.size(); i++) {
+		for (int i = 0; i < srcAttributes.size(); i++) {
 			
-			rawParams = srcParams.get(i);
-			rawParamIDs.clear();
-			for (Param p : rawParams)
-				rawParamIDs.add(p.getId());
+			rawAttributes = srcAttributes.get(i);
+			rawAttributeIDs.clear();
+			for (Attribute p : rawAttributes)
+				rawAttributeIDs.add(p.getId());
 			
 			for (int j = 0; j < srcValues.get(i).size(); j++) {
 				
 				List<String> populatedValues = new ArrayList<String>();
 				rawValues = srcValues.get(i).get(j);
 				
-				for (int k = 0; k < resultParams.size(); k++) {
-					int index = rawParamIDs.indexOf(resultParams.get(k).getId());
+				for (int k = 0; k < resultAttributes.size(); k++) {
+					int index = rawAttributeIDs.indexOf(resultAttributes.get(k).getId());
 					if (index == -1)
 //						singleValue = null;
 						singleValue = "";
@@ -182,7 +182,7 @@ public class Table {
 			
 		}
 		
-		resultTable.setHeaders(resultParams);
+		resultTable.setHeaders(resultAttributes);
 		resultTable.setValues(resultValues);
 		
 		return resultTable;

@@ -28,6 +28,8 @@ public class Vertex {
 	private NodeType nodeType;
 	private Name name;
 	private SemanticType semanticType;
+	// rdfId is only used for the purpose of publishing source/service models
+	private String rdfId;
 	
 	public Vertex(String id, Name name, NodeType nodeType) {
 		this.id = id;
@@ -47,6 +49,7 @@ public class Vertex {
 		this.id = v.id;
 		this.name = new Name(v.name);
 		this.nodeType = v.nodeType;
+		this.rdfId = v.rdfId;
 		this.semanticType = v.semanticType;
 	}
 	
@@ -86,7 +89,15 @@ public class Vertex {
 		return this.semanticType;
 	}
 	
-    public boolean equals(Object obj){
+    public String getRdfId() {
+		return rdfId;
+	}
+
+	public void setRdfId(String rdfId) {
+		this.rdfId = rdfId;
+	}
+
+	public boolean equals(Object obj){
         if(obj == null || obj.getClass() != this.getClass()){
             return false;
         }

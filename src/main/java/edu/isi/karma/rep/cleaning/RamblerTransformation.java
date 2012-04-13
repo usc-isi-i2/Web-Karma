@@ -38,7 +38,7 @@ public class RamblerTransformation implements Transformation {
 		this.rules = rules;
 		for(int i = 0; i< rules.size(); i++)
 		{
-			signature += rules.get(i);
+			signature += rules.get(i)+"\n";
 		}
 	}
 	@Override

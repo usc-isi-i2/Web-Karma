@@ -29,10 +29,11 @@ public interface Namespaces {
 	public static final String OWL = com.hp.hpl.jena.vocabulary.OWL.getURI(); //"http://www.w3.org/2002/07/owl#"; 
 	public static final String SAWSDL = "http://www.w3.org/ns/sawsdl#"; 
 	public static final String MSM = "http://cms-wg.sti2.org/ns/minimal-service-model#"; 
+	public static final String WSMO_LITE = "http://www.wsmo.org/ns/wsmo-lite#"; 
 	public static final String HRESTS = "http://purl.org/hRESTS/current#";
 	public static final String RULEML = "http://www.w3.org/2003/11/ruleml#";
 	public static final String SWRL = "http://www.w3.org/2003/11/swrl#";
-	public static final String KARMA = "http://isi.edu/karma/services/";
-	
+	public static final String KARMA = "http://isi.edu/integration/karma#";
+	public static final String KARMA_SERVICE_NS = "http://isi.edu/integration/karma/services/";
 
 }
