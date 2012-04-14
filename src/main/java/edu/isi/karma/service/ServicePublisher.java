@@ -173,14 +173,14 @@ public class ServicePublisher {
 		for (int k = 0; k < this.service.getOperations().size(); k++) {
 			Operation op = this.service.getOperations().get(k);
 			Resource my_operation = model.createResource(baseNS + op.getId());
-			if (op.getName().length() > 0)
-				my_operation.addProperty(has_name, op.getName());
 			my_service.addProperty(has_operation, my_operation);
 			my_operation.addProperty(rdf_type, operation_resource);
 
 			// operation name, address, and method
-			my_operation.addProperty(has_name, op.getName());
-			my_operation.addProperty(has_method, op.getMethod());
+			if (op.getName().length() > 0)
+				my_operation.addProperty(has_name, op.getName());
+			if (op.getMethod().length() > 0)
+				my_operation.addProperty(has_method, op.getMethod());
 			if (op.getAddressTemplate().length() > 0) {
 				Literal operation_address_literal = model.createTypedLiteral(op.getAddressTemplate(), uri_template);
 				my_operation.addLiteral(has_address, operation_address_literal);
