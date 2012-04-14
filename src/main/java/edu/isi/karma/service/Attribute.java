@@ -25,7 +25,7 @@ public class Attribute {
 
 	private String id;
 	private String name;
-	private String IOType;
+	private String ioType;
 	private String value;
 	private String hNodeId;
 	private String groundedIn;
@@ -34,27 +34,52 @@ public class Attribute {
 	public static final String INPUT_PREFIX = "in_"; 
 	public static final String OUTPUT_PREFIX = "out_"; 
 
+	public Attribute() {
+	}
 	public Attribute(Attribute attribute) {
 		this.id = attribute.id;
 		this.name = attribute.name;
-		this.IOType = attribute.IOType;
+		this.ioType = attribute.ioType;
 		this.value = attribute.value;
 		this.requirement = attribute.requirement;
 		this.groundedIn = attribute.groundedIn;
 		this.hNodeId = attribute.hNodeId;
 	}
 	
-	public Attribute(String id, String name, String IOType) {
+	public Attribute(String id, String name) {
 		this.id = id;
 		this.name = name;
-		this.IOType = IOType;
+		this.ioType = IOType.NONE;
+		this.requirement = AttributeRequirement.NONE;
+	}
+	
+	public Attribute(String id, String name, String ioType) {
+		this.id = id;
+		this.name = name;
+		this.ioType = ioType;
 		this.requirement = AttributeRequirement.NONE;
 	}
 
-	public Attribute(String id, String name, String IOType, String value) {
+	
+	public Attribute(String id, String name, String ioType, AttributeRequirement requirement) {
 		this.id = id;
 		this.name = name;
-		this.IOType = IOType;
+		this.ioType = ioType;
+		this.requirement = requirement;
+	}
+
+	public Attribute(String id, String name, String ioType, AttributeRequirement requirement, String groundedIn) {
+		this.id = id;
+		this.name = name;
+		this.ioType = ioType;
+		this.requirement = requirement;
+		this.groundedIn = groundedIn;
+	}
+	
+	public Attribute(String id, String name, String ioType, String value) {
+		this.id = id;
+		this.name = name;
+		this.ioType = ioType;
 		this.value = value;
 		this.requirement = AttributeRequirement.NONE;
 	}
@@ -88,10 +113,10 @@ public class Attribute {
 		this.value = value;
 	}
 	public String getIOType() {
-		return IOType;
+		return ioType;
 	}
-	public void setIOType(String IOType) {
-		this.IOType = IOType;
+	public void setIOType(String ioType) {
+		this.ioType = ioType;
 	}
 
 
@@ -115,7 +140,9 @@ public class Attribute {
 		if (this.id != null && this.id.length() > 0) System.out.println("id: " + this.id);
 		if (this.hNodeId != null && this.hNodeId.length() > 0) System.out.println("hNodeId: " + this.hNodeId);
 		if (this.name != null && this.name.length() > 0) System.out.println("name: " + this.name);
-		if (this.IOType != null && this.IOType.length() > 0) System.out.println("IOType: " + this.IOType);
+		if (this.ioType != null && this.ioType.length() > 0) System.out.println("IOType: " + this.ioType);
+		if (this.groundedIn != null && this.groundedIn.length() > 0) System.out.println("groundedIn: " + this.groundedIn);
+		if (this.requirement != null) System.out.println("requirement: " + this.requirement);
 		if (this.value != null && this.value.length() > 0) System.out.println("value: " + this.value);
 	}
 	
@@ -123,7 +150,7 @@ public class Attribute {
 		String s = "";
 //		if (this.id != null && this.id.length() > 0) s += "id: " + this.id + ",";
 		if (this.name != null && this.name.length() > 0) s += "param name: " + this.name + ", ";
-		if (this.IOType != null && this.IOType.length() > 0) s += "IOType: " + this.IOType + ", ";
+		if (this.ioType != null && this.ioType.length() > 0) s += "IOType: " + this.ioType + ", ";
 		if (this.value != null && this.value.length() > 0) s += "value: " + this.value;
 		return s;
 	}

@@ -45,6 +45,14 @@ public class PropertyAtom extends Atom {
 	
 	public Name getArgument2() {
 		return argument2;
+	}
+
+	public void print() {
+		System.out.println("property predicate uri: " + propertyPredicate.getUri());
+		System.out.println("property predicate ns: " + propertyPredicate.getNs());
+		System.out.println("property predicate prefix: " + propertyPredicate.getPrefix());
+		System.out.println("argument1: " + argument1.getUri());
+		System.out.println("argument2: " + argument2.getUri());
 	}	
 	
 }

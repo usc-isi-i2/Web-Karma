@@ -119,9 +119,6 @@ public class Operation {
 
 	public void setInputAttributes(List<Attribute> inputAttributes) {
 		this.inputAttributes = inputAttributes;
-		for (Attribute att : this.inputAttributes)
-			att.setId(this.getId() + "_" + att.getId());
-
 	}
 
 	public List<Attribute> getOutputAttributes() {
@@ -130,13 +127,11 @@ public class Operation {
 
 	public void setOutputAttributes(List<Attribute> outputAttributes) {
 		this.outputAttributes = outputAttributes;
-		for (Attribute att : this.outputAttributes)
-			att.setId(this.getId() + "_" + att.getId());
 	}
 
-	public String getAddress() {
-		return address;
-	}
+//	public String getAddress() {
+//		return address;
+//	}
 
 	public void setAddress(String address) {
 		this.address = address;
@@ -151,6 +146,10 @@ public class Operation {
 	}
 
 	
+	public void setAddressTemplate(String addressTemplate) {
+		this.addressTemplate = addressTemplate;
+	}
+
 	public List<String> getVariables() {
 		return variables;
 	}
@@ -163,8 +162,52 @@ public class Operation {
 		this.hNodeIdToAttribute = hNodeIdToAttribute;
 	}
 
+	public void updateId(String newId) {
+		// update the id of input attributes
+		for (Attribute att : this.getInputAttributes())
+			att.setId(att.getId().replaceFirst(this.getId(), newId));
+		// update the id of output attributes
+		for (Attribute att : this.getOutputAttributes())
+			att.setId(att.getId().replaceFirst(this.getId(), newId));
+		// update the id of atoms in input model
+		if (this.inputModel != null && this.inputModel.getAtoms() != null) {
+			for (Atom atom : this.inputModel.getAtoms()) {
+				if (atom instanceof ClassAtom) {
+					ClassAtom classAtom = ((ClassAtom) atom);
+					if (classAtom.getArgument1() != null)
+						classAtom.getArgument1().setUri(classAtom.getArgument1().getUri().replaceFirst(this.getId(), newId));
+				}
+				if (atom instanceof PropertyAtom) {
+					PropertyAtom propertyAtom = ((PropertyAtom) atom);
+					if (propertyAtom.getArgument1() != null)
+						propertyAtom.getArgument1().setUri(propertyAtom.getArgument1().getUri().replaceFirst(this.getId(), newId));
+					if (propertyAtom.getArgument2() != null)
+						propertyAtom.getArgument2().setUri(propertyAtom.getArgument2().getUri().replaceFirst(this.getId(), newId));
+				}
+			}
+		}
+		// update the id of atoms in output model
+		if (this.outputModel != null && this.outputModel.getAtoms() != null) {
+			for (Atom atom : this.outputModel.getAtoms()) {
+				if (atom instanceof ClassAtom) {
+					ClassAtom classAtom = ((ClassAtom) atom);
+					if (classAtom.getArgument1() != null)
+						classAtom.getArgument1().setUri(classAtom.getArgument1().getUri().replaceFirst(this.getId(), newId));
+				}
+				if (atom instanceof PropertyAtom) {
+					PropertyAtom propertyAtom = ((PropertyAtom) atom);
+					if (propertyAtom.getArgument1() != null)
+						propertyAtom.getArgument1().setUri(propertyAtom.getArgument1().getUri().replaceFirst(this.getId(), newId));
+					if (propertyAtom.getArgument2() != null)
+						propertyAtom.getArgument2().setUri(propertyAtom.getArgument2().getUri().replaceFirst(this.getId(), newId));
+				}
+			}
+		}
+		this.setId(newId);
+	}
+	
 	private void doGrounding() {
-		String str = this.getAddress();
+		String str = this.address;
 		
 		if (this.address == null || this.address.length() == 0) {
 			this.addressTemplate = "";
@@ -338,16 +381,31 @@ public class Operation {
 	}
 	
 	public void print() {
+		System.out.println("id: " + this.getId());
 		System.out.println("name: " + this.getName());
-		System.out.println("description: " + this.getDescription());
+		System.out.println("address: " + this.getAddressTemplate());
+		System.out.println("method: " + this.getMethod());
+//		System.out.println("description: " + this.getDescription());
+
 		System.out.println("----------------------");
-		System.out.println("input attributeeters: ");
+		System.out.println("input attributes: ");
 		for (Attribute p : getInputAttributes())
 			p.print();
+		
 		System.out.println("----------------------");
-		System.out.println("output attributeeters: ");
+		System.out.println("input model: ");
+		if (this.inputModel != null)
+			this.inputModel.print();
+		
+		System.out.println("----------------------");
+		System.out.println("output attributes: ");
 		for (Attribute p : getOutputAttributes())
 			p.print();
+		
+		System.out.println("----------------------");
+		System.out.println("output model: ");
+		if (this.outputModel != null)
+			this.outputModel.print();
 	}
 	
 }

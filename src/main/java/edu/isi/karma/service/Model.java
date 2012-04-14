@@ -39,5 +39,11 @@ public class Model {
 	public void setAtoms(List<Atom> atoms) {
 		this.atoms = atoms;
 	}
-	
+
+	public void print() {
+		for (Atom atom : atoms) {
+			System.out.println("@@@@@@@@@@@@@@@");
+			if (atom != null) atom.print();
+		}
+	}
 }

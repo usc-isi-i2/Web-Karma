@@ -34,6 +34,5 @@ public interface Namespaces {
 	public static final String RULEML = "http://www.w3.org/2003/11/ruleml#";
 	public static final String SWRL = "http://www.w3.org/2003/11/swrl#";
 	public static final String KARMA = "http://isi.edu/integration/karma#";
-	public static final String KARMA_SERVICE_NS = "http://isi.edu/integration/karma/services/";
 
 }

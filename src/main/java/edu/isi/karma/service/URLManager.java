@@ -99,7 +99,7 @@ public class URLManager {
 	 * @return
 	 */
 	public static String getServiceAddress(URL url) {
-		String address = url.getHost() + url.getPath();
+		String address = url.getProtocol() + "://" + url.getHost() + url.getPath();
 		int index = address.lastIndexOf("/");
 		if (index != -1) {
 			address = address.substring(0, index);
