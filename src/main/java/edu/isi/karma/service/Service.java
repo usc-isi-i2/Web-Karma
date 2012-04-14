@@ -21,10 +21,13 @@
 
 package edu.isi.karma.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Service {
 	
+	public static final String KARMA_SERVICE_PREFIX = "http://isi.edu/integration/karma/services/";
+
 	private String id;
 	private String localId;
 	private String name;
@@ -33,13 +36,19 @@ public class Service {
 
 	private List<Operation> operations;
 
+	public Service() {
+		this.operations = new ArrayList<Operation>();
+	}
+	
+	public Service(String id, String name, String address) {
+		this.setId(id);
+		this.setName(name);
+		this.setAddress(address);
+		this.operations = new ArrayList<Operation>();
+	}
 	
 	public String getLocalId() {
 		return localId;
-	}
-
-	public void setLocalId(String localId) {
-		this.localId = localId;
 	}
 
 	public String getId() {
@@ -48,6 +57,11 @@ public class Service {
 
 	public void setId(String id) {
 		this.id = id;
+		
+		String s = id.replaceFirst(KARMA_SERVICE_PREFIX, "");
+		s = s.substring(0, s.length() - 1);
+		
+		this.localId = s;
 	}
 
 	public void setAddress(String address) {
@@ -82,15 +96,25 @@ public class Service {
 		this.operations = operations;
 	}
 
+	public String getInfo() {
+		String s = "";
+		
+		s += "id=" + this.getId() + "\n";
+		s += "local id=" + this.getLocalId() + ", ";
+		s += "name=" + this.getName() + ", ";
+		s += "address=" + this.getAddress();
+		
+		return s;
+	}
+	
 	public void print() {
-		System.out.println("************** Service **************");
-		System.out.println("id: " + this.getId());
-		System.out.println("local id: " + this.getLocalId());
-		System.out.println("name: " + this.getName());
-		System.out.println("address: " + this.getAddress());
+		System.out.println("********************************************");
+		System.out.println("Service: " + getInfo());
+//		System.out.println("id: " + this.getId());
+//		System.out.println("local id: " + this.getLocalId());
+//		System.out.println("name: " + this.getName());
+//		System.out.println("address: " + this.getAddress());
 //		System.out.println("description: " + this.getDescription());
-		System.out.println("----------------------");
-		System.out.println("operations: ");
 		for (Operation op: getOperations())
 			op.print();
 	}

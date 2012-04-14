@@ -38,8 +38,6 @@ public class ServiceBuilder {
 
 	static Logger logger = Logger.getLogger(ServiceBuilder.class);
 
-	public static final String KARMA_SERVICE_PREFIX = "http://isi.edu/integration/karma/services/";
-
 	private List<URL> requestURLs;
 	private List<Invocation> invocations;
 	private String serviceName;
@@ -167,8 +165,7 @@ public class ServiceBuilder {
 		
 //		String guid = "623607FC-AF72-CB84-0304-9392FEEB74FC";
 		String guid = new RandomGUID().toString();
-		service.setLocalId(guid);
-		service.setId(KARMA_SERVICE_PREFIX + guid + "#");
+		service.setId(Service.KARMA_SERVICE_PREFIX + guid + "#");
 		service.setName(this.serviceName);
 		service.setDescription("");
 		service.setAddress(address);

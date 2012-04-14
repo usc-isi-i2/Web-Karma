@@ -54,6 +54,105 @@ public class ServiceLoader {
 		return service;
 	}
 	
+	public static Service getServiceByUri(String uri) {
+		
+		Model m = ServiceRepository.Instance().getNamedModel(uri);
+		if (m == null)
+			return null;
+
+		Service service = getServiceFromJenaModel(m);
+		return service;
+	}
+	
+	/**
+	 * returns the service id, name, address of all services in the repository
+	 * @return
+	 */
+	public static List<Service> getAllServices() {
+		
+		List<Service> serviceList = new ArrayList<Service>();
+		
+		Model model = ServiceRepository.Instance().getModel();
+		
+		String service_id = "";
+		String service_name = "";
+		String service_address = "";
+		
+		// Create a new query
+		String queryString =
+			"PREFIX " + Prefixes.KARMA + ": <" + Namespaces.KARMA + "> \n" +
+			"PREFIX " + Prefixes.WSMO_LITE + ": <" + Namespaces.WSMO_LITE + "> \n" +
+			"PREFIX " + Prefixes.HRESTS + ": <" + Namespaces.HRESTS + "> \n" +
+			"SELECT ?s ?name ?address \n" +
+			"WHERE { \n" +
+			"      ?s a " + Prefixes.WSMO_LITE + ":Service . \n" +
+			"      OPTIONAL {?s " + Prefixes.HRESTS + ":hasAddress ?address .} \n" +
+			"      OPTIONAL {?s " + Prefixes.KARMA + ":hasName ?name .} \n" +
+			"      } \n";
+		
+		logger.debug("query= \n" + queryString);
+		
+		Query query = QueryFactory.create(queryString);
+		// Execute the query and obtain results
+		QueryExecution qexec = QueryExecutionFactory.create(query, model);
+
+		try {
+			ResultSet results = qexec.execSelect() ;
+			
+			if (!results.hasNext())
+				logger.info("query does not return any answer.");
+
+//			ResultSetFormatter.out(System.out, results, query) ;
+			 
+			for ( ; results.hasNext() ; )
+			{
+				QuerySolution soln = results.nextSolution() ;
+				
+				RDFNode s = soln.get("s") ;       // Get a result variable by name.
+				RDFNode name = soln.get("name") ;       // Get a result variable by name.
+				RDFNode address = soln.get("address") ;       // Get a result variable by name.
+
+				if (s == null) {
+					logger.info("service id is null.");
+					continue;
+				}
+
+				service_id = s.toString();
+				logger.debug("service id: " + service_id);
+				if (name != null && name.isLiteral()) service_name = name.asLiteral().getString();
+				logger.debug("service name: " + service_name);
+				if (address != null && address.isLiteral()) service_address = address.asLiteral().getString();
+				logger.debug("service address: " + service_address);
+				
+				if (service_id.trim().length() > 0)
+					serviceList.add(new Service(service_id, service_name, service_address));
+				else
+					logger.info("length of service id is zero.");
+			}
+			
+			return serviceList;
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+			return null;
+		} finally { 
+			qexec.close() ; 
+		}
+	}
+	
+	/**
+	 * returns all the services in the repository along with their complete information
+	 * probably this method is not useful since fetching all the services with their complete
+	 * information takes long time.
+	 * @return
+	 */
+	public static List<Service> getAllServicesComplete() {
+		List<Service> serviceList = getAllServices();
+		for (Service s : serviceList) {
+			s = getServiceByUri(s.getId());
+		}
+		return serviceList;
+	}
+	
 	private static Model getJenaModelByServiceAddress(String address) {
 
 		Model model = ServiceRepository.Instance().getModel();
@@ -78,6 +177,9 @@ public class ServiceLoader {
 		try {
 			ResultSet results = qexec.execSelect() ;
 			
+			if (!results.hasNext())
+				logger.info("query does not return any answer.");
+
 //			ResultSetFormatter.out(System.out, results, query) ;
 			 
 			String serviceURI = "";
@@ -169,7 +271,6 @@ public class ServiceLoader {
 		}
 		
 		service.setId(service_id);
-		service.setLocalId(service_localId);
 		service.setName(service_name);
 		service.setAddress(service_address);
 		service.setOperations(operations);
@@ -524,5 +625,23 @@ public class ServiceLoader {
 		return propertyAtom;	
 	}
 	
+	public static void main(String[] args) {
+
+//		ServiceBuilder.main(new String[0]);
+		
+		String address = "http://api.geonames.org/";
+		Service service = ServiceLoader.getServiceByAddress(address);
+		if (service != null) service.print();
+
+//		String uri = "http://isi.edu/integration/karma/services/E9C3F8D3-F778-5C4B-E089-C1749D50AE1F#";
+//		Service service = ServiceLoader.getServiceByUri(uri);
+//		if (service != null) service.print();
+		
+		List<Service> serviceList = getAllServices();
+		for (Service s : serviceList) {
+			if (s != null) s.print();
+		}
+
+	}
 
 }

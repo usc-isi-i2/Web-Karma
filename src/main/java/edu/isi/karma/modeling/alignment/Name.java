@@ -65,5 +65,29 @@ public class Name {
 		return prefix;
 	}
 	
-	
+	public String getLocalName() {
+		if (uri == null)
+			return null;
+		
+		String name = uri;
+		if (ns != null)
+			name = name.replaceFirst(ns, "");
+		
+		return name;
+	}
+
+	public String getLocalNameWithPrefix() {
+		if (uri == null)
+			return null;
+		
+		String name = uri;
+		if (ns != null)
+			name = name.replaceFirst(ns, "");
+		
+		if (prefix != null)
+			name = prefix + ":" + name;
+		
+		return name;
+	}
+
 }

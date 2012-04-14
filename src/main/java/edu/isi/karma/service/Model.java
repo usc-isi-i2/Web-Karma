@@ -41,9 +41,42 @@ public class Model {
 	}
 
 	public void print() {
+		System.out.println(getLogicalForm());
+//		for (Atom atom : atoms) {
+//			System.out.println("@@@@@@@@@@@@@@@");
+//			if (atom != null) atom.print();
+//		}
+	}
+	
+	public String getLogicalForm() {
+		String logicalForm = "";
+		String separator = " /\\ ";
 		for (Atom atom : atoms) {
-			System.out.println("@@@@@@@@@@@@@@@");
-			if (atom != null) atom.print();
-		}
+			if (atom != null) {
+				if (atom instanceof ClassAtom) {
+					ClassAtom classAtom = ((ClassAtom)atom);
+					logicalForm += classAtom.getClassPredicate().getLocalName();
+					logicalForm += "(";
+					logicalForm += classAtom.getArgument1().getLocalName();
+					logicalForm += ")";
+					logicalForm += separator;				
+				}
+				else if (atom instanceof PropertyAtom) {
+					PropertyAtom propertyAtom = ((PropertyAtom)atom);
+					logicalForm += propertyAtom.getPropertyPredicate().getLocalName();
+					logicalForm += "(";
+					logicalForm += propertyAtom.getArgument1().getLocalName();
+					logicalForm += ",";
+					logicalForm += propertyAtom.getArgument2().getLocalName();
+					logicalForm += ")";
+					logicalForm += separator;				
+				}			
+			}
+		}		
+		int index = logicalForm.lastIndexOf(separator);
+		if (index != -1)
+			logicalForm = logicalForm.substring(0, index);
+		
+		return logicalForm;
 	}
 }

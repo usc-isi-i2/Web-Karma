@@ -137,21 +137,24 @@ public class Attribute {
 	}
 
 	public void print() {
-		if (this.id != null && this.id.length() > 0) System.out.println("id: " + this.id);
-		if (this.hNodeId != null && this.hNodeId.length() > 0) System.out.println("hNodeId: " + this.hNodeId);
-		if (this.name != null && this.name.length() > 0) System.out.println("name: " + this.name);
-		if (this.ioType != null && this.ioType.length() > 0) System.out.println("IOType: " + this.ioType);
-		if (this.groundedIn != null && this.groundedIn.length() > 0) System.out.println("groundedIn: " + this.groundedIn);
-		if (this.requirement != null) System.out.println("requirement: " + this.requirement);
-		if (this.value != null && this.value.length() > 0) System.out.println("value: " + this.value);
+		System.out.println(getInfo());
+//		if (this.id != null && this.id.length() > 0) System.out.println("id: " + this.id);
+//		if (this.hNodeId != null && this.hNodeId.length() > 0) System.out.println("hNodeId: " + this.hNodeId);
+//		if (this.name != null && this.name.length() > 0) System.out.println("name: " + this.name);
+//		if (this.ioType != null && this.ioType.length() > 0) System.out.println("IOType: " + this.ioType);
+//		if (this.groundedIn != null && this.groundedIn.length() > 0) System.out.println("groundedIn: " + this.groundedIn);
+//		if (this.requirement != null) System.out.println("requirement: " + this.requirement);
+//		if (this.value != null && this.value.length() > 0) System.out.println("value: " + this.value);
 	}
 	
-	public String getPrintInfo() {
+	public String getInfo() {
 		String s = "";
-//		if (this.id != null && this.id.length() > 0) s += "id: " + this.id + ",";
-		if (this.name != null && this.name.length() > 0) s += "param name: " + this.name + ", ";
-		if (this.ioType != null && this.ioType.length() > 0) s += "IOType: " + this.ioType + ", ";
-		if (this.value != null && this.value.length() > 0) s += "value: " + this.value;
+		s += "id=" + this.id + ", ";
+		s += "name=" + this.name + ", ";
+		s += "ioType=" + this.ioType + ", ";
+		s += "requirement=" + this.requirement + ", ";
+		s += "groundedIn=" + this.groundedIn + ", ";
+		s += "value= " + this.value;
 		return s;
 	}
 }

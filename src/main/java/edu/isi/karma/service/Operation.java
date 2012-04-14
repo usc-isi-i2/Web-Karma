@@ -380,30 +380,39 @@ public class Operation {
 				this.hNodeIdToAttribute.put(att.gethNodeId(), att);
 	}
 	
+	public String getInfo() {
+		String s = "";
+		s += "id=" + this.getId() + ", ";
+		s += "name=" + this.getName() + ", ";
+		s += "address=" + this.getAddressTemplate() + ", ";
+		s += "method=" + this.getMethod();
+		return s;
+	}
+	
 	public void print() {
-		System.out.println("id: " + this.getId());
-		System.out.println("name: " + this.getName());
-		System.out.println("address: " + this.getAddressTemplate());
-		System.out.println("method: " + this.getMethod());
+//		System.out.println("id: " + this.getId());
+//		System.out.println("name: " + this.getName());
+//		System.out.println("address: " + this.getAddressTemplate());
+//		System.out.println("method: " + this.getMethod());
 //		System.out.println("description: " + this.getDescription());
 
-		System.out.println("----------------------");
-		System.out.println("input attributes: ");
+		System.out.println("********************************************");
+		System.out.println("Operation: ");
+		System.out.println(getInfo());
+		System.out.println("********************************************");
+		System.out.println("Input Attributes: ");
 		for (Attribute p : getInputAttributes())
 			p.print();
-		
-		System.out.println("----------------------");
-		System.out.println("input model: ");
+		System.out.println("********************************************");
+		System.out.println("Input Model: ");
 		if (this.inputModel != null)
 			this.inputModel.print();
-		
-		System.out.println("----------------------");
-		System.out.println("output attributes: ");
+		System.out.println("********************************************");
+		System.out.println("Output Attributes: ");
 		for (Attribute p : getOutputAttributes())
 			p.print();
-		
-		System.out.println("----------------------");
-		System.out.println("output model: ");
+		System.out.println("********************************************");
+		System.out.println("Output Model: ");
 		if (this.outputModel != null)
 			this.outputModel.print();
 	}

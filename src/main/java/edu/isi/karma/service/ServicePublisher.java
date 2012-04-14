@@ -316,16 +316,5 @@ public class ServicePublisher {
 		}
 
 	}
-
-
-	public static void main(String[] args) {
-
-		ServiceBuilder.main(new String[0]);
-		
-//		String address = "http://api.geonames.org/";
-//		Service service = getServiceByAddress(address);
-//		service.print();
-
-	}
 	
 }

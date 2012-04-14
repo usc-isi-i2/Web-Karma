@@ -64,7 +64,7 @@ public class ServiceRepository {
 	
 	public void addModel(Model m, String name) {
 		
-		Model namedModel = this.getNamedModel(name); 
+		Model namedModel = this.dataset.getNamedModel(name); 
 		namedModel.removeAll();
 		namedModel.add(m.listStatements());
 		namedModel.setNsPrefixes(m.getNsPrefixMap());
@@ -89,6 +89,7 @@ public class ServiceRepository {
 	public Model getNamedModel(String name) {
 		if (!this.dataset.containsNamedModel(name)) {
 			logger.debug("The model: " + name + " does not exist in the service repository.");
+			return null;
 		}
 		return this.dataset.getNamedModel(name);
 	}

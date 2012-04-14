@@ -57,5 +57,4 @@ public class ClassAtom extends Atom {
 		System.out.println("argument1: " + argument1.getUri());
 	}
 	
-	
 }
