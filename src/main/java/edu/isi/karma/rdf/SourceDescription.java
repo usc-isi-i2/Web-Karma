@@ -260,7 +260,9 @@ public class SourceDescription {
 					}
 				}
 				else if(e.getLinkType()==LinkType.HasSubClass){
-					//do nothing for this link
+					//I have to include this, otherwise I lose the "connection" between the classes
+					stmt = generateObjectPropertyStatement(v,e,child);
+					s.append("\n ^ " + stmt);
 				}
 				generateSourceDescription(child,s);
 			}
@@ -362,7 +364,7 @@ public class SourceDescription {
 		if(child.getNodeType()!=NodeType.Class){
 			throw new KarmaException("Node " + child.getUri() + " should be of type NodeType.Class");
 		}
-		if(e.getLinkType()!=LinkType.ObjectProperty){
+		if(e.getLinkType()!=LinkType.ObjectProperty && e.getLinkType()!=LinkType.HasSubClass){
 			throw new KarmaException("Edge " + e.getUri() + " should be of type LinkType.ObjectProperty");
 		}
 		//find the key of Class v
@@ -484,6 +486,10 @@ public class SourceDescription {
 		String s = "";
 		//see if this property has an inverse property, and if it does add it to the SD
 		ObjectProperty op = model.getObjectProperty(propertyName);
+		if(op==null){
+			//this can happen if propertyName is not an Object property; it could be a subclass
+			return s;
+		}
 		//one or the other will be null
 		OntProperty inverseProp1 = op.getInverse();
 		OntProperty inverseProp2 = op.getInverseOf();

@@ -37,6 +37,8 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.imp.csv.CSVFileImport;
+import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
@@ -61,6 +63,8 @@ public class GetExampleJSON extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
+		System.out.println("In GetExampleJSON.....");
+		
 		Workspace workspace = WorkspaceManager.getInstance().getFactory()
 				.createWorkspace();
 
@@ -89,32 +93,33 @@ public class GetExampleJSON extends HttpServlet {
 		
 		// Loading ontology to be preloaded
 		OntologyManager mgr = workspace.getOntologyManager();
-		mgr.doImport(new File("./Preloaded_Ontologies/geo_2007.owl"));
-		mgr.doImport(new File("./Preloaded_Ontologies/oilwell.owl"));
+		//mgr.doImport(new File("./Preloaded_Ontologies/geo_2007.owl"));
+		//mgr.doImport(new File("./Preloaded_Ontologies/oilwell.owl"));
 		//mariam
 		
-//		File file = new File("../demofiles/peopleFaculty.csv");
-		/*
-		File file = new File("../demofiles/usc_faculty.csv");
-		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
-		imp.generateWorksheet();
-		*/
+		
+		//File file = new File("../demofiles/usc_faculty.csv");
+		
+		//File file = new File("C:\\Documents and Settings\\mariam\\My Documents\\dovetail-phase2\\startgtd.csv");
+		//CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
+		//imp.generateWorksheet();
+
+		//File file = new File("C:\\Documents and Settings\\mariam\\My Documents\\dovetail-phase2\\tosig.json");
+		//SampleDataFactory.createFromJsonTextFile(workspace,"C:\\Documents and Settings\\mariam\\My Documents\\dovetail-phase2\\tosig.json");
+
+		
 		
 		//load ontologies
 		OntologyManager om = workspace.getOntologyManager();
 		
 		//vivo ontology
-/*
-		om.doImport(new File("../demofiles/vivo1.4-protege.owl"));
+		//om.doImport(new File("../demofiles/vivo-core-public-1.4.owl"));
 		//rdfs ontology
-		om.doImport(new File("../demofiles/rdfs-small.owl"));
-*/
-		/*
-		om.doImport(new File("../demofiles/vivo-core-public-1.4.owl"));
-		//rdfs ontology
-		om.doImport(new File("../demofiles/rdfs_subset.owl"));
-		om.doImport(new File("../demofiles/uscont.owl"));
-	*/
+		//om.doImport(new File("../demofiles/rdfs_subset.owl"));
+		//om.doImport(new File("../demofiles/uscont.owl"));
+	
+		//om.doImport(new File("../demofiles/DovetailOnto_v0_9.rdf"));
+		//om.doImport(new File("../demofiles/ExtendedDovetailOnto_v0_9.rdf"));
 		//////////////
 
 		// Initialize the Outlier tag

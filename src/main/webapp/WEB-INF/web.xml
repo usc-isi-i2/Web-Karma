@@ -76,5 +76,22 @@
     <servlet-name>KMLFileTransferHandler</servlet-name>
     <url-pattern>/KMLFileTransferHandler</url-pattern>
   </servlet-mapping>
-  
+
+<!-- uncomment for password protection; change user/pwd in config/jettyrealm.properties -->
+<!-- 
+ <security-constraint>
+    <web-resource-collection>
+      <url-pattern>/web-karma.html</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>karma</role-name>
+    </auth-constraint>
+  </security-constraint>
+
+  <login-config>
+    <auth-method>DIGEST</auth-method>
+    <realm-name>TestRealm</realm-name>
+  </login-config>
+-->
+
 </web-app>

@@ -112,13 +112,10 @@ public class AddUserLinkToAlignmentCommand extends Command {
 				.getSteinerTree();
 		Vertex root = alignment.GetTreeRoot();
 
-//		List<HNode> sortedHeaders = worksheet.getHeaders().getSortedHNodes();
-		List<HNode> sortedHeaderNodes = new ArrayList<HNode>(); 
-		worksheet.getHeaders().getSortedLeafHNodes(sortedHeaderNodes);
-		
+		List<HNode> sortedHeaders = worksheet.getHeaders().getSortedHNodes();
 		// Convert the tree into a AlignmentForest
 		AlignmentForest forest = AlignmentForest.constructFromSteinerTree(tree,
-				root, sortedHeaderNodes);
+				root, sortedHeaders);
 		AlignmentHeadersUpdate alignmentUpdate = new AlignmentHeadersUpdate(
 				forest, vWorksheetId, alignmentId);
 		GraphUtil.printGraph(tree);
@@ -128,26 +125,18 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, tree, root);
 		}catch(KarmaException e){
 			e.printStackTrace();
-		}
+		}		
 		/////////////////////////
 
-		// Create new vWorksheet using the new header order for flat sources
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-		if(!worksheet.getHeaders().hasNestedTables()) {
-			List<HNodePath> columnPaths = new ArrayList<HNodePath>();
-			List<HNodePath> existingPaths = worksheet.getHeaders().getAllPaths();
-			for (HNode node : sortedHeaderNodes) {
-				for(HNodePath path:existingPaths){
-					if(path.getLeaf().getId().equals(node.getId())) {
-						columnPaths.add(path);
-						break;
-					}
-				}
-			}
-			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
-					worksheet, columnPaths, vWorkspace);
-			vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+		// Create new vWorksheet using the new header order
+		List<HNodePath> columnPaths = new ArrayList<HNodePath>();
+		for (HNode node : sortedHeaders) {
+			HNodePath path = new HNodePath(node);
+			columnPaths.add(path);
 		}
+		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,
+				columnPaths, vWorkspace);
+		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 
 		UpdateContainer c = new UpdateContainer();
 		c.add(alignmentUpdate);
