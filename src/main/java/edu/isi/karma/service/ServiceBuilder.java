@@ -164,8 +164,7 @@ public class ServiceBuilder {
 		String address = URLManager.getServiceAddress(sampleUrl);
 		
 		String guid = new RandomGUID().toString();
-		// FIXME
-		guid = "E9C3F8D3-F778-5C4B-E089-C1749D50AE1F";
+//		guid = "E9C3F8D3-F778-5C4B-E089-C1749D50AE1F";
 		service.setId(guid);
 		service.setName(this.serviceName);
 		service.setDescription("");

@@ -22,7 +22,9 @@
 package edu.isi.karma.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -42,27 +44,39 @@ import edu.isi.karma.modeling.alignment.Name;
 
 public class ServiceLoader {
 
-	private static final int DEFAULT_RESULTS_SIZE = 10;
-	
+	private static final int DEFAULT_SERVICE_RESULTS_SIZE = 10;
+	private static final int DEFAULT_OPERATION_RESULTS_SIZE = 10;
+
 	static Logger logger = Logger.getLogger(ServiceLoader.class);
 
-	public static Service getServiceByAddress(String address) {
+	public static void deleteServiceByAddress(String address, Integer operationLimit) {
 		
-		Model m = getJenaModelByServiceAddress(address);
+		String uri = getServiceUriByServiceAddress(address);
+		ServiceRepository.Instance().clearNamedModel(uri);
+	}
+	
+	public static Service getServiceByAddress(String address, Integer operationLimit) {
+		
+		String uri = getServiceUriByServiceAddress(address);
+		Model m = ServiceRepository.Instance().getNamedModel(uri);
 		if (m == null)
 			return null;
 
-		Service service = getServiceFromJenaModel(m);
+		Service service = getServiceFromJenaModel(m, null, operationLimit);
 		return service;
 	}
 	
-	public static Service getServiceByUri(String uri) {
+	public static void deleteServiceByUri(String uri) {
+		ServiceRepository.Instance().clearNamedModel(uri);
+	}
+	
+	public static Service getServiceByUri(String uri, Integer operationLimit) {
 		
 		Model m = ServiceRepository.Instance().getNamedModel(uri);
 		if (m == null)
 			return null;
 
-		Service service = getServiceFromJenaModel(m);
+		Service service = getServiceFromJenaModel(m, null, operationLimit);
 		return service;
 	}
 	
@@ -71,7 +85,7 @@ public class ServiceLoader {
 	 * @param limit : maximum number of results, null value means all the services
 	 * @return
 	 */
-	public static List<Service> getAllServices(Integer limit) {
+	public static List<Service> getAllServices(Integer serviceLimit) {
 		
 		List<Service> serviceList = new ArrayList<Service>();
 		
@@ -92,9 +106,10 @@ public class ServiceLoader {
 			"      OPTIONAL {?s " + Prefixes.HRESTS + ":hasAddress ?address .} \n" +
 			"      OPTIONAL {?s " + Prefixes.KARMA + ":hasName ?name .} \n" +
 			"      } \n";
-		if (limit != null) {
-			if (limit.intValue() < 0) limit = DEFAULT_RESULTS_SIZE;
-			queryString += "LIMIT " + String.valueOf(limit.intValue() + "\n");
+		
+		if (serviceLimit != null) {
+			if (serviceLimit.intValue() < 0) serviceLimit = DEFAULT_SERVICE_RESULTS_SIZE;
+			queryString += "LIMIT " + String.valueOf(serviceLimit.intValue() + "\n");
 		}
 		
 		logger.debug("query= \n" + queryString);
@@ -155,93 +170,198 @@ public class ServiceLoader {
 	 * information takes long time.
 	 * @return
 	 */
-	public static List<Service> getAllServicesComplete(Integer limit) {
-		List<Service> serviceList = getAllServices(limit);
+	public static List<Service> getAllServicesComplete(Integer serviceLimit, Integer operationLimit) {
+
+		List<Service> serviceList = getAllServices(serviceLimit);
 		List<Service> serviceListCompleteInfo = new ArrayList<Service>();
 		for (Service s : serviceList) {
-			serviceListCompleteInfo.add(getServiceByUri(s.getUri()));
+			serviceListCompleteInfo.add(getServiceByUri(s.getUri(), operationLimit));
 		}
 		return serviceListCompleteInfo;
 	}
 	
 	/**
-	 * returns all the services in the repository whose input/output model matches the semantic model parameter
-	 * @param semanticModel
+	 * Returns all the operations in the repository whose input/output model matches the semantic model parameter.
+	 * Note that the services in the return list only include the operations that match the model parameter.
+	 * @param semanticModel The input model whose pattern will be searched in the repository
 	 * @param ioType declares which one of the service input or service output will be tested for matching
+	 * @param operationsLimit maximum number of operations that will be fetched
 	 * @return
 	 */
 	public static List<Service> getServicesByIOPattern(edu.isi.karma.service.Model semanticModel, 
-			IOType ioType, Integer limit) {
+			String ioType, Integer operationsLimit) {
 		
-		Model model = ServiceRepository.Instance().getModel();
+		Map<String, List<String>> serviceAndOperations = getServicesIdsByIOPattern(semanticModel, ioType, operationsLimit);
+		if (serviceAndOperations == null)
+			return null;
 		
-		// Create a new query
-		String queryString =
-			"PREFIX " + Prefixes.KARMA + ": <" + Namespaces.KARMA + "> \n" +
-			"PREFIX " + Prefixes.WSMO_LITE + ": <" + Namespaces.WSMO_LITE + "> \n" +
-			"PREFIX " + Prefixes.HRESTS + ": <" + Namespaces.HRESTS + "> \n" +
-			"SELECT ?s ?name ?address \n" +
+		List<Service> serviceList = new ArrayList<Service>();
+		
+		for (String uri : serviceAndOperations.keySet()) {
+			Model m = ServiceRepository.Instance().getNamedModel(uri);
+			if (m != null)
+				serviceList.add(getServiceFromJenaModel(m, serviceAndOperations.get(uri), null));
+		}
+		return serviceList;
+	}
+	
+	/**
+	 * Returns a hash map of all services and their operations whose input/output model matches the semantic model parameter.
+	 * Note that the services in the return list only include the operations that match the model parameter.
+	 * @param semanticModel The input model whose pattern will be searched in the repository
+	 * @param ioType declares which one of the service input or service output will be tested for matching
+	 * @param operationsLimit maximum number of operations that will be fetched
+	 * @return
+	 */
+	private static Map<String, List<String>> getServicesIdsByIOPattern(edu.isi.karma.service.Model semanticModel, 
+			String ioType, Integer operationsLimit) {
+
+		Map<String, List<String>> serviceAndOperations = new HashMap<String, List<String>>();
+
+		if (semanticModel == null || semanticModel.getAtoms() == null 
+				|| semanticModel.getAtoms().size() == 0) {
+			logger.info("The input model is nul or it does not have any atom");
+			return null;
+		}
+		
+		String io_class = "";
+		String io_property = "";
+		if (ioType.equalsIgnoreCase(IOType.OUTPUT))
+		{
+			io_class = "Output";
+			io_property = "hasOutput";
+		} else {
+			io_class =  "Input";
+			io_property = "hasInput";
+		}
+	
+		// map of NS --> Prefix
+		Map<String, String> nsToPrefixMapping = new HashMap<String, String>();
+		nsToPrefixMapping.put(Namespaces.KARMA, Prefixes.KARMA);
+		nsToPrefixMapping.put(Namespaces.WSMO_LITE, Prefixes.WSMO_LITE);
+		nsToPrefixMapping.put(Namespaces.SWRL, Prefixes.SWRL);
+		nsToPrefixMapping.put(Namespaces.HRESTS, Prefixes.HRESTS);
+		
+		String select =
+			"SELECT ?s ?op \n" +
 			"WHERE { \n" +
 			"      ?s a " + Prefixes.WSMO_LITE + ":Service . \n" +
-			"      OPTIONAL {?s " + Prefixes.HRESTS + ":hasAddress ?address .} \n" +
-			"      OPTIONAL {?s " + Prefixes.KARMA + ":hasName ?name .} \n" +
-			"      } \n";
-		if (limit != null) {
-			if (limit.intValue() < 0) limit = DEFAULT_RESULTS_SIZE;
-			queryString += "LIMIT " + String.valueOf(limit.intValue() + "\n");
+			"      ?s " + Prefixes.WSMO_LITE + ":hasOperation ?op . \n" +
+			"      ?op a " + Prefixes.WSMO_LITE + ":Operation . \n" +
+			"      ?op " + Prefixes.KARMA + ":" + io_property + " ?io . \n" +
+			"      ?io a " + Prefixes.KARMA + ":" + io_class + " . \n" +
+			"      ?io " + Prefixes.KARMA + ":hasModel ?model . \n" + 
+			"      ?model a " + Prefixes.KARMA + ":Model . \n";
+		
+		String atomVar = "";
+		String predicateUri = "";
+		String argument1 = "";
+		String argument2 = "";
+
+		for (int i = 0; i < semanticModel.getAtoms().size(); i++) {
+			Atom atom = semanticModel.getAtoms().get(i);
+			if (atom != null) {
+				if (atom instanceof ClassAtom) {
+					ClassAtom classAtom = ((ClassAtom)atom);
+					atomVar = "?atom" + String.valueOf(i+1);
+					predicateUri = classAtom.getClassPredicate().getUri();
+					argument1 = "?" + classAtom.getArgument1().getLocalName();
+					
+					select += 
+						"      ?model " + Prefixes.KARMA + ":hasAtom " + atomVar + " . \n" +
+						"      " + atomVar + " a " + Prefixes.SWRL + ":ClassAtom . \n" +
+						"      " + atomVar + " " + Prefixes.SWRL + ":classPredicate <" + predicateUri + "> . \n" +
+						"      " + atomVar + " " + Prefixes.SWRL + ":argument1 " + argument1 + " . \n";
+				}
+				else if (atom instanceof PropertyAtom) {
+					PropertyAtom propertyAtom = ((PropertyAtom)atom);
+					atomVar = "?atom" + String.valueOf(i+1);
+					predicateUri = propertyAtom.getPropertyPredicate().getUri();
+					argument1 = "?" + propertyAtom.getArgument1().getLocalName();
+					argument2 = "?" + propertyAtom.getArgument2().getLocalName();
+
+					
+					select += 
+						"      ?model " + Prefixes.KARMA + ":hasAtom " + atomVar + " . \n" +
+						"      " + atomVar + " a " + Prefixes.SWRL + ":IndividualPropertyAtom . \n" +
+						"      " + atomVar + " " + Prefixes.SWRL + ":propertyPredicate <" + predicateUri + "> . \n" +
+						"      " + atomVar + " " + Prefixes.SWRL + ":argument1 " + argument1 + " . \n" +
+						"      " + atomVar + " " + Prefixes.SWRL + ":argument2 " + argument2 + " . \n";
+				}			
+			}
+		}		
+		select += 	"      } \n";
+ 
+		String prefix = getSPARQLHeader(nsToPrefixMapping); 
+		String queryString = prefix + select;
+		
+		if (operationsLimit != null) {
+			if (operationsLimit.intValue() < 0) operationsLimit = DEFAULT_OPERATION_RESULTS_SIZE;
+			queryString += "LIMIT " + String.valueOf(operationsLimit.intValue() + "\n");
 		}
 		
 		logger.debug("query= \n" + queryString);
 		
+		Model model = ServiceRepository.Instance().getModel();
 		Query query = QueryFactory.create(queryString);
-		// Execute the query and obtain results
+//		// Execute the query and obtain results
 		QueryExecution qexec = QueryExecutionFactory.create(query, model);
 
 		try {
-//			ResultSet results = qexec.execSelect() ;
-//			
-//			if (!results.hasNext())
-//				logger.info("query does not return any answer.");
-//
-////			ResultSetFormatter.out(System.out, results, query) ;
-//			 
-//			for ( ; results.hasNext() ; )
-//			{
-//				QuerySolution soln = results.nextSolution() ;
-//				
-//				RDFNode s = soln.get("s") ;       // Get a result variable by name.
-//				RDFNode name = soln.get("name") ;       // Get a result variable by name.
-//				RDFNode address = soln.get("address") ;       // Get a result variable by name.
-//
-//				if (s == null) {
-//					logger.info("service id is null.");
-//					continue;
-//				}
-//
-//				service_id = s.toString();
-//				logger.debug("service id: " + service_id);
-//				if (name != null && name.isLiteral()) service_name = name.asLiteral().getString();
-//				logger.debug("service name: " + service_name);
-//				if (address != null && address.isLiteral()) service_address = address.asLiteral().getString();
-//				logger.debug("service address: " + service_address);
-//				
-//				if (service_id.trim().length() > 0)
-//					serviceList.add(new Service(service_id, service_name, service_address));
-//				else
-//					logger.info("length of service id is zero.");
-//			}
-//			
-//			return serviceList;
+			ResultSet results = qexec.execSelect() ;
+			
+			if (!results.hasNext())
+				logger.info("query does not return any answer.");
+
+//			ResultSetFormatter.out(System.out, results, query) ;
+			 
+			for ( ; results.hasNext() ; )
+			{
+				QuerySolution soln = results.nextSolution() ;
+				
+				RDFNode s = soln.get("s") ;       // Get a result variable by name.
+				RDFNode op = soln.get("op") ;       // Get a result variable by name.
+
+				if (s == null) {
+					logger.info("service uri is null.");
+					continue;
+				}
+
+				String service_uri = s.toString();
+				logger.debug("service uri: " + service_uri);
+				if (serviceAndOperations.get(service_uri) == null)
+					serviceAndOperations.put(service_uri, new ArrayList<String>());
+				
+				if (op != null && op.isResource()) {
+					String op_id = op.asResource().getLocalName();
+					logger.debug("op id: " + op_id);
+					serviceAndOperations.get(service_uri).add(op.asResource().getLocalName());
+				} else logger.debug("op is null");
+					
+			}
+			
+			return serviceAndOperations;
 		} catch (Exception e) {
 			logger.info(e.getMessage());
 			return null;
 		} finally { 
 			qexec.close() ; 
 		}
-		return null;
+	}
+
+	private static String getSPARQLHeader(Map<String, String> nsToPrefixMapping) {
+		String prefixHeader = "";
+		
+		for (String ns : nsToPrefixMapping.keySet()) {
+			String prefix = nsToPrefixMapping.get(ns);
+			if (prefix != null)
+				prefixHeader += "PREFIX " + prefix + ": <" + ns + "> \n";
+		}
+
+		return prefixHeader;
 	}
 	
-	private static Model getJenaModelByServiceAddress(String address) {
+	private static String getServiceUriByServiceAddress(String address) {
 
 		Model model = ServiceRepository.Instance().getModel();
 		
@@ -280,13 +400,7 @@ public class ServiceLoader {
 				break;
 			}
 			
-			// get the model specific to the found service
-			if (serviceURI.length() > 0)
-				return ServiceRepository.Instance().getNamedModel(serviceURI);
-			else {
-				logger.info("could not find a service with the address " + address + " in service repository.");
-				return null;
-			}
+			return serviceURI;
 		} catch (Exception e) {
 			logger.info("Exception in finding a service with the address " + address + " in service repository.");
 			return null;
@@ -296,8 +410,23 @@ public class ServiceLoader {
 
 	}
 	
-	public static Service getServiceFromJenaModel(Model model) {
+	/**
+	 * From the service model, returns the service object
+	 * If the list of operation ids is null, it includes all the operations, otherwise it only 
+	 * fetches the mentioned operations
+	 * If operationLimit=null and operationIds=null returns all operations
+	 * If operationLimit=null, it returns the all specified operations
+	 * If operationIds=null, it returns the first (opLimit) number of operations
+	 * If both of them are not null, it returns the first (opLimit) number of specified operations 
+	 * @param model
+	 * @param operationIds
+	 * @return
+	 */
+	public static Service getServiceFromJenaModel(Model model, List<String> operationIds, Integer operationLimit) {
 		logger.debug("model size: " + model.getGraph().size());
+		
+		if (operationLimit != null && operationLimit.intValue() < 0)
+			operationLimit = DEFAULT_OPERATION_RESULTS_SIZE;
 		
 		String service_name = "";
 		String service_uri = "";
@@ -342,15 +471,23 @@ public class ServiceLoader {
 
 		// operations
 		nodeIterator = model.listObjectsOfProperty(service_resource, has_operation_property);
+		int opCounter = 0;
 		while ( nodeIterator.hasNext()) {
 			node = nodeIterator.next();
 			
 			if (!node.isResource()) {
-				logger.debug("object of the hasOperation property is not a resource.");
+				logger.info("object of the hasOperation property is not a resource.");
 				continue;
 			}
 			
-			operations.add(getOperation(model, node.asResource()));
+			if (operationLimit != null && opCounter == operationLimit)
+				break;
+			
+			String op_id = node.asResource().getLocalName();
+			if (operationIds == null || operationIds.indexOf(op_id) != -1) {
+				operations.add(getOperation(model, node.asResource()));
+				opCounter ++;
+			}
 		}
 		
 		service.setId(service_id);
@@ -427,7 +564,7 @@ public class ServiceLoader {
 			outputAttributes = getAttributes(model, node.asResource(), IOType.OUTPUT );
 			outputModel = getSemanticModel(model, node.asResource());
 		} else
-			logger.debug("operation does not have an output.");
+			logger.info("operation does not have an output.");
 		
 		op.setId(op_id);
 		op.setName(op_name);
@@ -459,7 +596,7 @@ public class ServiceLoader {
 			node = nodeIterator.next();
 			
 			if (!node.isResource()) {
-				logger.debug("object of the hasAttribute property is not a resource.");
+				logger.info("object of the hasAttribute property is not a resource.");
 				continue;
 			}
 			
@@ -472,7 +609,7 @@ public class ServiceLoader {
 			node = nodeIterator.next();
 			
 			if (!node.isResource()) {
-				logger.debug("object of the hasMandatoryAttribute property is not a resource.");
+				logger.info("object of the hasMandatoryAttribute property is not a resource.");
 				continue;
 			}
 			
@@ -485,7 +622,7 @@ public class ServiceLoader {
 			node = nodeIterator.next();
 			
 			if (!node.isResource()) {
-				logger.debug("object of the hasOptionalAttribute property is not a resource.");
+				logger.info("object of the hasOptionalAttribute property is not a resource.");
 				continue;
 			}
 			
@@ -551,7 +688,7 @@ public class ServiceLoader {
 		// hasModel
 		nodeIterator = model.listObjectsOfProperty(io_resource, has_model_property);
 		if (!nodeIterator.hasNext() || !(modelNode = nodeIterator.next()).isResource()) {
-			logger.debug("There is no model resource.");
+			logger.info("There is no model resource.");
 			return null;
 		}
 
@@ -566,7 +703,7 @@ public class ServiceLoader {
 			atomNode = nodeIterator.next();
 			
 			if (!atomNode.isResource()) {
-				logger.debug("object of the hasAtom property is not a resource.");
+				logger.info("object of the hasAtom property is not a resource.");
 				continue;
 			}
 			
@@ -591,7 +728,7 @@ public class ServiceLoader {
 		// atom type
 		nodeIterator = model.listObjectsOfProperty(atom_resource, rdf_type);
 		if (!nodeIterator.hasNext() || !(node = nodeIterator.next()).isResource()) {
-			logger.debug("The atom type is not specified.");
+			logger.info("The atom type is not specified.");
 			return null;
 		}
 		
@@ -626,7 +763,7 @@ public class ServiceLoader {
 		// atom class predicate
 		nodeIterator = model.listObjectsOfProperty(atom_resource, class_predicate_property);
 		if (!nodeIterator.hasNext() || !(node = nodeIterator.next()).isResource()) {
-			logger.debug("The class predicate resource is not specified.");
+			logger.info("The class predicate resource is not specified.");
 			return null;
 		}
 		
@@ -641,7 +778,7 @@ public class ServiceLoader {
 			argument1 = node.asResource().getLocalName();
 			logger.debug("The atom argument1 is: " + argument1);
 		} else {
-			logger.debug("atom does not have an argument1.");
+			logger.info("atom does not have an argument1.");
 			return null;
 		}
 		
@@ -673,7 +810,7 @@ public class ServiceLoader {
 		// atom class predicate
 		nodeIterator = model.listObjectsOfProperty(atom_resource, property_predicate_property);
 		if (!nodeIterator.hasNext() || !(node = nodeIterator.next()).isResource()) {
-			logger.debug("The property predicate resource is not specified.");
+			logger.info("The property predicate resource is not specified.");
 			return null;
 		}
 		
@@ -688,7 +825,7 @@ public class ServiceLoader {
 			argument1 = node.asResource().getLocalName();
 			logger.debug("The atom argument1 is: " + argument1);
 		} else {
-			logger.debug("atom does not have an argument1.");
+			logger.info("atom does not have an argument1.");
 			return null;
 		}
 
@@ -698,7 +835,7 @@ public class ServiceLoader {
 			argument2 = node.asResource().getLocalName();
 			logger.debug("The atom argument2 is: " + argument2);
 		} else {
-			logger.debug("atom does not have an argument2.");
+			logger.info("atom does not have an argument2.");
 			return null;
 		}
 		
@@ -711,22 +848,54 @@ public class ServiceLoader {
 		return propertyAtom;	
 	}
 	
-	public static void main(String[] args) {
-
-//		ServiceBuilder.main(new String[0]);
-		
-//		String address = "http://api.geonames.org/";
-//		Service service = ServiceLoader.getServiceByAddress(address);
-//		if (service != null) service.print();
-
-//		String uri = "http://isi.edu/integration/karma/services/E9C3F8D3-F778-5C4B-E089-C1749D50AE1F#";
-//		Service service = ServiceLoader.getServiceByUri(uri);
-//		if (service != null) service.print();
-		
-		List<Service> serviceList = getAllServicesComplete(DEFAULT_RESULTS_SIZE);
+	private static void testGetServiceByUri() {
+		String uri = "http://isi.edu/integration/karma/services/E9C3F8D3-F778-5C4B-E089-C1749D50AE1F#";
+		Service service = ServiceLoader.getServiceByUri(uri, null);
+		if (service != null) service.print();
+	}
+	private static void testGetServiceByAddress() {
+		String address = "http://api.geonames.org/";
+		Service service = ServiceLoader.getServiceByAddress(address, null);
+		if (service != null) service.print();
+	}
+	private static void testGetAllServices() {
+		List<Service> serviceList = getAllServicesComplete(null, null);
 		for (Service s : serviceList) {
 			if (s != null) s.print();
 		}
+	}
+	private static void testGetServicesByIOPattern() {
+		edu.isi.karma.service.Model semanticModel = new edu.isi.karma.service.Model(null);
+
+		String geonamesOntology = "http://www.geonames.org/ontology#";
+		String wgs84Ontology = "http://www.w3.org/2003/01/geo/wgs84_pos#";
+		
+		Name featurePredicatName = new Name(geonamesOntology + "Feature", geonamesOntology, "gn");
+		Name latPredicatName = new Name(wgs84Ontology + "lat", wgs84Ontology, "wgs84");
+		Name lngPredicatName = new Name(wgs84Ontology + "long", wgs84Ontology, "wgs84");
+		
+		ClassAtom c1 = new ClassAtom(featurePredicatName, new Name("arg1", null, null));
+		PropertyAtom p1 = new PropertyAtom(latPredicatName, new Name("arg1", null, null), new Name("arg2", null, null));
+		PropertyAtom p2 = new PropertyAtom(lngPredicatName, new Name("arg1", null, null), new Name("arg3", null, null));
+
+		semanticModel.getAtoms().add(c1);
+		semanticModel.getAtoms().add(p1);
+		semanticModel.getAtoms().add(p2);
+		List<Service> serviceList = getServicesByIOPattern(semanticModel, IOType.INPUT, null);
+		for (Service s : serviceList) {
+			if (s != null) s.print();
+		}
+	}
+	public static void main(String[] args) {
+
+//		ServiceBuilder.main(new String[0]);
+
+		boolean test1 = false, test2 = false, test3 = false, test4 = true;
+		if (test1) testGetServiceByUri();
+		if (test2) testGetServiceByAddress();
+		if (test3) testGetServicesByIOPattern();
+		if (test4) testGetAllServices();
+
 
 	}
 

@@ -99,6 +99,8 @@ public class Service {
 		s += "id=" + this.getId() + ", ";
 		s += "name=" + this.getName() + ", ";
 		s += "address=" + this.getAddress();
+		if (this.getOperations() != null)
+			s += "operations count=" + this.getOperations().size();
 		
 		return s;
 	}

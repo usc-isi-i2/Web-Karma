@@ -81,7 +81,7 @@ public class Name {
 			return null;
 		
 		String name = uri;
-		if (ns != null)
+		if (ns != null && prefix != null)
 			name = name.replaceFirst(ns, "");
 		
 		if (prefix != null)

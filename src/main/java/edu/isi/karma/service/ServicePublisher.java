@@ -73,7 +73,7 @@ public class ServicePublisher {
 	
 	public void publish() throws FileNotFoundException {
 		
-		Service existingService = ServiceLoader.getServiceByAddress(this.service.getAddress());
+		Service existingService = ServiceLoader.getServiceByAddress(this.service.getAddress(), null);
 		
 		String newServiceOpName = "";
 		String existingServiceOpName = "";
@@ -120,7 +120,7 @@ public class ServicePublisher {
 		if (this.model == null)
 			model = generateModel();
 		
-		String service_desc_file = ServiceRepository.Instance().SERVICE_REPOSITORY_DIR + this.service.getId() + ".n33";
+		String service_desc_file = ServiceRepository.Instance().SERVICE_REPOSITORY_DIR + this.service.getId() + ".n3";
 		OutputStreamWriter output = new OutputStreamWriter(new FileOutputStream(service_desc_file));
 		model.write(output,"N3");
 

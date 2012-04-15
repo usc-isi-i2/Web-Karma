@@ -63,6 +63,10 @@ public class ServiceRepository {
 	}
 	
 	public void addModel(Model m, String name) {
+		if (name == null) {
+			logger.info("cannot add the model because the given name is null.");
+			return;
+		}
 		
 		Model namedModel = this.dataset.getNamedModel(name); 
 		namedModel.removeAll();
@@ -87,11 +91,53 @@ public class ServiceRepository {
 	}
 	
 	public Model getNamedModel(String name) {
+		if (name == null) {
+			logger.info("cannot get the model because the given name is null.");
+			return null;
+		}
+		
 		if (!this.dataset.containsNamedModel(name)) {
-			logger.debug("The model: " + name + " does not exist in the service repository.");
+			logger.info("The model: " + name + " does not exist in the service repository.");
 			return null;
 		}
 		return this.dataset.getNamedModel(name);
 	}
+	
+	public void clearNamedModel(String name) {
+		if (name == null) {
+			logger.info("cannot clear the model because the given name is null.");
+			return;
+		}
+		
+		if (!this.dataset.containsNamedModel(name)) {
+			logger.info("The model: " + name + " does not exist in the service repository.");
+			return;
+		}
+		this.dataset.getNamedModel(name).removeAll();
+		this.dataset.getNamedModel(name).commit();
+	}
+
+//	public void clearResourceTriples(String modelName, String uri) {
+//		if (uri == null) {
+//			logger.info("cannot clear the resource because the given uri is null.");
+//			return;
+//		}
+//		
+//		Resource r = this.getModel().getResource(uri);
+//		if (r == null) {
+//			logger.info("The model does not contain the resource " + uri);
+//			return;
+//		}
+//		
+//		Model m = r.getModel();
+//		if (m == null) {
+//			logger.info("No model is associated to resource " + uri);
+//			return;
+//		}
+//		
+//		//TODO
+//		
+//		m.commit();
+//	}
 
 }

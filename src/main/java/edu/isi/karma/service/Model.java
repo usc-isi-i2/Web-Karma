@@ -23,7 +23,6 @@ package edu.isi.karma.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Model {
 	
@@ -107,53 +106,6 @@ public class Model {
 			logicalForm = logicalForm.substring(0, index);
 		
 		return logicalForm;
-	}
-
-	public String getSparqlWherePartForData(Map<String, String> prefixMapping) {
-		String query = "";
-		
-//		String separator = " /\\ ";
-//		for (Atom atom : atoms) {
-//			if (atom != null) {
-//				if (atom instanceof ClassAtom) {
-//					ClassAtom classAtom = ((ClassAtom)atom);
-//					query += classAtom.getClassPredicate().getLocalName();
-//					logicalForm += "(";
-//					logicalForm += classAtom.getArgument1().getLocalName();
-//					logicalForm += ")";
-//					logicalForm += separator;				
-//				}
-//				else if (atom instanceof PropertyAtom) {
-//					PropertyAtom propertyAtom = ((PropertyAtom)atom);
-//					logicalForm += propertyAtom.getPropertyPredicate().getLocalName();
-//					logicalForm += "(";
-//					logicalForm += propertyAtom.getArgument1().getLocalName();
-//					logicalForm += ",";
-//					logicalForm += propertyAtom.getArgument2().getLocalName();
-//					logicalForm += ")";
-//					logicalForm += separator;				
-//				}			
-//			}
-//		}		
-
-		
-//		String queryString =
-//			"PREFIX " + Prefixes.KARMA + ": <" + Namespaces.KARMA + "> \n" +
-//			"PREFIX " + Prefixes.WSMO_LITE + ": <" + Namespaces.WSMO_LITE + "> \n" +
-//			"PREFIX " + Prefixes.HRESTS + ": <" + Namespaces.HRESTS + "> \n" +
-//			"SELECT ?s ?name ?address \n" +
-//			"WHERE { \n" +
-//			"      ?s a " + Prefixes.WSMO_LITE + ":Service . \n" +
-//			"      OPTIONAL {?s " + Prefixes.HRESTS + ":hasAddress ?address .} \n" +
-//			"      OPTIONAL {?s " + Prefixes.KARMA + ":hasName ?name .} \n" +
-//			"      } \n";
-		
-		return query;
-	}
-	
-	public String getSparqlWherePartForServices() {
-		String query = "";
-		return query;
 	}
 
 }
