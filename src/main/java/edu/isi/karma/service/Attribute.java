@@ -23,6 +23,7 @@ package edu.isi.karma.service;
 
 public class Attribute {
 
+	private String baseUri;
 	private String id;
 	private String name;
 	private String ioType;
@@ -44,6 +45,7 @@ public class Attribute {
 		this.requirement = attribute.requirement;
 		this.groundedIn = attribute.groundedIn;
 		this.hNodeId = attribute.hNodeId;
+		this.baseUri = attribute.baseUri;
 	}
 	
 	public Attribute(String id, String name) {
@@ -61,14 +63,16 @@ public class Attribute {
 	}
 
 	
-	public Attribute(String id, String name, String ioType, AttributeRequirement requirement) {
+	public Attribute(String id, String baseUri, String name, String ioType, AttributeRequirement requirement) {
+		this.baseUri = baseUri;
 		this.id = id;
 		this.name = name;
 		this.ioType = ioType;
 		this.requirement = requirement;
 	}
 
-	public Attribute(String id, String name, String ioType, AttributeRequirement requirement, String groundedIn) {
+	public Attribute(String id, String baseUri, String name, String ioType, AttributeRequirement requirement, String groundedIn) {
+		this.baseUri = baseUri;
 		this.id = id;
 		this.name = name;
 		this.ioType = ioType;
@@ -92,6 +96,20 @@ public class Attribute {
 		this.id = id;
 	}
 
+	public String getBaseUri() {
+		return baseUri;
+	}
+
+	public void setBaseUri(String baseUri) {
+		this.baseUri = baseUri;
+	}
+
+	public String getUri() {
+		String uri = "";
+		if (getBaseUri() != null) uri += getBaseUri();
+		if (getId() != null) uri += getId();
+		return uri;
+	}
 	public String gethNodeId() {
 		return hNodeId;
 	}
@@ -137,6 +155,7 @@ public class Attribute {
 	}
 
 	public void print() {
+		System.out.println("Attribute: " + this.getUri());
 		System.out.println(getInfo());
 //		if (this.id != null && this.id.length() > 0) System.out.println("id: " + this.id);
 //		if (this.hNodeId != null && this.hNodeId.length() > 0) System.out.println("hNodeId: " + this.hNodeId);
@@ -154,7 +173,7 @@ public class Attribute {
 		s += "ioType=" + this.ioType + ", ";
 		s += "requirement=" + this.requirement + ", ";
 		s += "groundedIn=" + this.groundedIn + ", ";
-		s += "value= " + this.value;
+		s += "value= " + this.value + ", ";
 		return s;
 	}
 }

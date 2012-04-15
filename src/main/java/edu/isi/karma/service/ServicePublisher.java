@@ -53,7 +53,7 @@ public class ServicePublisher {
 //		Model model = maker.createModel(baseNS);
 		Model model = ModelFactory.createDefaultModel();
 		
-		String baseNS = service.getId();
+		String baseNS = service.getUri();
 		model.setNsPrefix("", baseNS);
 		model.setNsPrefix(Prefixes.KARMA, Namespaces.KARMA);
 		model.setNsPrefix(Prefixes.RDF, Namespaces.RDF);
@@ -120,7 +120,7 @@ public class ServicePublisher {
 		if (this.model == null)
 			model = generateModel();
 		
-		String service_desc_file = ServiceRepository.Instance().SERVICE_REPOSITORY_DIR + this.service.getLocalId() + ".n3";
+		String service_desc_file = ServiceRepository.Instance().SERVICE_REPOSITORY_DIR + this.service.getId() + ".n33";
 		OutputStreamWriter output = new OutputStreamWriter(new FileOutputStream(service_desc_file));
 		model.write(output,"N3");
 
@@ -129,7 +129,7 @@ public class ServicePublisher {
 //		model.write(output,"RDF/XML");
 		
 		// update the repository active model
-		ServiceRepository.Instance().addModel(this.model, service.getId());
+		ServiceRepository.Instance().addModel(this.model, service.getUri());
 
 	}
 	
@@ -219,7 +219,7 @@ public class ServicePublisher {
 					my_attribute.addLiteral(is_grounded_in, ground_literal);
 				}
 
-				addModelPart(model, my_input, op.getInputModel(), op.getId() + "_inputModel");
+				addModelPart(model, my_input, op.getInputModel());
 			}
 
 			if (op.getOutputAttributes() != null) {
@@ -245,13 +245,13 @@ public class ServicePublisher {
 					my_attribute.addProperty(has_name, op.getOutputAttributes().get(i).getName());
 //					my_part.addProperty(model_reference, XSDDatatype.XSDstring.getURI());
 				}
-				addModelPart(model, my_output, op.getOutputModel(), op.getId() + "_outputModel");
+				addModelPart(model, my_output, op.getOutputModel());
 			}
 
 		}
 	}
 	
-	public void addModelPart(Model model, Resource resource, edu.isi.karma.service.Model semanticModel, String modelName) {
+	public void addModelPart(Model model, Resource resource, edu.isi.karma.service.Model semanticModel) {
 
 		if (semanticModel == null)
 			return;
@@ -271,7 +271,7 @@ public class ServicePublisher {
 		Property has_argument1 = model.createProperty(Namespaces.SWRL, "argument1");
 		Property has_argument2 = model.createProperty(Namespaces.SWRL, "argument2");
 
-		Resource my_model = model.createResource(baseNS + modelName);
+		Resource my_model = model.createResource(baseNS + semanticModel.getId());
 		my_model.addProperty(rdf_type, model_resource);
 		resource.addProperty(has_model, my_model);
 		

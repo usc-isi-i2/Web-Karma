@@ -42,6 +42,8 @@ import edu.isi.karma.modeling.alignment.Name;
 
 public class ServiceLoader {
 
+	private static final int DEFAULT_RESULTS_SIZE = 10;
+	
 	static Logger logger = Logger.getLogger(ServiceLoader.class);
 
 	public static Service getServiceByAddress(String address) {
@@ -66,9 +68,10 @@ public class ServiceLoader {
 	
 	/**
 	 * returns the service id, name, address of all services in the repository
+	 * @param limit : maximum number of results, null value means all the services
 	 * @return
 	 */
-	public static List<Service> getAllServices() {
+	public static List<Service> getAllServices(Integer limit) {
 		
 		List<Service> serviceList = new ArrayList<Service>();
 		
@@ -89,6 +92,10 @@ public class ServiceLoader {
 			"      OPTIONAL {?s " + Prefixes.HRESTS + ":hasAddress ?address .} \n" +
 			"      OPTIONAL {?s " + Prefixes.KARMA + ":hasName ?name .} \n" +
 			"      } \n";
+		if (limit != null) {
+			if (limit.intValue() < 0) limit = DEFAULT_RESULTS_SIZE;
+			queryString += "LIMIT " + String.valueOf(limit.intValue() + "\n");
+		}
 		
 		logger.debug("query= \n" + queryString);
 		
@@ -117,7 +124,10 @@ public class ServiceLoader {
 					continue;
 				}
 
-				service_id = s.toString();
+				String service_uri = s.toString();
+				service_id = service_uri.substring(service_uri.lastIndexOf("/") + 1, service_uri.length() - 1);
+
+				logger.debug("service uri: " + service_uri);
 				logger.debug("service id: " + service_id);
 				if (name != null && name.isLiteral()) service_name = name.asLiteral().getString();
 				logger.debug("service name: " + service_name);
@@ -145,12 +155,90 @@ public class ServiceLoader {
 	 * information takes long time.
 	 * @return
 	 */
-	public static List<Service> getAllServicesComplete() {
-		List<Service> serviceList = getAllServices();
+	public static List<Service> getAllServicesComplete(Integer limit) {
+		List<Service> serviceList = getAllServices(limit);
+		List<Service> serviceListCompleteInfo = new ArrayList<Service>();
 		for (Service s : serviceList) {
-			s = getServiceByUri(s.getId());
+			serviceListCompleteInfo.add(getServiceByUri(s.getUri()));
 		}
-		return serviceList;
+		return serviceListCompleteInfo;
+	}
+	
+	/**
+	 * returns all the services in the repository whose input/output model matches the semantic model parameter
+	 * @param semanticModel
+	 * @param ioType declares which one of the service input or service output will be tested for matching
+	 * @return
+	 */
+	public static List<Service> getServicesByIOPattern(edu.isi.karma.service.Model semanticModel, 
+			IOType ioType, Integer limit) {
+		
+		Model model = ServiceRepository.Instance().getModel();
+		
+		// Create a new query
+		String queryString =
+			"PREFIX " + Prefixes.KARMA + ": <" + Namespaces.KARMA + "> \n" +
+			"PREFIX " + Prefixes.WSMO_LITE + ": <" + Namespaces.WSMO_LITE + "> \n" +
+			"PREFIX " + Prefixes.HRESTS + ": <" + Namespaces.HRESTS + "> \n" +
+			"SELECT ?s ?name ?address \n" +
+			"WHERE { \n" +
+			"      ?s a " + Prefixes.WSMO_LITE + ":Service . \n" +
+			"      OPTIONAL {?s " + Prefixes.HRESTS + ":hasAddress ?address .} \n" +
+			"      OPTIONAL {?s " + Prefixes.KARMA + ":hasName ?name .} \n" +
+			"      } \n";
+		if (limit != null) {
+			if (limit.intValue() < 0) limit = DEFAULT_RESULTS_SIZE;
+			queryString += "LIMIT " + String.valueOf(limit.intValue() + "\n");
+		}
+		
+		logger.debug("query= \n" + queryString);
+		
+		Query query = QueryFactory.create(queryString);
+		// Execute the query and obtain results
+		QueryExecution qexec = QueryExecutionFactory.create(query, model);
+
+		try {
+//			ResultSet results = qexec.execSelect() ;
+//			
+//			if (!results.hasNext())
+//				logger.info("query does not return any answer.");
+//
+////			ResultSetFormatter.out(System.out, results, query) ;
+//			 
+//			for ( ; results.hasNext() ; )
+//			{
+//				QuerySolution soln = results.nextSolution() ;
+//				
+//				RDFNode s = soln.get("s") ;       // Get a result variable by name.
+//				RDFNode name = soln.get("name") ;       // Get a result variable by name.
+//				RDFNode address = soln.get("address") ;       // Get a result variable by name.
+//
+//				if (s == null) {
+//					logger.info("service id is null.");
+//					continue;
+//				}
+//
+//				service_id = s.toString();
+//				logger.debug("service id: " + service_id);
+//				if (name != null && name.isLiteral()) service_name = name.asLiteral().getString();
+//				logger.debug("service name: " + service_name);
+//				if (address != null && address.isLiteral()) service_address = address.asLiteral().getString();
+//				logger.debug("service address: " + service_address);
+//				
+//				if (service_id.trim().length() > 0)
+//					serviceList.add(new Service(service_id, service_name, service_address));
+//				else
+//					logger.info("length of service id is zero.");
+//			}
+//			
+//			return serviceList;
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+			return null;
+		} finally { 
+			qexec.close() ; 
+		}
+		return null;
 	}
 	
 	private static Model getJenaModelByServiceAddress(String address) {
@@ -212,30 +300,26 @@ public class ServiceLoader {
 		logger.debug("model size: " + model.getGraph().size());
 		
 		String service_name = "";
+		String service_uri = "";
 		String service_id = "";
-		String service_localId = "";
 		String service_address = "";
-		
-		
 		
 		Service service = new Service();
 		List<Operation> operations = new ArrayList<Operation>();
 		
-		String serviceUri = model.getNsPrefixURI("");
-		
 		// service id
-		service_id = serviceUri;
-		logger.debug("service id: " + service_id);
+		service_uri = model.getNsPrefixURI("");
+		logger.debug("service uri: " + service_uri);
 		
 		// service local id
-		service_localId = service_id.substring(service_id.lastIndexOf("/") + 1, service_id.length() - 1);
-		logger.debug("service local id: " + service_localId);
+		service_id = service_uri.substring(service_uri.lastIndexOf("/") + 1, service_uri.length() - 1);
+		logger.debug("service id: " + service_id);
 		
 		Property has_address_property = model.getProperty(Namespaces.HRESTS + "hasAddress");
 		Property has_name_property = model.getProperty(Namespaces.KARMA + "hasName");
 		Property has_operation_property = model.getProperty(Namespaces.WSMO_LITE + "hasOperation");
 		
-		Resource service_resource = model.getResource(serviceUri);
+		Resource service_resource = model.getResource(service_uri);
 		
 		NodeIterator nodeIterator = null;
 		RDFNode node = null;
@@ -256,7 +340,6 @@ public class ServiceLoader {
 		} else
 			logger.debug("service does not have an address.");
 
-		
 		// operations
 		nodeIterator = model.listObjectsOfProperty(service_resource, has_operation_property);
 		while ( nodeIterator.hasNext()) {
@@ -291,15 +374,16 @@ public class ServiceLoader {
 		Property has_input_property = model.getProperty(Namespaces.KARMA + "hasInput");
 		Property has_output_property = model.getProperty(Namespaces.KARMA + "hasOutput");
 		
-		Operation op = new Operation();
+
+		// operation id
+		op_id = op_resource.getLocalName();
+		logger.debug("operation id: " + op_id);
+
+		Operation op = new Operation(op_id);
 		List<Attribute> inputAttributes = null;;
 		List<Attribute> outputAttributes = null;
 		edu.isi.karma.service.Model inputModel = null;
 		edu.isi.karma.service.Model outputModel = null;
-		
-		// operation id
-		op_id = op_resource.getLocalName();
-		logger.debug("operation id: " + op_id);
 
 		NodeIterator nodeIterator = null;
 		RDFNode node = null;
@@ -447,9 +531,9 @@ public class ServiceLoader {
 
 		Attribute att = null;
 		if (att_groundedIn.length() > 0)
-			att = new Attribute(att_id, att_name, ioType, requirement, att_groundedIn);
+			att = new Attribute(att_id, att_resource.getNameSpace(), att_name, ioType, requirement, att_groundedIn );
 		else
-			att = new Attribute(att_id, att_name, ioType, requirement);
+			att = new Attribute(att_id, att_resource.getNameSpace(), att_name, ioType, requirement);
 		
 		return att;
 
@@ -460,9 +544,6 @@ public class ServiceLoader {
 		Property has_model_property = model.getProperty(Namespaces.KARMA + "hasModel");
 		Property has_atom_property = model.getProperty(Namespaces.KARMA + "hasAtom");
 		
-		edu.isi.karma.service.Model semanticModel = new edu.isi.karma.service.Model();
-		List<Atom> atoms = new ArrayList<Atom>();
-		
 		NodeIterator nodeIterator = null;
 		RDFNode modelNode = null;
 		RDFNode atomNode = null;
@@ -471,9 +552,14 @@ public class ServiceLoader {
 		nodeIterator = model.listObjectsOfProperty(io_resource, has_model_property);
 		if (!nodeIterator.hasNext() || !(modelNode = nodeIterator.next()).isResource()) {
 			logger.debug("There is no model resource.");
-			return semanticModel;
+			return null;
 		}
+
+		edu.isi.karma.service.Model semanticModel = 
+			new edu.isi.karma.service.Model(modelNode.asResource().getLocalName());
+		List<Atom> atoms = new ArrayList<Atom>();
 		
+
 		// hasAtom
 		nodeIterator = model.listObjectsOfProperty(modelNode.asResource(), has_atom_property);
 		while ( nodeIterator.hasNext()) {
@@ -629,15 +715,15 @@ public class ServiceLoader {
 
 //		ServiceBuilder.main(new String[0]);
 		
-		String address = "http://api.geonames.org/";
-		Service service = ServiceLoader.getServiceByAddress(address);
-		if (service != null) service.print();
+//		String address = "http://api.geonames.org/";
+//		Service service = ServiceLoader.getServiceByAddress(address);
+//		if (service != null) service.print();
 
 //		String uri = "http://isi.edu/integration/karma/services/E9C3F8D3-F778-5C4B-E089-C1749D50AE1F#";
 //		Service service = ServiceLoader.getServiceByUri(uri);
 //		if (service != null) service.print();
 		
-		List<Service> serviceList = getAllServices();
+		List<Service> serviceList = getAllServicesComplete(DEFAULT_RESULTS_SIZE);
 		for (Service s : serviceList) {
 			if (s != null) s.print();
 		}

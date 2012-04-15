@@ -163,19 +163,19 @@ public class ServiceBuilder {
 		
 		String address = URLManager.getServiceAddress(sampleUrl);
 		
-//		String guid = "623607FC-AF72-CB84-0304-9392FEEB74FC";
 		String guid = new RandomGUID().toString();
-		service.setId(Service.KARMA_SERVICE_PREFIX + guid + "#");
+		// FIXME
+		guid = "E9C3F8D3-F778-5C4B-E089-C1749D50AE1F";
+		service.setId(guid);
 		service.setName(this.serviceName);
 		service.setDescription("");
 		service.setAddress(address);
 		
-		Operation op = new Operation();
+		Operation op = new Operation("op1");
 		
 		String operationName = URLManager.getOperationName(sampleUrl);
 		String operationAddress = URLManager.getOperationAddress(sampleUrl);
 
-		op.setId("op1");
 		op.setName(operationName);
 		op.setAddress(operationAddress);
 		op.setDescription("");

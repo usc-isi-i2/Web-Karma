@@ -29,7 +29,6 @@ public class Service {
 	public static final String KARMA_SERVICE_PREFIX = "http://isi.edu/integration/karma/services/";
 
 	private String id;
-	private String localId;
 	private String name;
 	private String address;
 	private String description;
@@ -47,21 +46,16 @@ public class Service {
 		this.operations = new ArrayList<Operation>();
 	}
 	
-	public String getLocalId() {
-		return localId;
+	public String getUri() {
+		return KARMA_SERVICE_PREFIX + getId() + "#";
 	}
 
 	public String getId() {
 		return id;
 	}
-
+	
 	public void setId(String id) {
 		this.id = id;
-		
-		String s = id.replaceFirst(KARMA_SERVICE_PREFIX, "");
-		s = s.substring(0, s.length() - 1);
-		
-		this.localId = s;
 	}
 
 	public void setAddress(String address) {
@@ -93,14 +87,16 @@ public class Service {
 	}
 
 	public void setOperations(List<Operation> operations) {
+		for (Operation op : operations)
+			op.updateBaseUri(this.getUri());
 		this.operations = operations;
 	}
 
 	public String getInfo() {
 		String s = "";
 		
-		s += "id=" + this.getId() + "\n";
-		s += "local id=" + this.getLocalId() + ", ";
+		s += "uri" + this.getUri() + "\n";
+		s += "id=" + this.getId() + ", ";
 		s += "name=" + this.getName() + ", ";
 		s += "address=" + this.getAddress();
 		
