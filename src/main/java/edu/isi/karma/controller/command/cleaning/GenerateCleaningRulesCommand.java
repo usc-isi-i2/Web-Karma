@@ -152,10 +152,21 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		RamblerValueCollection vc = new RamblerValueCollection(rows);
 		inputs = new RamblerTransformationInputs(examples, vc);
 		//generate the program
-		RamblerTransformationOutput rtf = new RamblerTransformationOutput(inputs);
-		HashMap<String,Vector<String>> js2tps = new HashMap<String,Vector<String>>();
+		boolean results = false;
+		int iterNum = 0;
+		RamblerTransformationOutput rtf = null;
+		while(iterNum<3 && !results)
+		{
+			rtf = new RamblerTransformationOutput(inputs);
+			if(rtf.getTransformations().keySet().size()>0)
+			{
+				results = true;
+			}
+			iterNum ++;
+		}
 		Iterator<String> iter = rtf.getTransformations().keySet().iterator();
 		Vector<ValueCollection> vvc = new Vector<ValueCollection>();
+		HashMap<String,Vector<String>> js2tps = new HashMap<String,Vector<String>>();
 		int index = 0;
 		while(iter.hasNext())
 		{
@@ -175,7 +186,15 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			}
 		}
 		////////
-		Vector<String> jsons = getTopK(js2tps.keySet(), 3);
+		Vector<String> jsons = new Vector<String>();
+		if(js2tps.keySet().size()!=0)
+		{
+			jsons = getTopK(js2tps.keySet(), 3);
+		}
+		else
+		{
+			System.out.println("Didn't find any transformation programs");
+		}
 		
 		return new UpdateContainer(new CleaningResultUpdate(hNodeId, jsons,js2tps));
 	}
@@ -243,6 +262,11 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 						}
 					}
 					////////
+					if(js2tps.keySet().size() == 0)
+					{
+						System.out.println("No Rules have been found");
+						return; 
+					}
 					Vector<String> jsons = getTopK(js2tps.keySet(), 3);
 					for(String s:jsons)
 					{

@@ -200,13 +200,13 @@ public class UtilTools {
 			}
 			catch(Exception ex)
 			{
-				System.out.println(""+ex.toString());
+				System.out.println("get Scores error: "+ex.toString());
 				return null;
 			}
 		}
 		catch(Exception ex)
 		{
-			System.out.println(""+ex.toString());
+			System.out.println("Get Scores error: "+ex.toString());
 		}
 		return vds;
 	}
