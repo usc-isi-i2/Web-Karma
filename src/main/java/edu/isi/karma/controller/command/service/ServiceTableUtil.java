@@ -78,6 +78,7 @@ public class ServiceTableUtil {
 			HNode hNode = headers.addHNode(att.getName(), worksheet, factory);
 			headersList.add(hNode.getId());
 			
+			// very important 
 			// update the hNodeId of the input/output attributes
 			att.sethNodeId(hNode.getId());
 		}

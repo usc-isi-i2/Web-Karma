@@ -22,11 +22,14 @@
 package edu.isi.karma.service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 import org.apache.log4j.Logger;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.tdb.TDB;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.tdb.base.file.Location;
@@ -116,7 +119,48 @@ public class ServiceRepository {
 		this.dataset.getNamedModel(name).removeAll();
 		this.dataset.getNamedModel(name).commit();
 	}
+	
+	/**
+	 * imports the named model from a directory or a file
+	 * @param lang The language of the file specified by the lang argument. 
+	 * Predefined values are "RDF/XML", "RDF/XML-ABBREV", "N-TRIPLE", "TURTLE", (and "TTL") and "N3". 
+	 * The default value, represented by null is "RDF/XML".
+	 * @param path
+	 */
+	public void importModel(File file, String lang) {
+		if (!file.exists()) {
+			logger.error("cannot find the file/dir at " + file.getAbsolutePath());
+			return;
+		}
+		
+		if (file.isFile()) {
+			importModelFromSingleFile(file, lang);
+		} else if (file.isDirectory()) {
+			for (File f : file.listFiles()) {
+				importModelFromSingleFile(f, lang);
+			}
+		}
+		
 
+	}
+	
+	private void importModelFromSingleFile(File file, String lang) {
+		Model m = ModelFactory.createDefaultModel();
+		
+		try {
+			InputStream s = new FileInputStream(file);
+			m.read(s, null);
+			
+			this.addModel(m, file.getName());
+			
+			logger.info("The model " + file.getPath() + " successfully imported to repository");
+			
+		} catch (Throwable t) {
+			logger.error("Error reading the model file!", t);
+			return;
+		}		
+	}
+	
 //	public void clearResourceTriples(String modelName, String uri) {
 //		if (uri == null) {
 //			logger.info("cannot clear the resource because the given uri is null.");

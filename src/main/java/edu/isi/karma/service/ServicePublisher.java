@@ -71,7 +71,14 @@ public class ServicePublisher {
 		
 	}
 	
-	public void publish() throws FileNotFoundException {
+	/**
+	 * 
+	 * @param lang The language in which to write the model is specified by the lang argument. 
+	 * Predefined values are "RDF/XML", "RDF/XML-ABBREV", "N-TRIPLE", "TURTLE", (and "TTL") and "N3". 
+	 * The default value, represented by null is "RDF/XML".
+	 * @throws FileNotFoundException
+	 */
+	public void publish(String lang, boolean writeToFile) throws FileNotFoundException {
 		
 		Service existingService = ServiceLoader.getServiceByAddress(this.service.getAddress(), null);
 		
@@ -120,17 +127,25 @@ public class ServicePublisher {
 		if (this.model == null)
 			model = generateModel();
 		
+		// update the repository active model
+		ServiceRepository.Instance().addModel(this.model, service.getUri());
+
+		// write the model to the file
+		if (writeToFile)
+			writeToFile(lang);
+	}
+	
+	public void writeToFile(String lang) throws FileNotFoundException {
+		if (this.model == null)
+			model = generateModel();
+		
 		String service_desc_file = ServiceRepository.Instance().SERVICE_REPOSITORY_DIR + this.service.getId() + ".n3";
 		OutputStreamWriter output = new OutputStreamWriter(new FileOutputStream(service_desc_file));
-		model.write(output,"N3");
-
+		model.write(output,lang);		
 //		model.write(output,"RDF/XML-ABBREV");
 //		model.write(output,"N-TRIPLE");
 //		model.write(output,"RDF/XML");
 		
-		// update the repository active model
-		ServiceRepository.Instance().addModel(this.model, service.getUri());
-
 	}
 	
 	public void addInvocationPart(Model model) {

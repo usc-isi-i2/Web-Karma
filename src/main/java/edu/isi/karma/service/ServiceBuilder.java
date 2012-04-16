@@ -224,7 +224,8 @@ public class ServiceBuilder {
 			service.getOperations().get(0).updateModel(Test.getGeoNamesNeighbourhoodTree());
 			
 			ServicePublisher servicePublisher = new ServicePublisher(service);
-			servicePublisher.publish();
+			servicePublisher.publish("N3", true);
+//			servicePublisher.writeToFile("N3");
 
 		} catch (Exception e) {
 			e.printStackTrace();

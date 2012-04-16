@@ -127,7 +127,7 @@ public class Worksheet extends RepEntity {
 		dataTable.addNestedTableToDataTable(hNode, factory);
 	}
 	
-	public boolean containServiceModel() {
+	public boolean containService() {
 		if (this.getMetadataContainer() == null)
 			return false;
 		
