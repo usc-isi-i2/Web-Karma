@@ -113,7 +113,7 @@ public class ServiceRepository {
 		}
 		
 		if (!this.dataset.containsNamedModel(name)) {
-			logger.info("The model: " + name + " does not exist in the service repository.");
+			logger.info("The model " + name + " does not exist in the service repository.");
 			return;
 		}
 		this.dataset.getNamedModel(name).removeAll();

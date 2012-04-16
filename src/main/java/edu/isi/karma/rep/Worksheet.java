@@ -84,6 +84,10 @@ public class Worksheet extends RepEntity {
 		return metadataContainer;
 	}
 
+	public void setMetadataContainer(MetadataContainer metadataContainer) {
+		this.metadataContainer = metadataContainer;
+	}
+
 	/**
 	 * When a new HNode is added to a table or one of the nested tables, we need
 	 * to go through and add place holders in the data table to hold the values

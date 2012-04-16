@@ -88,7 +88,8 @@ public class Service {
 
 	public void setOperations(List<Operation> operations) {
 		for (Operation op : operations)
-			op.updateBaseUri(this.getUri());
+			if (op != null)
+				op.updateBaseUri(this.getUri());
 		this.operations = operations;
 	}
 

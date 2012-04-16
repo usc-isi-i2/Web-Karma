@@ -93,8 +93,12 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			
 			Service service = sb.getInitialServiceModel();
 			MetadataContainer metaData = wk.getMetadataContainer();
-			if (metaData == null) metaData = new MetadataContainer();
+			if (metaData == null) {
+				metaData = new MetadataContainer();
+				wk.setMetadataContainer(metaData);
+			}
 			metaData.setService(service);
+			logger.info("Service added to the Worksheet.");
 
 		} catch (MalformedURLException e) {
 			logger.error("Malformed service request URL.");

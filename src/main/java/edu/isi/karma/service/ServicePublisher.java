@@ -98,7 +98,8 @@ public class ServicePublisher {
 				logger.debug("new operation: " + newServiceOpName);
 				
 				boolean found = false;
-				for (Operation existingServiceOp : existingService.getOperations()) {
+				for (int j = 0; j < existingService.getOperations().size(); j++) {
+					Operation existingServiceOp = existingService.getOperations().get(j);
 					existingServiceOpId = existingServiceOp.getId();
 					existingServiceOpName = existingServiceOp.getName();
 					logger.debug("existing operation: " + existingServiceOpName);
@@ -108,7 +109,8 @@ public class ServicePublisher {
 					if (newServiceOpName.equalsIgnoreCase(existingServiceOpName)) {
 						logger.info("The repository has already a model of the operation " + newServiceOpName + " and it should be updated.");
 						newServiceOp.updateId(existingServiceOpId);
-						existingServiceOp = newServiceOp;
+						existingService.getOperations().remove(j);
+						existingService.getOperations().add(j, newServiceOp);
 						found = true;
 						break;
 					}
@@ -268,8 +270,10 @@ public class ServicePublisher {
 	
 	public void addModelPart(Model model, Resource resource, edu.isi.karma.service.Model semanticModel) {
 
-		if (semanticModel == null)
+		if (semanticModel == null) {
+			logger.info("The semantic model is null");
 			return;
+		}
 		
 		String baseNS = model.getNsPrefixURI("");
 		

@@ -62,7 +62,7 @@ public class PublishServiceModelCommand extends Command{
 
 	@Override
 	public String getTitle() {
-		return "Modeling the Service";
+		return "Publishing the Service Model";
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class PublishServiceModelCommand extends Command{
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		
 		Workspace ws = vWorkspace.getWorkspace();
-		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(this.vWorksheetId);
+		Worksheet wk = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 
 		if (!wk.containService()) { 
 			logger.error("The worksheet does not have a service object.");
@@ -100,23 +100,19 @@ public class PublishServiceModelCommand extends Command{
 		String alignmentId = mgr.constructAlignmentId(ws.getId(), vWorksheetId);
 		Alignment al = mgr.getAlignment(alignmentId);
 		
-		if (al == null) {
+		if (al == null) 
 			logger.error("The alignment model is null.");
-			return new UpdateContainer(new ErrorUpdate(
-					"Error occured while publishing the model. The alignment object is null."));
+		else {
+			DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = al.getSteinerTree();
+			
+			if (tree == null) 
+				logger.error("The alignment tree is null.");
+			else
+				op.updateModel(tree);
 		}
 		
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = al.getSteinerTree();
-		
-		if (tree == null) {
-			logger.error("The alignment tree is null.");
-			return new UpdateContainer(new ErrorUpdate(
-					"Error occured while publishing the model. The alignment tree is null."));
-		}
 		
 		try {
-			
-			op.updateModel(tree);
 			ServicePublisher servicePublisher = new ServicePublisher(service);
 			servicePublisher.publish("N3", true);
 
