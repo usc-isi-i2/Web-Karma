@@ -42,4 +42,19 @@ public class ClassAtom extends Atom {
 	}
 	
 	
+	public void setClassPredicate(Name classPredicate) {
+		this.classPredicate = classPredicate;
+	}
+
+	public void setArgument1(Name argument1) {
+		this.argument1 = argument1;
+	}
+
+	public void print() {
+		System.out.println("class predicate uri: " + classPredicate.getUri());
+		System.out.println("class predicate ns: " + classPredicate.getNs());
+		System.out.println("class predicate prefix: " + classPredicate.getPrefix());
+		System.out.println("argument1: " + argument1.getUri());
+	}
+	
 }

@@ -26,12 +26,39 @@ import java.util.List;
 
 public class Model {
 	
+	private String id;
+	private String baseUri;
+	
 	private List<Atom> atoms;
 
-	public Model() {
+	public Model(String id) {
+		this.id = id;
 		atoms = new ArrayList<Atom>();
 	}
 	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getBaseUri() {
+		return baseUri;
+	}
+
+	public void setBaseUri(String baseUri) {
+		this.baseUri = baseUri;
+	}
+
+	public String getUri() {
+		String uri = "";
+		if (getBaseUri() != null) uri += getBaseUri();
+		if (getId() != null) uri += getId();
+		return uri;
+	}
+
 	public List<Atom> getAtoms() {
 		return atoms;
 	}
@@ -39,5 +66,46 @@ public class Model {
 	public void setAtoms(List<Atom> atoms) {
 		this.atoms = atoms;
 	}
+
+	public void print() {
+		System.out.println("model id=" + this.getId());
+		System.out.println(getLogicalForm());
+//		for (Atom atom : atoms) {
+//			System.out.println("@@@@@@@@@@@@@@@");
+//			if (atom != null) atom.print();
+//		}
+	}
 	
+	public String getLogicalForm() {
+		String logicalForm = "";
+		String separator = " /\\ ";
+		for (Atom atom : atoms) {
+			if (atom != null) {
+				if (atom instanceof ClassAtom) {
+					ClassAtom classAtom = ((ClassAtom)atom);
+					logicalForm += classAtom.getClassPredicate().getLocalName();
+					logicalForm += "(";
+					logicalForm += classAtom.getArgument1().getLocalName();
+					logicalForm += ")";
+					logicalForm += separator;				
+				}
+				else if (atom instanceof PropertyAtom) {
+					PropertyAtom propertyAtom = ((PropertyAtom)atom);
+					logicalForm += propertyAtom.getPropertyPredicate().getLocalName();
+					logicalForm += "(";
+					logicalForm += propertyAtom.getArgument1().getLocalName();
+					logicalForm += ",";
+					logicalForm += propertyAtom.getArgument2().getLocalName();
+					logicalForm += ")";
+					logicalForm += separator;				
+				}			
+			}
+		}		
+		int index = logicalForm.lastIndexOf(separator);
+		if (index != -1)
+			logicalForm = logicalForm.substring(0, index);
+		
+		return logicalForm;
+	}
+
 }

@@ -22,7 +22,7 @@
 package edu.isi.karma.service;
 
 public enum AttributeRequirement {
+	NONE,
 	MANDATORY,
-	OPTIONAL,
-	NONE
+	OPTIONAL
 }

@@ -40,6 +40,7 @@ public class Operation {
 
 	static Logger logger = Logger.getLogger(Operation.class);
 
+	private String baseUri;
 	private String id;
 	private String name;
 	private String description;
@@ -58,7 +59,8 @@ public class Operation {
 	
 	private HashMap<String, Attribute> hNodeIdToAttribute;
 	
-	public Operation() {
+	public Operation(String id) {
+		this.id = id;
 		hNodeIdToAttribute = new HashMap<String, Attribute>();
 		variables = new ArrayList<String>();
 		inputAttributes = new ArrayList<Attribute>();
@@ -72,12 +74,28 @@ public class Operation {
 	public void setId(String id) {
 		this.id = id;
 	}
+	
+	public String getBaseUri() {
+		return baseUri;
+	}
+
+	public void setBaseUri(String baseUri) {
+		this.baseUri = baseUri;
+	}
+
+	public String getUri() {
+		String uri = "";
+		if (getBaseUri() != null) uri += getBaseUri();
+		if (getId() != null) uri += getId();
+		return uri;
+	}
 
 	public Model getInputModel() {
 		return inputModel;
 	}
 
 	public void setInputModel(Model inputModel) {
+		inputModel.setBaseUri(this.getBaseUri());
 		this.inputModel = inputModel;
 	}
 
@@ -86,6 +104,7 @@ public class Operation {
 	}
 
 	public void setOutputModel(Model outputModel) {
+		outputModel.setBaseUri(this.getBaseUri());
 		this.outputModel = outputModel;
 	}
 
@@ -118,10 +137,9 @@ public class Operation {
 	}
 
 	public void setInputAttributes(List<Attribute> inputAttributes) {
+		for (Attribute att : inputAttributes)
+			att.setBaseUri(this.getBaseUri());
 		this.inputAttributes = inputAttributes;
-		for (Attribute att : this.inputAttributes)
-			att.setId(this.getId() + "_" + att.getId());
-
 	}
 
 	public List<Attribute> getOutputAttributes() {
@@ -129,13 +147,9 @@ public class Operation {
 	}
 
 	public void setOutputAttributes(List<Attribute> outputAttributes) {
+		for (Attribute att : outputAttributes)
+			att.setBaseUri(this.getBaseUri());
 		this.outputAttributes = outputAttributes;
-		for (Attribute att : this.outputAttributes)
-			att.setId(this.getId() + "_" + att.getId());
-	}
-
-	public String getAddress() {
-		return address;
 	}
 
 	public void setAddress(String address) {
@@ -151,6 +165,10 @@ public class Operation {
 	}
 
 	
+	public void setAddressTemplate(String addressTemplate) {
+		this.addressTemplate = addressTemplate;
+	}
+
 	public List<String> getVariables() {
 		return variables;
 	}
@@ -163,8 +181,85 @@ public class Operation {
 		this.hNodeIdToAttribute = hNodeIdToAttribute;
 	}
 
+	public void updateId(String newId) {
+		
+		String oldId = this.getId();
+		this.setId(newId);
+		
+		// update the id of input attributes
+		for (Attribute att : this.getInputAttributes())
+			att.setId(att.getId().replaceFirst(oldId, newId));
+		// update the id of output attributes
+		for (Attribute att : this.getOutputAttributes())
+			att.setId(att.getId().replaceFirst(oldId, newId));
+		// update the id of atoms in input model
+		if (this.inputModel != null) {
+			
+			if (this.inputModel.getId() != null)
+				this.inputModel.setId(this.inputModel.getId().replaceFirst(oldId, newId));
+			
+			if (this.inputModel.getAtoms() != null) {
+				for (Atom atom : this.inputModel.getAtoms()) {
+					if (atom instanceof ClassAtom) {
+						ClassAtom classAtom = ((ClassAtom) atom);
+						if (classAtom.getArgument1() != null)
+							classAtom.getArgument1().setUri(classAtom.getArgument1().getUri().replaceFirst(oldId, newId));
+					}
+					if (atom instanceof PropertyAtom) {
+						PropertyAtom propertyAtom = ((PropertyAtom) atom);
+						if (propertyAtom.getArgument1() != null)
+							propertyAtom.getArgument1().setUri(propertyAtom.getArgument1().getUri().replaceFirst(oldId, newId));
+						if (propertyAtom.getArgument2() != null)
+							propertyAtom.getArgument2().setUri(propertyAtom.getArgument2().getUri().replaceFirst(oldId, newId));
+					}
+				}
+			}
+		}
+		// update the id of atoms in output model
+		if (this.outputModel != null) {
+			
+			if (this.outputModel.getId() != null)
+				this.outputModel.setId(this.outputModel.getId().replaceFirst(oldId, newId));
+			
+			if (this.outputModel.getAtoms() != null) {
+				for (Atom atom : this.outputModel.getAtoms()) {
+					if (atom instanceof ClassAtom) {
+						ClassAtom classAtom = ((ClassAtom) atom);
+						if (classAtom.getArgument1() != null)
+							classAtom.getArgument1().setUri(classAtom.getArgument1().getUri().replaceFirst(oldId, newId));
+					}
+					if (atom instanceof PropertyAtom) {
+						PropertyAtom propertyAtom = ((PropertyAtom) atom);
+						if (propertyAtom.getArgument1() != null)
+							propertyAtom.getArgument1().setUri(propertyAtom.getArgument1().getUri().replaceFirst(oldId, newId));
+						if (propertyAtom.getArgument2() != null)
+							propertyAtom.getArgument2().setUri(propertyAtom.getArgument2().getUri().replaceFirst(oldId, newId));
+					}
+				}
+			}
+		}
+		
+	}
+	
+	public void updateBaseUri(String newBaseUri) {
+		
+		this.setBaseUri(newBaseUri);
+		
+		for (Attribute att : this.getInputAttributes())
+			att.setBaseUri(newBaseUri);
+
+		for (Attribute att : this.getOutputAttributes())
+			att.setBaseUri(newBaseUri);
+
+		if (this.inputModel != null) 
+			this.inputModel.setBaseUri(newBaseUri);
+
+		if (this.outputModel != null) 
+			this.outputModel.setBaseUri(newBaseUri);
+	}
+
 	private void doGrounding() {
-		String str = this.getAddress();
+		String str = this.address;
 		
 		if (this.address == null || this.address.length() == 0) {
 			this.addressTemplate = "";
@@ -259,7 +354,7 @@ public class Operation {
 		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodes);
 
 
-		Model m = new Model();
+		Model m = new Model(this.getId() + "_inputModel");
 		for (Vertex v : steinerTree.getSteinerTree().vertexSet()) {
 			
 			inputModelVertexes.add(v.getID());
@@ -295,7 +390,7 @@ public class Operation {
 		if (operationTreeModel == null)
 			return null;
 
-		Model m = new Model();
+		Model m = new Model(this.getId() + "_outputModel");
 		
 		for (Vertex v : operationTreeModel.vertexSet()) {
 			
@@ -337,17 +432,45 @@ public class Operation {
 				this.hNodeIdToAttribute.put(att.gethNodeId(), att);
 	}
 	
+	public String getInfo() {
+		String s = "";
+		s += "id=" + this.getId() + ", ";
+		s += "name=" + this.getName() + ", ";
+		s += "address=" + this.getAddressTemplate() + ", ";
+		s += "method=" + this.getMethod();
+		return s;
+	}
+	
 	public void print() {
-		System.out.println("name: " + this.getName());
-		System.out.println("description: " + this.getDescription());
-		System.out.println("----------------------");
-		System.out.println("input attributeeters: ");
+//		System.out.println("id: " + this.getId());
+//		System.out.println("name: " + this.getName());
+//		System.out.println("address: " + this.getAddressTemplate());
+//		System.out.println("method: " + this.getMethod());
+//		System.out.println("description: " + this.getDescription());
+
+		System.out.println("********************************************");
+		System.out.println("Operation: " + this.getUri());
+		System.out.println(getInfo());
+		System.out.println("********************************************");
+		System.out.println("Input Attributes: ");
 		for (Attribute p : getInputAttributes())
 			p.print();
-		System.out.println("----------------------");
-		System.out.println("output attributeeters: ");
+		System.out.println("********************************************");
+		System.out.print("Input Model: ");
+		if (this.inputModel != null) {
+			System.out.println(inputModel.getUri());
+			this.inputModel.print();
+		}
+		System.out.println("********************************************");
+		System.out.println("Output Attributes: ");
 		for (Attribute p : getOutputAttributes())
 			p.print();
+		System.out.println("********************************************");
+		System.out.print("Output Model: ");
+		if (this.outputModel != null) {
+			System.out.println(outputModel.getUri());
+			this.outputModel.print();
+		}
 	}
 	
 }

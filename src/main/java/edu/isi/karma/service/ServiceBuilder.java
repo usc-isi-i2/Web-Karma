@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpMethods;
 
 import edu.isi.karma.modeling.Test;
+import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.webserver.KarmaException;
 
 public class ServiceBuilder {
@@ -162,23 +163,28 @@ public class ServiceBuilder {
 		
 		String address = URLManager.getServiceAddress(sampleUrl);
 		
-		service.setId(this.serviceName);
+		String guid = new RandomGUID().toString();
+//		guid = "E9C3F8D3-F778-5C4B-E089-C1749D50AE1F";
+		service.setId(guid);
 		service.setName(this.serviceName);
 		service.setDescription("");
 		service.setAddress(address);
 		
-		Operation op = new Operation();
+		Operation op = new Operation("op1");
 		
 		String operationName = URLManager.getOperationName(sampleUrl);
 		String operationAddress = URLManager.getOperationAddress(sampleUrl);
 
-		op.setId("op1");
 		op.setName(operationName);
 		op.setAddress(operationAddress);
 		op.setDescription("");
 		op.setMethod(HttpMethods.GET);
 		op.setInputAttributes(getInputAttributes());
+		for (Attribute att : op.getInputAttributes())
+			att.setId(op.getId() + "_" + att.getId());
 		op.setOutputAttributes(getOutputAttributes());
+		for (Attribute att : op.getOutputAttributes())
+			att.setId(op.getId() + "_" + att.getId());
 		
 		List<Operation> opList = new ArrayList<Operation>();
 		opList.add(op);
@@ -217,7 +223,8 @@ public class ServiceBuilder {
 			
 			service.getOperations().get(0).updateModel(Test.getGeoNamesNeighbourhoodTree());
 			
-			service.publish(ServiceRepository.Instance().SERVICE_REPOSITORY_DIR);
+			ServicePublisher servicePublisher = new ServicePublisher(service);
+			servicePublisher.publish();
 
 		} catch (Exception e) {
 			e.printStackTrace();

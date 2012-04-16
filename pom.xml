@@ -197,7 +197,7 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jettyVersion}</version>
 <!-- change user/pwd in config/jettyrealm.properties -->
-  <configuration>
+<!--  <configuration>
    <webAppConfig>
       <contextPath>/*</contextPath>
     </webAppConfig>
@@ -208,7 +208,7 @@
       </loginService>
     </loginServices>
   </configuration>
-
+-->
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

@@ -57,4 +57,8 @@ public class AlignmentManager {
 			alignmentMap.remove(key);
 		}
 	}
+	
+	public String constructAlignmentId(String workspaceId, String vWorksheetId) {
+		return workspaceId + ":" + vWorksheetId + "AL";
+	}
 }

@@ -99,7 +99,7 @@ public class URLManager {
 	 * @return
 	 */
 	public static String getServiceAddress(URL url) {
-		String address = url.getHost() + url.getPath();
+		String address = url.getProtocol() + "://" + url.getHost() + url.getPath();
 		int index = address.lastIndexOf("/");
 		if (index != -1) {
 			address = address.substring(0, index);
@@ -215,7 +215,7 @@ public class URLManager {
 			                attributeValue = values.get(0);
 			                Attribute p = new Attribute(attributeId, attributeName, IOType.INPUT, attributeValue);
 			                attributeList.add(p);
-			                logger.debug(p.getPrintInfo());
+			                logger.debug(p.getInfo());
 		                }
 	                } catch (Exception e) {
 	                	//e.printStackTrace();

@@ -23,8 +23,11 @@ package edu.isi.karma.service;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
+
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.tdb.TDB;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.tdb.base.file.Location;
 
@@ -33,7 +36,9 @@ public class ServiceRepository {
 	public final String SERVICE_REPOSITORY_DIR = "service_repository/services/";
 	public final String TRIPLE_DATASET_DIR = "service_repository/dataset/";
 	
-	private Model model;
+	static Logger logger = Logger.getLogger(ServiceRepository.class);
+
+	private Dataset dataset;
 
 	private static ServiceRepository _InternalInstance = null;
 	public static ServiceRepository Instance()
@@ -53,15 +58,86 @@ public class ServiceRepository {
 	
 	public void createRepository() {
 		Location location = new Location(this.TRIPLE_DATASET_DIR);
-		Dataset dataset = TDBFactory.createDataset(location);
-		this.model = dataset.getDefaultModel();
+		this.dataset = TDBFactory.createDataset(location);
+//		TDB.getContext().set(TDB.symUnionDefaultGraph, true);
 	}
 	
+	public void addModel(Model m, String name) {
+		if (name == null) {
+			logger.info("cannot add the model because the given name is null.");
+			return;
+		}
+		
+		Model namedModel = this.dataset.getNamedModel(name); 
+		namedModel.removeAll();
+		namedModel.add(m.listStatements());
+		namedModel.setNsPrefixes(m.getNsPrefixMap());
+		namedModel.commit();
+		TDB.sync(this.dataset);
+	}
+	
+	/**
+	 * returns the union of all named models.
+	 * @return
+	 */
 	public Model getModel() {
-		return this.model;
+
+//		1) tdbDataset.getNamedModel("urn:x-arq:UnionGraph") does always return the union graph (even when
+//		TDB.getContext().set(TDB.symUnionDefaultGraph, true) is NOT set).
+//		2) tdbDataset.getDefaultModel() does always return the 'real' default graph which is different/independent of (1).
+//		3) so only in context of a SPARQL query the'default graph' contains the union of all named graphs.
+				
+		return this.dataset.getNamedModel("urn:x-arq:UnionGraph") ;
 	}
 	
-	public static void main(String[] args) {
-		ServiceRepository.Instance().getModel();
+	public Model getNamedModel(String name) {
+		if (name == null) {
+			logger.info("cannot get the model because the given name is null.");
+			return null;
+		}
+		
+		if (!this.dataset.containsNamedModel(name)) {
+			logger.info("The model: " + name + " does not exist in the service repository.");
+			return null;
+		}
+		return this.dataset.getNamedModel(name);
 	}
+	
+	public void clearNamedModel(String name) {
+		if (name == null) {
+			logger.info("cannot clear the model because the given name is null.");
+			return;
+		}
+		
+		if (!this.dataset.containsNamedModel(name)) {
+			logger.info("The model: " + name + " does not exist in the service repository.");
+			return;
+		}
+		this.dataset.getNamedModel(name).removeAll();
+		this.dataset.getNamedModel(name).commit();
+	}
+
+//	public void clearResourceTriples(String modelName, String uri) {
+//		if (uri == null) {
+//			logger.info("cannot clear the resource because the given uri is null.");
+//			return;
+//		}
+//		
+//		Resource r = this.getModel().getResource(uri);
+//		if (r == null) {
+//			logger.info("The model does not contain the resource " + uri);
+//			return;
+//		}
+//		
+//		Model m = r.getModel();
+//		if (m == null) {
+//			logger.info("No model is associated to resource " + uri);
+//			return;
+//		}
+//		
+//		//TODO
+//		
+//		m.commit();
+//	}
+
 }
