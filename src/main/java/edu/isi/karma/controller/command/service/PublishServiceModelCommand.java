@@ -37,7 +37,6 @@ import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.service.Operation;
 import edu.isi.karma.service.Service;
 import edu.isi.karma.service.ServicePublisher;
 import edu.isi.karma.view.VWorkspace;
@@ -88,13 +87,6 @@ public class PublishServiceModelCommand extends Command{
 		}
 
 		Service service = wk.getMetadataContainer().getService();
-		if (service.getOperations() == null || service.getOperations().size() == 0) {
-			logger.error("The service does not have any operation.");
-			return new UpdateContainer(new ErrorUpdate(
-					"Error occured while publishing the model. The service in the worksheet does not have any operation"));
-		}
-		
-		Operation op = service.getOperations().get(0);
 		
 		AlignmentManager mgr = AlignmentManager.Instance();
 		String alignmentId = mgr.constructAlignmentId(ws.getId(), vWorksheetId);
@@ -108,7 +100,7 @@ public class PublishServiceModelCommand extends Command{
 			if (tree == null) 
 				logger.error("The alignment tree is null.");
 			else
-				op.updateModel(tree);
+				service.updateModel(tree);
 		}
 		
 		

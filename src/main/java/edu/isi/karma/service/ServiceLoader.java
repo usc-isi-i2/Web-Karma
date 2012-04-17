@@ -39,6 +39,7 @@ import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 import edu.isi.karma.modeling.alignment.Name;
 
@@ -98,11 +99,10 @@ public class ServiceLoader {
 		// Create a new query
 		String queryString =
 			"PREFIX " + Prefixes.KARMA + ": <" + Namespaces.KARMA + "> \n" +
-			"PREFIX " + Prefixes.WSMO_LITE + ": <" + Namespaces.WSMO_LITE + "> \n" +
 			"PREFIX " + Prefixes.HRESTS + ": <" + Namespaces.HRESTS + "> \n" +
 			"SELECT ?s ?name ?address \n" +
 			"WHERE { \n" +
-			"      ?s a " + Prefixes.WSMO_LITE + ":Service . \n" +
+			"      ?s a " + Prefixes.KARMA + ":Service . \n" +
 			"      OPTIONAL {?s " + Prefixes.HRESTS + ":hasAddress ?address .} \n" +
 			"      OPTIONAL {?s " + Prefixes.KARMA + ":hasName ?name .} \n" +
 			"      } \n";
@@ -238,17 +238,14 @@ public class ServiceLoader {
 		// map of NS --> Prefix
 		Map<String, String> nsToPrefixMapping = new HashMap<String, String>();
 		nsToPrefixMapping.put(Namespaces.KARMA, Prefixes.KARMA);
-		nsToPrefixMapping.put(Namespaces.WSMO_LITE, Prefixes.WSMO_LITE);
 		nsToPrefixMapping.put(Namespaces.SWRL, Prefixes.SWRL);
 		nsToPrefixMapping.put(Namespaces.HRESTS, Prefixes.HRESTS);
 		
 		String select =
 			"SELECT ?s ?op \n" +
 			"WHERE { \n" +
-			"      ?s a " + Prefixes.WSMO_LITE + ":Service . \n" +
-			"      ?s " + Prefixes.WSMO_LITE + ":hasOperation ?op . \n" +
-			"      ?op a " + Prefixes.WSMO_LITE + ":Operation . \n" +
-			"      ?op " + Prefixes.KARMA + ":" + io_property + " ?io . \n" +
+			"      ?s a " + Prefixes.KARMA + ":Service . \n" +
+			"      ?s " + Prefixes.KARMA + ":" + io_property + " ?io . \n" +
 			"      ?io a " + Prefixes.KARMA + ":" + io_class + " . \n" +
 			"      ?io " + Prefixes.KARMA + ":hasModel ?model . \n" + 
 			"      ?model a " + Prefixes.KARMA + ":Model . \n";
@@ -265,7 +262,7 @@ public class ServiceLoader {
 					ClassAtom classAtom = ((ClassAtom)atom);
 					atomVar = "?atom" + String.valueOf(i+1);
 					predicateUri = classAtom.getClassPredicate().getUri();
-					argument1 = "?" + classAtom.getArgument1().getLocalName();
+					argument1 = "?" + classAtom.getArgument1().getId();
 					
 					select += 
 						"      ?model " + Prefixes.KARMA + ":hasAtom " + atomVar + " . \n" +
@@ -277,8 +274,8 @@ public class ServiceLoader {
 					PropertyAtom propertyAtom = ((PropertyAtom)atom);
 					atomVar = "?atom" + String.valueOf(i+1);
 					predicateUri = propertyAtom.getPropertyPredicate().getUri();
-					argument1 = "?" + propertyAtom.getArgument1().getLocalName();
-					argument2 = "?" + propertyAtom.getArgument2().getLocalName();
+					argument1 = "?" + propertyAtom.getArgument1().getId();
+					argument2 = "?" + propertyAtom.getArgument2().getId();
 
 					
 					select += 
@@ -368,11 +365,10 @@ public class ServiceLoader {
 		// Create a new query
 		String queryString =
 			"PREFIX " + Prefixes.KARMA + ": <" + Namespaces.KARMA + "> \n" +
-			"PREFIX " + Prefixes.WSMO_LITE + ": <" + Namespaces.WSMO_LITE + "> \n" +
 			"PREFIX " + Prefixes.HRESTS + ": <" + Namespaces.HRESTS + "> \n" +
 			"SELECT ?s \n" +
 			"WHERE { \n" +
-			"      ?s a " + Prefixes.WSMO_LITE + ":Service . \n" +
+			"      ?s a " + Prefixes.KARMA + ":Service . \n" +
 			"      ?s " + Prefixes.HRESTS + ":hasAddress \"" + address + "\"^^hrests:URITemplate . \n" +
 			"      } \n";
 		
@@ -432,7 +428,8 @@ public class ServiceLoader {
 		String service_uri = "";
 		String service_id = "";
 		String service_address = "";
-		
+		String service_method = "";
+
 		// service id
 		service_uri = model.getNsPrefixURI("");
 		logger.debug("service uri: " + service_uri);
@@ -441,13 +438,12 @@ public class ServiceLoader {
 		service_id = service_uri.substring(service_uri.lastIndexOf("/") + 1, service_uri.length() - 1);
 		logger.debug("service id: " + service_id);
 		
-		Service service = new Service(service_id);
-		List<Operation> operations = new ArrayList<Operation>();
-		
 		Property has_address_property = model.getProperty(Namespaces.HRESTS + "hasAddress");
 		Property has_name_property = model.getProperty(Namespaces.KARMA + "hasName");
-		Property has_operation_property = model.getProperty(Namespaces.WSMO_LITE + "hasOperation");
-		
+		Property has_method_property = model.getProperty(Namespaces.HRESTS + "hasMethod");
+		Property has_input_property = model.getProperty(Namespaces.KARMA + "hasInput");
+		Property has_output_property = model.getProperty(Namespaces.KARMA + "hasOutput");
+
 		Resource service_resource = model.getResource(service_uri);
 		
 		NodeIterator nodeIterator = null;
@@ -469,113 +465,44 @@ public class ServiceLoader {
 		} else
 			logger.debug("service does not have an address.");
 
-		// operations
-		nodeIterator = model.listObjectsOfProperty(service_resource, has_operation_property);
-		int opCounter = 0;
-		while ( nodeIterator.hasNext()) {
-			node = nodeIterator.next();
-			
-			if (!node.isResource()) {
-				logger.info("object of the hasOperation property is not a resource.");
-				continue;
-			}
-			
-			if (operationLimit != null && opCounter == operationLimit)
-				break;
-			
-			String op_id = node.asResource().getLocalName();
-			if (operationIds == null || operationIds.indexOf(op_id) != -1) {
-				operations.add(getOperation(model, node.asResource()));
-				opCounter ++;
-			}
-		}
-		
-		service.setName(service_name);
-		service.setAddress(service_address);
-		service.setOperations(operations);
-		
-		return service;
-	}
-	
-	private static Operation getOperation(Model model, Resource op_resource) {
-		
-		String op_name = "";
-		String op_id = "";
-		String op_method = "";
-		String op_address = "";
-		
-		Property has_address_property = model.getProperty(Namespaces.HRESTS + "hasAddress");
-		Property has_name_property = model.getProperty(Namespaces.KARMA + "hasName");
-		Property has_method_property = model.getProperty(Namespaces.HRESTS + "hasMethod");
-		Property has_input_property = model.getProperty(Namespaces.KARMA + "hasInput");
-		Property has_output_property = model.getProperty(Namespaces.KARMA + "hasOutput");
-		
+		// operation method
+		nodeIterator = model.listObjectsOfProperty(service_resource, has_method_property);
+		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isLiteral()) {
+			service_method = node.asLiteral().getString();
+			logger.debug("service method: " + service_method);
+		} else
+			logger.debug("service does not have a method.");
 
-		// operation id
-		op_id = op_resource.getLocalName();
-		logger.debug("operation id: " + op_id);
-
-		Operation op = new Operation(op_id);
 		List<Attribute> inputAttributes = null;;
 		List<Attribute> outputAttributes = null;
 		edu.isi.karma.service.Model inputModel = null;
 		edu.isi.karma.service.Model outputModel = null;
 
-		NodeIterator nodeIterator = null;
-		RDFNode node = null;
-		
-
-		// operation name
-		nodeIterator = model.listObjectsOfProperty(op_resource, has_name_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isLiteral()) {
-			op_name = node.asLiteral().getString();
-			logger.debug("operation name: " + op_name);
-		} else
-			logger.debug("operation does not have a name.");
-		
-		// operation address
-		nodeIterator = model.listObjectsOfProperty(op_resource, has_address_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isLiteral()) {
-			op_address = node.asLiteral().getString();
-			logger.debug("operation address: " + op_address);
-		} else
-			logger.debug("operation does not have an address.");
-
-		// operation method
-		nodeIterator = model.listObjectsOfProperty(op_resource, has_method_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isLiteral()) {
-			op_method = node.asLiteral().getString();
-			logger.debug("operation method: " + op_address);
-		} else
-			logger.debug("operation does not have a method.");
-
 		// operation input
-		nodeIterator = model.listObjectsOfProperty(op_resource, has_input_property);
+		nodeIterator = model.listObjectsOfProperty(service_resource, has_input_property);
 		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
 			inputAttributes = getAttributes(model, node.asResource(), IOType.INPUT);
 			inputModel = getSemanticModel(model, node.asResource());
 		} else
-			logger.debug("operation does not have an input.");
+			logger.debug("service does not have an input.");
 		
 		// operation output
-		nodeIterator = model.listObjectsOfProperty(op_resource, has_output_property);
+		nodeIterator = model.listObjectsOfProperty(service_resource, has_output_property);
 		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
 			outputAttributes = getAttributes(model, node.asResource(), IOType.OUTPUT );
 			outputModel = getSemanticModel(model, node.asResource());
 		} else
-			logger.info("operation does not have an output.");
+			logger.info("service does not have an output.");
 		
-		op.setId(op_id);
-		op.setName(op_name);
-		op.setAddressTemplate(op_address);
-		op.setMethod(op_method);
-		op.setInputAttributes(inputAttributes);
-		op.setOutputAttributes(outputAttributes);
-		op.setInputModel(inputModel);
-		op.setOutputModel(outputModel);
-		
-		return op;
+		Service service = new Service(service_id, service_name, service_address);
+		service.setMethod(service_method);
+		service.setInputAttributes(inputAttributes);
+		service.setOutputAttributes(outputAttributes);
+		service.setInputModel(inputModel);
+		service.setOutputModel(outputModel);
 
+		
+		return service;
 	}
 	
 	private static List<Attribute> getAttributes(Model model, Resource io_resource, String ioType) {
@@ -750,8 +677,12 @@ public class ServiceLoader {
 		String predicatePrefix = "";
 		String predicateNs = "";
 		
-		String argument1 = "";
+		String argument1Id = "";
+		String argument1Type = "";
 		
+		Resource attribute = ResourceFactory.createResource(Namespaces.KARMA + "Attribute");
+		Resource variable = ResourceFactory.createResource(Namespaces.SWRL + "Variable");
+
 		Property class_predicate_property = model.getProperty(Namespaces.SWRL + "classPredicate");
 		Property argument1_property = model.getProperty(Namespaces.SWRL + "argument1");
 
@@ -774,17 +705,23 @@ public class ServiceLoader {
 		// atom argument1 
 		nodeIterator = model.listObjectsOfProperty(atom_resource, argument1_property);
 		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
-			argument1 = node.asResource().getLocalName();
-			logger.debug("The atom argument1 is: " + argument1);
+			argument1Id = node.asResource().getLocalName();
+			logger.debug("The atom argument1 is: " + argument1Id);
+			
+			if (isInstanceOfTheClass(node.asResource(), attribute))
+				argument1Type = ArgumentType.ATTRIBUTE;
+			else if (isInstanceOfTheClass(node.asResource(), variable))
+				argument1Type = ArgumentType.VARIABLE;
+			
 		} else {
 			logger.info("atom does not have an argument1.");
 			return null;
 		}
 		
 		Name predicateName = new Name(predicateUri, predicateNs, predicatePrefix);
-		Name argument1Name = new Name(argument1, "", "");
+		Argument arg1 = new Argument(argument1Id, argument1Id, argument1Type);
 		
-		ClassAtom classAtom = new ClassAtom(predicateName, argument1Name);
+		ClassAtom classAtom = new ClassAtom(predicateName, arg1);
 
 		return classAtom;
 
@@ -796,9 +733,15 @@ public class ServiceLoader {
 		String predicatePrefix = "";
 		String predicateNs = "";
 		
-		String argument1 = "";
-		String argument2 = ""; 
+		String argument1Id = "";
+		String argument2Id = ""; 
+
+		String argument1Type = "";
+		String argument2Type = ""; 
 		
+		Resource attribute = ResourceFactory.createResource(Namespaces.KARMA + "Attribute");
+		Resource variable = ResourceFactory.createResource(Namespaces.SWRL + "Variable");
+
 		Property property_predicate_property = model.getProperty(Namespaces.SWRL + "propertyPredicate");
 		Property argument1_property = model.getProperty(Namespaces.SWRL + "argument1");
 		Property argument2_property = model.getProperty(Namespaces.SWRL + "argument2");
@@ -821,8 +764,14 @@ public class ServiceLoader {
 		// atom argument1 
 		nodeIterator = model.listObjectsOfProperty(atom_resource, argument1_property);
 		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
-			argument1 = node.asResource().getLocalName();
-			logger.debug("The atom argument1 is: " + argument1);
+			argument1Id = node.asResource().getLocalName();
+			logger.debug("The atom argument1 is: " + argument1Id);
+			
+			if (isInstanceOfTheClass(node.asResource(), attribute))
+				argument1Type = ArgumentType.ATTRIBUTE;
+			else if (isInstanceOfTheClass(node.asResource(), variable))
+				argument1Type = ArgumentType.VARIABLE;
+			
 		} else {
 			logger.info("atom does not have an argument1.");
 			return null;
@@ -831,20 +780,38 @@ public class ServiceLoader {
 		// atom argument2 
 		nodeIterator = model.listObjectsOfProperty(atom_resource, argument2_property);
 		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
-			argument2 = node.asResource().getLocalName();
-			logger.debug("The atom argument2 is: " + argument2);
+			argument2Id = node.asResource().getLocalName();
+			logger.debug("The atom argument2 is: " + argument2Id);
+			
+			if (isInstanceOfTheClass(node.asResource(), attribute))
+				argument2Type = ArgumentType.ATTRIBUTE;
+			else if (isInstanceOfTheClass(node.asResource(), variable))
+				argument2Type = ArgumentType.VARIABLE;
+			
 		} else {
 			logger.info("atom does not have an argument2.");
 			return null;
 		}
 		
 		Name predicateName = new Name(predicateUri, predicateNs, predicatePrefix);
-		Name argument1Name = new Name(argument1, "", "");
-		Name argument2Name = new Name(argument2, "", "");
+		Argument arg1 = new Argument(argument1Id, argument1Id, argument1Type);
+		Argument arg2 = new Argument(argument2Id, argument2Id, argument2Type);
 		
-		PropertyAtom propertyAtom = new PropertyAtom(predicateName, argument1Name, argument2Name);
+		PropertyAtom propertyAtom = new PropertyAtom(predicateName, arg1, arg2);
 
 		return propertyAtom;	
+	}
+	
+	private static boolean isInstanceOfTheClass(Resource resource, Resource class_resource) {
+		Property type_property = ResourceFactory.createProperty(Namespaces.RDF + "type");
+		
+		if (resource == null || !resource.isResource())
+			return true;
+		
+		if (resource.hasProperty(type_property, class_resource))
+			return true;
+		else
+			return false;
 	}
 	
 	private static void testGetServiceByUri() {
@@ -873,9 +840,13 @@ public class ServiceLoader {
 		Name latPredicatName = new Name(wgs84Ontology + "lat", wgs84Ontology, "wgs84");
 		Name lngPredicatName = new Name(wgs84Ontology + "long", wgs84Ontology, "wgs84");
 		
-		ClassAtom c1 = new ClassAtom(featurePredicatName, new Name("arg1", null, null));
-		PropertyAtom p1 = new PropertyAtom(latPredicatName, new Name("arg1", null, null), new Name("arg2", null, null));
-		PropertyAtom p2 = new PropertyAtom(lngPredicatName, new Name("arg1", null, null), new Name("arg3", null, null));
+		ClassAtom c1 = new ClassAtom(featurePredicatName, new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE));
+		PropertyAtom p1 = new PropertyAtom(latPredicatName,
+				new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE), 
+				new Argument("arg2", "arg2", ArgumentType.ATTRIBUTE));
+		PropertyAtom p2 = new PropertyAtom(lngPredicatName,
+				new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE), 
+				new Argument("arg3", "arg3", ArgumentType.ATTRIBUTE));
 
 		semanticModel.getAtoms().add(c1);
 		semanticModel.getAtoms().add(p1);

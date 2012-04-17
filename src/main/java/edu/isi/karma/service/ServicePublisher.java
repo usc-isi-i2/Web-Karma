@@ -24,7 +24,6 @@ package edu.isi.karma.service;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
@@ -57,7 +56,6 @@ public class ServicePublisher {
 		model.setNsPrefix("", baseNS);
 		model.setNsPrefix(Prefixes.KARMA, Namespaces.KARMA);
 		model.setNsPrefix(Prefixes.RDF, Namespaces.RDF);
-		model.setNsPrefix(Prefixes.WSMO_LITE, Namespaces.WSMO_LITE);
 		model.setNsPrefix(Prefixes.RDFS, Namespaces.RDFS);
 //		model.setNsPrefix(Prefixes.SAWSDL, Namespaces.SAWSDL);
 //		model.setNsPrefix(Prefixes.MSM, Namespaces.MSM);
@@ -81,50 +79,8 @@ public class ServicePublisher {
 	public void publish(String lang, boolean writeToFile) throws FileNotFoundException {
 		
 		Service existingService = ServiceLoader.getServiceByAddress(this.service.getAddress(), null);
-		
-		String newServiceOpName = "";
-		String existingServiceOpName = "";
-		String existingServiceOpId = "";
-
-		if (existingService != null) {
-			
-			if (this.service.getOperations() != null)
-			for (Operation newServiceOp : this.service.getOperations()) {
-				
-				if (existingService.getOperations() == null)
-					existingService.setOperations(new ArrayList<Operation>());
-				
-				newServiceOpName = newServiceOp.getName();
-				logger.debug("new operation: " + newServiceOpName);
-				
-				boolean found = false;
-				for (int j = 0; j < existingService.getOperations().size(); j++) {
-					Operation existingServiceOp = existingService.getOperations().get(j);
-					existingServiceOpId = existingServiceOp.getId();
-					existingServiceOpName = existingServiceOp.getName();
-					logger.debug("existing operation: " + existingServiceOpName);
-					
-					// existing service has a previous version of this operation
-					// should be replaced with the new model of the operation
-					if (newServiceOpName.equalsIgnoreCase(existingServiceOpName)) {
-						logger.info("The repository has already a model of the operation " + newServiceOpName + " and it should be updated.");
-						newServiceOp.updateId(existingServiceOpId);
-						existingService.getOperations().remove(j);
-						existingService.getOperations().add(j, newServiceOp);
-						found = true;
-						break;
-					}
-				}
-				
-				if (!found) {
-					logger.info("The operation " + newServiceOpName + " is a new operation and should be added to repository.");
-					newServiceOp.updateId("op" + String.valueOf(existingService.getOperations().size() +1) );
-					existingService.getOperations().add(newServiceOp);
-				}
-			}
-			
-			this.service = existingService;
-		}
+		if (existingService != null) 
+			ServiceLoader.deleteServiceByUri(existingService.getUri());
 		
 		if (this.model == null)
 			model = generateModel();
@@ -154,8 +110,7 @@ public class ServicePublisher {
 		
 		String baseNS = model.getNsPrefixURI("");
 		// resources
-		Resource service_resource = model.createResource(Namespaces.WSMO_LITE + "Service");
-		Resource operation_resource = model.createResource(Namespaces.WSMO_LITE + "Operation");
+		Resource service_resource = model.createResource(Namespaces.KARMA + "Service");
 		Resource input_resource = model.createResource(Namespaces.KARMA + "Input");
 		Resource output_resource = model.createResource(Namespaces.KARMA + "Output");
 		Resource attribute_resource = model.createResource(Namespaces.KARMA + "Attribute");
@@ -163,7 +118,6 @@ public class ServicePublisher {
 
 		// properties
 		Property rdf_type = model.createProperty(Namespaces.RDF , "type");
-		Property has_operation = model.createProperty(Namespaces.WSMO_LITE, "hasOperation");
 		Property has_address = model.createProperty(Namespaces.HRESTS, "hasAddress");
 		Property has_method = model.createProperty(Namespaces.HRESTS, "hasMethod");
 		Property has_input = model.createProperty(Namespaces.KARMA, "hasInput");
@@ -186,86 +140,74 @@ public class ServicePublisher {
 		if (this.service.getName().length() > 0)
 			my_service.addProperty(has_name, this.service.getName());
 		
-		if (this.service.getOperations() != null)
-		for (int k = 0; k < this.service.getOperations().size(); k++) {
-			Operation op = this.service.getOperations().get(k);
-			Resource my_operation = model.createResource(baseNS + op.getId());
-			my_service.addProperty(has_operation, my_operation);
-			my_operation.addProperty(rdf_type, operation_resource);
-
-			// operation name, address, and method
-			if (op.getName().length() > 0)
-				my_operation.addProperty(has_name, op.getName());
-			if (op.getMethod().length() > 0)
-				my_operation.addProperty(has_method, op.getMethod());
-			if (op.getAddressTemplate().length() > 0) {
-				Literal operation_address_literal = model.createTypedLiteral(op.getAddressTemplate(), uri_template);
-				my_operation.addLiteral(has_address, operation_address_literal);
-			}
-			
-			
-			if (op.getInputAttributes() != null) {
-				Resource my_input = model.createResource(baseNS + op.getId() + "_input");  
-				if (op.getInputAttributes().size() > 0) {
-					my_operation.addProperty(has_input, my_input);
-					my_input.addProperty(rdf_type, input_resource);
-				}
-				for (int i = 0; i < op.getVariables().size(); i++) {
-					Resource my_variable = model.createResource(baseNS + op.getVariables().get(i).toString());
-					my_variable.addProperty(rdf_type, variavle_resource);
-				}
-				for (int i = 0; i < op.getInputAttributes().size(); i++) {
-					
-					Attribute att = op.getInputAttributes().get(i);
-					
-					Resource my_attribute = model.createResource(baseNS + att.getId());
-					
-					if (att.getRequirement() == AttributeRequirement.NONE)
-						my_input.addProperty(has_attribute, my_attribute);
-					else if (att.getRequirement() == AttributeRequirement.MANDATORY)
-						my_input.addProperty(has_mandatory_attribute, my_attribute);
-					else if (att.getRequirement() == AttributeRequirement.OPTIONAL)
-						my_input.addProperty(has_optional_attribute, my_attribute);
-					
-					my_attribute.addProperty(rdf_type, attribute_resource);
-					my_attribute.addProperty(has_name, att.getName());
-//					my_part.addProperty(model_reference, XSDDatatype.XSDstring.getURI());
-					
-					Literal ground_literal = model.createTypedLiteral(
-							op.getInputAttributes().get(i).getGroundedIn(), rdf_plain_literal);
-					my_attribute.addLiteral(is_grounded_in, ground_literal);
-				}
-
-				addModelPart(model, my_input, op.getInputModel());
-			}
-
-			if (op.getOutputAttributes() != null) {
-				Resource my_output = model.createResource(baseNS + op.getId() + "_output");  
-				if (op.getOutputAttributes().size() > 0) {
-					my_operation.addProperty(has_output, my_output);
-					my_output.addProperty(rdf_type, output_resource);
-				}
-				for (int i = 0; i < op.getOutputAttributes().size(); i++) {
-					
-					Attribute att = op.getOutputAttributes().get(i);
-					
-					Resource my_attribute = model.createResource(baseNS + att.getId());
-
-					if (att.getRequirement() == AttributeRequirement.NONE)
-						my_output.addProperty(has_attribute, my_attribute);
-					else if (att.getRequirement() == AttributeRequirement.MANDATORY)
-						my_output.addProperty(has_mandatory_attribute, my_attribute);
-					else if (att.getRequirement() == AttributeRequirement.OPTIONAL)
-						my_output.addProperty(has_optional_attribute, my_attribute);
-
-					my_attribute.addProperty(rdf_type, attribute_resource);
-					my_attribute.addProperty(has_name, op.getOutputAttributes().get(i).getName());
-//					my_part.addProperty(model_reference, XSDDatatype.XSDstring.getURI());
-				}
-				addModelPart(model, my_output, op.getOutputModel());
-			}
-
+		if (this.service.getMethod().length() > 0)
+			my_service.addProperty(has_method, this.service.getMethod());
+		if (this.service.getAddress().length() > 0) {
+			Literal operation_address_literal = model.createTypedLiteral(this.service.getAddress(), uri_template);
+			my_service.addLiteral(has_address, operation_address_literal);
 		}
+			
+		if (this.service.getInputAttributes() != null) {
+			Resource my_input = model.createResource(baseNS + "input");  
+			if (this.service.getInputAttributes().size() > 0) {
+				my_service.addProperty(has_input, my_input);
+				my_input.addProperty(rdf_type, input_resource);
+			}
+			for (int i = 0; i < this.service.getVariables().size(); i++) {
+				Resource my_variable = model.createResource(baseNS + this.service.getVariables().get(i).toString());
+				my_variable.addProperty(rdf_type, variavle_resource);
+			}
+			for (int i = 0; i < this.service.getInputAttributes().size(); i++) {
+				
+				Attribute att = this.service.getInputAttributes().get(i);
+				
+				Resource my_attribute = model.createResource(baseNS + att.getId());
+				
+				if (att.getRequirement() == AttributeRequirement.NONE)
+					my_input.addProperty(has_attribute, my_attribute);
+				else if (att.getRequirement() == AttributeRequirement.MANDATORY)
+					my_input.addProperty(has_mandatory_attribute, my_attribute);
+				else if (att.getRequirement() == AttributeRequirement.OPTIONAL)
+					my_input.addProperty(has_optional_attribute, my_attribute);
+				
+				my_attribute.addProperty(rdf_type, attribute_resource);
+				my_attribute.addProperty(has_name, att.getName());
+//					my_part.addProperty(model_reference, XSDDatatype.XSDstring.getURI());
+				
+				Literal ground_literal = model.createTypedLiteral(
+						this.service.getInputAttributes().get(i).getGroundedIn(), rdf_plain_literal);
+				my_attribute.addLiteral(is_grounded_in, ground_literal);
+			}
+
+			addModelPart(model, my_input, this.service.getInputModel());
+		}
+
+		if (this.service.getOutputAttributes() != null) {
+			Resource my_output = model.createResource(baseNS + "output");  
+			if (this.service.getOutputAttributes().size() > 0) {
+				my_service.addProperty(has_output, my_output);
+				my_output.addProperty(rdf_type, output_resource);
+			}
+			for (int i = 0; i < this.service.getOutputAttributes().size(); i++) {
+				
+				Attribute att = this.service.getOutputAttributes().get(i);
+				
+				Resource my_attribute = model.createResource(baseNS + att.getId());
+
+				if (att.getRequirement() == AttributeRequirement.NONE)
+					my_output.addProperty(has_attribute, my_attribute);
+				else if (att.getRequirement() == AttributeRequirement.MANDATORY)
+					my_output.addProperty(has_mandatory_attribute, my_attribute);
+				else if (att.getRequirement() == AttributeRequirement.OPTIONAL)
+					my_output.addProperty(has_optional_attribute, my_attribute);
+
+				my_attribute.addProperty(rdf_type, attribute_resource);
+				my_attribute.addProperty(has_name, this.service.getOutputAttributes().get(i).getName());
+//					my_part.addProperty(model_reference, XSDDatatype.XSDstring.getURI());
+			}
+			addModelPart(model, my_output, this.service.getOutputModel());
+		}
+
 	}
 	
 	public void addModelPart(Model model, Resource resource, edu.isi.karma.service.Model semanticModel) {
@@ -307,7 +249,7 @@ public class ServicePublisher {
 					Resource className = model.createResource(classAtom.getClassPredicate().getUri());
 					r.addProperty(class_predicate, className);
 					
-					Resource arg1 = model.getResource(baseNS + classAtom.getArgument1().getUri());
+					Resource arg1 = model.getResource(baseNS + classAtom.getArgument1().getAttOrVarId());
 					r.addProperty(has_argument1, arg1);
 					
 					my_model.addProperty(has_atom, r);
@@ -323,10 +265,10 @@ public class ServicePublisher {
 					Resource propertyName = model.createResource(propertyAtom.getPropertyPredicate().getUri());
 					r.addProperty(property_predicate, propertyName);
 					
-					Resource arg1 = model.getResource(baseNS + propertyAtom.getArgument1().getUri());
+					Resource arg1 = model.getResource(baseNS + propertyAtom.getArgument1().getAttOrVarId());
 					r.addProperty(has_argument1, arg1);
 					
-					Resource arg2 = model.getResource(baseNS + propertyAtom.getArgument2().getUri());
+					Resource arg2 = model.getResource(baseNS + propertyAtom.getArgument2().getAttOrVarId());
 					r.addProperty(has_argument2, arg2);
 					
 					my_model.addProperty(has_atom, r);
@@ -336,4 +278,7 @@ public class ServicePublisher {
 
 	}
 	
+	public static void main(String[] args) {
+		ServiceBuilder.main(new String[0]);
+	}
 }

@@ -85,7 +85,7 @@ public class Model {
 					ClassAtom classAtom = ((ClassAtom)atom);
 					logicalForm += classAtom.getClassPredicate().getLocalName();
 					logicalForm += "(";
-					logicalForm += classAtom.getArgument1().getLocalName();
+					logicalForm += classAtom.getArgument1().getId();
 					logicalForm += ")";
 					logicalForm += separator;				
 				}
@@ -93,9 +93,9 @@ public class Model {
 					PropertyAtom propertyAtom = ((PropertyAtom)atom);
 					logicalForm += propertyAtom.getPropertyPredicate().getLocalName();
 					logicalForm += "(";
-					logicalForm += propertyAtom.getArgument1().getLocalName();
+					logicalForm += propertyAtom.getArgument1().getId();
 					logicalForm += ",";
-					logicalForm += propertyAtom.getArgument2().getLocalName();
+					logicalForm += propertyAtom.getArgument2().getId();
 					logicalForm += ")";
 					logicalForm += separator;				
 				}			

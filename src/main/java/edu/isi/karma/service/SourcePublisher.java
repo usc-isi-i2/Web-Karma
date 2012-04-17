@@ -172,7 +172,7 @@ public class SourcePublisher {
 					Resource className = model.createResource(classAtom.getClassPredicate().getUri());
 					r.addProperty(class_predicate, className);
 					
-					Resource arg1 = model.getResource(baseNS + classAtom.getArgument1().getUri());
+					Resource arg1 = model.getResource(baseNS + classAtom.getArgument1().getAttOrVarId());
 					r.addProperty(has_argument1, arg1);
 					
 					my_model.addProperty(has_atom, r);
@@ -188,10 +188,10 @@ public class SourcePublisher {
 					Resource propertyName = model.createResource(propertyAtom.getPropertyPredicate().getUri());
 					r.addProperty(property_predicate, propertyName);
 					
-					Resource arg1 = model.getResource(baseNS + propertyAtom.getArgument1().getUri());
+					Resource arg1 = model.getResource(baseNS + propertyAtom.getArgument1().getAttOrVarId());
 					r.addProperty(has_argument1, arg1);
 					
-					Resource arg2 = model.getResource(baseNS + propertyAtom.getArgument2().getUri());
+					Resource arg2 = model.getResource(baseNS + propertyAtom.getArgument2().getAttOrVarId());
 					r.addProperty(has_argument2, arg2);
 					
 					my_model.addProperty(has_atom, r);

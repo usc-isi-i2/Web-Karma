@@ -21,38 +21,35 @@
 
 package edu.isi.karma.service;
 
-import edu.isi.karma.modeling.alignment.Name;
-
-public class PropertyAtom extends Atom {
-
-	private Name propertyPredicate;
-	private Argument argument1;
-	private Argument argument2;
+public class Argument {
+	private String id;
+	private String attOrVarId;
+	private String argType;
 	
-	public PropertyAtom(Name propertyPredicate, Argument argument1, Argument argument2) {
-		this.propertyPredicate = propertyPredicate;
-		this.argument1 = argument1;
-		this.argument2 = argument2;
+	public Argument(String id, String attOrVarId, String argType) {
+		this.id = id;
+		this.attOrVarId = attOrVarId;
+		this.argType = argType;
 	}
-
-	public Name getPropertyPredicate() {
-		return propertyPredicate;
-	}
-
-	public Argument getArgument1() {
-		return argument1;
-	}	
 	
-	public Argument getArgument2() {
-		return argument2;
+	public String getId() {
+		return id;
 	}
-
-	public void print() {
-		System.out.println("property predicate uri: " + propertyPredicate.getUri());
-		System.out.println("property predicate ns: " + propertyPredicate.getNs());
-		System.out.println("property predicate prefix: " + propertyPredicate.getPrefix());
-		System.out.println("argument1: " + argument1.getId());
-		System.out.println("argument2: " + argument2.getId());
-	}	
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getAttOrVarId() {
+		return attOrVarId;
+	}
+	public void setAttOrVarId(String attOrVarId) {
+		this.attOrVarId = attOrVarId;
+	}
+	public String getArgType() {
+		return argType;
+	}
+	public void setArgType(String argType) {
+		this.argType = argType;
+	}
+	
 	
 }
