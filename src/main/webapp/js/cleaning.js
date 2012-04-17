@@ -169,6 +169,8 @@ function populateResultsInCleaningTable(data) {
             }
         }
 	    });
+		//remove the previous tp windows
+		$("#allTPs").ipad ();
         //add the transformation programs here
 		var allTPs = $("<table>").attr("id", "allTPs");
 		var ttr = $("<tr>");
@@ -176,13 +178,20 @@ function populateResultsInCleaningTable(data) {
 		{
             if("tps" in pacdata)
             {
-				var ttd = $("<td>");
+				var ttd = $("<td>").attr('valign','top');
               	var tptable = $("<table>").addClass("tptable");
                 var resulttps = pacdata["tps"];
+				var i = 0;
                 for(var xid in resulttps) 
                 {
-					var ds= $("<div>").attr("id",index+""+xid).text(resulttps[xid]).hide();
-                    var tartp = $("<tr>").append($("<td>")).append($("<Button>").text(xid).click(function(){ds.dialog({modal:true})}));
+					var ds= $("<div>").attr("id",index+""+xid).hide();
+					var rules = resulttps[xid].split('\n');
+					$.each(rules,function(ind,val){
+						ds.append($("<div>").append($("<p>").text(val)));
+					});
+                    var tartp = $("<tr>").append($("<td>").append($("<Button>").text(i).click(function(){ds.dialog({modal:true})}))
+									);
+					i = i+1;
                     tptable.append(tartp);
                 }
 				ttd.append(tptable);

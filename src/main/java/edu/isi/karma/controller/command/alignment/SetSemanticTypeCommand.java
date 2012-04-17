@@ -21,6 +21,7 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -117,6 +118,7 @@ public class SetSemanticTypeCommand extends Command {
 		worksheet.getSemanticTypes().addSynonymTypesForHNodeId(
 				newType.getHNodeId(), newSynonymTypes);
 
+		long start = System.currentTimeMillis();
 		// Find the corresponding hNodePath. Used to find examples for training
 		// the CRF Model.
 		HNodePath currentColumnPath = null;
@@ -143,7 +145,6 @@ public class SetSemanticTypeCommand extends Command {
 		// columnFeatures.put(ColumnFeature.TableName, tableNameList);
 
 		// Calculating the time required for training the semantic type
-		long start = System.currentTimeMillis();
 
 		// Train the model with the new type
 		ArrayList<String> trainingExamples = SemanticTypeUtil
@@ -165,10 +166,6 @@ public class SetSemanticTypeCommand extends Command {
 		logger.debug("Using type:" + newType.getDomain() + "|"
 				+ newType.getType());
 
-		long elapsedTimeMillis = System.currentTimeMillis() - start;
-		float elapsedTimeSec = elapsedTimeMillis / 1000F;
-		logger.info("Time required for training the semantic type: "
-				+ elapsedTimeSec);
 
 		// Add the new CRF column model for this column
 		ArrayList<String> labels = new ArrayList<String>();
@@ -181,12 +178,22 @@ public class SetSemanticTypeCommand extends Command {
 		CRFColumnModel newModel = new CRFColumnModel(labels, scores);
 		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), newModel);
 
+		long elapsedTimeMillis = System.currentTimeMillis() - start;
+		float elapsedTimeSec = elapsedTimeMillis / 1000F;
+		logger.info("Time required for training the semantic type: "
+				+ elapsedTimeSec);
+
+		long t2 = System.currentTimeMillis();
+		
 		// Identify the outliers for the column
 		SemanticTypeUtil.identifyOutliers(worksheet, newTypeString,
 				currentColumnPath, vWorkspace.getWorkspace().getTagsContainer()
 						.getTag(TagName.Outlier), columnFeatures, crfModelHandler);
 
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+
+		long t3 = System.currentTimeMillis();
+		logger.info("Identify outliers: "+ (t3-t2));
 
 		// Get the alignment update if any
 		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
@@ -200,6 +207,10 @@ public class SetSemanticTypeCommand extends Command {
 		}
 
 		c.add(new TagsUpdate());
+
+		long t4 = System.currentTimeMillis();
+		logger.info("Alignment: "+ (t4-t3));
+		
 		return c;
 	}
 
