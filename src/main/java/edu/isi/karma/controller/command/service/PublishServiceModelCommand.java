@@ -72,7 +72,7 @@ public class PublishServiceModelCommand extends Command{
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.undoable;
+		return CommandType.notUndoable;
 	}
 
 	@Override
@@ -129,7 +129,6 @@ public class PublishServiceModelCommand extends Command{
 
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		// Do nothing!
 		return null;
 	}
 
