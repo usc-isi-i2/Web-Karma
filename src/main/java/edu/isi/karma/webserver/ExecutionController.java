@@ -93,6 +93,8 @@ import edu.isi.karma.controller.command.publish.PublishRDFCellCommand;
 import edu.isi.karma.controller.command.publish.PublishRDFCellCommandFactory;
 import edu.isi.karma.controller.command.service.InvokeServiceCommand;
 import edu.isi.karma.controller.command.service.InvokeServiceCommandFactory;
+import edu.isi.karma.controller.command.service.PublishServiceModelCommand;
+import edu.isi.karma.controller.command.service.PublishServiceModelCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
 
@@ -183,6 +185,8 @@ public class ExecutionController {
 				new InvokeServiceCommandFactory());
 		commandFactoryMap.put(GetPropertiesAndClassesList.class.getSimpleName(),
 				new GetPropertiesAndClassesListCommandFactory());
+		commandFactoryMap.put(PublishServiceModelCommand.class.getSimpleName(),
+				new PublishServiceModelCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

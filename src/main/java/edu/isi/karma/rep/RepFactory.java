@@ -60,6 +60,13 @@ public class RepFactory {
 		worksheets.put(id, ws);
 		return ws;
 	}
+
+	public void replaceWorksheet(String id, Worksheet worksheet) {
+		if (worksheets.containsKey(id)) {
+			worksheets.put(id, worksheet);
+			hTables.put(worksheet.getHeaders().getId(), worksheet.getHeaders());
+		}
+	}
 	
 	public void removeWorkspace(String workspaceId) {
 		workspaces.remove(workspaceId);
