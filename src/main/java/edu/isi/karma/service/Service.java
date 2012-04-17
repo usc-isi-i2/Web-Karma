@@ -35,12 +35,13 @@ public class Service {
 
 	private List<Operation> operations;
 
-	public Service() {
+	public Service(String id) {
+		this.id = id;
 		this.operations = new ArrayList<Operation>();
 	}
 	
 	public Service(String id, String name, String address) {
-		this.setId(id);
+		this.id = id;
 		this.setName(name);
 		this.setAddress(address);
 		this.operations = new ArrayList<Operation>();
@@ -52,10 +53,6 @@ public class Service {
 
 	public String getId() {
 		return id;
-	}
-	
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public void setAddress(String address) {
@@ -88,14 +85,15 @@ public class Service {
 
 	public void setOperations(List<Operation> operations) {
 		for (Operation op : operations)
-			op.updateBaseUri(this.getUri());
+			if (op != null)
+				op.updateBaseUri(this.getUri());
 		this.operations = operations;
 	}
 
 	public String getInfo() {
 		String s = "";
 		
-		s += "uri" + this.getUri() + "\n";
+		s += "uri=" + this.getUri() + "\n";
 		s += "id=" + this.getId() + ", ";
 		s += "name=" + this.getName() + ", ";
 		s += "address=" + this.getAddress();

@@ -28,6 +28,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.rits.cloning.Cloner;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
@@ -54,6 +56,8 @@ public class InvokeServiceCommand extends WorksheetCommand {
 	static Logger logger = Logger.getLogger(InvokeServiceCommand.class);
 	private final String hNodeId;
 	private final String vWorksheetId;
+	
+	private Worksheet worksheetBeforeInvocation = null;
 
 	InvokeServiceCommand(String id, String worksheetId, String vWorksheetId, String hNodeId) {
 		super(id, worksheetId);
@@ -71,6 +75,10 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		UpdateContainer c = new UpdateContainer();
 		Workspace ws = vWorkspace.getWorkspace();
 		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
+		
+		// Clone the worksheet just before the invocation
+		Cloner cloner = new Cloner();
+		this.worksheetBeforeInvocation = cloner.deepClone(wk);
 		
 		List<String> requestURLStrings = new ArrayList<String>();
 		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows());
@@ -93,8 +101,12 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			
 			Service service = sb.getInitialServiceModel();
 			MetadataContainer metaData = wk.getMetadataContainer();
-			if (metaData == null) metaData = new MetadataContainer();
+			if (metaData == null) {
+				metaData = new MetadataContainer();
+				wk.setMetadataContainer(metaData);
+			}
 			metaData.setService(service);
+			logger.info("Service added to the Worksheet.");
 
 		} catch (MalformedURLException e) {
 			logger.error("Malformed service request URL.");
@@ -130,7 +142,21 @@ public class InvokeServiceCommand extends WorksheetCommand {
 	
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		return null;
+		UpdateContainer c = new UpdateContainer();
+		
+		// Create new vWorksheet using the new header order
+		List<HNodePath> columnPaths = new ArrayList<HNodePath>();
+		for (HNode node : worksheetBeforeInvocation.getHeaders().getSortedHNodes()) {
+			HNodePath path = new HNodePath(node);
+			columnPaths.add(path);
+		}
+		vWorkspace.getRepFactory().replaceWorksheet(this.worksheetId, this.worksheetBeforeInvocation);
+		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
+				this.worksheetBeforeInvocation, columnPaths, vWorkspace);
+		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+		vw.update(c);
+		
+		return c;	
 	}
 
 	@Override

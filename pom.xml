@@ -177,16 +177,11 @@
 		      <version>2.1</version>
 		      <scope>compile</scope>
 	    </dependency>
-		<!-- <dependency>
-		    <groupId>org.apache.jena</groupId>
-		    <artifactId>jena-tdb</artifactId>
-		    <version>0.9.0-incubating</version>
-		</dependency> -->
-		<!--dependency>
-			<groupId>com.hp.hpl.jena</groupId>
-			<artifactId>tdb</artifactId>
-			<version>0.8.7</version>
-		</dependency-->
+        <dependency>
+              <groupId>uk.com.robust-it</groupId>
+              <artifactId>cloning</artifactId>
+              <version>1.7.9</version>
+        </dependency>
             
 </dependencies>
   
@@ -197,7 +192,7 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jettyVersion}</version>
 <!-- change user/pwd in config/jettyrealm.properties -->
-  <configuration>
+<!--  <configuration>
    <webAppConfig>
       <contextPath>/*</contextPath>
     </webAppConfig>
@@ -208,7 +203,7 @@
       </loginService>
     </loginServices>
   </configuration>
-
+-->
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

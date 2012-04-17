@@ -78,6 +78,7 @@ public class ServiceTableUtil {
 			HNode hNode = headers.addHNode(att.getName(), worksheet, factory);
 			headersList.add(hNode.getId());
 			
+			// very important 
 			// update the hNodeId of the input/output attributes
 			att.sethNodeId(hNode.getId());
 		}
@@ -137,8 +138,12 @@ public class ServiceTableUtil {
 				else 
 					row = dataTable.addRow(factory);
 				
+				System.out.println(hNodeIdList.size());
 				for (int j = 0; j < hNodeIdList.size(); j++) {
-					// the first column in the table is the url column which should not be added t the table
+					// the first column in the table is the url column which should not be added to the table
+					System.out.println("j:" + j);
+					System.out.println(hNodeIdList.get(j));
+					System.out.println(rowValues.get(j + 1));
 					row.setValue(hNodeIdList.get(j), rowValues.get(j + 1));
 				}
 				

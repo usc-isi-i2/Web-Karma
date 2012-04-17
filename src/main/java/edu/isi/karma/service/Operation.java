@@ -95,7 +95,8 @@ public class Operation {
 	}
 
 	public void setInputModel(Model inputModel) {
-		inputModel.setBaseUri(this.getBaseUri());
+		if (inputModel != null)
+			inputModel.setBaseUri(this.getBaseUri());
 		this.inputModel = inputModel;
 	}
 
@@ -104,7 +105,8 @@ public class Operation {
 	}
 
 	public void setOutputModel(Model outputModel) {
-		outputModel.setBaseUri(this.getBaseUri());
+		if (inputModel != null)
+			outputModel.setBaseUri(this.getBaseUri());
 		this.outputModel = outputModel;
 	}
 
@@ -362,6 +364,9 @@ public class Operation {
 			if (v.getNodeType() == NodeType.DataProperty)
 				continue;
 			
+			if (v.getRdfId() == null)
+				continue;
+			
 			Name classPredicate = new Name(v.getUri(), v.getNs(), v.getPrefix());
 			Name argument1 = new Name(v.getRdfId(), null, null);
 
@@ -372,6 +377,9 @@ public class Operation {
 		for (LabeledWeightedEdge e : steinerTree.getSteinerTree().edgeSet()) {
 			
 			inputModelEdges.add(e.getID());
+			
+			if (e.getSource().getRdfId() == null || e.getTarget().getRdfId() == null)
+				continue;
 			
 			Name propertyPredicate = new Name(e.getUri(), e.getNs(), e.getPrefix());
 			Name argument1 = new Name(e.getSource().getRdfId(), null, null);
@@ -400,6 +408,9 @@ public class Operation {
 			if (v.getNodeType() == NodeType.DataProperty)
 				continue;
 			
+			if (v.getRdfId() == null)
+				continue;
+			
 			Name classPredicate = new Name(v.getUri(), v.getNs(), v.getPrefix());
 			Name argument1 = new Name(v.getRdfId(), null, null);
 
@@ -412,6 +423,9 @@ public class Operation {
 			if (inputModelEdges.indexOf(e.getID()) != -1)
 				continue;
 			
+			if (e.getSource().getRdfId() == null || e.getTarget().getRdfId() == null)
+				continue;
+
 			Name propertyPredicate = new Name(e.getUri(), e.getNs(), e.getPrefix());
 			Name argument1 = new Name(e.getSource().getRdfId(), null, null);
 			Name argument2 = new Name(e.getTarget().getRdfId(), null, null);

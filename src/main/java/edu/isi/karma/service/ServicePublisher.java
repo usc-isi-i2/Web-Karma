@@ -48,7 +48,7 @@ public class ServicePublisher {
 	private Model generateModel() {
 		
 //		OntModel model = ModelFactory.createOntologyModel();
-//		Model model = ServiceRepository.Instance().getNamedModel(baseNS);
+//		Model model = Repository.Instance().getNamedModel(baseNS);
 //		ModelMaker maker = ModelFactory.createMemModelMaker();
 //		Model model = maker.createModel(baseNS);
 		Model model = ModelFactory.createDefaultModel();
@@ -71,7 +71,14 @@ public class ServicePublisher {
 		
 	}
 	
-	public void publish() throws FileNotFoundException {
+	/**
+	 * 
+	 * @param lang The language in which to write the model is specified by the lang argument. 
+	 * Predefined values are "RDF/XML", "RDF/XML-ABBREV", "N-TRIPLE", "TURTLE", (and "TTL") and "N3". 
+	 * The default value, represented by null is "RDF/XML".
+	 * @throws FileNotFoundException
+	 */
+	public void publish(String lang, boolean writeToFile) throws FileNotFoundException {
 		
 		Service existingService = ServiceLoader.getServiceByAddress(this.service.getAddress(), null);
 		
@@ -91,7 +98,8 @@ public class ServicePublisher {
 				logger.debug("new operation: " + newServiceOpName);
 				
 				boolean found = false;
-				for (Operation existingServiceOp : existingService.getOperations()) {
+				for (int j = 0; j < existingService.getOperations().size(); j++) {
+					Operation existingServiceOp = existingService.getOperations().get(j);
 					existingServiceOpId = existingServiceOp.getId();
 					existingServiceOpName = existingServiceOp.getName();
 					logger.debug("existing operation: " + existingServiceOpName);
@@ -101,7 +109,8 @@ public class ServicePublisher {
 					if (newServiceOpName.equalsIgnoreCase(existingServiceOpName)) {
 						logger.info("The repository has already a model of the operation " + newServiceOpName + " and it should be updated.");
 						newServiceOp.updateId(existingServiceOpId);
-						existingServiceOp = newServiceOp;
+						existingService.getOperations().remove(j);
+						existingService.getOperations().add(j, newServiceOp);
 						found = true;
 						break;
 					}
@@ -120,17 +129,25 @@ public class ServicePublisher {
 		if (this.model == null)
 			model = generateModel();
 		
-		String service_desc_file = ServiceRepository.Instance().SERVICE_REPOSITORY_DIR + this.service.getId() + ".n3";
-		OutputStreamWriter output = new OutputStreamWriter(new FileOutputStream(service_desc_file));
-		model.write(output,"N3");
+		// update the repository active model
+		Repository.Instance().addModel(this.model, service.getUri());
 
+		// write the model to the file
+		if (writeToFile)
+			writeToFile(lang);
+	}
+	
+	public void writeToFile(String lang) throws FileNotFoundException {
+		if (this.model == null)
+			model = generateModel();
+		
+		String service_desc_file = Repository.Instance().SERVICE_REPOSITORY_DIR + this.service.getId() + ".n3";
+		OutputStreamWriter output = new OutputStreamWriter(new FileOutputStream(service_desc_file));
+		model.write(output,lang);		
 //		model.write(output,"RDF/XML-ABBREV");
 //		model.write(output,"N-TRIPLE");
 //		model.write(output,"RDF/XML");
 		
-		// update the repository active model
-		ServiceRepository.Instance().addModel(this.model, service.getUri());
-
 	}
 	
 	public void addInvocationPart(Model model) {
@@ -253,8 +270,10 @@ public class ServicePublisher {
 	
 	public void addModelPart(Model model, Resource resource, edu.isi.karma.service.Model semanticModel) {
 
-		if (semanticModel == null)
+		if (semanticModel == null) {
+			logger.info("The semantic model is null");
 			return;
+		}
 		
 		String baseNS = model.getNsPrefixURI("");
 		

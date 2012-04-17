@@ -133,6 +133,38 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		columnListDiv.dialog({width: 300, height: 150
 			, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": splitColumnByComma }});
 	});
+	
+	$("button#publishServiceModel").click(function(){
+        optionsDiv.hide();
+        
+        var info = new Object();
+        info["vWorksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "PublishServiceModelCommand";
+            
+        showLoading(info["vWorksheetId"]);
+        var returned = $.ajax({
+            url: "/RequestController", 
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete : 
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(info["vWorksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while publishing service model!" + textStatus);
+                    hideLoading(info["vWorksheetId"]);
+                }          
+        });
+        
+    });
+	
+	
 }
 
 function openWorksheetOptions(event) {
