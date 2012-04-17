@@ -154,7 +154,9 @@ public class ServiceBuilder {
 	 */
 	public Service getInitialServiceModel() {
 		
-		Service service = new Service();
+		String guid = new RandomGUID().toString();
+//		guid = "E9C3F8D3-F778-5C4B-E089-C1749D50AE1F";
+		Service service = new Service(guid);
 		
 		URL sampleUrl = requestURLs.get(0);
 		
@@ -163,9 +165,6 @@ public class ServiceBuilder {
 		
 		String address = URLManager.getServiceAddress(sampleUrl);
 		
-		String guid = new RandomGUID().toString();
-//		guid = "E9C3F8D3-F778-5C4B-E089-C1749D50AE1F";
-		service.setId(guid);
 		service.setName(this.serviceName);
 		service.setDescription("");
 		service.setAddress(address);

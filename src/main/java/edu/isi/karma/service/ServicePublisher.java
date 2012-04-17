@@ -48,7 +48,7 @@ public class ServicePublisher {
 	private Model generateModel() {
 		
 //		OntModel model = ModelFactory.createOntologyModel();
-//		Model model = ServiceRepository.Instance().getNamedModel(baseNS);
+//		Model model = Repository.Instance().getNamedModel(baseNS);
 //		ModelMaker maker = ModelFactory.createMemModelMaker();
 //		Model model = maker.createModel(baseNS);
 		Model model = ModelFactory.createDefaultModel();
@@ -130,7 +130,7 @@ public class ServicePublisher {
 			model = generateModel();
 		
 		// update the repository active model
-		ServiceRepository.Instance().addModel(this.model, service.getUri());
+		Repository.Instance().addModel(this.model, service.getUri());
 
 		// write the model to the file
 		if (writeToFile)
@@ -141,7 +141,7 @@ public class ServicePublisher {
 		if (this.model == null)
 			model = generateModel();
 		
-		String service_desc_file = ServiceRepository.Instance().SERVICE_REPOSITORY_DIR + this.service.getId() + ".n3";
+		String service_desc_file = Repository.Instance().SERVICE_REPOSITORY_DIR + this.service.getId() + ".n3";
 		OutputStreamWriter output = new OutputStreamWriter(new FileOutputStream(service_desc_file));
 		model.write(output,lang);		
 //		model.write(output,"RDF/XML-ABBREV");

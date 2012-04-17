@@ -34,25 +34,30 @@ import com.hp.hpl.jena.tdb.TDB;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.tdb.base.file.Location;
 
-public class ServiceRepository {
+public class Repository {
 	
-	public final String SERVICE_REPOSITORY_DIR = "service_repository/services/";
-	public final String TRIPLE_DATASET_DIR = "service_repository/dataset/";
+	public final String SERVICE_REPOSITORY_DIR = "repository/services/";
+	public final String SOURCE_REPOSITORY_DIR = "repository/sources/";
+	public final String TRIPLE_DATASET_DIR = "repository/dataset/";
 	
-	static Logger logger = Logger.getLogger(ServiceRepository.class);
+	static Logger logger = Logger.getLogger(Repository.class);
 
 	private Dataset dataset;
 
-	private static ServiceRepository _InternalInstance = null;
-	public static ServiceRepository Instance()
+	private static Repository _InternalInstance = null;
+	public static Repository Instance()
 	{
 		if (_InternalInstance == null)
 		{
-			_InternalInstance = new ServiceRepository();
+			_InternalInstance = new Repository();
 
 			File serviceRepository = new File(_InternalInstance.SERVICE_REPOSITORY_DIR);
 			if (!serviceRepository.exists())
 				serviceRepository.mkdir();
+			
+			File sourceRepository = new File(_InternalInstance.SOURCE_REPOSITORY_DIR);
+			if (!sourceRepository.exists())
+				sourceRepository.mkdir();
 			
 			_InternalInstance.createRepository();
 		}
@@ -100,7 +105,7 @@ public class ServiceRepository {
 		}
 		
 		if (!this.dataset.containsNamedModel(name)) {
-			logger.info("The model: " + name + " does not exist in the service repository.");
+			logger.info("The model: " + name + " does not exist in the repository.");
 			return null;
 		}
 		return this.dataset.getNamedModel(name);
@@ -113,7 +118,7 @@ public class ServiceRepository {
 		}
 		
 		if (!this.dataset.containsNamedModel(name)) {
-			logger.info("The model " + name + " does not exist in the service repository.");
+			logger.info("The model " + name + " does not exist in the repository.");
 			return;
 		}
 		this.dataset.getNamedModel(name).removeAll();

@@ -52,13 +52,13 @@ public class ServiceLoader {
 	public static void deleteServiceByAddress(String address, Integer operationLimit) {
 		
 		String uri = getServiceUriByServiceAddress(address);
-		ServiceRepository.Instance().clearNamedModel(uri);
+		Repository.Instance().clearNamedModel(uri);
 	}
 	
 	public static Service getServiceByAddress(String address, Integer operationLimit) {
 		
 		String uri = getServiceUriByServiceAddress(address);
-		Model m = ServiceRepository.Instance().getNamedModel(uri);
+		Model m = Repository.Instance().getNamedModel(uri);
 		if (m == null)
 			return null;
 
@@ -67,12 +67,12 @@ public class ServiceLoader {
 	}
 	
 	public static void deleteServiceByUri(String uri) {
-		ServiceRepository.Instance().clearNamedModel(uri);
+		Repository.Instance().clearNamedModel(uri);
 	}
 	
 	public static Service getServiceByUri(String uri, Integer operationLimit) {
 		
-		Model m = ServiceRepository.Instance().getNamedModel(uri);
+		Model m = Repository.Instance().getNamedModel(uri);
 		if (m == null)
 			return null;
 
@@ -89,7 +89,7 @@ public class ServiceLoader {
 		
 		List<Service> serviceList = new ArrayList<Service>();
 		
-		Model model = ServiceRepository.Instance().getModel();
+		Model model = Repository.Instance().getModel();
 		
 		String service_id = "";
 		String service_name = "";
@@ -198,7 +198,7 @@ public class ServiceLoader {
 		List<Service> serviceList = new ArrayList<Service>();
 		
 		for (String uri : serviceAndOperations.keySet()) {
-			Model m = ServiceRepository.Instance().getNamedModel(uri);
+			Model m = Repository.Instance().getNamedModel(uri);
 			if (m != null)
 				serviceList.add(getServiceFromJenaModel(m, serviceAndOperations.get(uri), null));
 		}
@@ -302,7 +302,7 @@ public class ServiceLoader {
 		
 		logger.debug("query= \n" + queryString);
 		
-		Model model = ServiceRepository.Instance().getModel();
+		Model model = Repository.Instance().getModel();
 		Query query = QueryFactory.create(queryString);
 //		// Execute the query and obtain results
 		QueryExecution qexec = QueryExecutionFactory.create(query, model);
@@ -363,7 +363,7 @@ public class ServiceLoader {
 	
 	private static String getServiceUriByServiceAddress(String address) {
 
-		Model model = ServiceRepository.Instance().getModel();
+		Model model = Repository.Instance().getModel();
 		
 		// Create a new query
 		String queryString =
@@ -433,9 +433,6 @@ public class ServiceLoader {
 		String service_id = "";
 		String service_address = "";
 		
-		Service service = new Service();
-		List<Operation> operations = new ArrayList<Operation>();
-		
 		// service id
 		service_uri = model.getNsPrefixURI("");
 		logger.debug("service uri: " + service_uri);
@@ -443,6 +440,9 @@ public class ServiceLoader {
 		// service local id
 		service_id = service_uri.substring(service_uri.lastIndexOf("/") + 1, service_uri.length() - 1);
 		logger.debug("service id: " + service_id);
+		
+		Service service = new Service(service_id);
+		List<Operation> operations = new ArrayList<Operation>();
 		
 		Property has_address_property = model.getProperty(Namespaces.HRESTS + "hasAddress");
 		Property has_name_property = model.getProperty(Namespaces.KARMA + "hasName");
@@ -490,7 +490,6 @@ public class ServiceLoader {
 			}
 		}
 		
-		service.setId(service_id);
 		service.setName(service_name);
 		service.setAddress(service_address);
 		service.setOperations(operations);
