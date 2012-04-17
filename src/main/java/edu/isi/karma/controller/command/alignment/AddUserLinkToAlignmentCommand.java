@@ -118,7 +118,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 				root, sortedHeaders);
 		AlignmentHeadersUpdate alignmentUpdate = new AlignmentHeadersUpdate(
 				forest, vWorksheetId, alignmentId);
-		GraphUtil.printGraph(tree);
+		//GraphUtil.printGraph(tree);
 		
 		//mariam
 		/*
