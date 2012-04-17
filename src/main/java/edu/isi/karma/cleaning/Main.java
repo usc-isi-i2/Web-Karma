@@ -695,8 +695,8 @@ public class Main {
 					examples.add(entries.get(0));
 					boolean isend = false;
 					double timespan = 0.0;
-					int Ranktermin = 10;
-					while(Ranktermin>=3||Ranktermin == -1)
+					int Ranktermin = -1;
+					while(Ranktermin == -1) // repeat as no correct answer appears.
 					{
 						cx = "";
 						HashMap<String,Integer> dic = new HashMap<String,Integer>();
@@ -849,16 +849,19 @@ public class Main {
 						}
 						if(wexam!=null)
 						{
-							examples.add(wexam);
+							//if(examples.size()<=3)
+							//{
+								examples.add(wexam);
+							//}
 						}
+						names.add(f.getName());
+						exampleCnt.add(examples.size());
+						timeleng.add(timespan);
+						cRules.add(cx);
+						ranks.add(rank);
+						consisRules.add(consRule);
 					}
-					names.add(f.getName());
-					exampleCnt.add(examples.size());
-					timeleng.add(timespan);
-					//cRuleNum.add(corrNum);
-					cRules.add(cx);
-					ranks.add(rank);
-					consisRules.add(consRule);		
+							
 				}
 			}
 			catch(Exception ex)
@@ -870,16 +873,11 @@ public class Main {
 		try
 		{
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/Users/bowu/mysoft/xx/logx.txt")));
-			for(int x = 0; x<ranks.size();x++)
+			for(int x = 0; x<names.size();x++)
 			{
 				bw.write(names.get(x)+":"+exampleCnt.get(x)+","+timeleng.get(x));
 				bw.write("\n");
 				System.out.println(names.get(x)+":"+exampleCnt.get(x)+","+timeleng.get(x));
-				bw.write(names.get(x)+"\n");
-				for(String d:ranks.get(x))
-				{
-					bw.write(d+",");
-				}
 				bw.write("\n");
 //				System.out.println(consisRules.get(x));
 			}
@@ -936,7 +934,7 @@ public class Main {
 		for(int x = 0;x <1;x++)
 		{
 			double st = System.currentTimeMillis();
-			m.exper_2("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/pos");
+			m.exper_2("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/test");
 			double ed = System.currentTimeMillis();
 			xy.add((ed-st)*1.0/60000);
 		}
