@@ -21,6 +21,7 @@
 
 package edu.isi.karma.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +53,24 @@ public class SourceLoader {
 	
 	public static void deleteSourceByUri(String uri) {
 		Repository.Instance().clearNamedModel(uri);
+		
+		String source_id = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 1);
+		String dir = Repository.Instance().SOURCE_REPOSITORY_DIR;
+		String fileName = source_id + Repository.Instance().getFileExtension(Repository.Instance().LANG);
+		File f = new File(dir + fileName);
+		
+		try {
+		if (f.exists()) {
+			if (!f.delete())
+				logger.debug("The file " + fileName + " cannot be deleted from " + dir);
+			else
+				logger.debug("The file " + fileName + " has been deleted from " + dir);
+		} else
+			logger.debug("The file " + fileName + " does not exist in " + dir);
+		} catch (Throwable t) {
+			logger.debug("cannot delete the file " + fileName + " from " + dir + " because " + t.getMessage());
+		}
+
 	}
 	
 	public static Source getSourceByUri(String uri) {

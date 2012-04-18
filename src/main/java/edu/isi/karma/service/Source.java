@@ -117,6 +117,12 @@ public class Source {
 		if (treeModel == null)
 			return;
 		
+		Model m = new Model("model");
+		if (this.attributes == null)
+			this.attributes = new ArrayList<Attribute>();
+		else
+			this.attributes.clear();
+		
 		HashMap<String, Argument> vertexIdToArgument = new HashMap<String, Argument>();
 		
 		// get the column name associated to the hNodeIds to assign to attribute names 
@@ -140,8 +146,6 @@ public class Source {
 			}
 		}
 
-		Model m = new Model("model");
-		
 		for (Vertex v : treeModel.vertexSet()) {
 			
 			if (v.getNodeType() == NodeType.DataProperty)

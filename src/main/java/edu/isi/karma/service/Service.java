@@ -241,9 +241,9 @@ public class Service {
 		this.address = str;
 	}
 	
-	public void updateModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> operationTreeModel) {
+	public void updateModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeModel) {
 		
-		if (operationTreeModel == null)
+		if (treeModel == null)
 			return;
 		
 		List<Vertex> inputAttributesNodes = new ArrayList<Vertex>();
@@ -256,7 +256,7 @@ public class Service {
 		
 		// set the rdf ids of all the vertices. The rdf id of leaf vertices are the attribute ids. 
 		String hNodeId = "";
-		for (Vertex v : operationTreeModel.vertexSet()) {
+		for (Vertex v : treeModel.vertexSet()) {
 			if (v.getSemanticType() != null && v.getSemanticType().getHNodeId() != null) {
 				logger.debug("Vertex " + v.getLocalID() + " is a semantic type associated to a source columns.");
 				hNodeId = v.getSemanticType().getHNodeId();
@@ -287,12 +287,14 @@ public class Service {
 		
 		List<String> inputModelVertexes = new ArrayList<String>();
 		List<String> inputModelEdges = new ArrayList<String>();		
-		Model inputModel = getInputModel(operationTreeModel, inputAttributesNodes, 
+		
+		Model inputModel = getInputModel(treeModel, inputAttributesNodes, 
 				inputModelVertexes, inputModelEdges,
 				vertexIdToArgument);
+		
 		this.setInputModel(inputModel);
 		
-		Model outputModel = getOutputModel(operationTreeModel, 
+		Model outputModel = getOutputModel(treeModel, 
 				inputModelVertexes, inputModelEdges,
 				vertexIdToArgument);
 		
@@ -300,15 +302,15 @@ public class Service {
 		
 	}
 	
-	private Model getInputModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> operationTreeModel, 
+	private Model getInputModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeModel, 
 			List<Vertex> inputNodes, List<String> inputModelVertexes, List<String> inputModelEdges,
 			HashMap<String, Argument> vertexIdToArgument) {
 
-		if (operationTreeModel == null)
+		if (treeModel == null)
 			return null;
 				
 		logger.debug("compute the steiner tree from the alignment tree with input nodes as steiner nodes ...");
-		GraphPreProcess graphPreProcess = new GraphPreProcess(operationTreeModel, inputNodes, null);
+		GraphPreProcess graphPreProcess = new GraphPreProcess(treeModel, inputNodes, null);
 		UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedGraph = graphPreProcess.getUndirectedGraph();
 		List<Vertex> steinerNodes = graphPreProcess.getSteinerNodes();
 		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodes);
@@ -350,16 +352,16 @@ public class Service {
 		return m;
 	}
 
-	private Model getOutputModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> operationTreeModel, 
+	private Model getOutputModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeModel, 
 			List<String> inputModelVertexes, List<String> inputModelEdges,
 			HashMap<String, Argument> vertexIdToArgument) {
 
-		if (operationTreeModel == null)
+		if (treeModel == null)
 			return null;
 
 		Model m = new Model("outputModel");
 		
-		for (Vertex v : operationTreeModel.vertexSet()) {
+		for (Vertex v : treeModel.vertexSet()) {
 			
 			if (inputModelVertexes.indexOf(v.getID()) != -1)
 				continue;
@@ -377,7 +379,7 @@ public class Service {
 			m.getAtoms().add(classAtom);
 		}
 		
-		for (LabeledWeightedEdge e : operationTreeModel.edgeSet()) {
+		for (LabeledWeightedEdge e : treeModel.edgeSet()) {
 			
 			if (inputModelEdges.indexOf(e.getID()) != -1)
 				continue;

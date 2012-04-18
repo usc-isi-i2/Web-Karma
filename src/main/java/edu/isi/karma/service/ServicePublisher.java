@@ -97,7 +97,10 @@ public class ServicePublisher {
 		if (this.model == null)
 			model = generateModel();
 		
-		String service_desc_file = Repository.Instance().SERVICE_REPOSITORY_DIR + this.service.getId() + ".n3";
+		String service_desc_file = Repository.Instance().SERVICE_REPOSITORY_DIR + 
+									this.service.getId() + 
+									Repository.Instance().getFileExtension(lang);
+		
 		OutputStreamWriter output = new OutputStreamWriter(new FileOutputStream(service_desc_file));
 		model.write(output,lang);		
 //		model.write(output,"RDF/XML-ABBREV");

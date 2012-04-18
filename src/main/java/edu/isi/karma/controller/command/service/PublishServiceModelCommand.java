@@ -37,7 +37,9 @@ import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.service.Repository;
 import edu.isi.karma.service.Service;
+import edu.isi.karma.service.ServiceLoader;
 import edu.isi.karma.service.ServicePublisher;
 import edu.isi.karma.view.VWorkspace;
 
@@ -106,23 +108,52 @@ public class PublishServiceModelCommand extends Command{
 		
 		try {
 			ServicePublisher servicePublisher = new ServicePublisher(service);
-			servicePublisher.publish("N3", true);
+			servicePublisher.publish(Repository.Instance().LANG, true);
 
 			logger.info("Service model has successfully been published to repository.");
 			return new UpdateContainer(new ErrorUpdate(
 					"Service model has successfully been published to repository."));
 
 		} catch (IOException e) {
-			logger.error("Error occured while importing CSV file.", e);
+			logger.error("Error occured while publishing the service " + service.getId(), e);
 			return new UpdateContainer(new ErrorUpdate(
-					"Error occured while importing CSV File."));
+					"Error occured while publishing the service " + service.getId()));
 		}
 	}
 
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		// do nothing
-		return null;
+
+		Worksheet wk = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+
+		if (!wk.containService()) { 
+			logger.error("The worksheet does not have a service object.");
+			return new UpdateContainer(new ErrorUpdate(
+				"Error occured while deleting the model. The worksheet does not have a service object."));
+		}
+
+		Service service = wk.getMetadataContainer().getService();
+		
+		try {
+
+			// one way to un-publish is just set the service model to null and publish it again.
+			// in this way the invocation part will be kept in the repository.
+//			ServicePublisher servicePublisher = new ServicePublisher(service);
+//			servicePublisher.publish("N3", true);
+
+			// deleting the service completely from the repository.
+			ServiceLoader.deleteServiceByUri(service.getUri());
+
+			logger.info("Service model has successfully been deleted from repository.");
+			return new UpdateContainer(new ErrorUpdate(
+					"Service model has successfully been deleted from repository."));
+
+		} catch (Exception e) {
+			logger.error("Error occured while deleting the service " + service.getId(), e);
+			return new UpdateContainer(new ErrorUpdate(
+					"Error occured while deleting the service " + service.getId()));
+		}
+		
 	}
 
 }

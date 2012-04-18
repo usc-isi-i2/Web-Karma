@@ -21,6 +21,7 @@
 
 package edu.isi.karma.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +70,23 @@ public class ServiceLoader {
 	
 	public static void deleteServiceByUri(String uri) {
 		Repository.Instance().clearNamedModel(uri);
+		
+		String service_id = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 1);
+		String dir = Repository.Instance().SERVICE_REPOSITORY_DIR;
+		String fileName = service_id + Repository.Instance().getFileExtension(Repository.Instance().LANG);
+		File f = new File(dir + fileName);
+		
+		try {
+		if (f.exists()) {
+			if (!f.delete())
+				logger.debug("The file " + fileName + " cannot be deleted from " + dir);
+			else
+				logger.debug("The file " + fileName + " has been deleted from " + dir);
+		} else
+			logger.debug("The file " + fileName + " does not exist in " + dir);
+		} catch (Throwable t) {
+			logger.debug("cannot delete the file " + fileName + " from " + dir + " because " + t.getMessage());
+		}
 	}
 	
 	public static Service getServiceByUri(String uri, Integer operationLimit) {
@@ -900,16 +918,20 @@ public class ServiceLoader {
 		}
 
 	}
+	private static void testDeleteServiceByUri() {
+		String uri = "http://isi.edu/integration/karma/services/3D579101-2596-2331-53A8-63F949D71C8F#";
+		ServiceLoader.deleteServiceByUri(uri);
+	}	
 	public static void main(String[] args) {
 
 //		ServiceBuilder.main(new String[0]);
 
-		boolean test1 = false, test2 = false, test3 = true, test4 = false;
+		boolean test1 = false, test2 = false, test3 = false, test4 = true, test5 = false;
 		if (test1) testGetServiceByUri();
 		if (test2) testGetServiceByAddress();
 		if (test3) testGetServicesByIOPattern();
 		if (test4) testGetAllServices();
-
+		if (test5) testDeleteServiceByUri();
 
 	}
 
