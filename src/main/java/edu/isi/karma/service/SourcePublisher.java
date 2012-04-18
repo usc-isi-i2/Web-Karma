@@ -90,7 +90,11 @@ public class SourcePublisher {
 		if (this.model == null)
 			model = generateModel();
 		
-		String source_desc_file = Repository.Instance().SOURCE_REPOSITORY_DIR + this.source.getId() + ".n3";
+		String source_desc_file = Repository.Instance().SOURCE_REPOSITORY_DIR + 
+									this.source.getId() + ".n3";
+									Repository.Instance().getFileExtension(lang);
+
+
 		OutputStreamWriter output = new OutputStreamWriter(new FileOutputStream(source_desc_file));
 		model.write(output,lang);		
 		
@@ -172,7 +176,7 @@ public class SourcePublisher {
 					Resource className = model.createResource(classAtom.getClassPredicate().getUri());
 					r.addProperty(class_predicate, className);
 					
-					Resource arg1 = model.getResource(baseNS + classAtom.getArgument1().getUri());
+					Resource arg1 = model.getResource(baseNS + classAtom.getArgument1().getAttOrVarId());
 					r.addProperty(has_argument1, arg1);
 					
 					my_model.addProperty(has_atom, r);
@@ -188,10 +192,10 @@ public class SourcePublisher {
 					Resource propertyName = model.createResource(propertyAtom.getPropertyPredicate().getUri());
 					r.addProperty(property_predicate, propertyName);
 					
-					Resource arg1 = model.getResource(baseNS + propertyAtom.getArgument1().getUri());
+					Resource arg1 = model.getResource(baseNS + propertyAtom.getArgument1().getAttOrVarId());
 					r.addProperty(has_argument1, arg1);
 					
-					Resource arg2 = model.getResource(baseNS + propertyAtom.getArgument2().getUri());
+					Resource arg2 = model.getResource(baseNS + propertyAtom.getArgument2().getAttOrVarId());
 					r.addProperty(has_argument2, arg2);
 					
 					my_model.addProperty(has_atom, r);
@@ -206,7 +210,7 @@ public class SourcePublisher {
 		source.print();
 		SourcePublisher sourcePublisher = new SourcePublisher(source);
 		try {
-			sourcePublisher.publish("N3", true);
+			sourcePublisher.publish(Repository.Instance().LANG, true);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

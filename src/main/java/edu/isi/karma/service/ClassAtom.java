@@ -26,9 +26,9 @@ import edu.isi.karma.modeling.alignment.Name;
 public class ClassAtom extends Atom {
 
 	private Name classPredicate;
-	private Name argument1;
+	private Argument argument1;
 	
-	public ClassAtom(Name classPredicate, Name argument1) {
+	public ClassAtom(Name classPredicate, Argument argument1) {
 		this.classPredicate = classPredicate;
 		this.argument1 = argument1;
 	}
@@ -37,7 +37,7 @@ public class ClassAtom extends Atom {
 		return classPredicate;
 	}
 
-	public Name getArgument1() {
+	public Argument getArgument1() {
 		return argument1;
 	}
 	
@@ -46,7 +46,7 @@ public class ClassAtom extends Atom {
 		this.classPredicate = classPredicate;
 	}
 
-	public void setArgument1(Name argument1) {
+	public void setArgument1(Argument argument1) {
 		this.argument1 = argument1;
 	}
 
@@ -54,7 +54,7 @@ public class ClassAtom extends Atom {
 		System.out.println("class predicate uri: " + classPredicate.getUri());
 		System.out.println("class predicate ns: " + classPredicate.getNs());
 		System.out.println("class predicate prefix: " + classPredicate.getPrefix());
-		System.out.println("argument1: " + argument1.getUri());
+		System.out.println("argument1: " + argument1.getId());
 	}
 	
 }

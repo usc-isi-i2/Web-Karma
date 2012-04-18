@@ -40,6 +40,11 @@ public class Repository {
 	public final String SOURCE_REPOSITORY_DIR = "repository/sources/";
 	public final String TRIPLE_DATASET_DIR = "repository/dataset/";
 	
+//	@param LANG: The language in which to write the model is specified by the lang argument.
+//	* Predefined values are "RDF/XML", "RDF/XML-ABBREV", "N-TRIPLE", "TURTLE", (and "TTL") and "N3". 
+//	* The default value, represented by null is "RDF/XML".
+	 public final String LANG = "N3";
+	
 	static Logger logger = Logger.getLogger(Repository.class);
 
 	private Dataset dataset;
@@ -166,27 +171,14 @@ public class Repository {
 		}		
 	}
 	
-//	public void clearResourceTriples(String modelName, String uri) {
-//		if (uri == null) {
-//			logger.info("cannot clear the resource because the given uri is null.");
-//			return;
-//		}
-//		
-//		Resource r = this.getModel().getResource(uri);
-//		if (r == null) {
-//			logger.info("The model does not contain the resource " + uri);
-//			return;
-//		}
-//		
-//		Model m = r.getModel();
-//		if (m == null) {
-//			logger.info("No model is associated to resource " + uri);
-//			return;
-//		}
-//		
-//		//TODO
-//		
-//		m.commit();
-//	}
-
+	public String getFileExtension(String lang) {
+		String ext = ".rdf";
+		if (lang.equalsIgnoreCase("RDF/XML")) ext = ".rdf";
+		else if (lang.equalsIgnoreCase("RDF/XML-ABBREV")) ext = ".rdf";
+		else if (lang.equalsIgnoreCase("N-TRIPLE")) ext = ".ntriple";
+		else if (lang.equalsIgnoreCase("TURTLE")) ext = ".turtle";
+		else if (lang.equalsIgnoreCase("TTL")) ext = ".ttl";
+		else if (lang.equalsIgnoreCase("N3")) ext = ".n3";
+		return ext;
+	}
 }

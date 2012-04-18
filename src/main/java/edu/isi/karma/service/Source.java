@@ -22,6 +22,7 @@
 package edu.isi.karma.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -116,53 +117,60 @@ public class Source {
 		if (treeModel == null)
 			return;
 		
+		Model m = new Model("model");
+		if (this.attributes == null)
+			this.attributes = new ArrayList<Attribute>();
+		else
+			this.attributes.clear();
+		
+		HashMap<String, Argument> vertexIdToArgument = new HashMap<String, Argument>();
+		
 		// get the column name associated to the hNodeIds to assign to attribute names 
-		// set the rdf ids of all the vertices.  
+		// set the rdf ids of all the vertices.
 		for (Vertex v : treeModel.vertexSet()) {
 			if (v.getSemanticType() != null && v.getSemanticType().getHNodeId() != null) {
 				logger.debug("Vertex " + v.getLocalID() + " is a semantic type associated to a source columns.");
-				String attId = "att_" + v.getSemanticType().getHNodeId();
-				v.setRdfId(attId);
-
+				String hNodeId = v.getSemanticType().getHNodeId();
+				String attId = "att" + String.valueOf(attributes.size() + 1);
 				Attribute att = new Attribute(attId, this.getUri(), v.getLocalLabel(), IOType.NONE, AttributeRequirement.NONE);
+				att.sethNodeId(hNodeId);
 				this.attributes.add(att);
 				
+				vertexIdToArgument.put(v.getID(), new Argument(att.getId(), att.getId(), ArgumentType.ATTRIBUTE));
 			} else {
 				logger.debug("Vertex " + v.getLocalID() + " is an intermediate node.");
-				String variable = "v" + String.valueOf(variables.size() + 1);
-				this.variables.add(variable);
-				v.setRdfId(variable);
-				continue;
+				String variableId = "v" + String.valueOf(variables.size() + 1);
+				this.variables.add(variableId);
+
+				vertexIdToArgument.put(v.getID(), new Argument(variableId, variableId, ArgumentType.VARIABLE));
 			}
 		}
 
-		Model m = new Model("model");
-		
 		for (Vertex v : treeModel.vertexSet()) {
 			
 			if (v.getNodeType() == NodeType.DataProperty)
 				continue;
 			
-			if (v.getRdfId() == null)
+			if (vertexIdToArgument.get(v.getID()) == null)
 				continue;
 			
 			Name classPredicate = new Name(v.getUri(), v.getNs(), v.getPrefix());
-			Name argument1 = new Name(v.getRdfId(), null, null);
 
-			ClassAtom classAtom = new ClassAtom(classPredicate, argument1);
+			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(v.getID()));
 			m.getAtoms().add(classAtom);
 		}
 		
 		for (LabeledWeightedEdge e : treeModel.edgeSet()) {
 			
-			if (e.getSource().getRdfId() == null || e.getTarget().getRdfId() == null)
+			if (vertexIdToArgument.get(e.getSource().getID()) == null || 
+					vertexIdToArgument.get(e.getTarget().getID()) == null)
 				continue;
 
 			Name propertyPredicate = new Name(e.getUri(), e.getNs(), e.getPrefix());
-			Name argument1 = new Name(e.getSource().getRdfId(), null, null);
-			Name argument2 = new Name(e.getTarget().getRdfId(), null, null);
 
-			PropertyAtom propertyAtom = new PropertyAtom(propertyPredicate, argument1, argument2);
+			PropertyAtom propertyAtom = new PropertyAtom(propertyPredicate, 
+					vertexIdToArgument.get(e.getSource().getID()),
+					vertexIdToArgument.get(e.getTarget().getID()));
 			m.getAtoms().add(propertyAtom);
 		}
 		

@@ -52,6 +52,7 @@ public class ServiceBuilder {
 		
 		this.serviceData = null;
 		this.serviceName = serviceName;
+		System.out.println("Service Name: " + this.serviceName);
 		this.invocations = new ArrayList<Invocation>();
 	}
 	
@@ -156,39 +157,17 @@ public class ServiceBuilder {
 		
 		String guid = new RandomGUID().toString();
 //		guid = "E9C3F8D3-F778-5C4B-E089-C1749D50AE1F";
-		Service service = new Service(guid);
-		
 		URL sampleUrl = requestURLs.get(0);
+		Service service = new Service(guid, sampleUrl);
 		
 		if (sampleUrl == null)
 			return null;
-		
-		String address = URLManager.getServiceAddress(sampleUrl);
-		
-		service.setName(this.serviceName);
-		service.setDescription("");
-		service.setAddress(address);
-		
-		Operation op = new Operation("op1");
-		
-		String operationName = URLManager.getOperationName(sampleUrl);
-		String operationAddress = URLManager.getOperationAddress(sampleUrl);
 
-		op.setName(operationName);
-		op.setAddress(operationAddress);
-		op.setDescription("");
-		op.setMethod(HttpMethods.GET);
-		op.setInputAttributes(getInputAttributes());
-		for (Attribute att : op.getInputAttributes())
-			att.setId(op.getId() + "_" + att.getId());
-		op.setOutputAttributes(getOutputAttributes());
-		for (Attribute att : op.getOutputAttributes())
-			att.setId(op.getId() + "_" + att.getId());
+		service.setMethod(HttpMethods.GET);
+
+		service.setInputAttributes(getInputAttributes());
+		service.setOutputAttributes(getOutputAttributes());
 		
-		List<Operation> opList = new ArrayList<Operation>();
-		opList.add(op);
-		
-		service.setOperations(opList);
 		return service;
 	}
 	
@@ -212,15 +191,15 @@ public class ServiceBuilder {
 			Service service = sb.getInitialServiceModel();
 			
 			// just for test
-			service.getOperations().get(0).getInputAttributes().get(0).sethNodeId("h1");
-			service.getOperations().get(0).getInputAttributes().get(1).sethNodeId("h2");
-			service.getOperations().get(0).getOutputAttributes().get(4).sethNodeId("h3");
-			service.getOperations().get(0).getOutputAttributes().get(6).sethNodeId("h4");
-			service.getOperations().get(0).getOutputAttributes().get(5).sethNodeId("h5");
-			service.getOperations().get(0).getOutputAttributes().get(3).sethNodeId("h6");
+			service.getInputAttributes().get(0).sethNodeId("h1");
+			service.getInputAttributes().get(1).sethNodeId("h2");
+			service.getOutputAttributes().get(4).sethNodeId("h3");
+			service.getOutputAttributes().get(6).sethNodeId("h4");
+			service.getOutputAttributes().get(5).sethNodeId("h5");
+			service.getOutputAttributes().get(3).sethNodeId("h6");
 			service.print();
 			
-			service.getOperations().get(0).updateModel(Test.getGeoNamesNeighbourhoodTree());
+			service.updateModel(Test.getGeoNamesNeighbourhoodTree());
 			
 			ServicePublisher servicePublisher = new ServicePublisher(service);
 			servicePublisher.publish("N3", true);

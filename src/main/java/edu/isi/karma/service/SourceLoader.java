@@ -21,6 +21,7 @@
 
 package edu.isi.karma.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,7 @@ import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 import edu.isi.karma.modeling.alignment.Name;
 
@@ -51,6 +53,24 @@ public class SourceLoader {
 	
 	public static void deleteSourceByUri(String uri) {
 		Repository.Instance().clearNamedModel(uri);
+		
+		String source_id = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 1);
+		String dir = Repository.Instance().SOURCE_REPOSITORY_DIR;
+		String fileName = source_id + Repository.Instance().getFileExtension(Repository.Instance().LANG);
+		File f = new File(dir + fileName);
+		
+		try {
+		if (f.exists()) {
+			if (!f.delete())
+				logger.debug("The file " + fileName + " cannot be deleted from " + dir);
+			else
+				logger.debug("The file " + fileName + " has been deleted from " + dir);
+		} else
+			logger.debug("The file " + fileName + " does not exist in " + dir);
+		} catch (Throwable t) {
+			logger.debug("cannot delete the file " + fileName + " from " + dir + " because " + t.getMessage());
+		}
+
 	}
 	
 	public static Source getSourceByUri(String uri) {
@@ -157,53 +177,63 @@ public class SourceLoader {
 	}
 	
 	/**
-	 * Returns all the sources in the repository whose model matches the semantic model parameter.
+	 * Searches the repository to find the sources whose model matches the semantic model parameter.
 	 * @param semanticModel The input model whose pattern will be searched in the repository
 	 * @param ioType declares which one of the source input or source output will be tested for matching
 	 * @param sourceLimit maximum number of sources that will be fetched
-	 * @return
+	 * @return a hashmap of all found sources and a mapping from the found source parameters to the model parameters. 
+	 * This help us later to how to join the model's corresponding source and the matched source 
 	 */
-	public static List<Source> getSourcesByIOPattern(edu.isi.karma.service.Model semanticModel, Integer sourceLimit) {
+	public static Map<Source, Map<String, String>> getSourcesByIOPattern(edu.isi.karma.service.Model semanticModel, 
+			Integer sourceLimit) {
 		
-		List<String> sourceIds = getSourcesIdsByIOPattern(semanticModel, sourceLimit);
-		if (sourceIds == null)
+		Map<Source, Map<String, String>> sourcesAndMappings = 
+			new HashMap<Source, Map<String,String>>();
+		
+		Map<String, Map<String, String>> sourceIdsAndMappings =
+			getSourcesIdsByIOPattern(semanticModel, sourceLimit);
+		
+		if (sourceIdsAndMappings == null)
 			return null;
 		
-		List<Source> sourceList = new ArrayList<Source>();
-		
-		for (String uri : sourceIds) {
-			Model m = Repository.Instance().getNamedModel(uri);
+		for (String sourceId : sourceIdsAndMappings.keySet()) {
+			Model m = Repository.Instance().getNamedModel(sourceId);
 			if (m != null)
-				sourceList.add(getSourceFromJenaModel(m));
+				sourcesAndMappings.put(getSourceFromJenaModel(m), sourceIdsAndMappings.get(sourceId));
 		}
-		return sourceList;
+		
+		return sourcesAndMappings;
 	}
 	
 	/**
-	 * Returns a hash map of all sources whose model matches the semantic model parameter.
+	 * Searches the repository to find the sources whose model matches the semantic model parameter.
 	 * @param semanticModel The input model whose pattern will be searched in the repository
 	 * @param ioType declares which one of the source input or source output will be tested for matching
 	 * @param sourceLimit maximum number of sources that will be fetched
-	 * @return
+	 * @return a hashmap of IDs of all found sources and a mapping from the found source parameters to the model parameters. 
+	 * This help us later to how to join the model's corresponding source and the matched source 
 	 */
-	private static List<String> getSourcesIdsByIOPattern(edu.isi.karma.service.Model semanticModel, 
+	private static Map<String, Map<String, String>> getSourcesIdsByIOPattern(edu.isi.karma.service.Model semanticModel, 
 			Integer sourceLimit) {
 
-		List<String> sourceIds = new ArrayList<String>();
-
+		Map<String, Map<String, String>> sourceIdsAndMappings = 
+			new HashMap<String, Map<String,String>>();
+		
 		if (semanticModel == null || semanticModel.getAtoms() == null 
 				|| semanticModel.getAtoms().size() == 0) {
 			logger.info("The input model is nul or it does not have any atom");
 			return null;
 		}
+		
+		List<String> uniqueArgumentList = new ArrayList<String>();
 	
 		// map of NS --> Prefix
 		Map<String, String> nsToPrefixMapping = new HashMap<String, String>();
 		nsToPrefixMapping.put(Namespaces.KARMA, Prefixes.KARMA);
 		nsToPrefixMapping.put(Namespaces.SWRL, Prefixes.SWRL);
 		
-		String select =
-			"SELECT ?s \n" +
+		String select_header = "SELECT ?s ";
+		String select_where =
 			"WHERE { \n" +
 			"      ?s a " + Prefixes.KARMA + ":Source . \n" +
 			"      ?s " + Prefixes.KARMA + ":hasModel ?model . \n" + 
@@ -213,6 +243,8 @@ public class SourceLoader {
 		String predicateUri = "";
 		String argument1 = "";
 		String argument2 = "";
+		String argument1Var = "";
+		String argument2Var = "";
 
 		for (int i = 0; i < semanticModel.getAtoms().size(); i++) {
 			Atom atom = semanticModel.getAtoms().get(i);
@@ -221,34 +253,51 @@ public class SourceLoader {
 					ClassAtom classAtom = ((ClassAtom)atom);
 					atomVar = "?atom" + String.valueOf(i+1);
 					predicateUri = classAtom.getClassPredicate().getUri();
-					argument1 = "?" + classAtom.getArgument1().getLocalName();
+					argument1 = classAtom.getArgument1().getId();
+					argument1Var = "?" + argument1;
 					
-					select += 
+					if (uniqueArgumentList.indexOf(argument1) == -1) {
+						uniqueArgumentList.add(argument1);
+						select_header += argument1Var + " ";
+					}
+					
+					select_where += 
 						"      ?model " + Prefixes.KARMA + ":hasAtom " + atomVar + " . \n" +
 						"      " + atomVar + " a " + Prefixes.SWRL + ":ClassAtom . \n" +
 						"      " + atomVar + " " + Prefixes.SWRL + ":classPredicate <" + predicateUri + "> . \n" +
-						"      " + atomVar + " " + Prefixes.SWRL + ":argument1 " + argument1 + " . \n";
+						"      " + atomVar + " " + Prefixes.SWRL + ":argument1 " + argument1Var + " . \n";
 				}
 				else if (atom instanceof PropertyAtom) {
 					PropertyAtom propertyAtom = ((PropertyAtom)atom);
 					atomVar = "?atom" + String.valueOf(i+1);
 					predicateUri = propertyAtom.getPropertyPredicate().getUri();
-					argument1 = "?" + propertyAtom.getArgument1().getLocalName();
-					argument2 = "?" + propertyAtom.getArgument2().getLocalName();
-
+					argument1 = propertyAtom.getArgument1().getId();
+					argument2 = propertyAtom.getArgument2().getId();
+					argument1Var = "?" + argument1;
+					argument2Var = "?" + argument2;
 					
-					select += 
+					if (uniqueArgumentList.indexOf(argument1) == -1) {
+						uniqueArgumentList.add(argument1);
+						select_header += argument1Var + " ";
+					}
+					if (uniqueArgumentList.indexOf(argument2) == -1) {
+						uniqueArgumentList.add(argument2);
+						select_header += argument2Var + " ";
+					}
+					
+					select_where += 
 						"      ?model " + Prefixes.KARMA + ":hasAtom " + atomVar + " . \n" +
 						"      " + atomVar + " a " + Prefixes.SWRL + ":IndividualPropertyAtom . \n" +
 						"      " + atomVar + " " + Prefixes.SWRL + ":propertyPredicate <" + predicateUri + "> . \n" +
-						"      " + atomVar + " " + Prefixes.SWRL + ":argument1 " + argument1 + " . \n" +
-						"      " + atomVar + " " + Prefixes.SWRL + ":argument2 " + argument2 + " . \n";
+						"      " + atomVar + " " + Prefixes.SWRL + ":argument1 " + argument1Var + " . \n" +
+						"      " + atomVar + " " + Prefixes.SWRL + ":argument2 " + argument2Var + " . \n";
 				}			
 			}
 		}		
-		select += 	"      } \n";
+		select_where += 	"      } \n";
  
-		String prefix = getSPARQLHeader(nsToPrefixMapping); 
+		String prefix = getSPARQLHeader(nsToPrefixMapping);
+		String select = select_header + " \n " + select_where;
 		String queryString = prefix + select;
 		
 		if (sourceLimit != null) {
@@ -266,8 +315,10 @@ public class SourceLoader {
 		try {
 			ResultSet results = qexec.execSelect() ;
 			
-			if (!results.hasNext())
+			if (!results.hasNext()) {
 				logger.info("query does not return any answer.");
+				return null;
+			}
 
 //			ResultSetFormatter.out(System.out, results, query) ;
 			 
@@ -284,10 +335,20 @@ public class SourceLoader {
 
 				String source_uri = s.toString();
 				logger.debug("source uri: " + source_uri);
-				sourceIds.add(source_uri);
+				if (sourceIdsAndMappings.get(source_uri) == null) {
+					sourceIdsAndMappings.put(source_uri, new HashMap<String, String>());
+				}
+				
+				for (String arg : uniqueArgumentList) {
+					RDFNode argNode = soln.get(arg) ;
+					if (argNode != null && argNode.isResource()) {
+						String retrieved_id = argNode.asResource().getLocalName();
+						sourceIdsAndMappings.get(source_uri).put(retrieved_id, arg);
+					}
+				}
 			}
 			
-			return sourceIds;
+			return sourceIdsAndMappings;
 		} catch (Exception e) {
 			logger.info(e.getMessage());
 			return null;
@@ -335,8 +396,6 @@ public class SourceLoader {
 		source_id = source_uri.substring(source_uri.lastIndexOf("/") + 1, source_uri.length() - 1);
 		logger.debug("source id: " + source_id);
 
-		Source source = new Source(source_id);
-		
 		Property has_name_property = model.getProperty(Namespaces.KARMA + "hasName");
 		
 		Resource source_resource = model.getResource(source_uri);
@@ -352,6 +411,7 @@ public class SourceLoader {
 		} else
 			logger.debug("source does not have a name.");
 		
+		Source source = new Source(source_id);
 		source.setName(source_name);
 	 	source.setAttributes(getAttributes(model, source_resource));
 	 	source.setModel(getSemanticModel(model, source_resource));
@@ -488,8 +548,12 @@ public class SourceLoader {
 		String predicatePrefix = "";
 		String predicateNs = "";
 		
-		String argument1 = "";
+		String argument1Id = "";
+		String argument1Type = "";
 		
+		Resource attribute = ResourceFactory.createResource(Namespaces.KARMA + "Attribute");
+		Resource variable = ResourceFactory.createResource(Namespaces.SWRL + "Variable");
+
 		Property class_predicate_property = model.getProperty(Namespaces.SWRL + "classPredicate");
 		Property argument1_property = model.getProperty(Namespaces.SWRL + "argument1");
 
@@ -512,17 +576,23 @@ public class SourceLoader {
 		// atom argument1 
 		nodeIterator = model.listObjectsOfProperty(atom_resource, argument1_property);
 		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
-			argument1 = node.asResource().getLocalName();
-			logger.debug("The atom argument1 is: " + argument1);
+			argument1Id = node.asResource().getLocalName();
+			logger.debug("The atom argument1 is: " + argument1Id);
+			
+			if (isInstanceOfTheClass(node.asResource(), attribute))
+				argument1Type = ArgumentType.ATTRIBUTE;
+			else if (isInstanceOfTheClass(node.asResource(), variable))
+				argument1Type = ArgumentType.VARIABLE;
+			
 		} else {
 			logger.info("atom does not have an argument1.");
 			return null;
 		}
 		
 		Name predicateName = new Name(predicateUri, predicateNs, predicatePrefix);
-		Name argument1Name = new Name(argument1, "", "");
+		Argument arg1 = new Argument(argument1Id, argument1Id, argument1Type);
 		
-		ClassAtom classAtom = new ClassAtom(predicateName, argument1Name);
+		ClassAtom classAtom = new ClassAtom(predicateName, arg1);
 
 		return classAtom;
 
@@ -534,9 +604,15 @@ public class SourceLoader {
 		String predicatePrefix = "";
 		String predicateNs = "";
 		
-		String argument1 = "";
-		String argument2 = ""; 
+		String argument1Id = "";
+		String argument2Id = ""; 
+
+		String argument1Type = "";
+		String argument2Type = ""; 
 		
+		Resource attribute = ResourceFactory.createResource(Namespaces.KARMA + "Attribute");
+		Resource variable = ResourceFactory.createResource(Namespaces.SWRL + "Variable");
+
 		Property property_predicate_property = model.getProperty(Namespaces.SWRL + "propertyPredicate");
 		Property argument1_property = model.getProperty(Namespaces.SWRL + "argument1");
 		Property argument2_property = model.getProperty(Namespaces.SWRL + "argument2");
@@ -559,8 +635,14 @@ public class SourceLoader {
 		// atom argument1 
 		nodeIterator = model.listObjectsOfProperty(atom_resource, argument1_property);
 		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
-			argument1 = node.asResource().getLocalName();
-			logger.debug("The atom argument1 is: " + argument1);
+			argument1Id = node.asResource().getLocalName();
+			logger.debug("The atom argument1 is: " + argument1Id);
+			
+			if (isInstanceOfTheClass(node.asResource(), attribute))
+				argument1Type = ArgumentType.ATTRIBUTE;
+			else if (isInstanceOfTheClass(node.asResource(), variable))
+				argument1Type = ArgumentType.VARIABLE;
+			
 		} else {
 			logger.info("atom does not have an argument1.");
 			return null;
@@ -569,20 +651,38 @@ public class SourceLoader {
 		// atom argument2 
 		nodeIterator = model.listObjectsOfProperty(atom_resource, argument2_property);
 		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
-			argument2 = node.asResource().getLocalName();
-			logger.debug("The atom argument2 is: " + argument2);
+			argument2Id = node.asResource().getLocalName();
+			logger.debug("The atom argument2 is: " + argument2Id);
+			
+			if (isInstanceOfTheClass(node.asResource(), attribute))
+				argument2Type = ArgumentType.ATTRIBUTE;
+			else if (isInstanceOfTheClass(node.asResource(), variable))
+				argument2Type = ArgumentType.VARIABLE;
+			
 		} else {
 			logger.info("atom does not have an argument2.");
 			return null;
 		}
 		
 		Name predicateName = new Name(predicateUri, predicateNs, predicatePrefix);
-		Name argument1Name = new Name(argument1, "", "");
-		Name argument2Name = new Name(argument2, "", "");
+		Argument arg1 = new Argument(argument1Id, argument1Id, argument1Type);
+		Argument arg2 = new Argument(argument2Id, argument2Id, argument2Type);
 		
-		PropertyAtom propertyAtom = new PropertyAtom(predicateName, argument1Name, argument2Name);
+		PropertyAtom propertyAtom = new PropertyAtom(predicateName, arg1, arg2);
 
 		return propertyAtom;	
+	}
+	
+	private static boolean isInstanceOfTheClass(Resource resource, Resource class_resource) {
+		Property type_property = ResourceFactory.createProperty(Namespaces.RDF + "type");
+		
+		if (resource == null || !resource.isResource())
+			return true;
+		
+		if (resource.hasProperty(type_property, class_resource))
+			return true;
+		else
+			return false;
 	}
 	
 	private static void testGetSourceByUri() {
@@ -607,19 +707,39 @@ public class SourceLoader {
 		Name latPredicatName = new Name(wgs84Ontology + "lat", wgs84Ontology, "wgs84");
 		Name lngPredicatName = new Name(wgs84Ontology + "long", wgs84Ontology, "wgs84");
 		
-		ClassAtom c1 = new ClassAtom(featurePredicatName, new Name("arg1", null, null));
-		PropertyAtom p1 = new PropertyAtom(latPredicatName, new Name("arg1", null, null), new Name("arg2", null, null));
-		PropertyAtom p2 = new PropertyAtom(lngPredicatName, new Name("arg1", null, null), new Name("arg3", null, null));
-//		ClassAtom c2 = new ClassAtom(featurePredicatName, new Name("arg2", null, null));
+		ClassAtom c1 = new ClassAtom(featurePredicatName, new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE));
+		PropertyAtom p1 = new PropertyAtom(latPredicatName,
+				new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE), 
+				new Argument("arg2", "arg2", ArgumentType.ATTRIBUTE));
+		PropertyAtom p2 = new PropertyAtom(lngPredicatName,
+				new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE), 
+				new Argument("arg3", "arg3", ArgumentType.ATTRIBUTE));
+//		ClassAtom c2 = new ClassAtom(featurePredicatName, new Argument("arg2", "arg2", ArgumentType.ATTRIBUTE));
 
 		semanticModel.getAtoms().add(c1);
 		semanticModel.getAtoms().add(p1);
 		semanticModel.getAtoms().add(p2);
 //		semanticModel.getAtoms().add(c2);
-		List<Source> sourceList = getSourcesByIOPattern(semanticModel, null);
-		for (Source s : sourceList) {
+		
+		Map<Source, Map<String, String>> sourcesAndMappings = 
+			getSourcesByIOPattern(semanticModel, null);
+
+		if (sourcesAndMappings == null)
+			return;
+		
+		for (Source s : sourcesAndMappings.keySet()) {
 			if (s != null) s.print();
 		}
+		
+		System.out.println("Mappings from matched source to model arguments:");
+		for (Source s : sourcesAndMappings.keySet()) {
+			System.out.println("Source: " + s.getId());
+			if (sourcesAndMappings.get(s) == null)
+				continue;
+			for (String str : sourcesAndMappings.get(s).keySet())
+				System.out.println(str + "-------" + sourcesAndMappings.get(s).get(str));
+		}
+
 	}
 	private static void testDeleteSourceByUri() {
 		String uri = "http://isi.edu/integration/karma/sources/AEEA5A9A-744C-8096-B372-836ACC820D5A#";
@@ -627,13 +747,11 @@ public class SourceLoader {
 	}
 	public static void main(String[] args) {
 
-//		SourceBuilder.main(new String[0]);
-
-		boolean test1 = false, test2 = true, test3 = false, test4 = false;
+		boolean test1 = false, test2 = false, test3 = true, test4 = false;
 		if (test1) testGetSourceByUri();
-		if (test2) testGetSourcesByIOPattern();
-		if (test3) testGetAllSources();
-		if (test4) testDeleteSourceByUri();
+		if (test2) testDeleteSourceByUri();
+		if (test3) testGetSourcesByIOPattern();
+		if (test4) testGetAllSources();
 
 
 	}
