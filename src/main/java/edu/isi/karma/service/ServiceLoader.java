@@ -882,7 +882,7 @@ public class ServiceLoader {
 		
 		Name featurePredicatName = new Name(geonamesOntology + "Feature", geonamesOntology, "gn");
 		Name latPredicatName = new Name(wgs84Ontology + "lat", wgs84Ontology, "wgs84");
-		Name lngPredicatName = new Name(wgs84Ontology + "long", wgs84Ontology, "wgs84");
+		Name lngPredicatName = new Name(wgs84Ontology + "long1", wgs84Ontology, "wgs84");
 		
 		ClassAtom c1 = new ClassAtom(featurePredicatName, new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE));
 		PropertyAtom p1 = new PropertyAtom(latPredicatName,
@@ -926,7 +926,7 @@ public class ServiceLoader {
 
 //		ServiceBuilder.main(new String[0]);
 
-		boolean test1 = false, test2 = false, test3 = false, test4 = true, test5 = false;
+		boolean test1 = false, test2 = false, test3 = true, test4 = false, test5 = false;
 		if (test1) testGetServiceByUri();
 		if (test2) testGetServiceByAddress();
 		if (test3) testGetServicesByIOPattern();

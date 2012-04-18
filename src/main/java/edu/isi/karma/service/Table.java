@@ -32,15 +32,19 @@ public class Table {
 
 	private List<Attribute> headers;
 	private List<List<String>> values;
+	// the row id associated to each table row
+	private List<String> rowIds;
 	
 	public Table() {
 		headers = new ArrayList<Attribute>();
 		values = new ArrayList<List<String>>();
+		rowIds = new ArrayList<String>();
 	}
 	
 	public Table(Table table) {
 		this.headers = new ArrayList<Attribute>(table.headers);
 		this.values = new ArrayList<List<String>>(table.values);
+		this.rowIds = new ArrayList<String>(table.rowIds);
 	}
 	
 
@@ -59,6 +63,14 @@ public class Table {
 		this.values = values;
 	}
 	
+	public List<String> getRowIds() {
+		return rowIds;
+	}
+
+	public void setRowIds(List<String> rowIds) {
+		this.rowIds = rowIds;
+	}
+
 	public void print() {
 		
 		for (Attribute p: headers) {
@@ -131,12 +143,15 @@ public class Table {
 		
 		List<List<Attribute>> srcAttributes = new ArrayList<List<Attribute>>();
 		List<List<List<String>>> srcValues = new ArrayList<List<List<String>>>();
+		List<List<String>> srcRowIds = new ArrayList<List<String>>();
 		
 		List<Attribute> resultAttributes = new ArrayList<Attribute>();
 		List<List<String>> resultValues = new ArrayList<List<String>>();
+		List<String> resultRowIds = new ArrayList<String>();
 		
 		for (Table t : srcTables) {
 			srcAttributes.add(t.getHeaders());
+			srcRowIds.add(t.getRowIds());
 			srcValues.add(t.getValues());
 		}
 
@@ -177,12 +192,14 @@ public class Table {
 					populatedValues.add(singleValue);
 				}
 				
+				resultRowIds.add(srcRowIds.get(i).get(j));
 				resultValues.add(populatedValues);
 			}
 			
 		}
 		
 		resultTable.setHeaders(resultAttributes);
+		resultTable.setRowIds(resultRowIds);
 		resultTable.setValues(resultValues);
 		
 		return resultTable;

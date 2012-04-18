@@ -39,8 +39,11 @@ public class Invocation {
 
 	private static final String REQUEST_COLUMN_NAME = "request";
 	static Logger logger = Logger.getLogger(Invocation.class);
+	
+	private String requestId;
 
-	public Invocation(Request request) {
+	public Invocation(String requestId, Request request) {
+		this.requestId = requestId;
 		this.request = request;
 		updateRequest();
 	}
@@ -52,7 +55,6 @@ public class Invocation {
 	public Request getRequest() {
 		return request;
 	}
-
 
 	public void setRequest(Request request) {
 		this.request = request;
@@ -71,6 +73,8 @@ public class Invocation {
 
 	public Table getJointInputAndOutput() {
 		joinInputAndOutput();
+		for (int i = 0; i < this.jointInputAndOutput.getValues().size(); i++)
+			this.jointInputAndOutput.getRowIds().add(this.requestId);
 		return jointInputAndOutput;
 	}
 

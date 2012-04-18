@@ -484,7 +484,7 @@ public class Service {
 			for (Attribute p : this.inputAttributes)
 				p.print();
 		System.out.println("********************************************");
-		System.out.print("Input Model: ");
+		System.out.println("Input Model: ");
 		if (this.inputModel != null) {
 			System.out.println(inputModel.getUri());
 			this.inputModel.print();
@@ -495,7 +495,7 @@ public class Service {
 			for (Attribute p : getOutputAttributes())
 				p.print();
 		System.out.println("********************************************");
-		System.out.print("Output Model: ");
+		System.out.println("Output Model: ");
 		if (this.outputModel != null) {
 			System.out.println(outputModel.getUri());
 			this.outputModel.print();

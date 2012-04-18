@@ -147,8 +147,9 @@ public class PopulateCommand extends WorksheetCommand{
 				"Error occured while populating the source. Cannot find any services to be invoked according to this source model."));
 		}
 		
+		List<String> requestIds = new ArrayList<String>();
 		Map<String, String> serviceToSourceAttMapping =  servicesAndMappings.get(service);
-		List<String> requestURLStrings = getUrlStrings(service, source, wk, serviceToSourceAttMapping);
+		List<String> requestURLStrings = getUrlStrings(service, source, wk, serviceToSourceAttMapping, requestIds);
 		if (requestURLStrings == null || requestURLStrings.size() == 0) {
 			logger.error("Data table does not have any row.");
 			return new UpdateContainer(new ErrorUpdate("Data table does not have any row."));	
@@ -157,11 +158,11 @@ public class PopulateCommand extends WorksheetCommand{
 		
 		InvocationManager invocatioManager;
 		try {
-			invocatioManager = new InvocationManager(requestURLStrings);
+			invocatioManager = new InvocationManager(requestIds, requestURLStrings);
 			logger.info("Requesting data with includeURL=" + true + ",includeInput=" + true + ",includeOutput=" + true);
-			Table serviceTable = invocatioManager.getServiceData(false, true, true);
+			Table serviceTable = invocatioManager.getServiceData(false, false, true);
 			logger.debug(serviceTable.getPrintInfo());
-			wk = ServiceTableUtil.generateWorksheet(serviceTable, ws);
+			ServiceTableUtil.populateWorksheet(serviceTable, wk, ws.getFactory());
 			logger.info("The service " + service.getUri() + " has been invoked successfully.");
 
 
@@ -189,7 +190,8 @@ public class PopulateCommand extends WorksheetCommand{
 	}
 
 	private List<String> getUrlStrings(Service service, Source source, 
-			Worksheet wk, Map<String, String> serviceToSourceAttMapping) {
+			Worksheet wk, Map<String, String> serviceToSourceAttMapping, 
+			List<String> requestIds) {
 		
 		List<String> requestURLStrings = new ArrayList<String>();
 		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows());
@@ -224,7 +226,9 @@ public class PopulateCommand extends WorksheetCommand{
 			//FIXME
 			urlString = urlString.replaceAll("\\{p3\\}", "taheriyan");
 			
+			requestIds.add(rows.get(i).getId());
 			requestURLStrings.add(urlString);
+			
 			logger.debug("The invocation url " + urlString + " has been added to the invocation list.");
 		}
 		

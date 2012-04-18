@@ -87,17 +87,19 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			return new UpdateContainer(new ErrorUpdate("Data table does not have any row."));	
 		}
 		
+		List<String> requestIds = new ArrayList<String>();
 		for (int i = 0; i < rows.size(); i++) {
+			requestIds.add(rows.get(i).getId());
 			requestURLStrings.add(rows.get(i).getNode(hNodeId).getValue().asString());
 		}
 
 		InvocationManager invocatioManager;
 		try {
-			invocatioManager = new InvocationManager(requestURLStrings);
-			logger.info("Requesting data with includeURL=" + true + ",includeInput=" + true + ",includeOutput=" + true);
-			Table serviceTable = invocatioManager.getServiceData();
+			invocatioManager = new InvocationManager(requestIds, requestURLStrings);
+			logger.info("Requesting data with includeURL=" + false + ",includeInput=" + true + ",includeOutput=" + true);
+			Table serviceTable = invocatioManager.getServiceData(false, true, true);
 			logger.debug(serviceTable.getPrintInfo());
-			ServiceTableUtil.populateWorksheet(serviceTable, wk, ws.getFactory(), hNodeId);
+			ServiceTableUtil.populateWorksheet(serviceTable, wk, ws.getFactory());
 			
 			Service service = invocatioManager.getInitialServiceModel(null);
 			MetadataContainer metaData = wk.getMetadataContainer();

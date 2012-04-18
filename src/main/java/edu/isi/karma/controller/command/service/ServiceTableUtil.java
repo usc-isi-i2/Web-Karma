@@ -33,7 +33,6 @@ import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.service.Attribute;
 import edu.isi.karma.service.Table;
 
@@ -41,55 +40,38 @@ public class ServiceTableUtil {
 
 	static Logger logger = Logger.getLogger(ServiceTableUtil.class);
 
-	public static Worksheet generateWorksheet(Table table, Workspace ws) {
-
-		Worksheet worksheet = ws.getFactory().createWorksheet("results", ws);
-		logger.info("Generating a new worksheet with the service data ...");
-
-		List<String> hNodeIdList = new ArrayList<String>();
-		hNodeIdList = addHeaders(table.getHeaders(), worksheet, ws.getFactory(), true);
-
-		edu.isi.karma.rep.Table dataTable = worksheet.getDataTable();
-		addRows(table.getValues(), worksheet, ws.getFactory(), hNodeIdList, dataTable);
-		
-		return worksheet;
-
-	}
 	
 	public static void populateEmptyWorksheet(Table table, Worksheet worksheet, RepFactory factory) {
 
 		logger.info("Populating an empty worksheet with the service data ...");
 
 		List<String> hNodeIdList = new ArrayList<String>();
-		hNodeIdList = addHeaders(table.getHeaders(), worksheet, factory, true);
+		hNodeIdList = addHeaders(table.getHeaders(), worksheet, factory);
 
 		edu.isi.karma.rep.Table dataTable = worksheet.getDataTable();
 		addRows(table.getValues(), worksheet, factory, hNodeIdList, dataTable);
 
 	}
 	
-	public static void populateWorksheet(Table table, Worksheet worksheet, RepFactory factory, String urlHNodeId) {
+	public static void populateWorksheet(Table table, Worksheet worksheet, RepFactory factory) {
 		
 		logger.info("Populating existing worksheet with the service data ...");
 		
 		List<String> oldHNodeIdList = new ArrayList<String>(worksheet.getHeaders().getHNodeIds());
 
 		List<String> hNodeIdList = new ArrayList<String>();
-		hNodeIdList = addHeaders(table.getHeaders(), worksheet, factory, false);
+		hNodeIdList = addHeaders(table.getHeaders(), worksheet, factory);
 
 		edu.isi.karma.rep.Table dataTable = worksheet.getDataTable();
-		updateRows(table.getValues(), worksheet, factory, oldHNodeIdList, hNodeIdList, dataTable, urlHNodeId);
+		updateRows(table.getValues(), table.getRowIds(), worksheet, factory, oldHNodeIdList, hNodeIdList, dataTable);
 
 	}
 	
-	private static List<String> addHeaders(List<Attribute> tableHeader, Worksheet worksheet, RepFactory factory, boolean includeURL) {
+	private static List<String> addHeaders(List<Attribute> tableHeader, Worksheet worksheet, RepFactory factory) {
 		HTable headers = worksheet.getHeaders();
 		List<String> headersList = new ArrayList<String>();
 		
-		// eliminate the url header if the flag is true
-		int startIndex = 0;
-		if (!includeURL) startIndex = 1;
-		for (int i = startIndex; i < tableHeader.size(); i++) {
+		for (int i = 0; i < tableHeader.size(); i++) {
 			Attribute att = tableHeader.get(i);
 			HNode hNode = headers.addHNode(att.getName(), worksheet, factory);
 			headersList.add(hNode.getId());
@@ -114,35 +96,40 @@ public class ServiceTableUtil {
 		
 	}
 
-	private static void updateRows(List<List<String>> tableValues, Worksheet worksheet, RepFactory factory, 
+	private static void updateRows(List<List<String>> tableValues, List<String> tableRowIds, 
+			Worksheet worksheet, RepFactory factory, 
 			List<String> oldHNodeIdList, List<String> hNodeIdList, 
-			edu.isi.karma.rep.Table dataTable, String urlHNodeId) {
+			edu.isi.karma.rep.Table dataTable) {
 		
 		int rowsCount = dataTable.getNumRows();
 		List<Row> oldRows = dataTable.getRows(0, rowsCount);
 		List<HashMap<String, String>> oldRowValues = new ArrayList<HashMap<String,String>>();
+		List<String> oldRowIds = new ArrayList<String>();
+		
 		for (Row r : oldRows) {
 			HashMap<String, String> vals = new HashMap<String, String>();
 			for (Node n : r.getNodes()) {
 				vals.put(n.getHNodeId(), n.getValue().asString());
 			}
 			oldRowValues.add(vals);
+			oldRowIds.add(r.getId());
 		}
 		
 		HashMap<String, String> currentRow = null;
-		String currentRowURL = "";
+		String currentRowId = "";
 		
 		int addedRowsCount = 0; 
 		for (int i = 0; i < oldRowValues.size(); i++) {
 			currentRow = oldRowValues.get(i);
-			currentRowURL = currentRow.get(urlHNodeId);
+			currentRowId = oldRowIds.get(i);
 			
-			for (List<String> rowValues : tableValues) {
+			for (int k = 0; k < tableValues.size(); k++) {
+				List<String> rowValues = tableValues.get(k);
 				if (rowValues == null || rowValues.size() == 0)
 					continue;
 				
-				String urlValue = rowValues.get(0);
-				if (!urlValue.trim().equalsIgnoreCase(currentRowURL.trim())) {
+				String tableRowId = tableRowIds.get(k);
+				if (tableRowId == null || !tableRowId.trim().equalsIgnoreCase(currentRowId.trim())) {
 					continue;
 				}
 				
@@ -157,10 +144,10 @@ public class ServiceTableUtil {
 				System.out.println(hNodeIdList.size());
 				for (int j = 0; j < hNodeIdList.size(); j++) {
 					// the first column in the table is the url column which should not be added to the table
-					System.out.println("j:" + j);
-					System.out.println(hNodeIdList.get(j));
-					System.out.println(rowValues.get(j + 1));
-					row.setValue(hNodeIdList.get(j), rowValues.get(j + 1));
+//					System.out.println("j:" + j);
+//					System.out.println(hNodeIdList.get(j));
+//					System.out.println(rowValues.get(j + 1));
+					row.setValue(hNodeIdList.get(j), rowValues.get(j));
 				}
 				
 				for (String id: oldHNodeIdList) {

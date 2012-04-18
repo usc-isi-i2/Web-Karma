@@ -39,12 +39,13 @@ public class InvocationManager {
 	static Logger logger = Logger.getLogger(InvocationManager.class);
 
 	private List<URL> requestURLs;
+	private List<String> idList;
 	private List<Invocation> invocations;
 	private Table serviceData;
 	
-	public InvocationManager(List<String> requestURLStrings) 
+	public InvocationManager(List<String> idList, List<String> requestURLStrings) 
 	throws MalformedURLException, KarmaException {
-
+		this.idList = idList;
 		requestURLs = URLManager.getURLsFromStrings(requestURLStrings);
 		if (requestURLs == null || requestURLs.size() == 0)
 			throw new KarmaException("Cannot model a service without any request example.");
@@ -54,9 +55,13 @@ public class InvocationManager {
 	}
 	
 	private void invokeAndGetResponse() {
-		for (URL url : requestURLs) {
+		for (int i = 0; i < requestURLs.size(); i++) {
+			URL url = requestURLs.get(i);
+			String requestId = null;
+			if (idList != null)
+				requestId = idList.get(i);
 			Request request = new Request(url);
-			Invocation invocation = new Invocation(request);
+			Invocation invocation = new Invocation(requestId, request);
 			logger.info("Invoking the service " + request.getUrl().toString() + " ...");
 			invocation.invokeAPI();
 			invocations.add(invocation);
@@ -85,6 +90,7 @@ public class InvocationManager {
 		Table newTable = new Table();
 		List<Attribute> newHeader = new ArrayList<Attribute>();
 		List<List<String>> newValues = new ArrayList<List<String>>();
+		List<String> newRowIds = new ArrayList<String>(this.serviceData.getRowIds());
 		
 		List<Integer> includingColumns = new ArrayList<Integer>();
 		
@@ -112,6 +118,7 @@ public class InvocationManager {
 		
 		newTable.setHeaders(newHeader);
 		newTable.setValues(newValues);
+		newTable.setRowIds(newRowIds);
 		
 		return newTable;
 	}
@@ -177,15 +184,21 @@ public class InvocationManager {
 	public static void main(String[] args) {
 //		String s1 = "http://colo-vm10.isi.edu:8080/DovetailService/GetSampleData?sourceName=KDD-02-B-TOSIG";
 		String s1 = "http://api.geonames.org/neighbourhood?lat=40.78343&lng=-73.96625&username=taheriyan";
-//		String s2 = "http://api.geonames.org/neighbourhood?lat=40.7&lng=-73.9&username=taheriyan";
-//		String s3 = "http://api.geonames.org/neighbourhood?lat=40.9&lng=-73.9&username=taheriyan";
+		String s2 = "http://api.geonames.org/neighbourhood?lat=40.7&lng=-73.9&username=taheriyan";
+		String s3 = "http://api.geonames.org/neighbourhood?lat=40.9&lng=-73.9&username=taheriyan";
 
 		List<String> urls = new ArrayList<String>();
 		urls.add(s1);
-//		urls.add(s2);
-		
+		urls.add(s2);
+		urls.add(s3);
+
+		List<String> ids = new ArrayList<String>();
+		ids.add("1"); 
+		ids.add("2"); 
+		ids.add("3");
+
 		try {
-			InvocationManager sb = new InvocationManager(urls);
+			InvocationManager sb = new InvocationManager(ids, urls);
 			Table tb = sb.getServiceData(true, true, true);
 
 			logger.debug(tb.getPrintInfo());
