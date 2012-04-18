@@ -34,16 +34,15 @@ import edu.isi.karma.modeling.Test;
 import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.webserver.KarmaException;
 
-public class ServiceBuilder {
+public class InvocationManager {
 
-	static Logger logger = Logger.getLogger(ServiceBuilder.class);
+	static Logger logger = Logger.getLogger(InvocationManager.class);
 
 	private List<URL> requestURLs;
 	private List<Invocation> invocations;
-	private String serviceName;
 	private Table serviceData;
 	
-	public ServiceBuilder(String serviceName, List<String> requestURLStrings) 
+	public InvocationManager(List<String> requestURLStrings) 
 	throws MalformedURLException, KarmaException {
 
 		requestURLs = URLManager.getURLsFromStrings(requestURLStrings);
@@ -51,8 +50,6 @@ public class ServiceBuilder {
 			throw new KarmaException("Cannot model a service without any request example.");
 		
 		this.serviceData = null;
-		this.serviceName = serviceName;
-		System.out.println("Service Name: " + this.serviceName);
 		this.invocations = new ArrayList<Invocation>();
 	}
 	
@@ -153,15 +150,20 @@ public class ServiceBuilder {
 	 * service endpoint, http method, input and output attributes
 	 * @return
 	 */
-	public Service getInitialServiceModel() {
+	public Service getInitialServiceModel(String serviceName) {
 		
 		String guid = new RandomGUID().toString();
 //		guid = "E9C3F8D3-F778-5C4B-E089-C1749D50AE1F";
 		URL sampleUrl = requestURLs.get(0);
-		Service service = new Service(guid, sampleUrl);
 		
 		if (sampleUrl == null)
 			return null;
+
+		Service service = null;
+		if (serviceName == null || serviceName.trim().length() == 0)
+			service = new Service(guid, sampleUrl);
+		else
+			service = new Service(guid, serviceName, sampleUrl);
 
 		service.setMethod(HttpMethods.GET);
 
@@ -183,12 +185,12 @@ public class ServiceBuilder {
 //		urls.add(s2);
 		
 		try {
-			ServiceBuilder sb = new ServiceBuilder("myService", urls);
+			InvocationManager sb = new InvocationManager(urls);
 			Table tb = sb.getServiceData(true, true, true);
 
 			logger.debug(tb.getPrintInfo());
 
-			Service service = sb.getInitialServiceModel();
+			Service service = sb.getInitialServiceModel(null);
 			
 			// just for test
 			service.getInputAttributes().get(0).sethNodeId("h1");

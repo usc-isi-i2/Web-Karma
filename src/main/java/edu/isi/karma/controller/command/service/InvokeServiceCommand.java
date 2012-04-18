@@ -40,8 +40,8 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.MetadataContainer;
+import edu.isi.karma.service.InvocationManager;
 import edu.isi.karma.service.Service;
-import edu.isi.karma.service.ServiceBuilder;
 import edu.isi.karma.service.Table;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
@@ -91,15 +91,15 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			requestURLStrings.add(rows.get(i).getNode(hNodeId).getValue().asString());
 		}
 
-		ServiceBuilder sb;
+		InvocationManager invocatioManager;
 		try {
-			sb = new ServiceBuilder(wk.getTitle(), requestURLStrings);
+			invocatioManager = new InvocationManager(requestURLStrings);
 			logger.info("Requesting data with includeURL=" + true + ",includeInput=" + true + ",includeOutput=" + true);
-			Table serviceTable = sb.getServiceData();
+			Table serviceTable = invocatioManager.getServiceData();
 			logger.debug(serviceTable.getPrintInfo());
 			ServiceTableUtil.populateWorksheet(serviceTable, wk, ws.getFactory(), hNodeId);
 			
-			Service service = sb.getInitialServiceModel();
+			Service service = invocatioManager.getInitialServiceModel(null);
 			MetadataContainer metaData = wk.getMetadataContainer();
 			if (metaData == null) {
 				metaData = new MetadataContainer();

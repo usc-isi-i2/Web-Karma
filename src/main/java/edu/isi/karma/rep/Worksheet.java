@@ -140,4 +140,14 @@ public class Worksheet extends RepEntity {
 		
 		return true;
 	}
+	
+	public boolean containSource() {
+		if (this.getMetadataContainer() == null)
+			return false;
+		
+		if (this.getMetadataContainer().getSource() == null)
+			return false;
+		
+		return true;
+	}
 }

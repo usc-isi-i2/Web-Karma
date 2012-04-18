@@ -18,48 +18,27 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.rep.metadata;
 
-import edu.isi.karma.rep.semantictypes.SemanticTypes;
-import edu.isi.karma.service.Service;
-import edu.isi.karma.service.Source;
+package edu.isi.karma.controller.command.service;
 
-public class MetadataContainer {
+import javax.servlet.http.HttpServletRequest;
+
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.view.VWorkspace;
+
+public class PublishModelCommandFactory extends CommandFactory{
 	
-	@SuppressWarnings("unused")
-	private String 			worksheetName;
-	@SuppressWarnings("unused")
-	private SemanticTypes 	semanticTypes;
-	
-	private Service service;
-	private Source source;
-	
-//	private String 
-
-
-	public void initializeFromJSON() {
-		
+	public enum Arguments {
+		vWorksheetId
 	}
 	
-	public void save() {
-		
+	@Override
+	public Command createCommand(HttpServletRequest request,
+			VWorkspace vWorkspace) {
+
+		String vWorksheetId =request.getParameter(Arguments.vWorksheetId.name());
+		return new PublishModelCommand(getNewId(vWorkspace), vWorksheetId);
 	}
 
-	public Service getService() {
-		return service;
-	}
-
-	public void setService(Service service) {
-		this.service = service;
-	}
-
-	public Source getSource() {
-		return source;
-	}
-
-	public void setSource(Source source) {
-		this.source = source;
-	}
-	
-	
 }

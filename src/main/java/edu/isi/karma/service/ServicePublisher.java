@@ -282,6 +282,6 @@ public class ServicePublisher {
 	}
 	
 	public static void main(String[] args) {
-		ServiceBuilder.main(new String[0]);
+		InvocationManager.main(new String[0]);
 	}
 }

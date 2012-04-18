@@ -37,21 +37,25 @@ import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.MetadataContainer;
 import edu.isi.karma.service.Repository;
 import edu.isi.karma.service.Service;
 import edu.isi.karma.service.ServiceLoader;
 import edu.isi.karma.service.ServicePublisher;
+import edu.isi.karma.service.Source;
+import edu.isi.karma.service.SourceLoader;
+import edu.isi.karma.service.SourcePublisher;
 import edu.isi.karma.view.VWorkspace;
 
-public class PublishServiceModelCommand extends Command{
+public class PublishModelCommand extends Command{
 
 	private final String vWorksheetId;
 
 	// Logger object
 	private static Logger logger = LoggerFactory
-			.getLogger(PublishServiceModelCommand.class.getSimpleName());
+			.getLogger(PublishModelCommand.class.getSimpleName());
 
-	public PublishServiceModelCommand(String id, String vWorksheetId) {
+	public PublishModelCommand(String id, String vWorksheetId) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
 	}
@@ -63,7 +67,7 @@ public class PublishServiceModelCommand extends Command{
 
 	@Override
 	public String getTitle() {
-		return "Publishing the Service Model";
+		return "Publish the Model";
 	}
 
 	@Override
@@ -82,42 +86,69 @@ public class PublishServiceModelCommand extends Command{
 		Workspace ws = vWorkspace.getWorkspace();
 		Worksheet wk = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 
+		Service service = null;
+		Source source = null;
+		
 		if (!wk.containService()) { 
 			logger.error("The worksheet does not have a service object.");
-			return new UpdateContainer(new ErrorUpdate(
-				"Error occured while publishing the model. The worksheet does not have a service object."));
-		}
-
-		Service service = wk.getMetadataContainer().getService();
+//			return new UpdateContainer(new ErrorUpdate(
+//				"Error occured while publishing the model. The worksheet does not have a service object."));
+		} else
+			service = wk.getMetadataContainer().getService();
 		
 		AlignmentManager mgr = AlignmentManager.Instance();
 		String alignmentId = mgr.constructAlignmentId(ws.getId(), vWorksheetId);
 		Alignment al = mgr.getAlignment(alignmentId);
 		
-		if (al == null) 
+		if (al == null) { 
 			logger.error("The alignment model is null.");
-		else {
-			DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = al.getSteinerTree();
-			
-			if (tree == null) 
-				logger.error("The alignment tree is null.");
-			else
-				service.updateModel(tree);
+			if (service == null)
+				return new UpdateContainer(new ErrorUpdate(
+					"Error occured while publishing the source. The alignment model is null."));
+		} 
+		
+		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = null;
+		if (al != null) 
+			tree = al.getSteinerTree();
+		
+		if (tree == null) { 
+			logger.error("The alignment tree is null.");
+			if (service == null)
+				return new UpdateContainer(new ErrorUpdate(
+					"Error occured while publishing the source. The alignment tree is null."));
 		}
 		
+		if (service != null) service.updateModel(tree);
+		else {
+			source = new Source(wk.getTitle(), tree);
+			MetadataContainer metaData = wk.getMetadataContainer();
+			if (metaData == null) {
+				metaData = new MetadataContainer();
+				wk.setMetadataContainer(metaData);
+			}
+			metaData.setSource(source);
+			logger.info("Source added to the Worksheet.");
+		}
 		
 		try {
-			ServicePublisher servicePublisher = new ServicePublisher(service);
-			servicePublisher.publish(Repository.Instance().LANG, true);
-
-			logger.info("Service model has successfully been published to repository.");
-			return new UpdateContainer(new ErrorUpdate(
-					"Service model has successfully been published to repository."));
+			if (service != null) {
+				ServicePublisher servicePublisher = new ServicePublisher(service);
+				servicePublisher.publish(Repository.Instance().LANG, true);
+				logger.info("Service model has successfully been published to repository.");
+				return new UpdateContainer(new ErrorUpdate(
+						"Service model has successfully been published to repository."));
+			} else { //if (source != null) {
+				SourcePublisher sourcePublisher = new SourcePublisher(source);
+				sourcePublisher.publish(Repository.Instance().LANG, true);
+				logger.info("Source model has successfully been published to repository.");
+				return new UpdateContainer(new ErrorUpdate(
+						"Source model has successfully been published to repository."));
+			}
 
 		} catch (IOException e) {
-			logger.error("Error occured while publishing the service " + service.getId(), e);
+			logger.error("Error occured while publishing the source/service ", e);
 			return new UpdateContainer(new ErrorUpdate(
-					"Error occured while publishing the service " + service.getId()));
+					"Error occured while publishing the source/service "));
 		}
 	}
 
@@ -126,13 +157,22 @@ public class PublishServiceModelCommand extends Command{
 
 		Worksheet wk = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 
+		Service service = null;
+		Source source = null;
+		
 		if (!wk.containService()) { 
 			logger.error("The worksheet does not have a service object.");
-			return new UpdateContainer(new ErrorUpdate(
-				"Error occured while deleting the model. The worksheet does not have a service object."));
-		}
-
-		Service service = wk.getMetadataContainer().getService();
+//			return new UpdateContainer(new ErrorUpdate(
+//				"Error occured while deleting the model. The worksheet does not have a service object."));
+		} else
+			service = wk.getMetadataContainer().getService();
+		
+		if (!wk.containSource()) { 
+			logger.error("The worksheet does not have a source object.");
+//			return new UpdateContainer(new ErrorUpdate(
+//				"Error occured while deleting the model. The worksheet does not have a source object."));
+		} else
+			source = wk.getMetadataContainer().getSource();
 		
 		try {
 
@@ -142,16 +182,23 @@ public class PublishServiceModelCommand extends Command{
 //			servicePublisher.publish("N3", true);
 
 			// deleting the service completely from the repository.
-			ServiceLoader.deleteServiceByUri(service.getUri());
-
-			logger.info("Service model has successfully been deleted from repository.");
-			return new UpdateContainer(new ErrorUpdate(
-					"Service model has successfully been deleted from repository."));
+			if (service != null) {
+				ServiceLoader.deleteServiceByUri(service.getUri());
+				logger.info("Service model has successfully been deleted from repository.");
+				return new UpdateContainer(new ErrorUpdate(
+						"Service model has successfully been deleted from repository."));
+			}
+			else {
+				SourceLoader.deleteSourceByUri(source.getUri());
+				logger.info("Source model has successfully been deleted from repository.");
+				return new UpdateContainer(new ErrorUpdate(
+						"Source model has successfully been deleted from repository."));
+			}
 
 		} catch (Exception e) {
-			logger.error("Error occured while deleting the service " + service.getId(), e);
+			logger.error("Error occured while deleting the source/service " + service.getId(), e);
 			return new UpdateContainer(new ErrorUpdate(
-					"Error occured while deleting the service " + service.getId()));
+					"Error occured while deleting the source/service " + service.getId()));
 		}
 		
 	}

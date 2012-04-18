@@ -33,7 +33,6 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 import edu.isi.karma.modeling.Test;
-import edu.isi.karma.util.RandomGUID;
 
 public class SourcePublisher {
 
@@ -205,8 +204,7 @@ public class SourcePublisher {
 	}
 	
 	public static void main(String[] args) {
-		Source source = new Source(new RandomGUID().toString(), "mySource");
-		source.updateModel(Test.getGeoNamesNeighbourhoodTree());
+		Source source = new Source("mySource", Test.getGeoNamesNeighbourhoodTree());
 		source.print();
 		SourcePublisher sourcePublisher = new SourcePublisher(source);
 		try {
