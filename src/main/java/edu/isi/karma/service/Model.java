@@ -68,7 +68,7 @@ public class Model {
 	}
 
 	public void print() {
-		System.out.println("model id=" + this.getId());
+//		System.out.println("model id=" + this.getId());
 		System.out.println(getLogicalForm());
 //		for (Atom atom : atoms) {
 //			System.out.println("@@@@@@@@@@@@@@@");

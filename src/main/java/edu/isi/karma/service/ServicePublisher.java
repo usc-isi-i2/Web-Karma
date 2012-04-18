@@ -78,7 +78,7 @@ public class ServicePublisher {
 	 */
 	public void publish(String lang, boolean writeToFile) throws FileNotFoundException {
 		
-		Service existingService = ServiceLoader.getServiceByAddress(this.service.getAddress(), null);
+		Service existingService = ServiceLoader.getServiceByAddress(this.service.getAddress());
 		if (existingService != null) 
 			ServiceLoader.deleteServiceByUri(existingService.getUri());
 		

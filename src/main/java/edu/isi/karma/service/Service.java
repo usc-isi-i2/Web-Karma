@@ -179,24 +179,6 @@ public class Service {
 		this.outputModel = outputModel;
 	}
 	
-	public void updateId(String newId) {
-		this.id = newId;
-		
-		if (this.inputAttributes != null)
-			for (Attribute att : inputAttributes)
-				att.setBaseUri(this.getUri());
-
-		if (this.outputAttributes != null)
-			for (Attribute att : outputAttributes)
-				att.setBaseUri(this.getUri());
-		
-		if (this.inputModel != null)
-			this.inputModel.setBaseUri(this.getUri());
-
-		if (this.outputModel != null)
-			this.outputModel.setBaseUri(this.getUri());
-	}
-	
 	public String getMethod() {
 		return method;
 	}

@@ -158,51 +158,55 @@ public class SourceLoader {
 	}
 	
 	/**
-	 * Returns all the sources in the repository whose model matches the semantic model parameter.
+	 * Searches the repository to find the sources whose model matches the semantic model parameter.
 	 * @param semanticModel The input model whose pattern will be searched in the repository
 	 * @param ioType declares which one of the source input or source output will be tested for matching
 	 * @param sourceLimit maximum number of sources that will be fetched
-	 * @return
+	 * @return a hashmap of all found sources and a mapping from the found source parameters to the model parameters. 
+	 * This help us later to how to join the model's corresponding source and the matched source 
 	 */
-	public static List<Source> getSourcesByIOPattern(edu.isi.karma.service.Model semanticModel, Integer sourceLimit,
-			Map<String, String> modelToMatchedSourceParameterMapping) {
+	public static Map<Source, Map<String, String>> getSourcesByIOPattern(edu.isi.karma.service.Model semanticModel, 
+			Integer sourceLimit) {
 		
-		List<String> sourceIds = getSourcesIdsByIOPattern(semanticModel, sourceLimit,
-				modelToMatchedSourceParameterMapping);
+		Map<Source, Map<String, String>> sourcesAndMappings = 
+			new HashMap<Source, Map<String,String>>();
 		
-		for (String arg : modelToMatchedSourceParameterMapping.keySet())
-			System.out.println(arg + "*****" + modelToMatchedSourceParameterMapping.get(arg));
+		Map<String, Map<String, String>> sourceIdsAndMappings =
+			getSourcesIdsByIOPattern(semanticModel, sourceLimit);
 		
-		if (sourceIds == null)
+		if (sourceIdsAndMappings == null)
 			return null;
 		
-		List<Source> sourceList = new ArrayList<Source>();
-		
-		for (String uri : sourceIds) {
-			Model m = Repository.Instance().getNamedModel(uri);
+		for (String sourceId : sourceIdsAndMappings.keySet()) {
+			Model m = Repository.Instance().getNamedModel(sourceId);
 			if (m != null)
-				sourceList.add(getSourceFromJenaModel(m));
+				sourcesAndMappings.put(getSourceFromJenaModel(m), sourceIdsAndMappings.get(sourceId));
 		}
-		return sourceList;
+		
+		return sourcesAndMappings;
 	}
 	
 	/**
-	 * Returns a hash map of all sources whose model matches the semantic model parameter.
+	 * Searches the repository to find the sources whose model matches the semantic model parameter.
 	 * @param semanticModel The input model whose pattern will be searched in the repository
 	 * @param ioType declares which one of the source input or source output will be tested for matching
 	 * @param sourceLimit maximum number of sources that will be fetched
-	 * @return
+	 * @return a hashmap of IDs of all found sources and a mapping from the found source parameters to the model parameters. 
+	 * This help us later to how to join the model's corresponding source and the matched source 
 	 */
-	private static List<String> getSourcesIdsByIOPattern(edu.isi.karma.service.Model semanticModel, 
-			Integer sourceLimit, Map<String, String> modelToMatchedSourceParameterMapping) {
+	private static Map<String, Map<String, String>> getSourcesIdsByIOPattern(edu.isi.karma.service.Model semanticModel, 
+			Integer sourceLimit) {
 
-		List<String> sourceIds = new ArrayList<String>();
-
+		Map<String, Map<String, String>> sourceIdsAndMappings = 
+			new HashMap<String, Map<String,String>>();
+		
 		if (semanticModel == null || semanticModel.getAtoms() == null 
 				|| semanticModel.getAtoms().size() == 0) {
 			logger.info("The input model is nul or it does not have any atom");
 			return null;
 		}
+		
+		List<String> uniqueArgumentList = new ArrayList<String>();
 	
 		// map of NS --> Prefix
 		Map<String, String> nsToPrefixMapping = new HashMap<String, String>();
@@ -233,10 +237,11 @@ public class SourceLoader {
 					argument1 = classAtom.getArgument1().getId();
 					argument1Var = "?" + argument1;
 					
-					if (modelToMatchedSourceParameterMapping.get(argument1) == null) {
-						modelToMatchedSourceParameterMapping.put(argument1, "");
+					if (uniqueArgumentList.indexOf(argument1) == -1) {
+						uniqueArgumentList.add(argument1);
 						select_header += argument1Var + " ";
 					}
+					
 					select_where += 
 						"      ?model " + Prefixes.KARMA + ":hasAtom " + atomVar + " . \n" +
 						"      " + atomVar + " a " + Prefixes.SWRL + ":ClassAtom . \n" +
@@ -251,14 +256,13 @@ public class SourceLoader {
 					argument2 = propertyAtom.getArgument2().getId();
 					argument1Var = "?" + argument1;
 					argument2Var = "?" + argument2;
-
 					
-					if (modelToMatchedSourceParameterMapping.get(argument1) == null) {
-						modelToMatchedSourceParameterMapping.put(argument1, "");
+					if (uniqueArgumentList.indexOf(argument1) == -1) {
+						uniqueArgumentList.add(argument1);
 						select_header += argument1Var + " ";
 					}
-					if (modelToMatchedSourceParameterMapping.get(argument2) == null) {
-						modelToMatchedSourceParameterMapping.put(argument2, "");
+					if (uniqueArgumentList.indexOf(argument2) == -1) {
+						uniqueArgumentList.add(argument2);
 						select_header += argument2Var + " ";
 					}
 					
@@ -294,8 +298,7 @@ public class SourceLoader {
 			
 			if (!results.hasNext()) {
 				logger.info("query does not return any answer.");
-				modelToMatchedSourceParameterMapping = null;
-				return sourceIds;
+				return null;
 			}
 
 //			ResultSetFormatter.out(System.out, results, query) ;
@@ -313,18 +316,20 @@ public class SourceLoader {
 
 				String source_uri = s.toString();
 				logger.debug("source uri: " + source_uri);
-				sourceIds.add(source_uri);
+				if (sourceIdsAndMappings.get(source_uri) == null) {
+					sourceIdsAndMappings.put(source_uri, new HashMap<String, String>());
+				}
 				
-				for (String arg : modelToMatchedSourceParameterMapping.keySet()) {
+				for (String arg : uniqueArgumentList) {
 					RDFNode argNode = soln.get(arg) ;
 					if (argNode != null && argNode.isResource()) {
 						String retrieved_id = argNode.asResource().getLocalName();
-						modelToMatchedSourceParameterMapping.put(arg, retrieved_id);
+						sourceIdsAndMappings.get(source_uri).put(retrieved_id, arg);
 					}
 				}
 			}
 			
-			return sourceIds;
+			return sourceIdsAndMappings;
 		} catch (Exception e) {
 			logger.info(e.getMessage());
 			return null;
@@ -697,12 +702,25 @@ public class SourceLoader {
 		semanticModel.getAtoms().add(p2);
 //		semanticModel.getAtoms().add(c2);
 		
-		Map<String, String> modelToMatchedSourceParameterMapping =
-			new HashMap<String, String>();
-		List<Source> sourceList = getSourcesByIOPattern(semanticModel, null, modelToMatchedSourceParameterMapping);
-		for (Source s : sourceList) {
+		Map<Source, Map<String, String>> sourcesAndMappings = 
+			getSourcesByIOPattern(semanticModel, null);
+
+		if (sourcesAndMappings == null)
+			return;
+		
+		for (Source s : sourcesAndMappings.keySet()) {
 			if (s != null) s.print();
 		}
+		
+		System.out.println("Mappings from matched source to model arguments:");
+		for (Source s : sourcesAndMappings.keySet()) {
+			System.out.println("Source: " + s.getId());
+			if (sourcesAndMappings.get(s) == null)
+				continue;
+			for (String str : sourcesAndMappings.get(s).keySet())
+				System.out.println(str + "-------" + sourcesAndMappings.get(s).get(str));
+		}
+
 	}
 	private static void testDeleteSourceByUri() {
 		String uri = "http://isi.edu/integration/karma/sources/AEEA5A9A-744C-8096-B372-836ACC820D5A#";
@@ -710,9 +728,7 @@ public class SourceLoader {
 	}
 	public static void main(String[] args) {
 
-//		SourceBuilder.main(new String[0]);
-
-		boolean test1 = false, test2 = false, test3 = false, test4 = true;
+		boolean test1 = false, test2 = false, test3 = true, test4 = false;
 		if (test1) testGetSourceByUri();
 		if (test2) testDeleteSourceByUri();
 		if (test3) testGetSourcesByIOPattern();
