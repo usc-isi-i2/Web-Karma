@@ -45,7 +45,7 @@ public class SourcePublisher {
 		this.source = source;
 	}
 	
-	private Model generateModel() {
+	public Model generateModel() {
 		
 		Model model = ModelFactory.createDefaultModel();
 		
@@ -90,7 +90,7 @@ public class SourcePublisher {
 			model = generateModel();
 		
 		String source_desc_file = Repository.Instance().SOURCE_REPOSITORY_DIR + 
-									this.source.getId() + ".n3";
+									this.source.getId() +
 									Repository.Instance().getFileExtension(lang);
 
 

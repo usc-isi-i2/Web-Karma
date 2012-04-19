@@ -224,11 +224,11 @@ public class URLManager {
 	        }
 	        
 	        if (!verifyAttributeExtraction(url, attributeList)) {
-	        	logger.error("attributeeters have not been extracted successfully.");
+	        	logger.error("Attributes have not been extracted successfully.");
 	        	return null;
 	        }
 	        
-	        logger.debug("Attributeeters extracted successfully from " + url.toString());
+	        logger.debug("Attributes extracted successfully from " + url.toString());
 	        return attributeList;
 	        
 	    } catch (Exception ex) {

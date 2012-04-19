@@ -216,8 +216,13 @@ public class InvocationManager {
 			
 			service.updateModel(Test.getGeoNamesNeighbourhoodTree());
 			
-			ServicePublisher servicePublisher = new ServicePublisher(service);
-			servicePublisher.publish("N3", true);
+			String dir = Repository.Instance().SOURCE_REPOSITORY_DIR;
+			service.getInputModel().writeJenaModelToFile(dir + "model", "N3", IOType.NONE);
+			
+			System.out.println(service.getInputModel().getSPARQLQuery(IOType.NONE, null));
+			
+//			ServicePublisher servicePublisher = new ServicePublisher(service);
+//			servicePublisher.publish("N3", true);
 //			servicePublisher.writeToFile("N3");
 
 		} catch (Exception e) {

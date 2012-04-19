@@ -21,11 +21,31 @@
 
 package edu.isi.karma.service;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 public class Model {
 	
+	static Logger logger = Logger.getLogger(Model.class);
+
 	private String id;
 	private String baseUri;
 	
@@ -65,6 +85,278 @@ public class Model {
 
 	public void setAtoms(List<Atom> atoms) {
 		this.atoms = atoms;
+	}
+	
+	public com.hp.hpl.jena.rdf.model.Model getJenaModel(String ioType) {
+		
+		com.hp.hpl.jena.rdf.model.Model model = ModelFactory.createDefaultModel();
+		
+		String baseNS = this.getBaseUri();
+		if (baseNS != null && baseNS.trim().length() > 0)
+			model.setNsPrefix("", baseNS);
+		model.setNsPrefix(Prefixes.KARMA, Namespaces.KARMA);
+		model.setNsPrefix(Prefixes.RDF, Namespaces.RDF);
+		model.setNsPrefix(Prefixes.RDFS, Namespaces.RDFS);
+		model.setNsPrefix(Prefixes.SWRL, Namespaces.SWRL);
+
+		Resource model_resource = model.createResource(Namespaces.KARMA + "Model");
+		Resource class_atom_resource = model.createResource(Namespaces.SWRL + "ClassAtom");
+		Resource individual_property_atom_resource = model.createResource(Namespaces.SWRL + "IndividualPropertyAtom");
+		Resource input_resource = model.createResource(Namespaces.KARMA + "Input");
+		Resource output_resource = model.createResource(Namespaces.KARMA + "Output");
+
+		Property rdf_type = model.createProperty(Namespaces.RDF , "type");
+		Property has_atom = model.createProperty(Namespaces.KARMA, "hasAtom");
+		Property has_model = model.createProperty(Namespaces.KARMA, "hasModel");
+
+		Property class_predicate = model.createProperty(Namespaces.SWRL, "classPredicate");
+		Property property_predicate = model.createProperty(Namespaces.SWRL, "propertyPredicate");
+		Property has_argument1 = model.createProperty(Namespaces.SWRL, "argument1");
+		Property has_argument2 = model.createProperty(Namespaces.SWRL, "argument2");
+
+		Resource my_model = model.createResource(baseNS + this.getId());
+		my_model.addProperty(rdf_type, model_resource);
+
+		if (ioType.equalsIgnoreCase(IOType.NONE)) {
+			Resource r = model.createResource(baseUri);
+			r.addProperty(has_model, my_model);
+		} else	if (ioType.equalsIgnoreCase(IOType.INPUT)) {
+			Resource r = model.createResource();
+			r.addProperty(rdf_type, input_resource);
+			r.addProperty(has_model, my_model);
+		} else	if (ioType.equalsIgnoreCase(IOType.OUTPUT)) {
+			Resource r = model.createResource();
+			r.addProperty(rdf_type, output_resource);
+			r.addProperty(has_model, my_model);
+		}
+
+		for (Atom atom : this.getAtoms()) {
+			if (atom instanceof ClassAtom) {
+				ClassAtom classAtom = (ClassAtom)atom;
+				
+				Resource r = model.createResource();
+				r.addProperty(rdf_type, class_atom_resource);
+				
+				if (classAtom.getClassPredicate().getPrefix() != null && classAtom.getClassPredicate().getNs() != null)
+					model.setNsPrefix(classAtom.getClassPredicate().getPrefix(), classAtom.getClassPredicate().getNs());
+				Resource className = model.createResource(classAtom.getClassPredicate().getUri());
+				r.addProperty(class_predicate, className);
+				
+				Resource arg1 = model.getResource(baseNS + classAtom.getArgument1().getAttOrVarId());
+				r.addProperty(has_argument1, arg1);
+				
+				my_model.addProperty(has_atom, r);
+			}
+			else if (atom instanceof PropertyAtom) {
+				PropertyAtom propertyAtom = (PropertyAtom)atom;
+				
+				Resource r = model.createResource();
+				r.addProperty(rdf_type, individual_property_atom_resource);
+				
+				if (propertyAtom.getPropertyPredicate().getPrefix() != null && propertyAtom.getPropertyPredicate().getNs() != null)
+					model.setNsPrefix(propertyAtom.getPropertyPredicate().getPrefix(), propertyAtom.getPropertyPredicate().getNs());
+				Resource propertyName = model.createResource(propertyAtom.getPropertyPredicate().getUri());
+				r.addProperty(property_predicate, propertyName);
+				
+				Resource arg1 = model.getResource(baseNS + propertyAtom.getArgument1().getAttOrVarId());
+				r.addProperty(has_argument1, arg1);
+				
+				Resource arg2 = model.getResource(baseNS + propertyAtom.getArgument2().getAttOrVarId());
+				r.addProperty(has_argument2, arg2);
+				
+				my_model.addProperty(has_atom, r);
+			}
+		}
+		return model;
+	}
+
+	public void writeJenaModelToFile(String path, String lang, String ioType) throws FileNotFoundException {
+		com.hp.hpl.jena.rdf.model.Model model = getJenaModel(ioType);
+		String source_desc_file = path + Repository.Instance().getFileExtension(lang);
+		OutputStreamWriter output = new OutputStreamWriter(new FileOutputStream(source_desc_file));
+		model.write(output,lang);		
+		
+	}
+	
+	private static String getSPARQLHeader(Map<String, String> nsToPrefixMapping) {
+		String prefixHeader = "";
+		
+		for (String ns : nsToPrefixMapping.keySet()) {
+			String prefix = nsToPrefixMapping.get(ns);
+			if (prefix != null)
+				prefixHeader += "PREFIX " + prefix + ": <" + ns + "> \n";
+		}
+
+		return prefixHeader;
+	}
+	
+	public String getSPARQLQuery(String ioType, List<String> argList) {
+
+		String queryString = "";
+		
+		// map of NS --> Prefix
+		Map<String, String> nsToPrefixMapping = new HashMap<String, String>();
+		nsToPrefixMapping.put(Namespaces.KARMA, Prefixes.KARMA);
+		nsToPrefixMapping.put(Namespaces.SWRL, Prefixes.SWRL);
+		nsToPrefixMapping.put(Namespaces.HRESTS, Prefixes.HRESTS);
+		
+		String io_class = "";
+		if (ioType.equalsIgnoreCase(IOType.OUTPUT))
+			io_class = "Output";
+		else if (ioType.equalsIgnoreCase(IOType.INPUT))
+			io_class =  "Input";
+
+		String select_header = "SELECT ?model ";
+		String select_where =
+			"WHERE { \n" ;
+		
+		if (io_class.trim().length() > 0)
+			select_where += "      ?x a " + Prefixes.KARMA + ":" + io_class + " . \n";
+		
+		select_where += 
+			"      ?x " + Prefixes.KARMA + ":hasModel ?model . \n" + 
+			"      ?model a " + Prefixes.KARMA + ":Model . \n";
+		
+		String atomVar = "";
+		String predicateUri = "";
+		String argument1 = "";
+		String argument2 = "";
+		String argument1Var = "";
+		String argument2Var = "";
+
+		if (argList == null) 
+			argList = new ArrayList<String>();
+
+		for (int i = 0; i < this.getAtoms().size(); i++) {
+			Atom atom = this.getAtoms().get(i);
+			if (atom != null) {
+				if (atom instanceof ClassAtom) {
+					ClassAtom classAtom = ((ClassAtom)atom);
+					atomVar = "?atom" + String.valueOf(i+1);
+					predicateUri = classAtom.getClassPredicate().getUri();
+					argument1 = classAtom.getArgument1().getId();
+					argument1Var = "?" + argument1;
+					
+					if (argList.indexOf(argument1) == -1) {
+						argList.add(argument1);
+						select_header += argument1Var + " ";
+					}
+
+					select_where += 
+						"      ?model " + Prefixes.KARMA + ":hasAtom " + atomVar + " . \n" +
+						"      " + atomVar + " a " + Prefixes.SWRL + ":ClassAtom . \n" +
+						"      " + atomVar + " " + Prefixes.SWRL + ":classPredicate <" + predicateUri + "> . \n" +
+						"      " + atomVar + " " + Prefixes.SWRL + ":argument1 " + argument1Var + " . \n";
+				}
+				else if (atom instanceof PropertyAtom) {
+					PropertyAtom propertyAtom = ((PropertyAtom)atom);
+					atomVar = "?atom" + String.valueOf(i+1);
+					predicateUri = propertyAtom.getPropertyPredicate().getUri();
+					argument1 = propertyAtom.getArgument1().getId();
+					argument2 = propertyAtom.getArgument2().getId();
+					argument1Var = "?" + argument1;
+					argument2Var = "?" + argument2;
+					
+					if (argList.indexOf(argument1) == -1) {
+						argList.add(argument1);
+						select_header += argument1Var + " ";
+					}
+					if (argList.indexOf(argument2) == -1) {
+						argList.add(argument2);
+						select_header += argument2Var + " ";
+					}
+					
+					select_where += 
+						"      ?model " + Prefixes.KARMA + ":hasAtom " + atomVar + " . \n" +
+						"      " + atomVar + " a " + Prefixes.SWRL + ":IndividualPropertyAtom . \n" +
+						"      " + atomVar + " " + Prefixes.SWRL + ":propertyPredicate <" + predicateUri + "> . \n" +
+						"      " + atomVar + " " + Prefixes.SWRL + ":argument1 " + argument1Var + " . \n" +
+						"      " + atomVar + " " + Prefixes.SWRL + ":argument2 " + argument2Var + " . \n";
+				}			
+			}
+		}		
+		select_where += 	"      } \n";
+ 
+		String prefix = getSPARQLHeader(nsToPrefixMapping);
+		String select = select_header + " \n " + select_where;
+
+		queryString = prefix + select;
+		
+		logger.debug("query= \n" + queryString);
+
+		return queryString;
+	}
+
+	/**
+	 * Returns a hash map of all sources/services whose (input/output) model matches this object model.
+	 * @param semanticModel The input model whose pattern will be searched in the repository
+	 * @param ioType declares which one of the service input or service output will be tested for matching
+	 * @param operationsLimit maximum number of operations that will be fetched
+	 * @return a hashmap of all IDs of found sources/services and a mapping from the model parameters to query params. 
+	 * This help us later to how to join the model's corresponding source and the matched service 
+	 */
+	public Map<String, Map<String, String>> findInJenaModel(
+			com.hp.hpl.jena.rdf.model.Model jenaModel, String ioType, Integer serviceLimit) {
+
+		Map<String, Map<String, String>> IdsAndMappings = 
+			new HashMap<String, Map<String,String>>();
+		
+		List<String> argList = new ArrayList<String>();
+		String queryString = this.getSPARQLQuery(ioType, argList);
+
+		if (serviceLimit != null) {
+			queryString += "LIMIT " + String.valueOf(serviceLimit.intValue() + "\n");
+		}
+		
+//		logger.debug("query= \n" + queryString);
+		
+		Query query = QueryFactory.create(queryString);
+//		// Execute the query and obtain results
+		QueryExecution qexec = QueryExecutionFactory.create(query, jenaModel);
+
+		try {
+			ResultSet results = qexec.execSelect() ;
+			
+			if (!results.hasNext()) {
+				logger.info("query does not return any answer.");
+				return null;
+			}
+
+//			ResultSetFormatter.out(System.out, results, query) ;
+			 
+			for ( ; results.hasNext() ; )
+			{
+				QuerySolution soln = results.nextSolution() ;
+				
+				RDFNode m = soln.get("model") ;       // Get a result variable by name.
+
+				if (m == null) {
+					logger.info("model uri is null.");
+					continue;
+				}
+
+				String uri = m.asResource().getNameSpace();
+				logger.debug("service uri: " + uri);
+				if (IdsAndMappings.get(uri) == null) {
+					IdsAndMappings.put(uri, new HashMap<String, String>());
+				}
+				
+				for (String arg : argList) {
+					RDFNode argNode = soln.get(arg) ;
+					if (argNode != null && argNode.isResource()) {
+						String retrieved_id = argNode.asResource().getLocalName();
+						IdsAndMappings.get(uri).put(arg, retrieved_id);
+					}
+				}
+			}
+			
+			return IdsAndMappings;
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+			return null;
+		} finally { 
+			qexec.close() ; 
+		}
 	}
 
 	public void print() {
