@@ -21,6 +21,12 @@
 package edu.isi.karma.modeling.semantictypes.mycrf.crfmodel ;
 
 
+/**
+ * The abstract class that represents a CRF model.
+ * 
+ * @author amangoel
+ *
+ */
 public abstract class CRFModelAbstract {	
 	
 	public double[] weights ;

@@ -25,6 +25,14 @@ import java.util.ArrayList;
 import edu.isi.karma.modeling.semantictypes.mycrf.graph.GraphInterface;
 
 
+/**
+ * This is an abstract class representing global information such as 
+ * the list of semantic classes and 
+ * the list of training graphs 
+ * 
+ * @author amangoel
+ *
+ */
 public abstract class GlobalDataAbstract {
 	
 	public ArrayList<GraphInterface> trainingGraphs ;

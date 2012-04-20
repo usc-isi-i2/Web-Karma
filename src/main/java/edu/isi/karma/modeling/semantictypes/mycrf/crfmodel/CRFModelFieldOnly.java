@@ -30,6 +30,14 @@ import edu.isi.karma.modeling.semantictypes.mycrf.graph.GraphInterface;
 
 
 
+/**
+ * This class represents the CRF model that is trained on single node graphs.
+ * These single node graphs represent a field (without considering its neighbors and without splitting it into tokens)
+ * Its main properties are a list of feature functions and a double[] array to store their weights.
+ * 
+ * @author amangoel
+ *
+ */
 public class CRFModelFieldOnly extends CRFModelAbstract {
 	
 	GlobalDataFieldOnly globalData ;

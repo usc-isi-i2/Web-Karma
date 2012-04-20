@@ -22,6 +22,13 @@ package edu.isi.karma.modeling.semantictypes.mycrf.common ;
 
 import java.util.ArrayList;
 
+/**
+ * This class defined the nodes used in graphs.
+ * It stores the features of the item that the node represents, a field or a token.
+ * 
+ * @author amangoel
+ *
+ */
 public class Node {
 	
 	public int type ;

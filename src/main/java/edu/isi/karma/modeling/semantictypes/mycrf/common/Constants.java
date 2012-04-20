@@ -20,6 +20,11 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.semantictypes.mycrf.common ;
 
+/**
+ * Constants used throughout the package
+ * @author amangoel
+ *
+ */
 public class Constants {
 	
 	public final static int FIELD_TYPE = 0 ;

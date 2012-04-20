@@ -1,1 +1,7 @@
 edu.isi.karma.modeling.semantictypes.crfmodelhandler
+edu.isi.karma.modeling.semantictypes.mycrf.common
+edu.isi.karma.modeling.semantictypes.mycrf.crfmodel
+edu.isi.karma.modeling.semantictypes.mycrf.fieldonly
+edu.isi.karma.modeling.semantictypes.mycrf.globaldata
+edu.isi.karma.modeling.semantictypes.mycrf.graph
+edu.isi.karma.modeling.semantictypes.mycrf.map
