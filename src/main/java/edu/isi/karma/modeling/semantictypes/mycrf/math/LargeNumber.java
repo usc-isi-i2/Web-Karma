@@ -22,6 +22,14 @@ package edu.isi.karma.modeling.semantictypes.mycrf.math ;
 
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
 
+/**
+ * This class represents the large numbers (as large as 10^1000) which are generated
+ * due to exponential computations. 
+ * It supports basic operations such as addition, and multiplication.
+ * 
+ * @author amangoel
+ *
+ */
 public class LargeNumber {
 
 	double mantissa ;

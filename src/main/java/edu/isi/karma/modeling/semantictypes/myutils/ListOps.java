@@ -22,6 +22,12 @@ package edu.isi.karma.modeling.semantictypes.myutils;
 
 import java.util.ArrayList;
 
+/**
+ * This class provides utility methods for sorting small lists based on another list containing scores for them.
+ * 
+ * @author amangoel
+ *
+ */
 public class ListOps {
 
 	public static void main(String[] args) {

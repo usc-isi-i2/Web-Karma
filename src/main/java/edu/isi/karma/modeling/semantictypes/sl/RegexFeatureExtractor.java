@@ -25,6 +25,14 @@ import java.util.ArrayList;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
 
 
+/**
+ * This class generates features for tokens.
+ * Some of the features are:
+ * StartsWith, NumDigits, Symbol<X>
+ * 
+ * @author amangoel
+ *
+ */
 public class RegexFeatureExtractor {
 	
 	public static ArrayList<String> getFieldFeatures(String field) {

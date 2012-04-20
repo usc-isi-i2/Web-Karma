@@ -26,6 +26,14 @@ import java.util.Random;
 
 
 
+/**
+ * This class provides utility methods for performing randomness based operations,
+ * such as,
+ * generating random numbers within a range.
+ * 
+ * @author amangoel
+ *
+ */
 public class RandOps {
 	
 	public static void main(String[] args) throws Exception {

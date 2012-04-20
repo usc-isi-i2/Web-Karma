@@ -28,6 +28,16 @@ import edu.isi.karma.modeling.semantictypes.mycrf.graph.GraphInterface;
 import edu.isi.karma.modeling.semantictypes.mycrf.math.Matrix;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
 
+/**
+ * This is the class that performs the optimization of the CRF model.
+ * It uses other classes in this package to guess the gradient to follow 
+ * and the step size to use.
+ * It also have several stopping criteria, such as,
+ * gradient being too small, and change in the error value being too small.
+ * 
+ * @author amangoel
+ *
+ */
 public class OptimizeFieldOnly {
 	
 	CRFModelFieldOnly crfModel ;

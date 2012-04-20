@@ -28,6 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * This class simulated a normal rectangular table.
+ * 
+ * @author amangoel
+ *
+ */
 public class DBTable {
 	
 	private int numColumns;
