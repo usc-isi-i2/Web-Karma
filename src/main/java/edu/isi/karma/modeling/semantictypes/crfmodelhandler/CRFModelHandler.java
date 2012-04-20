@@ -173,13 +173,14 @@ public class CRFModelHandler {
 
 
 	/**
+	 * Adds the passed list of examples to the model. 
+	 * Regenerates 100 feature functions to represent the label, 
+	 * if examples of this label already exist in the model.
+	 * 
 	 * @param label True label for the list of example.
 	 * @param examples List of example strings.
 	 * @param columnFeatures Map of column features.
 	 * @return True if success, else False
-	 * Adds the passed list of examples to the model. 
-	 * Regenerates 100 feature functions to represent the label, 
-	 * if examples of this label already exist in the model.
 	 */
 	public boolean addOrUpdateLabel(String label, List<String> examples, Map<ColumnFeature, Collection<String>> columnFeatures) {
 		ArrayList<String> cleanedExamples, allFeatures;
