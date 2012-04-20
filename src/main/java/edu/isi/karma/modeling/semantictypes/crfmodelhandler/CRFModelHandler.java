@@ -260,7 +260,7 @@ public class CRFModelHandler {
 	/**
 	 * @param label The label for which examples are being requested.
 	 * @param examples The list argument that will be used to return the list of examples in the model for the supplied label.
-	 * @return
+	 * @return True, if successful, else False
 	 */
 	public boolean getExamplesForLabel(String label, ArrayList<String> examples) {
 		ArrayList<Example> examplesOfLabel;
@@ -288,7 +288,7 @@ public class CRFModelHandler {
 
 	/**
 	 * @param labels The ordered list of labels is returned in this argument.
-	 * @return
+	 * @return True, if successful, else False
 	 */
 	public boolean getLabels(List<String> labels) {
 		if (file == null) {
@@ -314,7 +314,7 @@ public class CRFModelHandler {
 	 * @param exampleProbabilities - the size() == examples.size(). It contains, for each example, in the same order, a double array that contains the probability 
 	 * 									of belonging to the labels returned in predictedLabels.	 
 	 * @param columnFeatures - this Map supplies ColumnFeatures such as ColumnName, etc.
-	 * @return
+	 * @return True, if successful, else False
 	 */
 	public boolean predictLabelForExamples(
 			List<String> examples,
@@ -405,7 +405,7 @@ public class CRFModelHandler {
 
 
 	/**
-	 * @param file The path of the file from which the model should be read.
+	 * @param modelFile The path of the file from which the model should be read.
 	 * @return True is successfully read. False, otherwise.
 	 * This function takes the path of file as input and
 	 * creates an environment that consists of globalData, crfModel, list of examples of each label, etc.
