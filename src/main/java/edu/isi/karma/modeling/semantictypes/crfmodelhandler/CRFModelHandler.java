@@ -53,6 +53,13 @@ import edu.isi.karma.modeling.semantictypes.sl.Part;
 import edu.isi.karma.modeling.semantictypes.sl.RegexFeatureExtractor;
 
 
+/**
+ * This class is an API to the mycrf package.
+ * It allows instantiating CRF models, training them and using them for prediction.
+ * 
+ * @author amangoel
+ *
+ */
 public class CRFModelHandler {
 
 	// ***********************************************************************************************
