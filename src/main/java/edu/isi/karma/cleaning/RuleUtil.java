@@ -381,7 +381,7 @@ public class RuleUtil {
 				System.out.print(gt.size()+","+index+" ");	
 				HashMap<MDPState,MDPState> his = new HashMap<MDPState,MDPState>();
 				int sccnt = 0;
-				for(int ct = 0;ct <100;ct++)
+				for(int ct = 0;ct <200;ct++)
 				{
 					MarkovDP mdp = new MarkovDP(org,tar,gt);
 					mdp.setHistory(his);
@@ -463,6 +463,7 @@ public class RuleUtil {
 		}
         return "/Users/bowu/mysoft/Allrules.txt";
 	}
+	
 	public static Vector<Vector<Vector<EditOper>>> genEditOpers(Vector<Vector<TNode>> orgs,Vector<Vector<TNode>> tars) throws Throwable
 	{
 		Vector<Vector<Vector<EditOper>>> tmp =new Vector<Vector<Vector<EditOper>>>();

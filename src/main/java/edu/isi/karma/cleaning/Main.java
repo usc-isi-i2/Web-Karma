@@ -937,6 +937,7 @@ public class Main {
 			m.exper_2("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/test");
 			double ed = System.currentTimeMillis();
 			xy.add((ed-st)*1.0/60000);
+			
 		}
 		m.write2CSV();
 		for(int i= 0; i<xy.size();i++)
