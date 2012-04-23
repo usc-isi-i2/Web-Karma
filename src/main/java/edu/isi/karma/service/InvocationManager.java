@@ -34,32 +34,34 @@ import edu.isi.karma.modeling.Test;
 import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.webserver.KarmaException;
 
-public class ServiceBuilder {
+public class InvocationManager {
 
-	static Logger logger = Logger.getLogger(ServiceBuilder.class);
+	static Logger logger = Logger.getLogger(InvocationManager.class);
 
 	private List<URL> requestURLs;
+	private List<String> idList;
 	private List<Invocation> invocations;
-	private String serviceName;
 	private Table serviceData;
 	
-	public ServiceBuilder(String serviceName, List<String> requestURLStrings) 
+	public InvocationManager(List<String> idList, List<String> requestURLStrings) 
 	throws MalformedURLException, KarmaException {
-
+		this.idList = idList;
 		requestURLs = URLManager.getURLsFromStrings(requestURLStrings);
 		if (requestURLs == null || requestURLs.size() == 0)
 			throw new KarmaException("Cannot model a service without any request example.");
 		
 		this.serviceData = null;
-		this.serviceName = serviceName;
-		System.out.println("Service Name: " + this.serviceName);
 		this.invocations = new ArrayList<Invocation>();
 	}
 	
 	private void invokeAndGetResponse() {
-		for (URL url : requestURLs) {
+		for (int i = 0; i < requestURLs.size(); i++) {
+			URL url = requestURLs.get(i);
+			String requestId = null;
+			if (idList != null)
+				requestId = idList.get(i);
 			Request request = new Request(url);
-			Invocation invocation = new Invocation(request);
+			Invocation invocation = new Invocation(requestId, request);
 			logger.info("Invoking the service " + request.getUrl().toString() + " ...");
 			invocation.invokeAPI();
 			invocations.add(invocation);
@@ -88,6 +90,7 @@ public class ServiceBuilder {
 		Table newTable = new Table();
 		List<Attribute> newHeader = new ArrayList<Attribute>();
 		List<List<String>> newValues = new ArrayList<List<String>>();
+		List<String> newRowIds = new ArrayList<String>(this.serviceData.getRowIds());
 		
 		List<Integer> includingColumns = new ArrayList<Integer>();
 		
@@ -115,6 +118,7 @@ public class ServiceBuilder {
 		
 		newTable.setHeaders(newHeader);
 		newTable.setValues(newValues);
+		newTable.setRowIds(newRowIds);
 		
 		return newTable;
 	}
@@ -153,15 +157,20 @@ public class ServiceBuilder {
 	 * service endpoint, http method, input and output attributes
 	 * @return
 	 */
-	public Service getInitialServiceModel() {
+	public Service getInitialServiceModel(String serviceName) {
 		
 		String guid = new RandomGUID().toString();
 //		guid = "E9C3F8D3-F778-5C4B-E089-C1749D50AE1F";
 		URL sampleUrl = requestURLs.get(0);
-		Service service = new Service(guid, sampleUrl);
 		
 		if (sampleUrl == null)
 			return null;
+
+		Service service = null;
+		if (serviceName == null || serviceName.trim().length() == 0)
+			service = new Service(guid, sampleUrl);
+		else
+			service = new Service(guid, serviceName, sampleUrl);
 
 		service.setMethod(HttpMethods.GET);
 
@@ -175,20 +184,26 @@ public class ServiceBuilder {
 	public static void main(String[] args) {
 //		String s1 = "http://colo-vm10.isi.edu:8080/DovetailService/GetSampleData?sourceName=KDD-02-B-TOSIG";
 		String s1 = "http://api.geonames.org/neighbourhood?lat=40.78343&lng=-73.96625&username=taheriyan";
-//		String s2 = "http://api.geonames.org/neighbourhood?lat=40.7&lng=-73.9&username=taheriyan";
-//		String s3 = "http://api.geonames.org/neighbourhood?lat=40.9&lng=-73.9&username=taheriyan";
+		String s2 = "http://api.geonames.org/neighbourhood?lat=40.7&lng=-73.9&username=taheriyan";
+		String s3 = "http://api.geonames.org/neighbourhood?lat=40.9&lng=-73.9&username=taheriyan";
 
 		List<String> urls = new ArrayList<String>();
 		urls.add(s1);
-//		urls.add(s2);
-		
+		urls.add(s2);
+		urls.add(s3);
+
+		List<String> ids = new ArrayList<String>();
+		ids.add("1"); 
+		ids.add("2"); 
+		ids.add("3");
+
 		try {
-			ServiceBuilder sb = new ServiceBuilder("myService", urls);
+			InvocationManager sb = new InvocationManager(ids, urls);
 			Table tb = sb.getServiceData(true, true, true);
 
 			logger.debug(tb.getPrintInfo());
 
-			Service service = sb.getInitialServiceModel();
+			Service service = sb.getInitialServiceModel(null);
 			
 			// just for test
 			service.getInputAttributes().get(0).sethNodeId("h1");
@@ -201,8 +216,13 @@ public class ServiceBuilder {
 			
 			service.updateModel(Test.getGeoNamesNeighbourhoodTree());
 			
-			ServicePublisher servicePublisher = new ServicePublisher(service);
-			servicePublisher.publish("N3", true);
+			String dir = Repository.Instance().SOURCE_REPOSITORY_DIR;
+			service.getInputModel().writeJenaModelToFile(dir + "model", "N3", IOType.NONE);
+			
+			System.out.println(service.getInputModel().getSPARQLQuery(IOType.NONE, null));
+			
+//			ServicePublisher servicePublisher = new ServicePublisher(service);
+//			servicePublisher.publish("N3", true);
 //			servicePublisher.writeToFile("N3");
 
 		} catch (Exception e) {

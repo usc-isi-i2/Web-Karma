@@ -22,6 +22,7 @@
 package edu.isi.karma.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Name;
 import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.modeling.alignment.Vertex;
+import edu.isi.karma.util.RandomGUID;
 
 public class Source {
 
@@ -47,10 +49,13 @@ public class Source {
 	private Model model;
 	private List<String> variables;
 
+	HashMap<String, Attribute> attIdToAttMap;
+
 	public Source(String id) {
 		this.id = id;
 		variables = new ArrayList<String>();
 		attributes = new ArrayList<Attribute>();
+		attIdToAttMap = new HashMap<String, Attribute>();
 	}
 	
 	public Source(String id, String name) {
@@ -58,19 +63,47 @@ public class Source {
 		this.setName(name);
 		variables = new ArrayList<String>();
 		attributes = new ArrayList<Attribute>();
+		attIdToAttMap = new HashMap<String, Attribute>();
 	}
 	
+	public Source(String name, DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeModel) {
+		this.id = new RandomGUID().toString();
+		this.setName(name);
+		variables = new ArrayList<String>();
+		attributes = new ArrayList<Attribute>();
+		attIdToAttMap = new HashMap<String, Attribute>();
+		this.updateModel(treeModel);
+	}
+	
+	public Source(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeModel) {
+		this.id = new RandomGUID().toString();
+		variables = new ArrayList<String>();
+		attributes = new ArrayList<Attribute>();
+		attIdToAttMap = new HashMap<String, Attribute>();
+		this.updateModel(treeModel);
+	}
 	
 	public String getUri() {
 		return KARMA_SOURCE_PREFIX + getId() + "#";
 	}
 	public List<Attribute> getAttributes() {
-		return attributes;
+		return Collections.unmodifiableList(attributes);
 	}
 
+	public Attribute getAttribute(String id) {
+		return this.attIdToAttMap.get(id);
+	}
+	
 	public void setAttributes(List<Attribute> attributes) {
+		
+		if (this.attributes != null)
+			this.attributes.clear();
+		
 		for (Attribute att : attributes)
 			att.setBaseUri(this.getUri());
+		for (Attribute att : attributes)
+			attIdToAttMap.put(att.getId(), att);
+		
 		this.attributes = attributes;
 	}
 
@@ -112,18 +145,15 @@ public class Source {
 		this.description = description;
 	}
 	
-	public void updateModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeModel) {
+	private void updateModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeModel) {
 		
 		if (treeModel == null)
 			return;
 		
 		Model m = new Model("model");
-		if (this.attributes == null)
-			this.attributes = new ArrayList<Attribute>();
-		else
-			this.attributes.clear();
 		
 		HashMap<String, Argument> vertexIdToArgument = new HashMap<String, Argument>();
+		List<Attribute> attributeList = new ArrayList<Attribute>();
 		
 		// get the column name associated to the hNodeIds to assign to attribute names 
 		// set the rdf ids of all the vertices.
@@ -131,10 +161,10 @@ public class Source {
 			if (v.getSemanticType() != null && v.getSemanticType().getHNodeId() != null) {
 				logger.debug("Vertex " + v.getLocalID() + " is a semantic type associated to a source columns.");
 				String hNodeId = v.getSemanticType().getHNodeId();
-				String attId = "att" + String.valueOf(attributes.size() + 1);
+				String attId = "att" + String.valueOf(attributeList.size() + 1);
 				Attribute att = new Attribute(attId, this.getUri(), v.getLocalLabel(), IOType.NONE, AttributeRequirement.NONE);
 				att.sethNodeId(hNodeId);
-				this.attributes.add(att);
+				attributeList.add(att);
 				
 				vertexIdToArgument.put(v.getID(), new Argument(att.getId(), att.getId(), ArgumentType.ATTRIBUTE));
 			} else {
@@ -174,6 +204,8 @@ public class Source {
 			m.getAtoms().add(propertyAtom);
 		}
 		
+		// will update the hashmap.
+		setAttributes(attributeList);
 		this.setModel(m);
 		
 	}

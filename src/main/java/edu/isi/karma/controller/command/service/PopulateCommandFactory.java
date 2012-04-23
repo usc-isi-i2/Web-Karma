@@ -27,7 +27,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.view.VWorkspace;
 
-public class PublishServiceModelCommandFactory extends CommandFactory{
+public class PopulateCommandFactory extends CommandFactory{
 	
 	public enum Arguments {
 		vWorksheetId
@@ -38,7 +38,8 @@ public class PublishServiceModelCommandFactory extends CommandFactory{
 			VWorkspace vWorkspace) {
 
 		String vWorksheetId =request.getParameter(Arguments.vWorksheetId.name());
-		return new PublishServiceModelCommand(getNewId(vWorkspace), vWorksheetId);
+		return new PopulateCommand(getNewId(vWorkspace), 
+				getWorksheetId(request, vWorkspace), vWorksheetId);
 	}
 
 }

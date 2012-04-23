@@ -22,6 +22,7 @@ package edu.isi.karma.rep.metadata;
 
 import edu.isi.karma.rep.semantictypes.SemanticTypes;
 import edu.isi.karma.service.Service;
+import edu.isi.karma.service.Source;
 
 public class MetadataContainer {
 	
@@ -31,6 +32,7 @@ public class MetadataContainer {
 	private SemanticTypes 	semanticTypes;
 	
 	private Service service;
+	private Source source;
 	
 //	private String 
 
@@ -49,6 +51,14 @@ public class MetadataContainer {
 
 	public void setService(Service service) {
 		this.service = service;
+	}
+
+	public Source getSource() {
+		return source;
+	}
+
+	public void setSource(Source source) {
+		this.source = source;
 	}
 	
 	

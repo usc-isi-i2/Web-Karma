@@ -22,6 +22,12 @@ package edu.isi.karma.modeling.semantictypes.myutils;
 
 import java.util.ArrayList;
 
+/**
+ * This is multi-threading utility class.
+ * 
+ * @author amangoel
+ *
+ */
 public class ThreadOps {
 	
 	public static void run_in_parallel(ArrayList<? extends Thread> threadObjs, int max) {

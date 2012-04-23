@@ -33,7 +33,6 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 import edu.isi.karma.modeling.Test;
-import edu.isi.karma.util.RandomGUID;
 
 public class SourcePublisher {
 
@@ -46,7 +45,7 @@ public class SourcePublisher {
 		this.source = source;
 	}
 	
-	private Model generateModel() {
+	public Model generateModel() {
 		
 		Model model = ModelFactory.createDefaultModel();
 		
@@ -91,7 +90,7 @@ public class SourcePublisher {
 			model = generateModel();
 		
 		String source_desc_file = Repository.Instance().SOURCE_REPOSITORY_DIR + 
-									this.source.getId() + ".n3";
+									this.source.getId() +
 									Repository.Instance().getFileExtension(lang);
 
 
@@ -205,8 +204,7 @@ public class SourcePublisher {
 	}
 	
 	public static void main(String[] args) {
-		Source source = new Source(new RandomGUID().toString(), "mySource");
-		source.updateModel(Test.getGeoNamesNeighbourhoodTree());
+		Source source = new Source("mySource", Test.getGeoNamesNeighbourhoodTree());
 		source.print();
 		SourcePublisher sourcePublisher = new SourcePublisher(source);
 		try {

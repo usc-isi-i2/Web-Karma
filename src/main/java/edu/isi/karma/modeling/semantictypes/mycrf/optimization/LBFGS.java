@@ -26,6 +26,14 @@ import edu.isi.karma.modeling.semantictypes.mycrf.common.Constants;
 import edu.isi.karma.modeling.semantictypes.mycrf.math.Matrix;
 
 
+/**
+ * This class implements limited memory BFGS.
+ * It generates the next gradient to follow based on 
+ * previous values of the weights and also previous gradients.
+ * 
+ * @author amangoel
+ *
+ */
 public class LBFGS {
 	
 	ArrayList<double[]> s ;

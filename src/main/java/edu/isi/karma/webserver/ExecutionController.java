@@ -87,14 +87,16 @@ import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommand;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommand;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommandFactory;
-import edu.isi.karma.controller.command.publish.PublishRDFCommand;
-import edu.isi.karma.controller.command.publish.PublishRDFCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishRDFCellCommand;
 import edu.isi.karma.controller.command.publish.PublishRDFCellCommandFactory;
+import edu.isi.karma.controller.command.publish.PublishRDFCommand;
+import edu.isi.karma.controller.command.publish.PublishRDFCommandFactory;
 import edu.isi.karma.controller.command.service.InvokeServiceCommand;
 import edu.isi.karma.controller.command.service.InvokeServiceCommandFactory;
-import edu.isi.karma.controller.command.service.PublishServiceModelCommand;
-import edu.isi.karma.controller.command.service.PublishServiceModelCommandFactory;
+import edu.isi.karma.controller.command.service.PopulateCommand;
+import edu.isi.karma.controller.command.service.PopulateCommandFactory;
+import edu.isi.karma.controller.command.service.PublishModelCommand;
+import edu.isi.karma.controller.command.service.PublishModelCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
 
@@ -185,8 +187,10 @@ public class ExecutionController {
 				new InvokeServiceCommandFactory());
 		commandFactoryMap.put(GetPropertiesAndClassesList.class.getSimpleName(),
 				new GetPropertiesAndClassesListCommandFactory());
-		commandFactoryMap.put(PublishServiceModelCommand.class.getSimpleName(),
-				new PublishServiceModelCommandFactory());
+		commandFactoryMap.put(PublishModelCommand.class.getSimpleName(),
+				new PublishModelCommandFactory());
+		commandFactoryMap.put(PopulateCommand.class.getSimpleName(),
+				new PopulateCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

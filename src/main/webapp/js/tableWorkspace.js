@@ -134,13 +134,43 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 			, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": splitColumnByComma }});
 	});
 	
-	$("button#publishServiceModel").click(function(){
+	$("button#populateSource").click(function(){
         optionsDiv.hide();
         
         var info = new Object();
         info["vWorksheetId"] = optionsDiv.data("worksheetId");
         info["workspaceId"] = $.workspaceGlobalInformation.id;
-        info["command"] = "PublishServiceModelCommand";
+        info["command"] = "PopulateCommand";
+            
+        showLoading(info["vWorksheetId"]);
+        var returned = $.ajax({
+            url: "/RequestController", 
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete : 
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(info["vWorksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while populating source!" + textStatus);
+                    hideLoading(info["vWorksheetId"]);
+                }          
+        });
+        
+    });
+    
+    $("button#publishServiceModel").click(function(){
+        optionsDiv.hide();
+        
+        var info = new Object();
+        info["vWorksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "PublishModelCommand";
             
         showLoading(info["vWorksheetId"]);
         var returned = $.ajax({

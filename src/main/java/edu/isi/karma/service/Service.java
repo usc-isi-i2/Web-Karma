@@ -23,8 +23,10 @@ package edu.isi.karma.service;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpMethods;
@@ -59,6 +61,8 @@ public class Service {
 
 	private Model inputModel;
 	private Model outputModel;
+	
+	HashMap<String, Attribute> attIdToAttMap;
 
 	private HashMap<String, Attribute> hNodeIdToAttribute;
 
@@ -70,6 +74,7 @@ public class Service {
 		variables = new ArrayList<String>();
 		inputAttributes = new ArrayList<Attribute>();
 		outputAttributes = new ArrayList<Attribute>();
+		attIdToAttMap = new HashMap<String, Attribute>();
 	}
 	
 	public Service(String id, String name, URL urlExample) {
@@ -80,6 +85,7 @@ public class Service {
 		this.urlExample = urlExample;
 		inputAttributes = new ArrayList<Attribute>();
 		outputAttributes = new ArrayList<Attribute>();
+		attIdToAttMap = new HashMap<String, Attribute>();
 	}
 	
 	public Service(String id, String addressTemplate) {
@@ -87,6 +93,7 @@ public class Service {
 		this.address= addressTemplate;
 		inputAttributes = new ArrayList<Attribute>();
 		outputAttributes = new ArrayList<Attribute>();
+		attIdToAttMap = new HashMap<String, Attribute>();
 	}
 	
 	public Service(String id, String name, String addressTemplate) {
@@ -95,6 +102,7 @@ public class Service {
 		this.address= addressTemplate;
 		inputAttributes = new ArrayList<Attribute>();
 		outputAttributes = new ArrayList<Attribute>();
+		attIdToAttMap = new HashMap<String, Attribute>();
 	}
 
 	public Service(String id, String name, URL urlExample, String method) {
@@ -104,6 +112,7 @@ public class Service {
 		this.setMethod(method);
 		inputAttributes = new ArrayList<Attribute>();
 		outputAttributes = new ArrayList<Attribute>();
+		attIdToAttMap = new HashMap<String, Attribute>();
 	}
 
 	public String getUri() {
@@ -117,6 +126,47 @@ public class Service {
 		return operationName;
 	}
 
+	public String getPopulatedAddress(Map<String, String> attIdToValue) {
+		String address = this.getAddress();
+		String populatedAddress = address;
+		
+		for (String attId : attIdToValue.keySet()) {
+			Attribute att = this.attIdToAttMap.get(attId);
+			if (att == null) {
+				logger.debug("Cannot find the attribute " + attId + " in this service.");
+				return null;
+			}
+			if (!att.getIOType().equalsIgnoreCase(IOType.INPUT)) {
+				logger.debug("The type of the attribute " + attId + " is not INPUT.");
+				return null;
+			}
+			
+			String groundedIn = att.getGroundedIn();
+			if (groundedIn == null || groundedIn.trim().length() == 0) {
+				logger.debug("The attribute " + attId + " grounding parameter is not specified.");
+				return null;
+			}
+			
+			String value = attIdToValue.get(attId);
+			if (value == null) {// || value.trim().length() == 0) {
+				logger.debug("No value is given for attribute " + attId);
+				return null;
+			}
+			
+			logger.debug("att: " + attId);
+			logger.debug("grounded in: " + groundedIn.trim());
+			logger.debug("value: " + value.trim());
+			
+			populatedAddress = populatedAddress.replaceAll("\\{" + groundedIn.trim() + "\\}", value);
+		}
+		
+		return populatedAddress;
+	}
+
+	public Attribute getAttribute(String id) {
+		return this.attIdToAttMap.get(id);
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -138,24 +188,28 @@ public class Service {
 	}
 
 	public List<Attribute> getInputAttributes() {
-		return inputAttributes;
+		return Collections.unmodifiableList(inputAttributes);
 	}
 
 	public void setInputAttributes(List<Attribute> inputAttributes) {
 		if (inputAttributes != null)
 			for (Attribute att : inputAttributes)
 				att.setBaseUri(this.getUri());
+		for (Attribute att : inputAttributes)
+			attIdToAttMap.put(att.getId(), att);
 		this.inputAttributes = inputAttributes;
 	}
 
 	public List<Attribute> getOutputAttributes() {
-		return outputAttributes;
+		return Collections.unmodifiableList(outputAttributes);
 	}
 
 	public void setOutputAttributes(List<Attribute> outputAttributes) {
 		if (outputAttributes != null)
 			for (Attribute att : outputAttributes)
 				att.setBaseUri(this.getUri());
+		for (Attribute att : outputAttributes)
+			attIdToAttMap.put(att.getId(), att);
 		this.outputAttributes = outputAttributes;
 	}
 
@@ -430,7 +484,7 @@ public class Service {
 			for (Attribute p : this.inputAttributes)
 				p.print();
 		System.out.println("********************************************");
-		System.out.print("Input Model: ");
+		System.out.println("Input Model: ");
 		if (this.inputModel != null) {
 			System.out.println(inputModel.getUri());
 			this.inputModel.print();
@@ -441,13 +495,12 @@ public class Service {
 			for (Attribute p : getOutputAttributes())
 				p.print();
 		System.out.println("********************************************");
-		System.out.print("Output Model: ");
+		System.out.println("Output Model: ");
 		if (this.outputModel != null) {
 			System.out.println(outputModel.getUri());
 			this.outputModel.print();
 		}
 	}
 
-	
 
 }

@@ -20,6 +20,13 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.semantictypes.mycrf.graph ;
 
+/**
+ * This interface defines the common methods supported by any graph, such as,
+ * computing its potential and the partition function.
+ * 
+ * @author amangoel
+ *
+ */
 public interface GraphInterface {
 	
 	public void computeGraphPotentialAndZ() ; 
