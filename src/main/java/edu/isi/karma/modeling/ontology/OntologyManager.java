@@ -55,7 +55,7 @@ public class OntologyManager {
 	public OntologyManager() {
 		OntDocumentManager mgr = new OntDocumentManager();
 		mgr.setProcessImports(false);
-		OntModelSpec s = new OntModelSpec( OntModelSpec.OWL_MEM );
+		OntModelSpec s = new OntModelSpec( OntModelSpec.OWL_MEM_RDFS_INF );
 		s.setDocumentManager( mgr );
 		ontModel = ModelFactory.createOntologyModel(s);
 		ontCache = new OntologyCache();
@@ -181,9 +181,11 @@ public class OntologyManager {
 				i = c.listSuperClasses(true);
             for (; i.hasNext();) {
                 OntClass superC = (OntClass) i.next();
-                if (superC.isURIResource())
+                if (superC.isURIResource()) {
                 	resources.add(superC);
-                else {
+//                	if (recursive)
+//                		getParents(superC, resources, recursive);
+                } else {
             		List<OntResource> members = new ArrayList<OntResource>();
                 	getMembers(superC, members, false);
                 	for (int j = 0; j < members.size(); j++) {
@@ -206,16 +208,16 @@ public class OntologyManager {
                 OntProperty superP = (OntProperty) i.next();
                 if (superP.isURIResource()) {
                 	resources.add(superP);
-                	if (recursive)
-                		getParents(superP, resources, recursive);
-                } else {
-            		List<OntResource> members = new ArrayList<OntResource>();
-                	getMembers(superP, members, false);
-                	for (int j = 0; j < members.size(); j++) {
-                		resources.add(members.get(j));
-                		if (recursive)
-                			getParents(members.get(j), resources, recursive);
-                	}
+//                	if (recursive)
+//                		getParents(superP, resources, recursive);
+//                } else {
+//            		List<OntResource> members = new ArrayList<OntResource>();
+//                	getMembers(superP, members, false);
+//                	for (int j = 0; j < members.size(); j++) {
+//                		resources.add(members.get(j));
+//                		if (recursive)
+//                			getParents(members.get(j), resources, recursive);
+//                	}
                 }
             }
 		}
@@ -253,8 +255,8 @@ public class OntologyManager {
                 OntClass subC = (OntClass) i.next();
                 if (subC.isURIResource()) {
                 	resources.add(subC);
-                	if (recursive)
-                		getChildren(subC, resources, recursive);
+//                	if (recursive)
+//                		getChildren(subC, resources, recursive);
                 } else {
             		List<OntResource> members = new ArrayList<OntResource>();
                 	getMembers(subC, members, false);
@@ -278,15 +280,15 @@ public class OntologyManager {
                 OntProperty subP = (OntProperty) i.next();
                 if (subP.isURIResource())
                 	resources.add(subP);
-                else {
-            		List<OntResource> members = new ArrayList<OntResource>();
-                	getMembers(subP, members, false);
-                	for (int j = 0; j < members.size(); j++) {
-                		resources.add(members.get(j));
-                		if (recursive)
-                			getParents(members.get(j), resources, recursive);
-                	}
-                }
+//                else {
+//            		List<OntResource> members = new ArrayList<OntResource>();
+//                	getMembers(subP, members, false);
+//                	for (int j = 0; j < members.size(); j++) {
+//                		resources.add(members.get(j));
+//                		if (recursive)
+//                			getParents(members.get(j), resources, recursive);
+//                	}
+//                }
             }
 		}
 	}
@@ -386,6 +388,7 @@ public class OntologyManager {
 
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntClass(classUri);
+		if (r == null) return null;
 		getChildren(r, resources, recursive);
 		return getResourcesURIs(resources);
 	}
@@ -400,6 +403,37 @@ public class OntologyManager {
 		
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntClass(classUri);
+		if (r == null) return null;
+		getParents(r, resources, recursive);
+		return getResourcesURIs(resources);
+	}
+
+	/**
+	 * returns URIs of all sub-properties of @param propertyUri
+	 * @param propertyUri
+	 * @param recursive
+	 * @return
+	 */
+	public List<String> getSubProperties(String propertyUri, boolean recursive) {
+
+		List<OntResource> resources = new ArrayList<OntResource>();
+		OntResource r = ontModel.getOntProperty(propertyUri);
+		if (r == null) return null;
+		getChildren(r, resources, recursive);
+		return getResourcesURIs(resources);
+	}
+	
+	/**
+	 * returns URIs of all super-properties of @param propertyUri
+	 * @param propertyUri
+	 * @param recursive
+	 * @return
+	 */
+	public List<String> getSuperProperties(String propertyUri, boolean recursive) {
+
+		List<OntResource> resources = new ArrayList<OntResource>();
+		OntResource r = ontModel.getOntProperty(propertyUri);
+		if (r == null) return null;
 		getParents(r, resources, recursive);
 		return getResourcesURIs(resources);
 	}
@@ -413,7 +447,8 @@ public class OntologyManager {
 		List<String> resourcesURIs = new ArrayList<String>();
 		if (resources != null)
 			for (OntResource r: resources) {
-				resourcesURIs.add(r.getURI());
+				if (resourcesURIs.indexOf(r.getURI()) == -1)
+					resourcesURIs.add(r.getURI());
 			}
 		return resourcesURIs;
 	}

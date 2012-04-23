@@ -109,34 +109,6 @@ public class OntologyCache {
 	public OntologyCache() {
 	}
 
-//	private static OntologyCache _InternalInstance = null;
-//	public static OntologyCache Instance()
-//	{
-//		if (_InternalInstance == null)
-//		{
-//			directOutDataProperties = new HashMap<String, List<String>>();
-//			indirectOutDataProperties = new HashMap<String, List<String>>();
-//			directOutObjectProperties = new HashMap<String, List<String>>();
-//			indirectOutObjectProperties = new HashMap<String, List<String>>();
-//			directInObjectProperties = new HashMap<String, List<String>>();
-//			indirectInObjectProperties = new HashMap<String, List<String>>();
-//			
-//			propertyDirectDomains = new HashMap<String, List<String>>();
-//			propertyIndirectDomains = new HashMap<String, List<String>>();
-//			propertyDirectRanges = new HashMap<String, List<String>>();
-//			propertyIndirectRanges = new HashMap<String, List<String>>();
-//			
-//			directDomainRangeProperties = new HashMap<String, List<String>>();
-//			indirectDomainRangeProperties = new HashMap<String, List<String>>();
-//			
-//			_InternalInstance = new OntologyCache();
-//			
-//			_InternalInstance.init();
-//			
-//		}
-//		return _InternalInstance;
-//	}
-
 	public void init(OntologyManager ontologyManager) {
 
 		this.ontologyManager = ontologyManager;
@@ -156,10 +128,10 @@ public class OntologyCache {
 		directDomainRangeProperties = new HashMap<String, List<String>>();
 		indirectDomainRangeProperties = new HashMap<String, List<String>>();
 		
-
 		long start = System.currentTimeMillis();
 		fillDataPropertiesHashMaps();
 		fillObjectPropertiesHashMaps();
+		updateMapsWithSubpropertyDefinitions();
 		float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
 		logger.info("time to build ontology cache: " + elapsedTimeSec);
 	}
@@ -358,4 +330,87 @@ public class OntologyCache {
 
 		}		
 	}
+	
+	private void updateMapsWithSubpropertyDefinitions() {
+		
+		
+		// iterate over all properties
+		for (String p : propertyDirectDomains.keySet()) {
+			
+			List<String> superProperties = ontologyManager.getSuperProperties(p, true);
+			List<String> temp = null;
+			
+			List<String> allDomains = new ArrayList<String>();
+			for (String superP : superProperties) {
+				List<String> domains = propertyIndirectDomains.get(superP);
+				if (domains == null) continue;
+				allDomains.addAll(domains);
+			}
+
+			List<String> indirectDomains = propertyIndirectDomains.get(p);
+			if (indirectDomains == null) {
+				indirectDomains = new ArrayList<String>();
+				propertyIndirectDomains.put(p, indirectDomains);
+			}
+			
+			for (String d : allDomains) {
+				if (indirectDomains.indexOf(d) == -1)
+					indirectDomains.add(d);
+			}
+			
+			if (ontologyManager.isObjectProperty(p)) 
+				for (String d : allDomains) {
+					temp = indirectOutObjectProperties.get(d);
+					if (temp.indexOf(p) == -1)
+						temp.add(p);
+				}
+
+			if (ontologyManager.isDataProperty(p)) 
+				for (String d : allDomains) {
+					temp = indirectOutDataProperties.get(d);
+					if (temp.indexOf(p) == -1)
+						temp.add(p);
+				}
+
+			List<String> allRanges = new ArrayList<String>();
+			for (String superP : superProperties) {
+				List<String> ranges = propertyIndirectRanges.get(superP);
+				if (ranges == null) continue;
+				allRanges.addAll(ranges);
+			}
+
+			List<String> indirectRanges = propertyIndirectDomains.get(p);
+			if (indirectRanges == null) {  
+				indirectRanges = new ArrayList<String>();
+				propertyIndirectRanges.put(p, indirectRanges);
+			}
+			
+			for (String r : allRanges) {
+				if (indirectRanges.indexOf(r) == -1)
+					indirectRanges.add(r);
+			}
+			
+			if (ontologyManager.isObjectProperty(p)) 
+				for (String r : allRanges) {
+					temp = indirectInObjectProperties.get(r);
+					if (temp.indexOf(p) == -1)
+						temp.add(p);
+				}
+				
+			for (int i = 0; i < allDomains.size(); i++) {
+				for (int j = 0; j < allRanges.size(); j++) {
+					temp = 
+						indirectDomainRangeProperties.get(allDomains.get(i).toString() + allRanges.get(j).toString());
+					if (temp == null) {
+						temp = new ArrayList<String>();
+						indirectDomainRangeProperties.put(allDomains.get(i).toString() + allRanges.get(j).toString(), temp);
+					}
+					if (temp.indexOf(p) == -1)
+						temp.add(p);
+				}
+			}
+		}
+
+	}
+
 }

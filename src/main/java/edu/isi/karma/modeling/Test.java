@@ -44,7 +44,7 @@ public class Test {
 		f[1] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\uscont.owl");
 		f[2] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\rdfs_subset.owl");
 		f[3] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\geonames\\wgs84_pos-updated.xml");
-		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\geonames\\ontology_v3.01.rdf");
+		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\geonames\\ontology_v3.01-test.rdf");
 		
 //		f[0] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\vivo1.4-protege.owl");
 //		f[1] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\sample.owl");
@@ -234,11 +234,8 @@ public class Test {
 		for (String s : list)
 			System.out.println(s);
 	}
-	public static void main(String[] args) {
-		
-//		getGeoNamesNeighbourhoodTree();
-//		if (true) return;
-		
+	
+	private static void testAlignment() {
 		OntologyManager ontManagar = new OntologyManager();
 		loadOntologies(ontManagar);
 //		System.out.println(ontManagar.getOntModel().getNsURIPrefix("http://vivoweb.org/ontology/core#"));
@@ -304,7 +301,11 @@ public class Test {
 //		alignment.addUILink("http://halowiki/ob/property#Causes1");
 //		GraphUtil.printGraph(alignment.getSteinerTree());
 
-
-
+	}
+	
+	public static void main(String[] args) {
+		boolean test1 = false, test2 = true;
+		if (test1) testAlignment();
+		if (test2) testOntologyImport();
 	}
 }
