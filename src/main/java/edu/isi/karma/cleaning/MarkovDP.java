@@ -100,7 +100,17 @@ public class MarkovDP {
 		{
 			Vector<TNode> x = elem.get(i);
 			Vector<TNode> y = eToks.get(i);
-			if(x.toString().compareTo(y.toString())!=0)
+			String s1 = "";
+			String s2 = "";
+			for(TNode t:x)
+			{
+				s1 += t.text;
+			}
+			for(TNode t:y)
+			{
+				s2 += t.text;
+			}
+			if(s1.compareTo(s2)!=0)
 				return false;
 		}
 		return true;
@@ -208,7 +218,7 @@ public class MarkovDP {
 				if(gtree.isRuleConsistent(r))
 				{	
 					result.add(r);
-					//i++;
+					i++;
 				}
 				i++;
 			}
