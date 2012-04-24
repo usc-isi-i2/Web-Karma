@@ -242,7 +242,7 @@ public class SourceDescription {
 				if(e.getLinkType()==LinkType.DataProperty){
 					//get the child node, which should be a DataProperty node
 					if(child.getNodeType()!=NodeType.DataProperty){
-						throw new KarmaException("Node " + child.getUri() + " should be of type NodeType.DataProperty");
+						throw new KarmaException("Node " + child.getID() + " should be of type NodeType.DataProperty");
 					}
 					else{
 						stmt = generateDataPropertyStatement(v,e,child);
@@ -252,7 +252,7 @@ public class SourceDescription {
 				else if(e.getLinkType()==LinkType.ObjectProperty){
 					//get the child node, which should be a DataProperty node
 					if(child.getNodeType()!=NodeType.Class){
-						throw new KarmaException("Node " + child.getUri() + " should be of type NodeType.Class");
+						throw new KarmaException("Node " + child.getID() + " should be of type NodeType.Class");
 					}
 					else{
 						stmt = generateObjectPropertyStatement(v,e,child);
