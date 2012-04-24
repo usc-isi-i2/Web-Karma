@@ -687,7 +687,7 @@ public class Main {
 					String corrResult = "";
 					while ((pair=cr.readNext())!=null)
 					{
-						pair[0] = "%"+pair[0]+"@";
+						pair[0] = "<_START>"+pair[0]+"<_END>";
 						entries.add(pair);
 						corrResult += pair[1]+"\n";
 					}

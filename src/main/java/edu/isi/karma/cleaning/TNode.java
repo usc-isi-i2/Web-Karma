@@ -66,11 +66,11 @@ public class TNode{
 		}
 		else if(type == TNode.STARTTYP)
 		{
-			return "Start";
+			return "START";
 		}
 		else if(type == TNode.ENDTYP)
 		{
-			return "End";
+			return "END";
 		}
 		else
 		{

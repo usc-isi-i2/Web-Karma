@@ -1,24 +1,4 @@
-/*******************************************************************************
- * Copyright 2012 University of Southern California
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * 	http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- * This code was developed by the Information Integration Group as part 
- * of the Karma project at the Information Sciences Institute of the 
- * University of Southern California.  For more information, publications, 
- * and related projects, please see: http://www.isi.edu/integration
- ******************************************************************************/
-// $ANTLR 3.4 INSInterpreterTree.g 2012-02-13 14:41:40
+// $ANTLR 3.4 INSInterpreterTree.g 2012-04-23 21:53:48
 
   // We want the generated parser class to be in this package.
   package edu.isi.karma.cleaning.changed_grammar;
@@ -43,7 +23,7 @@ import java.util.ArrayList;
 @SuppressWarnings({"all", "warnings", "unchecked"})
 public class INSInterpreterTree extends TreeParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ANYNUM", "ANYTOK", "ANYTYP", "BNKTYP", "DIGIT", "FRMB", "FRME", "FST", "INCLD", "INS", "LST", "NEWLINE", "NUM", "NUMTYP", "SYBTYP", "TOKEN", "WRDTYP", "WS"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ANYNUM", "ANYTOK", "ANYTYP", "BNKTYP", "DIGIT", "ENDTYP", "FRMB", "FRME", "FST", "INCLD", "INS", "LST", "NEWLINE", "NUM", "NUMTYP", "SRTTYP", "SYBTYP", "TOKEN", "WRDTYP", "WS"
     };
 
     public static final int EOF=-1;
@@ -52,19 +32,21 @@ public class INSInterpreterTree extends TreeParser {
     public static final int ANYTYP=6;
     public static final int BNKTYP=7;
     public static final int DIGIT=8;
-    public static final int FRMB=9;
-    public static final int FRME=10;
-    public static final int FST=11;
-    public static final int INCLD=12;
-    public static final int INS=13;
-    public static final int LST=14;
-    public static final int NEWLINE=15;
-    public static final int NUM=16;
-    public static final int NUMTYP=17;
-    public static final int SYBTYP=18;
-    public static final int TOKEN=19;
-    public static final int WRDTYP=20;
-    public static final int WS=21;
+    public static final int ENDTYP=9;
+    public static final int FRMB=10;
+    public static final int FRME=11;
+    public static final int FST=12;
+    public static final int INCLD=13;
+    public static final int INS=14;
+    public static final int LST=15;
+    public static final int NEWLINE=16;
+    public static final int NUM=17;
+    public static final int NUMTYP=18;
+    public static final int SRTTYP=19;
+    public static final int SYBTYP=20;
+    public static final int TOKEN=21;
+    public static final int WRDTYP=22;
+    public static final int WS=23;
 
     // delegates
     public TreeParser[] getDelegates() {
@@ -296,7 +278,7 @@ public TreeAdaptor getTreeAdaptor() {
                 int alt1=2;
                 int LA1_0 = input.LA(1);
 
-                if ( (LA1_0==BNKTYP||(LA1_0 >= NUMTYP && LA1_0 <= WRDTYP)) ) {
+                if ( (LA1_0==BNKTYP||LA1_0==ENDTYP||(LA1_0 >= NUMTYP && LA1_0 <= WRDTYP)) ) {
                     alt1=1;
                 }
 
@@ -391,7 +373,7 @@ public TreeAdaptor getTreeAdaptor() {
                 int alt2=2;
                 int LA2_0 = input.LA(1);
 
-                if ( (LA2_0==BNKTYP||(LA2_0 >= NUMTYP && LA2_0 <= WRDTYP)) ) {
+                if ( (LA2_0==BNKTYP||LA2_0==ENDTYP||(LA2_0 >= NUMTYP && LA2_0 <= WRDTYP)) ) {
                     alt2=1;
                 }
 
@@ -470,7 +452,7 @@ public TreeAdaptor getTreeAdaptor() {
             if ( (LA3_0==TOKEN) ) {
                 alt3=1;
             }
-            else if ( (LA3_0==BNKTYP||(LA3_0 >= NUMTYP && LA3_0 <= SYBTYP)||LA3_0==WRDTYP) ) {
+            else if ( (LA3_0==BNKTYP||LA3_0==ENDTYP||(LA3_0 >= NUMTYP && LA3_0 <= SYBTYP)||LA3_0==WRDTYP) ) {
                 alt3=2;
             }
             else {
@@ -603,7 +585,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "type"
-    // INSInterpreterTree.g:61:1: type returns [String value] : ( NUMTYP | WRDTYP | SYBTYP | BNKTYP );
+    // INSInterpreterTree.g:61:1: type returns [String value] : ( NUMTYP | WRDTYP | SYBTYP | BNKTYP | SRTTYP | ENDTYP );
     public final INSInterpreterTree.type_return type() throws RecognitionException {
         INSInterpreterTree.type_return retval = new INSInterpreterTree.type_return();
         retval.start = input.LT(1);
@@ -618,15 +600,19 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree WRDTYP13=null;
         CommonTree SYBTYP14=null;
         CommonTree BNKTYP15=null;
+        CommonTree SRTTYP16=null;
+        CommonTree ENDTYP17=null;
 
         CommonTree NUMTYP12_tree=null;
         CommonTree WRDTYP13_tree=null;
         CommonTree SYBTYP14_tree=null;
         CommonTree BNKTYP15_tree=null;
+        CommonTree SRTTYP16_tree=null;
+        CommonTree ENDTYP17_tree=null;
 
         try {
-            // INSInterpreterTree.g:61:28: ( NUMTYP | WRDTYP | SYBTYP | BNKTYP )
-            int alt4=4;
+            // INSInterpreterTree.g:61:28: ( NUMTYP | WRDTYP | SYBTYP | BNKTYP | SRTTYP | ENDTYP )
+            int alt4=6;
             switch ( input.LA(1) ) {
             case NUMTYP:
                 {
@@ -646,6 +632,16 @@ public TreeAdaptor getTreeAdaptor() {
             case BNKTYP:
                 {
                 alt4=4;
+                }
+                break;
+            case SRTTYP:
+                {
+                alt4=5;
+                }
+                break;
+            case ENDTYP:
+                {
+                alt4=6;
                 }
                 break;
             default:
@@ -729,6 +725,42 @@ public TreeAdaptor getTreeAdaptor() {
 
                     }
                     break;
+                case 5 :
+                    // INSInterpreterTree.g:61:152: SRTTYP
+                    {
+                    root_0 = (CommonTree)adaptor.nil();
+
+
+                    _last = (CommonTree)input.LT(1);
+                    SRTTYP16=(CommonTree)match(input,SRTTYP,FOLLOW_SRTTYP_in_type196); 
+                    SRTTYP16_tree = (CommonTree)adaptor.dupNode(SRTTYP16);
+
+
+                    adaptor.addChild(root_0, SRTTYP16_tree);
+
+
+                    retval.value =(SRTTYP16!=null?SRTTYP16.getText():null);
+
+                    }
+                    break;
+                case 6 :
+                    // INSInterpreterTree.g:61:182: ENDTYP
+                    {
+                    root_0 = (CommonTree)adaptor.nil();
+
+
+                    _last = (CommonTree)input.LT(1);
+                    ENDTYP17=(CommonTree)match(input,ENDTYP,FOLLOW_ENDTYP_in_type200); 
+                    ENDTYP17_tree = (CommonTree)adaptor.dupNode(ENDTYP17);
+
+
+                    adaptor.addChild(root_0, ENDTYP17_tree);
+
+
+                    retval.value =(ENDTYP17!=null?ENDTYP17.getText():null);
+
+                    }
+                    break;
 
             }
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
@@ -766,9 +798,9 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree _first_0 = null;
         CommonTree _last = null;
 
-        CommonTree TOKEN16=null;
+        CommonTree TOKEN18=null;
 
-        CommonTree TOKEN16_tree=null;
+        CommonTree TOKEN18_tree=null;
 
         try {
             // INSInterpreterTree.g:63:28: ( TOKEN )
@@ -778,14 +810,14 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             _last = (CommonTree)input.LT(1);
-            TOKEN16=(CommonTree)match(input,TOKEN,FOLLOW_TOKEN_in_token204); 
-            TOKEN16_tree = (CommonTree)adaptor.dupNode(TOKEN16);
+            TOKEN18=(CommonTree)match(input,TOKEN,FOLLOW_TOKEN_in_token212); 
+            TOKEN18_tree = (CommonTree)adaptor.dupNode(TOKEN18);
 
 
-            adaptor.addChild(root_0, TOKEN16_tree);
+            adaptor.addChild(root_0, TOKEN18_tree);
 
 
-            retval.value =(TOKEN16!=null?TOKEN16.getText():null);
+            retval.value =(TOKEN18!=null?TOKEN18.getText():null);
 
             }
 
@@ -824,11 +856,11 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree _first_0 = null;
         CommonTree _last = null;
 
-        CommonTree FRMB17=null;
-        CommonTree FRME18=null;
+        CommonTree FRMB19=null;
+        CommonTree FRME20=null;
 
-        CommonTree FRMB17_tree=null;
-        CommonTree FRME18_tree=null;
+        CommonTree FRMB19_tree=null;
+        CommonTree FRME20_tree=null;
 
         try {
             // INSInterpreterTree.g:67:2: ( FRMB | FRME )
@@ -856,14 +888,14 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     _last = (CommonTree)input.LT(1);
-                    FRMB17=(CommonTree)match(input,FRMB,FOLLOW_FRMB_in_scanningOrder221); 
-                    FRMB17_tree = (CommonTree)adaptor.dupNode(FRMB17);
+                    FRMB19=(CommonTree)match(input,FRMB,FOLLOW_FRMB_in_scanningOrder229); 
+                    FRMB19_tree = (CommonTree)adaptor.dupNode(FRMB19);
 
 
-                    adaptor.addChild(root_0, FRMB17_tree);
+                    adaptor.addChild(root_0, FRMB19_tree);
 
 
-                    retval.value =(FRMB17!=null?FRMB17.getText():null);
+                    retval.value =(FRMB19!=null?FRMB19.getText():null);
 
                     }
                     break;
@@ -874,14 +906,14 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     _last = (CommonTree)input.LT(1);
-                    FRME18=(CommonTree)match(input,FRME,FOLLOW_FRME_in_scanningOrder225); 
-                    FRME18_tree = (CommonTree)adaptor.dupNode(FRME18);
+                    FRME20=(CommonTree)match(input,FRME,FOLLOW_FRME_in_scanningOrder233); 
+                    FRME20_tree = (CommonTree)adaptor.dupNode(FRME20);
 
 
-                    adaptor.addChild(root_0, FRME18_tree);
+                    adaptor.addChild(root_0, FRME20_tree);
 
 
-                    retval.value =(FRME18!=null?FRME18.getText():null);
+                    retval.value =(FRME20!=null?FRME20.getText():null);
 
                     }
                     break;
@@ -924,7 +956,7 @@ public TreeAdaptor getTreeAdaptor() {
 
         INSInterpreterTree.dwherequantifier_return r =null;
 
-        INSInterpreterTree.scanningOrder_return scanningOrder19 =null;
+        INSInterpreterTree.scanningOrder_return scanningOrder21 =null;
 
 
 
@@ -936,17 +968,17 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             _last = (CommonTree)input.LT(1);
-            pushFollow(FOLLOW_scanningOrder_in_dest239);
-            scanningOrder19=scanningOrder();
+            pushFollow(FOLLOW_scanningOrder_in_dest247);
+            scanningOrder21=scanningOrder();
 
             state._fsp--;
 
-            adaptor.addChild(root_0, scanningOrder19.getTree());
+            adaptor.addChild(root_0, scanningOrder21.getTree());
 
 
             _last = (CommonTree)input.LT(1);
-            pushFollow(FOLLOW_dwherequantifier_in_dest243);
-            r=dwherequantifier((scanningOrder19!=null?scanningOrder19.value:null));
+            pushFollow(FOLLOW_dwherequantifier_in_dest251);
+            r=dwherequantifier((scanningOrder21!=null?scanningOrder21.value:null));
 
             state._fsp--;
 
@@ -994,19 +1026,19 @@ public TreeAdaptor getTreeAdaptor() {
 
         CommonTree q=null;
         CommonTree p=null;
-        CommonTree FST20=null;
-        CommonTree LST21=null;
+        CommonTree FST22=null;
+        CommonTree LST23=null;
         INSInterpreterTree.dtokenspec_return x =null;
 
         INSInterpreterTree.dtokenspec_return y =null;
 
-        INSInterpreterTree.dnum_return dnum22 =null;
+        INSInterpreterTree.dnum_return dnum24 =null;
 
 
         CommonTree q_tree=null;
         CommonTree p_tree=null;
-        CommonTree FST20_tree=null;
-        CommonTree LST21_tree=null;
+        CommonTree FST22_tree=null;
+        CommonTree LST23_tree=null;
 
         try {
             // INSInterpreterTree.g:73:2: ( FST (q= INCLD )? x= dtokenspec | LST (p= INCLD )? y= dtokenspec | dnum )
@@ -1043,11 +1075,11 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     _last = (CommonTree)input.LT(1);
-                    FST20=(CommonTree)match(input,FST,FOLLOW_FST_in_dwherequantifier262); 
-                    FST20_tree = (CommonTree)adaptor.dupNode(FST20);
+                    FST22=(CommonTree)match(input,FST,FOLLOW_FST_in_dwherequantifier270); 
+                    FST22_tree = (CommonTree)adaptor.dupNode(FST22);
 
 
-                    adaptor.addChild(root_0, FST20_tree);
+                    adaptor.addChild(root_0, FST22_tree);
 
 
                     // INSInterpreterTree.g:73:9: (q= INCLD )?
@@ -1062,7 +1094,7 @@ public TreeAdaptor getTreeAdaptor() {
                             // INSInterpreterTree.g:73:9: q= INCLD
                             {
                             _last = (CommonTree)input.LT(1);
-                            q=(CommonTree)match(input,INCLD,FOLLOW_INCLD_in_dwherequantifier266); 
+                            q=(CommonTree)match(input,INCLD,FOLLOW_INCLD_in_dwherequantifier274); 
                             q_tree = (CommonTree)adaptor.dupNode(q);
 
 
@@ -1076,7 +1108,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     _last = (CommonTree)input.LT(1);
-                    pushFollow(FOLLOW_dtokenspec_in_dwherequantifier271);
+                    pushFollow(FOLLOW_dtokenspec_in_dwherequantifier279);
                     x=dtokenspec();
 
                     state._fsp--;
@@ -1084,7 +1116,7 @@ public TreeAdaptor getTreeAdaptor() {
                     adaptor.addChild(root_0, x.getTree());
 
 
-                    retval.pos = this.ruler.evalPos((FST20!=null?FST20.getText():null)+(q!=null?q.getText():null),(x!=null?x.res:null),order);
+                    retval.pos = this.ruler.evalPos((FST22!=null?FST22.getText():null)+(q!=null?q.getText():null),(x!=null?x.res:null),order);
 
                     }
                     break;
@@ -1095,11 +1127,11 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     _last = (CommonTree)input.LT(1);
-                    LST21=(CommonTree)match(input,LST,FOLLOW_LST_in_dwherequantifier276); 
-                    LST21_tree = (CommonTree)adaptor.dupNode(LST21);
+                    LST23=(CommonTree)match(input,LST,FOLLOW_LST_in_dwherequantifier284); 
+                    LST23_tree = (CommonTree)adaptor.dupNode(LST23);
 
 
-                    adaptor.addChild(root_0, LST21_tree);
+                    adaptor.addChild(root_0, LST23_tree);
 
 
                     // INSInterpreterTree.g:73:98: (p= INCLD )?
@@ -1114,7 +1146,7 @@ public TreeAdaptor getTreeAdaptor() {
                             // INSInterpreterTree.g:73:98: p= INCLD
                             {
                             _last = (CommonTree)input.LT(1);
-                            p=(CommonTree)match(input,INCLD,FOLLOW_INCLD_in_dwherequantifier280); 
+                            p=(CommonTree)match(input,INCLD,FOLLOW_INCLD_in_dwherequantifier288); 
                             p_tree = (CommonTree)adaptor.dupNode(p);
 
 
@@ -1128,7 +1160,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     _last = (CommonTree)input.LT(1);
-                    pushFollow(FOLLOW_dtokenspec_in_dwherequantifier285);
+                    pushFollow(FOLLOW_dtokenspec_in_dwherequantifier293);
                     y=dtokenspec();
 
                     state._fsp--;
@@ -1136,7 +1168,7 @@ public TreeAdaptor getTreeAdaptor() {
                     adaptor.addChild(root_0, y.getTree());
 
 
-                    retval.pos = this.ruler.evalPos((LST21!=null?LST21.getText():null)+(p!=null?p.getText():null),(x!=null?x.res:null),order);
+                    retval.pos = this.ruler.evalPos((LST23!=null?LST23.getText():null)+(p!=null?p.getText():null),(x!=null?x.res:null),order);
 
                     }
                     break;
@@ -1147,15 +1179,15 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     _last = (CommonTree)input.LT(1);
-                    pushFollow(FOLLOW_dnum_in_dwherequantifier289);
-                    dnum22=dnum();
+                    pushFollow(FOLLOW_dnum_in_dwherequantifier297);
+                    dnum24=dnum();
 
                     state._fsp--;
 
-                    adaptor.addChild(root_0, dnum22.getTree());
+                    adaptor.addChild(root_0, dnum24.getTree());
 
 
-                    retval.pos =this.ruler.evalPos((dnum22!=null?dnum22.x:null),null,order);
+                    retval.pos =this.ruler.evalPos((dnum24!=null?dnum24.x:null),null,order);
 
                     }
                     break;
@@ -1196,9 +1228,9 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree _first_0 = null;
         CommonTree _last = null;
 
-        CommonTree NUM23=null;
+        CommonTree NUM25=null;
 
-        CommonTree NUM23_tree=null;
+        CommonTree NUM25_tree=null;
 
         try {
             // INSInterpreterTree.g:75:24: ( NUM )
@@ -1208,14 +1240,14 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             _last = (CommonTree)input.LT(1);
-            NUM23=(CommonTree)match(input,NUM,FOLLOW_NUM_in_dnum302); 
-            NUM23_tree = (CommonTree)adaptor.dupNode(NUM23);
+            NUM25=(CommonTree)match(input,NUM,FOLLOW_NUM_in_dnum310); 
+            NUM25_tree = (CommonTree)adaptor.dupNode(NUM25);
 
 
-            adaptor.addChild(root_0, NUM23_tree);
+            adaptor.addChild(root_0, NUM25_tree);
 
 
-            retval.x =(NUM23!=null?NUM23.getText():null);
+            retval.x =(NUM25!=null?NUM25.getText():null);
 
             }
 
@@ -1239,14 +1271,14 @@ public TreeAdaptor getTreeAdaptor() {
 
  
 
-    public static final BitSet FOLLOW_operator_in_rule71 = new BitSet(new long[]{0x00000000001E0080L});
-    public static final BitSet FOLLOW_what_in_rule73 = new BitSet(new long[]{0x0000000000000600L});
+    public static final BitSet FOLLOW_operator_in_rule71 = new BitSet(new long[]{0x00000000007C0280L});
+    public static final BitSet FOLLOW_what_in_rule73 = new BitSet(new long[]{0x0000000000000C00L});
     public static final BitSet FOLLOW_dest_in_rule75 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_tokenspec_in_what88 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_singletokenspec_in_tokenspec107 = new BitSet(new long[]{0x00000000001E0082L});
-    public static final BitSet FOLLOW_singletokenspec_in_tokenspec111 = new BitSet(new long[]{0x00000000001E0082L});
-    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec133 = new BitSet(new long[]{0x00000000001E0082L});
-    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec137 = new BitSet(new long[]{0x00000000001E0082L});
+    public static final BitSet FOLLOW_singletokenspec_in_tokenspec107 = new BitSet(new long[]{0x00000000007C0282L});
+    public static final BitSet FOLLOW_singletokenspec_in_tokenspec111 = new BitSet(new long[]{0x00000000007C0282L});
+    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec133 = new BitSet(new long[]{0x00000000007C0282L});
+    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec137 = new BitSet(new long[]{0x00000000007C0282L});
     public static final BitSet FOLLOW_token_in_singletokenspec151 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_type_in_singletokenspec154 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_INS_in_operator167 = new BitSet(new long[]{0x0000000000000002L});
@@ -1254,18 +1286,20 @@ public TreeAdaptor getTreeAdaptor() {
     public static final BitSet FOLLOW_WRDTYP_in_type184 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_SYBTYP_in_type188 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_BNKTYP_in_type192 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_TOKEN_in_token204 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_FRMB_in_scanningOrder221 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_FRME_in_scanningOrder225 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_scanningOrder_in_dest239 = new BitSet(new long[]{0x0000000000014800L});
-    public static final BitSet FOLLOW_dwherequantifier_in_dest243 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_FST_in_dwherequantifier262 = new BitSet(new long[]{0x00000000001E1080L});
-    public static final BitSet FOLLOW_INCLD_in_dwherequantifier266 = new BitSet(new long[]{0x00000000001E0080L});
-    public static final BitSet FOLLOW_dtokenspec_in_dwherequantifier271 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LST_in_dwherequantifier276 = new BitSet(new long[]{0x00000000001E1080L});
-    public static final BitSet FOLLOW_INCLD_in_dwherequantifier280 = new BitSet(new long[]{0x00000000001E0080L});
-    public static final BitSet FOLLOW_dtokenspec_in_dwherequantifier285 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_dnum_in_dwherequantifier289 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NUM_in_dnum302 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_SRTTYP_in_type196 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ENDTYP_in_type200 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_TOKEN_in_token212 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_FRMB_in_scanningOrder229 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_FRME_in_scanningOrder233 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_scanningOrder_in_dest247 = new BitSet(new long[]{0x0000000000029000L});
+    public static final BitSet FOLLOW_dwherequantifier_in_dest251 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_FST_in_dwherequantifier270 = new BitSet(new long[]{0x00000000007C2280L});
+    public static final BitSet FOLLOW_INCLD_in_dwherequantifier274 = new BitSet(new long[]{0x00000000007C0280L});
+    public static final BitSet FOLLOW_dtokenspec_in_dwherequantifier279 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LST_in_dwherequantifier284 = new BitSet(new long[]{0x00000000007C2280L});
+    public static final BitSet FOLLOW_INCLD_in_dwherequantifier288 = new BitSet(new long[]{0x00000000007C0280L});
+    public static final BitSet FOLLOW_dtokenspec_in_dwherequantifier293 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_dnum_in_dwherequantifier297 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NUM_in_dnum310 = new BitSet(new long[]{0x0000000000000002L});
 
 }
