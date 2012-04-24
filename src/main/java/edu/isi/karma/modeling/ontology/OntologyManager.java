@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.hp.hpl.jena.ontology.ConversionException;
 import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.IntersectionClass;
 import com.hp.hpl.jena.ontology.ObjectProperty;
@@ -55,28 +56,12 @@ public class OntologyManager {
 	public OntologyManager() {
 		OntDocumentManager mgr = new OntDocumentManager();
 		mgr.setProcessImports(false);
-		OntModelSpec s = new OntModelSpec( OntModelSpec.OWL_MEM_RDFS_INF );
+		OntModelSpec s = new OntModelSpec( OntModelSpec.OWL_MEM );
 		s.setDocumentManager( mgr );
 		ontModel = ModelFactory.createOntologyModel(s);
 		ontCache = new OntologyCache();
 	}
 
-//	private static OntologyManager _InternalInstance = null;
-//	public static OntologyManager Instance()
-//	{
-//		if (_InternalInstance == null)
-//		{
-//			OntDocumentManager mgr = new OntDocumentManager();
-//			mgr.setProcessImports(false);
-//			OntModelSpec s = new OntModelSpec( OntModelSpec.OWL_MEM );
-//			s.setDocumentManager( mgr );
-//			ontModel = ModelFactory.createOntologyModel(s);
-//			_InternalInstance = new OntologyManager();
-//			
-//		}
-//		return _InternalInstance;
-//	}
-	
 	public OntModel getOntModel() {
 		return ontModel;
 	}
@@ -174,17 +159,21 @@ public class OntologyManager {
 			return;
 		
 		if (c != null && c.hasSuperClass()) {
-			ExtendedIterator<OntClass> i;
-			if (recursive)
-				i = c.listSuperClasses(false);
-			else
-				i = c.listSuperClasses(true);
-            for (; i.hasNext();) {
+			ExtendedIterator<OntClass> i = null;
+			try {
+//				if (recursive)
+//					i = c.listSuperClasses(false);
+//				else
+					i = c.listSuperClasses(true);
+			} catch (ConversionException e) {
+				logger.debug(e.getMessage());
+			}
+            for (; i != null && i.hasNext();) {
                 OntClass superC = (OntClass) i.next();
                 if (superC.isURIResource()) {
                 	resources.add(superC);
-//                	if (recursive)
-//                		getParents(superC, resources, recursive);
+                	if (recursive)
+                		getParents(superC, resources, recursive);
                 } else {
             		List<OntResource> members = new ArrayList<OntResource>();
                 	getMembers(superC, members, false);
@@ -198,19 +187,25 @@ public class OntologyManager {
 		}
 
 		if (p != null) {
-			ExtendedIterator<? extends OntProperty> i;
-			if (recursive)
-				i = p.listSuperProperties(false);
-			else
-				i = p.listSuperProperties(true);
-			
-            for (; i.hasNext();) {
-                OntProperty superP = (OntProperty) i.next();
+			ExtendedIterator<? extends OntProperty> i = null;
+			try {
+	//			if (recursive)
+	//				i = p.listSuperProperties(false);
+	//			else
+					i = p.listSuperProperties(true);
+			} catch (ConversionException e) {
+				logger.debug(e.getMessage());
+			}
+            for (; i != null && i.hasNext();) {
+                
+            	OntResource superP = i.next();
+            	//if (superP.a)
                 if (superP.isURIResource()) {
                 	resources.add(superP);
-//                	if (recursive)
-//                		getParents(superP, resources, recursive);
-//                } else {
+                	if (recursive)
+                		getParents(superP, resources, recursive);
+                } 
+//                else {
 //            		List<OntResource> members = new ArrayList<OntResource>();
 //                	getMembers(superP, members, false);
 //                	for (int j = 0; j < members.size(); j++) {
@@ -218,7 +213,7 @@ public class OntologyManager {
 //                		if (recursive)
 //                			getParents(members.get(j), resources, recursive);
 //                	}
-                }
+//                }
             }
 		}
 	}
@@ -246,17 +241,21 @@ public class OntologyManager {
 			return;
 		
 		if (c != null && c.hasSubClass()) {
-			ExtendedIterator<OntClass> i;
-			if (recursive)
-				i = c.listSubClasses(false);
-			else
-				i = c.listSubClasses(true);
-            for (; i.hasNext();) {
+			ExtendedIterator<OntClass> i = null;
+			try {
+//				if (recursive)
+//					i = c.listSubClasses(false);
+//				else
+					i = c.listSubClasses(true);
+			} catch (ConversionException e) {
+				logger.debug(e.getMessage());
+			}
+            for (; i != null && i.hasNext();) {
                 OntClass subC = (OntClass) i.next();
                 if (subC.isURIResource()) {
                 	resources.add(subC);
-//                	if (recursive)
-//                		getChildren(subC, resources, recursive);
+                	if (recursive)
+                		getChildren(subC, resources, recursive);
                 } else {
             		List<OntResource> members = new ArrayList<OntResource>();
                 	getMembers(subC, members, false);
@@ -270,16 +269,22 @@ public class OntologyManager {
 		}
 
 		if (p != null) {
-			ExtendedIterator<? extends OntProperty> i;
-			if (recursive)
-				i = p.listSubProperties(false);
-			else
-				i = p.listSubProperties(true);
-			
-            for (; i.hasNext();) {
+			ExtendedIterator<? extends OntProperty> i = null;
+			try {
+//				if (recursive)
+//					i = p.listSubProperties(false);
+//				else
+					i = p.listSubProperties(true);
+			} catch (ConversionException e) {
+				logger.debug(e.getMessage());
+			}
+            for (; i != null && i.hasNext();) {
                 OntProperty subP = (OntProperty) i.next();
-                if (subP.isURIResource())
+                if (subP.isURIResource()) {
                 	resources.add(subP);
+                	if (recursive)
+                		getParents(subP, resources, recursive);
+                }
 //                else {
 //            		List<OntResource> members = new ArrayList<OntResource>();
 //                	getMembers(subP, members, false);

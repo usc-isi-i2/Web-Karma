@@ -131,7 +131,7 @@ public class OntologyCache {
 		long start = System.currentTimeMillis();
 		fillDataPropertiesHashMaps();
 		fillObjectPropertiesHashMaps();
-		updateMapsWithSubpropertyDefinitions();
+		updateMapsWithSubpropertyDefinitions(false);
 		float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
 		logger.info("time to build ontology cache: " + elapsedTimeSec);
 	}
@@ -331,7 +331,11 @@ public class OntologyCache {
 		}		
 	}
 	
-	private void updateMapsWithSubpropertyDefinitions() {
+	/**
+	 * If the inheritance is true, it adds all the sub-classes of the domain and range of super-properties too.
+	 * @param inheritance
+	 */
+	private void updateMapsWithSubpropertyDefinitions(boolean inheritance) {
 		
 		
 		// iterate over all properties
@@ -342,7 +346,11 @@ public class OntologyCache {
 			
 			List<String> allDomains = new ArrayList<String>();
 			for (String superP : superProperties) {
-				List<String> domains = propertyIndirectDomains.get(superP);
+				List<String> domains = null;
+				if (inheritance)
+					domains = propertyIndirectDomains.get(superP);
+				else
+					domains = propertyDirectDomains.get(superP);
 				if (domains == null) continue;
 				allDomains.addAll(domains);
 			}
@@ -374,7 +382,11 @@ public class OntologyCache {
 
 			List<String> allRanges = new ArrayList<String>();
 			for (String superP : superProperties) {
-				List<String> ranges = propertyIndirectRanges.get(superP);
+				List<String> ranges = null;
+				if (inheritance)
+					ranges = propertyIndirectRanges.get(superP);
+				else
+					ranges = propertyDirectRanges.get(superP);
 				if (ranges == null) continue;
 				allRanges.addAll(ranges);
 			}
