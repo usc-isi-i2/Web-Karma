@@ -26,6 +26,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
+/**
+ * This class provides utility methods for reading all lines from files.
+ * 
+ * @author amangoel
+ *
+ */
 public class FileIOOps {
 
 	public static ArrayList<String> allLinesFromFile(String file, boolean removeEmptyLines)  {

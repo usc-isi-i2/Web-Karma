@@ -27,6 +27,12 @@ import edu.isi.karma.modeling.semantictypes.mycrf.graph.GraphFieldOnly;
 import edu.isi.karma.modeling.semantictypes.mycrf.math.LargeNumber;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
 
+/**
+ * This class predicts the semantic class given an example.
+ * 
+ * @author amangoel
+ *
+ */
 public class MAPFieldOnly {
 	
 	GlobalDataFieldOnly globalData ;

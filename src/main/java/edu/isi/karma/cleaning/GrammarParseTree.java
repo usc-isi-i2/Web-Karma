@@ -399,6 +399,7 @@ public class GrammarParseTree {
 	public boolean initalSubtemplete(Vector<HashSet<String>> sequen,HashMap<String,GrammarTreeNode> globalTemp)
 	{
 		diagDesc = sequen;
+		//if subtemple exists, we should remove the production rules.
 		for(String s:sequen.get(0))
 		{
 			//System.out.println("etokenspec: "+s);
@@ -504,7 +505,7 @@ public class GrammarParseTree {
 				subtemples.put("dnum", vg);
 			}
 		}
-		for(String s:sequen.get(7))
+		for(String s:sequen.get(7))//
 		{
 			//System.out.println("dtokenspec:"+s);
 			GrammarTreeNode root = NonterminalValidator.getTemplate("dtokenspec",s,globalTemp);
@@ -538,7 +539,7 @@ public class GrammarParseTree {
 		
 		Set<String> keys = this.nonterminals.keySet();
 		Iterator<String> iter = keys.iterator();
-		//essential non-terminal has no production rules
+		//non-terminal has no production rules
 		while(iter.hasNext())
 		{
 			String key = iter.next();

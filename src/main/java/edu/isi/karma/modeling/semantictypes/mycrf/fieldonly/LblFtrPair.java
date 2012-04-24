@@ -20,6 +20,14 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.semantictypes.mycrf.fieldonly;
 
+/**
+ * This class represents a feature function.
+ * It contains the index of a semantic label
+ * and the associated feature (such as StartsWith5)
+ * 
+ * @author amangoel
+ *
+ */
 public class LblFtrPair {
 	
 	public int labelIndex ;

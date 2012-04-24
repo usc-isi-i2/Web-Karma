@@ -24,6 +24,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class also provides utility methods for finding all files within a folder.
+ * 
+ * @author amangoel
+ *
+ */
 public class FileSystemOps {
 
 	public static ArrayList<String> filesFromFolders(List<String> folderList, String qualifierEnding) {

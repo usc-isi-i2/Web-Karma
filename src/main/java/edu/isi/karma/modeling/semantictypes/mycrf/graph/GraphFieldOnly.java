@@ -32,6 +32,15 @@ import edu.isi.karma.modeling.semantictypes.mycrf.math.LargeNumber;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
 
 
+/**
+ * This class represents a single node graph.
+ * It also stores its computed partition function value,
+ * potential, and
+ * marginals.
+ * 
+ * @author amangoel
+ *
+ */
 public class GraphFieldOnly implements GraphInterface {
 
 	GlobalDataFieldOnly globalData ;

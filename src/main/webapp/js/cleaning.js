@@ -170,7 +170,8 @@ function populateResultsInCleaningTable(data) {
         }
 	    });
 		//remove the previous tp windows
-		$("#allTPs").ipad ();
+        if($("#allTPs") !=null)
+            $("#allTPs").remove();;
         //add the transformation programs here
 		var allTPs = $("<table>").attr("id", "allTPs");
 		var ttr = $("<tr>");

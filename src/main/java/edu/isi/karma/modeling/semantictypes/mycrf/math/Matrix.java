@@ -25,6 +25,15 @@ import java.util.ArrayList;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
 
 
+/**
+ * This class represents matrices and vectors.
+ * It is primarily used to perform vector computations, 
+ * such as,
+ * addition, dot product, and scalar multiplication.
+ * 
+ * @author amangoel
+ *
+ */
 public class Matrix {
 	
 	int numOfRows ;

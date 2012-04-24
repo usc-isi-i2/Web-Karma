@@ -23,6 +23,14 @@ package edu.isi.karma.modeling.semantictypes.myutils ;
 import java.io.File;
 import java.util.ArrayList;
 
+/**
+ * This class provides utility methods for finding all files within a folder.
+ * It is deprecated.
+ * 
+ * 
+ * @author amangoel
+ *
+ */
 public class FileOps {
 
 	public static ArrayList<String> filesFromFolders(ArrayList<String> folderList, String qualifierEnding) {

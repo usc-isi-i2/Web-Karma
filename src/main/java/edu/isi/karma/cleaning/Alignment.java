@@ -19,7 +19,6 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 package edu.isi.karma.cleaning;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -172,9 +171,7 @@ public class Alignment {
 					}
 				}
 			}
-		
-			//update the positions to be the shuffled order.
-		
+			//update the positions to be order of target sequence.
 			for(int q = 0; q<mks.size();q++)
 			{
 				int cnt = -1;
@@ -201,16 +198,14 @@ public class Alignment {
 					{
 						positions.set(p, value);
 					}
-				}
-				
+				}				
 			}
 			//detect the continous segment
 			Vector<int[]> segments =  deterContinus(positions,mks);
 			Vector<EditOper> xx = new Vector<EditOper>();
 			Vector<Vector<Integer>> history = new Vector<Vector<Integer>>();
-			transMOVDEL(segments,positions,mks,xx,history);
-		}
-		
+			transMOVDEL(segments,positions,mks,xx,history,a);
+		}		
 	}
 	public static int getReverseOrderNum(Vector<Integer> position)
 	{
@@ -239,7 +234,7 @@ public class Alignment {
 	 * eo: for record the path for one move and delete sequence
 	 * history is used to store all previous state to prevent visit some visited state dead loop
 	 */
-	public static void transMOVDEL(Vector<int[]> segments,Vector<Integer> positon,Vector<Integer> x,Vector<EditOper> eo,Vector<Vector<Integer>> history)
+	public static void transMOVDEL(Vector<int[]> segments,Vector<Integer> positon,Vector<Integer> x,Vector<EditOper> eo,Vector<Vector<Integer>> history,Vector<TNode> a)
 	{
 		if(eo.size()>positon.size()-1)//prune, the number of mov should be less than total size -1 
 			return;
@@ -324,7 +319,7 @@ public class Alignment {
 				Vector<EditOper> seqx = (Vector<EditOper>)eo.clone();
 				seqx.add(eox);			
 				Vector<int[]> newsegments1 = deterContinus(positonx,x);
-				transMOVDEL(newsegments1,positonx,x,seqx,history1);
+				transMOVDEL(newsegments1,positonx,x,seqx,history1,a);
 			}
 		}
 		if(!globalcontrary)
@@ -336,7 +331,7 @@ public class Alignment {
 			for(int h = 0; h<positon.size();h++)
 			{
 				//start of segment
-				if(!started&&!x.contains(positon.get(h)))
+				if(!started&&!x.contains(positon.get(h))&&(a.get(positon.get(h)).type != TNode.STARTTYP)&&(a.get(positon.get(h)).type != TNode.ENDTYP))
 				{
 					start = h;
 					started = true;

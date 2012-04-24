@@ -32,6 +32,12 @@ import edu.isi.karma.modeling.semantictypes.mycrf.math.Matrix;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
 
 
+/**
+ * This class represents global information used while creating graphs or training the CRF model
+ * 
+ * @author amangoel
+ *
+ */
 public class GlobalDataFieldOnly extends GlobalDataAbstract {
 
 	public ArrayList<String> labels ;

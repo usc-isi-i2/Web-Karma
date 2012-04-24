@@ -77,7 +77,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 				String before = (String)jo.getString("before");
 				String after = (String)jo.getString("after");
 				ary[0] = nodeid;
-				ary[1] = "%"+before+"@";
+				ary[1] = "<_START>"+before+"<_END>";
 				ary[2] = after;
 				TransformationExample re = new RamblerTransformationExample(ary[1], ary[2], ary[0]);
 				x.add(re);
@@ -145,7 +145,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		//obtain original rows
 		for (Node node : nodes) {
 			String id = node.getId();
-			String originalVal = "%"+node.getValue().asString()+"@";
+			String originalVal = "<_START>"+node.getValue().asString()+"<_END>";
 			//System.out.println(id+","+originalVal);
 			rows.put(id, originalVal);
 		}
@@ -225,9 +225,9 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 					while ((pair=cr.readNext())!=null)
 					{
 						
-						pair[0] = "%"+pair[0]+"@";
+						pair[0] = "<_START>"+pair[0]+"<_END>";
 						tx.put(i+"", pair[0]);
-						if(isadded<30)
+						if(isadded<4)
 						{
 							RamblerTransformationExample tmp = new RamblerTransformationExample(pair[0], pair[1], i+"");
 							vrt.add(tmp);

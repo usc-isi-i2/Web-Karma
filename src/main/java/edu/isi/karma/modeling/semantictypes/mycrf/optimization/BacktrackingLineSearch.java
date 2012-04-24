@@ -27,6 +27,12 @@ import edu.isi.karma.modeling.semantictypes.mycrf.graph.GraphInterface;
 import edu.isi.karma.modeling.semantictypes.mycrf.math.Matrix;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
 
+/**
+ * This class performs the task of finding the step size for the gradient during the optimization process.
+ * 
+ * @author amangoel
+ *
+ */
 public class BacktrackingLineSearch {
 
 	GlobalDataAbstract globalData ;

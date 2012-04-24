@@ -155,7 +155,7 @@ public class Service {
 			
 			logger.debug("att: " + attId);
 			logger.debug("grounded in: " + groundedIn.trim());
-			logger.debug("value: " + groundedIn.trim());
+			logger.debug("value: " + value.trim());
 			
 			populatedAddress = populatedAddress.replaceAll("\\{" + groundedIn.trim() + "\\}", value);
 		}

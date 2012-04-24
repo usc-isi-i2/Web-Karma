@@ -24,6 +24,7 @@ package edu.isi.karma.service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -46,12 +47,10 @@ import edu.isi.karma.modeling.alignment.Name;
 
 public class ServiceLoader {
 
-	private static final int DEFAULT_SERVICE_RESULTS_SIZE = 10;
-	private static final int DEFAULT_OPERATION_RESULTS_SIZE = 10;
-
 	static Logger logger = Logger.getLogger(ServiceLoader.class);
+	private static final int DEFAULT_SERVICE_RESULTS_SIZE = 10;
 
-	public static void deleteServiceByAddress(String address, Integer operationLimit) {
+	public static void deleteServiceByAddress(String address) {
 		
 		String uri = getServiceUriByServiceAddress(address);
 		Repository.Instance().clearNamedModel(uri);
@@ -89,7 +88,7 @@ public class ServiceLoader {
 		}
 	}
 	
-	public static Service getServiceByUri(String uri, Integer operationLimit) {
+	public static Service getServiceByUri(String uri) {
 		
 		Model m = Repository.Instance().getNamedModel(uri);
 		if (m == null)
@@ -188,12 +187,12 @@ public class ServiceLoader {
 	 * information takes long time.
 	 * @return
 	 */
-	public static List<Service> getAllServicesComplete(Integer serviceLimit, Integer operationLimit) {
+	public static List<Service> getAllServicesComplete(Integer serviceLimit) {
 
 		List<Service> serviceList = getAllServices(serviceLimit);
 		List<Service> serviceListCompleteInfo = new ArrayList<Service>();
 		for (Service s : serviceList) {
-			serviceListCompleteInfo.add(getServiceByUri(s.getUri(), operationLimit));
+			serviceListCompleteInfo.add(getServiceByUri(s.getUri()));
 		}
 		return serviceListCompleteInfo;
 	}
@@ -210,11 +209,17 @@ public class ServiceLoader {
 	public static Map<Service, Map<String, String>> getServicesByIOPattern(edu.isi.karma.service.Model semanticModel, 
 			String ioType, Integer serviceLimit) {
 		
+		if (semanticModel == null || semanticModel.getAtoms() == null 
+				|| semanticModel.getAtoms().size() == 0) {
+			logger.info("The input model is nul or it does not have any atom");
+			return null;
+		}
+		
 		Map<Service, Map<String, String>> servicesAndMappings = 
 			new HashMap<Service, Map<String,String>>();
 		
 		Map<String, Map<String, String>> serviceIdsAndMappings =
-			getServicesIdsByIOPattern(semanticModel, ioType, serviceLimit);
+			semanticModel.findInJenaModel(Repository.Instance().getModel(), ioType, serviceLimit);
 		
 		if (serviceIdsAndMappings == null)
 			return null;
@@ -229,180 +234,48 @@ public class ServiceLoader {
 	}
 	
 	/**
-	 * Returns a hash map of all services and their operations whose input/output model matches the semantic model parameter.
+	 * Searches the repository to find the services whose input/output model is contained in the semantic model parameter.
 	 * Note that the services in the return list only include the operations that match the model parameter.
 	 * @param semanticModel The input model whose pattern will be searched in the repository
-	 * @param ioType declares which one of the service input or service output will be tested for matching
+	 * @param ioType declares which one of the service input or service output will be tested for matching.
 	 * @param operationsLimit maximum number of operations that will be fetched
-	 * @return a hashmap of all IDs of found services and a mapping from the found service parameters to the model parameters. 
+	 * @return a hashmap of all found services and a mapping from the found service parameters to the model parameters. 
 	 * This help us later to how to join the model's corresponding source and the matched service 
 	 */
-	private static Map<String, Map<String, String>> getServicesIdsByIOPattern(edu.isi.karma.service.Model semanticModel, 
+	public static Map<Service, Map<String, String>> getServicesContainedInModel(edu.isi.karma.service.Model semanticModel, 
 			String ioType, Integer serviceLimit) {
+		
+		List<Service> serviceList = getAllServicesComplete(serviceLimit);
+		
+		Map<Service, Map<String, String>> servicesAndMappings = 
+			new HashMap<Service, Map<String,String>>();
 
-		Map<String, Map<String, String>> serviceIdsAndMappings = 
-			new HashMap<String, Map<String,String>>();
-		
-		if (semanticModel == null || semanticModel.getAtoms() == null 
-				|| semanticModel.getAtoms().size() == 0) {
-			logger.info("The input model is nul or it does not have any atom");
-			return null;
-		}
-		
-		String io_class = "";
-		String io_property = "";
-		if (ioType.equalsIgnoreCase(IOType.OUTPUT))
-		{
-			io_class = "Output";
-			io_property = "hasOutput";
-		} else {
-			io_class =  "Input";
-			io_property = "hasInput";
-		}
-	
-		List<String> uniqueArgumentList = new ArrayList<String>();
-		
-		// map of NS --> Prefix
-		Map<String, String> nsToPrefixMapping = new HashMap<String, String>();
-		nsToPrefixMapping.put(Namespaces.KARMA, Prefixes.KARMA);
-		nsToPrefixMapping.put(Namespaces.SWRL, Prefixes.SWRL);
-		nsToPrefixMapping.put(Namespaces.HRESTS, Prefixes.HRESTS);
-		
-		String select_header = "SELECT ?s ";
-		String select_where =
-			"WHERE { \n" +
-			"      ?s a " + Prefixes.KARMA + ":Service . \n" +
-			"      ?s " + Prefixes.KARMA + ":" + io_property + " ?io . \n" +
-			"      ?io a " + Prefixes.KARMA + ":" + io_class + " . \n" +
-			"      ?io " + Prefixes.KARMA + ":hasModel ?model . \n" + 
-			"      ?model a " + Prefixes.KARMA + ":Model . \n";
-		
-		String atomVar = "";
-		String predicateUri = "";
-		String argument1 = "";
-		String argument2 = "";
-		String argument1Var = "";
-		String argument2Var = "";
-
-		for (int i = 0; i < semanticModel.getAtoms().size(); i++) {
-			Atom atom = semanticModel.getAtoms().get(i);
-			if (atom != null) {
-				if (atom instanceof ClassAtom) {
-					ClassAtom classAtom = ((ClassAtom)atom);
-					atomVar = "?atom" + String.valueOf(i+1);
-					predicateUri = classAtom.getClassPredicate().getUri();
-					argument1 = classAtom.getArgument1().getId();
-					argument1Var = "?" + argument1;
-					
-					if (uniqueArgumentList.indexOf(argument1) == -1) {
-						uniqueArgumentList.add(argument1);
-						select_header += argument1Var + " ";
-					}
-
-					select_where += 
-						"      ?model " + Prefixes.KARMA + ":hasAtom " + atomVar + " . \n" +
-						"      " + atomVar + " a " + Prefixes.SWRL + ":ClassAtom . \n" +
-						"      " + atomVar + " " + Prefixes.SWRL + ":classPredicate <" + predicateUri + "> . \n" +
-						"      " + atomVar + " " + Prefixes.SWRL + ":argument1 " + argument1Var + " . \n";
-				}
-				else if (atom instanceof PropertyAtom) {
-					PropertyAtom propertyAtom = ((PropertyAtom)atom);
-					atomVar = "?atom" + String.valueOf(i+1);
-					predicateUri = propertyAtom.getPropertyPredicate().getUri();
-					argument1 = propertyAtom.getArgument1().getId();
-					argument2 = propertyAtom.getArgument2().getId();
-					argument1Var = "?" + argument1;
-					argument2Var = "?" + argument2;
-					
-					if (uniqueArgumentList.indexOf(argument1) == -1) {
-						uniqueArgumentList.add(argument1);
-						select_header += argument1Var + " ";
-					}
-					if (uniqueArgumentList.indexOf(argument2) == -1) {
-						uniqueArgumentList.add(argument2);
-						select_header += argument2Var + " ";
-					}
-					
-					select_where += 
-						"      ?model " + Prefixes.KARMA + ":hasAtom " + atomVar + " . \n" +
-						"      " + atomVar + " a " + Prefixes.SWRL + ":IndividualPropertyAtom . \n" +
-						"      " + atomVar + " " + Prefixes.SWRL + ":propertyPredicate <" + predicateUri + "> . \n" +
-						"      " + atomVar + " " + Prefixes.SWRL + ":argument1 " + argument1Var + " . \n" +
-						"      " + atomVar + " " + Prefixes.SWRL + ":argument2 " + argument2Var + " . \n";
-				}			
-			}
-		}		
-		select_where += 	"      } \n";
- 
-		String prefix = getSPARQLHeader(nsToPrefixMapping);
-		String select = select_header + " \n " + select_where;
-		String queryString = prefix + select;
-		
-		if (serviceLimit != null) {
-			if (serviceLimit.intValue() < 0) serviceLimit = DEFAULT_OPERATION_RESULTS_SIZE;
-			queryString += "LIMIT " + String.valueOf(serviceLimit.intValue() + "\n");
-		}
-		
-		logger.debug("query= \n" + queryString);
-		
-		Model model = Repository.Instance().getModel();
-		Query query = QueryFactory.create(queryString);
-//		// Execute the query and obtain results
-		QueryExecution qexec = QueryExecutionFactory.create(query, model);
-
-		try {
-			ResultSet results = qexec.execSelect() ;
+		Model jenaModel = semanticModel.getJenaModel(ioType);
+		for (Service service : serviceList) {
 			
-			if (!results.hasNext())
-				logger.info("query does not return any answer.");
-
-//			ResultSetFormatter.out(System.out, results, query) ;
-			 
-			for ( ; results.hasNext() ; )
-			{
-				QuerySolution soln = results.nextSolution() ;
-				
-				RDFNode s = soln.get("s") ;       // Get a result variable by name.
-
-				if (s == null) {
-					logger.info("service uri is null.");
-					continue;
-				}
-
-				String service_uri = s.toString();
-				logger.debug("service uri: " + service_uri);
-				if (serviceIdsAndMappings.get(service_uri) == null) {
-					serviceIdsAndMappings.put(service_uri, new HashMap<String, String>());
-				}
-				
-				for (String arg : uniqueArgumentList) {
-					RDFNode argNode = soln.get(arg) ;
-					if (argNode != null && argNode.isResource()) {
-						String retrieved_id = argNode.asResource().getLocalName();
-						serviceIdsAndMappings.get(service_uri).put(retrieved_id, arg);
-					}
-				}
-			}
+			edu.isi.karma.service.Model m = null;
+			if (ioType.equalsIgnoreCase(IOType.INPUT))
+				m = service.getInputModel();
+			else
+				m = service.getOutputModel();
 			
-			return serviceIdsAndMappings;
-		} catch (Exception e) {
-			logger.info(e.getMessage());
-			return null;
-		} finally { 
-			qexec.close() ; 
+			if (m == null)
+				continue;
+			
+			Map<String, Map<String, String>> serviceIdsAndMappings =
+				m.findInJenaModel(jenaModel, ioType, null);
+			
+			if (serviceIdsAndMappings == null)
+				continue;
+			
+			Iterator<String> itr = serviceIdsAndMappings.keySet().iterator();
+			if (itr.hasNext()) {
+				String key = itr.next();
+				servicesAndMappings.put(service, serviceIdsAndMappings.get(key));
+			}
 		}
-	}
-
-	private static String getSPARQLHeader(Map<String, String> nsToPrefixMapping) {
-		String prefixHeader = "";
 		
-		for (String ns : nsToPrefixMapping.keySet()) {
-			String prefix = nsToPrefixMapping.get(ns);
-			if (prefix != null)
-				prefixHeader += "PREFIX " + prefix + ": <" + ns + "> \n";
-		}
-
-		return prefixHeader;
+		return servicesAndMappings;
 	}
 	
 	private static String getServiceUriByServiceAddress(String address) {
@@ -455,14 +328,7 @@ public class ServiceLoader {
 	
 	/**
 	 * From the service model, returns the service object
-	 * If the list of operation ids is null, it includes all the operations, otherwise it only 
-	 * fetches the mentioned operations
-	 * If operationLimit=null and operationIds=null returns all operations
-	 * If operationLimit=null, it returns the all specified operations
-	 * If operationIds=null, it returns the first (opLimit) number of operations
-	 * If both of them are not null, it returns the first (opLimit) number of specified operations 
 	 * @param model
-	 * @param operationIds
 	 * @return
 	 */
 	public static Service getServiceFromJenaModel(Model model) {
@@ -509,7 +375,7 @@ public class ServiceLoader {
 		} else
 			logger.debug("service does not have an address.");
 
-		// operation method
+		// service method
 		nodeIterator = model.listObjectsOfProperty(service_resource, has_method_property);
 		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isLiteral()) {
 			service_method = node.asLiteral().getString();
@@ -522,7 +388,7 @@ public class ServiceLoader {
 		edu.isi.karma.service.Model inputModel = null;
 		edu.isi.karma.service.Model outputModel = null;
 
-		// operation input
+		// service input
 		nodeIterator = model.listObjectsOfProperty(service_resource, has_input_property);
 		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
 			inputAttributes = getAttributes(model, node.asResource(), IOType.INPUT);
@@ -530,7 +396,7 @@ public class ServiceLoader {
 		} else
 			logger.debug("service does not have an input.");
 		
-		// operation output
+		// service output
 		nodeIterator = model.listObjectsOfProperty(service_resource, has_output_property);
 		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
 			outputAttributes = getAttributes(model, node.asResource(), IOType.OUTPUT );
@@ -860,7 +726,7 @@ public class ServiceLoader {
 	
 	private static void testGetServiceByUri() {
 		String uri = "http://isi.edu/integration/karma/services/E9C3F8D3-F778-5C4B-E089-C1749D50AE1F#";
-		Service service = ServiceLoader.getServiceByUri(uri, null);
+		Service service = ServiceLoader.getServiceByUri(uri);
 		if (service != null) service.print();
 	}
 	private static void testGetServiceByAddress() {
@@ -869,7 +735,7 @@ public class ServiceLoader {
 		if (service != null) service.print();
 	}
 	private static void testGetAllServices() {
-		List<Service> serviceList = getAllServicesComplete(null, null);
+		List<Service> serviceList = getAllServicesComplete(null);
 		for (Service s : serviceList) {
 			if (s != null) s.print();
 		}
@@ -882,7 +748,7 @@ public class ServiceLoader {
 		
 		Name featurePredicatName = new Name(geonamesOntology + "Feature", geonamesOntology, "gn");
 		Name latPredicatName = new Name(wgs84Ontology + "lat", wgs84Ontology, "wgs84");
-		Name lngPredicatName = new Name(wgs84Ontology + "long1", wgs84Ontology, "wgs84");
+		Name lngPredicatName = new Name(wgs84Ontology + "long", wgs84Ontology, "wgs84");
 		
 		ClassAtom c1 = new ClassAtom(featurePredicatName, new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE));
 		PropertyAtom p1 = new PropertyAtom(latPredicatName,
@@ -899,7 +765,10 @@ public class ServiceLoader {
 		semanticModel.getAtoms().add(p2);
 
 		Map<Service, Map<String, String>> servicesAndMappings = 
-			getServicesByIOPattern(semanticModel, IOType.INPUT, null);
+			getServicesContainedInModel(semanticModel, IOType.INPUT, null);
+
+//		Map<Service, Map<String, String>> servicesAndMappings = 
+//			getServicesByIOPattern(semanticModel, IOType.INPUT, null);
 
 		if (servicesAndMappings == null)
 			return;
@@ -910,7 +779,7 @@ public class ServiceLoader {
 		
 		System.out.println("Mappings from matched source to model arguments:");
 		for (Service s : servicesAndMappings.keySet()) {
-			System.out.println("Source: " + s.getId());
+			System.out.println("Service: " + s.getId());
 			if (servicesAndMappings.get(s) == null)
 				continue;
 			for (String str : servicesAndMappings.get(s).keySet())

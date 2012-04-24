@@ -27,6 +27,12 @@ import java.util.regex.Pattern;
 import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
 
 
+/**
+ * This class is used to split field into tokens.
+ * 
+ * @author amangoel
+ *
+ */
 public class Lexer {
 	
 	// enumerated types used to remember what we the lexer has been looking/searching for while scanning the char stream 

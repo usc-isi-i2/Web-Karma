@@ -125,7 +125,7 @@ public class PopulateCommand extends WorksheetCommand{
 		Source source = new Source(wk.getTitle(), tree);
 		
 		Map<Service, Map<String, String>> servicesAndMappings = 
-			ServiceLoader.getServicesByIOPattern(source.getModel(), IOType.INPUT, null);
+			ServiceLoader.getServicesContainedInModel(source.getModel(), IOType.INPUT, null);
 		
 		if (servicesAndMappings == null) {
 			logger.error("Cannot find any services to be invoked according to this source model.");
@@ -216,7 +216,7 @@ public class PopulateCommand extends WorksheetCommand{
 					continue;
 				}
 				
-				String value = rows.get(i).getNode(hNodeId).getValue().asString();
+				String value = rows.get(i).getNode(hNodeId).getValue().asString().trim();
 				
 				attIdToValue.put(serviceAttId, value);
 				
