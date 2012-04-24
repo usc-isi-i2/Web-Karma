@@ -34,12 +34,14 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
+import edu.isi.karma.rdf.WorksheetRDFGenerator;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.alignmentHeadings.AlignmentForest;
+import edu.isi.karma.webserver.KarmaException;
 
 public class AddUserLinkToAlignmentCommand extends Command {
 
@@ -120,13 +122,13 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		//GraphUtil.printGraph(tree);
 		
 		//mariam
-		/*
+		
 		try{
 		WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, tree, root);
 		}catch(KarmaException e){
 			e.printStackTrace();
 		}
-		*/		
+				
 		/////////////////////////
 
 		// Create new vWorksheet using the new header order for flat sources
