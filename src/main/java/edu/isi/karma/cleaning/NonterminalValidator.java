@@ -102,6 +102,7 @@ public class NonterminalValidator
 		for(int i=0;i<=Math.pow(2, size);i++)
 		{
 			String rule = "";
+			boolean setoken = false;
 			for(int j=0;j<size;j++)
 			{
 				int stat = i>>j;
@@ -111,10 +112,12 @@ public class NonterminalValidator
 				}
 				else
 				{
+					if(target.get(j).text.length()==0)
+						setoken = true;
 					rule += "\""+target.get(j).text+"\"";
 				}
 			}
-			if(rule.length()!=0)
+			if(rule.length()!=0&&!setoken)
 				rules.add(rule);
 		}
 		//rules.add("ANYTOK");

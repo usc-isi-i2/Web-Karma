@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Vector;
-
 import au.com.bytecode.opencsv.CSVReader;
 
 public class MarkovDP {
@@ -218,11 +217,10 @@ public class MarkovDP {
 				if(gtree.isRuleConsistent(r))
 				{	
 					result.add(r);
-					i++;
+					//i++;
 				}
 				i++;
 			}
-			//System.out.println("vv");
 		}
 		catch(Exception ex)
 		{

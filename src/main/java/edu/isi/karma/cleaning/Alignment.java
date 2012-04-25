@@ -84,7 +84,7 @@ public class Alignment {
 		int index = sortedmks.indexOf(a); 
 		if(a<=b && index<sortedmks.size()-1)
 		{
-			if(sortedmks.get(index+1) == b)
+			if(sortedmks.get(index+1) == b || a==b)
 				return true;
 			else
 				return false;			
@@ -200,13 +200,17 @@ public class Alignment {
 					}
 				}				
 			}
-			//detect the continous segment
+			//set the s/e token's position value the same as its adjacent token's position value
+			positions.set(0,positions.get(1));
+			positions.set(positions.size()-1,positions.get(positions.size()-2));
+			//detect the continous segments
 			Vector<int[]> segments =  deterContinus(positions,mks);
 			Vector<EditOper> xx = new Vector<EditOper>();
 			Vector<Vector<Integer>> history = new Vector<Vector<Integer>>();
 			transMOVDEL(segments,positions,mks,xx,history,a);
 		}		
 	}
+	//
 	public static int getReverseOrderNum(Vector<Integer> position)
 	{
 		int cnt = 0;
