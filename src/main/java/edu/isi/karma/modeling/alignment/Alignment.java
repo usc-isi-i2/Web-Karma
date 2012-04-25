@@ -49,12 +49,11 @@ public class Alignment {
 	}
 	
 	private OntologyManager ontologyManager;
-
+	private boolean separateDomainInstancesForSameDataProperties;
 	private List<SemanticType> semanticTypes;
 	private List<Vertex> semanticNodes;
 
 	private List<LabeledWeightedEdge> linksForcedByUser;
-	private List<LabeledWeightedEdge> linksForcedByDomain;
 	private List<LabeledWeightedEdge> linksPreferredByUI;
 
 	private DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = null;
@@ -64,13 +63,13 @@ public class Alignment {
 	
 	public Alignment(OntologyManager ontologyManager, List<SemanticType> semanticTypes) {
 		this.ontologyManager = ontologyManager;
-		
+		this.separateDomainInstancesForSameDataProperties = true;
+
 		this.semanticTypes = semanticTypes;
 		Collections.sort(this.semanticTypes, new SemanticTypeComparator());
 
 		logger.info("building initial graph ...");
-		graphBuilder = new GraphBuilder(ontologyManager, this.semanticTypes);
-		linksForcedByDomain = graphBuilder.getLinksForcedByDomain();
+		graphBuilder = new GraphBuilder(ontologyManager, this.semanticTypes, separateDomainInstancesForSameDataProperties);
 		
 		linksForcedByUser = new ArrayList<LabeledWeightedEdge>();
 		linksPreferredByUI = new ArrayList<LabeledWeightedEdge>();
@@ -79,6 +78,22 @@ public class Alignment {
 		
 	}
 	
+	public Alignment(OntologyManager ontologyManager, List<SemanticType> semanticTypes, boolean separateDomainInstancesForSameDataProperties) {
+		this.ontologyManager = ontologyManager;
+		this.separateDomainInstancesForSameDataProperties = separateDomainInstancesForSameDataProperties;
+		
+		this.semanticTypes = semanticTypes;
+		Collections.sort(this.semanticTypes, new SemanticTypeComparator());
+
+		logger.info("building initial graph ...");
+		graphBuilder = new GraphBuilder(ontologyManager, this.semanticTypes, separateDomainInstancesForSameDataProperties);
+		
+		linksForcedByUser = new ArrayList<LabeledWeightedEdge>();
+		linksPreferredByUI = new ArrayList<LabeledWeightedEdge>();
+		
+		semanticNodes = graphBuilder.getSemanticNodes();
+		
+	}
 	public List<SemanticType> getSemanticTypes() {
 		return this.semanticTypes;
 	}
@@ -160,6 +175,7 @@ public class Alignment {
 				
 				Vertex v = this.graphBuilder.copyNode(source);
 				this.graphBuilder.copyLinks(source, v);
+				target.setDomainVertexId(v.getID());
 				
 //				GraphUtil.printGraph(this.graphBuilder.getGraph());
 				linksForcedByUser.add(this.graphBuilder.getGraph().getEdge(v, target));
@@ -178,7 +194,7 @@ public class Alignment {
 	
 	public void reset() {
 		
-		graphBuilder = new GraphBuilder(ontologyManager, this.semanticTypes);
+		graphBuilder = new GraphBuilder(ontologyManager, this.semanticTypes, separateDomainInstancesForSameDataProperties);
 		linksForcedByUser.clear();
 		semanticNodes = graphBuilder.getSemanticNodes();
 		align();
@@ -203,6 +219,10 @@ public class Alignment {
 		
 		if (!includeAssignedLink)
 			assignedLink = getAssignedLink(nodeId);
+
+		List<String> displayedNodes = new ArrayList<String>();
+		for (Vertex v : this.steinerTree.vertexSet())
+			displayedNodes.add(v.getID());
 		
 		for (Vertex v : this.graphBuilder.getGraph().vertexSet()) {
 			if (v.getID().equalsIgnoreCase(nodeId)) {
@@ -214,6 +234,12 @@ public class Alignment {
 							if (assignedLink.getID().equalsIgnoreCase(incomingLinks[i].getID()))
 								continue;
 						}
+						
+						// if the node is not in the UI, don't show it to the user
+						// Scenario: multiple domain, then again merge it. The created node is in the graph but not in the tree.
+						if (displayedNodes.indexOf(incomingLinks[i].getSource().getID()) == -1)
+							continue;
+						
 						alternatives.add(incomingLinks[i]);
 					}
 				}
@@ -226,8 +252,6 @@ public class Alignment {
 		// order of adding lists is important: linksPreferredByUI should be first 
 		for (LabeledWeightedEdge e : linksPreferredByUI)
 			e.setLinkStatus(LinkStatus.PreferredByUI);
-		for (LabeledWeightedEdge e : linksForcedByDomain)
-			e.setLinkStatus(LinkStatus.ForcedByDomain);
 		for (LabeledWeightedEdge e : linksForcedByUser)
 			e.setLinkStatus(LinkStatus.ForcedByUser);
 	}
@@ -269,7 +293,6 @@ public class Alignment {
 		List<LabeledWeightedEdge> selectedLinks = new ArrayList<LabeledWeightedEdge>();
 		// order of adding lists is important: linksPreferredByUI should be first 
 		selectedLinks.addAll(linksPreferredByUI);
-		selectedLinks.addAll(linksForcedByDomain);
 		selectedLinks.addAll(linksForcedByUser);
 		
 		GraphPreProcess graphPreProcess = new GraphPreProcess(this.graphBuilder.getGraph(), semanticNodes, selectedLinks );

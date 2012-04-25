@@ -39,9 +39,8 @@ public class GraphBuilder {
 	private List<Vertex> semanticNodes;
 	private DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> graph;
 	private OntologyManager ontologyManager;
+	private boolean separateDomainInstancesForSameDataProperties;
 	
-	private List<LabeledWeightedEdge> linksForcedByDomains = new ArrayList<LabeledWeightedEdge>();
-
 	private HashMap<String, Integer> nodesLabelCounter;
 	private HashMap<String, Integer> linksLabelCounter;
 	
@@ -57,8 +56,9 @@ public class GraphBuilder {
 	public static double MIN_WEIGHT = 0.000001; // need to be fixed later	
 	public static double MAX_WEIGHT = 1000000;
 	
-	public GraphBuilder(OntologyManager ontologyManager, List<SemanticType> semanticTypes) {
+	public GraphBuilder(OntologyManager ontologyManager, List<SemanticType> semanticTypes, boolean separateDomainInstancesForSameDataProperties) {
 		this.ontologyManager = ontologyManager;
+		this.separateDomainInstancesForSameDataProperties = separateDomainInstancesForSameDataProperties;
 		
 		nodesLabelCounter = new HashMap<String, Integer>();
 		linksLabelCounter = new HashMap<String, Integer>();
@@ -96,6 +96,17 @@ public class GraphBuilder {
 //			id = label;
 		}
 		return id;
+	}
+	
+	private String getLastID(String label) {
+		
+		int index;
+		
+		if (nodesLabelCounter.containsKey(label)) {
+			index = nodesLabelCounter.get(label).intValue();
+			return (label + "" + index);
+		} else 
+			return null;
 	}
 	
 	private String createLinkID(String label) {
@@ -158,6 +169,52 @@ public class GraphBuilder {
 		logger.debug("exit>");
 	}
 	
+	private void addDomainsOfDataPropertyNodesToGraph() {
+		
+		logger.debug("<enter");
+		String id;
+		
+		List<String> visitedDataProperties = new ArrayList<String>();
+		Vertex[] vertexList = this.graph.vertexSet().toArray(new Vertex[0]);
+		for (Vertex v : vertexList) {
+			
+			if (v.getNodeType() != NodeType.DataProperty)
+				continue;
+			
+			if (v.getSemanticType() == null)
+				continue;
+
+			String domainClass = v.getSemanticType().getDomain();
+			if (domainClass == null || domainClass.trim().length() == 0)
+				continue;
+		
+			if (!ontologyManager.isClass(domainClass))
+				return;
+			
+			if (!separateDomainInstancesForSameDataProperties) {
+				if (nodesLabelCounter.get(domainClass) == null) {
+					id = createNodeID(domainClass);
+					Vertex domain = new Vertex(id, ontologyManager.getNameFromURI(domainClass), NodeType.Class);
+					graph.addVertex(domain);
+					v.setDomainVertexId(domain.getID());
+				}
+				else
+					v.setDomainVertexId(getLastID(domainClass));
+			} else {
+				if (visitedDataProperties.indexOf(v.getUri()) != -1 || nodesLabelCounter.get(domainClass) == null) {
+					id = createNodeID(domainClass);
+					Vertex domain = new Vertex(id, ontologyManager.getNameFromURI(domainClass), NodeType.Class);
+					graph.addVertex(domain);
+					v.setDomainVertexId(domain.getID());
+				}
+				else
+					v.setDomainVertexId(getLastID(domainClass));
+				visitedDataProperties.add(v.getUri());
+			}
+		}
+		
+		logger.debug("exit>");
+	}
 	
 	private void addNodesClosure() {
 		
@@ -215,34 +272,34 @@ public class GraphBuilder {
 		logger.debug("exit>");
 	}
 	
-	private void addUnaddedDomainsToGraph() {
-		
-		logger.debug("<enter");
-		String id;
-		
-		for (int i = 0; i < this.semanticTypes.size(); i++) {
-			
-			if (!ontologyManager.isDataProperty(semanticTypes.get(i).getType().trim()))
-				continue;
-
-			String domainClass = semanticTypes.get(i).getDomain().trim();
-			if (domainClass == null || domainClass.trim().length() == 0)
-				continue;
-		
-			if (!ontologyManager.isClass(domainClass))
-				return;
-			
-			if (nodesLabelCounter.get(domainClass) == null) {
-				id = createNodeID(domainClass);
-				Vertex v = new Vertex(id, ontologyManager.getNameFromURI(domainClass), NodeType.Class);
-				semanticNodes.add(v);
-				graph.addVertex(v);
-				
-			}
-		}
-		
-		logger.debug("exit>");
-	}
+//	private void addUnaddedDomainsToGraph() {
+//		
+//		logger.debug("<enter");
+//		String id;
+//		
+//		for (int i = 0; i < this.semanticTypes.size(); i++) {
+//			
+//			if (!ontologyManager.isDataProperty(semanticTypes.get(i).getType().trim()))
+//				continue;
+//
+//			String domainClass = semanticTypes.get(i).getDomain().trim();
+//			if (domainClass == null || domainClass.trim().length() == 0)
+//				continue;
+//		
+//			if (!ontologyManager.isClass(domainClass))
+//				return;
+//			
+//			if (nodesLabelCounter.get(domainClass) == null) {
+//				id = createNodeID(domainClass);
+//				Vertex v = new Vertex(id, ontologyManager.getNameFromURI(domainClass), NodeType.Class);
+//				semanticNodes.add(v);
+//				graph.addVertex(v);
+//				
+//			}
+//		}
+//		
+//		logger.debug("exit>");
+//	}
 	
 
 	private void addLinks() {
@@ -271,12 +328,7 @@ public class GraphBuilder {
 				target = vertices[j];
 				sourceLabel = source.getUri();
 				targetLabel = target.getUri();
-				
-				String targetDomain = "";
-				
-				if (target.getSemanticType() != null)
-					targetDomain = target.getSemanticType().getDomain();
-				
+
 				// There is no outgoing link from DataProperty nodes
 				if (source.getNodeType() == NodeType.DataProperty)
 					break;
@@ -301,10 +353,6 @@ public class GraphBuilder {
 						this.graph.addEdge(source, target, e);
 						this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
 
-						// put epsilon as weights of the links from domains that specified by user 
-						if (targetDomain != null && targetDomain.trim().length() > 0) 
-							if (targetDomain.trim().equalsIgnoreCase(sourceLabel))  // the source is not the domain specified by user
-								this.linksForcedByDomains.add(e);
 					}
 				}
 
@@ -505,13 +553,17 @@ public class GraphBuilder {
 		logger.info("number of initial nodes: " + this.graph.vertexSet().size());
 		logger.info("time to add initial semantic types: " + elapsedTimeSec);
 
-		
+		addDomainsOfDataPropertyNodesToGraph();
+		long addDomainsOfDataPropertyNodes = System.currentTimeMillis();
+		elapsedTimeSec = (addDomainsOfDataPropertyNodes - addSemanticTypes)/1000F;
+		logger.info("time to add domain of data property nodes to graph: " + elapsedTimeSec);
+
 		addNodesClosure();
 		long addNodesClosure = System.currentTimeMillis();
-		elapsedTimeSec = (addNodesClosure - addSemanticTypes)/1000F;
+		elapsedTimeSec = (addNodesClosure - addDomainsOfDataPropertyNodes)/1000F;
 		logger.info("time to add nodes closure: " + elapsedTimeSec);
 		
-		addUnaddedDomainsToGraph();
+//		addUnaddedDomainsToGraph();
 		addLinks();
 		long addLinks = System.currentTimeMillis();
 		elapsedTimeSec = (addLinks - addNodesClosure)/1000F;
@@ -531,8 +583,5 @@ public class GraphBuilder {
 	public List<Vertex> getSemanticNodes() {
 		return this.semanticNodes;
 	}
-	
-	public List<LabeledWeightedEdge> getLinksForcedByDomain() {
-		return this.linksForcedByDomains;
-	}
+
 }

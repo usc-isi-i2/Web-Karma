@@ -28,6 +28,8 @@ public class Vertex {
 	private NodeType nodeType;
 	private Name name;
 	private SemanticType semanticType;
+	// only used for the vertexes of type DataProperty
+	private String domainVertexId;
 	
 	public Vertex(String id, Name name, NodeType nodeType) {
 		this.id = id;
@@ -84,6 +86,14 @@ public class Vertex {
 	
 	public SemanticType getSemanticType() {
 		return this.semanticType;
+	}
+
+	public String getDomainVertexId() {
+		return domainVertexId;
+	}
+
+	public void setDomainVertexId(String domainVertexId) {
+		this.domainVertexId = domainVertexId;
 	}
 
 	public boolean equals(Object obj){

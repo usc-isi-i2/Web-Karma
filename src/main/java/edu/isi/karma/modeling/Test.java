@@ -52,7 +52,7 @@ public class Test {
 //		f[3] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\DoveTailOntoRDF.owl");
 //		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\Dovetail_ISI_mod.owl");
 		
-		for (int i = 2; i < 5; i++) {
+		for (int i = 3; i < 5; i++) {
 			ontManager.doImport(f[i]);
 		}
 	}
@@ -199,26 +199,38 @@ public class Test {
 		OntologyManager ontManagar = new OntologyManager();
 		loadOntologies(ontManagar);
 		List<SemanticType> semTypes5 = createTestInput5();
-		Alignment alignment = new Alignment(ontManagar, semTypes5);
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = alignment.getSteinerTree();
+		
+//		Alignment alignment = new Alignment(ontManagar, semTypes5, false);
+//		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = alignment.getSteinerTree();
 //		GraphUtil.printGraph(steinerTree);
-		
-		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name1");
-		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name1");
-		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name1");
-		
-		alignment.addUserLink("http://www.geonames.org/ontology#name4");
-		alignment.addUserLink("http://www.geonames.org/ontology#name8");
-		alignment.addUserLink("http://www.geonames.org/ontology#name12");
-		alignment.addUserLink("http://www.geonames.org/ontology#countryCode4");
+//		
+//		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name1");
+//		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name1");
+//		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name1");
+//		
+//		alignment.addUserLink("http://www.geonames.org/ontology#name4");
+//		alignment.addUserLink("http://www.geonames.org/ontology#name8");
+//		alignment.addUserLink("http://www.geonames.org/ontology#name12");
+//		alignment.addUserLink("http://www.geonames.org/ontology#countryCode4");
+//
+//		alignment.addUserLink("http://www.geonames.org/ontology#neighbour1");
+//		alignment.addUserLink("http://www.geonames.org/ontology#nearby4");
+//		alignment.addUserLink("http://www.geonames.org/ontology#parentFeature10");
 
-		alignment.addUserLink("http://www.geonames.org/ontology#neighbour1");
-		alignment.addUserLink("http://www.geonames.org/ontology#nearby4");
-		alignment.addUserLink("http://www.geonames.org/ontology#parentFeature10");
 		
-//		GraphUtil.printGraphSimple(alignment.getAlignmentGraph());
+		Alignment alignment = new Alignment(ontManagar, semTypes5, true);
+		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = alignment.getSteinerTree();
+		
+		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name3");
+		
+		alignment.addUserLink("http://www.geonames.org/ontology#neighbour10");
+		alignment.addUserLink("http://www.geonames.org/ontology#nearby7");
+		alignment.addUserLink("http://www.geonames.org/ontology#parentFeature3");
+
+		GraphUtil.printGraphSimple(alignment.getAlignmentGraph());
 //		GraphUtil.printGraphSimple(alignment.getSteinerTree());
 		steinerTree = alignment.getSteinerTree();
+		GraphUtil.printGraphSimple(alignment.getSteinerTree());
 		return steinerTree;
 	}
 	
@@ -309,6 +321,6 @@ public class Test {
 	public static void main(String[] args) {
 		boolean test1 = false, test2 = true;
 		if (test1) testAlignment();
-		if (test2) testOntologyImport();
+		if (test2) getGeoNamesNeighbourhoodTree();
 	}
 }

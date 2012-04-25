@@ -55,14 +55,10 @@ public class GraphPreProcess {
 		
 		gPrime = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>)this.graph.clone();
 		
-		if (selectedLinks == null || selectedLinks.size() == 0) {
-			logger.debug("exit>");
-			return;
-		}
-		
 		LabeledWeightedEdge e;
 		LinkStatus status;
 		
+		if (selectedLinks != null) 
 		for (int i = 0; i < selectedLinks.size(); i++) {
 			
 			e = (LabeledWeightedEdge)selectedLinks.get(i);
@@ -71,7 +67,7 @@ public class GraphPreProcess {
 			if (status == LinkStatus.PreferredByUI) {
 				gPrime.setEdgeWeight(e, GraphBuilder.DEFAULT_WEIGHT - GraphBuilder.MIN_WEIGHT);
 				
-			} else if (status == LinkStatus.ForcedByUser || status == LinkStatus.ForcedByDomain) {
+			} else if (status == LinkStatus.ForcedByUser) {
 				
 				e = (LabeledWeightedEdge)selectedLinks.get(i);
 				
@@ -99,41 +95,28 @@ public class GraphPreProcess {
 			}			
 		}
 		
-//		GraphUtil.printGraph(gPrime);
-		
-		// if there are 2 DataProperties go to one node, we have to select only one of them. 
-		// The target is definitely one of the source columns and we cannot have two classes pointed to that.
-		// User can change our selected link later.
-		
-//		for (Vertex v: gPrime.vertexSet()) {
-//			
-//			if (v.getNodeType() != NodeType.DataProperty)
-//				continue;
-//			
-//			double weight;
-//			int minIndex;
-//			double minWeight;
-//			
-//			LabeledWeightedEdge[] incomingLinks = gPrime.incomingEdgesOf(v).toArray(new LabeledWeightedEdge[0]);
-//			if (incomingLinks != null && incomingLinks.length != 0) {
-//				
-//				minWeight = GraphBuilder.MAX_WEIGHT;
-//				minIndex = 0;
-//				// keeping only the link with minimum weight and remove the others.
-//				// we select minimum to prefer the UI links in previous model.
-//				for (int i = 0; i < incomingLinks.length; i++) {
-//					weight = gPrime.getEdgeWeight(incomingLinks[i]);
-//					if (weight < minWeight) {
-//						minWeight = weight;
-//						minIndex = i;
-//					}
-//				}
-//				for (int i = 0; i < incomingLinks.length; i++)
-//					if (i != minIndex)
-//					gPrime.removeEdge(incomingLinks[i]);
-//			}
-//		}
-		
+		// It is possible that some data property nodes have multiple incoming links from 
+		// different instances of the same class. We only keep the one that comes from its domain instance.
+		for (Vertex v: gPrime.vertexSet()) {
+			
+			if (v.getNodeType() != NodeType.DataProperty)
+				continue;
+			
+			String domainVertexId = v.getDomainVertexId();
+			if (domainVertexId == null)
+				continue;
+
+			LabeledWeightedEdge[] incomingLinks = gPrime.incomingEdgesOf(v).toArray(new LabeledWeightedEdge[0]);
+			if (incomingLinks != null && incomingLinks.length != 0) {
+				
+				if (incomingLinks.length > 1) {  // only for data property nodes who have links from multiple instances of the same class
+					for (int i = 0; i < incomingLinks.length; i++)
+						if (!incomingLinks[i].getSource().getID().equalsIgnoreCase(domainVertexId))
+							gPrime.removeEdge(incomingLinks[i]);
+				}
+			}
+		}
+
 		logger.debug("exit>");
 //		GraphUtil.printGraph(gPrime);
 	}
