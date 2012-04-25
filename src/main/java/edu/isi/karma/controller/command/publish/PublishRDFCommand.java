@@ -157,10 +157,10 @@ public class PublishRDFCommand extends Command {
 						vWorkspace.getRepFactory(), descString, rdfFileName);
 				if (worksheet.getHeaders().hasNestedTables()) {
 					//logger.info("Alignment of nested tables is work in progress. No RDF generated!");
-					wrg.generateTriplesCell(worksheet);
+					wrg.generateTriplesCell(worksheet,true);
 				} else {
 					//System.out.println("RDF start="+ Calendar.getInstance().getTimeInMillis());
-					wrg.generateTriplesRow(worksheet);
+					wrg.generateTriplesRow(worksheet, true);
 					//System.out.println("RDF end="+ Calendar.getInstance().getTimeInMillis());
 				}
 				String fileName = "./publish/Source Description/W"

@@ -371,23 +371,38 @@ public class Ruler {
 		while(t.getType()!=-1)
 		{
 			int mytype = -1;
-			if(t.getType()==12)
+			String txt = "";
+			if(t.getType()==Tokenizer.WORD)
 			{
 				mytype = TNode.WRDTYP;
+				txt = t.getText();
 			}
-			else if(t.getType() == 4)
+			else if(t.getType() == Tokenizer.BLANK)
 			{
 				mytype = TNode.BNKTYP;
+				txt = t.getText();
 			}
-			else if(t.getType() == 8)
+			else if(t.getType() == Tokenizer.NUMBER)
 			{
-				mytype = TNode.NUMTYP;
+				mytype 	= TNode.NUMTYP;
+				txt = t.getText();
 			}
-			else if(t.getType() == 9)
+			else if(t.getType() == Tokenizer.SYBS)
 			{
 				mytype = TNode.SYBSTYP;
+				txt = t.getText();
 			}
-			TNode tx = new TNode(mytype,t.getText());
+			else if(t.getType() == Tokenizer.START)
+			{
+				mytype = TNode.STARTTYP;
+				txt = "";
+			}
+			else if(t.getType() == Tokenizer.END)
+			{
+				mytype = TNode.ENDTYP;
+				txt = "";
+			}
+			TNode tx = new TNode(mytype,txt);
 			vec.add(tx);
 			//System.out.println("cnt: "+t.getText()+" type:"+t.getType());
 			t = tk.nextToken();

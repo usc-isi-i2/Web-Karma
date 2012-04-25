@@ -102,6 +102,7 @@ public class NonterminalValidator
 		for(int i=0;i<=Math.pow(2, size);i++)
 		{
 			String rule = "";
+			boolean setoken = false;
 			for(int j=0;j<size;j++)
 			{
 				int stat = i>>j;
@@ -111,10 +112,13 @@ public class NonterminalValidator
 				}
 				else
 				{
+					if(target.get(j).text.length()==0)
+						setoken = true;
 					rule += "\""+target.get(j).text+"\"";
 				}
 			}
-			rules.add(rule);
+			if(rule.length()!=0&&!setoken)
+				rules.add(rule);
 		}
 		//rules.add("ANYTOK");
 		return rules;
@@ -208,7 +212,8 @@ public class NonterminalValidator
 			
 			if(spos+k>=0&&spos+k<ex.size())
 			{
-				rules.add("\""+ex.get(spos+k).text+"\"");
+				if(ex.get(spos+k).text.length()>0)
+					rules.add("\""+ex.get(spos+k).text+"\"");
 				rules.add(""+ex.get(spos+k).getType()+"");
 			}
 		}
@@ -231,7 +236,8 @@ public class NonterminalValidator
 			
 			if(dpos+k>=0&&dpos+k<ex.size())
 			{
-				rules.add("\""+ex.get(dpos+k).text+"\"");
+				if(ex.get(dpos+k).text.length()>0)
+					rules.add("\""+ex.get(dpos+k).text+"\"");
 				rules.add(""+ex.get(dpos+k).getType()+"");
 			}
 		}
@@ -290,7 +296,8 @@ public class NonterminalValidator
 			
 			if(epos+k>=0&&epos+k<ex.size())
 			{
-				rules.add("\""+ex.get(epos+k).text+"\"");
+				if(ex.get(epos+k).text.length()>0)
+					rules.add("\""+ex.get(epos+k).text+"\"");
 				rules.add(""+ex.get(epos+k).getType()+"");
 			}
 		}

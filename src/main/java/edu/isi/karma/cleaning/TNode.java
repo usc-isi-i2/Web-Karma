@@ -26,6 +26,8 @@ public class TNode{
 	public static final int SYBSTYP = 2;
 	public static final int BNKTYP = 3;
 	public static final int WRDTYP = 4;
+	public static final int STARTTYP = 5;
+	public static final int ENDTYP = 6;
 	public static final String ANYTOK = "ANYTOK";
 	public static final int ANYNUM = Integer.MAX_VALUE;
 	public int type;
@@ -61,6 +63,14 @@ public class TNode{
 		else if(type == TNode.BNKTYP)
 		{
 			return "Blank";
+		}
+		else if(type == TNode.STARTTYP)
+		{
+			return "START";
+		}
+		else if(type == TNode.ENDTYP)
+		{
+			return "END";
 		}
 		else
 		{

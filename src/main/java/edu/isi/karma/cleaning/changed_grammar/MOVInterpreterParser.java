@@ -1,24 +1,4 @@
-/*******************************************************************************
- * Copyright 2012 University of Southern California
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * 	http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- * This code was developed by the Information Integration Group as part 
- * of the Karma project at the Information Sciences Institute of the 
- * University of Southern California.  For more information, publications, 
- * and related projects, please see: http://www.isi.edu/integration
- ******************************************************************************/
-// $ANTLR 3.4 MOVInterpreter.g 2012-02-13 14:41:39
+// $ANTLR 3.4 MOVInterpreter.g 2012-04-23 21:53:47
 
 package edu.isi.karma.cleaning.changed_grammar;
 import edu.isi.karma.cleaning.*;
@@ -38,26 +18,28 @@ import org.antlr.runtime.tree.*;
 @SuppressWarnings({"all", "warnings", "unchecked"})
 public class MOVInterpreterParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ANYTOKS", "BNKTYP", "DIGIT", "FRMB", "FRME", "FST", "INCLD", "LST", "MOV", "NEWLINE", "NUM", "NUMTYP", "SYBTYP", "TOKEN", "WRDTYP", "WS"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ANYTOKS", "BNKTYP", "DIGIT", "ENDTYP", "FRMB", "FRME", "FST", "INCLD", "LST", "MOV", "NEWLINE", "NUM", "NUMTYP", "SRTTYP", "SYBTYP", "TOKEN", "WRDTYP", "WS"
     };
 
     public static final int EOF=-1;
     public static final int ANYTOKS=4;
     public static final int BNKTYP=5;
     public static final int DIGIT=6;
-    public static final int FRMB=7;
-    public static final int FRME=8;
-    public static final int FST=9;
-    public static final int INCLD=10;
-    public static final int LST=11;
-    public static final int MOV=12;
-    public static final int NEWLINE=13;
-    public static final int NUM=14;
-    public static final int NUMTYP=15;
-    public static final int SYBTYP=16;
-    public static final int TOKEN=17;
-    public static final int WRDTYP=18;
-    public static final int WS=19;
+    public static final int ENDTYP=7;
+    public static final int FRMB=8;
+    public static final int FRME=9;
+    public static final int FST=10;
+    public static final int INCLD=11;
+    public static final int LST=12;
+    public static final int MOV=13;
+    public static final int NEWLINE=14;
+    public static final int NUM=15;
+    public static final int NUMTYP=16;
+    public static final int SRTTYP=17;
+    public static final int SYBTYP=18;
+    public static final int TOKEN=19;
+    public static final int WRDTYP=20;
+    public static final int WS=21;
 
     // delegates
     public Parser[] getDelegates() {
@@ -97,7 +79,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "rule"
-    // MOVInterpreter.g:36:1: rule : operator what where dest ;
+    // MOVInterpreter.g:38:1: rule : operator what where dest ;
     public final MOVInterpreterParser.rule_return rule() throws RecognitionException {
         MOVInterpreterParser.rule_return retval = new MOVInterpreterParser.rule_return();
         retval.start = input.LT(1);
@@ -116,34 +98,34 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // MOVInterpreter.g:36:6: ( operator what where dest )
-            // MOVInterpreter.g:36:8: operator what where dest
+            // MOVInterpreter.g:38:6: ( operator what where dest )
+            // MOVInterpreter.g:38:8: operator what where dest
             {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_operator_in_rule141);
+            pushFollow(FOLLOW_operator_in_rule163);
             operator1=operator();
 
             state._fsp--;
 
             adaptor.addChild(root_0, operator1.getTree());
 
-            pushFollow(FOLLOW_what_in_rule143);
+            pushFollow(FOLLOW_what_in_rule165);
             what2=what();
 
             state._fsp--;
 
             adaptor.addChild(root_0, what2.getTree());
 
-            pushFollow(FOLLOW_where_in_rule145);
+            pushFollow(FOLLOW_where_in_rule167);
             where3=where();
 
             state._fsp--;
 
             adaptor.addChild(root_0, where3.getTree());
 
-            pushFollow(FOLLOW_dest_in_rule147);
+            pushFollow(FOLLOW_dest_in_rule169);
             dest4=dest();
 
             state._fsp--;
@@ -181,7 +163,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "what"
-    // MOVInterpreter.g:37:1: what : ( tokenspec | ANYTOKS );
+    // MOVInterpreter.g:39:1: what : ( tokenspec | ANYTOKS );
     public final MOVInterpreterParser.what_return what() throws RecognitionException {
         MOVInterpreterParser.what_return retval = new MOVInterpreterParser.what_return();
         retval.start = input.LT(1);
@@ -196,11 +178,11 @@ public TreeAdaptor getTreeAdaptor() {
         Object ANYTOKS6_tree=null;
 
         try {
-            // MOVInterpreter.g:37:6: ( tokenspec | ANYTOKS )
+            // MOVInterpreter.g:39:6: ( tokenspec | ANYTOKS )
             int alt1=2;
             int LA1_0 = input.LA(1);
 
-            if ( (LA1_0==BNKTYP||(LA1_0 >= NUMTYP && LA1_0 <= WRDTYP)) ) {
+            if ( (LA1_0==BNKTYP||LA1_0==ENDTYP||(LA1_0 >= NUMTYP && LA1_0 <= WRDTYP)) ) {
                 alt1=1;
             }
             else if ( (LA1_0==ANYTOKS) ) {
@@ -215,12 +197,12 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt1) {
                 case 1 :
-                    // MOVInterpreter.g:37:8: tokenspec
+                    // MOVInterpreter.g:39:8: tokenspec
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_tokenspec_in_what154);
+                    pushFollow(FOLLOW_tokenspec_in_what176);
                     tokenspec5=tokenspec();
 
                     state._fsp--;
@@ -230,12 +212,12 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // MOVInterpreter.g:37:18: ANYTOKS
+                    // MOVInterpreter.g:39:18: ANYTOKS
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    ANYTOKS6=(Token)match(input,ANYTOKS,FOLLOW_ANYTOKS_in_what156); 
+                    ANYTOKS6=(Token)match(input,ANYTOKS,FOLLOW_ANYTOKS_in_what178); 
                     ANYTOKS6_tree = 
                     (Object)adaptor.create(ANYTOKS6)
                     ;
@@ -275,7 +257,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "tokenspec"
-    // MOVInterpreter.g:40:1: tokenspec : ( singletokenspec | singletokenspec tokenspec );
+    // MOVInterpreter.g:42:1: tokenspec : ( singletokenspec | singletokenspec tokenspec );
     public final MOVInterpreterParser.tokenspec_return tokenspec() throws RecognitionException {
         MOVInterpreterParser.tokenspec_return retval = new MOVInterpreterParser.tokenspec_return();
         retval.start = input.LT(1);
@@ -292,7 +274,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // MOVInterpreter.g:40:11: ( singletokenspec | singletokenspec tokenspec )
+            // MOVInterpreter.g:42:11: ( singletokenspec | singletokenspec tokenspec )
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -302,7 +284,7 @@ public TreeAdaptor getTreeAdaptor() {
                 if ( ((LA2_1 >= FRMB && LA2_1 <= FRME)) ) {
                     alt2=1;
                 }
-                else if ( (LA2_1==BNKTYP||(LA2_1 >= NUMTYP && LA2_1 <= WRDTYP)) ) {
+                else if ( (LA2_1==BNKTYP||LA2_1==ENDTYP||(LA2_1 >= NUMTYP && LA2_1 <= WRDTYP)) ) {
                     alt2=2;
                 }
                 else {
@@ -313,13 +295,13 @@ public TreeAdaptor getTreeAdaptor() {
 
                 }
             }
-            else if ( (LA2_0==BNKTYP||(LA2_0 >= NUMTYP && LA2_0 <= SYBTYP)||LA2_0==WRDTYP) ) {
+            else if ( (LA2_0==BNKTYP||LA2_0==ENDTYP||(LA2_0 >= NUMTYP && LA2_0 <= SYBTYP)||LA2_0==WRDTYP) ) {
                 int LA2_2 = input.LA(2);
 
                 if ( ((LA2_2 >= FRMB && LA2_2 <= FRME)) ) {
                     alt2=1;
                 }
-                else if ( (LA2_2==BNKTYP||(LA2_2 >= NUMTYP && LA2_2 <= WRDTYP)) ) {
+                else if ( (LA2_2==BNKTYP||LA2_2==ENDTYP||(LA2_2 >= NUMTYP && LA2_2 <= WRDTYP)) ) {
                     alt2=2;
                 }
                 else {
@@ -339,12 +321,12 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt2) {
                 case 1 :
-                    // MOVInterpreter.g:40:13: singletokenspec
+                    // MOVInterpreter.g:42:13: singletokenspec
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_singletokenspec_in_tokenspec166);
+                    pushFollow(FOLLOW_singletokenspec_in_tokenspec188);
                     singletokenspec7=singletokenspec();
 
                     state._fsp--;
@@ -354,19 +336,19 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // MOVInterpreter.g:40:30: singletokenspec tokenspec
+                    // MOVInterpreter.g:42:30: singletokenspec tokenspec
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_singletokenspec_in_tokenspec169);
+                    pushFollow(FOLLOW_singletokenspec_in_tokenspec191);
                     singletokenspec8=singletokenspec();
 
                     state._fsp--;
 
                     adaptor.addChild(root_0, singletokenspec8.getTree());
 
-                    pushFollow(FOLLOW_tokenspec_in_tokenspec171);
+                    pushFollow(FOLLOW_tokenspec_in_tokenspec193);
                     tokenspec9=tokenspec();
 
                     state._fsp--;
@@ -406,7 +388,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "stokenspec"
-    // MOVInterpreter.g:41:1: stokenspec : ( singletokenspec | singletokenspec stokenspec );
+    // MOVInterpreter.g:43:1: stokenspec : ( singletokenspec | singletokenspec stokenspec );
     public final MOVInterpreterParser.stokenspec_return stokenspec() throws RecognitionException {
         MOVInterpreterParser.stokenspec_return retval = new MOVInterpreterParser.stokenspec_return();
         retval.start = input.LT(1);
@@ -423,7 +405,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // MOVInterpreter.g:41:12: ( singletokenspec | singletokenspec stokenspec )
+            // MOVInterpreter.g:43:12: ( singletokenspec | singletokenspec stokenspec )
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -433,7 +415,7 @@ public TreeAdaptor getTreeAdaptor() {
                 if ( ((LA3_1 >= FRMB && LA3_1 <= FRME)) ) {
                     alt3=1;
                 }
-                else if ( (LA3_1==BNKTYP||(LA3_1 >= NUMTYP && LA3_1 <= WRDTYP)) ) {
+                else if ( (LA3_1==BNKTYP||LA3_1==ENDTYP||(LA3_1 >= NUMTYP && LA3_1 <= WRDTYP)) ) {
                     alt3=2;
                 }
                 else {
@@ -444,13 +426,13 @@ public TreeAdaptor getTreeAdaptor() {
 
                 }
             }
-            else if ( (LA3_0==BNKTYP||(LA3_0 >= NUMTYP && LA3_0 <= SYBTYP)||LA3_0==WRDTYP) ) {
+            else if ( (LA3_0==BNKTYP||LA3_0==ENDTYP||(LA3_0 >= NUMTYP && LA3_0 <= SYBTYP)||LA3_0==WRDTYP) ) {
                 int LA3_2 = input.LA(2);
 
                 if ( ((LA3_2 >= FRMB && LA3_2 <= FRME)) ) {
                     alt3=1;
                 }
-                else if ( (LA3_2==BNKTYP||(LA3_2 >= NUMTYP && LA3_2 <= WRDTYP)) ) {
+                else if ( (LA3_2==BNKTYP||LA3_2==ENDTYP||(LA3_2 >= NUMTYP && LA3_2 <= WRDTYP)) ) {
                     alt3=2;
                 }
                 else {
@@ -470,12 +452,12 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt3) {
                 case 1 :
-                    // MOVInterpreter.g:41:14: singletokenspec
+                    // MOVInterpreter.g:43:14: singletokenspec
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_singletokenspec_in_stokenspec178);
+                    pushFollow(FOLLOW_singletokenspec_in_stokenspec200);
                     singletokenspec10=singletokenspec();
 
                     state._fsp--;
@@ -485,19 +467,19 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // MOVInterpreter.g:41:31: singletokenspec stokenspec
+                    // MOVInterpreter.g:43:31: singletokenspec stokenspec
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_singletokenspec_in_stokenspec181);
+                    pushFollow(FOLLOW_singletokenspec_in_stokenspec203);
                     singletokenspec11=singletokenspec();
 
                     state._fsp--;
 
                     adaptor.addChild(root_0, singletokenspec11.getTree());
 
-                    pushFollow(FOLLOW_stokenspec_in_stokenspec183);
+                    pushFollow(FOLLOW_stokenspec_in_stokenspec205);
                     stokenspec12=stokenspec();
 
                     state._fsp--;
@@ -537,7 +519,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "etokenspec"
-    // MOVInterpreter.g:42:1: etokenspec : ( singletokenspec | singletokenspec etokenspec );
+    // MOVInterpreter.g:44:1: etokenspec : ( singletokenspec | singletokenspec etokenspec );
     public final MOVInterpreterParser.etokenspec_return etokenspec() throws RecognitionException {
         MOVInterpreterParser.etokenspec_return retval = new MOVInterpreterParser.etokenspec_return();
         retval.start = input.LT(1);
@@ -554,7 +536,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // MOVInterpreter.g:42:12: ( singletokenspec | singletokenspec etokenspec )
+            // MOVInterpreter.g:44:12: ( singletokenspec | singletokenspec etokenspec )
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -564,7 +546,7 @@ public TreeAdaptor getTreeAdaptor() {
                 if ( ((LA4_1 >= FRMB && LA4_1 <= FRME)) ) {
                     alt4=1;
                 }
-                else if ( (LA4_1==BNKTYP||(LA4_1 >= NUMTYP && LA4_1 <= WRDTYP)) ) {
+                else if ( (LA4_1==BNKTYP||LA4_1==ENDTYP||(LA4_1 >= NUMTYP && LA4_1 <= WRDTYP)) ) {
                     alt4=2;
                 }
                 else {
@@ -575,13 +557,13 @@ public TreeAdaptor getTreeAdaptor() {
 
                 }
             }
-            else if ( (LA4_0==BNKTYP||(LA4_0 >= NUMTYP && LA4_0 <= SYBTYP)||LA4_0==WRDTYP) ) {
+            else if ( (LA4_0==BNKTYP||LA4_0==ENDTYP||(LA4_0 >= NUMTYP && LA4_0 <= SYBTYP)||LA4_0==WRDTYP) ) {
                 int LA4_2 = input.LA(2);
 
                 if ( ((LA4_2 >= FRMB && LA4_2 <= FRME)) ) {
                     alt4=1;
                 }
-                else if ( (LA4_2==BNKTYP||(LA4_2 >= NUMTYP && LA4_2 <= WRDTYP)) ) {
+                else if ( (LA4_2==BNKTYP||LA4_2==ENDTYP||(LA4_2 >= NUMTYP && LA4_2 <= WRDTYP)) ) {
                     alt4=2;
                 }
                 else {
@@ -601,12 +583,12 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt4) {
                 case 1 :
-                    // MOVInterpreter.g:42:14: singletokenspec
+                    // MOVInterpreter.g:44:14: singletokenspec
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_singletokenspec_in_etokenspec190);
+                    pushFollow(FOLLOW_singletokenspec_in_etokenspec212);
                     singletokenspec13=singletokenspec();
 
                     state._fsp--;
@@ -616,19 +598,19 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // MOVInterpreter.g:42:31: singletokenspec etokenspec
+                    // MOVInterpreter.g:44:31: singletokenspec etokenspec
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_singletokenspec_in_etokenspec193);
+                    pushFollow(FOLLOW_singletokenspec_in_etokenspec215);
                     singletokenspec14=singletokenspec();
 
                     state._fsp--;
 
                     adaptor.addChild(root_0, singletokenspec14.getTree());
 
-                    pushFollow(FOLLOW_etokenspec_in_etokenspec195);
+                    pushFollow(FOLLOW_etokenspec_in_etokenspec217);
                     etokenspec15=etokenspec();
 
                     state._fsp--;
@@ -668,7 +650,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "dtokenspec"
-    // MOVInterpreter.g:43:1: dtokenspec : ( singletokenspec | singletokenspec dtokenspec );
+    // MOVInterpreter.g:45:1: dtokenspec : ( singletokenspec | singletokenspec dtokenspec );
     public final MOVInterpreterParser.dtokenspec_return dtokenspec() throws RecognitionException {
         MOVInterpreterParser.dtokenspec_return retval = new MOVInterpreterParser.dtokenspec_return();
         retval.start = input.LT(1);
@@ -685,7 +667,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // MOVInterpreter.g:43:12: ( singletokenspec | singletokenspec dtokenspec )
+            // MOVInterpreter.g:45:12: ( singletokenspec | singletokenspec dtokenspec )
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -695,7 +677,7 @@ public TreeAdaptor getTreeAdaptor() {
                 if ( (LA5_1==EOF) ) {
                     alt5=1;
                 }
-                else if ( (LA5_1==BNKTYP||(LA5_1 >= NUMTYP && LA5_1 <= WRDTYP)) ) {
+                else if ( (LA5_1==BNKTYP||LA5_1==ENDTYP||(LA5_1 >= NUMTYP && LA5_1 <= WRDTYP)) ) {
                     alt5=2;
                 }
                 else {
@@ -706,13 +688,13 @@ public TreeAdaptor getTreeAdaptor() {
 
                 }
             }
-            else if ( (LA5_0==BNKTYP||(LA5_0 >= NUMTYP && LA5_0 <= SYBTYP)||LA5_0==WRDTYP) ) {
+            else if ( (LA5_0==BNKTYP||LA5_0==ENDTYP||(LA5_0 >= NUMTYP && LA5_0 <= SYBTYP)||LA5_0==WRDTYP) ) {
                 int LA5_2 = input.LA(2);
 
                 if ( (LA5_2==EOF) ) {
                     alt5=1;
                 }
-                else if ( (LA5_2==BNKTYP||(LA5_2 >= NUMTYP && LA5_2 <= WRDTYP)) ) {
+                else if ( (LA5_2==BNKTYP||LA5_2==ENDTYP||(LA5_2 >= NUMTYP && LA5_2 <= WRDTYP)) ) {
                     alt5=2;
                 }
                 else {
@@ -732,12 +714,12 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt5) {
                 case 1 :
-                    // MOVInterpreter.g:43:14: singletokenspec
+                    // MOVInterpreter.g:45:14: singletokenspec
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_singletokenspec_in_dtokenspec202);
+                    pushFollow(FOLLOW_singletokenspec_in_dtokenspec224);
                     singletokenspec16=singletokenspec();
 
                     state._fsp--;
@@ -747,19 +729,19 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // MOVInterpreter.g:43:31: singletokenspec dtokenspec
+                    // MOVInterpreter.g:45:31: singletokenspec dtokenspec
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_singletokenspec_in_dtokenspec205);
+                    pushFollow(FOLLOW_singletokenspec_in_dtokenspec227);
                     singletokenspec17=singletokenspec();
 
                     state._fsp--;
 
                     adaptor.addChild(root_0, singletokenspec17.getTree());
 
-                    pushFollow(FOLLOW_dtokenspec_in_dtokenspec207);
+                    pushFollow(FOLLOW_dtokenspec_in_dtokenspec229);
                     dtokenspec18=dtokenspec();
 
                     state._fsp--;
@@ -799,7 +781,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "singletokenspec"
-    // MOVInterpreter.g:44:1: singletokenspec : ( token | type );
+    // MOVInterpreter.g:46:1: singletokenspec : ( token | type );
     public final MOVInterpreterParser.singletokenspec_return singletokenspec() throws RecognitionException {
         MOVInterpreterParser.singletokenspec_return retval = new MOVInterpreterParser.singletokenspec_return();
         retval.start = input.LT(1);
@@ -814,14 +796,14 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // MOVInterpreter.g:44:17: ( token | type )
+            // MOVInterpreter.g:46:17: ( token | type )
             int alt6=2;
             int LA6_0 = input.LA(1);
 
             if ( (LA6_0==TOKEN) ) {
                 alt6=1;
             }
-            else if ( (LA6_0==BNKTYP||(LA6_0 >= NUMTYP && LA6_0 <= SYBTYP)||LA6_0==WRDTYP) ) {
+            else if ( (LA6_0==BNKTYP||LA6_0==ENDTYP||(LA6_0 >= NUMTYP && LA6_0 <= SYBTYP)||LA6_0==WRDTYP) ) {
                 alt6=2;
             }
             else {
@@ -833,12 +815,12 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt6) {
                 case 1 :
-                    // MOVInterpreter.g:44:19: token
+                    // MOVInterpreter.g:46:19: token
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_token_in_singletokenspec214);
+                    pushFollow(FOLLOW_token_in_singletokenspec236);
                     token19=token();
 
                     state._fsp--;
@@ -848,12 +830,12 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // MOVInterpreter.g:44:25: type
+                    // MOVInterpreter.g:46:25: type
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_type_in_singletokenspec216);
+                    pushFollow(FOLLOW_type_in_singletokenspec238);
                     type20=type();
 
                     state._fsp--;
@@ -893,7 +875,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "operator"
-    // MOVInterpreter.g:47:1: operator : MOV ;
+    // MOVInterpreter.g:49:1: operator : MOV ;
     public final MOVInterpreterParser.operator_return operator() throws RecognitionException {
         MOVInterpreterParser.operator_return retval = new MOVInterpreterParser.operator_return();
         retval.start = input.LT(1);
@@ -906,13 +888,13 @@ public TreeAdaptor getTreeAdaptor() {
         Object MOV21_tree=null;
 
         try {
-            // MOVInterpreter.g:47:10: ( MOV )
-            // MOVInterpreter.g:47:12: MOV
+            // MOVInterpreter.g:49:10: ( MOV )
+            // MOVInterpreter.g:49:12: MOV
             {
             root_0 = (Object)adaptor.nil();
 
 
-            MOV21=(Token)match(input,MOV,FOLLOW_MOV_in_operator225); 
+            MOV21=(Token)match(input,MOV,FOLLOW_MOV_in_operator247); 
             MOV21_tree = 
             (Object)adaptor.create(MOV21)
             ;
@@ -950,7 +932,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "type"
-    // MOVInterpreter.g:50:1: type : ( NUMTYP | WRDTYP | SYBTYP | BNKTYP );
+    // MOVInterpreter.g:52:1: type : ( NUMTYP | WRDTYP | SYBTYP | BNKTYP | SRTTYP | ENDTYP );
     public final MOVInterpreterParser.type_return type() throws RecognitionException {
         MOVInterpreterParser.type_return retval = new MOVInterpreterParser.type_return();
         retval.start = input.LT(1);
@@ -963,7 +945,7 @@ public TreeAdaptor getTreeAdaptor() {
         Object set22_tree=null;
 
         try {
-            // MOVInterpreter.g:50:7: ( NUMTYP | WRDTYP | SYBTYP | BNKTYP )
+            // MOVInterpreter.g:52:7: ( NUMTYP | WRDTYP | SYBTYP | BNKTYP | SRTTYP | ENDTYP )
             // MOVInterpreter.g:
             {
             root_0 = (Object)adaptor.nil();
@@ -971,7 +953,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             set22=(Token)input.LT(1);
 
-            if ( input.LA(1)==BNKTYP||(input.LA(1) >= NUMTYP && input.LA(1) <= SYBTYP)||input.LA(1)==WRDTYP ) {
+            if ( input.LA(1)==BNKTYP||input.LA(1)==ENDTYP||(input.LA(1) >= NUMTYP && input.LA(1) <= SYBTYP)||input.LA(1)==WRDTYP ) {
                 input.consume();
                 adaptor.addChild(root_0, 
                 (Object)adaptor.create(set22)
@@ -1015,7 +997,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "token"
-    // MOVInterpreter.g:52:1: token : TOKEN ;
+    // MOVInterpreter.g:54:1: token : TOKEN ;
     public final MOVInterpreterParser.token_return token() throws RecognitionException {
         MOVInterpreterParser.token_return retval = new MOVInterpreterParser.token_return();
         retval.start = input.LT(1);
@@ -1028,13 +1010,13 @@ public TreeAdaptor getTreeAdaptor() {
         Object TOKEN23_tree=null;
 
         try {
-            // MOVInterpreter.g:52:8: ( TOKEN )
-            // MOVInterpreter.g:52:10: TOKEN
+            // MOVInterpreter.g:54:8: ( TOKEN )
+            // MOVInterpreter.g:54:10: TOKEN
             {
             root_0 = (Object)adaptor.nil();
 
 
-            TOKEN23=(Token)match(input,TOKEN,FOLLOW_TOKEN_in_token252); 
+            TOKEN23=(Token)match(input,TOKEN,FOLLOW_TOKEN_in_token278); 
             TOKEN23_tree = 
             (Object)adaptor.create(TOKEN23)
             ;
@@ -1072,7 +1054,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "where"
-    // MOVInterpreter.g:54:1: where : start end ;
+    // MOVInterpreter.g:56:1: where : start end ;
     public final MOVInterpreterParser.where_return where() throws RecognitionException {
         MOVInterpreterParser.where_return retval = new MOVInterpreterParser.where_return();
         retval.start = input.LT(1);
@@ -1087,20 +1069,20 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // MOVInterpreter.g:54:8: ( start end )
-            // MOVInterpreter.g:54:10: start end
+            // MOVInterpreter.g:56:8: ( start end )
+            // MOVInterpreter.g:56:10: start end
             {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_start_in_where262);
+            pushFollow(FOLLOW_start_in_where288);
             start24=start();
 
             state._fsp--;
 
             adaptor.addChild(root_0, start24.getTree());
 
-            pushFollow(FOLLOW_end_in_where264);
+            pushFollow(FOLLOW_end_in_where290);
             end25=end();
 
             state._fsp--;
@@ -1138,7 +1120,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "scanningOrder"
-    // MOVInterpreter.g:56:1: scanningOrder : ( FRMB | FRME );
+    // MOVInterpreter.g:58:1: scanningOrder : ( FRMB | FRME );
     public final MOVInterpreterParser.scanningOrder_return scanningOrder() throws RecognitionException {
         MOVInterpreterParser.scanningOrder_return retval = new MOVInterpreterParser.scanningOrder_return();
         retval.start = input.LT(1);
@@ -1151,7 +1133,7 @@ public TreeAdaptor getTreeAdaptor() {
         Object set26_tree=null;
 
         try {
-            // MOVInterpreter.g:56:15: ( FRMB | FRME )
+            // MOVInterpreter.g:58:15: ( FRMB | FRME )
             // MOVInterpreter.g:
             {
             root_0 = (Object)adaptor.nil();
@@ -1203,7 +1185,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "start"
-    // MOVInterpreter.g:58:1: start : scanningOrder swherequantifier ;
+    // MOVInterpreter.g:60:1: start : scanningOrder swherequantifier ;
     public final MOVInterpreterParser.start_return start() throws RecognitionException {
         MOVInterpreterParser.start_return retval = new MOVInterpreterParser.start_return();
         retval.start = input.LT(1);
@@ -1218,20 +1200,20 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // MOVInterpreter.g:58:8: ( scanningOrder swherequantifier )
-            // MOVInterpreter.g:58:11: scanningOrder swherequantifier
+            // MOVInterpreter.g:60:8: ( scanningOrder swherequantifier )
+            // MOVInterpreter.g:60:11: scanningOrder swherequantifier
             {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_scanningOrder_in_start285);
+            pushFollow(FOLLOW_scanningOrder_in_start311);
             scanningOrder27=scanningOrder();
 
             state._fsp--;
 
             adaptor.addChild(root_0, scanningOrder27.getTree());
 
-            pushFollow(FOLLOW_swherequantifier_in_start287);
+            pushFollow(FOLLOW_swherequantifier_in_start313);
             swherequantifier28=swherequantifier();
 
             state._fsp--;
@@ -1269,7 +1251,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "end"
-    // MOVInterpreter.g:59:1: end : scanningOrder ewherequantifier ;
+    // MOVInterpreter.g:61:1: end : scanningOrder ewherequantifier ;
     public final MOVInterpreterParser.end_return end() throws RecognitionException {
         MOVInterpreterParser.end_return retval = new MOVInterpreterParser.end_return();
         retval.start = input.LT(1);
@@ -1284,20 +1266,20 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // MOVInterpreter.g:59:6: ( scanningOrder ewherequantifier )
-            // MOVInterpreter.g:59:9: scanningOrder ewherequantifier
+            // MOVInterpreter.g:61:6: ( scanningOrder ewherequantifier )
+            // MOVInterpreter.g:61:9: scanningOrder ewherequantifier
             {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_scanningOrder_in_end296);
+            pushFollow(FOLLOW_scanningOrder_in_end322);
             scanningOrder29=scanningOrder();
 
             state._fsp--;
 
             adaptor.addChild(root_0, scanningOrder29.getTree());
 
-            pushFollow(FOLLOW_ewherequantifier_in_end298);
+            pushFollow(FOLLOW_ewherequantifier_in_end324);
             ewherequantifier30=ewherequantifier();
 
             state._fsp--;
@@ -1335,7 +1317,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "dest"
-    // MOVInterpreter.g:60:1: dest : scanningOrder dwherequantifier ;
+    // MOVInterpreter.g:62:1: dest : scanningOrder dwherequantifier ;
     public final MOVInterpreterParser.dest_return dest() throws RecognitionException {
         MOVInterpreterParser.dest_return retval = new MOVInterpreterParser.dest_return();
         retval.start = input.LT(1);
@@ -1350,20 +1332,20 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // MOVInterpreter.g:60:7: ( scanningOrder dwherequantifier )
-            // MOVInterpreter.g:60:10: scanningOrder dwherequantifier
+            // MOVInterpreter.g:62:7: ( scanningOrder dwherequantifier )
+            // MOVInterpreter.g:62:10: scanningOrder dwherequantifier
             {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_scanningOrder_in_dest307);
+            pushFollow(FOLLOW_scanningOrder_in_dest333);
             scanningOrder31=scanningOrder();
 
             state._fsp--;
 
             adaptor.addChild(root_0, scanningOrder31.getTree());
 
-            pushFollow(FOLLOW_dwherequantifier_in_dest309);
+            pushFollow(FOLLOW_dwherequantifier_in_dest335);
             dwherequantifier32=dwherequantifier();
 
             state._fsp--;
@@ -1401,7 +1383,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "dwherequantifier"
-    // MOVInterpreter.g:61:1: dwherequantifier : ( FST ( INCLD )? dtokenspec | dnum );
+    // MOVInterpreter.g:63:1: dwherequantifier : ( FST ( INCLD )? dtokenspec | dnum );
     public final MOVInterpreterParser.dwherequantifier_return dwherequantifier() throws RecognitionException {
         MOVInterpreterParser.dwherequantifier_return retval = new MOVInterpreterParser.dwherequantifier_return();
         retval.start = input.LT(1);
@@ -1420,7 +1402,7 @@ public TreeAdaptor getTreeAdaptor() {
         Object INCLD34_tree=null;
 
         try {
-            // MOVInterpreter.g:61:18: ( FST ( INCLD )? dtokenspec | dnum )
+            // MOVInterpreter.g:63:18: ( FST ( INCLD )? dtokenspec | dnum )
             int alt8=2;
             int LA8_0 = input.LA(1);
 
@@ -1439,19 +1421,19 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt8) {
                 case 1 :
-                    // MOVInterpreter.g:61:20: FST ( INCLD )? dtokenspec
+                    // MOVInterpreter.g:63:20: FST ( INCLD )? dtokenspec
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    FST33=(Token)match(input,FST,FOLLOW_FST_in_dwherequantifier316); 
+                    FST33=(Token)match(input,FST,FOLLOW_FST_in_dwherequantifier342); 
                     FST33_tree = 
                     (Object)adaptor.create(FST33)
                     ;
                     adaptor.addChild(root_0, FST33_tree);
 
 
-                    // MOVInterpreter.g:61:24: ( INCLD )?
+                    // MOVInterpreter.g:63:24: ( INCLD )?
                     int alt7=2;
                     int LA7_0 = input.LA(1);
 
@@ -1460,9 +1442,9 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     switch (alt7) {
                         case 1 :
-                            // MOVInterpreter.g:61:24: INCLD
+                            // MOVInterpreter.g:63:24: INCLD
                             {
-                            INCLD34=(Token)match(input,INCLD,FOLLOW_INCLD_in_dwherequantifier318); 
+                            INCLD34=(Token)match(input,INCLD,FOLLOW_INCLD_in_dwherequantifier344); 
                             INCLD34_tree = 
                             (Object)adaptor.create(INCLD34)
                             ;
@@ -1475,7 +1457,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
 
 
-                    pushFollow(FOLLOW_dtokenspec_in_dwherequantifier321);
+                    pushFollow(FOLLOW_dtokenspec_in_dwherequantifier347);
                     dtokenspec35=dtokenspec();
 
                     state._fsp--;
@@ -1485,12 +1467,12 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // MOVInterpreter.g:61:42: dnum
+                    // MOVInterpreter.g:63:42: dnum
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_dnum_in_dwherequantifier323);
+                    pushFollow(FOLLOW_dnum_in_dwherequantifier349);
                     dnum36=dnum();
 
                     state._fsp--;
@@ -1530,7 +1512,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "swherequantifier"
-    // MOVInterpreter.g:62:1: swherequantifier : ( FST ( INCLD )? stokenspec | snum );
+    // MOVInterpreter.g:64:1: swherequantifier : ( FST ( INCLD )? stokenspec | snum );
     public final MOVInterpreterParser.swherequantifier_return swherequantifier() throws RecognitionException {
         MOVInterpreterParser.swherequantifier_return retval = new MOVInterpreterParser.swherequantifier_return();
         retval.start = input.LT(1);
@@ -1549,7 +1531,7 @@ public TreeAdaptor getTreeAdaptor() {
         Object INCLD38_tree=null;
 
         try {
-            // MOVInterpreter.g:62:18: ( FST ( INCLD )? stokenspec | snum )
+            // MOVInterpreter.g:64:18: ( FST ( INCLD )? stokenspec | snum )
             int alt10=2;
             int LA10_0 = input.LA(1);
 
@@ -1568,19 +1550,19 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt10) {
                 case 1 :
-                    // MOVInterpreter.g:62:20: FST ( INCLD )? stokenspec
+                    // MOVInterpreter.g:64:20: FST ( INCLD )? stokenspec
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    FST37=(Token)match(input,FST,FOLLOW_FST_in_swherequantifier330); 
+                    FST37=(Token)match(input,FST,FOLLOW_FST_in_swherequantifier356); 
                     FST37_tree = 
                     (Object)adaptor.create(FST37)
                     ;
                     adaptor.addChild(root_0, FST37_tree);
 
 
-                    // MOVInterpreter.g:62:24: ( INCLD )?
+                    // MOVInterpreter.g:64:24: ( INCLD )?
                     int alt9=2;
                     int LA9_0 = input.LA(1);
 
@@ -1589,9 +1571,9 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     switch (alt9) {
                         case 1 :
-                            // MOVInterpreter.g:62:24: INCLD
+                            // MOVInterpreter.g:64:24: INCLD
                             {
-                            INCLD38=(Token)match(input,INCLD,FOLLOW_INCLD_in_swherequantifier332); 
+                            INCLD38=(Token)match(input,INCLD,FOLLOW_INCLD_in_swherequantifier358); 
                             INCLD38_tree = 
                             (Object)adaptor.create(INCLD38)
                             ;
@@ -1604,7 +1586,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
 
 
-                    pushFollow(FOLLOW_stokenspec_in_swherequantifier335);
+                    pushFollow(FOLLOW_stokenspec_in_swherequantifier361);
                     stokenspec39=stokenspec();
 
                     state._fsp--;
@@ -1614,12 +1596,12 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // MOVInterpreter.g:62:42: snum
+                    // MOVInterpreter.g:64:42: snum
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_snum_in_swherequantifier337);
+                    pushFollow(FOLLOW_snum_in_swherequantifier363);
                     snum40=snum();
 
                     state._fsp--;
@@ -1659,7 +1641,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "ewherequantifier"
-    // MOVInterpreter.g:63:1: ewherequantifier : ( FST ( INCLD )? etokenspec | tnum );
+    // MOVInterpreter.g:65:1: ewherequantifier : ( FST ( INCLD )? etokenspec | tnum );
     public final MOVInterpreterParser.ewherequantifier_return ewherequantifier() throws RecognitionException {
         MOVInterpreterParser.ewherequantifier_return retval = new MOVInterpreterParser.ewherequantifier_return();
         retval.start = input.LT(1);
@@ -1678,7 +1660,7 @@ public TreeAdaptor getTreeAdaptor() {
         Object INCLD42_tree=null;
 
         try {
-            // MOVInterpreter.g:63:18: ( FST ( INCLD )? etokenspec | tnum )
+            // MOVInterpreter.g:65:18: ( FST ( INCLD )? etokenspec | tnum )
             int alt12=2;
             int LA12_0 = input.LA(1);
 
@@ -1697,19 +1679,19 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt12) {
                 case 1 :
-                    // MOVInterpreter.g:63:20: FST ( INCLD )? etokenspec
+                    // MOVInterpreter.g:65:20: FST ( INCLD )? etokenspec
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    FST41=(Token)match(input,FST,FOLLOW_FST_in_ewherequantifier344); 
+                    FST41=(Token)match(input,FST,FOLLOW_FST_in_ewherequantifier370); 
                     FST41_tree = 
                     (Object)adaptor.create(FST41)
                     ;
                     adaptor.addChild(root_0, FST41_tree);
 
 
-                    // MOVInterpreter.g:63:24: ( INCLD )?
+                    // MOVInterpreter.g:65:24: ( INCLD )?
                     int alt11=2;
                     int LA11_0 = input.LA(1);
 
@@ -1718,9 +1700,9 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     switch (alt11) {
                         case 1 :
-                            // MOVInterpreter.g:63:24: INCLD
+                            // MOVInterpreter.g:65:24: INCLD
                             {
-                            INCLD42=(Token)match(input,INCLD,FOLLOW_INCLD_in_ewherequantifier346); 
+                            INCLD42=(Token)match(input,INCLD,FOLLOW_INCLD_in_ewherequantifier372); 
                             INCLD42_tree = 
                             (Object)adaptor.create(INCLD42)
                             ;
@@ -1733,7 +1715,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
 
 
-                    pushFollow(FOLLOW_etokenspec_in_ewherequantifier349);
+                    pushFollow(FOLLOW_etokenspec_in_ewherequantifier375);
                     etokenspec43=etokenspec();
 
                     state._fsp--;
@@ -1743,12 +1725,12 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // MOVInterpreter.g:63:42: tnum
+                    // MOVInterpreter.g:65:42: tnum
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_tnum_in_ewherequantifier351);
+                    pushFollow(FOLLOW_tnum_in_ewherequantifier377);
                     tnum44=tnum();
 
                     state._fsp--;
@@ -1788,7 +1770,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "snum"
-    // MOVInterpreter.g:64:1: snum : NUM ;
+    // MOVInterpreter.g:66:1: snum : NUM ;
     public final MOVInterpreterParser.snum_return snum() throws RecognitionException {
         MOVInterpreterParser.snum_return retval = new MOVInterpreterParser.snum_return();
         retval.start = input.LT(1);
@@ -1801,13 +1783,13 @@ public TreeAdaptor getTreeAdaptor() {
         Object NUM45_tree=null;
 
         try {
-            // MOVInterpreter.g:64:8: ( NUM )
-            // MOVInterpreter.g:64:10: NUM
+            // MOVInterpreter.g:66:8: ( NUM )
+            // MOVInterpreter.g:66:10: NUM
             {
             root_0 = (Object)adaptor.nil();
 
 
-            NUM45=(Token)match(input,NUM,FOLLOW_NUM_in_snum360); 
+            NUM45=(Token)match(input,NUM,FOLLOW_NUM_in_snum386); 
             NUM45_tree = 
             (Object)adaptor.create(NUM45)
             ;
@@ -1845,7 +1827,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "tnum"
-    // MOVInterpreter.g:65:1: tnum : NUM ;
+    // MOVInterpreter.g:67:1: tnum : NUM ;
     public final MOVInterpreterParser.tnum_return tnum() throws RecognitionException {
         MOVInterpreterParser.tnum_return retval = new MOVInterpreterParser.tnum_return();
         retval.start = input.LT(1);
@@ -1858,13 +1840,13 @@ public TreeAdaptor getTreeAdaptor() {
         Object NUM46_tree=null;
 
         try {
-            // MOVInterpreter.g:65:8: ( NUM )
-            // MOVInterpreter.g:65:10: NUM
+            // MOVInterpreter.g:67:8: ( NUM )
+            // MOVInterpreter.g:67:10: NUM
             {
             root_0 = (Object)adaptor.nil();
 
 
-            NUM46=(Token)match(input,NUM,FOLLOW_NUM_in_tnum369); 
+            NUM46=(Token)match(input,NUM,FOLLOW_NUM_in_tnum395); 
             NUM46_tree = 
             (Object)adaptor.create(NUM46)
             ;
@@ -1902,7 +1884,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "dnum"
-    // MOVInterpreter.g:66:1: dnum : NUM ;
+    // MOVInterpreter.g:68:1: dnum : NUM ;
     public final MOVInterpreterParser.dnum_return dnum() throws RecognitionException {
         MOVInterpreterParser.dnum_return retval = new MOVInterpreterParser.dnum_return();
         retval.start = input.LT(1);
@@ -1915,13 +1897,13 @@ public TreeAdaptor getTreeAdaptor() {
         Object NUM47_tree=null;
 
         try {
-            // MOVInterpreter.g:66:8: ( NUM )
-            // MOVInterpreter.g:66:10: NUM
+            // MOVInterpreter.g:68:8: ( NUM )
+            // MOVInterpreter.g:68:10: NUM
             {
             root_0 = (Object)adaptor.nil();
 
 
-            NUM47=(Token)match(input,NUM,FOLLOW_NUM_in_dnum378); 
+            NUM47=(Token)match(input,NUM,FOLLOW_NUM_in_dnum404); 
             NUM47_tree = 
             (Object)adaptor.create(NUM47)
             ;
@@ -1956,50 +1938,50 @@ public TreeAdaptor getTreeAdaptor() {
 
  
 
-    public static final BitSet FOLLOW_operator_in_rule141 = new BitSet(new long[]{0x0000000000078030L});
-    public static final BitSet FOLLOW_what_in_rule143 = new BitSet(new long[]{0x0000000000000180L});
-    public static final BitSet FOLLOW_where_in_rule145 = new BitSet(new long[]{0x0000000000000180L});
-    public static final BitSet FOLLOW_dest_in_rule147 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_tokenspec_in_what154 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ANYTOKS_in_what156 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_singletokenspec_in_tokenspec166 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_singletokenspec_in_tokenspec169 = new BitSet(new long[]{0x0000000000078020L});
-    public static final BitSet FOLLOW_tokenspec_in_tokenspec171 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_singletokenspec_in_stokenspec178 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_singletokenspec_in_stokenspec181 = new BitSet(new long[]{0x0000000000078020L});
-    public static final BitSet FOLLOW_stokenspec_in_stokenspec183 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_singletokenspec_in_etokenspec190 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_singletokenspec_in_etokenspec193 = new BitSet(new long[]{0x0000000000078020L});
-    public static final BitSet FOLLOW_etokenspec_in_etokenspec195 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec202 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec205 = new BitSet(new long[]{0x0000000000078020L});
-    public static final BitSet FOLLOW_dtokenspec_in_dtokenspec207 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_token_in_singletokenspec214 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_type_in_singletokenspec216 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_MOV_in_operator225 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_TOKEN_in_token252 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_start_in_where262 = new BitSet(new long[]{0x0000000000000180L});
-    public static final BitSet FOLLOW_end_in_where264 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_scanningOrder_in_start285 = new BitSet(new long[]{0x0000000000004200L});
-    public static final BitSet FOLLOW_swherequantifier_in_start287 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_scanningOrder_in_end296 = new BitSet(new long[]{0x0000000000004200L});
-    public static final BitSet FOLLOW_ewherequantifier_in_end298 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_scanningOrder_in_dest307 = new BitSet(new long[]{0x0000000000004200L});
-    public static final BitSet FOLLOW_dwherequantifier_in_dest309 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_FST_in_dwherequantifier316 = new BitSet(new long[]{0x0000000000078420L});
-    public static final BitSet FOLLOW_INCLD_in_dwherequantifier318 = new BitSet(new long[]{0x0000000000078020L});
-    public static final BitSet FOLLOW_dtokenspec_in_dwherequantifier321 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_dnum_in_dwherequantifier323 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_FST_in_swherequantifier330 = new BitSet(new long[]{0x0000000000078420L});
-    public static final BitSet FOLLOW_INCLD_in_swherequantifier332 = new BitSet(new long[]{0x0000000000078020L});
-    public static final BitSet FOLLOW_stokenspec_in_swherequantifier335 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_snum_in_swherequantifier337 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_FST_in_ewherequantifier344 = new BitSet(new long[]{0x0000000000078420L});
-    public static final BitSet FOLLOW_INCLD_in_ewherequantifier346 = new BitSet(new long[]{0x0000000000078020L});
-    public static final BitSet FOLLOW_etokenspec_in_ewherequantifier349 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_tnum_in_ewherequantifier351 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NUM_in_snum360 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NUM_in_tnum369 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NUM_in_dnum378 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_operator_in_rule163 = new BitSet(new long[]{0x00000000001F00B0L});
+    public static final BitSet FOLLOW_what_in_rule165 = new BitSet(new long[]{0x0000000000000300L});
+    public static final BitSet FOLLOW_where_in_rule167 = new BitSet(new long[]{0x0000000000000300L});
+    public static final BitSet FOLLOW_dest_in_rule169 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_tokenspec_in_what176 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ANYTOKS_in_what178 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_singletokenspec_in_tokenspec188 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_singletokenspec_in_tokenspec191 = new BitSet(new long[]{0x00000000001F00A0L});
+    public static final BitSet FOLLOW_tokenspec_in_tokenspec193 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_singletokenspec_in_stokenspec200 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_singletokenspec_in_stokenspec203 = new BitSet(new long[]{0x00000000001F00A0L});
+    public static final BitSet FOLLOW_stokenspec_in_stokenspec205 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_singletokenspec_in_etokenspec212 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_singletokenspec_in_etokenspec215 = new BitSet(new long[]{0x00000000001F00A0L});
+    public static final BitSet FOLLOW_etokenspec_in_etokenspec217 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec224 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec227 = new BitSet(new long[]{0x00000000001F00A0L});
+    public static final BitSet FOLLOW_dtokenspec_in_dtokenspec229 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_token_in_singletokenspec236 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_type_in_singletokenspec238 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_MOV_in_operator247 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_TOKEN_in_token278 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_start_in_where288 = new BitSet(new long[]{0x0000000000000300L});
+    public static final BitSet FOLLOW_end_in_where290 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_scanningOrder_in_start311 = new BitSet(new long[]{0x0000000000008400L});
+    public static final BitSet FOLLOW_swherequantifier_in_start313 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_scanningOrder_in_end322 = new BitSet(new long[]{0x0000000000008400L});
+    public static final BitSet FOLLOW_ewherequantifier_in_end324 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_scanningOrder_in_dest333 = new BitSet(new long[]{0x0000000000008400L});
+    public static final BitSet FOLLOW_dwherequantifier_in_dest335 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_FST_in_dwherequantifier342 = new BitSet(new long[]{0x00000000001F08A0L});
+    public static final BitSet FOLLOW_INCLD_in_dwherequantifier344 = new BitSet(new long[]{0x00000000001F00A0L});
+    public static final BitSet FOLLOW_dtokenspec_in_dwherequantifier347 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_dnum_in_dwherequantifier349 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_FST_in_swherequantifier356 = new BitSet(new long[]{0x00000000001F08A0L});
+    public static final BitSet FOLLOW_INCLD_in_swherequantifier358 = new BitSet(new long[]{0x00000000001F00A0L});
+    public static final BitSet FOLLOW_stokenspec_in_swherequantifier361 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_snum_in_swherequantifier363 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_FST_in_ewherequantifier370 = new BitSet(new long[]{0x00000000001F08A0L});
+    public static final BitSet FOLLOW_INCLD_in_ewherequantifier372 = new BitSet(new long[]{0x00000000001F00A0L});
+    public static final BitSet FOLLOW_etokenspec_in_ewherequantifier375 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_tnum_in_ewherequantifier377 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NUM_in_snum386 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NUM_in_tnum395 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NUM_in_dnum404 = new BitSet(new long[]{0x0000000000000002L});
 
 }

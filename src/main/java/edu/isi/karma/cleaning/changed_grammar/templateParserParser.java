@@ -1,24 +1,4 @@
-/*******************************************************************************
- * Copyright 2012 University of Southern California
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * 	http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- * This code was developed by the Information Integration Group as part 
- * of the Karma project at the Information Sciences Institute of the 
- * University of Southern California.  For more information, publications, 
- * and related projects, please see: http://www.isi.edu/integration
- ******************************************************************************/
-// $ANTLR 3.4 templateParser.g 2012-02-13 14:41:40
+// $ANTLR 3.4 templateParser.g 2012-04-23 21:53:49
 
 package edu.isi.karma.cleaning.changed_grammar;
 import edu.isi.karma.cleaning.*;
@@ -39,7 +19,7 @@ import org.antlr.runtime.tree.*;
 @SuppressWarnings({"all", "warnings", "unchecked"})
 public class templateParserParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ANYNUM", "ANYTOK", "BNKTYP", "DIGIT", "FRMB", "FRME", "FST", "INCLD", "LST", "NEWLINE", "NUM", "NUMTYP", "SYBTYP", "TOKEN", "WRDTYP", "WS"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ANYNUM", "ANYTOK", "BNKTYP", "DIGIT", "ENDTYP", "FRMB", "FRME", "FST", "INCLD", "LST", "NEWLINE", "NUM", "NUMTYP", "SRTTYP", "SYBTYP", "TOKEN", "WRDTYP", "WS"
     };
 
     public static final int EOF=-1;
@@ -47,18 +27,20 @@ public class templateParserParser extends Parser {
     public static final int ANYTOK=5;
     public static final int BNKTYP=6;
     public static final int DIGIT=7;
-    public static final int FRMB=8;
-    public static final int FRME=9;
-    public static final int FST=10;
-    public static final int INCLD=11;
-    public static final int LST=12;
-    public static final int NEWLINE=13;
-    public static final int NUM=14;
-    public static final int NUMTYP=15;
-    public static final int SYBTYP=16;
-    public static final int TOKEN=17;
-    public static final int WRDTYP=18;
-    public static final int WS=19;
+    public static final int ENDTYP=8;
+    public static final int FRMB=9;
+    public static final int FRME=10;
+    public static final int FST=11;
+    public static final int INCLD=12;
+    public static final int LST=13;
+    public static final int NEWLINE=14;
+    public static final int NUM=15;
+    public static final int NUMTYP=16;
+    public static final int SRTTYP=17;
+    public static final int SYBTYP=18;
+    public static final int TOKEN=19;
+    public static final int WRDTYP=20;
+    public static final int WS=21;
 
     // delegates
     public Parser[] getDelegates() {
@@ -115,7 +97,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (Object)adaptor.nil();
 
 
-            NUM1=(Token)match(input,NUM,FOLLOW_NUM_in_qnum148); 
+            NUM1=(Token)match(input,NUM,FOLLOW_NUM_in_qnum168); 
             NUM1_tree = 
             (Object)adaptor.create(NUM1)
             ;
@@ -176,7 +158,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (Object)adaptor.nil();
 
 
-            NUM2=(Token)match(input,NUM,FOLLOW_NUM_in_snum167); 
+            NUM2=(Token)match(input,NUM,FOLLOW_NUM_in_snum187); 
             NUM2_tree = 
             (Object)adaptor.create(NUM2)
             ;
@@ -237,7 +219,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (Object)adaptor.nil();
 
 
-            NUM3=(Token)match(input,NUM,FOLLOW_NUM_in_tnum185); 
+            NUM3=(Token)match(input,NUM,FOLLOW_NUM_in_tnum205); 
             NUM3_tree = 
             (Object)adaptor.create(NUM3)
             ;
@@ -298,7 +280,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (Object)adaptor.nil();
 
 
-            NUM4=(Token)match(input,NUM,FOLLOW_NUM_in_dnum203); 
+            NUM4=(Token)match(input,NUM,FOLLOW_NUM_in_dnum223); 
             NUM4_tree = 
             (Object)adaptor.create(NUM4)
             ;
@@ -361,7 +343,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_singletokenspec_in_tokenspec224);
+            pushFollow(FOLLOW_singletokenspec_in_tokenspec244);
             t=singletokenspec();
 
             state._fsp--;
@@ -376,7 +358,7 @@ public TreeAdaptor getTreeAdaptor() {
                 int alt1=2;
                 int LA1_0 = input.LA(1);
 
-                if ( (LA1_0==BNKTYP||(LA1_0 >= NUMTYP && LA1_0 <= WRDTYP)) ) {
+                if ( (LA1_0==BNKTYP||LA1_0==ENDTYP||(LA1_0 >= NUMTYP && LA1_0 <= WRDTYP)) ) {
                     alt1=1;
                 }
 
@@ -385,7 +367,7 @@ public TreeAdaptor getTreeAdaptor() {
             	case 1 :
             	    // templateParser.g:50:46: s= singletokenspec
             	    {
-            	    pushFollow(FOLLOW_singletokenspec_in_tokenspec230);
+            	    pushFollow(FOLLOW_singletokenspec_in_tokenspec250);
             	    s=singletokenspec();
 
             	    state._fsp--;
@@ -460,7 +442,7 @@ public TreeAdaptor getTreeAdaptor() {
             if ( (LA3_0==ANYTOK) ) {
                 alt3=1;
             }
-            else if ( (LA3_0==BNKTYP||(LA3_0 >= NUMTYP && LA3_0 <= WRDTYP)) ) {
+            else if ( (LA3_0==BNKTYP||LA3_0==ENDTYP||(LA3_0 >= NUMTYP && LA3_0 <= WRDTYP)) ) {
                 alt3=2;
             }
             else {
@@ -477,7 +459,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (Object)adaptor.nil();
 
 
-                    ANYTOK5=(Token)match(input,ANYTOK,FOLLOW_ANYTOK_in_stokenspec252); 
+                    ANYTOK5=(Token)match(input,ANYTOK,FOLLOW_ANYTOK_in_stokenspec272); 
                     ANYTOK5_tree = 
                     (Object)adaptor.create(ANYTOK5)
                     ;
@@ -494,7 +476,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_singletokenspec_in_stokenspec258);
+                    pushFollow(FOLLOW_singletokenspec_in_stokenspec278);
                     t=singletokenspec();
 
                     state._fsp--;
@@ -509,7 +491,7 @@ public TreeAdaptor getTreeAdaptor() {
                         int alt2=2;
                         int LA2_0 = input.LA(1);
 
-                        if ( (LA2_0==BNKTYP||(LA2_0 >= NUMTYP && LA2_0 <= WRDTYP)) ) {
+                        if ( (LA2_0==BNKTYP||LA2_0==ENDTYP||(LA2_0 >= NUMTYP && LA2_0 <= WRDTYP)) ) {
                             alt2=1;
                         }
 
@@ -518,7 +500,7 @@ public TreeAdaptor getTreeAdaptor() {
                     	case 1 :
                     	    // templateParser.g:54:131: s= singletokenspec
                     	    {
-                    	    pushFollow(FOLLOW_singletokenspec_in_stokenspec264);
+                    	    pushFollow(FOLLOW_singletokenspec_in_stokenspec284);
                     	    s=singletokenspec();
 
                     	    state._fsp--;
@@ -595,7 +577,7 @@ public TreeAdaptor getTreeAdaptor() {
             if ( (LA5_0==ANYTOK) ) {
                 alt5=1;
             }
-            else if ( (LA5_0==BNKTYP||(LA5_0 >= NUMTYP && LA5_0 <= WRDTYP)) ) {
+            else if ( (LA5_0==BNKTYP||LA5_0==ENDTYP||(LA5_0 >= NUMTYP && LA5_0 <= WRDTYP)) ) {
                 alt5=2;
             }
             else {
@@ -612,7 +594,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (Object)adaptor.nil();
 
 
-                    ANYTOK6=(Token)match(input,ANYTOK,FOLLOW_ANYTOK_in_etokenspec285); 
+                    ANYTOK6=(Token)match(input,ANYTOK,FOLLOW_ANYTOK_in_etokenspec305); 
                     ANYTOK6_tree = 
                     (Object)adaptor.create(ANYTOK6)
                     ;
@@ -629,7 +611,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_singletokenspec_in_etokenspec291);
+                    pushFollow(FOLLOW_singletokenspec_in_etokenspec311);
                     t=singletokenspec();
 
                     state._fsp--;
@@ -644,7 +626,7 @@ public TreeAdaptor getTreeAdaptor() {
                         int alt4=2;
                         int LA4_0 = input.LA(1);
 
-                        if ( (LA4_0==BNKTYP||(LA4_0 >= NUMTYP && LA4_0 <= WRDTYP)) ) {
+                        if ( (LA4_0==BNKTYP||LA4_0==ENDTYP||(LA4_0 >= NUMTYP && LA4_0 <= WRDTYP)) ) {
                             alt4=1;
                         }
 
@@ -653,7 +635,7 @@ public TreeAdaptor getTreeAdaptor() {
                     	case 1 :
                     	    // templateParser.g:57:131: s= singletokenspec
                     	    {
-                    	    pushFollow(FOLLOW_singletokenspec_in_etokenspec297);
+                    	    pushFollow(FOLLOW_singletokenspec_in_etokenspec317);
                     	    s=singletokenspec();
 
                     	    state._fsp--;
@@ -730,7 +712,7 @@ public TreeAdaptor getTreeAdaptor() {
             if ( (LA7_0==ANYTOK) ) {
                 alt7=1;
             }
-            else if ( (LA7_0==BNKTYP||(LA7_0 >= NUMTYP && LA7_0 <= WRDTYP)) ) {
+            else if ( (LA7_0==BNKTYP||LA7_0==ENDTYP||(LA7_0 >= NUMTYP && LA7_0 <= WRDTYP)) ) {
                 alt7=2;
             }
             else {
@@ -747,7 +729,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (Object)adaptor.nil();
 
 
-                    ANYTOK7=(Token)match(input,ANYTOK,FOLLOW_ANYTOK_in_dtokenspec318); 
+                    ANYTOK7=(Token)match(input,ANYTOK,FOLLOW_ANYTOK_in_dtokenspec338); 
                     ANYTOK7_tree = 
                     (Object)adaptor.create(ANYTOK7)
                     ;
@@ -764,7 +746,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_singletokenspec_in_dtokenspec324);
+                    pushFollow(FOLLOW_singletokenspec_in_dtokenspec344);
                     t=singletokenspec();
 
                     state._fsp--;
@@ -779,7 +761,7 @@ public TreeAdaptor getTreeAdaptor() {
                         int alt6=2;
                         int LA6_0 = input.LA(1);
 
-                        if ( (LA6_0==BNKTYP||(LA6_0 >= NUMTYP && LA6_0 <= WRDTYP)) ) {
+                        if ( (LA6_0==BNKTYP||LA6_0==ENDTYP||(LA6_0 >= NUMTYP && LA6_0 <= WRDTYP)) ) {
                             alt6=1;
                         }
 
@@ -788,7 +770,7 @@ public TreeAdaptor getTreeAdaptor() {
                     	case 1 :
                     	    // templateParser.g:60:131: s= singletokenspec
                     	    {
-                    	    pushFollow(FOLLOW_singletokenspec_in_dtokenspec330);
+                    	    pushFollow(FOLLOW_singletokenspec_in_dtokenspec350);
                     	    s=singletokenspec();
 
                     	    state._fsp--;
@@ -863,7 +845,7 @@ public TreeAdaptor getTreeAdaptor() {
             if ( (LA8_0==TOKEN) ) {
                 alt8=1;
             }
-            else if ( (LA8_0==BNKTYP||(LA8_0 >= NUMTYP && LA8_0 <= SYBTYP)||LA8_0==WRDTYP) ) {
+            else if ( (LA8_0==BNKTYP||LA8_0==ENDTYP||(LA8_0 >= NUMTYP && LA8_0 <= SYBTYP)||LA8_0==WRDTYP) ) {
                 alt8=2;
             }
             else {
@@ -880,7 +862,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_token_in_singletokenspec352);
+                    pushFollow(FOLLOW_token_in_singletokenspec372);
                     token8=token();
 
                     state._fsp--;
@@ -897,7 +879,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_type_in_singletokenspec355);
+                    pushFollow(FOLLOW_type_in_singletokenspec375);
                     type9=type();
 
                     state._fsp--;
@@ -960,7 +942,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (Object)adaptor.nil();
 
 
-            TOKEN10=(Token)match(input,TOKEN,FOLLOW_TOKEN_in_token374); 
+            TOKEN10=(Token)match(input,TOKEN,FOLLOW_TOKEN_in_token394); 
             TOKEN10_tree = 
             (Object)adaptor.create(TOKEN10)
             ;
@@ -1001,7 +983,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "type"
-    // templateParser.g:70:1: type returns [GrammarTreeNode tok] : ( NUMTYP | WRDTYP | SYBTYP | BNKTYP );
+    // templateParser.g:70:1: type returns [GrammarTreeNode tok] : ( NUMTYP | WRDTYP | SYBTYP | BNKTYP | SRTTYP | ENDTYP );
     public final templateParserParser.type_return type() throws RecognitionException {
         templateParserParser.type_return retval = new templateParserParser.type_return();
         retval.start = input.LT(1);
@@ -1013,16 +995,20 @@ public TreeAdaptor getTreeAdaptor() {
         Token WRDTYP12=null;
         Token SYBTYP13=null;
         Token BNKTYP14=null;
+        Token SRTTYP15=null;
+        Token ENDTYP16=null;
 
         Object NUMTYP11_tree=null;
         Object WRDTYP12_tree=null;
         Object SYBTYP13_tree=null;
         Object BNKTYP14_tree=null;
+        Object SRTTYP15_tree=null;
+        Object ENDTYP16_tree=null;
 
         retval.tok = new GrammarTreeNode("type");
         try {
-            // templateParser.g:72:3: ( NUMTYP | WRDTYP | SYBTYP | BNKTYP )
-            int alt9=4;
+            // templateParser.g:72:3: ( NUMTYP | WRDTYP | SYBTYP | BNKTYP | SRTTYP | ENDTYP )
+            int alt9=6;
             switch ( input.LA(1) ) {
             case NUMTYP:
                 {
@@ -1044,6 +1030,16 @@ public TreeAdaptor getTreeAdaptor() {
                 alt9=4;
                 }
                 break;
+            case SRTTYP:
+                {
+                alt9=5;
+                }
+                break;
+            case ENDTYP:
+                {
+                alt9=6;
+                }
+                break;
             default:
                 NoViableAltException nvae =
                     new NoViableAltException("", 9, 0, input);
@@ -1059,7 +1055,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (Object)adaptor.nil();
 
 
-                    NUMTYP11=(Token)match(input,NUMTYP,FOLLOW_NUMTYP_in_type394); 
+                    NUMTYP11=(Token)match(input,NUMTYP,FOLLOW_NUMTYP_in_type414); 
                     NUMTYP11_tree = 
                     (Object)adaptor.create(NUMTYP11)
                     ;
@@ -1076,7 +1072,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (Object)adaptor.nil();
 
 
-                    WRDTYP12=(Token)match(input,WRDTYP,FOLLOW_WRDTYP_in_type398); 
+                    WRDTYP12=(Token)match(input,WRDTYP,FOLLOW_WRDTYP_in_type418); 
                     WRDTYP12_tree = 
                     (Object)adaptor.create(WRDTYP12)
                     ;
@@ -1093,7 +1089,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (Object)adaptor.nil();
 
 
-                    SYBTYP13=(Token)match(input,SYBTYP,FOLLOW_SYBTYP_in_type402); 
+                    SYBTYP13=(Token)match(input,SYBTYP,FOLLOW_SYBTYP_in_type422); 
                     SYBTYP13_tree = 
                     (Object)adaptor.create(SYBTYP13)
                     ;
@@ -1110,7 +1106,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (Object)adaptor.nil();
 
 
-                    BNKTYP14=(Token)match(input,BNKTYP,FOLLOW_BNKTYP_in_type406); 
+                    BNKTYP14=(Token)match(input,BNKTYP,FOLLOW_BNKTYP_in_type426); 
                     BNKTYP14_tree = 
                     (Object)adaptor.create(BNKTYP14)
                     ;
@@ -1118,6 +1114,40 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     GrammarTreeNode gtn=new GrammarTreeNode((BNKTYP14!=null?BNKTYP14.getText():null));retval.tok.addChild(gtn);
+
+                    }
+                    break;
+                case 5 :
+                    // templateParser.g:72:335: SRTTYP
+                    {
+                    root_0 = (Object)adaptor.nil();
+
+
+                    SRTTYP15=(Token)match(input,SRTTYP,FOLLOW_SRTTYP_in_type430); 
+                    SRTTYP15_tree = 
+                    (Object)adaptor.create(SRTTYP15)
+                    ;
+                    adaptor.addChild(root_0, SRTTYP15_tree);
+
+
+                    GrammarTreeNode gtn=new GrammarTreeNode((SRTTYP15!=null?SRTTYP15.getText():null));retval.tok.addChild(gtn);
+
+                    }
+                    break;
+                case 6 :
+                    // templateParser.g:72:418: ENDTYP
+                    {
+                    root_0 = (Object)adaptor.nil();
+
+
+                    ENDTYP16=(Token)match(input,ENDTYP,FOLLOW_ENDTYP_in_type434); 
+                    ENDTYP16_tree = 
+                    (Object)adaptor.create(ENDTYP16)
+                    ;
+                    adaptor.addChild(root_0, ENDTYP16_tree);
+
+
+                    GrammarTreeNode gtn=new GrammarTreeNode((ENDTYP16!=null?ENDTYP16.getText():null));retval.tok.addChild(gtn);
 
                     }
                     break;
@@ -1149,27 +1179,29 @@ public TreeAdaptor getTreeAdaptor() {
 
  
 
-    public static final BitSet FOLLOW_NUM_in_qnum148 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NUM_in_snum167 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NUM_in_tnum185 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NUM_in_dnum203 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_singletokenspec_in_tokenspec224 = new BitSet(new long[]{0x0000000000078042L});
-    public static final BitSet FOLLOW_singletokenspec_in_tokenspec230 = new BitSet(new long[]{0x0000000000078042L});
-    public static final BitSet FOLLOW_ANYTOK_in_stokenspec252 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_singletokenspec_in_stokenspec258 = new BitSet(new long[]{0x0000000000078042L});
-    public static final BitSet FOLLOW_singletokenspec_in_stokenspec264 = new BitSet(new long[]{0x0000000000078042L});
-    public static final BitSet FOLLOW_ANYTOK_in_etokenspec285 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_singletokenspec_in_etokenspec291 = new BitSet(new long[]{0x0000000000078042L});
-    public static final BitSet FOLLOW_singletokenspec_in_etokenspec297 = new BitSet(new long[]{0x0000000000078042L});
-    public static final BitSet FOLLOW_ANYTOK_in_dtokenspec318 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec324 = new BitSet(new long[]{0x0000000000078042L});
-    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec330 = new BitSet(new long[]{0x0000000000078042L});
-    public static final BitSet FOLLOW_token_in_singletokenspec352 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_type_in_singletokenspec355 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_TOKEN_in_token374 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NUMTYP_in_type394 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_WRDTYP_in_type398 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_SYBTYP_in_type402 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BNKTYP_in_type406 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NUM_in_qnum168 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NUM_in_snum187 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NUM_in_tnum205 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NUM_in_dnum223 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_singletokenspec_in_tokenspec244 = new BitSet(new long[]{0x00000000001F0142L});
+    public static final BitSet FOLLOW_singletokenspec_in_tokenspec250 = new BitSet(new long[]{0x00000000001F0142L});
+    public static final BitSet FOLLOW_ANYTOK_in_stokenspec272 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_singletokenspec_in_stokenspec278 = new BitSet(new long[]{0x00000000001F0142L});
+    public static final BitSet FOLLOW_singletokenspec_in_stokenspec284 = new BitSet(new long[]{0x00000000001F0142L});
+    public static final BitSet FOLLOW_ANYTOK_in_etokenspec305 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_singletokenspec_in_etokenspec311 = new BitSet(new long[]{0x00000000001F0142L});
+    public static final BitSet FOLLOW_singletokenspec_in_etokenspec317 = new BitSet(new long[]{0x00000000001F0142L});
+    public static final BitSet FOLLOW_ANYTOK_in_dtokenspec338 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec344 = new BitSet(new long[]{0x00000000001F0142L});
+    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec350 = new BitSet(new long[]{0x00000000001F0142L});
+    public static final BitSet FOLLOW_token_in_singletokenspec372 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_type_in_singletokenspec375 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_TOKEN_in_token394 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NUMTYP_in_type414 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_WRDTYP_in_type418 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_SYBTYP_in_type422 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_BNKTYP_in_type426 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_SRTTYP_in_type430 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ENDTYP_in_type434 = new BitSet(new long[]{0x0000000000000002L});
 
 }

@@ -687,7 +687,7 @@ public class Main {
 					String corrResult = "";
 					while ((pair=cr.readNext())!=null)
 					{
-						pair[0] = "%"+pair[0]+"@";
+						pair[0] = "<_START>"+pair[0]+"<_END>";
 						entries.add(pair);
 						corrResult += pair[1]+"\n";
 					}
@@ -937,6 +937,7 @@ public class Main {
 			m.exper_2("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/test");
 			double ed = System.currentTimeMillis();
 			xy.add((ed-st)*1.0/60000);
+			
 		}
 		m.write2CSV();
 		for(int i= 0; i<xy.size();i++)

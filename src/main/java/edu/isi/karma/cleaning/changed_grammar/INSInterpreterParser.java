@@ -1,24 +1,4 @@
-/*******************************************************************************
- * Copyright 2012 University of Southern California
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * 	http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- * This code was developed by the Information Integration Group as part 
- * of the Karma project at the Information Sciences Institute of the 
- * University of Southern California.  For more information, publications, 
- * and related projects, please see: http://www.isi.edu/integration
- ******************************************************************************/
-// $ANTLR 3.4 INSInterpreter.g 2012-02-13 14:41:39
+// $ANTLR 3.4 INSInterpreter.g 2012-04-23 21:53:48
 
 package edu.isi.karma.cleaning.changed_grammar;
 import edu.isi.karma.cleaning.*;
@@ -38,7 +18,7 @@ import org.antlr.runtime.tree.*;
 @SuppressWarnings({"all", "warnings", "unchecked"})
 public class INSInterpreterParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ANYNUM", "ANYTOK", "ANYTYP", "BNKTYP", "DIGIT", "FRMB", "FRME", "FST", "INCLD", "INS", "LST", "NEWLINE", "NUM", "NUMTYP", "SYBTYP", "TOKEN", "WRDTYP", "WS"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ANYNUM", "ANYTOK", "ANYTYP", "BNKTYP", "DIGIT", "ENDTYP", "FRMB", "FRME", "FST", "INCLD", "INS", "LST", "NEWLINE", "NUM", "NUMTYP", "SRTTYP", "SYBTYP", "TOKEN", "WRDTYP", "WS"
     };
 
     public static final int EOF=-1;
@@ -47,19 +27,21 @@ public class INSInterpreterParser extends Parser {
     public static final int ANYTYP=6;
     public static final int BNKTYP=7;
     public static final int DIGIT=8;
-    public static final int FRMB=9;
-    public static final int FRME=10;
-    public static final int FST=11;
-    public static final int INCLD=12;
-    public static final int INS=13;
-    public static final int LST=14;
-    public static final int NEWLINE=15;
-    public static final int NUM=16;
-    public static final int NUMTYP=17;
-    public static final int SYBTYP=18;
-    public static final int TOKEN=19;
-    public static final int WRDTYP=20;
-    public static final int WS=21;
+    public static final int ENDTYP=9;
+    public static final int FRMB=10;
+    public static final int FRME=11;
+    public static final int FST=12;
+    public static final int INCLD=13;
+    public static final int INS=14;
+    public static final int LST=15;
+    public static final int NEWLINE=16;
+    public static final int NUM=17;
+    public static final int NUMTYP=18;
+    public static final int SRTTYP=19;
+    public static final int SYBTYP=20;
+    public static final int TOKEN=21;
+    public static final int WRDTYP=22;
+    public static final int WS=23;
 
     // delegates
     public Parser[] getDelegates() {
@@ -99,7 +81,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "rule"
-    // INSInterpreter.g:39:1: rule : operator what dest ;
+    // INSInterpreter.g:41:1: rule : operator what dest ;
     public final INSInterpreterParser.rule_return rule() throws RecognitionException {
         INSInterpreterParser.rule_return retval = new INSInterpreterParser.rule_return();
         retval.start = input.LT(1);
@@ -116,27 +98,27 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // INSInterpreter.g:39:6: ( operator what dest )
-            // INSInterpreter.g:39:8: operator what dest
+            // INSInterpreter.g:41:6: ( operator what dest )
+            // INSInterpreter.g:41:8: operator what dest
             {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_operator_in_rule160);
+            pushFollow(FOLLOW_operator_in_rule182);
             operator1=operator();
 
             state._fsp--;
 
             adaptor.addChild(root_0, operator1.getTree());
 
-            pushFollow(FOLLOW_what_in_rule162);
+            pushFollow(FOLLOW_what_in_rule184);
             what2=what();
 
             state._fsp--;
 
             adaptor.addChild(root_0, what2.getTree());
 
-            pushFollow(FOLLOW_dest_in_rule164);
+            pushFollow(FOLLOW_dest_in_rule186);
             dest3=dest();
 
             state._fsp--;
@@ -174,7 +156,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "what"
-    // INSInterpreter.g:41:1: what : tokenspec ;
+    // INSInterpreter.g:43:1: what : tokenspec ;
     public final INSInterpreterParser.what_return what() throws RecognitionException {
         INSInterpreterParser.what_return retval = new INSInterpreterParser.what_return();
         retval.start = input.LT(1);
@@ -187,13 +169,13 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // INSInterpreter.g:41:6: ( tokenspec )
-            // INSInterpreter.g:41:8: tokenspec
+            // INSInterpreter.g:43:6: ( tokenspec )
+            // INSInterpreter.g:43:8: tokenspec
             {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_tokenspec_in_what173);
+            pushFollow(FOLLOW_tokenspec_in_what195);
             tokenspec4=tokenspec();
 
             state._fsp--;
@@ -231,7 +213,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "tokenspec"
-    // INSInterpreter.g:43:1: tokenspec : singletokenspec ( singletokenspec )* ;
+    // INSInterpreter.g:45:1: tokenspec : singletokenspec ( singletokenspec )* ;
     public final INSInterpreterParser.tokenspec_return tokenspec() throws RecognitionException {
         INSInterpreterParser.tokenspec_return retval = new INSInterpreterParser.tokenspec_return();
         retval.start = input.LT(1);
@@ -246,35 +228,35 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // INSInterpreter.g:44:2: ( singletokenspec ( singletokenspec )* )
-            // INSInterpreter.g:44:4: singletokenspec ( singletokenspec )*
+            // INSInterpreter.g:46:2: ( singletokenspec ( singletokenspec )* )
+            // INSInterpreter.g:46:4: singletokenspec ( singletokenspec )*
             {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_singletokenspec_in_tokenspec184);
+            pushFollow(FOLLOW_singletokenspec_in_tokenspec206);
             singletokenspec5=singletokenspec();
 
             state._fsp--;
 
             adaptor.addChild(root_0, singletokenspec5.getTree());
 
-            // INSInterpreter.g:44:20: ( singletokenspec )*
+            // INSInterpreter.g:46:20: ( singletokenspec )*
             loop1:
             do {
                 int alt1=2;
                 int LA1_0 = input.LA(1);
 
-                if ( (LA1_0==BNKTYP||(LA1_0 >= NUMTYP && LA1_0 <= WRDTYP)) ) {
+                if ( (LA1_0==BNKTYP||LA1_0==ENDTYP||(LA1_0 >= NUMTYP && LA1_0 <= WRDTYP)) ) {
                     alt1=1;
                 }
 
 
                 switch (alt1) {
             	case 1 :
-            	    // INSInterpreter.g:44:21: singletokenspec
+            	    // INSInterpreter.g:46:21: singletokenspec
             	    {
-            	    pushFollow(FOLLOW_singletokenspec_in_tokenspec187);
+            	    pushFollow(FOLLOW_singletokenspec_in_tokenspec209);
             	    singletokenspec6=singletokenspec();
 
             	    state._fsp--;
@@ -321,7 +303,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "dtokenspec"
-    // INSInterpreter.g:45:1: dtokenspec : singletokenspec ( singletokenspec )* ;
+    // INSInterpreter.g:47:1: dtokenspec : singletokenspec ( singletokenspec )* ;
     public final INSInterpreterParser.dtokenspec_return dtokenspec() throws RecognitionException {
         INSInterpreterParser.dtokenspec_return retval = new INSInterpreterParser.dtokenspec_return();
         retval.start = input.LT(1);
@@ -336,35 +318,35 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // INSInterpreter.g:46:2: ( singletokenspec ( singletokenspec )* )
-            // INSInterpreter.g:46:4: singletokenspec ( singletokenspec )*
+            // INSInterpreter.g:48:2: ( singletokenspec ( singletokenspec )* )
+            // INSInterpreter.g:48:4: singletokenspec ( singletokenspec )*
             {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_singletokenspec_in_dtokenspec200);
+            pushFollow(FOLLOW_singletokenspec_in_dtokenspec222);
             singletokenspec7=singletokenspec();
 
             state._fsp--;
 
             adaptor.addChild(root_0, singletokenspec7.getTree());
 
-            // INSInterpreter.g:46:20: ( singletokenspec )*
+            // INSInterpreter.g:48:20: ( singletokenspec )*
             loop2:
             do {
                 int alt2=2;
                 int LA2_0 = input.LA(1);
 
-                if ( (LA2_0==BNKTYP||(LA2_0 >= NUMTYP && LA2_0 <= WRDTYP)) ) {
+                if ( (LA2_0==BNKTYP||LA2_0==ENDTYP||(LA2_0 >= NUMTYP && LA2_0 <= WRDTYP)) ) {
                     alt2=1;
                 }
 
 
                 switch (alt2) {
             	case 1 :
-            	    // INSInterpreter.g:46:21: singletokenspec
+            	    // INSInterpreter.g:48:21: singletokenspec
             	    {
-            	    pushFollow(FOLLOW_singletokenspec_in_dtokenspec203);
+            	    pushFollow(FOLLOW_singletokenspec_in_dtokenspec225);
             	    singletokenspec8=singletokenspec();
 
             	    state._fsp--;
@@ -411,7 +393,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "singletokenspec"
-    // INSInterpreter.g:47:1: singletokenspec : ( token | type );
+    // INSInterpreter.g:49:1: singletokenspec : ( token | type );
     public final INSInterpreterParser.singletokenspec_return singletokenspec() throws RecognitionException {
         INSInterpreterParser.singletokenspec_return retval = new INSInterpreterParser.singletokenspec_return();
         retval.start = input.LT(1);
@@ -426,14 +408,14 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // INSInterpreter.g:47:17: ( token | type )
+            // INSInterpreter.g:49:17: ( token | type )
             int alt3=2;
             int LA3_0 = input.LA(1);
 
             if ( (LA3_0==TOKEN) ) {
                 alt3=1;
             }
-            else if ( (LA3_0==BNKTYP||(LA3_0 >= NUMTYP && LA3_0 <= SYBTYP)||LA3_0==WRDTYP) ) {
+            else if ( (LA3_0==BNKTYP||LA3_0==ENDTYP||(LA3_0 >= NUMTYP && LA3_0 <= SYBTYP)||LA3_0==WRDTYP) ) {
                 alt3=2;
             }
             else {
@@ -445,12 +427,12 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt3) {
                 case 1 :
-                    // INSInterpreter.g:47:19: token
+                    // INSInterpreter.g:49:19: token
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_token_in_singletokenspec214);
+                    pushFollow(FOLLOW_token_in_singletokenspec236);
                     token9=token();
 
                     state._fsp--;
@@ -460,12 +442,12 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // INSInterpreter.g:47:25: type
+                    // INSInterpreter.g:49:25: type
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_type_in_singletokenspec216);
+                    pushFollow(FOLLOW_type_in_singletokenspec238);
                     type10=type();
 
                     state._fsp--;
@@ -505,7 +487,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "type"
-    // INSInterpreter.g:49:1: type : ( NUMTYP | WRDTYP | SYBTYP | BNKTYP );
+    // INSInterpreter.g:51:1: type : ( NUMTYP | WRDTYP | SYBTYP | BNKTYP | SRTTYP | ENDTYP );
     public final INSInterpreterParser.type_return type() throws RecognitionException {
         INSInterpreterParser.type_return retval = new INSInterpreterParser.type_return();
         retval.start = input.LT(1);
@@ -518,7 +500,7 @@ public TreeAdaptor getTreeAdaptor() {
         Object set11_tree=null;
 
         try {
-            // INSInterpreter.g:49:6: ( NUMTYP | WRDTYP | SYBTYP | BNKTYP )
+            // INSInterpreter.g:51:6: ( NUMTYP | WRDTYP | SYBTYP | BNKTYP | SRTTYP | ENDTYP )
             // INSInterpreter.g:
             {
             root_0 = (Object)adaptor.nil();
@@ -526,7 +508,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             set11=(Token)input.LT(1);
 
-            if ( input.LA(1)==BNKTYP||(input.LA(1) >= NUMTYP && input.LA(1) <= SYBTYP)||input.LA(1)==WRDTYP ) {
+            if ( input.LA(1)==BNKTYP||input.LA(1)==ENDTYP||(input.LA(1) >= NUMTYP && input.LA(1) <= SYBTYP)||input.LA(1)==WRDTYP ) {
                 input.consume();
                 adaptor.addChild(root_0, 
                 (Object)adaptor.create(set11)
@@ -570,7 +552,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "operator"
-    // INSInterpreter.g:51:1: operator : INS ;
+    // INSInterpreter.g:53:1: operator : INS ;
     public final INSInterpreterParser.operator_return operator() throws RecognitionException {
         INSInterpreterParser.operator_return retval = new INSInterpreterParser.operator_return();
         retval.start = input.LT(1);
@@ -583,13 +565,13 @@ public TreeAdaptor getTreeAdaptor() {
         Object INS12_tree=null;
 
         try {
-            // INSInterpreter.g:51:10: ( INS )
-            // INSInterpreter.g:51:12: INS
+            // INSInterpreter.g:53:10: ( INS )
+            // INSInterpreter.g:53:12: INS
             {
             root_0 = (Object)adaptor.nil();
 
 
-            INS12=(Token)match(input,INS,FOLLOW_INS_in_operator242); 
+            INS12=(Token)match(input,INS,FOLLOW_INS_in_operator268); 
             INS12_tree = 
             (Object)adaptor.create(INS12)
             ;
@@ -627,7 +609,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "token"
-    // INSInterpreter.g:54:1: token : TOKEN ;
+    // INSInterpreter.g:56:1: token : TOKEN ;
     public final INSInterpreterParser.token_return token() throws RecognitionException {
         INSInterpreterParser.token_return retval = new INSInterpreterParser.token_return();
         retval.start = input.LT(1);
@@ -640,13 +622,13 @@ public TreeAdaptor getTreeAdaptor() {
         Object TOKEN13_tree=null;
 
         try {
-            // INSInterpreter.g:54:7: ( TOKEN )
-            // INSInterpreter.g:54:9: TOKEN
+            // INSInterpreter.g:56:7: ( TOKEN )
+            // INSInterpreter.g:56:9: TOKEN
             {
             root_0 = (Object)adaptor.nil();
 
 
-            TOKEN13=(Token)match(input,TOKEN,FOLLOW_TOKEN_in_token252); 
+            TOKEN13=(Token)match(input,TOKEN,FOLLOW_TOKEN_in_token278); 
             TOKEN13_tree = 
             (Object)adaptor.create(TOKEN13)
             ;
@@ -684,7 +666,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "scanningOrder"
-    // INSInterpreter.g:57:1: scanningOrder : ( FRMB | FRME );
+    // INSInterpreter.g:59:1: scanningOrder : ( FRMB | FRME );
     public final INSInterpreterParser.scanningOrder_return scanningOrder() throws RecognitionException {
         INSInterpreterParser.scanningOrder_return retval = new INSInterpreterParser.scanningOrder_return();
         retval.start = input.LT(1);
@@ -697,7 +679,7 @@ public TreeAdaptor getTreeAdaptor() {
         Object set14_tree=null;
 
         try {
-            // INSInterpreter.g:58:2: ( FRMB | FRME )
+            // INSInterpreter.g:60:2: ( FRMB | FRME )
             // INSInterpreter.g:
             {
             root_0 = (Object)adaptor.nil();
@@ -749,7 +731,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "dest"
-    // INSInterpreter.g:60:1: dest : scanningOrder dwherequantifier ;
+    // INSInterpreter.g:62:1: dest : scanningOrder dwherequantifier ;
     public final INSInterpreterParser.dest_return dest() throws RecognitionException {
         INSInterpreterParser.dest_return retval = new INSInterpreterParser.dest_return();
         retval.start = input.LT(1);
@@ -764,20 +746,20 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // INSInterpreter.g:60:6: ( scanningOrder dwherequantifier )
-            // INSInterpreter.g:60:9: scanningOrder dwherequantifier
+            // INSInterpreter.g:62:6: ( scanningOrder dwherequantifier )
+            // INSInterpreter.g:62:9: scanningOrder dwherequantifier
             {
             root_0 = (Object)adaptor.nil();
 
 
-            pushFollow(FOLLOW_scanningOrder_in_dest278);
+            pushFollow(FOLLOW_scanningOrder_in_dest304);
             scanningOrder15=scanningOrder();
 
             state._fsp--;
 
             adaptor.addChild(root_0, scanningOrder15.getTree());
 
-            pushFollow(FOLLOW_dwherequantifier_in_dest280);
+            pushFollow(FOLLOW_dwherequantifier_in_dest306);
             dwherequantifier16=dwherequantifier();
 
             state._fsp--;
@@ -815,7 +797,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "dwherequantifier"
-    // INSInterpreter.g:63:1: dwherequantifier : ( FST ( INCLD )? dtokenspec | LST ( INCLD )? dtokenspec | dnum );
+    // INSInterpreter.g:65:1: dwherequantifier : ( FST ( INCLD )? dtokenspec | LST ( INCLD )? dtokenspec | dnum );
     public final INSInterpreterParser.dwherequantifier_return dwherequantifier() throws RecognitionException {
         INSInterpreterParser.dwherequantifier_return retval = new INSInterpreterParser.dwherequantifier_return();
         retval.start = input.LT(1);
@@ -840,7 +822,7 @@ public TreeAdaptor getTreeAdaptor() {
         Object INCLD21_tree=null;
 
         try {
-            // INSInterpreter.g:64:2: ( FST ( INCLD )? dtokenspec | LST ( INCLD )? dtokenspec | dnum )
+            // INSInterpreter.g:66:2: ( FST ( INCLD )? dtokenspec | LST ( INCLD )? dtokenspec | dnum )
             int alt6=3;
             switch ( input.LA(1) ) {
             case FST:
@@ -868,19 +850,19 @@ public TreeAdaptor getTreeAdaptor() {
 
             switch (alt6) {
                 case 1 :
-                    // INSInterpreter.g:64:4: FST ( INCLD )? dtokenspec
+                    // INSInterpreter.g:66:4: FST ( INCLD )? dtokenspec
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    FST17=(Token)match(input,FST,FOLLOW_FST_in_dwherequantifier292); 
+                    FST17=(Token)match(input,FST,FOLLOW_FST_in_dwherequantifier318); 
                     FST17_tree = 
                     (Object)adaptor.create(FST17)
                     ;
                     adaptor.addChild(root_0, FST17_tree);
 
 
-                    // INSInterpreter.g:64:8: ( INCLD )?
+                    // INSInterpreter.g:66:8: ( INCLD )?
                     int alt4=2;
                     int LA4_0 = input.LA(1);
 
@@ -889,9 +871,9 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     switch (alt4) {
                         case 1 :
-                            // INSInterpreter.g:64:8: INCLD
+                            // INSInterpreter.g:66:8: INCLD
                             {
-                            INCLD18=(Token)match(input,INCLD,FOLLOW_INCLD_in_dwherequantifier294); 
+                            INCLD18=(Token)match(input,INCLD,FOLLOW_INCLD_in_dwherequantifier320); 
                             INCLD18_tree = 
                             (Object)adaptor.create(INCLD18)
                             ;
@@ -904,7 +886,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
 
 
-                    pushFollow(FOLLOW_dtokenspec_in_dwherequantifier297);
+                    pushFollow(FOLLOW_dtokenspec_in_dwherequantifier323);
                     dtokenspec19=dtokenspec();
 
                     state._fsp--;
@@ -914,19 +896,19 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // INSInterpreter.g:64:27: LST ( INCLD )? dtokenspec
+                    // INSInterpreter.g:66:27: LST ( INCLD )? dtokenspec
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    LST20=(Token)match(input,LST,FOLLOW_LST_in_dwherequantifier300); 
+                    LST20=(Token)match(input,LST,FOLLOW_LST_in_dwherequantifier326); 
                     LST20_tree = 
                     (Object)adaptor.create(LST20)
                     ;
                     adaptor.addChild(root_0, LST20_tree);
 
 
-                    // INSInterpreter.g:64:31: ( INCLD )?
+                    // INSInterpreter.g:66:31: ( INCLD )?
                     int alt5=2;
                     int LA5_0 = input.LA(1);
 
@@ -935,9 +917,9 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     switch (alt5) {
                         case 1 :
-                            // INSInterpreter.g:64:31: INCLD
+                            // INSInterpreter.g:66:31: INCLD
                             {
-                            INCLD21=(Token)match(input,INCLD,FOLLOW_INCLD_in_dwherequantifier302); 
+                            INCLD21=(Token)match(input,INCLD,FOLLOW_INCLD_in_dwherequantifier328); 
                             INCLD21_tree = 
                             (Object)adaptor.create(INCLD21)
                             ;
@@ -950,7 +932,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
 
 
-                    pushFollow(FOLLOW_dtokenspec_in_dwherequantifier305);
+                    pushFollow(FOLLOW_dtokenspec_in_dwherequantifier331);
                     dtokenspec22=dtokenspec();
 
                     state._fsp--;
@@ -960,12 +942,12 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 3 :
-                    // INSInterpreter.g:64:50: dnum
+                    // INSInterpreter.g:66:50: dnum
                     {
                     root_0 = (Object)adaptor.nil();
 
 
-                    pushFollow(FOLLOW_dnum_in_dwherequantifier308);
+                    pushFollow(FOLLOW_dnum_in_dwherequantifier334);
                     dnum23=dnum();
 
                     state._fsp--;
@@ -1005,7 +987,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "dnum"
-    // INSInterpreter.g:66:1: dnum : NUM ;
+    // INSInterpreter.g:68:1: dnum : NUM ;
     public final INSInterpreterParser.dnum_return dnum() throws RecognitionException {
         INSInterpreterParser.dnum_return retval = new INSInterpreterParser.dnum_return();
         retval.start = input.LT(1);
@@ -1018,13 +1000,13 @@ public TreeAdaptor getTreeAdaptor() {
         Object NUM24_tree=null;
 
         try {
-            // INSInterpreter.g:66:6: ( NUM )
-            // INSInterpreter.g:66:8: NUM
+            // INSInterpreter.g:68:6: ( NUM )
+            // INSInterpreter.g:68:8: NUM
             {
             root_0 = (Object)adaptor.nil();
 
 
-            NUM24=(Token)match(input,NUM,FOLLOW_NUM_in_dnum317); 
+            NUM24=(Token)match(input,NUM,FOLLOW_NUM_in_dnum343); 
             NUM24_tree = 
             (Object)adaptor.create(NUM24)
             ;
@@ -1059,27 +1041,27 @@ public TreeAdaptor getTreeAdaptor() {
 
  
 
-    public static final BitSet FOLLOW_operator_in_rule160 = new BitSet(new long[]{0x00000000001E0080L});
-    public static final BitSet FOLLOW_what_in_rule162 = new BitSet(new long[]{0x0000000000000600L});
-    public static final BitSet FOLLOW_dest_in_rule164 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_tokenspec_in_what173 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_singletokenspec_in_tokenspec184 = new BitSet(new long[]{0x00000000001E0082L});
-    public static final BitSet FOLLOW_singletokenspec_in_tokenspec187 = new BitSet(new long[]{0x00000000001E0082L});
-    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec200 = new BitSet(new long[]{0x00000000001E0082L});
-    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec203 = new BitSet(new long[]{0x00000000001E0082L});
-    public static final BitSet FOLLOW_token_in_singletokenspec214 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_type_in_singletokenspec216 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_INS_in_operator242 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_TOKEN_in_token252 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_scanningOrder_in_dest278 = new BitSet(new long[]{0x0000000000014800L});
-    public static final BitSet FOLLOW_dwherequantifier_in_dest280 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_FST_in_dwherequantifier292 = new BitSet(new long[]{0x00000000001E1080L});
-    public static final BitSet FOLLOW_INCLD_in_dwherequantifier294 = new BitSet(new long[]{0x00000000001E0080L});
-    public static final BitSet FOLLOW_dtokenspec_in_dwherequantifier297 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LST_in_dwherequantifier300 = new BitSet(new long[]{0x00000000001E1080L});
-    public static final BitSet FOLLOW_INCLD_in_dwherequantifier302 = new BitSet(new long[]{0x00000000001E0080L});
-    public static final BitSet FOLLOW_dtokenspec_in_dwherequantifier305 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_dnum_in_dwherequantifier308 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NUM_in_dnum317 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_operator_in_rule182 = new BitSet(new long[]{0x00000000007C0280L});
+    public static final BitSet FOLLOW_what_in_rule184 = new BitSet(new long[]{0x0000000000000C00L});
+    public static final BitSet FOLLOW_dest_in_rule186 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_tokenspec_in_what195 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_singletokenspec_in_tokenspec206 = new BitSet(new long[]{0x00000000007C0282L});
+    public static final BitSet FOLLOW_singletokenspec_in_tokenspec209 = new BitSet(new long[]{0x00000000007C0282L});
+    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec222 = new BitSet(new long[]{0x00000000007C0282L});
+    public static final BitSet FOLLOW_singletokenspec_in_dtokenspec225 = new BitSet(new long[]{0x00000000007C0282L});
+    public static final BitSet FOLLOW_token_in_singletokenspec236 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_type_in_singletokenspec238 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_INS_in_operator268 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_TOKEN_in_token278 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_scanningOrder_in_dest304 = new BitSet(new long[]{0x0000000000029000L});
+    public static final BitSet FOLLOW_dwherequantifier_in_dest306 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_FST_in_dwherequantifier318 = new BitSet(new long[]{0x00000000007C2280L});
+    public static final BitSet FOLLOW_INCLD_in_dwherequantifier320 = new BitSet(new long[]{0x00000000007C0280L});
+    public static final BitSet FOLLOW_dtokenspec_in_dwherequantifier323 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LST_in_dwherequantifier326 = new BitSet(new long[]{0x00000000007C2280L});
+    public static final BitSet FOLLOW_INCLD_in_dwherequantifier328 = new BitSet(new long[]{0x00000000007C0280L});
+    public static final BitSet FOLLOW_dtokenspec_in_dwherequantifier331 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_dnum_in_dwherequantifier334 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NUM_in_dnum343 = new BitSet(new long[]{0x0000000000000002L});
 
 }

@@ -1,24 +1,4 @@
-/*******************************************************************************
- * Copyright 2012 University of Southern California
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * 	http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- * This code was developed by the Information Integration Group as part 
- * of the Karma project at the Information Sciences Institute of the 
- * University of Southern California.  For more information, publications, 
- * and related projects, please see: http://www.isi.edu/integration
- ******************************************************************************/
-// $ANTLR 3.4 RuleInterpreter.g 2012-02-13 14:41:38
+// $ANTLR 3.4 RuleInterpreter.g 2012-04-23 21:53:46
 package edu.isi.karma.cleaning.changed_grammar;
 import org.antlr.runtime.*;
 import java.util.Stack;
@@ -35,18 +15,22 @@ public class RuleInterpreterLexer extends Lexer {
     public static final int BNKTYP=8;
     public static final int DEL=9;
     public static final int DIGIT=10;
-    public static final int FRMB=11;
-    public static final int FRME=12;
-    public static final int FST=13;
-    public static final int INCLD=14;
-    public static final int LST=15;
-    public static final int NEWLINE=16;
-    public static final int NUM=17;
-    public static final int NUMTYP=18;
-    public static final int SYBTYP=19;
-    public static final int TOKEN=20;
-    public static final int WRDTYP=21;
-    public static final int WS=22;
+    public static final int ENDTYP=11;
+    public static final int FRMB=12;
+    public static final int FRME=13;
+    public static final int FST=14;
+    public static final int INCLD=15;
+    public static final int INS=16;
+    public static final int LST=17;
+    public static final int MOV=18;
+    public static final int NEWLINE=19;
+    public static final int NUM=20;
+    public static final int NUMTYP=21;
+    public static final int SRTTYP=22;
+    public static final int SYBTYP=23;
+    public static final int TOKEN=24;
+    public static final int WRDTYP=25;
+    public static final int WS=26;
 
     // delegates
     // delegators
@@ -201,13 +185,36 @@ public class RuleInterpreterLexer extends Lexer {
     }
     // $ANTLR end "DEL"
 
+    // $ANTLR start "ENDTYP"
+    public final void mENDTYP() throws RecognitionException {
+        try {
+            int _type = ENDTYP;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // RuleInterpreter.g:8:8: ( 'END' )
+            // RuleInterpreter.g:8:10: 'END'
+            {
+            match("END"); 
+
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "ENDTYP"
+
     // $ANTLR start "FRMB"
     public final void mFRMB() throws RecognitionException {
         try {
             int _type = FRMB;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // RuleInterpreter.g:8:6: ( 'from_beginning' )
-            // RuleInterpreter.g:8:8: 'from_beginning'
+            // RuleInterpreter.g:9:6: ( 'from_beginning' )
+            // RuleInterpreter.g:9:8: 'from_beginning'
             {
             match("from_beginning"); 
 
@@ -229,8 +236,8 @@ public class RuleInterpreterLexer extends Lexer {
         try {
             int _type = FRME;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // RuleInterpreter.g:9:6: ( 'from_end' )
-            // RuleInterpreter.g:9:8: 'from_end'
+            // RuleInterpreter.g:10:6: ( 'from_end' )
+            // RuleInterpreter.g:10:8: 'from_end'
             {
             match("from_end"); 
 
@@ -252,8 +259,8 @@ public class RuleInterpreterLexer extends Lexer {
         try {
             int _type = FST;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // RuleInterpreter.g:10:5: ( 'first' )
-            // RuleInterpreter.g:10:7: 'first'
+            // RuleInterpreter.g:11:5: ( 'first' )
+            // RuleInterpreter.g:11:7: 'first'
             {
             match("first"); 
 
@@ -275,8 +282,8 @@ public class RuleInterpreterLexer extends Lexer {
         try {
             int _type = INCLD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // RuleInterpreter.g:11:7: ( 'incld' )
-            // RuleInterpreter.g:11:9: 'incld'
+            // RuleInterpreter.g:12:7: ( 'incld' )
+            // RuleInterpreter.g:12:9: 'incld'
             {
             match("incld"); 
 
@@ -293,13 +300,36 @@ public class RuleInterpreterLexer extends Lexer {
     }
     // $ANTLR end "INCLD"
 
+    // $ANTLR start "INS"
+    public final void mINS() throws RecognitionException {
+        try {
+            int _type = INS;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // RuleInterpreter.g:13:5: ( 'ins' )
+            // RuleInterpreter.g:13:7: 'ins'
+            {
+            match("ins"); 
+
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "INS"
+
     // $ANTLR start "LST"
     public final void mLST() throws RecognitionException {
         try {
             int _type = LST;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // RuleInterpreter.g:12:5: ( 'last' )
-            // RuleInterpreter.g:12:7: 'last'
+            // RuleInterpreter.g:14:5: ( 'last' )
+            // RuleInterpreter.g:14:7: 'last'
             {
             match("last"); 
 
@@ -316,13 +346,36 @@ public class RuleInterpreterLexer extends Lexer {
     }
     // $ANTLR end "LST"
 
+    // $ANTLR start "MOV"
+    public final void mMOV() throws RecognitionException {
+        try {
+            int _type = MOV;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // RuleInterpreter.g:15:5: ( 'mov' )
+            // RuleInterpreter.g:15:7: 'mov'
+            {
+            match("mov"); 
+
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "MOV"
+
     // $ANTLR start "NUMTYP"
     public final void mNUMTYP() throws RecognitionException {
         try {
             int _type = NUMTYP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // RuleInterpreter.g:13:8: ( 'Number' )
-            // RuleInterpreter.g:13:10: 'Number'
+            // RuleInterpreter.g:16:8: ( 'Number' )
+            // RuleInterpreter.g:16:10: 'Number'
             {
             match("Number"); 
 
@@ -339,13 +392,36 @@ public class RuleInterpreterLexer extends Lexer {
     }
     // $ANTLR end "NUMTYP"
 
+    // $ANTLR start "SRTTYP"
+    public final void mSRTTYP() throws RecognitionException {
+        try {
+            int _type = SRTTYP;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // RuleInterpreter.g:17:8: ( 'START' )
+            // RuleInterpreter.g:17:10: 'START'
+            {
+            match("START"); 
+
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "SRTTYP"
+
     // $ANTLR start "SYBTYP"
     public final void mSYBTYP() throws RecognitionException {
         try {
             int _type = SYBTYP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // RuleInterpreter.g:14:8: ( 'Symbol' )
-            // RuleInterpreter.g:14:10: 'Symbol'
+            // RuleInterpreter.g:18:8: ( 'Symbol' )
+            // RuleInterpreter.g:18:10: 'Symbol'
             {
             match("Symbol"); 
 
@@ -367,8 +443,8 @@ public class RuleInterpreterLexer extends Lexer {
         try {
             int _type = WRDTYP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // RuleInterpreter.g:15:8: ( 'Word' )
-            // RuleInterpreter.g:15:10: 'Word'
+            // RuleInterpreter.g:19:8: ( 'Word' )
+            // RuleInterpreter.g:19:10: 'Word'
             {
             match("Word"); 
 
@@ -390,12 +466,12 @@ public class RuleInterpreterLexer extends Lexer {
         try {
             int _type = TOKEN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // RuleInterpreter.g:73:7: ( '\\\"' ( . )+ '\\\"' )
-            // RuleInterpreter.g:73:9: '\\\"' ( . )+ '\\\"'
+            // RuleInterpreter.g:77:7: ( '\\\"' ( . )+ '\\\"' )
+            // RuleInterpreter.g:77:9: '\\\"' ( . )+ '\\\"'
             {
             match('\"'); 
 
-            // RuleInterpreter.g:73:13: ( . )+
+            // RuleInterpreter.g:77:13: ( . )+
             int cnt1=0;
             loop1:
             do {
@@ -412,7 +488,7 @@ public class RuleInterpreterLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // RuleInterpreter.g:73:13: .
+            	    // RuleInterpreter.g:77:13: .
             	    {
             	    matchAny(); 
 
@@ -447,10 +523,10 @@ public class RuleInterpreterLexer extends Lexer {
         try {
             int _type = NEWLINE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // RuleInterpreter.g:75:8: ( ( '\\r' )? '\\n' )
-            // RuleInterpreter.g:75:10: ( '\\r' )? '\\n'
+            // RuleInterpreter.g:79:8: ( ( '\\r' )? '\\n' )
+            // RuleInterpreter.g:79:10: ( '\\r' )? '\\n'
             {
-            // RuleInterpreter.g:75:10: ( '\\r' )?
+            // RuleInterpreter.g:79:10: ( '\\r' )?
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -459,7 +535,7 @@ public class RuleInterpreterLexer extends Lexer {
             }
             switch (alt2) {
                 case 1 :
-                    // RuleInterpreter.g:75:10: '\\r'
+                    // RuleInterpreter.g:79:10: '\\r'
                     {
                     match('\r'); 
 
@@ -487,10 +563,10 @@ public class RuleInterpreterLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // RuleInterpreter.g:77:3: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // RuleInterpreter.g:77:5: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // RuleInterpreter.g:81:3: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // RuleInterpreter.g:81:5: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // RuleInterpreter.g:77:5: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // RuleInterpreter.g:81:5: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt3=0;
             loop3:
             do {
@@ -547,10 +623,10 @@ public class RuleInterpreterLexer extends Lexer {
         try {
             int _type = NUM;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // RuleInterpreter.g:79:5: ( ( DIGIT )+ )
-            // RuleInterpreter.g:79:7: ( DIGIT )+
+            // RuleInterpreter.g:83:5: ( ( DIGIT )+ )
+            // RuleInterpreter.g:83:7: ( DIGIT )+
             {
-            // RuleInterpreter.g:79:7: ( DIGIT )+
+            // RuleInterpreter.g:83:7: ( DIGIT )+
             int cnt4=0;
             loop4:
             do {
@@ -603,7 +679,7 @@ public class RuleInterpreterLexer extends Lexer {
     // $ANTLR start "DIGIT"
     public final void mDIGIT() throws RecognitionException {
         try {
-            // RuleInterpreter.g:81:2: ( '0' .. '9' )
+            // RuleInterpreter.g:85:2: ( '0' .. '9' )
             // RuleInterpreter.g:
             {
             if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
@@ -627,28 +703,28 @@ public class RuleInterpreterLexer extends Lexer {
     // $ANTLR end "DIGIT"
 
     public void mTokens() throws RecognitionException {
-        // RuleInterpreter.g:1:8: ( ANYNUM | ANYTOK | ANYTOKS | ANYTYP | BNKTYP | DEL | FRMB | FRME | FST | INCLD | LST | NUMTYP | SYBTYP | WRDTYP | TOKEN | NEWLINE | WS | NUM )
-        int alt5=18;
+        // RuleInterpreter.g:1:8: ( ANYNUM | ANYTOK | ANYTOKS | ANYTYP | BNKTYP | DEL | ENDTYP | FRMB | FRME | FST | INCLD | INS | LST | MOV | NUMTYP | SRTTYP | SYBTYP | WRDTYP | TOKEN | NEWLINE | WS | NUM )
+        int alt5=22;
         switch ( input.LA(1) ) {
         case 'a':
             {
             int LA5_1 = input.LA(2);
 
             if ( (LA5_1=='n') ) {
-                int LA5_16 = input.LA(3);
+                int LA5_18 = input.LA(3);
 
-                if ( (LA5_16=='y') ) {
-                    int LA5_21 = input.LA(4);
+                if ( (LA5_18=='y') ) {
+                    int LA5_26 = input.LA(4);
 
-                    if ( (LA5_21=='n') ) {
+                    if ( (LA5_26=='n') ) {
                         alt5=1;
                     }
-                    else if ( (LA5_21=='t') ) {
+                    else if ( (LA5_26=='t') ) {
                         alt5=3;
                     }
                     else {
                         NoViableAltException nvae =
-                            new NoViableAltException("", 5, 21, input);
+                            new NoViableAltException("", 5, 26, input);
 
                         throw nvae;
 
@@ -656,7 +732,7 @@ public class RuleInterpreterLexer extends Lexer {
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("", 5, 16, input);
+                        new NoViableAltException("", 5, 18, input);
 
                     throw nvae;
 
@@ -676,23 +752,23 @@ public class RuleInterpreterLexer extends Lexer {
             int LA5_2 = input.LA(2);
 
             if ( (LA5_2=='N') ) {
-                int LA5_17 = input.LA(3);
+                int LA5_19 = input.LA(3);
 
-                if ( (LA5_17=='Y') ) {
-                    int LA5_22 = input.LA(4);
+                if ( (LA5_19=='Y') ) {
+                    int LA5_27 = input.LA(4);
 
-                    if ( (LA5_22=='T') ) {
-                        int LA5_26 = input.LA(5);
+                    if ( (LA5_27=='T') ) {
+                        int LA5_33 = input.LA(5);
 
-                        if ( (LA5_26=='O') ) {
+                        if ( (LA5_33=='O') ) {
                             alt5=2;
                         }
-                        else if ( (LA5_26=='Y') ) {
+                        else if ( (LA5_33=='Y') ) {
                             alt5=4;
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("", 5, 26, input);
+                                new NoViableAltException("", 5, 33, input);
 
                             throw nvae;
 
@@ -700,7 +776,7 @@ public class RuleInterpreterLexer extends Lexer {
                     }
                     else {
                         NoViableAltException nvae =
-                            new NoViableAltException("", 5, 22, input);
+                            new NoViableAltException("", 5, 27, input);
 
                         throw nvae;
 
@@ -708,7 +784,7 @@ public class RuleInterpreterLexer extends Lexer {
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("", 5, 17, input);
+                        new NoViableAltException("", 5, 19, input);
 
                     throw nvae;
 
@@ -733,31 +809,36 @@ public class RuleInterpreterLexer extends Lexer {
             alt5=6;
             }
             break;
+        case 'E':
+            {
+            alt5=7;
+            }
+            break;
         case 'f':
             {
-            int LA5_5 = input.LA(2);
+            int LA5_6 = input.LA(2);
 
-            if ( (LA5_5=='r') ) {
-                int LA5_18 = input.LA(3);
+            if ( (LA5_6=='r') ) {
+                int LA5_20 = input.LA(3);
 
-                if ( (LA5_18=='o') ) {
-                    int LA5_23 = input.LA(4);
+                if ( (LA5_20=='o') ) {
+                    int LA5_28 = input.LA(4);
 
-                    if ( (LA5_23=='m') ) {
-                        int LA5_27 = input.LA(5);
+                    if ( (LA5_28=='m') ) {
+                        int LA5_34 = input.LA(5);
 
-                        if ( (LA5_27=='_') ) {
-                            int LA5_30 = input.LA(6);
+                        if ( (LA5_34=='_') ) {
+                            int LA5_37 = input.LA(6);
 
-                            if ( (LA5_30=='b') ) {
-                                alt5=7;
-                            }
-                            else if ( (LA5_30=='e') ) {
+                            if ( (LA5_37=='b') ) {
                                 alt5=8;
+                            }
+                            else if ( (LA5_37=='e') ) {
+                                alt5=9;
                             }
                             else {
                                 NoViableAltException nvae =
-                                    new NoViableAltException("", 5, 30, input);
+                                    new NoViableAltException("", 5, 37, input);
 
                                 throw nvae;
 
@@ -765,7 +846,7 @@ public class RuleInterpreterLexer extends Lexer {
                         }
                         else {
                             NoViableAltException nvae =
-                                new NoViableAltException("", 5, 27, input);
+                                new NoViableAltException("", 5, 34, input);
 
                             throw nvae;
 
@@ -773,7 +854,7 @@ public class RuleInterpreterLexer extends Lexer {
                     }
                     else {
                         NoViableAltException nvae =
-                            new NoViableAltException("", 5, 23, input);
+                            new NoViableAltException("", 5, 28, input);
 
                         throw nvae;
 
@@ -781,18 +862,18 @@ public class RuleInterpreterLexer extends Lexer {
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("", 5, 18, input);
+                        new NoViableAltException("", 5, 20, input);
 
                     throw nvae;
 
                 }
             }
-            else if ( (LA5_5=='i') ) {
-                alt5=9;
+            else if ( (LA5_6=='i') ) {
+                alt5=10;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 5, 5, input);
+                    new NoViableAltException("", 5, 6, input);
 
                 throw nvae;
 
@@ -801,69 +882,113 @@ public class RuleInterpreterLexer extends Lexer {
             break;
         case 'i':
             {
-            alt5=10;
+            int LA5_7 = input.LA(2);
+
+            if ( (LA5_7=='n') ) {
+                int LA5_22 = input.LA(3);
+
+                if ( (LA5_22=='c') ) {
+                    alt5=11;
+                }
+                else if ( (LA5_22=='s') ) {
+                    alt5=12;
+                }
+                else {
+                    NoViableAltException nvae =
+                        new NoViableAltException("", 5, 22, input);
+
+                    throw nvae;
+
+                }
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 5, 7, input);
+
+                throw nvae;
+
+            }
             }
             break;
         case 'l':
             {
-            alt5=11;
-            }
-            break;
-        case 'N':
-            {
-            alt5=12;
-            }
-            break;
-        case 'S':
-            {
             alt5=13;
             }
             break;
-        case 'W':
+        case 'm':
             {
             alt5=14;
             }
             break;
-        case '\"':
+        case 'N':
             {
             alt5=15;
             }
             break;
+        case 'S':
+            {
+            int LA5_11 = input.LA(2);
+
+            if ( (LA5_11=='T') ) {
+                alt5=16;
+            }
+            else if ( (LA5_11=='y') ) {
+                alt5=17;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 5, 11, input);
+
+                throw nvae;
+
+            }
+            }
+            break;
+        case 'W':
+            {
+            alt5=18;
+            }
+            break;
+        case '\"':
+            {
+            alt5=19;
+            }
+            break;
         case '\r':
             {
-            int LA5_12 = input.LA(2);
+            int LA5_14 = input.LA(2);
 
-            if ( (LA5_12=='\n') ) {
-                int LA5_13 = input.LA(3);
+            if ( (LA5_14=='\n') ) {
+                int LA5_15 = input.LA(3);
 
-                if ( ((LA5_13 >= '\t' && LA5_13 <= '\n')||LA5_13=='\r'||LA5_13==' ') ) {
-                    alt5=17;
+                if ( ((LA5_15 >= '\t' && LA5_15 <= '\n')||LA5_15=='\r'||LA5_15==' ') ) {
+                    alt5=21;
                 }
                 else {
-                    alt5=16;
+                    alt5=20;
                 }
             }
             else {
-                alt5=17;
+                alt5=21;
             }
             }
             break;
         case '\n':
             {
-            int LA5_13 = input.LA(2);
+            int LA5_15 = input.LA(2);
 
-            if ( ((LA5_13 >= '\t' && LA5_13 <= '\n')||LA5_13=='\r'||LA5_13==' ') ) {
-                alt5=17;
+            if ( ((LA5_15 >= '\t' && LA5_15 <= '\n')||LA5_15=='\r'||LA5_15==' ') ) {
+                alt5=21;
             }
             else {
-                alt5=16;
+                alt5=20;
             }
             }
             break;
         case '\t':
         case ' ':
             {
-            alt5=17;
+            alt5=21;
             }
             break;
         case '0':
@@ -877,7 +1002,7 @@ public class RuleInterpreterLexer extends Lexer {
         case '8':
         case '9':
             {
-            alt5=18;
+            alt5=22;
             }
             break;
         default:
@@ -938,95 +1063,127 @@ public class RuleInterpreterLexer extends Lexer {
                 }
                 break;
             case 7 :
-                // RuleInterpreter.g:1:50: FRMB
+                // RuleInterpreter.g:1:50: ENDTYP
+                {
+                mENDTYP(); 
+
+
+                }
+                break;
+            case 8 :
+                // RuleInterpreter.g:1:57: FRMB
                 {
                 mFRMB(); 
 
 
                 }
                 break;
-            case 8 :
-                // RuleInterpreter.g:1:55: FRME
+            case 9 :
+                // RuleInterpreter.g:1:62: FRME
                 {
                 mFRME(); 
 
 
                 }
                 break;
-            case 9 :
-                // RuleInterpreter.g:1:60: FST
+            case 10 :
+                // RuleInterpreter.g:1:67: FST
                 {
                 mFST(); 
 
 
                 }
                 break;
-            case 10 :
-                // RuleInterpreter.g:1:64: INCLD
+            case 11 :
+                // RuleInterpreter.g:1:71: INCLD
                 {
                 mINCLD(); 
 
 
                 }
                 break;
-            case 11 :
-                // RuleInterpreter.g:1:70: LST
+            case 12 :
+                // RuleInterpreter.g:1:77: INS
+                {
+                mINS(); 
+
+
+                }
+                break;
+            case 13 :
+                // RuleInterpreter.g:1:81: LST
                 {
                 mLST(); 
 
 
                 }
                 break;
-            case 12 :
-                // RuleInterpreter.g:1:74: NUMTYP
+            case 14 :
+                // RuleInterpreter.g:1:85: MOV
+                {
+                mMOV(); 
+
+
+                }
+                break;
+            case 15 :
+                // RuleInterpreter.g:1:89: NUMTYP
                 {
                 mNUMTYP(); 
 
 
                 }
                 break;
-            case 13 :
-                // RuleInterpreter.g:1:81: SYBTYP
+            case 16 :
+                // RuleInterpreter.g:1:96: SRTTYP
+                {
+                mSRTTYP(); 
+
+
+                }
+                break;
+            case 17 :
+                // RuleInterpreter.g:1:103: SYBTYP
                 {
                 mSYBTYP(); 
 
 
                 }
                 break;
-            case 14 :
-                // RuleInterpreter.g:1:88: WRDTYP
+            case 18 :
+                // RuleInterpreter.g:1:110: WRDTYP
                 {
                 mWRDTYP(); 
 
 
                 }
                 break;
-            case 15 :
-                // RuleInterpreter.g:1:95: TOKEN
+            case 19 :
+                // RuleInterpreter.g:1:117: TOKEN
                 {
                 mTOKEN(); 
 
 
                 }
                 break;
-            case 16 :
-                // RuleInterpreter.g:1:101: NEWLINE
+            case 20 :
+                // RuleInterpreter.g:1:123: NEWLINE
                 {
                 mNEWLINE(); 
 
 
                 }
                 break;
-            case 17 :
-                // RuleInterpreter.g:1:109: WS
+            case 21 :
+                // RuleInterpreter.g:1:131: WS
                 {
                 mWS(); 
 
 
                 }
                 break;
-            case 18 :
-                // RuleInterpreter.g:1:112: NUM
+            case 22 :
+                // RuleInterpreter.g:1:134: NUM
                 {
                 mNUM(); 
 
