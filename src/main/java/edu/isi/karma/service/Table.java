@@ -185,8 +185,8 @@ public class Table {
 				for (int k = 0; k < resultAttributes.size(); k++) {
 					int index = rawAttributeIDs.indexOf(resultAttributes.get(k).getId());
 					if (index == -1)
-//						singleValue = null;
-						singleValue = "";
+						singleValue = null;
+//						singleValue = "";
 					else
 						singleValue = rawValues.get(index);
 					populatedValues.add(singleValue);
