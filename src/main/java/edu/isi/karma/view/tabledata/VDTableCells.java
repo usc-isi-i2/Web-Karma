@@ -908,9 +908,9 @@ public class VDTableCells {
 				colIndex, cellDepth, 0, jw, vWorksheet, vWorkspace);
 
 		boolean isValueTruncated = false;
-		CellValue cellValue = c.getNode() == null ? null : c.getNode()
-				.getValue();
-		String valueString = cellValue == null ? "" : cellValue.asString();
+		CellValue cellValue = c.getNode() == null ? null : c.getNode().getValue();
+		String valueString = (cellValue == null || cellValue.asString() == null) ? "" : cellValue.asString();
+
 		if(valueString.length() > vWorkspace.getPreferences().getIntViewPreferenceValue(
 						ViewPreference.maxCharactersInCell)) {
 			valueString = JSONUtil.truncateCellValue(
