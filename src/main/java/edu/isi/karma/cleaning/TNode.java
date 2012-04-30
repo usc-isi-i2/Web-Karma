@@ -99,6 +99,14 @@ public class TNode{
 		{
 			type = TNode.BNKTYP;
 		}
+		else if(stype.compareTo("START")==0)
+		{
+			type = TNode.STARTTYP;
+		}
+		else if(stype.compareTo("END")==0)
+		{
+			type = TNode.ENDTYP;
+		}
 		this.text = text;
 	}
 	public boolean sameNode(TNode t)

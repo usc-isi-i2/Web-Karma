@@ -223,7 +223,7 @@ public class Alignment {
 				if(a<b)
 				{
 					cnt++;
-					break;
+					continue;
 				}
 				
 			}

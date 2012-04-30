@@ -221,15 +221,16 @@ public class MarkovDP {
 				}
 				i++;
 			}
+			if(result.size()==0)
+				return tmpresult;
+			return result;
 		}
 		catch(Exception ex)
 		{
 			System.out.println("sampling error:"+ex.toString());
-			System.exit(1);
+			return null;
 		}
-		if(result.size()==0)
-			return tmpresult;
-		return result;
+		
 	}
 	//search algorithm: the least value of cost
 	public double search(MDPState s,MDPAction p,double value,int depth)
