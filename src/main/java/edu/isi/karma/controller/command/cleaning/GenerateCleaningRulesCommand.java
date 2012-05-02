@@ -189,7 +189,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		Vector<String> jsons = new Vector<String>();
 		if(js2tps.keySet().size()!=0)
 		{
-			jsons = getTopK(js2tps.keySet(), 3);
+			jsons = getTopK(js2tps.keySet(), 50);
 		}
 		else
 		{

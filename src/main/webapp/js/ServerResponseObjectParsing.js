@@ -766,7 +766,8 @@ function parse(data) {
 		
 		else if(element["updateType"] == "CleaningResultUpdate") {
             if(element["result"] != null) {
-                populateResultsInCleaningTable(element["result"]);  // in cleaning.js
+            		var pdata = getVaritions(element["result"]);
+				populateResultsInCleaningTable(pdata);
             }
                 
         }
