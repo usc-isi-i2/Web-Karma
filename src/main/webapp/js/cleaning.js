@@ -106,7 +106,7 @@ function populateResultsInCleaningTable(data) {
 			var trTag = $("tr#" + nodeId + "_cl_row");
 			// this row is the whole line accross the panel
 			if(trTag != null) {
-				trTag.append($("<td>").addClass("ruleResultsValue").append($("<table>").attr("border","0").append($("<tr>").attr("border","0").append($("<td>").attr("border",0).append($("<div>").data("nodeId", nodeId).data("originalVal", $("td#" + nodeId + "_origVal", cleaningTable).text())// set the original value for the example
+				trTag.append($("<td>").addClass("ruleResultsValue").append($("<table>").append($("<tr>").append($("<td>").addClass("noinnerBorder").append($("<div>").data("nodeId", nodeId).data("originalVal", $("td#" + nodeId + "_origVal", cleaningTable).text())// set the original value for the example
 				.data("cellValue", val).addClass("cleanExampleDiv").text(val)//set the result here
 				.attr("id", nodeId + "_c" ).editable(function(value, settings) {
 					var editDiv = $(this);
@@ -146,6 +146,8 @@ function populateResultsInCleaningTable(data) {
 						"before" : $(this).data("originalVal"),
 						"after" : value
 					});
+					//call the update result function
+					updateResult(data);
 					return (value);
 				}, {
 					type : 'textarea',
@@ -222,6 +224,33 @@ function addExample(nodeID) {
 }
 
 //update column when examples are added
-function updateColumn() {
-
+function updateResult(data) {
+	var newdata = [];
+	var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+	var examples = columnHeadingMenu.data("cleaningExamples");
+	$.each(data, function(index, pacdata) {
+	  column = pacdata["data"];
+	  islegal = true;
+	  $.each(examples, function(ind, exp) {
+		if(!(column[exp["nodeId"]] === exp["after"]))
+		{
+			islegal = false;
+			break;
+		}
+	  });
+	  if(islegal) // add the result to the new data collection
+	  {
+	  	newdata.push(pacdata);
+	  }
+	});
+	//generate rules and apply them to test data
+	if(newdata.length == 0)
+	{
+		handleGenerateCleaningRulesButton();
+	}
+	else // use the trimmed data
+	{
+		var tdata = getVaritions(newdata);
+		populateResultsInCleaningTable(tdata);
+	}
 }

@@ -35,6 +35,12 @@ table#cleaningExamplesTable td {
 table#cleaningExamplesTable td.noBorder {
 	border: none;
 }
+table#cleaningExamplesTable td.noinnerBorder {
+	font-size: 12px;
+	border: none;
+	height: 15px;
+	padding: 1px;
+}
 
 table#cleaningExamplesTable td.examplesDivider {
 	width:20px;
