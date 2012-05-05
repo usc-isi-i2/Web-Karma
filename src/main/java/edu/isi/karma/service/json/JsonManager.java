@@ -30,9 +30,6 @@ import java.util.Set;
 import net.sf.json.JSON;
 import net.sf.json.xml.XMLSerializer;
 
-import org.json.JSONObject;
-import org.json.XML;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
