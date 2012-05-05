@@ -21,7 +21,6 @@
 
 function assignHandlersToCleaningPanelObjects() {
 	var cleaningPanel = $("div#ColumnCleaningPanel");
-
 	$("button#cleanColumnButton").click(handleCleanColumnButton);
 	$("button#generateCleaningRules", cleaningPanel).click(handleGenerateCleaningRulesButton);
 }
@@ -68,6 +67,7 @@ function handleCleanColumnButton() {
 		initialResultsValues.push(pac);
 		cleaningTable.append(tr);
 	});
+	$("div#columnHeadingDropDownMenu").data("results",initialResultsValues);
 	var tdata = getVaritions(initialResultsValues);
 	populateResultsInCleaningTable(tdata);
 
@@ -78,13 +78,13 @@ function handleCleanColumnButton() {
 	//
 	$("div#ColumnCleaningPanel").dialog({
 		title : 'Transform',
-		width : 500,
+		width : 900,
 		height : 500,
 		buttons : {
 			"Cancel" : function() {
 				$(this).dialog("close");
 			},
-			"Generate Rules" : handleGenerateCleaningRulesButton,
+			//"Generate Rules" : handleGenerateCleaningRulesButton,
 			"Submit" : function() {
 				$(this).dialog("close");
 			}
@@ -147,7 +147,7 @@ function populateResultsInCleaningTable(data) {
 						"after" : value
 					});
 					//call the update result function
-					updateResult(data);
+					updateResult();
 					return (value);
 				}, {
 					type : 'textarea',
@@ -184,7 +184,7 @@ function handleGenerateCleaningRulesButton() {
 		complete : function(xhr, textStatus) {
 			var json = $.parseJSON(xhr.responseText);
 			var tdata = parse(json);
-			
+			$("div#columnHeadingDropDownMenu").data("results",tdata);
 			
 		},
 		error : function(xhr, textStatus) {
@@ -200,6 +200,10 @@ function getVaritions(data) {
 	$.each(data, function(index, pacdata) {
 		ruleResult = pacdata["data"];
 		for(var nodeId in ruleResult) {
+			if(ruleResult[nodeId]=="")
+			{
+				continue;
+			}
 			if( nodeId in x) {
 				var dic = x[nodeId];
 				var value = ruleResult[nodeId];
@@ -224,18 +228,19 @@ function addExample(nodeID) {
 }
 
 //update column when examples are added
-function updateResult(data) {
+function updateResult() {
+	var data = $("div#columnHeadingDropDownMenu").data("results");
 	var newdata = [];
 	var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
 	var examples = columnHeadingMenu.data("cleaningExamples");
 	$.each(data, function(index, pacdata) {
-	  column = pacdata["data"];
+	  var column = pacdata["data"];
 	  islegal = true;
 	  $.each(examples, function(ind, exp) {
 		if(!(column[exp["nodeId"]] === exp["after"]))
 		{
 			islegal = false;
-			break;
+			return;
 		}
 	  });
 	  if(islegal) // add the result to the new data collection

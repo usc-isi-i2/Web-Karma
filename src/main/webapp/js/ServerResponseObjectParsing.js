@@ -768,6 +768,7 @@ function parse(data) {
             if(element["result"] != null) {
             		var pdata = getVaritions(element["result"]);
 				populateResultsInCleaningTable(pdata);
+				return pdata;
             }
                 
         }

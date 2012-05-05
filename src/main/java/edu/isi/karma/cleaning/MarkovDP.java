@@ -88,7 +88,7 @@ public class MarkovDP {
 		String res = "";
 		for(MDPAction a:policies)
 		{
-			res += "#"+a.rule;
+			res += "<RULESEP>"+a.rule;
 		}
 		return res;
 	}
