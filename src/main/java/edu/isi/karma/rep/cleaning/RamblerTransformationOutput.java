@@ -55,7 +55,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		Vector<String> trans = RuleUtil.genRule(exps);
 		for(int i = 0; i<trans.size(); i++)
 		{
-			String[] rules = trans.get(i).split("#");
+			String[] rules = trans.get(i).split("<RULESEP>");
 			//System.out.println(""+s1);
 			Vector<String> xr = new Vector<String>();
 			for(int t = 0; t< rules.length; t++)
