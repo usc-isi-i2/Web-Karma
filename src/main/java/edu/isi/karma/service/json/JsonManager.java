@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.sf.json.JSON;
+import net.sf.json.xml.XMLSerializer;
+
 import org.json.JSONObject;
 import org.json.XML;
 
@@ -407,10 +410,12 @@ public class JsonManager {
     }
     
     public static String convertXML2JSON(String xmlContent) {
-    	
     	try {
-    		JSONObject jsonObj =  XML.toJSONObject(xmlContent);
-	        return jsonObj.toString();
+            XMLSerializer xmlSerializer = new XMLSerializer(); 
+            JSON json = xmlSerializer.read( xmlContent ); 
+            return json.toString();
+//    		JSONObject jsonObj =  XML.toJSONObject(xmlContent);
+//	        return jsonObj.toString();
     	} catch (Exception e) {
     		System.out.println(e.getMessage());
     		return null;

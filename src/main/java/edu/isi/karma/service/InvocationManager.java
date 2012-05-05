@@ -183,19 +183,19 @@ public class InvocationManager {
 	
 	public static void main(String[] args) {
 //		String s1 = "http://colo-vm10.isi.edu:8080/DovetailService/GetSampleData?sourceName=KDD-02-B-TOSIG";
-		String s1 = "http://api.geonames.org/neighbourhood?lat=40.78343&lng=-73.96625&username=taheriyan";
-		String s2 = "http://api.geonames.org/neighbourhood?lat=40.7&lng=-73.9&username=taheriyan";
-		String s3 = "http://api.geonames.org/neighbourhood?lat=40.9&lng=-73.9&username=taheriyan";
+		String s1 = "http://api.geonames.org/neighbourhood?lat=40.78343&lng=-73.96625&username=karma";
+//		String s2 = "http://api.geonames.org/neighbourhood?lat=40.7&lng=-73.9&username=karma";
+//		String s3 = "http://api.geonames.org/neighbourhood?lat=40.9&lng=-73.9&username=karma";
 
 		List<String> urls = new ArrayList<String>();
 		urls.add(s1);
-		urls.add(s2);
-		urls.add(s3);
+//		urls.add(s2);
+//		urls.add(s3);
 
 		List<String> ids = new ArrayList<String>();
 		ids.add("1"); 
-		ids.add("2"); 
-		ids.add("3");
+//		ids.add("2"); 
+//		ids.add("3");
 
 		try {
 			InvocationManager sb = new InvocationManager(ids, urls);
