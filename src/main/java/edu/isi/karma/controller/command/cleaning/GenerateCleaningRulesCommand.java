@@ -112,7 +112,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	
 	private static Vector<String> getTopK(Set<String> res,int k)
 	{
-		String trainPath = "/Users/bowu/Research/features.arff";
+		String trainPath = "./grammar/features.arff";
 		Vector<String> vs = new Vector<String>();
 		//
 		String[] x = (String[])res.toArray(new String[res.size()]);
