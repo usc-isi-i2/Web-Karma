@@ -53,28 +53,40 @@ public class TreePostProcess {
 		int reachableNodes = -1;
 		
 		List<Vertex> vertexList = new ArrayList<Vertex>();
+		List<Vertex> dangledVertexList = new ArrayList<Vertex>();
 		List<Integer> reachableNodesList = new ArrayList<Integer>();
 		
+		boolean connectedToSemanticType = false;
 		for (Vertex v: this.tree.vertexSet()) {
 			BreadthFirstIterator<Vertex, LabeledWeightedEdge> i = new BreadthFirstIterator<Vertex, LabeledWeightedEdge>(this.tree, v);
+			connectedToSemanticType = false;
 			
 			reachableNodes = -1;
 			while (i.hasNext()) {
-				i.next();
+				Vertex temp = i.next();
+				if (temp.getSemanticType() != null)
+					connectedToSemanticType = true;
 				reachableNodes ++;
 			}
 			
-			vertexList.add(v);
-			reachableNodesList.add(reachableNodes);
-			
-			if (reachableNodes > maxReachableNodes) {
-				maxReachableNodes = reachableNodes;
+			if (connectedToSemanticType == false)
+				dangledVertexList.add(v);
+			else {
+				vertexList.add(v);
+				reachableNodesList.add(reachableNodes);
+				
+				if (reachableNodes > maxReachableNodes) {
+					maxReachableNodes = reachableNodes;
+				}
 			}
 		}
 		
 		for (int i = 0; i < vertexList.size(); i++)
 			if (reachableNodesList.get(i).intValue() == maxReachableNodes)
 				possibleRoots.add(vertexList.get(i));
+		
+		for (Vertex v : dangledVertexList)
+			this.tree.removeVertex(v);
 		
 		return possibleRoots;
 	}

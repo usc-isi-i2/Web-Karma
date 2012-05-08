@@ -98,11 +98,20 @@ public class Alignment {
 		return this.semanticTypes;
 	}
 	
+	private void addToLinksForcedByUserList(LabeledWeightedEdge e) {
+		LabeledWeightedEdge[] links = linksForcedByUser.toArray(new LabeledWeightedEdge[0]);
+		for (LabeledWeightedEdge link : links) {
+			if (link.getTarget().getID().equalsIgnoreCase(e.getTarget().getID()))
+				clearUserLink(link.getID());
+		}
+		linksForcedByUser.add(e);
+	}
+	
 	public void addUserLink(String linkId) {
 		LabeledWeightedEdge[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new LabeledWeightedEdge[0]);
 		for (int i = 0; i < allLinks.length; i++) {
 			if (allLinks[i].getID().equalsIgnoreCase(linkId)) {
-				linksForcedByUser.add(allLinks[i]);
+				addToLinksForcedByUserList(allLinks[i]);
 				logger.info("link " + linkId + " has been added to user selected links.");
 				align();
 				return;
@@ -118,7 +127,7 @@ public class Alignment {
 			boolean found = false;
 			for (int i = 0; i < allLinks.length; i++) {
 				if (allLinks[i].getID().equalsIgnoreCase(linkIds.get(j))) {
-					linksForcedByUser.add(allLinks[i]);
+					addToLinksForcedByUserList(allLinks[i]);
 					found = true;
 					logger.info("link " + linkIds.get(j) + " has been added to user selected links.");
 				}
@@ -178,7 +187,7 @@ public class Alignment {
 				target.setDomainVertexId(v.getID());
 				
 //				GraphUtil.printGraph(this.graphBuilder.getGraph());
-				linksForcedByUser.add(this.graphBuilder.getGraph().getEdge(v, target));
+				addToLinksForcedByUserList(this.graphBuilder.getGraph().getEdge(v, target));
 				
 				// do we need to keep the outgoing links of the source which are already in the tree? 
 				
@@ -237,8 +246,8 @@ public class Alignment {
 						
 						// if the node is not in the UI, don't show it to the user
 						// Scenario: multiple domain, then again merge it. The created node is in the graph but not in the tree.
-						if (displayedNodes.indexOf(incomingLinks[i].getSource().getID()) == -1)
-							continue;
+//						if (displayedNodes.indexOf(incomingLinks[i].getSource().getID()) == -1)
+//							continue;
 						
 						alternatives.add(incomingLinks[i]);
 					}
@@ -281,6 +290,18 @@ public class Alignment {
 		}
 	}
 	
+	private List<LabeledWeightedEdge> buildSelectedLinks() {
+		List<LabeledWeightedEdge> selectedLinks = new ArrayList<LabeledWeightedEdge>();
+
+		addUILinksFromTree();
+		updateLinksStatus();
+
+		selectedLinks.addAll(linksPreferredByUI);
+		selectedLinks.addAll(linksForcedByUser);
+
+		return selectedLinks;
+	}
+	
 	private void align() {
 		
 
@@ -288,12 +309,8 @@ public class Alignment {
 		
 		logger.info("preparing G Prime for steiner algorithm input ...");
 		
-		addUILinksFromTree();
-		updateLinksStatus();
-		List<LabeledWeightedEdge> selectedLinks = new ArrayList<LabeledWeightedEdge>();
+		List<LabeledWeightedEdge> selectedLinks = buildSelectedLinks();
 		// order of adding lists is important: linksPreferredByUI should be first 
-		selectedLinks.addAll(linksPreferredByUI);
-		selectedLinks.addAll(linksForcedByUser);
 		
 		GraphPreProcess graphPreProcess = new GraphPreProcess(this.graphBuilder.getGraph(), semanticNodes, selectedLinks );
 		UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedGraph = graphPreProcess.getUndirectedGraph();
@@ -331,7 +348,7 @@ public class Alignment {
 		if (this.steinerTree == null)
 			align();
 		
-//		GraphUtil.printGraph(this.graphBuilder.getGraph());
+		GraphUtil.printGraph(this.steinerTree);
 		return this.steinerTree;
 	}
 

@@ -50,6 +50,7 @@ public class Vertex {
 		this.name = new Name(v.name);
 		this.nodeType = v.nodeType;
 		this.semanticType = v.semanticType;
+		this.domainVertexId = v.domainVertexId;
 	}
 	
 	public String getLocalID() {

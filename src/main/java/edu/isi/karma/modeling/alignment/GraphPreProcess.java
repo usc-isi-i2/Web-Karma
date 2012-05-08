@@ -92,9 +92,13 @@ public class GraphPreProcess {
 				// if it is a subclass link, change the weight to epsilon
 				//if (e.getType() == LinkType.HasSubClass)
 				gPrime.setEdgeWeight(e, GraphBuilder.MIN_WEIGHT);
+				
+				if (target.getNodeType() == NodeType.DataProperty)
+					target.setDomainVertexId(source.getID());
 			}			
 		}
 		
+		// adding the domains of data property nodes to steiner nodes collection
 		// It is possible that some data property nodes have multiple incoming links from 
 		// different instances of the same class. We only keep the one that comes from its domain instance.
 		for (Vertex v: gPrime.vertexSet()) {
@@ -109,10 +113,13 @@ public class GraphPreProcess {
 			LabeledWeightedEdge[] incomingLinks = gPrime.incomingEdgesOf(v).toArray(new LabeledWeightedEdge[0]);
 			if (incomingLinks != null && incomingLinks.length != 0) {
 				
-				if (incomingLinks.length > 1) {  // only for data property nodes who have links from multiple instances of the same class
-					for (int i = 0; i < incomingLinks.length; i++)
-						if (!incomingLinks[i].getSource().getID().equalsIgnoreCase(domainVertexId))
-							gPrime.removeEdge(incomingLinks[i]);
+					for (int i = 0; i < incomingLinks.length; i++) {
+						if (!incomingLinks[i].getSource().getID().equalsIgnoreCase(domainVertexId)) {
+							if (incomingLinks.length > 1)   // only for data property nodes who have links from multiple instances of the same class
+								gPrime.removeEdge(incomingLinks[i]); 
+						}
+						else if (!steinerNodes.contains(incomingLinks[i].getSource()))
+							steinerNodes.add(incomingLinks[i].getSource());
 				}
 			}
 		}
