@@ -105,6 +105,18 @@ public class Alignment {
 				clearUserLink(link.getID());
 		}
 		linksForcedByUser.add(e);
+		logger.info("link " + e.getID() + " has been added to user selected links.");
+	}
+	
+	private void removeInvalidForcedLinks(List<Vertex> dangledVertexList) {
+		LabeledWeightedEdge[] links = linksForcedByUser.toArray(new LabeledWeightedEdge[0]);
+		for (LabeledWeightedEdge link : links) {
+			for (Vertex v : dangledVertexList) {
+				if (link.getTarget().getID().equalsIgnoreCase(v.getID()) || 
+						link.getSource().getID().equalsIgnoreCase(v.getID()))
+					clearUserLink(link.getID());
+			}
+		}
 	}
 	
 	public void addUserLink(String linkId) {
@@ -112,7 +124,6 @@ public class Alignment {
 		for (int i = 0; i < allLinks.length; i++) {
 			if (allLinks[i].getID().equalsIgnoreCase(linkId)) {
 				addToLinksForcedByUserList(allLinks[i]);
-				logger.info("link " + linkId + " has been added to user selected links.");
 				align();
 				return;
 			}
@@ -129,7 +140,6 @@ public class Alignment {
 				if (allLinks[i].getID().equalsIgnoreCase(linkIds.get(j))) {
 					addToLinksForcedByUserList(allLinks[i]);
 					found = true;
-					logger.info("link " + linkIds.get(j) + " has been added to user selected links.");
 				}
 			}
 			if (!found)
@@ -329,6 +339,7 @@ public class Alignment {
 		
 		logger.info("updating link directions ...");
 		TreePostProcess treePostProcess = new TreePostProcess(tree);
+		removeInvalidForcedLinks(treePostProcess.getDangledVertexList());
 		
 		this.steinerTree = treePostProcess.getTree();
 		this.root = treePostProcess.getRoot();

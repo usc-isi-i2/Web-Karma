@@ -35,10 +35,12 @@ public class TreePostProcess {
 
 	private DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree;
 	private Vertex root = null;
+	private List<Vertex> dangledVertexList;
 
 	public TreePostProcess(WeightedMultigraph<Vertex, LabeledWeightedEdge> tree) {
 		
 		this.tree = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>)GraphUtil.asDirectedGraph(tree);
+		dangledVertexList = new ArrayList<Vertex>();
 		selectRoot(findPossibleRoots());
 		updateLinksDirections(this.root, null);
 	}
@@ -53,7 +55,6 @@ public class TreePostProcess {
 		int reachableNodes = -1;
 		
 		List<Vertex> vertexList = new ArrayList<Vertex>();
-		List<Vertex> dangledVertexList = new ArrayList<Vertex>();
 		List<Integer> reachableNodesList = new ArrayList<Integer>();
 		
 		boolean connectedToSemanticType = false;
@@ -153,4 +154,10 @@ public class TreePostProcess {
 	public Vertex getRoot() {
 		return this.root;
 	}
+
+	public List<Vertex> getDangledVertexList() {
+		return dangledVertexList;
+	}
+	
+	
 }
