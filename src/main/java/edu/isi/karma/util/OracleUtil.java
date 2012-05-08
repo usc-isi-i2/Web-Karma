@@ -27,6 +27,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import edu.isi.karma.util.AbstractJDBCUtil.DBType;
+
 public class OracleUtil extends AbstractJDBCUtil {
 	
 	static final String DRIVER = 
@@ -42,6 +44,23 @@ public class OracleUtil extends AbstractJDBCUtil {
 		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
 		Connection conn = getConnection(DRIVER, connectString);
 		
+		ArrayList<String> tableNames = new ArrayList<String>();
+		
+		Statement stmt = conn.createStatement(); 
+	    ResultSet rs = stmt.executeQuery("select object_name from user_objects " +
+	    		"where object_type = 'TABLE'");
+
+	    while (rs.next()) {
+	      String tableName = rs.getString(1);
+	      tableNames.add(tableName);
+	    }
+	    Collections.sort(tableNames);
+		return tableNames;
+	}
+
+	@Override
+	public ArrayList<String> getListOfTables(Connection conn)
+			throws SQLException, ClassNotFoundException {
 		ArrayList<String> tableNames = new ArrayList<String>();
 		
 		Statement stmt = conn.createStatement(); 
@@ -97,6 +116,23 @@ public class OracleUtil extends AbstractJDBCUtil {
 		r.close();
 		s.close();
 		return vals;
+	}
+	
+	@Override
+	public Connection getConnection(String hostname,
+			int portnumber, String username, String password, String dBorSIDName)
+			throws SQLException, ClassNotFoundException {
+		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
+		Connection conn = getConnection(DRIVER, connectString);
+		return conn;
+	}
+
+	@Override
+	public String prepareName(String name) {
+		String s = name;
+		s = name.replace('-', '_');
+		s = "`" + s + "`";
+		return s;
 	}
 
 }

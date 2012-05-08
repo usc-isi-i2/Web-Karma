@@ -111,6 +111,16 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 
 	});
 
+	$("button#publishDatabase").click(function(){
+		optionsDiv.hide();
+		$("div#databaseInfo").show();
+		//getPreferences();
+		var dbDialogBox = $("div#PublishDatabaseDialogBox");
+		// Show the dialog box
+		dbDialogBox.dialog({width: 300
+			, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": publishDatabaseFunction }});
+	});
+
 	$("button#splitByComma").click(function(){
 		optionsDiv.hide();
 		

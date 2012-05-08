@@ -28,21 +28,28 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class AbstractJDBCUtil {
 	
-	
+	private static Logger logger = LoggerFactory
+	.getLogger(AbstractJDBCUtil.class);
+
 	public enum DBType {
-		Oracle, MySQL
+		Oracle, MySQL, SQLServer
 	}
 
 	public abstract ArrayList<String> getListOfTables(DBType dbType,
 			String hostname, int portnumber, String username, String password,
 			String dBorSIDName) throws SQLException, ClassNotFoundException;
 	
+	public abstract ArrayList<String> getListOfTables(Connection conn) throws SQLException, ClassNotFoundException;
+
 	public abstract ArrayList<ArrayList<String>> getDataForTable(DBType dbType,
 			String hostname, int portnumber, String username, String password,
 			String tableName, String dBorSIDName) throws SQLException, ClassNotFoundException;
-	
+
 	public Connection getConnection(String driver, String connectString) throws SQLException, ClassNotFoundException {
 		Connection localConn = null;
 		Class.forName(driver);
@@ -94,4 +101,128 @@ public abstract class AbstractJDBCUtil {
 	public abstract ArrayList<ArrayList<String>> getDataForLimitedRows(DBType dbType,
 			String hostname, int portnumber, String username, String password,
 			String tableName, String dBorSIDName, int rowCount) throws SQLException, ClassNotFoundException;
+
+	//MARIAM
+	
+	public abstract Connection getConnection(String hostname, int portnumber, String username, String password,
+			String dBorSIDName) throws SQLException, ClassNotFoundException;
+	
+	public abstract String prepareName(String name);
+
+	public boolean tableExists(String tableName, Connection conn) throws SQLException, ClassNotFoundException {
+		ArrayList<String> tn = getListOfTables(conn);
+
+		if (tn.contains(tableName)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public ArrayList<String> getColumnNames(String tableName, Connection conn) throws SQLException {
+		ArrayList<String> columnNames = new ArrayList<String>();
+		String query = "select * from " + tableName;
+		if (conn == null)
+			return columnNames;
+		try {
+			Statement s = conn.createStatement();
+			ResultSet r = s.executeQuery(query);
+			ResultSetMetaData meta = null;
+
+			if (r == null) {
+				s.close();
+				return null;
+			}
+
+			meta = r.getMetaData();
+			for (int i = 1; i <= meta.getColumnCount(); i++) {
+				columnNames.add(meta.getColumnName(i));
+			}
+			r.close();
+			s.close();
+		} catch (SQLException e) {
+			throw e;
+		}
+		return columnNames;
+	}
+
+	public ArrayList<String> getColumnTypes(String tableName, Connection conn) throws SQLException {
+		ArrayList<String> columnTypes = new ArrayList<String>();
+		
+		String query = "select * from " + tableName;
+
+		// String res = executeQuery(connectString, query);
+		// logger.debug("RES="+res);
+
+		if (conn == null)
+			return columnTypes;
+		try {
+			Statement s = conn.createStatement();
+			ResultSet r = s.executeQuery(query);
+			ResultSetMetaData meta = null;
+
+			if (r == null) {
+				s.close();
+				return null;
+			}
+
+			meta = r.getMetaData();
+			for (int i = 1; i <= meta.getColumnCount(); i++) {
+				logger.debug("Type= " + meta.getColumnTypeName(i));
+	
+				columnTypes.add(meta.getColumnTypeName(i));
+			}
+			r.close();
+			s.close();
+		} catch (SQLException e) {
+			throw e;		}
+		return columnTypes;
+	}
+
+	// returns true if execute was successful
+	// false otherwise
+	public void execute(Connection conn, String query) throws SQLException {
+
+		if (conn != null) {
+			// logger.debug("query=" + query);
+
+			try {
+				Statement s = conn.createStatement();
+				s.execute(query);
+				s.close();
+			} catch (SQLException e) {
+				logger.error("sendSQL ..." + query);
+				logger.error("MSG=" + e.getMessage());
+				logger.error("STATE=" + e.getSQLState());
+				if (query.startsWith("drop")
+						&& e.getMessage().startsWith("Unknown table")) {
+				} else {
+					throw e;
+				}
+			}
+		}
+	}
+
+	public void executeUpdate(Connection conn, String query) throws SQLException {
+		if (conn != null) {
+			// logger.debug("query=" + query);
+
+			try {
+				Statement s = conn.createStatement();
+				s.executeUpdate(query);
+				s.close();
+			} catch (SQLException e) {
+				if (query.startsWith("insert")
+						&& e.getMessage().startsWith("Duplicate entry")) {
+				} else {
+					logger.debug("sendSQL ..." + query);
+					logger.debug("MSG=" + e.getMessage());
+					logger.debug("STATE=" + e.getSQLState());
+					logger.error("Error occured while executing update!", e);
+					throw e;
+				}
+			}
+		}
+	}
+
+
 }

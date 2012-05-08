@@ -19,49 +19,24 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-function showHideRdfInfo() {
-		if( $("input#saveToRDFStore").is(":checked")) {
-			$("div#rdfStoreInfo").show();
-		}
-		else {
-			$("div#rdfStoreInfo").hide();
-		}
-}
-
-function publishRDFFunction() {
-		$("div#PublishRDFDialogBox").dialog("close");
+function publishDatabaseFunction() {
+		$("div#PublishDatabaseDialogBox").dialog("close");
 
 		var info = new Object();
 		info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "PublishRDFCommand";
-		info["addInverseProperties"] = $("input#addInverseProperties").is(":checked");
-		info["rdfPrefix"] = $("input#rdfPrefix").val();
-		info["saveToStore"] = $("input#saveToStore").is(":checked");
+		info["command"] = "PublishDatabseCommand";
+		info["dbType] = $("select#dbType").val();
 		info["hostName"] = $("input#hostName").val();
 		info["dbName"] = $("input#dbName").val();
 		info["userName"] = $("input#userName").val();
 		info["password"] = $("input#password").val();
-		info["modelName"] = $("input#modelName").val();
+		info["tableName"] = $("input#tableName").val();
+		info["overwriteTable"] = $("input#overwriteTable").is(":checked");
+		info["insertTable"] = $("input#insertTable").is(":checked");
 
-		if( $("input#saveToRDFStore").is(":checked")) {
-			publishRDFToStore(info);
-		}
-		else {
-			publishRDFToFile(info);		
-		}
-}
-
-function publishRDFToFile(info) {
-
-		showLoadingRDF(info["vWorksheetId"],"Saving to file...");
+		showLoadingDatabse(info["vWorksheetId"],"Saving to database...");
 		returnFunc(info);
-}
-
-function publishRDFToStore(info) {
-		
-		showLoadingRDF(info["vWorksheetId"],"Saving to RDF store...");
-		returnFunc(info);		
 }
 
 function returnFunc(info) {
@@ -78,13 +53,13 @@ function returnFunc(info) {
 			   	},
 			error :
 				function (xhr, textStatus) {
-		   			alert("Error occured while generating RDF!" + textStatus);
+		   			alert("Error occured while saving to database!" + textStatus);
 		   			hideLoading(info["vWorksheetId"]);
 			   	}		   
 		});
 }
 
-function showLoadingRDF(worksheetId, message) {
+function showLoadingDatabase(worksheetId, message) {
     var coverDiv = $("<div>").attr("id","WaitingDiv_"+worksheetId).addClass('waitingDiv')
         .append($("<div>").html('<b>'+message+'</b>')
             .append($('<img>').attr("src","images/ajax-loader.gif"))
@@ -99,7 +74,7 @@ function getPreferences() {
 	var info = new Object();
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "FetchPreferencesCommand";
-	info["preferenceCommand"] = "PublishRDFCommand";
+	info["preferenceCommand"] = "PublishDatabaseCommand";
 	var returned = $.ajax({
 	   	url: "/RequestController", 
 	   	type: "POST",
@@ -109,17 +84,16 @@ function getPreferences() {
 	   		function (xhr, textStatus) {
 	   			var json = $.parseJSON(xhr.responseText);
 	    		$.each(json["elements"], function(index, element) {
-	    			if(element["updateType"] == "PublishRDFCommandPreferences") {
+	    			if(element["updateType"] == "PublishDatabaseCommandPreferences") {
 	    				
 	    				if(element["PreferenceValues"]) {
+	    					$("select#dbType").val(element["PreferenceValues"]["dbType"]);
 	    					$("input#hostName").val(element["PreferenceValues"]["hostName"]);
 	    					$("input#dbName").val(element["PreferenceValues"]["dbName"]);
 	    					$("input#userName").val(element["PreferenceValues"]["userName"]);
-	    					$("input#modelName").val(element["PreferenceValues"]["modelName"]);
-	    					$("input#rdfPrefix").val(element["PreferenceValues"]["rdfPrefix"]);
-	    					$("input#saveToRDFStore").val(element["PreferenceValues"]["saveToStore"]);
-	    					$("input#saveToRDFStore").val(element["PreferenceValues"]["saveToStore"]);
-	    					$("input#addInverseProperties").val(element["PreferenceValues"]["addInverseProperties"]);
+	    					$("input#tableName").val(element["PreferenceValues"]["tableName"]);
+	    					$("input#overwriteTable").val(element["PreferenceValues"]["overwriteTable"]);
+	    					$("input#insertTable").val(element["PreferenceValues"]["insertTable"]);
 	    				}
 	    			}
 	    		});

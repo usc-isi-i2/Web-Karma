@@ -35,13 +35,26 @@ public class MySQLUtil extends AbstractJDBCUtil {
 	
 	static final String CONNECT_STRING_TEMPLATE = 
 		"jdbc:mysql://host:port/dbname?user=username&password=pwd";
-	
+		
 	@Override
 	public ArrayList<String> getListOfTables(DBType dbType, String hostname,
 			int portnumber, String username, String password, String dBorSIDName) 
 			throws SQLException, ClassNotFoundException {
 		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
 		Connection conn = getConnection(DRIVER, connectString);
+		
+		ArrayList<String> tableNames = new ArrayList<String>();
+		DatabaseMetaData dmd = conn.getMetaData();
+		ResultSet rs = dmd.getTables(null, null, null, new String[] {"TABLE"});
+		while (rs.next())
+			tableNames.add(rs.getString(3));
+		Collections.sort(tableNames);
+		return tableNames;
+	}
+
+	@Override
+	public ArrayList<String> getListOfTables(Connection conn) 
+			throws SQLException, ClassNotFoundException {
 		
 		ArrayList<String> tableNames = new ArrayList<String>();
 		DatabaseMetaData dmd = conn.getMetaData();
@@ -92,5 +105,22 @@ public class MySQLUtil extends AbstractJDBCUtil {
 		r.close();
 		s.close();
 		return vals;
+	}
+
+	@Override
+	public Connection getConnection(String hostname,
+			int portnumber, String username, String password, String dBorSIDName)
+			throws SQLException, ClassNotFoundException {
+		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
+		Connection conn = getConnection(DRIVER, connectString);
+		return conn;
+	}
+
+	@Override
+	public String prepareName(String name) {
+		String s = name;
+		s = name.replace('-', '_');
+		s = "`" + s + "`";
+		return s;
 	}
 }

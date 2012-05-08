@@ -73,6 +73,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<script type="text/javascript" src="js/commandHistory.js"></script>
 		<script type="text/javascript" src="js/tableWorkspace.js"></script>
 		<script type="text/javascript" src="js/publishRDF.js"></script>
+		<script type="text/javascript" src="js/publishDatabase.js"></script>
 		<script type="text/javascript" src="js/pager.js"></script>
 		<script type="text/javascript" src="js/geospatial.js"></script>
 		<script type="text/javascript" src="js/databaseImportDialog.js"></script>
@@ -472,6 +473,7 @@ and related projects, please see: http://www.isi.edu/integration
 			<button href="#" id="resetModel">Reset Model</button>
 			<button href="#" id="splitByComma">Split Column By Comma</button>
 			<button href="#" id="publishRDF">Publish RDF</button>
+			<button href="#" id="publishDatabase">Publish Database</button>
 			<button href="#" id="populateSource">Populate Source</button>
 			<button href="#" id="publishServiceModel">Publish Model</button>
 		</div>
@@ -562,6 +564,48 @@ and related projects, please see: http://www.isi.edu/integration
 			</tr>
 			</table>
 			</div>
+			<br />
+		</div>
+		<div id="PublishDatabaseDialogBox" style="display: none">
+			<div class="smallSizedFont" id="databaseInfo">
+			<table>
+			<tr>
+				<td>DB Type</td>
+				<td>Host Name:Port</td>
+			</tr>
+			<tr>
+			<td>
+				<select id="dbType" maxlength="100" size="20">
+				  	<option selected>MySQL</option>
+				  	<option>SQLServer</option>
+				</select>
+			</td>
+			<td><input type="text" id="hostName" value="localhost:3306" maxlength="100" size="20"/></td>
+			</tr>
+			<tr>
+				<td>Database Name</td>
+				<td>Table Name</td>
+			</tr>
+			<tr>
+				<td><input type="text" id="dbName" value= "" maxlength="100" size="20"/></td>
+				<td><input type="text" id="TableName" value="" maxlength="100" size="20"/></td>
+			</tr>
+			<tr>
+				<td>User Name</td>
+				<td>Password</td>
+			</tr>
+			<tr>
+				<td><input type="text" id="userName" value="root" maxlength="100" size="20"/></td>
+				<td><input type="password" id="password" value="" maxlength="100" size="20"/></td>
+			</tr>
+			</table>
+			</div>
+			<br><br>
+			<input type="checkbox" id="overwriteTable" />
+			<label for="overwriteTable" class="smallSizedFont">Overwrite Table</label>
+			<br><br>
+			<input type="checkbox" id="insertTable" />
+			<label for="insertTable" class="smallSizedFont">Insert in Table</label>
 			<br />
 		</div>
 		<div id="ColumnCleaningPanel" style="display: none">
