@@ -73,6 +73,7 @@ public class InvocationManager {
 		
 		logger.info("Integrating the results of all invocations ...");
 		Table result = Table.union(invocationData);
+		logger.info("Integrating finished.");
 		this.serviceData = result;
 	}
 	
