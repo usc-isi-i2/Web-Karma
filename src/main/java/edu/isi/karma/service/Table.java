@@ -177,12 +177,15 @@ public class Table {
 			for (Attribute p : rawAttributes)
 				rawAttributeIDs.add(p.getId());
 			
+//			logger.debug("table " + i);
 			for (int j = 0; j < srcValues.get(i).size(); j++) {
 				
 				List<String> populatedValues = new ArrayList<String>();
 				rawValues = srcValues.get(i).get(j);
 				
+//				logger.debug("\t row " + j);
 				for (int k = 0; k < resultAttributes.size(); k++) {
+//					logger.debug("\t\t column " + k);
 					int index = rawAttributeIDs.indexOf(resultAttributes.get(k).getId());
 					if (index == -1)
 						singleValue = null;

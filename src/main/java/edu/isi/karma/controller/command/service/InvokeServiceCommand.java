@@ -98,7 +98,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			invocatioManager = new InvocationManager(requestIds, requestURLStrings);
 			logger.info("Requesting data with includeURL=" + false + ",includeInput=" + true + ",includeOutput=" + true);
 			Table serviceTable = invocatioManager.getServiceData(false, true, true);
-			logger.debug(serviceTable.getPrintInfo());
+//			logger.debug(serviceTable.getPrintInfo());
 			ServiceTableUtil.populateWorksheet(serviceTable, wk, ws.getFactory());
 			
 			Service service = invocatioManager.getInitialServiceModel(null);

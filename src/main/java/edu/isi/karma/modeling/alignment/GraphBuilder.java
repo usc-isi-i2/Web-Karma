@@ -472,7 +472,7 @@ public class GraphBuilder {
 		Vertex newNode = new Vertex(id, ontologyManager.getNameFromURI(label), node.getNodeType());
 		
 		this.graph.addVertex(newNode);
-		
+	
 		return newNode;
 	}
 	
@@ -518,7 +518,7 @@ public class GraphBuilder {
 		for (int k = 0; k < objectProperties.size(); k++) {
 			label = objectProperties.get(k);
 			id = createLinkID(label);
-			LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getNameFromURI(label), LinkType.DataProperty);
+			LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getNameFromURI(label), LinkType.ObjectProperty);
 			this.graph.addEdge(s, t, e);
 			this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
 		}
