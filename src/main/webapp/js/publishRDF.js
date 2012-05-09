@@ -95,7 +95,7 @@ function showLoadingRDF(worksheetId, message) {
         "width": spaceToCoverDiv.width(), "top":spaceToCoverDiv.position().top, "left":spaceToCoverDiv.position().left}).show());
 }
 
-function getPreferences() {
+function getRDFPreferences() {
 	var info = new Object();
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "FetchPreferencesCommand";

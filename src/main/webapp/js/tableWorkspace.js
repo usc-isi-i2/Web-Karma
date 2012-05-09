@@ -103,7 +103,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	$("button#publishRDF").click(function(){
 		optionsDiv.hide();
 		showHideRdfInfo();
-		getPreferences();
+		getRDFPreferences();
 		var rdfDialogBox = $("div#PublishRDFDialogBox");
 		// Show the dialog box
 		rdfDialogBox.dialog({width: 300
@@ -113,8 +113,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 
 	$("button#publishDatabase").click(function(){
 		optionsDiv.hide();
-		$("div#databaseInfo").show();
-		//getPreferences();
+		getDatabasePreferences();
 		var dbDialogBox = $("div#PublishDatabaseDialogBox");
 		// Show the dialog box
 		dbDialogBox.dialog({width: 300

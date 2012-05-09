@@ -28,7 +28,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class MySQLUtil extends AbstractJDBCUtil {
+
+	private static Logger logger = LoggerFactory
+	.getLogger(MySQLUtil.class);
 
 	static final String DRIVER = 
 		"com.mysql.jdbc.Driver";
@@ -107,11 +113,14 @@ public class MySQLUtil extends AbstractJDBCUtil {
 		return vals;
 	}
 
+	//mariam
+	
 	@Override
 	public Connection getConnection(String hostname,
 			int portnumber, String username, String password, String dBorSIDName)
 			throws SQLException, ClassNotFoundException {
 		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
+		logger.debug("Connect to:" + hostname + ":" +portnumber + "/" + dBorSIDName);
 		Connection conn = getConnection(DRIVER, connectString);
 		return conn;
 	}

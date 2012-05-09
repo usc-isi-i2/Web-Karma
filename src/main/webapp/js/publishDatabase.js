@@ -25,17 +25,18 @@ function publishDatabaseFunction() {
 		var info = new Object();
 		info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "PublishDatabseCommand";
-		info["dbType] = $("select#dbType").val();
-		info["hostName"] = $("input#hostName").val();
-		info["dbName"] = $("input#dbName").val();
-		info["userName"] = $("input#userName").val();
-		info["password"] = $("input#password").val();
+		info["command"] = "PublishDatabaseCommand";
+		info["dbType"] = $("select#dbType").val();
+		info["hostName"] = $("input#hostName1").val();
+		info["dbName"] = $("input#dbName1").val();
+		info["userName"] = $("input#userName1").val();
+		info["password"] = $("input#password1").val();
 		info["tableName"] = $("input#tableName").val();
+		info["port"] = $("input#port").val();
 		info["overwriteTable"] = $("input#overwriteTable").is(":checked");
 		info["insertTable"] = $("input#insertTable").is(":checked");
 
-		showLoadingDatabse(info["vWorksheetId"],"Saving to database...");
+		showLoadingDatabase(info["vWorksheetId"],"Saving to database...");
 		returnFunc(info);
 }
 
@@ -70,7 +71,7 @@ function showLoadingDatabase(worksheetId, message) {
         "width": spaceToCoverDiv.width(), "top":spaceToCoverDiv.position().top, "left":spaceToCoverDiv.position().left}).show());
 }
 
-function getPreferences() {
+function getDatabasePreferences() {
 	var info = new Object();
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "FetchPreferencesCommand";
@@ -88,10 +89,11 @@ function getPreferences() {
 	    				
 	    				if(element["PreferenceValues"]) {
 	    					$("select#dbType").val(element["PreferenceValues"]["dbType"]);
-	    					$("input#hostName").val(element["PreferenceValues"]["hostName"]);
-	    					$("input#dbName").val(element["PreferenceValues"]["dbName"]);
-	    					$("input#userName").val(element["PreferenceValues"]["userName"]);
+	    					$("input#hostName1").val(element["PreferenceValues"]["hostName"]);
+	    					$("input#dbName1").val(element["PreferenceValues"]["dbName"]);
+	    					$("input#userName1").val(element["PreferenceValues"]["userName"]);
 	    					$("input#tableName").val(element["PreferenceValues"]["tableName"]);
+	    					$("input#port").val(element["PreferenceValues"]["port"]);
 	    					$("input#overwriteTable").val(element["PreferenceValues"]["overwriteTable"]);
 	    					$("input#insertTable").val(element["PreferenceValues"]["insertTable"]);
 	    				}

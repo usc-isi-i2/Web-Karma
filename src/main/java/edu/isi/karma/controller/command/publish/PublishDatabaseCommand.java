@@ -83,7 +83,6 @@ public class PublishDatabaseCommand extends Command {
 		this.dbName=dbName;
 		this.userName=userName;
 		this.password=password;
-		this.tableName=tableName;
 		this.port=port;
 		this.overwrite = Boolean.valueOf(overwrite);
 		this.insert = Boolean.valueOf(insert);
@@ -92,7 +91,8 @@ public class PublishDatabaseCommand extends Command {
 		if(dbTypeStr.equals("SQLServer"))
 			dbType = AbstractJDBCUtil.DBType.SQLServer;
 		dbUtil = JDBCUtilFactory.getInstance(dbType);
-		tableName = dbUtil.prepareName(tableName);
+		logger.info("host=" + hostName);
+		this.tableName = tableName;
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class PublishDatabaseCommand extends Command {
 
 	@Override
 	public String getDescription() {
-		return null;
+		return tableName;
 	}
 
 	@Override
@@ -128,29 +128,37 @@ public class PublishDatabaseCommand extends Command {
 		try{
 			conn = dbUtil.getConnection(hostName, Integer.valueOf(port).intValue(), userName, password, dbName);
 
+			//get a map of corresponding hNodeIds with their semantic types
 			Map<String,String> colNamesMap = getDbColumnNames(worksheet);
 			Collection<String> colNames = colNamesMap.values();
+			if(colNames.isEmpty()){
+				//no columns were modeled
+				return new UpdateContainer(new ErrorUpdate("Please align the worksheet before saving."));				
+			}
 			
 			//see if table exists
 			if (dbUtil.tableExists(tableName, conn)) {
 				if(!overwrite && !insert){
 					if(conn!=null)
 						conn.close();
-					return new UpdateContainer(new InfoUpdate(
+					return new UpdateContainer(new ErrorUpdate(
 					"Table exists! Please check one of \"Overwrite Table\" or \"Insert in Table\"."));					
 				}
 				else if(overwrite){
+					logger.info("Overwrite table: " + tableName);
 					//delete old table & create a new table
 					dropTable(tableName,conn);
 					createTable(tableName, colNames, conn);
 					insertInTable(worksheet, tableName, colNamesMap,conn);
 				}
 				else if(insert){
+					logger.info("Insert in table: " + tableName);
 					//insert in existing table
 					insertInTable(worksheet, tableName, colNamesMap,conn);
 				}
 			}
 			else{
+				logger.info("Create new table: " + tableName);
 				//create a new table
 				createTable(tableName, colNames, conn);
 				insertInTable(worksheet, tableName, colNamesMap,conn);
@@ -186,6 +194,8 @@ public class PublishDatabaseCommand extends Command {
 
 	//column names are the semantic types
 	private void createTable(String tableName, Collection<String> colNames,Connection conn) throws SQLException{
+		//add escaping in case we have unusual chars
+		tableName=dbUtil.prepareName(tableName);
 		// create the table
 		String createQ = "create table " + tableName + "(";
 		int i=0;
@@ -197,12 +207,14 @@ public class PublishDatabaseCommand extends Command {
 		}
 		createQ += ")";
 
-		// logger.debug("createQ " + createQ);
+		logger.debug("createQ " + createQ);
 
 		dbUtil.execute(conn, createQ);		
 	}
 	
 	private void dropTable(String tableName, Connection conn) throws SQLException{
+		//add escaping in case we have unusual chars
+		tableName=dbUtil.prepareName(tableName);
 		String dropQ = "drop table " + tableName;
 		dbUtil.execute(conn, dropQ);		
 	}
@@ -240,6 +252,9 @@ public class PublishDatabaseCommand extends Command {
 	private String insertInTableRow(Row r, String tableName,
 			Map<String, String> colNamesMap, Map<String, String> colTypesMap) {
 
+		//add escaping in case we have unusual chars
+		tableName=dbUtil.prepareName(tableName);
+
 		String colNames = "";
 		String colValues = "";
 		boolean firstCol=true;
@@ -271,9 +286,9 @@ public class PublishDatabaseCommand extends Command {
 			firstCol=false;
 		}
 
-		String insertQ="insert into table " + tableName + "(" + colNames + ") values (" + colValues + ")";
+		String insertQ="insert into " + tableName + "(" + colNames + ") values (" + colValues + ")";
 		
-		logger.info("insertQ=" + insertQ);
+		//logger.info("insertQ=" + insertQ);
 		
 		return insertQ;
 	}
@@ -297,7 +312,7 @@ public class PublishDatabaseCommand extends Command {
 	}
 	
 	private boolean isDbTypeString(String type){
-		if(type.contains("varchar") || type.contains("bit"))
+		if(type.toLowerCase().contains("varchar") || type.toLowerCase().contains("bit"))
 			return true;
 		return false;
 	}
@@ -314,6 +329,8 @@ public class PublishDatabaseCommand extends Command {
 		Map<String, SemanticType> st = w.getSemanticTypes().getTypes();
 		for(Map.Entry<String, SemanticType> e: st.entrySet()){
 			String type = e.getValue().getType();
+			int index = type.indexOf("#");
+				type=type.substring(index+1);
 			if(duplicates.add(type)){
 				//not a duplicate
 				result.put(e.getKey(),type);

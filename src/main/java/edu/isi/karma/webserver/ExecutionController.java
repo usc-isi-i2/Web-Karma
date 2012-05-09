@@ -85,6 +85,8 @@ import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommandFactory;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommand;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommandFactory;
+import edu.isi.karma.controller.command.publish.PublishDatabaseCommand;
+import edu.isi.karma.controller.command.publish.PublishDatabaseCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommand;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishRDFCellCommand;
@@ -173,6 +175,8 @@ public class ExecutionController {
 				new ImportExcelFileCommandFactory());
 		commandFactoryMap.put(PublishRDFCommand.class.getSimpleName(),
 				new PublishRDFCommandFactory());
+		commandFactoryMap.put(PublishDatabaseCommand.class.getSimpleName(),
+				new PublishDatabaseCommandFactory());
 		commandFactoryMap.put(AddNewColumnCommand.class.getSimpleName(),
 				new AddNewColumnCommandFactory());
 		commandFactoryMap.put(PublishRDFCellCommand.class.getSimpleName(),
