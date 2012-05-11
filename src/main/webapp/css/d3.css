@@ -1,0 +1,50 @@
+text {
+	font-size:12px;
+	color: black;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1px;
+}
+
+rect {
+  fill: white;
+  stroke: black;
+  stroke-width: 1.0;
+  fill-opacity:0.80;
+}
+
+g.DataProperty rect{
+	fill:black;
+}
+
+g.Class rect {
+	fill: #D3D3D3;
+	z-index: 1;
+}
+
+g.DataProperty:hover {
+	cursor: pointer;
+}
+
+g.Unassigned:hover {
+	cursor: pointer;
+}
+
+g.Unassigned rect {
+	fill: red;
+	stroke: red;
+}
+
+text.LinkLabel:hover {
+	cursor: pointer;
+}
+
+g.Class.highlightOverlay rect{
+	fill: #9C9C9C;
+	stroke: black;
+	z-index:10;
+	stroke-width : 2px;
+}

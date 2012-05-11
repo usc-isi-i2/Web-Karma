@@ -103,7 +103,8 @@ public class ResetModelCommand extends Command {
 		//System.out.println("OLD TYPES=" + oldTypes.getTypes());
 		
 		//save old alignment for undo operation
-		alignmentId = vWorkspace.getWorkspace().getId() + ":" + vWorksheetId + "AL";
+//		alignmentId = vWorkspace.getWorkspace().getId() + ":" + vWorksheetId + "AL";
+		alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
 		oldAlignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		
 		// Remove the nodes (if any) from the outlier tag

@@ -20,30 +20,21 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.update.AbstractUpdate;
-import edu.isi.karma.controller.update.AlignmentHeadersUpdate;
+import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rdf.WorksheetRDFGenerator;
-import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.rep.semantictypes.SemanticTypes;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.view.alignmentHeadings.AlignmentForest;
 import edu.isi.karma.webserver.KarmaException;
 
 public class AlignToOntology {
@@ -51,7 +42,7 @@ public class AlignToOntology {
 	private VWorkspace vWorkspace;
 	private final String vWorksheetId;
 	
-	private static Logger logger = LoggerFactory.getLogger(AlignToOntology.class);
+//	private static Logger logger = LoggerFactory.getLogger(AlignToOntology.class);
 	
 	public AlignToOntology(Worksheet worksheet, VWorkspace vWorkspace,
 			String vWorksheetId) {
@@ -75,76 +66,28 @@ public class AlignToOntology {
 			alignment = getNewAlignment();
 		}
 
-		// Get the list of sorted column names
-		List<HNode> sortedHeaderNodes = new ArrayList<HNode>(); 
-		worksheet.getHeaders().getSortedLeafHNodes(sortedHeaderNodes);
-		
 		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
 				.getSteinerTree();
-		//GraphUtil.printGraph(tree);
 		Vertex root = alignment.GetTreeRoot();
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		
+		List<String> hNodeIdList = new ArrayList<String>();
+		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+		List<HNodePath> columns = vw.getColumns();
+		for(HNodePath path:columns)
+			hNodeIdList.add(path.getLeaf().getId());
 
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(
-				vWorksheetId);
-
+		SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, tree, root, hNodeIdList);
+		
 		if (root != null) {
-			//mariam
+			// mariam
 			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, tree, root);
-			/////////////////////////
-			
-			// Convert the tree into a AlignmentForest			
-			AlignmentForest forest = AlignmentForest.constructFromSteinerTree(
-					tree, root, sortedHeaderNodes);
-			AlignmentHeadersUpdate alignmentUpdate = new AlignmentHeadersUpdate(
-					forest, vWorksheetId, alignmentId);
-
-			// Create new vWorksheet using the new header order for flat sources
-			if(!worksheet.getHeaders().hasNestedTables()) {
-				List<HNodePath> columnPaths = new ArrayList<HNodePath>();
-				List<HNodePath> existingPaths = worksheet.getHeaders().getAllPaths();
-				for (HNode node : sortedHeaderNodes) {
-					for(HNodePath path:existingPaths){
-						if(path.getLeaf().getId().equals(node.getId())) {
-							columnPaths.add(path);
-							break;
-						}
-					}
-				}
-				vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
-						worksheet, columnPaths, vWorkspace);
-				vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-			}
-			
-			
-			// Debug
-			 GraphUtil.printGraph(tree);
-			
-			c.add(alignmentUpdate);
-			vw.update(c);
-			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
-		} else {
-			// Add an empty alignment headers update
-			c.add(new AbstractUpdate() {
-				@Override
-				public void generateJson(String prefix, PrintWriter pw,
-						VWorkspace vWorkspace) {
-					JSONObject obj = new JSONObject();
-					JSONArray emptyEdgesArray = new JSONArray();
-	
-					try {
-						obj.put(AbstractUpdate.GenericJsonKeys.updateType.name(), AlignmentHeadersUpdate.class.getSimpleName());
-						obj.put(AlignmentHeadersUpdate.JsonKeys.worksheetId.name(), vWorksheetId);
-						obj.put(AlignmentHeadersUpdate.JsonKeys.alignmentId.name(), alignmentId);
-						obj.put(AlignmentHeadersUpdate.JsonKeys.rows.name(), emptyEdgesArray);
-						pw.println(obj.toString());
-					} catch (JSONException e) {
-						logger.error("Error generating JSON!");
-					}
-				}
-			});
-			logger.error("Alignment returned null root!");
 		}
+		// Debug
+		GraphUtil.printGraph(tree);
+		
+		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+		c.add(svgUpdate);
 	}
 
 	private Alignment getNewAlignment() {

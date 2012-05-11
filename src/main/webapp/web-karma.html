@@ -45,7 +45,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<link rel="stylesheet" type="text/css" href="./css/sticky.min.css" />
 		<link rel="stylesheet" type="text/css" href="./css/cleaning.css" />
 		<link rel="stylesheet" type="text/css" href="./css/alignment.css" />
-<!-- 		<link rel="stylesheet" type="text/css" href="./css/d3.css" /> -->
+		<link rel="stylesheet" type="text/css" href="./css/d3.css" />
 <!-- 		<link rel="stylesheet" type="text/css" href="./css/jquery.autocomplete.css" /> -->
 		
 		
@@ -64,7 +64,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<script type="text/javascript" src="js/jquery.jeditable.js"></script>
 		<script type="text/javascript" src="js/json2.js"></script>
 		<script type="text/javascript" src="js/jquery.cookie.js"></script>
-<!-- 		<script type="text/javascript" src="js/d3.v2.min.js"></script> -->
+		<script type="text/javascript" src="js/d3.v2.min.js"></script>
 <!-- 		<script type="text/javascript" src="js/jquery.autocomplete.js"></script> -->
 		
 		<!-- Home grown JavaScript files -->
@@ -81,6 +81,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<script type="text/javascript" src="js/csvImport.js"></script>
 		<script type="text/javascript" src="js/cleaning.js"></script>
 		<script type="text/javascript" src="js/services.js"></script>
+		<script type="text/javascript" src="js/d3-alignment-vis.js"></script>
 		
 		<script type="text/javascript">
 			/* Load and parse initial JSON */
@@ -216,9 +217,9 @@ and related projects, please see: http://www.isi.edu/integration
 				        var scroll = $(window).scrollTop();
 						var x = 0 - $(this).scrollLeft();
 						
-						$.each($("div.TableDiv"), function(index, tableDivElement){
+						$.each($("table.WorksheetTable"), function(index, tableDivElement){
 							var anchor_top = $(tableDivElement).offset().top;
-							var tableID = $("table", tableDivElement).attr("id");
+							var tableID = $(this).attr("id");
 							var anchor_bottom = $("div#" + tableID + "bottomAnchor").offset().top;
 							
 							if(scroll > anchor_bottom)

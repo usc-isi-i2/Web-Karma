@@ -21,7 +21,6 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -137,12 +136,6 @@ public class SetSemanticTypeCommand extends Command {
 		Collection<String> columnNameList = new ArrayList<String>();
 		columnNameList.add(columnName);
 		columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
-
-		// // Prepare the worksheet name for training
-		// String tableName = worksheet.getTitle();
-		// Collection<String> tableNameList = new ArrayList<String>();
-		// tableNameList.add(tableName);
-		// columnFeatures.put(ColumnFeature.TableName, tableNameList);
 
 		// Calculating the time required for training the semantic type
 

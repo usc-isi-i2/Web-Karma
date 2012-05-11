@@ -42,7 +42,7 @@ public class TreePostProcess {
 		this.tree = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>)GraphUtil.asDirectedGraph(tree);
 		dangledVertexList = new ArrayList<Vertex>();
 		selectRoot(findPossibleRoots());
-		updateLinksDirections(this.root, null);
+//		updateLinksDirections(this.root, null);
 	}
 	
 	
@@ -107,6 +107,7 @@ public class TreePostProcess {
 		this.root = possibleRoots.get(0);
 	}
 	
+	/*
 	private void updateLinksDirections(Vertex root, LabeledWeightedEdge e) {
 		
 		if (root == null)
@@ -146,6 +147,7 @@ public class TreePostProcess {
 			updateLinksDirections(target, outgoingLinks[i]);
 		}
 	}
+	*/
 	
 	public DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getTree() {
 		return this.tree;
