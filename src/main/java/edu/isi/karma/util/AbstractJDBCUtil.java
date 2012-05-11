@@ -40,15 +40,19 @@ public abstract class AbstractJDBCUtil {
 		Oracle, MySQL, SQLServer
 	}
 
+	protected abstract String getDriver();
+	protected abstract String getConnectStringTemplate();
+	public abstract String prepareName(String name);
+	public abstract ArrayList<ArrayList<String>> getDataForLimitedRows(DBType dbType,
+			String hostname, int portnumber, String username, String password,
+			String tableName, String dBorSIDName, int rowCount) throws SQLException, ClassNotFoundException;
+
+
 	public abstract ArrayList<String> getListOfTables(DBType dbType,
 			String hostname, int portnumber, String username, String password,
 			String dBorSIDName) throws SQLException, ClassNotFoundException;
 	
 	public abstract ArrayList<String> getListOfTables(Connection conn) throws SQLException, ClassNotFoundException;
-
-	public abstract ArrayList<ArrayList<String>> getDataForTable(DBType dbType,
-			String hostname, int portnumber, String username, String password,
-			String tableName, String dBorSIDName) throws SQLException, ClassNotFoundException;
 
 	public Connection getConnection(String driver, String connectString) throws SQLException, ClassNotFoundException {
 		Connection localConn = null;
@@ -57,6 +61,41 @@ public abstract class AbstractJDBCUtil {
 		return localConn;
 	}
 	
+
+	public Connection getConnection(String hostname,
+			int portnumber, String username, String password, String dBorSIDName)
+			throws SQLException, ClassNotFoundException {
+		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
+		logger.debug("Connect to:" + hostname + ":" +portnumber + "/" + dBorSIDName);
+		logger.info("Conn string:"+ connectString);
+		Connection conn = getConnection(getDriver(), connectString);
+		return conn;
+	}
+	
+	protected String getConnectString (String hostname, int portnumber, String username, String password, String dBorSIDName) {
+		String connectString = getConnectStringTemplate();
+		connectString = connectString.replaceAll("host", hostname);
+		connectString = connectString.replaceAll("port", Integer.toString(portnumber));
+		connectString = connectString.replaceAll("dbname", dBorSIDName);
+		connectString = connectString.replaceAll("username", username);
+		//passwords could have special chars that are not being handles properly in 
+		//reg expr; so for pwd do the replace differently
+		int pwdInd = connectString.indexOf("pwd");
+		if(pwdInd>=0){
+			connectString = connectString.substring(0,pwdInd)+password+connectString.substring(pwdInd+3);
+		}
+		return connectString;
+	}
+
+	public ArrayList<ArrayList<String>> getDataForTable(DBType dbType, String hostname,
+			int portnumber, String username, String password, String tableName, String dBorSIDName)
+			throws SQLException, ClassNotFoundException {
+		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
+		Connection conn = getConnection(getDriver(), connectString);
+		
+		return getDataForTable(conn, tableName);
+	}
+
 	public ArrayList<ArrayList<String>> getDataForTable(Connection conn, String tableName) throws SQLException {
 		String query = "SELECT * FROM " + tableName;
 		Statement s = conn.createStatement();
@@ -97,18 +136,6 @@ public abstract class AbstractJDBCUtil {
 		}
 		return vals;
 	}
-
-	public abstract ArrayList<ArrayList<String>> getDataForLimitedRows(DBType dbType,
-			String hostname, int portnumber, String username, String password,
-			String tableName, String dBorSIDName, int rowCount) throws SQLException, ClassNotFoundException;
-
-	//MARIAM
-	
-	public abstract Connection getConnection(String hostname, int portnumber, String username, String password,
-			String dBorSIDName) throws SQLException, ClassNotFoundException;
-	
-	public abstract String prepareName(String name);
-
 	public boolean tableExists(String tableName, Connection conn) throws SQLException, ClassNotFoundException {
 		ArrayList<String> tn = getListOfTables(conn);
 
@@ -223,6 +250,5 @@ public abstract class AbstractJDBCUtil {
 			}
 		}
 	}
-
 
 }

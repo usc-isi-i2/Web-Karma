@@ -70,7 +70,7 @@ public class PublishDatabaseCommand extends Command {
 			.getLogger(PublishDatabaseCommand.class);
 
 	public enum PreferencesKeys {
-		dbTypeStr, dbName, hostName, userName, tableName,port, overwriteTable, insertTable
+		dbType, dbName, hostName, userName, tableName,port, overwriteTable, insertTable
 	}
 
 	protected PublishDatabaseCommand(String id, String vWorksheetId,
@@ -188,6 +188,7 @@ public class PublishDatabaseCommand extends Command {
 			if(conn!=null)
 				conn.close();
 			}catch(SQLException ex){}
+			e.printStackTrace();
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}
 	}
@@ -293,18 +294,6 @@ public class PublishDatabaseCommand extends Command {
 		return insertQ;
 	}
 
-	/*
-	private String prepareColumnName(String name) {
-		String s = name;
-		s = name.replace('-', '_');
-		if(dbType.equals("MYSQL"))
-			s = "`" + s + "`";
-		else if(dbType.equals("SQLServer"))
-			s = "[" + s + "]";
-		return s;
-	}
-	*/
-	
 	// for now everything is a string
 	private String getDbType(String semType) {
 		String dbType = "VARCHAR(1000)";
@@ -346,7 +335,7 @@ public class PublishDatabaseCommand extends Command {
 	private void savePreferences(VWorkspace vWorkspace){
 		try{
 			JSONObject prefObject = new JSONObject();
-			prefObject.put(PreferencesKeys.dbTypeStr.name(), dbTypeStr);
+			prefObject.put(PreferencesKeys.dbType.name(), dbTypeStr);
 			prefObject.put(PreferencesKeys.dbName.name(), dbName);
 			prefObject.put(PreferencesKeys.hostName.name(), hostName);
 			prefObject.put(PreferencesKeys.tableName.name(), tableName);
