@@ -49,6 +49,9 @@ import edu.isi.karma.view.VWorkspace;
 
 public class PublishDatabaseCommand extends Command {
 	private final String vWorksheetId;
+	/**
+	 * one of MySQL, SQLServer, Oracle
+	 */
 	private String dbTypeStr;
 	private String hostName;
 	private String port;
@@ -56,6 +59,9 @@ public class PublishDatabaseCommand extends Command {
 	private String userName;
 	private String password;
 	private String tableName;
+	/**
+	 * drop table; create new table;
+	 */
 	private boolean overwrite;
 	private boolean insert;
 	private AbstractJDBCUtil.DBType dbType;
@@ -92,7 +98,6 @@ public class PublishDatabaseCommand extends Command {
 		if(dbTypeStr.equals("SQLServer"))
 			dbType = AbstractJDBCUtil.DBType.SQLServer;
 		dbUtil = JDBCUtilFactory.getInstance(dbType);
-		logger.info("host=" + hostName);
 		this.tableName = tableName;
 	}
 
@@ -126,6 +131,7 @@ public class PublishDatabaseCommand extends Command {
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
+		//for now don't save a nested table (we may want to save it as multiple tables with foreign keys)
 		if (worksheet.getHeaders().hasNestedTables()) {
 			return new UpdateContainer(new ErrorUpdate("Saving of nested tables not supported!"));				
 		}
@@ -135,8 +141,11 @@ public class PublishDatabaseCommand extends Command {
 			conn = dbUtil.getConnection(hostName, Integer.valueOf(port).intValue(), userName, password, dbName);
 
 			//get a map of corresponding hNodeIds with their semantic types
+			//if more than one sem type with same name append indices
 			Map<String,String> colNamesMap = getDbColumnNames(worksheet);
+			//all semanticTypes
 			Collection<String> colNames = colNamesMap.values();
+			//ONLY columns with given semantic types will be saved; unassigned columns are ignored
 			if(colNames.isEmpty()){
 				//no columns were modeled
 				return new UpdateContainer(new ErrorUpdate("Please align the worksheet before saving."));				
@@ -202,6 +211,13 @@ public class PublishDatabaseCommand extends Command {
 	}
 
 	//column names are the semantic types
+	/**
+	 * Create a table given the list of column names; all types are VARCHAR.
+	 * @param tableName
+	 * @param colNames
+	 * @param conn
+	 * @throws SQLException
+	 */
 	private void createTable(String tableName, Collection<String> colNames,Connection conn) throws SQLException{
 		//add escaping in case we have unusual chars
 		tableName=dbUtil.prepareName(tableName);
@@ -209,6 +225,7 @@ public class PublishDatabaseCommand extends Command {
 		String createQ = "create table " + tableName + "(";
 		int i=0;
 		for(String semType: colNames){
+			//for now always VARCHAR
 			String dbType = getDbType(semType);
 			if (i++ > 0)
 				createQ += ",";
@@ -221,6 +238,12 @@ public class PublishDatabaseCommand extends Command {
 		dbUtil.execute(conn, createQ);		
 	}
 	
+	/**
+	 * Drop the given table.
+	 * @param tableName
+	 * @param conn
+	 * @throws SQLException
+	 */
 	private void dropTable(String tableName, Connection conn) throws SQLException{
 		//add escaping in case we have unusual chars
 		tableName=dbUtil.prepareName(tableName);
@@ -228,11 +251,23 @@ public class PublishDatabaseCommand extends Command {
 		dbUtil.execute(conn, dropQ);		
 	}
 	
+	/**
+	 * Inserts the worksheet data in the DB table.
+	 * @param w
+	 * @param tableName
+	 * @param colNamesMap
+	 * 	key=hNodeId; val=column name (same as semantic type for this column)
+	 * @param conn
+	 * @return
+	 * 		number of rows not inserted. A row is not inserted if we have a type mismatch.
+	 * @throws SQLException
+	 */
 	private int insertInTable(Worksheet w, String tableName, Map<String, String> colNamesMap,Connection conn) throws SQLException{
 		int numOfRowsNotInserted = 0;
 		//get col names for existing table
 		//some databases are case sensitive when referring to column/table names, so we have
 		//to use the "real" case in the queries
+		//I don't do this check for now; not sure for which DBs it is required
 		ArrayList<String> existingColNames = dbUtil.getColumnNames(tableName, conn);
 		ArrayList<String> existingColTypes = dbUtil.getColumnTypes(tableName, conn);
 		//add in the insert only values for these columns; other columns do not exist in the remote table
@@ -253,8 +288,10 @@ public class PublishDatabaseCommand extends Command {
 		
 		ArrayList<Row> rows = w.getDataTable().getRows(0, w.getDataTable().getNumRows());
 		for(Row r:rows){
-			//construct the values map
+			//insert one row
 			String insertRow = insertInTableRow(r, tableName, addTheseColumns, addTheseTypes);
+			//returns null if that particular row could not be inserted
+			//because there is a number column for which the values are not numbers
 			if(insertRow!=null)
 				dbUtil.executeUpdate(conn, insertRow);
 			else numOfRowsNotInserted++;
@@ -262,6 +299,16 @@ public class PublishDatabaseCommand extends Command {
 		return numOfRowsNotInserted;
 	}
 	
+	/**
+	 * @param r
+	 * @param tableName
+	 * @param colNamesMap
+	 * 	key=hNodeId; val=column name (same as semantic type for this column)
+	 * @param colTypesMap
+	 * 	key=hNodeId; val=column type 
+	 * @return
+	 * 		number of rows not inserted. A row is not inserted if we have a type mismatch.
+	 */
 	private String insertInTableRow(Row r, String tableName,
 			Map<String, String> colNamesMap, Map<String, String> colTypesMap) {
 
@@ -272,8 +319,10 @@ public class PublishDatabaseCommand extends Command {
 		String colValues = "";
 		boolean firstCol=true;
 		for(Map.Entry<String, Node> node: r.getNodesMap().entrySet()){
+			//get value
 			String val = node.getValue().getValue().asString();
 			String hNodeId = node.getKey();
+			//get column name
 			String colName = colNamesMap.get(hNodeId);
 			if(colName!=null){
 				if(!firstCol){
@@ -321,14 +370,24 @@ public class PublishDatabaseCommand extends Command {
 		return dbType;
 	}
 	
+	/**
+	 * Returns true if the DB type is a string; false otherwise.
+	 * @param type
+	 * @return
+	 */
 	private boolean isDbTypeString(String type){
 		if(type.toLowerCase().contains("varchar") || type.toLowerCase().contains("bit"))
 			return true;
 		return false;
 	}
 	
-	//key = hnodeId; value=the semantic type used as the column name
-	//if multiple sem types with same name, use an index to distinguish them
+	/**
+	 * Returns a map where key = hnodeId; value=the semantic type used as the column name.
+	 * @param w
+	 * @return
+	 * 	a map where key = hnodeId; value=the semantic type used as the column name
+	 * 	<br> If multiple sem types with same name, use an index to distinguish them
+	 */
 	private Map<String, String> getDbColumnNames(Worksheet w){
 		Map<String, String> result = new HashMap<String, String>();
 		//index used when we have duplicate semantic types
@@ -336,6 +395,7 @@ public class PublishDatabaseCommand extends Command {
 		int ind=1;
 		HashSet<String> duplicates = new HashSet<String>();
 		//key = hNodeId
+		//get all sem types for this worksheet
 		Map<String, SemanticType> st = w.getSemanticTypes().getTypes();
 		for(Map.Entry<String, SemanticType> e: st.entrySet()){
 			String type = e.getValue().getType();
@@ -362,6 +422,8 @@ public class PublishDatabaseCommand extends Command {
 			prefObject.put(PreferencesKeys.tableName.name(), tableName);
 			prefObject.put(PreferencesKeys.userName.name(), userName);
 			prefObject.put(PreferencesKeys.port.name(), port);
+			//although we save these we don't reload them (I just left them here in case we want to in the future)
+			//look in publishDatabse.js
 			prefObject.put(PreferencesKeys.overwriteTable.name(), overwrite);
 			prefObject.put(PreferencesKeys.insertTable.name(), overwrite);
 			vWorkspace.getPreferences().setCommandPreferences(

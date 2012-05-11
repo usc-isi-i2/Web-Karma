@@ -27,31 +27,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import edu.isi.karma.util.AbstractJDBCUtil.DBType;
-
 public class OracleUtil extends AbstractJDBCUtil {
 	
-	private static Logger logger = LoggerFactory
-	.getLogger(OracleUtil.class);
-
 	static final String DRIVER = 
 		"oracle.jdbc.driver.OracleDriver";
 	
 	static final String CONNECT_STRING_TEMPLATE = 
 		"jdbc:oracle:thin:username/pwd@//host:port/sid";
-
-	@Override
-	public ArrayList<String> getListOfTables(DBType dbType, String hostname,
-			int portnumber, String username, String password, String dBorSIDName)
-			throws SQLException, ClassNotFoundException {
-		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
-		Connection conn = getConnection(DRIVER, connectString);
-		
-		return getListOfTables(conn);
-	}
 
 	@Override
 	public ArrayList<String> getListOfTables(Connection conn)

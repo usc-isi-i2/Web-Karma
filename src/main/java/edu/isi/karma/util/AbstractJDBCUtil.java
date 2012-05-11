@@ -42,16 +42,17 @@ public abstract class AbstractJDBCUtil {
 
 	protected abstract String getDriver();
 	protected abstract String getConnectStringTemplate();
+	/**
+	 * Enclose input string between escape chars specific for each type of DB.
+	 * @param name
+	 * @return
+	 */
 	public abstract String prepareName(String name);
 	public abstract ArrayList<ArrayList<String>> getDataForLimitedRows(DBType dbType,
 			String hostname, int portnumber, String username, String password,
 			String tableName, String dBorSIDName, int rowCount) throws SQLException, ClassNotFoundException;
 
 
-	public abstract ArrayList<String> getListOfTables(DBType dbType,
-			String hostname, int portnumber, String username, String password,
-			String dBorSIDName) throws SQLException, ClassNotFoundException;
-	
 	public abstract ArrayList<String> getListOfTables(Connection conn) throws SQLException, ClassNotFoundException;
 
 	public Connection getConnection(String driver, String connectString) throws SQLException, ClassNotFoundException {
@@ -85,6 +86,15 @@ public abstract class AbstractJDBCUtil {
 			connectString = connectString.substring(0,pwdInd)+password+connectString.substring(pwdInd+3);
 		}
 		return connectString;
+	}
+
+	public ArrayList<String> getListOfTables(DBType dbType, String hostname,
+			int portnumber, String username, String password, String dBorSIDName) 
+			throws SQLException, ClassNotFoundException {
+		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
+		Connection conn = getConnection(getDriver(), connectString);
+		
+		return getListOfTables(conn);
 	}
 
 	public ArrayList<ArrayList<String>> getDataForTable(DBType dbType, String hostname,
@@ -136,6 +146,16 @@ public abstract class AbstractJDBCUtil {
 		}
 		return vals;
 	}
+	
+	/**
+	 * Returns true if given table exists in DB; false otherwise.
+	 * @param tableName
+	 * @param conn
+	 * @return
+	 * 		true if given table exists in DB; false otherwise.
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
+	 */
 	public boolean tableExists(String tableName, Connection conn) throws SQLException, ClassNotFoundException {
 		ArrayList<String> tn = getListOfTables(conn);
 
@@ -145,6 +165,14 @@ public abstract class AbstractJDBCUtil {
 		return false;
 	}
 	
+	/**
+	 * Returns the column names for a given table.
+	 * @param tableName
+	 * @param conn
+	 * @return
+	 * 		column names for a given table.
+	 * @throws SQLException
+	 */
 	public ArrayList<String> getColumnNames(String tableName, Connection conn) throws SQLException {
 		ArrayList<String> columnNames = new ArrayList<String>();
 		String query = "select * from " + tableName;
@@ -172,6 +200,14 @@ public abstract class AbstractJDBCUtil {
 		return columnNames;
 	}
 
+	/**
+	 * Returns the column types for a given table.
+	 * @param tableName
+	 * @param conn
+	 * @return
+	 * 		column types for a given table.
+	 * @throws SQLException
+	 */
 	public ArrayList<String> getColumnTypes(String tableName, Connection conn) throws SQLException {
 		ArrayList<String> columnTypes = new ArrayList<String>();
 		
@@ -204,8 +240,12 @@ public abstract class AbstractJDBCUtil {
 		return columnTypes;
 	}
 
-	// returns true if execute was successful
-	// false otherwise
+	/**
+	 * 	Executes a SQL query.
+	 * @param conn
+	 * @param query
+	 * @throws SQLException
+	 */
 	public void execute(Connection conn, String query) throws SQLException {
 
 		if (conn != null) {
@@ -228,6 +268,12 @@ public abstract class AbstractJDBCUtil {
 		}
 	}
 
+	/**
+	 * Executes an update query. (e.g. insert ...)
+	 * @param conn
+	 * @param query
+	 * @throws SQLException
+	 */
 	public void executeUpdate(Connection conn, String query) throws SQLException {
 		if (conn != null) {
 			// logger.debug("query=" + query);

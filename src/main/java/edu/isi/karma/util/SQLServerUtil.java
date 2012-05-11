@@ -28,13 +28,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class SQLServerUtil extends AbstractJDBCUtil {
 
-	private static Logger logger = LoggerFactory
-	.getLogger(SQLServerUtil.class);
+	//private static Logger logger = LoggerFactory
+	//.getLogger(SQLServerUtil.class);
 
 	static final String DRIVER = 
 		"net.sourceforge.jtds.jdbc.Driver";
@@ -43,16 +40,6 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 	static final String CONNECT_STRING_TEMPLATE = 
 		"jdbc:jtds:sqlserver://host:port;databaseName=dbname;user=username;password=pwd;";
 		
-	@Override
-	public ArrayList<String> getListOfTables(DBType dbType, String hostname,
-			int portnumber, String username, String password, String dBorSIDName) 
-			throws SQLException, ClassNotFoundException {
-		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
-		Connection conn = getConnection(DRIVER, connectString);
-		
-		return getListOfTables(conn);
-	}
-
 	@Override
 	public ArrayList<String> getListOfTables(Connection conn) 
 			throws SQLException, ClassNotFoundException {
