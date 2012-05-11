@@ -38,7 +38,6 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
@@ -61,16 +60,18 @@ public class PublishDatabaseCommand extends Command {
 	private boolean insert;
 	private AbstractJDBCUtil.DBType dbType;
 	private AbstractJDBCUtil dbUtil;
-	
+
+	int numRowsNotInserted = 0;
+
 	public enum JsonKeys {
-		updateType, vWorksheetId
+		updateType, vWorksheetId, numRowsNotInserted
 	}
 
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishDatabaseCommand.class);
 
 	public enum PreferencesKeys {
-		dbTypeStr, dbName, hostName, userName, tableName,port, overwriteTable, insertTable
+		dbType, dbName, hostName, userName, tableName,port, overwriteTable, insertTable
 	}
 
 	protected PublishDatabaseCommand(String id, String vWorksheetId,
@@ -118,12 +119,17 @@ public class PublishDatabaseCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		
+	
 		//save the preferences 
 		savePreferences(vWorkspace);
 
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
+		if (worksheet.getHeaders().hasNestedTables()) {
+			return new UpdateContainer(new ErrorUpdate("Saving of nested tables not supported!"));				
+		}
+		
 		Connection conn = null;
 		try{
 			conn = dbUtil.getConnection(hostName, Integer.valueOf(port).intValue(), userName, password, dbName);
@@ -149,19 +155,19 @@ public class PublishDatabaseCommand extends Command {
 					//delete old table & create a new table
 					dropTable(tableName,conn);
 					createTable(tableName, colNames, conn);
-					insertInTable(worksheet, tableName, colNamesMap,conn);
+					numRowsNotInserted= insertInTable(worksheet, tableName, colNamesMap,conn);
 				}
 				else if(insert){
 					logger.info("Insert in table: " + tableName);
 					//insert in existing table
-					insertInTable(worksheet, tableName, colNamesMap,conn);
+					numRowsNotInserted=insertInTable(worksheet, tableName, colNamesMap,conn);
 				}
 			}
 			else{
 				logger.info("Create new table: " + tableName);
 				//create a new table
 				createTable(tableName, colNames, conn);
-				insertInTable(worksheet, tableName, colNamesMap,conn);
+				numRowsNotInserted=insertInTable(worksheet, tableName, colNamesMap,conn);
 			}
 
 			if(conn!=null)
@@ -177,6 +183,8 @@ public class PublishDatabaseCommand extends Command {
 								"PublishDatabaseUpdate");
 						outputObject.put(JsonKeys.vWorksheetId.name(),
 								vWorksheetId);
+						outputObject.put(JsonKeys.numRowsNotInserted.name(),
+								numRowsNotInserted);
 						pw.println(outputObject.toString(4));
 					} catch (JSONException e) {
 						logger.error("Error occured while generating JSON!");
@@ -188,6 +196,7 @@ public class PublishDatabaseCommand extends Command {
 			if(conn!=null)
 				conn.close();
 			}catch(SQLException ex){}
+			e.printStackTrace();
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}
 	}
@@ -219,7 +228,8 @@ public class PublishDatabaseCommand extends Command {
 		dbUtil.execute(conn, dropQ);		
 	}
 	
-	private void insertInTable(Worksheet w, String tableName, Map<String, String> colNamesMap,Connection conn) throws SQLException{
+	private int insertInTable(Worksheet w, String tableName, Map<String, String> colNamesMap,Connection conn) throws SQLException{
+		int numOfRowsNotInserted = 0;
 		//get col names for existing table
 		//some databases are case sensitive when referring to column/table names, so we have
 		//to use the "real" case in the queries
@@ -245,8 +255,11 @@ public class PublishDatabaseCommand extends Command {
 		for(Row r:rows){
 			//construct the values map
 			String insertRow = insertInTableRow(r, tableName, addTheseColumns, addTheseTypes);
-			dbUtil.executeUpdate(conn, insertRow);
+			if(insertRow!=null)
+				dbUtil.executeUpdate(conn, insertRow);
+			else numOfRowsNotInserted++;
 		}
+		return numOfRowsNotInserted;
 	}
 	
 	private String insertInTableRow(Row r, String tableName,
@@ -276,6 +289,15 @@ public class PublishDatabaseCommand extends Command {
 					// it's a number
 					if (val.trim().equals(""))
 						val = null;
+					else{
+						//check that it is really a number
+						try{
+							Double.valueOf(val);
+						}catch(NumberFormatException e){
+							logger.error("Row not inserted:" + val + " is not a number as required by the database");
+							return null;
+						}
+					}
 				}
 
 				colValues += val;
@@ -293,18 +315,6 @@ public class PublishDatabaseCommand extends Command {
 		return insertQ;
 	}
 
-	/*
-	private String prepareColumnName(String name) {
-		String s = name;
-		s = name.replace('-', '_');
-		if(dbType.equals("MYSQL"))
-			s = "`" + s + "`";
-		else if(dbType.equals("SQLServer"))
-			s = "[" + s + "]";
-		return s;
-	}
-	*/
-	
 	// for now everything is a string
 	private String getDbType(String semType) {
 		String dbType = "VARCHAR(1000)";
@@ -346,7 +356,7 @@ public class PublishDatabaseCommand extends Command {
 	private void savePreferences(VWorkspace vWorkspace){
 		try{
 			JSONObject prefObject = new JSONObject();
-			prefObject.put(PreferencesKeys.dbTypeStr.name(), dbTypeStr);
+			prefObject.put(PreferencesKeys.dbType.name(), dbTypeStr);
 			prefObject.put(PreferencesKeys.dbName.name(), dbName);
 			prefObject.put(PreferencesKeys.hostName.name(), hostName);
 			prefObject.put(PreferencesKeys.tableName.name(), tableName);

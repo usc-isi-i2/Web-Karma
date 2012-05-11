@@ -26,6 +26,8 @@ public class JDBCUtilFactory {
 			return new MySQLUtil();
 		else if(dbType == AbstractJDBCUtil.DBType.Oracle)
 			return new OracleUtil();
+		else if(dbType == AbstractJDBCUtil.DBType.SQLServer)
+			return new SQLServerUtil();
 		else return null;
 	}
 
