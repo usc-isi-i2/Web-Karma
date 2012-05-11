@@ -763,6 +763,15 @@ function parse(data) {
 			var downloadLink = $("<a>").attr("href",element["fileUrl"]).text("RDF").addClass("RdfDownloadLink").attr("target","_blank");
 			$("div.tableTitleTextDiv", titleDiv).after(downloadLink);
 		} 
+
+		else if(element["updateType"] == "PublishDatabaseUpdate") {
+			if(element["numRowsNotInserted"]==0){
+				$.sticky("Data saved successfully!");
+			}
+			else{
+				$.sticky(element["numRowsNotInserted"] + " rows not saved in database! Check log file for details.");			
+			}
+		} 
 		
 		else if(element["updateType"] == "CleaningResultUpdate") {
             if(element["result"] != null) {

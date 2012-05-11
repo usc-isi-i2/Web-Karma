@@ -73,7 +73,7 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 		
 		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
 		Connection conn = getConnection(DRIVER, connectString);
-		String query = "Select * from " + tableName + " limit " + rowCount;
+		String query = "Select TOP " + rowCount + " * from " + tableName;
 		
 		Statement s = conn.createStatement();
 		ResultSet r = s.executeQuery(query);

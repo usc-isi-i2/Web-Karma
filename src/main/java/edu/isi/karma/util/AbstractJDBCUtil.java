@@ -195,7 +195,6 @@ public abstract class AbstractJDBCUtil {
 			meta = r.getMetaData();
 			for (int i = 1; i <= meta.getColumnCount(); i++) {
 				logger.debug("Type= " + meta.getColumnTypeName(i));
-	
 				columnTypes.add(meta.getColumnTypeName(i));
 			}
 			r.close();

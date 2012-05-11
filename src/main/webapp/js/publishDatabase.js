@@ -20,24 +20,68 @@
  ******************************************************************************/
 
 function publishDatabaseFunction() {
-		$("div#PublishDatabaseDialogBox").dialog("close");
 
-		var info = new Object();
-		info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "PublishDatabaseCommand";
-		info["dbType"] = $("select#dbType").val();
-		info["hostName"] = $("input#hostName1").val();
-		info["dbName"] = $("input#dbName1").val();
-		info["userName"] = $("input#userName1").val();
-		info["password"] = $("input#password1").val();
-		info["tableName"] = $("input#tableName").val();
-		info["port"] = $("input#port").val();
-		info["overwriteTable"] = $("input#overwriteTable").is(":checked");
-		info["insertTable"] = $("input#insertTable").is(":checked");
+		var noEmptyField = checkEmptyFields();
 
-		showLoadingDatabase(info["vWorksheetId"],"Saving to database...");
-		returnFunc(info);
+		if(noEmptyField==true){
+			$("div#PublishDatabaseDialogBox").dialog("close");
+
+			var info = new Object();
+			info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
+			info["workspaceId"] = $.workspaceGlobalInformation.id;
+			info["command"] = "PublishDatabaseCommand";
+			info["dbType"] = $("select#dbType").val();
+			info["hostName"] = $("input#hostName1").val();
+			info["dbName"] = $("input#dbName1").val();
+			info["userName"] = $("input#userName1").val();
+			info["password"] = $("input#password1").val();
+			info["tableName"] = $("input#tableName").val();
+			info["port"] = $("input#port").val();
+			info["overwriteTable"] = $("input#overwriteTable").is(":checked");
+			info["insertTable"] = $("input#insertTable").is(":checked");
+
+			showLoadingDatabase(info["vWorksheetId"],"Saving to database...");
+			returnFunc(info);
+		}
+}
+
+function checkEmptyFields(){
+		if($.trim($("input#hostName1").val())==""){
+				$.sticky("Host name is empty!");		
+				return false;
+		}
+		if($.trim($("input#port").val())==""){
+				$.sticky("Port is empty!");		
+				return false;
+		}
+		if($.trim($("input#dbName").val())==""){
+				$.sticky("DB name is empty!");		
+				return false;
+		}
+		if($.trim($("input#tableName").val())==""){
+				$.sticky("Table name is empty!");		
+				return false;
+		}
+		if($.trim($("input#userName").val())==""){
+				$.sticky("User name is empty!");		
+				return false;
+		}
+		return true;
+
+}
+
+function insertTable(){
+	if($("input#insertTable").is(":checked")){
+		//uncheck the overwrite
+		document.getElementById("overwriteTable").checked=0;
+	}
+}
+
+function overwriteTable(){
+	if($("input#overwriteTable").is(":checked")){
+		//uncheck the insert
+		document.getElementById("insertTable").checked=0;
+	}
 }
 
 function returnFunc(info) {
@@ -94,8 +138,8 @@ function getDatabasePreferences() {
 	    					$("input#userName1").val(element["PreferenceValues"]["userName"]);
 	    					$("input#tableName").val(element["PreferenceValues"]["tableName"]);
 	    					$("input#port").val(element["PreferenceValues"]["port"]);
-	    					$("input#overwriteTable").val(element["PreferenceValues"]["overwriteTable"]);
-	    					$("input#insertTable").val(element["PreferenceValues"]["insertTable"]);
+	    					//$("input#overwriteTable").val(element["PreferenceValues"]["overwriteTable"]);
+	    					//$("input#insertTable").val(element["PreferenceValues"]["insertTable"]);
 	    				}
 	    			}
 	    		});
