@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.AlignToOntology;
@@ -76,12 +75,6 @@ public class ShowModelCommand extends WorksheetCommand {
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
-		// Show error update for aligning hierarchical sources
-//		if (worksheet.getHeaders().hasNestedTables()) {
-//			return new UpdateContainer(new ErrorUpdate(
-//					"Karma cannot align hierarchical sources yet!"));
-//		}
-
 		worksheetName = worksheet.getTitle();
 
 		// Get the Outlier Tag
@@ -90,7 +83,6 @@ public class ShowModelCommand extends WorksheetCommand {
 
 		// Generate the semantic types for the worksheet
 		SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, outlierTag, vWorkspace.getWorkspace().getCrfModelHandler());
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 
 		// Get the alignment update if any
 		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
@@ -103,7 +95,6 @@ public class ShowModelCommand extends WorksheetCommand {
 			return new UpdateContainer(new ErrorUpdate(
 					"Error occured while generating the model for the source."));
 		}
-
 		c.add(new TagsUpdate());
 		return c;
 	}

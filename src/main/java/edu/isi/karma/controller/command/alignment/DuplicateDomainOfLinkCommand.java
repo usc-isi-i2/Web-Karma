@@ -27,7 +27,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.update.AlignmentHeadersUpdate;
+import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -36,12 +36,10 @@ import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rdf.WorksheetRDFGenerator;
-import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.view.alignmentHeadings.AlignmentForest;
 import edu.isi.karma.webserver.KarmaException;
 
 public class DuplicateDomainOfLinkCommand extends Command {
@@ -100,49 +98,26 @@ public class DuplicateDomainOfLinkCommand extends Command {
 		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
 				.getSteinerTree();
 		Vertex root = alignment.GetTreeRoot();
-
-		List<HNode> sortedHeaderNodes = new ArrayList<HNode>(); 
-		worksheet.getHeaders().getSortedLeafHNodes(sortedHeaderNodes);
-		
-		// Convert the tree into a AlignmentForest
-		AlignmentForest forest = AlignmentForest.constructFromSteinerTree(tree,
-				root, sortedHeaderNodes);
-		AlignmentHeadersUpdate alignmentUpdate = new AlignmentHeadersUpdate(
-				forest, vWorksheetId, alignmentId);
 		GraphUtil.printGraph(tree);
 
-		//mariam
+		List<String> hNodeIdList = new ArrayList<String>();
+		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+		List<HNodePath> columns = vw.getColumns();
+		for(HNodePath path:columns)
+			hNodeIdList.add(path.getLeaf().getId());
 		
+		SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, tree, root, hNodeIdList);
+		
+		//mariam
 		try{
-		WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, tree, root);
+			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, tree, root);
 		}catch(KarmaException e){
 			e.printStackTrace();
 		}
-		
-		/////////////////////////
-
-		// Create new vWorksheet using the new header order for flat sources
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-		if(!worksheet.getHeaders().hasNestedTables()) {
-			List<HNodePath> columnPaths = new ArrayList<HNodePath>();
-			List<HNodePath> existingPaths = worksheet.getHeaders().getAllPaths();
-			for (HNode node : sortedHeaderNodes) {
-				for(HNodePath path:existingPaths){
-					if(path.getLeaf().getId().equals(node.getId())) {
-						columnPaths.add(path);
-						break;
-					}
-				}
-			}
-			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
-					worksheet, columnPaths, vWorkspace);
-			vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-		}
 
 		UpdateContainer c = new UpdateContainer();
-		c.add(alignmentUpdate);
-		vw.update(c);
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+		c.add(svgUpdate);
 		return c;
 	}
 

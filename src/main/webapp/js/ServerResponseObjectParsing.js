@@ -687,6 +687,7 @@ function parse(data) {
 			$("#DatabaseImportDiv").data("commandId", element["commandId"]);
 		}
 		
+		/*
 		else if(element["updateType"] == "SemanticTypesUpdate") {
 			var table = $("table#" + element["worksheetId"]);
 			
@@ -722,7 +723,17 @@ function parse(data) {
 				tdTag.append(semDiv);
 			});
 		}
+		*/
 		
+		else if(element["updateType"] == "SemanticTypesUpdate") {
+            var table = $("table#" + element["worksheetId"]);
+            
+            $.each(element["Types"], function(index, type) {
+                var tdTag = $("td.columnHeadingCell#" + type["HNodeId"], table);
+                tdTag.data("typesJsonObject", type);
+            });
+        }
+        
 		else if(element["updateType"] == "ImportOntologyCommand") {
 			if(!element["Import"])
 				$.sticky("Ontology import failed!");
@@ -770,7 +781,14 @@ function parse(data) {
 				populateResultsInCleaningTable(pdata);
 				return pdata;
             }
-                
+        }
+        
+        else if(element["updateType"] == "InfoUpdate") {
+            $.sticky(element["Info"]);
+        }
+        
+        else if(element["updateType"] == "SVGAlignmentUpdate_ForceKarmaLayout") {
+            displayAlignmentTree_ForceKarmaLayout(element);  // In d3-alignment-vis.js
         }
 	});
 }
