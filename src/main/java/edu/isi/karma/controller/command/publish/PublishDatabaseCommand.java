@@ -49,10 +49,6 @@ import edu.isi.karma.view.VWorkspace;
 
 public class PublishDatabaseCommand extends Command {
 	private final String vWorksheetId;
-	/**
-	 * one of MySQL, SQLServer, Oracle
-	 */
-	private String dbTypeStr;
 	private String hostName;
 	private String port;
 	private String dbName;
@@ -80,12 +76,14 @@ public class PublishDatabaseCommand extends Command {
 		dbType, dbName, hostName, userName, tableName,port, overwriteTable, insertTable
 	}
 
+	/**
+	 * dbType one of MySQL, SQLServer, Oracle
+	 */
 	protected PublishDatabaseCommand(String id, String vWorksheetId,
-			String dbTypeStr, String hostName, String port, String dbName,String userName,String password, String tableName, 
+			String dbType, String hostName, String port, String dbName,String userName,String password, String tableName, 
 			String overwrite, String insert) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
-		this.dbTypeStr = dbTypeStr;
 		this.hostName=hostName;
 		this.dbName=dbName;
 		this.userName=userName;
@@ -93,11 +91,8 @@ public class PublishDatabaseCommand extends Command {
 		this.port=port;
 		this.overwrite = Boolean.valueOf(overwrite);
 		this.insert = Boolean.valueOf(insert);
-		if(dbTypeStr.equals("MySQL"))
-			dbType = AbstractJDBCUtil.DBType.MySQL;
-		if(dbTypeStr.equals("SQLServer"))
-			dbType = AbstractJDBCUtil.DBType.SQLServer;
-		dbUtil = JDBCUtilFactory.getInstance(dbType);
+		this.dbType=AbstractJDBCUtil.DBType.valueOf(dbType);
+		dbUtil = JDBCUtilFactory.getInstance(this.dbType);
 		this.tableName = tableName;
 	}
 
@@ -416,7 +411,7 @@ public class PublishDatabaseCommand extends Command {
 	private void savePreferences(VWorkspace vWorkspace){
 		try{
 			JSONObject prefObject = new JSONObject();
-			prefObject.put(PreferencesKeys.dbType.name(), dbTypeStr);
+			prefObject.put(PreferencesKeys.dbType.name(), dbType);
 			prefObject.put(PreferencesKeys.dbName.name(), dbName);
 			prefObject.put(PreferencesKeys.hostName.name(), hostName);
 			prefObject.put(PreferencesKeys.tableName.name(), tableName);
