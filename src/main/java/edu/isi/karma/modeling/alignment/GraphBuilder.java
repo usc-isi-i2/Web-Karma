@@ -201,7 +201,7 @@ public class GraphBuilder {
 				else
 					v.setDomainVertexId(getLastID(domainClass));
 			} else {
-				if (visitedDataProperties.indexOf(v.getUri()) != -1 || nodesLabelCounter.get(domainClass) == null) {
+				if (visitedDataProperties.indexOf(domainClass + v.getUri()) != -1 || nodesLabelCounter.get(domainClass) == null) {
 					id = createNodeID(domainClass);
 					Vertex domain = new Vertex(id, ontologyManager.getNameFromURI(domainClass), NodeType.Class);
 					graph.addVertex(domain);
@@ -209,7 +209,7 @@ public class GraphBuilder {
 				}
 				else
 					v.setDomainVertexId(getLastID(domainClass));
-				visitedDataProperties.add(v.getUri());
+				visitedDataProperties.add(domainClass + v.getUri());
 			}
 		}
 		
