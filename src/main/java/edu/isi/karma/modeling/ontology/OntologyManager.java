@@ -106,6 +106,10 @@ public class OntologyManager {
 
 	public Name getNameFromURI(String uri) {
 		Resource r = ontModel.getResource(uri);
+		if (r == null) {
+			logger.error("Could not find the resource " + uri + " in the ontology model.");
+			return null;
+		}
 		return new Name(r.getURI(), r.getNameSpace(), ontModel.getNsURIPrefix(r.getNameSpace()));
 	}
 	
