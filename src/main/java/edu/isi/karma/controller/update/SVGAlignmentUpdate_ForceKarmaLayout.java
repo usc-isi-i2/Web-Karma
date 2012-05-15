@@ -37,7 +37,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 	}
 
 	private enum JsonValues {
-		key, holderLink, objPropertyLink, Unassigned
+		key, holderLink, objPropertyLink, Unassigned, FakeRoot, FakeRootLink, Add_Parent
 	}
 
 	public SVGAlignmentUpdate_ForceKarmaLayout(String vWorksheetId,
@@ -79,7 +79,8 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 				Set<Vertex> vertices = tree.vertexSet();
 				HashMap<Vertex, Integer> verticesIndex = new HashMap<Vertex, Integer>();
 				int nodesIndexcounter = 0;
-				
+				List<Vertex> maxNodesCovered = null;
+				Vertex maxHeightVertex = null;
 				
 				for (Vertex vertex : vertices) {
 					JSONObject vertObj = new JSONObject();
@@ -89,8 +90,12 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 					
 					List<Vertex> nodesWithSemTypesCovered = new ArrayList<Vertex>();
 					int height = getHeight(vertex, nodesWithSemTypesCovered, treeClone);
-					if(height > maxTreeHeight)
+					if(height > maxTreeHeight) {
 						maxTreeHeight = height;
+						maxNodesCovered = nodesWithSemTypesCovered;
+						maxHeightVertex = vertex;
+					}
+						
 					vertObj.put(JsonKeys.height.name(), height);
 					JSONArray hNodeIdsCoveredByVertex = new JSONArray();
 					for(Vertex v : nodesWithSemTypesCovered)
@@ -122,9 +127,32 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 							linksArr.put(linkObj);
 						}
 					}
+					
 					vertArr.put(vertObj);
 					verticesIndex.put(vertex, nodesIndexcounter++);
 				}
+				
+				// Add a node that sits above the top of tree to change the parent of root
+				JSONObject vertObj = new JSONObject();
+				vertObj.put(JsonKeys.label.name(), JsonValues.FakeRoot.name());
+				vertObj.put(JsonKeys.id.name(), JsonValues.FakeRoot.name());
+				vertObj.put(JsonKeys.nodeType.name(), JsonValues.FakeRoot.name());
+				vertObj.put(JsonKeys.height.name(), ++maxTreeHeight);
+				JSONArray hNodeIdsCoveredByVertex = new JSONArray();
+				for(Vertex v : maxNodesCovered)
+					hNodeIdsCoveredByVertex.put(v.getSemanticType().getHNodeId());
+				vertObj.put(JsonKeys.hNodesCovered.name(), hNodeIdsCoveredByVertex);
+				vertArr.put(vertObj);
+				
+				// Add the link from fake root to the root
+				JSONObject fakeRootLink = new JSONObject();
+				fakeRootLink.put(JsonKeys.source.name(), nodesIndexcounter);
+				fakeRootLink.put(JsonKeys.target.name(), verticesIndex.get(maxHeightVertex));
+				fakeRootLink.put(JsonKeys.sourceNodeId.name(), JsonValues.FakeRoot.name());
+				fakeRootLink.put(JsonKeys.targetNodeId.name(), maxHeightVertex.getID());
+				fakeRootLink.put(JsonKeys.label.name(), JsonValues.Add_Parent.name());
+				fakeRootLink.put(JsonKeys.id.name(), JsonValues.FakeRootLink.name());
+				linksArr.put(fakeRootLink);
 				
 				
 				/*** Add the links ***/

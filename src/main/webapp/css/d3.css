@@ -1,6 +1,11 @@
 text {
 	font-size:12px;
 	color: black;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+text.FakeRootLink {
+	font-style: italic;
 }
 
 .link {
