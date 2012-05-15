@@ -32,6 +32,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.modeling.alignment.URI;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler.ColumnFeature;
 import edu.isi.karma.rep.HNodePath;
@@ -116,7 +118,8 @@ public class SemanticTypeUtil {
 	 *         returned.
 	 */
 	public static boolean populateSemanticTypesUsingCRF(Worksheet worksheet,
-			Tag outlierTag, CRFModelHandler crfModelHandler) {
+			Tag outlierTag, CRFModelHandler crfModelHandler,
+			OntologyManager ontMgr) {
 		boolean semanticTypesChangedOrAdded = false;
 
 		SemanticTypes types = worksheet.getSemanticTypes();
@@ -170,9 +173,15 @@ public class SemanticTypeUtil {
 				type = topLabel.split("\\|")[1];
 			}
 
+			URI typeURI = ontMgr.getNameFromURI(type);
+			if (typeURI == null)
+				continue;
+			URI domainURI = null;
+			if (domain != "")
+				domainURI = ontMgr.getNameFromURI(domain);
 			SemanticType semtype = new SemanticType(path.getLeaf().getId(),
-					type, domain, SemanticType.Origin.CRFModel, scores.get(0),
-					false);
+					typeURI, domainURI, SemanticType.Origin.CRFModel,
+					scores.get(0), false);
 
 			// Check if the user already provided a semantic type manually
 			SemanticType existingType = types.getSemanticTypeForHNodeId(path
@@ -233,11 +242,12 @@ public class SemanticTypeUtil {
 	 *            Features such as column name, table name that are required by
 	 *            the CRF Model to predict the semantic type for a node (table
 	 *            cell)
-	 * @param crfModelHandler 
+	 * @param crfModelHandler
 	 */
 	public static void identifyOutliers(Worksheet worksheet,
 			String predictedType, HNodePath path, Tag outlierTag,
-			Map<ColumnFeature, Collection<String>> columnFeatures, CRFModelHandler crfModelHandler) {
+			Map<ColumnFeature, Collection<String>> columnFeatures,
+			CRFModelHandler crfModelHandler) {
 		Collection<Node> nodes = new ArrayList<Node>();
 		worksheet.getDataTable().collectNodes(path, nodes);
 

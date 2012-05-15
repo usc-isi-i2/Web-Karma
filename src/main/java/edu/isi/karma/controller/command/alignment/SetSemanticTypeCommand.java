@@ -80,13 +80,10 @@ public class SetSemanticTypeCommand extends Command {
 
 	@Override
 	public String getDescription() {
-		String domainLabel = SemanticTypeUtil.removeNamespace(newType
-				.getDomain());
-		String typeLabel = SemanticTypeUtil.removeNamespace(newType.getType());
-		if (domainLabel.equals(""))
-			return typeLabel;
+		if (newType.getDomain() == null)
+			return newType.getType().getLocalName();
 		else
-			return typeLabel + " of " + domainLabel;
+			return newType.getType().getLocalName() + " of " + newType.getDomain().getLocalName();
 	}
 
 	@Override
@@ -144,10 +141,10 @@ public class SetSemanticTypeCommand extends Command {
 				.getTrainingExamples(worksheet, currentColumnPath);
 		boolean trainingResult = false;
 		String newTypeString = "";
-		if (newType.getDomain().equals("")) {
-			newTypeString = newType.getType();
+		if (newType.getDomain() == null) {
+			newTypeString = newType.getType().getUriString();
 		} else {
-			newTypeString = newType.getDomain() + "|" + newType.getType();
+			newTypeString = newType.getDomain().getUriString() + "|" + newType.getType().getUriString();
 		}
 		trainingResult = crfModelHandler.addOrUpdateLabel(newTypeString,
 				trainingExamples, columnFeatures);
@@ -156,8 +153,8 @@ public class SetSemanticTypeCommand extends Command {
 			logger.error("Error occured while training CRF Model.");
 		}
 
-		logger.debug("Using type:" + newType.getDomain() + "|"
-				+ newType.getType());
+		logger.debug("Using type:" + newType.getDomain().getUriString() + "|"
+				+ newType.getType().getUriString());
 
 
 		// Add the new CRF column model for this column

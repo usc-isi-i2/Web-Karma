@@ -20,21 +20,16 @@ import de.micromata.opengis.kml.v_2_2_0.Coordinate;
 import de.micromata.opengis.kml.v_2_2_0.Folder;
 import de.micromata.opengis.kml.v_2_2_0.Kml;
 import de.micromata.opengis.kml.v_2_2_0.KmlFactory;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
-import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.metadata.TagsContainer;
-import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class WorksheetGeospatialContent {
 	private Worksheet worksheet;
-	private CRFModelHandler crfModelHandler;
 
 	private List<Point> points = new ArrayList<Point>();
 	private List<LineString> lines = new ArrayList<LineString>();
@@ -60,23 +55,16 @@ public class WorksheetGeospatialContent {
 		POINT_LAT_LNG, POINT_POS, LINE_POS_LIST, POLYGON_POS_LIST, NOT_PRESENT
 	}
 
-	public WorksheetGeospatialContent(Worksheet worksheet,
-			TagsContainer tagsContainer, CRFModelHandler crfModelHandler) {
+	public WorksheetGeospatialContent(Worksheet worksheet) {
 		this.worksheet = worksheet;
-		this.crfModelHandler = crfModelHandler;
-		populateGeospatialData(tagsContainer);
+		populateGeospatialData();
 	}
 
-	private void populateGeospatialData(TagsContainer tagsContainer) {
+	private void populateGeospatialData() {
 		List<String> coordinateHNodeIds = new ArrayList<String>();
 		CoordinateCase currentCase = CoordinateCase.NOT_PRESENT;
 		boolean latFound = false;
 		boolean lngFound = false;
-
-		if (worksheet.getSemanticTypes().getListOfTypes().size() == 0) {
-			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet,
-					tagsContainer.getTag(TagName.Outlier), crfModelHandler);
-		}
 
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
 			// Latitude of a Point case. E.g. For a column with only latitude

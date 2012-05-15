@@ -29,6 +29,7 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.AlignToOntology;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.metadata.Tag;
@@ -82,7 +83,8 @@ public class ShowModelCommand extends WorksheetCommand {
 				.getTag(TagName.Outlier);
 
 		// Generate the semantic types for the worksheet
-		SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, outlierTag, vWorkspace.getWorkspace().getCrfModelHandler());
+		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+		SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, outlierTag, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
 
 		// Get the alignment update if any
 		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,

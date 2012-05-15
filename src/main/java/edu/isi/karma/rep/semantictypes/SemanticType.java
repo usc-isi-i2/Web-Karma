@@ -23,12 +23,13 @@ package edu.isi.karma.rep.semantictypes;
 import org.json.JSONException;
 import org.json.JSONWriter;
 
+import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.util.Jsonizable;
 
 public class SemanticType implements Jsonizable {
 	private final String hNodeId;
-	private final String type;
-	private final String domain;
+	private final URI type;
+	private final URI domain;
 	private final Origin origin;
 	private final boolean isPartOfKey; 
 	private final ConfidenceLevel confidenceLevel;
@@ -41,11 +42,11 @@ public class SemanticType implements Jsonizable {
 		High, Medium, Low
 	}
 
-	public SemanticType(String hNodeId, String type, Origin origin, Double probability, boolean isPartOfKey) {
+	public SemanticType(String hNodeId, URI type, Origin origin, Double probability, boolean isPartOfKey) {
 		this.hNodeId = hNodeId;
 		this.type = type;
 		this.origin = origin;
-		this.domain = "";
+		this.domain = null;
 		this.isPartOfKey = isPartOfKey;
 		
 		if(probability > 0.8)
@@ -56,7 +57,7 @@ public class SemanticType implements Jsonizable {
 			confidenceLevel = ConfidenceLevel.Low;
 	}
 	
-	public SemanticType(String hNodeId, String type, String domain, Origin origin, Double probability, boolean isPartOfKey) {
+	public SemanticType(String hNodeId, URI type, URI domain, Origin origin, Double probability, boolean isPartOfKey) {
 		this.hNodeId = hNodeId;
 		this.type = type;
 		this.origin = origin;
@@ -75,11 +76,11 @@ public class SemanticType implements Jsonizable {
 		return hNodeId;
 	}
 
-	public String getDomain() {
+	public URI getDomain() {
 		return domain;
 	}
 	
-	public String getType() {
+	public URI getType() {
 		return type;
 	}
 
@@ -94,7 +95,7 @@ public class SemanticType implements Jsonizable {
 	 * 		true if this type is a Class; false if it is a data property.
 	 */
 	public boolean isClass(){
-		if(domain==null || domain.trim().isEmpty())
+		if(domain==null || domain.getUriString().trim().isEmpty())
 			return true;
 		//it is a data property
 		return false;

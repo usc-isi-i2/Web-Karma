@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
+
 function displayAlignmentTree_ForceKarmaLayout(json) {
     var vworksheetId = json["worksheetId"];
     var showHideDiv = $("div#showHideSpace_"+vworksheetId);
@@ -12,7 +33,11 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     
     $("<div>").attr("id","svgDiv_"+vworksheetId).insertBefore('table#'+vworksheetId);
     
-    var h = levelHeight * (json["maxTreeHeight"] - 0.2);
+    var h = 0;
+    if(json["maxTreeHeight"] == 0)
+        h = levelHeight * (json["maxTreeHeight"] + 0.2);
+    else
+        h = levelHeight * (json["maxTreeHeight"] - 0.2);
     if(w == 0)
         w = $("div#"+vworksheetId + "TableDiv").width();
     
@@ -186,6 +211,10 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     node.insert("rect", "text")
         .attr("ry", 6)
         .attr("rx", 6)
+        .attr("class", function(d){
+            if(d.nodeType != "DataProperty" && d.nodeType != "Unassigned" && d.nodeType != "FakeRoot")
+                return vworksheetId;
+        })
         .attr("y", function(d){
             if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot") {
                 return -2;
@@ -223,6 +252,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             var width1 = this.getBBox().width;
             var height1 = this.getBBox().height;
             var cur1 = $(this);
+            // console.log("^^^^^^^^^^^^");
             d3.selectAll("text.LinkLabel." + vworksheetId)
                .sort(comparator)
                .each(function(d2,i2) {
@@ -233,10 +263,15 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                    if(d1.id != d2.id) {
                        if(y1 == y2) {
                            if(((x1 + width1) > x2) && (x2+width2>x1+width1)){
+                               // console.log("Collision detected!");
+                               // console.log(d1);
+                               // console.log(d2);
+                               // console.log("Existing: " + $(cur1).attr("y"));
+                               // console.log("Flag: " + flag);
                                if(flag%2 == 0)
-                                    $(cur1).attr("y", $(cur1).attr("y")-8);
+                                   $(cur1).attr("y", Number($(cur1).attr("y"))-8);
                                else
-                                    $(cur1).attr("y", $(cur1).attr("y")+8);
+                                   $(cur1).attr("y", Number($(cur1).attr("y"))+5);
                                flag++;
                            }
                        }
@@ -247,10 +282,22 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         });
     
     /*** Check for collisions between labels and rectangles ***/
-   // d3.selectAll("text.LinkLabel." + vworksheetId)
+    // d3.selectAll("text.LinkLabel." + vworksheetId)
         // .sort(comparator)
         // .each(function(d1,i1) {
-//             
+            // var x1 = this.getBBox().x;
+            // var y1 = this.getBBox().y;
+            // var width1 = this.getBBox().width;
+            // var height1 = this.getBBox().height;
+            // var cur1 = $(this);
+            // d3.selectAll("rect." + vworksheetId).each(function(d2,i2){
+                // var x2 = this.getBBox().x;
+                // var y2 = this.getBBox().y;
+                // var width2 = this.getBBox().width;
+                // var height2 = this.getBBox().height;
+//                 
+                // console.log(x2 + " " + y2 + " " + width2 + " " + height2);
+            // });
         // });
     
     $("text.LinkLabel").qtip({content: {text: "Edit Relationship"}});

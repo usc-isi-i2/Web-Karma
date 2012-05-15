@@ -32,41 +32,23 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 	private String id;
 	private LinkType linkType;
 	private boolean inverse;
-	private Name name;
+	private URI uri;
 	private LinkStatus linkStatus;
 	
-//	public LabeledWeightedEdge(String id) {
-//		super();
-//		this.id = id;
-//		this.linkType = LinkType.None;
-//		this.label = id;
-//		this.inverse = false;
-//		this.linkStatus = LinkStatus.None;
-//	}
-//
-//	public LabeledWeightedEdge(String id, String label) {
-//		super();
-//		this.id = id;
-//		this.linkType = LinkType.None;
-//		this.label = label;
-//		this.inverse = false;
-//		this.linkStatus = LinkStatus.None;
-//	}
-	
-	public LabeledWeightedEdge(String id, Name name, LinkType linkType) {
+	public LabeledWeightedEdge(String id, URI name, LinkType linkType) {
 		super();
 		this.id = id;
 		this.linkType = linkType;
-		this.name = name;
+		this.uri = name;
 		this.inverse = false;
 		this.linkStatus = LinkStatus.None;
 	}
 	
-	public LabeledWeightedEdge(String id, Name name, LinkType linkType, boolean inverse) {
+	public LabeledWeightedEdge(String id, URI name, LinkType linkType, boolean inverse) {
 		super();
 		this.id = id;
 		this.linkType = linkType;
-		this.name = name;
+		this.uri = name;
 		this.inverse = inverse;;
 		this.linkStatus = LinkStatus.None;
 	}
@@ -75,20 +57,20 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		super();
 		this.id = e.id;
 		this.linkType = e.linkType;
-		this.name = new Name(e.name);
+		this.uri = new URI(e.uri);
 		this.inverse = e.inverse;;
 		this.linkStatus = LinkStatus.None;
 	}
 	
 	public String getLocalID() {
 		String s = this.id;
-		s = s.replaceAll(this.name.getNs(), "");
+		s = s.replaceAll(this.uri.getNs(), "");
 		return s;
 	}
 	
 	public String getLocalLabel() {
-		String s = this.name.getUri();
-		s = s.replaceAll(this.name.getNs(), "");
+		String s = this.uri.getUriString();
+		s = s.replaceAll(this.uri.getNs(), "");
 		return s;
 	}
 	
@@ -109,16 +91,16 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		return this.id;
 	}
 	
-	public String getUri() {
-		return this.name.getUri();
+	public String getUriString() {
+		return this.uri.getUriString();
 	}
 	
 	public String getNs() {
-		return this.name.getNs();
+		return this.uri.getNs();
 	}
 	
 	public String getPrefix() {
-		return this.name.getPrefix();
+		return this.uri.getPrefix();
 	}
 	
 	public LinkType getLinkType() {

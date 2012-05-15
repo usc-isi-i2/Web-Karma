@@ -26,28 +26,28 @@ public class Vertex {
 
 	private String id;
 	private NodeType nodeType;
-	private Name name;
+	private URI uri;
 	private SemanticType semanticType;
 	// only used for the vertexes of type DataProperty
 	private String domainVertexId;
 	
-	public Vertex(String id, Name name, NodeType nodeType) {
+	public Vertex(String id, URI name, NodeType nodeType) {
 		this.id = id;
-		this.name = name;
+		this.uri = name;
 		this.nodeType = nodeType;
 		this.semanticType = null;
 	}
 	
-	public Vertex(String id, Name name, SemanticType semanticType, NodeType nodeType) {
+	public Vertex(String id, URI name, SemanticType semanticType, NodeType nodeType) {
 		this.id = id;
-		this.name = name;
+		this.uri = name;
 		this.nodeType = nodeType;
 		this.semanticType = semanticType;
 	}
 	
 	public Vertex(Vertex v) {
 		this.id = v.id;
-		this.name = new Name(v.name);
+		this.uri = new URI(v.uri);
 		this.nodeType = v.nodeType;
 		this.semanticType = v.semanticType;
 		this.domainVertexId = v.domainVertexId;
@@ -55,13 +55,13 @@ public class Vertex {
 	
 	public String getLocalID() {
 		String s = id;
-		s = s.replaceAll(this.name.getNs(), "");
+		s = s.replaceAll(this.uri.getNs(), "");
 		return s;
 	}
 
 	public String getLocalLabel() {
-		String s = this.name.getUri();
-		s = s.replaceAll(this.name.getNs(), "");
+		String s = this.uri.getUriString();
+		s = s.replaceAll(this.uri.getNs(), "");
 		return s;
 	}
 	
@@ -69,16 +69,16 @@ public class Vertex {
 		return this.id;
 	}
 	
-	public String getUri() {
-		return this.name.getUri();
+	public String getUriString() {
+		return this.uri.getUriString();
 	}
 	
 	public String getNs() {
-		return this.name.getNs();
+		return this.uri.getNs();
 	}
 	
 	public String getPrefix() {
-		return this.name.getPrefix();
+		return this.uri.getPrefix();
 	}
 	
 	public NodeType getNodeType() {

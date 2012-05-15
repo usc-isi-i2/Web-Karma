@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.Name;
+import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rep.semantictypes.SemanticType;
@@ -248,7 +248,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 				if (inLink.getID().equalsIgnoreCase(e.getID()))
 					continue;
 				
-				LabeledWeightedEdge inverseLink = new LabeledWeightedEdge(inLink.getID(), new Name(inLink.getUri(), inLink.getNs(), inLink.getPrefix()), inLink.getLinkType(), true);
+				LabeledWeightedEdge inverseLink = new LabeledWeightedEdge(inLink.getID(), new URI(inLink.getUriString(), inLink.getNs(), inLink.getPrefix()), inLink.getLinkType(), true);
 				treeClone.addEdge(target, source, inverseLink);
 				treeClone.setEdgeWeight(inverseLink, inLink.getWeight());
 				treeClone.removeEdge(inLink);

@@ -44,7 +44,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
-import edu.isi.karma.modeling.alignment.Name;
+import edu.isi.karma.modeling.alignment.URI;
 
 public class OntologyManager {
 	
@@ -104,9 +104,9 @@ public class OntologyManager {
 		return true;
 	}
 
-	public Name getNameFromURI(String uri) {
+	public URI getNameFromURI(String uri) {
 		Resource r = ontModel.getResource(uri);
-		return new Name(r.getURI(), r.getNameSpace(), ontModel.getNsURIPrefix(r.getNameSpace()));
+		return new URI(r.getURI(), r.getNameSpace(), ontModel.getNsURIPrefix(r.getNameSpace()));
 	}
 	
 	public boolean isClass(String label) {

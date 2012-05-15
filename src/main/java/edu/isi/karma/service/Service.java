@@ -35,7 +35,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.alignment.GraphPreProcess;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.Name;
+import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.modeling.alignment.Vertex;
@@ -381,7 +381,7 @@ public class Service {
 			if (vertexIdToArgument.get(v.getID()) == null)
 				continue;
 			
-			Name classPredicate = new Name(v.getUri(), v.getNs(), v.getPrefix());
+			URI classPredicate = new URI(v.getUriString(), v.getNs(), v.getPrefix());
 
 			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(v.getID()));
 			m.getAtoms().add(classAtom);
@@ -395,7 +395,7 @@ public class Service {
 					vertexIdToArgument.get(e.getTarget().getID()) == null)
 				continue;
 			
-			Name propertyPredicate = new Name(e.getUri(), e.getNs(), e.getPrefix());
+			URI propertyPredicate = new URI(e.getUriString(), e.getNs(), e.getPrefix());
 
 			PropertyAtom propertyAtom = new PropertyAtom(propertyPredicate, 
 					vertexIdToArgument.get(e.getSource().getID()),
@@ -427,7 +427,7 @@ public class Service {
 				continue;
 			
 			
-			Name classPredicate = new Name(v.getUri(), v.getNs(), v.getPrefix());
+			URI classPredicate = new URI(v.getUriString(), v.getNs(), v.getPrefix());
 
 			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(v.getID()));
 			m.getAtoms().add(classAtom);
@@ -442,7 +442,7 @@ public class Service {
 					vertexIdToArgument.get(e.getTarget().getID()) == null)
 				continue;
 			
-			Name propertyPredicate = new Name(e.getUri(), e.getNs(), e.getPrefix());
+			URI propertyPredicate = new URI(e.getUriString(), e.getNs(), e.getPrefix());
 
 			PropertyAtom propertyAtom = new PropertyAtom(propertyPredicate, 
 					vertexIdToArgument.get(e.getSource().getID()),

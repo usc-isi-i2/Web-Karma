@@ -139,7 +139,7 @@ public class Model {
 				
 				if (classAtom.getClassPredicate().getPrefix() != null && classAtom.getClassPredicate().getNs() != null)
 					model.setNsPrefix(classAtom.getClassPredicate().getPrefix(), classAtom.getClassPredicate().getNs());
-				Resource className = model.createResource(classAtom.getClassPredicate().getUri());
+				Resource className = model.createResource(classAtom.getClassPredicate().getUriString());
 				r.addProperty(class_predicate, className);
 				
 				Resource arg1 = model.getResource(baseNS + classAtom.getArgument1().getAttOrVarId());
@@ -155,7 +155,7 @@ public class Model {
 				
 				if (propertyAtom.getPropertyPredicate().getPrefix() != null && propertyAtom.getPropertyPredicate().getNs() != null)
 					model.setNsPrefix(propertyAtom.getPropertyPredicate().getPrefix(), propertyAtom.getPropertyPredicate().getNs());
-				Resource propertyName = model.createResource(propertyAtom.getPropertyPredicate().getUri());
+				Resource propertyName = model.createResource(propertyAtom.getPropertyPredicate().getUriString());
 				r.addProperty(property_predicate, propertyName);
 				
 				Resource arg1 = model.getResource(baseNS + propertyAtom.getArgument1().getAttOrVarId());
@@ -233,7 +233,7 @@ public class Model {
 				if (atom instanceof ClassAtom) {
 					ClassAtom classAtom = ((ClassAtom)atom);
 					atomVar = "?atom" + String.valueOf(i+1);
-					predicateUri = classAtom.getClassPredicate().getUri();
+					predicateUri = classAtom.getClassPredicate().getUriString();
 					argument1 = classAtom.getArgument1().getId();
 					argument1Var = "?" + argument1;
 					
@@ -251,7 +251,7 @@ public class Model {
 				else if (atom instanceof PropertyAtom) {
 					PropertyAtom propertyAtom = ((PropertyAtom)atom);
 					atomVar = "?atom" + String.valueOf(i+1);
-					predicateUri = propertyAtom.getPropertyPredicate().getUri();
+					predicateUri = propertyAtom.getPropertyPredicate().getUriString();
 					argument1 = propertyAtom.getArgument1().getId();
 					argument2 = propertyAtom.getArgument2().getId();
 					argument1Var = "?" + argument1;

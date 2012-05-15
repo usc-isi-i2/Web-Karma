@@ -304,18 +304,18 @@ public class SourceDescription {
 	private String generateDataPropertyStatement(Vertex v,
 			LabeledWeightedEdge e, Vertex child) throws KarmaException {
 		if(child.getNodeType()!=NodeType.DataProperty){
-			throw new KarmaException("Node " + child.getUri()+ " should be of type NodeType.DataProperty");
+			throw new KarmaException("Node " + child.getUriString()+ " should be of type NodeType.DataProperty");
 		}
 		if(e.getLinkType()!=LinkType.DataProperty){
-			throw new KarmaException("Edge " + e.getUri() + " should be of type LinkType.DataProperty");
+			throw new KarmaException("Edge " + e.getUriString() + " should be of type LinkType.DataProperty");
 		}
 		if(v.getNodeType()!=NodeType.Class){
-			throw new KarmaException("Node " + v.getUri() + " should be of type NodeType.Class");
+			throw new KarmaException("Node " + v.getUriString() + " should be of type NodeType.Class");
 		}
 		//find the key of Class v
 		String key = findKey(v);
 		if(key==null){
-			throw new KarmaException("Key for " + v.getUri() + " is NULL. This should not happen!");
+			throw new KarmaException("Key for " + v.getUriString() + " is NULL. This should not happen!");
 		}
 		
 		////////
@@ -336,7 +336,7 @@ public class SourceDescription {
 		ruleAttributes.add(dataAttribute);
 		String propertyName = getPrefix(e.getPrefix(), e.getNs()) + ":" + e.getLocalLabel();
 		if(e.isInverse()){
-			throw new KarmaException("A data property cannot be an inverse_of:" + e.getUri());
+			throw new KarmaException("A data property cannot be an inverse_of:" + e.getUriString());
 		}
 		String s = "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
 		//System.out.println("DataProperty:" + s);
@@ -359,29 +359,29 @@ public class SourceDescription {
 	private String generateObjectPropertyStatement(Vertex v,
 			LabeledWeightedEdge e, Vertex child) throws KarmaException {
 		if(v.getNodeType()!=NodeType.Class){
-			throw new KarmaException("Node " + v.getUri() + " should be of type NodeType.Class");
+			throw new KarmaException("Node " + v.getUriString() + " should be of type NodeType.Class");
 		}
 		if(child.getNodeType()!=NodeType.Class){
-			throw new KarmaException("Node " + child.getUri() + " should be of type NodeType.Class");
+			throw new KarmaException("Node " + child.getUriString() + " should be of type NodeType.Class");
 		}
 		if(e.getLinkType()!=LinkType.ObjectProperty && e.getLinkType()!=LinkType.HasSubClass){
-			throw new KarmaException("Edge " + e.getUri() + " should be of type LinkType.ObjectProperty");
+			throw new KarmaException("Edge " + e.getUriString() + " should be of type LinkType.ObjectProperty");
 		}
 		//find the key of Class v
 		String key1 = findKey(v);
 		if(key1==null){
-			throw new KarmaException("Key for " + v.getUri() + " is NULL. This should not happen!");
+			throw new KarmaException("Key for " + v.getUriString() + " is NULL. This should not happen!");
 		}
 		String key2 = findKey(child);
 		String propertyName = getPrefix(e.getPrefix(), e.getNs()) + ":" + e.getLocalLabel();
 
 		String s = "`" + propertyName + "`(uri(" + key1 + "),uri(" + key2 + "))";
-		s += addInverseProperty(e.getUri(), key1,key2);
+		s += addInverseProperty(e.getUriString(), key1,key2);
 		
 		if(e.isInverse()){
 			//propertyName = TableRDFGenerator.inverseProperty + propertyName;
 			s = "`" + propertyName + "`(uri(" + key2 + "),uri(" + key1 + "))";
-			s += addInverseProperty(e.getUri(), key2,key1);
+			s += addInverseProperty(e.getUriString(), key2,key1);
 		}
 
 		//System.out.println("ObjectProperty:" + s);
@@ -434,12 +434,12 @@ public class SourceDescription {
 			//semantic type is a Class
 			String key = findKey(child);
 			//logger.info("Sem Type is a class:"+st.getType());
-			String className = getPropertyWithPrefix(model.getOntResource(st.getType()));
+			String className = getPropertyWithPrefix(model.getOntResource(st.getType().getUriString()));
 			String s = "`" + className + "`(uri(" + key + "))"; 
 			return s;
 		}
 		else{
-			String domainClass = st.getDomain();
+			String domainClass = st.getDomain().getUriString();
 			logger.info("Domain=" + domainClass);
 			String s = "";
 			String id = classNameToId.get(domainClass);
@@ -451,7 +451,7 @@ public class SourceDescription {
 				uriMap.put(domainClass,key);
 				//I don't have an id for this class because I don't have a vertex in the graph for it
 				classNameToId.put(domainClass,domainClass);
-				id=st.getDomain();
+				id=st.getDomain().getUriString();
 				//add a class statement for this class
 				s += "`" + domainClass + "`(uri(" + key + ")) \n ^ "; 
 			}
@@ -464,7 +464,7 @@ public class SourceDescription {
 				dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNames();
 			}
 			ruleAttributes.add(dataAttribute);
-			String propertyName = getPropertyWithPrefix(model.getOntProperty(st.getType()));
+			String propertyName = getPropertyWithPrefix(model.getOntProperty(st.getType().getUriString()));
 			s += "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
 			//System.out.println("DataProperty:" + s);
 			return s;
@@ -591,7 +591,7 @@ public class SourceDescription {
 		if(!isGensym)
 			key = addBacktick(key);
 		
-		classNameToId.put(v.getUri(), v.getID());
+		classNameToId.put(v.getUriString(), v.getID());
 		uriMap.put(v.getID(), key);
 		//logger.info("Key for " + v.getID() + " is " + key);
 		return key;

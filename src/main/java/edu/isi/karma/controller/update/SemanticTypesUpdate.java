@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
@@ -86,21 +85,19 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 					// Add the primary semantic type
 					writer.object()
 							.key(JsonKeys.FullType.name())
-							.value(type.getType())
+							.value(type.getType().getUriString())
 							.key(JsonKeys.Origin.name())
 							.value(type.getOrigin().name())
 							.key(JsonKeys.ConfidenceLevel.name())
 							.value(type.getConfidenceLevel().name())
 							.key(JsonKeys.DisplayLabel.name())
-							.value(SemanticTypeUtil.removeNamespace(type
-									.getType()))
+							.value(type.getType().getLocalName())
 							.key(JsonKeys.Domain.name())
-							.value(type.getDomain())
+							.value(type.getDomain().getUriString())
 							.key(JsonKeys.isPartOfKey.name())
 							.value(type.isPartOfKey())
 							.key(JsonKeys.DisplayDomainLabel.name())
-							.value(SemanticTypeUtil.removeNamespace(type
-									.getDomain()))
+							.value(type.getDomain().getLocalName())
 							.key(JsonKeys.isPrimary.name()).value(true);
 					writer.endObject();
 
@@ -114,20 +111,17 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 									.key(JsonKeys.HNodeId.name())
 									.value(synType.getHNodeId())
 									.key(JsonKeys.FullType.name())
-									.value(synType.getType())
+									.value(synType.getType().getUriString())
 									.key(JsonKeys.Origin.name())
 									.value(synType.getOrigin().name())
 									.key(JsonKeys.ConfidenceLevel.name())
 									.value(synType.getConfidenceLevel().name())
 									.key(JsonKeys.DisplayLabel.name())
-									.value(SemanticTypeUtil
-											.removeNamespace(synType.getType()))
+									.value(synType.getType().getLocalName())
 									.key(JsonKeys.Domain.name())
-									.value(synType.getDomain())
+									.value(synType.getDomain().getUriString())
 									.key(JsonKeys.DisplayDomainLabel.name())
-									.value(SemanticTypeUtil
-											.removeNamespace(synType
-													.getDomain()))
+									.value(synType.getDomain().getLocalName())
 									.key(JsonKeys.isPrimary.name())
 									.value(false);
 							writer.endObject();

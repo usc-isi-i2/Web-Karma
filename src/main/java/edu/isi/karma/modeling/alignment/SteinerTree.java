@@ -73,7 +73,7 @@ public class SteinerTree {
 					continue;
 				
 				String id = "e" + String.valueOf(i) + String.valueOf(j);
-				LabeledWeightedEdge e = new LabeledWeightedEdge(id, new Name(id, null, null), null);
+				LabeledWeightedEdge e = new LabeledWeightedEdge(id, new URI(id, null, null), null);
 				g.addEdge(steinerNodes.get(i), steinerNodes.get(j), e);
 				g.setEdgeWeight(e, path.getCost(steinerNodes.get(j)));
 				

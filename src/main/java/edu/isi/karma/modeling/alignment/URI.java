@@ -20,26 +20,33 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
 
-public class Name {
+public class URI {
 
-	private String uri;
+	private String uriString;
 	private String ns;
 	private String prefix;
 	
-	public Name(String uri, String ns, String prefix) {
-		this.uri = uri;
+	public URI(String uri, String ns, String prefix) {
+		this.uriString = uri;
 		this.ns = ns;
 		this.prefix = prefix;
 	}
 
-	public Name(Name n) {
-		this.uri = n.uri;
-		this.ns = n.ns;
-		this.prefix = n.prefix;
+	
+	public URI(String uri) {
+		this.uriString = uri;
+		this.ns = "";
+		this.prefix = "";
 	}
 	
-	public void setUri(String uri) {
-		this.uri = uri;
+	public URI(URI uri) {
+		this.uriString = uri.getUriString();
+		this.ns = uri.getNs();
+		this.prefix = uri.getPrefix();
+	}
+	
+	public void setUriString(String uri) {
+		this.uriString = uri;
 	}
 
 
@@ -53,8 +60,8 @@ public class Name {
 	}
 
 
-	public String getUri() {
-		return uri;
+	public String getUriString() {
+		return uriString;
 	}
 
 	public String getNs() {
@@ -66,10 +73,10 @@ public class Name {
 	}
 	
 	public String getLocalName() {
-		if (uri == null)
+		if (uriString == null)
 			return null;
 		
-		String name = uri;
+		String name = uriString;
 		if (ns != null)
 			name = name.replaceFirst(ns, "");
 		
@@ -77,10 +84,10 @@ public class Name {
 	}
 
 	public String getLocalNameWithPrefix() {
-		if (uri == null)
+		if (uriString == null)
 			return null;
 		
-		String name = uri;
+		String name = uriString;
 		if (ns != null && prefix != null)
 			name = name.replaceFirst(ns, "");
 		

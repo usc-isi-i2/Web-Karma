@@ -25,7 +25,10 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.geospatial.WorksheetGeospatialContent;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.view.VWorkspace;
 
 public class PublishKMLLayerCommand extends Command {
@@ -73,8 +76,14 @@ public class PublishKMLLayerCommand extends Command {
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
-		WorksheetGeospatialContent geo = new WorksheetGeospatialContent(
-				worksheet, vWorkspace.getWorkspace().getTagsContainer(), vWorkspace.getWorkspace().getCrfModelHandler());
+		Workspace ws = vWorkspace.getWorkspace();
+		if (worksheet.getSemanticTypes().getListOfTypes().size() == 0) {
+			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, ws
+					.getTagsContainer().getTag(TagName.Outlier), ws
+					.getCrfModelHandler(), ws.getOntologyManager());
+		}
+
+		WorksheetGeospatialContent geo = new WorksheetGeospatialContent(worksheet);
 		// Send an error update if no geospatial data found!
 		if (geo.hasNoGeospatialData()) {
 			return new UpdateContainer(new ErrorUpdate(
@@ -109,9 +118,8 @@ public class PublishKMLLayerCommand extends Command {
 			});
 		} catch (FileNotFoundException e) {
 			logger.error("KML File not found!", e);
-			return new UpdateContainer(
-					new ErrorUpdate(
-							"Error occurred while publishing KML layer!"));
+			return new UpdateContainer(new ErrorUpdate(
+					"Error occurred while publishing KML layer!"));
 		}
 	}
 

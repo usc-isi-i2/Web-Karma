@@ -21,21 +21,21 @@
 
 package edu.isi.karma.service;
 
-import edu.isi.karma.modeling.alignment.Name;
+import edu.isi.karma.modeling.alignment.URI;
 
 public class PropertyAtom extends Atom {
 
-	private Name propertyPredicate;
+	private URI propertyPredicate;
 	private Argument argument1;
 	private Argument argument2;
 	
-	public PropertyAtom(Name propertyPredicate, Argument argument1, Argument argument2) {
+	public PropertyAtom(URI propertyPredicate, Argument argument1, Argument argument2) {
 		this.propertyPredicate = propertyPredicate;
 		this.argument1 = argument1;
 		this.argument2 = argument2;
 	}
 
-	public Name getPropertyPredicate() {
+	public URI getPropertyPredicate() {
 		return propertyPredicate;
 	}
 
@@ -48,7 +48,7 @@ public class PropertyAtom extends Atom {
 	}
 
 	public void print() {
-		System.out.println("property predicate uri: " + propertyPredicate.getUri());
+		System.out.println("property predicate uri: " + propertyPredicate.getUriString());
 		System.out.println("property predicate ns: " + propertyPredicate.getNs());
 		System.out.println("property predicate prefix: " + propertyPredicate.getPrefix());
 		System.out.println("argument1: " + argument1.getId());

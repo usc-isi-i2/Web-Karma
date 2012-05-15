@@ -29,6 +29,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
+import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.semantictypes.SemanticType;
@@ -61,24 +62,24 @@ public class Test {
 		
 		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
 		
-//		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#City", null, 0.0, false) );
-//		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#hasCode", null, 0.0) );
-//		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#zipCode", null, 0.0, false) );
-//		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#hasModel", null, 0.0) );
-//		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Country", null, 0.0) );
-//		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Country", null, 0.0) );
-//		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#zipCode", null, 0.0) );
-//		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#City", null, 0.0) );
-		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#hasName", "http://mohsen.isi.edu/sample.owl#Person", null, 0.0, false) );
-//		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#hasName", null, 0.0) );
-//		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#hasName", null, 0.0) );
-//		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#live", null, 0.0) );
-//		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Place", null, 0.0) );
-//		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Plant", null, 0.0) );
-//		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Person", null, 0.0, false) );
-//		semanticTypes.add( new SemanticType(null, "http://mohsen.isi.edu/sample.owl#Animal", null, 0.0, false) );
-//		semanticTypes.add( new SemanticType(null, "http://www.w3.org/2002/07/owl#Thing", null, 0.0) );
-//		semanticTypes.add( new SemanticType(null, "http://www.w3.org/2002/07/owl#Thing", null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#City"), null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#hasCode"), null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#zipCode"), null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#hasModel"), null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#Country"), null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#Country"), null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#zipCode"), null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#City"), null, 0.0) );
+		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#hasName"), new URI("http://mohsen.isi.edu/sample.owl#Person"), null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#hasName"), null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#hasName"), null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#live"), null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#Place"), null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#Plant"), null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#Person"), null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://mohsen.isi.edu/sample.owl#Animal"), null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://www.w3.org/2002/07/owl#Thing"), null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://www.w3.org/2002/07/owl#Thing"), null, 0.0) );
 		
 		return semanticTypes;
 	}
@@ -87,35 +88,35 @@ public class Test {
 		
 		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
 		
-		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#PharmGKBId", 
-				"http://halowiki/ob/category#Gene", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://halowiki/ob/property#PharmGKBId"), 
+				new URI("http://halowiki/ob/category#Gene"), null, 0.0, false) );
 		
-		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#PharmGKBId", 
-				"http://halowiki/ob/category#Pathway", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://halowiki/ob/property#PharmGKBId"), 
+				new URI("http://halowiki/ob/category#Pathway"), null, 0.0, false) );
 		
-		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#PharmGKBId", 
-				"http://halowiki/ob/category#Disease", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://halowiki/ob/property#PharmGKBId"), 
+				new URI("http://halowiki/ob/category#Disease"), null, 0.0, false) );
 		
-		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#PharmGKBId", 
-				"http://halowiki/ob/category#Drug", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://halowiki/ob/property#PharmGKBId"), 
+				new URI("http://halowiki/ob/category#Drug"), null, 0.0, false) );
 		
 		
-		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#Label", 
-				"http://halowiki/ob/category#Gene", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://halowiki/ob/property#Label"), 
+				new URI("http://halowiki/ob/category#Gene"), null, 0.0, false) );
 		
-		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#Label", 
-				"http://halowiki/ob/category#Pathway", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://halowiki/ob/property#Label"), 
+				new URI("http://halowiki/ob/category#Pathway"), null, 0.0, false) );
 		
-		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#Label", 
-				"http://halowiki/ob/category#Disease", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://halowiki/ob/property#Label"), 
+				new URI("http://halowiki/ob/category#Disease"), null, 0.0, false) );
 		
-		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/property#Label", 
-				"http://halowiki/ob/category#Drug", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://halowiki/ob/property#Label"), 
+				new URI("http://halowiki/ob/category#Drug"), null, 0.0, false) );
 		
-//		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/category#Disease", null, 0.0) );
-//		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/category#Drug", null, 0.0) );
-//		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/category#Gene", null, 0.0) );
-//		semanticTypes.add( new SemanticType(null, "http://halowiki/ob/category#Pathway", null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://halowiki/ob/category#Disease"), null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://halowiki/ob/category#Drug"), null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://halowiki/ob/category#Gene"), null, 0.0) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://halowiki/ob/category#Pathway"), null, 0.0) );
 		
 		return semanticTypes;
 	}
@@ -124,8 +125,8 @@ public class Test {
 		
 		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
 		
-		semanticTypes.add( new SemanticType(null, "http://www.sri.com/ontologies/DovetailOnto.owl#Attack", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://www.sri.com/ontologies/DovetailOnto.owl#Nation", null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://www.sri.com/ontologies/DovetailOnto.owl#Attack"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://www.sri.com/ontologies/DovetailOnto.owl#Nation"), null, 0.0, false) );
 		
 		return semanticTypes;
 	}
@@ -134,34 +135,34 @@ public class Test {
 		
 		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
 		
-//		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#email", 
-				"http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#phoneNumber", 
-				"http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://xmlns.com/foaf/0.1/firstName", 
-				"http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://xmlns.com/foaf/0.1/lastName", 
-				"http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://www.w3.org/2000/01/rdf-schema#label", 
-				"http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#preferredTitle", 
-				"http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://www.usc.edu/ontology/local#organizationID", 
-				"http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://www.w3.org/2000/01/rdf-schema#label", 
-				"http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, "http://www.usc.edu/ontology/local#personID", 
-				"http://vivoweb.org/ontology/core#FacultyMember", null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://vivoweb.org/ontology/core#FacultyMember"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://vivoweb.org/ontology/core#email"), 
+				new URI("http://vivoweb.org/ontology/core#FacultyMember"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://vivoweb.org/ontology/core#phoneNumber"), 
+				new URI("http://vivoweb.org/ontology/core#FacultyMember"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://xmlns.com/foaf/0.1/firstName"), 
+				new URI("http://vivoweb.org/ontology/core#FacultyMember"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://xmlns.com/foaf/0.1/lastName"), 
+				new URI("http://vivoweb.org/ontology/core#FacultyMember"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://www.w3.org/2000/01/rdf-schema#label"), 
+				new URI("http://vivoweb.org/ontology/core#FacultyMember"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://vivoweb.org/ontology/core#preferredTitle"), 
+				new URI("http://vivoweb.org/ontology/core#FacultyMember"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://www.usc.edu/ontology/local#organizationID"), 
+				new URI("http://vivoweb.org/ontology/core#Department"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://www.w3.org/2000/01/rdf-schema#label"), 
+				new URI("http://vivoweb.org/ontology/core#Department"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://www.usc.edu/ontology/local#personID"), 
+				new URI("http://vivoweb.org/ontology/core#FacultyMember"), null, 0.0, false) );
 
 
 
 
-//		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#Position", null, 0.0, false) );
-//		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
-//		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
-//		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
-//		semanticTypes.add( new SemanticType(null, "http://vivoweb.org/ontology/core#Department", null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://vivoweb.org/ontology/core#Position"), null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://vivoweb.org/ontology/core#Department"), null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://vivoweb.org/ontology/core#Department"), null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://vivoweb.org/ontology/core#Department"), null, 0.0, false) );
+//		semanticTypes.add( new SemanticType(null, new URI("http://vivoweb.org/ontology/core#Department"), null, 0.0, false) );
 		
 		return semanticTypes;
 	}
@@ -170,18 +171,18 @@ public class Test {
 		
 		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
 		
-		semanticTypes.add( new SemanticType("h1", "http://www.w3.org/2003/01/geo/wgs84_pos#lat", 
-				"http://www.geonames.org/ontology#Feature", null, 0.0, false) );
-		semanticTypes.add( new SemanticType("h2", "http://www.w3.org/2003/01/geo/wgs84_pos#long", 
-				"http://www.geonames.org/ontology#Feature", null, 0.0, false) );
-		semanticTypes.add( new SemanticType("h3", "http://www.geonames.org/ontology#name", 
-				"http://www.geonames.org/ontology#Feature", null, 0.0, false) );
-		semanticTypes.add( new SemanticType("h4", "http://www.geonames.org/ontology#name", 
-				"http://www.geonames.org/ontology#Feature", null, 0.0, false) );
-		semanticTypes.add( new SemanticType("h5", "http://www.geonames.org/ontology#countryCode", 
-				"http://www.geonames.org/ontology#Feature", null, 0.0, false) );
-		semanticTypes.add( new SemanticType("h6", "http://www.geonames.org/ontology#name", 
-				"http://www.geonames.org/ontology#Feature", null, 0.0, false) );
+		semanticTypes.add( new SemanticType("h1", new URI("http://www.w3.org/2003/01/geo/wgs84_pos#lat"), 
+				new URI("http://www.geonames.org/ontology#Feature"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType("h2", new URI("http://www.w3.org/2003/01/geo/wgs84_pos#long"), 
+				new URI("http://www.geonames.org/ontology#Feature"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType("h3", new URI("http://www.geonames.org/ontology#name"), 
+				new URI("http://www.geonames.org/ontology#Feature"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType("h4", new URI("http://www.geonames.org/ontology#name"), 
+				new URI("http://www.geonames.org/ontology#Feature"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType("h5", new URI("http://www.geonames.org/ontology#countryCode"), 
+				new URI("http://www.geonames.org/ontology#Feature"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType("h6", new URI("http://www.geonames.org/ontology#name"), 
+				new URI("http://www.geonames.org/ontology#Feature"), null, 0.0, false) );
 
 
 		return semanticTypes;
@@ -204,18 +205,18 @@ public class Test {
 //		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = alignment.getSteinerTree();
 //		GraphUtil.printGraph(steinerTree);
 //		
-//		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name1");
-//		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name1");
-//		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name1");
+//		alignment.duplicateDomainOfLink(new URI("http://www.geonames.org/ontology#name1");
+//		alignment.duplicateDomainOfLink(new URI("http://www.geonames.org/ontology#name1");
+//		alignment.duplicateDomainOfLink(new URI("http://www.geonames.org/ontology#name1");
 //		
-//		alignment.addUserLink("http://www.geonames.org/ontology#name4");
-//		alignment.addUserLink("http://www.geonames.org/ontology#name8");
-//		alignment.addUserLink("http://www.geonames.org/ontology#name12");
-//		alignment.addUserLink("http://www.geonames.org/ontology#countryCode4");
+//		alignment.addUserLink(new URI("http://www.geonames.org/ontology#name4");
+//		alignment.addUserLink(new URI("http://www.geonames.org/ontology#name8");
+//		alignment.addUserLink(new URI("http://www.geonames.org/ontology#name12");
+//		alignment.addUserLink(new URI("http://www.geonames.org/ontology#countryCode4");
 //
-//		alignment.addUserLink("http://www.geonames.org/ontology#neighbour1");
-//		alignment.addUserLink("http://www.geonames.org/ontology#nearby4");
-//		alignment.addUserLink("http://www.geonames.org/ontology#parentFeature10");
+//		alignment.addUserLink(new URI("http://www.geonames.org/ontology#neighbour1");
+//		alignment.addUserLink(new URI("http://www.geonames.org/ontology#nearby4");
+//		alignment.addUserLink(new URI("http://www.geonames.org/ontology#parentFeature10");
 
 		
 		Alignment alignment = new Alignment(ontManagar, semTypes5, true);
@@ -240,9 +241,9 @@ public class Test {
 		loadOntologies(ontManager);
 		
 //		OntologyCache cache =  ontManager.getOntCache();
-//		List<String> list = ontManager.getDataPropertiesOfClass("http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing", false);
-//		List<String> list = ontManager.getObjectPropertiesOfClass("http://www.geonames.org/ontology#Feature", false);
-//		List<String> list = ontManager.getSubClasses("http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing", false);
+//		List<String> list = ontManager.getDataPropertiesOfClass(new URI("http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing"), false);
+//		List<String> list = ontManager.getObjectPropertiesOfClass(new URI("http://www.geonames.org/ontology#Feature"), false);
+//		List<String> list = ontManager.getSubClasses(new URI("http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing"), false);
 		List<String> list = ontManager.getObjectPropertiesOfClass("http://www.sri.com/ontologies/DovetailOnto.owl#Entity", true);
 	
 		System.out.println(list.size());
@@ -253,7 +254,7 @@ public class Test {
 	private static void testAlignment() {
 		OntologyManager ontManagar = new OntologyManager();
 		loadOntologies(ontManagar);
-//		System.out.println(ontManagar.getOntModel().getNsURIPrefix("http://vivoweb.org/ontology/core#"));
+//		System.out.println(ontManagar.getOntModel().getNsURIPrefix(new URI("http://vivoweb.org/ontology/core#"));
 //		System.out.println(ontManagar.getOntModel().getNsPrefixURI("vivo"));
 //		System.out.println(ontManagar.getOntModel().get("vivo"));
 //		if (true) return;
@@ -304,16 +305,16 @@ public class Test {
 //		GraphUtil.printGraphSimple(alignment3.getSteinerTree());
 
 
-//		alignment.addUserLink("http://halowiki/ob/property#involves1");
+//		alignment.addUserLink(new URI("http://halowiki/ob/property#involves1");
 //		GraphUtil.printGraph(alignment.getSteinerTree());
-//		alignment.addUserLink("http://halowiki/ob/property#IsInvolvedIn1");
+//		alignment.addUserLink(new URI("http://halowiki/ob/property#IsInvolvedIn1");
 //		GraphUtil.printGraph(alignment.getSteinerTree());
 
 		
 //		alignment.getSteinerTree();
 //		GraphUtil.printGraph(alignment.getSteinerTree());
 		
-//		alignment.addUILink("http://halowiki/ob/property#Causes1");
+//		alignment.addUILink(new URI("http://halowiki/ob/property#Causes1");
 //		GraphUtil.printGraph(alignment.getSteinerTree());
 
 	}

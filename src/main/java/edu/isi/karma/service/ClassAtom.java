@@ -21,19 +21,19 @@
 
 package edu.isi.karma.service;
 
-import edu.isi.karma.modeling.alignment.Name;
+import edu.isi.karma.modeling.alignment.URI;
 
 public class ClassAtom extends Atom {
 
-	private Name classPredicate;
+	private URI classPredicate;
 	private Argument argument1;
 	
-	public ClassAtom(Name classPredicate, Argument argument1) {
+	public ClassAtom(URI classPredicate, Argument argument1) {
 		this.classPredicate = classPredicate;
 		this.argument1 = argument1;
 	}
 
-	public Name getClassPredicate() {
+	public URI getClassPredicate() {
 		return classPredicate;
 	}
 
@@ -42,7 +42,7 @@ public class ClassAtom extends Atom {
 	}
 	
 	
-	public void setClassPredicate(Name classPredicate) {
+	public void setClassPredicate(URI classPredicate) {
 		this.classPredicate = classPredicate;
 	}
 
@@ -51,7 +51,7 @@ public class ClassAtom extends Atom {
 	}
 
 	public void print() {
-		System.out.println("class predicate uri: " + classPredicate.getUri());
+		System.out.println("class predicate uri: " + classPredicate.getUriString());
 		System.out.println("class predicate ns: " + classPredicate.getNs());
 		System.out.println("class predicate prefix: " + classPredicate.getPrefix());
 		System.out.println("argument1: " + argument1.getId());
