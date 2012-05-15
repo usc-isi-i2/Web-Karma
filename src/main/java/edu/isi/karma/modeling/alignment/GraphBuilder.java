@@ -92,8 +92,8 @@ public class GraphBuilder {
 		} else {
 			index = 1;
 			nodesLabelCounter.put(label, index);
-			id = label + "" + index;
-//			id = label;
+//			id = label + "" + index;
+			id = label;
 		}
 		return id;
 	}
@@ -104,7 +104,10 @@ public class GraphBuilder {
 		
 		if (nodesLabelCounter.containsKey(label)) {
 			index = nodesLabelCounter.get(label).intValue();
-			return (label + "" + index);
+			if (index == 1)
+				return label;
+			else
+				return (label + "" + index);
 		} else 
 			return null;
 	}
@@ -121,8 +124,8 @@ public class GraphBuilder {
 		} else {
 			index = 1;
 			linksLabelCounter.put(label, index);
-			id = label + "" + index;
-//			id = label;
+//			id = label + "" + index;
+			id = label;
 		}
 		return id;
 	}
