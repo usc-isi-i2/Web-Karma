@@ -12,7 +12,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     
     $("<div>").attr("id","svgDiv_"+vworksheetId).insertBefore('table#'+vworksheetId);
     
-    var h = levelHeight * (json["maxTreeHeight"]+0.5);
+    var h = levelHeight * (json["maxTreeHeight"] - 0.2);
     if(w == 0)
         w = $("div#"+vworksheetId + "TableDiv").width();
     
@@ -49,6 +49,8 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         node["y"] = h - ((node["height"] * levelHeight));
         if(node["nodeType"] == "DataProperty" || node["nodeType"] == "Unassigned")
             node["y"] -= 5;
+        if(node["nodeType"] == "FakeRoot")
+            node["y"] += 15;
         node["x"] = extremeLeftX + width/2;
     });
     
@@ -99,7 +101,12 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .text(function(d) {
             return d.label;
         })
-        .attr("class","LinkLabel")
+        .attr("class", function(d) {
+            if(d.id != "FakeRootLink")
+                return "LinkLabel "+vworksheetId;
+            else
+                return "LinkLabel FakeRootLink "+vworksheetId;
+        })
         .attr("x", function(d) {
             if(d.source.y > d.target.y)
                 return d.source.x;
@@ -109,6 +116,8 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .attr("y", function(d) {
             if(d.target.nodeType == "DataProperty")
                 return ((d.source.y + d.target.y)/2 + 12);
+            if(d.source.nodeType == "FakeRoot")
+                return ((d.source.y + d.target.y)/2 - 4);
             return ((d.source.y + d.target.y)/2 + 5);
         })
         .attr("transform", function(d) {
@@ -118,7 +127,8 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             else
                 X = d.target.x;
             Y = (d.source.y + d.target.y)/2;
-            return "translate(" + (this.getComputedTextLength()/2 * -1) + ") rotate(-8 " +X+","+Y+ ")";  
+            return "translate(" + (this.getComputedTextLength()/2 * -1) + ")";
+            // return "translate(" + (this.getComputedTextLength()/2 * -1) + ") rotate(-8 " +X+","+Y+ ")";  
         }).on("click", function(d){
             showAlternativeParents_d3(d, svg, d3.event);
         }).on("mouseover", function(d){
@@ -148,14 +158,14 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .attr("dy", ".32em")
         .text(function(d) {
             $(this).data("text",d.label);
-            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned")
+            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
                 return "";
             else 
                 return d.label; })
         .attr("width", function(d) {
             var newText = $(this).text();
             if(this.getComputedTextLength() > d["width"]) {
-                if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned")
+                if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
                     return 0;
                 $(this).qtip({content: {text: $(this).data("text")}});
                 // Trim the string to make it fit inside the rectangle
@@ -177,24 +187,24 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .attr("ry", 6)
         .attr("rx", 6)
         .attr("y", function(d){
-            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned") {
+            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot") {
                 return -2;
             } else
                 return -10;
         })
         .attr("height", function(d){
-            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned")
+            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
                 return 6;
             else
                 return 20;  
         })
         .attr("width", function(d) {
-            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned")
+            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
                 return 6;
             else
                 return d["width"];
         }).attr("x", function(d){
-            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned") {
+            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot") {
                 return -3;
             } else
                 return d.width/2 * -1;
@@ -202,6 +212,47 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             if(d["nodeType"] == "DataProperty" || d.nodeType == "Unassigned")
                 changeSemanticType_d3(d, svg, d3.event);
         });
+    
+    /*** Check for collisions between labels ***/
+    var flag = 0;
+    d3.selectAll("text.LinkLabel." + vworksheetId)
+        .sort(comparator)
+        .each(function(d1,i1) {
+            var x1 = this.getBBox().x;
+            var y1 = this.getBBox().y;
+            var width1 = this.getBBox().width;
+            var height1 = this.getBBox().height;
+            var cur1 = $(this);
+            d3.selectAll("text.LinkLabel." + vworksheetId)
+               .sort(comparator)
+               .each(function(d2,i2) {
+                   var x2 = this.getBBox().x;
+                   var y2 = this.getBBox().y;
+                   var width2 = this.getBBox().width;
+                   var height2 = this.getBBox().height;
+                   if(d1.id != d2.id) {
+                       if(y1 == y2) {
+                           if(((x1 + width1) > x2) && (x2+width2>x1+width1)){
+                               if(flag%2 == 0)
+                                    $(cur1).attr("y", $(cur1).attr("y")-8);
+                               else
+                                    $(cur1).attr("y", $(cur1).attr("y")+8);
+                               flag++;
+                           }
+                       }
+                       if(x1+width1 < x2)
+                            return false;
+                   }
+            });
+        });
+    
+    /*** Check for collisions between labels and rectangles ***/
+   // d3.selectAll("text.LinkLabel." + vworksheetId)
+        // .sort(comparator)
+        // .each(function(d1,i1) {
+//             
+        // });
+    
     $("text.LinkLabel").qtip({content: {text: "Edit Relationship"}});
     $("g.DataProperty, g.Unassigned").qtip({content: {text: "Change Semantic Type"}});
     
@@ -212,7 +263,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             return d.target.x;
     })
     .attr("y1", function(d) { return d.source.y; })
-    .attr("x2", function(d) { 
+    .attr("x2", function(d) {
         if(d.source.y > d.target.y)
             return d.source.x;
         else
@@ -229,6 +280,20 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     });
 }
 
+var comparator = function(a,b){
+    var x1 = 0;
+    if(a.source.y > a.target.y)
+        x1 = a.source.x;
+    else
+        x1 = a.target.x;
+        
+    var x2 = 0;
+    if(b.source.y > b.target.y)
+        x2 = b.source.x;
+    else
+        x2 = b.target.x;
+    return x1-x2;
+}
 // Thanks to http://stackoverflow.com/questions/2854407/javascript-jquery-window-resize-how-to-fire-after-the-resize-is-completed
 var waitForFinalEvent = (function () {
     var timers = {};
