@@ -677,7 +677,6 @@ public class RuleUtil {
 					else
 					{
 						newsign.add(RuleUtil.getSign(eos));
-						//descriptions1.add(seqscurExamp);
 						dcrpt.addDesc(seqscurExamp);
 						dcrpt.addSeqs(seq);
 						hs.add(seqscurExamp.toString());
@@ -764,6 +763,11 @@ public class RuleUtil {
 		}
 		dcrpt.sequences = sequences;
 		dcrpt.desc = descriptions;
+		try {
+			dcrpt.writeJSONString();
+		} catch (Exception e) {
+		}
+		
 		//descriptions = filterDescription(descriptions,sign); // many descriptoins
 		//prepare three kind of rule generator
 		Vector<Vector<GrammarParseTree>> gps = new Vector<Vector<GrammarParseTree>>();
