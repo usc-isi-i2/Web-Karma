@@ -715,7 +715,7 @@ public class Main {
 						{		
 							String tranresult = "";
 							cx +="\n\n"+pls.get(i);
-							String[] rules = pls.get(i).split("<RULESEP>");
+							String[] rules = pls.get(i).split("#");
 							//System.out.println(""+s1);
 							Vector<String> xr = new Vector<String>();
 							for(int t = 0; t< rules.length; t++)
