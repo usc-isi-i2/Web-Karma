@@ -20,7 +20,12 @@
  ******************************************************************************/
 package edu.isi.karma.cleaning;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.HashSet;
+import org.json.*;
+
 import java.util.Vector;
 class Tuple
 {
@@ -38,6 +43,22 @@ class Tuple
 	public Vector<TNode> getafter()
 	{
 		return tuple.get(1);
+	}
+	public String toString()
+	{
+		Vector<TNode> bef = this.getBefore();
+		Vector<TNode> aft = this.getafter();
+		String orgString = "";
+		String aftString = "";
+		for(TNode t:bef)
+		{
+			orgString += t.text;
+		}
+		for(TNode t:aft)
+		{
+			aftString += t.text;
+		}
+		return orgString+" === "+aftString;
 	}
 }
 public class Description 
@@ -81,5 +102,42 @@ public class Description
 	public void newSeqs()
 	{
 		this.sequences = new Vector<Vector<Vector<Tuple>>>();
+	}
+	public void writeJSONString() throws Exception
+	{
+		
+		String rep = "";
+		if(this.desc.size() != this.sequences.size())
+		{
+			CleaningLogger.write("description toString error");
+			return ;
+			
+		}
+		JSONArray jx = new JSONArray();
+		for(int i = 0; i<this.desc.size(); i++)
+		{
+			JSONArray jaArray = new JSONArray();
+			for(int j = 0; j<this.desc.get(i).size();j++)
+			{
+				JSONObject jObject = new JSONObject();
+				JSONArray js1 = new JSONArray();
+				JSONArray js2 = new JSONArray();
+				for(int k = 0; k<this.desc.get(i).get(j).size();k++)
+				{
+					js1.put(this.desc.get(i).get(j).get(k).toString());
+				}
+				for(int k = 0;k<this.sequences.get(i).get(j).size();k++)
+				{
+					js2.put(this.sequences.get(i).get(j).get(k).toString());
+				}
+				jObject.put("Description", js1);
+				jObject.put("Sequence", js2);
+				jaArray.put(jObject);
+			}
+			jx.put(jaArray);
+		}
+		BufferedWriter bWriter = new BufferedWriter(new FileWriter(new File("./tmp/sgsdebug.json")));
+		bWriter.write(jx.toString());
+		bWriter.close();
 	}
 }
