@@ -786,8 +786,11 @@ function parse(data) {
 		
 		else if(element["updateType"] == "CleaningResultUpdate") {
             if(element["result"] != null) {
-            		var pdata = getVaritions(element["result"]);
-				populateResultsInCleaningTable(pdata);
+            		//var pdata = getVaritions(element["result"]);
+            		var topCol = element["result"][0];
+				populateResult(topCol);
+				var pdata = getVaritions(element["result"]);
+				populateVariations(pdata);
 				return pdata;
             }
         }
