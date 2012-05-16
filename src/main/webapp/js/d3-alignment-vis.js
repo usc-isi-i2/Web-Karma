@@ -242,6 +242,35 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 changeSemanticType_d3(d, svg, d3.event);
         });
     
+    /*** Check for collisions between labels and rectangles ***/
+    d3.selectAll("text.LinkLabel." + vworksheetId)
+        .sort(comparator)
+        .each(function(d1,i1) {
+            // console.log("^^^^^^^^^^^^^^^^^^^^^^^" + d1.label)
+            var x1 = this.getBBox().x;
+            var y1 = this.getBBox().y;
+            var width1 = this.getBBox().width;
+            var height1 = this.getBBox().height;
+            
+            var cur1 = $(this);
+            d3.selectAll("rect." + vworksheetId).each(function(d2,i2){
+                var x2 = d2.px + this.getBBox().x;
+                var y2 = d2.py + this.getBBox().y;
+                var width2 = this.getBBox().width;
+                var height2 = this.getBBox().height;
+                
+                // Check if they overlap on y axis
+                if((y2<y1 && y1<y2+height2 ) || (y1<y2 && y2<y1+height1 && y1+height1<y2+height2)) {
+                    // console.log("Collision detected on Y axis");
+                    // Check overlap on X axis
+                    if(x2<x1 && x2+width2>x1) {
+                        $(cur1).attr("y", Number($(cur1).attr("y"))+(y2-y1-16));
+                    }
+                }
+                
+            });
+        });
+        
     /*** Check for collisions between labels ***/
     var flag = 0;
     d3.selectAll("text.LinkLabel." + vworksheetId)
@@ -263,11 +292,6 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                    if(d1.id != d2.id) {
                        if(y1 == y2) {
                            if(((x1 + width1) > x2) && (x2+width2>x1+width1)){
-                               // console.log("Collision detected!");
-                               // console.log(d1);
-                               // console.log(d2);
-                               // console.log("Existing: " + $(cur1).attr("y"));
-                               // console.log("Flag: " + flag);
                                if(flag%2 == 0)
                                    $(cur1).attr("y", Number($(cur1).attr("y"))-8);
                                else
@@ -280,25 +304,6 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                    }
             });
         });
-    
-    /*** Check for collisions between labels and rectangles ***/
-    // d3.selectAll("text.LinkLabel." + vworksheetId)
-        // .sort(comparator)
-        // .each(function(d1,i1) {
-            // var x1 = this.getBBox().x;
-            // var y1 = this.getBBox().y;
-            // var width1 = this.getBBox().width;
-            // var height1 = this.getBBox().height;
-            // var cur1 = $(this);
-            // d3.selectAll("rect." + vworksheetId).each(function(d2,i2){
-                // var x2 = this.getBBox().x;
-                // var y2 = this.getBBox().y;
-                // var width2 = this.getBBox().width;
-                // var height2 = this.getBBox().height;
-//                 
-                // console.log(x2 + " " + y2 + " " + width2 + " " + height2);
-            // });
-        // });
     
     $("text.LinkLabel").qtip({content: {text: "Edit Relationship"}});
     $("g.DataProperty, g.Unassigned").qtip({content: {text: "Change Semantic Type"}});
