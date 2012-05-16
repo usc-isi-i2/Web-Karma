@@ -20,18 +20,37 @@
  ******************************************************************************/
 
 table#cleaningExamplesTable {
-	border-width: 0px; 
-	border-spacing: 0px; 
+	border-width: 1px; 
+	border-spacing: 1px; 
 	border-collapse: collapse;
 }
 
-table#cleaningExamplesTable td {
+table#cleaningExamplesTable td{
 	font-size: 12px;
 	border: solid 1px;
 	height: 15px;
 	padding: 1px;
 }
+table#cleaningExamplesTable td.ruleResultsValue_begin{
+	font-size: 12px;
+	border: 1px solid;
+	height: 15px;
+	padding: 1px;
+}
 
+table#cleaningExamplesTable td.ruleResultsValue_rest{	
+	border: none;
+}
+table#cleaningExamplesTable button.suggestion{
+   font-size:11px;
+   font-family:Arial,sans-serif;
+   text-align:left;
+   color:#444444;
+   width:90px;
+   background-color:#DDDDDD;
+   border-style:none;
+
+}
 table#cleaningExamplesTable td.noBorder {
 	border: none;
 }
