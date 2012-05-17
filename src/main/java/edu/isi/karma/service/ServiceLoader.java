@@ -583,12 +583,12 @@ public class ServiceLoader {
 	
 	private static ClassAtom getClassAtom(Model model, Resource atom_resource) {
 		
-		String predicateUri = "";
-		String predicatePrefix = "";
-		String predicateNs = "";
+		String predicateUri = null;
+		String predicatePrefix = null;
+		String predicateNs = null;
 		
-		String argument1Id = "";
-		String argument1Type = "";
+		String argument1Id = null;
+		String argument1Type = null;
 		
 		Resource attribute = ResourceFactory.createResource(Namespaces.KARMA + "Attribute");
 		Resource variable = ResourceFactory.createResource(Namespaces.SWRL + "Variable");
@@ -639,15 +639,15 @@ public class ServiceLoader {
 	
 	private static PropertyAtom getPropertyAtom(Model model, Resource atom_resource) {
 		
-		String predicateUri = "";
-		String predicatePrefix = "";
-		String predicateNs = "";
+		String predicateUri = null;
+		String predicatePrefix = null;
+		String predicateNs = null;
 		
-		String argument1Id = "";
-		String argument2Id = ""; 
+		String argument1Id = null;
+		String argument2Id = null; 
 
-		String argument1Type = "";
-		String argument2Type = ""; 
+		String argument1Type = null;
+		String argument2Type = null; 
 		
 		Resource attribute = ResourceFactory.createResource(Namespaces.KARMA + "Attribute");
 		Resource variable = ResourceFactory.createResource(Namespaces.SWRL + "Variable");

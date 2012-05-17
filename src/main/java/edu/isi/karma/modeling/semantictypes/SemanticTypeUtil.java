@@ -173,12 +173,12 @@ public class SemanticTypeUtil {
 				type = topLabel.split("\\|")[1];
 			}
 
-			URI typeURI = ontMgr.getNameFromURI(type);
+			URI typeURI = ontMgr.getURIFromString(type);
 			if (typeURI == null)
 				continue;
 			URI domainURI = null;
 			if (domain != "")
-				domainURI = ontMgr.getNameFromURI(domain);
+				domainURI = ontMgr.getURIFromString(domain);
 			SemanticType semtype = new SemanticType(path.getLeaf().getId(),
 					typeURI, domainURI, SemanticType.Origin.CRFModel,
 					scores.get(0), false);

@@ -80,12 +80,12 @@ public class SetSemanticTypeCommandFactory extends CommandFactory {
 				JSONObject type = arr.getJSONObject(i);
 				// Look for the primary semantic type
 				URI typeName = ontMgr
-						.getNameFromURI(type
+						.getURIFromString(type
 								.getString(SemanticTypesUpdate.JsonKeys.FullType
 										.name()));
 				URI domainName = null;
 				if (type.getString(SemanticTypesUpdate.JsonKeys.Domain.name()) != "")
-					domainName = ontMgr.getNameFromURI(type
+					domainName = ontMgr.getURIFromString(type
 							.getString(SemanticTypesUpdate.JsonKeys.Domain
 									.name()));
 

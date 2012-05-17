@@ -170,9 +170,7 @@ public class SourcePublisher {
 					Resource r = model.createResource();
 					r.addProperty(rdf_type, class_atom_resource);
 					
-					if (classAtom.getClassPredicate().getPrefix() != null && 
-							classAtom.getClassPredicate().getNs() != null &&
-							classAtom.getClassPredicate().getPrefix() != null)
+					if (classAtom.getClassPredicate().getPrefix() != null && classAtom.getClassPredicate().getNs() != null)
 						model.setNsPrefix(classAtom.getClassPredicate().getPrefix(), classAtom.getClassPredicate().getNs());
 					Resource className = model.createResource(classAtom.getClassPredicate().getUriString());
 					r.addProperty(class_predicate, className);
@@ -188,9 +186,7 @@ public class SourcePublisher {
 					Resource r = model.createResource();
 					r.addProperty(rdf_type, individual_property_atom_resource);
 					
-					if (propertyAtom.getPropertyPredicate().getPrefix() != null && 
-							propertyAtom.getPropertyPredicate().getNs() != null &&
-							propertyAtom.getPropertyPredicate().getPrefix() != null)
+					if (propertyAtom.getPropertyPredicate().getPrefix() != null && propertyAtom.getPropertyPredicate().getNs() != null)
 						model.setNsPrefix(propertyAtom.getPropertyPredicate().getPrefix(), propertyAtom.getPropertyPredicate().getNs());
 					Resource propertyName = model.createResource(propertyAtom.getPropertyPredicate().getUriString());
 					r.addProperty(property_predicate, propertyName);

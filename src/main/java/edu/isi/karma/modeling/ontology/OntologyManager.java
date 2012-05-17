@@ -104,13 +104,17 @@ public class OntologyManager {
 		return true;
 	}
 
-	public URI getNameFromURI(String uri) {
+	public URI getURIFromString(String uri) {
 		Resource r = ontModel.getResource(uri);
 		if (r == null) {
 			logger.error("Could not find the resource " + uri + " in the ontology model.");
 			return null;
 		}
-		return new URI(r.getURI(), r.getNameSpace(), ontModel.getNsURIPrefix(r.getNameSpace()));
+		String ns = r.getNameSpace();
+		if (ns != null && ns.trim().length() == 0) ns = null;
+		String prefix = ontModel.getNsURIPrefix(r.getNameSpace());
+		if (prefix != null && prefix.trim().length() == 0) prefix = null;
+		return new URI(r.getURI(), ns, prefix);
 	}
 	
 	public boolean isClass(String label) {
