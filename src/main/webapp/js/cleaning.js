@@ -224,7 +224,9 @@ function handleGenerateCleaningRulesButton() {
 //find the variations for each cell
 function getVaritions(data) {
 	var x = {};
-	$.each(data, function(index, pacdata) {
+	var top = data[0]["data"];
+	var subdata = data.slice(1);
+	$.each(subdata, function(index, pacdata) {
 		ruleResult = pacdata["data"];
 		for(var nodeId in ruleResult) {
 			if(ruleResult[nodeId] == "") {
@@ -233,14 +235,17 @@ function getVaritions(data) {
 			if( nodeId in x) {
 				var dic = x[nodeId];
 				var value = ruleResult[nodeId];
-				if(!( value in Object.keys(dic))) {
+				if(!( value in Object.keys(dic))&& (value!=top[nodeId])) {
 					dic[value] = "" + index;
 				}
-			} else {
+			} else{
 				var value = ruleResult[nodeId];
 				var y = {};
-				y[value] = "" + index;
-				x[nodeId] = y
+				if((value!=top[nodeId]))
+				{
+					y[value] = "" + index;
+					x[nodeId] = y;
+				}
 			}
 		}
 	});
