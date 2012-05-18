@@ -54,6 +54,9 @@ g.Class rect {
 g.DataProperty:hover {
 	cursor: pointer;
 }
+g.Class:hover {
+	cursor: pointer;
+}
 
 g.Unassigned:hover {
 	cursor: pointer;
