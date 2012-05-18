@@ -238,6 +238,7 @@ public class RuleRDFGenerator {
 		outWriter.println();
 		//outWriter.print("# Row " + rowId + ":");
 
+		/* only for printing... fails if getValue=null
 		String valuesStr = "";
 		Set<Entry<String,String>> entries = values.entrySet();
 		Iterator<Entry<String,String>> it = entries.iterator();
@@ -245,6 +246,7 @@ public class RuleRDFGenerator {
 			Entry<String,String> entry = it.next();
 			valuesStr += entry.getKey() + ":" + entry.getValue().replaceAll("\r\n", " ") + ";";
 		}
+		*/
 		//System.out.println("VALUES1=" + valuesStr);
 		//outWriter.println( "[" + valuesStr +"]");
 		//////////////////////////////
