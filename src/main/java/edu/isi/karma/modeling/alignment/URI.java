@@ -32,11 +32,10 @@ public class URI {
 		this.prefix = prefix;
 	}
 
-	
 	public URI(String uri) {
 		this.uriString = uri;
-		this.ns = "";
-		this.prefix = "";
+		this.ns = null;
+		this.prefix = null;
 	}
 	
 	public URI(URI uri) {

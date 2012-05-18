@@ -263,7 +263,7 @@ public class GraphBuilder {
 				for (int j = 0; j < newAddedClasses.size(); j++) {
 					if (!nodesLabelCounter.containsKey(newAddedClasses.get(j))) { // if node is not in graph yet
 						label = newAddedClasses.get(j);
-						Vertex v = new Vertex(createNodeID(label), ontologyManager.getNameFromURI(newAddedClasses.get(j)), NodeType.Class);
+						Vertex v = new Vertex(createNodeID(label), ontologyManager.getURIFromString(newAddedClasses.get(j)), NodeType.Class);
 						newNodes.add(v);
 						this.graph.addVertex(v);
 					}
@@ -355,7 +355,7 @@ public class GraphBuilder {
 						// label of the data property nodes is equal to name of the data properties
 						label = targetLabel; // dataProperties.get(k);
 						id = createLinkID(label);
-						LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getNameFromURI(label), LinkType.DataProperty);
+						LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getURIFromString(label), LinkType.DataProperty);
 						this.graph.addEdge(source, target, e);
 						this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
 
@@ -378,7 +378,7 @@ public class GraphBuilder {
 							inherited = false;
 						
 						id = createLinkID(label);
-						LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getNameFromURI(label), LinkType.ObjectProperty);
+						LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getURIFromString(label), LinkType.ObjectProperty);
 						this.graph.addEdge(source, target, e);
 						
 						// prefer the links which are actually defined between source and target in ontology over inherited ones.
@@ -475,7 +475,7 @@ public class GraphBuilder {
 		label = node.getUriString();
 		id = createNodeID(label);
 		
-		Vertex newNode = new Vertex(id, ontologyManager.getNameFromURI(label), node.getNodeType());
+		Vertex newNode = new Vertex(id, ontologyManager.getURIFromString(label), node.getNodeType());
 		
 		this.graph.addVertex(newNode);
 	
@@ -496,7 +496,7 @@ public class GraphBuilder {
 			for (int i = 0; i < outgoing.length; i++) {
 				label = outgoing[i].getUriString();
 				id = createLinkID(label);
-				LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getNameFromURI(label), outgoing[i].getLinkType());
+				LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getURIFromString(label), outgoing[i].getLinkType());
 				s = target;
 				t = outgoing[i].getTarget();
 				this.graph.addEdge(s, t, e);
@@ -507,7 +507,7 @@ public class GraphBuilder {
 			for (int i = 0; i < incoming.length; i++) {
 				label = incoming[i].getUriString();
 				id = createLinkID(label);
-				LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getNameFromURI(label), incoming[i].getLinkType());
+				LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getURIFromString(label), incoming[i].getLinkType());
 				s = incoming[i].getSource();
 				t = target;
 				this.graph.addEdge(s, t, e);
@@ -524,7 +524,7 @@ public class GraphBuilder {
 		for (int k = 0; k < objectProperties.size(); k++) {
 			label = objectProperties.get(k);
 			id = createLinkID(label);
-			LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getNameFromURI(label), LinkType.ObjectProperty);
+			LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getURIFromString(label), LinkType.ObjectProperty);
 			this.graph.addEdge(s, t, e);
 			this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
 		}
@@ -536,7 +536,7 @@ public class GraphBuilder {
 		for (int k = 0; k < objectProperties.size(); k++) {
 			label = objectProperties.get(k);
 			id = createLinkID(label);
-			LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getNameFromURI(label), LinkType.ObjectProperty);
+			LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getURIFromString(label), LinkType.ObjectProperty);
 			this.graph.addEdge(s, t, e);
 			this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
 		}

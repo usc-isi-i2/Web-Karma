@@ -195,8 +195,9 @@ public class Service {
 		if (inputAttributes != null)
 			for (Attribute att : inputAttributes)
 				att.setBaseUri(this.getUri());
-		for (Attribute att : inputAttributes)
-			attIdToAttMap.put(att.getId(), att);
+		if (inputAttributes != null)
+			for (Attribute att : inputAttributes)
+				attIdToAttMap.put(att.getId(), att);
 		this.inputAttributes = inputAttributes;
 	}
 
@@ -208,8 +209,9 @@ public class Service {
 		if (outputAttributes != null)
 			for (Attribute att : outputAttributes)
 				att.setBaseUri(this.getUri());
-		for (Attribute att : outputAttributes)
-			attIdToAttMap.put(att.getId(), att);
+		if (outputAttributes != null)
+			for (Attribute att : outputAttributes)
+				attIdToAttMap.put(att.getId(), att);
 		this.outputAttributes = outputAttributes;
 	}
 
