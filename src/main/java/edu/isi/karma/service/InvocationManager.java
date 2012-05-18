@@ -185,6 +185,7 @@ public class InvocationManager {
 	public static void main(String[] args) {
 //		String s1 = "http://colo-vm10.isi.edu:8080/DovetailService/GetSampleData?sourceName=KDD-02-B-TOSIG";
 		String s1 = "http://api.geonames.org/neighbourhood?lat=40.78343&lng=-73.96625&username=karma";
+//		String s1 = "http://api.geonames.org/postalCodeCountryInfo?username=karma";
 //		String s2 = "http://api.geonames.org/neighbourhood?lat=40.7&lng=-73.9&username=karma";
 //		String s3 = "http://api.geonames.org/neighbourhood?lat=40.9&lng=-73.9&username=karma";
 
@@ -200,8 +201,14 @@ public class InvocationManager {
 
 		try {
 			InvocationManager sb = new InvocationManager(ids, urls);
-			Table tb = sb.getServiceData(true, true, true);
-
+			Table tb = sb.getServiceData(false, false, true);
+			
+//			String str = tb.asCSV();
+//			File f = new File("csv");
+//			PrintWriter pw = new PrintWriter(f);
+//			pw.write(str);
+//			pw.close();
+			
 			logger.debug(tb.getPrintInfo());
 
 			Service service = sb.getInitialServiceModel(null);
