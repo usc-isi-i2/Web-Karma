@@ -253,10 +253,10 @@ public class URLManager {
 	/**
 	 * 
 	 * @attribute urlList
-	 * @return a list of attributeeter names
+	 * @return a list of attributes names
 	 * @throws MalformedURLException 
 	 */
-	public static List<String>  extractAttributeeterNames(List<String> urlList) throws MalformedURLException {
+	public static List<String>  extractAttributeNames(List<String> urlList) throws MalformedURLException {
 		List<String> attributesNameList = new ArrayList<String>();
 
 		Attribute p = null;
@@ -267,9 +267,6 @@ public class URLManager {
 			for (int j = 0; j < attributeList.size(); j++) {
 				p = attributeList.get(j);
 				key = p.getName();
-				//FIXME
-				if (key.equalsIgnoreCase("attributeeters"))
-					continue;
 				if (key.trim().length() > 0 && attributesNameList.indexOf(key) == -1) {
 					attributesNameList.add(key);
 				}

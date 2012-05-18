@@ -207,5 +207,52 @@ public class Table {
 		
 		return resultTable;
     }
+
+	public String asCSV() {
+		return asCSV(null, null, null);
+	}
+
+	public String asCSV(Character separator, Character quotechar, Character endlinechar) {
+		String csv = "";
+		if (separator == null) separator = ',';
+		if (quotechar == null) quotechar = '"';
+		if (endlinechar == null) endlinechar = '\n';
+		
+		try {
+			
+			if (this.headers != null && this.headers.size() > 0) {
+				for (int i = 0; i < this.headers.size(); i++) {
+					if (i != 0)
+						csv += separator.charValue();
+					csv += quotechar + this.headers.get(i).getName() + quotechar;
+				}
+				csv += endlinechar;
+			} else {
+				logger.error("Table does not have any header.");
+			}
+
+			if (values == null) {
+				logger.error("Table does not have any rows.");
+				return csv;
+			}
+			
+			for (int i = 0; i < this.values.size(); i++) {
+				for (int j = 0; j < this.values.get(i).size(); j++) {
+					if (j != 0)
+						csv += separator;
+					csv += quotechar + values.get(i).get(j) + quotechar;
+				}
+				csv += endlinechar;
+			}
+
+			return csv;
+			
+		} catch (Exception e) {
+			logger.error("Error in generating CSV from the table.");
+			e.printStackTrace();
+			return null;
+		}
+
+	}
     
 }

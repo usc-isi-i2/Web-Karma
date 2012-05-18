@@ -121,6 +121,17 @@ public class Invocation {
 		
 		logger.info("Service response converted to a flat table.");
 		this.response.setTable(results);
+		
+		//FIXME : just to rule out some attributes in the GUI for the paper figure
+//		int i = 0;
+//		while (i < this.response.getTable().getHeaders().size()) {
+//			String h = this.response.getTable().getHeaders().get(i).getName();
+//			if (h.indexOf("admin") == -1) {i++; continue;}
+//			this.response.getTable().getHeaders().remove(i);
+//			for (List<String> values: this.response.getTable().getValues()) {
+//				values.remove(i);
+//			}
+//		}
 	}
 	
 	public void invokeAPI() {
@@ -169,7 +180,7 @@ public class Invocation {
 			this.response.setCode(code);
 			this.response.setStream(outString.toString());
 			
-			logger.debug(response.getStream());
+//			logger.debug(response.getStream());
 			logger.info("Service response is ready as string stream.");
 			
 		}catch(Exception e){
