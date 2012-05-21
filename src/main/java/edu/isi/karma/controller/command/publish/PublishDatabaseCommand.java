@@ -393,9 +393,7 @@ public class PublishDatabaseCommand extends Command {
 		//get all sem types for this worksheet
 		Map<String, SemanticType> st = w.getSemanticTypes().getTypes();
 		for(Map.Entry<String, SemanticType> e: st.entrySet()){
-			String type = e.getValue().getType().getUriString();
-			int index = type.indexOf("#");
-				type=type.substring(index+1);
+			String type = e.getValue().getType().getLocalName();
 			if(duplicates.add(type)){
 				//not a duplicate
 				result.put(e.getKey(),type);

@@ -39,9 +39,11 @@ public class ServicePublisher {
 
 	private Service service;
 	private Model model = null;
+	private String sourceDescription;
 	
-	public ServicePublisher(Service service) {
+	public ServicePublisher(Service service, String sourceDescription) {
 		this.service = service;
+		this.sourceDescription=sourceDescription;
 	}
 	
 	private Model generateModel() {
@@ -183,6 +185,12 @@ public class ServicePublisher {
 			}
 
 			addModelPart(model, my_input, this.service.getInputModel());
+			
+			//for source description
+			Property hasSourceDesc = model.createProperty(Namespaces.KARMA, "hasSourceDescription");
+			sourceDescription=sourceDescription.replaceAll("\n", " ").replaceAll("\r", " ");
+			my_service.addProperty(hasSourceDesc, sourceDescription);
+
 		}
 
 		if (this.service.getOutputAttributes() != null) {
