@@ -34,10 +34,10 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     $("<div>").attr("id","svgDiv_"+vworksheetId).insertBefore('table#'+vworksheetId);
     
     var h = 0;
-    if(json["maxTreeHeight"] == 0)
-        h = levelHeight * (json["maxTreeHeight"] + 0.2);
-    else
-        h = levelHeight * (json["maxTreeHeight"] - 0.2);
+    // if(json["maxTreeHeight"] == 0)
+        // h = levelHeight * (json["maxTreeHeight"] + 0.2);
+    // else
+        h = levelHeight * (json["maxTreeHeight"] + 0.4);
     if(w == 0)
         w = $("div#"+vworksheetId + "TableDiv").width();
     
@@ -206,7 +206,13 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             else
                 return this.getComputedTextLength();
         })
-        .attr("x", function(d){ return this.getComputedTextLength()/2 * -1;});
+        .attr("x", function(d){ return this.getComputedTextLength()/2 * -1;})
+        .on("click", function(d){
+            if(d["nodeType"] == "Class") {
+                d["targetNodeId"] = d["id"];
+                showAlternativeParents_d3(d, svg, d3.event);
+            }
+        });
         
     node.insert("rect", "text")
         .attr("ry", 6)
@@ -240,6 +246,10 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         }).on("click", function(d){
             if(d["nodeType"] == "DataProperty" || d.nodeType == "Unassigned")
                 changeSemanticType_d3(d, svg, d3.event);
+            else if(d["nodeType"] == "Class") {
+                d["targetNodeId"] = d["id"];
+                showAlternativeParents_d3(d, svg, d3.event);
+            }
         });
     
     /*** Check for collisions between labels and rectangles ***/
@@ -264,6 +274,12 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                     // console.log("Collision detected on Y axis");
                     // Check overlap on X axis
                     if(x2<x1 && x2+width2>x1) {
+                        // console.log("Rect: " + x2 + " " + y2 + " " + width2 + " " + height2);
+                        // console.log("Text: " + x1 + " " + y1 + " " + width1 + " " + height1);
+                        // console.log("Collision detected!")
+                        // console.log(d1);
+                        // console.log(d2);
+                        // console.log("Number to add: " + (y2-y1-16));
                         $(cur1).attr("y", Number($(cur1).attr("y"))+(y2-y1-16));
                     }
                 }
@@ -292,6 +308,11 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                    if(d1.id != d2.id) {
                        if(y1 == y2) {
                            if(((x1 + width1) > x2) && (x2+width2>x1+width1)){
+                               // console.log("Collision detected!");
+                               // console.log(d1);
+                               // console.log(d2);
+                               // console.log("Existing: " + $(cur1).attr("y"));
+                               // console.log("Flag: " + flag);
                                if(flag%2 == 0)
                                    $(cur1).attr("y", Number($(cur1).attr("y"))-8);
                                else
@@ -307,6 +328,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     
     $("text.LinkLabel").qtip({content: {text: "Edit Relationship"}});
     $("g.DataProperty, g.Unassigned").qtip({content: {text: "Change Semantic Type"}});
+    $("g.Class").qtip({content: {text: "Add Parent Relationship"}});
     
     link.attr("x1", function(d) {
         if(d.source.y > d.target.y)
