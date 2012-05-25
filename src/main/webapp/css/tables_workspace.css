@@ -353,7 +353,7 @@ a.pagerSizeSelected {
 	font-size: 12px;
 }
 
-#importDatabaseTableButton {
+.importButton {
 	font-size: 26px;
 }
 

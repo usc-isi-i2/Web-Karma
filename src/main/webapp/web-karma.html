@@ -39,6 +39,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<link rel="stylesheet" type="text/css" href="./css/uploadify.css" />
 		<link rel="stylesheet" type="text/css" href="./css/CSVImport.css" />
 		<link rel="stylesheet" type="text/css" href="./css/DatabaseImport.css" />
+		<link rel="stylesheet" type="text/css" href="./css/ServiceImport.css" />
 		<link rel="stylesheet" type="text/css" href="./css/headerParsingExample.css" />
 		<link rel="stylesheet" type="text/css" href="./css/AlignmentHeaders.css" />
 		<link rel="stylesheet" type="text/css" href="./css/jquery.qtip.min.css" />
@@ -74,6 +75,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<script type="text/javascript" src="js/tableWorkspace.js"></script>
 		<script type="text/javascript" src="js/publishRDF.js"></script>
 		<script type="text/javascript" src="js/publishDatabase.js"></script>
+		<script type="text/javascript" src="js/importFromService.js"></script>
 		<script type="text/javascript" src="js/pager.js"></script>
 		<script type="text/javascript" src="js/geospatial.js"></script>
 		<script type="text/javascript" src="js/databaseImportDialog.js"></script>
@@ -182,6 +184,9 @@ and related projects, please see: http://www.isi.edu/integration
 				// Database Import div options 
 				styleAndAssignHandlerstoDatabaseImportObjects();
 				
+				// Service Import div options 
+				styleAndAssignHandlerstoServiceImportObjects();
+
 				// Stylize the worksheet options div panel
 				styleAndAssignHandlersToWorksheetOptionButtons();
 				
@@ -319,7 +324,10 @@ and related projects, please see: http://www.isi.edu/integration
 					<input type="file" name="file5" id="uploadFile_Excel">
 				</td>
 				<td>
-					<button id="importDatabaseTableButton">Import Database Table</button>
+					<button id="importDatabaseTableButton" class="importButton" >Import Database Table</button>
+				</td>
+				<td>
+					<button id="importFromServiceButton" class="importButton" >Import from Service</button>
 				</td>
 			</tr>
 		</table>
@@ -400,30 +408,30 @@ and related projects, please see: http://www.isi.edu/integration
 						<td>
 							Database Type: 
 							<select id="databaseTypeSelector" class="DatabaseImportOption">
+							  	<option>SQLServer</option>
 							  	<option>MySQL</option>
 							  	<option>Oracle</option>
-							  	<option>SQLServer</option>
 							</select>
 						</td>
 						<td>
 							Host Name:
-							<input type="textarea" id="DatabaseHostName" value="" class="DatabaseImportOption" maxlength="40" size="10"/>
+							<input type="textarea" id="DatabaseHostName" value="karma1.isi.edu" class="DatabaseImportOption" maxlength="40" size="10"/>
 						</td>
 						<td>
 							Port Number:
-							<input type="textarea" id="DatabasePortNumber" value="" class="DatabaseImportOption" maxlength="6" size="5"/>
+							<input type="textarea" id="DatabasePortNumber" value="1433" class="DatabaseImportOption" maxlength="6" size="5"/>
 						</td>
 						<td>
 							Username:
-							<input type="textarea" id="DatabaseUsername" value="" class="DatabaseImportOption" maxlength="20" size="10"/>
+							<input type="textarea" id="DatabaseUsername" value="karma" class="DatabaseImportOption" maxlength="20" size="10"/>
 						</td>
 						<td>
 							Password:
-							<input type="password" id="DatabasePassword" value="" class="DatabaseImportOption" maxlength="20" size="10"/>
+							<input type="password" id="DatabasePassword" value="k@rm@" class="DatabaseImportOption" maxlength="20" size="10"/>
 						</td>
 						<td id="DBNameCell">
 							<span>Database Name:</span>
-							<input type="textarea" id="DatabaseName" value="" class="DatabaseImportOption" maxlength="20" size="10"/>
+							<input type="textarea" id="DatabaseName" value="smithsonian" class="DatabaseImportOption" maxlength="20" size="10"/>
 						</td>
 						<td>
 							<button id="DatabaseImportFieldsButton" type="button">OK</button>
@@ -468,6 +476,54 @@ and related projects, please see: http://www.isi.edu/integration
 			</table>
 			<br>
 		</div>
+
+		<div id="ServiceImportDiv" style="display: none">
+			<table>
+				<tbody>
+					<tr>
+						<td>
+							URL:
+							<input type="textarea" id="ServiceUrl" value="http://colo-vm10.isi.edu:8080/DovetailService" class="DatabaseImportOption" maxlength="100" size="50"/>
+						</td>
+						<td>
+							<button id="ServiceImportFieldsButton" type="button">Get Available Sources</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<br>
+			<div class="ui-widget" id="ServiceImportErrorWindow" style="display: none">
+				<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"> 
+					<p id="serviceImportErrorWindow"><span class="ui-icon ui-icon-alert" 
+							style="float: left; margin-right: .3em;"></span> 
+					<span id="ServiceImportErrorWindowText"></span></p>
+					<br />
+				</div>
+			</div>
+			<!-- For showing available sources -->
+			<table id="ServiceImportSourceList">
+				<tr>
+					<td>
+						Choose Source:
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="textarea" id="serviceTableFilterTable" class="DatabaseImportOption dbTableColumn" size="12"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div id="ServiceSourceList">
+							<table></table>
+						</div>						
+					</td>
+				</tr>
+			</table>
+			<br>
+		</div>
+
+
 		<div id="ScrollHeadersPlaceholder"></div>
 		<div id="WorksheetOptionsDiv" style="display: none">
 			<button href="#" id="showModel">Show Model</button>
@@ -599,7 +655,7 @@ and related projects, please see: http://www.isi.edu/integration
 			</tr>
 			<tr>
 				<td><input type="text" id="userName1" value="root" maxlength="100" size="20"/></td>
-				<td><input type="password" id="password1" value="isi4676" maxlength="100" size="20"/></td>
+				<td><input type="password" id="password1" value="" maxlength="100" size="20"/></td>
 			</tr>
 			</table>
 			</div>

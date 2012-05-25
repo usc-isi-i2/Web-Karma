@@ -49,6 +49,8 @@ import edu.isi.karma.controller.command.ImportJSONFileCommand;
 import edu.isi.karma.controller.command.ImportJSONFileCommandFactory;
 import edu.isi.karma.controller.command.ImportOntologyCommand;
 import edu.isi.karma.controller.command.ImportOntologyCommandFactory;
+import edu.isi.karma.controller.command.ImportServiceCommand;
+import edu.isi.karma.controller.command.ImportServiceCommandFactory;
 import edu.isi.karma.controller.command.ImportXMLFileCommand;
 import edu.isi.karma.controller.command.ImportXMLFileCommandFactory;
 import edu.isi.karma.controller.command.SplitByCommaCommand;
@@ -173,6 +175,8 @@ public class ExecutionController {
 				new PublishKMLLayerCommandFactory());
 		commandFactoryMap.put(ImportExcelFileCommand.class.getSimpleName(),
 				new ImportExcelFileCommandFactory());
+		commandFactoryMap.put(ImportServiceCommand.class.getSimpleName(),
+				new ImportServiceCommandFactory());
 		commandFactoryMap.put(PublishRDFCommand.class.getSimpleName(),
 				new PublishRDFCommandFactory());
 		commandFactoryMap.put(PublishDatabaseCommand.class.getSimpleName(),
