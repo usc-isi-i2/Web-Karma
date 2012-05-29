@@ -92,7 +92,7 @@ public class PublishModelCommand extends Command{
 		Source source = null;
 		
 		if (!wk.containService()) { 
-			logger.error("The worksheet does not have a service object.");
+			logger.info("The worksheet does not have a service object.");
 //			return new UpdateContainer(new ErrorUpdate(
 //				"Error occured while publishing the model. The worksheet does not have a service object."));
 		} else

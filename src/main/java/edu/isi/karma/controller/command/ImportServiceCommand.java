@@ -48,18 +48,26 @@ import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
 public class ImportServiceCommand extends Command {
+	private static Logger logger = LoggerFactory
+	.getLogger(ImportServiceCommand.class);
+
 	private String ServiceUrl;
+	/**
+	 * GetSources or ImportSource; (in importFromService.js)
+	 */
 	private InteractionType interactionType;
+	/**
+	 * the source that was imported
+	 */
 	private String sourceName;
-	
+	/**
+	 * sources returned by serviceURL/GetAvailableSources
+	 */
 	Object availableSources;
 	
 	public enum JsonKeys {
 		updateType, SourceList
 	}
-
-	private static Logger logger = LoggerFactory
-			.getLogger(ImportServiceCommand.class);
 
 	public enum PreferencesKeys {
 		ServiceUrl
@@ -90,7 +98,9 @@ public class ImportServiceCommand extends Command {
 
 	@Override
 	public String getDescription() {
-		return "";
+		if(sourceName==null)
+			return "";
+		else return sourceName;
 	}
 
 	@Override
@@ -108,10 +118,13 @@ public class ImportServiceCommand extends Command {
 		try{
 
 			if(interactionType==InteractionType.GetSources){
+				//get avilable sources from the service
 				String url = ServiceUrl + "/GetAvailableSources";
 				logger.info("Get sources ..." + url);
 
-				String sources = getJSONOutput(url);
+				//get JSON from the URL
+				String sources = getFromUrl(url);
+				logger.debug("Source="+sources);
 				availableSources = JSONUtil.createJson(sources);
 				if(!(availableSources instanceof JSONArray)){
 					return new UpdateContainer(new ErrorUpdate("Get Available Sources failed!"));					
@@ -125,9 +138,12 @@ public class ImportServiceCommand extends Command {
 							outputObject.put(JsonKeys.updateType.name(),
 							"GetServiceSourceList");
 
-//							JSONArray dataRows = new JSONArray();
+							JSONArray dataRows = new JSONArray();
 //							dataRows.put("TestSource");
-							JSONArray dataRows = (JSONArray)availableSources;
+							JSONArray availableSourcesArray = (JSONArray)availableSources;
+							for(int i=0; i<availableSourcesArray.length(); i++){
+								dataRows.put(((JSONObject)availableSourcesArray.get(i)).get("SourceName"));
+							}
 							outputObject.put(JsonKeys.SourceList.name(),
 									dataRows);
 							pw.println(outputObject.toString(2));
@@ -138,13 +154,14 @@ public class ImportServiceCommand extends Command {
 				});
 			}
 			else if(interactionType==InteractionType.ImportSource){
-
+				//import a source
 				String url = ServiceUrl + "/GetSampleData?sourceName="+sourceName;
 				logger.info("Import source " + url);
 				
 				UpdateContainer c = new UpdateContainer();
 
-				String wsOutput = getJSONOutput(url);
+				//get data from the URL
+				String wsOutput = getFromUrl(url);
 				
 				//import data in Karma
 				JsonImport imp = new JsonImport(wsOutput, sourceName, vWorkspace.getWorkspace());
@@ -166,7 +183,14 @@ public class ImportServiceCommand extends Command {
 		}
 	}
 
-	private String getJSONOutput(String url) throws UnsupportedEncodingException, IOException{
+	/**
+	 * Returns the result data from the given URL.
+	 * @param url
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws IOException
+	 */
+	private String getFromUrl(String url) throws UnsupportedEncodingException, IOException{
 		
 		URL urlStr = new URL(url);
 		URLConnection connection = urlStr.openConnection();

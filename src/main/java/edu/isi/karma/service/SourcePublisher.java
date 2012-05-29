@@ -92,7 +92,7 @@ public class SourcePublisher {
 			model = generateModel();
 		
 		String source_desc_file = Repository.Instance().SOURCE_REPOSITORY_DIR + 
-									this.source.getId() +
+		 							this.source.getName() + "_" + this.source.getId() +
 									Repository.Instance().getFileExtension(lang);
 
 
