@@ -27,6 +27,12 @@ import java.util.List;
 import java.util.Vector;
 
 public class Alignment {
+	//generate preprcessing editsteps before generating rules
+	public static Vector<EditOper> getPreprocessingEditOpers(Vector<TNode> a,Vector<TNode> b)
+	{
+		Vector<EditOper> inss = Alignment.insopers(a,b);
+		return inss;
+	}
 	//follow the framework of INS MOV DEL
 	//generat all possible edit operations
 	//a target token sequence b orginal token sequence
@@ -147,10 +153,7 @@ public class Alignment {
 		{
 			Vector<EditOper> ev = new Vector<EditOper>();
 			Vector<int[]> tmapping = mapping.get(i);
-			//detect deleted part
-			//Vector<Integer> dels= delopers(tmapping,b);
 			Vector<Integer> positions =  new Vector<Integer>();
-			//record the positions showed be moved
 			//record the original order
 			Vector<Integer> mks = new Vector<Integer>(b.size());
 			for(int  n = 0;n<b.size();n++)
@@ -200,7 +203,8 @@ public class Alignment {
 					}
 				}				
 			}
-			//set the s/e token's position value the same as its adjacent token's position value
+			/*set the s/e token's position value the same as its adjacent token's position value
+			in order to make them move with the adjacent token*/
 			positions.set(0,positions.get(1));
 			positions.set(positions.size()-1,positions.get(positions.size()-2));
 			//detect the continous segments
@@ -269,7 +273,6 @@ public class Alignment {
 				{
 					localcontrary = true;
 					globalcontrary = true;
-					//swamp the pair two directions
 					EditOper eo2 = new EditOper();
 					eo2.starPos = segments.get(i)[0];
 					eo2.endPos = segments.get(i)[1];
@@ -288,10 +291,13 @@ public class Alignment {
 						eox = eo2;
 						positonx = positon2;
 					}
+					else {
+						positon2 = null;
+					}
 				}
 			}	
 			//move to the front
-			for(int k=0;k<i;k++)
+			/*for(int k=0;k<i;k++)
 			{
 				if(positon.get(segments.get(i)[0])<positon.get(segments.get(k)[0]))
 				{
@@ -317,7 +323,7 @@ public class Alignment {
 						positonx = positon1;
 					}
 				}
-			}
+			}*/
 			if(localcontrary)
 			{
 				Vector<EditOper> seqx = (Vector<EditOper>)eo.clone();
@@ -421,9 +427,10 @@ public class Alignment {
 			{
 				if(a.get(i).sameNode(b.get(j)))
 				{
-					//check whether two whitespaces are counterpart
+					//map two BNK nodes
 					if(a.get(i).text.compareTo(" ")==0)
 					{
+						//if left side nodes are same
 						if(i-1>=0 && j-1>=0)
 						{
 							if(!a.get(i-1).sameNode(b.get(j-1)))
@@ -431,7 +438,7 @@ public class Alignment {
 								continue;
 							}
 						}
-						if(i+1<a.size() && j+1<b.size())
+						if(i+1<a.size() && j+1<b.size())//if right side nodes are same.
 						{
 							if(!a.get(i+1).sameNode(b.get(j+1)))
 							{
@@ -448,7 +455,7 @@ public class Alignment {
 			if(tmp.size()!=0)
 				all.add(tmp);
 		}
-		/*map the unmapped same node*/
+		/*map the blank node*/
 		for(int i=0;i<a.size();i++)
 		{
 			Vector<int[]> tmp = new Vector<int[]>();
@@ -851,24 +858,6 @@ public class Alignment {
 			poss.add(p);
 		}
 		return poss;
-	}
-}
-//a Class aims to store the parameter for edit operations
-class EditOper{
-	public String oper="";
-	public int starPos=-1;
-	public int endPos=-1;
-	public int dest = -1;
-	public Vector<TNode> tar = new Vector<TNode>();
-	public Vector<TNode> before = new Vector<TNode>();
-	public Vector<TNode> after = new Vector<TNode>();
-	public EditOper()
-	{
-		
-	}
-	public String toString()
-	{
-		return oper+": "+starPos+","+endPos+","+dest+tar.toString();
 	}
 }
 class Comparator1 implements Comparator{

@@ -37,7 +37,7 @@ public class Ruler {
 	String Trgt = "";
 	StringTokenizer st = null;
 	String[] seperator = {" ",","};
-	Vector<TNode> vec;
+	public Vector<TNode> vec;
 	int curPos = 0;
 	Vector<Object[]> operators = new Vector<Object[]>();
 	Vector<Integer> positions;

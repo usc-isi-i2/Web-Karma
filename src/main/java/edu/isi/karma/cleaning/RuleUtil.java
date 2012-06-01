@@ -51,6 +51,15 @@ import edu.isi.karma.cleaning.changed_grammar.RuleInterpreterParser;
 import edu.isi.karma.cleaning.changed_grammar.RuleInterpreterTree;
 
 public class RuleUtil {
+	public static String tokens2str(Vector<TNode> x)
+	{
+		String resString = "";
+		for(TNode t:x)
+		{
+			resString += t.text;
+		}
+		return resString;
+	}
 	public  static void write2file(Collection<String> x,String fname)
 	{
 		try
@@ -100,6 +109,14 @@ public class RuleUtil {
 		Ruler r = new Ruler();
 		r.setNewInput(s);
 		Vector<TNode> x = r.vec;
+		/*value preprocessing starts*/
+		for(EditOper eo:preEditOpers)
+		{
+			if (eo.oper.compareTo("ins") == 0) {
+				NonterminalValidator.applyins(eo, x);
+			}
+		}
+		/*value preprocessing ends*/
 		for(String rule:rules)
 		{
 			x = applyRule(rule,x);
@@ -337,8 +354,9 @@ public class RuleUtil {
 	}
 	public static int sgsnum = 0;
 	//ops is corresponding editoperation of multiple sequence
+	public static Vector<EditOper> preEditOpers = new Vector<EditOper>();
 	public static Vector<String> genRule(Vector<String[]> examples)
-	{
+	{	
 		Vector<String> rules = new Vector<String>();
 		try
 		{	
@@ -353,6 +371,18 @@ public class RuleUtil {
 				r1.setNewInput(examples.get(i)[1]);
 				tar.add(r1.vec);
 			}
+			/*examples preprocessing starts*/
+			preEditOpers.clear();
+			preEditOpers = Alignment.getPreprocessingEditOpers(org.get(0), tar.get(0));
+			for(int i= 0; i<examples.size();i++)
+			{
+				for (EditOper eo : preEditOpers) {
+					if (eo.oper.compareTo("ins") == 0) {
+						NonterminalValidator.applyins(eo, org.get(i));
+					}
+				}
+			}
+			/*example preprocessing ends*/
 			Vector<Vector<GrammarParseTree>> trees = RuleUtil.genGrammarTrees(org, tar);
 			sgsnum = trees.size();
 			Vector<Integer> l = new Vector<Integer>();
@@ -378,7 +408,7 @@ public class RuleUtil {
 				//Random r = new Random();
 				//int index = r.nextInt(1);
 				Vector<GrammarParseTree> gt = trees.get(index);
-				System.out.print(gt.size()+","+index+" ");	
+				System.out.print(gt.size()+","+index+"\n");	
 				HashMap<MDPState,MDPState> his = new HashMap<MDPState,MDPState>();
 				int sccnt = 0;
 				for(int ct = 0;ct <200;ct++)
@@ -763,10 +793,10 @@ public class RuleUtil {
 		}
 		dcrpt.sequences = sequences;
 		dcrpt.desc = descriptions;
-		try {
+		/*try {
 			dcrpt.writeJSONString();
 		} catch (Exception e) {
-		}
+		}*/
 		
 		//descriptions = filterDescription(descriptions,sign); // many descriptoins
 		//prepare three kind of rule generator

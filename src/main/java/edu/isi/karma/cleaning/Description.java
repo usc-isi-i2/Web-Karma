@@ -120,11 +120,46 @@ public class Description
 			for(int j = 0; j<this.desc.get(i).size();j++)
 			{
 				JSONObject jObject = new JSONObject();
-				JSONArray js1 = new JSONArray();
+				JSONObject js1 = new JSONObject();
 				JSONArray js2 = new JSONArray();
 				for(int k = 0; k<this.desc.get(i).get(j).size();k++)
 				{
-					js1.put(this.desc.get(i).get(j).get(k).toString());
+					if(k==0)
+					{
+						js1.put("etokenspec",this.desc.get(i).get(j).get(k).toString());
+					}
+					else if(k==1)
+					{
+						js1.put("stokenspec",this.desc.get(i).get(j).get(k).toString());
+					}
+					else if(k==2)
+					{
+						js1.put("tokenspec",this.desc.get(i).get(j).get(k).toString());
+					}
+					else if(k==3)
+					{
+						js1.put("qnum",this.desc.get(i).get(j).get(k).toString());
+					}
+					else if(k==4)
+					{
+						js1.put("snum",this.desc.get(i).get(j).get(k).toString());
+					}
+					else if( k ==5)
+					{
+						js1.put("tnum",this.desc.get(i).get(j).get(k).toString());
+					}
+					else if(k==6)
+					{
+						js1.put("dnum",this.desc.get(i).get(j).get(k).toString());
+					}
+					else if(k ==7)
+					{
+						js1.put("dtokenspec",this.desc.get(i).get(j).get(k).toString());
+					}
+					else if(k==8)
+					{
+						js1.put("operator",this.desc.get(i).get(j).get(k).toString());
+					}
 				}
 				for(int k = 0;k<this.sequences.get(i).get(j).size();k++)
 				{
@@ -137,7 +172,7 @@ public class Description
 			jx.put(jaArray);
 		}
 		BufferedWriter bWriter = new BufferedWriter(new FileWriter(new File("./tmp/sgsdebug.json")));
-		bWriter.write(jx.toString());
+		bWriter.write(jx.toString());//this one might cause out of heap space.
 		bWriter.close();
 	}
 }

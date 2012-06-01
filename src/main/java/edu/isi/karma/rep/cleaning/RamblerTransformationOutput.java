@@ -35,6 +35,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 
 	private RamblerTransformationInputs input;
 	private HashMap<String,Transformation> transformations; 
+	private Vector<EditOper> preEditOpers;
 	public RamblerTransformationOutput(RamblerTransformationInputs input)
 	{
 		this.input = input;

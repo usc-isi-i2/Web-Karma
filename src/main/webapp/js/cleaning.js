@@ -180,6 +180,8 @@ function populateVariations(data) {
 						"before" : $(this).data("before"),
 						"after" : $(this).attr("value")
 					});
+					//update the first row's text
+					$("div#"+nodeId+"_c").text = $(this).attr("value");
 					updateResult();
 					return;
 				}));

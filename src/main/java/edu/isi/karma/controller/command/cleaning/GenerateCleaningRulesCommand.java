@@ -155,7 +155,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		boolean results = false;
 		int iterNum = 0;
 		RamblerTransformationOutput rtf = null;
-		while(iterNum<3 && !results)
+		while(iterNum<10 && !results) // try to find any rule during 5 times running
 		{
 			rtf = new RamblerTransformationOutput(inputs);
 			if(rtf.getTransformations().keySet().size()>0)
@@ -227,7 +227,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 						
 						pair[0] = "<_START>"+pair[0]+"<_END>";
 						tx.put(i+"", pair[0]);
-						if(isadded<40)
+						if(isadded<2)
 						{
 							RamblerTransformationExample tmp = new RamblerTransformationExample(pair[0], pair[1], i+"");
 							vrt.add(tmp);

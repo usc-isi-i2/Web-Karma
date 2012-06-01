@@ -21,8 +21,11 @@
 package edu.isi.karma.rep.cleaning;
 
 import java.util.Collection;
+import java.util.Vector;
 
 import org.json.JSONObject;
+
+import edu.isi.karma.cleaning.TNode;
 
 public interface ValueCollection {
 	public abstract String getValue(String id);

@@ -680,8 +680,7 @@ public class Main {
 			try
 			{
 				if(f.getName().indexOf(".csv")==(f.getName().length()-4))
-				{
-					
+				{					
 					CSVReader cr = new CSVReader(new FileReader(f),'\t');
 					String[] pair;
 					String corrResult = "";
@@ -756,7 +755,7 @@ public class Main {
 						long ed = System.currentTimeMillis();
 						timespan = (ed -st)*1.0/60000;
 						
-						String trainPath = "/Users/bowu/Research/features.arff";
+						String trainPath = "./grammar/features.arff";
 						int trnk = UtilTools.rank(dic, corrResult, trainPath);
 						rank.add(trnk+"/"+dic.keySet().size());
 						Ranktermin = trnk;
@@ -860,8 +859,7 @@ public class Main {
 						cRules.add(cx);
 						ranks.add(rank);
 						consisRules.add(consRule);
-					}
-							
+					}							
 				}
 			}
 			catch(Exception ex)

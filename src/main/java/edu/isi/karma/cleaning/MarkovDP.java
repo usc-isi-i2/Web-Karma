@@ -26,7 +26,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
 import java.util.Vector;
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -318,7 +320,7 @@ public class MarkovDP {
 	//length value = 1/Length
 	public static int sampleByScore(Vector<Integer> a,Vector<Integer> b)
 	{
-		/*HashMap<Integer,Vector<Integer>> length2Num = new HashMap<Integer,Vector<Integer>>();
+		HashMap<Integer,Vector<Integer>> length2Num = new HashMap<Integer,Vector<Integer>>();
 		for(int i = 0;i<a.size();i++)
 		{
 			int leng = a.get(i);
@@ -354,8 +356,8 @@ public class MarkovDP {
 		Vector<Integer> vi = length2Num.get(sign[index]);
 		Random r = new Random();
 		int pos = r.nextInt(vi.size());
-		return vi.get(pos);*/
-		Vector<Double> cv = new Vector<Double>();
+		return vi.get(pos);
+		/*Vector<Double> cv = new Vector<Double>();
 		double div = 0.0;
 		for(int i = 0; i<a.size(); i++)
 		{
@@ -370,7 +372,7 @@ public class MarkovDP {
 			x[i] = cv.get(i)*1.0/div;
 		}
 		int index = multinominalSampler(x);
-		return index;
+		return index;*/
 		
 	}
 	public static int multinominalSampler(double[] probs)

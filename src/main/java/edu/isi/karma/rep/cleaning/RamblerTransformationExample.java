@@ -49,5 +49,17 @@ public class RamblerTransformationExample implements TransformationExample {
 		// TODO Auto-generated method stub
 		return this.after;
 	}
+	public void setBefore(String before)
+	{
+		this.before = before;
+	}
+	public void setAfter(String after)
+	{
+		this.after = after;
+	}
+	public void setNodeId(String NodeId)
+	{
+		this.nodeID = NodeId;
+	}
 
 }
