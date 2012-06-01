@@ -97,7 +97,6 @@ public class DuplicateDomainOfLinkCommand extends Command {
 			Worksheet worksheet, VWorkspace vWorkspace){
 		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
 				.getSteinerTree();
-		Vertex root = alignment.GetTreeRoot();
 		GraphUtil.printGraph(tree);
 
 		List<String> hNodeIdList = new ArrayList<String>();
@@ -106,11 +105,11 @@ public class DuplicateDomainOfLinkCommand extends Command {
 		for(HNodePath path:columns)
 			hNodeIdList.add(path.getLeaf().getId());
 		
-		SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, tree, root, hNodeIdList);
+		SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, alignment, hNodeIdList);
 		
 		//mariam
 		try{
-			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, tree, root);
+			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, alignment);
 		}catch(KarmaException e){
 			e.printStackTrace();
 		}

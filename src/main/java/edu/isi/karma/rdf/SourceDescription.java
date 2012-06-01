@@ -30,15 +30,18 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.jgrapht.graph.WeightedMultigraph;
 
 import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
 
+import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.LinkType;
 import edu.isi.karma.modeling.alignment.NodeType;
+import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
@@ -156,12 +159,20 @@ public class SourceDescription {
 	 * datasource to be modeled.
 	 * <br>useColumnNames=false if the SD is used internally.
 	 */
-	public SourceDescription(Workspace workspace, DirectedWeightedMultigraph<Vertex, 
-			LabeledWeightedEdge> steinerTree, Vertex root, Worksheet worksheet, String sourcePrefix, boolean generateInverse, 
+	public SourceDescription(Workspace workspace, Alignment alignment, Worksheet worksheet, String sourcePrefix, boolean generateInverse, 
 			boolean useColumnNames){
+		
+		//the tree is not directed anymore, so we have to transform it before we can use it
+		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> sTree = alignment.getSteinerTree();
+		@SuppressWarnings("unchecked")
+		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeClone = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>) sTree.clone();
+		// Reversing the inverse links
+		alignment.updateLinksDirections(alignment.GetTreeRoot(), null, treeClone);
+
+		
 		this.factory=workspace.getFactory();
-		this.steinerTree = steinerTree;
-		this.root=root;
+		this.steinerTree = treeClone;
+		this.root=alignment.GetTreeRoot();
 		this.useColumnNames = useColumnNames;
 		this.rdfSourcePrefix=sourcePrefix;
 		this.generateInverse = generateInverse;
@@ -331,7 +342,7 @@ public class SourceDescription {
 		
 		String dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName();
 		if(!useColumnNames){
-			dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNames();
+			dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toTableColumnPath();
 		}
 		ruleAttributes.add(dataAttribute);
 		String propertyName = getPrefix(e.getPrefix(), e.getNs()) + ":" + e.getLocalLabel();
@@ -461,7 +472,7 @@ public class SourceDescription {
 			
 			String dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName();
 			if(!useColumnNames){
-				dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNames();
+				dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toTableColumnPath();
 			}
 			ruleAttributes.add(dataAttribute);
 			String propertyName = getPropertyWithPrefix(model.getOntProperty(st.getType().getUriString()));
@@ -564,7 +575,7 @@ public class SourceDescription {
 						if(useColumnNames){
 							key = factory.getHNode(n.getSemanticType().getHNodeId()).getColumnName();
 						}else{
-							key=factory.getHNode(n.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNames();
+							key=factory.getHNode(n.getSemanticType().getHNodeId()).getHNodePath(factory).toTableColumnPath();
 						}
 						ruleAttributes.add(key);
 						break;
@@ -583,7 +594,7 @@ public class SourceDescription {
 			if(useColumnNames){
 				key = factory.getHNode(v.getSemanticType().getHNodeId()).getColumnName();
 			}else{
-				key=factory.getHNode(v.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNames();				
+				key=factory.getHNode(v.getSemanticType().getHNodeId()).getHNodePath(factory).toTableColumnPath();				
 			}
 			ruleAttributes.add(key);
 		}
@@ -673,4 +684,5 @@ public class SourceDescription {
 			return MediatorUtil.addBacktick(s);
 		else return s;
 	}
+	
 }

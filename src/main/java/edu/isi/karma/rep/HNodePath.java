@@ -106,7 +106,7 @@ public class HNodePath {
 	 * Example:
 	 * HN1/HN2/ColumnName
 	 */
-	public String toColumnNames() {
+	public String addColumnName() {
 		String path = toString() + "/";
 		//get the last node
 		HNode n = hNodes.get(hNodes.size()-1);
@@ -114,6 +114,25 @@ public class HNodePath {
 		return path;
 	}
 	
+	/**
+	 * Returns the HNodePath as a String containing column/table names instead of HnodeIds
+	 * @return
+	 * 		the HNodePath as a String containing column/table names instead of HnodeIds.
+	 * Example:
+	 * TableName1/ColumnName1/TableName2/ColumnName2
+	 */
+	public String toTableColumnPath() {
+		StringBuffer b = new StringBuffer();
+		Iterator<HNode> it = hNodes.iterator();
+		while (it.hasNext()) {
+			b.append(it.next().getColumnName());
+			if (it.hasNext()){
+				b.append("/");
+			}
+		}
+		return b.toString();
+	}
+
 	public static HNodePath concatenate(HNodePath prefix, HNodePath suffix) {
 		HNodePath result = new HNodePath(prefix);
 		for (HNode hn : suffix.hNodes){

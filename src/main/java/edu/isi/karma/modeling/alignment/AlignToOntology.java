@@ -77,11 +77,11 @@ public class AlignToOntology {
 		for(HNodePath path:columns)
 			hNodeIdList.add(path.getLeaf().getId());
 
-		SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, tree, root, hNodeIdList);
+		SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, alignment, hNodeIdList);
 		
 		if (root != null) {
 			// mariam
-			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, tree, root);
+			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, alignment);
 		}
 		// Debug
 		GraphUtil.printGraph(tree);

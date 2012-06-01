@@ -138,8 +138,6 @@ public class PublishRDFCommand extends Command {
 					"Please align the worksheet before generating RDF!"));
 		}
 
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
-				.getSteinerTree();
 		Vertex root = alignment.GetTreeRoot();
 
 		try {
@@ -148,7 +146,7 @@ public class PublishRDFCommand extends Command {
 				// use true to generate a SD with column names (for use
 				// "outside" of Karma)
 				// use false for internal use
-				SourceDescription desc = new SourceDescription(vWorkspace.getWorkspace(), tree, root, worksheet,
+				SourceDescription desc = new SourceDescription(vWorkspace.getWorkspace(), alignment, worksheet,
 						rdfSourcePrefix, Boolean.valueOf(addInverseProperties),false);
 				String descString = desc.generateSourceDescription();
 				logger.info("SD=" + descString);

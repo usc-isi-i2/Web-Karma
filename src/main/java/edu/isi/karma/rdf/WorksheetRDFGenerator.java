@@ -31,6 +31,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rep.Node;
@@ -267,7 +268,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		//the value for this node
 		String val = n.getValue().asString();
 		//get the column name of this node
-		String columnName = factory.getHNode(n.getHNodeId()).getHNodePath(factory).toColumnNames();
+		String columnName = factory.getHNode(n.getHNodeId()).getHNodePath(factory).toTableColumnPath();
 		if(!useInternalColumnNames)
 			columnName = factory.getHNode(n.getHNodeId()).getColumnName();
 		//logger.info("Generate triples for node:"+columnName +" with value=" + val);
@@ -304,6 +305,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		logger.debug("Value Map:"+values);
 		//a gensym may be needed to generate the tuples. In order to have the same gensym for the same nodes
 		//we will use the HNodePath up to the last node (removing the last node)
+		//there is no reason to not use the hpath for gensym, so I just leave it like this
 		String gensym = "";
 		String hNodePath = factory.getHNode(n.getHNodeId()).getHNodePath(factory).toString();
 		int index = hNodePath.lastIndexOf("/");
@@ -337,7 +339,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		//for each node in the row
 		for (Node n : r.getNodes()) {
 			//get HNodePtah for this node
-			String columnName = factory.getHNode(n.getHNodeId()).getHNodePath(factory).toColumnNames();
+			String columnName = factory.getHNode(n.getHNodeId()).getHNodePath(factory).toTableColumnPath();
 			if(!useInternalColumnNames)
 				columnName = factory.getHNode(n.getHNodeId()).getColumnName();
 			//logger.debug("Path="+path);
@@ -377,7 +379,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		for(Map.Entry<String, Node> node: r.getNodesMap().entrySet()){
 			String val = node.getValue().getValue().asString();
 			//the HNodePath for this node is used in the SD
-			String columnName = factory.getHNode(node.getKey()).getHNodePath(factory).toColumnNames();
+			String columnName = factory.getHNode(node.getKey()).getHNodePath(factory).toTableColumnPath();
 			//System.out.println("val for " + columnName + "=" + val + " is it null?" + (val==null));
 			//transform the null to "", so that I can handle it as ""; basically it will not be added as a triple to RDF
 			if(val==null) val="";
@@ -413,14 +415,13 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 	}	
 
 	//test the RDF generation
-	static public void testRDFGeneration(Workspace workspace, Worksheet worksheet, DirectedWeightedMultigraph<Vertex, 
-			LabeledWeightedEdge> tree, Vertex root) throws KarmaException{
+	static public void testRDFGeneration(Workspace workspace, Worksheet worksheet, Alignment alignment) throws KarmaException{
 		try{
 			// Write the source description
 			//use true to generate a SD with column names (for use "outside" of Karma)
 			//use false for internal use
 
-			SourceDescription desc = new SourceDescription(workspace, tree, root, worksheet,
+			SourceDescription desc = new SourceDescription(workspace, alignment, worksheet,
 					"http://localhost/source/",true,false);
 			String descString = desc.generateSourceDescription();
 			System.out.println("SD="+ descString);

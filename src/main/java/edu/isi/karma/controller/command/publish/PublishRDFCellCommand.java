@@ -103,8 +103,6 @@ public class PublishRDFCellCommand extends Command {
 					new ErrorUpdate("Worksheet not modeled!"));
 		}
 
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
-				.getSteinerTree();
 		Vertex root = alignment.GetTreeRoot();
 
 		try {
@@ -114,7 +112,7 @@ public class PublishRDFCellCommand extends Command {
 				// "outside" of Karma)
 				// use false for internal use
 				SourceDescription desc = new SourceDescription(
-						vWorkspace.getWorkspace(), tree, root, worksheet,
+						vWorkspace.getWorkspace(), alignment, worksheet,
 						rdfSourcePrefix, true, false);
 				String descString = desc.generateSourceDescription();
 				logger.info("SD=" + descString);

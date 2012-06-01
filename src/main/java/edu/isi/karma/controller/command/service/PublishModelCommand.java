@@ -134,7 +134,7 @@ public class PublishModelCommand extends Command{
 		
 		try {
 			//construct the SD
-			SourceDescription desc = new SourceDescription(ws, tree, al.GetTreeRoot(), wk,
+			SourceDescription desc = new SourceDescription(ws, al, wk,
 					"http://dovetail/", true,false);
 			String descString = desc.generateSourceDescription();
 			/////////////////

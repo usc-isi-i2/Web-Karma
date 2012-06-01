@@ -105,9 +105,6 @@ public class AddUserLinkToAlignmentCommand extends Command {
 
 	private UpdateContainer getAlignmentUpdateContainer(Alignment alignment,
 			Worksheet worksheet, VWorkspace vWorkspace) {
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
-				.getSteinerTree();
-		Vertex root = alignment.GetTreeRoot();
 		
 		List<String> hNodeIdList = new ArrayList<String>();
 		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
@@ -115,11 +112,11 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		for(HNodePath path:columns)
 			hNodeIdList.add(path.getLeaf().getId());
 		
-		SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, tree, root, hNodeIdList);
+		SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, alignment, hNodeIdList);
 
 		//mariam		
 		try{
-			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, tree, root);
+			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, alignment);
 		}catch(KarmaException e){
 			e.printStackTrace();
 		}

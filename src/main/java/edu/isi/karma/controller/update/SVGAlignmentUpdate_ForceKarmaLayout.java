@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.modeling.alignment.URI;
@@ -25,6 +26,7 @@ import edu.isi.karma.view.VWorkspace;
 public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 	private final String vWorksheetId;
 	private final String alignmentId;
+	private Alignment alignment;
 	private final DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree;
 	private final Vertex root;
 	private final List<String> hNodeIdList;
@@ -42,14 +44,14 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 
 	public SVGAlignmentUpdate_ForceKarmaLayout(String vWorksheetId,
 			String alignmentId,
-			DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree,
-			Vertex root, List<String> hNodeIdList) {
+			Alignment alignment, List<String> hNodeIdList) {
 		super();
 		this.vWorksheetId = vWorksheetId;
 		this.alignmentId = alignmentId;
-		this.tree = tree;
-		this.root = root;
+		this.tree = alignment.getSteinerTree();
+		this.root = alignment.GetTreeRoot();
 		this.hNodeIdList = hNodeIdList;
+		this.alignment=alignment;
 	}
 	
 	@Override
@@ -65,7 +67,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 			@SuppressWarnings("unchecked")
 			DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeClone = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>) tree.clone();
 			// Reversing the inverse links
-			updateLinksDirections(this.root, null, treeClone);
+			alignment.updateLinksDirections(this.root, null, treeClone);
 
 			/*** Add the nodes and the links from the Steiner tree ***/
 			List<String> hNodeIdsAdded = new ArrayList<String>();
@@ -217,39 +219,4 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 		return height;
 	}
 	
-	private void updateLinksDirections(Vertex root, LabeledWeightedEdge e, DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeClone) {
-		
-		if (root == null)
-			return;
-		Vertex source, target;
-		LabeledWeightedEdge inLink;
-		
-		LabeledWeightedEdge[] incomingLinks = treeClone.incomingEdgesOf(root).toArray(new LabeledWeightedEdge[0]);
-		if (incomingLinks != null && incomingLinks.length != 0) {
-			for (int i = 0; i < incomingLinks.length; i++) {
-				
-				inLink = incomingLinks[i];
-				source = inLink.getSource();
-				target = inLink.getTarget();
-				// don't remove the incoming link from parent to this node
-				if (inLink.getID().equalsIgnoreCase(e.getID()))
-					continue;
-				
-				LabeledWeightedEdge inverseLink = new LabeledWeightedEdge(inLink.getID(), new URI(inLink.getUriString(), inLink.getNs(), inLink.getPrefix()), inLink.getLinkType(), true);
-				treeClone.addEdge(target, source, inverseLink);
-				treeClone.setEdgeWeight(inverseLink, inLink.getWeight());
-				treeClone.removeEdge(inLink);
-			}
-		}
-
-		LabeledWeightedEdge[] outgoingLinks = treeClone.outgoingEdgesOf(root).toArray(new LabeledWeightedEdge[0]);
-
-		if (outgoingLinks == null || outgoingLinks.length == 0)
-			return;
-		for (int i = 0; i < outgoingLinks.length; i++) {
-			target = outgoingLinks[i].getTarget();
-			updateLinksDirections(target, outgoingLinks[i], treeClone);
-		}
-	}	
-
 }
