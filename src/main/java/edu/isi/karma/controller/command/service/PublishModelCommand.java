@@ -35,6 +35,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
+import edu.isi.karma.rdf.SourceDescription;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.MetadataContainer;
@@ -46,6 +47,7 @@ import edu.isi.karma.service.Source;
 import edu.isi.karma.service.SourceLoader;
 import edu.isi.karma.service.SourcePublisher;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.KarmaException;
 
 public class PublishModelCommand extends Command{
 
@@ -90,7 +92,7 @@ public class PublishModelCommand extends Command{
 		Source source = null;
 		
 		if (!wk.containService()) { 
-			logger.error("The worksheet does not have a service object.");
+			logger.info("The worksheet does not have a service object.");
 //			return new UpdateContainer(new ErrorUpdate(
 //				"Error occured while publishing the model. The worksheet does not have a service object."));
 		} else
@@ -131,24 +133,34 @@ public class PublishModelCommand extends Command{
 		}
 		
 		try {
+			//construct the SD
+			SourceDescription desc = new SourceDescription(ws, tree, al.GetTreeRoot(), wk,
+					"http://dovetail/", true,false);
+			String descString = desc.generateSourceDescription();
+			/////////////////
+			
 			if (service != null) {
-				ServicePublisher servicePublisher = new ServicePublisher(service);
+				ServicePublisher servicePublisher = new ServicePublisher(service,descString);
 				servicePublisher.publish(Repository.Instance().LANG, true);
 				logger.info("Service model has successfully been published to repository.");
 				return new UpdateContainer(new ErrorUpdate(
-						"Service model has successfully been published to repository."));
+				"Service model has successfully been published to repository."));
 			} else { //if (source != null) {
-				SourcePublisher sourcePublisher = new SourcePublisher(source);
+				SourcePublisher sourcePublisher = new SourcePublisher(source, descString);
 				sourcePublisher.publish(Repository.Instance().LANG, true);
 				logger.info("Source model has successfully been published to repository.");
 				return new UpdateContainer(new ErrorUpdate(
-						"Source model has successfully been published to repository."));
+				"Source model has successfully been published to repository."));
 			}
 
 		} catch (IOException e) {
 			logger.error("Error occured while publishing the source/service ", e);
 			return new UpdateContainer(new ErrorUpdate(
-					"Error occured while publishing the source/service "));
+			"Error occured while publishing the source/service "));
+		}catch(KarmaException e){
+			logger.error("Error occured while generating the source description. ", e);
+			return new UpdateContainer(new ErrorUpdate(
+			"Error occured while generating the source description."));
 		}
 	}
 

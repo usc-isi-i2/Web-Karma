@@ -16,8 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.alignment.NodeType;
+import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.view.VWorkspace;
@@ -79,21 +79,17 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 				Set<Vertex> vertices = tree.vertexSet();
 				HashMap<Vertex, Integer> verticesIndex = new HashMap<Vertex, Integer>();
 				int nodesIndexcounter = 0;
-				List<Vertex> maxNodesCovered = null;
-				Vertex maxHeightVertex = null;
 				
 				for (Vertex vertex : vertices) {
 					JSONObject vertObj = new JSONObject();
-					vertObj.put(JsonKeys.label.name(), vertex.getLocalLabel());
+					vertObj.put(JsonKeys.label.name(), vertex.getLocalID());
 					vertObj.put(JsonKeys.id.name(), vertex.getID());
 					vertObj.put(JsonKeys.nodeType.name(), vertex.getNodeType().name());
 					
 					List<Vertex> nodesWithSemTypesCovered = new ArrayList<Vertex>();
 					int height = getHeight(vertex, nodesWithSemTypesCovered, treeClone);
-					if(height > maxTreeHeight) {
+					if(height >= maxTreeHeight) {
 						maxTreeHeight = height;
-						maxNodesCovered = nodesWithSemTypesCovered;
-						maxHeightVertex = vertex;
 					}
 						
 					vertObj.put(JsonKeys.height.name(), height);
@@ -115,7 +111,13 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 							vertObj_holder.put(JsonKeys.id.name(), vertex.getID()+"_holder");
 							vertObj_holder.put(JsonKeys.nodeType.name(), NodeType.DataProperty.name());
 							vertObj_holder.put(JsonKeys.hNodeId.name(), type.getHNodeId());
+							
+							JSONArray hNodeIdsCoveredByVertex_holder = new JSONArray();
+							hNodeIdsCoveredByVertex_holder.put(vertex.getSemanticType().getHNodeId());
+							vertObj_holder.put(JsonKeys.hNodesCovered.name(), hNodeIdsCoveredByVertex_holder);
+							vertObj_holder.put(JsonKeys.height.name(), 0);
 							vertArr.put(vertObj_holder);
+							
 							nodesIndexcounter++;
 							
 							// Add the holder link
@@ -131,29 +133,6 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 					vertArr.put(vertObj);
 					verticesIndex.put(vertex, nodesIndexcounter++);
 				}
-				
-				// Add a node that sits above the top of tree to change the parent of root
-				JSONObject vertObj = new JSONObject();
-				vertObj.put(JsonKeys.label.name(), JsonValues.FakeRoot.name());
-				vertObj.put(JsonKeys.id.name(), JsonValues.FakeRoot.name());
-				vertObj.put(JsonKeys.nodeType.name(), JsonValues.FakeRoot.name());
-				vertObj.put(JsonKeys.height.name(), ++maxTreeHeight);
-				JSONArray hNodeIdsCoveredByVertex = new JSONArray();
-				for(Vertex v : maxNodesCovered)
-					hNodeIdsCoveredByVertex.put(v.getSemanticType().getHNodeId());
-				vertObj.put(JsonKeys.hNodesCovered.name(), hNodeIdsCoveredByVertex);
-				vertArr.put(vertObj);
-				
-				// Add the link from fake root to the root
-				JSONObject fakeRootLink = new JSONObject();
-				fakeRootLink.put(JsonKeys.source.name(), nodesIndexcounter);
-				fakeRootLink.put(JsonKeys.target.name(), verticesIndex.get(maxHeightVertex));
-				fakeRootLink.put(JsonKeys.sourceNodeId.name(), JsonValues.FakeRoot.name());
-				fakeRootLink.put(JsonKeys.targetNodeId.name(), maxHeightVertex.getID());
-				fakeRootLink.put(JsonKeys.label.name(), JsonValues.Add_Parent.name());
-				fakeRootLink.put(JsonKeys.id.name(), JsonValues.FakeRootLink.name());
-				linksArr.put(fakeRootLink);
-				
 				
 				/*** Add the links ***/
 				Set<LabeledWeightedEdge> edges = tree.edgeSet();
@@ -226,6 +205,14 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 		
 		if(lastNodeWithSemanticType != null) {
 			height = new DijkstraShortestPath<Vertex, LabeledWeightedEdge>(treeClone, vertex, lastNodeWithSemanticType).getPathEdgeList().size();
+			if(lastNodeWithSemanticType.getNodeType() == NodeType.Class && lastNodeWithSemanticType.getSemanticType() != null && vertex != lastNodeWithSemanticType) {
+				height += getHeight(lastNodeWithSemanticType, new ArrayList<Vertex>(), treeClone);  
+			}
+			
+			if(vertex == lastNodeWithSemanticType && vertex.getNodeType() == NodeType.Class && vertex.getSemanticType() != null) {
+				height = 1;
+			}
+				
 		}
 		return height;
 	}

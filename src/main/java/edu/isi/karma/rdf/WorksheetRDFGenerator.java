@@ -256,7 +256,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 	 */
 	public void generateTriplesCell(String nodeId, boolean useInternalColumnNames) throws MediatorException, IOException, KarmaException{
 		Node n = factory.getNode(nodeId);
-		logger.info("Generate triples for node:"+n);
+		logger.debug("Generate triples for node:"+n);
 		if(n.hasNestedTable()){
 			//This should not happen
 			throw new KarmaException("Node " + n.getHNodeId() + " contains a nested table. " +
@@ -271,6 +271,8 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		if(!useInternalColumnNames)
 			columnName = factory.getHNode(n.getHNodeId()).getColumnName();
 		//logger.info("Generate triples for node:"+columnName +" with value=" + val);
+		//transform the null to "", so that I can handle it as ""; basically it will not be added as a triple to RDF
+		if(val==null) val="";
 		values.put(columnName, val);
 		
 		//get other columns used in the RDF rule associated with columnName
@@ -376,7 +378,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 			String val = node.getValue().getValue().asString();
 			//the HNodePath for this node is used in the SD
 			String columnName = factory.getHNode(node.getKey()).getHNodePath(factory).toColumnNames();
-			//System.out.println("val for " + columnName + "=" + val);
+			//System.out.println("val for " + columnName + "=" + val + " is it null?" + (val==null));
 			//transform the null to "", so that I can handle it as ""; basically it will not be added as a triple to RDF
 			if(val==null) val="";
 			values.put(columnName,val);
@@ -403,6 +405,8 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 			//the HNodePath for this node is used in the SD
 			String columnName = factory.getHNode(node.getKey()).getColumnName();
 			//System.out.println("val for " + columnName + "=" + val);
+			//transform the null to "", so that I can handle it as ""; basically it will not be added as a triple to RDF
+			if(val==null) val="";
 			values.put(columnName,val);
 		}
 		return values;
@@ -425,7 +429,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 			WorksheetRDFGenerator wrg2 = new WorksheetRDFGenerator(workspace.getFactory(), descString, "./publish/RDF/rdftestcell.n3");
 			if(worksheet.getHeaders().hasNestedTables()){
 				logger.info("Has nested tables!!!");
-				//wrg2.generateTriplesCellLimit(worksheet);
+				wrg2.generateTriplesCellLimit(worksheet);
 			}
 			else{
 				wrg1.generateTriplesRowLimit(worksheet);

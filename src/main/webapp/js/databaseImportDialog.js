@@ -109,7 +109,7 @@ function populateTableList(json) {
 	$("#DatabaseTablePreview table tr").remove();
 	$("#dbPreviewTableName").text("");
 	
-	table.data("commandId", json["elements"][0]["commandId"])
+	table.data("commandId", json["elements"][0]["commandId"]);
 	$.each(json["elements"][0]["TableList"][0] , function(index, value) {
 		var tr = $("<tr>").data("tableName", value);
 		var tableNametd = $("<td>");

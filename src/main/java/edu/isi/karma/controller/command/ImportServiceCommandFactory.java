@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * 	http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,62 +18,31 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
+package edu.isi.karma.controller.command;
 
-text {
-	font-size:12px;
-	color: black;
-	font-family: Arial, Helvetica, sans-serif;
-}
+import javax.servlet.http.HttpServletRequest;
 
-text.FakeRootLink {
-	font-style: italic;
-}
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.view.VWorkspace;
 
-.link {
-  fill: none;
-  stroke: #ccc;
-  stroke-width: 1px;
-}
+public class ImportServiceCommandFactory extends CommandFactory {
+	private enum Arguments {
+		vWorksheetId, ServiceUrl,sourceName,commandType
+	}
 
-rect {
-  fill: white;
-  stroke: black;
-  stroke-width: 1.0;
-  fill-opacity:0.80;
-}
+	@Override
+	public Command createCommand(HttpServletRequest request,
+			VWorkspace vWorkspace) {
 
-g.DataProperty rect{
-	fill:black;
-}
+		String commandType = request.getParameter(Arguments.commandType.name());
+		
+		ImportServiceCommand comm = new ImportServiceCommand(getNewId(vWorkspace), 
+				commandType,
+				request.getParameter(Arguments.ServiceUrl.name()),
+				request.getParameter(Arguments.sourceName.name())
+				);
+		return comm;
+	}
 
-g.Class rect {
-	fill: #D3D3D3;
-	z-index: 1;
-}
-
-g.DataProperty:hover {
-	cursor: pointer;
-}
-g.Class:hover {
-	cursor: pointer;
-}
-
-g.Unassigned:hover {
-	cursor: pointer;
-}
-
-g.Unassigned rect {
-	fill: red;
-	stroke: red;
-}
-
-text.LinkLabel:hover {
-	cursor: pointer;
-}
-
-g.Class.highlightOverlay rect{
-	fill: #9C9C9C;
-	stroke: black;
-	z-index:10;
-	stroke-width : 2px;
 }

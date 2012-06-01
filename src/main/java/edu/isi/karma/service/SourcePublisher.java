@@ -40,9 +40,11 @@ public class SourcePublisher {
 
 	private Source source;
 	private Model model = null;
+	private String sourceDescription;
 	
-	public SourcePublisher(Source source) {
+	public SourcePublisher(Source source, String sourceDescription) {
 		this.source = source;
+		this.sourceDescription=sourceDescription;
 	}
 	
 	public Model generateModel() {
@@ -90,7 +92,7 @@ public class SourcePublisher {
 			model = generateModel();
 		
 		String source_desc_file = Repository.Instance().SOURCE_REPOSITORY_DIR + 
-									this.source.getId() +
+		 							this.source.getName() + "_" + this.source.getId() +
 									Repository.Instance().getFileExtension(lang);
 
 
@@ -134,6 +136,10 @@ public class SourcePublisher {
 			}
 			addModelPart(model, my_source, this.source.getModel());
 		}
+		//for source description
+		Property hasSourceDesc = model.createProperty(Namespaces.KARMA, "hasSourceDescription");
+		sourceDescription=sourceDescription.replaceAll("\n", " ").replaceAll("\r", " ");
+		my_source.addProperty(hasSourceDesc, sourceDescription);
 	}
 	
 	public void addModelPart(Model model, Resource resource, edu.isi.karma.service.Model semanticModel) {
@@ -206,7 +212,7 @@ public class SourcePublisher {
 	public static void main(String[] args) {
 		Source source = new Source("mySource", Test.getGeoNamesNeighbourhoodTree());
 		source.print();
-		SourcePublisher sourcePublisher = new SourcePublisher(source);
+		SourcePublisher sourcePublisher = new SourcePublisher(source,"");
 		try {
 			sourcePublisher.publish(Repository.Instance().LANG, true);
 		} catch (FileNotFoundException e) {
