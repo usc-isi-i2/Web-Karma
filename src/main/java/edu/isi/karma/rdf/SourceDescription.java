@@ -195,9 +195,9 @@ public class SourceDescription {
 	 * 		a source description.
 	 * @throws KarmaException
 	 * For a table without nested tables the source description contains column names.
-	 * SD(ColumnName1, ColumnName2)
-	 * For a table with nested tables the source description contains HNodePaths.
-	 * SD(HN1/HN2/HN3, HN1/HN2/HN4) - the ids of the HNodes.
+	 * SD(ColumnName2, ColumnName3)
+	 * For a table with nested tables the source description contains HNodePaths (transformed in ColumnNames)
+	 * SD(ColumnName1/ColumnName2, ColumnName1/ColumnName3) - the ids of the HNodes.
 	 */
 	public String generateSourceDescription() throws KarmaException{
 		//System.out.println("THE TREE******************");
@@ -342,7 +342,7 @@ public class SourceDescription {
 		
 		String dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName();
 		if(!useColumnNames){
-			dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toTableColumnPath();
+			dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNamePath();
 		}
 		ruleAttributes.add(dataAttribute);
 		String propertyName = getPrefix(e.getPrefix(), e.getNs()) + ":" + e.getLocalLabel();
@@ -472,7 +472,7 @@ public class SourceDescription {
 			
 			String dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName();
 			if(!useColumnNames){
-				dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toTableColumnPath();
+				dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNamePath();
 			}
 			ruleAttributes.add(dataAttribute);
 			String propertyName = getPropertyWithPrefix(model.getOntProperty(st.getType().getUriString()));
@@ -575,7 +575,7 @@ public class SourceDescription {
 						if(useColumnNames){
 							key = factory.getHNode(n.getSemanticType().getHNodeId()).getColumnName();
 						}else{
-							key=factory.getHNode(n.getSemanticType().getHNodeId()).getHNodePath(factory).toTableColumnPath();
+							key=factory.getHNode(n.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNamePath();
 						}
 						ruleAttributes.add(key);
 						break;
@@ -594,7 +594,7 @@ public class SourceDescription {
 			if(useColumnNames){
 				key = factory.getHNode(v.getSemanticType().getHNodeId()).getColumnName();
 			}else{
-				key=factory.getHNode(v.getSemanticType().getHNodeId()).getHNodePath(factory).toTableColumnPath();				
+				key=factory.getHNode(v.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNamePath();				
 			}
 			ruleAttributes.add(key);
 		}

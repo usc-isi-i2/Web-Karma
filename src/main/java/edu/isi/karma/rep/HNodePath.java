@@ -115,13 +115,13 @@ public class HNodePath {
 	}
 	
 	/**
-	 * Returns the HNodePath as a String containing column/table names instead of HnodeIds
+	 * Returns the HNodePath as a String containing column names instead of HnodeIds
 	 * @return
-	 * 		the HNodePath as a String containing column/table names instead of HnodeIds.
+	 * 		the HNodePath as a String containing column names instead of HnodeIds.
 	 * Example:
-	 * TableName1/ColumnName1/TableName2/ColumnName2
+	 * ColumnName1/ColumnName2
 	 */
-	public String toTableColumnPath() {
+	public String toColumnNamePath() {
 		StringBuffer b = new StringBuffer();
 		Iterator<HNode> it = hNodes.iterator();
 		while (it.hasNext()) {

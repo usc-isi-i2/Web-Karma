@@ -268,7 +268,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		//the value for this node
 		String val = n.getValue().asString();
 		//get the column name of this node
-		String columnName = factory.getHNode(n.getHNodeId()).getHNodePath(factory).toTableColumnPath();
+		String columnName = factory.getHNode(n.getHNodeId()).getHNodePath(factory).toColumnNamePath();
 		if(!useInternalColumnNames)
 			columnName = factory.getHNode(n.getHNodeId()).getColumnName();
 		//logger.info("Generate triples for node:"+columnName +" with value=" + val);
@@ -339,7 +339,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		//for each node in the row
 		for (Node n : r.getNodes()) {
 			//get HNodePtah for this node
-			String columnName = factory.getHNode(n.getHNodeId()).getHNodePath(factory).toTableColumnPath();
+			String columnName = factory.getHNode(n.getHNodeId()).getHNodePath(factory).toColumnNamePath();
 			if(!useInternalColumnNames)
 				columnName = factory.getHNode(n.getHNodeId()).getColumnName();
 			//logger.debug("Path="+path);
@@ -379,7 +379,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		for(Map.Entry<String, Node> node: r.getNodesMap().entrySet()){
 			String val = node.getValue().getValue().asString();
 			//the HNodePath for this node is used in the SD
-			String columnName = factory.getHNode(node.getKey()).getHNodePath(factory).toTableColumnPath();
+			String columnName = factory.getHNode(node.getKey()).getHNodePath(factory).toColumnNamePath();
 			//System.out.println("val for " + columnName + "=" + val + " is it null?" + (val==null));
 			//transform the null to "", so that I can handle it as ""; basically it will not be added as a triple to RDF
 			if(val==null) val="";
