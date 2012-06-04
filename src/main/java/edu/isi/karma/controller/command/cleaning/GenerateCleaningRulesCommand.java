@@ -227,7 +227,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 						
 						pair[0] = "<_START>"+pair[0]+"<_END>";
 						tx.put(i+"", pair[0]);
-						if(isadded<2)
+						if(isadded<4)
 						{
 							RamblerTransformationExample tmp = new RamblerTransformationExample(pair[0], pair[1], i+"");
 							vrt.add(tmp);

@@ -150,6 +150,7 @@ public class RuleUtil {
 		        MOVInterpreterParser parser= new MOVInterpreterParser(tokens);
 		        CommonTree x = (CommonTree)parser.rule().getTree();
 		        CommonTreeNodeStream nodes = new CommonTreeNodeStream(x);
+		        nodes.setTokenStream(tokens);
 		        MOVInterpreterTree evaluator = new MOVInterpreterTree(nodes);  
 		        r.setNewInput(before);
 		        evaluator.setRuler(r);
@@ -162,6 +163,7 @@ public class RuleUtil {
 		        CommonTokenStream tokens = new CommonTokenStream(lexer);
 		        RuleInterpreterParser parser= new RuleInterpreterParser(tokens);
 		        CommonTreeNodeStream nodes = new CommonTreeNodeStream((CommonTree)parser.rule().getTree());
+		        nodes.setTokenStream(tokens);
 		        RuleInterpreterTree evaluator = new RuleInterpreterTree(nodes);
 		        r.setNewInput(before);
 		        evaluator.setRuler(r);
@@ -173,6 +175,7 @@ public class RuleUtil {
 		        CommonTokenStream tokens = new CommonTokenStream(lexer);
 		        INSInterpreterParser parser= new INSInterpreterParser(tokens);
 		        CommonTreeNodeStream nodes = new CommonTreeNodeStream((CommonTree)parser.rule().getTree());
+		        nodes.setTokenStream(tokens);
 		        INSInterpreterTree evaluator = new INSInterpreterTree(nodes);
 		        r.setNewInput(before);
 		        evaluator.setRuler(r);
@@ -181,6 +184,7 @@ public class RuleUtil {
 	        return r.vec;
 			
 		} catch (Exception e) {
+			//System.out.println(""+e.toString());
 			return null;
 		}
 		
@@ -497,50 +501,12 @@ public class RuleUtil {
 	public static Vector<Vector<Vector<EditOper>>> genEditOpers(Vector<Vector<TNode>> orgs,Vector<Vector<TNode>> tars) throws Throwable
 	{
 		Vector<Vector<Vector<EditOper>>> tmp =new Vector<Vector<Vector<EditOper>>>();
-		HashMap<String,Integer> filter = new HashMap<String,Integer>();//use the concatenation of the oper name as the key
-		for(int i=0;i<orgs.size();i++)
-		{
-			HashMap<String,Integer> tmpfilter = new HashMap<String,Integer>();
-			Vector<TNode> x = orgs.get(i);
-			Vector<TNode> y = tars.get(i);
-			Vector<Vector<EditOper>> ops = Alignment.genEditOperation(x, y);//ops contains multiple edit sequence
-			for(int j = 0; j<ops.size();j++)
-			{
-				
-				String sign = "";
-				for(EditOper xeo:ops.get(j))
-				{
-					sign+=xeo.oper;
-				}
-				if(tmpfilter.containsKey(sign))
-				{
-					tmpfilter.put(sign, tmpfilter.get(sign)+1);
-				}
-				else
-				{
-					
-					tmpfilter.put(sign, 1);
-				}
-			}
-			for(String key:tmpfilter.keySet())
-			{
-				if(filter.containsKey(key))
-				{
-					filter.put(key, filter.get(key)+1);
-				}
-				else
-				{
-					filter.put(key, 1);
-				}
-			}
-		}
 		for(int i=0;i<orgs.size();i++)
 		{
 			Vector<TNode> x = orgs.get(i);
 			Vector<TNode> y = tars.get(i);
 			Vector<Vector<EditOper>> ops = Alignment.genEditOperation(x, y);//ops contains multiple edit sequence
 			Vector<Vector<EditOper>> tx = new Vector<Vector<EditOper>>();
-			
 			for(int j = 0; j<ops.size();j++)
 			{
 				String sign = "";
@@ -566,12 +532,7 @@ public class RuleUtil {
 					xeo.after = (Vector<TNode>)(r.vec.clone());
 					cur = r.vec;
 				}
-				if(filter.get(sign)>=2 || orgs.size()<=1)
-				{
-					tx.add(ops.get(j));
-					//find before and after for each edit operator
-					
-				}
+				tx.add(ops.get(j));
 			}
 			tmp.add(tx);
 		}
@@ -793,10 +754,10 @@ public class RuleUtil {
 		}
 		dcrpt.sequences = sequences;
 		dcrpt.desc = descriptions;
-		/*try {
+		try {
 			dcrpt.writeJSONString();
 		} catch (Exception e) {
-		}*/
+		}
 		
 		//descriptions = filterDescription(descriptions,sign); // many descriptoins
 		//prepare three kind of rule generator

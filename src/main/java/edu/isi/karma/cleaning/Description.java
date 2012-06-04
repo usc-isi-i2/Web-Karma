@@ -73,6 +73,11 @@ public class Description
 	{
 		this.desc = desc;
 	}
+	public void clear()
+	{
+		desc.clear();
+		sequences.clear();
+	}
 	public void delComponent(int index)
 	{
 		desc.remove(index);

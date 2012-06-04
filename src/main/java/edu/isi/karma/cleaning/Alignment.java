@@ -40,28 +40,26 @@ public class Alignment {
 	{
 		Alignment.paths.clear();
 		//generate INS operation (only need to record the content)
-		Vector<EditOper> inss = Alignment.insopers(a,b);
-		//apply the learned insert operation
-		Vector<TNode> clonea = (Vector<TNode>)a.clone();
+		/*Vector<EditOper> inss = Alignment.insopers(a,b);
 		for(EditOper eo:inss)
 		{
 			NonterminalValidator.applyins(eo, clonea);
 			eo.before = a;
 			eo.after = clonea;
-		}
+		}*/
+		Vector<TNode> clonea = (Vector<TNode>)a.clone();
 		//generate MOV and DEL operation
-		Alignment.movopers(clonea,b);
-		Vector<Vector<EditOper>> movdels = Alignment.paths;
+		Vector<Vector<EditOper>> movdels = Alignment.movopers(clonea,b);
 		//generate all combination of the two set of operation sequence
 		Vector<Vector<EditOper>> res = new Vector<Vector<EditOper>>();
 		for(Vector<EditOper> v:movdels)
 		{
 			Vector<EditOper> z = new Vector<EditOper>();
-			z.addAll(inss);
 			z.addAll(v);
 			res.add(z);
 			System.out.println(""+z.toString());
 		}
+		Alignment.paths.clear();
 		return res;
 	}
 	public static Vector<Integer> delopers(Vector<int[]> a,Vector<TNode> before)
@@ -146,9 +144,19 @@ public class Alignment {
 		segments.add(b);
 		return segments;
 	}
-	public static void movopers(Vector<TNode> a, Vector<TNode> b)
+	public static Vector<Vector<EditOper>> movopers(Vector<TNode> a, Vector<TNode> b)
 	{
+		int stoken = 0;
+		for(TNode t:a){
+			if(t.type == TNode.STARTTYP)
+			{
+				break;
+			}
+			stoken ++;
+		}
+		int etoken = a.size()-1;
 		Vector<Vector<int[]>> mapping = map(a,b);
+		Vector<Vector<EditOper>> paths = new Vector<Vector<EditOper>>();
 		for(int i= 0; i< mapping.size();i++)
 		{
 			Vector<EditOper> ev = new Vector<EditOper>();
@@ -205,14 +213,15 @@ public class Alignment {
 			}
 			/*set the s/e token's position value the same as its adjacent token's position value
 			in order to make them move with the adjacent token*/
-			positions.set(0,positions.get(1));
-			positions.set(positions.size()-1,positions.get(positions.size()-2));
+			positions.set(stoken,positions.get(stoken+1));
+			positions.set(etoken,positions.get(etoken-1));
 			//detect the continous segments
 			Vector<int[]> segments =  deterContinus(positions,mks);
 			Vector<EditOper> xx = new Vector<EditOper>();
 			Vector<Vector<Integer>> history = new Vector<Vector<Integer>>();
-			transMOVDEL(segments,positions,mks,xx,history,a);
+			transMOVDEL(segments,positions,mks,xx,history,a,paths);
 		}		
+		return paths;
 	}
 	//
 	public static int getReverseOrderNum(Vector<Integer> position)
@@ -242,7 +251,7 @@ public class Alignment {
 	 * eo: for record the path for one move and delete sequence
 	 * history is used to store all previous state to prevent visit some visited state dead loop
 	 */
-	public static void transMOVDEL(Vector<int[]> segments,Vector<Integer> positon,Vector<Integer> x,Vector<EditOper> eo,Vector<Vector<Integer>> history,Vector<TNode> a)
+	public static void transMOVDEL(Vector<int[]> segments,Vector<Integer> positon,Vector<Integer> x,Vector<EditOper> eo,Vector<Vector<Integer>> history,Vector<TNode> a,Vector<Vector<EditOper>> paths)
 	{
 		if(eo.size()>positon.size()-1)//prune, the number of mov should be less than total size -1 
 			return;
@@ -260,8 +269,9 @@ public class Alignment {
 		history1.add(positon);
 		boolean globalcontrary = false;
 		boolean localcontrary = false;
-		for(int i = 0; i<segments.size(); i++)
-		{
+		//for(int i = 0; i<segments.size(); i++)
+		//{
+			int i = 0;
 			localcontrary = false;
 			int minNum = Integer.MAX_VALUE;
 			EditOper eox = new EditOper();
@@ -329,9 +339,9 @@ public class Alignment {
 				Vector<EditOper> seqx = (Vector<EditOper>)eo.clone();
 				seqx.add(eox);			
 				Vector<int[]> newsegments1 = deterContinus(positonx,x);
-				transMOVDEL(newsegments1,positonx,x,seqx,history1,a);
+				transMOVDEL(newsegments1,positonx,x,seqx,history1,a,paths);
 			}
-		}
+		//}
 		if(!globalcontrary)
 		{
 			//add the delete operation

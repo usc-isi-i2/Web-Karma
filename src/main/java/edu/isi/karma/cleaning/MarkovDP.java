@@ -260,6 +260,7 @@ public class MarkovDP {
 		double totalScore = 0.0;
 		for(String crule:res)
 		{	
+			//crule = "   mov     Symbol    from_beginning  first incld    Symbol   from_end   12   from_beginning   7";
 			MDPState newS = s.genNewState(crule, actualInd);
 			if(newS == null)
 				continue;
