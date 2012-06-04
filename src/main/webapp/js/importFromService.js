@@ -53,7 +53,7 @@ function styleAndAssignHandlerstoServiceImportObjects(){
     	// fire the above change event after every letter
     	
     	//if esc is pressed or nothing is entered  
-	    if (event.keyCode == 27 || $(this).val() == '') {  
+	    if (event.keyCode == 27 || $(this).val() == '') {
 	      //if esc is pressed we want to clear the value of search box  
 	      $(this).val('');  
 	  
@@ -64,13 +64,13 @@ function styleAndAssignHandlerstoServiceImportObjects(){
 	  
 	    //if there is text, lets filter
 	    else {  
-	      filter('#ServiceTablesList tr', $(this).val());  
+	      filterService('#ServiceSourceList tr', $(this).val());  
 	    }
   	});
 }
 
 //filter results
-function filter(selector, query) {
+function filterService(selector, query) {
 	  query	= $.trim(query); //trim white space
 	  query = query.replace(/ /gi, '|'); //add OR for regex query
 	

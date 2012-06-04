@@ -138,6 +138,40 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		//all triples written, so close the writer
 		closeWriter();
 	}
+
+	/** Generates RDF for the given worksheet by invoking the RDF generator row by row.
+	 * <br>Only for tables WITHOUT nested tables.
+	 * <br>The source description for the entire table is used.
+	 * @param w
+	 * 		a worksheet
+	 * @param useInternalColumnNames
+	 * 		true if the SD uses HPath as column names (HN6/HN8/ColumnName)
+	 * 		false if SD uses actual column names
+	 * @throws MediatorException
+	 * @throws IOException
+	 */
+	public void generateTriplesRow(Worksheet w, boolean useInternalColumnNames, boolean appendToWriter) throws MediatorException, IOException{
+		//generate all triples for this worksheet (row by row)
+		//the RuleRDFGenerator for SD is rdfGenerator (from the superclass)
+
+		//for each row
+		//logger.debug("Number of rows="+w.getDataTable().getNumRows());
+		ArrayList<Row> rows = w.getDataTable().getRows(0, w.getDataTable().getNumRows());
+		for(Row r:rows){
+			//construct the values map
+			Map<String,String> values;
+			if(useInternalColumnNames)
+				values = getValueMap(r);
+			else
+				values = getValueMapColumnName(r);
+			logger.debug("Values=" + values);
+			generateTriples(values);
+		}
+		//all triples written, so close the writer
+		if(!appendToWriter)
+			closeWriter();
+	}
+	
 	//used for testing
 	public void generateTriplesRowLimit(Worksheet w) throws MediatorException, IOException{
 		logger.info("Generate RDF row by row ...");
@@ -171,6 +205,22 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		generateTriplesCell(w.getDataTable(), useInternalColumnNames);
 		//all triples written, so close the writer
 		closeWriter();		
+	}
+	/** Generates RDF for the given worksheet by invoking the RDF generator cell by cell.
+	 * @param w
+	 * 		a worksheet
+	 * @param useInternalColumnNames
+	 * 		true if the SD uses HPath as column names (HN6/HN8/ColumnName)
+	 * 		false if SD uses actual column names
+	 * @throws MediatorException
+	 * @throws IOException
+	 * @throws KarmaException 
+	 */
+	public void generateTriplesCell(Worksheet w, boolean useInternalColumnNames, boolean appendToWriter) throws MediatorException, IOException, KarmaException{
+		generateTriplesCell(w.getDataTable(), useInternalColumnNames);
+		//all triples written, so close the writer
+		if(!appendToWriter)
+			closeWriter();		
 	}
 	//used for testing; generate only for first 3 rows
 	public void generateTriplesCellLimit(Worksheet w) throws MediatorException, IOException, KarmaException{

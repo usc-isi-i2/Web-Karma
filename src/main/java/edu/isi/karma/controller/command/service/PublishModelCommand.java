@@ -146,7 +146,7 @@ public class PublishModelCommand extends Command{
 				return new UpdateContainer(new ErrorUpdate(
 				"Service model has successfully been published to repository."));
 			} else { //if (source != null) {
-				SourcePublisher sourcePublisher = new SourcePublisher(source, descString);
+				SourcePublisher sourcePublisher = new SourcePublisher(source, descString,ws.getFactory());
 				sourcePublisher.publish(Repository.Instance().LANG, true);
 				logger.info("Source model has successfully been published to repository.");
 				return new UpdateContainer(new ErrorUpdate(

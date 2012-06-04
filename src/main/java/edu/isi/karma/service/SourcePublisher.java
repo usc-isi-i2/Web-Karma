@@ -33,6 +33,7 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 import edu.isi.karma.modeling.Test;
+import edu.isi.karma.rep.RepFactory;
 
 public class SourcePublisher {
 
@@ -41,10 +42,15 @@ public class SourcePublisher {
 	private Source source;
 	private Model model = null;
 	private String sourceDescription;
+	private RepFactory factory;
 	
-	public SourcePublisher(Source source, String sourceDescription) {
+	//MARIAM
+	//I had to add factory, so that I can get to the columnName
+	//I tried to do it in a nicer way but couldn't figure out how to add it to the Attribute
+	public SourcePublisher(Source source, String sourceDescription, RepFactory factory) {
 		this.source = source;
 		this.sourceDescription=sourceDescription;
+		this.factory=factory;
 	}
 	
 	public Model generateModel() {
@@ -113,6 +119,7 @@ public class SourcePublisher {
 		Property rdf_type = model.createProperty(Namespaces.RDF , "type");
 		Property has_attribute = model.createProperty(Namespaces.KARMA, "hasAttribute");
 		Property has_name = model.createProperty(Namespaces.KARMA, "hasName");
+		Property has_columnName = model.createProperty(Namespaces.KARMA, "hasColumnName");
 		
 		Resource my_source = model.createResource(baseNS + "");
 		my_source.addProperty(rdf_type, source_resource);
@@ -132,6 +139,7 @@ public class SourcePublisher {
 				my_source.addProperty(has_attribute, my_attribute);
 				my_attribute.addProperty(rdf_type, attribute_resource);
 				my_attribute.addProperty(has_name, att.getName());
+				my_attribute.addProperty(has_columnName, factory.getHNode(att.gethNodeId()).getColumnName());
 
 			}
 			addModelPart(model, my_source, this.source.getModel());
@@ -208,7 +216,7 @@ public class SourcePublisher {
 			}
 		}
 	}
-	
+	/*
 	public static void main(String[] args) {
 		Source source = new Source("mySource", Test.getGeoNamesNeighbourhoodTree());
 		source.print();
@@ -220,5 +228,5 @@ public class SourcePublisher {
 		}
 
 	}
-	
+	*/
 }
