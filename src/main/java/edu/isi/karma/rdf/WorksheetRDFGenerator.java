@@ -147,6 +147,9 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 	 * @param useInternalColumnNames
 	 * 		true if the SD uses HPath as column names (HN6/HN8/ColumnName)
 	 * 		false if SD uses actual column names
+	 * @param appendToWriter
+	 * 		false: close this writer after RDF is generated
+	 * 		true: don't close the writer; additional calls to generateTriplesRow() with the same writer will append data to the writer
 	 * @throws MediatorException
 	 * @throws IOException
 	 */
@@ -212,6 +215,9 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 	 * @param useInternalColumnNames
 	 * 		true if the SD uses HPath as column names (HN6/HN8/ColumnName)
 	 * 		false if SD uses actual column names
+	 * @param appendToWriter
+	 * 		false: close this writer after RDF is generated
+	 * 		true: don't close the writer; additional calls to generateTriplesCell() with the same writer will append data to the writer
 	 * @throws MediatorException
 	 * @throws IOException
 	 * @throws KarmaException 
@@ -361,6 +367,8 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 		int index = hNodePath.lastIndexOf("/");
 		if(index>0){
 			gensym = hNodePath.substring(0, index);
+			//replace all "/" with "_"
+			gensym = gensym.replaceAll("/", "_");
 		}
 		//else this is a top level node, so the gensym is just ""
 		generateTriples(columnName,values,gensym);

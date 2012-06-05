@@ -33,6 +33,6 @@ public interface Namespaces {
 	public static final String HRESTS = "http://purl.org/hRESTS/current#";
 	public static final String RULEML = "http://www.w3.org/2003/11/ruleml#";
 	public static final String SWRL = "http://www.w3.org/2003/11/swrl#";
-	public static final String KARMA = "http://isi.edu/ontologies/karma/current#";
+	public static final String KARMA = "http://www.isi.edu/ontologies/karma/current#";
 
 }

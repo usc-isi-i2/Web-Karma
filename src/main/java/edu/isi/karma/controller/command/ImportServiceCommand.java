@@ -163,8 +163,18 @@ public class ImportServiceCommand extends Command {
 				//get data from the URL
 				String wsOutput = getFromUrl(url);
 				
+				//add the source name to the data
+				//it is always an array
+				JSONArray json = (JSONArray)JSONUtil.createJson(wsOutput);
+				for(int i=0; i<json.length(); i++){
+					JSONObject oneRow = (JSONObject)json.get(i);
+					oneRow.put("SourceName", sourceName);
+					oneRow.put("score","0");
+				}
+				
 				//import data in Karma
-				JsonImport imp = new JsonImport(wsOutput, sourceName, vWorkspace.getWorkspace());
+				//JsonImport imp = new JsonImport(wsOutput, sourceName, vWorkspace.getWorkspace());
+				JsonImport imp = new JsonImport(json, sourceName, vWorkspace.getWorkspace());
 				Worksheet wsht = imp.generateWorksheet();
 				vWorkspace.addAllWorksheets();
 				
