@@ -101,6 +101,8 @@ public class FileUtil {
 	}
 
 	public static void copyFiles(File destination, File source) throws FileNotFoundException, IOException{
+		if(!destination.exists())
+			destination.createNewFile();
 		InputStream in = new FileInputStream(source);
 		OutputStream out = new FileOutputStream(destination);
 

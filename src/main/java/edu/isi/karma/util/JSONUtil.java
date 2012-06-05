@@ -100,7 +100,7 @@ public class JSONUtil {
 		}
 	}
 
-	private static String readerToString(Reader reader) {
+	public static String readerToString(Reader reader) {
 		StringBuffer fileData = new StringBuffer(1000);
 		BufferedReader bufferedReader = new BufferedReader(reader);
 		char[] buf = new char[1024];

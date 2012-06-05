@@ -24,6 +24,11 @@
 package edu.isi.karma.rep;
 
 import java.io.PrintWriter;
+import java.util.Stack;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author szekely
@@ -133,6 +138,27 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 
 	public int compareTo(HNode other) {
 		return columnName.compareTo(other.getColumnName());
+	}
+
+	public JSONArray getJSONArrayRepresentation(RepFactory f) throws JSONException {
+		JSONArray arr = new JSONArray();
+		Stack<HNode> st = new Stack<HNode>();
+		st.push(this);
+		HTable t = f.getHTable(hTableId);
+		HNode parentNode = t.getParentHNode();
+		while (parentNode != null) {
+			st.push(parentNode);
+			t = f.getHTable(parentNode.getHTableId());
+			parentNode = t.getParentHNode();
+		}
+		
+		while (!st.isEmpty()) {
+			HNode node = st.pop();
+			JSONObject obj = new JSONObject();
+			obj.put("columnName", node.getColumnName());
+			arr.put(obj);
+		}
+		return arr;
 	}
 
 }

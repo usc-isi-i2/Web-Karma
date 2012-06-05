@@ -23,8 +23,6 @@ package edu.isi.karma.controller.command.alignment;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
@@ -32,8 +30,6 @@ import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rdf.WorksheetRDFGenerator;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
@@ -55,6 +51,8 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		this.edgeId = edgeId;
 		this.alignmentId = alignmentId;
 		this.vWorksheetId = vWorksheetId;
+		
+		addTag(CommandTag.Modeling);
 	}
 
 	@Override

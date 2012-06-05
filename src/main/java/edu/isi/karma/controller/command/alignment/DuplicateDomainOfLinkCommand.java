@@ -54,6 +54,8 @@ public class DuplicateDomainOfLinkCommand extends Command {
 		this.edgeId = edgeId;
 		this.alignmentId = alignmentId;
 		this.vWorksheetId = vWorksheetId;
+		
+		addTag(CommandTag.Modeling);
 	}
 
 	@Override

@@ -56,8 +56,7 @@ public class SetSemanticTypeCommand extends Command {
 	private final SemanticType newType;
 	private final SynonymSemanticTypes newSynonymTypes;
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass()
-			.getSimpleName());
+	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	protected SetSemanticTypeCommand(String id, String vWorksheetId,
 			String hNodeId, boolean isPartOfKey, SemanticType type,
@@ -66,6 +65,8 @@ public class SetSemanticTypeCommand extends Command {
 		this.vWorksheetId = vWorksheetId;
 		this.newType = type;
 		this.newSynonymTypes = synTypes;
+		
+		addTag(CommandTag.Modeling);
 	}
 
 	@Override
@@ -94,25 +95,19 @@ public class SetSemanticTypeCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
-		CRFModelHandler crfModelHandler = vWorkspace.getWorkspace()
-				.getCrfModelHandler();
+		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		CRFModelHandler crfModelHandler = vWorkspace.getWorkspace().getCrfModelHandler();
 
 		// Save the old SemanticType object and CRF Model for undo
-		oldType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(
-				newType.getHNodeId());
-		oldColumnModel = worksheet.getCrfModel().getModelByHNodeId(
-				newType.getHNodeId());
-		oldSynonymTypes = worksheet.getSemanticTypes()
-				.getSynonymTypesForHNodeId(newType.getHNodeId());
+		oldType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(newType.getHNodeId());
+		oldColumnModel = worksheet.getCrfModel().getModelByHNodeId(newType.getHNodeId());
+		oldSynonymTypes = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(newType.getHNodeId());
 
 		// Update the SemanticTypes data structure for the worksheet
 		worksheet.getSemanticTypes().addType(newType);
 
 		// Update the synonym semanticTypes
-		worksheet.getSemanticTypes().addSynonymTypesForHNodeId(
-				newType.getHNodeId(), newSynonymTypes);
+		worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), newSynonymTypes);
 
 		long start = System.currentTimeMillis();
 		// Find the corresponding hNodePath. Used to find examples for training
@@ -137,8 +132,7 @@ public class SetSemanticTypeCommand extends Command {
 		// Calculating the time required for training the semantic type
 
 		// Train the model with the new type
-		ArrayList<String> trainingExamples = SemanticTypeUtil
-				.getTrainingExamples(worksheet, currentColumnPath);
+		ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(worksheet, currentColumnPath);
 		boolean trainingResult = false;
 		String newTypeString = "";
 		if (newType.getDomain() == null) {
@@ -146,22 +140,18 @@ public class SetSemanticTypeCommand extends Command {
 		} else {
 			newTypeString = newType.getDomain().getUriString() + "|" + newType.getType().getUriString();
 		}
-		trainingResult = crfModelHandler.addOrUpdateLabel(newTypeString,
-				trainingExamples, columnFeatures);
+		trainingResult = crfModelHandler.addOrUpdateLabel(newTypeString,trainingExamples, columnFeatures);
 
 		if (!trainingResult) {
 			logger.error("Error occured while training CRF Model.");
 		}
-
-		logger.debug("Using type:" + newType.getDomain().getUriString() + "|"
-				+ newType.getType().getUriString());
+		logger.debug("Using type:" + newType.getDomain().getUriString() + "|" + newType.getType().getUriString());
 
 
 		// Add the new CRF column model for this column
 		ArrayList<String> labels = new ArrayList<String>();
 		ArrayList<Double> scores = new ArrayList<Double>();
-		trainingResult = crfModelHandler.predictLabelForExamples(
-				trainingExamples, 4, labels, scores, null, columnFeatures);
+		trainingResult = crfModelHandler.predictLabelForExamples(trainingExamples, 4, labels, scores, null, columnFeatures);
 		if (!trainingResult) {
 			logger.error("Error occured while predicting labels");
 		}
@@ -176,9 +166,8 @@ public class SetSemanticTypeCommand extends Command {
 		long t2 = System.currentTimeMillis();
 		
 		// Identify the outliers for the column
-		SemanticTypeUtil.identifyOutliers(worksheet, newTypeString,
-				currentColumnPath, vWorkspace.getWorkspace().getTagsContainer()
-						.getTag(TagName.Outlier), columnFeatures, crfModelHandler);
+		SemanticTypeUtil.identifyOutliers(worksheet, newTypeString,currentColumnPath, vWorkspace.getWorkspace().getTagsContainer()
+				.getTag(TagName.Outlier), columnFeatures, crfModelHandler);
 
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 
@@ -207,23 +196,18 @@ public class SetSemanticTypeCommand extends Command {
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
 		UpdateContainer c = new UpdateContainer();
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 		if (oldType == null) {
-			worksheet.getSemanticTypes().unassignColumnSemanticType(
-					newType.getHNodeId());
+			worksheet.getSemanticTypes().unassignColumnSemanticType(newType.getHNodeId());
 		} else {
 			worksheet.getSemanticTypes().addType(oldType);
-			worksheet.getSemanticTypes().addSynonymTypesForHNodeId(
-					newType.getHNodeId(), oldSynonymTypes);
+			worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), oldSynonymTypes);
 		}
 
-		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(),
-				oldColumnModel);
+		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(),oldColumnModel);
 
 		// Get the alignment update if any
-		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
-				vWorksheetId);
+		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,vWorksheetId);
 		try {
 			align.update(c, true);
 		} catch (Exception e) {

@@ -36,7 +36,7 @@ public class PublishKMLLayerCommand extends Command {
 	private String publicKMLAddress;
 	private String kMLTransferServiceURL;
 
-	public enum JsonKeys {
+	private enum JsonKeys {
 		updateType, fileName
 	}
 

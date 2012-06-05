@@ -24,6 +24,7 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,7 @@ import edu.isi.karma.controller.command.ImportServiceCommand;
 import edu.isi.karma.controller.command.ImportServiceCommandFactory;
 import edu.isi.karma.controller.command.ImportXMLFileCommand;
 import edu.isi.karma.controller.command.ImportXMLFileCommandFactory;
+import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.command.SplitByCommaCommand;
 import edu.isi.karma.controller.command.SplitByCommaCommandFactory;
 import edu.isi.karma.controller.command.TablePagerCommand;
@@ -95,6 +97,8 @@ import edu.isi.karma.controller.command.publish.PublishRDFCellCommand;
 import edu.isi.karma.controller.command.publish.PublishRDFCellCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishRDFCommand;
 import edu.isi.karma.controller.command.publish.PublishRDFCommandFactory;
+import edu.isi.karma.controller.command.publish.PublishWorksheetHistoryCommand;
+import edu.isi.karma.controller.command.publish.PublishWorksheetHistoryCommandFactory;
 import edu.isi.karma.controller.command.service.InvokeServiceCommand;
 import edu.isi.karma.controller.command.service.InvokeServiceCommandFactory;
 import edu.isi.karma.controller.command.service.PopulateCommand;
@@ -199,17 +203,31 @@ public class ExecutionController {
 				new PublishModelCommandFactory());
 		commandFactoryMap.put(PopulateCommand.class.getSimpleName(),
 				new PopulateCommandFactory());
+		commandFactoryMap.put(PublishWorksheetHistoryCommand.class.getSimpleName(),
+				new PublishWorksheetHistoryCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {
 		return vWorkspace;
 	}
 
+	public HashMap<String, CommandFactory> getCommandFactoryMap() {
+		return commandFactoryMap;
+	}
+
 	public Command getCommand(HttpServletRequest request) {
-		CommandFactory cf = commandFactoryMap.get(request
-				.getParameter("command"));
+		CommandFactory cf = commandFactoryMap.get(request.getParameter("command"));
 		if (cf != null) {
-			return cf.createCommand(request, vWorkspace);
+			if (cf instanceof JSONInputCommandFactory) {
+				try {
+					JSONInputCommandFactory scf = (JSONInputCommandFactory)cf;
+					return scf.createCommand(new JSONArray(request.getParameter("newInfo")), vWorkspace);
+				}  catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				} 
+			} else
+				return cf.createCommand(request, vWorkspace);
 		} else {
 			logger.error("Command " + request.getParameter("command")
 					+ " not found!");
@@ -225,8 +243,7 @@ public class ExecutionController {
 				if(command instanceof CommandWithPreview){
 					updateContainer = ((CommandWithPreview)command).showPreview(vWorkspace);
 				} else {
-					updateContainer = vWorkspace.getWorkspace()
-					.getCommandHistory().doCommand(command, vWorkspace);
+					updateContainer = vWorkspace.getWorkspace().getCommandHistory().doCommand(command, vWorkspace);
 				}
 				
 				String responseJson = updateContainer.generateJson(vWorkspace);

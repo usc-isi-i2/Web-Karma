@@ -715,6 +715,15 @@ function getCurrentSelectedTypes() {
     return existingTypes;
 }
 
+function getParamObject(name, value, type) {
+    var param = new Object();
+    param["name"] = name;
+    param["value"] = value;
+    param["type"] = type;
+    
+    return param;
+}
+
 function submitSemanticTypeChange() {
 	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
 	
@@ -730,6 +739,13 @@ function submitSemanticTypeChange() {
 	info["isKey"] = $("input#chooseClassKey").is(":checked");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["SemanticTypesArray"] = JSON.stringify(semTypesArray);
+	
+	var newInfo = [];
+	newInfo.push(getParamObject("hNodeId", hNodeId,"hNodeId"));
+	newInfo.push(getParamObject("SemanticTypesArray", semTypesArray, "other"));
+	newInfo.push(getParamObject("vWorksheetId", info["vWorksheetId"], "vWorksheetId"));
+	newInfo.push(getParamObject("isKey", $("input#chooseClassKey").is(":checked"), "other"));
+	info["newInfo"] = JSON.stringify(newInfo);
 	
 	if(semTypesArray.length == 0)
 	    info["command"] = "UnassignSemanticTypeCommand";
@@ -890,9 +906,13 @@ function submitAlignmentLinkChange() {
 	info["vWorksheetId"] = optionsDiv.data("worksheetId");
 	info["alignmentId"] = optionsDiv.data("alignmentId");
 	info["edgeId"] = optionsDiv.data("currentSelection");
-	
-	
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	
+	var newInfo = [];
+    newInfo.push(getParamObject("edgeId", optionsDiv.data("currentSelection"), "other"));
+    newInfo.push(getParamObject("alignmentId", optionsDiv.data("alignmentId"), "other"));
+    newInfo.push(getParamObject("vWorksheetId", optionsDiv.data("worksheetId"), "vWorksheetId"));
+    info["newInfo"] = JSON.stringify(newInfo);
 	
 	showLoading(info["vWorksheetId"]);
 	var returned = $.ajax({

@@ -480,5 +480,10 @@ span.bold {
 	font-weight: 900;
 }
 
+a.DownloadLink {
+	margin-left: 5px;
+	font-family: Helvetica;
+	font-size: 0.8em;
+}
 
 

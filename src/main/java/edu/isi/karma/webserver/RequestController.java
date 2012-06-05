@@ -37,9 +37,6 @@ import edu.isi.karma.controller.update.UpdateContainer;
 
 public class RequestController extends HttpServlet{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private static Logger logger = LoggerFactory.getLogger(RequestController.class);
