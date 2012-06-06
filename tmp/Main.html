@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+	<title></title>
+	<head>
+		<script type="text/javascript" src="js/jquery-1.6.2.js"></script>
+		<script type="text/javascript" scr="jquery.js"></script>
+		<script type="text/javascript">
+			function getAllSupportedItems() {
+				var jarray = new Array();
+				$.getJSON("sgsdebug.json",function(data){
+					$.each(data, function(index, item) {
+					  jArrayArray.push(item);
+					});
+					return jarray;
+				});
+			}
+
+
+			$(document).ready(function() {
+				//read local json files
+				var res = getAllSupportedItems();
+			});
+		</script>
+	</head>
+	<body>
+		<table id="display"></table>
+	</body>
+</html>
