@@ -212,8 +212,8 @@ function handleGenerateCleaningRulesButton() {
 		dataType : "json",
 		complete : function(xhr, textStatus) {
 			var json = $.parseJSON(xhr.responseText);
-			var tdata = parse(json);
-			$("div#columnHeadingDropDownMenu").data("results", tdata);
+			parse(json);
+			var tdata = $("div#columnHeadingDropDownMenu").data("results");
 
 		},
 		error : function(xhr, textStatus) {
