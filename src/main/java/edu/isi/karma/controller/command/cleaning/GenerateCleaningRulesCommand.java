@@ -116,13 +116,13 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		Vector<String> vs = new Vector<String>();
 		//
 		String[] x = (String[])res.toArray(new String[res.size()]);
-		System.out.println(""+x);
+		/*System.out.println(""+x);
 		Vector<Double> scores = UtilTools.getScores(x, trainPath);
 		System.out.println("Scores: "+scores);
 		Vector<Integer> ins =UtilTools.topKindexs(scores, k);
-		System.out.println("Indexs: "+ins);
+		System.out.println("Indexs: "+ins);*/
 		Vector<String> y = new Vector<String>();
-		for(Integer i:ins)
+		for(int i = 0; i<k&&i<x.length;i++)
 		{
 			y.add(x[i]);
 		}
