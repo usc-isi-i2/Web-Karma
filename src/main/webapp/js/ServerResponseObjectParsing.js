@@ -791,7 +791,7 @@ function parse(data) {
 				populateResult(topCol);
 				var pdata = getVaritions(element["result"]);
 				populateVariations(pdata);
-				return pdata;
+				$("div#columnHeadingDropDownMenu").data("results", element["result"]);
             }
         }
         

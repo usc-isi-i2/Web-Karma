@@ -85,6 +85,8 @@ public class Alignment {
 	}
 	public static boolean isAdjacent(int a,int b, Vector<Integer> sortedmks)
 	{
+		if(a==b)
+			return true; // <S> <E> token
 		int index = sortedmks.indexOf(a); 
 		if(a<=b && index<sortedmks.size()-1)
 		{
@@ -219,7 +221,12 @@ public class Alignment {
 			Vector<int[]> segments =  deterContinus(positions,mks);
 			Vector<EditOper> xx = new Vector<EditOper>();
 			Vector<Vector<Integer>> history = new Vector<Vector<Integer>>();
-			transMOVDEL(segments,positions,mks,xx,history,a,paths);
+			try 
+			{
+				transMOVDEL(segments,positions,mks,xx,history,a,paths);
+			} catch (Exception e) {
+				System.out.println("transMOVDEL error"+e.toString());
+			}
 		}		
 		return paths;
 	}
@@ -269,43 +276,45 @@ public class Alignment {
 		history1.add(positon);
 		boolean globalcontrary = false;
 		boolean localcontrary = false;
-		//for(int i = 0; i<segments.size(); i++)
-		//{
-			int i = 0;
+		for(int i = 0; i<segments.size(); i++)
+		{
 			localcontrary = false;
 			int minNum = Integer.MAX_VALUE;
 			EditOper eox = new EditOper();
 			Vector<Integer> positonx = new Vector<Integer>();
 			//move to the back
+			EditOper eo2 = new EditOper();
 			for(int k=i+1;k<segments.size();k++)
 			{
 				if(positon.get(segments.get(i)[0])>positon.get(segments.get(k)[0]))
 				{
 					localcontrary = true;
 					globalcontrary = true;
-					EditOper eo2 = new EditOper();
 					eo2.starPos = segments.get(i)[0];
 					eo2.endPos = segments.get(i)[1];
 					eo2.oper = "mov";
 					eo2.dest = segments.get(k)[1]+1;//after the first segment
-					Vector<Integer> positon2 = (Vector<Integer>)positon.clone();
-					//update the position2
-					List<Integer> tmp2 = positon.subList(eo2.starPos, eo2.endPos+1);
-					positon2.removeAll(tmp2);
-					//insert first then delete
-					positon2.addAll(eo2.dest-tmp2.size(), tmp2);
-					int score = Alignment.getReverseOrderNum(positon2);
-					if(score <minNum)
-					{
-						minNum = score;
-						eox = eo2;
-						positonx = positon2;
-					}
-					else {
-						positon2 = null;
-					}
 				}
-			}	
+				
+			}
+			if(localcontrary)
+			{
+				Vector<Integer> positon2 = (Vector<Integer>)positon.clone();
+				//update the position2
+				List<Integer> tmp2 = positon.subList(eo2.starPos, eo2.endPos+1);
+				positon2.removeAll(tmp2);
+				//insert first then delete
+				if((eo2.dest-tmp2.size())>=positon2.size())
+				{
+					positon2.addAll(tmp2);
+				}
+				else {
+					positon2.addAll(eo2.dest-tmp2.size(), tmp2);
+				}
+				positonx = positon2;
+				eox = eo2;
+			}
+			
 			//move to the front
 			/*for(int k=0;k<i;k++)
 			{
@@ -341,7 +350,7 @@ public class Alignment {
 				Vector<int[]> newsegments1 = deterContinus(positonx,x);
 				transMOVDEL(newsegments1,positonx,x,seqx,history1,a,paths);
 			}
-		//}
+		}
 		if(!globalcontrary)
 		{
 			//add the delete operation
