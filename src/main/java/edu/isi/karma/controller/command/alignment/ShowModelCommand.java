@@ -81,15 +81,15 @@ public class ShowModelCommand extends WorksheetCommand {
 		worksheetName = worksheet.getTitle();
 		
 		// Check if any command history exists for the worksheet
-		if(HistoryJsonUtil.historyExists(worksheetName, vWorkspace.getPreferencesId())) {
-			WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
-			try {
-				commReader.readAndExecuteCommands();
-			} catch (Exception e) {
-				logger.error("Error occured while reading model commands from history!", e);
-				e.printStackTrace();
-			}
-		}
+//		if(HistoryJsonUtil.historyExists(worksheetName, vWorkspace.getPreferencesId())) {
+//			WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
+//			try {
+//				commReader.readAndExecuteCommands();
+//			} catch (Exception e) {
+//				logger.error("Error occured while reading model commands from history!", e);
+//				e.printStackTrace();
+//			}
+//		}
 
 		// Get the Outlier Tag
 		Tag outlierTag = vWorkspace.getWorkspace().getTagsContainer().getTag(TagName.Outlier);
