@@ -161,7 +161,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 if(d2 == d.source) {
                     var newRect = $(this).clone();
                     newRect.attr("class","Class highlightOverlay");
-                    $("svg").append(newRect);
+                    $("div#svgDiv_" + json["worksheetId"] + " svg").append(newRect);
                     return false;
                 }
             });
@@ -268,14 +268,17 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 var y2 = d2.py + this.getBBox().y;
                 var width2 = this.getBBox().width;
                 var height2 = this.getBBox().height;
+                // console.log("D2 width: " + d2["width"]);
                 
                 // Check if they overlap on y axis
                 if((y2<y1 && y1<y2+height2 ) || (y1<y2 && y2<y1+height1 && y1+height1<y2+height2)) {
                     // console.log("Collision detected on Y axis");
+                    // console.log("Rect- X2: " + x2 + " Y2: " + y2 + " width: " + width2 + " height " + height2);
+                    // console.log("Text- X1: " + x1 + " Y1: " + y1 + " width " + width1 + " height " + height1);
                     // Check overlap on X axis
-                    if(x2<x1 && x2+width2>x1) {
-                        // console.log("Rect: " + x2 + " " + y2 + " " + width2 + " " + height2);
-                        // console.log("Text: " + x1 + " " + y1 + " " + width1 + " " + height1);
+                    if(x1>x2 && x2+width2>x1) {
+                        // console.log("Rect- X2: " + x2 + " Y2: " + y2 + " width: " + width2 + " height " + height2);
+                        // console.log("Text- X1: " + x1 + " Y1: " + y1 + " width " + width1 + " height " + height1);
                         // console.log("Collision detected!")
                         // console.log(d1);
                         // console.log(d2);

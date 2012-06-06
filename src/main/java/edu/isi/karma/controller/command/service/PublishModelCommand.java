@@ -135,7 +135,7 @@ public class PublishModelCommand extends Command{
 		try {
 			//construct the SD
 			SourceDescription desc = new SourceDescription(ws, al, wk,
-					"http://dovetail/", true,false);
+					"http://localhost/", true,false);
 			String descString = desc.generateSourceDescription();
 			/////////////////
 			

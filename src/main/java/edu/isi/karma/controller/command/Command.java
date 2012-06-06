@@ -24,6 +24,8 @@
 package edu.isi.karma.controller.command;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Entity;
@@ -82,9 +84,19 @@ public abstract class Command extends Entity {
 	 */
 	private boolean isExecuted = false;
 
+	/**
+	 * List of tags for the command
+	 */
+	private List<CommandTag> tags = new ArrayList<CommandTag>();
+	
+	private String inputParameterJson;
+
+	public enum CommandTag {
+		Modeling, Cleaning, Integration, Import
+	}
+
 	protected Command(String id) {
 		super(id);
-
 	}
 
 	public boolean isExecuted() {
@@ -99,7 +111,8 @@ public abstract class Command extends Entity {
 	 * @param prefix
 	 * @param pw
 	 * @param vWorkspace
-	 * @param historyType of the lists where the command is, either undo or redo.
+	 * @param historyType
+	 *            of the lists where the command is, either undo or redo.
 	 */
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace, HistoryType historyType) {
@@ -107,11 +120,29 @@ public abstract class Command extends Entity {
 		String newPref = prefix + "  ";
 		pw.println(newPref + JSONUtil.json(JsonKeys.commandId, getId()));
 		pw.println(newPref + JSONUtil.json(JsonKeys.title, getTitle()));
-		pw.println(newPref + JSONUtil.json(JsonKeys.description, getDescription()));
+		pw.println(newPref
+				+ JSONUtil.json(JsonKeys.description, getDescription()));
 		pw.println(newPref
 				+ JSONUtil.json(JsonKeys.historyType, historyType.name()));
 		pw.println(newPref
-				+ JSONUtil.jsonLast(JsonKeys.commandType, getCommandType().name()));
+				+ JSONUtil.jsonLast(JsonKeys.commandType, getCommandType()
+						.name()));
 		pw.println(prefix + "}");
+	}
+
+	public boolean hasTag(CommandTag tag) {
+		return tags.contains(tag);
+	}
+
+	public void addTag(CommandTag tag) {
+		tags.add(tag);
+	}
+
+	public String getInputParameterJson() {
+		return inputParameterJson;
+	}
+
+	public void setInputParameterJson(String inputParamJson) {
+		this.inputParameterJson = inputParamJson;
 	}
 }

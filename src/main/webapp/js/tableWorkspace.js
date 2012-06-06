@@ -202,7 +202,40 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
         });
         
     });
+    
+    $("button#publishWorksheetHistory").click(function(){
+        optionsDiv.hide();
+        
+        var info = new Object();
+        info["vWorksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "PublishWorksheetHistoryCommand";
+            
+        showLoading(info["vWorksheetId"]);
+        var returned = $.ajax({
+            url: "/RequestController", 
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete : 
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(info["vWorksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while publishing worksheet history!" + textStatus);
+                    hideLoading(info["vWorksheetId"]);
+                }          
+        });
+        
+    });
 	
+	$("button#applyWorksheetHistory").click(function(){
+	    alert("Not working yet!");
+	});
 	
 }
 

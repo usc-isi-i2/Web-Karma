@@ -30,6 +30,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.Command.CommandType;
 import edu.isi.karma.controller.command.CommandException;
@@ -63,6 +67,8 @@ public class CommandHistory {
 	 * through multiple HTTP requests.
 	 */
 	private Command currentCommand;
+	
+	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	public CommandHistory() {
 	}
@@ -119,6 +125,9 @@ public class CommandHistory {
 	public UpdateContainer doCommand(Command command, VWorkspace vWorkspace)
 			throws CommandException {
 		UpdateContainer effects = new UpdateContainer();
+		effects.append(command.doIt(vWorkspace));
+		command.setExecuted(true);
+		
 		if (command.getCommandType() != CommandType.notInHistory) {
 			redoStack.clear();
 			
@@ -131,8 +140,16 @@ public class CommandHistory {
 			history.add(command);
 			effects.add(new HistoryAddCommandUpdate(command));
 		}
-		effects.append(command.doIt(vWorkspace));
-		command.setExecuted(true);
+		
+		// Save the modeling commands
+		CommandHistoryWriter chWriter = new CommandHistoryWriter(history, vWorkspace);
+		try {
+			chWriter.writeHistoryPerWorksheet();
+		} catch (JSONException e) {
+			logger.error("Error occured while writing history!" , e);
+			e.printStackTrace();
+		}
+		
 		return effects;
 	}
 

@@ -68,8 +68,8 @@ public class WorksheetGeospatialContent {
 
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
 			// Latitude of a Point case. E.g. For a column with only latitude
-			if (type.getType().equals(WGS84_LAT_PROPERTY)
-					&& type.getDomain().equals(POINT_CLASS)) {
+			if (type.getType().getUriString().equals(WGS84_LAT_PROPERTY)
+					&& type.getDomain().getUriString().equals(POINT_CLASS)) {
 				// Longitude id is always before the latitude id
 				if (lngFound) {
 					currentCase = CoordinateCase.POINT_LAT_LNG;
@@ -85,8 +85,8 @@ public class WorksheetGeospatialContent {
 				}
 			}
 			// Long of a Point case. E.g. for a column with only longitude
-			else if (type.getType().equals(WGS84_LNG_PROPERTY)
-					&& type.getDomain().equals(POINT_CLASS)) {
+			else if (type.getType().getUriString().equals(WGS84_LNG_PROPERTY)
+					&& type.getDomain().getUriString().equals(POINT_CLASS)) {
 				// Longitude id is always before the latitude id
 				if (latFound) {
 					coordinateHNodeIds.set(0, type.getHNodeId());
@@ -102,8 +102,8 @@ public class WorksheetGeospatialContent {
 			}
 			// Position of a Point case. E.g. for a column containing lat and
 			// long data such as "12.34, 234.2"
-			else if (type.getType().equals(POINT_POS_PROPERTY)
-					&& type.getDomain().equals(POINT_CLASS)) {
+			else if (type.getType().getUriString().equals(POINT_POS_PROPERTY)
+					&& type.getDomain().getUriString().equals(POINT_CLASS)) {
 				coordinateHNodeIds.add(0, type.getHNodeId());
 				currentCase = CoordinateCase.POINT_POS;
 				populatePoints(coordinateHNodeIds, currentCase, getRows(),
@@ -111,8 +111,8 @@ public class WorksheetGeospatialContent {
 			}
 			// PosList of a Line case. E.g. for a column containing list of
 			// coordinates for a line string
-			else if (type.getType().equals(POS_LIST_PROPERTY)
-					&& type.getDomain().equals(LINE_CLASS)) {
+			else if (type.getType().getUriString().equals(POS_LIST_PROPERTY)
+					&& type.getDomain().getUriString().equals(LINE_CLASS)) {
 				coordinateHNodeIds.add(0, type.getHNodeId());
 				currentCase = CoordinateCase.LINE_POS_LIST;
 				populateLines(coordinateHNodeIds, getRows(), getColumnMap());

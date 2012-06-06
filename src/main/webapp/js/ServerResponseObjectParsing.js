@@ -771,9 +771,18 @@ function parse(data) {
 			// Remove existing link if any
 			$("a.RdfDownloadLink", titleDiv).remove();
 			
-			var downloadLink = $("<a>").attr("href",element["fileUrl"]).text("RDF").addClass("RdfDownloadLink").attr("target","_blank");
+			var downloadLink = $("<a>").attr("href",element["fileUrl"]).text("RDF").addClass("RdfDownloadLink  DownloadLink").attr("target","_blank");
 			$("div.tableTitleTextDiv", titleDiv).after(downloadLink);
-		} 
+		}
+		
+		else if(element["updateType"] == "PublishWorksheetHistoryUpdate") {
+            var titleDiv = $("div#" + element["vWorksheetId"] +" div.WorksheetTitleDiv");
+            // Remove existing link if any
+            $("a.HistoryDownloadLink", titleDiv).remove();
+            
+            var downloadLink = $("<a>").attr("href",element["fileUrl"]).text("History").addClass("HistoryDownloadLink DownloadLink").attr("target","_blank");
+            $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+        } 
 
 		else if(element["updateType"] == "PublishDatabaseUpdate") {
 			if(element["numRowsNotInserted"]==0){

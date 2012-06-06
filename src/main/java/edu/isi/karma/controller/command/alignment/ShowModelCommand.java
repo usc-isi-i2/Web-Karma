@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
+import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -72,26 +74,35 @@ public class ShowModelCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+		
 		UpdateContainer c = new UpdateContainer();
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 
 		worksheetName = worksheet.getTitle();
+		
+		// Check if any command history exists for the worksheet
+		if(HistoryJsonUtil.historyExists(worksheetName, vWorkspace.getPreferencesId())) {
+			WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
+			try {
+				commReader.readAndExecuteCommands();
+			} catch (Exception e) {
+				logger.error("Error occured while reading model commands from history!", e);
+				e.printStackTrace();
+			}
+		}
 
 		// Get the Outlier Tag
-		Tag outlierTag = vWorkspace.getWorkspace().getTagsContainer()
-				.getTag(TagName.Outlier);
+		Tag outlierTag = vWorkspace.getWorkspace().getTagsContainer().getTag(TagName.Outlier);
 
 		// Generate the semantic types for the worksheet
 		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
 		SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, outlierTag, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
 
 		// Get the alignment update if any
-		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
-				vWorksheetId);
+		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
 
 		try {
-			align.update(c, true);
+			align.update(c, false);
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(

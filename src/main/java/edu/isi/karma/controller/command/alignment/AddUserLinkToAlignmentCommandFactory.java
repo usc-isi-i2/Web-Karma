@@ -22,11 +22,17 @@ package edu.isi.karma.controller.command.alignment;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.view.VWorkspace;
 
-public class AddUserLinkToAlignmentCommandFactory extends CommandFactory {
+public class AddUserLinkToAlignmentCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 	private enum Arguments {
 		edgeId, alignmentId, vWorksheetId
 	}
@@ -40,4 +46,13 @@ public class AddUserLinkToAlignmentCommandFactory extends CommandFactory {
 		return new AddUserLinkToAlignmentCommand(getNewId(vWorkspace),edgeId, alignmentId, vWorksheetId);
 	}
 
+	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace) throws JSONException {
+		String edgeId = HistoryJsonUtil.getStringValue(Arguments.edgeId.name(), inputJson);
+		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		
+		AddUserLinkToAlignmentCommand comm = new AddUserLinkToAlignmentCommand(getNewId(vWorkspace),edgeId, alignmentId, vWorksheetId); 
+		comm.setInputParameterJson(inputJson.toString());
+		return comm;
+	}
 }

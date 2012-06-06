@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.NodeType;
-import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.view.VWorkspace;

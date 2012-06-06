@@ -1,3 +1,4 @@
+Requirements: Java 1.6, Maven 3.0 and above
 To run the jetty server, execute the following command from webkarma top directory:
 	mvn jetty:run
 Point your browser to http://localhost:8080/web-karma.html
