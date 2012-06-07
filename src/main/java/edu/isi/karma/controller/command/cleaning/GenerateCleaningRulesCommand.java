@@ -234,8 +234,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 							isadded ++;
 						}
 						i++;
-					}
-					
+					}				
 					RamblerValueCollection vc = new RamblerValueCollection(tx);
 					RamblerTransformationInputs inputs = new RamblerTransformationInputs(vrt, vc);
 					//generate the program

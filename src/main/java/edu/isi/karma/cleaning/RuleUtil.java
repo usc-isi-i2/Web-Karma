@@ -60,6 +60,15 @@ public class RuleUtil {
 		}
 		return resString;
 	}
+	public static String tokens2strwithStyle(Vector<TNode> x)
+	{
+		String resString = "";
+		for(TNode t:x)
+		{
+			resString += "<span class='"+t.getColor()+"'>"+t.text+"</span>";
+		}
+		return resString;
+	}
 	public  static void write2file(Collection<String> x,String fname)
 	{
 		try
@@ -102,6 +111,33 @@ public class RuleUtil {
 		}
 	}
 	//apply a sequence of rules
+	public static String applyRulewithStyle(Vector<String> rules, String s)
+	{
+		try
+		{
+		Ruler r = new Ruler();
+		r.setNewInput(s);
+		Vector<TNode> x = r.vec;
+		/*value preprocessing starts*/
+		for(EditOper eo:preEditOpers)
+		{
+			if (eo.oper.compareTo("ins") == 0) {
+				NonterminalValidator.applyins(eo, x);
+			}
+		}
+		/*value preprocessing ends*/
+		for(String rule:rules)
+		{
+			x = applyRule(rule,x);
+		}
+		return RuleUtil.tokens2strwithStyle(x);
+		}
+		catch(Exception e)
+		{
+			//System.out.println(""+e.toString());
+			return "";
+		}
+	}
 	public static String applyRule(Vector<String> rules, String s)
 	{
 		try
@@ -121,12 +157,7 @@ public class RuleUtil {
 		{
 			x = applyRule(rule,x);
 		}
-		String z = "";
-		for(int i = 0; i<x.size();i++)
-		{
-			z+= x.get(i).text;
-		}
-		return z;
+		return RuleUtil.tokens2str(x);
 		}
 		catch(Exception e)
 		{

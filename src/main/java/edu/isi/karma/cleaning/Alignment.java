@@ -419,6 +419,7 @@ public class Alignment {
 				EditOper eox= new EditOper();
 				eox.oper = "ins";
 				eox.dest = 0;
+				b.get(i).setColor(TNode.INSCOLOR);//set color for inserted tnodes.
 				eox.tar.add(b.get(i));
 				eo.add(eox);
 			}

@@ -607,6 +607,7 @@ public class Ruler {
 		{
 			//this.collectPoss(pos);
 			TNode tn = l.next();
+			tn.setColor(TNode.MOVCOLOR); // set color for moving.
 			x.add(tn);
 			//this.whats.add(tn);
 			l.remove();

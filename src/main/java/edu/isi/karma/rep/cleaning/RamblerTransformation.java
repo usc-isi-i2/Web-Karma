@@ -49,7 +49,7 @@ public class RamblerTransformation implements Transformation {
 		}
 		String s = RuleUtil.applyRule(this.rules, value);
 		return s;
-	}
+	}	
 	@Override
 	public String getId() {
 		// TODO Auto-generated method stub

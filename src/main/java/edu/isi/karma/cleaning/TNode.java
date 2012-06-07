@@ -21,6 +21,10 @@
 package edu.isi.karma.cleaning;
 //type
 public class TNode{
+	public int color = -1;
+	public static final int MOVCOLOR = 0;
+	public static final int DELCOLOR = 1;
+	public static final int INSCOLOR = 2;
 	public static final int ANYTYP = 0;
 	public static final int NUMTYP = 1;
 	public static final int SYBSTYP = 2;
@@ -36,6 +40,14 @@ public class TNode{
 	{
 		this.type = type;
 		this.text = text;
+	}
+	public void setColor(int c)
+	{
+		this.color = c;
+	}
+	public int getColor()
+	{
+		return color;
 	}
 	public String toString()
 	{
