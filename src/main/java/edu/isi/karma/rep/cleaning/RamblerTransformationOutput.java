@@ -54,6 +54,11 @@ public class RamblerTransformationOutput implements TransformationOutput {
 			exps.add(tmp);
 		}
 		Vector<String> trans = RuleUtil.genRule(exps);
+		if(trans == null)
+		{
+			System.err.println("Error happens in generating rules");
+			System.exit(1);
+		}
 		for(int i = 0; i<trans.size(); i++)
 		{
 			String[] rules = trans.get(i).split("<RULESEP>");
@@ -97,61 +102,6 @@ public class RamblerTransformationOutput implements TransformationOutput {
 	public Collection<String> getRecommandedNextExample() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	//for testing the interfaces
-	public static void main(String[] args)
-	{
-		String dirpath = "/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/test";
-		File nf = new File(dirpath);
-		File[] allfiles = nf.listFiles();
-		for(File f:allfiles)
-		{
-			try
-			{
-				if(f.getName().indexOf(".csv")==(f.getName().length()-4))
-				{
-					
-					CSVReader cr = new CSVReader(new FileReader(f),'\t');
-					String[] pair;
-					int isadded = 0;
-					HashMap<String,String> tx = new HashMap<String,String>();
-					int i = 0;
-					Vector<TransformationExample> vrt = new Vector<TransformationExample>();
-					while ((pair=cr.readNext())!=null)
-					{
-						
-						pair[0] = "%"+pair[0]+"@";
-						tx.put(i+"", pair[0]);
-						if(isadded<3)
-						{
-							RamblerTransformationExample rtf = new RamblerTransformationExample(pair[0], pair[1], i+"");
-							vrt.add(rtf);
-							isadded ++;
-						}
-						i++;
-					}
-					RamblerValueCollection vc = new RamblerValueCollection(tx);
-					RamblerTransformationInputs inputs = new RamblerTransformationInputs(vrt, vc);
-					//generate the program
-					RamblerTransformationOutput rtf = new RamblerTransformationOutput(inputs);
-					Set<String> keys = rtf.getTransformations().keySet();
-					Iterator<String> iter = keys.iterator();
-					int index = 0;
-					while(iter.hasNext() && index<3)
-					{
-						ValueCollection rvco = rtf.getTransformedValues(iter.next());
-						System.out.println(rvco.getValues());
-						index ++;
-					}					
-				}			
-			}
-			catch(Exception ex)
-			{
-				System.out.println(""+ex.toString());
-			}	
-		}
-		
-		//RamblerTransformationInputs ri = new RamblerTransformationInputs(examples, inputValues) 
 	}
 
 }

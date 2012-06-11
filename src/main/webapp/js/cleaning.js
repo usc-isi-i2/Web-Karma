@@ -83,6 +83,7 @@ function handleCleanColumnButton() {
 			},
 			//"Generate Rules" : handleGenerateCleaningRulesButton,
 			"Submit" : function() {
+				
 				$(this).dialog("close");
 			}
 		}

@@ -206,7 +206,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	}
 	public static void main(String[] args)
 	{
-		String dirpath = "/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/test";
+		String dirpath = "/Users/bowu/Research/testdata/TestSingleFile";
 		File nf = new File(dirpath);
 		File[] allfiles = nf.listFiles();
 		for(File f:allfiles)

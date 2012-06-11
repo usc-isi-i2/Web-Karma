@@ -315,7 +315,7 @@ public class MarkovDP {
 	}
 	public int getDeepth()
 	{
-		return 3;
+		return 2;
 	}
 	//sample the index according to length, the short the better
 	//length value = 1/Length
