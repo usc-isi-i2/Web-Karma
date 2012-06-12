@@ -101,6 +101,7 @@ public class TableRDFGeneratorTest {
 		   vals1.put("DRUG_NAME","4");
 		   vals1.put("ACCESSION_ID","5");
 
+		   
 		   //TableRDFGenerator rdfGen = new TableRDFGenerator(dF1, null);
 		   TableRDFGenerator rdfGen = new TableRDFGenerator(dF3, new PrintWriter(System.out));
 		   rdfGen.generateTriples("GENE_NAME", vals1, "t123");
