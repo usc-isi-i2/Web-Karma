@@ -20,11 +20,21 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+
+import org.json.*;
+//import net.sf.json.JSONObject;
 
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
@@ -32,11 +42,13 @@ import edu.isi.karma.view.VWorkspace;
 public class AddNewColumnCommand extends WorksheetCommand {
 	private final String hNodeId;
 	private final String vWorksheetId;
+	private String result;
 
-	protected AddNewColumnCommand(String id, String worksheetId, String hNodeId, String vWorksheetId) {
+	protected AddNewColumnCommand(String id, String vWorksheetId, String worksheetId, String hNodeId, String result) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.vWorksheetId = vWorksheetId;
+		this.result = result;
 	}
 
 	@Override
@@ -61,16 +73,35 @@ public class AddNewColumnCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = vWorkspace.getWorkspace().getWorksheet(worksheetId);
+		System.out.println("Old Size" + worksheet.getHeaders().getAllPaths().size());
 		HTable headers = worksheet.getHeaders();
 		String existingColumnName = headers.getHNode(hNodeId).getColumnName();
-		
+		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows());
 		worksheet.getHeaders().addNewHNodeAfter(hNodeId, vWorkspace.getRepFactory(), existingColumnName+"_copy", worksheet);
-		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet, columnPaths, vWorkspace);
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-		vw.update(c);
+		HNode ndid = worksheet.getHeaders().getHNodeFromColumnName(existingColumnName+"_copy");
+		System.out.println(""+ndid.getColumnName());
+		JSONObject jObject = null;
+		try 
+		{
+			jObject  = new JSONObject(result);
+			for(Row r:rows)
+			{
+				Node node = r.getNode(hNodeId);
+				String t = jObject.getString(node.getId());
+				System.out.println(""+t+""+ndid.getId()+","+hNodeId);
+				r.setValue(ndid.getId(), t);
+			}
+			System.out.println("Old VW ID: " + vWorksheetId);
+			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet, worksheet.getHeaders().getAllPaths(), vWorkspace);
+			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+			System.out.println("New VW ID: " + vw.getId());
+			vw.update(c);
+		} catch (Exception e) {
+			System.out.println(""+e.toString());
+		}
 		return c;
 	}
 

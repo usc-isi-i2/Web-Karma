@@ -83,7 +83,7 @@ function handleCleanColumnButton() {
 			},
 			//"Generate Rules" : handleGenerateCleaningRulesButton,
 			"Submit" : function() {
-				
+				submit();
 				$(this).dialog("close");
 			}
 		}
@@ -93,7 +93,8 @@ function handleCleanColumnButton() {
 function populateResult(rdata) {
 	var examples = $("div#columnHeadingDropDownMenu").data("cleaningExamples", examples);
 	var cleaningTable = $("table#cleaningExamplesTable");
-
+	var transformedResult = new Object();
+	$("div#columnHeadingDropDownMenu").data("transformedResult", transformedResult);
 	// Remove the old results
 	$("td.ruleResultsValue_rest", cleaningTable).remove();
 	$("td.ruleResultsValue_begin", cleaningTable).remove();
@@ -102,6 +103,7 @@ function populateResult(rdata) {
 	$.each(data, function(nodeId, xval) {
 		var trTag = $("tr#" + nodeId + "_cl_row");
 		if(trTag != null) {
+			transformedResult[nodeId] = xval;
 			trTag.append($("<td>").addClass("ruleResultsValue_begin").attr("id", nodeId + "_transformed").append($("<table>").append($("<tr>").append($("<td>").addClass("noinnerBorder").append($("<div>").data("nodeId", nodeId).data("originalVal", $("td#" + nodeId + "_origVal", cleaningTable).text())// set the original value for the example
 			.data("cellValue", xval).addClass("cleanExampleDiv").text(xval)//set the result here
 			.attr("id", nodeId + "_c").editable(function(value, settings) {
@@ -255,7 +257,36 @@ function getVaritions(data) {
 	//attach data to dom node
 	return x;
 }
+//submit the transformed result
+function submit()
+{
+	var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+	var selectedHNodeId = columnHeadingMenu.data("parentCellId");
+	var tdTag = $("td#" + selectedHNodeId);
+	var vWorksheetId = tdTag.parents("div.Worksheet").attr("id");
+	var transformedRes = $("div#columnHeadingDropDownMenu").data("transformedResult");
+	var info = new Object();
+	info["vWorksheetId"] = vWorksheetId;
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["hNodeId"] = selectedHNodeId;
+	info["command"] = "AddNewColumnCommand";
+	info["result"] = JSON.stringify(transformedRes);
 
+	var returned = $.ajax({
+		url : "/RequestController",
+		type : "POST",
+		data : info,
+		dataType : "json",
+		complete : function(xhr, textStatus) {
+			var json = $.parseJSON(xhr.responseText);
+			parse(json);
+			console.log("Done parsing!");
+		},
+		error : function(xhr, textStatus) {
+			$.sticky("Error in submitting");
+		}
+	});
+}
 //add the choosen value to be a new example
 function addExample(nodeID) {
 

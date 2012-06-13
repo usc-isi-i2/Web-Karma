@@ -208,7 +208,8 @@ function parse(data) {
 		
 		else if(element["updateType"] == "WorksheetHierarchicalHeadersUpdate") {
 			var table = $("table#" + element["worksheetId"]);
-			
+			console.log("WS ID: " + element["worksheetId"]);
+			console.log(table);
 			var thead = $("thead", table);
 			
 			if(thead.length == 0) {
@@ -245,7 +246,7 @@ function parse(data) {
 						
 						// Store the node ID
 						tdTag.attr("id", cell["contentCell"]["id"]);
-						
+						console.log("Name: " + cell["contentCell"]["label"]);
 						//Add the name
 						tdTag.append($("<div>").addClass("ColumnHeadingNameDiv")
 							.text(cell["contentCell"]["label"]))
@@ -256,7 +257,7 @@ function parse(data) {
 						tdTag.attr("colspan", cell["colSpan"]);
 					}
 					tdTag.data("jsonElement", cell).hover(showConsoleInfo);
-					
+					console.log(tdTag);
 					trTag.append(tdTag);
 				});
 				thead.append(trTag);
