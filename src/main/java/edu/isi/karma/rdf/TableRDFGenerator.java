@@ -334,7 +334,7 @@ public class TableRDFGenerator {
 	 * 1. if the term is a function/uri term uri(1) or uri(V) find a unary predicate 
 	 * that has "term" as it's only term. Person(uri(N)) or Activity(uri(1))
 	 * 3. If the uri is NOT a gensym, STOP. This is the end of the rule.
-	 * 4. If the uri is a gensym, find a binary predicate that has the gensym as a second arg.
+	 * 4. If the uri is a gensym, find ALL binary predicates that have the gensym as a second arg.
 	 * 5. If no such predicate exists, STOP.
 	 * 6. If a binary predicate exists, start from 1 with the input term being the first 
 	 * term of the  binary predicate.
@@ -350,6 +350,43 @@ public class TableRDFGenerator {
 	 * 		predicates are being added to this
 	 * @throws MediatorException 
 	 */
+	private void findAllRelatedPredicates(Term term,
+			ArrayList<Predicate> preds, RelationPredicate antecedent,
+			ArrayList<Predicate> consequent) throws MediatorException {
+
+		if(term instanceof VarTerm)
+			return;
+		else if(term instanceof FunctionTerm){
+			//it is a uri();
+			//find the unary predicate for this URI
+			Predicate p2 = findUnaryPredicate(term, preds);
+			//System.out.println("Unary Pred ...="+p2);
+			if(!consequent.contains(p2))
+				consequent.add(p2.clone());
+			if(gensymPredicate(p2)){
+				//if it is a gensym see if you can find other related 
+				ArrayList<Predicate> binaryP = findAllBinaryPredicates(p2.getTerms().get(0),preds);
+				//System.out.println("Binary Pred="+p1);
+				//remove it from the list of predicates so that I don't get into a infinite loop
+				for(Predicate p1: binaryP){
+					preds.remove(p1);
+					if(p1!=null){
+						//find the varbiable on the first position
+						//this var is needed to construct this rule
+						String firstVar = getFirstVariableName(p1);
+						if(firstVar!=null){
+							antecedent.addTermIfUnique(firstVar);
+						}
+						if(!consequent.contains(p1)){
+							consequent.add(p1.clone());
+						}
+						findAllRelatedPredicates(p1.getTerms().get(0),preds,antecedent,consequent);
+					}
+				}
+			}
+		}
+	}
+	/*
 	private void findAllRelatedPredicates(Term term,
 			ArrayList<Predicate> preds, RelationPredicate antecedent,
 			ArrayList<Predicate> consequent) throws MediatorException {
@@ -384,7 +421,7 @@ public class TableRDFGenerator {
 			}
 		}
 	}
-
+*/
 	/**
 	 * Returns the unary predicate that has the term equal to a given term.
 	 * @param term
@@ -446,6 +483,27 @@ public class TableRDFGenerator {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Returns a list of binary predicate that has the SECOND term equal to a given term.
+	 * @param term
+	 * @param preds
+	 * 		a list of unary and binary perdicates
+	 * @return
+	 * 		a list of binary predicate that has the SECOND term equal to a given term.
+	 */
+	private ArrayList<Predicate> findAllBinaryPredicates(Term term,ArrayList<Predicate> preds) {
+		ArrayList<Predicate> binaryP = new ArrayList<Predicate>();
+		for(Predicate p:preds){
+			if(p.getTerms().size()==2){
+				//get second term
+				Term t = p.getTerms().get(1);
+				if(t.equals(term))
+					binaryP.add(p);
+			}
+		}
+		return binaryP;
 	}
 
 	/**
