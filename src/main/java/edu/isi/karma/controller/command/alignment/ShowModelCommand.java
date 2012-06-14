@@ -83,7 +83,6 @@ public class ShowModelCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 
@@ -103,7 +102,7 @@ public class ShowModelCommand extends WorksheetCommand {
 			// Save the semantic types in the input parameter JSON
 			saveSemanticTypesInformation(worksheet, vWorkspace);
 			
-			align.update(c, false);
+			align.update(c, true);
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(
