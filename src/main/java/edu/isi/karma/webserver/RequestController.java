@@ -70,10 +70,12 @@ public class RequestController extends HttpServlet{
 							.generateJson(ctrl.getvWorkspace());
 			}
 		} else {
-			responseString = ctrl.invokeCommand(ctrl.getCommand(request));
+			Command command = ctrl.getCommand(request);
+			if(command != null)
+				responseString = ctrl.invokeCommand(command);
+			else
+				logger.error("Error occured while creating command (Could not create Command object): " + request.getParameter("command"));
 		}
-		
-		//System.out.println(responseString);
 		
 		response.getWriter().write(responseString);
 		response.flushBuffer();

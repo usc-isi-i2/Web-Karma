@@ -46,21 +46,6 @@ public class SemanticType implements Jsonizable {
 	public enum ClientJsonKeys {
 		isPrimary, Domain, FullType
 	}
-
-	public SemanticType(String hNodeId, URI type, Origin origin, Double probability, boolean isPartOfKey) {
-		this.hNodeId = hNodeId;
-		this.type = type;
-		this.origin = origin;
-		this.domain = null;
-		this.isPartOfKey = isPartOfKey;
-		
-		if(probability > 0.8)
-			confidenceLevel = ConfidenceLevel.High;
-		else if (probability < 0.8 && probability > 0.4)
-			confidenceLevel = ConfidenceLevel.Medium;
-		else
-			confidenceLevel = ConfidenceLevel.Low;
-	}
 	
 	public SemanticType(String hNodeId, URI type, URI domain, Origin origin, Double probability, boolean isPartOfKey) {
 		this.hNodeId = hNodeId;

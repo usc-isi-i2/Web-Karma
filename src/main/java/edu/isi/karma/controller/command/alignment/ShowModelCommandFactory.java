@@ -74,7 +74,6 @@ public class ShowModelCommandFactory extends CommandFactory implements JSONInput
 			return new ShowModelCommand(getNewId(vWorkspace), worksheet.getId(), vWorksheetId);
 		}
 		else {
-			
 			ShowModelCommand comm = new ShowModelCommand(getNewId(vWorkspace), worksheet.getId(), vWorksheetId);
 			OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
 			// Add the semantic types that have saved into the history

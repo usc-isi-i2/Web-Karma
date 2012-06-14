@@ -32,7 +32,6 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-import edu.isi.karma.modeling.Test;
 import edu.isi.karma.rep.RepFactory;
 
 public class SourcePublisher {

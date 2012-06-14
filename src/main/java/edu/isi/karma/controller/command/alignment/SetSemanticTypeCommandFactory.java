@@ -76,6 +76,10 @@ public class SetSemanticTypeCommandFactory extends CommandFactory implements JSO
 				JSONObject type = arr.getJSONObject(i);
 				// Look for the primary semantic type
 				URI typeName = ontMgr.getURIFromString(type.getString(ClientJsonKeys.FullType.name()));
+				if(typeName == null) {
+					logger.error("Could not find the resource " + type.getString(ClientJsonKeys.FullType.name()) + " in ontology model!");
+					return null;
+				}
 				URI domainName = null;
 				if (type.getString(ClientJsonKeys.Domain.name()) != "")
 					domainName = ontMgr.getURIFromString(type.getString(ClientJsonKeys.Domain.name()));
@@ -120,6 +124,10 @@ public class SetSemanticTypeCommandFactory extends CommandFactory implements JSO
 				JSONObject type = arr.getJSONObject(i);
 				// Look for the primary semantic type
 				URI typeName = ontMgr.getURIFromString(type.getString(SemanticTypesUpdate.JsonKeys.FullType.name()));
+				if(typeName == null) {
+					logger.error("Could not find the resource " + type.getString(SemanticTypesUpdate.JsonKeys.FullType.name()) + " in ontology model!");
+					return null;
+				}
 				URI domainName = null;
 				if (type.getString(SemanticTypesUpdate.JsonKeys.Domain.name()) != "")
 					domainName = ontMgr.getURIFromString(type.getString(SemanticTypesUpdate.JsonKeys.Domain.name()));

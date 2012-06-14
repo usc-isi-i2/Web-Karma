@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.rep.cleaning.ValueCollection;
 import edu.isi.karma.view.VWorkspace;
 
 public class CleaningResultUpdate extends AbstractUpdate {

@@ -138,7 +138,7 @@ public class SemanticTypeUtil {
 			Collection<String> columnNameList = new ArrayList<String>();
 			columnNameList.add(columnName);
 			columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
-
+			
 			// // Prepare the table name feature
 			// String tableName = worksheetName;
 			// Collection<String> tableNameList = new ArrayList<String>();
@@ -174,14 +174,14 @@ public class SemanticTypeUtil {
 			}
 
 			URI typeURI = ontMgr.getURIFromString(type);
-			if (typeURI == null)
+			if(typeURI == null) {
+				logger.error("Could not find the resource " + type + " in ontology model!");
 				continue;
+			}
 			URI domainURI = null;
-			if (domain != "")
+			if (!domain.equals(""))
 				domainURI = ontMgr.getURIFromString(domain);
-			SemanticType semtype = new SemanticType(path.getLeaf().getId(),
-					typeURI, domainURI, SemanticType.Origin.CRFModel,
-					scores.get(0), false);
+			SemanticType semtype = new SemanticType(path.getLeaf().getId(),typeURI, domainURI, SemanticType.Origin.CRFModel,scores.get(0), false);
 
 			// Check if the user already provided a semantic type manually
 			SemanticType existingType = types.getSemanticTypeForHNodeId(path

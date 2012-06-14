@@ -59,7 +59,10 @@ public class WorksheetCommandHistoryReader {
 					logger.info("Executing command from history: " + commObject.get(HistoryArguments.commandName.name()));
 					JSONInputCommandFactory scf = (JSONInputCommandFactory)cf;
 					Command comm = scf.createCommand(inputParamArr, vWorkspace);
-					vWorkspace.getWorkspace().getCommandHistory().doCommand(comm, vWorkspace);
+					if(comm != null)
+						vWorkspace.getWorkspace().getCommandHistory().doCommand(comm, vWorkspace);
+					else
+						logger.error("Error occured while creating command (Could not create Command object): " + commObject.get(HistoryArguments.commandName.name()));
 				}
 			}
 		}
