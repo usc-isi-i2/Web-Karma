@@ -115,7 +115,7 @@ public class CommandHistory {
 	 * Commands go onto the history when they have all their arguments and are
 	 * ready to be executed. If a command needs multiple user interactions to
 	 * define the parameters, then the command object must be created,
-	 * interacted with and then executed.
+	 * interacted with and then executed. 
 	 * 
 	 * @param command
 	 * @param vWorkspace

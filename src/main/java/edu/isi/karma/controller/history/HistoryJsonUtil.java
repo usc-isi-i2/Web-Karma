@@ -9,11 +9,11 @@ import org.json.JSONObject;
 public class HistoryJsonUtil {
 	
 	public enum ClientJsonKeys {
-		isPrimary, name, value, type
+		isPrimary, name, value, type, SemanticType
 	}
 	
 	public enum ParameterType {
-		hNodeId, vWorksheetId, other
+		hNodeId, vWorksheetId, other, checkHistory
 	}
 	
 	public static JSONObject getJSONObjectWithName(String arg, JSONArray json) throws JSONException {
@@ -40,7 +40,8 @@ public class HistoryJsonUtil {
 	}
 
 	public static boolean historyExists(String worksheetName, String vworkspacePreferenceId) {
-		return new File(constructWorksheetHistoryJsonFilePath(worksheetName, vworkspacePreferenceId)).exists();
+		File histFile = new File(constructWorksheetHistoryJsonFilePath(worksheetName, vworkspacePreferenceId));
+		return histFile.exists();
 	}
 	
 	public static String constructWorksheetHistoryJsonFilePath (String worksheetName, String vworkspacePreferenceId) {
@@ -49,6 +50,16 @@ public class HistoryJsonUtil {
 	
 	public static String constructWorksheetHistoryJsonFileName (String worksheetName, String vworkspacePreferenceId) {
 		return vworkspacePreferenceId + "_" + worksheetName.replaceAll("[\\./]", "") + ".json";
+	}
+
+	public static boolean setArgumentValue(String name, Object value,
+			JSONArray inputJson) throws JSONException {
+		JSONObject obj = getJSONObjectWithName(name, inputJson);
+		if(obj != null) {
+			obj.put(ClientJsonKeys.value.name(), value);
+			return true;
+		} else
+			return false;
 	}
 
 //	private double getDoubleValue(String arg, JSONArray json) throws JSONException {

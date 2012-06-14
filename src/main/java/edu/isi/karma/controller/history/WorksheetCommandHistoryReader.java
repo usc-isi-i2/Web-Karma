@@ -47,7 +47,6 @@ public class WorksheetCommandHistoryReader {
 			JSONArray inputParamArr = (JSONArray) commObject.get(HistoryArguments.inputParameters.name());
 			// Change the hNode ids, vworksheet id to point to the current worksheet ids
 			if(normalizeJsonInput(inputParamArr)) {
-//				System.out.println(inputParamArr.toString(4));
 				// Invoke the command
 				CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
 				if(cf != null && cf instanceof JSONInputCommandFactory) {

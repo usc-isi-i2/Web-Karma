@@ -66,8 +66,7 @@ public class AlignToOntology {
 			alignment = getNewAlignment();
 		}
 
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
-				.getSteinerTree();
+		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment.getSteinerTree();
 		Vertex root = alignment.GetTreeRoot();
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		

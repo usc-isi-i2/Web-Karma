@@ -42,7 +42,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		info["vWorksheetId"] = optionsDiv.data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
 		info["command"] = "ShowModelCommand";
-			
+	   
+	    var newInfo = [];
+        newInfo.push(getParamObject("vWorksheetId", optionsDiv.data("worksheetId"), "vWorksheetId"));
+        newInfo.push(getParamObject("checkHistory", true, "other"));
+        info["newInfo"] = JSON.stringify(newInfo);
+	   
 		showLoading(info["vWorksheetId"]);
 		var returned = $.ajax({
 		   	url: "/RequestController", 

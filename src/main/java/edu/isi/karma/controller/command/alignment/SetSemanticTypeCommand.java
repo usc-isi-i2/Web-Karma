@@ -55,16 +55,18 @@ public class SetSemanticTypeCommand extends Command {
 	private CRFColumnModel oldColumnModel;
 	private final SemanticType newType;
 	private final SynonymSemanticTypes newSynonymTypes;
+	private final boolean trainAndShowUpdates;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	protected SetSemanticTypeCommand(String id, String vWorksheetId,
 			String hNodeId, boolean isPartOfKey, SemanticType type,
-			SynonymSemanticTypes synTypes) {
+			SynonymSemanticTypes synTypes, boolean trainAndShowUpdates) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
 		this.newType = type;
 		this.newSynonymTypes = synTypes;
+		this.trainAndShowUpdates = trainAndShowUpdates;
 		
 		addTag(CommandTag.Modeling);
 	}
@@ -109,87 +111,90 @@ public class SetSemanticTypeCommand extends Command {
 		// Update the synonym semanticTypes
 		worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), newSynonymTypes);
 
-		long start = System.currentTimeMillis();
-		// Find the corresponding hNodePath. Used to find examples for training
-		// the CRF Model.
-		HNodePath currentColumnPath = null;
-		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
-		for (HNodePath path : paths) {
-			if (path.getLeaf().getId().equals(newType.getHNodeId())) {
-				currentColumnPath = path;
-				break;
+		if(trainAndShowUpdates) {
+			long start = System.currentTimeMillis();
+			// Find the corresponding hNodePath. Used to find examples for training
+			// the CRF Model.
+			HNodePath currentColumnPath = null;
+			List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
+			for (HNodePath path : paths) {
+				if (path.getLeaf().getId().equals(newType.getHNodeId())) {
+					currentColumnPath = path;
+					break;
+				}
 			}
+
+			Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
+
+			// Prepare the column name for training
+			String columnName = currentColumnPath.getLeaf().getColumnName();
+			Collection<String> columnNameList = new ArrayList<String>();
+			columnNameList.add(columnName);
+			columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
+
+			// Calculating the time required for training the semantic type
+
+			// Train the model with the new type
+			ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(worksheet, currentColumnPath);
+			boolean trainingResult = false;
+			String newTypeString = "";
+			if (newType.getDomain() == null) {
+				newTypeString = newType.getType().getUriString();
+			} else {
+				newTypeString = newType.getDomain().getUriString() + "|" + newType.getType().getUriString();
+			}
+			trainingResult = crfModelHandler.addOrUpdateLabel(newTypeString,trainingExamples, columnFeatures);
+
+			if (!trainingResult) {
+				logger.error("Error occured while training CRF Model.");
+			}
+			logger.debug("Using type:" + newType.getDomain().getUriString() + "|" + newType.getType().getUriString());
+
+
+			// Add the new CRF column model for this column
+			ArrayList<String> labels = new ArrayList<String>();
+			ArrayList<Double> scores = new ArrayList<Double>();
+			trainingResult = crfModelHandler.predictLabelForExamples(trainingExamples, 4, labels, scores, null, columnFeatures);
+			if (!trainingResult) {
+				logger.error("Error occured while predicting labels");
+			}
+			CRFColumnModel newModel = new CRFColumnModel(labels, scores);
+			worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), newModel);
+
+			long elapsedTimeMillis = System.currentTimeMillis() - start;
+			float elapsedTimeSec = elapsedTimeMillis / 1000F;
+			logger.info("Time required for training the semantic type: "
+					+ elapsedTimeSec);
+
+			long t2 = System.currentTimeMillis();
+			
+			// Identify the outliers for the column
+			SemanticTypeUtil.identifyOutliers(worksheet, newTypeString,currentColumnPath, vWorkspace.getWorkspace().getTagsContainer()
+					.getTag(TagName.Outlier), columnFeatures, crfModelHandler);
+
+			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+
+			long t3 = System.currentTimeMillis();
+			logger.info("Identify outliers: "+ (t3-t2));
+
+			// Get the alignment update if any
+			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
+					vWorksheetId);
+			try {
+				align.update(c, true);
+			} catch (Exception e) {
+				logger.error("Error occured while setting the semantic type!", e);
+				return new UpdateContainer(new ErrorUpdate(
+						"Error occured while setting the semantic type!"));
+			}
+
+			c.add(new TagsUpdate());
+
+			long t4 = System.currentTimeMillis();
+			logger.info("Alignment: "+ (t4-t3));
+			
+			return c;
 		}
-
-		Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
-
-		// Prepare the column name for training
-		String columnName = currentColumnPath.getLeaf().getColumnName();
-		Collection<String> columnNameList = new ArrayList<String>();
-		columnNameList.add(columnName);
-		columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
-
-		// Calculating the time required for training the semantic type
-
-		// Train the model with the new type
-		ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(worksheet, currentColumnPath);
-		boolean trainingResult = false;
-		String newTypeString = "";
-		if (newType.getDomain() == null) {
-			newTypeString = newType.getType().getUriString();
-		} else {
-			newTypeString = newType.getDomain().getUriString() + "|" + newType.getType().getUriString();
-		}
-		trainingResult = crfModelHandler.addOrUpdateLabel(newTypeString,trainingExamples, columnFeatures);
-
-		if (!trainingResult) {
-			logger.error("Error occured while training CRF Model.");
-		}
-		logger.debug("Using type:" + newType.getDomain().getUriString() + "|" + newType.getType().getUriString());
-
-
-		// Add the new CRF column model for this column
-		ArrayList<String> labels = new ArrayList<String>();
-		ArrayList<Double> scores = new ArrayList<Double>();
-		trainingResult = crfModelHandler.predictLabelForExamples(trainingExamples, 4, labels, scores, null, columnFeatures);
-		if (!trainingResult) {
-			logger.error("Error occured while predicting labels");
-		}
-		CRFColumnModel newModel = new CRFColumnModel(labels, scores);
-		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), newModel);
-
-		long elapsedTimeMillis = System.currentTimeMillis() - start;
-		float elapsedTimeSec = elapsedTimeMillis / 1000F;
-		logger.info("Time required for training the semantic type: "
-				+ elapsedTimeSec);
-
-		long t2 = System.currentTimeMillis();
-		
-		// Identify the outliers for the column
-		SemanticTypeUtil.identifyOutliers(worksheet, newTypeString,currentColumnPath, vWorkspace.getWorkspace().getTagsContainer()
-				.getTag(TagName.Outlier), columnFeatures, crfModelHandler);
-
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
-
-		long t3 = System.currentTimeMillis();
-		logger.info("Identify outliers: "+ (t3-t2));
-
-		// Get the alignment update if any
-		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
-				vWorksheetId);
-		try {
-			align.update(c, true);
-		} catch (Exception e) {
-			logger.error("Error occured while setting the semantic type!", e);
-			return new UpdateContainer(new ErrorUpdate(
-					"Error occured while setting the semantic type!"));
-		}
-
-		c.add(new TagsUpdate());
-
-		long t4 = System.currentTimeMillis();
-		logger.info("Alignment: "+ (t4-t3));
-		
 		return c;
 	}
 

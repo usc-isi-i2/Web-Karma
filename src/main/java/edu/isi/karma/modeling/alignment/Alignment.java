@@ -359,7 +359,7 @@ public class Alignment {
 		if (this.steinerTree == null)
 			align();
 		
-		GraphUtil.printGraph(this.steinerTree);
+		// GraphUtil.printGraph(this.steinerTree);
 		return this.steinerTree;
 	}
 

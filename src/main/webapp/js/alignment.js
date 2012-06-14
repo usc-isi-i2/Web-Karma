@@ -745,6 +745,7 @@ function submitSemanticTypeChange() {
 	newInfo.push(getParamObject("SemanticTypesArray", semTypesArray, "other"));
 	newInfo.push(getParamObject("vWorksheetId", info["vWorksheetId"], "vWorksheetId"));
 	newInfo.push(getParamObject("isKey", $("input#chooseClassKey").is(":checked"), "other"));
+	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
 	info["newInfo"] = JSON.stringify(newInfo);
 	
 	if(semTypesArray.length == 0)

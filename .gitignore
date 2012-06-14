@@ -19,3 +19,4 @@ src/main/webapp/RDF/*.n3
 CRF_Models/*_CRFModel.txt
 repository
 CRF_Models/WSP1_CRFModel.txt.zip
+tmp/*
