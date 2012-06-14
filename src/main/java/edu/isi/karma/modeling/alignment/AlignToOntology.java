@@ -23,12 +23,9 @@ package edu.isi.karma.modeling.alignment;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-
 import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.rdf.WorksheetRDFGenerator;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
@@ -66,8 +63,7 @@ public class AlignToOntology {
 			alignment = getNewAlignment();
 		}
 
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment.getSteinerTree();
-		Vertex root = alignment.GetTreeRoot();
+//		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment.getSteinerTree();
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		
 		List<String> hNodeIdList = new ArrayList<String>();
@@ -84,7 +80,7 @@ public class AlignToOntology {
 		}
 		*/
 		// Debug
-		GraphUtil.printGraph(tree);
+		// GraphUtil.printGraph(tree);
 		
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 		c.add(svgUpdate);
@@ -95,7 +91,7 @@ public class AlignToOntology {
 		// Get the list of semantic types
 		List<SemanticType> types = new ArrayList<SemanticType>();
 		for (SemanticType type : semTypes.getTypes().values()) {
-		//System.out.println("Type: " + type.getType()+ " of " + type.getDomain() + "HNode ID: " + type.getHNodeId());
+//		System.out.println("Type: " + type.getType().getLocalName() + " of " + type.getDomain().getLocalName() + "HNode ID: " + type.getHNodeId());
 			types.add(type);
 		}
 
