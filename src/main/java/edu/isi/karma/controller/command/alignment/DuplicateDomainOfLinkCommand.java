@@ -110,12 +110,13 @@ public class DuplicateDomainOfLinkCommand extends Command {
 		SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, alignment, hNodeIdList);
 		
 		//mariam
+		/*
 		try{
 			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, alignment);
 		}catch(KarmaException e){
 			e.printStackTrace();
 		}
-
+*/
 		UpdateContainer c = new UpdateContainer();
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 		c.add(svgUpdate);
