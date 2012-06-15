@@ -21,7 +21,6 @@
 
 package edu.isi.mediator.domain;
 
-import edu.isi.mediator.domain.DomainAttribute;
 import edu.isi.mediator.gav.util.MediatorConstants;
 
 public class SourceAttribute extends DomainAttribute{

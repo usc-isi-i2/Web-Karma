@@ -280,7 +280,6 @@ function submit()
 		complete : function(xhr, textStatus) {
 			var json = $.parseJSON(xhr.responseText);
 			parse(json);
-			console.log("Done parsing!");
 		},
 		error : function(xhr, textStatus) {
 			$.sticky("Error in submitting");

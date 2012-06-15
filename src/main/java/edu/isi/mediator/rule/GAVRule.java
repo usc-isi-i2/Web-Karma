@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import edu.isi.mediator.gav.main.MediatorException;
-//import edu.isi.mediator.gav.source.SourceQuery;
 import edu.isi.mediator.gav.util.MediatorConstants;
 
 

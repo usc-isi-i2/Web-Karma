@@ -24,8 +24,8 @@ package edu.isi.mediator.rdf;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.gav.util.MediatorLogger;

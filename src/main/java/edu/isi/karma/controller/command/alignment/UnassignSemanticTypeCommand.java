@@ -120,7 +120,7 @@ public class UnassignSemanticTypeCommand extends Command {
 		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
 				vWorksheetId);
 		try {
-			align.update(c, true);
+			align.alignAndUpdate(c, true);
 		} catch (Exception e) {
 			logger.error("Error occured while unassigning the semantic type!",
 					e);
@@ -150,7 +150,7 @@ public class UnassignSemanticTypeCommand extends Command {
 		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
 				vWorksheetId);
 		try {
-			align.update(c, true);
+			align.alignAndUpdate(c, true);
 		} catch (Exception e) {
 			logger.error("Error occured while unassigning the semantic type!",
 					e);

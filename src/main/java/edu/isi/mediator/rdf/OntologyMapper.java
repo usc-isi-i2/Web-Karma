@@ -35,9 +35,9 @@ import com.hp.hpl.jena.rdf.model.Model;
 
 import edu.isi.mediator.domain.parser.DomainParser;
 import edu.isi.mediator.gav.main.MediatorException;
+import edu.isi.mediator.gav.util.MediatorLogger;
 import edu.isi.mediator.rule.Predicate;
 import edu.isi.mediator.rule.Rule;
-import edu.isi.mediator.gav.util.MediatorLogger;
 
 
 /**

@@ -178,22 +178,25 @@ public class SetSemanticTypeCommand extends Command {
 			logger.info("Identify outliers: "+ (t3-t2));
 
 			// Get the alignment update if any
-			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
-					vWorksheetId);
+			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
+			
 			try {
-				align.update(c, true);
+				align.alignAndUpdate(c, true);
 			} catch (Exception e) {
 				logger.error("Error occured while setting the semantic type!", e);
 				return new UpdateContainer(new ErrorUpdate(
 						"Error occured while setting the semantic type!"));
 			}
-
 			c.add(new TagsUpdate());
-
+			
 			long t4 = System.currentTimeMillis();
 			logger.info("Alignment: "+ (t4-t3));
-			
 			return c;
+			
+		} else {
+			// Just do the alignment, no training and update JSON required.
+			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
+			align.align(true);
 		}
 		return c;
 	}
@@ -214,7 +217,7 @@ public class SetSemanticTypeCommand extends Command {
 		// Get the alignment update if any
 		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,vWorksheetId);
 		try {
-			align.update(c, true);
+			align.alignAndUpdate(c, true);
 		} catch (Exception e) {
 			logger.error("Error occured while unsetting the semantic type!", e);
 			return new UpdateContainer(new ErrorUpdate(

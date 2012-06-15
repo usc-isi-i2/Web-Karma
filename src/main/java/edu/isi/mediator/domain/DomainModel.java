@@ -25,9 +25,9 @@ import java.util.ArrayList;
 
 import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.rule.GAVRule;
-import edu.isi.mediator.rule.Rule;
 import edu.isi.mediator.rule.GLAVRule;
 import edu.isi.mediator.rule.LAVRule;
+import edu.isi.mediator.rule.Rule;
 
 
 /**

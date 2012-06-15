@@ -61,7 +61,7 @@ public class CommandHistoryWriter {
 						inpP.put(ClientJsonKeys.value.name(), hNodeRepresentation);
 					
 					} else if (HistoryJsonUtil.getParameterType(inpP) == ParameterType.vWorksheetId) {
-						// do nothing now
+						inpP.put(ClientJsonKeys.value.name(), "VW");
 					} else {
 						// do nothing
 					}

@@ -101,8 +101,7 @@ public class ShowModelCommand extends WorksheetCommand {
 		try {
 			// Save the semantic types in the input parameter JSON
 			saveSemanticTypesInformation(worksheet, vWorkspace);
-			
-			align.update(c, true);
+			align.alignAndUpdate(c, true);
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(

@@ -25,8 +25,6 @@ import java.util.ArrayList;
 
 import org.antlr.runtime.tree.CommonTree;
 
-import edu.isi.mediator.domain.parser.DomainParser;
-import edu.isi.mediator.domain.parser.RuleParser;
 import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.rdf.RDFDomainModel;
 import edu.isi.mediator.rule.LAVRule;

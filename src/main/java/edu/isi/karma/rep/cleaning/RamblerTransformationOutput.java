@@ -20,16 +20,13 @@
  ******************************************************************************/
 package edu.isi.karma.rep.cleaning;
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.Vector;
 
-import au.com.bytecode.opencsv.CSVReader;
-import edu.isi.karma.cleaning.*;
+import edu.isi.karma.cleaning.EditOper;
+import edu.isi.karma.cleaning.RuleUtil;
 
 public class RamblerTransformationOutput implements TransformationOutput {
 

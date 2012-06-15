@@ -26,9 +26,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
-import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.domain.SourceAttribute;
 import edu.isi.mediator.domain.SourceSchema;
+import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.gav.util.MediatorConstants;
 
 /**

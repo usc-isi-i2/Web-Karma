@@ -24,6 +24,8 @@
 package edu.isi.karma.view.tabledata;
 
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.contentRow;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.fullValue;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.isTruncated;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.rowCells;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.rowType;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.rows;
@@ -31,8 +33,6 @@ import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.Js
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.status;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.value;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.worksheetId;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.isTruncated;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate.JsonKeys.fullValue;
 
 import java.util.HashSet;
 import java.util.LinkedList;

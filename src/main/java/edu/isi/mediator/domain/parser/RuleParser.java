@@ -25,15 +25,15 @@ import java.util.ArrayList;
 
 import org.antlr.runtime.tree.CommonTree;
 
+import edu.isi.mediator.domain.DomainModel;
+import edu.isi.mediator.domain.SourceSchema;
+import edu.isi.mediator.gav.main.MediatorException;
+import edu.isi.mediator.gav.util.MediatorConstants;
 import edu.isi.mediator.rule.BuiltInPredicate;
 import edu.isi.mediator.rule.FunctionPredicate;
-import edu.isi.mediator.rule.Predicate;
-import edu.isi.mediator.gav.util.MediatorConstants;
 import edu.isi.mediator.rule.FunctionTerm;
+import edu.isi.mediator.rule.Predicate;
 import edu.isi.mediator.rule.RelationPredicate;
-import edu.isi.mediator.domain.SourceSchema;
-import edu.isi.mediator.domain.DomainModel;
-import edu.isi.mediator.gav.main.MediatorException;
 
 /**
  * Rule parser helper methods.

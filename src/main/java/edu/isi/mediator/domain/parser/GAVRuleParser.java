@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import org.antlr.runtime.tree.CommonTree;
 
 import edu.isi.mediator.domain.DomainModel;
-import edu.isi.mediator.rule.Predicate;
-import edu.isi.mediator.rule.GAVRule;
 import edu.isi.mediator.gav.main.MediatorException;
+import edu.isi.mediator.rule.GAVRule;
+import edu.isi.mediator.rule.Predicate;
 
 /**
  * GAV Rule parser.

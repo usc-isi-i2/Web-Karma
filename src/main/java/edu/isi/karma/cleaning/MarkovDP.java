@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
+
 import au.com.bytecode.opencsv.CSVReader;
 
 public class MarkovDP {

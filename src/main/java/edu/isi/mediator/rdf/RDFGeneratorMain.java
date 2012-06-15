@@ -29,7 +29,6 @@ import java.io.IOException;
 
 import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.gav.util.MediatorLogger;
-import edu.isi.mediator.rdf.RDFGenerator;
 
 /**
  * Main RDF Generator Class.

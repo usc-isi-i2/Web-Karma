@@ -29,10 +29,10 @@ import java.util.List;
 import java.util.Map;
 
 import edu.isi.mediator.gav.main.MediatorException;
+import edu.isi.mediator.gav.util.MediatorLogger;
 import edu.isi.mediator.rule.FunctionPredicate;
 import edu.isi.mediator.rule.Rule;
 import edu.isi.mediator.rule.Term;
-import edu.isi.mediator.gav.util.MediatorLogger;
 
 public class RuleRDFMapper extends RuleRDFGenerator{
 

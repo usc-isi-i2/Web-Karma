@@ -23,12 +23,13 @@
  */
 package edu.isi.karma.view;
 
-import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.cellType;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.border;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.cellType;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.fillId;
-import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.topBorder;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.leftBorder;
 import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.rightBorder;
+import static edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate.JsonKeys.topBorder;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;

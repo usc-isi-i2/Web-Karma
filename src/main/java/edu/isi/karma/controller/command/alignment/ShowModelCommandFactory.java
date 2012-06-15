@@ -97,7 +97,6 @@ public class ShowModelCommandFactory extends CommandFactory implements JSONInput
 				if(typeName != null) {
 					type = new SemanticType(hNodeId, typeName, domainName, Origin.User, 1.00, isPrimary);
 					worksheet.getSemanticTypes().addType(type);
-					System.out.println("******** Setting semantic type: " + type);
 				}
 			}
 			return comm;
