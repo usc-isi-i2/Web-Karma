@@ -340,6 +340,7 @@ and related projects, please see: http://www.isi.edu/integration
 			<div id="tablesWorkspace"></div>
 		</div>
 		<div id="columnHeadingDropDownMenu" class="ui-corner-all" style="display: none">
+			<button href="#" id="splitByComma">Split Column</button>
 			<button id="cleanColumnButton">Transform</button>
 			<button id="renameColumnButton">Rename</button>
 			<button id="invokeServiceButton">Invoke Service</button>
@@ -529,7 +530,6 @@ and related projects, please see: http://www.isi.edu/integration
 			<button href="#" id="showModel">Show Model</button>
 			<button href="#" id="hideModel">Hide Model</button>
 			<button href="#" id="resetModel">Reset Model</button>
-			<button href="#" id="splitByComma">Split Column By Comma</button>
 			<button href="#" id="publishRDF">Publish RDF</button>
 			<button href="#" id="publishDatabase">Publish Database</button>
 			<button href="#" id="populateSource">Populate Source</button>
@@ -580,8 +580,10 @@ and related projects, please see: http://www.isi.edu/integration
 			<table id="AlternativeParentLinksTable"></table>
 		</div>
 		<div id="SplitByCommaColumnListPanel" style="display: none">
-			<span class="mediumSizedFont">Choose column:</span>
-			<select id="splitByCommaColumnList"></select>
+			<span class="smallSizedFont">Specify character delimiter:</span>
+			<input class="smallSizedFont" type="text" id="columnSplitDelimiter" value="," maxlength="5" size="5"/></br>
+			<span class="smallSizedFont">Enter "space" to use single space</span></br>
+			<span class="smallSizedFont">Enter "tab" to use tab</span>
 		</div>
 		<div id="tableCellMenuButtonDiv" style="display: none"></div>
 		<div id="columnHeadingMenuButtonDiv" style="display: none"></div>

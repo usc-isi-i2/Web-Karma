@@ -26,16 +26,27 @@ import edu.isi.karma.view.VWorkspace;
 
 public class SplitByCommaCommandFactory extends CommandFactory {
 	private enum Arguments {
-		vWorksheetId, hNodeId
+		vWorksheetId, hNodeId, delimiter
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId
-				.name());
+		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
+		String delimiter = request.getParameter(Arguments.delimiter.name());
+		
+		// Convert the delimiter into character primitive type
+		char delimiterChar = ',';
+		if(delimiter.equalsIgnoreCase("space"))
+			delimiterChar = ' ';
+		else if(delimiter.equalsIgnoreCase("tab"))
+			delimiterChar = '\t';
+		else {
+			delimiterChar = new Character(delimiter.charAt(0));
+		}
+		
 		return new SplitByCommaCommand(getNewId(vWorkspace), getWorksheetId(
-				request, vWorkspace), hNodeId, vWorksheetId);
+				request, vWorkspace), hNodeId, vWorksheetId, delimiterChar);
 	}
 }

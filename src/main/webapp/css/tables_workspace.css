@@ -394,14 +394,14 @@ div#tableCellToolBarMenu button {
 }
 
 div#columnHeadingDropDownMenu {
-	width: 64px;
+	width: 85px;
 	padding: 2px;
 	background-color: #A3A3A3;
 }
 
 div#columnHeadingDropDownMenu button {
 	margin: 2px;
-	width: 60px;
+	width: 80px;
 }
 
 table#UnassignedLabelTable td {
@@ -414,10 +414,6 @@ table#UnassignedLabelTable td {
 }
 
 .smallSizedFont {
-	font-size: 10px;
-}
-
-select#splitByCommaColumnList {
 	font-size: 10px;
 }
 
@@ -480,10 +476,18 @@ span.bold {
 	font-weight: 900;
 }
 
+span.error {
+	color: red;
+}
+
 a.DownloadLink {
 	margin-left: 5px;
 	font-family: Helvetica;
 	font-size: 0.8em;
+}
+
+input.smallSizedFont {
+	font-size: 10px;
 }
 
 
