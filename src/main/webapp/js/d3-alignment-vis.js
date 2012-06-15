@@ -449,8 +449,7 @@ function changeSemanticType_d3(d, vis, event) {
     });
     
     // Get the column name to show in dalog box
-    var td = $(this).parents("td");
-    var columnName = $("div.ColumnHeadingNameDiv", td).text();
+    var columnName = $("div.ColumnHeadingNameDiv", tdTag).text();
     
     // Show the dialog box
     var positionArray = [event.clientX+20, event.clientY+10];
