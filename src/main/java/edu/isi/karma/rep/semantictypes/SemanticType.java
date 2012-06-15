@@ -81,13 +81,13 @@ public class SemanticType implements Jsonizable {
 	@Override
 	public String toString() {
 		if (isClass())
-			return "SemanticType [hNodeId=" + hNodeId + ", type=" + type.getLocalName()
+			return "SemanticType [hNodeId=" + hNodeId + ", type=" + type.getUriString()
 				+ ", origin=" + origin
 				+ ", isPartOfKey=" + isPartOfKey + ", confidenceLevel="
 				+ confidenceLevel + "]";
 		else
-			return "SemanticType [hNodeId=" + hNodeId + ", type=" + type.getLocalName()
-					+ ", domain=" + domain.getLocalName() + ", origin=" + origin
+			return "SemanticType [hNodeId=" + hNodeId + ", type=" + type.getUriString()
+					+ ", domain=" + domain.getUriString() + ", origin=" + origin
 					+ ", isPartOfKey=" + isPartOfKey + ", confidenceLevel="
 					+ confidenceLevel + "]";
 	}

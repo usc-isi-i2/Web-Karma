@@ -23,6 +23,8 @@ package edu.isi.karma.modeling.alignment;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+
 import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -92,7 +94,8 @@ public class AlignToOntology {
 		}
 		*/
 		// Debug
-		// GraphUtil.printGraph(tree);
+		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment.getSteinerTree();
+		GraphUtil.printGraph(tree);
 		
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 		c.add(svgUpdate);
