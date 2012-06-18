@@ -95,5 +95,13 @@ public class URI {
 		
 		return name;
 	}
+	
+	public String getLocalNameWithPrefixIfAvailable() {
+		if (prefix == null || prefix.equals("")) {
+			return getLocalName();
+		} else {
+			return getLocalNameWithPrefix();
+		}
+	}
 
 }

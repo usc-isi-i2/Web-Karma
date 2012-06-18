@@ -342,7 +342,7 @@ function showSemanticTypeEditOptions() {
             validatePropertyInputValue();
     }, source: function( request, response ) {
         var matches = $.map( propertyArray, function(prop) {
-            if ( prop.toUpperCase().indexOf(request.term.toUpperCase()) === 0 ) {
+            if ( prop.toUpperCase().indexOf(request.term.toUpperCase()) != -1 ) {
                 return prop;
             }
         });
@@ -354,7 +354,7 @@ function showSemanticTypeEditOptions() {
         validateClassInputValue();
     }, source: function( request, response ) {
         var matches = $.map( classArray, function(cls) {
-            if ( cls.toUpperCase().indexOf(request.term.toUpperCase()) === 0 ) {
+            if ( cls.toUpperCase().indexOf(request.term.toUpperCase()) != -1 ) {
                 return cls;
             }
         });
