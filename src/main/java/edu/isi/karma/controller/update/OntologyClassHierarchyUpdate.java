@@ -65,8 +65,7 @@ public class OntologyClassHierarchyUpdate extends AbstractUpdate {
 			ExtendedIterator<OntClass> iter = model.listNamedClasses();
 			while (iter.hasNext()) {
 				OntClass cls = iter.next();
-				if ((cls.hasSuperClass())
-						|| classesAdded.contains(cls.getURI())) {
+				if ((cls.hasSuperClass()) || classesAdded.contains(cls.getURI())) {
 					// Need to check if it has a non-anonymous superclass
 					boolean flag = false;
 					ExtendedIterator<OntClass> superClasses = cls
@@ -106,11 +105,10 @@ public class OntologyClassHierarchyUpdate extends AbstractUpdate {
 
 			// Prepare the output JSON
 			JSONObject outputObject = new JSONObject();
-			outputObject.put(GenericJsonKeys.updateType.name(),
-					"OntologyClassHierarchyUpdate");
+			outputObject.put(GenericJsonKeys.updateType.name(), "OntologyClassHierarchyUpdate");
 			outputObject.put(JsonKeys.data.name(), dataArray);
 
-			pw.println(outputObject.toString(4));
+			pw.println(outputObject.toString());
 
 		} catch (JSONException e) {
 			logger.error("Error occured while creating JSON", e);

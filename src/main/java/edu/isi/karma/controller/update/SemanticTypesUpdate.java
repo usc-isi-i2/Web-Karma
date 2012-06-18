@@ -135,11 +135,9 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 				}
 
 				// Populate the CRF Model
-				CRFColumnModel colModel = worksheet.getCrfModel()
-						.getModelByHNodeId(nodeId);
+				CRFColumnModel colModel = worksheet.getCrfModel().getModelByHNodeId(nodeId);
 				if (colModel != null) {
-					writer.key(JsonKeys.FullCRFModel.name()).value(
-							colModel.getAsJSONObject());
+					writer.key(JsonKeys.FullCRFModel.name()).value(colModel.getAsJSONObject(vWorkspace.getWorkspace().getOntologyManager()));
 				}
 
 				writer.endObject();

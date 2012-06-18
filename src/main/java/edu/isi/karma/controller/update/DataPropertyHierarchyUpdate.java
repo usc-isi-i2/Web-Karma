@@ -99,7 +99,7 @@ public class DataPropertyHierarchyUpdate extends AbstractUpdate {
 					"DataPropertyListUpdate");
 			outputObject.put(JsonKeys.data.name(), dataArray);
 
-			pw.println(outputObject.toString(4));
+			pw.println(outputObject.toString());
 		} catch (JSONException e) {
 			logger.error("Error occured while creating JSON!", e);
 		}
