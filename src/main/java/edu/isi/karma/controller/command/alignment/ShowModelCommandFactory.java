@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
@@ -41,6 +43,8 @@ import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class ShowModelCommandFactory extends CommandFactory implements JSONInputCommandFactory {
+	
+	private static Logger logger = LoggerFactory.getLogger(ShowModelCommandFactory.class);
 	
 	private enum Arguments {
 		vWorksheetId, checkHistory
@@ -67,7 +71,7 @@ public class ShowModelCommandFactory extends CommandFactory implements JSONInput
 				try {
 					commReader.readAndExecuteCommands();
 				} catch (Exception e) {
-					// logger.error("Error occured while reading model commands from history!", e);
+					 logger.error("Error occured while reading model commands from history!", e);
 					e.printStackTrace();
 				}
 			}

@@ -20,6 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
@@ -41,6 +43,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.rep.semantictypes.SemanticTypes;
+import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.mediator.gav.util.MediatorUtil;
 
@@ -52,6 +55,7 @@ public class ResetModelCommand extends Command {
 	private String alignmentId;
 	private String oldCRFModel;
 	private String crfModelFilePath;
+	private String oldHistoryFileContent;
 	
 	private static Logger logger = LoggerFactory
 			.getLogger(ResetModelCommand.class);
@@ -117,23 +121,30 @@ public class ResetModelCommand extends Command {
 				nodeIds.add(n.getId());
 			}
 		}
-		vWorkspace.getWorkspace().getTagsContainer().getTag(TagName.Outlier)
-				.removeNodeIds(nodeIds);
+		vWorkspace.getWorkspace().getTagsContainer().getTag(TagName.Outlier).removeNodeIds(nodeIds);
 
 		// Update the container
 		UpdateContainer c = new UpdateContainer();
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 
 		// Update the alignment
-		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
-				vWorksheetId);
+		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
 		try {
+			// Delete the existing history that saves the model
+			if(HistoryJsonUtil.historyExists(worksheet.getTitle(), vWorkspace.getPreferencesId())) {
+				File histFile = new File(HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(worksheet.getTitle(), vWorkspace.getPreferencesId()));
+				if(histFile.exists()) {
+					oldHistoryFileContent = FileUtil.readFileContentsToString(histFile);
+					histFile.delete();
+				}
+			}
+			// Remove the modeling commands from the Command History
+			vWorkspace.getWorkspace().getCommandHistory().removeCommands(CommandTag.Modeling);
+			
 			align.alignAndUpdate(c, true);
 		} catch (Exception e) {
-			logger.error("Error occured while resetting model!",
-					e);
-			return new UpdateContainer(new ErrorUpdate(
-					"Error occured while resetting model!"));
+			logger.error("Error occured while resetting model!", e);
+			return new UpdateContainer(new ErrorUpdate("Error occured while resetting model!"));
 		}
 		c.add(new TagsUpdate());
 		
@@ -161,11 +172,15 @@ public class ResetModelCommand extends Command {
 		// Update the container
 		UpdateContainer c = new UpdateContainer();
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
-
+		
 		// Update the alignment
 		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
 				vWorksheetId);
 		try {
+			// Write the history file content into the history file
+			File histFile = new File(HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(worksheet.getTitle(), vWorkspace.getPreferencesId()));
+			FileUtil.writeStringToFile(oldHistoryFileContent, histFile.getAbsolutePath());
+			
 			align.alignAndUpdate(c, true);
 		} catch (Exception e) {
 			logger.error("Error occured while undoing alignment!",

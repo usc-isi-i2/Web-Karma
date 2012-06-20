@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.command.Command.CommandType;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.UndoRedoCommand;
@@ -273,5 +274,14 @@ public class CommandHistory {
 			if(i != 0)
 				pw.println(prefix + ",");
 		}
+	}
+
+	public void removeCommands(CommandTag tag) {
+		List<Command> commandsToBeRemoved = new ArrayList<Command>();
+		for(Command command: history) {
+			if(command.hasTag(tag))
+				commandsToBeRemoved.add(command);
+		}
+		history.removeAll(commandsToBeRemoved);
 	}
 }
