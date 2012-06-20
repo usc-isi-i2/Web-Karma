@@ -297,6 +297,17 @@ function showSemanticTypeEditOptions() {
     
     $(parentTrTag).addClass("currentEditRow");
     
+    
+    // Automatically select the row 
+    if(!$("input[name='currentSemanticTypeCheckBoxGroup']:checkbox", parentTrTag).is(':checked')) {
+        $("input[name='currentSemanticTypeCheckBoxGroup']:checkbox", parentTrTag).prop('checked', true);
+        $(parentTrTag).addClass("selected");
+        
+        if($("tr.selected", table).length == 1)
+            $("input[name='isPrimaryGroup']:radio", parentTrTag).prop('checked',true);
+    }
+    
+    
     if($(optionsDiv).data("classAndPropertyListJson") == null){
         alert("Class and property list not yet loaded from the server!");
         return false;
