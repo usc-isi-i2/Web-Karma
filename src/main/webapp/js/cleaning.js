@@ -51,7 +51,6 @@ function handleCleanColumnButton() {
 	// Populate the table of cleaning preview table
 	var cleaningTable = $("table#cleaningExamplesTable");
 	$("tr.nonHeading", cleaningTable).remove();
-	$("tr.radioButtons", cleaningTable).remove();
 
 	var res = new Object();
 	$.each(values, function(index, val) {
@@ -67,10 +66,6 @@ function handleCleanColumnButton() {
 	initialResultsValues.push(pac);
 	$("div#columnHeadingDropDownMenu").data("results", initialResultsValues);
 	populateResult(initialResultsValues[0]);
-
-	// Add the radio button row
-	cleaningTable.append($("<tr>").addClass("radioButtons").append($("<td>").addClass("noBorder")).append($("<td>").addClass("noBorder")).append($("<td>").append($("<input>").attr("type", "radio").attr("name", "cleaningRuleSelect").attr("value", "rule0").prop("checked", true))));
-	//add transformation programs into the panel
 
 	//
 	$("div#ColumnCleaningPanel").dialog({
@@ -97,13 +92,16 @@ function populateResult(rdata) {
 	$("div#columnHeadingDropDownMenu").data("transformedResult", transformedResult);
 	// Remove the old results
 	$("td.ruleResultsValue_rest", cleaningTable).remove();
-	$("td.ruleResultsValue_begin", cleaningTable).remove();
-	$("tr.radioButtons", cleaningTable).remove();
+	//$("td.ruleResultsValue_begin", cleaningTable).remove();
 	var data = rdata["data"];
 	$.each(data, function(nodeId, xval) {
 		var trTag = $("tr#" + nodeId + "_cl_row");
 		if(trTag != null) {
 			transformedResult[nodeId] = xval;
+			if(xval == $("div#" + nodeId + "_c").text()) {
+				return true;
+			}
+			$("td.ruleResultsValue_begin", trTag).remove();
 			trTag.append($("<td>").addClass("ruleResultsValue_begin").attr("id", nodeId + "_transformed").append($("<table>").append($("<tr>").append($("<td>").addClass("noinnerBorder").append($("<div>").data("nodeId", nodeId).data("originalVal", $("td#" + nodeId + "_origVal", cleaningTable).text())// set the original value for the example
 			.data("cellValue", xval).addClass("cleanExampleDiv").text(xval)//set the result here
 			.attr("id", nodeId + "_c").editable(function(value, settings) {
@@ -125,7 +123,10 @@ function populateResult(rdata) {
 							delInd = index2;
 					});
 					if(delInd != -1)
+					{
 						examples.splice(delInd, 1);
+						updateResult();
+					}
 				}).qtip({
 					content : {
 						text : 'Undo'
@@ -164,27 +165,54 @@ function populateVariations(data) {
 
 	// Remove the old results
 	$("td.ruleResultsValue_rest", cleaningTable).remove();
-	$("tr.radioButtons", cleaningTable).remove();
 
 	$.each(data, function(nodeId, xval) {
 		var values = Object.keys(xval);
 		$.each(values, function(index, val) {
 			var trTag = $("tr#" + nodeId + "_cl_row");
-			var tdTag = $("td#"+nodeId + "_variations");
-			if(tdTag ==null||tdTag.length==0)
-			{
+			var tdTag = $("td#" + nodeId + "_variations");
+			if(tdTag == null || tdTag.length == 0) {
 				var tdTag = $("<td>").addClass("ruleResultsValue_rest").attr("id", nodeId + "_variations");
 			}
 			if(tdTag != null) {
 				trTag.append(tdTag);
-				tdTag.append($("<input>").data("nodeId",nodeId).data("before",$("td#" + nodeId + "_origVal", cleaningTable).text()).attr("type","button").addClass("suggestion").prop('value', val).click(function() {
+				tdTag.append($("<input>").data("nodeId", nodeId).data("before", $("td#" + nodeId + "_origVal", cleaningTable).text()).attr("type", "button").addClass("suggestion").prop('value', val).click(function() {
 					examples.push({
 						"nodeId" : $(this).data("nodeId"),
 						"before" : $(this).data("before"),
 						"after" : $(this).attr("value")
 					});
-					//update the first row's text
-					$("div#"+nodeId+"_c").text = $(this).attr("value");
+					$("div#" + nodeId + "_c").text($(this).attr("value"));
+					var revertButton = $("<div>").addClass("undoEditButton").button({
+						icons : {
+							primary : 'ui-icon-arrowreturnthick-1-w'
+						},
+						text : false
+					}).click(function() {
+						//editDiv.text(editDiv.data("cellValue"));
+						$(this).remove();
+						// Remove the user provided example from the examples JSON object
+						var delInd = -1;
+						$.each(examples, function(index2, example) {
+							if(example["nodeId"] == $("div#" + nodeId + "_c").data("nodeId"))
+								delInd = index2;
+						});
+						if(delInd != -1)
+						{
+							examples.splice(delInd, 1);
+							updateResult();
+						}
+					}).qtip({
+						content : {
+							text : 'Undo'
+						},
+						style : {
+							classes : 'ui-tooltip-light ui-tooltip-shadow'
+						}
+					});
+					// Remove existing button
+					$("td.noBorder", $("div#" + nodeId + "_c").parent().parent()).remove();
+					$("div#" + nodeId + "_c").parent().parent().append($("<td>").addClass("noBorder").append(revertButton));
 					updateResult();
 					return;
 				}));
@@ -215,11 +243,13 @@ function handleGenerateCleaningRulesButton() {
 		dataType : "json",
 		complete : function(xhr, textStatus) {
 			var json = $.parseJSON(xhr.responseText);
+			hideCleanningWaitingSignOnScreen();
 			parse(json);
 			var tdata = $("div#columnHeadingDropDownMenu").data("results");
 
 		},
 		error : function(xhr, textStatus) {
+			hideCleanningWaitingSignOnScreen();
 			$.sticky("Error generating new cleaning rules!");
 		}
 	});
@@ -240,14 +270,13 @@ function getVaritions(data) {
 			if( nodeId in x) {
 				var dic = x[nodeId];
 				var value = ruleResult[nodeId];
-				if(!( value in Object.keys(dic))&& (value!=top[nodeId])) {
+				if(!( value in Object.keys(dic)) && (value != top[nodeId])) {
 					dic[value] = "" + index;
 				}
-			} else{
+			} else {
 				var value = ruleResult[nodeId];
 				var y = {};
-				if((value!=top[nodeId]))
-				{
+				if((value != top[nodeId])) {
 					y[value] = "" + index;
 					x[nodeId] = y;
 				}
@@ -257,9 +286,9 @@ function getVaritions(data) {
 	//attach data to dom node
 	return x;
 }
+
 //submit the transformed result
-function submit()
-{
+function submit() {
 	var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
 	var selectedHNodeId = columnHeadingMenu.data("parentCellId");
 	var tdTag = $("td#" + selectedHNodeId);
@@ -280,13 +309,14 @@ function submit()
 		complete : function(xhr, textStatus) {
 			var json = $.parseJSON(xhr.responseText);
 			parse(json);
-			console.log("Done parsing!");
+			hideCleanningWaitingSignOnScreen();
 		},
 		error : function(xhr, textStatus) {
 			$.sticky("Error in submitting");
 		}
 	});
 }
+
 //add the choosen value to be a new example
 function addExample(nodeID) {
 
@@ -298,6 +328,10 @@ function updateResult() {
 	var newdata = [];
 	var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
 	var examples = columnHeadingMenu.data("cleaningExamples");
+	if(examples.length == 0)
+	{
+		return;
+	}
 	$.each(data, function(index, pacdata) {
 		var column = pacdata["data"];
 		islegal = true;
@@ -314,6 +348,7 @@ function updateResult() {
 	});
 	//generate rules and apply them to test data
 	if(newdata.length == 0) {
+		showCleanningWaitingSignOnScreen();
 		handleGenerateCleaningRulesButton();
 	} else// use the trimmed data
 	{
@@ -321,4 +356,23 @@ function updateResult() {
 		var pdata = getVaritions(newdata);
 		populateVariations(pdata);
 	}
+}
+
+//wait
+function showCleanningWaitingSignOnScreen() {
+	var coverDiv = $("<div>").attr("id", "WaitingDiv").addClass('waitingDiv').append($("<div>").html('<b>Please wait</b>').append($('<img>').attr("src", "images/ajax-loader.gif")));
+
+	var spaceToCoverDiv = $("div#ColumnCleaningPanel");
+	spaceToCoverDiv.append(coverDiv.css({
+		"position" : "fixed",
+		"height" : $(document).height(),
+		"width" : $(document).width(),
+		"zIndex" : 100,
+		"top" : spaceToCoverDiv.position().top,
+		"left" : spaceToCoverDiv.position().left
+	}).show());
+}
+
+function hideCleanningWaitingSignOnScreen() {
+	$("div#WaitingDiv").hide();
 }
