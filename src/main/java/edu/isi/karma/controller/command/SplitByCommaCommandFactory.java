@@ -22,9 +22,15 @@ package edu.isi.karma.controller.command;
 
 import javax.servlet.http.HttpServletRequest;
 
-import edu.isi.karma.view.VWorkspace;
+import org.json.JSONArray;
+import org.json.JSONException;
 
-public class SplitByCommaCommandFactory extends CommandFactory {
+import edu.isi.karma.controller.history.HistoryJsonUtil;
+import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.KarmaException;
+
+public class SplitByCommaCommandFactory extends CommandFactory implements
+		JSONInputCommandFactory {
 	private enum Arguments {
 		vWorksheetId, hNodeId, delimiter
 	}
@@ -33,20 +39,48 @@ public class SplitByCommaCommandFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
+		String vWorksheetId = request.getParameter(Arguments.vWorksheetId
+				.name());
 		String delimiter = request.getParameter(Arguments.delimiter.name());
-		
+
 		// Convert the delimiter into character primitive type
 		char delimiterChar = ',';
-		if(delimiter.equalsIgnoreCase("space"))
+		if (delimiter.equalsIgnoreCase("space"))
 			delimiterChar = ' ';
-		else if(delimiter.equalsIgnoreCase("tab"))
+		else if (delimiter.equalsIgnoreCase("tab"))
 			delimiterChar = '\t';
 		else {
 			delimiterChar = new Character(delimiter.charAt(0));
 		}
-		
+
 		return new SplitByCommaCommand(getNewId(vWorkspace), getWorksheetId(
 				request, vWorkspace), hNodeId, vWorksheetId, delimiterChar);
+	}
+
+	@Override
+	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
+			throws JSONException, KarmaException {
+		String vWorksheetId = HistoryJsonUtil.getStringValue(
+				Arguments.vWorksheetId.name(), inputJson);
+		String hNodeId = HistoryJsonUtil.getStringValue(
+				Arguments.hNodeId.name(), inputJson);
+		String delimiter = HistoryJsonUtil.getStringValue(
+				Arguments.delimiter.name(), inputJson);
+
+		// Convert the delimiter into character primitive type
+		char delimiterChar = ',';
+		if (delimiter.equalsIgnoreCase("space"))
+			delimiterChar = ' ';
+		else if (delimiter.equalsIgnoreCase("tab"))
+			delimiterChar = '\t';
+		else {
+			delimiterChar = new Character(delimiter.charAt(0));
+		}
+		SplitByCommaCommand comm = new SplitByCommaCommand(
+				getNewId(vWorkspace), vWorkspace.getViewFactory()
+						.getVWorksheet(vWorksheetId).getWorksheetId(), hNodeId,
+				vWorksheetId, delimiterChar);
+		comm.setInputParameterJson(inputJson.toString());
+		return comm;
 	}
 }

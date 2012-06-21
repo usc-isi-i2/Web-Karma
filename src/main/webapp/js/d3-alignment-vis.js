@@ -453,7 +453,7 @@ function changeSemanticType_d3(d, vis, event) {
     
     // Show the dialog box
     var positionArray = [event.clientX+20, event.clientY+10];
-    optionsDiv.dialog({width: 350, position: positionArray, title:columnName
+    optionsDiv.dialog({width: 450, position: positionArray, title:columnName
         , buttons: { 
             "Cancel": function() { $(this).dialog("close"); }, 
             "Submit":submitSemanticTypeChange }
