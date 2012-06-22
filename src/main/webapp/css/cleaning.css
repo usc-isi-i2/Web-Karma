@@ -76,7 +76,7 @@ div.cleanExampleDiv {
 	display: block;
 	min-height: 12px;
 	padding-left: 2px;
-	width: 150px;
+	/*width: 150px;*/
 }
 
 table.cleaningExampleDivTable td {

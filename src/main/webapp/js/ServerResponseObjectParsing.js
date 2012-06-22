@@ -793,6 +793,10 @@ function parse(data) {
 		else if(element["updateType"] == "CleaningResultUpdate") {
             if(element["result"] != null) {
             		//var pdata = getVaritions(element["result"]);
+            		if(element["result"].length==0)
+            		{
+            			alert("Cannot find any transformations! Please check your examples!");
+            		}
             		var topCol = element["result"][0];
 				populateResult(topCol);
 				var pdata = getVaritions(element["result"]);
