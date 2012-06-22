@@ -218,6 +218,7 @@
   </configuration>
 -->
       </plugin>
+      <!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -229,6 +230,7 @@
           <mainClass>edu.isi.karma.webserver.ServerStart</mainClass>
         </configuration>
       </plugin>
+    -->
     </plugins>
   </build>
   

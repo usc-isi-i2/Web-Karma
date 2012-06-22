@@ -66,6 +66,8 @@ public class SplitByCommaCommand extends WorksheetCommand {
 		this.hNodeId = hNodeId;
 		this.vWorksheetId = vWorksheetId;
 		this.delimiter = delimiter;
+		
+		// addTag(CommandTag.Modeling);
 	}
 
 	@Override
