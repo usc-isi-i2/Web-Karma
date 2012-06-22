@@ -130,6 +130,8 @@ public class SemanticTypeUtil {
 			boolean semanticTypeAdded = false;
 			ArrayList<String> trainingExamples = getTrainingExamples(worksheet,
 					path);
+			if (trainingExamples.size() == 0)
+				continue;
 
 			Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
 
