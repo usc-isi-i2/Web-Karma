@@ -1,6 +1,7 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,6 +60,8 @@ public class GetPropertiesAndClassesList extends Command {
 		JSONArray classesMap = new JSONArray();
 		JSONArray propertiesList = new JSONArray();
 		JSONArray propertiesMap = new JSONArray();
+		
+		Map<String, String> prefixMap = vWorkspace.getWorkspace().getOntologyManager().getPrefixMap();
 
 		ExtendedIterator<OntClass> iter = ontMgr.getOntModel()
 				.listNamedClasses();
@@ -69,17 +72,24 @@ public class GetPropertiesAndClassesList extends Command {
 		try {
 			while (iter.hasNext()) {
 				OntClass cls = iter.next();
-				classesList.put(cls.getLocalName());
+				
+				String pr = prefixMap.get(cls.getNameSpace());
+				String clsStr = (pr != null && !pr.equals("")) ? pr + ":" + cls.getLocalName() : cls.getLocalName();
+				
+				classesList.put(clsStr);
 				JSONObject classKey = new JSONObject();
-				classKey.put(cls.getLocalName(), cls.getURI());
+				classKey.put(clsStr, cls.getURI());
 				classesMap.put(classKey);
 			}
 
 			while (propsIter.hasNext()) {
 				DatatypeProperty prop = propsIter.next();
-				propertiesList.put(prop.getLocalName());
+				String pr = prefixMap.get(prop.getNameSpace());
+				String propStr = (pr != null && !pr.equals("")) ? pr + ":" + prop.getLocalName() : prop.getLocalName(); 
+				
+				propertiesList.put(propStr);
 				JSONObject propKey = new JSONObject();
-				propKey.put(prop.getLocalName(), prop.getURI());
+				propKey.put(propStr, prop.getURI());
 				propertiesMap.put(propKey);
 			}
 

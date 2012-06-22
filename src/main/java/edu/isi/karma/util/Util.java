@@ -47,7 +47,7 @@ public class Util {
 		Object[] sortedArray = sortedSet.toArray();
 		
 		int size = sortedArray.length;
-		for (int i = 0; i < size; i++) {
+		for (int i = size-1; i >= 0; i--) {
 			sortedMap.put(mapKeys.get(mapValues.indexOf(sortedArray[i])),
 					(Double) sortedArray[i]);
 		}

@@ -32,8 +32,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.isi.mediator.gav.main.MediatorException;
-import edu.isi.mediator.simplegraph.SimpleGraph;
 import edu.isi.mediator.gav.util.MediatorLogger;
+import edu.isi.mediator.simplegraph.SimpleGraph;
 
 
 /**

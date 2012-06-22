@@ -25,6 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -171,6 +172,63 @@ public class JSONUtil {
 			e.printStackTrace();
 			return "not JSON";
 		}
+	}
+	
+	public static boolean compareJSONObjects(Object obj1, Object obj2) throws JSONException {
+		if(obj1 instanceof JSONArray && obj2 instanceof JSONArray) {
+			JSONArray a1 = (JSONArray) obj1;
+			JSONArray a2 = (JSONArray) obj2;
+			
+			if(a1.length() != a2.length())
+				return false;
+			
+			for (int i=0; i<a1.length(); i++) {
+				Object a = a1.get(i);
+				Object b = a2.get(i);
+				
+				if(!compareJSONObjects(a, b))
+					return false;
+			}
+			
+		} else if (obj1 instanceof JSONObject && obj2 instanceof JSONObject) {
+			JSONObject a1 = (JSONObject) obj1;
+			JSONObject a2 = (JSONObject) obj2;
+			
+			if(a1.length() != a2.length())
+				return false;
+			
+			@SuppressWarnings("rawtypes")
+			Iterator keys = a1.keys();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				Object val1 = a1.get(key);
+				Object val2 = null;
+				try {
+					val2 = a2.get(key); 
+				} catch (JSONException e) {
+					return false;
+				}
+				if(!compareJSONObjects(val1, val2))
+					return false;
+			}
+			
+		} else if (obj1 instanceof String && obj2 instanceof String) {
+			return obj1.toString().equals(obj2.toString());
+		} else if (obj1 instanceof Integer && obj2 instanceof Integer) {
+			return (Integer)obj1 == (Integer)obj2;
+		} else if (obj1 instanceof Double && obj2 instanceof Double) {
+			return (Double)obj1 == (Double)obj2;
+		} else if (obj1 instanceof Long && obj2 instanceof Long) {
+			return (Long)obj1 == (Long)obj2;
+		} else if (obj1 instanceof Boolean && obj2 instanceof Boolean) {
+			return (Boolean)obj1 == (Boolean)obj2;
+		} else if (obj1 == JSONObject.NULL && obj2 == JSONObject.NULL) {
+			return true;
+		}
+		else
+			return false;
+		
+		return true;
 	}
 
 	public static void writeJsonFile(Object o, String name) {

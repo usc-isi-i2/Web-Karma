@@ -23,9 +23,7 @@ package edu.isi.karma.rep.cleaning;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.Vector;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 

@@ -184,7 +184,7 @@ function sendImportSourceRequest() {
 	info["ServiceUrl"] = $.trim($("#ServiceUrl").val());
 	info["sourceName"] = $(this).parents("tr").data("sourceName");
 	info["commandType"] = "ImportSource";
-		
+    showWaitingSignOnScreen();
 	var returned = $.ajax({
 	   	url: "/RequestController", 
 	   	type: "POST",
@@ -204,6 +204,7 @@ function sendImportSourceRequest() {
 				
 				if(flag != -1) {
 					parse(json);
+					hideWaitingSignOnScreen();
     				alert("Source imported in workspace!");
 				}
     			
@@ -211,6 +212,7 @@ function sendImportSourceRequest() {
 		error :
 			function (xhr, textStatus) {
 	   			alert("Error occured with fetching new rows! " + textStatus);
+	   			hideWaitingSignOnScreen();
 		   	}		   
 	});
 }

@@ -18,8 +18,10 @@ import org.slf4j.LoggerFactory;
 import de.micromata.opengis.kml.v_2_2_0.AltitudeMode;
 import de.micromata.opengis.kml.v_2_2_0.Coordinate;
 import de.micromata.opengis.kml.v_2_2_0.Folder;
+import de.micromata.opengis.kml.v_2_2_0.Icon;
 import de.micromata.opengis.kml.v_2_2_0.Kml;
 import de.micromata.opengis.kml.v_2_2_0.KmlFactory;
+import de.micromata.opengis.kml.v_2_2_0.Style;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
@@ -54,6 +56,8 @@ public class WorksheetGeospatialContent {
 	private enum CoordinateCase {
 		POINT_LAT_LNG, POINT_POS, LINE_POS_LIST, POLYGON_POS_LIST, NOT_PRESENT
 	}
+	
+	private static int randomCounter = 0;
 
 	public WorksheetGeospatialContent(Worksheet worksheet) {
 		this.worksheet = worksheet;
@@ -241,10 +245,18 @@ public class WorksheetGeospatialContent {
 		final Folder folder = kml.createAndSetFolder()
 				.withName(worksheet.getTitle()).withOpen(true);
 
+		Style style = folder.createAndAddStyle().withId("karma");
+		
+		if(randomCounter++%2 == 0)
+			style.createAndSetIconStyle().withScale(1.399999976158142).withIcon(new Icon().withHref("http://maps.google.com/mapfiles/ms/icons/blue-pushpin.png"));
+		else
+			style.createAndSetIconStyle().withScale(1.399999976158142).withIcon(new Icon().withHref("http://maps.google.com/mapfiles/ms/icons/red-pushpin.png"));
+
 		for (Point point : points) {
 			folder.createAndAddPlacemark()
 					.withDescription(point.getHTMLDescription())
 					.withVisibility(true)
+					.withStyleUrl("karma")
 					.createAndSetPoint()
 					.withAltitudeMode(AltitudeMode.CLAMP_TO_GROUND)
 					.addToCoordinates(

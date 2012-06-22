@@ -340,10 +340,11 @@ and related projects, please see: http://www.isi.edu/integration
 			<div id="tablesWorkspace"></div>
 		</div>
 		<div id="columnHeadingDropDownMenu" class="ui-corner-all" style="display: none">
+			<button href="#" id="splitByComma">Split Column</button>
 			<button id="cleanColumnButton">Transform</button>
-			<button id="renameColumnButton">Rename</button>
+			<button id="renameColumnButton" style="display: none">Rename</button>
 			<button id="invokeServiceButton">Invoke Service</button>
-			<button id="hideColumnButton">Hide</button>
+			<button id="hideColumnButton" style="display: none">Hide</button>
 		</div>
 		<div id="tableCellToolBarMenu" class="ui-corner-all" style="display: none">
 			<button id="editCellButton">Edit</button>
@@ -415,23 +416,23 @@ and related projects, please see: http://www.isi.edu/integration
 						</td>
 						<td>
 							Host Name:
-							<input type="textarea" id="DatabaseHostName" value="karma1.isi.edu" class="DatabaseImportOption" maxlength="40" size="10"/>
+							<input type="textarea" id="DatabaseHostName" value="localhost" class="DatabaseImportOption" maxlength="40" size="10"/>
 						</td>
 						<td>
 							Port Number:
-							<input type="textarea" id="DatabasePortNumber" value="1433" class="DatabaseImportOption" maxlength="6" size="5"/>
+							<input type="textarea" id="DatabasePortNumber" value="" class="DatabaseImportOption" maxlength="6" size="5"/>
 						</td>
 						<td>
 							Username:
-							<input type="textarea" id="DatabaseUsername" value="karma" class="DatabaseImportOption" maxlength="20" size="10"/>
+							<input type="textarea" id="DatabaseUsername" value="" class="DatabaseImportOption" maxlength="20" size="10"/>
 						</td>
 						<td>
 							Password:
-							<input type="password" id="DatabasePassword" value="k@rm@" class="DatabaseImportOption" maxlength="20" size="10"/>
+							<input type="password" id="DatabasePassword" value="" class="DatabaseImportOption" maxlength="20" size="10"/>
 						</td>
 						<td id="DBNameCell">
 							<span>Database Name:</span>
-							<input type="textarea" id="DatabaseName" value="smithsonian" class="DatabaseImportOption" maxlength="20" size="10"/>
+							<input type="textarea" id="DatabaseName" value="" class="DatabaseImportOption" maxlength="20" size="10"/>
 						</td>
 						<td>
 							<button id="DatabaseImportFieldsButton" type="button">OK</button>
@@ -529,13 +530,12 @@ and related projects, please see: http://www.isi.edu/integration
 			<button href="#" id="showModel">Show Model</button>
 			<button href="#" id="hideModel">Hide Model</button>
 			<button href="#" id="resetModel">Reset Model</button>
-			<button href="#" id="splitByComma">Split Column By Comma</button>
 			<button href="#" id="publishRDF">Publish RDF</button>
 			<button href="#" id="publishDatabase">Publish Database</button>
 			<button href="#" id="populateSource">Populate Source</button>
 			<button href="#" id="publishServiceModel">Publish Model</button>
-			<button href="#" id="publishWorksheetHistory">Publish Worksheet History</button>
-			<button href="#" id="applyWorksheetHistory">Apply Worksheet History</button>
+			<button href="#" id="publishWorksheetHistory" style="display: none">Publish Worksheet History</button>
+			<button href="#" id="applyWorksheetHistory" style="display: none">Apply Worksheet History</button>
 		</div>
 		<div id="ChangeSemanticTypesDialogBox" style="display: none">
 			<div id="CurrentSemanticTypesBox" class="ui-corner-all">
@@ -580,8 +580,10 @@ and related projects, please see: http://www.isi.edu/integration
 			<table id="AlternativeParentLinksTable"></table>
 		</div>
 		<div id="SplitByCommaColumnListPanel" style="display: none">
-			<span class="mediumSizedFont">Choose column:</span>
-			<select id="splitByCommaColumnList"></select>
+			<span class="smallSizedFont">Specify character delimiter:</span>
+			<input class="smallSizedFont" type="text" id="columnSplitDelimiter" value="," maxlength="5" size="5"/></br>
+			<span class="smallSizedFont">Enter "space" to use single space</span></br>
+			<span class="smallSizedFont">Enter "tab" to use tab</span>
 		</div>
 		<div id="tableCellMenuButtonDiv" style="display: none"></div>
 		<div id="columnHeadingMenuButtonDiv" style="display: none"></div>
@@ -641,15 +643,15 @@ and related projects, please see: http://www.isi.edu/integration
 			</tr>
 			<tr>
 			<td><input type="text" id="hostName1" value="localhost" maxlength="100" size="20"/></td>
-			<td><input type="text" id="port" value="3306" maxlength="100" size="20"/></td>
+			<td><input type="text" id="port" value="" maxlength="100" size="20"/></td>
 			</tr>
 			<tr>
 				<td>Database Name</td>
 				<td>Table Name</td>
 			</tr>
 			<tr>
-				<td><input type="text" id="dbName1" value= "test" maxlength="100" size="20"/></td>
-				<td><input type="text" id="tableName" value="tabtest1" maxlength="100" size="20"/></td>
+				<td><input type="text" id="dbName1" value= "" maxlength="100" size="20"/></td>
+				<td><input type="text" id="tableName" value="" maxlength="100" size="20"/></td>
 			</tr>
 			<tr>
 				<td>User Name</td>

@@ -35,9 +35,9 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.alignment.GraphPreProcess;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.modeling.alignment.SteinerTree;
+import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.alignment.Vertex;
 
 public class Service {

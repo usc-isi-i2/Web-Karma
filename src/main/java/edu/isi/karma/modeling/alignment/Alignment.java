@@ -78,6 +78,10 @@ public class Alignment {
 		
 	}
 	
+	public List<LabeledWeightedEdge> getLinksForcedByUser() {
+		return linksForcedByUser;
+	}
+	
 	public Alignment(OntologyManager ontologyManager, List<SemanticType> semanticTypes, boolean separateDomainInstancesForSameDataProperties) {
 		this.ontologyManager = ontologyManager;
 		this.separateDomainInstancesForSameDataProperties = separateDomainInstancesForSameDataProperties;
@@ -359,7 +363,7 @@ public class Alignment {
 		if (this.steinerTree == null)
 			align();
 		
-		GraphUtil.printGraph(this.steinerTree);
+		// GraphUtil.printGraph(this.steinerTree);
 		return this.steinerTree;
 	}
 

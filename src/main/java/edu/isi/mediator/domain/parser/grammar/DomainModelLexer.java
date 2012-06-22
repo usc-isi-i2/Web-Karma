@@ -22,7 +22,18 @@ package edu.isi.mediator.domain.parser.grammar;
 
 // $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\Documents and Settings\\mariam\\My Documents\\mediator-new\\workspace\\domainparser\\DomainModel.g 2011-07-20 11:01:07
 
-import org.antlr.runtime.*;
+import org.antlr.runtime.BaseRecognizer;
+import org.antlr.runtime.BitSet;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.DFA;
+import org.antlr.runtime.EarlyExitException;
+import org.antlr.runtime.IntStream;
+import org.antlr.runtime.Lexer;
+import org.antlr.runtime.MismatchedSetException;
+import org.antlr.runtime.MismatchedTokenException;
+import org.antlr.runtime.NoViableAltException;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.RecognizerSharedState;
 
 public class DomainModelLexer extends Lexer {
     public static final int GLAV_RULES=9;

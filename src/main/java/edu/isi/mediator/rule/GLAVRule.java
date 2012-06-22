@@ -22,8 +22,6 @@
 package edu.isi.mediator.rule;
 
 
-import edu.isi.mediator.rule.Predicate;
-import edu.isi.mediator.rule.Rule;
 
 
 /**

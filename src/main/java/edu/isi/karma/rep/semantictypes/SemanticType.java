@@ -21,6 +21,7 @@
 package edu.isi.karma.rep.semantictypes;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import edu.isi.karma.modeling.alignment.URI;
@@ -41,20 +42,9 @@ public class SemanticType implements Jsonizable {
 	public enum ConfidenceLevel {
 		High, Medium, Low
 	}
-
-	public SemanticType(String hNodeId, URI type, Origin origin, Double probability, boolean isPartOfKey) {
-		this.hNodeId = hNodeId;
-		this.type = type;
-		this.origin = origin;
-		this.domain = null;
-		this.isPartOfKey = isPartOfKey;
-		
-		if(probability > 0.8)
-			confidenceLevel = ConfidenceLevel.High;
-		else if (probability < 0.8 && probability > 0.4)
-			confidenceLevel = ConfidenceLevel.Medium;
-		else
-			confidenceLevel = ConfidenceLevel.Low;
+	
+	public enum ClientJsonKeys {
+		isPrimary, Domain, FullType
 	}
 	
 	public SemanticType(String hNodeId, URI type, URI domain, Origin origin, Double probability, boolean isPartOfKey) {
@@ -88,6 +78,20 @@ public class SemanticType implements Jsonizable {
 		return origin;
 	}
 
+	@Override
+	public String toString() {
+		if (isClass())
+			return "SemanticType [hNodeId=" + hNodeId + ", type=" + type.getUriString()
+				+ ", origin=" + origin
+				+ ", isPartOfKey=" + isPartOfKey + ", confidenceLevel="
+				+ confidenceLevel + "]";
+		else
+			return "SemanticType [hNodeId=" + hNodeId + ", type=" + type.getUriString()
+					+ ", domain=" + domain.getUriString() + ", origin=" + origin
+					+ ", isPartOfKey=" + isPartOfKey + ", confidenceLevel="
+					+ confidenceLevel + "]";
+	}
+
 	//mariam
 	/**
 	 * Returns true if this type is a Class; false if it is a data property.
@@ -106,6 +110,17 @@ public class SemanticType implements Jsonizable {
 
 	public boolean isPartOfKey() {
 		return isPartOfKey;
+	}
+	
+	public JSONObject getJSONArrayRepresentation() throws JSONException {
+		JSONObject typeObj = new JSONObject();
+		typeObj.put(ClientJsonKeys.FullType.name(), type.getUriString());
+		if(isClass())
+			typeObj.put(ClientJsonKeys.Domain.name(), "");
+		else
+			typeObj.put(ClientJsonKeys.Domain.name(), domain.getUriString());
+		typeObj.put(ClientJsonKeys.isPrimary.name(), isPartOfKey);
+		return typeObj;
 	}
 
 	@Override

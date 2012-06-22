@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
 
-import edu.isi.karma.cleaning.Alignment;
 import edu.isi.karma.cleaning.EditOper;
 import edu.isi.karma.cleaning.NonterminalValidator;
 import edu.isi.karma.cleaning.RuleUtil;

@@ -61,17 +61,27 @@ public class CommandHistoryWriter {
 						inpP.put(ClientJsonKeys.value.name(), hNodeRepresentation);
 					
 					} else if (HistoryJsonUtil.getParameterType(inpP) == ParameterType.vWorksheetId) {
-						// do nothing now
-					
+						inpP.put(ClientJsonKeys.value.name(), "VW");
 					} else {
 						// do nothing
 					}
 				}
 				commObj.put(HistoryArguments.inputParameters.name(), inputArr);
-				commArr.put(commObj);
+				 if(!commandAlreadyexists(commArr, commObj))
+					commArr.put(commObj);
 			}
 //			System.out.println(commArr.toString(4));
 			JSONUtil.writeJsonFile(commArr, HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(wkName, vWorkspace.getPreferencesId()));
 		}
+	}
+	
+	private boolean commandAlreadyexists(JSONArray commArr, JSONObject commObj1) throws JSONException {
+		for (int i = 0; i< commArr.length(); i++) {
+			JSONObject commObj2 = (JSONObject) commArr.get(i);
+			if (JSONUtil.compareJSONObjects(commObj1, commObj2)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

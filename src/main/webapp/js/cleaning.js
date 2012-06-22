@@ -137,6 +137,7 @@ function populateResult(rdata) {
 				});
 				// Remove existing button
 				$("td.noBorder", $(this).parent().parent()).remove();
+				updateResult();
 				$(this).parent().parent().append($("<td>").addClass("noBorder").append(revertButton));
 
 				examples.push({
@@ -145,7 +146,6 @@ function populateResult(rdata) {
 					"after" : value
 				});
 				//call the update result function
-				updateResult();
 				return (value);
 			}, {
 				type : 'textarea',
@@ -308,8 +308,8 @@ function submit() {
 		dataType : "json",
 		complete : function(xhr, textStatus) {
 			var json = $.parseJSON(xhr.responseText);
-			parse(json);
 			hideCleanningWaitingSignOnScreen();
+			parse(json);
 		},
 		error : function(xhr, textStatus) {
 			$.sticky("Error in submitting");
@@ -328,6 +328,7 @@ function updateResult() {
 	var newdata = [];
 	var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
 	var examples = columnHeadingMenu.data("cleaningExamples");
+	console.log(examples)
 	if(examples.length == 0)
 	{
 		return;

@@ -20,8 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.FetchPreferencesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;

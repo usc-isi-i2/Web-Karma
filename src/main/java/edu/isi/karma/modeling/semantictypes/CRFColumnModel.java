@@ -29,6 +29,8 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
+import edu.isi.karma.modeling.alignment.URI;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.util.Jsonizable;
 import edu.isi.karma.util.Util;
 
@@ -64,7 +66,7 @@ public class CRFColumnModel implements Jsonizable {
 		writer.endObject();
 	}
 
-	public JSONObject getAsJSONObject() throws JSONException {
+	public JSONObject getAsJSONObject(OntologyManager ontMgr) throws JSONException {
 		JSONObject obj = new JSONObject();
 		JSONArray arr = new JSONArray();
 
@@ -76,13 +78,20 @@ public class CRFColumnModel implements Jsonizable {
 			
 			// Check if the type contains domain
 			if(label.contains("|")){
-				oj.put(SemanticTypesUpdate.JsonKeys.DisplayDomainLabel.name(), SemanticTypeUtil.removeNamespace(label.split("\\|")[0]));
+				URI domainURI = ontMgr.getURIFromString(label.split("\\|")[0]);
+				URI typeURI = ontMgr.getURIFromString(label.split("\\|")[1]);
+				if(domainURI == null || typeURI == null)
+					continue;
+				oj.put(SemanticTypesUpdate.JsonKeys.DisplayDomainLabel.name(), domainURI.getLocalNameWithPrefixIfAvailable());
 				oj.put(SemanticTypesUpdate.JsonKeys.Domain.name(), label.split("\\|")[0]);
-				oj.put(SemanticTypesUpdate.JsonKeys.DisplayLabel.name(), SemanticTypeUtil.removeNamespace(label.split("\\|")[1]));
+				oj.put(SemanticTypesUpdate.JsonKeys.DisplayLabel.name(), typeURI.getLocalNameWithPrefixIfAvailable());
 				oj.put(SemanticTypesUpdate.JsonKeys.FullType.name(), label.split("\\|")[1]);
 			} else {
+				URI typeURI = ontMgr.getURIFromString(label);
+				if(typeURI == null)
+					continue;
 				oj.put(SemanticTypesUpdate.JsonKeys.FullType.name(), label);
-				oj.put(SemanticTypesUpdate.JsonKeys.DisplayLabel.name(), SemanticTypeUtil.removeNamespace(label));
+				oj.put(SemanticTypesUpdate.JsonKeys.DisplayLabel.name(), typeURI.getLocalNameWithPrefixIfAvailable());
 				oj.put(SemanticTypesUpdate.JsonKeys.DisplayDomainLabel.name(), "");
 				oj.put(SemanticTypesUpdate.JsonKeys.Domain.name(), "");
 			}

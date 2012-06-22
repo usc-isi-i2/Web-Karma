@@ -20,16 +20,13 @@
  ******************************************************************************/
 package edu.isi.karma.rep.cleaning;
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.Vector;
 
-import au.com.bytecode.opencsv.CSVReader;
-import edu.isi.karma.cleaning.*;
+import edu.isi.karma.cleaning.EditOper;
+import edu.isi.karma.cleaning.RuleUtil;
 
 public class RamblerTransformationOutput implements TransformationOutput {
 
@@ -40,9 +37,13 @@ public class RamblerTransformationOutput implements TransformationOutput {
 	{
 		this.input = input;
 		transformations = new HashMap<String,Transformation>();
-		this.learnTransformation();
+		try {		
+			this.learnTransformation();
+		} catch (Exception e) {
+			System.out.println("Exception in learning transformations");
+		}
 	}
-	private void learnTransformation()
+	private void learnTransformation() throws Exception
 	{
 		Collection<TransformationExample> exs =  input.getExamples();
 		Vector<String[]> exps = new Vector<String[]>();
@@ -56,8 +57,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		Vector<String> trans = RuleUtil.genRule(exps);
 		if(trans == null)
 		{
-			System.err.println("Error happens in generating rules");
-			System.exit(1);
+			return;
 		}
 		for(int i = 0; i<trans.size(); i++)
 		{

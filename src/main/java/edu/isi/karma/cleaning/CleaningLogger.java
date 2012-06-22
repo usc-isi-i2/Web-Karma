@@ -1,6 +1,7 @@
 package edu.isi.karma.cleaning;
-import java.util.Vector;
-import java.util.logging.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CleaningLogger {
 	static private FileHandler fileTxt;

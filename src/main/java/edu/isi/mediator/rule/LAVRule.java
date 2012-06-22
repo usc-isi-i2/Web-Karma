@@ -25,10 +25,6 @@ import java.util.ArrayList;
 
 import edu.isi.mediator.domain.parser.LAVRuleParser;
 import edu.isi.mediator.gav.main.MediatorException;
-import edu.isi.mediator.rule.BuiltInPredicate;
-import edu.isi.mediator.rule.Predicate;
-import edu.isi.mediator.rule.RelationPredicate;
-import edu.isi.mediator.rule.Rule;
 
 /**
  * @author Maria Muslea(USC/ISI)

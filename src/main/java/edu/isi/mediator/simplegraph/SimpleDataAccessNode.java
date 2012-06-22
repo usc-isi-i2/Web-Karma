@@ -21,8 +21,9 @@
 
 package edu.isi.mediator.simplegraph;
 
-import java.util.*;
+import java.util.ArrayList;
 
+import edu.isi.mediator.domain.SourceAttribute;
 import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.gav.util.MediatorConstants;
 import edu.isi.mediator.rule.ConstTerm;
@@ -30,7 +31,6 @@ import edu.isi.mediator.rule.FunctionTerm;
 import edu.isi.mediator.rule.RelationPredicate;
 import edu.isi.mediator.rule.Term;
 import edu.isi.mediator.rule.VarTerm;
-import edu.isi.mediator.domain.SourceAttribute;
 
 public class SimpleDataAccessNode extends SimpleBaseNode
 {

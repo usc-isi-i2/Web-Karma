@@ -2,22 +2,21 @@
 
   // We want the generated parser class to be in this package.
   package edu.isi.karma.cleaning.changed_grammar;
-  import edu.isi.karma.cleaning.*;
-  import java.util.Map;
-  import java.util.TreeMap;
-  import java.util.Collections;
-  import java.util.HashMap; 
-  import java.util.Iterator;
-  import java.util.ListIterator;
-  import java.util.StringTokenizer;
   import java.util.Vector;
 
+import org.antlr.runtime.BitSet;
+import org.antlr.runtime.NoViableAltException;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.RecognizerSharedState;
+import org.antlr.runtime.tree.CommonTree;
+import org.antlr.runtime.tree.CommonTreeAdaptor;
+import org.antlr.runtime.tree.TreeAdaptor;
+import org.antlr.runtime.tree.TreeNodeStream;
+import org.antlr.runtime.tree.TreeParser;
+import org.antlr.runtime.tree.TreeRuleReturnScope;
 
-import org.antlr.runtime.*;
-import org.antlr.runtime.tree.*;
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
+import edu.isi.karma.cleaning.Ruler;
+import edu.isi.karma.cleaning.TNode;
 
 
 @SuppressWarnings({"all", "warnings", "unchecked"})

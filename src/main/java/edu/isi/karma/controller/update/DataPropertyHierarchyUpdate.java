@@ -22,6 +22,7 @@ package edu.isi.karma.controller.update;
 
 import java.io.PrintWriter;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.json.JSONArray;
@@ -57,18 +58,16 @@ public class DataPropertyHierarchyUpdate extends AbstractUpdate {
 			VWorkspace vWorkspace) {
 		Set<String> propertiesAdded = new HashSet<String>();
 
-		ExtendedIterator<DatatypeProperty> propsIter = model
-				.listDatatypeProperties();
+		ExtendedIterator<DatatypeProperty> propsIter = model.listDatatypeProperties();
+		Map<String, String> prefixMap = vWorkspace.getWorkspace().getOntologyManager().getPrefixMap();
 
 		try {
 			JSONArray dataArray = new JSONArray();
 
 			while (propsIter.hasNext()) {
 				DatatypeProperty prop = propsIter.next();
-//				System.out.println(prop.getURI());
 				if ((prop.listSuperProperties().toList().size() != 0)
-						|| propertiesAdded.contains(prop.getLocalName())) {
-//					System.out.println("Skipping " + prop.getURI());
+						|| propertiesAdded.contains(prop.getURI())) {
 					continue;
 				}
 
@@ -76,13 +75,17 @@ public class DataPropertyHierarchyUpdate extends AbstractUpdate {
 
 				if (prop.listSubProperties().toList().size() != 0) {
 					JSONArray childrenArray = new JSONArray();
-					addSubclassChildren(prop, childrenArray, 0, propertiesAdded);
+					addSubclassChildren(prop, childrenArray, 0, propertiesAdded, prefixMap);
 					classObject.put(JsonKeys.children.name(), childrenArray);
 				}
 
-				classObject.put(JsonKeys.data.name(), prop.getLocalName());
+				String pr = prefixMap.get(prop.getNameSpace());
+				if(pr != null && !pr.equals(""))
+					classObject.put(JsonKeys.data.name(), pr + ":" + prop.getLocalName());
+				else
+					classObject.put(JsonKeys.data.name(), prop.getLocalName());
 
-				propertiesAdded.add(prop.getLocalName());
+				propertiesAdded.add(prop.getURI());
 
 				JSONObject metadataObject = new JSONObject();
 				metadataObject.put(JsonKeys.URI.name(), prop.getURI());
@@ -96,14 +99,14 @@ public class DataPropertyHierarchyUpdate extends AbstractUpdate {
 					"DataPropertyListUpdate");
 			outputObject.put(JsonKeys.data.name(), dataArray);
 
-			pw.println(outputObject.toString(4));
+			pw.println(outputObject.toString());
 		} catch (JSONException e) {
 			logger.error("Error occured while creating JSON!", e);
 		}
 	}
 
 	private static void addSubclassChildren(OntProperty prop,
-			JSONArray childrenArray, int level, Set<String> propertiesAdded)
+			JSONArray childrenArray, int level, Set<String> propertiesAdded, Map<String, String> prefixMap)
 			throws JSONException {
 
 		ExtendedIterator<? extends OntProperty> subProperties = prop
@@ -114,11 +117,16 @@ public class DataPropertyHierarchyUpdate extends AbstractUpdate {
 				continue;
 			}
 			
-//			System.out.println("Working with sub prop " + subProp.getURI() + " at level " + level);
-			propertiesAdded.add(subProp.getLocalName());
+			propertiesAdded.add(subProp.getURI());
 
 			JSONObject classObject = new JSONObject();
-			classObject.put(JsonKeys.data.name(), subProp.getLocalName());
+			
+			String pr = prefixMap.get(prop.getNameSpace());
+			if(pr != null && !pr.equals(""))
+				classObject.put(JsonKeys.data.name(), pr + ":" + subProp.getLocalName());
+			else
+				classObject.put(JsonKeys.data.name(), subProp.getLocalName());
+			
 			JSONObject metadataObject = new JSONObject();
 			metadataObject.put(JsonKeys.URI.name(), subProp.getURI());
 			classObject.put(JsonKeys.metadata.name(), metadataObject);
@@ -126,7 +134,7 @@ public class DataPropertyHierarchyUpdate extends AbstractUpdate {
 			if (subProp.listSubProperties().toList().size() != 0) {
 				JSONArray childrenArraySubClass = new JSONArray();
 				addSubclassChildren(subProp, childrenArraySubClass, level + 1,
-						propertiesAdded);
+						propertiesAdded, prefixMap);
 				classObject
 						.put(JsonKeys.children.name(), childrenArraySubClass);
 			}

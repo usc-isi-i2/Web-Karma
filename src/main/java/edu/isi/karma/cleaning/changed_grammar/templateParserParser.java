@@ -1,19 +1,18 @@
 // $ANTLR 3.4 templateParser.g 2012-06-03 21:17:10
 
 package edu.isi.karma.cleaning.changed_grammar;
-import edu.isi.karma.cleaning.*;
-import edu.isi.karma.cleaning.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import org.antlr.runtime.BitSet;
+import org.antlr.runtime.NoViableAltException;
+import org.antlr.runtime.Parser;
+import org.antlr.runtime.ParserRuleReturnScope;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.RecognizerSharedState;
+import org.antlr.runtime.Token;
+import org.antlr.runtime.TokenStream;
+import org.antlr.runtime.tree.CommonTreeAdaptor;
+import org.antlr.runtime.tree.TreeAdaptor;
 
-
-import org.antlr.runtime.*;
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
-
-import org.antlr.runtime.tree.*;
+import edu.isi.karma.cleaning.GrammarTreeNode;
 
 
 @SuppressWarnings({"all", "warnings", "unchecked"})

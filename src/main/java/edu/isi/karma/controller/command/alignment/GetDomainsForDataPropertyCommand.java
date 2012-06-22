@@ -34,8 +34,8 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.OntologyClassHierarchyUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetDomainsForDataPropertyCommand extends Command {
@@ -76,7 +76,7 @@ public class GetDomainsForDataPropertyCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+		final OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
 		final List<String> domains = ontMgr.getDomainsGivenProperty(
 				dataPropertyURI, true);
 
@@ -92,28 +92,26 @@ public class GetDomainsForDataPropertyCommand extends Command {
 					VWorkspace vWorkspace) {
 				JSONObject outputObject = new JSONObject();
 				try {
-					outputObject.put(JsonKeys.updateType.name(),
-							"DomainsForDataPropertyUpdate");
+					outputObject.put(JsonKeys.updateType.name(), "DomainsForDataPropertyUpdate");
 
 					JSONArray dataArray = new JSONArray();
-
 					for (String domain : domains) {
 						JSONObject classObject = new JSONObject();
 
-						String displayName = SemanticTypeUtil
-								.removeNamespace(domain);
-						classObject.put(JsonKeys.data.name(), displayName);
+						URI domainURI = ontMgr.getURIFromString(domain);
+						if(domainURI == null)
+							continue;
+						classObject.put(JsonKeys.data.name(), domainURI.getLocalNameWithPrefixIfAvailable());
 
 						JSONObject metadataObject = new JSONObject();
 						metadataObject.put(JsonKeys.URI.name(), domain);
-						classObject.put(JsonKeys.metadata.name(),
-								metadataObject);
+						classObject.put(JsonKeys.metadata.name(), metadataObject);
 
 						dataArray.put(classObject);
 					}
 					outputObject.put(JsonKeys.data.name(), dataArray);
 
-					pw.println(outputObject.toString(4));
+					pw.println(outputObject.toString());
 				} catch (JSONException e) {
 					logger.error("Error occured while generating JSON!");
 				}

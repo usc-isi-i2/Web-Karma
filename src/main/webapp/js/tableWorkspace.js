@@ -42,7 +42,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		info["vWorksheetId"] = optionsDiv.data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
 		info["command"] = "ShowModelCommand";
-			
+	   
+	    var newInfo = [];
+        newInfo.push(getParamObject("vWorksheetId", optionsDiv.data("worksheetId"), "vWorksheetId"));
+        newInfo.push(getParamObject("checkHistory", true, "other"));
+        info["newInfo"] = JSON.stringify(newInfo);
+	   
 		showLoading(info["vWorksheetId"]);
 		var returned = $.ajax({
 		   	url: "/RequestController", 
@@ -118,29 +123,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		// Show the dialog box
 		dbDialogBox.dialog({width: 300
 			, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": publishDatabaseFunction }});
-	});
-
-	$("button#splitByComma").click(function(){
-		optionsDiv.hide();
-		
-		// console.log("Splitting by comma for table: " + optionsDiv.data("worksheetId"));
-		var table = $("table#" + optionsDiv.data("worksheetId"));
-		var cols = $('td.columnHeadingCell[colspan="1"]', table);
-		
-		var columnListDiv = $("div#SplitByCommaColumnListPanel");
-		var columnList = $("select#splitByCommaColumnList", columnListDiv);
-		
-		// Remove any existing option from the list
-		$("option", columnList).remove();
-		
-		$.each(cols, function(index, col){
-			if($("div.ColumnHeadingNameDiv",col).length != 0)
-				columnList.append($("<option>").val($(col).attr("id")).text($("div.ColumnHeadingNameDiv",col).text()));
-		});
-		
-		// Show the dialog box
-		columnListDiv.dialog({width: 300, height: 150
-			, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": splitColumnByComma }});
 	});
 	
 	$("button#populateSource").click(function(){
@@ -244,37 +226,6 @@ function openWorksheetOptions(event) {
 			.css({'position':'fixed', 'left':(event.clientX - 75) + 'px', 'top':(event.clientY+4)+'px'})
 			.data("worksheetId", $(this).parents("div.Worksheet").attr("id"))
 			.show();
-}
-
-function splitColumnByComma() {
-	$("div#SplitByCommaColumnListPanel").dialog("close");
-	var selectedHNodeId = $("select#splitByCommaColumnList option:selected").val();
-	
-	var info = new Object();
-	info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["hNodeId"] = selectedHNodeId;
-	info["command"] = "SplitByCommaCommand";
-			
-	showLoading(info["vWorksheetId"]);
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			// alert(xhr.responseText);
-	    		var json = $.parseJSON(xhr.responseText);
-	    		parse(json);
-	    		hideLoading(info["vWorksheetId"]);
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured while splitting a column by comma! " + textStatus);
-	   			hideLoading(info["vWorksheetId"]);
-		   	}		   
-	});
 }
 
 function showSemanticTypeInfo() {
@@ -436,11 +387,63 @@ function styleAndAssignHandlersToColumnHeadingMenu() {
 		$(this).show();
 	});
 	
+	// Handle split column button
+	$("button#splitByComma").click(function(){
+        optionsDiv.hide();
+        
+        var splitPanel = $("div#SplitByCommaColumnListPanel");
+        splitPanel.dialog({width: 300, height: 200
+           , buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": splitColumnByComma }});
+    });
+	
 	// Assign handler to column clean button (in cleaning.js)
     assignHandlersToCleaningPanelObjects();
     
     // Assign handler to service invocation button (in services.js)
     assignHandlersToServiceInvocationObjects();
+}
+
+function splitColumnByComma() {
+    var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+    var selectedHNodeId = columnHeadingMenu.data("parentCellId");
+    var splitPanel = $("div#SplitByCommaColumnListPanel");
+    
+    $("div#errorPanel", splitPanel).remove();
+    
+    var inputVal = $("input#columnSplitDelimiter").val();
+    if(inputVal != "space" && inputVal != "tab" && inputVal.length != 1) {
+        splitPanel.append($("<div>").attr("id", "errorPanel").append($("<span>").addClass("error smallSizedFont").text("Length of the delimiter should be 1!")));
+        return false;
+    }
+        
+    $("div#SplitByCommaColumnListPanel").dialog("close");
+    
+    var info = new Object();
+    info["vWorksheetId"] = $("td#" + selectedHNodeId).parents("table.WorksheetTable").attr("id");
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["hNodeId"] = selectedHNodeId;
+    info["delimiter"] = inputVal;
+    info["command"] = "SplitByCommaCommand";
+            
+    showLoading(info["vWorksheetId"]);
+    var returned = $.ajax({
+        url: "/RequestController", 
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete : 
+            function (xhr, textStatus) {
+                // alert(xhr.responseText);
+                var json = $.parseJSON(xhr.responseText);
+                parse(json);
+                hideLoading(info["vWorksheetId"]);
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while splitting a column by comma! " + textStatus);
+                hideLoading(info["vWorksheetId"]);
+            }          
+    });
 }
 
 function openColumnHeadingOptions() {

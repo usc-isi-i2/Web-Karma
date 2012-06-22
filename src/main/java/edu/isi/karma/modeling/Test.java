@@ -125,8 +125,8 @@ public class Test {
 		
 		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
 		
-		semanticTypes.add( new SemanticType(null, new URI("http://www.sri.com/ontologies/DovetailOnto.owl#Attack"), null, 0.0, false) );
-		semanticTypes.add( new SemanticType(null, new URI("http://www.sri.com/ontologies/DovetailOnto.owl#Nation"), null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://www.sri.com/ontologies/DovetailOnto.owl#Attack"), null, null, 0.0, false) );
+		semanticTypes.add( new SemanticType(null, new URI("http://www.sri.com/ontologies/DovetailOnto.owl#Nation"), null, null, 0.0, false) );
 		
 		return semanticTypes;
 	}

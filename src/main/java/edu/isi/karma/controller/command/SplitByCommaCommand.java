@@ -49,6 +49,7 @@ import edu.isi.karma.view.VWorkspace;
 public class SplitByCommaCommand extends WorksheetCommand {
 	private final String hNodeId;
 	private final String vWorksheetId;
+	private final char delimiter;
 	private String columnName;
 	private HNode hNode;
 	private String splitValueHNodeID;
@@ -60,10 +61,11 @@ public class SplitByCommaCommand extends WorksheetCommand {
 			.getSimpleName());
 
 	protected SplitByCommaCommand(String id, String worksheetId,
-			String hNodeId, String vWorksheetId) {
+			String hNodeId, String vWorksheetId, char delimiter) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.vWorksheetId = vWorksheetId;
+		this.delimiter = delimiter;
 	}
 
 	@Override
@@ -94,23 +96,24 @@ public class SplitByCommaCommand extends WorksheetCommand {
 		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 
 		// Get the HNode
+		hNode = vWorkspace.getRepFactory().getHNode(hNodeId);
+		// The column should not have a nested table but check to make sure!
+		if (hNode.hasNestedTable()) {
+			c.add(new ErrorUpdate("Cannot split column with nested table!"));
+			return c;
+		}
+		
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = wk.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {
 			if (path.getLeaf().getId().equals(hNodeId)) {
 				hNode = path.getLeaf();
 				selectedPath = path;
+				break;
 			}
 		}
 
 		columnName = hNode.getColumnName();
-
-		// The column should not have a nested table but check to make sure!
-		if (hNode.hasNestedTable()) {
-			logger.error("The column already has a nested table!");
-			c.add(new ErrorUpdate("The column already has a nested table!"));
-			return c;
-		}
 
 		// Add the nested new HTable to the hNode
 		HTable newTable = hNode.addNestedTable("Comma Split Values", wk,
@@ -128,7 +131,7 @@ public class SplitByCommaCommand extends WorksheetCommand {
 
 			if (originalVal != null && originalVal != "") {
 				// Split the values
-				CSVReader reader = new CSVReader(new StringReader(originalVal));
+				CSVReader reader = new CSVReader(new StringReader(originalVal), delimiter);
 				try {
 					String[] rowValues = reader.readNext();
 					if (rowValues == null || rowValues.length == 0)

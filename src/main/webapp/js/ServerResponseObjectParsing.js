@@ -254,7 +254,6 @@ function parse(data) {
 						tdTag.attr("colspan", cell["colSpan"]);
 					}
 					tdTag.data("jsonElement", cell).hover(showConsoleInfo);
-					console.log(tdTag);
 					trTag.append(tdTag);
 				});
 				thead.append(trTag);
@@ -794,6 +793,10 @@ function parse(data) {
 		else if(element["updateType"] == "CleaningResultUpdate") {
             if(element["result"] != null) {
             		//var pdata = getVaritions(element["result"]);
+            		if(element["result"].length==0)
+            		{
+            			alert("Cannot find any transformations! Please check your examples!");
+            		}
             		var topCol = element["result"][0];
 				populateResult(topCol);
 				var pdata = getVaritions(element["result"]);

@@ -36,8 +36,8 @@ import java.util.Map;
 
 import edu.isi.mediator.domain.parser.DomainParser;
 import edu.isi.mediator.gav.main.MediatorException;
-import edu.isi.mediator.rule.Rule;
 import edu.isi.mediator.gav.util.MediatorUtil;
+import edu.isi.mediator.rule.Rule;
 
 
 /**

@@ -20,11 +20,18 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
+import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -32,8 +39,8 @@ import edu.isi.karma.modeling.alignment.AlignToOntology;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.metadata.Tag;
-import edu.isi.karma.rep.metadata.TagsContainer.TagName;
+import edu.isi.karma.rep.semantictypes.SemanticType;
+import edu.isi.karma.rep.semantictypes.SemanticTypes;
 import edu.isi.karma.view.VWorkspace;
 
 public class ShowModelCommand extends WorksheetCommand {
@@ -48,6 +55,8 @@ public class ShowModelCommand extends WorksheetCommand {
 			String vWorksheetId) {
 		super(id, worksheetId);
 		this.vWorksheetId = vWorksheetId;
+		
+		addTag(CommandTag.Modeling);
 	}
 
 	@Override
@@ -72,35 +81,26 @@ public class ShowModelCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 
 		worksheetName = worksheet.getTitle();
-		
-		// Check if any command history exists for the worksheet
-//		if(HistoryJsonUtil.historyExists(worksheetName, vWorkspace.getPreferencesId())) {
-//			WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
-//			try {
-//				commReader.readAndExecuteCommands();
-//			} catch (Exception e) {
-//				logger.error("Error occured while reading model commands from history!", e);
-//				e.printStackTrace();
-//			}
-//		}
 
 		// Get the Outlier Tag
-		Tag outlierTag = vWorkspace.getWorkspace().getTagsContainer().getTag(TagName.Outlier);
+//		Tag outlierTag = vWorkspace.getWorkspace().getTagsContainer().getTag(TagName.Outlier);
 
 		// Generate the semantic types for the worksheet
 		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-		SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, outlierTag, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
-
+//		SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, outlierTag, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
+		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
+		
 		// Get the alignment update if any
 		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
 
 		try {
-			align.update(c, false);
+			// Save the semantic types in the input parameter JSON
+			saveSemanticTypesInformation(worksheet, vWorkspace);
+			align.alignAndUpdate(c, true);
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(
@@ -110,9 +110,46 @@ public class ShowModelCommand extends WorksheetCommand {
 		return c;
 	}
 
+	private void saveSemanticTypesInformation(Worksheet worksheet, VWorkspace vWorkspace) throws JSONException {
+		SemanticTypes types = worksheet.getSemanticTypes();
+		JSONArray typesArray = new JSONArray();
+		Map<String, SemanticType> typeMap = types.getTypes();
+		
+		// Add the vworksheet information
+		JSONObject vwIDJObj = new JSONObject();
+		vwIDJObj.put(ClientJsonKeys.name.name(), ParameterType.vWorksheetId.name());
+		vwIDJObj.put(ClientJsonKeys.type.name(), ParameterType.vWorksheetId.name());
+		vwIDJObj.put(ClientJsonKeys.value.name(), vWorksheetId);
+		typesArray.put(vwIDJObj);
+		
+		// Add the check history information
+		JSONObject chIDJObj = new JSONObject();
+		chIDJObj.put(ClientJsonKeys.name.name(), ParameterType.checkHistory.name());
+		chIDJObj.put(ClientJsonKeys.type.name(), ParameterType.other.name());
+		chIDJObj.put(ClientJsonKeys.value.name(), false);
+		typesArray.put(chIDJObj);
+		
+		for (String hNodeId : typeMap.keySet()) {
+			// Add the hNode information
+			JSONObject hNodeJObj = new JSONObject();
+			hNodeJObj.put(ClientJsonKeys.name.name(), ParameterType.hNodeId.name());
+			hNodeJObj.put(ClientJsonKeys.type.name(), ParameterType.hNodeId.name());
+			hNodeJObj.put(ClientJsonKeys.value.name(), hNodeId);
+			typesArray.put(hNodeJObj);
+			
+			// Add the semantic type information
+			JSONObject typeJObj = new JSONObject();
+			typeJObj.put(ClientJsonKeys.name.name(), ClientJsonKeys.SemanticType.name());
+			typeJObj.put(ClientJsonKeys.type.name(), ParameterType.other.name());
+			typeJObj.put(ClientJsonKeys.value.name(), typeMap.get(hNodeId).getJSONArrayRepresentation());
+			typesArray.put(typeJObj);
+		}
+		
+		setInputParameterJson(typesArray.toString(4));
+	}
+
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
 		return null;
 	}
-
 }

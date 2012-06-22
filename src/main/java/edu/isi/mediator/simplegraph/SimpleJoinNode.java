@@ -21,7 +21,7 @@
 
 package edu.isi.mediator.simplegraph;
 
-import java.util.*;
+import java.util.ArrayList;
 
 import edu.isi.mediator.gav.main.MediatorException;
 

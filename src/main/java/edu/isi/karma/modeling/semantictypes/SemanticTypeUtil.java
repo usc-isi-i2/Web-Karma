@@ -138,7 +138,7 @@ public class SemanticTypeUtil {
 			Collection<String> columnNameList = new ArrayList<String>();
 			columnNameList.add(columnName);
 			columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
-
+			
 			// // Prepare the table name feature
 			// String tableName = worksheetName;
 			// Collection<String> tableNameList = new ArrayList<String>();
@@ -174,14 +174,14 @@ public class SemanticTypeUtil {
 			}
 
 			URI typeURI = ontMgr.getURIFromString(type);
-			if (typeURI == null)
+			if(typeURI == null) {
+				logger.error("Could not find the resource " + type + " in ontology model!");
 				continue;
+			}
 			URI domainURI = null;
-			if (domain != "")
+			if (!domain.equals(""))
 				domainURI = ontMgr.getURIFromString(domain);
-			SemanticType semtype = new SemanticType(path.getLeaf().getId(),
-					typeURI, domainURI, SemanticType.Origin.CRFModel,
-					scores.get(0), false);
+			SemanticType semtype = new SemanticType(path.getLeaf().getId(),typeURI, domainURI, SemanticType.Origin.CRFModel,scores.get(0), false);
 
 			// Check if the user already provided a semantic type manually
 			SemanticType existingType = types.getSemanticTypeForHNodeId(path
@@ -270,9 +270,7 @@ public class SemanticTypeUtil {
 				boolean result = crfModelHandler.predictLabelForExamples(
 						examples, 1, predictedLabels, confidenceScores, null,
 						columnFeatures);
-				// logger.debug("Example: " + examples.get(0) + " Label: "
-				// + predictedLabels + " Score: "
-				// + confidenceScores);
+				// logger.debug("Example: " + examples.get(0) + " Label: " + predictedLabels + " Score: " + confidenceScores);
 				if (!result) {
 					logger.error("Error while predicting type for " + nodeVal);
 					continue;
@@ -309,6 +307,39 @@ public class SemanticTypeUtil {
 		else if (uri.contains("/"))
 			uri = uri.substring(uri.lastIndexOf("/") + 1);
 		return uri;
+	}
+
+	public static void computeSemanticTypesSuggestion(Worksheet worksheet,
+			CRFModelHandler crfModelHandler, OntologyManager ontMgr) {
+		
+		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
+		for (HNodePath path : paths) {
+			ArrayList<String> trainingExamples = getTrainingExamples(worksheet, path);
+
+			Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
+
+			// Prepare the column name feature
+			String columnName = path.getLeaf().getColumnName();
+			Collection<String> columnNameList = new ArrayList<String>();
+			columnNameList.add(columnName);
+			columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
+			
+			// Stores the probability scores
+			ArrayList<Double> scores = new ArrayList<Double>();
+			// Stores the predicted labels
+			ArrayList<String> labels = new ArrayList<String>();
+			boolean predictResult = crfModelHandler.predictLabelForExamples(trainingExamples, 4, labels, scores, null, columnFeatures);
+			if (!predictResult) {
+				logger.error("Error occured while predicting semantic type.");
+				continue;
+			}
+			if (labels.size() == 0) {
+				continue;
+			}
+
+			CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
+			worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(), columnModel);
+		}
 	}
 
 }

@@ -35,12 +35,10 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.Vertex;
-import edu.isi.karma.rdf.WorksheetRDFGenerator;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.webserver.KarmaException;
 
 public class DuplicateDomainOfLinkCommand extends Command {
 
@@ -110,12 +108,13 @@ public class DuplicateDomainOfLinkCommand extends Command {
 		SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, alignment, hNodeIdList);
 		
 		//mariam
+		/*
 		try{
 			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, alignment);
 		}catch(KarmaException e){
 			e.printStackTrace();
 		}
-
+*/
 		UpdateContainer c = new UpdateContainer();
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 		c.add(svgUpdate);

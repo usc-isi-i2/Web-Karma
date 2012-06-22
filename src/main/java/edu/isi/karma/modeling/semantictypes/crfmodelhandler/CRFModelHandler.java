@@ -189,7 +189,7 @@ public class CRFModelHandler {
 	 * @param columnFeatures Map of column features.
 	 * @return True if success, else False
 	 */
-	public boolean addOrUpdateLabel(String label, List<String> examples, Map<ColumnFeature, Collection<String>> columnFeatures) {
+	public synchronized boolean addOrUpdateLabel(String label, List<String> examples, Map<ColumnFeature, Collection<String>> columnFeatures) {
 		ArrayList<String> cleanedExamples, allFeatures;
 		int labelIndex ;
 		HashSet<String> selectedFeatures, tmpFeatures;

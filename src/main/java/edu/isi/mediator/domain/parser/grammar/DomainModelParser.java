@@ -22,9 +22,23 @@ package edu.isi.mediator.domain.parser.grammar;
 
 // $ANTLR 3.2 Sep 23, 2009 12:02:23 C:\\Documents and Settings\\mariam\\My Documents\\mediator-new\\workspace\\domainparser\\DomainModel.g 2011-07-20 11:01:06
 
-import org.antlr.runtime.*;
-
-import org.antlr.runtime.tree.*;
+import org.antlr.runtime.BitSet;
+import org.antlr.runtime.IntStream;
+import org.antlr.runtime.MismatchedSetException;
+import org.antlr.runtime.MismatchedTokenException;
+import org.antlr.runtime.NoViableAltException;
+import org.antlr.runtime.Parser;
+import org.antlr.runtime.ParserRuleReturnScope;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.RecognizerSharedState;
+import org.antlr.runtime.Token;
+import org.antlr.runtime.TokenStream;
+import org.antlr.runtime.tree.CommonTree;
+import org.antlr.runtime.tree.CommonTreeAdaptor;
+import org.antlr.runtime.tree.RewriteEarlyExitException;
+import org.antlr.runtime.tree.RewriteRuleSubtreeStream;
+import org.antlr.runtime.tree.RewriteRuleTokenStream;
+import org.antlr.runtime.tree.TreeAdaptor;
 
 @SuppressWarnings("all")
 public class DomainModelParser extends Parser {
