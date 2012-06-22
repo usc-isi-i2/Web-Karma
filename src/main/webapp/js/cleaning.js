@@ -137,14 +137,13 @@ function populateResult(rdata) {
 				});
 				// Remove existing button
 				$("td.noBorder", $(this).parent().parent()).remove();
-				updateResult();
-				$(this).parent().parent().append($("<td>").addClass("noBorder").append(revertButton));
-
 				examples.push({
 					"nodeId" : $(this).data("nodeId"),
 					"before" : $(this).data("originalVal"),
 					"after" : value
 				});
+				updateResult();
+				$(this).parent().parent().append($("<td>").addClass("noBorder").append(revertButton));
 				//call the update result function
 				return (value);
 			}, {
