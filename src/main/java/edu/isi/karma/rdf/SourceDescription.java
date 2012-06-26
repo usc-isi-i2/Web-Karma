@@ -21,6 +21,7 @@
 
 package edu.isi.karma.rdf;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -538,6 +539,8 @@ public class SourceDescription {
 	 * <br> If node is associated with a column, that column is the key (the column was mapped to a Class)
 	 * <br> Else, look at all this node's children, and see which one is a key. If
 	 * <br> no key is found generate a gensym URI (return a uri index for this class)
+	 * <br> A key can also be a combination of several columns (compound key). In this case we generate a 
+	 * <br> concat("_",col1,col2,...), so the uri will be uri(concat("_",col1,col2,...))
 	 * @param v
 	 * 		the node
 	 * @return
@@ -550,6 +553,7 @@ public class SourceDescription {
 		//class, so we have to distinguish between the key for these classes
 		//logger.info("Get Key for " + v.getUri() + " with ID=" + v.getID());
 		boolean isGensym=false;
+		boolean isCompoundKey=false;
 		String key = uriMap.get(v.getID());
 		if(key!=null){
 			//logger.info("Key for " + v.getID() + " is " + key);
@@ -561,6 +565,8 @@ public class SourceDescription {
 			//this node is not associated with a column
 			//look in the child nodes to find the key to be used when generating the URI
 			Set<LabeledWeightedEdge> edges = steinerTree.outgoingEdgesOf(v);
+			//I could have more than 1 key
+			List<String> keys = new ArrayList<String>();
 			for(LabeledWeightedEdge e:edges){
 				//get the child node
 				Vertex n = steinerTree.getEdgeTarget(e);
@@ -575,15 +581,28 @@ public class SourceDescription {
 							key=factory.getHNode(n.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNamePath();
 						}
 						ruleAttributes.add(key);
-						break;
+						keys.add(key);
 					}
 				}
 			}
-			if(key==null){
+			if(keys.isEmpty()){
 				//I looked at all children and I did not find a key
 				//generate gensym index
 				key = String.valueOf(uriIndex++);
 				isGensym=true;
+			}
+			else if(keys.size()==1){
+				//I only have 1 key
+				key=keys.get(0);
+			}
+			else{
+				//I have more than 1 key, so I have to construct a concat statement that will be the key
+				key = "";
+				for(int i=0; i<keys.size();i++){
+					if(i>0) key+=",";
+					key += addBacktick(keys.get(i));
+				}
+				isCompoundKey=true;
 			}
 		}
 		else{
@@ -596,7 +615,7 @@ public class SourceDescription {
 			ruleAttributes.add(key);
 		}
 		//I have to do it here because I don't want backticks for the gensyms
-		if(!isGensym)
+		if(!isGensym && !isCompoundKey)
 			key = addBacktick(key);
 		
 		classNameToId.put(v.getUriString(), v.getID());
