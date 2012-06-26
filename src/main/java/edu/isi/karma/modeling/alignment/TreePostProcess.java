@@ -57,22 +57,28 @@ public class TreePostProcess {
 		List<Vertex> vertexList = new ArrayList<Vertex>();
 		List<Integer> reachableNodesList = new ArrayList<Integer>();
 		
-		boolean connectedToSemanticType = false;
+//		UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedTree = 
+//			new AsUndirectedGraph<Vertex, LabeledWeightedEdge>(this.tree);
+
+//		boolean connectedToSemanticType = false;
 		for (Vertex v: this.tree.vertexSet()) {
-			BreadthFirstIterator<Vertex, LabeledWeightedEdge> i = new BreadthFirstIterator<Vertex, LabeledWeightedEdge>(this.tree, v);
-			connectedToSemanticType = false;
+			BreadthFirstIterator<Vertex, LabeledWeightedEdge> i = 
+				new BreadthFirstIterator<Vertex, LabeledWeightedEdge>(this.tree, v);
+//			connectedToSemanticType = false;
 			
 			reachableNodes = -1;
 			while (i.hasNext()) {
-				Vertex temp = i.next();
-				if (temp.getSemanticType() != null)
-					connectedToSemanticType = true;
+//				Vertex temp = i.next();
+				i.next();
+//				if (temp.getSemanticType() != null)
+//					connectedToSemanticType = true;
 				reachableNodes ++;
 			}
 			
-			if (connectedToSemanticType == false)
-				dangledVertexList.add(v);
-			else {
+//			if (connectedToSemanticType == false)
+//				dangledVertexList.add(v);
+//			else 
+			{
 				vertexList.add(v);
 				reachableNodesList.add(reachableNodes);
 				
@@ -86,8 +92,8 @@ public class TreePostProcess {
 			if (reachableNodesList.get(i).intValue() == maxReachableNodes)
 				possibleRoots.add(vertexList.get(i));
 		
-		for (Vertex v : dangledVertexList)
-			this.tree.removeVertex(v);
+//		for (Vertex v : dangledVertexList)
+//			this.tree.removeVertex(v);
 		
 		return possibleRoots;
 	}

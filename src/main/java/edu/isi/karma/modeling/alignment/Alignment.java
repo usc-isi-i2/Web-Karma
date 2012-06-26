@@ -374,38 +374,37 @@ public class Alignment {
 	// Reversing the inverse links
 	public void updateLinksDirections(Vertex root, LabeledWeightedEdge e, DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeClone) {
 
-		
-		if (root == null)
-			return;
-		Vertex source, target;
-		LabeledWeightedEdge inLink;
-		
-		LabeledWeightedEdge[] incomingLinks = treeClone.incomingEdgesOf(root).toArray(new LabeledWeightedEdge[0]);
-		if (incomingLinks != null && incomingLinks.length != 0) {
-			for (int i = 0; i < incomingLinks.length; i++) {
-				
-				inLink = incomingLinks[i];
-				source = inLink.getSource();
-				target = inLink.getTarget();
-				// don't remove the incoming link from parent to this node
-				if (inLink.getID().equalsIgnoreCase(e.getID()))
-					continue;
-				
-				LabeledWeightedEdge inverseLink = new LabeledWeightedEdge(inLink.getID(), new URI(inLink.getUriString(), inLink.getNs(), inLink.getPrefix()), inLink.getLinkType(), true);
-				treeClone.addEdge(target, source, inverseLink);
-				treeClone.setEdgeWeight(inverseLink, inLink.getWeight());
-				treeClone.removeEdge(inLink);
-			}
-		}
-
-		LabeledWeightedEdge[] outgoingLinks = treeClone.outgoingEdgesOf(root).toArray(new LabeledWeightedEdge[0]);
-
-		if (outgoingLinks == null || outgoingLinks.length == 0)
-			return;
-		for (int i = 0; i < outgoingLinks.length; i++) {
-			target = outgoingLinks[i].getTarget();
-			updateLinksDirections(target, outgoingLinks[i], treeClone);
-		}
+//		if (root == null || e == null)
+//			return;
+//		Vertex source, target;
+//		LabeledWeightedEdge inLink;
+//		
+//		LabeledWeightedEdge[] incomingLinks = treeClone.incomingEdgesOf(root).toArray(new LabeledWeightedEdge[0]);
+//		if (incomingLinks != null && incomingLinks.length != 0) {
+//			for (int i = 0; i < incomingLinks.length; i++) {
+//				
+//				inLink = incomingLinks[i];
+//				source = inLink.getSource();
+//				target = inLink.getTarget();
+//				// don't remove the incoming link from parent to this node
+//				if (inLink.getID().equalsIgnoreCase(e.getID()))
+//					continue;
+//				
+//				LabeledWeightedEdge inverseLink = new LabeledWeightedEdge(inLink.getID(), new URI(inLink.getUriString(), inLink.getNs(), inLink.getPrefix()), inLink.getLinkType(), true);
+//				treeClone.addEdge(target, source, inverseLink);
+//				treeClone.setEdgeWeight(inverseLink, inLink.getWeight());
+//				treeClone.removeEdge(inLink);
+//			}
+//		}
+//
+//		LabeledWeightedEdge[] outgoingLinks = treeClone.outgoingEdgesOf(root).toArray(new LabeledWeightedEdge[0]);
+//
+//		if (outgoingLinks == null || outgoingLinks.length == 0)
+//			return;
+//		for (int i = 0; i < outgoingLinks.length; i++) {
+//			target = outgoingLinks[i].getTarget();
+//			updateLinksDirections(target, outgoingLinks[i], treeClone);
+//		}
 	}	
 
 }
