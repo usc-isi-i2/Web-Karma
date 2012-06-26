@@ -31,9 +31,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpMethods;
 import org.jgrapht.UndirectedGraph;
+import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
-import edu.isi.karma.modeling.alignment.GraphPreProcess;
 import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.modeling.alignment.SteinerTree;
@@ -366,9 +366,9 @@ public class Service {
 			return null;
 				
 		logger.debug("compute the steiner tree from the alignment tree with input nodes as steiner nodes ...");
-		GraphPreProcess graphPreProcess = new GraphPreProcess(treeModel, inputNodes, null);
-		UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedGraph = graphPreProcess.getUndirectedGraph();
-		List<Vertex> steinerNodes = graphPreProcess.getSteinerNodes();
+		UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedGraph = 
+			new AsUndirectedGraph<Vertex, LabeledWeightedEdge>(treeModel);
+		List<Vertex> steinerNodes = inputNodes;
 		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodes);
 
 
