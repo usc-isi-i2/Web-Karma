@@ -218,7 +218,8 @@ public class SampleDataFactory {
 			Object o = JSONUtil.createJson(r);
 			// System.err.println("JSON:" + o.toString());
 			// System.err.println("JSON:" + JSONObject.quote(o.toString()));
-			JsonImport ji = new JsonImport(o, fileName, workspace);
+			File f = new File(fileName);
+			JsonImport ji = new JsonImport(o, f.getName(), workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
 		} catch (FileNotFoundException e) {
