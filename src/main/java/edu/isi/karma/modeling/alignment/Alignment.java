@@ -387,7 +387,7 @@ public class Alignment {
 				source = inLink.getSource();
 				target = inLink.getTarget();
 				// don't remove the incoming link from parent to this node
-				if (inLink.getID().equalsIgnoreCase(e.getID())){
+				if (e != null && inLink.getID().equalsIgnoreCase(e.getID())){
 					continue;
 				}
 				
