@@ -19,14 +19,13 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-function showCSVImportOptions(response) {
+function showCSVImportOptions(responseJSON) {
 	var csvPreviewTable = $("#CSVPreviewTable");
 	var csvImportDiv = $("#CSVImportDiv");
 	// TODO Reset the CSV import options
 	$("tr", csvPreviewTable).remove();
 	csvPreviewTable.append($("<tr>").append($("<td>").addClass("rowIndexCell").text("File Row Number")));
 	
-	var responseJSON = $.parseJSON(response);
 	var headers = responseJSON["elements"][0]["headers"];
 	
 	//Change the source name

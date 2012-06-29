@@ -856,7 +856,7 @@ function showAlternativeParents(event) {
 							table.append(trTag);
 						});
 						// Show the dialog box
-						optionsDiv.dialog({width: 300, height: 300, position: positionArray
+						optionsDiv.dialog({width: 500, height: 300, position: positionArray
 							, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitAlignmentLinkChange }});
 							
 						$("input:radio[@name='AlternativeLinksGroup']").change(function(){
