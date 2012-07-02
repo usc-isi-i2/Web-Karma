@@ -111,7 +111,7 @@ function CSVImportOptionsChanged(flag) {
 	   	complete : 
 	   		function (xhr, textStatus) {
 	   			if(!options["execute"]) {
-	   			    showCSVImportOptions(xhr.responseText);
+	   			    showCSVImportOptions($.parseJSON(xhr.responseText));
 	   			} else {
 	    			var json = $.parseJSON(xhr.responseText);
 	    			parse(json);
