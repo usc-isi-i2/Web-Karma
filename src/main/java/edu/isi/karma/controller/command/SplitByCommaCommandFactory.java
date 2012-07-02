@@ -24,23 +24,30 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
+import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class SplitByCommaCommandFactory extends CommandFactory implements
 		JSONInputCommandFactory {
+	
 	private enum Arguments {
-		vWorksheetId, hNodeId, delimiter
+		vWorksheetId, hNodeId, delimiter, checkHistory
 	}
+	
+	private static Logger logger = LoggerFactory.getLogger(SplitByCommaCommandFactory.class);
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId
-				.name());
+		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
 		String delimiter = request.getParameter(Arguments.delimiter.name());
 
 		// Convert the delimiter into character primitive type
@@ -60,13 +67,28 @@ public class SplitByCommaCommandFactory extends CommandFactory implements
 	@Override
 	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
 			throws JSONException, KarmaException {
-		String vWorksheetId = HistoryJsonUtil.getStringValue(
-				Arguments.vWorksheetId.name(), inputJson);
-		String hNodeId = HistoryJsonUtil.getStringValue(
-				Arguments.hNodeId.name(), inputJson);
-		String delimiter = HistoryJsonUtil.getStringValue(
-				Arguments.delimiter.name(), inputJson);
+		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
+		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
+		String delimiter = HistoryJsonUtil.getStringValue(Arguments.delimiter.name(), inputJson);
+		boolean checkHist = HistoryJsonUtil.getBooleanValue(Arguments.checkHistory.name(), inputJson);
+		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		
+		// TODO This logic needs to be refactored and this should be moved from here
+		if(checkHist) {
+			// Check if any command history exists for the worksheet
+			if(HistoryJsonUtil.historyExists(worksheet.getTitle(), vWorkspace.getPreferencesId())) {
+				WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
+				try {
+					commReader.readAndExecuteCommands(CommandTag.Modeling);
+				} catch (Exception e) {
+					 logger.error("Error occured while reading model commands from history!", e);
+					e.printStackTrace();
+				}
+			}
+		}
 
+		HistoryJsonUtil.setArgumentValue(Arguments.checkHistory.name(), false, inputJson);
+		
 		// Convert the delimiter into character primitive type
 		char delimiterChar = ',';
 		if (delimiter.equalsIgnoreCase("space"))
@@ -76,9 +98,8 @@ public class SplitByCommaCommandFactory extends CommandFactory implements
 		else {
 			delimiterChar = new Character(delimiter.charAt(0));
 		}
-		SplitByCommaCommand comm = new SplitByCommaCommand(
-				getNewId(vWorkspace), vWorkspace.getViewFactory()
-						.getVWorksheet(vWorksheetId).getWorksheetId(), hNodeId,
+		SplitByCommaCommand comm = new SplitByCommaCommand(getNewId(vWorkspace), 
+				vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheetId(), hNodeId,
 				vWorksheetId, delimiterChar);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;

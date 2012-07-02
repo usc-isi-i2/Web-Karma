@@ -24,12 +24,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.alignment.AlignToOntology;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.GraphUtil;
@@ -45,6 +49,8 @@ public class DuplicateDomainOfLinkCommand extends Command {
 	private final String vWorksheetId;
 	private final String edgeId;
 	private final String alignmentId;
+	
+	private static Logger logger = LoggerFactory.getLogger(DuplicateDomainOfLinkCommand.class);
 
 	protected DuplicateDomainOfLinkCommand(String id, String edgeId,
 			String alignmentId, String vWorksheetId) {
@@ -78,10 +84,20 @@ public class DuplicateDomainOfLinkCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Alignment alignment = AlignmentManager.Instance().getAlignment(
-				alignmentId);
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		
+		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		if(alignment == null) {
+			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
+			try {
+				align.align(false);
+			} catch (Exception e) {
+				logger.error("Error occured while generating the model Reason:.", e);
+				return new UpdateContainer(new ErrorUpdate("Error occured while generating the model for the source."));
+			}
+			alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		}
+		
 		// Duplicate the domain of the edge
 		alignment.duplicateDomainOfLink(edgeId);
 

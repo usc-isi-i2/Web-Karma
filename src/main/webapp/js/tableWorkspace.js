@@ -429,10 +429,8 @@ function splitColumnByComma() {
     newInfo.push(getParamObject("vWorksheetId", $("td#" + selectedHNodeId).parents("table.WorksheetTable").attr("id"), "vWorksheetId"));
     newInfo.push(getParamObject("hNodeId", selectedHNodeId,"hNodeId"));
     newInfo.push(getParamObject("delimiter", inputVal, "other"));
+    newInfo.push(getParamObject("checkHistory", true, "other"));
     info["newInfo"] = JSON.stringify(newInfo);
-    console.log(inputVal);
-    console.log(newInfo);
-    console.log(info);
             
     showLoading(info["vWorksheetId"]);
     var returned = $.ajax({

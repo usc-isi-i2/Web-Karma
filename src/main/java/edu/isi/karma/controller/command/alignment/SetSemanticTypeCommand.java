@@ -121,8 +121,8 @@ public class SetSemanticTypeCommand extends Command {
 			
 		} else {
 			// Just do the alignment, no training and update JSON required.
-			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
-			align.align(true);
+//			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
+//			align.align(true);
 		}
 		return c;
 	}

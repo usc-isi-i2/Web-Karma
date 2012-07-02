@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
@@ -37,8 +38,8 @@ public class WorksheetCommandHistoryReader {
 		this.vWorksheetId = vWorksheetId;
 		this.vWorkspace = vWorkspace;
 	}
-
-	public void readAndExecuteCommands() throws FileNotFoundException, JSONException, KarmaException, CommandException {
+	
+	public void readAndExecuteCommands(CommandTag tag) throws FileNotFoundException, JSONException, KarmaException, CommandException {
 		String worksheetName = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet().getTitle();
 		File historyFile = new File(HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(worksheetName, vWorkspace.getPreferencesId()));
 		JSONArray historyJson = (JSONArray) JSONUtil.createJson(new FileReader(historyFile));
@@ -59,8 +60,14 @@ public class WorksheetCommandHistoryReader {
 					logger.info("Executing command from history: " + commObject.get(HistoryArguments.commandName.name()));
 					JSONInputCommandFactory scf = (JSONInputCommandFactory)cf;
 					Command comm = scf.createCommand(inputParamArr, vWorkspace);
-					if(comm != null)
-						vWorkspace.getWorkspace().getCommandHistory().doCommand(comm, vWorkspace);
+					if(comm != null){
+						if(comm.hasTag(tag)) {
+							logger.info("Executing command: " + commObject.get(HistoryArguments.commandName.name()));
+							vWorkspace.getWorkspace().getCommandHistory().doCommand(comm, vWorkspace);
+						} else {
+							logger.debug("Won't execute command: " + commObject.get(HistoryArguments.commandName.name()));
+						}
+					}
 					else
 						logger.error("Error occured while creating command (Could not create Command object): " + commObject.get(HistoryArguments.commandName.name()));
 				}

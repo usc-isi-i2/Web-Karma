@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
@@ -69,7 +70,7 @@ public class ShowModelCommandFactory extends CommandFactory implements JSONInput
 			if(HistoryJsonUtil.historyExists(worksheet.getTitle(), vWorkspace.getPreferencesId())) {
 				WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
 				try {
-					commReader.readAndExecuteCommands();
+					commReader.readAndExecuteCommands(CommandTag.Modeling);
 				} catch (Exception e) {
 					 logger.error("Error occured while reading model commands from history!", e);
 					e.printStackTrace();

@@ -56,7 +56,11 @@ public class ShowModelCommand extends WorksheetCommand {
 		super(id, worksheetId);
 		this.vWorksheetId = vWorksheetId;
 		
-		addTag(CommandTag.Modeling);
+		/** NOTE Not saving this command in history for now since we are 
+		 * not letting CRF model assign semantic types automatically. This command 
+		 * was being saved in history to keep track of the semantic types 
+		 * that were assigned by the CRF Model **/ 
+		// addTag(CommandTag.Modeling);
 	}
 
 	@Override

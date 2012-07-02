@@ -92,7 +92,7 @@ public abstract class Command extends Entity {
 	private String inputParameterJson;
 
 	public enum CommandTag {
-		Modeling, Cleaning, Integration, Import
+		Modeling, Transformation, Cleaning, Integration, Import
 	}
 
 	protected Command(String id) {
