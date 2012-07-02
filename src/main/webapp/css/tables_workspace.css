@@ -353,10 +353,6 @@ a.pagerSizeSelected {
 	font-size: 12px;
 }
 
-.importButton {
-	font-size: 26px;
-}
-
 div#ScrollHeadersPlaceholder table {
 	border-width: 0px; 
 	border-spacing: 0px; 
@@ -421,7 +417,7 @@ div.ColumnHeadingNameDiv {
 	display: inline;
 }
 
-span.tag {;
+span.tag {
 	width: 6px;
 	height: 15px;
 	float: right;
@@ -490,4 +486,7 @@ input.smallSizedFont {
 	font-size: 10px;
 }
 
+.smallSizedFont {
+	font-size: 10px;
+}
 

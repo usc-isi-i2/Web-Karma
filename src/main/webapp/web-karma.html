@@ -36,7 +36,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<link rel="stylesheet" type="text/css" href="./css/command_History.css" />
 		<link rel="stylesheet" type="text/css" href="./css/tables_workspace.css" />
 		<link rel="stylesheet" type="text/css" href="./css/jquery.fileupload-ui.css" />
-		<link rel="stylesheet" type="text/css" href="./css/uploadify.css" />
+		<!-- <link rel="stylesheet" type="text/css" href="./css/uploadify.css" /> -->
 		<link rel="stylesheet" type="text/css" href="./css/CSVImport.css" />
 		<link rel="stylesheet" type="text/css" href="./css/DatabaseImport.css" />
 		<link rel="stylesheet" type="text/css" href="./css/ServiceImport.css" />
@@ -47,7 +47,6 @@ and related projects, please see: http://www.isi.edu/integration
 		<link rel="stylesheet" type="text/css" href="./css/cleaning.css" />
 		<link rel="stylesheet" type="text/css" href="./css/alignment.css" />
 		<link rel="stylesheet" type="text/css" href="./css/d3.css" />
-<!-- 		<link rel="stylesheet" type="text/css" href="./css/jquery.autocomplete.css" /> -->
 		
 		
 		<!-- Third Party JavaScript files		 -->
@@ -55,8 +54,8 @@ and related projects, please see: http://www.isi.edu/integration
 		<script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
 		<script type="text/javascript" src="js/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="js/jquery.hoverIntent.js"></script>
-		<script type="text/javascript" src="js/jquery.uploadify.v2.1.4.js"></script>
-		<script type="text/javascript" src="js/swfobject.js"></script>
+		<!-- <script type="text/javascript" src="js/jquery.uploadify.v2.1.4.js"></script>
+		<script type="text/javascript" src="js/swfobject.js"></script> -->
 		<script type="text/javascript" src="js/jquery.jstree.js"></script>
 		<script type="text/javascript" src="js/jquery.qtip.min.js"></script>
 <!-- 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script> -->
@@ -66,7 +65,13 @@ and related projects, please see: http://www.isi.edu/integration
 		<script type="text/javascript" src="js/json2.js"></script>
 		<script type="text/javascript" src="js/jquery.cookie.js"></script>
 		<script type="text/javascript" src="js/d3.v2.min.js"></script>
-<!-- 		<script type="text/javascript" src="js/jquery.autocomplete.js"></script> -->
+		<script src="js/jquery.iframe-transport.js"></script>
+		
+		<script src="js/jquery.fileupload.js"></script>
+		<script src="js/jquery.fileupload-ui.js"></script>
+		<script src="js/jquery.fileupload-jui.js"></script>
+		<script src="js/locale.js"></script>
+
 		
 		<!-- Home grown JavaScript files -->
 		<script type="text/javascript" src="js/table_manipulation.js"></script>
@@ -103,76 +108,94 @@ and related projects, please see: http://www.isi.edu/integration
 					$.cookie("workspacePreferencesId", $.workspaceGlobalInformation.id, { expires: 7000 });
 				
 				// Attach upload handlers to the import file buttons
-				$('input#uploadFile_JSON').uploadify({
-    				'uploader'  : '/images/uploadify.swf',
-    				'cancelImg' : '/images/cancel.png',
-    				'script'	: 'RequestController',
-    				'buttonText': 'Import JSON',
-    				'scriptData': {'command': 'ImportJSONFileCommand', 
-    								'workspaceId': $.workspaceGlobalInformation.id},
-    				'method'	: 'GET',
-    				'auto': true,
-    				'onComplete'  : function(event, ID, fileObj, response, data) {
-				    	parse($.parseJSON(response));
-				    }
-  				})
+				// $('input#uploadFile_JSON').uploadify({
+    				// 'uploader'  : '/images/uploadify.swf',
+    				// 'cancelImg' : '/images/cancel.png',
+    				// 'script'	: 'RequestController',
+    				// 'buttonText': 'Import JSON',
+    				// 'scriptData': {'command': 'ImportJSONFileCommand', 
+    								// 'workspaceId': $.workspaceGlobalInformation.id},
+    				// 'method'	: 'GET',
+    				// 'auto': true,
+    				// 'onComplete'  : function(event, ID, fileObj, response, data) {
+				    	// parse($.parseJSON(response));
+				    // }
+  				// })
   				
-  				$('input#uploadFile_CSV').uploadify({
-    				'uploader'  : '/images/uploadify.swf',
-    				'cancelImg' : '/images/cancel.png',
-    				'script'	: 'RequestController',
-    				'buttonText': 'Import CSV',
-    				'scriptData': {'command': 'ImportCSVFileCommand', 
-    								'workspaceId': $.workspaceGlobalInformation.id},
-    				'method'	: 'GET',
-    				'auto': true,
-    				'onComplete'  : function(event, ID, fileObj, response, data) {
-						resetCSVDialogOptions();
-				    	showCSVImportOptions(response);
-				    }
-  				});
-  				
-  				$('input#uploadFile_XML').uploadify({
-    				'uploader'  : '/images/uploadify.swf',
-    				'cancelImg' : '/images/cancel.png',
-    				'script'	: 'RequestController',
-    				'buttonText': 'Import XML',
-    				'scriptData': {'command': 'ImportXMLFileCommand', 
-    								'workspaceId': $.workspaceGlobalInformation.id},
-    				'method'	: 'GET',
-    				'auto': true,
-    				'onComplete'  : function(event, ID, fileObj, response, data) {
-						parse($.parseJSON(response));
-				    }
-  				});
-  				
-  				$('input#uploadFile_Ontology').uploadify({
-    				'uploader'  : '/images/uploadify.swf',
-    				'cancelImg' : '/images/cancel.png',
-    				'script'	: 'RequestController',
-    				'buttonText': 'Import Ontology',
-    				'scriptData': {'command': 'ImportOntologyCommand', 
-    								'workspaceId': $.workspaceGlobalInformation.id},
-    				'method'	: 'GET',
-    				'auto': true,
-    				'onComplete'  : function(event, ID, fileObj, response, data) {
-						parse($.parseJSON(response));
-				    }
-  				});
-  				
-  				$('input#uploadFile_Excel').uploadify({
-    				'uploader'  : '/images/uploadify.swf',
-    				'cancelImg' : '/images/cancel.png',
-    				'script'	: 'RequestController',
-    				'buttonText': 'Import Excel',
-    				'scriptData': {'command': 'ImportExcelFileCommand', 
-    								'workspaceId': $.workspaceGlobalInformation.id},
-    				'method'	: 'GET',
-    				'auto': true,
-    				'onComplete'  : function(event, ID, fileObj, response, data) {
-						parse($.parseJSON(response));
-				    }
-  				});
+  				// Initialize the jQuery File Upload widget:
+			    $('#fileupload').fileupload({
+			        url: "RequestController?workspaceId=" + $.workspaceGlobalInformation.id + "&command=ImportCSVFileCommand",
+			        add : function (e, data) {
+			            var fileName = data.files[0].name;
+			            $("span#fileFormatError").hide();
+			            $("input:radio[name=FileFormatSelection]").attr("checked", false);
+
+			            if(fileName.match(".csv$") || fileName.match(".tsv$") || fileName.match(".txt$") || fileName.match(".log$")) {
+			                $(":radio[name=FileFormatSelection][value=CSV]").attr("checked", true);                    
+			            } else if(fileName.match(".xml$")) {
+			                $(":radio[name=FileFormatSelection][value=XMLFile]").attr("checked", true);
+			            } else if(fileName.match(".xls$") || fileName.match(".xlsx$")) {
+			                $(":radio[name=FileFormatSelection][value=ExcelFile]").attr("checked", true);
+			            } else if(fileName.match(".owl$") || fileName.match(".rdf$")) {
+			                $(":radio[name=FileFormatSelection][value=Ontology]").attr("checked", true);
+			            } else if(fileName.match(".json$")) {
+			                $(":radio[name=FileFormatSelection][value=JSONFile]").attr("checked", true);
+			            }
+
+			            $("div#fileFormatSelectionDialog").dialog({width: 200, height: 250, title: "Confirm File Format", modal: true
+			            	, open: function(event, ui) {
+			            		$('.ui-dialog-buttonset  button:last').filter(":last").focus();
+			            	}
+	                      	, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": function() {
+	                            var selectedFormat = $("input:radio[@name='FileFormatSelection']:checked").val();
+	                            if(selectedFormat == null || selectedFormat =="") {
+	                            	$("span#fileFormatError").show();
+	                            	return false;
+	                            }
+	                            var urlString = "RequestController?workspaceId=" + $.workspaceGlobalInformation.id + "&command=";
+	                            
+	                            // Change the command according to the selected format
+	                            if (selectedFormat == "CSV") {
+	                                $('#fileupload').fileupload({
+	                                    url: urlString +"ImportCSVFileCommand",
+	                                    done: function(e, data) {
+							        		resetCSVDialogOptions();
+											showCSVImportOptions(data.result);
+								        }
+	                                });
+	                            } else if (selectedFormat == "XMLFile" || selectedFormat == "ExcelFile" || selectedFormat == "Ontology" || selectedFormat == "JSONFile") {
+	                                $('#fileupload').fileupload({
+	                                    url: urlString+"Import" + selectedFormat + "Command",
+	                                    done: function(e, data) {
+							        		parse(data.result);
+								        }
+	                                });
+	                            }
+	                             
+	                            data.submit();
+	                            $(this).dialog("close");
+	                        } 
+	                    }});
+			        },
+			        done: function(e, data) {
+			        	parse(data.result);
+			        },
+			        fail: function(e, data) {
+			        	$.sticky("File upload failed!");	
+			        }
+			    }).qtip({
+			    	content: {text: "Supported file formats include CSV, XML, JSON, Excel spreadsheet, and OWL ontology"}
+			    });
+			    
+			    // Enable iframe cross-domain access via redirect option:
+			    $('#fileupload').fileupload(
+			        'option',
+			        'redirect',
+			        window.location.href.replace(
+			            /\/[^\/]*$/,
+			            '/cors/result.html?%s'
+			        )
+			    );
   				
 			}).error(function() { 
 				alert("Trouble connecting to server!"); 
@@ -309,25 +332,37 @@ and related projects, please see: http://www.isi.edu/integration
 		<table id="topMenuBar">
 			<tr>
 				<td>
-					<input type="file" name="file1" id="uploadFile_JSON">
+					<button id="importDatabaseTableButton" class="importButton" align="top">Import Database Table</button>
 				</td>
 				<td>
-					<input type="file" name="file2" id="uploadFile_CSV">
+					<button id="importFromServiceButton" class="importButton" align="top">Import from Service</button>
 				</td>
 				<td>
-					<input type="file" name="file3" id="uploadFile_XML">
-				</td>
-				<td>
-					<input type="file" name="file4" id="uploadFile_Ontology">
-				</td>
-				<td>
-					<input type="file" name="file5" id="uploadFile_Excel">
-				</td>
-				<td>
-					<button id="importDatabaseTableButton" class="importButton" >Import Database Table</button>
-				</td>
-				<td>
-					<button id="importFromServiceButton" class="importButton" >Import from Service</button>
+					<div class="container">
+						<!-- <input type="file" name="file1" id="uploadFile_JSON"> -->
+						<form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">
+					        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+					        <div class="row fileupload-buttonbar">
+					            <div class="span7">
+					                <!-- The fileinput-button span is used to style the file input field as button -->
+					                <span class="btn btn-success fileinput-button importButton">
+					                    <i class="icon-plus icon-white"></i>
+					                    <span>Import File...</span>
+					                    <input type="file" name="files[]" multiple>
+					                </span>
+					            </div>
+					            <!-- The global progress information -->
+					            <div class="span5 fileupload-progress fade">
+					                <!-- The global progress bar -->
+					                <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+					                    <div class="bar" style="width:0%;"></div>
+					                </div>
+					                <!-- The extended global progress information -->
+					                <div class="progress-extended">&nbsp;</div>
+					            </div>
+					        </div>
+					    </form>
+					   </div>
 				</td>
 			</tr>
 		</table>
@@ -677,6 +712,19 @@ and related projects, please see: http://www.isi.edu/integration
 					<td class="cleaningTableHeading noBorder" colspan=3>Provide Examples</td>
 				</tr>
 			</table>
+		</div>
+		<div id="fileFormatSelectionDialog" style="display: none" class="smallSizedFont">
+			<table>
+				<tr>
+					<input type="radio" name="FileFormatSelection" value="CSV" id="CSVFileFormat"><label for="CSVFileFormat">CSV Text File</label><br>
+					<input type="radio" name="FileFormatSelection" value="JSONFile" id="JSONFileFormat"><label for="JSONFileFormat">JSON</label><br>
+					<input type="radio" name="FileFormatSelection" value="XMLFile" id="XMLFileFormat"><label for="XMLFileFormat">XML</label><br>
+					<input type="radio" name="FileFormatSelection" value="ExcelFile" id="XLSFileFormat"><label for="XLSFileFormat">Excel Spreadsheet</label><br>
+					<input type="radio" name="FileFormatSelection" value="Ontology" id="OWLFileFormat"><label for="OWLFileFormat">OWL Ontology</label><br>
+				</tr>
+			</table>
+			<br />
+			<span class="error" style="display: none" id="fileFormatError">Please select the file format!</span>
 		</div>
 	</body>
 </html>
