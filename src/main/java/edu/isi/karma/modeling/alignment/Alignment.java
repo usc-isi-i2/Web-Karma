@@ -372,6 +372,7 @@ public class Alignment {
 	}
 	
 	// Reversing the inverse links
+	//THIS IS AN IMPORTANT METHOD. DO NOT REMOVE!!!!! (mariam)
 	public void updateLinksDirections(Vertex root, LabeledWeightedEdge e, DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeClone) {
 
 		if (root == null)

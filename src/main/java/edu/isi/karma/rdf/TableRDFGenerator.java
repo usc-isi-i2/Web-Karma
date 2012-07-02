@@ -313,7 +313,7 @@ public class TableRDFGenerator {
 				findAllRelatedPredicates(p.getTerms().get(1), preds, antecedent, consequent);
 			}
 		}
-		//see if there are any unary predicates ex: hasName(uri(N))
+		//see if there are any unary predicates ex: Person(uri(N))
 		Predicate p = findUnaryPredicate(v, preds);
 		if(p!=null){
 			if(!consequent.contains(p))
@@ -619,5 +619,6 @@ public class TableRDFGenerator {
 		outWriter.flush();
 		outWriter.close();
 	}
+	
 
 }
