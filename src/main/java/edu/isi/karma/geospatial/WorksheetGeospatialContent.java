@@ -194,6 +194,14 @@ public class WorksheetGeospatialContent {
 					}
 					break;
 				}
+				case LINE_POS_LIST:
+					break;
+				case NOT_PRESENT:
+					break;
+				case POLYGON_POS_LIST:
+					break;
+				default:
+					break;
 				}
 
 				if (lng == null || lng.trim().equals("") || lat == null
@@ -239,8 +247,7 @@ public class WorksheetGeospatialContent {
 	}
 
 	public File publishKML() throws FileNotFoundException {
-		File outputFile = new File("./publish/KML/" + worksheet.getTitle()
-				+ ".kml");
+		File outputFile = new File("./src/main/webapp/KML/" + worksheet.getTitle() + ".kml");
 		final Kml kml = KmlFactory.createKml();
 		final Folder folder = kml.createAndSetFolder()
 				.withName(worksheet.getTitle()).withOpen(true);

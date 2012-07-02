@@ -37,7 +37,7 @@ public class PublishKMLLayerCommand extends Command {
 	private String kMLTransferServiceURL;
 
 	private enum JsonKeys {
-		updateType, fileName
+		updateType, fileName, localFileName, transferSuccessful
 	}
 
 	private static Logger logger = LoggerFactory
@@ -93,11 +93,9 @@ public class PublishKMLLayerCommand extends Command {
 		try {
 			final File file = geo.publishKML();
 			// Transfer the file to a public server
-			boolean transfer = transferFileToPublicServer(file);
+			final boolean transfer = transferFileToPublicServer(file);
 			if (!transfer) {
-				return new UpdateContainer(
-						new ErrorUpdate(
-								"Published KML file could not be moved to a public server to display on Google Maps!"));
+				logger.error("Published KML file could not be moved to a public server to display on Google Maps!");
 			}
 
 			return new UpdateContainer(new AbstractUpdate() {
@@ -110,6 +108,10 @@ public class PublishKMLLayerCommand extends Command {
 								"PublishKMLUpdate");
 						outputObject.put(JsonKeys.fileName.name(),
 								publicKMLAddress + file.getName());
+						outputObject.put(JsonKeys.transferSuccessful.name(),
+								transfer);
+						outputObject.put(JsonKeys.localFileName.name(),
+								"KML/" + file.getName());
 						pw.println(outputObject.toString(4));
 					} catch (JSONException e) {
 						logger.error("Error occured while generating JSON!");
