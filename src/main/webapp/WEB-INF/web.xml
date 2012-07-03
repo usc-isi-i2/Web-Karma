@@ -76,6 +76,15 @@
     <servlet-name>KMLFileTransferHandler</servlet-name>
     <url-pattern>/KMLFileTransferHandler</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>LinkedAPIServiceHandler</servlet-name>
+    <servlet-class>edu.isi.karma.webserver.LinkedApiServiceHandler</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LinkedAPIServiceHandler</servlet-name>
+    <url-pattern>/karma/services</url-pattern>
+  </servlet-mapping>
 
 <!-- uncomment for password protection; change user/pwd in config/jettyrealm.properties -->
 <!-- 
