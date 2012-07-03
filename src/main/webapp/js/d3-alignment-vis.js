@@ -434,7 +434,8 @@ function changeSemanticType_d3(d, vis, event) {
                 // Special case when no training has been done to CRF model
                 // Shows an empty semantic type
                 if((!CRFInfo && existingTypes.length == 0) || 
-                    ((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo.length == 0))) {
+                    ((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo.length == 0)) ||
+                    ((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo["Labels"].length == 0))) {
                     addEmptySemanticType();
                     $("table#currentSemanticTypesTable input").prop("checked", true);
                     $("table#currentSemanticTypesTable tr.semTypeRow").addClass("selected");
