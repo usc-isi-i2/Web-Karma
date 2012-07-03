@@ -106,6 +106,10 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 						hNodeIdsAdded.add(type.getHNodeId());
 						
 						if (vertex.getNodeType() == NodeType.Class) {
+							if(type.isPartOfKey()) {
+								vertObj.put(JsonKeys.label.name(), vertex.getLocalID() + "*");
+							}
+							
 							// Add the holder vertex object and the link that attaches nodes to the columns
 							JSONObject vertObj_holder = new JSONObject();
 							vertObj_holder.put(JsonKeys.label.name(), JsonValues.key.name());
@@ -157,8 +161,12 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 					linkObj.put(JsonKeys.label.name(), edge.getLocalLabel());
 					linkObj.put(JsonKeys.id.name(), edge.getID()+"");
 					
-					if(target.getSemanticType() != null && outEdges.isEmpty())
+					if(target.getSemanticType() != null && outEdges.isEmpty()) {
 						linkObj.put(JsonKeys.linkType.name(), JsonValues.holderLink.name());
+						if(target.getSemanticType().isPartOfKey())
+							linkObj.put(JsonKeys.label.name(), edge.getLocalLabel()+"*");
+					}
+						
 					linksArr.put(linkObj);
 					
 					if(source.getNodeType() == NodeType.Class && target.getNodeType() == NodeType.Class) {
