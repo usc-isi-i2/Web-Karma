@@ -34,7 +34,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 			.getLogger(SVGAlignmentUpdate_ForceKarmaLayout.class);
 
 	private enum JsonKeys {
-		worksheetId, alignmentId, label, id, hNodeId, nodeType, source, target, linkType, sourceNodeId, targetNodeId, height, hNodesCovered, nodes, links, maxTreeHeight
+		worksheetId, alignmentId, label, id, hNodeId, nodeType, source, target, linkType, sourceNodeId, targetNodeId, height, hNodesCovered, nodes, links, maxTreeHeight, linkStatus
 	}
 
 	private enum JsonValues {
@@ -160,6 +160,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 					linkObj.put(JsonKeys.targetNodeId.name(), target.getID());
 					linkObj.put(JsonKeys.label.name(), edge.getLocalLabel());
 					linkObj.put(JsonKeys.id.name(), edge.getID()+"");
+					linkObj.put(JsonKeys.linkStatus.name(), edge.getLinkStatus().name());
 					
 					if(target.getSemanticType() != null && outEdges.isEmpty()) {
 						linkObj.put(JsonKeys.linkType.name(), JsonValues.holderLink.name());
@@ -173,7 +174,6 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 						linkObj.put(JsonKeys.linkType.name(), JsonValues.objPropertyLink.name());
 					}
 				}
-				
 			} 
 
 			// Add the vertices for the columns that were not in Steiner tree

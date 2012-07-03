@@ -128,7 +128,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         })
         .attr("class", function(d) {
             if(d.id != "FakeRootLink")
-                return "LinkLabel "+vworksheetId;
+                return "LinkLabel "+vworksheetId + " " + d.linkStatus;
             else
                 return "LinkLabel FakeRootLink "+vworksheetId;
         })
