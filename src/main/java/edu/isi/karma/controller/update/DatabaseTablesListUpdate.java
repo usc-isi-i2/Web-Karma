@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONWriter;
 
+import edu.isi.karma.controller.command.ImportDatabaseTableCommand;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.JDBCUtilFactory;
 import edu.isi.karma.view.VWorkspace;
@@ -84,7 +85,7 @@ public class DatabaseTablesListUpdate extends AbstractUpdate {
 			prefObject.put(JsonKeys.username.name(), username);
 			prefObject.put(JsonKeys.dBorSIDName.name(), dBorSIDName);
 			vWorkspace.getPreferences().setCommandPreferences(
-					"ImportDatabaseTableCommand", prefObject);
+					ImportDatabaseTableCommand.class.getSimpleName()+"Preferences", prefObject);
 
 			JSONStringer jsonStr = new JSONStringer();
 			JSONWriter writer = jsonStr.object().key(JsonKeys.commandId.name())

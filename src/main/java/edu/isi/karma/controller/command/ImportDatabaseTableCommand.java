@@ -128,6 +128,11 @@ public class ImportDatabaseTableCommand extends CommandWithPreview {
 		case importTable: {
 			tableName = request.getParameter("tableName");
 		}
+		case getPreferencesValues: {
+			break;	
+		}
+		default:
+			break;
 		}
 		return c;
 	}
