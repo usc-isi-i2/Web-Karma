@@ -145,4 +145,8 @@ public abstract class Command extends Entity {
 	public void setInputParameterJson(String inputParamJson) {
 		this.inputParameterJson = inputParamJson;
 	}
+
+	public List<CommandTag> getTags() {
+		return tags;
+	}
 }

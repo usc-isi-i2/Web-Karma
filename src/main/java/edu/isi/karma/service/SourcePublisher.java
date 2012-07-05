@@ -24,6 +24,7 @@ package edu.isi.karma.service;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -42,14 +43,16 @@ public class SourcePublisher {
 	private Model model = null;
 	private String sourceDescription;
 	private RepFactory factory;
+	private List<String> transformationCommandsJSON;
 	
 	//MARIAM
 	//I had to add factory, so that I can get to the columnName
 	//I tried to do it in a nicer way but couldn't figure out how to add it to the Attribute
-	public SourcePublisher(Source source, String sourceDescription, RepFactory factory) {
+	public SourcePublisher(Source source, String sourceDescription, RepFactory factory, List<String> transformationCommandJSON) {
 		this.source = source;
 		this.sourceDescription=sourceDescription;
 		this.factory=factory;
+		this.transformationCommandsJSON = transformationCommandJSON;
 	}
 	
 	public Model generateModel() {
@@ -63,6 +66,7 @@ public class SourcePublisher {
 		model.setNsPrefix(Prefixes.RDFS, Namespaces.RDFS);
 		model.setNsPrefix(Prefixes.SWRL, Namespaces.SWRL);
 
+		addTransformationCommandsHistory(model);
 		addSourceInfoPart(model);
 		
 		return model;
@@ -147,8 +151,16 @@ public class SourcePublisher {
 		Property hasSourceDesc = model.createProperty(Namespaces.KARMA, "hasSourceDescription");
 		sourceDescription=sourceDescription.replaceAll("\n", " ").replaceAll("\r", " ");
 		my_source.addProperty(hasSourceDesc, sourceDescription);
+		
+		// Add transformations
+		Property has_columnTransformation = model.createProperty(Namespaces.KARMA, "hasColumnTransformation");
+		for(String commJson : transformationCommandsJSON)
+			my_source.addProperty(has_columnTransformation, commJson);
 	}
 	
+	private void addTransformationCommandsHistory(Model model2) {
+		
+	}
 	public void addModelPart(Model model, Resource resource, edu.isi.karma.service.Model semanticModel) {
 
 		if (semanticModel == null) {

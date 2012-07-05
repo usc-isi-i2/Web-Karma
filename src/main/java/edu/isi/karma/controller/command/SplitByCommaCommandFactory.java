@@ -37,7 +37,7 @@ import edu.isi.karma.webserver.KarmaException;
 public class SplitByCommaCommandFactory extends CommandFactory implements
 		JSONInputCommandFactory {
 	
-	private enum Arguments {
+	public enum Arguments {
 		vWorksheetId, hNodeId, delimiter, checkHistory
 	}
 	
@@ -50,18 +50,8 @@ public class SplitByCommaCommandFactory extends CommandFactory implements
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
 		String delimiter = request.getParameter(Arguments.delimiter.name());
 
-		// Convert the delimiter into character primitive type
-		char delimiterChar = ',';
-		if (delimiter.equalsIgnoreCase("space"))
-			delimiterChar = ' ';
-		else if (delimiter.equalsIgnoreCase("tab"))
-			delimiterChar = '\t';
-		else {
-			delimiterChar = new Character(delimiter.charAt(0));
-		}
-
 		return new SplitByCommaCommand(getNewId(vWorkspace), getWorksheetId(
-				request, vWorkspace), hNodeId, vWorksheetId, delimiterChar);
+				request, vWorkspace), hNodeId, vWorksheetId, delimiter);
 	}
 
 	@Override
@@ -89,18 +79,9 @@ public class SplitByCommaCommandFactory extends CommandFactory implements
 
 		HistoryJsonUtil.setArgumentValue(Arguments.checkHistory.name(), false, inputJson);
 		
-		// Convert the delimiter into character primitive type
-		char delimiterChar = ',';
-		if (delimiter.equalsIgnoreCase("space"))
-			delimiterChar = ' ';
-		else if (delimiter.equalsIgnoreCase("tab"))
-			delimiterChar = '\t';
-		else {
-			delimiterChar = new Character(delimiter.charAt(0));
-		}
 		SplitByCommaCommand comm = new SplitByCommaCommand(getNewId(vWorkspace), 
 				vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheetId(), hNodeId,
-				vWorksheetId, delimiterChar);
+				vWorksheetId, delimiter);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

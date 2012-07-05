@@ -22,6 +22,7 @@
 package edu.isi.karma.controller.command.service;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -139,6 +141,10 @@ public class PublishModelCommand extends Command{
 			String descString = desc.generateSourceDescription();
 			/////////////////
 			
+			// Get the transformation commands JSON list
+			WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
+			List<String> commandsJSON = histReader.getJSONForCommands(CommandTag.Transformation);
+			
 			if (service != null) {
 				ServicePublisher servicePublisher = new ServicePublisher(service,descString);
 				servicePublisher.publish(Repository.Instance().LANG, true);
@@ -146,7 +152,7 @@ public class PublishModelCommand extends Command{
 				return new UpdateContainer(new ErrorUpdate(
 				"Service model has successfully been published to repository."));
 			} else { //if (source != null) {
-				SourcePublisher sourcePublisher = new SourcePublisher(source, descString,ws.getFactory());
+				SourcePublisher sourcePublisher = new SourcePublisher(source, descString, ws.getFactory(), commandsJSON);
 				sourcePublisher.publish(Repository.Instance().LANG, true);
 				logger.info("Source model has successfully been published to repository.");
 				return new UpdateContainer(new ErrorUpdate(

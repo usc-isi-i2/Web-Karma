@@ -3,7 +3,9 @@ package edu.isi.karma.controller.history;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,28 +51,45 @@ public class WorksheetCommandHistoryReader {
 		
 		for (int i = 0; i< historyJson.length(); i++) {
 			JSONObject commObject = (JSONObject) historyJson.get(i);
-			JSONArray inputParamArr = (JSONArray) commObject.get(HistoryArguments.inputParameters.name());
-			
-			logger.info("Command in history: " + commObject.get(HistoryArguments.commandName.name()));
-			// Change the hNode ids, vworksheet id to point to the current worksheet ids
-			if(normalizeJsonInput(inputParamArr)) {
-				// Invoke the command
-				CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
-				if(cf != null && cf instanceof JSONInputCommandFactory) {
-					logger.info("Executing command from history: " + commObject.get(HistoryArguments.commandName.name()));
-					JSONInputCommandFactory scf = (JSONInputCommandFactory)cf;
-					Command comm = scf.createCommand(inputParamArr, vWorkspace);
-					if(comm != null){
-						if(comm.hasTag(tag)) {
-							logger.info("Executing command: " + commObject.get(HistoryArguments.commandName.name()));
-							vWorkspace.getWorkspace().getCommandHistory().doCommand(comm, vWorkspace);
-						} else {
-							logger.debug("Won't execute command: " + commObject.get(HistoryArguments.commandName.name()));
-						}
-					}
-					else
-						logger.error("Error occured while creating command (Could not create Command object): " + commObject.get(HistoryArguments.commandName.name()));
+			JSONArray tags = commObject.getJSONArray(HistoryArguments.tags.name());
+			for (int j=0; j<tags.length(); j++) {
+				String tag2 = tags.getString(j);
+				if(tag2.equals(tag.name())) {
+					executeCommand(commObject, commandFactoryMap);
+					break;
 				}
+			}
+		}
+	}
+	
+	public void executeListOfCommands(List<String> commandsJsonList) throws JSONException, KarmaException, CommandException {
+		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(vWorkspace.getWorkspace().getId());
+		HashMap<String, CommandFactory> commandFactoryMap = ctrl.getCommandFactoryMap();
+		
+		for(String commJson : commandsJsonList) {
+			JSONObject commObject = new JSONObject(commJson);
+			executeCommand(commObject, commandFactoryMap);
+		}
+	}
+	
+	private void executeCommand(JSONObject commObject, HashMap<String, CommandFactory> commandFactoryMap) throws JSONException, KarmaException, CommandException {
+		JSONArray inputParamArr = (JSONArray) commObject.get(HistoryArguments.inputParameters.name());
+		
+		logger.info("Command in history: " + commObject.get(HistoryArguments.commandName.name()));
+		// Change the hNode ids, vworksheet id to point to the current worksheet ids
+		if(normalizeJsonInput(inputParamArr)) {
+			// Invoke the command
+			CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
+			if(cf != null && cf instanceof JSONInputCommandFactory) {
+				logger.info("Executing command from history: " + commObject.get(HistoryArguments.commandName.name()));
+				JSONInputCommandFactory scf = (JSONInputCommandFactory)cf;
+				Command comm = scf.createCommand(inputParamArr, vWorkspace);
+				if(comm != null){
+					logger.info("Executing command: " + commObject.get(HistoryArguments.commandName.name()));
+					vWorkspace.getWorkspace().getCommandHistory().doCommand(comm, vWorkspace);
+				}
+				else
+					logger.error("Error occured while creating command (Could not create Command object): " + commObject.get(HistoryArguments.commandName.name()));
 			}
 		}
 	}
@@ -109,5 +128,32 @@ public class WorksheetCommandHistoryReader {
 			}
 		}
 		return true;
+	}
+
+	public List<String> getJSONForCommands(CommandTag tag) {
+		List<String> commandsJSON = new ArrayList<String>();
+		String worksheetName = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet().getTitle();
+		File historyFile = new File(HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(worksheetName, vWorkspace.getPreferencesId()));
+		
+		try {
+			JSONArray historyJson = (JSONArray) JSONUtil.createJson(new FileReader(historyFile));
+			
+			for (int i = 0; i< historyJson.length(); i++) {
+				JSONObject commObject = (JSONObject) historyJson.get(i);
+				JSONArray tags = commObject.getJSONArray(HistoryArguments.tags.name());
+				for (int j=0; j< tags.length(); j++) {
+					String tag2 = tags.getString(j);
+					if(tag2.equals(tag.name()))
+						commandsJSON.add(commObject.toString());
+				}
+			}
+		} catch (FileNotFoundException e) {
+			logger.error("History file not found!", e);
+			return commandsJSON;
+		} catch (JSONException e) {
+			logger.error("Error occured while working with JSON!", e);
+		}
+		
+		return commandsJSON;
 	}
 }

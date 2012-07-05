@@ -21,7 +21,7 @@ public class CommandHistoryWriter {
 	private VWorkspace vWorkspace;
 	
 	public enum HistoryArguments {
-		vWorksheetId, commandName, inputParameters, hNodeId
+		vWorksheetId, commandName, inputParameters, hNodeId, tags
 	}
 
 	public CommandHistoryWriter(ArrayList<Command> history, VWorkspace vWorkspace) {
@@ -48,6 +48,12 @@ public class CommandHistoryWriter {
 			for(Command comm : comms) {
 				JSONObject commObj = new JSONObject();
 				commObj.put(HistoryArguments.commandName.name(), comm.getCommandName());
+				
+				// Populate the tags
+				JSONArray tagsArr = new JSONArray();
+				for (CommandTag tag : comm.getTags())
+					tagsArr.put(tag.name());
+				commObj.put(HistoryArguments.tags.name(), tagsArr);
 				
 				JSONArray inputArr = new JSONArray(comm.getInputParameterJson());
 				for (int i = 0; i < inputArr.length(); i++) {
