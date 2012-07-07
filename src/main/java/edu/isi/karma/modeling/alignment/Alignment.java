@@ -42,9 +42,21 @@ public class Alignment {
 	private class SemanticTypeComparator implements Comparator<SemanticType> {
 	    @Override
 	    public int compare(SemanticType o1, SemanticType o2) {
-	    	String s1 = (o1.getDomain() != null?o1.getDomain().getUriString():"") + o1.getType().getUriString();
-	    	String s2 = (o2.getDomain() != null?o2.getDomain().getUriString():"") + o2.getType().getUriString();
-	        return s1.compareTo(s2);
+//	    	String s1 = (o1.getDomain() != null?o1.getDomain().getUriString():"") + o1.getType().getUriString();
+//	    	String s2 = (o2.getDomain() != null?o2.getDomain().getUriString():"") + o2.getType().getUriString();
+	    	String s1 = o1.getHNodeId();
+	    	String s2 = o2.getHNodeId();
+//	    	return s1.compareTo(s2);
+	    	
+	    	s1 = s1.replaceFirst("HN", "");
+	    	s2 = s2.replaceFirst("HN", "");
+	        
+	    	int i1 = Integer.valueOf(s1).intValue();
+	    	int i2 = Integer.valueOf(s2).intValue();
+
+	    	if (i1 < i2) return -1;
+	    	else if (i1 > i2) return 1;
+	    	else return 0;
 	    }
 	}
 	

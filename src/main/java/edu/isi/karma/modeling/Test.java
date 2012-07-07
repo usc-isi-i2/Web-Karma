@@ -43,7 +43,7 @@ public class Test {
 		
 		f[0] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\vivo-core-public-1.4.owl");
 		f[1] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\uscont.owl");
-		f[2] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\geonames\\DovetailOnto_v0_9.rdf");
+		f[2] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\DovetailOnto_v1_0.rdf");
 		f[3] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\geonames\\wgs84_pos-updated.xml");
 		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\geonames\\ontology_v3.01-test.rdf");
 		
@@ -53,7 +53,7 @@ public class Test {
 //		f[3] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\DoveTailOntoRDF.owl");
 //		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\Dovetail_ISI_mod.owl");
 		
-		for (int i = 3; i < 5; i++) {
+		for (int i = 2; i < 3; i++) {
 			ontManager.doImport(f[i]);
 		}
 	}

@@ -391,7 +391,7 @@ public class OntologyCache {
 				allRanges.addAll(ranges);
 			}
 
-			List<String> indirectRanges = propertyIndirectDomains.get(p);
+			List<String> indirectRanges = propertyIndirectRanges.get(p);
 			if (indirectRanges == null) {  
 				indirectRanges = new ArrayList<String>();
 				propertyIndirectRanges.put(p, indirectRanges);
@@ -409,6 +409,9 @@ public class OntologyCache {
 						temp.add(p);
 				}
 				
+			allDomains.addAll(indirectDomains);
+			allRanges.addAll(indirectRanges);
+			
 			for (int i = 0; i < allDomains.size(); i++) {
 				for (int j = 0; j < allRanges.size(); j++) {
 					temp = 
