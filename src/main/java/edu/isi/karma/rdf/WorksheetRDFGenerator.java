@@ -249,6 +249,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 	public void generateTriplesCell(Table dataTable, boolean useInternalColumnNames) throws MediatorException, IOException, KarmaException{
 		//generate all triples cell by cell
 		//for each row
+		//logger.info("Generate triples for table:" + dataTable);
 		ArrayList<Row> rows = dataTable.getRows(0, dataTable.getNumRows());
 		//int i=0;
 		for(Row r:rows){
@@ -310,7 +311,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 	 */
 	public void generateTriplesCell(String nodeId, boolean useInternalColumnNames) throws MediatorException, IOException, KarmaException{
 		Node n = factory.getNode(nodeId);
-		logger.debug("Generate triples for node:"+n);
+		//logger.info("Generate triples for node:"+n);
 		if(n.hasNestedTable()){
 			//This should not happen
 			throw new KarmaException("Node " + n.getHNodeId() + " contains a nested table. " +
@@ -347,6 +348,11 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 				//that are in the same row as this nested table
 				//for ex: person name that has multiple phone numbers
 				//if I look at phone number node, the value for person name is in the parent row
+				//logger.info("Parent table" + n.getParentTable());
+				if(n.getParentTable().getNestedTableInNode()==null){
+					//this is not a nested table, so I can't go to the parent Row
+					throw new KarmaException("No value was found for node:" + var + ". Alignment of table is not correct!");
+				}
 				Row parentRow = n.getParentTable().getNestedTableInNode().getBelongsToRow();
 				varValue = getValueInRow(var,parentRow,useInternalColumnNames);
 				if(varValue==null){
@@ -390,15 +396,16 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 	 * 		if the node contains a nested table.
 	 */
 	private String getValueInRow(String nodePath, Row r, boolean useInternalColumnNames) throws KarmaException {
-		//logger.debug("Row="+r.hashCode());
+		//logger.info("Row="+r.hashCode() + " node path=" + nodePath);
 		//for each node in the row
 		for (Node n : r.getNodes()) {
 			//get HNodePtah for this node
+			//logger.info("hnodepath="+factory.getHNode(n.getHNodeId()).getHNodePath(factory));
 			String columnName = factory.getHNode(n.getHNodeId()).getHNodePath(factory).toColumnNamePath();
 			if(!useInternalColumnNames)
 				columnName = factory.getHNode(n.getHNodeId()).getColumnName();
-			//logger.debug("Path="+path);
-			//logger.debug("Row for this node="+n.getBelongsToRow().hashCode());			
+			//logger.info("Path="+nodePath + "col name:" + columnName);
+			//logger.info("Row for this node="+n.getBelongsToRow().hashCode());			
 			if(columnName.equals(nodePath)){
 				//this is the node
 				if(n.hasNestedTable()){
@@ -408,7 +415,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 				}
 				else{
 					//contains a value
-					//logger.debug("Value for:"+path + "=" + n.getValue().asString());
+					//logger.info("Value for:"+nodePath + "=" + n.getValue().asString());
 					return n.getValue().asString();
 				}
 			}
