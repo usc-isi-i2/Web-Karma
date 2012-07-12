@@ -50,7 +50,7 @@ public class GraphBuilder {
 	
 	private static String SUBCLASS_URI = "hasSubClass";
 	private static String SUBCLASS_NS = "http://example.com#";
-	private static String SUBCLASS_PREFIX = "sub";
+	private static String SUBCLASS_PREFIX = "";
 
 	public static double DEFAULT_WEIGHT = 1.0;	
 	public static double MIN_WEIGHT = 0.000001; // need to be fixed later	
@@ -496,7 +496,10 @@ public class GraphBuilder {
 			for (int i = 0; i < outgoing.length; i++) {
 				label = outgoing[i].getUriString();
 				id = createLinkID(label);
-				LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getURIFromString(label), outgoing[i].getLinkType());
+				LabeledWeightedEdge e = new LabeledWeightedEdge(id, 
+						new URI(outgoing[i].getUriString(), 
+								outgoing[i].getNs(),
+								outgoing[i].getPrefix()), outgoing[i].getLinkType());
 				s = target;
 				t = outgoing[i].getTarget();
 				this.graph.addEdge(s, t, e);
@@ -507,7 +510,10 @@ public class GraphBuilder {
 			for (int i = 0; i < incoming.length; i++) {
 				label = incoming[i].getUriString();
 				id = createLinkID(label);
-				LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getURIFromString(label), incoming[i].getLinkType());
+				LabeledWeightedEdge e = new LabeledWeightedEdge(id, 
+						new URI(incoming[i].getUriString(), 
+								incoming[i].getNs(),
+								incoming[i].getPrefix()), incoming[i].getLinkType());
 				s = incoming[i].getSource();
 				t = target;
 				this.graph.addEdge(s, t, e);
