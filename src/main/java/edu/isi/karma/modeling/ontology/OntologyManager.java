@@ -109,7 +109,7 @@ public class OntologyManager {
 	public URI getURIFromString(String uri) {
 		Resource r = ontModel.getResource(uri);
 		if (r == null || !ontModel.containsResource(r)) {
-			logger.error("Could not find the resource " + uri + " in the ontology model.");
+			logger.debug("Could not find the resource " + uri + " in the ontology model.");
 			return null;
 		}
 		String ns = r.getNameSpace();

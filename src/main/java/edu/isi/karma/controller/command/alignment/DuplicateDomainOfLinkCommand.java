@@ -113,7 +113,7 @@ public class DuplicateDomainOfLinkCommand extends Command {
 			Worksheet worksheet, VWorkspace vWorkspace){
 		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
 				.getSteinerTree();
-		GraphUtil.printGraph(tree);
+//		GraphUtil.printGraph(tree);
 
 		List<String> hNodeIdList = new ArrayList<String>();
 		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);

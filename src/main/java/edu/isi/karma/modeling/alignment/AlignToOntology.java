@@ -63,13 +63,20 @@ public class AlignToOntology {
 				alignment = getNewAlignment();
 			}
 		} else {
-			// Save the previously added user links
+			// Save the previously added user links and duplicated links
 			List<LabeledWeightedEdge> userLinks = null;
+			List<String> duplicatedLinks = null;
 			if(alignment != null) {
 				userLinks = alignment.getLinksForcedByUser();
+				duplicatedLinks = alignment.getDuplicatedLinkIds();
 			}
 			
 			alignment = getNewAlignment();
+			// Add duplicated links
+			if (duplicatedLinks != null && duplicatedLinks.size() != 0) {
+				for (String linkId : duplicatedLinks)
+					alignment.duplicateDomainOfLink(linkId);
+			}
 			// Add user links if any
 			if (userLinks != null && userLinks.size() != 0) {
 				for (LabeledWeightedEdge edge : userLinks)

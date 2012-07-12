@@ -67,6 +67,9 @@ public class Alignment {
 
 	private List<LabeledWeightedEdge> linksForcedByUser;
 	private List<LabeledWeightedEdge> linksPreferredByUI;
+	
+	
+	private List<String> duplicatedLinkIds;
 
 	private DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = null;
 	private Vertex root = null;
@@ -85,6 +88,7 @@ public class Alignment {
 		
 		linksForcedByUser = new ArrayList<LabeledWeightedEdge>();
 		linksPreferredByUI = new ArrayList<LabeledWeightedEdge>();
+		duplicatedLinkIds = new ArrayList<String>();
 		
 		semanticNodes = graphBuilder.getSemanticNodes();
 		
@@ -94,6 +98,10 @@ public class Alignment {
 		return linksForcedByUser;
 	}
 	
+	public List<String> getDuplicatedLinkIds() {
+		return duplicatedLinkIds;
+	}
+
 	public Alignment(OntologyManager ontologyManager, List<SemanticType> semanticTypes, boolean separateDomainInstancesForSameDataProperties) {
 		this.ontologyManager = ontologyManager;
 		this.separateDomainInstancesForSameDataProperties = separateDomainInstancesForSameDataProperties;
@@ -219,6 +227,7 @@ public class Alignment {
 				
 				logger.info("domain of the link " + linkId + " has been replicated and graph has been changed successfully.");
 				align();
+				duplicatedLinkIds.add(linkId);
 				return;
 				
 			}
@@ -408,7 +417,7 @@ public class Alignment {
 				treeClone.addEdge(target, source, inverseLink);
 				treeClone.setEdgeWeight(inverseLink, inLink.getWeight());
 				treeClone.removeEdge(inLink);
-				GraphUtil.printGraph(treeClone);
+//				GraphUtil.printGraph(treeClone);
 			}
 		}
 
