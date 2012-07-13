@@ -467,67 +467,6 @@ public class RuleUtil {
 			return null;
 		}
 	}
-	public static String genRules(ArrayList<String[]> examples) throws Exception
-	{
-		try
-		{
-			String fname = "./grammar/grammar.txt";
-			FileInputStream   file   =   new   FileInputStream(fname); 
-			byte[]   buf   =   new   byte[file.available()];     
-			file.read(buf,   0,   file.available());   // 
-			String   str   =   new   String(buf); 
-			CharStream cs =  new ANTLRStringStream(str);
-			GrammarparserLexer lexer = new GrammarparserLexer(cs);
-	        CommonTokenStream tokens = new CommonTokenStream(lexer);
-	        GrammarparserParser parser= new GrammarparserParser(tokens);
-	        RuleGenerator gen = new RuleGenerator();
-	        parser.setGen(gen);
-	        parser.alllines();
-	        HashSet<String> s = gen.printRules("rule",0);
-	        //use examples to learn some weak params
-    			Vector<int[]> x = Alignment.getParams(examples.get(0)[0], examples.get(0)[1]);
-    			Ruler r = new Ruler();
-    			r.setNewInput(examples.get(0)[0]);
-    			Vector<TNode> vt = r.vec;
-	        Set<String> st = new HashSet<String>();
-	        // for multiple tokens
-	        if(x.size()==0)
-	        {
-	        		System.out.println("Nothing needs to be deleted");
-	        		System.exit(0);
-	        		return "";
-	        }
-	        Vector<Vector<String>> vs = RuleUtil.getLitervalue(vt, x.get(0)[0],x.get(0)[1],gen);
-	        for(String l:s)
-	        {
-	        		l = gen.revital(l);
-	        		Vector<String> ro = gen.assignValue(l,vs);
-	        		for(String xx:ro)
-	        		{
-	        			xx = xx.replaceAll("( )+", " ");
-	        			xx = xx.trim();
-		        		if(!gen.checkOnExamples(examples, xx))
-		        			continue;
-		        		if(!st.contains(xx))
-		        		{
-		        			st.add(xx);
-		        		}
-	        		}
-	        }
-	        BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/Users/bowu/mysoft/Allrules.txt")));
-	        for(String ts:st)
-	        {
-	        		bw.write(ts+"\n");
-	        }
-	        bw.close();
-	        System.out.println("ji");
-		}
-		catch(Exception ex)
-		{
-			System.out.println(""+ex.toString());
-		}
-        return "/Users/bowu/mysoft/Allrules.txt";
-	}
 	
 	public static Vector<Vector<Vector<EditOper>>> genEditOpers(Vector<Vector<TNode>> orgs,Vector<Vector<TNode>> tars) throws Throwable
 	{
@@ -732,6 +671,7 @@ public class RuleUtil {
 								Vector<HashSet<String>> allParams = new Vector<HashSet<String>>();
 								HashSet<String> set1 = NonterminalValidator.genendendContext(curSeqs.get(l).get(m), p);
 								set1.retainAll(descriptions.get(j).get(m).get(0));
+								System.out.println(set1);
 								allParams.add(set1);
 								HashSet<String> set2 = NonterminalValidator.genstartContext(curSeqs.get(l).get(m), p);
 								set2.retainAll(descriptions.get(j).get(m).get(1));

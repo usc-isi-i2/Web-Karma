@@ -190,7 +190,14 @@ public class Ruler {
 				else
 				{
 					if(pos<vec.size())
-						return pos;
+						if(pos>0)
+						{
+							return pos-1;
+						}
+						else {
+							return 0;
+						}
+						
 					else
 						return vec.size()-1;
 				}

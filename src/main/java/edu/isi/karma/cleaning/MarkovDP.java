@@ -261,7 +261,8 @@ public class MarkovDP {
 		double totalScore = 0.0;
 		for(String crule:res)
 		{	
-			//crule = "   mov     Symbol    from_beginning  first incld    Symbol   from_end   12   from_beginning   7";
+			//crule = "del  anytoks    from_beginning   1   from_beginning  first    Number";
+			//System.out.println(""+crule);
 			MDPState newS = s.genNewState(crule, actualInd);
 			if(newS == null)
 				continue;

@@ -404,67 +404,6 @@ public class Main {
 	}
 	static Vector<Integer> ruleNum1 = new Vector<Integer>();
 	static Vector<Integer> ruleNum2 = new Vector<Integer>();
-	public static void LearnRule()
-	{
-		RuleUtil rutil = new RuleUtil();
-		try
-		{
-			int expcnt = 1; // number for examples
-			String fpath = "/Users/bowu/Research/dataclean/data/Experiments/50_stock_company_pair.csv";
-			CSVReader cr = new CSVReader(new FileReader(new File(fpath)),'\t');
-			ArrayList<String[]> examples = new ArrayList<String[]>();
-			ArrayList<String[]> examples1 = new ArrayList<String[]>();
-			cr.readNext(); // skip the first row
-			for(int i = 0; i< expcnt;i++)
-			{
-				String [] z = cr.readNext();
-				examples.add(z);
-				examples1.add(z);
-			}
-			while(true)
-			{
-				String rpath = RuleUtil.genRules(examples);
-				exper1_cluster(rpath,fpath,"");
-				String[] x = output(rpath,fpath);
-				if(x==null)
-				{
-					break;
-				}
-				else
-				{
-					examples.add(x);
-				}
-				expcnt++;
-			}
-			int expcnt0 = 1;
-			//examples.clear();
-			ruleNum2 = (Vector<Integer>)ruleNum1.clone();
-			ruleNum1.clear();
-			while(true)
-			{
-				String rpath = RuleUtil.genRules(examples1);
-				String[] y = exper1_cluster(rpath,fpath,"");
-				output(rpath,fpath);
-				if(y==null)
-				{
-					break;
-				}
-				else
-				{
-					examples1.add(y);
-				}
-				expcnt0++;
-			}
-			System.out.println("without ranking: "+examples.size()+" with ranking: "+examples1.size());
-			System.out.println(ruleNum2);
-			System.out.println(ruleNum1);
-		}
-		catch(Exception ex)
-		{
-			System.out.println(""+ex.toString());
-		}
-	}
-	
 	// output for generating all the results of all rules
 	//fpath rule file path fpath0 data file
 	public static String[] output(String fpath,String fpath0)
@@ -932,7 +871,7 @@ public class Main {
 		for(int x = 0;x <1;x++)
 		{
 			double st = System.currentTimeMillis();
-			m.exper_2("/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/test");
+			m.exper_2("/Users/bowu/Research/testdata/TestSingleFile");
 			double ed = System.currentTimeMillis();
 			xy.add((ed-st)*1.0/60000);
 			
