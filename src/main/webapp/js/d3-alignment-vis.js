@@ -469,6 +469,7 @@ function showAlternativeParents_d3(d, vis, event) {
     info["command"] = "GetAlternativeLinksCommand";
     info["alignmentId"] = $(vis).data("alignmentId");
     info["worksheetId"] = $(vis).data("worksheetId");
+    $("#alternativeParentsTableFilter").val("");
         
     var returned = $.ajax({
         url: "/RequestController", 
@@ -518,7 +519,8 @@ function showAlternativeParents_d3(d, vis, event) {
                             var linkLabelTd = $("<td>").append(linkLabel); 
                             
                             trTag.append($("<td>").append(radioButton))
-                                .append(linkLabelTd);
+                                .append(linkLabelTd)
+                                .data("edgeLabel", linkLabel.text());
                                 
                             if(edge["selected"]) {
                                 radioButton.attr("checked", true);
@@ -531,7 +533,7 @@ function showAlternativeParents_d3(d, vis, event) {
                             table.append(trTag);
                         });
                         // Show the dialog box
-                        optionsDiv.dialog({width: 300, height: 300, position: positionArray
+                        optionsDiv.dialog({width: 300, height: 400, position: positionArray
                             , buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitAlignmentLinkChange }});
                             
                         $("input:radio[@name='AlternativeLinksGroup']").change(function(){

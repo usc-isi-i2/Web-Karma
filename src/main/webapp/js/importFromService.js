@@ -64,20 +64,9 @@ function styleAndAssignHandlerstoServiceImportObjects(){
 	  
 	    //if there is text, lets filter
 	    else {  
-	      filterService('#ServiceSourceList tr', $(this).val());  
+	      filter('#ServiceSourceList tr', $(this).val(), "sourceName");  
 	    }
   	});
-}
-
-//filter results
-function filterService(selector, query) {
-	  query	= $.trim(query); //trim white space
-	  query = query.replace(/ /gi, '|'); //add OR for regex query
-	
-	  $(selector).each(function() {
-	    ($(this).data("sourceName").search(new RegExp(query, "i")) < 0) 
-	    	? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
-	  });
 }
 
 function populateSourceList(element) {

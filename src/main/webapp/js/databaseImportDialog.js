@@ -79,20 +79,21 @@ function styleAndAssignHandlerstoDatabaseImportObjects(){
 	  
 	    //if there is text, lets filter
 	    else {  
-	      filter('#DatabaseTablesList tr', $(this).val());  
+	      filter('#DatabaseTablesList tr', $(this).val(), "tableName");  
 	    }
   	});
 }
 
 //filter results
-function filter(selector, query) {
-	  query	= $.trim(query); //trim white space
-	  query = query.replace(/ /gi, '|'); //add OR for regex query
-	
-	  $(selector).each(function() {
-	    ($(this).data("tableName").search(new RegExp(query, "i")) < 0) 
-	    	? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
-	  });
+function filter(selector, query, dataAttribute) {
+      query = $.trim(query); //trim white space
+      query = query.replace(/ /gi, '|'); //add OR for regex query
+    
+        
+      $(selector).each(function() {
+        ($(this).data(dataAttribute).search(new RegExp(query, "i")) < 0) 
+            ? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
+      });
 }
 
 function isNumeric(input){

@@ -61,6 +61,26 @@ function attachOntologyOptionsRadioButtonHandlers() {
 	$("input#filterPropertyByDomain").change(handleDataPropertyFilter);
 	$("input#filterClassByDomain").change(handleClassFilter);
 	$("button#addSemanticType").button().click(addEmptySemanticType);
+	
+	// Filter for the alternative object properties list
+    $("#alternativeParentsTableFilter").keyup( function (event) {
+        // fire the above change event after every letter
+        
+        //if esc is pressed or nothing is entered  
+        if (event.keyCode == 27 || $(this).val() == '') {  
+          //if esc is pressed we want to clear the value of search box  
+          $(this).val('');  
+      
+          //we want each row to be visible because if nothing  
+          //is entered then all rows are matched.  
+          $('tr').removeClass('visible').show().addClass('visible');  
+        }  
+      
+        //if there is text, lets filter
+        else {  
+          filter('#AlternativeParentLinksTable tr', $(this).val(), "edgeLabel");  
+        }
+    });
 }
 
 function handleDataPropertyFilter() {
