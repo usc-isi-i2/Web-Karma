@@ -64,7 +64,7 @@ function styleAndAssignHandlerstoServiceImportObjects(){
 	  
 	    //if there is text, lets filter
 	    else {  
-	      filter('#ServiceSourceList tr', $(this).val(), "sourceName");  
+	      filter('#ServiceSourceList tr', $(this).val(), "sourceName");  // present in databasImportDialog.js
 	    }
   	});
 }

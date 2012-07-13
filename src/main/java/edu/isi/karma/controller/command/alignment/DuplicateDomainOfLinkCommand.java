@@ -23,7 +23,6 @@ package edu.isi.karma.controller.command.alignment;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,9 +35,6 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.AlignToOntology;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.GraphUtil;
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.view.VWorksheet;
@@ -111,8 +107,8 @@ public class DuplicateDomainOfLinkCommand extends Command {
 
 	private UpdateContainer getAlignmentUpdateContainer(Alignment alignment,
 			Worksheet worksheet, VWorkspace vWorkspace){
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
-				.getSteinerTree();
+//		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
+//				.getSteinerTree();
 //		GraphUtil.printGraph(tree);
 
 		List<String> hNodeIdList = new ArrayList<String>();
