@@ -39,11 +39,11 @@ public class Datagenerator {
 	{
 		return RuleUtil.applyRule(rule, fpath);
 	}
-	public String generateRules(ArrayList<String[]> examples)
+	public String generateRules(Vector<String[]> examples)
 	{
 		try
 		{
-			return RuleUtil.genRules(examples);
+			return RuleUtil.genRule(examples).get(0);
 		}
 		catch(Exception e)
 		{
@@ -129,7 +129,7 @@ public class Datagenerator {
 					continue;
 				}
 				String p = dg.generateTruth(tf.getAbsolutePath(), rules.get(cnt));
-				ArrayList<String[]> examples = new ArrayList<String[]>();
+				Vector<String[]> examples = new Vector<String[]>();
 				examples.add(paras[0].split("%"));
 				String rpath = dg.generateRules(examples);
 				//dg.chooseWrost(p, rpath);
