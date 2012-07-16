@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.AddNewColumnCommand;
 import edu.isi.karma.controller.command.AddNewColumnCommandFactory;
+import edu.isi.karma.controller.command.ApplyWorksheetHistoryCommand;
+import edu.isi.karma.controller.command.ApplyWorksheetHistoryCommandFactory;
 import edu.isi.karma.controller.command.CloseWorkspaceCommand;
 import edu.isi.karma.controller.command.CloseWorkspaceCommandFactory;
 import edu.isi.karma.controller.command.Command;
@@ -205,6 +207,8 @@ public class ExecutionController {
 				new PopulateCommandFactory());
 		commandFactoryMap.put(PublishWorksheetHistoryCommand.class.getSimpleName(),
 				new PublishWorksheetHistoryCommandFactory());
+		commandFactoryMap.put(ApplyWorksheetHistoryCommand.class.getSimpleName(),
+				new ApplyWorksheetHistoryCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

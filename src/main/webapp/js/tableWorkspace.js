@@ -215,9 +215,24 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
         
     });
 	
-	$("button#applyWorksheetHistory").click(function(){
-	    alert("Not working yet!");
-	});
+	$("#applyWorksheetHistory").fileupload({
+        add : function (e, data) {
+            $("#applyWorksheetHistory").fileupload({
+                url: "RequestController?workspaceId=" + $.workspaceGlobalInformation.id + "&command=ApplyWorksheetHistoryCommand&vWorksheetId="+optionsDiv.data("worksheetId")
+            });
+            showLoading(optionsDiv.data("worksheetId"));
+            data.submit();
+        },
+        done: function(e, data) {
+            $("div.span5", optionsDiv).remove();
+            parse(data.result);
+            hideLoading(optionsDiv.data("worksheetId"));
+        },
+        fail: function(e, data) {
+            $.sticky("History file upload failed!");
+            hideLoading(optionsDiv.data("worksheetId"));
+        }
+    });
 	
 }
 

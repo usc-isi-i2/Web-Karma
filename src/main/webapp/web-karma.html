@@ -194,7 +194,6 @@ and related projects, please see: http://www.isi.edu/integration
 			            '/cors/result.html?%s'
 			        )
 			    );
-  				
 			}).error(function() { 
 				alert("Trouble connecting to server!"); 
 			});
@@ -567,8 +566,32 @@ and related projects, please see: http://www.isi.edu/integration
 			<button href="#" id="publishDatabase">Publish Database</button>
 			<button href="#" id="populateSource">Populate Source</button>
 			<button href="#" id="publishServiceModel">Publish Model</button>
-			<button href="#" id="publishWorksheetHistory" style="display: none">Publish Worksheet History</button>
-			<button href="#" id="applyWorksheetHistory" style="display: none">Apply Worksheet History</button>
+			<button href="#" id="publishWorksheetHistory">Publish Worksheet History</button>
+			<div class="container">
+				<!-- <input type="file" name="file1" id="uploadFile_JSON"> -->
+				<form id="applyWorksheetHistory" action="ImportFileCommand" method="POST" enctype="multipart/form-data">
+			        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+			        <div class="row fileupload-buttonbar">
+			            <div class="span7">
+			                <!-- The fileinput-button span is used to style the file input field as button -->
+			                <span class="btn btn-success fileinput-button importButton" id="applyHistoryButton">
+			                    <!-- <i class="icon-plus icon-white"></i> -->
+			                    <span>Apply History</span>
+			                    <input type="file" name="files[]" multiple>
+			                </span>
+			            </div>
+			            <!-- The global progress information -->
+			            <div class="span5 fileupload-progress fade">
+			                <!-- The global progress bar -->
+			                <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+			                    <div class="bar" style="width:0%;"></div>
+			                </div>
+			                <!-- The extended global progress information -->
+			                <div class="progress-extended">&nbsp;</div>
+			            </div>
+			        </div>
+			    </form>
+			   </div>
 		</div>
 		<div id="ChangeSemanticTypesDialogBox" style="display: none">
 			<div id="CurrentSemanticTypesBox" class="ui-corner-all">

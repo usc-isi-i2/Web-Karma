@@ -812,6 +812,10 @@ function parse(data) {
         else if(element["updateType"] == "SVGAlignmentUpdate_ForceKarmaLayout") {
             displayAlignmentTree_ForceKarmaLayout(element);  // In d3-alignment-vis.js
         }
+        
+        else if(element["updateType"] == "KarmaInfo") {
+            $.sticky(element["Info"]);
+        }
 	});
 }
 

@@ -21,13 +21,12 @@
 package edu.isi.karma.controller.command;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.imp.json.JsonImport;
@@ -86,13 +85,11 @@ public class ImportJSONFileCommand extends Command {
 			c.add(new WorksheetListUpdate(vWorkspace.getVWorksheetList()));
 			VWorksheet vw = vWorkspace.getVWorksheet(wsht.getId());
 			vw.update(c);
-			
-		} catch (FileNotFoundException e) {
-			logger.error("File Not Found", e);
-		} catch (JSONException e) {
-			logger.error("JSON Exception!", e);
-		}
-		
+		} catch (Exception e) {
+			logger.error("Error occured while generating worksheet from JSON!", e);
+			return new UpdateContainer(new ErrorUpdate(
+					"Error occured while importing JSON File."));
+		} 
 		return c;
 	}
 

@@ -84,10 +84,10 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
-		if(alignment == null) {
+		if(alignment == null || alignment.getAlignmentGraph().edgeSet().size() == 0) {
 			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
 			try {
-				align.align(false);
+				align.align(true);
 			} catch (Exception e) {
 				logger.error("Error occured while generating the model Reason:.", e);
 				return new UpdateContainer(new ErrorUpdate("Error occured while generating the model for the source."));
@@ -97,7 +97,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		
 		// Add the user provided edge
 		alignment.addUserLink(edgeId);
-
+		
 		return getAlignmentUpdateContainer(alignment, worksheet, vWorkspace);
 	}
 
@@ -126,14 +126,6 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		
 		SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, alignment, hNodeIdList);
 
-		//mariam		
-		/*
-		try{
-			WorksheetRDFGenerator.testRDFGeneration(vWorkspace.getWorkspace(), worksheet, alignment);
-		}catch(KarmaException e){
-			e.printStackTrace();
-		}
-			*/	
 		UpdateContainer c = new UpdateContainer();
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 		c.add(svgUpdate);
