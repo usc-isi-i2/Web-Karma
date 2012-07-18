@@ -66,8 +66,9 @@ public class DatabaseTableImport {
 	public Worksheet generateWorksheet() throws SQLException, ClassNotFoundException {
 		/** Get the data from the database table **/
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
-		ArrayList<ArrayList<String>> data = dbUtil.getDataForTable(dbType, hostname, 
-				portnumber, username, password, tableName, dBorSIDName);
+		// TODO Limiting the munber of rows to 1000 for now to avoid all data in memory
+		ArrayList<ArrayList<String>> data = dbUtil.getDataForLimitedRows(dbType, hostname, 
+				portnumber, username, password, tableName, dBorSIDName, 1000);
 		
 		/** Add the headers **/
 		HTable headers = worksheet.getHeaders();
