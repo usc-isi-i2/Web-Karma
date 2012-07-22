@@ -198,7 +198,7 @@ public class SourceLoader {
 			new HashMap<Source, Map<String,String>>();
 		
 		Map<String, Map<String, String>> sourceIdsAndMappings =
-			semanticModel.findInJenaModel(Repository.Instance().getModel(), IOType.NONE, sourceLimit);
+			semanticModel.findInJenaModel(Repository.Instance().getModel(), sourceLimit);
 		
 		if (sourceIdsAndMappings == null)
 			return null;
@@ -229,7 +229,7 @@ public class SourceLoader {
 		Map<Source, Map<String, String>> sourcesAndMappings = 
 			new HashMap<Source, Map<String,String>>();
 
-		Model jenaModel = semanticModel.getJenaModel(IOType.NONE);
+		Model jenaModel = semanticModel.getJenaModel();
 		for (Source source : sourceList) {
 			
 			edu.isi.karma.service.Model m = source.getModel();
@@ -238,7 +238,7 @@ public class SourceLoader {
 				continue;
 			
 			Map<String, Map<String, String>> sourceIdsAndMappings =
-				m.findInJenaModel(jenaModel, IOType.NONE, null);
+				m.findInJenaModel(jenaModel, null);
 			
 			if (sourceIdsAndMappings == null)
 				continue;
@@ -297,10 +297,36 @@ public class SourceLoader {
 		
 		Source source = new Source(source_id);
 		source.setName(source_name);
+		source.setVariables(getVariables(model, source_resource));
 	 	source.setAttributes(getAttributes(model, source_resource));
 	 	source.setModel(getSemanticModel(model, source_resource));
 		
 		return source;
+	}
+	
+	private static List<String> getVariables(Model model, Resource source_resource) {
+		
+		Property has_variable_property = model.getProperty(Namespaces.KARMA + "hasVariable");
+	
+		List<String> variables = new ArrayList<String>();
+		NodeIterator nodeIterator = null;
+		RDFNode node = null;
+
+		// hasAttribute
+		nodeIterator = model.listObjectsOfProperty(source_resource, has_variable_property);
+		while ( nodeIterator.hasNext()) {
+			node = nodeIterator.next();
+			
+			if (!node.isResource()) {
+				logger.info("object of the hasAttribute property is not a resource.");
+				continue;
+			}
+			
+			variables.add(node.asResource().getLocalName());
+		}
+		
+		return variables;
+
 	}
 	
 	private static List<Attribute> getAttributes(Model model, Resource source_resource) {
@@ -631,7 +657,7 @@ public class SourceLoader {
 	}
 	public static void main(String[] args) {
 
-		boolean test1 = false, test2 = false, test3 = true, test4 = false;
+		boolean test1 = true, test2 = false, test3 = false, test4 = false;
 		if (test1) testGetSourceByUri();
 		if (test2) testDeleteSourceByUri();
 		if (test3) testGetSourcesByIOPattern();

@@ -146,8 +146,8 @@ public class PublishModelCommand extends Command{
 			List<String> commandsJSON = histReader.getJSONForCommands(CommandTag.Transformation);
 			
 			if (service != null) {
-				ServicePublisher servicePublisher = new ServicePublisher(service,descString);
-				servicePublisher.publish(Repository.Instance().LANG, true);
+				service.setSourceDescription(descString);
+				ServicePublisher.publish(service, Repository.Instance().LANG, true);
 				logger.info("Service model has successfully been published to repository.");
 				return new UpdateContainer(new ErrorUpdate(
 				"Service model has successfully been published to repository."));

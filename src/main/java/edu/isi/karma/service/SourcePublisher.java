@@ -123,17 +123,21 @@ public class SourcePublisher {
 		Property has_attribute = model.createProperty(Namespaces.KARMA, "hasAttribute");
 		Property has_name = model.createProperty(Namespaces.KARMA, "hasName");
 		Property has_columnName = model.createProperty(Namespaces.KARMA, "hasColumnName");
-		
+		Property has_variable = model.createProperty(Namespaces.KARMA, "hasVariable");
+
 		Resource my_source = model.createResource(baseNS + "");
 		my_source.addProperty(rdf_type, source_resource);
 		if (this.source.getName().length() > 0)
 			my_source.addProperty(has_name, this.source.getName());
-		
+
+		if (this.source.getVariables() != null)
+		for (int i = 0; i < this.source.getVariables().size(); i++) {
+			Resource my_variable = model.createResource(baseNS + this.source.getVariables().get(i).toString());
+			my_variable.addProperty(rdf_type, variavle_resource);
+			my_source.addProperty(has_variable, my_variable);
+		}
+
 		if (this.source.getAttributes() != null) {
-			for (int i = 0; i < this.source.getVariables().size(); i++) {
-				Resource my_variable = model.createResource(baseNS + this.source.getVariables().get(i).toString());
-				my_variable.addProperty(rdf_type, variavle_resource);
-			}
 			for (int i = 0; i < this.source.getAttributes().size(); i++) {
 				
 				Attribute att = this.source.getAttributes().get(i);

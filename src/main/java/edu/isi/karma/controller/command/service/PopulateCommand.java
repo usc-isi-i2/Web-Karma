@@ -48,7 +48,6 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.service.Attribute;
-import edu.isi.karma.service.IOType;
 import edu.isi.karma.service.InvocationManager;
 import edu.isi.karma.service.Service;
 import edu.isi.karma.service.ServiceLoader;
@@ -125,7 +124,7 @@ public class PopulateCommand extends WorksheetCommand{
 		Source source = new Source(wk.getTitle(), tree);
 		
 		Map<Service, Map<String, String>> servicesAndMappings = 
-			ServiceLoader.getServicesContainedInModel(source.getModel(), IOType.INPUT, null);
+			ServiceLoader.getServicesWithInputContainedInModel(source.getModel(), null);
 		
 		if (servicesAndMappings == null) {
 			logger.error("Cannot find any services to be invoked according to this source model.");

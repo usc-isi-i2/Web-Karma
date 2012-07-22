@@ -53,6 +53,7 @@ public class Service {
 	private URL urlExample;
 	private String description;
 	private String operationName;
+	private String sourceDescription;
 
 	private List<Attribute> inputAttributes;
 	private List<Attribute> outputAttributes;
@@ -70,39 +71,43 @@ public class Service {
 		this.id = id;
 		this.urlExample= urlExample;
 		this.name = getOperationName();
-		hNodeIdToAttribute = new HashMap<String, Attribute>();
-		variables = new ArrayList<String>();
-		inputAttributes = new ArrayList<Attribute>();
-		outputAttributes = new ArrayList<Attribute>();
-		attIdToAttMap = new HashMap<String, Attribute>();
+		this.sourceDescription = "";
+		this.hNodeIdToAttribute = new HashMap<String, Attribute>();
+		this.variables = new ArrayList<String>();
+		this.inputAttributes = new ArrayList<Attribute>();
+		this.outputAttributes = new ArrayList<Attribute>();
+		this.attIdToAttMap = new HashMap<String, Attribute>();
 	}
 	
 	public Service(String id, String name, URL urlExample) {
 		this.id = id;
 		this.setName(name);
 		this.urlExample= urlExample;
+		this.sourceDescription = "";
 		this.setMethod(HttpMethods.GET);
 		this.urlExample = urlExample;
-		inputAttributes = new ArrayList<Attribute>();
-		outputAttributes = new ArrayList<Attribute>();
-		attIdToAttMap = new HashMap<String, Attribute>();
+		this.inputAttributes = new ArrayList<Attribute>();
+		this.outputAttributes = new ArrayList<Attribute>();
+		this.attIdToAttMap = new HashMap<String, Attribute>();
 	}
 	
 	public Service(String id, String addressTemplate) {
 		this.id = id;
 		this.address= addressTemplate;
-		inputAttributes = new ArrayList<Attribute>();
-		outputAttributes = new ArrayList<Attribute>();
-		attIdToAttMap = new HashMap<String, Attribute>();
+		this.inputAttributes = new ArrayList<Attribute>();
+		this.outputAttributes = new ArrayList<Attribute>();
+		this.attIdToAttMap = new HashMap<String, Attribute>();
+		this.sourceDescription = "";
 	}
 	
 	public Service(String id, String name, String addressTemplate) {
 		this.id = id;
 		this.setName(name);
 		this.address= addressTemplate;
-		inputAttributes = new ArrayList<Attribute>();
-		outputAttributes = new ArrayList<Attribute>();
-		attIdToAttMap = new HashMap<String, Attribute>();
+		this.inputAttributes = new ArrayList<Attribute>();
+		this.outputAttributes = new ArrayList<Attribute>();
+		this.attIdToAttMap = new HashMap<String, Attribute>();
+		this.sourceDescription = "";
 	}
 
 	public Service(String id, String name, URL urlExample, String method) {
@@ -110,9 +115,10 @@ public class Service {
 		this.setName(name);
 		this.urlExample = urlExample;
 		this.setMethod(method);
-		inputAttributes = new ArrayList<Attribute>();
-		outputAttributes = new ArrayList<Attribute>();
-		attIdToAttMap = new HashMap<String, Attribute>();
+		this.inputAttributes = new ArrayList<Attribute>();
+		this.outputAttributes = new ArrayList<Attribute>();
+		this.attIdToAttMap = new HashMap<String, Attribute>();
+		this.sourceDescription = "";
 	}
 
 	public String getUri() {
@@ -124,6 +130,19 @@ public class Service {
 			this.operationName = URLManager.getOperationName(this.urlExample);
 		
 		return operationName;
+	}
+
+	
+	public void setVariables(List<String> variables) {
+		this.variables = variables;
+	}
+
+	public String getSourceDescription() {
+		return sourceDescription;
+	}
+
+	public void setSourceDescription(String serviceDescription) {
+		this.sourceDescription = serviceDescription;
 	}
 
 	public String getPopulatedAddress(Map<String, String> attIdToValue) {
@@ -480,6 +499,13 @@ public class Service {
 	public void print() {
 		System.out.println("********************************************");
 		System.out.println("Service: " + getInfo());
+		System.out.println("********************************************");
+		System.out.println("Variables: ");
+		if (this.variables != null) {
+			for (String v : this.variables)
+				System.out.print(v + ", ");
+			System.out.println();
+		}
 		System.out.println("********************************************");
 		System.out.println("Input Attributes: ");
 		if (this.inputAttributes != null)

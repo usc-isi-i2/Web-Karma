@@ -43,7 +43,7 @@ public class Repository {
 //	@param LANG: The language in which to write the model is specified by the lang argument.
 //	* Predefined values are "RDF/XML", "RDF/XML-ABBREV", "N-TRIPLE", "TURTLE", (and "TTL") and "N3". 
 //	* The default value, represented by null is "RDF/XML".
-	 public final String LANG = "N3";
+	public final String LANG = SerializationLang.N3;
 	
 	static Logger logger = Logger.getLogger(Repository.class);
 

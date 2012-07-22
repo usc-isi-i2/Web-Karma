@@ -87,11 +87,10 @@ public class URI {
 			return null;
 		
 		String name = uriString;
-		if (ns != null && prefix != null)
+		if (ns != null && prefix != null) {
 			name = name.replaceFirst(ns, "");
-		
-		if (prefix != null)
 			name = prefix + ":" + name;
+		}
 		
 		return name;
 	}

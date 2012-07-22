@@ -214,24 +214,20 @@ public class InvocationManager {
 			Service service = sb.getInitialServiceModel(null);
 			
 			// just for test
-			service.getInputAttributes().get(0).sethNodeId("h1");
-			service.getInputAttributes().get(1).sethNodeId("h2");
-			service.getOutputAttributes().get(4).sethNodeId("h3");
-			service.getOutputAttributes().get(6).sethNodeId("h4");
-			service.getOutputAttributes().get(5).sethNodeId("h5");
-			service.getOutputAttributes().get(3).sethNodeId("h6");
+			service.getInputAttributes().get(0).sethNodeId("HN1");
+			service.getInputAttributes().get(1).sethNodeId("HN2");
+			service.getOutputAttributes().get(4).sethNodeId("HN3");
+			service.getOutputAttributes().get(6).sethNodeId("HN4");
+			service.getOutputAttributes().get(5).sethNodeId("HN5");
+			service.getOutputAttributes().get(3).sethNodeId("HN6");
 			service.print();
 			
 			service.updateModel(Test.getGeoNamesNeighbourhoodTree());
 			
 			String dir = Repository.Instance().SOURCE_REPOSITORY_DIR;
-			service.getInputModel().writeJenaModelToFile(dir + "model", "N3", IOType.NONE);
+			service.getInputModel().writeJenaModelToFile(dir + "model", "N3");
 			
-			System.out.println(service.getInputModel().getSPARQLQuery(IOType.NONE, null));
-			
-//			ServicePublisher servicePublisher = new ServicePublisher(service);
-//			servicePublisher.publish("N3", true);
-//			servicePublisher.writeToFile("N3");
+			System.out.println(service.getInputModel().getSparql(null));
 
 		} catch (Exception e) {
 			e.printStackTrace();
