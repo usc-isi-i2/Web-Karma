@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import com.hp.hpl.jena.rdf.model.Model;
 
 import edu.isi.karma.service.MimeType;
@@ -15,6 +17,8 @@ import edu.isi.karma.service.ServicePublisher;
 
 
 public class GetRequestManager extends LinkedApiRequestManager {
+
+	static Logger logger = Logger.getLogger(GetRequestManager.class);
 
 	public GetRequestManager(String serviceId, 
 			ResourceType resourceType, 
