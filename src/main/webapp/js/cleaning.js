@@ -33,8 +33,16 @@ function handleCleanColumnButton() {
 	var selectedHNodeId = columnHeadingMenu.data("parentCellId");
 	var tdTag = $("td#" + selectedHNodeId);
 	var table = tdTag.parents("table.WorksheetTable");
-	var lastRow = $("thead tr:last", table);
-	var index = $("td", lastRow).index(tdTag);
+	var rows = $("thead tr", table);
+	var index = -1;
+	$.each(rows, function(ind, row) {
+	  var x = $('td',row).index(tdTag);
+	  if(x != -1)
+	  {
+	  	index = x;
+	  	return;
+	  }
+	});
 	var values = [];
 	$('tbody>tr>td:nth-child(' + (index + 1) + ')', table).each(function() {
 		if($(this).attr("id"))
