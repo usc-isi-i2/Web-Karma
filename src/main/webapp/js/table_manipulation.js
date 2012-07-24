@@ -56,7 +56,7 @@ function submitEdit(value, settings) {
 	edits["workspaceId"] = $.workspaceGlobalInformation.id;
 
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : edits,
 	   	dataType : "json",

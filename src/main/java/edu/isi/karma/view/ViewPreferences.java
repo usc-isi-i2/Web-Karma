@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.JSONUtil;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 /**
  * @author szekely
@@ -78,8 +80,8 @@ public class ViewPreferences {
 	
 	private void populatePreferences() {
 		try {
-			// TODO Make this path to user preferences configurable through web.xml
-			jsonFile = new File("./UserPrefs/" + preferencesId + ".json");
+			jsonFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
+					"UserPrefs/" + preferencesId + ".json");
 			if(jsonFile.exists()){
 				// Populate from the existing preferences JSON file
 				json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
@@ -101,7 +103,8 @@ public class ViewPreferences {
 	
 	private void createNewPreferencesFileFromTemplate() throws IOException {
 		jsonFile.createNewFile();
-		File template_file = new File("./UserPrefs/WorkspacePref.template");
+		File template_file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
+				"UserPrefs/WorkspacePref.template");
 		FileUtil.copyFiles(jsonFile, template_file);
 		json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
 	}

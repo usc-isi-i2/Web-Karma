@@ -32,7 +32,7 @@ function handlePrevNextLink() {
 	info["command"] = "TablePagerCommand";
 		
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",
@@ -70,7 +70,7 @@ function handlePagerResize() {
 	// info["command"] = "TablePagerResizeCommand";
 // 		
 	// var returned = $.ajax({
-	   	// url: "/RequestController", 
+	   	// url: "RequestController", 
 	   	// type: "POST",
 	   	// data : info,
 	   	// dataType : "json",

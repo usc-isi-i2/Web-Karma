@@ -34,11 +34,14 @@ import com.hp.hpl.jena.tdb.TDB;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.tdb.base.file.Location;
 
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 public class Repository {
 	
-	public final String SERVICE_REPOSITORY_DIR = "repository/services/";
-	public final String SOURCE_REPOSITORY_DIR = "repository/sources/";
-	public final String TRIPLE_DATASET_DIR = "repository/dataset/";
+	public final String SERVICE_REPOSITORY_DIR = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "repository/services/";
+	public final String SOURCE_REPOSITORY_DIR = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "repository/sources/";
+	public final String TRIPLE_DATASET_DIR = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "repository/dataset/";
 	
 //	@param LANG: The language in which to write the model is specified by the lang argument.
 //	* Predefined values are "RDF/XML", "RDF/XML-ABBREV", "N-TRIPLE", "TURTLE", (and "TTL") and "N3". 

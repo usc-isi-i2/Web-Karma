@@ -86,7 +86,7 @@ function overwriteTable(){
 
 function returnFunc(info) {
 		var returned = $.ajax({
-		   	url: "/RequestController", 
+		   	url: "RequestController", 
 		   	type: "POST",
 		   	data : info,
 		   	dataType : "json",
@@ -121,7 +121,7 @@ function getDatabasePreferences() {
 	info["command"] = "FetchPreferencesCommand";
 	info["preferenceCommand"] = "PublishDatabaseCommand";
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",

@@ -39,6 +39,8 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.gav.util.MediatorUtil;
 
@@ -488,8 +490,8 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 			String descString = desc.generateSourceDescription();
 			System.out.println("SD="+ descString);
 			//generate RDF for the first 3 rows: mariam
-			WorksheetRDFGenerator wrg1 = new WorksheetRDFGenerator(workspace.getFactory(), descString, "./publish/RDF/rdftestrow.n3");
-			WorksheetRDFGenerator wrg2 = new WorksheetRDFGenerator(workspace.getFactory(), descString, "./publish/RDF/rdftestcell.n3");
+			WorksheetRDFGenerator wrg1 = new WorksheetRDFGenerator(workspace.getFactory(), descString, ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "publish/RDF/rdftestrow.n3");
+			WorksheetRDFGenerator wrg2 = new WorksheetRDFGenerator(workspace.getFactory(), descString, ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "publish/RDF/rdftestcell.n3");
 			if(worksheet.getHeaders().hasNestedTables()){
 				logger.info("Has nested tables!!!");
 				wrg2.generateTriplesCellLimit(worksheet);
@@ -499,7 +501,7 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 				wrg2.generateTriplesCellLimit(worksheet);	
 			}
 			//String fileName = "./publish/Source Description/"+worksheet.getTitle()+".txt";
-			String fileName = "./publish/Source Description/W"+worksheet.getId()+".txt";
+			String fileName = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "publish/Source Description/W"+worksheet.getId()+".txt";
 			FileUtil.writeStringToFile(descString, fileName);
 			logger.info("Source description written to file: " + fileName);			
 			////////////////////

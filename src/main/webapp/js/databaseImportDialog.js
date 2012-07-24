@@ -155,7 +155,7 @@ function sendDBTableImportCommandCreateRequest() {
 	info["interactionType"] = "getPreferencesValues";
 	
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",
@@ -200,7 +200,7 @@ function sendGenerateTableListRequest() {
 	info["interactionType"] = "generateTableList";
 		
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",
@@ -231,7 +231,7 @@ function sendImportTableRequest() {
 	info["execute"] = true;
 		
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",
@@ -270,7 +270,7 @@ function sendPreviewTableRequest() {
 	// options["execute"] = true;
 		
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",

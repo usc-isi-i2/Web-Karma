@@ -33,7 +33,7 @@ function assignHandlersToServiceInvocationObjects() {
         info["command"] = "InvokeServiceCommand";
             
         var returned = $.ajax({
-            url: "/RequestController", 
+            url: "RequestController", 
             type: "POST",
             data : info,
             dataType : "json",

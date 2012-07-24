@@ -66,7 +66,7 @@ function publishRDFToStore(info) {
 
 function returnFunc(info) {
 		var returned = $.ajax({
-		   	url: "/RequestController", 
+		   	url: "RequestController", 
 		   	type: "POST",
 		   	data : info,
 		   	dataType : "json",
@@ -101,7 +101,7 @@ function getRDFPreferences() {
 	info["command"] = "FetchPreferencesCommand";
 	info["preferenceCommand"] = "PublishRDFCommand";
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",

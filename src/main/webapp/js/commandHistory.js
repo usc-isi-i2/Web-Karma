@@ -29,7 +29,7 @@ function clickUndoButton() {
 	// Invoke the UNDO command on the server
 	showWaitingSignOnScreen();
 	$.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : edits,
 	   	dataType : "json",
@@ -49,12 +49,12 @@ function clickUndoButton() {
 	var index =  $(".CommandDiv").index($(commandDivElem));
 	if(commandDivElem.hasClass("undo-state")){
 		$.each($(".CommandDiv:gt(" +index+ ")").add($(commandDivElem)), function(index, elem) {
-			$(elem).find("img").attr("src", "../images/edit_redo.png");
+			$(elem).find("img").attr("src", "images/edit_redo.png");
 			$(elem).removeClass("undo-state").addClass("redo-state");
 		});
 	} else {
 		$.each($(".CommandDiv:lt(" +index+ ")").add($(commandDivElem)), function(index, elem) {
-			$(elem).find("img").attr("src", "../images/edit_undo.png");
+			$(elem).find("img").attr("src", "images/edit_undo.png");
 			$(elem).removeClass("redo-state").addClass("undo-state");
 		});
 	}

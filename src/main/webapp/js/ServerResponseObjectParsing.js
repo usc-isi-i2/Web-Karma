@@ -77,7 +77,7 @@ function parse(data) {
 							.append($("<div>").addClass("rightOptionsToolbar")
 								.append($("<div>").addClass("toggleMapView")
 									.append($("<img>")
-										.attr("src","../images/google-earth-32.png"))
+										.attr("src","images/google-earth-32.png"))
 									.qtip({
 										   content: {
 										      text: 'View on map'
@@ -316,7 +316,7 @@ function parse(data) {
 								tdTag.append($("<span>").text("key").addClass("KeyAtrributeLabel"));
 							} else {
 								var pencilDiv = $("<div>").addClass("AlignmentLinkConfigDiv")
-									.append($("<img>").attr("src","../images/configure-icon.png"))
+									.append($("<img>").attr("src","images/configure-icon.png"))
 									.append($("<span>").text(cell["contentCell"]["parentLinkLabel"]))
 									.click(showAlternativeParents);
 								
@@ -327,7 +327,7 @@ function parse(data) {
 									tdTag.append(labelDiv);
 								}
 						} else {
-							labelDiv.prepend($("<img>").attr("src","../images/configure-icon.png")).click(showAlternativeParents);
+							labelDiv.prepend($("<img>").attr("src","images/configure-icon.png")).click(showAlternativeParents);
 							tdTag.append(labelDiv);
 						}
 						
@@ -508,7 +508,7 @@ function parse(data) {
 						// if(cell["pager"]) {
 							// $(tdTag).append(
 								// $("<div>").addClass("nestedTableLastRow")
-										// .append($("<img>").attr("src","../images/pagerBar.png"))
+										// .append($("<img>").attr("src","images/pagerBar.png"))
 										// .mouseenter(showNestedTablePager)
 										// .mouseleave(hideNestedTablePager)
 										// .data("pagerElem", cell["pager"])
@@ -577,7 +577,7 @@ function parse(data) {
 							.append($("<div>")
 									.addClass("iconDiv")
 									.append($("<img>")
-											.attr("src", "../images/edit_undo.png")
+											.attr("src", "images/edit_undo.png")
 									)
 									.bind('click', clickUndoButton)
 									.qtip({
@@ -629,7 +629,7 @@ function parse(data) {
 					$(commandDiv).addClass("redo-state");
 					$("div.iconDiv", commandDiv)
 						.append($("<img>")
-						.attr("src", "../images/edit_redo.png"))
+						.attr("src", "images/edit_redo.png"))
 						.qtip({
 						   content: {
 						      text: 'Redo'
@@ -642,7 +642,7 @@ function parse(data) {
 					$(commandDiv).addClass("undo-state");
 					$("div.iconDiv", commandDiv)
 						.append($("<img>")
-						.attr("src", "../images/edit_undo.png"))
+						.attr("src", "images/edit_undo.png"))
 						.qtip({
 						   content: {
 						      text: 'Undo'

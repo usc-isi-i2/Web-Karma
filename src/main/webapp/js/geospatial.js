@@ -17,7 +17,7 @@ function showMapViewForWorksheet() {
         
         showLoading(worksheetId);
         var returned = $.ajax({
-            url: "/RequestController", 
+            url: "RequestController", 
             type: "POST",
             data : info,
             dataType : "json",
@@ -47,7 +47,7 @@ function showMapViewForWorksheet() {
                             tableDiv.hide();
                             // Toggle the icon and state of the div
                             var iconDiv = $("div.toggleMapView", worksheetPanel);   
-                            $("img", iconDiv).attr("src","../images/table.png")
+                            $("img", iconDiv).attr("src","images/table.png")
                             $(iconDiv).data("state", "map");
                             
                             // Change the tooltip
@@ -82,7 +82,7 @@ function showMapViewForWorksheet() {
               text: 'View as map'
            }
         });
-        $("div.toggleMapView img", worksheetPanel).attr("src","../images/google-earth-32.png")
+        $("div.toggleMapView img", worksheetPanel).attr("src","images/google-earth-32.png")
     }
 }
 
@@ -148,7 +148,7 @@ function displayKMLandToggleIcon(worksheetId, fileName, worksheetPanel) {
     
     // Toggle the icon and state of the div
     var iconDiv = $("div.toggleMapView", worksheetPanel);   
-    $("img", iconDiv).attr("src","../images/table.png")
+    $("img", iconDiv).attr("src","images/table.png")
     $(iconDiv).data("state", "map");
     
     // Change the tooltip
@@ -173,7 +173,7 @@ function displayKMLOnGoogleEarth(worksheetId, fileName, worksheetPanel) {
     
     // Toggle the icon and state of the div
     var iconDiv = $("div.toggleMapView", worksheetPanel);   
-    $("img", iconDiv).attr("src","../images/table.png")
+    $("img", iconDiv).attr("src","images/table.png")
     $(iconDiv).data("state", "map");
     
     // Change the tooltip

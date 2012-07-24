@@ -1,7 +1,0 @@
-NAMESPACES:
-
-s:'http://www.isi.edu/'
-
-LAV_RULES:
-
-SourceDescription() -> 

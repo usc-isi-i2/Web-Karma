@@ -49,10 +49,12 @@ import edu.isi.karma.rdf.WorksheetRDFGenerator;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PublishRDFCommand extends Command {
 	private final String vWorksheetId;
-	private String publicRDFAddress;
+//	private String publicRDFAddress;
 	private String rdfSourcePrefix;
 	private String addInverseProperties;
 	private boolean saveToStore;
@@ -78,7 +80,7 @@ public class PublishRDFCommand extends Command {
 			String saveToStore,String hostName,String dbName,String userName,String password, String modelName) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
-		this.publicRDFAddress = publicRDFAddress;
+//		this.publicRDFAddress = publicRDFAddress;
 		this.rdfSourcePrefix = rdfSourcePrefix;
 		this.addInverseProperties = addInverseProperties;
 		this.saveToStore=Boolean.valueOf(saveToStore);
@@ -123,7 +125,8 @@ public class PublishRDFCommand extends Command {
 
 		//use the unique workspace id saved for this user
 		//I want to have only one RDF file per user/browser
-		final String rdfFileName = "./src/main/webapp/RDF/" + vWorkspace.getPreferencesId() + vWorksheetId
+		final String rdfFileName = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +  
+				"RDF/" + vWorkspace.getPreferencesId() + vWorksheetId
 				+ ".n3";
 
 		// get alignment for this worksheet
@@ -158,7 +161,7 @@ public class PublishRDFCommand extends Command {
 					wrg.generateTriplesRow(worksheet, true);
 					//System.out.println("RDF end="+ Calendar.getInstance().getTimeInMillis());
 				}
-				String fileName = "./publish/Source Description/W"
+				String fileName = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "publish/Source Description/W"
 						+ worksheet.getId() + ".txt";
 				FileUtil.writeStringToFile(descString, fileName);
 				logger.info("Source description written to file: " + fileName);
@@ -184,7 +187,7 @@ public class PublishRDFCommand extends Command {
 						outputObject.put(JsonKeys.updateType.name(),
 								"PublishRDFUpdate");
 						outputObject.put(JsonKeys.fileUrl.name(),
-								publicRDFAddress + vWorkspace.getPreferencesId() + vWorksheetId + ".n3");
+								"RDF/" + vWorkspace.getPreferencesId() + vWorksheetId + ".n3");
 						outputObject.put(JsonKeys.vWorksheetId.name(),
 								vWorksheetId);
 						pw.println(outputObject.toString(4));

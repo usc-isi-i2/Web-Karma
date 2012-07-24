@@ -44,6 +44,10 @@
 		<param-name>TRAINING_EXAMPLE_MAX_COUNT</param-name>
 		<param-value>100</param-value>
 	</context-param>
+  <context-param>
+		<param-name>USER_DIRECTORY_PATH</param-name>
+		<param-value>src/main/webapp/</param-value>
+  </context-param>
   
   	<servlet>
     	<servlet-name>ServletStart</servlet-name>

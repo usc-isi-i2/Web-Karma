@@ -37,9 +37,6 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
-import edu.isi.karma.imp.csv.CSVFileImport;
-import edu.isi.karma.imp.json.JsonImport;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.rep.metadata.Tag;
@@ -47,27 +44,26 @@ import edu.isi.karma.rep.metadata.TagsContainer.Color;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class GetExampleJSON extends HttpServlet {
 	private enum Arguments {
 		hasPreferenceId, workspacePreferencesId
 	}
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private static Logger logger = LoggerFactory.getLogger(GetExampleJSON.class);
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-
-		System.out.println("In GetExampleJSON.....");
 		
+		logger.info("Creating new workspace ...");
+
 		Workspace workspace = WorkspaceManager.getInstance().getFactory()
 				.createWorkspace();
 
+		logger.info("done");
 		/* Check if any workspace id is set in cookies. */
 		boolean hasWorkspaceCookieId = request.getParameter(Arguments.hasPreferenceId.name()).equals("true");
 		VWorkspace vwsp = null;
@@ -77,10 +73,12 @@ public class GetExampleJSON extends HttpServlet {
 		if(hasWorkspaceCookieId) {
 			String cachedWorkspaceId = request.getParameter(Arguments.workspacePreferencesId.name());
 			vwsp = new VWorkspace(workspace, cachedWorkspaceId);
-			crfModelFile = new File("./CRF_Models/"+cachedWorkspaceId+"_CRFModel.txt");
+			crfModelFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
+					"CRF_Models/"+cachedWorkspaceId+"_CRFModel.txt");
 		} else {
 			vwsp = new VWorkspace(workspace);
-			crfModelFile = new File("./CRF_Models/"+workspace.getId()+"_CRFModel.txt");
+			crfModelFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
+					"CRF_Models/"+workspace.getId()+"_CRFModel.txt");
 		}
 		/* Read and populate CRF Model from a file */
 		if(!crfModelFile.exists())
@@ -92,35 +90,23 @@ public class GetExampleJSON extends HttpServlet {
 		WorkspaceRegistry.getInstance().register(new ExecutionController(vwsp));
 		
 		// Loading ontology to be preloaded
-		OntologyManager mgr = workspace.getOntologyManager();
-		//mgr.doImport(new File("./Preloaded_Ontologies/geo_2007.owl"));
-		//mgr.doImport(new File("./Preloaded_Ontologies/oilwell.owl"));
+//		OntologyManager mgr = workspace.getOntologyManager();
+//		mgr.doImport(new File("./Preloaded_Ontologies/geo_2007.owl"));
+//		mgr.doImport(new File("./Preloaded_Ontologies/oilwell.owl"));
+		
 		//mariam
-		
-		
 		//File file = new File("../demofiles/usc_faculty.csv");
 		
-		//File file = new File("C:\\Documents and Settings\\mariam\\My Documents\\dovetail-phase2\\startgtd.csv");
-		//CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
-		//imp.generateWorksheet();
+//		File file = new File("./SampleData/CSV/wells-large.csv");
+//		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
+//		try {
+//			imp.generateWorksheet();
+//		} catch (KarmaException e) {
+//			e.printStackTrace();
+//		}
+//		
 
-		//File file = new File("C:\\Documents and Settings\\mariam\\My Documents\\dovetail-phase2\\tosig.json");
-		//SampleDataFactory.createFromJsonTextFile(workspace,"C:\\Documents and Settings\\mariam\\My Documents\\dovetail-phase2\\tosig.json");
-
-		
-		
-		//load ontologies
-		OntologyManager om = workspace.getOntologyManager();
-		
-		//vivo ontology
-		//om.doImport(new File("../demofiles/vivo-core-public-1.4.owl"));
-		//rdfs ontology
-		//om.doImport(new File("../demofiles/rdfs_subset.owl"));
-		//om.doImport(new File("../demofiles/uscont.owl"));
-	
-		//om.doImport(new File("../demofiles/DovetailOnto_v0_9.rdf"));
-		//om.doImport(new File("../demofiles/ExtendedDovetailOnto_v0_9.rdf"));
-		//////////////
+//		SampleDataFactory.createFromJsonTextFile(workspace,"./SampleData/JSON/Events.json");
 
 		// Initialize the Outlier tag
 		Tag outlierTag = new Tag(TagName.Outlier, Color.Red);

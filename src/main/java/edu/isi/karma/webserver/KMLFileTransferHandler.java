@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.util.FileUtil;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class KMLFileTransferHandler extends HttpServlet {
 	/**
@@ -47,7 +48,8 @@ public class KMLFileTransferHandler extends HttpServlet {
 		File file = FileUtil.downloadFileFromHTTPRequest(request);
 
 		// Move the file to the webapp directory so that it is public
-		File dir = new File("./src/main/webapp/KML/"+file.getName());
+		File dir = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
+				"KML/"+file.getName());
 		if(dir.exists())
 			dir.delete();
 		file.renameTo(dir);

@@ -6,6 +6,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 public class HistoryJsonUtil {
 	
 	public enum ClientJsonKeys {
@@ -45,7 +48,8 @@ public class HistoryJsonUtil {
 	}
 	
 	public static String constructWorksheetHistoryJsonFilePath (String worksheetName, String vworkspacePreferenceId) {
-		return "./publish/History/" + constructWorksheetHistoryJsonFileName(worksheetName, vworkspacePreferenceId);
+		return ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
+				"publish/History/" + constructWorksheetHistoryJsonFileName(worksheetName, vworkspacePreferenceId);
 	}
 	
 	public static String constructWorksheetHistoryJsonFileName (String worksheetName, String vworkspacePreferenceId) {

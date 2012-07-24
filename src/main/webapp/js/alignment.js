@@ -98,7 +98,7 @@ function handleDataPropertyFilter() {
         }
         
         var returned = $.ajax({
-            url: "/RequestController", 
+            url: "RequestController", 
             type: "POST",
             data : info,
             dataType : "json",
@@ -133,7 +133,7 @@ function handleClassFilter() {
         }
         
         var returned = $.ajax({
-            url: "/RequestController", 
+            url: "RequestController", 
             type: "POST",
             data : info,
             dataType : "json",
@@ -199,7 +199,7 @@ function changeSemanticType(event) {
     info["command"] = "GetPropertiesAndClassesList";
     info["vWorksheetId"] = optionsDiv.data("worksheetId");
     var returned = $.ajax({
-        url: "/RequestController", 
+        url: "RequestController", 
         type: "POST",
         data : info,
         dataType : "json",
@@ -542,7 +542,7 @@ function showClassHierarchyWindow(event) {
     info["command"] = "GetOntologyClassHierarchyCommand";
     
     var returned = $.ajax({
-        url: "/RequestController", 
+        url: "RequestController", 
         type: "POST",
         data : info,
         dataType : "json",
@@ -589,7 +589,7 @@ function showPropertyHierarchyWindow(event) {
     info["command"] = "GetDataPropertyHierarchyCommand";
     
     var returned = $.ajax({
-        url: "/RequestController", 
+        url: "RequestController", 
         type: "POST",
         data : info,
         dataType : "json",
@@ -786,7 +786,7 @@ function submitSemanticTypeChange() {
 	
 	showLoading(info["vWorksheetId"]);
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",
@@ -816,7 +816,7 @@ function showAlternativeParents(event) {
 	info["worksheetId"] = $(this).parents("table.WorksheetTable").attr("id");
 		
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",
@@ -948,7 +948,7 @@ function submitAlignmentLinkChange() {
 	
 	showLoading(info["vWorksheetId"]);
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",

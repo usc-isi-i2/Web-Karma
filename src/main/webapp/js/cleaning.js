@@ -244,7 +244,7 @@ function handleGenerateCleaningRulesButton() {
 	info["examples"] = JSON.stringify(examples);
 
 	var returned = $.ajax({
-		url : "/RequestController",
+		url : "RequestController",
 		type : "POST",
 		data : info,
 		dataType : "json",
@@ -309,7 +309,7 @@ function submit() {
 	info["result"] = JSON.stringify(transformedRes);
 
 	var returned = $.ajax({
-		url : "/RequestController",
+		url : "RequestController",
 		type : "POST",
 		data : info,
 		dataType : "json",

@@ -91,7 +91,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<script type="text/javascript">
 			/* Load and parse initial JSON */
 			// Get the preferences Id from cookies if present
-			var bootupURL = "/getExampleNestedJSON?rand="+(new Date()).valueOf();
+			var bootupURL = "getExampleNestedJSON?rand="+(new Date()).valueOf();
 			if($.cookie("workspacePreferencesId") != null) {
 				bootupURL += "&hasPreferenceId=" + true + "&workspacePreferencesId="+$.cookie("workspacePreferencesId");
 			} else {
@@ -300,7 +300,7 @@ and related projects, please see: http://www.isi.edu/integration
 					info["command"] = "CloseWorkspaceCommand";
 					
 					var returned = $.ajax({
-					   	url: "/RequestController", 
+					   	url: "RequestController", 
 						type: "POST",
 						data : info,
 						dataType : "json",

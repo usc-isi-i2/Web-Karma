@@ -422,7 +422,7 @@ function changeSemanticType_d3(d, vis, event) {
     info["command"] = "GetPropertiesAndClassesList";
     info["vWorksheetId"] = optionsDiv.data("worksheetId");
     var returned = $.ajax({
-        url: "/RequestController", 
+        url: "RequestController", 
         type: "POST",
         data : info,
         dataType : "json",
@@ -472,7 +472,7 @@ function showAlternativeParents_d3(d, vis, event) {
     $("#alternativeParentsTableFilter").val("");
         
     var returned = $.ajax({
-        url: "/RequestController", 
+        url: "RequestController", 
         type: "POST",
         data : info,
         dataType : "json",

@@ -50,7 +50,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	   
 		showLoading(info["vWorksheetId"]);
 		var returned = $.ajax({
-		   	url: "/RequestController", 
+		   	url: "RequestController", 
 		   	type: "POST",
 		   	data : info,
 		   	dataType : "json",
@@ -71,9 +71,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	
 	$("button#hideModel").click(function(){
 		optionsDiv.hide();
-		var table = $("table#" + optionsDiv.data("worksheetId"));
-		$("tr.AlignmentRow", table).remove();
-		$("div.semanticTypeDiv", table).remove();
+		$("div#svgDiv_" + optionsDiv.data("worksheetId")).remove();
 	});
 	
 	$("button#resetModel").click(function(){
@@ -86,7 +84,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 			
 		showLoading(info["vWorksheetId"]);
 		var returned = $.ajax({
-		   	url: "/RequestController", 
+		   	url: "RequestController", 
 		   	type: "POST",
 		   	data : info,
 		   	dataType : "json",
@@ -135,7 +133,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
             
         showLoading(info["vWorksheetId"]);
         var returned = $.ajax({
-            url: "/RequestController", 
+            url: "RequestController", 
             type: "POST",
             data : info,
             dataType : "json",
@@ -165,7 +163,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
             
         showLoading(info["vWorksheetId"]);
         var returned = $.ajax({
-            url: "/RequestController", 
+            url: "RequestController", 
             type: "POST",
             data : info,
             dataType : "json",
@@ -195,7 +193,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
             
         showLoading(info["vWorksheetId"]);
         var returned = $.ajax({
-            url: "/RequestController", 
+            url: "RequestController", 
             type: "POST",
             data : info,
             dataType : "json",
@@ -318,7 +316,7 @@ function handleEableCellExpandButton(event) {
 	info["command"] = "PublishRDFCellCommand";
 	
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",
@@ -449,7 +447,7 @@ function splitColumnByComma() {
             
     showLoading(info["vWorksheetId"]);
     var returned = $.ajax({
-        url: "/RequestController", 
+        url: "RequestController", 
         type: "POST",
         data : info,
         dataType : "json",

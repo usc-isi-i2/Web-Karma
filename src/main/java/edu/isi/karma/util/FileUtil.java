@@ -46,18 +46,17 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 public class FileUtil {
-	
-	static Logger logger = LoggerFactory.getLogger(FileUtil.class);
+	private static String DESTINATION_DIR_PATH = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
+			"UserUploadedFiles";
+	private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 	
 	static public File downloadFileFromHTTPRequest (HttpServletRequest request) {
-		//TODO Make it configurable through web.xml
-		String DESTINATION_DIR_PATH ="UserUploadedFiles";
-		File destinationDir;
-		
 		// Download the file to the upload file folder
-		String realPath = DESTINATION_DIR_PATH;
-		destinationDir = new File(realPath);
+		File destinationDir = new File(DESTINATION_DIR_PATH);
 		logger.debug("File upload destination directory: " + destinationDir.getAbsolutePath());
 		if(!destinationDir.isDirectory()) {
 			destinationDir.mkdir();

@@ -104,7 +104,7 @@ function CSVImportOptionsChanged(flag) {
 	
     
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : options,
 	   	dataType : "json",
