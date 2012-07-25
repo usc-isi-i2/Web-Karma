@@ -1,22 +1,23 @@
 target
 .DS_Store
 lastJsonImport.json
-UserPrefs/*.json
+src/main/webapp/UserPrefs/*.json
 UserUploadedFiles
-UserUploadedFiles/*
+src/main/webapp/UserUploadedFiles/*
 *.json
 SampleData
 CRF_Model.txt
 log/*
 !.gitignore
-publish/KML/*.*
-publish/Source Description/*.*
-publish/CSV/*
-publish/RDF/*
+src/main/webapp/publish/KML/*.*
+src/main/webapp/publish/Source Description/*.*
+src/main/webapp/publish/History/*.*
+src/main/webapp/publish/CSV/*
+src/main/webapp/publish/RDF/*
 Preloaded_Ontologies/catalog-v001.xml
 src/main/webapp/RDF/*.rdf
 src/main/webapp/RDF/*.n3
-CRF_Models/*_CRFModel.txt
-repository
-CRF_Models/WSP1_CRFModel.txt.zip
+src/main/webapp/CRF_Models/*_CRFModel.txt
+src/main/webapp/repository
+src/main/webapp/CRF_Models/WSP1_CRFModel.txt.zip
 tmp/*
