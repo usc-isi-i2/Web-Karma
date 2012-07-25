@@ -17,7 +17,8 @@ src/main/webapp/publish/RDF/*
 Preloaded_Ontologies/catalog-v001.xml
 src/main/webapp/RDF/*.rdf
 src/main/webapp/RDF/*.n3
-src/main/webapp/CRF_Models/*_CRFModel.txt
+src/main/webapp/CRF_Models/*.txt
 src/main/webapp/repository
 src/main/webapp/CRF_Models/WSP1_CRFModel.txt.zip
 tmp/*
+src/main/webapp/CRF_Models/WSP1_CRFModel.txt
