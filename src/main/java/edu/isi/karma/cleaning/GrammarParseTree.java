@@ -40,6 +40,8 @@ import org.antlr.runtime.tree.CommonTreeNodeStream;
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.cleaning.changed_grammar.RuleInterpreterLexer;
 import edu.isi.karma.cleaning.changed_grammar.RuleInterpreterParser;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class GrammarParseTree {
 	// the set of node  which are going to be mutated.
@@ -68,7 +70,8 @@ public class GrammarParseTree {
 	{
 		try
 		{
-			FileInputStream   file   =   new   FileInputStream("./grammar/MOVgrammar.txt"); 
+			String dirpathString = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH);
+			FileInputStream   file   =   new   FileInputStream(dirpathString+"grammar/MOVgrammar.txt"); 
 			byte[]   buf   =   new   byte[file.available()];     
 			file.read(buf,   0,   file.available());   // 
 			String   str   =   new   String(buf); 
@@ -80,7 +83,7 @@ public class GrammarParseTree {
 	        movparser.setGen(movgen);
 	        movparser.alllines();
 	        
-	        FileInputStream   file1   =   new   FileInputStream("./grammar/INSgrammar.txt"); 
+	        FileInputStream   file1   =   new   FileInputStream(dirpathString+"grammar/INSgrammar.txt"); 
 			byte[]   buf1   =   new   byte[file1.available()];     
 			file1.read(buf1,   0,   file1.available());   // 
 			String   str1   =   new   String(buf1); 
@@ -92,7 +95,7 @@ public class GrammarParseTree {
 	        insparser.setGen(insgen);
 	        insparser.alllines();
 	        
-	        FileInputStream   file2   =   new   FileInputStream("./grammar/delgrammar.txt"); 
+	        FileInputStream   file2   =   new   FileInputStream(dirpathString+"grammar/delgrammar.txt"); 
 			byte[]   buf2   =   new   byte[file2.available()];     
 			file2.read(buf2,   0,   file2.available());   // 
 			String   str2   =   new   String(buf2); 
