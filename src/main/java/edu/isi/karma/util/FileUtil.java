@@ -51,7 +51,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class FileUtil {
 	private static String DESTINATION_DIR_PATH = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
-			"UserUploadedFiles";
+			"UserUploadedFiles/";
 	private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 	
 	static public File downloadFileFromHTTPRequest (HttpServletRequest request) {

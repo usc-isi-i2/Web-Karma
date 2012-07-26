@@ -35,6 +35,8 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ImportExcelFileCommand extends Command {
 	private final File excelFile;
@@ -78,7 +80,7 @@ public class ImportExcelFileCommand extends Command {
 		ToCSV csvConverter = new ToCSV();
 		try {
 			csvConverter.convertExcelToCSV(excelFile.getAbsolutePath(),
-					"./publish/CSV");
+					ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "publish/CSV");
 		} catch (Exception e) {
 			String message = "Error occured while converting the Excel file to CSV file.";
 			logger.error(message, e);
