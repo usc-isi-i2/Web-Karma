@@ -81,6 +81,8 @@ public class Worksheet extends RepEntity {
 	}
 
 	public MetadataContainer getMetadataContainer() {
+		if(metadataContainer == null)
+			metadataContainer = new MetadataContainer();
 		return metadataContainer;
 	}
 

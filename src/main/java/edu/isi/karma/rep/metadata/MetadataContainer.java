@@ -34,8 +34,7 @@ public class MetadataContainer {
 	private Service service;
 	private Source source;
 	
-//	private String 
-
+	private SourceInformation sourceInfo;
 
 	public void initializeFromJSON() {
 		
@@ -60,6 +59,12 @@ public class MetadataContainer {
 	public void setSource(Source source) {
 		this.source = source;
 	}
-	
-	
+
+	public SourceInformation getSourceInformation() {
+		return sourceInfo;
+	}
+
+	public void setSourceInformation(SourceInformation sourceInfo) {
+		this.sourceInfo = sourceInfo;
+	}	
 }
