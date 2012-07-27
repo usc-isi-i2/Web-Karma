@@ -21,6 +21,7 @@
 package edu.isi.karma.modeling.ontology;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -369,14 +370,14 @@ public class OntologyCache {
 			if (ontologyManager.isObjectProperty(p)) 
 				for (String d : allDomains) {
 					temp = indirectOutObjectProperties.get(d);
-					if (temp.indexOf(p) == -1)
+					if (temp != null && temp.indexOf(p) == -1)
 						temp.add(p);
 				}
 
 			if (ontologyManager.isDataProperty(p)) 
 				for (String d : allDomains) {
 					temp = indirectOutDataProperties.get(d);
-					if (temp.indexOf(p) == -1)
+					if (temp != null && temp.indexOf(p) == -1)
 						temp.add(p);
 				}
 
@@ -405,7 +406,7 @@ public class OntologyCache {
 			if (ontologyManager.isObjectProperty(p)) 
 				for (String r : allRanges) {
 					temp = indirectInObjectProperties.get(r);
-					if (temp.indexOf(p) == -1)
+					if (temp != null && temp.indexOf(p) == -1)
 						temp.add(p);
 				}
 				
