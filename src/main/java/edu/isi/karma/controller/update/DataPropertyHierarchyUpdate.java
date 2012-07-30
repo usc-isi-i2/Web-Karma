@@ -22,6 +22,7 @@ package edu.isi.karma.controller.update;
 
 import java.io.PrintWriter;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -66,9 +67,22 @@ public class DataPropertyHierarchyUpdate extends AbstractUpdate {
 
 			while (propsIter.hasNext()) {
 				DatatypeProperty prop = propsIter.next();
-				if ((prop.listSuperProperties().toList().size() != 0)
-						|| propertiesAdded.contains(prop.getURI())) {
+				
+				if (propertiesAdded.contains(prop.getURI()))
 					continue;
+				
+				if ((prop.listSuperProperties().toList().size() != 0)) {
+					// Check if all the super properties are object properties
+					boolean hasObjectPropertiesAsAllSuperProperties = true; 
+					List<? extends OntProperty> superProps = prop.listSuperProperties().toList();
+					for (OntProperty s : superProps) {
+						if (s.isDatatypeProperty()) {
+							hasObjectPropertiesAsAllSuperProperties = false;
+							break;
+						}
+					}
+					if(!hasObjectPropertiesAsAllSuperProperties)
+						continue;
 				}
 
 				JSONObject classObject = new JSONObject();
