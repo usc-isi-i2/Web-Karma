@@ -32,6 +32,10 @@ public class WorkspaceManager {
 	public static WorkspaceManager getInstance() {
 		return singleton;
 	}
+	
+	public static WorkspaceManager _getNewInstance() {
+		return new WorkspaceManager();
+	}
 
 	/**
 	 * One factory for all the objects for all users.
@@ -42,3 +46,4 @@ public class WorkspaceManager {
 		return factory;
 	}
 }
+ 
