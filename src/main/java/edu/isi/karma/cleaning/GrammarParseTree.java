@@ -112,7 +112,6 @@ public class GrammarParseTree {
 			System.out.println(""+ex.toString());
 		}
         
-        
 	}
 	public boolean isRuleConsistent(String rule)
 	{
