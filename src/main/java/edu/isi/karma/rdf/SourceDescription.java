@@ -184,6 +184,7 @@ public class SourceDescription {
 		if(!rdfSourcePrefix.endsWith("/") && !rdfSourcePrefix.endsWith("#"))
 			rdfSourcePrefix += "/";
 		namespaces.put("s", rdfSourcePrefix);
+		prefixes.put(rdfSourcePrefix, "s");
 	}
 	
 	/**
