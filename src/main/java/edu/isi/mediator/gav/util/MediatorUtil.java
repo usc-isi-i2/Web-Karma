@@ -71,7 +71,7 @@ public class MediatorUtil {
 	}
 	
 	static public String addBacktick(String s){
-		s = s.trim();
+//		s = s.trim();
 		if(s.startsWith("`")){
 			return s;
 		}
