@@ -36,12 +36,32 @@ function handleCleanColumnButton() {
 	var rows = $("thead tr", table);
 	var index = -1;
 	$.each(rows, function(ind, row) {
-	  var x = $('td',row).index(tdTag);
-	  if(x != -1)
+	  var cells = $('td',row);
+	  if (cells.index(tdTag) == -1)
 	  {
-	  	index = x;
 	  	return;
 	  }
+	  index = 0;
+	  for(var k = 0; k<cells.length; k++)
+	  { 
+	  	cell = cells.get(k);
+	  	if($(tdTag).text() != $(cell).text())
+	  	{
+	  		if(cell.attributes["colspan"]!=undefined)
+	  		{
+	  			index = index + parseInt($(cell).attr("colspan"));
+	  		}
+	  		else
+	  		{
+	  			index = index +1;
+	  		}
+	  	}
+	  	else
+	  	{
+	  		break;
+	  	}
+	  }
+	  return index;
 	});
 	var values = [];
 	$('tbody>tr>td:nth-child(' + (index + 1) + ')', table).each(function() {
