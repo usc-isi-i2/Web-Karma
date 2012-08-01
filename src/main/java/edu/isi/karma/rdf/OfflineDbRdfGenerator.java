@@ -190,7 +190,7 @@ public class OfflineDbRdfGenerator {
 		while (r.next()) {
 			
 			// Create a new worksheet for every DATABASE_TABLE_FETCH_SIZE rows 
-			if(counter%DATABASE_TABLE_FETCH_SIZE == 0) {
+			if(counter%DATABASE_TABLE_FETCH_SIZE == 0 && counter != 0) {
 				System.out.println("Done for " + counter + " rows ..." );
 				
 				WorksheetRDFGenerator rdfGen = new WorksheetRDFGenerator(factory, sourceDesc, pw);
