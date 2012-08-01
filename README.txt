@@ -16,9 +16,9 @@ To start in logging mode (where all the logs are stored in the log folder), use 
 *** Offline RDF Generation from a database ***
 1. Model your source and publish it's model.
 2. From the command line, go to the top level Karma directory and run the following command:
-	mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineDbRdfGenerator" -Dexec.args="[PATH TO YOUR MODEL FILE] [OUTPUT RDF FILE NAME/PATH]"
+	mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineDbRdfGenerator" -Dexec.args="[PATH TO YOUR MODEL FILE] [OUTPUT RDF FILE NAME/PATH] [DATABASE PASSWORD]"
 
-	e.g. mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineDbRdfGenerator" -Dexec.args="ObjCurLocView.n3 result.n3"
+	e.g. mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineDbRdfGenerator" -Dexec.args="ObjCurLocView.n3 result.n3 secretPassword"
 	Above command will use the ObjCurLocView.n3 model file to pubish a RDF file named result.n3
 
 NOTE: In Maven Jetty plugin based Karma deployment, the published models are located at src/main/webapp/repository/sources/ inside the Karma directory.

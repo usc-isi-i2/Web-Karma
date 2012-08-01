@@ -67,10 +67,10 @@ public class OfflineDbRdfGenerator {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		if(args.length != 2)
-			throw new IllegalArgumentException("Illegal arguments! Please specify the model file path and the output file path as arguments.");
+		if(args.length != 3)
+			throw new IllegalArgumentException("Illegal arguments! Please specify the model file path, the output file path and the database password as arguments.");
 		
-		OfflineDbRdfGenerator rdfGen = new OfflineDbRdfGenerator(args[0], args[1]);
+		OfflineDbRdfGenerator rdfGen = new OfflineDbRdfGenerator(args[0], args[1], args[2]);
 		
 		try {
 			// Load the model file into a Jena Model
@@ -104,9 +104,10 @@ public class OfflineDbRdfGenerator {
 		
 	}
 
-	public OfflineDbRdfGenerator(String modelFilePath, String outputFilePath) {
+	public OfflineDbRdfGenerator(String modelFilePath, String outputFilePath, String password) {
 		this.modelFilePath = modelFilePath;
 		this.outputFilePath = outputFilePath;
+		this.password =password;
 	}
 
 	private void loadModelFile() throws IOException {
@@ -148,8 +149,6 @@ public class OfflineDbRdfGenerator {
 				portnumber = Integer.parseInt(stmt.getString());
 			} else if(attr == InfoAttribute.username) {
 				username = stmt.getString();
-			} else if(attr == InfoAttribute.password) {
-				password = stmt.getString();
 			} else if(attr == InfoAttribute.dBorSIDName) {
 				dBorSIDName = stmt.getString();
 			} else if(attr == InfoAttribute.tableName) {
