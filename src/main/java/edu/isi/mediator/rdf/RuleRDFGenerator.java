@@ -506,7 +506,14 @@ public class RuleRDFGenerator {
 	 * <br>Note: look in RuleRDFMapper for a special case where the value is a URI.
 	 */
 	protected String prepareValue(String value){
-		return RDFUtil.escapeQuote(value);
+		// Escaping the quotes
+		value = value.replaceAll("\"", "\\\\\"");
+		
+		// If newline present in the value, quote them around with triple quotes
+		if (value.contains("\n") || value.contains("\r"))	
+			return "\"\"\"" + value + "\"\"\"";
+		else
+			return "\"" + value + "\"";
 	}
 	
 	/**
