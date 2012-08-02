@@ -229,8 +229,11 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
         fail: function(e, data) {
             $.sticky("History file upload failed!");
             hideLoading(optionsDiv.data("worksheetId"));
-        }
+        },
+        dropZone: null
     });
+    
+    
 	
 }
 

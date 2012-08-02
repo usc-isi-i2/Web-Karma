@@ -105,26 +105,12 @@ and related projects, please see: http://www.isi.edu/integration
 				if($.cookie("workspacePreferencesId") == null)
 					$.cookie("workspacePreferencesId", $.workspaceGlobalInformation.id, { expires: 7000 });
 				
-				// Attach upload handlers to the import file buttons
-				// $('input#uploadFile_JSON').uploadify({
-    				// 'uploader'  : '/images/uploadify.swf',
-    				// 'cancelImg' : '/images/cancel.png',
-    				// 'script'	: 'RequestController',
-    				// 'buttonText': 'Import JSON',
-    				// 'scriptData': {'command': 'ImportJSONFileCommand', 
-    								// 'workspaceId': $.workspaceGlobalInformation.id},
-    				// 'method'	: 'GET',
-    				// 'auto': true,
-    				// 'onComplete'  : function(event, ID, fileObj, response, data) {
-				    	// parse($.parseJSON(response));
-				    // }
-  				// })
   				
   				// Initialize the jQuery File Upload widget:
 			    $('#fileupload').fileupload({
 			        url: "RequestController?workspaceId=" + $.workspaceGlobalInformation.id + "&command=ImportCSVFileCommand",
 			        add : function (e, data) {
-			            var fileName = data.files[0].name;
+			        	var fileName = data.files[0].name;
 			            $("span#fileFormatError").hide();
 			            $("input:radio[name=FileFormatSelection]").attr("checked", false);
 
@@ -180,7 +166,8 @@ and related projects, please see: http://www.isi.edu/integration
 			        },
 			        fail: function(e, data) {
 			        	$.sticky("File upload failed!");	
-			        }
+			        },
+			        dropZone: $(document)
 			    }).qtip({
 			    	content: {text: "Supported file formats include CSV, XML, JSON, Excel spreadsheet, and OWL ontology"}
 			    });
