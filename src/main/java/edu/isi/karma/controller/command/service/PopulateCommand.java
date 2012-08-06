@@ -220,7 +220,7 @@ public class PopulateCommand extends WorksheetCommand{
 				attIdToValue.put(serviceAttId, value);
 				
 			}
-			String urlString = service.getPopulatedAddress(attIdToValue);
+			String urlString = service.getPopulatedAddress(attIdToValue, null);
 			
 			//FIXME
 			urlString = urlString.replaceAll("\\{p3\\}", "taheriyan");

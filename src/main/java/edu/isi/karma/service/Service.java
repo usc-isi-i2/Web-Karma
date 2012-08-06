@@ -145,40 +145,59 @@ public class Service {
 		this.sourceDescription = serviceDescription;
 	}
 
-	public String getPopulatedAddress(Map<String, String> attIdToValue) {
+	/**
+	 * This method takes a map of attribute Ids and their values and return the invocation URL. 
+	 * If there are some mandatory attributes that are not provided in the input map, this function returns 
+	 * them in missingAttributes.
+	 * @param attIdToValue
+	 * @param requiredAttributes
+	 * @return
+	 */
+	public String getPopulatedAddress(Map<String, String> attIdToValue, List<Attribute> missingAttributes) {
 		String address = this.getAddress();
 		String populatedAddress = address;
 		
-		for (String attId : attIdToValue.keySet()) {
-			Attribute att = this.attIdToAttMap.get(attId);
-			if (att == null) {
-				logger.debug("Cannot find the attribute " + attId + " in this service.");
-				return null;
-			}
-			if (!att.getIOType().equalsIgnoreCase(IOType.INPUT)) {
-				logger.debug("The type of the attribute " + attId + " is not INPUT.");
-				return null;
-			}
+		if (missingAttributes == null)
+			missingAttributes = new ArrayList<Attribute>();
+		
+		for (Attribute att : this.inputAttributes) {
 			
+			String attId = att.getId();
+			
+			String value = attIdToValue.get(att.getId());
 			String groundedIn = att.getGroundedIn();
+
+			// the input attribute is not in the url.
 			if (groundedIn == null || groundedIn.trim().length() == 0) {
 				logger.debug("The attribute " + attId + " grounding parameter is not specified.");
-				return null;
+				continue;
 			}
 			
-			String value = attIdToValue.get(attId);
-			if (value == null) {// || value.trim().length() == 0) {
-				logger.debug("No value is given for attribute " + attId);
-				return null;
+			if (value == null) { // input attribute is not in the input map
+				
+				if (att.getRequirement() == AttributeRequirement.MANDATORY ||
+						// FIXME: later when we are able to model the attribute mandatory/optional,
+						// we have to remove the next line. currently we consider every 
+						// input attribute is a necessary
+						att.getRequirement() == AttributeRequirement.NONE) {
+					logger.debug("No value is given for the mandatory attribute " + attId);
+					missingAttributes.add(att);
+				} else {
+					// remove the attribute from the url if it exists there.
+					populatedAddress = populatedAddress.replaceAll("&" + att.getName() + "=", "");
+					populatedAddress = populatedAddress.replaceAll(att.getName() + "=", "");
+					populatedAddress = populatedAddress.replaceAll("\\{" + groundedIn.trim() + "\\}", "");
+				}
+			} else {
+
+				logger.debug("att: " + attId);
+				logger.debug("grounded in: " + groundedIn.trim());
+				logger.debug("value: " + value.trim());
+
+				populatedAddress = populatedAddress.replaceAll("\\{" + groundedIn.trim() + "\\}", value);
 			}
 			
-			logger.debug("att: " + attId);
-			logger.debug("grounded in: " + groundedIn.trim());
-			logger.debug("value: " + value.trim());
-			
-			populatedAddress = populatedAddress.replaceAll("\\{" + groundedIn.trim() + "\\}", value);
 		}
-		
 		return populatedAddress;
 	}
 

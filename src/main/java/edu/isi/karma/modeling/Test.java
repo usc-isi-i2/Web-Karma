@@ -22,6 +22,7 @@ package edu.isi.karma.modeling;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -53,7 +54,7 @@ public class Test {
 //		f[3] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\DoveTailOntoRDF.owl");
 //		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\Dovetail_ISI_mod.owl");
 		
-		for (int i = 1; i < 3; i++) {
+		for (int i = 1; i < 2; i++) {
 			ontManager.doImport(f[i]);
 		}
 	}
@@ -245,10 +246,12 @@ public class Test {
 //		List<String> list = ontManager.getObjectPropertiesOfClass(new URI("http://www.geonames.org/ontology#Feature"), false);
 //		List<String> list = ontManager.getSubClasses(new URI("http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing"), false);
 //		List<String> list = ontManager.getObjectPropertiesOfClass("http://www.sri.com/ontologies/DovetailOnto.owl#Entity", true);
-	
-//		System.out.println(list.size());
-//		for (String s : list)
-//			System.out.println(s);
+
+		HashMap<String, List<String>> map = ontManager.getOntCache().getPropertyDirectDomains();
+
+		System.out.println(map.size());
+		for (String s : map.keySet())
+			System.out.println(s + ":" + map.get(s).size());
 		
 	}
 	

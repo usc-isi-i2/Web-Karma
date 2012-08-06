@@ -55,7 +55,7 @@ public class GetRequestManager extends LinkedApiRequestManager {
 			
 			if (getResourceType() == ResourceType.Input) {
 				if (getFormat().equalsIgnoreCase(SerializationLang.SPARQL)) {
-					sparql = inputModel.getSparqlConstructQuery();
+					sparql = inputModel.getSparqlConstructQuery(null);
 					getResponse().setContentType(MimeType.TEXT_PLAIN);
 					pw.write(sparql);
 					return;
@@ -65,7 +65,7 @@ public class GetRequestManager extends LinkedApiRequestManager {
 
 			if (getResourceType() == ResourceType.Output) {
 				if (getFormat().equalsIgnoreCase(SerializationLang.SPARQL)) {
-					sparql = outputModel.getSparqlConstructQuery();
+					sparql = outputModel.getSparqlConstructQuery(null);
 					getResponse().setContentType(MimeType.TEXT_PLAIN);
 					pw.write(sparql);
 					return;

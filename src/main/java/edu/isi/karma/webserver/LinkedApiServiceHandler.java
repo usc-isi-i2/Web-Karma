@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.CharEncoding;
 import org.apache.log4j.Logger;
 
 import edu.isi.karma.linkedapi.server.GetRequestManager;
@@ -60,16 +61,20 @@ public class LinkedApiServiceHandler extends HttpServlet {
 		String serviceId = request.getParameter("id");
 		String format = request.getParameter("format");
 		
+		request.setCharacterEncoding(CharEncoding.ISO_8859_1);
+		
 		String inputLang = "";
-		if (request.getContentType().equalsIgnoreCase(MimeType.APPLICATION_RDF_XML))
+		if (request.getContentType().startsWith(MimeType.APPLICATION_RDF_XML))
 			inputLang = SerializationLang.XML;
-		else if (request.getContentType().equalsIgnoreCase(MimeType.TEXT_XML))
+		if (request.getContentType().startsWith(MimeType.TEXT_XML))
 			inputLang = SerializationLang.XML;
-		else if (request.getContentType().equalsIgnoreCase(MimeType.APPLICATION_RDF_N3))
+		else if (request.getContentType().startsWith(MimeType.APPLICATION_XML))
+			inputLang = SerializationLang.XML;
+		else if (request.getContentType().startsWith(MimeType.APPLICATION_RDF_N3))
 			inputLang = SerializationLang.N3;
 		else {
 			response.setContentType(MimeType.TEXT_PLAIN);
-			response.getWriter().write("The content type is neither application/rdf+xml nor application/text/rdf+n3");
+			response.getWriter().write("The content type is neither rdf+xml nor rdf+n3");
 			return;
 		}
 		
@@ -90,4 +95,12 @@ public class LinkedApiServiceHandler extends HttpServlet {
 		
 		response.flushBuffer();
 	}
+	
+//	 public static Document loadXMLFromString(String xml) throws Exception
+//	 {
+//        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//        DocumentBuilder builder = factory.newDocumentBuilder();
+//        InputSource is = new InputSource(new StringReader(xml));
+//        return builder.parse(is);
+//	 }
 }
