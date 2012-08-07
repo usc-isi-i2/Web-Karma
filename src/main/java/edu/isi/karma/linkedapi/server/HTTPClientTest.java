@@ -185,13 +185,13 @@ public class HTTPClientTest {
 			"<rdf:RDF xmlns:geo=\"http://isi.edu/ontologies/geo/current#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"> \n" +
 			"	<geo:Feature rdf:about=\"http://www.geonames.org/5112085\"> \n" +
 			"		<geo:description>first feature</geo:description> \n" +
-			"		<geo:lat>47.0</geo:lat> \n" +
-			"		<geo:long>-120.0</geo:long> \n" +
+			"		<geo:lat>40.78343</geo:lat> \n" +
+			"		<geo:long>-73.96625</geo:long> \n" +
 			"	</geo:Feature> \n" +
 			"	<geo:Feature rdf:about=\"http://www.geonames.org/5125771\"> \n" +
 			"		<geo:description>second feature</geo:description> \n" +
-			"		<geo:lat>40.0</geo:lat> \n" +
-			"		<geo:long>-122.0</geo:long> \n" +
+			"		<geo:lat>40.71012</geo:lat> \n" +
+			"		<geo:long>-73.90078</geo:long> \n" +
 			"	</geo:Feature> \n" +
 			"</rdf:RDF>";
 		
@@ -201,13 +201,13 @@ public class HTTPClientTest {
 
 				"<http://www.geonames.org/5112085> rdf:type geo:Feature.\n" +
 				"<http://www.geonames.org/5112085> geo:description \"first feature\".\n" +
-				"<http://www.geonames.org/5112085> geo:lat \"47.0\".\n" +
-				"<http://www.geonames.org/5112085> geo:long \"-120.0\".\n" +
+				"<http://www.geonames.org/5112085> geo:lat \"40.78343\".\n" +
+				"<http://www.geonames.org/5112085> geo:long \"-73.96625\".\n" +
 
 				"<http://www.geonames.org/5125771> rdf:type geo:Feature.\n" +
 				"<http://www.geonames.org/5125771> geo:description \"second feature\".\n" +
-				"<http://www.geonames.org/5125771> geo:lat \"40.0\".\n" +
-				"<http://www.geonames.org/5125771> geo:long \"-122.0\".\n";
+				"<http://www.geonames.org/5125771> geo:lat \"40.71012\".\n" +
+				"<http://www.geonames.org/5125771> geo:long \"-73.90078\".\n";
 		
 		InputStream is = new ByteArrayInputStream(xmlData.getBytes());
 		InputStreamReader in= new InputStreamReader(is);

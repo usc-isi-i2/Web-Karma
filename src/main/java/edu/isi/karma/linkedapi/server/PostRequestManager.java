@@ -3,6 +3,7 @@ package edu.isi.karma.linkedapi.server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,9 +16,12 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import edu.isi.karma.service.Attribute;
+import edu.isi.karma.service.InvocationManager;
 import edu.isi.karma.service.MimeType;
 import edu.isi.karma.service.Service;
 import edu.isi.karma.service.ServiceLoader;
+import edu.isi.karma.service.Table;
+import edu.isi.karma.webserver.KarmaException;
 
 
 public class PostRequestManager extends LinkedApiRequestManager {
@@ -91,7 +95,7 @@ public class PostRequestManager extends LinkedApiRequestManager {
 		
 		for (Map<String, String> m : listOfAttValues)
 			for (String s : m.keySet())
-				System.out.println(s + "-->" + m.get(s));
+				logger.debug(s + "-->" + m.get(s));
 		
 		//for (String s : serviceIdsAndMappings.)
 		return true;
@@ -107,19 +111,47 @@ public class PostRequestManager extends LinkedApiRequestManager {
 			
 			missingAttributes = new ArrayList<Attribute>();
 			String url = service.getPopulatedAddress(attValues, missingAttributes);
+			
+			//FIXME: Authentication Data
+			url = url.replaceAll("\\{p3\\}", "karma");
+			
 			urls.add(url);
 			
-			System.out.println(url);
+			logger.debug(url);
 			
 			for (Attribute att : missingAttributes)
-				System.out.println("missing: " + att.getName() + ", grounded in:" + att.getGroundedIn());
+				logger.debug("missing: " + att.getName() + ", grounded in:" + att.getGroundedIn());
 		}
 		
 		return urls;
 	}
 	
-	private void invokeWebAPI(List<String> invocationUrls) {
-		return;
+	private void invokeWebAPI(List<String> requestURLStrings) {
+
+		if (requestURLStrings == null || requestURLStrings.size() == 0) {
+			logger.info("The invocation list is empty.");
+			return;
+		}
+		
+		List<String> requestIds = new ArrayList<String>();
+		for (int i = 0; i < requestURLStrings.size(); i++)
+			requestIds.add(String.valueOf(i));
+		
+		InvocationManager invocatioManager;
+		try {
+			invocatioManager = new InvocationManager(requestIds, requestURLStrings);
+			logger.info("Requesting data with includeURL=" + true + ",includeInput=" + true + ",includeOutput=" + true);
+			Table serviceTable = invocatioManager.getServiceData(false, false, true);
+			logger.info(serviceTable.getPrintInfo());
+			logger.info("The service " + service.getUri() + " has been invoked successfully.");
+
+
+		} catch (MalformedURLException e) {
+			logger.error("Malformed service request URL.");
+		} catch (KarmaException e) {
+			logger.error(e.getMessage());
+		}
+
 	}
 	
 	public void HandleRequest() throws IOException {
