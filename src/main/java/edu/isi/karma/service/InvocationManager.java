@@ -54,6 +54,20 @@ public class InvocationManager {
 		this.invocations = new ArrayList<Invocation>();
 	}
 	
+	public InvocationManager(String requestURLString) 
+	throws MalformedURLException, KarmaException {
+		this.idList = new ArrayList<String>();
+		this.idList.add("1");
+		List<String> requestURLList = new ArrayList<String>();
+		requestURLList.add(requestURLString);
+		requestURLs = URLManager.getURLsFromStrings(requestURLList);
+		if (requestURLs == null || requestURLs.size() == 0)
+			throw new KarmaException("Cannot model a service without any request example.");
+		
+		this.serviceData = null;
+		this.invocations = new ArrayList<Invocation>();
+	}
+	
 	private void invokeAndGetResponse() {
 		for (int i = 0; i < requestURLs.size(); i++) {
 			URL url = requestURLs.get(i);

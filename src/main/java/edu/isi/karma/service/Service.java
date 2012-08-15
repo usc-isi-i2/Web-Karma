@@ -296,6 +296,28 @@ public class Service {
 		return variables;
 	}
 
+	public Attribute getInputAttributeByName(String name) {
+		if (this.inputAttributes == null)
+			return null;
+		
+		for (Attribute att : this.inputAttributes)
+			if (att.getName().equalsIgnoreCase(name))
+				return att;
+		
+		return null;
+	}
+	
+	public Attribute getOutputAttributeByName(String name) {
+		if (this.outputAttributes == null)
+			return null;
+		
+		for (Attribute att : this.outputAttributes)
+			if (att.getName().equalsIgnoreCase(name))
+				return att;
+		
+		return null;
+	}
+	
 	public HashMap<String, Attribute> gethNodeIdToAttribute() {
 		return hNodeIdToAttribute;
 	}

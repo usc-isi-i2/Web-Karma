@@ -87,7 +87,8 @@ public class HTTPClientTest {
 			urlc.setUseCaches(false);
 			urlc.setAllowUserInteraction(false);
 //			urlc.setRequestProperty("Content-type", "text/xml; charset=" + "UTF-8");
-			urlc.setRequestProperty("Content-Type", MimeType.APPLICATION_XML);			
+			urlc.setRequestProperty("Content-Type", MimeType.APPLICATION_XML);
+			urlc.addRequestProperty("format", "N3");
 //			urlc.setRequestProperty("Content-Type", MimeType.APPLICATION_RDF_N3);			
 	 
 			OutputStream out = urlc.getOutputStream();
@@ -213,7 +214,7 @@ public class HTTPClientTest {
 		InputStreamReader in= new InputStreamReader(is);
 		BufferedReader bin= new BufferedReader(in);
 
-		String endpoint = "http://localhost:8080/karma/services?id=CDA81BE4-DD77-E0D3-D033-FC771B2F4800#";
+		String endpoint = "http://localhost:8080/karma/services?id=CDA81BE4-DD77-E0D3-D033-FC771B2F4800&format=N3";
 		Writer writer = new OutputStreamWriter(System.out);//, "UTF-8");
 		postData(bin , new URL(endpoint), writer);
 //		postData( new FileReader("C:\\Users\\mohsen\\Desktop\\karma\\input.rdf"), new URL(endpoint), writer);
