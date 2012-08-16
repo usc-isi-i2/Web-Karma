@@ -145,7 +145,7 @@ public class PublishModelCommand extends Command{
 				ViewPreferences prefs = vWorkspace.getPreferences();
 				JSONObject prefObject = prefs.getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
 				sourcePrefix = prefObject.getString("rdfPrefix");
-			}catch(JSONException e){
+			}catch(Exception e){
 				//prefix not found, just use the default
 			}
 			SourceDescription desc = new SourceDescription(ws, al, wk,
@@ -160,15 +160,15 @@ public class PublishModelCommand extends Command{
 			if (service != null) {
 				service.setSourceDescription(descString);
 				ServicePublisher.publish(service, Repository.Instance().LANG, true);
-				logger.info("Service model has successfully been published to repository.");
+				logger.info("Service model has successfully been published to repository: " + service.getId());
 				return new UpdateContainer(new ErrorUpdate(
-				"Service model has successfully been published to repository."));
+				"Service model has successfully been published to repository: " + service.getId()));
 			} else { //if (source != null) {
 				SourcePublisher sourcePublisher = new SourcePublisher(source, descString, ws.getFactory(), commandsJSON, wk.getMetadataContainer().getSourceInformation());
 				sourcePublisher.publish(Repository.Instance().LANG, true);
-				logger.info("Source model has successfully been published to repository.");
+				logger.info("Source model has successfully been published to repository: " + source.getId());
 				return new UpdateContainer(new ErrorUpdate(
-				"Source model has successfully been published to repository."));
+				"Source model has successfully been published to repository: " + source.getId()));
 			}
 
 		} catch (IOException e) {
