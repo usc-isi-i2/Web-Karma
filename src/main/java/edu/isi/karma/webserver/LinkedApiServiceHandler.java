@@ -1,5 +1,6 @@
 package edu.isi.karma.webserver;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -8,7 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.CharEncoding;
 import org.apache.log4j.Logger;
 
 import edu.isi.karma.linkedapi.server.GetRequestManager;
@@ -61,7 +61,8 @@ public class LinkedApiServiceHandler extends HttpServlet {
 		String serviceId = request.getParameter("id");
 		String format = request.getParameter("format");
 		
-		request.setCharacterEncoding(CharEncoding.ISO_8859_1);
+		//request.setCharacterEncoding(CharEncoding.ISO_8859_1);
+		logger.info("Content-Type: " + request.getContentType());
 		
 		String inputLang = "";
 		if (request.getContentType().startsWith(MimeType.APPLICATION_RDF_XML))
@@ -72,6 +73,8 @@ public class LinkedApiServiceHandler extends HttpServlet {
 			inputLang = SerializationLang.XML;
 		else if (request.getContentType().startsWith(MimeType.APPLICATION_RDF_N3))
 			inputLang = SerializationLang.N3;
+		if (request.getContentType().startsWith(MimeType.APPLICATION_FORM_URLENCODED))
+			;
 		else {
 			response.setContentType(MimeType.TEXT_PLAIN);
 			response.getWriter().write("The content type is neither rdf+xml nor rdf+n3");
@@ -86,6 +89,15 @@ public class LinkedApiServiceHandler extends HttpServlet {
 		format = format.toUpperCase();
 		
 		InputStream in = request.getInputStream();
+		
+		if (request.getContentType().startsWith(MimeType.APPLICATION_FORM_URLENCODED)) {
+			inputLang = SerializationLang.N3; // default for html forms
+			String formData = request.getParameter("rdf");
+			logger.debug(formData);
+			if (formData != null) {
+				in = new ByteArrayInputStream(formData.getBytes());
+			}
+		} 
 		
 		if(serviceId != null) {
 			new PostRequestManager(serviceId, in, inputLang, format, response).HandleRequest();

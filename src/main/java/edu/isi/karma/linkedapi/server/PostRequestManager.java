@@ -136,7 +136,7 @@ public class PostRequestManager extends LinkedApiRequestManager {
 			invocatioManager = new InvocationManager(requestURLString);
 			logger.info("Requesting data with includeURL=" + true + ",includeInput=" + true + ",includeOutput=" + true);
 			Table serviceTable = invocatioManager.getServiceData(false, false, true);
-			logger.info(serviceTable.getPrintInfo());
+			logger.debug(serviceTable.getPrintInfo());
 			logger.info("The service " + service.getUri() + " has been invoked successfully.");
 			return serviceTable;
 
@@ -252,10 +252,12 @@ public class PostRequestManager extends LinkedApiRequestManager {
 //		InputStreamReader is = new InputStreamReader(inputStream);
 //		BufferedReader br = new BufferedReader(is);
 //		String read = br.readLine();
+//		System.out.println("START");
 //		while(read != null) {
 //		    System.out.println(read);
 //		    read = br.readLine();
 //		}
+//		System.out.println("END");
 		
 		PrintWriter pw = getResponse().getWriter();
 		
