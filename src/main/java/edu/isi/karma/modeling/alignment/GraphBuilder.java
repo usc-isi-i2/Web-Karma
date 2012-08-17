@@ -256,9 +256,12 @@ public class GraphBuilder {
 					dpDomainClasses = ontologyManager.getDomainsGivenProperty(label, true);
 				}
 				
-				newAddedClasses.addAll(opDomainClasses);
-				newAddedClasses.addAll(dpDomainClasses);
-				newAddedClasses.addAll(superClasses);
+				if (opDomainClasses != null)
+					newAddedClasses.addAll(opDomainClasses);
+				if (dpDomainClasses != null)
+					newAddedClasses.addAll(dpDomainClasses);
+				if (superClasses != null)
+					newAddedClasses.addAll(superClasses);
 				
 				for (int j = 0; j < newAddedClasses.size(); j++) {
 					if (!nodesLabelCounter.containsKey(newAddedClasses.get(j))) { // if node is not in graph yet

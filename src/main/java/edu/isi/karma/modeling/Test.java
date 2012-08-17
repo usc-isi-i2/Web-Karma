@@ -43,7 +43,7 @@ public class Test {
 		File[] f = new File[size];
 		
 		f[0] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\vivo-core-public-1.4.owl");
-		f[1] = new File("C:\\Users\\mohsen\\Desktop\\karma\\EDM.owl");
+		f[1] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\rdf-schema");
 		f[2] = new File("C:\\Users\\mohsen\\Desktop\\karma\\EDM-v1.owl");
 		f[3] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\DovetailOnto_v1_0.rdf");
 		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\geonames\\wgs84_pos-updated.xml");
@@ -54,7 +54,7 @@ public class Test {
 //		f[3] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\DoveTailOntoRDF.owl");
 //		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\Dovetail_ISI_mod.owl");
 		
-		for (int i = 1; i < 2; i++) {
+		for (int i = 0; i < 2; i++) {
 			ontManager.doImport(f[i]);
 		}
 	}
@@ -247,12 +247,14 @@ public class Test {
 //		List<String> list = ontManager.getSubClasses(new URI("http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing"), false);
 //		List<String> list = ontManager.getObjectPropertiesOfClass("http://www.sri.com/ontologies/DovetailOnto.owl#Entity", true);
 
-		HashMap<String, List<String>> map = ontManager.getOntCache().getPropertyDirectDomains();
+		HashMap<String, List<String>> map = ontManager.getOntCache().getPropertyIndirectDomains();//.getPropertyDirectDomains();
 
 		System.out.println(map.size());
-		for (String s : map.keySet())
-			System.out.println(s + ":" + map.get(s).size());
-		
+		for (String s : map.keySet()) {
+			System.out.println(s);
+			for (String ss : map.get(s)) 
+				System.out.println("\t" + ss);
+		}
 	}
 	
 	private static void testAlignment() {
