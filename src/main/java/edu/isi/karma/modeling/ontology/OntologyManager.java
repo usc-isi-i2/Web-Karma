@@ -250,7 +250,7 @@ public class OntologyManager {
 		else
 			return;
 		
-		if (c != null && c.hasSubClass()) {
+		if (c != null) {
 			ExtendedIterator<OntClass> i = null;
 			try {
 //				if (recursive)
