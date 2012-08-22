@@ -72,6 +72,11 @@ public class OntologyManager {
 		return ontCache;
 	}
 	
+
+	public boolean isEmpty() {
+		return getOntModel().isEmpty();
+	}
+	
 	public boolean doImport(File sourceFile) {
 
 		if (sourceFile == null) {
@@ -168,7 +173,7 @@ public class OntologyManager {
 		else
 			return;
 		
-		if (c != null && c.hasSuperClass()) {
+		if (c != null) { // && c.hasSuperClass()) {
 			ExtendedIterator<OntClass> i = null;
 			try {
 //				if (recursive)
@@ -362,7 +367,6 @@ public class OntologyManager {
 	public boolean isSuperClass(String superClassUri, String subClassUri, boolean recursive) {
 		
 		List<String> superClasses = getSuperClasses(subClassUri, recursive);
-		
 		for (int i = 0; i < superClasses.size(); i++) {
 			if (superClassUri.equalsIgnoreCase(superClasses.get(i))) {
 				return true;
@@ -383,7 +387,6 @@ public class OntologyManager {
 	public boolean isSubClass(String subClassUri, String superClassUri, boolean recursive) {
 		
 		List<String> subClasses = getSubClasses(superClassUri, recursive);
-		
 		for (int i = 0; i < subClasses.size(); i++) {
 			if (subClassUri.equalsIgnoreCase(subClasses.get(i))) {
 				return true;
@@ -403,7 +406,7 @@ public class OntologyManager {
 
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntClass(classUri);
-		if (r == null) return null;
+		if (r == null) return new ArrayList<String>();
 		getChildren(r, resources, recursive);
 		return getResourcesURIs(resources);
 	}
@@ -418,7 +421,7 @@ public class OntologyManager {
 		
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntClass(classUri);
-		if (r == null) return null;
+		if (r == null) return new ArrayList<String>();
 		getParents(r, resources, recursive);
 		return getResourcesURIs(resources);
 	}
@@ -433,7 +436,7 @@ public class OntologyManager {
 
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntProperty(propertyUri);
-		if (r == null) return null;
+		if (r == null) return new ArrayList<String>();
 		getChildren(r, resources, recursive);
 		return getResourcesURIs(resources);
 	}
@@ -448,7 +451,7 @@ public class OntologyManager {
 
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntProperty(propertyUri);
-		if (r == null) return null;
+		if (r == null) return new ArrayList<String>();
 		getParents(r, resources, recursive);
 		return getResourcesURIs(resources);
 	}

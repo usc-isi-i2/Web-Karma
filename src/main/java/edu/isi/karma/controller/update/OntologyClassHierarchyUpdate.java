@@ -31,6 +31,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.ontology.ConversionException;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
@@ -64,43 +65,52 @@ public class OntologyClassHierarchyUpdate extends AbstractUpdate {
 
 			ExtendedIterator<OntClass> iter = model.listNamedClasses();
 			while (iter.hasNext()) {
-				OntClass cls = iter.next();
-				if ((cls.hasSuperClass()) || classesAdded.contains(cls.getURI())) {
-					// Need to check if it has a non-anonymous superclass
-					boolean flag = false;
-					ExtendedIterator<OntClass> superClasses = cls
-							.listSuperClasses();
-					while (superClasses.hasNext()) {
-						OntClass clss = superClasses.next();
-						if (!clss.isAnon() && !clss.getURI().equals("http://www.w3.org/2000/01/rdf-schema#Resource"))
-							flag = true;
-					}
-					if (flag) {
+					OntClass cls = iter.next();
+					boolean hasSupClass = false;
+					try {
+						hasSupClass = cls.hasSuperClass();
+					} catch (ConversionException e) {
+						logger.debug(e.getMessage());
 						continue;
 					}
-				}
-
-				JSONObject classObject = new JSONObject();
-
-				if (cls.hasSubClass()) {
-					JSONArray childrenArray = new JSONArray();
-					addSubclassChildren(cls, childrenArray, 0, classesAdded, prefixMap);
-					classObject.put(JsonKeys.children.name(), childrenArray);
-				}
-
-				String pr = prefixMap.get(cls.getNameSpace());
-				if(pr != null && !pr.equals(""))
-					classObject.put(JsonKeys.data.name(), pr + ":" + cls.getLocalName());
-				else
-					classObject.put(JsonKeys.data.name(), cls.getLocalName());
-				classesAdded.add(cls.getURI());
-
-				JSONObject metadataObject = new JSONObject();
-				metadataObject.put(JsonKeys.URI.name(), cls.getURI());
-				classObject.put(JsonKeys.metadata.name(), metadataObject);
-
-				dataArray.put(classObject);
-
+					if ((hasSupClass) || classesAdded.contains(cls.getURI())) {
+						// Need to check if it has a non-anonymous superclass
+						boolean flag = false;
+						ExtendedIterator<OntClass> superClasses = cls.listSuperClasses();
+						try {
+							while (superClasses.hasNext()) {
+								OntClass clss = superClasses.next();
+								if (!clss.isAnon() && !clss.getURI().equals("http://www.w3.org/2000/01/rdf-schema#Resource"))
+									flag = true;
+							}
+						} catch (ConversionException e) {
+							logger.debug(e.getMessage());
+						}
+						if (flag) {
+							continue;
+						}
+					}
+	
+					JSONObject classObject = new JSONObject();
+	
+					if (cls.hasSubClass()) {
+						JSONArray childrenArray = new JSONArray();
+						addSubclassChildren(cls, childrenArray, 0, classesAdded, prefixMap);
+						classObject.put(JsonKeys.children.name(), childrenArray);
+					}
+	
+					String pr = prefixMap.get(cls.getNameSpace());
+					if(pr != null && !pr.equals(""))
+						classObject.put(JsonKeys.data.name(), pr + ":" + cls.getLocalName());
+					else
+						classObject.put(JsonKeys.data.name(), cls.getLocalName());
+					classesAdded.add(cls.getURI());
+	
+					JSONObject metadataObject = new JSONObject();
+					metadataObject.put(JsonKeys.URI.name(), cls.getURI());
+					classObject.put(JsonKeys.metadata.name(), metadataObject);
+	
+					dataArray.put(classObject);
 			}
 
 			// Prepare the output JSON
@@ -137,7 +147,14 @@ public class OntologyClassHierarchyUpdate extends AbstractUpdate {
 			metadataObject.put(JsonKeys.URI.name(), subclass.getURI());
 			classObject.put(JsonKeys.metadata.name(), metadataObject);
 
-			if (subclass.hasSubClass()) {
+			boolean hasSubClass = false;
+			try {
+				hasSubClass = subclass.hasSubClass();
+			} catch (ConversionException e) {
+				logger.debug(e.getMessage());
+				continue;
+			}
+			if (hasSubClass) {
 				JSONArray childrenArraySubClass = new JSONArray();
 				addSubclassChildren(subclass, childrenArraySubClass, level + 1,
 						classesAdded, prefixMap);
