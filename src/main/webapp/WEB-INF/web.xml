@@ -87,7 +87,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>LinkedAPIServiceHandler</servlet-name>
-    <url-pattern>/karma/services</url-pattern>
+    <url-pattern>/karma/services/*</url-pattern>
   </servlet-mapping>
 
 <!-- uncomment for password protection; change user/pwd in config/jettyrealm.properties -->
