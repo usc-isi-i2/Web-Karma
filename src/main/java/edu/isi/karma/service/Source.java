@@ -39,7 +39,7 @@ public class Source {
 
 	static Logger logger = Logger.getLogger(Source.class);
 
-	public static final String KARMA_SOURCE_PREFIX = "http://isi.edu/integration/karma/sources/";
+	public static final String KARMA_SOURCE_PREFIX = "http://karma.isi.edu/sources/";
 
 	private String id;
 	private String name;

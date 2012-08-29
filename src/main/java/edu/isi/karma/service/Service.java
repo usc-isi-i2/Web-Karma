@@ -44,7 +44,7 @@ public class Service {
 	
 	static Logger logger = Logger.getLogger(Service.class);
 
-	public static final String KARMA_SERVICE_PREFIX = "http://isi.edu/integration/karma/services/";
+	public static final String KARMA_SERVICE_PREFIX = "http://karma.isi.edu/linkedservices/";
 
 	private String id;
 	private String name;
