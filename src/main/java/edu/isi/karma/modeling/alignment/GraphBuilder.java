@@ -146,7 +146,8 @@ public class GraphBuilder {
 			
 			if (ontologyManager.isClass(label))
 				nodeType = NodeType.Class;
-			else if (ontologyManager.isDataProperty(label))
+//			else if (ontologyManager.isDataProperty(label))
+			else if (ontologyManager.isProperty(label))
 				nodeType = NodeType.DataProperty;
 			else
 				nodeType = null;

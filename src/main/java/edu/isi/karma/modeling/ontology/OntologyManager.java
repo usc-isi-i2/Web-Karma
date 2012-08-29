@@ -43,6 +43,7 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.ontology.UnionClass;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
@@ -142,6 +143,15 @@ public class OntologyManager {
 		return false;
 	}
 		
+	public boolean isProperty(String label) {
+
+		Property p = ontModel.getProperty(label);
+		if (p != null)
+			return true;
+		
+		return false;
+	}
+	
 	public boolean isObjectProperty(String label) {
 
 		ObjectProperty op = ontModel.getObjectProperty(label);

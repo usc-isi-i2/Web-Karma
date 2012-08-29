@@ -33,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.ontology.ConversionException;
-import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
@@ -60,14 +59,19 @@ public class DataPropertyHierarchyUpdate extends AbstractUpdate {
 			VWorkspace vWorkspace) {
 		Set<String> propertiesAdded = new HashSet<String>();
 
-		ExtendedIterator<DatatypeProperty> propsIter = model.listDatatypeProperties();
+		ExtendedIterator<OntProperty> propsIter = model.listAllOntProperties();
+//		ExtendedIterator<DatatypeProperty> propsIter = model.listDatatypeProperties();
 		Map<String, String> prefixMap = vWorkspace.getWorkspace().getOntologyManager().getPrefixMap();
 
 		try {
 			JSONArray dataArray = new JSONArray();
 
 			while (propsIter.hasNext()) {
-				DatatypeProperty prop = propsIter.next();
+				OntProperty prop = propsIter.next();
+//				DatatypeProperty prop = propsIter.next();
+				
+				if (prop.isObjectProperty() && !prop.isDatatypeProperty())
+					continue;
 				
 				if (propertiesAdded.contains(prop.getURI()))
 					continue;

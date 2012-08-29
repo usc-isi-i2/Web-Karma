@@ -26,8 +26,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.ontology.ObjectProperty;
+import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
@@ -146,8 +145,8 @@ public class OntologyCache {
 		List<OntResource> allRanges = new ArrayList<OntResource>();
 		List<String> temp; 
 		
-//		ExtendedIterator<OntProperty> itrOP = ontologyManager.getOntModel().listAllOntProperties();
-		ExtendedIterator<ObjectProperty> itrOP = ontologyManager.getOntModel().listObjectProperties();
+		ExtendedIterator<OntProperty> itrOP = ontologyManager.getOntModel().listAllOntProperties();
+//		ExtendedIterator<ObjectProperty> itrOP = ontologyManager.getOntModel().listObjectProperties();
 		OntResource d;
 		OntResource r;
 		
@@ -158,11 +157,11 @@ public class OntologyCache {
 			directRanges.clear();
 			allRanges.clear();
 			
-			ObjectProperty op = itrOP.next();
+//			ObjectProperty op = itrOP.next();
 			
-//			OntProperty op = itrOP.next();
-//			if (op.isDatatypeProperty() && !op.isObjectProperty())
-//				continue;
+			OntProperty op = itrOP.next();
+			if (op.isDatatypeProperty() && !op.isObjectProperty())
+				continue;
 //			System.out.println("OP:" + op.getURI());
 			
 			// getting domains and subclasses
@@ -287,8 +286,8 @@ public class OntologyCache {
 		List<OntResource> allRanges = new ArrayList<OntResource>();
 		List<String> temp; 
 		
-//		ExtendedIterator<OntProperty> itrDP = ontologyManager.getOntModel().listAllOntProperties();
-		ExtendedIterator<DatatypeProperty> itrDP = ontologyManager.getOntModel().listDatatypeProperties();
+		ExtendedIterator<OntProperty> itrDP = ontologyManager.getOntModel().listAllOntProperties();
+//		ExtendedIterator<DatatypeProperty> itrDP = ontologyManager.getOntModel().listDatatypeProperties();
 		OntResource d;
 		OntResource r;
 		
@@ -299,11 +298,11 @@ public class OntologyCache {
 			directRanges.clear();
 			allRanges.clear();
 
-			DatatypeProperty dp = itrDP.next();
+//			DatatypeProperty dp = itrDP.next();
 			
-//			OntProperty dp = itrDP.next();
-//			if (dp.isObjectProperty() && !dp.isDatatypeProperty())
-//				continue;
+			OntProperty dp = itrDP.next();
+			if (dp.isObjectProperty() && !dp.isDatatypeProperty())
+				continue;
 //			System.out.println("DP:" + dp.getURI());
 
 			// getting domains and subclasses
