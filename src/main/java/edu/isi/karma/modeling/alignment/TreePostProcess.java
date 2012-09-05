@@ -42,7 +42,8 @@ public class TreePostProcess {
 		this.tree = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>)GraphUtil.asDirectedGraph(tree);
 		dangledVertexList = new ArrayList<Vertex>();
 		selectRoot(findPossibleRoots());
-//		updateLinksDirections(this.root, null);
+		updateLinksDirections(this.root, null);
+		removeDanglingNodes();
 	}
 	
 	
@@ -113,7 +114,6 @@ public class TreePostProcess {
 		this.root = possibleRoots.get(0);
 	}
 	
-	/*
 	private void updateLinksDirections(Vertex root, LabeledWeightedEdge e) {
 		
 		if (root == null)
@@ -131,10 +131,10 @@ public class TreePostProcess {
 				target = inLink.getTarget();
 				
 				// don't remove the incoming link from parent to this node
-				if (inLink.getID().equalsIgnoreCase(e.getID()))
+				if (e != null && inLink.getID().equalsIgnoreCase(e.getID()))
 					continue;
 				
-				LabeledWeightedEdge inverseLink = new LabeledWeightedEdge(inLink.getID(), new Name(inLink.getUri(), inLink.getNs(), inLink.getPrefix()), inLink.getLinkType(), true);
+				LabeledWeightedEdge inverseLink = new LabeledWeightedEdge(inLink.getID(), new URI(inLink.getUriString(), inLink.getNs(), inLink.getPrefix()), inLink.getLinkType(), true);
 				
 				this.tree.addEdge(target, source, inverseLink);
 				this.tree.setEdgeWeight(inverseLink, inLink.getWeight());
@@ -153,7 +153,30 @@ public class TreePostProcess {
 			updateLinksDirections(target, outgoingLinks[i]);
 		}
 	}
-	*/
+	
+	private void removeDanglingNodes() {
+
+		boolean connectedToSemanticType = false;
+		for (Vertex v: this.tree.vertexSet()) {
+			BreadthFirstIterator<Vertex, LabeledWeightedEdge> i = 
+				new BreadthFirstIterator<Vertex, LabeledWeightedEdge>(this.tree, v);
+
+			connectedToSemanticType = false;
+			
+			while (i.hasNext()) {
+				Vertex temp = i.next();
+				if (temp.getSemanticType() != null)
+					connectedToSemanticType = true;
+			}
+			
+			if (connectedToSemanticType == false)
+				dangledVertexList.add(v);
+		}
+		
+		for (Vertex v : dangledVertexList)
+			this.tree.removeVertex(v);
+		
+	}
 	
 	public DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getTree() {
 		return this.tree;

@@ -170,14 +170,16 @@ public class SourceDescription {
 		
 		//the tree is not directed anymore, so we have to transform it before we can use it
 		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> sTree = alignment.getSteinerTree();
-		@SuppressWarnings("unchecked")
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeClone = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>) sTree.clone();
-		// Reversing the inverse links
-		alignment.updateLinksDirections(alignment.GetTreeRoot(), null, treeClone);
+//      Mohsen: I apply the updateLinkDirection() before returning the Steiner tree.
+//		@SuppressWarnings("unchecked")
+//		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeClone = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>) sTree.clone();
+//		// Reversing the inverse links
+//		alignment.updateLinksDirections(alignment.GetTreeRoot(), null, treeClone);
 
 		
 		this.factory=workspace.getFactory();
-		this.steinerTree = treeClone;
+//		this.steinerTree = treeClone;
+		this.steinerTree = sTree;
 		this.root=alignment.GetTreeRoot();
 		this.useColumnNames = useColumnNames;
 		this.rdfSourcePrefix=sourcePrefix;

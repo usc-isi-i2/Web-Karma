@@ -25,9 +25,9 @@ import edu.isi.karma.view.VWorkspace;
 public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 	private final String vWorksheetId;
 	private final String alignmentId;
-	private Alignment alignment;
+//	private Alignment alignment;
 	private final DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree;
-	private final Vertex root;
+//	private final Vertex root;
 	private final List<String> hNodeIdList;
 	
 	private static Logger logger = LoggerFactory
@@ -48,9 +48,9 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 		this.vWorksheetId = vWorksheetId;
 		this.alignmentId = alignmentId;
 		this.tree = alignment.getSteinerTree();
-		this.root = alignment.GetTreeRoot();
+//		this.root = alignment.GetTreeRoot();
 		this.hNodeIdList = hNodeIdList;
-		this.alignment=alignment;
+//		this.alignment=alignment;
 	}
 	
 	@Override
@@ -63,10 +63,10 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 			topObj.put(JsonKeys.alignmentId.name(), alignmentId);
 			topObj.put(JsonKeys.worksheetId.name(), vWorksheetId);
 			
-			@SuppressWarnings("unchecked")
-			DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeClone = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>) tree.clone();
-			// Reversing the inverse links
-			alignment.updateLinksDirections(this.root, null, treeClone);
+//			@SuppressWarnings("unchecked")
+//			DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeClone = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>) tree.clone();
+//			// Reversing the inverse links
+//			alignment.updateLinksDirections(this.root, null, treeClone);
 
 			/*** Add the nodes and the links from the Steiner tree ***/
 			List<String> hNodeIdsAdded = new ArrayList<String>();
@@ -88,7 +88,8 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 					vertObj.put(JsonKeys.nodeType.name(), vertex.getNodeType().name());
 					
 					List<Vertex> nodesWithSemTypesCovered = new ArrayList<Vertex>();
-					int height = getHeight(vertex, nodesWithSemTypesCovered, treeClone);
+//					int height = getHeight(vertex, nodesWithSemTypesCovered, treeClone);
+					int height = getHeight(vertex, nodesWithSemTypesCovered, tree);
 					if(height >= maxTreeHeight) {
 						maxTreeHeight = height;
 					}
