@@ -463,7 +463,7 @@ public class RuleRDFGenerator {
 			else{
 				//it's another function
 				String value = (String)func.evaluate(values);
-				statement += RDFUtil.escapeQuote(value);
+				statement += prepareValue(value);
 			}
 		}
 		else{
@@ -506,7 +506,15 @@ public class RuleRDFGenerator {
 	 * <br>Note: look in RuleRDFMapper for a special case where the value is a URI.
 	 */
 	protected String prepareValue(String value){
-		return RDFUtil.escapeQuote(value);
+		// Escaping the quotes
+		value = value.replaceAll("\\\\", "\\\\\\\\");
+		value = value.replaceAll("\"", "\\\\\"");
+		
+		// If newline present in the value, quote them around with triple quotes
+		if (value.contains("\n") || value.contains("\r"))	
+			return "\"\"\"" + value + "\"\"\"";
+		else
+			return "\"" + value + "\"";
 	}
 	
 	/**
@@ -568,6 +576,13 @@ public class RuleRDFGenerator {
 					// in case I have more than 1 NULL in a row I have to distinguish
 					//between them, so I use the column id to generate unique gensyms
 					val = RDFUtil.gensym(uniqueId, rowId,"NULL_c" + i);
+				}
+				else if(val.trim().isEmpty()){
+					//for empty strings that are keys / I have to generate a URI I generate a gensym
+					//create a gensym for this value
+					// in case I have more than 1 empty string in a row I have to distinguish
+					//between them, so I use the column id to generate unique gensyms
+					val = RDFUtil.gensym(uniqueId, rowId,"EmptyStr_c" + i);
 				}
 				varValue += val;
 				allVarNames += varName;

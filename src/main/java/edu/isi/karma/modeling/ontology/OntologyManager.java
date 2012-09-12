@@ -43,6 +43,7 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.ontology.UnionClass;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
@@ -70,6 +71,11 @@ public class OntologyManager {
 
 	public OntologyCache getOntCache() {
 		return ontCache;
+	}
+	
+
+	public boolean isEmpty() {
+		return getOntModel().isEmpty();
 	}
 	
 	public boolean doImport(File sourceFile) {
@@ -108,7 +114,7 @@ public class OntologyManager {
 
 	public URI getURIFromString(String uri) {
 		Resource r = ontModel.getResource(uri);
-		if (r == null || !ontModel.containsResource(r)) {
+		if (r == null) {// || !ontModel.containsResource(r)) {
 			logger.debug("Could not find the resource " + uri + " in the ontology model.");
 			return null;
 		}
@@ -137,6 +143,15 @@ public class OntologyManager {
 		return false;
 	}
 		
+	public boolean isProperty(String label) {
+
+		Property p = ontModel.getProperty(label);
+		if (p != null)
+			return true;
+		
+		return false;
+	}
+	
 	public boolean isObjectProperty(String label) {
 
 		ObjectProperty op = ontModel.getObjectProperty(label);
@@ -168,7 +183,7 @@ public class OntologyManager {
 		else
 			return;
 		
-		if (c != null && c.hasSuperClass()) {
+		if (c != null) { // && c.hasSuperClass()) {
 			ExtendedIterator<OntClass> i = null;
 			try {
 //				if (recursive)
@@ -250,7 +265,7 @@ public class OntologyManager {
 		else
 			return;
 		
-		if (c != null && c.hasSubClass()) {
+		if (c != null) {
 			ExtendedIterator<OntClass> i = null;
 			try {
 //				if (recursive)
@@ -362,7 +377,6 @@ public class OntologyManager {
 	public boolean isSuperClass(String superClassUri, String subClassUri, boolean recursive) {
 		
 		List<String> superClasses = getSuperClasses(subClassUri, recursive);
-		
 		for (int i = 0; i < superClasses.size(); i++) {
 			if (superClassUri.equalsIgnoreCase(superClasses.get(i))) {
 				return true;
@@ -383,7 +397,6 @@ public class OntologyManager {
 	public boolean isSubClass(String subClassUri, String superClassUri, boolean recursive) {
 		
 		List<String> subClasses = getSubClasses(superClassUri, recursive);
-		
 		for (int i = 0; i < subClasses.size(); i++) {
 			if (subClassUri.equalsIgnoreCase(subClasses.get(i))) {
 				return true;
@@ -403,7 +416,7 @@ public class OntologyManager {
 
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntClass(classUri);
-		if (r == null) return null;
+		if (r == null) return new ArrayList<String>();
 		getChildren(r, resources, recursive);
 		return getResourcesURIs(resources);
 	}
@@ -418,7 +431,7 @@ public class OntologyManager {
 		
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntClass(classUri);
-		if (r == null) return null;
+		if (r == null) return new ArrayList<String>();
 		getParents(r, resources, recursive);
 		return getResourcesURIs(resources);
 	}
@@ -433,7 +446,7 @@ public class OntologyManager {
 
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntProperty(propertyUri);
-		if (r == null) return null;
+		if (r == null) return new ArrayList<String>();
 		getChildren(r, resources, recursive);
 		return getResourcesURIs(resources);
 	}
@@ -448,7 +461,7 @@ public class OntologyManager {
 
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntProperty(propertyUri);
-		if (r == null) return null;
+		if (r == null) return new ArrayList<String>();
 		getParents(r, resources, recursive);
 		return getResourcesURIs(resources);
 	}

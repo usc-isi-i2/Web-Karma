@@ -32,7 +32,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.ontology.DatatypeProperty;
+import com.hp.hpl.jena.ontology.ConversionException;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
@@ -59,32 +59,39 @@ public class DataPropertyHierarchyUpdate extends AbstractUpdate {
 			VWorkspace vWorkspace) {
 		Set<String> propertiesAdded = new HashSet<String>();
 
-		ExtendedIterator<DatatypeProperty> propsIter = model.listDatatypeProperties();
+		ExtendedIterator<OntProperty> propsIter = model.listAllOntProperties();
+//		ExtendedIterator<DatatypeProperty> propsIter = model.listDatatypeProperties();
 		Map<String, String> prefixMap = vWorkspace.getWorkspace().getOntologyManager().getPrefixMap();
 
 		try {
 			JSONArray dataArray = new JSONArray();
 
 			while (propsIter.hasNext()) {
-				DatatypeProperty prop = propsIter.next();
+				OntProperty prop = propsIter.next();
+//				DatatypeProperty prop = propsIter.next();
+				
+				if (prop.isObjectProperty() && !prop.isDatatypeProperty())
+					continue;
 				
 				if (propertiesAdded.contains(prop.getURI()))
 					continue;
-				
-				if ((prop.listSuperProperties().toList().size() != 0)) {
-					// Check if all the super properties are object properties
-					boolean hasObjectPropertiesAsAllSuperProperties = true; 
-					List<? extends OntProperty> superProps = prop.listSuperProperties().toList();
-					for (OntProperty s : superProps) {
-						if (s.isDatatypeProperty()) {
-							hasObjectPropertiesAsAllSuperProperties = false;
-							break;
+				try {
+					if ((prop.listSuperProperties().toList().size() != 0)) {
+						// Check if all the super properties are object properties
+						boolean hasObjectPropertiesAsAllSuperProperties = true; 
+						List<? extends OntProperty> superProps = prop.listSuperProperties().toList();
+						for (OntProperty s : superProps) {
+							if (s.isDatatypeProperty()) {
+								hasObjectPropertiesAsAllSuperProperties = false;
+								break;
+							}
 						}
+						if(!hasObjectPropertiesAsAllSuperProperties)
+							continue;
 					}
-					if(!hasObjectPropertiesAsAllSuperProperties)
-						continue;
+				} catch (ConversionException e) {
+					logger.debug(e.getMessage());
 				}
-
 				JSONObject classObject = new JSONObject();
 
 				if (prop.listSubProperties().toList().size() != 0) {
@@ -144,15 +151,19 @@ public class DataPropertyHierarchyUpdate extends AbstractUpdate {
 			JSONObject metadataObject = new JSONObject();
 			metadataObject.put(JsonKeys.URI.name(), subProp.getURI());
 			classObject.put(JsonKeys.metadata.name(), metadataObject);
-
-			if (subProp.listSubProperties().toList().size() != 0) {
-				JSONArray childrenArraySubClass = new JSONArray();
-				addSubclassChildren(subProp, childrenArraySubClass, level + 1,
-						propertiesAdded, prefixMap);
-				classObject
-						.put(JsonKeys.children.name(), childrenArraySubClass);
+			try{
+				if (subProp.listSubProperties().toList().size() != 0) {
+					JSONArray childrenArraySubClass = new JSONArray();
+					addSubclassChildren(subProp, childrenArraySubClass, level + 1,
+							propertiesAdded, prefixMap);
+					classObject
+							.put(JsonKeys.children.name(), childrenArraySubClass);
+				}
+				childrenArray.put(classObject);
+			} catch (ConversionException e) {
+				logger.debug(e.getMessage());
+				continue;
 			}
-			childrenArray.put(classObject);
 		}
 	}
 

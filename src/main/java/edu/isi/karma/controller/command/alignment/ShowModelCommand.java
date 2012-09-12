@@ -95,6 +95,9 @@ public class ShowModelCommand extends WorksheetCommand {
 
 		// Generate the semantic types for the worksheet
 		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+		if(ontMgr.isEmpty())
+			return new UpdateContainer(new ErrorUpdate(
+			"No ontology loaded."));
 //		SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, outlierTag, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
 		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
 		

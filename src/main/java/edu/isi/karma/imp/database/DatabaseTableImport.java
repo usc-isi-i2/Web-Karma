@@ -97,7 +97,6 @@ public class DatabaseTableImport {
         srcInfo.setAttributeValue(InfoAttribute.hostname, hostname);
         srcInfo.setAttributeValue(InfoAttribute.portnumber, String.valueOf(portnumber));
         srcInfo.setAttributeValue(InfoAttribute.username, username);
-        srcInfo.setAttributeValue(InfoAttribute.password, password);
         srcInfo.setAttributeValue(InfoAttribute.dBorSIDName, dBorSIDName);
         srcInfo.setAttributeValue(InfoAttribute.tableName, tableName);
         worksheet.getMetadataContainer().setSourceInformation(srcInfo);

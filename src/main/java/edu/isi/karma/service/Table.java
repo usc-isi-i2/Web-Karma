@@ -47,7 +47,16 @@ public class Table {
 		this.rowIds = new ArrayList<String>(table.rowIds);
 	}
 	
-
+	public int getRowsCount() {
+		if (this.values == null) return 0;
+		return this.values.size();
+	}
+	
+	public int getColumnsCount() {
+		if (this.headers == null) return 0;
+		return this.headers.size();
+	}
+	
 	public List<Attribute> getHeaders() {
 		return headers;
 	}

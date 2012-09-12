@@ -20,7 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.imp.csv;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -66,9 +68,9 @@ public class CSVFileImport {
 
 	public Worksheet generateWorksheet() throws IOException, KarmaException {
 		Table dataTable = worksheet.getDataTable();
-
-		// Prepare the scanner for reading file line by line
-		Scanner scanner = new Scanner(csvFile);
+		
+		// Prepare the reader for reading file line by line
+		BufferedReader br = new BufferedReader(new FileReader(csvFile));
 
 		// Index for row currently being read
 		int rowCount = 0;
@@ -78,17 +80,17 @@ public class CSVFileImport {
 		if (headerRowIndex == 0){
 			hNodeIdList = addEmptyHeaders(worksheet, factory);
 			if(hNodeIdList == null || hNodeIdList.size() == 0){
+				br.close();
 				throw new KarmaException("Error occured while counting header " +
 						"nodes for the worksheet!");
 			}				
 		}
 			
-
 		// Populate the worksheet model
-		while (scanner.hasNextLine()) {
+		String line = null;
+		while ((line = br.readLine()) != null) {
 			// Check for the header row
 			if (rowCount + 1 == headerRowIndex) {
-				String line = scanner.nextLine();
 				hNodeIdList = addHeaders(worksheet, factory, line);
 				rowCount++;
 				continue;
@@ -96,16 +98,14 @@ public class CSVFileImport {
 
 			// Populate the model with data rows
 			if (rowCount + 1 >= dataStartRowIndex) {
-				String line = scanner.nextLine();
 				addRow(worksheet, factory, line, hNodeIdList, dataTable);
 				rowCount++;
 				continue;
 			}
 
 			rowCount++;
-			scanner.nextLine();
 		}
-
+		br.close();
 		return worksheet;
 	}
 
@@ -118,8 +118,11 @@ public class CSVFileImport {
 		String[] rowValues = null;
 		rowValues = reader.readNext();
 
-		if (rowValues == null || rowValues.length == 0)
+		if (rowValues == null || rowValues.length == 0) {
+			reader.close();
 			return addEmptyHeaders(worksheet, fac);
+		}
+			
 		for (int i = 0; i < rowValues.length; i++) {
 			HNode hNode = null;
 			if (headerRowIndex == 0)
@@ -128,6 +131,7 @@ public class CSVFileImport {
 				hNode = headers.addHNode(rowValues[i], worksheet, fac);
 			headersList.add(hNode.getId());
 		}
+		reader.close();
 		return headersList;
 	}
 
@@ -137,8 +141,11 @@ public class CSVFileImport {
 				quoteCharacter, escapeCharacter);
 		String[] rowValues = null;
 		rowValues = reader.readNext();
-		if (rowValues == null || rowValues.length == 0)
+		if (rowValues == null || rowValues.length == 0) {
+			reader.close();
 			return;
+		}
+			
 		Row row = dataTable.addRow(fac);
 		for (int i = 0; i < rowValues.length; i++) {
 			if (i < hNodeIdList.size())
@@ -150,6 +157,7 @@ public class CSVFileImport {
 				logger.error("More data elements detected in the row than number of headers!");
 			}
 		}
+		reader.close();
 	}
 
 	private ArrayList<String> addEmptyHeaders(Worksheet worksheet,
@@ -178,6 +186,7 @@ public class CSVFileImport {
 							worksheet, fac);
 					headersList.add(hNode.getId());
 				}
+				reader.close();
 				break;
 			}
 			rowCount++;

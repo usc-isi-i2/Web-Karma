@@ -160,7 +160,7 @@ public class PopulateCommand extends WorksheetCommand{
 			invocatioManager = new InvocationManager(requestIds, requestURLStrings);
 			logger.info("Requesting data with includeURL=" + true + ",includeInput=" + true + ",includeOutput=" + true);
 			Table serviceTable = invocatioManager.getServiceData(false, false, true);
-			logger.debug(serviceTable.getPrintInfo());
+//			logger.debug(serviceTable.getPrintInfo());
 			ServiceTableUtil.populateWorksheet(serviceTable, wk, ws.getFactory());
 			logger.info("The service " + service.getUri() + " has been invoked successfully.");
 
@@ -220,10 +220,10 @@ public class PopulateCommand extends WorksheetCommand{
 				attIdToValue.put(serviceAttId, value);
 				
 			}
-			String urlString = service.getPopulatedAddress(attIdToValue);
+			String urlString = service.getPopulatedAddress(attIdToValue, null);
 			
 			//FIXME
-			urlString = urlString.replaceAll("\\{p3\\}", "taheriyan");
+			urlString = urlString.replaceAll("\\{p3\\}", "karma");
 			
 			requestIds.add(rows.get(i).getId());
 			requestURLStrings.add(urlString);

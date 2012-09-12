@@ -2,18 +2,12 @@ package edu.isi.karma.linkedapi.server;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.StringReader;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -21,8 +15,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
+import org.apache.commons.lang3.CharEncoding;
 
 import edu.isi.karma.service.MimeType;
 
@@ -43,7 +36,7 @@ public class HTTPClientTest {
 			// Send a GET request to the servlet
 			try {
 				// Construct data
-				StringBuffer data = new StringBuffer();
+				//StringBuffer data = new StringBuffer();
 	 
 				// Send data
 				String urlStr = endpoint;
@@ -94,7 +87,8 @@ public class HTTPClientTest {
 			urlc.setUseCaches(false);
 			urlc.setAllowUserInteraction(false);
 //			urlc.setRequestProperty("Content-type", "text/xml; charset=" + "UTF-8");
-			urlc.setRequestProperty("Content-Type", MimeType.APPLICATION_RDF_XML);			
+			urlc.setRequestProperty("Content-Type", MimeType.APPLICATION_XML);
+			urlc.addRequestProperty("format", "N3");
 //			urlc.setRequestProperty("Content-Type", MimeType.APPLICATION_RDF_N3);			
 	 
 			OutputStream out = urlc.getOutputStream();
@@ -160,16 +154,16 @@ public class HTTPClientTest {
 			urlc.setDoInput(true);
 			urlc.setUseCaches(false);
 			urlc.setAllowUserInteraction(false);
-//			urlc.setRequestProperty("Content-type", "text/xml; charset=" + "UTF-8");
-			urlc.setRequestProperty("Content-Type", MimeType.APPLICATION_RDF_XML);			
+			urlc.setRequestProperty("Content-type", "text/xml; charset=" + CharEncoding.UTF_8);
+//			urlc.setRequestProperty("Content-Type", MimeType.APPLICATION_RDF_XML);			
 //			urlc.setRequestProperty("Content-Type", MimeType.APPLICATION_RDF_N3);			
 	 
-	        OutputStreamWriter wr = new OutputStreamWriter(urlc.getOutputStream());
+	        OutputStreamWriter wr = new OutputStreamWriter(urlc.getOutputStream(), CharEncoding.UTF_8);
 	        wr.write(data);
 	        wr.flush();
 	        
 	        // Get the response
-	        BufferedReader rd = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
+	        BufferedReader rd = new BufferedReader(new InputStreamReader(urlc.getInputStream(), CharEncoding.UTF_8));
 	        String line;
 	        while ((line = rd.readLine()) != null) {
 	            System.out.println(line);
@@ -186,40 +180,44 @@ public class HTTPClientTest {
 	}
 	 
 	public static void main(String[] args) throws MalformedURLException, Exception {
+		
 		String xmlData = 
 			"<?xml version=\"1.0\"?> \n" +
 			"<rdf:RDF xmlns:geo=\"http://isi.edu/ontologies/geo/current#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"> \n" +
 			"	<geo:Feature rdf:about=\"http://www.geonames.org/5112085\"> \n" +
 			"		<geo:description>first feature</geo:description> \n" +
-			"		<geo:lat>47.0</geo:lat> \n" +
-			"		<geo:long>-120.0</geo:long> \n" +
+			"		<geo:lat>40.78343</geo:lat> \n" +
+			"		<geo:long>-73.96625</geo:long> \n" +
 			"	</geo:Feature> \n" +
 			"	<geo:Feature rdf:about=\"http://www.geonames.org/5125771\"> \n" +
 			"		<geo:description>second feature</geo:description> \n" +
-			"		<geo:lat>40.0</geo:lat> \n" +
-			"		<geo:long>-122.0</geo:long> \n" +
+			"		<geo:lat>40.71012</geo:lat> \n" +
+			"		<geo:long>-73.90078</geo:long> \n" +
 			"	</geo:Feature> \n" +
 			"</rdf:RDF>";
 		
-		String n3Data = 
-				"@prefix geo:     <http://isi.edu/ontologies/geo/current#> .\n" + 
-				"@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" +
-
-				"<http://www.geonames.org/5112085> rdf:type geo:Feature.\n" +
-				"<http://www.geonames.org/5112085> geo:description \"first feature\".\n" +
-				"<http://www.geonames.org/5112085> geo:lat \"47.0\".\n" +
-				"<http://www.geonames.org/5112085> geo:long \"-120.0\".\n" +
-
-				"<http://www.geonames.org/5125771> rdf:type geo:Feature.\n" +
-				"<http://www.geonames.org/5125771> geo:description \"second feature\".\n" +
-				"<http://www.geonames.org/5125771> geo:lat \"40.0\".\n" +
-				"<http://www.geonames.org/5125771> geo:long \"-122.0\".\n";
+//		String n3Data = 
+//				"@prefix geo:     <http://isi.edu/ontologies/geo/current#> .\n" + 
+//				"@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n" +
+//
+//				"<http://www.geonames.org/5112085> rdf:type geo:Feature.\n" +
+//				"<http://www.geonames.org/5112085> geo:description \"first feature\".\n" +
+//				"<http://www.geonames.org/5112085> geo:lat \"40.78343\".\n" +
+//				"<http://www.geonames.org/5112085> geo:long \"-73.96625\".\n" +
+//
+//				"<http://www.geonames.org/5125771> rdf:type geo:Feature.\n" +
+//				"<http://www.geonames.org/5125771> geo:description \"second feature\".\n" +
+//				"<http://www.geonames.org/5125771> geo:lat \"40.71012\".\n" +
+//				"<http://www.geonames.org/5125771> geo:long \"-73.90078\".\n";
 		
-//		InputStream is = new ByteArrayInputStream(xmlData.getBytes());
-//		Model m = ModelFactory.createDefaultModel().read(is, null);
+		InputStream is = new ByteArrayInputStream(xmlData.getBytes());
+		InputStreamReader in= new InputStreamReader(is);
+		BufferedReader bin= new BufferedReader(in);
 
-		String endpoint = "http://localhost:8080/karma/services?id=B4285BE7-5309-BFD4-44CF-8FE88A82333E";
+		String endpoint = "http://localhost:8080/karma/services?id=CDA81BE4-DD77-E0D3-D033-FC771B2F4800&format=N3";
 		Writer writer = new OutputStreamWriter(System.out);//, "UTF-8");
-		postData2(xmlData, new URL(endpoint), writer);
+		postData(bin , new URL(endpoint), writer);
+//		postData( new FileReader("C:\\Users\\mohsen\\Desktop\\karma\\input.rdf"), new URL(endpoint), writer);
+//		postData2( new String(xmlData.getBytes(CharEncoding.UTF_8)), new URL(endpoint), writer);
 	}
 }

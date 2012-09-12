@@ -209,7 +209,6 @@ public class ServiceLoader {
 	/**
 	 * Searches the repository to find the services that the semantic model parameter is contained in 
 	 * their input model.
-	 * Note that the services in the return list only include the operations that match the model parameter.
 	 * @param semanticModel The input model whose pattern will be searched in the repository
 	 * @param ioType declares which one of the service input or service output will be tested for matching.
 	 * @param operationsLimit maximum number of operations that will be fetched
@@ -217,7 +216,7 @@ public class ServiceLoader {
 	 * This help us later to how to join the model's corresponding source and the matched service 
 	 */
 	public static Map<Service, Map<String, String>> getServicesByInputPattern(edu.isi.karma.service.Model semanticModel, 
-			String ioType, Integer serviceLimit) {
+			Integer serviceLimit) {
 		
 		if (semanticModel == null || semanticModel.getAtoms() == null 
 				|| semanticModel.getAtoms().size() == 0) {
@@ -246,7 +245,6 @@ public class ServiceLoader {
 	/**
 	 * Searches the repository to find the services that the semantic model parameter is contained in 
 	 * their output model.
-	 * Note that the services in the return list only include the operations that match the model parameter.
 	 * @param semanticModel The input model whose pattern will be searched in the repository
 	 * @param ioType declares which one of the service input or service output will be tested for matching.
 	 * @param operationsLimit maximum number of operations that will be fetched
@@ -254,7 +252,7 @@ public class ServiceLoader {
 	 * This help us later to how to join the model's corresponding source and the matched service 
 	 */
 	public static Map<Service, Map<String, String>> getServicesByOutputPattern(edu.isi.karma.service.Model semanticModel, 
-			String ioType, Integer serviceLimit) {
+			Integer serviceLimit) {
 		
 		if (semanticModel == null || semanticModel.getAtoms() == null 
 				|| semanticModel.getAtoms().size() == 0) {
@@ -864,12 +862,13 @@ public class ServiceLoader {
 	private static void testGetServicesByIOPattern() {
 		edu.isi.karma.service.Model semanticModel = new edu.isi.karma.service.Model(null);
 
-		String geonamesOntology = "http://www.geonames.org/ontology#";
-		String wgs84Ontology = "http://www.w3.org/2003/01/geo/wgs84_pos#";
+//		String geonamesOntology = "http://www.geonames.org/ontology#";
+//		String wgs84Ontology = "http://www.w3.org/2003/01/geo/wgs84_pos#";
+		String geoOntology = "http://isi.edu/ontologies/geo/current#";
 		
-		URI featurePredicatName = new URI(geonamesOntology + "Feature", geonamesOntology, "gn");
-		URI latPredicatName = new URI(wgs84Ontology + "lat", wgs84Ontology, "wgs84");
-		URI lngPredicatName = new URI(wgs84Ontology + "long", wgs84Ontology, "wgs84");
+		URI featurePredicatName = new URI(geoOntology + "Feature", geoOntology, "geo");
+		URI latPredicatName = new URI(geoOntology + "lat", geoOntology, "geo");
+		URI lngPredicatName = new URI(geoOntology + "long", geoOntology, "geo");
 		
 		ClassAtom c1 = new ClassAtom(featurePredicatName, new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE));
 		PropertyAtom p1 = new PropertyAtom(latPredicatName,
@@ -884,9 +883,10 @@ public class ServiceLoader {
 //		semanticModel.getAtoms().add(c2);
 		semanticModel.getAtoms().add(p1);
 		semanticModel.getAtoms().add(p2);
-
+		
 		Map<Service, Map<String, String>> servicesAndMappings = 
 			getServicesWithInputContainedInModel(semanticModel, null);
+//			getServicesByInputPattern(semanticModel, null);
 
 //		Map<Service, Map<String, String>> servicesAndMappings = 
 //			getServicesByIOPattern(semanticModel, IOType.INPUT, null);
@@ -895,7 +895,7 @@ public class ServiceLoader {
 			return;
 		
 		for (Service s : servicesAndMappings.keySet()) {
-			if (s != null) s.print();
+			if (s != null) System.out.println((s.getUri())); //s.print();
 		}
 		
 		System.out.println("Mappings from matched source to model arguments:");

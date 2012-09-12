@@ -9,8 +9,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.OntClass;
+import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import edu.isi.karma.controller.command.Command;
@@ -65,8 +65,10 @@ public class GetPropertiesAndClassesList extends Command {
 
 		ExtendedIterator<OntClass> iter = ontMgr.getOntModel()
 				.listNamedClasses();
-		ExtendedIterator<DatatypeProperty> propsIter = ontMgr.getOntModel()
-				.listDatatypeProperties();
+//		ExtendedIterator<DatatypeProperty> propsIter = ontMgr.getOntModel()
+//				.listDatatypeProperties();
+		ExtendedIterator<OntProperty> propsIter = ontMgr.getOntModel()
+			.listAllOntProperties();
 		final JSONObject outputObj = new JSONObject();
 
 		try {
@@ -83,7 +85,12 @@ public class GetPropertiesAndClassesList extends Command {
 			}
 
 			while (propsIter.hasNext()) {
-				DatatypeProperty prop = propsIter.next();
+//				DatatypeProperty prop = propsIter.next();
+				OntProperty prop = propsIter.next();
+
+				if (prop.isObjectProperty() && !prop.isDatatypeProperty())
+					continue;
+				
 				String pr = prefixMap.get(prop.getNameSpace());
 				String propStr = (pr != null && !pr.equals("")) ? pr + ":" + prop.getLocalName() : prop.getLocalName(); 
 				

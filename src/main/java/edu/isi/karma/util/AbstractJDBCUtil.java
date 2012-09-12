@@ -68,7 +68,7 @@ public abstract class AbstractJDBCUtil {
 			throws SQLException, ClassNotFoundException {
 		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
 		logger.debug("Connect to:" + hostname + ":" +portnumber + "/" + dBorSIDName);
-		logger.info("Conn string:"+ connectString);
+		logger.debug("Conn string:"+ connectString);
 		Connection conn = getConnection(getDriver(), connectString);
 		return conn;
 	}

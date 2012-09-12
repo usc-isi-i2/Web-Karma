@@ -77,6 +77,7 @@ public class RequestController extends HttpServlet{
 				logger.error("Error occured while creating command (Could not create Command object): " + request.getParameter("command"));
 		}
 		
+		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(responseString);
 		response.flushBuffer();
 	}

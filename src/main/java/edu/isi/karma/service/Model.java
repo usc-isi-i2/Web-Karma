@@ -98,7 +98,8 @@ public class Model {
 		
 		com.hp.hpl.jena.rdf.model.Model model = ModelFactory.createDefaultModel();
 		
-		model.setNsPrefix("", this.baseUri);
+		if (this.baseUri != null)
+			model.setNsPrefix("", this.baseUri);
 		
 		model.setNsPrefix(Prefixes.KARMA, Namespaces.KARMA);
 		model.setNsPrefix(Prefixes.RDF, Namespaces.RDF);
@@ -255,6 +256,64 @@ public class Model {
 		}
 	}
 	
+	public List<Map<String, String>> findModelDataInJenaData( 
+			com.hp.hpl.jena.rdf.model.Model jenaModel, Integer limit) {
+
+		List<Map<String, String>> attValueList = 
+			new ArrayList<Map<String,String>>();
+		
+		List<String> argList = new ArrayList<String>();
+		String queryString = "";
+		queryString = this.getSparqlDataQuery(argList);
+		
+//		System.out.println(queryString);
+
+		if (limit != null) {
+			queryString += "LIMIT " + String.valueOf(limit.intValue() + "\n");
+		}
+		
+//		logger.debug("query= \n" + queryString);
+		
+		Query query = QueryFactory.create(queryString);
+//		// Execute the query and obtain results
+		QueryExecution qexec = QueryExecutionFactory.create(query, jenaModel);
+
+		try {
+			ResultSet results = qexec.execSelect() ;
+			
+			if (!results.hasNext()) {
+				logger.info("query does not return any answer.");
+				return null;
+			}
+
+//			ResultSetFormatter.out(System.out, results, query) ;
+			 
+			for ( ; results.hasNext() ; )
+			{
+				QuerySolution soln = results.nextSolution() ;
+				Map<String, String> attValues = 
+					new HashMap<String, String>();
+				
+				for (String arg : argList) {
+					RDFNode argNode = soln.get(arg) ;
+					if (argNode != null) {
+						String value = argNode.toString();
+						attValues.put(arg, value);
+					}
+				}
+				
+				attValueList.add(attValues);
+			}
+			
+			return attValueList;
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+			return null;
+		} finally { 
+			qexec.close() ; 
+		}
+	}
+	
 	public void writeJenaModelToFile(String path, String lang) throws FileNotFoundException {
 		com.hp.hpl.jena.rdf.model.Model model = getJenaModel();
 		String source_desc_file = path + Repository.Instance().getFileExtension(lang);
@@ -275,7 +334,7 @@ public class Model {
 		return prefixHeader;
 	}
 	
-	public String getSparqlConstructQuery() {
+	public String getSparqlDataQuery(List<String> argList) {
 
 		String queryString = "";
 		
@@ -283,8 +342,8 @@ public class Model {
 		Map<String, String> nsToPrefixMapping = new HashMap<String, String>();
 		nsToPrefixMapping.put(Namespaces.RDF, Prefixes.RDF);
 		
-		String construct_header = "CONSTRUCT { \n";
-		String construct_where =
+		String select_header = "SELECT \n";
+		String select_where =
 			"WHERE { \n" ;
 		
 		String predicateUri = "";
@@ -293,6 +352,9 @@ public class Model {
 		String argument1Var = "";
 		String argument2Var = "";
 
+		if (argList == null) 
+			argList = new ArrayList<String>();
+		
 		for (int i = 0; i < this.getAtoms().size(); i++) {
 			Atom atom = this.getAtoms().get(i);
 			if (atom != null) {
@@ -313,6 +375,105 @@ public class Model {
 					argument1 = classAtom.getArgument1().getId();
 					argument1Var = "?" + argument1;
 					
+					if (argList.indexOf(argument1) == -1) {
+						argList.add(argument1);
+						select_header += "  " + argument1Var;
+					}
+						
+					select_where += 
+						"      " + argument1Var + " rdf:type " + predicateUri + " . \n";
+				}
+				else if (atom instanceof PropertyAtom) {
+					PropertyAtom propertyAtom = ((PropertyAtom)atom);
+					
+					if (propertyAtom.getPropertyPredicate().getPrefix() != null &&
+							propertyAtom.getPropertyPredicate().getNs() != null) { 
+						
+						nsToPrefixMapping.put(propertyAtom.getPropertyPredicate().getNs(), 
+						propertyAtom.getPropertyPredicate().getPrefix());
+						predicateUri = propertyAtom.getPropertyPredicate().getLocalNameWithPrefix();
+						
+					} else {
+						predicateUri = "<" + propertyAtom.getPropertyPredicate().getUriString() + ">";
+					}
+
+					argument1 = propertyAtom.getArgument1().getId();
+					argument2 = propertyAtom.getArgument2().getId();
+					argument1Var = "?" + argument1;
+					argument2Var = "?" + argument2;
+					
+					if (argList.indexOf(argument1) == -1) {
+						argList.add(argument1);
+						select_header += "  " + argument1Var;
+					}					
+					if (argList.indexOf(argument2) == -1) {
+						argList.add(argument2);
+						select_header += "  " + argument2Var;
+					}
+			
+					select_where += 
+						"      " + argument1Var + " " + predicateUri + " " + argument2Var + " . \n";
+				}			
+			}
+		}		
+		select_header += "\n";
+		select_where += "} \n";
+ 
+		String prefix = getSparqlHeader(nsToPrefixMapping);
+		String select = select_header + select_where;
+
+		queryString = prefix + select;
+		
+		logger.debug("query= \n" + queryString);
+
+		return queryString;
+	}
+
+
+	public String getSparqlConstructQuery(List<String> argList) {
+
+		String queryString = "";
+		
+		// map of NS --> Prefix
+		Map<String, String> nsToPrefixMapping = new HashMap<String, String>();
+		nsToPrefixMapping.put(Namespaces.RDF, Prefixes.RDF);
+		
+		String construct_header = "CONSTRUCT { \n";
+		String construct_where =
+			"WHERE { \n" ;
+		
+		String predicateUri = "";
+		String argument1 = "";
+		String argument2 = "";
+		String argument1Var = "";
+		String argument2Var = "";
+
+		if (argList == null) 
+			argList = new ArrayList<String>();
+		
+		for (int i = 0; i < this.getAtoms().size(); i++) {
+			Atom atom = this.getAtoms().get(i);
+			if (atom != null) {
+				if (atom instanceof ClassAtom) {
+					ClassAtom classAtom = ((ClassAtom)atom);
+					
+					if (classAtom.getClassPredicate().getPrefix() != null &&
+							classAtom.getClassPredicate().getNs() != null) { 
+						
+						nsToPrefixMapping.put(classAtom.getClassPredicate().getNs(), 
+						classAtom.getClassPredicate().getPrefix());
+						predicateUri = classAtom.getClassPredicate().getLocalNameWithPrefix();
+						
+					} else {
+						predicateUri = "<" + classAtom.getClassPredicate().getUriString() + ">";
+					}
+					
+					argument1 = classAtom.getArgument1().getId();
+					argument1Var = "?" + argument1;
+					
+					if (argList.indexOf(argument1) == -1) 
+						argList.add(argument1);
+
 					construct_header += 
 						"      " + argument1Var + " rdf:type " + predicateUri + " . \n";
 						
@@ -337,6 +498,11 @@ public class Model {
 					argument2 = propertyAtom.getArgument2().getId();
 					argument1Var = "?" + argument1;
 					argument2Var = "?" + argument2;
+					
+					if (argList.indexOf(argument1) == -1) 
+						argList.add(argument1);
+					if (argList.indexOf(argument2) == -1) 
+						argList.add(argument2);
 					
 					construct_header += 
 						"      " + argument1Var + " " + predicateUri + " " + argument2Var + " . \n";
@@ -391,11 +557,12 @@ public class Model {
 		String select_where =
 			"WHERE { \n" ;
 		
-		if (io_class.trim().length() > 0)
-			select_where += "      ?x a " + Prefixes.KARMA + ":" + io_class + " . \n";
+		if (io_class.trim().length() > 0) {
+			select_where += "      ?x a " + Prefixes.KARMA + ":" + io_class + " . \n" + 
+							"      ?x " + Prefixes.KARMA + ":hasModel ?model . \n"; 
+		}
 		
 		select_where += 
-			"      ?x " + Prefixes.KARMA + ":hasModel ?model . \n" + 
 			"      ?model a " + Prefixes.KARMA + ":Model . \n";
 		
 		String atomVar = "";

@@ -101,16 +101,24 @@ public class SourceDescription {
 	private String rdfSourcePrefix;
 		
 	/**
-	 * All namespaces used in thie SD.
-	 * key=prefix; val=namespace
+	 * All prefix/namespaces combinations used in this SD.
+	 * key=prefix:namespace; val=givenPrefix (to this prefix:namespace combination)
 	 * If the same prefix appears again with a different 
 	 * namespace assigned to it, prefix is renamed.
 	 */
-	private HashMap<String, String> namespaces = new HashMap<String, String>();
+	HashMap<String, String> seenPrefixNamespaceCombination = new HashMap<String, String>();
+	
 	/**
-	 * key=namespace; val=prefix.
+	 * All assigned prefixes.
 	 */
-	private HashMap<String, String> prefixes = new HashMap<String, String>();
+	ArrayList<String> assignedPrefixes = new ArrayList<String>();
+	
+	/**
+	 * All namespaces used in this SD in format need for mediator domain model:
+	 * prefix:'namespace'
+	 */
+	Set<String> allNamespaces = new HashSet<String>();
+
 	/**
 	 * If the same prefix appears again with a different 
 	 * namespace assigned to it, prefix is renamed.
@@ -162,14 +170,16 @@ public class SourceDescription {
 		
 		//the tree is not directed anymore, so we have to transform it before we can use it
 		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> sTree = alignment.getSteinerTree();
-		@SuppressWarnings("unchecked")
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeClone = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>) sTree.clone();
-		// Reversing the inverse links
-		alignment.updateLinksDirections(alignment.GetTreeRoot(), null, treeClone);
+//      Mohsen: I apply the updateLinkDirection() before returning the Steiner tree.
+//		@SuppressWarnings("unchecked")
+//		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeClone = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>) sTree.clone();
+//		// Reversing the inverse links
+//		alignment.updateLinksDirections(alignment.GetTreeRoot(), null, treeClone);
 
 		
 		this.factory=workspace.getFactory();
-		this.steinerTree = treeClone;
+//		this.steinerTree = treeClone;
+		this.steinerTree = sTree;
 		this.root=alignment.GetTreeRoot();
 		this.useColumnNames = useColumnNames;
 		this.rdfSourcePrefix=sourcePrefix;
@@ -183,8 +193,9 @@ public class SourceDescription {
 		//add a delimiter if it doesn't exist, otherwise the URIs will not be well formed
 		if(!rdfSourcePrefix.endsWith("/") && !rdfSourcePrefix.endsWith("#"))
 			rdfSourcePrefix += "/";
-		namespaces.put("s", rdfSourcePrefix);
-		prefixes.put(rdfSourcePrefix, "s");
+		seenPrefixNamespaceCombination.put("s:"+rdfSourcePrefix,"s");
+		assignedPrefixes.add("s");
+		allNamespaces.add("s:'"+rdfSourcePrefix+"'");
 	}
 	
 	/**
@@ -340,6 +351,7 @@ public class SourceDescription {
 		/////////
 		
 		String dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName();
+		//System.out.println("COLUMN name='"+dataAttribute+"'");
 		if(!useColumnNames){
 			dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNamePath();
 		}
@@ -632,11 +644,10 @@ public class SourceDescription {
 	 */
 	private String getAllNamespaces(){
 		String allNs="";
-		Iterator<String> prefixes = namespaces.keySet().iterator();
-		while(prefixes.hasNext()){
-			String pref = prefixes.next();
-			String namespace = namespaces.get(pref);
-			String ns = "\n" + pref + ":'" + namespace + "'";
+		Iterator<String> namespace = allNamespaces.iterator();
+		while(namespace.hasNext()){
+			String oneNs = namespace.next();
+			String ns = "\n" + oneNs;
 			allNs += ns;
 		}
 
@@ -651,49 +662,44 @@ public class SourceDescription {
 	 * 		the namespace that corresponds to the prefix given as argument
 	 * @return
 	 * 		the prefix of the given namespace.
-	 * 1. If prefix is not present in the "namespaces" map, see if this namespace already has an assigned prefix, otherwise add it and return the same prefix
-	 * 2. if prefix is already present in the namespaces map
-	 * 	2.a the namespace corresponding to this prefix is the same as the input arg, return this prefix
-	 * 	2.b the namespace corresponding to this prefix is different, rename the prefix,
-	 * 	add it to the map, and return the new prefix
+	 * 1. if prefix is empty assign it a value "ont0"
+	 * 2. if prefix:namespace combination already has a namespace assigned, return it
+	 *    else if prefix was already assigned, generate new prefix
+	 *         else return prefix
 	 * (we do this to ensure that we don't have the same prefix mapped to different namespaces; this
 	 * can happen if we import several ontologies, with overlapping prefix names)
 	 */
 	private String getPrefix(String prefix, String namespace){
+		String fullName = prefix + ":" + namespace;
+
 		if(prefix==null || prefix.trim().isEmpty()){
 			//generate a prefix
-			prefix = "ont" + (prefixIndex++);				
+			prefix = "ont0";				
 		}
-		String ns = namespaces.get(prefix);
-		//if prefix doesn't exist, see if this namespace already has an assigned prefix
-		// if not add it to the map and return it
-		if(ns==null){
-			//check to see if I already assigned a prefix to this namespace
-			if(namespaces.containsValue(namespace)){
-				//return the already saved namespace
-				return prefixes.get(namespace);
-			}
-			else{
-				namespaces.put(prefix, namespace);
-				prefixes.put(namespace, prefix);
-				return prefix;
-			}
-		}
-		else{
-			//if it is the same namespace, return the prefix
-			if(namespace.trim().equals(ns.trim())){
-				return prefix;
-			}
-			else{
-				//I have to generate a new prefix
+		
+		String givenPrefix = seenPrefixNamespaceCombination.get(fullName);
+		if(givenPrefix==null){
+			//see if prefix was already assigned to a namespace
+			if(assignedPrefixes.contains(prefix)){
+				//was already assigned => rename the input prefix
 				String newPref = prefix + (prefixIndex++);
-				namespaces.put(newPref, namespace);
-				prefixes.put(namespace, newPref);
+				seenPrefixNamespaceCombination.put(fullName, newPref);
+				assignedPrefixes.add(newPref);
+				allNamespaces.add(newPref+":'"+namespace+"'");
 				return newPref;
 			}
+			else{
+				//was not assigned, so I can assign it
+				seenPrefixNamespaceCombination.put(fullName, prefix);
+				assignedPrefixes.add(prefix);
+				allNamespaces.add(prefix+":'"+namespace+"'");
+				return prefix;
+			}
 		}
+		else return givenPrefix;
+
 	}
-	
+
 	private String addBacktick(String s){
 		//this method has to be enhanced to add backtick if we have columns with
 		//"strange" chars

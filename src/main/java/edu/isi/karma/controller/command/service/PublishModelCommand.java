@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +50,7 @@ import edu.isi.karma.service.Source;
 import edu.isi.karma.service.SourceLoader;
 import edu.isi.karma.service.SourcePublisher;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.ViewPreferences;
 import edu.isi.karma.webserver.KarmaException;
 
 public class PublishModelCommand extends Command{
@@ -136,8 +138,17 @@ public class PublishModelCommand extends Command{
 		
 		try {
 			//construct the SD
+			//get from preferences saved source prefix
+			String sourcePrefix = "http://localhost/";
+			try{
+				ViewPreferences prefs = vWorkspace.getPreferences();
+				JSONObject prefObject = prefs.getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
+				sourcePrefix = prefObject.getString("rdfPrefix");
+			}catch(Exception e){
+				//prefix not found, just use the default
+			}
 			SourceDescription desc = new SourceDescription(ws, al, wk,
-					"http://localhost/", true,false);
+					sourcePrefix, true,false);
 			String descString = desc.generateSourceDescription();
 			/////////////////
 			
@@ -148,15 +159,15 @@ public class PublishModelCommand extends Command{
 			if (service != null) {
 				service.setSourceDescription(descString);
 				ServicePublisher.publish(service, Repository.Instance().LANG, true);
-				logger.info("Service model has successfully been published to repository.");
+				logger.info("Service model has successfully been published to repository: " + service.getId());
 				return new UpdateContainer(new ErrorUpdate(
-				"Service model has successfully been published to repository."));
+				"Service model has successfully been published to repository: " + service.getId()));
 			} else { //if (source != null) {
 				SourcePublisher sourcePublisher = new SourcePublisher(source, descString, ws.getFactory(), commandsJSON, wk.getMetadataContainer().getSourceInformation());
 				sourcePublisher.publish(Repository.Instance().LANG, true);
-				logger.info("Source model has successfully been published to repository.");
+				logger.info("Source model has successfully been published to repository: " + source.getId());
 				return new UpdateContainer(new ErrorUpdate(
-				"Source model has successfully been published to repository."));
+				"Source model has successfully been published to repository: " + source.getId()));
 			}
 
 		} catch (IOException e) {

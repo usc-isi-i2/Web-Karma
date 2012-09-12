@@ -21,14 +21,12 @@
 package edu.isi.karma.modeling.ontology;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.ontology.ObjectProperty;
+import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
@@ -133,6 +131,7 @@ public class OntologyCache {
 		fillDataPropertiesHashMaps();
 		fillObjectPropertiesHashMaps();
 		updateMapsWithSubpropertyDefinitions(false);
+		addPropertiesOfRDFVocabulary();
 		float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
 		logger.info("time to build ontology cache: " + elapsedTimeSec);
 	}
@@ -146,7 +145,8 @@ public class OntologyCache {
 		List<OntResource> allRanges = new ArrayList<OntResource>();
 		List<String> temp; 
 		
-		ExtendedIterator<ObjectProperty> itrOP = ontologyManager.getOntModel().listObjectProperties();
+		ExtendedIterator<OntProperty> itrOP = ontologyManager.getOntModel().listAllOntProperties();
+//		ExtendedIterator<ObjectProperty> itrOP = ontologyManager.getOntModel().listObjectProperties();
 		OntResource d;
 		OntResource r;
 		
@@ -157,7 +157,12 @@ public class OntologyCache {
 			directRanges.clear();
 			allRanges.clear();
 			
-			ObjectProperty op = itrOP.next();
+//			ObjectProperty op = itrOP.next();
+			
+			OntProperty op = itrOP.next();
+			if (op.isDatatypeProperty() && !op.isObjectProperty())
+				continue;
+//			System.out.println("OP:" + op.getURI());
 			
 			// getting domains and subclasses
 			ExtendedIterator<? extends OntResource> itrDomains = op.listDomain();
@@ -166,7 +171,11 @@ public class OntologyCache {
 				ontologyManager.getMembers(d, directDomains, false);
 			}
 
-			propertyDirectDomains.put(op.getURI(), ontologyManager.getResourcesURIs(directDomains));
+			temp  = propertyDirectDomains.get(op.getURI());
+			if (temp == null)
+				propertyDirectDomains.put(op.getURI(), ontologyManager.getResourcesURIs(directDomains));
+			else 
+				temp.addAll(ontologyManager.getResourcesURIs(directDomains));
 			
 			for (int i = 0; i < directDomains.size(); i++) {
 				temp = directOutObjectProperties.get(directDomains.get(i).getURI());
@@ -182,8 +191,12 @@ public class OntologyCache {
 				ontologyManager.getChildren(directDomains.get(i), allDomains, true);
 			}
 
-			propertyIndirectDomains.put(op.getURI(), ontologyManager.getResourcesURIs(allDomains));
-
+			temp  = propertyIndirectDomains.get(op.getURI());
+			if (temp == null)
+				propertyIndirectDomains.put(op.getURI(), ontologyManager.getResourcesURIs(allDomains));
+			else 
+				temp.addAll(ontologyManager.getResourcesURIs(allDomains));
+			
 			for (int i = 0; i < allDomains.size(); i++) {
 				temp = indirectOutObjectProperties.get(allDomains.get(i).getURI());
 				if (temp == null) { 
@@ -200,7 +213,11 @@ public class OntologyCache {
 				ontologyManager.getMembers(r, directRanges, false);
 			}
 
-			propertyDirectRanges.put(op.getURI(), ontologyManager.getResourcesURIs(directRanges));
+			temp  = propertyDirectRanges.get(op.getURI());
+			if (temp == null)
+				propertyDirectRanges.put(op.getURI(), ontologyManager.getResourcesURIs(directRanges));
+			else 
+				temp.addAll(ontologyManager.getResourcesURIs(directRanges));
 			
 			for (int i = 0; i < directRanges.size(); i++) {
 				temp = directInObjectProperties.get(directRanges.get(i).getURI());
@@ -216,7 +233,11 @@ public class OntologyCache {
 				ontologyManager.getChildren(directRanges.get(i), allRanges, true);
 			}
 			
-			propertyIndirectRanges.put(op.getURI(), ontologyManager.getResourcesURIs(allRanges));
+			temp  = propertyIndirectRanges.get(op.getURI());
+			if (temp == null)
+				propertyIndirectRanges.put(op.getURI(), ontologyManager.getResourcesURIs(allRanges));
+			else 
+				temp.addAll(ontologyManager.getResourcesURIs(allRanges));
 			
 			for (int i = 0; i < allRanges.size(); i++) {
 				temp = indirectInObjectProperties.get(allRanges.get(i).getURI());
@@ -265,7 +286,8 @@ public class OntologyCache {
 		List<OntResource> allRanges = new ArrayList<OntResource>();
 		List<String> temp; 
 		
-		ExtendedIterator<DatatypeProperty> itrDP = ontologyManager.getOntModel().listDatatypeProperties();
+		ExtendedIterator<OntProperty> itrDP = ontologyManager.getOntModel().listAllOntProperties();
+//		ExtendedIterator<DatatypeProperty> itrDP = ontologyManager.getOntModel().listDatatypeProperties();
 		OntResource d;
 		OntResource r;
 		
@@ -275,9 +297,14 @@ public class OntologyCache {
 			allDomains.clear();
 			directRanges.clear();
 			allRanges.clear();
+
+//			DatatypeProperty dp = itrDP.next();
 			
-			DatatypeProperty dp = itrDP.next();
-			
+			OntProperty dp = itrDP.next();
+			if (dp.isObjectProperty() && !dp.isDatatypeProperty())
+				continue;
+//			System.out.println("DP:" + dp.getURI());
+
 			// getting domains and subclasses
 			ExtendedIterator<? extends OntResource> itrDomains = dp.listDomain();
 			while (itrDomains.hasNext()) {
@@ -285,7 +312,11 @@ public class OntologyCache {
 				ontologyManager.getMembers(d, directDomains, false);
 			}
 
-			propertyDirectDomains.put(dp.getURI(), ontologyManager.getResourcesURIs(directDomains));
+			temp  = propertyDirectDomains.get(dp.getURI());
+			if (temp == null)
+				propertyDirectDomains.put(dp.getURI(), ontologyManager.getResourcesURIs(directDomains));
+			else 
+				temp.addAll(ontologyManager.getResourcesURIs(directDomains));
 			
 			for (int i = 0; i < directDomains.size(); i++) {
 				temp = directOutDataProperties.get(directDomains.get(i).getURI());
@@ -301,8 +332,12 @@ public class OntologyCache {
 				ontologyManager.getChildren(directDomains.get(i), allDomains, true);
 			}
 
-			propertyIndirectDomains.put(dp.getURI(), ontologyManager.getResourcesURIs(allDomains));
-
+			temp  = propertyIndirectDomains.get(dp.getURI());
+			if (temp == null)
+				propertyIndirectDomains.put(dp.getURI(), ontologyManager.getResourcesURIs(allDomains));
+			else 
+				temp.addAll(ontologyManager.getResourcesURIs(allDomains));
+			
 			for (int i = 0; i < allDomains.size(); i++) {
 				temp = indirectOutDataProperties.get(allDomains.get(i).getURI());
 				if (temp == null) { 
@@ -319,17 +354,75 @@ public class OntologyCache {
 				ontologyManager.getMembers(r, directRanges, false);
 			}
 
-			propertyDirectRanges.put(dp.getURI(), ontologyManager.getResourcesURIs(directRanges));
-
+			temp  = propertyDirectRanges.get(dp.getURI());
+			if (temp == null)
+				propertyDirectRanges.put(dp.getURI(), ontologyManager.getResourcesURIs(directRanges));
+			else 
+				temp.addAll(ontologyManager.getResourcesURIs(directRanges));
 			
 			for (int i = 0; i < directRanges.size(); i++) {
 				allRanges.add(directRanges.get(i));
 				ontologyManager.getChildren(directRanges.get(i), allRanges, true);
 			}
 			
-			propertyIndirectRanges.put(dp.getURI(), ontologyManager.getResourcesURIs(allRanges));
-
+			temp  = propertyIndirectRanges.get(dp.getURI());
+			if (temp == null)
+				propertyIndirectRanges.put(dp.getURI(), ontologyManager.getResourcesURIs(allRanges));
+			else 
+				temp.addAll(ontologyManager.getResourcesURIs(allRanges));
+			
 		}		
+	}
+	
+	private void addPropertiesOfRDFVocabulary() {
+		String labelUri = "http://www.w3.org/2000/01/rdf-schema#label";
+		String commentUri = "http://www.w3.org/2000/01/rdf-schema#comment";
+		List<String> temp;
+		
+		ontologyManager.getOntModel().setNsPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		ontologyManager.getOntModel().createDatatypeProperty(labelUri);
+		ontologyManager.getOntModel().createDatatypeProperty(commentUri);
+
+		// collect all the existing classes
+		List<String> classes = new ArrayList<String>();
+		for (String s : indirectOutDataProperties.keySet()) 
+			if (classes.indexOf(s) == -1) classes.add(s);
+		for (String s : indirectOutObjectProperties.keySet()) 
+			if (classes.indexOf(s) == -1) classes.add(s);
+		for (String s : indirectInObjectProperties.keySet()) 
+			if (classes.indexOf(s) == -1) classes.add(s);
+		
+		// add label and comment property to the properties of all the classes
+		for (String s : classes) {
+			temp = indirectOutDataProperties.get(s);
+			if (temp == null) {
+				temp = new ArrayList<String>();
+				indirectOutDataProperties.put(s, temp);
+			}
+			temp.add(labelUri);
+			temp.add(commentUri);
+		}
+
+		// add label to properties hashmap
+		temp = propertyIndirectDomains.get(labelUri);
+		if (temp == null) {
+			temp = new ArrayList<String>();
+			propertyIndirectDomains.put(labelUri, temp);
+		}
+		for (String s : classes)
+			if (temp.indexOf(s) == -1)
+				temp.add(s);
+		
+		// add comment to properties hashmap
+		temp = propertyIndirectDomains.get(commentUri);
+		if (temp == null) {
+			temp = new ArrayList<String>();
+			propertyIndirectDomains.put(commentUri, temp);
+		}
+		for (String s : classes)
+			if (temp.indexOf(s) == -1)
+				temp.add(s);
+
 	}
 	
 	/**

@@ -90,11 +90,15 @@ public class FunctionRepository {
 		else{
 			//treat "value" as a value, not a seed
 			String newValue = className +"_" + value;
-			//in VIVO + is not allowed in the URI, so I replace the + (equiv to the space) with _
-			//also replace the % (not allowed in VIVO
 			newValue = newValue.replaceAll(" ", "_");
+			//these chars are not encoded, but not allowed in JENA
+			newValue = newValue.replaceAll("\\*", "_");
+			newValue = newValue.replaceAll("-", "_");
+
 			String encodedValue = URLEncoder.encode(newValue, "UTF-8");
 			//these have to be after the encode
+			//in VIVO + is not allowed in the URI, so I replace the + (equiv to the space) with _
+			//also replace the % (not allowed in VIVO
 			encodedValue = encodedValue.replaceAll("\\+", "_");
 			encodedValue = encodedValue.replaceAll("\\%", "");
 			encodedValue = encodedValue.replaceAll("\\.", "_");
