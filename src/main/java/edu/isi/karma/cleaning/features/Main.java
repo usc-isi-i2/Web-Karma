@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Vector;
 
 import au.com.bytecode.opencsv.CSVReader;
-import edu.isi.karma.cleaning.ResultViewer;
 
 public class Main {
 	public static void main(String[] args)
@@ -35,7 +34,6 @@ public class Main {
 		try
 		{
 			//BufferedWriter bw = new BufferedWriter(new FileWriter("/Users/bowu/Research/dataclean/data/negadata.out"));
-			ResultViewer rv = new ResultViewer();
 			boolean isfirstRun = true;
 			for(int i = 0 ; i<flist.length;i++)
 			{
@@ -66,7 +64,6 @@ public class Main {
 						row.add(x[l].getName());
 					}
 					isfirstRun = false;
-					rv.addRow(row);
 					row = new Vector<String>();
 				}
 				if(!isfirstRun)
@@ -77,9 +74,7 @@ public class Main {
 						row.add(String.valueOf(x[k].getScore()));
 					}
 				}
-				rv.addRow(row);
 			}
-			rv.print(dir+"/features.csv");
 		}
 		catch(Exception ex)
 		{

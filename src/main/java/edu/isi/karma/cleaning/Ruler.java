@@ -90,50 +90,6 @@ public class Ruler {
 		this.vec = x;
 		this.initConstantPosition();
 	}
-	public Vector<TNode> parsewhat(String input)
-	{
-		String sep1 = "||";
-		String sep2 = " ";
-		StringTokenizer st1 = new StringTokenizer(input,sep2);
-		Vector<TNode> vecx = new Vector<TNode>();
-		while(st1.hasMoreTokens())
-		{
-			String tks = st1.nextToken();
-			String[] t = tks.split("\\|\\|");
-			int type = -1;
-			if(t[0].compareTo("ANYTYP")==0)
-			{
-				type = TNode.ANYTYP;
-			}
-			else if(t[0].compareTo("NUMTYP")==0)
-			{
-				type = TNode.NUMTYP;
-			}
-			else if(t[0].compareTo("Word")==0)
-			{
-				type = TNode.WRDTYP;
-			}
-			else if(t[0].compareTo("Symbol")==0)
-			{
-				type = TNode.SYBSTYP;
-			}
-			else if(t[0].compareTo("Blank")==0)
-			{
-				type = TNode.BNKTYP;
-			}
-			String cnt = "";
-			if(t[1].compareTo("ANYTOK")==0)
-			{
-				cnt = TNode.ANYTOK;
-			}
-			else
-			{
-				cnt = t[1].substring(1,t[1].length()-1);
-			}
-			vecx.add(new TNode(type,cnt));
-		}
-		return vecx;
-	}
 	//in current data,search the position of the tvec
 	public static int Search(Vector<TNode> xvec,Vector<TNode> tvec,int bpos)
 	{
@@ -239,127 +195,6 @@ public class Ruler {
 			}
 		}
 	}
-	public int parseStart(String input)
-	{
-		boolean incld = false;
-		if(input.contains("FST"))
-		{
-			if(!input.contains("incld"))
-			{
-				input = input.substring(9);
-				incld = false;
-			}
-			else
-			{
-				input = input.substring(10);
-				incld = true;
-			}
-			Vector<TNode> t = this.parsewhat(input);
-			int pos1 = this.Search(this.vec,t,0);
-			if(incld)
-			{
-				return pos1;
-			}
-			else
-			{
-				return pos1+1;
-			}
-		}
-		/*else if(input.contains("LST"))
-		{
-			input = input.substring(4);
-			Vector<TNode> x = this.parsewhat(input);
-			int pos1 = this.Search(x,0);
-			return pos1;
-		}*/
-		else
-		{
-			return Integer.parseInt(input);
-		}
-	}
-	public int parseEnd(String input)
-	{
-		boolean incld = false;
-		if(input.contains("FST"))
-		{
-			if(!input.contains("incld"))
-			{
-				input = input.substring(9);
-				incld = false;
-			}
-			else
-			{
-				incld = true;
-				input = input.substring(10);
-			}
-			Vector<TNode> t = this.parsewhat(input);
-			Vector<TNode> tmpvec = (Vector<TNode>)this.vec.clone();
-			Collections.reverse(tmpvec);
-			int pos = this.Search(tmpvec,t, 0);
-			if(pos == -1)
-				return 0;
-			if(incld)
-			{
-				return this.vec.size()- pos;
-			}
-			else
-			{
-				return this.vec.size()- pos-1;
-			}
-		}
-		/*else if(input.contains("LST"))
-		{
-			
-		}*/
-		else
-		{
-			return this.vec.size() - Integer.parseInt(input);
-		}
-	}
-	/*public int parseQuantifier(String input)
-	{
-		int quan = Integer.parseInt(input);
-		if(quan == -1)
-		{
-			return TNode.ANYNUM;
-		}
-		else
-		{
-			return quan;
-		}
-	}
-	public void ParseParameters(HashMap<String,String> hm)
-	{
-		String oper = "";
-		int quan = 0;
-		int startpos = -1;
-		int endpos = 1000;
-		Vector<TNode> pat = new Vector<TNode>();
-		if(hm.containsKey("what"))
-		{
-			pat = this.parsewhat(hm.get("what"));
-		}
-		if(hm.containsKey("operator"))
-		{
-			oper = hm.get("operator");
-		}
-		if(hm.containsKey("qnum"))
-		{
-			quan = this.parseQuantifier(hm.get("qnum"));
-		}
-		if(hm.containsKey("start"))
-		{
-			startpos = this.parseStart(hm.get("start"));
-		}
-		if(hm.containsKey("end"))
-		{
-			endpos = this.parseEnd(hm.get("end"));
-		}
-		if(oper.compareTo("del")==0)
-		{
-			this.det(quan, pat, startpos, endpos);
-		}
-	}*/
 	public void addOperators(Object[][] opers)
 	{
 		for(int j = 0; j<opers.length;j++)
@@ -379,9 +214,14 @@ public class Ruler {
 		{
 			int mytype = -1;
 			String txt = "";
-			if(t.getType()==Tokenizer.WORD)
+			if(t.getType()==Tokenizer.LWRD)
 			{
-				mytype = TNode.WRDTYP;
+				mytype = TNode.LWRDTYP;
+				txt = t.getText();
+			}
+			else if(t.getType()==Tokenizer.UWRD)
+			{
+				mytype = TNode.UWRDTYP;
 				txt = t.getText();
 			}
 			else if(t.getType() == Tokenizer.BLANK)
@@ -494,8 +334,10 @@ public class Ruler {
 		for(int i =0;i<vec.size();i++)
 		{
 			String type = "";
-			if(vec.get(i).type==TNode.WRDTYP)
-				type = "WRD";
+			if(vec.get(i).type==TNode.LWRDTYP)
+				type = "LWRD";
+			else if(vec.get(i).type==TNode.UWRDTYP)
+				type = "UWRD";
 			else if(vec.get(i).type==TNode.SYBSTYP)
 				type = "SYB";
 			else if(vec.get(i).type==TNode.NUMTYP)

@@ -25,6 +25,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +35,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import au.com.bytecode.opencsv.CSVReader;
+import edu.isi.karma.cleaning.Ruler;
+import edu.isi.karma.cleaning.TNode;
+import edu.isi.karma.cleaning.UtilTools;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.CleaningResultUpdate;
@@ -48,6 +52,8 @@ import edu.isi.karma.rep.cleaning.RamblerValueCollection;
 import edu.isi.karma.rep.cleaning.TransformationExample;
 import edu.isi.karma.rep.cleaning.ValueCollection;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	final String hNodeId;
@@ -86,6 +92,31 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		}
 		return x;
 	}
+	private static Vector<String> getTopK(Set<String> res,int k)
+	{
+		String dirpathString = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH);
+		if(dirpathString.compareTo("")==0)
+		{
+			dirpathString = "./src/main/webapp/";
+		}
+
+		String trainPath = dirpathString+"grammar/features.arff";
+		Vector<String> vs = new Vector<String>();
+		//
+		String[] x = (String[])res.toArray(new String[res.size()]);
+		System.out.println(""+x);
+		Vector<Double> scores = UtilTools.getScores(x, trainPath);
+		System.out.println("Scores: "+scores);
+		Vector<Integer> ins =UtilTools.topKindexs(scores, k);
+		System.out.println("Indexs: "+ins);
+		Vector<String> y = new Vector<String>();
+		for(int i = 0; i<k&&i<x.length;i++)
+		{
+			y.add(x[i]);
+		}
+		return y;
+	}
+
 	@Override
 	public String getCommandName() {
 		return GenerateCleaningRulesCommand.class.getSimpleName();
@@ -106,25 +137,6 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	public CommandType getCommandType() {
 		return CommandType.undoable;
 	}
-	
-	private static Vector<String> getTopK(Set<String> res,int k)
-	{
-		String trainPath = "./grammar/features.arff";
-		Vector<String> vs = new Vector<String>();
-		//
-		String[] x = (String[])res.toArray(new String[res.size()]);
-		/*System.out.println(""+x);
-		Vector<Double> scores = UtilTools.getScores(x, trainPath);
-		System.out.println("Scores: "+scores);
-		Vector<Integer> ins =UtilTools.topKindexs(scores, k);
-		System.out.println("Indexs: "+ins);*/
-		Vector<String> y = new Vector<String>();
-		for(int i = 0; i<k&&i<x.length;i++)
-		{
-			y.add(x[i]);
-		}
-		return y;
-	}
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
@@ -140,11 +152,12 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		wk.getDataTable().collectNodes(selectedPath, nodes);
 		HashMap<String, String> rows = new HashMap<String,String>();
 		//obtain original rows
+		HashMap<String, Integer> amb = new HashMap<String, Integer>();
 		for (Node node : nodes) {
 			String id = node.getId();
-			String originalVal = "<_START>"+node.getValue().asString()+"<_END>";
-			//System.out.println(id+","+originalVal);
+			String originalVal = node.getValue().asString();
 			rows.put(id, originalVal);
+			calAmbScore(id,originalVal,amb);
 		}
 		RamblerValueCollection vc = new RamblerValueCollection(rows);
 		inputs = new RamblerTransformationInputs(examples, vc);
@@ -163,13 +176,17 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		}
 		Iterator<String> iter = rtf.getTransformations().keySet().iterator();
 		Vector<ValueCollection> vvc = new Vector<ValueCollection>();
+		HashMap<String, HashMap<String,Integer>> values = new HashMap<String, HashMap<String,Integer>>();
 		HashMap<String,Vector<String>> js2tps = new HashMap<String,Vector<String>>();
 		int index = 0;
 		while(iter.hasNext())
 		{
 			String tpid = iter.next();
 			ValueCollection rvco = rtf.getTransformedValues(tpid);
+			if(rvco==null)
+				continue;
 			vvc.add(rvco);
+			updateCandiScore(rvco,values);
 			String reps = rvco.getJson().toString();
 			if(js2tps.containsKey(reps))
 			{
@@ -182,20 +199,110 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 				js2tps.put(reps, tps);
 			}
 		}
+		//get the best transformed result
+		ValueCollection rvco = rtf.getTransformedValues("BESTRULE");
+		String bestRes = rvco.getJson().toString(); 
 		////////
+		HashMap<String, Double> topkeys = getScore(amb, values);
 		Vector<String> jsons = new Vector<String>();
 		if(js2tps.keySet().size()!=0)
 		{
-			jsons = getTopK(js2tps.keySet(), 50);
+			 bestRes = getTopK(js2tps.keySet(), 1).get(0);
 		}
 		else
 		{
 			System.out.println("Didn't find any transformation programs");
 		}
-		
-		return new UpdateContainer(new CleaningResultUpdate(hNodeId, jsons,js2tps));
-	}
 
+		jsons.addAll(js2tps.keySet());
+		return new UpdateContainer(new CleaningResultUpdate(hNodeId, jsons,js2tps,bestRes,topkeys.keySet()));
+	}
+	public void calAmbScore(String id,String org,HashMap<String, Integer> amb )
+	{
+		Ruler ruler = new Ruler();
+		ruler.setNewInput(org);
+		Vector<TNode> tNodes = ruler.vec;
+		int tcnt = 1;
+		for(int i=0;i<tNodes.size();i++)
+		{
+			if(tNodes.get(i).text.compareTo(" ")==0)
+				continue;
+			for(int j=0;j>i&&j<tNodes.size();j++)
+			{
+				if(tNodes.get(j).sameNode(tNodes.get(i)))
+				{
+					tcnt ++;
+				}
+			}
+		}
+		amb.put(id, tcnt);
+	}
+	public void updateCandiScore(ValueCollection rvco,HashMap<String, HashMap<String,Integer>> values)
+	{
+		Iterator<String> ids = rvco.getNodeIDs().iterator();
+		while(ids.hasNext())
+		{
+			String id = ids.next();
+			String value = rvco.getValue(id);
+			HashMap<String, Integer> dict;
+			if(values.containsKey(id))
+			{
+				dict = values.get(id);
+			}
+			else 
+			{
+				dict = new HashMap<String, Integer>();
+				values.put(id, dict);
+			}
+			if(dict.containsKey(value))
+			{
+				dict.put(value, dict.get(value)+1);
+			}
+			else {
+				dict.put(value, 1);
+			}
+		}
+		return;
+	}
+	public HashMap<String, Double> getScore(HashMap<String,Integer> dicts,HashMap<String, HashMap<String,Integer>> values)
+	{
+		int topKsize = 3;
+		HashMap<String, Double> topK = new HashMap<String, Double>();
+		Iterator<String> iditer = dicts.keySet().iterator();
+		while (iditer.hasNext()) {
+			String id = iditer.next();
+			int amb = dicts.get(id);
+			HashMap<String, Integer> hm = values.get(id);
+			int div = 0;
+			int squrecnt = 0;
+			Iterator<String> iters = hm.keySet().iterator();
+			while(iters.hasNext())
+			{
+				String value = iters.next();
+				div += hm.get(value);
+				squrecnt += Math.pow(hm.get(value),2);
+			}
+			double entro = squrecnt*1.0/div;
+			double score = amb*1.0/entro;
+			if(topK.keySet().size()<3)
+			{
+				topK.put(id, score);
+			}
+			else
+			{
+				String[] keys = topK.keySet().toArray(new String[topK.keySet().size()]);
+				for(String key:keys)
+				{
+					if(topK.get(key)>score)
+					{
+						topK.remove(key);
+						topK.put(id, score);
+					}
+				}
+			}
+		}
+		return topK;
+	}
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
 		// TODO Auto-generated method stub
@@ -263,8 +370,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 						System.out.println("No Rules have been found");
 						return; 
 					}
-					Vector<String> jsons = getTopK(js2tps.keySet(), 3);
-					for(String s:jsons)
+					for(String s:js2tps.keySet())
 					{
 						System.out.println(""+s);
 					}
