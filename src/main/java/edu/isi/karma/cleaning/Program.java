@@ -2,8 +2,6 @@ package edu.isi.karma.cleaning;
 
 import java.util.Vector;
 
-import org.python.antlr.PythonParser.else_clause_return;
-
 public class Program implements GrammarTreeNode {
 	public Vector<Partition> partitions = new Vector<Partition>();
 	public String cls = "";

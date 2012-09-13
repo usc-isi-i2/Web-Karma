@@ -14,7 +14,7 @@ import javax.swing.text.Position;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-public class test {
+public class Test {
 	public static void test1()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
@@ -335,6 +335,6 @@ public class test {
 	public static void main(String[] args)
 	{
 		//test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		test.test5();
+		Test.test5();
 	}
 }

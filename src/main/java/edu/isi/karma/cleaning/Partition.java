@@ -80,10 +80,8 @@ public class Partition implements GrammarTreeNode {
 		String s = "partition:"+this.label+"\n";
 		for(Integer i:this.templates.keySet())
 		{
-			for(Template t:this.templates.get(i))
-			{
-				s += t.toProgram()+"\n";
-			}
+			if(templates.get(i).size()>0)
+				s += templates.get(i).get(0).toProgram()+"\n";
 		}
 		s += "Examples:\n";
 		for(int i = 0; i<this.orgNodes.size(); i++)
@@ -102,16 +100,29 @@ public class Partition implements GrammarTreeNode {
 	@Override
 	public String toProgram() {
 		//randomly choose a Template
-		Vector<Template> t = new Vector<Template>();
 		Iterator<Integer> iterator = this.templates.keySet().iterator();
+		int[] inds = new int[this.templates.keySet().size()];
+		double[] prob = new double[inds.length];
+		int i = 0;
+		double totalLength = 0;
 		while(iterator.hasNext())
 		{
-			t.addAll(this.templates.get(iterator.next()));
+			inds[i] = iterator.next();
+			prob[i] = 1.0/(inds[i]*1.0);
+			totalLength += prob[i];
+			i++;
 		}
-		int i = UtilTools.randChoose(t.size());
-		String r = t.get(i).toProgram();
+		for(int j = 0; j<inds.length; j++)
+		{
+			
+			prob[j] = prob[j]*1.0/totalLength;
+		}
+		int clen = UtilTools.multinominalSampler(prob);
+		clen = inds[clen];
+		int k = UtilTools.randChoose(templates.get(clen).size());
+		String r = templates.get(clen).get(k).toProgram();
 		//String r = String.format("(not getClass(\"%s\",value)==\'attr_0\',len(%s))",this.cls,"\"\'"+this.label+"\'\"");
-		score = t.get(i).getScore();
+		score = templates.get(clen).get(k).getScore();
 		return r;
 	}
 	@Override

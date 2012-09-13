@@ -22,6 +22,26 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 public class UtilTools {
 	public static int index = 0;
 	public static Vector<String> results = new Vector<String>();
+	public static int multinominalSampler(double[] probs)
+	{
+		Random r = new Random();
+		double x = r.nextDouble();
+		if(x<=probs[0])
+		{
+			return 0;
+		}
+		x -= probs[0];
+		for(int i = 1;i<probs.length;i++)
+		{
+			if(x<=probs[i])
+			{
+				return i;
+			}
+			x -= probs[i];
+		}
+		return 0;
+	}
+
 	public static int randChoose(int n)
 	{
 		Random r = new Random();
