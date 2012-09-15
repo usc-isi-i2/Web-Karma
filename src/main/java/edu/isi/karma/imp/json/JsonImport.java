@@ -179,10 +179,12 @@ public class JsonImport {
 				value = Integer.toString((Integer) listValue);
 			else if (listValue instanceof Long)
 				value = Long.toString((Long) listValue);
+			else {
+				// Pedro 2012/09/14
+				logger.error("Unexpected value in JSON arrary:"
+						+ listValue.toString());
+			}
 			row.setValue(hNodeId, value);
-			//Pedro 2012/09/14
-			logger.error("Unexpected value in JSON arrary:"
-					+ listValue.toString());
 		}
 
 		else if (listValue instanceof JSONArray) {
