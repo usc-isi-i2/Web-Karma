@@ -33,6 +33,11 @@ import java.util.Map;
  * 
  */
 public class HTable extends RepEntity {
+
+	// The name of the column to use to collect single values when a column has
+	// both values and nested tables.
+	static final String ORPHAN_COLUMN_NAME = "orphan";
+
 	// My name.
 	private String tableName;
 
@@ -41,12 +46,12 @@ public class HTable extends RepEntity {
 
 	private ArrayList<String> orderedNodeIds = new ArrayList<String>();
 
-	//mariam
+	// mariam
 	/**
 	 * the HNode that contains this table (useful for backwards traversing)
 	 */
-	private HNode parentHNode=null;
-	
+	private HNode parentHNode = null;
+
 	public HTable(String id, String tableName) {
 		super(id);
 		this.tableName = tableName;
@@ -84,23 +89,23 @@ public class HTable extends RepEntity {
 		}
 		return null;
 	}
-	
-	//mariam
+
+	// mariam
 	/**
 	 * Returns the HNode that contains this table.
-	 * @return
-	 * 		the HNode that contains this table.
+	 * 
+	 * @return the HNode that contains this table.
 	 */
-	public HNode getParentHNode(){
+	public HNode getParentHNode() {
 		return parentHNode;
 	}
 
 	/**
 	 * Returns the HNodeId for the first HNode with the given columnName.
+	 * 
 	 * @param columnName
-	 * @return
-	 * 		the HNodeId given a columnName.
-	 * Should be used only with worksheets that do not contain nested tables.
+	 * @return the HNodeId given a columnName. Should be used only with
+	 *         worksheets that do not contain nested tables.
 	 */
 	public String getHNodeIdFromColumnName(String columnName) {
 		for (Map.Entry<String, HNode> n : nodes.entrySet()) {
@@ -113,21 +118,27 @@ public class HTable extends RepEntity {
 
 	/**
 	 * Returns true if this table contains nested tables, false otherwise.
-	 * @return
-	 * 		true if this table contains nested tables, false otherwise.
+	 * 
+	 * @return true if this table contains nested tables, false otherwise.
 	 */
-	public boolean hasNestedTables(){
-		for(HNode n: getHNodes()){
-			if(n.hasNestedTable())
+	public boolean hasNestedTables() {
+		for (HNode n : getHNodes()) {
+			if (n.hasNestedTable())
 				return true;
 		}
 		return false;
 	}
-//////////////////////////////////////////////
-	
+
+	// ////////////////////////////////////////////
+
 	public HNode addHNode(String columnName, Worksheet worksheet,
 			RepFactory factory) {
-		HNode hn = factory.createHNode(id, columnName);
+		return addHNode(columnName, false, worksheet, factory);
+	}
+
+	public HNode addHNode(String columnName, boolean automaticallyAdded,
+			Worksheet worksheet, RepFactory factory) {
+		HNode hn = factory.createHNode(id, columnName, automaticallyAdded);
 		nodes.put(hn.getId(), hn);
 		orderedNodeIds.add(hn.getId());
 		worksheet.addNodeToDataTable(hn, factory);
@@ -152,37 +163,40 @@ public class HTable extends RepEntity {
 			}
 		}
 	}
-	
-	public void addNewHNodeAfter(String hNodeId, RepFactory factory, String columnName, Worksheet worksheet) {
+
+	public void addNewHNodeAfter(String hNodeId, RepFactory factory,
+			String columnName, Worksheet worksheet) {
 		HNode hNode = getHNode(hNodeId);
-		if(hNode == null) {
-			for(HNode node : nodes.values()) {
-				if(node.hasNestedTable()) {
-					node.getNestedTable().addNewHNodeAfter(hNodeId, factory, columnName, worksheet);
+		if (hNode == null) {
+			for (HNode node : nodes.values()) {
+				if (node.hasNestedTable()) {
+					node.getNestedTable().addNewHNodeAfter(hNodeId, factory,
+							columnName, worksheet);
 				}
 			}
 		} else {
-			HNode newNode = factory.createHNode(getId(), columnName);
+			HNode newNode = factory.createHNode(getId(), columnName, false);
 			nodes.put(newNode.getId(), newNode);
 			int index = orderedNodeIds.indexOf(hNodeId);
-			
-			if(index == orderedNodeIds.size()-1)
+
+			if (index == orderedNodeIds.size() - 1)
 				orderedNodeIds.add(newNode.getId());
 			else
-				orderedNodeIds.add(index+1, newNode.getId());
+				orderedNodeIds.add(index + 1, newNode.getId());
 			worksheet.addNodeToDataTable(newNode, factory);
 		}
 	}
 
-	/** Returns ordered nodeIds.
-	 * @return
-	 * 		ordered nodeIds.
+	/**
+	 * Returns ordered nodeIds.
+	 * 
+	 * @return ordered nodeIds.
 	 * @author mariam
 	 */
-	public ArrayList<String> getOrderedNodeIds(){
+	public ArrayList<String> getOrderedNodeIds() {
 		return orderedNodeIds;
 	}
-	
+
 	@Override
 	public void prettyPrint(String prefix, PrintWriter pw, RepFactory factory) {
 		pw.print(prefix);
@@ -219,10 +233,52 @@ public class HTable extends RepEntity {
 
 	/**
 	 * Sets the parent HNode.
+	 * 
 	 * @param hNode
 	 * @author mariam
 	 */
 	public void setParentHNode(HNode hNode) {
 		parentHNode = hNode;
+	}
+
+	/**
+	 * @param orphanColumnName
+	 * @param worksheet
+	 * @param factory
+	 * @return the added column. If an automatically generated column with the
+	 *         desired name already exists, we return it. Otherwise we create a
+	 *         new one. We make sure that the new column does not conflict with
+	 *         an existing column.
+	 */
+	HNode addAutomaticallyGeneratedColumn(String orphanColumnName,
+			Worksheet worksheet, RepFactory factory) {
+		HNode orphanHNode = getHNodeFromColumnName(HTable.ORPHAN_COLUMN_NAME);
+		if (orphanHNode == null || !orphanHNode.isAutomaticallyAdded()) {
+			// Create the new column
+			orphanHNode = addHNode(
+					getAutomaticallyAddedColumnName(HTable.ORPHAN_COLUMN_NAME),
+					true, worksheet, factory);
+		}
+
+		return orphanHNode;
+	}
+
+	/**
+	 * When we automatically add a new column, we must make sure that it's name
+	 * does not conflict with a column that was not added automatically. We
+	 * append underscores until the name does not conflict.
+	 * 
+	 * @param columnName
+	 *            the name we would like to use.
+	 * @return a column name that does not conflict with a source column.
+	 */
+	String getAutomaticallyAddedColumnName(String columnName) {
+		HNode hn = getHNodeFromColumnName(columnName);
+		String name = columnName;
+		while (hn != null && !hn.isAutomaticallyAdded()) {
+			name = "_" + name + "_";
+			hn = getHNodeFromColumnName(name);
+		}
+		return name;
 	}
 }

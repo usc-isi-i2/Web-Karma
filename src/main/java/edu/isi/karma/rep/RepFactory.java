@@ -43,18 +43,17 @@ public class RepFactory {
 	private final Map<String, Row> rows = new HashMap<String, Row>();
 	private final Map<String, Node> nodes = new HashMap<String, Node>();
 
-	
 	public Workspace createWorkspace() {
 		String id = getNewId("WSP");
 		Workspace wsp = new Workspace(id, this);
 		workspaces.put(id, wsp);
 		return wsp;
 	}
-	
+
 	public Worksheet createWorksheet(String tableName, Workspace workspace) {
 		String id = getNewId("WS");
 		HTable headers = createHTable(tableName);
-		Table dataTable = createTable(headers.getId());
+		Table dataTable = createTable(headers.getId(), id);
 		Worksheet ws = new Worksheet(id, headers, dataTable);
 		workspace.addWorksheet(ws);
 		worksheets.put(id, ws);
@@ -67,7 +66,7 @@ public class RepFactory {
 			hTables.put(worksheet.getHeaders().getId(), worksheet.getHeaders());
 		}
 	}
-	
+
 	public void removeWorkspace(String workspaceId) {
 		workspaces.remove(workspaceId);
 	}
@@ -76,42 +75,48 @@ public class RepFactory {
 		return prefix + (nextId++);
 	}
 
-	HNode createHNode(String hTableId, String columnName) {
+	HNode createHNode(String hTableId, String columnName,
+			boolean automaticallyAdded) {
 		String id = getNewId("HN");
-		HNode hn = new HNode(id, hTableId, columnName);
+		HNode hn = new HNode(id, hTableId, columnName, automaticallyAdded);
 		hNodes.put(id, hn);
 		return hn;
 	}
 
-	//added for testing (mariam)
+	// added for testing (mariam)
 	/**
 	 * Returns all HNodes.
+	 * 
 	 * @return
 	 */
-	public Collection<HNode> getAllHNodes(){
+	public Collection<HNode> getAllHNodes() {
 		return hNodes.values();
 	}
-	
+
 	public HNode getHNode(String id) {
 		return hNodes.get(id);
+	}
+
+	public String getColumnName(String id) {
+		return hNodes.get(id).getColumnName();
 	}
 
 	public HTable getHTable(String id) {
 		return hTables.get(id);
 	}
 
-	public Node getNode(String id){
+	public Node getNode(String id) {
 		return nodes.get(id);
 	}
-	
-	public Worksheet getWorksheet(String id){
+
+	public Worksheet getWorksheet(String id) {
 		return worksheets.get(id);
 	}
-	
-	public Table getTable(String id){
+
+	public Table getTable(String id) {
 		return tables.get(id);
 	}
-	
+
 	HTable createHTable(String tableName) {
 		String id = getNewId("HT");
 		HTable ht = new HTable(id, tableName);
@@ -119,35 +124,35 @@ public class RepFactory {
 		return ht;
 	}
 
-	Table createTable(String hTableId) {
+	Table createTable(String hTableId, String worksheetId) {
 		String id = getNewId("T");
-		Table t = new Table(id, hTableId);
+		Table t = new Table(worksheetId, id, hTableId);
 		tables.put(id, t);
 		return t;
 	}
 
-	Row createRow(String hTableId) {
+	Row createRow(String hTableId, String worksheetId) {
 		String id = getNewId("R");
 		Row r = new Row(id);
 		rows.put(id, r);
 
 		HTable ht = hTables.get(hTableId);
 		for (String hNodeId : ht.getHNodeIds()) {
-			Node n = createNode(hNodeId);
+			Node n = createNode(hNodeId, worksheetId);
 			r.addNode(n);
 		}
 
 		return r;
 	}
 
-	Node createNode(String hNodeId) {
+	Node createNode(String hNodeId, String worksheetId) {
 		String id = getNewId("N");
 		Node n = new Node(id, hNodeId);
 		nodes.put(id, n);
 		HNode hn = hNodes.get(hNodeId);
 		HTable nestedHTable = hn.getNestedTable();
 		if (nestedHTable != null) {
-			n.setNestedTable(createTable(nestedHTable.getId()));
+			n.setNestedTable(createTable(nestedHTable.getId(), worksheetId), this);
 		}
 		return n;
 	}

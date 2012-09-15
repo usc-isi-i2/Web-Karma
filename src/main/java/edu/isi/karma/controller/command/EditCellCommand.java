@@ -39,7 +39,7 @@ public class EditCellCommand extends WorksheetCommand {
 	private final String nodeIdArg;
 
 	private CellValue previousValue = null;
-	
+
 	private Node.NodeStatus previousStatus;
 
 	private final CellValue newValueArg;
@@ -73,7 +73,8 @@ public class EditCellCommand extends WorksheetCommand {
 			throw new CommandException(this, "Cell " + nodeIdArg
 					+ " has a nested table. It cannot be edited.");
 		}
-		node.setValue(newValueArg, Node.NodeStatus.edited);
+		node.setValue(newValueArg, Node.NodeStatus.edited,
+				vWorkspace.getRepFactory());
 		return new UpdateContainer(new NodeChangedUpdate(worksheetId,
 				nodeIdArg, newValueArg, Node.NodeStatus.edited));
 	}
@@ -81,7 +82,7 @@ public class EditCellCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
 		Node node = vWorkspace.getWorkspace().getFactory().getNode(nodeIdArg);
-		node.setValue(previousValue, previousStatus);
+		node.setValue(previousValue, previousStatus, vWorkspace.getRepFactory());
 		return new UpdateContainer(new NodeChangedUpdate(worksheetId,
 				nodeIdArg, previousValue, previousStatus));
 	}
@@ -94,8 +95,9 @@ public class EditCellCommand extends WorksheetCommand {
 	@Override
 	public String getDescription() {
 		if (isExecuted()) {
-			if(newValueArg.asString().length() > 20)
-				return "Set value to " + newValueArg.asString().substring(0, 19) + "...";
+			if (newValueArg.asString().length() > 20)
+				return "Set value to "
+						+ newValueArg.asString().substring(0, 19) + "...";
 			else
 				return "Set value to " + newValueArg.asString();
 		} else {

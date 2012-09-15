@@ -97,23 +97,23 @@ public class JsonImport {
 		String hNodeId = hNode.getId();
 
 		if (value instanceof String) {
-			row.setValue(hNodeId, (String) value);
+			row.setValue(hNodeId, (String) value, factory);
 		}
 
 		else if (value instanceof Integer) {
-			row.setValue(hNodeId, value.toString());
+			row.setValue(hNodeId, value.toString(), factory);
 		}
 
 		else if (value instanceof Double) {
-			row.setValue(hNodeId, value.toString());
+			row.setValue(hNodeId, value.toString(), factory);
 		}
 
 		else if (value instanceof Long) {
-			row.setValue(hNodeId, value.toString());
+			row.setValue(hNodeId, value.toString(), factory);
 		}
 
 		else if (value instanceof Boolean) {
-			row.setValue(hNodeId, value.toString());
+			row.setValue(hNodeId, value.toString(), factory);
 		}
 
 		else if (value instanceof JSONObject) {
@@ -184,7 +184,7 @@ public class JsonImport {
 				logger.error("Unexpected value in JSON array:"
 						+ listValue.toString());
 			}
-			row.setValue(hNodeId, value);
+			row.setValue(hNodeId, value, factory);
 		}
 
 		else if (listValue instanceof JSONArray) {

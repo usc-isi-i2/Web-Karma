@@ -69,11 +69,13 @@ public class Worksheet extends RepEntity {
 	public SemanticTypes getSemanticTypes() {
 		return semanticTypes;
 	}
+
 	public void clearSemanticTypes() {
-		semanticTypes=new SemanticTypes();
+		semanticTypes = new SemanticTypes();
 	}
-	public void setSemanticTypes(SemanticTypes t){
-		semanticTypes=t;
+
+	public void setSemanticTypes(SemanticTypes t) {
+		semanticTypes = t;
 	}
 
 	public FullCRFModel getCrfModel() {
@@ -81,7 +83,7 @@ public class Worksheet extends RepEntity {
 	}
 
 	public MetadataContainer getMetadataContainer() {
-		if(metadataContainer == null)
+		if (metadataContainer == null)
 			metadataContainer = new MetadataContainer();
 		return metadataContainer;
 	}
@@ -132,24 +134,24 @@ public class Worksheet extends RepEntity {
 	public void addNestedTableToDataTable(HNode hNode, RepFactory factory) {
 		dataTable.addNestedTableToDataTable(hNode, factory);
 	}
-	
+
 	public boolean containService() {
 		if (this.getMetadataContainer() == null)
 			return false;
-		
+
 		if (this.getMetadataContainer().getService() == null)
 			return false;
-		
+
 		return true;
 	}
-	
+
 	public boolean containSource() {
 		if (this.getMetadataContainer() == null)
 			return false;
-		
+
 		if (this.getMetadataContainer().getSource() == null)
 			return false;
-		
+
 		return true;
 	}
 }

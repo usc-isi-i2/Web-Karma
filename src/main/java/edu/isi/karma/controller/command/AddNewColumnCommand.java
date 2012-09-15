@@ -67,7 +67,8 @@ public class AddNewColumnCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
+		//pedro 2012-09-15: unused.
+		//		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = vWorkspace.getWorkspace().getWorksheet(worksheetId);
 		System.out.println("Old Size" + worksheet.getHeaders().getAllPaths().size());
@@ -86,7 +87,7 @@ public class AddNewColumnCommand extends WorksheetCommand {
 				Node node = r.getNode(hNodeId);
 				String t = jObject.getString(node.getId());
 				System.out.println(""+t+""+ndid.getId()+","+hNodeId);
-				r.setValue(ndid.getId(), t);
+				r.setValue(ndid.getId(), t, vWorkspace.getRepFactory());
 			}
 			System.out.println("Old VW ID: " + vWorksheetId);
 			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet, worksheet.getHeaders().getAllPaths(), vWorkspace);

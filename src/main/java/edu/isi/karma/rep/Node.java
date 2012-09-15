@@ -59,9 +59,9 @@ public class Node extends RepEntity {
 	private NodeStatus status = NodeStatus.original;
 
 	// The value stored in this cell.
-	private CellValue value = StringCellValue.getEmptyString();
+	private CellValue value = CellValue.getEmptyValue();
 
-	private CellValue originalValue = StringCellValue.getEmptyString();
+	private CellValue originalValue = CellValue.getEmptyValue();
 
 	// mariam
 	/**
@@ -110,34 +110,48 @@ public class Node extends RepEntity {
 		return value;
 	}
 
-	public void setValue(CellValue value, NodeStatus status) {
+	public void setValue(CellValue value, NodeStatus status, RepFactory factory) {
 		this.value = value;
 		this.status = status;
 		// Pedro 2012/09/14
 		if (nestedTable != null) {
-			logger.error("Node contains both value and nested table: "
-					+ toString());
+			logger.info("Node in column '" + factory.getColumnName(hNodeId)
+					+ "' contains both value and nested table: " + toString()
+					+ " -- setting value '" + value.asString() + "'");
+			nestedTable.addOrphanValue(value, factory);
 		}
 	}
 
 	public void clearValue(NodeStatus status) {
-		this.value = null;
+		// pedro 2012-09-15: this was wrong because it was setting the value to
+		// null.
+		this.value = CellValue.getEmptyValue();
 		this.status = status;
 	}
 
-	public void setValue(String value, NodeStatus status) {
-		setValue(new StringCellValue(value), status);
+	public void setValue(String value, NodeStatus status, RepFactory factory) {
+		setValue(new StringCellValue(value), status, factory);
 	}
 
 	public Table getNestedTable() {
 		return nestedTable;
 	}
 
-	public void setNestedTable(Table nestedTable) {
+	public void setNestedTable(Table nestedTable, RepFactory factory) {
 		this.nestedTable = nestedTable;
 		// mariam
-		if (nestedTable != null)
+		if (nestedTable != null) {
 			nestedTable.setNestedTableInNode(this);
+			// pedro 2012-09-15
+			if (!value.isEmptyValue()) {
+				logger.info("Node in column '"
+						+ factory.getColumnName(hNodeId)
+						+ "' contains both value and nested table: "
+						+ toString() + " -- setting value '" + value.asString()
+						+ "'");
+				nestedTable.addOrphanValue(value, factory);
+			}
+		}
 	}
 
 	public boolean hasNestedTable() {

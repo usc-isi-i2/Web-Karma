@@ -45,10 +45,17 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 	// A nested table, possibly null.
 	private HTable nestedTable = null;
 
-	HNode(String id, String hTableId, String columnName) {
+	// Mark whether this HNode was automatically added by Karma. Need to know
+	// this to make sure that we don't over-write columns that came from source
+	// data.
+	private final boolean automaticallyAdded;
+
+	HNode(String id, String hTableId, String columnName,
+			boolean automaticallyAdded) {
 		super(id);
 		this.hTableId = hTableId;
 		this.columnName = columnName;
+		this.automaticallyAdded = automaticallyAdded;
 	}
 
 	public String getColumnName() {
@@ -72,6 +79,10 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 
 	public HTable getNestedTable() {
 		return nestedTable;
+	}
+	
+	boolean isAutomaticallyAdded() {
+		return automaticallyAdded;
 	}
 
 	public void setNestedTable(HTable nestedTable) {

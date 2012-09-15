@@ -149,7 +149,7 @@ public class CSVFileImport {
 		Row row = dataTable.addRow(fac);
 		for (int i = 0; i < rowValues.length; i++) {
 			if (i < hNodeIdList.size())
-				row.setValue(hNodeIdList.get(i), rowValues[i]);
+				row.setValue(hNodeIdList.get(i), rowValues[i], fac);
 			else {
 				// TODO Our model does not allow a value to be added to a row
 				// without its associated HNode. In CSVs, there could be case

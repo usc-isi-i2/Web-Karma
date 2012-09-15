@@ -91,7 +91,7 @@ public class ServiceTableUtil {
 				continue;
 			Row row = dataTable.addRow(factory);
 			for (int i = 0; i < rowValues.size(); i++) 
-				row.setValue(hNodeIdList.get(i), rowValues.get(i));
+				row.setValue(hNodeIdList.get(i), rowValues.get(i), factory);
 		}
 		
 	}
@@ -147,11 +147,11 @@ public class ServiceTableUtil {
 //					System.out.println("j:" + j);
 //					System.out.println(hNodeIdList.get(j));
 //					System.out.println(rowValues.get(j + 1));
-					row.setValue(hNodeIdList.get(j), rowValues.get(j));
+					row.setValue(hNodeIdList.get(j), rowValues.get(j), factory);
 				}
 				
 				for (String id: oldHNodeIdList) {
-					row.setValue(id, currentRow.get(id).toString());
+					row.setValue(id, currentRow.get(id).toString(), factory);
 				}
 				
 			}
