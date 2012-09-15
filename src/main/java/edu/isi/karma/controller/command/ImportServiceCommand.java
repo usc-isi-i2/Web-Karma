@@ -169,6 +169,8 @@ public class ImportServiceCommand extends Command {
 					oneRow.put("score","0");
 				}
 				
+				System.out.println("JSON="+json);
+				
 				//import data in Karma
 				//JsonImport imp = new JsonImport(wsOutput, sourceName, vWorkspace.getWorkspace());
 				JsonImport imp = new JsonImport(json, sourceName, vWorkspace.getWorkspace());
