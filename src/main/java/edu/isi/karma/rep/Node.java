@@ -25,11 +25,18 @@ package edu.isi.karma.rep;
 
 import java.io.PrintWriter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.imp.json.JsonImport;
+
 /**
  * @author szekely
  * 
  */
 public class Node extends RepEntity {
+
+	private static Logger logger = LoggerFactory.getLogger(Node.class);
 
 	public enum NodeStatus {
 		original("O"), edited("E");
@@ -58,34 +65,37 @@ public class Node extends RepEntity {
 
 	private CellValue originalValue = StringCellValue.getEmptyString();
 
-	//mariam
+	// mariam
 	/**
 	 * The row that this node belongs to
 	 */
 	private Row belongsToRow;
-	
+
 	Node(String id, String hNodeId) {
 		super(id);
 		this.hNodeId = hNodeId;
 	}
 
-	//mariam
-	public void setBelongsToRow(Row row){
-		belongsToRow=row;
+	// mariam
+	public void setBelongsToRow(Row row) {
+		belongsToRow = row;
 	}
-	public Row getBelongsToRow(){
+
+	public Row getBelongsToRow() {
 		return belongsToRow;
 	}
+
 	/**
 	 * Return the table that this node belongs to.
-	 * @return
-	 * 		the table that this node belongs to.
+	 * 
+	 * @return the table that this node belongs to.
 	 */
-	public Table getParentTable(){
+	public Table getParentTable() {
 		return belongsToRow.getBelongsToTable();
 	}
-	///////////////
-	
+
+	// /////////////
+
 	public String getHNodeId() {
 		return hNodeId;
 	}
@@ -105,8 +115,13 @@ public class Node extends RepEntity {
 	public void setValue(CellValue value, NodeStatus status) {
 		this.value = value;
 		this.status = status;
+		// Pedro 2012/09/14
+		if (nestedTable != null) {
+			logger.error("Node contains both value and nested table: "
+					+ toString());
+		}
 	}
-	
+
 	public void clearValue(NodeStatus status) {
 		this.value = null;
 		this.status = status;
@@ -122,8 +137,8 @@ public class Node extends RepEntity {
 
 	public void setNestedTable(Table nestedTable) {
 		this.nestedTable = nestedTable;
-		//mariam
-		if(nestedTable != null)
+		// mariam
+		if (nestedTable != null)
 			nestedTable.setNestedTableInNode(this);
 	}
 
