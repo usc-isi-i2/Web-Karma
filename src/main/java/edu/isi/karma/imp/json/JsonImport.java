@@ -180,7 +180,8 @@ public class JsonImport {
 			else if (listValue instanceof Long)
 				value = Long.toString((Long) listValue);
 			row.setValue(hNodeId, value);
-			logger.error("Unexpected value in JSON object: "
+			//Pedro 2012/09/14
+			logger.error("Unexpected value in JSON arrary:"
 					+ listValue.toString());
 		}
 
