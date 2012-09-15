@@ -82,6 +82,9 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 
 	public void removeNestedTable() {
 		this.nestedTable = null;
+		// Pedro 2012-09-15
+		// TODO: this is wrong.If we remove a nested table we have to go to the
+		// data table and remove if from all the rows.
 	}
 
 	public HTable addNestedTable(String tableName, Worksheet worksheet,
