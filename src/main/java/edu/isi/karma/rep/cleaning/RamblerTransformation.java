@@ -22,33 +22,43 @@ package edu.isi.karma.rep.cleaning;
 
 import java.util.Vector;
 
-import edu.isi.karma.cleaning.RuleUtil;
+import edu.isi.karma.cleaning.InterpreterType;
+import edu.isi.karma.cleaning.Interpretor;
+
 
 
 public class RamblerTransformation implements Transformation {
 
 	private Vector<String> rules = new Vector<String>();
 	public String signature = "";
-	public RamblerTransformation(Vector<String> rules)
+	private InterpreterType worker;
+	private static Interpretor itInterpretor;
+	public RamblerTransformation(String prog)
 	{
-		this.setTransformationRules(rules);
-	}
-	public void setTransformationRules(Vector<String> rules)
-	{
-		this.rules = rules;
-		for(int i = 0; i< rules.size(); i++)
+		initInterpretor();
+		worker = this.itInterpretor.create(prog);
+		if(prog.length()-100<0)
 		{
-			signature += rules.get(i)+"\n";
+			this.signature = prog.substring(0,prog.length());
 		}
+		else
+		{
+			this.signature = prog.substring(prog.length()-100,prog.length());
+		}
+	}
+	//
+	public void initInterpretor()
+	{
+		if(itInterpretor == null)
+			itInterpretor = new Interpretor();
 	}
 	@Override
 	public String transform(String value) {
-		if(this.rules.size() == 0)
-		{
-			return value; // if no rule exists, return the original string
-		}
-		String s = RuleUtil.applyRule(this.rules, value);
-		return s;
+		String s = worker.execute(value);
+		if(s.contains("_FATAL_ERROR_"))
+			return value;
+		else
+			return s;
 	}	
 	@Override
 	public String getId() {

@@ -1,65 +1,340 @@
-/*******************************************************************************
- * Copyright 2012 University of Southern California
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * 	http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- * This code was developed by the Information Integration Group as part 
- * of the Karma project at the Information Sciences Institute of the 
- * University of Southern California.  For more information, publications, 
- * and related projects, please see: http://www.isi.edu/integration
- ******************************************************************************/
 package edu.isi.karma.cleaning;
-
-import java.util.ArrayList;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Random;
+import java.util.Vector;
+
+import javax.print.attribute.IntegerSyntax;
+import javax.swing.text.Position;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 public class Test {
-	public static HashMap<String, ArrayList<ArrayList<String>>> deepclone(HashMap<String, ArrayList<ArrayList<String>>> x)
+	public static void test1()
 	{
-		HashMap<String, ArrayList<ArrayList<String>>> nx = new HashMap<String, ArrayList<ArrayList<String>>>();
-		Iterator<String> iter = x.keySet().iterator();
-		while(iter.hasNext())
+		Vector<String[]> examples = new Vector<String[]>();
+		String[] xStrings = {"a b b a b","a b a b b"
+};
+		String[] yStrings ={"c d e f g","c f g e d"
+};
+		examples.add(xStrings);
+		examples.add(yStrings);
+		Vector<Vector<TNode>> org = new Vector<Vector<TNode>>();
+		Vector<Vector<TNode>> tar = new Vector<Vector<TNode>>();
+		for(int i =0 ; i<examples.size();i++)
 		{
-			String key = iter.next();
-			ArrayList<ArrayList<String>> value = new ArrayList<ArrayList<String>>();
-			ArrayList<ArrayList<String>> copy = x.get(key);
-			for(int i = 0; i<copy.size(); i++)
-			{
-				ArrayList<String> xy = (ArrayList<String>)copy.get(i).clone();
-				value.add(xy);
-			}
-			nx.put(key, value);
+			Ruler r = new Ruler();
+			r.setNewInput(examples.get(i)[0]);
+			org.add(r.vec);
+			Ruler r1 = new Ruler();
+			r1.setNewInput(examples.get(i)[1]);
+			tar.add(r1.vec);
 		}
-		return nx;
+		for(int i=0; i<org.size();i++)
+		{
+			Vector<Vector<int[]>> mapping = Alignment.map(org.get(i), tar.get(i));
+			HashMap<Integer,Vector<Template>> segs = Alignment.genSegseqList(mapping);	
+		}
+	}
+	public static void test2()
+	{
+		Vector<Integer> poss = new Vector<Integer>();
+		poss.add(1);
+		poss.add(3);
+		poss.add(4);
+		ProgSynthesis ps = new ProgSynthesis();
+		Vector<Vector<Integer>> p = new Vector<Vector<Integer>>();
+		p = ps.generateCrossIndex(poss, p, 0);
+		for(Vector<Integer> i:p)
+		{
+			System.out.println(""+i);
+		}
+	}
+	//test cross merge
+	public static void test3()
+	{
+		Vector<String[]> examples = new Vector<String[]>();
+		String[] xStrings = {"<_START>BTR KRNL WK CORN 15Z<_END>","15Z"};
+		String[] yStrings ={"<_START>CAMP DRY DBL NDL 3.6 OZ<_END>","3.6 OZ"};
+		examples.add(xStrings);
+		examples.add(yStrings);
+		ProgSynthesis psProgSynthesis = new ProgSynthesis();
+		psProgSynthesis.inite(examples);
+		HashSet<String> p = psProgSynthesis.run_main();
+		Interpretor it = new Interpretor();
+		String value = "O F TOMATO PASTE 6 OZ";
+		String progString = p.iterator().next();
+		InterpreterType worker = it.create(progString);
+		String reString = worker.execute(value);
+		System.out.println("===========Results===================");
+		System.out.println(reString);
+	}
+	public static void test4(String dirpath)
+	{
+		File nf = new File(dirpath);
+		File[] allfiles = nf.listFiles();
+		//statistics
+		Vector<String> names = new Vector<String>();
+		Vector<Integer> exampleCnt = new Vector<Integer>();
+		Vector<Double> timeleng = new Vector<Double>();
+		//list all the csv file under the dir
+		for(File f:allfiles)
+		{
+			Vector<String[]> examples = new Vector<String[]>();
+			Vector<String[]> entries = new Vector<String[]>();	
+			try
+			{
+				if(f.getName().indexOf(".csv")==(f.getName().length()-4))
+				{					
+					CSVReader cr = new CSVReader(new FileReader(f),'\t');
+					String[] pair;
+					String corrResult = "";
+					while ((pair=cr.readNext())!=null)
+					{
+						entries.add(pair);
+						corrResult += pair[1]+"\n";
+					}
+					HashMap<Integer,Boolean> indicators = new HashMap<Integer,Boolean>();
+					String[] mt = {"<_START>"+entries.get(0)[0]+"<_END>",entries.get(0)[1]};
+					examples.add(mt);
+					while(true) // repeat as no correct answer appears.
+					{
+						HashMap<String,Integer> dic = new HashMap<String,Integer>();
+						long st = System.currentTimeMillis();
+						ProgSynthesis psProgSynthesis = new ProgSynthesis();
+						psProgSynthesis.inite(examples);
+						
+						Vector<String> pls = new Vector<String>();
+						pls.addAll(psProgSynthesis.run_main());
+						for(int k = 0; k<examples.size();k++)
+						{
+							System.out.println(examples.get(k)[0]+"    "+examples.get(k)[1]);
+						}
+						int corrNum = 0;
+						String[] wexam = null;
+						if(pls.size()==0)
+							break;
+						
+						for(int i = 0; i<pls.size(); i++)
+						{		
+							Interpretor ipInterpretor = new Interpretor();
+							String script = pls.get(i);
+							System.out.println(script);
+							InterpreterType worker = ipInterpretor.create(script);
+							String tranresult = "";
+							for(int j = 0; j<entries.size(); j++)
+							{
+								String s = worker.execute(entries.get(j)[0]);
+								System.out.println("result:   "+s);
+								if(s== null||s.length()==0)
+								{
+									wexam = entries.get(j);
+									String p[] = {"<_START>"+wexam[0]+"<_END>",wexam[1]};
+									wexam = p;
+									s = entries.get(j)[0];
+									break;
+								}
+								if(s.compareTo(entries.get(j)[1])!=0)
+								{
+									wexam = entries.get(j);
+									String p[] = {"<_START>"+wexam[0]+"<_END>",wexam[1]};
+									wexam = p;
+									s = entries.get(j)[0];
+									break;
+								}						
+							}
+							if(wexam == null)
+								return;
+						}	
+						examples.add(wexam);
+						long ed = System.currentTimeMillis();
+						double timespan = (ed -st)*1.0/60000;
+					}							
+				}				
+			}
+			catch(Exception ex)
+			{
+				System.out.println(""+ex.toString());
+			}
+		}
+		try
+		{
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/Users/bowu/mysoft/xx/logx.txt")));
+			for(int x = 0; x<names.size();x++)
+			{
+				bw.write(names.get(x)+":"+exampleCnt.get(x)+","+timeleng.get(x));
+				bw.write("\n");
+				System.out.println(names.get(x)+":"+exampleCnt.get(x)+","+timeleng.get(x));
+				bw.write("\n");
+//				System.out.println(consisRules.get(x));
+			}
+			bw.flush();
+		}
+		catch(Exception ex)
+		{
+			System.out.println(""+ex.toString());
+		}	
+	}
+	public static void test5()
+	{
+		Vector<String[]> examples = new Vector<String[]>();
+		String[] xStrings = {"<_START>Knoblock,Craig<_END>","Craig Knoblock"};
+		//String[] yStrings ={"<_START>Szekely,Pedro<_END>","Pedro Szekely"};
+		examples.add(xStrings);
+		//examples.add(yStrings);
+		ProgSynthesis psProgSynthesis = new ProgSynthesis();
+		psProgSynthesis.inite(examples);
+		HashSet<String> p = psProgSynthesis.run_main();
+		Interpretor it = new Interpretor();
+		String value = "Szekely,Pedro";
+		//String value = "(6/7)(4/5)(14/2)";
+		InterpreterType worker = it.create(p.iterator().next());
+		String reString = worker.execute(value);
+		System.out.println("===========Results===================");
+		System.out.println(reString);
+	}
+	//test the classifier
+	public static void test6()
+	{
+		Vector<String[]> examples = new Vector<String[]>();
+		String[] xStrings = {"<_START>Bulevar kralja Aleksandra&nbsp;156<_END>","Bulevar kralja Aleksandra*156"};
+		String[] yStrings ={"<_START>Dositejeva&nbsp;22<_END>","Dositejeva*22"};
+		String[] zStrings ={"<_START>Bobby's Restaurant,London<_END>","Bobby's Restaurant"};
+		String[] pStrings ={"<_START>1 Lombard street,London<_END>","1 Lombard street"};
+		String[] qStrings = {"<_START>5th ave,New York<_END>","5th ave"};
+		String[] rStrings = {"<_START>2008-09-07<_END>","09/07/2008"};
+		examples.add(xStrings);
+		examples.add(yStrings);
+		examples.add(rStrings);
+		examples.add(zStrings);
+		examples.add(pStrings);
+		examples.add(qStrings);
+		ProgSynthesis psProgSynthesis = new ProgSynthesis();
+		psProgSynthesis.inite(examples);
+		psProgSynthesis.run_partition();
+		//System.out.println(""+psProgSynthesis.classifier.test("2009-07-11"));
+	}
+	public static void test7()
+	{
+		Vector<String[]> examples = new Vector<String[]>();
+		String[] xStrings ={"<_START>(323)-708-7700<_END>","323-708-7700"};
+		String[] yStrings ={"<_START>(425)-706-7709<_END>","425-706-7709"};
+		String[] zStrings ={"<_START>510.220.5586<_END>","510-220-5586"};
+		String[] pStrings ={"<_START>323.710.7700<_END>","323-710-7700"};
+		String[] qStrings ={"<_START>235 7654<_END>","425-235-7654"};
+		String[] rStrings ={"<_START>745 8139<_END>","425-745-8139"};
+		examples.add(xStrings);
+		examples.add(yStrings);
+		examples.add(zStrings);
+		examples.add(pStrings);
+		examples.add(qStrings);
+		examples.add(rStrings);
+		ProgSynthesis psProgSynthesis = new ProgSynthesis();
+		psProgSynthesis.inite(examples);
+		String p = psProgSynthesis.run_partition();
+		Interpretor it = new Interpretor();
+		String value = "(323)-708-7800";
+		String value1 = "508 7800";
+		InterpreterType worker = it.create(p);
+		String reString = worker.execute(value);
+		String reString1 = worker.execute(value1);
+		System.out.println("/*===========Results===================*/");
+		System.out.println(reString);
+		System.out.println(reString1);
+	}
+	//test loop statement
+	public static void test8()
+	{
+		Vector<String[]> examples = new Vector<String[]>();
+		String[] xStrings = {"<_START>(6/7)(4/5)(14/2)<_END>","6/7#4/5#14/2#"};
+		String[] yStrings ={"<_START>49(28/11)(14/1)<_END>","28/11#14/1#"};
+		String[] pStrings = {"<_START>Bulevar kralja Aleksandra&nbsp;156<_END>","Bulevar kralja Aleksandra*156"};
+		String[] qStrings ={"<_START>Dositejeva&nbsp;22<_END>","Dositejeva*22"};
+		examples.add(xStrings);
+		examples.add(yStrings);
+		examples.add(pStrings);
+		examples.add(qStrings);
+		ProgSynthesis psProgSynthesis = new ProgSynthesis();
+		psProgSynthesis.inite(examples);
+		String p = psProgSynthesis.run_partition();
+		System.out.println(""+p);
+		Interpretor it = new Interpretor();
+		String value = "() (28/11)(14/1)";
+		//String value = "(6/7)(4/5)(14/2)";
+		InterpreterType worker = it.create(p);
+		String reString = worker.execute(value);
+		System.out.println("===========Results===================");
+		System.out.println(reString);
+	}
+	public static void test9()
+	{
+		Vector<String[]> examples = new Vector<String[]>();
+		String[] xStrings = {"<_START>123 is on car 456<_END>","123,456,"};
+		String[] yStrings ={"<_START>67 is attack at location 56 by 89<_END>","67,56,89,"};
+		examples.add(xStrings);
+		examples.add(yStrings);
+		ProgSynthesis psProgSynthesis = new ProgSynthesis();
+		psProgSynthesis.inite(examples);
+		String p = psProgSynthesis.run_partition();
+		System.out.println(""+p);
+		Interpretor it = new Interpretor();
+		String value = "facility 112 is on fire. Battle unit 890 is under attack";
+		//String value = "(6/7)(4/5)(14/2)";
+		InterpreterType worker = it.create(p);
+		String reString = worker.execute(value);
+		System.out.println("===========Results===================");
+		System.out.println(reString);
+	}
+	public static void test10()// fail due to symerty blank mapping 
+	{
+		Vector<String[]> examples = new Vector<String[]>();
+		String[] xStrings = {"<_START>International Bussiness Machine<_END>","IBM"};
+		String[] yStrings ={"<_START>Principles Of Porgramming Languages<_END>","POPL"};
+		examples.add(xStrings);
+		examples.add(yStrings);
+		ProgSynthesis psProgSynthesis = new ProgSynthesis();
+		psProgSynthesis.inite(examples);
+		String p = psProgSynthesis.run_partition();
+		System.out.println(""+p);
+		Interpretor it = new Interpretor();
+		String value = "International Conference on Software Engineering";
+		//String value = "(6/7)(4/5)(14/2)";
+		InterpreterType worker = it.create(p);
+		String reString = worker.execute(value);
+		System.out.println("===========Results===================");
+		System.out.println(reString);
+	}
+	//test Sumit's approach
+	public static void test11()
+	{
+		Vector<String[]> examples = new Vector<String[]>();
+		String[] xStrings = {"<_START>a1b2c3d4e5#g6h<_END>","g6h,a1b2c3d4e5"};
+		String[] zStrings ={"<_START>m1n2r3s4t5#x6y<_END>","x6y,m1n2r3s4t5"};
+		//String[] yStrings ={"<_START>#p1q<_END>","p1q#c3d4e"};
+		examples.add(xStrings);
+		//examples.add(yStrings);
+		examples.add(zStrings);
+		long t1 = System.currentTimeMillis();
+		ProgSynthesis psProgSynthesis = new ProgSynthesis();
+		psProgSynthesis.inite(examples);
+		String p = psProgSynthesis.run_sumit();
+		long t2 = System.currentTimeMillis();
+		ProgSynthesis psProgSynthesis1 = new ProgSynthesis();
+		psProgSynthesis1.inite(examples);
+		String q = psProgSynthesis1.run_partition();
+		long t3 = System.currentTimeMillis();
+		double timespan1 = (t2 -t1)*1.0/60000;
+		double timespan2 = (t3 -t2)*1.0/60000;
+		System.out.println("span 1:"+timespan1+"\nspan 2:"+timespan2);
 	}
 	public static void main(String[] args)
 	{
-		HashMap<String, ArrayList<ArrayList<String>>> a = new HashMap<String, ArrayList<ArrayList<String>>>();
-		ArrayList<ArrayList<String>> aas = new ArrayList<ArrayList<String>>();
-		ArrayList<String> x = new ArrayList<String>();
-		x.add("1");
-		x.add("2");
-		aas.add(x);
-		ArrayList<ArrayList<String>> bbs = new ArrayList<ArrayList<String>>();
-		ArrayList<String> y = new ArrayList<String>();
-		y.add("a");
-		y.add("b");
-		bbs.add(y);
-		a.put("a", aas);
-		a.put("b", bbs);
-		HashMap<String, ArrayList<ArrayList<String>>> t = Test.deepclone(a);
-		t.get("a").get(0).add("3");
-		System.out.println("really");
+		//test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		Test.test5();
 	}
 }

@@ -45,10 +45,17 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 	// A nested table, possibly null.
 	private HTable nestedTable = null;
 
-	HNode(String id, String hTableId, String columnName) {
+	// Mark whether this HNode was automatically added by Karma. Need to know
+	// this to make sure that we don't over-write columns that came from source
+	// data.
+	private final boolean automaticallyAdded;
+
+	HNode(String id, String hTableId, String columnName,
+			boolean automaticallyAdded) {
 		super(id);
 		this.hTableId = hTableId;
 		this.columnName = columnName;
+		this.automaticallyAdded = automaticallyAdded;
 	}
 
 	public String getColumnName() {
@@ -65,7 +72,7 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 	public String getHTableId() {
 		return hTableId;
 	}
-	
+
 	public boolean hasNestedTable() {
 		return nestedTable != null;
 	}
@@ -73,49 +80,57 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 	public HTable getNestedTable() {
 		return nestedTable;
 	}
+	
+	boolean isAutomaticallyAdded() {
+		return automaticallyAdded;
+	}
 
 	public void setNestedTable(HTable nestedTable) {
 		this.nestedTable = nestedTable;
-		//mariam
+		// mariam
 		nestedTable.setParentHNode(this);
 	}
-	
+
 	public void removeNestedTable() {
 		this.nestedTable = null;
+		// Pedro 2012-09-15
+		// TODO: this is wrong.If we remove a nested table we have to go to the
+		// data table and remove if from all the rows.
 	}
 
-	public HTable addNestedTable(String tableName, Worksheet worksheet, RepFactory factory) {
+	public HTable addNestedTable(String tableName, Worksheet worksheet,
+			RepFactory factory) {
 		nestedTable = factory.createHTable(tableName);
-		//mariam
+		// mariam
 		nestedTable.setParentHNode(this);
 		worksheet.addNestedTableToDataTable(this, factory);
 		return nestedTable;
 	}
 
-	//mariam
+	// mariam
 	/**
 	 * Returns the HTable that this node belongs to.
+	 * 
 	 * @param f
-	 * @return
-	 * 		the HTable that this node belongs to.
+	 * @return the HTable that this node belongs to.
 	 */
-	public HTable getHTable(RepFactory f){
+	public HTable getHTable(RepFactory f) {
 		return f.getHTable(hTableId);
 	}
-	
-	//mariam
+
+	// mariam
 	/**
 	 * Returns the HNodePath for this node.
+	 * 
 	 * @param factory
-	 * @return
-	 * 		the HNodePath for this node.
+	 * @return the HNodePath for this node.
 	 */
-	public HNodePath getHNodePath(RepFactory factory){
+	public HNodePath getHNodePath(RepFactory factory) {
 		HNodePath p1 = new HNodePath(this);
-		//get the table that it belongs to
+		// get the table that it belongs to
 		HTable t = factory.getHTable(hTableId);
 		HNode parentNode = t.getParentHNode();
-		if(parentNode!=null){
+		if (parentNode != null) {
 			HNodePath p2 = parentNode.getHNodePath(factory);
 			p1 = HNodePath.concatenate(p2, p1);
 		}
@@ -140,7 +155,8 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 		return columnName.compareTo(other.getColumnName());
 	}
 
-	public JSONArray getJSONArrayRepresentation(RepFactory f) throws JSONException {
+	public JSONArray getJSONArrayRepresentation(RepFactory f)
+			throws JSONException {
 		JSONArray arr = new JSONArray();
 		Stack<HNode> st = new Stack<HNode>();
 		st.push(this);
@@ -151,7 +167,7 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 			t = f.getHTable(parentNode.getHTableId());
 			parentNode = t.getParentHNode();
 		}
-		
+
 		while (!st.isEmpty()) {
 			HNode node = st.pop();
 			JSONObject obj = new JSONObject();

@@ -29,44 +29,60 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author szekely
  * 
  */
 public class Table extends RepEntity {
+
+	@SuppressWarnings("unused")
+	private static Logger logger = LoggerFactory.getLogger(Table.class);
+
+	// The worksheet where I am defined.
+	private final String worksheetId;
+
 	// the HTable that defines my properties
 	private final String hTableId;
 
 	// My rows.
 	private final ArrayList<Row> rows = new ArrayList<Row>();
 
-	//mariam
+	// mariam
 	/**
 	 * The node that this table is a nested table in.
 	 */
 	private Node nestedTableInNode;
-	
-	Table(String id, String hTableId) {
+
+	Table(String myWorksheetId, String id, String hTableId) {
 		super(id);
+		this.worksheetId = myWorksheetId;
 		this.hTableId = hTableId;
 	}
 
-	//mariam
-	public void setNestedTableInNode(Node n){
-		nestedTableInNode=n;
+	// mariam
+	public void setNestedTableInNode(Node n) {
+		nestedTableInNode = n;
 	}
-	public Node getNestedTableInNode(){
+
+	public Node getNestedTableInNode() {
 		return nestedTableInNode;
 	}
-	
+
 	public String getHTableId() {
 		return hTableId;
 	}
 
+	public String getWorksheetId() {
+		return worksheetId;
+	}
+
 	public Row addRow(RepFactory factory) {
-		Row r = factory.createRow(hTableId);
+		Row r = factory.createRow(hTableId, worksheetId);
 		rows.add(r);
-		//mariam
+		// mariam
 		r.setBelongsToTable(this);
 		return r;
 	}
@@ -142,44 +158,83 @@ public class Table extends RepEntity {
 			r.prettyPrint(prefix, pw, factory);
 		}
 	}
-	
+
 	/**
-	 * Populates the nodes Collection (present in the argument) with nodes from the 
-	 * table that satisfy the given path.
-	 * @param path Path to a given column
-	 * @param nodes Collection of nodes that satisfy the path
+	 * Populates the nodes Collection (present in the argument) with nodes from
+	 * the table that satisfy the given path.
+	 * 
+	 * @param path
+	 *            Path to a given column
+	 * @param nodes
+	 *            Collection of nodes that satisfy the path
 	 */
 	public void collectNodes(HNodePath path, Collection<Node> nodes) {
-		if(nodes == null)
+		if (nodes == null)
 			nodes = new ArrayList<Node>();
 		collectNodes(path, nodes, rows);
 	}
-	
-	private void collectNodes(HNodePath path, Collection<Node> nodes, List<Row> rows) {
-		RowIterator:
-		for(Row r : rows) {
+
+	private void collectNodes(HNodePath path, Collection<Node> nodes,
+			List<Row> rows) {
+		RowIterator: for (Row r : rows) {
 			Collection<Node> nodesInRow = r.getNodes();
-			
-			for(Node n : nodesInRow) {
-				if(n.getHNodeId().equals(path.getFirst().getId())) {
+
+			for (Node n : nodesInRow) {
+				if (n.getHNodeId().equals(path.getFirst().getId())) {
 					// Check if the path has only one HNode
-					if(path.getRest() == null || path.getRest().isEmpty()) {
+					if (path.getRest() == null || path.getRest().isEmpty()) {
 						nodes.add(n);
 						continue RowIterator;
 					}
-					
+
 					// Check if the node has a nested table
-					if(n.hasNestedTable()) {
+					if (n.hasNestedTable()) {
 						int numRows = n.getNestedTable().getNumRows();
-						if(numRows == 0)
+						if (numRows == 0)
 							continue RowIterator;
-						
-						List<Row> rowsNestedTable = n.getNestedTable().getRows(0, numRows);
-						if(rowsNestedTable != null && rowsNestedTable.size() != 0)
+
+						List<Row> rowsNestedTable = n.getNestedTable().getRows(
+								0, numRows);
+						if (rowsNestedTable != null
+								&& rowsNestedTable.size() != 0)
 							collectNodes(path.getRest(), nodes, rowsNestedTable);
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * 
+	 * 
+	 * @param value
+	 *            an orphan value is a value that was the value of a node, but
+	 *            the node acquired a nested table, so the value now needs to be
+	 *            reocred in the nested table (this table).
+	 */
+	public void addOrphanValue(CellValue value, RepFactory factory) {
+		HTable hTable = factory.getHTable(hTableId);
+		HNode hNode = hTable.addAutomaticallyGeneratedColumn(
+				HTable.ORPHAN_COLUMN_NAME, factory.getWorksheet(worksheetId),
+				factory);
+
+		// If the nested table is empty we need to add a row where we can store
+		// the value.
+		if (rows.isEmpty()) {
+			addRow(factory);
+		}
+
+		setValueInAllRows(hNode.getId(), value, factory);
+	}
+
+	public void setValueInAllRows(String hNodeId, CellValue value,
+			RepFactory factory) {
+//		logger.info("Setting value of column " + factory.getColumnName(hNodeId) + " to "
+//				+ value.asString());
+		for (Row r : rows) {
+//			logger.info("Setting value of column " + factory.getColumnName(hNodeId) + " in row "
+//					+ r.getId() + " to " + value.asString());
+			r.setValue(hNodeId, value, Node.NodeStatus.original, factory);
 		}
 	}
 }

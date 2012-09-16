@@ -7,45 +7,127 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
-
 import org.json.JSONObject;
-
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.isi.karma.cleaning.features.Data2Features;
 import edu.isi.karma.cleaning.features.Feature;
 import edu.isi.karma.cleaning.features.RegularityFeatureSet;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 
 public class UtilTools {
-	public static Vector<String> results = new Vector<String>();
 	public static int index = 0;
+	public static Vector<String> results = new Vector<String>();
+	public static int multinominalSampler(double[] probs)
+	{
+		Random r = new Random();
+		double x = r.nextDouble();
+		if(x<=probs[0])
+		{
+			return 0;
+		}
+		x -= probs[0];
+		for(int i = 1;i<probs.length;i++)
+		{
+			if(x<=probs[i])
+			{
+				return i;
+			}
+			x -= probs[i];
+		}
+		return 0;
+	}
+
+	public static int randChoose(int n)
+	{
+		Random r = new Random();
+		return r.nextInt(n);
+	}
+	public static String print(Vector<TNode> x)
+	{
+		String str = "";
+		for(TNode t:x)
+			str += t.text;
+		return str;
+	}
+	public static boolean samesteplength(Vector<Integer> s)
+	{
+		if(s.size()<=1)
+			return false;
+		if(s.size() == 2)
+		{
+			if(s.get(1)-s.get(0)>=1)
+			{
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		int span = s.get(1)-s.get(0);
+		for(int i = 2; i<s.size(); i++)
+		{
+			if((s.get(i)-s.get(i-1))!=span)
+				return false;
+		}
+		return true;
+	}
+	public static String escape(String s)
+	{
+		HashMap<String, String> dict = new HashMap<String, String>();
+		dict.put("\\(", "\\\\(");
+		dict.put("\\)", "\\\\)");
+		dict.put("\\+", "\\\\+");
+		dict.put("\\.", "\\\\.");
+		dict.put("\\?", "\\\\?");
+		dict.put("\\$", "\\\\$");
+		dict.put("\\*", "\\\\*");
+		dict.put("\\^", "\\\\^");
+		dict.put("\\]", "\\\\]");
+		dict.put("\\[", "\\\\[");
+		dict.put("\\/", "\\\\/");
+		for(String key:dict.keySet())
+		{
+			s = s.replaceAll(key, dict.get(key));
+		}
+		return s;
+	}
+	public static Vector<TNode> subtokenseqs(int a,int b,Vector<TNode> org)
+	{
+		Vector<TNode> xNodes = new Vector<TNode>();
+		if(a<0||b>=org.size()||a>b)
+		{
+			return null;
+		}
+		else {
+			for(int i = a;i<=b;i++)
+			{
+				xNodes.add(org.get(i));
+			}
+			return xNodes;
+		}
+	}
 	public static void clearTmpVars()
 	{
 		results.clear();
 		index = 0;
 	}
-	//s is the transformed result,seperated by \n
-	//dic contain the former results and their times
-	//tar is the finally result
-	//output the arff file 3 indicates the correct ones otherwise else 
-	public static void clusterResult(String s, HashMap<String,Integer> dic)
-	{
-		if(dic.containsKey(s))
-		{
-			dic.put(s, dic.get(s)+1);
-		}
-		else
-		{
-			dic.put(s, 1);
-		}
-	}
+
 	public static String dic2Arff(String[] dic,String s)
 	{
+		String dirpathString = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH);
+		if(dirpathString.compareTo("")==0)
+		{
+			dirpathString = "./src/main/webapp/";
+		}
 		UtilTools.clearTmpVars();
 		try
 		{
-			CSVWriter cw = new CSVWriter(new FileWriter(new File("./tmp/tmp.csv")),',');
+			CSVWriter cw = new CSVWriter(new FileWriter(new File(dirpathString+"grammar/tmp/tmp.csv")),',');
 			//write header into the csv file
 			Vector<String> tmp = new Vector<String>();
 			Vector<String> tmp1 = new Vector<String>();
@@ -122,8 +204,8 @@ public class UtilTools {
 			}
 			cw.flush();
 			cw.close();
-			Data2Features.csv2arff("./tmp/tmp.csv", "./tmp/tmp.arff");
-			return "./tmp/tmp.arff";
+			Data2Features.csv2arff(dirpathString+"grammar/tmp/tmp.csv", "./src/main/webapp/grammar/tmp/tmp.arff");
+			return dirpathString+"grammar/tmp/tmp.arff";
 		}
 		catch(Exception e)
 		{
@@ -208,6 +290,13 @@ public class UtilTools {
 		}
 		return vds;
 	}
+	public static void main(String[] args)
+	{
+		String s = "+";
+		System.out.println(""+UtilTools.escape(s));
+		//System.out.println(""+s.replace("(", "\\("));
+	}
+
 }
 //used to sort the score in decend order
 class ScoreObj

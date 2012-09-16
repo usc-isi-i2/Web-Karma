@@ -208,7 +208,7 @@ public class OfflineDbRdfGenerator {
 	        Row row = dataTable.addRow(factory);
 			for (int i = 1; i <= meta.getColumnCount(); i++) {
 				String val = r.getString(i);
-				row.setValue(headersList.get(i-1), val);
+				row.setValue(headersList.get(i-1), val, factory);
 			}
 			counter++;
 		}

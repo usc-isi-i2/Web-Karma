@@ -29,9 +29,10 @@ public class TNode{
 	public static final int NUMTYP = 1;
 	public static final int SYBSTYP = 2;
 	public static final int BNKTYP = 3;
-	public static final int WRDTYP = 4;
+	public static final int UWRDTYP = 4;
 	public static final int STARTTYP = 5;
 	public static final int ENDTYP = 6;
+	public static final int LWRDTYP = 7;
 	public static final String ANYTOK = "ANYTOK";
 	public static final int ANYNUM = Integer.MAX_VALUE;
 	public int type;
@@ -64,10 +65,6 @@ public class TNode{
 		{
 			return "Number";
 		}
-		else if(type == TNode.WRDTYP)
-		{
-			return "Word";
-		}
 		else if(type == TNode.SYBSTYP)
 		{
 			return "Symbol";
@@ -98,10 +95,6 @@ public class TNode{
 		else if(stype.compareTo("Number")==0)
 		{
 			type = TNode.NUMTYP;
-		}
-		else if(stype.compareTo("Word")==0)
-		{
-			type = TNode.WRDTYP;
 		}
 		else if(stype.compareTo("Symbol")==0)
 		{

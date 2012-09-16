@@ -25,11 +25,16 @@ package edu.isi.karma.rep;
 
 import java.io.PrintWriter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author szekely
  * 
  */
 public class Node extends RepEntity {
+
+	private static Logger logger = LoggerFactory.getLogger(Node.class);
 
 	public enum NodeStatus {
 		original("O"), edited("E");
@@ -54,38 +59,41 @@ public class Node extends RepEntity {
 	private NodeStatus status = NodeStatus.original;
 
 	// The value stored in this cell.
-	private CellValue value = StringCellValue.getEmptyString();
+	private CellValue value = CellValue.getEmptyValue();
 
-	private CellValue originalValue = StringCellValue.getEmptyString();
+	private CellValue originalValue = CellValue.getEmptyValue();
 
-	//mariam
+	// mariam
 	/**
 	 * The row that this node belongs to
 	 */
 	private Row belongsToRow;
-	
+
 	Node(String id, String hNodeId) {
 		super(id);
 		this.hNodeId = hNodeId;
 	}
 
-	//mariam
-	public void setBelongsToRow(Row row){
-		belongsToRow=row;
+	// mariam
+	public void setBelongsToRow(Row row) {
+		belongsToRow = row;
 	}
-	public Row getBelongsToRow(){
+
+	public Row getBelongsToRow() {
 		return belongsToRow;
 	}
+
 	/**
 	 * Return the table that this node belongs to.
-	 * @return
-	 * 		the table that this node belongs to.
+	 * 
+	 * @return the table that this node belongs to.
 	 */
-	public Table getParentTable(){
+	public Table getParentTable() {
 		return belongsToRow.getBelongsToTable();
 	}
-	///////////////
-	
+
+	// /////////////
+
 	public String getHNodeId() {
 		return hNodeId;
 	}
@@ -102,29 +110,48 @@ public class Node extends RepEntity {
 		return value;
 	}
 
-	public void setValue(CellValue value, NodeStatus status) {
+	public void setValue(CellValue value, NodeStatus status, RepFactory factory) {
 		this.value = value;
 		this.status = status;
+		// Pedro 2012/09/14
+		if (nestedTable != null) {
+			logger.info("Node in column '" + factory.getColumnName(hNodeId)
+					+ "' contains both value and nested table: " + toString()
+					+ " -- setting value '" + value.asString() + "'");
+			nestedTable.addOrphanValue(value, factory);
+		}
 	}
-	
+
 	public void clearValue(NodeStatus status) {
-		this.value = null;
+		// pedro 2012-09-15: this was wrong because it was setting the value to
+		// null.
+		this.value = CellValue.getEmptyValue();
 		this.status = status;
 	}
 
-	public void setValue(String value, NodeStatus status) {
-		setValue(new StringCellValue(value), status);
+	public void setValue(String value, NodeStatus status, RepFactory factory) {
+		setValue(new StringCellValue(value), status, factory);
 	}
 
 	public Table getNestedTable() {
 		return nestedTable;
 	}
 
-	public void setNestedTable(Table nestedTable) {
+	public void setNestedTable(Table nestedTable, RepFactory factory) {
 		this.nestedTable = nestedTable;
-		//mariam
-		if(nestedTable != null)
+		// mariam
+		if (nestedTable != null) {
 			nestedTable.setNestedTableInNode(this);
+			// pedro 2012-09-15
+			if (!value.isEmptyValue()) {
+				logger.info("Node in column '"
+						+ factory.getColumnName(hNodeId)
+						+ "' contains both value and nested table: "
+						+ toString() + " -- setting value '" + value.asString()
+						+ "'");
+				nestedTable.addOrphanValue(value, factory);
+			}
+		}
 	}
 
 	public boolean hasNestedTable() {

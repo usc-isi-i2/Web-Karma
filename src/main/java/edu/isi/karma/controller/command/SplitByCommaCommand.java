@@ -139,8 +139,9 @@ public class SplitByCommaCommand extends WorksheetCommand {
 		wk.getDataTable().collectNodes(selectedPath, nodes);
 
 		for (Node node : nodes) {
-			node.setNestedTable(null);
-			node.setValue(oldNodeValueMap.get(node), oldNodeStatusMap.get(node));
+			//pedro 2012-09-15 this does not look correct.
+			node.setNestedTable(null, vWorkspace.getRepFactory());
+			node.setValue(oldNodeValueMap.get(node), oldNodeStatusMap.get(node), vWorkspace.getRepFactory());
 		}
 
 		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, wk,

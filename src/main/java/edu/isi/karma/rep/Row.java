@@ -37,12 +37,12 @@ public class Row extends RepEntity {
 	// to Node.
 	private final Map<String, Node> nodes = new HashMap<String, Node>();
 
-	//mariam
+	// mariam
 	/**
-	 * The table that this row belongs to 
+	 * The table that this row belongs to
 	 */
 	private Table belongsToTable;
-	
+
 	Row(String id) {
 		super(id);
 	}
@@ -55,26 +55,46 @@ public class Row extends RepEntity {
 		return nodes.values();
 	}
 
-	//mariam
-	/** Returns all nodes and associated HNodeIds.
-	 * @return
-	 * 		all nodes and associated HNodeIds.
+	// mariam
+	/**
+	 * Returns all nodes and associated HNodeIds.
+	 * 
+	 * @return all nodes and associated HNodeIds.
 	 */
 	public Map<String, Node> getNodesMap() {
 		return nodes;
 	}
-	public void setBelongsToTable(Table t){
-		belongsToTable=t;
+
+	public void setBelongsToTable(Table t) {
+		belongsToTable = t;
 	}
-	public Table getBelongsToTable(){
+
+	public Table getBelongsToTable() {
 		return belongsToTable;
 	}
-	/////////////////
-	
+
+	public String getWorksheetId() {
+		return belongsToTable.getWorksheetId();
+	}
+
+	// ///////////////
+
 	void addNode(Node node) {
 		nodes.put(node.getHNodeId(), node);
-		//mariam
+		// mariam
 		node.setBelongsToRow(this);
+	}
+
+	/**
+	 * @param hNodeId
+	 * @param value
+	 * @param status
+	 * @return the row containing the modified node.
+	 */
+	public Row setValue(String hNodeId, CellValue value,
+			Node.NodeStatus status, RepFactory factory) {
+		getNode(hNodeId).setValue(value, status, factory);
+		return this;
 	}
 
 	/**
@@ -86,8 +106,9 @@ public class Row extends RepEntity {
 	 *            specifies the status of the value
 	 * @return the row containing the modified node.
 	 */
-	public Row setValue(String hNodeId, String value, Node.NodeStatus status) {
-		getNode(hNodeId).setValue(value, status);
+	public Row setValue(String hNodeId, String value, Node.NodeStatus status,
+			RepFactory factory) {
+		getNode(hNodeId).setValue(value, status, factory);
 		return this;
 	}
 
@@ -98,8 +119,8 @@ public class Row extends RepEntity {
 	 * @param value
 	 * @return the row containing the modified node.
 	 */
-	public Row setValue(String hNodeId, String value) {
-		return setValue(hNodeId, value, Node.NodeStatus.original);
+	public Row setValue(String hNodeId, String value, RepFactory factory) {
+		return setValue(hNodeId, value, Node.NodeStatus.original, factory);
 	}
 
 	/**
@@ -123,19 +144,20 @@ public class Row extends RepEntity {
 		}
 	}
 
-	//mariam
-	public String toString(){
+	// mariam
+	public String toString() {
 		String s = "ROW:\n";
 		for (Node n : nodes.values()) {
-			s +=n.toString();
+			s += n.toString();
 		}
 		return s;
 	}
-	
+
 	void addNodeToDataTable(HNode newHNode, Table table, RepFactory factory) {
 		HTable ht = factory.getHTable(table.getHTableId());
 		if (ht.contains(newHNode)) {
-			Node newNode = factory.createNode(newHNode.getId());
+			Node newNode = factory.createNode(newHNode.getId(),
+					getWorksheetId());
 			addNode(newNode);
 		} else {
 			// We don't know where the nested table is, so we have to
@@ -154,10 +176,17 @@ public class Row extends RepEntity {
 		Node node = getNode(hNode.getId());
 		if (node != null) {
 			// This table does contain this hNode.
-			Table nestedTable = factory.createTable(hNode.getNestedTable().getId());
-			node.setNestedTable(nestedTable);
+			Table nestedTable = factory.createTable(hNode.getNestedTable()
+					.getId(), getWorksheetId());
+			node.setNestedTable(nestedTable, factory);
+			// If the node has a value, we have to move the value to the
+			// nestedTable given that we cannot have both.
+			if (!node.getValue().isEmptyValue()) {
+				nestedTable.addOrphanValue(node.getValue(), factory);
+			}
 		} else {
-			// The node may be in one of the nested tables. We have to look for it.
+			// The node may be in one of the nested tables. We have to look for
+			// it.
 			for (Node n : nodes.values()) {
 				Table nestedTable = n.getNestedTable();
 				if (nestedTable != null) {

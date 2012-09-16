@@ -25,6 +25,17 @@ package edu.isi.karma.rep;
  * 
  */
 public abstract class CellValue {
+
+	private static CellValue emptyValue = new StringCellValue("");
+
+	public static CellValue getEmptyValue() {
+		return emptyValue;
+	}
+
+	public boolean isEmptyValue() {
+		return this == emptyValue;
+	}
+
 	// Return the value as a string.
 	public abstract String asString();
 

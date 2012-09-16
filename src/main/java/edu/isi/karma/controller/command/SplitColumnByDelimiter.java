@@ -41,12 +41,13 @@ public class SplitColumnByDelimiter {
 		this.delimiter = delimiter;
 		this.workspace = workspace;
 	}
-	
+
 	public String getSplitValueHNodeID() {
 		return splitValueHNodeID;
 	}
 
-	public void split(HashMap<Node, CellValue> oldNodeValueMap, HashMap<Node, NodeStatus> oldNodeStatusMap) {
+	public void split(HashMap<Node, CellValue> oldNodeValueMap,
+			HashMap<Node, NodeStatus> oldNodeStatusMap) {
 		RepFactory factory = workspace.getFactory();
 		HNode hNode = factory.getHNode(hNodeId);
 
@@ -65,7 +66,7 @@ public class SplitColumnByDelimiter {
 				break;
 			}
 		}
-		
+
 		// Convert the delimiter into character primitive type
 		char delimiterChar = ',';
 		if (delimiter.equalsIgnoreCase("space"))
@@ -79,17 +80,17 @@ public class SplitColumnByDelimiter {
 		// Add the nested new HTable to the hNode
 		HTable newTable = hNode.addNestedTable("Comma Split Values", worksheet,
 				factory);
-		splitValueHNodeID = newTable.addHNode("Values", worksheet,
-				factory).getId();
+		splitValueHNodeID = newTable.addHNode("Values", worksheet, factory)
+				.getId();
 
 		Collection<Node> nodes = new ArrayList<Node>();
 		worksheet.getDataTable().collectNodes(selectedPath, nodes);
 
 		for (Node node : nodes) {
 			String originalVal = node.getValue().asString();
-			if(oldNodeValueMap != null)
+			if (oldNodeValueMap != null)
 				oldNodeValueMap.put(node, node.getValue());
-			if(oldNodeStatusMap != null)
+			if (oldNodeStatusMap != null)
 				oldNodeStatusMap.put(node, node.getStatus());
 
 			if (originalVal != null && !originalVal.equals("")) {
@@ -110,7 +111,7 @@ public class SplitColumnByDelimiter {
 						if (!rowVal.trim().equals("")) {
 							Row row = table.addRow(factory);
 							row.setValue(splitValueHNodeID, rowVal,
-									NodeStatus.edited);
+									NodeStatus.edited, factory);
 						}
 					}
 				} catch (IOException e) {

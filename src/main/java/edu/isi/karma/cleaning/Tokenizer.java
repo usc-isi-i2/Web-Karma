@@ -1,12 +1,9 @@
-// $ANTLR 3.4 Tokenizer.g 2012-04-22 17:35:00
+// $ANTLR 3.4 Tokenizer.g 2012-08-31 09:41:11
 package edu.isi.karma.cleaning;
-import org.antlr.runtime.CharStream;
-import org.antlr.runtime.EarlyExitException;
-import org.antlr.runtime.Lexer;
-import org.antlr.runtime.MismatchedSetException;
-import org.antlr.runtime.NoViableAltException;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.RecognizerSharedState;
+import org.antlr.runtime.*;
+import java.util.Stack;
+import java.util.List;
+import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked"})
 public class Tokenizer extends Lexer {
@@ -16,12 +13,13 @@ public class Tokenizer extends Lexer {
     public static final int END=6;
     public static final int LETTER=7;
     public static final int LOWER=8;
-    public static final int NUMBER=9;
-    public static final int START=10;
-    public static final int SYBS=11;
-    public static final int SYMBOL=12;
-    public static final int UPPER=13;
-    public static final int WORD=14;
+    public static final int LWRD=9;
+    public static final int NUMBER=10;
+    public static final int START=11;
+    public static final int SYBS=12;
+    public static final int SYMBOL=13;
+    public static final int UPPER=14;
+    public static final int UWRD=15;
 
     // delegates
     // delegators
@@ -67,22 +65,51 @@ public class Tokenizer extends Lexer {
     }
     // $ANTLR end "BLANK"
 
-    // $ANTLR start "WORD"
-    public final void mWORD() throws RecognitionException {
+    // $ANTLR start "UWRD"
+    public final void mUWRD() throws RecognitionException {
         try {
-            int _type = WORD;
+            int _type = UWRD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Tokenizer.g:4:5: ( ( LETTER )+ )
-            // Tokenizer.g:4:6: ( LETTER )+
+            // Tokenizer.g:4:6: ( UPPER )
+            // Tokenizer.g:
             {
-            // Tokenizer.g:4:6: ( LETTER )+
+            if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z') ) {
+                input.consume();
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;
+            }
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "UWRD"
+
+    // $ANTLR start "LWRD"
+    public final void mLWRD() throws RecognitionException {
+        try {
+            int _type = LWRD;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // Tokenizer.g:5:6: ( ( LOWER )+ )
+            // Tokenizer.g:5:8: ( LOWER )+
+            {
+            // Tokenizer.g:5:8: ( LOWER )+
             int cnt1=0;
             loop1:
             do {
                 int alt1=2;
                 int LA1_0 = input.LA(1);
 
-                if ( ((LA1_0 >= 'A' && LA1_0 <= 'Z')||(LA1_0 >= 'a' && LA1_0 <= 'z')) ) {
+                if ( ((LA1_0 >= 'a' && LA1_0 <= 'z')) ) {
                     alt1=1;
                 }
 
@@ -91,7 +118,7 @@ public class Tokenizer extends Lexer {
             	case 1 :
             	    // Tokenizer.g:
             	    {
-            	    if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
+            	    if ( (input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
             	        input.consume();
             	    }
             	    else {
@@ -123,17 +150,17 @@ public class Tokenizer extends Lexer {
         	// do for sure before leaving
         }
     }
-    // $ANTLR end "WORD"
+    // $ANTLR end "LWRD"
 
     // $ANTLR start "NUMBER"
     public final void mNUMBER() throws RecognitionException {
         try {
             int _type = NUMBER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Tokenizer.g:5:7: ( ( DIGIT )+ )
-            // Tokenizer.g:5:9: ( DIGIT )+
+            // Tokenizer.g:6:7: ( ( DIGIT )+ )
+            // Tokenizer.g:6:9: ( DIGIT )+
             {
-            // Tokenizer.g:5:9: ( DIGIT )+
+            // Tokenizer.g:6:9: ( DIGIT )+
             int cnt2=0;
             loop2:
             do {
@@ -188,7 +215,7 @@ public class Tokenizer extends Lexer {
         try {
             int _type = SYBS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Tokenizer.g:6:5: ( ( SYMBOL ) )
+            // Tokenizer.g:7:5: ( ( SYMBOL ) )
             // Tokenizer.g:
             {
             if ( input.LA(1)=='!'||(input.LA(1) >= '#' && input.LA(1) <= '/')||(input.LA(1) >= ':' && input.LA(1) <= '@')||(input.LA(1) >= '[' && input.LA(1) <= '`')||(input.LA(1) >= '{' && input.LA(1) <= '~') ) {
@@ -217,8 +244,8 @@ public class Tokenizer extends Lexer {
         try {
             int _type = START;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Tokenizer.g:7:7: ( '<_START>' )
-            // Tokenizer.g:7:9: '<_START>'
+            // Tokenizer.g:8:7: ( '<_START>' )
+            // Tokenizer.g:8:9: '<_START>'
             {
             match("<_START>"); 
 
@@ -240,8 +267,8 @@ public class Tokenizer extends Lexer {
         try {
             int _type = END;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Tokenizer.g:8:5: ( '<_END>' )
-            // Tokenizer.g:8:7: '<_END>'
+            // Tokenizer.g:9:5: ( '<_END>' )
+            // Tokenizer.g:9:7: '<_END>'
             {
             match("<_END>"); 
 
@@ -261,7 +288,7 @@ public class Tokenizer extends Lexer {
     // $ANTLR start "SYMBOL"
     public final void mSYMBOL() throws RecognitionException {
         try {
-            // Tokenizer.g:11:2: ( '!' | '#' .. '/' | ':' .. '@' | '[' .. '`' | '{' .. '~' )
+            // Tokenizer.g:12:2: ( '!' | '#' .. '/' | ':' .. '@' | '[' .. '`' | '{' .. '~' )
             // Tokenizer.g:
             {
             if ( input.LA(1)=='!'||(input.LA(1) >= '#' && input.LA(1) <= '/')||(input.LA(1) >= ':' && input.LA(1) <= '@')||(input.LA(1) >= '[' && input.LA(1) <= '`')||(input.LA(1) >= '{' && input.LA(1) <= '~') ) {
@@ -287,7 +314,7 @@ public class Tokenizer extends Lexer {
     // $ANTLR start "LETTER"
     public final void mLETTER() throws RecognitionException {
         try {
-            // Tokenizer.g:13:2: ( LOWER | UPPER )
+            // Tokenizer.g:14:2: ( LOWER | UPPER )
             // Tokenizer.g:
             {
             if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
@@ -313,7 +340,7 @@ public class Tokenizer extends Lexer {
     // $ANTLR start "LOWER"
     public final void mLOWER() throws RecognitionException {
         try {
-            // Tokenizer.g:15:2: ( 'a' .. 'z' )
+            // Tokenizer.g:16:2: ( 'a' .. 'z' )
             // Tokenizer.g:
             {
             if ( (input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
@@ -339,7 +366,7 @@ public class Tokenizer extends Lexer {
     // $ANTLR start "UPPER"
     public final void mUPPER() throws RecognitionException {
         try {
-            // Tokenizer.g:17:2: ( 'A' .. 'Z' )
+            // Tokenizer.g:18:2: ( 'A' .. 'Z' )
             // Tokenizer.g:
             {
             if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z') ) {
@@ -365,7 +392,7 @@ public class Tokenizer extends Lexer {
     // $ANTLR start "DIGIT"
     public final void mDIGIT() throws RecognitionException {
         try {
-            // Tokenizer.g:18:16: ( '0' .. '9' )
+            // Tokenizer.g:19:16: ( '0' .. '9' )
             // Tokenizer.g:
             {
             if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
@@ -389,8 +416,8 @@ public class Tokenizer extends Lexer {
     // $ANTLR end "DIGIT"
 
     public void mTokens() throws RecognitionException {
-        // Tokenizer.g:1:8: ( BLANK | WORD | NUMBER | SYBS | START | END )
-        int alt3=6;
+        // Tokenizer.g:1:8: ( BLANK | UWRD | LWRD | NUMBER | SYBS | START | END )
+        int alt3=7;
         switch ( input.LA(1) ) {
         case '\t':
         case '\n':
@@ -427,6 +454,10 @@ public class Tokenizer extends Lexer {
         case 'X':
         case 'Y':
         case 'Z':
+            {
+            alt3=2;
+            }
+            break;
         case 'a':
         case 'b':
         case 'c':
@@ -454,7 +485,7 @@ public class Tokenizer extends Lexer {
         case 'y':
         case 'z':
             {
-            alt3=2;
+            alt3=3;
             }
             break;
         case '0':
@@ -468,32 +499,32 @@ public class Tokenizer extends Lexer {
         case '8':
         case '9':
             {
-            alt3=3;
+            alt3=4;
             }
             break;
         case '<':
             {
-            int LA3_4 = input.LA(2);
+            int LA3_5 = input.LA(2);
 
-            if ( (LA3_4=='_') ) {
-                int LA3_6 = input.LA(3);
+            if ( (LA3_5=='_') ) {
+                int LA3_7 = input.LA(3);
 
-                if ( (LA3_6=='S') ) {
-                    alt3=5;
-                }
-                else if ( (LA3_6=='E') ) {
+                if ( (LA3_7=='S') ) {
                     alt3=6;
+                }
+                else if ( (LA3_7=='E') ) {
+                    alt3=7;
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("", 3, 6, input);
+                        new NoViableAltException("", 3, 7, input);
 
                     throw nvae;
 
                 }
             }
             else {
-                alt3=4;
+                alt3=5;
             }
             }
             break;
@@ -528,7 +559,7 @@ public class Tokenizer extends Lexer {
         case '}':
         case '~':
             {
-            alt3=4;
+            alt3=5;
             }
             break;
         default:
@@ -549,39 +580,47 @@ public class Tokenizer extends Lexer {
                 }
                 break;
             case 2 :
-                // Tokenizer.g:1:16: WORD
+                // Tokenizer.g:1:16: UWRD
                 {
-                mWORD(); 
+                mUWRD(); 
 
 
                 }
                 break;
             case 3 :
-                // Tokenizer.g:1:21: NUMBER
+                // Tokenizer.g:1:21: LWRD
+                {
+                mLWRD(); 
+
+
+                }
+                break;
+            case 4 :
+                // Tokenizer.g:1:26: NUMBER
                 {
                 mNUMBER(); 
 
 
                 }
                 break;
-            case 4 :
-                // Tokenizer.g:1:28: SYBS
+            case 5 :
+                // Tokenizer.g:1:33: SYBS
                 {
                 mSYBS(); 
 
 
                 }
                 break;
-            case 5 :
-                // Tokenizer.g:1:33: START
+            case 6 :
+                // Tokenizer.g:1:38: START
                 {
                 mSTART(); 
 
 
                 }
                 break;
-            case 6 :
-                // Tokenizer.g:1:39: END
+            case 7 :
+                // Tokenizer.g:1:44: END
                 {
                 mEND(); 
 

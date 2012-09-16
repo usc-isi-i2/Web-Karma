@@ -112,7 +112,25 @@ function handleCleanColumnButton() {
 		}
 	});
 }
-
+function movetop(keys)
+{
+	if(keys == undefined)
+	{
+		return;
+	}
+	if(keys.length == 0)
+	{
+		return;
+	}
+	var cleaningTable = $("table#cleaningExamplesTable");
+	for(var i = 0; i<keys.length ; i++)
+	{
+		var trtag = $("tr#" + keys[i] + "_cl_row");
+		//trtag.data("nodeId", nodeId).data("originalVal", $("td#" + nodeId + "_origVal", cleaningTable).text())
+		$("tr#" + keys[i] + "_cl_row").detach();
+		$("tr",cleaningTable).eq(1).after(trtag);
+	}
+}
 function populateResult(rdata) {
 	var examples = $("div#columnHeadingDropDownMenu").data("cleaningExamples", examples);
 	var cleaningTable = $("table#cleaningExamplesTable");
@@ -121,7 +139,9 @@ function populateResult(rdata) {
 	// Remove the old results
 	$("td.ruleResultsValue_rest", cleaningTable).remove();
 	//$("td.ruleResultsValue_begin", cleaningTable).remove();
-	var data = rdata["data"];
+	
+	movetop(rdata["top"]);
+	var data = rdata["data"];	
 	$.each(data, function(nodeId, xval) {
 		var trTag = $("tr#" + nodeId + "_cl_row");
 		if(trTag != null) {
@@ -183,6 +203,7 @@ function populateResult(rdata) {
 			}))))))
 		}
 	});
+	
 }
 
 // input: data shows resultual varations for each nodeID
@@ -375,10 +396,12 @@ function updateResult() {
 		}
 	});
 	//generate rules and apply them to test data
-	if(newdata.length == 0) {
+	if(newdata.length == 0) 
+	{
 		showCleanningWaitingSignOnScreen();
 		handleGenerateCleaningRulesButton();
-	} else// use the trimmed data
+	} 
+	else// use the trimmed data
 	{
 		populateResult(newdata[0]);
 		var pdata = getVaritions(newdata);

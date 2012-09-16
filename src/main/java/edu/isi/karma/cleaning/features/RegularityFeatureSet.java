@@ -56,21 +56,25 @@ public class RegularityFeatureSet implements FeatureSet {
 		while(t.getType()!=-1)
 		{
 			int mytype = -1;
-			if(t.getType()==12)
+			if(t.getType()==15)
 			{
-				mytype = TNode.WRDTYP;
+				mytype = TNode.UWRDTYP;
 			}
 			else if(t.getType() == 4)
 			{
 				mytype = TNode.BNKTYP;
 			}
-			else if(t.getType() == 8)
+			else if(t.getType() == 10)
 			{
 				mytype = TNode.NUMTYP;
 			}
-			else if(t.getType() == 9)
+			else if(t.getType() == 12)
 			{
 				mytype = TNode.SYBSTYP;
+			}
+			else if(t.getType() == 9)
+			{
+				mytype = TNode.LWRDTYP;
 			}
 			TNode tx = new TNode(mytype,t.getText());
 			x.add(tx);
@@ -119,20 +123,26 @@ public class RegularityFeatureSet implements FeatureSet {
 		li1.add(t1);
 		CntFeature cf1 = new CntFeature(this.otokenseqs,this.tokenseqs,li1);
 		cf1.setName("entr_cnt_syb");
-		TNode t2 = new TNode(TNode.WRDTYP,TNode.ANYTOK);
+		TNode t2 = new TNode(TNode.LWRDTYP,TNode.ANYTOK);
 		Vector<TNode> li2 = new Vector<TNode>();
 		li2.add(t2);
 		CntFeature cf2 = new CntFeature(this.otokenseqs,this.tokenseqs,li2);
-		cf2.setName("entr_cnt_wrd");
+		cf2.setName("entr_cnt_lwrd");
 		TNode t3 = new TNode(TNode.NUMTYP,TNode.ANYTOK);
 		Vector<TNode> li3 = new Vector<TNode>();
 		li3.add(t3);
 		CntFeature cf3 = new CntFeature(this.otokenseqs,this.tokenseqs,li3);
 		cf3.setName("entr_cnt_num");
+		/*TNode t4 = new TNode(TNode.UWRDTYP,TNode.ANYTOK);
+		Vector<TNode> li4 = new Vector<TNode>();
+		li3.add(t4);
+		CntFeature cf4 = new CntFeature(this.otokenseqs,this.tokenseqs,li4);
+		cf3.setName("entr_cnt_num");*/
 		cntfs.add(cf); 
 		cntfs.add(cf1);
 		cntfs.add(cf2);
 		cntfs.add(cf3);
+		//cntfs.add(cf4);
 		r.addAll(cntfs);
 		r.addAll(movfs);
 		for(int i= 0; i<r.size();i++)
@@ -211,78 +221,4 @@ public class RegularityFeatureSet implements FeatureSet {
 		
 	}
 }
-class CntFeature implements Feature{
-	String name = "";
-	double score = 0.0;
-	Vector<TNode> pa;
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-	public CntFeature(ArrayList<Vector<TNode>> v,ArrayList<Vector<TNode>> n,Vector<TNode> t)
-	{
-		pa = t;
-		score= calFeatures(v,n);
-	}
-	// x is the old y is the new example
-	public double calFeatures(ArrayList<Vector<TNode>> x,ArrayList<Vector<TNode>> y)
-	{
-		HashMap<Integer,Integer> tmp = new HashMap<Integer,Integer>();
-		for(int i = 0; i<x.size();i++)
-		{
-			int cnt = 0;
-			Vector<TNode> z = x.get(i);
-			Vector<TNode> z1 = y.get(i);
-			int bpos = 0;
-			int p = 0;
-			int bpos1 = 0;
-			int p1 = 0;
-			int cnt1 = 0;
-			while (p!=-1)
-			{
-				p = Ruler.Search(z, pa, bpos);
-				if(p==-1)
-					break;
-				bpos = p+1;
-				cnt++;
-			}
-			while (p1!=-1)
-			{
-				p1 = Ruler.Search(z1, pa, bpos1);
-				if(p1==-1)
-					break;
-				bpos1 = p1+1;
-				cnt1++;
-			}
-			//use the minus value to compute homogenenity 
-			cnt = cnt - cnt1;
-			if(tmp.containsKey(cnt))
-			{
-				tmp.put(cnt, tmp.get(cnt)+1);
-			}
-			else
-			{
-				tmp.put(cnt, 1);
-			}
-		}
-		Integer a[] = new Integer[tmp.keySet().size()];
-		tmp.values().toArray(a);
-		int b[] = new int[a.length];
-		for(int i = 0; i<a.length;i++)
-		{
-			b[i] = a[i].intValue();
-		}
-		return RegularityFeatureSet.calShannonEntropy(b)*1.0/Math.log(x.size());
-	}
-	@Override
-	public String getName() {
-		
-		return this.name;
-	}
-	
-	@Override
-	public double getScore() {
-		
-		return score;
-	}	
-}
+

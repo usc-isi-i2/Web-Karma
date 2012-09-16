@@ -87,7 +87,7 @@ public class DatabaseTableImport {
         	Row row = dataTable.addRow(factory);
         	ArrayList<String> rowData = data.get(i);
 			for (int j = 0; j < rowData.size(); j++) {
-				row.setValue(headersList.get(j), rowData.get(j));
+				row.setValue(headersList.get(j), rowData.get(j), factory);
 			}
         }
         
