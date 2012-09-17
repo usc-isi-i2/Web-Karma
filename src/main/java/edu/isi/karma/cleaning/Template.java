@@ -3,28 +3,43 @@ package edu.isi.karma.cleaning;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.python.antlr.PythonParser.else_clause_return;
+import org.python.apache.xerces.xni.grammars.Grammar;
+
 public class Template implements GrammarTreeNode{
-	public Vector<GrammarTreeNode> segmentlist = new Vector<GrammarTreeNode>();
+	public Vector<HashMap<String,GrammarTreeNode>> segmentlist = new Vector<HashMap<String,GrammarTreeNode>>();
 	public Vector<Vector<Segment>> examples = new Vector<Vector<Segment>>();
 	public Vector<TNode> org;
 	public Vector<TNode> tar;
 	public boolean isinloop = false;
-	public Template(Vector<GrammarTreeNode> list)
+	public Template(Vector<GrammarTreeNode> vgt,int t)
+	{
+		Vector<HashMap<String,GrammarTreeNode>> list = new Vector<HashMap<String,GrammarTreeNode>>();
+		for(int i=0;i<vgt.size();i++)
+		{
+			HashMap<String, GrammarTreeNode> x = new HashMap<String, GrammarTreeNode>();
+			x.put(vgt.get(i).toString(), vgt.get(i));
+			list.add(x);
+		}
+		this.segmentlist = list;
+	}
+	public Template(Vector<HashMap<String,GrammarTreeNode>> list)
 	{
 		this.segmentlist = list;
 	}
 	public int size()
 	{
 		int size = 0;
-		for(GrammarTreeNode gt:this.segmentlist)
+		for(HashMap<String,GrammarTreeNode> gt:this.segmentlist)
 		{
-			if(gt.getNodeType().compareTo("segment")==0)
+			GrammarTreeNode node = gt.get(gt.keySet().iterator().next());
+			if(node.getNodeType().compareTo("segment")==0)
 			{
 				size+= 1;
 			}
-			else if(gt.getNodeType().compareTo("loop")==0)
+			else if(node.getNodeType().compareTo("loop")==0)
 			{
-				size += ((Loop)gt).loopbody.size();
+				size += ((Loop)node).loopbody.size();
 			}
 		}
 		return size;
@@ -46,6 +61,7 @@ public class Template implements GrammarTreeNode{
 		}
 		return reString;
 	}
+	//only applicable for initialization.
 	public Vector<Template> produceVariations()
 	{
 		Vector<Template> vars = new Vector<Template>();
@@ -53,7 +69,7 @@ public class Template implements GrammarTreeNode{
 		HashMap<String, Vector<Integer>> adds = new HashMap<String,Vector<Integer>>();
 		for(int i = 0; i<this.segmentlist.size(); i++)
 		{
-			String s = this.getDescription(this.segmentlist.get(i));
+			String s = this.getDescription(this.segmentlist.get(i).get(this.segmentlist.get(i).keySet().iterator().next()));
 			if(adds.containsKey(s))
 			{
 				adds.get(s).add(i);
@@ -85,16 +101,17 @@ public class Template implements GrammarTreeNode{
 		{
 			int startpos = rep.get(0);
 			int endpos = rep.get(rep.size()-1);
-			Segment seg = (Segment)segmentlist.get(startpos);
+			Segment seg = (Segment)segmentlist.get(startpos).get(segmentlist.get(startpos).keySet().iterator().next());
 			for(int i=0;i<this.segmentlist.size();i++)
 			{
+				Segment segb =  (Segment)segmentlist.get(i).get(segmentlist.get(i).keySet().iterator().next());
 				if(i<startpos)
 				{
-					nodelist.add(segmentlist.get(i));
+					nodelist.add(segb);
 				}
 				else if(i>= startpos+1 && i<=endpos)
 				{
-					seg = seg.mergewith((Segment)segmentlist.get(i));
+					seg = seg.mergewith(segb);
 					if(seg == null)
 						return null;
 					if(i==endpos)
@@ -107,7 +124,7 @@ public class Template implements GrammarTreeNode{
 				}
 				else if(i>endpos)
 				{
-					nodelist.add(segmentlist.get(i));
+					nodelist.add(segb);
 				}
 			}
 		}
@@ -122,7 +139,8 @@ public class Template implements GrammarTreeNode{
 				Vector<GrammarTreeNode> lbody = new Vector<GrammarTreeNode>();
 				for(int i = startpos; i<startpos+span; i++)
 				{
-					lbody.add(segmentlist.get(i));
+					Segment segb =  (Segment)segmentlist.get(i).get(segmentlist.get(i).keySet().iterator().next());
+					lbody.add(segb);
 				}
 				Loop lp = new Loop(lbody);
 				for(int k = 1; k<=rep.size()-1; k++)
@@ -130,7 +148,8 @@ public class Template implements GrammarTreeNode{
 					Vector<GrammarTreeNode> tmp = new Vector<GrammarTreeNode>();
 					for(int i = rep.get(k); i<span+rep.get(k);i++)
 					{
-						tmp.add(segmentlist.get(i));
+						Segment segb =  (Segment)segmentlist.get(i).get(segmentlist.get(i).keySet().iterator().next());
+						tmp.add(segb);
 					}
 					Loop lpn = new Loop(tmp);
 					lp = lp.mergewith(lpn);
@@ -139,9 +158,10 @@ public class Template implements GrammarTreeNode{
 				}
 				for(int i = 0; i<this.segmentlist.size();i++)
 				{
+					Segment segb =  (Segment)segmentlist.get(i).get(segmentlist.get(i).keySet().iterator().next());
 					if(i<startpos)
 					{
-						nodelist.add(segmentlist.get(i));
+						nodelist.add(segb);
 					}
 					if(i==endpos+span-1)
 					{
@@ -149,7 +169,7 @@ public class Template implements GrammarTreeNode{
 					}
 					else if(i>= endpos+span)
 					{
-						nodelist.add(segmentlist.get(i));
+						nodelist.add(segb);
 					}
 				}
 			}
@@ -160,7 +180,8 @@ public class Template implements GrammarTreeNode{
 				Vector<GrammarTreeNode> lbody = new Vector<GrammarTreeNode>();
 				for(int i = startpos-span+1; i<=startpos; i++)
 				{
-					lbody.add(segmentlist.get(i));
+					Segment segb =  (Segment)segmentlist.get(i).get(segmentlist.get(i).keySet().iterator().next());
+					lbody.add(segb);
 				}
 				Loop lp = new Loop(lbody);
 				for(int k = 1; k<=rep.size()-1; k++)
@@ -168,7 +189,8 @@ public class Template implements GrammarTreeNode{
 					Vector<GrammarTreeNode> tmp = new Vector<GrammarTreeNode>();
 					for(int i = rep.get(k)-span+1; i<=rep.get(k);i++)
 					{
-						tmp.add(segmentlist.get(i));
+						Segment segb =  (Segment)segmentlist.get(i).get(segmentlist.get(i).keySet().iterator().next());
+						tmp.add(segb);
 					}
 					Loop lpn = new Loop(tmp);
 					lp = lp.mergewith(lpn);
@@ -177,9 +199,10 @@ public class Template implements GrammarTreeNode{
 				}
 				for(int i = 0; i<this.segmentlist.size();i++)
 				{
+					Segment segb =  (Segment)segmentlist.get(i).get(segmentlist.get(i).keySet().iterator().next());
 					if(i<startpos-span+1)
 					{
-						nodelist.add(segmentlist.get(i));
+						nodelist.add(segb);
 					}
 					if(i==endpos)
 					{
@@ -187,7 +210,7 @@ public class Template implements GrammarTreeNode{
 					}
 					else if(i> endpos)
 					{
-						nodelist.add(segmentlist.get(i));
+						nodelist.add(segb);
 					}
 				}
 			}
@@ -202,7 +225,8 @@ public class Template implements GrammarTreeNode{
 				Vector<GrammarTreeNode> lbody = new Vector<GrammarTreeNode>();
 				for(int i = startpos; i<startpos+span; i++)
 				{
-					lbody.add(segmentlist.get(i));
+					Segment segb =  (Segment)segmentlist.get(i).get(segmentlist.get(i).keySet().iterator().next());
+					lbody.add(segb);
 				}
 				Loop lp = new Loop(lbody);
 				for(int k = 1; k<=rep.size()-1; k++)
@@ -210,7 +234,8 @@ public class Template implements GrammarTreeNode{
 					Vector<GrammarTreeNode> tmp = new Vector<GrammarTreeNode>();
 					for(int i = rep.get(k); i<span+rep.get(k);i++)
 					{
-						tmp.add(segmentlist.get(i));
+						Segment segb =  (Segment)segmentlist.get(i).get(segmentlist.get(i).keySet().iterator().next());
+						tmp.add(segb);
 					}
 					Loop lpn = new Loop(tmp);
 					lp = lp.mergewith(lpn);
@@ -219,9 +244,10 @@ public class Template implements GrammarTreeNode{
 				}
 				for(int i = 0; i<this.segmentlist.size();i++)
 				{
+					Segment segb =  (Segment)segmentlist.get(i).get(segmentlist.get(i).keySet().iterator().next());
 					if(i<startpos)
 					{
-						nodelist.add(segmentlist.get(i));
+						nodelist.add(segb);
 					}
 					if(i==endpos+span-1)
 					{
@@ -229,12 +255,19 @@ public class Template implements GrammarTreeNode{
 					}
 					else if(i>= endpos+span)
 					{
-						nodelist.add(segmentlist.get(i));
+						nodelist.add(segb);
 					}
 				}
 			}
 		}
-		Template template = new Template(nodelist);
+		Vector<HashMap<String, GrammarTreeNode>> xHashMaps = new Vector<HashMap<String,GrammarTreeNode>>();
+		for(GrammarTreeNode node:nodelist)
+		{
+			HashMap<String, GrammarTreeNode> xq = new  HashMap<String, GrammarTreeNode>();
+			xq.put(node.toString(), node);
+			xHashMaps.add(xq);
+		}
+		Template template = new Template(xHashMaps);
 		return template;
 	}
 	public void initeDescription(Vector<TNode> example,Vector<TNode> target,HashMap<String, Segment> segdict)
@@ -243,13 +276,13 @@ public class Template implements GrammarTreeNode{
 		this.tar = target;
 		for(int i = 0; i<segmentlist.size(); i++)
 		{
-			Segment seg = (Segment)segmentlist.get(i);
+			Segment seg = (Segment)segmentlist.get(i).get(segmentlist.get(i).keySet().iterator().next());
 			String keyString = seg.toString();
 			keyString = keyString.substring(1,keyString.indexOf("||"));
 			keyString += seg.lend+","+seg.lstart;
 			if(segdict.containsKey(keyString))
 			{
-				segmentlist.set(i,segdict.get(keyString));
+				segmentlist.get(i).put(seg.toString(),segdict.get(keyString));
 				continue;
 			}
 			if(seg.start<0 && seg.end <0)
@@ -323,48 +356,104 @@ public class Template implements GrammarTreeNode{
 	public String toString()
 	{
 		String string = "";
-		for(GrammarTreeNode s:this.segmentlist)
+		for(HashMap<String, GrammarTreeNode> s:this.segmentlist)
 		{
-			string += s.toString();
+			string += s.get(s.keySet().iterator().next());
 		}
 		return string;
 	}
-	/*public Template mergewith2(Template b)
+	public HashMap<String, GrammarTreeNode> SameNodesetMerge(HashMap<String, GrammarTreeNode> asegs,HashMap<String, GrammarTreeNode> bsegs)
 	{
-		boolean doable = true;
-		Vector<Segment> vsSegments = new Vector<Segment>();
-		if(b.segmentlist.size() != this.segmentlist.size())
-			return null;
-		for(int i = 0; i<this.segmentlist.size(); i++)
+		HashMap<String,GrammarTreeNode> hsg = new HashMap<String, GrammarTreeNode>();
+		for(String x:asegs.keySet())
 		{
-			Segment p = this.segmentlist.get(i).mergewith(b.segmentlist.get(i));
-			if(p==null)
+			for(String y:bsegs.keySet())
 			{
-				return null;
+				GrammarTreeNode p = asegs.get(x);
+				GrammarTreeNode q = bsegs.get(y);
+				GrammarTreeNode a = p.mergewith(q);
+				if(a == null)
+					return null;
+				hsg.put(a.toString(), a);
 			}
-			vsSegments.add(p);
 		}
-		Template temp = new Template(vsSegments);
-		return temp;
-	}*/
+		return hsg;
+	}
+	public Vector<Vector<GrammarTreeNode>> genloops(Vector<HashMap<String, GrammarTreeNode>> segs,Vector<Vector<GrammarTreeNode>> vecs,int i)
+	{
+		if(i>= segs.size())
+		{
+			return vecs;
+		}
+		if(vecs.size() ==0)
+		{
+			for(String key:segs.get(i).keySet())
+			{
+				Vector<GrammarTreeNode> vgt = new Vector<GrammarTreeNode>();
+				vgt.add(segs.get(i).get(key));
+				vecs.add(vgt);
+			}
+			return genloops(segs,vecs,i++);
+		}
+		else {
+			for(int j = 0; j<vecs.size(); j++)
+			{
+				for(String key:segs.get(i).keySet())
+				{
+					Vector<GrammarTreeNode> vgt = new Vector<GrammarTreeNode>();
+					vgt.addAll(vecs.get(j));
+					vgt.add(segs.get(i).get(key));
+					vecs.add(vgt);
+				}
+			}
+			return genloops(segs,vecs,i++);
+		}
+		
+	}
+	public HashMap<String, GrammarTreeNode> SegmentLoopMerge(HashMap<String, GrammarTreeNode> loops,Vector<HashMap<String, GrammarTreeNode>> segs)
+	{
+		HashMap<String,GrammarTreeNode> hsg = new HashMap<String, GrammarTreeNode>();
+		Vector<Vector<GrammarTreeNode>> vecs = new Vector<Vector<GrammarTreeNode>>();
+		vecs = genloops(segs,vecs,0);
+		for(Vector<GrammarTreeNode> vgts:vecs)
+		{
+			Loop lp = new Loop(vgts);
+			for(GrammarTreeNode l:loops.values())
+			{
+				Loop q = (Loop)l;
+				Loop zLoop = q.mergewith(lp);
+				if(zLoop != null)
+					hsg.put(zLoop.toString(), zLoop);
+			}
+		}
+		return hsg;
+	}
+	
 	public Template mergewith(Template b)
 	{
-		boolean doable = true;
-		Vector<GrammarTreeNode> vsSegments = new Vector<GrammarTreeNode>();
+		Vector<HashMap<String,GrammarTreeNode>> vsSegments = new Vector<HashMap<String,GrammarTreeNode>>();
 		if(b.segmentlist.size() != this.segmentlist.size())
 			return null;
 		int a_ptr=0,b_ptr = 0;
 		while(a_ptr<this.segmentlist.size()&&b_ptr<b.segmentlist.size())
 		{
-			GrammarTreeNode p = this.segmentlist.get(a_ptr);
-			GrammarTreeNode q = b.segmentlist.get(b_ptr);
+			HashMap<String,GrammarTreeNode> n = new HashMap<String, GrammarTreeNode>();
+			HashMap<String,GrammarTreeNode> gt1 = this.segmentlist.get(a_ptr);
+			HashMap<String,GrammarTreeNode> gt2 = b.segmentlist.get(b_ptr);
+		
+			GrammarTreeNode p = gt1.get(gt1.keySet().iterator().next());
+			GrammarTreeNode q = gt2.get(gt2.keySet().iterator().next());
 			if(p.getNodeType().compareTo("segment")==0&&q.getNodeType().compareTo("segment")==0)
 			{
 				
-				GrammarTreeNode a = p.mergewith(q);
-				if(a == null)
+				HashMap<String, GrammarTreeNode> xHashMap = SameNodesetMerge(gt1, gt2);
+				if(xHashMap!=null)
+				{
+					vsSegments.add(xHashMap);
+				}
+				else {
 					return null;
-				vsSegments.add(a);
+				}
 				a_ptr++;
 				b_ptr++;
 			}
@@ -373,7 +462,7 @@ public class Template implements GrammarTreeNode{
 				//create a new loop node
 				Loop xLoop = (Loop)q;	
 				int span = xLoop.loopbody.size();
-				Vector<GrammarTreeNode> vecs = new Vector<GrammarTreeNode>();
+				Vector<HashMap<String,GrammarTreeNode>> vecs = new Vector<HashMap<String,GrammarTreeNode>>();
 				int count = 0;
 				while(count<span)
 				{
@@ -381,43 +470,54 @@ public class Template implements GrammarTreeNode{
 					count++;
 					a_ptr ++;
 				}
-				Loop yLoop = new Loop(vecs);
-				Loop zLoop = xLoop.mergewith(yLoop);
-				if(zLoop == null)
+				HashMap<String,GrammarTreeNode> hsg = SegmentLoopMerge(gt2, vecs);
+				if(hsg!=null)
+				{
+					vsSegments.add(hsg);
+				}
+				else
+				{
 					return null;
-				vsSegments.add(zLoop);
+				}
 				b_ptr++;
 			}
 			else if(p.getNodeType().compareTo("loop")==0&&q.getNodeType().compareTo("loop")==0)
 			{
-				GrammarTreeNode a = p.mergewith(q);
-				if(a == null)
+				HashMap<String, GrammarTreeNode> xHashMap = SameNodesetMerge(gt1, gt2);
+				if(xHashMap!=null)
+				{
+					vsSegments.add(xHashMap);
+				}
+				else {
 					return null;
-				vsSegments.add(a);
+				}
 				a_ptr++;
 				b_ptr++;
 			}
 			else if(p.getNodeType().compareTo("loop")==0&&q.getNodeType().compareTo("segment")==0)
 			{
 				//create a new loop node
-				Loop xLoop = (Loop)p;
+				Loop xLoop = (Loop)p;	
 				int span = xLoop.loopbody.size();
-				Vector<GrammarTreeNode> vecs = new Vector<GrammarTreeNode>();
+				Vector<HashMap<String,GrammarTreeNode>> vecs = new Vector<HashMap<String,GrammarTreeNode>>();
 				int count = 0;
 				while(count<span)
 				{
-					vecs.add(b.segmentlist.get(count));
+					vecs.add(this.segmentlist.get(b_ptr));
 					count++;
-					b_ptr++;
+					b_ptr ++;
 				}
-				Loop yLoop = new Loop(vecs);
-				Loop zLoop = xLoop.mergewith(yLoop);
-				if(zLoop == null)
+				HashMap<String,GrammarTreeNode> hsg = SegmentLoopMerge(gt1, vecs);
+				if(hsg!=null)
+				{
+					vsSegments.add(hsg);
+				}
+				else
+				{
 					return null;
-				vsSegments.add(zLoop);
+				}
 				a_ptr++;
 			}
-			
 		}
 		Template temp = new Template(vsSegments);
 		return temp;
@@ -433,13 +533,34 @@ public class Template implements GrammarTreeNode{
 		this.score = 0.0;
 		return r;
 	}
+	public Template TempUnion(Template b)
+	{
+		Vector<HashMap<String, GrammarTreeNode>> res = new Vector<HashMap<String,GrammarTreeNode>>();
+		for(int i = 0; i<this.segmentlist.size(); i++)
+		{
+			HashMap<String, GrammarTreeNode> x = this.segmentlist.get(i);
+			HashMap<String, GrammarTreeNode> y = b.segmentlist.get(i);
+			x.putAll(y);
+			res.add(x);
+		}
+		Template template = new Template(res);
+		return template;
+	}
 	public String toProgram()
 	{
 		String resString = "";
 		for(int i = 0; i<this.segmentlist.size(); i++)
 		{
-			resString += segmentlist.get(i).toProgram()+"+";
-			score += segmentlist.get(i).getScore();
+			HashMap<String, GrammarTreeNode> hsg = segmentlist.get(i);
+			int c = UtilTools.randChoose(hsg.keySet().size());
+			String keyString = "";
+			for(int j = 0; j<=c; j++)
+			{
+				keyString = hsg.keySet().iterator().next();
+			}
+			GrammarTreeNode gt = hsg.get(keyString);
+			resString += gt.toProgram()+"+";
+			score += gt.getScore();
 		}
 		score = score/this.segmentlist.size();
 		resString = resString.substring(0,resString.length()-1);

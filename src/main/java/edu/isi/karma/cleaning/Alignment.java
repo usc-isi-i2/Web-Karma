@@ -25,7 +25,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
@@ -245,10 +244,10 @@ public class Alignment {
 						xString = xString.substring(0, xind)+subs+xString.substring(xind);
 					}
 					//System.out.println(""+xString);
-					aind[i]=false;
+					//aind[i]=false;
 					bind[j]=false;
 					alignment(a, b, aind, bind, xString,res);
-					aind[i]=true;
+					//aind[i]=true;
 					bind[j]=true;
 				}
 			}	
@@ -289,7 +288,7 @@ public class Alignment {
 				TNode nNode = b.get(j);
 				if(mNode.sameNode(nNode))
 				{
-					matched = true;
+					
 					if(a.get(i).text.compareTo(" ")==0)
 					{
 						String cnxt = "";
@@ -409,8 +408,8 @@ public class Alignment {
 							revdic.put(key, vec);
 						}
 					}
+					matched = true;
 				}
-				
 			}
 			if(!matched)
 			{
@@ -432,7 +431,7 @@ public class Alignment {
 		//generate blank space mapping
 		for(int i=0;i<a.size();i++)
 		{
-			Vector<int[]> tmp = new Vector<int[]>();
+			//Vector<int[]> tmp = new Vector<int[]>();
 			for(int j=0; j<b.size(); j++)
 			{
 				//check whether two whitespaces are counterpart
@@ -485,10 +484,10 @@ public class Alignment {
 						cnt--;
 					}				
 				//}
-			}
-			
+			}		
 		}
 		Iterator<String> iter = allpathes.iterator();
+		HashSet<String> checkor = new HashSet<String>();
 		while(iter.hasNext())
 		{
 			String p = iter.next().trim();
@@ -496,6 +495,17 @@ public class Alignment {
 				continue;
 			Vector<int[]> line = new Vector<int[]>();
 			String[] mps = p.trim().split("#");
+			//check redundancy 
+			HashSet<String> repsHashSet = new HashSet<String>();
+			for(String x:mps)
+			{
+				repsHashSet.add(x);
+			}
+			if(checkor.contains(repsHashSet.toString()))
+			{
+				continue;
+			}
+			checkor.add(repsHashSet.toString());
 			for(String str:mps)
 			{
 				String string = str.trim();
@@ -512,7 +522,6 @@ public class Alignment {
 	public static HashMap<Integer, Vector<Template>> genSegseqList(Vector<Vector<int[]>> mapping)
 	{
 		HashMap<Integer, Vector<Template>> dics = new HashMap<Integer, Vector<Template>>();
-		Vector<Template> segsVector =new Vector<Template>();
 		for(int i = 0; i<mapping.size();i++)
 		{
 			int[][] seqVector = mapping.get(i).toArray(new int[mapping.get(i).size()][]);
@@ -523,7 +532,7 @@ public class Alignment {
 			{
 				vgt.add((GrammarTreeNode)s);
 			}
-			Template temp = new Template(vgt);
+			Template temp = new Template(vgt,0);
 			if(dics.containsKey(segSeq.size()))
 			{
 				dics.get(segSeq.size()).add(temp);
@@ -540,7 +549,6 @@ public class Alignment {
 	public static Vector<Segment> genSegments(int[][] mapping)
 	{
 		int start = 0;
-		int end = 0;
 		int pre =0;
 		int lstart = 0;
 	    boolean started = false;
@@ -587,13 +595,7 @@ public class Alignment {
 		Vector<TNode> tar = r1.vec;
 		HashSet<String> traces = new HashSet<String>();
 		HashMap<String, String> dict = new HashMap<String, String>();
-		HashMap<String, Segment> sdict = new HashMap<String, Segment>();
 		Alignment.SumitTraceGen(0, org, tar, "", traces, dict);
-		for(String s:traces)
-		{
-			//System.out.println(""+s);
-			//System.out.println(""+Alignment.genSumitSegments(s,sdict));
-		}
 	}
 }
 class AlignObj

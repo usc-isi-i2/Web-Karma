@@ -1,6 +1,5 @@
 package edu.isi.karma.cleaning;
 
-import java.util.Iterator;
 import java.util.Vector;
 
 public class ConstrainedAlignment {
@@ -25,8 +24,6 @@ public class ConstrainedAlignment {
 			spos.add(0);
 		}
 		int[] iters = new int[expnum];
-		//inite the iters
-		int[] curStats = new int[expnum];
 		for(int i = 0; i<iters.length; i++)
 		{
 			iters[i] = 0;

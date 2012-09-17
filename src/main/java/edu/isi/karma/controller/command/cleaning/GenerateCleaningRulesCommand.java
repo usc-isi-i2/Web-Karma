@@ -25,7 +25,6 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -101,7 +100,6 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		}
 
 		String trainPath = dirpathString+"grammar/features.arff";
-		Vector<String> vs = new Vector<String>();
 		//
 		String[] x = (String[])res.toArray(new String[res.size()]);
 		System.out.println(""+x);
@@ -178,7 +176,6 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		Vector<ValueCollection> vvc = new Vector<ValueCollection>();
 		HashMap<String, HashMap<String,Integer>> values = new HashMap<String, HashMap<String,Integer>>();
 		HashMap<String,Vector<String>> js2tps = new HashMap<String,Vector<String>>();
-		int index = 0;
 		while(iter.hasNext())
 		{
 			String tpid = iter.next();
@@ -200,10 +197,15 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			}
 		}
 		//get the best transformed result
-		ValueCollection rvco = rtf.getTransformedValues("BESTRULE");
-		String bestRes = rvco.getJson().toString(); 
-		////////
-		HashMap<String, Double> topkeys = getScore(amb, values);
+		String bestRes = "";
+		HashMap<String, Double> topkeys = new HashMap<String, Double>();
+		if( rtf.getTransformations().keySet().size()>0)
+		{
+			ValueCollection rvco = rtf.getTransformedValues("BESTRULE");
+			bestRes = rvco.getJson().toString(); 
+			////////
+			topkeys = getScore(amb, values);
+		}
 		Vector<String> jsons = new Vector<String>();
 		if(js2tps.keySet().size()!=0)
 		{
@@ -284,7 +286,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			}
 			double entro = squrecnt*1.0/div;
 			double score = amb*1.0/entro;
-			if(topK.keySet().size()<3)
+			if(topK.keySet().size()<topKsize)
 			{
 				topK.put(id, score);
 			}
@@ -346,7 +348,6 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 					HashMap<String,Vector<String>> js2tps = new HashMap<String,Vector<String>>();
 					Iterator<String> iter = rtf.getTransformations().keySet().iterator();
 					Vector<ValueCollection> vvc = new Vector<ValueCollection>();
-					int index = 0;
 					while(iter.hasNext())
 					{
 						String tpid = iter.next();

@@ -5,12 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Random;
 import java.util.Vector;
-
-import javax.print.attribute.IntegerSyntax;
-import javax.swing.text.Position;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -18,12 +13,10 @@ public class Test {
 	public static void test1()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"a b b a b","a b a b b"
-};
-		String[] yStrings ={"c d e f g","c f g e d"
-};
+		String[] xStrings = {"AB","ABB"};
+	//	String[] yStrings ={"c d e f g","c f g e d"};
 		examples.add(xStrings);
-		examples.add(yStrings);
+	//	examples.add(yStrings);
 		Vector<Vector<TNode>> org = new Vector<Vector<TNode>>();
 		Vector<Vector<TNode>> tar = new Vector<Vector<TNode>>();
 		for(int i =0 ; i<examples.size();i++)
@@ -39,6 +32,7 @@ public class Test {
 		{
 			Vector<Vector<int[]>> mapping = Alignment.map(org.get(i), tar.get(i));
 			HashMap<Integer,Vector<Template>> segs = Alignment.genSegseqList(mapping);	
+			System.out.println(""+segs);
 		}
 	}
 	public static void test2()
@@ -99,12 +93,10 @@ public class Test {
 						entries.add(pair);
 						corrResult += pair[1]+"\n";
 					}
-					HashMap<Integer,Boolean> indicators = new HashMap<Integer,Boolean>();
 					String[] mt = {"<_START>"+entries.get(0)[0]+"<_END>",entries.get(0)[1]};
 					examples.add(mt);
 					while(true) // repeat as no correct answer appears.
 					{
-						HashMap<String,Integer> dic = new HashMap<String,Integer>();
 						long st = System.currentTimeMillis();
 						ProgSynthesis psProgSynthesis = new ProgSynthesis();
 						psProgSynthesis.inite(examples);
@@ -115,7 +107,6 @@ public class Test {
 						{
 							System.out.println(examples.get(k)[0]+"    "+examples.get(k)[1]);
 						}
-						int corrNum = 0;
 						String[] wexam = null;
 						if(pls.size()==0)
 							break;
@@ -126,7 +117,6 @@ public class Test {
 							String script = pls.get(i);
 							System.out.println(script);
 							InterpreterType worker = ipInterpretor.create(script);
-							String tranresult = "";
 							for(int j = 0; j<entries.size(); j++)
 							{
 								String s = worker.execute(entries.get(j)[0]);
@@ -152,8 +142,6 @@ public class Test {
 								return;
 						}	
 						examples.add(wexam);
-						long ed = System.currentTimeMillis();
-						double timespan = (ed -st)*1.0/60000;
 					}							
 				}				
 			}
@@ -335,6 +323,6 @@ public class Test {
 	public static void main(String[] args)
 	{
 		//test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		Test.test5();
+		Test.test7();
 	}
 }

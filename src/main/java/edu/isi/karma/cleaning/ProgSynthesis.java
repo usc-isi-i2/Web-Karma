@@ -1,6 +1,9 @@
 package edu.isi.karma.cleaning;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Vector;
 
 public class ProgSynthesis {
 	Vector<Vector<TNode>> orgVector = new Vector<Vector<TNode>>();
@@ -99,7 +102,8 @@ public class ProgSynthesis {
 			Vector<Vector<TNode>> tvt = new Vector<Vector<TNode>>();
 			ovt.add(this.orgVector.get(i));
 			tvt.add(this.tarVector.get(i));
-			Partition pt = new Partition(tx, ovt, tvt);
+			HashMap<String, Vector<Template>> hsv = Partition.condenseTemplate(tx);
+			Partition pt = new Partition(hsv, ovt, tvt);
 			pars.add(pt);
 		}
 		return pars;
@@ -195,7 +199,7 @@ public class ProgSynthesis {
 				{
 					vgt.add((GrammarTreeNode)sv);
 				}
-				Template template = new Template(vgt);
+				Template template = new Template(vgt,0);
 				if(segs.containsKey(template.size()))
 				{
 					segs.get(template.size()).add(template);
@@ -330,7 +334,8 @@ public class ProgSynthesis {
 						{
 							newsegs.get(leng).add(vts.get(p));
 						}
-						else {
+						else 
+						{
 							Vector<Template> vtep = new Vector<Template>();
 							vtep.add(vts.get(p));
 							newsegs.put(leng, vtep);

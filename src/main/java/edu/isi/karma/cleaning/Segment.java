@@ -131,7 +131,7 @@ public class Segment implements GrammarTreeNode{
 		{	
 			String reString = "";
 			String mdString = "";
-			if(this.start == this.CONST &&this.end == this.CONST)
+			if(this.start == Segment.CONST &&this.end == Segment.CONST)
 			{	
 				for(TNode t:this.constNodes)
 				{

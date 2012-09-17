@@ -61,17 +61,20 @@ public class CleaningResultUpdate extends AbstractUpdate {
 				pac.put("tps", tpsjo);
 				jsa.put(pac);
 			}
-			JSONObject jsBest = new JSONObject(bestRes);
-			JSONObject bestpac = new JSONObject();
-			JSONArray jba = new JSONArray();
-			for(String key:topkey)
+			if(bestRes.compareTo("")!=0)
 			{
-				jba.put(key);
+				JSONObject jsBest = new JSONObject(bestRes);
+				JSONObject bestpac = new JSONObject();
+				JSONArray jba = new JSONArray();
+				for(String key:topkey)
+				{
+					jba.put(key);
+				}
+				bestpac.put("data", jsBest);
+				bestpac.put("tps",new JSONObject());
+				bestpac.put("top", jba);
+				jsa.put(0,bestpac);//put the best one as the first
 			}
-			bestpac.put("data", jsBest);
-			bestpac.put("tps",new JSONObject());
-			bestpac.put("top", jba);
-			jsa.put(0,bestpac);//put the best one as the first
 			obj.put(JsonKeys.result.name(), jsa);
 			pw.print(obj.toString(4));
 		} catch (JSONException e) {

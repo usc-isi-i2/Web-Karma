@@ -3,7 +3,6 @@ package edu.isi.karma.cleaning;
 import java.util.Vector;
 
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
 
 public class PartitionClassifier {

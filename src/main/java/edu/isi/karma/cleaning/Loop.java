@@ -42,14 +42,15 @@ public class Loop implements GrammarTreeNode {
 	@Override
 	public String toProgram() {
 		//Template
-		Template a = new Template(this.loopbody);
-		for(GrammarTreeNode g:a.segmentlist)
+		String prog = "";
+		for(GrammarTreeNode g:this.loopbody)
 		{
 			Segment segment = (Segment)g;
+			prog += segment.toProgram()+"+";
+			score += segment.getScore();
 			segment.setinLoop(true);
 		}
-		String prog = a.toProgram();
-		score += a.getScore();
+		prog = prog.substring(0,prog.length()-1);
 		String s = String.format("loop(value,\"%s\")",prog);
 		return s;
 	}
