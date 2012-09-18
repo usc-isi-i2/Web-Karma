@@ -414,6 +414,7 @@ public class Alignment {
 			if(!matched)
 			{
 				unmatched += "#-1"+","+j;
+				bind[j] = false;
 			}
 		}
 		//generate non-ambiguious mapping

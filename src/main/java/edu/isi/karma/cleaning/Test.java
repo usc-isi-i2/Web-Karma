@@ -268,7 +268,7 @@ public class Test {
 		examples.add(yStrings);
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(examples);
-		String p = psProgSynthesis.run_partition();
+		String p = psProgSynthesis.run_main().iterator().next();
 		System.out.println(""+p);
 		Interpretor it = new Interpretor();
 		String value = "facility 112 is on fire. Battle unit 890 is under attack";
@@ -322,7 +322,7 @@ public class Test {
 	}
 	public static void main(String[] args)
 	{
-		//test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		//Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
 		Test.test7();
 	}
 }

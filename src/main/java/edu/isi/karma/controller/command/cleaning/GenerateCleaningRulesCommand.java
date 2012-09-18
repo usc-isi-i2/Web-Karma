@@ -203,18 +203,18 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		{
 			ValueCollection rvco = rtf.getTransformedValues("BESTRULE");
 			bestRes = rvco.getJson().toString(); 
-			////////
-			topkeys = getScore(amb, values);
+			//
+			//topkeys = getScore(amb, values);
 		}
 		Vector<String> jsons = new Vector<String>();
-		if(js2tps.keySet().size()!=0)
+		/*if(js2tps.keySet().size()!=0)
 		{
 			 bestRes = getTopK(js2tps.keySet(), 1).get(0);
 		}
 		else
 		{
 			System.out.println("Didn't find any transformation programs");
-		}
+		}*/
 
 		jsons.addAll(js2tps.keySet());
 		return new UpdateContainer(new CleaningResultUpdate(hNodeId, jsons,js2tps,bestRes,topkeys.keySet()));
