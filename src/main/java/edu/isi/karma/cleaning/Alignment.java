@@ -117,12 +117,12 @@ public class Alignment {
 			int spos = Integer.parseInt(pos[0]);
 			int epos = Integer.parseInt(pos[1]);
 			Segment st = new Segment();
-			if(spos>=0 && epos >=0)
+			if((!pos[0].contains("-"))&&(!pos[1].contains("-")))
 			{
 				st.start = spos;
 				st.end =epos;
 			}
-			else if(spos <0 || epos <0)
+			else if(pos[0].contains("-")|| pos[1].contains("-"))
 			{
 				st.start = Segment.CONST;
 				st.end = Segment.CONST;

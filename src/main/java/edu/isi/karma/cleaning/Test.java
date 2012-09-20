@@ -310,19 +310,50 @@ public class Test {
 		long t1 = System.currentTimeMillis();
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(examples);
-		String p = psProgSynthesis.run_sumit();
+		HashSet<String> p = psProgSynthesis.run_sumit();
 		long t2 = System.currentTimeMillis();
 		ProgSynthesis psProgSynthesis1 = new ProgSynthesis();
 		psProgSynthesis1.inite(examples);
-		String q = psProgSynthesis1.run_partition();
+		HashSet<String> q = psProgSynthesis1.run_main();
 		long t3 = System.currentTimeMillis();
 		double timespan1 = (t2 -t1)*1.0/60000;
 		double timespan2 = (t3 -t2)*1.0/60000;
 		System.out.println("span 1:"+timespan1+"\nspan 2:"+timespan2);
+		
+	}
+	public static void test12()
+	{
+		Vector<String[]> examples = new Vector<String[]>();
+		String[] xStrings ={"<_START>(323)-708-7700<_END>","323-708-7700"};
+		String[] yStrings ={"<_START>(425)-706-7709<_END>","425-706-7709"};
+		String[] zStrings ={"<_START>510.220.5586<_END>","510-220-5586"};
+		String[] pStrings ={"<_START>323.710.7700<_END>","323-710-7700"};
+		String[] qStrings ={"<_START>235 7654<_END>","425-235-7654"};
+		String[] rStrings ={"<_START>745 8139<_END>","425-745-8139"};
+		examples.add(xStrings);
+		examples.add(yStrings);
+		examples.add(zStrings);
+		examples.add(pStrings);
+		examples.add(qStrings);
+		examples.add(rStrings);
+		long t1 = System.currentTimeMillis();
+		ProgSynthesis psProgSynthesis = new ProgSynthesis();
+		psProgSynthesis.inite(examples);
+		HashSet<String> p = psProgSynthesis.run_sumit();
+		Interpretor it = new Interpretor();
+		String value = "(323)-708-7800";
+		String value1 = "508 7800";
+		//String value = "(6/7)(4/5)(14/2)";
+		InterpreterType worker = it.create(p.iterator().next());
+		String reString = worker.execute(value);
+		String reString2 = worker.execute(value1);
+		System.out.println("===========Results===================");
+		System.out.println(reString);
+		System.out.println(reString2);
 	}
 	public static void main(String[] args)
 	{
 		//Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		Test.test7();
+		Test.test12();
 	}
 }

@@ -69,6 +69,7 @@ function handleCleanColumnButton() {
 			values.push({
 				"nodeId" : $(this).attr("id"),
 				"nodeValue" : $(this).text()
+				//"nodeValue" : $(this).data("fullValue")
 			});
 	});
 

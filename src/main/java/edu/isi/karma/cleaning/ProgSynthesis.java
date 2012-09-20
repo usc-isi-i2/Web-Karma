@@ -181,7 +181,7 @@ public class ProgSynthesis {
 		}
 		return dicts;
 	}
-	public String run_sumit() {
+	public HashSet<String> run_sumit() {
 		// generate mapping segmentList and put it into a hashmap
 		Vector<HashMap<Integer, Vector<Template>>> xyz = new Vector<HashMap<Integer, Vector<Template>>>();
 		
@@ -251,8 +251,26 @@ public class ProgSynthesis {
 			}
 		}
 		Program prog = new Program(pars);
-		System.out.println(""+prog.toString());
-		return prog.toProgram();	
+		//return a list of randomly choosen rules
+		HashSet<String> rules = new HashSet<String>();
+		Interpretor it = new Interpretor();
+		double max = -1;
+		for(int i = 0; i<50; i++)
+		{
+			String r = prog.toProgram();
+			double s = prog.getScore();
+			if(this.validRule(r, it))
+			{
+				rules.add(r);
+				if(s>max)
+				{
+					this.bestRuleString = r;
+					System.out.println("<<<<<<<<BestRule: "+bestRuleString+" , "+s);
+					max = s;
+				}
+			}
+		}
+		return rules;	
 	}
 	public String run_partition() {
 		// generate mapping segmentList and put it into a hashmap
