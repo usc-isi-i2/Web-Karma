@@ -379,23 +379,27 @@ public class ProgSynthesis {
 		}
 		Program prog = new Program(pars);
 		//return a list of randomly choosen rules
-		HashSet<String> rules = new HashSet<String>();
+		//HashSet<String> rules = new HashSet<String>();
 		Interpretor it = new Interpretor();
+		Vector<Double> scores = new Vector<Double>();
+		Vector<String> rulesx = new Vector<String>();
 		double max = -1;
-		for(int i = 0; i<50; i++)
+		for(int i = 0; i<100; i++)
 		{
 			String r = prog.toProgram();
 			double s = prog.getScore();
 			if(this.validRule(r, it))
 			{
-				rules.add(r);
-				if(s>max)
-				{
-					this.bestRuleString = r;
-					System.out.println("<<<<<<<<BestRule: "+bestRuleString+" , "+s);
-					max = s;
-				}
+				rulesx.add(r);
+				scores.add(s);
 			}
+		}
+		Vector<Integer> inds = UtilTools.topKindexs(scores, 30);
+		HashSet<String> rules = new HashSet<String>();
+		for(int index:inds)
+		{
+			if(rulesx.get(index).trim().length()>0)
+				rules.add(rulesx.get(index));
 		}
 		return rules;	
 	}

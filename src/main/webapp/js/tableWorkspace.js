@@ -232,9 +232,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
         },
         dropZone: null
     });
-    
-    
-	
+     $("button#transformcolumns").click(handleColumnsTransformation);
 }
 
 function openWorksheetOptions(event) {
