@@ -22,14 +22,12 @@ package edu.isi.karma.cleaning.features;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Vector;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.Token;
 
-import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
 import edu.isi.karma.cleaning.Tokenizer;
 

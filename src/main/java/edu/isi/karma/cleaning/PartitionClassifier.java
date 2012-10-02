@@ -3,22 +3,26 @@ package edu.isi.karma.cleaning;
 import java.util.Vector;
 
 import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
+
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PartitionClassifier {
 	private PyObject interpreterClass;
 	public String clssettingString = "";
 	public PartitionClassifier()
 	{
+		
+		String dirpathString = "./src/main/scripts/Lib";
 		PythonInterpreter interpreter = new PythonInterpreter();
         //change the sys.path
 		interpreter.exec("import sys");
 		//interpreter.exec("sys.path.append('/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/')");
 		//interpreter.exec("sys.path.append('/Library/Python/2.7/site-packages')");
-        interpreter.exec("sys.path.append('/Users/bowu/Documents/Aptana Studio 3 Workspace/IDCT/')");
+        interpreter.exec("sys.path.append('"+dirpathString+"')");
         ///Users/bowu/projects/IDCT/src/edu/isi/karma/cleaning
-        interpreter.exec("sys.path.append('Users/bowu/projects/IDCT/src/edu/isi/karma/cleaning')");
+        interpreter.exec("sys.path.append('"+dirpathString+"')");
         //interpreter.exec("print sys.path");
         interpreter.exec("import re");
         //interpreter.exec("print sys.path");

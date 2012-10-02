@@ -9,10 +9,11 @@ public class Interpretor {
     public Interpretor() {
         PythonInterpreter interpreter = new PythonInterpreter();
         //change the sys.path
+        String dirpathString = "./src/main/scripts/Lib";
         interpreter.exec("import sys");
-        interpreter.exec("sys.path.append('/Users/bowu/Documents/Aptana Studio 3 Workspace/IDCT/')");
+        interpreter.exec("sys.path.append('"+dirpathString+"')");
         ///Users/bowu/projects/IDCT/src/edu/isi/karma/cleaning
-        interpreter.exec("sys.path.append('Users/bowu/projects/IDCT/src/edu/isi/karma/cleaning')");
+        interpreter.exec("sys.path.append('"+dirpathString+"')");
         interpreter.exec("from FunctionList import *");
         interpreter.exec("from Interpreter import *");
         //interpreter.exec("print sys.path");

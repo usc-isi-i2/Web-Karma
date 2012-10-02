@@ -70,8 +70,8 @@ public class RamblerTransformationOutput implements TransformationOutput {
 				transformations.put(r.signature, r);
 			}
 		}
-		RamblerTransformation r = new RamblerTransformation(psProgSynthesis.getBestRule());
-		transformations.put("BESTRULE",r);
+		//RamblerTransformation r = new RamblerTransformation(psProgSynthesis.getBestRule());
+		//transformations.put("BESTRULE",r);
 	}
 	@Override
 	public HashMap<String,Transformation> getTransformations() {

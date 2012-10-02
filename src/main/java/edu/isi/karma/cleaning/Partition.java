@@ -5,21 +5,66 @@ import java.util.Iterator;
 import java.util.Vector;
 
 public class Partition implements GrammarTreeNode {
-	public HashMap<Integer,Vector<Template>> templates;
+	public HashMap<String,Vector<Template>> templates;
 	public Vector<Vector<TNode>> orgNodes;
 	public Vector<Vector<TNode>> tarNodes;
 	public String label; // the class label of current partition
 	public String cls;
 	public Partition()
 	{	
+		
 	}
-	public Partition(HashMap<Integer,Vector<Template>> tp, Vector<Vector<TNode>> org,Vector<Vector<TNode>> tar)
+	public static HashMap<String, Vector<Template>> condenseTemplate(HashMap<Integer, Vector<Template>> tp)
+	{
+		HashMap<String, Vector<Template>> xHashMap = new HashMap<String, Vector<Template>>();
+		for(int ind: tp.keySet())
+		{
+			for(Template t:tp.get(ind))
+			{
+				String rep = "";
+				for(HashMap<String,GrammarTreeNode> hgtn:t.segmentlist)
+				{
+					GrammarTreeNode gtn = hgtn.get(hgtn.keySet().iterator().next());
+					rep += gtn.getNodeType();
+					if(gtn.getNodeType().compareTo("loop")==0)
+					{
+						rep += ((Loop)gtn).loopbody.size();
+					}
+				}
+				if(xHashMap.containsKey(rep))
+				{
+					xHashMap.get(rep).add(t);
+				}
+				else
+				{
+					Vector<Template> vt = new Vector<Template>();
+					vt.add(t);
+					xHashMap.put(rep, vt);
+				}
+			}
+		}
+		HashMap<String, Vector<Template>> nvt = new HashMap<String, Vector<Template>>();
+		for(String key: xHashMap.keySet())
+		{
+			Vector<Template> vtp = xHashMap.get(key);
+			Template t0 = vtp.get(0);
+			for(int j = 1; j<vtp.size(); j++)
+			{
+				t0 = t0.TempUnion(vtp.get(j));
+			}
+			Vector<Template> t = new Vector<Template>();
+			t.add(t0);
+			nvt.put(key, t);
+		}
+		return nvt;
+	}
+	public Partition(HashMap<String,Vector<Template>> tp, Vector<Vector<TNode>> org,Vector<Vector<TNode>> tar)
 	{
 		this.templates = tp;
 		this.orgNodes = org;
 		this.tarNodes = tar;
 	}
-	public void setTemplates(HashMap<Integer,Vector<Template>> tmps)
+	public void setTemplates(HashMap<String,Vector<Template>> tmps)
 	{
 		this.templates = tmps;
 	}
@@ -34,9 +79,9 @@ public class Partition implements GrammarTreeNode {
 	}
 	public Partition mergewith(Partition b)
 	{
-		HashMap<Integer,Vector<Template>> ntemp = new HashMap<Integer,Vector<Template>>();
+		HashMap<String,Vector<Template>> ntemp = new HashMap<String,Vector<Template>>();
 		//merge the templates
-		for(Integer ind:templates.keySet())
+		for(String ind:templates.keySet())
 		{
 			if(!b.templates.containsKey(ind))
 			{
@@ -78,7 +123,7 @@ public class Partition implements GrammarTreeNode {
 	public String toString()
 	{
 		String s = "partition:"+this.label+"\n";
-		for(Integer i:this.templates.keySet())
+		for(String i:this.templates.keySet())
 		{
 			if(templates.get(i).size()>0)
 				s += templates.get(i).get(0).toProgram()+"\n";
@@ -100,15 +145,17 @@ public class Partition implements GrammarTreeNode {
 	@Override
 	public String toProgram() {
 		//randomly choose a Template
-		Iterator<Integer> iterator = this.templates.keySet().iterator();
-		int[] inds = new int[this.templates.keySet().size()];
+		Iterator<String> iterator = this.templates.keySet().iterator();
+		String[] inds = new String[this.templates.keySet().size()];
 		double[] prob = new double[inds.length];
 		int i = 0;
 		double totalLength = 0;
 		while(iterator.hasNext())
 		{
-			inds[i] = iterator.next();
-			prob[i] = 1.0/(inds[i]*1.0);
+			String key = iterator.next();
+			inds[i] = key;
+			int size = templates.get(key).get(0).size();
+			prob[i] = 1.0/(size*1.0);
 			totalLength += prob[i];
 			i++;
 		}
@@ -118,11 +165,11 @@ public class Partition implements GrammarTreeNode {
 			prob[j] = prob[j]*1.0/totalLength;
 		}
 		int clen = UtilTools.multinominalSampler(prob);
-		clen = inds[clen];
-		int k = UtilTools.randChoose(templates.get(clen).size());
-		String r = templates.get(clen).get(k).toProgram();
+		String key = inds[clen];
+		int k = UtilTools.randChoose(templates.get(key).size());
+		String r = templates.get(key).get(k).toProgram();
 		//String r = String.format("(not getClass(\"%s\",value)==\'attr_0\',len(%s))",this.cls,"\"\'"+this.label+"\'\"");
-		score = templates.get(clen).get(k).getScore();
+		score = templates.get(key).get(k).getScore();
 		return r;
 	}
 	@Override

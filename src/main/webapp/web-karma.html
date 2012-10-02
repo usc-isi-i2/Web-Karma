@@ -25,7 +25,7 @@ and related projects, please see: http://www.isi.edu/integration
 <html lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Karma</title>
+		<title>Karma v1.02</title>
 		<!-- Date: 2011-08-01 -->
 		
 		<!-- CSS -->
@@ -45,6 +45,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<link rel="stylesheet" type="text/css" href="./css/cleaning.css" />
 		<link rel="stylesheet" type="text/css" href="./css/alignment.css" />
 		<link rel="stylesheet" type="text/css" href="./css/d3.css" />
+        <link rel="stylesheet" type="text/css" href="./css/main.css" />
 		
 		
 		<!-- Third Party JavaScript files		 -->
@@ -313,8 +314,9 @@ and related projects, please see: http://www.isi.edu/integration
 	
 	
 	<body>
+		<h1 id="banner">Karma <span id="karma-version">v1.02</span></h1>
 		<table id="topMenuBar">
-			<tr>
+<tr>
 				<td>
 					<button id="importDatabaseTableButton" class="importButton" align="top">Import Database Table</button>
 				</td>
@@ -553,6 +555,7 @@ and related projects, please see: http://www.isi.edu/integration
 			<button href="#" id="publishDatabase">Publish Database</button>
 			<button href="#" id="populateSource">Populate Source</button>
 			<button href="#" id="publishServiceModel">Publish Model</button>
+			<button href="#" id="transformcolumns">Transform Columns</button>
 			<button href="#" id="publishWorksheetHistory">Publish Worksheet History</button>
 			<div class="container">
 				<!-- <input type="file" name="file1" id="uploadFile_JSON"> -->
@@ -712,6 +715,15 @@ and related projects, please see: http://www.isi.edu/integration
 			<label for="overwriteTable" class="smallSizedFont">Overwrite Table</label>
 			<input type="checkbox" id="insertTable" onClick="insertTable();"/>
 			<label for="insertTable" class="smallSizedFont">Insert in Table</label>
+		</div>
+		<div id="ColumnSelection" style="display: none">
+			<table id="allcolumns">
+				<tr>
+					<td class="cleaningTableHeading noBorder">Selected</td>
+					<td class="examplesDivider noBorder"></td>
+					<td class="cleaningTableHeading noBorder" colspan=3>Columns</td>
+				</tr>
+			</table>
 		</div>
 		<div id="ColumnCleaningPanel" style="display: none">
 			<table id="cleaningExamplesTable">

@@ -1,6 +1,9 @@
 package edu.isi.karma.cleaning;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Vector;
 
 public class ProgSynthesis {
 	Vector<Vector<TNode>> orgVector = new Vector<Vector<TNode>>();
@@ -99,7 +102,8 @@ public class ProgSynthesis {
 			Vector<Vector<TNode>> tvt = new Vector<Vector<TNode>>();
 			ovt.add(this.orgVector.get(i));
 			tvt.add(this.tarVector.get(i));
-			Partition pt = new Partition(tx, ovt, tvt);
+			HashMap<String, Vector<Template>> hsv = Partition.condenseTemplate(tx);
+			Partition pt = new Partition(hsv, ovt, tvt);
 			pars.add(pt);
 		}
 		return pars;
@@ -177,7 +181,7 @@ public class ProgSynthesis {
 		}
 		return dicts;
 	}
-	public String run_sumit() {
+	public HashSet<String> run_sumit() {
 		// generate mapping segmentList and put it into a hashmap
 		Vector<HashMap<Integer, Vector<Template>>> xyz = new Vector<HashMap<Integer, Vector<Template>>>();
 		
@@ -195,7 +199,7 @@ public class ProgSynthesis {
 				{
 					vgt.add((GrammarTreeNode)sv);
 				}
-				Template template = new Template(vgt);
+				Template template = new Template(vgt,0);
 				if(segs.containsKey(template.size()))
 				{
 					segs.get(template.size()).add(template);
@@ -247,8 +251,26 @@ public class ProgSynthesis {
 			}
 		}
 		Program prog = new Program(pars);
-		System.out.println(""+prog.toString());
-		return prog.toProgram();	
+		//return a list of randomly choosen rules
+		HashSet<String> rules = new HashSet<String>();
+		Interpretor it = new Interpretor();
+		double max = -1;
+		for(int i = 0; i<50; i++)
+		{
+			String r = prog.toProgram();
+			double s = prog.getScore();
+			if(this.validRule(r, it))
+			{
+				rules.add(r);
+				if(s>max)
+				{
+					this.bestRuleString = r;
+					System.out.println("<<<<<<<<BestRule: "+bestRuleString+" , "+s);
+					max = s;
+				}
+			}
+		}
+		return rules;	
 	}
 	public String run_partition() {
 		// generate mapping segmentList and put it into a hashmap
@@ -330,7 +352,8 @@ public class ProgSynthesis {
 						{
 							newsegs.get(leng).add(vts.get(p));
 						}
-						else {
+						else 
+						{
 							Vector<Template> vtep = new Vector<Template>();
 							vtep.add(vts.get(p));
 							newsegs.put(leng, vtep);
@@ -356,23 +379,27 @@ public class ProgSynthesis {
 		}
 		Program prog = new Program(pars);
 		//return a list of randomly choosen rules
-		HashSet<String> rules = new HashSet<String>();
+		//HashSet<String> rules = new HashSet<String>();
 		Interpretor it = new Interpretor();
+		Vector<Double> scores = new Vector<Double>();
+		Vector<String> rulesx = new Vector<String>();
 		double max = -1;
-		for(int i = 0; i<50; i++)
+		for(int i = 0; i<100; i++)
 		{
 			String r = prog.toProgram();
 			double s = prog.getScore();
 			if(this.validRule(r, it))
 			{
-				rules.add(r);
-				if(s>max)
-				{
-					this.bestRuleString = r;
-					System.out.println("<<<<<<<<BestRule: "+bestRuleString+" , "+s);
-					max = s;
-				}
+				rulesx.add(r);
+				scores.add(s);
 			}
+		}
+		Vector<Integer> inds = UtilTools.topKindexs(scores, 30);
+		HashSet<String> rules = new HashSet<String>();
+		for(int index:inds)
+		{
+			if(rulesx.get(index).trim().length()>0)
+				rules.add(rulesx.get(index));
 		}
 		return rules;	
 	}

@@ -136,7 +136,7 @@ public class Ruler {
 			//int pos1 = this.Search(this.vec,t,0);
 			if(option.compareTo("from_beginning")==0)
 			{
-				int pos = this.Search(vec,t, 0);
+				int pos = Ruler.Search(vec,t, 0);
 				if(pos == -1)
 					return -1;
 				if(incld)
@@ -163,7 +163,7 @@ public class Ruler {
 			{
 				Vector<TNode> tmpvec = (Vector<TNode>)this.vec.clone();
 				Collections.reverse(tmpvec);
-				int pos = this.Search(tmpvec,t, 0);
+				int pos = Ruler.Search(tmpvec,t, 0);
 				if(pos == -1)
 					return -1;
 				if(incld)
@@ -429,7 +429,7 @@ public class Ruler {
 		int size = 0;
 		if(toks!=null)
 		{
-			pos = this.Search(this.vec,toks, spos);
+			pos = Ruler.Search(this.vec,toks, spos);
 			if(pos+toks.size()>epos+1 || pos == -1)
 			{
 				return;
@@ -497,7 +497,7 @@ public class Ruler {
 			}
 			else
 			{
-				pos = this.Search(this.vec,toks,start);
+				pos = Ruler.Search(this.vec,toks,start);
 				deleng = toks.size();
 			}
 			if(pos+deleng>end+1 || pos == -1)

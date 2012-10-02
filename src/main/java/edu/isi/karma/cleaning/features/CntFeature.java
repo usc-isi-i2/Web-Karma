@@ -24,7 +24,7 @@ public class CntFeature implements Feature{
 		public double calFeatures(ArrayList<Vector<TNode>> x,ArrayList<Vector<TNode>> y)
 		{
 			HashMap<Integer,Integer> tmp = new HashMap<Integer,Integer>();
-			for(int i = 0; i<x.size();i++)
+			for(int i = 0; i<y.size();i++)
 			{
 				int cnt = 0;
 				Vector<TNode> z = x.get(i);
@@ -51,7 +51,8 @@ public class CntFeature implements Feature{
 					cnt1++;
 				}
 				//use the minus value to compute homogenenity 
-				cnt = cnt - cnt1;
+				//cnt = cnt - cnt1;
+				cnt = cnt1;
 				if(tmp.containsKey(cnt))
 				{
 					tmp.put(cnt, tmp.get(cnt)+1);

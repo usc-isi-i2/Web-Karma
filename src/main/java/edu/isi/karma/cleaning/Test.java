@@ -5,12 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Random;
 import java.util.Vector;
-
-import javax.print.attribute.IntegerSyntax;
-import javax.swing.text.Position;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -18,12 +13,10 @@ public class Test {
 	public static void test1()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"a b b a b","a b a b b"
-};
-		String[] yStrings ={"c d e f g","c f g e d"
-};
+		String[] xStrings = {"AB","ABB"};
+	//	String[] yStrings ={"c d e f g","c f g e d"};
 		examples.add(xStrings);
-		examples.add(yStrings);
+	//	examples.add(yStrings);
 		Vector<Vector<TNode>> org = new Vector<Vector<TNode>>();
 		Vector<Vector<TNode>> tar = new Vector<Vector<TNode>>();
 		for(int i =0 ; i<examples.size();i++)
@@ -39,6 +32,7 @@ public class Test {
 		{
 			Vector<Vector<int[]>> mapping = Alignment.map(org.get(i), tar.get(i));
 			HashMap<Integer,Vector<Template>> segs = Alignment.genSegseqList(mapping);	
+			System.out.println(""+segs);
 		}
 	}
 	public static void test2()
@@ -99,12 +93,10 @@ public class Test {
 						entries.add(pair);
 						corrResult += pair[1]+"\n";
 					}
-					HashMap<Integer,Boolean> indicators = new HashMap<Integer,Boolean>();
 					String[] mt = {"<_START>"+entries.get(0)[0]+"<_END>",entries.get(0)[1]};
 					examples.add(mt);
 					while(true) // repeat as no correct answer appears.
 					{
-						HashMap<String,Integer> dic = new HashMap<String,Integer>();
 						long st = System.currentTimeMillis();
 						ProgSynthesis psProgSynthesis = new ProgSynthesis();
 						psProgSynthesis.inite(examples);
@@ -115,7 +107,6 @@ public class Test {
 						{
 							System.out.println(examples.get(k)[0]+"    "+examples.get(k)[1]);
 						}
-						int corrNum = 0;
 						String[] wexam = null;
 						if(pls.size()==0)
 							break;
@@ -126,7 +117,6 @@ public class Test {
 							String script = pls.get(i);
 							System.out.println(script);
 							InterpreterType worker = ipInterpretor.create(script);
-							String tranresult = "";
 							for(int j = 0; j<entries.size(); j++)
 							{
 								String s = worker.execute(entries.get(j)[0]);
@@ -152,8 +142,6 @@ public class Test {
 								return;
 						}	
 						examples.add(wexam);
-						long ed = System.currentTimeMillis();
-						double timespan = (ed -st)*1.0/60000;
 					}							
 				}				
 			}
@@ -280,7 +268,7 @@ public class Test {
 		examples.add(yStrings);
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(examples);
-		String p = psProgSynthesis.run_partition();
+		String p = psProgSynthesis.run_main().iterator().next();
 		System.out.println(""+p);
 		Interpretor it = new Interpretor();
 		String value = "facility 112 is on fire. Battle unit 890 is under attack";
@@ -322,19 +310,50 @@ public class Test {
 		long t1 = System.currentTimeMillis();
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(examples);
-		String p = psProgSynthesis.run_sumit();
+		HashSet<String> p = psProgSynthesis.run_sumit();
 		long t2 = System.currentTimeMillis();
 		ProgSynthesis psProgSynthesis1 = new ProgSynthesis();
 		psProgSynthesis1.inite(examples);
-		String q = psProgSynthesis1.run_partition();
+		HashSet<String> q = psProgSynthesis1.run_main();
 		long t3 = System.currentTimeMillis();
 		double timespan1 = (t2 -t1)*1.0/60000;
 		double timespan2 = (t3 -t2)*1.0/60000;
 		System.out.println("span 1:"+timespan1+"\nspan 2:"+timespan2);
+		
+	}
+	public static void test12()
+	{
+		Vector<String[]> examples = new Vector<String[]>();
+		String[] xStrings ={"<_START>(323)-708-7700<_END>","323-708-7700"};
+		String[] yStrings ={"<_START>(425)-706-7709<_END>","425-706-7709"};
+		String[] zStrings ={"<_START>510.220.5586<_END>","510-220-5586"};
+		String[] pStrings ={"<_START>323.710.7700<_END>","323-710-7700"};
+		String[] qStrings ={"<_START>235 7654<_END>","425-235-7654"};
+		String[] rStrings ={"<_START>745 8139<_END>","425-745-8139"};
+		examples.add(xStrings);
+		examples.add(yStrings);
+		examples.add(zStrings);
+		examples.add(pStrings);
+		examples.add(qStrings);
+		examples.add(rStrings);
+		long t1 = System.currentTimeMillis();
+		ProgSynthesis psProgSynthesis = new ProgSynthesis();
+		psProgSynthesis.inite(examples);
+		HashSet<String> p = psProgSynthesis.run_sumit();
+		Interpretor it = new Interpretor();
+		String value = "(323)-708-7800";
+		String value1 = "508 7800";
+		//String value = "(6/7)(4/5)(14/2)";
+		InterpreterType worker = it.create(p.iterator().next());
+		String reString = worker.execute(value);
+		String reString2 = worker.execute(value1);
+		System.out.println("===========Results===================");
+		System.out.println(reString);
+		System.out.println(reString2);
 	}
 	public static void main(String[] args)
 	{
-		//test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		Test.test5();
+		//Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		Test.test12();
 	}
 }
