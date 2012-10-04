@@ -27,7 +27,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.gav.util.MediatorUtil;
@@ -228,6 +231,12 @@ public class RuleRDFGenerator {
 		
 		//System.out.println("VALUES=" + values);
 		
+		//as the class names can come from the value of a column name, we have to clear
+		//the classes hash map for every set of values, as the class name can be different
+		//in each set; this was not necessary before as the class names were present in
+		//the SD
+		classes.clear();
+		
 		//increment rowId for each processed tuple
 		rowId++;
 
@@ -235,7 +244,7 @@ public class RuleRDFGenerator {
 		outWriter.println();
 		//outWriter.print("# Row " + rowId + ":");
 
-		/* only for printing... fails if getValue=null
+		/*
 		String valuesStr = "";
 		Set<Entry<String,String>> entries = values.entrySet();
 		Iterator<Entry<String,String>> it = entries.iterator();
@@ -350,6 +359,16 @@ public class RuleRDFGenerator {
 		if(className.startsWith("`"))
 			className = className.substring(1,className.length()-1);
 		
+		//the class name is the VALUE of the column name (p=`expand@column_name(uri(`id`))) ; 
+		//look for the value of column_name in values to find the actual class name 
+		if(className.startsWith("expand@"))
+			className = getExpandedName(className, values);
+		
+		if(className==null){
+			//the value is empty or null; don't include this triple
+			return true;
+		}
+		
 		//System.out.println("Class Name=" + className);
 		String ontologyPrefixName = ontologyPrefix;
 		//split class name
@@ -370,6 +389,10 @@ public class RuleRDFGenerator {
 		FunctionPredicate uri = ((FunctionTerm) t).getFunction();
 		
 		String subject = evaluateURI(uri, className, values);
+		if(subject==null){
+			//could not construct the URI; do not add this triple
+			return true;
+		}
 		
 		//we assume that class names do not have spaces or other "strange" chars
 		//className = URLEncoder.encode(className, "UTF-8");
@@ -413,7 +436,17 @@ public class RuleRDFGenerator {
 		//System.out.println("Predicate Name=" + predicateName);
 		if(predicateName.startsWith("`"))
 			predicateName = predicateName.substring(1,predicateName.length()-1);
-		
+
+		//the predicate name is the VALUE of the column name (p=`expand@predicate_name(uri(`id`))) ; 
+		//look for the value of column_name in values to find the actual class name 
+		if(predicateName.startsWith("expand@"))
+			predicateName = getExpandedName(predicateName, values);
+
+		if(predicateName==null){
+			//the value is empty or null; don't include this triple
+			return true;
+		}
+
 		String ontologyPrefixName = ontologyPrefix;
 
 		//split predicate name
@@ -448,6 +481,11 @@ public class RuleRDFGenerator {
 		FunctionPredicate uri1 = ((FunctionTerm) t1).getFunction();
 		
 		String subject = evaluateURI(uri1, null, values);
+		if(subject==null){
+			//could not construct the URI; do not add this triple
+			return true;
+		}
+
 		//System.out.println("Subject URI =" + subject);
 
 		//t2 can be either a uri or a concat() or a varTerm
@@ -457,6 +495,11 @@ public class RuleRDFGenerator {
 			if(func.getName().equals("uri")){
 				//it's a URI
 				String value = evaluateURI(func, null, values);
+				if(value==null){
+					//could not construct the URI; do not add this triple
+					return true;
+				}
+
 				//System.out.println("Value URI =" + value);
 				statement +=  value;
 			}
@@ -472,7 +515,6 @@ public class RuleRDFGenerator {
 			String varValue = values.get(MediatorUtil.removeBacktick(varName));
 			if(varValue==null)
 				throw new MediatorException("The values map does not contain variable: " + varName + " Map is:" + values);
-
 			statement += prepareValue(varValue);
 			
 			//I have a key that has no value OR has NULL value=>don't add this triple
@@ -496,6 +538,27 @@ public class RuleRDFGenerator {
 				return true;
 		}
 		return true;
+	}
+	
+	/** Given a name of the form "expand@columnName", returns the value of 
+	 * columnName from values;
+	 * @param name
+	 * 	a name of the form "expand@columnName"
+	 * @param values
+	 * 		map containing <column_name,value> where "column_name" are variable names used in the rule.
+	 * @return
+	 * @throws MediatorException 
+	 */
+	private String getExpandedName(String name, Map<String,String> values) throws MediatorException{
+		String columnName = name.substring(7);
+
+		String varValue = values.get(columnName);
+		if(varValue==null)
+			throw new MediatorException("The values map does not contain variable: " + columnName + " Map is:" + values);
+		if(varValue.equals("") || varValue.equals("NULL")){
+			return null;
+		}
+		return varValue;
 	}
 	
 	/**
@@ -550,7 +613,7 @@ public class RuleRDFGenerator {
 		//get variable name
 		String varName = uri.getTerms().get(0).getVar();
 		String varValue = "";
-
+		
 		//if the uri has more than one var name we have to append them
 		//before adding to the classes map
 		String allVarNames = "";
@@ -562,7 +625,13 @@ public class RuleRDFGenerator {
 			varName = "v_" + varValue;
 			allVarNames = varName;
 		}
-		else{
+		else if(varName.startsWith("`expand@")){
+				//for cases where we us the URI given as the value of the column
+				varValue = getExpandedName(MediatorUtil.removeBacktick(varName), values);
+				//if varValue=null or empty don't include this triple
+				//don't include any triples involve this class
+				return varValue;
+		}else{
 			for(int i=0; i< uri.getTerms().size(); i++){
 				Term term = uri.getTerms().get(i);
 				varName = term.getVar();
@@ -598,7 +667,10 @@ public class RuleRDFGenerator {
 					//I can just use it as is
 				}
 				else{
-					throw new MediatorException("Did not find equivalent class for:" + allVarNames + " in " + classes);
+					//throw new MediatorException("Did not find equivalent class for:" + allVarNames + " in " + classes);
+					//if a class was not found probably the value of the column that defines the class is empty
+					//don't include any triples involve this class
+					return null;
 				}
 			}
 		}
