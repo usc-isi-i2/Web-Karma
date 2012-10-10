@@ -29,6 +29,8 @@ public class RatioMultiplyAggregator implements Aggregator {
 	
 	@Override
 	public MultiScore match(JSONArray confArr, Resource res1, Resource res2) {
+		double ratio, sim, totalRatio = 1, totalSim = 1;
+		boolean canHalt = false;
 		MultiScore ms = new MultiScore();
 		ms.setSrcSubj(res1);
 		ms.setDstSubj(res2);
@@ -63,8 +65,20 @@ public class RatioMultiplyAggregator implements Aggregator {
 				String predicate = config.getString("property");				// create the property object to be compared
 				Property p = ResourceFactory.createProperty(predicate);
 				
-				Score s = m.match(p, res1, res2);		
-				sList.add(s);
+				Score s = m.match(p, res1, res2);	
+				ratio = getRatio(s.getPredicate().getURI());
+				if (s.getScoreType() == ScoreType.NORMAL) {
+					sim = s.getSimilarity();
+					if (sim < threshold) {
+						canHalt = true;
+						break;
+					}
+					totalSim *= sim;
+					sList.add(s);
+				} else {			// if value of this property is missing, then punish it.
+					totalSim *= (1-Math.sqrt(ratio));
+				}
+				totalRatio *= ratio;
 				
 				
 			} catch (JSONException e) {
@@ -72,10 +86,12 @@ public class RatioMultiplyAggregator implements Aggregator {
 				return null;
 			}
 		}
-		 
-		ms.setScoreList(sList);				// add the detailed compare result of each property into a score list.
-		
-		ms.setFinalScore(calcRatio(sList));	// aggregate score of properties
+		if (canHalt) {
+			ms.setFinalScore(0);
+		} else {
+			ms.setScoreList(sList);				// add the detailed compare result of each property into a score list.
+			ms.setFinalScore((1 - totalRatio) * totalSim);	// aggregate score of properties
+		}
 		return ms;
 	}
 

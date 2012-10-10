@@ -12,7 +12,7 @@ import org.json.JSONObject;
 public class ConfigUtil {
 
 	public JSONArray loadConfig() {
-		File file = new File("config/configuration.json");
+		File file = new File("config/er_configuration.json");
 		if (!file.exists()) {
 			throw new IllegalArgumentException("file name " + file.getAbsolutePath() + " does not exist.");
 		}
@@ -94,7 +94,7 @@ public class ConfigUtil {
 	}
 	
 	public void loadConstants() {
-		File file = new File("config/constants.json");
+		File file = new File("config/er_constants.json");
 		if (!file.exists()) {
 			throw new IllegalArgumentException("file name " + file.getAbsolutePath() + " does not exist.");
 		}

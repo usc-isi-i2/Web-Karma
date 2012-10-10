@@ -10,5 +10,5 @@ public class Constants {
 	
 	public static String PATH_N3_FILE = PATH_BASE + "n3_file/";
 
-	public static String PATH_SCORE_BOARD_FILE = PATH_BASE;
+	public static String PATH_SCORE_BOARD_FILE = PATH_BASE + "score_result/";
 }
