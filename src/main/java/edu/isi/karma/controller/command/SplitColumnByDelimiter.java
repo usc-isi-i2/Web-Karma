@@ -77,22 +77,34 @@ public class SplitColumnByDelimiter {
 			delimiterChar = new Character(delimiter.charAt(0));
 		}
 
+		Collection<Node> nodes = new ArrayList<Node>();
+		worksheet.getDataTable().collectNodes(selectedPath, nodes);
+
+		//pedro: 2012-10-09
+		// Need to save and clear the values before adding the nested table.
+		// Otherwise we have both a value and a nested table, which is not legal.
+		for (Node node : nodes) {
+			if (oldNodeValueMap != null)
+				oldNodeValueMap.put(node, node.getValue());
+			if (oldNodeStatusMap != null)
+				oldNodeStatusMap.put(node, node.getStatus());
+			
+			node.clearValue(NodeStatus.edited);
+		}
+		
+		//pedro: 2012-10-09
+		// Now that we cleared the values it is safe to add the nested table.
+		//
 		// Add the nested new HTable to the hNode
 		HTable newTable = hNode.addNestedTable("Comma Split Values", worksheet,
 				factory);
 		splitValueHNodeID = newTable.addHNode("Values", worksheet, factory)
 				.getId();
-
-		Collection<Node> nodes = new ArrayList<Node>();
-		worksheet.getDataTable().collectNodes(selectedPath, nodes);
-
+		
 		for (Node node : nodes) {
-			String originalVal = node.getValue().asString();
-			if (oldNodeValueMap != null)
-				oldNodeValueMap.put(node, node.getValue());
-			if (oldNodeStatusMap != null)
-				oldNodeStatusMap.put(node, node.getStatus());
-
+			//String originalVal = node.getValue().asString();
+			String originalVal = oldNodeValueMap.get(node).asString();
+				
 			if (originalVal != null && !originalVal.equals("")) {
 				// Split the values
 				CSVReader reader = new CSVReader(new StringReader(originalVal),
