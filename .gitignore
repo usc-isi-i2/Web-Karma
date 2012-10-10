@@ -24,3 +24,4 @@ src/main/webapp/repository/sources/*.*
 src/main/webapp/CRF_Models/WSP1_CRFModel.txt.zip
 tmp/*
 src/main/webapp/CRF_Models/WSP1_CRFModel.txt
+src/main/scripts/Lib/*.class
