@@ -28,6 +28,8 @@ import java.util.List;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.AlignToOntology;
+import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
@@ -109,6 +111,9 @@ public class SplitByCommaCommand extends WorksheetCommand {
 		
 		// Get the alignment update if any
 		if (!wk.getSemanticTypes().getListOfTypes().isEmpty()) {
+			OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+			SemanticTypeUtil.computeSemanticTypesSuggestion(wk, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
+			
 			AlignToOntology align = new AlignToOntology(wk, vWorkspace, vWorksheetId);
 			try {
 				align.alignAndUpdate(c, true);
