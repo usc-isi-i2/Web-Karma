@@ -27,6 +27,7 @@ import java.util.List;
 
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.alignment.AlignToOntology;
 import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
@@ -104,6 +105,20 @@ public class SplitByCommaCommand extends WorksheetCommand {
 		vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 
 		vw.update(c);
+		// c.add(new SemanticTypesUpdate(wk, vWorksheetId));
+		
+		// Get the alignment update if any
+		if (!wk.getSemanticTypes().getListOfTypes().isEmpty()) {
+			AlignToOntology align = new AlignToOntology(wk, vWorkspace, vWorksheetId);
+			try {
+				align.alignAndUpdate(c, true);
+			} catch (Exception e) {
+				return new UpdateContainer(new ErrorUpdate(
+						"Error occured while generating the model for the source."));
+			}
+		}
+		
+		
 		return c;
 	}
 
