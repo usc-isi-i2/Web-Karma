@@ -34,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import au.com.bytecode.opencsv.CSVReader;
+import edu.isi.karma.cleaning.MyLogger;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
 import edu.isi.karma.cleaning.UtilTools;
@@ -64,6 +65,9 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.examples = this.parseExample(examples);
+		/************collect info************/
+		MyLogger.logsth(worksheetId+" examples: "+examples);
+		/*************************************/
 		
 	}
 	public Vector<TransformationExample> parseExample(String example)
@@ -202,12 +206,13 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		//get the best transformed result
 		String bestRes = "";
 		HashMap<String, Double> topkeys = new HashMap<String, Double>();
+		String switcher = ServletContextParameterMap.getParameterValue(ContextParameter.MSFT);
 		if( rtf.getTransformations().keySet().size()>0)
 		{
 			//ValueCollection rvco = rtf.getTransformedValues("BESTRULE");
 			//bestRes = rvco.getJson().toString(); 
 			//
-			topkeys = getScore(amb, values);
+			topkeys = getScore(amb, values,(switcher.compareTo("True")==0));
 		}
 		Vector<String> jsons = new Vector<String>();
 		if(js2tps.keySet().size()!=0)
@@ -218,8 +223,18 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		{
 			System.out.println("Didn't find any transformation programs");
 		}
-
-		jsons.addAll(js2tps.keySet());
+		
+		//if true use msft algor, randomly choose the result, no top keys and no suggestions
+		if(switcher.compareTo("True")==0)
+		{
+			bestRes = js2tps.keySet().iterator().next();
+			jsons.add(bestRes);
+			//topkeys.clear();
+		}
+		else 
+		{
+			jsons.addAll(js2tps.keySet());
+		}
 		return new UpdateContainer(new CleaningResultUpdate(hNodeId, jsons,js2tps,bestRes,topkeys.keySet()));
 	}
 	public void calAmbScore(String id,String org,HashMap<String, Integer> amb )
@@ -269,9 +284,12 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		}
 		return;
 	}
-	public HashMap<String, Double> getScore(HashMap<String,Integer> dicts,HashMap<String, HashMap<String,Integer>> values)
+	public HashMap<String, Double> getScore(HashMap<String,Integer> dicts,HashMap<String, HashMap<String,Integer>> values,boolean sw)
 	{
-		int topKsize = 1;
+		
+		int topKsize = 3;
+		if(sw)
+			topKsize = Integer.MAX_VALUE;
 		HashMap<String, Double> topK = new HashMap<String, Double>();
 		Iterator<String> iditer = dicts.keySet().iterator();
 		while (iditer.hasNext()) {
@@ -290,7 +308,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			//double entro = squrecnt*1.0/div;
 			//double score = amb*1.0/entro;
 			double score = div;
-			if(topK.keySet().size()<topKsize)
+			if(topK.keySet().size()<topKsize && div >1)
 			{
 				topK.put(id, score);
 			}

@@ -21,7 +21,6 @@ public class ProgSynthesis {
 			tarVector.add(r1.vec);
 		}
 	}
-
 	public Vector<Vector<Integer>> generateCrossIndex(Vector<Integer> poss,
 			Vector<Vector<Integer>> p, int index) {
 		Vector<Vector<Integer>> qVector = new Vector<Vector<Integer>>();

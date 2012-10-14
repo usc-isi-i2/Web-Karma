@@ -76,9 +76,17 @@ div.cleanExampleDiv {
 	display: block;
 	min-height: 12px;
 	padding-left: 2px;
-	/*width: 150px;*/
+	width: 150px;
 }
 
+div.ambExampleDiv {
+/*	border: solid #8C8C8C 1px;*/
+	display: block;
+	min-height: 12px;
+	padding-left: 2px;
+	width: 150px;
+	 background-color:#FDDDDF;
+}
 table.cleaningExampleDivTable td {
 	padding: 0px;
 }
@@ -93,6 +101,9 @@ tr#buttonsAndRuleInfoRow td {
 	font-size: 20px;
 }
 
+tr.suggestion td {
+	background-color: #CC9999;
+}
 div.undoEditButton {
 	float:right;
 	display: inline;

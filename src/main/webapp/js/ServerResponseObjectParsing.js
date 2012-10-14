@@ -788,8 +788,7 @@ function parse(data) {
 			else{
 				$.sticky(element["numRowsNotInserted"] + " rows not saved in database! Check log file for details.");			
 			}
-		} 
-		
+		} 	
 		else if(element["updateType"] == "CleaningResultUpdate") {
             if(element["result"] != null) {
             		//var pdata = getVaritions(element["result"]);
@@ -798,21 +797,19 @@ function parse(data) {
             			alert("Cannot find any transformations! Please check your examples!");
             		}
             		var topCol = element["result"][0];
+            		preprocessData(topCol,topCol["top"]);
 				populateResult(topCol);
 				var pdata = getVaritions(element["result"]);
-				populateVariations(pdata);
+				populateVariations(topCol["top"],pdata);
 				$("div#columnHeadingDropDownMenu").data("results", element["result"]);
             }
         }
-        
         else if(element["updateType"] == "InfoUpdate") {
             $.sticky(element["Info"]);
-        }
-        
+        }       
         else if(element["updateType"] == "SVGAlignmentUpdate_ForceKarmaLayout") {
             displayAlignmentTree_ForceKarmaLayout(element);  // In d3-alignment-vis.js
-        }
-        
+        }       
         else if(element["updateType"] == "KarmaInfo") {
             $.sticky(element["Info"]);
         }

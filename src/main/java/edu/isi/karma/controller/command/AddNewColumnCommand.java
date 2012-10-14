@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 import org.json.JSONObject;
 
+import edu.isi.karma.cleaning.MyLogger;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
@@ -79,6 +80,7 @@ public class AddNewColumnCommand extends WorksheetCommand {
 		HNode ndid = worksheet.getHeaders().getHNodeFromColumnName(existingColumnName+"_copy");
 		System.out.println(""+ndid.getColumnName());
 		JSONObject jObject = null;
+		String resultString = "";
 		try 
 		{
 			jObject  = new JSONObject(result);
@@ -86,7 +88,8 @@ public class AddNewColumnCommand extends WorksheetCommand {
 			{
 				Node node = r.getNode(hNodeId);
 				String t = jObject.getString(node.getId());
-				System.out.println(""+t+""+ndid.getId()+","+hNodeId);
+				//System.out.println(""+t+""+ndid.getId()+","+hNodeId);
+				resultString += t+"\n";
 				r.setValue(ndid.getId(), t, vWorkspace.getRepFactory());
 			}
 			System.out.println("Old VW ID: " + vWorksheetId);
@@ -94,6 +97,12 @@ public class AddNewColumnCommand extends WorksheetCommand {
 			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 			System.out.println("New VW ID: " + vw.getId());
 			vw.update(c);
+			/************collect info************/
+			String id = vw.getWorksheetId();
+			MyLogger.logsth(id+" results: "+resultString);
+			MyLogger.logsth(id+" time span: "+MyLogger.getDuration(id));
+			MyLogger.logsth("Finish Submitting: "+id);
+			/*************************************/
 		} catch (Exception e) {
 			System.out.println(""+e.toString());
 		}
