@@ -238,8 +238,8 @@ function handleCleanColumnButton() {
 	//
 	$("div#ColumnCleaningPanel").dialog({
 		title : 'Transform',
-		width : 900,
-		height : 500,
+		width : 1100,
+		height : 600,
 		buttons : {
 			"Cancel" : function() {
 				$(this).dialog("close");
@@ -359,7 +359,7 @@ function populateResult(rdata,nodeIds) {
 				type : 'textarea',
 				submit : 'OK',
 				cancel : 'Cancel',
-				width : 140,
+				width : 350,
 				onblur : 'ignore',
 			}))))))
 		}

@@ -2,6 +2,8 @@ package edu.isi.karma.cleaning;
 
 import java.util.Vector;
 
+import org.python.antlr.PythonParser.else_clause_return;
+
 public class Position implements GrammarTreeNode {
 	public Vector<TNode> leftContextNodes =new Vector<TNode>();
 	public Vector<TNode> rightContextNodes = new Vector<TNode>();
@@ -34,16 +36,22 @@ public class Position implements GrammarTreeNode {
 				score += 1.0;
 				continue;
 			}
-			if(r==5 || r==6)
-			{
-				s +="ANY";
-				score += 1.0;
-				continue;
-			}
+//			if(r==5 || r==6)
+//			{
+//				s +="ANY";
+//				score += 1.0;
+//				continue;
+//			}
+			
 			if(t.type == TNode.NUMTYP)
 			{
 				s +="NUM";
 				score += 2.0;
+			}
+			else if(t.type == TNode.WORD)
+			{
+				s +="WORD";
+				score += 4.0;
 			}
 			else if(t.type == TNode.SYBSTYP)
 			{
@@ -102,20 +110,21 @@ public class Position implements GrammarTreeNode {
 						xNodes.add(null);
 						continue;
 					}
-					if(!t.sameType(t1))
+					if(t.mergableType(t1)==-1)
 					{
 						return null;
 					}
 					else 
 					{
-						if(t.text.compareTo(t1.text)==0&&t.type == t1.type)
+						int type = t.mergableType(t1);
+						if(t.text.compareTo(t1.text)==0)
 						{
-							TNode tx = new TNode(t.type,t.text);
+							TNode tx = new TNode(type,t.text);
 							xNodes.add(tx);
 						}
 						else
 						{
-							TNode tx = new TNode(t.type,"ANYTOK");
+							TNode tx = new TNode(type,"ANYTOK");
 							xNodes.add(tx);
 						}
 					}

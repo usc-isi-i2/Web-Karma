@@ -76,7 +76,6 @@ div.cleanExampleDiv {
 	display: block;
 	min-height: 12px;
 	padding-left: 2px;
-	width: 150px;
 }
 
 div.ambExampleDiv {
@@ -84,8 +83,8 @@ div.ambExampleDiv {
 	display: block;
 	min-height: 12px;
 	padding-left: 2px;
-	width: 150px;
-	 background-color:#FDDDDF;
+	/*width: 150px;*/
+	background-color:#FDDDDF;
 }
 table.cleaningExampleDivTable td {
 	padding: 0px;

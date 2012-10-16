@@ -17,6 +17,7 @@ class Translator(object):
                       'UWRD':'[A-Z]+',\
                       'BNK':'[\s]+',\
                       'SYB':'[^(0-9|a-z|A-Z|\s)]',\
+                      'WORD':'[a-z|A-Z]',\
                       'ANY':'',\
                       }
     def translate(self,script):

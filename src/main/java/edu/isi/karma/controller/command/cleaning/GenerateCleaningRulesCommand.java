@@ -170,7 +170,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		boolean results = false;
 		int iterNum = 0;
 		RamblerTransformationOutput rtf = null;
-		while(iterNum<10 && !results) // try to find any rule during 5 times running
+		while(iterNum<5 && !results) // try to find any rule during 5 times running
 		{
 			rtf = new RamblerTransformationOutput(inputs);
 			if(rtf.getTransformations().keySet().size()>0)
