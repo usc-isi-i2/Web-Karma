@@ -8,8 +8,9 @@ from Interpreter import *
 from ast import *
 def test0():
     '''test concatenation'''
-    s = "Bulevar kralja Aleksandra&nbsp;156"
-    scripts = '''substr(value,indexOf(value,'START','WORD',1),indexOf(value,'LWRD','BNK',1))'''
+    s = "13 Jan 2008 00:00:00 +0000"
+    scripts = '''substr(value,indexOf(value,'START','NUM',1),12)+loop(value,"substr(value,-11,18)")+substr(value,12,-12)
+'''
     a = Interpreter(scripts)
     print a.execute(s)
 def test1():

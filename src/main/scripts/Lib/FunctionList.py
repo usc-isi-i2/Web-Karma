@@ -39,6 +39,8 @@ def loop(value,stript):
     cnt = 1;
     while True:
         tmpstript = stript
+        if tmpstript.find("counter") == -1:
+            break
         tmpstript = tmpstript.replace("counter",str(cnt))
         s = eval(tmpstript)
         if s.find("<_FATAL_ERROR_>")!=-1:
