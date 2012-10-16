@@ -405,7 +405,6 @@ public class ProgSynthesis {
 	public boolean validRule(String p,Interpretor it)
 	{
 		InterpreterType worker = it.create(p);
-		System.out.println(""+p);
 		boolean res = true;
 		for(int i=0; i<orgVector.size();i++)
 		{
