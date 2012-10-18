@@ -34,3 +34,5 @@ src/main/scripts/Lib/*.class
 src/main/scripts/Lib/Interpreter$py.class
 
 src/main/scripts/Lib/Translator$py.class
+
+.classpath
