@@ -377,11 +377,14 @@ public class OntologyCache {
 	private void addPropertiesOfRDFVocabulary() {
 		String labelUri = "http://www.w3.org/2000/01/rdf-schema#label";
 		String commentUri = "http://www.w3.org/2000/01/rdf-schema#comment";
+		String valueUri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#value";
 		List<String> temp;
 		
+		ontologyManager.getOntModel().setNsPrefix("rdfs", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 		ontologyManager.getOntModel().setNsPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 		ontologyManager.getOntModel().createDatatypeProperty(labelUri);
 		ontologyManager.getOntModel().createDatatypeProperty(commentUri);
+		ontologyManager.getOntModel().createDatatypeProperty(valueUri);
 
 		// collect all the existing classes
 		List<String> classes = new ArrayList<String>();
@@ -401,6 +404,7 @@ public class OntologyCache {
 			}
 			temp.add(labelUri);
 			temp.add(commentUri);
+			temp.add(valueUri);
 		}
 
 		// add label to properties hashmap
@@ -423,6 +427,15 @@ public class OntologyCache {
 			if (temp.indexOf(s) == -1)
 				temp.add(s);
 
+		// add value to properties hashmap
+		temp = propertyIndirectDomains.get(valueUri);
+		if (temp == null) {
+			temp = new ArrayList<String>();
+			propertyIndirectDomains.put(valueUri, temp);
+		}
+		for (String s : classes)
+			if (temp.indexOf(s) == -1)
+				temp.add(s);
 	}
 	
 	/**
