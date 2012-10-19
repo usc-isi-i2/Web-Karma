@@ -20,13 +20,17 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
+import java.awt.List;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.json.JSONObject;
+import org.python.antlr.ast.For;
 
 import edu.isi.karma.cleaning.MyLogger;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
@@ -39,7 +43,8 @@ public class AddNewColumnCommand extends WorksheetCommand {
 	private final String vWorksheetId;
 	private String result;
 
-	protected AddNewColumnCommand(String id, String vWorksheetId, String worksheetId, String hNodeId, String result) {
+	protected AddNewColumnCommand(String id, String vWorksheetId,
+			String worksheetId, String hNodeId, String result) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.vWorksheetId = vWorksheetId;
@@ -68,43 +73,67 @@ public class AddNewColumnCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		//pedro 2012-09-15: unused.
-		//		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
+		// pedro 2012-09-15: unused.
+		// Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
 		UpdateContainer c = new UpdateContainer();
-		Worksheet worksheet = vWorkspace.getWorkspace().getWorksheet(worksheetId);
-		System.out.println("Old Size" + worksheet.getHeaders().getAllPaths().size());
+		Worksheet worksheet = vWorkspace.getWorkspace().getWorksheet(
+				worksheetId);
+		System.out.println("Old Size"
+				+ worksheet.getHeaders().getAllPaths().size());
 		HTable headers = worksheet.getHeaders();
-		String existingColumnName = headers.getHNode(hNodeId).getColumnName();
-		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows());
-		worksheet.getHeaders().addNewHNodeAfter(hNodeId, vWorkspace.getRepFactory(), existingColumnName+"_copy", worksheet);
-		HNode ndid = worksheet.getHeaders().getHNodeFromColumnName(existingColumnName+"_copy");
-		System.out.println(""+ndid.getColumnName());
-		JSONObject jObject = null;
-		String resultString = "";
-		try 
-		{
-			jObject  = new JSONObject(result);
-			for(Row r:rows)
-			{
+		java.util.List<HNodePath> nodesList = headers.getAllPaths();
+		HNodePath index = null;
+		for (HNodePath hp : nodesList) {
+			if (hp.toString().contains(hNodeId)) {
+				index = hp;
+			}
+		}
+		HNode xHNode = index.getLeaf();
+		String existingColumnName = xHNode
+				.getHTable(vWorkspace.getRepFactory()).getHNode(hNodeId)
+				.getColumnName();
+		xHNode.getHTable(vWorkspace.getRepFactory()).addNewHNodeAfter(hNodeId,
+				vWorkspace.getRepFactory(), existingColumnName + "_copy",
+				worksheet);
+		// worksheet.getHeaders().addNewHNodeAfter(hNodeId,
+		// vWorkspace.getRepFactory(), existingColumnName+"_copy", worksheet);
+		HNode ndid = xHNode.getHTable(vWorkspace.getRepFactory())
+				.getHNodeFromColumnName(existingColumnName + "_copy");
+		System.out.println("" + ndid.getColumnName());
+		Collection<Node> nodes = new ArrayList<Node>();
+		worksheet.getDataTable().collectNodes(index, nodes);
+		try {
+			JSONObject jObject = new JSONObject(this.result);
+			for (Node xnode : nodes) {
+				Row r = xnode.getBelongsToRow();
 				Node node = r.getNode(hNodeId);
 				String t = jObject.getString(node.getId());
-				//System.out.println(""+t+""+ndid.getId()+","+hNodeId);
-				resultString += t+"\n";
+					// System.out.println(""+t+""+ndid.getId()+","+hNodeId);
+					// resultString += t+"\n";
 				r.setValue(ndid.getId(), t, vWorkspace.getRepFactory());
+				
+				
+
 			}
 			System.out.println("Old VW ID: " + vWorksheetId);
-			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet, worksheet.getHeaders().getAllPaths(), vWorkspace);
-			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
+					worksheet, worksheet.getHeaders().getAllPaths(),
+					vWorkspace);
+			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(
+					vWorksheetId);
 			System.out.println("New VW ID: " + vw.getId());
 			vw.update(c);
-			/************collect info************/
-			String id = vw.getWorksheetId();
-			MyLogger.logsth(id+" results: "+resultString);
-			MyLogger.logsth(id+" time span: "+MyLogger.getDuration(id));
-			MyLogger.logsth("Finish Submitting: "+id);
+			String resultString = "";
+
+			/************ collect info ************/
+			String id = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId)
+					.getWorksheetId();
+			MyLogger.logsth(id + " results: " + resultString);
+			MyLogger.logsth(id + " time span: " + MyLogger.getDuration(id));
+			MyLogger.logsth("Finish Submitting: " + id);
 			/*************************************/
 		} catch (Exception e) {
-			System.out.println(""+e.toString());
+			System.out.println("" + e.toString());
 		}
 		return c;
 	}

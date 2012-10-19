@@ -132,10 +132,9 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 			VWorksheet vw = vWorkspace.getVWorksheet(wsht.getId());
 			vw.update(c);
 			/************collect info************/
-			MyLogger xLogger = new MyLogger();
 			String id = vw.getWorksheetId();
 			MyLogger.setTime(id, System.currentTimeMillis());
-			MyLogger.logsth(">>>>>>>>Load worksheet: "+id);
+			MyLogger.logsth(">>>>>>>>user "+MyLogger.user_id+" Load worksheet: "+id);
 			/*************************************/
 		} catch (Exception e) {
 			logger.error("Error occured while importing CSV file.", e);

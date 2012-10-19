@@ -67,6 +67,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		this.examples = this.parseExample(examples);
 		/************collect info************/
 		MyLogger.logsth(worksheetId+" examples: "+examples);
+		MyLogger.logsth("Time: "+System.currentTimeMillis());
 		/*************************************/
 		
 	}
@@ -287,7 +288,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	public HashMap<String, Double> getScore(HashMap<String,Integer> dicts,HashMap<String, HashMap<String,Integer>> values,boolean sw)
 	{
 		
-		int topKsize = 3;
+		int topKsize = 1;
 		if(sw)
 			topKsize = Integer.MAX_VALUE;
 		HashMap<String, Double> topK = new HashMap<String, Double>();
