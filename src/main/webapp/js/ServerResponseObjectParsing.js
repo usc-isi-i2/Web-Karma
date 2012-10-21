@@ -797,10 +797,11 @@ function parse(data) {
             			alert("Cannot find any transformations! Please check your examples!");
             		}
             		var topCol = element["result"][0];
+            		var sndCol = element["result"][1];
             		preprocessData(topCol,topCol["top"]);
 				populateResult(topCol);
-				var pdata = getVaritions(element["result"]);
-				populateVariations(topCol["top"],pdata);
+				//var pdata = getVaritions(element["result"]);
+				populateVariations(topCol["top"],sndCol["data"]);
 				$("div#columnHeadingDropDownMenu").data("results", element["result"]);
             }
         }

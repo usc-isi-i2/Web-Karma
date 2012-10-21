@@ -37,7 +37,6 @@ public class HeadersColorKeyTranslator implements ColorKeyTranslator {
 		depthCssMap.put(6, "table06cell");
 	}
 	
-	@Override
 	public String getCssTag(String colorKey, int depth) {
 		return depthCssMap.get(depth%7);
 	}

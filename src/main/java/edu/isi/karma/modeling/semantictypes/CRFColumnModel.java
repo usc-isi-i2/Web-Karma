@@ -52,7 +52,6 @@ public class CRFColumnModel implements Jsonizable {
 		return scoreMap.get(label);
 	}
 
-	@Override
 	public void write(JSONWriter writer) throws JSONException {
 		writer.object();
 		writer.array();

@@ -30,7 +30,6 @@ public class SemanticTypeTrainingThread implements Runnable {
 	}
 
 	
-	@Override
 	public void run() {
 		long start = System.currentTimeMillis();
 		// Find the corresponding hNodePath. Used to find examples for training the CRF Model.

@@ -72,13 +72,11 @@ public class CntFeature implements Feature{
 			double res = RegularityFeatureSet.calShannonEntropy(b)*1.0/Math.log(x.size());
 			return res;
 		}
-		@Override
 		public String getName() {
 			
 			return this.name;
 		}
 		
-		@Override
 		public double getScore() {
 			
 			return score;

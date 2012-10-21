@@ -34,7 +34,6 @@ public class Program implements GrammarTreeNode {
 		this.score = 0.0;
 		return r;
 	}
-	@Override
 	public String toProgram() {
 		if(this.partitions.size()>1)
 		{
@@ -67,7 +66,6 @@ public class Program implements GrammarTreeNode {
 		return resString;
 	}
 
-	@Override
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
 		// TODO Auto-generated method stub
 		return null;

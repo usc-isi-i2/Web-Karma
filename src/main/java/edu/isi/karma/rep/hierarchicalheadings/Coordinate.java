@@ -49,7 +49,6 @@ public class Coordinate implements Comparable<Coordinate> {
 		return type;
 	}
 
-	@Override
 	public int compareTo(Coordinate o) {
 		if (o.type == Type.content) {
 			if (this.type == Type.content) {

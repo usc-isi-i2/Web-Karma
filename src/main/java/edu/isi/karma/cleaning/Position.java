@@ -36,12 +36,12 @@ public class Position implements GrammarTreeNode {
 				score += 1.0;
 				continue;
 			}
-//			if(r==5 || r==6)
-//			{
-//				s +="ANY";
-//				score += 1.0;
-//				continue;
-//			}
+			if(r==5 || r==6)
+			{
+				s +="ANY";
+				score += 1.0;
+				continue;
+			}
 			
 			if(t.type == TNode.NUMTYP)
 			{
@@ -225,7 +225,6 @@ public class Position implements GrammarTreeNode {
 	{
 		return this.absPosition+"("+this.leftContextNodes+","+this.rightContextNodes+")";
 	}
-	@Override
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
 		Position p = (Position)a;
 		p = this.mergewith(p);

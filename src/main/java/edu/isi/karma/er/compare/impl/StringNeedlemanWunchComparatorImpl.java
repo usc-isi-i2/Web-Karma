@@ -5,7 +5,6 @@ import edu.isi.karma.er.compare.StringComparator;
 
 public class StringNeedlemanWunchComparatorImpl implements StringComparator {
 
-	@Override
 	public float getSimilarity(String str1, String str2) {
 		NeedlemanWunch comp = new NeedlemanWunch();
 		

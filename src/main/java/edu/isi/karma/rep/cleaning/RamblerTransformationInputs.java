@@ -33,17 +33,14 @@ public class RamblerTransformationInputs implements TransformationInputs {
 		this.examples = examples;
 		this.inputValues = inputValues;
 	}
-	@Override
 	public Collection<TransformationExample> getExamples() {
 		// TODO Auto-generated method stub
 		return this.examples;
 	}
-	@Override
 	public ValueCollection getInputValues() {
 		// TODO Auto-generated method stub
 		return this.inputValues;
 	}
-	@Override
 	public void setPreferredRule(Transformation t) {
 		// TODO Auto-generated method stub
 		this.preferedTransformation = t;

@@ -58,19 +58,16 @@ public class VDCellStrokes {
 			}
 		}
 
-		@Override
 		public boolean hasNext() {
 			return increment == 1 ? index != limit : index >= limit;
 		}
 
-		@Override
 		public Stroke next() {
 			Stroke result = strokes[position.ordinal()][index];
 			index += increment;
 			return result;
 		}
 
-		@Override
 		public void remove() {
 			throw new Error("Cannot remove!");
 		}

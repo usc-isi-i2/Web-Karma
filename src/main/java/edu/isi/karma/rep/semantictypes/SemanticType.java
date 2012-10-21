@@ -123,7 +123,6 @@ public class SemanticType implements Jsonizable {
 		return typeObj;
 	}
 
-	@Override
 	public void write(JSONWriter writer) throws JSONException {
 		writer.object();
 		writer.key("HNodeId").value(hNodeId);

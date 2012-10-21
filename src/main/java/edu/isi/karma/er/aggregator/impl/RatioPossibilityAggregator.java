@@ -19,7 +19,6 @@ public class RatioPossibilityAggregator implements Aggregator {
 	public RatioPossibilityAggregator(calPosibility cal) {
 		this.cal = cal;
 	}
-	@Override
 	public MultiScore match(JSONArray confArr, Resource res1, Resource res2) {
 		
 		MultiScore ms = new MultiScore();

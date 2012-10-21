@@ -384,7 +384,7 @@ function populateVariations(data,data1) {
 		var trTag = $("tr#" + nodeId + "_suggestion_cl_row");
 		trTag.attr("class","suggestion")
 		//$("tr", cleaningTable).eq(0).after(trTag);
-		var values = Object.keys(data1[nodeId]);
+		var values = data1[nodeId];
 		$.each(values, function(index, val) {
 			
 			var tdTag = $("td#" + nodeId + "_suggestion_variations");
@@ -582,12 +582,12 @@ function updateResult() {
 		showCleanningWaitingSignOnScreen();
 		handleGenerateCleaningRulesButton();
 	} 
-	else//use the trimmed data
+	/*else//use the trimmed data
 	{
 		populateResult(newdata[0]);
 		var pdata = getVaritions(newdata);
 		populateVariations(newdata[0]["top"],pdata);
-	}
+	}*/
 }
 
 //wait

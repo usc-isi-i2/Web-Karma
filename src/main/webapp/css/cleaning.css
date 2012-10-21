@@ -47,7 +47,7 @@ table#cleaningExamplesTable button.suggestion{
    text-align:left;
    color:#444444;
    width:90px;
-   background-color:#DDDDDD;
+   background-color:#FDDDDF;
    border-style:none;
 
 }
@@ -101,7 +101,7 @@ tr#buttonsAndRuleInfoRow td {
 }
 
 tr.suggestion td {
-	background-color: #CC9999;
+	background-color: #FDDDDF;
 }
 div.undoEditButton {
 	float:right;

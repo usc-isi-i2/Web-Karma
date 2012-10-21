@@ -34,7 +34,6 @@ public class VTHeaderForest implements TForest {
 	private List<TNode> roots = new ArrayList<TNode>();
 	private Map<String, VTHNode> nodeMap = new HashMap<String, VTHNode>();
 
-	@Override
 	public List<TNode> getRoots() {
 		return roots;
 	}

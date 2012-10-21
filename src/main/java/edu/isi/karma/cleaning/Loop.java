@@ -39,7 +39,6 @@ public class Loop implements GrammarTreeNode {
 		this.score = 0.0;
 		return r;
 	}
-	@Override
 	public String toProgram() {
 		//Template
 		String prog = "";
@@ -54,7 +53,6 @@ public class Loop implements GrammarTreeNode {
 		String s = String.format("loop(value,\"%s\")",prog);
 		return s;
 	}
-	@Override
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
 		return this.mergewith((Loop)a);
 	}

@@ -45,7 +45,6 @@ public class AlignmentForest implements TForest {
 	private static Logger logger = LoggerFactory
 			.getLogger(AlignmentForest.class.getName());
 
-	@Override
 	public List<TNode> getRoots() {
 		return roots;
 	}

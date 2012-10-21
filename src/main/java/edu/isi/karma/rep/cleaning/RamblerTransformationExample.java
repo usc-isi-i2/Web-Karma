@@ -32,19 +32,16 @@ public class RamblerTransformationExample implements TransformationExample {
 		this.after = after;
 		this.nodeID = nodeID;
 	}
-	@Override
 	public String getNodeId() {
 		// TODO Auto-generated method stub
 		return this.nodeID;
 	}
 
-	@Override
 	public String getBefore() {
 		// TODO Auto-generated method stub
 		return this.before;
 	}
 
-	@Override
 	public String getAfter() {
 		// TODO Auto-generated method stub
 		return this.after;

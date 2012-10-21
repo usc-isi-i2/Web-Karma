@@ -40,7 +40,6 @@ public class Alignment {
 	static Logger logger = Logger.getLogger(Alignment.class);
 
 	private class SemanticTypeComparator implements Comparator<SemanticType> {
-	    @Override
 	    public int compare(SemanticType o1, SemanticType o2) {
 //	    	String s1 = (o1.getDomain() != null?o1.getDomain().getUriString():"") + o1.getType().getUriString();
 //	    	String s2 = (o2.getDomain() != null?o2.getDomain().getUriString():"") + o2.getType().getUriString();

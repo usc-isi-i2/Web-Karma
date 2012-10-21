@@ -25,6 +25,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,9 @@ import java.util.Vector;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.python.antlr.PythonParser.else_clause_return;
+
+import com.hp.hpl.jena.tdb.store.Hash;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.cleaning.MyLogger;
@@ -171,7 +175,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		boolean results = false;
 		int iterNum = 0;
 		RamblerTransformationOutput rtf = null;
-		while(iterNum<5 && !results) // try to find any rule during 5 times running
+		while(iterNum<2 && !results) // try to find any rule during 5 times running
 		{
 			rtf = new RamblerTransformationOutput(inputs);
 			if(rtf.getTransformations().keySet().size()>0)
@@ -184,6 +188,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		Vector<ValueCollection> vvc = new Vector<ValueCollection>();
 		HashMap<String, HashMap<String,Integer>> values = new HashMap<String, HashMap<String,Integer>>();
 		HashMap<String,Vector<String>> js2tps = new HashMap<String,Vector<String>>();
+		HashMap<String, HashSet<String>> vars = new HashMap<String, HashSet<String>>();
 		while(iter.hasNext())
 		{
 			String tpid = iter.next();
@@ -202,6 +207,25 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 				Vector<String> tps = new Vector<String>();
 				tps.add(tpid);
 				js2tps.put(reps, tps);
+			}
+			Collection<String> ids = rvco.getNodeIDs();
+			for(String id:ids)
+			{
+				String value = rvco.getValue(id);
+				if(vars.containsKey(id))
+				{
+					HashSet<String> hsIdSet = vars.get(id);
+					if(!hsIdSet.contains(value))
+					{
+						hsIdSet.add(value);
+					}
+				}
+				else
+				{
+					HashSet<String> hsIdSet = new HashSet<String>();
+					hsIdSet.add(value);
+					vars.put(id, hsIdSet);
+				}
 			}
 		}
 		//get the best transformed result
@@ -224,7 +248,6 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		{
 			System.out.println("Didn't find any transformation programs");
 		}
-		
 		//if true use msft algor, randomly choose the result, no top keys and no suggestions
 		if(switcher.compareTo("True")==0)
 		{
@@ -235,8 +258,37 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		else 
 		{
 			jsons.addAll(js2tps.keySet());
+			jsons.clear();
+			js2tps.clear();
 		}
-		return new UpdateContainer(new CleaningResultUpdate(hNodeId, jsons,js2tps,bestRes,topkeys.keySet()));
+		HashMap<String, HashSet<String>> sub_vars = new HashMap<String, HashSet<String>>();
+		for(String tkey:topkeys.keySet())
+		{
+			if(vars.containsKey(tkey))
+			{
+				sub_vars.put(tkey, vars.get(tkey));
+			}
+		}
+		String jsonrep = getVarJSON(sub_vars);
+		return new UpdateContainer(new CleaningResultUpdate(hNodeId, jsons,js2tps,bestRes,jsonrep,topkeys.keySet()));
+	}
+	public String getVarJSON(HashMap<String, HashSet<String>> values)
+	{
+		JSONObject jsobj = new JSONObject();
+		try 
+		{
+			for(String key:values.keySet())
+			{
+				JSONArray jsonArray = new JSONArray();
+				HashSet<String> vs = values.get(key);
+				for(String v:vs)
+					jsonArray.put(v);
+				jsobj.put(key, jsonArray);
+			}
+		} catch (Exception e) {
+			System.out.println("value generation error");
+		}
+		return jsobj.toString();
 	}
 	public void calAmbScore(String id,String org,HashMap<String, Integer> amb )
 	{

@@ -83,13 +83,11 @@ public class MovFeature implements Feature {
 	{
 		this.name = name;
 	}
-	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
 		return this.name;
 	}
 
-	@Override
 	public double getScore() {
 		// TODO Auto-generated method stub
 		return this.score;

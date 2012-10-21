@@ -73,13 +73,11 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		//RamblerTransformation r = new RamblerTransformation(psProgSynthesis.getBestRule());
 		//transformations.put("BESTRULE",r);
 	}
-	@Override
 	public HashMap<String,Transformation> getTransformations() {
 		// TODO Auto-generated method stub
 		return transformations;
 	}
 
-	@Override
 	public ValueCollection getTransformedValues(String TransformatinId) {
 		// TODO Auto-generated method stub
 		Transformation t = transformations.get(TransformatinId);
@@ -98,7 +96,6 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		return vo;
 	}
 
-	@Override
 	public Collection<String> getRecommandedNextExample() {
 		// TODO Auto-generated method stub
 		return null;

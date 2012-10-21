@@ -48,7 +48,6 @@ public class RamblerValueCollection implements ValueCollection {
 			data.put(id, val);
 		}
 	}
-	@Override
 	public String getValue(String id) {
 		// TODO Auto-generated method stub
 		if(data.containsKey(id))
@@ -59,19 +58,16 @@ public class RamblerValueCollection implements ValueCollection {
 			return "";
 	}
 
-	@Override
 	public Collection<String> getValues() {
 		// TODO Auto-generated method stub
 		return data.values();
 	}
 
-	@Override
 	public Collection<String> getNodeIDs() {
 		// TODO Auto-generated method stub
 		return data.keySet();
 	}
 
-	@Override
 	public JSONObject getJson() {
 		// TODO Auto-generated method stub
 		try

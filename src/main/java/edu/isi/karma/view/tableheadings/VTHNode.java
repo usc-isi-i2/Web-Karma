@@ -44,12 +44,10 @@ public class VTHNode implements TNode {
 		children = new ArrayList<TNode>();
 	}
 	
-	@Override
 	public List<TNode> getChildren() {
 		return children;
 	}
 
-	@Override
 	public String getId() {
 		return id;
 	}
@@ -58,7 +56,6 @@ public class VTHNode implements TNode {
 		return label;
 	}
 
-	@Override
 	public void generateContentJson(PrintWriter pw) {
 		JSONObject obj = new JSONObject();
 		
@@ -71,12 +68,10 @@ public class VTHNode implements TNode {
 		}
 	}
 
-	@Override
 	public String getColorKey() {
 		return null;
 	}
 
-	@Override
 	public JSONObject generateJsonObject() {
 		JSONObject obj = new JSONObject();
 		

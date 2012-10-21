@@ -393,9 +393,10 @@ public class Template implements GrammarTreeNode{
 				vgt.add(segs.get(i).get(key));
 				vecs.add(vgt);
 			}
-			return genloops(segs,vecs,i++);
+			return genloops(segs,vecs,++i);
 		}
 		else {
+			Vector<Vector<GrammarTreeNode>> nvecs = new Vector<Vector<GrammarTreeNode>>();
 			for(int j = 0; j<vecs.size(); j++)
 			{
 				for(String key:segs.get(i).keySet())
@@ -403,10 +404,10 @@ public class Template implements GrammarTreeNode{
 					Vector<GrammarTreeNode> vgt = new Vector<GrammarTreeNode>();
 					vgt.addAll(vecs.get(j));
 					vgt.add(segs.get(i).get(key));
-					vecs.add(vgt);
+					nvecs.add(vgt);
 				}
 			}
-			return genloops(segs,vecs,i++);
+			return genloops(segs,nvecs,++i);
 		}
 		
 	}
@@ -432,7 +433,7 @@ public class Template implements GrammarTreeNode{
 	public Template mergewith(Template b)
 	{
 		Vector<HashMap<String,GrammarTreeNode>> vsSegments = new Vector<HashMap<String,GrammarTreeNode>>();
-		if(b.segmentlist.size() != this.segmentlist.size())
+		if(b.size() != this.size())
 			return null;
 		int a_ptr=0,b_ptr = 0;
 		while(a_ptr<this.segmentlist.size()&&b_ptr<b.segmentlist.size())
@@ -566,7 +567,6 @@ public class Template implements GrammarTreeNode{
 		resString = resString.substring(0,resString.length()-1);
 		return resString;
 	}
-	@Override
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
 		// TODO Auto-generated method stub
 		return null;

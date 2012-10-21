@@ -81,7 +81,6 @@ public class RegularityFeatureSet implements FeatureSet {
 		}
 		return x;
 	}
-	@Override
 	public Collection<Feature> computeFeatures(Collection<String> examples,Collection<String> oexamples) {
 		Vector<Feature> r = new Vector<Feature>();
 		
@@ -212,7 +211,6 @@ public class RegularityFeatureSet implements FeatureSet {
 		}
 		return entropy;
 	}
-	@Override
 	public Collection<String> getFeatureNames() {
 		
 		return fnames;

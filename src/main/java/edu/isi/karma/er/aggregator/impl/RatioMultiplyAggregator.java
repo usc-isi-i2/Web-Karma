@@ -27,7 +27,6 @@ public class RatioMultiplyAggregator implements Aggregator {
 
 	private double threshold = 0.8;
 	
-	@Override
 	public MultiScore match(JSONArray confArr, Resource res1, Resource res2) {
 		double ratio, sim, totalRatio = 1, totalSim = 1;
 		boolean canHalt = false;

@@ -6,7 +6,6 @@ import edu.isi.karma.er.compare.StringComparator;
 
 public class StringQGramComparatorImpl implements StringComparator {
 
-	@Override
 	public float getSimilarity(String str1, String str2) {
 		
 		//QGramsDistance method = new QGramsDistance();

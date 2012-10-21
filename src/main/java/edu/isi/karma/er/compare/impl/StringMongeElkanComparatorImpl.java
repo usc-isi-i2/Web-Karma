@@ -5,7 +5,6 @@ import edu.isi.karma.er.compare.StringComparator;
 
 public class StringMongeElkanComparatorImpl implements StringComparator {
 
-	@Override
 	public float getSimilarity(String str1, String str2) {
 		
 		MongeElkan comp = new MongeElkan();

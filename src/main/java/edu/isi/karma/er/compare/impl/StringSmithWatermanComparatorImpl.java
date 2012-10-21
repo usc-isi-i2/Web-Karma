@@ -5,7 +5,6 @@ import edu.isi.karma.er.compare.StringComparator;
 
 public class StringSmithWatermanComparatorImpl implements StringComparator {
 
-	@Override
 	public float getSimilarity(String str1, String str2) {
 		
 		SmithWaterman method = new SmithWaterman();

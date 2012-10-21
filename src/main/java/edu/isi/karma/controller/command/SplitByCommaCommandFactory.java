@@ -54,7 +54,6 @@ public class SplitByCommaCommandFactory extends CommandFactory implements
 				request, vWorkspace), hNodeId, vWorksheetId, delimiter);
 	}
 
-	@Override
 	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
 			throws JSONException, KarmaException {
 		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);

@@ -16,7 +16,8 @@ class FeatureFactory:
         tmplist = []        
         for c in self.specialchars:
             ft = CntFeature("attr_"+c,value,c)
-            tmplist.append(ft.computerScore())
+            score = ft.computerScore();
+            tmplist.append(score)
         self.datatable.append(tmplist)
     def getFeatureNames(self):
         return self.specialchars

@@ -4,7 +4,6 @@ import edu.isi.karma.er.compare.StringComparator;
 
 public class StringEqualComparatorImpl implements StringComparator {
 
-	@Override
 	public float getSimilarity(String str1, String str2) {
 		if (str1 == null || str2 == null)
 			return 0f;

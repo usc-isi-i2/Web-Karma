@@ -125,7 +125,6 @@ public class Segment implements GrammarTreeNode{
 		this.score = 0.0;
 		return r;
 	}
-	@Override
 	public String toProgram() {
 		try 
 		{	
@@ -153,7 +152,6 @@ public class Segment implements GrammarTreeNode{
 			return null;
 		}
 	}
-	@Override
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
 		Segment s = (Segment)a;
 		s = this.mergewith(s);

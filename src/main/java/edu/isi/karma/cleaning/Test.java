@@ -53,15 +53,15 @@ public class Test {
 	public static void test3()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"<_START>BTR KRNL WK CORN 15Z<_END>","15Z"};
-		String[] yStrings ={"<_START>CAMP DRY DBL NDL 3.6 OZ<_END>","3.6 OZ"};
+		String[] xStrings = {"<_START>http://dbpedia.org/resource/Air_Europa<_END>","Air Europa"};
+		String[] yStrings ={"<_START>http://dbpedia.org/resource/European_Aviation_Air_Charter<_END>","European Aviation Air Charter"};
 		examples.add(xStrings);
 		examples.add(yStrings);
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(examples);
 		HashSet<String> p = psProgSynthesis.run_main();
 		Interpretor it = new Interpretor();
-		String value = "O F TOMATO PASTE 6 OZ";
+		String value = "http://dbpedia.org/resource/Air_Malta";
 		String progString = p.iterator().next();
 		InterpreterType worker = it.create(progString);
 		String reString = worker.execute(value);
@@ -354,6 +354,6 @@ public class Test {
 	public static void main(String[] args)
 	{
 		//Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		Test.test12();
+		Test.test3();
 	}
 }

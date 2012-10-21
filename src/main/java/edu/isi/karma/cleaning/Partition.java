@@ -31,15 +31,15 @@ public class Partition implements GrammarTreeNode {
 						rep += ((Loop)gtn).loopbody.size();
 					}
 				}
-				if(xHashMap.containsKey(rep))
+				if(xHashMap.containsKey(ind+""))
 				{
-					xHashMap.get(rep).add(t);
+					xHashMap.get(ind+"").add(t);
 				}
 				else
 				{
 					Vector<Template> vt = new Vector<Template>();
 					vt.add(t);
-					xHashMap.put(rep, vt);
+					xHashMap.put(ind+"", vt);
 				}
 			}
 		}
@@ -142,7 +142,6 @@ public class Partition implements GrammarTreeNode {
 		this.score = 0.0;
 		return r;
 	}
-	@Override
 	public String toProgram() {
 		//randomly choose a Template
 		Iterator<String> iterator = this.templates.keySet().iterator();
@@ -172,7 +171,6 @@ public class Partition implements GrammarTreeNode {
 		score = templates.get(key).get(k).getScore();
 		return r;
 	}
-	@Override
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
 		Partition p = (Partition)a;
 		p = this.mergewith(p);

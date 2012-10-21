@@ -39,7 +39,6 @@ public class SynonymSemanticTypes implements Jsonizable {
 		return synonyms;
 	}
 	
-	@Override
 	public void write(JSONWriter writer) throws JSONException {
 		writer.array();
 		for (SemanticType type : synonyms) {

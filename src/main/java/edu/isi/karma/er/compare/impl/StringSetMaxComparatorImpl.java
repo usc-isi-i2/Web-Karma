@@ -9,7 +9,6 @@ import edu.isi.karma.er.compare.StringSetComparator;
 
 public class StringSetMaxComparatorImpl implements StringSetComparator {
 
-	@Override
 	public float getSimilarity(Set<String> srcSet, Set<String> dstSet,
 			StringComparator comp) {
 		/*

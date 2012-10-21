@@ -33,13 +33,11 @@ class Varfeature implements Feature {
 		name = fname+"_var";
 	}
 	
-	@Override
 	public String getName() {
 		
 		return this.name;
 	}
 	
-	@Override
 	public double getScore() {
 		
 		return score;
@@ -73,7 +71,6 @@ public class VarianceFeatureSet implements FeatureSet {
 		return fs;
 	}
 
-	@Override
 	public Collection<String> getFeatureNames() {
 		
 		return null;

@@ -55,12 +55,10 @@ public class AlignmentNode implements TNode {
 		return semanticType;
 	}
 
-	@Override
 	public List<TNode> getChildren() {
 		return children;
 	}
 
-	@Override
 	public String getId() {
 		return id;
 	}
@@ -84,7 +82,6 @@ public class AlignmentNode implements TNode {
 			return null;
 	}
 
-	@Override
 	public void generateContentJson(PrintWriter pw) {
 		JSONObject obj = new JSONObject();
 
@@ -102,7 +99,6 @@ public class AlignmentNode implements TNode {
 		}
 	}
 
-	@Override
 	public JSONObject generateJsonObject() {
 		JSONObject obj = new JSONObject();
 
@@ -121,7 +117,6 @@ public class AlignmentNode implements TNode {
 		return obj;
 	}
 
-	@Override
 	public String getColorKey() {
 		return null;
 	}

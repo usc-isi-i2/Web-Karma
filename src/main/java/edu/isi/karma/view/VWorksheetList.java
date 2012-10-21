@@ -50,7 +50,6 @@ public class VWorksheetList {
 			this.repFactory = repFactory;
 		}
 
-		@Override
 		public int compare(VWorksheet arg0, VWorksheet arg1) {
 			String title0 = repFactory.getWorksheet(arg0.getWorksheetId())
 					.getTitle();

@@ -18,7 +18,7 @@ public class NumberComparatorImpl implements NumberComparator {
 		this.max = max;
 	}
 	
-	@Override
+	
 	/**
 	 * Calculate the similarity between 2 numbers.
 	 * @param a  srcNumber

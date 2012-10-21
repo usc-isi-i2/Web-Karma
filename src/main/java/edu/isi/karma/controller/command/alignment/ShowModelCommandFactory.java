@@ -58,7 +58,6 @@ public class ShowModelCommandFactory extends CommandFactory implements JSONInput
 		return new ShowModelCommand(getNewId(vWorkspace), getWorksheetId(request, vWorkspace), vWorksheetId);
 	}
 
-	@Override
 	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
 			throws JSONException, KarmaException {
 		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);

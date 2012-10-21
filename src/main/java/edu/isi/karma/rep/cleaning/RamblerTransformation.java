@@ -52,7 +52,6 @@ public class RamblerTransformation implements Transformation {
 		if(itInterpretor == null)
 			itInterpretor = new Interpretor();
 	}
-	@Override
 	public String transform(String value) {
 		String s = worker.execute(value);
 		if(s.contains("_FATAL_ERROR_"))
@@ -60,7 +59,6 @@ public class RamblerTransformation implements Transformation {
 		else
 			return s;
 	}	
-	@Override
 	public String getId() {
 		// TODO Auto-generated method stub
 		return this.signature;

@@ -35,7 +35,6 @@ public class AlignmentColorKeyTranslator implements ColorKeyTranslator {
 		depthCssMap.put(4, "AlignmentTable04cell");
 	}
 	
-	@Override
 	public String getCssTag(String colorKey, int depth) {
 		return depthCssMap.get(depth%5);
 	}

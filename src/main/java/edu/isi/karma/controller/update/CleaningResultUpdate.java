@@ -20,23 +20,21 @@ public class CleaningResultUpdate extends AbstractUpdate {
 	private HashMap<String,Vector<String>> js2tps;
 	private String hNodeId = "";
 	private String bestRes;
+	private String varString;
 	private Set<String> topkey = new HashSet<String>();
-
 	public enum JsonKeys {
 		worksheetId, hNodeId, result
 	}
-
 	private static Logger logger = LoggerFactory
 			.getLogger(CleaningResultUpdate.class);
-
-	public CleaningResultUpdate(String hNodeId, Vector<String> js,HashMap<String,Vector<String>> jstp,String bestRes,Set<String> keys) {
+	public CleaningResultUpdate(String hNodeId, Vector<String> js,HashMap<String,Vector<String>> jstp,String bestRes,String vars,Set<String> keys) {
 		this.hNodeId = hNodeId;
 		jsons = js;
 		js2tps = jstp;
 		this.bestRes = bestRes; 
 		topkey = keys;
+		varString = vars;
 	}
-
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
@@ -75,6 +73,16 @@ public class CleaningResultUpdate extends AbstractUpdate {
 				bestpac.put("top", jba);
 				jsa.put(0,bestpac);//put the best one as the first
 			}
+			if(varString.compareTo("")!=0)
+			{
+				JSONObject jsBest = new JSONObject(varString);
+				JSONObject varpac = new JSONObject();
+				JSONArray jba = new JSONArray();
+				varpac.put("data", jsBest);
+				varpac.put("tps",new JSONObject());
+				jsa.put(1,varpac);//put the var as the second
+			}
+			
 			obj.put(JsonKeys.result.name(), jsa);
 			pw.print(obj.toString(4));
 		} catch (JSONException e) {

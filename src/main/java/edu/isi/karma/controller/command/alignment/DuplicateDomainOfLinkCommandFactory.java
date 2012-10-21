@@ -48,7 +48,6 @@ public class DuplicateDomainOfLinkCommandFactory extends CommandFactory implemen
 				alignmentId, vWorksheetId);
 	}
 	
-	@Override
 	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace) throws JSONException {
 		String edgeId = HistoryJsonUtil.getStringValue(Arguments.edgeId.name(), inputJson);
 		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
