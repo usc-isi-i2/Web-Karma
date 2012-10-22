@@ -3,8 +3,12 @@ package edu.isi.karma.er.helper;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import edu.isi.karma.er.helper.entity.SimilarityFrequency;
 
 
 public class RatioFileUtil {
@@ -44,7 +48,7 @@ public class RatioFileUtil {
 				if (lines.length >= 3) {						// 2 elements separated by ':' for a text line.
 					try {
 						value = Double.parseDouble(lines[2]);	// if the 2nd element can be parsed as a double, then it's a valid record
-						ratioMap.put(lines[0].replaceAll("\"",  ""), value / total);
+						ratioMap.put(lines[0], value / total);
 					} catch (NumberFormatException nfd) {}
 				}
 			}
@@ -75,5 +79,56 @@ public class RatioFileUtil {
 		map.put("http://americanart.si.edu/saam/country", 1.0 / 124); 	 // 124.0 / 21237);
 		
 		return map;
+	}
+	
+	public Map<String, List<SimilarityFrequency>> loadDefaultFrequency() {
+		Map<String, List<SimilarityFrequency>> map = new HashMap<String, List<SimilarityFrequency>>();
+		List<SimilarityFrequency> nameList = new ArrayList<SimilarityFrequency>();
+		nameList.add(new SimilarityFrequency(0.975, 0.0000011));
+		nameList.add(new SimilarityFrequency(0.95, 0.00000137));
+		nameList.add(new SimilarityFrequency(0.9, 0.00000381));
+		nameList.add(new SimilarityFrequency(0.85, 0.0000161));
+		nameList.add(new SimilarityFrequency(0.80, 0.0000806));
+		nameList.add(new SimilarityFrequency(0.7, 0.000837));
+		map.put("http://americanart.si.edu/saam/fullName", nameList);
+		
+		List<SimilarityFrequency> birthList = new ArrayList<SimilarityFrequency>();
+		birthList.add(new SimilarityFrequency(0.975, 0.00654));
+		birthList.add(new SimilarityFrequency(0.95, 0.01933));
+		birthList.add(new SimilarityFrequency(0.9, 0.03390));
+		birthList.add(new SimilarityFrequency(0.85, 0.04568));
+		birthList.add(new SimilarityFrequency(0.8, 0.06137));
+		birthList.add(new SimilarityFrequency(0.7, 0.09562));
+		map.put("http://americanart.si.edu/saam/birthYear", birthList);
+		
+		List<SimilarityFrequency> deathList = new ArrayList<SimilarityFrequency>();
+		deathList.add(new SimilarityFrequency(0.975, 0.0564));
+		deathList.add(new SimilarityFrequency(0.95, 0.01571));
+		deathList.add(new SimilarityFrequency(0.9, 0.02781));
+		deathList.add(new SimilarityFrequency(0.85, 0.03772));
+		deathList.add(new SimilarityFrequency(0.8, 0.04952));
+		deathList.add(new SimilarityFrequency(0.7, 0.08081));
+		map.put("http://americanart.si.edu/saam/deathYear", deathList);
+		
+		return map;
+	}
+	
+	public double queryFrequency(String predicate, double similarity) {
+		double freq = 0;
+		Map<String, List<SimilarityFrequency>> map = loadDefaultFrequency();
+		List<SimilarityFrequency> list = map.get(predicate);
+		int i = 0; 
+		if (list == null) 
+			return freq;
+		for (i = 0; i < list.size(); i++) {
+			SimilarityFrequency f = list.get(i);
+			if (similarity >= f.getSimilarity()) {
+				break;
+			}
+		}
+		if (i < list.size())
+			freq = list.get(i).getFrequency();
+		
+		return freq;
 	}
 }

@@ -4,12 +4,8 @@ import java.util.List;
 
 import org.json.JSONObject;
 
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-
 import edu.isi.karma.er.compare.StringComparator;
+import edu.isi.karma.er.helper.entity.SaamPerson;
 import edu.isi.karma.er.helper.entity.Score;
 import edu.isi.karma.er.helper.entity.ScoreType;
 import edu.isi.karma.er.matcher.Matcher;
@@ -37,46 +33,44 @@ public class StringSetMatcher implements Matcher {
 		}
 	}
 
-	public Score match(Property p, Resource v, Resource w) {
+	public Score match(String pred, SaamPerson v, SaamPerson w) {
 		Score s = new Score();
-		s.setPredicate(p);
+		s.setPredicate(pred);
 		s.setScoreType(ScoreType.INVALID);
-		if (v == null || w == null) {
+		if (v == null || w == null || v.getProperty(pred) == null || w.getProperty(pred) == null) {
 			return s;
 		}
-		// get all property value to the spcified subject with given property.
-		List<Statement> listV = v.listProperties(p).toList();
-		List<Statement> listW = w.listProperties(p).toList();
 		
-		RDFNode nodeV = null;
-		RDFNode nodeW = null;
+		List<String> listV = v.getProperty(pred).getValue();
+		List<String> listW = w.getProperty(pred).getValue();
+		
+		if (listV == null || listV.size() <= 0 || listW == null || listW.size() <= 0) {
+			return s;
+		}
+		
 		double similarity, maxSimilarity = -1;
+		
+		
 		
 		s.setScoreType(ScoreType.IGNORE);
 		
 		
 		// get all elements of the result set of querying property value from specified subject.
-		for (Statement sv : listV) {
-			nodeV = sv.getObject();
-			String strV = nodeV.asLiteral().getString();
-			if (nodeV == null || nodeV == null) {
-				continue;
-			}
+		for (String strV : listV) {
+			
 			
 			// find the most appropriate matched pair in target set
-			for (Statement sw : listW) {
-				nodeW = sw.getObject();
+			for (String strW : listW) {
 				
-				String strW = nodeW.asLiteral().getString();
-				if (strV == null || strV.trim().length() <= 0 || strW == null || strW.trim().length() <= 0) {
+				if (strV == null || "".equals(strV) || strW == null || "".equals(strW)) {
 					continue;
 				}
 				
 				s.setScoreType(ScoreType.NORMAL);
 				similarity = comp.getSimilarity(strV, strW);
 				if (similarity > maxSimilarity) {
-					s.setSrcObj(sv);
-					s.setDstObj(sw);
+					s.setSrcObj(strV);
+					s.setDstObj(strW);
 					if (1 - similarity< 1e-5) {
 						s.setSimilarity(similarity);
 						return s;

@@ -1,10 +1,8 @@
 package edu.isi.karma.er.aggregator;
 
-import org.json.JSONArray;
-
-import com.hp.hpl.jena.rdf.model.Resource;
 
 import edu.isi.karma.er.helper.entity.MultiScore;
+import edu.isi.karma.er.helper.entity.SaamPerson;
 
 public interface Aggregator {
 
@@ -15,5 +13,5 @@ public interface Aggregator {
 	 * @param res2	the target resource to match with
 	 * @return an object contains final score and details of matching 
 	 */
-	public MultiScore match(JSONArray confArr, Resource res1, Resource res2);
+	public MultiScore match(SaamPerson s1, SaamPerson s2);
 }

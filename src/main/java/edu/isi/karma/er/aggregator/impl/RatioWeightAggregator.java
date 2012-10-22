@@ -1,6 +1,7 @@
 package edu.isi.karma.er.aggregator.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,13 +9,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-
 import edu.isi.karma.er.aggregator.Aggregator;
 import edu.isi.karma.er.helper.RatioFileUtil;
 import edu.isi.karma.er.helper.entity.MultiScore;
+import edu.isi.karma.er.helper.entity.SaamPerson;
 import edu.isi.karma.er.helper.entity.Score;
 import edu.isi.karma.er.helper.entity.ScoreType;
 import edu.isi.karma.er.matcher.Matcher;
@@ -27,17 +25,14 @@ public class RatioWeightAggregator implements Aggregator {
 
 	private Map<String, Map<String, Double>> ratioMapList = null;
 	
-	public RatioWeightAggregator(Map<String, Map<String, Double>> ratioMapList) {
-		setRatioMapList(ratioMapList);
+	private  Map<String, Matcher> compMap = null;
+	
+	public RatioWeightAggregator(JSONArray confArr) {
+		compMap = parseConfig(confArr);
 	}
 	
-	public MultiScore match(JSONArray confArr, Resource res1, Resource res2) {
-		MultiScore ms = new MultiScore();
-		ms.setSrcSubj(res1);
-		ms.setDstSubj(res2);
-		List<Score> sList = new ArrayList<Score>();
-		
-		// for each property to be compared in configuration array, load its configurations and initialize the detailed comparator to be invoked.
+	private Map<String, Matcher> parseConfig(JSONArray confArr) {
+		Map<String, Matcher> map = new HashMap<String, Matcher>();
 		for (int i = 0; i < confArr.length(); i++) {	
 			try {
 				JSONObject config = confArr.getJSONObject(i);
@@ -64,16 +59,33 @@ public class RatioWeightAggregator implements Aggregator {
 				}
 				
 				String predicate = config.getString("property");				// create the property object to be compared
-				Property p = ResourceFactory.createProperty(predicate);
-				
-				Score s = m.match(p, res1, res2);		
-				sList.add(s);
+				map.put(predicate, m);
+
 				
 				
 			} catch (JSONException e) {
 				e.printStackTrace();
 				return null;
 			}
+		}
+		return map;
+	}
+	
+	public RatioWeightAggregator(Map<String, Map<String, Double>> ratioMapList) {
+		setRatioMapList(ratioMapList);
+	}
+	
+	public MultiScore match(SaamPerson res1, SaamPerson res2) {
+		MultiScore ms = new MultiScore();
+		ms.setSrcSubj(res1);
+		ms.setDstSubj(res2);
+		List<Score> sList = new ArrayList<Score>();
+		
+		for (String pred : compMap.keySet()) {
+			Matcher m = compMap.get(pred);
+			
+			Score s = m.match(pred, res1, res2);		
+			sList.add(s);
 		}
 		
 		ms.setScoreList(sList);				// add the detailed compare result of each property into a score list.
@@ -96,14 +108,14 @@ public class RatioWeightAggregator implements Aggregator {
 		for (Score s : sList) {
 			if (s.getScoreType() == ScoreType.NORMAL) {
 				sim = s.getSimilarity();
-				ratio = getRatio(s.getPredicate().getURI()
-						, s.getSrcObj().getObject().toString()
-						, s.getDstObj().getObject().toString());
+				ratio = getRatio(s.getPredicate()
+						, s.getSrcObj()
+						, s.getDstObj());
 				weight = calcWeight(sim, ratio);
 				totalSim += sim * weight;
 				totalWeight += weight;
 			} else  {
-				ratio = getRatio(s.getPredicate().getURI(), null, null);
+				ratio = getRatio(s.getPredicate(), null, null);
 				s.setSimilarity(ratio);
 				sim = ratio;
 				weight = calcWeight(sim, ratio);

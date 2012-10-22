@@ -3,11 +3,9 @@ package edu.isi.karma.er.helper.entity;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-
 public class ResultRecord {
 
-	Resource res = null;		// the owner of this result record, which points to a resource in data model.
+	SaamPerson res = null;		// the owner of this result record, which points to a resource in data model.
 	
 	int limit = 5;
 	
@@ -53,11 +51,11 @@ public class ResultRecord {
 		return result;
 	}
 
-	public Resource getRes() {
+	public SaamPerson getRes() {
 		return res;
 	}
 
-	public void setRes(Resource res) {
+	public void setRes(SaamPerson res) {
 		this.res = res;
 	}
 
@@ -71,7 +69,7 @@ public class ResultRecord {
 	
 	public String toString() {
 		String str = "";
-		str += res.getURI() + "\t [";
+		str += res.getSubject() + "\t [";
 		for(int j = 0; j < rankList.size(); j++) {
 			MultiScore s = rankList.get(j);
 			str += s.getFinalScore() + ",";

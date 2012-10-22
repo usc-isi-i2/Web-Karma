@@ -43,6 +43,7 @@ public class RatioImpl implements IRatio {
 		return map;
 	}
 
+	@Override
 	public Map<String, Integer> calcRatio(Model model, String predicateUri) {
 		if (model == null || predicateUri == null || predicateUri.trim().length() <= 0) {
 			throw new IllegalArgumentException("Null or empty arguments exception. Please check arguments first.");
@@ -53,7 +54,7 @@ public class RatioImpl implements IRatio {
 		
 		while (iter.hasNext()) {
 			Statement res = iter.next();
-			list.add(res.getObject().toString());
+			list.add(res.getObject().toString().replaceAll("\"", ""));
 		}
 		
 		model.close();

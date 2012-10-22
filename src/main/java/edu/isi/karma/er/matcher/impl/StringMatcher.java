@@ -1,13 +1,11 @@
 package edu.isi.karma.er.matcher.impl;
 
+import java.util.List;
+
 import org.json.JSONObject;
 
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-
 import edu.isi.karma.er.compare.StringComparator;
+import edu.isi.karma.er.helper.entity.SaamPerson;
 import edu.isi.karma.er.helper.entity.Score;
 import edu.isi.karma.er.helper.entity.ScoreType;
 import edu.isi.karma.er.matcher.Matcher;
@@ -34,7 +32,7 @@ public class StringMatcher implements Matcher {
 		
 	}
 
-	public Score match(Property p, Resource v, Resource w) {
+	public Score match(String pred, SaamPerson v, SaamPerson w) {
 		Score s = new Score();
 		s.setScoreType(ScoreType.INVALID);
 		
@@ -42,29 +40,17 @@ public class StringMatcher implements Matcher {
 			return s;
 		}
 		
-		// get all property value to the spcified subject with given property.
-		StmtIterator iterV = v.listProperties(p);
-		StmtIterator iterW = w.listProperties(p);
+		List<String> listV = v.getProperty(pred).getValue();
+		List<String> listW = w.getProperty(pred).getValue();
 		
-		RDFNode nodeV = null;
-		RDFNode nodeW = null;
-		
-		// get the first element of the result set of querying property value from specified subject.
-		if (iterV.hasNext()) 
-			nodeV = iterV.next().getObject();
-		if (iterW.hasNext()) 
-			nodeW = iterW.next().getObject();
-		
-		if (nodeV == null || nodeV == null) {
+		if (listV == null || listV.size() <= 0 || listW == null || listW.size() <= 0) {
 			return s;
 		}
 		
-		String strV = nodeV.asLiteral().getString(), strW = nodeW.asLiteral().getString();
+		String strV = listV.get(0);
+		String strW = listW.get(0);
 		
-		if (strV == null || strV.trim().length() <= 0 || strW == null || strW.trim().length() <= 0) {
-			s.setScoreType(ScoreType.IGNORE);
-			return s;
-		}
+		
 		
 		if (strV.equals(strW)) {
 			s.setSimilarity(1);

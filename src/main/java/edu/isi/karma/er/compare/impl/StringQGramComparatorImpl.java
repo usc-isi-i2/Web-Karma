@@ -139,7 +139,7 @@ public class StringQGramComparatorImpl implements StringComparator {
 		for (j = 0; j < len2; j++) 
 			if (ch2[j] == ' ')
 				count ++;
-		return weight * 1f / (count + 2);
+		return weight * 0.5f / (count + 2);
 	}
 
 }

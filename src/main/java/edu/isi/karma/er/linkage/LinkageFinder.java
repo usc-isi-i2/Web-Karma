@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -12,8 +13,12 @@ import org.json.JSONObject;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import edu.isi.karma.er.aggregator.Aggregator;
 import edu.isi.karma.er.aggregator.impl.AverageAggregator;
@@ -24,7 +29,9 @@ import edu.isi.karma.er.helper.ConfigUtil;
 import edu.isi.karma.er.helper.Constants;
 import edu.isi.karma.er.helper.RatioFileUtil;
 import edu.isi.karma.er.helper.entity.MultiScore;
+import edu.isi.karma.er.helper.entity.PersonProperty;
 import edu.isi.karma.er.helper.entity.ResultRecord;
+import edu.isi.karma.er.helper.entity.SaamPerson;
 import edu.isi.karma.er.test.calPosibility;
 
 public class LinkageFinder {
@@ -42,12 +49,10 @@ public class LinkageFinder {
 	
 	public List<ResultRecord> findLinkage(Model srcModel, Model dstModel) {
 		
-		String RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";	// property to retrieve all the subjects from models.
-		Property RDF = ResourceFactory.createProperty(RDF_TYPE);
-		int THREAD_NUM = 10;
+		int THREAD_NUM = 3;
 		
-		List<Resource> list1 = srcModel.listSubjectsWithProperty(RDF).toList();
-		List<Resource> list2 = dstModel.listSubjectsWithProperty(RDF).toList();
+		List<SaamPerson> list1 = loadOntologies(srcModel);
+		List<SaamPerson> list2 = loadOntologies(dstModel);
 		System.out.println("list size:" + list1.size() + "|" + list2.size());
 		
 		
@@ -55,10 +60,18 @@ public class LinkageFinder {
 		JSONObject aggr = null;
 		String aggrStr = "";
 		JSONArray confArr2 = new JSONArray();
+		List<String> dependArr = new ArrayList<String>();
 		
 		try {
 			aggr = confArr.getJSONObject(confArr.length() - 1);
 			aggrStr = aggr.optString("aggregator");
+			
+			// parsing pair properties from configuration file
+			JSONArray dpArr = aggr.optJSONArray("dependencies");
+			for (int i = 0; i < dpArr.length(); i++) {
+				dependArr.add(dpArr.getJSONObject(i).getString("source"));	// put source property into odd row
+				dependArr.add(dpArr.getJSONObject(i).getString("target"));	// put target property into even row
+			}
 			
 			//confArr.remove(confArr.length() - 1);		// remove the aggregator info from configuration file, in order to not affect the parse process for properties
 			
@@ -76,13 +89,13 @@ public class LinkageFinder {
 		Aggregator aver = null;
 		
 		if ("average".equals(aggr.optString("aggregator"))) {
-			aver = new AverageAggregator();
+			aver = new AverageAggregator(confArr2);
 		} else if ("ratio_weight".equalsIgnoreCase(aggr.optString("aggregator"))) {
-			aver = new RatioWeightAggregator(null);
+			aver = new RatioWeightAggregator(confArr2);
 		} else if ("possibility".equalsIgnoreCase(aggr.optString("aggregator"))) {
 			aver = new RatioPossibilityAggregator(new calPosibility());
 		} else if ("ratio_multiply".equalsIgnoreCase(aggr.optString("aggregator"))) {
-			aver = new RatioMultiplyAggregator();
+			aver = new RatioMultiplyAggregator(confArr2, dependArr);
 		} else {
 			System.err.println("aggregator error");
 		}
@@ -90,10 +103,10 @@ public class LinkageFinder {
 		//long startTime = System.currentTimeMillis();
 		
 		int i = 0;
-		//DecimalFormat df = new DecimalFormat("0.000");
 		List<ResultRecord> resultList = new ArrayList<ResultRecord>();
+		
 		// long lines = list1.size() * list2.size();			// total times of cross comparing
-		List<List<Resource>> dstListArr = new ArrayList<List<Resource>>(THREAD_NUM);
+		List<List<SaamPerson>> dstListArr = new ArrayList<List<SaamPerson>>(THREAD_NUM);
 		int total = list2.size();
 		int pageSize = total / THREAD_NUM;
 		for (i = 0; i < THREAD_NUM - 1; i++) {
@@ -118,7 +131,31 @@ public class LinkageFinder {
 		for (i = 0; i < THREAD_NUM; i++) {
 			resultList = mergeResultList(resultList, ((LinkageFinderThread)threads[i]).getResultList());
 		}
-		
+		/*
+		long startTime = System.currentTimeMillis();
+		for (SaamPerson res1 : list1) {
+			if (++i % 100 == 0) {
+				log.info(" processed " + i + " rows in " + (System.currentTimeMillis() - startTime) + "ms.");
+				startTime = System.currentTimeMillis();
+				
+			}
+			ResultRecord rec = new ResultRecord();
+			rec.setRes(res1);
+			for (SaamPerson res2 : list2) {
+				//if (++i % 1000000 == 0) {
+				//	log.info(" processed " + i + " rows in " + (System.currentTimeMillis() - startTime) + "ms.");
+				//	startTime = System.currentTimeMillis();
+				//}
+				MultiScore ms = aver.match(res1, res2); 	// compare 2 resource to return a result of match with match details
+				if ( ms.getFinalScore() > rec.getCurrentMinScore()) {	// to decide whether current pair can rank to top 5 
+					rec.addMultiScore(ms);
+				}
+			}
+			
+			//log.info("[" + df.format(rec.getCurrentMinScore()) + " | " + df.format(rec.getCurrentMaxScore()) + "] " + rec.getRes() + " has " + rec.getRankList().size() + " results");
+			resultList.add(rec);
+		}
+		*/
 		return resultList;
 	}
 
@@ -129,7 +166,7 @@ public class LinkageFinder {
 			int i;
 			for (i = 0; i < size; i++) {
 				ResultRecord rec = resultList.get(i);
-				if (rec.getRes().getURI().equals(subRec.getRes().getURI())) {
+				if (rec.getRes().getSubject().equals(subRec.getRes().getSubject())) {
 					for (MultiScore ms : subRec.getRankList()) {
 						if (ms.getFinalScore() > rec.getCurrentMinScore()) {
 							rec.addMultiScore(ms);
@@ -168,5 +205,44 @@ public class LinkageFinder {
 			e.printStackTrace();
 		}
 		return ratioMap;
+	}
+	
+	private List<SaamPerson> loadOntologies(Model model) {
+		Property RDF = ResourceFactory.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+		ResIterator iter = model.listResourcesWithProperty(RDF);
+		
+		List<SaamPerson> list = new Vector<SaamPerson>();
+		while (iter.hasNext()) {
+			Resource res = iter.next();
+			StmtIterator siter = res.listProperties();
+			SaamPerson per = new SaamPerson();
+			per.setSubject(res.getURI());
+			
+			while (siter.hasNext()) {
+				Statement st = siter.next();
+				String pred = st.getPredicate().getURI();
+				RDFNode node = st.getObject();
+				PersonProperty p = per.getProperty(pred);
+				if (p == null) {
+					p = new PersonProperty();
+					p.setPredicate(pred);
+				}
+				
+				if (node != null) {
+					if (pred.indexOf("fullName") > -1) {
+						p.setValue(node.asLiteral().getString());
+						per.setFullName(p);
+					} else if (pred.indexOf("birthYear") > -1) {
+						p.setValue(node.asLiteral().getString());
+						per.setBirthYear(p);
+					} else if (pred.indexOf("deathYear") > -1) {
+						p.setValue(node.asLiteral().getString());
+						per.setDeathYear(p);
+					}
+				}
+			}
+			list.add(per);
+		}
+		return list;
 	}
 }

@@ -1,10 +1,9 @@
 package edu.isi.karma.er.test.old;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.er.compare.StringComparator;
-import edu.isi.karma.er.compare.impl.StringJaccardComparatorImpl;
-import edu.isi.karma.er.compare.impl.StringJaroWinklerComparatorImpl;
-import edu.isi.karma.er.compare.impl.StringLevenshteinComparatorImpl;
-import edu.isi.karma.er.compare.impl.StringMongeElkanComparatorImpl;
 import edu.isi.karma.er.compare.impl.StringQGramComparatorImpl;
 import edu.isi.karma.er.compare.impl.StringSmithWatermanComparatorImpl;
 
@@ -14,12 +13,14 @@ public class TestStringComparator {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		Logger logger = LoggerFactory.getLogger(TestStringComparator.class);
+		logger.info("TEST");
 		String str1 = "Anthony van Dyck"; //"John R. Smith";
 		String str2 = "Sir Anthony van Dyck"; //"John Richard Smith";
-		String[] strs1 = {"Art Green (artist)", "Cassandre", "Arthur Hall", "Anderson Johnson", "Sir Anthony van Dyck", "Alfred Rudolph Waud", "Alan Stone", "Arthur North", "Alice Mason"};
-		String[] strs2 = {"Art Green", "A. Mouron Cassandre",  "Arthur R. Hall", "John Anderson, Jr.", "Anthony van Dyck", "Alfred Waud", "Allan Stone", "Arthur Norman", "Alice Rahon"};
+		String[] strs1 = {"Anthony Velonis", "Alexander Dobkin", "Alfred-Phillippe Roll", "Cassandre", "Arthur Hall", "Anderson Johnson", "Sir Anthony van Dyck", "Alfred Rudolph Waud", "Alan Stone", "Arthur North", "Alice Mason"};
+		String[] strs2 = {"Anthony Fell", "Alexander Dinghas", "Alfred Philippe Roll", "A. Mouron Cassandre",  "Arthur R. Hall", "John Anderson, Jr.", "Anthony van Dyck", "Alfred Waud", "Allan Stone", "Arthur Norman", "Alice Rahon"};
 		long startTime = System.currentTimeMillis();
-		StringComparator comp = new StringSmithWatermanComparatorImpl();
+		StringComparator comp = new StringQGramComparatorImpl();
 //		StringComparator comp2 = new StringJaroWinklerComparatorImpl();
 //		StringComparator comp3 = new StringLevenshteinComparatorImpl();
 //		StringComparator comp4 = new StringJaccardComparatorImpl();
@@ -30,7 +31,7 @@ public class TestStringComparator {
 //		System.out.println("Levenshtein result:" + comp3.getSimilarity(str1, str2));
 //		System.out.println("Jaccard result:" + comp4.getSimilarity(str1, str2));
 //		System.out.println("SmithWaterman result:" + comp5.getSimilarity(str1, str2));
-		for (int j = 0; j < 1000; j++)
+
 		for (int i = 0; i < strs1.length; i++) {
 			System.out.println("[ " + comp.getSimilarity(strs1[i], strs2[i]) + " ]\t" + strs1[i] + "\t" + strs2[i]);
 		}

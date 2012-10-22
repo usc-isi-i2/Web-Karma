@@ -9,13 +9,13 @@ import edu.isi.karma.er.helper.Constants;
 
 public class TestFileModel {
 	
-	private final static String DBPEDIA_DIRECTORY = Constants.PATH_REPOSITORY + "dbpedia_a/";
+	private final static String DBPEDIA_DIRECTORY = Constants.PATH_REPOSITORY + "dbpedia/";
 	private final static String SAAM_DIRECTORY = Constants.PATH_REPOSITORY + "saam_a/";
 	private final static String ALL_DIRECTORY = Constants.PATH_REPOSITORY + "all/";
 	
 
 	private final static String SAAM_FILE = Constants.PATH_N3_FILE + "saam_fullname_birth_death_asso_city_state_country.n3";
-	private final static String DBPEDIA_FILE = Constants.PATH_N3_FILE + "dbpedia_fullname_birth_death_city_state_country.n3";
+	private final static String DBPEDIA_FILE = Constants.PATH_N3_FILE + "dbpedia_fullname_birth_death_dbpprop.n3";
 	private final static String ALL_FILE = Constants.PATH_N3_FILE + "all_fullname_birth_death_asso_city_state_country.n3";
 	private final static String SAAM_FILE_PART = Constants.PATH_N3_FILE + "saam_fullname_start_with_A.n3";
 	private final static String DBPEDIA_FILE_PART = Constants.PATH_N3_FILE + "dbpedia_dbpprop_start_with_A.n3";
@@ -88,7 +88,7 @@ public class TestFileModel {
 		
 		Model model = dataset.getDefaultModel();
 		
-		FileManager.get().readModel(model, DBPEDIA_FILE_PART);
+		FileManager.get().readModel(model, DBPEDIA_FILE);
 		
 		dataset.close();
 		

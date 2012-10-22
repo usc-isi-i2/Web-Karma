@@ -5,12 +5,8 @@ import java.util.List;
 
 import org.json.JSONObject;
 
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-
 import edu.isi.karma.er.compare.NumberComparator;
+import edu.isi.karma.er.helper.entity.SaamPerson;
 import edu.isi.karma.er.helper.entity.Score;
 import edu.isi.karma.er.helper.entity.ScoreType;
 import edu.isi.karma.er.matcher.Matcher;
@@ -56,41 +52,45 @@ public class NumberSetMatcher implements Matcher {
 	}
 	
 
-	public Score match(Property p, Resource v, Resource w) {
+	public Score match(String pred, SaamPerson v, SaamPerson w) {
 		Score s = new Score();
-		s.setPredicate(p);
+		s.setPredicate(pred);
 		s.setScoreType(ScoreType.IGNORE);
-		RDFNode nodeV = null, nodeW = null;
+		int numV = -1, numW = -1;
+		double sim, maxSim = -1;
 		
-		if (v == null || w == null) {
+		if (v == null || w == null || v.getProperty(pred) == null || w.getProperty(pred) == null) {
 			return s;
 		}
 		
-		List<Statement> listV = v.listProperties(p).toList();
-		List<Statement> listW = w.listProperties(p).toList();
-		
-		if (listV == null || listV.size() <= 0 || listW == null || listW.size() <= 0)
+		//List<Statement> listV = v.listProperties(p).toList();
+		List<String> listV = v.getProperty(pred).getValue();
+		List<String> listW = w.getProperty(pred).getValue();
+		if (listV == null || listV.size() <= 0 || listW == null || listW.size() <= 0) {
+			s.setScoreType(ScoreType.IGNORE);
 			return s;
+		}
 		
-		int numV = -10000, numW = -10000;
-		double sim = 0, maxSim = 0;
 		
-		for (Statement sv : listV) {
-			if (sv == null || sv.getObject() == null)
+		for (String nodeV : listV) {
+			
+			if (isParsable(nodeV)) {
+				numV = Integer.parseInt(nodeV);
+			} else {
 				continue;
-			nodeV = sv.getObject();
-			try {
-				numV = Integer.parseInt(nodeV.asLiteral().getString());
-			} catch (Exception e) { continue; }
-			s.setSrcObj(sv);
-			for (Statement sw : listW) {
-				if (sw == null || sw.getObject() == null)
+			}
+			
+			s.setSrcObj(nodeV);
+			
+			for (String nodeW : listW) {
+				
+				if (isParsable(nodeW)) {
+					numW = Integer.parseInt(nodeW);
+				} else {
 					continue;
-				nodeW = sw.getObject();
-				try {
-					numW = Integer.parseInt(nodeW.asLiteral().getString());
-				} catch (Exception e) { continue; }
-				s.setDstObj(sw);
+				}
+				
+				s.setDstObj(nodeW);
 				
 				if (numV > max || numV < min || numW > max || numW < min) {
 					if (s.getScoreType() == ScoreType.IGNORE) {
@@ -120,6 +120,23 @@ public class NumberSetMatcher implements Matcher {
 		return s;
 	}
 
+	private boolean isParsable(String str) {
+		if (str == null || "" == str) {
+			return false;
+		}
+		char[] ch = str.toCharArray();
+		int i;
+		for (i = 0; i < ch.length; i++) {
+			if (ch[i] > '9' || ch[i] < '0') {
+				break;
+			}
+		}
+
+		if (i >= ch.length)
+			return true;
+		else
+			return false;
+	}
 
 	public double getMin() {
 		return min;

@@ -1,15 +1,12 @@
 package edu.isi.karma.er.matcher.impl;
 
 import java.lang.reflect.Constructor;
+import java.util.List;
 
 import org.json.JSONObject;
 
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-
 import edu.isi.karma.er.compare.NumberComparator;
+import edu.isi.karma.er.helper.entity.SaamPerson;
 import edu.isi.karma.er.helper.entity.Score;
 import edu.isi.karma.er.helper.entity.ScoreType;
 import edu.isi.karma.er.matcher.Matcher;
@@ -55,42 +52,37 @@ public class NumberMatcher implements Matcher {
 	}
 	
 
-	public Score match(Property p, Resource v, Resource w) {
+	public Score match(String pred, SaamPerson v, SaamPerson w) {
 		Score s = new Score();
-		s.setPredicate(p);
-		RDFNode nodeV = null, nodeW = null;
+		s.setPredicate(pred);
+		String nodeV = null, nodeW = null;
 		
-		if (v == null || w == null) {
+		if (v == null || w == null || v.getProperty(pred) == null || w.getProperty(pred) == null ) {
 			s.setScoreType(ScoreType.IGNORE);
 			return s;
 		}
 		
-		StmtIterator iterV = v.listProperties(p);
-		StmtIterator iterW = w.listProperties(p);
-		
-		if (iterV.hasNext()) {
-			s.setSrcObj(iterV.next());
-			nodeV = s.getSrcObj().getObject();
-		}
-		if (iterW.hasNext()) {
-			s.setDstObj(iterW.next());
-			nodeW = s.getDstObj().getObject();
-		}
-		
-		
-		if (nodeV == null || nodeW == null) {
+		List<String> listV = v.getProperty(pred).getValue();
+		List<String> listW = w.getProperty(pred).getValue();
+		if (listV == null || listV.size() <= 0 || listW == null || listW.size() <= 0) {
 			s.setScoreType(ScoreType.IGNORE);
 			return s;
 		}
 		
+		nodeV = listV.get(0);
+		s.setSrcObj(nodeV);
+		nodeW = listW.get(0);
+		s.setDstObj(nodeW);
+	
 		double numV = 0, numW = 0;
-		try {
-			numV = Double.parseDouble(nodeV.asLiteral().getString());
-			numW = Double.parseDouble(nodeW.asLiteral().getString());
-		} catch (Exception e) { 
+		if (!isParsable(nodeV) || !isParsable(nodeW)) {
 			s.setScoreType(ScoreType.INVALID);
 			return s;
 		}
+			
+		numV = Integer.parseInt(nodeV);
+		numW = Integer.parseInt(nodeW);
+		
 		
 		if (numV > max || numV < min || numW > max || numW < min) {
 			s.setScoreType(ScoreType.INVALID);
@@ -101,6 +93,24 @@ public class NumberMatcher implements Matcher {
 		}	
 		
 		return s;
+	}
+
+	private boolean isParsable(String str) {
+		if (str == null || "" == str) {
+			return false;
+		}
+		char[] ch = str.toCharArray();
+		int i;
+		for (i = 0; i < ch.length; i++) {
+			if (ch[i] > '9' || ch[i] < '0') {
+				break;
+			}
+		}
+
+		if (i >= ch.length)
+			return true;
+		else
+			return false;
 	}
 
 

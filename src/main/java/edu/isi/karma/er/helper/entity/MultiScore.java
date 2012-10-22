@@ -2,17 +2,15 @@ package edu.isi.karma.er.helper.entity;
 
 import java.util.List;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-
 public class MultiScore {
 
 	private double finalScore;				// the gross score of pair 
 	
 	private List<Score> scoreList = null;	// list of score objects for properties of pair to be compared 
 
-	private Resource srcSubj = null;		// the source subject to compare
+	private SaamPerson srcSubj = null;		// the source subject to compare
 	
-	private Resource dstSubj = null;		// the target subject to compare with
+	private SaamPerson dstSubj = null;		// the target subject to compare with
 	
 	public double getFinalScore() {
 		return finalScore;
@@ -30,19 +28,19 @@ public class MultiScore {
 		this.scoreList = scoreList;
 	}
 
-	public Resource getSrcSubj() {
+	public SaamPerson getSrcSubj() {
 		return srcSubj;
 	}
 
-	public void setSrcSubj(Resource srcSubj) {
+	public void setSrcSubj(SaamPerson srcSubj) {
 		this.srcSubj = srcSubj;
 	}
 
-	public Resource getDstSubj() {
+	public SaamPerson getDstSubj() {
 		return dstSubj;
 	}
 
-	public void setDstSubj(Resource dstSubj) {
+	public void setDstSubj(SaamPerson dstSubj) {
 		this.dstSubj = dstSubj;
 	}
 	

@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.openjena.atlas.logging.Log;
 
 import edu.isi.karma.er.helper.entity.MultiScore;
 import edu.isi.karma.er.helper.entity.Score;
@@ -84,8 +83,8 @@ public class ScoreBoardFileUtil {
 		}
 		
 		RandomAccessFile raf = null;
-		int count = 0, i = 0, perfCount = 0, thresholdCount = 0; 
-		DecimalFormat df = new DecimalFormat("0.0000");
+		int count = 0, i = 0, thresholdCount = 0; 
+		DecimalFormat df = new DecimalFormat("0.00000000");
 		try {
 			file.createNewFile();
 			raf = new RandomAccessFile(file, "rw");
@@ -103,21 +102,21 @@ public class ScoreBoardFileUtil {
 						MultiScore ms = rankList.get(k);
 						sb.append(", [").append(df.format(ms.getFinalScore())).append("]");
 						for (Score sc : ms.getScoreList()) {
-							sb.append("\t(").append(df.format(sc.getSimilarity())).append("== ")
-								.append(sc.getSrcObj() == null ? "----" : sc.getSrcObj().getObject().toString())
+							sb.append("\t(").append(df.format(sc.getSimilarity()) + "|" + df.format(sc.getFreq())).append("== ")
+								.append(sc.getSrcObj() == null ? "----" : sc.getSrcObj())
 								.append(" | ")
-								.append(sc.getDstObj() == null ? "----" : sc.getDstObj().getObject().toString()).append(") ");
+								.append(sc.getDstObj() == null ? "----" : sc.getDstObj()).append(") ");
 						}
 						
 					}
 					if (s.getDbpediaUri().equals(s.getKarmaUri())) {
-						raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + "," + s.getDbpediaUri() + "," + s.getKarmaUri() + "," + df.format(s.getFound()) + ", same" + sb.toString() + "\r\n");
+						raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + "," + s.getDbpediaUri() + "," + s.getKarmaUri().replaceAll(",", "") + "," + df.format(s.getFound()) + ", same" + sb.toString() + "\r\n");
 							if (Math.abs(s.getFound() -1) < 1e-5) {
-							perfCount ++;
+							//perfCount ++;
 						}
 						thresholdCount ++;
 					} else {
-						raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + "," + s.getDbpediaUri() + "," + s.getKarmaUri() + "," + df.format(s.getFound()) + ", not same" + sb.toString() + "\r\n");
+						raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + "," + s.getDbpediaUri().replaceAll(",", "") + "," + s.getKarmaUri().replaceAll(",", "") + "," + df.format(s.getFound()) + ", not same" + sb.toString() + "\r\n");
 						
 					}
 				} else {
@@ -131,8 +130,8 @@ public class ScoreBoardFileUtil {
 			log.info("(similarity >= 0.9) recall: " + thresholdCount + " of " + i + " (" + df.format(thresholdCount*1.0/i) + ")");
 			log.info("(similarity >= 0.9) F1 score:" + df.format(2.0*thresholdCount/(i+count)) + "\r\n");
 			
-			raf.writeBytes("(similarity = 1) precision: " + perfCount + " of " + count + " (" + df.format(perfCount*1.0/count) + ")\r\n");
-			raf.writeBytes("(similarity = 1) recall: " + perfCount + " of " + i + " (" + df.format(perfCount*1.0/i) + ")\r\n");
+			//raf.writeBytes("(similarity = 1) precision: " + perfCount + " of " + count + " (" + df.format(perfCount*1.0/count) + ")\r\n");
+			//raf.writeBytes("(similarity = 1) recall: " + perfCount + " of " + i + " (" + df.format(perfCount*1.0/i) + ")\r\n");
 			
 		} catch (IOException e) {
 			
