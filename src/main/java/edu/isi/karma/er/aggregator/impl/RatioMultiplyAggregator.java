@@ -25,7 +25,7 @@ import edu.isi.karma.er.matcher.impl.StringSetMatcher;
 
 public class RatioMultiplyAggregator implements Aggregator {
 
-	private double threshold = 0.8;
+	private double threshold = 0.85;
 	
 	private Map<String, Map<String, Double>> ratioMaps;
 	
@@ -101,8 +101,7 @@ public class RatioMultiplyAggregator implements Aggregator {
 		}
 		return map;
 	}
-	
-	@Override
+
 	public MultiScore match(SaamPerson res1, SaamPerson res2) {
 		double freq, sim, totalFreq = 1, ratio;
 		int pairFlag = 0;

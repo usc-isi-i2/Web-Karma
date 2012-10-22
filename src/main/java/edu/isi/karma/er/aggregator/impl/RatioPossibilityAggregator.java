@@ -16,12 +16,9 @@ public class RatioPossibilityAggregator implements Aggregator {
 	public RatioPossibilityAggregator(calPosibility cal) {
 		this.cal = cal;
 	}
-<<<<<<< HEAD
-	@Override
+
 	public MultiScore match(SaamPerson res1, SaamPerson res2) {
-=======
-	public MultiScore match(JSONArray confArr, Resource res1, Resource res2) {
->>>>>>> 994193e1d02c4c52ce098435623499e558ffc511
+
 		
 		MultiScore ms = new MultiScore();
 		ms.setSrcSubj(res1);

@@ -43,7 +43,6 @@ public class RatioImpl implements IRatio {
 		return map;
 	}
 
-	@Override
 	public Map<String, Integer> calcRatio(Model model, String predicateUri) {
 		if (model == null || predicateUri == null || predicateUri.trim().length() <= 0) {
 			throw new IllegalArgumentException("Null or empty arguments exception. Please check arguments first.");

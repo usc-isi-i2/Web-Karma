@@ -1,13 +1,9 @@
 package edu.isi.karma.er.test.old;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.text.DecimalFormat;
 import java.util.Vector;
 
-import edu.isi.karma.er.helper.Constants;
+import edu.isi.karma.er.helper.ScoreBoardFileUtil;
 import edu.isi.karma.er.helper.entity.ScoreBoard;
 
 public class DrawDiagramFromScoreBoard {
@@ -17,7 +13,8 @@ public class DrawDiagramFromScoreBoard {
 	 */
 	public static void main(String[] args) {
 		String filename = "result2012-10-19-15-29.csv";
-		Vector<ScoreBoard> list = loadScoreBoardFile(filename);
+		ScoreBoardFileUtil util = new ScoreBoardFileUtil();
+		Vector<ScoreBoard> list = util.loadScoreBoardFile(filename);
 		sortByScoreDesc(list);
 		
 		drawGraphData(list);
@@ -58,50 +55,6 @@ public class DrawDiagramFromScoreBoard {
 		
 	}
 
-	private static Vector<ScoreBoard> loadScoreBoardFile(String filename) {
-		File file = new File(Constants.PATH_SCORE_BOARD_FILE + filename);
-		if (!file.exists())
-			throw new IllegalArgumentException("file " + file.getAbsolutePath() + " not exists.");
-		
-		RandomAccessFile raf = null;
-		Vector<ScoreBoard> list = new Vector<ScoreBoard>();
-		
-		try {
-			raf = new RandomAccessFile(file, "r");
-			String line;
-			raf.readLine();
-			double found = -1;
-			
-			while ((line = raf.readLine()) != null) {
-				String[] arr = line.split(",");
-				
-				if (arr.length >= 5) {
-					ScoreBoard s = new ScoreBoard();
-					s.setDbpediaUri(arr[2]);
-					s.setKarmaUri(arr[3]);
-					try {
-						found = Double.parseDouble(arr[4]);
-					} catch (NumberFormatException nfe) {
-						found = -1;
-					}
-					s.setFound(found);
-					list.add(s);
-				}
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				raf.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		return list;
-	}
 	
 	
 }

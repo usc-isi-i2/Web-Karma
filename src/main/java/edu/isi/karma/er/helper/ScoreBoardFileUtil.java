@@ -1,6 +1,7 @@
 package edu.isi.karma.er.helper;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.text.DecimalFormat;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Date;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
@@ -163,4 +165,50 @@ public class ScoreBoardFileUtil {
 		
 		return arr;
 	}
+	
+	public Vector<ScoreBoard> loadScoreBoardFile(String filename) {
+		File file = new File(Constants.PATH_SCORE_BOARD_FILE + filename);
+		if (!file.exists())
+			throw new IllegalArgumentException("file " + file.getAbsolutePath() + " not exists.");
+		
+		RandomAccessFile raf = null;
+		Vector<ScoreBoard> list = new Vector<ScoreBoard>();
+		
+		try {
+			raf = new RandomAccessFile(file, "r");
+			String line;
+			raf.readLine();
+			double found = -1;
+			
+			while ((line = raf.readLine()) != null) {
+				String[] arr = line.split(",");
+				
+				if (arr.length >= 5) {
+					ScoreBoard s = new ScoreBoard();
+					s.setDbpediaUri(arr[2]);
+					s.setKarmaUri(arr[3]);
+					try {
+						found = Double.parseDouble(arr[4]);
+					} catch (NumberFormatException nfe) {
+						found = -1;
+					}
+					s.setFound(found);
+					list.add(s);
+				}
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				raf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return list;
+	}
+	
 }

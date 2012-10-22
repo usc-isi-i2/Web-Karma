@@ -12,7 +12,6 @@ public class NumberEqualityComparatorImpl implements NumberComparator {
 		this.delta = delta;
 	}
 	
-	@Override
 	public double getSimilarity(Number a, Number b) {
 		if (a.intValue() == b.intValue()) 
 			return 1;
