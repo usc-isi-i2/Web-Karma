@@ -2,6 +2,7 @@ package edu.isi.karma.er.helper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.text.DecimalFormat;
@@ -84,16 +85,20 @@ public class ScoreBoardFileUtil {
 			file.delete();
 		}
 		
+		
+		
 		RandomAccessFile raf = null;
 		int count = 0, i = 0, thresholdCount = 0; 
 		DecimalFormat df = new DecimalFormat("0.00000000");
 		try {
 			file.createNewFile();
 			raf = new RandomAccessFile(file, "rw");
-			raf.writeBytes("SAAM Person,URI in SAAM,URI in DBPedia,URI found by karma,matched, ,No.1,No.2,No.3,No.4,No.5 \r\n");
-			for (String str: map.keySet()) {
+			raf.writeBytes("SAAM Person,URI in SAAM,URI in Wiki, URI in DBPedia,URI found by karma,matched, ,No.1,No.2,No.3,No.4,No.5 \r\n");
+			List<ScoreBoard> list = sortResultList(map);
+			int len = list.size();
+			for (int j = 0; j < len; j++) {
 				
-				ScoreBoard s = map.get(str);
+				ScoreBoard s = list.get(j); 
 				if (s.getDbpediaUri().trim().length() > 0)
 					i ++;
 				if (s.getKarmaUri() != null && s.getKarmaUri().length() > 0) {
@@ -104,6 +109,9 @@ public class ScoreBoardFileUtil {
 						MultiScore ms = rankList.get(k);
 						sb.append(", [").append(df.format(ms.getFinalScore())).append("]");
 						for (Score sc : ms.getScoreList()) {
+							sc.setSrcObj(replaceComma(sc.getSrcObj()));
+							sc.setDstObj(replaceComma(sc.getDstObj()));
+							
 							sb.append("\t(").append(df.format(sc.getSimilarity()) + "|" + df.format(sc.getFreq())).append("== ")
 								.append(sc.getSrcObj() == null ? "----" : sc.getSrcObj())
 								.append(" | ")
@@ -112,17 +120,17 @@ public class ScoreBoardFileUtil {
 						
 					}
 					if (s.getDbpediaUri().equals(s.getKarmaUri())) {
-						raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + "," + s.getDbpediaUri() + "," + s.getKarmaUri().replaceAll(",", "") + "," + df.format(s.getFound()) + ", same" + sb.toString() + "\r\n");
+						raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + "," + s.getWikiUri() + "," + s.getDbpediaUri() + "," + s.getKarmaUri().replaceAll(",", "") + "," + df.format(s.getFound()) + ", same" + sb.toString() + "\r\n");
 							if (Math.abs(s.getFound() -1) < 1e-5) {
 							//perfCount ++;
 						}
 						thresholdCount ++;
 					} else {
-						raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + "," + s.getDbpediaUri().replaceAll(",", "") + "," + s.getKarmaUri().replaceAll(",", "") + "," + df.format(s.getFound()) + ", not same" + sb.toString() + "\r\n");
+						raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + "," + s.getWikiUri() + "," + s.getDbpediaUri().replaceAll(",", "") + "," + s.getKarmaUri().replaceAll(",", "") + "," + df.format(s.getFound()) + ", not same" + sb.toString() + "\r\n");
 						
 					}
 				} else {
-					raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + "," + s.getDbpediaUri() + ",,\r\n");
+					raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + "," + s.getWikiUri() + "," + s.getDbpediaUri() + ",,\r\n");
 				}
 			}
 			raf.writeBytes("(similarity >= 0.9) precision: " + thresholdCount + " of " + count + " (" + df.format(thresholdCount*1.0/count) + ")\r\n");
@@ -149,6 +157,30 @@ public class ScoreBoardFileUtil {
 		
 	}
 	
+	private List<ScoreBoard> sortResultList(Map<String, ScoreBoard> map) {
+		List<ScoreBoard> list = new Vector<ScoreBoard>();
+		ScoreBoard rec;
+		
+		for (ScoreBoard s : map.values()) {
+			int i;
+			for (i = 0; i < list.size() ; i++) {
+				rec = list.get(i);
+				if (s.getFound() > rec.getFound())
+					break;
+			}
+			list.add(i, s);
+		}
+		
+		return list;
+	}
+	
+	private String replaceComma(String str) {
+		if (str != null && str.indexOf(",") > -1) {
+			str = str.replaceAll(",", "%2C");
+		}
+		return str;
+	}
+	
 	private String[] split(String str) {
 		ArrayList<String> list = new ArrayList<String>();
 		int index = str.indexOf(',');
@@ -156,6 +188,23 @@ public class ScoreBoardFileUtil {
 			list.add(str.substring(0, index));
 			str = str.substring(index+1);
 			index = str.indexOf(',');
+		}
+		list.add(str);
+		String[] arr = new String[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			arr[i] = list.get(i);
+		}
+		
+		return arr;
+	}
+	
+	private String[] split(String str, String delimiter) {
+		ArrayList<String> list = new ArrayList<String>();
+		int index = str.indexOf(delimiter);
+		while (index > -1) {
+			list.add(str.substring(0, index));
+			str = str.substring(index+delimiter.length());
+			index = str.indexOf(delimiter);
 		}
 		list.add(str);
 		String[] arr = new String[list.size()];
@@ -179,22 +228,49 @@ public class ScoreBoardFileUtil {
 			String line;
 			raf.readLine();
 			double found = -1;
+			List<MultiScore> rankList;
 			
 			while ((line = raf.readLine()) != null) {
-				String[] arr = line.split(",");
+				String[] arr = split(line);
 				
-				if (arr.length >= 5) {
-					ScoreBoard s = new ScoreBoard();
-					s.setDbpediaUri(arr[2]);
-					s.setKarmaUri(arr[3]);
-					try {
-						found = Double.parseDouble(arr[4]);
-					} catch (NumberFormatException nfe) {
-						found = -1;
+				if (line.indexOf("http") > -1) {
+					if (arr.length >= 8) {
+						ScoreBoard s = new ScoreBoard();
+						s.setSubject(arr[0]);
+						s.setSaamUri(arr[1]);
+						s.setWikiUri(arr[2]);
+						s.setDbpediaUri(arr[3]);
+						s.setKarmaUri(arr[4]);
+						try {
+							found = Double.parseDouble(arr[5]);
+						} catch (NumberFormatException nfe) {
+							found = -1;
+						}
+						if (arr.length >= 11) {
+							rankList = parseRankList(arr[7], arr[8], arr[9], arr[10]);
+						} else if (arr.length == 10) {
+							rankList = parseRankList(arr[7], arr[8], arr[9]);
+						} else if (arr.length == 9) {
+							rankList = parseRankList(arr[7], arr[8]);
+						} else if (arr.length == 8) {
+							rankList = parseRankList(arr[7]);
+						} else {
+							rankList = null;
+						}
+						s.setRankList(rankList);
+						s.setFound(found);
+						list.add(s);
+					} else {
+						ScoreBoard s = new ScoreBoard();
+						s.setSubject(arr[0]);
+						s.setSaamUri(arr[1]);
+						s.setWikiUri(arr[2]);
+						s.setDbpediaUri(arr[3]);
+						s.setKarmaUri("");
+						s.setFound(-1);
+						list.add(s);
 					}
-					s.setFound(found);
-					list.add(s);
-				}
+				} 
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -210,5 +286,69 @@ public class ScoreBoardFileUtil {
 		
 		return list;
 	}
+
+	private List<MultiScore> parseRankList(String... strs) {
+		String[] preds = {"http://americanart.si.edu/saam/birthYear", "http://americanart.si.edu/saam/deathYear", "http://americanart.si.edu/saam/fullName"};
+		Vector<MultiScore> list = new Vector<MultiScore> ();
+		List<Score> scoreList = null;
+		
+		String finalScore, sim, attr;
+		for (String str : strs) {
+			if (str.indexOf('(') > -1 && str.indexOf(')') > -1) {
+				MultiScore ms = new MultiScore();
+				
+				scoreList = new Vector<Score>();
+				finalScore = str.substring(str.indexOf('[')+1, str.indexOf(']'));
+				str = str.substring(str.indexOf(']') + 2);
+				ms.setFinalScore(Double.parseDouble(finalScore));
+				
+				String[] scoreStrs = split(str, "(");
+				int i = 0;
+				for (String substr : scoreStrs) {
+					if (substr.indexOf('|') != substr.lastIndexOf('|')) {
+						
+						sim = substr.substring(0, substr.indexOf('='));
+						attr = substr.substring(substr.indexOf('=') + 2);
+						
+						Score s = new Score();
+						s.setPredicate(preds[i++]);
+						
+						s.setSimilarity(Double.parseDouble(sim.substring(0, sim.indexOf('|'))));
+						s.setFreq(Double.parseDouble(sim.substring(sim.indexOf('|')+1)));
+						s.setSrcObj(attr.substring(0, attr.lastIndexOf('|')));
+						s.setDstObj(attr.substring(attr.indexOf('|') + 1, attr.lastIndexOf(')')));
+						scoreList.add(s);
+					}
+				}
+				ms.setScoreList(scoreList);
+				list.add(ms);
+			}
+		}
+		return list;
+	}
 	
+	public String getLastestResult() {
+		String path = Constants.PATH_SCORE_BOARD_FILE;
+		File file = new File(path);
+		if (!file.isDirectory()) {
+			throw new IllegalArgumentException(path + " is not a directory");
+		}
+		FilenameFilter filter = new FilenameFilter() {
+
+			public boolean accept(File dir, String name) {
+				if (name.toLowerCase().endsWith(".csv")) 
+					return true;
+				return false;
+			}};
+		File[] files = file.listFiles(filter);
+		long latest = files[0].lastModified();
+		File latestFile = files[0];
+		for (File f : files) {
+			if (latest < f.lastModified()) {
+				latest = f.lastModified();
+				latestFile = f;
+			}
+		}
+		return latestFile.getName();
+	}
 }

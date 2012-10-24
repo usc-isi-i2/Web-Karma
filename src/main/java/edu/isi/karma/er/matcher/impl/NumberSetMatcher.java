@@ -73,14 +73,12 @@ public class NumberSetMatcher implements Matcher {
 		
 		
 		for (String nodeV : listV) {
-			
+			s.setSrcObj(nodeV);
 			if (isParsable(nodeV)) {
 				numV = Integer.parseInt(nodeV);
 			} else {
 				continue;
 			}
-			
-			s.setSrcObj(nodeV);
 			
 			for (String nodeW : listW) {
 				

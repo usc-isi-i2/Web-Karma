@@ -47,7 +47,6 @@ public class TestPairMatchMain {
 		LinkageFinder finder = new LinkageFinder();
 		List<ResultRecord> resultList = finder.findLinkage(model, model2);						// match and return linkage result in list.
 		
-		
 		int count = 0;
 		DecimalFormat df = new DecimalFormat("0.00000000");
 		
@@ -108,6 +107,8 @@ public class TestPairMatchMain {
 		log.info("Program finished at:" + sdf.format(new java.util.Date()));
 		
 	}
+
+	
 	
 }
 

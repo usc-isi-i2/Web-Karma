@@ -2,7 +2,7 @@ package edu.isi.karma.er.helper;
 
 public class Constants {
 
-	public static String PATH_BASE = "/Users/Frank/workspace/TestData_dbpedia_saam/";
+	public static String PATH_BASE = "C:/DBpediaRepository/workspace/TestData_dbpedia_saam/";
 	
 	public static String PATH_REPOSITORY = PATH_BASE + "jena_repository/";
 	
