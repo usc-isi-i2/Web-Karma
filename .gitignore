@@ -30,9 +30,4 @@ src/main/webapp/CRF_Models/WSP1_CRFModel.txt.zip
 tmp/*
 src/main/webapp/CRF_Models/WSP1_CRFModel.txt
 src/main/scripts/Lib/*.class
-
-src/main/scripts/Lib/Interpreter$py.class
-
-src/main/scripts/Lib/Translator$py.class
-
 bin/
