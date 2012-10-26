@@ -73,7 +73,7 @@ public class NumberMatcher implements Matcher {
 		s.setSrcObj(nodeV);
 		nodeW = listW.get(0);
 		s.setDstObj(nodeW);
-	
+		
 		double numV = 0, numW = 0;
 		if (!isParsable(nodeV) || !isParsable(nodeW)) {
 			s.setScoreType(ScoreType.INVALID);

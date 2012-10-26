@@ -339,22 +339,30 @@ public class Service {
 			return;
 		}
 		
+		String params = "";
+		String[] addressParts = str.split("\\?");
+		if (addressParts.length == 2) params = addressParts[1];
+		
 		// This only works for Web APIs and not RESTful APIs
 		for (int i = 0; i < this.inputAttributes.size(); i++) {
 			String name = this.inputAttributes.get(i).getName();
 			String groundVar = "p" + String.valueOf(i+1);
-			int index = str.indexOf(name);
-			String temp = str.substring(index);
+			int index = params.indexOf(name);
+			String temp = params.substring(index);
 			if (temp.indexOf("&") != -1)
 				temp = temp.substring(0, temp.indexOf("&"));
 			if (temp.indexOf("=") != -1)
 				temp = temp.substring(temp.indexOf("=") + 1);
-			
-			str = str.replaceFirst(temp.trim(), "{" + groundVar + "}");
+
+			params = params.replaceFirst(temp.trim(), "{" + groundVar + "}");
 			this.inputAttributes.get(i).setGroundedIn(groundVar);
 		}
 		
-		this.address = str;
+		if (params.length() > 0)
+			this.address = addressParts[0] + "?" + params;
+		else
+			this.address = str;
+
 	}
 	
 	public void updateModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeModel) {

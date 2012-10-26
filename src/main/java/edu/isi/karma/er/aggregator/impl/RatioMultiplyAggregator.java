@@ -25,7 +25,7 @@ import edu.isi.karma.er.matcher.impl.StringSetMatcher;
 
 public class RatioMultiplyAggregator implements Aggregator {
 
-	private double threshold = 0.85;
+	private double threshold = 0.80;
 	
 	private Map<String, Map<String, Double>> ratioMaps;
 	

@@ -46,11 +46,11 @@ public class StringMatcher implements Matcher {
 		if (listV == null || listV.size() <= 0 || listW == null || listW.size() <= 0) {
 			return s;
 		}
-		
 		String strV = listV.get(0);
 		String strW = listW.get(0);
 		
-		
+		s.setSrcObj(strV);
+		s.setDstObj(strW);
 		
 		if (strV.equals(strW)) {
 			s.setSimilarity(1);
