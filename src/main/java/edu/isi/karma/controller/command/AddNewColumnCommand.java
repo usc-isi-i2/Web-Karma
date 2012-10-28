@@ -20,15 +20,17 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
-import java.awt.List;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.json.JSONObject;
-import org.python.antlr.ast.For;
 
 import edu.isi.karma.cleaning.MyLogger;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.alignment.AlignToOntology;
+import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
@@ -134,6 +136,21 @@ public class AddNewColumnCommand extends WorksheetCommand {
 			/*************************************/
 		} catch (Exception e) {
 			System.out.println("" + e.toString());
+		}
+		
+		// Get the alignment update if any
+		// Shubham 2012/11/28 to move the red dots in case the the model is being shown
+		if (!worksheet.getSemanticTypes().getListOfTypes().isEmpty()) {
+			OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+			SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
+			
+			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
+			try {
+				align.alignAndUpdate(c, true);
+			} catch (Exception e) {
+				return new UpdateContainer(new ErrorUpdate(
+						"Error occured while generating the model for the source."));
+			}
 		}
 		return c;
 	}
