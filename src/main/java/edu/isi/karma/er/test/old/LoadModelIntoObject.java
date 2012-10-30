@@ -32,7 +32,7 @@ public class LoadModelIntoObject {
 		Model dstModel = TDBFactory.createDataset(Constants.PATH_REPOSITORY + "dbpedia_a/").getDefaultModel();
 		String RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";	// property to retrieve all the subjects from models.
 		Property RDF = ResourceFactory.createProperty(RDF_TYPE);
-		Property p = ResourceFactory.createProperty("http://americanart.si.edu/saam/fullName");
+		// Property p = ResourceFactory.createProperty("http://americanart.si.edu/saam/fullName");
 		
 		
 		ResIterator iter1 = srcModel.listSubjectsWithProperty(RDF);

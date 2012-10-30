@@ -1,23 +1,14 @@
 package edu.isi.karma.er.test.old;
 
-import java.util.List;
-
-import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.tdb.TDBFactory;
 
 import edu.isi.karma.er.helper.Constants;
-import edu.isi.karma.er.helper.ScoreBoardFileUtil;
-import edu.isi.karma.er.helper.entity.ScoreBoard;
-import edu.isi.karma.er.helper.ontology.MatchOntologyUtil;
 
 public class CreateOntologyRepositoryUsingJena {
 
@@ -36,6 +27,7 @@ public class CreateOntologyRepositoryUsingJena {
 		
 	}
 
+	/*
 	private static Model loadRepositoryFromCSV(Model model) {
 		ScoreBoardFileUtil util = new ScoreBoardFileUtil();
 		String filename = util.getLastestResult();
@@ -62,7 +54,7 @@ public class CreateOntologyRepositoryUsingJena {
 		}
 		
 		return model;
-	}
+	}*/
 
 	private static void queryRepository(Model model) {
 		String sparql = "PREFIX :<http://www.semanticweb.org/ontologies/2012/9/OntologyMatchGroundTruth.owl#>" + "\n" +
@@ -104,6 +96,7 @@ public class CreateOntologyRepositoryUsingJena {
 		}
 	}
 
+	/*
 	private static Model createRepository(Model model) {
 		String subject, srcId, srcUrl, dstId, dstUrl, comment, matched , createTime;
 		Resource res = null;
@@ -132,5 +125,5 @@ public class CreateOntologyRepositoryUsingJena {
 		
 		return model;
 	}
-
+	*/
 }

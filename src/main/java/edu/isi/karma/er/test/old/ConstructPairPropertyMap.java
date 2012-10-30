@@ -1,31 +1,9 @@
 package edu.isi.karma.er.test.old;
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.text.DecimalFormat;
-import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-import com.hp.hpl.jena.tdb.TDBFactory;
-
-import edu.isi.karma.er.helper.Constants;
 import edu.isi.karma.er.helper.PairPropertyUtil;
-import edu.isi.karma.er.helper.entity.PersonProperty;
-import edu.isi.karma.er.helper.entity.SaamPerson;
 
 public class ConstructPairPropertyMap {
 
@@ -33,10 +11,10 @@ public class ConstructPairPropertyMap {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Model srcModel = TDBFactory.createDataset(Constants.PATH_REPOSITORY + "dbpedia/").getDefaultModel();
+		//Model srcModel = TDBFactory.createDataset(Constants.PATH_REPOSITORY + "dbpedia/").getDefaultModel();
 		// Model dstModel = TDBFactory.createDataset(Constants.PATH_REPOSITORY + "dbpedia_a/").getDefaultModel();
-		String p1 = "http://americanart.si.edu/saam/birthYear";
-		String p2 = "http://americanart.si.edu/saam/deathYear";
+		//String p1 = "http://americanart.si.edu/saam/birthYear";
+		//String p2 = "http://americanart.si.edu/saam/deathYear";
 		
 		PairPropertyUtil util = new PairPropertyUtil();
 		//Map<String, Map<String, Double>> map = configPairMap(srcModel, p1, p2);
@@ -50,6 +28,7 @@ public class ConstructPairPropertyMap {
 		}
 	}
 
+	/*
 	private static Map<String, Map<String, Double>> configPairMap(
 			Model model, String p1, String p2) {
 		Map<String, Map<String, Double>> map = new TreeMap<String, Map<String, Double>>();
@@ -128,13 +107,13 @@ public class ConstructPairPropertyMap {
 					count ++;
 					subMap.put(s2, count);
 					map.put(s1, subMap);
-				}*/
+				}* /
 			}
 		}
 		System.out.println(i + " rows processed.");
 		return map;
 	}
-
+*/
 	private static void output(Map<String, Map<String, Double>> map) throws JSONException {
 		int total = 0, subTotal = 0;
 		for (String str : map.keySet()) {
@@ -154,7 +133,7 @@ public class ConstructPairPropertyMap {
 		
 		
 	}
-
+/*
 	private static void output2File(
 			Map<String, Map<String, Double>> map) throws JSONException {
 		double total = 0, subTotal = 0;
@@ -194,7 +173,8 @@ public class ConstructPairPropertyMap {
 		}
 		
 	}
-
+*/
+	/*
 	private static List<SaamPerson> loadOntologies(Model model) {
 		String RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";	// property to retrieve all the subjects from models.
 		Property RDF = ResourceFactory.createProperty(RDF_TYPE);
@@ -231,7 +211,8 @@ public class ConstructPairPropertyMap {
 		}
 		return list;
 	}
-	
+	*/
+	/*
 	private static boolean isParsable(String str) {
 		if (str == null || "" == str) {
 			return false;
@@ -249,4 +230,5 @@ public class ConstructPairPropertyMap {
 		else
 			return false;
 	}
+	*/
 }

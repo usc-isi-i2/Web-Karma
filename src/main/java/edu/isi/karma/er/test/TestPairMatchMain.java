@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.tdb.TDBFactory;
-import com.hp.hpl.jena.util.FileManager;
 
 import edu.isi.karma.er.helper.Constants;
 import edu.isi.karma.er.helper.ScoreBoardFileUtil;

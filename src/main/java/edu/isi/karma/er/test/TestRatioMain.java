@@ -6,10 +6,8 @@ import java.io.FileWriter;
 import java.text.DecimalFormat;
 import java.util.Map;
 
-import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.tdb.TDBFactory;
-import com.hp.hpl.jena.util.FileManager;
 
 import edu.isi.karma.er.helper.Constants;
 import edu.isi.karma.er.ratio.IRatio;
