@@ -27,7 +27,7 @@ To start in logging mode (where all the logs are stored in the log folder), use 
 	mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineCSVGenerator" -Dexec.args="[PATH TO YOUR MODEL FILE] [CSV DATA FILE] [OUTPUT RDF FILE NAME/PATH]"
 NOTE: Currently only tab-delimited kind of CSV files are supported.
 
-	e.g. mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineCSVGenerator" -Dexec.args="model.n3 result.n3 secretPassword"
-	Above command will use the ObjCurLocView.n3 model file to pubish a RDF file named result.n3
-
+	e.g. mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineCSVGenerator" -Dexec.args="model.n3 data.csv result.n3"
+	Above command will use the model.n3 model file to pubish a RDF file named result.n3
+	
 NOTE: In Maven Jetty plugin based Karma deployment, the published models are located at src/main/webapp/repository/sources/ inside the Karma directory.
