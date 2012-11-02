@@ -37,7 +37,6 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.rep.metadata.Tag;
@@ -90,22 +89,10 @@ public class GetExampleJSON extends HttpServlet {
 		
 		WorkspaceRegistry.getInstance().register(new ExecutionController(vwsp));
 		
-		/** Check if any ontology needs to be preloaded **/
-		String preloadedOntDir = ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.PRELOADED_ONTOLOGY_DIRECTORY);
-		File ontDir = new File(preloadedOntDir);
-		if (ontDir.exists()) {
-			File[] ontologies = ontDir.listFiles();
-			OntologyManager mgr = workspace.getOntologyManager();
-			for (File ontology: ontologies) {
-				try {
-					mgr.doImport(ontology);
-				} catch (Exception t) {
-					logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
-				}
-			}
-		} else {
-			logger.info("No directory for preloading ontologies exists.");
-		}
+		// Loading ontology to be preloaded
+//		OntologyManager mgr = workspace.getOntologyManager();
+//		mgr.doImport(new File("./Preloaded_Ontologies/geo_2007.owl"));
+//		mgr.doImport(new File("./Preloaded_Ontologies/oilwell.owl"));
 		
 		//mariam
 		//File file = new File("../demofiles/usc_faculty.csv");

@@ -82,9 +82,6 @@ public class AddNewColumnCommand extends WorksheetCommand {
 				worksheetId);
 		System.out.println("Old Size"
 				+ worksheet.getHeaders().getAllPaths().size());
-
-		// pedro 2012-10-28: there needs to be a better way to do this. A more
-		// efficient implementation should be done in HTable.
 		HTable headers = worksheet.getHeaders();
 		java.util.List<HNodePath> nodesList = headers.getAllPaths();
 		HNodePath index = null;
@@ -113,15 +110,17 @@ public class AddNewColumnCommand extends WorksheetCommand {
 				Row r = xnode.getBelongsToRow();
 				Node node = r.getNode(hNodeId);
 				String t = jObject.getString(node.getId());
-				// System.out.println(""+t+""+ndid.getId()+","+hNodeId);
-				// resultString += t+"\n";
+					// System.out.println(""+t+""+ndid.getId()+","+hNodeId);
+					// resultString += t+"\n";
 				r.setValue(ndid.getId(), t, vWorkspace.getRepFactory());
+				
+				
 
 			}
 			System.out.println("Old VW ID: " + vWorksheetId);
-			vWorkspace.getViewFactory()
-					.updateWorksheet(vWorksheetId, worksheet,
-							worksheet.getHeaders().getAllPaths(), vWorkspace);
+			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
+					worksheet, worksheet.getHeaders().getAllPaths(),
+					vWorkspace);
 			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(
 					vWorksheetId);
 			System.out.println("New VW ID: " + vw.getId());
@@ -138,24 +137,19 @@ public class AddNewColumnCommand extends WorksheetCommand {
 		} catch (Exception e) {
 			System.out.println("" + e.toString());
 		}
-
+		
 		// Get the alignment update if any
-		// Shubham 2012/10/28 to move the red dots in case the the model is
-		// being shown
+		// Shubham 2012/11/28 to move the red dots in case the the model is being shown
 		if (!worksheet.getSemanticTypes().getListOfTypes().isEmpty()) {
-			OntologyManager ontMgr = vWorkspace.getWorkspace()
-					.getOntologyManager();
-			SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet,
-					vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
-
-			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
-					vWorksheetId);
+			OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+			SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
+			
+			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
 			try {
 				align.alignAndUpdate(c, true);
 			} catch (Exception e) {
-				return new UpdateContainer(
-						new ErrorUpdate(
-								"Error occured while generating the model for the source."));
+				return new UpdateContainer(new ErrorUpdate(
+						"Error occured while generating the model for the source."));
 			}
 		}
 		return c;

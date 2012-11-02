@@ -302,31 +302,6 @@ and related projects, please see: http://www.isi.edu/integration
 							}
 					});
 				});
-				
-				// Prevent the backspace key from navigating back.
-				$(document).unbind('keydown').bind('keydown', function (event) {
-				    var doPrevent = false;
-				    if (event.keyCode === 8) {
-				    	// console.log("Delete button detected!");
-				    	var d = event.srcElement || event.target;
-				        if ((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD')) 
-				            || d.tagName.toUpperCase() === 'TEXTAREA') {
-				            doPrevent = d.readOnly || d.disabled;
-				        }
-				        else {
-				            doPrevent = true;
-				        }
-				
-				    	if (doPrevent) {
-					        var ans = confirm("Are you sure you want to go back? You will lose all the progress.");
-						    if (ans) {
-						    	// Go with normal behavior
-						    } else {
-						    	event.preventDefault();	
-						    }
-					    }
-				    }
-				});
 			});
 		</script>
 		<script type="text/javascript">
@@ -339,7 +314,7 @@ and related projects, please see: http://www.isi.edu/integration
 	
 	
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.10</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.09</span></h1>
 		<table id="topMenuBar">
 <tr>
 				<td>

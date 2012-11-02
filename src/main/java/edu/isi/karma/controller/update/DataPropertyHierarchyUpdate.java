@@ -101,13 +101,10 @@ public class DataPropertyHierarchyUpdate extends AbstractUpdate {
 				}
 
 				String pr = prefixMap.get(prop.getNameSpace());
-				String propLabel = prop.getLocalName();
-				if (prop.getLabel(null) != null && !prop.getLabel(null).equals(""))
-					propLabel = prop.getLabel(null);
 				if(pr != null && !pr.equals(""))
-					classObject.put(JsonKeys.data.name(), pr + ":" + propLabel);
+					classObject.put(JsonKeys.data.name(), pr + ":" + prop.getLocalName());
 				else
-					classObject.put(JsonKeys.data.name(), propLabel);
+					classObject.put(JsonKeys.data.name(), prop.getLocalName());
 
 				propertiesAdded.add(prop.getURI());
 
@@ -146,13 +143,10 @@ public class DataPropertyHierarchyUpdate extends AbstractUpdate {
 			JSONObject classObject = new JSONObject();
 			
 			String pr = prefixMap.get(prop.getNameSpace());
-			String subPropLabel = subProp.getLocalName();
-			if (prop.getLabel(null) != null && !prop.getLabel(null).equals(""))
-				subPropLabel = subProp.getLabel(null);
 			if(pr != null && !pr.equals(""))
-				classObject.put(JsonKeys.data.name(), pr + ":" + subPropLabel);
+				classObject.put(JsonKeys.data.name(), pr + ":" + subProp.getLocalName());
 			else
-				classObject.put(JsonKeys.data.name(), subPropLabel);
+				classObject.put(JsonKeys.data.name(), subProp.getLocalName());
 			
 			JSONObject metadataObject = new JSONObject();
 			metadataObject.put(JsonKeys.URI.name(), subProp.getURI());

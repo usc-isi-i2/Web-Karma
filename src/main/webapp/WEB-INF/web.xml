@@ -52,10 +52,6 @@
 		<param-name>MSFT</param-name>
 		<param-value>False</param-value>
   </context-param>
-  <context-param>
-		<param-name>PRELOADED_ONTOLOGY_DIRECTORY</param-name>
-		<param-value>preloaded-ontologies</param-value>
-  </context-param>
 
   
   	<servlet>
