@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.er.compare.StringComparator;
 import edu.isi.karma.er.compare.impl.StringQGramComparatorImpl;
-import edu.isi.karma.er.compare.impl.StringSmithWatermanComparatorImpl;
 
 public class TestStringComparator {
 
@@ -15,8 +14,8 @@ public class TestStringComparator {
 	public static void main(String[] args) {
 		Logger logger = LoggerFactory.getLogger(TestStringComparator.class);
 		logger.info("TEST");
-		String str1 = "Anthony van Dyck"; //"John R. Smith";
-		String str2 = "Sir Anthony van Dyck"; //"John Richard Smith";
+		//String str1 = "Anthony van Dyck"; //"John R. Smith";
+		//String str2 = "Sir Anthony van Dyck"; //"John Richard Smith";
 		String[] strs1 = {"Anthony Velonis", "Alexander Dobkin", "Alfred-Phillippe Roll", "Cassandre", "Arthur Hall", "Anderson Johnson", "Sir Anthony van Dyck", "Alfred Rudolph Waud", "Alan Stone", "Arthur North", "Alice Mason"};
 		String[] strs2 = {"Anthony Fell", "Alexander Dinghas", "Alfred Philippe Roll", "A. Mouron Cassandre",  "Arthur R. Hall", "John Anderson, Jr.", "Anthony van Dyck", "Alfred Waud", "Allan Stone", "Arthur Norman", "Alice Rahon"};
 		long startTime = System.currentTimeMillis();

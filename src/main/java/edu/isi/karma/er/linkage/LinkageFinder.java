@@ -23,7 +23,6 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import edu.isi.karma.er.aggregator.Aggregator;
 import edu.isi.karma.er.aggregator.impl.AverageAggregator;
 import edu.isi.karma.er.aggregator.impl.RatioMultiplyAggregator;
-import edu.isi.karma.er.aggregator.impl.RatioPossibilityAggregator;
 import edu.isi.karma.er.aggregator.impl.RatioWeightAggregator;
 import edu.isi.karma.er.helper.ConfigUtil;
 import edu.isi.karma.er.helper.Constants;
@@ -32,7 +31,6 @@ import edu.isi.karma.er.helper.entity.MultiScore;
 import edu.isi.karma.er.helper.entity.PersonProperty;
 import edu.isi.karma.er.helper.entity.ResultRecord;
 import edu.isi.karma.er.helper.entity.SaamPerson;
-import edu.isi.karma.er.test.calPosibility;
 
 public class LinkageFinder {
 
@@ -93,7 +91,7 @@ public class LinkageFinder {
 		} else if ("ratio_weight".equalsIgnoreCase(aggr.optString("aggregator"))) {
 			aver = new RatioWeightAggregator(confArr2);
 		} else if ("possibility".equalsIgnoreCase(aggr.optString("aggregator"))) {
-			aver = new RatioPossibilityAggregator(new calPosibility());
+			//aver = new RatioPossibilityAggregator(new calPosibility());
 		} else if ("ratio_multiply".equalsIgnoreCase(aggr.optString("aggregator"))) {
 			aver = new RatioMultiplyAggregator(confArr2, dependArr);
 		} else {

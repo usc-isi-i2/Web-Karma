@@ -3,7 +3,6 @@ package edu.isi.karma.er.test.old;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.List;
-import java.util.Map;
 
 import edu.isi.karma.er.helper.Constants;
 import edu.isi.karma.er.helper.ScoreBoardFileUtil;

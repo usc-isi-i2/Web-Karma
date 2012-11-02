@@ -17,20 +17,16 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.tdb.TDBFactory;
-import com.hp.hpl.jena.util.FileManager;
 
-import edu.isi.karma.er.compare.NumberComparator;
 import edu.isi.karma.er.compare.StringComparator;
-import edu.isi.karma.er.compare.impl.NumberComparatorImpl;
 import edu.isi.karma.er.compare.impl.StringJaroWinklerComparatorImpl;
-import edu.isi.karma.er.compare.impl.StringQGramComparatorImpl;
 import edu.isi.karma.er.helper.Constants;
 import edu.isi.karma.er.helper.entity.PersonProperty;
 import edu.isi.karma.er.helper.entity.SaamPerson;
 
 public class TestRandomFrequency {
 
-	private static String ATTR = "http://americanart.si.edu/saam/fullName";
+	// private static String ATTR = "http://americanart.si.edu/saam/fullName";
 	private StringComparator comp = new StringJaroWinklerComparatorImpl();
 	// private NumberComparator comp = new NumberComparatorImpl(0, 2012, 10);
 	/**
@@ -122,7 +118,7 @@ public class TestRandomFrequency {
 		
 		return list;
 	}
-	
+	/*
 	private double calcAverFreq(double sim, List<String> srcList) {
 		double sumFreq = 0, freq;
 		int len = srcList.size();
@@ -148,7 +144,7 @@ public class TestRandomFrequency {
 						} catch (NumberFormatException nfe) {
 							
 						}
-					*/		
+					* /		
 						if (comp.getSimilarity(s1, s2) > sim)		{
 							freq ++;
 						}
@@ -159,13 +155,13 @@ public class TestRandomFrequency {
 		}
 		return sumFreq / (len * len);
 	}
-	
+	*/
 	private double calcAverFreq(double sim, List<String> srcList, List<SaamPerson> perList) {
 		double sumFreq = 0, freq;
 		
 		int len = srcList.size();
 		System.out.println("size:" + len + " | " + perList.size());
-		int n1, n2;
+		// int n1, n2;
 		long i = 0;
 		long t = System.currentTimeMillis();
 		String s2;
