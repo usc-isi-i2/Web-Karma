@@ -8,17 +8,17 @@ import org.json.JSONArray;
 
 import edu.isi.karma.er.aggregator.Aggregator;
 import edu.isi.karma.er.helper.entity.MultiScore;
+import edu.isi.karma.er.helper.entity.Ontology;
 import edu.isi.karma.er.helper.entity.ResultRecord;
-import edu.isi.karma.er.helper.entity.SaamPerson;
 
 public class LinkageFinderThread extends Thread {
-	List<SaamPerson> srcList = null;
-	List<SaamPerson> dstList = null;
+	List<Ontology> srcList = null;
+	List<Ontology> dstList = null;
 	Aggregator aver = null;
 	JSONArray confArr = null;
 	List<ResultRecord> resultList = new Vector<ResultRecord>();
 
-	public LinkageFinderThread(List<SaamPerson> srcList, List<SaamPerson> dstList, Aggregator aver, JSONArray confArr) {
+	public LinkageFinderThread(List<Ontology> srcList, List<Ontology> dstList, Aggregator aver, JSONArray confArr) {
 		this.srcList = srcList;
 		this.dstList = dstList;
 		this.aver = aver;
@@ -29,11 +29,11 @@ public class LinkageFinderThread extends Thread {
 		int i = 0;
 		Logger log = Logger.getRootLogger();
 		long startTime = System.currentTimeMillis();
-		for (SaamPerson p1 : srcList) {
+		for (Ontology p1 : srcList) {
 			
 			ResultRecord rec = new ResultRecord();
 			rec.setRes(p1);
-			for (SaamPerson p2 : dstList) {
+			for (Ontology p2 : dstList) {
 				
 				MultiScore ms = aver.match(p1, p2); 	// compare 2 resource to return a result of match with match details
 				if ( ms.getFinalScore() > rec.getCurrentMinScore() ) {	// to decide whether current pair can rank to top 5 
@@ -50,19 +50,19 @@ public class LinkageFinderThread extends Thread {
 		}
 	}
 
-	public List<SaamPerson> getSrcList() {
+	public List<Ontology> getSrcList() {
 		return srcList;
 	}
 
-	public void setSrcList(List<SaamPerson> srcList) {
+	public void setSrcList(List<Ontology> srcList) {
 		this.srcList = srcList;
 	}
 
-	public List<SaamPerson> getDstList() {
+	public List<Ontology> getDstList() {
 		return dstList;
 	}
 
-	public void setDstList(List<SaamPerson> dstList) {
+	public void setDstList(List<Ontology> dstList) {
 		this.dstList = dstList;
 	}
 

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -12,13 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import edu.isi.karma.er.aggregator.Aggregator;
 import edu.isi.karma.er.aggregator.impl.AverageAggregator;
@@ -26,11 +18,11 @@ import edu.isi.karma.er.aggregator.impl.RatioMultiplyAggregator;
 import edu.isi.karma.er.aggregator.impl.RatioWeightAggregator;
 import edu.isi.karma.er.helper.ConfigUtil;
 import edu.isi.karma.er.helper.Constants;
+import edu.isi.karma.er.helper.OntologyUtil;
 import edu.isi.karma.er.helper.RatioFileUtil;
 import edu.isi.karma.er.helper.entity.MultiScore;
-import edu.isi.karma.er.helper.entity.PersonProperty;
+import edu.isi.karma.er.helper.entity.Ontology;
 import edu.isi.karma.er.helper.entity.ResultRecord;
-import edu.isi.karma.er.helper.entity.SaamPerson;
 
 public class LinkageFinder {
 
@@ -48,9 +40,9 @@ public class LinkageFinder {
 	public List<ResultRecord> findLinkage(Model srcModel, Model dstModel) {
 		
 		int THREAD_NUM = 3;
-		
-		List<SaamPerson> list1 = loadOntologies(srcModel);
-		List<SaamPerson> list2 = loadOntologies(dstModel);
+		OntologyUtil outil = new OntologyUtil();
+		List<Ontology> list1 = outil.loadSaamPersonOntologies(srcModel);
+		List<Ontology> list2 = outil.loadSaamPersonOntologies(dstModel);
 		System.out.println("list size:" + list1.size() + "|" + list2.size());
 		
 		
@@ -104,7 +96,7 @@ public class LinkageFinder {
 		List<ResultRecord> resultList = new ArrayList<ResultRecord>();
 		
 		// long lines = list1.size() * list2.size();			// total times of cross comparing
-		List<List<SaamPerson>> dstListArr = new ArrayList<List<SaamPerson>>(THREAD_NUM);
+		List<List<Ontology>> dstListArr = new ArrayList<List<Ontology>>(THREAD_NUM);
 		int total = list2.size();
 		int pageSize = total / THREAD_NUM;
 		for (i = 0; i < THREAD_NUM - 1; i++) {
@@ -205,42 +197,5 @@ public class LinkageFinder {
 		return ratioMap;
 	}
 	
-	private List<SaamPerson> loadOntologies(Model model) {
-		Property RDF = ResourceFactory.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-		ResIterator iter = model.listResourcesWithProperty(RDF);
-		
-		List<SaamPerson> list = new Vector<SaamPerson>();
-		while (iter.hasNext()) {
-			Resource res = iter.next();
-			StmtIterator siter = res.listProperties();
-			SaamPerson per = new SaamPerson();
-			per.setSubject(res.getURI());
-			
-			while (siter.hasNext()) {
-				Statement st = siter.next();
-				String pred = st.getPredicate().getURI();
-				RDFNode node = st.getObject();
-				PersonProperty p = per.getProperty(pred);
-				if (p == null) {
-					p = new PersonProperty();
-					p.setPredicate(pred);
-				}
-				
-				if (node != null) {
-					if (pred.indexOf("fullName") > -1) {
-						p.setValue(node.asLiteral().getString());
-						per.setFullName(p);
-					} else if (pred.indexOf("birthYear") > -1) {
-						p.setValue(node.asLiteral().getString());
-						per.setBirthYear(p);
-					} else if (pred.indexOf("deathYear") > -1) {
-						p.setValue(node.asLiteral().getString());
-						per.setDeathYear(p);
-					}
-				}
-			}
-			list.add(per);
-		}
-		return list;
-	}
+	
 }

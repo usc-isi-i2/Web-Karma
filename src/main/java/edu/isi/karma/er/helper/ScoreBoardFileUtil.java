@@ -17,6 +17,7 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 
 import edu.isi.karma.er.helper.entity.MultiScore;
+import edu.isi.karma.er.helper.entity.ResultRecord;
 import edu.isi.karma.er.helper.entity.Score;
 import edu.isi.karma.er.helper.entity.ScoreBoard;
 
@@ -157,6 +158,99 @@ public class ScoreBoardFileUtil {
 		
 	}
 	
+	public void write2Log(List<ResultRecord> list) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
+		write2Log(list, Constants.PATH_SCORE_BOARD_FILE + "result" + sdf.format(new Date()) + ".csv");
+	}
+	
+	public void write2Log(List<ResultRecord> list, String logFile) {
+		File file = new File(logFile);
+		if (file.exists()) {
+			file.delete();
+		}
+		
+		RandomAccessFile raf = null;
+		int i = 0;
+		double threshold = 0.85; 
+		DecimalFormat df = new DecimalFormat("0.00000000");
+		try {
+			file.createNewFile();
+			raf = new RandomAccessFile(file, "rw");
+			raf.writeBytes("Src URI,URI found by karma,matched, ,No.1,No.2,No.3,No.4,No.5 \r\n");
+			
+			int len = list.size();
+			for (int j = 0; j < len; j++) {
+				
+				ResultRecord r = list.get(j); 
+				if (r.getCurrentMaxScore() >= threshold) {
+					i ++;
+				
+					StringBuffer sb = new StringBuffer();
+					List<MultiScore> rankList = r.getRankList();
+					MultiScore m = rankList.get(0);
+					for (int k = 0; k < rankList.size(); k++) {
+						MultiScore ms = rankList.get(k);
+						sb.append(", [").append(df.format(ms.getFinalScore())).append("]");
+						for (Score sc : ms.getScoreList()) {
+							sc.setSrcObj(replaceComma(sc.getSrcObj()));
+							sc.setDstObj(replaceComma(sc.getDstObj()));
+							
+							sb.append("\t(").append(df.format(sc.getSimilarity()) + "|" + df.format(sc.getFreq())).append("== ")
+								.append(sc.getSrcObj() == null ? "----" : sc.getSrcObj())
+								.append(" | ")
+								.append(sc.getDstObj() == null ? "----" : sc.getDstObj()).append(") ");
+						}
+						
+					}
+				
+					raf.writeBytes(r.getRes().getSubject() + "," + m.getDstSubj().getSubject()+ "," + df.format(r.getCurrentMaxScore()) + ", same" + sb.toString() + "\r\n");
+						
+					
+				} else {
+					if (r.getCurrentMaxScore() > 0) {
+						StringBuffer sb = new StringBuffer();
+						List<MultiScore> rankList = r.getRankList();
+						MultiScore m = rankList.get(0);
+						for (int k = 0; k < rankList.size(); k++) {
+							MultiScore ms = rankList.get(k);
+							sb.append(", [").append(df.format(ms.getFinalScore())).append("]");
+							for (Score sc : ms.getScoreList()) {
+								sc.setSrcObj(replaceComma(sc.getSrcObj()));
+								sc.setDstObj(replaceComma(sc.getDstObj()));
+								
+								sb.append("\t(").append(df.format(sc.getSimilarity()) + "|" + df.format(sc.getFreq())).append("== ")
+									.append(sc.getSrcObj() == null ? "----" : sc.getSrcObj())
+									.append(" | ")
+									.append(sc.getDstObj() == null ? "----" : sc.getDstObj()).append(") ");
+							}
+							
+						}
+						raf.writeBytes(r.getRes().getSubject() + "," + m.getDstSubj().getSubject() + ",, not same,\r\n");
+					} else {
+						raf.writeBytes(r.getRes().getSubject() + "," + ",,,\r\n");
+					}
+				}
+			}
+			raf.writeBytes("(similarity >= 0.9) found: " + i + " of " + len + " (" + df.format(i*1.0/len) + ")\r\n");
+			log.info("(similarity >= 0.9) found: " + i + " of " + len + " (" + df.format(i*1.0/len) + ")\r\n");
+			
+			//raf.writeBytes("(similarity = 1) precision: " + perfCount + " of " + count + " (" + df.format(perfCount*1.0/count) + ")\r\n");
+			//raf.writeBytes("(similarity = 1) recall: " + perfCount + " of " + i + " (" + df.format(perfCount*1.0/i) + ")\r\n");
+			
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		} finally {
+			try {
+				raf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
+	
 	private List<ScoreBoard> sortResultList(Map<String, ScoreBoard> map) {
 		List<ScoreBoard> list = new Vector<ScoreBoard>();
 		ScoreBoard rec;
@@ -246,6 +340,7 @@ public class ScoreBoardFileUtil {
 						} catch (NumberFormatException nfe) {
 							found = -1;
 						}
+						System.out.println(s.getSubject());
 						if (arr.length >= 11) {
 							rankList = parseRankList(arr[7], arr[8], arr[9], arr[10]);
 						} else if (arr.length == 10) {

@@ -8,9 +8,9 @@ public class MultiScore {
 	
 	private List<Score> scoreList = null;	// list of score objects for properties of pair to be compared 
 
-	private SaamPerson srcSubj = null;		// the source subject to compare
+	private Ontology srcSubj = null;		// the source subject to compare
 	
-	private SaamPerson dstSubj = null;		// the target subject to compare with
+	private Ontology dstSubj = null;		// the target subject to compare with
 	
 	public double getFinalScore() {
 		return finalScore;
@@ -28,19 +28,19 @@ public class MultiScore {
 		this.scoreList = scoreList;
 	}
 
-	public SaamPerson getSrcSubj() {
+	public Ontology getSrcSubj() {
 		return srcSubj;
 	}
 
-	public void setSrcSubj(SaamPerson srcSubj) {
+	public void setSrcSubj(Ontology srcSubj) {
 		this.srcSubj = srcSubj;
 	}
 
-	public SaamPerson getDstSubj() {
+	public Ontology getDstSubj() {
 		return dstSubj;
 	}
 
-	public void setDstSubj(SaamPerson dstSubj) {
+	public void setDstSubj(Ontology dstSubj) {
 		this.dstSubj = dstSubj;
 	}
 	

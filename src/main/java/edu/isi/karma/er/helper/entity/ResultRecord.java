@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ResultRecord {
 
-	SaamPerson res = null;		// the owner of this result record, which points to a resource in data model.
+	Ontology res = null;		// the owner of this result record, which points to a resource in data model.
 	
 	int limit = 5;
 	
@@ -51,11 +51,11 @@ public class ResultRecord {
 		return result;
 	}
 
-	public SaamPerson getRes() {
+	public Ontology getRes() {
 		return res;
 	}
 
-	public void setRes(SaamPerson res) {
+	public void setRes(Ontology res) {
 		this.res = res;
 	}
 

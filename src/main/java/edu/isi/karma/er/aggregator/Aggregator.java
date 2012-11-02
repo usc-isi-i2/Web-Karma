@@ -2,7 +2,7 @@ package edu.isi.karma.er.aggregator;
 
 
 import edu.isi.karma.er.helper.entity.MultiScore;
-import edu.isi.karma.er.helper.entity.SaamPerson;
+import edu.isi.karma.er.helper.entity.Ontology;
 
 public interface Aggregator {
 
@@ -13,5 +13,5 @@ public interface Aggregator {
 	 * @param res2	the target resource to match with
 	 * @return an object contains final score and details of matching 
 	 */
-	public MultiScore match(SaamPerson s1, SaamPerson s2);
+	public MultiScore match(Ontology s1, Ontology s2);
 }

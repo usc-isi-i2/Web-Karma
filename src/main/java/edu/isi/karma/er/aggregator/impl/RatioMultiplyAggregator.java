@@ -14,7 +14,7 @@ import edu.isi.karma.er.helper.Constants;
 import edu.isi.karma.er.helper.PairPropertyUtil;
 import edu.isi.karma.er.helper.RatioFileUtil;
 import edu.isi.karma.er.helper.entity.MultiScore;
-import edu.isi.karma.er.helper.entity.SaamPerson;
+import edu.isi.karma.er.helper.entity.Ontology;
 import edu.isi.karma.er.helper.entity.Score;
 import edu.isi.karma.er.helper.entity.ScoreType;
 import edu.isi.karma.er.matcher.Matcher;
@@ -102,20 +102,21 @@ public class RatioMultiplyAggregator implements Aggregator {
 		return map;
 	}
 
-	public MultiScore match(SaamPerson res1, SaamPerson res2) {
+	public MultiScore match(Ontology o1, Ontology o2) {
+
 		double freq, sim, totalFreq = 1, ratio;
 		int pairFlag = 0;
 		// boolean canHalt = false;
 		MultiScore ms = new MultiScore();
-		ms.setSrcSubj(res1);
-		ms.setDstSubj(res2);
+		ms.setSrcSubj(o1);
+		ms.setDstSubj(o2);
 		List<Score> sList = new ArrayList<Score>();
 		
 		// for each property to be compared in configuration array, load its configurations and initialize the detailed comparator to be invoked.
 		for (String pred : compMap.keySet()) {
 			Matcher m = compMap.get(pred);
 			
-			Score s = m.match(pred, res1, res2);		
+			Score s = m.match(pred, o1, o2);		
 			
 			if (s.getScoreType() == ScoreType.NORMAL) {
 				sim = s.getSimilarity();

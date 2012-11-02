@@ -12,7 +12,7 @@ import org.json.JSONObject;
 import edu.isi.karma.er.aggregator.Aggregator;
 import edu.isi.karma.er.helper.RatioFileUtil;
 import edu.isi.karma.er.helper.entity.MultiScore;
-import edu.isi.karma.er.helper.entity.SaamPerson;
+import edu.isi.karma.er.helper.entity.Ontology;
 import edu.isi.karma.er.helper.entity.Score;
 import edu.isi.karma.er.helper.entity.ScoreType;
 import edu.isi.karma.er.matcher.Matcher;
@@ -75,16 +75,16 @@ public class RatioWeightAggregator implements Aggregator {
 		setRatioMapList(ratioMapList);
 	}
 	
-	public MultiScore match(SaamPerson res1, SaamPerson res2) {
+	public MultiScore match(Ontology o1, Ontology o2) {
 		MultiScore ms = new MultiScore();
-		ms.setSrcSubj(res1);
-		ms.setDstSubj(res2);
+		ms.setSrcSubj(o1);
+		ms.setDstSubj(o2);
 		List<Score> sList = new ArrayList<Score>();
 		
 		for (String pred : compMap.keySet()) {
 			Matcher m = compMap.get(pred);
 			
-			Score s = m.match(pred, res1, res2);		
+			Score s = m.match(pred, o1, o2);		
 			sList.add(s);
 		}
 		

@@ -1,9 +1,7 @@
 package edu.isi.karma.er.helper.entity;
 
 
-public class SaamPerson {
-
-	private String subject;
+public class SaamPerson extends Ontology {
 	
 	private PersonProperty fullName;
 	
@@ -29,20 +27,8 @@ public class SaamPerson {
 				return this.deathYear;
 			}
 		}
-		
 		return p;
 	}
-
-	public String getSubject() {
-		return subject;
-	}
-
-
-
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
-
 
 
 	public PersonProperty getFullName() {

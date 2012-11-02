@@ -5,7 +5,7 @@ import java.util.List;
 
 import edu.isi.karma.er.aggregator.Aggregator;
 import edu.isi.karma.er.helper.entity.MultiScore;
-import edu.isi.karma.er.helper.entity.SaamPerson;
+import edu.isi.karma.er.helper.entity.Ontology;
 import edu.isi.karma.er.helper.entity.Score;
 
 public class RatioPossibilityAggregator implements Aggregator {
@@ -16,12 +16,11 @@ public class RatioPossibilityAggregator implements Aggregator {
 		//this.cal = cal;
 	}
 
-	public MultiScore match(SaamPerson res1, SaamPerson res2) {
-
+	public MultiScore match(Ontology o1, Ontology o2) {
 		
 		MultiScore ms = new MultiScore();
-		ms.setSrcSubj(res1);
-		ms.setDstSubj(res2);
+		ms.setSrcSubj(o1);
+		ms.setDstSubj(o2);
 		List<Score> sList = new ArrayList<Score>();
 		
 		double score = 0; //cal.run(null, 0.99);
