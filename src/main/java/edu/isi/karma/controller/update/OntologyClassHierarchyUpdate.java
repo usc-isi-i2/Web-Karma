@@ -100,10 +100,16 @@ public class OntologyClassHierarchyUpdate extends AbstractUpdate {
 					}
 	
 					String pr = prefixMap.get(cls.getNameSpace());
-					if(pr != null && !pr.equals(""))
-						classObject.put(JsonKeys.data.name(), pr + ":" + cls.getLocalName());
-					else
-						classObject.put(JsonKeys.data.name(), cls.getLocalName());
+					String classLabel = cls.getLocalName();
+					if (cls.getLabel(null) != null && !cls.getLabel(null).equals(""))
+						classLabel = cls.getLabel(null);
+					
+					if(pr != null && !pr.equals("")) {
+						classObject.put(JsonKeys.data.name(), pr + ":" + classLabel);
+					} else {
+						classObject.put(JsonKeys.data.name(), classLabel);
+					}
+						
 					classesAdded.add(cls.getURI());
 	
 					JSONObject metadataObject = new JSONObject();
@@ -139,10 +145,13 @@ public class OntologyClassHierarchyUpdate extends AbstractUpdate {
 
 			JSONObject classObject = new JSONObject();
 			String pr = prefixMap.get(subclass.getNameSpace());
+			String subClassLabel = subclass.getLocalName();
+			if (subclass.getLabel(null) != null && !subclass.getLabel(null).equals(""))
+				subClassLabel = subclass.getLabel(null);
 			if (pr != null && !pr.equals(""))
-				classObject.put(JsonKeys.data.name(), pr + ":" + subclass.getLocalName());
+				classObject.put(JsonKeys.data.name(), pr + ":" + subClassLabel);
 			else
-				classObject.put(JsonKeys.data.name(), subclass.getLocalName());
+				classObject.put(JsonKeys.data.name(), subClassLabel);
 			JSONObject metadataObject = new JSONObject();
 			metadataObject.put(JsonKeys.URI.name(), subclass.getURI());
 			classObject.put(JsonKeys.metadata.name(), metadataObject);
