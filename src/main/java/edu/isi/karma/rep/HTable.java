@@ -164,6 +164,9 @@ public class HTable extends RepEntity {
 		}
 	}
 
+	// pedro 2012-10-28: this method seems to recurse looking for the hNodeId.
+	// Bad design. Adding a new column should return the HNode or hNodeId of the added column.
+	// There should be a way to add before or after the given hNodeId.
 	public void addNewHNodeAfter(String hNodeId, RepFactory factory,
 			String columnName, Worksheet worksheet) {
 		HNode hNode = getHNode(hNodeId);
