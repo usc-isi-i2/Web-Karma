@@ -111,7 +111,7 @@ public class SetSemanticTypeCommand extends Command {
 			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
 			
 			try {
-				align.alignAndUpdate(c, true);
+				align.alignAndUpdate(c, false);
 			} catch (Exception e) {
 				logger.error("Error occured while setting the semantic type!", e);
 				return new UpdateContainer(new ErrorUpdate(
@@ -121,8 +121,8 @@ public class SetSemanticTypeCommand extends Command {
 			
 		} else {
 			// Just do the alignment, no training and update JSON required.
-//			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
-//			align.align(true);
+			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
+			align.align(false);
 		}
 		return c;
 	}
@@ -143,7 +143,7 @@ public class SetSemanticTypeCommand extends Command {
 		// Get the alignment update if any
 		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,vWorksheetId);
 		try {
-			align.alignAndUpdate(c, true);
+			align.alignAndUpdate(c, false);
 		} catch (Exception e) {
 			logger.error("Error occured while unsetting the semantic type!", e);
 			return new UpdateContainer(new ErrorUpdate(
