@@ -1,122 +1,157 @@
 package edu.isi.karma.er.test.old;
 
 import java.util.List;
+import java.util.Vector;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.tdb.TDBFactory;
-
-import edu.isi.karma.er.helper.Constants;
 import edu.isi.karma.er.helper.ScoreBoardFileUtil;
 import edu.isi.karma.er.helper.entity.MultiScore;
+import edu.isi.karma.er.helper.entity.Paginator;
 import edu.isi.karma.er.helper.entity.Score;
 import edu.isi.karma.er.helper.entity.ScoreBoard;
 import edu.isi.karma.er.helper.ontology.MatchOntologyUtil;
+import edu.isi.karma.er.helper.ontology.MatchResultOntology;
+import edu.isi.karma.er.web.service.ResultService;
 
 public class CreateOntologyRepositoryUsingJena {
 
 	private static double THRESHOLD = 0.9;
-	/**
+	/**  
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		
-		// Model model = ModelFactory.createDefaultModel();
-		Model model = TDBFactory.createDataset(Constants.PATH_REPOSITORY + "match_result/").getDefaultModel();
-		//model.remove(model);
-		//model = createRepository(model);
-		//model = loadRepositoryFromCSV(model);
-		//model.write(System.out, "N3");
-		
+		ResultService ser = new ResultService();
+		//ser.initOntology();
+		ser.listHistory("", "");
+		//ser.clearOntology();
 		MatchOntologyUtil util = new MatchOntologyUtil();
-		util.outputAllMatchResult(model);
+		//util.outputLatestMatchResult();
+		//util.outputAllMatchResult();
+	
+		Paginator pager = new Paginator();
+		pager.setPageSize(3);
+		pager.setCurPage(1);
+		List<MatchResultOntology> list = util.listPagedLatestMatchResultObjects(pager, "");
 		
-		util.outputLatestMatchResult(model);
+		for (MatchResultOntology onto : list) {
+			System.out.println(onto.getSrcUri());
+		}
 		
-		System.out.println("model size:" + model.size());
-		model.close();
+		System.out.println(pager.getTotalPage() + "\t" + pager.getTotalNumber());
+		//loadRepositoryFromCSV();
+		//model.write(System.out, "N3");
+/*		
+		MatchOntologyUtil util = new MatchOntologyUtil();
+		//util.outputLatestMatchResult(model);
+		
+		util.outputLatestMatchResult();
+		
+		
+//		String srcUri = "http://americanart.si.edu/saam/Person_894";
+//		String dstUri = "http://dbpedia.org/resource/Alvan_Clark";
+//		ScoreBoard sb = util.getLatestOneMatchResultObject(srcUri, dstUri);
+//		sb.setComment("not sure");
+//		sb.setCreator("Human");
+//		sb.setMatched("U");
+//		util.createMatchOntology(sb);
+*/		
+/*		
+		List<MatchResultOntology> sbList = util.listLatestMatchResultObjects("");
+		for (MatchResultOntology sb1 : sbList) {
+			System.out.println(sb1.getSrcUri() + "\t" + sb1.getDstUri() + "\t" + sb1.getComment() + "\t" + sb1.getMatched() + "\t" + sb1.getUpdated());
+		}
+		System.out.println("list size:" + sbList.size());
+/*		
+		
+		//util.outputLatestOneMatchResultObject(model, srcUri, dstUri);
+		//System.out.println(sb.getSubject() + "\t" + sb.getKarmaUri() + "\t" + sb.getUpdated());
+		util.outputLatestMatchResult();
+*/
+		
 		
 	}
 
 	
-	public static Model loadRepositoryFromCSV(Model model) {
+	public static void loadRepositoryFromCSV() {
 		ScoreBoardFileUtil util = new ScoreBoardFileUtil();
 		String filename = util.getLastestResult();
-		List<ScoreBoard> resultList = util.loadScoreBoardFile(filename);
+		List<ScoreBoard> resultList = util.loadScoreResultFile(filename);
 		
 		String srcURI, dstURI, creator, comment ;
-		String[] srcAttr, srcVal, dstAttr, dstVal;
-		long createTime = System.currentTimeMillis();
 		double finalScore;
-		
+		MatchResultOntology onto = null;
 		MatchOntologyUtil ontoUtil = new MatchOntologyUtil();
 		
-		for (ScoreBoard sb : resultList) {
+		for (int j = 0; j < resultList.size() && j < 10; j++) {
+			ScoreBoard sb = resultList.get(j);
 			srcURI = sb.getSaamUri(); //"http://smithsonianart.si.edu/saam/Person_2482";
 			dstURI = sb.getKarmaUri();
 			if (sb.getFound() > 0) {
+				onto = new MatchResultOntology();
 				MultiScore ms = sb.getRankList().get(0);
 				
-				createTime = System.currentTimeMillis();
 				creator = "Karma";
 				finalScore = sb.getFound();
 				if (finalScore >= THRESHOLD) {
-					comment = "Exact match, cause similarity is greater than " + THRESHOLD;
+					comment = "Exact match (" + finalScore + ")";
 				} else {
-					comment = "Not match, cause similarity is less than " + THRESHOLD;
+					comment = "Not match ( " + finalScore + ")";
 				}
 				
 				List<Score> slist = ms.getScoreList();
-				int len = slist.size();
-				srcAttr = new String[len];
-				srcVal = new String[len];
-				dstAttr = new String[len];
-				dstVal = new String[len];
-				for (int i = 0; i < len; i++) {
-					Score s = slist.get(i);
-					srcAttr[i] = s.getPredicate();
-					dstAttr[i] = s.getPredicate();
-					srcVal[i] = s.getSrcObj();
-					dstVal[i] = s.getDstObj();
-				}
 				
-				ontoUtil.createMatchOntology(model, finalScore, createTime, srcURI, dstURI, creator, comment, srcAttr, srcVal, dstAttr, dstVal);
+				onto.setFinalScore(finalScore);
+				onto.setMatched("");
+				onto.setSrcUri(srcURI);
+				onto.setDstUri(dstURI);
+				onto.setCreator(creator);
+				onto.setComment(comment);
+				onto.setMemberList(slist);
+				
+				ontoUtil.createMatchOntology(onto);
 			}
 		}
-		
-		return model;
+
 	}
 
 	
 
 	
-	public static Model createRepository(Model model) {
+	public static void createRepository() {
 		String srcURI, dstURI, creator, comment ;
-		String[] srcAttr, srcVal, dstAttr, dstVal;
-		long createTime;
 		double finalScore;
 		
-		model = ModelFactory.createDefaultModel();
 		MatchOntologyUtil util = new MatchOntologyUtil();
 		
 		
 		String[] srcAttr1 = {"http://americanart.si.edu/saam/deathYear", "http://americanart.si.edu/saam/birthYear", "http://americanart.si.edu/saam/fullName"};
 		String[] srcVal1 = {"1887", "1804", "Alvan Clark"};
-		String[] dstAttr1 = {"http://americanart.si.edu/saam/deathYear", "http://americanart.si.edu/saam/birthYear", "http://americanart.si.edu/saam/fullName"};
 		String[] dstVal1 = {"1887", "1804", "Alvan Clark"};
-		srcAttr = srcAttr1; 
-		srcVal = srcVal1;
-		dstAttr = dstAttr1;
-		dstVal = dstVal1;
+
 		srcURI = "http://smithsonianart.si.edu/saam/Person_2482";
 		dstURI = "http://dbpedia.org/Andy_Smith";
-		createTime = System.currentTimeMillis();
-		comment = "They are real matched";
+		comment = "";
 		finalScore = 0.999986;
 		creator = "Karma";
 		
-		util.createMatchOntology(model, finalScore, createTime, srcURI, dstURI, creator, comment, srcAttr, srcVal, dstAttr, dstVal);
+		MatchResultOntology onto = new MatchResultOntology();
+		onto.setSrcUri(srcURI);
+		onto.setDstUri(dstURI);
+		onto.setComment(comment);
+		onto.setCreator(creator);
+		onto.setFinalScore(finalScore);
+		List<Score> list = new Vector<Score>();
+		for (int i= 0; i < srcAttr1.length; i++) {
+			Score s = new Score();
+			s.setPredicate(srcAttr1[i]);
+			s.setSrcObj(srcVal1[i]);
+			s.setDstObj(dstVal1[i]);
+			list.add(s);
+		}
+		onto.setMemberList(list);
 		
+		util.createMatchOntology(onto);
+		/*
 		
 		String[] srcAttr2 = {"http://americanart.si.edu/saam/deathYear", "http://americanart.si.edu/saam/birthYear", "http://americanart.si.edu/saam/fullName"};
 		String[] srcVal2 = {"1887", "1804", "Alvan Clark"};
@@ -133,7 +168,7 @@ public class CreateOntologyRepositoryUsingJena {
 		finalScore = 0.999986;
 		creator = "Human";
 		
-		util.createMatchOntology(model, finalScore, createTime, srcURI, dstURI, creator, comment, srcAttr, srcVal, dstAttr, dstVal);
+		util.createMatchOntology(model, finalScore, "", createTime, srcURI, dstURI, creator, comment, srcAttr, srcVal, dstAttr, dstVal);
 		
 		
 		
@@ -152,7 +187,7 @@ public class CreateOntologyRepositoryUsingJena {
 		finalScore = 0.999986;
 		creator = "Human";
 		
-		util.createMatchOntology(model, finalScore, createTime, srcURI, dstURI, creator, comment, srcAttr, srcVal, dstAttr, dstVal);
+		util.createMatchOntology(model, finalScore, "", createTime, srcURI, dstURI, creator, comment, srcAttr, srcVal, dstAttr, dstVal);
 		
 		
 		
@@ -171,7 +206,7 @@ public class CreateOntologyRepositoryUsingJena {
 		finalScore = 0.9999901;
 		creator = "Karma";
 		
-		util.createMatchOntology(model, finalScore, createTime, srcURI, dstURI, creator, comment, srcAttr, srcVal, dstAttr, dstVal);
+		util.createMatchOntology(model, finalScore, "", createTime, srcURI, dstURI, creator, comment, srcAttr, srcVal, dstAttr, dstVal);
 		
 		String[] srcAttr5 = {"http://americanart.si.edu/saam/deathYear", "http://americanart.si.edu/saam/birthYear", "http://americanart.si.edu/saam/fullName"};
 		String[] srcVal5 = {"1984", "1900", "Alice Neel"};
@@ -188,7 +223,7 @@ public class CreateOntologyRepositoryUsingJena {
 		finalScore = 0.9999901;
 		creator = "Human";
 		
-		util.createMatchOntology(model, finalScore, createTime, srcURI, dstURI, creator, comment, srcAttr, srcVal, dstAttr, dstVal);
+		util.createMatchOntology(model, finalScore, "", createTime, srcURI, dstURI, creator, comment, srcAttr, srcVal, dstAttr, dstVal);
 		
 		
 		String[] srcAttr6 = {"http://americanart.si.edu/saam/deathYear", "http://americanart.si.edu/saam/birthYear", "http://americanart.si.edu/saam/fullName"};
@@ -206,12 +241,11 @@ public class CreateOntologyRepositoryUsingJena {
 		finalScore = 0.96447678;
 		creator = "Karma";
 		
-		util.createMatchOntology(model, finalScore, createTime, srcURI, dstURI, creator, comment, srcAttr, srcVal, dstAttr, dstVal);
+		util.createMatchOntology(model, finalScore, "", createTime, srcURI, dstURI, creator, comment, srcAttr, srcVal, dstAttr, dstVal);
+		*/
+		util.outputAllMatchResult();
 		
-		util.outputAllMatchResult(model);
-		
-		util.outputLatestMatchResult(model);
-		return model;
+		util.outputLatestMatchResult();
 	}
 	
 }

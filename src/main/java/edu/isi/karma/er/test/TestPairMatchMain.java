@@ -54,11 +54,10 @@ public class TestPairMatchMain {
 	}
 
 	private static void outputResult2Ontology(List<ResultRecord> resultList) {
-		Model matchModel = TDBFactory.createDataset(Constants.PATH_REPOSITORY + "match_result/").getDefaultModel();
 		MatchOntologyUtil util = new MatchOntologyUtil();
-		util.createMatchOntology(matchModel, resultList);
+		util.createMatchOntology(resultList);
 		
-		util.outputLatestMatchResult(matchModel);
+		util.outputLatestMatchResult();
 		
 	}
 
