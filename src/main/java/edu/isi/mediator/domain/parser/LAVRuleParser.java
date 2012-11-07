@@ -48,14 +48,15 @@ public class LAVRuleParser{
 	public void parseNamespaces(CommonTree t, RDFDomainModel dm){
 		for(int i=0; i<t.getChildCount(); i++){
 			CommonTree child = (CommonTree) t.getChild(i);
-			//System.out.println(child.getText());
+			//System.out.println("PREFIX:"+child.getText());
 			String prefix = child.getText();
 			String namespace = child.getChild(0).getText();
 			//remove the quotes
 			namespace = namespace.substring(1, namespace.length()-1);
 			//there is only one source NS and that has prefix "s"
-			if(prefix.equals(RDFDomainModel.SOURCE_PREFIX)){
-				dm.addSourceNamespace(prefix, namespace);
+			if(prefix.startsWith(RDFDomainModel.SOURCE_PREFIX)){
+				//will look like sourcePrefix:thePrefix
+				dm.addSourceNamespace(prefix.substring(RDFDomainModel.SOURCE_PREFIX.length()), namespace);
 			}
 			else
 				dm.addOntologyNamespace(prefix, namespace);

@@ -139,16 +139,18 @@ public class PublishModelCommand extends Command{
 		try {
 			//construct the SD
 			//get from preferences saved source prefix
-			String sourcePrefix = "http://localhost/";
+			String sourceNamespace = "http://localhost/";
+			String sourcePrefix = "s";
 			try{
 				ViewPreferences prefs = vWorkspace.getPreferences();
 				JSONObject prefObject = prefs.getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
 				sourcePrefix = prefObject.getString("rdfPrefix");
+				sourceNamespace = prefObject.getString("rdfNamespace");
 			}catch(Exception e){
 				//prefix not found, just use the default
 			}
 			SourceDescription desc = new SourceDescription(ws, al, wk,
-					sourcePrefix, true,false);
+					sourcePrefix, sourceNamespace, true,false);
 			String descString = desc.generateSourceDescription();
 			/////////////////
 			

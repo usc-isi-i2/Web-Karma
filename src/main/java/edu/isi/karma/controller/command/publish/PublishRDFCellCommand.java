@@ -46,6 +46,7 @@ public class PublishRDFCellCommand extends Command {
 	private final String vWorksheetId;
 	private final String nodeId;
 	private String rdfSourcePrefix;
+	private String rdfSourceNamespace;
 	// rdf for this cell
 	private StringWriter outRdf = new StringWriter();
 
@@ -57,11 +58,12 @@ public class PublishRDFCellCommand extends Command {
 			.getLogger(PublishRDFCellCommand.class);
 
 	protected PublishRDFCellCommand(String id, String vWorksheetId,
-			String nodeId, String rdfSourcePrefix) {
+			String nodeId, String rdfSourcePrefix, String rdfSourceNamespace) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
 		this.nodeId = nodeId;
 		this.rdfSourcePrefix = rdfSourcePrefix;
+		this.rdfSourceNamespace = rdfSourceNamespace;
 	}
 
 	@Override
@@ -111,7 +113,7 @@ public class PublishRDFCellCommand extends Command {
 				// use false for internal use
 				SourceDescription desc = new SourceDescription(
 						vWorkspace.getWorkspace(), alignment, worksheet,
-						rdfSourcePrefix, true, false);
+						rdfSourcePrefix,rdfSourceNamespace, true, false);
 				String descString = desc.generateSourceDescription();
 				logger.info("SD=" + descString);
 				PrintWriter outWriter = new PrintWriter(outRdf);
