@@ -58,7 +58,7 @@ public class OntologyManager {
 	
 	public OntologyManager() {
 		OntDocumentManager mgr = new OntDocumentManager();
-//		mgr.setProcessImports(false);
+		mgr.setProcessImports(false);
 		OntModelSpec s = new OntModelSpec( OntModelSpec.OWL_MEM );
 		s.setDocumentManager( mgr );
 		ontModel = ModelFactory.createOntologyModel(s);
