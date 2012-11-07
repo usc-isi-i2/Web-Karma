@@ -282,6 +282,7 @@ public class PostRequestManager extends LinkedApiRequestManager {
 		// including the statements of the input model in the output model
 		this.outputJenaModel = ModelFactory.createDefaultModel();
 		this.outputJenaModel.add(this.inputJenaModel);
+		this.outputJenaModel.setNsPrefixes(this.inputJenaModel.getNsPrefixMap());
 		
 		Map<String, String> outputAttNameToAttIds = new HashMap<String, String>();
 		Map<String, String> outputAttValues = new HashMap<String, String>();
