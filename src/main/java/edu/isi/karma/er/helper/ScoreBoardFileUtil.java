@@ -309,6 +309,11 @@ public class ScoreBoardFileUtil {
 		return arr;
 	}
 	
+	/**
+	 * Load score results from result file based on score board.
+	 * @param filename of result file
+	 * @return score board data list with ground truth
+	 */
 	public Vector<ScoreBoard> loadScoreBoardFile(String filename) {
 		File file = new File(Constants.PATH_SCORE_BOARD_FILE + filename);
 		if (!file.exists())
@@ -361,6 +366,84 @@ public class ScoreBoardFileUtil {
 						s.setSaamUri(arr[1]);
 						s.setWikiUri(arr[2]);
 						s.setDbpediaUri(arr[3]);
+						s.setKarmaUri("");
+						s.setFound(-1);
+						list.add(s);
+					}
+				} 
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				raf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * load score result from file without score board
+	 * @param filename of result file
+	 * @return score board data list without ground truth
+	 */
+	public Vector<ScoreBoard> loadScoreResultFile(String filename) {
+		File file = new File(Constants.PATH_SCORE_BOARD_FILE + filename);
+		if (!file.exists())
+			throw new IllegalArgumentException("file " + file.getAbsolutePath() + " not exists.");
+		
+		RandomAccessFile raf = null;
+		Vector<ScoreBoard> list = new Vector<ScoreBoard>();
+		
+		try {
+			raf = new RandomAccessFile(file, "r");
+			String line;
+			raf.readLine();
+			double found = -1;
+			List<MultiScore> rankList;
+			
+			while ((line = raf.readLine()) != null) {
+				String[] arr = split(line);
+				
+				if (line.indexOf("http") > -1) {
+					if (arr.length >= 5) {
+						ScoreBoard s = new ScoreBoard();
+						s.setSubject(arr[0]);
+						s.setSaamUri(arr[0]);
+						s.setWikiUri("");
+						s.setDbpediaUri("");
+						s.setKarmaUri(arr[1]);
+						try {
+							found = Double.parseDouble(arr[2]);
+						} catch (NumberFormatException nfe) {
+							found = -1;
+						}
+						System.out.println(s.getSubject());
+						if (arr.length >= 8) {
+							rankList = parseRankList(arr[4], arr[5], arr[6], arr[7]);
+						} else if (arr.length == 7) {
+							rankList = parseRankList(arr[4], arr[5], arr[6]);
+						} else if (arr.length == 6) {
+							rankList = parseRankList(arr[4], arr[5]);
+						} else if (arr.length == 5) {
+							rankList = parseRankList(arr[4]);
+						} else {
+							rankList = null;
+						}
+						s.setRankList(rankList);
+						s.setFound(found);
+						list.add(s);
+					} else {
+						ScoreBoard s = new ScoreBoard();
+						s.setSubject(arr[0]);
+						s.setSaamUri(arr[0]);
+						s.setWikiUri("");
+						s.setDbpediaUri("");
 						s.setKarmaUri("");
 						s.setFound(-1);
 						list.add(s);
