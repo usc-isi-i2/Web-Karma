@@ -106,7 +106,7 @@ public class GetExampleJSON extends HttpServlet {
 		} else {
 			logger.info("No directory for preloading ontologies exists.");
 		}
-		
+
 		//mariam
 		//File file = new File("../demofiles/usc_faculty.csv");
 		
