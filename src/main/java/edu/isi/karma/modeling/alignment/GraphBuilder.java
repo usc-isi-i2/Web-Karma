@@ -302,18 +302,24 @@ public class GraphBuilder {
 				graph.addVertex(domain);
 				v.setDomainVertexId(domain.getID());
 			}
-			else
-				v.setDomainVertexId(getLastID(domainClass));
+			else {
+				String domainId = getLastID(domainClass);
+				v.setDomainVertexId(domainId);
+				domain = GraphUtil.getVertex(graph, domainId);
+			}
 		} else {
-//			if (visitedDataProperties.indexOf(domainClass + v.getUriString()) != -1 || nodesLabelCounter.get(domainClass) == null) {
+//			if (nodesLabelCounter.indexOf(domainClass + v.getUriString()) != -1 || nodesLabelCounter.get(domainClass) == null) {
 			if (dataPropertyWithDomainCounter.get(domainClass + v.getUriString()) != null || nodesLabelCounter.get(domainClass) == null) {
 				id = createNodeID(domainClass);
 				domain = new Vertex(id, domainURI, NodeType.Class);
 				graph.addVertex(domain);
 				v.setDomainVertexId(domain.getID());
 			}
-			else
-				v.setDomainVertexId(getLastID(domainClass));
+			else {
+				String domainId = getLastID(domainClass);
+				v.setDomainVertexId(domainId);
+				domain = GraphUtil.getVertex(graph, domainId);
+			}
 //			visitedDataProperties.add(domainClass + v.getUriString());
 			createVisitedDataProperty(v.getUriString(), domainClass);
 		}
@@ -438,65 +444,65 @@ public class GraphBuilder {
 //		logger.info("number of links added to graph: " + this.graph.edgeSet().size());
 		logger.debug("exit>");
 	}
-	private void addLinksFromThing(Vertex vertex) {
-		
-		logger.debug("<enter");
-
-		Vertex[] vertices = this.graph.vertexSet().toArray(new Vertex[0]);
-		
-		Vertex source;
-		Vertex target;
-		String sourceLabel;
-		String targetLabel;
-		
-		String id;
-
-		for (int i = 0; i < vertices.length; i++) {
-			for (int j = 0; j < 2; j++) {
-				
-				if (vertices[i].getID().equalsIgnoreCase(vertex.getID()))
-					continue;
-				
-				if (j == 0) {
-					source = vertices[i];
-					target = vertex;
-				} else {
-					source = vertex;
-					target = vertices[i];
-				}
-
-				sourceLabel = source.getUriString();
-				targetLabel = target.getUriString();
-				
-				// There is no outgoing link from DataProperty nodes
-				if (source.getNodeType() != NodeType.Class)
-					break;
-				
-				if (target.getNodeType() != NodeType.Class)
-					continue;
-				
-				if (!sourceLabel.equalsIgnoreCase(THING_URI))
-					continue;
-				
-				if (ontologyManager.getSuperClasses(targetLabel, false).size() != 0)
-					continue;
-				
-				// create a link from Thing node to the node if it does not have any superclasses
-				if (target.getNodeType() == NodeType.Class) {
-					id = createLinkID(SUBCLASS_URI);
-//					id = createLinkID(source.getLocalLabel(), target.getLocalLabel(), SUBCLASS_URI);
-					LabeledWeightedEdge e = new LabeledWeightedEdge(id, 
-							new URI(SUBCLASS_URI, SUBCLASS_NS, SUBCLASS_PREFIX), 
-							LinkType.HasSubClass);
-					this.graph.addEdge(source, target, e);
-					this.graph.setEdgeWeight(e, MAX_WEIGHT);					
-				}
-			}
-		}
-		
-		logger.debug("exit>");
-
-	}
+//	private void addLinksFromThing(Vertex vertex) {
+//		
+//		logger.debug("<enter");
+//
+//		Vertex[] vertices = this.graph.vertexSet().toArray(new Vertex[0]);
+//		
+//		Vertex source;
+//		Vertex target;
+//		String sourceLabel;
+//		String targetLabel;
+//		
+//		String id;
+//
+//		for (int i = 0; i < vertices.length; i++) {
+//			for (int j = 0; j < 2; j++) {
+//				
+//				if (vertices[i].getID().equalsIgnoreCase(vertex.getID()))
+//					continue;
+//				
+//				if (j == 0) {
+//					source = vertices[i];
+//					target = vertex;
+//				} else {
+//					source = vertex;
+//					target = vertices[i];
+//				}
+//
+//				sourceLabel = source.getUriString();
+//				targetLabel = target.getUriString();
+//				
+//				// There is no outgoing link from DataProperty nodes
+//				if (source.getNodeType() != NodeType.Class)
+//					break;
+//				
+//				if (target.getNodeType() != NodeType.Class)
+//					continue;
+//				
+//				if (!sourceLabel.equalsIgnoreCase(THING_URI))
+//					continue;
+//				
+//				if (ontologyManager.getSuperClasses(targetLabel, false).size() != 0)
+//					continue;
+//				
+//				// create a link from Thing node to the node if it does not have any superclasses
+//				if (target.getNodeType() == NodeType.Class) {
+//					id = createLinkID(SUBCLASS_URI);
+////					id = createLinkID(source.getLocalLabel(), target.getLocalLabel(), SUBCLASS_URI);
+//					LabeledWeightedEdge e = new LabeledWeightedEdge(id, 
+//							new URI(SUBCLASS_URI, SUBCLASS_NS, SUBCLASS_PREFIX), 
+//							LinkType.HasSubClass);
+//					this.graph.addEdge(source, target, e);
+//					this.graph.setEdgeWeight(e, MAX_WEIGHT);					
+//				}
+//			}
+//		}
+//		
+//		logger.debug("exit>");
+//
+//	}
 	public void addSemanticType(SemanticType semanticType) {
 
 		if (semanticType == null) {
@@ -532,9 +538,7 @@ public class GraphBuilder {
 		elapsedTimeSec = (addLinks - addNodesClosure)/1000F;
 		logger.info("time to add links to graph: " + elapsedTimeSec);
 
-		addLinksFromThing(v);
-		if (domain != null) addLinksFromThing(domain);
-		if (domain != null) addLinks(domain);
+		addLinksFromThing();
 		long addLinksFromThing = System.currentTimeMillis();
 		elapsedTimeSec = (addLinksFromThing - addLinks)/1000F;
 //		logger.info("time to add links from Thing (root): " + elapsedTimeSec);
@@ -865,35 +869,49 @@ public class GraphBuilder {
 		Vertex source;
 		Vertex target;
 		String sourceLabel;
-		String targetLabel;
+//		String targetLabel;
 		
 		String id;
 
 		for (int i = 0; i < vertices.length; i++) {
+			
+			source = vertices[i];
+			sourceLabel = source.getUriString();
+			if (!sourceLabel.equalsIgnoreCase(THING_URI))
+				continue;
+			
 			for (int j = 0; j < vertices.length; j++) {
 				
 				if (j == i)
 					continue;
 				
-				source = vertices[i];
 				target = vertices[j];
-				sourceLabel = source.getUriString();
-				targetLabel = target.getUriString();
-				
-				// There is no outgoing link from DataProperty nodes
-				if (source.getNodeType() != NodeType.Class)
-					break;
-				
+//				targetLabel = target.getUriString();
+
+			
 				if (target.getNodeType() != NodeType.Class)
 					continue;
 				
-				if (!sourceLabel.equalsIgnoreCase(THING_URI))
+				boolean parentExist = false;
+				boolean parentThing = false;
+				LabeledWeightedEdge[] incomingLinks = this.graph.incomingEdgesOf(target).toArray(new LabeledWeightedEdge[0]); 
+				for (LabeledWeightedEdge inLink: incomingLinks) {
+					if (inLink.getUriString().equalsIgnoreCase(SUBCLASS_URI)) {
+						if (!sourceLabel.equalsIgnoreCase(sourceLabel))
+							parentExist = true;
+						else
+							parentThing = true;
+					}
+				}
+				if (parentExist) {
+					this.graph.removeAllEdges(source, target);
+					continue;
+				}
+
+				if (parentThing)
 					continue;
 				
-				if (ontologyManager.getSuperClasses(targetLabel, false).size() != 0)
-					continue;
-				
-				// create a link from all Thing nodes to nodes who don't have any superclasses
+				// create a link from Thing node to nodes who don't have any superclasses
 				if (target.getNodeType() == NodeType.Class) {
 					id = createLinkID(SUBCLASS_URI);
 //					id = createLinkID(source.getLocalLabel(), target.getLocalLabel(), SUBCLASS_URI);
@@ -904,6 +922,8 @@ public class GraphBuilder {
 					this.graph.setEdgeWeight(e, MAX_WEIGHT);					
 				}
 			}
+			
+			break;
 		}
 		
 		logger.debug("exit>");
