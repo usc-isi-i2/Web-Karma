@@ -86,4 +86,8 @@ public class ResultRecord {
 	public double getCurrentMaxScore() {
 		return maxSimilarity;
 	}
+	
+	public int getLimit() {
+		return limit;
+	}
 }
