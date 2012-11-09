@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.ProgSynthesis;
+import edu.isi.karma.cleaning.ProgramRule;
 
 
 public class RamblerTransformationOutput implements TransformationOutput {
@@ -56,12 +57,12 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		}
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(exps);
-		HashSet<String> rules = psProgSynthesis.run_main();
+		Collection<ProgramRule> rules = psProgSynthesis.run_main();
 		if(rules.size() == 0)
 		{
 			return;
 		}
-		Iterator<String> iterator = rules.iterator();
+		Iterator<ProgramRule> iterator = rules.iterator();
 		while(iterator.hasNext())
 		{	
 			RamblerTransformation r = new RamblerTransformation(iterator.next());

@@ -1,5 +1,6 @@
 package edu.isi.karma.cleaning;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -180,97 +181,97 @@ public class ProgSynthesis {
 		}
 		return dicts;
 	}
-	public HashSet<String> run_sumit() {
-		// generate mapping segmentList and put it into a hashmap
-		Vector<HashMap<Integer, Vector<Template>>> xyz = new Vector<HashMap<Integer, Vector<Template>>>();
-		
-		for (int i = 0; i < this.orgVector.size(); i++) {
-			HashMap<String, Segment> segdict = new HashMap<String, Segment>();
-			HashMap<Integer, Vector<Template>> segs = new HashMap<Integer, Vector<Template>>();
-			HashSet<String> traces = new HashSet<String>();
-			HashMap<String, String> dict = new HashMap<String, String>();
-			Alignment.SumitTraceGen(0, orgVector.get(i),tarVector.get(i), "", traces, dict);
-			for(String s:traces)
-			{
-				Vector<Segment> vsSegments =Alignment.genSumitSegments(s,segdict);
-				Vector<GrammarTreeNode> vgt = new Vector<GrammarTreeNode>();
-				for(Segment sv:vsSegments)
-				{
-					vgt.add((GrammarTreeNode)sv);
-				}
-				Template template = new Template(vgt,0);
-				if(segs.containsKey(template.size()))
-				{
-					segs.get(template.size()).add(template);
-				}
-				else {
-					Vector<Template> vtTemplates = new Vector<Template>();
-					vtTemplates.add(template);
-					segs.put(template.size(), vtTemplates);
-				}
-			}
-			segdict.clear(); // cleared for initialization 
-			HashMap<Integer, Vector<Template>> newsegs = new HashMap<Integer, Vector<Template>>();
-			// initialize the temple with examples
-			for (Integer j : segs.keySet()) {
-				Vector<Template> temps = segs.get(j);
-				for (Template elem : temps) {
-					elem.initeDescription(orgVector.get(i), tarVector.get(i),segdict);
-					Vector<Template> vts = elem.produceVariations();
-					vts.add(elem);
-					for(int p=0;p<vts.size();p++)
-					{
-						int leng = vts.get(p).size();
-						if(newsegs.containsKey(leng))
-						{
-							newsegs.get(leng).add(vts.get(p));
-						}
-						else {
-							Vector<Template> vtep = new Vector<Template>();
-							vtep.add(vts.get(p));
-							newsegs.put(leng, vtep);
-						}
-					}	
-				}
-			}
-			xyz.add(newsegs);
-		}
-		Vector<Partition> pars = this.initePartitions(xyz);
-		int size = pars.size();
-		while(true)
-		{
-			this.mergePartitions(pars);
-			if(size == pars.size())
-			{
-				break;
-			}
-			else
-			{
-				size = pars.size();
-			}
-		}
-		Program prog = new Program(pars);
-		//return a list of randomly choosen rules
-		HashSet<String> rules = new HashSet<String>();
-		Interpretor it = new Interpretor();
-		double max = -1;
-		for(int i = 0; i<50; i++)
-		{
-			String r = prog.toProgram();
-			double s = prog.getScore();
-			if(this.validRule(r, it))
-			{
-				rules.add(r);
-				if(s>max)
-				{
-					this.bestRuleString = r;
-					System.out.println("<<<<<<<<BestRule: "+bestRuleString+" , "+s);
-					max = s;
-				}
-			}
-		}
-		return rules;	
-	}
+//	public HashSet<String> run_sumit() {
+//		// generate mapping segmentList and put it into a hashmap
+//		Vector<HashMap<Integer, Vector<Template>>> xyz = new Vector<HashMap<Integer, Vector<Template>>>();
+//		
+//		for (int i = 0; i < this.orgVector.size(); i++) {
+//			HashMap<String, Segment> segdict = new HashMap<String, Segment>();
+//			HashMap<Integer, Vector<Template>> segs = new HashMap<Integer, Vector<Template>>();
+//			HashSet<String> traces = new HashSet<String>();
+//			HashMap<String, String> dict = new HashMap<String, String>();
+//			Alignment.SumitTraceGen(0, orgVector.get(i),tarVector.get(i), "", traces, dict);
+//			for(String s:traces)
+//			{
+//				Vector<Segment> vsSegments =Alignment.genSumitSegments(s,segdict);
+//				Vector<GrammarTreeNode> vgt = new Vector<GrammarTreeNode>();
+//				for(Segment sv:vsSegments)
+//				{
+//					vgt.add((GrammarTreeNode)sv);
+//				}
+//				Template template = new Template(vgt,0);
+//				if(segs.containsKey(template.size()))
+//				{
+//					segs.get(template.size()).add(template);
+//				}
+//				else {
+//					Vector<Template> vtTemplates = new Vector<Template>();
+//					vtTemplates.add(template);
+//					segs.put(template.size(), vtTemplates);
+//				}
+//			}
+//			segdict.clear(); // cleared for initialization 
+//			HashMap<Integer, Vector<Template>> newsegs = new HashMap<Integer, Vector<Template>>();
+//			// initialize the temple with examples
+//			for (Integer j : segs.keySet()) {
+//				Vector<Template> temps = segs.get(j);
+//				for (Template elem : temps) {
+//					elem.initeDescription(orgVector.get(i), tarVector.get(i),segdict);
+//					Vector<Template> vts = elem.produceVariations();
+//					vts.add(elem);
+//					for(int p=0;p<vts.size();p++)
+//					{
+//						int leng = vts.get(p).size();
+//						if(newsegs.containsKey(leng))
+//						{
+//							newsegs.get(leng).add(vts.get(p));
+//						}
+//						else {
+//							Vector<Template> vtep = new Vector<Template>();
+//							vtep.add(vts.get(p));
+//							newsegs.put(leng, vtep);
+//						}
+//					}	
+//				}
+//			}
+//			xyz.add(newsegs);
+//		}
+//		Vector<Partition> pars = this.initePartitions(xyz);
+//		int size = pars.size();
+//		while(true)
+//		{
+//			this.mergePartitions(pars);
+//			if(size == pars.size())
+//			{
+//				break;
+//			}
+//			else
+//			{
+//				size = pars.size();
+//			}
+//		}
+//		Program prog = new Program(pars);
+//		//return a list of randomly choosen rules
+//		HashSet<String> rules = new HashSet<String>();
+//		Interpretor it = new Interpretor();
+//		double max = -1;
+//		for(int i = 0; i<50; i++)
+//		{
+//			String r = prog.toProgram();
+//			double s = prog.getScore();
+//			if(this.validRule(r, it))
+//			{
+//				rules.add(r);
+//				if(s>max)
+//				{
+//					this.bestRuleString = r;
+//					System.out.println("<<<<<<<<BestRule: "+bestRuleString+" , "+s);
+//					max = s;
+//				}
+//			}
+//		}
+//		return rules;	
+//	}
 	public String run_partition() {
 		// generate mapping segmentList and put it into a hashmap
 		Vector<HashMap<Integer, Vector<Template>>> xyz = new Vector<HashMap<Integer, Vector<Template>>>();
@@ -327,7 +328,7 @@ public class ProgSynthesis {
 	{
 		return this.bestRuleString;
 	}
-	public HashSet<String> run_main() {
+	public Collection<ProgramRule> run_main() {
 		// generate mapping segmentList and put it into a hashmap
 		Vector<HashMap<Integer, Vector<Template>>> xyz = new Vector<HashMap<Integer, Vector<Template>>>();
 		for (int i = 0; i < this.orgVector.size(); i++) {
@@ -381,11 +382,11 @@ public class ProgSynthesis {
 		//HashSet<String> rules = new HashSet<String>();
 		Interpretor it = new Interpretor();
 		Vector<Double> scores = new Vector<Double>();
-		Vector<String> rulesx = new Vector<String>();
+		Vector<ProgramRule> rulesx = new Vector<ProgramRule>();
 		double max = -1;
 		for(int i = 0; i<100; i++)
 		{
-			String r = prog.toProgram();
+			ProgramRule r = prog.toProgram1();
 			double s = prog.getScore();
 			if(this.validRule(r, it))
 			{
@@ -394,21 +395,21 @@ public class ProgSynthesis {
 			}
 		}
 		Vector<Integer> inds = UtilTools.topKindexs(scores, 30);
-		HashSet<String> rules = new HashSet<String>();
+		HashMap<String,ProgramRule> rules = new HashMap<String,ProgramRule>();
 		for(int index:inds)
 		{
-			if(rulesx.get(index).trim().length()>0)
-				rules.add(rulesx.get(index));
+			if(!rules.containsKey(rulesx.get(index).toString()))
+				rules.put(rulesx.get(index).toString(),rulesx.get(index));
 		}
-		return rules;	
+		return rules.values();	
 	}
-	public boolean validRule(String p,Interpretor it)
-	{
-		InterpreterType worker = it.create(p);
+	public boolean validRule(ProgramRule p,Interpretor it)
+	{	
 		boolean res = true;
 		for(int i=0; i<orgVector.size();i++)
-		{
+		{		
 			String s1 = UtilTools.print(orgVector.get(i));
+			InterpreterType worker = p.getRuleForValue(s1);
 			String s2 = worker.execute(s1);
 			String s3 = UtilTools.print(tarVector.get(i));
 			if(s3.compareTo(s2)!=0)

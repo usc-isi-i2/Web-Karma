@@ -48,12 +48,17 @@ public class Partition implements GrammarTreeNode {
 		{
 			Vector<Template> vtp = xHashMap.get(key);
 			Template t0 = vtp.get(0);
+			Vector<Template> t = new Vector<Template>();
 			for(int j = 1; j<vtp.size(); j++)
 			{
 				t0 = t0.TempUnion(vtp.get(j));
+				if(t0 == null)
+				{
+					t.add(vtp.get(j));					
+				}
 			}
-			Vector<Template> t = new Vector<Template>();
-			t.add(t0);
+			if(t0 != null)
+				t.add(t0);
 			nvt.put(key, t);
 		}
 		return nvt;

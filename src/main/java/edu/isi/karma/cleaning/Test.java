@@ -3,6 +3,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
@@ -59,11 +60,10 @@ public class Test {
 		examples.add(yStrings);
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(examples);
-		HashSet<String> p = psProgSynthesis.run_main();
-		Interpretor it = new Interpretor();
+		Collection<ProgramRule> p = psProgSynthesis.run_main();
 		String value = "http://dbpedia.org/resource/Air_Malta";
-		String progString = p.iterator().next();
-		InterpreterType worker = it.create(progString);
+		ProgramRule progString = p.iterator().next();
+		InterpreterType worker = progString.getRuleForValue(value);
 		String reString = worker.execute(value);
 		System.out.println("===========Results===================");
 		System.out.println(reString);
@@ -101,7 +101,7 @@ public class Test {
 						ProgSynthesis psProgSynthesis = new ProgSynthesis();
 						psProgSynthesis.inite(examples);
 						
-						Vector<String> pls = new Vector<String>();
+						Vector<ProgramRule> pls = new Vector<ProgramRule>();
 						pls.addAll(psProgSynthesis.run_main());
 						for(int k = 0; k<examples.size();k++)
 						{
@@ -113,12 +113,12 @@ public class Test {
 						
 						for(int i = 0; i<pls.size(); i++)
 						{		
-							Interpretor ipInterpretor = new Interpretor();
-							String script = pls.get(i);
+							ProgramRule script = pls.get(i);
 							System.out.println(script);
-							InterpreterType worker = ipInterpretor.create(script);
+							
 							for(int j = 0; j<entries.size(); j++)
 							{
+								InterpreterType worker = script.getRuleForValue(entries.get(j)[0]);
 								String s = worker.execute(entries.get(j)[0]);
 								System.out.println("result:   "+s);
 								if(s== null||s.length()==0)
@@ -168,24 +168,7 @@ public class Test {
 			System.out.println(""+ex.toString());
 		}	
 	}
-	public static void test5()
-	{
-		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"<_START>Knoblock,Craig<_END>","Craig Knoblock"};
-		//String[] yStrings ={"<_START>Szekely,Pedro<_END>","Pedro Szekely"};
-		examples.add(xStrings);
-		//examples.add(yStrings);
-		ProgSynthesis psProgSynthesis = new ProgSynthesis();
-		psProgSynthesis.inite(examples);
-		HashSet<String> p = psProgSynthesis.run_main();
-		Interpretor it = new Interpretor();
-		String value = "Szekely,Pedro";
-		//String value = "(6/7)(4/5)(14/2)";
-		InterpreterType worker = it.create(p.iterator().next());
-		String reString = worker.execute(value);
-		System.out.println("===========Results===================");
-		System.out.println(reString);
-	}
+	
 	//test the classifier
 	public static void test6()
 	{
@@ -207,6 +190,8 @@ public class Test {
 		psProgSynthesis.run_partition();
 		//System.out.println(""+psProgSynthesis.classifier.test("2009-07-11"));
 	}
+	
+	
 	public static void test7()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
@@ -224,17 +209,20 @@ public class Test {
 		examples.add(rStrings);
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(examples);
-		String p = psProgSynthesis.run_partition();
-		Interpretor it = new Interpretor();
+		Collection<ProgramRule> p = psProgSynthesis.run_main();
 		String value = "(323)-708-7800";
 		String value1 = "508 7800";
-		InterpreterType worker = it.create(p);
+		ProgramRule progString = p.iterator().next();
+		InterpreterType worker = progString.getRuleForValue(value);
 		String reString = worker.execute(value);
+		InterpreterType worker1 = progString.getRuleForValue(value1);
 		String reString1 = worker.execute(value1);
 		System.out.println("/*===========Results===================*/");
 		System.out.println(reString);
 		System.out.println(reString1);
 	}
+	
+	
 	//test loop statement
 	public static void test8()
 	{
@@ -259,25 +247,8 @@ public class Test {
 		System.out.println("===========Results===================");
 		System.out.println(reString);
 	}
-	public static void test9()
-	{
-		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"<_START>123 is on car 456<_END>","123,456,"};
-		String[] yStrings ={"<_START>67 is attack at location 56 by 89<_END>","67,56,89,"};
-		examples.add(xStrings);
-		examples.add(yStrings);
-		ProgSynthesis psProgSynthesis = new ProgSynthesis();
-		psProgSynthesis.inite(examples);
-		String p = psProgSynthesis.run_main().iterator().next();
-		System.out.println(""+p);
-		Interpretor it = new Interpretor();
-		String value = "facility 112 is on fire. Battle unit 890 is under attack";
-		//String value = "(6/7)(4/5)(14/2)";
-		InterpreterType worker = it.create(p);
-		String reString = worker.execute(value);
-		System.out.println("===========Results===================");
-		System.out.println(reString);
-	}
+	
+	
 	public static void test10()// fail due to symerty blank mapping 
 	{
 		Vector<String[]> examples = new Vector<String[]>();
@@ -298,62 +269,32 @@ public class Test {
 		System.out.println(reString);
 	}
 	//test Sumit's approach
-	public static void test11()
-	{
-		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"<_START>a1b2c3d4e5#g6h<_END>","g6h,a1b2c3d4e5"};
-		String[] zStrings ={"<_START>m1n2r3s4t5#x6y<_END>","x6y,m1n2r3s4t5"};
-		//String[] yStrings ={"<_START>#p1q<_END>","p1q#c3d4e"};
-		examples.add(xStrings);
-		//examples.add(yStrings);
-		examples.add(zStrings);
-		long t1 = System.currentTimeMillis();
-		ProgSynthesis psProgSynthesis = new ProgSynthesis();
-		psProgSynthesis.inite(examples);
-		HashSet<String> p = psProgSynthesis.run_sumit();
-		long t2 = System.currentTimeMillis();
-		ProgSynthesis psProgSynthesis1 = new ProgSynthesis();
-		psProgSynthesis1.inite(examples);
-		HashSet<String> q = psProgSynthesis1.run_main();
-		long t3 = System.currentTimeMillis();
-		double timespan1 = (t2 -t1)*1.0/60000;
-		double timespan2 = (t3 -t2)*1.0/60000;
-		System.out.println("span 1:"+timespan1+"\nspan 2:"+timespan2);
-		
-	}
-	public static void test12()
-	{
-		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings ={"<_START>(323)-708-7700<_END>","323-708-7700"};
-		String[] yStrings ={"<_START>(425)-706-7709<_END>","425-706-7709"};
-		String[] zStrings ={"<_START>510.220.5586<_END>","510-220-5586"};
-		String[] pStrings ={"<_START>323.710.7700<_END>","323-710-7700"};
-		String[] qStrings ={"<_START>235 7654<_END>","425-235-7654"};
-		String[] rStrings ={"<_START>745 8139<_END>","425-745-8139"};
-		examples.add(xStrings);
-		examples.add(yStrings);
-		examples.add(zStrings);
-		examples.add(pStrings);
-		examples.add(qStrings);
-		examples.add(rStrings);
-		long t1 = System.currentTimeMillis();
-		ProgSynthesis psProgSynthesis = new ProgSynthesis();
-		psProgSynthesis.inite(examples);
-		HashSet<String> p = psProgSynthesis.run_sumit();
-		Interpretor it = new Interpretor();
-		String value = "(323)-708-7800";
-		String value1 = "508 7800";
-		//String value = "(6/7)(4/5)(14/2)";
-		InterpreterType worker = it.create(p.iterator().next());
-		String reString = worker.execute(value);
-		String reString2 = worker.execute(value1);
-		System.out.println("===========Results===================");
-		System.out.println(reString);
-		System.out.println(reString2);
-	}
+//	public static void test11()
+//	{
+//		Vector<String[]> examples = new Vector<String[]>();
+//		String[] xStrings = {"<_START>a1b2c3d4e5#g6h<_END>","g6h,a1b2c3d4e5"};
+//		String[] zStrings ={"<_START>m1n2r3s4t5#x6y<_END>","x6y,m1n2r3s4t5"};
+//		//String[] yStrings ={"<_START>#p1q<_END>","p1q#c3d4e"};
+//		examples.add(xStrings);
+//		//examples.add(yStrings);
+//		examples.add(zStrings);
+//		long t1 = System.currentTimeMillis();
+//		ProgSynthesis psProgSynthesis = new ProgSynthesis();
+//		psProgSynthesis.inite(examples);
+//		HashSet<String> p = psProgSynthesis.run_sumit();
+//		long t2 = System.currentTimeMillis();
+//		ProgSynthesis psProgSynthesis1 = new ProgSynthesis();
+//		psProgSynthesis1.inite(examples);
+//		HashSet<String> q = psProgSynthesis1.run_main();
+//		long t3 = System.currentTimeMillis();
+//		double timespan1 = (t2 -t1)*1.0/60000;
+//		double timespan2 = (t3 -t2)*1.0/60000;
+//		System.out.println("span 1:"+timespan1+"\nspan 2:"+timespan2);
+//		
+//	}
 	public static void main(String[] args)
 	{
 		//Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		Test.test3();
+		Test.test10();
 	}
 }

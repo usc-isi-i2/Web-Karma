@@ -37,6 +37,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.rep.metadata.Tag;
@@ -97,14 +98,14 @@ public class GetExampleJSON extends HttpServlet {
 		//mariam
 		//File file = new File("../demofiles/usc_faculty.csv");
 		
-//		File file = new File("./SampleData/CSV/wells-large.csv");
+//		File file = new File("./exper.csv");
 //		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
 //		try {
 //			imp.generateWorksheet();
 //		} catch (KarmaException e) {
 //			e.printStackTrace();
 //		}
-//		
+		
 
 //		SampleDataFactory.createFromJsonTextFile(workspace,"./SampleData/JSON/Events.json");
 

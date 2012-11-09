@@ -37,7 +37,7 @@ class IDCTClassifier(PartitionClassifierType):
        self.model = model
        return pickle.dumps(model).encode('string_escape')
        
-    def test(self, value):
+    def getLabel(self, value):
         feature = FeatureFactory()
         feature.createFeature(value, "")
         dict = {};
@@ -47,7 +47,9 @@ class IDCTClassifier(PartitionClassifierType):
         for i in range(len(line)):
             dict['attributes'][str(i)] = line[i]
             attributes.append(str(i))
-        print self.model.predict(dict)
+        res = self.model.predict(dict)
+	r = max(res.iterkeys(),key=lambda k:res[k])
+	return r
         
 if __name__ == "__main__":
     s = ["Bulevar kralja Aleksandra*156", "Dositejeva*22", "Bobby's Restaurant", "1 Lombard street", "5th ave", "09/07/2008"]

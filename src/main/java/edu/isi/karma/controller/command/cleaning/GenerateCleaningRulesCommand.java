@@ -175,6 +175,9 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		boolean results = false;
 		int iterNum = 0;
 		RamblerTransformationOutput rtf = null;
+		
+		long time1 = System.currentTimeMillis();
+		
 		while(iterNum<2 && !results) // try to find any rule during 5 times running
 		{
 			rtf = new RamblerTransformationOutput(inputs);
@@ -183,19 +186,24 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 				results = true;
 			}
 			iterNum ++;
-		}
+		}	
+		long time2 = System.currentTimeMillis();
 		Iterator<String> iter = rtf.getTransformations().keySet().iterator();
 		Vector<ValueCollection> vvc = new Vector<ValueCollection>();
 		HashMap<String, HashMap<String,Integer>> values = new HashMap<String, HashMap<String,Integer>>();
 		HashMap<String,Vector<String>> js2tps = new HashMap<String,Vector<String>>();
 		HashMap<String, HashSet<String>> vars = new HashMap<String, HashSet<String>>();
+		long time6=0,time7=0;
 		while(iter.hasNext())
 		{
+			long _time5 = System.currentTimeMillis();
+			
 			String tpid = iter.next();
 			ValueCollection rvco = rtf.getTransformedValues(tpid);
 			if(rvco==null)
 				continue;
 			vvc.add(rvco);
+			long _time6 = System.currentTimeMillis();
 			updateCandiScore(rvco,values);
 			String reps = rvco.getJson().toString();
 			if(js2tps.containsKey(reps))
@@ -227,7 +235,13 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 					vars.put(id, hsIdSet);
 				}
 			}
+			long _time7 = System.currentTimeMillis();
+			time6 += _time6- _time5;
+			time7 = _time7-_time6;
 		}
+		
+		long time3 = System.currentTimeMillis();
+		
 		//get the best transformed result
 		String bestRes = "";
 		HashMap<String, Double> topkeys = new HashMap<String, Double>();
@@ -269,6 +283,11 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 				sub_vars.put(tkey, vars.get(tkey));
 			}
 		}
+		
+		long time4 = System.currentTimeMillis();
+		System.out.println("program size: "+rtf.getTransformations().keySet().size());
+		System.out.println("Learning Span:"+(time2-time1)+" Excecution time:"+(time3-time2)+" ranking time:"+(time4-time3));
+		System.out.println("Decompose Excecution Time:\n "+"runing time: "+(time6)+" variance time: "+(time7));
 		String jsonrep = getVarJSON(sub_vars);
 		return new UpdateContainer(new CleaningResultUpdate(hNodeId, jsons,js2tps,bestRes,jsonrep,topkeys.keySet()));
 	}

@@ -3,5 +3,5 @@ package edu.isi.karma.cleaning;
 public interface PartitionClassifierType {
 	public void addTrainingData(String value,String label);
 	public String learnClassifer();
-	public String test(String value);
+	public String getLabel(String value);
 }

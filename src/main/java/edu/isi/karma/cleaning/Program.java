@@ -1,11 +1,13 @@
 package edu.isi.karma.cleaning;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 public class Program implements GrammarTreeNode {
 	public Vector<Partition> partitions = new Vector<Partition>();
 	public String cls = "";
 	public double score = 0.0;
+	public PartitionClassifierType classifier;
 	public Program(Vector<Partition> pars)
 	{
 		this.partitions = pars;
@@ -20,13 +22,14 @@ public class Program implements GrammarTreeNode {
 	public void learnClassifier()
 	{
 		PartitionClassifier pcf = new PartitionClassifier();
-		pcf.create(this.partitions);
-		this.cls = pcf.clssettingString;
+		PartitionClassifierType classifier= pcf.create(this.partitions);
+		this.classifier = classifier;
+//		this.cls = pcf.clssettingString;
 		//this.cls = "x";
-		for(Partition p:this.partitions)
-		{
-			p.cls = this.cls;
-		}
+//		for(Partition p:this.partitions)
+//		{
+//			p.cls = this.cls;
+//		}
 	}
 	public double getScore()
 	{
@@ -54,6 +57,27 @@ public class Program implements GrammarTreeNode {
 			String s = partitions.get(0).toProgram(); 
 			score = this.partitions.get(0).getScore();
 			return s;
+		}
+	}
+	public ProgramRule toProgram1() {
+		ProgramRule pr = new ProgramRule(this);
+		if(this.partitions.size()>1)
+		{
+			for(Partition p:this.partitions)
+			{
+				pr.addRule(p.label, p.toProgram());
+				score += p.getScore();
+			}
+			score = score/this.partitions.size();
+			
+			return pr;
+		}
+		else
+		{
+			String s = partitions.get(0).toProgram(); 
+			score = this.partitions.get(0).getScore();
+			pr.addRule(partitions.get(0).label, s);
+			return pr;
 		}
 	}
 	public String toString()

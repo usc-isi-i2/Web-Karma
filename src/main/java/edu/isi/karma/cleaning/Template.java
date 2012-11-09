@@ -3,8 +3,6 @@ package edu.isi.karma.cleaning;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.python.antlr.PythonParser.else_clause_return;
-import org.python.apache.xerces.xni.grammars.Grammar;
 
 public class Template implements GrammarTreeNode{
 	public Vector<HashMap<String,GrammarTreeNode>> segmentlist = new Vector<HashMap<String,GrammarTreeNode>>();
@@ -537,11 +535,13 @@ public class Template implements GrammarTreeNode{
 	public Template TempUnion(Template b)
 	{
 		Vector<HashMap<String, GrammarTreeNode>> res = new Vector<HashMap<String,GrammarTreeNode>>();
+		if(this.segmentlist.size() != b.segmentlist.size())
+			return null;
 		for(int i = 0; i<this.segmentlist.size(); i++)
 		{
 			HashMap<String, GrammarTreeNode> x = this.segmentlist.get(i);
 			HashMap<String, GrammarTreeNode> y = b.segmentlist.get(i);
-			x.putAll(y);
+			x.putAll(y); 
 			res.add(x);
 		}
 		Template template = new Template(res);

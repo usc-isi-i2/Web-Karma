@@ -20,10 +20,16 @@
  ******************************************************************************/
 package edu.isi.karma.rep.cleaning;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.InterpreterType;
 import edu.isi.karma.cleaning.Interpretor;
+import edu.isi.karma.cleaning.Partition;
+import edu.isi.karma.cleaning.PartitionClassifier;
+import edu.isi.karma.cleaning.PartitionClassifierType;
+import edu.isi.karma.cleaning.Program;
+import edu.isi.karma.cleaning.ProgramRule;
 
 
 
@@ -31,28 +37,14 @@ public class RamblerTransformation implements Transformation {
 
 	private Vector<String> rules = new Vector<String>();
 	public String signature = "";
-	private InterpreterType worker;
-	private static Interpretor itInterpretor;
-	public RamblerTransformation(String prog)
-	{
-		initInterpretor();
-		worker = this.itInterpretor.create(prog);
-		if(prog.length()-100<0)
-		{
-			this.signature = prog.substring(0,prog.length());
-		}
-		else
-		{
-			this.signature = prog.substring(prog.length()-100,prog.length());
-		}
-	}
-	//
-	public void initInterpretor()
-	{
-		if(itInterpretor == null)
-			itInterpretor = new Interpretor();
+	private ProgramRule prog;
+	public RamblerTransformation(ProgramRule prog)
+	{ 
+		this.prog = prog;
+		this.signature = prog.signString;
 	}
 	public String transform(String value) {
+		InterpreterType worker = prog.getRuleForValue(value);
 		String s = worker.execute(value);
 		if(s.contains("_FATAL_ERROR_"))
 			return value;

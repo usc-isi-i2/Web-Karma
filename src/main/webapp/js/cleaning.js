@@ -22,6 +22,7 @@
 function assignHandlersToCleaningPanelObjects() {
 	var cleaningPanel = $("div#ColumnCleaningPanel");
 	$("button#cleanColumnButton").click(handleCleanColumnButton);
+	$("button#cleanColumnButton").click(90);
 	$("button#generateCleaningRules", cleaningPanel).click(handleGenerateCleaningRulesButton);
 }
 
@@ -204,11 +205,18 @@ function handleCleanColumnButton() {
 	var values = [];
 	$('tbody>tr>td:nth-child(' + (index + 1) + ')', table).each(function() {
 		if($(this).attr("id"))
+		{
+			var value = $(this).text();
+			if ($(this).attr("class").indexOf("hasTruncatedValue")>=0)
+			{
+				value = $(this).data("fullValue");
+			}
 			values.push({
 				"nodeId" : $(this).attr("id"),
-				"nodeValue" : $(this).text()
-				//"nodeValue" : $(this).data("fullValue")
+				//"nodeValue" : $(this).text()
+				"nodeValue" : value
 			});
+		}
 	});
 
 	// Create and store a array that stores the user provided examples
@@ -453,8 +461,7 @@ function handleGenerateCleaningRulesButton() {
 	if(jQuery.type(selectedHNodeId) === "array")
 	{
 		selectedHNodeId = selectedHNodeId.join("#");
-	}
-	
+	}	
 	var tdTag = $("td#" + selectedHNodeId);
 	var vWorksheetId = tdTag.parents("div.Worksheet").attr("id");
 
