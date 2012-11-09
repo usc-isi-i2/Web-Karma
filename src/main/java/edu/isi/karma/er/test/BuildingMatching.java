@@ -1,10 +1,8 @@
 package edu.isi.karma.er.test;
 
-import java.io.*;
-import java.util.List;
 
 import edu.isi.karma.er.aggregator.impl.AggregatorImplByMeters;
-import edu.isi.karma.er.aggregator.impl.AggregatorImplByUnits;
+//import edu.isi.karma.er.aggregator.impl.AggregatorImplByUnits;
 import edu.isi.karma.er.helper.ExtractCoordinates;
 import edu.isi.karma.er.helper.WriteCSVImpl;
 import edu.isi.karma.er.helper.entity.InputStruct;
@@ -15,12 +13,7 @@ import edu.isi.karma.er.helper.ConnectPostgis;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+
 import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.util.FileManager;
 
@@ -31,7 +24,7 @@ public class BuildingMatching {
 
 	public static int struct_number = 200;
 
-	private static void setupDirectoryModel(String DBPEDIA_DIRECTORY,
+	public static void setupDirectoryModel(String DBPEDIA_DIRECTORY,
 			String DBPEDIA_FILE) {
 
 		Dataset dataset = TDBFactory.createDataset(DBPEDIA_DIRECTORY);
@@ -43,8 +36,8 @@ public class BuildingMatching {
 
 	public static void main(String[] args) {
 
-		String fileAddress1 = "/Users/yzhang/Downloads/building_openstreetmap.n3";
-		String fileAddress2 = "/Users/yzhang/Downloads/building_wikimapia.n3";
+		//String fileAddress1 = "/Users/yzhang/Downloads/building_openstreetmap.n3";
+		//String fileAddress2 = "/Users/yzhang/Downloads/building_wikimapia.n3";
 		String directory1 = "/Users/yzhang/Downloads/Repository/openstreetmap";
 		String directory2 = "/Users/yzhang/Downloads/Repository/wikimapia";
 		/*
@@ -66,7 +59,7 @@ public class BuildingMatching {
 		connection = (Connection) conpgis.ConnectingPostgis();
 
 		WriteCSVImpl wcsv = new WriteCSVImpl();
-		wcsv.WriteCSVImpl();
+		//wcsv.WriteCSVImpl();
 
 		InputStruct resource1[] = new InputStruct[struct_number];
 		for (int i = 0; i < struct_number; i++) {

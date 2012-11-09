@@ -9,7 +9,7 @@ public class WriteCSVImpl {
 	private FileWriter fw;
 	private BufferedWriter bw;
 
-	public void WriteCSVImpl() {
+	public WriteCSVImpl() {
 		try {
 			this.fw = new FileWriter(
 			// "/Users/yingzhang/Downloads/BuildingMatchedResult.csv");
