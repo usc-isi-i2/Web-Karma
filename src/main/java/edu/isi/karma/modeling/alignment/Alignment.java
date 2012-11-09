@@ -146,6 +146,7 @@ public class Alignment {
 		LabeledWeightedEdge[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new LabeledWeightedEdge[0]);
 		for (int i = 0; i < allLinks.length; i++) {
 			if (allLinks[i].getID().equalsIgnoreCase(linkId)) {
+				logger.debug("link " + linkId + "has been added to the user selected links.");
 				addToLinksForcedByUserList(allLinks[i]);
 				align();
 				return;
@@ -161,6 +162,7 @@ public class Alignment {
 			boolean found = false;
 			for (int i = 0; i < allLinks.length; i++) {
 				if (allLinks[i].getID().equalsIgnoreCase(linkIds.get(j))) {
+					logger.debug("link " + linkIds.get(j) + "has been added to the user selected links.");
 					addToLinksForcedByUserList(allLinks[i]);
 					found = true;
 				}
@@ -197,6 +199,61 @@ public class Alignment {
 	public void clearAllUserLinks() {
 		linksForcedByUser.clear();
 		logger.info("user selected links have been cleared.");
+		align();
+	}
+	
+	private boolean duplicate(SemanticType st1, SemanticType st2) {
+		if (st1.getHNodeId().equalsIgnoreCase(st2.getHNodeId()) &&
+				st1.getType().getUriString().equalsIgnoreCase(st2.getType().getUriString()) ) {
+			if (st1.getDomain() != null && st2.getDomain() != null) 
+				if (st1.getDomain().getUriString().equalsIgnoreCase(st2.getDomain().getUriString()))
+					return true;
+			
+			if (st1.getDomain() == null && st2.getDomain() == null)
+				return true;
+			
+			return false;
+		}
+		return false;
+	}
+	
+	public void updateSemanticTypes(List<SemanticType> semanticTypes) {
+		
+		List<SemanticType> updatedSemanticTypes = new ArrayList<SemanticType>();
+		List<Vertex> deletedVertices = new ArrayList<Vertex>(); 
+		for (SemanticType s : semanticTypes)
+			System.out.println("%%%%%%%%%%%%%%%%%%%" + s.getType().getUriString());
+		
+		for (SemanticType newType : semanticTypes) {
+			boolean found = false;
+			for (SemanticType prevType : this.semanticTypes) {				
+				if (duplicate(newType, prevType))
+					found = true;
+			}
+			if (!found) {
+				System.out.println(">>>>>>>>new>>>>>>" + newType.getType().getUriString());
+				this.graphBuilder.addSemanticType(newType);
+				updatedSemanticTypes.add(newType);
+			}
+		}
+		for (SemanticType prevType : this.semanticTypes) {
+			boolean found = false;
+			for (SemanticType newType : semanticTypes) {
+
+				if (duplicate(newType, prevType)) {
+					found = true;
+					updatedSemanticTypes.add(prevType);
+				}
+			}
+			if (!found) {
+				Vertex deletedNode = this.graphBuilder.removeSemanticType(prevType);
+				System.out.println("<<<<<<<<<delete<<<<<<<<<" + prevType.getType().getUriString());
+				if (deletedNode != null) deletedVertices.add(deletedNode);
+			}
+		}
+		this.semanticTypes = updatedSemanticTypes;
+		this.semanticNodes = this.graphBuilder.getSemanticNodes();
+		removeInvalidForcedLinks(deletedVertices);
 		align();
 	}
 	
@@ -312,7 +369,6 @@ public class Alignment {
 		logger.info("link with ID " + linkId + " does not exist in graph.");
 	}
 	
-	
 	private void addUILinksFromTree() {
 		linksPreferredByUI.clear();
 		
@@ -338,7 +394,7 @@ public class Alignment {
 	
 	private void align() {
 		
-
+//		GraphUtil.printGraph(this.graphBuilder.getGraph());
 		long start = System.currentTimeMillis();
 		
 		logger.info("preparing G Prime for steiner algorithm input ...");

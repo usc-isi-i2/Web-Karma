@@ -37,6 +37,7 @@ function publishRDFFunction() {
 		info["command"] = "PublishRDFCommand";
 		info["addInverseProperties"] = $("input#addInverseProperties").is(":checked");
 		info["rdfPrefix"] = $("input#rdfPrefix").val();
+		info["rdfNamespace"] = $("input#rdfNamespace").val();
 		info["saveToStore"] = $("input#saveToStore").is(":checked");
 		info["hostName"] = $("input#hostName").val();
 		info["dbName"] = $("input#dbName").val();
@@ -117,6 +118,7 @@ function getRDFPreferences() {
 	    					$("input#userName").val(element["PreferenceValues"]["userName"]);
 	    					$("input#modelName").val(element["PreferenceValues"]["modelName"]);
 	    					$("input#rdfPrefix").val(element["PreferenceValues"]["rdfPrefix"]);
+	    					$("input#rdfNamespace").val(element["PreferenceValues"]["rdfNamespace"]);
 	    					$("input#saveToRDFStore").val(element["PreferenceValues"]["saveToStore"]);
 	    					$("input#saveToRDFStore").val(element["PreferenceValues"]["saveToStore"]);
 	    					$("input#addInverseProperties").val(element["PreferenceValues"]["addInverseProperties"]);

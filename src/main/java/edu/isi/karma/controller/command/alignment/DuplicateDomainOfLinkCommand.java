@@ -86,7 +86,7 @@ public class DuplicateDomainOfLinkCommand extends Command {
 		if(alignment == null || alignment.getAlignmentGraph().edgeSet().size() == 0) {
 			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
 			try {
-				align.align(true);
+				align.align(false);
 			} catch (Exception e) {
 				logger.error("Error occured while generating the model Reason:.", e);
 				return new UpdateContainer(new ErrorUpdate("Error occured while generating the model for the source."));

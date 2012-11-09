@@ -28,7 +28,6 @@ public class ExtractSAAMData {
 		Model model = dataset.getDefaultModel();
 		Logger logger = Logger.getLogger(ExtractSAAMData.class);
 		int count = 0;
-		int c = 0;
 		
 		//String predicate = "http://americanart.si.edu/saam/fullName";
 		ResIterator iter = model.listSubjectsWithProperty(RDF);

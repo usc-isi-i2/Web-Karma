@@ -49,6 +49,16 @@ public class GraphUtil {
     		return null;
 	}
 	
+	public static Vertex getVertex(Graph<Vertex, LabeledWeightedEdge> graph, String id) {
+		if (id == null)
+			return null;
+		
+		for (Vertex v : graph.vertexSet())
+			if (v.getID().equalsIgnoreCase(id))
+				return v;
+		return null;
+	}
+	
 	public static void printVertex(Vertex vertex) {
     	System.out.print("(");
     	System.out.print( vertex.getLocalID());

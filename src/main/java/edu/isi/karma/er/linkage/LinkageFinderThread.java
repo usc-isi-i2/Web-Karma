@@ -1,26 +1,24 @@
 package edu.isi.karma.er.linkage;
 
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-
 import edu.isi.karma.er.aggregator.Aggregator;
 import edu.isi.karma.er.helper.entity.MultiScore;
+import edu.isi.karma.er.helper.entity.Ontology;
 import edu.isi.karma.er.helper.entity.ResultRecord;
 
 public class LinkageFinderThread extends Thread {
-	List<Resource> srcList = null;
-	List<Resource> dstList = null;
+	List<Ontology> srcList = null;
+	List<Ontology> dstList = null;
 	Aggregator aver = null;
 	JSONArray confArr = null;
 	List<ResultRecord> resultList = new Vector<ResultRecord>();
 
-	public LinkageFinderThread(List<Resource> srcList, List<Resource> dstList, Aggregator aver, JSONArray confArr) {
+	public LinkageFinderThread(List<Ontology> srcList, List<Ontology> dstList, Aggregator aver, JSONArray confArr) {
 		this.srcList = srcList;
 		this.dstList = dstList;
 		this.aver = aver;
@@ -29,42 +27,42 @@ public class LinkageFinderThread extends Thread {
 	
 	public void run() {
 		int i = 0;
-		DecimalFormat df = new DecimalFormat("0.0000");
 		Logger log = Logger.getRootLogger();
 		long startTime = System.currentTimeMillis();
-		for (Resource res1 : srcList) {
+		for (Ontology p1 : srcList) {
 			
 			ResultRecord rec = new ResultRecord();
-			rec.setRes(res1);
-			for (Resource res2 : dstList) {
+			rec.setRes(p1);
+			for (Ontology p2 : dstList) {
 				
-				MultiScore ms = aver.match(confArr, res1, res2); 	// compare 2 resource to return a result of match with match details
-				if ( ms.getFinalScore() > rec.getCurrentMinScore() && ms.getFinalScore() > 0.5) {	// to decide whether current pair can rank to top 5 
+				MultiScore ms = aver.match(p1, p2); 	// compare 2 resource to return a result of match with match details
+				if ( ms.getFinalScore() > rec.getCurrentMinScore() ) {	// to decide whether current pair can rank to top 5 
 					rec.addMultiScore(ms);
 				}
 			}
 			if (++i % 100 == 0) {
 				log.info(this.getName() + " processed " + i + " rows in " + (System.currentTimeMillis() - startTime) + "ms.");
 				startTime = System.currentTimeMillis();
+				
 			}
 			//log.info("[" + df.format(rec.getCurrentMinScore()) + " | " + df.format(rec.getCurrentMaxScore()) + "] " + rec.getRes() + " has " + rec.getRankList().size() + " results");
 			resultList.add(rec);
 		}
 	}
 
-	public List<Resource> getSrcList() {
+	public List<Ontology> getSrcList() {
 		return srcList;
 	}
 
-	public void setSrcList(List<Resource> srcList) {
+	public void setSrcList(List<Ontology> srcList) {
 		this.srcList = srcList;
 	}
 
-	public List<Resource> getDstList() {
+	public List<Ontology> getDstList() {
 		return dstList;
 	}
 
-	public void setDstList(List<Resource> dstList) {
+	public void setDstList(List<Ontology> dstList) {
 		this.dstList = dstList;
 	}
 

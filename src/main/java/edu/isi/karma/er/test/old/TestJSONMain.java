@@ -1,11 +1,9 @@
 package edu.isi.karma.er.test.old;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class TestJSONMain {

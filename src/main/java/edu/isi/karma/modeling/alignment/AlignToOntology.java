@@ -53,36 +53,47 @@ public class AlignToOntology {
 		this.alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
 	}
 	
-	public void align(boolean replaceExistingAlignment) {
+	public void align(boolean resetAlignment) {
 		// Get the previous alignment
+
 		alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		// If we need to use the previous alignment (if it exists)
-		if (!replaceExistingAlignment) {
-			// If the alignment does not exists, create a new one
-			if (alignment == null) {
-				alignment = getNewAlignment();
-			}
-		} else {
-			// Save the previously added user links and duplicated links
-			List<LabeledWeightedEdge> userLinks = null;
-			List<String> duplicatedLinks = null;
-			if(alignment != null) {
-				userLinks = alignment.getLinksForcedByUser();
-				duplicatedLinks = alignment.getDuplicatedLinkIds();
-			}
-			
+		if (alignment == null || resetAlignment) {
 			alignment = getNewAlignment();
-			// Add duplicated links
-			if (duplicatedLinks != null && duplicatedLinks.size() != 0) {
-				for (String linkId : duplicatedLinks)
-					alignment.duplicateDomainOfLink(linkId);
-			}
-			// Add user links if any
-			if (userLinks != null && userLinks.size() != 0) {
-				for (LabeledWeightedEdge edge : userLinks)
-					alignment.addUserLink(edge.getID());
-			}
+		} else {
+			List<SemanticType> semanticTypeList = getListOfSemanticTypes();
+			alignment.updateSemanticTypes(semanticTypeList);
 		}
+		
+//		// If we need to use the previous alignment (if it exists)
+//		if (!replaceExistingAlignment) {
+//			// If the alignment does not exists, create a new one
+//			if (alignment == null) {
+//				alignment = getNewAlignment();
+//			}
+//		} else {
+//			// Save the previously added user links and duplicated links
+//			List<LabeledWeightedEdge> userLinks = null;
+//			List<String> duplicatedLinks = null;
+//			if(alignment != null) {
+//				userLinks = alignment.getLinksForcedByUser();
+//				duplicatedLinks = alignment.getDuplicatedLinkIds();
+//			}
+//			
+//			if (alignment == null)
+//				alignment = getNewAlignment();
+//			else
+//				alignment.updateSemanticTypes(getListOfSemanticTypes());
+//			// Add duplicated links
+//			if (duplicatedLinks != null && duplicatedLinks.size() != 0) {
+//				for (String linkId : duplicatedLinks)
+//					alignment.duplicateDomainOfLink(linkId);
+//			}
+//			// Add user links if any
+//			if (userLinks != null && userLinks.size() != 0) {
+//				for (LabeledWeightedEdge edge : userLinks)
+//					alignment.addUserLink(edge.getID());
+//			}
+//		}
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 	}
 
@@ -108,12 +119,12 @@ public class AlignToOntology {
 		c.add(svgUpdate);
 	}
 	
-	public void alignAndUpdate(UpdateContainer c, boolean replaceExistingAlignment) {
-		align(replaceExistingAlignment);
+	public void alignAndUpdate(UpdateContainer c, boolean resetAlignment) {
+		align(resetAlignment);
 		update(c);
 	}
 
-	private Alignment getNewAlignment() {
+	private List<SemanticType> getListOfSemanticTypes() {
 		SemanticTypes semTypes = worksheet.getSemanticTypes();
 		// Get the list of semantic types
 		List<SemanticType> types = new ArrayList<SemanticType>();
@@ -121,6 +132,17 @@ public class AlignToOntology {
 //		System.out.println("Type: " + type.getType().getLocalName() + " of " + type.getDomain().getLocalName() + "HNode ID: " + type.getHNodeId());
 			types.add(type);
 		}
-		return new Alignment(vWorkspace.getWorkspace().getOntologyManager(), types);
+		return types;
+	}
+	
+	private Alignment getNewAlignment() {
+//		SemanticTypes semTypes = worksheet.getSemanticTypes();
+//		// Get the list of semantic types
+//		List<SemanticType> types = new ArrayList<SemanticType>();
+//		for (SemanticType type : semTypes.getTypes().values()) {
+////		System.out.println("Type: " + type.getType().getLocalName() + " of " + type.getDomain().getLocalName() + "HNode ID: " + type.getHNodeId());
+//			types.add(type);
+//		}
+		return new Alignment(vWorkspace.getWorkspace().getOntologyManager(), getListOfSemanticTypes());
 	}
 }

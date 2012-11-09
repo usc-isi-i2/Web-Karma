@@ -1,7 +1,5 @@
 package edu.isi.karma.er.helper.entity;
 
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Statement;
 
 /**
  * The object records the result of calculation, especially with a score 
@@ -11,22 +9,42 @@ import com.hp.hpl.jena.rdf.model.Statement;
  */
 public class Score {
 	
-	private Property predicate; 	// the predicate used to compare between 2 values
+	private String predicate; 	// the predicate used to compare between 2 values
 
 	private double similarity;		// the similarity of compare result, also means score
 	
+	private double freq;
+	
+	private double ratio;
+	
 	private ScoreType scoreType;	// the type of compare result, see enum class ScoreType
 	
-	private Statement srcObj;		// the source statement to compare, including subject and object 
+	private String srcObj;		// the source statement to compare, including subject and object 
 		
-	private Statement dstObj;		// the target statement to compare with, including subject and object
+	private String dstObj;		// the target statement to compare with, including subject and object
 	
 
-	public Property getPredicate() {
+	public double getFreq() {
+		return freq;
+	}
+
+	public void setFreq(double freq) {
+		this.freq = freq;
+	}
+
+	public double getRatio() {
+		return ratio;
+	}
+
+	public void setRatio(double ratio) {
+		this.ratio = ratio;
+	}
+
+	public String getPredicate() {
 		return predicate;
 	}
 
-	public void setPredicate(Property predicate) {
+	public void setPredicate(String predicate) {
 		this.predicate = predicate;
 	}
 
@@ -38,19 +56,19 @@ public class Score {
 		this.similarity = similarity;
 	}
 
-	public Statement getSrcObj() {
+	public String getSrcObj() {
 		return srcObj;
 	}
 
-	public void setSrcObj(Statement srcObj) {
+	public void setSrcObj(String srcObj) {
 		this.srcObj = srcObj;
 	}
 
-	public Statement getDstObj() {
+	public String getDstObj() {
 		return dstObj;
 	}
 
-	public void setDstObj(Statement dstObj) {
+	public void setDstObj(String dstObj) {
 		this.dstObj = dstObj;
 	}
 

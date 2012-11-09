@@ -47,11 +47,10 @@ import edu.isi.mediator.gav.main.MediatorException;
  * 
  */
 public class OfflineCSVGenerator {
-    private static Logger logger = LoggerFactory
-	    .getLogger(OfflineCSVGenerator.class);
 
     /**
      * @param args
+     * 		 model file, data file, output file, (optional)csv delimiter - default is '\t'
      * @throws MediatorException
      * @throws IOException
      * @throws ClassNotFoundException
@@ -59,16 +58,22 @@ public class OfflineCSVGenerator {
      */
     public static void main(String[] args) throws ClassNotFoundException,
 	    IOException, MediatorException, KarmaException {
-	if (args.length != 3)
+	if (args.length < 3)
 	    throw new IllegalArgumentException(
-		    "Arguments are: <model file> <data file> <output file>");
+		    "Arguments are: <model file> <data file> <output file> <csv delimiter>");
 
 	String modelFilePath = args[0];
 	String dataFilePath = args[1];
 	String outputFilePath = args[2];
+	char csvDelimiter = '\t';
+	
+	if(args.length==4)
+		csvDelimiter = args[3].charAt(0);
 
+	//System.out.println("CSV Delimiter:" + csvDelimiter);
+	
 	OfflineCSVGenerator generator = new OfflineCSVGenerator();
-	generator.process(modelFilePath, dataFilePath, outputFilePath);
+	generator.process(modelFilePath, dataFilePath, csvDelimiter, outputFilePath);
     }
 
     /**
@@ -79,7 +84,7 @@ public class OfflineCSVGenerator {
      * @throws ClassNotFoundException
      * @throws KarmaException
      */
-    public void process(String modelFilePath, String dataFilePath,
+    public void process(String modelFilePath, String dataFilePath, char csvDelimiter,
 	    String outputFilePath) throws IOException, ClassNotFoundException,
 	    MediatorException, KarmaException {
 
@@ -88,7 +93,7 @@ public class OfflineCSVGenerator {
 	Workspace workspace = factory.createWorkspace();
 
 	// Load the CSV file into a new worksheet
-	CSVFileImport fileImport = new CSVFileImport(1, 2, '\t', '\"',
+	CSVFileImport fileImport = new CSVFileImport(1, 2, csvDelimiter, '\"',
 		new File(dataFilePath), factory, workspace);
 	Worksheet worksheet = fileImport.generateWorksheet();
 

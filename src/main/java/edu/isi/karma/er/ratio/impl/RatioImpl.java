@@ -53,7 +53,7 @@ public class RatioImpl implements IRatio {
 		
 		while (iter.hasNext()) {
 			Statement res = iter.next();
-			list.add(res.getObject().toString());
+			list.add(res.getObject().toString().replaceAll("\"", ""));
 		}
 		
 		model.close();

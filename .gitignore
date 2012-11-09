@@ -1,4 +1,5 @@
 bin
+*.class
 *py.class
 *.pydevproject
 *.project
@@ -31,9 +32,11 @@ src/main/webapp/CRF_Models/WSP1_CRFModel.txt.zip
 tmp/*
 src/main/webapp/CRF_Models/WSP1_CRFModel.txt
 src/main/scripts/Lib/*.class
-
-src/main/scripts/Lib/Interpreter$py.class
-
-src/main/scripts/Lib/Translator$py.class
-
+bin/
 .classpath
+
+.project
+
+.gitignore
+
+src/main/java/edu/isi/karma/er/compare/impl/NumberComparatorImpl.java

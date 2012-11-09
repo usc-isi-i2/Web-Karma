@@ -76,7 +76,10 @@ public class GetPropertiesAndClassesList extends Command {
 				OntClass cls = iter.next();
 				
 				String pr = prefixMap.get(cls.getNameSpace());
-				String clsStr = (pr != null && !pr.equals("")) ? pr + ":" + cls.getLocalName() : cls.getLocalName();
+				String classLabel = cls.getLocalName();
+				if (cls.getLabel(null) != null && !cls.getLabel(null).equals(""))
+					classLabel = cls.getLabel(null);
+				String clsStr = (pr != null && !pr.equals("")) ? pr + ":" + classLabel : classLabel;
 				
 				classesList.put(clsStr);
 				JSONObject classKey = new JSONObject();
@@ -92,7 +95,10 @@ public class GetPropertiesAndClassesList extends Command {
 					continue;
 				
 				String pr = prefixMap.get(prop.getNameSpace());
-				String propStr = (pr != null && !pr.equals("")) ? pr + ":" + prop.getLocalName() : prop.getLocalName(); 
+				String propLabel = prop.getLocalName();
+				if (prop.getLabel(null) != null && !prop.getLabel(null).equals(""))
+					propLabel = prop.getLabel(null);
+				String propStr = (pr != null && !pr.equals("")) ? pr + ":" + propLabel : propLabel; 
 				
 				propertiesList.put(propStr);
 				JSONObject propKey = new JSONObject();

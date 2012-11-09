@@ -48,6 +48,7 @@ import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.rep.semantictypes.SynonymSemanticTypes;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.mediator.gav.util.MediatorUtil;
+import edu.isi.mediator.rdf.RDFDomainModel;
 
 /**
  * Class that generates a source description given a Steiner tree 
@@ -96,9 +97,10 @@ public class SourceDescription {
 	private int uriIndex = 0;
 	
 	/**
-	 * The source prefix used during RDF generation.
+	 * The source prefix & namespace used during RDF generation.
 	 */
 	private String rdfSourcePrefix;
+	private String rdfSourceNamespace;
 		
 	/**
 	 * All prefix/namespaces combinations used in this SD.
@@ -165,7 +167,7 @@ public class SourceDescription {
 	 * datasource to be modeled.
 	 * <br>useColumnNames=false if the SD is used internally.
 	 */
-	public SourceDescription(Workspace workspace, Alignment alignment, Worksheet worksheet, String sourcePrefix, boolean generateInverse, 
+	public SourceDescription(Workspace workspace, Alignment alignment, Worksheet worksheet, String sourcePrefix,String sourceNamespace, boolean generateInverse, 
 			boolean useColumnNames){
 		
 		//the tree is not directed anymore, so we have to transform it before we can use it
@@ -183,19 +185,22 @@ public class SourceDescription {
 		this.root=alignment.GetTreeRoot();
 		this.useColumnNames = useColumnNames;
 		this.rdfSourcePrefix=sourcePrefix;
+		this.rdfSourceNamespace=sourceNamespace;
 		this.generateInverse = generateInverse;
 		model = workspace.getOntologyManager().getOntModel();
 		this.worksheet=worksheet;
 		
 		//add source prefix
+		if(rdfSourceNamespace==null)
+			rdfSourceNamespace = "http://localhost:8080/";
 		if(rdfSourcePrefix==null)
-			rdfSourcePrefix = "http://localhost:8080/";
+			rdfSourcePrefix = "s";
 		//add a delimiter if it doesn't exist, otherwise the URIs will not be well formed
-		if(!rdfSourcePrefix.endsWith("/") && !rdfSourcePrefix.endsWith("#"))
-			rdfSourcePrefix += "/";
-		seenPrefixNamespaceCombination.put("s:"+rdfSourcePrefix,"s");
-		assignedPrefixes.add("s");
-		allNamespaces.add("s:'"+rdfSourcePrefix+"'");
+		if(!rdfSourceNamespace.endsWith("/") && !rdfSourceNamespace.endsWith("#"))
+			rdfSourceNamespace += "/";
+		seenPrefixNamespaceCombination.put(rdfSourcePrefix+ ":"+rdfSourceNamespace,rdfSourcePrefix);
+		assignedPrefixes.add(rdfSourcePrefix);
+		allNamespaces.add(RDFDomainModel.SOURCE_PREFIX + rdfSourcePrefix+ ":'"+rdfSourceNamespace+"'");
 	}
 	
 	/**

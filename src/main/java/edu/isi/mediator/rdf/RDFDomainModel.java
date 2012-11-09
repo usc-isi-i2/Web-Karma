@@ -33,7 +33,7 @@ import edu.isi.mediator.domain.DomainModel;
  */
 public class RDFDomainModel extends DomainModel{
 
-	public static String SOURCE_PREFIX="s";
+	public static String SOURCE_PREFIX="sourcePrefix_";
 	
 	/**
 	 * Contains mapping of prefix name to source namespace.

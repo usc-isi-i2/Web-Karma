@@ -56,6 +56,7 @@ public class PublishRDFCommand extends Command {
 	private final String vWorksheetId;
 //	private String publicRDFAddress;
 	private String rdfSourcePrefix;
+	private String rdfSourceNamespace;
 	private String addInverseProperties;
 	private boolean saveToStore;
 	private String hostName;
@@ -72,16 +73,17 @@ public class PublishRDFCommand extends Command {
 			.getLogger(PublishRDFCommand.class);
 
 	public enum PreferencesKeys {
-		rdfPrefix, addInverseProperties, saveToStore, dbName, hostName, userName, modelName
+		rdfPrefix, rdfNamespace, addInverseProperties, saveToStore, dbName, hostName, userName, modelName
 	}
 
 	protected PublishRDFCommand(String id, String vWorksheetId,
-			String publicRDFAddress, String rdfSourcePrefix, String addInverseProperties,
+			String publicRDFAddress, String rdfSourcePrefix, String rdfSourceNamespace, String addInverseProperties,
 			String saveToStore,String hostName,String dbName,String userName,String password, String modelName) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
 //		this.publicRDFAddress = publicRDFAddress;
 		this.rdfSourcePrefix = rdfSourcePrefix;
+		this.rdfSourceNamespace = rdfSourceNamespace;
 		this.addInverseProperties = addInverseProperties;
 		this.saveToStore=Boolean.valueOf(saveToStore);
 		this.hostName=hostName;
@@ -148,7 +150,7 @@ public class PublishRDFCommand extends Command {
 				// "outside" of Karma)
 				// use false for internal use
 				SourceDescription desc = new SourceDescription(vWorkspace.getWorkspace(), alignment, worksheet,
-						rdfSourcePrefix, Boolean.valueOf(addInverseProperties),false);
+						rdfSourcePrefix, rdfSourceNamespace,  Boolean.valueOf(addInverseProperties),false);
 				String descString = desc.generateSourceDescription();
 				logger.info("SD=" + descString);
 				WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(
@@ -206,6 +208,7 @@ public class PublishRDFCommand extends Command {
 			JSONObject prefObject = new JSONObject();
 			prefObject.put(PreferencesKeys.addInverseProperties.name(), addInverseProperties);
 			prefObject.put(PreferencesKeys.rdfPrefix.name(), rdfSourcePrefix);
+			prefObject.put(PreferencesKeys.rdfNamespace.name(), rdfSourceNamespace);
 			prefObject.put(PreferencesKeys.saveToStore.name(), saveToStore);
 			prefObject.put(PreferencesKeys.dbName.name(), dbName);
 			prefObject.put(PreferencesKeys.hostName.name(), hostName);

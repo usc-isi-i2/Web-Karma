@@ -6,10 +6,8 @@ import java.io.FileWriter;
 import java.text.DecimalFormat;
 import java.util.Map;
 
-import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.tdb.TDBFactory;
-import com.hp.hpl.jena.util.FileManager;
 
 import edu.isi.karma.er.helper.Constants;
 import edu.isi.karma.er.ratio.IRatio;
@@ -23,11 +21,11 @@ public class TestRatioMain {
 	public static void main(String[] args) {
 		
 		System.out.println("start loading.");
-		//Model model = FileManager.get().loadModel(Constants.PATH_N3_FILE + "dbpedia_fullname_birth_death_city_state_country.n3", "Turtle");
-		Model model = TDBFactory.createDataset(Constants.PATH_REPOSITORY + "all/").getDefaultModel();
+		//Model model = FileManager.get().loadModel(Constants.PATH_N3_FILE + "dbpedia_fullname_birth_death_dbpprop.n3", "Turtle");
+		Model model = TDBFactory.createDataset(Constants.PATH_REPOSITORY + "dbpedia/").getDefaultModel();
 		System.out.println("finish loading.");
 		
-		String attr = "associatedYear";
+		String attr = "fullName";
 		String predicate = "http://americanart.si.edu/saam/" + attr;
 		
 		IRatio ratio = new RatioImpl();
@@ -50,11 +48,14 @@ public class TestRatioMain {
             bw.write("\"__total__\"::" + total + "\n");
             
 			for (String str : map.keySet()) {
-				System.out.print("[ " + str + " : " + df.format(map.get(str) * 1.0 / total * 1.0) + ":" + map.get(str) + " ] \t");
-				bw.write("\"" + str + "\":" + df.format(map.get(str) * 1.0 / total) + ":" + map.get(str) + "\n");
-		        bw.newLine();
-				if (++count % 10 == 0) {
-					System.out.println("");
+				int num = map.get(str);
+				if (num > 1) {
+					System.out.print("[ " + str + " : " + df.format(map.get(str) * 1.0 / total * 1.0) + ":" + map.get(str) + " ] \t");
+					bw.write(str + ":" + df.format(map.get(str) * 1.0 / total) + ":" + map.get(str) + "\n");
+			        bw.newLine();
+					if (++count % 10 == 0) {
+						System.out.println("");
+					}
 				}
 			}
 			
