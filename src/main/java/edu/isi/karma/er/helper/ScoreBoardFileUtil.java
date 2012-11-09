@@ -345,7 +345,7 @@ public class ScoreBoardFileUtil {
 						} catch (NumberFormatException nfe) {
 							found = -1;
 						}
-						System.out.println(s.getSubject());
+						//System.out.println(s.getSubject());
 						if (arr.length >= 11) {
 							rankList = parseRankList(arr[7], arr[8], arr[9], arr[10]);
 						} else if (arr.length == 10) {
@@ -423,7 +423,7 @@ public class ScoreBoardFileUtil {
 						} catch (NumberFormatException nfe) {
 							found = -1;
 						}
-						System.out.println(s.getSubject());
+						//System.out.println(s.getSubject());
 						if (arr.length >= 8) {
 							rankList = parseRankList(arr[4], arr[5], arr[6], arr[7]);
 						} else if (arr.length == 7) {
@@ -466,7 +466,7 @@ public class ScoreBoardFileUtil {
 	}
 
 	private List<MultiScore> parseRankList(String... strs) {
-		String[] preds = {"http://americanart.si.edu/saam/birthYear", "http://americanart.si.edu/saam/deathYear", "http://americanart.si.edu/saam/fullName"};
+		String[] preds = {"http://americanart.si.edu/saam/deathYear", "http://americanart.si.edu/saam/birthYear", "http://americanart.si.edu/saam/fullName"};
 		Vector<MultiScore> list = new Vector<MultiScore> ();
 		List<Score> scoreList = null;
 		

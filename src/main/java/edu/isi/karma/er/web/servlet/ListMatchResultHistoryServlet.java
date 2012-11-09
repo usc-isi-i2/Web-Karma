@@ -23,7 +23,9 @@ public class ListMatchResultHistoryServlet extends HttpServlet {
 		String srcUri = request.getParameter("srcUri");
 		String dstUri = request.getParameter("dstUri");
 		
-		ResultService ser = new ResultService();
+		String repositoryName = (String)request.getSession().getAttribute("repositoryName");
+		
+		ResultService ser = new ResultService(repositoryName);
 		List<MatchResultOntology> list = ser.listHistory(srcUri, dstUri);
 		
 		StringBuffer sb = new StringBuffer();

@@ -36,6 +36,17 @@ public class ShowMatchResultServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String repositoryName = request.getParameter("repositoryName");
+		if (repositoryName == null || repositoryName.length() <= 0) {
+			repositoryName = (String)request.getSession().getAttribute("repositoryName");
+			if (repositoryName == null || repositoryName.length() <= 0) {
+				//throw new IllegalArgumentException("please select a repository to continue.");
+				repositoryName = "SAAM_links_partA";
+			}
+		}
+		
+		request.getSession().setAttribute("repositoryName", repositoryName);
+		
 		String sortBy = request.getParameter("sort_by");
 		String page = request.getParameter("page");
 		int curPage = 1;
@@ -47,13 +58,18 @@ public class ShowMatchResultServlet extends HttpServlet {
 		Paginator pager = new Paginator();
 		pager.setCurPage(curPage);
 		
-		ResultService serv = new ResultService();
+		
+		ResultService serv = new ResultService(repositoryName);
+		
 		List<MatchResultOntology> resultList = serv.getResultList(pager, sortBy);
-		//String filename = serv.getFilename();
-		// String datetime = filename.substring(6, filename.lastIndexOf('.'));
+		List<String> predList = serv.getPredicateList(resultList);
+		List<String> repoList = serv.getRepositoryList();
+		
 		request.setAttribute("pager", pager);
 		request.setAttribute("resultList", resultList);
 		request.setAttribute("sortBy", sortBy);
+		request.setAttribute("predList", predList);
+		request.setAttribute("repoList", repoList);
 		
 		request.getRequestDispatcher("show_result.jsp").forward(request, response);
 	}

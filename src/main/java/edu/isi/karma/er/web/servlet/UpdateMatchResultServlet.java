@@ -34,7 +34,9 @@ public class UpdateMatchResultServlet extends HttpServlet {
 		String comment = request.getParameter("comment");
 		String matched = request.getParameter("matched");
 		
-		ResultService serv = new ResultService();
+		String repositoryName = (String)request.getSession().getAttribute("repositoryName");
+		
+		ResultService serv = new ResultService(repositoryName);
 		MatchResultOntology onto = serv.updateRecord(srcUri, dstUri, matched, comment);
 		System.out.println("get" + srcUri + dstUri + comment + matched);
 		response.setContentType("application/json");
