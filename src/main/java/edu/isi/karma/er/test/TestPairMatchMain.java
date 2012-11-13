@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.tdb.TDBFactory;
+import com.hp.hpl.jena.util.FileManager;
 
 import edu.isi.karma.er.helper.Constants;
 import edu.isi.karma.er.helper.ScoreBoardFileUtil;
@@ -34,10 +34,10 @@ public class TestPairMatchMain {
 	public static void main(String[] args) {
 		long startTime = System.currentTimeMillis();
 		log.info("Program execution start from: " + sdf.format(new java.util.Date()));
-		Model model = TDBFactory.createDataset(Constants.PATH_REPOSITORY + "saam_a/").getDefaultModel();
-		Model model2 = TDBFactory.createDataset(Constants.PATH_REPOSITORY + "dbpedia_a/").getDefaultModel();
-		//Model model2 = FileManager.get().loadModel(Constants.PATH_N3_FILE + "dbpedia_dbpprop_start_with_A.n3");
-		//Model model = FileManager.get().loadModel(Constants.PATH_N3_FILE + "saam_sample.n3");
+		//Model model = TDBFactory.createDataset(Constants.PATH_REPOSITORY + "saam_a/").getDefaultModel();
+		//Model model2 = TDBFactory.createDataset(Constants.PATH_REPOSITORY + "dbpedia_a/").getDefaultModel();
+		Model model2 = FileManager.get().loadModel(Constants.PATH_N3_FILE + "dbpedia_name_birth_death_A.n3");
+		Model model = FileManager.get().loadModel(Constants.PATH_N3_FILE + "saam_name_birth_death_A.n3");
 		//Model model = FileManager.get().loadModel(Constants.PATH_N3_FILE + "getty_sample.n3");
 		
 		log.info("finish loading."); 
@@ -45,15 +45,15 @@ public class TestPairMatchMain {
 		LinkageFinder finder = new LinkageFinder();
 		List<ResultRecord> resultList = finder.findLinkage(model, model2);						// match and return linkage result in list.
 		
-		outputResultWithoutTemplate(resultList);
+		outputResultWithTemplate(resultList);
 		
-		outputResult2Ontology(resultList);
+		//outputResult2Ontology(resultList);
 		
 		log.info("total time elapsed:" + (System.currentTimeMillis() - startTime) / 1000 + "s");
 		log.info("Program finished at:" + sdf.format(new java.util.Date()));
 	}
 
-	private static void outputResult2Ontology(List<ResultRecord> resultList) {
+	public static void outputResult2Ontology(List<ResultRecord> resultList) {
 		MatchOntologyUtil util = new MatchOntologyUtil();
 		util.createMatchOntology(resultList);
 		
@@ -61,7 +61,7 @@ public class TestPairMatchMain {
 		
 	}
 
-	private static void outputResultWithoutTemplate(List<ResultRecord> resultList) {
+	public static void outputResultWithoutTemplate(List<ResultRecord> resultList) {
 		int count = 0;
 		DecimalFormat df = new DecimalFormat("0.00000000");
 		

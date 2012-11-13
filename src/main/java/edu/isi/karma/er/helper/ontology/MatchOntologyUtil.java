@@ -1,5 +1,9 @@
 package edu.isi.karma.er.helper.ontology;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -39,8 +43,22 @@ public class MatchOntologyUtil {
 	private String SAAM_VERSION = "http://fusion.adx.isi.edu:8088/openrdf-workbench/repositories/SAAM3/";
 	private String DBPEDIA_VERSION = "http://dbpedia.org/Downloads37";
 	
+	private String repositoryName = "match_result";
+	
+	public void setThreshold(double threshold) {
+		this.THRESHOLD = threshold;
+	}
+	
+	public String getRepositoryName() {
+		return repositoryName;
+	}
+
+	public void setRepositoryName(String repositoryName) {
+		this.repositoryName = repositoryName;
+	}
+
 	public Model getModel() {
-		return (TDBFactory.createDataset(Constants.PATH_REPOSITORY + "match_result/").getDefaultModel());
+		return (TDBFactory.createDataset(Constants.PATH_REPOSITORY + repositoryName + "/").getDefaultModel());
 	}
 
 	/**
@@ -311,7 +329,7 @@ public class MatchOntologyUtil {
 	 * @return the latest resource of MatchResult, returns null if no result.
 	 */
 	public Resource getLatestOneMatchResult(String srcUri, String dstUri) {
-		Model model = TDBFactory.createDataset(Constants.PATH_REPOSITORY + "match_result/").getDefaultModel();
+		Model model = this.getModel();
 		Resource res = null;
 		String sparql = "PREFIX match:<" + NameSpace.PREFIX_MATCH + ">\n" +
 				"PREFIX prov:<" + NameSpace.PREFIX_PROV + ">\n" +
@@ -486,7 +504,7 @@ public class MatchOntologyUtil {
 				"PREFIX rdf:<" + NameSpace.PREFIX_RDF + ">" + "\n" +
 				"PREFIX rdfs:<" + NameSpace.PREFIX_RDFS + ">" + "\n" +
 				"PREFIX skos:<" + NameSpace.PREFIX_SKOS + ">" + "\n" + 
-				" select ?sub ?matchType ?comment ?srcUri ?dstUri ?seeAlsoSI ?seeAlsoWiki ?score ?updated ?memVal1 " + "\n" +
+				" select ?sub ?matchType ?comment ?srcUri ?dstUri ?seeAlsoSI ?seeAlsoWiki ?score ?updated ?creator " + "\n" +
 				" where {" + "\n" + 
 					"?sub prov:generatedAtTime ?updated." + "\n" +
 					"?sub match:seeAlsoInSmithsonian ?seeAlsoSI." + "\n" +
@@ -495,10 +513,12 @@ public class MatchOntologyUtil {
 					"?sub match:hasMatchType ?matchType." + "\n" + 
 					"?sub skos:note ?comment." + "\n" +
 					"?sub prov:wasGeneratedBy ?acti." + "\n" +
+					"?acti prov:wasAssociatedWith ?ag." + "\n" +
+					"?ag rdfs:label ?creator." + "\n" +
 					"?acti match:hasMatchSource ?src1." + "\n" +
-					"?src1 prov:hadMember ?mem1." + "\n" +
-					"?mem1 rdf:predicate <" + NameSpace.PREFIX_SAAM + "fullName" + ">." + "\n" +
-					"?mem1 prov:value ?memVal1." + "\n" + 
+					//"?src1 prov:hadMember ?mem1." + "\n" +
+					//"?mem1 rdf:predicate <" + NameSpace.PREFIX_SAAM + "fullName" + ">." + "\n" +
+					//"?mem1 prov:value ?memVal1." + "\n" + 
 					"?acti match:hasMatchTarget ?dst1." + "\n" +
 					"?src1 prov:wasQuotedFrom ?srcUri." + "\n" +
 					"?dst1 prov:wasQuotedFrom ?dstUri." + "\n" +
@@ -516,23 +536,23 @@ public class MatchOntologyUtil {
 				"} "; 
 		if ("sim_desc".equals(sortBy)) {
 			sparql += "order by desc(?score) ";
-		} else if ("name_asc".equals(sortBy)) {
-			sparql += "order by asc(?memVal1) ";
-		} else if ("name_desc".equals(sortBy)) {
-			sparql += "order by desc(?memVal1) ";
+		//} else if ("name_asc".equals(sortBy)) {
+		//	sparql += "order by asc(?memVal1) ";
+		//} else if ("name_desc".equals(sortBy)) {
+		//	sparql += "order by desc(?memVal1) ";
 		} else if ("time_asc".equals(sortBy)) {
-			sparql += "order by desc(?updated) ";
+			sparql += "order by asc(?updated) ";
 		} else if ("time_desc".equals(sortBy)) {
 			sparql += "order by desc(?updated) ";
 		} else {
-			sparql += "order by asc(?memVal1) ";
+			sparql += "order by desc(?score) ";
 		}
 		
 		QueryExecution exec = QueryExecutionFactory.create(sparql, model);
 		QuerySolution solu = null;
 		ResultSet rs = null;
 		Resource res = null;
-		String comment, srcUri, dstUri, seeSIUri, seeWikiUri, matchType, updated;
+		String comment, srcUri, dstUri, seeSIUri, seeWikiUri, matchType, updated, creator;
 		double score = -1;
 		
 		RDFNode node = null;
@@ -556,6 +576,7 @@ public class MatchOntologyUtil {
 				score = node.asLiteral().getDouble();
 				matchType = solu.getResource("matchType").getURI();
 				updated = fixXSDDate(solu.get("updated").asLiteral().getString());
+				creator = solu.getLiteral("creator").asLiteral().getString();
 				onto.setSrcUri(srcUri);
 				onto.setDstUri(dstUri);
 				onto.setSeeAlsoInSI(seeSIUri);
@@ -572,7 +593,7 @@ public class MatchOntologyUtil {
 				onto.setMemberList(getScoreListFromResource(res));
 				onto.setFinalScore(score);
 				onto.setResId(res.getURI());
-		
+				onto.setCreator(creator);
 				list.add(onto);
 			}
 		} catch (Exception e ) {
@@ -700,7 +721,7 @@ public class MatchOntologyUtil {
 					"?act match:hasMatchTarget ?ent2." + "\n" +
 					"?ent1 prov:wasQuotedFrom <" + srcUri + ">." + "\n" +
 					"?ent2 prov:wasQuotedFrom <" + dstUri + ">." + "\n" +
-					"} order by desc(?time) ";
+					"} order by desc(?updated) ";
 		QueryExecution exec = QueryExecutionFactory.create(sparql, model);
 		QuerySolution solu = null;
 		ResultSet rs = null;
@@ -931,5 +952,31 @@ public class MatchOntologyUtil {
 		model.removeAll();
 		model.commit();
 		TDB.sync(model);
+	}
+	
+	public List<String> listRepositories() {
+		List<String> list = new Vector<String>();
+		String repoListFile = Constants.PATH_REPOSITORY + "repository_list.txt";
+		
+		File file = new File(repoListFile);
+		if (file.exists()) {
+			RandomAccessFile raf = null;
+			String line = null;
+			
+			try {
+				raf = new RandomAccessFile(file, "r");
+				while ((line = raf.readLine()) != null) {
+					if (line.length() > 0) {
+						list.add(line);
+					}
+				}
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return list;
 	}
 }

@@ -1,24 +1,32 @@
 package edu.isi.karma.er.web.service;
 
 import java.util.List;
+import java.util.Vector;
 
 import edu.isi.karma.er.helper.ScoreBoardFileUtil;
 import edu.isi.karma.er.helper.entity.MultiScore;
 import edu.isi.karma.er.helper.entity.Ontology;
 import edu.isi.karma.er.helper.entity.Paginator;
+import edu.isi.karma.er.helper.entity.Score;
 import edu.isi.karma.er.helper.entity.ScoreBoard;
 import edu.isi.karma.er.helper.ontology.MatchOntologyUtil;
 import edu.isi.karma.er.helper.ontology.MatchResultOntology;
    
 
 public class ResultService {
-	private String filename = "";
 	private MatchOntologyUtil util = null;
 	
-	public ResultService() {
+	public ResultService(String repositoryName) {
 		util = new MatchOntologyUtil();
+		util.setRepositoryName(repositoryName);
 	}
  
+	public List<String> getRepositoryList() {
+		List<String> repoList = util.listRepositories();
+		
+		return repoList;
+	}
+	
 	public List<MatchResultOntology> getResultList(Paginator pager, String sortBy) {
 		
 		List<MatchResultOntology> resultList = util.listPagedLatestMatchResultObjects(pager, sortBy);
@@ -29,10 +37,6 @@ public class ResultService {
 		
 		List<MatchResultOntology> resultList = util.listLatestMatchResultObjects(sortBy);
 		return resultList;
-	}
-	
-	public String getFilename() {
-		return this.filename;
 	}
 
 	public MatchResultOntology updateRecord(String srcUri, String dstUri, String matched,
@@ -46,8 +50,7 @@ public class ResultService {
 	}
 	
 	public void clearOntology() {
-		MatchOntologyUtil ontoUtil = new MatchOntologyUtil();
-		ontoUtil.clear();
+		util.clear();
 	}
 	
 	public List<MatchResultOntology> listHistory(String srcUri, String dstUri) {
@@ -58,14 +61,13 @@ public class ResultService {
 	
 	public void initOntology() {
 		double THRESHOLD = 0.9;
-		ScoreBoardFileUtil util = new ScoreBoardFileUtil();
-		String filename = util.getLastestResult();
-		List<ScoreBoard> resultList = util.loadScoreResultFile(filename);
+		ScoreBoardFileUtil sbutil = new ScoreBoardFileUtil();
+		String filename = sbutil.getLastestResult();
+		List<ScoreBoard> resultList = sbutil.loadScoreResultFile(filename);
 		
 		String creator, comment;
 		double finalScore;
 		
-		MatchOntologyUtil ontoUtil = new MatchOntologyUtil();
 		MatchResultOntology onto = new MatchResultOntology();
 		
 		for (int j = 0; j < resultList.size() ; j++) {
@@ -97,7 +99,7 @@ public class ResultService {
 				onto.setMemberList(ms.getScoreList());
 				onto.setFinalScore(finalScore);
 				
-				ontoUtil.createMatchOntology(onto);
+				util.createMatchOntology(onto);
 			}
 		}
 		
@@ -111,6 +113,19 @@ public class ResultService {
 		onto.setCreator("Human");
 		onto.setMatched("U");
 		util.createMatchOntology(onto);
+	}
+
+	public List<String> getPredicateList(List<MatchResultOntology> resultList) {
+		List<String> predList = new Vector<String>();
+		if (resultList != null && resultList.size() > 0) {
+			List<Score> scList = resultList.get(0).getMemberList();
+			for (int i = 0; i < scList.size(); i++) {
+				Score s = scList.get(i);
+				String pred = s.getPredicate().substring(s.getPredicate().lastIndexOf('/') + 1);
+				predList.add(pred);
+			}
+		}
+		return predList;
 	}
 
 	

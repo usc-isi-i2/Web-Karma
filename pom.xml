@@ -209,6 +209,11 @@
 	        <scope>system</scope>
 	    	<systemPath>${project.basedir}/lib/simmetrics_jar_v1_6_2_d07_02_07.jar</systemPath>
 	    </dependency>
+        <dependency>
+        	<groupId>postgresql</groupId>
+        	<artifactId>postgresql</artifactId>
+        	<version>9.1-901.jdbc4</version>
+        </dependency>
   </dependencies>
   
   <build>
