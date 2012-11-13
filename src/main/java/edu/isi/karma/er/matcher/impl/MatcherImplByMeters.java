@@ -13,10 +13,8 @@ import edu.isi.karma.er.helper.entity.MultiScore;
 import edu.isi.karma.er.matcher.MatcherBuilding;
 
 public class MatcherImplByMeters implements MatcherBuilding {
-
 	public MultiScore matchBuilding(Connection connection, MultiScore result,
 			String p, String q, InputStruct v, InputStruct w) {
-
 		String watp = null;
 		String watq = null;
 		double x1 = 0.0;
@@ -28,7 +26,6 @@ public class MatcherImplByMeters implements MatcherBuilding {
 		PointToPointComparatorImpl point2point = new PointToPointComparatorImpl();
 		PolygonToPolygonComparatorImpl polygon2polygon = new PolygonToPolygonComparatorImpl();
 		PointToPolygonComparatorImpl point2polygon = new PointToPolygonComparatorImpl();
-
 		try {
 			stmt = connection.createStatement();
 
