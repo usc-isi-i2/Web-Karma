@@ -32,7 +32,7 @@ public class BuildingMatching {
 		String csvFileAddress = "/Users/yzhang/Downloads/BuildingMatchedResult.csv";
 		Connection connection = null;
 		/*
-		 * run this statement only once,unless you revised the n3 file;
+		 *** run this statement only once,unless you revised the n3 file;
 		 */
 		// setupDirectoryModel(directory1, fileAddress1);
 		// setupDirectoryModel(directory2, fileAddress2);
