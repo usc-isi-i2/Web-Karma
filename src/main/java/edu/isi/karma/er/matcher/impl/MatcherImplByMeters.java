@@ -23,6 +23,7 @@ public class MatcherImplByMeters implements MatcherBuilding {
 		double y2 = 0.0;
 		Statement stmt = null;
 		ResultSet rs = null;
+
 		PointToPointComparatorImpl point2point = new PointToPointComparatorImpl();
 		PolygonToPolygonComparatorImpl polygon2polygon = new PolygonToPolygonComparatorImpl();
 		PointToPolygonComparatorImpl point2polygon = new PointToPolygonComparatorImpl();
@@ -42,7 +43,6 @@ public class MatcherImplByMeters implements MatcherBuilding {
 				rs = stmt.executeQuery("SELECT ST_AsText(\'" + v.getPolygon()
 						+ "\')");
 				while (rs.next()) {
-
 					try {
 						watp = rs.getString(1);
 					} catch (SQLException e) {
@@ -91,6 +91,7 @@ public class MatcherImplByMeters implements MatcherBuilding {
 				polygon2polygon.getSimilarity(connection, result, watp, watq);
 			}
 		}
+
 		return result;
 
 	}
