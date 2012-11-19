@@ -7,7 +7,7 @@ public class ResultRecord {
 
 	Ontology res = null;		// the owner of this result record, which points to a resource in data model.
 	
-	int limit = 5;
+	int limit = 1;
 	
 	List<MultiScore> rankList = new LinkedList<MultiScore>();	// the related results list ranking by the similarity descendant.
 	
