@@ -51,10 +51,10 @@ function attachOntologyOptionsRadioButtonHandlers() {
 	    $(optionsDiv).data("selectedPrimaryRow", tr);
 	}));
 	
-	$("#classSearch").click(function(){
+	$("#classSearch").button().click(function(){
 		$("div#classTree").jstree("search", $("#classKeyword").val());
 	});
-	$("#propertySearch").click(function(){
+	$("#propertySearch").button().click(function(){
 		$("div#propertyTree").jstree("search", $("#propertyKeyword").val());
 	});
 	
