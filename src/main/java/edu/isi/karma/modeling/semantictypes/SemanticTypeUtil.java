@@ -338,6 +338,39 @@ public class SemanticTypeUtil {
 			if (labels.size() == 0) {
 				continue;
 			}
+			
+			/** Remove the labels that are not in the ontology **/
+			List<String> removeLabels = new ArrayList<String>();
+			for (int i=0; i<labels.size(); i++) {
+				String label = labels.get(i);
+				if (label.contains("|")) {
+					URI domainUri = ontMgr.getURIFromString(label.split("\\|")[0]);
+					URI typeUri = ontMgr.getURIFromString(label.split("\\|")[1]);
+					System.out.println("I come here!!! ***");
+					
+					// Remove from the list if URI not present in the URI
+					if (domainUri == null || typeUri == null) {
+						removeLabels.add(label);
+					}
+				} else {
+					URI typeUri = ontMgr.getURIFromString(label);
+					
+					// Remove from the list if URI not present in the URI
+					if (typeUri == null) {
+						removeLabels.add(label);
+					}
+				}
+			}
+			for (String removeLabel : removeLabels) {
+				int idx = labels.indexOf(removeLabel);
+				System.out.println("Removing " + removeLabel);
+				logger.info("Removing " + removeLabel);
+				labels.remove(removeLabel);
+				scores.remove(idx);
+			}
+			if (labels.size() == 0) {
+				continue;
+			}
 
 			CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
 			worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(), columnModel);

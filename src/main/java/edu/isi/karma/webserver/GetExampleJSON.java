@@ -97,10 +97,13 @@ public class GetExampleJSON extends HttpServlet {
 			File[] ontologies = ontDir.listFiles();
 			OntologyManager mgr = workspace.getOntologyManager();
 			for (File ontology: ontologies) {
-				try {
-					mgr.doImport(ontology);
-				} catch (Exception t) {
-					logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
+				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf")) {
+					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
+					try {
+						mgr.doImport(ontology);
+					} catch (Exception t) {
+						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
+					}
 				}
 			}
 		} else {

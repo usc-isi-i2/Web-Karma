@@ -116,6 +116,10 @@ public class RepFactory {
 	public Table getTable(String id) {
 		return tables.get(id);
 	}
+	
+	public Row getRow(String id) {
+		return rows.get(id);
+	}
 
 	HTable createHTable(String tableName) {
 		String id = getNewId("HT");
