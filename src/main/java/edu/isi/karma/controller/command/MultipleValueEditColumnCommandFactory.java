@@ -23,7 +23,6 @@ public class MultipleValueEditColumnCommandFactory extends CommandFactory implem
 		return null;
 	}
 
-	@Override
 	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace) throws JSONException, KarmaException {
 		/** Parse the input arguments and create proper data structues to be passed to the command **/
 		String hNodeID = CommandInputJSONUtil.getStringValue(JSONInputArguments.hNodeID.name(), inputJson);
