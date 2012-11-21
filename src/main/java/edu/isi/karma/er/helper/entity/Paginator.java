@@ -1,11 +1,20 @@
 package edu.isi.karma.er.helper.entity;
 
+import java.util.Map;
+
 public class Paginator {
 
 	private int curPage;
 	private int totalNumber;
 	private int totalPage;
 	private int pageSize = 50;
+	private Map<String, Integer> map;
+	public Map<String, Integer> getMap() {
+		return map;
+	}
+	public void setMap(Map<String, Integer> map) {
+		this.map = map;
+	}
 	public int getCurPage() {
 		return curPage;
 	}

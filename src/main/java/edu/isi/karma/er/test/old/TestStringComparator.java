@@ -34,6 +34,8 @@ public class TestStringComparator {
 		for (int i = 0; i < strs1.length; i++) {
 			System.out.println("[ " + comp.getSimilarity(strs1[i], strs2[i]) + " ]\t" + strs1[i] + "\t" + strs2[i]);
 		}
+
+		
 		System.out.println("time elapsed:" + (System.currentTimeMillis() - startTime) + "ms");
 	}
 

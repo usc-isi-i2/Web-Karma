@@ -2,19 +2,28 @@ package edu.isi.karma.er.test.old;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.tdb.TDB;
+import com.hp.hpl.jena.util.FileManager;
 
 import edu.isi.karma.er.helper.Constants;
 import edu.isi.karma.er.helper.ScoreBoardFileUtil;
 import edu.isi.karma.er.helper.entity.MultiScore;
+import edu.isi.karma.er.helper.entity.NYTimes;
+import edu.isi.karma.er.helper.entity.Paginator;
 import edu.isi.karma.er.helper.entity.Score;
 import edu.isi.karma.er.helper.entity.ScoreBoard;
 import edu.isi.karma.er.helper.ontology.MatchOntologyUtil;
 import edu.isi.karma.er.helper.ontology.MatchResultOntology;
+import edu.isi.karma.er.web.service.ResultService;
 
 public class CreateOntologyRepositoryUsingJena {
 
@@ -23,103 +32,130 @@ public class CreateOntologyRepositoryUsingJena {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-/*
-		List<MatchResultOntology> list = loadBuildingOntologyFromCSV();
-		MatchOntologyUtil util = new MatchOntologyUtil();
-		
-		util.setRepositoryName("building_match");
-		
-		for (MatchResultOntology onto : list) {
-			util.createMatchOntology(onto);
-		}
-		
-		util.outputLatestMatchResult();
-					
-		ResultService ser = new ResultService("match_result");
-		//ser.initOntology();
-		//ser.listHistory("", "");
-		//ser.clearOntology();
-	
-		MatchOntologyUtil util = new MatchOntologyUtil();
-		util.setRepositoryName("match_result");
-		
-		Paginator pager = new Paginator();
-		pager.setPageSize(3);
-		pager.setCurPage(1);
-		List<MatchResultOntology> list = ser.getResultList(pager, "");
-		List<String> predList = ser.getPredicateList(list);
-		
-		for (int i = 0; i < predList.size(); i++) {
-			System.out.print(predList.get(i));
-		}
-		System.out.println();
-		
-		List<Score> sList = list.get(0).getMemberList();
-		for (int i = 0; i < sList.size(); i++) {
-			System.out.print(sList.get(i).getPredicate());
-		}
-		System.out.println();
-		for (int i = 0; i < sList.size(); i++) {
-			System.out.print(sList.get(i).getSrcObj());
-		}
-		System.out.println();
-		
-		//util.outputLatestMatchResult();
-		//util.outputAllMatchResult();
 
-		MatchOntologyUtil util = new MatchOntologyUtil();
-		util.setRepositoryName("match_result");
-		Paginator pager = new Paginator();
-		pager.setPageSize(3);
-		pager.setCurPage(1);
-		List<MatchResultOntology> list = util.listPagedLatestMatchResultObjects(pager, "");
+		loadRepositoryFromCSV();
 		
-		for (MatchResultOntology onto : list) {
-			System.out.println(onto.getSrcUri());
-		}
-		
-		System.out.println(pager.getTotalPage() + "\t" + pager.getTotalNumber());
-		//loadRepositoryFromCSV();
-		//model.write(System.out, "N3");
-/*		
-		MatchOntologyUtil util = new MatchOntologyUtil();
-		//util.outputLatestMatchResult(model);
-		
-		util.outputLatestMatchResult();
-		
-		
-//		String srcUri = "http://americanart.si.edu/saam/Person_894";
-//		String dstUri = "http://dbpedia.org/resource/Alvan_Clark";
-//		ScoreBoard sb = util.getLatestOneMatchResultObject(srcUri, dstUri);
-//		sb.setComment("not sure");
-//		sb.setCreator("Human");
-//		sb.setMatched("U");
-//		util.createMatchOntology(sb);
-		
-		
-		List<MatchResultOntology> sbList = util.listLatestMatchResultObjects("");
-		for (MatchResultOntology sb1 : sbList) {
-			System.out.println(sb1.getSrcUri() + "\t" + sb1.getDstUri() + "\t" + sb1.getComment() + "\t" + sb1.getMatched() + "\t" + sb1.getUpdated());
-		}
-		System.out.println("list size:" + sbList.size());
-*/			
-		
-		listRevisionsForGivenSrcDst();
+		// listRevisionsForGivenSrcDst();
 		
 		//updateGroundTruthForSaam();
 		
 		// batchLoadingDataFromCSV();
+		
+		// getLatestMatchResults();
+		
+		//getVerifiedGroundTruth();
+		
+		// outputModelToN3();
+		// loadN3ToModel();
+		
+		//mapToNytimes();
 	}
 	
+	public static void getVerifiedGroundTruth() {
+		MatchOntologyUtil util = new MatchOntologyUtil();
+		util.setRepositoryName("match_result");
+		List<MatchResultOntology> list = util.listLatestMatchResultObjectsHumanFirst("src_asc");
+		for (MatchResultOntology onto: list) {
+			if ("M".equals(onto.getMatched())) {
+				System.out.println(onto.getMatched() + "," + onto.getSrcUri() + "," + onto.getDstUri() + "," + onto.getCreator() + "," + onto.getComment());
+			}
+		}
+		System.out.println("size:" + list.size());
+	}
+
+	public static void mapToNytimes() {
+		NYTimes nyt = new NYTimes();
+		Map<String, NYTimes> map = nyt.listAllToMap();
+		MatchOntologyUtil util = new MatchOntologyUtil();
+		List<MatchResultOntology> list = util.listLatestMatchResultObjects("", "");
+		for (MatchResultOntology onto : list) {
+			nyt = map.get(onto.getDstUri());
+			if (nyt != null) {
+				System.out.println(onto.getSrcUri() + "\t" + onto.getDstUri() + "\t" + nyt.getSubject());
+			}
+		}
+	}
+
+	public static void outputModelToN3() {
+		MatchOntologyUtil util = new MatchOntologyUtil();
+		util.setRepositoryName("match_result");
+		File file = new File(Constants.PATH_N3_FILE + "match_result_export.n3");
+		if (file.exists()) {
+			file.delete();
+		}
+		FileOutputStream fos = null;
+		try {
+			file.createNewFile();
+			fos = new FileOutputStream(file);
+			util.getModel().write(fos, "N3");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				fos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void loadN3ToModel() {
+		MatchOntologyUtil util = new MatchOntologyUtil();
+		util.setRepositoryName("match_result");
+		Model model = util.getModel();
+		model.begin();
+		model.removeAll();
+		
+		FileManager.get().readModel(model, Constants.PATH_N3_FILE + "match_result_export.n3");
+		model.commit();
+		TDB.sync(model);
+	}
+
+	public static void getLatestMatchResults() {
+		/*
+		MatchOntologyUtil util = new MatchOntologyUtil();
+		util.setRepositoryName("match_result"); */
+		Paginator pager = new Paginator();
+		pager.setCurPage(1);
+		pager.setPageSize(50);
+		
+		ResultService ser = new ResultService("match_result");
+		System.out.println(ResultService.getRepositoryList().get(0));
+		List<MatchResultOntology> list = ser.getResultList(pager, "");
+		for (MatchResultOntology onto : list) {
+			NYTimes nyt = onto.getNytimes();
+			System.out.println(onto.getCreator() + "\t" + onto.getComment() + "\t" + onto.getUpdated() + "\t" + (nyt == null ? "no nytimes" : nyt.getSubject()));
+		}
+	}
+
+	public static void getLatestOneMatchResult() {
+		String srcUri = "http://americanart.si.edu/saam/Person_4809";
+		String dstUri = "http://dbpedia.org/resource/Alessandro_Tiarini";
+		MatchOntologyUtil util = new MatchOntologyUtil();
+		util.setRepositoryName("match_result");
+		
+		MatchResultOntology onto = util.getLatestOneMatchResultObject(srcUri, dstUri, "Karma");
+		System.out.println(onto.getResId() + "\t" + onto.getComment() + "\t" + onto.getUpdated());
+		
+		onto = util.getLatestOneMatchResultObject(srcUri, dstUri, "Human");
+		System.out.println(onto.getResId() + "\t" + onto.getComment() + "\t" + onto.getUpdated());
+		
+	}
+
 	public static void listRevisionsForGivenSrcDst() {
 		MatchOntologyUtil util = new MatchOntologyUtil();
-		util.setRepositoryName("SAAM_links_partA");
-		String srcUri = "http://americanart.si.edu/saam/Person_4276";
-		String dstUri = "http://dbpedia.org/resource/Angelo_Brovelli";
+		util.setRepositoryName("match_result");
+		String srcUri = "http://americanart.si.edu/saam/Person_1882";
+		String dstUri = "http://dbpedia.org/resource/Arshile_Gorky";
+		
+		
 		List<MatchResultOntology> list = util.listMatchResultObjectWithGiven(srcUri, dstUri);
 		for (MatchResultOntology onto : list) {
-			System.out.println(onto.getComment() + "\t" + onto.getUpdated());
+			NYTimes nyt = onto.getNytimes();
+			System.out.println(onto.getCreator() + "\t" + onto.getComment() + "\t" + onto.getUpdated() + "\t" + (nyt == null ? "no nytimes" : nyt.getSubject()));
+			
 		}
+		
 	}
 
 	
@@ -128,12 +164,16 @@ public class CreateOntologyRepositoryUsingJena {
 		String filename = util.getLastestResult();
 		List<ScoreBoard> resultList = util.loadScoreResultFile(filename);
 		
+		NYTimes nyt = new NYTimes();
+		Map<String, NYTimes> map = nyt.listAllToMap();
+		
 		String srcURI, dstURI, creator, comment ;
 		double finalScore;
 		MatchResultOntology onto = null;
 		MatchOntologyUtil ontoUtil = new MatchOntologyUtil();
+		ontoUtil.setRepositoryName("match_result");
 		
-		for (int j = 0; j < resultList.size() && j < 10; j++) {
+		for (int j = 0; j < resultList.size() ; j++) {
 			ScoreBoard sb = resultList.get(j);
 			srcURI = sb.getSaamUri(); //"http://smithsonianart.si.edu/saam/Person_2482";
 			dstURI = sb.getKarmaUri();
@@ -158,10 +198,15 @@ public class CreateOntologyRepositoryUsingJena {
 				onto.setCreator(creator);
 				onto.setComment(comment);
 				onto.setMemberList(slist);
+				if (map != null) {
+					onto.setNytimes(map.get(dstURI));
+				}
 				
 				ontoUtil.createMatchOntology(onto);
 			}
 		}
+		
+		System.out.println("finished.");
 
 	}
 
@@ -174,6 +219,8 @@ public class CreateOntologyRepositoryUsingJena {
 		
 		MatchOntologyUtil util = new MatchOntologyUtil();
 		
+		NYTimes nyt = new NYTimes();
+		Map<String, NYTimes> map = nyt.listAllToMap();
 		
 		String[] srcAttr1 = {"http://americanart.si.edu/saam/deathYear", "http://americanart.si.edu/saam/birthYear", "http://americanart.si.edu/saam/fullName"};
 		String[] srcVal1 = {"1887", "1804", "Alvan Clark"};
@@ -200,9 +247,11 @@ public class CreateOntologyRepositoryUsingJena {
 			list.add(s);
 		}
 		onto.setMemberList(list);
-		
+		if (map != null) {
+			onto.setNytimes(map.get(dstURI));
+		}
 		util.createMatchOntology(onto);
-
+		
 		util.outputAllMatchResult();
 		
 		util.outputLatestMatchResult();
@@ -313,7 +362,6 @@ public class CreateOntologyRepositoryUsingJena {
 		util.setRepositoryName("match_result");
 		int count = 0;
 		
-		
 		for (ScoreBoard sb : list) {
 			if (sb.getSubject().length() > 0 && sb.getDbpediaUri().length() > 0) {
 				MatchResultOntology onto = util.getLatestOneMatchResultObject(sb.getSubject(), sb.getDbpediaUri());
@@ -322,6 +370,7 @@ public class CreateOntologyRepositoryUsingJena {
 					onto.setCreator("Human");
 					onto.setMatched("M");
 					util.createMatchOntology(onto);
+					
 					count ++;
 				}
 			}
@@ -336,6 +385,9 @@ public class CreateOntologyRepositoryUsingJena {
 		String srcURI, dstURI, creator, comment, matched ;
 		double finalScore;
 		MatchResultOntology onto = null;
+		
+		NYTimes nyt = new NYTimes();
+		Map<String, NYTimes> map = nyt.listAllToMap();
 		
 		for (char ch : letters) {
 			long startTime = System.currentTimeMillis();
@@ -374,7 +426,9 @@ public class CreateOntologyRepositoryUsingJena {
 					onto.setCreator(creator);
 					onto.setComment(comment);
 					onto.setMemberList(slist);
-					
+					if (map != null) {
+						onto.setNytimes(map.get(dstURI));
+					}
 					util.createMatchOntology(onto);
 				}
 			}

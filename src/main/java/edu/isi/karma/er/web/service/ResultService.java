@@ -1,10 +1,12 @@
 package edu.isi.karma.er.web.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import edu.isi.karma.er.helper.ScoreBoardFileUtil;
 import edu.isi.karma.er.helper.entity.MultiScore;
+import edu.isi.karma.er.helper.entity.NYTimes;
 import edu.isi.karma.er.helper.entity.Ontology;
 import edu.isi.karma.er.helper.entity.Paginator;
 import edu.isi.karma.er.helper.entity.Score;
@@ -21,8 +23,8 @@ public class ResultService {
 		util.setRepositoryName(repositoryName);
 	}
  
-	public List<String> getRepositoryList() {
-		List<String> repoList = util.listRepositories();
+	public static List<String> getRepositoryList() {
+		List<String> repoList = MatchOntologyUtil.listRepositories();
 		
 		return repoList;
 	}
@@ -30,12 +32,6 @@ public class ResultService {
 	public List<MatchResultOntology> getResultList(Paginator pager, String sortBy) {
 		
 		List<MatchResultOntology> resultList = util.listPagedLatestMatchResultObjects(pager, sortBy);
-		return resultList;
-	}
-
-	public List<MatchResultOntology> getResultList(String sortBy) {
-		
-		List<MatchResultOntology> resultList = util.listLatestMatchResultObjects(sortBy);
 		return resultList;
 	}
 
@@ -126,6 +122,33 @@ public class ResultService {
 			}
 		}
 		return predList;
+	}
+
+	public int createOrUpdateRespository(String resultFile) {
+		int count = 0;
+		
+		ScoreBoardFileUtil sbutil = new ScoreBoardFileUtil();
+		List<ScoreBoard> resultList = sbutil.loadScoreResultFile(resultFile);
+		
+		NYTimes nyt = new NYTimes();
+		Map<String, NYTimes> map = nyt.listAllToMap();
+		MatchResultOntology onto = null;
+		
+		for (int j = 0; j < resultList.size() ; j++) {
+			ScoreBoard sb = resultList.get(j);
+			onto = util.createMatchOntology(sb, map);
+			if (onto != null)
+				count ++;
+			
+		}
+
+		return count;
+		
+	}
+
+	public void addRepositoryToList(String repoName) {
+		util.addRepositoryName(repoName);
+		
 	}
 
 	

@@ -214,6 +214,18 @@
         	<artifactId>postgresql</artifactId>
         	<version>9.1-901.jdbc4</version>
         </dependency>
+        <dependency>
+	        <groupId>com.jspsmart.upload</groupId>
+	        <artifactId>jspsmartupload</artifactId>
+	        <version>1.1</version>
+	        <scope>system</scope>
+	    	<systemPath>${project.basedir}/lib/jsmartupload.jar</systemPath>
+	    </dependency>
+        <dependency>
+        	<groupId>javax.servlet.jsp</groupId>
+        	<artifactId>javax.servlet.jsp-api</artifactId>
+        	<version>2.2.1</version>
+        </dependency>
   </dependencies>
   
   <build>

@@ -16,7 +16,6 @@ import edu.isi.karma.er.aggregator.Aggregator;
 import edu.isi.karma.er.aggregator.impl.AverageAggregator;
 import edu.isi.karma.er.aggregator.impl.RatioMultiplyAggregator;
 import edu.isi.karma.er.aggregator.impl.RatioWeightAggregator;
-import edu.isi.karma.er.helper.ConfigUtil;
 import edu.isi.karma.er.helper.Constants;
 import edu.isi.karma.er.helper.OntologyUtil;
 import edu.isi.karma.er.helper.RatioFileUtil;
@@ -28,12 +27,10 @@ public class LinkageFinder {
 
 	private JSONArray confArr = null;		// configuration data, will be loaded from /config/configuration.json during constructor.
 	private Logger log = Logger.getLogger(LinkageFinder.class);
+	private double threshold;
 	
-	
-	public LinkageFinder() {
-		ConfigUtil util = new ConfigUtil();
-		util.loadConstants();
-		confArr = util.loadConfig();
+	public LinkageFinder(JSONArray confArr) {
+		this.confArr = confArr;
 		
 	}
 	
@@ -85,7 +82,7 @@ public class LinkageFinder {
 		} else if ("possibility".equalsIgnoreCase(aggr.optString("aggregator"))) {
 			//aver = new RatioPossibilityAggregator(new calPosibility());
 		} else if ("ratio_multiply".equalsIgnoreCase(aggr.optString("aggregator"))) {
-			aver = new RatioMultiplyAggregator(confArr2, dependArr);
+			aver = new RatioMultiplyAggregator(confArr2, dependArr, threshold);
 		} else {
 			System.err.println("aggregator error");
 		}
@@ -94,6 +91,7 @@ public class LinkageFinder {
 		
 		int i = 0;
 		List<ResultRecord> resultList = new ArrayList<ResultRecord>();
+		
 		
 		// long lines = list1.size() * list2.size();			// total times of cross comparing
 		List<List<Ontology>> dstListArr = new ArrayList<List<Ontology>>(THREAD_NUM);
@@ -123,7 +121,7 @@ public class LinkageFinder {
 		}
 		/*
 		long startTime = System.currentTimeMillis();
-		for (SaamPerson res1 : list1) {
+		for (Ontology res1 : list1) {
 			if (++i % 100 == 0) {
 				log.info(" processed " + i + " rows in " + (System.currentTimeMillis() - startTime) + "ms.");
 				startTime = System.currentTimeMillis();
@@ -131,7 +129,8 @@ public class LinkageFinder {
 			}
 			ResultRecord rec = new ResultRecord();
 			rec.setRes(res1);
-			for (SaamPerson res2 : list2) {
+			int j = 0;
+			for (Ontology res2 : list2) {
 				//if (++i % 1000000 == 0) {
 				//	log.info(" processed " + i + " rows in " + (System.currentTimeMillis() - startTime) + "ms.");
 				//	startTime = System.currentTimeMillis();
@@ -195,6 +194,14 @@ public class LinkageFinder {
 			e.printStackTrace();
 		}
 		return ratioMap;
+	}
+
+	public double getThreshold() {
+		return threshold;
+	}
+
+	public void setThreshold(double threshold) {
+		this.threshold = threshold;
 	}
 	
 	

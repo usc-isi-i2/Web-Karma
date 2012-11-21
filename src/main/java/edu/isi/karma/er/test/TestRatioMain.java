@@ -41,7 +41,7 @@ public class TestRatioMain {
 			} 
 			file.createNewFile();
             BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
-            DecimalFormat df = new DecimalFormat("0.000000");
+            DecimalFormat df = new DecimalFormat("0.0000000000");
             
             int total = map.get("__total__");
             map.remove("__total__");

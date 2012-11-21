@@ -2,6 +2,7 @@ package edu.isi.karma.er.helper.ontology;
 
 import java.util.List;
 
+import edu.isi.karma.er.helper.entity.NYTimes;
 import edu.isi.karma.er.helper.entity.Score;
 
 public class MatchResultOntology {
@@ -34,6 +35,8 @@ public class MatchResultOntology {
 	private String dstVersion;	// uri links to target data in a specific version
 	
 	private MatchResultOntology originalOntology;	// the original ontology of this ontology, which means this ontology is originated from
+	
+	private NYTimes nytimes;
 
 	public String getSrcUri() {
 		return srcUri;
@@ -153,6 +156,14 @@ public class MatchResultOntology {
 
 	public void setOriginalOntology(MatchResultOntology originalOntology) {
 		this.originalOntology = originalOntology;
+	}
+
+	public NYTimes getNytimes() {
+		return nytimes;
+	}
+
+	public void setNytimes(NYTimes nytimes) {
+		this.nytimes = nytimes;
 	}
 	
 	
