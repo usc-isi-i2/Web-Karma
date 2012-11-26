@@ -75,9 +75,9 @@ public class GetRequestManager extends LinkedApiRequestManager {
 		}
 		
 		if (getFormat().equalsIgnoreCase(SerializationLang.XML))
-			getResponse().setContentType(MimeType.APPLICATION_RDF_XML); 
+			getResponse().setContentType(MimeType.APPLICATION_XML); 
 		else if (getFormat().equalsIgnoreCase(SerializationLang.XML_ABBREV))
-			getResponse().setContentType(MimeType.APPLICATION_RDF_XML); 
+			getResponse().setContentType(MimeType.APPLICATION_XML); 
 		else
 			getResponse().setContentType(MimeType.TEXT_PLAIN);
 
