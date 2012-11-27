@@ -53,10 +53,14 @@ public class OutputToCSV {
 						+ ","
 						+ ((this.matchedPair[i].getRankList().get(j)))
 								.getScoreList().get(0).getSimilarity()
+												+ ","
+						+ ((this.matchedPair[i].getRankList().get(j))
+								.getScoreList().get(0).getObjectMap()
+								.get("IsOverlaps"))
 						+ ","
 						+ ((this.matchedPair[i].getRankList().get(j))
 								.getScoreList().get(0).getObjectMap()
-								.get("IsOverlaps")));
+								.get("IsContained")));
 			}// for j
 		}// for i;
 		wcsv.Close();
