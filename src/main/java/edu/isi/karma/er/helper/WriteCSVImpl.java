@@ -14,7 +14,7 @@ public class WriteCSVImpl {
 			this.fw = new FileWriter(csvFileAddress);
 			this.bw = new BufferedWriter(fw);
 			String header = "Source,Source_NAME,Source_X,Source_Y,Source_POLYGON,Matched,Matched_Building_Name,"
-					+ "Matched_Building_X,Matched_Building_Y,Matched_Building_Polygon,Distance,Similarity,IsOverlaps";
+					+ "Matched_Building_X,Matched_Building_Y,Matched_Building_Polygon,Distance,Similarity,IsOverlaps,IsContained";
 		//	+ "Matched_Building_X,Matched_Building_Y,Matched_Building_Polygon,Distance,Similarity,IsOverlaps\r\n";
 			this.fw.write(header);
 		} catch (FileNotFoundException e) {
