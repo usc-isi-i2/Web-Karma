@@ -98,6 +98,15 @@
     <servlet-name>LinkedAPIServiceHandler</servlet-name>
     <url-pattern>/linkedservices/*</url-pattern>
   </servlet-mapping>
+    
+  <servlet>
+     <servlet-name>ExtractSpacialInformationServiceHandler</servlet-name>
+     <servlet-class>edu.isi.karma.webserver.ExtractSpacialInformationServiceHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+     <servlet-name>ExtractSpacialInformationServiceHandler</servlet-name>
+     <url-pattern>/ExtractSpacialInformationService/*</url-pattern>
+  </servlet-mapping>
 
 <!-- uncomment for password protection; change user/pwd in config/jettyrealm.properties -->
 <!-- 

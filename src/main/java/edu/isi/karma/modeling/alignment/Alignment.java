@@ -222,7 +222,7 @@ public class Alignment {
 		List<SemanticType> updatedSemanticTypes = new ArrayList<SemanticType>();
 		List<Vertex> deletedVertices = new ArrayList<Vertex>(); 
 		for (SemanticType s : semanticTypes)
-			System.out.println("%%%%%%%%%%%%%%%%%%%" + s.getType().getUriString());
+			logger.debug("%%%%%%%%%%%%%%%%%%%" + s.getType().getUriString());
 		
 		for (SemanticType newType : semanticTypes) {
 			boolean found = false;
@@ -231,7 +231,7 @@ public class Alignment {
 					found = true;
 			}
 			if (!found) {
-				System.out.println(">>>>>>>>new>>>>>>" + newType.getType().getUriString());
+				logger.debug(">>>>>>>>new>>>>>>" + newType.getType().getUriString());
 				this.graphBuilder.addSemanticType(newType);
 				updatedSemanticTypes.add(newType);
 			}
@@ -247,7 +247,7 @@ public class Alignment {
 			}
 			if (!found) {
 				Vertex deletedNode = this.graphBuilder.removeSemanticType(prevType);
-				System.out.println("<<<<<<<<<delete<<<<<<<<<" + prevType.getType().getUriString());
+				logger.debug("<<<<<<<<<delete<<<<<<<<<" + prevType.getType().getUriString());
 				if (deletedNode != null) deletedVertices.add(deletedNode);
 			}
 		}

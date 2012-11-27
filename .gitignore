@@ -34,10 +34,3 @@ tmp/*
 src/main/webapp/CRF_Models/WSP1_CRFModel.txt
 src/main/scripts/Lib/*.class
 bin/
-.classpath
-
-.project
-
-.gitignore
-
-src/main/java/edu/isi/karma/er/compare/impl/NumberComparatorImpl.java
