@@ -130,7 +130,7 @@ public class OntologyCache {
 		long start = System.currentTimeMillis();
 		fillDataPropertiesHashMaps();
 		fillObjectPropertiesHashMaps();
-		updateMapsWithSubpropertyDefinitions(false);
+		updateMapsWithSubpropertyDefinitions(true);
 		addPropertiesOfRDFVocabulary();
 		float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
 		logger.info("time to build ontology cache: " + elapsedTimeSec);
@@ -449,6 +449,10 @@ public class OntologyCache {
 		for (String p : propertyDirectDomains.keySet()) {
 			
 			List<String> superProperties = ontologyManager.getSuperProperties(p, true);
+			
+//			System.out.println("*****************" + p);
+//			for (String s : superProperties)
+//				System.out.println(">>>>>>>>>>>>>>>>>>" + s);
 			List<String> temp = null;
 			
 			List<String> allDomains = new ArrayList<String>();
