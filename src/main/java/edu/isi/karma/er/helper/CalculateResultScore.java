@@ -57,10 +57,9 @@ public class CalculateResultScore {// calculating
 					 */
 					String sourcePolygon = this.resource1[i].getPolygon();
 					String destinationPolygon = this.resource2[j].getPolygon();
-					String isOverlaps = " ";
-					String isContained=" ";
+					String isO = " ";
 					if (sourcePolygon != "null" && destinationPolygon != "null") {
-						try {//judge the overlaps relationship;
+						try {
 							rs = stmt.executeQuery("select ST_Overlaps "
 									+ "(ST_GeomFromText(ST_AsText(\'"
 									+ sourcePolygon
@@ -70,9 +69,9 @@ public class CalculateResultScore {// calculating
 								try {
 									boolean overlaps = rs.getBoolean(1);
 									if (overlaps == true) {
-										isOverlaps = "true";
+										isO = "true";
 									} else if (overlaps == false) {
-										isOverlaps = "false";
+										isO = "false";
 									}
 								} catch (SQLException e) {
 									e.printStackTrace();
@@ -83,61 +82,6 @@ public class CalculateResultScore {// calculating
 						} catch (SQLException ee) {
 							ee.getStackTrace();
 						}
-						
-						
-						try {//judge the contain relationship;
-							rs = stmt.executeQuery("select ST_Contains "
-									+ "(ST_GeomFromText(ST_AsText(\'"
-									+ sourcePolygon
-									+ "\')),ST_GeomFromText(ST_AsText(\'"
-									+ destinationPolygon + "\'))) ");
-							while (rs.next()) {
-								try {
-									boolean contain = rs.getBoolean(1);
-									if (contain == true) {
-										isContained = "true";
-									} else if (contain == false) {
-										isContained = "false";
-									}
-								} catch (SQLException e) {
-									e.printStackTrace();
-								}
-
-							}
-
-						} catch (SQLException ee) {
-							ee.getStackTrace();
-						}
-						
-						
-						if(isContained.equalsIgnoreCase("false")){
-							
-							try {//judge the contain relationship;
-								rs = stmt.executeQuery("select ST_Contains "
-										+ "(ST_GeomFromText(ST_AsText(\'"
-										+ destinationPolygon
-										+ "\')),ST_GeomFromText(ST_AsText(\'"
-										+  sourcePolygon+ "\'))) ");
-								while (rs.next()) {
-									try {
-										boolean contain = rs.getBoolean(1);
-										if (contain == true) {
-											isContained = "true";
-										} else if (contain == false) {
-											isContained = "false";
-										}
-									} catch (SQLException e) {
-										e.printStackTrace();
-									}
-
-								}
-
-							} catch (SQLException ee) {
-								ee.getStackTrace();
-							}
-						}
-						
-						
 
 					}// **
 
@@ -152,9 +96,7 @@ public class CalculateResultScore {// calculating
 						received.setSrcSubj((InputStruct) this.resource1[i]);
 						received.setDstSubj((InputStruct) this.resource2[j]);
 						Map<String, Object> map = new HashMap<String, Object>();
-						map.put("IsOverlaps", new String(isOverlaps));
-						map.put("IsContained", new String(isContained));
-						
+						map.put("IsOverlaps", new String(isO));
 						received.getScoreList().get(0).setObjectMap(map);
 						double sim = received.getScoreList().get(0)
 								.getSimilarity();
