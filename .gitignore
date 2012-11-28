@@ -33,3 +33,5 @@ tmp/*
 src/main/webapp/CRF_Models/WSP1_CRFModel.txt
 src/main/scripts/Lib/*.class
 bin/
+
+*.kml
