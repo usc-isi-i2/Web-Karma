@@ -104,7 +104,10 @@ public class Invocation {
 		List<String> columns = new ArrayList<String>();
         HashMap<String, Integer> attributeNameCounter = new HashMap<String, Integer>();
 
-		if (response.getType().indexOf("xml") != -1) { // XML content
+        if (response.getType() == null) {
+			logger.info("The output does not have a type.");
+        }
+        else if (response.getType().indexOf("xml") != -1) { // XML content
 			// The library has a bug, some values are wrong, e.g., adminCode2: 061 --> 49 			
 			String json = JsonManager.convertXML2JSON(response.getStream());
 	        JsonManager.getJsonFlat(json, columns, results.getValues());
