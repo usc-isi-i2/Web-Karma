@@ -21,7 +21,6 @@ src/main/webapp/publish/Source Description/*.*
 src/main/webapp/publish/History/*.*
 src/main/webapp/publish/CSV/*
 src/main/webapp/publish/RDF/*
-Preloaded_Ontologies/catalog-v001.xml
 preloaded-ontologies
 src/main/webapp/RDF/*.rdf
 src/main/webapp/RDF/*.n3
