@@ -13,6 +13,9 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CreateGeoStreetForTable {
 
@@ -32,7 +35,7 @@ public class CreateGeoStreetForTable {
 
 	}
 
-	public void createGeoStreet() {
+	public String createGeoStreet() {
 		CreateNodeDataForTable cnd = new CreateNodeDataForTable(
 				this.connection, this.osmFile_path);
 		cnd.createNodeDataforTable();// create a nodetalbe 
@@ -52,6 +55,8 @@ public class CreateGeoStreetForTable {
 
 		SAXReader saxReadering = new SAXReader();
 		Document document = null;
+		JSONObject obj=new JSONObject();
+		JSONArray arr=new JSONArray();
 		try {
 			document = saxReadering.read(new File(osmFile_path));
 		} catch (DocumentException e) {
@@ -171,6 +176,22 @@ public class CreateGeoStreetForTable {
 					} catch (SQLException ee) {
 						ee.getStackTrace();
 					}
+					
+					try {
+						//obj.put("Street_Number", ord);
+						obj.put("Street_Name", Street_name);
+						obj.put("Way_Id", way_id);
+						obj.put("Way_Type", way_type);						
+						obj.put("Street_Name", Street_name);
+						obj.put("Polyline", node_latlon);
+						arr.put(obj);
+						obj=new JSONObject();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					
+					
+					
 					ord = ord + 1;
 				}
 			}
@@ -183,7 +204,8 @@ public class CreateGeoStreetForTable {
 		} catch (SQLException ee) {
 			ee.getStackTrace();
 		}
-
+		String jsonOutput= arr.toString();
+		return jsonOutput;
 	}
 	
 
