@@ -6,11 +6,11 @@
   <display-name>Archetype Created Web Application</display-name>
 	<context-param>
 		<param-name>PUBLIC_KML_ADDRESS</param-name>
-		<param-value>http://128.9.216.81:8080/KML/</param-value>
+		<param-value>http://128.9.216.81:9999/KML/</param-value>
 	</context-param>
 	<context-param>
 		<param-name>KML_TRANSFER_SERVICE</param-name>
-		<param-value>http://128.9.216.81:8080/KMLFileTransferHandler</param-value>
+		<param-value>http://128.9.216.81:9999/KMLFileTransferHandler</param-value>
 	</context-param>
 	<context-param>
 		<param-name>PUBLIC_RDF_ADDRESS</param-name>
@@ -39,6 +39,10 @@
 	<context-param>
 		<param-name>LINE_CLASS</param-name>
 		<param-value>http://www.opengis.net/gml/LineString</param-value>
+	</context-param>
+		<context-param>
+		<param-name>POLYGON_CLASS</param-name>
+		<param-value>http://www.opengis.net/gml/Polygon</param-value>
 	</context-param>
 	<context-param>
 		<param-name>TRAINING_EXAMPLE_MAX_COUNT</param-name>

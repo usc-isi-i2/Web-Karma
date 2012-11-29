@@ -18,38 +18,32 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.webserver;
+
+package edu.isi.karma.geospatial;
 
 import java.util.HashMap;
+import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public class FeatureTable {
+	
+	private Map<String, String> popupData = new HashMap<String, String>();
 
-public class ServletContextParameterMap {
-	private static HashMap<ContextParameter, String> valuesMap = new HashMap<ContextParameter, String>();
-
-	private static Logger logger = LoggerFactory
-			.getLogger(ServletContextParameterMap.class);
-
-	public enum ContextParameter {
-		PUBLIC_RDF_ADDRESS,PUBLIC_KML_ADDRESS, 
-		KML_TRANSFER_SERVICE, WGS84_LAT_PROPERTY, 
-		WGS84_LNG_PROPERTY, POINT_POS_PROPERTY, 
-		POS_LIST_PROPERTY, POINT_CLASS, LINE_CLASS, 
-		TRAINING_EXAMPLE_MAX_COUNT, USER_DIRECTORY_PATH,MSFT,
-		PRELOADED_ONTOLOGY_DIRECTORY, POLYGON_CLASS
+	public FeatureTable() {
+		super();
+		
 	}
 
-	public static void setParameterValue(ContextParameter param, String value) {
-		valuesMap.put(param, value);
+
+	public void addColumnToDescription(String columnName, String data) {
+		popupData.put(columnName, data);
 	}
 
-	public static String getParameterValue(ContextParameter param) {
-		if (valuesMap.containsKey(param))
-			return valuesMap.get(param);
-		else
-			logger.error("Parameter value does not exist!");
-
-		return "";
+	public String getHTMLDescription() {
+		StringBuilder str = new StringBuilder();
+		for (String name : popupData.keySet()) {
+			str.append("<b>" + name + "</b>: " + popupData.get(name)
+					+ " <br />");
+		}
+		return str.toString();
 	}
 }

@@ -215,6 +215,11 @@
         	<version>9.1-901.jdbc4</version>
         </dependency>
         <dependency>
+			<groupId>com.vividsolutions</groupId>
+			<artifactId>jts</artifactId>
+			<version>1.8</version>
+		</dependency>
+        <dependency>
 	        <groupId>com.jspsmart.upload</groupId>
 	        <artifactId>jspsmartupload</artifactId>
 	        <version>1.1</version>
