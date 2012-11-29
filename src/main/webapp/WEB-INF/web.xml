@@ -104,21 +104,14 @@
   </servlet-mapping>
     
   <servlet>
-     <servlet-name>ExtractSpacialInformationServiceHandler</servlet-name>
-     <servlet-class>edu.isi.karma.webserver.ExtractSpacialInformationServiceHandler</servlet-class>
+     <servlet-name>ExtractSpatialInformationServiceHandler</servlet-name>
+     <servlet-class>edu.isi.karma.webserver.ExtractSpatialInformationServiceHandler</servlet-class>
     </servlet>
     <servlet-mapping>
-     <servlet-name>ExtractSpacialInformationServiceHandler</servlet-name>
-     <url-pattern>/ExtractSpacialInformationService/*</url-pattern>
+     <servlet-name>ExtractSpatialInformationServiceHandler</servlet-name>
+     <url-pattern>/ExtractSpacialInformation/*</url-pattern>
   </servlet-mapping>
-  <servlet>
-    <servlet-name>SpatialReferenceSystemServiceHandler</servlet-name>
-    <servlet-class>edu.isi.karma.webserver.SpatialReferenceSystemServiceHandler</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>SpatialReferenceSystemServiceHandler</servlet-name>
-    <url-pattern>/SpatialReferenceSystemService/*</url-pattern>
-  </servlet-mapping>
+
 <!-- uncomment for password protection; change user/pwd in config/jettyrealm.properties -->
 <!-- 
  <security-constraint>

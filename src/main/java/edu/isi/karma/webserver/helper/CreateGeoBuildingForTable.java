@@ -8,11 +8,15 @@ import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
 
+
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CreateGeoBuildingForTable {
 
@@ -32,7 +36,7 @@ public class CreateGeoBuildingForTable {
 
 	}
 
-	public void createOpenStreetMapBuildings() {
+	public String createOpenStreetMapBuildings() {
 		CreateNodeDataForTable cnd = new CreateNodeDataForTable(
 				this.connection, this.osmFile_path);
 		cnd.createNodeDataforTable();
@@ -56,10 +60,13 @@ public class CreateGeoBuildingForTable {
 		String Coordinate_System = "WGS84";
 		int srid = 4326;
 		SAXReader saxReadering = new SAXReader();
+		JSONObject obj=new JSONObject();
+		JSONArray arr=new JSONArray();
 		try {
 			Document document = saxReadering.read(new File(this.osmFile_path));
 			List listnode = document.selectNodes("//osm/node");
 			Iterator iter_node = listnode.iterator();
+
 			while (iter_node.hasNext()) {
 				int colm_tag = 1;
 				String NodeBuilding_name = " ";
@@ -193,8 +200,25 @@ public class CreateGeoBuildingForTable {
 					} catch (SQLException ee) {
 						ee.getStackTrace();
 					}
+					try {
+						//obj.put("Building_number", ord);
+						obj.put("Building_id", NodeBuilding_id);
+						obj.put("Building_name", NodeBuilding_name);
+						obj.put("State", NodeBuilding_state);
+						obj.put("County_name", NodeBuilding_county_name);
+						obj.put("Elevation", NodeBuilding_ele);
+						obj.put("Latitude", NodeLat);
+						obj.put("Longitude", NodeLon);
+						obj.put("Coordinate_System", Coordinate_System);
+						obj.put("SRID", srid);
+						arr.put(obj);
+						obj=new JSONObject();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 					ord = ord + 1;
 				}
+
 			}
 
 			List list = document.selectNodes("//osm/way");
@@ -369,6 +393,23 @@ public class CreateGeoBuildingForTable {
 					} catch (SQLException ee) {
 						ee.getStackTrace();
 					}
+					
+					
+					try {
+						//obj.put("Building_number", ord);
+						obj.put("Building_id", NodeBuilding_id);
+						obj.put("Building_name", NodeBuilding_name);
+						obj.put("State", NodeBuilding_state);
+						obj.put("County_name", NodeBuilding_county_name);
+						obj.put("Elevation", NodeBuilding_ele);
+						obj.put("Polygon", node_latlon);
+						obj.put("Coordinate_System", Coordinate_System);
+						obj.put("SRID", srid);
+						arr.put(obj);
+						obj=new JSONObject();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}				
 					ord = ord + 1;
 				}
 
@@ -384,6 +425,9 @@ public class CreateGeoBuildingForTable {
 		} catch (DocumentException e) {
 			e.getStackTrace();
 		}
+
+		String jsonOutput= arr.toString();
+		return jsonOutput;
 
 	}
 

@@ -1,13 +1,18 @@
 package edu.isi.karma.webserver;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Enumeration;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -21,12 +26,38 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.jetty.http.HttpMethods;
+import org.json.JSONArray;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
+import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
+import edu.isi.karma.controller.update.WorksheetListUpdate;
+
+
+import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.WorkspaceManager;
+import edu.isi.karma.rep.metadata.Tag;
+import edu.isi.karma.rep.metadata.TagsContainer.Color;
+import edu.isi.karma.rep.metadata.TagsContainer.TagName;
+import edu.isi.karma.view.VWorksheet;
+import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 import edu.isi.karma.er.helper.ConnectPostgis;
+import edu.isi.karma.imp.csv.CSVFileImport;
+import edu.isi.karma.linkedapi.server.GetRequestManager;
+import edu.isi.karma.linkedapi.server.ResourceType;
+
+import edu.isi.karma.service.MimeType;
+import edu.isi.karma.service.SerializationLang;
+
 import edu.isi.karma.webserver.helper.CreateGeoBuildingForTable;
 import edu.isi.karma.webserver.helper.CreateGeoStreetForTable;
 
-public class ExtractSpacialInformationServiceHandler extends HttpServlet {
+public class ExtractSpatialInformationServiceHandler extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private static Logger logger = Logger
@@ -35,17 +66,24 @@ public class ExtractSpacialInformationServiceHandler extends HttpServlet {
 	private Connection connection = null;
 	private String osmFile_path = "/tmp/GET_OPENSTREETMAP.xml";
 
-	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
 
+	public void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		
 		logger.debug("Request URL: " + request.getRequestURI());
 		logger.debug("Request Path Info: " + request.getPathInfo());
 		logger.debug("Request Param: " + request.getQueryString());
 		
-		String bbox = request.getParameter("bbox");
-		String url = "bbox=" + bbox;
+		String jsonOutput=null;
+		
+		String minLon = request.getParameter("minLongitude");
+		String minLat = request.getParameter("minLatitude");
+		String maxLon = request.getParameter("maxLongitude");
+		String maxLat = request.getParameter("maxLatitude");
 		String type = request.getParameter("type");
 
+		String url = "bbox=" + minLon+","+minLat+","+maxLon+","+maxLat;
+		
 		try {
 			System.out
 					.println("Please Wait for extracting information from Web Site...");
@@ -61,8 +99,8 @@ public class ExtractSpacialInformationServiceHandler extends HttpServlet {
 			CreateGeoStreetForTable cgs = new CreateGeoStreetForTable(
 					this.connection, this.osmFile_path);
 			System.out.println("Extracting the Street Information from OSM file...");
-			cgs.createGeoStreet();
-			System.out.println("You have created the CSV file for STREETS at location:/tmp/buildings_geo.csv");
+			jsonOutput=cgs.createGeoStreet();
+			System.out.println("You have created the CSV file for STREETS at location:/tmp/buildings_geo.csv");	
 		}else if(type.equalsIgnoreCase("building") || type.equalsIgnoreCase("buildings")){
 			System.out.println("Opening PostGis Connection...");
 			openConnection();
@@ -70,13 +108,18 @@ public class ExtractSpacialInformationServiceHandler extends HttpServlet {
 			CreateGeoBuildingForTable cgb = new CreateGeoBuildingForTable(
 					this.connection, this.osmFile_path);
 			System.out.println("Extracting the Building Information from OSM file...");
-			cgb.createOpenStreetMapBuildings();
+			jsonOutput=cgb.createOpenStreetMapBuildings();
 			System.out.println("SUCCEED! You have created the CSV file for BUILDINGS at location:/tmp/buildings_geo.csv");
-		}else{
-			System.out.println("ERROR: You have input the wrong URL");
 		}
-
-		this.closeConnection(this.connection);// close connection
+		
+		/*Close connection*/
+		this.closeConnection(this.connection);
+		
+		/*Output the JSON content to Web Page*/
+		PrintWriter pw = response.getWriter();
+		response.setContentType(MimeType.APPLICATION_JSON);
+		pw.write(jsonOutput);
+		return;
 
 	}
 
@@ -101,7 +144,6 @@ public class ExtractSpacialInformationServiceHandler extends HttpServlet {
 		OutputStreamWriter out = new OutputStreamWriter(bout, "UTF8");
 		out.write(result);
 		out.close();
-
 	}
 
 	private void openConnection(){
