@@ -1,6 +1,22 @@
 /*******************************************************************************
  * Copyright 2012 University of Southern California
- *  
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 package edu.isi.karma.geospatial;
 
@@ -36,13 +52,13 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.geom.LineString;
-//import com.vividsolutions.jts.geom.Point; 
+import com.vividsolutions.jts.geom.Point; 
 import com.vividsolutions.jts.geom.Polygon;
 
 public class WorksheetGeospatialContent {
 	private Worksheet worksheet;
 
-	private List<Point> points = new ArrayList<Point>();
+	private List<edu.isi.karma.geospatial.Point> points = new ArrayList<edu.isi.karma.geospatial.Point>();
 	private List<edu.isi.karma.geospatial.LineString> lines = new ArrayList<edu.isi.karma.geospatial.LineString>();
 	private List<Polygon> polygons = new ArrayList<Polygon>();
 	private List<FeatureTable> polygonTable = new ArrayList<FeatureTable>();
@@ -238,11 +254,14 @@ public class WorksheetGeospatialContent {
 						String coordinate = row
 								.getNode(coordinateHNodeIds.get(0)).getValue()
 								.asString();
-						String[] coordinateSplit = coordinate.split(",");
+					//	String[] coordinateSplit = coordinate.split(",");
 
-						lng = coordinateSplit[0];
-						lat = coordinateSplit[1];
-
+					//	lng = coordinateSplit[0];
+					//	lat = coordinateSplit[1];
+					WKTReader reader = new WKTReader();
+					Point JTSPoint = (Point)reader.read(coordinate);
+					lng = Double.toString(JTSPoint.getX());
+					lat = Double.toString(JTSPoint.getY());
 					} catch (Exception e) {
 						logger.error("Error creating point! Skipping it.", e);
 						continue;
@@ -265,7 +284,7 @@ public class WorksheetGeospatialContent {
 
 				double lngF = Double.parseDouble(lng.trim());
 				double latF = Double.parseDouble(lat.trim());
-				Point point = new Point(lngF, latF);
+				edu.isi.karma.geospatial.Point point = new edu.isi.karma.geospatial.Point(lngF, latF);
 
 				// Get the data from the other columns for description
 				Collection<Node> nodes = row.getNodes();
@@ -314,7 +333,7 @@ public class WorksheetGeospatialContent {
 		else
 			style.createAndSetIconStyle().withScale(1.399999976158142).withIcon(new Icon().withHref("http://maps.google.com/mapfiles/ms/icons/red-pushpin.png"));
 
-		for (Point point : points) {
+		for (edu.isi.karma.geospatial.Point point : points) {
 			folder.createAndAddPlacemark()
 					.withDescription(point.getHTMLDescription())
 					.withVisibility(true)
