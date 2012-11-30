@@ -31,5 +31,27 @@ public class ConnectPostgis {
 		return connection;
 
 	}
+	public Connection ConnectingPostgis(String ConnectionString, String user, String password) {
+		Connection connection = null;
+		try {
+			Class.forName("org.postgresql.Driver");
+		} catch (ClassNotFoundException e) {
+
+			System.out.println("Where is your PostgreSQL JDBC Driver? "
+					+ "Include in your library path!");
+			e.printStackTrace();
+
+		}
+		try {
+			connection = DriverManager.getConnection(
+					ConnectionString, user,
+					password);
+		} catch (SQLException e) {
+			System.out.println("Connection Failed! Check output console");
+			e.printStackTrace();
+		}
+		return connection;
+
+	}
 
 }
