@@ -159,7 +159,7 @@ public class SpatialReferenceSystemServiceHandler extends HttpServlet {
 
 	private void openConnection(){
 		ConnectPostgis conPostgis = new ConnectPostgis();
-		this.connection = conPostgis.ConnectingPostgis("jdbc:postgresql://fusion.isi.edu:54322/testGIS","postgres","migi700111");	
+		this.connection = conPostgis.ConnectingPostgis("jdbc:postgresql://fusion.isi.edu:54322/testGIS","karma","2xpd516");	
 	}
 	
 	private void closeConnection(Connection connection) {
