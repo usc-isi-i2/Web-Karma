@@ -21,6 +21,19 @@
 
 package edu.isi.karma.geospatial;
 
-public class ShapefileUtil {
+import java.io.*;
+import java.net.URL;
+import java.util.*;
 
+import org.geotools.feature.*;
+import org.geotools.data.*;
+import org.geotools.data.shapefile.*;
+import com.vividsolutions.jts.geom.*;
+
+public class ShapefileUtil {
+	void ShapefileUtil(){}
+	void Write(FeatureCollection fc, URL path) {
+		//ShapefileDataStore output = new ShapefileDataStore(path);
+		
+	}
 }

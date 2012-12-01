@@ -166,12 +166,10 @@ public class WorksheetGeospatialContent {
 			try {
 				String posList = row.getNode(coordinateHNodeIds.get(0))
 						.getValue().asString();
-				
 		        WKTReader reader = new WKTReader();
-		        
 		        Polygon JTSPolygon = (Polygon)reader.read(posList);
+		        if(JTSPolygon == null) continue;
 		        polygons.add(JTSPolygon);
-
 				FeatureTable featureTable = new FeatureTable();
 				Collection<Node> nodes = row.getNodes();
 				for (Node node : nodes) {
@@ -198,9 +196,8 @@ public class WorksheetGeospatialContent {
 		        WKTReader reader = new WKTReader();
 		        
 		        LineString JTSLine = (LineString)reader.read(posList);
+		        if(JTSLine == null) continue;
 		        int lineLength = JTSLine.getNumPoints();
-		        
-				//String[] coords = posList.split(" ");
 				List<Coordinate> coordsList = new ArrayList<Coordinate>();
 				for (int i=0;i<lineLength;i++) {
 					
@@ -255,13 +252,13 @@ public class WorksheetGeospatialContent {
 								.getNode(coordinateHNodeIds.get(0)).getValue()
 								.asString();
 					//	String[] coordinateSplit = coordinate.split(",");
-
 					//	lng = coordinateSplit[0];
 					//	lat = coordinateSplit[1];
-					WKTReader reader = new WKTReader();
-					Point JTSPoint = (Point)reader.read(coordinate);
-					lng = Double.toString(JTSPoint.getX());
-					lat = Double.toString(JTSPoint.getY());
+						WKTReader reader = new WKTReader();
+						Point JTSPoint = (Point)reader.read(coordinate);
+						if(JTSPoint == null) continue;
+						lng = Double.toString(JTSPoint.getX());
+						lat = Double.toString(JTSPoint.getY());
 					} catch (Exception e) {
 						logger.error("Error creating point! Skipping it.", e);
 						continue;
