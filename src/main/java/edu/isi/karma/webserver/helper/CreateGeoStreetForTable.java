@@ -169,9 +169,9 @@ public class CreateGeoStreetForTable {
 										+ Street_name_Alias
 										+ "\',line=ST_GeomFromText(\'SRID=4326; LINESTRING("
 										+ node_latlon
-										+ ")\'),lineAsText=\'"
+										+ ")\'),lineAsText=\' LINESTRING("
 										+ node_latlon
-										+ "\' where Street_number=" + ord);
+										+ ") \' where Street_number=" + ord);
 
 					} catch (SQLException ee) {
 						ee.getStackTrace();
@@ -183,7 +183,7 @@ public class CreateGeoStreetForTable {
 						obj.put("Way_Id", way_id);
 						obj.put("Way_Type", way_type);						
 						obj.put("Street_Name", Street_name);
-						obj.put("Polyline", node_latlon);
+						obj.put("Polyline", "LINESTRING("+node_latlon+")");
 						arr.put(obj);
 						obj=new JSONObject();
 					} catch (JSONException e) {
