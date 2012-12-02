@@ -25,6 +25,7 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.geospatial.WorksheetGeospatialContent;
+import edu.isi.karma.geospatial.WorksheetToFeatureCollections;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -83,7 +84,8 @@ public class PublishKMLLayerCommand extends Command {
 					.getCrfModelHandler(), ws.getOntologyManager());
 		}
 
-		WorksheetGeospatialContent geo = new WorksheetGeospatialContent(worksheet);
+		//WorksheetGeospatialContent geo = new WorksheetGeospatialContent(worksheet); yaoyi
+		WorksheetToFeatureCollections geo = new WorksheetToFeatureCollections(worksheet);
 		// Send an error update if no geospatial data found!
 		if (geo.hasNoGeospatialData()) {
 			return new UpdateContainer(new ErrorUpdate(
@@ -91,7 +93,8 @@ public class PublishKMLLayerCommand extends Command {
 		}
 
 		try {
-			final File file = geo.publishKML();
+			final File file = geo.SaveSpatialData();
+			final String zippedSpatialDataPath = geo.getZippedSpatialDataPath();
 			// Transfer the file to a public server
 			final boolean transfer = transferFileToPublicServer(file);
 			if (!transfer) {
@@ -111,7 +114,7 @@ public class PublishKMLLayerCommand extends Command {
 						outputObject.put(JsonKeys.transferSuccessful.name(),
 								transfer);
 						outputObject.put(JsonKeys.localFileName.name(),
-								"KML/" + file.getName());
+								"KML/" + zippedSpatialDataPath);//file.getName());
 						pw.println(outputObject.toString(4));
 					} catch (JSONException e) {
 						logger.error("Error occured while generating JSON!");
@@ -122,7 +125,13 @@ public class PublishKMLLayerCommand extends Command {
 			logger.error("KML File not found!", e);
 			return new UpdateContainer(new ErrorUpdate(
 					"Error occurred while publishing KML layer!"));
+		} catch (Exception shapfileException) {
+			// TODO Auto-generated catch block
+			shapfileException.printStackTrace();
+			return new UpdateContainer(new ErrorUpdate(
+					"Error occurred while saving Shapefile!"));
 		}
+		
 	}
 
 	@SuppressWarnings("deprecation")

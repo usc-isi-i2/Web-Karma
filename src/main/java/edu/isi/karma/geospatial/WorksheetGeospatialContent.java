@@ -63,6 +63,8 @@ public class WorksheetGeospatialContent {
 	private List<Polygon> polygons = new ArrayList<Polygon>();
 	private List<FeatureTable> polygonTable = new ArrayList<FeatureTable>();
 	
+	private static String SRID_PROPERTY = ServletContextParameterMap
+			.getParameterValue(ContextParameter.SRID_PROPERTY);
 	private static String WGS84_LAT_PROPERTY = ServletContextParameterMap
 			.getParameterValue(ContextParameter.WGS84_LAT_PROPERTY);
 	private static String WGS84_LNG_PROPERTY = ServletContextParameterMap
@@ -72,6 +74,8 @@ public class WorksheetGeospatialContent {
 	private static String POS_LIST_PROPERTY = ServletContextParameterMap
 			.getParameterValue(ContextParameter.POS_LIST_PROPERTY);
 
+	private static String SRID_CLASS = ServletContextParameterMap
+			.getParameterValue(ContextParameter.SRID_CLASS);
 	private static String POINT_CLASS = ServletContextParameterMap
 			.getParameterValue(ContextParameter.POINT_CLASS);
 	private static String LINE_CLASS = ServletContextParameterMap
@@ -90,6 +94,7 @@ public class WorksheetGeospatialContent {
 
 	public WorksheetGeospatialContent(Worksheet worksheet) {
 		this.worksheet = worksheet;
+		//WorksheetToFeatureCollections wtfc = new WorksheetToFeatureCollections(worksheet);
 		populateGeospatialData();
 	}
 
@@ -98,7 +103,12 @@ public class WorksheetGeospatialContent {
 		CoordinateCase currentCase = CoordinateCase.NOT_PRESENT;
 		boolean latFound = false;
 		boolean lngFound = false;
-
+		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
+			if (type.getType().getUriString().equals(SRID_PROPERTY)
+					&& type.getDomain().getUriString().equals(SRID_CLASS)){
+				
+			}
+		}
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
 			// Latitude of a Point case. E.g. For a column with only latitude
 			if (type.getType().getUriString().equals(WGS84_LAT_PROPERTY)
