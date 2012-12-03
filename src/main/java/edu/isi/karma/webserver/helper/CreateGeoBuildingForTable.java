@@ -207,6 +207,7 @@ public class CreateGeoBuildingForTable {
 						obj.put("State", NodeBuilding_state);
 						obj.put("County_name", NodeBuilding_county_name);
 						obj.put("Elevation", NodeBuilding_ele);
+						obj.put("Point", "Point("+NodeLon+" "+NodeLat+")");
 						obj.put("Latitude", NodeLat);
 						obj.put("Longitude", NodeLon);
 						obj.put("Coordinate_System", Coordinate_System);
@@ -387,9 +388,13 @@ public class CreateGeoBuildingForTable {
 						rs = stmt
 								.executeQuery("update postgis.public.buildings_geo set polygon_binary=ST_GeographyFromText(\'SRID=4326; polygon(("
 										+ node_latlon
-										+ "))\') , polygon_text=\'"
+										+ "))\') , polygon_text=\' polygon(("
 										+ node_latlon
-										+ " \'   where Building_number=" + ord);
+										+ " ))  \' where Building_number=" + ord);
+//										+ "))\') , polygon_text=\'"
+//										+ node_latlon
+//										+ " \'   where Building_number=" + ord);				
+										
 					} catch (SQLException ee) {
 						ee.getStackTrace();
 					}
@@ -402,7 +407,7 @@ public class CreateGeoBuildingForTable {
 						obj.put("State", NodeBuilding_state);
 						obj.put("County_name", NodeBuilding_county_name);
 						obj.put("Elevation", NodeBuilding_ele);
-						obj.put("Polygon", node_latlon);
+						obj.put("Polygon", "polygon(("+ node_latlon+ "))");
 						obj.put("Coordinate_System", Coordinate_System);
 						obj.put("SRID", srid);
 						arr.put(obj);
