@@ -38,6 +38,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKTReader;
 
 import de.micromata.opengis.kml.v_2_2_0.AltitudeMode;
@@ -100,6 +101,8 @@ public class WorksheetToFeatureCollections {
 	private boolean WGS84 = false;
 	private String SRIDHNodeId="";
 	private String pointFeatureHNodeId="";
+	private String pointFeatureLatHNodeId="";
+	private String pointFeatureLonHNodeId="";
 	private String lineFeatureHNodeId="";
 	private String polygonFeatureHNodeId="";
 	private String zippedSpatialDataFolderAndName="";
@@ -146,6 +149,18 @@ public class WorksheetToFeatureCollections {
 					&& pointFeatureHNodeId=="") {
 				spatialHNodeIds.add(0, type.getHNodeId());
 				pointFeatureHNodeId=type.getHNodeId();
+			}
+			else if (type.getType().getUriString().equals(WGS84_LAT_PROPERTY)
+					&& type.getDomain().getUriString().equals(POINT_CLASS)
+					&& pointFeatureLatHNodeId=="") {
+				spatialHNodeIds.add(0, type.getHNodeId());
+				pointFeatureLatHNodeId=type.getHNodeId();
+			}
+			else if (type.getType().getUriString().equals(WGS84_LNG_PROPERTY)
+					&& type.getDomain().getUriString().equals(POINT_CLASS)
+					&& pointFeatureLonHNodeId=="") {
+				spatialHNodeIds.add(0, type.getHNodeId());
+				pointFeatureLonHNodeId=type.getHNodeId();
 			}
 			// PosList of a Line case. E.g. for a column containing list of
 			// coordinates for a line string
@@ -237,6 +252,24 @@ public class WorksheetToFeatureCollections {
 				// build the type
 				pointFeatureType = pointBuilder.buildFeatureType();
 			}
+			if(pointFeatureLatHNodeId!=""&&pointFeatureLonHNodeId!=""){
+				SimpleFeatureTypeBuilder pointBuilder = new SimpleFeatureTypeBuilder();
+				pointBuilder.setName(worksheetTitle);
+				//if(sourceCRS!= null)
+				//	pointBuilder.setCRS(sourceCRS); // <- Coordinate reference system
+				pointBuilder.add("GEOM", Point.class);
+				// add attributes in order
+				Collection<Node> nodes = firstRow.get(0).getNodes();
+				for (Node node : nodes) {
+					if (!spatialHNodeIds.contains(node.getHNodeId())){
+						String columnName = columnNameMap.get(node.getHNodeId());
+						pointBuilder.add(columnName, String.class);
+					}
+				}
+				
+				// build the type
+				pointFeatureType = pointBuilder.buildFeatureType();
+			}
 			if(lineFeatureHNodeId!=""){
 				SimpleFeatureTypeBuilder lineBuilder = new SimpleFeatureTypeBuilder();
 				lineBuilder.setName(worksheetTitle);
@@ -272,35 +305,62 @@ public class WorksheetToFeatureCollections {
 				polygonFeatureType = polygonBuilder.buildFeatureType();
 			}
 			if(pointFeatureHNodeId!="")
-				populateSimpleFeatures(spatialHNodeIds,pointFeatureHNodeId, getRows(),
+				populateSimpleFeatures(spatialHNodeIds,pointFeatureHNodeId, "",getRows(),
+						getColumnMap(), pointFeatureList,
+						pointFeatureType);
+			if(pointFeatureLatHNodeId!=""&&pointFeatureLonHNodeId!="")
+				populateSimpleFeatures(spatialHNodeIds,pointFeatureLonHNodeId, pointFeatureLatHNodeId,getRows(),
 						getColumnMap(), pointFeatureList,
 						pointFeatureType);
 			if(lineFeatureHNodeId!="")
-				populateSimpleFeatures(spatialHNodeIds,lineFeatureHNodeId, getRows(),
+				populateSimpleFeatures(spatialHNodeIds,lineFeatureHNodeId, "",getRows(),
 						getColumnMap(), lineFeatureList,
 						lineFeatureType);
 			if(polygonFeatureHNodeId!="")
-				populateSimpleFeatures(spatialHNodeIds,polygonFeatureHNodeId, getRows(),
+				populateSimpleFeatures(spatialHNodeIds,polygonFeatureHNodeId, "",getRows(),
 						getColumnMap(), polygonFeatureList,
 						polygonFeatureType);
 		}
 	}
 
-	private void populateSimpleFeatures(List<String> spatialHNodeIds,String geometryHNodeId,
+	private void populateSimpleFeatures(List<String> spatialHNodeIds,String geometryHNodeId,String geometry2HNodeId,
 			ArrayList<Row> rows, Map<String, String> columnNameMap, List<SimpleFeature> features,
 			SimpleFeatureType simpleFeatureType) {
 
 		for (Row row : rows) {
 			try {
-				String posList = row.getNode(geometryHNodeId)
-						.getValue().asString();
+				Geometry JTSGeometry = null;
+				String posList="";
+				if(geometry2HNodeId==""){
+					posList = row.getNode(geometryHNodeId)
+							.getValue().asString();
+					//WKBReader wkbreader = new WKBReader();
+					//byte[] wkbPosList = WKBReader.hexToBytes(posList);
+					//JTSGeometry = wkbreader.read(wkbPosList);
+					
+				}
+				else {
+					String lon = row.getNode(geometryHNodeId)
+							.getValue().asString();
+					String lat = row.getNode(geometry2HNodeId)
+							.getValue().asString();
+					if(lon.trim().length()==0 || lat.trim().length()==0)
+						continue;
+					posList="POINT("+lon+" "+lat+")"; 
+		
+				}
+				
 				WKTReader reader = new WKTReader();
-				Geometry JTSGeometry = reader.read(posList);
+				JTSGeometry= reader.read(posList);
+				
 				if(JTSGeometry == null) continue;
 				String srid = row.getNode(SRIDHNodeId).getValue().asString();
+				if(!srid.contains(":"))
+					srid="EPSG:"+srid;
 				CoordinateReferenceSystem sourceCRS=null;
 				try {
-					sourceCRS = CRS.decode(srid);
+					//CRS.decode(code, true)
+					sourceCRS = CRS.decode(srid, true);
 				} catch (NoSuchAuthorityCodeException e) {
 					// TODO Auto-generated catch block
 					logger.error("No such authority code!", e);
@@ -364,7 +424,7 @@ public class WorksheetToFeatureCollections {
 		dir.mkdir();
 		
 		File kml = publishKML(spatialDataFolder,fileName);
-		if(pointFeatureHNodeId!="")
+		if(pointFeatureHNodeId!=""|| (pointFeatureLatHNodeId!=""&&pointFeatureLonHNodeId!=""))
 			saveShapefile(pointFeatureType,pointFeatureList, spatialDataFolder,fileName+"_point");
 		if(lineFeatureHNodeId!="") 
 			saveShapefile(lineFeatureType,lineFeatureList, spatialDataFolder,fileName+"_line");

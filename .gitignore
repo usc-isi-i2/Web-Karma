@@ -35,3 +35,17 @@ src/main/scripts/Lib/*.class
 bin/
 
 *.kml
+
+*.fix
+
+*.dbf
+
+*.zip
+
+*.prj
+
+*.qix
+
+*.shp
+
+*.shx
