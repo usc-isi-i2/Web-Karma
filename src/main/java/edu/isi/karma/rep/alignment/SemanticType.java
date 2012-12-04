@@ -18,22 +18,21 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.rep.semantictypes;
+package edu.isi.karma.rep.alignment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.util.Jsonizable;
 
-public class SemanticType implements Jsonizable {
+public class SemanticType implements Jsonizable  {
 	private final String hNodeId;
 	private final URI type;
-	private final URI domain;
 	private final Origin origin;
 	private final boolean isPartOfKey; 
 	private final ConfidenceLevel confidenceLevel;
+	
 
 	public enum Origin {
 		User, CRFModel
@@ -51,7 +50,7 @@ public class SemanticType implements Jsonizable {
 		this.hNodeId = hNodeId;
 		this.type = type;
 		this.origin = origin;
-		this.domain = domain;
+		this.clazz = domain;
 		this.isPartOfKey = isPartOfKey;
 		
 		if(probability > 0.8)
@@ -67,7 +66,7 @@ public class SemanticType implements Jsonizable {
 	}
 
 	public URI getDomain() {
-		return domain;
+		return clazz;
 	}
 	
 	public URI getType() {
@@ -87,7 +86,7 @@ public class SemanticType implements Jsonizable {
 				+ confidenceLevel + "]";
 		else
 			return "SemanticType [hNodeId=" + hNodeId + ", type=" + type.getUriString()
-					+ ", domain=" + domain.getUriString() + ", origin=" + origin
+					+ ", domain=" + clazz.getUriString() + ", origin=" + origin
 					+ ", isPartOfKey=" + isPartOfKey + ", confidenceLevel="
 					+ confidenceLevel + "]";
 	}
@@ -99,7 +98,7 @@ public class SemanticType implements Jsonizable {
 	 * 		true if this type is a Class; false if it is a data property.
 	 */
 	public boolean isClass(){
-		if(domain==null || domain.getUriString().trim().isEmpty())
+		if(clazz==null || clazz.getUriString().trim().isEmpty())
 			return true;
 		//it is a data property
 		return false;
@@ -118,7 +117,7 @@ public class SemanticType implements Jsonizable {
 		if(isClass())
 			typeObj.put(ClientJsonKeys.Domain.name(), "");
 		else
-			typeObj.put(ClientJsonKeys.Domain.name(), domain.getUriString());
+			typeObj.put(ClientJsonKeys.Domain.name(), clazz.getUriString());
 		typeObj.put(ClientJsonKeys.isPrimary.name(), isPartOfKey);
 		return typeObj;
 	}

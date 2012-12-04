@@ -26,7 +26,7 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.semantictypes.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 

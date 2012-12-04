@@ -18,7 +18,7 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.rep.semantictypes;
+package edu.isi.karma.rep.alignment;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -33,8 +33,8 @@ import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.semantictypes.SemanticType;
-import edu.isi.karma.rep.semantictypes.SynonymSemanticTypes;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 import edu.isi.karma.view.VWorkspace;
 
 public class SetSemanticTypeCommand extends Command {

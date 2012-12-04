@@ -29,10 +29,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.NodeType;
-import edu.isi.karma.modeling.alignment.URI;
-import edu.isi.karma.modeling.alignment.Vertex;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.URI;
 import edu.isi.karma.util.RandomGUID;
 
 public class Source {
@@ -66,7 +66,7 @@ public class Source {
 		attIdToAttMap = new HashMap<String, Attribute>();
 	}
 	
-	public Source(String name, DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeModel) {
+	public Source(String name, DirectedWeightedMultigraph<Node, Link> treeModel) {
 		this.id = new RandomGUID().toString();
 		this.setName(name);
 		variables = new ArrayList<String>();
@@ -75,7 +75,7 @@ public class Source {
 		this.updateModel(treeModel);
 	}
 	
-	public Source(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeModel) {
+	public Source(DirectedWeightedMultigraph<Node, Link> treeModel) {
 		this.id = new RandomGUID().toString();
 		variables = new ArrayList<String>();
 		attributes = new ArrayList<Attribute>();
@@ -145,7 +145,7 @@ public class Source {
 		this.description = description;
 	}
 	
-	private void updateModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeModel) {
+	private void updateModel(DirectedWeightedMultigraph<Node, Link> treeModel) {
 		
 		if (treeModel == null)
 			return;
@@ -157,7 +157,7 @@ public class Source {
 		
 		// get the column name associated to the hNodeIds to assign to attribute names 
 		// set the rdf ids of all the vertices.
-		for (Vertex v : treeModel.vertexSet()) {
+		for (Node v : treeModel.vertexSet()) {
 			if (v.getSemanticType() != null && v.getSemanticType().getHNodeId() != null) {
 				logger.debug("Vertex " + v.getLocalID() + " is a semantic type associated to a source columns.");
 				String hNodeId = v.getSemanticType().getHNodeId();
@@ -176,7 +176,7 @@ public class Source {
 			}
 		}
 
-		for (Vertex v : treeModel.vertexSet()) {
+		for (Node v : treeModel.vertexSet()) {
 			
 			if (v.getNodeType() == NodeType.DataProperty)
 				continue;
@@ -190,7 +190,7 @@ public class Source {
 			m.getAtoms().add(classAtom);
 		}
 		
-		for (LabeledWeightedEdge e : treeModel.edgeSet()) {
+		for (Link e : treeModel.edgeSet()) {
 			
 			if (vertexIdToArgument.get(e.getSource().getID()) == null || 
 					vertexIdToArgument.get(e.getTarget().getID()) == null)

@@ -16,17 +16,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.NodeType;
-import edu.isi.karma.modeling.alignment.Vertex;
-import edu.isi.karma.rep.semantictypes.SemanticType;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.view.VWorkspace;
 
 public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 	private final String vWorksheetId;
 	private final String alignmentId;
 //	private Alignment alignment;
-	private final DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree;
+	private final DirectedWeightedMultigraph<Node, Link> tree;
 //	private final Vertex root;
 	private final List<String> hNodeIdList;
 	
@@ -77,17 +77,17 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 			if (tree != null && tree.vertexSet().size() != 0) {
 				
 				/*** Add the nodes ***/
-				Set<Vertex> vertices = tree.vertexSet();
-				HashMap<Vertex, Integer> verticesIndex = new HashMap<Vertex, Integer>();
+				Set<Node> vertices = tree.vertexSet();
+				HashMap<Node, Integer> verticesIndex = new HashMap<Node, Integer>();
 				int nodesIndexcounter = 0;
 				
-				for (Vertex vertex : vertices) {
+				for (Node vertex : vertices) {
 					JSONObject vertObj = new JSONObject();
 					vertObj.put(JsonKeys.label.name(), vertex.getLocalID());
 					vertObj.put(JsonKeys.id.name(), vertex.getID());
 					vertObj.put(JsonKeys.nodeType.name(), vertex.getNodeType().name());
 					
-					List<Vertex> nodesWithSemTypesCovered = new ArrayList<Vertex>();
+					List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
 //					int height = getHeight(vertex, nodesWithSemTypesCovered, treeClone);
 					int height = getHeight(vertex, nodesWithSemTypesCovered, tree);
 					if(height >= maxTreeHeight) {
@@ -96,7 +96,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 						
 					vertObj.put(JsonKeys.height.name(), height);
 					JSONArray hNodeIdsCoveredByVertex = new JSONArray();
-					for(Vertex v : nodesWithSemTypesCovered)
+					for(Node v : nodesWithSemTypesCovered)
 						hNodeIdsCoveredByVertex.put(v.getSemanticType().getHNodeId());
 					vertObj.put(JsonKeys.hNodesCovered.name(), hNodeIdsCoveredByVertex);
 					
@@ -141,13 +141,13 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 				}
 				
 				/*** Add the links ***/
-				Set<LabeledWeightedEdge> edges = tree.edgeSet();
-				for (LabeledWeightedEdge edge : edges) {
-					Vertex source = edge.getSource();
+				Set<Link> edges = tree.edgeSet();
+				for (Link edge : edges) {
+					Node source = edge.getSource();
 					Integer sourceIndex = verticesIndex.get(source);
-					Vertex target = edge.getTarget();
+					Node target = edge.getTarget();
 					Integer targetIndex = verticesIndex.get(target);
-					Set<LabeledWeightedEdge> outEdges = tree.outgoingEdgesOf(target);
+					Set<Link> outEdges = tree.outgoingEdgesOf(target);
 					
 					if(sourceIndex == null || targetIndex == null) {
 						logger.error("Edge vertex index not found!");
@@ -201,12 +201,12 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 		}
 	}
 
-	private int getHeight(Vertex vertex, List<Vertex> nodesWithSemTypesCovered, DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeClone) {
-		BreadthFirstIterator<Vertex, LabeledWeightedEdge> itr = new BreadthFirstIterator<Vertex, LabeledWeightedEdge>(treeClone, vertex);
-		Vertex lastNodeWithSemanticType = null;
+	private int getHeight(Node vertex, List<Node> nodesWithSemTypesCovered, DirectedWeightedMultigraph<Node, Link> treeClone) {
+		BreadthFirstIterator<Node, Link> itr = new BreadthFirstIterator<Node, Link>(treeClone, vertex);
+		Node lastNodeWithSemanticType = null;
 		int height = 0;
 		while(itr.hasNext()) {
-			Vertex v = itr.next();
+			Node v = itr.next();
 			if(v.getSemanticType() != null) {
 				lastNodeWithSemanticType = v;
 				nodesWithSemTypesCovered.add(v);
@@ -214,9 +214,9 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 		}
 		
 		if(lastNodeWithSemanticType != null) {
-			height = new DijkstraShortestPath<Vertex, LabeledWeightedEdge>(treeClone, vertex, lastNodeWithSemanticType).getPathEdgeList().size();
+			height = new DijkstraShortestPath<Node, Link>(treeClone, vertex, lastNodeWithSemanticType).getPathEdgeList().size();
 			if(lastNodeWithSemanticType.getNodeType() == NodeType.Class && lastNodeWithSemanticType.getSemanticType() != null && vertex != lastNodeWithSemanticType) {
-				height += getHeight(lastNodeWithSemanticType, new ArrayList<Vertex>(), treeClone);  
+				height += getHeight(lastNodeWithSemanticType, new ArrayList<Node>(), treeClone);  
 			}
 			
 			if(vertex == lastNodeWithSemanticType && vertex.getNodeType() == NodeType.Class && vertex.getSemanticType() != null) {

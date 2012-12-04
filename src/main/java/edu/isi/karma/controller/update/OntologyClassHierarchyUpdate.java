@@ -66,6 +66,7 @@ public class OntologyClassHierarchyUpdate extends AbstractUpdate {
 			ExtendedIterator<OntClass> iter = model.listNamedClasses();
 			while (iter.hasNext()) {
 					OntClass cls = iter.next();
+					System.out.println(cls.getLocalName());
 					boolean hasSupClass = false;
 					try {
 						hasSupClass = cls.hasSuperClass();
@@ -75,17 +76,20 @@ public class OntologyClassHierarchyUpdate extends AbstractUpdate {
 					}
 					if ((hasSupClass) || classesAdded.contains(cls.getURI())) {
 						// Need to check if it has a non-anonymous superclass
+						System.out.println("HAS SUPER CLASS");
 						boolean flag = false;
 						ExtendedIterator<OntClass> superClasses = cls.listSuperClasses();
 						try {
 							while (superClasses.hasNext()) {
 								OntClass clss = superClasses.next();
+								System.out.println("Superclass" + clss.getURI());
 								if (!clss.isAnon() && !clss.getURI().equals("http://www.w3.org/2000/01/rdf-schema#Resource"))
 									flag = true;
 							}
 						} catch (ConversionException e) {
 							logger.debug(e.getMessage());
 						}
+						System.out.println("Flag value: " + flag);
 						if (flag) {
 							continue;
 						}

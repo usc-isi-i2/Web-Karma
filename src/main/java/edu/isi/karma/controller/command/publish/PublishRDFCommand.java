@@ -43,10 +43,10 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rdf.SourceDescription;
 import edu.isi.karma.rdf.WorksheetRDFGenerator;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -141,7 +141,7 @@ public class PublishRDFCommand extends Command {
 					"Please align the worksheet before generating RDF!"));
 		}
 
-		Vertex root = alignment.GetTreeRoot();
+		Node root = alignment.GetTreeRoot();
 
 		try {
 			if (root != null) {

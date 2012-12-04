@@ -37,15 +37,15 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
 
 import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.LinkType;
 import edu.isi.karma.modeling.alignment.NodeType;
-import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.semantictypes.SemanticType;
-import edu.isi.karma.rep.semantictypes.SynonymSemanticTypes;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.mediator.gav.util.MediatorUtil;
 import edu.isi.mediator.rdf.RDFDomainModel;
@@ -63,11 +63,11 @@ public class SourceDescription {
 	/**
 	 * The Steiner tree.
 	 */
-	private DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree;
+	private DirectedWeightedMultigraph<Node, Link> steinerTree;
 	/**
 	 * The root of the Steiner tree.
 	 */
-	private Vertex root;
+	private Node root;
 	
 	/**
 	 * Needed in order to get synonym semantic types.
@@ -171,7 +171,7 @@ public class SourceDescription {
 			boolean useColumnNames){
 		
 		//the tree is not directed anymore, so we have to transform it before we can use it
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> sTree = alignment.getSteinerTree();
+		DirectedWeightedMultigraph<Node, Link> sTree = alignment.getSteinerTree();
 //      Mohsen: I apply the updateLinkDirection() before returning the Steiner tree.
 //		@SuppressWarnings("unchecked")
 //		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeClone = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>) sTree.clone();
@@ -256,15 +256,15 @@ public class SourceDescription {
 	 * 6. generateSourceDescription(getEdgeTarget(e))
 	 * 7. stop when v is DataProperty (leaves are reached)
 	 */
-	private void generateSourceDescription(Vertex v, StringBuffer s) throws KarmaException{
+	private void generateSourceDescription(Node v, StringBuffer s) throws KarmaException{
 		//System.out.println("Generate SD for node:" + v.getUri() + " type:" + v.getNodeType());
 		if(v.getNodeType()==NodeType.Class){
 			String stmt = generateClassStatement(v);
 			if(s.length()!=0) s.append(" ^ ");
 			s.append(stmt);
-			Set<LabeledWeightedEdge> edges = steinerTree.outgoingEdgesOf(v);
-			for(LabeledWeightedEdge e:edges){
-				Vertex child = steinerTree.getEdgeTarget(e);
+			Set<Link> edges = steinerTree.outgoingEdgesOf(v);
+			for(Link e:edges){
+				Node child = steinerTree.getEdgeTarget(e);
 				if(e.getLinkType()==LinkType.DataProperty){
 					//get the child node, which should be a DataProperty node
 					if(child.getNodeType()!=NodeType.DataProperty){
@@ -307,7 +307,7 @@ public class SourceDescription {
 	 * 		a unary predicate for a Class.
 	 * Example: Person(uri(Name)) or Person(uri(1))
 	 */
-	private String generateClassStatement(Vertex v) {
+	private String generateClassStatement(Node v) {
 		String key = findKey(v);
 		String s = "`" + getPrefix(v.getPrefix(), v.getNs()) + ":" + v.getLocalLabel() + "`(uri(" + key + "))"; 
 		//System.out.println("Class:" + s);
@@ -327,8 +327,8 @@ public class SourceDescription {
 	 * <br>EXample: hasName(uri(Name), Name)
 	 * @throws KarmaException 
 	 */
-	private String generateDataPropertyStatement(Vertex v,
-			LabeledWeightedEdge e, Vertex child) throws KarmaException {
+	private String generateDataPropertyStatement(Node v,
+			Link e, Node child) throws KarmaException {
 		if(child.getNodeType()!=NodeType.DataProperty){
 			throw new KarmaException("Node " + child.getUriString()+ " should be of type NodeType.DataProperty");
 		}
@@ -383,8 +383,8 @@ public class SourceDescription {
 	 * <br>EXample: isAddress(uri(Name), uri(Address))
 	 * @throws KarmaException 
 	 */
-	private String generateObjectPropertyStatement(Vertex v,
-			LabeledWeightedEdge e, Vertex child) throws KarmaException {
+	private String generateObjectPropertyStatement(Node v,
+			Link e, Node child) throws KarmaException {
 		if(v.getNodeType()!=NodeType.Class){
 			throw new KarmaException("Node " + v.getUriString() + " should be of type NodeType.Class");
 		}
@@ -424,7 +424,7 @@ public class SourceDescription {
 		//System.out.println("Generate synonym statements ....");
 		String s = "";
 		//for each leaf of the tree
-		for(Vertex child: steinerTree.vertexSet()){
+		for(Node child: steinerTree.vertexSet()){
 			//System.out.println("Get semantic type for " + child.getLocalLabel());
 			if(child.getSemanticType()==null){
 				//only if the node id mapped to a column it will have a semantic type
@@ -456,7 +456,7 @@ public class SourceDescription {
 	 * 		a SemanticType
 	 * @return
 	 */
-	private String generateSynonymStatement(Vertex child, SemanticType st) {
+	private String generateSynonymStatement(Node child, SemanticType st) {
 		if(st.isClass()){
 			//semantic type is a Class
 			String key = findKey(child);
@@ -565,7 +565,7 @@ public class SourceDescription {
 	 * 		the key associated with this class, or a uri index (for generating gensym URIs) 
 	 * 		if no key is found.
 	 */
-	private String findKey(Vertex v){
+	private String findKey(Node v){
 		//check if it is not in the map
 		//I use the vertex IDs because there can be several columns mapped to the same
 		//class, so we have to distinguish between the key for these classes
@@ -582,12 +582,12 @@ public class SourceDescription {
 		if(v.getSemanticType()==null){
 			//this node is not associated with a column
 			//look in the child nodes to find the key to be used when generating the URI
-			Set<LabeledWeightedEdge> edges = steinerTree.outgoingEdgesOf(v);
+			Set<Link> edges = steinerTree.outgoingEdgesOf(v);
 			//I could have more than 1 key
 			List<String> keys = new ArrayList<String>();
-			for(LabeledWeightedEdge e:edges){
+			for(Link e:edges){
 				//get the child node
-				Vertex n = steinerTree.getEdgeTarget(e);
+				Node n = steinerTree.getEdgeTarget(e);
 				if(n.getNodeType()==NodeType.DataProperty){
 					//see if it is a key
 					if(n.getSemanticType().isPartOfKey()){

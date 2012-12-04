@@ -35,11 +35,11 @@ import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
-import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.semantictypes.SemanticType;
-import edu.isi.karma.rep.semantictypes.SemanticType.Origin;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 

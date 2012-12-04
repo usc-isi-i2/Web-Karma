@@ -36,11 +36,11 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
-import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.semantictypes.SemanticType;
-import edu.isi.karma.rep.semantictypes.SemanticType.ClientJsonKeys;
-import edu.isi.karma.rep.semantictypes.SynonymSemanticTypes;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
+import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 

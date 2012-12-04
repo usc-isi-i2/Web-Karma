@@ -29,11 +29,11 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.URI;
-import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.semantictypes.SemanticType;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.URI;
 
 public class Test {
 
@@ -189,7 +189,7 @@ public class Test {
 		return semanticTypes;
 	}
 	
-	public static DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getVivoTree() {
+	public static DirectedWeightedMultigraph<Node, Link> getVivoTree() {
 		OntologyManager ontManagar = new OntologyManager();
 		loadOntologies(ontManagar);
 		List<SemanticType> semTypes4 = createTestInput4();
@@ -197,7 +197,7 @@ public class Test {
 		return alignment.getSteinerTree();
 	}
 
-	public static DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getGeoNamesNeighbourhoodTree() {
+	public static DirectedWeightedMultigraph<Node, Link> getGeoNamesNeighbourhoodTree() {
 		OntologyManager ontManagar = new OntologyManager();
 		loadOntologies(ontManagar);
 		List<SemanticType> semTypes5 = createTestInput5();
@@ -221,7 +221,7 @@ public class Test {
 
 		
 		Alignment alignment = new Alignment(ontManagar, semTypes5, true);
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = alignment.getSteinerTree();
+		DirectedWeightedMultigraph<Node, Link> steinerTree = alignment.getSteinerTree();
 		
 		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name3");
 		
@@ -289,9 +289,9 @@ public class Test {
 		GraphUtil.printGraphSimple(alignment5.getSteinerTree());
 		
 //		alignment.getSteinerTree();
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = alignment5.getSteinerTree();
+		DirectedWeightedMultigraph<Node, Link> steinerTree = alignment5.getSteinerTree();
 //		GraphUtil.printGraph(steinerTree);
-		for (Vertex v : steinerTree.vertexSet()) {
+		for (Node v : steinerTree.vertexSet()) {
 			if (v.getSemanticType() != null)
 				System.out.println(v.getSemanticType().getHNodeId());
 		}

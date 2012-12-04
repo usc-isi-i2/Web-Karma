@@ -43,7 +43,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
-import edu.isi.karma.modeling.alignment.URI;
+import edu.isi.karma.rep.alignment.URI;
 
 public class SourceLoader {
 

@@ -18,32 +18,31 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.rep.semantictypes;
+package edu.isi.karma.rep.alignment;
 
-import java.util.List;
+import edu.isi.karma.modeling.alignment.NodeType;
 
-import org.json.JSONException;
-import org.json.JSONWriter;
 
-import edu.isi.karma.util.Jsonizable;
+public abstract class Node {
 
-public class SynonymSemanticTypes implements Jsonizable {
+	protected String id;
+	private NodeType nodeType;
 	
-	private List<SemanticType> synonyms;
-
-	public SynonymSemanticTypes(List<SemanticType> semTypes) {
-		synonyms = semTypes;
+	public Node(String id, NodeType nodeType) {
+		this.id = id;
+		this.nodeType = nodeType;
 	}
 	
-	public List<SemanticType> getSynonyms(){
-		return synonyms;
+	public Node(Node v) {
+		this.id = v.id;
+		this.nodeType = v.nodeType;
 	}
 	
-	public void write(JSONWriter writer) throws JSONException {
-		writer.array();
-		for (SemanticType type : synonyms) {
-			type.write(writer);
-		}
-		writer.endArray();
+	public String getID() {
+		return this.id;
+	}
+	
+	public NodeType getNodeType() {
+		return this.nodeType;
 	}
 }

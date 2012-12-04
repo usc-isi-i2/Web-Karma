@@ -18,53 +18,21 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.rep.metadata;
 
-import edu.isi.karma.rep.alignment.SemanticTypes;
-import edu.isi.karma.service.Service;
-import edu.isi.karma.service.Source;
+package edu.isi.karma.rep.alignment;
 
-public class MetadataContainer {
+import edu.isi.karma.modeling.alignment.NodeType;
+
+public class ColumnNode extends Node {
+
+	private final String hNodeId;
 	
-	@SuppressWarnings("unused")
-	private String 			worksheetName;
-	@SuppressWarnings("unused")
-	private SemanticTypes 	semanticTypes;
-	
-	private Service service;
-	private Source source;
-	
-	private SourceInformation sourceInfo;
-
-	public void initializeFromJSON() {
-		
-	}
-	
-	public void save() {
-		
+	public ColumnNode(String id, String hNodeId) {
+		super(id, NodeType.ColumnNode);
+		this.hNodeId = hNodeId;
 	}
 
-	public Service getService() {
-		return service;
+	public String getHNodeId() {
+		return hNodeId;
 	}
-
-	public void setService(Service service) {
-		this.service = service;
-	}
-
-	public Source getSource() {
-		return source;
-	}
-
-	public void setSource(Source source) {
-		this.source = source;
-	}
-
-	public SourceInformation getSourceInformation() {
-		return sourceInfo;
-	}
-
-	public void setSourceInformation(SourceInformation sourceInfo) {
-		this.sourceInfo = sourceInfo;
-	}	
 }

@@ -31,7 +31,10 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
 
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.semantictypes.SemanticType;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LinkStatus;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.SemanticType;
 
 
 
@@ -62,16 +65,16 @@ public class Alignment {
 	private OntologyManager ontologyManager;
 	private boolean separateDomainInstancesForSameDataProperties;
 	private List<SemanticType> semanticTypes;
-	private List<Vertex> semanticNodes;
+	private List<Node> semanticNodes;
 
-	private List<LabeledWeightedEdge> linksForcedByUser;
-	private List<LabeledWeightedEdge> linksPreferredByUI;
+	private List<Link> linksForcedByUser;
+	private List<Link> linksPreferredByUI;
 	
 	
 	private List<String> duplicatedLinkIds;
 
-	private DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = null;
-	private Vertex root = null;
+	private DirectedWeightedMultigraph<Node, Link> steinerTree = null;
+	private Node root = null;
 	
 	private GraphBuilder graphBuilder;
 	
@@ -85,15 +88,15 @@ public class Alignment {
 		logger.info("building initial graph ...");
 		graphBuilder = new GraphBuilder(ontologyManager, this.semanticTypes, separateDomainInstancesForSameDataProperties);
 		
-		linksForcedByUser = new ArrayList<LabeledWeightedEdge>();
-		linksPreferredByUI = new ArrayList<LabeledWeightedEdge>();
+		linksForcedByUser = new ArrayList<Link>();
+		linksPreferredByUI = new ArrayList<Link>();
 		duplicatedLinkIds = new ArrayList<String>();
 		
 		semanticNodes = graphBuilder.getSemanticNodes();
 		
 	}
 	
-	public List<LabeledWeightedEdge> getLinksForcedByUser() {
+	public List<Link> getLinksForcedByUser() {
 		return linksForcedByUser;
 	}
 	
@@ -111,8 +114,8 @@ public class Alignment {
 		logger.info("building initial graph ...");
 		graphBuilder = new GraphBuilder(ontologyManager, this.semanticTypes, separateDomainInstancesForSameDataProperties);
 		
-		linksForcedByUser = new ArrayList<LabeledWeightedEdge>();
-		linksPreferredByUI = new ArrayList<LabeledWeightedEdge>();
+		linksForcedByUser = new ArrayList<Link>();
+		linksPreferredByUI = new ArrayList<Link>();
 		
 		semanticNodes = graphBuilder.getSemanticNodes();
 		
@@ -121,9 +124,9 @@ public class Alignment {
 		return this.semanticTypes;
 	}
 	
-	private void addToLinksForcedByUserList(LabeledWeightedEdge e) {
-		LabeledWeightedEdge[] links = linksForcedByUser.toArray(new LabeledWeightedEdge[0]);
-		for (LabeledWeightedEdge link : links) {
+	private void addToLinksForcedByUserList(Link e) {
+		Link[] links = linksForcedByUser.toArray(new Link[0]);
+		for (Link link : links) {
 			if (link.getTarget().getID().equalsIgnoreCase(e.getTarget().getID()))
 				clearUserLink(link.getID());
 		}
@@ -131,10 +134,10 @@ public class Alignment {
 		logger.info("link " + e.getID() + " has been added to user selected links.");
 	}
 	
-	private void removeInvalidForcedLinks(List<Vertex> dangledVertexList) {
-		LabeledWeightedEdge[] links = linksForcedByUser.toArray(new LabeledWeightedEdge[0]);
-		for (LabeledWeightedEdge link : links) {
-			for (Vertex v : dangledVertexList) {
+	private void removeInvalidForcedLinks(List<Node> dangledVertexList) {
+		Link[] links = linksForcedByUser.toArray(new Link[0]);
+		for (Link link : links) {
+			for (Node v : dangledVertexList) {
 				if (link.getTarget().getID().equalsIgnoreCase(v.getID()) || 
 						link.getSource().getID().equalsIgnoreCase(v.getID()))
 					clearUserLink(link.getID());
@@ -143,7 +146,7 @@ public class Alignment {
 	}
 	
 	public void addUserLink(String linkId) {
-		LabeledWeightedEdge[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new LabeledWeightedEdge[0]);
+		Link[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new Link[0]);
 		for (int i = 0; i < allLinks.length; i++) {
 			if (allLinks[i].getID().equalsIgnoreCase(linkId)) {
 				logger.debug("link " + linkId + "has been added to the user selected links.");
@@ -157,7 +160,7 @@ public class Alignment {
 	}
 	
 	public void addUserLinks(List<String> linkIds) {
-		LabeledWeightedEdge[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new LabeledWeightedEdge[0]);
+		Link[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new Link[0]);
 		for (int j = 0; j < linkIds.size(); j++) {
 			boolean found = false;
 			for (int i = 0; i < allLinks.length; i++) {
@@ -220,7 +223,7 @@ public class Alignment {
 	public void updateSemanticTypes(List<SemanticType> semanticTypes) {
 		
 		List<SemanticType> updatedSemanticTypes = new ArrayList<SemanticType>();
-		List<Vertex> deletedVertices = new ArrayList<Vertex>(); 
+		List<Node> deletedVertices = new ArrayList<Node>(); 
 		for (SemanticType s : semanticTypes)
 			logger.debug("%%%%%%%%%%%%%%%%%%%" + s.getType().getUriString());
 		
@@ -246,7 +249,7 @@ public class Alignment {
 				}
 			}
 			if (!found) {
-				Vertex deletedNode = this.graphBuilder.removeSemanticType(prevType);
+				Node deletedNode = this.graphBuilder.removeSemanticType(prevType);
 				logger.debug("<<<<<<<<<delete<<<<<<<<<" + prevType.getType().getUriString());
 				if (deletedNode != null) deletedVertices.add(deletedNode);
 			}
@@ -262,8 +265,8 @@ public class Alignment {
 		
 //		GraphUtil.printGraph(this.graphBuilder.getGraph());
 
-		LabeledWeightedEdge[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new LabeledWeightedEdge[0]);
-		Vertex source, target;
+		Link[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new Link[0]);
+		Node source, target;
 		
 		
 		for (int i = 0; i < allLinks.length; i++) {
@@ -272,7 +275,7 @@ public class Alignment {
 				source = allLinks[i].getSource();
 				target = allLinks[i].getTarget();
 				
-				Vertex v = this.graphBuilder.copyNode(source);
+				Node v = this.graphBuilder.copyNode(source);
 				this.graphBuilder.copyLinks(source, v);
 				target.setDomainVertexId(v.getID());
 				
@@ -300,11 +303,11 @@ public class Alignment {
 		align();
 	}
 	
-	public LabeledWeightedEdge getAssignedLink(String nodeId) {
+	public Link getAssignedLink(String nodeId) {
 		
-		for (Vertex v : this.steinerTree.vertexSet()) {
+		for (Node v : this.steinerTree.vertexSet()) {
 			if (v.getID().equalsIgnoreCase(nodeId)) {
-				LabeledWeightedEdge[] incomingLinks = this.steinerTree.incomingEdgesOf(v).toArray(new LabeledWeightedEdge[0]);
+				Link[] incomingLinks = this.steinerTree.incomingEdgesOf(v).toArray(new Link[0]);
 				if (incomingLinks != null && incomingLinks.length == 1)
 					return incomingLinks[0];
 			}
@@ -312,21 +315,21 @@ public class Alignment {
 		return null;
 	}
 	
-	public List<LabeledWeightedEdge> getAlternatives(String nodeId, boolean includeAssignedLink) {
+	public List<Link> getAlternatives(String nodeId, boolean includeAssignedLink) {
 		
-		List<LabeledWeightedEdge> alternatives = new ArrayList<LabeledWeightedEdge>();
-		LabeledWeightedEdge assignedLink = null;
+		List<Link> alternatives = new ArrayList<Link>();
+		Link assignedLink = null;
 		
 		if (!includeAssignedLink)
 			assignedLink = getAssignedLink(nodeId);
 
 		List<String> displayedNodes = new ArrayList<String>();
-		for (Vertex v : this.steinerTree.vertexSet())
+		for (Node v : this.steinerTree.vertexSet())
 			displayedNodes.add(v.getID());
 		
-		for (Vertex v : this.graphBuilder.getGraph().vertexSet()) {
+		for (Node v : this.graphBuilder.getGraph().vertexSet()) {
 			if (v.getID().equalsIgnoreCase(nodeId)) {
-				LabeledWeightedEdge[] incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(v).toArray(new LabeledWeightedEdge[0]);
+				Link[] incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(v).toArray(new Link[0]);
 				if (incomingLinks != null && incomingLinks.length > 0) {
 					
 					for (int i = 0; i < incomingLinks.length; i++) {
@@ -350,14 +353,14 @@ public class Alignment {
 	
 	private void updateLinksStatus() {
 		// order of adding lists is important: linksPreferredByUI should be first 
-		for (LabeledWeightedEdge e : linksPreferredByUI)
+		for (Link e : linksPreferredByUI)
 			e.setLinkStatus(LinkStatus.PreferredByUI);
-		for (LabeledWeightedEdge e : linksForcedByUser)
+		for (Link e : linksForcedByUser)
 			e.setLinkStatus(LinkStatus.ForcedByUser);
 	}
 	
 	private void addUILink(String linkId) {
-		LabeledWeightedEdge[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new LabeledWeightedEdge[0]);
+		Link[] allLinks =  this.graphBuilder.getGraph().edgeSet().toArray(new Link[0]);
 		for (int i = 0; i < allLinks.length; i++) {
 			if (allLinks[i].getID().equalsIgnoreCase(linkId)) {
 				linksPreferredByUI.add(allLinks[i]);
@@ -375,13 +378,13 @@ public class Alignment {
 		if (this.steinerTree == null)
 			return;
 		
-		for (LabeledWeightedEdge e: this.steinerTree.edgeSet()) {
+		for (Link e: this.steinerTree.edgeSet()) {
 			addUILink(e.getID());
 		}
 	}
 	
-	private List<LabeledWeightedEdge> buildSelectedLinks() {
-		List<LabeledWeightedEdge> selectedLinks = new ArrayList<LabeledWeightedEdge>();
+	private List<Link> buildSelectedLinks() {
+		List<Link> selectedLinks = new ArrayList<Link>();
 
 		addUILinksFromTree();
 		updateLinksStatus();
@@ -399,18 +402,18 @@ public class Alignment {
 		
 		logger.info("preparing G Prime for steiner algorithm input ...");
 		
-		List<LabeledWeightedEdge> selectedLinks = buildSelectedLinks();
+		List<Link> selectedLinks = buildSelectedLinks();
 		// order of adding lists is important: linksPreferredByUI should be first 
 		
 		GraphPreProcess graphPreProcess = new GraphPreProcess(this.graphBuilder.getGraph(), semanticNodes, selectedLinks );
-		UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedGraph = graphPreProcess.getUndirectedGraph();
+		UndirectedGraph<Node, Link> undirectedGraph = graphPreProcess.getUndirectedGraph();
 //		GraphUtil.printGraph(undirectedGraph);
-		List<Vertex> steinerNodes = graphPreProcess.getSteinerNodes();
+		List<Node> steinerNodes = graphPreProcess.getSteinerNodes();
 
 		logger.info("computing steiner tree ...");
 
 		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodes);
-		WeightedMultigraph<Vertex, LabeledWeightedEdge> tree = steinerTree.getSteinerTree();
+		WeightedMultigraph<Node, Link> tree = steinerTree.getSteinerTree();
 		if (tree == null) {
 			logger.info("resulting tree is null ...");
 			return;
@@ -431,11 +434,11 @@ public class Alignment {
 		logger.info("time to compute steiner tree: " + elapsedTimeSec);
 	}
 
-	public Vertex GetTreeRoot() {
+	public Node GetTreeRoot() {
 		return this.root;
 	}
 	
-	public DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getSteinerTree() {
+	public DirectedWeightedMultigraph<Node, Link> getSteinerTree() {
 		if (this.steinerTree == null)
 			align();
 		
@@ -443,7 +446,7 @@ public class Alignment {
 		return this.steinerTree;
 	}
 
-	public DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getAlignmentGraph() {
+	public DirectedWeightedMultigraph<Node, Link> getAlignmentGraph() {
 		return this.graphBuilder.getGraph();
 	}
 	

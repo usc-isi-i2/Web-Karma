@@ -18,53 +18,32 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.rep.metadata;
+package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.rep.alignment.SemanticTypes;
-import edu.isi.karma.service.Service;
-import edu.isi.karma.service.Source;
+import java.util.List;
 
-public class MetadataContainer {
-	
-	@SuppressWarnings("unused")
-	private String 			worksheetName;
-	@SuppressWarnings("unused")
-	private SemanticTypes 	semanticTypes;
-	
-	private Service service;
-	private Source source;
-	
-	private SourceInformation sourceInfo;
+import org.json.JSONException;
+import org.json.JSONWriter;
 
-	public void initializeFromJSON() {
-		
+import edu.isi.karma.util.Jsonizable;
+
+public class SynonymSemanticTypes implements Jsonizable {
+	
+	private List<SemanticType> synonyms;
+
+	public SynonymSemanticTypes(List<SemanticType> semTypes) {
+		synonyms = semTypes;
 	}
 	
-	public void save() {
-		
+	public List<SemanticType> getSynonyms(){
+		return synonyms;
 	}
-
-	public Service getService() {
-		return service;
+	
+	public void write(JSONWriter writer) throws JSONException {
+		writer.array();
+		for (SemanticType type : synonyms) {
+			type.write(writer);
+		}
+		writer.endArray();
 	}
-
-	public void setService(Service service) {
-		this.service = service;
-	}
-
-	public Source getSource() {
-		return source;
-	}
-
-	public void setSource(Source source) {
-		this.source = source;
-	}
-
-	public SourceInformation getSourceInformation() {
-		return sourceInfo;
-	}
-
-	public void setSourceInformation(SourceInformation sourceInfo) {
-		this.sourceInfo = sourceInfo;
-	}	
 }

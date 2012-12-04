@@ -21,7 +21,7 @@
 
 package edu.isi.karma.service;
 
-import edu.isi.karma.modeling.alignment.URI;
+import edu.isi.karma.rep.alignment.URI;
 
 public class PropertyAtom extends Atom {
 

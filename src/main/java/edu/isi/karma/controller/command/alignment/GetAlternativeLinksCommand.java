@@ -33,8 +33,8 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.Vertex;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetAlternativeLinksCommand extends Command {
@@ -80,9 +80,9 @@ public class GetAlternativeLinksCommand extends Command {
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				alignmentId);
-		final List<LabeledWeightedEdge> edges = alignment.getAlternatives(
+		final List<Link> edges = alignment.getAlternatives(
 				nodeId, true);
-		final LabeledWeightedEdge currentLink = alignment.getAssignedLink(nodeId); 
+		final Link currentLink = alignment.getAssignedLink(nodeId); 
 
 		UpdateContainer upd = new UpdateContainer(new AbstractUpdate() {
 			@Override
@@ -93,7 +93,7 @@ public class GetAlternativeLinksCommand extends Command {
 
 				try {
 					obj.put(JsonKeys.updateType.name(), "GetAlternativeLinks");
-					for (LabeledWeightedEdge edge : edges) {
+					for (Link edge : edges) {
 						
 						String edgeLabel = "";
 //						if(edge.getPrefix() != null && !edge.getPrefix().equals(""))
@@ -102,7 +102,7 @@ public class GetAlternativeLinksCommand extends Command {
 							edgeLabel = edge.getLocalLabel();
 						
 						String edgeSourceLabel = "";
-						Vertex edgeSource = edge.getSource();
+						Node edgeSource = edge.getSource();
 //						if(edgeSource.getPrefix() != null && !edgeSource.getPrefix().equals(""))
 //							edgeSourceLabel = edgeSource.getPrefix() + ":" + edgeSource.getLocalLabel();
 //						else

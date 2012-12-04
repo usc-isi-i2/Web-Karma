@@ -18,53 +18,45 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.rep.metadata;
 
-import edu.isi.karma.rep.alignment.SemanticTypes;
-import edu.isi.karma.service.Service;
-import edu.isi.karma.service.Source;
+package edu.isi.karma.rep.alignment;
 
-public class MetadataContainer {
-	
-	@SuppressWarnings("unused")
-	private String 			worksheetName;
-	@SuppressWarnings("unused")
-	private SemanticTypes 	semanticTypes;
-	
-	private Service service;
-	private Source source;
-	
-	private SourceInformation sourceInfo;
+import edu.isi.karma.modeling.alignment.NodeType;
 
-	public void initializeFromJSON() {
-		
+public class InternalNode extends Node {
+
+	private final URI uri;
+	
+	public InternalNode(String id, URI uri) {
+		super(id, NodeType.InternalClassNode);
+		this.uri = uri;
+	}
+
+	public URI getUri() {
+		return uri;
 	}
 	
-	public void save() {
-		
+	public String getLocalLabel() {
+		String s = this.uri.getUriString();
+		s = s.replaceAll(this.uri.getNs(), "");
+		return s;
 	}
-
-	public Service getService() {
-		return service;
+	
+	public String getUriString() {
+		return this.uri.getUriString();
 	}
-
-	public void setService(Service service) {
-		this.service = service;
+	
+	public String getNs() {
+		return this.uri.getNs();
 	}
-
-	public Source getSource() {
-		return source;
+	
+	public String getPrefix() {
+		return this.uri.getPrefix();
 	}
-
-	public void setSource(Source source) {
-		this.source = source;
+	
+	public String getLocalID() {
+		String s = this.id;
+		s = s.replaceAll(this.uri.getNs(), "");
+		return s;
 	}
-
-	public SourceInformation getSourceInformation() {
-		return sourceInfo;
-	}
-
-	public void setSourceInformation(SourceInformation sourceInfo) {
-		this.sourceInfo = sourceInfo;
-	}	
 }

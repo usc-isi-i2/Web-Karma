@@ -29,8 +29,8 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
-import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.alignment.URI;
 import edu.isi.karma.util.Jsonizable;
 import edu.isi.karma.util.Util;
 

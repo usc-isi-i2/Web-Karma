@@ -28,23 +28,27 @@ import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LinkStatus;
+import edu.isi.karma.rep.alignment.Node;
+
 public class GraphPreProcess {
 
 	static Logger logger = Logger.getLogger(GraphPreProcess.class);
 
-	DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> graph;
-	DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> gPrime;
-	List<Vertex> semanticNodes;
-	List<LabeledWeightedEdge> selectedLinks;
-	List<Vertex> steinerNodes;
+	DirectedWeightedMultigraph<Node, Link> graph;
+	DirectedWeightedMultigraph<Node, Link> gPrime;
+	List<Node> semanticNodes;
+	List<Link> selectedLinks;
+	List<Node> steinerNodes;
 	
-	public GraphPreProcess(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> graph, 
-			List<Vertex> semanticNodes, List<LabeledWeightedEdge> selectedLinks) {
+	public GraphPreProcess(DirectedWeightedMultigraph<Node, Link> graph, 
+			List<Node> semanticNodes, List<Link> selectedLinks) {
 		this.graph = graph;
 		this.semanticNodes = semanticNodes;
 		this.selectedLinks = selectedLinks;
 		// copy all semantic nodes into steiner nodes
-		this.steinerNodes = new ArrayList<Vertex>(semanticNodes); 
+		this.steinerNodes = new ArrayList<Node>(semanticNodes); 
 
 		createDirectedGPrime();
 	}
@@ -53,15 +57,15 @@ public class GraphPreProcess {
 	private void createDirectedGPrime() {
 		logger.debug("<enter");
 		
-		gPrime = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>)this.graph.clone();
+		gPrime = (DirectedWeightedMultigraph<Node, Link>)this.graph.clone();
 		
-		LabeledWeightedEdge e;
+		Link e;
 		LinkStatus status;
 		
 		if (selectedLinks != null) 
 		for (int i = 0; i < selectedLinks.size(); i++) {
 			
-			e = (LabeledWeightedEdge)selectedLinks.get(i);
+			e = (Link)selectedLinks.get(i);
 			status = e.getLinkStatus();
 			
 			if (status == LinkStatus.PreferredByUI) {
@@ -69,10 +73,10 @@ public class GraphPreProcess {
 				
 			} else if (status == LinkStatus.ForcedByUser) {
 				
-				e = (LabeledWeightedEdge)selectedLinks.get(i);
+				e = (Link)selectedLinks.get(i);
 				
-				Vertex source = selectedLinks.get(i).getSource();
-				Vertex target = selectedLinks.get(i).getTarget();
+				Node source = selectedLinks.get(i).getSource();
+				Node target = selectedLinks.get(i).getTarget();
 				
 				if (!steinerNodes.contains(source))
 					steinerNodes.add(source);
@@ -81,8 +85,8 @@ public class GraphPreProcess {
 					steinerNodes.add(target);
 				
 				// removing all links to target
-				LabeledWeightedEdge[] incomingLinks = gPrime.incomingEdgesOf(target).toArray(new LabeledWeightedEdge[0]); 
-				for (LabeledWeightedEdge inLink: incomingLinks) {
+				Link[] incomingLinks = gPrime.incomingEdgesOf(target).toArray(new Link[0]); 
+				for (Link inLink: incomingLinks) {
 					gPrime.removeAllEdges( inLink.getSource(), inLink.getTarget() );
 				}
 	
@@ -101,7 +105,7 @@ public class GraphPreProcess {
 		// adding the domains of data property nodes to steiner nodes collection
 		// It is possible that some data property nodes have multiple incoming links from 
 		// different instances of the same class. We only keep the one that comes from its domain instance.
-		for (Vertex v: gPrime.vertexSet()) {
+		for (Node v: gPrime.vertexSet()) {
 			
 			if (v.getNodeType() != NodeType.DataProperty)
 				continue;
@@ -110,7 +114,7 @@ public class GraphPreProcess {
 			if (domainVertexId == null)
 				continue;
 
-			LabeledWeightedEdge[] incomingLinks = gPrime.incomingEdgesOf(v).toArray(new LabeledWeightedEdge[0]);
+			Link[] incomingLinks = gPrime.incomingEdgesOf(v).toArray(new Link[0]);
 			if (incomingLinks != null && incomingLinks.length != 0) {
 				
 					for (int i = 0; i < incomingLinks.length; i++) {
@@ -128,13 +132,13 @@ public class GraphPreProcess {
 //		GraphUtil.printGraph(gPrime);
 	}
 	
-	public List<Vertex> getSteinerNodes() {
+	public List<Node> getSteinerNodes() {
 		return this.steinerNodes;
 	}
 	
-	public UndirectedGraph<Vertex, LabeledWeightedEdge> getUndirectedGraph() {
+	public UndirectedGraph<Node, Link> getUndirectedGraph() {
 		
-		return  new AsUndirectedGraph<Vertex, LabeledWeightedEdge>(this.gPrime);
+		return  new AsUndirectedGraph<Node, Link>(this.gPrime);
 	}
 	
 }

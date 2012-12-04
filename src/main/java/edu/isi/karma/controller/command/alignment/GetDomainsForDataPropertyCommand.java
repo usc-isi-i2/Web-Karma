@@ -34,8 +34,8 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.OntologyClassHierarchyUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.alignment.URI;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetDomainsForDataPropertyCommand extends Command {

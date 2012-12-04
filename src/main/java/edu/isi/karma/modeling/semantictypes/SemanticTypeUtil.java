@@ -32,16 +32,16 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler.ColumnFeature;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticTypes;
+import edu.isi.karma.rep.alignment.URI;
 import edu.isi.karma.rep.metadata.Tag;
-import edu.isi.karma.rep.semantictypes.SemanticType;
-import edu.isi.karma.rep.semantictypes.SemanticTypes;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -339,6 +339,38 @@ public class SemanticTypeUtil {
 				continue;
 			}
 			
+			/** Remove the labels that are not in the ontology **/
+			List<String> removeLabels = new ArrayList<String>();
+			for (int i=0; i<labels.size(); i++) {
+				String label = labels.get(i);
+				if (label.contains("|")) {
+					URI domainUri = ontMgr.getURIFromString(label.split("\\|")[0]);
+					URI typeUri = ontMgr.getURIFromString(label.split("\\|")[1]);
+					
+					// Remove from the list if URI not present in the URI
+					if (domainUri == null || typeUri == null) {
+						removeLabels.add(label);
+					}
+				} else {
+					URI typeUri = ontMgr.getURIFromString(label);
+					
+					// Remove from the list if URI not present in the URI
+					if (typeUri == null) {
+						removeLabels.add(label);
+					}
+				}
+			}
+			for (String removeLabel : removeLabels) {
+				int idx = labels.indexOf(removeLabel);
+				System.out.println("Removing " + removeLabel);
+				logger.info("Removing " + removeLabel);
+				labels.remove(removeLabel);
+				scores.remove(idx);
+			}
+			if (labels.size() == 0) {
+				continue;
+			}
+
 			CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
 			worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(), columnModel);
 		}

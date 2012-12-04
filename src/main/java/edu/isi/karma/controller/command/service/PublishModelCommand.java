@@ -36,11 +36,11 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rdf.SourceDescription;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.metadata.MetadataContainer;
 import edu.isi.karma.service.Repository;
 import edu.isi.karma.service.Service;
@@ -113,7 +113,7 @@ public class PublishModelCommand extends Command{
 					"Error occured while publishing the source. The alignment model is null."));
 		} 
 		
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = null;
+		DirectedWeightedMultigraph<Node, Link> tree = null;
 		if (al != null) 
 			tree = al.getSteinerTree();
 		

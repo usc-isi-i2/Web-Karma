@@ -13,7 +13,7 @@ import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler.ColumnFeature;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.semantictypes.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticType;
 
 public class SemanticTypeTrainingThread implements Runnable {
 

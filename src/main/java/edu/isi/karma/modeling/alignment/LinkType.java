@@ -23,6 +23,7 @@ package edu.isi.karma.modeling.alignment;
 public enum LinkType {
 	ObjectProperty,
 	DataProperty,
+	MetaProperty,
 	HasSubClass, // from superclass to subclass
 	None // default
 }

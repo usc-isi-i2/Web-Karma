@@ -29,18 +29,22 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.URI;
+
 public class TreePostProcess {
 	
 	static Logger logger = Logger.getLogger(TreePostProcess.class);
 
-	private DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree;
-	private Vertex root = null;
-	private List<Vertex> dangledVertexList;
+	private DirectedWeightedMultigraph<Node, Link> tree;
+	private Node root = null;
+	private List<Node> dangledVertexList;
 
-	public TreePostProcess(WeightedMultigraph<Vertex, LabeledWeightedEdge> tree) {
+	public TreePostProcess(WeightedMultigraph<Node, Link> tree) {
 		
-		this.tree = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>)GraphUtil.asDirectedGraph(tree);
-		dangledVertexList = new ArrayList<Vertex>();
+		this.tree = (DirectedWeightedMultigraph<Node, Link>)GraphUtil.asDirectedGraph(tree);
+		dangledVertexList = new ArrayList<Node>();
 		selectRoot(findPossibleRoots());
 		updateLinksDirections(this.root, null);
 		removeDanglingNodes();
@@ -48,23 +52,23 @@ public class TreePostProcess {
 	
 	
 	
-	private List<Vertex> findPossibleRoots() {
+	private List<Node> findPossibleRoots() {
 
-		List<Vertex> possibleRoots = new ArrayList<Vertex>();
+		List<Node> possibleRoots = new ArrayList<Node>();
 
 		int maxReachableNodes = -1;
 		int reachableNodes = -1;
 		
-		List<Vertex> vertexList = new ArrayList<Vertex>();
+		List<Node> vertexList = new ArrayList<Node>();
 		List<Integer> reachableNodesList = new ArrayList<Integer>();
 		
 //		UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedTree = 
 //			new AsUndirectedGraph<Vertex, LabeledWeightedEdge>(this.tree);
 
 //		boolean connectedToSemanticType = false;
-		for (Vertex v: this.tree.vertexSet()) {
-			BreadthFirstIterator<Vertex, LabeledWeightedEdge> i = 
-				new BreadthFirstIterator<Vertex, LabeledWeightedEdge>(this.tree, v);
+		for (Node v: this.tree.vertexSet()) {
+			BreadthFirstIterator<Node, Link> i = 
+				new BreadthFirstIterator<Node, Link>(this.tree, v);
 //			connectedToSemanticType = false;
 			
 			reachableNodes = -1;
@@ -99,7 +103,7 @@ public class TreePostProcess {
 		return possibleRoots;
 	}
 	
-	private void selectRoot(List<Vertex> possibleRoots) {
+	private void selectRoot(List<Node> possibleRoots) {
 		
 		if (possibleRoots == null || possibleRoots.size() == 0)
 			return;
@@ -114,15 +118,15 @@ public class TreePostProcess {
 		this.root = possibleRoots.get(0);
 	}
 	
-	private void updateLinksDirections(Vertex root, LabeledWeightedEdge e) {
+	private void updateLinksDirections(Node root, Link e) {
 		
 		if (root == null)
 			return;
 		
-		Vertex source, target;
-		LabeledWeightedEdge inLink;
+		Node source, target;
+		Link inLink;
 		
-		LabeledWeightedEdge[] incomingLinks = this.tree.incomingEdgesOf(root).toArray(new LabeledWeightedEdge[0]);
+		Link[] incomingLinks = this.tree.incomingEdgesOf(root).toArray(new Link[0]);
 		if (incomingLinks != null && incomingLinks.length != 0) {
 			for (int i = 0; i < incomingLinks.length; i++) {
 				
@@ -134,7 +138,7 @@ public class TreePostProcess {
 				if (e != null && inLink.getID().equalsIgnoreCase(e.getID()))
 					continue;
 				
-				LabeledWeightedEdge inverseLink = new LabeledWeightedEdge(inLink.getID(), new URI(inLink.getUriString(), inLink.getNs(), inLink.getPrefix()), inLink.getLinkType(), true);
+				Link inverseLink = new Link(inLink.getID(), new URI(inLink.getUriString(), inLink.getNs(), inLink.getPrefix()), inLink.getLinkType(), true);
 				
 				this.tree.addEdge(target, source, inverseLink);
 				this.tree.setEdgeWeight(inverseLink, inLink.getWeight());
@@ -142,7 +146,7 @@ public class TreePostProcess {
 			}
 		}
 
-		LabeledWeightedEdge[] outgoingLinks = this.tree.outgoingEdgesOf(root).toArray(new LabeledWeightedEdge[0]);
+		Link[] outgoingLinks = this.tree.outgoingEdgesOf(root).toArray(new Link[0]);
 
 		if (outgoingLinks == null || outgoingLinks.length == 0)
 			return;
@@ -157,14 +161,14 @@ public class TreePostProcess {
 	private void removeDanglingNodes() {
 
 		boolean connectedToSemanticType = false;
-		for (Vertex v: this.tree.vertexSet()) {
-			BreadthFirstIterator<Vertex, LabeledWeightedEdge> i = 
-				new BreadthFirstIterator<Vertex, LabeledWeightedEdge>(this.tree, v);
+		for (Node v: this.tree.vertexSet()) {
+			BreadthFirstIterator<Node, Link> i = 
+				new BreadthFirstIterator<Node, Link>(this.tree, v);
 
 			connectedToSemanticType = false;
 			
 			while (i.hasNext()) {
-				Vertex temp = i.next();
+				Node temp = i.next();
 				if (temp.getSemanticType() != null)
 					connectedToSemanticType = true;
 			}
@@ -173,20 +177,20 @@ public class TreePostProcess {
 				dangledVertexList.add(v);
 		}
 		
-		for (Vertex v : dangledVertexList)
+		for (Node v : dangledVertexList)
 			this.tree.removeVertex(v);
 		
 	}
 	
-	public DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getTree() {
+	public DirectedWeightedMultigraph<Node, Link> getTree() {
 		return this.tree;
 	}
 	
-	public Vertex getRoot() {
+	public Node getRoot() {
 		return this.root;
 	}
 
-	public List<Vertex> getDangledVertexList() {
+	public List<Node> getDangledVertexList() {
 		return dangledVertexList;
 	}
 	

@@ -25,9 +25,12 @@ import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
+
 public class GraphUtil {
 
-	private static String getNodeTypeString(Vertex vertex) {
+	private static String getNodeTypeString(Node vertex) {
     	if (vertex.getNodeType() == NodeType.Class)
     		return "Class";
     	else if (vertex.getNodeType() == NodeType.DataProperty)
@@ -36,7 +39,7 @@ public class GraphUtil {
     		return null;
 	}
 
-	private static String getLinkTypeString(LabeledWeightedEdge link) {
+	private static String getLinkTypeString(Link link) {
     	if (link.getLinkType() == LinkType.ObjectProperty)
     		return "ObjectProperty";
     	if (link.getLinkType() == LinkType.DataProperty)
@@ -49,17 +52,17 @@ public class GraphUtil {
     		return null;
 	}
 	
-	public static Vertex getVertex(Graph<Vertex, LabeledWeightedEdge> graph, String id) {
+	public static Node getVertex(Graph<Node, Link> graph, String id) {
 		if (id == null)
 			return null;
 		
-		for (Vertex v : graph.vertexSet())
+		for (Node v : graph.vertexSet())
 			if (v.getID().equalsIgnoreCase(id))
 				return v;
 		return null;
 	}
 	
-	public static void printVertex(Vertex vertex) {
+	public static void printVertex(Node vertex) {
     	System.out.print("(");
     	System.out.print( vertex.getLocalID());
 //    	System.out.print( vertex.getID());
@@ -70,7 +73,7 @@ public class GraphUtil {
     	System.out.print(")");
 	}
 	
-	public static void printEdge(LabeledWeightedEdge edge) {
+	public static void printEdge(Link edge) {
     	System.out.print("(");
 		// FIXME
 		if (edge.isInverse()) {
@@ -90,28 +93,28 @@ public class GraphUtil {
     	printVertex(edge.getTarget());
 	}
 
-	public static DirectedGraph<Vertex, LabeledWeightedEdge> asDirectedGraph(UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedGraph) {
+	public static DirectedGraph<Node, Link> asDirectedGraph(UndirectedGraph<Node, Link> undirectedGraph) {
 		
-		DirectedGraph<Vertex, LabeledWeightedEdge> g = new DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>(LabeledWeightedEdge.class);
+		DirectedGraph<Node, Link> g = new DirectedWeightedMultigraph<Node, Link>(Link.class);
 		
-		for (Vertex v : undirectedGraph.vertexSet())
+		for (Node v : undirectedGraph.vertexSet())
 			g.addVertex(v);
 		
-		for (LabeledWeightedEdge e: undirectedGraph.edgeSet())
+		for (Link e: undirectedGraph.edgeSet())
 			g.addEdge(e.getSource(), e.getTarget(), e);
 		
 		return g;
 	}
 	
-	public static void printGraph(Graph<Vertex, LabeledWeightedEdge> graph) {
+	public static void printGraph(Graph<Node, Link> graph) {
 		
     	System.out.println("*** Nodes ***");
-		for (Vertex vertex : graph.vertexSet()) {
+		for (Node vertex : graph.vertexSet()) {
 			printVertex(vertex);
 			System.out.println();
         }
     	System.out.println("*** Links ***");
-		for (LabeledWeightedEdge edge : graph.edgeSet()) {
+		for (Link edge : graph.edgeSet()) {
 			printEdge(edge);
 			System.out.println();
         }
@@ -119,7 +122,7 @@ public class GraphUtil {
 		
 	}
 	
-	public static void printGraphSimple(Graph<Vertex, LabeledWeightedEdge> graph) {
+	public static void printGraphSimple(Graph<Node, Link> graph) {
 		
 //    	System.out.println("*** Nodes ***");
 //		for (Vertex vertex : graph.vertexSet()) {
@@ -127,7 +130,7 @@ public class GraphUtil {
 //			System.out.println();
 //        }
     	System.out.println("*** Graph ***");
-		for (LabeledWeightedEdge edge : graph.edgeSet()) {
+		for (Link edge : graph.edgeSet()) {
 			System.out.print("(");
 			System.out.print(edge.getSource().getLocalID());
 			System.out.print(")");

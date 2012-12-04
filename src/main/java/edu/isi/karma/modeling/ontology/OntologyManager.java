@@ -47,7 +47,7 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
-import edu.isi.karma.modeling.alignment.URI;
+import edu.isi.karma.rep.alignment.URI;
 
 public class OntologyManager {
 	

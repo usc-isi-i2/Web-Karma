@@ -22,9 +22,11 @@ package edu.isi.karma.modeling.alignment;
 
 import java.util.Comparator;
 
-public class EdgeComparatorByLabel implements Comparator<LabeledWeightedEdge> {
+import edu.isi.karma.rep.alignment.Link;
 
-	public int compare(LabeledWeightedEdge o1, LabeledWeightedEdge o2) {
+public class EdgeComparatorByLabel implements Comparator<Link> {
+
+	public int compare(Link o1, Link o2) {
 		return o1.getUriString().compareTo(o2.getUriString());
 	}
 

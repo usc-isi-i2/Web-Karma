@@ -32,9 +32,9 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.hierarchicalheadings.TForest;
 import edu.isi.karma.rep.hierarchicalheadings.TNode;
 
@@ -54,8 +54,8 @@ public class AlignmentForest implements TForest {
 	}
 
 	public static AlignmentForest constructFromSteinerTree(
-			DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree,
-			Vertex treeRoot, List<HNode> sortedHeaders) {
+			DirectedWeightedMultigraph<Node, Link> tree,
+			Node treeRoot, List<HNode> sortedHeaders) {
 
 		AlignmentForest forest = new AlignmentForest();
 
@@ -258,9 +258,9 @@ public class AlignmentForest implements TForest {
 		return null;
 	}
 
-	private TNode populateWithVertex(Vertex vertex,
-			DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree,
-			LabeledWeightedEdge parentEdge) {
+	private TNode populateWithVertex(Node vertex,
+			DirectedWeightedMultigraph<Node, Link> tree,
+			Link parentEdge) {
 		// Add the information about the parent link
 		AlignmentLink parentLink = null;
 		if (parentEdge != null) {
@@ -286,8 +286,8 @@ public class AlignmentForest implements TForest {
 		}
 
 		//
-		Set<LabeledWeightedEdge> edges = tree.outgoingEdgesOf(vertex);
-		for (LabeledWeightedEdge edge : edges) {
+		Set<Link> edges = tree.outgoingEdgesOf(vertex);
+		for (Link edge : edges) {
 			TNode child = populateWithVertex(edge.getTarget(), tree, edge);
 			children.add(child);
 		}

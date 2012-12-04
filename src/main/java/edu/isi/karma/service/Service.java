@@ -34,11 +34,11 @@ import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
 import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.modeling.alignment.SteinerTree;
-import edu.isi.karma.modeling.alignment.URI;
-import edu.isi.karma.modeling.alignment.Vertex;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.URI;
 
 public class Service {
 	
@@ -365,13 +365,13 @@ public class Service {
 
 	}
 	
-	public void updateModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeModel) {
+	public void updateModel(DirectedWeightedMultigraph<Node, Link> treeModel) {
 		
 		if (treeModel == null)
 			return;
 		
-		List<Vertex> inputAttributesNodes = new ArrayList<Vertex>();
-		List<Vertex> outputAttributesNodes = new ArrayList<Vertex>();
+		List<Node> inputAttributesNodes = new ArrayList<Node>();
+		List<Node> outputAttributesNodes = new ArrayList<Node>();
 		
 		HashMap<String, Argument> vertexIdToArgument = new HashMap<String, Argument>();
 
@@ -380,7 +380,7 @@ public class Service {
 		
 		// set the rdf ids of all the vertices. The rdf id of leaf vertices are the attribute ids. 
 		String hNodeId = "";
-		for (Vertex v : treeModel.vertexSet()) {
+		for (Node v : treeModel.vertexSet()) {
 			if (v.getSemanticType() != null && v.getSemanticType().getHNodeId() != null) {
 				logger.debug("Vertex " + v.getLocalID() + " is a semantic type associated to a source columns.");
 				hNodeId = v.getSemanticType().getHNodeId();
@@ -426,22 +426,22 @@ public class Service {
 		
 	}
 	
-	private Model getInputModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeModel, 
-			List<Vertex> inputNodes, List<String> inputModelVertexes, List<String> inputModelEdges,
+	private Model getInputModel(DirectedWeightedMultigraph<Node, Link> treeModel, 
+			List<Node> inputNodes, List<String> inputModelVertexes, List<String> inputModelEdges,
 			HashMap<String, Argument> vertexIdToArgument) {
 
 		if (treeModel == null)
 			return null;
 				
 		logger.debug("compute the steiner tree from the alignment tree with input nodes as steiner nodes ...");
-		UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedGraph = 
-			new AsUndirectedGraph<Vertex, LabeledWeightedEdge>(treeModel);
-		List<Vertex> steinerNodes = inputNodes;
+		UndirectedGraph<Node, Link> undirectedGraph = 
+			new AsUndirectedGraph<Node, Link>(treeModel);
+		List<Node> steinerNodes = inputNodes;
 		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodes);
 
 
 		Model m = new Model("inputModel");
-		for (Vertex v : steinerTree.getSteinerTree().vertexSet()) {
+		for (Node v : steinerTree.getSteinerTree().vertexSet()) {
 			
 			inputModelVertexes.add(v.getID());
 			
@@ -457,7 +457,7 @@ public class Service {
 			m.getAtoms().add(classAtom);
 		}
 		
-		for (LabeledWeightedEdge e : steinerTree.getSteinerTree().edgeSet()) {
+		for (Link e : steinerTree.getSteinerTree().edgeSet()) {
 			
 			inputModelEdges.add(e.getID());
 			
@@ -476,7 +476,7 @@ public class Service {
 		return m;
 	}
 
-	private Model getOutputModel(DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeModel, 
+	private Model getOutputModel(DirectedWeightedMultigraph<Node, Link> treeModel, 
 			List<String> inputModelVertexes, List<String> inputModelEdges,
 			HashMap<String, Argument> vertexIdToArgument) {
 
@@ -485,7 +485,7 @@ public class Service {
 
 		Model m = new Model("outputModel");
 		
-		for (Vertex v : treeModel.vertexSet()) {
+		for (Node v : treeModel.vertexSet()) {
 			
 			if (inputModelVertexes.indexOf(v.getID()) != -1)
 				continue;
@@ -503,7 +503,7 @@ public class Service {
 			m.getAtoms().add(classAtom);
 		}
 		
-		for (LabeledWeightedEdge e : treeModel.edgeSet()) {
+		for (Link e : treeModel.edgeSet()) {
 			
 			if (inputModelEdges.indexOf(e.getID()) != -1)
 				continue;

@@ -32,9 +32,9 @@ import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.semantictypes.SemanticType;
-import edu.isi.karma.rep.semantictypes.SemanticTypes;
-import edu.isi.karma.rep.semantictypes.SynonymSemanticTypes;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticTypes;
+import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 import edu.isi.karma.view.VWorkspace;
 
 public class SemanticTypesUpdate extends AbstractUpdate {

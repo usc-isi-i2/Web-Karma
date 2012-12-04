@@ -30,8 +30,10 @@ import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.semantictypes.SemanticType;
-import edu.isi.karma.rep.semantictypes.SemanticTypes;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
@@ -112,7 +114,7 @@ public class AlignToOntology {
 		}
 		*/
 		// Debug
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment.getSteinerTree();
+		DirectedWeightedMultigraph<Node, Link> tree = alignment.getSteinerTree();
 		GraphUtil.printGraph(tree);
 		
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));

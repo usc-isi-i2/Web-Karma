@@ -18,10 +18,28 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.modeling.alignment;
 
-public enum LinkStatus {
-	ForcedByUser,
-	PreferredByUI,
-	None // default
+package edu.isi.karma.rep.alignment;
+
+import edu.isi.karma.modeling.alignment.LinkType;
+
+public class PropertyLink extends Link {
+
+	private static final long serialVersionUID = 1L;
+	private boolean inverse;
+	private boolean isPartOfKey;
+	
+	public PropertyLink(String id, URI uri, LinkType linkType, LinkStatus status, boolean isPartOfKey) {
+		super(id, uri, linkType, status);
+		this.inverse = false;
+		this.isPartOfKey = isPartOfKey;
+	}
+
+	public boolean isInverse() {
+		return this.inverse;
+	}
+
+	public boolean isPartOfKey() {
+		return isPartOfKey;
+	}
 }

@@ -42,7 +42,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.semantictypes.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.JDBCUtilFactory;
 import edu.isi.karma.view.VWorkspace;

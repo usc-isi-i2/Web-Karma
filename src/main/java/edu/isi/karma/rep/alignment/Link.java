@@ -18,48 +18,36 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.modeling.alignment;
+package edu.isi.karma.rep.alignment;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 
-public class LabeledWeightedEdge extends DefaultWeightedEdge {
+import edu.isi.karma.modeling.alignment.LinkType;
+
+public abstract class Link extends DefaultWeightedEdge {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String id;
-	private LinkType linkType;
-	private boolean inverse;
-	private URI uri;
+	private final String id;
+	private final URI uri;
+	private final LinkType linkType;
 	private LinkStatus linkStatus;
 	
-	public LabeledWeightedEdge(String id, URI name, LinkType linkType) {
+	
+	public Link(String id, URI uri, LinkType linkType, LinkStatus linkStatus) {
 		super();
 		this.id = id;
+		this.uri = uri;
 		this.linkType = linkType;
-		this.uri = name;
-		this.inverse = false;
-		this.linkStatus = LinkStatus.None;
+		this.linkStatus = linkStatus;
 	}
 	
-	public LabeledWeightedEdge(String id, URI name, LinkType linkType, boolean inverse) {
-		super();
-		this.id = id;
-		this.linkType = linkType;
-		this.uri = name;
-		this.inverse = inverse;;
-		this.linkStatus = LinkStatus.None;
-	}
-	
-	public LabeledWeightedEdge(LabeledWeightedEdge e) {
+	public Link(Link e) {
 		super();
 		this.id = e.id;
 		this.linkType = e.linkType;
-		this.uri = new URI(e.uri);
-		this.inverse = e.inverse;;
-		this.linkStatus = LinkStatus.None;
+		this.uri = e.uri;
+		this.linkStatus = e.linkStatus;
 	}
 	
 	public String getLocalID() {
@@ -83,9 +71,6 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		this.linkStatus = linkStatus;
 	}
 	
-	public boolean isInverse() {
-		return this.inverse;
-	}
 
 	public String getID() {
 		return this.id;
@@ -107,12 +92,12 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 		return this.linkType;
 	}
 	
-	public Vertex getSource() {
-		return (Vertex)super.getSource();
+	public Node getSource() {
+		return (Node)super.getSource();
 	}
 
-	public Vertex getTarget() {
-		return (Vertex)super.getTarget();
+	public Node getTarget() {
+		return (Node)super.getTarget();
 	}
 	
 	public double getWeight() {
@@ -123,7 +108,7 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
         if(obj == null || obj.getClass() != this.getClass()){
             return false;
         }
-        if( ((LabeledWeightedEdge)obj).getID() == this.getID()){
+        if( ((Link)obj).getID() == this.getID()){
             return true;
         }
         return false;
