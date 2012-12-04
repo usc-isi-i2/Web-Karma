@@ -5,8 +5,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import org.dom4j.Attribute;
 import org.dom4j.Document;
@@ -35,6 +37,23 @@ public class CreateGeoStreetForTable {
 
 	}
 
+	private <T> List<T> castList(Class<T> clazz, Collection<?> c) {
+		List<T> list = new Vector<T>(c.size());
+		for (Object object : c) {
+			System.out.println(object.getClass());
+			list.add(clazz.cast(object));
+		}
+		return list;
+	}
+	
+	private <T> List<T> castIterator(Class<T> clazz, Iterator<?> i) {
+		List<T> list = new Vector<T>();
+		while(i.hasNext()) {
+			list.add(clazz.cast(i.next()));
+		}
+		return list;
+	}
+
 	public String createGeoStreet() {
 		CreateNodeDataForTable cnd = new CreateNodeDataForTable(
 				this.connection, this.osmFile_path);
@@ -47,7 +66,7 @@ public class CreateGeoStreetForTable {
 		}
 		try {
 			rs = stmt
-					.executeQuery("CREATE TABLE postgis.public.streets_geo (Street_number integer PRIMARY KEY, way_id integer, way_type character varying, Street_name character varying, Street_name_Alias character varying, line geography(LINESTRING, 4326), lineAsText character varying)");
+					.executeQuery("CREATE TABLE postgis.public.streets_geo (Street_number integer PRIMARY KEY, way_id integer, way_type character varying, Street_name character varying, Street_name_Alias character varying, line geography(LINESTRING, 4326), lineAsText character varying, SRID integer)");
 
 		} catch (SQLException ee) {
 			ee.getStackTrace();
@@ -62,19 +81,18 @@ public class CreateGeoStreetForTable {
 		} catch (DocumentException e) {
 			e.getStackTrace();
 		}
-		List list = document.selectNodes("//osm/way");
-		Iterator iter = list.iterator();
+		
 		int ord = 1;
-		while (iter.hasNext()) {
-			//int colm_tag = 1;
+		int srid = 4326;
+		List<Element> list = castList(Element.class, document.selectNodes("//osm/way"));
+	    for (Element ele : list) {
 			String Street_name = "Street_name";
 			String Street_name_Alias = " ";
 			String way_type = "way_type";
 			String way_id = "way_id";
 			String node_latlon = "";
-			Element ele = (Element) iter.next();
-			for (Iterator ite = ele.attributeIterator(); ite.hasNext();) {
-				Attribute attribute = (Attribute) ite.next();
+			List<Attribute> ite = castIterator(Attribute.class, ele.attributeIterator());
+			for (Attribute attribute : ite) {
 				String name = attribute.getName();
 				String value = attribute.getText();
 				if (name.equals("id")) {
@@ -82,18 +100,16 @@ public class CreateGeoStreetForTable {
 				}
 			}
 
-			List nods = ele.elements("nd");
 			int colm_nd = 1;
 			float lats = 0;
 			float lons = 0;
-			for (Iterator its = nods.iterator(); its.hasNext();) {
-				Element elms = (Element) its.next();
-				for (Iterator iters = elms.attributeIterator(); iters.hasNext();) {// 获取每个nd子元素的属性值，即ref值；
-					Attribute attribute = (Attribute) iters.next();
+			List<Element> nods = castList(Element.class, ele.elements("nd"));
+			for (Element elms:nods) {
+				List<Attribute> iters = castIterator(Attribute.class, elms.attributeIterator());
+				for (Attribute attribute : iters) {
 					String name = attribute.getName();
 					String value = attribute.getText();
 					if (name.equals("ref")) {// ref值为way成员节点的node_id，所以需要提取每个id值，并查询nodestable表，获得相应的lat，lon；
-						// System.out.println("ref="+value);
 						try {
 							rs = stmt
 									.executeQuery("select lat,lon from postgis.public.nodestable where id=\'"
@@ -120,13 +136,13 @@ public class CreateGeoStreetForTable {
 				colm_nd = colm_nd + 1;
 			}
 
-			List nodes = ele.elements("tag");
-			for (Iterator its = nodes.iterator(); its.hasNext();) {
-				Element elm_tag = (Element) its.next();
-				for (Iterator iters = elm_tag.attributeIterator(); iters
+			List<Element> nodes = castList(Element.class, ele.elements("tag"));
+
+			for (Element elm_tag : nodes) {	
+				List<Attribute> itLists = castIterator(Attribute.class, elm_tag.attributeIterator());
+				for (Iterator<Attribute> iters = itLists.iterator(); iters
 						.hasNext();) {
 					Attribute attributes = (Attribute) iters.next();
-					String name = attributes.getName();
 					String value = attributes.getText();
 					if (value.equals("highway")) {
 						Attribute attribute_highway = (Attribute) iters.next();
@@ -171,27 +187,25 @@ public class CreateGeoStreetForTable {
 										+ node_latlon
 										+ ")\'),lineAsText=\' LINESTRING("
 										+ node_latlon
-										+ ") \' where Street_number=" + ord);
+										+ ") \',srid=\'"+
+										srid+"\' where Street_number=" + ord);
 
 					} catch (SQLException ee) {
 						ee.getStackTrace();
 					}
 					
 					try {
-						//obj.put("Street_Number", ord);
 						obj.put("Street_Name", Street_name);
 						obj.put("Way_Id", way_id);
 						obj.put("Way_Type", way_type);						
 						obj.put("Street_Name", Street_name);
 						obj.put("Polyline", "LINESTRING("+node_latlon+")");
+						obj.put("Srid", srid);
 						arr.put(obj);
 						obj=new JSONObject();
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
-					
-					
-					
 					ord = ord + 1;
 				}
 			}
@@ -207,8 +221,5 @@ public class CreateGeoStreetForTable {
 		String jsonOutput= arr.toString();
 		return jsonOutput;
 	}
-	
-
-	
 
 }
