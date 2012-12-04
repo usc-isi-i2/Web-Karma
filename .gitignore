@@ -21,7 +21,7 @@ src/main/webapp/publish/Source Description/*.*
 src/main/webapp/publish/History/*.*
 src/main/webapp/publish/CSV/*
 src/main/webapp/publish/RDF/*
-preloaded-ontologies
+preloaded-ontologies/*
 src/main/webapp/RDF/*.rdf
 src/main/webapp/RDF/*.n3
 src/main/webapp/CRF_Models/*.txt
