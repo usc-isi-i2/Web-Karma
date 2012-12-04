@@ -68,6 +68,7 @@ import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.feature.AttributeTypeBuilder;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.JTS;
@@ -76,6 +77,9 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.GeometryType;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -91,7 +95,8 @@ public class WorksheetToFeatureCollections {
 	List<SimpleFeature> pointFeatureList = new ArrayList<SimpleFeature>();
 	List<SimpleFeature> lineFeatureList = new ArrayList<SimpleFeature>();
 	List<SimpleFeature> polygonFeatureList = new ArrayList<SimpleFeature>();
-
+	List<AttributeDescriptor> featureSchema = new ArrayList<AttributeDescriptor>();
+	
 	SimpleFeatureType pointFeatureType =null;
 	SimpleFeatureType lineFeatureType =null;
 	SimpleFeatureType polygonFeatureType =null;
@@ -131,13 +136,13 @@ public class WorksheetToFeatureCollections {
 
 	public WorksheetToFeatureCollections(Worksheet worksheet) {
 		this.worksheet = worksheet;
-		prepareFeatureCollections();
+		prepareFeatureSchema();
 	}
 
-	private void prepareFeatureCollections()
+	private void prepareFeatureSchema()
 	{
 		List<String> spatialHNodeIds = new ArrayList<String>();
-
+		
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
 			if (type.getType().getUriString().equals(SRID_PROPERTY)
 					&& type.getDomain().getUriString().equals(SRID_CLASS)){
@@ -180,152 +185,44 @@ public class WorksheetToFeatureCollections {
 			}
 		}
 		
-		ArrayList<Row> firstRow = worksheet.getDataTable().getRows(0, 1);
-		/*
-		srid = firstRow.get(0).getNode(srid).getValue().asString();
-		if(!srid.contains("4326"))
-			WGS84 = true;
-		CoordinateReferenceSystem sourceCRS=null;
-		try {
-			sourceCRS = CRS.decode(srid);
-		} catch (NoSuchAuthorityCodeException e) {
-			// TODO Auto-generated catch block
-			logger.error("No such authority code!", e);
-		} catch (FactoryException e) {
-			// TODO Auto-generated catch block
-			logger.error("Error parsing SRID!", e);
-		}*/
-
-		if(spatialHNodeIds.size()>1) { // has spatial data
-			String worksheetTitle = worksheet.getTitle();
-			Map<String, String> columnNameMap = getColumnMap();
-			/*
-			ArrayList<Row> firstRow = worksheet.getDataTable().getRows(0, 1);
-			Collection<Node> nodes = firstRow.get(0).getNodes();
-			SimpleFeatureTypeBuilder simpleFeatureBuilder = new SimpleFeatureTypeBuilder();
-			simpleFeatureBuilder.setCRS(DefaultGeographicCRS.WGS84);
-			simpleFeatureBuilder.add("GEOM", Geometry.class);
-			for (Node node : nodes) {
-				if (!spatialHNodeIds.contains(node.getHNodeId())){
-					String columnName = columnNameMap.get(node.getHNodeId());
-					simpleFeatureBuilder.add(columnName, String.class);
+		if(spatialHNodeIds.size()>1) {
+			List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
+			worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
+			for (HNode hNode : sortedLeafHNodes){
+				if (!spatialHNodeIds.contains(hNode.getId())) {
+					AttributeTypeBuilder build = new AttributeTypeBuilder();
+		            build.setNillable(true);
+		            build.setBinding(String.class); // might need to change to specific bindings
+		            AttributeDescriptor descriptor = build.buildDescriptor(hNode.getColumnName());
+		            featureSchema.add(descriptor);
 				}
-			}
-			if(pointFeatureHNodeId!="") {
-				simpleFeatureBuilder.add("GEOM",Point.class);
-				pointFeatureType = simpleFeatureBuilder.buildFeatureType();
-				populateSimpleFeatures(spatialHNodeIds,pointFeatureHNodeId, getRows(),
-						getColumnMap(), pointFeatureList,
-						pointFeatureType);
-			}
-			if(lineFeatureHNodeId!="") {
-				simpleFeatureBuilder.add("GEOM",LineString.class);
-				lineFeatureType = simpleFeatureBuilder.buildFeatureType();
-				populateSimpleFeatures(spatialHNodeIds,lineFeatureHNodeId, getRows(),
-						getColumnMap(), lineFeatureList,
-						lineFeatureType);
-			}
-			if(polygonFeatureHNodeId!="") {
-				simpleFeatureBuilder.add("GEOM",Polygon.class);
-				polygonFeatureType = simpleFeatureBuilder.buildFeatureType();
-				populateSimpleFeatures(spatialHNodeIds,polygonFeatureHNodeId, getRows(),
-						getColumnMap(), polygonFeatureList,
-						polygonFeatureType);
 			}
 		}
-			*/
-			if(pointFeatureHNodeId!=""){
-				SimpleFeatureTypeBuilder pointBuilder = new SimpleFeatureTypeBuilder();
-				pointBuilder.setName(worksheetTitle);
-				//if(sourceCRS!= null)
-				//	pointBuilder.setCRS(sourceCRS); // <- Coordinate reference system
-				pointBuilder.add("GEOM", Point.class);
-				// add attributes in order
-				Collection<Node> nodes = firstRow.get(0).getNodes();
-				for (Node node : nodes) {
-					if (!spatialHNodeIds.contains(node.getHNodeId())){
-						String columnName = columnNameMap.get(node.getHNodeId());
-						pointBuilder.add(columnName, String.class);
-					}
-				}
-				
-				// build the type
-				pointFeatureType = pointBuilder.buildFeatureType();
-			}
-			if(pointFeatureLatHNodeId!=""&&pointFeatureLonHNodeId!=""){
-				SimpleFeatureTypeBuilder pointBuilder = new SimpleFeatureTypeBuilder();
-				pointBuilder.setName(worksheetTitle);
-				//if(sourceCRS!= null)
-				//	pointBuilder.setCRS(sourceCRS); // <- Coordinate reference system
-				pointBuilder.add("GEOM", Point.class);
-				// add attributes in order
-				Collection<Node> nodes = firstRow.get(0).getNodes();
-				for (Node node : nodes) {
-					if (!spatialHNodeIds.contains(node.getHNodeId())){
-						String columnName = columnNameMap.get(node.getHNodeId());
-						pointBuilder.add(columnName, String.class);
-					}
-				}
-				
-				// build the type
-				pointFeatureType = pointBuilder.buildFeatureType();
-			}
-			if(lineFeatureHNodeId!=""){
-				SimpleFeatureTypeBuilder lineBuilder = new SimpleFeatureTypeBuilder();
-				lineBuilder.setName(worksheetTitle);
-				//if(sourceCRS!= null)
-				//	lineBuilder.setCRS(sourceCRS); // <- Coordinate reference system
-				lineBuilder.add("GEOM", LineString.class);
-				// add attributes in order
-				Collection<Node> nodes = firstRow.get(0).getNodes();
-				for (Node node : nodes) {
-					if (!spatialHNodeIds.contains(node.getHNodeId())){
-						String columnName = columnNameMap.get(node.getHNodeId());
-						lineBuilder.add(columnName, String.class);
-					}
-				}
-				// build the type
-				lineFeatureType = lineBuilder.buildFeatureType();
-			}
-			if(polygonFeatureHNodeId!=""){
-				SimpleFeatureTypeBuilder polygonBuilder = new SimpleFeatureTypeBuilder();
-				polygonBuilder.setName(worksheetTitle);
-				//if(sourceCRS!= null)
-				//	polygonBuilder.setCRS(sourceCRS); // <- Coordinate reference system
-				polygonBuilder.add("GEOM", Polygon.class);
-				// add attributes in order
-				Collection<Node> nodes = firstRow.get(0).getNodes();
-				for (Node node : nodes) {
-					if (!spatialHNodeIds.contains(node.getHNodeId())){
-						String columnName = columnNameMap.get(node.getHNodeId());
-						polygonBuilder.add(columnName, String.class);
-					}
-				}
-				// build the type
-				polygonFeatureType = polygonBuilder.buildFeatureType();
-			}
-			if(pointFeatureHNodeId!="")
-				populateSimpleFeatures(spatialHNodeIds,pointFeatureHNodeId, "",getRows(),
+
+		if(spatialHNodeIds.size()>1) { // has spatial data
+			
+			if(pointFeatureHNodeId!="") 
+	            populateSimpleFeatures(spatialHNodeIds,pointFeatureHNodeId, "",getRows(),
 						getColumnMap(), pointFeatureList,
-						pointFeatureType);
+						Point.class);
+				
 			if(pointFeatureLatHNodeId!=""&&pointFeatureLonHNodeId!="")
 				populateSimpleFeatures(spatialHNodeIds,pointFeatureLonHNodeId, pointFeatureLatHNodeId,getRows(),
 						getColumnMap(), pointFeatureList,
-						pointFeatureType);
+						Point.class);
 			if(lineFeatureHNodeId!="")
 				populateSimpleFeatures(spatialHNodeIds,lineFeatureHNodeId, "",getRows(),
 						getColumnMap(), lineFeatureList,
-						lineFeatureType);
+						LineString.class);
 			if(polygonFeatureHNodeId!="")
 				populateSimpleFeatures(spatialHNodeIds,polygonFeatureHNodeId, "",getRows(),
 						getColumnMap(), polygonFeatureList,
-						polygonFeatureType);
+						Polygon.class);
 		}
 	}
-
 	private void populateSimpleFeatures(List<String> spatialHNodeIds,String geometryHNodeId,String geometry2HNodeId,
 			ArrayList<Row> rows, Map<String, String> columnNameMap, List<SimpleFeature> features,
-			SimpleFeatureType simpleFeatureType) {
+			Class binding) {
 
 		for (Row row : rows) {
 			try {
@@ -337,7 +234,6 @@ public class WorksheetToFeatureCollections {
 					//WKBReader wkbreader = new WKBReader();
 					//byte[] wkbPosList = WKBReader.hexToBytes(posList);
 					//JTSGeometry = wkbreader.read(wkbPosList);
-					
 				}
 				else {
 					String lon = row.getNode(geometryHNodeId)
@@ -349,7 +245,7 @@ public class WorksheetToFeatureCollections {
 					posList="POINT("+lon+" "+lat+")"; 
 		
 				}
-				
+				posList=posList.toUpperCase();
 				WKTReader reader = new WKTReader();
 				JTSGeometry= reader.read(posList);
 				
@@ -358,6 +254,7 @@ public class WorksheetToFeatureCollections {
 				if(!srid.contains(":"))
 					srid="EPSG:"+srid;
 				CoordinateReferenceSystem sourceCRS=null;
+				
 				try {
 					//CRS.decode(code, true)
 					sourceCRS = CRS.decode(srid, true);
@@ -369,9 +266,10 @@ public class WorksheetToFeatureCollections {
 					logger.error("Error parsing SRID!", e);
 				}
 				SimpleFeatureTypeBuilder simpleFeatureTypeBuilder = new SimpleFeatureTypeBuilder();
-				simpleFeatureTypeBuilder.init(simpleFeatureType);
+				simpleFeatureTypeBuilder.setName("SimpleFeature");
 				simpleFeatureTypeBuilder.setCRS(sourceCRS);
-				
+				simpleFeatureTypeBuilder.add("GEOM",binding);
+				simpleFeatureTypeBuilder.addAll(featureSchema);
 				SimpleFeatureType simpleFeatureTypeWithCRS = simpleFeatureTypeBuilder.buildFeatureType();
 				SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(simpleFeatureTypeWithCRS);
 				featureBuilder.add(JTSGeometry);
@@ -392,7 +290,7 @@ public class WorksheetToFeatureCollections {
 				SimpleFeature feature = featureBuilder.buildFeature(null);
 				features.add(feature);
 			} catch (Exception e) {
-				logger.error("Error creating polygon! Skipping it.", e);
+				logger.error("Error creating geometry! Skipping it.", e);
 				continue;
 			}
 		}
@@ -447,7 +345,7 @@ public class WorksheetToFeatureCollections {
 			params.put("create spatial index", Boolean.TRUE);
 
 			ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory.createNewDataStore(params);
-			newDataStore.createSchema(simpleFeatureType);
+			newDataStore.createSchema(features.get(0).getFeatureType());
 
 			/*
 			 * You can comment out this line if you are using the createFeatureType method (at end of
@@ -492,7 +390,7 @@ public class WorksheetToFeatureCollections {
 			}
 		}
 		catch(Exception e){
-
+			logger.error("Shapefile file published failed! Do you have multiple SRID in a single worksheet?");
 		}
 		//kml.marshal(outputFile);
 		logger.info("Shapefile file published. Location:"
@@ -512,11 +410,12 @@ public class WorksheetToFeatureCollections {
 		style.createAndSetLineStyle().withColor("501400FF").withWidth(2);
 		style.createAndSetPolyStyle().withColor("5014F000");
 		for (SimpleFeature pointFeature : pointFeatureList) {
-			/*
-			CoordinateReferenceSystem sourceCRS = pointFeature.getType().getCoordinateReferenceSystem();
+			
+			CoordinateReferenceSystem sourceCRS =  pointFeature.getType().getCoordinateReferenceSystem();
+		
 			CoordinateReferenceSystem targetCRS=null;
 			try {
-				targetCRS = CRS.decode("EPSG:4326");
+				targetCRS = CRS.decode("EPSG:4326",true);
 			} catch (NoSuchAuthorityCodeException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -527,16 +426,16 @@ public class WorksheetToFeatureCollections {
 
 			MathTransform transform=null;
 			try {
-				transform = CRS.findMathTransform(targetCRS,sourceCRS);
+				transform = CRS.findMathTransform(sourceCRS, targetCRS,true);
 			} catch (FactoryException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			*/
+			
 
 			String htmlDescription=getHTMLDescription(pointFeature);
-			Point p = (Point)pointFeature.getAttribute("GEOM");
-			/*
+			//Point p = (Point)pointFeature.getAttribute("GEOM");
+			
 			Point p=null;
 			try {
 				Point temp = (Point)pointFeature.getAttribute("GEOM");
@@ -547,7 +446,7 @@ public class WorksheetToFeatureCollections {
 			} catch (TransformException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}*/
+			}
 
 			folder.createAndAddPlacemark()
 			.withDescription(htmlDescription)
@@ -556,7 +455,6 @@ public class WorksheetToFeatureCollections {
 			.createAndSetPoint()
 			.withAltitudeMode(AltitudeMode.CLAMP_TO_GROUND)
 			.addToCoordinates(p.getX() + "," + p.getY());
-
 		}
 
 		for (SimpleFeature lineFeature : lineFeatureList) {
@@ -574,7 +472,6 @@ public class WorksheetToFeatureCollections {
 			.withAltitudeMode(AltitudeMode.CLAMP_TO_GROUND)
 			.setCoordinates(coordsList);
 		}
-		int n=0;
 		for (SimpleFeature polygonFeature: polygonFeatureList) {
 			String htmlDescription=getHTMLDescription(polygonFeature);
 			Polygon polygon = (Polygon)polygonFeature.getAttribute("GEOM");
@@ -698,19 +595,16 @@ public class WorksheetToFeatureCollections {
 					 */
 
 					zout.closeEntry();
-
 					//close the InputStream
 					fin.close();
 				}
 			}
-
 			//close the ZipOutputStream
 			zout.close();
-			System.out.println("Zip file has been created!");
 		}
 		catch(IOException ioe)
 		{
-			System.out.println("IOException :" + ioe);
+			logger.error("IOException :" + ioe);
 		}
 	}
 	public boolean hasNoGeospatialData() {

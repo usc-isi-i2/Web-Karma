@@ -19,12 +19,13 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hp.hpl.jena.ontology.OntModel;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.geospatial.WorksheetGeospatialContent;
 import edu.isi.karma.geospatial.WorksheetToFeatureCollections;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
@@ -83,6 +84,9 @@ public class PublishKMLLayerCommand extends Command {
 					.getTagsContainer().getTag(TagName.Outlier), ws
 					.getCrfModelHandler(), ws.getOntologyManager());
 		}
+		
+		//OntModel model = ws.getOntologyManager().getOntModel();
+		//ws.getOntologyManager().
 
 		//WorksheetGeospatialContent geo = new WorksheetGeospatialContent(worksheet); yaoyi
 		WorksheetToFeatureCollections geo = new WorksheetToFeatureCollections(worksheet);
