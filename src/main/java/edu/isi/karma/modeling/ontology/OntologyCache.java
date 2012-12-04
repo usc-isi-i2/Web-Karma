@@ -26,8 +26,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
+import com.hp.hpl.jena.ontology.OntTools;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 public class OntologyCache {
@@ -36,6 +38,12 @@ public class OntologyCache {
 	
 	private OntologyManager ontologyManager = null;
 
+	private List<String> classes;
+	private List<String> rootClasses;
+	private List<String> properties;
+	private List<String> dataProperties;
+	private List<String> objectProperties;
+	
 	// hashmap: class -> properties whose domain(direct) includes this class 
 	private HashMap<String, List<String>> directOutDataProperties; 
 	private HashMap<String, List<String>> indirectOutDataProperties; 
@@ -55,6 +63,27 @@ public class OntologyCache {
 	// hashmap: domain+range -> object properties
 	private HashMap<String, List<String>> directDomainRangeProperties;
 	private HashMap<String, List<String>> indirectDomainRangeProperties;
+
+	
+	public List<String> getClasses() {
+		return classes;
+	}
+
+	public List<String> getRootClasses() {
+		return rootClasses;
+	}
+
+	public List<String> getProperties() {
+		return properties;
+	}
+
+	public List<String> getDataProperties() {
+		return dataProperties;
+	}
+
+	public List<String> getObjectProperties() {
+		return objectProperties;
+	}
 
 	public HashMap<String, List<String>> getDirectOutDataProperties() {
 		return directOutDataProperties;
@@ -112,6 +141,12 @@ public class OntologyCache {
 
 		this.ontologyManager = ontologyManager;
 		
+		classes = new ArrayList<String>();
+		rootClasses = new ArrayList<String>();
+		properties = new ArrayList<String>();
+		dataProperties = new ArrayList<String>();
+		objectProperties = new ArrayList<String>();
+		
 		directOutDataProperties = new HashMap<String, List<String>>();
 		indirectOutDataProperties = new HashMap<String, List<String>>();
 		directOutObjectProperties = new HashMap<String, List<String>>();
@@ -128,6 +163,8 @@ public class OntologyCache {
 		indirectDomainRangeProperties = new HashMap<String, List<String>>();
 		
 		long start = System.currentTimeMillis();
+		loadClasses();
+		loadProperties();
 		fillDataPropertiesHashMaps();
 		fillObjectPropertiesHashMaps();
 		updateMapsWithSubpropertyDefinitions(true);
@@ -136,6 +173,55 @@ public class OntologyCache {
 		logger.info("time to build ontology cache: " + elapsedTimeSec);
 	}
 
+	private void loadClasses() {
+		
+		ExtendedIterator<OntClass> itrC = ontologyManager.getOntModel().listNamedClasses();
+		
+		while (itrC.hasNext()) {
+			
+			OntClass c = itrC.next();
+			
+			if (!c.isURIResource())
+				continue;
+			
+			if (classes.indexOf(c.getURI()) == -1)
+				classes.add(c.getURI());	
+		}
+
+		List<OntClass> namedRoots = OntTools.namedHierarchyRoots(ontologyManager.getOntModel());
+		for (OntClass c : namedRoots) {
+			if (c.isURIResource() && rootClasses.indexOf(c.getURI()) == -1)
+				rootClasses.add(c.getURI());
+		}
+	}
+
+	private void loadProperties() {
+		
+		ExtendedIterator<OntProperty> itrP = ontologyManager.getOntModel().listAllOntProperties();
+		
+		while (itrP.hasNext()) {
+			
+			OntProperty p = itrP.next();
+			
+			if (!p.isURIResource())
+				continue;
+			
+			if (properties.indexOf(p.getURI()) == -1)
+				properties.add(p.getURI());	
+			
+			if (p.isDatatypeProperty())
+			{
+				if (dataProperties.indexOf(p.getURI()) == -1)
+						dataProperties.add(p.getURI());				
+			}
+
+			if (p.isObjectProperty())
+			{
+				if (objectProperties.indexOf(p.getURI()) == -1)
+						objectProperties.add(p.getURI());				
+			}
+		}
+	}
 	
 	private void fillObjectPropertiesHashMaps() {
 		
