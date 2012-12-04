@@ -615,7 +615,30 @@ and related projects, please see: http://www.isi.edu/integration
 					<tr><td /><td /><td>Primary</td><td /></tr>
 				</table>
 				<br />
-				<button id="addSemanticType">Add synonym semantic type</button>
+				<button id="addSemanticType">Add synonym semantic type</button><br />
+				<input type="checkbox" id="chooseClassKey" />
+				<label for="chooseClassKey" class="smallSizedFont">Mark as key for the class.</label><br />
+				
+				<button id="semanticTypingAdvancedOptions">Advanced Options</button><br />
+				<div id="semanticTypingAdvacedOptionsDiv" style="display: none">
+					<table>
+						<tr class="smallSizedFont">
+							<td><input type="checkbox" id="isUriOfClassOption"></input></td>
+							<td style="text-align: right;">contains URI for node:</td>
+							<td><input type="text" /></td>
+						</tr>
+						<tr class="smallSizedFont">
+							<td><input type="checkbox" id="isSubclassOfClassOption"></input></td>
+							<td style="text-align: right;">specifies class for node:</td>
+							<td><input type="text" /></td>
+						</tr>
+						<tr class="smallSizedFont">
+							<td><input type="checkbox" id="isPropertyOfColumnOption"></input></td>
+							<td style="text-align: right;">specifies property for column:</td>
+							<td><input type="text" /></td>
+						</tr>
+					</table>
+				</div>
 			</div>
 			<div class="ui-widget" id="SemanticTypeErrorWindow" style="display: none">
 				<br />
@@ -627,8 +650,6 @@ and related projects, please see: http://www.isi.edu/integration
 				</div>
 				<br />
 			</div>
-			<input type="checkbox" id="chooseClassKey" />
-			<label for="chooseClassKey" class="smallSizedFont">Mark as key for the class.</label><br />
 		</div>
 		<div id="propertyOntologyBox" style="display: none">
 			<input id="filterPropertyByDomain" type="checkbox"/>
