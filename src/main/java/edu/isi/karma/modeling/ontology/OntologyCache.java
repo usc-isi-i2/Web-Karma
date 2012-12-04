@@ -162,6 +162,10 @@ public class OntologyCache {
 			OntProperty op = itrOP.next();
 			if (op.isDatatypeProperty() && !op.isObjectProperty())
 				continue;
+			
+			if (!op.isURIResource())
+				continue;
+			
 //			System.out.println("OP:" + op.getURI());
 			
 			// getting domains and subclasses
@@ -302,6 +306,9 @@ public class OntologyCache {
 			
 			OntProperty dp = itrDP.next();
 			if (dp.isObjectProperty() && !dp.isDatatypeProperty())
+				continue;
+			
+			if (!dp.isURIResource())
 				continue;
 //			System.out.println("DP:" + dp.getURI());
 
@@ -448,6 +455,7 @@ public class OntologyCache {
 		// iterate over all properties
 		for (String p : propertyDirectDomains.keySet()) {
 			
+//			logger.debug("*********************************" + p);
 			List<String> superProperties = ontologyManager.getSuperProperties(p, true);
 			
 //			System.out.println("*****************" + p);
