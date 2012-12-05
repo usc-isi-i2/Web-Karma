@@ -157,6 +157,8 @@ public class OntologyCache {
 
 	public void init(OntologyManager ontologyManager) {
 
+		logger.info("start building the ontology cache ...");
+
 		this.ontologyManager = ontologyManager;
 		
 		classes = new ArrayList<String>();
@@ -210,7 +212,7 @@ public class OntologyCache {
 //		objectPropertyHierarchy.print();
 		
 		float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
-		logger.info("time to build ontology cache: " + elapsedTimeSec);
+		logger.info("time to build the ontology cache: " + elapsedTimeSec);
 	}
 
 	private void loadClasses() {
@@ -264,9 +266,6 @@ public class OntologyCache {
 	}
 	
 	private void buildClassHierarchy(OntologyTreeNode node) {
-		
-		if (node.getUri().getUriString().equalsIgnoreCase("http://purl.org/dc/terms/RightsStatement"))
-			System.out.println("debug");
 		
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
