@@ -92,13 +92,17 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 							.value(type.getConfidenceLevel().name())
 							.key(JsonKeys.DisplayLabel.name())
 							.value(type.getType().getLocalNameWithPrefixIfAvailable())
-							.key(JsonKeys.Domain.name())
-							.value(type.getDomain().getUriString())
 							.key(JsonKeys.isPartOfKey.name())
 							.value(type.isPartOfKey())
-							.key(JsonKeys.DisplayDomainLabel.name())
-							.value(type.getDomain().getLocalNameWithPrefixIfAvailable())
 							.key(JsonKeys.isPrimary.name()).value(true);
+					
+					if (!type.isClass()) {
+						writer.key(JsonKeys.Domain.name())
+							.value(type.getDomain().getUriString())
+							.key(JsonKeys.DisplayDomainLabel.name())
+							.value(type.getDomain().getLocalNameWithPrefixIfAvailable());
+					}
+					
 					writer.endObject();
 
 					// Iterate through the synonym semantic types
@@ -118,12 +122,14 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 									.value(synType.getConfidenceLevel().name())
 									.key(JsonKeys.DisplayLabel.name())
 									.value(synType.getType().getLocalNameWithPrefixIfAvailable())
-									.key(JsonKeys.Domain.name())
-									.value(synType.getDomain().getUriString())
-									.key(JsonKeys.DisplayDomainLabel.name())
-									.value(synType.getDomain().getLocalNameWithPrefixIfAvailable())
 									.key(JsonKeys.isPrimary.name())
 									.value(false);
+							if (!synType.isClass()) {
+								writer.key(JsonKeys.Domain.name())
+									.value(synType.getDomain().getUriString())
+									.key(JsonKeys.DisplayDomainLabel.name())
+									.value(synType.getDomain().getLocalNameWithPrefixIfAvailable());
+							}
 							writer.endObject();
 						}
 					}
