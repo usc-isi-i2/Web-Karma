@@ -394,7 +394,7 @@ public class Alignment {
 	
 	private void align() {
 		
-		GraphUtil.printGraph(this.graphBuilder.getGraph());
+//		GraphUtil.printGraph(this.graphBuilder.getGraph());
 		long start = System.currentTimeMillis();
 		
 		logger.info("preparing G Prime for steiner algorithm input ...");
