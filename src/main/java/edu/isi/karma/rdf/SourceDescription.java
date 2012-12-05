@@ -258,6 +258,9 @@ public class SourceDescription {
 	 */
 	private void generateSourceDescription(Vertex v, StringBuffer s) throws KarmaException{
 		//System.out.println("Generate SD for node:" + v.getUri() + " type:" + v.getNodeType());
+		if(v==null){
+			throw new KarmaException("Align source before generating SourceDescription.");
+		}
 		if(v.getNodeType()==NodeType.Class){
 			String stmt = generateClassStatement(v);
 			if(s.length()!=0) s.append(" ^ ");
