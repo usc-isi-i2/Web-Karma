@@ -95,12 +95,6 @@ public class OntologyManager {
 		try {
 			InputStream s = new FileInputStream(sourceFile);
 			ontModel.read(s, null);
-			
-			// Store the new namespaces information in the namespace map maintained in OntologyGraphManager
-//			String baseNS = m.getNsPrefixURI("");
-//			m.setNsPrefix("dv" + ontologyNSIndex++, baseNS);	
-			
-			//System.out.println("Prefix map:" + ontologyModel.getNsPrefixMap());
 		} catch (Throwable t) {
 			logger.error("Error reading the OWL ontology file!", t);
 			return false;
@@ -129,12 +123,6 @@ public class OntologyManager {
 		try {
 			InputStream s = new FileInputStream(sourceFile);
 			ontModel.read(s, null);
-			
-			// Store the new namespaces information in the namespace map maintained in OntologyGraphManager
-//			String baseNS = m.getNsPrefixURI("");
-//			m.setNsPrefix("dv" + ontologyNSIndex++, baseNS);	
-			
-			//System.out.println("Prefix map:" + ontologyModel.getNsPrefixMap());
 		} catch (Throwable t) {
 			logger.error("Error reading the OWL ontology file!", t);
 			return false;

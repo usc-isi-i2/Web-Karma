@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
-import edu.isi.karma.controller.update.OntologyClassHierarchyUpdate;
+import edu.isi.karma.controller.update.OntologyHierarchyUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.ontology.OntologyManager;
@@ -82,8 +82,7 @@ public class GetDomainsForDataPropertyCommand extends Command {
 
 		// Show all he classes when none are present
 		if (domains == null || domains.size() == 0) {
-			return new UpdateContainer(new OntologyClassHierarchyUpdate(
-					ontMgr.getOntModel()));
+			return new UpdateContainer(new OntologyHierarchyUpdate(ontMgr.getOntCache().getClassHierarchy(), "OntologyClassHierarchyUpdate"));
 		}
 
 		return new UpdateContainer(new AbstractUpdate() {

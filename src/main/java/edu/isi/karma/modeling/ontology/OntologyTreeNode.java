@@ -56,6 +56,10 @@ public class OntologyTreeNode {
 		this.children = children;
 	}
 	
+	public boolean hasChildren() {
+		return (children != null && children.size() != 0);
+	}
+	
 	public void print() {
 		printRecursively(this, 0);
 	}
