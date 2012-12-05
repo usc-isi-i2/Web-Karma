@@ -32,6 +32,8 @@ import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.ontology.OntTools;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
+import edu.isi.karma.modeling.alignment.URI;
+
 public class OntologyCache {
 	
 	static Logger logger = Logger.getLogger(OntologyCache.class.getName());
@@ -43,6 +45,10 @@ public class OntologyCache {
 	private List<String> properties;
 	private List<String> dataProperties;
 	private List<String> objectProperties;
+	
+	private OntologyTreeNode classHierarchy;
+	private OntologyTreeNode objectPropertyHierarchy;
+	private OntologyTreeNode dataPropertyHierarchy;
 	
 	// hashmap: class -> properties whose domain(direct) includes this class 
 	private HashMap<String, List<String>> directOutDataProperties; 
@@ -83,6 +89,18 @@ public class OntologyCache {
 
 	public List<String> getObjectProperties() {
 		return objectProperties;
+	}
+
+	public OntologyTreeNode getClassHierarchy() {
+		return classHierarchy;
+	}
+
+	public OntologyTreeNode getObjectPropertyHierarchy() {
+		return objectPropertyHierarchy;
+	}
+
+	public OntologyTreeNode getDataPropertyHierarchy() {
+		return dataPropertyHierarchy;
 	}
 
 	public HashMap<String, List<String>> getDirectOutDataProperties() {
@@ -147,6 +165,10 @@ public class OntologyCache {
 		dataProperties = new ArrayList<String>();
 		objectProperties = new ArrayList<String>();
 		
+		classHierarchy = new OntologyTreeNode(new URI("Classes"), null, null);
+		dataPropertyHierarchy = new OntologyTreeNode(new URI("Data Properties"), null, null);
+		objectPropertyHierarchy = new OntologyTreeNode(new URI("Object Properties"), null, null);
+
 		directOutDataProperties = new HashMap<String, List<String>>();
 		indirectOutDataProperties = new HashMap<String, List<String>>();
 		directOutObjectProperties = new HashMap<String, List<String>>();
@@ -163,12 +185,30 @@ public class OntologyCache {
 		indirectDomainRangeProperties = new HashMap<String, List<String>>();
 		
 		long start = System.currentTimeMillis();
+		
+		// create a list of classes and properties of the model
 		loadClasses();
 		loadProperties();
+		
+		// create a hierarchy of classes and properties of the model
+		buildClassHierarchy(classHierarchy);
+		buildDataPropertyHierarchy(dataPropertyHierarchy);
+		buildObjectPropertyHierarchy(objectPropertyHierarchy);
+		
+		// create some hashmaps that will be used in alignment
 		fillDataPropertiesHashMaps();
 		fillObjectPropertiesHashMaps();
+		
+		// update hashmaps to include the subproperty relations  
 		updateMapsWithSubpropertyDefinitions(true);
+		
+		// add some common properties like rdfs:label, rdfs:comment, ...
 		addPropertiesOfRDFVocabulary();
+		
+//		classHierarchy.print();
+//		dataPropertyHierarchy.print();
+//		objectPropertyHierarchy.print();
+		
 		float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
 		logger.info("time to build ontology cache: " + elapsedTimeSec);
 	}
@@ -209,19 +249,101 @@ public class OntologyCache {
 			if (properties.indexOf(p.getURI()) == -1)
 				properties.add(p.getURI());	
 			
-			if (p.isDatatypeProperty())
+			if (p.isDatatypeProperty() || !p.isObjectProperty())
 			{
 				if (dataProperties.indexOf(p.getURI()) == -1)
 						dataProperties.add(p.getURI());				
 			}
 
-			if (p.isObjectProperty())
+			if (p.isObjectProperty() || !p.isDatatypeProperty())
 			{
 				if (objectProperties.indexOf(p.getURI()) == -1)
 						objectProperties.add(p.getURI());				
 			}
 		}
 	}
+	
+	private void buildClassHierarchy(OntologyTreeNode node) {
+		
+		if (node.getUri().getUriString().equalsIgnoreCase("http://purl.org/dc/terms/RightsStatement"))
+			System.out.println("debug");
+		
+		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
+		if (node.getParent() == null) {
+			for (String s : rootClasses) {
+//			for (String s : classes) {
+//				List<String> superClasses = ontologyManager.getSuperClasses(s, false);
+//				if (superClasses == null || superClasses.size() == 0) {
+					URI uri = ontologyManager.getURIFromString(s);
+					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
+					buildClassHierarchy(childNode);
+					children.add(childNode);
+//				}
+			}
+		} else {
+			List<String> subClasses = ontologyManager.getSubClasses(node.getUri().getUriString(), false);
+			if (subClasses != null)
+				for (String s : subClasses) {
+					URI uri = ontologyManager.getURIFromString(s);
+					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
+					buildClassHierarchy(childNode);
+					children.add(childNode);
+				}
+		}
+		node.setChildren(children);
+	}
+	
+	private void buildDataPropertyHierarchy(OntologyTreeNode node) {
+		
+		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
+		if (node.getParent() == null) {
+			for (String s : dataProperties) {
+				List<String> superProperties = ontologyManager.getSuperProperties(s, false);
+				if (superProperties == null || superProperties.size() == 0) {
+					URI uri = ontologyManager.getURIFromString(s);
+					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
+					buildDataPropertyHierarchy(childNode);
+					children.add(childNode);
+				}
+			}
+		} else {
+			List<String> subProperties = ontologyManager.getSubProperties(node.getUri().getUriString(), false);
+			if (subProperties != null)
+				for (String s : subProperties) {
+					URI uri = ontologyManager.getURIFromString(s);
+					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
+					buildDataPropertyHierarchy(childNode);
+					children.add(childNode);
+				}
+		}
+		node.setChildren(children);	
+	}
+	
+	private void buildObjectPropertyHierarchy(OntologyTreeNode node) {
+		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
+		if (node.getParent() == null) {
+			for (String s : objectProperties) {
+				List<String> superProperties = ontologyManager.getSuperProperties(s, false);
+				if (superProperties == null || superProperties.size() == 0) {
+					URI uri = ontologyManager.getURIFromString(s);
+					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
+					buildObjectPropertyHierarchy(childNode);
+					children.add(childNode);
+				}
+			}
+		} else {
+			List<String> subProperties = ontologyManager.getSubProperties(node.getUri().getUriString(), false);
+			if (subProperties != null)
+				for (String s : subProperties) {
+					URI uri = ontologyManager.getURIFromString(s);
+					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
+					buildObjectPropertyHierarchy(childNode);
+					children.add(childNode);
+				}
+		}
+		node.setChildren(children);	
+	}
+	
 	
 	private void fillObjectPropertiesHashMaps() {
 		

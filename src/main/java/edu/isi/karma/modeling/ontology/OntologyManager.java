@@ -308,7 +308,7 @@ public class OntologyManager {
                 if (subP.isURIResource()) {
                 	resources.add(subP);
                 	if (recursive)
-                		getParents(subP, resources, recursive);
+                		getChildren(subP, resources, recursive);
                 }
 //                else {
 //            		List<OntResource> members = new ArrayList<OntResource>();
