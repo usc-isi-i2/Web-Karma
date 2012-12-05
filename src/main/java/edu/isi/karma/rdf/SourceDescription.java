@@ -406,7 +406,8 @@ public class SourceDescription {
 		String propertyName = getPrefix(e.getPrefix(), e.getNs()) + ":" + e.getLocalLabel();
 
 		String s = "`" + propertyName + "`(uri(" + key1 + "),uri(" + key2 + "))";
-		s += addInverseProperty(e.getUriString(), key1,key2);
+		if(generateInverse)
+			s += addInverseProperty(e.getUriString(), key1,key2);
 		
 		if(e.isInverse()){
 			//propertyName = TableRDFGenerator.inverseProperty + propertyName;
