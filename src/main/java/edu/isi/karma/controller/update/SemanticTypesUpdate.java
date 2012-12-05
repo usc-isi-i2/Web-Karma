@@ -101,6 +101,11 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 							.value(type.getDomain().getUriString())
 							.key(JsonKeys.DisplayDomainLabel.name())
 							.value(type.getDomain().getLocalNameWithPrefixIfAvailable());
+					} else {
+						writer.key(JsonKeys.Domain.name())
+							.value("")
+							.key(JsonKeys.DisplayDomainLabel.name())
+							.value("");
 					}
 					
 					writer.endObject();
@@ -129,6 +134,11 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 									.value(synType.getDomain().getUriString())
 									.key(JsonKeys.DisplayDomainLabel.name())
 									.value(synType.getDomain().getLocalNameWithPrefixIfAvailable());
+							} else {
+								writer.key(JsonKeys.Domain.name())
+									.value("")
+									.key(JsonKeys.DisplayDomainLabel.name())
+									.value("");
 							}
 							writer.endObject();
 						}
