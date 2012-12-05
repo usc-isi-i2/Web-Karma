@@ -40,7 +40,6 @@ public class CreateGeoStreetForTable {
 	private <T> List<T> castList(Class<T> clazz, Collection<?> c) {
 		List<T> list = new Vector<T>(c.size());
 		for (Object object : c) {
-			System.out.println(object.getClass());
 			list.add(clazz.cast(object));
 		}
 		return list;
@@ -60,13 +59,13 @@ public class CreateGeoStreetForTable {
 		cnd.createNodeDataforTable();// create a nodetalbe 
 
 		try {
-			rs = stmt.executeQuery("drop TABLE postgis.public.streets_geo");
+			rs = stmt.executeQuery("drop TABLE streets_geo");
 		} catch (SQLException ee) {
 			ee.getStackTrace();
 		}
 		try {
 			rs = stmt
-					.executeQuery("CREATE TABLE postgis.public.streets_geo (Street_number integer PRIMARY KEY, way_id integer, way_type character varying, Street_name character varying, Street_name_Alias character varying, line geography(LINESTRING, 4326), lineAsText character varying, SRID integer)");
+					.executeQuery("CREATE TABLE streets_geo (Street_number integer PRIMARY KEY, way_id integer, way_type character varying, Street_name character varying, Street_name_Alias character varying, line geography(LINESTRING, 4326), lineAsText character varying, SRID integer)");
 
 		} catch (SQLException ee) {
 			ee.getStackTrace();
@@ -109,10 +108,10 @@ public class CreateGeoStreetForTable {
 				for (Attribute attribute : iters) {
 					String name = attribute.getName();
 					String value = attribute.getText();
-					if (name.equals("ref")) {// ref值为way成员节点的node_id，所以需要提取每个id值，并查询nodestable表，获得相应的lat，lon；
+					if (name.equals("ref")) {
 						try {
 							rs = stmt
-									.executeQuery("select lat,lon from postgis.public.nodestable where id=\'"
+									.executeQuery("select lat,lon from nodestable where id=\'"
 											+ value + "\';");
 
 							while (rs.next()) {
@@ -152,7 +151,6 @@ public class CreateGeoStreetForTable {
 						Attribute attribute_name = (Attribute) iters.next();
 						Street_name = attribute_name.getText();
 						System.out.println("Street Name :" + Street_name);
-
 					} else if (value.equals("name_1")) {
 						Attribute attribute_alias = (Attribute) iters.next();
 						Street_name_Alias = attribute_alias.getText();
@@ -166,7 +164,7 @@ public class CreateGeoStreetForTable {
 						|| way_type.equals("footway")) {
 					try {
 						rs = stmt
-								.executeQuery("insert into postgis.public.streets_geo(Street_number) values ("
+								.executeQuery("insert into streets_geo(Street_number) values ("
 										+ ord + ")");
 
 					} catch (SQLException ee) {
@@ -175,7 +173,7 @@ public class CreateGeoStreetForTable {
 
 					try {
 						rs = stmt
-								.executeQuery("update postgis.public.streets_geo set way_id=\'"
+								.executeQuery("update streets_geo set way_id=\'"
 										+ way_id
 										+ "\', way_type=\'"
 										+ way_type
@@ -214,7 +212,7 @@ public class CreateGeoStreetForTable {
 
 		try {
 			rs = stmt
-					.executeQuery("	Copy (Select * From postgis.public.streets_geo) To '/tmp/streets_geo.csv' CSV HEADER;");
+					.executeQuery("	Copy (Select * From streets_geo) To '/tmp/streets_geo.csv' CSV HEADER;");
 		} catch (SQLException ee) {
 			ee.getStackTrace();
 		}

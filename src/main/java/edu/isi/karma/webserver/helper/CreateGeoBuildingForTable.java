@@ -41,7 +41,6 @@ public class CreateGeoBuildingForTable {
 	private <T> List<T> castList(Class<T> clazz, Collection<?> c) {
 		List<T> list = new Vector<T>(c.size());
 		for (Object object : c) {
-			System.out.println(object.getClass());
 			list.add(clazz.cast(object));
 		}
 		return list;
@@ -60,13 +59,13 @@ public class CreateGeoBuildingForTable {
 		cnd.createNodeDataforTable();
 
 		try {
-			rs = stmt.executeQuery("drop TABLE postgis.public.buildings_geo");
+			rs = stmt.executeQuery("drop TABLE buildings_geo");
 		} catch (SQLException ee) {
 			ee.getStackTrace();
 		}
 		try {
 			rs = stmt
-					.executeQuery("CREATE TABLE postgis.public.buildings_geo (Building_number integer PRIMARY KEY, Building_id character varying, Building_name character varying, State character varying, ele character varying, "
+					.executeQuery("CREATE TABLE buildings_geo (Building_number integer PRIMARY KEY, Building_id character varying, Building_name character varying, State character varying, ele character varying, "
 							+ "County_name character varying, UUID character varying, feature_id character varying, reviewed character varying,  Building_amenity character varying, source character varying,"
 							+ " lat double precision, lon double precision, point_text character varying,polygon_binary geography(polygon, 4326), polygon_text character varying,  Coordinate_System character varying,SRID integer)");
 
@@ -168,7 +167,7 @@ public class CreateGeoBuildingForTable {
 						|| NodeBuilding_amenity.equals("place_of_worship")) {
 					try {
 						rs = stmt
-								.executeQuery("insert into postgis.public.buildings_geo(Building_number) values ("
+								.executeQuery("insert into buildings_geo(Building_number) values ("
 										+ ord + ")");
 					} catch (SQLException ee) {
 						ee.getStackTrace();
@@ -176,7 +175,7 @@ public class CreateGeoBuildingForTable {
 
 					try {
 						rs = stmt
-								.executeQuery("update postgis.public.buildings_geo set Building_id=\'"
+								.executeQuery("update buildings_geo set Building_id=\'"
 										+ NodeBuilding_id
 										+ "\',Building_name=\'"
 										+ NodeBuilding_name
@@ -266,7 +265,7 @@ public class CreateGeoBuildingForTable {
 						if (name.equals("ref")) {
 							try {
 								rs = stmt
-										.executeQuery("select lat,lon from postgis.public.nodestable where id=\'"
+										.executeQuery("select lat,lon from nodestable where id=\'"
 												+ value + "\';");
 								while (rs.next()) {
 									lats = rs.getFloat("lat");
@@ -343,7 +342,7 @@ public class CreateGeoBuildingForTable {
 				if (NodeBuilding_type.equals("yes")) {
 					try {
 						rs = stmt
-								.executeQuery("insert into postgis.public.buildings_geo(Building_number) values ("
+								.executeQuery("insert into buildings_geo(Building_number) values ("
 										+ ord + ")");
 					} catch (SQLException ee) {
 						ee.getStackTrace();
@@ -352,7 +351,7 @@ public class CreateGeoBuildingForTable {
 					try {
 						System.out.println("Building Name is:"+NodeBuilding_name);
 						rs = stmt
-								.executeQuery("update postgis.public.buildings_geo set Building_id=\'"
+								.executeQuery("update buildings_geo set Building_id=\'"
 										+ NodeBuilding_id
 										+ "\',"
 										+ "Building_name=\'"
@@ -388,7 +387,7 @@ public class CreateGeoBuildingForTable {
 
 					try {
 						rs = stmt
-								.executeQuery("update postgis.public.buildings_geo set polygon_binary=ST_GeographyFromText(\'SRID=4326; POLYGON(("
+								.executeQuery("update buildings_geo set polygon_binary=ST_GeographyFromText(\'SRID=4326; POLYGON(("
 										+ node_latlon
 										+ "))\') , polygon_text=\' POLYGON(("
 										+ node_latlon
@@ -420,7 +419,7 @@ public class CreateGeoBuildingForTable {
 
 			try {
 				rs = stmt
-						.executeQuery("	Copy (Select * From postgis.public.buildings_geo) To '/tmp/buildings_geo.csv' CSV HEADER;");
+						.executeQuery("	Copy (Select * From buildings_geo) To '/tmp/buildings_geo.csv' CSV HEADER;");
 			} catch (SQLException ee) {
 				ee.getStackTrace();
 			}

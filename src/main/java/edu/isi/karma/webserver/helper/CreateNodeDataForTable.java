@@ -36,7 +36,6 @@ public class CreateNodeDataForTable {
 	private <T> List<T> castList(Class<T> clazz, Collection<?> c) {
 		List<T> list = new Vector<T>(c.size());
 		for (Object object : c) {
-			System.out.println(object.getClass());
 			list.add(clazz.cast(object));
 		}
 		return list;
@@ -56,23 +55,23 @@ public class CreateNodeDataForTable {
 	public void createNodeDataforTable() {
 
 		try {
-			stmt.executeQuery("drop TABLE postgis.public.nodestable");
+			stmt.executeQuery("drop TABLE nodestable");
 		} catch (SQLException ee) {
 			ee.getStackTrace();
 		}
 		try {
-			stmt.executeQuery("CREATE TABLE postgis.public.nodestable (ord integer PRIMARY KEY, id integer, lat double precision, lon double precision, uid integer, visible boolean, version integer, changeset integer, users character varying, timestamp timestamp without time zone)");
+			stmt.executeQuery("CREATE TABLE nodestable (ord integer PRIMARY KEY, id integer, lat double precision, lon double precision, uid integer, visible boolean, version integer, changeset integer, users character varying, timestamp timestamp without time zone)");
 		} catch (SQLException ee) {
 			ee.getStackTrace();
 		}
 
 		try {
-			stmt.executeQuery("drop TABLE postgis.public.nodes_tag");
+			stmt.executeQuery("drop TABLE nodes_tag");
 		} catch (SQLException ee) {
 			ee.getStackTrace();
 		}
 		try {
-			stmt.executeQuery("CREATE TABLE postgis.public.nodes_tag (number integer PRIMARY KEY, node_id integer, tag_order integer, k character varying, v character varying)");
+			stmt.executeQuery("CREATE TABLE nodes_tag (number integer PRIMARY KEY, node_id integer, tag_order integer, k character varying, v character varying)");
 		} catch (SQLException ee) {
 			ee.getStackTrace();
 		}
@@ -88,7 +87,7 @@ public class CreateNodeDataForTable {
 			for (Element ele : list) {
 				try {
 
-					stmt.executeQuery("insert into postgis.public.nodestable (ord) values ("
+					stmt.executeQuery("insert into nodestable (ord) values ("
 							+ ord + ")");
 				} catch (SQLException ee) {
 					ee.getStackTrace();
@@ -105,7 +104,7 @@ public class CreateNodeDataForTable {
 						node_id = value;
 					}
 					try {
-						stmt.executeQuery("update postgis.public.nodestable set "
+						stmt.executeQuery("update nodestable set "
 								+ name + "=\'" + value + "\' where ord=" + ord);
 
 					} catch (SQLException ee) {
@@ -119,14 +118,14 @@ public class CreateNodeDataForTable {
 						ele.elements("tag"));
 				for (Element elms : nods) {
 					try {
-						stmt.executeQuery("insert into postgis.public.nodes_tag (number) values ("
+						stmt.executeQuery("insert into nodes_tag (number) values ("
 								+ columofnodes_tag + ")");
 					} catch (SQLException ee) {
 						ee.getStackTrace();
 					}
 
 					try {
-						stmt.executeQuery("update postgis.public.nodes_tag set node_id=\'"
+						stmt.executeQuery("update nodes_tag set node_id=\'"
 								+ node_id
 								+ "\', tag_order=\'"
 								+ colm_tag
@@ -145,7 +144,7 @@ public class CreateNodeDataForTable {
 						String name = attribute.getName();
 						String value = attribute.getText();
 						try {
-							stmt.executeQuery("update postgis.public.nodes_tag set "
+							stmt.executeQuery("update nodes_tag set "
 									+ name
 									+ "=\'"
 									+ value

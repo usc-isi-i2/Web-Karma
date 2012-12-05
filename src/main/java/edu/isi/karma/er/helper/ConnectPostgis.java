@@ -21,9 +21,8 @@ public class ConnectPostgis {
 
 		}
 		try {
-			connection = DriverManager.getConnection(
-					"jdbc:postgresql://localhost:5432/postgis", "postgres",
-					"dd251314");
+			//connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgis", "postgres","dd251314");
+			connection = DriverManager.getConnection("jdbc:postgresql://fusion.isi.edu:54322/testGIS","karma","2xpd516");
 		} catch (SQLException e) {
 			System.out.println("Connection Failed! Check output console");
 			e.printStackTrace();
