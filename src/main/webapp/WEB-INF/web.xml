@@ -108,7 +108,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>LinkedAPIServiceHandler</servlet-name>
-    <url-pattern>/linkedservices/*</url-pattern>
+    <url-pattern>/services/*</url-pattern>
   </servlet-mapping>
     
   <servlet>
