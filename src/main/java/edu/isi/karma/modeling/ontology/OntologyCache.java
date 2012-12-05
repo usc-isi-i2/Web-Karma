@@ -192,6 +192,17 @@ public class OntologyCache {
 		loadClasses();
 		loadProperties();
 		
+		logger.info("number of classes:" + classes.size());
+		logger.info("number of all properties:" + properties.size());
+		// A = number of all properties including rdf:Property 
+		// B = number of properties defined as Data Property
+		// C = number of properties defined as Object Property
+		// properties = A
+		// dataproperties = A - C
+		// objectproperties = A - B
+		logger.info("number of data properties:" + (properties.size() - objectProperties.size()) );
+		logger.info("number of object properties:" + (properties.size() - dataProperties.size()) );
+
 		// create a hierarchy of classes and properties of the model
 		buildClassHierarchy(classHierarchy);
 		buildDataPropertyHierarchy(dataPropertyHierarchy);
