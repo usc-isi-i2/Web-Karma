@@ -31,3 +31,21 @@ NOTE: Currently only tab-delimited kind of CSV files are supported.
 	Above command will use the model.n3 model file to pubish a RDF file named result.n3
 	
 NOTE: In Maven Jetty plugin based Karma deployment, the published models are located at src/main/webapp/repository/sources/ inside the Karma directory.
+
+
+*** Steps for importing data from an Oracle database ***
+Due to Oracles binary license issues, we can't distribute the JAR file that is required for importing data from an Oracle database. Following are the steps to resolve the runtime error that you will get if you try to do it with the current source code:
+
+1. Download the appropriate JDBC drive JAR file (for JDK 1.5 and above) that matches your Oracle DB version. Link: http://www.oracle.com/technetwork/database/features/jdbc/index-091264.html
+2. Put the downloaded JAR file inside "lib" folder of the Karma source code. 
+3. Add the following snippet in the "pom.xml" file (present inside the top level folder of Karma source code) inside the dependencies XML element: 
+
+<dependency> 
+    <groupId>com.oracle</groupId> 
+    <artifactId>ojdbc</artifactId> 
+    <version>14</version> 
+    <scope>system</scope> 
+    <systemPath>${project.basedir}/lib/ojdbc14.jar</systemPath> 
+</dependency> 
+
+Make sure that the filename mentioned in the "systemPath" element matches with your downloaded JAR file.
