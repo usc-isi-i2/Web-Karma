@@ -21,7 +21,7 @@ src/main/webapp/publish/Source Description/*.*
 src/main/webapp/publish/History/*.*
 src/main/webapp/publish/CSV/*
 src/main/webapp/publish/RDF/*
-Preloaded_Ontologies/catalog-v001.xml
+preloaded-ontologies/*
 src/main/webapp/RDF/*.rdf
 src/main/webapp/RDF/*.n3
 src/main/webapp/CRF_Models/*.txt
@@ -33,10 +33,19 @@ tmp/*
 src/main/webapp/CRF_Models/WSP1_CRFModel.txt
 src/main/scripts/Lib/*.class
 bin/
-.classpath
 
-.project
+*.kml
 
-.gitignore
+*.fix
 
-src/main/java/edu/isi/karma/er/compare/impl/NumberComparatorImpl.java
+*.dbf
+
+*.zip
+
+*.prj
+
+*.qix
+
+*.shp
+
+*.shx

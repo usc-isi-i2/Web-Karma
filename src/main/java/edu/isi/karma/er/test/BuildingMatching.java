@@ -27,9 +27,9 @@ public class BuildingMatching {
 
 	public static void main(String[] args) {
 
-		String directory1 = "/Users/yzhang/Downloads/Repository/openstreetmap";
-		String directory2 = "/Users/yzhang/Downloads/Repository/wikimapia";
-		String csvFileAddress = "/Users/yzhang/Downloads/BuildingMatchedResult.csv";
+		String directory1 = "/Users/yingzhang/Downloads/Repository/openstreetmap";
+		String directory2 = "/Users/yingzhang/Downloads/Repository/wikimapia";
+		String csvFileAddress = "/Users/yingzhang/Downloads/BuildingMatchedResult.csv";
 		Connection connection = null;
 		/*
 		 *** run this statement only once,unless you revised the n3 file;

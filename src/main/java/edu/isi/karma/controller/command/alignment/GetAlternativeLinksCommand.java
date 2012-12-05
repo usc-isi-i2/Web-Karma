@@ -96,16 +96,16 @@ public class GetAlternativeLinksCommand extends Command {
 					for (LabeledWeightedEdge edge : edges) {
 						
 						String edgeLabel = "";
-//						if(edge.getPrefix() != null && !edge.getPrefix().equals(""))
-//							edgeLabel = edge.getPrefix() + ":" + edge.getLocalLabel();
-//						else
+						if(edge.getPrefix() != null && !edge.getPrefix().equals(""))
+							edgeLabel = edge.getPrefix() + ":" + edge.getLocalLabel();
+						else
 							edgeLabel = edge.getLocalLabel();
 						
 						String edgeSourceLabel = "";
 						Vertex edgeSource = edge.getSource();
-//						if(edgeSource.getPrefix() != null && !edgeSource.getPrefix().equals(""))
-//							edgeSourceLabel = edgeSource.getPrefix() + ":" + edgeSource.getLocalLabel();
-//						else
+						if(edgeSource.getPrefix() != null && !edgeSource.getPrefix().equals(""))
+							edgeSourceLabel = edgeSource.getPrefix() + ":" + edgeSource.getLocalLabel();
+						else
 							edgeSourceLabel = edgeSource.getLocalID();
 						
 						JSONObject edgeObj = new JSONObject();

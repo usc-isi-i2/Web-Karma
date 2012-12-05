@@ -46,6 +46,11 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 		
 		ArrayList<String> tableNames = new ArrayList<String>();
 		DatabaseMetaData dmd = conn.getMetaData();
+<<<<<<< HEAD
+=======
+		//Pedro: 2012/12/03 comment out to enable loading Views in Karma (on behalf of Maria)
+		//ResultSet rs = dmd.getTables(null, null, null, new String[] {"TABLE"});
+>>>>>>> 47d9e8e21675946876f0429fe3cf42a2ada5c8e2
 		ResultSet rs = dmd.getTables(null, null, null, new String[] {"TABLE","VIEW"});
 		while (rs.next())
 			tableNames.add(rs.getString(3));

@@ -223,10 +223,10 @@ public class URLManager {
 	            }
 	        }
 	        
-	        if (!verifyAttributeExtraction(url, attributeList)) {
-	        	logger.error("Attributes have not been extracted successfully.");
-	        	return null;
-	        }
+//	        if (!verifyAttributeExtraction(url, attributeList)) {
+//	        	logger.error("Attributes have not been extracted successfully.");
+//	        	return null;
+//	        }
 	        
 	        logger.debug("Attributes extracted successfully from " + url.toString());
 	        return attributeList;
@@ -455,12 +455,15 @@ public class URLManager {
 	public static void main(String[] args) throws MalformedURLException {
 
 //		URL url = new URL("http://www.test.com/getVideos?user=demo");
-		URL url = new URL("http://www.test.com/?test=1");
+//		URL url = new URL("http://www.test.com/?test=1");
+		URL url = new URL("http://localhost:8080/SpatialReferenceSystemService?srid=2163&geometry=POINT%20(2236208.82887498%2093460.8811236587)");
 		System.out.println(getEndPoint(url));
 		System.out.println(getServiceAddress(url));
 		System.out.println(getOperationName(url));
 		System.out.println(getOperationAddress(url));
-
+		for (Attribute att : getQueryAttributes(url)) {
+			System.out.println(att.getName());
+		}
 		
 //		String serviceName = "";
 //		String apiEndPoint = "";

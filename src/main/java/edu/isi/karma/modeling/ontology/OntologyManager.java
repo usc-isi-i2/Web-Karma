@@ -95,12 +95,6 @@ public class OntologyManager {
 		try {
 			InputStream s = new FileInputStream(sourceFile);
 			ontModel.read(s, null);
-			
-			// Store the new namespaces information in the namespace map maintained in OntologyGraphManager
-//			String baseNS = m.getNsPrefixURI("");
-//			m.setNsPrefix("dv" + ontologyNSIndex++, baseNS);	
-			
-			//System.out.println("Prefix map:" + ontologyModel.getNsPrefixMap());
 		} catch (Throwable t) {
 			logger.error("Error reading the OWL ontology file!", t);
 			return false;
@@ -110,6 +104,37 @@ public class OntologyManager {
 		/* Record the operation */
 		logger.debug("done.");
 		return true;
+	}
+	
+	public boolean doImportWithoutCacheUpdate(File sourceFile) {
+
+		if (sourceFile == null) {
+			logger.debug("input file is null.");
+			return false;
+		}
+		
+		logger.debug("Importing " + sourceFile.getName() + " OWL Ontology ...");
+
+		if(!sourceFile.exists()){
+			logger.error("file does not exist  " + sourceFile.getAbsolutePath());
+			return false;
+		}
+		
+		try {
+			InputStream s = new FileInputStream(sourceFile);
+			ontModel.read(s, null);
+		} catch (Throwable t) {
+			logger.error("Error reading the OWL ontology file!", t);
+			return false;
+		}
+		
+		/* Record the operation */
+		logger.debug("done.");
+		return true;
+	}
+	
+	public void initCache() {
+		ontCache.init(this);
 	}
 
 	public URI getURIFromString(String uri) {
@@ -308,7 +333,7 @@ public class OntologyManager {
                 if (subP.isURIResource()) {
                 	resources.add(subP);
                 	if (recursive)
-                		getParents(subP, resources, recursive);
+                		getChildren(subP, resources, recursive);
                 }
 //                else {
 //            		List<OntResource> members = new ArrayList<OntResource>();

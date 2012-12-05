@@ -81,6 +81,10 @@ function attachOntologyOptionsRadioButtonHandlers() {
           filter('#AlternativeParentLinksTable tr', $(this).val(), "edgeLabel");  
         }
     });
+    
+    $("button#semanticTypingAdvancedOptions").button().click(function(){
+    	$("div#semanticTypingAdvacedOptionsDiv").show();
+    });
 }
 
 function handleDataPropertyFilter() {
