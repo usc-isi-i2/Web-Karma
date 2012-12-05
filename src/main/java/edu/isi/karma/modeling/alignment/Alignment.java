@@ -204,7 +204,8 @@ public class Alignment {
 	
 	private boolean duplicate(SemanticType st1, SemanticType st2) {
 		if (st1.getHNodeId().equalsIgnoreCase(st2.getHNodeId()) &&
-				st1.getType().getUriString().equalsIgnoreCase(st2.getType().getUriString()) ) {
+				st1.getType().getUriString().equalsIgnoreCase(st2.getType().getUriString()) &&
+				st1.isPartOfKey() == st2.isPartOfKey()) {
 			if (st1.getDomain() != null && st2.getDomain() != null) 
 				if (st1.getDomain().getUriString().equalsIgnoreCase(st2.getDomain().getUriString()))
 					return true;
