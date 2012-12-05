@@ -28,6 +28,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import edu.isi.karma.webserver.KarmaException;
+
 /**
  * @author szekely
  * 
@@ -188,6 +190,45 @@ public class HTable extends RepEntity {
 				orderedNodeIds.add(index + 1, newNode.getId());
 			worksheet.addNodeToDataTable(newNode, factory);
 		}
+	}
+
+	//mariam 2012-11-28
+	//add before hNodeId, or at the beginning of table if hNodeId is null
+	//adds new HNode with given columnName
+	public HNode addNewHNodeAfter(String hNodeId, RepFactory factory,
+			String columnName, Worksheet worksheet, boolean b) throws KarmaException {
+
+		HNode hn = factory.createHNode(id, columnName, false);
+		nodes.put(hn.getId(), hn);
+		//if hNodeId==null add new node at the beginning
+		if(hNodeId==null){
+			orderedNodeIds.add(0,hn.getId());
+		}
+		else{
+			//add it after hNodeId
+			int index = orderedNodeIds.indexOf(hNodeId);
+			if(index<0){
+				//node not found; 
+				throw new KarmaException("Node " + hNodeId + " not found in table " + tableName);
+			}
+			else if (index == orderedNodeIds.size() - 1)
+				//last node
+				orderedNodeIds.add(hn.getId());
+			else
+				orderedNodeIds.add(index + 1, hn.getId());
+		}
+		
+		worksheet.addNodeToDataTable(hn, factory);
+
+		return hn;
+	}
+
+	//mariam 2012-11-30
+	public void removeHNode(String hNodeId,Worksheet worksheet){
+
+		nodes.remove(hNodeId);
+		orderedNodeIds.remove(hNodeId);
+		worksheet.removeNodeFromDataTable(hNodeId);
 	}
 
 	/**

@@ -28,6 +28,8 @@ import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.AddColumnCommand;
+import edu.isi.karma.controller.command.AddColumnCommandFactory;
 import edu.isi.karma.controller.command.AddNewColumnCommand;
 import edu.isi.karma.controller.command.AddNewColumnCommandFactory;
 import edu.isi.karma.controller.command.ApplyWorksheetHistoryCommand;
@@ -189,6 +191,8 @@ public class ExecutionController {
 				new PublishDatabaseCommandFactory());
 		commandFactoryMap.put(AddNewColumnCommand.class.getSimpleName(),
 				new AddNewColumnCommandFactory());
+		commandFactoryMap.put(AddColumnCommand.class.getSimpleName(),
+				new AddColumnCommandFactory());
 		commandFactoryMap.put(PublishRDFCellCommand.class.getSimpleName(),
 				new PublishRDFCellCommandFactory());
 		commandFactoryMap.put(FetchPreferencesCommand.class.getSimpleName(),

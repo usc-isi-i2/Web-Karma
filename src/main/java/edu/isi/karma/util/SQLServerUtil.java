@@ -46,7 +46,7 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 		
 		ArrayList<String> tableNames = new ArrayList<String>();
 		DatabaseMetaData dmd = conn.getMetaData();
-		ResultSet rs = dmd.getTables(null, null, null, new String[] {"TABLE"});
+		ResultSet rs = dmd.getTables(null, null, null, new String[] {"TABLE","VIEW"});
 		while (rs.next())
 			tableNames.add(rs.getString(3));
 		Collections.sort(tableNames);

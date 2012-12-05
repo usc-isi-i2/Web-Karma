@@ -103,6 +103,44 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		});
 	});
 
+	//just for testing
+	$("button#addColumnButton").click(function(){
+		optionsDiv.hide();
+		
+		var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+    	var selectedHNodeId = columnHeadingMenu.data("parentCellId");
+		
+		var info = new Object();
+		info["vWorksheetId"] = $("td#" + selectedHNodeId).parents("table.WorksheetTable").attr("id");
+		info["workspaceId"] = $.workspaceGlobalInformation.id;
+		info["hNodeId"] = selectedHNodeId
+		info["hTableId"] = ""
+		info["newColumnName"] = "new_column"
+		info["command"] = "AddColumnCommand";
+			
+		//console.log(info["vWorksheetId"]);
+		showLoading(info["vWorksheetId"]);
+		
+		var returned = $.ajax({
+		   	url: "RequestController", 
+		   	type: "POST",
+		   	data : info,
+		   	dataType : "json",
+		   	complete : 
+		   		function (xhr, textStatus) {
+		   			//alert(xhr.responseText);
+		    		var json = $.parseJSON(xhr.responseText);
+		    		parse(json);
+		    		hideLoading(info["vWorksheetId"]);
+			   	},
+			error :
+				function (xhr, textStatus) {
+		   			alert("Error occured while removing semantic types!" + textStatus);
+		   			hideLoading(info["vWorksheetId"]);
+			   	}		   
+		});
+	});
+
 	$("button#publishRDF").click(function(){
 		optionsDiv.hide();
 		showHideRdfInfo();
