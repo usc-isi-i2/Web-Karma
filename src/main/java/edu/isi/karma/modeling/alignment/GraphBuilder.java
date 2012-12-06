@@ -49,7 +49,7 @@ public class GraphBuilder {
 	private static String THING_NS = "http://www.w3.org/2002/07/owl#";
 	private static String THING_PREFIX = "owl";
 	
-	private static String SUBCLASS_URI = "hasSubClass";
+	private static String SUBCLASS_URI = "http://example.com#hasSubClass";
 	private static String SUBCLASS_NS = "http://example.com#";
 	private static String SUBCLASS_PREFIX = "";
 
