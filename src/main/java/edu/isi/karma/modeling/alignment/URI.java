@@ -64,10 +64,16 @@ public class URI {
 	}
 
 	public String getNs() {
+		if (ns != null && ns.trim().length() == 0)
+			return null;		
+		
 		return ns;
 	}
 
 	public String getPrefix() {
+		if (prefix != null && prefix.trim().length() == 0)
+			return null;
+		
 		return prefix;
 	}
 	
