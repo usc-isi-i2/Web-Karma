@@ -245,6 +245,7 @@ public class WorksheetToFeatureCollections {
 					posList="POINT("+lon+" "+lat+")"; 
 		
 				}
+				if(posList.length()==0) continue;
 				posList=posList.toUpperCase();
 				WKTReader reader = new WKTReader();
 				JTSGeometry= reader.read(posList);
