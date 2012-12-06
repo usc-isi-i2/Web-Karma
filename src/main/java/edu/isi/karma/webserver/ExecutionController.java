@@ -93,6 +93,8 @@ import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommandFactory;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommand;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommandFactory;
+import edu.isi.karma.controller.command.publish.PublishCSVCommand;
+import edu.isi.karma.controller.command.publish.PublishCSVCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishDatabaseCommand;
 import edu.isi.karma.controller.command.publish.PublishDatabaseCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommand;
@@ -213,6 +215,8 @@ public class ExecutionController {
 				new PublishWorksheetHistoryCommandFactory());
 		commandFactoryMap.put(ApplyWorksheetHistoryCommand.class.getSimpleName(),
 				new ApplyWorksheetHistoryCommandFactory());
+		commandFactoryMap.put(PublishCSVCommand.class.getSimpleName(),
+				new PublishCSVCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {
