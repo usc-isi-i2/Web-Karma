@@ -29,7 +29,6 @@ import org.apache.log4j.Logger;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.ontology.OntTools;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import edu.isi.karma.modeling.alignment.URI;
@@ -41,7 +40,7 @@ public class OntologyCache {
 	private OntologyManager ontologyManager = null;
 
 	private List<String> classes;
-	private List<String> rootClasses;
+//	private List<String> rootClasses;
 	private List<String> properties;
 	private List<String> dataProperties;
 	private List<String> objectProperties;
@@ -75,9 +74,9 @@ public class OntologyCache {
 		return classes;
 	}
 
-	public List<String> getRootClasses() {
-		return rootClasses;
-	}
+//	public List<String> getRootClasses() {
+//		return rootClasses;
+//	}
 
 	public List<String> getProperties() {
 		return properties;
@@ -162,7 +161,7 @@ public class OntologyCache {
 		this.ontologyManager = ontologyManager;
 		
 		classes = new ArrayList<String>();
-		rootClasses = new ArrayList<String>();
+//		rootClasses = new ArrayList<String>();
 		properties = new ArrayList<String>();
 		dataProperties = new ArrayList<String>();
 		objectProperties = new ArrayList<String>();
@@ -238,14 +237,15 @@ public class OntologyCache {
 				continue;
 			
 			if (classes.indexOf(c.getURI()) == -1)
-				classes.add(c.getURI());	
+				classes.add(c.getURI());
+
 		}
 
-		List<OntClass> namedRoots = OntTools.namedHierarchyRoots(ontologyManager.getOntModel());
-		for (OntClass c : namedRoots) {
-			if (c.isURIResource() && rootClasses.indexOf(c.getURI()) == -1)
-				rootClasses.add(c.getURI());
-		}
+//		List<OntClass> namedRoots = OntTools.namedHierarchyRoots(ontologyManager.getOntModel());
+//		for (OntClass c : namedRoots) {
+//			if (c.isURIResource() && rootClasses.indexOf(c.getURI()) == -1)
+//				rootClasses.add(c.getURI());
+//		}
 	}
 
 	private void loadProperties() {
@@ -280,15 +280,15 @@ public class OntologyCache {
 		
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
-			for (String s : rootClasses) {
-//			for (String s : classes) {
-//				List<String> superClasses = ontologyManager.getSuperClasses(s, false);
-//				if (superClasses == null || superClasses.size() == 0) {
+//			for (String s : rootClasses) {
+			for (String s : classes) {
+				List<String> superClasses = ontologyManager.getSuperClasses(s, false);
+				if (superClasses == null || superClasses.size() == 0) {
 					URI uri = ontologyManager.getURIFromString(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
 					buildClassHierarchy(childNode);
 					children.add(childNode);
-//				}
+				}
 			}
 		} else {
 			List<String> subClasses = ontologyManager.getSubClasses(node.getUri().getUriString(), false);
