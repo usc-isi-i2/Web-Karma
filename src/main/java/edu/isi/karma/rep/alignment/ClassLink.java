@@ -21,42 +21,18 @@
 
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.modeling.alignment.NodeType;
+import edu.isi.karma.modeling.alignment.LinkType;
 
-public class InternalNode extends Node {
-
-	private final URI uri;
+public class ClassLink extends Link {
+	private static final long serialVersionUID = 1L;
+	private boolean isPartOfKey;
 	
-	public InternalNode(String id, URI uri) {
-		super(id, NodeType.InternalClassNode);
-		this.uri = uri;
+	public ClassLink(String id, URI uri, LinkType linkType, LinkStatus status, boolean isPartOfKey) {
+		super(id, uri, linkType, status);
+		this.isPartOfKey = isPartOfKey;
 	}
 
-	public URI getUri() {
-		return uri;
-	}
-	
-	public String getLocalLabel() {
-		String s = this.uri.getUriString();
-		s = s.replaceAll(this.uri.getNs(), "");
-		return s;
-	}
-	
-	public String getUriString() {
-		return this.uri.getUriString();
-	}
-	
-	public String getNs() {
-		return this.uri.getNs();
-	}
-	
-	public String getPrefix() {
-		return this.uri.getPrefix();
-	}
-	
-	public String getLocalID() {
-		String s = this.id;
-		s = s.replaceAll(this.uri.getNs(), "");
-		return s;
+	public boolean isPartOfKey() {
+		return isPartOfKey;
 	}
 }

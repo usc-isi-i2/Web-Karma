@@ -31,10 +31,18 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
 
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.alignment.ClassLink;
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.DataPropertyOfColumnMetaPropertyLink;
+import edu.isi.karma.rep.alignment.InternalClassNode;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.PropertyLink;
 import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SubclassOfNodeMetaPropertyLink;
+import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.URIOfClassMetaPropertyLink;
 
 
 
@@ -450,5 +458,48 @@ public class Alignment {
 		return this.graphBuilder.getGraph();
 	}
 	
+	/**** TO BE IMPLEMENTED ***/
+	public Link getLinkById(String linkId) {
+		return null;
+	}
+	
+	public Node getNodeById(String nodeId) {
+		return null;
+	}
+	
+	public ColumnNode createColumnNode(String hNodeId) {
+		return null;
+	}
+	
+	public InternalClassNode createInternalClassNode(URI uri) {
+		return null;
+	}
 
+	public PropertyLink createPropertyLink(Node source, Node target, URI uri, boolean isPartOfKey) {
+		return null;
+	}
+	
+	public ClassLink createClassLink(Node source, Node target, boolean isPartOfKey) {
+		return null;
+	}
+	
+	public DataPropertyOfColumnMetaPropertyLink createDataPropertyOfColumnMetaPropertyLink(Node source, Node target) {
+		return null;
+	}
+
+	public SubclassOfNodeMetaPropertyLink createSubclassOfNodeMetaPropertyLink(Node source, Node target) {
+		return null;
+	}
+	
+	public URIOfClassMetaPropertyLink createURIOfClassMetaPropertyLink(Node source, Node target) {
+		return null;
+	}
+	
+	public void addLink(Link link) {
+		
+	}
+	
+	public ColumnNode getColumnNodeByHNodeId(String hNodeId) {
+		return null;
+	}
 }

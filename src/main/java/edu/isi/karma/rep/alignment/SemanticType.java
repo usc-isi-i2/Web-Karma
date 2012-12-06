@@ -29,6 +29,7 @@ import edu.isi.karma.util.Jsonizable;
 public class SemanticType implements Jsonizable  {
 	private final String hNodeId;
 	private final URI type;
+	private final URI clazz;
 	private final Origin origin;
 	private final boolean isPartOfKey; 
 	private final ConfidenceLevel confidenceLevel;
