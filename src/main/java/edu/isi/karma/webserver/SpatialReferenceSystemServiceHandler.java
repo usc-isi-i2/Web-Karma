@@ -25,6 +25,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.isi.karma.er.helper.ConnectPostgis;
@@ -56,8 +57,8 @@ public class SpatialReferenceSystemServiceHandler extends HttpServlet {
 		openConnection();
 
 
-		String statement = "SELECT ST_AsText(ST_Transform(ST_GeomFromEWKT('SRID="
-		+srid+";"+geometry+"'),4326))";
+		String statement = "SELECT ST_AsText(ST_Transform(ST_GeomFromText('"+geometry+"',"
+		+srid+"),4326))";
 		
 		JSONObject obj=new JSONObject();
 		JSONArray arr=new JSONArray();
@@ -90,10 +91,20 @@ public class SpatialReferenceSystemServiceHandler extends HttpServlet {
 		} catch (SQLException ee) {
 			ee.getStackTrace();
 		}
-		
-		jsonOutput=arr.toString();
 		/*Close connection*/
 		this.closeConnection(this.connection);
+		
+		if(arr.length()==0) {
+			try {
+				obj.put("Geometry", geometry);
+				obj.put("SRID", srid);
+				arr.put(obj);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		jsonOutput=arr.toString();
 		
 		/*Output the JSON content to Web Page*/
 		PrintWriter pw = response.getWriter();

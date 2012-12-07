@@ -34,9 +34,36 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	});
 	
 	// Adding handlers to the buttons
+	 $("button#csvExport").click(function(){
+        optionsDiv.hide();
+        var info = new Object();
+        info["vWorksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "PublishCSVCommand";
+            
+        showLoading(info["vWorksheetId"]);
+        var returned = $.ajax({
+            url: "RequestController", 
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete : 
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while export CSV!" + textStatus);
+                    hideLoading(info["vWorksheetId"]);
+                }          
+        });
+        
+    });
 	$("button#showModel").click(function(){
 		optionsDiv.hide();
-		
+		 //alert("test");
 		// console.log("Showing model for table with ID: " +optionsDiv.data("worksheetId"));
 		var info = new Object();
 		info["vWorksheetId"] = optionsDiv.data("worksheetId");

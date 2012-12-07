@@ -29,6 +29,7 @@ import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
+import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.view.VWorkspace;
 
 public class PublishKMLLayerCommand extends Command {
@@ -82,11 +83,10 @@ public class PublishKMLLayerCommand extends Command {
 					.getTagsContainer().getTag(TagName.Outlier), ws
 					.getCrfModelHandler(), ws.getOntologyManager());
 		}
-		
+		//Note:
 		//OntModel model = ws.getOntologyManager().getOntModel();
 		//ws.getOntologyManager().
 
-		//WorksheetGeospatialContent geo = new WorksheetGeospatialContent(worksheet); yaoyi
 		WorksheetToFeatureCollections geo = new WorksheetToFeatureCollections(worksheet);
 		// Send an error update if no geospatial data found!
 		if (geo.hasNoGeospatialData()) {
@@ -98,7 +98,8 @@ public class PublishKMLLayerCommand extends Command {
 			final File file = geo.SaveSpatialData();
 			final String zippedSpatialDataPath = geo.getZippedSpatialDataPath();
 			// Transfer the file to a public server
-			final boolean transfer = transferFileToPublicServer(file);
+			final String kmlFileName = new RandomGUID().toString();
+			final boolean transfer = transferFileToPublicServer(kmlFileName,file);
 			if (!transfer) {
 				logger.error("Published KML file could not be moved to a public server to display on Google Maps!");
 			}
@@ -112,7 +113,7 @@ public class PublishKMLLayerCommand extends Command {
 						outputObject.put(JsonKeys.updateType.name(),
 								"PublishKMLUpdate");
 						outputObject.put(JsonKeys.fileName.name(),
-								publicKMLAddress + file.getName());
+								publicKMLAddress + kmlFileName+".kml");//file.getName());
 						outputObject.put(JsonKeys.transferSuccessful.name(),
 								transfer);
 						outputObject.put(JsonKeys.localFileName.name(),
@@ -137,7 +138,7 @@ public class PublishKMLLayerCommand extends Command {
 	}
 
 	@SuppressWarnings("deprecation")
-	private boolean transferFileToPublicServer(File file) {
+	private boolean transferFileToPublicServer(String kmlFileName,File file) {
 		try {
 			logger.info("Starting transfer of the published KML file to a public server to view it on Google Maps ...");
 			HttpURLConnection conn = null;
@@ -170,7 +171,8 @@ public class PublishKMLLayerCommand extends Command {
 			dos = new DataOutputStream(conn.getOutputStream());
 			dos.writeBytes(twoHyphens + boundary + lineEnd);
 			dos.writeBytes("Content-Disposition: form-data; name=\"upload\";"
-					+ " filename=\"" + file.getName() + "\"" + lineEnd);
+					//+ " filename=\"" + file.getName() + "\"" + lineEnd);
+					+ " filename=\"" + kmlFileName + ".kml\"" + lineEnd);
 			dos.writeBytes(lineEnd);
 
 			// Creating a buffer of maximum size

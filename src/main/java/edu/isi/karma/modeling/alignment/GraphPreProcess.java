@@ -28,6 +28,8 @@ import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.modeling.ModelingParams;
+
 public class GraphPreProcess {
 
 	static Logger logger = Logger.getLogger(GraphPreProcess.class);
@@ -65,7 +67,7 @@ public class GraphPreProcess {
 			status = e.getLinkStatus();
 			
 			if (status == LinkStatus.PreferredByUI) {
-				gPrime.setEdgeWeight(e, GraphBuilder.DEFAULT_WEIGHT - GraphBuilder.MIN_WEIGHT);
+				gPrime.setEdgeWeight(e, ModelingParams.DEFAULT_WEIGHT - ModelingParams.MIN_WEIGHT);
 				
 			} else if (status == LinkStatus.ForcedByUser) {
 				
@@ -91,7 +93,7 @@ public class GraphPreProcess {
 				
 				// if it is a subclass link, change the weight to epsilon
 				//if (e.getType() == LinkType.HasSubClass)
-				gPrime.setEdgeWeight(e, GraphBuilder.MIN_WEIGHT);
+				gPrime.setEdgeWeight(e, ModelingParams.MIN_WEIGHT);
 				
 				if (target.getNodeType() == NodeType.DataProperty)
 					target.setDomainVertexId(source.getID());

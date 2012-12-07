@@ -141,29 +141,29 @@ public class URLManager {
 		return address;
 	}
 
-	private static boolean verifyAttributeExtraction(URL url, List<Attribute> attributeList) {
-		if (url.getQuery() == null && (attributeList == null || attributeList.size() == 0))
-			return true;
-		
-		if (url.getQuery() != null && url.getQuery().trim().length() == 0 && 
-				(attributeList == null || attributeList.size() == 0))
-			return true;
-		
-		String query = "";
-		for (Attribute p:attributeList) {
-			query += p.getName().trim();
-			query += "=";
-			query += p.getValue().trim();
-			query += "&";
-		}
-		if (query.endsWith("&"))
-			query = query.substring(0, query.length()-1);
-		
-		if (query.equalsIgnoreCase(url.getQuery()))
-			return true;
-		
-		return false;
-	}
+//	private static boolean verifyAttributeExtraction(URL url, List<Attribute> attributeList) {
+//		if (url.getQuery() == null && (attributeList == null || attributeList.size() == 0))
+//			return true;
+//		
+//		if (url.getQuery() != null && url.getQuery().trim().length() == 0 && 
+//				(attributeList == null || attributeList.size() == 0))
+//			return true;
+//		
+//		String query = "";
+//		for (Attribute p:attributeList) {
+//			query += p.getName().trim();
+//			query += "=";
+//			query += p.getValue().trim();
+//			query += "&";
+//		}
+//		if (query.endsWith("&"))
+//			query = query.substring(0, query.length()-1);
+//		
+//		if (query.equalsIgnoreCase(url.getQuery()))
+//			return true;
+//		
+//		return false;
+//	}
 	
 	public static List<Attribute> getQueryAttributes(String urlString) throws MalformedURLException {
 		URL url = new URL(urlString);

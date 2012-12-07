@@ -49,3 +49,5 @@ bin/
 *.shp
 
 *.shx
+
+src/main/webapp/SpatialData/GET_OPENSTREETMAP.xml

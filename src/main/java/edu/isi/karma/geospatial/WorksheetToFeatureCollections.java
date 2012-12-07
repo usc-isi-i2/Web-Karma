@@ -20,12 +20,19 @@
  ******************************************************************************/
 
 package edu.isi.karma.geospatial;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -60,6 +67,7 @@ import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
+import org.apache.commons.io.FileUtils;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Transaction;
 import org.geotools.data.collection.ListFeatureCollection;
@@ -96,6 +104,9 @@ public class WorksheetToFeatureCollections {
 	List<SimpleFeature> lineFeatureList = new ArrayList<SimpleFeature>();
 	List<SimpleFeature> polygonFeatureList = new ArrayList<SimpleFeature>();
 	List<AttributeDescriptor> featureSchema = new ArrayList<AttributeDescriptor>();
+	List<String> pointHNodeIdList = new ArrayList<String>();
+	List<String> lineHNodeIdList = new ArrayList<String>();
+	List<String> polygonHNodeIdList = new ArrayList<String>();
 	
 	SimpleFeatureType pointFeatureType =null;
 	SimpleFeatureType lineFeatureType =null;
@@ -195,6 +206,7 @@ public class WorksheetToFeatureCollections {
 		            build.setBinding(String.class); // might need to change to specific bindings
 		            AttributeDescriptor descriptor = build.buildDescriptor(hNode.getColumnName());
 		            featureSchema.add(descriptor);
+		            pointHNodeIdList.add(hNode.getId());
 				}
 			}
 		}
@@ -245,6 +257,7 @@ public class WorksheetToFeatureCollections {
 					posList="POINT("+lon+" "+lat+")"; 
 		
 				}
+				if(posList.length()==0) continue;
 				posList=posList.toUpperCase();
 				WKTReader reader = new WKTReader();
 				JTSGeometry= reader.read(posList);
@@ -274,10 +287,11 @@ public class WorksheetToFeatureCollections {
 				SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(simpleFeatureTypeWithCRS);
 				featureBuilder.add(JTSGeometry);
 				
-				Collection<Node> nodes = row.getNodes();
-				for (Node node : nodes) {
-
-					if (!(spatialHNodeIds.contains(node.getHNodeId()))){
+				//Collection<Node> nodes = row.getNodes();
+				for(String hNodeId : pointHNodeIdList) {
+				//for (Node node : nodes) {
+					//if (!(spatialHNodeIds.contains(node.getHNodeId()))){
+					Node node = row.getNode(hNodeId);
 						if(node.hasNestedTable())
 							featureBuilder.add("Nested table");
 						else
@@ -285,7 +299,7 @@ public class WorksheetToFeatureCollections {
 							String colValue =node.getValue().asString();
 							featureBuilder.add(colValue);
 						}
-					}
+					//}
 				}
 				SimpleFeature feature = featureBuilder.buildFeature(null);
 				features.add(feature);
@@ -323,16 +337,16 @@ public class WorksheetToFeatureCollections {
 		
 		File kml = publishKML(spatialDataFolder,fileName);
 		if(pointFeatureHNodeId!=""|| (pointFeatureLatHNodeId!=""&&pointFeatureLonHNodeId!=""))
-			saveShapefile(pointFeatureType,pointFeatureList, spatialDataFolder,fileName+"_point");
+			saveShapefile(pointFeatureList, spatialDataFolder,fileName+"_point");
 		if(lineFeatureHNodeId!="") 
-			saveShapefile(lineFeatureType,lineFeatureList, spatialDataFolder,fileName+"_line");
+			saveShapefile(lineFeatureList, spatialDataFolder,fileName+"_line");
 		if(polygonFeatureHNodeId!="") 
-			saveShapefile(polygonFeatureType,polygonFeatureList, spatialDataFolder,fileName+"_polygon");
+			saveShapefile(polygonFeatureList, spatialDataFolder,fileName+"_polygon");
 		
 		saveSpatialDataToZip(spatialDataFolder,fileName);
 		return kml;
 	}
-	public File saveShapefile(SimpleFeatureType simpleFeatureType, List<SimpleFeature> features, String spatialDataFolder, String fileName) throws FileNotFoundException, Exception {
+	public File saveShapefile(List<SimpleFeature> features, String spatialDataFolder, String fileName) throws FileNotFoundException, Exception {
 		File outputFile = new File( spatialDataFolder+ fileName+".shp");
 		try{
 			/*
@@ -345,13 +359,14 @@ public class WorksheetToFeatureCollections {
 			params.put("create spatial index", Boolean.TRUE);
 
 			ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory.createNewDataStore(params);
+			newDataStore.setStringCharset(Charset.forName("UTF-8"));
 			newDataStore.createSchema(features.get(0).getFeatureType());
-
+			
 			/*
 			 * You can comment out this line if you are using the createFeatureType method (at end of
 			 * class file) rather than DataUtilities.createType
 			 */
-			CoordinateReferenceSystem crs = simpleFeatureType.getCoordinateReferenceSystem();
+			CoordinateReferenceSystem crs = features.get(0).getFeatureType().getCoordinateReferenceSystem();
 			if(crs==null)
 				newDataStore.forceSchemaCRS(DefaultGeographicCRS.WGS84);
 			/*
@@ -370,7 +385,7 @@ public class WorksheetToFeatureCollections {
 				 * SimpleFeatureCollection object, so we use the ListFeatureCollection
 				 * class to wrap our list of features.
 				 */
-				SimpleFeatureCollection collection = new ListFeatureCollection(simpleFeatureType, features);
+				SimpleFeatureCollection collection = new ListFeatureCollection(features.get(0).getFeatureType(), features);
 				featureStore.setTransaction(transaction);
 				try {
 					featureStore.addFeatures(collection);
@@ -397,9 +412,8 @@ public class WorksheetToFeatureCollections {
 				+ outputFile.getAbsolutePath());
 		return outputFile;
 	}
-	public File publishKML(String spatialDataFolder, String fileName) throws FileNotFoundException {
+	public File publishKML(String spatialDataFolder, String fileName) throws IOException {
 		File outputFile = new File(spatialDataFolder + fileName + ".kml");
-		//File outputFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "KML/" + worksheet.getTitle() + ".kml");
 		
 		final Kml kml = KmlFactory.createKml();
 		final Folder folder = kml.createAndSetFolder()
@@ -432,9 +446,7 @@ public class WorksheetToFeatureCollections {
 				e.printStackTrace();
 			}
 			
-
 			String htmlDescription=getHTMLDescription(pointFeature);
-			//Point p = (Point)pointFeature.getAttribute("GEOM");
 			
 			Point p=null;
 			try {
@@ -513,7 +525,25 @@ public class WorksheetToFeatureCollections {
 					innercoord.add(new de.micromata.opengis.kml.v_2_2_0.Coordinate(polygon.getInteriorRingN(i).getPointN(j).getX(),polygon.getInteriorRingN(i).getPointN(j).getY()));
 			}
 		}
-		kml.marshal(outputFile);
+		//OutputStream out = new FileOutputStream(outputFile);
+		final StringWriter out = new StringWriter();
+        kml.marshal(out);
+        String test = out.toString();
+        Writer outUTF8;
+		try {
+			outUTF8 = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(outputFile), "UTF8"));
+			outUTF8.append(test);
+    		outUTF8.flush();
+    		outUTF8.close();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+     
+        
+    		
+		//kml.marshal(outputFile);
 		logger.info("KML file published. Location:"
 				+ outputFile.getAbsolutePath());
 		return outputFile;
@@ -548,9 +578,7 @@ public class WorksheetToFeatureCollections {
 
 			//check to see if this directory exists
 			if(!dir.isDirectory())
-			{
 				System.out.println(sourceDirectory + " is not a directory");
-			}
 			else
 			{
 				File[] files = dir.listFiles();
