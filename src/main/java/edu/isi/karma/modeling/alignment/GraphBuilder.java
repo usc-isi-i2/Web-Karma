@@ -27,8 +27,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.semantictypes.SemanticType;
+import edu.isi.karma.service.Namespaces;
+import edu.isi.karma.service.Prefixes;
 
 public class GraphBuilder {
 
@@ -45,17 +48,6 @@ public class GraphBuilder {
 	private HashMap<String, Integer> linksLabelCounter;
 	private HashMap<String, Integer> dataPropertyWithDomainCounter;
 
-	private static String THING_URI = "http://www.w3.org/2002/07/owl#Thing";
-	private static String THING_NS = "http://www.w3.org/2002/07/owl#";
-	private static String THING_PREFIX = "owl";
-	
-	private static String SUBCLASS_URI = "http://example.com#hasSubClass";
-	private static String SUBCLASS_NS = "http://example.com#";
-	private static String SUBCLASS_PREFIX = "";
-
-	public static double DEFAULT_WEIGHT = 1.0;	
-	public static double MIN_WEIGHT = 0.000001; // need to be fixed later	
-	public static double MAX_WEIGHT = 1000000;
 	
 	public GraphBuilder(OntologyManager ontologyManager, List<SemanticType> semanticTypes, boolean separateDomainInstancesForSameDataProperties) {
 		this.ontologyManager = ontologyManager;
@@ -390,7 +382,7 @@ public class GraphBuilder {
 	//						id = createLinkID(source.getLocalLabel(), target.getLocalLabel(), label);
 							LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getURIFromString(label), LinkType.DataProperty);
 							this.graph.addEdge(source, target, e);
-							this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
+							this.graph.setEdgeWeight(e, ModelingParams.DEFAULT_WEIGHT);
 						}
 
 					}
@@ -419,9 +411,9 @@ public class GraphBuilder {
 							
 							// prefer the links which are actually defined between source and target in ontology over inherited ones.
 							if (inherited)
-								this.graph.setEdgeWeight(e, DEFAULT_WEIGHT + MIN_WEIGHT);
+								this.graph.setEdgeWeight(e, ModelingParams.DEFAULT_WEIGHT + ModelingParams.MIN_WEIGHT);
 							else
-								this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
+								this.graph.setEdgeWeight(e, ModelingParams.DEFAULT_WEIGHT);
 						}
 					}
 				}
@@ -430,14 +422,14 @@ public class GraphBuilder {
 					// we have to check both sides.
 					if (ontologyManager.isSubClass(targetLabel, sourceLabel, false) ||
 							ontologyManager.isSuperClass(sourceLabel, targetLabel, false)) {
-						if (!duplicateLink(source, target, SUBCLASS_URI)) {
-							id = createLinkID(SUBCLASS_URI);
+						if (!duplicateLink(source, target, ModelingParams.HAS_SUBCLASS_URI)) {
+							id = createLinkID(ModelingParams.HAS_SUBCLASS_URI);
 	//						id = createLinkID(source.getLocalLabel(), target.getLocalLabel(), SUBCLASS_URI);
 							LabeledWeightedEdge e = new LabeledWeightedEdge(id, 
-									new URI(SUBCLASS_URI, SUBCLASS_NS, SUBCLASS_PREFIX), 
+									new URI(ModelingParams.HAS_SUBCLASS_URI, Namespaces.EXAMPLE, Prefixes.EXAMPLE), 
 									LinkType.HasSubClass);
 							this.graph.addEdge(source, target, e);
-							this.graph.setEdgeWeight(e, MAX_WEIGHT);	
+							this.graph.setEdgeWeight(e, ModelingParams.MAX_WEIGHT);	
 						}
 					}
 				}
@@ -467,7 +459,7 @@ public class GraphBuilder {
 			
 			source = vertices[i];
 			sourceLabel = source.getUriString();
-			if (!sourceLabel.equalsIgnoreCase(THING_URI))
+			if (!sourceLabel.equalsIgnoreCase(ModelingParams.THING_URI))
 				continue;
 			
 			for (int j = 0; j < vertices.length; j++) {
@@ -486,7 +478,7 @@ public class GraphBuilder {
 				boolean parentThing = false;
 				LabeledWeightedEdge[] incomingLinks = this.graph.incomingEdgesOf(target).toArray(new LabeledWeightedEdge[0]); 
 				for (LabeledWeightedEdge inLink: incomingLinks) {
-					if (inLink.getUriString().equalsIgnoreCase(SUBCLASS_URI)) {
+					if (inLink.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)) {
 						if (!sourceLabel.equalsIgnoreCase(sourceLabel))
 							parentExist = true;
 						else
@@ -503,13 +495,13 @@ public class GraphBuilder {
 				
 				// create a link from Thing node to nodes who don't have any superclasses
 				if (target.getNodeType() == NodeType.Class) {
-					id = createLinkID(SUBCLASS_URI);
-//					id = createLinkID(source.getLocalLabel(), target.getLocalLabel(), SUBCLASS_URI);
+					id = createLinkID(ModelingParams.HAS_SUBCLASS_URI);
+//					id = createLinkID(source.getLocalLabel(), target.getLocalLabel(), StaticConfigParams.HAS_SUBCLASS_URI);
 					LabeledWeightedEdge e = new LabeledWeightedEdge(id, 
-							new URI(SUBCLASS_URI, SUBCLASS_NS, SUBCLASS_PREFIX), 
+							new URI(ModelingParams.HAS_SUBCLASS_URI, Namespaces.EXAMPLE, Prefixes.EXAMPLE), 
 							LinkType.HasSubClass);
 					this.graph.addEdge(source, target, e);
-					this.graph.setEdgeWeight(e, MAX_WEIGHT);					
+					this.graph.setEdgeWeight(e, ModelingParams.MAX_WEIGHT);					
 				}
 			}
 			
@@ -693,7 +685,7 @@ public class GraphBuilder {
 //			id = createLinkID(source.getLocalLabel(), target.getLocalLabel(), label);
 			LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getURIFromString(label), LinkType.ObjectProperty);
 			this.graph.addEdge(s, t, e);
-			this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
+			this.graph.setEdgeWeight(e, ModelingParams.DEFAULT_WEIGHT);
 		}
 
 		// interlinks from target to source
@@ -706,7 +698,7 @@ public class GraphBuilder {
 //			id = createLinkID(source.getLocalLabel(), target.getLocalLabel(), label);
 			LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getURIFromString(label), LinkType.ObjectProperty);
 			this.graph.addEdge(s, t, e);
-			this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
+			this.graph.setEdgeWeight(e, ModelingParams.DEFAULT_WEIGHT);
 		}
 
 	}
@@ -715,8 +707,8 @@ public class GraphBuilder {
 
 		logger.info("create a graph with a single Thing node");
 
-		if (!nodesLabelCounter.containsKey(THING_URI)) {
-			Vertex v = new Vertex(createNodeID(THING_URI), new URI(THING_URI, THING_NS, THING_PREFIX), NodeType.Class);			
+		if (!nodesLabelCounter.containsKey(ModelingParams.THING_URI)) {
+			Vertex v = new Vertex(createNodeID(ModelingParams.THING_URI), new URI(ModelingParams.THING_URI, Namespaces.OWL, Prefixes.OWL), NodeType.Class);			
 			this.graph.addVertex(v);
 		}
 	
@@ -758,8 +750,8 @@ public class GraphBuilder {
 //
 //		// Add Thing to Graph if it is not added before.
 //		// Preventing from have an unconnected graph
-//		if (!nodesLabelCounter.containsKey(THING_URI)) {
-//			Vertex v = new Vertex(createNodeID(THING_URI), new URI(THING_URI, THING_NS, THING_PREFIX), NodeType.Class);			
+//		if (!nodesLabelCounter.containsKey(StaticConfigParams.THING_URI)) {
+//			Vertex v = new Vertex(createNodeID(StaticConfigParams.THING_URI), new URI(StaticConfigParams.THING_URI, StaticConfigParams.THING_NS, THING_PREFIX), NodeType.Class);			
 //			this.graph.addVertex(v);
 //		}
 //		
@@ -927,7 +919,7 @@ public class GraphBuilder {
 ////						id = createLinkID(source.getLocalLabel(), target.getLocalLabel(), label);
 //						LabeledWeightedEdge e = new LabeledWeightedEdge(id, ontologyManager.getURIFromString(label), LinkType.DataProperty);
 //						this.graph.addEdge(source, target, e);
-//						this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
+//						this.graph.setEdgeWeight(e, StaticConfigParams.DEFAULT_WEIGHT);
 //
 //					}
 //				}
@@ -954,9 +946,9 @@ public class GraphBuilder {
 //						
 //						// prefer the links which are actually defined between source and target in ontology over inherited ones.
 //						if (inherited)
-//							this.graph.setEdgeWeight(e, DEFAULT_WEIGHT + MIN_WEIGHT);
+//							this.graph.setEdgeWeight(e, StaticConfigParams.DEFAULT_WEIGHT + StaticConfigParams.MIN_WEIGHT);
 //						else
-//							this.graph.setEdgeWeight(e, DEFAULT_WEIGHT);
+//							this.graph.setEdgeWeight(e, StaticConfigParams.DEFAULT_WEIGHT);
 //					}
 //				}
 //				
@@ -970,7 +962,7 @@ public class GraphBuilder {
 //								new URI(SUBCLASS_URI, SUBCLASS_NS, SUBCLASS_PREFIX), 
 //								LinkType.HasSubClass);
 //						this.graph.addEdge(source, target, e);
-//						this.graph.setEdgeWeight(e, MAX_WEIGHT);					
+//						this.graph.setEdgeWeight(e, StaticConfigParams.MAX_WEIGHT);					
 //					}
 //				}
 //				

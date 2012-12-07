@@ -19,21 +19,25 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.modeling;
 
-public interface Prefixes {
+import edu.isi.karma.service.Namespaces;
 
-	public static final String XSD = "xsd"; 
-	public static final String RDF = "rdf"; 
-	public static final String RDFS = "rdfs"; 
-	public static final String OWL = "owl"; 
-	public static final String SAWSDL = "sawsdl"; 
-	public static final String MSM = "msm"; 
-	public static final String WSMO_LITE = "wsmo-lite"; 
-	public static final String HRESTS = "hrests";
-	public static final String KARMA = "km";
-	public static final String RULEML = "ruleml";
-	public static final String SWRL = "swrl";
-	public static final String EXAMPLE = "ex";
+public interface ModelingParams{
 
+	// URIs
+	public static String THING_URI = Namespaces.OWL + "Thing";
+	public static String HAS_SUBCLASS_URI = "http://example.com#hasSubClass";
+	public static final String SUBCLASS_URI = Namespaces.RDFS + "subClassOf"; 
+
+	// Building Graph
+	public static double DEFAULT_WEIGHT = 1.0;	
+	public static double MIN_WEIGHT = 0.000001; // need to be fixed later	
+	public static double MAX_WEIGHT = 1000000;
+
+	// Prefixes
+	public static String KARMA_SOURCE_PREFIX = "http://isi.edu/integration/karma/sources/";
+	public static String KARMA_SERVICE_PREFIX = "http://isi.edu/integration/karma/services/";
+
+	
 }

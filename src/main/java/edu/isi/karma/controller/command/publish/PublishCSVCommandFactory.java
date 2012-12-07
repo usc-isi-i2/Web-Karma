@@ -22,11 +22,7 @@ public class PublishCSVCommandFactory extends CommandFactory {
 			VWorkspace vWorkspace) {
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId
 				.name());
-		return new PublishKMLLayerCommand(getNewId(vWorkspace), vWorksheetId,
-				ServletContextParameterMap
-						.getParameterValue(ContextParameter.PUBLIC_KML_ADDRESS),
-				ServletContextParameterMap
-						.getParameterValue(ContextParameter.KML_TRANSFER_SERVICE));
+		return new PublishCSVCommand(getNewId(vWorkspace), vWorksheetId);
 	}
 
 }
