@@ -34,13 +34,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	});
 	
 	// Adding handlers to the buttons
-	 $("button#exportCSV").click(function(){
+	 $("button#csvExport").click(function(){
         optionsDiv.hide();
-        alert("test");
         var info = new Object();
         info["vWorksheetId"] = optionsDiv.data("worksheetId");
         info["workspaceId"] = $.workspaceGlobalInformation.id;
-        info["command"] = "ExportCSVCommand";
+        info["command"] = "PublishCSVCommand";
             
         showLoading(info["vWorksheetId"]);
         var returned = $.ajax({
@@ -53,7 +52,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                     //alert(xhr.responseText);
                     var json = $.parseJSON(xhr.responseText);
                     parse(json);
-                    hideLoading(info["vWorksheetId"]);
                 },
             error :
                 function (xhr, textStatus) {
