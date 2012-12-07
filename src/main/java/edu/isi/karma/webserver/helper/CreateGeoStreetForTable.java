@@ -85,7 +85,7 @@ public class CreateGeoStreetForTable {
 		int srid = 4326;
 		List<Element> list = castList(Element.class, document.selectNodes("//osm/way"));
 	    for (Element ele : list) {
-			String Street_name = "Street_name";
+			String Street_name = "N/A";
 			String Street_name_Alias = " ";
 			String way_type = "way_type";
 			String way_id = "way_id";
@@ -157,11 +157,13 @@ public class CreateGeoStreetForTable {
 					}
 				}
 			}
-			if (!Street_name.equals("Street_name")) {
+			//if (!Street_name.equals("Street_name")) 
+			{
 				if (way_type.equals("secondary") || way_type.equals("motorway")
 						|| way_type.equals("pedestrian")
 						|| way_type.equals("residential")
-						|| way_type.equals("footway")) {
+						|| way_type.equals("footway")) 
+				{
 					try {
 						rs = stmt
 								.executeQuery("insert into streets_geo(Street_number) values ("

@@ -21,9 +21,15 @@
 
 package edu.isi.karma.imp.csv;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -71,23 +77,26 @@ public class CSVFileExport {
 		StringBuilder sb = new StringBuilder();
 		ArrayList<Row> rows =  worksheet.getDataTable().getRows(0, numRows);
 		List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
+		List<String> hNodeIdList = new ArrayList<String>();
 		worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
 		for (HNode hNode : sortedLeafHNodes) {
 			if(sb.length()!=0)
 				sb.append(",");
 			sb.append(hNode.getColumnName());
+			hNodeIdList.add(hNode.getId());
 		}
 		sb.append("\n");
+		
 		for (Row row : rows) {
 			boolean newRow = true;
 			try {
 				Collection<Node> nodes = row.getNodes();
-				for (Node node : nodes) {
+				for(String hNodeId : hNodeIdList) {
 					if(!newRow) 
 						sb.append(",");
 					else
 						newRow = false;
-					String colValue =node.getValue().asString();
+					String colValue =row.getNode(hNodeId).getValue().asString();
 					sb.append("\"");
 					sb.append(colValue);
 					sb.append("\"");
@@ -100,7 +109,21 @@ public class CSVFileExport {
 		}
 
 		try {
-			FileUtil.writeStringToFile(sb.toString(),ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +outputFile);
+			//FileUtil.writeStringToFile(sb.toString(),
+			//		ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +outputFile);
+			
+	        Writer outUTF8;
+			try {
+				outUTF8 = new BufferedWriter(new OutputStreamWriter(
+						new FileOutputStream(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +outputFile), "UTF8"));
+				outUTF8.append(sb.toString());
+	    		outUTF8.flush();
+	    		outUTF8.close();
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

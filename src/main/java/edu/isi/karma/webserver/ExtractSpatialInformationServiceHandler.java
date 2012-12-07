@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 
 import edu.isi.karma.er.helper.ConnectPostgis;
 import edu.isi.karma.service.MimeType;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 import edu.isi.karma.webserver.helper.CreateGeoBuildingForTable;
 import edu.isi.karma.webserver.helper.CreateGeoStreetForTable;
 
@@ -35,7 +36,7 @@ public class ExtractSpatialInformationServiceHandler extends HttpServlet {
 			.getLogger(LinkedApiServiceHandler.class);
 	private String url;
 	private Connection connection = null;
-	private String osmFile_path = "/tmp/GET_OPENSTREETMAP.xml";
+	private String osmFile_path ="/tmp/GET_OPENSTREETMAP.xml";
 
 
 	public void doGet(HttpServletRequest request,
@@ -87,6 +88,7 @@ public class ExtractSpatialInformationServiceHandler extends HttpServlet {
 		this.closeConnection(this.connection);
 		
 		/*Output the JSON content to Web Page*/
+		response.setCharacterEncoding("UTF8");
 		PrintWriter pw = response.getWriter();
 		response.setContentType(MimeType.APPLICATION_JSON);
 		pw.write(jsonOutput);
