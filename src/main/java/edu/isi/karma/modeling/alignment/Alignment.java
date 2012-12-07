@@ -495,11 +495,20 @@ public class Alignment {
 		return null;
 	}
 	
-	public void addLink(Link link) {
+	public ColumnNode getColumnNodeByHNodeId(String hNodeId) {
+		return null;
+	}
+	
+	public void addLinkAndUpdateAlignment(Link link) {
 		
 	}
 	
-	public ColumnNode getColumnNodeByHNodeId(String hNodeId) {
-		return null;
+	// Used in the case of semantic types
+	public void deleteLink(String linkId) {
+		
+	}
+	
+	public void changeLinkStatus(String linkId, LinkStatus status) {
+		
 	}
 }
