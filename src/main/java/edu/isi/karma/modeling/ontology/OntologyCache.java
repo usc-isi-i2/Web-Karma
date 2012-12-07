@@ -69,6 +69,10 @@ public class OntologyCache {
 	private HashMap<String, List<String>> directDomainRangeProperties;
 	private HashMap<String, List<String>> indirectDomainRangeProperties;
 
+	// hashmap: class1 + class2 -> boolean (if c1 is subClassOf c2)
+	private HashMap<String, Boolean> directSubClassMap;
+	// hashmap: property1 + property2 -> boolean (if p1 is subPropertyOf p2)
+	private HashMap<String, Boolean> directSubPropertyMap;
 	
 	public List<String> getClasses() {
 		return classes;
@@ -151,6 +155,14 @@ public class OntologyCache {
 		return indirectDomainRangeProperties;
 	}
 	
+	public HashMap<String, Boolean> getSubClassMap() {
+		return directSubClassMap;
+	}
+	
+	public HashMap<String, Boolean> getSubPropertyMap() {
+		return directSubPropertyMap;
+	}
+	
 	public OntologyCache() {
 	}
 
@@ -185,6 +197,9 @@ public class OntologyCache {
 		directDomainRangeProperties = new HashMap<String, List<String>>();
 		indirectDomainRangeProperties = new HashMap<String, List<String>>();
 		
+		directSubClassMap = new HashMap<String, Boolean>();
+		directSubPropertyMap = new HashMap<String, Boolean>();
+		
 		long start = System.currentTimeMillis();
 		
 		// create a list of classes and properties of the model
@@ -208,8 +223,8 @@ public class OntologyCache {
 		buildObjectPropertyHierarchy(objectPropertyHierarchy);
 		
 		// create some hashmaps that will be used in alignment
-		fillDataPropertiesHashMaps();
-		fillObjectPropertiesHashMaps();
+		buildDataPropertiesHashMaps();
+		buildObjectPropertiesHashMaps();
 		
 		// update hashmaps to include the subproperty relations  
 		updateMapsWithSubpropertyDefinitions(true);
@@ -296,6 +311,10 @@ public class OntologyCache {
 				for (String s : subClasses) {
 					URI uri = ontologyManager.getURIFromString(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
+					
+					// update direct subClass map
+					directSubClassMap.put(childNode.getUri().getUriString() + node.getUri().getUriString(), true);
+					
 					buildClassHierarchy(childNode);
 					children.add(childNode);
 				}
@@ -322,6 +341,10 @@ public class OntologyCache {
 				for (String s : subProperties) {
 					URI uri = ontologyManager.getURIFromString(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
+					
+					// update direct subProperty map
+					directSubPropertyMap.put(childNode.getUri().getUriString() + node.getUri().getUriString(), true);
+					
 					buildDataPropertyHierarchy(childNode);
 					children.add(childNode);
 				}
@@ -347,15 +370,19 @@ public class OntologyCache {
 				for (String s : subProperties) {
 					URI uri = ontologyManager.getURIFromString(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
+					
+					// update direct subProperty map
+					directSubPropertyMap.put(childNode.getUri().getUriString() + node.getUri().getUriString(), true);
+					
 					buildObjectPropertyHierarchy(childNode);
 					children.add(childNode);
 				}
 		}
 		node.setChildren(children);	
 	}
-	
-	
-	private void fillObjectPropertiesHashMaps() {
+
+			
+	private void buildObjectPropertiesHashMaps() {
 		
 		List<OntResource> directDomains = new ArrayList<OntResource>();
 		List<OntResource> allDomains = new ArrayList<OntResource>();
@@ -500,7 +527,7 @@ public class OntologyCache {
 
 	}
 	
-	private void fillDataPropertiesHashMaps() {
+	private void buildDataPropertiesHashMaps() {
 		
 		List<OntResource> directDomains = new ArrayList<OntResource>();
 		List<OntResource> allDomains = new ArrayList<OntResource>();

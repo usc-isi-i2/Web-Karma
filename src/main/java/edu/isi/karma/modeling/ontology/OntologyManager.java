@@ -401,6 +401,13 @@ public class OntologyManager {
 	 */
 	public boolean isSuperClass(String superClassUri, String subClassUri, boolean recursive) {
 		
+		if (!recursive) {
+			if (ontCache.getSubClassMap().containsKey(subClassUri + superClassUri))
+				return true;
+			else
+				return false;
+		}
+		
 		List<String> superClasses = getSuperClasses(subClassUri, recursive);
 		for (int i = 0; i < superClasses.size(); i++) {
 			if (superClassUri.equalsIgnoreCase(superClasses.get(i))) {
@@ -420,6 +427,13 @@ public class OntologyManager {
 	 * @return
 	 */
 	public boolean isSubClass(String subClassUri, String superClassUri, boolean recursive) {
+		
+		if (!recursive) {
+			if (ontCache.getSubClassMap().containsKey(subClassUri + superClassUri))
+				return true;
+			else
+				return false;
+		}
 		
 		List<String> subClasses = getSubClasses(superClassUri, recursive);
 		for (int i = 0; i < subClasses.size(); i++) {
@@ -461,6 +475,60 @@ public class OntologyManager {
 		return getResourcesURIs(resources);
 	}
 
+	/**
+	 * If @param superPropertyUri is a superProperty of @param subPropertyUri, it returns true; otherwise, false.
+	 * If third parameter is set to true, it also considers indirect superproperties.
+	 * @param superPropertyUri
+	 * @param subPropertyUri
+	 * @param recursive
+	 * @return
+	 */
+	public boolean isSuperProperty(String superPropertyUri, String subPropertyUri, boolean recursive) {
+		
+		if (!recursive) {
+			if (ontCache.getSubPropertyMap().containsKey(subPropertyUri + superPropertyUri))
+				return true;
+			else
+				return false;
+		}
+		
+		List<String> superProperties = getSuperProperties(subPropertyUri, recursive);
+		for (int i = 0; i < superProperties.size(); i++) {
+			if (superPropertyUri.equalsIgnoreCase(superProperties.get(i))) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * If @param subPropertyUri is a subProperty of @param superPropertyUri, it returns true; otherwise, false.
+	 * If third parameter is set to true, it also considers indirect subproperties.
+	 * @param subPropertyUri
+	 * @param superClassUri
+	 * @param recursive
+	 * @return
+	 */
+	public boolean isSubProperty(String subPropertyUri, String superPropertyUri, boolean recursive) {
+		
+		if (!recursive) {
+			if (ontCache.getSubPropertyMap().containsKey(subPropertyUri + superPropertyUri))
+				return true;
+			else
+				return false;
+		}
+		
+		List<String> subProperties = getSubProperties(superPropertyUri, recursive);
+		for (int i = 0; i < subProperties.size(); i++) {
+			if (subPropertyUri.equalsIgnoreCase(subProperties.get(i))) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * returns URIs of all sub-properties of @param propertyUri
 	 * @param propertyUri
