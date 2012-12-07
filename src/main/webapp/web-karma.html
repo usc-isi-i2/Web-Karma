@@ -339,7 +339,7 @@ and related projects, please see: http://www.isi.edu/integration
 	
 	
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.31</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.37</span></h1>
 		<table id="topMenuBar">
 <tr>
 				<td>
@@ -580,6 +580,7 @@ and related projects, please see: http://www.isi.edu/integration
 			<button href="#" id="publishRDF">Publish RDF</button>
 			<button href="#" id="publishDatabase">Publish Database</button>
 			<button href="#" id="populateSource">Populate Source</button>
+			<button href="#" id="csvExport">Export to CSV</button>
 			<button href="#" id="publishServiceModel">Publish Model</button>
 			<button href="#" id="transformcolumns">Transform Columns</button>
 			<button href="#" id="publishWorksheetHistory">Publish Worksheet History</button>
@@ -635,7 +636,7 @@ and related projects, please see: http://www.isi.edu/integration
 						</tr>
 						<tr class="smallSizedFont">
 							<td><input type="checkbox" id="isPropertyOfColumnOption"></input></td>
-							<td style="text-align: right;">specifies property for column:</td>
+							<td style="text-align: right;">specifies specialization for edge:</td>
 							<td><input type="text" /></td>
 						</tr>
 					</table>
@@ -736,6 +737,7 @@ and related projects, please see: http://www.isi.edu/integration
 			<select id="dbType">
 			  	<option selected>MySQL</option>
 			  	<option>SQLServer</option>
+			  	<option>PostGIS</option>
 			</select>
 			<br> <br>
 			<table>
