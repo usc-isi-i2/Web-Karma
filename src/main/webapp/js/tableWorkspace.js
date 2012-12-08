@@ -96,6 +96,41 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		});
 	});
 	
+	$("button#showAutoModel").click(function(){
+		optionsDiv.hide();
+		 //alert("test");
+		// console.log("Showing model for table with ID: " +optionsDiv.data("worksheetId"));
+		var info = new Object();
+		info["vWorksheetId"] = optionsDiv.data("worksheetId");
+		info["workspaceId"] = $.workspaceGlobalInformation.id;
+		info["command"] = "ShowAutoModelCommand";
+	   
+	    var newInfo = [];
+        newInfo.push(getParamObject("vWorksheetId", optionsDiv.data("worksheetId"), "vWorksheetId"));
+        newInfo.push(getParamObject("checkHistory", true, "other"));
+        info["newInfo"] = JSON.stringify(newInfo);
+	   
+		showLoading(info["vWorksheetId"]);
+		var returned = $.ajax({
+		   	url: "RequestController", 
+		   	type: "POST",
+		   	data : info,
+		   	dataType : "json",
+		   	complete : 
+		   		function (xhr, textStatus) {
+		   			//alert(xhr.responseText);
+		    		var json = $.parseJSON(xhr.responseText);
+		    		parse(json);
+		    		hideLoading(info["vWorksheetId"]);
+			   	},
+			error :
+				function (xhr, textStatus) {
+		   			alert("Error occured while generating the automatic model!" + textStatus);
+		   			hideLoading(info["vWorksheetId"]);
+			   	}		   
+		});
+	});
+	
 	$("button#hideModel").click(function(){
 		optionsDiv.hide();
 		$("div#svgDiv_" + optionsDiv.data("worksheetId")).remove();

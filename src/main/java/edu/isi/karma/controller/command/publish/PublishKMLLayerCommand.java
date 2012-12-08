@@ -114,7 +114,7 @@ public class PublishKMLLayerCommand extends Command {
 						outputObject.put(JsonKeys.transferSuccessful.name(),
 								transfer);
 						outputObject.put(JsonKeys.localFileName.name(),
-								"KML/" + zippedSpatialDataPath);
+								"publish/SpatialData/" + zippedSpatialDataPath);
 						pw.println(outputObject.toString(4));
 					} catch (JSONException e) {
 						logger.error("Error occured while generating JSON!");

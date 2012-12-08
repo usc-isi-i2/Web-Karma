@@ -307,7 +307,8 @@ public class WorksheetToFeatureCollections {
 		String fileName = worksheet.getTitle();
 		fileName = fileName.substring(0, fileName.length()-4);
 		zippedSpatialDataFolderAndName = spatialDataFolder+"/"+fileName+".zip";
-		spatialDataFolder = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "KML/"+spatialDataFolder+"/";
+		spatialDataFolder = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
+				"publish/SpatialData/"+spatialDataFolder+"/";
 		File dir = new File(spatialDataFolder);  
 		dir.mkdir();
 		

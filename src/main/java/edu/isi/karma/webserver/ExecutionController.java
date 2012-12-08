@@ -87,6 +87,8 @@ import edu.isi.karma.controller.command.alignment.ResetModelCommand;
 import edu.isi.karma.controller.command.alignment.ResetModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommandFactory;
+import edu.isi.karma.controller.command.alignment.ShowAutoModelCommand;
+import edu.isi.karma.controller.command.alignment.ShowAutoModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.ShowModelCommand;
 import edu.isi.karma.controller.command.alignment.ShowModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommand;
@@ -175,6 +177,8 @@ public class ExecutionController {
 				new UnassignSemanticTypeCommandFactory());
 		commandFactoryMap.put(ShowModelCommand.class.getSimpleName(),
 				new ShowModelCommandFactory());
+		commandFactoryMap.put(ShowAutoModelCommand.class.getSimpleName(),
+				new ShowAutoModelCommandFactory());
 		commandFactoryMap.put(SplitByCommaCommand.class.getSimpleName(),
 				new SplitByCommaCommandFactory());
 		commandFactoryMap.put(DuplicateDomainOfLinkCommand.class.getSimpleName(),

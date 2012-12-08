@@ -1,10 +1,6 @@
 package edu.isi.karma.webserver;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import java.sql.Connection;
@@ -17,12 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,8 +28,6 @@ public class SpatialReferenceSystemServiceHandler extends HttpServlet {
 			.getLogger(LinkedApiServiceHandler.class);
 	private String url;
 	private Connection connection = null;
-	private String osmFile_path = "/tmp/GET_OPENSTREETMAP.xml";
-
 
 	public void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
@@ -121,25 +109,10 @@ public class SpatialReferenceSystemServiceHandler extends HttpServlet {
 	
 	}
 
-	protected void outputToOSM(String url) throws SQLException,
-			ClientProtocolException, IOException {
-
-		this.url = "http://www.openstreetmap.org/api/0.6/map?" + url;
-		DefaultHttpClient client = new DefaultHttpClient();
-		HttpGet get = new HttpGet(this.url);
-		HttpResponse response = client.execute(get);
-		HttpEntity entity = response.getEntity();
-		String result = EntityUtils.toString(entity);
-		FileOutputStream fout = new FileOutputStream(osmFile_path);
-		OutputStream bout = new BufferedOutputStream(fout);
-		OutputStreamWriter out = new OutputStreamWriter(bout, "UTF8");
-		out.write(result);
-		out.close();
-	}
-
 	private void openConnection(){
 		ConnectPostgis conPostgis = new ConnectPostgis();
-		this.connection = conPostgis.ConnectingPostgis("jdbc:postgresql://fusion.isi.edu:54322/testGIS","karma","2xpd516");	
+		//this.connection = conPostgis.ConnectingPostgis("jdbc:postgresql://fusion.isi.edu:54322/testGIS","karma","2xpd516");	
+		this.connection = conPostgis.ConnectingPostgis("jdbc:postgresql://localhost:54321/testGIS","karma","2xpd516");	
 	}
 	
 	private void closeConnection(Connection connection) {
