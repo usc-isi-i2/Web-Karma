@@ -72,16 +72,19 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements JSONI
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 		
 		AutoOntology autoOntology = new AutoOntology(worksheet);
-		String path = ServletContextParameterMap.getParameterValue(ContextParameter.PRELOADED_ONTOLOGY_DIRECTORY) + 
-				"/"+worksheet.getTitle()+".owl";
+		String path = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
+				"/publish/AutoOntology/"+worksheet.getTitle()+".owl";
 		try {
 			autoOntology.Build(path);
 		} catch (IOException e) {
 			logger.error("Error occured while creating auto model!", e);
 		}
+		
 		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
 		File autoOtologyFile = new File(path);
-		ontMgr.doImportWithoutCacheUpdate(autoOtologyFile);
+		logger.info("Loading ontology: " + autoOtologyFile.getAbsolutePath());
+		ontMgr.doImport(autoOtologyFile);
+		logger.info("Done loading ontology: " + autoOtologyFile.getAbsolutePath());
 		
 		if(checkHist) {
 			// Check if any command history exists for the worksheet
@@ -94,10 +97,10 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements JSONI
 					e.printStackTrace();
 				}
 			}
-			return new ShowModelCommand(getNewId(vWorkspace), worksheet.getId(), vWorksheetId);
+			return new ShowAutoModelCommand(getNewId(vWorkspace), worksheet.getId(), vWorksheetId);
 		}
 		else {
-			ShowModelCommand comm = new ShowModelCommand(getNewId(vWorkspace), worksheet.getId(), vWorksheetId);
+			ShowAutoModelCommand comm = new ShowAutoModelCommand(getNewId(vWorkspace), worksheet.getId(), vWorksheetId);
 			// Add the semantic types that have saved into the history
 			for (int i=2; i<inputJson.length(); i++) {
 				JSONObject hnodeObj = (JSONObject) inputJson.get(i);

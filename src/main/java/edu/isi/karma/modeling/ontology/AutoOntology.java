@@ -61,7 +61,6 @@ public class AutoOntology {
 		OntModel autoOntology = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM );
 		String ns = "http://www.isi.edu/karma/automodel/"+worksheet.getTitle()+"#";
 		OntClass topClass = autoOntology.createClass( ns + worksheet.getTitle());
-		URI domainName = new URI(topClass.getURI()); 
 		for (HNode hNode : sortedLeafHNodes){
 			DatatypeProperty dp = autoOntology.createDatatypeProperty(ns+hNode.getColumnName());
 			dp.addDomain(topClass);

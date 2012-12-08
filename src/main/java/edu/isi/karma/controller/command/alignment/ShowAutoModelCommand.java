@@ -95,7 +95,7 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 		if(ontMgr.isEmpty())
 			return new UpdateContainer(new ErrorUpdate(
 			"No ontology loaded."));
-//		SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, outlierTag, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
+		
 		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
 		
 		// Get the alignment update if any
@@ -104,7 +104,7 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 		try {
 			// Save the semantic types in the input parameter JSON
 			saveSemanticTypesInformation(worksheet, vWorkspace);
-			align.alignAndUpdate(c, false);
+			align.alignAndUpdate(c, true);
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(
