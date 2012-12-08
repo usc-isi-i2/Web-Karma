@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -34,7 +33,6 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +43,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKTReader;
 
 import de.micromata.opengis.kml.v_2_2_0.AltitudeMode;
@@ -67,7 +64,6 @@ import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-import org.apache.commons.io.FileUtils;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Transaction;
 import org.geotools.data.collection.ListFeatureCollection;
@@ -86,8 +82,6 @@ import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.GeometryType;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -104,17 +98,8 @@ public class WorksheetToFeatureCollections {
 	List<SimpleFeature> lineFeatureList = new ArrayList<SimpleFeature>();
 	List<SimpleFeature> polygonFeatureList = new ArrayList<SimpleFeature>();
 	List<AttributeDescriptor> featureSchema = new ArrayList<AttributeDescriptor>();
-	List<String> pointHNodeIdList = new ArrayList<String>();
-	List<String> lineHNodeIdList = new ArrayList<String>();
-	List<String> polygonHNodeIdList = new ArrayList<String>();
+	List<String> geomHNodeIdList = new ArrayList<String>();
 	
-	SimpleFeatureType pointFeatureType =null;
-	SimpleFeatureType lineFeatureType =null;
-	SimpleFeatureType polygonFeatureType =null;
-	
-	SimpleFeatureType geometryFeatureType =null;
-
-	private boolean WGS84 = false;
 	private String SRIDHNodeId="";
 	private String pointFeatureHNodeId="";
 	private String pointFeatureLatHNodeId="";
@@ -178,16 +163,12 @@ public class WorksheetToFeatureCollections {
 				spatialHNodeIds.add(0, type.getHNodeId());
 				pointFeatureLonHNodeId=type.getHNodeId();
 			}
-			// PosList of a Line case. E.g. for a column containing list of
-			// coordinates for a line string
 			else if (type.getType().getUriString().equals(POS_LIST_PROPERTY)
 					&& type.getDomain().getUriString().equals(LINE_CLASS)
 					&& lineFeatureHNodeId=="") {
 				spatialHNodeIds.add(0, type.getHNodeId());
 				lineFeatureHNodeId=type.getHNodeId();
 			}
-			// PosList of a Line case. E.g. for a column containing list of
-			// coordinates for a line string
 			else if (type.getType().getUriString().equals(POS_LIST_PROPERTY)
 					&& type.getDomain().getUriString().equals(POLYGON_CLASS)
 					&& polygonFeatureHNodeId=="") {
@@ -206,18 +187,16 @@ public class WorksheetToFeatureCollections {
 		            build.setBinding(String.class); // might need to change to specific bindings
 		            AttributeDescriptor descriptor = build.buildDescriptor(hNode.getColumnName());
 		            featureSchema.add(descriptor);
-		            pointHNodeIdList.add(hNode.getId());
+		            geomHNodeIdList.add(hNode.getId());
 				}
 			}
 		}
 
 		if(spatialHNodeIds.size()>1) { // has spatial data
-			
 			if(pointFeatureHNodeId!="") 
 	            populateSimpleFeatures(spatialHNodeIds,pointFeatureHNodeId, "",getRows(),
 						getColumnMap(), pointFeatureList,
 						Point.class);
-				
 			if(pointFeatureLatHNodeId!=""&&pointFeatureLonHNodeId!="")
 				populateSimpleFeatures(spatialHNodeIds,pointFeatureLonHNodeId, pointFeatureLatHNodeId,getRows(),
 						getColumnMap(), pointFeatureList,
@@ -243,6 +222,7 @@ public class WorksheetToFeatureCollections {
 				if(geometry2HNodeId==""){
 					posList = row.getNode(geometryHNodeId)
 							.getValue().asString();
+					//Future work on WKB columns:
 					//WKBReader wkbreader = new WKBReader();
 					//byte[] wkbPosList = WKBReader.hexToBytes(posList);
 					//JTSGeometry = wkbreader.read(wkbPosList);
@@ -255,21 +235,22 @@ public class WorksheetToFeatureCollections {
 					if(lon.trim().length()==0 || lat.trim().length()==0)
 						continue;
 					posList="POINT("+lon+" "+lat+")"; 
-		
 				}
+				
 				if(posList.length()==0) continue;
+				
 				posList=posList.toUpperCase();
 				WKTReader reader = new WKTReader();
 				JTSGeometry= reader.read(posList);
 				
 				if(JTSGeometry == null) continue;
+				
 				String srid = row.getNode(SRIDHNodeId).getValue().asString();
 				if(!srid.contains(":"))
 					srid="EPSG:"+srid;
 				CoordinateReferenceSystem sourceCRS=null;
 				
 				try {
-					//CRS.decode(code, true)
 					sourceCRS = CRS.decode(srid, true);
 				} catch (NoSuchAuthorityCodeException e) {
 					// TODO Auto-generated catch block
@@ -287,19 +268,14 @@ public class WorksheetToFeatureCollections {
 				SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(simpleFeatureTypeWithCRS);
 				featureBuilder.add(JTSGeometry);
 				
-				//Collection<Node> nodes = row.getNodes();
-				for(String hNodeId : pointHNodeIdList) {
-				//for (Node node : nodes) {
-					//if (!(spatialHNodeIds.contains(node.getHNodeId()))){
+				for(String hNodeId : geomHNodeIdList) {
 					Node node = row.getNode(hNodeId);
 						if(node.hasNestedTable())
 							featureBuilder.add("Nested table");
-						else
-						{
+						else {
 							String colValue =node.getValue().asString();
 							featureBuilder.add(colValue);
 						}
-					//}
 				}
 				SimpleFeature feature = featureBuilder.buildFeature(null);
 				features.add(feature);
@@ -398,10 +374,9 @@ public class WorksheetToFeatureCollections {
 				} finally {
 					transaction.close();
 				}
-				//System.exit(0); // success!
+				// success!
 			} else {
-				//System.out.println(typeName + " does not support read/write access");
-				//System.exit(1);
+				logger.error(typeName + " does not support read/write access");
 			}
 		}
 		catch(Exception e){
@@ -424,9 +399,7 @@ public class WorksheetToFeatureCollections {
 		style.createAndSetLineStyle().withColor("501400FF").withWidth(2);
 		style.createAndSetPolyStyle().withColor("5014F000");
 		for (SimpleFeature pointFeature : pointFeatureList) {
-			
 			CoordinateReferenceSystem sourceCRS =  pointFeature.getType().getCoordinateReferenceSystem();
-		
 			CoordinateReferenceSystem targetCRS=null;
 			try {
 				targetCRS = CRS.decode("EPSG:4326",true);
@@ -453,10 +426,8 @@ public class WorksheetToFeatureCollections {
 				Point temp = (Point)pointFeature.getAttribute("GEOM");
 				p = (Point)JTS.transform( temp, transform);
 			} catch (MismatchedDimensionException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (TransformException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -468,7 +439,6 @@ public class WorksheetToFeatureCollections {
 			.withAltitudeMode(AltitudeMode.CLAMP_TO_GROUND)
 			.addToCoordinates(p.getX() + "," + p.getY());
 		}
-
 		for (SimpleFeature lineFeature : lineFeatureList) {
 			String htmlDescription=getHTMLDescription(lineFeature);
 			LineString line = (LineString)lineFeature.getAttribute("GEOM");
@@ -508,7 +478,6 @@ public class WorksheetToFeatureCollections {
 			for (int i=0;i<polygon.getExteriorRing().getNumPoints();i++) {
 				outercoord.add(new de.micromata.opengis.kml.v_2_2_0.Coordinate(polygon.getExteriorRing().getPointN(i).getX(),polygon.getExteriorRing().getPointN(i).getY()));
 			}
-
 			int numOfInnerBoundaries = polygon.getNumInteriorRing();
 			for(int i=0;i<numOfInnerBoundaries;i++)
 			{
@@ -525,11 +494,10 @@ public class WorksheetToFeatureCollections {
 					innercoord.add(new de.micromata.opengis.kml.v_2_2_0.Coordinate(polygon.getInteriorRingN(i).getPointN(j).getX(),polygon.getInteriorRingN(i).getPointN(j).getY()));
 			}
 		}
-		//OutputStream out = new FileOutputStream(outputFile);
 		final StringWriter out = new StringWriter();
         kml.marshal(out);
         String test = out.toString();
-        Writer outUTF8;
+        Writer outUTF8=null;
 		try {
 			outUTF8 = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(outputFile), "UTF8"));
@@ -537,13 +505,8 @@ public class WorksheetToFeatureCollections {
     		outUTF8.flush();
     		outUTF8.close();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-     
-        
-    		
-		//kml.marshal(outputFile);
 		logger.info("KML file published. Location:"
 				+ outputFile.getAbsolutePath());
 		return outputFile;

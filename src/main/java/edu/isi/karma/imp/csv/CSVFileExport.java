@@ -22,40 +22,20 @@
 package edu.isi.karma.imp.csv;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.referencing.CRS;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.WKTReader;
-
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.service.json.JsonManager;
-import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -86,11 +66,9 @@ public class CSVFileExport {
 			hNodeIdList.add(hNode.getId());
 		}
 		sb.append("\n");
-		
 		for (Row row : rows) {
 			boolean newRow = true;
 			try {
-				Collection<Node> nodes = row.getNodes();
 				for(String hNodeId : hNodeIdList) {
 					if(!newRow) 
 						sb.append(",");
@@ -107,12 +85,8 @@ public class CSVFileExport {
 			}
 			sb.append("\n");
 		}
-
 		try {
-			//FileUtil.writeStringToFile(sb.toString(),
-			//		ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +outputFile);
-			
-	        Writer outUTF8;
+	        Writer outUTF8=null;
 			try {
 				outUTF8 = new BufferedWriter(new OutputStreamWriter(
 						new FileOutputStream(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +outputFile), "UTF8"));
@@ -120,12 +94,10 @@ public class CSVFileExport {
 	    		outUTF8.flush();
 	    		outUTF8.close();
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 				
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return outputFile;

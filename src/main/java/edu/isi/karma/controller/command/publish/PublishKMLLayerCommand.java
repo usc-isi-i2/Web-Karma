@@ -83,9 +83,6 @@ public class PublishKMLLayerCommand extends Command {
 					.getTagsContainer().getTag(TagName.Outlier), ws
 					.getCrfModelHandler(), ws.getOntologyManager());
 		}
-		//Note:
-		//OntModel model = ws.getOntologyManager().getOntModel();
-		//ws.getOntologyManager().
 
 		WorksheetToFeatureCollections geo = new WorksheetToFeatureCollections(worksheet);
 		// Send an error update if no geospatial data found!
@@ -113,11 +110,11 @@ public class PublishKMLLayerCommand extends Command {
 						outputObject.put(JsonKeys.updateType.name(),
 								"PublishKMLUpdate");
 						outputObject.put(JsonKeys.fileName.name(),
-								publicKMLAddress + kmlFileName+".kml");//file.getName());
+								publicKMLAddress + kmlFileName+".kml");
 						outputObject.put(JsonKeys.transferSuccessful.name(),
 								transfer);
 						outputObject.put(JsonKeys.localFileName.name(),
-								"KML/" + zippedSpatialDataPath);//file.getName());
+								"KML/" + zippedSpatialDataPath);
 						pw.println(outputObject.toString(4));
 					} catch (JSONException e) {
 						logger.error("Error occured while generating JSON!");
@@ -171,7 +168,6 @@ public class PublishKMLLayerCommand extends Command {
 			dos = new DataOutputStream(conn.getOutputStream());
 			dos.writeBytes(twoHyphens + boundary + lineEnd);
 			dos.writeBytes("Content-Disposition: form-data; name=\"upload\";"
-					//+ " filename=\"" + file.getName() + "\"" + lineEnd);
 					+ " filename=\"" + kmlFileName + ".kml\"" + lineEnd);
 			dos.writeBytes(lineEnd);
 
