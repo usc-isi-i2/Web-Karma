@@ -475,6 +475,11 @@ public class OntologyManager {
 		return getResourcesURIs(resources);
 	}
 
+	
+
+	
+	
+	
 	/**
 	 * If @param superPropertyUri is a superProperty of @param subPropertyUri, it returns true; otherwise, false.
 	 * If third parameter is set to true, it also considers indirect superproperties.

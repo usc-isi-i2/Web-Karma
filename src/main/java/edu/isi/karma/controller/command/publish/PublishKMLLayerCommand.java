@@ -25,6 +25,7 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.geospatial.WorksheetToFeatureCollections;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -84,7 +85,9 @@ public class PublishKMLLayerCommand extends Command {
 					.getCrfModelHandler(), ws.getOntologyManager());
 		}
 
-		WorksheetToFeatureCollections geo = new WorksheetToFeatureCollections(worksheet);
+		OntologyManager om= ws.getOntologyManager();
+		WorksheetToFeatureCollections geo = new WorksheetToFeatureCollections(worksheet,om);//ying
+		//WorksheetToFeatureCollections geo = new WorksheetToFeatureCollections(worksheet);
 		// Send an error update if no geospatial data found!
 		if (geo.hasNoGeospatialData()) {
 			return new UpdateContainer(new ErrorUpdate(
