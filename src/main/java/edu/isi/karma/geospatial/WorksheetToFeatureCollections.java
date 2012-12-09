@@ -139,13 +139,12 @@ public class WorksheetToFeatureCollections {
 		prepareFeatureSchema();
 	}
 
-	//
-	// private boolean isSubclassOf(String subClassUri, String superClassUri,
-	// boolean recursive){
-	// boolean isSub=false;
-	// isSub=this.om.isSubClass(subClassUri, superClassUri, recursive);
-	// return isSub;
-	// }
+	private boolean isSubClassOf(String subClassUri, String superClassUri,
+			boolean recursive) {
+		boolean isSub = false;
+		isSub = this.om.isSubClass(subClassUri, superClassUri, recursive);
+		return isSub;
+	}
 
 	private boolean isSubPropertyOf(String subPropertyUri,
 			String superPropertyUri, boolean recursive) {
@@ -165,7 +164,9 @@ public class WorksheetToFeatureCollections {
 				spatialHNodeIds.add(0, SRIDHNodeId);
 			} else if (isSubPropertyOf(
 					type.getType().getUriString().toString(),
-					"http://www.opengis.net/gml/hasID", true)) {
+					"http://www.opengis.net/gml/hasID", true)
+					&& isSubClassOf(type.getDomain().getUriString().toString(),
+							SRID_CLASS, true)) {
 				System.out.println("POS_LIST_PROPERTY:"
 						+ type.getType().getUriString().toString());
 				SRIDHNodeId = type.getHNodeId();
@@ -175,7 +176,18 @@ public class WorksheetToFeatureCollections {
 					&& pointFeatureHNodeId == "") {
 				spatialHNodeIds.add(0, type.getHNodeId());
 				pointFeatureHNodeId = type.getHNodeId();
-			} else if (type.getType().getUriString().equals(WGS84_LAT_PROPERTY)
+			} else if (isSubPropertyOf(
+					type.getType().getUriString().toString(),
+					"http://www.opengis.net/gml/pos", true)
+					&& isSubClassOf(type.getDomain().getUriString().toString(),
+							POINT_CLASS, true)) {
+				System.out.println("POS_LIST_PROPERTY:"
+						+ type.getType().getUriString().toString());
+				spatialHNodeIds.add(0, type.getHNodeId());
+				pointFeatureHNodeId = type.getHNodeId();
+			}
+			
+			else if (type.getType().getUriString().equals(WGS84_LAT_PROPERTY)
 					&& type.getDomain().getUriString().equals(POINT_CLASS)
 					&& pointFeatureLatHNodeId == "") {
 				spatialHNodeIds.add(0, type.getHNodeId());
@@ -192,7 +204,9 @@ public class WorksheetToFeatureCollections {
 				lineFeatureHNodeId = type.getHNodeId();
 			} else if (isSubPropertyOf(
 					type.getType().getUriString().toString(),
-					"http://www.opengis.net/gml/posList", true)) {
+					"http://www.opengis.net/gml/posList", true)
+					&& isSubClassOf(type.getDomain().getUriString().toString(),
+							LINE_CLASS, true) && lineFeatureHNodeId == "") {
 				System.out.println("POS_LIST_PROPERTY:"
 						+ type.getType().getUriString().toString());
 				spatialHNodeIds.add(0, type.getHNodeId());
@@ -201,6 +215,15 @@ public class WorksheetToFeatureCollections {
 			} else if (type.getType().getUriString().equals(POS_LIST_PROPERTY)
 					&& type.getDomain().getUriString().equals(POLYGON_CLASS)
 					&& polygonFeatureHNodeId == "") {
+				spatialHNodeIds.add(0, type.getHNodeId());
+				polygonFeatureHNodeId = type.getHNodeId();
+			} else if (isSubPropertyOf(
+					type.getType().getUriString().toString(),
+					"http://www.opengis.net/gml/posList", true)
+					&& isSubClassOf(type.getDomain().getUriString().toString(),
+							POLYGON_CLASS, true) && polygonFeatureHNodeId == "") {
+				System.out.println("POS_LIST_PROPERTY:"
+						+ type.getType().getUriString().toString());
 				spatialHNodeIds.add(0, type.getHNodeId());
 				polygonFeatureHNodeId = type.getHNodeId();
 			}
