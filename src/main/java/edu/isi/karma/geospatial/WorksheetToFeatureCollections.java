@@ -99,7 +99,7 @@ public class WorksheetToFeatureCollections {
 	List<SimpleFeature> polygonFeatureList = new ArrayList<SimpleFeature>();
 	List<AttributeDescriptor> featureSchema = new ArrayList<AttributeDescriptor>();
 	List<String> geomHNodeIdList = new ArrayList<String>();
-	
+
 	private String SRIDHNodeId="";
 	private String pointFeatureHNodeId="";
 	private String pointFeatureLatHNodeId="";
@@ -138,7 +138,7 @@ public class WorksheetToFeatureCollections {
 	private void prepareFeatureSchema()
 	{
 		List<String> spatialHNodeIds = new ArrayList<String>();
-		
+
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
 			if (type.getType().getUriString().equals(SRID_PROPERTY)
 					&& type.getDomain().getUriString().equals(SRID_CLASS)){
@@ -176,25 +176,25 @@ public class WorksheetToFeatureCollections {
 				polygonFeatureHNodeId=type.getHNodeId();
 			}
 		}
-		
+
 		if(spatialHNodeIds.size()>1) {
 			List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
 			worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
 			for (HNode hNode : sortedLeafHNodes){
 				if (!spatialHNodeIds.contains(hNode.getId())) {
 					AttributeTypeBuilder build = new AttributeTypeBuilder();
-		            build.setNillable(true);
-		            build.setBinding(String.class); // might need to change to specific bindings
-		            AttributeDescriptor descriptor = build.buildDescriptor(hNode.getColumnName());
-		            featureSchema.add(descriptor);
-		            geomHNodeIdList.add(hNode.getId());
+					build.setNillable(true);
+					build.setBinding(String.class); // might need to change to specific bindings
+					AttributeDescriptor descriptor = build.buildDescriptor(hNode.getColumnName());
+					featureSchema.add(descriptor);
+					geomHNodeIdList.add(hNode.getId());
 				}
 			}
 		}
 
 		if(spatialHNodeIds.size()>1) { // has spatial data
 			if(pointFeatureHNodeId!="") 
-	            populateSimpleFeatures(spatialHNodeIds,pointFeatureHNodeId, "",getRows(),
+				populateSimpleFeatures(spatialHNodeIds,pointFeatureHNodeId, "",getRows(),
 						getColumnMap(), pointFeatureList,
 						Point.class);
 			if(pointFeatureLatHNodeId!=""&&pointFeatureLonHNodeId!="")
@@ -236,27 +236,25 @@ public class WorksheetToFeatureCollections {
 						continue;
 					posList="POINT("+lon+" "+lat+")"; 
 				}
-				
+
 				if(posList.length()==0) continue;
-				
+
 				posList=posList.toUpperCase();
 				WKTReader reader = new WKTReader();
 				JTSGeometry= reader.read(posList);
-				
+
 				if(JTSGeometry == null) continue;
-				
+
 				String srid = row.getNode(SRIDHNodeId).getValue().asString();
 				if(!srid.contains(":"))
 					srid="EPSG:"+srid;
 				CoordinateReferenceSystem sourceCRS=null;
-				
+
 				try {
 					sourceCRS = CRS.decode(srid, true);
 				} catch (NoSuchAuthorityCodeException e) {
-					// TODO Auto-generated catch block
 					logger.error("No such authority code!", e);
 				} catch (FactoryException e) {
-					// TODO Auto-generated catch block
 					logger.error("Error parsing SRID!", e);
 				}
 				SimpleFeatureTypeBuilder simpleFeatureTypeBuilder = new SimpleFeatureTypeBuilder();
@@ -267,15 +265,15 @@ public class WorksheetToFeatureCollections {
 				SimpleFeatureType simpleFeatureTypeWithCRS = simpleFeatureTypeBuilder.buildFeatureType();
 				SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(simpleFeatureTypeWithCRS);
 				featureBuilder.add(JTSGeometry);
-				
+
 				for(String hNodeId : geomHNodeIdList) {
 					Node node = row.getNode(hNodeId);
-						if(node.hasNestedTable())
-							featureBuilder.add("Nested table");
-						else {
-							String colValue =node.getValue().asString();
-							featureBuilder.add(colValue);
-						}
+					if(node.hasNestedTable())
+						featureBuilder.add("Nested table");
+					else {
+						String colValue =node.getValue().asString();
+						featureBuilder.add(colValue);
+					}
 				}
 				SimpleFeature feature = featureBuilder.buildFeature(null);
 				features.add(feature);
@@ -311,7 +309,7 @@ public class WorksheetToFeatureCollections {
 				"publish/SpatialData/"+spatialDataFolder+"/";
 		File dir = new File(spatialDataFolder);  
 		dir.mkdir();
-		
+
 		File kml = publishKML(spatialDataFolder,fileName);
 		if(pointFeatureHNodeId!=""|| (pointFeatureLatHNodeId!=""&&pointFeatureLonHNodeId!=""))
 			saveShapefile(pointFeatureList, spatialDataFolder,fileName+"_point");
@@ -319,7 +317,7 @@ public class WorksheetToFeatureCollections {
 			saveShapefile(lineFeatureList, spatialDataFolder,fileName+"_line");
 		if(polygonFeatureHNodeId!="") 
 			saveShapefile(polygonFeatureList, spatialDataFolder,fileName+"_polygon");
-		
+
 		saveSpatialDataToZip(spatialDataFolder,fileName);
 		return kml;
 	}
@@ -338,7 +336,7 @@ public class WorksheetToFeatureCollections {
 			ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory.createNewDataStore(params);
 			newDataStore.setStringCharset(Charset.forName("UTF-8"));
 			newDataStore.createSchema(features.get(0).getFeatureType());
-			
+
 			/*
 			 * You can comment out this line if you are using the createFeatureType method (at end of
 			 * class file) rather than DataUtilities.createType
@@ -390,7 +388,7 @@ public class WorksheetToFeatureCollections {
 	}
 	public File publishKML(String spatialDataFolder, String fileName) throws IOException {
 		File outputFile = new File(spatialDataFolder + fileName + ".kml");
-		
+
 		final Kml kml = KmlFactory.createKml();
 		final Folder folder = kml.createAndSetFolder()
 				.withName(worksheet.getTitle()).withOpen(true);
@@ -399,7 +397,9 @@ public class WorksheetToFeatureCollections {
 		style.createAndSetIconStyle().withScale(1.399999976158142).withIcon(new Icon().withHref("http://maps.google.com/mapfiles/ms/icons/blue-pushpin.png"));
 		style.createAndSetLineStyle().withColor("501400FF").withWidth(2);
 		style.createAndSetPolyStyle().withColor("5014F000");
+
 		for (SimpleFeature pointFeature : pointFeatureList) {
+
 			CoordinateReferenceSystem sourceCRS =  pointFeature.getType().getCoordinateReferenceSystem();
 			CoordinateReferenceSystem targetCRS=null;
 			try {
@@ -411,7 +411,8 @@ public class WorksheetToFeatureCollections {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+			Point p=(Point)SpatialReferenceSystemTransformationUtil.Transform((Geometry)pointFeature.getAttribute("GEOM"), sourceCRS, targetCRS);
+			/* keep this for a while
 			MathTransform transform=null;
 			try {
 				transform = CRS.findMathTransform(sourceCRS, targetCRS,true);
@@ -419,9 +420,6 @@ public class WorksheetToFeatureCollections {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			String htmlDescription=getHTMLDescription(pointFeature);
-			
 			Point p=null;
 			try {
 				Point temp = (Point)pointFeature.getAttribute("GEOM");
@@ -431,7 +429,8 @@ public class WorksheetToFeatureCollections {
 			} catch (TransformException e) {
 				e.printStackTrace();
 			}
-
+			 */
+			String htmlDescription=getHTMLDescription(pointFeature);
 			folder.createAndAddPlacemark()
 			.withDescription(htmlDescription)
 			.withVisibility(true)
@@ -442,7 +441,20 @@ public class WorksheetToFeatureCollections {
 		}
 		for (SimpleFeature lineFeature : lineFeatureList) {
 			String htmlDescription=getHTMLDescription(lineFeature);
-			LineString line = (LineString)lineFeature.getAttribute("GEOM");
+
+			CoordinateReferenceSystem sourceCRS =  lineFeature.getType().getCoordinateReferenceSystem();
+			CoordinateReferenceSystem targetCRS=null;
+			try {
+				targetCRS = CRS.decode("EPSG:4326",true);
+			} catch (NoSuchAuthorityCodeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FactoryException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			LineString line=(LineString)SpatialReferenceSystemTransformationUtil.Transform((Geometry)lineFeature.getAttribute("GEOM"), sourceCRS, targetCRS);
+
 			List<de.micromata.opengis.kml.v_2_2_0.Coordinate> coordsList = new ArrayList<de.micromata.opengis.kml.v_2_2_0.Coordinate>();
 			for (int i=0;i<line.getNumPoints();i++) {
 
@@ -457,7 +469,21 @@ public class WorksheetToFeatureCollections {
 		}
 		for (SimpleFeature polygonFeature: polygonFeatureList) {
 			String htmlDescription=getHTMLDescription(polygonFeature);
-			Polygon polygon = (Polygon)polygonFeature.getAttribute("GEOM");
+
+			CoordinateReferenceSystem sourceCRS =  polygonFeature.getType().getCoordinateReferenceSystem();
+			CoordinateReferenceSystem targetCRS=null;
+			try {
+				targetCRS = CRS.decode("EPSG:4326",true);
+			} catch (NoSuchAuthorityCodeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FactoryException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			Polygon polygon=(Polygon)SpatialReferenceSystemTransformationUtil.Transform((Geometry)polygonFeature.getAttribute("GEOM"), sourceCRS, targetCRS);
+
 			Placemark placemark = folder.createAndAddPlacemark()
 					.withDescription(htmlDescription)
 					.withVisibility(true).withStyleUrl("karma");
@@ -496,15 +522,15 @@ public class WorksheetToFeatureCollections {
 			}
 		}
 		final StringWriter out = new StringWriter();
-        kml.marshal(out);
-        String test = out.toString();
-        Writer outUTF8=null;
+		kml.marshal(out);
+		String test = out.toString();
+		Writer outUTF8=null;
 		try {
 			outUTF8 = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(outputFile), "UTF8"));
 			outUTF8.append(test);
-    		outUTF8.flush();
-    		outUTF8.close();
+			outUTF8.flush();
+			outUTF8.close();
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -594,8 +620,7 @@ public class WorksheetToFeatureCollections {
 			//close the ZipOutputStream
 			zout.close();
 		}
-		catch(IOException ioe)
-		{
+		catch(IOException ioe) {
 			logger.error("IOException :" + ioe);
 		}
 	}
