@@ -38,15 +38,10 @@ import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.vocabulary.XSD;
 
-import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
-import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.AlignToOntology;
-import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.semantictypes.SemanticType;
-import edu.isi.karma.rep.semantictypes.SemanticType.ClientJsonKeys;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class AutoOntology {
 	static Logger logger = Logger.getLogger(AutoOntology.class.getName());
@@ -56,17 +51,20 @@ public class AutoOntology {
 		this.worksheet = worksheet;
 	}
 	public void Build(String path) throws IOException {
+		String autoModelURI = ServletContextParameterMap
+				.getParameterValue(ContextParameter.AUTO_MODEL_URI);
+		
 		List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
 		worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
 		OntModel autoOntology = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM );
-		String ns = "http://www.isi.edu/karma/automodel/"+worksheet.getTitle()+"#";
+		String ns = autoModelURI+worksheet.getTitle()+"#";
 		OntClass topClass = autoOntology.createClass( ns + worksheet.getTitle());
 		for (HNode hNode : sortedLeafHNodes){
 			DatatypeProperty dp = autoOntology.createDatatypeProperty(ns+hNode.getColumnName());
 			dp.addDomain(topClass);
 			dp.addRange(XSD.xstring);
 		}
-
+		
 		Writer outUTF8 =null;
 		try {
 			outUTF8 = new BufferedWriter(new OutputStreamWriter(
@@ -77,6 +75,5 @@ public class AutoOntology {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		 
 	}
 }

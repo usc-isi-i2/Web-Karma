@@ -1,0 +1,94 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" > 
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#building_id">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#srid">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#state">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#feature_id">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#lat">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#lon">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#source">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#building_amenity">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#county_name">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#building_name">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#uuid">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#ele">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#polygon_text">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#polygon_binary">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#coordinate_system">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#building_number">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#reviewed">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_buildings_geo_pp.csv#buildings_geo_pp.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+</rdf:RDF>

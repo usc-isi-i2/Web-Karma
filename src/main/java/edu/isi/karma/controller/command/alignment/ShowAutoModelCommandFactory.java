@@ -22,6 +22,8 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,6 +43,7 @@ import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.ontology.AutoOntology;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.rep.semantictypes.SemanticType.Origin;
@@ -124,6 +127,21 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements JSONI
 					worksheet.getSemanticTypes().addType(type);
 				}
 			}
+			/*
+			String autoModelURI = ServletContextParameterMap
+					.getParameterValue(ContextParameter.AUTO_MODEL_URI);
+			List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
+			worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
+			String ns = autoModelURI+worksheet.getTitle()+"#";
+			for (HNode hNode : sortedLeafHNodes){
+				SemanticType primaryType = null;
+				URI typeName = new URI(ns+hNode.getColumnName());
+				URI domainName = new URI(ns + worksheet.getTitle());
+				primaryType = new SemanticType(hNode.getId(), typeName,domainName, SemanticType.Origin.User, 1.0,true);
+				worksheet.getSemanticTypes().addType(primaryType);
+				//SynonymSemanticTypes newSynonymTypes;
+				//worksheet.getSemanticTypes().addSynonymTypesForHNodeId(primaryType.getHNodeId(), newSynonymTypes);
+			}*/
 			return comm;
 		}
 	}

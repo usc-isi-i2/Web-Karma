@@ -343,5 +343,35 @@ public class SemanticTypeUtil {
 			worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(), columnModel);
 		}
 	}
+	public static void computeSemanticTypesForAutoModel(Worksheet worksheet,
+			CRFModelHandler crfModelHandler, OntologyManager ontMgr) {
+		
+		String autoModelURI = ServletContextParameterMap
+				.getParameterValue(ContextParameter.AUTO_MODEL_URI);
+		String topClassURI = autoModelURI + worksheet.getTitle();
+		
+		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
+		for (HNodePath path : paths) {
 
+			Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
+
+			// Prepare the column name feature
+			String columnName = path.getLeaf().getColumnName();
+			Collection<String> columnNameList = new ArrayList<String>();
+			columnNameList.add(columnName);
+			columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
+			
+			// Stores the probability scores
+			ArrayList<Double> scores = new ArrayList<Double>();
+			// Stores the predicted labels
+			ArrayList<String> labels = new ArrayList<String>();
+			
+			String label = topClassURI+"#"+worksheet.getTitle()+"|"+topClassURI+"#"+columnName;
+			labels.add(label);
+			scores.add(1.0);
+			
+			CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
+			worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(), columnModel);
+		}
+	}
 }

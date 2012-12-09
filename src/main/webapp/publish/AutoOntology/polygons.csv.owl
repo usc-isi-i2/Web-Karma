@@ -3,82 +3,82 @@
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" > 
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#feature_id">
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#reviewed">
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#coordinate_system">
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#source">
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#lon">
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#building_name">
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#st_astext">
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#county_name">
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv">
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#ele">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#state">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#st_astext">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#coordinate_system">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#lon">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#lat">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#building_number">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#feature_id">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#uuid">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#building_amenity">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#lat">
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#building_id">
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#county_name">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#ele">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#building_amenity">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#building_name">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#state">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#building_id">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#source">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#reviewed">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#uuid">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv"/>
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
-  </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/polygons.csv#building_number">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/polygons.csv#polygons.csv"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_polygons.csv#polygons.csv"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </rdf:Description>
 </rdf:RDF>

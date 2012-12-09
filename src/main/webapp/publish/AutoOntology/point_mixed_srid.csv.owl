@@ -3,27 +3,27 @@
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" > 
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_line.csv#Text">
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/point_mixed_srid.csv#y">
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_line.csv#line.csv"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/point_mixed_srid.csv#point_mixed_srid.csv"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_line.csv# SRID">
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/point_mixed_srid.csv#x">
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_line.csv#line.csv"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/point_mixed_srid.csv#point_mixed_srid.csv"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_line.csv#Name">
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/point_mixed_srid.csv#srid">
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_line.csv#line.csv"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/point_mixed_srid.csv#point_mixed_srid.csv"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_line.csv# Line">
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/point_mixed_srid.csv#wkt">
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/AutoModel_line.csv#line.csv"/>
+    <rdfs:domain rdf:resource="http://www.isi.edu/karma/automodel/point_mixed_srid.csv#point_mixed_srid.csv"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/AutoModel_line.csv#line.csv">
+  <rdf:Description rdf:about="http://www.isi.edu/karma/automodel/point_mixed_srid.csv#point_mixed_srid.csv">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
   </rdf:Description>
 </rdf:RDF>
