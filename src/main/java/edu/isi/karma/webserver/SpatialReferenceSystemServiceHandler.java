@@ -26,7 +26,7 @@ public class SpatialReferenceSystemServiceHandler extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static Logger logger = Logger
 			.getLogger(LinkedApiServiceHandler.class);
-	private String url;
+	//private String url;
 	private Connection connection = null;
 
 	public void doGet(HttpServletRequest request,
@@ -42,7 +42,7 @@ public class SpatialReferenceSystemServiceHandler extends HttpServlet {
 		String geometry = request.getParameter("geometry");
 		String srid = request.getParameter("srid");
 		
-		openConnection();
+		//openConnection();
 
 
 		String statement = "SELECT ST_AsText(ST_Transform(ST_GeomFromText('"+geometry+"',"
@@ -80,7 +80,7 @@ public class SpatialReferenceSystemServiceHandler extends HttpServlet {
 			ee.getStackTrace();
 		}
 		/*Close connection*/
-		this.closeConnection(this.connection);
+		//this.closeConnection(this.connection);
 		
 		if(arr.length()==0) {
 			try {
@@ -108,7 +108,7 @@ public class SpatialReferenceSystemServiceHandler extends HttpServlet {
           // doPost;
 	
 	}
-
+/*
 	private void openConnection(){
 		ConnectPostgis conPostgis = new ConnectPostgis();
 		//this.connection = conPostgis.ConnectingPostgis("jdbc:postgresql://fusion.isi.edu:54322/testGIS","karma","2xpd516");	
@@ -121,6 +121,6 @@ public class SpatialReferenceSystemServiceHandler extends HttpServlet {
 		} catch (Exception ex) {
 			ex.getMessage();
 		}
-	}
+	}*/
 
 }
