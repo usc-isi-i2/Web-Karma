@@ -33,7 +33,7 @@ public class OracleUtil extends AbstractJDBCUtil {
 		"oracle.jdbc.driver.OracleDriver";
 	
 	static final String CONNECT_STRING_TEMPLATE = 
-		"jdbc:oracle:thin:username/pwd@//host:port/sid";
+		"jdbc:oracle:thin:username/pwd@//host:port/dbname";
 
 	@Override
 	public ArrayList<String> getListOfTables(Connection conn)
