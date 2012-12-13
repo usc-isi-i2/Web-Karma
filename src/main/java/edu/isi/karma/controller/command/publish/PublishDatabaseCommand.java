@@ -233,6 +233,33 @@ public class PublishDatabaseCommand extends Command {
 		dbUtil.execute(conn, createQ);		
 	}
 	
+	//column names are the semantic types
+		/**
+		 * Create a table given the list of column names; all types are VARCHAR.
+		 * @param tableName
+		 * @param colNames
+		 * @param conn
+		 * @throws SQLException
+		 */
+		private void createSpatialTable(String tableName, Collection<String> colNames,Connection conn) throws SQLException{
+			//add escaping in case we have unusual chars
+			tableName=dbUtil.prepareName(tableName);
+			// create the table
+			String createQ = "create table " + tableName + "(";
+			int i=0;
+			for(String semType: colNames){
+				//for now always VARCHAR
+				String dbType = getDbType(semType);
+				if (i++ > 0)
+					createQ += ",";
+				createQ += dbUtil.prepareName(semType) + " " + dbType;
+			}
+			createQ += ")";
+
+			logger.debug("createQ " + createQ);
+
+			dbUtil.execute(conn, createQ);		
+		}
 	/**
 	 * Drop the given table.
 	 * @param tableName

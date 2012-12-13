@@ -274,7 +274,7 @@ public class WorksheetToFeatureCollections {
 		for (Row row : rows) {
 			try {
 				Geometry JTSGeometry = null;
-				String posList = "";
+				String posList = null;
 				if (geometry2HNodeId == "") {
 					posList = row.getNode(geometryHNodeId).getValue()
 							.asString();
@@ -292,7 +292,7 @@ public class WorksheetToFeatureCollections {
 					posList = "POINT(" + lon + " " + lat + ")";
 				}
 
-				if (posList.length() == 0)
+				if (posList == null)
 					continue;
 
 				posList = posList.toUpperCase();
@@ -630,8 +630,11 @@ public class WorksheetToFeatureCollections {
 
 		StringBuilder str = new StringBuilder();
 		for (Property property : simpleFeature.getProperties()) {
-			str.append("<b>" + property.getName() + "</b>: "
-					+ property.getValue().toString() + " <br />");
+			str.append("<b>" + property.getName() + "</b>: ");
+			if(property.getValue()!=null)
+				str.append( property.getValue().toString() + " <br />");
+			else
+				str.append( " <br />");
 		}
 		return str.toString();
 	}
