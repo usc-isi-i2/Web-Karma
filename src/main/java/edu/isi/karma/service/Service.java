@@ -21,12 +21,15 @@
 
 package edu.isi.karma.service;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpMethods;
@@ -327,6 +330,10 @@ public class Service {
 
 	private void doGrounding() {
 		String str = this.urlExample.toString();
+		try {
+			str = URLDecoder.decode(str, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+		}
 		
 		if (str == null || str.length() == 0) {
 			this.address = "";
@@ -353,7 +360,7 @@ public class Service {
 			if (temp.indexOf("=") != -1)
 				temp = temp.substring(temp.indexOf("=") + 1);
 
-			params = params.replaceFirst(temp.trim(), "{" + groundVar + "}");
+			params = params.replaceFirst(Pattern.quote(temp.trim()), "{" + groundVar + "}");
 			this.inputAttributes.get(i).setGroundedIn(groundVar);
 		}
 		
