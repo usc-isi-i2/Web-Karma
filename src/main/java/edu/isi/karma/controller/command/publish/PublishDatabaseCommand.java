@@ -352,6 +352,9 @@ public class PublishDatabaseCommand extends Command {
 					colValues +=",";
 				}
 				colNames += dbUtil.prepareName(colName);
+				//handle null vaules in worksheets
+				if(val==null)
+					val="";
 				//escape string
 				val = val.replaceAll("'", "''");
 				if (isDbTypeString(colTypesMap.get(hNodeId))) {
@@ -388,7 +391,7 @@ public class PublishDatabaseCommand extends Command {
 
 	// for now everything is a string
 	private String getDbType(String semType) {
-		String dbType = "VARCHAR(1000)";
+		String dbType = "VARCHAR(5000)";
 		return dbType;
 	}
 	
