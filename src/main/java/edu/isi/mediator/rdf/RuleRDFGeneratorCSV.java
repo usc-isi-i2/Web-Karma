@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import au.com.bytecode.opencsv.CSVReader;
+
 import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.gav.util.MediatorLogger;
 import edu.isi.mediator.rule.LAVRule;
@@ -84,6 +85,7 @@ public class RuleRDFGeneratorCSV extends RuleRDFGenerator {
 		}
 		String[] firstLine = lines.get(0);
 
+		
 		///////////////////////////
 		/*
 		System.out.print("Parse File:[");
@@ -117,6 +119,11 @@ public class RuleRDFGeneratorCSV extends RuleRDFGenerator {
 				String val = line[i].trim();
 
 				//System.out.println("name=" + colName + " val=" + val);
+
+				//12/7/2012 MariaM
+				if(val.trim().equals("null")){
+					val="NULL";
+				}
 
 				//I need only values used in the rule
 				if(colNamesInHead.contains(colName))
