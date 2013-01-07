@@ -136,7 +136,7 @@ public class OntologyManager {
 	public void initCache() {
 		ontCache.init(this);
 	}
-
+	
 	public URI getURIFromString(String uri) {
 		Resource r = ontModel.getResource(uri);
 		if (r == null || !ontModel.containsResource(r)) {
@@ -147,7 +147,16 @@ public class OntologyManager {
 		if (ns != null && ns.trim().length() == 0) ns = null;
 		String prefix = ontModel.getNsURIPrefix(r.getNameSpace());
 		if (prefix != null && prefix.trim().length() == 0) prefix = null;
-		return new URI(r.getURI(), ns, prefix);
+		
+		OntResource ontR = null;
+		try { ontR = (OntResource)r;} catch(Exception e) {}
+		if (ontR == null)
+			return new URI(r.getURI(), ns, prefix);
+		
+		String rdfsLabel = ontR.getLabel(null);
+		String rdfsComment = ontR.getComment(null);
+		
+		return new URI(r.getURI(), ns, prefix, rdfsLabel, rdfsComment);
 	}
 	
 	public boolean isClass(String label) {

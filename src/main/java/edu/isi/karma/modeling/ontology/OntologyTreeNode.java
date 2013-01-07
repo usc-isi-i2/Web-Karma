@@ -55,7 +55,7 @@ public class OntologyTreeNode {
 	public void setChildren(List<OntologyTreeNode> children) {
 		this.children = children;
 	}
-	
+
 	public boolean hasChildren() {
 		return (children != null && children.size() != 0);
 	}
@@ -65,9 +65,12 @@ public class OntologyTreeNode {
 	}
 	
 	private void printRecursively(OntologyTreeNode node, int level) {
-		for (int i = 0; i < level; i++) System.out.print("---");
-		System.out.print(" ");
-		System.out.println(node.getUri().getUriString());
+		for (int i = 0; i < level; i++) System.out.print("---"); System.out.print(" ");
+		System.out.println("URI: " + node.getUri().getUriString());
+		for (int i = 0; i < level; i++) System.out.print("   "); System.out.print(" ");
+		System.out.println("Label: " + node.getUri().getRdfsLabel());
+		for (int i = 0; i < level; i++) System.out.print("   "); System.out.print(" ");
+		System.out.println("Comment: " + node.getUri().getRdfsComment());
 		if (node.children == null || node.children.size() == 0)
 			return;
 		for (OntologyTreeNode child : node.getChildren()) {

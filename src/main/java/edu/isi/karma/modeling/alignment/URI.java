@@ -25,23 +25,38 @@ public class URI {
 	private String uriString;
 	private String ns;
 	private String prefix;
+	private String rdfsLabel;
+	private String rdfsComment;
+	
+	public URI(String uri, String ns, String prefix, String rdfsLabel, String rdfsComment) {
+		this.uriString = uri;
+		this.ns = ns;
+		this.prefix = prefix;
+		this.rdfsLabel = rdfsLabel;
+		this.rdfsComment = rdfsComment;
+	}
 	
 	public URI(String uri, String ns, String prefix) {
 		this.uriString = uri;
 		this.ns = ns;
 		this.prefix = prefix;
+		this.rdfsLabel = null;
+		this.rdfsComment = null;
 	}
 
 	public URI(String uri) {
 		this.uriString = uri;
 		this.ns = null;
 		this.prefix = null;
-	}
+		this.rdfsLabel = null;
+		this.rdfsComment = null;	}
 	
 	public URI(URI uri) {
 		this.uriString = uri.getUriString();
 		this.ns = uri.getNs();
 		this.prefix = uri.getPrefix();
+		this.rdfsLabel = uri.getRdfsLabel();
+		this.rdfsComment = uri.getRdfsComment();
 	}
 	
 	public void setUriString(String uri) {
@@ -68,6 +83,14 @@ public class URI {
 			return null;		
 		
 		return ns;
+	}
+	
+	public String getRdfsLabel() {
+		return rdfsLabel;
+	}
+
+	public String getRdfsComment() {
+		return rdfsComment;
 	}
 
 	public String getPrefix() {
