@@ -31,6 +31,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.io.WKTReader;
+
 import de.micromata.opengis.kml.v_2_2_0.AltitudeMode;
 import de.micromata.opengis.kml.v_2_2_0.Boundary;
 import de.micromata.opengis.kml.v_2_2_0.Coordinate;
@@ -48,12 +53,6 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.io.WKTReader;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point; 
-import com.vividsolutions.jts.geom.Polygon;
 
 public class WorksheetGeospatialContent {
 	private Worksheet worksheet;

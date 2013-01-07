@@ -22,8 +22,6 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,16 +32,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.ontology.AutoOntology;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.semantictypes.SemanticType;
 import edu.isi.karma.rep.semantictypes.SemanticType.Origin;
