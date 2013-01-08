@@ -4,17 +4,29 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+  	<context-param>
+		<param-name>AUTO_MODEL_URI</param-name>
+		<param-value>http://www.isi.edu/karma/automodel/AutoModel_</param-value>
+	</context-param>
 	<context-param>
 		<param-name>PUBLIC_KML_ADDRESS</param-name>
-		<param-value>http://128.9.216.81:8080/KML/</param-value>
+		<param-value>http://128.9.216.81:9999/KML/</param-value>
 	</context-param>
 	<context-param>
 		<param-name>KML_TRANSFER_SERVICE</param-name>
-		<param-value>http://128.9.216.81:8080/KMLFileTransferHandler</param-value>
+		<param-value>http://128.9.216.81:9999/KMLFileTransferHandler</param-value>
 	</context-param>
 	<context-param>
 		<param-name>PUBLIC_RDF_ADDRESS</param-name>
 		<param-value>http://localhost:8080/RDF/</param-value>
+	</context-param>
+	<context-param>
+		<param-name>SRID_CLASS</param-name>
+		<param-value>http://www.opengis.net/gml/SpatialReferenceSystem</param-value>
+	</context-param>
+	<context-param>
+		<param-name>SRID_PROPERTY</param-name>
+		<param-value>http://www.opengis.net/gml/hasID</param-value>
 	</context-param>
 	<context-param>
 		<param-name>WGS84_LAT_PROPERTY</param-name>
@@ -39,6 +51,10 @@
 	<context-param>
 		<param-name>LINE_CLASS</param-name>
 		<param-value>http://www.opengis.net/gml/LineString</param-value>
+	</context-param>
+		<context-param>
+		<param-name>POLYGON_CLASS</param-name>
+		<param-value>http://www.opengis.net/gml/Polygon</param-value>
 	</context-param>
 	<context-param>
 		<param-name>TRAINING_EXAMPLE_MAX_COUNT</param-name>
@@ -96,7 +112,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>LinkedAPIServiceHandler</servlet-name>
-    <url-pattern>/linkedservices/*</url-pattern>
+    <url-pattern>/services/*</url-pattern>
   </servlet-mapping>
     
   <servlet>
@@ -106,6 +122,14 @@
     <servlet-mapping>
      <servlet-name>ExtractSpatialInformationServiceHandler</servlet-name>
      <url-pattern>/ExtractSpacialInformation/*</url-pattern>
+  </servlet-mapping>
+   <servlet>
+     <servlet-name>SpatialReferenceSystemServiceHandler</servlet-name>
+     <servlet-class>edu.isi.karma.webserver.SpatialReferenceSystemServiceHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+     <servlet-name>SpatialReferenceSystemServiceHandler</servlet-name>
+     <url-pattern>/SpatialReferenceSystemService/*</url-pattern>
   </servlet-mapping>
 
 <!-- uncomment for password protection; change user/pwd in config/jettyrealm.properties -->

@@ -1,254 +1,81 @@
 package edu.isi.karma.webserver;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.PrintWriter;
 
+import java.sql.Connection;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.http.HttpMethods;
-
-import edu.isi.karma.linkedapi.server.GetRequestManager;
-import edu.isi.karma.linkedapi.server.PostRequestManager;
-import edu.isi.karma.linkedapi.server.ResourceType;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import edu.isi.karma.geospatial.SpatialReferenceSystemTransformationUtil;
 import edu.isi.karma.service.MimeType;
-import edu.isi.karma.service.SerializationLang;
-
-import java.sql.DriverManager;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class SpatialReferenceSystemServiceHandler extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private static Logger logger = Logger.getLogger(SpatialReferenceSystemServiceHandler.class);
-	private static String DEFAULT_FORMAT = SerializationLang.N3;
+	private static Logger logger = Logger
+			.getLogger(LinkedApiServiceHandler.class);
 
-	private class RestRequest {
-		
-		private String guidRegex = "([A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12})"; 
-		private String serviceIdRegex = guidRegex + "#?";
-		private String formatRegex = "\\?format=(RDF/XML|RDF/XML-ABBREV|N-TRIPLE|N3|TTL|TURTLE)";
-		private String ioFormatRegex = "\\?format=(RDF/XML|RDF/XML-ABBREV|N-TRIPLE|N3|TTL|TURTLE|SPARQL)";
-		
-		private String simpleUrlRegex = "/" + serviceIdRegex + "/?";
-		private String urlWithFormatRegex = "/" + serviceIdRegex + formatRegex + "/?";
-		private String getInputOrOutputRegex = "/" + serviceIdRegex + "/" + "(input|output)" + "/?";
-		private String getInputOrOutputWithFormatRegex = "/" + serviceIdRegex + "/" + "(input|output)" + ioFormatRegex + "/?";
-		
-		Pattern simpleUrlPattern = Pattern.compile(simpleUrlRegex, Pattern.CASE_INSENSITIVE);
-		Pattern urlWithFormatPattern = Pattern.compile(urlWithFormatRegex, Pattern.CASE_INSENSITIVE);
-		Pattern getInputOrOutputPattern = Pattern.compile(getInputOrOutputRegex, Pattern.CASE_INSENSITIVE);
-		Pattern getInputOrOutputWithFormatPattern = Pattern.compile(getInputOrOutputWithFormatRegex, Pattern.CASE_INSENSITIVE);
-		 
-		private String id;
-		private String format;
-		private String resource;
- 
-		public RestRequest(String pathInfo, String method) throws ServletException {
-			// regex parse pathInfo
-			   try {
-					 
-					Class.forName("org.postgresql.Driver");
+	public void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 
-				} catch (ClassNotFoundException e) {
-
-					System.out.println("Where is your PostgreSQL JDBC Driver? "
-							+ "Include in your library path!");
-					e.printStackTrace();
-					return;
-
-				}
-				
-				 
-			   Connection connection = null;
-			   try {
-				   
-					connection = DriverManager.getConnection(
-							"jdbc:postgresql://fusion.isi.edu:54322/", "postgres",
-							"migi700111");
-		 
-				} catch (SQLException e) {
-		 
-					System.out.println("Connection Failed! Check output console");
-					e.printStackTrace();
-					return;
-		 
-				}
-		 
-				if (connection != null) {
-					System.out.println("You made it, take control your database now!");
-				} else {
-					System.out.println("Failed to make connection!");
-				}
-			Matcher matcher;
-			if (pathInfo == null || pathInfo.trim().length() == 0)
-				return;
-			
-			if (method == HttpMethods.GET) {
-				matcher = getInputOrOutputWithFormatPattern.matcher(pathInfo);
-				if (matcher.find()) {
-					logger.debug(getInputOrOutputWithFormatRegex);
-					id = matcher.group(1);
-					resource = matcher.group(2);
-					format = matcher.group(3);
-					return;
-				}
-		 
-				matcher = getInputOrOutputPattern.matcher(pathInfo);
-				if (matcher.find()) {
-					logger.debug(getInputOrOutputRegex);
-					id = matcher.group(1);
-					resource = matcher.group(2);
-					format = DEFAULT_FORMAT;
-					return;
-				}
-			}
-
-			matcher = urlWithFormatPattern.matcher(pathInfo);
-			if (matcher.find()) {
-				logger.debug(urlWithFormatRegex);
-				id = matcher.group(1);
-				format = matcher.group(2);
-				resource = null;
-				return;
-			}
-			
-			matcher = simpleUrlPattern.matcher(pathInfo);
-			if (matcher.find()) {
-				logger.debug(simpleUrlRegex);
-				id = matcher.group(1);
-				format = DEFAULT_FORMAT;
-				resource = null;
-				return;
-			}
-			
-			throw new ServletException("Invalid URI");
-		}
-
-		
-		public String getId() {
-			return id;
-		}
-		public String getFormat() {
-			// I don't know why Jena gives error for turtle.
-			if (format.equalsIgnoreCase("TTL") || format.equalsIgnoreCase("TURTLE"))
-				format = DEFAULT_FORMAT;
-			return format.toUpperCase();
-		}
-		public String getResource() {
-			return resource;
-		}
- 
-  }
-	  
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
 		logger.debug("Request URL: " + request.getRequestURI());
 		logger.debug("Request Path Info: " + request.getPathInfo());
 		logger.debug("Request Param: " + request.getQueryString());
+		
+		String jsonOutput=null;
 
-		RestRequest restRequest = null;
+		String inGeomWKT = request.getParameter("geometry");
+		String fromSRID = request.getParameter("srid");
+		JSONObject obj=new JSONObject();
+		JSONArray arr=new JSONArray();
 		try {
-			String url = request.getPathInfo();
-			if (request.getQueryString() != null) url += "?" + request.getQueryString();
-			restRequest = new RestRequest(url , HttpMethods.GET);
-		} catch (ServletException e) {
-			response.setContentType(MimeType.TEXT_PLAIN);
-			response.getWriter().write("Invalid URL!");
-			return;
+			if(fromSRID=="4326" || fromSRID=="EPSG:4326") {
+				obj.put("Geometry", inGeomWKT);
+				obj.put("SRID", fromSRID);
+				arr.put(obj);
+			}else {
+				String outGeomWKT = SpatialReferenceSystemTransformationUtil.Transform(inGeomWKT, fromSRID, "4326");
+				obj.put("Geometry", outGeomWKT);
+				obj.put("SRID", 4326);
+				arr.put(obj);
+			}
+		} catch (JSONException e) {
+			logger.error("Cannot write JSON!",e);
 		}
-		
-		String serviceId = restRequest.getId();
-		String format = restRequest.getFormat();
-		String resource = restRequest.getResource();
+		jsonOutput=arr.toString();
 
-		logger.debug("Id: " + serviceId);
-		logger.debug("Format: " + format);
-		logger.debug("Resource: " + resource);
-
-		ResourceType resourceType = ResourceType.Service;
-		if (resource != null && resource.trim().toString().equalsIgnoreCase("input"))
-			resourceType = ResourceType.Input;
-		if (resource != null && resource.trim().toString().equalsIgnoreCase("output"))
-			resourceType = ResourceType.Output;
-
-		new GetRequestManager(serviceId, resourceType, format, response).HandleRequest();
-		
-		response.flushBuffer(); 
-	}
-	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		logger.debug("Request URL: " + request.getRequestURI());
-		logger.debug("Request Path Info: " + request.getPathInfo());
-		logger.debug("Request Param: " + request.getQueryString());
-
-		RestRequest restRequest = null;
-		try {
-			String url = request.getPathInfo();
-			if (request.getQueryString() != null) url += "?" + request.getQueryString();
-			restRequest = new RestRequest(url, HttpMethods.POST);
-		} catch (ServletException e) {
-			response.setContentType(MimeType.TEXT_PLAIN);
-			response.getWriter().write("Invalid URL!");
-			return;
-		}
-		
-		String serviceId = restRequest.getId();
-		String format = restRequest.getFormat();
-
-//		for (String s : request.getParameterMap().keySet())
-//			System.out.println(s + " --- " + request.getParameterMap().get(s).toString());
-//		logger.debug("Id: " + serviceId);
-//		logger.debug("Format: " + format);
-		
-		//request.setCharacterEncoding(CharEncoding.ISO_8859_1);
-		logger.info("Content-Type: " + request.getContentType());
-		
-		String formData = null;
-		String inputLang = "";
-		if (request.getContentType().startsWith(MimeType.APPLICATION_RDF_XML))
-			inputLang = SerializationLang.XML;
-		if (request.getContentType().startsWith(MimeType.TEXT_XML))
-			inputLang = SerializationLang.XML;
-		else if (request.getContentType().startsWith(MimeType.APPLICATION_XML))
-			inputLang = SerializationLang.XML;
-		else if (request.getContentType().startsWith(MimeType.APPLICATION_RDF_N3))
-			inputLang = SerializationLang.N3;
-		if (request.getContentType().startsWith(MimeType.APPLICATION_FORM_URLENCODED)) {
-			inputLang = SerializationLang.N3; // default for html forms
-			formData = request.getParameter("rdf");
-			logger.debug(formData);
-		} else {
-			response.setContentType(MimeType.TEXT_PLAIN);
-			response.getWriter().write("The content type is neither rdf+xml nor rdf+n3");
-			return;
-		}
-		
-		InputStream in = request.getInputStream();
-		
-		if (formData != null) {
-			in = new ByteArrayInputStream(formData.getBytes());
-		} 
-		
-		new PostRequestManager(serviceId, in, inputLang, format, response).HandleRequest();
-		
-		response.flushBuffer();
+		/*Output the JSON content to Web Page*/
+		PrintWriter pw = response.getWriter();
+		response.setContentType(MimeType.APPLICATION_JSON);
+		pw.write(jsonOutput);
+		return;
 	}
 
-	
-//	 public static Document loadXMLFromString(String xml) throws Exception
-//	 {
-//        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//        DocumentBuilder builder = factory.newDocumentBuilder();
-//        InputSource is = new InputSource(new StringReader(xml));
-//        return builder.parse(is);
-//	 }
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		// doPost;
+
+	}
+	/*
+	private void openConnection(){
+		ConnectPostgis conPostgis = new ConnectPostgis();
+		//this.connection = conPostgis.ConnectingPostgis("jdbc:postgresql://fusion.isi.edu:54322/testGIS","karma","2xpd516");	
+		this.connection = conPostgis.ConnectingPostgis("jdbc:postgresql://localhost:54321/testGIS","karma","2xpd516");	
+	}
+
+	private void closeConnection(Connection connection) {
+		try {
+			connection.close();
+		} catch (Exception ex) {
+			ex.getMessage();
+		}
+	}*/
+
 }

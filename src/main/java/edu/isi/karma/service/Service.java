@@ -21,12 +21,15 @@
 
 package edu.isi.karma.service;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpMethods;
@@ -34,6 +37,7 @@ import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.rep.alignment.Link;
@@ -43,8 +47,6 @@ import edu.isi.karma.rep.alignment.URI;
 public class Service {
 	
 	static Logger logger = Logger.getLogger(Service.class);
-
-	public static final String KARMA_SERVICE_PREFIX = "http://karma.isi.edu/linkedservices/";
 
 	private String id;
 	private String name;
@@ -122,7 +124,7 @@ public class Service {
 	}
 
 	public String getUri() {
-		return KARMA_SERVICE_PREFIX + getId() + "#";
+		return ModelingParams.KARMA_SERVICE_PREFIX + getId() + "#";
 	}
 
 	public String getOperationName() {
@@ -328,6 +330,10 @@ public class Service {
 
 	private void doGrounding() {
 		String str = this.urlExample.toString();
+		try {
+			str = URLDecoder.decode(str, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+		}
 		
 		if (str == null || str.length() == 0) {
 			this.address = "";
@@ -354,7 +360,7 @@ public class Service {
 			if (temp.indexOf("=") != -1)
 				temp = temp.substring(temp.indexOf("=") + 1);
 
-			params = params.replaceFirst(temp.trim(), "{" + groundVar + "}");
+			params = params.replaceFirst(Pattern.quote(temp.trim()), "{" + groundVar + "}");
 			this.inputAttributes.get(i).setGroundedIn(groundVar);
 		}
 		
@@ -466,10 +472,19 @@ public class Service {
 				continue;
 			
 			URI propertyPredicate = new URI(e.getUriString(), e.getNs(), e.getPrefix());
-
-			PropertyAtom propertyAtom = new PropertyAtom(propertyPredicate, 
-					vertexIdToArgument.get(e.getSource().getID()),
-					vertexIdToArgument.get(e.getTarget().getID()));
+			PropertyAtom propertyAtom = null;
+			
+			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source
+			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
+				URI subClassPredicate = new URI(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
+				propertyAtom = new PropertyAtom(subClassPredicate, 
+						vertexIdToArgument.get(e.getTarget().getID()),
+						vertexIdToArgument.get(e.getSource().getID()));
+			} else {
+				propertyAtom = new PropertyAtom(propertyPredicate, 
+						vertexIdToArgument.get(e.getSource().getID()),
+						vertexIdToArgument.get(e.getTarget().getID()));
+			}
 			m.getAtoms().add(propertyAtom);
 		}
 
@@ -513,12 +528,21 @@ public class Service {
 				continue;
 			
 			URI propertyPredicate = new URI(e.getUriString(), e.getNs(), e.getPrefix());
-
-			PropertyAtom propertyAtom = new PropertyAtom(propertyPredicate, 
-					vertexIdToArgument.get(e.getSource().getID()),
-					vertexIdToArgument.get(e.getTarget().getID()));
-
+			PropertyAtom propertyAtom = null;
+			
+			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source
+			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
+				URI subClassPredicate = new URI(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
+				propertyAtom = new PropertyAtom(subClassPredicate, 
+						vertexIdToArgument.get(e.getTarget().getID()),
+						vertexIdToArgument.get(e.getSource().getID()));
+			} else {
+				propertyAtom = new PropertyAtom(propertyPredicate, 
+						vertexIdToArgument.get(e.getSource().getID()),
+						vertexIdToArgument.get(e.getTarget().getID()));
+			}
 			m.getAtoms().add(propertyAtom);
+
 		}
 		
 		return m;

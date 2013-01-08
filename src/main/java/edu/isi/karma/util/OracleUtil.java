@@ -31,9 +31,8 @@ public class OracleUtil extends AbstractJDBCUtil {
 	
 	static final String DRIVER = 
 		"oracle.jdbc.driver.OracleDriver";
-	
 	static final String CONNECT_STRING_TEMPLATE = 
-		"jdbc:oracle:thin:username/pwd@//host:port/sid";
+		"jdbc:oracle:thin:username/pwd@//host:port/dbname";
 
 	@Override
 	public ArrayList<String> getListOfTables(Connection conn)
@@ -42,7 +41,7 @@ public class OracleUtil extends AbstractJDBCUtil {
 		
 		Statement stmt = conn.createStatement(); 
 	    ResultSet rs = stmt.executeQuery("select object_name from user_objects " +
-	    		"where object_type = 'TABLE'");
+	    		"where object_type = 'TABLE' or object_type = 'VIEW'");
 
 	    while (rs.next()) {
 	      String tableName = rs.getString(1);

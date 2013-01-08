@@ -15,13 +15,12 @@ src/main/webapp/UserUploadedFiles/*
 SampleData
 CRF_Model.txt
 log/*
-!.gitignore
 src/main/webapp/publish/KML/*.*
 src/main/webapp/publish/Source Description/*.*
 src/main/webapp/publish/History/*.*
 src/main/webapp/publish/CSV/*
 src/main/webapp/publish/RDF/*
-preloaded-ontologies
+preloaded-ontologies/*
 src/main/webapp/RDF/*.rdf
 src/main/webapp/RDF/*.n3
 src/main/webapp/CRF_Models/*.txt
@@ -33,5 +32,12 @@ tmp/*
 src/main/webapp/CRF_Models/WSP1_CRFModel.txt
 src/main/scripts/Lib/*.class
 bin/
-
 *.kml
+*.fix
+*.dbf
+*.zip
+*.prj
+*.qix
+*.shp
+*.shx
+src/main/webapp/SpatialData/GET_OPENSTREETMAP.xml

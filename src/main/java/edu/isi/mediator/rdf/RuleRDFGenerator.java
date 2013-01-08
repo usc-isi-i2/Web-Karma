@@ -27,7 +27,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.gav.util.MediatorUtil;
@@ -45,6 +48,10 @@ import edu.isi.mediator.rule.Term;
  * and generates triples. Outputs the RDF triples in N3 notation
  * in the output file or Stdout.
  * 
+ * @author Maria Muslea(USC/ISI)
+ *
+ */
+/**
  * @author Maria Muslea(USC/ISI)
  *
  */
@@ -116,6 +123,11 @@ public class RuleRDFGenerator {
 	 */
 	private int NUMBER_OF_TRIPLES=1;
 	
+	/**
+	 * true: If a key is NULL or "" generates a gensym for that Key 
+	 * false: Does not include a triples related to this key
+	 */
+	private boolean generateGensymForEmptyKey = false;
 
 	/**
 	 * Constructs a RuleRDFGenerator.
@@ -552,8 +564,12 @@ public class RuleRDFGenerator {
 		String varValue = values.get(columnName);
 		if(varValue==null)
 			throw new MediatorException("The values map does not contain variable: " + columnName + " Map is:" + values);
-		if(varValue.equals("") || varValue.equals("NULL")){
+		else if(varValue.equals("") || varValue.equals("NULL")){
 			return null;
+		}
+		else if(varValue.startsWith("http://")){
+			//enclose in <>
+			return "<" + varValue + ">";
 		}
 		return varValue;
 	}
@@ -597,6 +613,7 @@ public class RuleRDFGenerator {
 	 * <br>					values and use this value to construct the URI and term "Seed" = false
 	 * <br>uri(int) - in this case the integer specifies a seed used during the 
 	 * <br>					evaluation of uri() to generate a random number and term "Seed" =true
+	 * <br>if value of var_name is "" or NULL return null; this means don't include the triple in the output
 	 * @throws UnsupportedEncodingException 
 	 */
 	protected String evaluateURI(FunctionPredicate uri, String className, Map<String,String> values)
@@ -636,19 +653,33 @@ public class RuleRDFGenerator {
 				String val = values.get(MediatorUtil.removeBacktick(varName));
 				if(val==null)
 					throw new MediatorException("The values map does not contain variable: " + varName + " Map is:" + values);
-				if(i>0){ varValue += "_"; allVarNames += "_";}
+				if(i>0 && !varValue.trim().isEmpty()) { varValue += "_"; allVarNames += "_";}
+				//System.out.println("VAL="+val);
 				if(val.equals("NULL")){
 					//create a gensym for this value
 					// in case I have more than 1 NULL in a row I have to distinguish
 					//between them, so I use the column id to generate unique gensyms
-					val = RDFUtil.gensym(uniqueId, rowId,"NULL_c" + i);
+					//12/7/2012 MariaM: per Karma-57
+					//if key is null set val to empty; if key is not part of a compound key return null
+					//and don't include this tuple
+					if(generateGensymForEmptyKey)
+						val = RDFUtil.gensym(uniqueId, rowId,"NULL_c" + i);
+					else
+						val="";
 				}
 				else if(val.trim().isEmpty()){
 					//for empty strings that are keys / I have to generate a URI I generate a gensym
 					//create a gensym for this value
 					// in case I have more than 1 empty string in a row I have to distinguish
 					//between them, so I use the column id to generate unique gensyms
-					val = RDFUtil.gensym(uniqueId, rowId,"EmptyStr_c" + i);
+					//12/7/2012 MariaM: per Karma-57
+					//if key is null set val to empty; if key is not part of a compound key return null
+					//and don't include this tuple
+					if(generateGensymForEmptyKey)
+						val = RDFUtil.gensym(uniqueId, rowId,"EmptyStr_c" + i);
+					else
+						val="";
+
 				}
 				varValue += val;
 				allVarNames += varName;
@@ -666,7 +697,7 @@ public class RuleRDFGenerator {
 				else{
 					//throw new MediatorException("Did not find equivalent class for:" + allVarNames + " in " + classes);
 					//if a class was not found probably the value of the column that defines the class is empty
-					//don't include any triples involve this class
+					//don't include any triples that involve this class
 					return null;
 				}
 			}
@@ -674,6 +705,13 @@ public class RuleRDFGenerator {
 		else{
 			//add to the classes map
 			classes.put(allVarNames,className);
+		}
+		
+		//12/7/2012 MariaM: per Karma-57
+		//if all values of vars involved in key are null, varValue will be empty
+		//don't include this tuple
+		if(varValue.isEmpty()){
+			return null;
 		}
 		
 		//set terms for this function

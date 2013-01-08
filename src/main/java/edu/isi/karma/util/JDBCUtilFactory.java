@@ -28,6 +28,8 @@ public class JDBCUtilFactory {
 			return new OracleUtil();
 		else if(dbType == AbstractJDBCUtil.DBType.SQLServer)
 			return new SQLServerUtil();
+		else if(dbType == AbstractJDBCUtil.DBType.PostGIS)
+			return new PostGISUtil();
 		else return null;
 	}
 

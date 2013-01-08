@@ -1,18 +1,14 @@
 package edu.isi.karma.webserver;
 
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.StringWriter;
+
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Enumeration;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -26,34 +22,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.http.HttpMethods;
-import org.json.JSONArray;
-import org.slf4j.LoggerFactory;
-
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
-import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
-import edu.isi.karma.controller.update.WorksheetListUpdate;
-
-
-import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.WorkspaceManager;
-import edu.isi.karma.rep.metadata.Tag;
-import edu.isi.karma.rep.metadata.TagsContainer.Color;
-import edu.isi.karma.rep.metadata.TagsContainer.TagName;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 import edu.isi.karma.er.helper.ConnectPostgis;
-import edu.isi.karma.imp.csv.CSVFileImport;
-import edu.isi.karma.linkedapi.server.GetRequestManager;
-import edu.isi.karma.linkedapi.server.ResourceType;
-
 import edu.isi.karma.service.MimeType;
-import edu.isi.karma.service.SerializationLang;
-
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 import edu.isi.karma.webserver.helper.CreateGeoBuildingForTable;
 import edu.isi.karma.webserver.helper.CreateGeoStreetForTable;
 
@@ -64,7 +36,7 @@ public class ExtractSpatialInformationServiceHandler extends HttpServlet {
 			.getLogger(LinkedApiServiceHandler.class);
 	private String url;
 	private Connection connection = null;
-	private String osmFile_path = "/tmp/GET_OPENSTREETMAP.xml";
+	private String osmFile_path ="/tmp/GET_OPENSTREETMAP.xml";
 
 
 	public void doGet(HttpServletRequest request,
@@ -116,6 +88,7 @@ public class ExtractSpatialInformationServiceHandler extends HttpServlet {
 		this.closeConnection(this.connection);
 		
 		/*Output the JSON content to Web Page*/
+		response.setCharacterEncoding("UTF8");
 		PrintWriter pw = response.getWriter();
 		response.setContentType(MimeType.APPLICATION_JSON);
 		pw.write(jsonOutput);

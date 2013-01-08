@@ -29,6 +29,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
@@ -38,8 +39,6 @@ import edu.isi.karma.util.RandomGUID;
 public class Source {
 
 	static Logger logger = Logger.getLogger(Source.class);
-
-	public static final String KARMA_SOURCE_PREFIX = "http://karma.isi.edu/sources/";
 
 	private String id;
 	private String name;
@@ -84,7 +83,7 @@ public class Source {
 	}
 	
 	public String getUri() {
-		return KARMA_SOURCE_PREFIX + getId() + "#";
+		return ModelingParams.KARMA_SOURCE_PREFIX + getId() + "#";
 	}
 	public List<Attribute> getAttributes() {
 		return Collections.unmodifiableList(attributes);
@@ -197,10 +196,19 @@ public class Source {
 				continue;
 
 			URI propertyPredicate = new URI(e.getUriString(), e.getNs(), e.getPrefix());
-
-			PropertyAtom propertyAtom = new PropertyAtom(propertyPredicate, 
-					vertexIdToArgument.get(e.getSource().getID()),
-					vertexIdToArgument.get(e.getTarget().getID()));
+			PropertyAtom propertyAtom = null;
+			
+			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source
+			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
+				URI subClassPredicate = new URI(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
+				propertyAtom = new PropertyAtom(subClassPredicate, 
+						vertexIdToArgument.get(e.getTarget().getID()),
+						vertexIdToArgument.get(e.getSource().getID()));
+			} else {
+				propertyAtom = new PropertyAtom(propertyPredicate, 
+						vertexIdToArgument.get(e.getSource().getID()),
+						vertexIdToArgument.get(e.getTarget().getID()));
+			}
 			m.getAtoms().add(propertyAtom);
 		}
 		

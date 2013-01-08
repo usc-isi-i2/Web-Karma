@@ -5,8 +5,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 
 import org.dom4j.Attribute;
@@ -36,21 +38,36 @@ public class CreateGeoBuildingForTable {
 
 	}
 
+	private <T> List<T> castList(Class<T> clazz, Collection<?> c) {
+		List<T> list = new Vector<T>(c.size());
+		for (Object object : c) {
+			list.add(clazz.cast(object));
+		}
+		return list;
+	}
+	private <T> List<T> castIterator(Class<T> clazz, Iterator<?> i) {
+		List<T> list = new Vector<T>();
+		while(i.hasNext()) {
+			list.add(clazz.cast(i.next()));
+		}
+		return list;
+	}
+	
 	public String createOpenStreetMapBuildings() {
 		CreateNodeDataForTable cnd = new CreateNodeDataForTable(
 				this.connection, this.osmFile_path);
 		cnd.createNodeDataforTable();
 
 		try {
-			rs = stmt.executeQuery("drop TABLE postgis.public.buildings_geo");
+			rs = stmt.executeQuery("drop TABLE buildings_geo");
 		} catch (SQLException ee) {
 			ee.getStackTrace();
 		}
 		try {
 			rs = stmt
-					.executeQuery("CREATE TABLE postgis.public.buildings_geo (Building_number integer PRIMARY KEY, Building_id character varying, Building_name character varying, State character varying, ele character varying, "
+					.executeQuery("CREATE TABLE buildings_geo (Building_number integer PRIMARY KEY, Building_id character varying, Building_name character varying, State character varying, ele character varying, "
 							+ "County_name character varying, UUID character varying, feature_id character varying, reviewed character varying,  Building_amenity character varying, source character varying,"
-							+ " lat double precision, lon double precision, polygon_binary geography(polygon, 4326), polygon_text character varying,  Coordinate_System character varying,SRID integer)");
+							+ " lat double precision, lon double precision, point_text character varying,polygon_binary geography(polygon, 4326), polygon_text character varying,  Coordinate_System character varying,SRID integer)");
 
 		} catch (SQLException ee) {
 			ee.getStackTrace();
@@ -64,11 +81,9 @@ public class CreateGeoBuildingForTable {
 		JSONArray arr=new JSONArray();
 		try {
 			Document document = saxReadering.read(new File(this.osmFile_path));
-			List listnode = document.selectNodes("//osm/node");
-			Iterator iter_node = listnode.iterator();
-
+			List<Element> listnode = castList(Element.class, document.selectNodes("//osm/node"));
+			Iterator<Element> iter_node = listnode.iterator();
 			while (iter_node.hasNext()) {
-				int colm_tag = 1;
 				String NodeBuilding_name = " ";
 				String NodeBuilding_state = " ";
 				String NodeBuilding_ele = " ";
@@ -79,14 +94,13 @@ public class CreateGeoBuildingForTable {
 				String NodeBuilding_source = " ";
 				String NodeBuilding_id = " ";
 				String NodeBuilding_type = "no";
-				String node_latlon = " ";
 				String NodeBuilding_amenity = " ";
 				String NodeLat = " ";
 				String NodeLon = " ";
 				Element ele_node = (Element) iter_node.next();
+				List<Attribute> ite = castIterator(Attribute.class, ele_node.attributeIterator());
 
-				for (Iterator ite = ele_node.attributeIterator(); ite.hasNext();) {
-					Attribute attribute = (Attribute) ite.next();
+				for (Attribute attribute : ite) {
 					String name = attribute.getName();
 					String value = attribute.getText();
 					if (name.equals("id")) {// get node id, latitude, longitude;
@@ -98,14 +112,12 @@ public class CreateGeoBuildingForTable {
 					}
 				}
 
-				node_latlon = NodeLon + " " + NodeLat;
-				List nodes = ele_node.elements("tag");
-				for (Iterator its = nodes.iterator(); its.hasNext();) {
-					Element elm_tag = (Element) its.next();
-					for (Iterator iters = elm_tag.attributeIterator(); iters
+				List<Element> nodes = castList(Element.class, ele_node.elements("tag"));
+				for (Element elm_tag : nodes) {					
+					List<Attribute> itList = castIterator(Attribute.class, elm_tag.attributeIterator());
+					for (Iterator<Attribute> iters = itList.iterator(); iters
 							.hasNext();) {
 						Attribute attributes = (Attribute) iters.next();
-						String name = attributes.getName();
 						String value = attributes.getText();
 						if (value.equals("building")) {
 							Attribute attribute_building = (Attribute) iters
@@ -155,7 +167,7 @@ public class CreateGeoBuildingForTable {
 						|| NodeBuilding_amenity.equals("place_of_worship")) {
 					try {
 						rs = stmt
-								.executeQuery("insert into postgis.public.buildings_geo(Building_number) values ("
+								.executeQuery("insert into buildings_geo(Building_number) values ("
 										+ ord + ")");
 					} catch (SQLException ee) {
 						ee.getStackTrace();
@@ -163,17 +175,15 @@ public class CreateGeoBuildingForTable {
 
 					try {
 						rs = stmt
-								.executeQuery("update postgis.public.buildings_geo set Building_id=\'"
+								.executeQuery("update buildings_geo set Building_id=\'"
 										+ NodeBuilding_id
-										+ "\',"
-										+ "Building_name=\'"
+										+ "\',Building_name=\'"
 										+ NodeBuilding_name
 										+ "\',State=\'"
 										+ NodeBuilding_state
 										+ "\',ele=\'"
 										+ NodeBuilding_ele
-										+ "\',"
-										+ "County_name=\'"
+										+ "\',County_name=\'"
 										+ NodeBuilding_county_name
 										+ "\',UUID=\'"
 										+ NodeBuilding_import_uuid
@@ -181,17 +191,16 @@ public class CreateGeoBuildingForTable {
 										+ NodeBuilding_feature_id
 										+ "\', source=\'"
 										+ NodeBuilding_source
-										+ "\',"
-										+ "reviewed=\'"
+										+ "\',reviewed=\'"
 										+ NodeBuilding_reviewed
 										+ "\',Building_amenity=\'"
 										+ NodeBuilding_amenity
-										+ "\',"
-										+ "lat=\'"
+										+ "\',lat=\'"
 										+ NodeLat
 										+ "\',lon=\'"
 										+ NodeLon
-										+ "\', Coordinate_System=\'"
+										+ "\', point_text=\'POINT("
+										+NodeLon+" "+NodeLat+")\', Coordinate_System=\'"
 										+ Coordinate_System
 										+ " \' , SRID=\'"
 										+ srid
@@ -201,16 +210,16 @@ public class CreateGeoBuildingForTable {
 						ee.getStackTrace();
 					}
 					try {
-						//obj.put("Building_number", ord);
 						obj.put("Building_id", NodeBuilding_id);
 						obj.put("Building_name", NodeBuilding_name);
 						obj.put("State", NodeBuilding_state);
 						obj.put("County_name", NodeBuilding_county_name);
 						obj.put("Elevation", NodeBuilding_ele);
+						obj.put("Point", "POINT("+NodeLon+" "+NodeLat+")");
 						obj.put("Latitude", NodeLat);
-						obj.put("Longitude", NodeLon);
+						obj.put("Longitude", NodeLon);						
 						obj.put("Coordinate_System", Coordinate_System);
-						obj.put("SRID", srid);
+						obj.put("srid", srid);
 						arr.put(obj);
 						obj=new JSONObject();
 					} catch (JSONException e) {
@@ -221,10 +230,8 @@ public class CreateGeoBuildingForTable {
 
 			}
 
-			List list = document.selectNodes("//osm/way");
-			Iterator iter = list.iterator();
-
-			while (iter.hasNext()) {
+			List<Element> list = castList(Element.class, document.selectNodes("//osm/way"));
+		    for (Element ele : list) {
 				String node_latlon = "";
 				String NodeBuilding_name = " ";
 				String NodeBuilding_state = " ";
@@ -237,32 +244,28 @@ public class CreateGeoBuildingForTable {
 				String NodeBuilding_id = " ";
 				String NodeBuilding_type = "no";
 				String NodeBuilding_amenity = " ";
-				Element ele = (Element) iter.next();
-
-				for (Iterator ite = ele.attributeIterator(); ite.hasNext();) {// 处理提取出的way元素的属性值；
-					Attribute attribute = (Attribute) ite.next();
+				List<Attribute> ite = castIterator(Attribute.class, ele.attributeIterator());
+				for (Attribute attribute : ite) {
 					String name = attribute.getName();
 					String value = attribute.getText();
 					if (name.equals("id")) {
 						NodeBuilding_id = value;
 					}
 				}
-
-				List nods = ele.elements("nd");
+				
 				int colm_nd = 1;
 				float lats = 0;
-				float lons = 0;
-				for (Iterator its = nods.iterator(); its.hasNext();) {
-					Element elms = (Element) its.next();
-					for (Iterator iters = elms.attributeIterator(); iters
-							.hasNext();) {
-						Attribute attribute = (Attribute) iters.next();
+				float lons = 0;	
+				List<Element> nods = castList(Element.class, ele.elements("nd"));
+				for (Element elms:nods) {
+					List<Attribute> iters = castIterator(Attribute.class, elms.attributeIterator());
+					for (Attribute attribute : iters) {
 						String name = attribute.getName();
 						String value = attribute.getText();
 						if (name.equals("ref")) {
 							try {
 								rs = stmt
-										.executeQuery("select lat,lon from postgis.public.nodestable where id=\'"
+										.executeQuery("select lat,lon from nodestable where id=\'"
 												+ value + "\';");
 								while (rs.next()) {
 									lats = rs.getFloat("lat");
@@ -283,14 +286,13 @@ public class CreateGeoBuildingForTable {
 					}
 					colm_nd = colm_nd + 1;
 				}
+				List<Element> nodes = castList(Element.class, ele.elements("tag"));
 
-				List nodes = ele.elements("tag");
-				for (Iterator its = nodes.iterator(); its.hasNext();) {
-					Element elm_tag = (Element) its.next();
-					for (Iterator iters = elm_tag.attributeIterator(); iters
+				for (Element elm_tag : nodes) {		
+					List<Attribute> itLists = castIterator(Attribute.class, elm_tag.attributeIterator());
+					for (Iterator<Attribute> iters = itLists.iterator(); iters
 							.hasNext();) {
 						Attribute attributes = (Attribute) iters.next();
-						String name = attributes.getName();
 						String value = attributes.getText();
 						if (value.equals("building")) {
 							Attribute attribute_building = (Attribute) iters
@@ -340,7 +342,7 @@ public class CreateGeoBuildingForTable {
 				if (NodeBuilding_type.equals("yes")) {
 					try {
 						rs = stmt
-								.executeQuery("insert into postgis.public.buildings_geo(Building_number) values ("
+								.executeQuery("insert into buildings_geo(Building_number) values ("
 										+ ord + ")");
 					} catch (SQLException ee) {
 						ee.getStackTrace();
@@ -349,7 +351,7 @@ public class CreateGeoBuildingForTable {
 					try {
 						System.out.println("Building Name is:"+NodeBuilding_name);
 						rs = stmt
-								.executeQuery("update postgis.public.buildings_geo set Building_id=\'"
+								.executeQuery("update buildings_geo set Building_id=\'"
 										+ NodeBuilding_id
 										+ "\',"
 										+ "Building_name=\'"
@@ -385,26 +387,26 @@ public class CreateGeoBuildingForTable {
 
 					try {
 						rs = stmt
-								.executeQuery("update postgis.public.buildings_geo set polygon_binary=ST_GeographyFromText(\'SRID=4326; polygon(("
+								.executeQuery("update buildings_geo set polygon_binary=ST_GeographyFromText(\'SRID=4326; POLYGON(("
 										+ node_latlon
-										+ "))\') , polygon_text=\'"
+										+ "))\') , polygon_text=\' POLYGON(("
 										+ node_latlon
-										+ " \'   where Building_number=" + ord);
+										+ " ))  \' where Building_number=" + ord);			
+										
 					} catch (SQLException ee) {
 						ee.getStackTrace();
 					}
 					
 					
 					try {
-						//obj.put("Building_number", ord);
 						obj.put("Building_id", NodeBuilding_id);
 						obj.put("Building_name", NodeBuilding_name);
 						obj.put("State", NodeBuilding_state);
 						obj.put("County_name", NodeBuilding_county_name);
 						obj.put("Elevation", NodeBuilding_ele);
-						obj.put("Polygon", node_latlon);
+						obj.put("Polygon", "POLYGON(("+ node_latlon+ "))");
 						obj.put("Coordinate_System", Coordinate_System);
-						obj.put("SRID", srid);
+						obj.put("srid", srid);
 						arr.put(obj);
 						obj=new JSONObject();
 					} catch (JSONException e) {
@@ -417,7 +419,7 @@ public class CreateGeoBuildingForTable {
 
 			try {
 				rs = stmt
-						.executeQuery("	Copy (Select * From postgis.public.buildings_geo) To '/tmp/buildings_geo.csv' CSV HEADER;");
+						.executeQuery("	Copy (Select * From buildings_geo) To '/tmp/buildings_geo.csv' CSV HEADER;");
 			} catch (SQLException ee) {
 				ee.getStackTrace();
 			}

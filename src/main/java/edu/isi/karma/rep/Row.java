@@ -51,6 +51,17 @@ public class Row extends RepEntity {
 		return nodes.get(hNodeId);
 	}
 
+	//mariam
+	public void removeNode(String hNodeId) {
+		nodes.remove(hNodeId);
+		for (Node n : nodes.values()) {
+			Table nestedTable = n.getNestedTable();
+			if (nestedTable != null) {
+				nestedTable.removeNodeFromDataTable(hNodeId);
+			}
+		}
+	}
+
 	public Collection<Node> getNodes() {
 		return nodes.values();
 	}

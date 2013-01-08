@@ -4,8 +4,8 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
+import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.service.SerializationLang;
-import edu.isi.karma.service.Service;
 
 public class LinkedApiRequestManager {
 
@@ -20,7 +20,7 @@ public class LinkedApiRequestManager {
 			String returnType,
 			HttpServletResponse response) {
 		this.serviceId = serviceId;
-		this.serviceUri = Service.KARMA_SERVICE_PREFIX + serviceId + (!serviceId.endsWith("#")?"#":""); 
+		this.serviceUri = ModelingParams.KARMA_SERVICE_PREFIX + serviceId + (!serviceId.endsWith("#")?"#":""); 
 		this.resourceType = resourceType;
 		this.format = returnType;
 		this.response = response;

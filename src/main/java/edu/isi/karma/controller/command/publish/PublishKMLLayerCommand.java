@@ -24,11 +24,13 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.geospatial.WorksheetGeospatialContent;
+import edu.isi.karma.geospatial.WorksheetToFeatureCollections;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
+import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.view.VWorkspace;
 
 public class PublishKMLLayerCommand extends Command {
@@ -83,7 +85,9 @@ public class PublishKMLLayerCommand extends Command {
 					.getCrfModelHandler(), ws.getOntologyManager());
 		}
 
-		WorksheetGeospatialContent geo = new WorksheetGeospatialContent(worksheet);
+		OntologyManager om= ws.getOntologyManager();
+		WorksheetToFeatureCollections geo = new WorksheetToFeatureCollections(worksheet,om);//ying
+		//WorksheetToFeatureCollections geo = new WorksheetToFeatureCollections(worksheet);
 		// Send an error update if no geospatial data found!
 		if (geo.hasNoGeospatialData()) {
 			return new UpdateContainer(new ErrorUpdate(
@@ -91,9 +95,11 @@ public class PublishKMLLayerCommand extends Command {
 		}
 
 		try {
-			final File file = geo.publishKML();
+			final File file = geo.SaveSpatialData();
+			final String zippedSpatialDataPath = geo.getZippedSpatialDataPath();
 			// Transfer the file to a public server
-			final boolean transfer = transferFileToPublicServer(file);
+			final String kmlFileName = new RandomGUID().toString();
+			final boolean transfer = transferFileToPublicServer(kmlFileName,file);
 			if (!transfer) {
 				logger.error("Published KML file could not be moved to a public server to display on Google Maps!");
 			}
@@ -107,11 +113,11 @@ public class PublishKMLLayerCommand extends Command {
 						outputObject.put(JsonKeys.updateType.name(),
 								"PublishKMLUpdate");
 						outputObject.put(JsonKeys.fileName.name(),
-								publicKMLAddress + file.getName());
+								publicKMLAddress + kmlFileName+".kml");
 						outputObject.put(JsonKeys.transferSuccessful.name(),
 								transfer);
 						outputObject.put(JsonKeys.localFileName.name(),
-								"KML/" + file.getName());
+								"publish/SpatialData/" + zippedSpatialDataPath);
 						pw.println(outputObject.toString(4));
 					} catch (JSONException e) {
 						logger.error("Error occured while generating JSON!");
@@ -122,11 +128,17 @@ public class PublishKMLLayerCommand extends Command {
 			logger.error("KML File not found!", e);
 			return new UpdateContainer(new ErrorUpdate(
 					"Error occurred while publishing KML layer!"));
+		} catch (Exception shapfileException) {
+			// TODO Auto-generated catch block
+			shapfileException.printStackTrace();
+			return new UpdateContainer(new ErrorUpdate(
+					"Error occurred while saving Shapefile!"));
 		}
+		
 	}
 
 	@SuppressWarnings("deprecation")
-	private boolean transferFileToPublicServer(File file) {
+	private boolean transferFileToPublicServer(String kmlFileName,File file) {
 		try {
 			logger.info("Starting transfer of the published KML file to a public server to view it on Google Maps ...");
 			HttpURLConnection conn = null;
@@ -159,7 +171,7 @@ public class PublishKMLLayerCommand extends Command {
 			dos = new DataOutputStream(conn.getOutputStream());
 			dos.writeBytes(twoHyphens + boundary + lineEnd);
 			dos.writeBytes("Content-Disposition: form-data; name=\"upload\";"
-					+ " filename=\"" + file.getName() + "\"" + lineEnd);
+					+ " filename=\"" + kmlFileName + ".kml\"" + lineEnd);
 			dos.writeBytes(lineEnd);
 
 			// Creating a buffer of maximum size

@@ -762,6 +762,16 @@ function parse(data) {
 				});
 			});
 		}
+		else if(element["updateType"] == "PublishCSVUpdate") {
+			$("a.CSVDownloadLink", titleDiv).remove();
+			console.log("test");
+			var titleDiv = $("div#" + element["vWorksheetId"] +" div.WorksheetTitleDiv");
+			// Remove existing link if any
+			hideLoading(element["vWorksheetId"]);
+			var downloadLink = $("<a>").attr("href",element["fileUrl"]).text("CSV").addClass("CSVDownloadLink  DownloadLink").attr("target","_blank");
+			$("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+			$.sticky("CSV file published");
+		}
 		
 		else if(element["updateType"] == "PublishRDFUpdate") {
 			var titleDiv = $("div#" + element["vWorksheetId"] +" div.WorksheetTitleDiv");

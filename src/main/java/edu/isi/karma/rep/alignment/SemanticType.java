@@ -36,7 +36,7 @@ public class SemanticType implements Jsonizable  {
 	
 
 	public enum Origin {
-		User, CRFModel
+		AutoModel, User, CRFModel
 	}
 
 	public enum ConfidenceLevel {

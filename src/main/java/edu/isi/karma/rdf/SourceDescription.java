@@ -258,6 +258,9 @@ public class SourceDescription {
 	 */
 	private void generateSourceDescription(Node v, StringBuffer s) throws KarmaException{
 		//System.out.println("Generate SD for node:" + v.getUri() + " type:" + v.getNodeType());
+		if(v==null){
+			throw new KarmaException("Align source before generating SourceDescription.");
+		}
 		if(v.getNodeType()==NodeType.Class){
 			String stmt = generateClassStatement(v);
 			if(s.length()!=0) s.append(" ^ ");
@@ -403,7 +406,8 @@ public class SourceDescription {
 		String propertyName = getPrefix(e.getPrefix(), e.getNs()) + ":" + e.getLocalLabel();
 
 		String s = "`" + propertyName + "`(uri(" + key1 + "),uri(" + key2 + "))";
-		s += addInverseProperty(e.getUriString(), key1,key2);
+		if(generateInverse)
+			s += addInverseProperty(e.getUriString(), key1,key2);
 		
 		if(e.isInverse()){
 			//propertyName = TableRDFGenerator.inverseProperty + propertyName;

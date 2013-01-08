@@ -95,12 +95,6 @@ public class OntologyManager {
 		try {
 			InputStream s = new FileInputStream(sourceFile);
 			ontModel.read(s, null);
-			
-			// Store the new namespaces information in the namespace map maintained in OntologyGraphManager
-//			String baseNS = m.getNsPrefixURI("");
-//			m.setNsPrefix("dv" + ontologyNSIndex++, baseNS);	
-			
-			//System.out.println("Prefix map:" + ontologyModel.getNsPrefixMap());
 		} catch (Throwable t) {
 			logger.error("Error reading the OWL ontology file!", t);
 			return false;
@@ -111,7 +105,38 @@ public class OntologyManager {
 		logger.debug("done.");
 		return true;
 	}
+	
+	public boolean doImportWithoutCacheUpdate(File sourceFile) {
 
+		if (sourceFile == null) {
+			logger.debug("input file is null.");
+			return false;
+		}
+		
+		logger.debug("Importing " + sourceFile.getName() + " OWL Ontology ...");
+
+		if(!sourceFile.exists()){
+			logger.error("file does not exist  " + sourceFile.getAbsolutePath());
+			return false;
+		}
+		
+		try {
+			InputStream s = new FileInputStream(sourceFile);
+			ontModel.read(s, null);
+		} catch (Throwable t) {
+			logger.error("Error reading the OWL ontology file!", t);
+			return false;
+		}
+		
+		/* Record the operation */
+		logger.debug("done.");
+		return true;
+	}
+	
+	public void initCache() {
+		ontCache.init(this);
+	}
+	
 	public URI getURIFromString(String uri) {
 		Resource r = ontModel.getResource(uri);
 		if (r == null || !ontModel.containsResource(r)) {
@@ -122,7 +147,16 @@ public class OntologyManager {
 		if (ns != null && ns.trim().length() == 0) ns = null;
 		String prefix = ontModel.getNsURIPrefix(r.getNameSpace());
 		if (prefix != null && prefix.trim().length() == 0) prefix = null;
-		return new URI(r.getURI(), ns, prefix);
+		
+		OntResource ontR = null;
+		try { ontR = (OntResource)r;} catch(Exception e) {}
+		if (ontR == null)
+			return new URI(r.getURI(), ns, prefix);
+		
+		String rdfsLabel = ontR.getLabel(null);
+		String rdfsComment = ontR.getComment(null);
+		
+		return new URI(r.getURI(), ns, prefix, rdfsLabel, rdfsComment);
 	}
 	
 	public boolean isClass(String label) {
@@ -308,7 +342,7 @@ public class OntologyManager {
                 if (subP.isURIResource()) {
                 	resources.add(subP);
                 	if (recursive)
-                		getParents(subP, resources, recursive);
+                		getChildren(subP, resources, recursive);
                 }
 //                else {
 //            		List<OntResource> members = new ArrayList<OntResource>();
@@ -376,6 +410,13 @@ public class OntologyManager {
 	 */
 	public boolean isSuperClass(String superClassUri, String subClassUri, boolean recursive) {
 		
+		if (!recursive) {
+			if (ontCache.getSubClassMap().containsKey(subClassUri + superClassUri))
+				return true;
+			else
+				return false;
+		}
+		
 		List<String> superClasses = getSuperClasses(subClassUri, recursive);
 		for (int i = 0; i < superClasses.size(); i++) {
 			if (superClassUri.equalsIgnoreCase(superClasses.get(i))) {
@@ -395,6 +436,13 @@ public class OntologyManager {
 	 * @return
 	 */
 	public boolean isSubClass(String subClassUri, String superClassUri, boolean recursive) {
+		
+		if (!recursive) {
+			if (ontCache.getSubClassMap().containsKey(subClassUri + superClassUri))
+				return true;
+			else
+				return false;
+		}
 		
 		List<String> subClasses = getSubClasses(superClassUri, recursive);
 		for (int i = 0; i < subClasses.size(); i++) {
@@ -436,6 +484,65 @@ public class OntologyManager {
 		return getResourcesURIs(resources);
 	}
 
+	
+
+	
+	
+	
+	/**
+	 * If @param superPropertyUri is a superProperty of @param subPropertyUri, it returns true; otherwise, false.
+	 * If third parameter is set to true, it also considers indirect superproperties.
+	 * @param superPropertyUri
+	 * @param subPropertyUri
+	 * @param recursive
+	 * @return
+	 */
+	public boolean isSuperProperty(String superPropertyUri, String subPropertyUri, boolean recursive) {
+		
+		if (!recursive) {
+			if (ontCache.getSubPropertyMap().containsKey(subPropertyUri + superPropertyUri))
+				return true;
+			else
+				return false;
+		}
+		
+		List<String> superProperties = getSuperProperties(subPropertyUri, recursive);
+		for (int i = 0; i < superProperties.size(); i++) {
+			if (superPropertyUri.equalsIgnoreCase(superProperties.get(i))) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * If @param subPropertyUri is a subProperty of @param superPropertyUri, it returns true; otherwise, false.
+	 * If third parameter is set to true, it also considers indirect subproperties.
+	 * @param subPropertyUri
+	 * @param superClassUri
+	 * @param recursive
+	 * @return
+	 */
+	public boolean isSubProperty(String subPropertyUri, String superPropertyUri, boolean recursive) {
+		
+		if (!recursive) {
+			if (ontCache.getSubPropertyMap().containsKey(subPropertyUri + superPropertyUri))
+				return true;
+			else
+				return false;
+		}
+		
+		List<String> subProperties = getSubProperties(superPropertyUri, recursive);
+		for (int i = 0; i < subProperties.size(); i++) {
+			if (subPropertyUri.equalsIgnoreCase(subProperties.get(i))) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * returns URIs of all sub-properties of @param propertyUri
 	 * @param propertyUri
