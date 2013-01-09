@@ -25,11 +25,10 @@ import org.apache.log4j.Logger;
 
 import edu.isi.karma.er.helper.ConnectPostgis;
 import edu.isi.karma.service.MimeType;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 import edu.isi.karma.webserver.helper.CreateGeoBuildingForTable;
 import edu.isi.karma.webserver.helper.CreateGeoStreetForTable;
 
-public class ExtractSpatialInformationServiceHandler extends HttpServlet {
+public class ExtractSpatialInformationFromOSMServiceHandler extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private static Logger logger = Logger
@@ -55,7 +54,7 @@ public class ExtractSpatialInformationServiceHandler extends HttpServlet {
 		String type = request.getParameter("type");
 
 		String url = "bbox=" + minLon+","+minLat+","+maxLon+","+maxLat;
-		
+		System.out.println("url="+url);
 		try {
 			System.out
 					.println("Please Wait for extracting information from Web Site...");
