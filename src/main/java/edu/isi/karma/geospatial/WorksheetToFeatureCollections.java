@@ -187,7 +187,25 @@ public class WorksheetToFeatureCollections {
 					&& pointFeatureLatHNodeId == "") {
 				spatialHNodeIds.add(0, type.getHNodeId());
 				pointFeatureLatHNodeId = type.getHNodeId();
-			} else if (type.getType().getUriString().equals(WGS84_LNG_PROPERTY)
+			}  else if (isSubPropertyOf(
+					type.getType().getUriString().toString(),
+					"http://www.w3.org/2003/01/geo/wgs84_pos#lat", true)
+					&& isSubClassOf(type.getDomain().getUriString().toString(),
+							POINT_CLASS, true) && pointFeatureLatHNodeId == "") {
+				System.out.println("WGS84_LAT_PROPERTY:"
+						+ type.getType().getUriString().toString());
+				spatialHNodeIds.add(0, type.getHNodeId());
+				pointFeatureLatHNodeId = type.getHNodeId();
+			}else if (isSubPropertyOf(
+					type.getType().getUriString().toString(),
+					"http://www.w3.org/2003/01/geo/wgs84_pos#long", true)
+					&& isSubClassOf(type.getDomain().getUriString().toString(),
+							POINT_CLASS, true) && pointFeatureLonHNodeId == "") {
+				System.out.println("WGS84_LNG_PROPERTY:"
+						+ type.getType().getUriString().toString());
+				spatialHNodeIds.add(0, type.getHNodeId());
+				pointFeatureLonHNodeId = type.getHNodeId();
+			}else if (type.getType().getUriString().equals(WGS84_LNG_PROPERTY)
 					&& type.getDomain().getUriString().equals(POINT_CLASS)
 					&& pointFeatureLonHNodeId == "") {
 				spatialHNodeIds.add(0, type.getHNodeId());
