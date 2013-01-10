@@ -512,4 +512,8 @@ public class Alignment {
 	public void changeLinkStatus(String linkId, LinkStatus status) {
 		
 	}
+	
+	public List<Node> getAllGraphNodes() {
+		return null;
+	}
 }

@@ -23,7 +23,7 @@ package edu.isi.karma.modeling.ontology;
 
 import java.util.List;
 
-import edu.isi.karma.modeling.alignment.URI;
+import edu.isi.karma.rep.alignment.URI;
 
 public class OntologyTreeNode {
 	// should change the location of URI class to package karma.modeling 

@@ -30,8 +30,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.ontology.OntologyTreeNode;
+import edu.isi.karma.rep.alignment.URI;
 import edu.isi.karma.view.VWorkspace;
 
 public class OntologyHierarchyUpdate extends AbstractUpdate {

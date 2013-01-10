@@ -31,7 +31,7 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
-import edu.isi.karma.modeling.alignment.URI;
+import edu.isi.karma.rep.alignment.URI;
 
 public class OntologyCache {
 	

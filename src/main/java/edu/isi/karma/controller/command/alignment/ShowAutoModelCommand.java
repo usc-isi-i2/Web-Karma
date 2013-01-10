@@ -39,8 +39,8 @@ import edu.isi.karma.modeling.alignment.AlignToOntology;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.semantictypes.SemanticType;
-import edu.isi.karma.rep.semantictypes.SemanticTypes;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.view.VWorkspace;
 
 public class ShowAutoModelCommand extends WorksheetCommand {

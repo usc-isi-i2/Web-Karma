@@ -27,6 +27,7 @@ public abstract class Node {
 
 	protected String id;
 	private NodeType nodeType;
+	private URI uri;
 	
 	public Node(String id, NodeType nodeType) {
 		this.id = id;
