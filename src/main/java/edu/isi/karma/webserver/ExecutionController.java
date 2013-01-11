@@ -85,6 +85,8 @@ import edu.isi.karma.controller.command.alignment.GetPropertiesAndClassesList;
 import edu.isi.karma.controller.command.alignment.GetPropertiesAndClassesListCommandFactory;
 import edu.isi.karma.controller.command.alignment.ResetModelCommand;
 import edu.isi.karma.controller.command.alignment.ResetModelCommandFactory;
+import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommand;
+import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommandFactory;
 import edu.isi.karma.controller.command.alignment.ShowAutoModelCommand;
@@ -221,6 +223,8 @@ public class ExecutionController {
 				new ApplyWorksheetHistoryCommandFactory());
 		commandFactoryMap.put(PublishCSVCommand.class.getSimpleName(),
 				new PublishCSVCommandFactory());
+		commandFactoryMap.put(SetMetaPropertyCommand.class.getSimpleName(),
+				new SetMetaPropertyCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

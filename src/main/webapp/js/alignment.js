@@ -796,22 +796,24 @@ function submitSemanticTypeChange() {
 	});
 	
 	if (isMetaPropertyChecked) {
-		info["isMetaPropertyUsed"] = true;
 		info["metaPropertyName"] = $("div#semanticTypingAdvacedOptionsDiv input:checkbox[checked=true]").attr("id");
 		// Get the value from the input text box
 		var propValue = $("div#semanticTypingAdvacedOptionsDiv input:checkbox[checked=true]").parents("tr").find("input:text").val();
 		info["metaPropertyValue"] = propValue;
+		info["command"] = "SetMetaPropertyCommand";
 	} else {
-		info["isMetaPropertyUsed"] = false;
 		// Get the JSON Array that captures all the currently selected semantic types
 		var semTypesArray = getCurrentSelectedTypes();
 		if(semTypesArray == null)
 		    return false;
 		info["SemanticTypesArray"] = JSON.stringify(semTypesArray);
+		if(semTypesArray.length == 0)
+		    info["command"] = "UnassignSemanticTypeCommand";
+	    else
+	        info["command"] = "SetSemanticTypeCommand";
 	}
 	
 	
-	/*
 	var info = new Object();
 	var hNodeId = optionsDiv.data("currentNodeId");
 	info["vWorksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
@@ -828,10 +830,7 @@ function submitSemanticTypeChange() {
 	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
 	info["newInfo"] = JSON.stringify(newInfo);
 	
-	if(semTypesArray.length == 0)
-	    info["command"] = "UnassignSemanticTypeCommand";
-    else
-        info["command"] = "SetSemanticTypeCommand";
+	
 	
 	showLoading(info["vWorksheetId"]);
 	var returned = $.ajax({
@@ -854,7 +853,6 @@ function submitSemanticTypeChange() {
 	});
 	
 	optionsDiv.dialog("close");
-	*/
 }
 
 function showAlternativeParents(event) {
