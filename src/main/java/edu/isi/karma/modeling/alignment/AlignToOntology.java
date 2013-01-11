@@ -115,7 +115,7 @@ public class AlignToOntology {
 		*/
 		// Debug
 		DirectedWeightedMultigraph<Node, Link> tree = alignment.getSteinerTree();
-		GraphUtil.printGraph(tree);
+//		GraphUtil.printGraph(tree);
 		
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 		c.add(svgUpdate);

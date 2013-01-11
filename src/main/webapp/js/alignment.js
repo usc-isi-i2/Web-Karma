@@ -85,6 +85,20 @@ function attachOntologyOptionsRadioButtonHandlers() {
     $("button#semanticTypingAdvancedOptions").button().click(function(){
     	$("div#semanticTypingAdvacedOptionsDiv").show();
     });
+    
+    $("div#semanticTypingAdvacedOptionsDiv input:checkbox").change(semanticTypesAdvancedOptionsHandler);
+}
+
+function semanticTypesAdvancedOptionsHandler() {
+	// Deselect all the existing semantic types
+	var semTypesTable = $("table#currentSemanticTypesTable");
+	$.each($("tr.selected.semTypeRow",semTypesTable), function(index, row){
+		$(this).removeClass('selected');
+		$("input[name='currentSemanticTypeCheckBoxGroup']:checkbox", $(this)).prop('checked', false);
+		$("input[name='isPrimaryGroup']:radio", $(this)).prop('checked',false);
+	});
+	
+	$("div#semanticTypingAdvacedOptionsDiv input:checkbox").not($(this)).prop('checked', false);
 }
 
 function handleDataPropertyFilter() {
@@ -680,6 +694,9 @@ function semanticTypesTableCheckBoxHandler() {
     var parentTr = $(this).parents("tr");
     var table = $("table#currentSemanticTypesTable");
     
+    // Deselect any meta property checkbox
+    $("div#semanticTypingAdvacedOptionsDiv input:checkbox").prop('checked', false);
+    
     // If it was checked
     if($(this).is(':checked')) {
         parentTr.addClass("selected");
@@ -762,11 +779,39 @@ function getParamObject(name, value, type) {
 function submitSemanticTypeChange() {
 	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
 	
-	// Get the JSON Array that captures all the currently selected semantic types
-	var semTypesArray = getCurrentSelectedTypes();
-	if(semTypesArray == null)
-	   return false;
+	/** Prepare the JSON object **/
+	var info = new Object();
+	var hNodeId = optionsDiv.data("currentNodeId");
+	info["vWorksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
+	info["hNodeId"] = hNodeId;
+	info["isKey"] = $("input#chooseClassKey").is(":checked");
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	
+	// Check if any meta property (advanced options) was selected
+	var isMetaPropertyChecked = false;
+	$.each($("div#semanticTypingAdvacedOptionsDiv input:checkbox"), function(index, property) {
+		if($(property).prop("checked")) {
+			isMetaPropertyChecked = true;
+		}
+	});
+	
+	if (isMetaPropertyChecked) {
+		info["isMetaPropertyUsed"] = true;
+		info["metaPropertyName"] = $("div#semanticTypingAdvacedOptionsDiv input:checkbox[checked=true]").attr("id");
+		// Get the value from the input text box
+		var propValue = $("div#semanticTypingAdvacedOptionsDiv input:checkbox[checked=true]").parents("tr").find("input:text").val();
+		info["metaPropertyValue"] = propValue;
+	} else {
+		info["isMetaPropertyUsed"] = false;
+		// Get the JSON Array that captures all the currently selected semantic types
+		var semTypesArray = getCurrentSelectedTypes();
+		if(semTypesArray == null)
+		    return false;
+		info["SemanticTypesArray"] = JSON.stringify(semTypesArray);
+	}
+	
+	
+	/*
 	var info = new Object();
 	var hNodeId = optionsDiv.data("currentNodeId");
 	info["vWorksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
@@ -809,6 +854,7 @@ function submitSemanticTypeChange() {
 	});
 	
 	optionsDiv.dialog("close");
+	*/
 }
 
 function showAlternativeParents(event) {

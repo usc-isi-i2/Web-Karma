@@ -34,7 +34,9 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 			.getLogger(SVGAlignmentUpdate_ForceKarmaLayout.class);
 
 	private enum JsonKeys {
-		worksheetId, alignmentId, label, id, hNodeId, nodeType, source, target, linkType, sourceNodeId, targetNodeId, height, hNodesCovered, nodes, links, maxTreeHeight, linkStatus
+		worksheetId, alignmentId, label, id, hNodeId, nodeType, source,
+		target, linkType, sourceNodeId, targetNodeId, height, hNodesCovered,
+		nodes, links, maxTreeHeight, linkStatus
 	}
 
 	private enum JsonValues {
@@ -76,105 +78,105 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 			
 			if (tree != null && tree.vertexSet().size() != 0) {
 				
-				/*** Add the nodes ***/
-				Set<Node> vertices = tree.vertexSet();
-				HashMap<Node, Integer> verticesIndex = new HashMap<Node, Integer>();
-				int nodesIndexcounter = 0;
-				
-				for (Node vertex : vertices) {
-					JSONObject vertObj = new JSONObject();
-					vertObj.put(JsonKeys.label.name(), vertex.getLocalID());
-					vertObj.put(JsonKeys.id.name(), vertex.getID());
-					vertObj.put(JsonKeys.nodeType.name(), vertex.getNodeType().name());
-					
-					List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
-//					int height = getHeight(vertex, nodesWithSemTypesCovered, treeClone);
-					int height = getHeight(vertex, nodesWithSemTypesCovered, tree);
-					if(height >= maxTreeHeight) {
-						maxTreeHeight = height;
-					}
-						
-					vertObj.put(JsonKeys.height.name(), height);
-					JSONArray hNodeIdsCoveredByVertex = new JSONArray();
-					for(Node v : nodesWithSemTypesCovered)
-						hNodeIdsCoveredByVertex.put(v.getSemanticType().getHNodeId());
-					vertObj.put(JsonKeys.hNodesCovered.name(), hNodeIdsCoveredByVertex);
-					
-					// Add the semantic type information if required.
-					if(vertex.getSemanticType() != null) {
-						SemanticType type = vertex.getSemanticType();
-						vertObj.put(JsonKeys.hNodeId.name(), type.getHNodeId());
-						hNodeIdsAdded.add(type.getHNodeId());
-						
-						if (vertex.getNodeType() == NodeType.Class) {
-							if(type.isPartOfKey()) {
-								vertObj.put(JsonKeys.label.name(), vertex.getLocalID() + "*");
-							}
-							
-							// Add the holder vertex object and the link that attaches nodes to the columns
-							JSONObject vertObj_holder = new JSONObject();
-							vertObj_holder.put(JsonKeys.label.name(), JsonValues.key.name());
-							vertObj_holder.put(JsonKeys.id.name(), vertex.getID()+"_holder");
-							vertObj_holder.put(JsonKeys.nodeType.name(), NodeType.DataProperty.name());
-							vertObj_holder.put(JsonKeys.hNodeId.name(), type.getHNodeId());
-							
-							JSONArray hNodeIdsCoveredByVertex_holder = new JSONArray();
-							hNodeIdsCoveredByVertex_holder.put(vertex.getSemanticType().getHNodeId());
-							vertObj_holder.put(JsonKeys.hNodesCovered.name(), hNodeIdsCoveredByVertex_holder);
-							vertObj_holder.put(JsonKeys.height.name(), 0);
-							vertArr.put(vertObj_holder);
-							
-							nodesIndexcounter++;
-							
-							// Add the holder link
-							JSONObject linkObj = new JSONObject();
-							linkObj.put(JsonKeys.source.name(), nodesIndexcounter);
-							linkObj.put(JsonKeys.target.name(), nodesIndexcounter-1);
-							linkObj.put(JsonKeys.label.name(), JsonValues.key.name());
-							linkObj.put(JsonKeys.id.name(), "");
-							linksArr.put(linkObj);
-						}
-					}
-					
-					vertArr.put(vertObj);
-					verticesIndex.put(vertex, nodesIndexcounter++);
-				}
-				
-				/*** Add the links ***/
-				Set<Link> edges = tree.edgeSet();
-				for (Link edge : edges) {
-					Node source = edge.getSource();
-					Integer sourceIndex = verticesIndex.get(source);
-					Node target = edge.getTarget();
-					Integer targetIndex = verticesIndex.get(target);
-					Set<Link> outEdges = tree.outgoingEdgesOf(target);
-					
-					if(sourceIndex == null || targetIndex == null) {
-						logger.error("Edge vertex index not found!");
-						continue;
-					}
-					
-					JSONObject linkObj = new JSONObject();
-					linkObj.put(JsonKeys.source.name(), sourceIndex);
-					linkObj.put(JsonKeys.target.name(), targetIndex);
-					linkObj.put(JsonKeys.sourceNodeId.name(), source.getID());
-					linkObj.put(JsonKeys.targetNodeId.name(), target.getID());
-					linkObj.put(JsonKeys.label.name(), edge.getLocalLabel());
-					linkObj.put(JsonKeys.id.name(), edge.getID()+"");
-					linkObj.put(JsonKeys.linkStatus.name(), edge.getLinkStatus().name());
-					
-					if(target.getSemanticType() != null && outEdges.isEmpty()) {
-						linkObj.put(JsonKeys.linkType.name(), JsonValues.holderLink.name());
-						if(target.getSemanticType().isPartOfKey())
-							linkObj.put(JsonKeys.label.name(), edge.getLocalLabel()+"*");
-					}
-						
-					linksArr.put(linkObj);
-					
-					if(source.getNodeType() == NodeType.Class && target.getNodeType() == NodeType.Class) {
-						linkObj.put(JsonKeys.linkType.name(), JsonValues.objPropertyLink.name());
-					}
-				}
+//				/*** Add the nodes ***/
+//				Set<Node> vertices = tree.vertexSet();
+//				HashMap<Node, Integer> verticesIndex = new HashMap<Node, Integer>();
+//				int nodesIndexcounter = 0;
+//				
+//				for (Node vertex : vertices) {
+//					JSONObject vertObj = new JSONObject();
+//					vertObj.put(JsonKeys.label.name(), vertex.getLocalID());
+//					vertObj.put(JsonKeys.id.name(), vertex.getID());
+//					vertObj.put(JsonKeys.nodeType.name(), vertex.getNodeType().name());
+//					
+//					List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
+////					int height = getHeight(vertex, nodesWithSemTypesCovered, treeClone);
+//					int height = getHeight(vertex, nodesWithSemTypesCovered, tree);
+//					if(height >= maxTreeHeight) {
+//						maxTreeHeight = height;
+//					}
+//						
+//					vertObj.put(JsonKeys.height.name(), height);
+//					JSONArray hNodeIdsCoveredByVertex = new JSONArray();
+//					for(Node v : nodesWithSemTypesCovered)
+//						hNodeIdsCoveredByVertex.put(v.getSemanticType().getHNodeId());
+//					vertObj.put(JsonKeys.hNodesCovered.name(), hNodeIdsCoveredByVertex);
+//					
+//					// Add the semantic type information if required.
+//					if(vertex.getSemanticType() != null) {
+//						SemanticType type = vertex.getSemanticType();
+//						vertObj.put(JsonKeys.hNodeId.name(), type.getHNodeId());
+//						hNodeIdsAdded.add(type.getHNodeId());
+//						
+//						if (vertex.getNodeType() == NodeType.Class) {
+//							if(type.isPartOfKey()) {
+//								vertObj.put(JsonKeys.label.name(), vertex.getLocalID() + "*");
+//							}
+//							
+//							// Add the holder vertex object and the link that attaches nodes to the columns
+//							JSONObject vertObj_holder = new JSONObject();
+//							vertObj_holder.put(JsonKeys.label.name(), JsonValues.key.name());
+//							vertObj_holder.put(JsonKeys.id.name(), vertex.getID()+"_holder");
+//							vertObj_holder.put(JsonKeys.nodeType.name(), NodeType.DataProperty.name());
+//							vertObj_holder.put(JsonKeys.hNodeId.name(), type.getHNodeId());
+//							
+//							JSONArray hNodeIdsCoveredByVertex_holder = new JSONArray();
+//							hNodeIdsCoveredByVertex_holder.put(vertex.getSemanticType().getHNodeId());
+//							vertObj_holder.put(JsonKeys.hNodesCovered.name(), hNodeIdsCoveredByVertex_holder);
+//							vertObj_holder.put(JsonKeys.height.name(), 0);
+//							vertArr.put(vertObj_holder);
+//							
+//							nodesIndexcounter++;
+//							
+//							// Add the holder link
+//							JSONObject linkObj = new JSONObject();
+//							linkObj.put(JsonKeys.source.name(), nodesIndexcounter);
+//							linkObj.put(JsonKeys.target.name(), nodesIndexcounter-1);
+//							linkObj.put(JsonKeys.label.name(), JsonValues.key.name());
+//							linkObj.put(JsonKeys.id.name(), "");
+//							linksArr.put(linkObj);
+//						}
+//					}
+//					
+//					vertArr.put(vertObj);
+//					verticesIndex.put(vertex, nodesIndexcounter++);
+//				}
+//				
+//				/*** Add the links ***/
+//				Set<Link> edges = tree.edgeSet();
+//				for (Link edge : edges) {
+//					Node source = edge.getSource();
+//					Integer sourceIndex = verticesIndex.get(source);
+//					Node target = edge.getTarget();
+//					Integer targetIndex = verticesIndex.get(target);
+//					Set<Link> outEdges = tree.outgoingEdgesOf(target);
+//					
+//					if(sourceIndex == null || targetIndex == null) {
+//						logger.error("Edge vertex index not found!");
+//						continue;
+//					}
+//					
+//					JSONObject linkObj = new JSONObject();
+//					linkObj.put(JsonKeys.source.name(), sourceIndex);
+//					linkObj.put(JsonKeys.target.name(), targetIndex);
+//					linkObj.put(JsonKeys.sourceNodeId.name(), source.getID());
+//					linkObj.put(JsonKeys.targetNodeId.name(), target.getID());
+//					linkObj.put(JsonKeys.label.name(), edge.getLocalLabel());
+//					linkObj.put(JsonKeys.id.name(), edge.getID()+"");
+//					linkObj.put(JsonKeys.linkStatus.name(), edge.getLinkStatus().name());
+//					
+//					if(target.getSemanticType() != null && outEdges.isEmpty()) {
+//						linkObj.put(JsonKeys.linkType.name(), JsonValues.holderLink.name());
+//						if(target.getSemanticType().isPartOfKey())
+//							linkObj.put(JsonKeys.label.name(), edge.getLocalLabel()+"*");
+//					}
+//						
+//					linksArr.put(linkObj);
+//					
+//					if(source.getNodeType() == NodeType.Class && target.getNodeType() == NodeType.Class) {
+//						linkObj.put(JsonKeys.linkType.name(), JsonValues.objPropertyLink.name());
+//					}
+//				}
 			} 
 
 			// Add the vertices for the columns that were not in Steiner tree

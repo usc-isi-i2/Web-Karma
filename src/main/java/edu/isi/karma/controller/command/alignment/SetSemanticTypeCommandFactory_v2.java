@@ -47,7 +47,11 @@ import edu.isi.karma.webserver.KarmaException;
 public class SetSemanticTypeCommandFactory_v2 extends CommandFactory implements JSONInputCommandFactory {
 
 	private enum Arguments {
-		vWorksheetId, hNodeId, isKey, SemanticTypesArray, trainAndShowUpdates
+		vWorksheetId, hNodeId, isKey, SemanticTypesArray, trainAndShowUpdates, isMetaPropertyUsed, metaPropertyName, metaPropertyValue
+	}
+	
+	public enum METAPROPERTY_NAME {
+		isUriOfClass, isSubclassOfClass, isSpecializationForEdge
 	}
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
@@ -58,19 +62,29 @@ public class SetSemanticTypeCommandFactory_v2 extends CommandFactory implements 
 
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
-		boolean isPartOfKey = Boolean.parseBoolean(request.getParameter(Arguments.isKey.name()));
-		String arrStr = request.getParameter(SemanticTypesUpdate.JsonKeys.SemanticTypesArray.name());
+		boolean isMetaPropertyUsed = Boolean.parseBoolean(request.getParameter(Arguments.isMetaPropertyUsed.name()));
 		
-		
-		JSONArray arr;
-		try {
-			arr = new JSONArray(arrStr);
-		} catch (JSONException e) {
-			logger.error("Bad JSON received from server!", e);
-			return null;
-		}
+		if (isMetaPropertyUsed) {
+			METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(request.getParameter(Arguments.metaPropertyName.name()));
+			String propValue = request.getParameter(Arguments.metaPropertyValue.name());
+			return new SetSemanticTypeCommand_v2(getNewId(vWorkspace), vWorksheetId, hNodeId,
+					true, prop, propValue,  // Metaproperty things
+					false, null, true);
+		} else {
+			boolean isPartOfKey = Boolean.parseBoolean(request.getParameter(Arguments.isKey.name()));
+			String arrStr = request.getParameter(SemanticTypesUpdate.JsonKeys.SemanticTypesArray.name());
+			
+			JSONArray arr;
+			try {
+				arr = new JSONArray(arrStr);
+			} catch (JSONException e) {
+				logger.error("Bad JSON received from server!", e);
+				return null;
+			}
 
-		return new SetSemanticTypeCommand_v2(getNewId(vWorkspace), vWorksheetId, hNodeId, isPartOfKey, arr, true);
+			return new SetSemanticTypeCommand_v2(getNewId(vWorkspace), vWorksheetId, hNodeId,
+					false, null, null, isPartOfKey, arr, true);
+		}
 	}
 
 	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace) throws JSONException, KarmaException {
