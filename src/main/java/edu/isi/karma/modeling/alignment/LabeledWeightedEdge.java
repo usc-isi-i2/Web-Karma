@@ -64,11 +64,15 @@ public class LabeledWeightedEdge extends DefaultWeightedEdge {
 	
 	public String getLocalID() {
 		String s = this.id;
+		if (this.uri == null)
+			return s;
 		s = s.replaceAll(this.uri.getNs(), "");
 		return s;
 	}
 	
 	public String getLocalLabel() {
+		if (this.uri == null)
+			return null;
 		String s = this.uri.getUriString();
 		s = s.replaceAll(this.uri.getNs(), "");
 		return s;
