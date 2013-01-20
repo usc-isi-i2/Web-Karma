@@ -28,8 +28,8 @@ import edu.isi.karma.util.Jsonizable;
 
 public class SemanticType implements Jsonizable  {
 	private final String hNodeId;
-	private final URI type;
-	private final URI clazz;
+	private final Label type;
+	private final Label clazz;
 	private final Origin origin;
 	private final boolean isPartOfKey; 
 	private final ConfidenceLevel confidenceLevel;
@@ -47,7 +47,7 @@ public class SemanticType implements Jsonizable  {
 		isPrimary, Domain, FullType
 	}
 	
-	public SemanticType(String hNodeId, URI type, URI domain, Origin origin, Double probability, boolean isPartOfKey) {
+	public SemanticType(String hNodeId, Label type, Label domain, Origin origin, Double probability, boolean isPartOfKey) {
 		this.hNodeId = hNodeId;
 		this.type = type;
 		this.origin = origin;
@@ -66,11 +66,11 @@ public class SemanticType implements Jsonizable  {
 		return hNodeId;
 	}
 
-	public URI getDomain() {
+	public Label getDomain() {
 		return clazz;
 	}
 	
-	public URI getType() {
+	public Label getType() {
 		return type;
 	}
 

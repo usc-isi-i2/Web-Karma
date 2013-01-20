@@ -25,57 +25,25 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.hp.hpl.jena.ontology.ConversionException;
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.ontology.IntersectionClass;
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntDocumentManager;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.ontology.UnionClass;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-
-import edu.isi.karma.rep.alignment.URI;
-
 public class OntologyManager {
 	
 	static Logger logger = Logger.getLogger(OntologyManager.class.getName());
 
-	private static OntModel ontModel = null;
+	private static OntologyController ontController = null;
 	private static OntologyCache ontCache = null;
 	
 	public OntologyManager() {
-		OntDocumentManager mgr = new OntDocumentManager();
-		mgr.setProcessImports(false);
-		OntModelSpec s = new OntModelSpec( OntModelSpec.OWL_MEM );
-		s.setDocumentManager( mgr );
-		ontModel = ModelFactory.createOntologyModel(s);
-		ontCache = new OntologyCache();
+		ontController = new OntologyController();
+		ontCache = new OntologyCache(ontController);
 	}
-
-	public OntModel getOntModel() {
-		return ontModel;
-	}
-
-	public OntologyCache getOntCache() {
-		return ontCache;
-	}
-	
 
 	public boolean isEmpty() {
-		return getOntModel().isEmpty();
+		return ontController.getOntModel().isEmpty();
 	}
 	
 	public boolean doImport(File sourceFile) {
@@ -94,13 +62,14 @@ public class OntologyManager {
 		
 		try {
 			InputStream s = new FileInputStream(sourceFile);
-			ontModel.read(s, null);
+			ontController.getOntModel().read(s, null);
 		} catch (Throwable t) {
 			logger.error("Error reading the OWL ontology file!", t);
 			return false;
 		}
 		
-		ontCache.init(this);
+		ontCache = new OntologyCache(ontController);
+		ontCache.init();
 		/* Record the operation */
 		logger.debug("done.");
 		return true;
@@ -122,7 +91,7 @@ public class OntologyManager {
 		
 		try {
 			InputStream s = new FileInputStream(sourceFile);
-			ontModel.read(s, null);
+			ontController.getOntModel().read(s, null);
 		} catch (Throwable t) {
 			logger.error("Error reading the OWL ontology file!", t);
 			return false;
@@ -133,271 +102,37 @@ public class OntologyManager {
 		return true;
 	}
 	
-	public void initCache() {
-		ontCache.init(this);
+	public void updateCache() {
+		ontCache = new OntologyCache(ontController);
+		ontCache.init();
 	}
 	
-	public URI getURIFromString(String uri) {
-		Resource r = ontModel.getResource(uri);
-		if (r == null || !ontModel.containsResource(r)) {
-			logger.debug("Could not find the resource " + uri + " in the ontology model.");
-			return null;
-		}
-		String ns = r.getNameSpace();
-		if (ns != null && ns.trim().length() == 0) ns = null;
-		String prefix = ontModel.getNsURIPrefix(r.getNameSpace());
-		if (prefix != null && prefix.trim().length() == 0) prefix = null;
-		
-		OntResource ontR = null;
-		try { ontR = (OntResource)r;} catch(Exception e) {}
-		if (ontR == null)
-			return new URI(r.getURI(), ns, prefix);
-		
-		String rdfsLabel = ontR.getLabel(null);
-		String rdfsComment = ontR.getComment(null);
-		
-		return new URI(r.getURI(), ns, prefix, rdfsLabel, rdfsComment);
-	}
-	
-	public boolean isClass(String label) {
-		
-		OntClass c = ontModel.getOntClass(label);
-		if (c != null)
-			return true;
-		
-		return false;
-	}
-	
-	public boolean isDataProperty(String label) {
-
-		DatatypeProperty dp = ontModel.getDatatypeProperty(label);
-		if (dp != null)
-			return true;
-		
-		return false;
-	}
-		
-	public boolean isProperty(String label) {
-
-		Property p = ontModel.getProperty(label);
-		if (p != null)
-			return true;
-		
-		return false;
-	}
-	
-	public boolean isObjectProperty(String label) {
-
-		ObjectProperty op = ontModel.getObjectProperty(label);
-		if (op != null)
-			return true;
-		
-		return false;
-	}
-	
-	/**
-	 * This method gets a resource (class or property) and adds the parents of the resource to the second parameter.
-	 * If third parameter is set to true, it adds the parents recursively.
-	 * @param r
-	 * @param resources
-	 * @param recursive
-	 */
-	public void getParents(OntResource r, List<OntResource> resources, boolean recursive) {
-		
-		OntClass c = null;
-		OntProperty p = null;
-		
-		if (r == null || resources == null)
-			return;
-
-		if (r.isClass())
-			c = r.asClass();
-		else if  (r.isProperty())
-			p = r.asProperty();
-		else
-			return;
-		
-		if (c != null) { // && c.hasSuperClass()) {
-			ExtendedIterator<OntClass> i = null;
-			try {
-//				if (recursive)
-//					i = c.listSuperClasses(false);
-//				else
-					i = c.listSuperClasses(true);
-			} catch (ConversionException e) {
-				logger.debug(e.getMessage());
-			}
-            for (; i != null && i.hasNext();) {
-                OntClass superC = (OntClass) i.next();
-                if (superC.isURIResource()) {
-                	resources.add(superC);
-                	if (recursive)
-                		getParents(superC, resources, recursive);
-                } else {
-            		List<OntResource> members = new ArrayList<OntResource>();
-                	getMembers(superC, members, false);
-                	for (int j = 0; j < members.size(); j++) {
-                		resources.add(members.get(j));
-                		if (recursive)
-                			getParents(members.get(j), resources, recursive);
-                	}
-                }
-            }
-		}
-
-		if (p != null) {
-			ExtendedIterator<? extends OntProperty> i = null;
-			try {
-	//			if (recursive)
-	//				i = p.listSuperProperties(false);
-	//			else
-					i = p.listSuperProperties(true);
-			} catch (ConversionException e) {
-				logger.debug(e.getMessage());
-			}
-            for (; i != null && i.hasNext();) {
-                
-            	OntResource superP = i.next();
-            	//if (superP.a)
-                if (superP.isURIResource()) {
-                	resources.add(superP);
-                	if (recursive)
-                		getParents(superP, resources, recursive);
-                } 
-//                else {
-//            		List<OntResource> members = new ArrayList<OntResource>();
-//                	getMembers(superP, members, false);
-//                	for (int j = 0; j < members.size(); j++) {
-//                		resources.add(members.get(j));
-//                		if (recursive)
-//                			getParents(members.get(j), resources, recursive);
-//                	}
-//                }
-            }
-		}
+	public List<String> getClasses() {
+		return ontCache.getClasses();
 	}
 
-	/**
-	 * This method gets a resource (class or property) and adds the children of the resource to the second parameter.
-	 * If third parameter is set to true, it adds the children recursively.
-	 * @param r
-	 * @param resources
-	 * @param recursive
-	 */
-	public void getChildren(OntResource r, List<OntResource> resources, boolean recursive) {
-		
-		OntClass c = null;
-		OntProperty p = null;
-		
-		if (r == null || resources == null)
-			return;
-
-		if (r.isClass())
-			c = r.asClass();
-		else if  (r.isProperty())
-			p = r.asProperty();
-		else
-			return;
-		
-		if (c != null) {
-			ExtendedIterator<OntClass> i = null;
-			try {
-//				if (recursive)
-//					i = c.listSubClasses(false);
-//				else
-					i = c.listSubClasses(true);
-			} catch (ConversionException e) {
-				logger.debug(e.getMessage());
-			}
-            for (; i != null && i.hasNext();) {
-                OntClass subC = (OntClass) i.next();
-                if (subC.isURIResource()) {
-                	resources.add(subC);
-                	if (recursive)
-                		getChildren(subC, resources, recursive);
-                } else {
-            		List<OntResource> members = new ArrayList<OntResource>();
-                	getMembers(subC, members, false);
-                	for (int j = 0; j < members.size(); j++) {
-                		resources.add(members.get(j));
-                		if (recursive)
-                			getChildren(members.get(j), resources, recursive);
-                	}
-                }
-            }
-		}
-
-		if (p != null) {
-			ExtendedIterator<? extends OntProperty> i = null;
-			try {
-//				if (recursive)
-//					i = p.listSubProperties(false);
-//				else
-					i = p.listSubProperties(true);
-			} catch (ConversionException e) {
-				logger.debug(e.getMessage());
-			}
-            for (; i != null && i.hasNext();) {
-                OntProperty subP = (OntProperty) i.next();
-                if (subP.isURIResource()) {
-                	resources.add(subP);
-                	if (recursive)
-                		getChildren(subP, resources, recursive);
-                }
-//                else {
-//            		List<OntResource> members = new ArrayList<OntResource>();
-//                	getMembers(subP, members, false);
-//                	for (int j = 0; j < members.size(); j++) {
-//                		resources.add(members.get(j));
-//                		if (recursive)
-//                			getParents(members.get(j), resources, recursive);
-//                	}
-//                }
-            }
-		}
+	public List<String> getProperties() {
+		return ontCache.getProperties();
 	}
 
-	/**
-	 * This method gets a resource and adds the members of the resource to the second parameter.
-	 * For example, for a resource like "A or (B and C)", it extracts three elements A, B, C.
-	 * If third parameter is set to true, it also adds the children of each member.
-	 * @param r
-	 * @param resources
-	 * @param recursive
-	 */
-	public void getMembers(OntResource r, List<OntResource> resources, boolean recursive) {
+	public List<String> getDataProperties() {
+		return ontCache.getDataProperties();
+	}
 
-		if (r == null || resources == null)
-			return;
+	public List<String> getObjectProperties() {
+		return ontCache.getObjectProperties();
+	}
 
-		if (r.isClass()) { 
-			OntClass c = r.asClass();
-			
-			// simple class
-			if (c.isURIResource()) {
-				resources.add(c);
-				if (recursive)
-					getChildren(c, resources, true);
-				return;
-			}
-			
-			// unionOf
-			else if (c.isUnionClass()) { // in form of unionOf or intersectionOf
-				UnionClass uc = c.asUnionClass();
-				  for (Iterator<? extends OntClass> i = uc.listOperands(); i.hasNext(); ) {
-				      OntClass op = (OntClass) i.next();
-			    	  getMembers(op, resources, recursive);
-				  }
-			
-			// intersectionOf
-			} else if (c.isIntersectionClass()) {
-				IntersectionClass ic = c.asIntersectionClass();
-				  for (Iterator<? extends OntClass> i = ic.listOperands(); i.hasNext(); ) {
-				      OntClass op = (OntClass) i.next();
-			    	  getMembers(op, resources, recursive);
-				  }
-			}
-		}
+	public OntologyTreeNode getClassHierarchy() {
+		return ontCache.getClassHierarchy();
+	}
+
+	public OntologyTreeNode getObjectPropertyHierarchy() {
+		return ontCache.getObjectPropertyHierarchy();
+	}
+
+	public OntologyTreeNode getDataPropertyHierarchy() {
+		return ontCache.getDataPropertyHierarchy();
 	}
 	
 	/**
@@ -417,7 +152,7 @@ public class OntologyManager {
 				return false;
 		}
 		
-		List<String> superClasses = getSuperClasses(subClassUri, recursive);
+		List<String> superClasses = ontController.getSuperClasses(subClassUri, recursive);
 		for (int i = 0; i < superClasses.size(); i++) {
 			if (superClassUri.equalsIgnoreCase(superClasses.get(i))) {
 				return true;
@@ -444,7 +179,7 @@ public class OntologyManager {
 				return false;
 		}
 		
-		List<String> subClasses = getSubClasses(superClassUri, recursive);
+		List<String> subClasses = ontController.getSubClasses(superClassUri, recursive);
 		for (int i = 0; i < subClasses.size(); i++) {
 			if (subClassUri.equalsIgnoreCase(subClasses.get(i))) {
 				return true;
@@ -454,41 +189,8 @@ public class OntologyManager {
 		return false;
 	}
 	
-	/**
-	 * returns URIs of all subclasses of @param classUri (also considers indirect subclasses if second parameter is true).
-	 * @param classUri
-	 * @param recursive
-	 * @return
-	 */
-	public List<String> getSubClasses(String classUri, boolean recursive) {
 
-		List<OntResource> resources = new ArrayList<OntResource>();
-		OntResource r = ontModel.getOntClass(classUri);
-		if (r == null) return new ArrayList<String>();
-		getChildren(r, resources, recursive);
-		return getResourcesURIs(resources);
-	}
-	
-	/**
-	 * returns URIs of all superclasses of @param classUri (also considers indirect superclasses if second parameter is true).
-	 * @param classUri
-	 * @param recursive
-	 * @return
-	 */
-	public List<String> getSuperClasses(String classUri, boolean recursive) {
-		
-		List<OntResource> resources = new ArrayList<OntResource>();
-		OntResource r = ontModel.getOntClass(classUri);
-		if (r == null) return new ArrayList<String>();
-		getParents(r, resources, recursive);
-		return getResourcesURIs(resources);
-	}
 
-	
-
-	
-	
-	
 	/**
 	 * If @param superPropertyUri is a superProperty of @param subPropertyUri, it returns true; otherwise, false.
 	 * If third parameter is set to true, it also considers indirect superproperties.
@@ -506,7 +208,7 @@ public class OntologyManager {
 				return false;
 		}
 		
-		List<String> superProperties = getSuperProperties(subPropertyUri, recursive);
+		List<String> superProperties = ontController.getSuperProperties(subPropertyUri, recursive);
 		for (int i = 0; i < superProperties.size(); i++) {
 			if (superPropertyUri.equalsIgnoreCase(superProperties.get(i))) {
 				return true;
@@ -533,7 +235,7 @@ public class OntologyManager {
 				return false;
 		}
 		
-		List<String> subProperties = getSubProperties(superPropertyUri, recursive);
+		List<String> subProperties = ontController.getSubProperties(superPropertyUri, recursive);
 		for (int i = 0; i < subProperties.size(); i++) {
 			if (subPropertyUri.equalsIgnoreCase(subProperties.get(i))) {
 				return true;
@@ -542,51 +244,7 @@ public class OntologyManager {
 		
 		return false;
 	}
-	
-	/**
-	 * returns URIs of all sub-properties of @param propertyUri
-	 * @param propertyUri
-	 * @param recursive
-	 * @return
-	 */
-	public List<String> getSubProperties(String propertyUri, boolean recursive) {
-
-		List<OntResource> resources = new ArrayList<OntResource>();
-		OntResource r = ontModel.getOntProperty(propertyUri);
-		if (r == null) return new ArrayList<String>();
-		getChildren(r, resources, recursive);
-		return getResourcesURIs(resources);
-	}
-	
-	/**
-	 * returns URIs of all super-properties of @param propertyUri
-	 * @param propertyUri
-	 * @param recursive
-	 * @return
-	 */
-	public List<String> getSuperProperties(String propertyUri, boolean recursive) {
-
-		List<OntResource> resources = new ArrayList<OntResource>();
-		OntResource r = ontModel.getOntProperty(propertyUri);
-		if (r == null) return new ArrayList<String>();
-		getParents(r, resources, recursive);
-		return getResourcesURIs(resources);
-	}
-	
-	/**
-	 * returns URIs of given resources.
-	 * @param resources
-	 * @return
-	 */
-	public List<String> getResourcesURIs(List<OntResource> resources) {
-		List<String> resourcesURIs = new ArrayList<String>();
-		if (resources != null)
-			for (OntResource r: resources) {
-				if (resourcesURIs.indexOf(r.getURI()) == -1)
-					resourcesURIs.add(r.getURI());
-			}
-		return resourcesURIs;
-	}
+		
 	
 	/**
 	 * This method takes a property URI and returns all domains of that property.
@@ -735,7 +393,7 @@ public class OntologyManager {
 	}
 	
 	public Map<String, String> getPrefixMap () {
-		Map<String, String> nsMap = ontModel.getNsPrefixMap();
+		Map<String, String> nsMap = ontController.getOntModel().getNsPrefixMap();
 		Map<String, String> prefixMap = new HashMap<String, String>();
 		
 		for(String ns: nsMap.keySet()) {

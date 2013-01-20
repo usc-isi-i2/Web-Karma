@@ -32,9 +32,10 @@ import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.alg.KruskalMinimumSpanningTree;
 import org.jgrapht.graph.WeightedMultigraph;
 
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
 
 
 public class SteinerTree {
@@ -77,7 +78,7 @@ public class SteinerTree {
 					continue;
 				
 				String id = "e" + String.valueOf(i) + String.valueOf(j);
-				Link e = new Link(id, new URI(id, null, null), null);
+				Link e = new DefaultLink(id, new Label(id, null, null));
 				g.addEdge(steinerNodes.get(i), steinerNodes.get(j), e);
 				g.setEdgeWeight(e, path.getCost(steinerNodes.get(j)));
 				

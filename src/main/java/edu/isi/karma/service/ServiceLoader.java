@@ -43,7 +43,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
 
 public class ServiceLoader {
 
@@ -742,7 +742,7 @@ public class ServiceLoader {
 			return null;
 		}
 		
-		URI predicateName = new URI(predicateUri, predicateNs, predicatePrefix);
+		Label predicateName = new Label(predicateUri, predicateNs, predicatePrefix);
 		Argument arg1 = new Argument(argument1Id, argument1Id, argument1Type);
 		
 		ClassAtom classAtom = new ClassAtom(predicateName, arg1);
@@ -817,7 +817,7 @@ public class ServiceLoader {
 			return null;
 		}
 		
-		URI predicateName = new URI(predicateUri, predicateNs, predicatePrefix);
+		Label predicateName = new Label(predicateUri, predicateNs, predicatePrefix);
 		Argument arg1 = new Argument(argument1Id, argument1Id, argument1Type);
 		Argument arg2 = new Argument(argument2Id, argument2Id, argument2Type);
 		
@@ -866,9 +866,9 @@ public class ServiceLoader {
 //		String wgs84Ontology = "http://www.w3.org/2003/01/geo/wgs84_pos#";
 		String geoOntology = "http://isi.edu/ontologies/geo/current#";
 		
-		URI featurePredicatName = new URI(geoOntology + "Feature", geoOntology, "geo");
-		URI latPredicatName = new URI(geoOntology + "lat", geoOntology, "geo");
-		URI lngPredicatName = new URI(geoOntology + "long", geoOntology, "geo");
+		Label featurePredicatName = new Label(geoOntology + "Feature", geoOntology, "geo");
+		Label latPredicatName = new Label(geoOntology + "lat", geoOntology, "geo");
+		Label lngPredicatName = new Label(geoOntology + "long", geoOntology, "geo");
 		
 		ClassAtom c1 = new ClassAtom(featurePredicatName, new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE));
 		PropertyAtom p1 = new PropertyAtom(latPredicatName,

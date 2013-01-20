@@ -20,7 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.rep.alignment;
 
-public class URI {
+public class Label {
 
 	private String uriString;
 	private String ns;
@@ -28,7 +28,7 @@ public class URI {
 	private String rdfsLabel;
 	private String rdfsComment;
 	
-	public URI(String uri, String ns, String prefix, String rdfsLabel, String rdfsComment) {
+	public Label(String uri, String ns, String prefix, String rdfsLabel, String rdfsComment) {
 		this.uriString = uri;
 		this.ns = ns;
 		this.prefix = prefix;
@@ -36,7 +36,7 @@ public class URI {
 		this.rdfsComment = rdfsComment;
 	}
 	
-	public URI(String uri, String ns, String prefix) {
+	public Label(String uri, String ns, String prefix) {
 		this.uriString = uri;
 		this.ns = ns;
 		this.prefix = prefix;
@@ -44,14 +44,14 @@ public class URI {
 		this.rdfsComment = null;
 	}
 
-	public URI(String uri) {
+	public Label(String uri) {
 		this.uriString = uri;
 		this.ns = null;
 		this.prefix = null;
 		this.rdfsLabel = null;
 		this.rdfsComment = null;	}
 	
-	public URI(URI uri) {
+	public Label(Label uri) {
 		this.uriString = uri.getUriString();
 		this.ns = uri.getNs();
 		this.prefix = uri.getPrefix();

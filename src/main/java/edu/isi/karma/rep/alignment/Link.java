@@ -20,48 +20,108 @@
  ******************************************************************************/
 package edu.isi.karma.rep.alignment;
 
+import org.apache.log4j.Logger;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
-import edu.isi.karma.modeling.alignment.LinkType;
+import edu.isi.karma.webserver.KarmaException;
 
-public abstract class Link extends DefaultWeightedEdge {
+
+public abstract class Link extends DefaultWeightedEdge implements Comparable<Link> {
 	
 	private static final long serialVersionUID = 1L;
-	
+	static Logger logger = Logger.getLogger(Link.class);
+
 	private final String id;
-	private final URI uri;
-	private final LinkType linkType;
+	private final Label label;
+//	private final LinkType linkType;
+//	private final LinkOWLType linkOwlType;
 	private LinkStatus linkStatus;
 	
-	
-	public Link(String id, URI uri, LinkType linkType, LinkStatus linkStatus) {
+	public Link(String id, Label label) throws KarmaException {
 		super();
+
+		if (id == null || id.trim().length() == 0) {
+			logger.error("The id of the link cannot be empty.");
+			throw new KarmaException("The id of the link cannot be empty.");
+		}
+		
 		this.id = id;
-		this.uri = uri;
-		this.linkType = linkType;
+		this.label = label;
+		this.linkStatus = LinkStatus.None;
+	}
+	
+	public Link(String id, Label label, LinkStatus linkStatus) throws KarmaException {
+		super();
+
+		if (id == null || id.trim().length() == 0) {
+			logger.error("The id of the link cannot be empty.");
+			throw new KarmaException("The id of the link cannot be empty.");
+		}
+		
+		this.id = id;
+		this.label = label;
 		this.linkStatus = linkStatus;
 	}
+	
+//	public Link(String id, Label label, LinkType linkType, LinkOWLType linkOwlType, LinkStatus linkStatus) {
+//		super();
+//		this.id = id;
+//		this.label = label;
+//		this.linkType = linkType;
+//		this.linkOwlType = linkOwlType;
+//		this.linkStatus = linkStatus;
+//	}
 	
 	public Link(Link e) {
 		super();
 		this.id = e.id;
-		this.linkType = e.linkType;
-		this.uri = e.uri;
+		this.label = e.label;
+//		this.linkType = e.linkType;
+//		this.linkOwlType = e.linkOwlType;
 		this.linkStatus = e.linkStatus;
+	}
+	
+	public String getID() {
+		return this.id;
 	}
 	
 	public String getLocalID() {
 		String s = this.id;
-		s = s.replaceAll(this.uri.getNs(), "");
+
+		if (this.label != null)
+			s = s.replaceAll(this.label.getNs(), "");
+		
 		return s;
 	}
 	
-	public String getLocalLabel() {
-		String s = this.uri.getUriString();
-		s = s.replaceAll(this.uri.getNs(), "");
+	public String getLocalName() {
+		if (this.label == null)
+			return null;
+
+		String s = this.label.getUriString();
+		s = s.replaceAll(this.label.getNs(), "");
 		return s;
 	}
 	
+	public String getUriString() {
+		return this.label.getUriString();
+	}
+	
+	public String getNs() {
+		return this.label.getNs();
+	}
+	
+	public String getPrefix() {
+		return this.label.getPrefix();
+	}
+	
+//	public LinkType getLinkType() {
+//		return this.linkType;
+//	}
+	
+//	public LinkOWLType getLinkOwlType() {
+//		return linkOwlType;
+//	}	
 	
 	public LinkStatus getLinkStatus() {
 		return linkStatus;
@@ -70,28 +130,7 @@ public abstract class Link extends DefaultWeightedEdge {
 	public void setLinkStatus(LinkStatus linkStatus) {
 		this.linkStatus = linkStatus;
 	}
-	
 
-	public String getID() {
-		return this.id;
-	}
-	
-	public String getUriString() {
-		return this.uri.getUriString();
-	}
-	
-	public String getNs() {
-		return this.uri.getNs();
-	}
-	
-	public String getPrefix() {
-		return this.uri.getPrefix();
-	}
-	
-	public LinkType getLinkType() {
-		return this.linkType;
-	}
-	
 	public Node getSource() {
 		return (Node)super.getSource();
 	}
@@ -104,13 +143,29 @@ public abstract class Link extends DefaultWeightedEdge {
 		return super.getWeight();
 	}
 	
-    public boolean equals(Object obj){
-        if(obj == null || obj.getClass() != this.getClass()){
-            return false;
-        }
-        if( ((Link)obj).getID() == this.getID()){
+
+	@Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
             return true;
         }
-        return false;
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Link link = (Link) obj;
+        return this.id == link.getID();
     }
+    
+    @Override
+    public int hashCode() {
+    	return this.getID().hashCode();
+    }
+
+    @Override
+    public int compareTo(Link link) {       
+        //compare id
+        return this.id.compareTo(link.getID());
+    }
+    
 }

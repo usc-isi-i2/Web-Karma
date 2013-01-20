@@ -35,7 +35,7 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.OntologyHierarchyUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetDomainsForDataPropertyCommand extends Command {
@@ -97,7 +97,7 @@ public class GetDomainsForDataPropertyCommand extends Command {
 					for (String domain : domains) {
 						JSONObject classObject = new JSONObject();
 
-						URI domainURI = ontMgr.getURIFromString(domain);
+						Label domainURI = ontMgr.getURIFromString(domain);
 						if(domainURI == null)
 							continue;
 						classObject.put(JsonKeys.data.name(), domainURI.getLocalNameWithPrefixIfAvailable());

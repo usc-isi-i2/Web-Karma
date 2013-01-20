@@ -21,19 +21,19 @@
 
 package edu.isi.karma.service;
 
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
 
 public class ClassAtom extends Atom {
 
-	private URI classPredicate;
+	private Label classPredicate;
 	private Argument argument1;
 	
-	public ClassAtom(URI classPredicate, Argument argument1) {
+	public ClassAtom(Label classPredicate, Argument argument1) {
 		this.classPredicate = classPredicate;
 		this.argument1 = argument1;
 	}
 
-	public URI getClassPredicate() {
+	public Label getClassPredicate() {
 		return classPredicate;
 	}
 
@@ -42,7 +42,7 @@ public class ClassAtom extends Atom {
 	}
 	
 	
-	public void setClassPredicate(URI classPredicate) {
+	public void setClassPredicate(Label classPredicate) {
 		this.classPredicate = classPredicate;
 	}
 

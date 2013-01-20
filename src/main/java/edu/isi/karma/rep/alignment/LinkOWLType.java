@@ -18,16 +18,11 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.modeling.alignment;
+package edu.isi.karma.rep.alignment;
 
-import java.util.Comparator;
-
-import edu.isi.karma.rep.alignment.Node;
-
-public class VertexComparatorByID implements Comparator<Node> {
-
-	public int compare(Node o1, Node o2) {
-		return o1.getID().compareTo(o2.getID());
-	}
-
+public enum LinkOWLType {
+//	ObjectProperty,
+//	DataProperty,
+//	SubClassOf,
+//	None
 }

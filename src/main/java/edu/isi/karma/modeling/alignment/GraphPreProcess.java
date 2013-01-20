@@ -31,6 +31,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.NodeType;
 
 public class GraphPreProcess {
 

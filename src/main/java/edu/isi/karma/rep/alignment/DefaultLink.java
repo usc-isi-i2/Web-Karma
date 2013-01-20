@@ -21,18 +21,18 @@
 
 package edu.isi.karma.rep.alignment;
 
+/**
+ * Use this type of link only in Steiner Algorithm: SteinerTree.java  
+ * @author mohsen
+ *
+ */
 
-public class ColumnNode extends Node {
+public class DefaultLink extends Link {
 
-	private final String hNodeId;
-	
-	// For a column node, create a Label using column name, example.: Label l = new Label(columnName);
-	public ColumnNode(String id, Label label, String hNodeId) {
-		super(id, label);
-		this.hNodeId = hNodeId;
+	private static final long serialVersionUID = 1L;
+
+	public DefaultLink(String id, Label uri) {
+		super(id, uri);
 	}
 
-	public String getHNodeId() {
-		return hNodeId;
-	}
 }

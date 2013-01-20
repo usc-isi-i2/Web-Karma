@@ -43,7 +43,7 @@ import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -114,8 +114,8 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements JSONI
 				String fullType = (String) value.get(SemanticType.ClientJsonKeys.FullType.name());
 				boolean isPrimary = (Boolean) value.get(SemanticType.ClientJsonKeys.isPrimary.name());
 				
-				URI typeName = ontMgr.getURIFromString(fullType);
-				URI domainName = null;
+				Label typeName = ontMgr.getURIFromString(fullType);
+				Label domainName = null;
 				if (domain != null && !domain.trim().equals(""))
 					domainName = ontMgr.getURIFromString(domain);
 				

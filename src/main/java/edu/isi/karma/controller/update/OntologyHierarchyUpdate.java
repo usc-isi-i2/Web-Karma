@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.ontology.OntologyTreeNode;
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.view.VWorkspace;
 
 public class OntologyHierarchyUpdate extends AbstractUpdate {
@@ -67,7 +67,7 @@ public class OntologyHierarchyUpdate extends AbstractUpdate {
 				}
 				
 				// Add the data
-				URI resourceUri = node.getUri();
+				Label resourceUri = node.getUri();
 				resourceObject.put(JsonKeys.data.name(), resourceUri.getLocalNameWithPrefixIfAvailable());
 				JSONObject metadataObject = new JSONObject();
 				metadataObject.put(JsonKeys.URI.name(), resourceUri.getUriString());
@@ -98,7 +98,7 @@ public class OntologyHierarchyUpdate extends AbstractUpdate {
 			}
 			
 			// Add the data
-			URI resourceUri = childNode.getUri();
+			Label resourceUri = childNode.getUri();
 			resourceObject.put(JsonKeys.data.name(), resourceUri.getLocalNameWithPrefixIfAvailable());
 			JSONObject metadataObject = new JSONObject();
 			metadataObject.put(JsonKeys.URI.name(), resourceUri.getUriString());

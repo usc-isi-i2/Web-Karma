@@ -18,21 +18,10 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-
 package edu.isi.karma.rep.alignment;
 
-
-public class ColumnNode extends Node {
-
-	private final String hNodeId;
-	
-	// For a column node, create a Label using column name, example.: Label l = new Label(columnName);
-	public ColumnNode(String id, Label label, String hNodeId) {
-		super(id, label);
-		this.hNodeId = hNodeId;
-	}
-
-	public String getHNodeId() {
-		return hNodeId;
-	}
+public enum NodeValueType {
+//	ClassInstance,
+//	Datatype,
+//	Literal
 }

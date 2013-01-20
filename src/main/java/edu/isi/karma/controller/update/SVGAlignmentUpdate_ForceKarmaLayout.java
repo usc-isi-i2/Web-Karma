@@ -16,9 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.view.VWorkspace;
 

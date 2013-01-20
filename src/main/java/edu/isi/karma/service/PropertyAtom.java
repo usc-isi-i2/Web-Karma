@@ -21,21 +21,21 @@
 
 package edu.isi.karma.service;
 
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
 
 public class PropertyAtom extends Atom {
 
-	private URI propertyPredicate;
+	private Label propertyPredicate;
 	private Argument argument1;
 	private Argument argument2;
 	
-	public PropertyAtom(URI propertyPredicate, Argument argument1, Argument argument2) {
+	public PropertyAtom(Label propertyPredicate, Argument argument1, Argument argument2) {
 		this.propertyPredicate = propertyPredicate;
 		this.argument1 = argument1;
 		this.argument2 = argument2;
 	}
 
-	public URI getPropertyPredicate() {
+	public Label getPropertyPredicate() {
 		return propertyPredicate;
 	}
 

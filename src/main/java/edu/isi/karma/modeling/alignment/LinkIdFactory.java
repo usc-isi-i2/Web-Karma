@@ -19,20 +19,32 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.rep.alignment;
+package edu.isi.karma.modeling.alignment;
 
+import java.util.HashMap;
 
-public class ColumnNode extends Node {
+public class LinkIdFactory {
 
-	private final String hNodeId;
+	HashMap<String, Integer> linksUris = new HashMap<String, Integer>();
 	
-	// For a column node, create a Label using column name, example.: Label l = new Label(columnName);
-	public ColumnNode(String id, Label label, String hNodeId) {
-		super(id, label);
-		this.hNodeId = hNodeId;
-	}
 
-	public String getHNodeId() {
-		return hNodeId;
+	public String getLinkId(String uriString) {
+		
+		int index;
+		String id;
+		
+		if (linksUris.containsKey(uriString)) {
+			
+			index = linksUris.get(uriString).intValue();
+			linksUris.put(uriString, ++index);
+			id = uriString + "" + index;
+			
+		} else {
+			index = 1;
+			linksUris.put(uriString, index);
+			id = uriString + "" + index;
+//			id = uriString;
+		}
+		return id;
 	}
 }

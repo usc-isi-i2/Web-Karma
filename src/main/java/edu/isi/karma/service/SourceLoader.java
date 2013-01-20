@@ -43,7 +43,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
 
 public class SourceLoader {
 
@@ -499,7 +499,7 @@ public class SourceLoader {
 			return null;
 		}
 		
-		URI predicateName = new URI(predicateUri, predicateNs, predicatePrefix);
+		Label predicateName = new Label(predicateUri, predicateNs, predicatePrefix);
 		Argument arg1 = new Argument(argument1Id, argument1Id, argument1Type);
 		
 		ClassAtom classAtom = new ClassAtom(predicateName, arg1);
@@ -574,7 +574,7 @@ public class SourceLoader {
 			return null;
 		}
 		
-		URI predicateName = new URI(predicateUri, predicateNs, predicatePrefix);
+		Label predicateName = new Label(predicateUri, predicateNs, predicatePrefix);
 		Argument arg1 = new Argument(argument1Id, argument1Id, argument1Type);
 		Argument arg2 = new Argument(argument2Id, argument2Id, argument2Type);
 		
@@ -613,9 +613,9 @@ public class SourceLoader {
 		String geonamesOntology = "http://www.geonames.org/ontology#";
 		String wgs84Ontology = "http://www.w3.org/2003/01/geo/wgs84_pos#";
 		
-		URI featurePredicatName = new URI(geonamesOntology + "Feature", geonamesOntology, "gn");
-		URI latPredicatName = new URI(wgs84Ontology + "lat", wgs84Ontology, "wgs84");
-		URI lngPredicatName = new URI(wgs84Ontology + "long", wgs84Ontology, "wgs84");
+		Label featurePredicatName = new Label(geonamesOntology + "Feature", geonamesOntology, "gn");
+		Label latPredicatName = new Label(wgs84Ontology + "lat", wgs84Ontology, "wgs84");
+		Label lngPredicatName = new Label(wgs84Ontology + "long", wgs84Ontology, "wgs84");
 		
 		ClassAtom c1 = new ClassAtom(featurePredicatName, new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE));
 		PropertyAtom p1 = new PropertyAtom(latPredicatName,

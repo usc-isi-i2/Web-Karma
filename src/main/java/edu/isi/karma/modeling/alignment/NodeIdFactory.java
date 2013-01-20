@@ -19,17 +19,33 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.rep.alignment;
+package edu.isi.karma.modeling.alignment;
 
-import edu.isi.karma.modeling.alignment.LinkType;
+import java.util.HashMap;
 
-public class SubclassOfNodeMetaPropertyLink extends Link {
+public class NodeIdFactory {
 
-	private static final long serialVersionUID = 1L;
+	HashMap<String, Integer> nodeUris = new HashMap<String, Integer>();
+	
 
-	public SubclassOfNodeMetaPropertyLink(String id, URI uri, LinkType linkType,
-			LinkStatus linkStatus) {
-		super(id, uri, linkType, linkStatus);
+	public String getNodeId(String uriString) {
+		
+		int index;
+		String id;
+		
+		if (nodeUris.containsKey(uriString)) {
+			
+			index = nodeUris.get(uriString).intValue();
+			nodeUris.put(uriString, ++index);
+			id = uriString + "" + index;
+			
+		} else {
+			index = 1;
+			nodeUris.put(uriString, index);
+			id = uriString + "" + index;
+//			id = uriString;
+		}
+		return id;
 	}
 
 }

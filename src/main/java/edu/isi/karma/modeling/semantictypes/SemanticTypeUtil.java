@@ -40,7 +40,7 @@ import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.metadata.Tag;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -175,12 +175,12 @@ public class SemanticTypeUtil {
 				type = topLabel.split("\\|")[1];
 			}
 
-			URI typeURI = ontMgr.getURIFromString(type);
+			Label typeURI = ontMgr.getURIFromString(type);
 			if(typeURI == null) {
 				logger.error("Could not find the resource " + type + " in ontology model!");
 				continue;
 			}
-			URI domainURI = null;
+			Label domainURI = null;
 			if (!domain.equals(""))
 				domainURI = ontMgr.getURIFromString(domain);
 			SemanticType semtype = new SemanticType(path.getLeaf().getId(),typeURI, domainURI, SemanticType.Origin.CRFModel,scores.get(0), false);
@@ -344,15 +344,15 @@ public class SemanticTypeUtil {
 			for (int i=0; i<labels.size(); i++) {
 				String label = labels.get(i);
 				if (label.contains("|")) {
-					URI domainUri = ontMgr.getURIFromString(label.split("\\|")[0]);
-					URI typeUri = ontMgr.getURIFromString(label.split("\\|")[1]);
+					Label domainUri = ontMgr.getURIFromString(label.split("\\|")[0]);
+					Label typeUri = ontMgr.getURIFromString(label.split("\\|")[1]);
 					
 					// Remove from the list if URI not present in the URI
 					if (domainUri == null || typeUri == null) {
 						removeLabels.add(label);
 					}
 				} else {
-					URI typeUri = ontMgr.getURIFromString(label);
+					Label typeUri = ontMgr.getURIFromString(label);
 					
 					// Remove from the list if URI not present in the URI
 					if (typeUri == null) {

@@ -21,14 +21,19 @@
 
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.modeling.alignment.LinkType;
 
 public class ClassLink extends Link {
+	
 	private static final long serialVersionUID = 1L;
 	private boolean isPartOfKey;
 	
-	public ClassLink(String id, URI uri, LinkType linkType, LinkStatus status, boolean isPartOfKey) {
-		super(id, uri, linkType, status);
+	public ClassLink(String id, Label label) {
+		super(id, label);
+		this.isPartOfKey = false;
+	}
+	
+	public ClassLink(String id, Label uri, boolean isPartOfKey) {
+		super(id, uri);
 		this.isPartOfKey = isPartOfKey;
 	}
 

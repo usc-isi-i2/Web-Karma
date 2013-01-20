@@ -30,10 +30,10 @@ import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.ModelingParams;
-import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.util.RandomGUID;
 
 public class Source {
@@ -161,7 +161,7 @@ public class Source {
 				logger.debug("Vertex " + v.getLocalID() + " is a semantic type associated to a source columns.");
 				String hNodeId = v.getSemanticType().getHNodeId();
 				String attId = "att" + String.valueOf(attributeList.size() + 1);
-				Attribute att = new Attribute(attId, this.getUri(), v.getLocalLabel(), IOType.NONE, AttributeRequirement.NONE);
+				Attribute att = new Attribute(attId, this.getUri(), v.getLocalName(), IOType.NONE, AttributeRequirement.NONE);
 				att.sethNodeId(hNodeId);
 				attributeList.add(att);
 				
@@ -183,7 +183,7 @@ public class Source {
 			if (vertexIdToArgument.get(v.getID()) == null)
 				continue;
 			
-			URI classPredicate = new URI(v.getUriString(), v.getNs(), v.getPrefix());
+			Label classPredicate = new Label(v.getUriString(), v.getNs(), v.getPrefix());
 
 			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(v.getID()));
 			m.getAtoms().add(classAtom);
@@ -195,12 +195,12 @@ public class Source {
 					vertexIdToArgument.get(e.getTarget().getID()) == null)
 				continue;
 
-			URI propertyPredicate = new URI(e.getUriString(), e.getNs(), e.getPrefix());
+			Label propertyPredicate = new Label(e.getUriString(), e.getNs(), e.getPrefix());
 			PropertyAtom propertyAtom = null;
 			
 			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source
 			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
-				URI subClassPredicate = new URI(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
+				Label subClassPredicate = new Label(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
 				propertyAtom = new PropertyAtom(subClassPredicate, 
 						vertexIdToArgument.get(e.getTarget().getID()),
 						vertexIdToArgument.get(e.getSource().getID()));

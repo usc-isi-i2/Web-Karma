@@ -33,16 +33,16 @@ import org.jgrapht.graph.WeightedMultigraph;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.ClassLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.DataPropertyOfColumnMetaPropertyLink;
-import edu.isi.karma.rep.alignment.InternalClassNode;
+import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
+import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.PropertyLink;
+import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.rep.alignment.SubclassOfNodeMetaPropertyLink;
-import edu.isi.karma.rep.alignment.URI;
-import edu.isi.karma.rep.alignment.URIOfClassMetaPropertyLink;
+import edu.isi.karma.rep.alignment.SubClassOfLink;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.UriOfClassLink;
 
 
 
@@ -50,34 +50,16 @@ public class Alignment {
 
 	static Logger logger = Logger.getLogger(Alignment.class);
 
-	private class SemanticTypeComparator implements Comparator<SemanticType> {
-	    public int compare(SemanticType o1, SemanticType o2) {
-//	    	String s1 = (o1.getDomain() != null?o1.getDomain().getUriString():"") + o1.getType().getUriString();
-//	    	String s2 = (o2.getDomain() != null?o2.getDomain().getUriString():"") + o2.getType().getUriString();
-	    	String s1 = o1.getHNodeId();
-	    	String s2 = o2.getHNodeId();
-//	    	return s1.compareTo(s2);
-	    	
-	    	s1 = s1.replaceFirst("HN", "");
-	    	s2 = s2.replaceFirst("HN", "");
-	        
-	    	int i1 = Integer.valueOf(s1).intValue();
-	    	int i2 = Integer.valueOf(s2).intValue();
 
-	    	if (i1 < i2) return -1;
-	    	else if (i1 > i2) return 1;
-	    	else return 0;
-	    }
-	}
-	
 	private OntologyManager ontologyManager;
 	private boolean separateDomainInstancesForSameDataProperties;
-	private List<SemanticType> semanticTypes;
 	private List<Node> semanticNodes;
 
 	private List<Link> linksForcedByUser;
 	private List<Link> linksPreferredByUI;
 	
+	private NodeIdFactory nodeIdFactory;
+	private LinkIdFactory linkIdFactory;
 	
 	private List<String> duplicatedLinkIds;
 
@@ -90,11 +72,11 @@ public class Alignment {
 		this.ontologyManager = ontologyManager;
 		this.separateDomainInstancesForSameDataProperties = true;
 
-		this.semanticTypes = semanticTypes;
-		Collections.sort(this.semanticTypes, new SemanticTypeComparator());
+		this.nodeIdFactory = new NodeIdFactory();
+		this.linkIdFactory = new LinkIdFactory();
 
 		logger.info("building initial graph ...");
-		graphBuilder = new GraphBuilder(ontologyManager, this.semanticTypes, separateDomainInstancesForSameDataProperties);
+		graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory, linkIdFactory);
 		
 		linksForcedByUser = new ArrayList<Link>();
 		linksPreferredByUI = new ArrayList<Link>();
@@ -112,24 +94,9 @@ public class Alignment {
 		return duplicatedLinkIds;
 	}
 
-	public Alignment(OntologyManager ontologyManager, List<SemanticType> semanticTypes, boolean separateDomainInstancesForSameDataProperties) {
-		this.ontologyManager = ontologyManager;
-		this.separateDomainInstancesForSameDataProperties = separateDomainInstancesForSameDataProperties;
-		
-		this.semanticTypes = semanticTypes;
-		Collections.sort(this.semanticTypes, new SemanticTypeComparator());
-
-		logger.info("building initial graph ...");
-		graphBuilder = new GraphBuilder(ontologyManager, this.semanticTypes, separateDomainInstancesForSameDataProperties);
-		
-		linksForcedByUser = new ArrayList<Link>();
-		linksPreferredByUI = new ArrayList<Link>();
-		
-		semanticNodes = graphBuilder.getSemanticNodes();
-		
-	}
 	public List<SemanticType> getSemanticTypes() {
-		return this.semanticTypes;
+//		return this.semanticTypes;
+		return null;
 	}
 	
 	private void addToLinksForcedByUserList(Link e) {
@@ -461,22 +428,43 @@ public class Alignment {
 	
 	/**** TO BE IMPLEMENTED ***/
 	public Link getLinkById(String linkId) {
-		return null;
+		return graphBuilder.getIdToLinks().get(linkId);
+	}
+	
+	public List<Link> getLinksByType(String uriString) {
+		return graphBuilder.getUriToLinks().get(uriString);
 	}
 	
 	public Node getNodeById(String nodeId) {
+		return graphBuilder.getIdToNodes().get(nodeId);
+	}
+	
+	public List<Node> getNodesByType(String uriString) {
+		return graphBuilder.getUriToNodes().get(uriString);
+	}
+	
+	public ColumnNode createColumnNode(String hNodeId, String columnName) {
+		String id = nodeIdFactory.getNodeId(hNodeId);
+		Label label = new Label(columnName);
+		
+		ColumnNode node = new ColumnNode(id, label, hNodeId);
+		if (this.graphBuilder.addNode(node))
+			return node;
+		
 		return null;
 	}
 	
-	public ColumnNode createColumnNode(String hNodeId) {
-		return null;
-	}
-	
-	public InternalClassNode createInternalClassNode(URI uri) {
-		return null;
+	public InternalNode createInternalClassNode(Label label) {
+		String id = nodeIdFactory.getNodeId(label.getUriString());
+		
+		InternalNode node = new InternalNode(id, label);
+		if (this.graphBuilder.addNode(node))
+			return node;
+		
+		return null;	
 	}
 
-	public PropertyLink createPropertyLink(Node source, Node target, URI uri, boolean isPartOfKey) {
+	public DataPropertyLink createPropertyLink(Node source, Node target, Label uri, boolean isPartOfKey) {
 		return null;
 	}
 	
@@ -484,15 +472,15 @@ public class Alignment {
 		return null;
 	}
 	
-	public DataPropertyOfColumnMetaPropertyLink createDataPropertyOfColumnMetaPropertyLink(Node source, Node target) {
+	public DataPropertyOfColumnLink createDataPropertyOfColumnMetaPropertyLink(Node source, Node target) {
 		return null;
 	}
 
-	public SubclassOfNodeMetaPropertyLink createSubclassOfNodeMetaPropertyLink(Node source, Node target) {
+	public SubClassOfLink createSubclassOfNodeMetaPropertyLink(Node source, Node target) {
 		return null;
 	}
 	
-	public URIOfClassMetaPropertyLink createURIOfClassMetaPropertyLink(Node source, Node target) {
+	public UriOfClassLink createURIOfClassMetaPropertyLink(Node source, Node target) {
 		return null;
 	}
 	

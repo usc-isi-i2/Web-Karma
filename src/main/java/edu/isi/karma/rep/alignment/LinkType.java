@@ -18,12 +18,12 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.modeling.alignment;
+package edu.isi.karma.rep.alignment;
 
 public enum LinkType {
-	ObjectProperty,
-	DataProperty,
-	MetaProperty,
-	HasSubClass, // from superclass to subclass
-	None // default
+//	ClassLink, // a link from a class to a column whose values are instances of that class
+//	PropertyLink, // a datatype property that points to a column including the values of that datatype property 
+//	DataPropertyOfColumnLink, //  
+//	UriOfClassLink, //
+//	SubclassOfNodeLink // 
 }

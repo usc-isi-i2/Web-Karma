@@ -42,11 +42,11 @@ import edu.isi.karma.rep.alignment.ClassLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.PropertyLink;
+import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.view.VWorkspace;
 
 public class SetSemanticTypeCommand_v2 extends Command {
@@ -111,12 +111,12 @@ public class SetSemanticTypeCommand_v2 extends Command {
 		for (int i = 0; i < typesArr.length(); i++) {
 			JSONObject type = typesArr.getJSONObject(i);
 			// Look for the primary semantic type
-			URI typeName = ontMgr.getURIFromString(type.getString(ClientJsonKeys.FullType.name()));
+			Label typeName = ontMgr.getURIFromString(type.getString(ClientJsonKeys.FullType.name()));
 			if(typeName == null) {
 				logger.error("Could not find the resource " + type.getString(ClientJsonKeys.FullType.name()) + " in ontology model!");
 				return null;
 			}
-			URI domainName = null;
+			Label domainName = null;
 			if (!type.getString(ClientJsonKeys.Domain.name()).equals(""))
 				domainName = ontMgr.getURIFromString(type.getString(ClientJsonKeys.Domain.name()));
 
@@ -137,7 +137,7 @@ public class SetSemanticTypeCommand_v2 extends Command {
 					if (classNode == null) {
 						classNode = alignment.createInternalClassNode(domainName);
 					}
-					PropertyLink propLink = alignment.createPropertyLink(classNode, columnNode, typeName, isPartOfKey);
+					DataPropertyLink propLink = alignment.createPropertyLink(classNode, columnNode, typeName, isPartOfKey);
 					alignment.addLinkAndUpdateAlignment(propLink);
 					newLink = propLink;
 				}

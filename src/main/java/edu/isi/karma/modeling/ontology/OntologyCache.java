@@ -31,13 +31,13 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
 
-public class OntologyCache {
+class OntologyCache {
 	
 	static Logger logger = Logger.getLogger(OntologyCache.class.getName());
 	
-	private OntologyManager ontologyManager = null;
+	private OntologyController ontController = null;
 
 	private List<String> classes;
 //	private List<String> rootClasses;
@@ -73,6 +73,10 @@ public class OntologyCache {
 	private HashMap<String, Boolean> directSubClassMap;
 	// hashmap: property1 + property2 -> boolean (if p1 is subPropertyOf p2)
 	private HashMap<String, Boolean> directSubPropertyMap;
+	
+	public OntologyCache(OntologyController ontController) {
+		this.ontController = ontController;
+	}
 	
 	public List<String> getClasses() {
 		return classes;
@@ -162,15 +166,10 @@ public class OntologyCache {
 	public HashMap<String, Boolean> getSubPropertyMap() {
 		return directSubPropertyMap;
 	}
-	
-	public OntologyCache() {
-	}
 
-	public void init(OntologyManager ontologyManager) {
+	public void init() {
 
 		logger.info("start building the ontology cache ...");
-
-		this.ontologyManager = ontologyManager;
 		
 		classes = new ArrayList<String>();
 //		rootClasses = new ArrayList<String>();
@@ -178,9 +177,9 @@ public class OntologyCache {
 		dataProperties = new ArrayList<String>();
 		objectProperties = new ArrayList<String>();
 		
-		classHierarchy = new OntologyTreeNode(new URI("Classes"), null, null);
-		dataPropertyHierarchy = new OntologyTreeNode(new URI("Data Properties"), null, null);
-		objectPropertyHierarchy = new OntologyTreeNode(new URI("Object Properties"), null, null);
+		classHierarchy = new OntologyTreeNode(new Label("Classes"), null, null);
+		dataPropertyHierarchy = new OntologyTreeNode(new Label("Data Properties"), null, null);
+		objectPropertyHierarchy = new OntologyTreeNode(new Label("Object Properties"), null, null);
 
 		directOutDataProperties = new HashMap<String, List<String>>();
 		indirectOutDataProperties = new HashMap<String, List<String>>();
@@ -242,7 +241,7 @@ public class OntologyCache {
 
 	private void loadClasses() {
 		
-		ExtendedIterator<OntClass> itrC = ontologyManager.getOntModel().listNamedClasses();
+		ExtendedIterator<OntClass> itrC = ontController.getOntModel().listNamedClasses();
 		
 		while (itrC.hasNext()) {
 			
@@ -256,7 +255,7 @@ public class OntologyCache {
 
 		}
 
-//		List<OntClass> namedRoots = OntTools.namedHierarchyRoots(ontologyManager.getOntModel());
+//		List<OntClass> namedRoots = OntTools.namedHierarchyRoots(ontController.getOntModel());
 //		for (OntClass c : namedRoots) {
 //			if (c.isURIResource() && rootClasses.indexOf(c.getURI()) == -1)
 //				rootClasses.add(c.getURI());
@@ -265,7 +264,7 @@ public class OntologyCache {
 
 	private void loadProperties() {
 		
-		ExtendedIterator<OntProperty> itrP = ontologyManager.getOntModel().listAllOntProperties();
+		ExtendedIterator<OntProperty> itrP = ontController.getOntModel().listAllOntProperties();
 		
 		while (itrP.hasNext()) {
 			
@@ -297,19 +296,19 @@ public class OntologyCache {
 		if (node.getParent() == null) {
 //			for (String s : rootClasses) {
 			for (String s : classes) {
-				List<String> superClasses = ontologyManager.getSuperClasses(s, false);
+				List<String> superClasses = ontController.getSuperClasses(s, false);
 				if (superClasses == null || superClasses.size() == 0) {
-					URI uri = ontologyManager.getURIFromString(s);
+					Label uri = ontController.getURIFromString(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
 					buildClassHierarchy(childNode);
 					children.add(childNode);
 				}
 			}
 		} else {
-			List<String> subClasses = ontologyManager.getSubClasses(node.getUri().getUriString(), false);
+			List<String> subClasses = ontController.getSubClasses(node.getUri().getUriString(), false);
 			if (subClasses != null)
 				for (String s : subClasses) {
-					URI uri = ontologyManager.getURIFromString(s);
+					Label uri = ontController.getURIFromString(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
 					
 					// update direct subClass map
@@ -327,19 +326,19 @@ public class OntologyCache {
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
 			for (String s : dataProperties) {
-				List<String> superProperties = ontologyManager.getSuperProperties(s, false);
+				List<String> superProperties = ontController.getSuperProperties(s, false);
 				if (superProperties == null || superProperties.size() == 0) {
-					URI uri = ontologyManager.getURIFromString(s);
+					Label uri = ontController.getURIFromString(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
 					buildDataPropertyHierarchy(childNode);
 					children.add(childNode);
 				}
 			}
 		} else {
-			List<String> subProperties = ontologyManager.getSubProperties(node.getUri().getUriString(), false);
+			List<String> subProperties = ontController.getSubProperties(node.getUri().getUriString(), false);
 			if (subProperties != null)
 				for (String s : subProperties) {
-					URI uri = ontologyManager.getURIFromString(s);
+					Label uri = ontController.getURIFromString(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
 					
 					// update direct subProperty map
@@ -356,19 +355,19 @@ public class OntologyCache {
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
 			for (String s : objectProperties) {
-				List<String> superProperties = ontologyManager.getSuperProperties(s, false);
+				List<String> superProperties = ontController.getSuperProperties(s, false);
 				if (superProperties == null || superProperties.size() == 0) {
-					URI uri = ontologyManager.getURIFromString(s);
+					Label uri = ontController.getURIFromString(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
 					buildObjectPropertyHierarchy(childNode);
 					children.add(childNode);
 				}
 			}
 		} else {
-			List<String> subProperties = ontologyManager.getSubProperties(node.getUri().getUriString(), false);
+			List<String> subProperties = ontController.getSubProperties(node.getUri().getUriString(), false);
 			if (subProperties != null)
 				for (String s : subProperties) {
-					URI uri = ontologyManager.getURIFromString(s);
+					Label uri = ontController.getURIFromString(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
 					
 					// update direct subProperty map
@@ -390,8 +389,8 @@ public class OntologyCache {
 		List<OntResource> allRanges = new ArrayList<OntResource>();
 		List<String> temp; 
 		
-		ExtendedIterator<OntProperty> itrOP = ontologyManager.getOntModel().listAllOntProperties();
-//		ExtendedIterator<ObjectProperty> itrOP = ontologyManager.getOntModel().listObjectProperties();
+		ExtendedIterator<OntProperty> itrOP = ontController.getOntModel().listAllOntProperties();
+//		ExtendedIterator<ObjectProperty> itrOP = ontController.getOntModel().listObjectProperties();
 		OntResource d;
 		OntResource r;
 		
@@ -417,14 +416,14 @@ public class OntologyCache {
 			ExtendedIterator<? extends OntResource> itrDomains = op.listDomain();
 			while (itrDomains.hasNext()) {
 				d = itrDomains.next();
-				ontologyManager.getMembers(d, directDomains, false);
+				ontController.getMembers(d, directDomains, false);
 			}
 
 			temp  = propertyDirectDomains.get(op.getURI());
 			if (temp == null)
-				propertyDirectDomains.put(op.getURI(), ontologyManager.getResourcesURIs(directDomains));
+				propertyDirectDomains.put(op.getURI(), ontController.getResourcesURIs(directDomains));
 			else 
-				temp.addAll(ontologyManager.getResourcesURIs(directDomains));
+				temp.addAll(ontController.getResourcesURIs(directDomains));
 			
 			for (int i = 0; i < directDomains.size(); i++) {
 				temp = directOutObjectProperties.get(directDomains.get(i).getURI());
@@ -437,14 +436,14 @@ public class OntologyCache {
 
 			for (int i = 0; i < directDomains.size(); i++) {
 				allDomains.add(directDomains.get(i));
-				ontologyManager.getChildren(directDomains.get(i), allDomains, true);
+				ontController.getChildren(directDomains.get(i), allDomains, true);
 			}
 
 			temp  = propertyIndirectDomains.get(op.getURI());
 			if (temp == null)
-				propertyIndirectDomains.put(op.getURI(), ontologyManager.getResourcesURIs(allDomains));
+				propertyIndirectDomains.put(op.getURI(), ontController.getResourcesURIs(allDomains));
 			else 
-				temp.addAll(ontologyManager.getResourcesURIs(allDomains));
+				temp.addAll(ontController.getResourcesURIs(allDomains));
 			
 			for (int i = 0; i < allDomains.size(); i++) {
 				temp = indirectOutObjectProperties.get(allDomains.get(i).getURI());
@@ -459,14 +458,14 @@ public class OntologyCache {
 			ExtendedIterator<? extends OntResource> itrRanges = op.listRange();
 			while (itrRanges.hasNext()) {
 				r = itrRanges.next();
-				ontologyManager.getMembers(r, directRanges, false);
+				ontController.getMembers(r, directRanges, false);
 			}
 
 			temp  = propertyDirectRanges.get(op.getURI());
 			if (temp == null)
-				propertyDirectRanges.put(op.getURI(), ontologyManager.getResourcesURIs(directRanges));
+				propertyDirectRanges.put(op.getURI(), ontController.getResourcesURIs(directRanges));
 			else 
-				temp.addAll(ontologyManager.getResourcesURIs(directRanges));
+				temp.addAll(ontController.getResourcesURIs(directRanges));
 			
 			for (int i = 0; i < directRanges.size(); i++) {
 				temp = directInObjectProperties.get(directRanges.get(i).getURI());
@@ -479,14 +478,14 @@ public class OntologyCache {
 			
 			for (int i = 0; i < directRanges.size(); i++) {
 				allRanges.add(directRanges.get(i));
-				ontologyManager.getChildren(directRanges.get(i), allRanges, true);
+				ontController.getChildren(directRanges.get(i), allRanges, true);
 			}
 			
 			temp  = propertyIndirectRanges.get(op.getURI());
 			if (temp == null)
-				propertyIndirectRanges.put(op.getURI(), ontologyManager.getResourcesURIs(allRanges));
+				propertyIndirectRanges.put(op.getURI(), ontController.getResourcesURIs(allRanges));
 			else 
-				temp.addAll(ontologyManager.getResourcesURIs(allRanges));
+				temp.addAll(ontController.getResourcesURIs(allRanges));
 			
 			for (int i = 0; i < allRanges.size(); i++) {
 				temp = indirectInObjectProperties.get(allRanges.get(i).getURI());
@@ -535,8 +534,8 @@ public class OntologyCache {
 		List<OntResource> allRanges = new ArrayList<OntResource>();
 		List<String> temp; 
 		
-		ExtendedIterator<OntProperty> itrDP = ontologyManager.getOntModel().listAllOntProperties();
-//		ExtendedIterator<DatatypeProperty> itrDP = ontologyManager.getOntModel().listDatatypeProperties();
+		ExtendedIterator<OntProperty> itrDP = ontController.getOntModel().listAllOntProperties();
+//		ExtendedIterator<DatatypeProperty> itrDP = ontController.getOntModel().listDatatypeProperties();
 		OntResource d;
 		OntResource r;
 		
@@ -561,14 +560,14 @@ public class OntologyCache {
 			ExtendedIterator<? extends OntResource> itrDomains = dp.listDomain();
 			while (itrDomains.hasNext()) {
 				d = itrDomains.next();
-				ontologyManager.getMembers(d, directDomains, false);
+				ontController.getMembers(d, directDomains, false);
 			}
 
 			temp  = propertyDirectDomains.get(dp.getURI());
 			if (temp == null)
-				propertyDirectDomains.put(dp.getURI(), ontologyManager.getResourcesURIs(directDomains));
+				propertyDirectDomains.put(dp.getURI(), ontController.getResourcesURIs(directDomains));
 			else 
-				temp.addAll(ontologyManager.getResourcesURIs(directDomains));
+				temp.addAll(ontController.getResourcesURIs(directDomains));
 			
 			for (int i = 0; i < directDomains.size(); i++) {
 				temp = directOutDataProperties.get(directDomains.get(i).getURI());
@@ -581,14 +580,14 @@ public class OntologyCache {
 
 			for (int i = 0; i < directDomains.size(); i++) {
 				allDomains.add(directDomains.get(i));
-				ontologyManager.getChildren(directDomains.get(i), allDomains, true);
+				ontController.getChildren(directDomains.get(i), allDomains, true);
 			}
 
 			temp  = propertyIndirectDomains.get(dp.getURI());
 			if (temp == null)
-				propertyIndirectDomains.put(dp.getURI(), ontologyManager.getResourcesURIs(allDomains));
+				propertyIndirectDomains.put(dp.getURI(), ontController.getResourcesURIs(allDomains));
 			else 
-				temp.addAll(ontologyManager.getResourcesURIs(allDomains));
+				temp.addAll(ontController.getResourcesURIs(allDomains));
 			
 			for (int i = 0; i < allDomains.size(); i++) {
 				temp = indirectOutDataProperties.get(allDomains.get(i).getURI());
@@ -603,25 +602,25 @@ public class OntologyCache {
 			ExtendedIterator<? extends OntResource> itrRanges = dp.listRange();
 			while (itrRanges.hasNext()) {
 				r = itrRanges.next();
-				ontologyManager.getMembers(r, directRanges, false);
+				ontController.getMembers(r, directRanges, false);
 			}
 
 			temp  = propertyDirectRanges.get(dp.getURI());
 			if (temp == null)
-				propertyDirectRanges.put(dp.getURI(), ontologyManager.getResourcesURIs(directRanges));
+				propertyDirectRanges.put(dp.getURI(), ontController.getResourcesURIs(directRanges));
 			else 
-				temp.addAll(ontologyManager.getResourcesURIs(directRanges));
+				temp.addAll(ontController.getResourcesURIs(directRanges));
 			
 			for (int i = 0; i < directRanges.size(); i++) {
 				allRanges.add(directRanges.get(i));
-				ontologyManager.getChildren(directRanges.get(i), allRanges, true);
+				ontController.getChildren(directRanges.get(i), allRanges, true);
 			}
 			
 			temp  = propertyIndirectRanges.get(dp.getURI());
 			if (temp == null)
-				propertyIndirectRanges.put(dp.getURI(), ontologyManager.getResourcesURIs(allRanges));
+				propertyIndirectRanges.put(dp.getURI(), ontController.getResourcesURIs(allRanges));
 			else 
-				temp.addAll(ontologyManager.getResourcesURIs(allRanges));
+				temp.addAll(ontController.getResourcesURIs(allRanges));
 			
 		}		
 	}
@@ -632,11 +631,11 @@ public class OntologyCache {
 		String valueUri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#value";
 		List<String> temp;
 		
-		ontologyManager.getOntModel().setNsPrefix("rdfs", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-		ontologyManager.getOntModel().setNsPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
-		ontologyManager.getOntModel().createDatatypeProperty(labelUri);
-		ontologyManager.getOntModel().createDatatypeProperty(commentUri);
-		ontologyManager.getOntModel().createDatatypeProperty(valueUri);
+		ontController.getOntModel().setNsPrefix("rdfs", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+		ontController.getOntModel().setNsPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		ontController.getOntModel().createDatatypeProperty(labelUri);
+		ontController.getOntModel().createDatatypeProperty(commentUri);
+		ontController.getOntModel().createDatatypeProperty(valueUri);
 
 		// collect all the existing classes
 		List<String> classes = new ArrayList<String>();
@@ -701,7 +700,7 @@ public class OntologyCache {
 		for (String p : propertyDirectDomains.keySet()) {
 			
 //			logger.debug("*********************************" + p);
-			List<String> superProperties = ontologyManager.getSuperProperties(p, true);
+			List<String> superProperties = ontController.getSuperProperties(p, true);
 			
 //			System.out.println("*****************" + p);
 //			for (String s : superProperties)
@@ -730,14 +729,14 @@ public class OntologyCache {
 					indirectDomains.add(d);
 			}
 			
-			if (ontologyManager.isObjectProperty(p)) 
+			if (ontController.isObjectProperty(p)) 
 				for (String d : allDomains) {
 					temp = indirectOutObjectProperties.get(d);
 					if (temp != null && temp.indexOf(p) == -1)
 						temp.add(p);
 				}
 
-			if (ontologyManager.isDataProperty(p)) 
+			if (ontController.isDataProperty(p)) 
 				for (String d : allDomains) {
 					temp = indirectOutDataProperties.get(d);
 					if (temp != null && temp.indexOf(p) == -1)
@@ -766,7 +765,7 @@ public class OntologyCache {
 					indirectRanges.add(r);
 			}
 			
-			if (ontologyManager.isObjectProperty(p)) 
+			if (ontController.isObjectProperty(p)) 
 				for (String r : allRanges) {
 					temp = indirectInObjectProperties.get(r);
 					if (temp != null && temp.indexOf(p) == -1)

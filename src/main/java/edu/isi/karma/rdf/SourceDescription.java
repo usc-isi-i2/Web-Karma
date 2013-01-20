@@ -37,13 +37,13 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
 
 import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.LinkType;
-import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 import edu.isi.karma.webserver.KarmaException;
@@ -312,7 +312,7 @@ public class SourceDescription {
 	 */
 	private String generateClassStatement(Node v) {
 		String key = findKey(v);
-		String s = "`" + getPrefix(v.getPrefix(), v.getNs()) + ":" + v.getLocalLabel() + "`(uri(" + key + "))"; 
+		String s = "`" + getPrefix(v.getPrefix(), v.getNs()) + ":" + v.getLocalName() + "`(uri(" + key + "))"; 
 		//System.out.println("Class:" + s);
 		return s;
 	}
@@ -364,7 +364,7 @@ public class SourceDescription {
 			dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNamePath();
 		}
 		ruleAttributes.add(dataAttribute);
-		String propertyName = getPrefix(e.getPrefix(), e.getNs()) + ":" + e.getLocalLabel();
+		String propertyName = getPrefix(e.getPrefix(), e.getNs()) + ":" + e.getLocalName();
 		if(e.isInverse()){
 			throw new KarmaException("A data property cannot be an inverse_of:" + e.getUriString());
 		}
@@ -403,7 +403,7 @@ public class SourceDescription {
 			throw new KarmaException("Key for " + v.getUriString() + " is NULL. This should not happen!");
 		}
 		String key2 = findKey(child);
-		String propertyName = getPrefix(e.getPrefix(), e.getNs()) + ":" + e.getLocalLabel();
+		String propertyName = getPrefix(e.getPrefix(), e.getNs()) + ":" + e.getLocalName();
 
 		String s = "`" + propertyName + "`(uri(" + key1 + "),uri(" + key2 + "))";
 		if(generateInverse)

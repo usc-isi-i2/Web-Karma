@@ -38,11 +38,11 @@ import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.ModelingParams;
-import edu.isi.karma.modeling.alignment.NodeType;
 import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.NodeType;
 
 public class Service {
 	
@@ -457,7 +457,7 @@ public class Service {
 			if (vertexIdToArgument.get(v.getID()) == null)
 				continue;
 			
-			URI classPredicate = new URI(v.getUriString(), v.getNs(), v.getPrefix());
+			Label classPredicate = new Label(v.getUriString(), v.getNs(), v.getPrefix());
 
 			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(v.getID()));
 			m.getAtoms().add(classAtom);
@@ -471,12 +471,12 @@ public class Service {
 					vertexIdToArgument.get(e.getTarget().getID()) == null)
 				continue;
 			
-			URI propertyPredicate = new URI(e.getUriString(), e.getNs(), e.getPrefix());
+			Label propertyPredicate = new Label(e.getUriString(), e.getNs(), e.getPrefix());
 			PropertyAtom propertyAtom = null;
 			
 			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source
 			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
-				URI subClassPredicate = new URI(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
+				Label subClassPredicate = new Label(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
 				propertyAtom = new PropertyAtom(subClassPredicate, 
 						vertexIdToArgument.get(e.getTarget().getID()),
 						vertexIdToArgument.get(e.getSource().getID()));
@@ -512,7 +512,7 @@ public class Service {
 				continue;
 			
 			
-			URI classPredicate = new URI(v.getUriString(), v.getNs(), v.getPrefix());
+			Label classPredicate = new Label(v.getUriString(), v.getNs(), v.getPrefix());
 
 			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(v.getID()));
 			m.getAtoms().add(classAtom);
@@ -527,12 +527,12 @@ public class Service {
 					vertexIdToArgument.get(e.getTarget().getID()) == null)
 				continue;
 			
-			URI propertyPredicate = new URI(e.getUriString(), e.getNs(), e.getPrefix());
+			Label propertyPredicate = new Label(e.getUriString(), e.getNs(), e.getPrefix());
 			PropertyAtom propertyAtom = null;
 			
 			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source
 			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
-				URI subClassPredicate = new URI(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
+				Label subClassPredicate = new Label(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
 				propertyAtom = new PropertyAtom(subClassPredicate, 
 						vertexIdToArgument.get(e.getTarget().getID()),
 						vertexIdToArgument.get(e.getSource().getID()));

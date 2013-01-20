@@ -21,15 +21,11 @@
 
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.modeling.alignment.LinkType;
 
-public class DataPropertyOfColumnMetaPropertyLink extends Link {
-
-	private static final long serialVersionUID = 1L;
-
-	public DataPropertyOfColumnMetaPropertyLink(String id, URI uri, LinkType linkType,
-			LinkStatus linkStatus) {
-		super(id, uri, linkType, linkStatus);
+public class InternalNode extends Node {
+	
+	public InternalNode(String id, Label label) {
+		super(id, label);
 	}
 
 }

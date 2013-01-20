@@ -39,7 +39,7 @@ import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
@@ -75,12 +75,12 @@ public class SetSemanticTypeCommandFactory extends CommandFactory implements JSO
 			for (int i = 0; i < arr.length(); i++) {
 				JSONObject type = arr.getJSONObject(i);
 				// Look for the primary semantic type
-				URI typeName = ontMgr.getURIFromString(type.getString(ClientJsonKeys.FullType.name()));
+				Label typeName = ontMgr.getURIFromString(type.getString(ClientJsonKeys.FullType.name()));
 				if(typeName == null) {
 					logger.error("Could not find the resource " + type.getString(ClientJsonKeys.FullType.name()) + " in ontology model!");
 					return null;
 				}
-				URI domainName = null;
+				Label domainName = null;
 				if (type.getString(ClientJsonKeys.Domain.name()) != "")
 					domainName = ontMgr.getURIFromString(type.getString(ClientJsonKeys.Domain.name()));
 
@@ -123,12 +123,12 @@ public class SetSemanticTypeCommandFactory extends CommandFactory implements JSO
 			for (int i = 0; i < arr.length(); i++) {
 				JSONObject type = arr.getJSONObject(i);
 				// Look for the primary semantic type
-				URI typeName = ontMgr.getURIFromString(type.getString(SemanticTypesUpdate.JsonKeys.FullType.name()));
+				Label typeName = ontMgr.getURIFromString(type.getString(SemanticTypesUpdate.JsonKeys.FullType.name()));
 				if(typeName == null) {
 					logger.error("Could not find the resource " + type.getString(SemanticTypesUpdate.JsonKeys.FullType.name()) + " in ontology model!");
 					return null;
 				}
-				URI domainName = null;
+				Label domainName = null;
 				if (type.getString(SemanticTypesUpdate.JsonKeys.Domain.name()) != "")
 					domainName = ontMgr.getURIFromString(type.getString(SemanticTypesUpdate.JsonKeys.Domain.name()));
 

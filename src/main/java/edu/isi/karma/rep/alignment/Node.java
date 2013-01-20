@@ -20,30 +20,113 @@
  ******************************************************************************/
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.modeling.alignment.NodeType;
+import org.apache.log4j.Logger;
+
+import edu.isi.karma.webserver.KarmaException;
 
 
-public abstract class Node {
 
-	protected String id;
-	private NodeType nodeType;
-	private URI uri;
+public abstract class Node implements Comparable<Node> {
+
+	static Logger logger = Logger.getLogger(Node.class);
+
+	private final String id;
+	private final Label label;
+//	private final NodeType nodeType;
+//	private final NodeValueType nodeValueType;
 	
-	public Node(String id, NodeType nodeType) {
+	public Node(String id, Label label) throws KarmaException {
+		
+		if (id == null || id.trim().length() == 0) {
+			logger.error("The id of the node cannot be empty.");
+			throw new KarmaException("The id of the node cannot be empty.");
+		}
+		
 		this.id = id;
-		this.nodeType = nodeType;
+		this.label = label;
 	}
+	
+//	public Node(String id, Label label, NodeType nodeType, NodeValueType nodeValueType) {
+//		this.id = id;
+//		this.label = label;
+//		this.nodeType = nodeType;
+//		this.nodeValueType = nodeValueType;
+//	}
 	
 	public Node(Node v) {
 		this.id = v.id;
-		this.nodeType = v.nodeType;
+		this.label = v.label;
+//		this.nodeType = v.nodeType;
+//		this.nodeValueType = v.nodeValueType;
 	}
 	
 	public String getID() {
 		return this.id;
 	}
 	
-	public NodeType getNodeType() {
-		return this.nodeType;
+	
+	public String getLocalID() {
+		String s = this.id;
+
+		if (this.label != null)
+			s = s.replaceAll(this.label.getNs(), "");
+		
+		return s;
 	}
+	
+	public String getLocalName() {
+		if (this.label == null)
+			return null;
+
+		String s = this.label.getUriString();
+		s = s.replaceAll(this.label.getNs(), "");
+		return s;
+	}
+	
+	
+	public String getUriString() {
+		return this.label.getUriString();
+	}
+	
+	public String getNs() {
+		return this.label.getNs();
+	}
+	
+	public String getPrefix() {
+		return this.label.getPrefix();
+	}
+	
+//	public NodeType getNodeType() {
+//		return this.nodeType;
+//	}
+	
+//	public NodeValueType getNodeValueType() {
+//		return this.nodeValueType;
+//	}
+
+	@Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Node node = (Node) obj;
+        return this.id == node.getID();
+    }
+    
+    @Override
+    public int hashCode() {
+    	return this.getID().hashCode();
+    }
+
+    @Override
+    public int compareTo(Node node) {       
+        //compare id
+        return this.id.compareTo(node.getID());
+    }
+
+
 }

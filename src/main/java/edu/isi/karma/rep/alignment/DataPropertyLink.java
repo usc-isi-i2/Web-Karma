@@ -22,17 +22,29 @@
 package edu.isi.karma.rep.alignment;
 
 
-public class ColumnNode extends Node {
+public class DataPropertyLink extends Link {
 
-	private final String hNodeId;
+	private static final long serialVersionUID = 1L;
+	private boolean inverse;
+	private boolean isPartOfKey;
 	
-	// For a column node, create a Label using column name, example.: Label l = new Label(columnName);
-	public ColumnNode(String id, Label label, String hNodeId) {
+	public DataPropertyLink(String id, Label label) {
 		super(id, label);
-		this.hNodeId = hNodeId;
+		this.inverse = false;
+		this.isPartOfKey = false;
 	}
 
-	public String getHNodeId() {
-		return hNodeId;
+	public DataPropertyLink(String id, Label label, boolean isPartOfKey) {
+		super(id, label);
+		this.inverse = false;
+		this.isPartOfKey = isPartOfKey;
+	}
+
+	public boolean isInverse() {
+		return this.inverse;
+	}
+
+	public boolean isPartOfKey() {
+		return isPartOfKey;
 	}
 }

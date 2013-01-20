@@ -31,7 +31,8 @@ import org.jgrapht.traverse.BreadthFirstIterator;
 
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.NodeComparatorByID;
 
 public class TreePostProcess {
 	
@@ -108,8 +109,7 @@ public class TreePostProcess {
 		if (possibleRoots == null || possibleRoots.size() == 0)
 			return;
 		
-		VertexComparatorByID vComp = new VertexComparatorByID();
-		Collections.sort(possibleRoots, vComp);
+		Collections.sort(possibleRoots);
 		
 //		for (int i = 0; i < possibleRoots.size(); i++)
 //			System.out.print(possibleRoots.get(i).getLocalID());
@@ -138,7 +138,7 @@ public class TreePostProcess {
 				if (e != null && inLink.getID().equalsIgnoreCase(e.getID()))
 					continue;
 				
-				Link inverseLink = new Link(inLink.getID(), new URI(inLink.getUriString(), inLink.getNs(), inLink.getPrefix()), inLink.getLinkType(), true);
+				Link inverseLink = new Link(inLink.getID(), new Label(inLink.getUriString(), inLink.getNs(), inLink.getPrefix()), inLink.getLinkType(), true);
 				
 				this.tree.addEdge(target, source, inverseLink);
 				this.tree.setEdgeWeight(inverseLink, inLink.getWeight());

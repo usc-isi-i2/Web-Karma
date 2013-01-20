@@ -23,24 +23,24 @@ package edu.isi.karma.modeling.ontology;
 
 import java.util.List;
 
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
 
 public class OntologyTreeNode {
 	// should change the location of URI class to package karma.modeling 
-	private URI uri;
+	private Label uri;
 	private OntologyTreeNode parent;
 	private List<OntologyTreeNode> children;
 	
-	public OntologyTreeNode(URI uri, OntologyTreeNode parent, List<OntologyTreeNode> children) {
+	public OntologyTreeNode(Label uri, OntologyTreeNode parent, List<OntologyTreeNode> children) {
 		this.uri = uri;
 		this.parent = parent;
 		this.children = children;
 	}
 	
-	public URI getUri() {
+	public Label getUri() {
 		return uri;
 	}
-	public void setUri(URI uri) {
+	public void setUri(Label uri) {
 		this.uri = uri;
 	}
 	public OntologyTreeNode getParent() {

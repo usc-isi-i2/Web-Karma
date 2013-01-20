@@ -18,18 +18,9 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.modeling.alignment.LinkType;
-
-public class URIOfClassMetaPropertyLink extends Link {
-
-	private static final long serialVersionUID = 1L;
-
-	public URIOfClassMetaPropertyLink(String id, URI uri, LinkType linkType,
-			LinkStatus linkStatus) {
-		super(id, uri, linkType, linkStatus);
-	}
-
+public enum NodeType {
+//	ColumnNode,
+//	InternalNode
 }

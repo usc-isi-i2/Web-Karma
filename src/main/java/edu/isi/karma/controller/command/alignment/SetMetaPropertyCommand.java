@@ -40,8 +40,8 @@ import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.SubclassOfNodeMetaPropertyLink;
-import edu.isi.karma.rep.alignment.URIOfClassMetaPropertyLink;
+import edu.isi.karma.rep.alignment.SubClassOfLink;
+import edu.isi.karma.rep.alignment.UriOfClassLink;
 import edu.isi.karma.view.VWorkspace;
 
 public class SetMetaPropertyCommand extends Command {
@@ -100,7 +100,7 @@ public class SetMetaPropertyCommand extends Command {
 		
 		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyValue);
-			URIOfClassMetaPropertyLink mpLink = alignment.createURIOfClassMetaPropertyLink(classNode, columnNode);
+			UriOfClassLink mpLink = alignment.createURIOfClassMetaPropertyLink(classNode, columnNode);
 			alignment.addLinkAndUpdateAlignment(mpLink);
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
 			
@@ -108,7 +108,7 @@ public class SetMetaPropertyCommand extends Command {
 			
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyValue);
-			SubclassOfNodeMetaPropertyLink mpLink = alignment.createSubclassOfNodeMetaPropertyLink(classNode, columnNode);
+			SubClassOfLink mpLink = alignment.createSubclassOfNodeMetaPropertyLink(classNode, columnNode);
 			alignment.addLinkAndUpdateAlignment(mpLink);
 		}
 		

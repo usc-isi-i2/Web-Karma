@@ -30,7 +30,7 @@ import org.json.JSONWriter;
 
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.util.Jsonizable;
 import edu.isi.karma.util.Util;
 
@@ -77,8 +77,8 @@ public class CRFColumnModel implements Jsonizable {
 			
 			// Check if the type contains domain
 			if(label.contains("|")){
-				URI domainURI = ontMgr.getURIFromString(label.split("\\|")[0]);
-				URI typeURI = ontMgr.getURIFromString(label.split("\\|")[1]);
+				Label domainURI = ontMgr.getURIFromString(label.split("\\|")[0]);
+				Label typeURI = ontMgr.getURIFromString(label.split("\\|")[1]);
 				if(domainURI == null || typeURI == null)
 					continue;
 				oj.put(SemanticTypesUpdate.JsonKeys.DisplayDomainLabel.name(), domainURI.getLocalNameWithPrefixIfAvailable());
@@ -86,7 +86,7 @@ public class CRFColumnModel implements Jsonizable {
 				oj.put(SemanticTypesUpdate.JsonKeys.DisplayLabel.name(), typeURI.getLocalNameWithPrefixIfAvailable());
 				oj.put(SemanticTypesUpdate.JsonKeys.FullType.name(), label.split("\\|")[1]);
 			} else {
-				URI typeURI = ontMgr.getURIFromString(label);
+				Label typeURI = ontMgr.getURIFromString(label);
 				if(typeURI == null)
 					continue;
 				oj.put(SemanticTypesUpdate.JsonKeys.FullType.name(), label);

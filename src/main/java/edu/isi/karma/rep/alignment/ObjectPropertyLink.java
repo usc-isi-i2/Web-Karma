@@ -21,16 +21,21 @@
 
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.modeling.alignment.LinkType;
 
-public class PropertyLink extends Link {
+public class ObjectPropertyLink extends Link {
 
 	private static final long serialVersionUID = 1L;
 	private boolean inverse;
 	private boolean isPartOfKey;
 	
-	public PropertyLink(String id, URI uri, LinkType linkType, LinkStatus status, boolean isPartOfKey) {
-		super(id, uri, linkType, status);
+	public ObjectPropertyLink(String id, Label label) {
+		super(id, label);
+		this.inverse = false;
+		this.isPartOfKey = false;
+	}
+
+	public ObjectPropertyLink(String id, Label label, boolean isPartOfKey) {
+		super(id, label);
 		this.inverse = false;
 		this.isPartOfKey = isPartOfKey;
 	}
