@@ -20,7 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -30,85 +29,60 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 
 public class GraphPreProcess {
 
 	static Logger logger = Logger.getLogger(GraphPreProcess.class);
 
-	DirectedWeightedMultigraph<Node, Link> graph;
 	DirectedWeightedMultigraph<Node, Link> gPrime;
-	List<Node> semanticNodes;
-	List<Link> selectedLinks;
-	List<Node> steinerNodes;
+	List<Link> linksPreferredByUI;
+	List<Link> linksForcedByUser;
 	
 	public GraphPreProcess(DirectedWeightedMultigraph<Node, Link> graph, 
-			List<Node> semanticNodes, List<Link> selectedLinks) {
-		this.graph = graph;
-		this.semanticNodes = semanticNodes;
-		this.selectedLinks = selectedLinks;
-		// copy all semantic nodes into steiner nodes
-		this.steinerNodes = new ArrayList<Node>(semanticNodes); 
+			List<Link> linksPreferredByUI,
+			List<Link> linksForcedByUser) {
+		
+		this.linksPreferredByUI = linksPreferredByUI;
+		this.linksForcedByUser = linksForcedByUser;
 
-		createDirectedGPrime();
+		this.gPrime = cloneGraph(graph);
+		this.updateWeights();
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void createDirectedGPrime() {
-		logger.debug("<enter");
-		
-		gPrime = (DirectedWeightedMultigraph<Node, Link>)this.graph.clone();
-		
-		Link e;
-		LinkStatus status;
-		
-		if (selectedLinks != null) 
-		for (int i = 0; i < selectedLinks.size(); i++) {
-			
-			e = (Link)selectedLinks.get(i);
-			status = e.getLinkStatus();
-			
-			if (status == LinkStatus.PreferredByUI) {
-				gPrime.setEdgeWeight(e, ModelingParams.DEFAULT_WEIGHT - ModelingParams.MIN_WEIGHT);
-				
-			} else if (status == LinkStatus.ForcedByUser) {
-				
-				e = (Link)selectedLinks.get(i);
-				
-				Node source = selectedLinks.get(i).getSource();
-				Node target = selectedLinks.get(i).getTarget();
-				
-				if (!steinerNodes.contains(source))
-					steinerNodes.add(source);
+	private DirectedWeightedMultigraph<Node, Link> cloneGraph(DirectedWeightedMultigraph<Node, Link> graph) {
+		gPrime = (DirectedWeightedMultigraph<Node, Link>)graph.clone();
+		return gPrime;
+	}
 	
-				if (!steinerNodes.contains(target))
-					steinerNodes.add(target);
+	private void updateWeights() {
+		
+		logger.debug("<enter");
+
+		if (linksPreferredByUI != null) 
+			for (Link link : linksPreferredByUI) 
+				gPrime.setEdgeWeight(link, ModelingParams.DEFAULT_WEIGHT - ModelingParams.MIN_WEIGHT);
 				
-				// removing all links to target
-				Link[] incomingLinks = gPrime.incomingEdgesOf(target).toArray(new Link[0]); 
+		if (linksPreferredByUI != null) 
+			for (Link link : linksPreferredByUI) {
+				// removing all the links to target
+				Link[] incomingLinks = gPrime.incomingEdgesOf(link.getTarget()).toArray(new Link[0]); 
 				for (Link inLink: incomingLinks) {
 					gPrime.removeAllEdges( inLink.getSource(), inLink.getTarget() );
 				}
 	
 				// adding the user selected link
-				gPrime.addEdge(source, target, e);
+				gPrime.addEdge(link.getSource(), link.getTarget(), link);
 				
-				gPrime.setEdgeWeight(e, ModelingParams.MIN_WEIGHT);
-
+				gPrime.setEdgeWeight(link, ModelingParams.MIN_WEIGHT);
 			}			
-		}
 
 		logger.debug("exit>");
 //		GraphUtil.printGraph(gPrime);
 	}
-	
-	public List<Node> getSteinerNodes() {
-		return this.steinerNodes;
-	}
-	
-	public UndirectedGraph<Node, Link> getUndirectedGraph() {
-		
+
+	public UndirectedGraph<Node, Link> getUndirectedGraph() {	
 		return  new AsUndirectedGraph<Node, Link>(this.gPrime);
 	}
 	

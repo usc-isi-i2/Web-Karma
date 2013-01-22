@@ -36,6 +36,7 @@ import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.SubClassOfLink;
@@ -51,11 +52,11 @@ public class GraphBuilder {
 	private NodeIdFactory nodeIdFactory;
 	private LinkIdFactory linkIdFactory;
 	
-	private HashMap<String, Node> idToNodes;
-	private HashMap<String, Link> idToLinks;
-
-	private HashMap<String, List<Node>> uriToNodes;
-	private HashMap<String, List<Link>> uriToLinks;
+	private HashMap<String, Node> idToNodeMap;
+	private HashMap<String, Link> idToLinkMap;
+	private HashMap<String, List<Node>> uriToNodesMap;
+	private HashMap<String, List<Link>> uriToLinksMap;
+	private HashMap<LinkStatus, List<Link>> statusToLinksMap;
 
 	private List<String> sourceToTargetLinkUris; 
 	private Node thingNode;
@@ -68,11 +69,11 @@ public class GraphBuilder {
 		this.nodeIdFactory = nodeIdFactory;
 		this.linkIdFactory = linkIdFactory;
 
-		this.idToNodes = new HashMap<String, Node>();
-		this.idToLinks = new HashMap<String, Link>();
-		
-		this.uriToNodes = new HashMap<String, List<Node>>();
-		this.uriToLinks = new HashMap<String, List<Link>>();
+		this.idToNodeMap = new HashMap<String, Node>();
+		this.idToLinkMap = new HashMap<String, Link>();
+		this.uriToNodesMap = new HashMap<String, List<Node>>();
+		this.uriToLinksMap = new HashMap<String, List<Link>>();
+		this.statusToLinksMap = new HashMap<LinkStatus, List<Link>>();
 		
 		graph = new DirectedWeightedMultigraph<Node, Link>(Link.class);
 		semanticNodes = new ArrayList<Node>();
@@ -85,22 +86,26 @@ public class GraphBuilder {
 	
 	// Public Methods
 	
-	public HashMap<String, Node> getIdToNodes() {
-		return idToNodes;
+	public HashMap<String, Node> getIdToNodeMap() {
+		return idToNodeMap;
 	}
 
-	public HashMap<String, Link> getIdToLinks() {
-		return idToLinks;
+	public HashMap<String, Link> getIdToLinkMap() {
+		return idToLinkMap;
 	}
 
-	public HashMap<String, List<Node>> getUriToNodes() {
-		return uriToNodes;
+	public HashMap<String, List<Node>> getUriToNodesMap() {
+		return uriToNodesMap;
 	}
 
-	public HashMap<String, List<Link>> getUriToLinks() {
-		return uriToLinks;
+	public HashMap<String, List<Link>> getUriToLinksMap() {
+		return uriToLinksMap;
 	}
 
+	public HashMap<LinkStatus, List<Link>> getStatusToLinksMap() {
+		return statusToLinksMap;
+	}
+	
 	public DirectedWeightedMultigraph<Node, Link> getGraph() {
 		return this.graph;
 	}
@@ -154,7 +159,7 @@ public class GraphBuilder {
 			return false;
 		}
 		
-		if (this.idToLinks.containsKey(link.getID())) {
+		if (this.idToLinkMap.containsKey(link.getID())) {
 			logger.debug("The node with id=" + link.getID() + " already exists in the graph");
 			return false;
 		}
@@ -176,19 +181,43 @@ public class GraphBuilder {
 		
 		// update the corresponding lists and hashmaps
 		
-		this.idToLinks.put(link.getID(), link);
+		this.idToLinkMap.put(link.getID(), link);
 		
-		List<Link> linksWithSameUri = uriToLinks.get(link.getUriString());
+		List<Link> linksWithSameUri = uriToLinksMap.get(link.getUriString());
 		if (linksWithSameUri == null) {
 			linksWithSameUri = new ArrayList<Link>();
-			uriToLinks.put(link.getUriString(), linksWithSameUri);
+			uriToLinksMap.put(link.getUriString(), linksWithSameUri);
 		}
 		linksWithSameUri.add(link);
+		
+		List<Link> linksWithSameStatus = statusToLinksMap.get(link.getStatus());
+		if (linksWithSameStatus == null) {
+			linksWithSameStatus = new ArrayList<Link>();
+			statusToLinksMap.put(link.getStatus(), linksWithSameUri);
+		}
+		linksWithSameStatus.add(link);
 		
 		sourceToTargetLinkUris.add(key);
 
 		logger.debug("exit>");		
 		return true;
+	}
+	
+	public void changeLinkStatus(Link link, LinkStatus newStatus) {
+
+		LinkStatus oldStatus = link.getStatus();
+		if (newStatus == oldStatus)
+			return;
+		
+		List<Link> linksWithOldStatus = this.statusToLinksMap.get(oldStatus);
+		if (linksWithOldStatus != null) linksWithOldStatus.remove(link);
+
+		List<Link> linksWithNewStatus = this.statusToLinksMap.get(oldStatus);
+		if (linksWithNewStatus == null) {
+			linksWithNewStatus = new ArrayList<Link>();
+			statusToLinksMap.put(newStatus, linksWithNewStatus);
+		}
+		linksWithNewStatus.add(link);
 	}
 	
 	// Private Methods
@@ -223,19 +252,19 @@ public class GraphBuilder {
 			return false;
 		}
 		
-		if (idToNodes.get(node.getID()) != null) {
+		if (idToNodeMap.get(node.getID()) != null) {
 			logger.debug("The node with id=" + node.getID() + " already exists in the graph.");
 			return false;
 		}
 		
 		this.graph.addVertex(node);
 		
-		this.idToNodes.put(node.getID(), node);
+		this.idToNodeMap.put(node.getID(), node);
 		
-		List<Node> nodesWithSameUri = uriToNodes.get(node.getUriString());
+		List<Node> nodesWithSameUri = uriToNodesMap.get(node.getUriString());
 		if (nodesWithSameUri == null) {
 			nodesWithSameUri = new ArrayList<Node>();
-			uriToNodes.put(node.getUriString(), nodesWithSameUri);
+			uriToNodesMap.put(node.getUriString(), nodesWithSameUri);
 		}
 		nodesWithSameUri.add(node);
 				

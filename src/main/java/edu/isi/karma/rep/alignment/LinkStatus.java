@@ -23,5 +23,5 @@ package edu.isi.karma.rep.alignment;
 public enum LinkStatus {
 	ForcedByUser,
 	PreferredByUI,
-	None // default
+	Normal // default
 }

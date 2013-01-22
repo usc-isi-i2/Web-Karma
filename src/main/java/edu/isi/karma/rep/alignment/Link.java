@@ -33,7 +33,7 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 
 	private final String id;
 	private final Label label;
-	private LinkStatus linkStatus;
+	private LinkStatus status;
 	
 	public Link(String id, Label label) {
 		super();
@@ -45,10 +45,10 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		
 		this.id = id;
 		this.label = label;
-		this.linkStatus = LinkStatus.None;
+		this.status = LinkStatus.Normal;
 	}
 	
-	public Link(String id, Label label, LinkStatus linkStatus) {
+	public Link(String id, Label label, LinkStatus status) {
 		super();
 
 		if (id == null || id.trim().length() == 0) {
@@ -58,14 +58,14 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		
 		this.id = id;
 		this.label = label;
-		this.linkStatus = linkStatus;
+		this.status = status;
 	}
 	
 	public Link(Link e) {
 		super();
 		this.id = e.id;
 		this.label = e.label;
-		this.linkStatus = e.linkStatus;
+		this.status = e.status;
 	}
 	
 	public String getID() {
@@ -102,12 +102,12 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		return this.label.getPrefix();
 	}
 	
-	public LinkStatus getLinkStatus() {
-		return linkStatus;
+	public LinkStatus getStatus() {
+		return status;
 	}
 
-	public void setLinkStatus(LinkStatus linkStatus) {
-		this.linkStatus = linkStatus;
+	public void setStatus(LinkStatus status) {
+		this.status = status;
 	}
 
 	public Node getSource() {
