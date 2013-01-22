@@ -44,13 +44,13 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import edu.isi.karma.rep.alignment.Label;
 
-class OntologyController {
+class OntologyHandler {
 	
-	static Logger logger = Logger.getLogger(OntologyController.class.getName());
+	static Logger logger = Logger.getLogger(OntologyHandler.class.getName());
 
 	private static OntModel ontModel = null;
 	
-	public OntologyController() {
+	public OntologyHandler() {
 		
 		OntDocumentManager mgr = new OntDocumentManager();
 		mgr.setProcessImports(false);
@@ -63,10 +63,10 @@ class OntologyController {
 		return ontModel;
 	}
 
-	public Label getURIFromString(String uri) {
-		Resource r = ontModel.getResource(uri);
+	public Label getLabelFromUriString(String uriString) {
+		Resource r = ontModel.getResource(uriString);
 		if (r == null || !ontModel.containsResource(r)) {
-			logger.debug("Could not find the resource " + uri + " in the ontology model.");
+			logger.debug("Could not find the resource " + uriString + " in the ontology model.");
 			return null;
 		}
 		String ns = r.getNameSpace();

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright 2012 University of Southern California
- * 
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,11 +18,23 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.rep.alignment;
 
-public enum LinkOWLType {
-//	ObjectProperty,
-//	DataProperty,
-//	SubClassOf,
-//	None
+package edu.isi.karma.modeling;
+
+public interface Prefixes {
+
+	public static final String XSD = "xsd"; 
+	public static final String RDF = "rdf"; 
+	public static final String RDFS = "rdfs"; 
+	public static final String OWL = "owl"; 
+	public static final String SAWSDL = "sawsdl"; 
+	public static final String MSM = "msm"; 
+	public static final String WSMO_LITE = "wsmo-lite"; 
+	public static final String HRESTS = "hrests";
+	public static final String KARMA = "km";
+	public static final String RULEML = "ruleml";
+	public static final String SWRL = "swrl";
+	public static final String EXAMPLE = "ex";
+	public static final String KARMA_DEV = "km-dev";
+
 }

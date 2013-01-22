@@ -28,10 +28,10 @@ import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.NodeType;
 
 public class GraphPreProcess {
 
@@ -70,7 +70,7 @@ public class GraphPreProcess {
 			status = e.getLinkStatus();
 			
 			if (status == LinkStatus.PreferredByUI) {
-				gPrime.setEdgeWeight(e, GraphBuilder.DEFAULT_WEIGHT - GraphBuilder.MIN_WEIGHT);
+				gPrime.setEdgeWeight(e, ModelingParams.DEFAULT_WEIGHT - ModelingParams.MIN_WEIGHT);
 				
 			} else if (status == LinkStatus.ForcedByUser) {
 				
@@ -94,39 +94,9 @@ public class GraphPreProcess {
 				// adding the user selected link
 				gPrime.addEdge(source, target, e);
 				
-				// if it is a subclass link, change the weight to epsilon
-				//if (e.getType() == LinkType.HasSubClass)
-				gPrime.setEdgeWeight(e, GraphBuilder.MIN_WEIGHT);
-				
-				if (target.getNodeType() == NodeType.DataProperty)
-					target.setDomainVertexId(source.getID());
-			}			
-		}
-		
-		// adding the domains of data property nodes to steiner nodes collection
-		// It is possible that some data property nodes have multiple incoming links from 
-		// different instances of the same class. We only keep the one that comes from its domain instance.
-		for (Node v: gPrime.vertexSet()) {
-			
-			if (v.getNodeType() != NodeType.DataProperty)
-				continue;
-			
-			String domainVertexId = v.getDomainVertexId();
-			if (domainVertexId == null)
-				continue;
+				gPrime.setEdgeWeight(e, ModelingParams.MIN_WEIGHT);
 
-			Link[] incomingLinks = gPrime.incomingEdgesOf(v).toArray(new Link[0]);
-			if (incomingLinks != null && incomingLinks.length != 0) {
-				
-					for (int i = 0; i < incomingLinks.length; i++) {
-						if (!incomingLinks[i].getSource().getID().equalsIgnoreCase(domainVertexId)) {
-							if (incomingLinks.length > 1)   // only for data property nodes who have links from multiple instances of the same class
-								gPrime.removeEdge(incomingLinks[i]); 
-						}
-						else if (!steinerNodes.contains(incomingLinks[i].getSource()))
-							steinerNodes.add(incomingLinks[i].getSource());
-				}
-			}
+			}			
 		}
 
 		logger.debug("exit>");

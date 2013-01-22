@@ -22,6 +22,7 @@
 package edu.isi.karma.rep.alignment;
 
 
+
 public class InternalNode extends Node {
 	
 	public InternalNode(String id, Label label) {

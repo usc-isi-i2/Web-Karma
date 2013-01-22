@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.modeling;
 
 public interface Namespaces {
 
@@ -35,5 +35,6 @@ public interface Namespaces {
 	public static final String SWRL = "http://www.w3.org/2003/11/swrl#";
 	public static final String KARMA = "http://isi.edu/integration/karma/ontologies/model/current#";
 	public static final String EXAMPLE = "http://example.com#";
+	public static final String KARMA_DEV = "http://isi.edu/integration/karma/dev#";
 
 }

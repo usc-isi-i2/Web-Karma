@@ -23,7 +23,7 @@ package edu.isi.karma.rep.alignment;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
-import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.util.RandomGUID;
 
 
 public abstract class Link extends DefaultWeightedEdge implements Comparable<Link> {
@@ -33,16 +33,14 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 
 	private final String id;
 	private final Label label;
-//	private final LinkType linkType;
-//	private final LinkOWLType linkOwlType;
 	private LinkStatus linkStatus;
 	
-	public Link(String id, Label label) throws KarmaException {
+	public Link(String id, Label label) {
 		super();
 
 		if (id == null || id.trim().length() == 0) {
-			logger.error("The id of the link cannot be empty.");
-			throw new KarmaException("The id of the link cannot be empty.");
+			logger.info("The input id is empty. A random Guid has been assigned.");
+			id = new RandomGUID().toString();
 		}
 		
 		this.id = id;
@@ -50,12 +48,12 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		this.linkStatus = LinkStatus.None;
 	}
 	
-	public Link(String id, Label label, LinkStatus linkStatus) throws KarmaException {
+	public Link(String id, Label label, LinkStatus linkStatus) {
 		super();
 
 		if (id == null || id.trim().length() == 0) {
-			logger.error("The id of the link cannot be empty.");
-			throw new KarmaException("The id of the link cannot be empty.");
+			logger.info("The input id is empty. A random Guid has been assigned.");
+			id = new RandomGUID().toString();
 		}
 		
 		this.id = id;
@@ -63,21 +61,10 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		this.linkStatus = linkStatus;
 	}
 	
-//	public Link(String id, Label label, LinkType linkType, LinkOWLType linkOwlType, LinkStatus linkStatus) {
-//		super();
-//		this.id = id;
-//		this.label = label;
-//		this.linkType = linkType;
-//		this.linkOwlType = linkOwlType;
-//		this.linkStatus = linkStatus;
-//	}
-	
 	public Link(Link e) {
 		super();
 		this.id = e.id;
 		this.label = e.label;
-//		this.linkType = e.linkType;
-//		this.linkOwlType = e.linkOwlType;
 		this.linkStatus = e.linkStatus;
 	}
 	
@@ -115,14 +102,6 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		return this.label.getPrefix();
 	}
 	
-//	public LinkType getLinkType() {
-//		return this.linkType;
-//	}
-	
-//	public LinkOWLType getLinkOwlType() {
-//		return linkOwlType;
-//	}	
-	
 	public LinkStatus getLinkStatus() {
 		return linkStatus;
 	}
@@ -142,7 +121,6 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 	public double getWeight() {
 		return super.getWeight();
 	}
-	
 
 	@Override
     public boolean equals(Object obj) {

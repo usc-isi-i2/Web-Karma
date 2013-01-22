@@ -48,4 +48,7 @@ public class NodeIdFactory {
 		return id;
 	}
 
+	public boolean duplicateUri(String uriString) {
+		return this.nodeUris.containsKey(uriString);
+	}
 }

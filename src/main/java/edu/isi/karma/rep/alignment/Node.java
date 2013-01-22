@@ -22,9 +22,7 @@ package edu.isi.karma.rep.alignment;
 
 import org.apache.log4j.Logger;
 
-import edu.isi.karma.webserver.KarmaException;
-
-
+import edu.isi.karma.util.RandomGUID;
 
 public abstract class Node implements Comparable<Node> {
 
@@ -32,38 +30,26 @@ public abstract class Node implements Comparable<Node> {
 
 	private final String id;
 	private final Label label;
-//	private final NodeType nodeType;
-//	private final NodeValueType nodeValueType;
 	
-	public Node(String id, Label label) throws KarmaException {
+	public Node(String id, Label label) {
 		
 		if (id == null || id.trim().length() == 0) {
-			logger.error("The id of the node cannot be empty.");
-			throw new KarmaException("The id of the node cannot be empty.");
+			logger.info("The input id is empty. A random Guid has been assigned.");
+			id = new RandomGUID().toString();
 		}
 		
 		this.id = id;
 		this.label = label;
 	}
 	
-//	public Node(String id, Label label, NodeType nodeType, NodeValueType nodeValueType) {
-//		this.id = id;
-//		this.label = label;
-//		this.nodeType = nodeType;
-//		this.nodeValueType = nodeValueType;
-//	}
-	
 	public Node(Node v) {
 		this.id = v.id;
 		this.label = v.label;
-//		this.nodeType = v.nodeType;
-//		this.nodeValueType = v.nodeValueType;
 	}
 	
 	public String getID() {
 		return this.id;
 	}
-	
 	
 	public String getLocalID() {
 		String s = this.id;
@@ -83,7 +69,6 @@ public abstract class Node implements Comparable<Node> {
 		return s;
 	}
 	
-	
 	public String getUriString() {
 		return this.label.getUriString();
 	}
@@ -96,14 +81,6 @@ public abstract class Node implements Comparable<Node> {
 		return this.label.getPrefix();
 	}
 	
-//	public NodeType getNodeType() {
-//		return this.nodeType;
-//	}
-	
-//	public NodeValueType getNodeValueType() {
-//		return this.nodeValueType;
-//	}
-
 	@Override
     public boolean equals(Object obj) {
         if (obj == this) {

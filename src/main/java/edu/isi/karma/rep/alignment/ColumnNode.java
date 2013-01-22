@@ -22,6 +22,7 @@
 package edu.isi.karma.rep.alignment;
 
 
+
 public class ColumnNode extends Node {
 
 	private final String hNodeId;

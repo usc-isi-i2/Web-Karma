@@ -26,42 +26,22 @@ import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.NodeType;
 
 public class GraphUtil {
 
-	private static String getNodeTypeString(Node vertex) {
-    	if (vertex.getNodeType() == NodeType.Class)
-    		return "Class";
-    	else if (vertex.getNodeType() == NodeType.DataProperty)
-    		return "DataProperty";
-    	else
-    		return null;
+	private static String getNodeTypeString(Node node) {
+		String s = node.getClass().getName();
+		if (s.indexOf(".") != -1)
+			s = s.substring(s.lastIndexOf(".") + 1);
+    	return s;
 	}
 
 	private static String getLinkTypeString(Link link) {
-    	if (link.getLinkType() == LinkType.ObjectProperty)
-    		return "ObjectProperty";
-    	if (link.getLinkType() == LinkType.DataProperty)
-    		return "DataProperty";
-    	if (link.getLinkType() == LinkType.HasSubClass)
-    		return "HasSubClass";
-    	if (link.getLinkType() == LinkType.None)
-    		return "None";
-    	else
-    		return null;
-	}
-	
-	public static Node getVertex(Graph<Node, Link> graph, String id) {
-		if (id == null)
-			return null;
-		
-		for (Node v : graph.vertexSet())
-			if (v.getID().equalsIgnoreCase(id))
-				return v;
-		return null;
+		String s = link.getClass().getName();
+		if (s.indexOf(".") != -1)
+			s = s.substring(s.lastIndexOf(".") + 1);
+    	return s;
 	}
 	
 	public static void printVertex(Node vertex) {
@@ -69,7 +49,7 @@ public class GraphUtil {
     	System.out.print( vertex.getLocalID());
 //    	System.out.print( vertex.getID());
     	System.out.print(", ");
-    	System.out.print(vertex.getUriString());
+    	System.out.print(vertex.getLocalName());
     	System.out.print(", ");
     	System.out.print(getNodeTypeString(vertex));
     	System.out.print(")");
@@ -77,14 +57,9 @@ public class GraphUtil {
 	
 	public static void printEdge(Link edge) {
     	System.out.print("(");
-		// FIXME
-		if (edge.isInverse()) {
-			System.out.print( "inverseOf(" + edge.getLocalID() + ")" );
-		} else 
-			System.out.print( edge.getLocalID());
-//    	System.out.print( edge.getID());
+    	System.out.print( edge.getLocalID());
     	System.out.print(", ");
-    	System.out.print(edge.getUriString());
+    	System.out.print(edge.getLocalName());
     	System.out.print(", ");
     	System.out.print(getLinkTypeString(edge));
     	System.out.print(", ");
@@ -126,11 +101,6 @@ public class GraphUtil {
 	
 	public static void printGraphSimple(Graph<Node, Link> graph) {
 		
-//    	System.out.println("*** Nodes ***");
-//		for (Vertex vertex : graph.vertexSet()) {
-//			printVertex(vertex);
-//			System.out.println();
-//        }
     	System.out.println("*** Graph ***");
 		for (Link edge : graph.edgeSet()) {
 			System.out.print("(");
@@ -138,8 +108,6 @@ public class GraphUtil {
 			System.out.print(")");
 			System.out.print(" - ");
 			System.out.print("(");
-			if (edge.isInverse())
-				System.out.print("invOf:");
 			System.out.print(edge.getLocalID());
 			System.out.print(")");
 			System.out.print(" - ");

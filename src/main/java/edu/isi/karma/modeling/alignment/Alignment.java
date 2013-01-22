@@ -30,19 +30,23 @@ import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
 
+import edu.isi.karma.modeling.FixedUris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.ClassLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.ColumnSubClassOfLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
+import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SubClassOfLink;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.UriOfClassLink;
+import edu.isi.karma.webserver.KarmaException;
 
 
 
@@ -52,7 +56,6 @@ public class Alignment {
 
 
 	private OntologyManager ontologyManager;
-	private boolean separateDomainInstancesForSameDataProperties;
 	private List<Node> semanticNodes;
 
 	private List<Link> linksForcedByUser;
@@ -68,9 +71,8 @@ public class Alignment {
 	
 	private GraphBuilder graphBuilder;
 	
-	public Alignment(OntologyManager ontologyManager, List<SemanticType> semanticTypes) {
+	public Alignment(OntologyManager ontologyManager) {
 		this.ontologyManager = ontologyManager;
-		this.separateDomainInstancesForSameDataProperties = true;
 
 		this.nodeIdFactory = new NodeIdFactory();
 		this.linkIdFactory = new LinkIdFactory();
@@ -443,44 +445,73 @@ public class Alignment {
 		return graphBuilder.getUriToNodes().get(uriString);
 	}
 	
-	public ColumnNode createColumnNode(String hNodeId, String columnName) {
+	// AddNode methods
+	
+	public ColumnNode addColumnNode(String hNodeId, String columnName) {
 		String id = nodeIdFactory.getNodeId(hNodeId);
 		Label label = new Label(columnName);
-		
 		ColumnNode node = new ColumnNode(id, label, hNodeId);
-		if (this.graphBuilder.addNode(node))
-			return node;
-		
+		if (this.graphBuilder.addNode(node)) return node;
 		return null;
 	}
 	
-	public InternalNode createInternalClassNode(Label label) {
+	public InternalNode addInternalClassNode(Label label) {
 		String id = nodeIdFactory.getNodeId(label.getUriString());
-		
 		InternalNode node = new InternalNode(id, label);
-		if (this.graphBuilder.addNode(node))
-			return node;
-		
+		if (this.graphBuilder.addNode(node)) return node;
+		return null;	
+	}
+	
+	// AddLink methods
+
+	public DataPropertyLink addDataPropertyLink(Node source, Node target, Label label, boolean isPartOfKey) {
+		String id = linkIdFactory.getLinkId(label.getUriString());	
+		DataPropertyLink link = new DataPropertyLink(id, label, isPartOfKey);
+		if (this.graphBuilder.addLink(source, target, link)) return link;
+		return null;
+	}
+	
+	// Probably we don't need this function in the interface to GUI
+	public ObjectPropertyLink addObjectPropertyLink(Node source, Node target, Label label, boolean isPartOfKey) {
+		String id = linkIdFactory.getLinkId(label.getUriString());		
+		ObjectPropertyLink link = new ObjectPropertyLink(id, label, isPartOfKey);
+		if (this.graphBuilder.addLink(source, target, link)) return link;
+		return null;	
+	}
+	
+	// Probably we don't need this function in the interface to GUI
+	public SubClassOfLink addSubClassOfLink(Node source, Node target) {
+		String id = linkIdFactory.getLinkId(FixedUris.RDFS_SUBCLASS_OF_URI);
+		SubClassOfLink link = new SubClassOfLink(id);
+		if (this.graphBuilder.addLink(source, target, link)) return link;
+		return null;	
+	}
+	
+	public ClassLink addClassLink(Node source, Node target, boolean isPartOfKey) {
+		String id = linkIdFactory.getLinkId(FixedUris.CLASS_LINK_URI);
+		ClassLink link = new ClassLink(id, isPartOfKey);
+		if (this.graphBuilder.addLink(source, target, link)) return link;
+		return null;
+	}
+	
+	public DataPropertyOfColumnLink addDataPropertyOfColumnLink(Node source, Node target) {
+		String id = linkIdFactory.getLinkId(FixedUris.DATAPROPERTY_OF_COLUMN_LINK_URI);
+		DataPropertyOfColumnLink link = new DataPropertyOfColumnLink(id);
+		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
 	}
 
-	public DataPropertyLink createPropertyLink(Node source, Node target, Label uri, boolean isPartOfKey) {
-		return null;
+	public ColumnSubClassOfLink addColumnSubClassOfLink(Node source, Node target) {
+		String id = linkIdFactory.getLinkId(FixedUris.COLUMN_SUBCLASS_OF_LINK_URI);
+		ColumnSubClassOfLink link = new ColumnSubClassOfLink(id);
+		if (this.graphBuilder.addLink(source, target, link)) return link;
+		return null;	
 	}
 	
-	public ClassLink createClassLink(Node source, Node target, boolean isPartOfKey) {
-		return null;
-	}
-	
-	public DataPropertyOfColumnLink createDataPropertyOfColumnMetaPropertyLink(Node source, Node target) {
-		return null;
-	}
-
-	public SubClassOfLink createSubclassOfNodeMetaPropertyLink(Node source, Node target) {
-		return null;
-	}
-	
-	public UriOfClassLink createURIOfClassMetaPropertyLink(Node source, Node target) {
+	public UriOfClassLink addURIOfClassLink(Node source, Node target) {
+		String id = linkIdFactory.getLinkId(FixedUris.URI_OF_CLASS_LINK_URI);
+		UriOfClassLink link = new UriOfClassLink(id);
+		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;
 	}
 	

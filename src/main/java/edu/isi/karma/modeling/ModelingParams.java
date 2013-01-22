@@ -21,14 +21,8 @@
 
 package edu.isi.karma.modeling;
 
-import edu.isi.karma.service.Namespaces;
 
 public interface ModelingParams{
-
-	// URIs
-	public static String THING_URI = Namespaces.OWL + "Thing";
-	public static String HAS_SUBCLASS_URI = "http://example.com#hasSubClass";
-	public static final String SUBCLASS_URI = Namespaces.RDFS + "subClassOf"; 
 
 	// Building Graph
 	public static double DEFAULT_WEIGHT = 1.0;	

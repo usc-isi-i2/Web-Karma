@@ -30,20 +30,22 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import edu.isi.karma.rep.alignment.Label;
+
 public class OntologyManager {
 	
 	static Logger logger = Logger.getLogger(OntologyManager.class.getName());
 
-	private static OntologyController ontController = null;
-	private static OntologyCache ontCache = null;
+	private OntologyHandler ontHandler = null;
+	private OntologyCache ontCache = null;
 	
 	public OntologyManager() {
-		ontController = new OntologyController();
-		ontCache = new OntologyCache(ontController);
+		ontHandler = new OntologyHandler();
+		ontCache = new OntologyCache(ontHandler);
 	}
 
 	public boolean isEmpty() {
-		return ontController.getOntModel().isEmpty();
+		return ontHandler.getOntModel().isEmpty();
 	}
 	
 	public boolean doImport(File sourceFile) {
@@ -62,13 +64,13 @@ public class OntologyManager {
 		
 		try {
 			InputStream s = new FileInputStream(sourceFile);
-			ontController.getOntModel().read(s, null);
+			ontHandler.getOntModel().read(s, null);
 		} catch (Throwable t) {
 			logger.error("Error reading the OWL ontology file!", t);
 			return false;
 		}
 		
-		ontCache = new OntologyCache(ontController);
+		ontCache = new OntologyCache(ontHandler);
 		ontCache.init();
 		/* Record the operation */
 		logger.debug("done.");
@@ -91,7 +93,7 @@ public class OntologyManager {
 		
 		try {
 			InputStream s = new FileInputStream(sourceFile);
-			ontController.getOntModel().read(s, null);
+			ontHandler.getOntModel().read(s, null);
 		} catch (Throwable t) {
 			logger.error("Error reading the OWL ontology file!", t);
 			return false;
@@ -103,7 +105,7 @@ public class OntologyManager {
 	}
 	
 	public void updateCache() {
-		ontCache = new OntologyCache(ontController);
+		ontCache = new OntologyCache(ontHandler);
 		ontCache.init();
 	}
 	
@@ -135,6 +137,59 @@ public class OntologyManager {
 		return ontCache.getDataPropertyHierarchy();
 	}
 	
+	public HashMap<String, List<String>> getDirectOutDataProperties() {
+		return ontCache.getDirectOutDataProperties();
+	}
+
+	public HashMap<String, List<String>> getIndirectOutDataProperties() {
+		return ontCache.getIndirectOutDataProperties();
+	}
+
+	public HashMap<String, List<String>> getDirectOutObjectProperties() {
+		return ontCache.getDirectOutObjectProperties();
+	}
+
+	public HashMap<String, List<String>> getIndirectOutObjectProperties() {
+		return ontCache.getIndirectOutObjectProperties();
+	}
+
+	public HashMap<String, List<String>> getDirectInObjectProperties() {
+		return ontCache.getDirectInObjectProperties();
+	}
+
+	public HashMap<String, List<String>> getIndirectInObjectProperties() {
+		return ontCache.getIndirectInObjectProperties();
+	}
+
+	public HashMap<String, List<String>> getPropertyDirectDomains() {
+		return ontCache.getPropertyDirectDomains();
+	}
+
+	public HashMap<String, List<String>> getPropertyIndirectDomains() {
+		return ontCache.getPropertyIndirectDomains();
+	}
+
+	public HashMap<String, List<String>> getPropertyDirectRanges() {
+		return ontCache.getPropertyDirectRanges();
+	}
+
+	public HashMap<String, List<String>> getPropertyIndirectRanges() {
+		return ontCache.getPropertyIndirectRanges();
+	}
+	
+	public HashMap<String, List<String>> getDirectDomainRangeProperties() {
+		return ontCache.getDirectDomainRangeProperties();
+	}
+
+	public HashMap<String, List<String>> getIndirectDomainRangeProperties() {
+		return ontCache.getIndirectDomainRangeProperties();
+	}
+
+	
+	public Label getLabelFromUriString(String uriString) {
+		return this.ontHandler.getLabelFromUriString(uriString);
+	}
+	
 	/**
 	 * If @param superClassUri is a superclass of @param subClassUri, it returns true; otherwise, false.
 	 * If third parameter is set to true, it also considers indirect superclasses.
@@ -152,7 +207,7 @@ public class OntologyManager {
 				return false;
 		}
 		
-		List<String> superClasses = ontController.getSuperClasses(subClassUri, recursive);
+		List<String> superClasses = ontHandler.getSuperClasses(subClassUri, recursive);
 		for (int i = 0; i < superClasses.size(); i++) {
 			if (superClassUri.equalsIgnoreCase(superClasses.get(i))) {
 				return true;
@@ -179,7 +234,7 @@ public class OntologyManager {
 				return false;
 		}
 		
-		List<String> subClasses = ontController.getSubClasses(superClassUri, recursive);
+		List<String> subClasses = ontHandler.getSubClasses(superClassUri, recursive);
 		for (int i = 0; i < subClasses.size(); i++) {
 			if (subClassUri.equalsIgnoreCase(subClasses.get(i))) {
 				return true;
@@ -208,7 +263,7 @@ public class OntologyManager {
 				return false;
 		}
 		
-		List<String> superProperties = ontController.getSuperProperties(subPropertyUri, recursive);
+		List<String> superProperties = ontHandler.getSuperProperties(subPropertyUri, recursive);
 		for (int i = 0; i < superProperties.size(); i++) {
 			if (superPropertyUri.equalsIgnoreCase(superProperties.get(i))) {
 				return true;
@@ -235,7 +290,7 @@ public class OntologyManager {
 				return false;
 		}
 		
-		List<String> subProperties = ontController.getSubProperties(superPropertyUri, recursive);
+		List<String> subProperties = ontHandler.getSubProperties(superPropertyUri, recursive);
 		for (int i = 0; i < subProperties.size(); i++) {
 			if (subPropertyUri.equalsIgnoreCase(subProperties.get(i))) {
 				return true;
@@ -393,7 +448,7 @@ public class OntologyManager {
 	}
 	
 	public Map<String, String> getPrefixMap () {
-		Map<String, String> nsMap = ontController.getOntModel().getNsPrefixMap();
+		Map<String, String> nsMap = ontHandler.getOntModel().getNsPrefixMap();
 		Map<String, String> prefixMap = new HashMap<String, String>();
 		
 		for(String ns: nsMap.keySet()) {
@@ -401,5 +456,49 @@ public class OntologyManager {
 				prefixMap.put(nsMap.get(ns), ns);
 		}
 		return prefixMap;
+	}
+	
+	/**
+	 * returns URIs of all subclasses of @param classUri (also considers indirect subclasses if second parameter is true).
+	 * @param classUri
+	 * @param recursive
+	 * @return
+	 */
+	public List<String> getSubClasses(String classUri, boolean recursive) {
+
+		return ontHandler.getSubClasses(classUri, recursive);
+	}
+	
+	/**
+	 * returns URIs of all superclasses of @param classUri (also considers indirect superclasses if second parameter is true).
+	 * @param classUri
+	 * @param recursive
+	 * @return
+	 */
+	public List<String> getSuperClasses(String classUri, boolean recursive) {
+		
+		return ontHandler.getSubClasses(classUri, recursive);
+	}
+	
+	/**
+	 * returns URIs of all sub-properties of @param propertyUri
+	 * @param propertyUri
+	 * @param recursive
+	 * @return
+	 */
+	public List<String> getSubProperties(String propertyUri, boolean recursive) {
+
+		return ontHandler.getSubProperties(propertyUri, recursive);
+	}
+	
+	/**
+	 * returns URIs of all super-properties of @param propertyUri
+	 * @param propertyUri
+	 * @param recursive
+	 * @return
+	 */
+	public List<String> getSuperProperties(String propertyUri, boolean recursive) {
+
+		return ontHandler.getSuperProperties(propertyUri, recursive);
 	}
 }

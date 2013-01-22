@@ -18,13 +18,13 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
+import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.service.Atom;
 import edu.isi.karma.service.Attribute;
 import edu.isi.karma.service.ClassAtom;
 import edu.isi.karma.service.InvocationManager;
 import edu.isi.karma.service.MimeType;
-import edu.isi.karma.service.Namespaces;
-import edu.isi.karma.service.Prefixes;
 import edu.isi.karma.service.PropertyAtom;
 import edu.isi.karma.service.SerializationLang;
 import edu.isi.karma.service.Service;

@@ -22,6 +22,7 @@
 package edu.isi.karma.rep.alignment;
 
 
+
 public class ObjectPropertyLink extends Link {
 
 	private static final long serialVersionUID = 1L;

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright 2012 University of Southern California
- * 
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,12 +18,18 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.rep.alignment;
 
-public enum LinkType {
-//	ClassLink, // a link from a class to a column whose values are instances of that class
-//	PropertyLink, // a datatype property that points to a column including the values of that datatype property 
-//	DataPropertyOfColumnLink, //  
-//	UriOfClassLink, //
-//	SubclassOfNodeLink // 
+package edu.isi.karma.modeling;
+
+public interface FixedUris {
+
+	public static final String THING_URI = Namespaces.OWL + "Thing"; 
+	public static final String RDFS_SUBCLASS_OF_URI = Namespaces.RDFS + "subClassOf"; 
+
+	// Karma Internal URIs
+	public static final String CLASS_LINK_URI = Namespaces.KARMA_DEV + "classLink"; 
+	public static final String COLUMN_SUBCLASS_OF_LINK_URI = Namespaces.KARMA_DEV + "columnSubClassOfLink"; 
+	public static final String DATAPROPERTY_OF_COLUMN_LINK_URI = Namespaces.KARMA_DEV + "dataPropertyOfColumnLink"; 
+	public static final String URI_OF_CLASS_LINK_URI = Namespaces.KARMA_DEV + "uriOfClassLink"; 
+
 }

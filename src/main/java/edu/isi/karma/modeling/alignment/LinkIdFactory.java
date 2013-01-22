@@ -47,4 +47,8 @@ public class LinkIdFactory {
 		}
 		return id;
 	}
+	
+	public boolean duplicateUri(String uriString) {
+		return this.linksUris.containsKey(uriString);
+	}
 }
