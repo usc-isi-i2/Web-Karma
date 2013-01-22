@@ -271,7 +271,7 @@ public class SourceDescription {
 				if(e.getLinkType()==LinkType.DataProperty){
 					//get the child node, which should be a DataProperty node
 					if(child.getNodeType()!=NodeType.DataProperty){
-						throw new KarmaException("Node " + child.getID() + " should be of type NodeType.DataProperty");
+						throw new KarmaException("Node " + child.getId() + " should be of type NodeType.DataProperty");
 					}
 					else{
 						stmt = generateDataPropertyStatement(v,e,child);
@@ -281,7 +281,7 @@ public class SourceDescription {
 				else if(e.getLinkType()==LinkType.ObjectProperty){
 					//get the child node, which should be a DataProperty node
 					if(child.getNodeType()!=NodeType.Class){
-						throw new KarmaException("Node " + child.getID() + " should be of type NodeType.Class");
+						throw new KarmaException("Node " + child.getId() + " should be of type NodeType.Class");
 					}
 					else{
 						stmt = generateObjectPropertyStatement(v,e,child);
@@ -576,7 +576,7 @@ public class SourceDescription {
 		//logger.info("Get Key for " + v.getUri() + " with ID=" + v.getID());
 		boolean isGensym=false;
 		boolean isCompoundKey=false;
-		String key = uriMap.get(v.getID());
+		String key = uriMap.get(v.getId());
 		if(key!=null){
 			//logger.info("Key for " + v.getID() + " is " + key);
 			return key;
@@ -640,8 +640,8 @@ public class SourceDescription {
 		if(!isGensym && !isCompoundKey)
 			key = addBacktick(key);
 		
-		classNameToId.put(v.getUriString(), v.getID());
-		uriMap.put(v.getID(), key);
+		classNameToId.put(v.getUriString(), v.getId());
+		uriMap.put(v.getId(), key);
 		//logger.info("Key for " + v.getID() + " is " + key);
 		return key;
 	}

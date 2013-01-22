@@ -198,76 +198,15 @@ public class OntologyManager {
 	 * @param recursive
 	 * @return
 	 */
-	public boolean isSuperClass(String superClassUri, String subClassUri, boolean recursive) {
-		
-		if (!recursive) {
-			if (ontCache.getSubClassMap().containsKey(subClassUri + superClassUri))
-				return true;
-			else
-				return false;
-		}
-		
-		List<String> superClasses = ontHandler.getSuperClasses(subClassUri, recursive);
-		for (int i = 0; i < superClasses.size(); i++) {
-			if (superClassUri.equalsIgnoreCase(superClasses.get(i))) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * If @param subClassUri is a subclass of @param superClassUri, it returns true; otherwise, false.
-	 * If third parameter is set to true, it also considers indirect subclaases.
-	 * @param subClassUri
-	 * @param superClassUri
-	 * @param recursive
-	 * @return
-	 */
 	public boolean isSubClass(String subClassUri, String superClassUri, boolean recursive) {
 		
-		if (!recursive) {
-			if (ontCache.getSubClassMap().containsKey(subClassUri + superClassUri))
+		if (!recursive) { 
+			if (ontCache.getDirectSubClasses().containsKey(subClassUri + superClassUri))
 				return true;
-			else
-				return false;
-		}
-		
-		List<String> subClasses = ontHandler.getSubClasses(superClassUri, recursive);
-		for (int i = 0; i < subClasses.size(); i++) {
-			if (subClassUri.equalsIgnoreCase(subClasses.get(i))) {
+		} else {
+			List<String> indirectSubClasses = ontCache.getIndirectSubClasses().get(superClassUri);
+			if (indirectSubClasses != null && indirectSubClasses.contains(subClassUri))
 				return true;
-			}
-		}
-		
-		return false;
-	}
-	
-
-
-	/**
-	 * If @param superPropertyUri is a superProperty of @param subPropertyUri, it returns true; otherwise, false.
-	 * If third parameter is set to true, it also considers indirect superproperties.
-	 * @param superPropertyUri
-	 * @param subPropertyUri
-	 * @param recursive
-	 * @return
-	 */
-	public boolean isSuperProperty(String superPropertyUri, String subPropertyUri, boolean recursive) {
-		
-		if (!recursive) {
-			if (ontCache.getSubPropertyMap().containsKey(subPropertyUri + superPropertyUri))
-				return true;
-			else
-				return false;
-		}
-		
-		List<String> superProperties = ontHandler.getSuperProperties(subPropertyUri, recursive);
-		for (int i = 0; i < superProperties.size(); i++) {
-			if (superPropertyUri.equalsIgnoreCase(superProperties.get(i))) {
-				return true;
-			}
 		}
 		
 		return false;
@@ -284,17 +223,12 @@ public class OntologyManager {
 	public boolean isSubProperty(String subPropertyUri, String superPropertyUri, boolean recursive) {
 		
 		if (!recursive) {
-			if (ontCache.getSubPropertyMap().containsKey(subPropertyUri + superPropertyUri))
+			if (ontCache.getDirectSubPropertyCheck().containsKey(subPropertyUri + superPropertyUri))
 				return true;
-			else
-				return false;
-		}
-		
-		List<String> subProperties = ontHandler.getSubProperties(superPropertyUri, recursive);
-		for (int i = 0; i < subProperties.size(); i++) {
-			if (subPropertyUri.equalsIgnoreCase(subProperties.get(i))) {
+		} else {
+			List<String> indirectSubProperties = ontCache.getIndirectSubProperties().get(superPropertyUri);
+			if (indirectSubProperties != null && indirectSubProperties.contains(subPropertyUri))
 				return true;
-			}
 		}
 		
 		return false;
@@ -309,8 +243,7 @@ public class OntologyManager {
 	 * @return
 	 */
 	public List<String> getDomainsGivenProperty(String propertyUri, boolean recursive) {
-		// should add all subclasses to the results
-		List<String> results;
+		List<String> results = null;
 
 		if (!recursive)
 			results = ontCache.getPropertyDirectDomains().get(propertyUri);
@@ -336,7 +269,7 @@ public class OntologyManager {
 		
 		List<String> objectProperties = ontCache.getDirectInObjectProperties().get(rangeClassUri);
 		List<String> domains = new ArrayList<String>();
-		List<String> temp;
+		List<String> temp = null;
 		
 		if (objectProperties == null)
 			return domains;
@@ -365,7 +298,7 @@ public class OntologyManager {
 	 */
 	public List<String> getDataProperties(String domainClassUri, String propertyUri, boolean inheritance) {
 
-		List<String> propertyDomains;
+		List<String> propertyDomains = null;
 		List<String> results = new ArrayList<String>();
 
 		if (!inheritance)
@@ -391,7 +324,7 @@ public class OntologyManager {
 	 */
 	public List<String> getObjectProperties(String domainClassUri, String rangeClassUri, boolean inheritance) {
 		
-		List<String> results;
+		List<String> results = null;
 
 		if (!inheritance)
 			results = ontCache.getDirectDomainRangeProperties().get(domainClassUri+rangeClassUri);
@@ -412,7 +345,7 @@ public class OntologyManager {
 	 */
 	public List<String> getDataPropertiesOfClass(String domainClassUri, boolean inheritance) {
 		
-		List<String> results;
+		List<String> results = null;
 
 		if (!inheritance)
 			results = ontCache.getDirectOutDataProperties().get(domainClassUri);
@@ -434,7 +367,7 @@ public class OntologyManager {
 	 */
 	public List<String> getObjectPropertiesOfClass(String domainClassUri, boolean inheritance) {
 		
-		List<String> results;
+		List<String> results = null;
 
 		if (!inheritance)
 			results = ontCache.getDirectOutObjectProperties().get(domainClassUri);

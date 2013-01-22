@@ -21,6 +21,7 @@
 package edu.isi.karma.modeling.alignment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -159,17 +160,17 @@ public class GraphBuilder {
 			return false;
 		}
 		
-		if (this.idToLinkMap.containsKey(link.getID())) {
-			logger.debug("The node with id=" + link.getID() + " already exists in the graph");
+		if (this.idToLinkMap.containsKey(link.getId())) {
+			logger.debug("The node with id=" + link.getId() + " already exists in the graph");
 			return false;
 		}
 		
-		String key = source.getID() + target.getID() + link.getUriString();
+		String key = source.getId() + target.getId() + link.getUriString();
 		// check to see if the link is duplicate or not
 		if (sourceToTargetLinkUris.indexOf(key) != -1)
 		{
 			logger.debug("There is already a link with label " + link.getUriString() + 
-					" from " + source.getID() + " to " + target.getID());
+					" from " + source.getId() + " to " + target.getId());
 			return false;
 		}
 
@@ -181,7 +182,7 @@ public class GraphBuilder {
 		
 		// update the corresponding lists and hashmaps
 		
-		this.idToLinkMap.put(link.getID(), link);
+		this.idToLinkMap.put(link.getId(), link);
 		
 		List<Link> linksWithSameUri = uriToLinksMap.get(link.getUriString());
 		if (linksWithSameUri == null) {
@@ -252,14 +253,14 @@ public class GraphBuilder {
 			return false;
 		}
 		
-		if (idToNodeMap.get(node.getID()) != null) {
-			logger.debug("The node with id=" + node.getID() + " already exists in the graph.");
+		if (idToNodeMap.get(node.getId()) != null) {
+			logger.debug("The node with id=" + node.getId() + " already exists in the graph.");
 			return false;
 		}
 		
 		this.graph.addVertex(node);
 		
-		this.idToNodeMap.put(node.getID(), node);
+		this.idToNodeMap.put(node.getId(), node);
 		
 		List<Node> nodesWithSameUri = uriToNodesMap.get(node.getUriString());
 		if (nodesWithSameUri == null) {
@@ -336,11 +337,10 @@ public class GraphBuilder {
 		return nodeClosureList;
 	}
 
-	private void updateLinks(List<Node> newNodes) {
-
+	private void updateLinksBetweenTwoSets(List<Node> set1, List<Node> set2) {
+		
 		logger.debug("<enter");
 
-		Node[] allNodes = this.graph.vertexSet().toArray(new Node[0]);
 		List<String> objectProperties = new ArrayList<String>();
 		//List<String> dataProperties = new ArrayList<String>();
 
@@ -353,26 +353,27 @@ public class GraphBuilder {
 		String id = null;
 		Label label = null;
 
-		logger.debug("number of set1 vertices (first loop): " + allNodes.length);
-		logger.debug("number of set2 vertices (second loop): " + newNodes.size());
+		logger.debug("number of set1 vertices (first loop): " + set1.size());
+		logger.debug("number of set2 vertices (second loop): " + set2.size());
 
-		for (int i = 0; i < allNodes.length; i++) {
-			for (int j = 0; j < newNodes.size(); j++) {
 
-//				logger.debug("node1: " + vertices[i]);
-//				logger.debug("node2: " + newNodes.get(u));
+		for (Node n1 : set1) {
+			for (Node n2 : set2) {
 
-				if (allNodes[i].equals(newNodes.get(j)))
+//				logger.debug("node1: " + n1.getID());
+//				logger.debug("node2: " + n2.getID());
+
+				if (n1.equals(n2))
 					continue;
 
 				for (int k = 0; k < 2; k++) {	
 
 					if (k == 0) {
-						source = allNodes[i];
-						target = newNodes.get(j);
+						source = n1;
+						target = n2;
 					} else {
-						source = newNodes.get(j);
-						target = allNodes[i];
+						source = n2;
+						target = n1;
 					}
 
 //					logger.debug("examining the links between nodes " + i + "," + u);
@@ -419,8 +420,7 @@ public class GraphBuilder {
 
 					// Add subclass links between internal nodes
 					// we have to check both sides.
-					if (ontologyManager.isSubClass(targetUri, sourceUri, false) ||
-							ontologyManager.isSuperClass(sourceUri, targetUri, false)) {
+					if (ontologyManager.isSubClass(targetUri, sourceUri, false)) {
 						id = linkIdFactory.getLinkId(SubClassOfLink.getLabel().getUriString());
 						SubClassOfLink subClassOfLink = new SubClassOfLink(id);
 						// target is subclass of source
@@ -429,7 +429,18 @@ public class GraphBuilder {
 
 				}
 			}
-		}
+		}		
+
+		logger.debug("exit>");
+
+	}
+	
+	private void updateLinks(List<Node> newNodes) {
+
+		logger.debug("<enter");
+
+		Node[] nodes = this.graph.vertexSet().toArray(new Node[0]);
+		updateLinksBetweenTwoSets(Arrays.asList(nodes), newNodes);
 
 		logger.debug("exit>");
 	}

@@ -46,7 +46,7 @@ public class GraphUtil {
 	
 	public static void printVertex(Node vertex) {
     	System.out.print("(");
-    	System.out.print( vertex.getLocalID());
+    	System.out.print( vertex.getLocalId());
 //    	System.out.print( vertex.getID());
     	System.out.print(", ");
     	System.out.print(vertex.getLocalName());
@@ -57,7 +57,7 @@ public class GraphUtil {
 	
 	public static void printEdge(Link edge) {
     	System.out.print("(");
-    	System.out.print( edge.getLocalID());
+    	System.out.print( edge.getLocalId());
     	System.out.print(", ");
     	System.out.print(edge.getLocalName());
     	System.out.print(", ");
@@ -104,15 +104,15 @@ public class GraphUtil {
     	System.out.println("*** Graph ***");
 		for (Link edge : graph.edgeSet()) {
 			System.out.print("(");
-			System.out.print(edge.getSource().getLocalID());
+			System.out.print(edge.getSource().getLocalId());
 			System.out.print(")");
 			System.out.print(" - ");
 			System.out.print("(");
-			System.out.print(edge.getLocalID());
+			System.out.print(edge.getLocalId());
 			System.out.print(")");
 			System.out.print(" - ");
 			System.out.print("(");
-			System.out.print(edge.getTarget().getLocalID());
+			System.out.print(edge.getTarget().getLocalId());
 			System.out.print(")");
 			System.out.println();
         }

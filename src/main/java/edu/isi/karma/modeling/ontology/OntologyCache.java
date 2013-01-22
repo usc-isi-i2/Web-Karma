@@ -69,10 +69,18 @@ class OntologyCache {
 	private HashMap<String, List<String>> directDomainRangeProperties;
 	private HashMap<String, List<String>> indirectDomainRangeProperties;
 
+	// hashmap: class -> subclasses
+	private HashMap<String, List<String>> directSubClasses;
+	private HashMap<String, List<String>> indirectSubClasses;
+
+	// hashmap: class -> subproperties
+	private HashMap<String, List<String>> directSubProperties;
+	private HashMap<String, List<String>> indirectSubProperties;
+
 	// hashmap: class1 + class2 -> boolean (if c1 is subClassOf c2)
-	private HashMap<String, Boolean> directSubClassMap;
+	private HashMap<String, Boolean> directSubClassCheck;
 	// hashmap: property1 + property2 -> boolean (if p1 is subPropertyOf p2)
-	private HashMap<String, Boolean> directSubPropertyMap;
+	private HashMap<String, Boolean> directSubPropertyCheck;
 	
 	public OntologyCache(OntologyHandler ontHandler) {
 		this.ontHandler = ontHandler;
@@ -154,51 +162,72 @@ class OntologyCache {
 		return indirectDomainRangeProperties;
 	}
 	
-	public HashMap<String, Boolean> getSubClassMap() {
-		return directSubClassMap;
+	public HashMap<String, List<String>> getDirectSubClasses() {
+		return directSubClasses;
+	}
+
+	public HashMap<String, List<String>> getIndirectSubClasses() {
+		return indirectSubClasses;
+	}
+
+	public HashMap<String, List<String>> getDirectSubProperties() {
+		return directSubProperties;
+	}
+
+	public HashMap<String, List<String>> getIndirectSubProperties() {
+		return indirectSubProperties;
+	}
+
+	public HashMap<String, Boolean> getDirectSubClassCheck() {
+		return directSubClassCheck;
 	}
 	
-	public HashMap<String, Boolean> getSubPropertyMap() {
-		return directSubPropertyMap;
+	public HashMap<String, Boolean> getDirectSubPropertyCheck() {
+		return directSubPropertyCheck;
 	}
 
 	public void init() {
 
 		logger.info("start building the ontology cache ...");
 		
-		classes = new ArrayList<String>();
-//		rootClasses = new ArrayList<String>();
-		properties = new ArrayList<String>();
-		dataProperties = new ArrayList<String>();
-		objectProperties = new ArrayList<String>();
+		this.classes = new ArrayList<String>();
+		this.properties = new ArrayList<String>();
+		this.dataProperties = new ArrayList<String>();
+		this.objectProperties = new ArrayList<String>();
 		
-		classHierarchy = new OntologyTreeNode(new Label("Classes"), null, null);
-		dataPropertyHierarchy = new OntologyTreeNode(new Label("Data Properties"), null, null);
-		objectPropertyHierarchy = new OntologyTreeNode(new Label("Object Properties"), null, null);
+		this.classHierarchy = new OntologyTreeNode(new Label("Classes"), null, null);
+		this.dataPropertyHierarchy = new OntologyTreeNode(new Label("Data Properties"), null, null);
+		this.objectPropertyHierarchy = new OntologyTreeNode(new Label("Object Properties"), null, null);
 
-		directOutDataProperties = new HashMap<String, List<String>>();
-		indirectOutDataProperties = new HashMap<String, List<String>>();
-		directOutObjectProperties = new HashMap<String, List<String>>();
-		indirectOutObjectProperties = new HashMap<String, List<String>>();
-		directInObjectProperties = new HashMap<String, List<String>>();
-		indirectInObjectProperties = new HashMap<String, List<String>>();
+		this.directSubClasses = new HashMap<String, List<String>>();
+		this.indirectSubClasses = new HashMap<String, List<String>>();
 		
-		propertyDirectDomains = new HashMap<String, List<String>>();
-		propertyIndirectDomains = new HashMap<String, List<String>>();
-		propertyDirectRanges = new HashMap<String, List<String>>();
-		propertyIndirectRanges = new HashMap<String, List<String>>();
+		this.directSubProperties = new HashMap<String, List<String>>();
+		this.indirectSubProperties = new HashMap<String, List<String>>();
 		
-		directDomainRangeProperties = new HashMap<String, List<String>>();
-		indirectDomainRangeProperties = new HashMap<String, List<String>>();
+		this.directSubClassCheck = new HashMap<String, Boolean>();
+		this.directSubPropertyCheck = new HashMap<String, Boolean>();
 		
-		directSubClassMap = new HashMap<String, Boolean>();
-		directSubPropertyMap = new HashMap<String, Boolean>();
+		this.directOutDataProperties = new HashMap<String, List<String>>();
+		this.indirectOutDataProperties = new HashMap<String, List<String>>();
+		this.directOutObjectProperties = new HashMap<String, List<String>>();
+		this.indirectOutObjectProperties = new HashMap<String, List<String>>();
+		this.directInObjectProperties = new HashMap<String, List<String>>();
+		this.indirectInObjectProperties = new HashMap<String, List<String>>();
+		
+		this.propertyDirectDomains = new HashMap<String, List<String>>();
+		this.propertyIndirectDomains = new HashMap<String, List<String>>();
+		this.propertyDirectRanges = new HashMap<String, List<String>>();
+		this.propertyIndirectRanges = new HashMap<String, List<String>>();
+		
+		this.directDomainRangeProperties = new HashMap<String, List<String>>();
+		this.indirectDomainRangeProperties = new HashMap<String, List<String>>();
 		
 		long start = System.currentTimeMillis();
 		
 		// create a list of classes and properties of the model
-		loadClasses();
-		loadProperties();
+		this.loadClasses();
+		this.loadProperties();
 		
 		logger.info("number of classes:" + classes.size());
 		logger.info("number of all properties:" + properties.size());
@@ -212,19 +241,23 @@ class OntologyCache {
 		logger.info("number of object properties:" + (properties.size() - dataProperties.size()) );
 
 		// create a hierarchy of classes and properties of the model
-		buildClassHierarchy(classHierarchy);
-		buildDataPropertyHierarchy(dataPropertyHierarchy);
-		buildObjectPropertyHierarchy(objectPropertyHierarchy);
+		this.buildClassHierarchy(classHierarchy);
+		this.buildDataPropertyHierarchy(dataPropertyHierarchy);
+		this.buildObjectPropertyHierarchy(objectPropertyHierarchy);
 		
-		// create some hashmaps that will be used in alignment
-		buildDataPropertiesHashMaps();
-		buildObjectPropertiesHashMaps();
+		// build some hashmaps that will be used in alignment
+		this.buildDataPropertiesHashMaps();
+		this.buildObjectPropertiesHashMaps();
+		
+		// build hashmaps for indirect subclass and subproperty relationships
+		this.buildIndirectSubClassesHashMap();
+		this.buildIndirectSubPropertiesHashMap();
 		
 		// update hashmaps to include the subproperty relations  
-		updateMapsWithSubpropertyDefinitions(true);
+		this.updateMapsWithSubpropertyDefinitions(true);
 		
 		// add some common properties like rdfs:label, rdfs:comment, ...
-		addPropertiesOfRDFVocabulary();
+		this.addPropertiesOfRDFVocabulary();
 		
 //		classHierarchy.print();
 //		dataPropertyHierarchy.print();
@@ -290,24 +323,25 @@ class OntologyCache {
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
 //			for (String s : rootClasses) {
-			for (String s : classes) {
-				List<String> superClasses = ontHandler.getSuperClasses(s, false);
+			for (String s : this.classes) {
+				List<String> superClasses = this.ontHandler.getSuperClasses(s, false);
 				if (superClasses == null || superClasses.size() == 0) {
-					Label uri = ontHandler.getLabelFromUriString(s);
-					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
+					Label label = this.ontHandler.getLabelFromUriString(s);
+					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					buildClassHierarchy(childNode);
 					children.add(childNode);
 				}
 			}
 		} else {
-			List<String> subClasses = ontHandler.getSubClasses(node.getUri().getUriString(), false);
+			List<String> subClasses = this.ontHandler.getSubClasses(node.getUri().getUriString(), false);
+			this.directSubClasses.put(node.getUri().getUriString(), subClasses);
 			if (subClasses != null)
 				for (String s : subClasses) {
-					Label uri = ontHandler.getLabelFromUriString(s);
-					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
+					Label label = this.ontHandler.getLabelFromUriString(s);
+					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					
 					// update direct subClass map
-					directSubClassMap.put(childNode.getUri().getUriString() + node.getUri().getUriString(), true);
+					this.directSubClassCheck.put(childNode.getUri().getUriString() + node.getUri().getUriString(), true);
 					
 					buildClassHierarchy(childNode);
 					children.add(childNode);
@@ -320,24 +354,25 @@ class OntologyCache {
 		
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
-			for (String s : dataProperties) {
-				List<String> superProperties = ontHandler.getSuperProperties(s, false);
+			for (String s : this.dataProperties) {
+				List<String> superProperties = this.ontHandler.getSuperProperties(s, false);
 				if (superProperties == null || superProperties.size() == 0) {
-					Label uri = ontHandler.getLabelFromUriString(s);
-					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
+					Label label = this.ontHandler.getLabelFromUriString(s);
+					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					buildDataPropertyHierarchy(childNode);
 					children.add(childNode);
 				}
 			}
 		} else {
-			List<String> subProperties = ontHandler.getSubProperties(node.getUri().getUriString(), false);
+			List<String> subProperties = this.ontHandler.getSubProperties(node.getUri().getUriString(), false);
+			this.directSubProperties.put(node.getUri().getUriString(), subProperties);
 			if (subProperties != null)
 				for (String s : subProperties) {
-					Label uri = ontHandler.getLabelFromUriString(s);
-					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
+					Label label = this.ontHandler.getLabelFromUriString(s);
+					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					
 					// update direct subProperty map
-					directSubPropertyMap.put(childNode.getUri().getUriString() + node.getUri().getUriString(), true);
+					this.directSubPropertyCheck.put(childNode.getUri().getUriString() + node.getUri().getUriString(), true);
 					
 					buildDataPropertyHierarchy(childNode);
 					children.add(childNode);
@@ -347,26 +382,28 @@ class OntologyCache {
 	}
 	
 	private void buildObjectPropertyHierarchy(OntologyTreeNode node) {
+		
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
-			for (String s : objectProperties) {
-				List<String> superProperties = ontHandler.getSuperProperties(s, false);
+			for (String s : this.objectProperties) {
+				List<String> superProperties = this.ontHandler.getSuperProperties(s, false);
 				if (superProperties == null || superProperties.size() == 0) {
-					Label uri = ontHandler.getLabelFromUriString(s);
-					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
+					Label label = this.ontHandler.getLabelFromUriString(s);
+					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					buildObjectPropertyHierarchy(childNode);
 					children.add(childNode);
 				}
 			}
 		} else {
-			List<String> subProperties = ontHandler.getSubProperties(node.getUri().getUriString(), false);
+			List<String> subProperties = this.ontHandler.getSubProperties(node.getUri().getUriString(), false);
+			this.directSubProperties.put(node.getUri().getUriString(), subProperties);
 			if (subProperties != null)
 				for (String s : subProperties) {
-					Label uri = ontHandler.getLabelFromUriString(s);
-					OntologyTreeNode childNode = new OntologyTreeNode(uri, node, null);
+					Label label = this.ontHandler.getLabelFromUriString(s);
+					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					
 					// update direct subProperty map
-					directSubPropertyMap.put(childNode.getUri().getUriString() + node.getUri().getUriString(), true);
+					this.directSubPropertyCheck.put(childNode.getUri().getUriString() + node.getUri().getUriString(), true);
 					
 					buildObjectPropertyHierarchy(childNode);
 					children.add(childNode);
@@ -375,7 +412,122 @@ class OntologyCache {
 		node.setChildren(children);	
 	}
 
+	private void buildIndirectSubPropertiesHashMap() {
+
+		for (String property : this.properties) {
+			List<String> subProperties = this.ontHandler.getSubProperties(property, true);
+			this.indirectSubProperties.put(property, subProperties);
+		}
+	}
+
+	private void buildIndirectSubClassesHashMap() {
+		
+		for (String c : this.classes) {
+			List<String> subClasses = this.ontHandler.getSubClasses(c, true);
+			this.indirectSubClasses.put(c, subClasses);
+		}
+
+	}
+	
+	private void buildDataPropertiesHashMaps() {
+		
+		List<OntResource> directDomains = new ArrayList<OntResource>();
+		List<OntResource> allDomains = new ArrayList<OntResource>();
+		List<OntResource> directRanges = new ArrayList<OntResource>();
+		List<OntResource> allRanges = new ArrayList<OntResource>();
+		List<String> temp; 
+		
+		ExtendedIterator<OntProperty> itrDP = ontHandler.getOntModel().listAllOntProperties();
+//		ExtendedIterator<DatatypeProperty> itrDP = ontController.getOntModel().listDatatypeProperties();
+		OntResource d;
+		OntResource r;
+		
+		while (itrDP.hasNext()) {
 			
+			directDomains.clear();
+			allDomains.clear();
+			directRanges.clear();
+			allRanges.clear();
+
+//			DatatypeProperty dp = itrDP.next();
+			
+			OntProperty dp = itrDP.next();
+			if (dp.isObjectProperty() && !dp.isDatatypeProperty())
+				continue;
+			
+			if (!dp.isURIResource())
+				continue;
+//			System.out.println("DP:" + dp.getURI());
+
+			// getting domains and subclasses
+			ExtendedIterator<? extends OntResource> itrDomains = dp.listDomain();
+			while (itrDomains.hasNext()) {
+				d = itrDomains.next();
+				ontHandler.getMembers(d, directDomains, false);
+			}
+
+			temp  = propertyDirectDomains.get(dp.getURI());
+			if (temp == null)
+				propertyDirectDomains.put(dp.getURI(), ontHandler.getResourcesURIs(directDomains));
+			else 
+				temp.addAll(ontHandler.getResourcesURIs(directDomains));
+			
+			for (int i = 0; i < directDomains.size(); i++) {
+				temp = directOutDataProperties.get(directDomains.get(i).getURI());
+				if (temp == null) {
+					temp = new ArrayList<String>();
+					directOutDataProperties.put(directDomains.get(i).getURI(), temp);
+				}
+				temp.add(dp.getURI());
+			}
+
+			for (int i = 0; i < directDomains.size(); i++) {
+				allDomains.add(directDomains.get(i));
+				ontHandler.getChildren(directDomains.get(i), allDomains, true);
+			}
+
+			temp  = propertyIndirectDomains.get(dp.getURI());
+			if (temp == null)
+				propertyIndirectDomains.put(dp.getURI(), ontHandler.getResourcesURIs(allDomains));
+			else 
+				temp.addAll(ontHandler.getResourcesURIs(allDomains));
+			
+			for (int i = 0; i < allDomains.size(); i++) {
+				temp = indirectOutDataProperties.get(allDomains.get(i).getURI());
+				if (temp == null) { 
+					temp = new ArrayList<String>();
+					indirectOutDataProperties.put(allDomains.get(i).getURI(), temp);
+				}
+				temp.add(dp.getURI());
+			}
+			
+			// getting ranges and subclasses
+			ExtendedIterator<? extends OntResource> itrRanges = dp.listRange();
+			while (itrRanges.hasNext()) {
+				r = itrRanges.next();
+				ontHandler.getMembers(r, directRanges, false);
+			}
+
+			temp  = propertyDirectRanges.get(dp.getURI());
+			if (temp == null)
+				propertyDirectRanges.put(dp.getURI(), ontHandler.getResourcesURIs(directRanges));
+			else 
+				temp.addAll(ontHandler.getResourcesURIs(directRanges));
+			
+			for (int i = 0; i < directRanges.size(); i++) {
+				allRanges.add(directRanges.get(i));
+				ontHandler.getChildren(directRanges.get(i), allRanges, true);
+			}
+			
+			temp  = propertyIndirectRanges.get(dp.getURI());
+			if (temp == null)
+				propertyIndirectRanges.put(dp.getURI(), ontHandler.getResourcesURIs(allRanges));
+			else 
+				temp.addAll(ontHandler.getResourcesURIs(allRanges));
+			
+		}		
+	}
+	
 	private void buildObjectPropertiesHashMaps() {
 		
 		List<OntResource> directDomains = new ArrayList<OntResource>();
@@ -519,105 +671,6 @@ class OntologyCache {
 
 		}	
 
-	}
-	
-	private void buildDataPropertiesHashMaps() {
-		
-		List<OntResource> directDomains = new ArrayList<OntResource>();
-		List<OntResource> allDomains = new ArrayList<OntResource>();
-		List<OntResource> directRanges = new ArrayList<OntResource>();
-		List<OntResource> allRanges = new ArrayList<OntResource>();
-		List<String> temp; 
-		
-		ExtendedIterator<OntProperty> itrDP = ontHandler.getOntModel().listAllOntProperties();
-//		ExtendedIterator<DatatypeProperty> itrDP = ontController.getOntModel().listDatatypeProperties();
-		OntResource d;
-		OntResource r;
-		
-		while (itrDP.hasNext()) {
-			
-			directDomains.clear();
-			allDomains.clear();
-			directRanges.clear();
-			allRanges.clear();
-
-//			DatatypeProperty dp = itrDP.next();
-			
-			OntProperty dp = itrDP.next();
-			if (dp.isObjectProperty() && !dp.isDatatypeProperty())
-				continue;
-			
-			if (!dp.isURIResource())
-				continue;
-//			System.out.println("DP:" + dp.getURI());
-
-			// getting domains and subclasses
-			ExtendedIterator<? extends OntResource> itrDomains = dp.listDomain();
-			while (itrDomains.hasNext()) {
-				d = itrDomains.next();
-				ontHandler.getMembers(d, directDomains, false);
-			}
-
-			temp  = propertyDirectDomains.get(dp.getURI());
-			if (temp == null)
-				propertyDirectDomains.put(dp.getURI(), ontHandler.getResourcesURIs(directDomains));
-			else 
-				temp.addAll(ontHandler.getResourcesURIs(directDomains));
-			
-			for (int i = 0; i < directDomains.size(); i++) {
-				temp = directOutDataProperties.get(directDomains.get(i).getURI());
-				if (temp == null) {
-					temp = new ArrayList<String>();
-					directOutDataProperties.put(directDomains.get(i).getURI(), temp);
-				}
-				temp.add(dp.getURI());
-			}
-
-			for (int i = 0; i < directDomains.size(); i++) {
-				allDomains.add(directDomains.get(i));
-				ontHandler.getChildren(directDomains.get(i), allDomains, true);
-			}
-
-			temp  = propertyIndirectDomains.get(dp.getURI());
-			if (temp == null)
-				propertyIndirectDomains.put(dp.getURI(), ontHandler.getResourcesURIs(allDomains));
-			else 
-				temp.addAll(ontHandler.getResourcesURIs(allDomains));
-			
-			for (int i = 0; i < allDomains.size(); i++) {
-				temp = indirectOutDataProperties.get(allDomains.get(i).getURI());
-				if (temp == null) { 
-					temp = new ArrayList<String>();
-					indirectOutDataProperties.put(allDomains.get(i).getURI(), temp);
-				}
-				temp.add(dp.getURI());
-			}
-			
-			// getting ranges and subclasses
-			ExtendedIterator<? extends OntResource> itrRanges = dp.listRange();
-			while (itrRanges.hasNext()) {
-				r = itrRanges.next();
-				ontHandler.getMembers(r, directRanges, false);
-			}
-
-			temp  = propertyDirectRanges.get(dp.getURI());
-			if (temp == null)
-				propertyDirectRanges.put(dp.getURI(), ontHandler.getResourcesURIs(directRanges));
-			else 
-				temp.addAll(ontHandler.getResourcesURIs(directRanges));
-			
-			for (int i = 0; i < directRanges.size(); i++) {
-				allRanges.add(directRanges.get(i));
-				ontHandler.getChildren(directRanges.get(i), allRanges, true);
-			}
-			
-			temp  = propertyIndirectRanges.get(dp.getURI());
-			if (temp == null)
-				propertyIndirectRanges.put(dp.getURI(), ontHandler.getResourcesURIs(allRanges));
-			else 
-				temp.addAll(ontHandler.getResourcesURIs(allRanges));
-			
-		}		
 	}
 	
 	private void addPropertiesOfRDFVocabulary() {

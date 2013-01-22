@@ -47,11 +47,11 @@ public abstract class Node implements Comparable<Node> {
 		this.label = v.label;
 	}
 	
-	public String getID() {
+	public String getId() {
 		return this.id;
 	}
 	
-	public String getLocalID() {
+	public String getLocalId() {
 		String s = this.id;
 
 		if (this.label != null)
@@ -91,18 +91,18 @@ public abstract class Node implements Comparable<Node> {
         }
 
         Node node = (Node) obj;
-        return this.id == node.getID();
+        return this.id == node.getId();
     }
     
     @Override
     public int hashCode() {
-    	return this.getID().hashCode();
+    	return this.getId().hashCode();
     }
 
     @Override
     public int compareTo(Node node) {       
         //compare id
-        return this.id.compareTo(node.getID());
+        return this.id.compareTo(node.getId());
     }
 
 

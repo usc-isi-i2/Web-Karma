@@ -155,7 +155,7 @@ public class Alignment {
 		
 		List<String> nodesInSteinerTree = new ArrayList<String>();
 		for (Node v : this.steinerTree.vertexSet())
-			nodesInSteinerTree.add(v.getID());
+			nodesInSteinerTree.add(v.getId());
 		
 		Link[] incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(node).toArray(new Link[0]);
 		if (incomingLinks != null) {
@@ -189,7 +189,7 @@ public class Alignment {
 		
 		for (Link link: this.steinerTree.edgeSet()) {
 			this.graphBuilder.changeLinkStatus(link, LinkStatus.PreferredByUI);
-			logger.debug("link " + link.getID() + " has been added to preferred UI links.");
+			logger.debug("link " + link.getId() + " has been added to preferred UI links.");
 		}
 	}
 	

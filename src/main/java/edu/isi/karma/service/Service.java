@@ -390,23 +390,23 @@ public class Service {
 		String hNodeId = "";
 		for (Node v : treeModel.vertexSet()) {
 			if (v.getSemanticType() != null && v.getSemanticType().getHNodeId() != null) {
-				logger.debug("Vertex " + v.getLocalID() + " is a semantic type associated to a source columns.");
+				logger.debug("Vertex " + v.getLocalId() + " is a semantic type associated to a source columns.");
 				hNodeId = v.getSemanticType().getHNodeId();
 			} else {
-				logger.debug("Vertex " + v.getLocalID() + " is an intermediate node.");
+				logger.debug("Vertex " + v.getLocalId() + " is an intermediate node.");
 				String variableId = "v" + String.valueOf(variables.size() + 1);
 				variables.add(variableId);
-				vertexIdToArgument.put(v.getID(), new Argument(variableId, variableId, ArgumentType.VARIABLE));
+				vertexIdToArgument.put(v.getId(), new Argument(variableId, variableId, ArgumentType.VARIABLE));
 				continue;
 			}
 			
 			Attribute att = this.hNodeIdToAttribute.get(hNodeId);
 			if (att == null) {
-				logger.error("No attribute is associated to the column with semantic type " + v.getID());
+				logger.error("No attribute is associated to the column with semantic type " + v.getId());
 				continue;
 			}
 			
-			vertexIdToArgument.put(v.getID(), new Argument(att.getId(), att.getId(), ArgumentType.ATTRIBUTE));
+			vertexIdToArgument.put(v.getId(), new Argument(att.getId(), att.getId(), ArgumentType.ATTRIBUTE));
 			
 			if (att.getIOType() == IOType.INPUT) {
 				inputAttributesNodes.add(v);
@@ -451,26 +451,26 @@ public class Service {
 		Model m = new Model("inputModel");
 		for (Node v : steinerTree.getSteinerTree().vertexSet()) {
 			
-			inputModelVertexes.add(v.getID());
+			inputModelVertexes.add(v.getId());
 			
 			if (v.getNodeType() == NodeType.DataProperty)
 				continue;
 			
-			if (vertexIdToArgument.get(v.getID()) == null)
+			if (vertexIdToArgument.get(v.getId()) == null)
 				continue;
 			
 			Label classPredicate = new Label(v.getUriString(), v.getNs(), v.getPrefix());
 
-			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(v.getID()));
+			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(v.getId()));
 			m.getAtoms().add(classAtom);
 		}
 		
 		for (Link e : steinerTree.getSteinerTree().edgeSet()) {
 			
-			inputModelEdges.add(e.getID());
+			inputModelEdges.add(e.getId());
 			
-			if (vertexIdToArgument.get(e.getSource().getID()) == null || 
-					vertexIdToArgument.get(e.getTarget().getID()) == null)
+			if (vertexIdToArgument.get(e.getSource().getId()) == null || 
+					vertexIdToArgument.get(e.getTarget().getId()) == null)
 				continue;
 			
 			Label propertyPredicate = new Label(e.getUriString(), e.getNs(), e.getPrefix());
@@ -480,12 +480,12 @@ public class Service {
 			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
 				Label subClassPredicate = new Label(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
 				propertyAtom = new PropertyAtom(subClassPredicate, 
-						vertexIdToArgument.get(e.getTarget().getID()),
-						vertexIdToArgument.get(e.getSource().getID()));
+						vertexIdToArgument.get(e.getTarget().getId()),
+						vertexIdToArgument.get(e.getSource().getId()));
 			} else {
 				propertyAtom = new PropertyAtom(propertyPredicate, 
-						vertexIdToArgument.get(e.getSource().getID()),
-						vertexIdToArgument.get(e.getTarget().getID()));
+						vertexIdToArgument.get(e.getSource().getId()),
+						vertexIdToArgument.get(e.getTarget().getId()));
 			}
 			m.getAtoms().add(propertyAtom);
 		}
@@ -504,29 +504,29 @@ public class Service {
 		
 		for (Node v : treeModel.vertexSet()) {
 			
-			if (inputModelVertexes.indexOf(v.getID()) != -1)
+			if (inputModelVertexes.indexOf(v.getId()) != -1)
 				continue;
 			
 			if (v.getNodeType() == NodeType.DataProperty)
 				continue;
 			
-			if (vertexIdToArgument.get(v.getID()) == null)
+			if (vertexIdToArgument.get(v.getId()) == null)
 				continue;
 			
 			
 			Label classPredicate = new Label(v.getUriString(), v.getNs(), v.getPrefix());
 
-			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(v.getID()));
+			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(v.getId()));
 			m.getAtoms().add(classAtom);
 		}
 		
 		for (Link e : treeModel.edgeSet()) {
 			
-			if (inputModelEdges.indexOf(e.getID()) != -1)
+			if (inputModelEdges.indexOf(e.getId()) != -1)
 				continue;
 			
-			if (vertexIdToArgument.get(e.getSource().getID()) == null || 
-					vertexIdToArgument.get(e.getTarget().getID()) == null)
+			if (vertexIdToArgument.get(e.getSource().getId()) == null || 
+					vertexIdToArgument.get(e.getTarget().getId()) == null)
 				continue;
 			
 			Label propertyPredicate = new Label(e.getUriString(), e.getNs(), e.getPrefix());
@@ -536,12 +536,12 @@ public class Service {
 			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
 				Label subClassPredicate = new Label(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
 				propertyAtom = new PropertyAtom(subClassPredicate, 
-						vertexIdToArgument.get(e.getTarget().getID()),
-						vertexIdToArgument.get(e.getSource().getID()));
+						vertexIdToArgument.get(e.getTarget().getId()),
+						vertexIdToArgument.get(e.getSource().getId()));
 			} else {
 				propertyAtom = new PropertyAtom(propertyPredicate, 
-						vertexIdToArgument.get(e.getSource().getID()),
-						vertexIdToArgument.get(e.getTarget().getID()));
+						vertexIdToArgument.get(e.getSource().getId()),
+						vertexIdToArgument.get(e.getTarget().getId()));
 			}
 			m.getAtoms().add(propertyAtom);
 

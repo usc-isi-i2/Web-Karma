@@ -48,19 +48,6 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		this.status = LinkStatus.Normal;
 	}
 	
-	public Link(String id, Label label, LinkStatus status) {
-		super();
-
-		if (id == null || id.trim().length() == 0) {
-			logger.info("The input id is empty. A random Guid has been assigned.");
-			id = new RandomGUID().toString();
-		}
-		
-		this.id = id;
-		this.label = label;
-		this.status = status;
-	}
-	
 	public Link(Link e) {
 		super();
 		this.id = e.id;
@@ -68,11 +55,11 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		this.status = e.status;
 	}
 	
-	public String getID() {
+	public String getId() {
 		return this.id;
 	}
 	
-	public String getLocalID() {
+	public String getLocalId() {
 		String s = this.id;
 
 		if (this.label != null)
@@ -132,18 +119,18 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
         }
 
         Link link = (Link) obj;
-        return this.id == link.getID();
+        return this.id == link.getId();
     }
     
     @Override
     public int hashCode() {
-    	return this.getID().hashCode();
+    	return this.getId().hashCode();
     }
 
     @Override
     public int compareTo(Link link) {       
         //compare id
-        return this.id.compareTo(link.getID());
+        return this.id.compareTo(link.getId());
     }
     
 }

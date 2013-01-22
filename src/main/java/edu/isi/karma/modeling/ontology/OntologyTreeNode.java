@@ -27,21 +27,21 @@ import edu.isi.karma.rep.alignment.Label;
 
 public class OntologyTreeNode {
 	// should change the location of URI class to package karma.modeling 
-	private Label uri;
+	private Label label;
 	private OntologyTreeNode parent;
 	private List<OntologyTreeNode> children;
 	
 	public OntologyTreeNode(Label uri, OntologyTreeNode parent, List<OntologyTreeNode> children) {
-		this.uri = uri;
+		this.label = uri;
 		this.parent = parent;
 		this.children = children;
 	}
 	
 	public Label getUri() {
-		return uri;
+		return label;
 	}
-	public void setUri(Label uri) {
-		this.uri = uri;
+	public void setLabel(Label label) {
+		this.label = label;
 	}
 	public OntologyTreeNode getParent() {
 		return parent;
