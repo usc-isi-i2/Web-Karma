@@ -18,18 +18,18 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
+import edu.isi.karma.model.serialization.MimeType;
+import edu.isi.karma.model.serialization.SerializationLang;
+import edu.isi.karma.model.serialization.WebServiceLoader;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
-import edu.isi.karma.service.Atom;
-import edu.isi.karma.service.Attribute;
-import edu.isi.karma.service.ClassAtom;
-import edu.isi.karma.service.InvocationManager;
-import edu.isi.karma.service.MimeType;
-import edu.isi.karma.service.PropertyAtom;
-import edu.isi.karma.service.SerializationLang;
-import edu.isi.karma.service.Service;
-import edu.isi.karma.service.ServiceLoader;
-import edu.isi.karma.service.Table;
+import edu.isi.karma.rep.model.Atom;
+import edu.isi.karma.rep.model.ClassAtom;
+import edu.isi.karma.rep.model.IndividualPropertyAtom;
+import edu.isi.karma.rep.sources.Attribute;
+import edu.isi.karma.rep.sources.InvocationManager;
+import edu.isi.karma.rep.sources.WebService;
+import edu.isi.karma.rep.sources.Table;
 import edu.isi.karma.webserver.KarmaException;
 
 
@@ -41,7 +41,7 @@ public class PostRequestManager extends LinkedApiRequestManager {
 	private String inputLang;
 	private Model inputJenaModel;
 	private Model outputJenaModel;
-	private Service service;
+	private WebService service;
 	private List<Map<String, String>> listOfInputAttValues;
 	
 	public PostRequestManager(String serviceId, 
@@ -74,7 +74,7 @@ public class PostRequestManager extends LinkedApiRequestManager {
 	}
 	
 	private boolean loadService() {
-		service = ServiceLoader.getServiceByUri(getServiceUri());
+		service = WebServiceLoader.getInstance().getSourceByUri(getServiceUri());
 		if (service == null) {
 			return false;
 		}
@@ -91,7 +91,7 @@ public class PostRequestManager extends LinkedApiRequestManager {
 		
 		PrintWriter pw = getResponse().getWriter();
 
-		edu.isi.karma.service.Model serviceInputModel = service.getInputModel();
+		edu.isi.karma.rep.model.Model serviceInputModel = service.getInputModel();
 		if (serviceInputModel == null) {
 			getResponse().setContentType(MimeType.TEXT_PLAIN);
 			pw.write("The service input model is null.");
@@ -111,7 +111,7 @@ public class PostRequestManager extends LinkedApiRequestManager {
 		return true;
 	}
 	
-	private String getUrlString(Service service, Map<String, String> inputAttValues) {
+	private String getUrlString(WebService service, Map<String, String> inputAttValues) {
 		
 		List<Attribute> missingAttributes= null;
 		
@@ -150,9 +150,9 @@ public class PostRequestManager extends LinkedApiRequestManager {
 
 	}
 	
-	public void addStatementsToJenaModel(Service service, Model model,  
+	public void addStatementsToJenaModel(WebService service, Model model,  
 			Map<String, String> inputAttValues, Map<String, String> outputAttValues) {
-		edu.isi.karma.service.Model outputModel = service.getOutputModel();
+		edu.isi.karma.rep.model.Model outputModel = service.getOutputModel();
 		if (outputModel == null) { 
 			logger.info("The service output model is null.");
 			return;
@@ -191,8 +191,8 @@ public class PostRequestManager extends LinkedApiRequestManager {
 		}
 		
 		for (Atom atom : outputModel.getAtoms()) {
-			if (atom instanceof PropertyAtom) {
-				PropertyAtom propertyAtom = (PropertyAtom)atom;
+			if (atom instanceof IndividualPropertyAtom) {
+				IndividualPropertyAtom propertyAtom = (IndividualPropertyAtom)atom;
 				
 				if (propertyAtom.getPropertyPredicate().getPrefix() != null && propertyAtom.getPropertyPredicate().getNs() != null)
 					model.setNsPrefix(propertyAtom.getPropertyPredicate().getPrefix(), propertyAtom.getPropertyPredicate().getNs());

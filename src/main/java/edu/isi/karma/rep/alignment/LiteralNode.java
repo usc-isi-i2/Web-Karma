@@ -19,14 +19,27 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.rep.alignment;
 
-public interface SerializationLang {
-	// "RDF/XML", "RDF/XML-ABBREV", "N-TRIPLE", "TURTLE", (and "TTL") and "N3".
-	public static String XML = "RDF/XML"; 
-	public static String XML_ABBREV = "RDF/XML-ABBREV"; 
-	public static String N_TRIPLE = "N-TRIPLE"; 
-	//public static String TURTLE = "TURTLE"; 
-	public static String N3 = "N3"; 
-	public static String SPARQL = "SPARQL"; 
+
+public class LiteralNode extends Node {
+	
+	private final String value;
+	private final Label datatype;
+
+	public LiteralNode(String id, String value, Label datatype) {
+		super(id, null);
+		this.value = value;
+		this.datatype = datatype;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public Label getDatatype() {
+		return datatype;
+	}
+	
+
 }

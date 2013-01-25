@@ -17,8 +17,8 @@ import org.eclipse.jetty.http.HttpMethods;
 import edu.isi.karma.linkedapi.server.GetRequestManager;
 import edu.isi.karma.linkedapi.server.PostRequestManager;
 import edu.isi.karma.linkedapi.server.ResourceType;
-import edu.isi.karma.service.MimeType;
-import edu.isi.karma.service.SerializationLang;
+import edu.isi.karma.model.serialization.MimeType;
+import edu.isi.karma.model.serialization.SerializationLang;
 
 public class LinkedApiServiceHandler extends HttpServlet {
 

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright 2012 University of Southern California
- * 
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,53 +18,10 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.rep.metadata;
 
-import edu.isi.karma.rep.alignment.SemanticTypes;
-import edu.isi.karma.rep.sources.WebService;
-import edu.isi.karma.rep.sources.DataSource;
+package edu.isi.karma.rep.model;
 
-public class MetadataContainer {
-	
-	@SuppressWarnings("unused")
-	private String 			worksheetName;
-	@SuppressWarnings("unused")
-	private SemanticTypes 	semanticTypes;
-	
-	private WebService service;
-	private DataSource source;
-	
-	private SourceInformation sourceInfo;
-
-	public void initializeFromJSON() {
-		
-	}
-	
-	public void save() {
-		
-	}
-
-	public WebService getService() {
-		return service;
-	}
-
-	public void setService(WebService service) {
-		this.service = service;
-	}
-
-	public DataSource getSource() {
-		return source;
-	}
-
-	public void setSource(DataSource source) {
-		this.source = source;
-	}
-
-	public SourceInformation getSourceInformation() {
-		return sourceInfo;
-	}
-
-	public void setSourceInformation(SourceInformation sourceInfo) {
-		this.sourceInfo = sourceInfo;
-	}	
+public interface ArgumentType {
+	public static final String ATTRIBUTE = "ATTRIBUTE";
+	public static final String VARIABLE = "VARIABLE";
 }

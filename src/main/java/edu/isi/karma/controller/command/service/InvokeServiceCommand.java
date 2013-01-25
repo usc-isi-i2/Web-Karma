@@ -40,9 +40,9 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.MetadataContainer;
-import edu.isi.karma.service.InvocationManager;
-import edu.isi.karma.service.Service;
-import edu.isi.karma.service.Table;
+import edu.isi.karma.rep.sources.InvocationManager;
+import edu.isi.karma.rep.sources.WebService;
+import edu.isi.karma.rep.sources.Table;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
@@ -101,7 +101,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 //			logger.debug(serviceTable.getPrintInfo());
 			ServiceTableUtil.populateWorksheet(serviceTable, wk, ws.getFactory());
 			
-			Service service = invocatioManager.getInitialServiceModel(null);
+			WebService service = invocatioManager.getInitialServiceModel(null);
 			MetadataContainer metaData = wk.getMetadataContainer();
 			if (metaData == null) {
 				metaData = new MetadataContainer();

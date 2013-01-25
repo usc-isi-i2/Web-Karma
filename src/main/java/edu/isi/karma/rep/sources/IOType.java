@@ -19,8 +19,10 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.rep.sources;
 
-public abstract class Atom {
-	public abstract void print();
+public interface IOType {
+	public static final String NONE = "NONE";
+	public static final String INPUT = "IN";
+	public static final String OUTPUT = "OUT";
 }

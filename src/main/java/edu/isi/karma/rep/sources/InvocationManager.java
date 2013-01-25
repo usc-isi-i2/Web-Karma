@@ -20,7 +20,7 @@
  ******************************************************************************/
 
 
-package edu.isi.karma.service;
+package edu.isi.karma.rep.sources;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,6 +30,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpMethods;
 
+import edu.isi.karma.model.serialization.Repository;
 import edu.isi.karma.modeling.Test;
 import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.webserver.KarmaException;
@@ -172,7 +173,7 @@ public class InvocationManager {
 	 * service endpoint, http method, input and output attributes
 	 * @return
 	 */
-	public Service getInitialServiceModel(String serviceName) {
+	public WebService getInitialServiceModel(String serviceName) {
 		
 		String guid = new RandomGUID().toString();
 //		guid = "E9C3F8D3-F778-5C4B-E089-C1749D50AE1F";
@@ -181,11 +182,11 @@ public class InvocationManager {
 		if (sampleUrl == null)
 			return null;
 
-		Service service = null;
+		WebService service = null;
 		if (serviceName == null || serviceName.trim().length() == 0)
-			service = new Service(guid, sampleUrl);
+			service = new WebService(guid, sampleUrl);
 		else
-			service = new Service(guid, serviceName, sampleUrl);
+			service = new WebService(guid, serviceName, sampleUrl);
 
 		service.setMethod(HttpMethods.GET);
 
@@ -225,7 +226,7 @@ public class InvocationManager {
 			
 			logger.debug(tb.getPrintInfo());
 
-			Service service = sb.getInitialServiceModel(null);
+			WebService service = sb.getInitialServiceModel(null);
 			
 			// just for test
 			service.getInputAttributes().get(0).sethNodeId("HN1");

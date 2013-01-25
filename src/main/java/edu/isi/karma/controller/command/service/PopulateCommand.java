@@ -38,6 +38,7 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.model.serialization.WebServiceLoader;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNode;
@@ -47,12 +48,11 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.service.Attribute;
-import edu.isi.karma.service.InvocationManager;
-import edu.isi.karma.service.Service;
-import edu.isi.karma.service.ServiceLoader;
-import edu.isi.karma.service.Source;
-import edu.isi.karma.service.Table;
+import edu.isi.karma.rep.sources.Attribute;
+import edu.isi.karma.rep.sources.InvocationManager;
+import edu.isi.karma.rep.sources.WebService;
+import edu.isi.karma.rep.sources.DataSource;
+import edu.isi.karma.rep.sources.Table;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
@@ -121,10 +121,10 @@ public class PopulateCommand extends WorksheetCommand{
 				"Error occured while populating the source. The alignment model is null."));
 		} 
 
-		Source source = new Source(wk.getTitle(), tree);
+		DataSource source = new DataSource(wk.getTitle(), tree);
 		
-		Map<Service, Map<String, String>> servicesAndMappings = 
-			ServiceLoader.getServicesWithInputContainedInModel(source.getModel(), null);
+		Map<WebService, Map<String, String>> servicesAndMappings = 
+			WebServiceLoader.getServicesWithInputContainedInModel(source.getModel(), null);
 		
 		if (servicesAndMappings == null) {
 			logger.error("Cannot find any services to be invoked according to this source model.");
@@ -134,8 +134,8 @@ public class PopulateCommand extends WorksheetCommand{
 		
 		// For now, we just use the first service, 
 		// later we can suggest the user a list of available services and user select among them
-		Service service = null;
-		Iterator<Service> itr = servicesAndMappings.keySet().iterator();
+		WebService service = null;
+		Iterator<WebService> itr = servicesAndMappings.keySet().iterator();
 		if (itr != null && itr.hasNext()) {
 			service = itr.next();
 		}
@@ -188,7 +188,7 @@ public class PopulateCommand extends WorksheetCommand{
 		return c;
 	}
 
-	private List<String> getUrlStrings(Service service, Source source, 
+	private List<String> getUrlStrings(WebService service, DataSource source, 
 			Worksheet wk, Map<String, String> serviceToSourceAttMapping, 
 			List<String> requestIds) {
 		

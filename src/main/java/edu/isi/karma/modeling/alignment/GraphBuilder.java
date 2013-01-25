@@ -122,9 +122,6 @@ public class GraphBuilder {
 		if (!addSingleNode(node))
 			return false;
 			
-		if (node instanceof ColumnNode)
-			semanticNodes.add(node);
-				
 		if (node instanceof InternalNode) {
 
 			long start = System.currentTimeMillis();
@@ -381,13 +378,13 @@ public class GraphBuilder {
 					sourceUri = source.getUriString();
 					targetUri = target.getUriString();
 
-					// There is no outgoing link from column nodes
-					if (source instanceof ColumnNode)
+					// There is no outgoing link from column nodes and literal nodes
+					if (!(source instanceof InternalNode))
 						break;
 
-					// The alignment explicitly adds a link from the domain to the column node, 
+					// The alignment explicitly adds a link from the domain to the column node and literal node, 
 					// so we don't need to worry about it.
-					if (target instanceof ColumnNode) 
+					if (!(target instanceof InternalNode))
 						continue;
 
 					// Add object property links between internal nodes

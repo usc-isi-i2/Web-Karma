@@ -19,53 +19,47 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.rep.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import edu.isi.karma.rep.alignment.Label;
 
+/**
+ * A class atom consists of an OWL named class or class expression and a single argument representing an OWL individual. 
+ * @author mohsen
+ *
+ */
+public class ClassAtom extends Atom {
 
-public class Response {
-	private String type;
-	private int code;
-	private String stream;
-	private Table table;
-	private List<Attribute> attributes;
+	private Label classPredicate;
+	private Argument argument1;
 	
-	public String getType() {
-		return type;
+	public ClassAtom(Label classPredicate, Argument argument1) {
+		this.classPredicate = classPredicate;
+		this.argument1 = argument1;
 	}
-	public void setType(String type) {
-		this.type = type;
+
+	public Label getClassPredicate() {
+		return classPredicate;
 	}
-	public String getStream() {
-		return stream;
+
+	public Argument getArgument1() {
+		return argument1;
 	}
-	public void setStream(String stream) {
-		this.stream = stream;
+	
+	
+	public void setClassPredicate(Label classPredicate) {
+		this.classPredicate = classPredicate;
 	}
-	public Table getTable() {
-		return table;
+
+	public void setArgument1(Argument argument1) {
+		this.argument1 = argument1;
 	}
-	public void setTable(Table table) {
-		this.table = table;
-		buildAttributeListFromTable();
+
+	public void print() {
+		System.out.println("class predicate uri: " + classPredicate.getUriString());
+		System.out.println("class predicate ns: " + classPredicate.getNs());
+		System.out.println("class predicate prefix: " + classPredicate.getPrefix());
+		System.out.println("argument1: " + argument1.getId());
 	}
-	public int getCode() {
-		return code;
-	}
-	public void setCode(int code) {
-		this.code = code;
-	}
-	public List<Attribute> getAttributes() {
-		return this.attributes;
-	}
-	private void buildAttributeListFromTable() {
-		this.attributes = new ArrayList<Attribute>();
-		if (table == null)
-			return;
-		for (Attribute p : table.getHeaders()) {
-			this.attributes.add(new Attribute(p));
-		}
-	}
+	
 }

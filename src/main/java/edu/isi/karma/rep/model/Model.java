@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.rep.model;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -42,8 +42,10 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 
+import edu.isi.karma.model.serialization.Repository;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
+import edu.isi.karma.rep.sources.IOType;
 
 public class Model {
 	
@@ -146,8 +148,8 @@ public class Model {
 				
 				my_model.addProperty(has_atom, r);
 			}
-			else if (atom instanceof PropertyAtom) {
-				PropertyAtom propertyAtom = (PropertyAtom)atom;
+			else if (atom instanceof IndividualPropertyAtom) {
+				IndividualPropertyAtom propertyAtom = (IndividualPropertyAtom)atom;
 				
 				r = model.createResource();
 				r.addProperty(rdf_type, individual_property_atom_resource);
@@ -386,8 +388,8 @@ public class Model {
 					select_where += 
 						"      " + argument1Var + " rdf:type " + predicateUri + " . \n";
 				}
-				else if (atom instanceof PropertyAtom) {
-					PropertyAtom propertyAtom = ((PropertyAtom)atom);
+				else if (atom instanceof IndividualPropertyAtom) {
+					IndividualPropertyAtom propertyAtom = ((IndividualPropertyAtom)atom);
 					
 					if (propertyAtom.getPropertyPredicate().getPrefix() != null &&
 							propertyAtom.getPropertyPredicate().getNs() != null) { 
@@ -483,8 +485,8 @@ public class Model {
 					construct_where += 
 						"      " + argument1Var + " rdf:type " + predicateUri + " . \n";
 				}
-				else if (atom instanceof PropertyAtom) {
-					PropertyAtom propertyAtom = ((PropertyAtom)atom);
+				else if (atom instanceof IndividualPropertyAtom) {
+					IndividualPropertyAtom propertyAtom = ((IndividualPropertyAtom)atom);
 					
 					if (propertyAtom.getPropertyPredicate().getPrefix() != null &&
 							propertyAtom.getPropertyPredicate().getNs() != null) { 
@@ -599,8 +601,8 @@ public class Model {
 						"      " + atomVar + " " + Prefixes.SWRL + ":classPredicate <" + predicateUri + "> . \n" +
 						"      " + atomVar + " " + Prefixes.SWRL + ":argument1 " + argument1Var + " . \n";
 				}
-				else if (atom instanceof PropertyAtom) {
-					PropertyAtom propertyAtom = ((PropertyAtom)atom);
+				else if (atom instanceof IndividualPropertyAtom) {
+					IndividualPropertyAtom propertyAtom = ((IndividualPropertyAtom)atom);
 					atomVar = "?atom" + String.valueOf(i+1);
 					predicateUri = propertyAtom.getPropertyPredicate().getUriString();
 					argument1 = propertyAtom.getArgument1().getId();
@@ -651,8 +653,8 @@ public class Model {
 					logicalForm += ")";
 					logicalForm += separator;				
 				}
-				else if (atom instanceof PropertyAtom) {
-					PropertyAtom propertyAtom = ((PropertyAtom)atom);
+				else if (atom instanceof IndividualPropertyAtom) {
+					IndividualPropertyAtom propertyAtom = ((IndividualPropertyAtom)atom);
 					logicalForm += propertyAtom.getPropertyPredicate().getLocalName();
 					logicalForm += "(";
 					logicalForm += propertyAtom.getArgument1().getId();

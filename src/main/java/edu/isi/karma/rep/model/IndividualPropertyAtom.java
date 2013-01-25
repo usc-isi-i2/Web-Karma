@@ -19,42 +19,45 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.rep.model;
 
 import edu.isi.karma.rep.alignment.Label;
 
-public class ClassAtom extends Atom {
+/**
+ * An individual property atom consists of an OWL object property and two arguments representing OWL individuals.
+ * @author mohsen
+ *
+ */
+public class IndividualPropertyAtom extends Atom {
 
-	private Label classPredicate;
+	private Label propertyPredicate;
 	private Argument argument1;
+	private Argument argument2;
 	
-	public ClassAtom(Label classPredicate, Argument argument1) {
-		this.classPredicate = classPredicate;
+	public IndividualPropertyAtom(Label propertyPredicate, Argument argument1, Argument argument2) {
+		this.propertyPredicate = propertyPredicate;
 		this.argument1 = argument1;
+		this.argument2 = argument2;
 	}
 
-	public Label getClassPredicate() {
-		return classPredicate;
+	public Label getPropertyPredicate() {
+		return propertyPredicate;
 	}
 
 	public Argument getArgument1() {
 		return argument1;
-	}
+	}	
 	
-	
-	public void setClassPredicate(Label classPredicate) {
-		this.classPredicate = classPredicate;
-	}
-
-	public void setArgument1(Argument argument1) {
-		this.argument1 = argument1;
+	public Argument getArgument2() {
+		return argument2;
 	}
 
 	public void print() {
-		System.out.println("class predicate uri: " + classPredicate.getUriString());
-		System.out.println("class predicate ns: " + classPredicate.getNs());
-		System.out.println("class predicate prefix: " + classPredicate.getPrefix());
+		System.out.println("property predicate uri: " + propertyPredicate.getUriString());
+		System.out.println("property predicate ns: " + propertyPredicate.getNs());
+		System.out.println("property predicate prefix: " + propertyPredicate.getPrefix());
 		System.out.println("argument1: " + argument1.getId());
-	}
+		System.out.println("argument2: " + argument2.getId());
+	}	
 	
 }

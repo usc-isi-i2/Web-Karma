@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright 2012 University of Southern California
- *  
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,37 +19,14 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.model.serialization;
 
-public class Argument {
-	private String id;
-	private String attOrVarId;
-	private String argType;
-	
-	public Argument(String id, String attOrVarId, String argType) {
-		this.id = id;
-		this.attOrVarId = attOrVarId;
-		this.argType = argType;
-	}
-	
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public String getAttOrVarId() {
-		return attOrVarId;
-	}
-	public void setAttOrVarId(String attOrVarId) {
-		this.attOrVarId = attOrVarId;
-	}
-	public String getArgType() {
-		return argType;
-	}
-	public void setArgType(String argType) {
-		this.argType = argType;
-	}
-	
-	
+public interface SerializationLang {
+	// "RDF/XML", "RDF/XML-ABBREV", "N-TRIPLE", "TURTLE", (and "TTL") and "N3".
+	public static String XML = "RDF/XML"; 
+	public static String XML_ABBREV = "RDF/XML-ABBREV"; 
+	public static String N_TRIPLE = "N-TRIPLE"; 
+	//public static String TURTLE = "TURTLE"; 
+	public static String N3 = "N3"; 
+	public static String SPARQL = "SPARQL"; 
 }

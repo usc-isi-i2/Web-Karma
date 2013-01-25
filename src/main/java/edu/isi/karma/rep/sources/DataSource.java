@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.rep.sources;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,21 +30,21 @@ import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.ModelingParams;
-import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.modeling.Prefixes;
-import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.NodeType;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LiteralNode;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.model.Argument;
+import edu.isi.karma.rep.model.ArgumentType;
+import edu.isi.karma.rep.model.ClassAtom;
+import edu.isi.karma.rep.model.IndividualPropertyAtom;
+import edu.isi.karma.rep.model.Model;
 import edu.isi.karma.util.RandomGUID;
 
-public class Source {
+public class DataSource extends Source {
 
-	static Logger logger = Logger.getLogger(Source.class);
-
-	private String id;
-	private String name;
-	private String description;
+	static Logger logger = Logger.getLogger(DataSource.class);
 
 	private List<Attribute> attributes;
 	private Model model;
@@ -52,23 +52,22 @@ public class Source {
 
 	HashMap<String, Attribute> attIdToAttMap;
 
-	public Source(String id) {
-		this.id = id;
+	public DataSource(String id) {
+		super(id);
 		variables = new ArrayList<String>();
 		attributes = new ArrayList<Attribute>();
 		attIdToAttMap = new HashMap<String, Attribute>();
 	}
 	
-	public Source(String id, String name) {
-		this.id = id;
-		this.setName(name);
+	public DataSource(String id, String name) {
+		super(id, name);
 		variables = new ArrayList<String>();
 		attributes = new ArrayList<Attribute>();
 		attIdToAttMap = new HashMap<String, Attribute>();
 	}
 	
-	public Source(String name, DirectedWeightedMultigraph<Node, Link> treeModel) {
-		this.id = new RandomGUID().toString();
+	public DataSource(String name, DirectedWeightedMultigraph<Node, Link> treeModel) {
+		super(new RandomGUID().toString());
 		this.setName(name);
 		variables = new ArrayList<String>();
 		attributes = new ArrayList<Attribute>();
@@ -76,8 +75,8 @@ public class Source {
 		this.updateModel(treeModel);
 	}
 	
-	public Source(DirectedWeightedMultigraph<Node, Link> treeModel) {
-		this.id = new RandomGUID().toString();
+	public DataSource(DirectedWeightedMultigraph<Node, Link> treeModel) {
+		super(new RandomGUID().toString());
 		variables = new ArrayList<String>();
 		attributes = new ArrayList<Attribute>();
 		attIdToAttMap = new HashMap<String, Attribute>();
@@ -125,26 +124,6 @@ public class Source {
 	public void setVariables(List<String> variables) {
 		this.variables = variables;
 	}
-
-	public String getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
 	
 	private void updateModel(DirectedWeightedMultigraph<Node, Link> treeModel) {
 		
@@ -158,36 +137,36 @@ public class Source {
 		
 		// get the column name associated to the hNodeIds to assign to attribute names 
 		// set the rdf ids of all the vertices.
-		for (Node v : treeModel.vertexSet()) {
-			if (v.getSemanticType() != null && v.getSemanticType().getHNodeId() != null) {
-				logger.debug("Vertex " + v.getLocalId() + " is a semantic type associated to a source columns.");
-				String hNodeId = v.getSemanticType().getHNodeId();
+		for (Node n : treeModel.vertexSet()) {
+			if (n instanceof ColumnNode) {
+				logger.debug("Vertex " + n.getLocalId() + " is a column node.");
+				String hNodeId = ((ColumnNode)n).getHNodeId();
 				String attId = "att" + String.valueOf(attributeList.size() + 1);
-				Attribute att = new Attribute(attId, this.getUri(), v.getLocalName(), IOType.NONE, AttributeRequirement.NONE);
+				Attribute att = new Attribute(attId, this.getUri(), n.getLocalName(), IOType.NONE, AttributeRequirement.NONE);
 				att.sethNodeId(hNodeId);
 				attributeList.add(att);
 				
-				vertexIdToArgument.put(v.getId(), new Argument(att.getId(), att.getId(), ArgumentType.ATTRIBUTE));
+				vertexIdToArgument.put(n.getId(), new Argument(att.getId(), att.getId(), ArgumentType.ATTRIBUTE));
 			} else {
-				logger.debug("Vertex " + v.getLocalId() + " is an intermediate node.");
+				logger.debug("Vertex " + n.getLocalId() + " is an intermediate node.");
 				String variableId = "v" + String.valueOf(variables.size() + 1);
 				this.variables.add(variableId);
 
-				vertexIdToArgument.put(v.getId(), new Argument(variableId, variableId, ArgumentType.VARIABLE));
+				vertexIdToArgument.put(n.getId(), new Argument(variableId, variableId, ArgumentType.VARIABLE));
 			}
 		}
 
-		for (Node v : treeModel.vertexSet()) {
+		for (Node n : treeModel.vertexSet()) {
 			
-			if (v.getNodeType() == NodeType.DataProperty)
+			if (n instanceof ColumnNode || n instanceof LiteralNode)
 				continue;
 			
-			if (vertexIdToArgument.get(v.getId()) == null)
+			if (vertexIdToArgument.get(n.getId()) == null)
 				continue;
 			
-			Label classPredicate = new Label(v.getUriString(), v.getNs(), v.getPrefix());
+			Label classPredicate = new Label(n.getUriString(), n.getNs(), n.getPrefix());
 
-			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(v.getId()));
+			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(n.getId()));
 			m.getAtoms().add(classAtom);
 		}
 		
@@ -198,19 +177,19 @@ public class Source {
 				continue;
 
 			Label propertyPredicate = new Label(e.getUriString(), e.getNs(), e.getPrefix());
-			PropertyAtom propertyAtom = null;
+			IndividualPropertyAtom propertyAtom = null;
 			
 			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source
-			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
-				Label subClassPredicate = new Label(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
-				propertyAtom = new PropertyAtom(subClassPredicate, 
-						vertexIdToArgument.get(e.getTarget().getId()),
-						vertexIdToArgument.get(e.getSource().getId()));
-			} else {
-				propertyAtom = new PropertyAtom(propertyPredicate, 
+//			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
+//				Label subClassPredicate = new Label(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
+//				propertyAtom = new IndividualPropertyAtom(subClassPredicate, 
+//						vertexIdToArgument.get(e.getTarget().getId()),
+//						vertexIdToArgument.get(e.getSource().getId()));
+//			} else {
+				propertyAtom = new IndividualPropertyAtom(propertyPredicate, 
 						vertexIdToArgument.get(e.getSource().getId()),
 						vertexIdToArgument.get(e.getTarget().getId()));
-			}
+//			}
 			m.getAtoms().add(propertyAtom);
 		}
 		
@@ -228,6 +207,7 @@ public class Source {
 		return s;
 	}
 	
+	@Override
 	public void print() {
 		System.out.println("********************************************");
 		System.out.println("Source: " + getInfo());

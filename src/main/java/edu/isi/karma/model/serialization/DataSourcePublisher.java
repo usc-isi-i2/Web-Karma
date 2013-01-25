@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.model.serialization;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -39,12 +39,17 @@ import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.metadata.SourceInformation;
 import edu.isi.karma.rep.metadata.SourceInformation.InfoAttribute;
+import edu.isi.karma.rep.model.Atom;
+import edu.isi.karma.rep.model.ClassAtom;
+import edu.isi.karma.rep.model.IndividualPropertyAtom;
+import edu.isi.karma.rep.sources.Attribute;
+import edu.isi.karma.rep.sources.DataSource;
 
-public class SourcePublisher {
+public class DataSourcePublisher extends SourcePublisher {
 
-	static Logger logger = Logger.getLogger(SourcePublisher.class);
+	static Logger logger = Logger.getLogger(DataSourcePublisher.class);
 
-	private Source source;
+	private DataSource source;
 	private Model model = null;
 	private String sourceDescription;
 	private RepFactory factory;
@@ -54,7 +59,7 @@ public class SourcePublisher {
 	//MARIAM
 	//I had to add factory, so that I can get to the columnName
 	//I tried to do it in a nicer way but couldn't figure out how to add it to the Attribute
-	public SourcePublisher(Source source, String sourceDescription, RepFactory factory, List<String> transformationCommandJSON, SourceInformation sourceInfo) {
+	public DataSourcePublisher(DataSource source, String sourceDescription, RepFactory factory, List<String> transformationCommandJSON, SourceInformation sourceInfo) {
 		this.source = source;
 		this.sourceDescription=sourceDescription;
 		this.factory=factory;
@@ -62,7 +67,8 @@ public class SourcePublisher {
 		this.sourceInfo = sourceInfo;
 	}
 	
-	public Model generateModel() {
+	@Override
+	public Model exportToJenaModel() {
 		
 		Model model = ModelFactory.createDefaultModel();
 		
@@ -87,13 +93,14 @@ public class SourcePublisher {
 	 * The default value, represented by null is "RDF/XML".
 	 * @throws FileNotFoundException
 	 */
+	@Override
 	public void publish(String lang, boolean writeToFile) throws FileNotFoundException {
 		
 		//TODO: how to see if a model of the same source exists or not
 		// maybe we can use a combination of source name, address, ...
 		
 		if (this.model == null)
-			model = generateModel();
+			model = exportToJenaModel();
 		
 		// update the repository active model
 		Repository.Instance().addModel(this.model, source.getUri());
@@ -103,9 +110,10 @@ public class SourcePublisher {
 			writeToFile(lang);
 	}
 	
+	@Override
 	public void writeToFile(String lang) throws FileNotFoundException {
 		if (this.model == null)
-			model = generateModel();
+			model = exportToJenaModel();
 		
 		String source_desc_file = Repository.Instance().SOURCE_REPOSITORY_DIR + 
 		 							this.source.getName() + "_" + this.source.getId() +
@@ -117,7 +125,7 @@ public class SourcePublisher {
 		
 	}
 	
-	public void addSourceInfoPart(Model model) {
+	private void addSourceInfoPart(Model model) {
 		
 		String baseNS = model.getNsPrefixURI("");
 		// resources
@@ -182,7 +190,8 @@ public class SourcePublisher {
 	private void addTransformationCommandsHistory(Model model2) {
 		
 	}
-	public void addModelPart(Model model, Resource resource, edu.isi.karma.service.Model semanticModel) {
+	
+	private void addModelPart(Model model, Resource resource, edu.isi.karma.rep.model.Model semanticModel) {
 
 		if (semanticModel == null) {
 			logger.info("The semantic model is null");
@@ -226,8 +235,8 @@ public class SourcePublisher {
 					
 					my_model.addProperty(has_atom, r);
 				}
-				else if (atom instanceof PropertyAtom) {
-					PropertyAtom propertyAtom = (PropertyAtom)atom;
+				else if (atom instanceof IndividualPropertyAtom) {
+					IndividualPropertyAtom propertyAtom = (IndividualPropertyAtom)atom;
 					
 					Resource r = model.createResource();
 					r.addProperty(rdf_type, individual_property_atom_resource);

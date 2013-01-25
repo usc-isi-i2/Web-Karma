@@ -2,7 +2,7 @@
  * Copyright 2012 University of Southern California
  *  
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this._service file except in compliance with the License.
+ * you may not use this.service file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
  * 	http://www.apache.org/licenses/LICENSE-2.0
@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.model.serialization;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -36,20 +36,31 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
+import edu.isi.karma.rep.model.Atom;
+import edu.isi.karma.rep.model.ClassAtom;
+import edu.isi.karma.rep.model.IndividualPropertyAtom;
+import edu.isi.karma.rep.sources.Attribute;
+import edu.isi.karma.rep.sources.AttributeRequirement;
+import edu.isi.karma.rep.sources.IOType;
+import edu.isi.karma.rep.sources.WebService;
 
-public class ServicePublisher {
+public class WebServicePublisher extends SourcePublisher {
 
-	static Logger logger = Logger.getLogger(ServicePublisher.class);
+	static Logger logger = Logger.getLogger(WebServicePublisher.class);
 	
-	private static Service _service = null;
+	private WebService service;
+	private Model model = null;
+	
+	public WebServicePublisher(WebService service) {
+		this.service = service;
+	}
 
-	public static Model generateModel(Service service) {
-		
-		_service = service;
+	@Override
+	public Model exportToJenaModel() {
 		
 		Model model = ModelFactory.createDefaultModel();
 		
-		String baseNS = _service.getUri();
+		String baseNS = service.getUri();
 		model.setNsPrefix("", baseNS);
 		model.setNsPrefix(Prefixes.KARMA, Namespaces.KARMA);
 		model.setNsPrefix(Prefixes.RDF, Namespaces.RDF);
@@ -63,13 +74,11 @@ public class ServicePublisher {
 		
 	}
 	
-	public static Model generateInputPart(Service service) {
-		
-		_service = service;
+	public Model generateInputPart() {
 		
 		Model model = ModelFactory.createDefaultModel();
 		
-		String baseNS = _service.getUri();
+		String baseNS = service.getUri();
 		model.setNsPrefix("", baseNS);
 		model.setNsPrefix(Prefixes.KARMA, Namespaces.KARMA);
 		model.setNsPrefix(Prefixes.RDF, Namespaces.RDF);
@@ -83,13 +92,11 @@ public class ServicePublisher {
 		
 	}
 
-	public static Model generateOutputPart(Service service) {
-		
-		_service = service;
+	public Model generateOutputPart() {
 		
 		Model model = ModelFactory.createDefaultModel();
 		
-		String baseNS = _service.getUri();
+		String baseNS = service.getUri();
 		model.setNsPrefix("", baseNS);
 		model.setNsPrefix(Prefixes.KARMA, Namespaces.KARMA);
 		model.setNsPrefix(Prefixes.RDF, Namespaces.RDF);
@@ -109,30 +116,40 @@ public class ServicePublisher {
 	 * The default value, represented by null is "RDF/XML".
 	 * @throws FileNotFoundException
 	 */
-	public static void publish(Service service, String lang, boolean writeToFile) throws FileNotFoundException {
+	@Override
+	public void publish(String lang, boolean writeToFile) throws FileNotFoundException {
 		
-		_service = service;
-
-		Service existingService = ServiceLoader.getServiceByAddress(_service.getAddress());
+		WebService existingService = WebServiceLoader.getInstance().getServiceByAddress(service.getAddress());
 		if (existingService != null) 
-			ServiceLoader.deleteServiceByUri(existingService.getUri());
+			WebServiceLoader.getInstance().deleteSourceByUri(existingService.getUri());
 		
-		Model model = generateModel(_service);
+		if (this.model == null)
+			model = exportToJenaModel();
 		
 		// update the repository active model
-		Repository.Instance().addModel(model, _service.getUri());
+		Repository.Instance().addModel(model, service.getUri());
 
 		// write the model to the file
-		if (writeToFile) {
-			String service_desc_file = Repository.Instance().SERVICE_REPOSITORY_DIR + 
-										_service.getId() + 
-										Repository.Instance().getFileExtension(lang);
-			OutputStreamWriter output = new OutputStreamWriter(new FileOutputStream(service_desc_file));
-			model.write(output,lang);	
-		}
+		if (writeToFile) 
+			writeToFile(lang);
 	}
 	
-	public static void addInvocationPart(Model model) {
+	@Override
+	public void writeToFile(String lang) throws FileNotFoundException {
+		if (this.model == null)
+			model = exportToJenaModel();
+		
+		String service_desc_file = Repository.Instance().SERVICE_REPOSITORY_DIR + 
+		 							this.service.getId() +
+									Repository.Instance().getFileExtension(lang);
+
+
+		OutputStreamWriter output = new OutputStreamWriter(new FileOutputStream(service_desc_file));
+		model.write(output,lang);		
+		
+	}
+	
+	private void addInvocationPart(Model model) {
 		
 		String baseNS = model.getNsPrefixURI("");
 		// resources
@@ -151,42 +168,42 @@ public class ServicePublisher {
 		// rdf datatypes
 		String uri_template = Namespaces.HRESTS + "URITemplate";
 
-		Resource my_service = model.createResource(baseNS + "");
-		Literal service_address = model.createTypedLiteral(_service.getAddress(), uri_template);
-		my_service.addProperty(rdf_type, service_resource);
-		my_service.addProperty(has_address, service_address);
-		if (_service.getName().length() > 0)
-			my_service.addProperty(has_name, _service.getName());
+		Resource myservice = model.createResource(baseNS + "");
+		Literal service_address = model.createTypedLiteral(service.getAddress(), uri_template);
+		myservice.addProperty(rdf_type, service_resource);
+		myservice.addProperty(has_address, service_address);
+		if (service.getName().length() > 0)
+			myservice.addProperty(has_name, service.getName());
 		
-		if (_service.getMethod().length() > 0)
-			my_service.addProperty(has_method, _service.getMethod());
-		if (_service.getAddress().length() > 0) {
-			Literal operation_address_literal = model.createTypedLiteral(_service.getAddress(), uri_template);
-			my_service.addLiteral(has_address, operation_address_literal);
+		if (service.getMethod().length() > 0)
+			myservice.addProperty(has_method, service.getMethod());
+		if (service.getAddress().length() > 0) {
+			Literal operation_address_literal = model.createTypedLiteral(service.getAddress(), uri_template);
+			myservice.addLiteral(has_address, operation_address_literal);
 		}
 		
-		if (_service.getVariables() != null)
-		for (int i = 0; i < _service.getVariables().size(); i++) {
-			Resource my_variable = model.createResource(baseNS + _service.getVariables().get(i).toString());
+		if (service.getVariables() != null)
+		for (int i = 0; i < service.getVariables().size(); i++) {
+			Resource my_variable = model.createResource(baseNS + service.getVariables().get(i).toString());
 			my_variable.addProperty(rdf_type, variavle_resource);
-			my_service.addProperty(has_variable, my_variable);
+			myservice.addProperty(has_variable, my_variable);
 		}
 		
 		//for source description
 		Property hasSourceDesc = model.createProperty(Namespaces.KARMA, "hasSourceDescription");
-		String sourceDescription = _service.getSourceDescription();
+		String sourceDescription = service.getSourceDescription();
 		sourceDescription = sourceDescription.replaceAll("\n", " ").replaceAll("\r", " ");
-		my_service.addProperty(hasSourceDesc, sourceDescription);
+		myservice.addProperty(hasSourceDesc, sourceDescription);
 			
 		Resource my_input = addInput(model, true);
-		if (my_input != null) my_service.addProperty(has_input, my_input);
+		if (my_input != null) myservice.addProperty(has_input, my_input);
 
 		Resource my_output = addOutput(model, true);
-		if (my_output != null) my_service.addProperty(has_output, my_output);
+		if (my_output != null) myservice.addProperty(has_output, my_output);
 
 	}
 	
-	private static Resource addInput(Model model, boolean includeAttributeDetails) {
+	private Resource addInput(Model model, boolean includeAttributeDetails) {
 		
 		Resource my_input = null;
 		
@@ -200,15 +217,15 @@ public class ServicePublisher {
 		Property has_mandatory_attribute = model.createProperty(Namespaces.KARMA, "hasMandatoryAttribute");
 		Property has_optional_attribute = model.createProperty(Namespaces.KARMA, "hasOptionalAttribute");
 
-		if (_service.getInputAttributes() != null) {
+		if (service.getInputAttributes() != null) {
 			
 			my_input = model.createResource(baseNS + "input");  
-			if (_service.getInputAttributes().size() > 0) {
+			if (service.getInputAttributes().size() > 0) {
 				my_input.addProperty(rdf_type, input_resource);
 			}
-			for (int i = 0; i < _service.getInputAttributes().size(); i++) {
+			for (int i = 0; i < service.getInputAttributes().size(); i++) {
 				
-				Attribute att = _service.getInputAttributes().get(i);
+				Attribute att = service.getInputAttributes().get(i);
 				Resource my_attribute = model.createResource(baseNS + att.getId());
 				
 				if (includeAttributeDetails)
@@ -223,13 +240,13 @@ public class ServicePublisher {
 
 			}
 
-			addModelPart(model, my_input, _service.getInputModel());
+			addModelPart(model, my_input, service.getInputModel());
 		}
 		
 		return my_input;
 	}
 
-	private static Resource addOutput(Model model, boolean includeAttributeDetails) {
+	private Resource addOutput(Model model, boolean includeAttributeDetails) {
 		
 		Resource my_output = null;
 		
@@ -243,14 +260,14 @@ public class ServicePublisher {
 		Property has_mandatory_attribute = model.createProperty(Namespaces.KARMA, "hasMandatoryAttribute");
 		Property has_optional_attribute = model.createProperty(Namespaces.KARMA, "hasOptionalAttribute");
 
-		if (_service.getOutputAttributes() != null) {
+		if (service.getOutputAttributes() != null) {
 			my_output = model.createResource(baseNS + "output");  
-			if (_service.getOutputAttributes().size() > 0) {
+			if (service.getOutputAttributes().size() > 0) {
 				my_output.addProperty(rdf_type, output_resource);
 			}
-			for (int i = 0; i < _service.getOutputAttributes().size(); i++) {
+			for (int i = 0; i < service.getOutputAttributes().size(); i++) {
 				
-				Attribute att = _service.getOutputAttributes().get(i);
+				Attribute att = service.getOutputAttributes().get(i);
 				Resource my_attribute = model.createResource(baseNS + att.getId());
 				
 				if (includeAttributeDetails)
@@ -264,12 +281,12 @@ public class ServicePublisher {
 					my_output.addProperty(has_optional_attribute, my_attribute);
 
 			}
-			addModelPart(model, my_output, _service.getOutputModel());
+			addModelPart(model, my_output, service.getOutputModel());
 		}
 		return my_output;
 	}
 
-	private static void addAttributeDetails(Model model, Resource my_attribute, Attribute att) {
+	private void addAttributeDetails(Model model, Resource my_attribute, Attribute att) {
 
 		Resource attribute_resource = model.createResource(Namespaces.KARMA + "Attribute");
 
@@ -289,7 +306,7 @@ public class ServicePublisher {
 		
 	}
 
-	private static void addModelPart(Model model, Resource resource, edu.isi.karma.service.Model semanticModel) {
+	private void addModelPart(Model model, Resource resource, edu.isi.karma.rep.model.Model semanticModel) {
 
 		if (semanticModel == null) {
 			logger.info("The semantic model is null");
@@ -333,8 +350,8 @@ public class ServicePublisher {
 					
 					my_model.addProperty(has_atom, r);
 				}
-				else if (atom instanceof PropertyAtom) {
-					PropertyAtom propertyAtom = (PropertyAtom)atom;
+				else if (atom instanceof IndividualPropertyAtom) {
+					IndividualPropertyAtom propertyAtom = (IndividualPropertyAtom)atom;
 					
 					Resource r = model.createResource();
 					r.addProperty(rdf_type, individual_property_atom_resource);
@@ -359,7 +376,7 @@ public class ServicePublisher {
 	
 	public static void main(String[] args) throws FileNotFoundException {
 		String serviceUri = ModelingParams.KARMA_SERVICE_PREFIX + "CDA81BE4-DD77-E0D3-D033-FC771B2F4800" + "#";
-		Service service = ServiceLoader.getServiceByUri(serviceUri);
+		WebService service = WebServiceLoader.getInstance().getSourceByUri(serviceUri);
 		
 		String service_file = Repository.Instance().SERVICE_REPOSITORY_DIR + 
 									"service" + 
@@ -377,9 +394,10 @@ public class ServicePublisher {
 		OutputStreamWriter outputServiceInput = new OutputStreamWriter(new FileOutputStream(service_input_file));
 		OutputStreamWriter outputServiceOutput = new OutputStreamWriter(new FileOutputStream(service_output_file));
 
-		com.hp.hpl.jena.rdf.model.Model model = ServicePublisher.generateModel(service);
-		com.hp.hpl.jena.rdf.model.Model inputModel = ServicePublisher.generateInputPart(service);
-		com.hp.hpl.jena.rdf.model.Model outputModel = ServicePublisher.generateOutputPart(service);
+		WebServicePublisher webServicePublisher = new WebServicePublisher(service);
+		com.hp.hpl.jena.rdf.model.Model model = webServicePublisher.exportToJenaModel();
+		com.hp.hpl.jena.rdf.model.Model inputModel = webServicePublisher.generateInputPart();
+		com.hp.hpl.jena.rdf.model.Model outputModel = webServicePublisher.generateOutputPart();
 		
 		model.write(outputService,SerializationLang.N3);		
 		inputModel.write(outputServiceInput,SerializationLang.N3);		

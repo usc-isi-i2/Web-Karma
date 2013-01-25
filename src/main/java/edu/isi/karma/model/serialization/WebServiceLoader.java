@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.model.serialization;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,30 +46,47 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.model.Argument;
+import edu.isi.karma.rep.model.ArgumentType;
+import edu.isi.karma.rep.model.Atom;
+import edu.isi.karma.rep.model.ClassAtom;
+import edu.isi.karma.rep.model.IndividualPropertyAtom;
+import edu.isi.karma.rep.sources.Attribute;
+import edu.isi.karma.rep.sources.AttributeRequirement;
+import edu.isi.karma.rep.sources.IOType;
+import edu.isi.karma.rep.sources.Source;
+import edu.isi.karma.rep.sources.WebService;
 
-public class ServiceLoader {
+public class WebServiceLoader extends SourceLoader {
 
-	static Logger logger = Logger.getLogger(ServiceLoader.class);
-	private static final int DEFAULT_SERVICE_RESULTS_SIZE = 10;
+	private static Logger logger = Logger.getLogger(WebServiceLoader.class);
+	private static WebServiceLoader instance = null;
+	private final int DEFAULT_SERVICE_RESULTS_SIZE = 10;
 
-	public static void deleteServiceByAddress(String address) {
-		
-		String uri = getServiceUriByServiceAddress(address);
-		Repository.Instance().clearNamedModel(uri);
+	protected WebServiceLoader() {
+		      // Exists only to defeat instantiation.
+	}
+		   
+	public static WebServiceLoader getInstance() {
+		if (instance == null) {
+			instance = new WebServiceLoader();
+		}
+		return instance;
 	}
 	
-	public static Service getServiceByAddress(String address) {
+    @Override
+	public WebService getSourceByUri(String uri) {
 		
-		String uri = getServiceUriByServiceAddress(address);
 		Model m = Repository.Instance().getNamedModel(uri);
 		if (m == null)
 			return null;
 
-		Service service = getServiceFromJenaModel(m);
+		WebService service = importSourceFromJenaModel(m);
 		return service;
 	}
 	
-	public static void deleteServiceByUri(String uri) {
+    @Override
+	public void deleteSourceByUri(String uri) {
 		Repository.Instance().clearNamedModel(uri);
 		
 		String service_id = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 1);
@@ -90,33 +107,15 @@ public class ServiceLoader {
 		}
 	}
 	
-	public static Service getServiceByUri(String uri) {
-		
-		Model m = Repository.Instance().getNamedModel(uri);
-		if (m == null)
-			return null;
-
-		Service service = getServiceFromJenaModel(m);
-		return service;
-	}
-	
-	public static Model getServiceJenaModelByUri(String uri) {
-		
-		Model m = Repository.Instance().getNamedModel(uri);
-		if (m == null)
-			return null;
-
-		return m;
-	}
-	
 	/**
 	 * returns the service id, name, address of all services in the repository
 	 * @param limit : maximum number of results, null value means all the services
 	 * @return
 	 */
-	public static List<Service> getAllServices(Integer serviceLimit) {
+    @Override
+	public List<Source> getSourcesAbstractInfo(Integer serviceLimit) {
 		
-		List<Service> serviceList = new ArrayList<Service>();
+		List<Source> serviceList = new ArrayList<Source>();
 		
 		Model model = Repository.Instance().getModel();
 		
@@ -178,7 +177,7 @@ public class ServiceLoader {
 				logger.debug("service address: " + service_address);
 				
 				if (service_id.trim().length() > 0)
-					serviceList.add(new Service(service_id, service_name, service_address));
+					serviceList.add(new WebService(service_id, service_name, service_address));
 				else
 					logger.info("length of service id is zero.");
 			}
@@ -198,173 +197,35 @@ public class ServiceLoader {
 	 * information takes long time.
 	 * @return
 	 */
-	public static List<Service> getAllServicesComplete(Integer serviceLimit) {
+    @Override
+	public List<Source> getSourcesDetailedInfo(Integer serviceLimit) {
 
-		List<Service> serviceList = getAllServices(serviceLimit);
-		List<Service> serviceListCompleteInfo = new ArrayList<Service>();
-		for (Service s : serviceList) {
-			serviceListCompleteInfo.add(getServiceByUri(s.getUri()));
+		List<Source> serviceList = getSourcesAbstractInfo(serviceLimit);
+		List<Source> serviceListCompleteInfo = new ArrayList<Source>();
+		for (Source s : serviceList) {
+			serviceListCompleteInfo.add(getSourceByUri(s.getUri()));
 		}
 		return serviceListCompleteInfo;
 	}
-	
-	/**
-	 * Searches the repository to find the services that the semantic model parameter is contained in 
-	 * their input model.
-	 * @param semanticModel The input model whose pattern will be searched in the repository
-	 * @param ioType declares which one of the service input or service output will be tested for matching.
-	 * @param operationsLimit maximum number of operations that will be fetched
-	 * @return a hashmap of all found services and a mapping from the found service parameters to the model parameters. 
-	 * This help us later to how to join the model's corresponding source and the matched service 
-	 */
-	public static Map<Service, Map<String, String>> getServicesByInputPattern(edu.isi.karma.service.Model semanticModel, 
-			Integer serviceLimit) {
+    
+	public WebService getServiceByAddress(String address) {
 		
-		if (semanticModel == null || semanticModel.getAtoms() == null 
-				|| semanticModel.getAtoms().size() == 0) {
-			logger.info("The input model is nul or it does not have any atom");
+		String uri = getServiceUriByServiceAddress(address);
+		Model m = Repository.Instance().getNamedModel(uri);
+		if (m == null)
 			return null;
-		}
-		
-		Map<Service, Map<String, String>> servicesAndMappings = 
-			new HashMap<Service, Map<String,String>>();
-		
-		Map<String, Map<String, String>> serviceIdsAndMappings = 
-			semanticModel.findInServiceInputs(Repository.Instance().getModel(), serviceLimit);
 
-		if (serviceIdsAndMappings == null)
-			return null;
-		
-		for (String serviceId : serviceIdsAndMappings.keySet()) {
-			Model m = Repository.Instance().getNamedModel(serviceId);
-			if (m != null)
-				servicesAndMappings.put(getServiceFromJenaModel(m), serviceIdsAndMappings.get(serviceId));
-		}
-		
-		return servicesAndMappings;
+		WebService service = importSourceFromJenaModel(m);
+		return service;
 	}
 	
-	/**
-	 * Searches the repository to find the services that the semantic model parameter is contained in 
-	 * their output model.
-	 * @param semanticModel The input model whose pattern will be searched in the repository
-	 * @param ioType declares which one of the service input or service output will be tested for matching.
-	 * @param operationsLimit maximum number of operations that will be fetched
-	 * @return a hashmap of all found services and a mapping from the found service parameters to the model parameters. 
-	 * This help us later to how to join the model's corresponding source and the matched service 
-	 */
-	public static Map<Service, Map<String, String>> getServicesByOutputPattern(edu.isi.karma.service.Model semanticModel, 
-			Integer serviceLimit) {
+	public void deleteServiceByAddress(String address) {
 		
-		if (semanticModel == null || semanticModel.getAtoms() == null 
-				|| semanticModel.getAtoms().size() == 0) {
-			logger.info("The input model is nul or it does not have any atom");
-			return null;
-		}
-		
-		Map<Service, Map<String, String>> servicesAndMappings = 
-			new HashMap<Service, Map<String,String>>();
-		
-		Map<String, Map<String, String>> serviceIdsAndMappings = 
-			semanticModel.findInServiceOutputs(Repository.Instance().getModel(), serviceLimit);
-		
-		if (serviceIdsAndMappings == null)
-			return null;
-		
-		for (String serviceId : serviceIdsAndMappings.keySet()) {
-			Model m = Repository.Instance().getNamedModel(serviceId);
-			if (m != null)
-				servicesAndMappings.put(getServiceFromJenaModel(m), serviceIdsAndMappings.get(serviceId));
-		}
-		
-		return servicesAndMappings;
+		String uri = getServiceUriByServiceAddress(address);
+		Repository.Instance().clearNamedModel(uri);
 	}
 	
-	/**
-	 * Searches the repository to find the services whose input model is contained in the semantic model parameter.
-	 * Note that the services in the return list only include the operations that match the model parameter.
-	 * @param semanticModel The input model whose pattern will be searched in the repository
-	 * @param ioType declares which one of the service input or service output will be tested for matching.
-	 * @param operationsLimit maximum number of operations that will be fetched
-	 * @return a hashmap of all found services and a mapping from the found service parameters to the model parameters. 
-	 * This help us later to how to join the model's corresponding source and the matched service 
-	 */
-	public static Map<Service, Map<String, String>> getServicesWithInputContainedInModel(
-			edu.isi.karma.service.Model semanticModel, 
-			Integer serviceLimit) {
-		
-		List<Service> serviceList = getAllServicesComplete(serviceLimit);
-		
-		Map<Service, Map<String, String>> servicesAndMappings = 
-			new HashMap<Service, Map<String,String>>();
-
-		Model jenaModel = semanticModel.getJenaModel();
-		for (Service service : serviceList) {
-			
-			edu.isi.karma.service.Model m = service.getInputModel();
-			
-			if (m == null)
-				continue;
-			
-			Map<String, Map<String, String>> serviceIdsAndMappings =
-				m.findInJenaModel(jenaModel, null);
-			
-			if (serviceIdsAndMappings == null)
-				continue;
-			
-			Iterator<String> itr = serviceIdsAndMappings.keySet().iterator();
-			if (itr.hasNext()) {
-				String key = itr.next();
-				servicesAndMappings.put(service, serviceIdsAndMappings.get(key));
-			}
-		}
-		
-		return servicesAndMappings;
-	}
-	
-	/**
-	 * Searches the repository to find the services whose output model is contained in the semantic model parameter.
-	 * Note that the services in the return list only include the operations that match the model parameter.
-	 * @param semanticModel The input model whose pattern will be searched in the repository
-	 * @param ioType declares which one of the service input or service output will be tested for matching.
-	 * @param operationsLimit maximum number of operations that will be fetched
-	 * @return a hashmap of all found services and a mapping from the found service parameters to the model parameters. 
-	 * This help us later to how to join the model's corresponding source and the matched service 
-	 */
-	public static Map<Service, Map<String, String>> getServicesWithOutputContainedInModel(
-			edu.isi.karma.service.Model semanticModel, 
-			Integer serviceLimit) {
-		
-		List<Service> serviceList = getAllServicesComplete(serviceLimit);
-		
-		Map<Service, Map<String, String>> servicesAndMappings = 
-			new HashMap<Service, Map<String,String>>();
-
-		Model jenaModel = semanticModel.getJenaModel();
-		for (Service service : serviceList) {
-			
-			edu.isi.karma.service.Model m = service.getOutputModel();
-			
-			if (m == null)
-				continue;
-			
-			Map<String, Map<String, String>> serviceIdsAndMappings =
-				m.findInJenaModel(jenaModel, null);
-			
-			if (serviceIdsAndMappings == null)
-				continue;
-			
-			Iterator<String> itr = serviceIdsAndMappings.keySet().iterator();
-			if (itr.hasNext()) {
-				String key = itr.next();
-				servicesAndMappings.put(service, serviceIdsAndMappings.get(key));
-			}
-		}
-		
-		return servicesAndMappings;
-	}
-	
-	private static String getServiceUriByServiceAddress(String address) {
+	private String getServiceUriByServiceAddress(String address) {
 
 		Model model = Repository.Instance().getModel();
 		
@@ -413,11 +274,174 @@ public class ServiceLoader {
 	}
 	
 	/**
+	 * Searches the repository to find the services that the semantic model parameter is contained in 
+	 * their input model.
+	 * @param semanticModel The input model whose pattern will be searched in the repository
+	 * @param ioType declares which one of the service input or service output will be tested for matching.
+	 * @param operationsLimit maximum number of operations that will be fetched
+	 * @return a hashmap of all found services and a mapping from the found service parameters to the model parameters. 
+	 * This help us later to how to join the model's corresponding source and the matched service 
+	 */
+	public Map<WebService, Map<String, String>> getServicesByInputPattern(edu.isi.karma.rep.model.Model semanticModel, 
+			Integer serviceLimit) {
+		
+		if (semanticModel == null || semanticModel.getAtoms() == null 
+				|| semanticModel.getAtoms().size() == 0) {
+			logger.info("The input model is nul or it does not have any atom");
+			return null;
+		}
+		
+		Map<WebService, Map<String, String>> servicesAndMappings = 
+			new HashMap<WebService, Map<String,String>>();
+		
+		Map<String, Map<String, String>> serviceIdsAndMappings = 
+			semanticModel.findInServiceInputs(Repository.Instance().getModel(), serviceLimit);
+
+		if (serviceIdsAndMappings == null)
+			return null;
+		
+		for (String serviceId : serviceIdsAndMappings.keySet()) {
+			Model m = Repository.Instance().getNamedModel(serviceId);
+			if (m != null)
+				servicesAndMappings.put(importSourceFromJenaModel(m), serviceIdsAndMappings.get(serviceId));
+		}
+		
+		return servicesAndMappings;
+	}
+	
+	/**
+	 * Searches the repository to find the services that the semantic model parameter is contained in 
+	 * their output model.
+	 * @param semanticModel The input model whose pattern will be searched in the repository
+	 * @param ioType declares which one of the service input or service output will be tested for matching.
+	 * @param operationsLimit maximum number of operations that will be fetched
+	 * @return a hashmap of all found services and a mapping from the found service parameters to the model parameters. 
+	 * This help us later to how to join the model's corresponding source and the matched service 
+	 */
+	public Map<WebService, Map<String, String>> getServicesByOutputPattern(edu.isi.karma.rep.model.Model semanticModel, 
+			Integer serviceLimit) {
+		
+		if (semanticModel == null || semanticModel.getAtoms() == null 
+				|| semanticModel.getAtoms().size() == 0) {
+			logger.info("The input model is nul or it does not have any atom");
+			return null;
+		}
+		
+		Map<WebService, Map<String, String>> servicesAndMappings = 
+			new HashMap<WebService, Map<String,String>>();
+		
+		Map<String, Map<String, String>> serviceIdsAndMappings = 
+			semanticModel.findInServiceOutputs(Repository.Instance().getModel(), serviceLimit);
+		
+		if (serviceIdsAndMappings == null)
+			return null;
+		
+		for (String serviceId : serviceIdsAndMappings.keySet()) {
+			Model m = Repository.Instance().getNamedModel(serviceId);
+			if (m != null)
+				servicesAndMappings.put(importSourceFromJenaModel(m), serviceIdsAndMappings.get(serviceId));
+		}
+		
+		return servicesAndMappings;
+	}
+	
+	/**
+	 * Searches the repository to find the services whose input model is contained in the semantic model parameter.
+	 * Note that the services in the return list only include the operations that match the model parameter.
+	 * @param semanticModel The input model whose pattern will be searched in the repository
+	 * @param ioType declares which one of the service input or service output will be tested for matching.
+	 * @param operationsLimit maximum number of operations that will be fetched
+	 * @return a hashmap of all found services and a mapping from the found service parameters to the model parameters. 
+	 * This help us later to how to join the model's corresponding source and the matched service 
+	 */
+	public Map<WebService, Map<String, String>> getServicesWithInputContainedInModel(
+			edu.isi.karma.rep.model.Model semanticModel, 
+			Integer serviceLimit) {
+		
+		List<Source> serviceList = getSourcesDetailedInfo(serviceLimit);
+		
+		Map<WebService, Map<String, String>> servicesAndMappings = 
+			new HashMap<WebService, Map<String,String>>();
+
+		Model jenaModel = semanticModel.getJenaModel();
+		for (Source service : serviceList) {
+			
+			if (!(service instanceof WebService))
+				continue;
+			
+			edu.isi.karma.rep.model.Model m = ((WebService)service).getInputModel();
+			
+			if (m == null)
+				continue;
+			
+			Map<String, Map<String, String>> serviceIdsAndMappings =
+				m.findInJenaModel(jenaModel, null);
+			
+			if (serviceIdsAndMappings == null)
+				continue;
+			
+			Iterator<String> itr = serviceIdsAndMappings.keySet().iterator();
+			if (itr.hasNext()) {
+				String key = itr.next();
+				servicesAndMappings.put((WebService)service, serviceIdsAndMappings.get(key));
+			}
+		}
+		
+		return servicesAndMappings;
+	}
+	
+	/**
+	 * Searches the repository to find the services whose output model is contained in the semantic model parameter.
+	 * Note that the services in the return list only include the operations that match the model parameter.
+	 * @param semanticModel The input model whose pattern will be searched in the repository
+	 * @param ioType declares which one of the service input or service output will be tested for matching.
+	 * @param operationsLimit maximum number of operations that will be fetched
+	 * @return a hashmap of all found services and a mapping from the found service parameters to the model parameters. 
+	 * This help us later to how to join the model's corresponding source and the matched service 
+	 */
+	public Map<WebService, Map<String, String>> getServicesWithOutputContainedInModel(
+			edu.isi.karma.rep.model.Model semanticModel, 
+			Integer serviceLimit) {
+		
+		List<Source> serviceList = getSourcesDetailedInfo(serviceLimit);
+		
+		Map<WebService, Map<String, String>> servicesAndMappings = 
+			new HashMap<WebService, Map<String,String>>();
+
+		Model jenaModel = semanticModel.getJenaModel();
+		for (Source service : serviceList) {
+			
+			if (!(service instanceof WebService))
+				continue;
+
+			edu.isi.karma.rep.model.Model m = ((WebService)service).getOutputModel();
+			
+			if (m == null)
+				continue;
+			
+			Map<String, Map<String, String>> serviceIdsAndMappings =
+				m.findInJenaModel(jenaModel, null);
+			
+			if (serviceIdsAndMappings == null)
+				continue;
+			
+			Iterator<String> itr = serviceIdsAndMappings.keySet().iterator();
+			if (itr.hasNext()) {
+				String key = itr.next();
+				servicesAndMappings.put((WebService)service, serviceIdsAndMappings.get(key));
+			}
+		}
+		
+		return servicesAndMappings;
+	}
+	
+	/**
 	 * From the service model, returns the service object
 	 * @param model
 	 * @return
 	 */
-	public static Service getServiceFromJenaModel(Model model) {
+	@Override
+	public WebService importSourceFromJenaModel(Model model) {
 		logger.debug("model size: " + model.getGraph().size());
 
 		String service_name = "";
@@ -472,8 +496,8 @@ public class ServiceLoader {
 		List<String> variables = null;
 		List<Attribute> inputAttributes = null;
 		List<Attribute> outputAttributes = null;
-		edu.isi.karma.service.Model inputModel = null;
-		edu.isi.karma.service.Model outputModel = null;
+		edu.isi.karma.rep.model.Model inputModel = null;
+		edu.isi.karma.rep.model.Model outputModel = null;
 
 		// service variables
 		variables = getVariables(model, service_resource);
@@ -494,7 +518,7 @@ public class ServiceLoader {
 		} else
 			logger.info("service does not have an output.");
 		
-		Service service = new Service(service_id, service_name, service_address);
+		WebService service = new WebService(service_id, service_name, service_address);
 		service.setMethod(service_method);
 		service.setVariables(variables);
 		service.setInputAttributes(inputAttributes);
@@ -506,7 +530,7 @@ public class ServiceLoader {
 		return service;
 	}
 	
-	private static List<String> getVariables(Model model, Resource service_resource) {
+	private List<String> getVariables(Model model, Resource service_resource) {
 		
 		Property has_variable_property = model.getProperty(Namespaces.KARMA + "hasVariable");
 	
@@ -531,7 +555,7 @@ public class ServiceLoader {
 
 	}
 	
-	private static List<Attribute> getAttributes(Model model, Resource io_resource, String ioType) {
+	private List<Attribute> getAttributes(Model model, Resource io_resource, String ioType) {
 		
 		Property has_attribute_property = model.getProperty(Namespaces.KARMA + "hasAttribute");
 		Property has_mandatory_attribute_property = model.getProperty(Namespaces.KARMA + "hasMandatoryAttribute");
@@ -585,7 +609,7 @@ public class ServiceLoader {
 
 	}
 	
-	private static Attribute getAttribute(Model model, Resource att_resource, String ioType, AttributeRequirement requirement) {
+	private Attribute getAttribute(Model model, Resource att_resource, String ioType, AttributeRequirement requirement) {
 		
 		String att_id = "";
 		String att_name = "";
@@ -628,7 +652,7 @@ public class ServiceLoader {
 
 	}
 	
-	private static edu.isi.karma.service.Model getSemanticModel(Model model, Resource io_resource) {
+	private edu.isi.karma.rep.model.Model getSemanticModel(Model model, Resource io_resource) {
 		
 		Property has_model_property = model.getProperty(Namespaces.KARMA + "hasModel");
 		Property has_atom_property = model.getProperty(Namespaces.KARMA + "hasAtom");
@@ -644,8 +668,8 @@ public class ServiceLoader {
 			return null;
 		}
 
-		edu.isi.karma.service.Model semanticModel = 
-			new edu.isi.karma.service.Model(modelNode.asResource().getLocalName());
+		edu.isi.karma.rep.model.Model semanticModel = 
+			new edu.isi.karma.rep.model.Model(modelNode.asResource().getLocalName());
 		List<Atom> atoms = new ArrayList<Atom>();
 		
 
@@ -667,7 +691,7 @@ public class ServiceLoader {
 
 	}
 	
-	private static Atom getAtom(Model model, Resource atom_resource) {
+	private Atom getAtom(Model model, Resource atom_resource) {
 		
 		Property rdf_type = model.getProperty(Namespaces.RDF + "type");
 
@@ -697,7 +721,7 @@ public class ServiceLoader {
 
 	}
 	
-	private static ClassAtom getClassAtom(Model model, Resource atom_resource) {
+	private ClassAtom getClassAtom(Model model, Resource atom_resource) {
 		
 		String predicateUri = null;
 		String predicatePrefix = null;
@@ -753,7 +777,7 @@ public class ServiceLoader {
 
 	}
 	
-	private static PropertyAtom getPropertyAtom(Model model, Resource atom_resource) {
+	private IndividualPropertyAtom getPropertyAtom(Model model, Resource atom_resource) {
 		
 		String predicateUri = null;
 		String predicatePrefix = null;
@@ -823,12 +847,12 @@ public class ServiceLoader {
 		Argument arg1 = new Argument(argument1Id, argument1Id, argument1Type);
 		Argument arg2 = new Argument(argument2Id, argument2Id, argument2Type);
 		
-		PropertyAtom propertyAtom = new PropertyAtom(predicateName, arg1, arg2);
+		IndividualPropertyAtom propertyAtom = new IndividualPropertyAtom(predicateName, arg1, arg2);
 
 		return propertyAtom;	
 	}
 	
-	private static boolean isInstanceOfTheClass(Resource resource, Resource class_resource) {
+	private boolean isInstanceOfTheClass(Resource resource, Resource class_resource) {
 		Property type_property = ResourceFactory.createProperty(Namespaces.RDF + "type");
 		
 		if (resource == null || !resource.isResource())
@@ -842,7 +866,7 @@ public class ServiceLoader {
 	
 	private static void testGetServiceByUri() {
 		String uri = "http://isi.edu/integration/karma/services/CDA81BE4-DD77-E0D3-D033-FC771B2F4800#";
-		Service service = ServiceLoader.getServiceByUri(uri);
+		WebService service = WebServiceLoader.getInstance().getSourceByUri(uri);
 		
 		if (service != null) {
 //			System.out.println(service.getInputModel().getSPARQLConstructQuery());
@@ -852,17 +876,17 @@ public class ServiceLoader {
 	}
 	private static void testGetServiceByAddress() {
 		String address = "http://api.geonames.org/";
-		Service service = ServiceLoader.getServiceByAddress(address);
+		WebService service = WebServiceLoader.getInstance().getServiceByAddress(address);
 		if (service != null) service.print();
 	}
 	private static void testGetAllServices() {
-		List<Service> serviceList = getAllServicesComplete(null);
-		for (Service s : serviceList) {
+		List<Source> serviceList = WebServiceLoader.getInstance().getSourcesDetailedInfo(null);
+		for (Source s : serviceList) {
 			if (s != null) s.print();
 		}
 	}
 	private static void testGetServicesByIOPattern() {
-		edu.isi.karma.service.Model semanticModel = new edu.isi.karma.service.Model(null);
+		edu.isi.karma.rep.model.Model semanticModel = new edu.isi.karma.rep.model.Model(null);
 
 //		String geonamesOntology = "http://www.geonames.org/ontology#";
 //		String wgs84Ontology = "http://www.w3.org/2003/01/geo/wgs84_pos#";
@@ -873,10 +897,10 @@ public class ServiceLoader {
 		Label lngPredicatName = new Label(geoOntology + "long", geoOntology, "geo");
 		
 		ClassAtom c1 = new ClassAtom(featurePredicatName, new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE));
-		PropertyAtom p1 = new PropertyAtom(latPredicatName,
+		IndividualPropertyAtom p1 = new IndividualPropertyAtom(latPredicatName,
 				new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE), 
 				new Argument("arg2", "arg2", ArgumentType.ATTRIBUTE));
-		PropertyAtom p2 = new PropertyAtom(lngPredicatName,
+		IndividualPropertyAtom p2 = new IndividualPropertyAtom(lngPredicatName,
 				new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE), 
 				new Argument("arg3", "arg3", ArgumentType.ATTRIBUTE));
 //		ClassAtom c2 = new ClassAtom(featurePredicatName, new Argument("arg2", "arg2", ArgumentType.ATTRIBUTE));
@@ -886,8 +910,8 @@ public class ServiceLoader {
 		semanticModel.getAtoms().add(p1);
 		semanticModel.getAtoms().add(p2);
 		
-		Map<Service, Map<String, String>> servicesAndMappings = 
-			getServicesWithInputContainedInModel(semanticModel, null);
+		Map<WebService, Map<String, String>> servicesAndMappings = 
+				WebServiceLoader.getInstance().getServicesWithInputContainedInModel(semanticModel, null);
 //			getServicesByInputPattern(semanticModel, null);
 
 //		Map<Service, Map<String, String>> servicesAndMappings = 
@@ -896,12 +920,12 @@ public class ServiceLoader {
 		if (servicesAndMappings == null)
 			return;
 		
-		for (Service s : servicesAndMappings.keySet()) {
+		for (WebService s : servicesAndMappings.keySet()) {
 			if (s != null) System.out.println((s.getUri())); //s.print();
 		}
 		
 		System.out.println("Mappings from matched source to model arguments:");
-		for (Service s : servicesAndMappings.keySet()) {
+		for (WebService s : servicesAndMappings.keySet()) {
 			System.out.println("Service: " + s.getId());
 			if (servicesAndMappings.get(s) == null)
 				continue;
@@ -912,7 +936,7 @@ public class ServiceLoader {
 	}
 	private static void testDeleteServiceByUri() {
 		String uri = "http://isi.edu/integration/karma/services/3D579101-2596-2331-53A8-63F949D71C8F#";
-		ServiceLoader.deleteServiceByUri(uri);
+		WebServiceLoader.getInstance().deleteSourceByUri(uri);
 	}	
 	public static void main(String[] args) {
 

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * Copyright 2012 University of Southern California
- * 
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this.source file except in compliance with the License.
  * You may obtain a copy of the License at
  * 
  * 	http://www.apache.org/licenses/LICENSE-2.0
@@ -19,28 +19,20 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.rep.alignment;
+package edu.isi.karma.model.serialization;
 
+import java.io.FileNotFoundException;
 
+import org.apache.log4j.Logger;
 
-public class ColumnNode extends Node {
+import com.hp.hpl.jena.rdf.model.Model;
 
-	private final String hNodeId;
-	private final String columnName;
-	
-	public ColumnNode(String id, String hNodeId, String columnName) {
-		super(id, null);
-		this.hNodeId = hNodeId;
-		this.columnName = columnName;
-	}
+public abstract class SourcePublisher {
 
-	public String getHNodeId() {
-		return hNodeId;
-	}
+	static Logger logger = Logger.getLogger(SourcePublisher.class);
 
-	public String getColumnName() {
-		return columnName;
-	}
-	
-	
+	public abstract Model exportToJenaModel();
+	public abstract void publish(String lang, boolean writeToFile) throws FileNotFoundException;	
+	public abstract void writeToFile(String lang) throws FileNotFoundException;
+
 }

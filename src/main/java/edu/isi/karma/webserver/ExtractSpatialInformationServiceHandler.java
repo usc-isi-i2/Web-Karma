@@ -24,7 +24,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 import edu.isi.karma.er.helper.ConnectPostgis;
-import edu.isi.karma.service.MimeType;
+import edu.isi.karma.model.serialization.MimeType;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 import edu.isi.karma.webserver.helper.CreateGeoBuildingForTable;
 import edu.isi.karma.webserver.helper.CreateGeoStreetForTable;

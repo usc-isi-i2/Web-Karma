@@ -1,4 +1,4 @@
-package edu.isi.karma.service;
+package edu.isi.karma.model.serialization;
 
 public interface MimeType {
 	static String  APPLICATION_TURTLE=            	"application/x-turtle";

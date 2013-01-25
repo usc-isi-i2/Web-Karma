@@ -108,7 +108,7 @@ public class GetExampleJSON extends HttpServlet {
 				}
 			}
 			// update the cache at the end when all files are added to the model
-			mgr.initCache();
+			mgr.updateCache();
 		} else {
 			logger.info("No directory for preloading ontologies exists.");
 		}

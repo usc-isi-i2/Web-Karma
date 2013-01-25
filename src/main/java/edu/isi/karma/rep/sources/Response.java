@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright 2012 University of Southern California
- * 
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,53 +18,54 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.rep.metadata;
 
-import edu.isi.karma.rep.alignment.SemanticTypes;
-import edu.isi.karma.rep.sources.WebService;
-import edu.isi.karma.rep.sources.DataSource;
+package edu.isi.karma.rep.sources;
 
-public class MetadataContainer {
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class Response {
+	private String type;
+	private int code;
+	private String stream;
+	private Table table;
+	private List<Attribute> attributes;
 	
-	@SuppressWarnings("unused")
-	private String 			worksheetName;
-	@SuppressWarnings("unused")
-	private SemanticTypes 	semanticTypes;
-	
-	private WebService service;
-	private DataSource source;
-	
-	private SourceInformation sourceInfo;
-
-	public void initializeFromJSON() {
-		
+	public String getType() {
+		return type;
 	}
-	
-	public void save() {
-		
+	public void setType(String type) {
+		this.type = type;
 	}
-
-	public WebService getService() {
-		return service;
+	public String getStream() {
+		return stream;
 	}
-
-	public void setService(WebService service) {
-		this.service = service;
+	public void setStream(String stream) {
+		this.stream = stream;
 	}
-
-	public DataSource getSource() {
-		return source;
+	public Table getTable() {
+		return table;
 	}
-
-	public void setSource(DataSource source) {
-		this.source = source;
+	public void setTable(Table table) {
+		this.table = table;
+		buildAttributeListFromTable();
 	}
-
-	public SourceInformation getSourceInformation() {
-		return sourceInfo;
+	public int getCode() {
+		return code;
 	}
-
-	public void setSourceInformation(SourceInformation sourceInfo) {
-		this.sourceInfo = sourceInfo;
-	}	
+	public void setCode(int code) {
+		this.code = code;
+	}
+	public List<Attribute> getAttributes() {
+		return this.attributes;
+	}
+	private void buildAttributeListFromTable() {
+		this.attributes = new ArrayList<Attribute>();
+		if (table == null)
+			return;
+		for (Attribute p : table.getHeaders()) {
+			this.attributes.add(new Attribute(p));
+		}
+	}
 }

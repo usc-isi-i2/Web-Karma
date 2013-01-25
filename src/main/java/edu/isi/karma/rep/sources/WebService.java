@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.rep.sources;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -38,24 +38,25 @@ import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.ModelingParams;
-import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.alignment.SteinerTree;
-import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.NodeType;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LiteralNode;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.model.Argument;
+import edu.isi.karma.rep.model.ArgumentType;
+import edu.isi.karma.rep.model.ClassAtom;
+import edu.isi.karma.rep.model.IndividualPropertyAtom;
+import edu.isi.karma.rep.model.Model;
 
-public class Service {
+public class WebService extends Source {
 	
-	static Logger logger = Logger.getLogger(Service.class);
+	static Logger logger = Logger.getLogger(WebService.class);
 
-	private String id;
-	private String name;
 	private String method;
 	private String address;
 	private URL urlExample;
-	private String description;
 	private String operationName;
 	private String sourceDescription;
 
@@ -71,10 +72,9 @@ public class Service {
 
 	private HashMap<String, Attribute> hNodeIdToAttribute;
 
-	public Service(String id, URL urlExample) {
-		this.id = id;
+	public WebService(String id, URL urlExample) {
+		super(id, URLManager.getOperationName(urlExample));
 		this.urlExample= urlExample;
-		this.name = getOperationName();
 		this.sourceDescription = "";
 		this.hNodeIdToAttribute = new HashMap<String, Attribute>();
 		this.variables = new ArrayList<String>();
@@ -83,9 +83,8 @@ public class Service {
 		this.attIdToAttMap = new HashMap<String, Attribute>();
 	}
 	
-	public Service(String id, String name, URL urlExample) {
-		this.id = id;
-		this.setName(name);
+	public WebService(String id, String name, URL urlExample) {
+		super(id, name);
 		this.urlExample= urlExample;
 		this.sourceDescription = "";
 		this.setMethod(HttpMethods.GET);
@@ -95,8 +94,8 @@ public class Service {
 		this.attIdToAttMap = new HashMap<String, Attribute>();
 	}
 	
-	public Service(String id, String addressTemplate) {
-		this.id = id;
+	public WebService(String id, String addressTemplate) {
+		super(id);
 		this.address= addressTemplate;
 		this.inputAttributes = new ArrayList<Attribute>();
 		this.outputAttributes = new ArrayList<Attribute>();
@@ -104,8 +103,8 @@ public class Service {
 		this.sourceDescription = "";
 	}
 	
-	public Service(String id, String name, String addressTemplate) {
-		this.id = id;
+	public WebService(String id, String name, String addressTemplate) {
+		super(id);
 		this.setName(name);
 		this.address= addressTemplate;
 		this.inputAttributes = new ArrayList<Attribute>();
@@ -114,9 +113,8 @@ public class Service {
 		this.sourceDescription = "";
 	}
 
-	public Service(String id, String name, URL urlExample, String method) {
-		this.id = id;
-		this.setName(name);
+	public WebService(String id, String name, URL urlExample, String method) {
+		super(id, name);
 		this.urlExample = urlExample;
 		this.setMethod(method);
 		this.inputAttributes = new ArrayList<Attribute>();
@@ -207,26 +205,6 @@ public class Service {
 
 	public Attribute getAttribute(String id) {
 		return this.attIdToAttMap.get(id);
-	}
-	
-	public String getId() {
-		return id;
-	}
-	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public List<Attribute> getInputAttributes() {
@@ -388,31 +366,31 @@ public class Service {
 		
 		// set the rdf ids of all the vertices. The rdf id of leaf vertices are the attribute ids. 
 		String hNodeId = "";
-		for (Node v : treeModel.vertexSet()) {
-			if (v.getSemanticType() != null && v.getSemanticType().getHNodeId() != null) {
-				logger.debug("Vertex " + v.getLocalId() + " is a semantic type associated to a source columns.");
-				hNodeId = v.getSemanticType().getHNodeId();
+		for (Node n : treeModel.vertexSet()) {
+			if (n instanceof ColumnNode) {
+				logger.debug("Node " + n.getLocalId() + " is a column node.");
+				hNodeId = ((ColumnNode)n).getHNodeId();
 			} else {
-				logger.debug("Vertex " + v.getLocalId() + " is an intermediate node.");
+				logger.debug("Node " + n.getLocalId() + " is an intermediate node.");
 				String variableId = "v" + String.valueOf(variables.size() + 1);
 				variables.add(variableId);
-				vertexIdToArgument.put(v.getId(), new Argument(variableId, variableId, ArgumentType.VARIABLE));
+				vertexIdToArgument.put(n.getId(), new Argument(variableId, variableId, ArgumentType.VARIABLE));
 				continue;
 			}
 			
 			Attribute att = this.hNodeIdToAttribute.get(hNodeId);
 			if (att == null) {
-				logger.error("No attribute is associated to the column with semantic type " + v.getId());
+				logger.error("No attribute is associated to the column with semantic type " + n.getId());
 				continue;
 			}
 			
-			vertexIdToArgument.put(v.getId(), new Argument(att.getId(), att.getId(), ArgumentType.ATTRIBUTE));
+			vertexIdToArgument.put(n.getId(), new Argument(att.getId(), att.getId(), ArgumentType.ATTRIBUTE));
 			
 			if (att.getIOType() == IOType.INPUT) {
-				inputAttributesNodes.add(v);
+				inputAttributesNodes.add(n);
 			}
 			if (att.getIOType() == IOType.OUTPUT) {
-				outputAttributesNodes.add(v);
+				outputAttributesNodes.add(n);
 			}
 		}
 
@@ -449,19 +427,19 @@ public class Service {
 
 
 		Model m = new Model("inputModel");
-		for (Node v : steinerTree.getSteinerTree().vertexSet()) {
+		for (Node n : steinerTree.getSteinerTree().vertexSet()) {
 			
-			inputModelVertexes.add(v.getId());
+			inputModelVertexes.add(n.getId());
 			
-			if (v.getNodeType() == NodeType.DataProperty)
+			if (n instanceof ColumnNode || n instanceof LiteralNode)
 				continue;
 			
-			if (vertexIdToArgument.get(v.getId()) == null)
+			if (vertexIdToArgument.get(n.getId()) == null)
 				continue;
 			
-			Label classPredicate = new Label(v.getUriString(), v.getNs(), v.getPrefix());
+			Label classPredicate = new Label(n.getUriString(), n.getNs(), n.getPrefix());
 
-			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(v.getId()));
+			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(n.getId()));
 			m.getAtoms().add(classAtom);
 		}
 		
@@ -474,19 +452,19 @@ public class Service {
 				continue;
 			
 			Label propertyPredicate = new Label(e.getUriString(), e.getNs(), e.getPrefix());
-			PropertyAtom propertyAtom = null;
+			IndividualPropertyAtom propertyAtom = null;
 			
-			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source
-			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
-				Label subClassPredicate = new Label(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
-				propertyAtom = new PropertyAtom(subClassPredicate, 
-						vertexIdToArgument.get(e.getTarget().getId()),
-						vertexIdToArgument.get(e.getSource().getId()));
-			} else {
-				propertyAtom = new PropertyAtom(propertyPredicate, 
+//			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source
+//			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
+//				Label subClassPredicate = new Label(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
+//				propertyAtom = new IndividualPropertyAtom(subClassPredicate, 
+//						vertexIdToArgument.get(e.getTarget().getId()),
+//						vertexIdToArgument.get(e.getSource().getId()));
+//			} else {
+				propertyAtom = new IndividualPropertyAtom(propertyPredicate, 
 						vertexIdToArgument.get(e.getSource().getId()),
 						vertexIdToArgument.get(e.getTarget().getId()));
-			}
+//			}
 			m.getAtoms().add(propertyAtom);
 		}
 
@@ -502,21 +480,21 @@ public class Service {
 
 		Model m = new Model("outputModel");
 		
-		for (Node v : treeModel.vertexSet()) {
+		for (Node n : treeModel.vertexSet()) {
 			
-			if (inputModelVertexes.indexOf(v.getId()) != -1)
+			if (inputModelVertexes.indexOf(n.getId()) != -1)
 				continue;
 			
-			if (v.getNodeType() == NodeType.DataProperty)
+			if (n instanceof ColumnNode || n instanceof LiteralNode)
 				continue;
 			
-			if (vertexIdToArgument.get(v.getId()) == null)
+			if (vertexIdToArgument.get(n.getId()) == null)
 				continue;
 			
 			
-			Label classPredicate = new Label(v.getUriString(), v.getNs(), v.getPrefix());
+			Label classPredicate = new Label(n.getUriString(), n.getNs(), n.getPrefix());
 
-			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(v.getId()));
+			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(n.getId()));
 			m.getAtoms().add(classAtom);
 		}
 		
@@ -530,19 +508,19 @@ public class Service {
 				continue;
 			
 			Label propertyPredicate = new Label(e.getUriString(), e.getNs(), e.getPrefix());
-			PropertyAtom propertyAtom = null;
+			IndividualPropertyAtom propertyAtom = null;
 			
 			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source
-			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
-				Label subClassPredicate = new Label(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
-				propertyAtom = new PropertyAtom(subClassPredicate, 
-						vertexIdToArgument.get(e.getTarget().getId()),
-						vertexIdToArgument.get(e.getSource().getId()));
-			} else {
-				propertyAtom = new PropertyAtom(propertyPredicate, 
+//			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
+//				Label subClassPredicate = new Label(ModelingParams.SUBCLASS_URI, Namespaces.OWL, Prefixes.OWL);
+//				propertyAtom = new IndividualPropertyAtom(subClassPredicate, 
+//						vertexIdToArgument.get(e.getTarget().getId()),
+//						vertexIdToArgument.get(e.getSource().getId()));
+//			} else {
+				propertyAtom = new IndividualPropertyAtom(propertyPredicate, 
 						vertexIdToArgument.get(e.getSource().getId()),
 						vertexIdToArgument.get(e.getTarget().getId()));
-			}
+//			}
 			m.getAtoms().add(propertyAtom);
 
 		}
@@ -571,6 +549,7 @@ public class Service {
 		return s;
 	}
 	
+	@Override
 	public void print() {
 		System.out.println("********************************************");
 		System.out.println("Service: " + getInfo());

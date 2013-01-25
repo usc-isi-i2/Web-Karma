@@ -309,8 +309,7 @@ public class Alignment {
 	
 	public ColumnNode addColumnNode(String hNodeId, String columnName) {
 		String id = nodeIdFactory.getNodeId(hNodeId);
-		Label label = new Label(columnName);
-		ColumnNode node = new ColumnNode(id, label, hNodeId);
+		ColumnNode node = new ColumnNode(id, hNodeId, columnName);
 		if (this.graphBuilder.addNode(node)) return node;
 		return null;
 	}

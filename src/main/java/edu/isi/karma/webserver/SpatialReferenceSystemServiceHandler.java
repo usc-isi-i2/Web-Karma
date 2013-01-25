@@ -14,7 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import edu.isi.karma.geospatial.SpatialReferenceSystemTransformationUtil;
-import edu.isi.karma.service.MimeType;
+import edu.isi.karma.model.serialization.MimeType;
 
 public class SpatialReferenceSystemServiceHandler extends HttpServlet {
 

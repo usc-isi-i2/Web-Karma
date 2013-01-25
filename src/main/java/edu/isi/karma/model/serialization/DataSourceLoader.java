@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.model.serialization;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,15 +46,47 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.model.Argument;
+import edu.isi.karma.rep.model.ArgumentType;
+import edu.isi.karma.rep.model.Atom;
+import edu.isi.karma.rep.model.ClassAtom;
+import edu.isi.karma.rep.model.IndividualPropertyAtom;
+import edu.isi.karma.rep.sources.Attribute;
+import edu.isi.karma.rep.sources.AttributeRequirement;
+import edu.isi.karma.rep.sources.DataSource;
+import edu.isi.karma.rep.sources.IOType;
+import edu.isi.karma.rep.sources.Source;
 
-public class SourceLoader {
+public class DataSourceLoader extends SourceLoader {
 
+	static Logger logger = Logger.getLogger(DataSourceLoader.class);
+	private static DataSourceLoader instance = null;
 	private static final int DEFAULT_SOURCE_RESULTS_SIZE = 10;
 
-	static Logger logger = Logger.getLogger(SourceLoader.class);
-
+	protected DataSourceLoader() {
+		      // Exists only to defeat instantiation.
+	}
+		   
+	public static DataSourceLoader getInstance() {
+		if (instance == null) {
+			instance = new DataSourceLoader();
+		}
+		return instance;
+	}
 	
-	public static void deleteSourceByUri(String uri) {
+    @Override
+	public DataSource getSourceByUri(String uri) {
+		
+		Model m = Repository.Instance().getNamedModel(uri);
+		if (m == null)
+			return null;
+
+		DataSource source = importSourceFromJenaModel(m);
+		return source;
+	}
+
+    @Override
+	public void deleteSourceByUri(String uri) {
 		Repository.Instance().clearNamedModel(uri);
 		
 		String source_id = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 1);
@@ -76,22 +108,14 @@ public class SourceLoader {
 
 	}
 	
-	public static Source getSourceByUri(String uri) {
-		
-		Model m = Repository.Instance().getNamedModel(uri);
-		if (m == null)
-			return null;
-
-		Source source = getSourceFromJenaModel(m);
-		return source;
-	}
 	
 	/**
 	 * returns the source id, name, address of all sources in the repository
 	 * @param limit : maximum number of results, null value means all the sources
 	 * @return
 	 */
-	public static List<Source> getAllSources(Integer sourceLimit) {
+    @Override
+	public List<Source> getSourcesAbstractInfo(Integer sourceLimit) {
 		
 		List<Source> sourceList = new ArrayList<Source>();
 		
@@ -149,7 +173,7 @@ public class SourceLoader {
 				logger.debug("source name: " + source_name);
 				
 				if (source_id.trim().length() > 0)
-					sourceList.add(new Source(source_id, source_name));
+					sourceList.add(new DataSource(source_id, source_name));
 				else
 					logger.info("length of source id is zero.");
 			}
@@ -169,9 +193,10 @@ public class SourceLoader {
 	 * information takes long time.
 	 * @return
 	 */
-	public static List<Source> getAllSourcesComplete(Integer sourceLimit) {
+    @Override
+	public List<Source> getSourcesDetailedInfo(Integer sourceLimit) {
 
-		List<Source> sourceList = getAllSources(sourceLimit);
+		List<Source> sourceList = getSourcesAbstractInfo(sourceLimit);
 		List<Source> sourceListCompleteInfo = new ArrayList<Source>();
 		for (Source s : sourceList) {
 			sourceListCompleteInfo.add(getSourceByUri(s.getUri()));
@@ -187,7 +212,7 @@ public class SourceLoader {
 	 * @return a hashmap of all found sources and a mapping from the found source parameters to the model parameters. 
 	 * This help us later to how to join the model's corresponding source and the matched source 
 	 */
-	public static Map<Source, Map<String, String>> getSourcesByIOPattern(edu.isi.karma.service.Model semanticModel, 
+	public Map<DataSource, Map<String, String>> getDataSourcesByIOPattern(edu.isi.karma.rep.model.Model semanticModel, 
 			Integer sourceLimit) {
 		
 		if (semanticModel == null || semanticModel.getAtoms() == null 
@@ -196,8 +221,8 @@ public class SourceLoader {
 			return null;
 		}
 		
-		Map<Source, Map<String, String>> sourcesAndMappings = 
-			new HashMap<Source, Map<String,String>>();
+		Map<DataSource, Map<String, String>> sourcesAndMappings = 
+			new HashMap<DataSource, Map<String,String>>();
 		
 		Map<String, Map<String, String>> sourceIdsAndMappings =
 			semanticModel.findInJenaModel(Repository.Instance().getModel(), sourceLimit);
@@ -208,7 +233,7 @@ public class SourceLoader {
 		for (String sourceId : sourceIdsAndMappings.keySet()) {
 			Model m = Repository.Instance().getNamedModel(sourceId);
 			if (m != null)
-				sourcesAndMappings.put(getSourceFromJenaModel(m), sourceIdsAndMappings.get(sourceId));
+				sourcesAndMappings.put(importSourceFromJenaModel(m), sourceIdsAndMappings.get(sourceId));
 		}
 		
 		return sourcesAndMappings;
@@ -223,18 +248,21 @@ public class SourceLoader {
 	 * @return a hashmap of all found sources and a mapping from the found source parameters to the model parameters. 
 	 * This help us later to how to join the model's corresponding source and the matched service 
 	 */
-	public static Map<Source, Map<String, String>> getSourcesContainedInModel(edu.isi.karma.service.Model semanticModel, 
+	public Map<DataSource, Map<String, String>> getDataSourcesContainedInModel(edu.isi.karma.rep.model.Model semanticModel, 
 			Integer sourceLimit) {
 		
-		List<Source> sourceList = getAllSourcesComplete(sourceLimit);
+		List<Source> sourceList = getSourcesDetailedInfo(sourceLimit);
 		
-		Map<Source, Map<String, String>> sourcesAndMappings = 
-			new HashMap<Source, Map<String,String>>();
+		Map<DataSource, Map<String, String>> sourcesAndMappings = 
+			new HashMap<DataSource, Map<String,String>>();
 
 		Model jenaModel = semanticModel.getJenaModel();
 		for (Source source : sourceList) {
 			
-			edu.isi.karma.service.Model m = source.getModel();
+			if (!(source instanceof DataSource))
+				continue;
+			
+			edu.isi.karma.rep.model.Model m = ((DataSource)source).getModel();
 
 			if (m == null)
 				continue;
@@ -248,7 +276,7 @@ public class SourceLoader {
 			Iterator<String> itr = sourceIdsAndMappings.keySet().iterator();
 			if (itr.hasNext()) {
 				String key = itr.next();
-				sourcesAndMappings.put(source, sourceIdsAndMappings.get(key));
+				sourcesAndMappings.put((DataSource)source, sourceIdsAndMappings.get(key));
 			}
 		}
 		
@@ -267,7 +295,8 @@ public class SourceLoader {
 	 * @param operationIds
 	 * @return
 	 */
-	public static Source getSourceFromJenaModel(Model model) {
+    @Override
+	public DataSource importSourceFromJenaModel(Model model) {
 		logger.debug("model size: " + model.getGraph().size());
 		
 		String source_name = "";
@@ -297,7 +326,7 @@ public class SourceLoader {
 		} else
 			logger.debug("source does not have a name.");
 		
-		Source source = new Source(source_id);
+		DataSource source = new DataSource(source_id);
 		source.setName(source_name);
 		source.setVariables(getVariables(model, source_resource));
 	 	source.setAttributes(getAttributes(model, source_resource));
@@ -306,7 +335,7 @@ public class SourceLoader {
 		return source;
 	}
 	
-	private static List<String> getVariables(Model model, Resource source_resource) {
+	private List<String> getVariables(Model model, Resource source_resource) {
 		
 		Property has_variable_property = model.getProperty(Namespaces.KARMA + "hasVariable");
 	
@@ -331,7 +360,7 @@ public class SourceLoader {
 
 	}
 	
-	private static List<Attribute> getAttributes(Model model, Resource source_resource) {
+	private List<Attribute> getAttributes(Model model, Resource source_resource) {
 		
 		Property has_attribute_property = model.getProperty(Namespaces.KARMA + "hasAttribute");
 	
@@ -357,7 +386,7 @@ public class SourceLoader {
 
 	}
 	
-	private static Attribute getSingleAttribute(Model model, Resource att_resource) {
+	private Attribute getSingleAttribute(Model model, Resource att_resource) {
 		
 		String att_id = "";
 		String att_name = "";
@@ -385,7 +414,7 @@ public class SourceLoader {
 
 	}
 	
-	private static edu.isi.karma.service.Model getSemanticModel(Model model, Resource source_resource) {
+	private edu.isi.karma.rep.model.Model getSemanticModel(Model model, Resource source_resource) {
 		
 		Property has_model_property = model.getProperty(Namespaces.KARMA + "hasModel");
 		Property has_atom_property = model.getProperty(Namespaces.KARMA + "hasAtom");
@@ -401,8 +430,8 @@ public class SourceLoader {
 			return null;
 		}
 
-		edu.isi.karma.service.Model semanticModel = 
-			new edu.isi.karma.service.Model(modelNode.asResource().getLocalName());
+		edu.isi.karma.rep.model.Model semanticModel = 
+			new edu.isi.karma.rep.model.Model(modelNode.asResource().getLocalName());
 		List<Atom> atoms = new ArrayList<Atom>();
 		
 
@@ -424,7 +453,7 @@ public class SourceLoader {
 
 	}
 	
-	private static Atom getAtom(Model model, Resource atom_resource) {
+	private Atom getAtom(Model model, Resource atom_resource) {
 		
 		Property rdf_type = model.getProperty(Namespaces.RDF + "type");
 
@@ -454,7 +483,7 @@ public class SourceLoader {
 
 	}
 	
-	private static ClassAtom getClassAtom(Model model, Resource atom_resource) {
+	private ClassAtom getClassAtom(Model model, Resource atom_resource) {
 		
 		String predicateUri = null;
 		String predicatePrefix = null;
@@ -510,7 +539,7 @@ public class SourceLoader {
 
 	}
 	
-	private static PropertyAtom getPropertyAtom(Model model, Resource atom_resource) {
+	private IndividualPropertyAtom getPropertyAtom(Model model, Resource atom_resource) {
 		
 		String predicateUri = null;
 		String predicatePrefix = null;
@@ -580,12 +609,12 @@ public class SourceLoader {
 		Argument arg1 = new Argument(argument1Id, argument1Id, argument1Type);
 		Argument arg2 = new Argument(argument2Id, argument2Id, argument2Type);
 		
-		PropertyAtom propertyAtom = new PropertyAtom(predicateName, arg1, arg2);
+		IndividualPropertyAtom propertyAtom = new IndividualPropertyAtom(predicateName, arg1, arg2);
 
 		return propertyAtom;	
 	}
 	
-	private static boolean isInstanceOfTheClass(Resource resource, Resource class_resource) {
+	private boolean isInstanceOfTheClass(Resource resource, Resource class_resource) {
 		Property type_property = ResourceFactory.createProperty(Namespaces.RDF + "type");
 		
 		if (resource == null || !resource.isResource())
@@ -600,17 +629,17 @@ public class SourceLoader {
 	private static void testGetSourceByUri() {
 		String uri = "http://isi.edu/integration/karma/sources/AEEA5A9A-744C-8096-B372-836ACC820D5A#";
 //		String uri = "http://isi.edu/integration/karma/sources/940466A8-8733-47B1-2597-11DC112F0437F#";
-		Source source = SourceLoader.getSourceByUri(uri);
+		DataSource source = (DataSource) DataSourceLoader.getInstance().getSourceByUri(uri);
 		if (source != null) source.print();
 	}
 	private static void testGetAllSources() {
-		List<Source> sourceList = getAllSourcesComplete(null);
+		List<Source> sourceList = DataSourceLoader.getInstance().getSourcesDetailedInfo(null);
 		for (Source s : sourceList) {
 			if (s != null) s.print();
 		}
 	}
 	private static void testGetSourcesByIOPattern() {
-		edu.isi.karma.service.Model semanticModel = new edu.isi.karma.service.Model(null);
+		edu.isi.karma.rep.model.Model semanticModel = new edu.isi.karma.rep.model.Model(null);
 
 		String geonamesOntology = "http://www.geonames.org/ontology#";
 		String wgs84Ontology = "http://www.w3.org/2003/01/geo/wgs84_pos#";
@@ -620,10 +649,10 @@ public class SourceLoader {
 		Label lngPredicatName = new Label(wgs84Ontology + "long", wgs84Ontology, "wgs84");
 		
 		ClassAtom c1 = new ClassAtom(featurePredicatName, new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE));
-		PropertyAtom p1 = new PropertyAtom(latPredicatName,
+		IndividualPropertyAtom p1 = new IndividualPropertyAtom(latPredicatName,
 				new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE), 
 				new Argument("arg2", "arg2", ArgumentType.ATTRIBUTE));
-		PropertyAtom p2 = new PropertyAtom(lngPredicatName,
+		IndividualPropertyAtom p2 = new IndividualPropertyAtom(lngPredicatName,
 				new Argument("arg1", "arg1", ArgumentType.ATTRIBUTE), 
 				new Argument("arg3", "arg3", ArgumentType.ATTRIBUTE));
 //		ClassAtom c2 = new ClassAtom(featurePredicatName, new Argument("arg2", "arg2", ArgumentType.ATTRIBUTE));
@@ -633,8 +662,8 @@ public class SourceLoader {
 		semanticModel.getAtoms().add(p2);
 //		semanticModel.getAtoms().add(c2);
 		
-		Map<Source, Map<String, String>> sourcesAndMappings = 
-			getSourcesByIOPattern(semanticModel, null);
+		Map<DataSource, Map<String, String>> sourcesAndMappings = 
+				DataSourceLoader.getInstance().getDataSourcesByIOPattern(semanticModel, null);
 
 		if (sourcesAndMappings == null)
 			return;
@@ -655,7 +684,7 @@ public class SourceLoader {
 	}
 	private static void testDeleteSourceByUri() {
 		String uri = "http://isi.edu/integration/karma/sources/AEEA5A9A-744C-8096-B372-836ACC820D5A#";
-		SourceLoader.deleteSourceByUri(uri);
+		DataSourceLoader.getInstance().deleteSourceByUri(uri);
 	}
 	public static void main(String[] args) {
 

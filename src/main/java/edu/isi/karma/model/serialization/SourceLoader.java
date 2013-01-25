@@ -19,40 +19,32 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.model.serialization;
 
-import edu.isi.karma.rep.alignment.Label;
+import java.util.List;
 
-public class PropertyAtom extends Atom {
+import org.apache.log4j.Logger;
 
-	private Label propertyPredicate;
-	private Argument argument1;
-	private Argument argument2;
+import com.hp.hpl.jena.rdf.model.Model;
+
+import edu.isi.karma.rep.sources.Source;
+
+public abstract class SourceLoader {
+
+	static Logger logger = Logger.getLogger(SourceLoader.class);
+
+	public abstract Source getSourceByUri(String uri);
+	public abstract void deleteSourceByUri(String uri);
+	public abstract List<Source> getSourcesAbstractInfo(Integer sourceLimit);
+	public abstract List<Source> getSourcesDetailedInfo(Integer sourceLimit);
+	public abstract Source importSourceFromJenaModel(Model model);
 	
-	public PropertyAtom(Label propertyPredicate, Argument argument1, Argument argument2) {
-		this.propertyPredicate = propertyPredicate;
-		this.argument1 = argument1;
-		this.argument2 = argument2;
+	public Model getSourceJenaModel(String uri) {
+		Model m = Repository.Instance().getNamedModel(uri);
+		if (m == null)
+			return null;
+
+		return m;
 	}
 
-	public Label getPropertyPredicate() {
-		return propertyPredicate;
-	}
-
-	public Argument getArgument1() {
-		return argument1;
-	}	
-	
-	public Argument getArgument2() {
-		return argument2;
-	}
-
-	public void print() {
-		System.out.println("property predicate uri: " + propertyPredicate.getUriString());
-		System.out.println("property predicate ns: " + propertyPredicate.getNs());
-		System.out.println("property predicate prefix: " + propertyPredicate.getPrefix());
-		System.out.println("argument1: " + argument1.getId());
-		System.out.println("argument2: " + argument2.getId());
-	}	
-	
 }

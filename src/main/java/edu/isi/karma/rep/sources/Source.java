@@ -19,9 +19,59 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.service;
+package edu.isi.karma.rep.sources;
 
-public interface ArgumentType {
-	public static final String ATTRIBUTE = "ATTRIBUTE";
-	public static final String VARIABLE = "VARIABLE";
+import org.apache.log4j.Logger;
+
+import edu.isi.karma.modeling.ModelingParams;
+
+public abstract class Source {
+
+	static Logger logger = Logger.getLogger(Source.class);
+
+	private String id;
+	private String name;
+	private String description;
+
+	public abstract void print();
+
+	public Source(String id) {
+		this.id = id;
+	}
+	
+	public Source(String id, String name) {
+		this.id = id;
+		this.name = name;
+	}
+
+	public Source(String id, String name, String description) {
+		this.id = id;
+		this.name = name;
+		this.description = description;
+	}
+	
+	public String getUri() {
+		return ModelingParams.KARMA_SOURCE_PREFIX + getId() + "#";
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 }
