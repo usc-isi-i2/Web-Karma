@@ -34,6 +34,7 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 	private final String id;
 	private final Label label;
 	private LinkStatus status;
+	private LinkKeyInfo keyInfo;
 	
 	public Link(String id, Label label) {
 		super();
@@ -46,6 +47,21 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		this.id = id;
 		this.label = label;
 		this.status = LinkStatus.Normal;
+		this.keyInfo = LinkKeyInfo.None;
+	}
+	
+	public Link(String id, Label label, LinkKeyInfo keyInfo) {
+		super();
+
+		if (id == null || id.trim().length() == 0) {
+			logger.info("The input id is empty. A random Guid has been assigned.");
+			id = new RandomGUID().toString();
+		}
+		
+		this.id = id;
+		this.label = label;
+		this.status = LinkStatus.Normal;
+		this.keyInfo = keyInfo;
 	}
 	
 	public Link(Link e) {
@@ -53,6 +69,7 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		this.id = e.id;
 		this.label = e.label;
 		this.status = e.status;
+		this.keyInfo = e.keyInfo;
 	}
 	
 	public String getId() {
@@ -95,6 +112,14 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 
 	public void setStatus(LinkStatus status) {
 		this.status = status;
+	}
+
+	public LinkKeyInfo getKeyType() {
+		return keyInfo;
+	}
+
+	public void setKeyType(LinkKeyInfo keyType) {
+		this.keyInfo = keyType;
 	}
 
 	public Node getSource() {

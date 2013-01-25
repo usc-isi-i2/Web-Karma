@@ -31,9 +31,9 @@ import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
 
-import edu.isi.karma.modeling.FixedUris;
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.alignment.ClassLink;
+import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassOfLink;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
@@ -41,11 +41,11 @@ import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.SubClassOfLink;
-import edu.isi.karma.rep.alignment.UriOfClassLink;
 
 
 
@@ -323,55 +323,48 @@ public class Alignment {
 	
 	// AddLink methods
 
-	public DataPropertyLink addDataPropertyLink(Node source, Node target, Label label, boolean isPartOfKey) {
+	public DataPropertyLink addDataPropertyLink(Node source, Node target, Label label, boolean partOfKey) {
 		String id = linkIdFactory.getLinkId(label.getUriString());	
-		DataPropertyLink link = new DataPropertyLink(id, label, isPartOfKey);
+		DataPropertyLink link = new DataPropertyLink(id, label, partOfKey);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;
 	}
 	
 	// Probably we don't need this function in the interface to GUI
-	public ObjectPropertyLink addObjectPropertyLink(Node source, Node target, Label label, boolean isPartOfKey) {
+	public ObjectPropertyLink addObjectPropertyLink(Node source, Node target, Label label) {
 		String id = linkIdFactory.getLinkId(label.getUriString());		
-		ObjectPropertyLink link = new ObjectPropertyLink(id, label, isPartOfKey);
+		ObjectPropertyLink link = new ObjectPropertyLink(id, label);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
 	}
 	
 	// Probably we don't need this function in the interface to GUI
 	public SubClassOfLink addSubClassOfLink(Node source, Node target) {
-		String id = linkIdFactory.getLinkId(FixedUris.RDFS_SUBCLASS_OF_URI);
+		String id = linkIdFactory.getLinkId(Uris.RDFS_SUBCLASS_OF_URI);
 		SubClassOfLink link = new SubClassOfLink(id);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
 	}
 	
-	public ClassLink addClassLink(Node source, Node target, boolean isPartOfKey) {
-		String id = linkIdFactory.getLinkId(FixedUris.CLASS_LINK_URI);
-		ClassLink link = new ClassLink(id, isPartOfKey);
+	public ClassInstanceLink addClassLink(Node source, Node target, LinkKeyInfo keyInfo) {
+		String id = linkIdFactory.getLinkId(Uris.CLASS_LINK_URI);
+		ClassInstanceLink link = new ClassInstanceLink(id, keyInfo);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;
 	}
 	
 	public DataPropertyOfColumnLink addDataPropertyOfColumnLink(Node source, Node target) {
-		String id = linkIdFactory.getLinkId(FixedUris.DATAPROPERTY_OF_COLUMN_LINK_URI);
+		String id = linkIdFactory.getLinkId(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI);
 		DataPropertyOfColumnLink link = new DataPropertyOfColumnLink(id);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
 	}
 
 	public ColumnSubClassOfLink addColumnSubClassOfLink(Node source, Node target) {
-		String id = linkIdFactory.getLinkId(FixedUris.COLUMN_SUBCLASS_OF_LINK_URI);
+		String id = linkIdFactory.getLinkId(Uris.COLUMN_SUBCLASS_OF_LINK_URI);
 		ColumnSubClassOfLink link = new ColumnSubClassOfLink(id);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
-	}
-	
-	public UriOfClassLink addURIOfClassLink(Node source, Node target) {
-		String id = linkIdFactory.getLinkId(FixedUris.URI_OF_CLASS_LINK_URI);
-		UriOfClassLink link = new UriOfClassLink(id);
-		if (this.graphBuilder.addLink(source, target, link)) return link;
-		return null;
 	}
 	
 	public void changeLinkStatus(String linkId, LinkStatus newStatus) {

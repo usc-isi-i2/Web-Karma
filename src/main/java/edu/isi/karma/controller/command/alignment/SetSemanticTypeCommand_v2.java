@@ -38,7 +38,7 @@ import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.alignment.ClassLink;
+import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
@@ -127,7 +127,7 @@ public class SetSemanticTypeCommand_v2 extends Command {
 					if (classNode == null) {
 						classNode = alignment.createInternalClassNode(typeName);
 					}
-					ClassLink clsLink = alignment.createClassLink(classNode, columnNode, isPartOfKey);
+					ClassInstanceLink clsLink = alignment.createClassLink(classNode, columnNode, isPartOfKey);
 					alignment.addLinkAndUpdateAlignment(clsLink);
 					newLink = clsLink;
 				} 

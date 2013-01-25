@@ -27,25 +27,14 @@ public class ObjectPropertyLink extends Link {
 
 	private static final long serialVersionUID = 1L;
 	private boolean inverse;
-	private boolean isPartOfKey;
 	
 	public ObjectPropertyLink(String id, Label label) {
 		super(id, label);
 		this.inverse = false;
-		this.isPartOfKey = false;
-	}
-
-	public ObjectPropertyLink(String id, Label label, boolean isPartOfKey) {
-		super(id, label);
-		this.inverse = false;
-		this.isPartOfKey = isPartOfKey;
 	}
 
 	public boolean isInverse() {
 		return this.inverse;
 	}
 
-	public boolean isPartOfKey() {
-		return isPartOfKey;
-	}
 }

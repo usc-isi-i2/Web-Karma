@@ -28,7 +28,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
-import edu.isi.karma.modeling.FixedUris;
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
@@ -225,8 +225,8 @@ public class GraphBuilder {
 		logger.debug("<enter");
 		
 		// Add Thing to the Graph 
-		String id = nodeIdFactory.getNodeId(FixedUris.THING_URI);
-		Label label = new Label(FixedUris.THING_URI, Namespaces.OWL, Prefixes.OWL);
+		String id = nodeIdFactory.getNodeId(Uris.THING_URI);
+		Label label = new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL);
 		thingNode = new InternalNode(id, label);			
 		addSingleNode(thingNode);
 		
@@ -450,7 +450,7 @@ public class GraphBuilder {
 
 		for (Node n : nodes) {
 
-			if (n.getUriString().equalsIgnoreCase(FixedUris.THING_URI))
+			if (n.getUriString().equalsIgnoreCase(Uris.THING_URI))
 				continue;
 
 			if (!(n instanceof InternalNode))
@@ -461,8 +461,8 @@ public class GraphBuilder {
 			
 			Link[] outgoingLinks = this.graph.outgoingEdgesOf(n).toArray(new Link[0]); 
 			for (Link outLink: outgoingLinks) {
-				if (outLink.getUriString().equalsIgnoreCase(FixedUris.RDFS_SUBCLASS_OF_URI)) {
-					if (!outLink.getTarget().getUriString().equalsIgnoreCase(FixedUris.THING_URI))
+				if (outLink.getUriString().equalsIgnoreCase(Uris.RDFS_SUBCLASS_OF_URI)) {
+					if (!outLink.getTarget().getUriString().equalsIgnoreCase(Uris.THING_URI))
 						parentExist = true;
 					else
 						parentThing = true;

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright 2012 University of Southern California
- * 
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,24 +19,16 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.rep.alignment;
+package edu.isi.karma.modeling;
 
-import edu.isi.karma.modeling.FixedUris;
-import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.modeling.Prefixes;
+public interface Uris {
 
+	public static final String THING_URI = Namespaces.OWL + "Thing"; 
+	public static final String RDFS_SUBCLASS_OF_URI = Namespaces.RDFS + "subClassOf"; 
 
-public class UriOfClassLink extends Link {
+	// Karma Internal URIs
+	public static final String CLASS_LINK_URI = Namespaces.KARMA_DEV + "classLink"; 
+	public static final String COLUMN_SUBCLASS_OF_LINK_URI = Namespaces.KARMA_DEV + "columnSubClassOfLink"; 
+	public static final String DATAPROPERTY_OF_COLUMN_LINK_URI = Namespaces.KARMA_DEV + "dataPropertyOfColumnLink"; 
 
-	private static final long serialVersionUID = 1L;
-	private static final Label label = 
-			new Label(FixedUris.URI_OF_CLASS_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
-
-	public UriOfClassLink(String id) {
-		super(id, label);
-	}
-	
-	public static Label getLabel() {
-		return label;
-	}
 }

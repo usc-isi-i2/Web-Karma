@@ -21,7 +21,7 @@
 
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.modeling.FixedUris;
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 
@@ -30,7 +30,7 @@ public class SubClassOfLink extends Link {
 
 	private static final long serialVersionUID = 1L;
 	private static final Label label = 
-			new Label(FixedUris.RDFS_SUBCLASS_OF_URI, Namespaces.RDFS, Prefixes.RDFS);
+			new Label(Uris.RDFS_SUBCLASS_OF_URI, Namespaces.RDFS, Prefixes.RDFS);
 
 	public SubClassOfLink(String id) {
 		super(id, label);

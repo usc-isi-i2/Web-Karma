@@ -21,32 +21,25 @@
 
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.modeling.FixedUris;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
+import edu.isi.karma.modeling.Uris;
 
 
-public class ClassLink extends Link {
+public class ClassInstanceLink extends Link {
 	
 	private static final long serialVersionUID = 1L;
-	private boolean isPartOfKey;
 	private static final Label label = 
-			new Label(FixedUris.CLASS_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
+			new Label(Uris.CLASS_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
 	
-	public ClassLink(String id) {
+	public ClassInstanceLink(String id) {
 		super(id, label);
-		this.isPartOfKey = false;
 	}
 	
-	public ClassLink(String id, boolean isPartOfKey) {
-		super(id, label);
-		this.isPartOfKey = isPartOfKey;
+	public ClassInstanceLink(String id, LinkKeyInfo keyInfo) {
+		super(id, label, keyInfo);
 	}
 
-	public boolean isPartOfKey() {
-		return isPartOfKey;
-	}
-	
 	public static Label getLabel() {
 		return label;
 	}

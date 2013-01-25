@@ -26,26 +26,13 @@ package edu.isi.karma.rep.alignment;
 public class DataPropertyLink extends Link {
 
 	private static final long serialVersionUID = 1L;
-	private boolean inverse;
-	private boolean isPartOfKey;
 	
 	public DataPropertyLink(String id, Label label) {
 		super(id, label);
-		this.inverse = false;
-		this.isPartOfKey = false;
 	}
 
-	public DataPropertyLink(String id, Label label, boolean isPartOfKey) {
-		super(id, label);
-		this.inverse = false;
-		this.isPartOfKey = isPartOfKey;
+	public DataPropertyLink(String id, Label label, boolean partOfKey) {
+		super(id, label, LinkKeyInfo.PartOfKey);
 	}
 
-	public boolean isInverse() {
-		return this.inverse;
-	}
-
-	public boolean isPartOfKey() {
-		return isPartOfKey;
-	}
 }

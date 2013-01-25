@@ -21,7 +21,7 @@
 
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.modeling.FixedUris;
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 
@@ -30,7 +30,7 @@ public class ColumnSubClassOfLink extends Link {
 
 	private static final long serialVersionUID = 1L;
 	private static final Label label = 
-			new Label(FixedUris.COLUMN_SUBCLASS_OF_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
+			new Label(Uris.COLUMN_SUBCLASS_OF_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
 
 	public ColumnSubClassOfLink(String id) {
 		super(id, label);
