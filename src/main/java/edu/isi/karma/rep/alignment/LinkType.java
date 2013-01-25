@@ -18,28 +18,14 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-
 package edu.isi.karma.rep.alignment;
 
-
-public class LiteralNode extends Node {
-	
-	private final String value;
-	private final Label datatype;
-
-	public LiteralNode(String id, String value, Label datatype) {
-		super(id, null, NodeType.LiteralNode);
-		this.value = value;
-		this.datatype = datatype;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public Label getDatatype() {
-		return datatype;
-	}
-	
-
+public enum LinkType {
+	None,
+	DataPropertyLink,
+	ObjectPropertyLink,
+	SubClassLink,
+	ClassInstanceLink,
+	ColumnSubClassLink,
+	DataPropertyOfColumnLink
 }

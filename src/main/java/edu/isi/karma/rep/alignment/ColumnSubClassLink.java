@@ -21,25 +21,22 @@
 
 package edu.isi.karma.rep.alignment;
 
+import edu.isi.karma.modeling.Uris;
+import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.modeling.Prefixes;
 
-public class LiteralNode extends Node {
-	
-	private final String value;
-	private final Label datatype;
 
-	public LiteralNode(String id, String value, Label datatype) {
-		super(id, null, NodeType.LiteralNode);
-		this.value = value;
-		this.datatype = datatype;
+public class ColumnSubClassLink extends Link {
+
+	private static final long serialVersionUID = 1L;
+	private static final Label label = 
+			new Label(Uris.COLUMN_SUBCLASS_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
+
+	public ColumnSubClassLink(String id) {
+		super(id, label, LinkType.ColumnSubClassLink);
 	}
 
-	public String getValue() {
-		return value;
+	public static Label getLabel() {
+		return label;
 	}
-
-	public Label getDatatype() {
-		return datatype;
-	}
-	
-
 }

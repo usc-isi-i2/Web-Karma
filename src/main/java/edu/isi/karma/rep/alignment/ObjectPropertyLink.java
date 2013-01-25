@@ -29,7 +29,7 @@ public class ObjectPropertyLink extends Link {
 	private boolean inverse;
 	
 	public ObjectPropertyLink(String id, Label label) {
-		super(id, label);
+		super(id, label, LinkType.ObjectPropertyLink);
 		this.inverse = false;
 	}
 

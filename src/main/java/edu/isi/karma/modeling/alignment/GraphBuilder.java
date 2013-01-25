@@ -38,30 +38,38 @@ import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkStatus;
+import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
-import edu.isi.karma.rep.alignment.SubClassOfLink;
+import edu.isi.karma.rep.alignment.SubClassLink;
 
 public class GraphBuilder {
 
 	static Logger logger = Logger.getLogger(GraphBuilder.class);
 
-	private List<Node> semanticNodes;
 	private DirectedWeightedMultigraph<Node, Link> graph;
 	private OntologyManager ontologyManager;
 	
 	private NodeIdFactory nodeIdFactory;
 	private LinkIdFactory linkIdFactory;
 	
-	private HashMap<String, Node> idToNodeMap;
-	private HashMap<String, Link> idToLinkMap;
-	private HashMap<String, List<Node>> uriToNodesMap;
-	private HashMap<String, List<Link>> uriToLinksMap;
-	private HashMap<LinkStatus, List<Link>> statusToLinksMap;
-
 	private List<String> sourceToTargetLinkUris; 
 	private Node thingNode;
 	
+	// HashMaps
+	
+	private HashMap<String, Node> idToNodeMap;
+	private HashMap<String, Link> idToLinkMap;
+
+	private HashMap<String, List<Node>> uriToNodesMap;
+	private HashMap<String, List<Link>> uriToLinksMap;
+	
+	private HashMap<NodeType, List<Node>> typeToNodesMap;
+	private HashMap<LinkType, List<Link>> typeToLinksMap;
+
+	private HashMap<LinkStatus, List<Link>> statusToLinksMap;
+
 	// Constructor
 	
 	public GraphBuilder(OntologyManager ontologyManager, NodeIdFactory nodeIdFactory, LinkIdFactory linkIdFactory) {
@@ -77,7 +85,6 @@ public class GraphBuilder {
 		this.statusToLinksMap = new HashMap<LinkStatus, List<Link>>();
 		
 		graph = new DirectedWeightedMultigraph<Node, Link>(Link.class);
-		semanticNodes = new ArrayList<Node>();
 		sourceToTargetLinkUris = new ArrayList<String>();
 			
 		initialGraph();
@@ -86,6 +93,10 @@ public class GraphBuilder {
 	}
 	
 	// Public Methods
+	
+	public DirectedWeightedMultigraph<Node, Link> getGraph() {
+		return this.graph;
+	}
 	
 	public HashMap<String, Node> getIdToNodeMap() {
 		return idToNodeMap;
@@ -103,16 +114,16 @@ public class GraphBuilder {
 		return uriToLinksMap;
 	}
 
+	public HashMap<NodeType, List<Node>> getTypeToNodesMap() {
+		return typeToNodesMap;
+	}
+
+	public HashMap<LinkType, List<Link>> getTypeToLinksMap() {
+		return typeToLinksMap;
+	}
+
 	public HashMap<LinkStatus, List<Link>> getStatusToLinksMap() {
 		return statusToLinksMap;
-	}
-	
-	public DirectedWeightedMultigraph<Node, Link> getGraph() {
-		return this.graph;
-	}
-	
-	public List<Node> getSemanticNodes() {
-		return this.semanticNodes;
 	}
 	
 	public boolean addNode(Node node) {
@@ -173,7 +184,7 @@ public class GraphBuilder {
 
 		this.graph.addEdge(source, target, link);
 		double weight = ModelingParams.DEFAULT_WEIGHT;
-		if (link instanceof SubClassOfLink)
+		if (link instanceof SubClassLink)
 			weight = ModelingParams.MAX_WEIGHT;
 		this.graph.setEdgeWeight(link, weight);
 		
@@ -194,6 +205,14 @@ public class GraphBuilder {
 			statusToLinksMap.put(link.getStatus(), linksWithSameUri);
 		}
 		linksWithSameStatus.add(link);
+		
+		
+		List<Link> linksWithSameType = typeToLinksMap.get(link.getType());
+		if (linksWithSameType == null) {
+			linksWithSameType = new ArrayList<Link>();
+			typeToLinksMap.put(link.getType(), linksWithSameType);
+		}
+		linksWithSameType.add(link);
 		
 		sourceToTargetLinkUris.add(key);
 
@@ -265,6 +284,13 @@ public class GraphBuilder {
 			uriToNodesMap.put(node.getUriString(), nodesWithSameUri);
 		}
 		nodesWithSameUri.add(node);
+		
+		List<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
+		if (nodesWithSameType == null) {
+			nodesWithSameType = new ArrayList<Node>();
+			typeToNodesMap.put(node.getType(), nodesWithSameType);
+		}
+		nodesWithSameType.add(node);
 				
 		logger.debug("exit>");		
 		return true;
@@ -418,8 +444,8 @@ public class GraphBuilder {
 					// Add subclass links between internal nodes
 					// we have to check both sides.
 					if (ontologyManager.isSubClass(targetUri, sourceUri, false)) {
-						id = linkIdFactory.getLinkId(SubClassOfLink.getLabel().getUriString());
-						SubClassOfLink subClassOfLink = new SubClassOfLink(id);
+						id = linkIdFactory.getLinkId(SubClassLink.getLabel().getUriString());
+						SubClassLink subClassOfLink = new SubClassLink(id);
 						// target is subclass of source
 						addWeightedLink(target, source, subClassOfLink, ModelingParams.MAX_WEIGHT);
 					}
@@ -461,7 +487,7 @@ public class GraphBuilder {
 			
 			Link[] outgoingLinks = this.graph.outgoingEdgesOf(n).toArray(new Link[0]); 
 			for (Link outLink: outgoingLinks) {
-				if (outLink.getUriString().equalsIgnoreCase(Uris.RDFS_SUBCLASS_OF_URI)) {
+				if (outLink.getUriString().equalsIgnoreCase(Uris.RDFS_SUBCLASS_URI)) {
 					if (!outLink.getTarget().getUriString().equalsIgnoreCase(Uris.THING_URI))
 						parentExist = true;
 					else
@@ -480,8 +506,8 @@ public class GraphBuilder {
 				continue;
 
 			// Create a link from Thing node to nodes who don't have any superclasses
-			String id = linkIdFactory.getLinkId(SubClassOfLink.getLabel().getUriString());
-			SubClassOfLink subClassOfLink = new SubClassOfLink(id);
+			String id = linkIdFactory.getLinkId(SubClassLink.getLabel().getUriString());
+			SubClassLink subClassOfLink = new SubClassLink(id);
 			addWeightedLink(n, thingNode, subClassOfLink, ModelingParams.MAX_WEIGHT);
 		}
 

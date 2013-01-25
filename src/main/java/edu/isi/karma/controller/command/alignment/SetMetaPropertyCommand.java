@@ -40,7 +40,7 @@ import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.SubClassOfLink;
+import edu.isi.karma.rep.alignment.SubClassLink;
 import edu.isi.karma.rep.alignment.UriOfClassLink;
 import edu.isi.karma.view.VWorkspace;
 
@@ -108,7 +108,7 @@ public class SetMetaPropertyCommand extends Command {
 			
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyValue);
-			SubClassOfLink mpLink = alignment.createSubclassOfNodeMetaPropertyLink(classNode, columnNode);
+			SubClassLink mpLink = alignment.createSubclassOfNodeMetaPropertyLink(classNode, columnNode);
 			alignment.addLinkAndUpdateAlignment(mpLink);
 		}
 		

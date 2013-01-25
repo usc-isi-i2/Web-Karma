@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.UndirectedGraph;
@@ -35,7 +34,7 @@ import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.ColumnSubClassOfLink;
+import edu.isi.karma.rep.alignment.ColumnSubClassLink;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.InternalNode;
@@ -43,9 +42,11 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkStatus;
+import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
-import edu.isi.karma.rep.alignment.SubClassOfLink;
+import edu.isi.karma.rep.alignment.SubClassLink;
 
 
 
@@ -197,9 +198,9 @@ public class Alignment {
 		List<Node> steinerNodes = new ArrayList<Node>();
 		
 		// Add column nodes
-		for (Node n : this.getGraphNodes())
-			if (n instanceof ColumnNode)
-				steinerNodes.add(n);
+		List<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
+		if (columnNodes != null)
+			steinerNodes.addAll(columnNodes);
 		
 		// Add source and target of the links forced by the user
 		List<Link> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
@@ -277,12 +278,24 @@ public class Alignment {
 	/**** TO BE IMPLEMENTED ***/
 	
 	
+//	public Set<Node> getGraphNodes() {
+//		return this.graphBuilder.getGraph().vertexSet();
+//	}
+//	
+//	public Set<Link> getGraphLinks() {
+//		return this.graphBuilder.getGraph().edgeSet();
+//	}
+	
 	public Node getNodeById(String nodeId) {
 		return this.graphBuilder.getIdToNodeMap().get(nodeId);
 	}
 	
 	public List<Node> getNodesByUri(String uriString) {
 		return this.graphBuilder.getUriToNodesMap().get(uriString);
+	}
+	
+	public List<Node> getNodesByType(NodeType type) {
+		return this.graphBuilder.getTypeToNodesMap().get(type);
 	}
 	
 	public Link getLinkById(String linkId) {
@@ -293,21 +306,19 @@ public class Alignment {
 		return this.graphBuilder.getUriToLinksMap().get(uriString);
 	}
 	
+	public List<Link> getLinksByType(LinkType type) {
+		return this.graphBuilder.getTypeToLinksMap().get(type);
+	}
+	
 	public List<Link> getLinksByStatus(LinkStatus status) {
 		return this.graphBuilder.getStatusToLinksMap().get(status);
 	}
-	
-	public Set<Node> getGraphNodes() {
-		return this.graphBuilder.getGraph().vertexSet();
-	}
-	
-	public Set<Link> getGraphLinks() {
-		return this.graphBuilder.getGraph().edgeSet();
-	}
+
 	
 	// AddNode methods
 	
 	public ColumnNode addColumnNode(String hNodeId, String columnName) {
+		
 		String id = nodeIdFactory.getNodeId(hNodeId);
 		ColumnNode node = new ColumnNode(id, hNodeId, columnName);
 		if (this.graphBuilder.addNode(node)) return node;
@@ -315,6 +326,7 @@ public class Alignment {
 	}
 	
 	public InternalNode addInternalClassNode(Label label) {
+		
 		String id = nodeIdFactory.getNodeId(label.getUriString());
 		InternalNode node = new InternalNode(id, label);
 		if (this.graphBuilder.addNode(node)) return node;
@@ -324,6 +336,7 @@ public class Alignment {
 	// AddLink methods
 
 	public DataPropertyLink addDataPropertyLink(Node source, Node target, Label label, boolean partOfKey) {
+		
 		String id = linkIdFactory.getLinkId(label.getUriString());	
 		DataPropertyLink link = new DataPropertyLink(id, label, partOfKey);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
@@ -332,6 +345,7 @@ public class Alignment {
 	
 	// Probably we don't need this function in the interface to GUI
 	public ObjectPropertyLink addObjectPropertyLink(Node source, Node target, Label label) {
+		
 		String id = linkIdFactory.getLinkId(label.getUriString());		
 		ObjectPropertyLink link = new ObjectPropertyLink(id, label);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
@@ -339,35 +353,39 @@ public class Alignment {
 	}
 	
 	// Probably we don't need this function in the interface to GUI
-	public SubClassOfLink addSubClassOfLink(Node source, Node target) {
-		String id = linkIdFactory.getLinkId(Uris.RDFS_SUBCLASS_OF_URI);
-		SubClassOfLink link = new SubClassOfLink(id);
+	public SubClassLink addSubClassOfLink(Node source, Node target) {
+		
+		String id = linkIdFactory.getLinkId(Uris.RDFS_SUBCLASS_URI);
+		SubClassLink link = new SubClassLink(id);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
 	}
 	
-	public ClassInstanceLink addClassLink(Node source, Node target, LinkKeyInfo keyInfo) {
-		String id = linkIdFactory.getLinkId(Uris.CLASS_LINK_URI);
+	public ClassInstanceLink addClassInstanceLink(Node source, Node target, LinkKeyInfo keyInfo) {
+		
+		String id = linkIdFactory.getLinkId(Uris.CLASS_INSTANCE_LINK_URI);
 		ClassInstanceLink link = new ClassInstanceLink(id, keyInfo);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;
 	}
 	
 	public DataPropertyOfColumnLink addDataPropertyOfColumnLink(Node source, Node target) {
+		
 		String id = linkIdFactory.getLinkId(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI);
 		DataPropertyOfColumnLink link = new DataPropertyOfColumnLink(id);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
 	}
 
-	public ColumnSubClassOfLink addColumnSubClassOfLink(Node source, Node target) {
-		String id = linkIdFactory.getLinkId(Uris.COLUMN_SUBCLASS_OF_LINK_URI);
-		ColumnSubClassOfLink link = new ColumnSubClassOfLink(id);
+	public ColumnSubClassLink addColumnSubClassOfLink(Node source, Node target) {
+		
+		String id = linkIdFactory.getLinkId(Uris.COLUMN_SUBCLASS_LINK_URI);
+		ColumnSubClassLink link = new ColumnSubClassLink(id);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
 	}
 	
-	public void changeLinkStatus(String linkId, LinkStatus newStatus) {
+	public void changeLinkStatus(String linkId, LinkStatus newStatus) {		
 		
 		Link link = this.getLinkById(linkId);
 		if (link == null) {
@@ -379,6 +397,7 @@ public class Alignment {
 	}
 	
 	public ColumnNode getColumnNodeByHNodeId(String hNodeId) {
+		
 		return null;
 	}
 	

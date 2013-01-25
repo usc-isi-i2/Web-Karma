@@ -26,16 +26,16 @@ import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 
 
-public class ColumnSubClassOfLink extends Link {
+public class SubClassLink extends Link {
 
 	private static final long serialVersionUID = 1L;
 	private static final Label label = 
-			new Label(Uris.COLUMN_SUBCLASS_OF_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
+			new Label(Uris.RDFS_SUBCLASS_URI, Namespaces.RDFS, Prefixes.RDFS);
 
-	public ColumnSubClassOfLink(String id) {
-		super(id, label);
+	public SubClassLink(String id) {
+		super(id, label, LinkType.SubClassLink);
 	}
-
+	
 	public static Label getLabel() {
 		return label;
 	}

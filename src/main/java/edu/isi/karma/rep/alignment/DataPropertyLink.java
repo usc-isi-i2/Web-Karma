@@ -28,11 +28,11 @@ public class DataPropertyLink extends Link {
 	private static final long serialVersionUID = 1L;
 	
 	public DataPropertyLink(String id, Label label) {
-		super(id, label);
+		super(id, label, LinkType.DataPropertyLink);
 	}
 
 	public DataPropertyLink(String id, Label label, boolean partOfKey) {
-		super(id, label, LinkKeyInfo.PartOfKey);
+		super(id, label, LinkType.DataPropertyLink, LinkKeyInfo.PartOfKey);
 	}
 
 }

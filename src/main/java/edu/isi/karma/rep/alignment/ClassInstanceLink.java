@@ -30,14 +30,14 @@ public class ClassInstanceLink extends Link {
 	
 	private static final long serialVersionUID = 1L;
 	private static final Label label = 
-			new Label(Uris.CLASS_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
+			new Label(Uris.CLASS_INSTANCE_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
 	
 	public ClassInstanceLink(String id) {
-		super(id, label);
+		super(id, label, LinkType.ClassInstanceLink);
 	}
 	
 	public ClassInstanceLink(String id, LinkKeyInfo keyInfo) {
-		super(id, label, keyInfo);
+		super(id, label, LinkType.ClassInstanceLink, keyInfo);
 	}
 
 	public static Label getLabel() {

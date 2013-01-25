@@ -18,25 +18,11 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.modeling.Prefixes;
-
-
-public class SubClassOfLink extends Link {
-
-	private static final long serialVersionUID = 1L;
-	private static final Label label = 
-			new Label(Uris.RDFS_SUBCLASS_OF_URI, Namespaces.RDFS, Prefixes.RDFS);
-
-	public SubClassOfLink(String id) {
-		super(id, label);
-	}
-	
-	public static Label getLabel() {
-		return label;
-	}
+public enum NodeType {
+	None,
+	LiteralNode,
+	ColumnNode,
+	InternalNode
 }

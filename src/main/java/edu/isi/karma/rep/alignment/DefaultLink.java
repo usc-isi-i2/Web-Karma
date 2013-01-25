@@ -33,7 +33,7 @@ public class DefaultLink extends Link {
 	private static final long serialVersionUID = 1L;
 
 	public DefaultLink(String id, Label uri) {
-		super(id, uri);
+		super(id, uri, LinkType.None);
 	}
 
 }

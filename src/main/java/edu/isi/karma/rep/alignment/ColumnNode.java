@@ -29,7 +29,7 @@ public class ColumnNode extends Node {
 	private final String columnName;
 	
 	public ColumnNode(String id, String hNodeId, String columnName) {
-		super(id, null);
+		super(id, null, NodeType.ColumnNode);
 		this.hNodeId = hNodeId;
 		this.columnName = columnName;
 	}

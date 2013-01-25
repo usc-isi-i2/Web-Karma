@@ -24,11 +24,11 @@ package edu.isi.karma.modeling;
 public interface Uris {
 
 	public static final String THING_URI = Namespaces.OWL + "Thing"; 
-	public static final String RDFS_SUBCLASS_OF_URI = Namespaces.RDFS + "subClassOf"; 
+	public static final String RDFS_SUBCLASS_URI = Namespaces.RDFS + "subClassOf"; 
 
 	// Karma Internal URIs
-	public static final String CLASS_LINK_URI = Namespaces.KARMA_DEV + "classLink"; 
-	public static final String COLUMN_SUBCLASS_OF_LINK_URI = Namespaces.KARMA_DEV + "columnSubClassOfLink"; 
+	public static final String CLASS_INSTANCE_LINK_URI = Namespaces.KARMA_DEV + "classLink"; 
+	public static final String COLUMN_SUBCLASS_LINK_URI = Namespaces.KARMA_DEV + "columnSubClassOfLink"; 
 	public static final String DATAPROPERTY_OF_COLUMN_LINK_URI = Namespaces.KARMA_DEV + "dataPropertyOfColumnLink"; 
 
 }

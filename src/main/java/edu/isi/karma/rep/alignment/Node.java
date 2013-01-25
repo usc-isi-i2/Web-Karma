@@ -30,8 +30,9 @@ public abstract class Node implements Comparable<Node> {
 
 	private final String id;
 	private final Label label;
+	private final NodeType type;
 	
-	public Node(String id, Label label) {
+	public Node(String id, Label label, NodeType type) {
 		
 		if (id == null || id.trim().length() == 0) {
 			logger.info("The input id is empty. A random Guid has been assigned.");
@@ -40,11 +41,13 @@ public abstract class Node implements Comparable<Node> {
 		
 		this.id = id;
 		this.label = label;
+		this.type = type;
 	}
 	
 	public Node(Node v) {
 		this.id = v.id;
 		this.label = v.label;
+		this.type = v.type;
 	}
 	
 	public String getId() {
@@ -81,6 +84,10 @@ public abstract class Node implements Comparable<Node> {
 		return this.label.getPrefix();
 	}
 	
+	public NodeType getType() {
+		return type;
+	}
+
 	@Override
     public boolean equals(Object obj) {
         if (obj == this) {

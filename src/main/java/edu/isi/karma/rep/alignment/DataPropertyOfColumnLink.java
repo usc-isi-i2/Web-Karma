@@ -33,7 +33,7 @@ public class DataPropertyOfColumnLink extends Link {
 			new Label(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
 
 	public DataPropertyOfColumnLink(String id) {
-		super(id, label);
+		super(id, label, LinkType.DataPropertyOfColumnLink);
 	}
 
 	public static Label getLabel() {
