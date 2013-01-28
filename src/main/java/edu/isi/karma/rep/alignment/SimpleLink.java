@@ -23,16 +23,16 @@ package edu.isi.karma.rep.alignment;
 
 
 /**
- * Use this type of link only in Steiner Algorithm: SteinerTree.java  
+ * SimpleLink does not have any type.   
  * @author mohsen
  *
  */
 
-public class DefaultLink extends Link {
+public class SimpleLink extends Link {
 
 	private static final long serialVersionUID = 1L;
 
-	public DefaultLink(String id, Label uri) {
+	public SimpleLink(String id, Label uri) {
 		super(id, uri, LinkType.None);
 	}
 
