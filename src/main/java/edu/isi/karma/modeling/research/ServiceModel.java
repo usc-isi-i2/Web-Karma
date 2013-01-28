@@ -36,23 +36,24 @@ import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 
 public class ServiceModel {
 
-//	private static String varPrefix = "var:";
-	private static String attPrefix = "att:";
-	
 	private String serviceNameWithPrefix;
 	private String serviceName;
 	private String serviceDescription;
 	
 	List<DirectedWeightedMultigraph<Node, Link>> models;
 	HashMap<String, List<DijkstraShortestPath<Node, Link>>> shortestPathsBetweenTwoAttributes; 
+	List<MatchedSubGraphs> matchedSubGraphs;
 
 	public ServiceModel() {
 		this.models = new ArrayList<DirectedWeightedMultigraph<Node,Link>>();
+		matchedSubGraphs = new ArrayList<MatchedSubGraphs>();
 		shortestPathsBetweenTwoAttributes = new HashMap<String, List<DijkstraShortestPath<Node,Link>>>();
 	}
 
@@ -153,18 +154,14 @@ public class ServiceModel {
 		System.out.println();
 		System.out.println();
 	}
-	
-	
-	private List<Node> getAttributes(DirectedWeightedMultigraph<Node, Link> graph) {
-		List<Node> attributes = new ArrayList<Node>();
-		for (Node n : graph.vertexSet()) {
-			if (!n.getId().startsWith(attPrefix)) continue;
-			attributes.add(n);
-		}
-		Collections.sort(attributes);
-		return attributes;
-	}
 
+	public void computeMatchedSubGraphs() {
+		if (this.models.size() == 2) {
+			this.matchedSubGraphs = 
+					Algorithm.computeMatchedSubGraphs(this.models.get(0), this.models.get(1));
+		}
+	}
+	
 	public void computeShortestPaths() {
 		
 		int modelNo = 1;
@@ -172,15 +169,15 @@ public class ServiceModel {
 		
 		for (DirectedWeightedMultigraph<Node, Link> graph : this.models) {
 			
-			List<Node> attributes = getAttributes(graph);
+			List<Node> attributes = Util.getAttributes(graph);
 			for (int i = 0; i < attributes.size(); i++) {
 				for (int j = i+1; j < attributes.size(); j++) {
 					
 					Node source = attributes.get(i);
 					Node target = attributes.get(j);
-					String index = source.getId().replaceAll(attPrefix, "") + 
+					String index = source.getId().replaceAll(ModelReader.attPrefix, "") + 
 									"-->" + 
-									target.getId().replaceAll(attPrefix, "") + 
+									target.getId().replaceAll(ModelReader.attPrefix, "") + 
 									" (m" + modelNo + ")";
 					
 					// TODO: How to get all the shortest paths?
@@ -205,9 +202,9 @@ public class ServiceModel {
 		}
 	}
 	
-	public void exportToGraphviz(String exportDirectory) throws FileNotFoundException {
+	public void exportModelsToGraphviz(String exportDirectory) throws FileNotFoundException {
 		
-		OutputStream out = new FileOutputStream(exportDirectory + this.getServiceNameWithPrefix() + ".dot");
+		OutputStream out = new FileOutputStream(exportDirectory + this.getServiceNameWithPrefix() + "_models.dot");
 		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
 		
 		graphViz.attr("fontcolor", "blue");
@@ -228,7 +225,42 @@ public class ServiceModel {
 
 	}
 	
-	public void exportPathsToGraphviz(String exportDirectory) throws FileNotFoundException {
+	public void exportMatchedSubGraphToGraphviz(String exportDirectory) throws FileNotFoundException {
+		
+		if (this.matchedSubGraphs == null) return;
+		
+		OutputStream out = new FileOutputStream(exportDirectory + this.getServiceNameWithPrefix() + "_subgraphs.dot");
+		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
+		graphViz.attr("fontcolor", "blue");
+		graphViz.attr("remincross", "true");
+		graphViz.attr("label", this.getServiceDescription());
+//		graphViz.attr("page", "8.5,11");
+		
+		List<String> sortedKeys = Arrays.asList(shortestPathsBetweenTwoAttributes.keySet().toArray(new String[0]));
+		Collections.sort(sortedKeys);
+
+		org.kohsuke.graphviz.Graph cluster = null;
+		org.kohsuke.graphviz.Graph gViz = null;
+		int counter = 0;
+		for (MatchedSubGraphs m : this.matchedSubGraphs) {
+
+			cluster = new org.kohsuke.graphviz.Graph();
+			cluster.id("cluster_" + counter);
+			cluster.attr("label", "");
+			graphViz.subGraph(cluster);
+
+			gViz = exportJGraphToGraphviz(m.getSubGraph1());
+			cluster.subGraph(gViz);
+			gViz = exportJGraphToGraphviz(m.getSubGraph2());
+			cluster.subGraph(gViz);
+			counter ++;
+		}
+		graphViz.writeTo(out);
+
+	}
+
+	
+	public void exportShortestPathsToGraphviz(String exportDirectory) throws FileNotFoundException {
 		
 		OutputStream out = new FileOutputStream(exportDirectory + this.getServiceNameWithPrefix() + "_paths.dot");
 		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
@@ -273,15 +305,20 @@ public class ServiceModel {
 		internalNodeStyle.attr("fontsize", "10");
 		internalNodeStyle.attr("fillcolor", "lightgray");
 		
-		org.kohsuke.graphviz.Style inputNodeStyle = new org.kohsuke.graphviz.Style();
-		inputNodeStyle.attr("shape", "plaintext");
-		inputNodeStyle.attr("style", "filled");
-		inputNodeStyle.attr("fillcolor", "#3CB371");
+//		org.kohsuke.graphviz.Style inputNodeStyle = new org.kohsuke.graphviz.Style();
+//		inputNodeStyle.attr("shape", "plaintext");
+//		inputNodeStyle.attr("style", "filled");
+//		inputNodeStyle.attr("fillcolor", "#3CB371");
+//
+//		org.kohsuke.graphviz.Style outputNodeStyle = new org.kohsuke.graphviz.Style();
+//		outputNodeStyle.attr("shape", "plaintext");
+//		outputNodeStyle.attr("style", "filled");
+//		outputNodeStyle.attr("fillcolor", "gold");
 
-		org.kohsuke.graphviz.Style outputNodeStyle = new org.kohsuke.graphviz.Style();
-		outputNodeStyle.attr("shape", "plaintext");
-		outputNodeStyle.attr("style", "filled");
-		outputNodeStyle.attr("fillcolor", "gold");
+		org.kohsuke.graphviz.Style parameterNodeStyle = new org.kohsuke.graphviz.Style();
+		parameterNodeStyle.attr("shape", "plaintext");
+		parameterNodeStyle.attr("style", "filled");
+		parameterNodeStyle.attr("fillcolor", "gold");
 
 		org.kohsuke.graphviz.Style literalNodeStyle = new org.kohsuke.graphviz.Style();
 		literalNodeStyle.attr("shape", "plaintext");
@@ -295,7 +332,7 @@ public class ServiceModel {
 		
 		HashMap<Node, org.kohsuke.graphviz.Node> nodeIndex = new HashMap<Node, org.kohsuke.graphviz.Node>();
 		
-		Node lastNode = null;
+//		Node lastNode = null;
 		for (int i = 0; i < path.getPathEdgeList().size(); i++) {
 			
 			Link e = path.getPathEdgeList().get(i);
@@ -310,11 +347,13 @@ public class ServiceModel {
 				n.attr("label", id);
 				nodeIndex.put(source, n);
 			
-				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
-					gViz.nodeWith(inputNodeStyle);
-				else if (id.indexOf("att") != -1 && id.indexOf("o") != -1)  // output
-					gViz.nodeWith(outputNodeStyle);
-				else if (id.indexOf("att") == -1 && id.indexOf(":") == -1 && id.indexOf("\"") != -1)  // literal
+//				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
+//					gViz.nodeWith(inputNodeStyle);
+//				else if (id.indexOf("att") != -1 && id.indexOf("o") != -1)  // output
+//					gViz.nodeWith(outputNodeStyle);
+				if (source instanceof ColumnNode)  // attribute
+					gViz.nodeWith(parameterNodeStyle);
+				else if (source instanceof LiteralNode)  // literal
 					gViz.nodeWith(literalNodeStyle);
 				else  // internal node
 					gViz.nodeWith(internalNodeStyle);
@@ -329,11 +368,13 @@ public class ServiceModel {
 				n.attr("label", id);
 				nodeIndex.put(target, n);
 			
-				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
-					gViz.nodeWith(inputNodeStyle);
-				else if (id.indexOf("att") != -1 && id.indexOf("o") != -1)  // output
-					gViz.nodeWith(outputNodeStyle);
-				else if (id.indexOf("att") == -1 && id.indexOf(":") == -1 && id.indexOf("\"") != -1)  // literal
+//				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
+//					gViz.nodeWith(inputNodeStyle);
+//				else if (id.indexOf("att") != -1 && id.indexOf("o") != -1)  // output
+//					gViz.nodeWith(outputNodeStyle);
+				if (target instanceof ColumnNode)  // attribute
+					gViz.nodeWith(parameterNodeStyle);
+				else if (target instanceof LiteralNode)  // literal
 					gViz.nodeWith(literalNodeStyle);
 				else  // internal node
 					gViz.nodeWith(internalNodeStyle);
@@ -341,7 +382,7 @@ public class ServiceModel {
 				gViz.node(n);
 			}
 			
-//			/*
+			/*
 			org.kohsuke.graphviz.Edge edge = null;
 			if (i == 0) {
 				edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(source), nodeIndex.get(target));
@@ -360,9 +401,9 @@ public class ServiceModel {
 				edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(source), nodeIndex.get(target));
 				lastNode = target;
 			} 
-//			*/
+			*/
 			
-//			Edge edge = new Edge(nodeIndex.get(source), nodeIndex.get(target));
+			org.kohsuke.graphviz.Edge edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(source), nodeIndex.get(target));
 			edge.attr("label", e.getId());
 			gViz.edgeWith(edgeStyle);
 			gViz.edge(edge);
@@ -383,15 +424,20 @@ public class ServiceModel {
 		internalNodeStyle.attr("fontsize", "10");
 		internalNodeStyle.attr("fillcolor", "lightgray");
 		
-		org.kohsuke.graphviz.Style inputNodeStyle = new org.kohsuke.graphviz.Style();
-		inputNodeStyle.attr("shape", "plaintext");
-		inputNodeStyle.attr("style", "filled");
-		inputNodeStyle.attr("fillcolor", "#3CB371");
+//		org.kohsuke.graphviz.Style inputNodeStyle = new org.kohsuke.graphviz.Style();
+//		inputNodeStyle.attr("shape", "plaintext");
+//		inputNodeStyle.attr("style", "filled");
+//		inputNodeStyle.attr("fillcolor", "#3CB371");
+//
+//		org.kohsuke.graphviz.Style outputNodeStyle = new org.kohsuke.graphviz.Style();
+//		outputNodeStyle.attr("shape", "plaintext");
+//		outputNodeStyle.attr("style", "filled");
+//		outputNodeStyle.attr("fillcolor", "gold");
 
-		org.kohsuke.graphviz.Style outputNodeStyle = new org.kohsuke.graphviz.Style();
-		outputNodeStyle.attr("shape", "plaintext");
-		outputNodeStyle.attr("style", "filled");
-		outputNodeStyle.attr("fillcolor", "gold");
+		org.kohsuke.graphviz.Style parameterNodeStyle = new org.kohsuke.graphviz.Style();
+		parameterNodeStyle.attr("shape", "plaintext");
+		parameterNodeStyle.attr("style", "filled");
+		parameterNodeStyle.attr("fillcolor", "gold");
 
 		org.kohsuke.graphviz.Style literalNodeStyle = new org.kohsuke.graphviz.Style();
 		literalNodeStyle.attr("shape", "plaintext");
@@ -417,11 +463,13 @@ public class ServiceModel {
 				n.attr("label", id);
 				nodeIndex.put(source, n);
 			
-				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
-					gViz.nodeWith(inputNodeStyle);
-				else if (id.indexOf("att") != -1 && id.indexOf("o") != -1)  // output
-					gViz.nodeWith(outputNodeStyle);
-				else if (id.indexOf("att") == -1 && id.indexOf(":") == -1 && id.indexOf("\"") != -1)  // literal
+//				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
+//					gViz.nodeWith(inputNodeStyle);
+//				else if (id.indexOf("att") != -1 && id.indexOf("o") != -1)  // output
+//					gViz.nodeWith(outputNodeStyle);
+				if (source instanceof ColumnNode)  // attribute
+					gViz.nodeWith(parameterNodeStyle);
+				else if (source instanceof LiteralNode)  // literal
 					gViz.nodeWith(literalNodeStyle);
 				else  // internal node
 					gViz.nodeWith(internalNodeStyle);
@@ -436,11 +484,13 @@ public class ServiceModel {
 				n.attr("label", id);
 				nodeIndex.put(target, n);
 			
-				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
-					gViz.nodeWith(inputNodeStyle);
-				else if (id.indexOf("att") != -1 && id.indexOf("o") != -1)  // output
-					gViz.nodeWith(outputNodeStyle);
-				else if (id.indexOf("att") == -1 && id.indexOf(":") == -1 && id.indexOf("\"") != -1)  // literal
+//				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
+//					gViz.nodeWith(inputNodeStyle);
+//				else if (id.indexOf("att") != -1 && id.indexOf("o") != -1)  // output
+//					gViz.nodeWith(outputNodeStyle);
+				if (target instanceof ColumnNode)  // attribute
+					gViz.nodeWith(parameterNodeStyle);
+				else if (target instanceof LiteralNode)  // literal
 					gViz.nodeWith(literalNodeStyle);
 				else  // internal node
 					gViz.nodeWith(internalNodeStyle);

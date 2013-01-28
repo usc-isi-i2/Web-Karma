@@ -106,14 +106,14 @@ public class SteinerTree {
 		WeightedMultigraph<Node, Link> g2 = 
 			new WeightedMultigraph<Node, Link>(Link.class);
 		
-		List<Link> edgesSortedByLabel = new ArrayList<Link>();
+		List<Link> edgesSortedById = new ArrayList<Link>();
 		
 		for (Link e : edges) 
-			edgesSortedByLabel.add(e);
+			edgesSortedById.add(e);
 		
-		Collections.sort(edgesSortedByLabel, new EdgeComparatorByLabel());
+		Collections.sort(edgesSortedById);
 		
-		for (Link edge : edgesSortedByLabel) {
+		for (Link edge : edgesSortedById) {
 
 //			//just for test, forcing to select another equal minimal spanning tree
 //			if (g1.getEdgeSource(edge).getLabel().equalsIgnoreCase("v1") && 

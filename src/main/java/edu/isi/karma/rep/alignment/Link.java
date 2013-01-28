@@ -99,14 +99,23 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 	}
 	
 	public String getUriString() {
+		if (this.label == null)
+			return null;
+		
 		return this.label.getUriString();
 	}
 	
 	public String getNs() {
+		if (this.label == null)
+			return null;
+		
 		return this.label.getNs();
 	}
 	
 	public String getPrefix() {
+		if (this.label == null)
+			return null;
+		
 		return this.label.getPrefix();
 	}
 	

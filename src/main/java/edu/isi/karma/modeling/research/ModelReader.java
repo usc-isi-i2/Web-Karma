@@ -32,13 +32,18 @@ import java.util.regex.Pattern;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SimpleLink;
-import edu.isi.karma.rep.alignment.SimpleNode;
 
 
 public class ModelReader {
+	
+//	public static String varPrefix = "var:";
+	public static String attPrefix = "att:";
 	
 	private static String examplesDir = "/Users/mohsen/Dropbox/Service Modeling/research/";
 	private static String typePredicate = "rdf:type";
@@ -80,10 +85,12 @@ public class ModelReader {
 		
 			if (serviceModels != null) {
 				for (ServiceModel sm : serviceModels) {
+					sm.computeMatchedSubGraphs();
 					sm.computeShortestPaths();
 					sm.print();
-					sm.exportToGraphviz(examplesDir);
-					sm.exportPathsToGraphviz(examplesDir);
+					sm.exportModelsToGraphviz(examplesDir);
+					sm.exportMatchedSubGraphToGraphviz(examplesDir);
+					sm.exportShortestPathsToGraphviz(examplesDir);
 					
 				}
 			}
@@ -215,7 +222,7 @@ public class ModelReader {
 			
 			if (st.getPredicate().equalsIgnoreCase(typePredicate)) {
 				
-				Node classNode = new SimpleNode(st.getObject(), null);
+				Node classNode = new InternalNode(st.getObject(), null);
 				uri2Classes.put(st.getSubject(), classNode);
 				graph.addVertex(classNode);
 				
@@ -229,13 +236,20 @@ public class ModelReader {
 			
 			Node subj = uri2Classes.get(st.getSubject());
 			if (subj == null) {
-				subj = new SimpleNode(st.getSubject(), null);
+				subj = new InternalNode(st.getSubject(), null);
 				graph.addVertex(subj);
 			}
 
 			Node obj = uri2Classes.get(st.getObject());
+			String objStr = st.getObject();
 			if (obj == null) {
-				obj = new SimpleNode(st.getObject(), null);
+				if (objStr.startsWith(attPrefix))
+					obj = new ColumnNode(objStr, null, null);
+				else if (objStr.indexOf(":") == -1 && objStr.indexOf("\"") != -1)
+					obj = new LiteralNode(objStr, objStr, null);
+				else
+					obj = new InternalNode(objStr, null);
+				
 				graph.addVertex(obj);
 			}
 			
