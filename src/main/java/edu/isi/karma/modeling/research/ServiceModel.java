@@ -47,9 +47,9 @@ public class ServiceModel {
 	private String serviceName;
 	private String serviceDescription;
 	
-	List<DirectedWeightedMultigraph<Node, Link>> models;
-	HashMap<String, List<DijkstraShortestPath<Node, Link>>> shortestPathsBetweenTwoAttributes; 
-	List<MatchedSubGraphs> matchedSubGraphs;
+	private List<DirectedWeightedMultigraph<Node, Link>> models;
+	private HashMap<String, List<DijkstraShortestPath<Node, Link>>> shortestPathsBetweenTwoAttributes; 
+	private List<MatchedSubGraphs> matchedSubGraphs;
 
 	public ServiceModel() {
 		this.models = new ArrayList<DirectedWeightedMultigraph<Node,Link>>();

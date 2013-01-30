@@ -101,7 +101,7 @@ public class GetExampleJSON extends HttpServlet {
 				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf")) {
 					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
 					try {
-						mgr.doImportWithoutCacheUpdate(ontology);
+						mgr.doImport(ontology);
 					} catch (Exception t) {
 						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
 					}

@@ -71,7 +71,7 @@ public class ImportOntologyCommand extends Command {
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		OntologyManager ontManager = vWorkspace.getWorkspace().getOntologyManager();
 		logger.info("Loading ontology: " + ontologyFile.getAbsolutePath());
-		final boolean success = ontManager.doImport(ontologyFile);
+		final boolean success = ontManager.doImportAndUpdateCache(ontologyFile);
 		logger.info("Done loading ontology: " + ontologyFile.getAbsolutePath());
 		return new UpdateContainer(new AbstractUpdate(){
 			@Override

@@ -48,7 +48,7 @@ public class OntologyManager {
 		return ontHandler.getOntModel().isEmpty();
 	}
 	
-	public boolean doImport(File sourceFile) {
+	public boolean doImportAndUpdateCache(File sourceFile) {
 
 		if (sourceFile == null) {
 			logger.debug("input file is null.");
@@ -77,7 +77,7 @@ public class OntologyManager {
 		return true;
 	}
 	
-	public boolean doImportWithoutCacheUpdate(File sourceFile) {
+	public boolean doImport(File sourceFile) {
 
 		if (sourceFile == null) {
 			logger.debug("input file is null.");
@@ -109,19 +109,19 @@ public class OntologyManager {
 		ontCache.init();
 	}
 	
-	public List<String> getClasses() {
+	public HashMap<String, Label> getClasses() {
 		return ontCache.getClasses();
 	}
 
-	public List<String> getProperties() {
+	public HashMap<String, Label> getProperties() {
 		return ontCache.getProperties();
 	}
 
-	public List<String> getDataProperties() {
+	public HashMap<String, Label> getDataProperties() {
 		return ontCache.getDataProperties();
 	}
 
-	public List<String> getObjectProperties() {
+	public HashMap<String, Label> getObjectProperties() {
 		return ontCache.getObjectProperties();
 	}
 
@@ -186,8 +186,8 @@ public class OntologyManager {
 	}
 
 	
-	public Label getLabelFromUriString(String uriString) {
-		return this.ontHandler.getLabelFromUriString(uriString);
+	public Label getUriLabel(String uriString) {
+		return this.ontHandler.getUriLabel(uriString);
 	}
 	
 	/**
@@ -397,7 +397,7 @@ public class OntologyManager {
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getSubClasses(String classUri, boolean recursive) {
+	public HashMap<String, Label> getSubClasses(String classUri, boolean recursive) {
 
 		return ontHandler.getSubClasses(classUri, recursive);
 	}
@@ -408,7 +408,7 @@ public class OntologyManager {
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getSuperClasses(String classUri, boolean recursive) {
+	public HashMap<String, Label> getSuperClasses(String classUri, boolean recursive) {
 		
 		return ontHandler.getSubClasses(classUri, recursive);
 	}
@@ -419,7 +419,7 @@ public class OntologyManager {
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getSubProperties(String propertyUri, boolean recursive) {
+	public HashMap<String, Label> getSubProperties(String propertyUri, boolean recursive) {
 
 		return ontHandler.getSubProperties(propertyUri, recursive);
 	}
@@ -430,7 +430,7 @@ public class OntologyManager {
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getSuperProperties(String propertyUri, boolean recursive) {
+	public HashMap<String, Label> getSuperProperties(String propertyUri, boolean recursive) {
 
 		return ontHandler.getSuperProperties(propertyUri, recursive);
 	}

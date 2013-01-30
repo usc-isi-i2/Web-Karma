@@ -83,7 +83,7 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements JSONI
 		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
 		File autoOtologyFile = new File(path);
 		logger.info("Loading ontology: " + autoOtologyFile.getAbsolutePath());
-		ontMgr.doImport(autoOtologyFile);
+		ontMgr.doImportAndUpdateCache(autoOtologyFile);
 		logger.info("Done loading ontology: " + autoOtologyFile.getAbsolutePath());
 		
 		if(checkHist) {

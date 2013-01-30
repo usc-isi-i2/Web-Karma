@@ -45,7 +45,8 @@ public class ModelReader {
 //	public static String varPrefix = "var:";
 	public static String attPrefix = "att:";
 	
-	private static String examplesDir = "/Users/mohsen/Dropbox/Service Modeling/research/";
+	private static String importDir = "/Users/mohsen/Dropbox/Service Modeling/research/texts/";
+	private static String exportDir = "/Users/mohsen/Dropbox/Service Modeling/research/dots/";
 	private static String typePredicate = "rdf:type";
 
 	static class Statement {
@@ -88,9 +89,9 @@ public class ModelReader {
 					sm.computeMatchedSubGraphs();
 					sm.computeShortestPaths();
 					sm.print();
-					sm.exportModelsToGraphviz(examplesDir);
-					sm.exportMatchedSubGraphToGraphviz(examplesDir);
-					sm.exportShortestPathsToGraphviz(examplesDir);
+					sm.exportModelsToGraphviz(exportDir);
+					sm.exportMatchedSubGraphToGraphviz(exportDir);
+					sm.exportShortestPathsToGraphviz(exportDir);
 					
 				}
 			}
@@ -104,7 +105,7 @@ public class ModelReader {
 		
 		List<ServiceModel> serviceModels = new ArrayList<ServiceModel>();
 		
-		File dir = new File(examplesDir);
+		File dir = new File(importDir);
 		File[] modelExamples = dir.listFiles();
 
 		Pattern fileNamePattern = Pattern.compile("s[0-9](|[0-9])-.*\\.txt", Pattern.CASE_INSENSITIVE);

@@ -55,7 +55,7 @@ public class Test {
 //		f[4] = new File("D:\\Academic\\ISI\\_GIT\\Web-Karma\\test\\Dovetail_ISI_mod.owl");
 		
 		for (int i = 1; i < 2; i++) {
-			ontManager.doImport(f[i]);
+			ontManager.doImportAndUpdateCache(f[i]);
 		}
 	}
 	

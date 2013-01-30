@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -306,9 +307,9 @@ public class GraphBuilder {
 		List<Node> recentlyAddedNodes = new ArrayList<Node>();
 		List<Node> newNodes;
 
-		List<String> dpDomainClasses = new ArrayList<String>();
-		List<String> opDomainClasses = new ArrayList<String>();
-		List<String> superClasses = new ArrayList<String>();
+		List<String> dpDomainClasses = null;
+		List<String> opDomainClasses = null;
+		Set<String> superClasses = null;
 		List<String> newAddedClasses = new ArrayList<String>();
 
 		recentlyAddedNodes.add(Node);
@@ -331,7 +332,7 @@ public class GraphBuilder {
 
 				if (recentlyAddedNodes.get(i) instanceof InternalNode) {
 					opDomainClasses = ontologyManager.getDomainsGivenRange(uriString, true);
-					superClasses = ontologyManager.getSuperClasses(uriString, false);
+					superClasses = ontologyManager.getSuperClasses(uriString, false).keySet();
 				} else if (recentlyAddedNodes.get(i) instanceof ColumnNode) {
 					dpDomainClasses = ontologyManager.getDomainsGivenProperty(uriString, true);
 				}
@@ -346,7 +347,7 @@ public class GraphBuilder {
 				for (int j = 0; j < newAddedClasses.size(); j++) {
 					uriString = newAddedClasses.get(j);
 					Node n = new InternalNode(nodeIdFactory.getNodeId(uriString), 
-							ontologyManager.getLabelFromUriString(uriString));
+							ontologyManager.getUriLabel(uriString));
 					if (addSingleNode(n))	
 						newNodes.add(n);
 				}
@@ -431,7 +432,7 @@ public class GraphBuilder {
 							inherited = false;
 
 						id = linkIdFactory.getLinkId(uriString);
-						label = ontologyManager.getLabelFromUriString(uriString);
+						label = ontologyManager.getUriLabel(uriString);
 						Link link = new ObjectPropertyLink(id, label);
 						// prefer the links that are actually defined between source and target in the ontology 
 						// over inherited ones.

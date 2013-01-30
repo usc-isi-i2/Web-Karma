@@ -162,7 +162,8 @@ public class PublishModelCommand extends Command{
 			
 			if (service != null) {
 				service.setSourceDescription(descString);
-				WebServicePublisher.publish(service, Repository.Instance().LANG, true);
+				WebServicePublisher servicePublisher = new WebServicePublisher(service);
+				servicePublisher.publish(Repository.Instance().LANG, true);
 				logger.info("Service model has successfully been published to repository: " + service.getId());
 				return new UpdateContainer(new ErrorUpdate(
 				"Service model has successfully been published to repository: " + service.getId()));
@@ -216,13 +217,13 @@ public class PublishModelCommand extends Command{
 
 			// deleting the service completely from the repository.
 			if (service != null) {
-				WebServiceLoader.deleteServiceByUri(service.getUri());
+				WebServiceLoader.getInstance().deleteSourceByUri(service.getUri());
 				logger.info("Service model has successfully been deleted from repository.");
 				return new UpdateContainer(new ErrorUpdate(
 						"Service model has successfully been deleted from repository."));
 			}
 			else {
-				DataSourceLoader.deleteSourceByUri(source.getUri());
+				DataSourceLoader.getInstance().deleteSourceByUri(source.getUri());
 				logger.info("Source model has successfully been deleted from repository.");
 				return new UpdateContainer(new ErrorUpdate(
 						"Source model has successfully been deleted from repository."));

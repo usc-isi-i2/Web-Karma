@@ -217,7 +217,7 @@ public class Alignment {
 		return steinerNodes;
 	}
 	
-	private void align() {
+	public void align() {
 		
 //		GraphUtil.printGraph(this.graphBuilder.getGraph());
 		long start = System.currentTimeMillis();
@@ -399,10 +399,6 @@ public class Alignment {
 	public ColumnNode getColumnNodeByHNodeId(String hNodeId) {
 		
 		return null;
-	}
-	
-	public void addLinkAndUpdateAlignment(Link link) {
-		
 	}
 	
 	// Used in the case of semantic types

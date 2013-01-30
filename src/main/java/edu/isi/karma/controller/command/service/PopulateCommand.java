@@ -124,7 +124,7 @@ public class PopulateCommand extends WorksheetCommand{
 		DataSource source = new DataSource(wk.getTitle(), tree);
 		
 		Map<WebService, Map<String, String>> servicesAndMappings = 
-			WebServiceLoader.getServicesWithInputContainedInModel(source.getModel(), null);
+			WebServiceLoader.getInstance().getServicesWithInputContainedInModel(source.getModel(), null);
 		
 		if (servicesAndMappings == null) {
 			logger.error("Cannot find any services to be invoked according to this source model.");

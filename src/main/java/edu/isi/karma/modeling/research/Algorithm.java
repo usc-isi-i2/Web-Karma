@@ -23,6 +23,7 @@ package edu.isi.karma.modeling.research;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -67,30 +68,35 @@ public class Algorithm {
 		List<Node> attributes1 = Util.getAttributes(g1);
 		List<Node> attributes2 = Util.getAttributes(g2);
 		
-		if (attributes1.size() != attributes2.size())
+		if (attributes1 == null || attributes2 == null)
 		{
-			System.out.println("Something went wrong, size of the attribute list of the two input graphs is not the same.");
+			System.out.println("One of the attribute list is null.");
 			return matchedSubGraphs;
 		}
-
+		
+		HashMap<String, Node> attMap1 = new HashMap<String, Node>();
+		HashMap<String, Node> attMap2 = new HashMap<String, Node>();
+		for (Node n : attributes1) attMap1.put(n.getId(), n);
+		for (Node n : attributes2) attMap2.put(n.getId(), n);
+		
 		int attCount = attributes1.size(); // = attributes2.size();
-		ArrayList<Integer> numbers = new ArrayList<Integer>();
-		for (int i = 0; i < attCount; i++)
-			numbers.add(i);
-		
-		Set<Set<Integer>> powerSet = powerSet(new HashSet<Integer>(numbers));
-		
+		Set<String> keys = attMap1.keySet();
+		if (attMap2.keySet().size() < attMap1.keySet().size())
+			keys = attMap2.keySet();
 
-		for (int k = 2; k < attCount - 1; k ++) {
-			for (Set<Integer> set : powerSet) {
+		
+		Set<Set<String>> powerSet = powerSet(keys);
+
+		for (int k = 2; k < attCount; k ++) {
+			for (Set<String> set : powerSet) {
 				if (set.size() != k)
 					continue;
 				
 				List<Node> steinerNodes1 = new ArrayList<Node>();
 				List<Node> steinerNodes2 = new ArrayList<Node>();
-				for (Integer j : set) {
-					steinerNodes1.add(attributes1.get(j));
-					steinerNodes2.add(attributes2.get(j));
+				for (String key : set) {
+					steinerNodes1.add(attMap1.get(key));
+					steinerNodes2.add(attMap2.get(key));
 				}
 				
 				DirectedWeightedMultigraph<Node, Link> steinerTree1 = 
@@ -106,6 +112,10 @@ public class Algorithm {
 			}
 		}
 		
+		MatchedSubGraphs m = new MatchedSubGraphs(g1, g2);
+		matchedSubGraphs.add(m);
+		
+
 		return matchedSubGraphs;
 	}
 	

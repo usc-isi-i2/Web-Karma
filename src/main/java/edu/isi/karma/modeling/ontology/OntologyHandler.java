@@ -21,6 +21,7 @@
 package edu.isi.karma.modeling.ontology;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -63,7 +64,7 @@ class OntologyHandler {
 		return ontModel;
 	}
 
-	public Label getLabelFromUriString(String uriString) {
+	public Label getUriLabel(String uriString) {
 		Resource r = ontModel.getResource(uriString);
 		if (r == null || !ontModel.containsResource(r)) {
 			logger.debug("Could not find the resource " + uriString + " in the ontology model.");
@@ -83,6 +84,58 @@ class OntologyHandler {
 		String rdfsComment = ontR.getComment(null);
 		
 		return new Label(r.getURI(), ns, prefix, rdfsLabel, rdfsComment);
+	}
+	
+	public Label getResourceLabel(Resource r) {
+		if (r == null || !ontModel.containsResource(r)) {
+			logger.debug("Could not find the resource in the ontology model.");
+			return null;
+		}
+		String ns = r.getNameSpace();
+		if (ns != null && ns.trim().length() == 0) ns = null;
+		String prefix = ontModel.getNsURIPrefix(r.getNameSpace());
+		if (prefix != null && prefix.trim().length() == 0) prefix = null;
+		
+		OntResource ontR = null;
+		try { ontR = (OntResource)r;} catch(Exception e) {}
+		if (ontR == null)
+			return new Label(r.getURI(), ns, prefix);
+		
+		String rdfsLabel = ontR.getLabel(null);
+		String rdfsComment = ontR.getComment(null);
+		
+		return new Label(r.getURI(), ns, prefix, rdfsLabel, rdfsComment);
+	}
+	
+	
+	/**
+	 * returns URIs of given resources.
+	 * @param resources
+	 * @return
+	 */
+	public List<String> getResourcesUris(List<OntResource> resources) {
+		List<String> resourcesURIs = new ArrayList<String>();
+		if (resources != null)
+			for (OntResource r: resources) {
+				if (resourcesURIs.indexOf(r.getURI()) == -1)
+					resourcesURIs.add(r.getURI());
+			}
+		return resourcesURIs;
+	}
+	
+	/**
+	 * returns URI and Label of given resources.
+	 * @param resources
+	 * @return
+	 */
+	public HashMap<String, Label> getResourcesLabels(List<OntResource> resources) {
+		HashMap<String, Label> resourcesLabels = new HashMap<String, Label>();
+		if (resources != null)
+			for (OntResource r: resources) {
+				if (!resourcesLabels.containsKey(r.getURI()))
+					resourcesLabels.put(r.getURI(), getResourceLabel(r));
+			}
+		return resourcesLabels;
 	}
 	
 	public boolean isClass(String label) {
@@ -327,33 +380,18 @@ class OntologyHandler {
 	}
 	
 	/**
-	 * returns URIs of given resources.
-	 * @param resources
-	 * @return
-	 */
-	public List<String> getResourcesURIs(List<OntResource> resources) {
-		List<String> resourcesURIs = new ArrayList<String>();
-		if (resources != null)
-			for (OntResource r: resources) {
-				if (resourcesURIs.indexOf(r.getURI()) == -1)
-					resourcesURIs.add(r.getURI());
-			}
-		return resourcesURIs;
-	}
-	
-	/**
 	 * returns URIs of all subclasses of @param classUri (also considers indirect subclasses if second parameter is true).
 	 * @param classUri
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getSubClasses(String classUri, boolean recursive) {
+	public HashMap<String, Label> getSubClasses(String classUri, boolean recursive) {
 
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntClass(classUri);
-		if (r == null) return new ArrayList<String>();
+		if (r == null) return new HashMap<String, Label>();
 		getChildren(r, resources, recursive);
-		return getResourcesURIs(resources);
+		return getResourcesLabels(resources);
 	}
 	
 	/**
@@ -362,13 +400,13 @@ class OntologyHandler {
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getSuperClasses(String classUri, boolean recursive) {
+	public HashMap<String, Label> getSuperClasses(String classUri, boolean recursive) {
 		
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntClass(classUri);
-		if (r == null) return new ArrayList<String>();
+		if (r == null) return new HashMap<String, Label>();
 		getParents(r, resources, recursive);
-		return getResourcesURIs(resources);
+		return getResourcesLabels(resources);
 	}
 	
 	/**
@@ -377,13 +415,13 @@ class OntologyHandler {
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getSubProperties(String propertyUri, boolean recursive) {
+	public HashMap<String, Label> getSubProperties(String propertyUri, boolean recursive) {
 
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntProperty(propertyUri);
-		if (r == null) return new ArrayList<String>();
+		if (r == null) return new HashMap<String, Label>();
 		getChildren(r, resources, recursive);
-		return getResourcesURIs(resources);
+		return getResourcesLabels(resources);
 	}
 	
 	/**
@@ -392,12 +430,12 @@ class OntologyHandler {
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getSuperProperties(String propertyUri, boolean recursive) {
+	public HashMap<String, Label> getSuperProperties(String propertyUri, boolean recursive) {
 
 		List<OntResource> resources = new ArrayList<OntResource>();
 		OntResource r = ontModel.getOntProperty(propertyUri);
-		if (r == null) return new ArrayList<String>();
+		if (r == null) return new HashMap<String, Label>();
 		getParents(r, resources, recursive);
-		return getResourcesURIs(resources);
+		return getResourcesLabels(resources);
 	}
 }
