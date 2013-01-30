@@ -114,10 +114,10 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements JSONI
 				String fullType = (String) value.get(SemanticType.ClientJsonKeys.FullType.name());
 				boolean isPrimary = (Boolean) value.get(SemanticType.ClientJsonKeys.isPrimary.name());
 				
-				Label typeName = ontMgr.getURIFromString(fullType);
+				Label typeName = ontMgr.getUriLabel(fullType);
 				Label domainName = null;
 				if (domain != null && !domain.trim().equals(""))
-					domainName = ontMgr.getURIFromString(domain);
+					domainName = ontMgr.getUriLabel(domain);
 				
 				if(typeName != null) {
 					type = new SemanticType(hNodeId, typeName, domainName, Origin.User, 1.00, isPrimary);

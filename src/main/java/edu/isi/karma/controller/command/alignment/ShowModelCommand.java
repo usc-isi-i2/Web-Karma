@@ -20,6 +20,8 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -33,14 +35,19 @@ import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
+import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.AlignToOntology;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
+import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
 public class ShowModelCommand extends WorksheetCommand {
@@ -96,24 +103,41 @@ public class ShowModelCommand extends WorksheetCommand {
 		// Generate the semantic types for the worksheet
 		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
 		if(ontMgr.isEmpty())
-			return new UpdateContainer(new ErrorUpdate(
-			"No ontology loaded."));
+			return new UpdateContainer(new ErrorUpdate("No ontology loaded."));
 //		SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, outlierTag, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
 		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
 		
-		// Get the alignment update if any
-		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
-
-		try {
-			// Save the semantic types in the input parameter JSON
-			saveSemanticTypesInformation(worksheet, vWorkspace);
-			align.alignAndUpdate(c, false);
-		} catch (Exception e) {
-			logger.error("Error occured while generating the model Reason:.", e);
-			return new UpdateContainer(new ErrorUpdate(
-					"Error occured while generating the model for the source."));
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		if (alignment == null) {
+			alignment = new Alignment(ontMgr);
 		}
-		c.add(new TagsUpdate());
+
+		if (alignment.isEmpty()) {
+			c.add(new TagsUpdate());
+			return c;
+		} else {
+			try {
+				// Save the semantic types in the input parameter JSON
+				saveSemanticTypesInformation(worksheet, vWorkspace);
+				
+				// Add the visualization update
+				List<String> hNodeIdList = new ArrayList<String>();
+				VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+				List<HNodePath> columns = vw.getColumns();
+				for(HNodePath path:columns)
+					hNodeIdList.add(path.getLeaf().getId());
+
+				SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, alignment, hNodeIdList);
+				c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+				c.add(svgUpdate);
+				c.add(new TagsUpdate());
+			} catch (Exception e) {
+				logger.error("Error occured while generating the model Reason:.", e);
+				return new UpdateContainer(new ErrorUpdate(
+						"Error occured while generating the model for the source."));
+			}
+		}
 		return c;
 	}
 

@@ -37,6 +37,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
@@ -84,7 +85,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
-		if(alignment == null || alignment.getAlignmentGraph().edgeSet().size() == 0) {
+		if(alignment == null || alignment.getGraphLinks().size() == 0) {
 			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
 			try {
 				align.align(false);
@@ -96,7 +97,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		}
 		
 		// Add the user provided edge
-		alignment.addUserLink(edgeId);
+		alignment.changeLinkStatus(edgeId, LinkStatus.ForcedByUser);
 		
 		return getAlignmentUpdateContainer(alignment, worksheet, vWorkspace);
 	}
@@ -109,7 +110,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
 		// Clear the user provided edge
-		alignment.clearUserLink(edgeId);
+		alignment.changeLinkStatus(edgeId, LinkStatus.Normal);
 
 		// Get the alignment update
 		return getAlignmentUpdateContainer(alignment, worksheet, vWorkspace);

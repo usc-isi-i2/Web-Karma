@@ -83,7 +83,7 @@ public class DuplicateDomainOfLinkCommand extends Command {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
-		if(alignment == null || alignment.getAlignmentGraph().edgeSet().size() == 0) {
+		if(alignment == null || alignment.getGraphLinks().size() == 0) {
 			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
 			try {
 				align.align(false);

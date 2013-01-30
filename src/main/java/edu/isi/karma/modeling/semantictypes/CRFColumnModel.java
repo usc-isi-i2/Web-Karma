@@ -77,8 +77,8 @@ public class CRFColumnModel implements Jsonizable {
 			
 			// Check if the type contains domain
 			if(label.contains("|")){
-				Label domainURI = ontMgr.getURIFromString(label.split("\\|")[0]);
-				Label typeURI = ontMgr.getURIFromString(label.split("\\|")[1]);
+				Label domainURI = ontMgr.getUriLabel(label.split("\\|")[0]);
+				Label typeURI = ontMgr.getUriLabel(label.split("\\|")[1]);
 				if(domainURI == null || typeURI == null)
 					continue;
 				oj.put(SemanticTypesUpdate.JsonKeys.DisplayDomainLabel.name(), domainURI.getLocalNameWithPrefixIfAvailable());
@@ -86,7 +86,7 @@ public class CRFColumnModel implements Jsonizable {
 				oj.put(SemanticTypesUpdate.JsonKeys.DisplayLabel.name(), typeURI.getLocalNameWithPrefixIfAvailable());
 				oj.put(SemanticTypesUpdate.JsonKeys.FullType.name(), label.split("\\|")[1]);
 			} else {
-				Label typeURI = ontMgr.getURIFromString(label);
+				Label typeURI = ontMgr.getUriLabel(label);
 				if(typeURI == null)
 					continue;
 				oj.put(SemanticTypesUpdate.JsonKeys.FullType.name(), label);

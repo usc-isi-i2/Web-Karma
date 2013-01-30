@@ -20,8 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,47 +29,35 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.AlignToOntology;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.alignment.ClassInstanceLink;
-import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
-import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.view.VWorkspace;
 
-public class SetSemanticTypeCommand_v2 extends Command {
+public class SetSemanticTypeCommand_old extends Command {
 
-	private final String hNodeId;
-	private final String vWorksheetId;
-	private final boolean trainAndShowUpdates;
-	private CRFColumnModel oldColumnModel;
+	private SemanticType oldType;
 	private SynonymSemanticTypes oldSynonymTypes;
-	private JSONArray typesArr;
-	private SynonymSemanticTypes newSynonymTypes;
-	private final boolean isPartOfKey;
-	private Link newLink;
-	
+	private final String vWorksheetId;
+	private CRFColumnModel oldColumnModel;
+	private final SemanticType newType;
+	private final SynonymSemanticTypes newSynonymTypes;
+	private final boolean trainAndShowUpdates;
+
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	protected SetSemanticTypeCommand_v2(String id, String vWorksheetId, String hNodeId, 
-			boolean isPartOfKey, JSONArray typesArr, boolean trainAndShowUpdates) {
+	protected SetSemanticTypeCommand_old(String id, String vWorksheetId,
+			String hNodeId, boolean isPartOfKey, SemanticType type,
+			SynonymSemanticTypes synTypes, boolean trainAndShowUpdates) {
 		super(id);
-		this.hNodeId = hNodeId;
 		this.vWorksheetId = vWorksheetId;
-		this.isPartOfKey = isPartOfKey;
+		this.newType = type;
+		this.newSynonymTypes = synTypes;
 		this.trainAndShowUpdates = trainAndShowUpdates;
-		this.typesArr = typesArr;
-
+		
 		addTag(CommandTag.Modeling);
 	}
 
@@ -87,7 +73,10 @@ public class SetSemanticTypeCommand_v2 extends Command {
 
 	@Override
 	public String getDescription() {
-		return "";
+		if (newType.getDomain() == null)
+			return newType.getType().getLocalName();
+		else
+			return newType.getType().getLocalName() + " of " + newType.getDomain().getLocalName();
 	}
 
 	@Override
@@ -97,70 +86,20 @@ public class SetSemanticTypeCommand_v2 extends Command {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		/*** Get the Alignment for this worksheet ***/
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		
-		/*** Add the appropriate nodes and links in alignment graph ***/
-		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
-		if (columnNode == null) {
-			columnNode = alignment.createColumnNode(hNodeId);
-		}
-		
-		for (int i = 0; i < typesArr.length(); i++) {
-			JSONObject type = typesArr.getJSONObject(i);
-			// Look for the primary semantic type
-			Label typeName = ontMgr.getURIFromString(type.getString(ClientJsonKeys.FullType.name()));
-			if(typeName == null) {
-				logger.error("Could not find the resource " + type.getString(ClientJsonKeys.FullType.name()) + " in ontology model!");
-				return null;
-			}
-			Label domainName = null;
-			if (!type.getString(ClientJsonKeys.Domain.name()).equals(""))
-				domainName = ontMgr.getURIFromString(type.getString(ClientJsonKeys.Domain.name()));
-
-			if (type.getBoolean(ClientJsonKeys.isPrimary.name())) {
-				// Add a class link if the domain is null
-				if (domainName == null) {
-					Node classNode = alignment.getNodeById(typeName.getUriString());
-					if (classNode == null) {
-						classNode = alignment.createInternalClassNode(typeName);
-					}
-					ClassInstanceLink clsLink = alignment.createClassLink(classNode, columnNode, isPartOfKey);
-					alignment.addLinkAndUpdateAlignment(clsLink);
-					newLink = clsLink;
-				} 
-				// Add a property link if both type (property) and domain (class) is present 
-				else {
-					Node classNode = alignment.getNodeById(domainName.getUriString());
-					if (classNode == null) {
-						classNode = alignment.createInternalClassNode(domainName);
-					}
-					DataPropertyLink propLink = alignment.createPropertyLink(classNode, columnNode, typeName, isPartOfKey);
-					alignment.addLinkAndUpdateAlignment(propLink);
-					newLink = propLink;
-				}
-			} else { // Synonym semantic type
-				SemanticType synType = new SemanticType(hNodeId, typeName,domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
-				typesList.add(synType);
-			}
-		}
-		
-		
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 		CRFModelHandler crfModelHandler = vWorkspace.getWorkspace().getCrfModelHandler();
 
 		// Save the old SemanticType object and CRF Model for undo
-//		oldColumnModel = worksheet.getCrfModel().getModelByHNodeId(hNodeId);
-//		oldSynonymTypes = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(newType.getHNodeId());
+		oldType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(newType.getHNodeId());
+		oldColumnModel = worksheet.getCrfModel().getModelByHNodeId(newType.getHNodeId());
+		oldSynonymTypes = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(newType.getHNodeId());
 
 		// Update the SemanticTypes data structure for the worksheet
-//		worksheet.getSemanticTypes().addType(newType);
+		worksheet.getSemanticTypes().addType(newType);
 
 		// Update the synonym semanticTypes
-//		worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), newSynonymTypes);
+		worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), newSynonymTypes);
 
 		if(trainAndShowUpdates) {
 			// Train the semantic type in a separate thread

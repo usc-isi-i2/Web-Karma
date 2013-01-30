@@ -55,7 +55,7 @@ public class GetOntologyClassHierarchyCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
-		c.add(new OntologyHierarchyUpdate(vWorkspace.getWorkspace().getOntologyManager().getOntCache().getClassHierarchy(), "OntologyClassHierarchyUpdate"));
+		c.add(new OntologyHierarchyUpdate(vWorkspace.getWorkspace().getOntologyManager().getClassHierarchy(), "OntologyClassHierarchyUpdate"));
 		return c;
 	}
 

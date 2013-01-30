@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.Command.CommandType;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory.METAPROPERTY_NAME;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -37,11 +36,14 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.ColumnSubClassLink;
+import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SubClassLink;
-import edu.isi.karma.rep.alignment.UriOfClassLink;
 import edu.isi.karma.view.VWorkspace;
 
 public class SetMetaPropertyCommand extends Command {
@@ -76,7 +78,6 @@ public class SetMetaPropertyCommand extends Command {
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -93,22 +94,23 @@ public class SetMetaPropertyCommand extends Command {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		
 		/*** Add the appropriate nodes and links in alignment graph ***/
+		HNode hnode = vWorkspace.getRepFactory().getHNode(hNodeId);
+		String columnName = hnode.getColumnName();
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 		if (columnNode == null) {
-			columnNode = alignment.createColumnNode(hNodeId);
+			columnNode = alignment.addColumnNode(hNodeId, columnName);
 		}
 		
 		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyValue);
-			UriOfClassLink mpLink = alignment.createURIOfClassMetaPropertyLink(classNode, columnNode);
+			ClassInstanceLink mpLink = alignment.addClassInstanceLink(classNode, columnNode, LinkKeyInfo.UriOfInstance);
 			alignment.addLinkAndUpdateAlignment(mpLink);
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
-			
-			
+//			Node classNode = alignment.getNodeById(metaPropertyValue);
 			
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyValue);
-			SubClassLink mpLink = alignment.createSubclassOfNodeMetaPropertyLink(classNode, columnNode);
+			ColumnSubClassLink mpLink = alignment.addColumnSubClassOfLink(classNode, columnNode);
 			alignment.addLinkAndUpdateAlignment(mpLink);
 		}
 		
@@ -128,8 +130,8 @@ public class SetMetaPropertyCommand extends Command {
 
 		if(trainAndShowUpdates) {
 			// Train the semantic type in a separate thread
-			Thread t = new Thread(new SemanticTypeTrainingThread(crfModelHandler, worksheet, newType));
-			t.start();
+//			Thread t = new Thread(new SemanticTypeTrainingThread(crfModelHandler, worksheet, newType));
+//			t.start();
 
 			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 			// Get the alignment update if any

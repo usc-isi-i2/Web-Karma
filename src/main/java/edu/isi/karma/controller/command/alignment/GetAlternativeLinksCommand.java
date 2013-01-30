@@ -80,9 +80,8 @@ public class GetAlternativeLinksCommand extends Command {
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				alignmentId);
-		final List<Link> edges = alignment.getAlternatives(
-				nodeId, true);
-		final Link currentLink = alignment.getAssignedLink(nodeId); 
+		final List<Link> edges = alignment.getAllPossibleLinksToNode(nodeId);
+		final Link currentLink = alignment.getCurrentLinkToNode(nodeId); 
 
 		UpdateContainer upd = new UpdateContainer(new AbstractUpdate() {
 			@Override

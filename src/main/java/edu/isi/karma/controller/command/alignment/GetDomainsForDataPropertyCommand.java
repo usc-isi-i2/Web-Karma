@@ -82,7 +82,7 @@ public class GetDomainsForDataPropertyCommand extends Command {
 
 		// Show all he classes when none are present
 		if (domains == null || domains.size() == 0) {
-			return new UpdateContainer(new OntologyHierarchyUpdate(ontMgr.getOntCache().getClassHierarchy(), "OntologyClassHierarchyUpdate"));
+			return new UpdateContainer(new OntologyHierarchyUpdate(ontMgr.getClassHierarchy(), "OntologyClassHierarchyUpdate"));
 		}
 
 		return new UpdateContainer(new AbstractUpdate() {
@@ -97,7 +97,7 @@ public class GetDomainsForDataPropertyCommand extends Command {
 					for (String domain : domains) {
 						JSONObject classObject = new JSONObject();
 
-						Label domainURI = ontMgr.getURIFromString(domain);
+						Label domainURI = ontMgr.getUriLabel(domain);
 						if(domainURI == null)
 							continue;
 						classObject.put(JsonKeys.data.name(), domainURI.getLocalNameWithPrefixIfAvailable());

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.UndirectedGraph;
@@ -278,13 +279,13 @@ public class Alignment {
 	/**** TO BE IMPLEMENTED ***/
 	
 	
-//	public Set<Node> getGraphNodes() {
-//		return this.graphBuilder.getGraph().vertexSet();
-//	}
-//	
-//	public Set<Link> getGraphLinks() {
-//		return this.graphBuilder.getGraph().edgeSet();
-//	}
+	public Set<Node> getGraphNodes() {
+		return this.graphBuilder.getGraph().vertexSet();
+	}
+	
+	public Set<Link> getGraphLinks() {
+		return this.graphBuilder.getGraph().edgeSet();
+	}
 	
 	public Node getNodeById(String nodeId) {
 		return this.graphBuilder.getIdToNodeMap().get(nodeId);
@@ -406,6 +407,8 @@ public class Alignment {
 		
 	}
 	
-
+	public boolean isEmpty() {
+		return (this.graphBuilder.getGraph().edgeSet().size() == 0);
+	}
 
 }

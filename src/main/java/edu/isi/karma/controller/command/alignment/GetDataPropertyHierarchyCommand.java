@@ -58,7 +58,7 @@ public class GetDataPropertyHierarchyCommand extends Command {
 		UpdateContainer c = new UpdateContainer();
 		
 		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-		c.add(new OntologyHierarchyUpdate(ontMgr.getOntCache().getDataPropertyHierarchy(), "DataPropertyListUpdate"));
+		c.add(new OntologyHierarchyUpdate(ontMgr.getDataPropertyHierarchy(), "DataPropertyListUpdate"));
 		return c;
 	}
 

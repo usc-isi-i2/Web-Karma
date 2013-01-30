@@ -175,14 +175,14 @@ public class SemanticTypeUtil {
 				type = topLabel.split("\\|")[1];
 			}
 
-			Label typeURI = ontMgr.getURIFromString(type);
+			Label typeURI = ontMgr.getUriLabel(type);
 			if(typeURI == null) {
 				logger.error("Could not find the resource " + type + " in ontology model!");
 				continue;
 			}
 			Label domainURI = null;
 			if (!domain.equals(""))
-				domainURI = ontMgr.getURIFromString(domain);
+				domainURI = ontMgr.getUriLabel(domain);
 			SemanticType semtype = new SemanticType(path.getLeaf().getId(),typeURI, domainURI, SemanticType.Origin.CRFModel,scores.get(0), false);
 
 			// Check if the user already provided a semantic type manually
@@ -344,15 +344,15 @@ public class SemanticTypeUtil {
 			for (int i=0; i<labels.size(); i++) {
 				String label = labels.get(i);
 				if (label.contains("|")) {
-					Label domainUri = ontMgr.getURIFromString(label.split("\\|")[0]);
-					Label typeUri = ontMgr.getURIFromString(label.split("\\|")[1]);
+					Label domainUri = ontMgr.getUriLabel(label.split("\\|")[0]);
+					Label typeUri = ontMgr.getUriLabel(label.split("\\|")[1]);
 					
 					// Remove from the list if URI not present in the URI
 					if (domainUri == null || typeUri == null) {
 						removeLabels.add(label);
 					}
 				} else {
-					Label typeUri = ontMgr.getURIFromString(label);
+					Label typeUri = ontMgr.getUriLabel(label);
 					
 					// Remove from the list if URI not present in the URI
 					if (typeUri == null) {

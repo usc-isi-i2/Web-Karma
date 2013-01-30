@@ -23,17 +23,11 @@ package edu.isi.karma.modeling.alignment;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-
 import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
@@ -60,10 +54,10 @@ public class AlignToOntology {
 
 		alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		if (alignment == null || resetAlignment) {
-			alignment = getNewAlignment();
+//			alignment = getNewAlignment();
 		} else {
-			List<SemanticType> semanticTypeList = getListOfSemanticTypes();
-			alignment.updateSemanticTypes(semanticTypeList);
+//			List<SemanticType> semanticTypeList = getListOfSemanticTypes();
+//			alignment.updateSemanticTypes(semanticTypeList);
 		}
 		
 //		// If we need to use the previous alignment (if it exists)
@@ -114,7 +108,7 @@ public class AlignToOntology {
 		}
 		*/
 		// Debug
-		DirectedWeightedMultigraph<Node, Link> tree = alignment.getSteinerTree();
+//		DirectedWeightedMultigraph<Node, Link> tree = alignment.getSteinerTree();
 //		GraphUtil.printGraph(tree);
 		
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
@@ -126,18 +120,7 @@ public class AlignToOntology {
 		update(c);
 	}
 
-	private List<SemanticType> getListOfSemanticTypes() {
-		SemanticTypes semTypes = worksheet.getSemanticTypes();
-		// Get the list of semantic types
-		List<SemanticType> types = new ArrayList<SemanticType>();
-		for (SemanticType type : semTypes.getTypes().values()) {
-//		System.out.println("Type: " + type.getType().getLocalName() + " of " + type.getDomain().getLocalName() + "HNode ID: " + type.getHNodeId());
-			types.add(type);
-		}
-		return types;
-	}
-	
-	private Alignment getNewAlignment() {
+//	private List<SemanticType> getListOfSemanticTypes() {
 //		SemanticTypes semTypes = worksheet.getSemanticTypes();
 //		// Get the list of semantic types
 //		List<SemanticType> types = new ArrayList<SemanticType>();
@@ -145,6 +128,17 @@ public class AlignToOntology {
 ////		System.out.println("Type: " + type.getType().getLocalName() + " of " + type.getDomain().getLocalName() + "HNode ID: " + type.getHNodeId());
 //			types.add(type);
 //		}
-		return new Alignment(vWorkspace.getWorkspace().getOntologyManager(), getListOfSemanticTypes());
-	}
+//		return types;
+//	}
+	
+//	private Alignment getNewAlignment() {
+//		SemanticTypes semTypes = worksheet.getSemanticTypes();
+//		// Get the list of semantic types
+//		List<SemanticType> types = new ArrayList<SemanticType>();
+//		for (SemanticType type : semTypes.getTypes().values()) {
+////		System.out.println("Type: " + type.getType().getLocalName() + " of " + type.getDomain().getLocalName() + "HNode ID: " + type.getHNodeId());
+//			types.add(type);
+//		}
+//		return new Alignment(vWorkspace.getWorkspace().getOntologyManager(), getListOfSemanticTypes());
+//	}
 }
