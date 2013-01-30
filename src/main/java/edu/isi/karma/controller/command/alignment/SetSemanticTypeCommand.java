@@ -118,11 +118,6 @@ public class SetSemanticTypeCommand extends Command {
 			alignment = new Alignment(ontMgr);
 		}
 		
-		// Save the old SemanticType object and CRF Model for undo
-		oldType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(newType.getHNodeId());
-		oldColumnModel = worksheet.getCrfModel().getModelByHNodeId(newType.getHNodeId());
-		oldSynonymTypes = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(newType.getHNodeId());
-		
 		/*** Add the appropriate nodes and links in alignment graph ***/
 		HNode hnode = vWorkspace.getRepFactory().getHNode(hNodeId);
 		String columnName = hnode.getColumnName();
@@ -187,8 +182,9 @@ public class SetSemanticTypeCommand extends Command {
 		CRFModelHandler crfModelHandler = vWorkspace.getWorkspace().getCrfModelHandler();
 
 		// Save the old SemanticType object and CRF Model for undo
+		oldType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(hNodeId);
 		oldColumnModel = worksheet.getCrfModel().getModelByHNodeId(hNodeId);
-		oldSynonymTypes = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(newType.getHNodeId());
+		oldSynonymTypes = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(hNodeId);
 
 		// Update the SemanticTypes data structure for the worksheet
 		worksheet.getSemanticTypes().addType(newType);

@@ -113,30 +113,25 @@ public class ShowModelCommand extends WorksheetCommand {
 			alignment = new Alignment(ontMgr);
 		}
 
-		if (alignment.isEmpty()) {
-			c.add(new TagsUpdate());
-			return c;
-		} else {
-			try {
-				// Save the semantic types in the input parameter JSON
-				saveSemanticTypesInformation(worksheet, vWorkspace);
-				
-				// Add the visualization update
-				List<String> hNodeIdList = new ArrayList<String>();
-				VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-				List<HNodePath> columns = vw.getColumns();
-				for(HNodePath path:columns)
-					hNodeIdList.add(path.getLeaf().getId());
+		try {
+			// Save the semantic types in the input parameter JSON
+			saveSemanticTypesInformation(worksheet, vWorkspace);
+			
+			// Add the visualization update
+			List<String> hNodeIdList = new ArrayList<String>();
+			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+			List<HNodePath> columns = vw.getColumns();
+			for(HNodePath path:columns)
+				hNodeIdList.add(path.getLeaf().getId());
 
-				SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, alignment, hNodeIdList);
-				c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
-				c.add(svgUpdate);
-				c.add(new TagsUpdate());
-			} catch (Exception e) {
-				logger.error("Error occured while generating the model Reason:.", e);
-				return new UpdateContainer(new ErrorUpdate(
-						"Error occured while generating the model for the source."));
-			}
+			SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, alignment, hNodeIdList);
+			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+			c.add(svgUpdate);
+			c.add(new TagsUpdate());
+		} catch (Exception e) {
+			logger.error("Error occured while generating the model Reason:.", e);
+			return new UpdateContainer(new ErrorUpdate(
+					"Error occured while generating the model for the source."));
 		}
 		return c;
 	}

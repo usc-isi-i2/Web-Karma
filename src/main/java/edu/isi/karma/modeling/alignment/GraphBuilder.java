@@ -83,6 +83,8 @@ public class GraphBuilder {
 		this.idToLinkMap = new HashMap<String, Link>();
 		this.uriToNodesMap = new HashMap<String, List<Node>>();
 		this.uriToLinksMap = new HashMap<String, List<Link>>();
+		this.typeToNodesMap = new HashMap<NodeType, List<Node>>();
+		this.typeToLinksMap = new HashMap<LinkType, List<Link>>();
 		this.statusToLinksMap = new HashMap<LinkStatus, List<Link>>();
 		
 		graph = new DirectedWeightedMultigraph<Node, Link>(Link.class);

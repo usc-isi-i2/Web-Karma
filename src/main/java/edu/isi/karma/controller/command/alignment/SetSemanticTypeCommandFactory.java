@@ -20,14 +20,10 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,11 +32,6 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
-import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
-import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
@@ -81,43 +72,15 @@ public class SetSemanticTypeCommandFactory extends CommandFactory implements JSO
 		boolean isPartOfKey = HistoryJsonUtil.getBooleanValue(Arguments.isKey.name(), inputJson);
 		boolean train = HistoryJsonUtil.getBooleanValue(Arguments.trainAndShowUpdates.name(), inputJson);
 		
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-		/*
-		 * Parse the input JSON Array to get the sem types (including the
-		 * synonym ones)
-		 */
-		List<SemanticType> typesList = new ArrayList<SemanticType>();
-		SemanticType primaryType = null;
-		
 		JSONArray arr;
 		try {
 			arr = new JSONArray(arrStr);
-			for (int i = 0; i < arr.length(); i++) {
-				JSONObject type = arr.getJSONObject(i);
-				// Look for the primary semantic type
-				Label typeName = ontMgr.getUriLabel(type.getString(SemanticTypesUpdate.JsonKeys.FullType.name()));
-				if(typeName == null) {
-					logger.error("Could not find the resource " + type.getString(SemanticTypesUpdate.JsonKeys.FullType.name()) + " in ontology model!");
-					return null;
-				}
-				Label domainName = null;
-				if (type.getString(SemanticTypesUpdate.JsonKeys.Domain.name()) != "")
-					domainName = ontMgr.getUriLabel(type.getString(SemanticTypesUpdate.JsonKeys.Domain.name()));
-
-				if (type.getBoolean(ClientJsonKeys.isPrimary.name())) {
-					primaryType = new SemanticType(hNodeId, typeName,domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
-				} else { // Synonym semantic type
-					SemanticType synType = new SemanticType(hNodeId, typeName,domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
-					typesList.add(synType);
-				}
-			}
 		} catch (JSONException e) {
 			logger.error("Bad JSON received from server!", e);
 			return null;
 		}
-		SynonymSemanticTypes synTypes = new SynonymSemanticTypes(typesList);
 		
-		SetSemanticTypeCommand_old comm = new SetSemanticTypeCommand_old(getNewId(vWorkspace), vWorksheetId,hNodeId, isPartOfKey, primaryType, synTypes, train);
+		SetSemanticTypeCommand comm = new SetSemanticTypeCommand(getNewId(vWorkspace), vWorksheetId, hNodeId, isPartOfKey, arr, train);
 		
 		// Change the train flag, so that it does not train while reading from history
 		HistoryJsonUtil.setArgumentValue(Arguments.trainAndShowUpdates.name(), false, inputJson);

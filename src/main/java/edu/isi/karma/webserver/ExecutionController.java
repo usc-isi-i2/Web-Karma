@@ -87,8 +87,8 @@ import edu.isi.karma.controller.command.alignment.ResetModelCommand;
 import edu.isi.karma.controller.command.alignment.ResetModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommand;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory;
-import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommand_old;
-import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommandFactory_old;
+import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommand;
+import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommandFactory;
 import edu.isi.karma.controller.command.alignment.ShowAutoModelCommand;
 import edu.isi.karma.controller.command.alignment.ShowAutoModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.ShowModelCommand;
@@ -163,8 +163,8 @@ public class ExecutionController {
 				new GetOntologyClassHierarchyCommandFactory());
 		commandFactoryMap.put(GetDataPropertyHierarchyCommand.class.getSimpleName(),
 				new GetDataPropertyHierarchyCommandFactory());
-		commandFactoryMap.put(SetSemanticTypeCommand_old.class.getSimpleName(),
-				new SetSemanticTypeCommandFactory_old());
+		commandFactoryMap.put(SetSemanticTypeCommand.class.getSimpleName(),
+				new SetSemanticTypeCommandFactory());
 		commandFactoryMap.put(ImportOntologyCommand.class.getSimpleName(),
 				new ImportOntologyCommandFactory());
 		commandFactoryMap.put(GetDomainsForDataPropertyCommand.class.getSimpleName(),
@@ -236,6 +236,7 @@ public class ExecutionController {
 	}
 
 	public Command getCommand(HttpServletRequest request) {
+		System.out.println("Command: " + request.getParameter("command"));
 		CommandFactory cf = commandFactoryMap.get(request.getParameter("command"));
 		if (cf != null) {
 			if (cf instanceof JSONInputCommandFactory) {

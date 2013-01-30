@@ -812,14 +812,11 @@ function submitSemanticTypeChange() {
 	    else
 	        info["command"] = "SetSemanticTypeCommand";
 	}
-	
-	
-	var info = new Object();
-	var hNodeId = optionsDiv.data("currentNodeId");
-	info["vWorksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
-	info["hNodeId"] = hNodeId;
-	info["isKey"] = $("input#chooseClassKey").is(":checked");
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
+
+	// info["vWorksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
+	// info["hNodeId"] = hNodeId;
+	// info["isKey"] = $("input#chooseClassKey").is(":checked");
+	// info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["SemanticTypesArray"] = JSON.stringify(semTypesArray);
 	
 	var newInfo = [];
