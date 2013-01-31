@@ -143,9 +143,9 @@ public class Alignment {
 	public Link getCurrentLinkToNode(String nodeId) {
 		
 		Node node = this.getNodeById(nodeId);
-		Link[] incomingLinks = this.steinerTree.incomingEdgesOf(node).toArray(new Link[0]);
-		if (incomingLinks != null && incomingLinks.length == 1)
-			return incomingLinks[0];
+		Set<Link> incomingLinks = this.steinerTree.incomingEdgesOf(node);
+		if (incomingLinks != null && incomingLinks.size() == 1)
+			return incomingLinks.toArray(new Link[0])[0];
 		
 		return null;
 	}
@@ -159,7 +159,7 @@ public class Alignment {
 		for (Node v : this.steinerTree.vertexSet())
 			nodesInSteinerTree.add(v.getId());
 		
-		Link[] incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(node).toArray(new Link[0]);
+		Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(node);
 		if (incomingLinks != null) {
 
 //			for (Link link : incomingLinks) {
@@ -170,7 +170,7 @@ public class Alignment {
 //				
 //			}
 
-			possibleLinks = Arrays.asList(incomingLinks);
+			possibleLinks = Arrays.asList(incomingLinks.toArray(new Link[0]));
 		}
 		
 		Collections.sort(possibleLinks);
