@@ -479,7 +479,11 @@ public class GraphBuilder {
 
 		for (Node n : nodes) {
 
-			if (n.getLabel().getUri().equalsIgnoreCase(Uris.THING_URI))
+			String uri = n.getLabel().getUri();
+			if (uri == null)
+				continue;
+			
+			if (uri.equalsIgnoreCase(Uris.THING_URI))
 				continue;
 
 			if (!(n instanceof InternalNode))
@@ -490,6 +494,8 @@ public class GraphBuilder {
 			
 			Link[] outgoingLinks = this.graph.outgoingEdgesOf(n).toArray(new Link[0]); 
 			for (Link outLink: outgoingLinks) {
+				if (outLink.getLabel().getUri() == null)
+					continue;
 				if (outLink.getLabel().getUri().equalsIgnoreCase(Uris.RDFS_SUBCLASS_URI)) {
 					if (!outLink.getTarget().getLabel().getUri().equalsIgnoreCase(Uris.THING_URI))
 						parentExist = true;

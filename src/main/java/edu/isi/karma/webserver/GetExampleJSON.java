@@ -116,13 +116,13 @@ public class GetExampleJSON extends HttpServlet {
 		//mariam
 		//File file = new File("../demofiles/usc_faculty.csv");
 		
-		File file = new File("SampleData/CSV/data.csv");
-		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
-		try {
-			imp.generateWorksheet();
-		} catch (KarmaException e) {
-			e.printStackTrace();
-		}
+//		File file = new File("SampleData/CSV/data.csv");
+//		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
+//		try {
+//			imp.generateWorksheet();
+//		} catch (KarmaException e) {
+//			e.printStackTrace();
+//		}
 		
 
 //		SampleDataFactory.createFromJsonTextFile(workspace,"./SampleData/JSON/Events.json");

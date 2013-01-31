@@ -88,7 +88,7 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 	public String getLocalId() {
 		String s = this.id;
 
-		if (this.label != null)
+		if (this.label != null && this.label.getNs() != null)
 			s = s.replaceAll(this.label.getNs(), "");
 		
 		return s;
