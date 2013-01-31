@@ -220,7 +220,7 @@ public class Alignment {
 	
 	public void align() {
 		
-//		GraphUtil.printGraph(this.graphBuilder.getGraph());
+		GraphUtil.printGraph(this.graphBuilder.getGraph());
 		long start = System.currentTimeMillis();
 		
 		logger.info("Updating UI preferred links ...");

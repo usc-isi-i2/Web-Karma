@@ -236,7 +236,6 @@ public class ExecutionController {
 	}
 
 	public Command getCommand(HttpServletRequest request) {
-		System.out.println("Command: " + request.getParameter("command"));
 		CommandFactory cf = commandFactoryMap.get(request.getParameter("command"));
 		if (cf != null) {
 			if (cf instanceof JSONInputCommandFactory) {

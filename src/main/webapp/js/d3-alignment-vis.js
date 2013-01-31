@@ -20,6 +20,7 @@
  ******************************************************************************/
 
 function displayAlignmentTree_ForceKarmaLayout(json) {
+	console.log(json);
     var vworksheetId = json["worksheetId"];
     var showHideDiv = $("div#showHideSpace_"+vworksheetId);
     var tableLeftOffset = $("table#"+vworksheetId).offset().left;
@@ -72,7 +73,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         var width = extremeRightX - extremeLeftX;
         node["width"] = width;
         node["y"] = h - ((node["height"] * levelHeight));
-        if(node["nodeType"] == "DataProperty" || node["nodeType"] == "Unassigned")
+        if(node["nodeType"] == "ColumnNode" || node["nodeType"] == "Unassigned")
             node["y"] -= 5;
         if(node["nodeType"] == "FakeRoot")
             node["y"] += 15;
@@ -114,7 +115,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .attr("y2", function(d) { return d.target.y; })
         .attr("id", function(d) { return "line"+d.source.index+"_"+d.target.index; })
         .attr("marker-end", function(d) {
-            if(d.target.nodeType == "DataProperty") 
+            if(d.target.nodeType == "ColumnNode") 
                 return "url(#marker-DataProperty)";
             else
                 return "url(#marker-Class)";
@@ -139,7 +140,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 return d.target.x;
         })
         .attr("y", function(d) {
-            if(d.target.nodeType == "DataProperty")
+            if(d.target.nodeType == "ColumnNode")
                 return ((d.source.y + d.target.y)/2 + 12);
             if(d.source.nodeType == "FakeRoot")
                 return ((d.source.y + d.target.y)/2 - 4);
@@ -183,14 +184,14 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .attr("dy", ".32em")
         .text(function(d) {
             $(this).data("text",d.label);
-            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
+            if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
                 return "";
             else 
                 return d.label; })
         .attr("width", function(d) {
             var newText = $(this).text();
             if(this.getComputedTextLength() > d["width"]) {
-                if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
+                if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
                     return 0;
                 $(this).qtip({content: {text: $(this).data("text")}});
                 // Trim the string to make it fit inside the rectangle
@@ -208,7 +209,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         })
         .attr("x", function(d){ return this.getComputedTextLength()/2 * -1;})
         .on("click", function(d){
-            if(d["nodeType"] == "Class") {
+            if(d["nodeType"] == "InternalNode") {
                 d["targetNodeId"] = d["id"];
                 showAlternativeParents_d3(d, svg, d3.event);
             }
@@ -218,35 +219,35 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .attr("ry", 6)
         .attr("rx", 6)
         .attr("class", function(d){
-            if(d.nodeType != "DataProperty" && d.nodeType != "Unassigned" && d.nodeType != "FakeRoot")
+            if(d.nodeType != "ColumnNode" && d.nodeType != "Unassigned" && d.nodeType != "FakeRoot")
                 return vworksheetId;
         })
         .attr("y", function(d){
-            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot") {
+            if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot") {
                 return -2;
             } else
                 return -10;
         })
         .attr("height", function(d){
-            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
+            if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
                 return 6;
             else
                 return 20;  
         })
         .attr("width", function(d) {
-            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
+            if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
                 return 6;
             else
                 return d["width"];
         }).attr("x", function(d){
-            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot") {
+            if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot") {
                 return -3;
             } else
                 return d.width/2 * -1;
         }).on("click", function(d){
-            if(d["nodeType"] == "DataProperty" || d.nodeType == "Unassigned")
+            if(d["nodeType"] == "ColumnNode" || d.nodeType == "Unassigned")
                 changeSemanticType_d3(d, svg, d3.event);
-            else if(d["nodeType"] == "Class") {
+            else if(d["nodeType"] == "InternalNode") {
                 d["targetNodeId"] = d["id"];
                 showAlternativeParents_d3(d, svg, d3.event);
             }

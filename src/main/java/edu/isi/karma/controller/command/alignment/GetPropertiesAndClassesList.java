@@ -1,6 +1,7 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,20 +13,30 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetPropertiesAndClassesList extends Command {
 
+	private final String vWorksheetId;
 	private static Logger logger = LoggerFactory.getLogger(GetPropertiesAndClassesList.class);
 
 	private enum JsonKeys {
-		classList, classMap, propertyList, propertyMap
+		classList, classMap, propertyList, propertyMap, label, category
+	}
+	
+	private enum JsonValues {
+		Class, Instance
 	}
 
-	public GetPropertiesAndClassesList(String id) {
+	public GetPropertiesAndClassesList(String id, String vWorksheetId) {
 		super(id);
+		this.vWorksheetId = vWorksheetId;
 	}
 
 	@Override
@@ -102,6 +113,34 @@ public class GetPropertiesAndClassesList extends Command {
 //				propKey.put(propStr, prop.getURI());
 //				propertiesMap.put(propKey);
 //			}
+			
+			/** Add all the class instances **/
+			String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+			Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+			if (alignment != null && !alignment.isEmpty()) {
+				Set<Node> nodes = alignment.getGraphNodes();
+				for (Node node: nodes) {
+					if (node.getType() == NodeType.InternalNode) {
+						JSONObject nodeKey = new JSONObject();
+						nodeKey.put(node.getLocalId(), node.getId());
+						classesMap.put(nodeKey);
+						
+						JSONObject instanceCatObject = new JSONObject();
+						instanceCatObject.put(JsonKeys.label.name(), node.getLocalId());
+						instanceCatObject.put(JsonKeys.category.name(), JsonValues.Instance.name());
+						classesList.put(instanceCatObject);
+					}
+				}
+			}
+			
+			// TESTING PURPOSES
+//			JSONObject nameObj = new JSONObject();
+//			nameObj.put("Person1", "http://isi.edu:Person1");
+//			classesMap.put(nameObj);
+//			JSONObject instanceCatObject = new JSONObject();
+//			instanceCatObject.put("label", "Person1");
+//			instanceCatObject.put("category", "Instance");
+//			classesList.put(instanceCatObject);
 			
 			/** Adding all the classes **/
 			for (Label clazz: ontMgr.getClasses().values()) {

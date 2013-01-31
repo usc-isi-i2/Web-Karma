@@ -198,7 +198,6 @@ public class SetSemanticTypeCommand extends Command {
 			Thread t = new Thread(new SemanticTypeTrainingThread(crfModelHandler, worksheet, newType));
 			t.start();
 
-			System.out.println("In train and show update...");
 			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 			try {
 				// Add the visualization update

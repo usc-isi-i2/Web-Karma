@@ -8,10 +8,15 @@ import edu.isi.karma.view.VWorkspace;
 
 public class GetPropertiesAndClassesListCommandFactory extends CommandFactory {
 
+	private enum Arguments {
+		vWorksheetId
+	}
+	
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
-		return new GetPropertiesAndClassesList(getNewId(vWorkspace));
+		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
+		return new GetPropertiesAndClassesList(getNewId(vWorkspace), vWorksheetId);
 	}
 
 }

@@ -87,6 +87,23 @@ function attachOntologyOptionsRadioButtonHandlers() {
     });
     
     $("div#semanticTypingAdvacedOptionsDiv input:checkbox").change(semanticTypesAdvancedOptionsHandler);
+    
+    $.widget( "custom.catcomplete", $.ui.autocomplete, {
+    	_renderItemData: function( ul, item ) {
+			return this._renderItem( ul, item ).data( "ui-autocomplete-item", item );
+		},
+	    _renderMenu: function( ul, items ) {
+			 var that = this,
+			 currentCategory = "";
+	      	 $.each( items, function( index, item ) {
+	         	if ( item.category != currentCategory ) {
+	          		ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+	          		currentCategory = item.category;
+	        	}
+	        that._renderItemData( ul, item);
+	      	});
+	   	}
+	});
 }
 
 function semanticTypesAdvancedOptionsHandler() {
@@ -398,12 +415,12 @@ function showSemanticTypeEditOptions() {
             response(matches);
         }
     });
-    $("input#classInputBox").autocomplete({autoFocus: true, select:function(event, ui){
+    $("input#classInputBox").catcomplete({autoFocus: true, select:function(event, ui){
         $("input#classInputBox").val(ui.item.value);
         validateClassInputValue();
     }, source: function( request, response ) {
         var matches = $.map( classArray, function(cls) {
-            if ( cls.toUpperCase().indexOf(request.term.toUpperCase()) != -1 ) {
+            if ( cls["label"].toUpperCase().indexOf(request.term.toUpperCase()) != -1 ) {
                 return cls;
             }
         });

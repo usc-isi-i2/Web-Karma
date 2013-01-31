@@ -249,14 +249,14 @@ and related projects, please see: http://www.isi.edu/integration
 								
 								if(cloneTable.data("currentTable") == tableID) {
 									cloneTable.css({position:'fixed',
-							                 top:0, left:288+x});
+							                 top:0, left:280+x});
 									return false;
 								} else {
 									$("table#HeaderScrollPanel tr").remove();
 							        var theadClone = $("table#"+tableID +" thead").clone();
 							        cloneTable.append(theadClone);
 							        cloneTable.css({position:'fixed',
-							                 top:0, left:288+x});
+							                 top:0, left:280+x});
 							                 
 							        $.each($("table#"+tableID+" thead tr"), function(trIndex, originalRow){
 							        	var dupRow = $("thead tr", cloneTable).get(trIndex);

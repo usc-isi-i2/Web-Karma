@@ -104,14 +104,14 @@ public class SetMetaPropertyCommand extends Command {
 		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyValue);
 			ClassInstanceLink mpLink = alignment.addClassInstanceLink(classNode, columnNode, LinkKeyInfo.UriOfInstance);
-			alignment.addLinkAndUpdateAlignment(mpLink);
+			alignment.align();
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
 //			Node classNode = alignment.getNodeById(metaPropertyValue);
 			
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyValue);
 			ColumnSubClassLink mpLink = alignment.addColumnSubClassOfLink(classNode, columnNode);
-			alignment.addLinkAndUpdateAlignment(mpLink);
+			alignment.align();
 		}
 		
 		UpdateContainer c = new UpdateContainer();
