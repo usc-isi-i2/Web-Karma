@@ -198,11 +198,22 @@ public class Alignment {
 	private List<Node> computeSteinerNodes() {
 		List<Node> steinerNodes = new ArrayList<Node>();
 		
-		// Add column nodes
+		// Add column nodes and their domain
 		List<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
-		if (columnNodes != null)
-			steinerNodes.addAll(columnNodes);
-		
+		if (columnNodes != null) {
+			for (Node n : columnNodes) {
+				Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(n);
+				if (incomingLinks != null && incomingLinks.size() == 1) {
+					Node domain = incomingLinks.toArray(new Link[0])[0].getSource();
+					// adding the column node
+					steinerNodes.add(n);
+					// adding the domain
+					steinerNodes.add(domain);
+				} else 
+					logger.error("The column node " + n.getId() + " does not have any domain or it has more than one domain.");
+			}
+		}
+
 		// Add source and target of the links forced by the user
 		List<Link> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
 		if (linksForcedByUser != null) {
@@ -220,7 +231,7 @@ public class Alignment {
 	
 	public void align() {
 		
-		GraphUtil.printGraph(this.graphBuilder.getGraph());
+		GraphUtil.printGraphSimple(this.graphBuilder.getGraph());
 		long start = System.currentTimeMillis();
 		
 		logger.info("Updating UI preferred links ...");
@@ -243,7 +254,7 @@ public class Alignment {
 			logger.info("resulting tree is null ...");
 			return;
 		}
-//		GraphUtil.printGraphSimple(tree);
+		GraphUtil.printGraphSimple(tree);
 		
 		logger.info("selecting a root for the tree ...");
 		TreePostProcess treePostProcess = new TreePostProcess(tree);
@@ -320,8 +331,8 @@ public class Alignment {
 	
 	public ColumnNode addColumnNode(String hNodeId, String columnName) {
 		
-		String id = nodeIdFactory.getNodeId(hNodeId);
-		ColumnNode node = new ColumnNode(id, hNodeId, columnName);
+		// use hNodeId as id of the node
+		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName);
 		if (this.graphBuilder.addNode(node)) return node;
 		return null;
 	}

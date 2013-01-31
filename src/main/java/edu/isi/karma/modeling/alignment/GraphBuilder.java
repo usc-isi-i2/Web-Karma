@@ -92,7 +92,7 @@ public class GraphBuilder {
 			
 		initialGraph();
 
-		logger.info("graph has been created.");
+		logger.info("initial graph has been created.");
 	}
 	
 	// Public Methods

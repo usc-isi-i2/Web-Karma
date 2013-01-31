@@ -25,6 +25,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
 
@@ -49,7 +50,10 @@ public class GraphUtil {
     	System.out.print( vertex.getLocalId());
 //    	System.out.print( vertex.getID());
     	System.out.print(", ");
-    	System.out.print(vertex.getLabel().getLocalName());
+		if (vertex instanceof ColumnNode)
+			System.out.print( ((ColumnNode)vertex).getColumnName());
+		else
+			System.out.print(vertex.getLabel().getLocalName());
     	System.out.print(", ");
     	System.out.print(getNodeTypeString(vertex));
     	System.out.print(")");
@@ -104,7 +108,10 @@ public class GraphUtil {
     	System.out.println("*** Graph ***");
 		for (Link edge : graph.edgeSet()) {
 			System.out.print("(");
-			System.out.print(edge.getSource().getLocalId());
+			if (edge.getSource() instanceof ColumnNode)
+				System.out.print( ((ColumnNode)edge.getSource()).getColumnName());
+			else
+				System.out.print(edge.getSource().getLocalId());
 			System.out.print(")");
 			System.out.print(" - ");
 			System.out.print("(");
@@ -112,7 +119,10 @@ public class GraphUtil {
 			System.out.print(")");
 			System.out.print(" - ");
 			System.out.print("(");
-			System.out.print(edge.getTarget().getLocalId());
+			if (edge.getTarget() instanceof ColumnNode)
+				System.out.print( ((ColumnNode)edge.getTarget()).getColumnName());
+			else
+				System.out.print(edge.getTarget().getLocalId());
 			System.out.print(")");
 			System.out.println();
         }
