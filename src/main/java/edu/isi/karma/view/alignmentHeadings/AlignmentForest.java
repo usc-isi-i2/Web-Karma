@@ -265,7 +265,7 @@ public class AlignmentForest implements TForest {
 		AlignmentLink parentLink = null;
 		if (parentEdge != null) {
 			parentLink = new AlignmentLink(parentEdge.getId(),
-					parentEdge.getUriString());
+					parentEdge.getLabel().getUri());
 		}
 
 		// Add the children
@@ -276,7 +276,7 @@ public class AlignmentForest implements TForest {
 		if (vertex.getSemanticType() != null
 				&& tree.outgoingEdgesOf(vertex).size() != 0) {
 			logger.debug("Intermediate Node with column attached to it: "
-					+ vertex.getUriString());
+					+ vertex.getLabel().getUri());
 			AlignmentLink link = new AlignmentLink(vertex.getSemanticType()
 					.getHNodeId() + "BlankLink", "BlankNode");
 			TNode node = new AlignmentNode(vertex.getId() + "BlankNodeId",
@@ -293,7 +293,7 @@ public class AlignmentForest implements TForest {
 		}
 
 		AlignmentNode node = new AlignmentNode(vertex.getId(), children,
-				parentLink, vertex.getUriString(), vertex.getSemanticType());
+				parentLink, vertex.getLabel().getUri(), vertex.getSemanticType());
 		logger.debug("Created node: " + node.getId());
 		return node;
 	}

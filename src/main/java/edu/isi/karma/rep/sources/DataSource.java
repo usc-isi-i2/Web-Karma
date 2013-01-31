@@ -142,7 +142,7 @@ public class DataSource extends Source {
 				logger.debug("Vertex " + n.getLocalId() + " is a column node.");
 				String hNodeId = ((ColumnNode)n).getHNodeId();
 				String attId = "att" + String.valueOf(attributeList.size() + 1);
-				Attribute att = new Attribute(attId, this.getUri(), n.getLocalName(), IOType.NONE, AttributeRequirement.NONE);
+				Attribute att = new Attribute(attId, this.getUri(), n.getLabel().getLocalName(), IOType.NONE, AttributeRequirement.NONE);
 				att.sethNodeId(hNodeId);
 				attributeList.add(att);
 				
@@ -164,7 +164,7 @@ public class DataSource extends Source {
 			if (vertexIdToArgument.get(n.getId()) == null)
 				continue;
 			
-			Label classPredicate = new Label(n.getUriString(), n.getNs(), n.getPrefix());
+			Label classPredicate = new Label(n.getLabel().getUri(), n.getLabel().getNs(), n.getLabel().getPrefix());
 
 			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(n.getId()));
 			m.getAtoms().add(classAtom);
@@ -176,7 +176,7 @@ public class DataSource extends Source {
 					vertexIdToArgument.get(e.getTarget().getId()) == null)
 				continue;
 
-			Label propertyPredicate = new Label(e.getUriString(), e.getNs(), e.getPrefix());
+			Label propertyPredicate = new Label(e.getLabel().getUri(), e.getLabel().getNs(), e.getLabel().getPrefix());
 			IndividualPropertyAtom propertyAtom = null;
 			
 			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source

@@ -66,7 +66,7 @@ public class OntologyTreeNode {
 	
 	private void printRecursively(OntologyTreeNode node, int level) {
 		for (int i = 0; i < level; i++) System.out.print("---"); System.out.print(" ");
-		System.out.println("URI: " + node.getUri().getUriString());
+		System.out.println("URI: " + node.getUri().getUri());
 		for (int i = 0; i < level; i++) System.out.print("   "); System.out.print(" ");
 		System.out.println("Label: " + node.getUri().getRdfsLabel());
 		for (int i = 0; i < level; i++) System.out.print("   "); System.out.print(" ");

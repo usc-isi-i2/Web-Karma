@@ -54,14 +54,14 @@ public class SemanticTypeTrainingThread implements Runnable {
 		ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(worksheet, currentColumnPath);
 		boolean trainingResult = false;
 		String newTypeString = (newType.getDomain() == null) ? 
-				newType.getType().getUriString() : newType.getDomain().getUriString() + "|" + newType.getType().getUriString();
+				newType.getType().getUri() : newType.getDomain().getUri() + "|" + newType.getType().getUri();
 		
 		trainingResult = crfModelHandler.addOrUpdateLabel(newTypeString,trainingExamples, columnFeatures);
 
 		if (!trainingResult) {
 			logger.error("Error occured while training CRF Model.");
 		}
-		logger.debug("Using type:" + newType.getDomain().getUriString() + "|" + newType.getType().getUriString());
+		logger.debug("Using type:" + newType.getDomain().getUri() + "|" + newType.getType().getUri());
 
 		// Add the new CRF column model for this column
 		ArrayList<String> labels = new ArrayList<String>();

@@ -95,10 +95,10 @@ public class GetAlternativeLinksCommand extends Command {
 					for (Link edge : edges) {
 						
 						String edgeLabel = "";
-						if(edge.getPrefix() != null && !edge.getPrefix().equals(""))
-							edgeLabel = edge.getPrefix() + ":" + edge.getLocalName();
+						if(edge.getLabel().getPrefix() != null && !edge.getLabel().getPrefix().equals(""))
+							edgeLabel = edge.getLabel().getPrefix() + ":" + edge.getLabel().getLocalName();
 						else
-							edgeLabel = edge.getLocalName();
+							edgeLabel = edge.getLabel().getLocalName();
 						
 						String edgeSourceLabel = "";
 						

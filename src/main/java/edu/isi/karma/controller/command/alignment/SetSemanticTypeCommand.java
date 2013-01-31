@@ -144,7 +144,7 @@ public class SetSemanticTypeCommand extends Command {
 				if (type.getBoolean(ClientJsonKeys.isPrimary.name())) {
 					// Add a class link if the domain is null
 					if (domainName == null) {
-						Node classNode = alignment.getNodeById(typeName.getUriString());
+						Node classNode = alignment.getNodeById(typeName.getUri());
 						if (classNode == null) {
 							classNode = alignment.addInternalClassNode(typeName);
 						}
@@ -158,7 +158,7 @@ public class SetSemanticTypeCommand extends Command {
 					} 
 					// Add a property link if both type (property) and domain (class) is present 
 					else {
-						Node classNode = alignment.getNodeById(domainName.getUriString());
+						Node classNode = alignment.getNodeById(domainName.getUri());
 						if (classNode == null) {
 							classNode = alignment.addInternalClassNode(domainName);
 						}

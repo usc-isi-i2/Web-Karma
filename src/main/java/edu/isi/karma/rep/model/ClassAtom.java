@@ -56,7 +56,7 @@ public class ClassAtom extends Atom {
 	}
 
 	public void print() {
-		System.out.println("class predicate uri: " + classPredicate.getUriString());
+		System.out.println("class predicate uri: " + classPredicate.getUri());
 		System.out.println("class predicate ns: " + classPredicate.getNs());
 		System.out.println("class predicate prefix: " + classPredicate.getPrefix());
 		System.out.println("argument1: " + argument1.getId());

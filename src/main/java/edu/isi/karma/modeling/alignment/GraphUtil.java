@@ -49,7 +49,7 @@ public class GraphUtil {
     	System.out.print( vertex.getLocalId());
 //    	System.out.print( vertex.getID());
     	System.out.print(", ");
-    	System.out.print(vertex.getLocalName());
+    	System.out.print(vertex.getLabel().getLocalName());
     	System.out.print(", ");
     	System.out.print(getNodeTypeString(vertex));
     	System.out.print(")");
@@ -59,7 +59,7 @@ public class GraphUtil {
     	System.out.print("(");
     	System.out.print( edge.getLocalId());
     	System.out.print(", ");
-    	System.out.print(edge.getLocalName());
+    	System.out.print(edge.getLabel().getLocalName());
     	System.out.print(", ");
     	System.out.print(getLinkTypeString(edge));
     	System.out.print(", ");

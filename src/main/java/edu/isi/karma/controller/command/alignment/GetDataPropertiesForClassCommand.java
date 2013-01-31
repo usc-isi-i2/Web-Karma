@@ -96,7 +96,7 @@ public class GetDataPropertiesForClassCommand extends Command {
 						if (domainURI == null)
 							continue;
 						
-						classObject.put(JsonKeys.data.name(), domainURI.getLocalNameWithPrefixIfAvailable());
+						classObject.put(JsonKeys.data.name(), domainURI.getLocalNameWithPrefix());
 						JSONObject metadataObject = new JSONObject();
 						metadataObject.put(JsonKeys.URI.name(), domain);
 						classObject.put(JsonKeys.metadata.name(), metadataObject);

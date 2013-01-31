@@ -36,7 +36,7 @@ public class DataPropertyOfColumnLink extends Link {
 		super(id, label, LinkType.DataPropertyOfColumnLink);
 	}
 
-	public static Label getLabel() {
+	public static Label getFixedLabel() {
 		return label;
 	}
 }

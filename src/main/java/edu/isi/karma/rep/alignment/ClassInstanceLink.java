@@ -40,7 +40,7 @@ public class ClassInstanceLink extends Link {
 		super(id, label, LinkType.ClassInstanceLink, keyInfo);
 	}
 
-	public static Label getLabel() {
+	public static Label getFixedLabel() {
 		return label;
 	}
 }

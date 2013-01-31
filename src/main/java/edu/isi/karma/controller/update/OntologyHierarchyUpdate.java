@@ -68,9 +68,9 @@ public class OntologyHierarchyUpdate extends AbstractUpdate {
 				
 				// Add the data
 				Label resourceUri = node.getUri();
-				resourceObject.put(JsonKeys.data.name(), resourceUri.getLocalNameWithPrefixIfAvailable());
+				resourceObject.put(JsonKeys.data.name(), resourceUri.getLocalNameWithPrefix());
 				JSONObject metadataObject = new JSONObject();
-				metadataObject.put(JsonKeys.URI.name(), resourceUri.getUriString());
+				metadataObject.put(JsonKeys.URI.name(), resourceUri.getUri());
 				resourceObject.put(JsonKeys.metadata.name(), metadataObject);
 				dataArray.put(resourceObject);
 			}
@@ -99,9 +99,9 @@ public class OntologyHierarchyUpdate extends AbstractUpdate {
 			
 			// Add the data
 			Label resourceUri = childNode.getUri();
-			resourceObject.put(JsonKeys.data.name(), resourceUri.getLocalNameWithPrefixIfAvailable());
+			resourceObject.put(JsonKeys.data.name(), resourceUri.getLocalNameWithPrefix());
 			JSONObject metadataObject = new JSONObject();
-			metadataObject.put(JsonKeys.URI.name(), resourceUri.getUriString());
+			metadataObject.put(JsonKeys.URI.name(), resourceUri.getUri());
 			resourceObject.put(JsonKeys.metadata.name(), metadataObject);
 			childrenArray.put(resourceObject);
 		}

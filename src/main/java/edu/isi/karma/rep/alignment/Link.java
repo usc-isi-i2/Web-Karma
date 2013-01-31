@@ -31,53 +31,58 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 	private static final long serialVersionUID = 1L;
 	static Logger logger = Logger.getLogger(Link.class);
 
-	private final String id;
-	private final Label label;
-	private final LinkType type;
+	private String id;
+	private Label label;
+	private LinkType type;
 	private LinkStatus status;
 	private LinkKeyInfo keyInfo;
 	
 	public Link(String id, Label label, LinkType type) {
 		super();
 
-		if (id == null || id.trim().length() == 0) {
-			logger.info("The input id is empty. A random Guid has been assigned.");
-			id = new RandomGUID().toString();
-		}
-		
-		this.id = id;
-		this.label = label;
-		this.type = type;
-		this.status = LinkStatus.Normal;
-		this.keyInfo = LinkKeyInfo.None;
+		this.init();
+		if (id != null && id.trim().length() > 0) this.id = id;
+		if (label != null) this.label = label;
+		if (type != null) this.type = type;
 	}
 	
 	public Link(String id, Label label, LinkType type, LinkKeyInfo keyInfo) {
 		super();
 
-		if (id == null || id.trim().length() == 0) {
-			logger.info("The input id is empty. A random Guid has been assigned.");
-			id = new RandomGUID().toString();
-		}
-		
-		this.id = id;
-		this.label = label;
-		this.type = type;
-		this.status = LinkStatus.Normal;
-		this.keyInfo = keyInfo;
+		this.init();
+		if (id != null && id.trim().length() > 0) this.id = id;
+		if (label != null) this.label = label;
+		if (type != null) this.type = type;
+		if (keyInfo != null) this.keyInfo = LinkKeyInfo.None;
 	}
 	
 	public Link(Link e) {
 		super();
-		this.id = e.id;
-		this.label = e.label;
-		this.type = e.type;
-		this.status = e.status;
-		this.keyInfo = e.keyInfo;
+		if (e == null) this.init();
+		else {
+			this.id = e.id;
+			this.label = e.label;
+			this.type = e.type;
+			this.status = e.status;
+			this.keyInfo = e.keyInfo;
+		}
+	}
+	
+	private void init() {
+		this.id = new RandomGUID().toString();
+		Label l = null;
+		this.label = new Label(l);
+		this.type = LinkType.None;
+		this.status = LinkStatus.Normal;
+		this.keyInfo = LinkKeyInfo.None;
 	}
 	
 	public String getId() {
 		return this.id;
+	}
+	
+	public Label getLabel() {
+		return this.label;
 	}
 	
 	public String getLocalId() {
@@ -88,37 +93,7 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		
 		return s;
 	}
-	
-	public String getLocalName() {
-		if (this.label == null)
-			return null;
 
-		String s = this.label.getUriString();
-		s = s.replaceAll(this.label.getNs(), "");
-		return s;
-	}
-	
-	public String getUriString() {
-		if (this.label == null)
-			return null;
-		
-		return this.label.getUriString();
-	}
-	
-	public String getNs() {
-		if (this.label == null)
-			return null;
-		
-		return this.label.getNs();
-	}
-	
-	public String getPrefix() {
-		if (this.label == null)
-			return null;
-		
-		return this.label.getPrefix();
-	}
-	
 	public LinkType getType() {
 		return type;
 	}

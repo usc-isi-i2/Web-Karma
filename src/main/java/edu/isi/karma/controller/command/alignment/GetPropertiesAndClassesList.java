@@ -106,17 +106,17 @@ public class GetPropertiesAndClassesList extends Command {
 			/** Adding all the classes **/
 			for (Label clazz: ontMgr.getClasses().values()) {
 				JSONObject classKey = new JSONObject();
-				classKey.put(clazz.getLocalNameWithPrefixIfAvailable(), clazz.getUriString());
+				classKey.put(clazz.getLocalNameWithPrefix(), clazz.getUri());
 				classesMap.put(classKey);
-				classesList.put(clazz.getLocalNameWithPrefixIfAvailable());
+				classesList.put(clazz.getLocalNameWithPrefix());
 			}
 			
 			/** Adding all the properties **/
 			for (Label prop: ontMgr.getDataProperties().values()) {
 				JSONObject propKey = new JSONObject();
-				propKey.put(prop.getLocalNameWithPrefixIfAvailable(), prop.getUriString());
+				propKey.put(prop.getLocalNameWithPrefix(), prop.getUri());
 				propertiesMap.put(propKey);
-				propertiesList.put(prop.getLocalNameWithPrefixIfAvailable());
+				propertiesList.put(prop.getLocalNameWithPrefix());
 			}
 
 			// Populate the JSON object that will hold everything in output

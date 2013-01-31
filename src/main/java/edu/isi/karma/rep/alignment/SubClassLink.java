@@ -36,7 +36,7 @@ public class SubClassLink extends Link {
 		super(id, label, LinkType.SubClassLink);
 	}
 	
-	public static Label getLabel() {
+	public static Label getFixedLabel() {
 		return label;
 	}
 }

@@ -136,14 +136,14 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 					linkObj.put(JsonKeys.target.name(), targetIndex);
 					linkObj.put(JsonKeys.sourceNodeId.name(), source.getId());
 					linkObj.put(JsonKeys.targetNodeId.name(), target.getId());
-					linkObj.put(JsonKeys.label.name(), link.getLocalName());
+					linkObj.put(JsonKeys.label.name(), link.getLabel().getLocalName());
 					linkObj.put(JsonKeys.id.name(), link.getId()+"");
 					linkObj.put(JsonKeys.linkStatus.name(), link.getStatus().name());
 
 					if(target.getType() == NodeType.ColumnNode && outEdges.isEmpty()) {
 						linkObj.put(JsonKeys.linkType.name(), JsonValues.holderLink.name());
 						if(link.getKeyType() == LinkKeyInfo.PartOfKey)
-							linkObj.put(JsonKeys.label.name(), link.getLocalName()+"*");
+							linkObj.put(JsonKeys.label.name(), link.getLabel().getLocalName()+"*");
 					}
 
 					linksArr.put(linkObj);

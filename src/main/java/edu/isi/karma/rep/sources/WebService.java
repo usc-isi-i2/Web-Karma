@@ -437,7 +437,7 @@ public class WebService extends Source {
 			if (vertexIdToArgument.get(n.getId()) == null)
 				continue;
 			
-			Label classPredicate = new Label(n.getUriString(), n.getNs(), n.getPrefix());
+			Label classPredicate = new Label(n.getLabel().getUri(), n.getLabel().getNs(), n.getLabel().getPrefix());
 
 			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(n.getId()));
 			m.getAtoms().add(classAtom);
@@ -451,7 +451,7 @@ public class WebService extends Source {
 					vertexIdToArgument.get(e.getTarget().getId()) == null)
 				continue;
 			
-			Label propertyPredicate = new Label(e.getUriString(), e.getNs(), e.getPrefix());
+			Label propertyPredicate = new Label(e.getLabel().getUri(), e.getLabel().getNs(), e.getLabel().getPrefix());
 			IndividualPropertyAtom propertyAtom = null;
 			
 //			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source
@@ -492,7 +492,7 @@ public class WebService extends Source {
 				continue;
 			
 			
-			Label classPredicate = new Label(n.getUriString(), n.getNs(), n.getPrefix());
+			Label classPredicate = new Label(n.getLabel().getUri(), n.getLabel().getNs(), n.getLabel().getPrefix());
 
 			ClassAtom classAtom = new ClassAtom(classPredicate, vertexIdToArgument.get(n.getId()));
 			m.getAtoms().add(classAtom);
@@ -507,7 +507,7 @@ public class WebService extends Source {
 					vertexIdToArgument.get(e.getTarget().getId()) == null)
 				continue;
 			
-			Label propertyPredicate = new Label(e.getUriString(), e.getNs(), e.getPrefix());
+			Label propertyPredicate = new Label(e.getLabel().getUri(), e.getLabel().getNs(), e.getLabel().getPrefix());
 			IndividualPropertyAtom propertyAtom = null;
 			
 			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source

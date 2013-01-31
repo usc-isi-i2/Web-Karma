@@ -22,14 +22,14 @@ package edu.isi.karma.rep.alignment;
 
 public class Label {
 
-	private String uriString;
+	private String uri;
 	private String ns;
 	private String prefix;
 	private String rdfsLabel;
 	private String rdfsComment;
 	
 	public Label(String uri, String ns, String prefix, String rdfsLabel, String rdfsComment) {
-		this.uriString = uri;
+		this.uri = uri;
 		this.ns = ns;
 		this.prefix = prefix;
 		this.rdfsLabel = rdfsLabel;
@@ -37,30 +37,39 @@ public class Label {
 	}
 	
 	public Label(String uri, String ns, String prefix) {
-		this.uriString = uri;
+		this.init();
+		this.uri = uri;
 		this.ns = ns;
 		this.prefix = prefix;
-		this.rdfsLabel = null;
-		this.rdfsComment = null;
+
 	}
 
 	public Label(String uri) {
-		this.uriString = uri;
+		this.init();
+		this.uri = uri;
+	}
+	
+	public Label(Label uri) {
+		if (uri == null) this.init();
+		else {
+			this.uri = uri.getUri();
+			this.ns = uri.getNs();
+			this.prefix = uri.getPrefix();
+			this.rdfsLabel = uri.getRdfsLabel();
+			this.rdfsComment = uri.getRdfsComment();
+		}
+	}
+	
+	private void init() {
+		this.uri = null;
 		this.ns = null;
 		this.prefix = null;
 		this.rdfsLabel = null;
-		this.rdfsComment = null;	}
-	
-	public Label(Label uri) {
-		this.uriString = uri.getUriString();
-		this.ns = uri.getNs();
-		this.prefix = uri.getPrefix();
-		this.rdfsLabel = uri.getRdfsLabel();
-		this.rdfsComment = uri.getRdfsComment();
+		this.rdfsComment = null;
 	}
 	
-	public void setUriString(String uri) {
-		this.uriString = uri;
+	public void setUri(String uri) {
+		this.uri = uri;
 	}
 
 
@@ -74,8 +83,8 @@ public class Label {
 	}
 
 
-	public String getUriString() {
-		return uriString;
+	public String getUri() {
+		return uri;
 	}
 
 	public String getNs() {
@@ -83,14 +92,6 @@ public class Label {
 			return null;		
 		
 		return ns;
-	}
-	
-	public String getRdfsLabel() {
-		return rdfsLabel;
-	}
-
-	public String getRdfsComment() {
-		return rdfsComment;
 	}
 
 	public String getPrefix() {
@@ -101,10 +102,10 @@ public class Label {
 	}
 	
 	public String getLocalName() {
-		if (uriString == null)
+		if (uri == null)
 			return null;
 		
-		String name = uriString;
+		String name = uri;
 		if (ns != null)
 			name = name.replaceFirst(ns, "");
 		
@@ -112,24 +113,24 @@ public class Label {
 	}
 
 	public String getLocalNameWithPrefix() {
-		if (uriString == null)
+
+		String localNameWithPrefix = getLocalName();
+		if (localNameWithPrefix == null)
 			return null;
 		
-		String name = uriString;
-		if (ns != null && prefix != null) {
-			name = name.replaceFirst(ns, "");
-			name = prefix + ":" + name;
-		}
+		if (prefix != null && prefix.trim().length() != 0) 
+			localNameWithPrefix = prefix + ":" + localNameWithPrefix;
 		
-		return name;
+		
+		return localNameWithPrefix;
 	}
-	
-	public String getLocalNameWithPrefixIfAvailable() {
-		if (prefix == null || prefix.equals("")) {
-			return getLocalName();
-		} else {
-			return getLocalNameWithPrefix();
-		}
+
+	public String getRdfsLabel() {
+		return rdfsLabel;
+	}
+
+	public String getRdfsComment() {
+		return rdfsComment;
 	}
 
 }

@@ -53,7 +53,7 @@ public class IndividualPropertyAtom extends Atom {
 	}
 
 	public void print() {
-		System.out.println("property predicate uri: " + propertyPredicate.getUriString());
+		System.out.println("property predicate uri: " + propertyPredicate.getUri());
 		System.out.println("property predicate ns: " + propertyPredicate.getNs());
 		System.out.println("property predicate prefix: " + propertyPredicate.getPrefix());
 		System.out.println("argument1: " + argument1.getId());

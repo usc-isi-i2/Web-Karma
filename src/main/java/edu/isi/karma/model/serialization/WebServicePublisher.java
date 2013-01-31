@@ -342,7 +342,7 @@ public class WebServicePublisher extends SourcePublisher {
 					
 					if (classAtom.getClassPredicate().getPrefix() != null && classAtom.getClassPredicate().getNs() != null)
 						model.setNsPrefix(classAtom.getClassPredicate().getPrefix(), classAtom.getClassPredicate().getNs());
-					Resource className = model.createResource(classAtom.getClassPredicate().getUriString());
+					Resource className = model.createResource(classAtom.getClassPredicate().getUri());
 					r.addProperty(class_predicate, className);
 					
 					Resource arg1 = model.getResource(baseNS + classAtom.getArgument1().getAttOrVarId());
@@ -358,7 +358,7 @@ public class WebServicePublisher extends SourcePublisher {
 					
 					if (propertyAtom.getPropertyPredicate().getPrefix() != null && propertyAtom.getPropertyPredicate().getNs() != null)
 						model.setNsPrefix(propertyAtom.getPropertyPredicate().getPrefix(), propertyAtom.getPropertyPredicate().getNs());
-					Resource propertyName = model.createResource(propertyAtom.getPropertyPredicate().getUriString());
+					Resource propertyName = model.createResource(propertyAtom.getPropertyPredicate().getUri());
 					r.addProperty(property_predicate, propertyName);
 					
 					Resource arg1 = model.getResource(baseNS + propertyAtom.getArgument1().getAttOrVarId());

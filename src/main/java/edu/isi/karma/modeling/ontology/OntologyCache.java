@@ -334,14 +334,14 @@ class OntologyCache {
 			}
 		} else {
 			HashMap<String, Label> subClasses = 
-					this.ontHandler.getSubClasses(node.getUri().getUriString(), false);
-			this.directSubClasses.put(node.getUri().getUriString(), new ArrayList<String>(subClasses.keySet()));
+					this.ontHandler.getSubClasses(node.getUri().getUri(), false);
+			this.directSubClasses.put(node.getUri().getUri(), new ArrayList<String>(subClasses.keySet()));
 			for (String s : subClasses.keySet()) {
 				Label label = subClasses.get(s);
 				OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 				
 				// update direct subClass map
-				this.directSubClassCheck.put(childNode.getUri().getUriString() + node.getUri().getUriString(), true);
+				this.directSubClassCheck.put(childNode.getUri().getUri() + node.getUri().getUri(), true);
 				
 				buildClassHierarchy(childNode);
 				children.add(childNode);
@@ -365,15 +365,15 @@ class OntologyCache {
 			}
 		} else {
 			HashMap<String, Label> subProperties = 
-					this.ontHandler.getSubProperties(node.getUri().getUriString(), false);
-			this.directSubProperties.put(node.getUri().getUriString(), new ArrayList<String>(subProperties.keySet()));
+					this.ontHandler.getSubProperties(node.getUri().getUri(), false);
+			this.directSubProperties.put(node.getUri().getUri(), new ArrayList<String>(subProperties.keySet()));
 			if (subProperties != null)
 				for (String s : subProperties.keySet()) {
 					Label label = subProperties.get(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					
 					// update direct subProperty map
-					this.directSubPropertyCheck.put(childNode.getUri().getUriString() + node.getUri().getUriString(), true);
+					this.directSubPropertyCheck.put(childNode.getUri().getUri() + node.getUri().getUri(), true);
 					
 					buildDataPropertyHierarchy(childNode);
 					children.add(childNode);
@@ -397,15 +397,15 @@ class OntologyCache {
 			}
 		} else {
 			HashMap<String, Label> subProperties = 
-					this.ontHandler.getSubProperties(node.getUri().getUriString(), false);
-			this.directSubProperties.put(node.getUri().getUriString(), new ArrayList<String>(subProperties.keySet()));
+					this.ontHandler.getSubProperties(node.getUri().getUri(), false);
+			this.directSubProperties.put(node.getUri().getUri(), new ArrayList<String>(subProperties.keySet()));
 			if (subProperties != null)
 				for (String s : subProperties.keySet()) {
 					Label label = subProperties.get(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					
 					// update direct subProperty map
-					this.directSubPropertyCheck.put(childNode.getUri().getUriString() + node.getUri().getUriString(), true);
+					this.directSubPropertyCheck.put(childNode.getUri().getUri() + node.getUri().getUri(), true);
 					
 					buildObjectPropertyHierarchy(childNode);
 					children.add(childNode);

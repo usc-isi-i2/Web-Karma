@@ -140,7 +140,7 @@ public class Model {
 				
 				if (classAtom.getClassPredicate().getPrefix() != null && classAtom.getClassPredicate().getNs() != null)
 					model.setNsPrefix(classAtom.getClassPredicate().getPrefix(), classAtom.getClassPredicate().getNs());
-				Resource className = model.createResource(classAtom.getClassPredicate().getUriString());
+				Resource className = model.createResource(classAtom.getClassPredicate().getUri());
 				r.addProperty(class_predicate, className);
 				
 				Resource arg1 = model.getResource(this.baseUri + classAtom.getArgument1().getAttOrVarId());
@@ -156,7 +156,7 @@ public class Model {
 				
 				if (propertyAtom.getPropertyPredicate().getPrefix() != null && propertyAtom.getPropertyPredicate().getNs() != null)
 					model.setNsPrefix(propertyAtom.getPropertyPredicate().getPrefix(), propertyAtom.getPropertyPredicate().getNs());
-				Resource propertyName = model.createResource(propertyAtom.getPropertyPredicate().getUriString());
+				Resource propertyName = model.createResource(propertyAtom.getPropertyPredicate().getUri());
 				r.addProperty(property_predicate, propertyName);
 				
 				Resource arg1 = model.getResource(this.baseUri + propertyAtom.getArgument1().getAttOrVarId());
@@ -374,7 +374,7 @@ public class Model {
 						predicateUri = classAtom.getClassPredicate().getLocalNameWithPrefix();
 						
 					} else {
-						predicateUri = "<" + classAtom.getClassPredicate().getUriString() + ">";
+						predicateUri = "<" + classAtom.getClassPredicate().getUri() + ">";
 					}
 					
 					argument1 = classAtom.getArgument1().getId();
@@ -399,7 +399,7 @@ public class Model {
 						predicateUri = propertyAtom.getPropertyPredicate().getLocalNameWithPrefix();
 						
 					} else {
-						predicateUri = "<" + propertyAtom.getPropertyPredicate().getUriString() + ">";
+						predicateUri = "<" + propertyAtom.getPropertyPredicate().getUri() + ">";
 					}
 
 					argument1 = propertyAtom.getArgument1().getId();
@@ -470,7 +470,7 @@ public class Model {
 						predicateUri = classAtom.getClassPredicate().getLocalNameWithPrefix();
 						
 					} else {
-						predicateUri = "<" + classAtom.getClassPredicate().getUriString() + ">";
+						predicateUri = "<" + classAtom.getClassPredicate().getUri() + ">";
 					}
 					
 					argument1 = classAtom.getArgument1().getId();
@@ -496,7 +496,7 @@ public class Model {
 						predicateUri = propertyAtom.getPropertyPredicate().getLocalNameWithPrefix();
 						
 					} else {
-						predicateUri = "<" + propertyAtom.getPropertyPredicate().getUriString() + ">";
+						predicateUri = "<" + propertyAtom.getPropertyPredicate().getUri() + ">";
 					}
 
 					argument1 = propertyAtom.getArgument1().getId();
@@ -586,7 +586,7 @@ public class Model {
 				if (atom instanceof ClassAtom) {
 					ClassAtom classAtom = ((ClassAtom)atom);
 					atomVar = "?atom" + String.valueOf(i+1);
-					predicateUri = classAtom.getClassPredicate().getUriString();
+					predicateUri = classAtom.getClassPredicate().getUri();
 					argument1 = classAtom.getArgument1().getId();
 					argument1Var = "?" + argument1;
 					
@@ -604,7 +604,7 @@ public class Model {
 				else if (atom instanceof IndividualPropertyAtom) {
 					IndividualPropertyAtom propertyAtom = ((IndividualPropertyAtom)atom);
 					atomVar = "?atom" + String.valueOf(i+1);
-					predicateUri = propertyAtom.getPropertyPredicate().getUriString();
+					predicateUri = propertyAtom.getPropertyPredicate().getUri();
 					argument1 = propertyAtom.getArgument1().getId();
 					argument2 = propertyAtom.getArgument2().getId();
 					argument1Var = "?" + argument1;

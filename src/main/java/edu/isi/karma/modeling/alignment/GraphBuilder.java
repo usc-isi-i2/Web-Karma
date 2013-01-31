@@ -176,11 +176,11 @@ public class GraphBuilder {
 			return false;
 		}
 		
-		String key = source.getId() + target.getId() + link.getUriString();
+		String key = source.getId() + target.getId() + link.getLabel().getUri();
 		// check to see if the link is duplicate or not
 		if (sourceToTargetLinkUris.indexOf(key) != -1)
 		{
-			logger.debug("There is already a link with label " + link.getUriString() + 
+			logger.debug("There is already a link with label " + link.getLabel().getUri() + 
 					" from " + source.getId() + " to " + target.getId());
 			return false;
 		}
@@ -195,10 +195,10 @@ public class GraphBuilder {
 		
 		this.idToLinkMap.put(link.getId(), link);
 		
-		List<Link> linksWithSameUri = uriToLinksMap.get(link.getUriString());
+		List<Link> linksWithSameUri = uriToLinksMap.get(link.getLabel().getUri());
 		if (linksWithSameUri == null) {
 			linksWithSameUri = new ArrayList<Link>();
-			uriToLinksMap.put(link.getUriString(), linksWithSameUri);
+			uriToLinksMap.put(link.getLabel().getUri(), linksWithSameUri);
 		}
 		linksWithSameUri.add(link);
 		
@@ -281,10 +281,10 @@ public class GraphBuilder {
 		
 		this.idToNodeMap.put(node.getId(), node);
 		
-		List<Node> nodesWithSameUri = uriToNodesMap.get(node.getUriString());
+		List<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
 		if (nodesWithSameUri == null) {
 			nodesWithSameUri = new ArrayList<Node>();
-			uriToNodesMap.put(node.getUriString(), nodesWithSameUri);
+			uriToNodesMap.put(node.getLabel().getUri(), nodesWithSameUri);
 		}
 		nodesWithSameUri.add(node);
 		
@@ -326,7 +326,7 @@ public class GraphBuilder {
 			newNodes = new ArrayList<Node>();
 			for (int i = 0; i < recentlyAddedNodes.size(); i++) {
 
-				uriString = recentlyAddedNodes.get(i).getUriString();
+				uriString = recentlyAddedNodes.get(i).getLabel().getUri();
 				if (processedLabels.indexOf(uriString) != -1) 
 					continue;
 
@@ -404,8 +404,8 @@ public class GraphBuilder {
 
 //					logger.debug("examining the links between nodes " + i + "," + u);
 
-					sourceUri = source.getUriString();
-					targetUri = target.getUriString();
+					sourceUri = source.getLabel().getUri();
+					targetUri = target.getLabel().getUri();
 
 					// There is no outgoing link from column nodes and literal nodes
 					if (!(source instanceof InternalNode))
@@ -447,7 +447,7 @@ public class GraphBuilder {
 					// Add subclass links between internal nodes
 					// we have to check both sides.
 					if (ontologyManager.isSubClass(targetUri, sourceUri, false)) {
-						id = linkIdFactory.getLinkId(SubClassLink.getLabel().getUriString());
+						id = linkIdFactory.getLinkId(SubClassLink.getFixedLabel().getUri());
 						SubClassLink subClassOfLink = new SubClassLink(id);
 						// target is subclass of source
 						addWeightedLink(target, source, subClassOfLink, ModelingParams.MAX_WEIGHT);
@@ -479,7 +479,7 @@ public class GraphBuilder {
 
 		for (Node n : nodes) {
 
-			if (n.getUriString().equalsIgnoreCase(Uris.THING_URI))
+			if (n.getLabel().getUri().equalsIgnoreCase(Uris.THING_URI))
 				continue;
 
 			if (!(n instanceof InternalNode))
@@ -490,8 +490,8 @@ public class GraphBuilder {
 			
 			Link[] outgoingLinks = this.graph.outgoingEdgesOf(n).toArray(new Link[0]); 
 			for (Link outLink: outgoingLinks) {
-				if (outLink.getUriString().equalsIgnoreCase(Uris.RDFS_SUBCLASS_URI)) {
-					if (!outLink.getTarget().getUriString().equalsIgnoreCase(Uris.THING_URI))
+				if (outLink.getLabel().getUri().equalsIgnoreCase(Uris.RDFS_SUBCLASS_URI)) {
+					if (!outLink.getTarget().getLabel().getUri().equalsIgnoreCase(Uris.THING_URI))
 						parentExist = true;
 					else
 						parentThing = true;
@@ -509,7 +509,7 @@ public class GraphBuilder {
 				continue;
 
 			// Create a link from Thing node to nodes who don't have any superclasses
-			String id = linkIdFactory.getLinkId(SubClassLink.getLabel().getUriString());
+			String id = linkIdFactory.getLinkId(SubClassLink.getFixedLabel().getUri());
 			SubClassLink subClassOfLink = new SubClassLink(id);
 			addWeightedLink(n, thingNode, subClassOfLink, ModelingParams.MAX_WEIGHT);
 		}

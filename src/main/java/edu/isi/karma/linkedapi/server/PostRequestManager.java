@@ -176,7 +176,7 @@ public class PostRequestManager extends LinkedApiRequestManager {
 				r = model.createResource();
 				if (classAtom.getClassPredicate().getPrefix() != null && classAtom.getClassPredicate().getNs() != null)
 					model.setNsPrefix(classAtom.getClassPredicate().getPrefix(), classAtom.getClassPredicate().getNs());
-				predicateUri = classAtom.getClassPredicate().getUriString();
+				predicateUri = classAtom.getClassPredicate().getUri();
 				
 				// creating the class resource
 				Resource classResource = model.getResource(predicateUri);
@@ -196,7 +196,7 @@ public class PostRequestManager extends LinkedApiRequestManager {
 				
 				if (propertyAtom.getPropertyPredicate().getPrefix() != null && propertyAtom.getPropertyPredicate().getNs() != null)
 					model.setNsPrefix(propertyAtom.getPropertyPredicate().getPrefix(), propertyAtom.getPropertyPredicate().getNs());
-				predicateUri = propertyAtom.getPropertyPredicate().getUriString();
+				predicateUri = propertyAtom.getPropertyPredicate().getUri();
 
 				// creating the property resource
 				Property propertyResource = model.getProperty(predicateUri);

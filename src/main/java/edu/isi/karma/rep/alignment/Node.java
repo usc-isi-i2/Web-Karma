@@ -28,30 +28,40 @@ public abstract class Node implements Comparable<Node> {
 
 	static Logger logger = Logger.getLogger(Node.class);
 
-	private final String id;
-	private final Label label;
-	private final NodeType type;
+	private String id;
+	private Label label;
+	private NodeType type;
 	
 	public Node(String id, Label label, NodeType type) {
 		
-		if (id == null || id.trim().length() == 0) {
-			logger.info("The input id is empty. A random Guid has been assigned.");
-			id = new RandomGUID().toString();
-		}
-		
-		this.id = id;
-		this.label = label;
-		this.type = type;
+		this.init();
+		if (id != null && id.trim().length() > 0) this.id = id;
+		if (label != null) this.label = label;
+		if (type != null) this.type = type;
 	}
 	
 	public Node(Node v) {
-		this.id = v.id;
-		this.label = v.label;
-		this.type = v.type;
+		if (v == null) this.init();
+		else {
+			this.id = v.id;
+			this.label = v.label;
+			this.type = v.type;
+		}
+	}
+	
+	private void init() {
+		this.id = new RandomGUID().toString();
+		Label l = null;
+		this.label = new Label(l);
+		this.type = NodeType.None;
 	}
 	
 	public String getId() {
 		return this.id;
+	}
+	
+	public Label getLabel() {
+		return this.label;
 	}
 	
 	public String getLocalId() {
@@ -61,36 +71,6 @@ public abstract class Node implements Comparable<Node> {
 			s = s.replaceAll(this.label.getNs(), "");
 		
 		return s;
-	}
-	
-	public String getLocalName() {
-		if (this.label == null)
-			return null;
-
-		String s = this.label.getUriString();
-		s = s.replaceAll(this.label.getNs(), "");
-		return s;
-	}
-	
-	public String getUriString() {
-		if (this.label == null)
-			return null;
-		
-		return this.label.getUriString();
-	}
-	
-	public String getNs() {
-		if (this.label == null)
-			return null;
-		
-		return this.label.getNs();
-	}
-	
-	public String getPrefix() {
-		if (this.label == null)
-			return null;
-		
-		return this.label.getPrefix();
 	}
 	
 	public NodeType getType() {

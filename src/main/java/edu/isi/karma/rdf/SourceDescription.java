@@ -465,12 +465,12 @@ public class SourceDescription {
 			//semantic type is a Class
 			String key = findKey(child);
 			//logger.info("Sem Type is a class:"+st.getType());
-			String className = getPropertyWithPrefix(model.getOntResource(st.getType().getUriString()));
+			String className = getPropertyWithPrefix(model.getOntResource(st.getType().getUri()));
 			String s = "`" + className + "`(uri(" + key + "))"; 
 			return s;
 		}
 		else{
-			String domainClass = st.getDomain().getUriString();
+			String domainClass = st.getDomain().getUri();
 			logger.info("Domain=" + domainClass);
 			String s = "";
 			String id = classNameToId.get(domainClass);
@@ -482,7 +482,7 @@ public class SourceDescription {
 				uriMap.put(domainClass,key);
 				//I don't have an id for this class because I don't have a vertex in the graph for it
 				classNameToId.put(domainClass,domainClass);
-				id=st.getDomain().getUriString();
+				id=st.getDomain().getUri();
 				//add a class statement for this class
 				s += "`" + domainClass + "`(uri(" + key + ")) \n ^ "; 
 			}
@@ -495,7 +495,7 @@ public class SourceDescription {
 				dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNamePath();
 			}
 			ruleAttributes.add(dataAttribute);
-			String propertyName = getPropertyWithPrefix(model.getOntProperty(st.getType().getUriString()));
+			String propertyName = getPropertyWithPrefix(model.getOntProperty(st.getType().getUri()));
 			s += "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
 			//System.out.println("DataProperty:" + s);
 			return s;

@@ -328,7 +328,7 @@ public class Alignment {
 	
 	public InternalNode addInternalClassNode(Label label) {
 		
-		String id = nodeIdFactory.getNodeId(label.getUriString());
+		String id = nodeIdFactory.getNodeId(label.getUri());
 		InternalNode node = new InternalNode(id, label);
 		if (this.graphBuilder.addNode(node)) return node;
 		return null;	
@@ -338,7 +338,7 @@ public class Alignment {
 
 	public DataPropertyLink addDataPropertyLink(Node source, Node target, Label label, boolean partOfKey) {
 		
-		String id = linkIdFactory.getLinkId(label.getUriString());	
+		String id = linkIdFactory.getLinkId(label.getUri());	
 		DataPropertyLink link = new DataPropertyLink(id, label, partOfKey);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;
@@ -347,7 +347,7 @@ public class Alignment {
 	// Probably we don't need this function in the interface to GUI
 	public ObjectPropertyLink addObjectPropertyLink(Node source, Node target, Label label) {
 		
-		String id = linkIdFactory.getLinkId(label.getUriString());		
+		String id = linkIdFactory.getLinkId(label.getUri());		
 		ObjectPropertyLink link = new ObjectPropertyLink(id, label);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
