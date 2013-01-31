@@ -116,6 +116,7 @@ public class SetSemanticTypeCommand extends Command {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		if (alignment == null) {
 			alignment = new Alignment(ontMgr);
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
 		
 		/*** Add the appropriate nodes and links in alignment graph ***/

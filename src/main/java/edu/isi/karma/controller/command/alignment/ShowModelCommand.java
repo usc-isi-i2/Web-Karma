@@ -111,6 +111,7 @@ public class ShowModelCommand extends WorksheetCommand {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		if (alignment == null) {
 			alignment = new Alignment(ontMgr);
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
 
 		try {
