@@ -30,14 +30,18 @@ import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.BellmanFordShortestPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.alg.KruskalMinimumSpanningTree;
+import org.jgrapht.graph.Pseudograph;
 import org.jgrapht.graph.WeightedMultigraph;
 
-import edu.isi.karma.rep.alignment.SimpleLink;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.SimpleLink;
 
-
+/**
+ * The approach is taken from the paper "A fast algorithm for steiner trees" by L. Kou et. al.
+ * @author mohsen
+ *
+ */
 public class SteinerTree {
 	
 	static Logger logger = Logger.getLogger(SteinerTree.class);
@@ -53,34 +57,37 @@ public class SteinerTree {
 		runAlgorithm();
 	}
 	
-	private WeightedMultigraph<Node, Link> step1() {
+	/**
+	 * Construct the complete undirected distance graph G1=(V1,EI,d1) from G and S.
+	 * @return
+	 */
+	private Pseudograph<Node, Link> step1() {
 		
 		logger.debug("<enter");
 
-		WeightedMultigraph<Node, Link> g = 
-			new WeightedMultigraph<Node, Link>(Link.class);
+		Pseudograph<Node, Link> g = 
+			new Pseudograph<Node, Link>(Link.class);
 		
-		for (int i = 0; i < steinerNodes.size(); i++) {
-			g.addVertex(steinerNodes.get(i));
+		for (Node n : this.steinerNodes) {
+			g.addVertex(n);
 		}
 		
 		BellmanFordShortestPath<Node, Link> path;
 		
-		for (int i = 0; i < steinerNodes.size(); i++) {
-			path = new BellmanFordShortestPath<Node, Link>(this.graph, steinerNodes.get(i));
+		for (Node n1 : this.steinerNodes) {
+			path = new BellmanFordShortestPath<Node, Link>(this.graph, n1);
 			
-			for (int j = 0; j < steinerNodes.size(); j++) {
+			for (Node n2 : this.steinerNodes) {
 				
-				if (i == j)
+				if (n1.equals(n2))
 					continue;
 				
-				if (g.containsEdge(steinerNodes.get(i), steinerNodes.get(j)))
+				if (g.containsEdge(n1, n2))
 					continue;
 				
-				String id = "e" + String.valueOf(i) + String.valueOf(j);
-				Link e = new SimpleLink(id, new Label(id, null, null));
-				g.addEdge(steinerNodes.get(i), steinerNodes.get(j), e);
-				g.setEdgeWeight(e, path.getCost(steinerNodes.get(j)));
+				Link e = new SimpleLink(null, null);
+				g.addEdge(n1, n2, e);
+				g.setEdgeWeight(e, path.getCost(n2));
 				
 			}
 
@@ -92,7 +99,12 @@ public class SteinerTree {
 
 	}
 	
-	private WeightedMultigraph<Node, Link> step2(WeightedMultigraph<Node, Link> g1) {
+	/**
+	 * Find the minimal spanning tree, T1, of G1. (If there are several minimal spanning trees, pick an arbitrary one.)
+	 * @param g1
+	 * @return
+	 */
+	private WeightedMultigraph<Node, Link> step2(Pseudograph<Node, Link> g1) {
 
 		logger.debug("<enter");
 
@@ -114,22 +126,9 @@ public class SteinerTree {
 		Collections.sort(edgesSortedById);
 		
 		for (Link edge : edgesSortedById) {
-
-//			//just for test, forcing to select another equal minimal spanning tree
-//			if (g1.getEdgeSource(edge).getLabel().equalsIgnoreCase("v1") && 
-//					g1.getEdgeTarget(edge).getLabel().equalsIgnoreCase("v3") ) {
-//				Vertex v2 = steinerNodes.get(1);
-//				g2.addVertex(g1.getEdgeTarget(edge));
-//				g2.addVertex(v2);
-//				LabeledWeightedEdge e = new LabeledWeightedEdge("e");
-//				g2.setEdgeWeight(e, g1.getEdgeWeight(edge));
-//				g2.addEdge(g1.getEdgeTarget(edge), v2, e);
-//			} else 
-			{
-				g2.addVertex(edge.getSource());
-				g2.addVertex(edge.getTarget());
-				g2.addEdge( edge.getSource(), edge.getTarget(), edge); 
-			}
+			g2.addVertex(edge.getSource());
+			g2.addVertex(edge.getTarget());
+			g2.addEdge( edge.getSource(), edge.getTarget(), edge); 
 		}
 		
 		logger.debug("exit>");
@@ -137,6 +136,12 @@ public class SteinerTree {
 		return g2;
 	}
 	
+	/**
+	 * Construct the subgraph, Gs, of G by replacing each edge in T1 by its corresponding shortest path in G. 
+	 * (If there are several shortest paths, pick an arbitrary one.)
+	 * @param g2
+	 * @return
+	 */
 	private WeightedMultigraph<Node, Link> step3(WeightedMultigraph<Node, Link> g2) {
 		
 		logger.debug("<enter");
@@ -182,17 +187,49 @@ public class SteinerTree {
 		return g3;
 	}
 	
+	/**
+	 * Find the minimal spanning tree, Ts, of Gs. (If there are several minimal spanning trees, pick an arbitrary one.)
+	 * @param g3
+	 * @return
+	 */
 	private WeightedMultigraph<Node, Link> step4(WeightedMultigraph<Node, Link> g3) {
 
 		logger.debug("<enter");
+
+		KruskalMinimumSpanningTree<Node, Link> mst =
+            new KruskalMinimumSpanningTree<Node, Link>(g3);
+
+//    	System.out.println("Total MST Cost: " + mst.getSpanningTreeCost());
+
+        Set<Link> edges = mst.getEdgeSet();
+
+		WeightedMultigraph<Node, Link> g4 = 
+			new WeightedMultigraph<Node, Link>(Link.class);
 		
-		WeightedMultigraph<Node, Link> g4 = step2(g3);
+		List<Link> edgesSortedById = new ArrayList<Link>();
+		
+		for (Link e : edges) 
+			edgesSortedById.add(e);
+		
+		Collections.sort(edgesSortedById);
+		
+		for (Link edge : edgesSortedById) {
+			g4.addVertex(edge.getSource());
+			g4.addVertex(edge.getTarget());
+			g4.addEdge( edge.getSource(), edge.getTarget(), edge); 
+		}
 		
 		logger.debug("exit>");
-		
+
 		return g4;
 	}
 	
+	/**
+	 * Construct a Steiner tree, Th, from Ts by deleting edges in Ts,if necessary, 
+	 * so that all the leaves in Th are Steiner points.
+	 * @param g4
+	 * @return
+	 */
 	private WeightedMultigraph<Node, Link> step5(WeightedMultigraph<Node, Link> g4) {
 		
 		logger.debug("<enter");
@@ -234,12 +271,13 @@ public class SteinerTree {
 		
 		logger.debug("<enter");
 
-		WeightedMultigraph<Node, Link> g1 = step1();
+		Pseudograph<Node, Link> g1 = step1();
 //		GraphUtil.printGraph(g1);
 //		GraphUtil.printGraphSimple(g1);
 		
 		if (g1.vertexSet().size() < 2) {
-			this.tree = g1;
+			this.tree = new WeightedMultigraph<Node, Link>(Link.class);
+			for (Node n : g1.vertexSet()) this.tree.addVertex(n);
 			return;
 		}
 		
