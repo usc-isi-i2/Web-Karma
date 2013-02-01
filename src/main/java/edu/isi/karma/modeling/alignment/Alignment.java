@@ -231,7 +231,9 @@ public class Alignment {
 	
 	public void align() {
 		
+    	System.out.println("*** Graph ***");
 		GraphUtil.printGraphSimple(this.graphBuilder.getGraph());
+
 		long start = System.currentTimeMillis();
 		
 		logger.info("Updating UI preferred links ...");
@@ -254,6 +256,8 @@ public class Alignment {
 			logger.info("resulting tree is null ...");
 			return;
 		}
+
+		System.out.println("*** Steiner Tree ***");
 		GraphUtil.printGraphSimple(tree);
 		
 		logger.info("selecting a root for the tree ...");

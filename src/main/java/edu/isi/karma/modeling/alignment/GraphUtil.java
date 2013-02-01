@@ -109,7 +109,6 @@ public class GraphUtil {
 	
 	public static void printGraphSimple(Graph<Node, Link> graph) {
 		
-    	System.out.println("*** Graph ***");
 		for (Link edge : graph.edgeSet()) {
 			System.out.print("(");
 			if (edge.getSource() instanceof ColumnNode)
