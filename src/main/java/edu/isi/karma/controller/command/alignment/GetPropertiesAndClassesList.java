@@ -73,47 +73,6 @@ public class GetPropertiesAndClassesList extends Command {
 		final JSONObject outputObj = new JSONObject();
 
 		try {
-//			ExtendedIterator<OntClass> iter = ontMgr.getOntModel()
-//			.listNamedClasses();
-//	ExtendedIterator<DatatypeProperty> propsIter = ontMgr.getOntModel()
-//			.listDatatypeProperties();
-//	ExtendedIterator<OntProperty> propsIter = ontMgr.getOntModel()
-//		.listAllOntProperties();
-			
-//			while (iter.hasNext()) {
-//				OntClass cls = iter.next();
-//				
-//				String pr = prefixMap.get(cls.getNameSpace());
-//				String classLabel = cls.getLocalName();
-////				if (cls.getLabel(null) != null && !cls.getLabel(null).equals(""))
-////					classLabel = cls.getLabel(null);
-//				String clsStr = (pr != null && !pr.equals("")) ? pr + ":" + classLabel : classLabel;
-//				
-//				classesList.put(clsStr);
-//				JSONObject classKey = new JSONObject();
-//				classKey.put(clsStr, cls.getURI());
-//				classesMap.put(classKey);
-//			}
-
-//			while (propsIter.hasNext()) {
-////				DatatypeProperty prop = propsIter.next();
-//				OntProperty prop = propsIter.next();
-//
-//				if (prop.isObjectProperty() && !prop.isDatatypeProperty())
-//					continue;
-//				
-//				String pr = prefixMap.get(prop.getNameSpace());
-//				String propLabel = prop.getLocalName();
-////				if (prop.getLabel(null) != null && !prop.getLabel(null).equals(""))
-////					propLabel = prop.getLabel(null);
-//				String propStr = (pr != null && !pr.equals("")) ? pr + ":" + propLabel : propLabel; 
-//				
-//				propertiesList.put(propStr);
-//				JSONObject propKey = new JSONObject();
-//				propKey.put(propStr, prop.getURI());
-//				propertiesMap.put(propKey);
-//			}
-			
 			/** Add all the class instances **/
 			String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
 			Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
@@ -133,21 +92,16 @@ public class GetPropertiesAndClassesList extends Command {
 				}
 			}
 			
-			// TESTING PURPOSES
-//			JSONObject nameObj = new JSONObject();
-//			nameObj.put("Person1", "http://isi.edu:Person1");
-//			classesMap.put(nameObj);
-//			JSONObject instanceCatObject = new JSONObject();
-//			instanceCatObject.put("label", "Person1");
-//			instanceCatObject.put("category", "Instance");
-//			classesList.put(instanceCatObject);
-			
 			/** Adding all the classes **/
 			for (Label clazz: ontMgr.getClasses().values()) {
 				JSONObject classKey = new JSONObject();
 				classKey.put(clazz.getLocalNameWithPrefix(), clazz.getUri());
 				classesMap.put(classKey);
-				classesList.put(clazz.getLocalNameWithPrefix());
+				
+				JSONObject labelObj = new JSONObject();
+				labelObj.put(JsonKeys.label.name(), clazz.getLocalNameWithPrefix());
+				labelObj.put(JsonKeys.category.name(), JsonValues.Class.name());
+				classesList.put(labelObj);
 			}
 			
 			/** Adding all the properties **/
@@ -163,7 +117,6 @@ public class GetPropertiesAndClassesList extends Command {
 			outputObj.put(JsonKeys.classMap.name(), classesMap);
 			outputObj.put(JsonKeys.propertyList.name(), propertiesList);
 			outputObj.put(JsonKeys.propertyMap.name(), propertiesMap);
-
 		} catch (JSONException e) {
 			logger.error("Error populating JSON!", e);
 		}

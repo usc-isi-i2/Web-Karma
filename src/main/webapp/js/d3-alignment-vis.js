@@ -20,7 +20,6 @@
  ******************************************************************************/
 
 function displayAlignmentTree_ForceKarmaLayout(json) {
-	console.log(json);
     var vworksheetId = json["worksheetId"];
     var showHideDiv = $("div#showHideSpace_"+vworksheetId);
     var tableLeftOffset = $("table#"+vworksheetId).offset().left;
@@ -388,11 +387,12 @@ var waitForFinalEvent = (function () {
 
 
 function changeSemanticType_d3(d, vis, event) {
-    var optionsDiv = $("#ChangeSemanticTypesDialogBox");
+	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
     
     var tdTag = $("td#"+d["hNodeId"]); 
     var typeJsonObject = $(tdTag).data("typesJsonObject");
     optionsDiv.data("currentNodeId",typeJsonObject["HNodeId"]);
+    optionsDiv.data("worksheetId", $("td.columnHeadingCell#" + d["hNodeId"]).parents("table.WorksheetTable").attr("id"))
     $("table#currentSemanticTypesTable tr.semTypeRow",optionsDiv).remove();
     $("table#currentSemanticTypesTable tr.editRow",optionsDiv).remove();
     $("input#chooseClassKey").attr("checked", false);
@@ -422,6 +422,7 @@ function changeSemanticType_d3(d, vis, event) {
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["command"] = "GetPropertiesAndClassesList";
     info["vWorksheetId"] = optionsDiv.data("worksheetId");
+    
     var returned = $.ajax({
         url: "RequestController", 
         type: "POST",

@@ -132,46 +132,59 @@ public class SetSemanticTypeCommand extends Command {
 		for (int i = 0; i < typesArr.length(); i++) {
 			try {
 				JSONObject type = typesArr.getJSONObject(i);
-				// Look for the primary semantic type
-				Label typeName = ontMgr.getUriLabel(type.getString(ClientJsonKeys.FullType.name()));
-				if(typeName == null) {
-					logger.error("Could not find the resource " + type.getString(ClientJsonKeys.FullType.name()) + " in ontology model!");
-					return null;
-				}
+				System.out.println("FULL TYPE:" + type.getString(ClientJsonKeys.FullType.name()));
+				System.out.println("Domain: " + type.getString(ClientJsonKeys.Domain.name()));
+				
+				// Look if the domain value exists. If it exists, then it is a domain of a data property. If not
+				// then the value in FullType has the the value which indicates if a new class instance is needed
+				// or an existing class instance should be used (this is the case when just the class is chosen as a sem type.
 				Label domainName = null;
-				if (!type.getString(ClientJsonKeys.Domain.name()).equals(""))
-					domainName = ontMgr.getUriLabel(type.getString(ClientJsonKeys.Domain.name()));
-
+				Node classNode = null;
+				String domainValue = type.getString(ClientJsonKeys.Domain.name());
+				if (!domainValue.equals("")) {
+					// Check if the domain is an existing instance
+					classNode = alignment.getNodeById(domainValue);
+					System.out.println("CLASS NODE: " + classNode);
+					
+					if (classNode == null) {
+						System.out.println("Adding a new internal class node");
+						Label domainLabel = ontMgr.getUriLabel(domainValue);
+						classNode = alignment.addInternalClassNode(domainLabel);
+					}
+					domainName = classNode.getLabel();
+				}
+				
+				String fullTypeValue = type.getString(ClientJsonKeys.FullType.name());
 				if (type.getBoolean(ClientJsonKeys.isPrimary.name())) {
 					// Add a class link if the domain is null
 					if (domainName == null) {
-						Node classNode = alignment.getNodeById(typeName.getUri());
+						// Check if it is an existing class instance node
+						classNode = alignment.getNodeById(fullTypeValue);
 						if (classNode == null) {
-							classNode = alignment.addInternalClassNode(typeName);
+							Label classLabel = ontMgr.getUriLabel(fullTypeValue);
+							classNode = alignment.addInternalClassNode(classLabel);
 						}
+						
 						LinkKeyInfo keyInfo = isPartOfKey ? LinkKeyInfo.PartOfKey : LinkKeyInfo.None;
 						ClassInstanceLink clsLink = alignment.addClassInstanceLink(classNode, columnNode, keyInfo);
 						alignment.align();
 						newLink = clsLink;
 						
-						newType = new SemanticType(hNodeId, typeName,domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
+						newType = new SemanticType(hNodeId, classNode.getLabel(),domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
 						worksheet.getSemanticTypes().addType(newType);
 					} 
 					// Add a property link if both type (property) and domain (class) is present 
 					else {
-						Node classNode = alignment.getNodeById(domainName.getUri());
-						if (classNode == null) {
-							classNode = alignment.addInternalClassNode(domainName);
-						}
-						DataPropertyLink propLink = alignment.addDataPropertyLink(classNode, columnNode, typeName, isPartOfKey);
+						Label propertyLabel = ontMgr.getUriLabel(fullTypeValue);
+						DataPropertyLink propLink = alignment.addDataPropertyLink(classNode, columnNode, propertyLabel, isPartOfKey);
 						alignment.align();
 						newLink = propLink;
 						
-						newType = new SemanticType(hNodeId, typeName,domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
+						newType = new SemanticType(hNodeId, propertyLabel,domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
 						worksheet.getSemanticTypes().addType(newType);
 					}
 				} else { // Synonym semantic type
-					SemanticType synType = new SemanticType(hNodeId, typeName,domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
+					SemanticType synType = new SemanticType(hNodeId, ontMgr.getUriLabel(fullTypeValue),domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
 					typesList.add(synType);
 				}
 			} catch (JSONException e) {

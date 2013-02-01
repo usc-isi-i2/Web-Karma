@@ -125,8 +125,6 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 					Node target = link.getTarget();
 					Integer targetIndex = verticesIndex.get(target);
 					Set<Link> outEdges = rootedTree.outgoingEdgesOf(target);
-
-					System.out.println(link);
 					
 					if(sourceIndex == null || targetIndex == null) {
 						logger.error("Edge vertex index not found!");
