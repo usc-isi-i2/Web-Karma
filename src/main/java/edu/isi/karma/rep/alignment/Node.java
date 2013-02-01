@@ -101,5 +101,16 @@ public abstract class Node implements Comparable<Node> {
         return this.id.compareTo(node.getId());
     }
 
+    public Node clone() {
 
+    	switch (this.type) {
+			case None: return new SimpleNode(this.getId(), this.getLabel()); 
+			case ColumnNode: return new ColumnNode(this.getId(), ((ColumnNode)this).getHNodeId(), ((ColumnNode)this).getColumnName()); 
+			case LiteralNode: return new LiteralNode(this.getId(), ((LiteralNode)this).getValue(), ((LiteralNode)this).getDatatype()); 
+			case InternalNode: return new InternalNode(this.getId(), this.getLabel());
+		}
+
+		logger.error("Cloning the node has been failed. Cannot identify the type of the node.");
+		return null;
+    }
 }

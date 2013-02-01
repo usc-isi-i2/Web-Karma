@@ -109,48 +109,7 @@ public class TreePostProcess {
 		
 		this.root = possibleRoots.get(0);
 	}
-	
-//	// Why do we need this function? I remember Maria said she is using it ...
-//	private void updateLinksDirections(Node root, Link e) {
-//		
-//		if (root == null)
-//			return;
-//		
-//		Node source, target;
-//		Link inLink;
-//		
-//		Link[] incomingLinks = this.tree.incomingEdgesOf(root).toArray(new Link[0]);
-//		if (incomingLinks != null && incomingLinks.length != 0) {
-//			for (int i = 0; i < incomingLinks.length; i++) {
-//				
-//				inLink = incomingLinks[i];
-//				source = inLink.getSource();
-//				target = inLink.getTarget();
-//				
-//				// don't remove the incoming link from parent to this node
-//				if (e != null && inLink.getID().equalsIgnoreCase(e.getID()))
-//					continue;
-//				
-//				Label label = new Label(inLink.getUriString(), inLink.getNs(), inLink.getPrefix());
-//				Link inverseLink = new Link(inLink.getID(), label);
-//				
-//				this.tree.addEdge(target, source, inverseLink);
-//				this.tree.setEdgeWeight(inverseLink, inLink.getWeight());
-//				this.tree.removeEdge(inLink);
-//			}
-//		}
-//
-//		Link[] outgoingLinks = this.tree.outgoingEdgesOf(root).toArray(new Link[0]);
-//
-//		if (outgoingLinks == null || outgoingLinks.length == 0)
-//			return;
-//		
-//		
-//		for (int i = 0; i < outgoingLinks.length; i++) {
-//			target = outgoingLinks[i].getTarget();
-//			updateLinksDirections(target, outgoingLinks[i]);
-//		}
-//	}
+
 	
 //	private void removeDanglingNodes() {
 //

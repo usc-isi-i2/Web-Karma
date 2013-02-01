@@ -20,6 +20,8 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
 
+import java.util.Set;
+
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
@@ -31,6 +33,8 @@ import edu.isi.karma.rep.alignment.Node;
 
 public class GraphUtil {
 
+//	private static Logger logger = Logger.getLogger(GraphUtil.class);
+	
 	private static String getNodeTypeString(Node node) {
 		String s = node.getClass().getName();
 		if (s.indexOf(".") != -1)
@@ -128,6 +132,55 @@ public class GraphUtil {
         }
 		System.out.println("------------------------------------------");
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static DirectedWeightedMultigraph<Node, Link> treeToRootedTree(
+			DirectedWeightedMultigraph<Node, Link> tree, Node root) {
+		
+		DirectedWeightedMultigraph<Node, Link> rootedTree = 
+				(DirectedWeightedMultigraph<Node, Link>)tree.clone();
+		treeToRootedTree(rootedTree, root, null);
+		return rootedTree;
+	}
+
+	private static void treeToRootedTree(DirectedWeightedMultigraph<Node, Link> tree, Node root, Link e) {
+		
+		if (root == null)
+			return;
+		
+		Node source, target;
+		
+		Set<Link> incomingLinks = tree.incomingEdgesOf(root);
+		if (incomingLinks != null) {
+			for (Link inLink : incomingLinks) {
+				
+				source = inLink.getSource();
+				target = inLink.getTarget();
+				
+				// don't remove the incoming link from parent to this node
+				if (e != null && inLink.getId().equalsIgnoreCase(e.getId()))
+					continue;
+				
+//				Label label = new Label(inLink.getLabel().getUri(), inLink.getLabel().getNs(), inLink.getLabel().getPrefix());
+				Link inverseLink = inLink.clone(); //new Link(inLink.getId(), label);
+				
+				tree.addEdge(target, source, inverseLink);
+				tree.setEdgeWeight(inverseLink, inLink.getWeight());
+				tree.removeEdge(inLink);
+			}
+		}
+
+		Set<Link> outgoingLinks = tree.outgoingEdgesOf(root);
+
+		if (outgoingLinks == null)
+			return;
+		
+		
+		for (Link outLink : outgoingLinks) {
+			target = outLink.getTarget();
+			treeToRootedTree(tree, target, outLink);
+		}
 	}
 	
 }

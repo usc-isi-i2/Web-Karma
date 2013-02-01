@@ -31,6 +31,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import com.hp.hpl.jena.graph.GraphUtil;
 import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
@@ -181,8 +182,8 @@ public class SourceDescription {
 		
 		this.factory=workspace.getFactory();
 //		this.steinerTree = treeClone;
-		this.steinerTree = sTree;
 		this.root=alignment.GetTreeRoot();
+		this.steinerTree=edu.isi.karma.modeling.alignment.GraphUtil.treeToRootedTree(sTree, this.root);
 		this.useColumnNames = useColumnNames;
 		this.rdfSourcePrefix=sourcePrefix;
 		this.rdfSourceNamespace=sourceNamespace;

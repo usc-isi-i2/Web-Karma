@@ -150,4 +150,24 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
         return this.id.compareTo(link.getId());
     }
     
+    public Link clone() {
+
+    	switch (this.type) {
+			case None: return new SimpleLink(this.getId(), this.getLabel()); 
+			case ClassInstanceLink: return new ClassInstanceLink(this.getId(), this.getKeyType()); 
+			case ColumnSubClassLink: return new ColumnSubClassLink(this.getId());
+			case DataPropertyLink: 
+				if (this.getKeyType() == LinkKeyInfo.PartOfKey) 
+					return new DataPropertyLink(this.getId(), this.getLabel(), true);
+				else
+					return new DataPropertyLink(this.getId(), this.getLabel());
+			case DataPropertyOfColumnLink: return new DataPropertyOfColumnLink(this.getId());
+			case ObjectPropertyLink: return new ObjectPropertyLink(this.getId(), this.getLabel());
+			case SubClassLink: return new SubClassLink(this.getId());
+
+		}
+
+		logger.error("Cloning the link has been failed. Cannot identify the type of the link.");
+		return null;
+    }
 }
