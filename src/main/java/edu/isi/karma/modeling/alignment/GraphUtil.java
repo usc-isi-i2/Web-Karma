@@ -20,6 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.jgrapht.DirectedGraph;
@@ -135,42 +136,49 @@ public class GraphUtil {
 	
 	@SuppressWarnings("unchecked")
 	public static DirectedWeightedMultigraph<Node, Link> treeToRootedTree(
-			DirectedWeightedMultigraph<Node, Link> tree, Node root) {
+			DirectedWeightedMultigraph<Node, Link> tree, Node root, Set<String> reversedLinks) {
 		
 		DirectedWeightedMultigraph<Node, Link> rootedTree = 
 				(DirectedWeightedMultigraph<Node, Link>)tree.clone();
-		treeToRootedTree(rootedTree, root, null);
+		if (reversedLinks == null)
+			reversedLinks = new HashSet<String>();
+		treeToRootedTree(rootedTree, root, null, reversedLinks);
 		return rootedTree;
 	}
 
-	private static void treeToRootedTree(DirectedWeightedMultigraph<Node, Link> tree, Node root, Link e) {
+	private static void treeToRootedTree(DirectedWeightedMultigraph<Node, Link> tree, Node node, Link e, Set<String> reversedLinks) {
 		
-		if (root == null)
+		if (node == null)
 			return;
 		
 		Node source, target;
 		
-		Set<Link> incomingLinks = tree.incomingEdgesOf(root);
+		Set<Link> incomingLinks = tree.incomingEdgesOf(node);
 		if (incomingLinks != null) {
-			for (Link inLink : incomingLinks) {
+			Link[] incomingLinksArr = incomingLinks.toArray(new Link[0]);
+			for (Link inLink : incomingLinksArr) {
 				
 				source = inLink.getSource();
 				target = inLink.getTarget();
 				
 				// don't remove the incoming link from parent to this node
-				if (e != null && inLink.getId().equalsIgnoreCase(e.getId()))
+				if (e != null && inLink.equals(e))
 					continue;
 				
+				// removeEdge method should always be called before addEdge because the new edge has the same id
+				// and JGraph does not add the duplicate link
 //				Label label = new Label(inLink.getLabel().getUri(), inLink.getLabel().getNs(), inLink.getLabel().getPrefix());
-				Link inverseLink = inLink.clone(); //new Link(inLink.getId(), label);
-				
-				tree.addEdge(target, source, inverseLink);
-				tree.setEdgeWeight(inverseLink, inLink.getWeight());
+				Link reverseLink = inLink.clone(); //new Link(inLink.getId(), label);
 				tree.removeEdge(inLink);
+				tree.addEdge(target, source, reverseLink);
+				tree.setEdgeWeight(reverseLink, inLink.getWeight());
+				
+				// Save the reversed links information
+				reversedLinks.add(inLink.getId());
 			}
 		}
 
-		Set<Link> outgoingLinks = tree.outgoingEdgesOf(root);
+		Set<Link> outgoingLinks = tree.outgoingEdgesOf(node);
 
 		if (outgoingLinks == null)
 			return;
@@ -178,7 +186,7 @@ public class GraphUtil {
 		
 		for (Link outLink : outgoingLinks) {
 			target = outLink.getTarget();
-			treeToRootedTree(tree, target, outLink);
+			treeToRootedTree(tree, target, outLink, reversedLinks);
 		}
 	}
 	

@@ -3,6 +3,7 @@ package edu.isi.karma.controller.update;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
@@ -29,7 +31,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 	private final String alignmentId;
 //	private Alignment alignment;
 	private final DirectedWeightedMultigraph<Node, Link> tree;
-//	private final Vertex root;
+	private final Node root;
 	private final List<String> hNodeIdList;
 	
 	private static Logger logger = LoggerFactory.getLogger(SVGAlignmentUpdate_ForceKarmaLayout.class);
@@ -51,9 +53,8 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 		this.vWorksheetId = vWorksheetId;
 		this.alignmentId = alignmentId;
 		this.tree = alignment.getSteinerTree();
-//		this.root = alignment.GetTreeRoot();
+		this.root = alignment.GetTreeRoot();
 		this.hNodeIdList = hNodeIdList;
-//		this.alignment=alignment;
 	}
 	
 	@Override
@@ -66,10 +67,9 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 			topObj.put(JsonKeys.alignmentId.name(), alignmentId);
 			topObj.put(JsonKeys.worksheetId.name(), vWorksheetId);
 			
-//			@SuppressWarnings("unchecked")
-//			DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> treeClone = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>) tree.clone();
-//			// Reversing the inverse links
-//			alignment.updateLinksDirections(this.root, null, treeClone);
+			// Reversing the inverse links for easy traversal through graph
+			Set<String> reversedLinks = new HashSet<String>();
+			DirectedWeightedMultigraph<Node, Link> rootedTree = GraphUtil.treeToRootedTree(tree, this.root, reversedLinks);
 
 			/*** Add the nodes and the links from the Steiner tree ***/
 			List<String> hNodeIdsAdded = new ArrayList<String>();
@@ -77,9 +77,9 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 			JSONArray linksArr = new JSONArray();
 			int maxTreeHeight = 0;
 			
-			if (tree != null && tree.vertexSet().size() != 0) {
+			if (rootedTree != null && rootedTree.vertexSet().size() != 0) {
 				/** Add the nodes **/
-				Set<Node> nodes = tree.vertexSet();
+				Set<Node> nodes = rootedTree.vertexSet();
 				HashMap<Node, Integer> verticesIndex = new HashMap<Node, Integer>();
 				int nodesIndexcounter = 0;
 				for (Node node : nodes) {
@@ -90,7 +90,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 					
 					/** Get info about the nodes that this node covers or sits above **/
 					List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
-					int height = getHeight(node, nodesWithSemTypesCovered, tree);
+					int height = getHeight(node, nodesWithSemTypesCovered, rootedTree);
 					if(height >= maxTreeHeight) {
 						maxTreeHeight = height;
 					}
@@ -118,24 +118,34 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 				}
 				
 				/*** Add the links ***/
-				Set<Link> links = tree.edgeSet();
+				Set<Link> links = rootedTree.edgeSet();
 				for (Link link : links) {
 					Node source = link.getSource();
 					Integer sourceIndex = verticesIndex.get(source);
 					Node target = link.getTarget();
 					Integer targetIndex = verticesIndex.get(target);
-					Set<Link> outEdges = tree.outgoingEdgesOf(target);
+					Set<Link> outEdges = rootedTree.outgoingEdgesOf(target);
 
+					System.out.println(link);
+					
 					if(sourceIndex == null || targetIndex == null) {
 						logger.error("Edge vertex index not found!");
 						continue;
 					}
 
 					JSONObject linkObj = new JSONObject();
-					linkObj.put(JsonKeys.source.name(), sourceIndex);
-					linkObj.put(JsonKeys.target.name(), targetIndex);
-					linkObj.put(JsonKeys.sourceNodeId.name(), source.getId());
-					linkObj.put(JsonKeys.targetNodeId.name(), target.getId());
+					if (reversedLinks.contains(link.getId())) {
+						linkObj.put(JsonKeys.source.name(), targetIndex);
+						linkObj.put(JsonKeys.target.name(), sourceIndex);
+						linkObj.put(JsonKeys.sourceNodeId.name(), target.getId());
+						linkObj.put(JsonKeys.targetNodeId.name(), source.getId());
+					} else {
+						linkObj.put(JsonKeys.source.name(), sourceIndex);
+						linkObj.put(JsonKeys.target.name(), targetIndex);
+						linkObj.put(JsonKeys.sourceNodeId.name(), source.getId());
+						linkObj.put(JsonKeys.targetNodeId.name(), target.getId());
+					}
+					
 					linkObj.put(JsonKeys.label.name(), link.getLabel().getLocalName());
 					linkObj.put(JsonKeys.id.name(), link.getId()+"");
 					linkObj.put(JsonKeys.linkStatus.name(), link.getStatus().name());
