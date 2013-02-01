@@ -129,6 +129,10 @@ public class GraphBuilder {
 		return statusToLinksMap;
 	}
 	
+	public Node getThingNode() {
+		return thingNode;
+	}
+
 	public boolean addNode(Node node) {
 		
 		logger.debug("<enter");
