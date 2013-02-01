@@ -261,7 +261,7 @@ public class Alignment {
 		GraphUtil.printGraphSimple(tree);
 		
 		logger.info("selecting a root for the tree ...");
-		TreePostProcess treePostProcess = new TreePostProcess(tree);
+		TreePostProcess treePostProcess = new TreePostProcess(tree, this.graphBuilder.getThingNode());
 //		removeInvalidForcedLinks(treePostProcess.getDangledVertexList());
 		
 		this.steinerTree = treePostProcess.getTree();
