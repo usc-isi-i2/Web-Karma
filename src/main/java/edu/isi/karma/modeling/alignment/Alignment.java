@@ -47,6 +47,8 @@ import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.rep.alignment.SubClassLink;
 
 
@@ -62,8 +64,6 @@ public class Alignment {
 	private NodeIdFactory nodeIdFactory;
 	private LinkIdFactory linkIdFactory;
 	
-//	private List<String> duplicatedLinkIds;
-
 	public Alignment(OntologyManager ontologyManager) {
 
 		this.nodeIdFactory = new NodeIdFactory();
@@ -72,211 +72,12 @@ public class Alignment {
 		logger.info("building initial graph ...");
 		graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory, linkIdFactory);
 		
-//		duplicatedLinkIds = new ArrayList<String>();
 	}
 	
-//	public List<String> getDuplicatedLinkIds() {
-//		return duplicatedLinkIds;
-//	}
-//
-//	public List<SemanticType> getSemanticTypes() {
-////		return this.semanticTypes;
-//		return null;
-//	}
-//
-//	private boolean duplicate(SemanticType st1, SemanticType st2) {
-//		if (st1.getHNodeId().equalsIgnoreCase(st2.getHNodeId()) &&
-//				st1.getType().getUriString().equalsIgnoreCase(st2.getType().getUriString()) &&
-//				st1.isPartOfKey() == st2.isPartOfKey()) {
-//			if (st1.getDomain() != null && st2.getDomain() != null) 
-//				if (st1.getDomain().getUriString().equalsIgnoreCase(st2.getDomain().getUriString()))
-//					return true;
-//			
-//			if (st1.getDomain() == null && st2.getDomain() == null)
-//				return true;
-//			
-//			return false;
-//		}
-//		return false;
-//	}
-//	
-//	public void updateSemanticTypes(List<SemanticType> semanticTypes) {
-//		
-//		List<SemanticType> updatedSemanticTypes = new ArrayList<SemanticType>();
-//		List<Node> deletedVertices = new ArrayList<Node>(); 
-//		for (SemanticType s : semanticTypes)
-//			logger.debug("%%%%%%%%%%%%%%%%%%%" + s.getType().getUriString());
-//		
-//		for (SemanticType newType : semanticTypes) {
-//			boolean found = false;
-//			for (SemanticType prevType : this.semanticTypes) {				
-//				if (duplicate(newType, prevType))
-//					found = true;
-//			}
-//			if (!found) {
-//				logger.debug(">>>>>>>>new>>>>>>" + newType.getType().getUriString());
-//				this.graphBuilder.addSemanticType(newType);
-//				updatedSemanticTypes.add(newType);
-//			}
-//		}
-//		for (SemanticType prevType : this.semanticTypes) {
-//			boolean found = false;
-//			for (SemanticType newType : semanticTypes) {
-//
-//				if (duplicate(newType, prevType)) {
-//					found = true;
-//					updatedSemanticTypes.add(prevType);
-//				}
-//			}
-//			if (!found) {
-//				Node deletedNode = this.graphBuilder.removeSemanticType(prevType);
-//				logger.debug("<<<<<<<<<delete<<<<<<<<<" + prevType.getType().getUriString());
-//				if (deletedNode != null) deletedVertices.add(deletedNode);
-//			}
-//		}
-//		this.semanticTypes = updatedSemanticTypes;
-//		this.semanticNodes = this.graphBuilder.getSemanticNodes();
-//		removeInvalidForcedLinks(deletedVertices);
-//		align();
-//	}
-	
-	public Link getCurrentLinkToNode(String nodeId) {
-		
-		Node node = this.getNodeById(nodeId);
-		if (node == null) return null;
-		Set<Link> incomingLinks = this.steinerTree.incomingEdgesOf(node);
-		if (incomingLinks != null && incomingLinks.size() == 1)
-			return incomingLinks.toArray(new Link[0])[0];
-		
-		return null;
+	public boolean isEmpty() {
+		return (this.graphBuilder.getGraph().edgeSet().size() == 0);
 	}
 	
-	public List<Link> getAllPossibleLinksToNode(String nodeId) {
-		
-		List<Link> possibleLinks = new ArrayList<Link>();
-		Node node = this.getNodeById(nodeId);
-		if (node == null) return possibleLinks;
-		
-//		List<String> nodesInSteinerTree = new ArrayList<String>();
-//		for (Node v : this.steinerTree.vertexSet())
-//			nodesInSteinerTree.add(v.getId());
-		
-		Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(node);
-		if (incomingLinks != null) {
-
-//			for (Link link : incomingLinks) {
-//				// if the node is not in the UI, don't show it to the user
-//				// Scenario: multiple domain, then again merge it. The created node is in the graph but not in the tree.
-//				if (nodesInSteinerTree.contains(link.getSource()))
-//					possibleLinks.add(link);
-//				
-//			}
-
-			possibleLinks = Arrays.asList(incomingLinks.toArray(new Link[0]));
-		}
-		
-		Collections.sort(possibleLinks);
-		return possibleLinks;
-	}
-	
-	private void updateLinksPreferredByUI() {
-		
-		if (this.steinerTree == null)
-			return;
-		
-		// Change the status of previously preferred links to normal
-		List<Link> linksInPreviousTree = this.getLinksByStatus(LinkStatus.PreferredByUI);
-		if (linksInPreviousTree != null) {
-			for (Link link : linksInPreviousTree)
-				this.graphBuilder.changeLinkStatus(link, LinkStatus.Normal);
-		}
-		
-		for (Link link: this.steinerTree.edgeSet()) {
-			this.graphBuilder.changeLinkStatus(link, LinkStatus.PreferredByUI);
-			logger.debug("link " + link.getId() + " has been added to preferred UI links.");
-		}
-	}
-	
-	private List<Node> computeSteinerNodes() {
-		List<Node> steinerNodes = new ArrayList<Node>();
-		
-		// Add column nodes and their domain
-		List<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
-		if (columnNodes != null) {
-			for (Node n : columnNodes) {
-				Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(n);
-				if (incomingLinks != null && incomingLinks.size() == 1) {
-					Node domain = incomingLinks.toArray(new Link[0])[0].getSource();
-					// adding the column node
-					steinerNodes.add(n);
-					// adding the domain
-					steinerNodes.add(domain);
-				} else 
-					logger.error("The column node " + n.getId() + " does not have any domain or it has more than one domain.");
-			}
-		}
-
-		// Add source and target of the links forced by the user
-		List<Link> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
-		if (linksForcedByUser != null) {
-			for (Link link : linksForcedByUser) {
-				
-				if (!steinerNodes.contains(link.getSource()))
-					steinerNodes.add(link.getSource());
-	
-				if (!steinerNodes.contains(link.getTarget()))
-					steinerNodes.add(link.getTarget());			}
-		}
-		
-		return steinerNodes;
-	}
-	
-	public void align() {
-		
-    	System.out.println("*** Graph ***");
-		GraphUtil.printGraphSimple(this.graphBuilder.getGraph());
-
-		long start = System.currentTimeMillis();
-		
-		logger.info("Updating UI preferred links ...");
-		this.updateLinksPreferredByUI();
-
-		logger.info("preparing G Prime for steiner algorithm input ...");
-		
-		GraphPreProcess graphPreProcess = new GraphPreProcess(this.graphBuilder.getGraph(), 
-				this.getLinksByStatus(LinkStatus.PreferredByUI),
-				this.getLinksByStatus(LinkStatus.ForcedByUser));		
-		UndirectedGraph<Node, Link> undirectedGraph = graphPreProcess.getUndirectedGraph();
-
-		logger.info("computing steiner nodes ...");
-		List<Node> steinerNodes = this.computeSteinerNodes();
-
-		logger.info("computing steiner tree ...");
-		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodes);
-		WeightedMultigraph<Node, Link> tree = steinerTree.getSteinerTree();
-		if (tree == null) {
-			logger.info("resulting tree is null ...");
-			return;
-		}
-
-		System.out.println("*** Steiner Tree ***");
-		GraphUtil.printGraphSimple(tree);
-		
-		logger.info("selecting a root for the tree ...");
-		TreePostProcess treePostProcess = new TreePostProcess(tree, this.graphBuilder.getThingNode());
-//		removeInvalidForcedLinks(treePostProcess.getDangledVertexList());
-		
-		this.steinerTree = treePostProcess.getTree();
-		this.root = treePostProcess.getRoot();
-
-		long elapsedTimeMillis = System.currentTimeMillis() - start;
-		float elapsedTimeSec = elapsedTimeMillis/1000F;
-		
-		logger.info("total number of nodes in steiner tree: " + this.steinerTree.vertexSet().size());
-		logger.info("total number of edges in steiner tree: " + this.steinerTree.edgeSet().size());
-		logger.info("time to compute steiner tree: " + elapsedTimeSec);
-	}
-
 	public Node GetTreeRoot() {
 		return this.root;
 	}
@@ -286,15 +87,48 @@ public class Alignment {
 		// GraphUtil.printGraph(this.steinerTree);
 		return this.steinerTree;
 	}
-
-	///////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////
-
-	/**** TO BE IMPLEMENTED ***/
 	
+	public List<SemanticType> getSemanticTypes() {
+		
+		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
+		
+		String hNodeId;
+		Label label;
+		Label domainLabel;
+		Origin origin;
+		Double probability;
+		boolean partOfKey;
+		
+		// FIXME: Are the column nodes enough to be added to Semantic Types?
+		List<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
+		if (columnNodes != null) {
+			for (Node n : columnNodes) {
+				
+				// FIXME: talk to user to see how the SemanticType attributed should be filled.
+				hNodeId = ((ColumnNode)n).getHNodeId();
+				label = null;
+				domainLabel = null;
+				origin = null;
+				probability = 0.0;
+				partOfKey = false;
+
+				
+				Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(n);
+				if (incomingLinks != null && incomingLinks.size() == 1) {
+					Link inLink = incomingLinks.toArray(new Link[0])[0];
+					Node domain = inLink.getSource();
+					domainLabel = domain.getLabel();
+					if (inLink.getKeyType() == LinkKeyInfo.PartOfKey) partOfKey = true;
+				} else 
+					logger.error("The column node " + n.getId() + " does not have any domain or it has more than one domain.");
+				
+				SemanticType s = new SemanticType(hNodeId, label, domainLabel, origin, probability, partOfKey);
+				semanticTypes.add(s);
+			}
+		}
+		
+		return semanticTypes;
+	}
 	
 	public Set<Node> getGraphNodes() {
 		return this.graphBuilder.getGraph().vertexSet();
@@ -419,13 +253,142 @@ public class Alignment {
 		return null;
 	}
 	
-	// Used in the case of semantic types
-	public void deleteLink(String linkId) {
+	// TODO
+	public void removeNode(String nodeId) {
+		
+	}
+
+	// TODO
+	public void removeLink(String linkId) {
 		
 	}
 	
-	public boolean isEmpty() {
-		return (this.graphBuilder.getGraph().edgeSet().size() == 0);
+
+	public Link getCurrentLinkToNode(String nodeId) {
+		
+		Node node = this.getNodeById(nodeId);
+		if (node == null) return null;
+		Set<Link> incomingLinks = this.steinerTree.incomingEdgesOf(node);
+		if (incomingLinks != null && incomingLinks.size() == 1)
+			return incomingLinks.toArray(new Link[0])[0];
+		
+		return null;
 	}
+	
+	public List<Link> getAllPossibleLinksToNode(String nodeId) {
+		
+		List<Link> possibleLinks = new ArrayList<Link>();
+		Node node = this.getNodeById(nodeId);
+		if (node == null) return possibleLinks;
+		
+		Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(node);
+		if (incomingLinks != null) {
+
+			possibleLinks = Arrays.asList(incomingLinks.toArray(new Link[0]));
+		}
+		
+		Collections.sort(possibleLinks);
+		return possibleLinks;
+	}
+	
+	private void updateLinksPreferredByUI() {
+		
+		if (this.steinerTree == null)
+			return;
+		
+		// Change the status of previously preferred links to normal
+		List<Link> linksInPreviousTree = this.getLinksByStatus(LinkStatus.PreferredByUI);
+		if (linksInPreviousTree != null) {
+			for (Link link : linksInPreviousTree)
+				this.graphBuilder.changeLinkStatus(link, LinkStatus.Normal);
+		}
+		
+		for (Link link: this.steinerTree.edgeSet()) {
+			this.graphBuilder.changeLinkStatus(link, LinkStatus.PreferredByUI);
+			logger.debug("link " + link.getId() + " has been added to preferred UI links.");
+		}
+	}
+	
+	private List<Node> computeSteinerNodes() {
+		List<Node> steinerNodes = new ArrayList<Node>();
+		
+		// Add column nodes and their domain
+		List<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
+		if (columnNodes != null) {
+			for (Node n : columnNodes) {
+				Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(n);
+				if (incomingLinks != null && incomingLinks.size() == 1) {
+					Node domain = incomingLinks.toArray(new Link[0])[0].getSource();
+					// adding the column node
+					steinerNodes.add(n);
+					// adding the domain
+					steinerNodes.add(domain);
+				} else 
+					logger.error("The column node " + n.getId() + " does not have any domain or it has more than one domain.");
+			}
+		}
+
+		// Add source and target of the links forced by the user
+		List<Link> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
+		if (linksForcedByUser != null) {
+			for (Link link : linksForcedByUser) {
+				
+				if (!steinerNodes.contains(link.getSource()))
+					steinerNodes.add(link.getSource());
+	
+				if (!steinerNodes.contains(link.getTarget()))
+					steinerNodes.add(link.getTarget());			
+			}
+		}
+		
+		return steinerNodes;
+	}
+	
+	public void align() {
+		
+    	System.out.println("*** Graph ***");
+		GraphUtil.printGraphSimple(this.graphBuilder.getGraph());
+
+		long start = System.currentTimeMillis();
+		
+		logger.info("Updating UI preferred links ...");
+		this.updateLinksPreferredByUI();
+
+		logger.info("preparing G Prime for steiner algorithm input ...");
+		
+		GraphPreProcess graphPreProcess = new GraphPreProcess(this.graphBuilder.getGraph(), 
+				this.getLinksByStatus(LinkStatus.PreferredByUI),
+				this.getLinksByStatus(LinkStatus.ForcedByUser));		
+		UndirectedGraph<Node, Link> undirectedGraph = graphPreProcess.getUndirectedGraph();
+
+		logger.info("computing steiner nodes ...");
+		List<Node> steinerNodes = this.computeSteinerNodes();
+
+		logger.info("computing steiner tree ...");
+		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodes);
+		WeightedMultigraph<Node, Link> tree = steinerTree.getSteinerTree();
+		if (tree == null) {
+			logger.info("resulting tree is null ...");
+			return;
+		}
+
+		System.out.println("*** Steiner Tree ***");
+		GraphUtil.printGraphSimple(tree);
+		
+		logger.info("selecting a root for the tree ...");
+		TreePostProcess treePostProcess = new TreePostProcess(tree, this.graphBuilder.getThingNode());
+//		removeInvalidForcedLinks(treePostProcess.getDangledVertexList());
+		
+		this.steinerTree = treePostProcess.getTree();
+		this.root = treePostProcess.getRoot();
+
+		long elapsedTimeMillis = System.currentTimeMillis() - start;
+		float elapsedTimeSec = elapsedTimeMillis/1000F;
+		
+		logger.info("total number of nodes in steiner tree: " + this.steinerTree.vertexSet().size());
+		logger.info("total number of edges in steiner tree: " + this.steinerTree.edgeSet().size());
+		logger.info("time to compute steiner tree: " + elapsedTimeSec);
+	}
+
 
 }
