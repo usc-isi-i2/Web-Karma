@@ -192,15 +192,13 @@ public class Test {
 	public static DirectedWeightedMultigraph<Node, Link> getVivoTree() {
 		OntologyManager ontManagar = new OntologyManager();
 		loadOntologies(ontManagar);
-		List<SemanticType> semTypes4 = createTestInput4();
-		Alignment alignment = new Alignment(ontManagar, semTypes4);
+		Alignment alignment = new Alignment(ontManagar);
 		return alignment.getSteinerTree();
 	}
 
 	public static DirectedWeightedMultigraph<Node, Link> getGeoNamesNeighbourhoodTree() {
 		OntologyManager ontManagar = new OntologyManager();
 		loadOntologies(ontManagar);
-		List<SemanticType> semTypes5 = createTestInput5();
 		
 //		Alignment alignment = new Alignment(ontManagar, semTypes5, false);
 //		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> steinerTree = alignment.getSteinerTree();
@@ -220,16 +218,15 @@ public class Test {
 //		alignment.addUserLink(new URI("http://www.geonames.org/ontology#parentFeature10");
 
 		
-		Alignment alignment = new Alignment(ontManagar, semTypes5, true);
+		Alignment alignment = new Alignment(ontManagar);
 		DirectedWeightedMultigraph<Node, Link> steinerTree = alignment.getSteinerTree();
 		
-		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name3");
-		
-		alignment.addUserLink("http://www.geonames.org/ontology#neighbour10");
-		alignment.addUserLink("http://www.geonames.org/ontology#nearby7");
-		alignment.addUserLink("http://www.geonames.org/ontology#parentFeature3");
+//		alignment.duplicateDomainOfLink("http://www.geonames.org/ontology#name3");
+//		
+//		alignment.addUserLink("http://www.geonames.org/ontology#neighbour10");
+//		alignment.addUserLink("http://www.geonames.org/ontology#nearby7");
+//		alignment.addUserLink("http://www.geonames.org/ontology#parentFeature3");
 
-		GraphUtil.printGraphSimple(alignment.getAlignmentGraph());
 //		GraphUtil.printGraphSimple(alignment.getSteinerTree());
 		steinerTree = alignment.getSteinerTree();
 		GraphUtil.printGraphSimple(alignment.getSteinerTree());
@@ -247,7 +244,7 @@ public class Test {
 //		List<String> list = ontManager.getSubClasses(new URI("http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing"), false);
 //		List<String> list = ontManager.getObjectPropertiesOfClass("http://www.sri.com/ontologies/DovetailOnto.owl#Entity", true);
 
-		HashMap<String, List<String>> map = ontManager.getOntCache().getPropertyIndirectDomains();//.getPropertyDirectDomains();
+		HashMap<String, List<String>> map = ontManager.getPropertyIndirectDomains();//.getPropertyDirectDomains();
 
 		System.out.println(map.size());
 		for (String s : map.keySet()) {
@@ -265,36 +262,13 @@ public class Test {
 //		System.out.println(ontManagar.getOntModel().get("vivo"));
 //		if (true) return;
 
-		List<SemanticType> semTypes1 = createTestInput1();
-		List<SemanticType> semTypes2 = createTestInput2();
-		List<SemanticType> semTypes3 = createTestInput3();
-		List<SemanticType> semTypes4 = createTestInput4();
-		List<SemanticType> semTypes5 = createTestInput5();
+		createTestInput1();
+		createTestInput2();
+		createTestInput3();
+		createTestInput4();
+		createTestInput5();
 
-		Alignment alignment1 = null;
-		Alignment alignment2 = null;
-		Alignment alignment3 = null;
-		Alignment alignment4 = null;
-		Alignment alignment5 = null;
-		alignment1 = new Alignment(ontManagar, semTypes1);
-		alignment2 = new Alignment(ontManagar, semTypes2);
-		alignment3 = new Alignment(ontManagar, semTypes3);
-		alignment4 = new Alignment(ontManagar, semTypes4);
-		alignment5 = new Alignment(ontManagar, semTypes5);
-		
-		GraphUtil.printGraphSimple(alignment1.getSteinerTree());
-		GraphUtil.printGraphSimple(alignment2.getSteinerTree());
-		GraphUtil.printGraphSimple(alignment3.getSteinerTree());
-		GraphUtil.printGraphSimple(alignment4.getSteinerTree());
-		GraphUtil.printGraphSimple(alignment5.getSteinerTree());
-		
-//		alignment.getSteinerTree();
-		DirectedWeightedMultigraph<Node, Link> steinerTree = alignment5.getSteinerTree();
-//		GraphUtil.printGraph(steinerTree);
-		for (Node v : steinerTree.vertexSet()) {
-			if (v.getSemanticType() != null)
-				System.out.println(v.getSemanticType().getHNodeId());
-		}
+
 //		GraphUtil.printGraphSimple(alignment.getSteinerTree());
 //		System.out.println(alignment.GetTreeRoot().getID());
 //		GraphUtil.printGraphSimple(alignment.getSteinerTree());

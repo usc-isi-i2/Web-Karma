@@ -190,6 +190,40 @@ public class OntologyManager {
 		return this.ontHandler.getUriLabel(uriString);
 	}
 	
+	public boolean isClass(String uri) {
+		return this.ontHandler.isClass(uri);
+	}
+	
+	public boolean isProperty(String uri) {
+		return this.ontHandler.isProperty(uri);
+	}	
+	
+	public boolean isDataProperty(String uri) {
+		return this.ontHandler.isDataProperty(uri);
+	}
+	
+	public boolean isObjectProperty(String uri) {
+		return this.ontHandler.isObjectProperty(uri);
+	}
+	
+	/**
+	 * Returns the inverse property of the property with given URI
+	 * @param uri
+	 * @return
+	 */
+	public Label getInverseProperty(String uri) {
+		return this.ontCache.getPropertyInverse().get(uri);
+	}
+	
+	/**
+	 * Returns the inverseOf property of the property with given URI
+	 * @param uri
+	 * @return
+	 */
+	public Label getInverseOfProperty(String uri) {
+		return this.ontCache.getPropertyInverseOf().get(uri);		
+	}
+	
 	/**
 	 * If @param superClassUri is a superclass of @param subClassUri, it returns true; otherwise, false.
 	 * If third parameter is set to true, it also considers indirect superclasses.

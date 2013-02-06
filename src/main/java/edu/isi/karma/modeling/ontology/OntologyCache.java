@@ -82,6 +82,9 @@ class OntologyCache {
 	// hashmap: property1 + property2 -> boolean (if p1 is subPropertyOf p2)
 	private HashMap<String, Boolean> directSubPropertyCheck;
 	
+	private HashMap<String, Label> propertyInverse;
+	private HashMap<String, Label> propertyInverseOf;
+	
 	public OntologyCache(OntologyHandler ontHandler) {
 		this.ontHandler = ontHandler;
 	}
@@ -186,6 +189,14 @@ class OntologyCache {
 		return directSubPropertyCheck;
 	}
 
+	public HashMap<String, Label> getPropertyInverse() {
+		return propertyInverse;
+	}
+
+	public HashMap<String, Label> getPropertyInverseOf() {
+		return propertyInverseOf;
+	}
+
 	public void init() {
 
 		logger.info("start building the ontology cache ...");
@@ -223,6 +234,9 @@ class OntologyCache {
 		this.directDomainRangeProperties = new HashMap<String, List<String>>();
 		this.indirectDomainRangeProperties = new HashMap<String, List<String>>();
 		
+		this.propertyInverse = new HashMap<String, Label>();
+		this.propertyInverseOf = new HashMap<String, Label>();
+		
 		long start = System.currentTimeMillis();
 		
 		// create a list of classes and properties of the model
@@ -252,6 +266,9 @@ class OntologyCache {
 		// build hashmaps for indirect subclass and subproperty relationships
 		this.buildIndirectSubClassesHashMap();
 		this.buildIndirectSubPropertiesHashMap();
+		
+		// build hashmaps to include inverse(Of) properties
+		this.buildInverseProperties();
 		
 		// update hashmaps to include the subproperty relations  
 		this.updateMapsWithSubpropertyDefinitions(true);
@@ -431,6 +448,13 @@ class OntologyCache {
 			this.indirectSubClasses.put(c, subClasses);
 		}
 
+	}
+
+	private void buildInverseProperties() {
+		for (String op : this.objectProperties.keySet()) {
+			this.propertyInverse.put(op, this.ontHandler.getInverseProperty(op));
+			this.propertyInverseOf.put(op, this.ontHandler.getInverseOfProperty(op));
+		}
 	}
 	
 	private void buildDataPropertiesHashMaps() {

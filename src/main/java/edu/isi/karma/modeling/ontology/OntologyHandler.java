@@ -138,36 +138,36 @@ class OntologyHandler {
 		return resourcesLabels;
 	}
 	
-	public boolean isClass(String label) {
+	public boolean isClass(String uri) {
 		
-		OntClass c = ontModel.getOntClass(label);
+		OntClass c = ontModel.getOntClass(uri);
 		if (c != null)
 			return true;
 		
 		return false;
 	}
 	
-	public boolean isDataProperty(String label) {
+	public boolean isDataProperty(String uri) {
 
-		DatatypeProperty dp = ontModel.getDatatypeProperty(label);
+		DatatypeProperty dp = ontModel.getDatatypeProperty(uri);
 		if (dp != null)
 			return true;
 		
 		return false;
 	}
 		
-	public boolean isProperty(String label) {
+	public boolean isProperty(String uri) {
 
-		Property p = ontModel.getProperty(label);
+		Property p = ontModel.getProperty(uri);
 		if (p != null)
 			return true;
 		
 		return false;
 	}
 	
-	public boolean isObjectProperty(String label) {
+	public boolean isObjectProperty(String uri) {
 
-		ObjectProperty op = ontModel.getObjectProperty(label);
+		ObjectProperty op = ontModel.getObjectProperty(uri);
 		if (op != null)
 			return true;
 		
@@ -179,7 +179,7 @@ class OntologyHandler {
 	 * @param uri
 	 * @return
 	 */
-	public Label getInverserProperty(String uri) {
+	public Label getInverseProperty(String uri) {
 		ObjectProperty op = ontModel.getObjectProperty(uri);
 		if (op == null)
 			return null;
@@ -196,7 +196,7 @@ class OntologyHandler {
 	 * @param uri
 	 * @return
 	 */
-	public Label getInverserOfProperty(String uri) {
+	public Label getInverseOfProperty(String uri) {
 		ObjectProperty op = ontModel.getObjectProperty(uri);
 		if (op == null)
 			return null;
