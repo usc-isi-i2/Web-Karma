@@ -93,8 +93,8 @@ public class Alignment {
 		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
 		
 		String hNodeId;
-		Label label;
-		Label domainLabel;
+		Label type;
+		Label domain;
 		Origin origin;
 		Double probability;
 		boolean partOfKey;
@@ -106,23 +106,28 @@ public class Alignment {
 				
 				// FIXME: talk to user to see how the SemanticType attributed should be filled.
 				hNodeId = ((ColumnNode)n).getHNodeId();
-				label = null;
-				domainLabel = null;
-				origin = null;
-				probability = 0.0;
+				type = null;
+				domain = null;
+				origin = Origin.User;
+				probability = 1.0;
 				partOfKey = false;
 
 				
 				Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(n);
 				if (incomingLinks != null && incomingLinks.size() == 1) {
 					Link inLink = incomingLinks.toArray(new Link[0])[0];
-					Node domain = inLink.getSource();
-					domainLabel = domain.getLabel();
+					Node source = inLink.getSource();
+					if (inLink instanceof DataPropertyLink) {
+						type = inLink.getLabel();
+						domain = source.getLabel();
+					} else
+						type = source.getLabel();
+					
 					if (inLink.getKeyType() == LinkKeyInfo.PartOfKey) partOfKey = true;
 				} else 
 					logger.error("The column node " + n.getId() + " does not have any domain or it has more than one domain.");
 				
-				SemanticType s = new SemanticType(hNodeId, label, domainLabel, origin, probability, partOfKey);
+				SemanticType s = new SemanticType(hNodeId, type, domain, origin, probability, partOfKey);
 				semanticTypes.add(s);
 			}
 		}
