@@ -21,6 +21,9 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,22 +31,23 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory.METAPROPERTY_NAME;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.AlignToOntology;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.SubClassLink;
+import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
 public class SetMetaPropertyCommand extends Command {
@@ -52,7 +56,7 @@ public class SetMetaPropertyCommand extends Command {
 	private final String vWorksheetId;
 	private final boolean trainAndShowUpdates;
 	private METAPROPERTY_NAME metaPropertyName;
-	private String metaPropertyValue;
+	private final String metaPropertyValue;
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
@@ -103,6 +107,10 @@ public class SetMetaPropertyCommand extends Command {
 		
 		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyValue);
+			if (classNode == null) {
+				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
+				classNode = alignment.addInternalClassNode(classNodeLabel);
+			}
 			ClassInstanceLink mpLink = alignment.addClassInstanceLink(classNode, columnNode, LinkKeyInfo.UriOfInstance);
 			alignment.align();
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
@@ -110,6 +118,10 @@ public class SetMetaPropertyCommand extends Command {
 			
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyValue);
+			if (classNode == null) {
+				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
+				classNode = alignment.addInternalClassNode(classNodeLabel);
+			}
 			ColumnSubClassLink mpLink = alignment.addColumnSubClassOfLink(classNode, columnNode);
 			alignment.align();
 		}
@@ -129,16 +141,15 @@ public class SetMetaPropertyCommand extends Command {
 //		worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), newSynonymTypes);
 
 		if(trainAndShowUpdates) {
-			// Train the semantic type in a separate thread
-//			Thread t = new Thread(new SemanticTypeTrainingThread(crfModelHandler, worksheet, newType));
-//			t.start();
-
 			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
-			// Get the alignment update if any
-			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
-			
 			try {
-				align.alignAndUpdate(c, false);
+				// Add the visualization update
+				List<String> hNodeIdList = new ArrayList<String>();
+				VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+				List<HNodePath> columns = vw.getColumns();
+				for(HNodePath path:columns)
+					hNodeIdList.add(path.getLeaf().getId());
+				c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, alignment, hNodeIdList));
 			} catch (Exception e) {
 				logger.error("Error occured while setting the semantic type!", e);
 				return new UpdateContainer(new ErrorUpdate(
@@ -148,8 +159,8 @@ public class SetMetaPropertyCommand extends Command {
 			
 		} else {
 			// Just do the alignment, no training and update JSON required.
-			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
-			align.align(false);
+//			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
+//			align.align(false);
 		}
 		return c;
 	}

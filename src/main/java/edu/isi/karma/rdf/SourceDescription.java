@@ -183,7 +183,7 @@ public class SourceDescription {
 		this.factory=workspace.getFactory();
 //		this.steinerTree = treeClone;
 		this.root=alignment.GetTreeRoot();
-		this.steinerTree=edu.isi.karma.modeling.alignment.GraphUtil.treeToRootedTree(sTree, this.root);
+		this.steinerTree=edu.isi.karma.modeling.alignment.GraphUtil.treeToRootedTree(sTree, this.root, null);
 		this.useColumnNames = useColumnNames;
 		this.rdfSourcePrefix=sourcePrefix;
 		this.rdfSourceNamespace=sourceNamespace;
@@ -258,20 +258,20 @@ public class SourceDescription {
 	 * 7. stop when v is DataProperty (leaves are reached)
 	 */
 	private void generateSourceDescription(Node v, StringBuffer s) throws KarmaException{
-		//System.out.println("Generate SD for node:" + v.getUri() + " type:" + v.getNodeType());
+		//System.out.println("Generate SD for node:" + v.getUri() + " type:" + v.getType());
 		if(v==null){
 			throw new KarmaException("Align source before generating SourceDescription.");
 		}
-		if(v.getNodeType()==NodeType.Class){
+		if(v.getType()==NodeType.InternalNode){
 			String stmt = generateClassStatement(v);
 			if(s.length()!=0) s.append(" ^ ");
 			s.append(stmt);
 			Set<Link> edges = steinerTree.outgoingEdgesOf(v);
 			for(Link e:edges){
 				Node child = steinerTree.getEdgeTarget(e);
-				if(e.getLinkType()==LinkType.DataProperty){
+				if(e.getType()==LinkType.DataPropertyLink){
 					//get the child node, which should be a DataProperty node
-					if(child.getNodeType()!=NodeType.DataProperty){
+					if(child.getType()!=NodeType.ColumnNode){
 						throw new KarmaException("Node " + child.getId() + " should be of type NodeType.DataProperty");
 					}
 					else{
@@ -279,9 +279,9 @@ public class SourceDescription {
 						s.append("\n ^ " + stmt);
 					}
 				}
-				else if(e.getLinkType()==LinkType.ObjectProperty){
+				else if(e.getType()==LinkType.ObjectPropertyLink){
 					//get the child node, which should be a DataProperty node
-					if(child.getNodeType()!=NodeType.Class){
+					if(child.getType()!=NodeType.InternalNode){
 						throw new KarmaException("Node " + child.getId() + " should be of type NodeType.Class");
 					}
 					else{
@@ -289,7 +289,7 @@ public class SourceDescription {
 						s.append("\n ^ " + stmt);
 					}
 				}
-				else if(e.getLinkType()==LinkType.HasSubClass){
+				else if(e.getType()==LinkType.SubClassLink){
 					//I have to include this, otherwise I lose the "connection" between the classes
 					stmt = generateObjectPropertyStatement(v,e,child);
 					s.append("\n ^ " + stmt);
@@ -313,7 +313,7 @@ public class SourceDescription {
 	 */
 	private String generateClassStatement(Node v) {
 		String key = findKey(v);
-		String s = "`" + getPrefix(v.getPrefix(), v.getNs()) + ":" + v.getLocalName() + "`(uri(" + key + "))"; 
+		String s = "`" + getPrefix(v.getLabel().getPrefix(), v.getLabel().getNs()) + ":" + v.getLabel().getLocalName() + "`(uri(" + key + "))"; 
 		//System.out.println("Class:" + s);
 		return s;
 	}
@@ -333,13 +333,13 @@ public class SourceDescription {
 	 */
 	private String generateDataPropertyStatement(Node v,
 			Link e, Node child) throws KarmaException {
-		if(child.getNodeType()!=NodeType.DataProperty){
+		if(child.getType()!=NodeType.ColumnNode){
 			throw new KarmaException("Node " + child.getUriString()+ " should be of type NodeType.DataProperty");
 		}
-		if(e.getLinkType()!=LinkType.DataProperty){
+		if(e.getType()!=LinkType.DataProperty){
 			throw new KarmaException("Edge " + e.getUriString() + " should be of type LinkType.DataProperty");
 		}
-		if(v.getNodeType()!=NodeType.Class){
+		if(v.getType()!=NodeType.Class){
 			throw new KarmaException("Node " + v.getUriString() + " should be of type NodeType.Class");
 		}
 		//find the key of Class v
@@ -389,13 +389,13 @@ public class SourceDescription {
 	 */
 	private String generateObjectPropertyStatement(Node v,
 			Link e, Node child) throws KarmaException {
-		if(v.getNodeType()!=NodeType.Class){
+		if(v.getType()!=NodeType.Class){
 			throw new KarmaException("Node " + v.getUriString() + " should be of type NodeType.Class");
 		}
-		if(child.getNodeType()!=NodeType.Class){
+		if(child.getType()!=NodeType.Class){
 			throw new KarmaException("Node " + child.getUriString() + " should be of type NodeType.Class");
 		}
-		if(e.getLinkType()!=LinkType.ObjectProperty && e.getLinkType()!=LinkType.HasSubClass){
+		if(e.getType()!=LinkType.ObjectProperty && e.getType()!=LinkType.HasSubClass){
 			throw new KarmaException("Edge " + e.getUriString() + " should be of type LinkType.ObjectProperty");
 		}
 		//find the key of Class v
@@ -593,7 +593,7 @@ public class SourceDescription {
 			for(Link e:edges){
 				//get the child node
 				Node n = steinerTree.getEdgeTarget(e);
-				if(n.getNodeType()==NodeType.DataProperty){
+				if(n.getType()==NodeType.DataProperty){
 					//see if it is a key
 					if(n.getSemanticType().isPartOfKey()){
 						//it's a key

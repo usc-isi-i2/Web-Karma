@@ -100,7 +100,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 						writer.key(JsonKeys.Domain.name())
 							.value(type.getDomain().getUri())
 							.key(JsonKeys.DisplayDomainLabel.name())
-							.value(type.getDomain().getLocalNameWithPrefix());
+							.value(type.getDomain().getLocalName());
 					} else {
 						writer.key(JsonKeys.Domain.name())
 							.value("")

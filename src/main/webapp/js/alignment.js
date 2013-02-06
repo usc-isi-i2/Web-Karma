@@ -82,10 +82,6 @@ function attachOntologyOptionsRadioButtonHandlers() {
         }
     });
     
-    $("button#semanticTypingAdvancedOptions").button().click(function(){
-    	$("div#semanticTypingAdvacedOptionsDiv").show();
-    });
-    
     $("div#semanticTypingAdvacedOptionsDiv input:checkbox").change(semanticTypesAdvancedOptionsHandler);
     
     $.widget( "custom.catcomplete", $.ui.autocomplete, {
@@ -104,6 +100,48 @@ function attachOntologyOptionsRadioButtonHandlers() {
 	      	});
 	   	}
 	});
+	
+	/*** Setting advanced semantic typing options ***/
+	$("button#semanticTypingAdvancedOptions").button().click(function(){
+    	$("div#semanticTypingAdvacedOptionsDiv").show();
+    	
+    	var classArray = $("#ChangeSemanticTypesDialogBox").data("classAndPropertyListJson")["elements"][0]["classList"];
+    	$("input#isUriOfClassTextBox").catcomplete({autoFocus: true, select:function(event, ui){
+		    $("input#isUriOfClassTextBox").val(ui.item.value);
+		    validateClassInputValue(ui.item.value, false);
+	    }, source: function( request, response ) {
+	        var matches = $.map( classArray, function(cls) {
+	            if ( cls["label"].toUpperCase().indexOf(request.term.toUpperCase()) != -1 ) {
+	                return cls;
+	            }
+	        });
+	            response(matches);
+	        }
+	    });
+	    
+	    $("input#isSubclassOfClassTextBox").catcomplete({autoFocus: true, select:function(event, ui){
+		    $("input#isSubclassOfClassTextBox").val(ui.item.value);
+		    validateClassInputValue(ui.item.value, false);
+	    }, source: function( request, response ) {
+	        var matches = $.map( classArray, function(cls) {
+	            if ( cls["label"].toUpperCase().indexOf(request.term.toUpperCase()) != -1 ) {
+	                return cls;
+	            }
+	        });
+	            response(matches);
+	        }
+	    });
+    });
+    
+    $("input#isUriOfClassTextBox").blur(function() {
+    	if ($("input#isUriOfClassTextBox").val() != "")
+    		validateClassInputValue($("input#isUriOfClassTextBox").val(), false)
+    });
+    $("input#isSubclassOfClassTextBox").blur(function() {
+    	if ($("input#isSubclassOfClassTextBox").val() != "")
+    		validateClassInputValue($("input#isSubclassOfClassTextBox").val(), false)
+    });
+
 }
 
 function semanticTypesAdvancedOptionsHandler() {
@@ -415,9 +453,10 @@ function showSemanticTypeEditOptions() {
             response(matches);
         }
     });
+    
     $("input#classInputBox").catcomplete({autoFocus: true, select:function(event, ui){
         $("input#classInputBox").val(ui.item.value);
-        validateClassInputValue();
+        validateClassInputValue($("input#classInputBox").val(), true);
     }, source: function( request, response ) {
         var matches = $.map( classArray, function(cls) {
             if ( cls["label"].toUpperCase().indexOf(request.term.toUpperCase()) != -1 ) {
@@ -429,7 +468,11 @@ function showSemanticTypeEditOptions() {
     });
     // Validate the value once the input loses focus
     $("input#propertyInputBox").blur(validatePropertyInputValue);
-    $("input#classInputBox").blur(validateClassInputValue);
+    $("input#classInputBox").blur(function() {
+    	validateClassInputValue($("input#classInputBox").val(), true)
+    });
+    
+    
 }
 
 function validatePropertyInputValue() {
@@ -497,11 +540,14 @@ function validatePropertyInputValue() {
     
 }
 
-function validateClassInputValue() {
+function validateClassInputValue(inputVal, updateLabels) {
+	console.log("Enter validation!!!");
+	console.log(inputVal);
+	
     var optionsDiv = $("#ChangeSemanticTypesDialogBox");
     var classMap = $(optionsDiv).data("classAndPropertyListJson")["elements"][0]["classMap"]
     var classInputBox = $("input#classInputBox");
-    var inputVal = $(classInputBox).val();
+    // var inputVal = $(classInputBox).val();
     $("div#SemanticTypeErrorWindow").hide();
     $("table#currentSemanticTypesTable tr").removeClass("fixMe");
     
@@ -521,29 +567,31 @@ function validateClassInputValue() {
     });
     
     if(!found) {
-        $("span#SemanticTypeErrorWindowText").text("Input class not valid!");
+        $("span#SemanticTypeErrorWindowText").text("Input class/instance not valid!");
         $("div#SemanticTypeErrorWindow").show();
         return false;
     }
     // Use the value in proper case as input value
-    $(classInputBox).val(properCasedKey);
-    
-    var rowToChange = $(classInputBox).parents("tr.editRow").data("editRowObject");
-    var displayLabel = "";
-    if($(rowToChange).data("ResourceType") == "Class") {
-        $(rowToChange).data("FullType",uri).data("DisplayLabel",properCasedKey);
-        displayLabel = $(rowToChange).data("DisplayLabel");
-    } else {
-        // If no value has been input in the data property box, change from data property sem type to class sem type
-        if($.trim($("input#propertyInputBox").val()) == "") {
-            $(rowToChange).data("ResourceType", "Class").data("FullType",uri).data("DisplayLabel",properCasedKey);
-            displayLabel = $(rowToChange).data("DisplayLabel");
-        } else {
-            $(rowToChange).data("Domain",uri).data("DisplayDomainLabel",properCasedKey);
-            displayLabel = "<span class='italic'>" + $(rowToChange).data("DisplayLabel") + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
-        }
+    // $(classInputBox).val(properCasedKey);
+    if (updateLabels) {
+    	var rowToChange = $(classInputBox).parents("tr.editRow").data("editRowObject");
+	    var displayLabel = "";
+	    if($(rowToChange).data("ResourceType") == "Class") {
+	        $(rowToChange).data("FullType",uri).data("DisplayLabel",properCasedKey);
+	        displayLabel = $(rowToChange).data("DisplayLabel");
+	    } else {
+	        // If no value has been input in the data property box, change from data property sem type to class sem type
+	        if($.trim($("input#propertyInputBox").val()) == "") {
+	            $(rowToChange).data("ResourceType", "Class").data("FullType",uri).data("DisplayLabel",properCasedKey);
+	            displayLabel = $(rowToChange).data("DisplayLabel");
+	        } else {
+	            $(rowToChange).data("Domain",uri).data("DisplayDomainLabel",properCasedKey);
+	            displayLabel = "<span class='italic'>" + $(rowToChange).data("DisplayLabel") + "</span> of " + $(rowToChange).data("DisplayDomainLabel");
+	        }
+	    }
+	    $("label.displayLabel", rowToChange).html(displayLabel);
     }
-    $("label.displayLabel", rowToChange).html(displayLabel);
+    
 }
 
 function showClassHierarchyWindow(event) {
@@ -700,7 +748,7 @@ function submitClassFromHierarchyWindow() {
     
     var classInputBox = $("input#classInputBox");
     classInputBox.val(label);
-    validateClassInputValue();
+    validateClassInputValue(label, true);
     
     $(this).dialog("close");
 }
@@ -812,11 +860,24 @@ function submitSemanticTypeChange() {
 		}
 	});
 	
-	if (isMetaPropertyChecked) {
 		info["metaPropertyName"] = $("div#semanticTypingAdvacedOptionsDiv input:checkbox[checked=true]").attr("id");
-		// Get the value from the input text box
+	if (isMetaPropertyChecked) {
 		var propValue = $("div#semanticTypingAdvacedOptionsDiv input:checkbox[checked=true]").parents("tr").find("input:text").val();
-		info["metaPropertyValue"] = propValue;
+		// Get the proper id
+		if (info["metaPropertyName"] == "isUriOfClass" || info["metaPropertyName"] == "isSubclassOfClass") {
+			var classMap = $("#ChangeSemanticTypesDialogBox").data("classAndPropertyListJson")["elements"][0]["classMap"];
+			$.each(classMap, function(index, clazz){
+		        for(var key in clazz) {
+		            if(clazz.hasOwnProperty(key)) {
+		                if(key.toLowerCase() == propValue.toLowerCase()) {
+		                    info["metaPropertyValue"] = clazz[key];
+		                }
+		            }
+		        }
+			});
+		} else {
+			
+		}
 		info["command"] = "SetMetaPropertyCommand";
 	} else {
 		// Get the JSON Array that captures all the currently selected semantic types

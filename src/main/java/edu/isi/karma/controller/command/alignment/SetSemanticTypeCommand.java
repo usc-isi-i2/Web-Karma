@@ -144,10 +144,8 @@ public class SetSemanticTypeCommand extends Command {
 				if (!domainValue.equals("")) {
 					// Check if the domain is an existing instance
 					classNode = alignment.getNodeById(domainValue);
-					System.out.println("CLASS NODE: " + classNode);
 					
 					if (classNode == null) {
-						System.out.println("Adding a new internal class node");
 						Label domainLabel = ontMgr.getUriLabel(domainValue);
 						classNode = alignment.addInternalClassNode(domainLabel);
 					}

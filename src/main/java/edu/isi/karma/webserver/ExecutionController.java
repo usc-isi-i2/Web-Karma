@@ -69,8 +69,6 @@ import edu.isi.karma.controller.command.UndoRedoCommand;
 import edu.isi.karma.controller.command.UndoRedoCommandFactory;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommand;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommandFactory;
-import edu.isi.karma.controller.command.alignment.DuplicateDomainOfLinkCommand;
-import edu.isi.karma.controller.command.alignment.DuplicateDomainOfLinkCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommand;
 import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetDataPropertiesForClassCommand;
@@ -183,8 +181,6 @@ public class ExecutionController {
 				new ShowAutoModelCommandFactory());
 		commandFactoryMap.put(SplitByCommaCommand.class.getSimpleName(),
 				new SplitByCommaCommandFactory());
-		commandFactoryMap.put(DuplicateDomainOfLinkCommand.class.getSimpleName(),
-				new DuplicateDomainOfLinkCommandFactory());
 		commandFactoryMap.put(CloseWorkspaceCommand.class.getSimpleName(),
 				new CloseWorkspaceCommandFactory());
 		commandFactoryMap.put(PublishKMLLayerCommand.class.getSimpleName(),
