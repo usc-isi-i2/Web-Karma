@@ -31,17 +31,18 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
-import com.hp.hpl.jena.graph.GraphUtil;
 import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
 
 import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
@@ -144,9 +145,13 @@ public class SourceDescription {
 	private boolean generateInverse = true;
 	
 	/**
-	 * the ontology model
+	 * the ontology manager
 	 */
-	private OntModel model;
+	private OntologyManager ontMgr;
+	/**
+	 * List of properties inverted
+	 */
+	Set<String> reversedLinkIds;
 	
 	static Logger logger = Logger.getLogger(SourceDescription.class);
 
@@ -179,16 +184,15 @@ public class SourceDescription {
 //		// Reversing the inverse links
 //		alignment.updateLinksDirections(alignment.GetTreeRoot(), null, treeClone);
 
-		
+		reversedLinkIds = new HashSet<String>();
 		this.factory=workspace.getFactory();
-//		this.steinerTree = treeClone;
 		this.root=alignment.GetTreeRoot();
-		this.steinerTree=edu.isi.karma.modeling.alignment.GraphUtil.treeToRootedTree(sTree, this.root, null);
+		this.steinerTree=edu.isi.karma.modeling.alignment.GraphUtil.treeToRootedTree(sTree, this.root, reversedLinkIds);
 		this.useColumnNames = useColumnNames;
 		this.rdfSourcePrefix=sourcePrefix;
 		this.rdfSourceNamespace=sourceNamespace;
 		this.generateInverse = generateInverse;
-		model = workspace.getOntologyManager().getOntModel();
+		ontMgr = workspace.getOntologyManager();
 		this.worksheet=worksheet;
 		
 		//add source prefix
@@ -272,7 +276,7 @@ public class SourceDescription {
 				if(e.getType()==LinkType.DataPropertyLink){
 					//get the child node, which should be a DataProperty node
 					if(child.getType()!=NodeType.ColumnNode){
-						throw new KarmaException("Node " + child.getId() + " should be of type NodeType.DataProperty");
+						throw new KarmaException("Node " + child.getId() + " should be of type NodeType.ColumnNode");
 					}
 					else{
 						stmt = generateDataPropertyStatement(v,e,child);
@@ -280,9 +284,9 @@ public class SourceDescription {
 					}
 				}
 				else if(e.getType()==LinkType.ObjectPropertyLink){
-					//get the child node, which should be a DataProperty node
+					//get the child node, which should be a Internal class instance node
 					if(child.getType()!=NodeType.InternalNode){
-						throw new KarmaException("Node " + child.getId() + " should be of type NodeType.Class");
+						throw new KarmaException("Node " + child.getId() + " should be of type NodeType.InternalNode");
 					}
 					else{
 						stmt = generateObjectPropertyStatement(v,e,child);
@@ -334,18 +338,18 @@ public class SourceDescription {
 	private String generateDataPropertyStatement(Node v,
 			Link e, Node child) throws KarmaException {
 		if(child.getType()!=NodeType.ColumnNode){
-			throw new KarmaException("Node " + child.getUriString()+ " should be of type NodeType.DataProperty");
+			throw new KarmaException("Node " + child.getLabel().getUri()+ " should be of type NodeType.ColumnNode");
 		}
-		if(e.getType()!=LinkType.DataProperty){
-			throw new KarmaException("Edge " + e.getUriString() + " should be of type LinkType.DataProperty");
+		if(e.getType()!=LinkType.DataPropertyLink){
+			throw new KarmaException("Edge " + e.getLabel().getUri() + " should be of type LinkType.DataPropertyLink");
 		}
-		if(v.getType()!=NodeType.Class){
-			throw new KarmaException("Node " + v.getUriString() + " should be of type NodeType.Class");
+		if(v.getType()!=NodeType.InternalNode){
+			throw new KarmaException("Node " + v.getLabel().getUri() + " should be of type NodeType.InternalNode");
 		}
 		//find the key of Class v
 		String key = findKey(v);
 		if(key==null){
-			throw new KarmaException("Key for " + v.getUriString() + " is NULL. This should not happen!");
+			throw new KarmaException("Key for " + v.getLabel().getUri() + " is NULL. This should not happen!");
 		}
 		
 		////////
@@ -358,16 +362,16 @@ public class SourceDescription {
 		}
 		*/
 		/////////
-		
-		String dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName();
+		String hNodeId = ((ColumnNode) child).getHNodeId();
+		String dataAttribute = factory.getHNode(hNodeId).getColumnName();
 		//System.out.println("COLUMN name='"+dataAttribute+"'");
 		if(!useColumnNames){
-			dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNamePath();
+			dataAttribute = factory.getHNode(hNodeId).getHNodePath(factory).toColumnNamePath();
 		}
 		ruleAttributes.add(dataAttribute);
-		String propertyName = getPrefix(e.getPrefix(), e.getNs()) + ":" + e.getLocalName();
-		if(e.isInverse()){
-			throw new KarmaException("A data property cannot be an inverse_of:" + e.getUriString());
+		String propertyName = getPrefix(e.getLabel().getPrefix(), e.getLabel().getNs()) + ":" + e.getLabel().getLocalName();
+		if(reversedLinkIds.contains(e.getId())){
+			throw new KarmaException("A data property cannot be an inverse_of:" + e.getLabel().getUri());
 		}
 		String s = "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
 		//System.out.println("DataProperty:" + s);
@@ -389,31 +393,31 @@ public class SourceDescription {
 	 */
 	private String generateObjectPropertyStatement(Node v,
 			Link e, Node child) throws KarmaException {
-		if(v.getType()!=NodeType.Class){
-			throw new KarmaException("Node " + v.getUriString() + " should be of type NodeType.Class");
+		if(v.getType()!=NodeType.InternalNode){
+			throw new KarmaException("Node " + v.getLabel().getUri() + " should be of type NodeType.Class");
 		}
-		if(child.getType()!=NodeType.Class){
-			throw new KarmaException("Node " + child.getUriString() + " should be of type NodeType.Class");
+		if(child.getType()!=NodeType.InternalNode){
+			throw new KarmaException("Node " + child.getLabel().getUri() + " should be of type NodeType.Class");
 		}
-		if(e.getType()!=LinkType.ObjectProperty && e.getType()!=LinkType.HasSubClass){
-			throw new KarmaException("Edge " + e.getUriString() + " should be of type LinkType.ObjectProperty");
+		if(e.getType()!=LinkType.ObjectPropertyLink && e.getType()!=LinkType.SubClassLink){
+			throw new KarmaException("Edge " + e.getLabel().getUri() + " should be of type LinkType.ObjectProperty");
 		}
 		//find the key of Class v
 		String key1 = findKey(v);
 		if(key1==null){
-			throw new KarmaException("Key for " + v.getUriString() + " is NULL. This should not happen!");
+			throw new KarmaException("Key for " + v.getLabel().getUri() + " is NULL. This should not happen!");
 		}
 		String key2 = findKey(child);
-		String propertyName = getPrefix(e.getPrefix(), e.getNs()) + ":" + e.getLocalName();
+		String propertyName = getPrefix(e.getLabel().getPrefix(), e.getLabel().getNs()) + ":" + e.getLabel().getLocalName();
 
 		String s = "`" + propertyName + "`(uri(" + key1 + "),uri(" + key2 + "))";
 		if(generateInverse)
-			s += addInverseProperty(e.getUriString(), key1,key2);
+			s += addInverseProperty(e.getLabel().getUri(), key1,key2);
 		
-		if(e.isInverse()){
+		if(reversedLinkIds.contains(e.getId())){
 			//propertyName = TableRDFGenerator.inverseProperty + propertyName;
 			s = "`" + propertyName + "`(uri(" + key2 + "),uri(" + key1 + "))";
-			s += addInverseProperty(e.getUriString(), key2,key1);
+			s += addInverseProperty(e.getLabel().getUri(), key2,key1);
 		}
 
 		//System.out.println("ObjectProperty:" + s);
@@ -431,12 +435,12 @@ public class SourceDescription {
 		//for each leaf of the tree
 		for(Node child: steinerTree.vertexSet()){
 			//System.out.println("Get semantic type for " + child.getLocalLabel());
-			if(child.getSemanticType()==null){
+			if(!(child instanceof ColumnNode)){
 				//only if the node id mapped to a column it will have a semantic type
 				//System.out.println("No semantic type for " + child.getLocalLabel());
 				continue;
 			}
-			SynonymSemanticTypes synonyms = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(child.getSemanticType().getHNodeId());
+			SynonymSemanticTypes synonyms = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(((ColumnNode)child).getHNodeId());
 			//System.out.println("Syn for " + factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName() + " is " + synonyms);
 			if(synonyms!=null){
 				List<SemanticType> semT = synonyms.getSynonyms();
@@ -462,11 +466,12 @@ public class SourceDescription {
 	 * @return
 	 */
 	private String generateSynonymStatement(Node child, SemanticType st) {
+		ColumnNode columnNode = (ColumnNode) child;
 		if(st.isClass()){
 			//semantic type is a Class
 			String key = findKey(child);
 			//logger.info("Sem Type is a class:"+st.getType());
-			String className = getPropertyWithPrefix(model.getOntResource(st.getType().getUri()));
+			String className = getPropertyWithPrefix(st.getType());
 			String s = "`" + className + "`(uri(" + key + "))"; 
 			return s;
 		}
@@ -491,12 +496,12 @@ public class SourceDescription {
 			//find the key of this property's domain
 			String key = uriMap.get(id);
 			
-			String dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getColumnName();
+			String dataAttribute = factory.getHNode(columnNode.getHNodeId()).getColumnName();
 			if(!useColumnNames){
-				dataAttribute = factory.getHNode(child.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNamePath();
+				dataAttribute = factory.getHNode(columnNode.getHNodeId()).getHNodePath(factory).toColumnNamePath();
 			}
 			ruleAttributes.add(dataAttribute);
-			String propertyName = getPropertyWithPrefix(model.getOntProperty(st.getType().getUri()));
+			String propertyName = getPropertyWithPrefix(st.getType());
 			s += "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
 			//System.out.println("DataProperty:" + s);
 			return s;
@@ -516,28 +521,29 @@ public class SourceDescription {
 	 */
 	private String addInverseProperty(String propertyName, String key1, String key2){
 		String s = "";
-		//see if this property has an inverse property, and if it does add it to the SD
-		ObjectProperty op = model.getObjectProperty(propertyName);
-		if(op==null){
-			//this can happen if propertyName is not an Object property; it could be a subclass
-			return s;
-		}
-		//one or the other will be null
-		OntProperty inverseProp1 = op.getInverse();
-		OntProperty inverseProp2 = op.getInverseOf();
-
-		//logger.info("Inverse prop for " + propertyName + " is " + inverseProp1 + " " + inverseProp2);
-		
-		if(inverseProp1!=null && generateInverse){
-			//add the inverse property
-			String prop = getPropertyWithPrefix(inverseProp1);
-			s += " \n ^ " + "`" + prop + "`(uri(" + key2 + "),uri(" + key1 + "))";
-		}
-		if(inverseProp2!=null && generateInverse){
-			//add the inverse property
-			String prop = getPropertyWithPrefix(inverseProp2);
-			s += " \n ^ " + "`" + prop + "`(uri(" + key2 + "),uri(" + key1 + "))";
-		}
+//		if (ontMgr.)
+//		//see if this property has an inverse property, and if it does add it to the SD
+//		ObjectProperty op = model.getObjectProperty(propertyName);
+//		if(op==null){
+//			//this can happen if propertyName is not an Object property; it could be a subclass
+//			return s;
+//		}
+//		//one or the other will be null
+//		OntProperty inverseProp1 = op.getInverse();
+//		OntProperty inverseProp2 = op.getInverseOf();
+//
+//		//logger.info("Inverse prop for " + propertyName + " is " + inverseProp1 + " " + inverseProp2);
+//		
+//		if(inverseProp1!=null && generateInverse){
+//			//add the inverse property
+//			String prop = getPropertyWithPrefix(inverseProp1);
+//			s += " \n ^ " + "`" + prop + "`(uri(" + key2 + "),uri(" + key1 + "))";
+//		}
+//		if(inverseProp2!=null && generateInverse){
+//			//add the inverse property
+//			String prop = getPropertyWithPrefix(inverseProp2);
+//			s += " \n ^ " + "`" + prop + "`(uri(" + key2 + "),uri(" + key1 + "))";
+//		}
 		
 		return s;
 	}
@@ -548,12 +554,12 @@ public class SourceDescription {
 	 * 		a property
 	 * @return
 	 */
-	private String getPropertyWithPrefix(OntResource prop){
-		if(prop==null)
+	private String getPropertyWithPrefix(Label label){
+		if(label==null)
 			return null;
-		String namespace = prop.getNameSpace();
-		String prefix = model.getNsURIPrefix(namespace);
-		String propWithPrefix = getPrefix(prefix, namespace) + ":" + prop.getLocalName();
+		String namespace = label.getNs();
+		String prefix = label.getPrefix();
+		String propWithPrefix = getPrefix(prefix, namespace) + ":" + label.getLocalName();
 		return propWithPrefix;
 	}
 	
@@ -584,7 +590,7 @@ public class SourceDescription {
 		}
 		//it's not there, so look for it
 		//System.out.println("Semantic Type="+v.getSemanticType());
-		if(v.getSemanticType()==null){
+		if(!(v instanceof ColumnNode)){
 			//this node is not associated with a column
 			//look in the child nodes to find the key to be used when generating the URI
 			Set<Link> edges = steinerTree.outgoingEdgesOf(v);
@@ -593,15 +599,16 @@ public class SourceDescription {
 			for(Link e:edges){
 				//get the child node
 				Node n = steinerTree.getEdgeTarget(e);
-				if(n.getType()==NodeType.DataProperty){
+				if(n.getType()==NodeType.ColumnNode){
+					String hNodeId = ((ColumnNode) n).getHNodeId();
 					//see if it is a key
-					if(n.getSemanticType().isPartOfKey()){
+					if(e.getKeyType() == LinkKeyInfo.PartOfKey){
 						//it's a key
 						//System.out.println("part of a key ... " + n.getUri() + n.getID());
 						if(useColumnNames){
-							key = factory.getHNode(n.getSemanticType().getHNodeId()).getColumnName();
+							key = factory.getHNode(hNodeId).getColumnName();
 						}else{
-							key=factory.getHNode(n.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNamePath();
+							key=factory.getHNode(hNodeId).getHNodePath(factory).toColumnNamePath();
 						}
 						ruleAttributes.add(key);
 						keys.add(key);
@@ -627,13 +634,13 @@ public class SourceDescription {
 				}
 				isCompoundKey=true;
 			}
-		}
-		else{
+		} else{
+			String hNodeId = ((ColumnNode) v).getHNodeId();
 			//the node is associated with a column => it's the key
 			if(useColumnNames){
-				key = factory.getHNode(v.getSemanticType().getHNodeId()).getColumnName();
+				key = factory.getHNode(hNodeId).getColumnName();
 			}else{
-				key=factory.getHNode(v.getSemanticType().getHNodeId()).getHNodePath(factory).toColumnNamePath();				
+				key=factory.getHNode(hNodeId).getHNodePath(factory).toColumnNamePath();				
 			}
 			ruleAttributes.add(key);
 		}
@@ -641,7 +648,7 @@ public class SourceDescription {
 		if(!isGensym && !isCompoundKey)
 			key = addBacktick(key);
 		
-		classNameToId.put(v.getUriString(), v.getId());
+		classNameToId.put(v.getLabel().getUri(), v.getId());
 		uriMap.put(v.getId(), key);
 		//logger.info("Key for " + v.getID() + " is " + key);
 		return key;

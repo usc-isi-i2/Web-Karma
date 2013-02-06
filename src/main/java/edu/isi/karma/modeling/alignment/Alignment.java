@@ -226,10 +226,10 @@ public class Alignment {
 		return null;
 	}
 	
-	public DataPropertyOfColumnLink addDataPropertyOfColumnLink(Node source, Node target) {
+	public DataPropertyOfColumnLink addDataPropertyOfColumnLink(Node source, Node target, String specializedColumnHNodeId) {
 		
 		String id = linkIdFactory.getLinkId(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI);
-		DataPropertyOfColumnLink link = new DataPropertyOfColumnLink(id);
+		DataPropertyOfColumnLink link = new DataPropertyOfColumnLink(id, specializedColumnHNodeId);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
 	}
@@ -242,7 +242,7 @@ public class Alignment {
 		return null;	
 	}
 	
-	public void changeLinkStatus(String linkId, LinkStatus newStatus) {		
+	public void changeLinkStatus(String linkId, LinkStatus newStatus) {
 		
 		Link link = this.getLinkById(linkId);
 		if (link == null) {

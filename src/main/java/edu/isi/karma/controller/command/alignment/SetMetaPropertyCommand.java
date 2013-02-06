@@ -44,7 +44,9 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
+import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.view.VWorksheet;
@@ -114,8 +116,16 @@ public class SetMetaPropertyCommand extends Command {
 			ClassInstanceLink mpLink = alignment.addClassInstanceLink(classNode, columnNode, LinkKeyInfo.UriOfInstance);
 			alignment.align();
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
-//			Node classNode = alignment.getNodeById(metaPropertyValue);
-			
+			Link dataPropertyLink = alignment.getLinkById(metaPropertyValue);
+			if (dataPropertyLink == null) {
+				logger.error("Link should exist in the alignment: " + metaPropertyValue);
+				return new UpdateContainer(new ErrorUpdate(
+						"Error occured while setting the semantic type!"));
+			}
+			Node classInstanceNode = dataPropertyLink.getSource();
+			String hNodeId = ((ColumnNode) dataPropertyLink.getTarget()).getHNodeId();
+			DataPropertyOfColumnLink dpLink = alignment.addDataPropertyOfColumnLink(classInstanceNode, columnNode, hNodeId);
+			alignment.align();
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyValue);
 			if (classNode == null) {

@@ -106,6 +106,8 @@ function attachOntologyOptionsRadioButtonHandlers() {
     	$("div#semanticTypingAdvacedOptionsDiv").show();
     	
     	var classArray = $("#ChangeSemanticTypesDialogBox").data("classAndPropertyListJson")["elements"][0]["classList"];
+    	var existingLinksMap = $("#ChangeSemanticTypesDialogBox").data("classAndPropertyListJson")["elements"][0]["existingDataPropertyInstances"];
+    	console.log(existingLinksMap);
     	$("input#isUriOfClassTextBox").catcomplete({autoFocus: true, select:function(event, ui){
 		    $("input#isUriOfClassTextBox").val(ui.item.value);
 		    validateClassInputValue(ui.item.value, false);
@@ -127,6 +129,19 @@ function attachOntologyOptionsRadioButtonHandlers() {
 	            if ( cls["label"].toUpperCase().indexOf(request.term.toUpperCase()) != -1 ) {
 	                return cls;
 	            }
+	        });
+	            response(matches);
+	        }
+	    });
+	    
+	    $("input#isSpecializationForEdgeTextBox").autocomplete({autoFocus: true, select:function(event, ui){
+            // $("input#isSpecializationForEdgeTextBox").val(ui.item.value);
+            // validatePropertyInputValue();
+	    }, source: function( request, response ) {
+	        var matches = $.map( existingLinksMap, function(prop) {
+        		if (prop["label"].toUpperCase().indexOf(request.term.toUpperCase()) != -1 ) {
+                	return prop;
+           		}
 	        });
 	            response(matches);
 	        }
@@ -541,10 +556,7 @@ function validatePropertyInputValue() {
 }
 
 function validateClassInputValue(inputVal, updateLabels) {
-	console.log("Enter validation!!!");
-	console.log(inputVal);
-	
-    var optionsDiv = $("#ChangeSemanticTypesDialogBox");
+	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
     var classMap = $(optionsDiv).data("classAndPropertyListJson")["elements"][0]["classMap"]
     var classInputBox = $("input#classInputBox");
     // var inputVal = $(classInputBox).val();
@@ -876,7 +888,11 @@ function submitSemanticTypeChange() {
 		        }
 			});
 		} else {
-			
+			var existingLinksMap = $("#ChangeSemanticTypesDialogBox").data("classAndPropertyListJson")["elements"][0]["existingDataPropertyInstances"];
+			$.each(existingLinksMap, function(index, prop) {
+				if (prop["label"] == propValue)
+					info["metaPropertyValue"] = prop["id"];
+			});
 		}
 		info["command"] = "SetMetaPropertyCommand";
 	} else {

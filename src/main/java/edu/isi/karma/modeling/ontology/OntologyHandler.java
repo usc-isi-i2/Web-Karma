@@ -175,6 +175,40 @@ class OntologyHandler {
 	}
 	
 	/**
+	 * Returns the inverse property of the property with given URI
+	 * @param uri
+	 * @return
+	 */
+	public Label getInverserProperty(String uri) {
+		ObjectProperty op = ontModel.getObjectProperty(uri);
+		if (op == null)
+			return null;
+		OntProperty inverseProp = op.getInverse();
+		if (inverseProp != null) {
+			return getUriLabel(inverseProp.getURI());
+		}
+		else
+			return null;
+	}
+	
+	/**
+	 * Returns the inverseOf property of the property with given URI
+	 * @param uri
+	 * @return
+	 */
+	public Label getInverserOfProperty(String uri) {
+		ObjectProperty op = ontModel.getObjectProperty(uri);
+		if (op == null)
+			return null;
+		OntProperty inverseOfProp = op.getInverseOf();
+		if (inverseOfProp != null) {
+			return getUriLabel(inverseOfProp.getURI());
+		}
+		else
+			return null;
+	}
+	
+	/**
 	 * This method gets a resource (class or property) and adds the parents of the resource to the second parameter.
 	 * If third parameter is set to true, it adds the parents recursively.
 	 * @param r

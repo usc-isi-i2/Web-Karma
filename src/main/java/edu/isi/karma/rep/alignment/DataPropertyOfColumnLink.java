@@ -28,15 +28,21 @@ import edu.isi.karma.modeling.Prefixes;
 
 public class DataPropertyOfColumnLink extends Link {
 
+	private final String specializedColumnHNodeId;
 	private static final long serialVersionUID = 1L;
 	private static final Label label = 
 			new Label(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
 
-	public DataPropertyOfColumnLink(String id) {
+	public DataPropertyOfColumnLink(String id, String hNodeId) {
 		super(id, label, LinkType.DataPropertyOfColumnLink);
+		this.specializedColumnHNodeId = hNodeId;
 	}
 
 	public static Label getFixedLabel() {
 		return label;
+	}
+
+	public String getSpecializedColumnHNodeId() {
+		return specializedColumnHNodeId;
 	}
 }

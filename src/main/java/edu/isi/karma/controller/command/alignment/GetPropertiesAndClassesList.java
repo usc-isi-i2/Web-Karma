@@ -16,7 +16,9 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.view.VWorkspace;
@@ -27,7 +29,7 @@ public class GetPropertiesAndClassesList extends Command {
 	private static Logger logger = LoggerFactory.getLogger(GetPropertiesAndClassesList.class);
 
 	private enum JsonKeys {
-		classList, classMap, propertyList, propertyMap, label, category
+		classList, classMap, propertyList, propertyMap, label, category, existingDataPropertyInstances, id
 	}
 	
 	private enum JsonValues {
@@ -66,6 +68,7 @@ public class GetPropertiesAndClassesList extends Command {
 		JSONArray classesMap = new JSONArray();
 		JSONArray propertiesList = new JSONArray();
 		JSONArray propertiesMap = new JSONArray();
+		JSONArray existingDataPropertyInstances = new JSONArray();
 		
 //		Map<String, String> prefixMap = vWorkspace.getWorkspace().getOntologyManager().getPrefixMap();
 
@@ -73,7 +76,7 @@ public class GetPropertiesAndClassesList extends Command {
 		final JSONObject outputObj = new JSONObject();
 
 		try {
-			/** Add all the class instances **/
+			/** Add all the class instances and property instances (existing links) **/
 			String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
 			Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 			if (alignment != null && !alignment.isEmpty()) {
@@ -88,6 +91,15 @@ public class GetPropertiesAndClassesList extends Command {
 						instanceCatObject.put(JsonKeys.label.name(), node.getLocalId());
 						instanceCatObject.put(JsonKeys.category.name(), JsonValues.Instance.name());
 						classesList.put(instanceCatObject);
+					}
+				}
+				
+				for (Link link:alignment.getGraphLinks()) {
+					if (link instanceof DataPropertyLink) {
+						JSONObject linkObj = new JSONObject();
+						linkObj.put(JsonKeys.label.name(), link.getLocalId());
+						linkObj.put(JsonKeys.id.name(), link.getId());
+						existingDataPropertyInstances.put(linkObj);
 					}
 				}
 			}
@@ -117,6 +129,7 @@ public class GetPropertiesAndClassesList extends Command {
 			outputObj.put(JsonKeys.classMap.name(), classesMap);
 			outputObj.put(JsonKeys.propertyList.name(), propertiesList);
 			outputObj.put(JsonKeys.propertyMap.name(), propertiesMap);
+			outputObj.put(JsonKeys.existingDataPropertyInstances.name(), existingDataPropertyInstances);
 		} catch (JSONException e) {
 			logger.error("Error populating JSON!", e);
 		}
