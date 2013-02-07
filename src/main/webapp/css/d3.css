@@ -35,6 +35,10 @@ text.FakeRootLink {
   stroke-width: 1px;
 }
 
+.link.DataPropertyOfColumnLink, .link.ColumnSubClassLink, .link.ClassInstanceLink, .link.horizontalDataPropertyLink {
+	stroke: lightgreen;
+}
+
 rect {
   fill: white;
   stroke: black;

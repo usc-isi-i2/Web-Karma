@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkType;
@@ -43,7 +44,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 	}
 
 	private enum JsonValues {
-		key, holderLink, objPropertyLink, Unassigned, FakeRoot, FakeRootLink, Add_Parent
+		key, holderLink, objPropertyLink, Unassigned, FakeRoot, FakeRootLink, Add_Parent, DataPropertyOfColumnHolder
 	}
 
 	public SVGAlignmentUpdate_ForceKarmaLayout(String vWorksheetId,
@@ -181,12 +182,59 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 						linkObj_holder.put(JsonKeys.target.name(), nodesIndexcounter-1);
 						linkObj_holder.put(JsonKeys.label.name(), JsonValues.key.name());
 						linkObj_holder.put(JsonKeys.id.name(), "");
+						linkObj_holder.put(JsonKeys.linkType.name(), "");
 						linksArr.put(linkObj_holder);
 					}
+					
+					if (link.getType() == LinkType.DataPropertyOfColumnLink) {
+						DataPropertyOfColumnLink dpLink = (DataPropertyOfColumnLink)link;
+						String startHNodeId = dpLink.getSpecializedColumnHNodeId();
+						String endHNodeId = ((ColumnNode)link.getTarget()).getHNodeId();
+						// Get height of the class instance node
+						List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
+						int height = getHeight(link.getSource(), nodesWithSemTypesCovered, rootedTree);
+						
+						// Add 2 more holder nodes
+						// Start node
+						JSONObject startNode = new JSONObject();
+						startNode.put(JsonKeys.label.name(), "");
+						startNode.put(JsonKeys.id.name(), source.getId()+"_holder");
+						startNode.put(JsonKeys.nodeType.name(), JsonValues.DataPropertyOfColumnHolder.name());
+						startNode.put(JsonKeys.hNodeId.name(), startHNodeId);
+						JSONArray hNodeIdsCoveredByVertex_holder = new JSONArray();
+						hNodeIdsCoveredByVertex_holder.put(startHNodeId);
+						startNode.put(JsonKeys.hNodesCovered.name(), hNodeIdsCoveredByVertex_holder);
+						startNode.put(JsonKeys.height.name(), height-0.35);
+						nodesArr.put(startNode);
 
-					if(link.getType() == LinkType.ObjectPropertyLink) {
-						linkObj.put(JsonKeys.linkType.name(), JsonValues.objPropertyLink.name());
+						nodesIndexcounter++;
+						
+						// End node
+						JSONObject endNode = new JSONObject();
+						endNode.put(JsonKeys.label.name(), "");
+						endNode.put(JsonKeys.id.name(), target.getId()+"_holder");
+						endNode.put(JsonKeys.nodeType.name(), JsonValues.DataPropertyOfColumnHolder.name());
+						endNode.put(JsonKeys.hNodeId.name(), endHNodeId);
+
+						JSONArray hNodeIdsCoveredByVertex_holder_2 = new JSONArray();
+						hNodeIdsCoveredByVertex_holder_2.put(endHNodeId);
+						endNode.put(JsonKeys.hNodesCovered.name(), hNodeIdsCoveredByVertex_holder_2);
+						endNode.put(JsonKeys.height.name(), height-0.35);
+						nodesArr.put(endNode);
+
+						nodesIndexcounter++;
+						
+						// Add the horizontal link
+						JSONObject linkObj_holder = new JSONObject();
+						linkObj_holder.put(JsonKeys.source.name(), nodesIndexcounter-2);
+						linkObj_holder.put(JsonKeys.target.name(), nodesIndexcounter-1);
+						linkObj_holder.put(JsonKeys.label.name(), "");
+						linkObj_holder.put(JsonKeys.id.name(), "");
+						linkObj_holder.put(JsonKeys.linkType.name(), "horizontalDataPropertyLink");
+						linksArr.put(linkObj_holder);
 					}
+					
+					linkObj.put(JsonKeys.linkType.name(), link.getType());
 				}
 				
 				

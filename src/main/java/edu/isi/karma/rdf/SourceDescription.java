@@ -31,9 +31,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntProperty;
-
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.RepFactory;

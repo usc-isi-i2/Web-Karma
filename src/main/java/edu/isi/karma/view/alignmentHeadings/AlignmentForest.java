@@ -258,43 +258,47 @@ public class AlignmentForest implements TForest {
 		return null;
 	}
 
+	////////NOT WORKING WITH NEW API OF ALIGNMENT 
+	//////// SO COMMENTING OUT
 	private TNode populateWithVertex(Node vertex,
 			DirectedWeightedMultigraph<Node, Link> tree,
 			Link parentEdge) {
 		// Add the information about the parent link
-		AlignmentLink parentLink = null;
-		if (parentEdge != null) {
-			parentLink = new AlignmentLink(parentEdge.getId(),
-					parentEdge.getLabel().getUri());
-		}
-
-		// Add the children
-		List<TNode> children = new ArrayList<TNode>();
+//		AlignmentLink parentLink = null;
+//		if (parentEdge != null) {
+//			parentLink = new AlignmentLink(parentEdge.getId(),
+//					parentEdge.getLabel().getUri());
+//		}
+//
+//		// Add the children
+//		List<TNode> children = new ArrayList<TNode>();
 
 		// Check if the vertex is an intermediate node that should be attached
 		// to a column. In such case add a blank child node
-		if (vertex.getSemanticType() != null
-				&& tree.outgoingEdgesOf(vertex).size() != 0) {
-			logger.debug("Intermediate Node with column attached to it: "
-					+ vertex.getLabel().getUri());
-			AlignmentLink link = new AlignmentLink(vertex.getSemanticType()
-					.getHNodeId() + "BlankLink", "BlankNode");
-			TNode node = new AlignmentNode(vertex.getId() + "BlankNodeId",
-					null, link, "BlankNode", vertex.getSemanticType());
-			 logger.debug("Created blank node: " + node.getId());
-			children.add(node);
-		}
+		
+//		if (vertex.getSemanticType() != null
+//				&& tree.outgoingEdgesOf(vertex).size() != 0) {
+//			logger.debug("Intermediate Node with column attached to it: "
+//					+ vertex.getLabel().getUri());
+//			AlignmentLink link = new AlignmentLink(vertex.getSemanticType()
+//					.getHNodeId() + "BlankLink", "BlankNode");
+//			TNode node = new AlignmentNode(vertex.getId() + "BlankNodeId",
+//					null, link, "BlankNode", vertex.getSemanticType());
+//			 logger.debug("Created blank node: " + node.getId());
+//			children.add(node);
+//		}
 
 		//
-		Set<Link> edges = tree.outgoingEdgesOf(vertex);
-		for (Link edge : edges) {
-			TNode child = populateWithVertex(edge.getTarget(), tree, edge);
-			children.add(child);
-		}
+//		Set<Link> edges = tree.outgoingEdgesOf(vertex);
+//		for (Link edge : edges) {
+//			TNode child = populateWithVertex(edge.getTarget(), tree, edge);
+//			children.add(child);
+//		}
 
-		AlignmentNode node = new AlignmentNode(vertex.getId(), children,
-				parentLink, vertex.getLabel().getUri(), vertex.getSemanticType());
-		logger.debug("Created node: " + node.getId());
-		return node;
+//		AlignmentNode node = new AlignmentNode(vertex.getId(), children,
+//				parentLink, vertex.getLabel().getUri(), vertex.getSemanticType());
+//		logger.debug("Created node: " + node.getId());
+//		return node;
+		return null;
 	}
 }

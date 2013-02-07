@@ -103,11 +103,10 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
       .append("svg:path")
         .attr("d", "M0,-5L10,0L0,5");
     
-    
     var link = svg.selectAll("line.link")
         .data(json.links)
         .enter().append("svg:line")
-        .attr("class", "link")
+        .attr("class", function(d) { return "link " + d.linkType; })
         .attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
@@ -119,6 +118,31 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             else
                 return "url(#marker-Class)";
         });
+    
+    // var dataPropertyOfColumnLinks = [];
+    // $.each(json.links, function(i, item) {
+    	// if (item.linkType == "DataPropertyOfColumnLink") {
+    		// dataPropertyOfColumnLinks.push(item);
+    	// }
+    // });
+//     
+    // if (dataPropertyOfColumnLinks.length != 0) {
+    	// var dataPropertyOfColumnSVGLinks = svg.selectAll("line.link")
+        // .data(dataPropertyOfColumnLinks)
+        // .enter().append("svg:line")
+        // .attr("class", function(d) { return "link " + d.linkType; })
+        // .attr("x1", function(d) { return d.source.x; })
+        // .attr("y1", function(d) { return d.source.y; })
+        // .attr("x2", function(d) { return d.target.x; })
+        // .attr("y2", function(d) { return d.target.y; })
+        // .attr("id", function(d) { return "line"+d.source.index+"_"+d.target.index; })
+        // .attr("marker-end", function(d) {
+            // if(d.target.nodeType == "ColumnNode") 
+                // return "url(#marker-DataProperty)";
+            // else
+                // return "url(#marker-Class)";
+        // });
+    // }
         
     svg.selectAll("text")
         .data(json.links)
@@ -157,7 +181,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         }).on("click", function(d){
             showAlternativeParents_d3(d, svg, d3.event);
         }).on("mouseover", function(d){
-            d3.selectAll("g.Class").each(function(d2,i) {
+            d3.selectAll("g.InternalNode").each(function(d2,i) {
                 if(d2 == d.source) {
                     var newRect = $(this).clone();
                     newRect.attr("class","Class highlightOverlay");
@@ -224,24 +248,32 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .attr("y", function(d){
             if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot") {
                 return -2;
-            } else
+            } else if (d.nodeType == "DataPropertyOfColumnHolder") 
+            	return 0;
+            else
                 return -10;
         })
         .attr("height", function(d){
             if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
                 return 6;
+            else if (d.nodeType == "DataPropertyOfColumnHolder") 
+            	return 0;
             else
                 return 20;  
         })
         .attr("width", function(d) {
             if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
                 return 6;
+           else if (d.nodeType == "DataPropertyOfColumnHolder") 
+            	return 0;
             else
                 return d["width"];
         }).attr("x", function(d){
             if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot") {
                 return -3;
-            } else
+            } else if (d.nodeType == "DataPropertyOfColumnHolder") 
+            	return 0;
+            else
                 return d.width/2 * -1;
         }).on("click", function(d){
             if(d["nodeType"] == "ColumnNode" || d.nodeType == "Unassigned")
@@ -334,13 +366,25 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     $("g.Class").qtip({content: {text: "Add Parent Relationship"}});
     
     link.attr("x1", function(d) {
+        if (d.linkType == "horizontalDataPropertyLink") {
+        	return d.source.x;
+        }
+        
         if(d.source.y > d.target.y)
             return d.source.x;
         else
             return d.target.x;
     })
-    .attr("y1", function(d) { return d.source.y; })
+    .attr("y1", function(d) {
+    	if (d.linkType == "DataPropertyOfColumnLink") {
+    		return d.source.y + 18;
+    	}
+    	return d.source.y; 
+    })
     .attr("x2", function(d) {
+    	if (d.linkType == "horizontalDataPropertyLink") {
+        	return d.target.x;
+        }
         if(d.source.y > d.target.y)
             return d.source.x;
         else
