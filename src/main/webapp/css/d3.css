@@ -36,7 +36,7 @@ text.FakeRootLink {
 }
 
 .link.DataPropertyOfColumnLink, .link.ColumnSubClassLink, .link.ClassInstanceLink, .link.horizontalDataPropertyLink {
-	stroke: lightgreen;
+	stroke: blue;
 }
 
 rect {

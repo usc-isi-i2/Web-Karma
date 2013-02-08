@@ -279,8 +279,7 @@ public class SourceDescription {
 						stmt = generateDataPropertyStatement(v,e,child);
 						s.append("\n ^ " + stmt);
 					}
-				}
-				else if(e.getType()==LinkType.ObjectPropertyLink){
+				} else if(e.getType()==LinkType.ObjectPropertyLink){
 					//get the child node, which should be a Internal class instance node
 					if(child.getType()!=NodeType.InternalNode){
 						throw new KarmaException("Node " + child.getId() + " should be of type NodeType.InternalNode");
@@ -289,11 +288,22 @@ public class SourceDescription {
 						stmt = generateObjectPropertyStatement(v,e,child);
 						s.append("\n ^ " + stmt);
 					}
-				}
-				else if(e.getType()==LinkType.SubClassLink){
+				} else if(e.getType()==LinkType.SubClassLink){
 					//I have to include this, otherwise I lose the "connection" between the classes
 					stmt = generateObjectPropertyStatement(v,e,child);
 					s.append("\n ^ " + stmt);
+				} else if (e.getType() == LinkType.ClassInstanceLink) {
+//					// ^ `expand@Email`(uri(`expand@Title_URI`),uri(PersonID))    -----------> URI + property
+//					stmt = generateClassInstanceExpandStatement(v,e,child);
+//					s.append("\n ^ " + stmt);
+					
+				} else if (e.getType() == LinkType.DataPropertyOfColumnLink) {
+					stmt = generateDataPropertyOfColumnExpandStatement(v,e,child);
+					s.append("\n ^ " + stmt);
+				} else if (e.getType() == LinkType.ColumnSubClassLink) {
+					stmt = generateColumnSubClassLinkExpandStatement(v,e,child);
+					s.append("\n ^ " + stmt);
+					// Do nothing. It is taken care of in the findKey method
 				}
 				generateSourceDescription(child,s);
 			}
@@ -302,6 +312,62 @@ public class SourceDescription {
 			//it is a DataProperty node, so I reached the leaves => do nothing
 		}
 	}
+	
+	// `expand@PositionType`(uri(PersonID))    ---------> subclass
+	private String generateColumnSubClassLinkExpandStatement(Node v, Link e,
+			Node child) throws KarmaException {
+		if(child.getType()!=NodeType.ColumnNode){
+			throw new KarmaException("Node " + child.getLabel().getUri()+ " should be of type NodeType.ColumnNode");
+		}
+		
+		//find the key of Class v
+		String key = findKey(v);
+		if(key==null){
+			throw new KarmaException("Key for " + v.getLabel().getUri() + " is NULL. This should not happen!");
+		}
+		
+		String hNodeId = ((ColumnNode) child).getHNodeId();
+		String dataAttribute = factory.getHNode(hNodeId).getColumnName();
+		if(!useColumnNames){
+			dataAttribute = factory.getHNode(hNodeId).getHNodePath(factory).toColumnNamePath();
+		}
+		ruleAttributes.add(dataAttribute);
+		
+		if(reversedLinkIds.contains(e.getId())){
+			throw new KarmaException("A data property cannot be an inverse_of:" + e.getLabel().getUri());
+		}
+		String s = "`expand@" + dataAttribute + "`(uri(" + key + "))";
+		return s;
+		
+	}
+
+	// ^ `expand@Title`(uri(PersonID),Title)     --------------> property
+	private String generateDataPropertyOfColumnExpandStatement(Node v, Link e,
+			Node child) throws KarmaException {
+		if(child.getType()!=NodeType.ColumnNode){
+			throw new KarmaException("Node " + child.getLabel().getUri()+ " should be of type NodeType.ColumnNode");
+		}
+		
+		//find the key of Class v
+		String key = findKey(v);
+		if(key==null){
+			throw new KarmaException("Key for " + v.getLabel().getUri() + " is NULL. This should not happen!");
+		}
+		
+		String hNodeId = ((ColumnNode) child).getHNodeId();
+		String dataAttribute = factory.getHNode(hNodeId).getColumnName();
+		if(!useColumnNames){
+			dataAttribute = factory.getHNode(hNodeId).getHNodePath(factory).toColumnNamePath();
+		}
+		ruleAttributes.add(dataAttribute);
+		String propertyName = "expand@" + dataAttribute;
+		if(reversedLinkIds.contains(e.getId())){
+			throw new KarmaException("A data property cannot be an inverse_of:" + e.getLabel().getUri());
+		}
+		String s = "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
+		return s;
+	}
+
 
 	/**
 	 * Generates a unary predicate for a Class.
@@ -518,29 +584,28 @@ public class SourceDescription {
 	 */
 	private String addInverseProperty(String propertyName, String key1, String key2){
 		String s = "";
-//		if (ontMgr.)
-//		//see if this property has an inverse property, and if it does add it to the SD
-//		ObjectProperty op = model.getObjectProperty(propertyName);
-//		if(op==null){
-//			//this can happen if propertyName is not an Object property; it could be a subclass
-//			return s;
-//		}
-//		//one or the other will be null
-//		OntProperty inverseProp1 = op.getInverse();
-//		OntProperty inverseProp2 = op.getInverseOf();
-//
-//		//logger.info("Inverse prop for " + propertyName + " is " + inverseProp1 + " " + inverseProp2);
-//		
-//		if(inverseProp1!=null && generateInverse){
-//			//add the inverse property
-//			String prop = getPropertyWithPrefix(inverseProp1);
-//			s += " \n ^ " + "`" + prop + "`(uri(" + key2 + "),uri(" + key1 + "))";
-//		}
-//		if(inverseProp2!=null && generateInverse){
-//			//add the inverse property
-//			String prop = getPropertyWithPrefix(inverseProp2);
-//			s += " \n ^ " + "`" + prop + "`(uri(" + key2 + "),uri(" + key1 + "))";
-//		}
+		
+		//this can happen if propertyName is not an Object property; it could be a subclass
+		if (!ontMgr.isObjectProperty(propertyName))
+			return s;
+		//see if this property has an inverse property, and if it does add it to the SD
+
+		//one or the other will be null
+		Label inversePropLabel = ontMgr.getInverseProperty(propertyName);
+		Label inverseOfPropLabel = ontMgr.getInverseOfProperty(propertyName);
+
+		//logger.info("Inverse prop for " + propertyName + " is " + inverseProp1 + " " + inverseProp2);
+		
+		if(inversePropLabel!=null && generateInverse){
+			//add the inverse property
+			String prop = getPropertyWithPrefix(inversePropLabel);
+			s += " \n ^ " + "`" + prop + "`(uri(" + key2 + "),uri(" + key1 + "))";
+		}
+		if(inverseOfPropLabel!=null && generateInverse){
+			//add the inverse property
+			String prop = getPropertyWithPrefix(inverseOfPropLabel);
+			s += " \n ^ " + "`" + prop + "`(uri(" + key2 + "),uri(" + key1 + "))";
+		}
 		
 		return s;
 	}
@@ -594,6 +659,22 @@ public class SourceDescription {
 			//I could have more than 1 key
 			List<String> keys = new ArrayList<String>();
 			for(Link e:edges){
+				if (e.getType() == LinkType.ClassInstanceLink) {
+					keys.clear();
+					//get the child node
+					Node n = steinerTree.getEdgeTarget(e);
+					if(n.getType()==NodeType.ColumnNode){
+						String hNodeId = ((ColumnNode) n).getHNodeId();
+						if(useColumnNames){
+							key = factory.getHNode(hNodeId).getColumnName();
+						}else{
+							key = factory.getHNode(hNodeId).getHNodePath(factory).toColumnNamePath();
+						}
+						ruleAttributes.add(key);
+						keys.add("expand@" + key);
+					}
+					break;
+				}
 				//get the child node
 				Node n = steinerTree.getEdgeTarget(e);
 				if(n.getType()==NodeType.ColumnNode){
