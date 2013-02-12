@@ -87,7 +87,7 @@ public class Algorithm {
 		
 		Set<Set<String>> powerSet = powerSet(keys);
 
-		for (int k = 2; k < attCount; k ++) {
+		for (int k = 1; k < attCount; k ++) {
 			for (Set<String> set : powerSet) {
 				if (set.size() != k)
 					continue;
@@ -97,6 +97,19 @@ public class Algorithm {
 				for (String key : set) {
 					steinerNodes1.add(attMap1.get(key));
 					steinerNodes2.add(attMap2.get(key));
+				}
+				
+				if (steinerNodes1.size() == 1) {
+					Set<Link> incomingLinks = g1.incomingEdgesOf(steinerNodes1.get(0));
+					if (incomingLinks != null && incomingLinks.size() > 0) {
+						steinerNodes1.add(incomingLinks.toArray(new Link[0])[0].getSource());
+					}
+				}
+				if (steinerNodes2.size() == 1) {
+					Set<Link> incomingLinks = g2.incomingEdgesOf(steinerNodes2.get(0));
+					if (incomingLinks != null && incomingLinks.size() > 0) {
+						steinerNodes2.add(incomingLinks.toArray(new Link[0])[0].getSource());
+					}
 				}
 				
 				DirectedWeightedMultigraph<Node, Link> steinerTree1 = 

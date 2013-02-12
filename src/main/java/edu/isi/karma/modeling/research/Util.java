@@ -27,7 +27,9 @@ import java.util.List;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 
 public class Util {
@@ -36,8 +38,8 @@ public class Util {
 	public static List<Node> getAttributes(DirectedWeightedMultigraph<Node, Link> graph) {
 		List<Node> attributes = new ArrayList<Node>();
 		for (Node n : graph.vertexSet()) {
-			if (!n.getId().startsWith(ModelReader.attPrefix)) continue;
-			attributes.add(n);
+			if (n instanceof ColumnNode || n instanceof LiteralNode)
+				attributes.add(n);
 		}
 		Collections.sort(attributes);
 		return attributes;
