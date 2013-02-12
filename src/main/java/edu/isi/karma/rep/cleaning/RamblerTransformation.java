@@ -20,15 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.rep.cleaning;
 
-import java.util.HashMap;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.InterpreterType;
-import edu.isi.karma.cleaning.Interpretor;
-import edu.isi.karma.cleaning.Partition;
-import edu.isi.karma.cleaning.PartitionClassifier;
-import edu.isi.karma.cleaning.PartitionClassifierType;
-import edu.isi.karma.cleaning.Program;
 import edu.isi.karma.cleaning.ProgramRule;
 
 

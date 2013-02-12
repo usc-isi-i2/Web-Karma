@@ -2,8 +2,6 @@ package edu.isi.karma.cleaning;
 
 import java.util.Vector;
 
-import org.python.antlr.PythonParser.else_clause_return;
-
 public class Position implements GrammarTreeNode {
 	public Vector<TNode> leftContextNodes =new Vector<TNode>();
 	public Vector<TNode> rightContextNodes = new Vector<TNode>();

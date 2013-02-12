@@ -1,7 +1,7 @@
 package edu.isi.karma.er.helper;
 
-import edu.isi.karma.er.helper.entity.ResultRecord;
 import edu.isi.karma.er.helper.entity.InputStruct;
+import edu.isi.karma.er.helper.entity.ResultRecord;
 
 public class OutputToCSV {
 	private String csvFileAddress;

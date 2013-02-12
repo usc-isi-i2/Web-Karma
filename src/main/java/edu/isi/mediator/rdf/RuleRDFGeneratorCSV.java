@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 import au.com.bytecode.opencsv.CSVReader;
-
 import edu.isi.mediator.gav.main.MediatorException;
 import edu.isi.mediator.gav.util.MediatorLogger;
 import edu.isi.mediator.rule.LAVRule;

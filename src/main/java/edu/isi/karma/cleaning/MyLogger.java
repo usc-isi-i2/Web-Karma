@@ -1,5 +1,7 @@
 package edu.isi.karma.cleaning;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.HashMap;
 public class MyLogger {
 	public static BufferedWriter out;

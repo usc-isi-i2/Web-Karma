@@ -1,16 +1,17 @@
 package edu.isi.karma.er.test;
 
-import edu.isi.karma.er.helper.ExtractCoordinates;
-import edu.isi.karma.er.helper.CalculateResultScore;
-import edu.isi.karma.er.helper.entity.InputStruct;
-import edu.isi.karma.er.helper.entity.ResultRecord;
-import edu.isi.karma.er.helper.ConnectPostgis;
+import java.sql.Connection;
+
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.util.FileManager;
-import java.sql.Connection;
-import java.lang.String;
+
+import edu.isi.karma.er.helper.CalculateResultScore;
+import edu.isi.karma.er.helper.ConnectPostgis;
+import edu.isi.karma.er.helper.ExtractCoordinates;
+import edu.isi.karma.er.helper.entity.InputStruct;
+import edu.isi.karma.er.helper.entity.ResultRecord;
 
 public class BuildingMatching {
 

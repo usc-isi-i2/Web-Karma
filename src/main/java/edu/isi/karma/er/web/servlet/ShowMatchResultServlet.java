@@ -7,7 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
- 
+
 import edu.isi.karma.er.helper.entity.Paginator;
 import edu.isi.karma.er.helper.ontology.MatchResultOntology;
 import edu.isi.karma.er.web.service.ResultService;

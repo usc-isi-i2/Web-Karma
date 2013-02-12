@@ -11,12 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
+import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Node.NodeStatus;
-import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
@@ -126,6 +126,7 @@ public class SplitColumnByDelimiter {
 									NodeStatus.edited, factory);
 						}
 					}
+					reader.close();
 				} catch (IOException e) {
 					logger.error("Error reading Line: " + originalVal, e);
 				}

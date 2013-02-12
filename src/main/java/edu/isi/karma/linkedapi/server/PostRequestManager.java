@@ -28,8 +28,8 @@ import edu.isi.karma.rep.model.ClassAtom;
 import edu.isi.karma.rep.model.IndividualPropertyAtom;
 import edu.isi.karma.rep.sources.Attribute;
 import edu.isi.karma.rep.sources.InvocationManager;
-import edu.isi.karma.rep.sources.WebService;
 import edu.isi.karma.rep.sources.Table;
+import edu.isi.karma.rep.sources.WebService;
 import edu.isi.karma.webserver.KarmaException;
 
 

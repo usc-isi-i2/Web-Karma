@@ -1,6 +1,5 @@
 package edu.isi.karma.cleaning;
 
-import java.util.HashMap;
 import java.util.Vector;
 
 public class Program implements GrammarTreeNode {

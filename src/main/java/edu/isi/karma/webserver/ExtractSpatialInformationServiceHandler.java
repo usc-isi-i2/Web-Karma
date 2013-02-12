@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -25,7 +24,6 @@ import org.apache.log4j.Logger;
 
 import edu.isi.karma.er.helper.ConnectPostgis;
 import edu.isi.karma.model.serialization.MimeType;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 import edu.isi.karma.webserver.helper.CreateGeoBuildingForTable;
 import edu.isi.karma.webserver.helper.CreateGeoStreetForTable;
 

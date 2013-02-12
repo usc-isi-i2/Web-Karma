@@ -47,8 +47,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 		key, holderLink, objPropertyLink, Unassigned, FakeRoot, FakeRootLink, Add_Parent, DataPropertyOfColumnHolder, horizontalDataPropertyLink
 	}
 
-	public SVGAlignmentUpdate_ForceKarmaLayout(String vWorksheetId,
-			String alignmentId,
+	public SVGAlignmentUpdate_ForceKarmaLayout(String vWorksheetId, String alignmentId,
 			Alignment alignment, List<String> hNodeIdList) {
 		super();
 		this.vWorksheetId = vWorksheetId;

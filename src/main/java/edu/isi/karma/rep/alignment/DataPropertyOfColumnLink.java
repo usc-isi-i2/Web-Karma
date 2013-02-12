@@ -21,9 +21,9 @@
 
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
+import edu.isi.karma.modeling.Uris;
 
 
 public class DataPropertyOfColumnLink extends Link {

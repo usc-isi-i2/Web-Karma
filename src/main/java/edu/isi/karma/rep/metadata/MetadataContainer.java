@@ -21,8 +21,8 @@
 package edu.isi.karma.rep.metadata;
 
 import edu.isi.karma.rep.alignment.SemanticTypes;
-import edu.isi.karma.rep.sources.WebService;
 import edu.isi.karma.rep.sources.DataSource;
+import edu.isi.karma.rep.sources.WebService;
 
 public class MetadataContainer {
 	

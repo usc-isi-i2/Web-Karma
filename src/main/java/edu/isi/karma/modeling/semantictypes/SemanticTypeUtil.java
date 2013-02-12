@@ -38,9 +38,9 @@ import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler.Colu
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
-import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.metadata.Tag;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
