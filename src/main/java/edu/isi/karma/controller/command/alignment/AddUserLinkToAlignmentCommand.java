@@ -32,7 +32,6 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.AlignToOntology;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNodePath;
@@ -86,18 +85,14 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 		if(alignment == null || alignment.getGraphLinks().size() == 0) {
-			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
-			try {
-				align.align(false);
-			} catch (Exception e) {
-				logger.error("Error occured while generating the model Reason:.", e);
-				return new UpdateContainer(new ErrorUpdate("Error occured while generating the model for the source."));
-			}
-			alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+			logger.error("Alignment cannot be null before calling this command since the alignment is created while " +
+					"setting the semantic types.");
+			return new UpdateContainer(new ErrorUpdate("Error occured while generating the model for the source."));
 		}
 		
 		// Add the user provided edge
 		alignment.changeLinkStatus(edgeId, LinkStatus.ForcedByUser);
+		alignment.align();
 		
 		return getAlignmentUpdateContainer(alignment, worksheet, vWorkspace);
 	}
@@ -111,6 +106,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 
 		// Clear the user provided edge
 		alignment.changeLinkStatus(edgeId, LinkStatus.Normal);
+		alignment.align();
 
 		// Get the alignment update
 		return getAlignmentUpdateContainer(alignment, worksheet, vWorkspace);
@@ -118,13 +114,12 @@ public class AddUserLinkToAlignmentCommand extends Command {
 
 	private UpdateContainer getAlignmentUpdateContainer(Alignment alignment,
 			Worksheet worksheet, VWorkspace vWorkspace) {
-		
+		// Add the visualization update
 		List<String> hNodeIdList = new ArrayList<String>();
 		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 		List<HNodePath> columns = vw.getColumns();
 		for(HNodePath path:columns)
 			hNodeIdList.add(path.getLeaf().getId());
-		
 		SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, alignment, hNodeIdList);
 
 		UpdateContainer c = new UpdateContainer();

@@ -168,8 +168,8 @@ public class SetSemanticTypeCommand extends Command {
 						alignment.align();
 						newLink = clsLink;
 						
+						// Create the semantic type object
 						newType = new SemanticType(hNodeId, classNode.getLabel(),domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
-						worksheet.getSemanticTypes().addType(newType);
 					} 
 					// Add a property link if both type (property) and domain (class) is present 
 					else {
@@ -177,9 +177,9 @@ public class SetSemanticTypeCommand extends Command {
 						DataPropertyLink propLink = alignment.addDataPropertyLink(classNode, columnNode, propertyLabel, isPartOfKey);
 						alignment.align();
 						newLink = propLink;
-						
+
+						// Create the semantic type object
 						newType = new SemanticType(hNodeId, propertyLabel,domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
-						worksheet.getSemanticTypes().addType(newType);
 					}
 				} else { // Synonym semantic type
 					SemanticType synType = new SemanticType(hNodeId, ontMgr.getUriLabel(fullTypeValue),domainName, SemanticType.Origin.User, 1.0,isPartOfKey);

@@ -22,7 +22,6 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,7 +45,6 @@ import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
@@ -116,15 +114,15 @@ public class ShowModelCommand extends WorksheetCommand {
 
 		try {
 			// Save the semantic types in the input parameter JSON
-			saveSemanticTypesInformation(worksheet, vWorkspace);
+			saveSemanticTypesInformation(worksheet, vWorkspace, alignment.getSemanticTypes());
 			
+			// Get the updates
 			// Add the visualization update
 			List<String> hNodeIdList = new ArrayList<String>();
 			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 			List<HNodePath> columns = vw.getColumns();
 			for(HNodePath path:columns)
 				hNodeIdList.add(path.getLeaf().getId());
-
 			SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, alignment, hNodeIdList);
 			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
 			c.add(svgUpdate);
@@ -137,10 +135,9 @@ public class ShowModelCommand extends WorksheetCommand {
 		return c;
 	}
 
-	private void saveSemanticTypesInformation(Worksheet worksheet, VWorkspace vWorkspace) throws JSONException {
-		SemanticTypes types = worksheet.getSemanticTypes();
+	private void saveSemanticTypesInformation(Worksheet worksheet, VWorkspace vWorkspace
+			, List<SemanticType> semanticTypes) throws JSONException {
 		JSONArray typesArray = new JSONArray();
-		Map<String, SemanticType> typeMap = types.getTypes();
 		
 		// Add the vworksheet information
 		JSONObject vwIDJObj = new JSONObject();
@@ -156,22 +153,21 @@ public class ShowModelCommand extends WorksheetCommand {
 		chIDJObj.put(ClientJsonKeys.value.name(), false);
 		typesArray.put(chIDJObj);
 		
-		for (String hNodeId : typeMap.keySet()) {
+		for (SemanticType type: semanticTypes) {
 			// Add the hNode information
 			JSONObject hNodeJObj = new JSONObject();
 			hNodeJObj.put(ClientJsonKeys.name.name(), ParameterType.hNodeId.name());
 			hNodeJObj.put(ClientJsonKeys.type.name(), ParameterType.hNodeId.name());
-			hNodeJObj.put(ClientJsonKeys.value.name(), hNodeId);
+			hNodeJObj.put(ClientJsonKeys.value.name(), type.getHNodeId());
 			typesArray.put(hNodeJObj);
 			
 			// Add the semantic type information
 			JSONObject typeJObj = new JSONObject();
 			typeJObj.put(ClientJsonKeys.name.name(), ClientJsonKeys.SemanticType.name());
 			typeJObj.put(ClientJsonKeys.type.name(), ParameterType.other.name());
-			typeJObj.put(ClientJsonKeys.value.name(), typeMap.get(hNodeId).getJSONArrayRepresentation());
+			typeJObj.put(ClientJsonKeys.value.name(), type.getJSONArrayRepresentation());
 			typesArray.put(typeJObj);
 		}
-		
 		setInputParameterJson(typesArray.toString(4));
 	}
 
