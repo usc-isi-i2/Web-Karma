@@ -154,7 +154,9 @@ public class GraphBuilder {
 			float elapsedTimeSec;
 
 			List<Node> closure = new ArrayList<Node>();
-			List<Node> newNodes = addNodeClosure(node, closure);
+			List<Node> newNodes = new ArrayList<Node>();
+			newNodes.add(node);
+			addNodeClosure(node, newNodes, closure);
 			this.nodeClosure.put(node,  closure);
 			long addNodesClosure = System.currentTimeMillis();
 			elapsedTimeSec = (addNodesClosure - start)/1000F;
@@ -411,22 +413,17 @@ public class GraphBuilder {
 	 * by ObjectProperty or SubClass links
 	 * @return
 	 */
-	private List<Node> addNodeClosure(Node node, List<Node> nodeClosureList) {
+	private void addNodeClosure(Node node, List<Node> newAddedNodes, List<Node> nodeClosureList) {
 
 		logger.debug("<enter");
 		
-		List<Node> newAddedNodes = new ArrayList<Node>();
-		if (nodeClosureList == null)
-			nodeClosureList = new ArrayList<Node>();
+		if (newAddedNodes == null) newAddedNodes = new ArrayList<Node>();
+		if (nodeClosureList == null) nodeClosureList = new ArrayList<Node>();
 		
-		String uri = node.getLabel().getUri();
-		if (this.uriToNodesMap.get(uri) == null ||
-				this.uriToNodesMap.get(uri).size() == 0) 
-			// the same class has already been added and we have added its closure before
-			return newAddedNodes;
+		String uri;
 			
+		List<Node> currentlyAddingNodes = new ArrayList<Node>();
 		List<Node> recentlyAddedNodes = new ArrayList<Node>();
-		List<Node> newNodes;
 
 		List<String> dpDomainClasses = null;
 		List<String> opDomainClasses = null;
@@ -442,19 +439,19 @@ public class GraphBuilder {
 		List<String> processedLabels = new ArrayList<String>();
 		while (recentlyAddedNodes.size() > 0) {
 
-			newNodes = new ArrayList<Node>();
-			for (int i = 0; i < recentlyAddedNodes.size(); i++) {
+			currentlyAddingNodes = new ArrayList<Node>();
+			for (Node n : recentlyAddedNodes) {
 
-				uri = recentlyAddedNodes.get(i).getLabel().getUri();
+				uri = n.getLabel().getUri();
 				if (processedLabels.indexOf(uri) != -1) 
 					continue;
 
 				processedLabels.add(uri);
 
-				if (recentlyAddedNodes.get(i) instanceof InternalNode) {
+				if (n instanceof InternalNode) {
 					opDomainClasses = ontologyManager.getDomainsGivenRange(uri, true);
 					superClasses = ontologyManager.getSuperClasses(uri, false).keySet();
-				} else if (recentlyAddedNodes.get(i) instanceof ColumnNode) {
+				} else if (n instanceof ColumnNode) {
 					dpDomainClasses = ontologyManager.getDomainsGivenProperty(uri, true);
 				}
 
@@ -465,36 +462,35 @@ public class GraphBuilder {
 				if (superClasses != null)
 					newAddedClasses.addAll(superClasses);
 
-				for (int j = 0; j < newAddedClasses.size(); j++) {
-					uri = newAddedClasses.get(j);
-					List<Node> nodesOfSameType = this.uriToNodesMap.get(uri);
+				for (String c : newAddedClasses) {
+					List<Node> nodesOfSameType = this.uriToNodesMap.get(c);
 					if (nodesOfSameType == null || nodesOfSameType.size() == 0) { // the internal node is not added to the graph before
-						Node n = new InternalNode(nodeIdFactory.getNodeId(uri), 
-								ontologyManager.getUriLabel(uri));
-						if (addSingleNode(n)) {	
-							newNodes.add(n);
-							nodeClosureList.add(n);
+						Node nn = new InternalNode(nodeIdFactory.getNodeId(c), 
+								ontologyManager.getUriLabel(c));
+						if (addSingleNode(nn)) {	
+							currentlyAddingNodes.add(nn);
+							newAddedNodes.add(nn);
+							nodeClosureList.add(nn);
 						}
 					} else {
-						for (Node n : nodesOfSameType) {
-							Integer refCount = this.nodeReferences.get(n);
+						for (Node nn : nodesOfSameType) {
+							Integer refCount = this.nodeReferences.get(nn);
 							if (refCount == null) {
-								logger.error("There should be something wrong. Number of references to a node cannot be null");
+								logger.error("There should be something wrong. Number of references of a node cannot be null");
 								continue;
 							}
-							this.nodeReferences.put(n, ++refCount);							
-							nodeClosureList.add(n); 
+							this.nodeReferences.put(nn, ++refCount);							
+							nodeClosureList.add(nn); 
 						}
 					}
 				}
 			}
 
-			recentlyAddedNodes = newNodes;
+			recentlyAddedNodes = currentlyAddingNodes;
 			newAddedClasses.clear();
 		}
 
 		logger.debug("exit>");
-		return newAddedNodes;
 	}
 
 	private void updateLinksBetweenTwoSets(List<Node> set1, List<Node> set2) {
