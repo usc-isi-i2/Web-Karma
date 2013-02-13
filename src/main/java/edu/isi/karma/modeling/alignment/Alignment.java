@@ -423,12 +423,4 @@ public class Alignment {
 		logger.info("total number of edges in steiner tree: " + this.steinerTree.edgeSet().size());
 		logger.info("time to compute steiner tree: " + elapsedTimeSec);
 	}
-
-	
-	// TODO: Why do we need this function
-	public ColumnNode getColumnNodeByHNodeId(String hNodeId) {
-		return null;
-	}
-
-
 }

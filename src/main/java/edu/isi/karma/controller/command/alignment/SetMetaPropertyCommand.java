@@ -33,6 +33,7 @@ import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.alignment.AlignmentUtil;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.HNode;
@@ -98,7 +99,7 @@ public class SetMetaPropertyCommand extends Command {
 		/*** Add the appropriate nodes and links in alignment graph ***/
 		HNode hnode = vWorkspace.getRepFactory().getHNode(hNodeId);
 		String columnName = hnode.getColumnName();
-		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+		ColumnNode columnNode = AlignmentUtil.getColumnNodeByHNodeId(alignment, hNodeId);
 		if (columnNode == null) {
 			columnNode = alignment.addColumnNode(hNodeId, columnName);
 		}
