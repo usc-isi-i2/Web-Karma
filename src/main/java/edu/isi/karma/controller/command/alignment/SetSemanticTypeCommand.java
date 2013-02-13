@@ -35,7 +35,6 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.AlignToOntology;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
@@ -43,7 +42,6 @@ import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
@@ -55,7 +53,6 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
-import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
 public class SetSemanticTypeCommand extends Command {
@@ -123,7 +120,12 @@ public class SetSemanticTypeCommand extends Command {
 		HNode hnode = vWorkspace.getRepFactory().getHNode(hNodeId);
 		String columnName = hnode.getColumnName();
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+		
 		if (columnNode == null) {
+			columnNode = alignment.addColumnNode(hNodeId, columnName);
+		} else {
+			// Remove old column node if it exists
+			alignment.removeNode(columnNode.getId());
 			columnNode = alignment.addColumnNode(hNodeId, columnName);
 		}
 		
@@ -210,15 +212,10 @@ public class SetSemanticTypeCommand extends Command {
 			Thread t = new Thread(new SemanticTypeTrainingThread(crfModelHandler, worksheet, newType));
 			t.start();
 
-			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
 			try {
 				// Add the visualization update
-				List<String> hNodeIdList = new ArrayList<String>();
-				VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-				List<HNodePath> columns = vw.getColumns();
-				for(HNodePath path:columns)
-					hNodeIdList.add(path.getLeaf().getId());
-				c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, alignment, hNodeIdList));
+				c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
 			} catch (Exception e) {
 				logger.error("Error occured while setting the semantic type!", e);
 				return new UpdateContainer(new ErrorUpdate(
@@ -245,12 +242,13 @@ public class SetSemanticTypeCommand extends Command {
 			worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), oldSynonymTypes);
 		}
 
-		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(),oldColumnModel);
+		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), oldColumnModel);
 
 		// Get the alignment update if any
-		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,vWorksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
+//		alignment.remo
 		try {
-			align.alignAndUpdate(c, false);
+			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
 		} catch (Exception e) {
 			logger.error("Error occured while unsetting the semantic type!", e);
 			return new UpdateContainer(new ErrorUpdate(

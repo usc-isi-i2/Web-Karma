@@ -20,7 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -42,10 +41,8 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
-import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
 public class ShowModelCommand extends WorksheetCommand {
@@ -116,16 +113,9 @@ public class ShowModelCommand extends WorksheetCommand {
 			// Save the semantic types in the input parameter JSON
 			saveSemanticTypesInformation(worksheet, vWorkspace, alignment.getSemanticTypes());
 			
-			// Get the updates
 			// Add the visualization update
-			List<String> hNodeIdList = new ArrayList<String>();
-			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-			List<HNodePath> columns = vw.getColumns();
-			for(HNodePath path:columns)
-				hNodeIdList.add(path.getLeaf().getId());
-			SVGAlignmentUpdate_ForceKarmaLayout svgUpdate = new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, alignment, hNodeIdList);
-			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
-			c.add(svgUpdate);
+			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
+			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
 			c.add(new TagsUpdate());
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);

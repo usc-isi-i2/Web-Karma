@@ -32,10 +32,12 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.AlignToOntology;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
@@ -114,18 +116,14 @@ public class UnassignSemanticTypeCommand extends Command {
 
 		// Update the container
 		UpdateContainer c = new UpdateContainer();
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
-
-		// Update the alignment
-		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
-				vWorksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
+		// Add the alignment update
 		try {
-			align.alignAndUpdate(c, false);
+			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
 		} catch (Exception e) {
-			logger.error("Error occured while unassigning the semantic type!",
-					e);
-			return new UpdateContainer(new ErrorUpdate(
-					"Error occured while unassigning the semantic type!"));
+			logger.error("Error occured while unassigning the semantic type!",e);
+			return new UpdateContainer(new ErrorUpdate("Error occured while unassigning the semantic type!"));
 		}
 		c.add(new TagsUpdate());
 		
@@ -144,18 +142,15 @@ public class UnassignSemanticTypeCommand extends Command {
 
 		// Update the container
 		UpdateContainer c = new UpdateContainer();
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
 
-		// Update the alignment
-		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
-				vWorksheetId);
+		// Add the alignment update
 		try {
-			align.alignAndUpdate(c, false);
+			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
 		} catch (Exception e) {
-			logger.error("Error occured while unassigning the semantic type!",
-					e);
-			return new UpdateContainer(new ErrorUpdate(
-					"Error occured while unassigning the semantic type!"));
+			logger.error("Error occured while unassigning the semantic type!", e);
+			return new UpdateContainer(new ErrorUpdate("Error occured while unassigning the semantic type!"));
 		}
 		return c;
 	}

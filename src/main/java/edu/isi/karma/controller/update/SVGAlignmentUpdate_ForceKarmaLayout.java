@@ -17,7 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.Link;
@@ -25,15 +27,13 @@ import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
+import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
 public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
-	private final String vWorksheetId;
-	private final String alignmentId;
-//	private Alignment alignment;
+	private final VWorksheet vWorksheet;
 	private final DirectedWeightedMultigraph<Node, Link> tree;
 	private final Node root;
-	private final List<String> hNodeIdList;
 	
 	private static Logger logger = LoggerFactory.getLogger(SVGAlignmentUpdate_ForceKarmaLayout.class);
 
@@ -44,28 +44,33 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 	}
 
 	private enum JsonValues {
-		key, holderLink, objPropertyLink, Unassigned, FakeRoot, FakeRootLink, Add_Parent, DataPropertyOfColumnHolder, horizontalDataPropertyLink
+		key, holderLink, objPropertyLink, Unassigned, FakeRoot, FakeRootLink, 
+		Add_Parent, DataPropertyOfColumnHolder, horizontalDataPropertyLink
 	}
 
-	public SVGAlignmentUpdate_ForceKarmaLayout(String vWorksheetId, String alignmentId,
-			Alignment alignment, List<String> hNodeIdList) {
+	public SVGAlignmentUpdate_ForceKarmaLayout(VWorksheet vWorksheet, Alignment alignment) {
 		super();
-		this.vWorksheetId = vWorksheetId;
-		this.alignmentId = alignmentId;
+		this.vWorksheet = vWorksheet;
 		this.tree = alignment.getSteinerTree();
 		this.root = alignment.GetTreeRoot();
-		this.hNodeIdList = hNodeIdList;
 	}
 	
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
+		List<String> hNodeIdList = new ArrayList<String>();
+		List<HNodePath> columns = vWorksheet.getColumns();
+		for(HNodePath path:columns)
+			hNodeIdList.add(path.getLeaf().getId());
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), 
+				vWorksheet.getId());
+		
 		JSONObject topObj = new JSONObject();
 		try {
 			topObj.put(GenericJsonKeys.updateType.name(),
 					SVGAlignmentUpdate_ForceKarmaLayout.class.getSimpleName());
 			topObj.put(JsonKeys.alignmentId.name(), alignmentId);
-			topObj.put(JsonKeys.worksheetId.name(), vWorksheetId);
+			topObj.put(JsonKeys.worksheetId.name(), vWorksheet.getId());
 			
 			// Reversing the inverse links for easy traversal through graph
 			Set<String> reversedLinks = new HashSet<String>();

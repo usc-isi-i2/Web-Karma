@@ -29,8 +29,11 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
+import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.AlignToOntology;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
@@ -156,20 +159,19 @@ public class AddColumnCommand extends WorksheetCommand {
 			// Get the alignment update if any
 			// Shubham 2012/10/28 to move the red dots in case the the model is
 			// being shown
-			if (!worksheet.getSemanticTypes().getListOfTypes().isEmpty()) {
-				OntologyManager ontMgr = vWorkspace.getWorkspace()
-						.getOntologyManager();
-				SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet,
-						vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
-
-				AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
-						vWorksheetId);
+			Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
+			if (!worksheet.getSemanticTypes().getListOfTypes().isEmpty() && alignment!= null && alignment.isEmpty()) {
 				try {
-					align.alignAndUpdate(c, true);
+					// Compute suggestions for the new column 
+					OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+					SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
+
+					// Get the updated alignment
+					c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
+					c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vw, alignment));
 				} catch (Exception e) {
 					return new UpdateContainer(
-							new ErrorUpdate(
-									"Error occured while generating the model for the source."));
+							new ErrorUpdate("Error occured while generating the model for the source."));
 				}
 			}
 			return c;

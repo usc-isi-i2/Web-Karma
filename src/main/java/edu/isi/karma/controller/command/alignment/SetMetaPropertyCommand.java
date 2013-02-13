@@ -21,9 +21,6 @@
 
 package edu.isi.karma.controller.command.alignment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +36,6 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
@@ -95,9 +91,9 @@ public class SetMetaPropertyCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		/*** Get the Alignment for this worksheet ***/
+		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
 		
 		/*** Add the appropriate nodes and links in alignment graph ***/
 		HNode hnode = vWorkspace.getRepFactory().getHNode(hNodeId);
@@ -137,7 +133,6 @@ public class SetMetaPropertyCommand extends Command {
 		}
 		
 		UpdateContainer c = new UpdateContainer();
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 		CRFModelHandler crfModelHandler = vWorkspace.getWorkspace().getCrfModelHandler();
 
 		// Save the old SemanticType object and CRF Model for undo
@@ -151,15 +146,11 @@ public class SetMetaPropertyCommand extends Command {
 //		worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), newSynonymTypes);
 
 		if(trainAndShowUpdates) {
-			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
 			try {
 				// Add the visualization update
-				List<String> hNodeIdList = new ArrayList<String>();
-				VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-				List<HNodePath> columns = vw.getColumns();
-				for(HNodePath path:columns)
-					hNodeIdList.add(path.getLeaf().getId());
-				c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorksheetId, alignmentId, alignment, hNodeIdList));
+				c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vw, alignment));
 			} catch (Exception e) {
 				logger.error("Error occured while setting the semantic type!", e);
 				return new UpdateContainer(new ErrorUpdate(

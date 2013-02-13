@@ -21,6 +21,9 @@
 package edu.isi.karma.controller.update;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONStringer;
@@ -28,10 +31,16 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.InternalNode;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
@@ -40,6 +49,7 @@ import edu.isi.karma.view.VWorkspace;
 public class SemanticTypesUpdate extends AbstractUpdate {
 	private Worksheet worksheet;
 	private String vWorksheetId;
+	private Alignment alignment;
 
 	public enum JsonKeys {
 		HNodeId, FullType, ConfidenceLevel, Origin, FullCRFModel, DisplayLabel, DisplayDomainLabel, Domain, SemanticTypesArray, isPrimary, isPartOfKey, Types
@@ -48,17 +58,20 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 	private static Logger logger = LoggerFactory
 			.getLogger(SemanticTypesUpdate.class);
 
-	public SemanticTypesUpdate(Worksheet worksheet, String vWorksheetId) {
+	public SemanticTypesUpdate(Worksheet worksheet, String vWorksheetId, Alignment alignment) {
 		super();
 		this.worksheet = worksheet;
 		this.vWorksheetId = vWorksheetId;
+		this.alignment = alignment;
 	}
 
 	@Override
-	public void generateJson(String prefix, PrintWriter pw,
-			VWorkspace vWorkspace) {
+	public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
+		
 		SemanticTypes types = worksheet.getSemanticTypes();
-
+		Map<String, ColumnNode> hNodeIdTocolumnNodeMap = createColumnNodeMap();
+		Map<String, InternalNode> hNodeIdToDomainNodeMap = createDomainNodeMap();
+		
 		JSONStringer jsonStr = new JSONStringer();
 		try {
 			JSONWriter writer = jsonStr.object();
@@ -77,32 +90,48 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 
 				// Check if a semantic type exists for the HNode
 				SemanticType type = types.getSemanticTypeForHNodeId(nodeId);
-				if (type != null
-						&& type.getConfidenceLevel() != SemanticType.ConfidenceLevel.Low) {
+				if (type != null && type.getConfidenceLevel() != SemanticType.ConfidenceLevel.Low) {
 					writer.key(JsonKeys.HNodeId.name())
 							.value(type.getHNodeId())
 							.key(JsonKeys.SemanticTypesArray.name()).array();
+					
+					ColumnNode alignmentColumnNode = hNodeIdTocolumnNodeMap.get(type.getHNodeId());
+					InternalNode domainNode = hNodeIdToDomainNodeMap.get(type.getHNodeId());
+					
+					if (alignmentColumnNode == null || domainNode == null) {
+						logger.error("Column node or domain node not found in alignment." +
+								" (This should not happen conceptually!):" + type);
+						continue;
+					}
+					
 					// Add the primary semantic type
 					writer.object()
-							.key(JsonKeys.FullType.name())
-							.value(type.getType().getUri())
 							.key(JsonKeys.Origin.name())
 							.value(type.getOrigin().name())
 							.key(JsonKeys.ConfidenceLevel.name())
 							.value(type.getConfidenceLevel().name())
-							.key(JsonKeys.DisplayLabel.name())
-							.value(type.getType().getLocalNameWithPrefix())
 							.key(JsonKeys.isPartOfKey.name())
 							.value(type.isPartOfKey())
-							.key(JsonKeys.isPrimary.name()).value(true);
+							.key(JsonKeys.isPrimary.name())
+							.value(true);
 					
 					if (!type.isClass()) {
-						writer.key(JsonKeys.Domain.name())
-							.value(type.getDomain().getUri())
+						writer
+							.key(JsonKeys.FullType.name())
+							.value(type.getType().getUri())
+							.key(JsonKeys.DisplayLabel.name())
+							.value(type.getType().getLocalNameWithPrefix())
+							.key(JsonKeys.Domain.name())
+							.value(domainNode.getId())
 							.key(JsonKeys.DisplayDomainLabel.name())
-							.value(type.getDomain().getLocalName());
+							.value(domainNode.getLocalId());
 					} else {
-						writer.key(JsonKeys.Domain.name())
+						writer
+							.key(JsonKeys.FullType.name())
+							.value(domainNode.getId())
+							.key(JsonKeys.DisplayLabel.name())
+							.value(domainNode.getLocalId())
+							.key(JsonKeys.Domain.name())
 							.value("")
 							.key(JsonKeys.DisplayDomainLabel.name())
 							.value("");
@@ -163,8 +192,34 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 
 			pw.print(writer.toString());
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			logger.error("Error occured while writing to JSON!", e);
 		}
+	}
+
+	private Map<String, InternalNode> createDomainNodeMap() {
+		Map<String, InternalNode> hNodeIdToDomainNodeMap = new HashMap<String, InternalNode>();
+		List<Node> alignmentColumnNodes = alignment.getNodesByType(NodeType.ColumnNode);
+		if (alignmentColumnNodes == null)
+			return hNodeIdToDomainNodeMap;
+		for (Node cNode : alignmentColumnNodes) {
+			Link incomingLink = alignment.getCurrentLinkToNode(cNode.getId());
+			if (incomingLink.getSource() instanceof InternalNode) {
+				hNodeIdToDomainNodeMap.put(((ColumnNode)cNode).getHNodeId()
+						, (InternalNode)incomingLink.getSource());
+			}
+		}
+		return hNodeIdToDomainNodeMap;
+	}
+
+	private Map<String, ColumnNode> createColumnNodeMap() {
+		List<Node> alignmentColumnNodes = alignment.getNodesByType(NodeType.ColumnNode);
+		Map<String, ColumnNode> hNodeIdToColumnNodeMap = new HashMap<String, ColumnNode>();
+		if (alignmentColumnNodes == null)
+			return hNodeIdToColumnNodeMap;
+		for (Node cNode : alignmentColumnNodes) {
+			ColumnNode columnNode = (ColumnNode) cNode;
+			hNodeIdToColumnNodeMap.put(columnNode.getHNodeId(), columnNode);
+		}
+		return hNodeIdToColumnNodeMap;
 	}
 }

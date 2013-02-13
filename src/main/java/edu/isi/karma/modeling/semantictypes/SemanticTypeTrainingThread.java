@@ -61,7 +61,7 @@ public class SemanticTypeTrainingThread implements Runnable {
 		if (!trainingResult) {
 			logger.error("Error occured while training CRF Model.");
 		}
-		logger.debug("Using type:" + newType.getDomain().getUri() + "|" + newType.getType().getUri());
+//		logger.debug("Using type:" + newType.getDomain().getUri() + "|" + newType.getType().getUri());
 
 		// Add the new CRF column model for this column
 		ArrayList<String> labels = new ArrayList<String>();

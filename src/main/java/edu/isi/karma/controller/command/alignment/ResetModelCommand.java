@@ -32,10 +32,10 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.AlignToOntology;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Node;
@@ -123,12 +123,13 @@ public class ResetModelCommand extends Command {
 		}
 		vWorkspace.getWorkspace().getTagsContainer().getTag(TagName.Outlier).removeNodeIds(nodeIds);
 
-		// Update the container
+		// Update the container with new empty alignment
+		Alignment newAlignment = new Alignment(vWorkspace.getWorkspace().getOntologyManager());
+		AlignmentManager.Instance().addAlignmentToMap(alignmentId, newAlignment);
 		UpdateContainer c = new UpdateContainer();
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, newAlignment));
 
 		// Update the alignment
-		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
 		try {
 			// Delete the existing history that saves the model
 			if(HistoryJsonUtil.historyExists(worksheet.getTitle(), vWorkspace.getPreferencesId())) {
@@ -140,8 +141,8 @@ public class ResetModelCommand extends Command {
 			}
 			// Remove the modeling commands from the Command History
 			vWorkspace.getWorkspace().getCommandHistory().removeCommands(CommandTag.Modeling);
-			
-			align.alignAndUpdate(c, true);
+			c.add(new SVGAlignmentUpdate_ForceKarmaLayout( vWorkspace.getViewFactory()
+					.getVWorksheet(vWorksheetId), newAlignment));
 		} catch (Exception e) {
 			logger.error("Error occured while resetting model!", e);
 			return new UpdateContainer(new ErrorUpdate("Error occured while resetting model!"));
@@ -171,22 +172,18 @@ public class ResetModelCommand extends Command {
 		
 		// Update the container
 		UpdateContainer c = new UpdateContainer();
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, oldAlignment));
 		
 		// Update the alignment
-		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace,
-				vWorksheetId);
 		try {
 			// Write the history file content into the history file
 			File histFile = new File(HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(worksheet.getTitle(), vWorkspace.getPreferencesId()));
 			FileUtil.writeStringToFile(oldHistoryFileContent, histFile.getAbsolutePath());
 			
-			align.alignAndUpdate(c, true);
+			c.add(new SVGAlignmentUpdate_ForceKarmaLayout( vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), oldAlignment));
 		} catch (Exception e) {
-			logger.error("Error occured while undoing alignment!",
-					e);
-			return new UpdateContainer(new ErrorUpdate(
-			"Error occured while undoing alignment!"));
+			logger.error("Error occured while undoing alignment!", e);
+			return new UpdateContainer(new ErrorUpdate("Error occured while undoing alignment!"));
 		}
 		return c;
 
