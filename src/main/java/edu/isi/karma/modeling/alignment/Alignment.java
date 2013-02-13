@@ -88,53 +88,6 @@ public class Alignment {
 		return this.steinerTree;
 	}
 	
-	public List<SemanticType> getSemanticTypes() {
-		
-		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
-		
-		String hNodeId;
-		Label type;
-		Label domain;
-		Origin origin;
-		Double probability;
-		boolean partOfKey;
-		
-		// FIXME: Are the column nodes enough to be added to Semantic Types?
-		List<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
-		if (columnNodes != null) {
-			for (Node n : columnNodes) {
-				
-				// FIXME: talk to user to see how the SemanticType attributed should be filled.
-				hNodeId = ((ColumnNode)n).getHNodeId();
-				type = null;
-				domain = null;
-				origin = Origin.User;
-				probability = 1.0;
-				partOfKey = false;
-
-				
-				Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(n);
-				if (incomingLinks != null && incomingLinks.size() == 1) {
-					Link inLink = incomingLinks.toArray(new Link[0])[0];
-					Node source = inLink.getSource();
-					if (inLink instanceof DataPropertyLink) {
-						type = inLink.getLabel();
-						domain = source.getLabel();
-					} else
-						type = source.getLabel();
-					
-					if (inLink.getKeyType() == LinkKeyInfo.PartOfKey) partOfKey = true;
-				} else 
-					logger.error("The column node " + n.getId() + " does not have any domain or it has more than one domain.");
-				
-				SemanticType s = new SemanticType(hNodeId, type, domain, origin, probability, partOfKey);
-				semanticTypes.add(s);
-			}
-		}
-		
-		return semanticTypes;
-	}
-	
 	public Set<Node> getGraphNodes() {
 		return this.graphBuilder.getGraph().vertexSet();
 	}
@@ -253,22 +206,98 @@ public class Alignment {
 		this.graphBuilder.changeLinkStatus(link, newStatus);
 	}
 	
-	public ColumnNode getColumnNodeByHNodeId(String hNodeId) {
+	/**
+	 * This method removes a node from the graph and also all the links and the nodes that 
+	 * are added to the graph by adding the specified node.
+	 * This method is useful when the user changes the semantic type assigned to a column.
+	 * The GUI needs to call the method by sending a Column Node  
+	 * @param nodeId
+	 */
+	public boolean removeNode(String nodeId) {
+
+		Node node = this.getNodeById(nodeId);
+		if (node == null) {
+			logger.debug("Cannot find the node " + nodeId + " in the graph.");
+			return false;
+		}
+			
+		if (!(node instanceof ColumnNode)) {
+			logger.debug("You can only request to delete a Column Node. Node " + node.getId() + " is not a Column Node");
+			return false;
+		}
 		
-		return null;
-	}
-	
-	// TODO
-	public void removeNode(String nodeId) {
+		Set<Link> incomingLinks = this.steinerTree.incomingEdgesOf(node);
+		Node domain = null;
+		if (incomingLinks != null && incomingLinks.size() == 1)
+			domain = incomingLinks.toArray(new Link[0])[0].getSource();
 		
+		this.graphBuilder.removeNode(node);
+		this.graphBuilder.removeNode(domain);
+
+		return false;
 	}
 
-	// TODO
-	public void removeLink(String linkId) {
+//	/**
+//	 * This method just deletes the specified link from the graph and leaves the rest of the graph untouched.
+//	 * Probably we don't need to use this function.
+//	 * @param linkId
+//	 * @return
+//	 */
+//	public boolean removeLink(String linkId) {
+//		
+//		Link link = this.getLinkById(linkId);
+//		if (link != null)
+//			return this.graphBuilder.removeLink(link);
+//		logger.debug("Cannot find the link " + linkId + " in the graph.");
+//		return false;
+//	}
+	
+	//FIXME: This method should be commented, or make it private for now ... 
+	public List<SemanticType> getSemanticTypes() {
 		
+		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
+		
+		String hNodeId;
+		Label type;
+		Label domain;
+		Origin origin;
+		Double probability;
+		boolean partOfKey;
+		
+		List<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
+		if (columnNodes != null) {
+			for (Node n : columnNodes) {
+				
+				hNodeId = ((ColumnNode)n).getHNodeId();
+				type = null;
+				domain = null;
+				origin = Origin.User;
+				probability = 1.0;
+				partOfKey = false;
+
+				
+				Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(n);
+				if (incomingLinks != null && incomingLinks.size() == 1) {
+					Link inLink = incomingLinks.toArray(new Link[0])[0];
+					Node source = inLink.getSource();
+					if (inLink instanceof DataPropertyLink) {
+						type = inLink.getLabel();
+						domain = source.getLabel();
+					} else
+						type = source.getLabel();
+					
+					if (inLink.getKeyType() == LinkKeyInfo.PartOfKey) partOfKey = true;
+				} else 
+					logger.error("The column node " + n.getId() + " does not have any domain or it has more than one domain.");
+				
+				SemanticType s = new SemanticType(hNodeId, type, domain, origin, probability, partOfKey);
+				semanticTypes.add(s);
+			}
+		}
+		
+		return semanticTypes;
 	}
 	
-
 	public Link getCurrentLinkToNode(String nodeId) {
 		
 		Node node = this.getNodeById(nodeId);
@@ -393,6 +422,12 @@ public class Alignment {
 		logger.info("total number of nodes in steiner tree: " + this.steinerTree.vertexSet().size());
 		logger.info("total number of edges in steiner tree: " + this.steinerTree.edgeSet().size());
 		logger.info("time to compute steiner tree: " + elapsedTimeSec);
+	}
+
+	
+	// TODO: Why do we need this function
+	public ColumnNode getColumnNodeByHNodeId(String hNodeId) {
+		return null;
 	}
 
 

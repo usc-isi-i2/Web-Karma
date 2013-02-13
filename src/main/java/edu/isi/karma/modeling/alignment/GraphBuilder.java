@@ -35,6 +35,7 @@ import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
@@ -70,6 +71,10 @@ public class GraphBuilder {
 	private HashMap<LinkType, List<Link>> typeToLinksMap;
 
 	private HashMap<LinkStatus, List<Link>> statusToLinksMap;
+	
+	// used for deleting a node
+	private HashMap<Node, List<Node>> nodeClosure;
+	private HashMap<Node, Integer> nodeReferences;
 
 	// Constructor
 	
@@ -86,6 +91,9 @@ public class GraphBuilder {
 		this.typeToNodesMap = new HashMap<NodeType, List<Node>>();
 		this.typeToLinksMap = new HashMap<LinkType, List<Link>>();
 		this.statusToLinksMap = new HashMap<LinkStatus, List<Link>>();
+		
+		this.nodeClosure = new HashMap<Node, List<Node>>();
+		this.nodeReferences = new HashMap<Node, Integer>();
 		
 		graph = new DirectedWeightedMultigraph<Node, Link>(Link.class);
 		sourceToTargetLinkUris = new ArrayList<String>();
@@ -145,12 +153,19 @@ public class GraphBuilder {
 			long start = System.currentTimeMillis();
 			float elapsedTimeSec;
 
-			List<Node> newNodes = addNodeClosure(node);
+			List<Node> closure = new ArrayList<Node>();
+			List<Node> newNodes = addNodeClosure(node, closure);
+			this.nodeClosure.put(node,  closure);
 			long addNodesClosure = System.currentTimeMillis();
 			elapsedTimeSec = (addNodesClosure - start)/1000F;
 			logger.info("time to add nodes closure: " + elapsedTimeSec);
 
 			updateLinks(newNodes);
+			// if we consider the set of current nodes as S1 and the set of new added nodes as S2:
+			// (*) the direction of all the subclass links between S1 and S2 is from S2 to S1
+			//		This is because superclasses of all the nodes in S1 are already added to the graph. 
+			// (*) the direction of all the object property links between S1 and S2 is from S1 to S2
+			//		This is because all the nodes that are reachable from S1 are added to the graph before adding new nodes in S2.
 			long updateLinks = System.currentTimeMillis();
 			elapsedTimeSec = (updateLinks - addNodesClosure)/1000F;
 			logger.info("time to update links of the graph: " + elapsedTimeSec);
@@ -244,6 +259,54 @@ public class GraphBuilder {
 		linksWithNewStatus.add(link);
 	}
 	
+	public boolean removeLink(Link link) {
+		
+		if (link == null) {
+			logger.debug("The link is null.");
+			return false;
+		}
+		
+		if (idToLinkMap.get(link.getId()) == null) {
+			logger.debug("The link with id=" + link.getId() + " does not exists in the graph.");
+			return false;
+		}
+		
+		return this.graph.removeEdge(link);
+	}
+	
+	public boolean removeNode(Node node) {
+		
+		if (node == null) {
+			logger.debug("The node is null");
+			return false;
+		}
+		
+		if (idToNodeMap.get(node.getId()) == null) {
+			logger.debug("The node with id=" + node.getId() + " does not exists in the graph.");
+			return false;
+		}
+		
+		List<Node> closure = this.nodeClosure.get(node);
+		List<Node> closureIncludingSelf = new ArrayList<Node>();
+		closureIncludingSelf.add(node);
+		if (closure != null) closureIncludingSelf.addAll(closure);
+		
+		for (Node n : closureIncludingSelf) {
+			Integer refCount = this.nodeReferences.get(n);
+			if (refCount == null) {
+				logger.error("There should be something wrong. There is no reference to the node " + node.getId());
+				return false;
+			}
+			
+			if (refCount.intValue() == 1) 
+				removeSingleNode(n);
+			else
+				this.nodeReferences.put(n, --refCount);
+		}
+
+		return true;
+	}
+	
 	// Private Methods
 	
 	private void initialGraph() {
@@ -298,18 +361,70 @@ public class GraphBuilder {
 			typeToNodesMap.put(node.getType(), nodesWithSameType);
 		}
 		nodesWithSameType.add(node);
+					
+		this.nodeReferences.put(node, 1);
 				
 		logger.debug("exit>");		
 		return true;
 	}
 	
-	private List<Node> addNodeClosure(Node Node) {
+	private boolean removeSingleNode(Node node) {
+		
+		logger.debug("<enter");
+
+		if (node == null) {
+			logger.debug("The node is null.");
+			return false;
+		}
+		
+		if (idToNodeMap.get(node.getId()) == null) {
+			logger.debug("The node with id=" + node.getId() + " does not exists in the graph.");
+			return false;
+		}
+		
+		if (!this.graph.removeVertex(node))
+			return false;
+		
+		// updating hashmaps
+		
+		this.idToNodeMap.remove(node.getId());
+		
+		List<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
+		if (nodesWithSameUri != null) 
+			nodesWithSameUri.remove(node);
+		
+		List<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
+		if (nodesWithSameType != null) 
+			typeToNodesMap.remove(node);
+		
+		this.nodeClosure.remove(node);
+		this.nodeReferences.remove(node);
+				
+		logger.debug("exit>");		
+		return true;
+	}
+
+	/**
+	 * returns all the new nodes that should be added to the graph due to adding the input node
+	 * @param node
+	 * @param closure: contains all the nodes that are connected to the input node 
+	 * by ObjectProperty or SubClass links
+	 * @return
+	 */
+	private List<Node> addNodeClosure(Node node, List<Node> nodeClosureList) {
 
 		logger.debug("<enter");
 		
-		List<Node> nodeClosureList = new ArrayList<Node>();
-
-		String uriString;
+		List<Node> newAddedNodes = new ArrayList<Node>();
+		if (nodeClosureList == null)
+			nodeClosureList = new ArrayList<Node>();
+		
+		String uri = node.getLabel().getUri();
+		if (this.uriToNodesMap.get(uri) == null ||
+				this.uriToNodesMap.get(uri).size() == 0) 
+			// the same class has already been added and we have added its closure before
+			return newAddedNodes;
+			
 		List<Node> recentlyAddedNodes = new ArrayList<Node>();
 		List<Node> newNodes;
 
@@ -318,7 +433,7 @@ public class GraphBuilder {
 		Set<String> superClasses = null;
 		List<String> newAddedClasses = new ArrayList<String>();
 
-		recentlyAddedNodes.add(Node);
+		recentlyAddedNodes.add(node);
 
 		// We don't need to add subclasses of each class separately.
 		// The only place in which we add children is where we are looking for domain class of a property.
@@ -330,17 +445,17 @@ public class GraphBuilder {
 			newNodes = new ArrayList<Node>();
 			for (int i = 0; i < recentlyAddedNodes.size(); i++) {
 
-				uriString = recentlyAddedNodes.get(i).getLabel().getUri();
-				if (processedLabels.indexOf(uriString) != -1) 
+				uri = recentlyAddedNodes.get(i).getLabel().getUri();
+				if (processedLabels.indexOf(uri) != -1) 
 					continue;
 
-				processedLabels.add(uriString);
+				processedLabels.add(uri);
 
 				if (recentlyAddedNodes.get(i) instanceof InternalNode) {
-					opDomainClasses = ontologyManager.getDomainsGivenRange(uriString, true);
-					superClasses = ontologyManager.getSuperClasses(uriString, false).keySet();
+					opDomainClasses = ontologyManager.getDomainsGivenRange(uri, true);
+					superClasses = ontologyManager.getSuperClasses(uri, false).keySet();
 				} else if (recentlyAddedNodes.get(i) instanceof ColumnNode) {
-					dpDomainClasses = ontologyManager.getDomainsGivenProperty(uriString, true);
+					dpDomainClasses = ontologyManager.getDomainsGivenProperty(uri, true);
 				}
 
 				if (opDomainClasses != null)
@@ -351,11 +466,26 @@ public class GraphBuilder {
 					newAddedClasses.addAll(superClasses);
 
 				for (int j = 0; j < newAddedClasses.size(); j++) {
-					uriString = newAddedClasses.get(j);
-					Node n = new InternalNode(nodeIdFactory.getNodeId(uriString), 
-							ontologyManager.getUriLabel(uriString));
-					if (addSingleNode(n))	
-						newNodes.add(n);
+					uri = newAddedClasses.get(j);
+					List<Node> nodesOfSameType = this.uriToNodesMap.get(uri);
+					if (nodesOfSameType == null || nodesOfSameType.size() == 0) { // the internal node is not added to the graph before
+						Node n = new InternalNode(nodeIdFactory.getNodeId(uri), 
+								ontologyManager.getUriLabel(uri));
+						if (addSingleNode(n)) {	
+							newNodes.add(n);
+							nodeClosureList.add(n);
+						}
+					} else {
+						for (Node n : nodesOfSameType) {
+							Integer refCount = this.nodeReferences.get(n);
+							if (refCount == null) {
+								logger.error("There should be something wrong. Number of references to a node cannot be null");
+								continue;
+							}
+							this.nodeReferences.put(n, ++refCount);							
+							nodeClosureList.add(n); 
+						}
+					}
 				}
 			}
 
@@ -364,7 +494,7 @@ public class GraphBuilder {
 		}
 
 		logger.debug("exit>");
-		return nodeClosureList;
+		return newAddedNodes;
 	}
 
 	private void updateLinksBetweenTwoSets(List<Node> set1, List<Node> set2) {
@@ -379,7 +509,7 @@ public class GraphBuilder {
 		String sourceUri;
 		String targetUri;
 
-		String uriString = null;
+		String uri = null;
 		String id = null;
 		Label label = null;
 
@@ -428,17 +558,17 @@ public class GraphBuilder {
 					objectProperties = ontologyManager.getObjectProperties(sourceUri, targetUri, true);
 
 					for (int u = 0; u < objectProperties.size(); u++) {
-						uriString = objectProperties.get(u);
+						uri = objectProperties.get(u);
 
-						List<String> dirDomains = ontologyManager.getPropertyDirectDomains().get(uriString);
-						List<String> dirRanges = ontologyManager.getPropertyDirectRanges().get(uriString);
+						List<String> dirDomains = ontologyManager.getPropertyDirectDomains().get(uri);
+						List<String> dirRanges = ontologyManager.getPropertyDirectRanges().get(uri);
 
 						if (dirDomains != null && dirDomains.indexOf(sourceUri) != -1 &&
 								dirRanges != null && dirRanges.indexOf(targetUri) != -1)
 							inherited = false;
 
-						id = linkIdFactory.getLinkId(uriString);
-						label = ontologyManager.getUriLabel(uriString);
+						id = linkIdFactory.getLinkId(uri);
+						label = ontologyManager.getUriLabel(uri);
 						Link link = new ObjectPropertyLink(id, label);
 						// prefer the links that are actually defined between source and target in the ontology 
 						// over inherited ones.
@@ -528,5 +658,23 @@ public class GraphBuilder {
 
 	}
 
+	public static void main(String[] args) {
+		DirectedWeightedMultigraph<Node, Link> g = new 
+				DirectedWeightedMultigraph<Node, Link>(Link.class);
+		
+		Node n1 = new ColumnNode("n1", "h1", "B");
+		Node n2 = new InternalNode("n2", null);
+		Link l1 = new DataPropertyLink("e1", null);
+		
+		g.addVertex(n1);
+		g.addVertex(n2);
+		g.addEdge(n1, n2, l1);
+		GraphUtil.printGraph(g);
 
+//		g.removeEdge(l1);
+//		GraphUtil.printGraph(g);
+		
+		g.removeVertex(n2);
+		GraphUtil.printGraph(g);
+	}
 }
