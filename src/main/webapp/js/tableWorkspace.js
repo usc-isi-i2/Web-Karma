@@ -337,7 +337,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 
 function openWorksheetOptions(event) {
 	$("div#WorksheetOptionsDiv")
-			.css({'position':'fixed', 'left':(event.clientX - 75) + 'px', 'top':(event.clientY+4)+'px'})
+			.css({'position':'relative', 'left':(event.clientX - 75) + 'px', 'top':(event.clientY-90)+'px'})
 			.data("worksheetId", $(this).parents("div.Worksheet").attr("id"))
 			.show();
 }
@@ -385,7 +385,7 @@ function styleAndAssignHandlersToTableCellMenu() {
 	});
 	
 	$("button#expandValueButton" ).click(function(event){
-		handleEableCellExpandButton(event);
+		handleTableCellExpandButton(event);
 	});
 	
 	// Hide the option button when mouse leaves the menu
@@ -398,7 +398,7 @@ function styleAndAssignHandlersToTableCellMenu() {
 	});
 }
 
-function handleEableCellExpandButton(event) {
+function handleTableCellExpandButton(event) {
 	var tdTagId = $("#tableCellToolBarMenu").data("parentCellId");
 	// Get the full expanded value
 	var value = ""

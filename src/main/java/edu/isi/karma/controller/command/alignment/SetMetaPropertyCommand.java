@@ -179,10 +179,6 @@ public class SetMetaPropertyCommand extends Command {
 			}
 			return c;
 			
-		} else {
-			// Just do the alignment, no training and update JSON required.
-//			AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
-//			align.align(false);
 		}
 		return c;
 	}
@@ -202,7 +198,6 @@ public class SetMetaPropertyCommand extends Command {
 
 		// Get the alignment update if any
 		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
-//		alignment.remo
 		try {
 			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
 		} catch (Exception e) {

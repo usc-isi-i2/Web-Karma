@@ -32,7 +32,7 @@ public class DataPropertyLink extends Link {
 	}
 
 	public DataPropertyLink(String id, Label label, boolean partOfKey) {
-		super(id, label, LinkType.DataPropertyLink, LinkKeyInfo.PartOfKey);
+		super(id, label, LinkType.DataPropertyLink, partOfKey ? LinkKeyInfo.PartOfKey : LinkKeyInfo.None);
 	}
 
 }

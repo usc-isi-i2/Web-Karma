@@ -140,7 +140,7 @@ public class SetSemanticTypeCommand extends Command {
 				
 				// Look if the domain value exists. If it exists, then it is a domain of a data property. If not
 				// then the value in FullType has the the value which indicates if a new class instance is needed
-				// or an existing class instance should be used (this is the case when just the class is chosen as a sem type.
+				// or an existing class instance should be used (this is the case when just the class is chosen as a sem type).
 				Label domainName = null;
 				Node classNode = null;
 				String domainValue = type.getString(ClientJsonKeys.Domain.name());
