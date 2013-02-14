@@ -53,7 +53,7 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		if (id != null && id.trim().length() > 0) this.id = id;
 		if (label != null) this.label = label;
 		if (type != null) this.type = type;
-		if (keyInfo != null) this.keyInfo = LinkKeyInfo.None;
+		if (keyInfo != null) this.keyInfo = keyInfo;
 	}
 	
 	public Link(Link e) {
