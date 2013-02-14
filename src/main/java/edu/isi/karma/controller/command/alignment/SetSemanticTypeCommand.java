@@ -182,10 +182,10 @@ public class SetSemanticTypeCommand extends Command {
 						newLink = propLink;
 
 						// Create the semantic type object
-						newType = new SemanticType(hNodeId, propertyLabel,domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
+						newType = new SemanticType(hNodeId, propertyLabel, domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
 					}
 				} else { // Synonym semantic type
-					SemanticType synType = new SemanticType(hNodeId, ontMgr.getUriLabel(fullTypeValue),domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
+					SemanticType synType = new SemanticType(hNodeId, ontMgr.getUriLabel(fullTypeValue), domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
 					typesList.add(synType);
 				}
 			} catch (JSONException e) {
@@ -247,7 +247,6 @@ public class SetSemanticTypeCommand extends Command {
 
 		// Get the alignment update if any
 		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
-//		alignment.remo
 		try {
 			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
 		} catch (Exception e) {

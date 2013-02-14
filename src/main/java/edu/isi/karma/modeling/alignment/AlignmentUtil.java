@@ -32,6 +32,8 @@ public class AlignmentUtil {
 		if (alignment == null)
 			return null;
 		List<Node> columnNodes = alignment.getNodesByType(NodeType.ColumnNode);
+		if (columnNodes == null)
+			return null;
 		for (Node cNode : columnNodes) {
 			if (((ColumnNode)cNode).getHNodeId().equals(hNodeId))
 				return (ColumnNode)cNode;

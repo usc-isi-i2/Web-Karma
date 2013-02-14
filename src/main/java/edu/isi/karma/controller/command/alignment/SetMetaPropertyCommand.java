@@ -35,7 +35,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.AlignmentUtil;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
+import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
@@ -46,6 +46,8 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
@@ -56,6 +58,11 @@ public class SetMetaPropertyCommand extends Command {
 	private final boolean trainAndShowUpdates;
 	private METAPROPERTY_NAME metaPropertyName;
 	private final String metaPropertyValue;
+	
+	private CRFColumnModel oldColumnModel;
+	private SynonymSemanticTypes oldSynonymTypes;
+	private SemanticType oldType;
+	private SemanticType newType;
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
@@ -104,6 +111,7 @@ public class SetMetaPropertyCommand extends Command {
 			columnNode = alignment.addColumnNode(hNodeId, columnName);
 		}
 		
+		SemanticType newType = null;
 		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyValue);
 			if (classNode == null) {
@@ -112,6 +120,9 @@ public class SetMetaPropertyCommand extends Command {
 			}
 			ClassInstanceLink mpLink = alignment.addClassInstanceLink(classNode, columnNode, LinkKeyInfo.UriOfInstance);
 			alignment.align();
+			
+			// Create the semantic type object
+			newType = new SemanticType(hNodeId, ClassInstanceLink.getFixedLabel(), classNode.getLabel(), SemanticType.Origin.User, 1.0, false);
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
 			Link dataPropertyLink = alignment.getLinkById(metaPropertyValue);
 			if (dataPropertyLink == null) {
@@ -123,6 +134,9 @@ public class SetMetaPropertyCommand extends Command {
 			String hNodeId = ((ColumnNode) dataPropertyLink.getTarget()).getHNodeId();
 			DataPropertyOfColumnLink dpLink = alignment.addDataPropertyOfColumnLink(classInstanceNode, columnNode, hNodeId);
 			alignment.align();
+			
+			// Create the semantic type object
+			newType = new SemanticType(hNodeId, DataPropertyOfColumnLink.getFixedLabel(), classInstanceNode.getLabel(), SemanticType.Origin.User, 1.0, false);
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyValue);
 			if (classNode == null) {
@@ -131,17 +145,21 @@ public class SetMetaPropertyCommand extends Command {
 			}
 			ColumnSubClassLink mpLink = alignment.addColumnSubClassOfLink(classNode, columnNode);
 			alignment.align();
+			
+			// Create the semantic type object
+			newType = new SemanticType(hNodeId, ColumnSubClassLink.getFixedLabel(), classNode.getLabel(), SemanticType.Origin.User, 1.0, false);
 		}
 		
 		UpdateContainer c = new UpdateContainer();
-		CRFModelHandler crfModelHandler = vWorkspace.getWorkspace().getCrfModelHandler();
+//		CRFModelHandler crfModelHandler = vWorkspace.getWorkspace().getCrfModelHandler();
 
 		// Save the old SemanticType object and CRF Model for undo
-//		oldColumnModel = worksheet.getCrfModel().getModelByHNodeId(hNodeId);
-//		oldSynonymTypes = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(newType.getHNodeId());
+		oldType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(hNodeId);
+		oldColumnModel = worksheet.getCrfModel().getModelByHNodeId(hNodeId);
+		oldSynonymTypes = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(newType.getHNodeId());
 
 		// Update the SemanticTypes data structure for the worksheet
-//		worksheet.getSemanticTypes().addType(newType);
+		worksheet.getSemanticTypes().addType(newType);
 
 		// Update the synonym semanticTypes
 //		worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), newSynonymTypes);
@@ -169,8 +187,28 @@ public class SetMetaPropertyCommand extends Command {
 
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		// TODO Auto-generated method stub
-		return null;
+		UpdateContainer c = new UpdateContainer();
+		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		if (oldType == null) {
+			worksheet.getSemanticTypes().unassignColumnSemanticType(newType.getHNodeId());
+		} else {
+			worksheet.getSemanticTypes().addType(oldType);
+			worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), oldSynonymTypes);
+		}
+
+		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), oldColumnModel);
+
+		// Get the alignment update if any
+		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
+//		alignment.remo
+		try {
+			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
+		} catch (Exception e) {
+			logger.error("Error occured while unsetting the semantic type!", e);
+			return new UpdateContainer(new ErrorUpdate(
+					"Error occured while unsetting the semantic type!"));
+		}
+		return c;
 	}
 
 }

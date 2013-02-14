@@ -36,9 +36,14 @@ import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.ColumnSubClassLink;
+import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.InternalNode;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.SemanticType;
@@ -52,7 +57,9 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 	private Alignment alignment;
 
 	public enum JsonKeys {
-		HNodeId, FullType, ConfidenceLevel, Origin, FullCRFModel, DisplayLabel, DisplayDomainLabel, Domain, SemanticTypesArray, isPrimary, isPartOfKey, Types
+		HNodeId, FullType, ConfidenceLevel, Origin, FullCRFModel, DisplayLabel, 
+		DisplayDomainLabel, Domain, SemanticTypesArray, isPrimary, isPartOfKey, 
+		Types, isMetaProperty
 	}
 
 	private static Logger logger = LoggerFactory
@@ -137,6 +144,12 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 							.value("");
 					}
 					
+					// Mark the special properties
+					writer
+						.key(JsonKeys.isMetaProperty.name())
+						.value(isMetaProperty(type.getType(), alignmentColumnNode));
+					
+					
 					writer.endObject();
 
 					// Iterate through the synonym semantic types
@@ -194,6 +207,21 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		} catch (JSONException e) {
 			logger.error("Error occured while writing to JSON!", e);
 		}
+	}
+
+	private boolean isMetaProperty(Label type, ColumnNode alignmentColumnNode) {
+		// Check for the case of DataPropertyOfColumnLink and ColumnSubClassLink
+		boolean case1 =  (type.getUri().equals(DataPropertyOfColumnLink.getFixedLabel().getUri()) 
+				|| type.getUri().equals(ColumnSubClassLink.getFixedLabel().getUri()));
+		if (case1)
+			return true;
+		else {	// Check for the class instance link with LinkKeyInfo as UriOfInstance
+			Link incomingLink = alignment.getCurrentLinkToNode(alignmentColumnNode.getId());
+			if (incomingLink != null && (incomingLink instanceof ClassInstanceLink) 
+					&& incomingLink.getKeyType().equals(LinkKeyInfo.UriOfInstance))
+				return true;
+		}
+		return false;
 	}
 
 	private Map<String, InternalNode> createDomainNodeMap() {

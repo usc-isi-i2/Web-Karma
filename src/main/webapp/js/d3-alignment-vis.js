@@ -442,6 +442,9 @@ function changeSemanticType_d3(d, vis, event) {
     $("input#chooseClassKey").attr("checked", false);
     $("div#SemanticTypeErrorWindow").hide();
     $(optionsDiv).removeData("selectedPrimaryRow");
+    // Deselect all the advanced options check boxes
+    $("div#semanticTypingAdvacedOptionsDiv input:checkbox").prop('checked', false);
+    $("div#semanticTypingAdvacedOptionsDiv input:text").val("");
     
     // Store a copy of the existing types.
     // This is tha JSON array which is changed when the user adds/changes through GUI and is submitted to the server.
@@ -453,7 +456,21 @@ function changeSemanticType_d3(d, vis, event) {
     
     // Populate the table with existing types and CRF suggested types
     $.each(existingTypes, function(index, type){
-        addSemTypeObjectToCurrentTable(type, true, false);
+        // Take care of the special meta properties that are set through the advanced options
+    	if (type["isMetaProperty"]) {
+    		if (type["DisplayLabel"] == "km-dev:classLink") {
+    			$("#isUriOfClass").prop('checked', true);
+    			$("#isUriOfClassTextBox").val(type["DisplayDomainLabel"]);
+    		} else if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
+    			$("#isSubclassOfClass").prop('checked', true);
+    			$("#isSubclassOfClassTextBox").val(type["DisplayDomainLabel"]);
+    		} else if (type["DisplayLabel"] == "km-dev:dataPropertyOfColumnLink") {
+    			$("#isSpecializationForEdge").prop('checked', true);
+    			$("#isSpecializationForEdgeTextBox").val(type["DisplayDomainLabel"]);
+    		}
+    	} else {
+    		addSemTypeObjectToCurrentTable(type, true, false);
+    	}
     });
     if(CRFInfo != null) {
         $.each(CRFInfo["Labels"], function(index, type){
