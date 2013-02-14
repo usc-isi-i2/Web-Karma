@@ -74,6 +74,8 @@ public class SetMetaPropertyCommand extends Command {
 		this.trainAndShowUpdates = trainAndShowUpdates;
 		this.metaPropertyName = metaPropertyName;
 		this.metaPropertyValue = metaPropertyValue;
+		
+		addTag(CommandTag.Modeling);
 	}
 
 	@Override

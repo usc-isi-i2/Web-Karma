@@ -858,11 +858,13 @@ function submitSemanticTypeChange() {
 	
 	/** Prepare the JSON object **/
 	var info = new Object();
+	var newInfo = [];	// Used for commands that take JSONArray as input and are saved in the history 
 	var hNodeId = optionsDiv.data("currentNodeId");
 	info["vWorksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
 	info["hNodeId"] = hNodeId;
 	info["isKey"] = $("input#chooseClassKey").is(":checked");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	
 	
 	// Check if any meta property (advanced options) was selected
 	var isMetaPropertyChecked = false;
@@ -872,7 +874,8 @@ function submitSemanticTypeChange() {
 		}
 	});
 	
-		info["metaPropertyName"] = $("div#semanticTypingAdvacedOptionsDiv input:checkbox[checked=true]").attr("id");
+	info["metaPropertyName"] = $("div#semanticTypingAdvacedOptionsDiv input:checkbox[checked=true]").attr("id");
+	newInfo.push(getParamObject("metaPropertyName", $("div#semanticTypingAdvacedOptionsDiv input:checkbox[checked=true]").attr("id"), "other"));
 	if (isMetaPropertyChecked) {
 		var propValue = $("div#semanticTypingAdvacedOptionsDiv input:checkbox[checked=true]").parents("tr").find("input:text").val();
 		// Get the proper id
@@ -883,6 +886,7 @@ function submitSemanticTypeChange() {
 		            if(clazz.hasOwnProperty(key)) {
 		                if(key.toLowerCase() == propValue.toLowerCase()) {
 		                    info["metaPropertyValue"] = clazz[key];
+		                    newInfo.push(getParamObject("metaPropertyValue", clazz[key], "other"));
 		                }
 		            }
 		        }
@@ -892,6 +896,7 @@ function submitSemanticTypeChange() {
 			$.each(existingLinksMap, function(index, prop) {
 				if (prop["label"] == propValue)
 					info["metaPropertyValue"] = prop["id"];
+					newInfo.push(getParamObject("metaPropertyValue", prop["id"], "other"));
 			});
 		}
 		info["command"] = "SetMetaPropertyCommand";
@@ -913,14 +918,13 @@ function submitSemanticTypeChange() {
 	// info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["SemanticTypesArray"] = JSON.stringify(semTypesArray);
 	
-	var newInfo = [];
+	
 	newInfo.push(getParamObject("hNodeId", hNodeId,"hNodeId"));
 	newInfo.push(getParamObject("SemanticTypesArray", semTypesArray, "other"));
 	newInfo.push(getParamObject("vWorksheetId", info["vWorksheetId"], "vWorksheetId"));
 	newInfo.push(getParamObject("isKey", $("input#chooseClassKey").is(":checked"), "other"));
 	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
 	info["newInfo"] = JSON.stringify(newInfo);
-	
 	
 	
 	showLoading(info["vWorksheetId"]);

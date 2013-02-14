@@ -23,18 +23,24 @@ package edu.isi.karma.controller.command.alignment;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.KarmaException;
 
-public class SetMetaPropertyCommandFactory extends CommandFactory {
+public class SetMetaPropertyCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 
 	public enum METAPROPERTY_NAME {
 		isUriOfClass, isSubclassOfClass, isSpecializationForEdge
 	}
 	
 	private enum Arguments {
-		vWorksheetId, hNodeId, metaPropertyName, metaPropertyValue
+		vWorksheetId, hNodeId, metaPropertyName, metaPropertyValue, trainAndShowUpdates
 	}
 	
 	@Override
@@ -46,6 +52,22 @@ public class SetMetaPropertyCommandFactory extends CommandFactory {
 		METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(request.getParameter(Arguments.metaPropertyName.name()));
 		String propValue = request.getParameter(Arguments.metaPropertyValue.name());
 		return new SetMetaPropertyCommand(getNewId(vWorkspace), vWorksheetId, hNodeId, prop, propValue, true);
+	}
+
+	@Override
+	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
+			throws JSONException, KarmaException {
+		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
+		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
+		METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(HistoryJsonUtil.getStringValue(Arguments.metaPropertyName.name(), inputJson));
+		String propValue = HistoryJsonUtil.getStringValue(Arguments.metaPropertyValue.name(), inputJson);
+		
+		SetMetaPropertyCommand comm = new SetMetaPropertyCommand(getNewId(vWorkspace), vWorksheetId, hNodeId, prop, propValue, true);
+		
+		// Change the train flag, so that it does not train while reading from history
+		HistoryJsonUtil.setArgumentValue(Arguments.trainAndShowUpdates.name(), false, inputJson);
+		comm.setInputParameterJson(inputJson.toString());
+		return comm;
 	}
 
 }
