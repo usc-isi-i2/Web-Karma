@@ -38,9 +38,11 @@ import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.alignment.AlignmentUtil;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
@@ -56,11 +58,12 @@ public class UnassignSemanticTypeCommand extends Command {
 	private static Logger logger = LoggerFactory
 			.getLogger(UnassignSemanticTypeCommand.class);
 
-	public UnassignSemanticTypeCommand(String id, String hNodeId,
-			String vWorksheetId) {
+	public UnassignSemanticTypeCommand(String id, String hNodeId, String vWorksheetId) {
 		super(id);
 		this.hNodeId = hNodeId;
 		this.vWorksheetId = vWorksheetId;
+		
+		addTag(CommandTag.Modeling);
 	}
 
 	@Override
@@ -93,6 +96,13 @@ public class UnassignSemanticTypeCommand extends Command {
 		oldSemanticType = types.getSemanticTypeForHNodeId(hNodeId);
 		types.unassignColumnSemanticType(hNodeId);
 
+		// Remove it from the alignment
+		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		ColumnNode columnNode = AlignmentUtil.getColumnNodeByHNodeId(alignment, hNodeId);
+		if (columnNode != null)
+			alignment.removeNode(columnNode.getId());
+		alignment.align();
+		
 		// Get the column name
 		HNodePath currentPath = null;
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
@@ -116,7 +126,7 @@ public class UnassignSemanticTypeCommand extends Command {
 
 		// Update the container
 		UpdateContainer c = new UpdateContainer();
-		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		
 		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
 		// Add the alignment update
 		try {
