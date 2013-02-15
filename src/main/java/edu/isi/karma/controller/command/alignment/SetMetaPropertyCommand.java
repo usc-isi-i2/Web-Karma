@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory.METAPROPERTY_NAME;
+import edu.isi.karma.controller.update.EmptyUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -106,20 +107,18 @@ public class SetMetaPropertyCommand extends Command {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
 		
 		/*** Add the appropriate nodes and links in alignment graph ***/
-		HNode hnode = vWorkspace.getRepFactory().getHNode(hNodeId);
-		String columnName = hnode.getColumnName();
-		ColumnNode columnNode = AlignmentUtil.getColumnNodeByHNodeId(alignment, hNodeId);
-		if (columnNode == null) {
-			columnNode = alignment.addColumnNode(hNodeId, columnName);
-		}
-		
 		SemanticType newType = null;
 		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyValue);
 			if (classNode == null) {
 				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
+				if (classNodeLabel == null) {
+					logger.error("URI/ID does not exist in the ontology or model: " + metaPropertyValue);
+					return new UpdateContainer(EmptyUpdate.getInstance());
+				}
 				classNode = alignment.addInternalClassNode(classNodeLabel);
 			}
+			ColumnNode columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
 			ClassInstanceLink mpLink = alignment.addClassInstanceLink(classNode, columnNode, LinkKeyInfo.UriOfInstance);
 			alignment.align();
 			
@@ -134,6 +133,7 @@ public class SetMetaPropertyCommand extends Command {
 			}
 			Node classInstanceNode = dataPropertyLink.getSource();
 			String hNodeId = ((ColumnNode) dataPropertyLink.getTarget()).getHNodeId();
+			ColumnNode columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
 			DataPropertyOfColumnLink dpLink = alignment.addDataPropertyOfColumnLink(classInstanceNode, columnNode, hNodeId);
 			alignment.align();
 			
@@ -143,8 +143,13 @@ public class SetMetaPropertyCommand extends Command {
 			Node classNode = alignment.getNodeById(metaPropertyValue);
 			if (classNode == null) {
 				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
+				if (classNodeLabel == null) {
+					logger.error("URI/ID does not exist in the ontology or model: " + metaPropertyValue);
+					return new UpdateContainer(EmptyUpdate.getInstance());
+				}
 				classNode = alignment.addInternalClassNode(classNodeLabel);
 			}
+			ColumnNode columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
 			ColumnSubClassLink mpLink = alignment.addColumnSubClassOfLink(classNode, columnNode);
 			alignment.align();
 			
@@ -206,6 +211,20 @@ public class SetMetaPropertyCommand extends Command {
 					"Error occured while unsetting the semantic type!"));
 		}
 		return c;
+	}
+	
+	private ColumnNode getColumnNode(Alignment alignment, HNode hNode) {
+		String columnName = hNode.getColumnName();
+		ColumnNode columnNode = AlignmentUtil.getColumnNodeByHNodeId(alignment, hNodeId);
+		
+		if (columnNode == null) {
+			columnNode = alignment.addColumnNode(hNodeId, columnName);
+		} else {
+			// Remove old column node if it exists
+			alignment.removeNode(columnNode.getId());
+			columnNode = alignment.addColumnNode(hNodeId, columnName);
+		}
+		return columnNode;
 	}
 
 }

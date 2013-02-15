@@ -158,7 +158,7 @@ public class ShowModelCommand extends WorksheetCommand {
 			typeJObj.put(ClientJsonKeys.value.name(), type.getJSONArrayRepresentation());
 			typesArray.put(typeJObj);
 		}
-		setInputParameterJson(typesArray.toString(4));
+		setInputParameterJson(typesArray.toString());
 	}
 
 	@Override
