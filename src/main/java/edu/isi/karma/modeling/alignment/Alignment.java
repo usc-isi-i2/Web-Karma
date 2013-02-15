@@ -47,8 +47,6 @@ import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
-import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.rep.alignment.SubClassLink;
 
 
@@ -253,55 +251,57 @@ public class Alignment {
 //	}
 	
 	//FIXME: This method should be commented, or make it private for now ... 
-	public List<SemanticType> getSemanticTypes() {
-		
-		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
-		
-		String hNodeId;
-		Label type;
-		Label domain;
-		Origin origin;
-		Double probability;
-		boolean partOfKey;
-		
-		List<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
-		if (columnNodes != null) {
-			for (Node n : columnNodes) {
-				
-				hNodeId = ((ColumnNode)n).getHNodeId();
-				type = null;
-				domain = null;
-				origin = Origin.User;
-				probability = 1.0;
-				partOfKey = false;
-
-				
-				Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(n);
-				if (incomingLinks != null && incomingLinks.size() == 1) {
-					Link inLink = incomingLinks.toArray(new Link[0])[0];
-					Node source = inLink.getSource();
-					if (inLink instanceof DataPropertyLink) {
-						type = inLink.getLabel();
-						domain = source.getLabel();
-					} else
-						type = source.getLabel();
-					
-					if (inLink.getKeyType() == LinkKeyInfo.PartOfKey) partOfKey = true;
-				} else 
-					logger.error("The column node " + n.getId() + " does not have any domain or it has more than one domain.");
-				
-				SemanticType s = new SemanticType(hNodeId, type, domain, origin, probability, partOfKey);
-				semanticTypes.add(s);
-			}
-		}
-		
-		return semanticTypes;
-	}
+//	private List<SemanticType> getSemanticTypes() {
+//		
+//		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
+//		
+//		String hNodeId;
+//		Label type;
+//		Label domain;
+//		Origin origin;
+//		Double probability;
+//		boolean partOfKey;
+//		
+//		List<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
+//		if (columnNodes != null) {
+//			for (Node n : columnNodes) {
+//				
+//				hNodeId = ((ColumnNode)n).getHNodeId();
+//				type = null;
+//				domain = null;
+//				origin = Origin.User;
+//				probability = 1.0;
+//				partOfKey = false;
+//
+//				
+//				Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(n);
+//				if (incomingLinks != null && incomingLinks.size() == 1) {
+//					Link inLink = incomingLinks.toArray(new Link[0])[0];
+//					Node source = inLink.getSource();
+//					if (inLink instanceof DataPropertyLink) {
+//						type = inLink.getLabel();
+//						domain = source.getLabel();
+//					} else
+//						type = source.getLabel();
+//					
+//					if (inLink.getKeyType() == LinkKeyInfo.PartOfKey) partOfKey = true;
+//				} else 
+//					logger.error("The column node " + n.getId() + " does not have any domain or it has more than one domain.");
+//				
+//				SemanticType s = new SemanticType(hNodeId, type, domain, origin, probability, partOfKey);
+//				semanticTypes.add(s);
+//			}
+//		}
+//		
+//		return semanticTypes;
+//	}
 	
 	public Link getCurrentLinkToNode(String nodeId) {
 		
 		Node node = this.getNodeById(nodeId);
 		if (node == null) return null;
+		if (!this.steinerTree.containsVertex(node)) return null;
+			
 		Set<Link> incomingLinks = this.steinerTree.incomingEdgesOf(node);
 		if (incomingLinks != null && incomingLinks.size() == 1)
 			return incomingLinks.toArray(new Link[0])[0];

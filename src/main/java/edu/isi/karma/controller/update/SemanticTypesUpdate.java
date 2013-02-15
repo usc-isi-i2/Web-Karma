@@ -231,7 +231,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 			return hNodeIdToDomainNodeMap;
 		for (Node cNode : alignmentColumnNodes) {
 			Link incomingLink = alignment.getCurrentLinkToNode(cNode.getId());
-			if (incomingLink.getSource() instanceof InternalNode) {
+			if (incomingLink!= null && incomingLink.getSource() instanceof InternalNode) {
 				hNodeIdToDomainNodeMap.put(((ColumnNode)cNode).getHNodeId()
 						, (InternalNode)incomingLink.getSource());
 			}

@@ -20,7 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -111,7 +111,7 @@ public class ShowModelCommand extends WorksheetCommand {
 
 		try {
 			// Save the semantic types in the input parameter JSON
-			saveSemanticTypesInformation(worksheet, vWorkspace, alignment.getSemanticTypes());
+			saveSemanticTypesInformation(worksheet, vWorkspace, worksheet.getSemanticTypes().getListOfTypes());
 			
 			// Add the visualization update
 			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
@@ -126,7 +126,7 @@ public class ShowModelCommand extends WorksheetCommand {
 	}
 
 	private void saveSemanticTypesInformation(Worksheet worksheet, VWorkspace vWorkspace
-			, List<SemanticType> semanticTypes) throws JSONException {
+			, Collection<SemanticType> semanticTypes) throws JSONException {
 		JSONArray typesArray = new JSONArray();
 		
 		// Add the vworksheet information

@@ -79,7 +79,7 @@ public class GetAlternativeLinksCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		final List<Link> edges = alignment.getAllPossibleLinksToNode(nodeId);
+		final List<Link> links = alignment.getAllPossibleLinksToNode(nodeId);
 		final Link currentLink = alignment.getCurrentLinkToNode(nodeId); 
 
 		UpdateContainer upd = new UpdateContainer(new AbstractUpdate() {
@@ -91,31 +91,28 @@ public class GetAlternativeLinksCommand extends Command {
 
 				try {
 					obj.put(JsonKeys.updateType.name(), "GetAlternativeLinks");
-					for (Link edge : edges) {
+					for (Link link : links) {
 						
-						String edgeLabel = "";
-						if(edge.getLabel().getPrefix() != null && !edge.getLabel().getPrefix().equals(""))
-							edgeLabel = edge.getLabel().getPrefix() + ":" + edge.getLabel().getLocalName();
-						else
-							edgeLabel = edge.getLabel().getLocalName();
-						
+						String linkLabel = link.getLabel().getLocalNameWithPrefix();
 						String edgeSourceLabel = "";
 						
-						Node edgeSource = edge.getSource();
+						Node edgeSource = link.getSource();
 //						if(edgeSource.getPrefix() != null && !edgeSource.getPrefix().equals(""))
 //							edgeSourceLabel = edgeSource.getPrefix() + ":" + edgeSource.getLocalLabel();
 //						else
 							edgeSourceLabel = edgeSource.getLocalId();
 						
 						JSONObject edgeObj = new JSONObject();
-						edgeObj.put(JsonKeys.edgeId.name(), edge.getId());
-						edgeObj.put(JsonKeys.edgeLabel.name(), edgeLabel);
+						edgeObj.put(JsonKeys.edgeId.name(), link.getId());
+						edgeObj.put(JsonKeys.edgeLabel.name(), linkLabel);
 						edgeObj.put(JsonKeys.edgeSource.name(),edgeSourceLabel);
-						if(currentLink != null && edge.getId().equals(currentLink.getId()))
+//						if (currentLink != null && link.getLabel().getUri().equals(currentLink.getLabel().getUri())
+//								&& edgeSource.getLabel().getUri().equals(currentLink.getLabel().getUri())) {
+						if (link == currentLink) {
 							edgeObj.put(JsonKeys.selected.name(), true);
-						else
+						} else {
 							edgeObj.put(JsonKeys.selected.name(), false);
-
+						}
 						edgesArray.put(edgeObj);
 					}
 					obj.put(JsonKeys.Edges.name(), edgesArray);

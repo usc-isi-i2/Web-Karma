@@ -118,18 +118,6 @@ public class SetSemanticTypeCommand extends Command {
 		}
 		
 		/*** Add the appropriate nodes and links in alignment graph ***/
-		HNode hnode = vWorkspace.getRepFactory().getHNode(hNodeId);
-		String columnName = hnode.getColumnName();
-		ColumnNode columnNode = AlignmentUtil.getColumnNodeByHNodeId(alignment, hNodeId);
-		
-		if (columnNode == null) {
-			columnNode = alignment.addColumnNode(hNodeId, columnName);
-		} else {
-			// Remove old column node if it exists
-			alignment.removeNode(columnNode.getId());
-			columnNode = alignment.addColumnNode(hNodeId, columnName);
-		}
-		
 		SemanticType newType = null;
 		List<SemanticType> typesList = new ArrayList<SemanticType>();
 		for (int i = 0; i < typesArr.length(); i++) {
@@ -150,6 +138,10 @@ public class SetSemanticTypeCommand extends Command {
 					
 					if (classNode == null) {
 						Label domainLabel = ontMgr.getUriLabel(domainValue);
+						if (domainLabel == null) {
+							logger.error("URI/ID does not exist in the ontology or model: " + domainValue);
+							continue;
+						}
 						classNode = alignment.addInternalClassNode(domainLabel);
 					}
 					domainName = classNode.getLabel();
@@ -163,9 +155,13 @@ public class SetSemanticTypeCommand extends Command {
 						classNode = alignment.getNodeById(fullTypeValue);
 						if (classNode == null) {
 							Label classLabel = ontMgr.getUriLabel(fullTypeValue);
+							if (classLabel == null) {
+								logger.error("URI/ID does not exist in the ontology or model: " + fullTypeValue);
+								continue;
+							}
 							classNode = alignment.addInternalClassNode(classLabel);
 						}
-						
+						ColumnNode columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
 						LinkKeyInfo keyInfo = isPartOfKey ? LinkKeyInfo.PartOfKey : LinkKeyInfo.None;
 						ClassInstanceLink clsLink = alignment.addClassInstanceLink(classNode, columnNode, keyInfo);
 						alignment.align();
@@ -177,6 +173,11 @@ public class SetSemanticTypeCommand extends Command {
 					// Add a property link if both type (property) and domain (class) is present 
 					else {
 						Label propertyLabel = ontMgr.getUriLabel(fullTypeValue);
+						if (propertyLabel == null) {
+							logger.error("URI/ID does not exist in the ontology or model: " + fullTypeValue);
+							continue;
+						}
+						ColumnNode columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
 						DataPropertyLink propLink = alignment.addDataPropertyLink(classNode, columnNode, propertyLabel, isPartOfKey);
 						alignment.align();
 						newLink = propLink;
@@ -185,7 +186,12 @@ public class SetSemanticTypeCommand extends Command {
 						newType = new SemanticType(hNodeId, propertyLabel, domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
 					}
 				} else { // Synonym semantic type
-					SemanticType synType = new SemanticType(hNodeId, ontMgr.getUriLabel(fullTypeValue), domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
+					Label propertyLabel = ontMgr.getUriLabel(fullTypeValue);
+					if (propertyLabel == null) {
+						logger.error("URI/ID does not exist in the ontology or model: " + fullTypeValue);
+						continue;
+					}
+					SemanticType synType = new SemanticType(hNodeId, propertyLabel, domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
 					typesList.add(synType);
 				}
 			} catch (JSONException e) {
@@ -201,18 +207,21 @@ public class SetSemanticTypeCommand extends Command {
 		oldColumnModel = worksheet.getCrfModel().getModelByHNodeId(hNodeId);
 		oldSynonymTypes = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(hNodeId);
 
-		// Update the SemanticTypes data structure for the worksheet
-		worksheet.getSemanticTypes().addType(newType);
+		if (newType != null) {
+			// Update the SemanticTypes data structure for the worksheet
+			worksheet.getSemanticTypes().addType(newType);
 
-		// Update the synonym semanticTypes
-		newSynonymTypes = new SynonymSemanticTypes(typesList);
-		worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), newSynonymTypes);
-
-		if(trainAndShowUpdates) {
+			// Update the synonym semanticTypes
+			newSynonymTypes = new SynonymSemanticTypes(typesList);
+			worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), newSynonymTypes);
+			
 			// Train the semantic type in a separate thread
 			Thread t = new Thread(new SemanticTypeTrainingThread(crfModelHandler, worksheet, newType));
 			t.start();
+		}
 
+
+		if(trainAndShowUpdates) {
 			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
 			try {
 				// Add the visualization update
@@ -230,6 +239,20 @@ public class SetSemanticTypeCommand extends Command {
 //			align.align(false);
 		}
 		return c;
+	}
+
+	private ColumnNode getColumnNode(Alignment alignment, HNode hNode) {
+		String columnName = hNode.getColumnName();
+		ColumnNode columnNode = AlignmentUtil.getColumnNodeByHNodeId(alignment, hNodeId);
+		
+		if (columnNode == null) {
+			columnNode = alignment.addColumnNode(hNodeId, columnName);
+		} else {
+			// Remove old column node if it exists
+			alignment.removeNode(columnNode.getId());
+			columnNode = alignment.addColumnNode(hNodeId, columnName);
+		}
+		return columnNode;
 	}
 
 	@Override
