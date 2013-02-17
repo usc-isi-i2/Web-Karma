@@ -20,8 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.cleaning;
 
-import org.python.antlr.PythonParser.return_stmt_return;
-
 //type
 public class TNode{
 	public int color = -1;

@@ -29,7 +29,7 @@ import edu.isi.karma.view.VWorkspace;
 public class GenerateCleaningRulesCommandFactory extends CommandFactory {
 	
 	private enum Arguments {
-		vWorksheetId, hNodeId, examples
+		vWorksheetId, hNodeId, examples,cellIDs
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class GenerateCleaningRulesCommandFactory extends CommandFactory {
 			VWorkspace vWorkspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String examples = request.getParameter(Arguments.examples.name());
-		
-		return new GenerateCleaningRulesCommand(getNewId(vWorkspace), getWorksheetId(request, vWorkspace), hNodeId, examples);
+		String cellIDs= request.getParameter(Arguments.cellIDs.name());
+		return new GenerateCleaningRulesCommand(getNewId(vWorkspace), getWorksheetId(request, vWorkspace), hNodeId, examples,cellIDs);
 	}
 }

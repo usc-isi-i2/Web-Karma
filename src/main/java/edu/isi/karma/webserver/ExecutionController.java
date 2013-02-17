@@ -89,6 +89,8 @@ import edu.isi.karma.controller.command.alignment.ShowModelCommand;
 import edu.isi.karma.controller.command.alignment.ShowModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommandFactory;
+import edu.isi.karma.controller.command.cleaning.FetchTransformingDataCommand;
+import edu.isi.karma.controller.command.cleaning.FetchTransformingDataFactory;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommand;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishDatabaseCommand;
@@ -209,6 +211,8 @@ public class ExecutionController {
 				new PublishWorksheetHistoryCommandFactory());
 		commandFactoryMap.put(ApplyWorksheetHistoryCommand.class.getSimpleName(),
 				new ApplyWorksheetHistoryCommandFactory());
+		commandFactoryMap.put(FetchTransformingDataCommand.class.getSimpleName(),
+				new FetchTransformingDataFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

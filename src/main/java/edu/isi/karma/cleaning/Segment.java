@@ -14,12 +14,19 @@ public class Segment implements GrammarTreeNode{
 	public int end = 0;
 	public int lstart = 0;
 	public int lend = 0;
+	public Vector<int[]> mappings; // corresponding areas in org
 	public boolean isinloop = false;
 	public Vector<TNode> constNodes = new Vector<TNode>();
 	
 	public Segment()
 	{
 		
+	}
+	public Segment(int start, int end, Vector<int[]> mapping)
+	{
+		this.start = start;
+		this.end = end;
+		this.mappings = mapping;
 	}
 	public void setinLoop(boolean res)
 	{

@@ -14,7 +14,7 @@ public class Test {
 	public static void test1()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"AB","ABB"};
+		String[] xStrings = {"AAAAAAAAAAAAAA","AAAAAAAAAAAAAAAAAAAAA"};
 	//	String[] yStrings ={"c d e f g","c f g e d"};
 		examples.add(xStrings);
 	//	examples.add(yStrings);
@@ -252,8 +252,8 @@ public class Test {
 	public static void test10()// fail due to symerty blank mapping 
 	{
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"<_START>International Bussiness Machine<_END>","IBM"};
-		String[] yStrings ={"<_START>Principles Of Porgramming Languages<_END>","POPL"};
+		String[] xStrings = {"<_START>start: International Bussiness Machine<_END>","startIBM"};
+		String[] yStrings ={"<_START>start: Principles of Porgramming Languages<_END>","startPPL"};
 		examples.add(xStrings);
 		examples.add(yStrings);
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
@@ -261,7 +261,7 @@ public class Test {
 		String p = psProgSynthesis.run_partition();
 		System.out.println(""+p);
 		Interpretor it = new Interpretor();
-		String value = "International Conference on Software Engineering";
+		String value = "start: International Conference on Software Engineering";
 		//String value = "(6/7)(4/5)(14/2)";
 		InterpreterType worker = it.create(p);
 		String reString = worker.execute(value);
