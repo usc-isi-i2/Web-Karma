@@ -12,13 +12,15 @@ class Translator(object):
         '''
         Constructor
         '''
-        self.token2str = { 'NUM':'[\d]+',\
-                      'LWRD':'[a-z]+',\
-                      'UWRD':'[A-Z]+',\
-                      'BNK':'[\s]+',\
-                      'SYB':'[^(0-9|a-z|A-Z|\s)]',\
-                      'WORD':'[a-z|A-Z]',\
+        self.token2str = { 'NUM':'([\d]+)',\
+                      'LWRD':'([a-z]+)',\
+                      'UWRD':'([A-Z]+)',\
+                      'BNK':'([\s])',\
+                      'SYB':'([^a-zA-Z0-9\s+])',\
+                      'WORD':'([a-z|A-Z])',\
                       'ANY':'',\
+                      'START':'^',\
+                      'END':'$',\
                       }
     def translate(self,script):
         for (key,value) in self.token2str.iteritems():

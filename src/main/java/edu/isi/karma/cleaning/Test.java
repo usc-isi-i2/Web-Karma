@@ -11,31 +11,6 @@ import java.util.Vector;
 import au.com.bytecode.opencsv.CSVReader;
 
 public class Test {
-	public static void test1()
-	{
-		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"AAAAAAAAAAAAAA","AAAAAAAAAAAAAAAAAAAAA"};
-	//	String[] yStrings ={"c d e f g","c f g e d"};
-		examples.add(xStrings);
-	//	examples.add(yStrings);
-		Vector<Vector<TNode>> org = new Vector<Vector<TNode>>();
-		Vector<Vector<TNode>> tar = new Vector<Vector<TNode>>();
-		for(int i =0 ; i<examples.size();i++)
-		{
-			Ruler r = new Ruler();
-			r.setNewInput(examples.get(i)[0]);
-			org.add(r.vec);
-			Ruler r1 = new Ruler();
-			r1.setNewInput(examples.get(i)[1]);
-			tar.add(r1.vec);
-		}
-		for(int i=0; i<org.size();i++)
-		{
-			Vector<Vector<int[]>> mapping = Alignment.map(org.get(i), tar.get(i));
-			HashMap<Integer,Vector<Template>> segs = Alignment.genSegseqList(mapping);	
-			System.out.println(""+segs);
-		}
-	}
 	public static void test2()
 	{
 		Vector<Integer> poss = new Vector<Integer>();
@@ -85,14 +60,18 @@ public class Test {
 			{
 				if(f.getName().indexOf(".csv")==(f.getName().length()-4))
 				{					
-					CSVReader cr = new CSVReader(new FileReader(f),'\t');
+					CSVReader cr = new CSVReader(new FileReader(f), ',');
 					String[] pair;
 					String corrResult = "";
 					while ((pair=cr.readNext())!=null)
 					{
+						if(pair == null || pair.length <=1)
+							break;
 						entries.add(pair);
 						corrResult += pair[1]+"\n";
 					}
+					if(entries.size() <=1)
+						continue;
 					String[] mt = {"<_START>"+entries.get(0)[0]+"<_END>",entries.get(0)[1]};
 					examples.add(mt);
 					while(true) // repeat as no correct answer appears.
@@ -100,7 +79,6 @@ public class Test {
 						long st = System.currentTimeMillis();
 						ProgSynthesis psProgSynthesis = new ProgSynthesis();
 						psProgSynthesis.inite(examples);
-						
 						Vector<ProgramRule> pls = new Vector<ProgramRule>();
 						pls.addAll(psProgSynthesis.run_main());
 						for(int k = 0; k<examples.size();k++)
@@ -114,9 +92,9 @@ public class Test {
 						for(int i = 0; i<pls.size(); i++)
 						{		
 							ProgramRule script = pls.get(i);
-							System.out.println(script);
+							//System.out.println(script);
 							
-							for(int j = 0; j<entries.size(); j++)
+							for(int j = 1; j<entries.size(); j++)
 							{
 								InterpreterType worker = script.getRuleForValue(entries.get(j)[0]);
 								String s = worker.execute(entries.get(j)[0]);
@@ -139,15 +117,20 @@ public class Test {
 								}						
 							}
 							if(wexam == null)
-								return;
+								break;
 						}	
-						examples.add(wexam);
+						if(wexam != null)
+							examples.add(wexam);
+						else {
+							break;
+						}
+							
 					}							
 				}				
 			}
 			catch(Exception ex)
 			{
-				System.out.println(""+ex.toString());
+				ex.printStackTrace();
 			}
 		}
 		try
@@ -187,10 +170,9 @@ public class Test {
 		examples.add(qStrings);
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(examples);
-		psProgSynthesis.run_partition();
+		psProgSynthesis.run_main();
 		//System.out.println(""+psProgSynthesis.classifier.test("2009-07-11"));
 	}
-	
 	
 	public static void test7()
 	{
@@ -214,60 +196,17 @@ public class Test {
 		String value1 = "508 7800";
 		ProgramRule progString = p.iterator().next();
 		InterpreterType worker = progString.getRuleForValue(value);
+		System.out.println(""+progString.getClassForValue(value));
 		String reString = worker.execute(value);
 		InterpreterType worker1 = progString.getRuleForValue(value1);
-		String reString1 = worker.execute(value1);
+		System.out.println(""+progString.getClassForValue(value1));
+		String reString1 = worker1.execute(value1);
 		System.out.println("/*===========Results===================*/");
 		System.out.println(reString);
 		System.out.println(reString1);
 	}
 	
 	
-	//test loop statement
-	public static void test8()
-	{
-		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"<_START>(6/7)(4/5)(14/2)<_END>","6/7#4/5#14/2#"};
-		String[] yStrings ={"<_START>49(28/11)(14/1)<_END>","28/11#14/1#"};
-		String[] pStrings = {"<_START>Bulevar kralja Aleksandra&nbsp;156<_END>","Bulevar kralja Aleksandra*156"};
-		String[] qStrings ={"<_START>Dositejeva&nbsp;22<_END>","Dositejeva*22"};
-		examples.add(xStrings);
-		examples.add(yStrings);
-		examples.add(pStrings);
-		examples.add(qStrings);
-		ProgSynthesis psProgSynthesis = new ProgSynthesis();
-		psProgSynthesis.inite(examples);
-		String p = psProgSynthesis.run_partition();
-		System.out.println(""+p);
-		Interpretor it = new Interpretor();
-		String value = "() (28/11)(14/1)";
-		//String value = "(6/7)(4/5)(14/2)";
-		InterpreterType worker = it.create(p);
-		String reString = worker.execute(value);
-		System.out.println("===========Results===================");
-		System.out.println(reString);
-	}
-	
-	
-	public static void test10()// fail due to symerty blank mapping 
-	{
-		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"<_START>start: International Bussiness Machine<_END>","startIBM"};
-		String[] yStrings ={"<_START>start: Principles of Porgramming Languages<_END>","startPPL"};
-		examples.add(xStrings);
-		examples.add(yStrings);
-		ProgSynthesis psProgSynthesis = new ProgSynthesis();
-		psProgSynthesis.inite(examples);
-		String p = psProgSynthesis.run_partition();
-		System.out.println(""+p);
-		Interpretor it = new Interpretor();
-		String value = "start: International Conference on Software Engineering";
-		//String value = "(6/7)(4/5)(14/2)";
-		InterpreterType worker = it.create(p);
-		String reString = worker.execute(value);
-		System.out.println("===========Results===================");
-		System.out.println(reString);
-	}
 	//test Sumit's approach
 //	public static void test11()
 //	{
@@ -294,7 +233,7 @@ public class Test {
 //	}
 	public static void main(String[] args)
 	{
-		//Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		Test.test10();
+		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		//Test.test3();
 	}
 }

@@ -221,13 +221,8 @@ public class ExecutionController {
 				new PublishWorksheetHistoryCommandFactory());
 		commandFactoryMap.put(ApplyWorksheetHistoryCommand.class.getSimpleName(),
 				new ApplyWorksheetHistoryCommandFactory());
-<<<<<<< HEAD
 		commandFactoryMap.put(FetchTransformingDataCommand.class.getSimpleName(),
 				new FetchTransformingDataFactory());
-=======
-		commandFactoryMap.put(PublishCSVCommand.class.getSimpleName(),
-				new PublishCSVCommandFactory());
->>>>>>> ebd948365085703ea0b37eb608f4f29fe24b47f5
 	}
 
 	public VWorkspace getvWorkspace() {

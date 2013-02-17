@@ -1,141 +1,154 @@
 package edu.isi.karma.cleaning;
 
+import java.util.HashMap;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.Vector;
 
+import org.antlr.grammar.v3.ANTLRv3Parser.option_return;
 import org.python.antlr.PythonParser.else_clause_return;
+import org.python.antlr.PythonParser.if_stmt_return;
+
+import com.sun.xml.xsom.impl.scd.Iterators.Map;
 
 public class Position implements GrammarTreeNode {
-	public Vector<TNode> leftContextNodes =new Vector<TNode>();
+	public Vector<TNode> leftContextNodes = new Vector<TNode>();
 	public Vector<TNode> rightContextNodes = new Vector<TNode>();
 	public Vector<Integer> absPosition = new Vector<Integer>();
 	public Vector<Integer> counters = new Vector<Integer>();
 	public boolean isinloop = false;
-	public Position(Vector<Integer> absPos, Vector<TNode> lcxt,Vector<TNode> rcxt){
+	public int curState = 0;
+
+	
+	public Position(Vector<Integer> absPos, Vector<TNode> lcxt,
+			Vector<TNode> rcxt, boolean loop) {
 		this.absPosition = absPos;
-		//to do counter
+		// occurance of a reg pattern
 		this.counters.add(-1);
 		this.counters.add(1);
 		this.leftContextNodes = lcxt;
 		this.rightContextNodes = rcxt;
+		this.isinloop = loop;
+		createTotalOrderVector();
 	}
-	public String getString(Vector<TNode> x)
+	public Position(Position p,boolean loop)
 	{
-		//add randomness to the representation
-		int r = UtilTools.randChoose(7);
-		if(x == null)
+		this.absPosition = p.absPosition;
+		// occurance of a reg pattern
+		this.counters.add(-1);
+		this.counters.add(1);
+		this.leftContextNodes = p.leftContextNodes;
+		this.rightContextNodes = p.rightContextNodes;
+		this.isinloop = loop;
+		createTotalOrderVector();
+	}
+
+	public void getString(Vector<TNode> x,int cur, String path,Double value,HashMap<String, Double> smap) {
+		// add randomness to the representation
+		if (x == null) {
+			return;
+		}
+		if(cur>=x.size())
 		{
-			score += 2.0;
-			return "ANY";
+			if(!smap.keySet().contains(path))
+			{
+				path = UtilTools.escape(path);
+				smap.put(path, value);
+			}
+			return;
+		}
+		TNode t  = x.get(cur);
+		if (t.text.compareTo("ANYTOK") != 0 && t.text.length() > 0) 
+		{
+			getString(x,cur+1,path+t.text,value,smap);
 		}
 		String s = "";
-		for(TNode t:x)
+		if (t.type == TNode.NUMTYP) {
+			s += "NUM";
+		} else if (t.type == TNode.WORD) {
+			s += "WORD";
+		} else if (t.type == TNode.SYBSTYP) {
+			s += "SYB";
+		} else if (t.type == TNode.BNKTYP) {
+			s += "BNK";
+		} else if (t.type == TNode.UWRDTYP) {
+			s += "UWRD";
+		} else if (t.type == TNode.LWRDTYP) {
+			s += "LWRD";
+		} else if (t.type == TNode.STARTTYP) {
+			s += "START";
+		} else if (t.type == TNode.ENDTYP) {
+			s += "END";
+		} else if(t.type == TNode.ANYTYP)
 		{
-			if(t.text.compareTo("ANYTOK")!=0 && t.text.length()>0&&r<3)
-			{
-				s += t.text;
-				score += 1.0;
-				continue;
-			}
-			if(r==5 || r==6)
-			{
-				s +="ANY";
-				score += 1.0;
-				continue;
-			}
-			
-			if(t.type == TNode.NUMTYP)
-			{
-				s +="NUM";
-				score += 2.0;
-			}
-			else if(t.type == TNode.WORD)
-			{
-				s +="WORD";
-				score += 4.0;
-			}
-			else if(t.type == TNode.SYBSTYP)
-			{
-				s +="SYB";
-				score += 2.0;
-			}
-			else if(t.type == TNode.BNKTYP)
-			{
-				s +="BNK";
-				score += 2.0;
-			}
-			else if(t.type == TNode.UWRDTYP)
-			{
-				s +="UWRD";
-				score += 2.0;
-			}
-			else if(t.type == TNode.LWRDTYP)
-			{
-				s +="LWRD";
-				score += 2.0;
-			}
-			else if(t.type == TNode.STARTTYP)
-			{
-				s +="START";
-				score += 1.0;
-			}
-			else if (t.type == TNode.ENDTYP) {
-				s += "END";
-				score += 1.0;
-			}
-			else {
-				s += "ANYTYP";
-				score += 2.0;
-			}
+			s += "ANYTYP";
 		}
-		return s;
-	}
-	public Vector<TNode> mergeCNXT(Vector<TNode> a, Vector<TNode> b)
-	{
-		Vector<TNode> xNodes = new Vector<TNode>();
-		if(a==null||b==null)
-			return null;
-		else 
+		else
 		{
-			if(a.size()!=b.size())
-				return null;
-			else 
-			{
-				for(int i=0;i<a.size();i++)
-				{
-					
+			s += ""+t.getType();
+		}
+		getString(x,cur+1,path+s,value+1,smap);
+	}
+
+	// option: left or right context
+	public Vector<TNode> mergeCNXT(Vector<TNode> a, Vector<TNode> b,
+			String option) {
+		Vector<TNode> xNodes = new Vector<TNode>();
+		if (a == null || b == null)
+			return null;
+		else {
+			int leng = Math.min(a.size(), b.size());
+			if (option.compareTo(Segment.LEFTPOS) == 0) {
+				for (int i = 1; i <= leng; i++) {
+
+					TNode t = a.get(a.size()-i);
+					TNode t1 = b.get(b.size()-i);
+					if (t == null || t1 == null) {
+						break;
+					}
+					if (t.mergableType(t1) == -1) {
+						break;
+					} else {
+						int type = t.mergableType(t1);
+						if (t.text.compareTo(t1.text) == 0) {
+							TNode tx = new TNode(type, t.text);
+							xNodes.add(0,tx);
+						} else {
+							TNode tx = new TNode(type, "ANYTOK");
+							xNodes.add(0,tx);
+						}
+					}
+				}
+			} else if (option.compareTo(Segment.RIGHTPOS) == 0) {
+				for (int i = 0; i <leng; i++) {
+
 					TNode t = a.get(i);
 					TNode t1 = b.get(i);
-					if(t==null || t1==null)
-					{
-						xNodes.add(null);
-						continue;
+					if (t == null || t1 == null) {
+						break;
 					}
-					if(t.mergableType(t1)==-1)
-					{
-						return null;
-					}
-					else 
-					{
+					if (t.mergableType(t1) == -1) {
+						break;
+					} else {
 						int type = t.mergableType(t1);
-						if(t.text.compareTo(t1.text)==0)
-						{
-							TNode tx = new TNode(type,t.text);
+						if (t.text.compareTo(t1.text) == 0) {
+							TNode tx = new TNode(type, t.text);
 							xNodes.add(tx);
-						}
-						else
-						{
-							TNode tx = new TNode(type,"ANYTOK");
+						} else {
+							TNode tx = new TNode(type, "ANYTOK");
 							xNodes.add(tx);
 						}
 					}
 				}
 			}
 		}
+		if (xNodes.size() == 0)
+			return null;
 		return xNodes;
 	}
-	public Position mergewith(Position b)
-	{
-		if(this == null||b==null)
+
+	public Position mergewith(Position b) {
+		if (this == null || b == null)
 			return null;
 		Vector<Integer> tmpIntegers = new Vector<Integer>();
 		tmpIntegers.addAll(this.absPosition);
@@ -145,93 +158,160 @@ public class Position implements GrammarTreeNode {
 		tmpIntegers2.retainAll(b.counters);
 		Vector<TNode> tl = b.leftContextNodes;
 		Vector<TNode> tr = b.rightContextNodes;
-		Vector<TNode> g_lcxtNodes = mergeCNXT(this.leftContextNodes, tl);
-		Vector<TNode> g_rcxtNodes = mergeCNXT(this.rightContextNodes, tr);
-		//this.leftContextNodes = g_lcxtNodes;
-		//this.rightContextNodes = g_rcxtNodes;
-		if(tmpIntegers.size() == 0 && g_lcxtNodes == null&&g_rcxtNodes == null)
+		Vector<TNode> g_lcxtNodes = mergeCNXT(this.leftContextNodes, tl,
+				Segment.LEFTPOS);
+		Vector<TNode> g_rcxtNodes = mergeCNXT(this.rightContextNodes, tr,
+				Segment.RIGHTPOS);
+		// this.leftContextNodes = g_lcxtNodes;
+		// this.rightContextNodes = g_rcxtNodes;
+		if (tmpIntegers.size() == 0 && g_lcxtNodes == null
+				&& g_rcxtNodes == null)
 			return null;
-		return new Position(tmpIntegers, g_lcxtNodes, g_rcxtNodes);
+		boolean loop = this.isinloop|| b.isinloop;
+		return new Position(tmpIntegers, g_lcxtNodes, g_rcxtNodes,loop);
 	}
-	public void setinLoop(boolean res)
-	{
+
+	public void setinLoop(boolean res) {
 		this.isinloop = res;
 	}
-	// return indexOf(value,left,right) or position 
+
+	// return indexOf(value,left,right) or position
 	private double score = 0.0;
-	public double getScore()
-	{
-		double r =  score;
-		this.score = 0.0;
-		return r;
+	//score sum(gToken)/size
+	public double getScore() {
+		double sum = 0.0;
+		int lsize = 0;
+		if(this.leftContextNodes!=null)
+		{
+			lsize = leftContextNodes.size();
+		}
+		int rsize = 0;
+		if(this.rightContextNodes!=null)
+		{
+			rsize = rightContextNodes.size();
+		}
+		if(lsize ==0 && rsize == 0)
+			return 1;
+		else
+		{
+			for(int i = 0; i< lsize; i++)
+			{
+				if(leftContextNodes.get(i).text.compareTo("ANYTOK")!=0 && leftContextNodes.get(i).type!= TNode.ANYTYP)
+				{
+					sum ++;
+				}
+			}
+			for(int i = 0; i< rsize; i++)
+			{
+				if(rightContextNodes.get(i).text.compareTo("ANYTOK")!=0 && rightContextNodes.get(i).type!= TNode.ANYTYP)
+				{
+					sum ++;
+				}
+			}
+			return sum*1.0/(lsize+rsize);
+		}
 	}
+	public void emptyState()
+	{
+		this.curState = 0;
+	}
+	public Vector<String> rules = new Vector<String>();
 	public String toProgram()
 	{
-		String reString = "";
-		if(this.absPosition.size()==0 &&(this.leftContextNodes!=null || this.rightContextNodes!=null))
-		{
-			String left = this.getString(this.leftContextNodes);
-			left=UtilTools.escape(left);
-			String right = this.getString(this.rightContextNodes);
-			right=UtilTools.escape(right);
-			if(!isinloop)
-			{
-				int t = UtilTools.randChoose(this.counters.size());
-				reString = String.format("indexOf(value,\'%s\',\'%s\',%s)", left,right,counters.get(t));
-			}
-			else {
-				reString = String.format("indexOf(value,\'%s\',\'%s\',counter)", left,right);
-			}
-			return reString;
-		}
-		if(this.rightContextNodes == null && this.rightContextNodes == null)
-		{
-			int t = UtilTools.randChoose(this.absPosition.size());
-			reString = String.format("%d", this.absPosition.get(t));
-			score += 1.0;
-			return reString;
-		}
-		//random choose one represenation from the two
-		int opt = UtilTools.randChoose(2);
-		if(opt == 0)
-		{
-			int t = UtilTools.randChoose(this.absPosition.size());
-			score += 1.0;
-			reString = String.format("%d", this.absPosition.get(t));
-		}
-		else if(opt == 1)
-		{
-			String left = this.getString(this.leftContextNodes);
-			left=UtilTools.escape(left);
-			String right = this.getString(this.rightContextNodes);
-			right=UtilTools.escape(right);
-			if(!isinloop)
-			{
-				int t = UtilTools.randChoose(this.counters.size());
-				reString = String.format("indexOf(value,\'%s\',\'%s\',%s)", left,right,counters.get(t));
-			}
-			else {
-				reString = String.format("indexOf(value,\'%s\',\'%s\',counter)", left,right);
-			}
-		}
-		else 
-		{
-			System.out.println("paranormal activity");
-		}
-		
-		return reString;
+		if(curState >= rules.size())
+			return "null";
+		String rule = rules.get(curState);
+		if(!isinloop)
+			rule = rule.replace("counter", counters.get(1)+"");
+		curState ++;
+		return rule;
 	}
-	public String toString()
+	public String getRule(int index)
 	{
-		return this.absPosition+"("+this.leftContextNodes+","+this.rightContextNodes+")";
+		if(index >= rules.size())
+			return "null";
+		String rule = rules.get(index);
+		if(!isinloop)
+			rule = rule.replace("counter", counters.get(1)+"");
+		return rule;
 	}
+	public long size()
+	{
+		return this.rules.size();
+	}
+	public void createTotalOrderVector() {
+		HashMap<String,Double> lMap = new HashMap<String,Double>();
+		HashMap<String,Double> rMap = new HashMap<String,Double>();
+		if(this.leftContextNodes != null)
+		{
+			String path = "";
+			getString(this.leftContextNodes, 0, path, 0.0, lMap);
+		}
+		else{
+			lMap.put("ANY", 1.0);
+		}
+		if(this.rightContextNodes != null)
+		{
+			String path = "";
+			getString(this.rightContextNodes, 0, path, 0.0, rMap);
+		}
+		else{
+			
+			rMap.put("ANY", 1.0);
+		}
+		String reString = "";
+		SortedMap<Double, Vector<String>> sortedMap = new TreeMap<Double, Vector<String>>();
+		String negString = "";
+		for(String a:lMap.keySet())
+		{
+			for(String b:rMap.keySet())
+			{
+				Double key = 1.0/(lMap.get(a)+rMap.get(b));		
+				reString = String.format("indexOf(value,\'%s\',\'%s\',counter)", a, b);
+				negString = String.format("indexOf(value,\'%s\',\'%s\',-counter)", a, b);
+				if(sortedMap.containsKey(key))
+				{
+					sortedMap.get(key).add(reString);
+					sortedMap.get(key).add(negString);
+				}
+				else
+				{
+					Vector<String> svec = new Vector<String>();
+					svec.add(reString);
+					svec.add(negString);
+					sortedMap.put(key, svec);
+				}
+			}
+		}
+		while(!sortedMap.isEmpty())
+		{
+			Double key = sortedMap.firstKey();
+			rules.addAll(sortedMap.get(key));
+			sortedMap.remove(key);
+		}
+		//append the absolute position to the end
+		for(int k =0; k<this.absPosition.size(); k++)
+		{
+			String line = String.format("%d", this.absPosition.get(k));
+			rules.add(line);
+		}
+	}
+
+	public String toString() {
+		return "(" + UtilTools.print(this.leftContextNodes) + ","+ UtilTools.print(this.rightContextNodes) + ")";
+	}
+
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
-		Position p = (Position)a;
+		Position p = (Position) a;
 		p = this.mergewith(p);
 		return p;
 	}
-	public String getNodeType()
-	{
+
+	public String getNodeType() {
 		return "position";
+	}
+	public String getrepString()
+	{
+		return this.toString();
 	}
 }

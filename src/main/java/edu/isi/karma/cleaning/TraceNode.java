@@ -2,22 +2,46 @@ package edu.isi.karma.cleaning;
 
 import java.util.Vector;
 
+
 public class TraceNode {
+	public GrammarTreeNode node;
 	public Segment curSegment;
-	public Vector<TraceNode> children;
-	public String repreString;
+	public Loop loop;
+	public Vector<TraceNode> children = new Vector<TraceNode>();
+	public String repString;
+	public TraceNode(GrammarTreeNode node)
+	{
+		this.node = node;
+		if(node.getNodeType().compareTo("loop")==0)
+		{
+			this.loop = (Loop)node;
+		}
+		else if(node.getNodeType().compareTo("segment")==0)
+		{
+			this.curSegment = (Segment)node;
+		}
+		inite();
+	}
 	public TraceNode(Segment seg)
 	{
 		curSegment = seg;
+		node = seg;
+		inite();
 	}
-	public String initrepreString()
+	public TraceNode(Loop p)
 	{
-		return "";
+		this.loop = p;
+		node = p;
+		inite();
 	}
-	public String toString()
+	public void inite()
 	{
-		String s = curSegment.toString();
-		return s;
+		repString = node.getrepString();
 	}
 	
+	public String toString()
+	{
+		String s = node.toString();
+		return s;
+	}
 }

@@ -1,61 +1,126 @@
 package edu.isi.karma.cleaning;
 
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.Vector;
 
-
-public class Segment implements GrammarTreeNode{
-	public Position sPosition;
-	public Position ePosition;
+public class Segment implements GrammarTreeNode {
+	public Vector<Section> section = new Vector<Section>();
+	public static final int cxtsize_limit = 3;
 	public static final String LEFTPOS = "leftpos";
 	public static final String RIGHTPOS = "rightpos";
 	public static final int CONST = -1;
 	public static final int UNDFN = -2;
-	public int start = 0;
-	public int end = 0;
-	public int lstart = 0;
-	public int lend = 0;
+	public int start = 0; // start position in tarNodes
+	public int end = 0; // end position in tarNodes
 	public Vector<int[]> mappings; // corresponding areas in org
 	public boolean isinloop = false;
 	public Vector<TNode> constNodes = new Vector<TNode>();
-	
-	public Segment()
+	public String repString = "";
+	private int curState = -1;
+	public Vector<String> segStrings = new Vector<String>();
+	public int VersionSP_size = 0;
+	public Segment(Vector<TNode> cont)
 	{
-		
+		constNodes = cont;
+		createTotalOrderVector();
 	}
-	public Segment(int start, int end, Vector<int[]> mapping)
+	public Segment(int start, int end, Vector<TNode> cont)
+	{
+		this.start = start;
+		this.end = end;
+		this.constNodes = cont;
+		this.createTotalOrderVector();
+	}
+	public Segment(Vector<Section> sections,boolean loop)
+	{
+		this.section = sections;
+		this.isinloop = loop;
+		this.createTotalOrderVector();
+	}
+	public Segment(int start, int end, Vector<int[]> mapping,Vector<TNode> orgNodes,Vector<TNode> tarNodes)
 	{
 		this.start = start;
 		this.end = end;
 		this.mappings = mapping;
+		initSections(orgNodes);
+		repString = "";
+		repString += tarNodes.get(this.start).getType();
+		if(end >start+1)
+			repString += tarNodes.get(this.end-1).getType();
+		this.createTotalOrderVector();
+	}
+	public void setSections(Vector<Position[]> sections)
+	{
+		Vector<Section> s = new Vector<Section>();
+		for(Position[] p:sections)
+		{
+			Section sx = new Section(p,this.isinloop);
+			s.add(sx);
+		}
+		this.section = s;
+		this.createTotalOrderVector();
+	}
+	public Vector<TNode> getLeftCxt(int c, Vector<TNode> x)
+	{
+		int i = Segment.cxtsize_limit;
+		Vector<TNode> res = new Vector<TNode>();
+		while(i>0)
+		{
+			if((c-i)<0)
+			{
+				i--;
+				continue;
+			}
+			res.add(x.get(c-i));
+			i--;
+		}
+		return res;
+	}
+	public Vector<TNode> getRightCxt(int c, Vector<TNode> x)
+	{
+		int i = 0;
+		Vector<TNode> res = new Vector<TNode>();
+		while(i<Segment.cxtsize_limit)
+		{
+			if((c+i)>=x.size())
+				break;
+			res.add(x.get(c+i));
+			i++;
+		}
+		return res;
+	}
+	//
+	public void initSections(Vector<TNode> orgNodes)
+	{
+		for (int[] elem: mappings)
+		{
+			int s = elem[0];
+			int e = elem[1];
+			//create the startPosition
+			Vector<Integer> sset = new Vector<Integer>();
+			sset = UtilTools.getStringPos(s, orgNodes);
+			Position sPosition = new Position(sset, getLeftCxt(s, orgNodes), getRightCxt(s, orgNodes),this.isinloop);
+			sPosition.isinloop = this.isinloop;
+			//create the endPosition
+			Vector<Integer> eset = new Vector<Integer>();
+			eset = UtilTools.getStringPos(e, orgNodes);
+			Position ePosition = new Position(eset, getLeftCxt(e, orgNodes), getRightCxt(e, orgNodes),this.isinloop);
+			ePosition.isinloop = this.isinloop;
+			if(sPosition != null && ePosition !=null)
+			{
+				Position[] pair = {sPosition,ePosition};
+				Section xsec = new Section(pair,isinloop);
+				section.add(xsec);
+			}
+		}
 	}
 	public void setinLoop(boolean res)
 	{
 		this.isinloop = res;
-		if(this.sPosition!=null &&this.ePosition!=null)
+		for(Section pair:section)
 		{
-			this.sPosition.setinLoop(res);
-			this.ePosition.setinLoop(res);
-		}
-	}
-	public void setPosition(String option,TNode t1,TNode t2,Vector<Integer> abspos)
-	{
-		if(option.compareTo(Segment.LEFTPOS)==0)
-		{
-			Vector<TNode> lNodes = new Vector<TNode>();
-			Vector<TNode> rNodes = new Vector<TNode>();
-			lNodes.add(t1);
-			rNodes.add(t2);
-			sPosition = new Position(abspos, lNodes, rNodes);
-			sPosition.isinloop = this.isinloop;
-		}
-		else 
-		{
-			Vector<TNode> lNodes = new Vector<TNode>();
-			Vector<TNode> rNodes = new Vector<TNode>();
-			lNodes.add(t1);
-			rNodes.add(t2);
-			ePosition = new Position(abspos, lNodes, rNodes);
-			ePosition.isinloop = isinloop;
+			pair.isinloop = res;
 		}
 	}
 	public void setCnt(Vector<TNode> cnst)
@@ -65,19 +130,22 @@ public class Segment implements GrammarTreeNode{
 			constNodes.add(t);
 		}
 	}
-	public Segment(int start,int end,int lstart,int lend)
+	public boolean isConstSegment()
 	{
-		this.start = start;
-		this.end = end;
-		this.lstart = lstart;
-		this.lend = lend;
+		if(this.constNodes.size() >0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
-	
 	public Segment mergewith(Segment s)
 	{
-		if(this.start == Segment.CONST &&this.end == Segment.CONST)
+		if(this.isConstSegment())
 		{
-			if(s.start <0 &&s.end<0)
+			if(s.isConstSegment())
 			{
 				if(this.constNodes.size() != s.constNodes.size())
 				{
@@ -97,32 +165,60 @@ public class Segment implements GrammarTreeNode{
 			else {
 				return null;
 			}
-			Segment res = new Segment();
-			res.start = Segment.CONST;
-			res.end = Segment.CONST;
-			res.constNodes = this.constNodes;
+			Segment res = new Segment(0,0,this.constNodes);
 			return res;
 		}
 		//merge the position
-		Position p1 = sPosition.mergewith(s.sPosition);
-		Position p2 = ePosition.mergewith(s.ePosition);
-		if(p1==null)
+		Vector<Section> newSections = new Vector<Section>();
+		for(Section x:this.section)
+		{
+			for(Section y:s.section)
+			{
+				GrammarTreeNode zSection = x.mergewith(y);
+				if(zSection!=null)
+				{
+					newSections.add((Section)zSection);
+				}
+			}
+		}
+		if(newSections.size() ==0)
 			return null;
-		if(p2==null)
-			return null;
-		Segment res = new Segment();
-		res.sPosition = p1;
-		res.ePosition = p2;
+		boolean loop = this.isinloop || s.isinloop;
+		Segment res = new Segment(newSections,loop);
 		return res;
+	}
+	public String getrepString()
+	{
+		if(this.constNodes.size()>0 && this.repString.length()==0 )
+		{	
+			repString = UtilTools.print(this.constNodes);
+			return repString;
+
+		}
+		else 
+		{
+			return this.repString;
+		}
+		
 	}
 	public String toString()
 	{
-		if(this.end == Segment.CONST && this.start == Segment.CONST)
+		if(this.isConstSegment())
 		{
-			return "("+start+","+end+"|" + "|"+this.constNodes+")";
+			return "<"+this.constNodes+">";
 		}
 		else {
-			return "("+start+","+end+"|" + "|"+this.sPosition+","+this.ePosition+")";
+			String s = "<";
+			if(this.isinloop)
+			{
+				s += "loop";
+			}
+			for(Section x:this.section)
+			{
+				s += x.pair[0]+","+x.pair[1];
+			}
+			s += ">";
+			return s;
 		}
 	}
 	private double score = 0.0;
@@ -132,37 +228,131 @@ public class Segment implements GrammarTreeNode{
 		this.score = 0.0;
 		return r;
 	}
-	public String toProgram() {
-		try 
-		{	
-			String reString = "";
-			String mdString = "";
-			if(this.start == Segment.CONST &&this.end == Segment.CONST)
-			{	
-				for(TNode t:this.constNodes)
-				{
-					mdString += t.text;
-				}
-				//mdString= UtilTools.escape(mdString);
-				reString = "\'"+mdString+"\'";
-				score += 1.0;
+	public Vector<Integer> rules = new Vector<Integer>();
+	public void createTotalOrderVector()
+	{
+		SortedMap<Double,Vector<Integer>> xmap = new TreeMap<Double, Vector<Integer>>();
+		for(int i=0; i< section.size(); i++)
+		{
+			Double double1 = 0.0;
+			//reverse the order to get higher values sorted in front
+			double1 += section.get(i).getScore();
+			double key = double1;
+			if(xmap.containsKey(key))
+			{
+				xmap.get(key).add(i);
 			}
 			else
 			{
-				reString = String.format("substr(value,%s,%s)", this.sPosition.toProgram(),this.ePosition.toProgram());
-				score += sPosition.getScore();
-				score += ePosition.getScore();
+				Vector<Integer> vi = new Vector<Integer>();
+				vi.add(i);
+				xmap.put(key, vi);
 			}
-			return reString;
-		} catch (Exception e) {
-			System.out.println(""+e.toString());
-			return null;
 		}
+		while(!xmap.isEmpty())
+		{
+			Double x = xmap.firstKey();
+			Vector<Integer> v = xmap.get(x);
+			//add the vth pair's rules
+			for(Integer e:v)
+			{
+				rules.add(e);
+			}
+			xmap.remove(x);
+		}
+//		String mdString = "";
+//		if(this.isConstSegment())
+//		{	
+//			for(TNode t:this.constNodes)
+//			{
+//				mdString += t.text;
+//			}
+//			//mdString= UtilTools.escape(mdString);
+//			mdString = "\'"+mdString+"\'";
+//			rules.add(mdString);
+//		}
+		rules.add(-1);
+		for(Section s:section)
+		{
+			this.VersionSP_size += s.size();
+		}
+		this.VersionSP_size ++; // constant segment
+	}
+	public long size()
+	{
+		return this.VersionSP_size;
+	}
+	public void emptyState()
+	{
+		this.curState = 0;
+	}
+	public String toProgram() {
+		if(curState >=rules.size())
+		{
+			return "null";
+		}
+		
+		String s =  "null";
+		while(curState<rules.size() && s.contains("null"))
+		{
+			s = section.get(rules.get(curState)).toProgram();
+			if(s.contains("null"))
+				curState ++;
+		}
+		return s;
 	}
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
-		Segment s = (Segment)a;
-		s = this.mergewith(s);
-		return s;
+		GrammarTreeNode s;
+		if(a.getNodeType().compareTo("loop")==0)
+		{
+			Loop p = (Loop)a;
+			s = p.mergewith(this);
+			return s;
+		}
+		else {
+			s = this.mergewith((Segment)a);
+			return s;
+		}
+	}
+	public String getRule(long index)
+	{
+		if(index>=this.size() || index <0)
+		{
+			return "null";
+		}
+		else
+		{
+			for(int i = 0; i<rules.size(); i++)
+			{
+				if(rules.get(i) == -1)
+				{
+					String mdString = "";
+					if(this.isConstSegment())
+					{	
+						for(TNode t:this.constNodes)
+						{
+							mdString += t.text;
+						}
+						mdString = "\'"+mdString+"\'";
+						return mdString;
+					}
+					else
+					{
+						return "null";
+					}
+				}
+				if(index< section.get(rules.get(i)).size())
+				{
+					section.get(i).isinloop = this.isinloop;
+					return section.get(rules.get(i)).getRule(index);
+				}
+				else
+				{
+					index = (index - section.get(rules.get(i)).size());
+				}
+			}
+			return "null";
+		}
 	}
 	public String getNodeType()
 	{

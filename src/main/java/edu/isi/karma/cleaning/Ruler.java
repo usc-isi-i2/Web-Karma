@@ -236,7 +236,8 @@ public class Ruler {
 			}
 			else if(t.getType() == Tokenizer.SYBS)
 			{
-				mytype = TNode.SYBSTYP;
+				//mytype = TNode.SYBSTYP;
+				mytype = (int)t.getText().charAt(0);
 				txt = t.getText();
 			}
 			else if(t.getType() == Tokenizer.START)
@@ -251,60 +252,12 @@ public class Ruler {
 			}
 			TNode tx = new TNode(mytype,txt);
 			vec.add(tx);
-			//System.out.println("cnt: "+t.getText()+" type:"+t.getType());
 			t = tk.nextToken();
 		}
-	}
-	public void applyrule()
-	{
-		/*for(int i = 0; i< operators.size(); i++)
-		{
-			Object[] oper = operators.get(i);
-			if(Integer.parseInt((String)oper[2])<0)
-			{
-				move(Integer.parseInt((String)oper[0]), (TNode)oper[1], Integer.parseInt((String)oper[2]));
-			}
-			else if(Integer.parseInt((String)oper[2])>=0)
-			{
-				det(Integer.parseInt((String)oper[0]), (TNode)oper[1], Integer.parseInt((String)oper[2]));
-			}
-		}*/
 	}
 	
 	public static void main(String[] args)
 	{
-		Object[][] opers = {{"0",new TNode(4,","),"0"}};
-		//generate the ruler
-		
-		String fpath = "/Users/bowu/Research/dataclean/data/d1.txt";
-		String fpath1 = "/Users/bowu/Research/dataclean/data/td1.txt";
-		String fpath2 = "/Users/bowu/Research/dataclean/data/d1r.txt";
-		try
-		{
-			BufferedReader br = new BufferedReader(new FileReader(fpath));
-			BufferedWriter bw1= new BufferedWriter(new FileWriter(fpath1));
-			BufferedWriter bw2 = new BufferedWriter(new FileWriter(fpath2));
-			String line = "";
-			while((line=br.readLine())!=null)
-			{
-				if(line.compareTo("")==0)
-					break;
-				Ruler r = new Ruler(line);
-				bw1.write(r.print());
-				bw1.write("\n");
-				r.addOperators(opers);
-				r.applyrule();
-				System.out.println(""+r.print());
-				bw2.write(r.print());
-				bw2.write("\n");
-			}
-			bw1.flush();
-			bw2.flush();
-		}
-		catch(Exception ex)
-		{
-			System.out.println(""+ex.toString());
-		}
 	}
 	
 	//move a position complied with condition

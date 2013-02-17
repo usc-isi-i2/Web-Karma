@@ -1,36 +1,51 @@
 package edu.isi.karma.cleaning;
 
-import java.util.Vector;
-
-
 public class Loop implements GrammarTreeNode {
-	public Vector<GrammarTreeNode> loopbody = new Vector<GrammarTreeNode>();
-	public Loop(Vector<GrammarTreeNode> loopbody)
+	public Segment loopbody;
+	public int looptype;
+	public static final int LOOP_START = 0;
+	public static final int LOOP_END = 1;
+	public static final int LOOP_BOTH =2;
+	public static final int LOOP_MID = 3;
+	public Loop(Segment loopbody,int looptype)
 	{
-		this.loopbody = loopbody;
-		for(GrammarTreeNode gt:this.loopbody)
+		if(loopbody.section.size() == 0)
 		{
-			Segment segment = (Segment)gt;
-			segment.isinloop = true;
+			this.loopbody = new Segment(loopbody.constNodes);
 		}
+		else
+		{
+			this.loopbody = new Segment(loopbody.section, true);
+		}
+		this.looptype = looptype;
+		this.loopbody.isinloop = true;
 	}
 	public Loop mergewith(Loop a)
 	{
-		Vector<GrammarTreeNode> tmp = new Vector<GrammarTreeNode>();
-		Vector<GrammarTreeNode> b = a.loopbody;
-		for(int i = 0; i< b.size(); i++)
+		if(this.looptype == a.looptype)
 		{
-			GrammarTreeNode x = b.get(i).mergewith(loopbody.get(i));
-			if(x == null)
+			Segment segment = this.loopbody.mergewith(a.loopbody);
+			if(segment == null)
 				return null;
-			tmp.add(x);
+			Loop l = new Loop(segment, looptype);
+			return l;
 		}
-		Loop p = new Loop(tmp);
-		return p;
+		else
+		{
+			return null;
+		}
+	}
+	public Loop mergewith(Segment a)
+	{
+		Segment segment = this.loopbody.mergewith(a);
+		if(segment == null)
+			return null;
+		Loop l = new Loop(segment, looptype);
+		return l;
 	}
 	public String toString()
 	{
-		return this.toProgram();
+		return "[loop]"+this.loopbody.toString();
 	}
 	private double score = 0.0;
 	public double getScore()
@@ -40,24 +55,56 @@ public class Loop implements GrammarTreeNode {
 		return r;
 	}
 	public String toProgram() {
-		//Template
-		String prog = "";
-		for(GrammarTreeNode g:this.loopbody)
+		String res = this.loopbody.toProgram();
+		if(res.length()==0)
 		{
-			Segment segment = (Segment)g;
-			prog += segment.toProgram()+"+";
-			score += segment.getScore();
-			segment.setinLoop(true);
+			this.loopbody.emptyState();
 		}
-		prog = prog.substring(0,prog.length()-1);
-		String s = String.format("loop(value,\"%s\")",prog);
-		return s;
+		return res;
 	}
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
-		return this.mergewith((Loop)a);
+		if(a.getNodeType().compareTo("loop")==0)
+		{
+			return this.mergewith((Loop)a);
+		}
+		else if(a.getNodeType().compareTo("Segment")==0)
+		{
+			return this.mergewith((Segment)a);
+		}
+		else
+			return null;
 	}
 	public String getNodeType()
 	{
 		return "loop";
+	}
+	public String getrepString()
+	{
+		return this.loopbody.getrepString();
+	}
+	@Override
+	public void createTotalOrderVector() {
+		// TODO Auto-generated method stub
+		
+	}
+	public String getRule(int index)
+	{
+		if(index>=loopbody.size() || index <0)
+		{
+			return "null";
+		}
+		else
+		{
+			return loopbody.getRule(index);
+		}
+	}
+	public long size()
+	{
+		return this.loopbody.size();
+	}
+	@Override
+	public void emptyState() {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -15,6 +15,7 @@ public class ProgSynthesis {
 	public void inite(Vector<String[]> examples) {
 		for (int i = 0; i < examples.size(); i++) {
 			Ruler r = new Ruler();
+			//System.out.println("Example: "+examples.get(i)[0]);
 			r.setNewInput(examples.get(i)[0]);
 			orgVector.add(r.vec);
 			Ruler r1 = new Ruler();
@@ -48,31 +49,6 @@ public class ProgSynthesis {
 		return qVector;
 	}
 
-	public Vector<Template> crossMerge(Vector<Vector<Template>> tmps) {
-		Vector<Vector<Integer>> p = new Vector<Vector<Integer>>();
-		Vector<Integer> poss = new Vector<Integer>();
-		for (Vector<Template> t : tmps) {
-			poss.add(t.size());
-		}
-		p = this.generateCrossIndex(poss, p, 0);
-		Vector<Template> resTemplates = new Vector<Template>();
-		for (int i = 0; i < p.size(); i++) {
-			Template t = tmps.get(0).get(p.get(i).get(0));
-			boolean doable = true;
-			for (int j = 1; j < p.get(i).size(); j++) {
-				Template t1 = tmps.get(j).get(p.get(i).get(j));
-				t = t.mergewith(t1);
-				if (t == null) {
-					doable = false;
-					break;
-				}
-			}
-			if (doable) {
-				resTemplates.add(t);
-			}
-		}
-		return resTemplates;
-	}
 
 	public double getCompScore(int i, int j, Vector<Partition> pars) {
 		Partition p = pars.get(i).mergewith(pars.get(j));
@@ -93,17 +69,15 @@ public class ProgSynthesis {
 		return validCnt;
 	}
 
-	public Vector<Partition> initePartitions(Vector<HashMap<Integer, Vector<Template>>> xyz) {
+	public Vector<Partition> initePartitions() {
 		Vector<Partition> pars = new Vector<Partition>();
 		// inite partition for each example
-		for (int i = 0; i < xyz.size(); i++) {
-			HashMap<Integer, Vector<Template>> tx = xyz.get(i);
+		for (int i = 0; i < orgVector.size(); i++) {
 			Vector<Vector<TNode>> ovt = new Vector<Vector<TNode>>();
 			Vector<Vector<TNode>> tvt = new Vector<Vector<TNode>>();
 			ovt.add(this.orgVector.get(i));
 			tvt.add(this.tarVector.get(i));
-			HashMap<String, Vector<Template>> hsv = Partition.condenseTemplate(tx);
-			Partition pt = new Partition(hsv, ovt, tvt);
+			Partition pt = new Partition(ovt, tvt);
 			pars.add(pt);
 		}
 		return pars;
@@ -136,236 +110,15 @@ public class ProgSynthesis {
 		pars.remove(j);
 	}
 
-	public HashMap<Integer, Vector<String>> run() {
-		// generate mapping segmentList and put it into a hashmap
-		Vector<HashMap<Integer, Vector<Template>>> xyz = new Vector<HashMap<Integer, Vector<Template>>>();
-		for (int i = 0; i < this.orgVector.size(); i++) {
-			Vector<Vector<int[]>> mapping = Alignment.map(orgVector.get(i),
-					tarVector.get(i));
-			HashMap<Integer, Vector<Template>> segs = Alignment
-					.genSegseqList(mapping);
-			HashMap<String, Segment> segdict = new HashMap<String, Segment>();
-			// initialize the temple with examples
-			for (Integer j : segs.keySet()) {
-				Vector<Template> temps = segs.get(j);
-				for (Template elem : temps) {
-					elem.initeDescription(orgVector.get(i), tarVector.get(i),segdict);
-				}
-			}
-			xyz.add(segs);
-		}
-
-		Set<Integer> keysSet = xyz.get(0).keySet();
-		HashMap<Integer, Vector<String>> dicts = new HashMap<Integer, Vector<String>>();
-		for (Integer key : keysSet) {
-			Vector<Vector<Template>> tVector = new Vector<Vector<Template>>();
-			boolean doable = true;
-			for (int i = 0; i < xyz.size(); i++) {
-				if (!xyz.get(i).containsKey(key)) {
-					doable = false;
-					break;
-				}
-				tVector.add(xyz.get(i).get(key));
-			}
-			if (!doable) {
-				continue;
-			}
-			Vector<Template> xTemplates = crossMerge(tVector);
-			Vector<String> reStrings = new Vector<String>();
-			for (Template t : xTemplates) {
-				System.out.println("" + t.toString());
-				// System.out.println(""+t.toProgram());
-				reStrings.add(t.toProgram());
-			}
-			dicts.put(key, reStrings);
-		}
-		return dicts;
-	}
-//	public HashSet<String> run_sumit() {
-//		// generate mapping segmentList and put it into a hashmap
-//		Vector<HashMap<Integer, Vector<Template>>> xyz = new Vector<HashMap<Integer, Vector<Template>>>();
-//		
-//		for (int i = 0; i < this.orgVector.size(); i++) {
-//			HashMap<String, Segment> segdict = new HashMap<String, Segment>();
-//			HashMap<Integer, Vector<Template>> segs = new HashMap<Integer, Vector<Template>>();
-//			HashSet<String> traces = new HashSet<String>();
-//			HashMap<String, String> dict = new HashMap<String, String>();
-//			Alignment.SumitTraceGen(0, orgVector.get(i),tarVector.get(i), "", traces, dict);
-//			for(String s:traces)
-//			{
-//				Vector<Segment> vsSegments =Alignment.genSumitSegments(s,segdict);
-//				Vector<GrammarTreeNode> vgt = new Vector<GrammarTreeNode>();
-//				for(Segment sv:vsSegments)
-//				{
-//					vgt.add((GrammarTreeNode)sv);
-//				}
-//				Template template = new Template(vgt,0);
-//				if(segs.containsKey(template.size()))
-//				{
-//					segs.get(template.size()).add(template);
-//				}
-//				else {
-//					Vector<Template> vtTemplates = new Vector<Template>();
-//					vtTemplates.add(template);
-//					segs.put(template.size(), vtTemplates);
-//				}
-//			}
-//			segdict.clear(); // cleared for initialization 
-//			HashMap<Integer, Vector<Template>> newsegs = new HashMap<Integer, Vector<Template>>();
-//			// initialize the temple with examples
-//			for (Integer j : segs.keySet()) {
-//				Vector<Template> temps = segs.get(j);
-//				for (Template elem : temps) {
-//					elem.initeDescription(orgVector.get(i), tarVector.get(i),segdict);
-//					Vector<Template> vts = elem.produceVariations();
-//					vts.add(elem);
-//					for(int p=0;p<vts.size();p++)
-//					{
-//						int leng = vts.get(p).size();
-//						if(newsegs.containsKey(leng))
-//						{
-//							newsegs.get(leng).add(vts.get(p));
-//						}
-//						else {
-//							Vector<Template> vtep = new Vector<Template>();
-//							vtep.add(vts.get(p));
-//							newsegs.put(leng, vtep);
-//						}
-//					}	
-//				}
-//			}
-//			xyz.add(newsegs);
-//		}
-//		Vector<Partition> pars = this.initePartitions(xyz);
-//		int size = pars.size();
-//		while(true)
-//		{
-//			this.mergePartitions(pars);
-//			if(size == pars.size())
-//			{
-//				break;
-//			}
-//			else
-//			{
-//				size = pars.size();
-//			}
-//		}
-//		Program prog = new Program(pars);
-//		//return a list of randomly choosen rules
-//		HashSet<String> rules = new HashSet<String>();
-//		Interpretor it = new Interpretor();
-//		double max = -1;
-//		for(int i = 0; i<50; i++)
-//		{
-//			String r = prog.toProgram();
-//			double s = prog.getScore();
-//			if(this.validRule(r, it))
-//			{
-//				rules.add(r);
-//				if(s>max)
-//				{
-//					this.bestRuleString = r;
-//					System.out.println("<<<<<<<<BestRule: "+bestRuleString+" , "+s);
-//					max = s;
-//				}
-//			}
-//		}
-//		return rules;	
-//	}
-	public String run_partition() {
-		// generate mapping segmentList and put it into a hashmap
-		Vector<HashMap<Integer, Vector<Template>>> xyz = new Vector<HashMap<Integer, Vector<Template>>>();
-		for (int i = 0; i < this.orgVector.size(); i++) {
-			Vector<Vector<int[]>> mapping = Alignment.map(orgVector.get(i),
-					tarVector.get(i));
-			HashMap<Integer, Vector<Template>> segs = Alignment
-					.genSegseqList(mapping);
-			HashMap<Integer, Vector<Template>> newsegs = new HashMap<Integer, Vector<Template>>();
-			HashMap<String, Segment> segdict = new HashMap<String, Segment>();
-			// initialize the temple with examples
-			for (Integer j : segs.keySet()) {
-				Vector<Template> temps = segs.get(j);
-				for (Template elem : temps) {
-					elem.initeDescription(orgVector.get(i), tarVector.get(i),segdict);
-					Vector<Template> vts = elem.produceVariations();
-					vts.add(elem);
-					for(int p=0;p<vts.size();p++)
-					{
-						int leng = vts.get(p).size();
-						if(newsegs.containsKey(leng))
-						{
-							newsegs.get(leng).add(vts.get(p));
-						}
-						else {
-							Vector<Template> vtep = new Vector<Template>();
-							vtep.add(vts.get(p));
-							newsegs.put(leng, vtep);
-						}
-					}	
-				}
-			}
-			xyz.add(newsegs);
-		}
-		Vector<Partition> pars = this.initePartitions(xyz);
-		int size = pars.size();
-		while(true)
-		{
-			this.mergePartitions(pars);
-			if(size == pars.size())
-			{
-				break;
-			}
-			else
-			{
-				size = pars.size();
-			}
-		}
-		Program prog = new Program(pars);
-		//return a list of randomly choosen rules
-		return prog.toProgram();	
-	}
 	public String getBestRule()
 	{
 		return this.bestRuleString;
 	}
-	public Collection<ProgramRule> run_main() {
-		// generate mapping segmentList and put it into a hashmap
-		Vector<HashMap<Integer, Vector<Template>>> xyz = new Vector<HashMap<Integer, Vector<Template>>>();
-		for (int i = 0; i < this.orgVector.size(); i++) {
-			Vector<Vector<int[]>> mapping = Alignment.map(orgVector.get(i),
-					tarVector.get(i));
-			HashMap<Integer, Vector<Template>> segs = Alignment
-					.genSegseqList(mapping);
-			HashMap<Integer, Vector<Template>> newsegs = new HashMap<Integer, Vector<Template>>();
-			HashMap<String, Segment> segdict = new HashMap<String, Segment>();
-			// initialize the temple with examples
-			for (Integer j : segs.keySet()) {
-				Vector<Template> temps = segs.get(j);
-				for (Template elem : temps) {
-					elem.initeDescription(orgVector.get(i), tarVector.get(i),segdict);
-					Vector<Template> vts = elem.produceVariations();
-					vts.add(elem);
-					for(int p=0;p<vts.size();p++)
-					{
-						int leng = vts.get(p).size();
-						if(newsegs.containsKey(leng))
-						{
-							newsegs.get(leng).add(vts.get(p));
-						}
-						else 
-						{
-							Vector<Template> vtep = new Vector<Template>();
-							vtep.add(vts.get(p));
-							newsegs.put(leng, vtep);
-						}
-					}	
-				}
-			}
-			xyz.add(newsegs);
-		}
-		Vector<Partition> pars = this.initePartitions(xyz);
+	public Vector<Partition> ProducePartitions(boolean condense)
+	{
+		Vector<Partition> pars = this.initePartitions();
 		int size = pars.size();
-		while(true)
+		while(condense)
 		{
 			this.mergePartitions(pars);
 			if(size == pars.size())
@@ -377,47 +130,74 @@ public class ProgSynthesis {
 				size = pars.size();
 			}
 		}
-		Program prog = new Program(pars);
-		//return a list of randomly choosen rules
-		//HashSet<String> rules = new HashSet<String>();
-		Interpretor it = new Interpretor();
-		Vector<Double> scores = new Vector<Double>();
-		Vector<ProgramRule> rulesx = new Vector<ProgramRule>();
-		double max = -1;
-		for(int i = 0; i<100; i++)
-		{
-			ProgramRule r = prog.toProgram1();
-			double s = prog.getScore();
-			if(this.validRule(r, it))
-			{
-				rulesx.add(r);
-				scores.add(s);
-			}
-		}
-		Vector<Integer> inds = UtilTools.topKindexs(scores, 30);
-		HashMap<String,ProgramRule> rules = new HashMap<String,ProgramRule>();
-		for(int index:inds)
-		{
-			if(!rules.containsKey(rulesx.get(index).toString()))
-				rules.put(rulesx.get(index).toString(),rulesx.get(index));
-		}
-		return rules.values();	
+		return pars;
 	}
-	public boolean validRule(ProgramRule p,Interpretor it)
+	public Collection<ProgramRule> producePrograms(Vector<Partition> pars) {
+		Program prog = new Program(pars);
+		ProgramRule r = prog.toProgram1();
+		String xString = "";
+		int termCnt = 0;
+		boolean findRule = true;	
+		while((xString=this.validRule(r))!="GOOD" && findRule)
+		{
+			if(termCnt == 10000)
+			{
+				findRule = false;
+				break;
+			}
+			for(Partition p:prog.partitions)
+			{
+				if(p.label.compareTo(xString)==0)
+				{
+					String newRule = p.toProgram();
+					System.out.println("updated Rule: "+p.label+": "+newRule);
+					if(newRule.contains("null"))
+					{
+						findRule = false;
+						break;
+					}
+					r.updateClassworker(xString, newRule);
+				}
+			}
+			termCnt ++;
+		}
+		HashSet<ProgramRule> rules = new HashSet<ProgramRule>();
+		if(findRule)
+			rules.add(r);
+		System.out.println("*********************************");
+		System.out.println("Total program size: "+prog.size());
+		System.out.println("Updated times: "+ termCnt);
+		System.out.println("*********************************");
+		return rules;	
+	}
+	public Collection<ProgramRule> run_main() {
+		Vector<Partition> vp = this.ProducePartitions(true);
+		Collection<ProgramRule> cpr = this.producePrograms(vp);
+		if(cpr.size() == 0)
+		{
+			vp = this.ProducePartitions(false);
+			cpr = this.producePrograms(vp);
+		}
+		return cpr;
+		
+	}
+	public String validRule(ProgramRule p)
 	{	
-		boolean res = true;
 		for(int i=0; i<orgVector.size();i++)
 		{		
 			String s1 = UtilTools.print(orgVector.get(i));
-			InterpreterType worker = p.getRuleForValue(s1);
+			String labelString = p.getClassForValue(s1);
+			//System.out.println("Rule: "+ p.getStringRule(labelString));
+			InterpreterType worker = p.getWorkerForClass(labelString);
 			String s2 = worker.execute(s1);
 			String s3 = UtilTools.print(tarVector.get(i));
+			
+			//System.out.println("Validation: "+s2+" | "+s3);
 			if(s3.compareTo(s2)!=0)
 			{
-				res = false;
-				break;
+				return labelString;
 			}
 		}
-		return res;
+		return "GOOD";
 	}
 }
