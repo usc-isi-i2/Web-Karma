@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 
 import edu.isi.karma.er.helper.entity.MultiScore;
 import edu.isi.karma.er.helper.entity.ResultRecord;
@@ -22,6 +23,8 @@ import edu.isi.karma.er.helper.entity.Score;
 import edu.isi.karma.er.helper.entity.ScoreBoard;
 
 public class ScoreBoardFileUtil {
+	
+	private double threshold = 0.9; 
 	
 	private String scoreBoardFile = Constants.PATH_SCORE_BOARD_FILE + "score_board.csv";
 	
@@ -75,12 +78,12 @@ public class ScoreBoardFileUtil {
 		return sMap;
 	}
 	
-	public void write2Log(Map<String, ScoreBoard> map) {
+	public void write2Log(Map<String, ScoreBoard> map, JSONArray confArr) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
-		write2Log(map, Constants.PATH_SCORE_BOARD_FILE + "result" + sdf.format(new Date()) + ".csv");
+		write2Log(map, Constants.PATH_SCORE_BOARD_FILE + "result" + sdf.format(new Date()) + ".csv", confArr);
 	}
 	
-	public void write2Log(Map<String, ScoreBoard> map, String logFile) {
+	public void write2Log(Map<String, ScoreBoard> map, String logFile, JSONArray confArr) {
 		File file = new File(logFile);
 		if (file.exists()) {
 			file.delete();
@@ -90,7 +93,7 @@ public class ScoreBoardFileUtil {
 		
 		RandomAccessFile raf = null;
 		int count = 0, i = 0, thresholdCount = 0; 
-		DecimalFormat df = new DecimalFormat("0.00000000");
+		DecimalFormat df = new DecimalFormat("0.0000000000");
 		try {
 			file.createNewFile();
 			raf = new RandomAccessFile(file, "rw");
@@ -113,34 +116,35 @@ public class ScoreBoardFileUtil {
 							sc.setSrcObj(replaceComma(sc.getSrcObj()));
 							sc.setDstObj(replaceComma(sc.getDstObj()));
 							
-							sb.append("\t(").append(df.format(sc.getSimilarity()) + "|" + df.format(sc.getFreq())).append("== ")
+							sb.append(" {").append(df.format(sc.getSimilarity()) + "|" + df.format(sc.getFreq())).append("== ")
 								.append(sc.getSrcObj() == null ? "----" : sc.getSrcObj())
 								.append(" | ")
-								.append(sc.getDstObj() == null ? "----" : sc.getDstObj()).append(") ");
+								.append(sc.getDstObj() == null ? "----" : sc.getDstObj()).append("} ");
 						}
 						
 					}
 					if (s.getDbpediaUri().equals(s.getKarmaUri())) {
-						raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + "," + s.getWikiUri() + "," + s.getDbpediaUri() + "," + s.getKarmaUri().replaceAll(",", "") + "," + df.format(s.getFound()) + ", same" + sb.toString() + "\r\n");
+						raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + ",\"" + s.getWikiUri() + "\",\"" + s.getDbpediaUri() + "\",\"" + s.getKarmaUri() + "\"," + df.format(s.getFound()) + ", same" + sb.toString() + "\r\n");
 							if (Math.abs(s.getFound() -1) < 1e-5) {
 							//perfCount ++;
 						}
 						thresholdCount ++;
 					} else {
-						raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + "," + s.getWikiUri() + "," + s.getDbpediaUri().replaceAll(",", "") + "," + s.getKarmaUri().replaceAll(",", "") + "," + df.format(s.getFound()) + ", not same" + sb.toString() + "\r\n");
+						raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + ",\"" + s.getWikiUri() + "\",\"" + s.getDbpediaUri() + "\",\"" + s.getKarmaUri() + "\"," + df.format(s.getFound()) + ", not same" + sb.toString() + "\r\n");
 						
 					}
 				} else {
-					raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + "," + s.getWikiUri() + "," + s.getDbpediaUri() + ",,\r\n");
+					raf.writeBytes(s.getSubject() + "," + s.getSaamUri() + ",\"" + s.getWikiUri() + "\",\"" + s.getDbpediaUri() + "\",,\r\n");
 				}
 			}
-			raf.writeBytes("(similarity >= 0.9) precision: " + thresholdCount + " of " + count + " (" + df.format(thresholdCount*1.0/count) + ")\r\n");
-			raf.writeBytes("(similarity >= 0.9) recall: " + thresholdCount + " of " + i + " (" + df.format(thresholdCount*1.0/i) + ")\r\n");
-			raf.writeBytes("(similarity >= 0.9) F1 score:" + df.format(2.0*thresholdCount/(i+count)) + "\r\n");
-			log.info("(similarity >= 0.9) precision: " + thresholdCount + " of " + count + " (" + df.format(thresholdCount*1.0/count) + ")");
-			log.info("(similarity >= 0.9) recall: " + thresholdCount + " of " + i + " (" + df.format(thresholdCount*1.0/i) + ")");
-			log.info("(similarity >= 0.9) F1 score:" + df.format(2.0*thresholdCount/(i+count)) + "\r\n");
+			raf.writeBytes("(similarity >= " + threshold + ") precision: " + thresholdCount + " of " + count + " (" + df.format(thresholdCount*1.0/count) + ")\r\n");
+			raf.writeBytes("(similarity >= " + threshold + ") recall: " + thresholdCount + " of " + i + " (" + df.format(thresholdCount*1.0/i) + ")\r\n");
+			raf.writeBytes("(similarity >= " + threshold + ") F1 score:" + df.format(2.0*thresholdCount/(i+count)) + "\r\n");
+			log.info("(similarity >= " + threshold + ") precision: " + thresholdCount + " of " + count + " (" + df.format(thresholdCount*1.0/count) + ")");
+			log.info("(similarity >= " + threshold + ") recall: " + thresholdCount + " of " + i + " (" + df.format(thresholdCount*1.0/i) + ")");
+			log.info("(similarity >= " + threshold + ") F1 score:" + df.format(2.0*thresholdCount/(i+count)) + "\r\n");
 			
+			raf.writeBytes(confArr.toString());
 			//raf.writeBytes("(similarity = 1) precision: " + perfCount + " of " + count + " (" + df.format(perfCount*1.0/count) + ")\r\n");
 			//raf.writeBytes("(similarity = 1) recall: " + perfCount + " of " + i + " (" + df.format(perfCount*1.0/i) + ")\r\n");
 			
@@ -158,12 +162,12 @@ public class ScoreBoardFileUtil {
 		
 	}
 	
-	public void write2Log(List<ResultRecord> list) {
+	public void write2Log(List<ResultRecord> list, JSONArray confArr) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
-		write2Log(list, Constants.PATH_SCORE_BOARD_FILE + "result" + sdf.format(new Date()) + ".csv");
+		write2Log(list, Constants.PATH_SCORE_BOARD_FILE + "result" + sdf.format(new Date()) + ".csv", confArr);
 	}
 	
-	public void write2Log(List<ResultRecord> list, String logFile) {
+	public void write2Log(List<ResultRecord> list, String logFile, JSONArray confArr) {
 		File file = new File(logFile);
 		if (file.exists()) {
 			file.delete();
@@ -171,8 +175,8 @@ public class ScoreBoardFileUtil {
 		
 		RandomAccessFile raf = null;
 		int i = 0;
-		double threshold = 0.85; 
-		DecimalFormat df = new DecimalFormat("0.00000000");
+		
+		DecimalFormat df = new DecimalFormat("0.0000000000");
 		try {
 			file.createNewFile();
 			raf = new RandomAccessFile(file, "rw");
@@ -195,15 +199,15 @@ public class ScoreBoardFileUtil {
 							sc.setSrcObj(replaceComma(sc.getSrcObj()));
 							sc.setDstObj(replaceComma(sc.getDstObj()));
 							
-							sb.append("\t(").append(df.format(sc.getSimilarity()) + "|" + df.format(sc.getFreq())).append("== ")
+							sb.append(" {").append(df.format(sc.getSimilarity()) + "|" + df.format(sc.getFreq())).append("== ")
 								.append(sc.getSrcObj() == null ? "----" : sc.getSrcObj())
 								.append(" | ")
-								.append(sc.getDstObj() == null ? "----" : sc.getDstObj()).append(") ");
+								.append(sc.getDstObj() == null ? "----" : sc.getDstObj()).append("} ");
 						}
 						
 					}
 				
-					raf.writeBytes(r.getRes().getSubject() + "," + m.getDstSubj().getSubject()+ "," + df.format(r.getCurrentMaxScore()) + ", same" + sb.toString() + "\r\n");
+					raf.writeBytes(r.getRes().getSubject() + ",\"" + m.getDstSubj().getSubject()+ "\"," + df.format(r.getCurrentMaxScore()) + ", same" + sb.toString() + "\r\n");
 						
 					
 				} else {
@@ -218,22 +222,23 @@ public class ScoreBoardFileUtil {
 								sc.setSrcObj(replaceComma(sc.getSrcObj()));
 								sc.setDstObj(replaceComma(sc.getDstObj()));
 								
-								sb.append("\t(").append(df.format(sc.getSimilarity()) + "|" + df.format(sc.getFreq())).append("== ")
+								sb.append(" {").append(df.format(sc.getSimilarity()) + "|" + df.format(sc.getFreq())).append("== ")
 									.append(sc.getSrcObj() == null ? "----" : sc.getSrcObj())
 									.append(" | ")
-									.append(sc.getDstObj() == null ? "----" : sc.getDstObj()).append(") ");
+									.append(sc.getDstObj() == null ? "----" : sc.getDstObj()).append("} ");
 							}
 							
 						}
-						raf.writeBytes(r.getRes().getSubject() + "," + m.getDstSubj().getSubject() + ",, not same,\r\n");
+						raf.writeBytes(r.getRes().getSubject() + ",\"" + m.getDstSubj().getSubject() + "\",, not same,\r\n");
 					} else {
 						raf.writeBytes(r.getRes().getSubject() + "," + ",,,\r\n");
 					}
 				}
 			}
-			raf.writeBytes("(similarity >= 0.9) found: " + i + " of " + len + " (" + df.format(i*1.0/len) + ")\r\n");
-			log.info("(similarity >= 0.9) found: " + i + " of " + len + " (" + df.format(i*1.0/len) + ")\r\n");
+			raf.writeBytes("(similarity >= " + threshold + ") found: " + i + " of " + len + " (" + df.format(i*1.0/len) + ")\r\n");
+			log.info("(similarity >= " + threshold + ") found: " + i + " of " + len + " (" + df.format(i*1.0/len) + ")\r\n");
 			
+			raf.writeBytes(confArr.toString());
 			//raf.writeBytes("(similarity = 1) precision: " + perfCount + " of " + count + " (" + df.format(perfCount*1.0/count) + ")\r\n");
 			//raf.writeBytes("(similarity = 1) recall: " + perfCount + " of " + i + " (" + df.format(perfCount*1.0/i) + ")\r\n");
 			
@@ -271,6 +276,13 @@ public class ScoreBoardFileUtil {
 	private String replaceComma(String str) {
 		if (str != null && str.indexOf(",") > -1) {
 			str = str.replaceAll(",", "%2C");
+		}
+		return str;
+	}
+	
+	private String replaceCommaBack(String str) {
+		if (str != null && str.indexOf("%2C") > -1) {
+			str = str.replaceAll("%2C", ",");
 		}
 		return str;
 	}
@@ -337,9 +349,9 @@ public class ScoreBoardFileUtil {
 						ScoreBoard s = new ScoreBoard();
 						s.setSubject(arr[0]);
 						s.setSaamUri(arr[1]);
-						s.setWikiUri(arr[2]);
-						s.setDbpediaUri(arr[3]);
-						s.setKarmaUri(arr[4]);
+						s.setWikiUri(removeDoubleQuotes(arr[2]));
+						s.setDbpediaUri(removeDoubleQuotes(arr[3]));
+						s.setKarmaUri(removeDoubleQuotes(arr[4]));
 						try {
 							found = Double.parseDouble(arr[5]);
 						} catch (NumberFormatException nfe) {
@@ -364,8 +376,8 @@ public class ScoreBoardFileUtil {
 						ScoreBoard s = new ScoreBoard();
 						s.setSubject(arr[0]);
 						s.setSaamUri(arr[1]);
-						s.setWikiUri(arr[2]);
-						s.setDbpediaUri(arr[3]);
+						s.setWikiUri(removeDoubleQuotes(arr[2]));
+						s.setDbpediaUri(removeDoubleQuotes(arr[3]));
 						s.setKarmaUri("");
 						s.setFound(-1);
 						list.add(s);
@@ -393,7 +405,12 @@ public class ScoreBoardFileUtil {
 	 * @return score board data list without ground truth
 	 */
 	public Vector<ScoreBoard> loadScoreResultFile(String filename) {
-		File file = new File(Constants.PATH_SCORE_BOARD_FILE + filename);
+		File file = null;
+		if (filename.indexOf(':') > -1 || filename.startsWith("/")) {
+			file = new File(filename);
+		} else {
+			file = new File(Constants.PATH_SCORE_BOARD_FILE + filename);
+		}
 		if (!file.exists())
 			throw new IllegalArgumentException("file " + file.getAbsolutePath() + " not exists.");
 		
@@ -417,7 +434,7 @@ public class ScoreBoardFileUtil {
 						s.setSaamUri(arr[0]);
 						s.setWikiUri("");
 						s.setDbpediaUri("");
-						s.setKarmaUri(arr[1]);
+						s.setKarmaUri(removeDoubleQuotes(arr[1]));
 						try {
 							found = Double.parseDouble(arr[2]);
 						} catch (NumberFormatException nfe) {
@@ -472,7 +489,7 @@ public class ScoreBoardFileUtil {
 		
 		String finalScore, sim, attr;
 		for (String str : strs) {
-			if (str.indexOf('(') > -1 && str.indexOf(')') > -1) {
+			if (str.indexOf('{') > -1 && str.indexOf('}') > -1) {
 				MultiScore ms = new MultiScore();
 				
 				scoreList = new Vector<Score>();
@@ -480,7 +497,7 @@ public class ScoreBoardFileUtil {
 				str = str.substring(str.indexOf(']') + 2);
 				ms.setFinalScore(Double.parseDouble(finalScore));
 				
-				String[] scoreStrs = split(str, "(");
+				String[] scoreStrs = split(str, "{");
 				int i = 0;
 				for (String substr : scoreStrs) {
 					if (substr.indexOf('|') != substr.lastIndexOf('|')) {
@@ -493,8 +510,8 @@ public class ScoreBoardFileUtil {
 						
 						s.setSimilarity(Double.parseDouble(sim.substring(0, sim.indexOf('|'))));
 						s.setFreq(Double.parseDouble(sim.substring(sim.indexOf('|')+1)));
-						s.setSrcObj(attr.substring(0, attr.lastIndexOf('|')));
-						s.setDstObj(attr.substring(attr.indexOf('|') + 1, attr.lastIndexOf(')')));
+						s.setSrcObj(replaceCommaBack(attr.substring(0, attr.lastIndexOf('|'))));
+						s.setDstObj(replaceCommaBack(attr.substring(attr.indexOf('|') + 1, attr.lastIndexOf('}'))));
 						scoreList.add(s);
 					}
 				}
@@ -528,5 +545,27 @@ public class ScoreBoardFileUtil {
 			}
 		}
 		return latestFile.getName();
+	}
+	
+	public String removeDoubleQuotes(String str) {
+		int p1, p2;
+		p1 = str.indexOf('"');
+		if (p1 > -1) {
+			p2 = str.lastIndexOf('"');
+			if (p2 > -1 && p2 != p1) {
+				str = str.substring(p1+1, p2);
+			} else {
+				str = str.substring(p1+1);
+			}
+		}
+		return str;
+	}
+
+	public double getThreshold() {
+		return threshold;
+	}
+
+	public void setThreshold(double threshold) {
+		this.threshold = threshold;
 	}
 }

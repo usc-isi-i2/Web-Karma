@@ -97,12 +97,17 @@ public class GetExampleJSON extends HttpServlet {
 			File[] ontologies = ontDir.listFiles();
 			OntologyManager mgr = workspace.getOntologyManager();
 			for (File ontology: ontologies) {
-				try {
-					mgr.doImport(ontology);
-				} catch (Exception t) {
-					logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
+				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf")) {
+					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
+					try {
+						mgr.doImportWithoutCacheUpdate(ontology);
+					} catch (Exception t) {
+						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
+					}
 				}
 			}
+			// update the cache at the end when all files are added to the model
+			mgr.initCache();
 		} else {
 			logger.info("No directory for preloading ontologies exists.");
 		}

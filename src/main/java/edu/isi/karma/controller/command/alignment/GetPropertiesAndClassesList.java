@@ -77,8 +77,8 @@ public class GetPropertiesAndClassesList extends Command {
 				
 				String pr = prefixMap.get(cls.getNameSpace());
 				String classLabel = cls.getLocalName();
-				if (cls.getLabel(null) != null && !cls.getLabel(null).equals(""))
-					classLabel = cls.getLabel(null);
+//				if (cls.getLabel(null) != null && !cls.getLabel(null).equals(""))
+//					classLabel = cls.getLabel(null);
 				String clsStr = (pr != null && !pr.equals("")) ? pr + ":" + classLabel : classLabel;
 				
 				classesList.put(clsStr);
@@ -96,8 +96,8 @@ public class GetPropertiesAndClassesList extends Command {
 				
 				String pr = prefixMap.get(prop.getNameSpace());
 				String propLabel = prop.getLocalName();
-				if (prop.getLabel(null) != null && !prop.getLabel(null).equals(""))
-					propLabel = prop.getLabel(null);
+//				if (prop.getLabel(null) != null && !prop.getLabel(null).equals(""))
+//					propLabel = prop.getLabel(null);
 				String propStr = (pr != null && !pr.equals("")) ? pr + ":" + propLabel : propLabel; 
 				
 				propertiesList.put(propStr);

@@ -20,6 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.service;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -67,7 +69,9 @@ public class URLManager {
 		
 		String firstEndpoint = "";
 		for (int i = 0; i < requestURLStrings.size(); i++) {
-			URL url = new URL(requestURLStrings.get(i).trim());
+			String urlStr = requestURLStrings.get(i).trim();
+			urlStr = urlStr.replaceAll(Pattern.quote(" "), "%20");
+			URL url = new URL(urlStr);
 			if (i == 0) firstEndpoint = getEndPoint(url);
 			
 			// only urls with the same endpoints will be added to the list.
@@ -141,13 +145,15 @@ public class URLManager {
 		return address;
 	}
 
-	private static boolean verifyAttributeExtraction(URL url, List<Attribute> attributeList) {
+	private static boolean verifyAttributeExtraction(URL url, List<Attribute> attributeList) throws UnsupportedEncodingException {
 		if (url.getQuery() == null && (attributeList == null || attributeList.size() == 0))
 			return true;
 		
 		if (url.getQuery() != null && url.getQuery().trim().length() == 0 && 
 				(attributeList == null || attributeList.size() == 0))
 			return true;
+		
+		String originalQuery = URLDecoder.decode(url.getQuery(), "UTF-8");
 		
 		String query = "";
 		for (Attribute p:attributeList) {
@@ -159,7 +165,7 @@ public class URLManager {
 		if (query.endsWith("&"))
 			query = query.substring(0, query.length()-1);
 		
-		if (query.equalsIgnoreCase(url.getQuery()))
+		if (query.equalsIgnoreCase(originalQuery))
 			return true;
 		
 		return false;
@@ -223,9 +229,12 @@ public class URLManager {
 	            }
 	        }
 	        
-	        if (!verifyAttributeExtraction(url, attributeList)) {
-	        	logger.error("Attributes have not been extracted successfully.");
-	        	return null;
+	        try {
+		        if (!verifyAttributeExtraction(url, attributeList)) {
+		        	logger.error("Attributes have not been extracted successfully.");
+		        }
+	        } catch (UnsupportedEncodingException e) {
+	        	logger.warn("There might be an error in extracting the attribute names from the URL.");
 	        }
 	        
 	        logger.debug("Attributes extracted successfully from " + url.toString());
@@ -452,15 +461,34 @@ public class URLManager {
 //		return links;
 //	}
 		
-	public static void main(String[] args) throws MalformedURLException {
+	public static void main(String[] args) throws MalformedURLException, UnsupportedEncodingException {
 
 //		URL url = new URL("http://www.test.com/getVideos?user=demo");
-		URL url = new URL("http://www.test.com/?test=1");
+//		URL url = new URL("http://www.test.com/?test=1");
+		URL url = new URL("http://localhost:8080/SpatialReferenceSystemService?srid=2163&geometry=POINT%20(2236208.82887498%2093460.8811236587)");
 		System.out.println(getEndPoint(url));
 		System.out.println(getServiceAddress(url));
 		System.out.println(getOperationName(url));
 		System.out.println(getOperationAddress(url));
-
+		List<Attribute> attributeList = getQueryAttributes(url);
+		for (Attribute att : attributeList) {
+			System.out.println(att.getName());
+		}
+		System.out.println(verifyAttributeExtraction(url, attributeList));
+		
+//		String s = "srid={p1}&geometry=POINT (2236208.82887498 93460.8811236587)";
+//		String r = "POINT (2236208.82887498 93460.8811236587)";
+//		s = s.replaceFirst(Pattern.quote(r), "test");
+//		System.out.println(s);
+		
+//		String s = URLDecoder.decode(url.toString(), "UTF-8");
+//		System.out.println(s);
+//		String s2 = URLEncoder.encode(s, "UTF-8");
+//		System.out.println(s2);
+//		URL url2 = new URL(s2);
+//		System.out.println(url2.toString());
+		
+		
 		
 //		String serviceName = "";
 //		String apiEndPoint = "";

@@ -30,8 +30,9 @@ public class NumberComparatorImpl implements NumberComparator {
 		double numV = a.doubleValue(), numW = b.doubleValue();
 		double diff = Math.abs(numV - numW);
 		if (diff <= delta) {
-			return Math.exp(-1 * (diff * 4.6 / 100));  
+			// return Math.exp(-1 * (diff * 4.6 / 100));  
 			// return (1- diff * 0.1 / delta);
+			return 1- (diff * 1.0 /delta);
 		} else {
 			return 0;
 		}

@@ -65,9 +65,10 @@ public class PairPropertyUtil {
 			if (w1 > w2) { t = w1; w1 = w2; w2 = t;}
 			for (int i = v1; i <= v2; i++) {
 				for (int j = w1; j <= w2; j++) {
+					//sum *= 1-Math.sqrt(getPairCount(map, String.valueOf(i), String.valueOf(j)));
 					sum += getPairCount(map, String.valueOf(i), String.valueOf(j));
 				}
-			}
+			} 
 		} catch (NumberFormatException nfe) {
 			
 		}

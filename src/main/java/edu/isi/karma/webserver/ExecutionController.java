@@ -28,6 +28,8 @@ import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.AddColumnCommand;
+import edu.isi.karma.controller.command.AddColumnCommandFactory;
 import edu.isi.karma.controller.command.AddNewColumnCommand;
 import edu.isi.karma.controller.command.AddNewColumnCommandFactory;
 import edu.isi.karma.controller.command.ApplyWorksheetHistoryCommand;
@@ -85,6 +87,8 @@ import edu.isi.karma.controller.command.alignment.ResetModelCommand;
 import edu.isi.karma.controller.command.alignment.ResetModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommandFactory;
+import edu.isi.karma.controller.command.alignment.ShowAutoModelCommand;
+import edu.isi.karma.controller.command.alignment.ShowAutoModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.ShowModelCommand;
 import edu.isi.karma.controller.command.alignment.ShowModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommand;
@@ -93,6 +97,8 @@ import edu.isi.karma.controller.command.cleaning.FetchTransformingDataCommand;
 import edu.isi.karma.controller.command.cleaning.FetchTransformingDataFactory;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommand;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommandFactory;
+import edu.isi.karma.controller.command.publish.PublishCSVCommand;
+import edu.isi.karma.controller.command.publish.PublishCSVCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishDatabaseCommand;
 import edu.isi.karma.controller.command.publish.PublishDatabaseCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommand;
@@ -173,6 +179,8 @@ public class ExecutionController {
 				new UnassignSemanticTypeCommandFactory());
 		commandFactoryMap.put(ShowModelCommand.class.getSimpleName(),
 				new ShowModelCommandFactory());
+		commandFactoryMap.put(ShowAutoModelCommand.class.getSimpleName(),
+				new ShowAutoModelCommandFactory());
 		commandFactoryMap.put(SplitByCommaCommand.class.getSimpleName(),
 				new SplitByCommaCommandFactory());
 		commandFactoryMap.put(DuplicateDomainOfLinkCommand.class.getSimpleName(),
@@ -191,6 +199,8 @@ public class ExecutionController {
 				new PublishDatabaseCommandFactory());
 		commandFactoryMap.put(AddNewColumnCommand.class.getSimpleName(),
 				new AddNewColumnCommandFactory());
+		commandFactoryMap.put(AddColumnCommand.class.getSimpleName(),
+				new AddColumnCommandFactory());
 		commandFactoryMap.put(PublishRDFCellCommand.class.getSimpleName(),
 				new PublishRDFCellCommandFactory());
 		commandFactoryMap.put(FetchPreferencesCommand.class.getSimpleName(),
@@ -211,8 +221,13 @@ public class ExecutionController {
 				new PublishWorksheetHistoryCommandFactory());
 		commandFactoryMap.put(ApplyWorksheetHistoryCommand.class.getSimpleName(),
 				new ApplyWorksheetHistoryCommandFactory());
+<<<<<<< HEAD
 		commandFactoryMap.put(FetchTransformingDataCommand.class.getSimpleName(),
 				new FetchTransformingDataFactory());
+=======
+		commandFactoryMap.put(PublishCSVCommand.class.getSimpleName(),
+				new PublishCSVCommandFactory());
+>>>>>>> ebd948365085703ea0b37eb608f4f29fe24b47f5
 	}
 
 	public VWorkspace getvWorkspace() {

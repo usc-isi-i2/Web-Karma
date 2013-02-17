@@ -104,6 +104,13 @@ public class Table extends RepEntity {
 			r.addNodeToDataTable(newHNode, this, factory);
 		}
 	}
+	
+	//mariam
+	public void removeNodeFromDataTable(String hNodeId) {
+		for (Row r : rows) {
+			r.removeNode(hNodeId);
+		}
+	}
 
 	/**
 	 * The HNode acquired a nested HTable, so we need to add placeholders on all

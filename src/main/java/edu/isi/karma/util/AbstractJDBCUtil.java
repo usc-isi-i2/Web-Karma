@@ -37,7 +37,7 @@ public abstract class AbstractJDBCUtil {
 	.getLogger(AbstractJDBCUtil.class);
 
 	public enum DBType {
-		Oracle, MySQL, SQLServer
+		Oracle, MySQL, SQLServer, PostGIS
 	}
 
 	protected abstract String getDriver();
@@ -249,7 +249,7 @@ public abstract class AbstractJDBCUtil {
 	public void execute(Connection conn, String query) throws SQLException {
 
 		if (conn != null) {
-			// logger.debug("query=" + query);
+			//logger.debug("query=" + query);
 
 			try {
 				Statement s = conn.createStatement();
@@ -276,7 +276,7 @@ public abstract class AbstractJDBCUtil {
 	 */
 	public void executeUpdate(Connection conn, String query) throws SQLException {
 		if (conn != null) {
-			// logger.debug("query=" + query);
+			logger.debug("query=" + query);
 
 			try {
 				Statement s = conn.createStatement();

@@ -406,6 +406,57 @@ public class JsonManager {
     	
     }
     
+	public static String jsonToCSV(String json) {
+		return jsonToCSV(json, null, null, null);
+	}
+
+	public static String jsonToCSV(String json, Character separator, Character quotechar, Character endlinechar) {
+		
+        List<String> columns = new ArrayList<String>();
+        List<List<String>> values = new ArrayList<List<String>>();
+        
+        getJsonFlat(json, columns, values);
+        
+		String csv = "";
+		if (separator == null) separator = ',';
+		if (quotechar == null) quotechar = '"';
+		if (endlinechar == null) endlinechar = '\n';
+		
+		try {
+			
+			if (columns != null && columns.size() > 0) {
+				for (int i = 0; i < columns.size(); i++) {
+					if (i != 0)
+						csv += separator.charValue();
+					csv += quotechar + columns.get(i) + quotechar;
+				}
+				csv += endlinechar;
+			} else
+				System.out.println("Json does not have any header.");
+
+			
+			if (values != null && values.size() > 0) {
+				for (int i = 0; i < values.size(); i++) {
+					for (int j = 0; j < values.get(i).size(); j++) {
+						if (j != 0)
+							csv += separator;
+						csv += quotechar + values.get(i).get(j) + quotechar;
+					}
+					csv += endlinechar;
+				}
+			} else
+				System.out.println("Json does not have any value.");
+
+			return csv;
+			
+		} catch (Exception e) {
+			System.out.println("Error in generating CSV from the Json.");
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+    
     public static String convertXML2JSON(String xmlContent) {
     	try {
             XMLSerializer xmlSerializer = new XMLSerializer(); 

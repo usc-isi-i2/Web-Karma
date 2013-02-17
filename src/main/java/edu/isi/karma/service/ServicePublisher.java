@@ -33,6 +33,8 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
+import edu.isi.karma.modeling.ModelingParams;
+
 public class ServicePublisher {
 
 	static Logger logger = Logger.getLogger(ServicePublisher.class);
@@ -354,7 +356,7 @@ public class ServicePublisher {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException {
-		String serviceUri = Service.KARMA_SERVICE_PREFIX + "CDA81BE4-DD77-E0D3-D033-FC771B2F4800" + "#";
+		String serviceUri = ModelingParams.KARMA_SERVICE_PREFIX + "CDA81BE4-DD77-E0D3-D033-FC771B2F4800" + "#";
 		Service service = ServiceLoader.getServiceByUri(serviceUri);
 		
 		String service_file = Repository.Instance().SERVICE_REPOSITORY_DIR + 

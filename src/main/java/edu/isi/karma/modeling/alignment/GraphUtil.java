@@ -20,13 +20,18 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import org.apache.log4j.Logger;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 public class GraphUtil {
-
+	private static Logger logger = Logger.getLogger(GraphUtil.class);
+	
 	private static String getNodeTypeString(Vertex vertex) {
     	if (vertex.getNodeType() == NodeType.Class)
     		return "Class";
@@ -59,35 +64,35 @@ public class GraphUtil {
 		return null;
 	}
 	
-	public static void printVertex(Vertex vertex) {
-    	System.out.print("(");
-    	System.out.print( vertex.getLocalID());
-//    	System.out.print( vertex.getID());
-    	System.out.print(", ");
-    	System.out.print(vertex.getUriString());
-    	System.out.print(", ");
-    	System.out.print(getNodeTypeString(vertex));
-    	System.out.print(")");
+	public static void printVertex(Vertex vertex, PrintWriter pw) {
+    	pw.print("(");
+    	pw.print( vertex.getLocalID());
+//    	pw.print( vertex.getID());
+    	pw.print(", ");
+    	pw.print(vertex.getUriString());
+    	pw.print(", ");
+    	pw.print(getNodeTypeString(vertex));
+    	pw.print(")");
 	}
 	
-	public static void printEdge(LabeledWeightedEdge edge) {
-    	System.out.print("(");
+	public static void printEdge(LabeledWeightedEdge edge, PrintWriter pw) {
+    	pw.print("(");
 		// FIXME
 		if (edge.isInverse()) {
-			System.out.print( "inverseOf(" + edge.getLocalID() + ")" );
+			pw.print( "inverseOf(" + edge.getLocalID() + ")" );
 		} else 
-			System.out.print( edge.getLocalID());
-//    	System.out.print( edge.getID());
-    	System.out.print(", ");
-    	System.out.print(edge.getUriString());
-    	System.out.print(", ");
-    	System.out.print(getLinkTypeString(edge));
-    	System.out.print(", ");
-    	System.out.print(edge.getWeight());
-    	System.out.print(") - From ");
-    	printVertex(edge.getSource());
-    	System.out.print(" To ");
-    	printVertex(edge.getTarget());
+			pw.print( edge.getLocalID());
+//    	pw.print( edge.getID());
+    	pw.print(", ");
+    	pw.print(edge.getUriString());
+    	pw.print(", ");
+    	pw.print(getLinkTypeString(edge));
+    	pw.print(", ");
+    	pw.print(edge.getWeight());
+    	pw.print(") - From ");
+    	printVertex(edge.getSource(), pw);
+    	pw.print(" To ");
+    	printVertex(edge.getTarget(), pw);
 	}
 
 	public static DirectedGraph<Vertex, LabeledWeightedEdge> asDirectedGraph(UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedGraph) {
@@ -104,19 +109,21 @@ public class GraphUtil {
 	}
 	
 	public static void printGraph(Graph<Vertex, LabeledWeightedEdge> graph) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
 		
-    	System.out.println("*** Nodes ***");
+    	pw.println("*** Nodes ***");
 		for (Vertex vertex : graph.vertexSet()) {
-			printVertex(vertex);
-			System.out.println();
+			printVertex(vertex, pw);
+			pw.println();
         }
-    	System.out.println("*** Links ***");
+    	pw.println("*** Links ***");
 		for (LabeledWeightedEdge edge : graph.edgeSet()) {
-			printEdge(edge);
-			System.out.println();
+			printEdge(edge, pw);
+			pw.println();
         }
-		System.out.println("------------------------------------------");
-		
+		pw.println("------------------------------------------");
+		logger.info("GRAPH: " + sw.toString());
 	}
 	
 	public static void printGraphSimple(Graph<Vertex, LabeledWeightedEdge> graph) {

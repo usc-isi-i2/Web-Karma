@@ -103,6 +103,15 @@ public class Worksheet extends RepEntity {
 		dataTable.addNodeToDataTable(newHNode, factory);
 	}
 
+	//mariam
+	/**
+	 * @param newHNode
+	 * @param factory
+	 */
+	void removeNodeFromDataTable(String hNodeId) {
+		dataTable.removeNodeFromDataTable(hNodeId);
+	}
+
 	/**
 	 * Convenience method to add rows to the top table.
 	 * 

@@ -22,7 +22,7 @@ package edu.isi.karma.controller.command.alignment;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.update.DataPropertyHierarchyUpdate;
+import edu.isi.karma.controller.update.OntologyHierarchyUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.view.VWorkspace;
@@ -31,7 +31,6 @@ public class GetDataPropertyHierarchyCommand extends Command {
 
 	protected GetDataPropertyHierarchyCommand(String id) {
 		super(id);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -59,13 +58,12 @@ public class GetDataPropertyHierarchyCommand extends Command {
 		UpdateContainer c = new UpdateContainer();
 		
 		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-		c.add(new DataPropertyHierarchyUpdate(ontMgr.getOntModel()));
+		c.add(new OntologyHierarchyUpdate(ontMgr.getOntCache().getDataPropertyHierarchy(), "DataPropertyListUpdate"));
 		return c;
 	}
 
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

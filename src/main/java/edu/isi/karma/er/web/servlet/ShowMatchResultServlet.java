@@ -37,14 +37,17 @@ public class ShowMatchResultServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String repositoryName = request.getParameter("repositoryName");
+		List<String> repoList = ResultService.getRepositoryList();
+		
 		if (repositoryName == null || repositoryName.length() <= 0) {
 			repositoryName = (String)request.getSession().getAttribute("repositoryName");
 			if (repositoryName == null || repositoryName.length() <= 0) {
 				//throw new IllegalArgumentException("please select a repository to continue.");
-				repositoryName = "SAAM_links_partA";
+				repositoryName = repoList.get(0);//"match_result";
 			}
 		}
 		
+		System.out.println("repository name:" + repositoryName);
 		request.getSession().setAttribute("repositoryName", repositoryName);
 		
 		String sortBy = request.getParameter("sort_by");
@@ -58,12 +61,10 @@ public class ShowMatchResultServlet extends HttpServlet {
 		Paginator pager = new Paginator();
 		pager.setCurPage(curPage);
 		
-		
 		ResultService serv = new ResultService(repositoryName);
-		
 		List<MatchResultOntology> resultList = serv.getResultList(pager, sortBy);
 		List<String> predList = serv.getPredicateList(resultList);
-		List<String> repoList = serv.getRepositoryList();
+		System.out.println("list size in servlet:" + resultList.size());
 		
 		request.setAttribute("pager", pager);
 		request.setAttribute("resultList", resultList);

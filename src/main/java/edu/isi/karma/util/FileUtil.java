@@ -29,6 +29,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -138,11 +141,26 @@ public class FileUtil {
 		  }
 	}
 
+	/**
+	 * Saves a string to a file.
+	 * @param str
+	 * @param fileName
+	 * @throws FileNotFoundException 
+	 * @throws UnsupportedEncodingException 
+	 */
+	public static void writeStringToFile(String str, String fileName) throws UnsupportedEncodingException, FileNotFoundException{
+		OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(fileName),"UTF-8");
+		BufferedWriter bw = new BufferedWriter (fw);
+		PrintWriter outWriter = new PrintWriter (bw);
+		outWriter.println(str);
+		outWriter.close();
+	}
+	/* does not write UTF8
 	public static void writeStringToFile(String string, String fileName) throws IOException {
 		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 		writer.write(string);
 		writer.flush();
 		writer.close();
 	}
-	
+	*/
 }

@@ -64,6 +64,7 @@ public class StringQGramComparatorImpl implements StringComparator {
 		char[] strch = new char[str.length()];
 		for (int i = 0; i < strch.length; i++) {
 			char ch = str.charAt(i);
+			if (ch == '(') break;
 			if (ch == ',' || ch == '.') ch = ' ';
 			if (ch == ' ' && last == ' ') {
 				

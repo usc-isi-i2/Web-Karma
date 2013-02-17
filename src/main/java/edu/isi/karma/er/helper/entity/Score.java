@@ -1,5 +1,8 @@
 package edu.isi.karma.er.helper.entity;
 
+import java.util.Map;
+
+
 
 /**
  * The object records the result of calculation, especially with a score 
@@ -23,7 +26,9 @@ public class Score {
 		
 	private String dstObj;		// the target statement to compare with, including subject and object
 	
-
+	private Map<String, Object> objectMap = null;
+	
+	
 	public double getFreq() {
 		return freq;
 	}
@@ -60,6 +65,9 @@ public class Score {
 		return srcObj;
 	}
 
+	
+
+	
 	public void setSrcObj(String srcObj) {
 		this.srcObj = srcObj;
 	}
@@ -88,6 +96,15 @@ public class Score {
 		this.similarity = similarity;
 		this.scoreType = scoreType;
 	}
+
+	public Map<String, Object> getObjectMap() {
+		return objectMap;
+	}
+
+	public void setObjectMap(Map<String, Object> objectMap) {
+		this.objectMap = objectMap;
+	}
+
 
 }
 

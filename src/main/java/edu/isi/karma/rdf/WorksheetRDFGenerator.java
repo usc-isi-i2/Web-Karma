@@ -357,6 +357,14 @@ public class WorksheetRDFGenerator extends TableRDFGenerator{
 				}
 				Row parentRow = n.getParentTable().getNestedTableInNode().getBelongsToRow();
 				varValue = getValueInRow(var,parentRow,useInternalColumnNames);
+				
+				//quick fix to look two levels up for the key
+				if(varValue==null){
+					//quick dirty fix to look at two levels up
+					parentRow = n.getParentTable().getNestedTableInNode().getParentTable().getNestedTableInNode().getBelongsToRow();
+					varValue = getValueInRow(var,parentRow,useInternalColumnNames);
+				}
+				
 				if(varValue==null){
 					throw new KarmaException("No value was found for node:" + var + ". Alignment of table is not correct!");
 				}

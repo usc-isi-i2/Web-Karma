@@ -34,9 +34,36 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	});
 	
 	// Adding handlers to the buttons
+	 $("button#csvExport").click(function(){
+        optionsDiv.hide();
+        var info = new Object();
+        info["vWorksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "PublishCSVCommand";
+            
+        showLoading(info["vWorksheetId"]);
+        var returned = $.ajax({
+            url: "RequestController", 
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete : 
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while export CSV!" + textStatus);
+                    hideLoading(info["vWorksheetId"]);
+                }          
+        });
+        
+    });
 	$("button#showModel").click(function(){
 		optionsDiv.hide();
-		
+		 //alert("test");
 		// console.log("Showing model for table with ID: " +optionsDiv.data("worksheetId"));
 		var info = new Object();
 		info["vWorksheetId"] = optionsDiv.data("worksheetId");
@@ -69,6 +96,41 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		});
 	});
 	
+	$("button#showAutoModel").click(function(){
+		optionsDiv.hide();
+		 //alert("test");
+		// console.log("Showing model for table with ID: " +optionsDiv.data("worksheetId"));
+		var info = new Object();
+		info["vWorksheetId"] = optionsDiv.data("worksheetId");
+		info["workspaceId"] = $.workspaceGlobalInformation.id;
+		info["command"] = "ShowAutoModelCommand";
+	   
+	    var newInfo = [];
+        newInfo.push(getParamObject("vWorksheetId", optionsDiv.data("worksheetId"), "vWorksheetId"));
+        newInfo.push(getParamObject("checkHistory", true, "other"));
+        info["newInfo"] = JSON.stringify(newInfo);
+	   
+		showLoading(info["vWorksheetId"]);
+		var returned = $.ajax({
+		   	url: "RequestController", 
+		   	type: "POST",
+		   	data : info,
+		   	dataType : "json",
+		   	complete : 
+		   		function (xhr, textStatus) {
+		   			//alert(xhr.responseText);
+		    		var json = $.parseJSON(xhr.responseText);
+		    		parse(json);
+		    		hideLoading(info["vWorksheetId"]);
+			   	},
+			error :
+				function (xhr, textStatus) {
+		   			alert("Error occured while generating the automatic model!" + textStatus);
+		   			hideLoading(info["vWorksheetId"]);
+			   	}		   
+		});
+	});
+	
 	$("button#hideModel").click(function(){
 		optionsDiv.hide();
 		$("div#svgDiv_" + optionsDiv.data("worksheetId")).remove();
@@ -83,6 +145,44 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		info["command"] = "ResetModelCommand";
 			
 		showLoading(info["vWorksheetId"]);
+		var returned = $.ajax({
+		   	url: "RequestController", 
+		   	type: "POST",
+		   	data : info,
+		   	dataType : "json",
+		   	complete : 
+		   		function (xhr, textStatus) {
+		   			//alert(xhr.responseText);
+		    		var json = $.parseJSON(xhr.responseText);
+		    		parse(json);
+		    		hideLoading(info["vWorksheetId"]);
+			   	},
+			error :
+				function (xhr, textStatus) {
+		   			alert("Error occured while removing semantic types!" + textStatus);
+		   			hideLoading(info["vWorksheetId"]);
+			   	}		   
+		});
+	});
+
+	//just for testing
+	$("button#addColumnButton").click(function(){
+		optionsDiv.hide();
+		
+		var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+    	var selectedHNodeId = columnHeadingMenu.data("parentCellId");
+		
+		var info = new Object();
+		info["vWorksheetId"] = $("td#" + selectedHNodeId).parents("table.WorksheetTable").attr("id");
+		info["workspaceId"] = $.workspaceGlobalInformation.id;
+		info["hNodeId"] = selectedHNodeId
+		info["hTableId"] = ""
+		info["newColumnName"] = "new_column"
+		info["command"] = "AddColumnCommand";
+			
+		//console.log(info["vWorksheetId"]);
+		showLoading(info["vWorksheetId"]);
+		
 		var returned = $.ajax({
 		   	url: "RequestController", 
 		   	type: "POST",

@@ -10,7 +10,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.isi.karma.er.aggregator.Aggregator;
-import edu.isi.karma.er.helper.Constants;
 import edu.isi.karma.er.helper.PairPropertyUtil;
 import edu.isi.karma.er.helper.RatioFileUtil;
 import edu.isi.karma.er.helper.entity.MultiScore;
@@ -25,9 +24,9 @@ import edu.isi.karma.er.matcher.impl.StringSetMatcher;
 
 public class RatioMultiplyAggregator implements Aggregator {
 
-	private double threshold = 0.80;
+	private double threshold; // = 0.93;
 	
-	private Map<String, Map<String, Double>> ratioMaps;
+	//private Map<String, Map<String, Double>> ratioMaps;
 	
 	private Map<String, Map<String, Double>> pairFreqMaps;
 	
@@ -35,10 +34,11 @@ public class RatioMultiplyAggregator implements Aggregator {
 	
 	private List<String> dependArr;		// source property uri in odd row, target property uri in even row
 	
-	public RatioMultiplyAggregator(JSONArray confArr, List<String> dependArr) {
+	public RatioMultiplyAggregator(JSONArray confArr, List<String> dependArr, double threshold) {
 		compMap = parseConfig(confArr);
-		ratioMaps = loadRatioMaps(confArr);
+		//ratioMaps = loadRatioMaps(confArr);
 		pairFreqMaps = loadPairFreqMaps(dependArr);
+		this.threshold = threshold;
 	}
 	
 	private Map<String, Map<String, Double>> loadPairFreqMaps(List<String> dependArr) {
@@ -46,7 +46,7 @@ public class RatioMultiplyAggregator implements Aggregator {
 		PairPropertyUtil util = new PairPropertyUtil();
 		return util.loadPairFreqMap();
 	}
-
+/*
 	private Map<String, Map<String, Double>> loadRatioMaps(JSONArray confArr) {
 		Map<String, Map<String, Double>> ratioMaps = new HashMap<String, Map<String, Double>>();
 		RatioFileUtil util = new RatioFileUtil();
@@ -63,7 +63,7 @@ public class RatioMultiplyAggregator implements Aggregator {
 		return ratioMaps;
 		
 	}
-
+*/
 	private Map<String, Matcher> parseConfig(JSONArray confArr) {
 		Map<String, Matcher> map = new HashMap<String, Matcher>();
 		for (int i = 0; i < confArr.length(); i++) {
@@ -122,36 +122,41 @@ public class RatioMultiplyAggregator implements Aggregator {
 				sim = s.getSimilarity();
 				if (sim >= threshold) {
 					if (1 - sim < 1e-6) {  // sim == 1
-						ratio = (getRatio(pred, s.getSrcObj()) + getRatio(pred, s.getDstObj())) / 2;
+						//ratio = (getRatio(pred, s.getSrcObj()) + getRatio(pred, s.getDstObj())) / 2;
+						ratio = getFrequency(s.getPredicate(), sim);
 						freq = ratio;
 					} else {
 						freq = getFrequency(s.getPredicate(), sim) ;
 					}
-					totalFreq *= (1-freq);
+					totalFreq *= (freq);
 					pairFlag ++;
 				} else {
 					freq = 0;
-					totalFreq = 0;
+					totalFreq = -1;
 				}
 				
 			} else {			// if value of this property is missing, then punish it.
 				freq = getFrequency(s.getPredicate(), threshold);
-				totalFreq *= 1-freq;
+				totalFreq *= freq;
 				//ratio = getRatio(pred, "");
 			}
 			//totalRatio *= (1- ratio);
 			s.setFreq(freq);
 			sList.add(s);
 			
-			//if (totalFreq < 0.0026) {
-			//	break;
-			//}
+			if (totalFreq < 0) {
+				break;
+			}
 		}
 		if (pairFlag >= 3) { 
 			totalFreq = dealWithDependent(sList);
 		}
+		if (totalFreq > 0) {
 			ms.setScoreList(sList);				// add the detailed compare result of each property into a score list.
-			ms.setFinalScore(totalFreq );	// aggregate score of properties
+			ms.setFinalScore(1-totalFreq*1000000 );	// aggregate score of properties
+		} else {
+			ms.setFinalScore(0);
+		}
 		
 		return ms;
 	}
@@ -164,22 +169,27 @@ public class RatioMultiplyAggregator implements Aggregator {
 			String sourcePred = dependArr.get(i + 0);
 			String targetPred = dependArr.get(i + 1);
 			String vs1 = null, vs2 = null, vt1 = null, vt2 = null;
+			Score s1 = null, s2 = null;
 			
 			for (int j = 0; j < sList.size(); j++) {
 				Score s = sList.get(j);
 				if (s.getPredicate().equals(sourcePred)) {
 					vs1 = s.getSrcObj();
 					vs2 = s.getDstObj();
+					s1 = s;
 				} else if (s.getPredicate().equals(targetPred)) {
 					vt1 = s.getSrcObj();
 					vt2 = s.getDstObj();
+					s2 = s;
 				} else {
-					totalFreq *= 1- s.getFreq();
+					totalFreq *= s.getFreq();
 				}
 			}
 			
-			double freq = 1 - getRangeFrequency(vs1, vt1, vs2, vt2) ;
+			double freq = getRangeFrequency(vs1, vt1, vs2, vt2) ;
 			totalFreq *= freq;
+			s1.setFreq(freq);
+			s2.setFreq(freq);
 		}
 		return totalFreq;
 	}
@@ -191,7 +201,7 @@ public class RatioMultiplyAggregator implements Aggregator {
 		return sum ;
 	}
 
-
+/*
 	private double getRatio(String uri, String value) {
 		
 		Map<String, Double> map = ratioMaps.get(uri);
@@ -203,7 +213,7 @@ public class RatioMultiplyAggregator implements Aggregator {
 			return 1 / total;
 		}
 	}
-	
+*/	
 	private double getFrequency(String uri, double similarity) {
 		RatioFileUtil util = new RatioFileUtil();
 		return util.queryFrequency(uri, similarity);

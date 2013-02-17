@@ -339,7 +339,7 @@ and related projects, please see: http://www.isi.edu/integration
 	
 	
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.11</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.41</span></h1>
 		<table id="topMenuBar">
 <tr>
 				<td>
@@ -388,6 +388,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<div id="columnHeadingDropDownMenu" class="ui-corner-all" style="display: none">
 			<button href="#" id="splitByComma">Split Column</button>
 			<button id="cleanColumnButton">Transform</button>
+			<button id="addColumnButton">Add Column</button>
 			<button id="renameColumnButton" style="display: none">Rename</button>
 			<button id="invokeServiceButton">Invoke Service</button>
 			<button id="hideColumnButton" style="display: none">Hide</button>
@@ -458,6 +459,7 @@ and related projects, please see: http://www.isi.edu/integration
 							  	<option>SQLServer</option>
 							  	<option>MySQL</option>
 							  	<option>Oracle</option>
+							  	<option>PostGIS</option>
 							</select>
 						</td>
 						<td>
@@ -574,11 +576,13 @@ and related projects, please see: http://www.isi.edu/integration
 		<div id="ScrollHeadersPlaceholder"></div>
 		<div id="WorksheetOptionsDiv" style="display: none">
 			<button href="#" id="showModel">Show Model</button>
+			<button href="#" id="showAutoModel">Show AutoModel</button>
 			<button href="#" id="hideModel">Hide Model</button>
 			<button href="#" id="resetModel">Reset Model</button>
 			<button href="#" id="publishRDF">Publish RDF</button>
 			<button href="#" id="publishDatabase">Publish Database</button>
 			<button href="#" id="populateSource">Populate Source</button>
+			<button href="#" id="csvExport">Export to CSV</button>
 			<button href="#" id="publishServiceModel">Publish Model</button>
 			<button href="#" id="transformcolumns">Transform Columns</button>
 			<button href="#" id="publishWorksheetHistory">Publish Worksheet History</button>
@@ -615,7 +619,30 @@ and related projects, please see: http://www.isi.edu/integration
 					<tr><td /><td /><td>Primary</td><td /></tr>
 				</table>
 				<br />
-				<button id="addSemanticType">Add synonym semantic type</button>
+				<button id="addSemanticType">Add synonym semantic type</button><br />
+				<input type="checkbox" id="chooseClassKey" />
+				<label for="chooseClassKey" class="smallSizedFont">Mark as key for the class.</label><br />
+				
+				<button id="semanticTypingAdvancedOptions">Advanced Options</button><br />
+				<div id="semanticTypingAdvacedOptionsDiv" style="display: none">
+					<table>
+						<tr class="smallSizedFont">
+							<td><input type="checkbox" id="isUriOfClassOption"></input></td>
+							<td style="text-align: right;">contains URI for node:</td>
+							<td><input type="text" /></td>
+						</tr>
+						<tr class="smallSizedFont">
+							<td><input type="checkbox" id="isSubclassOfClassOption"></input></td>
+							<td style="text-align: right;">specifies class for node:</td>
+							<td><input type="text" /></td>
+						</tr>
+						<tr class="smallSizedFont">
+							<td><input type="checkbox" id="isPropertyOfColumnOption"></input></td>
+							<td style="text-align: right;">specifies specialization for edge:</td>
+							<td><input type="text" /></td>
+						</tr>
+					</table>
+				</div>
 			</div>
 			<div class="ui-widget" id="SemanticTypeErrorWindow" style="display: none">
 				<br />
@@ -627,8 +654,6 @@ and related projects, please see: http://www.isi.edu/integration
 				</div>
 				<br />
 			</div>
-			<input type="checkbox" id="chooseClassKey" />
-			<label for="chooseClassKey" class="smallSizedFont">Mark as key for the class.</label><br />
 		</div>
 		<div id="propertyOntologyBox" style="display: none">
 			<input id="filterPropertyByDomain" type="checkbox"/>
@@ -672,7 +697,7 @@ and related projects, please see: http://www.isi.edu/integration
 			</tr>
 			</table>
 			</span>
-			<input type="checkbox" id="addInverseProperties" checked />
+			<input type="checkbox" id="addInverseProperties" unchecked />
 			<label for="addInverseProperties" class="smallSizedFont">Add Inverse Properties</label>
 			<br><br>
 			<input type="checkbox" id="saveToRDFStore" onChange = "showHideRdfInfo()"/>
@@ -714,6 +739,7 @@ and related projects, please see: http://www.isi.edu/integration
 			<select id="dbType">
 			  	<option selected>MySQL</option>
 			  	<option>SQLServer</option>
+			  	<option>PostGIS</option>
 			</select>
 			<br> <br>
 			<table>

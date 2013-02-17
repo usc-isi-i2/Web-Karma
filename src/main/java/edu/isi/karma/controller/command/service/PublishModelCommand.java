@@ -141,16 +141,26 @@ public class PublishModelCommand extends Command{
 			//get from preferences saved source prefix
 			String sourceNamespace = "http://localhost/";
 			String sourcePrefix = "s";
+			String addInverseProperties = "true";
 			try{
 				ViewPreferences prefs = vWorkspace.getPreferences();
 				JSONObject prefObject = prefs.getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
 				sourcePrefix = prefObject.getString("rdfPrefix");
 				sourceNamespace = prefObject.getString("rdfNamespace");
+				addInverseProperties= prefObject.getString("addInverseProperties");
 			}catch(Exception e){
 				//prefix not found, just use the default
+				sourceNamespace = "http://localhost/";
+				sourcePrefix = "s";
+				addInverseProperties = "true";
 			}
+			if(sourceNamespace.trim().isEmpty())
+				sourceNamespace = "http://localhost/";
+			if(sourcePrefix.trim().isEmpty())
+				sourcePrefix = "s";
+
 			SourceDescription desc = new SourceDescription(ws, al, wk,
-					sourcePrefix, sourceNamespace, true,false);
+					sourcePrefix, sourceNamespace,Boolean.valueOf(addInverseProperties),false);
 			String descString = desc.generateSourceDescription();
 			/////////////////
 			
