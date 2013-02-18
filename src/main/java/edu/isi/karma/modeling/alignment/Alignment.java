@@ -245,20 +245,20 @@ public class Alignment {
 		return false;
 	}
 
-//	/**
-//	 * This method just deletes the specified link from the graph and leaves the rest of the graph untouched.
-//	 * Probably we don't need to use this function.
-//	 * @param linkId
-//	 * @return
-//	 */
-//	public boolean removeLink(String linkId) {
-//		
-//		Link link = this.getLinkById(linkId);
-//		if (link != null)
-//			return this.graphBuilder.removeLink(link);
-//		logger.debug("Cannot find the link " + linkId + " in the graph.");
-//		return false;
-//	}
+	/**
+	 * This method just deletes the specified link from the graph and leaves the rest of the graph untouched.
+	 * Probably we don't need to use this function.
+	 * @param linkId
+	 * @return
+	 */
+	public boolean removeLink(String linkId) {
+		
+		Link link = this.getLinkById(linkId);
+		if (link != null)
+			return this.graphBuilder.removeLink(link);
+		logger.debug("Cannot find the link " + linkId + " in the graph.");
+		return false;
+	}
 	
 	//FIXME: This method should be commented, or make it private for now ... 
 //	private List<SemanticType> getSemanticTypes() {
