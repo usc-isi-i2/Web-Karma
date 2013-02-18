@@ -397,7 +397,7 @@ public class GraphBuilder {
 		
 		List<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
 		if (nodesWithSameType != null) 
-			typeToNodesMap.remove(node);
+			nodesWithSameType.remove(node);
 		
 		this.nodeClosure.remove(node);
 		this.nodeReferences.remove(node);
@@ -463,8 +463,8 @@ public class GraphBuilder {
 					newAddedClasses.addAll(superClasses);
 
 				for (String c : newAddedClasses) {
-					List<Node> nodesOfSameType = this.uriToNodesMap.get(c);
-					if (nodesOfSameType == null || nodesOfSameType.size() == 0) { // the internal node is not added to the graph before
+					List<Node> nodesOfSameUri = this.uriToNodesMap.get(c);
+					if (nodesOfSameUri == null || nodesOfSameUri.size() == 0) { // the internal node is not added to the graph before
 						Node nn = new InternalNode(nodeIdFactory.getNodeId(c), 
 								ontologyManager.getUriLabel(c));
 						if (addSingleNode(nn)) {	
@@ -473,7 +473,8 @@ public class GraphBuilder {
 							nodeClosureList.add(nn);
 						}
 					} else {
-						for (Node nn : nodesOfSameType) {
+						for (Node nn : nodesOfSameUri) {
+							if (nn.equals(node)) continue;
 							Integer refCount = this.nodeReferences.get(nn);
 							if (refCount == null) {
 								logger.error("There should be something wrong. Number of references of a node cannot be null");

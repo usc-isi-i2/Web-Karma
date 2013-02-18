@@ -122,6 +122,16 @@ public class Alignment {
 		return this.graphBuilder.getStatusToLinksMap().get(status);
 	}
 
+	public ColumnNode getColumnNodeByHNodeId(String hNodeId) {
+
+		List<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
+		if (columnNodes == null) return null;
+		for (Node cNode : columnNodes) {
+			if (((ColumnNode)cNode).getHNodeId().equals(hNodeId))
+				return (ColumnNode)cNode;
+		}
+		return null;
+	}
 	
 	// AddNode methods
 	

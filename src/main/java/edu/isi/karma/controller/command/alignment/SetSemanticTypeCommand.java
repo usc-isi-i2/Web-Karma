@@ -37,7 +37,6 @@ import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.AlignmentUtil;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
@@ -243,7 +242,7 @@ public class SetSemanticTypeCommand extends Command {
 
 	private ColumnNode getColumnNode(Alignment alignment, HNode hNode) {
 		String columnName = hNode.getColumnName();
-		ColumnNode columnNode = AlignmentUtil.getColumnNodeByHNodeId(alignment, hNodeId);
+		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 		
 		if (columnNode == null) {
 			columnNode = alignment.addColumnNode(hNodeId, columnName);

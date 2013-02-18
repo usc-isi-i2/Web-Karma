@@ -38,7 +38,6 @@ import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.AlignmentUtil;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
@@ -98,7 +97,7 @@ public class UnassignSemanticTypeCommand extends Command {
 
 		// Remove it from the alignment
 		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
-		ColumnNode columnNode = AlignmentUtil.getColumnNodeByHNodeId(alignment, hNodeId);
+		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 		if (columnNode != null)
 			alignment.removeNode(columnNode.getId());
 		alignment.align();
