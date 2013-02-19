@@ -73,8 +73,8 @@ public class GraphBuilder {
 	private HashMap<LinkStatus, List<Link>> statusToLinksMap;
 	
 	// used for deleting a node
-	private HashMap<Node, List<Node>> nodeClosure;
 	private HashMap<Node, Integer> nodeReferences;
+	private HashMap<String, List<String>> uriClosure;
 
 	// Constructor
 	
@@ -92,8 +92,8 @@ public class GraphBuilder {
 		this.typeToLinksMap = new HashMap<LinkType, List<Link>>();
 		this.statusToLinksMap = new HashMap<LinkStatus, List<Link>>();
 		
-		this.nodeClosure = new HashMap<Node, List<Node>>();
 		this.nodeReferences = new HashMap<Node, Integer>();
+		this.uriClosure = new HashMap<String, List<String>>();
 		
 		graph = new DirectedWeightedMultigraph<Node, Link>(Link.class);
 		sourceToTargetLinkUris = new ArrayList<String>();
@@ -141,6 +141,10 @@ public class GraphBuilder {
 		return thingNode;
 	}
 
+	public void resetOntologyMaps() {
+		this.uriClosure.clear();
+	}
+	
 	public boolean addNode(Node node) {
 		
 		logger.debug("<enter");
@@ -153,11 +157,9 @@ public class GraphBuilder {
 			long start = System.currentTimeMillis();
 			float elapsedTimeSec;
 
-			List<Node> closure = new ArrayList<Node>();
 			List<Node> newNodes = new ArrayList<Node>();
+			addNodeClosure(node, newNodes);
 			newNodes.add(node);
-			addNodeClosure(node, newNodes, closure);
-			this.nodeClosure.put(node,  closure);
 			long addNodesClosure = System.currentTimeMillis();
 			elapsedTimeSec = (addNodesClosure - start)/1000F;
 			logger.info("time to add nodes closure: " + elapsedTimeSec);
@@ -239,7 +241,19 @@ public class GraphBuilder {
 		linksWithSameType.add(link);
 		
 		sourceToTargetLinkUris.add(key);
-
+		
+		if (source instanceof InternalNode && target instanceof ColumnNode) {
+			List<Node> closure = this.getNodeClosure(source);
+			List<Node> closureIncludingSelf = new ArrayList<Node>();
+			closureIncludingSelf.add(source);
+			if (closure != null) closureIncludingSelf.addAll(closure);
+			
+			for (Node n : closureIncludingSelf) {
+				Integer refCount = this.nodeReferences.get(n);
+				this.nodeReferences.put(source, ++refCount);
+			}
+		}
+			
 		logger.debug("exit>");		
 		return true;
 	}
@@ -273,6 +287,21 @@ public class GraphBuilder {
 			return false;
 		}
 		
+		Node source = link.getSource();
+		Node target = link.getTarget();
+		
+		if (source instanceof InternalNode && target instanceof ColumnNode) {
+			List<Node> closure = this.getNodeClosure(source);
+			List<Node> closureIncludingSelf = new ArrayList<Node>();
+			closureIncludingSelf.add(source);
+			if (closure != null) closureIncludingSelf.addAll(closure);
+			
+			for (Node n : closureIncludingSelf) {
+				Integer refCount = this.nodeReferences.get(n);
+				this.nodeReferences.put(source, --refCount);
+			}
+		}
+		
 		return this.graph.removeEdge(link);
 	}
 	
@@ -288,19 +317,14 @@ public class GraphBuilder {
 			return false;
 		}
 		
-		List<Node> closure = this.nodeClosure.get(node);
+		List<Node> closure = this.getNodeClosure(node);
 		List<Node> closureIncludingSelf = new ArrayList<Node>();
 		closureIncludingSelf.add(node);
 		if (closure != null) closureIncludingSelf.addAll(closure);
 		
 		for (Node n : closureIncludingSelf) {
 			Integer refCount = this.nodeReferences.get(n);
-			if (refCount == null) {
-				logger.error("There should be something wrong. There is no reference to the node " + node.getId());
-				return false;
-			}
-			
-			if (refCount.intValue() == 1) 
+			if (refCount.intValue() == 0) 
 				removeSingleNode(n);
 			else
 				this.nodeReferences.put(n, --refCount);
@@ -364,7 +388,7 @@ public class GraphBuilder {
 		}
 		nodesWithSameType.add(node);
 					
-		this.nodeReferences.put(node, 1);
+		this.nodeReferences.put(node, 0);
 				
 		logger.debug("exit>");		
 		return true;
@@ -399,13 +423,79 @@ public class GraphBuilder {
 		if (nodesWithSameType != null) 
 			nodesWithSameType.remove(node);
 		
-		this.nodeClosure.remove(node);
 		this.nodeReferences.remove(node);
 				
 		logger.debug("exit>");		
 		return true;
 	}
 
+	private List<String> getUriDirectConnections(String uri) {
+		
+		List<String> uriDirectConnections = new ArrayList<String>();
+		
+		List<String> opDomainClasses = null;
+		Set<String> superClasses = null;
+
+		// We don't need to add subclasses of each class separately.
+		// The only place in which we add children is where we are looking for domain class of a property.
+		// In this case, in addition to the domain class, we add all of its children too.
+		
+		opDomainClasses = ontologyManager.getDomainsGivenRange(uri, true);
+		superClasses = ontologyManager.getSuperClasses(uri, false).keySet();
+
+		if (opDomainClasses != null)
+			uriDirectConnections.addAll(opDomainClasses);
+		if (superClasses != null)
+			uriDirectConnections.addAll(superClasses);
+
+		return uriDirectConnections;
+	}
+
+	private void computeUriClosure(String uri, List<String> closure) {
+		
+		logger.debug("<enter");
+		
+		List<String> currentClosure = this.uriClosure.get(uri);
+		if (currentClosure != null) {
+			closure.addAll(currentClosure);
+			return;
+		}
+
+		List<String> uriDirectConnections = getUriDirectConnections(uri);
+		if (uriDirectConnections.size() == 0) {
+			this.uriClosure.put(uri, new ArrayList<String>());
+		} else {
+			for (String c : uriDirectConnections) {
+				if (!closure.contains(c)) closure.add(c);
+				List<String> localClosure = new ArrayList<String>();
+				computeUriClosure(c, localClosure);
+				for (String s : localClosure)
+					if (!closure.contains(s)) closure.add(s);
+			}
+			this.uriClosure.put(uri, closure);
+		}
+		
+		logger.debug("exit>");
+	}
+	
+	private List<Node> getNodeClosure(Node node) {
+		
+		List<Node> nodeClosure = new ArrayList<Node>();
+		if (node instanceof ColumnNode) return nodeClosure;
+		
+		String uri = node.getLabel().getUri();
+		List<String> closure = this.uriClosure.get(uri); 
+		if (closure == null) {  // the closure has already been computed.
+			closure = new ArrayList<String>();
+			computeUriClosure(uri, closure);
+		} 
+		for (String s : closure) {
+			List<Node> nodes = uriToNodesMap.get(s);
+			nodeClosure.addAll(nodes);
+		}
+		return nodeClosure;
+	}
+	
 	/**
 	 * returns all the new nodes that should be added to the graph due to adding the input node
 	 * @param node
@@ -413,82 +503,24 @@ public class GraphBuilder {
 	 * by ObjectProperty or SubClass links
 	 * @return
 	 */
-	private void addNodeClosure(Node node, List<Node> newAddedNodes, List<Node> nodeClosureList) {
+	private void addNodeClosure(Node node, List<Node> newAddedNodes) {
 
 		logger.debug("<enter");
 		
 		if (newAddedNodes == null) newAddedNodes = new ArrayList<Node>();
-		if (nodeClosureList == null) nodeClosureList = new ArrayList<Node>();
 		
-		String uri;
-			
-		List<Node> currentlyAddingNodes = new ArrayList<Node>();
-		List<Node> recentlyAddedNodes = new ArrayList<Node>();
+		String uri = node.getLabel().getUri();
 
-		List<String> dpDomainClasses = null;
-		List<String> opDomainClasses = null;
-		Set<String> superClasses = null;
-		List<String> newAddedClasses = new ArrayList<String>();
+		List<String> uriClosure = new ArrayList<String>();
+		computeUriClosure(uri, uriClosure);
 
-		recentlyAddedNodes.add(node);
-
-		// We don't need to add subclasses of each class separately.
-		// The only place in which we add children is where we are looking for domain class of a property.
-		// In this case, in addition to the domain class, we add all of its children too.
-
-		List<String> processedLabels = new ArrayList<String>();
-		while (recentlyAddedNodes.size() > 0) {
-
-			currentlyAddingNodes = new ArrayList<Node>();
-			for (Node n : recentlyAddedNodes) {
-
-				uri = n.getLabel().getUri();
-				if (processedLabels.indexOf(uri) != -1) 
-					continue;
-
-				processedLabels.add(uri);
-
-				if (n instanceof InternalNode) {
-					opDomainClasses = ontologyManager.getDomainsGivenRange(uri, true);
-					superClasses = ontologyManager.getSuperClasses(uri, false).keySet();
-				} else if (n instanceof ColumnNode) {
-					dpDomainClasses = ontologyManager.getDomainsGivenProperty(uri, true);
-				}
-
-				if (opDomainClasses != null)
-					newAddedClasses.addAll(opDomainClasses);
-				if (dpDomainClasses != null)
-					newAddedClasses.addAll(dpDomainClasses);
-				if (superClasses != null)
-					newAddedClasses.addAll(superClasses);
-
-				for (String c : newAddedClasses) {
-					List<Node> nodesOfSameUri = this.uriToNodesMap.get(c);
-					if (nodesOfSameUri == null || nodesOfSameUri.size() == 0) { // the internal node is not added to the graph before
-						Node nn = new InternalNode(nodeIdFactory.getNodeId(c), 
-								ontologyManager.getUriLabel(c));
-						if (addSingleNode(nn)) {	
-							currentlyAddingNodes.add(nn);
-							newAddedNodes.add(nn);
-							nodeClosureList.add(nn);
-						}
-					} else {
-						for (Node nn : nodesOfSameUri) {
-							if (nn.equals(node)) continue;
-							Integer refCount = this.nodeReferences.get(nn);
-							if (refCount == null) {
-								logger.error("There should be something wrong. Number of references of a node cannot be null");
-								continue;
-							}
-							this.nodeReferences.put(nn, ++refCount);							
-							nodeClosureList.add(nn); 
-						}
-					}
-				}
-			}
-
-			recentlyAddedNodes = currentlyAddingNodes;
-			newAddedClasses.clear();
+		for (String c : uriClosure) {
+			List<Node> nodesOfSameUri = this.uriToNodesMap.get(c);
+			if (nodesOfSameUri == null || nodesOfSameUri.size() == 0) { // the internal node is not added to the graph before
+				Node nn = new InternalNode(nodeIdFactory.getNodeId(c), 
+						ontologyManager.getUriLabel(c));
+				if (addSingleNode(nn)) newAddedNodes.add(nn);
+			} 
 		}
 
 		logger.debug("exit>");

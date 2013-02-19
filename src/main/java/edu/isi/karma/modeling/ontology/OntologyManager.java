@@ -38,14 +38,21 @@ public class OntologyManager {
 
 	private OntologyHandler ontHandler = null;
 	private OntologyCache ontCache = null;
+	private List<OntologyUpdateListener> ontUpdateListeners; 
 	
 	public OntologyManager() {
 		ontHandler = new OntologyHandler();
 		ontCache = new OntologyCache(ontHandler);
+		ontUpdateListeners = new ArrayList<OntologyUpdateListener>();	
 	}
 
 	public boolean isEmpty() {
 		return ontHandler.getOntModel().isEmpty();
+	}
+	
+	private void notifyListeners() {
+		for (OntologyUpdateListener o : ontUpdateListeners)
+			o.ontologyModelUpdated();
 	}
 	
 	public boolean doImportAndUpdateCache(File sourceFile) {
@@ -70,9 +77,13 @@ public class OntologyManager {
 			return false;
 		}
 		
+		// update the cache
 		ontCache = new OntologyCache(ontHandler);
 		ontCache.init();
-		/* Record the operation */
+		
+		// notify listeners
+		this.notifyListeners();
+		
 		logger.debug("done.");
 		return true;
 	}
@@ -99,7 +110,9 @@ public class OntologyManager {
 			return false;
 		}
 		
-		/* Record the operation */
+		// notify listeners
+		this.notifyListeners();
+
 		logger.debug("done.");
 		return true;
 	}

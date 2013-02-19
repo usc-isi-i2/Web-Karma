@@ -33,6 +33,7 @@ import org.jgrapht.graph.WeightedMultigraph;
 
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.modeling.ontology.OntologyUpdateListener;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
@@ -51,7 +52,7 @@ import edu.isi.karma.rep.alignment.SubClassLink;
 
 
 
-public class Alignment {
+public class Alignment implements OntologyUpdateListener {
 
 	static Logger logger = Logger.getLogger(Alignment.class);
 
@@ -71,6 +72,10 @@ public class Alignment {
 		graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory, linkIdFactory);
 		
 	}
+	
+	// FIXME: We should notify the Alignment when a new ontology is added to the 
+	// ontologyManager (import), becasue we may need to update some of the hashMaps, 
+	// e.g., uriClosure
 	
 	public boolean isEmpty() {
 		return (this.graphBuilder.getGraph().edgeSet().size() == 0);
@@ -229,18 +234,18 @@ public class Alignment {
 			return false;
 		}
 			
-		if (!(node instanceof ColumnNode)) {
-			logger.debug("You can only request to delete a Column Node. Node " + node.getId() + " is not a Column Node");
-			return false;
-		}
-		
-		Set<Link> incomingLinks = this.steinerTree.incomingEdgesOf(node);
-		Node domain = null;
-		if (incomingLinks != null && incomingLinks.size() == 1)
-			domain = incomingLinks.toArray(new Link[0])[0].getSource();
+//		if (!(node instanceof ColumnNode)) {
+//			logger.debug("You can only request to delete a Column Node. Node " + node.getId() + " is not a Column Node");
+//			return false;
+//		}
+//		
+//		Set<Link> incomingLinks = this.steinerTree.incomingEdgesOf(node);
+//		Node domain = null;
+//		if (incomingLinks != null && incomingLinks.size() == 1)
+//			domain = incomingLinks.toArray(new Link[0])[0].getSource();
 		
 		this.graphBuilder.removeNode(node);
-		this.graphBuilder.removeNode(domain);
+//		this.graphBuilder.removeNode(domain);
 
 		return false;
 	}
@@ -432,5 +437,11 @@ public class Alignment {
 		logger.info("total number of nodes in steiner tree: " + this.steinerTree.vertexSet().size());
 		logger.info("total number of edges in steiner tree: " + this.steinerTree.edgeSet().size());
 		logger.info("time to compute steiner tree: " + elapsedTimeSec);
+	}
+
+	@Override
+	public void ontologyModelUpdated() {
+		this.graphBuilder.resetOntologyMaps();
+		
 	}
 }
