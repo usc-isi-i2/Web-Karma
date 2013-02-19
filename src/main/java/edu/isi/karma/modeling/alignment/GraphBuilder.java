@@ -145,7 +145,7 @@ public class GraphBuilder {
 		String[] currentUris = this.uriClosure.keySet().toArray(new String[0]);
 		this.uriClosure.clear();
 		for (String uri : currentUris)
-			computeUriClosure(uri, new ArrayList<String>());
+			computeUriClosure(uri);
 	}
 	
 	public boolean addNode(Node node) {
@@ -248,8 +248,8 @@ public class GraphBuilder {
 		if (source instanceof InternalNode && target instanceof ColumnNode) {
 			List<Node> closure = this.getNodeClosure(source);
 			List<Node> closureIncludingSelf = new ArrayList<Node>();
-			closureIncludingSelf.add(source);
 			if (closure != null) closureIncludingSelf.addAll(closure);
+			if (!closureIncludingSelf.contains(source)) closureIncludingSelf.add(source);
 			
 			for (Node n : closureIncludingSelf) {
 				Integer refCount = this.nodeReferences.get(n);
@@ -296,8 +296,8 @@ public class GraphBuilder {
 		if (source instanceof InternalNode && target instanceof ColumnNode) {
 			List<Node> closure = this.getNodeClosure(source);
 			List<Node> closureIncludingSelf = new ArrayList<Node>();
-			closureIncludingSelf.add(source);
 			if (closure != null) closureIncludingSelf.addAll(closure);
+			if (!closureIncludingSelf.contains(source)) closureIncludingSelf.add(source);
 			
 			for (Node n : closureIncludingSelf) {
 				Integer refCount = this.nodeReferences.get(n);
@@ -322,9 +322,9 @@ public class GraphBuilder {
 		
 		List<Node> closure = this.getNodeClosure(node);
 		List<Node> closureIncludingSelf = new ArrayList<Node>();
-		closureIncludingSelf.add(node);
 		if (closure != null) closureIncludingSelf.addAll(closure);
-		
+		if (!closureIncludingSelf.contains(node)) closureIncludingSelf.add(node);
+
 		for (Node n : closureIncludingSelf) {
 			Integer refCount = this.nodeReferences.get(n);
 			if (refCount.intValue() == 0) 
@@ -454,10 +454,44 @@ public class GraphBuilder {
 		return uriDirectConnections;
 	}
 
-	private void computeUriClosure(String uri, List<String> closure) {
+	private List<String> computeUriClosure(String uri) {
+		
+		List<String> closure = this.uriClosure.get(uri);
+		if (closure != null) 
+			return closure;
+	
+		closure = new ArrayList<String>();
+		List<String> closedList = new ArrayList<String>();
+		HashMap<String, List<String>> dependentUrisMap = new HashMap<String, List<String>>();
+		computeUriClosureRecursive(uri, closure, closedList, dependentUrisMap);
+		if (closedList.contains(uri) && !closure.contains(uri))
+			closure.add(uri);
+		
+		int count = 1;
+		while (count != 0) {
+			count = 0;
+			for (String s : dependentUrisMap.keySet()) {
+				List<String> temp = this.uriClosure.get(s);
+				List<String> dependentUris = dependentUrisMap.get(s);
+				for (String ss : dependentUris) {
+					if (!temp.contains(ss)) { temp.add(ss); count++;}
+					if (this.uriClosure.get(ss) != null) {
+						for (String c : this.uriClosure.get(ss))
+							if (!temp.contains(c)) {temp.add(c); count++;}
+					}
+						
+				}
+			}
+		}
+
+		return closure;
+	}
+
+	private void computeUriClosureRecursive(String uri, List<String> closure, List<String> closedList, HashMap<String, List<String>> dependentUrisMap) {
 		
 		logger.debug("<enter");
 		
+		closedList.add(uri);
 		List<String> currentClosure = this.uriClosure.get(uri);
 		if (currentClosure != null) {
 			closure.addAll(currentClosure);
@@ -469,9 +503,19 @@ public class GraphBuilder {
 			this.uriClosure.put(uri, new ArrayList<String>());
 		} else {
 			for (String c : uriDirectConnections) {
+				if (closedList.contains(c)) {
+					List<String> dependentUris = dependentUrisMap.get(uri);
+					if (dependentUris == null) {
+						dependentUris = new ArrayList<String>();
+						dependentUrisMap.put(uri, dependentUris);
+					}
+					if (!dependentUris.contains(c)) dependentUris.add(c);
+					continue;
+				}
 				if (!closure.contains(c)) closure.add(c);
+				if (!closedList.contains(c)) closedList.add(c);
 				List<String> localClosure = new ArrayList<String>();
-				computeUriClosure(c, localClosure);
+				computeUriClosureRecursive(c, localClosure, closedList, dependentUrisMap);
 				for (String s : localClosure)
 					if (!closure.contains(s)) closure.add(s);
 			}
@@ -489,8 +533,7 @@ public class GraphBuilder {
 		String uri = node.getLabel().getUri();
 		List<String> closure = this.uriClosure.get(uri); 
 		if (closure == null) {  // the closure has already been computed.
-			closure = new ArrayList<String>();
-			computeUriClosure(uri, closure);
+			closure = computeUriClosure(uri);
 		} 
 		for (String s : closure) {
 			List<Node> nodes = uriToNodesMap.get(s);
@@ -514,8 +557,7 @@ public class GraphBuilder {
 		
 		String uri = node.getLabel().getUri();
 
-		List<String> uriClosure = new ArrayList<String>();
-		computeUriClosure(uri, uriClosure);
+		List<String> uriClosure = computeUriClosure(uri);
 
 		for (String c : uriClosure) {
 			List<Node> nodesOfSameUri = this.uriToNodesMap.get(c);
