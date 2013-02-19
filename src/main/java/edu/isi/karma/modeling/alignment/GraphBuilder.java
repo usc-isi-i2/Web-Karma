@@ -142,7 +142,10 @@ public class GraphBuilder {
 	}
 
 	public void resetOntologyMaps() {
+		String[] currentUris = this.uriClosure.keySet().toArray(new String[0]);
 		this.uriClosure.clear();
+		for (String uri : currentUris)
+			computeUriClosure(uri, new ArrayList<String>());
 	}
 	
 	public boolean addNode(Node node) {
