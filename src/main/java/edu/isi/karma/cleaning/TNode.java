@@ -139,7 +139,7 @@ public class TNode{
 			return this.type;
 		if((this.type == TNode.UWRDTYP || this.type == TNode.LWRDTYP || this.type == TNode.WORD) &&(t.type == TNode.LWRDTYP || t.type == TNode.UWRDTYP || t.type == TNode.WORD))
 		{
-			return this.WORD;
+			return TNode.WORD;
 		}
 		return -1;
 	}

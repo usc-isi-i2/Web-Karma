@@ -22,7 +22,6 @@ package edu.isi.karma.rep.cleaning;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -41,7 +40,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		try {		
 			this.learnTransformation();
 		} catch (Exception e) {
-			System.out.println(e.toString());
+			e.printStackTrace();
 		}
 	}
 	private void learnTransformation() throws Exception

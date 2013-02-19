@@ -5,12 +5,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import org.antlr.grammar.v3.ANTLRv3Parser.option_return;
-import org.python.antlr.PythonParser.else_clause_return;
-import org.python.antlr.PythonParser.if_stmt_return;
-
-import com.sun.xml.xsom.impl.scd.Iterators.Map;
-
 public class Position implements GrammarTreeNode {
 	public Vector<TNode> leftContextNodes = new Vector<TNode>();
 	public Vector<TNode> rightContextNodes = new Vector<TNode>();

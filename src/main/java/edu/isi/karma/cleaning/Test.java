@@ -31,8 +31,12 @@ public class Test {
 		Vector<String[]> examples = new Vector<String[]>();
 		String[] xStrings = {"<_START>http://dbpedia.org/resource/Air_Europa<_END>","Air Europa"};
 		String[] yStrings ={"<_START>http://dbpedia.org/resource/European_Aviation_Air_Charter<_END>","European Aviation Air Charter"};
+		String[] zStrings = {"<_START>http://dbpedia.org/resource/Grossmann_Jet_Service<_END>","Grossmann Jet Service"};
+		String[] mStrings = {"<_START>http://dbpedia.org/resource/US_Airways<_END>","US Airways"};
 		examples.add(xStrings);
 		examples.add(yStrings);
+		examples.add(zStrings);
+		examples.add(mStrings);
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(examples);
 		Collection<ProgramRule> p = psProgSynthesis.run_main();
@@ -48,9 +52,7 @@ public class Test {
 		File nf = new File(dirpath);
 		File[] allfiles = nf.listFiles();
 		//statistics
-		Vector<String> names = new Vector<String>();
-		Vector<Integer> exampleCnt = new Vector<Integer>();
-		Vector<Double> timeleng = new Vector<Double>();
+		DataCollection dCollection = new DataCollection();
 		//list all the csv file under the dir
 		for(File f:allfiles)
 		{
@@ -60,7 +62,7 @@ public class Test {
 			{
 				if(f.getName().indexOf(".csv")==(f.getName().length()-4))
 				{					
-					CSVReader cr = new CSVReader(new FileReader(f), ',');
+					CSVReader cr = new CSVReader(new FileReader(f), ',','"','\0');
 					String[] pair;
 					String corrResult = "";
 					while ((pair=cr.readNext())!=null)
@@ -76,19 +78,14 @@ public class Test {
 					examples.add(mt);
 					while(true) // repeat as no correct answer appears.
 					{
-						long st = System.currentTimeMillis();
 						ProgSynthesis psProgSynthesis = new ProgSynthesis();
 						psProgSynthesis.inite(examples);
 						Vector<ProgramRule> pls = new Vector<ProgramRule>();
 						pls.addAll(psProgSynthesis.run_main());
-						for(int k = 0; k<examples.size();k++)
-						{
-							System.out.println(examples.get(k)[0]+"    "+examples.get(k)[1]);
-						}
 						String[] wexam = null;
 						if(pls.size()==0)
 							break;
-						
+						long t1 = System.currentTimeMillis();
 						for(int i = 0; i<pls.size(); i++)
 						{		
 							ProgramRule script = pls.get(i);
@@ -119,6 +116,9 @@ public class Test {
 							if(wexam == null)
 								break;
 						}	
+						long t2 = System.currentTimeMillis();
+						FileStat fileStat = new FileStat(f.getName(), psProgSynthesis.learnspan, psProgSynthesis.genspan, (t2-t1), examples.size(), examples, psProgSynthesis.ruleNo);
+						dCollection.addEntry(fileStat);
 						if(wexam != null)
 							examples.add(wexam);
 						else {
@@ -133,23 +133,7 @@ public class Test {
 				ex.printStackTrace();
 			}
 		}
-		try
-		{
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File("/Users/bowu/mysoft/xx/logx.txt")));
-			for(int x = 0; x<names.size();x++)
-			{
-				bw.write(names.get(x)+":"+exampleCnt.get(x)+","+timeleng.get(x));
-				bw.write("\n");
-				System.out.println(names.get(x)+":"+exampleCnt.get(x)+","+timeleng.get(x));
-				bw.write("\n");
-//				System.out.println(consisRules.get(x));
-			}
-			bw.flush();
-		}
-		catch(Exception ex)
-		{
-			System.out.println(""+ex.toString());
-		}	
+		dCollection.print();
 	}
 	
 	//test the classifier

@@ -8,14 +8,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import org.python.antlr.PythonParser.else_clause_return;
-import org.python.antlr.PythonParser.if_stmt_return;
-import org.python.antlr.PythonParser.return_stmt_return;
-
-import antlr.collections.List;
-
-import com.sun.tools.jxc.gen.config.Config;
-
 
 public class Traces implements GrammarTreeNode {
 	public Vector<TNode> orgNodes;
@@ -567,18 +559,26 @@ public class Traces implements GrammarTreeNode {
 			{
 				return true;
 			}
+			int pivot = pre;
 			if(s.mappings.size()>=0)
 			{
-				int[] m = s.mappings.get(0);
-				if(m[0]>pre)
+				boolean isFind = false;
+				for(int[] n:s.mappings)
 				{
-					pre = m[0];
+					if(n[0]>pivot && !isFind)
+					{
+						pre = n[0];
+						isFind = true;
+					}
+					else if(n[0]<pre && n[0]>pivot &&isFind)
+					{
+						pre = n[0];
+					}
 				}
-				else
+				if(!isFind)
 				{
 					return false;
 				}
-				
 			}
 		}
 		return res;

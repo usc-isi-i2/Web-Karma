@@ -2,8 +2,6 @@ package edu.isi.karma.cleaning;
 
 import java.util.HashMap;
 
-import org.python.antlr.PythonParser.return_stmt_return;
-
 
 public class ProgramRule {
 	public HashMap<String, InterpreterType> rules = new HashMap<String, InterpreterType>();

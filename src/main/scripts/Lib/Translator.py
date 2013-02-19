@@ -17,7 +17,7 @@ class Translator(object):
                       'UWRD':'([A-Z]+)',\
                       'BNK':'([\s])',\
                       'SYB':'([^a-zA-Z0-9\s+])',\
-                      'WORD':'([a-z|A-Z])',\
+                      'WORD':'([a-z|A-Z]+)',\
                       'ANY':'',\
                       'START':'^',\
                       'END':'$',\

@@ -804,7 +804,8 @@ function parse(data) {
             		//var pdata = getVaritions(element["result"]);
             		if(element["result"].length==0)
             		{
-            			alert("Cannot find any transformations! Please check your examples!");
+            			alert("Cannot find any transformations! ");
+				return;
             		}
             		var topCol = element["result"][0];
             		var sndCol = element["result"][1];

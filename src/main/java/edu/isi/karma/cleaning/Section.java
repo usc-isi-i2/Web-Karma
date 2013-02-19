@@ -2,8 +2,6 @@ package edu.isi.karma.cleaning;
 
 import java.util.Vector;
 
-import org.python.antlr.PythonParser.return_stmt_return;
-
 
 public class Section implements GrammarTreeNode {
 	public Position[] pair;

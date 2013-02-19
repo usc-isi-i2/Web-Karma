@@ -196,7 +196,6 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		RamblerTransformationOutput rtf = null;
 		
 		long time1 = System.currentTimeMillis();
-		
 		while(iterNum<2 && !results) // try to find any rule during 5 times running
 		{
 			rtf = new RamblerTransformationOutput(inputs);
@@ -265,7 +264,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		String bestRes = "";
 		HashMap<String, Double> topkeys = new HashMap<String, Double>();
 		String switcher = ServletContextParameterMap.getParameterValue(ContextParameter.MSFT);
-		if( rtf.getTransformations().keySet().size()>0)
+		if(rtf.getTransformations().keySet().size()>0)
 		{
 			//ValueCollection rvco = rtf.getTransformedValues("BESTRULE");
 			//bestRes = rvco.getJson().toString(); 

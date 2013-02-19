@@ -10,8 +10,8 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
+
 import org.json.JSONObject;
-import org.python.antlr.PythonParser.return_stmt_return;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.isi.karma.cleaning.features.Data2Features;
@@ -103,6 +103,7 @@ public class UtilTools {
 	}
 
 	public static String escape(String s) {
+		s = s.replaceAll("\\\\", "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\");
 		HashMap<String, String> dict = new HashMap<String, String>();
 		dict.put("\\(", "\\\\(");
 		dict.put("\\)", "\\\\)");

@@ -6,10 +6,16 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
+import weka.classifiers.trees.m5.RuleNode;
+
 public class ProgSynthesis {
 	Vector<Vector<TNode>> orgVector = new Vector<Vector<TNode>>();
 	Vector<Vector<TNode>> tarVector = new Vector<Vector<TNode>>();
 	String bestRuleString = "";
+	///for tracking the stats
+	public long learnspan = 0;
+	public long genspan = 0;
+	public long ruleNo = 0;
 	public PartitionClassifierType classifier;
 
 	public void inite(Vector<String[]> examples) {
@@ -164,6 +170,8 @@ public class ProgSynthesis {
 		HashSet<ProgramRule> rules = new HashSet<ProgramRule>();
 		if(findRule)
 			rules.add(r);
+		
+		this.ruleNo += termCnt; //accumulate the no of rules while the object is alive
 		System.out.println("*********************************");
 		System.out.println("Total program size: "+prog.size());
 		System.out.println("Updated times: "+ termCnt);
@@ -171,8 +179,13 @@ public class ProgSynthesis {
 		return rules;	
 	}
 	public Collection<ProgramRule> run_main() {
+		long t1 = System.currentTimeMillis();
 		Vector<Partition> vp = this.ProducePartitions(true);
+		long t2 = System.currentTimeMillis();
 		Collection<ProgramRule> cpr = this.producePrograms(vp);
+		long t3 = System.currentTimeMillis();
+		learnspan = (t2-t1);
+		genspan = (t3-t2);
 		if(cpr.size() == 0)
 		{
 			vp = this.ProducePartitions(false);

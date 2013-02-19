@@ -35,8 +35,8 @@ def indexOf(str, lregx, rregx, cnt=0):
         if cnt > 0:
             index = cnt -1
         else:
-            index = -1*cnt
-        if len(poslist) == -1 or index >= len(poslist):
+            index = len(poslist)+cnt
+        if len(poslist) == 0 or index >= len(poslist) or index<0:
             return None
         return poslist[index]
 def loop(value, stript):
