@@ -198,6 +198,25 @@ public class OntologyManager {
 		return ontCache.getIndirectDomainRangeProperties();
 	}
 
+	public HashMap<String, List<DomainRangePair>> getObjectPropertyDirectDomainRangePairs() {
+		return ontCache.getObjectPropertyDirectDomainRangePairs();
+	}
+
+	public HashMap<String, List<DomainRangePair>> getObjectPropertyIndirectDomainRangePairs() {
+		return ontCache.getObjectPropertyIndirectDomainRangePairs();
+	}
+
+	public HashMap<String, List<DomainRangePair>> getObjectPropertyNotDirectDomainRangePairs() {
+		return ontCache.getObjectPropertyNotDirectDomainRangePairs();
+	}
+
+	public List<SubclassSuperclassPair> getDirectSubclassSuperclassPairs() {
+		return ontCache.getDirectSubclassSuperclassPairs();
+	}
+
+	public List<SubclassSuperclassPair> getIndirectSubclassSuperclassPairs() {
+		return ontCache.getIndirectSubclassSuperclassPairs();
+	}
 	
 	public Label getUriLabel(String uriString) {
 		return this.ontHandler.getUriLabel(uriString);

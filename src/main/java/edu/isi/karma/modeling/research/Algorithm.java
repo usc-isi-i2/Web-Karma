@@ -60,7 +60,8 @@ public class Algorithm {
 
 	public static List<MatchedSubGraphs> computeMatchedSubGraphs(
 			DirectedWeightedMultigraph<Node, Link> g1, 
-			DirectedWeightedMultigraph<Node, Link> g2) {
+			DirectedWeightedMultigraph<Node, Link> g2,
+			Integer numberOfAttributes) {
 		
 		List<MatchedSubGraphs> matchedSubGraphs = 
 				new ArrayList<MatchedSubGraphs>();
@@ -88,6 +89,13 @@ public class Algorithm {
 		Set<Set<String>> powerSet = powerSet(keys);
 
 		for (int k = 1; k < attCount; k ++) {
+			
+			// if numberOfattributes specified by the user is null or greater than total number of attributes,
+			// we compute all the possible subgraphs
+			if (numberOfAttributes != null && numberOfAttributes.intValue() < attCount)
+				if (k != numberOfAttributes)
+					continue;
+			
 			for (Set<String> set : powerSet) {
 				if (set.size() != k)
 					continue;

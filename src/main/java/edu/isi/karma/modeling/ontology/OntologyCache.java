@@ -85,6 +85,15 @@ class OntologyCache {
 	private HashMap<String, Label> propertyInverse;
 	private HashMap<String, Label> propertyInverseOf;
 	
+	// hashmap: objectproperty -> <domain, range> pairs
+	private HashMap<String, List<DomainRangePair>> objectPropertyDirectDomainRangePairs;
+	private HashMap<String, List<DomainRangePair>> objectPropertyIndirectDomainRangePairs;
+	private HashMap<String, List<DomainRangePair>> objectPropertyNotDirectDomainRangePairs;
+	
+	// List <subclass, superclass> pairs
+	private List<SubclassSuperclassPair> directSubclassSuperclassPairs;
+	private List<SubclassSuperclassPair> indirectSubclassSuperclassPairs;
+	
 	public OntologyCache(OntologyHandler ontHandler) {
 		this.ontHandler = ontHandler;
 	}
@@ -197,6 +206,26 @@ class OntologyCache {
 		return propertyInverseOf;
 	}
 
+	public HashMap<String, List<DomainRangePair>> getObjectPropertyDirectDomainRangePairs() {
+		return objectPropertyDirectDomainRangePairs;
+	}
+
+	public HashMap<String, List<DomainRangePair>> getObjectPropertyIndirectDomainRangePairs() {
+		return objectPropertyIndirectDomainRangePairs;
+	}
+
+	public HashMap<String, List<DomainRangePair>> getObjectPropertyNotDirectDomainRangePairs() {
+		return objectPropertyNotDirectDomainRangePairs;
+	}
+
+	public List<SubclassSuperclassPair> getDirectSubclassSuperclassPairs() {
+		return directSubclassSuperclassPairs;
+	}
+
+	public List<SubclassSuperclassPair> getIndirectSubclassSuperclassPairs() {
+		return indirectSubclassSuperclassPairs;
+	}
+
 	public void init() {
 
 		logger.info("start building the ontology cache ...");
@@ -237,6 +266,12 @@ class OntologyCache {
 		this.propertyInverse = new HashMap<String, Label>();
 		this.propertyInverseOf = new HashMap<String, Label>();
 		
+		this.objectPropertyDirectDomainRangePairs = new HashMap<String, List<DomainRangePair>>();
+		this.objectPropertyIndirectDomainRangePairs = new HashMap<String, List<DomainRangePair>>();
+		this.objectPropertyNotDirectDomainRangePairs = new HashMap<String, List<DomainRangePair>>();
+		this.directSubclassSuperclassPairs = new ArrayList<SubclassSuperclassPair>();
+		this.indirectSubclassSuperclassPairs = new ArrayList<SubclassSuperclassPair>();
+		
 		long start = System.currentTimeMillis();
 		
 		// create a list of classes and properties of the model
@@ -269,6 +304,10 @@ class OntologyCache {
 		
 		// build hashmaps to include inverse(Of) properties
 		this.buildInverseProperties();
+		
+		// build hashmaps to speed up adding links to the graph
+		this.buildObjectPropertyDomainRangeMap();
+		this.buildSubclassSuperclassPairs();
 		
 		// update hashmaps to include the subproperty relations  
 		this.updateMapsWithSubpropertyDefinitions(true);
@@ -454,6 +493,65 @@ class OntologyCache {
 		for (String op : this.objectProperties.keySet()) {
 			this.propertyInverse.put(op, this.ontHandler.getInverseProperty(op));
 			this.propertyInverseOf.put(op, this.ontHandler.getInverseOfProperty(op));
+		}
+	}
+	
+	private void buildObjectPropertyDomainRangeMap() {
+		
+		for (String op : this.objectProperties.keySet()) {
+			
+			List<DomainRangePair> directDomainRangePairs = new ArrayList<DomainRangePair>();
+			List<DomainRangePair> indirectDomainRangePairs = new ArrayList<DomainRangePair>();
+			List<DomainRangePair> notDirectDomainRangePairs = new ArrayList<DomainRangePair>();
+			
+			this.objectPropertyDirectDomainRangePairs.put(op, directDomainRangePairs);
+			this.objectPropertyIndirectDomainRangePairs.put(op, indirectDomainRangePairs);
+			this.objectPropertyNotDirectDomainRangePairs.put(op, notDirectDomainRangePairs);
+			
+			List<String> directDomains = this.propertyDirectDomains.get(op);
+			List<String> directRanges = this.propertyDirectRanges.get(op);
+
+			List<String> indirectDomains = this.propertyIndirectDomains.get(op);
+			List<String> indirectRanges = this.propertyIndirectRanges.get(op);
+
+			// direct
+			if (directDomains != null && directRanges != null) { 
+				for (String d : directDomains)
+					for (String r : directRanges)
+						directDomainRangePairs.add(new DomainRangePair(d, r));
+			}
+			
+			// indirect
+			if (indirectDomains != null && indirectRanges != null) { 
+				for (String d : indirectDomains)
+					for (String r : indirectRanges)
+						indirectDomainRangePairs.add(new DomainRangePair(d, r));
+			}
+			
+			// not direct
+			if (indirectDomains != null && indirectRanges != null) { 
+				for (String d : indirectDomains) {
+					for (String r : indirectRanges) {
+						if (directDomains.contains(d) && directRanges.contains(r)) continue;
+						notDirectDomainRangePairs.add(new DomainRangePair(d, r));
+					}
+				}
+			}
+		}
+	}
+	
+	private void buildSubclassSuperclassPairs() {
+		
+		for (String superclass : this.directSubClasses.keySet()) {
+			List<String> subClasses = this.directSubClasses.get(superclass);
+			for (String subclass : subClasses)
+				this.directSubclassSuperclassPairs.add(new SubclassSuperclassPair(subclass, superclass));
+		}
+		
+		for (String superclass : this.indirectSubClasses.keySet()) {
+			List<String> subClasses = this.indirectSubClasses.get(superclass);
+			for (String subclass : subClasses)
+				this.indirectSubclassSuperclassPairs.add(new SubclassSuperclassPair(subclass, superclass));
 		}
 	}
 	

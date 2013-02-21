@@ -34,6 +34,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
@@ -45,9 +46,10 @@ public class ModelReader {
 //	public static String varPrefix = "var:";
 	public static String attPrefix = "att:";
 	
-	private static String importDir = "/Users/mohsen/Dropbox/Service Modeling/research/texts/";
-	private static String exportDir = "/Users/mohsen/Dropbox/Service Modeling/research/dots/";
-	private static String typePredicate = "rdf:type";
+	private static String importDir = "/Users/mohsen/Dropbox/Service Modeling/texts/";
+	private static String exportDir = "/Users/mohsen/Dropbox/Service Modeling/dots/";
+	private static String typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+	private static HashMap<String, String> prefixNsMapping;
 
 	static class Statement {
 		
@@ -86,7 +88,7 @@ public class ModelReader {
 		
 			if (serviceModels != null) {
 				for (ServiceModel sm : serviceModels) {
-					sm.computeMatchedSubGraphs();
+					sm.computeMatchedSubGraphs(null);
 					sm.computeShortestPaths();
 					sm.print();
 					sm.exportModelsToGraphviz(exportDir);
@@ -101,7 +103,27 @@ public class ModelReader {
 		}
 	}
 	
-	private static List<ServiceModel> importServiceModels() throws IOException {
+	private static void initPrefixNsMapping() {
+		
+		prefixNsMapping = new HashMap<String, String>();
+		
+		prefixNsMapping.put("geo", "http://www.w3.org/2003/01/geo/wgs84_pos#");
+		prefixNsMapping.put("gn", "http://www.geonames.org/ontology#");
+		prefixNsMapping.put("schema", "http://schema.org/");
+		prefixNsMapping.put("dbpprop", "http://dbpedia.org/property/");
+		prefixNsMapping.put("dbpedia-owl", "http://dbpedia.org/ontology/");
+		prefixNsMapping.put("skos", "http://www.w3.org/2004/02/skos/core#");
+		prefixNsMapping.put("tzont", "http://www.w3.org/2006/timezone#");
+		prefixNsMapping.put("qudt", "http://qudt.org/1.1/schema/qudt#");
+		prefixNsMapping.put("yago", "http://dbpedia.org/class/yago/");
+		prefixNsMapping.put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+		prefixNsMapping.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		prefixNsMapping.put("foaf", "http://xmlns.com/foaf/0.1/");
+	}
+	
+	public static List<ServiceModel> importServiceModels() throws IOException {
+		
+		initPrefixNsMapping();
 		
 		List<ServiceModel> serviceModels = new ArrayList<ServiceModel>();
 		
@@ -209,6 +231,21 @@ public class ModelReader {
 //		return graph;
 //	}
 	
+	private static String getUri(String prefixedUri) {
+		
+		String uri = prefixedUri;
+		String prefix = "";
+		String name = "";
+		if (prefixedUri.indexOf(":") != -1) {
+			prefix = prefixedUri.substring(0 , prefixedUri.indexOf(":")).trim();
+			name = prefixedUri.substring(prefixedUri.indexOf(":") + 1 , prefixedUri.length()).trim();
+			if (prefixNsMapping.containsKey(prefix)) {
+				uri = prefixNsMapping.get(prefix) + name;
+			}
+		}
+		return uri;
+	}
+	
 	private static DirectedWeightedMultigraph<Node, Link> buildGraphsFromStatements2(List<Statement> statements) {
 		
 		DirectedWeightedMultigraph<Node, Link> graph = 
@@ -221,10 +258,18 @@ public class ModelReader {
 		HashMap<String, Node> uri2Classes = new HashMap<String, Node>();
 		for (Statement st : statements) {
 			
-			if (st.getPredicate().equalsIgnoreCase(typePredicate)) {
+			String subjStr = st.getSubject();
+			String predicateStr = st.getPredicate();
+			String objStr = st.getObject();
+			
+			subjStr = getUri(subjStr);
+			predicateStr = getUri(predicateStr);
+			objStr = getUri(objStr);
+
+			if (predicateStr.equalsIgnoreCase(typePredicate)) {
 				
-				Node classNode = new InternalNode(st.getObject(), null);
-				uri2Classes.put(st.getSubject(), classNode);
+				Node classNode = new InternalNode(objStr, new Label(objStr));
+				uri2Classes.put(subjStr, classNode);
 				graph.addVertex(classNode);
 				
 			}
@@ -232,29 +277,36 @@ public class ModelReader {
 		
 		for (Statement st : statements) {
 			
+			String subjStr = st.getSubject();
+			String predicateStr = st.getPredicate();
+			String objStr = st.getObject();
+			
+			subjStr = getUri(subjStr);
+			predicateStr = getUri(predicateStr);
+			objStr = getUri(objStr);
+
 			if (st.getPredicate().equalsIgnoreCase(typePredicate)) 
 				continue;
 			
-			Node subj = uri2Classes.get(st.getSubject());
+			Node subj = uri2Classes.get(subjStr);
 			if (subj == null) {
-				subj = new InternalNode(st.getSubject(), null);
+				subj = new InternalNode(subjStr, new Label(subjStr));
 				graph.addVertex(subj);
 			}
 
-			Node obj = uri2Classes.get(st.getObject());
-			String objStr = st.getObject();
+			Node obj = uri2Classes.get(objStr);
 			if (obj == null) {
 				if (objStr.startsWith(attPrefix))
 					obj = new ColumnNode(objStr, null, null);
 				else if (objStr.indexOf(":") == -1 && objStr.indexOf("\"") != -1)
 					obj = new LiteralNode(objStr, objStr, null);
 				else
-					obj = new InternalNode(objStr, null);
+					obj = new InternalNode(objStr, new Label(objStr));
 				
 				graph.addVertex(obj);
 			}
 			
-			Link e = new SimpleLink(st.getPredicate(), null);
+			Link e = new SimpleLink(predicateStr, new Label(predicateStr));
 			graph.addEdge(subj, obj, e);
 			
 		}

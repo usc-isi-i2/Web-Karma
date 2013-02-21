@@ -28,21 +28,21 @@ public class NodeIdFactory {
 	HashMap<String, Integer> nodeUris = new HashMap<String, Integer>();
 	
 
-	public String getNodeId(String uriString) {
+	public String getNodeId(String uri) {
 		
 		int index;
 		String id;
 		
-		if (nodeUris.containsKey(uriString)) {
+		if (nodeUris.containsKey(uri)) {
 			
-			index = nodeUris.get(uriString).intValue();
-			nodeUris.put(uriString, ++index);
-			id = uriString + "" + index;
+			index = nodeUris.get(uri).intValue();
+			nodeUris.put(uri, ++index);
+			id = uri + "" + index;
 			
 		} else {
 			index = 1;
-			nodeUris.put(uriString, index);
-			id = uriString + "" + index;
+			nodeUris.put(uri, index);
+			id = uri + "" + index;
 //			id = uriString;
 		}
 		return id;
@@ -50,5 +50,12 @@ public class NodeIdFactory {
 
 	public boolean duplicateUri(String uriString) {
 		return this.nodeUris.containsKey(uriString);
+	}
+	
+	public int lastIndexOf(String uri) {
+		if (nodeUris.containsKey(uri))
+			return nodeUris.get(uri).intValue();
+		else
+			return -1;
 	}
 }

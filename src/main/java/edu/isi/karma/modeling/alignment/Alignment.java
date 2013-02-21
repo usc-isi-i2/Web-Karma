@@ -73,10 +73,6 @@ public class Alignment implements OntologyUpdateListener {
 		
 	}
 	
-	// FIXME: We should notify the Alignment when a new ontology is added to the 
-	// ontologyManager (import), becasue we may need to update some of the hashMaps, 
-	// e.g., uriClosure
-	
 	public boolean isEmpty() {
 		return (this.graphBuilder.getGraph().edgeSet().size() == 0);
 	}
@@ -125,6 +121,14 @@ public class Alignment implements OntologyUpdateListener {
 	
 	public List<Link> getLinksByStatus(LinkStatus status) {
 		return this.graphBuilder.getStatusToLinksMap().get(status);
+	}
+
+	public int getLastIndexOfNodeUri(String uri) {
+		return this.nodeIdFactory.lastIndexOf(uri);
+	}
+
+	public int getLastIndexOfLinkUri(String uri) {
+		return this.linkIdFactory.lastIndexOf(uri);
 	}
 
 	public ColumnNode getColumnNodeByHNodeId(String hNodeId) {

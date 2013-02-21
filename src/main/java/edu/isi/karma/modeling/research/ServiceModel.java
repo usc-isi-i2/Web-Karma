@@ -36,9 +36,7 @@ import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.alignment.GraphUtil;
-import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 
 public class ServiceModel {
@@ -56,8 +54,17 @@ public class ServiceModel {
 		matchedSubGraphs = new ArrayList<MatchedSubGraphs>();
 		shortestPathsBetweenTwoAttributes = new HashMap<String, List<DijkstraShortestPath<Node,Link>>>();
 	}
-
 	
+	public HashMap<String, List<DijkstraShortestPath<Node, Link>>> getShortestPathsBetweenTwoAttributes() {
+		return shortestPathsBetweenTwoAttributes;
+	}
+
+	public List<MatchedSubGraphs> getMatchedSubGraphs() {
+		return matchedSubGraphs;
+	}
+
+
+
 	public String getServiceName() {
 		return serviceName;
 	}
@@ -155,10 +162,10 @@ public class ServiceModel {
 		System.out.println();
 	}
 
-	public void computeMatchedSubGraphs() {
+	public void computeMatchedSubGraphs(Integer numberOfAttributes) {
 		if (this.models.size() == 2) {
 			this.matchedSubGraphs = 
-					Algorithm.computeMatchedSubGraphs(this.models.get(0), this.models.get(1));
+					Algorithm.computeMatchedSubGraphs(this.models.get(0), this.models.get(1), numberOfAttributes);
 		}
 	}
 	
@@ -214,7 +221,7 @@ public class ServiceModel {
 
 		int modelNo = 1;
 		for (DirectedWeightedMultigraph<Node, Link> model : this.models) {
-			org.kohsuke.graphviz.Graph gViz = exportJGraphToGraphviz(model);
+			org.kohsuke.graphviz.Graph gViz = GraphVizUtil.exportJGraphToGraphviz(model);
 			gViz.attr("label", "model_" + modelNo);
 			gViz.id("cluster_" + modelNo);
 			graphViz.subGraph(gViz);
@@ -249,9 +256,9 @@ public class ServiceModel {
 			cluster.attr("label", "");
 			graphViz.subGraph(cluster);
 
-			gViz = exportJGraphToGraphviz(m.getSubGraph1());
+			gViz = GraphVizUtil.exportJGraphToGraphviz(m.getSubGraph1());
 			cluster.subGraph(gViz);
-			gViz = exportJGraphToGraphviz(m.getSubGraph2());
+			gViz = GraphVizUtil.exportJGraphToGraphviz(m.getSubGraph2());
 			cluster.subGraph(gViz);
 			counter ++;
 		}
@@ -283,7 +290,7 @@ public class ServiceModel {
 				graphViz.subGraph(cluster);
 			}
 
-			org.kohsuke.graphviz.Graph gViz = exportJGrapPathToGraphviz(this.shortestPathsBetweenTwoAttributes.get(index).get(0));
+			org.kohsuke.graphviz.Graph gViz = GraphVizUtil.exportJGrapPathToGraphviz(this.shortestPathsBetweenTwoAttributes.get(index).get(0));
 			gViz.attr("label", index.substring(index.indexOf("(") + 1, index.indexOf(")")) );
 			gViz.id("model_" + (counter % 2 + 1) );
 			cluster.subGraph(gViz);
@@ -294,219 +301,7 @@ public class ServiceModel {
 
 	}
 	
-	private org.kohsuke.graphviz.Graph exportJGrapPathToGraphviz(DijkstraShortestPath<Node, Link> path) {
 
-		org.kohsuke.graphviz.Graph gViz = new org.kohsuke.graphviz.Graph();
-			
-		org.kohsuke.graphviz.Style internalNodeStyle = new org.kohsuke.graphviz.Style();
-//		internalNodeStyle.attr("shape", "circle");
-		internalNodeStyle.attr("style", "filled");
-		internalNodeStyle.attr("color", "white");
-		internalNodeStyle.attr("fontsize", "10");
-		internalNodeStyle.attr("fillcolor", "lightgray");
-		
-//		org.kohsuke.graphviz.Style inputNodeStyle = new org.kohsuke.graphviz.Style();
-//		inputNodeStyle.attr("shape", "plaintext");
-//		inputNodeStyle.attr("style", "filled");
-//		inputNodeStyle.attr("fillcolor", "#3CB371");
-//
-//		org.kohsuke.graphviz.Style outputNodeStyle = new org.kohsuke.graphviz.Style();
-//		outputNodeStyle.attr("shape", "plaintext");
-//		outputNodeStyle.attr("style", "filled");
-//		outputNodeStyle.attr("fillcolor", "gold");
-
-		org.kohsuke.graphviz.Style parameterNodeStyle = new org.kohsuke.graphviz.Style();
-		parameterNodeStyle.attr("shape", "plaintext");
-		parameterNodeStyle.attr("style", "filled");
-		parameterNodeStyle.attr("fillcolor", "gold");
-
-		org.kohsuke.graphviz.Style literalNodeStyle = new org.kohsuke.graphviz.Style();
-		literalNodeStyle.attr("shape", "plaintext");
-		literalNodeStyle.attr("style", "filled");
-		literalNodeStyle.attr("fillcolor", "#CC7799");
-
-		org.kohsuke.graphviz.Style edgeStyle = new org.kohsuke.graphviz.Style();
-		edgeStyle.attr("color", "brown");
-		edgeStyle.attr("fontsize", "10");
-		edgeStyle.attr("fontcolor", "black");
-		
-		HashMap<Node, org.kohsuke.graphviz.Node> nodeIndex = new HashMap<Node, org.kohsuke.graphviz.Node>();
-		
-//		Node lastNode = null;
-		for (int i = 0; i < path.getPathEdgeList().size(); i++) {
-			
-			Link e = path.getPathEdgeList().get(i);
-			
-			Node source = e.getSource();
-			Node target = e.getTarget();
-			
-			org.kohsuke.graphviz.Node n = nodeIndex.get(source);
-			String id = source.getId();
-			if (n == null) {
-				n = new org.kohsuke.graphviz.Node();
-				n.attr("label", id);
-				nodeIndex.put(source, n);
-			
-//				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
-//					gViz.nodeWith(inputNodeStyle);
-//				else if (id.indexOf("att") != -1 && id.indexOf("o") != -1)  // output
-//					gViz.nodeWith(outputNodeStyle);
-				if (source instanceof ColumnNode)  // attribute
-					gViz.nodeWith(parameterNodeStyle);
-				else if (source instanceof LiteralNode)  // literal
-					gViz.nodeWith(literalNodeStyle);
-				else  // internal node
-					gViz.nodeWith(internalNodeStyle);
-					
-				gViz.node(n);
-			}
-
-			n = nodeIndex.get(target);
-			id = target.getId();
-			if (n == null) {
-				n = new org.kohsuke.graphviz.Node();
-				n.attr("label", id);
-				nodeIndex.put(target, n);
-			
-//				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
-//					gViz.nodeWith(inputNodeStyle);
-//				else if (id.indexOf("att") != -1 && id.indexOf("o") != -1)  // output
-//					gViz.nodeWith(outputNodeStyle);
-				if (target instanceof ColumnNode)  // attribute
-					gViz.nodeWith(parameterNodeStyle);
-				else if (target instanceof LiteralNode)  // literal
-					gViz.nodeWith(literalNodeStyle);
-				else  // internal node
-					gViz.nodeWith(internalNodeStyle);
-					
-				gViz.node(n);
-			}
-			
-			/*
-			org.kohsuke.graphviz.Edge edge = null;
-			if (i == 0) {
-				edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(source), nodeIndex.get(target));
-				lastNode = target;
-				if (path.getPathEdgeList().size() > 1) {
-					Link nextEdge = path.getPathEdgeList().get(1);
-					if (source.equals(nextEdge.getSource()) ||
-							source.equals(nextEdge.getTarget())) {
-						edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(target), nodeIndex.get(source));
-						lastNode = source;					}
-				}
-			} else if (target.equals(lastNode)) {
-				edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(target), nodeIndex.get(source));
-				lastNode = source;
-			} else if (source.equals(lastNode)) {
-				edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(source), nodeIndex.get(target));
-				lastNode = target;
-			} 
-			*/
-			
-			org.kohsuke.graphviz.Edge edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(source), nodeIndex.get(target));
-			edge.attr("label", e.getId());
-			gViz.edgeWith(edgeStyle);
-			gViz.edge(edge);
-		}
-
-
-		return gViz;
-	}
-	
-	private org.kohsuke.graphviz.Graph exportJGraphToGraphviz(DirectedWeightedMultigraph<Node, Link> model) {
-
-		org.kohsuke.graphviz.Graph gViz = new org.kohsuke.graphviz.Graph();
-			
-		org.kohsuke.graphviz.Style internalNodeStyle = new org.kohsuke.graphviz.Style();
-//		internalNodeStyle.attr("shape", "circle");
-		internalNodeStyle.attr("style", "filled");
-		internalNodeStyle.attr("color", "white");
-		internalNodeStyle.attr("fontsize", "10");
-		internalNodeStyle.attr("fillcolor", "lightgray");
-		
-//		org.kohsuke.graphviz.Style inputNodeStyle = new org.kohsuke.graphviz.Style();
-//		inputNodeStyle.attr("shape", "plaintext");
-//		inputNodeStyle.attr("style", "filled");
-//		inputNodeStyle.attr("fillcolor", "#3CB371");
-//
-//		org.kohsuke.graphviz.Style outputNodeStyle = new org.kohsuke.graphviz.Style();
-//		outputNodeStyle.attr("shape", "plaintext");
-//		outputNodeStyle.attr("style", "filled");
-//		outputNodeStyle.attr("fillcolor", "gold");
-
-		org.kohsuke.graphviz.Style parameterNodeStyle = new org.kohsuke.graphviz.Style();
-		parameterNodeStyle.attr("shape", "plaintext");
-		parameterNodeStyle.attr("style", "filled");
-		parameterNodeStyle.attr("fillcolor", "gold");
-
-		org.kohsuke.graphviz.Style literalNodeStyle = new org.kohsuke.graphviz.Style();
-		literalNodeStyle.attr("shape", "plaintext");
-		literalNodeStyle.attr("style", "filled");
-		literalNodeStyle.attr("fillcolor", "#CC7799");
-
-		org.kohsuke.graphviz.Style edgeStyle = new org.kohsuke.graphviz.Style();
-		edgeStyle.attr("color", "brown");
-		edgeStyle.attr("fontsize", "10");
-		edgeStyle.attr("fontcolor", "black");
-		
-		HashMap<Node, org.kohsuke.graphviz.Node> nodeIndex = new HashMap<Node, org.kohsuke.graphviz.Node>();
-		
-		for (Link e : model.edgeSet()) {
-			
-			Node source = e.getSource();
-			Node target = e.getTarget();
-			
-			org.kohsuke.graphviz.Node n = nodeIndex.get(source);
-			String id = source.getId();
-			if (n == null) {
-				n = new org.kohsuke.graphviz.Node();
-				n.attr("label", id);
-				nodeIndex.put(source, n);
-			
-//				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
-//					gViz.nodeWith(inputNodeStyle);
-//				else if (id.indexOf("att") != -1 && id.indexOf("o") != -1)  // output
-//					gViz.nodeWith(outputNodeStyle);
-				if (source instanceof ColumnNode)  // attribute
-					gViz.nodeWith(parameterNodeStyle);
-				else if (source instanceof LiteralNode)  // literal
-					gViz.nodeWith(literalNodeStyle);
-				else  // internal node
-					gViz.nodeWith(internalNodeStyle);
-					
-				gViz.node(n);
-			}
-
-			n = nodeIndex.get(target);
-			id = target.getId();
-			if (n == null) {
-				n = new org.kohsuke.graphviz.Node();
-				n.attr("label", id);
-				nodeIndex.put(target, n);
-			
-//				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
-//					gViz.nodeWith(inputNodeStyle);
-//				else if (id.indexOf("att") != -1 && id.indexOf("o") != -1)  // output
-//					gViz.nodeWith(outputNodeStyle);
-				if (target instanceof ColumnNode)  // attribute
-					gViz.nodeWith(parameterNodeStyle);
-				else if (target instanceof LiteralNode)  // literal
-					gViz.nodeWith(literalNodeStyle);
-				else  // internal node
-					gViz.nodeWith(internalNodeStyle);
-					
-				gViz.node(n);
-			}
-			
-			org.kohsuke.graphviz.Edge edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(source), nodeIndex.get(target));
-			edge.attr("label", e.getId());
-			gViz.edgeWith(edgeStyle);
-			gViz.edge(edge);
-		}
-
-
-		return gViz;
-	}
 	
 	
 }

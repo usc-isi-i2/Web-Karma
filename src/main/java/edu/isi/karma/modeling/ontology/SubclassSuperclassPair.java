@@ -19,43 +19,24 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.alignment;
+package edu.isi.karma.modeling.ontology;
 
-import java.util.HashMap;
-
-public class LinkIdFactory {
-
-	HashMap<String, Integer> linksUris = new HashMap<String, Integer>();
+public class SubclassSuperclassPair {
 	
+	private final String subclass;
+	private final String superclass;
+	
+	public SubclassSuperclassPair(String subclass, String superclass) {
+		this.subclass = subclass;
+		this.superclass = superclass;
+	}
 
-	public String getLinkId(String uri) {
-		
-		int index;
-		String id;
-		
-		if (linksUris.containsKey(uri)) {
-			
-			index = linksUris.get(uri).intValue();
-			linksUris.put(uri, ++index);
-			id = uri + "" + index;
-			
-		} else {
-			index = 1;
-			linksUris.put(uri, index);
-			id = uri + "" + index;
-//			id = uriString;
-		}
-		return id;
+	public String getSubclass() {
+		return subclass;
+	}
+
+	public String getSuperclass() {
+		return superclass;
 	}
 	
-	public boolean duplicateUri(String uriString) {
-		return this.linksUris.containsKey(uriString);
-	}
-	
-	public int lastIndexOf(String uri) {
-		if (linksUris.containsKey(uri))
-			return linksUris.get(uri).intValue();
-		else
-			return -1;
-	}
 }
