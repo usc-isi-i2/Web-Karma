@@ -152,12 +152,30 @@ public class Alignment implements OntologyUpdateListener {
 		return null;
 	}
 	
-	public InternalNode addInternalClassNode(Label label) {
+	public InternalNode addInternalNode(Label label) {
 		
 		String id = nodeIdFactory.getNodeId(label.getUri());
 		InternalNode node = new InternalNode(id, label);
 		if (this.graphBuilder.addNode(node)) return node;
 		return null;	
+	}
+	
+	public ColumnNode createColumnNode(String hNodeId, String columnName) {
+		
+		// use hNodeId as id of the node
+		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName);
+		return node;
+	}
+	
+	public InternalNode createInternalNode(Label label) {
+
+		String id = nodeIdFactory.getNodeId(label.getUri());
+		InternalNode node = new InternalNode(id, label);
+		return node;
+	}
+	
+	public void addNodeList(List<Node> nodes) {
+		this.graphBuilder.addNodeList(nodes);
 	}
 	
 	// AddLink methods

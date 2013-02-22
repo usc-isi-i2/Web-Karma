@@ -206,7 +206,7 @@ public class Approach1 {
 		Alignment alignment = new Alignment(this.ontologyManager);
 		for (int i = 0; i < semanticLabels.size(); i++) {
 			SemanticLabel sl = semanticLabels.get(i);
-			InternalNode n = alignment.addInternalClassNode(sl.getNodeLabel());
+			InternalNode n = alignment.addInternalNode(sl.getNodeLabel());
 //			ColumnNode c = alignment.addColumnNode("H" + String.valueOf(i), sl.getLeafName());
 			ColumnNode c = alignment.addColumnNode(sl.getLeafName(), sl.getLeafName());
 			DataPropertyLink link = alignment.addDataPropertyLink(n, c, sl.getLinkLabel(), false);

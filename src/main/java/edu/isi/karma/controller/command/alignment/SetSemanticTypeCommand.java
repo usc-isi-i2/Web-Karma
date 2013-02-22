@@ -171,7 +171,7 @@ public class SetSemanticTypeCommand extends Command {
 									logger.error("URI/ID does not exist in the ontology or model: " + fullTypeValue);
 									continue;
 								}
-								classNode = alignment.addInternalClassNode(classLabel);
+								classNode = alignment.addInternalNode(classLabel);
 							}
 							ClassInstanceLink clsLink = alignment.addClassInstanceLink(classNode, newColumnNode, keyInfo);
 							newLink = clsLink;
@@ -199,7 +199,7 @@ public class SetSemanticTypeCommand extends Command {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
 							alignment.removeNode(oldDomainNode.getId());
 							Label domainLabel = ontMgr.getUriLabel(domainValue);
-							newDomainNode = alignment.addInternalClassNode(domainLabel);
+							newDomainNode = alignment.addInternalNode(domainLabel);
 							DataPropertyLink propLink = alignment.addDataPropertyLink(newDomainNode, existingColumnNode, propertyLabel, isPartOfKey);
 							newLink = propLink;
 						}
@@ -213,7 +213,7 @@ public class SetSemanticTypeCommand extends Command {
 						else {
 							if (!domainNodeAlreadyExistsInGraph) {
 								Label domainLabel = ontMgr.getUriLabel(domainValue);
-								newDomainNode = alignment.addInternalClassNode(domainLabel);
+								newDomainNode = alignment.addInternalNode(domainLabel);
 							}
 							
 							ColumnNode newColumnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));

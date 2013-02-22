@@ -133,7 +133,7 @@ public class SetMetaPropertyCommand extends Command {
 					logger.error("URI/ID does not exist in the ontology or model: " + metaPropertyValue);
 					return new UpdateContainer(EmptyUpdate.getInstance());
 				}
-				classNode = alignment.addInternalClassNode(classNodeLabel);
+				classNode = alignment.addInternalNode(classNodeLabel);
 			}
 		
 			ClassInstanceLink mpLink = alignment.addClassInstanceLink(classNode, columnNode, LinkKeyInfo.UriOfInstance);
@@ -175,7 +175,7 @@ public class SetMetaPropertyCommand extends Command {
 					logger.error("URI/ID does not exist in the ontology or model: " + metaPropertyValue);
 					return new UpdateContainer(EmptyUpdate.getInstance());
 				}
-				classNode = alignment.addInternalClassNode(classNodeLabel);
+				classNode = alignment.addInternalNode(classNodeLabel);
 			}
 			ColumnSubClassLink mpLink = alignment.addColumnSubClassOfLink(classNode, columnNode);
 			alignment.align();
