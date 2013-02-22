@@ -30,10 +30,14 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.jgrapht.graph.WeightedMultigraph;
 
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
@@ -48,35 +52,47 @@ public class Approach1 {
 	private static Logger logger = Logger.getLogger(Approach1.class);
 	private static String ontologyDir = "/Users/mohsen/Dropbox/Service Modeling/ontologies/";
 	private static String outputPath = "/Users/mohsen/Dropbox/Service Modeling/output/output.dot";
+	private static String graphPath = "/Users/mohsen/Dropbox/Service Modeling/output/graph";
 	private HashMap<String, Integer> sourceTargetLinkCounterMap;
 
 	private List<ServiceModel> trainingData;
 	private OntologyManager ontologyManager;
+	private List<SemanticLabel> inputSemanticLabels;
+	private List<SemanticLabel> outputSemanticLabels;
 	
 	public Approach1(List<ServiceModel> trainingData, OntologyManager ontologyManager) {
 		this.trainingData = trainingData;
 		this.ontologyManager = ontologyManager;
 		this.sourceTargetLinkCounterMap = new HashMap<String, Integer>();
+		this.inputSemanticLabels = new ArrayList<SemanticLabel>();
+		this.outputSemanticLabels = new ArrayList<SemanticLabel>();
 	}
-	
-	public DirectedWeightedMultigraph<Node, Link> hypothesize(
-			DirectedWeightedMultigraph<Node, Link> serviceModel) {
+
+	public List<SemanticLabel> getInputSemanticLabels() {
+		return inputSemanticLabels;
+	}
+
+
+	public List<SemanticLabel> getOutputSemanticLabels() {
+		return outputSemanticLabels;
+	}
+
+
+	public void preprocess(DirectedWeightedMultigraph<Node, Link> serviceModel) {
 		
-		List<SemanticLabel> inSemanticLabels = getModelSemanticLabels(serviceModel);
-		if (inSemanticLabels == null || inSemanticLabels.size() == 0) {
+		this.inputSemanticLabels = getModelSemanticLabels(serviceModel);
+		if (inputSemanticLabels == null || inputSemanticLabels.size() == 0) {
 			logger.info("The input model does not have any semantic label.");
-			return null;
+			return;
 		}
 		
 		logger.info("=====================================================================");
 		logger.info("Input Semantic Labels: ");
-		for (SemanticLabel sl: inSemanticLabels)
+		for (SemanticLabel sl: inputSemanticLabels)
 			sl.print();
 		logger.info("=====================================================================");
 		
-		List<SemanticLabel> outSemanticLabels = new ArrayList<SemanticLabel>();
-		
-		for (SemanticLabel sl : inSemanticLabels) {
+		for (SemanticLabel sl : inputSemanticLabels) {
 
 			sl.print();
 			logger.info("-------------------------------------------");
@@ -85,7 +101,7 @@ public class Approach1 {
 			if (matchedSemanticLabels == null || matchedSemanticLabels.size() == 0) {
 				logger.info("Cannot find any match for semantic label:");
 				sl.print();
-				return null;
+				return;
 			}
 			
 			logger.info("Matched Semantic Labels: ");
@@ -94,28 +110,64 @@ public class Approach1 {
 			logger.info("-------------------------------------------");
 
 			SemanticLabel bestMatch = selectBestMatchedSemanticLabel(matchedSemanticLabels);
-			outSemanticLabels.add(bestMatch);
+			outputSemanticLabels.add(bestMatch);
 
 			logger.info("Best Match: ");
 			bestMatch.print();
 			logger.info("-------------------------------------------");
 		}
 		
-		if (outSemanticLabels == null || outSemanticLabels.size() == 0) {
+		if (outputSemanticLabels == null || outputSemanticLabels.size() == 0) {
 			logger.info("The output model does not have any semantic label.");
-			return null;
+			return;
 		}
 
 		logger.info("=====================================================================");
 		logger.info("Output Semantic Labels: ");
-		for (SemanticLabel sl: outSemanticLabels)
+		for (SemanticLabel sl: outputSemanticLabels)
 			sl.print();
 		logger.info("=====================================================================");
 		
-		DirectedWeightedMultigraph<Node, Link> hypothesis = this.buildAlignmentGraph(outSemanticLabels);
-		this.buildSourceTargetLinkCounterMap();
+	}
+	
+	private List<Node> computeSteinerNodes() {
 		
-		return hypothesis;
+		List<Node> steinerNodes = new ArrayList<Node>();
+		
+		Alignment alignment = new Alignment(this.ontologyManager);
+		for (SemanticLabel sl : this.outputSemanticLabels) {
+			ColumnNode c = alignment.createColumnNode(sl.getLeafName(), sl.getLeafName());
+			steinerNodes.add(c);
+		}
+		
+		return steinerNodes;
+	}
+	
+	public DirectedWeightedMultigraph<Node, Link> buildGraph(List<SemanticLabel> semanticLabels) {
+		
+		Alignment alignment = new Alignment(this.ontologyManager);
+		
+		for (SemanticLabel sl : semanticLabels) {
+			InternalNode n = alignment.addInternalNodeWithoutUpdatingGraph(sl.getNodeLabel());
+//			ColumnNode c = alignment.addColumnNode("H" + String.valueOf(i), sl.getLeafName());
+			ColumnNode c = alignment.addColumnNodeWithoutUpdatingGraph(sl.getLeafName(), sl.getLeafName());
+			DataPropertyLink link = alignment.addDataPropertyLink(n, c, sl.getLinkLabel(), false);
+			break;
+		}
+		
+		alignment.updateGraph();
+		return alignment.getGraph();
+	}
+	
+	public DirectedWeightedMultigraph<Node, Link> hypothesize(
+			DirectedWeightedMultigraph<Node, Link> graph, 
+			List<Node> steinerNodes) {
+		UndirectedGraph<Node, Link> undirectedGraph = new AsUndirectedGraph<Node, Link>(graph);
+		logger.info("computing steiner tree ...");
+		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodes);
+		DirectedWeightedMultigraph<Node, Link> tree = 
+				(DirectedWeightedMultigraph<Node, Link>)GraphUtil.asDirectedGraph(steinerTree.getSteinerTree());
+		return tree;
 	}
 	
 	private List<SemanticLabel> getModelSemanticLabels(
@@ -205,28 +257,7 @@ public class Approach1 {
 //		matchedSemanticLabels.get(indexOfMostFrequentSemanticLabel).print();
 		return matchedSemanticLabels.get(indexOfMostFrequentSemanticLabel);
 	}
-	
-	private DirectedWeightedMultigraph<Node, Link> buildAlignmentGraph(List<SemanticLabel> semanticLabels) {
-		
-		Alignment alignment = new Alignment(this.ontologyManager);
-		
-		for (int i = 0; i < semanticLabels.size(); i++) {
-			SemanticLabel sl = semanticLabels.get(i);
-			InternalNode n = alignment.addInternalNodeWithoutUpdatingGraph(sl.getNodeLabel());
-//			ColumnNode c = alignment.addColumnNode("H" + String.valueOf(i), sl.getLeafName());
-			ColumnNode c = alignment.addColumnNodeWithoutUpdatingGraph(sl.getLeafName(), sl.getLeafName());
-			DataPropertyLink link = alignment.addDataPropertyLink(n, c, sl.getLinkLabel(), false);
-			break;
-		}
-		
-		alignment.updateGraph();
-		
-		updateWeights(alignment.getGraph(), getInitialLinkWeight());
-		alignment.align();
-		DirectedWeightedMultigraph<Node, Link> steinerTree = alignment.getSteinerTree();
-		return steinerTree;
-	}
-	
+
 	private double getInitialLinkWeight() {
 		double w = 0;
 		for (ServiceModel sm : this.trainingData) {
@@ -236,9 +267,10 @@ public class Approach1 {
 		return w;
 	}
 	
-	private void updateWeights(DirectedWeightedMultigraph<Node, Link> graph, double initialWeight) {
+	public void updateWeights(DirectedWeightedMultigraph<Node, Link> graph) {
 		String key;
 		Integer count;
+		double initialWeight = this.getInitialLinkWeight();
 		double w;
 		for (Link link : graph.edgeSet()) {
 			
@@ -273,6 +305,54 @@ public class Approach1 {
 		}
 	}
 	
+	private static void testApproach() throws IOException {
+		
+		List<ServiceModel> serviceModels = ModelReader.importServiceModels();
+		List<ServiceModel> trainingData = new ArrayList<ServiceModel>();
+		
+		int inputModelIndex = 0;
+		for (int i = 0; i < serviceModels.size(); i++) {
+			serviceModels.get(i).computeMatchedSubGraphs(1);
+			if (i != inputModelIndex) trainingData.add(serviceModels.get(i));
+		}
+		
+		DirectedWeightedMultigraph<Node, Link> inputModel = serviceModels.get(inputModelIndex).getModels().get(0);
+		DirectedWeightedMultigraph<Node, Link> oututModel = serviceModels.get(inputModelIndex).getModels().get(1);
+		DirectedWeightedMultigraph<Node, Link> hypothesis;
+
+		OntologyManager ontManager = new OntologyManager();
+		ontManager.doImport(new File(Approach1.ontologyDir + "dbpedia_3.8.owl"));
+		ontManager.doImport(new File(Approach1.ontologyDir + "foaf.rdf"));
+		ontManager.doImport(new File(Approach1.ontologyDir + "geonames.rdf"));
+		ontManager.doImport(new File(Approach1.ontologyDir + "wgs84_pos.xml"));
+		ontManager.doImport(new File(Approach1.ontologyDir + "helper.owl"));
+		ontManager.updateCache();
+//		ontManager.doImport(new File(this.ontologyDir + "wgs84_pos.xml"));
+//		ontManager.doImport(new File(this.ontologyDir + "schema.rdf"));
+		
+		Approach1 app = new Approach1(trainingData, ontManager);
+		app.preprocess(inputModel);
+		
+		DirectedWeightedMultigraph<Node, Link> graph = app.buildGraph(app.getOutputSemanticLabels());
+		
+		try {
+			GraphUtil.serialize(graph, graphPath);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+//		DirectedWeightedMultigraph<Node, Link> graph = GraphUtil.deserialize(graphPath);
+
+		app.updateWeights(graph);
+		List<Node> steinerNodes = app.computeSteinerNodes();
+		hypothesis = app.hypothesize(graph, steinerNodes);
+		
+		GraphUtil.printGraph(hypothesis);
+		GraphUtil.printGraphSimple(hypothesis);
+		
+		GraphVizUtil.exportJGraphToGraphvizFile(hypothesis, outputPath);
+	}
+	
 	private static void testSelectionOfBestMatch() {
 		
 		Label nodeLabel1 = new Label("n2"); Label linkLabel1 = new Label("e1");
@@ -302,40 +382,6 @@ public class Approach1 {
 		semanticLabels.add(sl7); semanticLabels.add(sl8); semanticLabels.add(sl9);
 		
 		new Approach1(null, null).selectBestMatchedSemanticLabel(semanticLabels);
-	}
-
-	private static void testApproach() throws IOException {
-		
-		List<ServiceModel> serviceModels = ModelReader.importServiceModels();
-		List<ServiceModel> trainingData = new ArrayList<ServiceModel>();
-		
-		int inputModelIndex = 0;
-		for (int i = 0; i < serviceModels.size(); i++) {
-			serviceModels.get(i).computeMatchedSubGraphs(1);
-			if (i != inputModelIndex) trainingData.add(serviceModels.get(i));
-		}
-		
-		DirectedWeightedMultigraph<Node, Link> inputModel = serviceModels.get(inputModelIndex).getModels().get(0);
-		DirectedWeightedMultigraph<Node, Link> oututModel = serviceModels.get(inputModelIndex).getModels().get(1);
-		DirectedWeightedMultigraph<Node, Link> hypothesis;
-
-		OntologyManager ontManager = new OntologyManager();
-		ontManager.doImport(new File(Approach1.ontologyDir + "dbpedia_3.8.owl"));
-		ontManager.doImport(new File(Approach1.ontologyDir + "foaf.rdf"));
-		ontManager.doImport(new File(Approach1.ontologyDir + "geonames.rdf"));
-		ontManager.doImport(new File(Approach1.ontologyDir + "wgs84_pos.xml"));
-		ontManager.doImport(new File(Approach1.ontologyDir + "helper.owl"));
-		ontManager.updateCache();
-//		ontManager.doImport(new File(this.ontologyDir + "wgs84_pos.xml"));
-//		ontManager.doImport(new File(this.ontologyDir + "schema.rdf"));
-		
-		Approach1 app = new Approach1(trainingData, ontManager);
-		hypothesis = app.hypothesize(inputModel);
-		
-		GraphUtil.printGraph(hypothesis);
-		GraphUtil.printGraphSimple(hypothesis);
-		
-		GraphVizUtil.exportJGraphToGraphvizFile(hypothesis, outputPath);
 	}
 	
 	public static void main(String[] args) {

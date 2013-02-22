@@ -20,8 +20,14 @@
  ******************************************************************************/
 package edu.isi.karma.rep.alignment;
 
-public class Label {
+import java.io.Serializable;
 
+public class Label implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String uri;
 	private String ns;
 	private String prefix;
