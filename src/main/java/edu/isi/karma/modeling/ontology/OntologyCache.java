@@ -68,6 +68,7 @@ class OntologyCache {
 	// hashmap: domain+range -> object properties
 	private HashMap<String, List<String>> directDomainRangeProperties;
 	private HashMap<String, List<String>> indirectDomainRangeProperties;
+	private HashMap<String, List<String>> notDirectDomainRangeProperties;
 
 	// hashmap: class -> subclasses
 	private HashMap<String, List<String>> directSubClasses;
@@ -170,6 +171,10 @@ class OntologyCache {
 		return directDomainRangeProperties;
 	}
 
+	public HashMap<String, List<String>> getNotDirectDomainRangeProperties() {
+		return notDirectDomainRangeProperties;
+	}
+
 	public HashMap<String, List<String>> getIndirectDomainRangeProperties() {
 		return indirectDomainRangeProperties;
 	}
@@ -262,6 +267,7 @@ class OntologyCache {
 		
 		this.directDomainRangeProperties = new HashMap<String, List<String>>();
 		this.indirectDomainRangeProperties = new HashMap<String, List<String>>();
+		this.notDirectDomainRangeProperties = new HashMap<String, List<String>>();
 		
 		this.propertyInverse = new HashMap<String, Label>();
 		this.propertyInverseOf = new HashMap<String, Label>();
@@ -598,18 +604,18 @@ class OntologyCache {
 			else 
 				temp.addAll(ontHandler.getResourcesUris(directDomains));
 			
-			for (int i = 0; i < directDomains.size(); i++) {
-				temp = directOutDataProperties.get(directDomains.get(i).getURI());
+			for (OntResource domain : directDomains) {
+				temp = directOutDataProperties.get(domain.getURI());
 				if (temp == null) {
 					temp = new ArrayList<String>();
-					directOutDataProperties.put(directDomains.get(i).getURI(), temp);
+					directOutDataProperties.put(domain.getURI(), temp);
 				}
 				temp.add(dp.getURI());
 			}
 
-			for (int i = 0; i < directDomains.size(); i++) {
-				allDomains.add(directDomains.get(i));
-				ontHandler.getChildren(directDomains.get(i), allDomains, true);
+			for (OntResource domain : directDomains) {
+				allDomains.add(domain);
+				ontHandler.getChildren(domain, allDomains, true);
 			}
 
 			temp  = propertyIndirectDomains.get(dp.getURI());
@@ -618,11 +624,11 @@ class OntologyCache {
 			else 
 				temp.addAll(ontHandler.getResourcesUris(allDomains));
 			
-			for (int i = 0; i < allDomains.size(); i++) {
-				temp = indirectOutDataProperties.get(allDomains.get(i).getURI());
+			for (OntResource domain : allDomains) {
+				temp = indirectOutDataProperties.get(domain.getURI());
 				if (temp == null) { 
 					temp = new ArrayList<String>();
-					indirectOutDataProperties.put(allDomains.get(i).getURI(), temp);
+					indirectOutDataProperties.put(domain.getURI(), temp);
 				}
 				temp.add(dp.getURI());
 			}
@@ -640,9 +646,9 @@ class OntologyCache {
 			else 
 				temp.addAll(ontHandler.getResourcesUris(directRanges));
 			
-			for (int i = 0; i < directRanges.size(); i++) {
-				allRanges.add(directRanges.get(i));
-				ontHandler.getChildren(directRanges.get(i), allRanges, true);
+			for (OntResource range : directRanges) {
+				allRanges.add(range);
+				ontHandler.getChildren(range, allRanges, true);
 			}
 			
 			temp  = propertyIndirectRanges.get(dp.getURI());
@@ -698,18 +704,18 @@ class OntologyCache {
 			else 
 				temp.addAll(ontHandler.getResourcesUris(directDomains));
 			
-			for (int i = 0; i < directDomains.size(); i++) {
-				temp = directOutObjectProperties.get(directDomains.get(i).getURI());
+			for (OntResource domain : directDomains) {
+				temp = directOutObjectProperties.get(domain.getURI());
 				if (temp == null) {
 					temp = new ArrayList<String>();
-					directOutObjectProperties.put(directDomains.get(i).getURI(), temp);
+					directOutObjectProperties.put(domain.getURI(), temp);
 				}
 				temp.add(op.getURI());
 			}
 
-			for (int i = 0; i < directDomains.size(); i++) {
-				allDomains.add(directDomains.get(i));
-				ontHandler.getChildren(directDomains.get(i), allDomains, true);
+			for (OntResource domain : directDomains) {
+				allDomains.add(domain);
+				ontHandler.getChildren(domain, allDomains, true);
 			}
 
 			temp  = propertyIndirectDomains.get(op.getURI());
@@ -718,11 +724,11 @@ class OntologyCache {
 			else 
 				temp.addAll(ontHandler.getResourcesUris(allDomains));
 			
-			for (int i = 0; i < allDomains.size(); i++) {
-				temp = indirectOutObjectProperties.get(allDomains.get(i).getURI());
+			for (OntResource domain : allDomains) {
+				temp = indirectOutObjectProperties.get(domain.getURI());
 				if (temp == null) { 
 					temp = new ArrayList<String>();
-					indirectOutObjectProperties.put(allDomains.get(i).getURI(), temp);
+					indirectOutObjectProperties.put(domain.getURI(), temp);
 				}
 				temp.add(op.getURI());
 			}
@@ -740,18 +746,18 @@ class OntologyCache {
 			else 
 				temp.addAll(ontHandler.getResourcesUris(directRanges));
 			
-			for (int i = 0; i < directRanges.size(); i++) {
-				temp = directInObjectProperties.get(directRanges.get(i).getURI());
+			for (OntResource range : directRanges) {
+				temp = directInObjectProperties.get(range.getURI());
 				if (temp == null) {
 					temp = new ArrayList<String>();
-					directInObjectProperties.put(directRanges.get(i).getURI(), temp);
+					directInObjectProperties.put(range.getURI(), temp);
 				}
 				temp.add(op.getURI());
 			}
 			
-			for (int i = 0; i < directRanges.size(); i++) {
-				allRanges.add(directRanges.get(i));
-				ontHandler.getChildren(directRanges.get(i), allRanges, true);
+			for (OntResource range : directRanges) {
+				allRanges.add(range);
+				ontHandler.getChildren(range, allRanges, true);
 			}
 			
 			temp  = propertyIndirectRanges.get(op.getURI());
@@ -760,35 +766,49 @@ class OntologyCache {
 			else 
 				temp.addAll(ontHandler.getResourcesUris(allRanges));
 			
-			for (int i = 0; i < allRanges.size(); i++) {
-				temp = indirectInObjectProperties.get(allRanges.get(i).getURI());
+			for (OntResource range : allRanges) {
+				temp = indirectInObjectProperties.get(range.getURI());
 				if (temp == null) {
 					temp = new ArrayList<String>();
-					indirectInObjectProperties.put(allRanges.get(i).getURI(), temp);
+					indirectInObjectProperties.put(range.getURI(), temp);
 				}
 				temp.add(op.getURI());
 			}
 			
-			for (int i = 0; i < directDomains.size(); i++) {
-				for (int j = 0; j < directRanges.size(); j++) {
+			for (OntResource domain : directDomains) {
+				for (OntResource range : directRanges) {
 					temp = 
-						directDomainRangeProperties.get(directDomains.get(i).toString() + directRanges.get(j).toString());
+						directDomainRangeProperties.get(domain.toString() + range.toString());
 					if (temp == null) {
 						temp = new ArrayList<String>();
-						directDomainRangeProperties.put(directDomains.get(i).toString() + directRanges.get(j).toString(), temp);
+						directDomainRangeProperties.put(domain.toString() + range.toString(), temp);
 					}
 					if (temp.indexOf(op.getURI()) == -1)
 						temp.add(op.getURI());
 				}
 			}
 			
-			for (int i = 0; i < allDomains.size(); i++) {
-				for (int j = 0; j < allRanges.size(); j++) {
+			for (OntResource domain : allDomains) {
+				for (OntResource range : allRanges) {
 					temp = 
-						indirectDomainRangeProperties.get(allDomains.get(i).toString() + allRanges.get(j).toString());
+						indirectDomainRangeProperties.get(domain.toString() + range.toString());
 					if (temp == null) {
 						temp = new ArrayList<String>();
-						indirectDomainRangeProperties.put(allDomains.get(i).toString() + allRanges.get(j).toString(), temp);
+						indirectDomainRangeProperties.put(domain.toString() + range.toString(), temp);
+					}
+					if (temp.indexOf(op.getURI()) == -1)
+						temp.add(op.getURI());
+				}
+			}
+
+			for (OntResource domain : allDomains) {
+				for (OntResource range : allRanges) {
+					if (directDomains.contains(domain) && directRanges.contains(range)) continue;
+					temp = 
+						notDirectDomainRangeProperties.get(domain.toString() + range.toString());
+					if (temp == null) {
+						temp = new ArrayList<String>();
+						notDirectDomainRangeProperties.put(domain.toString() + range.toString(), temp);
 					}
 					if (temp.indexOf(op.getURI()) == -1)
 						temp.add(op.getURI());
@@ -949,13 +969,13 @@ class OntologyCache {
 			allDomains.addAll(indirectDomains);
 			allRanges.addAll(indirectRanges);
 			
-			for (int i = 0; i < allDomains.size(); i++) {
-				for (int j = 0; j < allRanges.size(); j++) {
+			for (String domain : allDomains) {
+				for (String range : allRanges) {
 					temp = 
-						indirectDomainRangeProperties.get(allDomains.get(i).toString() + allRanges.get(j).toString());
+						indirectDomainRangeProperties.get(domain + range);
 					if (temp == null) {
 						temp = new ArrayList<String>();
-						indirectDomainRangeProperties.put(allDomains.get(i).toString() + allRanges.get(j).toString(), temp);
+						indirectDomainRangeProperties.put(domain + range, temp);
 					}
 					if (temp.indexOf(p) == -1)
 						temp.add(p);

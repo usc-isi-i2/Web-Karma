@@ -400,7 +400,29 @@ public class OntologyManager {
 		if (results == null)
 			return new ArrayList<String>();
 		
-		return results;	}
+		return results;	
+	}
+	
+	/**
+	 * This method extracts just the inherited object properties between two classes (object properties 
+	 * who have @param domainClassUri in their domain and @param rangeClassUri in their range).
+	 * If @param inheritance is true, it also returns the object properties inherited from parents.
+	 * @param domainClassUri
+	 * @param rangeClassUri
+	 * @param inheritance
+	 * @return
+	 */
+	public List<String> getOnlyInheritedObjectProperties(String domainClassUri, String rangeClassUri) {
+		
+		List<String> results = null;
+
+		results = ontCache.getNotDirectDomainRangeProperties().get(domainClassUri+rangeClassUri);
+		
+		if (results == null)
+			return new ArrayList<String>();
+		
+		return results;	
+	}
 	
 	/**
 	 * This function takes a class uri and returns the datatype properties who have this class in their domain. 
