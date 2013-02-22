@@ -210,6 +210,7 @@ public class Approach1 {
 //			ColumnNode c = alignment.addColumnNode("H" + String.valueOf(i), sl.getLeafName());
 			ColumnNode c = alignment.addColumnNode(sl.getLeafName(), sl.getLeafName());
 			DataPropertyLink link = alignment.addDataPropertyLink(n, c, sl.getLinkLabel(), false);
+			break;
 		}
 		alignment.align();
 		DirectedWeightedMultigraph<Node, Link> steinerTree = alignment.getSteinerTree();

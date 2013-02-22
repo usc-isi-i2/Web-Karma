@@ -25,6 +25,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -359,18 +363,18 @@ public class GraphBuilder {
 			float elapsedTimeSec;
 
 			
-			List<Node> newNodes = new ArrayList<Node>();
-			addNodeClosure(node, newNodes);
-			newNodes.add(node);
-			addNodeClosure(node, newNodes);
+//			List<Node> newNodes = new ArrayList<Node>();
+//			addNodeClosure(node, newNodes);
+//			newNodes.add(node);
+//			addNodeClosure(node, newNodes);
 			
-//			addNodeClosure(node, new ArrayList<Node>());
+			addNodeClosure(node, new ArrayList<Node>());
 			long addNodesClosure = System.currentTimeMillis();
 			elapsedTimeSec = (addNodesClosure - start)/1000F;
 			logger.info("time to add nodes closure: " + elapsedTimeSec);
 
-			updateLinks2(newNodes);
-//			updateLinks();
+//			updateLinks2();
+			updateLinks();
 			
 			// if we consider the set of current nodes as S1 and the set of new added nodes as S2:
 			// (*) the direction of all the subclass links between S1 and S2 is from S2 to S1
@@ -904,6 +908,238 @@ public class GraphBuilder {
 		logger.debug("exit>");
 	}
 
+	private void updateLinksMultiThread() {
+
+		logger.debug("<enter");
+
+		HashMap<String, List<DomainRangePair>> opDirectDomainRangePairs = 
+				this.ontologyManager.getObjectPropertyDirectDomainRangePairs();
+		HashMap<String, List<DomainRangePair>> opNotDirectDomainRangePairs = 
+				this.ontologyManager.getObjectPropertyNotDirectDomainRangePairs();
+		List<SubclassSuperclassPair> indirectSubclassSuperclassPairs = 
+				this.ontologyManager.getIndirectSubclassSuperclassPairs();
+		
+		String domainUri = "", rangeUri = "";
+		String subclassUri = "", superclassUri = "";
+		
+		String id = "";
+		Label label = null;
+		
+		for (String uri : opDirectDomainRangePairs.keySet()) {
+			for (DomainRangePair dr : opDirectDomainRangePairs.get(uri)) {
+				domainUri = dr.getDomain();
+				rangeUri = dr.getRange();
+				
+				List<Node> domains = this.uriToNodesMap.get(domainUri);
+				List<Node> ranges = this.uriToNodesMap.get(rangeUri);
+				
+				if (domains == null || ranges == null) continue;
+				
+				for (Node source : domains)
+					for (Node target : ranges) {
+						String key = source.getId() + target.getId() + uri;
+						// check to see if the link is duplicate or not
+						if (!sourceToTargetLinkUris.contains(key)) {
+							id = linkIdFactory.getLinkId(uri);
+							label = ontologyManager.getUriLabel(uri);
+							Link link = new ObjectPropertyLink(id, label);
+							addWeightedLink(source, target, link, ModelingParams.DEFAULT_WEIGHT);
+						}
+					}
+			}
+		}
+
+		int poolSize = opNotDirectDomainRangePairs.keySet().size();
+		logger.info("thread pool size: " + poolSize);
+	    ExecutorService service = Executors.newFixedThreadPool(poolSize);
+	    List<Future<?>> futures = new ArrayList<Future<?>>();
+	    int count = 0;
+	    for (String uri : opNotDirectDomainRangePairs.keySet()) {
+	    	System.out.println(count);
+	    	System.out.println(uri + " * number of pairs * " + opNotDirectDomainRangePairs.get(uri).size());
+			Future<?> f = service.submit(new GraphUpdateLinksThread(this, uri, opNotDirectDomainRangePairs.get(uri)));
+		    futures.add(f);
+		    count ++;
+		}
+
+	    count = 0;
+	    System.out.println("done submitting ... ");
+	    // wait for all tasks to complete before continuing
+	    for (Future<?> f : futures)
+	    {
+	    	System.out.println(count);
+	    	try {
+				f.get();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+	    	count ++;
+	    }
+
+		//shut down the executor service so that this thread can exit
+		service.shutdownNow();
+		
+		// subclass links
+		for (SubclassSuperclassPair ss : indirectSubclassSuperclassPairs) {
+			subclassUri = ss.getSubclass();
+			superclassUri = ss.getSuperclass();
+			
+			List<Node> subclasses = this.uriToNodesMap.get(subclassUri);
+			List<Node> superclasses = this.uriToNodesMap.get(superclassUri);
+			
+			if (subclasses == null || superclasses == null) continue;
+			
+			for (Node subclass : subclasses)
+				for (Node superclass : superclasses) {
+					String key = subclass.getId() + superclass.getId() + SubClassLink.getFixedLabel().getUri();
+					// check to see if the link is duplicate or not
+					if (!sourceToTargetLinkUris.contains(key)) {
+						id = linkIdFactory.getLinkId(SubClassLink.getFixedLabel().getUri());
+						SubClassLink subClassOfLink = new SubClassLink(id);
+						addWeightedLink(subclass, superclass, subClassOfLink, ModelingParams.MAX_WEIGHT);
+					}
+				}
+		}
+
+		logger.debug("exit>");
+	}
+	
+	private void updateLinks2() {
+		
+		logger.debug("<enter");
+		
+		Node[] nodes = this.graph.vertexSet().toArray(new Node[0]);
+		logger.debug("number of vertices: " + nodes.length);
+
+		List<String> directObjectProperties = new ArrayList<String>();
+		List<String> inheritedObjectProperties = new ArrayList<String>();
+
+		Node source;
+		Node target;
+		String sourceUri;
+		String targetUri;
+
+		String uri = null;
+		String id = null;
+		Label label = null;
+
+		for (Node n1 : nodes) {
+			for (Node n2 : nodes) {
+
+				if (n1.equals(n2))
+					continue;
+
+				source = n1;
+				target = n2;
+
+				sourceUri = source.getLabel().getUri();
+				targetUri = target.getLabel().getUri();
+
+				// There is no outgoing link from column nodes and literal nodes
+				if (!(source instanceof InternalNode))
+					break;
+
+				// The alignment explicitly adds a link from the domain to the column node and literal node, 
+				// so we don't need to worry about it.
+				if (!(target instanceof InternalNode))
+					continue;
+
+				// Add object property links between internal nodes
+				// The code for the case that both source and target are internal nodes
+				
+				// create a link from the domain to the range
+				directObjectProperties = ontologyManager.getObjectProperties(sourceUri, targetUri, false);
+
+				for (int u = 0; u < directObjectProperties.size(); u++) {
+					uri = directObjectProperties.get(u);
+
+					String key = source.getId() + target.getId() + uri;
+					// check to see if the link is duplicate or not
+					if (sourceToTargetLinkUris.contains(key)) continue;
+
+					id = linkIdFactory.getLinkId(uri);
+					label = ontologyManager.getUriLabel(uri);
+					Link link = new ObjectPropertyLink(id, label);
+					addWeightedLink(source, target, link, ModelingParams.DEFAULT_WEIGHT);
+				}
+				
+				// create a link from the domain and all its subclasses of ObjectProperties to range and all its subclasses
+				inheritedObjectProperties = ontologyManager.getOnlyInheritedObjectProperties(sourceUri, targetUri);
+				for (int u = 0; u < inheritedObjectProperties.size(); u++) {
+					uri = inheritedObjectProperties.get(u);
+
+					String key = source.getId() + target.getId() + uri;
+					// check to see if the link is duplicate or not
+					if (sourceToTargetLinkUris.contains(key)) continue;
+
+					id = linkIdFactory.getLinkId(uri);
+					label = ontologyManager.getUriLabel(uri);
+					Link link = new ObjectPropertyLink(id, label);
+					// prefer the links that are actually defined between source and target in the ontology 
+					// over inherited ones.
+					addWeightedLink(source, target, link, ModelingParams.DEFAULT_WEIGHT + ModelingParams.MIN_WEIGHT);
+				}
+
+				// Add subclass links between internal nodes
+				// we have to check both sides.
+				if (ontologyManager.isSubClass(targetUri, sourceUri, false)) {
+					// target is subclass of source
+					String key = target.getId() + source.getId() + SubClassLink.getFixedLabel().getUri();
+					// check to see if the link is duplicate or not
+					if (sourceToTargetLinkUris.contains(key)) continue;
+					id = linkIdFactory.getLinkId(SubClassLink.getFixedLabel().getUri());
+					SubClassLink subClassOfLink = new SubClassLink(id);
+					addWeightedLink(target, source, subClassOfLink, ModelingParams.MAX_WEIGHT);
+				}
+			}
+		}		
+
+		logger.debug("exit>");
+	}
+	
+	private void updateLinks2MultiThread() {
+		
+		logger.debug("<enter");
+
+		Node[] nodes = this.graph.vertexSet().toArray(new Node[0]);
+		int poolSize = nodes.length;
+		logger.info("thread pool size: " + poolSize);
+	    ExecutorService service = Executors.newFixedThreadPool(poolSize);
+	    List<Future<?>> futures = new ArrayList<Future<?>>();
+	    int count = 0;
+	    
+		for (Node n1 : nodes) {
+
+	    	System.out.println(count);
+	    	//System.out.println(n1.getId());
+			Future<?> f = service.submit(new GraphUpdateLinksThread2(n1, Arrays.asList(nodes)));
+		    futures.add(f);
+		    count ++;
+		}
+
+		System.out.println("done submitting ... ");
+	    // wait for all tasks to complete before continuing
+	    for (Future<?> f : futures)
+	    {
+	    	System.out.println(count);
+	    	try {
+				f.get();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+	    	count ++;
+	    }
+
+		//shut down the executor service so that this thread can exit
+		service.shutdownNow();
+
+		logger.debug("exit>");
+	}
+	
 	private void updateLinksFromThing() {
 
 		logger.debug("<enter");
@@ -955,154 +1191,6 @@ public class GraphBuilder {
 
 		logger.debug("exit>");
 
-	}
-
-
-	private void updateLinksBetweenTwoSets(List<Node> set1, List<Node> set2) {
-		
-		logger.debug("<enter");
-
-		logger.debug("number of set1 vertices (first loop): " + set1.size());
-		logger.debug("number of set2 vertices (second loop): " + set2.size());
-
-//		int poolSize = set1.size();
-//		logger.info("thread pool size: " + poolSize);
-//	    ExecutorService service = Executors.newFixedThreadPool(poolSize);
-//	    List<Future<?>> futures = new ArrayList<Future<?>>();
-//	    int count = 0;
-//	    
-//		for (Node n1 : set1) {
-//
-//	    	System.out.println(count);
-//	    	//System.out.println(n1.getId());
-//			Future<?> f = service.submit(new GraphUpdateLinksThread2(n1, set2));
-//		    futures.add(f);
-//		    count ++;
-//		}
-//
-//		System.out.println("done submitting ... ");
-//	    // wait for all tasks to complete before continuing
-//	    for (Future<?> f : futures)
-//	    {
-//	    	System.out.println(count);
-//	    	try {
-//				f.get();
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			} catch (ExecutionException e) {
-//				e.printStackTrace();
-//			}
-//	    	count ++;
-//	    }
-//
-//		//shut down the executor service so that this thread can exit
-//		service.shutdownNow();
-		
-
-		List<String> directObjectProperties = new ArrayList<String>();
-		List<String> inheritedObjectProperties = new ArrayList<String>();
-
-		Node source;
-		Node target;
-		String sourceUri;
-		String targetUri;
-
-		String uri = null;
-		String id = null;
-		Label label = null;
-
-		for (Node n1 : set1) {
-			for (Node n2 : set2) {
-
-				if (n1.equals(n2))
-					continue;
-
-				for (int k = 0; k < 2; k++) {	
-
-					if (k == 0) {
-						source = n1;
-						target = n2;
-					} else {
-						source = n2;
-						target = n1;
-					}
-
-					sourceUri = source.getLabel().getUri();
-					targetUri = target.getLabel().getUri();
-
-					// There is no outgoing link from column nodes and literal nodes
-					if (!(source instanceof InternalNode))
-						break;
-
-					// The alignment explicitly adds a link from the domain to the column node and literal node, 
-					// so we don't need to worry about it.
-					if (!(target instanceof InternalNode))
-						continue;
-
-					// Add object property links between internal nodes
-					// The code for the case that both source and target are internal nodes
-					
-					// create a link from the domain to the range
-					directObjectProperties = ontologyManager.getObjectProperties(sourceUri, targetUri, false);
-
-					for (int u = 0; u < directObjectProperties.size(); u++) {
-						uri = directObjectProperties.get(u);
-
-						String key = source.getId() + target.getId() + uri;
-						// check to see if the link is duplicate or not
-						if (sourceToTargetLinkUris.contains(key)) continue;
-
-						id = linkIdFactory.getLinkId(uri);
-						label = ontologyManager.getUriLabel(uri);
-						Link link = new ObjectPropertyLink(id, label);
-						addWeightedLink(source, target, link, ModelingParams.DEFAULT_WEIGHT);
-					}
-					
-					// create a link from the domain and all its subclasses of ObjectProperties to range and all its subclasses
-					inheritedObjectProperties = ontologyManager.getOnlyInheritedObjectProperties(sourceUri, targetUri);
-					for (int u = 0; u < inheritedObjectProperties.size(); u++) {
-						uri = inheritedObjectProperties.get(u);
-
-						String key = source.getId() + target.getId() + uri;
-						// check to see if the link is duplicate or not
-						if (sourceToTargetLinkUris.contains(key)) continue;
-
-						id = linkIdFactory.getLinkId(uri);
-						label = ontologyManager.getUriLabel(uri);
-						Link link = new ObjectPropertyLink(id, label);
-						// prefer the links that are actually defined between source and target in the ontology 
-						// over inherited ones.
-						addWeightedLink(source, target, link, ModelingParams.DEFAULT_WEIGHT + ModelingParams.MIN_WEIGHT);
-					}
-
-					// Add subclass links between internal nodes
-					// we have to check both sides.
-					if (ontologyManager.isSubClass(targetUri, sourceUri, false)) {
-						// target is subclass of source
-						String key = target.getId() + source.getId() + SubClassLink.getFixedLabel().getUri();
-						// check to see if the link is duplicate or not
-						if (sourceToTargetLinkUris.contains(key)) continue;
-						id = linkIdFactory.getLinkId(SubClassLink.getFixedLabel().getUri());
-						SubClassLink subClassOfLink = new SubClassLink(id);
-						addWeightedLink(target, source, subClassOfLink, ModelingParams.MAX_WEIGHT);
-					}
-
-				}
-			}
-		}		
-
-		logger.debug("exit>");
-
-	}
-	
-	private void updateLinks2(List<Node> newNodes) {
-
-		logger.debug("<enter");
-
-		Node[] nodes = this.graph.vertexSet().toArray(new Node[0]);
-		updateLinksBetweenTwoSets(Arrays.asList(nodes), newNodes);
-
-		logger.debug("exit>");
 	}
 	
 	public static void main(String[] args) {
