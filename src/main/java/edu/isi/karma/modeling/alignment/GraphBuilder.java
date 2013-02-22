@@ -398,6 +398,49 @@ public class GraphBuilder {
 		return true;
 	}
 	
+	public boolean addNodeWithoutUpdatingGraph(Node node) {
+		
+		logger.debug("<enter");
+
+		if (!addSingleNode(node))
+			return false;
+
+		logger.debug("exit>");		
+		return true;
+	}
+	
+	public void updateGraph() {
+		
+		logger.debug("<enter");
+
+		long start = System.currentTimeMillis();
+		float elapsedTimeSec;
+
+		for (Node node : this.typeToNodesMap.get(NodeType.InternalNode)) 
+			addNodeClosure(node, new ArrayList<Node>());
+
+		long addNodesClosure = System.currentTimeMillis();
+		elapsedTimeSec = (addNodesClosure - start)/1000F;
+		logger.info("time to add nodes closure: " + elapsedTimeSec);
+
+		updateLinks();
+		
+		long updateLinks = System.currentTimeMillis();
+		elapsedTimeSec = (updateLinks - addNodesClosure)/1000F;
+		logger.info("time to update links of the graph: " + elapsedTimeSec);
+		
+		updateLinksFromThing();
+		
+		long updateLinksFromThing = System.currentTimeMillis();
+		elapsedTimeSec = (updateLinksFromThing - updateLinks)/1000F;
+		logger.info("time to update links to Thing (root): " + elapsedTimeSec);
+
+		logger.info("total number of nodes in graph: " + this.graph.vertexSet().size());
+		logger.info("total number of links in graph: " + this.graph.edgeSet().size());
+
+		logger.debug("exit>");		
+	}
+	
 	public boolean addLink(Node source, Node target, Link link) {
 
 		logger.debug("<enter");

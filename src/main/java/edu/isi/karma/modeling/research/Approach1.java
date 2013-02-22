@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -47,6 +48,7 @@ public class Approach1 {
 	private static Logger logger = Logger.getLogger(Approach1.class);
 	private static String ontologyDir = "/Users/mohsen/Dropbox/Service Modeling/ontologies/";
 	private static String outputPath = "/Users/mohsen/Dropbox/Service Modeling/output/output.dot";
+	private HashMap<String, Integer> sourceTargetLinkCounterMap;
 
 	private List<ServiceModel> trainingData;
 	private OntologyManager ontologyManager;
@@ -54,6 +56,7 @@ public class Approach1 {
 	public Approach1(List<ServiceModel> trainingData, OntologyManager ontologyManager) {
 		this.trainingData = trainingData;
 		this.ontologyManager = ontologyManager;
+		this.sourceTargetLinkCounterMap = new HashMap<String, Integer>();
 	}
 	
 	public DirectedWeightedMultigraph<Node, Link> hypothesize(
@@ -109,7 +112,9 @@ public class Approach1 {
 			sl.print();
 		logger.info("=====================================================================");
 		
-		DirectedWeightedMultigraph<Node, Link> hypothesis = buildAlignmentGraph(outSemanticLabels);
+		DirectedWeightedMultigraph<Node, Link> hypothesis = this.buildAlignmentGraph(outSemanticLabels);
+		this.buildSourceTargetLinkCounterMap();
+		
 		return hypothesis;
 	}
 	
@@ -204,17 +209,68 @@ public class Approach1 {
 	private DirectedWeightedMultigraph<Node, Link> buildAlignmentGraph(List<SemanticLabel> semanticLabels) {
 		
 		Alignment alignment = new Alignment(this.ontologyManager);
+		
 		for (int i = 0; i < semanticLabels.size(); i++) {
 			SemanticLabel sl = semanticLabels.get(i);
-			InternalNode n = alignment.addInternalNode(sl.getNodeLabel());
+			InternalNode n = alignment.addInternalNodeWithoutUpdatingGraph(sl.getNodeLabel());
 //			ColumnNode c = alignment.addColumnNode("H" + String.valueOf(i), sl.getLeafName());
-			ColumnNode c = alignment.addColumnNode(sl.getLeafName(), sl.getLeafName());
+			ColumnNode c = alignment.addColumnNodeWithoutUpdatingGraph(sl.getLeafName(), sl.getLeafName());
 			DataPropertyLink link = alignment.addDataPropertyLink(n, c, sl.getLinkLabel(), false);
 			break;
 		}
+		
+		alignment.updateGraph();
+		
+		updateWeights(alignment.getGraph(), getInitialLinkWeight());
 		alignment.align();
 		DirectedWeightedMultigraph<Node, Link> steinerTree = alignment.getSteinerTree();
 		return steinerTree;
+	}
+	
+	private double getInitialLinkWeight() {
+		double w = 0;
+		for (ServiceModel sm : this.trainingData) {
+			DirectedWeightedMultigraph<Node, Link> m = sm.getModels().get(1);
+			w += m.edgeSet().size();
+		}
+		return w;
+	}
+	
+	private void updateWeights(DirectedWeightedMultigraph<Node, Link> graph, double initialWeight) {
+		String key;
+		Integer count;
+		double w;
+		for (Link link : graph.edgeSet()) {
+			
+			w = initialWeight;
+			
+			key = link.getSource().getLabel().getUri() + 
+					link.getTarget().getLabel().getUri() +
+					link.getLabel().getUri();
+			
+			count = this.sourceTargetLinkCounterMap.get(key);
+			if (count != null) w -= count;
+			graph.setEdgeWeight(link, w);
+		}
+	}
+	
+	private void buildSourceTargetLinkCounterMap() {
+		Integer count;
+		for (ServiceModel sm : this.trainingData) {
+			DirectedWeightedMultigraph<Node, Link> m = sm.getModels().get(1);
+			for (Link link : m.edgeSet()) {
+				Node source = link.getSource();
+				Node target = link.getTarget();
+				if (source instanceof InternalNode && target instanceof InternalNode) {
+					String key = source.getLabel().getUri() +
+								 target.getLabel().getUri() + 
+								 link.getLabel().getUri();
+					count = sourceTargetLinkCounterMap.get(key);
+					if (count == null) sourceTargetLinkCounterMap.put(key, 1);
+					else sourceTargetLinkCounterMap.put(key, ++count);
+				}
+			}
+		}
 	}
 	
 	private static void testSelectionOfBestMatch() {

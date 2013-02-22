@@ -31,6 +31,8 @@ import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
 
+import com.rits.cloning.Cloner;
+
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.ontology.OntologyUpdateListener;
@@ -81,10 +83,19 @@ public class Alignment implements OntologyUpdateListener {
 		return this.root;
 	}
 	
+	public Alignment getAlignmentClone() {
+		Cloner cloner=new Cloner();
+		return cloner.deepClone(this);
+	}
+	
 	public DirectedWeightedMultigraph<Node, Link> getSteinerTree() {
 		if (this.steinerTree == null) align();
 		// GraphUtil.printGraph(this.steinerTree);
 		return this.steinerTree;
+	}
+	
+	public DirectedWeightedMultigraph<Node, Link> getGraph() {
+		return this.graphBuilder.getGraph();
 	}
 	
 	public Set<Node> getGraphNodes() {
@@ -158,6 +169,26 @@ public class Alignment implements OntologyUpdateListener {
 		InternalNode node = new InternalNode(id, label);
 		if (this.graphBuilder.addNode(node)) return node;
 		return null;	
+	}
+	
+	public ColumnNode addColumnNodeWithoutUpdatingGraph(String hNodeId, String columnName) {
+		
+		// use hNodeId as id of the node
+		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName);
+		if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) return node;
+		return null;
+	}
+	
+	public InternalNode addInternalNodeWithoutUpdatingGraph(Label label) {
+		
+		String id = nodeIdFactory.getNodeId(label.getUri());
+		InternalNode node = new InternalNode(id, label);
+		if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) return node;
+		return null;	
+	}
+	
+	public void updateGraph() {
+		this.graphBuilder.updateGraph();
 	}
 	
 	public ColumnNode createColumnNode(String hNodeId, String columnName) {
