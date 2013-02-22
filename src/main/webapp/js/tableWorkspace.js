@@ -27,10 +27,15 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	
 	// Adding mouse handlers to the div
 	optionsDiv.mouseenter(function() {
+		if ($(this).data("timer") != null)
+			clearTimeout($(this).data("timer"));
 		$(this).show();
 	});
 	optionsDiv.mouseleave(function() {
-		$(this).hide();
+		var timer = setTimeout(function() {
+  			$("#WorksheetOptionsDiv").hide();
+		}, 700);
+		$(this).data("timer", timer);
 	});
 	
 	// Adding handlers to the buttons

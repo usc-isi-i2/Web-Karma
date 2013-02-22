@@ -122,53 +122,65 @@ public class SetSemanticTypeCommand extends Command {
 		for (int i = 0; i < typesArr.length(); i++) {
 			try {
 				JSONObject type = typesArr.getJSONObject(i);
+				String domainValue = type.getString(ClientJsonKeys.Domain.name());
+				String fullTypeValue = type.getString(ClientJsonKeys.FullType.name());
 				System.out.println("FULL TYPE:" + type.getString(ClientJsonKeys.FullType.name()));
 				System.out.println("Domain: " + type.getString(ClientJsonKeys.Domain.name()));
 				
 				// Look if the domain value exists. If it exists, then it is a domain of a data property. If not
 				// then the value in FullType has the the value which indicates if a new class instance is needed
 				// or an existing class instance should be used (this is the case when just the class is chosen as a sem type).
-				Label domainName = null;
-				Node classNode = null;
-				String domainValue = type.getString(ClientJsonKeys.Domain.name());
+//				Label domainName = null;
+				Node newDomainNode = null;
+				boolean domainNodeAlreadyExistsInGraph = false;
+				boolean domainValueExists = false;
 				if (!domainValue.equals("")) {
-					// Check if the domain is an existing instance
-					classNode = alignment.getNodeById(domainValue);
-					
-					if (classNode == null) {
-						Label domainLabel = ontMgr.getUriLabel(domainValue);
-						if (domainLabel == null) {
-							logger.error("URI/ID does not exist in the ontology or model: " + domainValue);
-							continue;
-						}
-						classNode = alignment.addInternalClassNode(domainLabel);
-					}
-					domainName = classNode.getLabel();
+					domainValueExists = true;
+					// Check if the new domain is an existing instance
+					newDomainNode = alignment.getNodeById(domainValue);
+					if (newDomainNode != null)
+						domainNodeAlreadyExistsInGraph = true;
 				}
-				
-				String fullTypeValue = type.getString(ClientJsonKeys.FullType.name());
+					
 				if (type.getBoolean(ClientJsonKeys.isPrimary.name())) {
+					// Check if a semantic type already exists for the column
+					ColumnNode existingColumnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+					boolean columnNodeAlreadyExisted = false;
+					Link oldIncomingLinkToColumnNode = null;
+					Node oldDomainNode = null;
+					if (existingColumnNode != null) {
+						columnNodeAlreadyExisted = true;
+						oldIncomingLinkToColumnNode = alignment.getCurrentLinkToNode(existingColumnNode.getId());
+						oldDomainNode = oldIncomingLinkToColumnNode.getSource();
+					}
+					
 					// Add a class link if the domain is null
-					if (domainName == null) {
-						// Check if it is an existing class instance node
-						classNode = alignment.getNodeById(fullTypeValue);
-						if (classNode == null) {
-							Label classLabel = ontMgr.getUriLabel(fullTypeValue);
-							if (classLabel == null) {
-								logger.error("URI/ID does not exist in the ontology or model: " + fullTypeValue);
-								continue;
-							}
-							classNode = alignment.addInternalClassNode(classLabel);
-						}
-						ColumnNode columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
+					if (!domainValueExists) {
+						Node classNode = alignment.getNodeById(fullTypeValue);
 						LinkKeyInfo keyInfo = isPartOfKey ? LinkKeyInfo.PartOfKey : LinkKeyInfo.None;
-						ClassInstanceLink clsLink = alignment.addClassInstanceLink(classNode, columnNode, keyInfo);
+						if (columnNodeAlreadyExisted && classNode != null) {
+							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+							ClassInstanceLink clsLink = alignment.addClassInstanceLink(classNode, existingColumnNode, keyInfo);
+							alignment.removeNode(oldDomainNode.getId());
+							newLink = clsLink;
+						} else {
+							ColumnNode newColumnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
+							if (classNode == null) {
+								Label classLabel = ontMgr.getUriLabel(fullTypeValue);
+								if (classLabel == null) {
+									logger.error("URI/ID does not exist in the ontology or model: " + fullTypeValue);
+									continue;
+								}
+								classNode = alignment.addInternalClassNode(classLabel);
+							}
+							ClassInstanceLink clsLink = alignment.addClassInstanceLink(classNode, newColumnNode, keyInfo);
+							newLink = clsLink;
+						}
+						// Update the alignment
 						alignment.align();
-						newLink = clsLink;
-						
 						// Create the semantic type object
-						newType = new SemanticType(hNodeId, classNode.getLabel(),domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
-					} 
+						newType = new SemanticType(hNodeId, classNode.getLabel(), null, SemanticType.Origin.User, 1.0,isPartOfKey);
+					}
 					// Add a property link if both type (property) and domain (class) is present 
 					else {
 						Label propertyLabel = ontMgr.getUriLabel(fullTypeValue);
@@ -176,13 +188,42 @@ public class SetSemanticTypeCommand extends Command {
 							logger.error("URI/ID does not exist in the ontology or model: " + fullTypeValue);
 							continue;
 						}
-						ColumnNode columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
-						DataPropertyLink propLink = alignment.addDataPropertyLink(classNode, columnNode, propertyLabel, isPartOfKey);
+						// When only the link changes between the class node and the internal node (domain)
+						if (columnNodeAlreadyExisted && domainNodeAlreadyExistsInGraph && (oldDomainNode == newDomainNode)) {
+							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+							DataPropertyLink propLink = alignment.addDataPropertyLink(newDomainNode, existingColumnNode, propertyLabel, isPartOfKey);
+							newLink = propLink;
+						}
+						// When there was an existing semantic type and the new domain is a new node in the graph and columnNode already existed 
+						else if (columnNodeAlreadyExisted && !domainNodeAlreadyExistsInGraph) {
+							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+							alignment.removeNode(oldDomainNode.getId());
+							Label domainLabel = ontMgr.getUriLabel(domainValue);
+							newDomainNode = alignment.addInternalClassNode(domainLabel);
+							DataPropertyLink propLink = alignment.addDataPropertyLink(newDomainNode, existingColumnNode, propertyLabel, isPartOfKey);
+							newLink = propLink;
+						}
+						// When the new domain node already existed in the graph
+						else if (columnNodeAlreadyExisted && domainNodeAlreadyExistsInGraph) {
+							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+							DataPropertyLink propLink = alignment.addDataPropertyLink(newDomainNode, existingColumnNode, propertyLabel, isPartOfKey);
+							alignment.removeNode(oldDomainNode.getId());
+						} 
+						// For all other cases where the columnNode did not exist yet
+						else {
+							if (!domainNodeAlreadyExistsInGraph) {
+								Label domainLabel = ontMgr.getUriLabel(domainValue);
+								newDomainNode = alignment.addInternalClassNode(domainLabel);
+							}
+							
+							ColumnNode newColumnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
+							DataPropertyLink propLink = alignment.addDataPropertyLink(newDomainNode, newColumnNode, propertyLabel, isPartOfKey);
+							newLink = propLink;
+						}
+						// Update the alignment
 						alignment.align();
-						newLink = propLink;
-
 						// Create the semantic type object
-						newType = new SemanticType(hNodeId, propertyLabel, domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
+						newType = new SemanticType(hNodeId, propertyLabel, newDomainNode.getLabel(), SemanticType.Origin.User, 1.0,isPartOfKey);
 					}
 				} else { // Synonym semantic type
 					Label propertyLabel = ontMgr.getUriLabel(fullTypeValue);
@@ -190,7 +231,18 @@ public class SetSemanticTypeCommand extends Command {
 						logger.error("URI/ID does not exist in the ontology or model: " + fullTypeValue);
 						continue;
 					}
-					SemanticType synType = new SemanticType(hNodeId, propertyLabel, domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
+					newDomainNode = alignment.getNodeById(domainValue);
+					Label domainLabel = null;
+					if (newDomainNode == null) {
+						domainLabel = ontMgr.getUriLabel(domainValue);
+						if (domainLabel == null) {
+							logger.error("URI/ID does not exist in the ontology or model: " + domainValue);
+							continue;
+						}
+					} else {
+						domainLabel = newDomainNode.getLabel();
+					}
+					SemanticType synType = new SemanticType(hNodeId, propertyLabel, domainLabel, SemanticType.Origin.User, 1.0,isPartOfKey);
 					typesList.add(synType);
 				}
 			} catch (JSONException e) {

@@ -29,7 +29,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<!-- Date: 2011-08-01 -->
 		
 		<!-- CSS -->
-		<link rel="stylesheet" type="text/css" href="./css/jquery-ui-1.8.16.custom.css" />
+		<link rel="stylesheet" type="text/css" href="./css/jquery-ui-1.10.1.custom.min.css" />
 		<link rel="stylesheet" type="text/css" href="./css/TopMenuBar.css" />
 		<link rel="stylesheet" type="text/css" href="./css/command_History.css" />
 		<link rel="stylesheet" type="text/css" href="./css/tables_workspace.css" />
@@ -50,7 +50,9 @@ and related projects, please see: http://www.isi.edu/integration
 		
 		<!-- Third Party JavaScript files		 -->
 		<script type="text/javascript" src="js/jquery-1.6.2.js"></script>
-		<script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+		<script type="text/javascript" src="js/jquery-migrate-1.1.1.min.js"></script>
+		<script type="text/javascript" src="js/jquery-ui-1.10.1.custom.min.js"></script>
+		
 		<script type="text/javascript" src="js/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="js/jquery.hoverIntent.js"></script>
 		<!-- <script type="text/javascript" src="js/jquery.uploadify.v2.1.4.js"></script>
@@ -169,8 +171,6 @@ and related projects, please see: http://www.isi.edu/integration
 			        	$.sticky("File upload failed!");	
 			        },
 			        dropZone: $(document)
-			    }).qtip({
-			    	content: {text: "Supported file formats include CSV, XML, JSON, Excel spreadsheet, and OWL ontology"}
 			    });
 			    
 			    // Enable iframe cross-domain access via redirect option:
@@ -307,7 +307,6 @@ and related projects, please see: http://www.isi.edu/integration
 				$(document).unbind('keydown').bind('keydown', function (event) {
 				    var doPrevent = false;
 				    if (event.keyCode === 8) {
-				    	// console.log("Delete button detected!");
 				    	var d = event.srcElement || event.target;
 				        if ((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD')) 
 				            || d.tagName.toUpperCase() === 'TEXTAREA') {

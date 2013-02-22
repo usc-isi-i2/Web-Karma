@@ -150,7 +150,7 @@ public class AddNewColumnCommand extends WorksheetCommand {
 			try {
 				// Compute suggestions for the new column 
 				OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-				SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
+				SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr, alignment);
 
 				// Get the updated alignment
 				c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));

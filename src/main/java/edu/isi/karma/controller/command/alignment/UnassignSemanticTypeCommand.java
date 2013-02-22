@@ -39,9 +39,9 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNodePath;
-import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
@@ -98,8 +98,17 @@ public class UnassignSemanticTypeCommand extends Command {
 		// Remove it from the alignment
 		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
-		if (columnNode != null)
+		if (columnNode != null) {
+			Link currentLink = alignment.getCurrentLinkToNode(columnNode.getId());
+			String domainNodeId = currentLink.getSource().getId();
+			// Remove the existing link
+			alignment.removeLink(currentLink.getId());
+			// Remove the column node
 			alignment.removeNode(columnNode.getId());
+			// Remove the source node
+			alignment.removeNode(domainNodeId);
+			
+		}
 		alignment.align();
 		
 		// Get the column name
@@ -114,10 +123,10 @@ public class UnassignSemanticTypeCommand extends Command {
 		}
 
 		// Remove the nodes (if any) from the outlier tag
-		Collection<Node> nodes = new ArrayList<Node>();
+		Collection<edu.isi.karma.rep.Node> nodes = new ArrayList<edu.isi.karma.rep.Node>();
 		worksheet.getDataTable().collectNodes(currentPath, nodes);
 		Set<String> nodeIds = new HashSet<String>();
-		for (Node node : nodes) {
+		for (edu.isi.karma.rep.Node node : nodes) {
 			nodeIds.add(node.getId());
 		}
 		vWorkspace.getWorkspace().getTagsContainer().getTag(TagName.Outlier)

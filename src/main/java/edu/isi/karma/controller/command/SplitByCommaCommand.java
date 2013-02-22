@@ -114,11 +114,11 @@ public class SplitByCommaCommand extends WorksheetCommand {
 		// Get the alignment update if any
 		if (!wk.getSemanticTypes().getListOfTypes().isEmpty()) {
 			try {
+				Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
 				// Compute suggestions for the new column added
 				OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-				SemanticTypeUtil.computeSemanticTypesSuggestion(wk, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
+				SemanticTypeUtil.computeSemanticTypesSuggestion(wk, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr, alignment);
 				// Add the alignment update
-				Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
 				c.add(new SemanticTypesUpdate(wk, vWorksheetId, alignment));
 				c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vw, alignment));
 			} catch (Exception e) {

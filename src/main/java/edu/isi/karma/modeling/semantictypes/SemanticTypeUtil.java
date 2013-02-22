@@ -32,6 +32,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler.ColumnFeature;
@@ -312,7 +313,7 @@ public class SemanticTypeUtil {
 	}
 
 	public static void computeSemanticTypesSuggestion(Worksheet worksheet,
-			CRFModelHandler crfModelHandler, OntologyManager ontMgr) {
+			CRFModelHandler crfModelHandler, OntologyManager ontMgr, Alignment alignment) {
 		
 		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : paths) {
@@ -349,7 +350,7 @@ public class SemanticTypeUtil {
 					Label domainUri = ontMgr.getUriLabel(label.split("\\|")[0]);
 					Label typeUri = ontMgr.getUriLabel(label.split("\\|")[1]);
 					
-					// Remove from the list if URI not present in the URI
+					// Remove from the list if URI not present in the model
 					if (domainUri == null || typeUri == null) {
 						removeLabels.add(label);
 						continue;
@@ -362,7 +363,7 @@ public class SemanticTypeUtil {
 					
 				} else {
 					Label typeUri = ontMgr.getUriLabel(label);
-					// Remove from the list if URI not present in the URI
+					// Remove from the list if URI not present in the model
 					if (typeUri == null) {
 						removeLabels.add(label);
 						continue;

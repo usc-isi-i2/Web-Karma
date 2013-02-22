@@ -107,7 +107,25 @@ public class SetMetaPropertyCommand extends Command {
 		
 		/*** Add the appropriate nodes and links in alignment graph ***/
 		SemanticType newType = null;
+
+		/** Check if a semantic type already exists for the column **/
+		ColumnNode existingColumnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+		boolean columnNodeAlreadyExisted = false;
+		Link oldIncomingLinkToColumnNode = null;
+		Node oldDomainNode = null;
+		if (existingColumnNode != null) {
+			columnNodeAlreadyExisted = true;
+			oldIncomingLinkToColumnNode = alignment.getCurrentLinkToNode(existingColumnNode.getId());
+			oldDomainNode = oldIncomingLinkToColumnNode.getSource();
+		}
+		
 		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
+			ColumnNode columnNode = null;
+			if (columnNodeAlreadyExisted) {
+				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment);
+				columnNode = existingColumnNode;
+			} else
+				columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId)); 
 			Node classNode = alignment.getNodeById(metaPropertyValue);
 			if (classNode == null) {
 				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
@@ -117,13 +135,19 @@ public class SetMetaPropertyCommand extends Command {
 				}
 				classNode = alignment.addInternalClassNode(classNodeLabel);
 			}
-			ColumnNode columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
+		
 			ClassInstanceLink mpLink = alignment.addClassInstanceLink(classNode, columnNode, LinkKeyInfo.UriOfInstance);
 			alignment.align();
 			
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId, ClassInstanceLink.getFixedLabel(), classNode.getLabel(), SemanticType.Origin.User, 1.0, false);
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
+			ColumnNode columnNode = null;
+			if (columnNodeAlreadyExisted) {
+				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment);
+				columnNode = existingColumnNode;
+			} else
+				columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId)); 
 			Link dataPropertyLink = alignment.getLinkById(metaPropertyValue);
 			if (dataPropertyLink == null) {
 				logger.error("Link should exist in the alignment: " + metaPropertyValue);
@@ -131,14 +155,19 @@ public class SetMetaPropertyCommand extends Command {
 						"Error occured while setting the semantic type!"));
 			}
 			Node classInstanceNode = dataPropertyLink.getSource();
-			String hNodeId = ((ColumnNode) dataPropertyLink.getTarget()).getHNodeId();
-			ColumnNode columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
-			DataPropertyOfColumnLink dpLink = alignment.addDataPropertyOfColumnLink(classInstanceNode, columnNode, hNodeId);
+			String targetHNodeId = ((ColumnNode) dataPropertyLink.getTarget()).getHNodeId();
+			DataPropertyOfColumnLink dpLink = alignment.addDataPropertyOfColumnLink(classInstanceNode, columnNode, targetHNodeId);
 			alignment.align();
 			
 			// Create the semantic type object
-			newType = new SemanticType(hNodeId, DataPropertyOfColumnLink.getFixedLabel(), classInstanceNode.getLabel(), SemanticType.Origin.User, 1.0, false);
+			newType = new SemanticType(targetHNodeId, DataPropertyOfColumnLink.getFixedLabel(), classInstanceNode.getLabel(), SemanticType.Origin.User, 1.0, false);
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
+			ColumnNode columnNode = null;
+			if (columnNodeAlreadyExisted) {
+				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment);
+				columnNode = existingColumnNode;
+			} else
+				columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId)); 
 			Node classNode = alignment.getNodeById(metaPropertyValue);
 			if (classNode == null) {
 				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
@@ -148,7 +177,6 @@ public class SetMetaPropertyCommand extends Command {
 				}
 				classNode = alignment.addInternalClassNode(classNodeLabel);
 			}
-			ColumnNode columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
 			ColumnSubClassLink mpLink = alignment.addColumnSubClassOfLink(classNode, columnNode);
 			alignment.align();
 			
@@ -185,6 +213,12 @@ public class SetMetaPropertyCommand extends Command {
 			
 		}
 		return c;
+	}
+
+	private void clearOldSemanticTypeLink(Link oldIncomingLinkToColumnNode,
+			Node oldDomainNode, Alignment alignment) {
+		alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+		alignment.removeNode(oldDomainNode.getId());
 	}
 
 	@Override

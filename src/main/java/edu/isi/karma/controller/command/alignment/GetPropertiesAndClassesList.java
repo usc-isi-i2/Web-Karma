@@ -1,6 +1,7 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.json.JSONArray;
@@ -79,21 +80,27 @@ public class GetPropertiesAndClassesList extends Command {
 			/** Add all the class instances and property instances (existing links) **/
 			String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
 			Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+			Set<String> steinerTreeNodeIds = new HashSet<String>();
 			if (alignment != null && !alignment.isEmpty()) {
-				Set<Node> nodes = alignment.getGraphNodes();
-				for (Node node: nodes) {
+//				Set<Node> nodes = alignment.getGraphNodes();
+				for (Node node: alignment.getSteinerTree().vertexSet()) {
 					if (node.getType() == NodeType.InternalNode) {
+						String nodeDisplayLabel = (node.getLabel().getPrefix() != null || (!node.getLabel().getPrefix().equals(""))) ?
+								(node.getLabel().getPrefix() + node.getLocalId()) : node.getLocalId(); 
 						JSONObject nodeKey = new JSONObject();
-						nodeKey.put(node.getLocalId(), node.getId());
+						nodeKey.put(nodeDisplayLabel, node.getId());
 						classesMap.put(nodeKey);
 						
 						JSONObject instanceCatObject = new JSONObject();
-						instanceCatObject.put(JsonKeys.label.name(), node.getLocalId());
+						instanceCatObject.put(JsonKeys.label.name(), nodeDisplayLabel);
 						instanceCatObject.put(JsonKeys.category.name(), JsonValues.Instance.name());
 						classesList.put(instanceCatObject);
+						
+						steinerTreeNodeIds.add(node.getId());
 					}
 				}
 				
+				// Store the data property links for specialized edge link options
 				for (Link link:alignment.getGraphLinks()) {
 					if (link instanceof DataPropertyLink) {
 						JSONObject linkObj = new JSONObject();
@@ -106,12 +113,36 @@ public class GetPropertiesAndClassesList extends Command {
 			
 			/** Adding all the classes **/
 			for (Label clazz: ontMgr.getClasses().values()) {
+				int graphLastIndex = alignment.getLastIndexOfNodeUri(clazz.getUri());
+				String clazzId = null;
+				String clazzDisplayLabel = null;
+				String clazzLocalNameWithPrefix = clazz.getLocalNameWithPrefix();
+				if (graphLastIndex == -1) { // No instance present in the graph
+					clazzDisplayLabel = clazzLocalNameWithPrefix + "1 (add)";
+					clazzId = clazz.getUri();
+				} else {
+					// Check if already present in the steiner tree
+					if (steinerTreeNodeIds.contains(clazzLocalNameWithPrefix + (graphLastIndex))) {
+						clazzDisplayLabel = clazzLocalNameWithPrefix + (graphLastIndex+1) + " (add)";
+						clazzId = clazz.getUri();
+					} else {
+						// Check if present in graph and not tree
+						Node graphNode = alignment.getNodeById(clazz.getUri() + (graphLastIndex));
+						if (graphNode != null) {
+							clazzDisplayLabel = clazzLocalNameWithPrefix + (graphLastIndex) + " (add)";
+							clazzId = graphNode.getId();
+						} else {
+							clazzDisplayLabel = clazzLocalNameWithPrefix + (graphLastIndex+1) + " (add)";
+							clazzId = clazz.getUri();
+						}
+					}
+				}
 				JSONObject classKey = new JSONObject();
-				classKey.put(clazz.getLocalNameWithPrefix(), clazz.getUri());
+				classKey.put(clazzDisplayLabel, clazzId);
 				classesMap.put(classKey);
 				
 				JSONObject labelObj = new JSONObject();
-				labelObj.put(JsonKeys.label.name(), clazz.getLocalNameWithPrefix());
+				labelObj.put(JsonKeys.label.name(), clazzDisplayLabel);
 				labelObj.put(JsonKeys.category.name(), JsonValues.Class.name());
 				classesList.put(labelObj);
 			}
