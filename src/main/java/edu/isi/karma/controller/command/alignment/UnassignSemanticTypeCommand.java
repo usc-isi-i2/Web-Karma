@@ -53,6 +53,7 @@ public class UnassignSemanticTypeCommand extends Command {
 	private final String hNodeId;
 	private String columnName;
 	private SemanticType oldSemanticType;
+	private Alignment oldAlignment;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(UnassignSemanticTypeCommand.class);
@@ -95,8 +96,11 @@ public class UnassignSemanticTypeCommand extends Command {
 		oldSemanticType = types.getSemanticTypeForHNodeId(hNodeId);
 		types.unassignColumnSemanticType(hNodeId);
 
-		// Remove it from the alignment
+		// Save the original alignment for undo
 		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		oldAlignment = alignment.getAlignmentClone();
+		
+		// Remove it from the alignment
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 		if (columnNode != null) {
 			Link currentLink = alignment.getCurrentLinkToNode(columnNode.getId());
@@ -160,15 +164,16 @@ public class UnassignSemanticTypeCommand extends Command {
 
 		// Update the container
 		UpdateContainer c = new UpdateContainer();
-		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
-
-		// Add the alignment update
+		
+		// Update with old alignment
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
 		try {
-			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
+			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, oldAlignment));
+			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), oldAlignment));
 		} catch (Exception e) {
-			logger.error("Error occured while unassigning the semantic type!", e);
-			return new UpdateContainer(new ErrorUpdate("Error occured while unassigning the semantic type!"));
+			logger.error("Error occured during undo of unassigning the semantic type!", e);
+			return new UpdateContainer(new ErrorUpdate("Error occured during undo of unassigning the semantic type!"));
 		}
 		return c;
 	}

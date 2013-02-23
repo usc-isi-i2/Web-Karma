@@ -121,7 +121,8 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 							.value(type.isPartOfKey())
 							.key(JsonKeys.isPrimary.name())
 							.value(true);
-					
+					String domainDisplayLabel = (domainNode.getLabel().getPrefix() != null || (!domainNode.getLabel().getPrefix().equals(""))) ?
+							(domainNode.getLabel().getPrefix() + ":" + domainNode.getLocalId()) : domainNode.getLocalId();
 					if (!type.isClass()) {
 						writer
 							.key(JsonKeys.FullType.name())
@@ -131,13 +132,13 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 							.key(JsonKeys.Domain.name())
 							.value(domainNode.getId())
 							.key(JsonKeys.DisplayDomainLabel.name())
-							.value(domainNode.getLocalId());
+							.value(domainDisplayLabel);
 					} else {
 						writer
 							.key(JsonKeys.FullType.name())
 							.value(domainNode.getId())
 							.key(JsonKeys.DisplayLabel.name())
-							.value(domainNode.getLocalId())
+							.value(domainDisplayLabel)
 							.key(JsonKeys.Domain.name())
 							.value("")
 							.key(JsonKeys.DisplayDomainLabel.name())
@@ -195,7 +196,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 				// Populate the CRF Model
 				CRFColumnModel colModel = worksheet.getCrfModel().getModelByHNodeId(nodeId);
 				if (colModel != null) {
-					writer.key(JsonKeys.FullCRFModel.name()).value(colModel.getAsJSONObject(vWorkspace.getWorkspace().getOntologyManager()));
+					writer.key(JsonKeys.FullCRFModel.name()).value(colModel.getAsJSONObject(vWorkspace.getWorkspace().getOntologyManager(), alignment));
 				}
 
 				writer.endObject();

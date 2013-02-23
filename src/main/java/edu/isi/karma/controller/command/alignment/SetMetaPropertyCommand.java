@@ -61,6 +61,7 @@ public class SetMetaPropertyCommand extends Command {
 	
 	private CRFColumnModel oldColumnModel;
 	private SynonymSemanticTypes oldSynonymTypes;
+	private Alignment oldAlignment;
 	private SemanticType oldType;
 	private SemanticType newType;
 	
@@ -103,7 +104,15 @@ public class SetMetaPropertyCommand extends Command {
 		/*** Get the Alignment for this worksheet ***/
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		if (alignment == null) {
+			alignment = new Alignment(ontMgr);
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		}
+		
+		// Save the original alignment for undo
+		oldAlignment = alignment.getAlignmentClone();
 		
 		/*** Add the appropriate nodes and links in alignment graph ***/
 		SemanticType newType = null;
@@ -136,7 +145,7 @@ public class SetMetaPropertyCommand extends Command {
 				classNode = alignment.addInternalNode(classNodeLabel);
 			}
 		
-			ClassInstanceLink mpLink = alignment.addClassInstanceLink(classNode, columnNode, LinkKeyInfo.UriOfInstance);
+			alignment.addClassInstanceLink(classNode, columnNode, LinkKeyInfo.UriOfInstance);
 			alignment.align();
 			
 			// Create the semantic type object
@@ -156,7 +165,7 @@ public class SetMetaPropertyCommand extends Command {
 			}
 			Node classInstanceNode = dataPropertyLink.getSource();
 			String targetHNodeId = ((ColumnNode) dataPropertyLink.getTarget()).getHNodeId();
-			DataPropertyOfColumnLink dpLink = alignment.addDataPropertyOfColumnLink(classInstanceNode, columnNode, targetHNodeId);
+			alignment.addDataPropertyOfColumnLink(classInstanceNode, columnNode, targetHNodeId);
 			alignment.align();
 			
 			// Create the semantic type object
@@ -177,7 +186,7 @@ public class SetMetaPropertyCommand extends Command {
 				}
 				classNode = alignment.addInternalNode(classNodeLabel);
 			}
-			ColumnSubClassLink mpLink = alignment.addColumnSubClassOfLink(classNode, columnNode);
+			alignment.addColumnSubClassOfLink(classNode, columnNode);
 			alignment.align();
 			
 			// Create the semantic type object
@@ -234,10 +243,14 @@ public class SetMetaPropertyCommand extends Command {
 
 		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), oldColumnModel);
 
+		// Replace the current alignment with the old alignment
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
+		
 		// Get the alignment update if any
-		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
 		try {
-			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
+			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, oldAlignment));
+			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), oldAlignment));
 		} catch (Exception e) {
 			logger.error("Error occured while unsetting the semantic type!", e);
 			return new UpdateContainer(new ErrorUpdate(

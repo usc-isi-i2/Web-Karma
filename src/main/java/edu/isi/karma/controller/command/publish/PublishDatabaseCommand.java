@@ -241,6 +241,7 @@ public class PublishDatabaseCommand extends Command {
 		 * @param conn
 		 * @throws SQLException
 		 */
+		@SuppressWarnings("unused")
 		private void createSpatialTable(String tableName, Collection<String> colNames,Connection conn) throws SQLException{
 			//add escaping in case we have unusual chars
 			tableName=dbUtil.prepareName(tableName);

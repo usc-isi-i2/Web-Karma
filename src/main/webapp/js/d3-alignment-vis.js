@@ -184,7 +184,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             d3.selectAll("g.InternalNode").each(function(d2,i) {
                 if(d2 == d.source) {
                     var newRect = $(this).clone();
-                    newRect.attr("class","Class highlightOverlay");
+                    newRect.attr("class","InternalNode highlightOverlay");
                     $("div#svgDiv_" + json["worksheetId"] + " svg").append(newRect);
                     return false;
                 }
@@ -362,8 +362,8 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         });
     
     $("text.LinkLabel").qtip({content: {text: "Edit Relationship"}});
-    $("g.DataProperty, g.Unassigned").qtip({content: {text: "Change Semantic Type"}});
-    $("g.Class").qtip({content: {text: "Add Parent Relationship"}});
+    $("g.ColumnNode, g.Unassigned").qtip({content: {text: "Change Semantic Type"}});
+    $("g.InternalNode").qtip({content: {text: "Add Parent Relationship"}});
     
     link.attr("x1", function(d) {
         if (d.linkType == "horizontalDataPropertyLink") {

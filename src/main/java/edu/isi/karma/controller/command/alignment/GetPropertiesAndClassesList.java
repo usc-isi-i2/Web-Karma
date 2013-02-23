@@ -86,7 +86,7 @@ public class GetPropertiesAndClassesList extends Command {
 				for (Node node: alignment.getSteinerTree().vertexSet()) {
 					if (node.getType() == NodeType.InternalNode) {
 						String nodeDisplayLabel = (node.getLabel().getPrefix() != null || (!node.getLabel().getPrefix().equals(""))) ?
-								(node.getLabel().getPrefix() + node.getLocalId()) : node.getLocalId(); 
+								(node.getLabel().getPrefix() + ":" + node.getLocalId()) : node.getLocalId(); 
 						JSONObject nodeKey = new JSONObject();
 						nodeKey.put(nodeDisplayLabel, node.getId());
 						classesMap.put(nodeKey);
@@ -122,7 +122,7 @@ public class GetPropertiesAndClassesList extends Command {
 					clazzId = clazz.getUri();
 				} else {
 					// Check if already present in the steiner tree
-					if (steinerTreeNodeIds.contains(clazzLocalNameWithPrefix + (graphLastIndex))) {
+					if (steinerTreeNodeIds.contains(clazz.getUri() + (graphLastIndex))) {
 						clazzDisplayLabel = clazzLocalNameWithPrefix + (graphLastIndex+1) + " (add)";
 						clazzId = clazz.getUri();
 					} else {

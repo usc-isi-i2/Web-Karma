@@ -84,22 +84,22 @@ function attachOntologyOptionsRadioButtonHandlers() {
     
     $("div#semanticTypingAdvacedOptionsDiv input:checkbox").change(semanticTypesAdvancedOptionsHandler);
     
-    $.widget( "custom.catcomplete", $.ui.autocomplete, {
-    	_renderItemData: function( ul, item ) {
-			return this._renderItem( ul, item ).data( "ui-autocomplete-item", item );
-		},
-	    _renderMenu: function( ul, items ) {
-			 var that = this,
-			 currentCategory = "";
-	      	 $.each( items, function( index, item ) {
-	         	if ( item.category != currentCategory ) {
-	          		ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
-	          		currentCategory = item.category;
-	        	}
-	        that._renderItemData( ul, item);
-	      	});
-	   	}
-	});
+    // $.widget( "custom.catcomplete", $.ui.autocomplete, {
+    	// _renderItemData: function( ul, item ) {
+			// return this._renderItem( ul, item ).data( "ui-autocomplete-item", item );
+		// },
+	    // _renderMenu: function( ul, items ) {
+			 // var that = this,
+			 // currentCategory = "";
+	      	 // $.each( items, function( index, item ) {
+	         	// if ( item.category != currentCategory ) {
+	          		// ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+	          		// currentCategory = item.category;
+	        	// }
+	        // that._renderItemData( ul, item);
+	      	// });
+	   	// }
+	// });
 	
 	/*** Setting advanced semantic typing options ***/
 	$("button#semanticTypingAdvancedOptions").button().click(function(){
@@ -108,7 +108,7 @@ function attachOntologyOptionsRadioButtonHandlers() {
     	var classArray = $("#ChangeSemanticTypesDialogBox").data("classAndPropertyListJson")["elements"][0]["classList"];
     	var existingLinksMap = $("#ChangeSemanticTypesDialogBox").data("classAndPropertyListJson")["elements"][0]["existingDataPropertyInstances"];
     	console.log(existingLinksMap);
-    	$("input#isUriOfClassTextBox").catcomplete({autoFocus: true, select:function(event, ui){
+    	$("input#isUriOfClassTextBox").autocomplete({autoFocus: true, select:function(event, ui){
 		    $("input#isUriOfClassTextBox").val(ui.item.value);
 		    validateClassInputValue(ui.item.value, false);
 	    }, source: function( request, response ) {
@@ -121,7 +121,7 @@ function attachOntologyOptionsRadioButtonHandlers() {
 	        }
 	    });
 	    
-	    $("input#isSubclassOfClassTextBox").catcomplete({autoFocus: true, select:function(event, ui){
+	    $("input#isSubclassOfClassTextBox").autocomplete({autoFocus: true, select:function(event, ui){
 		    $("input#isSubclassOfClassTextBox").val(ui.item.value);
 		    validateClassInputValue(ui.item.value, false);
 	    }, source: function( request, response ) {
@@ -469,7 +469,7 @@ function showSemanticTypeEditOptions() {
         }
     });
     
-    $("input#classInputBox").catcomplete({autoFocus: true, select:function(event, ui){
+    $("input#classInputBox").autocomplete({autoFocus: true, select:function(event, ui){
         $("input#classInputBox").val(ui.item.value);
         validateClassInputValue($("input#classInputBox").val(), true);
     }, source: function( request, response ) {

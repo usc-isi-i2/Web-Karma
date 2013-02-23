@@ -22,6 +22,8 @@ package edu.isi.karma.modeling.semantictypes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,8 +31,11 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
+import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.util.Jsonizable;
 import edu.isi.karma.util.Util;
 
@@ -65,9 +70,19 @@ public class CRFColumnModel implements Jsonizable {
 		writer.endObject();
 	}
 
-	public JSONObject getAsJSONObject(OntologyManager ontMgr) throws JSONException {
+	public JSONObject getAsJSONObject(OntologyManager ontMgr, Alignment alignment) throws JSONException {
 		JSONObject obj = new JSONObject();
 		JSONArray arr = new JSONArray();
+		
+		/** Create a set of node ids of internal nodes of Steiner Tree **/
+		Set<String> steinerTreeNodeIds = new HashSet<String>();
+		if (alignment != null && !alignment.isEmpty()) {
+			for (Node node: alignment.getSteinerTree().vertexSet()) {
+				if (node.getType() == NodeType.InternalNode) {
+					steinerTreeNodeIds.add(node.getId());
+				}
+			}
+		}
 
 		// Need to sort
 		HashMap<String, Double> sortedMap = Util.sortHashMap(scoreMap);
@@ -81,16 +96,29 @@ public class CRFColumnModel implements Jsonizable {
 				Label typeURI = ontMgr.getUriLabel(label.split("\\|")[1]);
 				if(domainURI == null || typeURI == null)
 					continue;
-				oj.put(SemanticTypesUpdate.JsonKeys.DisplayDomainLabel.name(), domainURI.getLocalNameWithPrefix());
-				oj.put(SemanticTypesUpdate.JsonKeys.Domain.name(), label.split("\\|")[0]);
+				
+				StringBuilder domainId = new StringBuilder();
+				StringBuilder domainDisplayLabel = new StringBuilder();
+				String clazzLocalNameWithPrefix = domainURI.getLocalNameWithPrefix();
+				
+				getDomainDisplayLabelAndId(domainURI, domainId, domainDisplayLabel, clazzLocalNameWithPrefix, alignment, steinerTreeNodeIds);
+				
+				oj.put(SemanticTypesUpdate.JsonKeys.DisplayDomainLabel.name(), domainDisplayLabel.toString());
+				oj.put(SemanticTypesUpdate.JsonKeys.Domain.name(), domainId.toString());
 				oj.put(SemanticTypesUpdate.JsonKeys.DisplayLabel.name(), typeURI.getLocalNameWithPrefix());
 				oj.put(SemanticTypesUpdate.JsonKeys.FullType.name(), label.split("\\|")[1]);
 			} else {
 				Label typeURI = ontMgr.getUriLabel(label);
 				if(typeURI == null)
 					continue;
-				oj.put(SemanticTypesUpdate.JsonKeys.FullType.name(), label);
-				oj.put(SemanticTypesUpdate.JsonKeys.DisplayLabel.name(), typeURI.getLocalNameWithPrefix());
+				
+				StringBuilder domainId = new StringBuilder();
+				StringBuilder domainDisplayLabel = new StringBuilder();
+				String clazzLocalNameWithPrefix = typeURI.getLocalNameWithPrefix();
+				
+				getDomainDisplayLabelAndId(typeURI, domainId, domainDisplayLabel, clazzLocalNameWithPrefix, alignment, steinerTreeNodeIds);
+				oj.put(SemanticTypesUpdate.JsonKeys.FullType.name(), domainId.toString());
+				oj.put(SemanticTypesUpdate.JsonKeys.DisplayLabel.name(), domainDisplayLabel.toString());
 				oj.put(SemanticTypesUpdate.JsonKeys.DisplayDomainLabel.name(), "");
 				oj.put(SemanticTypesUpdate.JsonKeys.Domain.name(), "");
 			}
@@ -100,5 +128,30 @@ public class CRFColumnModel implements Jsonizable {
 		}
 		obj.put("Labels", arr);
 		return obj;
+	}
+	
+	private void getDomainDisplayLabelAndId(Label domainURI, StringBuilder domainId, StringBuilder domainDisplayLabel, 
+			String clazzLocalNameWithPrefix, Alignment alignment, Set<String> steinerTreeNodeIds) {
+		int graphLastIndex = alignment.getLastIndexOfNodeUri(domainURI.getUri());
+		if (graphLastIndex == -1) { // No instance present in the graph
+			domainDisplayLabel.append(clazzLocalNameWithPrefix + "1 (add)");
+			domainId.append(domainURI.getUri());
+		} else {
+			// Check if already present in the steiner tree
+			if (steinerTreeNodeIds.contains(domainURI.getUri() + (graphLastIndex))) {
+				domainDisplayLabel.append(clazzLocalNameWithPrefix + (graphLastIndex));
+				domainId.append(domainURI.getUri() + (graphLastIndex));
+			} else {
+				// Check if present in graph and not tree
+				Node graphNode = alignment.getNodeById(domainURI.getUri() + (graphLastIndex));
+				if (graphNode != null) {
+					domainDisplayLabel.append(clazzLocalNameWithPrefix + (graphLastIndex) + " (add)");
+					domainId.append(graphNode.getId());
+				} else {
+					domainDisplayLabel.append(clazzLocalNameWithPrefix + (graphLastIndex+1) + " (add)");
+					domainId.append(domainURI.getUri());
+				}
+			}
+		}
 	}
 }

@@ -43,9 +43,7 @@ import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
@@ -65,7 +63,8 @@ public class SetSemanticTypeCommand extends Command {
 	private JSONArray typesArr;
 	private SynonymSemanticTypes newSynonymTypes;
 	private final boolean isPartOfKey;
-	private Link newLink;
+	private Alignment oldAlignment;
+//	private Link newLink;
 	
 	private SemanticType oldType;
 	private SemanticType newType;
@@ -116,8 +115,10 @@ public class SetSemanticTypeCommand extends Command {
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
 		
+		// Save the original alignment for undo
+		oldAlignment = alignment.getAlignmentClone();
+		
 		/*** Add the appropriate nodes and links in alignment graph ***/
-		SemanticType newType = null;
 		List<SemanticType> typesList = new ArrayList<SemanticType>();
 		for (int i = 0; i < typesArr.length(); i++) {
 			try {
@@ -160,9 +161,9 @@ public class SetSemanticTypeCommand extends Command {
 						LinkKeyInfo keyInfo = isPartOfKey ? LinkKeyInfo.PartOfKey : LinkKeyInfo.None;
 						if (columnNodeAlreadyExisted && classNode != null) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-							ClassInstanceLink clsLink = alignment.addClassInstanceLink(classNode, existingColumnNode, keyInfo);
+							alignment.addClassInstanceLink(classNode, existingColumnNode, keyInfo);
 							alignment.removeNode(oldDomainNode.getId());
-							newLink = clsLink;
+//							newLink = clsLink;
 						} else {
 							ColumnNode newColumnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
 							if (classNode == null) {
@@ -173,8 +174,8 @@ public class SetSemanticTypeCommand extends Command {
 								}
 								classNode = alignment.addInternalNode(classLabel);
 							}
-							ClassInstanceLink clsLink = alignment.addClassInstanceLink(classNode, newColumnNode, keyInfo);
-							newLink = clsLink;
+							alignment.addClassInstanceLink(classNode, newColumnNode, keyInfo);
+//							newLink = clsLink;
 						}
 						// Update the alignment
 						alignment.align();
@@ -191,8 +192,8 @@ public class SetSemanticTypeCommand extends Command {
 						// When only the link changes between the class node and the internal node (domain)
 						if (columnNodeAlreadyExisted && domainNodeAlreadyExistsInGraph && (oldDomainNode == newDomainNode)) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-							DataPropertyLink propLink = alignment.addDataPropertyLink(newDomainNode, existingColumnNode, propertyLabel, isPartOfKey);
-							newLink = propLink;
+							alignment.addDataPropertyLink(newDomainNode, existingColumnNode, propertyLabel, isPartOfKey);
+//							newLink = propLink;
 						}
 						// When there was an existing semantic type and the new domain is a new node in the graph and columnNode already existed 
 						else if (columnNodeAlreadyExisted && !domainNodeAlreadyExistsInGraph) {
@@ -200,13 +201,13 @@ public class SetSemanticTypeCommand extends Command {
 							alignment.removeNode(oldDomainNode.getId());
 							Label domainLabel = ontMgr.getUriLabel(domainValue);
 							newDomainNode = alignment.addInternalNode(domainLabel);
-							DataPropertyLink propLink = alignment.addDataPropertyLink(newDomainNode, existingColumnNode, propertyLabel, isPartOfKey);
-							newLink = propLink;
+							alignment.addDataPropertyLink(newDomainNode, existingColumnNode, propertyLabel, isPartOfKey);
+//							newLink = propLink;
 						}
 						// When the new domain node already existed in the graph
 						else if (columnNodeAlreadyExisted && domainNodeAlreadyExistsInGraph) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-							DataPropertyLink propLink = alignment.addDataPropertyLink(newDomainNode, existingColumnNode, propertyLabel, isPartOfKey);
+							alignment.addDataPropertyLink(newDomainNode, existingColumnNode, propertyLabel, isPartOfKey);
 							alignment.removeNode(oldDomainNode.getId());
 						} 
 						// For all other cases where the columnNode did not exist yet
@@ -217,8 +218,8 @@ public class SetSemanticTypeCommand extends Command {
 							}
 							
 							ColumnNode newColumnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
-							DataPropertyLink propLink = alignment.addDataPropertyLink(newDomainNode, newColumnNode, propertyLabel, isPartOfKey);
-							newLink = propLink;
+							alignment.addDataPropertyLink(newDomainNode, newColumnNode, propertyLabel, isPartOfKey);
+//							newLink = propLink;
 						}
 						// Update the alignment
 						alignment.align();
@@ -319,10 +320,14 @@ public class SetSemanticTypeCommand extends Command {
 
 		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), oldColumnModel);
 
+		// Replace the current alignment with the old alignment
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
+		
 		// Get the alignment update if any
-		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
 		try {
-			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
+			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, oldAlignment));
+			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), oldAlignment));
 		} catch (Exception e) {
 			logger.error("Error occured while unsetting the semantic type!", e);
 			return new UpdateContainer(new ErrorUpdate(
