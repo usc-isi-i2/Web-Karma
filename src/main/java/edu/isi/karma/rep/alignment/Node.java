@@ -20,11 +20,18 @@
  ******************************************************************************/
 package edu.isi.karma.rep.alignment;
 
+import java.io.Serializable;
+
 import org.apache.log4j.Logger;
 
 import edu.isi.karma.util.RandomGUID;
 
-public abstract class Node implements Comparable<Node> {
+public abstract class Node implements Comparable<Node>, Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	static Logger logger = Logger.getLogger(Node.class);
 

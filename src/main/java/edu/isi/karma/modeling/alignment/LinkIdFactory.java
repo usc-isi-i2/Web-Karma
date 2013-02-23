@@ -25,8 +25,7 @@ import java.util.HashMap;
 
 public class LinkIdFactory {
 
-	HashMap<String, Integer> linksUris = new HashMap<String, Integer>();
-	
+	private HashMap<String, Integer> linksUris = new HashMap<String, Integer>();
 
 	public String getLinkId(String uri) {
 		

@@ -1236,7 +1236,7 @@ public class GraphBuilder {
 
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		DirectedWeightedMultigraph<Node, Link> g = new 
 				DirectedWeightedMultigraph<Node, Link>(Link.class);
 		
@@ -1248,11 +1248,16 @@ public class GraphBuilder {
 		g.addVertex(n2);
 		g.addEdge(n1, n2, l1);
 		GraphUtil.printGraph(g);
+		
+		GraphUtil.serialize(g, "test");
+		DirectedWeightedMultigraph<Node, Link> gprime = GraphUtil.deserialize("test");
+		
+		GraphUtil.printGraph(gprime);
 
 //		g.removeEdge(l1);
 //		GraphUtil.printGraph(g);
 		
-		g.removeVertex(n2);
-		GraphUtil.printGraph(g);
+//		g.removeVertex(n2);
+//		GraphUtil.printGraph(g);
 	}
 }

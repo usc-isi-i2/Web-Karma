@@ -20,6 +20,10 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -144,6 +148,33 @@ public class GraphUtil {
 			reversedLinks = new HashSet<String>();
 		treeToRootedTree(rootedTree, root, null, reversedLinks);
 		return rootedTree;
+	}
+	
+	public static void serialize(DirectedWeightedMultigraph<Node, Link> graph, String fileName) throws Exception
+	{
+//		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		FileOutputStream f = new FileOutputStream(fileName);
+		ObjectOutputStream out = new ObjectOutputStream(f);
+
+		out.writeObject(graph);
+		out.flush();
+		out.close();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static DirectedWeightedMultigraph<Node, Link> deserialize(String fileName) throws Exception
+	{
+//		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		FileInputStream f = new FileInputStream(fileName);
+        ObjectInputStream in = new ObjectInputStream(f);
+
+        Object obj  = in.readObject();
+        in.close();
+        
+        if (obj instanceof DirectedWeightedMultigraph<?, ?>)
+        	return (DirectedWeightedMultigraph<Node, Link>)obj;
+        else 
+        	return null;
 	}
 
 	private static void treeToRootedTree(DirectedWeightedMultigraph<Node, Link> tree, Node node, Link e, Set<String> reversedLinks) {
