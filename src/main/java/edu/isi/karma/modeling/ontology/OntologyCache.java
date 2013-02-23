@@ -71,12 +71,20 @@ class OntologyCache {
 	private HashMap<String, List<String>> notDirectDomainRangeProperties;
 
 	// hashmap: class -> subclasses
-	private HashMap<String, List<String>> directSubClasses;
-	private HashMap<String, List<String>> indirectSubClasses;
+	private HashMap<String, HashMap<String, Label>> directSubClasses;
+	private HashMap<String, HashMap<String, Label>> indirectSubClasses;
 
 	// hashmap: class -> subproperties
-	private HashMap<String, List<String>> directSubProperties;
-	private HashMap<String, List<String>> indirectSubProperties;
+	private HashMap<String, HashMap<String, Label>> directSubProperties;
+	private HashMap<String, HashMap<String, Label>> indirectSubProperties;
+
+	// hashmap: class -> superclasses
+	private HashMap<String, HashMap<String, Label>> directSuperClasses;
+	private HashMap<String, HashMap<String, Label>> indirectSuperClasses;
+
+	// hashmap: class -> superproperties
+	private HashMap<String, HashMap<String, Label>> directSuperProperties;
+	private HashMap<String, HashMap<String, Label>> indirectSuperProperties;
 
 	// hashmap: class1 + class2 -> boolean (if c1 is subClassOf c2)
 	private HashMap<String, Boolean> directSubClassCheck;
@@ -179,22 +187,38 @@ class OntologyCache {
 		return indirectDomainRangeProperties;
 	}
 	
-	public HashMap<String, List<String>> getDirectSubClasses() {
+	public HashMap<String, HashMap<String, Label>> getDirectSubClasses() {
 		return directSubClasses;
 	}
 
-	public HashMap<String, List<String>> getIndirectSubClasses() {
+	public HashMap<String, HashMap<String, Label>> getIndirectSubClasses() {
 		return indirectSubClasses;
 	}
 
-	public HashMap<String, List<String>> getDirectSubProperties() {
+	public HashMap<String, HashMap<String, Label>> getDirectSubProperties() {
 		return directSubProperties;
 	}
 
-	public HashMap<String, List<String>> getIndirectSubProperties() {
+	public HashMap<String, HashMap<String, Label>> getIndirectSubProperties() {
 		return indirectSubProperties;
 	}
 
+	public HashMap<String, HashMap<String, Label>> getDirectSuperClasses() {
+		return directSuperClasses;
+	}
+
+	public HashMap<String, HashMap<String, Label>> getIndirectSuperClasses() {
+		return indirectSuperClasses;
+	}
+
+	public HashMap<String, HashMap<String, Label>> getDirectSuperProperties() {
+		return directSuperProperties;
+	}
+
+	public HashMap<String, HashMap<String, Label>> getIndirectSuperProperties() {
+		return indirectSuperProperties;
+	}
+	
 	public HashMap<String, Boolean> getDirectSubClassCheck() {
 		return directSubClassCheck;
 	}
@@ -244,11 +268,17 @@ class OntologyCache {
 		this.dataPropertyHierarchy = new OntologyTreeNode(new Label("Data Properties"), null, null);
 		this.objectPropertyHierarchy = new OntologyTreeNode(new Label("Object Properties"), null, null);
 
-		this.directSubClasses = new HashMap<String, List<String>>();
-		this.indirectSubClasses = new HashMap<String, List<String>>();
+		this.directSubClasses = new HashMap<String, HashMap<String, Label>>();
+		this.indirectSubClasses = new HashMap<String, HashMap<String, Label>>();
 		
-		this.directSubProperties = new HashMap<String, List<String>>();
-		this.indirectSubProperties = new HashMap<String, List<String>>();
+		this.directSubProperties = new HashMap<String, HashMap<String, Label>>();
+		this.indirectSubProperties = new HashMap<String, HashMap<String, Label>>();
+		
+		this.directSuperClasses = new HashMap<String, HashMap<String, Label>>();
+		this.indirectSuperClasses = new HashMap<String, HashMap<String, Label>>();
+		
+		this.directSuperProperties = new HashMap<String, HashMap<String, Label>>();
+		this.indirectSuperProperties = new HashMap<String, HashMap<String, Label>>();
 		
 		this.directSubClassCheck = new HashMap<String, Boolean>();
 		this.directSubPropertyCheck = new HashMap<String, Boolean>();
@@ -307,6 +337,8 @@ class OntologyCache {
 		// build hashmaps for indirect subclass and subproperty relationships
 		this.buildIndirectSubClassesHashMap();
 		this.buildIndirectSubPropertiesHashMap();
+		this.buildIndirectSuperClassesHashMap();
+		this.buildIndirectSuperPropertiesHashMap();
 		
 		// build hashmaps to include inverse(Of) properties
 		this.buildInverseProperties();
@@ -314,6 +346,9 @@ class OntologyCache {
 		// build hashmaps to speed up adding links to the graph
 		this.buildObjectPropertyDomainRangeMap();
 		this.buildSubclassSuperclassPairs();
+		
+		// update hashmaps to include ralations with Thing
+		this.updateMapsToIncludeThing();
 		
 		// update hashmaps to include the subproperty relations  
 		this.updateMapsWithSubpropertyDefinitions(true);
@@ -397,7 +432,12 @@ class OntologyCache {
 		} else {
 			HashMap<String, Label> subClasses = 
 					this.ontHandler.getSubClasses(node.getUri().getUri(), false);
-			this.directSubClasses.put(node.getUri().getUri(), new ArrayList<String>(subClasses.keySet()));
+			HashMap<String, Label> superClasses = 
+					this.ontHandler.getSuperClasses(node.getUri().getUri(), false);
+
+			this.directSubClasses.put(node.getUri().getUri(), subClasses);
+			this.directSuperClasses.put(node.getUri().getUri(), superClasses);
+
 			for (String s : subClasses.keySet()) {
 				Label label = subClasses.get(s);
 				OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
@@ -428,7 +468,12 @@ class OntologyCache {
 		} else {
 			HashMap<String, Label> subProperties = 
 					this.ontHandler.getSubProperties(node.getUri().getUri(), false);
-			this.directSubProperties.put(node.getUri().getUri(), new ArrayList<String>(subProperties.keySet()));
+			HashMap<String, Label> superProperties = 
+					this.ontHandler.getSuperProperties(node.getUri().getUri(), false);
+			
+			this.directSubProperties.put(node.getUri().getUri(), subProperties);
+			this.directSuperProperties.put(node.getUri().getUri(), superProperties);
+
 			if (subProperties != null)
 				for (String s : subProperties.keySet()) {
 					Label label = subProperties.get(s);
@@ -460,7 +505,12 @@ class OntologyCache {
 		} else {
 			HashMap<String, Label> subProperties = 
 					this.ontHandler.getSubProperties(node.getUri().getUri(), false);
-			this.directSubProperties.put(node.getUri().getUri(), new ArrayList<String>(subProperties.keySet()));
+			HashMap<String, Label> superProperties = 
+					this.ontHandler.getSuperProperties(node.getUri().getUri(), false);
+
+			this.directSubProperties.put(node.getUri().getUri(), subProperties);
+			this.directSuperProperties.put(node.getUri().getUri(), superProperties);
+			
 			if (subProperties != null)
 				for (String s : subProperties.keySet()) {
 					Label label = subProperties.get(s);
@@ -476,25 +526,37 @@ class OntologyCache {
 		node.setChildren(children);	
 	}
 
-	private void buildIndirectSubPropertiesHashMap() {
-
-		for (String property : this.properties.keySet()) {
-			List<String> subProperties = 
-					new ArrayList<String>(this.ontHandler.getSubProperties(property, true).keySet());
-			this.indirectSubProperties.put(property, subProperties);
-		}
-	}
 
 	private void buildIndirectSubClassesHashMap() {
 		
 		for (String c : this.classes.keySet()) {
-			List<String> subClasses = 
-					new ArrayList<String>(this.ontHandler.getSubClasses(c, true).keySet());
-			this.indirectSubClasses.put(c, subClasses);
+			this.indirectSubClasses.put(c, this.ontHandler.getSubClasses(c, true));
 		}
 
 	}
+	
+	private void buildIndirectSuperClassesHashMap() {
+		
+		for (String c : this.classes.keySet()) {
+			this.indirectSubClasses.put(c, this.ontHandler.getSuperClasses(c, true));
+		}
 
+	}
+	
+	private void buildIndirectSubPropertiesHashMap() {
+
+		for (String property : this.properties.keySet()) {
+			this.indirectSubProperties.put(property, this.ontHandler.getSubProperties(property, true));
+		}
+	}
+
+	private void buildIndirectSuperPropertiesHashMap() {
+
+		for (String property : this.properties.keySet()) {
+			this.indirectSubProperties.put(property, this.ontHandler.getSuperProperties(property, true));
+		}
+	}
+	
 	private void buildInverseProperties() {
 		for (String op : this.objectProperties.keySet()) {
 			this.propertyInverse.put(op, this.ontHandler.getInverseProperty(op));
@@ -549,13 +611,13 @@ class OntologyCache {
 	private void buildSubclassSuperclassPairs() {
 		
 		for (String superclass : this.directSubClasses.keySet()) {
-			List<String> subClasses = this.directSubClasses.get(superclass);
+			Set<String> subClasses = this.directSubClasses.get(superclass).keySet();
 			for (String subclass : subClasses)
 				this.directSubclassSuperclassPairs.add(new SubclassSuperclassPair(subclass, superclass));
 		}
 		
 		for (String superclass : this.indirectSubClasses.keySet()) {
-			List<String> subClasses = this.indirectSubClasses.get(superclass);
+			Set<String> subClasses = this.indirectSubClasses.get(superclass).keySet();
 			for (String subclass : subClasses)
 				this.indirectSubclassSuperclassPairs.add(new SubclassSuperclassPair(subclass, superclass));
 		}
@@ -985,4 +1047,6 @@ class OntologyCache {
 
 	}
 
+	private void updateMapsToIncludeThing() {
+	}
 }

@@ -285,7 +285,7 @@ public class ModelReader {
 			predicateStr = getUri(predicateStr);
 			objStr = getUri(objStr);
 
-			if (st.getPredicate().equalsIgnoreCase(typePredicate)) 
+			if (predicateStr.equalsIgnoreCase(typePredicate)) 
 				continue;
 			
 			Node subj = uri2Classes.get(subjStr);

@@ -416,8 +416,10 @@ public class GraphBuilder {
 		long start = System.currentTimeMillis();
 		float elapsedTimeSec;
 
-		for (Node node : this.typeToNodesMap.get(NodeType.InternalNode)) 
-			addNodeClosure(node, new ArrayList<Node>());
+		Node[] internalNodes = this.typeToNodesMap.get(NodeType.InternalNode).toArray(new Node[0]);
+		if (internalNodes != null)
+			for (Node node : internalNodes) 
+				addNodeClosure(node, new ArrayList<Node>());
 
 		long addNodesClosure = System.currentTimeMillis();
 		elapsedTimeSec = (addNodesClosure - start)/1000F;
@@ -734,8 +736,10 @@ public class GraphBuilder {
 				for (String ss : dependentUris) {
 					if (!temp.contains(ss)) { temp.add(ss); count++;}
 					if (this.uriClosure.get(ss) != null) {
-						for (String c : this.uriClosure.get(ss))
+						String[] cc = this.uriClosure.get(ss).toArray(new String[0]);
+						for (String c : cc) {
 							if (!temp.contains(c)) {temp.add(c); count++;}
+						}
 					}
 						
 				}
@@ -795,7 +799,7 @@ public class GraphBuilder {
 		} 
 		for (String s : closure) {
 			List<Node> nodes = uriToNodesMap.get(s);
-			nodeClosure.addAll(nodes);
+			if (nodes != null) nodeClosure.addAll(nodes);
 		}
 		return nodeClosure;
 	}
@@ -1249,10 +1253,10 @@ public class GraphBuilder {
 		g.addEdge(n1, n2, l1);
 		GraphUtil.printGraph(g);
 		
-		GraphUtil.serialize(g, "test");
-		DirectedWeightedMultigraph<Node, Link> gprime = GraphUtil.deserialize("test");
-		
-		GraphUtil.printGraph(gprime);
+//		GraphUtil.serialize(g, "test");
+//		DirectedWeightedMultigraph<Node, Link> gprime = GraphUtil.deserialize("test");
+//		
+//		GraphUtil.printGraph(gprime);
 
 //		g.removeEdge(l1);
 //		GraphUtil.printGraph(g);

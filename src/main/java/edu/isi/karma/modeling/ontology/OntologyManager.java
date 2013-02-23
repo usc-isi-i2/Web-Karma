@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -270,7 +271,9 @@ public class OntologyManager {
 			if (ontCache.getDirectSubClasses().containsKey(subClassUri + superClassUri))
 				return true;
 		} else {
-			List<String> indirectSubClasses = ontCache.getIndirectSubClasses().get(superClassUri);
+			HashMap<String, Label> map = ontCache.getIndirectSubClasses().get(superClassUri);
+			if (map == null) return false;
+			Set<String> indirectSubClasses = map.keySet();
 			if (indirectSubClasses != null && indirectSubClasses.contains(subClassUri))
 				return true;
 		}
@@ -292,7 +295,9 @@ public class OntologyManager {
 			if (ontCache.getDirectSubPropertyCheck().containsKey(subPropertyUri + superPropertyUri))
 				return true;
 		} else {
-			List<String> indirectSubProperties = ontCache.getIndirectSubProperties().get(superPropertyUri);
+			HashMap<String, Label> map = ontCache.getIndirectSubProperties().get(superPropertyUri);
+			if (map == null) return false;
+			Set<String> indirectSubProperties = map.keySet();
 			if (indirectSubProperties != null && indirectSubProperties.contains(subPropertyUri))
 				return true;
 		}
@@ -487,7 +492,10 @@ public class OntologyManager {
 	 */
 	public HashMap<String, Label> getSubClasses(String classUri, boolean recursive) {
 
-		return ontHandler.getSubClasses(classUri, recursive);
+		if (!recursive)
+			return ontCache.getDirectSubClasses().get(classUri);
+		else
+			return ontCache.getIndirectSubClasses().get(classUri);
 	}
 	
 	/**
@@ -498,7 +506,10 @@ public class OntologyManager {
 	 */
 	public HashMap<String, Label> getSuperClasses(String classUri, boolean recursive) {
 		
-		return ontHandler.getSubClasses(classUri, recursive);
+		if (!recursive)
+			return ontCache.getDirectSuperClasses().get(classUri);
+		else
+			return ontCache.getIndirectSuperClasses().get(classUri);	
 	}
 	
 	/**
@@ -509,7 +520,10 @@ public class OntologyManager {
 	 */
 	public HashMap<String, Label> getSubProperties(String propertyUri, boolean recursive) {
 
-		return ontHandler.getSubProperties(propertyUri, recursive);
+		if (!recursive)
+			return ontCache.getDirectSubProperties().get(propertyUri);
+		else
+			return ontCache.getIndirectSubProperties().get(propertyUri);
 	}
 	
 	/**
@@ -520,6 +534,9 @@ public class OntologyManager {
 	 */
 	public HashMap<String, Label> getSuperProperties(String propertyUri, boolean recursive) {
 
-		return ontHandler.getSuperProperties(propertyUri, recursive);
+		if (!recursive)
+			return ontCache.getDirectSuperProperties().get(propertyUri);
+		else
+			return ontCache.getIndirectSuperProperties().get(propertyUri);
 	}
 }

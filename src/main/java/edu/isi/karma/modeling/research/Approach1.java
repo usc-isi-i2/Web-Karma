@@ -33,16 +33,13 @@ import org.apache.log4j.Logger;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.jgrapht.graph.WeightedMultigraph;
 
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.InternalNode;
-import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
@@ -79,6 +76,8 @@ public class Approach1 {
 
 
 	public void preprocess(DirectedWeightedMultigraph<Node, Link> serviceModel) {
+		
+		this.buildSourceTargetLinkCounterMap();
 		
 		this.inputSemanticLabels = getModelSemanticLabels(serviceModel);
 		if (inputSemanticLabels == null || inputSemanticLabels.size() == 0) {
@@ -130,6 +129,25 @@ public class Approach1 {
 		
 	}
 	
+	private void buildSourceTargetLinkCounterMap() {
+		Integer count;
+		for (ServiceModel sm : this.trainingData) {
+			DirectedWeightedMultigraph<Node, Link> m = sm.getModels().get(1);
+			for (Link link : m.edgeSet()) {
+				Node source = link.getSource();
+				Node target = link.getTarget();
+				if (source instanceof InternalNode && target instanceof InternalNode) {
+					String key = source.getLabel().getUri() +
+								 target.getLabel().getUri() + 
+								 link.getLabel().getUri();
+					count = sourceTargetLinkCounterMap.get(key);
+					if (count == null) sourceTargetLinkCounterMap.put(key, 1);
+					else sourceTargetLinkCounterMap.put(key, ++count);
+				}
+			}
+		}
+	}
+	
 	private List<Node> computeSteinerNodes() {
 		
 		List<Node> steinerNodes = new ArrayList<Node>();
@@ -151,8 +169,7 @@ public class Approach1 {
 			InternalNode n = alignment.addInternalNodeWithoutUpdatingGraph(sl.getNodeLabel());
 //			ColumnNode c = alignment.addColumnNode("H" + String.valueOf(i), sl.getLeafName());
 			ColumnNode c = alignment.addColumnNodeWithoutUpdatingGraph(sl.getLeafName(), sl.getLeafName());
-			DataPropertyLink link = alignment.addDataPropertyLink(n, c, sl.getLinkLabel(), false);
-			break;
+			alignment.addDataPropertyLink(n, c, sl.getLinkLabel(), false);
 		}
 		
 		alignment.updateGraph();
@@ -281,27 +298,13 @@ public class Approach1 {
 					link.getLabel().getUri();
 			
 			count = this.sourceTargetLinkCounterMap.get(key);
-			if (count != null) w -= count;
-			graph.setEdgeWeight(link, w);
-		}
-	}
-	
-	private void buildSourceTargetLinkCounterMap() {
-		Integer count;
-		for (ServiceModel sm : this.trainingData) {
-			DirectedWeightedMultigraph<Node, Link> m = sm.getModels().get(1);
-			for (Link link : m.edgeSet()) {
-				Node source = link.getSource();
-				Node target = link.getTarget();
-				if (source instanceof InternalNode && target instanceof InternalNode) {
-					String key = source.getLabel().getUri() +
-								 target.getLabel().getUri() + 
-								 link.getLabel().getUri();
-					count = sourceTargetLinkCounterMap.get(key);
-					if (count == null) sourceTargetLinkCounterMap.put(key, 1);
-					else sourceTargetLinkCounterMap.put(key, ++count);
-				}
+			if (count != null) {
+				System.out.println(link.getSource().getLabel().getUri() + "---" +
+						link.getTarget().getLabel().getUri() + "---" +
+						link.getLabel().getUri() + "---" + count);
+				w -= count*100;
 			}
+			graph.setEdgeWeight(link, w);
 		}
 	}
 	
@@ -317,7 +320,7 @@ public class Approach1 {
 		}
 		
 		DirectedWeightedMultigraph<Node, Link> inputModel = serviceModels.get(inputModelIndex).getModels().get(0);
-		DirectedWeightedMultigraph<Node, Link> oututModel = serviceModels.get(inputModelIndex).getModels().get(1);
+//		DirectedWeightedMultigraph<Node, Link> oututModel = serviceModels.get(inputModelIndex).getModels().get(1);
 		DirectedWeightedMultigraph<Node, Link> hypothesis;
 
 		OntologyManager ontManager = new OntologyManager();
@@ -333,18 +336,32 @@ public class Approach1 {
 		Approach1 app = new Approach1(trainingData, ontManager);
 		app.preprocess(inputModel);
 		
-		DirectedWeightedMultigraph<Node, Link> graph = app.buildGraph(app.getOutputSemanticLabels());
+//		DirectedWeightedMultigraph<Node, Link> graph = app.buildGraph(app.getOutputSemanticLabels());
+//		
+//		try {
+//			GraphUtil.serialize(graph, graphPath);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		
+		DirectedWeightedMultigraph<Node, Link> graph = null;
 		try {
-			GraphUtil.serialize(graph, graphPath);
+			graph = GraphUtil.deserialize(graphPath);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-//		DirectedWeightedMultigraph<Node, Link> graph = GraphUtil.deserialize(graphPath);
+
+//		GraphUtil.printGraph(graph);
 
 		app.updateWeights(graph);
+		
 		List<Node> steinerNodes = app.computeSteinerNodes();
+		
+		steinerNodes = new ArrayList<Node>();
+		for (Node n : graph.vertexSet())
+			if (n instanceof ColumnNode)
+				steinerNodes.add(n);
+		
 		hypothesis = app.hypothesize(graph, steinerNodes);
 		
 		GraphUtil.printGraph(hypothesis);
@@ -353,36 +370,36 @@ public class Approach1 {
 		GraphVizUtil.exportJGraphToGraphvizFile(hypothesis, outputPath);
 	}
 	
-	private static void testSelectionOfBestMatch() {
-		
-		Label nodeLabel1 = new Label("n2"); Label linkLabel1 = new Label("e1");
-		Label nodeLabel2 = new Label("n2"); Label linkLabel2 = new Label("e4");
-		Label nodeLabel3 = new Label("n2"); Label linkLabel3 = new Label("e2");
-		Label nodeLabel4 = new Label("n1"); Label linkLabel4 = new Label("e1");
-		Label nodeLabel5 = new Label("n1"); Label linkLabel5 = new Label("e1");
-		Label nodeLabel6 = new Label("n2"); Label linkLabel6 = new Label("e3");
-		Label nodeLabel7 = new Label("n3"); Label linkLabel7 = new Label("e3");
-		Label nodeLabel8 = new Label("n4"); Label linkLabel8 = new Label("e4");
-		Label nodeLabel9 = new Label("n3"); Label linkLabel9 = new Label("e3");
-
-		
-		SemanticLabel sl1 = new SemanticLabel(nodeLabel1, linkLabel1, "1");
-		SemanticLabel sl2 = new SemanticLabel(nodeLabel2, linkLabel2, "2");
-		SemanticLabel sl3 = new SemanticLabel(nodeLabel3, linkLabel3, "3");
-		SemanticLabel sl4 = new SemanticLabel(nodeLabel4, linkLabel4, "4");
-		SemanticLabel sl5 = new SemanticLabel(nodeLabel5, linkLabel5, "5");
-		SemanticLabel sl6 = new SemanticLabel(nodeLabel6, linkLabel6, "6");
-		SemanticLabel sl7 = new SemanticLabel(nodeLabel7, linkLabel7, "7");
-		SemanticLabel sl8 = new SemanticLabel(nodeLabel8, linkLabel8, "8");
-		SemanticLabel sl9 = new SemanticLabel(nodeLabel9, linkLabel9, "9");
-		
-		List<SemanticLabel> semanticLabels = new ArrayList<SemanticLabel>();
-		semanticLabels.add(sl1); semanticLabels.add(sl2); semanticLabels.add(sl3);
-		semanticLabels.add(sl4); semanticLabels.add(sl5); semanticLabels.add(sl6);
-		semanticLabels.add(sl7); semanticLabels.add(sl8); semanticLabels.add(sl9);
-		
-		new Approach1(null, null).selectBestMatchedSemanticLabel(semanticLabels);
-	}
+//	private static void testSelectionOfBestMatch() {
+//		
+//		Label nodeLabel1 = new Label("n2"); Label linkLabel1 = new Label("e1");
+//		Label nodeLabel2 = new Label("n2"); Label linkLabel2 = new Label("e4");
+//		Label nodeLabel3 = new Label("n2"); Label linkLabel3 = new Label("e2");
+//		Label nodeLabel4 = new Label("n1"); Label linkLabel4 = new Label("e1");
+//		Label nodeLabel5 = new Label("n1"); Label linkLabel5 = new Label("e1");
+//		Label nodeLabel6 = new Label("n2"); Label linkLabel6 = new Label("e3");
+//		Label nodeLabel7 = new Label("n3"); Label linkLabel7 = new Label("e3");
+//		Label nodeLabel8 = new Label("n4"); Label linkLabel8 = new Label("e4");
+//		Label nodeLabel9 = new Label("n3"); Label linkLabel9 = new Label("e3");
+//
+//		
+//		SemanticLabel sl1 = new SemanticLabel(nodeLabel1, linkLabel1, "1");
+//		SemanticLabel sl2 = new SemanticLabel(nodeLabel2, linkLabel2, "2");
+//		SemanticLabel sl3 = new SemanticLabel(nodeLabel3, linkLabel3, "3");
+//		SemanticLabel sl4 = new SemanticLabel(nodeLabel4, linkLabel4, "4");
+//		SemanticLabel sl5 = new SemanticLabel(nodeLabel5, linkLabel5, "5");
+//		SemanticLabel sl6 = new SemanticLabel(nodeLabel6, linkLabel6, "6");
+//		SemanticLabel sl7 = new SemanticLabel(nodeLabel7, linkLabel7, "7");
+//		SemanticLabel sl8 = new SemanticLabel(nodeLabel8, linkLabel8, "8");
+//		SemanticLabel sl9 = new SemanticLabel(nodeLabel9, linkLabel9, "9");
+//		
+//		List<SemanticLabel> semanticLabels = new ArrayList<SemanticLabel>();
+//		semanticLabels.add(sl1); semanticLabels.add(sl2); semanticLabels.add(sl3);
+//		semanticLabels.add(sl4); semanticLabels.add(sl5); semanticLabels.add(sl6);
+//		semanticLabels.add(sl7); semanticLabels.add(sl8); semanticLabels.add(sl9);
+//		
+//		new Approach1(null, null).selectBestMatchedSemanticLabel(semanticLabels);
+//	}
 	
 	public static void main(String[] args) {
 		
@@ -390,7 +407,7 @@ public class Approach1 {
 //			testSelectionOfBestMatch();
 			testApproach();
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 	}
 }
