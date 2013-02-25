@@ -26,7 +26,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -63,6 +65,8 @@ public class Approach1 {
 	private LinkIdFactory linkIdFactory;
 	private List<DomainRangePair> sourceTargetList;
 	private HashMap<String, HashMap<String, Integer>> sourceTargetToLinkCounterMap;
+	private HashMap<Node, List<SemanticLabel>> nodeToSemanticLabels;
+	private HashMap<SemanticLabel, SemanticLabel> inputLabelsToOutputLabelsMatching;
 	
 	private List<ServiceModel> trainingData;
 	private OntologyManager ontologyManager;
@@ -76,14 +80,16 @@ public class Approach1 {
 		this.trainingData = trainingData;
 		this.ontologyManager = ontologyManager;
 		this.linkIdFactory = new LinkIdFactory();
-		this.sourceTargetList = new ArrayList<DomainRangePair>();
-		this.sourceTargetToLinkCounterMap = new HashMap<String, HashMap<String,Integer>>();
 		this.inputSemanticLabels = new ArrayList<SemanticLabel>();
 		this.outputSemanticLabels = new ArrayList<SemanticLabel>();
 		this.directLinkWeight = this.getInitialLinkWeight();
 		this.indirectLinkWeight = this.directLinkWeight + ModelingParams.MIN_WEIGHT;
 		this.typeToNodesMap = new HashMap<NodeType, List<Node>>();
 		this.uriToNodesMap = new HashMap<String, List<Node>>();
+		this.sourceTargetList = new ArrayList<DomainRangePair>();
+		this.sourceTargetToLinkCounterMap = new HashMap<String, HashMap<String,Integer>>();
+		this.nodeToSemanticLabels = new HashMap<Node, List<SemanticLabel>>();
+		this.inputLabelsToOutputLabelsMatching = new HashMap<SemanticLabel, SemanticLabel>();
 	}
 
 	public List<SemanticLabel> getInputSemanticLabels() {
@@ -141,7 +147,8 @@ public class Approach1 {
 	}
 	
 	private List<SemanticLabel> getModelSemanticLabels(
-			DirectedWeightedMultigraph<Node, Link> serviceModel) {
+			DirectedWeightedMultigraph<Node, Link> serviceModel,
+			boolean updateNodeToSemanticLabelsMap) {
 		
 		List<SemanticLabel> semanticLabels = new ArrayList<SemanticLabel>();
 
@@ -155,6 +162,15 @@ public class Approach1 {
 				
 				SemanticLabel sl = new SemanticLabel(domain.getLabel(), link.getLabel(), n.getId());
 				semanticLabels.add(sl);
+				
+				if (!updateNodeToSemanticLabelsMap) continue;
+				
+				List<SemanticLabel> attachedSLs = this.nodeToSemanticLabels.get(domain);
+				if (attachedSLs == null) {
+					attachedSLs = new ArrayList<SemanticLabel>();
+					this.nodeToSemanticLabels.put(domain, attachedSLs);
+				}
+				attachedSLs.add(sl);
 			} 
 		}
 		return semanticLabels;
@@ -170,10 +186,10 @@ public class Approach1 {
 			SemanticLabel sl1 = null, sl2 = null;
 			List<SemanticLabel> slList1 = null, slList2 = null;
 			for (MatchedSubGraphs m : matchedSubGraphs) {
-				slList1 = getModelSemanticLabels(m.getSubGraph1());
+				slList1 = getModelSemanticLabels(m.getSubGraph1(), false);
 				if (slList1 != null && slList1.size() == 1) sl1 = slList1.get(0); else sl1 = null;
 				
-				slList2 = getModelSemanticLabels(m.getSubGraph2());
+				slList2 = getModelSemanticLabels(m.getSubGraph2(), false);
 				if (slList2 != null && slList2.size() == 1) sl2 = slList2.get(0); else sl2 = null;
 				
 				if (sl1 == null || sl2 == null) continue;
@@ -232,7 +248,7 @@ public class Approach1 {
 		
 		this.buildSourceTargetLinkCounterMap();
 		
-		this.inputSemanticLabels = getModelSemanticLabels(serviceModel);
+		this.inputSemanticLabels = getModelSemanticLabels(serviceModel, true);
 		if (inputSemanticLabels == null || inputSemanticLabels.size() == 0) {
 			logger.info("The input model does not have any semantic label.");
 			return;
@@ -253,7 +269,7 @@ public class Approach1 {
 			if (matchedSemanticLabels == null || matchedSemanticLabels.size() == 0) {
 				logger.info("Cannot find any match for semantic label:");
 				sl.print();
-				return;
+				continue;
 			}
 			
 			logger.info("Matched Semantic Labels: ");
@@ -262,7 +278,10 @@ public class Approach1 {
 			logger.info("-------------------------------------------");
 
 			SemanticLabel bestMatch = selectBestMatchedSemanticLabel(matchedSemanticLabels);
-			outputSemanticLabels.add(bestMatch);
+			SemanticLabel outputSemanticLabel = 
+					new SemanticLabel(bestMatch.getNodeLabel(), bestMatch.getLinkLabel(), sl.getLeafName());
+			outputSemanticLabels.add(outputSemanticLabel);
+			this.inputLabelsToOutputLabelsMatching.put(sl, outputSemanticLabel);
 
 			logger.info("Best Match: ");
 			bestMatch.print();
@@ -281,18 +300,42 @@ public class Approach1 {
 		logger.info("=====================================================================");
 		
 	}
-
-	public void buildGraph(List<SemanticLabel> semanticLabels) {
+	
+	public void buildGraph() {
 		
 		Alignment alignment = new Alignment(this.ontologyManager);
 		
-		for (SemanticLabel sl : semanticLabels) {
-			InternalNode n = alignment.addInternalNodeWithoutUpdatingGraph(sl.getNodeLabel());
-//			ColumnNode c = alignment.addColumnNode("H" + String.valueOf(i), sl.getLeafName());
-			ColumnNode c = alignment.addColumnNodeWithoutUpdatingGraph(sl.getLeafName(), sl.getLeafName());
-			alignment.addDataPropertyLink(n, c, sl.getLinkLabel(), false);
+		for (List<SemanticLabel> slList : this.nodeToSemanticLabels.values()) {
+			
+			List<SemanticLabel> mappedOutputLabel = new ArrayList<SemanticLabel>();
+			for (SemanticLabel sl : slList)
+				if (this.inputLabelsToOutputLabelsMatching.get(sl) != null)
+					mappedOutputLabel.add(this.inputLabelsToOutputLabelsMatching.get(sl));
+			
+	
+			Map<String,List<SemanticLabel>> groupedMappedOutputLabelsByNodeUri =
+				    new LinkedHashMap<String,List<SemanticLabel>>();
+				
+			for (SemanticLabel sl : mappedOutputLabel) {
+			    List<SemanticLabel> outputLabelsWithSameNodeUri = 
+			    		groupedMappedOutputLabelsByNodeUri.get(sl.getNodeLabel().getUri());
+			    if (outputLabelsWithSameNodeUri == null) {
+			    	outputLabelsWithSameNodeUri = new ArrayList<SemanticLabel>();
+			    	groupedMappedOutputLabelsByNodeUri.put(sl.getNodeLabel().getUri(), outputLabelsWithSameNodeUri);
+			    }
+			    outputLabelsWithSameNodeUri.add(sl);
+			}
+			
+			for (String s : groupedMappedOutputLabelsByNodeUri.keySet()) {
+				List<SemanticLabel> groupedOutputList = groupedMappedOutputLabelsByNodeUri.get(s);
+				InternalNode n = alignment.addInternalNodeWithoutUpdatingGraph(new Label(s));
+				for (SemanticLabel sl : groupedOutputList) {
+					ColumnNode c = alignment.addColumnNodeWithoutUpdatingGraph(sl.getLeafName(), sl.getLeafName());
+					alignment.addDataPropertyLink(n, c, sl.getLinkLabel(), false);
+				}
+			}
 		}
-		
+		GraphUtil.printGraphSimple(alignment.getGraph());
 		alignment.updateGraph();
 		this.graph = alignment.getGraph();
 		this.updateHashMaps();
@@ -317,7 +360,8 @@ public class Approach1 {
 		}
 	}
 	
-	public void updateWeights() {
+	private void updateWeights() {
+		
 		String key, id;
 		Integer count;
 		double w;
@@ -359,13 +403,19 @@ public class Approach1 {
 			HashMap<String, Integer> linkCount = this.sourceTargetToLinkCounterMap.get(key);
 			if (linkCount == null || linkCount.size() == 0) continue;
 
+//			for (String s : linkCount.keySet()) 
+//				logger.info(key + " => " + s + " => " + linkCount.get(s));
+			
 			for (Node n1 : sources) {
 				for (Node n2 : targets) {
 					for (String s : linkCount.keySet()) {
 						
 						if (!possibleLinksFromSourceToTarget.contains(s)) {
-							logger.warn("The link " + s + " from " + dr.getDomain() + " to " + dr.getRange() + " cannot be inferred from the ontology, " +
-									"so we don't consider it in our graph.");
+//							logger.warn("The link " + s + " from " + dr.getDomain() + " to " + dr.getRange() + 
+//									" cannot be inferred from the ontology, so we don't consider it in our graph.");
+//							continue;
+							logger.warn("The link " + s + " from " + dr.getDomain() + " to " + dr.getRange() + 
+									" cannot be inferred from the ontology, but we assert it because it exists in training data.");
 							continue;
 						}
 						
@@ -389,13 +439,40 @@ public class Approach1 {
 	
 	private List<Node> computeSteinerNodes() {
 		
-		List<Node> steinerNodes = this.typeToNodesMap.get(NodeType.ColumnNode);
+		List<Node> steinerNodes = new ArrayList<Node>();
+		if (this.typeToNodesMap.get(NodeType.ColumnNode) != null) { 
+			for (Node n : this.typeToNodesMap.get(NodeType.ColumnNode)) {
+				steinerNodes.add(n);
+				// add node domain
+				Set<Link> incomingLinks = this.graph.incomingEdgesOf(n);
+				if (incomingLinks != null) { // && incomingLinks.size() == 1) {
+					Link link = incomingLinks.toArray(new Link[0])[0];
+					steinerNodes.add(link.getSource());
+				}
+			}
+		}
+		if (this.typeToNodesMap.get(NodeType.LiteralNode) != null) { 
+			for (Node n : this.typeToNodesMap.get(NodeType.LiteralNode)) {
+				steinerNodes.add(n);
+				// add node domain
+				Set<Link> incomingLinks = this.graph.incomingEdgesOf(n);
+				if (incomingLinks != null) { // && incomingLinks.size() == 1) {
+					Link link = incomingLinks.toArray(new Link[0])[0];
+					steinerNodes.add(link.getSource());
+				}
+			}
+		}
+		
 		return steinerNodes;
 	}
 	
 	public DirectedWeightedMultigraph<Node, Link> hypothesize() {
 		
 		List<Node> steinerNodes = this.computeSteinerNodes();
+		if (steinerNodes == null || steinerNodes.size() == 0) {
+			logger.error("There is no steiner node.");
+			return null;
+		}
 		this.updateWeights();
 
 		UndirectedGraph<Node, Link> undirectedGraph = new AsUndirectedGraph<Node, Link>(graph);
@@ -481,40 +558,56 @@ public class Approach1 {
 
 		for (int i = 0; i < serviceModels.size(); i++) {
 			
+			if (i == 12)
+				System.out.println("debug");
+			
 			trainingData.clear();
 			int inputModelIndex = i;
+			ServiceModel sm = serviceModels.get(inputModelIndex);
+			
+			logger.info("======================================================");
+			logger.info(sm.getServiceDescription());
+			logger.info("======================================================");
 			
 			for (int j = 0; j < serviceModels.size(); j++) {
 				if (j != inputModelIndex) trainingData.add(serviceModels.get(j));
 			}
 			
 			DirectedWeightedMultigraph<Node, Link> inputModel = 
-					serviceModels.get(inputModelIndex).getModels().get(inputModelIndex);
+					sm.getModels().get(0);
 //			DirectedWeightedMultigraph<Node, Link> oututModel = serviceModels.get(inputModelIndex).getModels().get(1);
 			
 			Approach1 app = new Approach1(trainingData, ontManager);
 			app.preprocess(inputModel);
-			app.buildGraph(app.getOutputSemanticLabels());
 			
-			// save graph to file
-			try {
-				GraphUtil.serialize(app.getGraph(), Approach1.outputDir + "graph" + String.valueOf(i));
-			} catch (Exception e) {
-				e.printStackTrace();
+			String graphName = Approach1.outputDir + "graph" + String.valueOf(i+1);
+			if (new File(graphName).exists()) {
+				// read graph from file
+				try {
+					app.loadGraph(GraphUtil.deserialize(graphName));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				logger.info("building the graph ...");
+				app.buildGraph();
+				// save graph to file
+				try {
+					GraphUtil.serialize(app.getGraph(), graphName);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			
-			// read graph from file
-	//		try {
-	//			app.loadGraph(GraphUtil.deserialize(graphPath));
-	//		} catch (Exception e) {
-	//			e.printStackTrace();
-	//		}
 	
 	//		GraphUtil.printGraph(graph);
 	
 			DirectedWeightedMultigraph<Node, Link> hypothesis = app.hypothesize();
-			GraphVizUtil.exportJGraphToGraphvizFile(hypothesis, Approach1.outputDir + "output" + String.valueOf(i) + ".dot");
-			
+			if (hypothesis == null)
+				continue;
+			GraphVizUtil.exportJGraphToGraphvizFile(hypothesis, 
+					sm.getServiceDescription(), 
+					Approach1.outputDir + "output" + String.valueOf(i+1) + ".dot");
 			GraphUtil.printGraphSimple(hypothesis);			
 
 		}
