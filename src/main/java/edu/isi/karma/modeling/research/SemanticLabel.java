@@ -56,7 +56,7 @@ public class SemanticLabel implements Comparable<SemanticLabel>{
 	public String getLeafName() {
 		return leafName;
 	}
-	
+
 	@Override
 	public int compareTo(SemanticLabel sl) {
 		if (this.nodeLabel == null || sl.getNodeLabel() == null) return 1;

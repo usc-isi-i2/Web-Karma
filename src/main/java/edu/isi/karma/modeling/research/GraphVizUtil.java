@@ -84,9 +84,10 @@ public class GraphVizUtil {
 			
 			org.kohsuke.graphviz.Node n = nodeIndex.get(source);
 			String id = source.getId();
+			String uri = source.getLabel().getUri();
 			if (n == null) {
 				n = new org.kohsuke.graphviz.Node();
-				n.attr("label", id);
+				n.attr("label", (uri == null?id:uri));
 				nodeIndex.put(source, n);
 			
 //				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
@@ -105,9 +106,10 @@ public class GraphVizUtil {
 
 			n = nodeIndex.get(target);
 			id = target.getId();
+			uri = target.getLabel().getUri();
 			if (n == null) {
 				n = new org.kohsuke.graphviz.Node();
-				n.attr("label", id);
+				n.attr("label", (uri == null?id:uri));
 				nodeIndex.put(target, n);
 			
 //				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
@@ -145,8 +147,10 @@ public class GraphVizUtil {
 			} 
 			*/
 			
+			id = e.getId();
+			uri = e.getLabel().getUri();
 			org.kohsuke.graphviz.Edge edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(source), nodeIndex.get(target));
-			edge.attr("label", e.getId());
+			edge.attr("label", (uri == null?id:uri));
 			gViz.edgeWith(edgeStyle);
 			gViz.edge(edge);
 		}
@@ -155,9 +159,12 @@ public class GraphVizUtil {
 		return gViz;
 	}
 	
-	public static org.kohsuke.graphviz.Graph exportJGraphToGraphviz(DirectedWeightedMultigraph<Node, Link> model) {
+	public static org.kohsuke.graphviz.Graph exportJGraphToGraphviz(DirectedWeightedMultigraph<Node, Link> model, String label) {
 
 		org.kohsuke.graphviz.Graph gViz = new org.kohsuke.graphviz.Graph();
+		gViz.attr("fontcolor", "blue");
+		gViz.attr("remincross", "true");
+		gViz.attr("label", label);
 			
 		org.kohsuke.graphviz.Style internalNodeStyle = new org.kohsuke.graphviz.Style();
 //		internalNodeStyle.attr("shape", "circle");
@@ -200,9 +207,10 @@ public class GraphVizUtil {
 			
 			org.kohsuke.graphviz.Node n = nodeIndex.get(source);
 			String id = source.getId();
+			String uri = source.getLabel().getUri();
 			if (n == null) {
 				n = new org.kohsuke.graphviz.Node();
-				n.attr("label", id);
+				n.attr("label", (uri == null?id:uri));
 				nodeIndex.put(source, n);
 			
 //				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
@@ -221,9 +229,10 @@ public class GraphVizUtil {
 
 			n = nodeIndex.get(target);
 			id = target.getId();
+			uri = target.getLabel().getUri();
 			if (n == null) {
 				n = new org.kohsuke.graphviz.Node();
-				n.attr("label", id);
+				n.attr("label", (uri == null?id:uri));
 				nodeIndex.put(target, n);
 			
 //				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
@@ -240,8 +249,10 @@ public class GraphVizUtil {
 				gViz.node(n);
 			}
 			
+			id = e.getId();
+			uri = e.getLabel().getUri();
 			org.kohsuke.graphviz.Edge edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(source), nodeIndex.get(target));
-			edge.attr("label", e.getId());
+			edge.attr("label", (uri == null?id:uri));
 			gViz.edgeWith(edgeStyle);
 			gViz.edge(edge);
 		}
@@ -251,10 +262,10 @@ public class GraphVizUtil {
 	}
 	
 	public static void exportJGraphToGraphvizFile(
-			DirectedWeightedMultigraph<Node, Link> model, String exportPath) 
+			DirectedWeightedMultigraph<Node, Link> model, String label, String exportPath) 
 					throws FileNotFoundException {
 		OutputStream out = new FileOutputStream(exportPath);
-		org.kohsuke.graphviz.Graph graphViz = exportJGraphToGraphviz(model);
+		org.kohsuke.graphviz.Graph graphViz = exportJGraphToGraphviz(model, label);
 		graphViz.writeTo(out);
 	}
 

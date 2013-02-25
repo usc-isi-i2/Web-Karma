@@ -23,6 +23,7 @@ package edu.isi.karma.modeling.ontology;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -32,6 +33,9 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
+import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.modeling.Prefixes;
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.alignment.Label;
 
 class OntologyCache {
@@ -103,6 +107,10 @@ class OntologyCache {
 	private List<SubclassSuperclassPair> directSubclassSuperclassPairs;
 	private List<SubclassSuperclassPair> indirectSubclassSuperclassPairs;
 	
+	// hashmap: class1 + class2 -> boolean (if c1 is subClassOf c2)
+	private HashMap<String, Boolean> directConnectivityCheck;
+	private HashMap<String, Boolean> indirectConnectivityCheck;
+ 
 	public OntologyCache(OntologyHandler ontHandler) {
 		this.ontHandler = ontHandler;
 	}
@@ -255,6 +263,14 @@ class OntologyCache {
 		return indirectSubclassSuperclassPairs;
 	}
 
+	public HashMap<String, Boolean> getDirectConnectivityCheck() {
+		return directConnectivityCheck;
+	}
+
+	public HashMap<String, Boolean> getIndirectConnectivityCheck() {
+		return indirectConnectivityCheck;
+	}
+
 	public void init() {
 
 		logger.info("start building the ontology cache ...");
@@ -264,7 +280,7 @@ class OntologyCache {
 		this.dataProperties = new HashMap<String, Label>();
 		this.objectProperties = new HashMap<String, Label>();
 		
-		this.classHierarchy = new OntologyTreeNode(new Label("Classes"), null, null);
+		this.classHierarchy = new OntologyTreeNode(new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL), null, null);
 		this.dataPropertyHierarchy = new OntologyTreeNode(new Label("Data Properties"), null, null);
 		this.objectPropertyHierarchy = new OntologyTreeNode(new Label("Object Properties"), null, null);
 
@@ -308,6 +324,9 @@ class OntologyCache {
 		this.directSubclassSuperclassPairs = new ArrayList<SubclassSuperclassPair>();
 		this.indirectSubclassSuperclassPairs = new ArrayList<SubclassSuperclassPair>();
 		
+		this.directConnectivityCheck = new HashMap<String, Boolean>();
+		this.indirectConnectivityCheck = new HashMap<String, Boolean>();
+		
 		long start = System.currentTimeMillis();
 		
 		// create a list of classes and properties of the model
@@ -347,14 +366,17 @@ class OntologyCache {
 		this.buildObjectPropertyDomainRangeMap();
 		this.buildSubclassSuperclassPairs();
 		
-		// update hashmaps to include ralations with Thing
-		this.updateMapsToIncludeThing();
-		
 		// update hashmaps to include the subproperty relations  
 		this.updateMapsWithSubpropertyDefinitions(true);
 		
 		// add some common properties like rdfs:label, rdfs:comment, ...
 		this.addPropertiesOfRDFVocabulary();
+		
+		// update hashmaps to include ralations with Thing
+		this.updateMapsToIncludeThing();
+		
+		// build connectivity hashmaps
+		this.buildConnectivityMaps();
 		
 //		classHierarchy.print();
 //		dataPropertyHierarchy.print();
@@ -419,7 +441,6 @@ class OntologyCache {
 		
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
-//			for (String s : rootClasses) {
 			for (String s : this.classes.keySet()) {
 				Set<String> superClasses = this.ontHandler.getSuperClasses(s, false).keySet();
 				if (superClasses == null || superClasses.size() == 0) {
@@ -529,32 +550,29 @@ class OntologyCache {
 
 	private void buildIndirectSubClassesHashMap() {
 		
-		for (String c : this.classes.keySet()) {
+		for (String c : this.classes.keySet()) 
 			this.indirectSubClasses.put(c, this.ontHandler.getSubClasses(c, true));
-		}
-
 	}
 	
 	private void buildIndirectSuperClassesHashMap() {
 		
-		for (String c : this.classes.keySet()) {
+		for (String c : this.classes.keySet()) 
 			this.indirectSubClasses.put(c, this.ontHandler.getSuperClasses(c, true));
-		}
-
+		
 	}
 	
 	private void buildIndirectSubPropertiesHashMap() {
 
-		for (String property : this.properties.keySet()) {
+		for (String property : this.properties.keySet()) 
 			this.indirectSubProperties.put(property, this.ontHandler.getSubProperties(property, true));
-		}
+		
 	}
 
 	private void buildIndirectSuperPropertiesHashMap() {
 
-		for (String property : this.properties.keySet()) {
+		for (String property : this.properties.keySet()) 
 			this.indirectSubProperties.put(property, this.ontHandler.getSuperProperties(property, true));
-		}
+		
 	}
 	
 	private void buildInverseProperties() {
@@ -1048,5 +1066,94 @@ class OntologyCache {
 	}
 
 	private void updateMapsToIncludeThing() {
+
+		// Add Thing to the classes
+		this.classes.put(Uris.THING_URI, new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL));
+		
+		HashMap<String, Label> classesExceptThing = new HashMap<String, Label>();
+		for (Entry<String, Label> entry : this.classes.entrySet())
+			if (!entry.getKey().equalsIgnoreCase(Uris.THING_URI))
+				classesExceptThing.put(entry.getKey(), entry.getValue());
+		this.indirectSubClasses.put(Uris.THING_URI, classesExceptThing);
+		
+		for (String c : this.indirectSuperClasses.keySet()) {
+			HashMap<String, Label> superClasses = this.indirectSuperClasses.get(c);
+			if (superClasses != null && !superClasses.containsKey(Uris.THING_URI))
+				superClasses.put(Uris.THING_URI, new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL));
+		}
+		
+		List<String> temp;
+		for (String p : this.objectProperties.keySet()) {
+			
+			List<String> directDomains = propertyDirectDomains.get(p);
+			List<String> directRanges = propertyDirectRanges.get(p);
+
+			List<String> indirectDomains = propertyIndirectDomains.get(p);
+			List<String> indirectRanges = propertyIndirectRanges.get(p);
+
+			if (indirectDomains.size() != 0 && indirectRanges.size() != 0)
+				continue;
+			
+			// a property without specified domain and range
+//			if (indirectDomains.size() == 0 && indirectRanges.size() == 0)
+//				continue;
+
+			// a property without specified domain
+			if (indirectDomains.size() == 0)
+				for (String s : this.classes.keySet())
+				indirectDomains.add(s);
+
+			// a property without specified range
+			if (indirectRanges.size() == 0)
+				for (String s : this.classes.keySet())
+					indirectRanges.add(s);
+
+			for (String domain : indirectDomains) {
+				for (String range : indirectRanges) {
+					temp = indirectDomainRangeProperties.get(domain + range);
+					if (temp == null) {
+						temp = new ArrayList<String>();
+						indirectDomainRangeProperties.put(domain.toString() + range.toString(), temp);
+					}
+					if (temp.indexOf(p) == -1)
+						temp.add(p);
+				}
+			}
+			
+			for (String domain : indirectDomains) {
+				for (String range : indirectRanges) {
+					if (directDomains.contains(domain) && directRanges.contains(range)) continue;
+					temp = notDirectDomainRangeProperties.get(domain + range);
+					if (temp == null) {
+						temp = new ArrayList<String>();
+						notDirectDomainRangeProperties.put(domain.toString() + range.toString(), temp);
+					}
+					if (temp.indexOf(p) == -1)
+						temp.add(p);
+				}
+			}
+		
+		}
+	}
+	
+	private void buildConnectivityMaps() {
+		List<String> classList = new ArrayList<String>(this.classes.keySet());
+		for (int i = 0; i < classList.size(); i++) {
+			String c1 = classList.get(i);
+			for (int j = i+1; j < classList.size(); j++) {
+				String c2 = classList.get(j);
+				
+				List<String> directProperties = this.directDomainRangeProperties.get(c1+c2);
+				if (directProperties != null && directProperties.size() > 0) { 
+					this.directConnectivityCheck.put(c1+c2, true);
+					this.directConnectivityCheck.put(c2+c1, true);
+				}
+				List<String> indirectProperties = this.indirectDomainRangeProperties.get(c1+c2);
+				if (indirectProperties != null && indirectProperties.size() > 0) { 
+					this.indirectConnectivityCheck.put(c1+c2, true);
+					this.indirectConnectivityCheck.put(c2+c1, true);
+				}
+			}
+		}
 	}
 }
