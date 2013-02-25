@@ -219,6 +219,15 @@ public class OntologyManager {
 		return ontCache.getIndirectSubclassSuperclassPairs();
 	}
 	
+
+	public HashMap<String, Boolean> getDirectConnectivityCheck() {
+		return ontCache.getDirectConnectivityCheck();
+	}
+
+	public HashMap<String, Boolean> getIndirectConnectivityCheck() {
+		return ontCache.getIndirectConnectivityCheck();
+	}
+	
 	public Label getUriLabel(String uriString) {
 		return this.ontHandler.getUriLabel(uriString);
 	}
@@ -268,7 +277,7 @@ public class OntologyManager {
 	public boolean isSubClass(String subClassUri, String superClassUri, boolean recursive) {
 		
 		if (!recursive) { 
-			if (ontCache.getDirectSubClasses().containsKey(subClassUri + superClassUri))
+			if (ontCache.getDirectSubClassCheck().containsKey(subClassUri + superClassUri))
 				return true;
 		} else {
 			HashMap<String, Label> map = ontCache.getIndirectSubClasses().get(superClassUri);
