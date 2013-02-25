@@ -183,7 +183,10 @@ class OntologyHandler {
 		ObjectProperty op = ontModel.getObjectProperty(uri);
 		if (op == null)
 			return null;
-		OntProperty inverseProp = op.getInverse();
+		OntProperty inverseProp = null;
+		try {
+			inverseProp = op.getInverse();
+		} catch (ConversionException e) {}
 		if (inverseProp != null) {
 			return getUriLabel(inverseProp.getURI());
 		}
@@ -200,7 +203,10 @@ class OntologyHandler {
 		ObjectProperty op = ontModel.getObjectProperty(uri);
 		if (op == null)
 			return null;
-		OntProperty inverseOfProp = op.getInverseOf();
+		OntProperty inverseOfProp = null;
+		try {
+			inverseOfProp = op.getInverse();
+		} catch (ConversionException e) {}
 		if (inverseOfProp != null) {
 			return getUriLabel(inverseOfProp.getURI());
 		}
