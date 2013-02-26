@@ -152,23 +152,41 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
     
     public Link clone() {
 
+    	Link link = null;
     	switch (this.type) {
-			case None: return new SimpleLink(this.getId(), this.getLabel()); 
-			case ClassInstanceLink: return new ClassInstanceLink(this.getId(), this.getKeyType()); 
-			case ColumnSubClassLink: return new ColumnSubClassLink(this.getId());
+			case None: { 
+				link = new SimpleLink(this.getId(), this.getLabel()); 
+			} 
+			case ClassInstanceLink: { 
+				link = new ClassInstanceLink(this.getId(), this.getKeyType()); 
+			} 
+			case ColumnSubClassLink: {
+				link = new ColumnSubClassLink(this.getId());
+			}
 			case DataPropertyLink: 
+			{
 				if (this.getKeyType() == LinkKeyInfo.PartOfKey) 
-					return new DataPropertyLink(this.getId(), this.getLabel(), true);
+					link = new DataPropertyLink(this.getId(), this.getLabel(), true);
 				else
-					return new DataPropertyLink(this.getId(), this.getLabel());
-			case DataPropertyOfColumnLink: 
-				return new DataPropertyOfColumnLink(this.getId(), ((DataPropertyOfColumnLink) this).getSpecializedColumnHNodeId());
-			case ObjectPropertyLink: return new ObjectPropertyLink(this.getId(), this.getLabel());
-			case SubClassLink: return new SubClassLink(this.getId());
+					link = new DataPropertyLink(this.getId(), this.getLabel());
+			}
+			case DataPropertyOfColumnLink: { 
+				link = new DataPropertyOfColumnLink(this.getId(), ((DataPropertyOfColumnLink) this).getSpecializedColumnHNodeId());
+			}
+			case ObjectPropertyLink: {
+				link = new ObjectPropertyLink(this.getId(), this.getLabel());
+			}
+			case SubClassLink: {
+				link = new SubClassLink(this.getId());
+			}
 
 		}
-
-		logger.error("Cloning the link has been failed. Cannot identify the type of the link.");
-		return null;
+    	
+    	if (link != null) 
+			link.setStatus(this.getStatus());
+    	else
+    		logger.error("Cloning the link has been failed. Cannot identify the type of the link.");
+		
+    	return link;
     }
 }
