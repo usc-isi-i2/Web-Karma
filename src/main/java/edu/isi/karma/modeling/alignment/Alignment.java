@@ -364,17 +364,13 @@ public class Alignment implements OntologyUpdateListener {
 //		return semanticTypes;
 //	}
 	
-	public Link getCurrentLinkToNode(String nodeId) {
+	public Set<Link> getCurrentLinksToNode(String nodeId) {
 		
 		Node node = this.getNodeById(nodeId);
 		if (node == null) return null;
 		if (!this.steinerTree.containsVertex(node)) return null;
 			
-		Set<Link> incomingLinks = this.steinerTree.incomingEdgesOf(node);
-		if (incomingLinks != null && incomingLinks.size() == 1)
-			return incomingLinks.toArray(new Link[0])[0];
-		
-		return null;
+		return this.steinerTree.incomingEdgesOf(node);
 	}
 	
 	public List<Link> getAllPossibleLinksToNode(String nodeId) {
@@ -448,8 +444,8 @@ public class Alignment implements OntologyUpdateListener {
 	
 	public void align() {
 		
-    	System.out.println("*** Graph ***");
-		GraphUtil.printGraphSimple(this.graphBuilder.getGraph());
+//    	System.out.println("*** Graph ***");
+//		GraphUtil.printGraphSimple(this.graphBuilder.getGraph());
 
 		long start = System.currentTimeMillis();
 		
