@@ -343,7 +343,7 @@ public class Segment implements GrammarTreeNode {
 				}
 				if(index< section.get(rules.get(i)).size())
 				{
-					section.get(i).isinloop = this.isinloop;
+					section.get(rules.get(i)).isinloop = this.isinloop;
 					return section.get(rules.get(i)).getRule(index);
 				}
 				else

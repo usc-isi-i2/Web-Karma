@@ -13,9 +13,13 @@ def indexOf(str, lregx, rregx, cnt=0):
         '''find the position'''
         pos = -1
         if lregx == "^":
+           if cnt != 1 and cnt != -1:
+               return None
            pos = 0
            return pos
         if rregx == "$":
+           if cnt != 1 and cnt != -1:
+               return None
            pos = len(str)
            return pos
         patternstr = "(" + lregx + ")" + rregx

@@ -57,7 +57,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(exps);
 		Collection<ProgramRule> rules = psProgSynthesis.run_main();
-		if(rules.size() == 0)
+		if(rules == null ||rules.size() == 0)
 		{
 			return;
 		}

@@ -1,14 +1,15 @@
 package edu.isi.karma.cleaning;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Vector;
 
-import weka.classifiers.trees.m5.RuleNode;
+import org.python.antlr.PythonParser.return_stmt_return;
 
-public class ProgSynthesis {
+import edu.isi.mediator.domain.parser.grammar.DomainModelParser.null_comparison_return;
+
+
+public class ProgSynthesis{
 	Vector<Vector<TNode>> orgVector = new Vector<Vector<TNode>>();
 	Vector<Vector<TNode>> tarVector = new Vector<Vector<TNode>>();
 	String bestRuleString = "";
@@ -17,7 +18,6 @@ public class ProgSynthesis {
 	public long genspan = 0;
 	public long ruleNo = 0;
 	public PartitionClassifierType classifier;
-
 	public void inite(Vector<String[]> examples) {
 		for (int i = 0; i < examples.size(); i++) {
 			Ruler r = new Ruler();
@@ -141,6 +141,8 @@ public class ProgSynthesis {
 	public Collection<ProgramRule> producePrograms(Vector<Partition> pars) {
 		Program prog = new Program(pars);
 		ProgramRule r = prog.toProgram1();
+		if(r == null)
+			return null;
 		String xString = "";
 		int termCnt = 0;
 		boolean findRule = true;	
@@ -183,13 +185,22 @@ public class ProgSynthesis {
 		Vector<Partition> vp = this.ProducePartitions(true);
 		long t2 = System.currentTimeMillis();
 		Collection<ProgramRule> cpr = this.producePrograms(vp);
+		if(cpr == null)
+		{
+			return null;
+		}
 		long t3 = System.currentTimeMillis();
 		learnspan = (t2-t1);
 		genspan = (t3-t2);
 		if(cpr.size() == 0)
 		{
+			t1 = System.currentTimeMillis();
 			vp = this.ProducePartitions(false);
+			t2 = System.currentTimeMillis();
 			cpr = this.producePrograms(vp);
+			t3 = System.currentTimeMillis();
+			learnspan += t2-t1;
+			genspan += t3-t2;
 		}
 		return cpr;
 		

@@ -49,8 +49,9 @@ class FileStat
 	long execTime = 0; // time used in applying the rule
 	int exp_cnt = 0; // number of examples
 	String examples = ""; // all the examples
+	String program = "" ;// the correct program
 	long ruleNo = 0; // order of the first consistent rule
-	public FileStat(String fname, long l,long g,long e,int exp,Vector<String[]> exps,long ruleNo)
+	public FileStat(String fname, long l,long g,long e,int exp,Vector<String[]> exps,long ruleNo,String program)
 	{
 		this.fileNameString = fname;
 		this.learnTime = l;
@@ -64,11 +65,13 @@ class FileStat
 			String s = p[0]+"\t"+p[1]+"\n";
 			examples += s;
 		}
+		this.program = program;
 	}
 	public String toString()
 	{
 		String resString = String.format("%s,%d,%d,%d,%d,%d", this.fileNameString,this.learnTime,this.genTime,this.execTime,this.exp_cnt,this.ruleNo);
 		//resString += this.examples;
+		//resString += this.program+"\n";
 		return resString;
 	}
 	

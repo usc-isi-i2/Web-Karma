@@ -66,7 +66,12 @@ public class ProgramRule {
 	}
 	public String toString()
 	{
-		return rules.values().toString();
+		String res = "";
+		for(String key:strRules.keySet())
+		{
+			res += String.format("%s:%s\n",key,strRules.get(key));
+		}
+		return res;
 	}
 	public static void main(String[] args)
 	{

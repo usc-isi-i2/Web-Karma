@@ -37,24 +37,29 @@ public class Position implements GrammarTreeNode {
 		createTotalOrderVector();
 	}
 
-	public void getString(Vector<TNode> x,int cur, String path,Double value,HashMap<String, Double> smap) {
-		// add randomness to the representation
-		if (x == null) {
+	public void getString(Vector<TNode> x,int cur, String path,Double value,HashMap<String, Double> smap,boolean isleft) {	
+		if (x == null || x.size() ==0) {
 			return;
 		}
-		if(cur>=x.size())
+		if(cur>=x.size() || cur<0)
 		{
 			if(!smap.keySet().contains(path))
 			{
-				path = UtilTools.escape(path);
-				smap.put(path, value);
+				String res = UtilTools.escape(path);
+				if(!smap.containsKey(res) && res.length()!=0)
+					smap.put(res, value); // store the string of all sizes
 			}
 			return;
 		}
 		TNode t  = x.get(cur);
 		if (t.text.compareTo("ANYTOK") != 0 && t.text.length() > 0) 
 		{
-			getString(x,cur+1,path+t.text,value,smap);
+			if(!isleft)
+				getString(x,cur+1,path+t.text,value+2,smap,false);
+			else
+			{
+				getString(x,cur-1,t.text+path,value+2,smap,true);
+			}
 		}
 		String s = "";
 		if (t.type == TNode.NUMTYP) {
@@ -81,7 +86,11 @@ public class Position implements GrammarTreeNode {
 		{
 			s += ""+t.getType();
 		}
-		getString(x,cur+1,path+s,value+1,smap);
+		if(!isleft)
+			getString(x,cur+1,path+s,value+1,smap,false);
+		else {
+			getString(x,cur-1,s+path,value+1,smap,true);
+		}
 	}
 
 	// option: left or right context
@@ -239,7 +248,7 @@ public class Position implements GrammarTreeNode {
 		if(this.leftContextNodes != null)
 		{
 			String path = "";
-			getString(this.leftContextNodes, 0, path, 0.0, lMap);
+			getString(this.leftContextNodes, this.leftContextNodes.size()-1, path, 1.0, lMap,true);
 		}
 		else{
 			lMap.put("ANY", 1.0);
@@ -247,7 +256,7 @@ public class Position implements GrammarTreeNode {
 		if(this.rightContextNodes != null)
 		{
 			String path = "";
-			getString(this.rightContextNodes, 0, path, 0.0, rMap);
+			getString(this.rightContextNodes, 0, path, 1.0, rMap,false);
 		}
 		else{
 			
@@ -260,7 +269,9 @@ public class Position implements GrammarTreeNode {
 		{
 			for(String b:rMap.keySet())
 			{
-				Double key = 1.0/(lMap.get(a)+rMap.get(b));		
+				if(a.compareTo(b)==0 && a.compareTo("ANY")==0)
+					continue;
+				Double key = lMap.get(a)+rMap.get(b);	
 				reString = String.format("indexOf(value,\'%s\',\'%s\',counter)", a, b);
 				negString = String.format("indexOf(value,\'%s\',\'%s\',-counter)", a, b);
 				if(sortedMap.containsKey(key))
