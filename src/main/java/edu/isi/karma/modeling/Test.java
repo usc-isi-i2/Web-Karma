@@ -22,7 +22,6 @@ package edu.isi.karma.modeling;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -244,14 +243,6 @@ public class Test {
 //		List<String> list = ontManager.getSubClasses(new URI("http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing"), false);
 //		List<String> list = ontManager.getObjectPropertiesOfClass("http://www.sri.com/ontologies/DovetailOnto.owl#Entity", true);
 
-		HashMap<String, List<String>> map = ontManager.getPropertyIndirectDomains();//.getPropertyDirectDomains();
-
-		System.out.println(map.size());
-		for (String s : map.keySet()) {
-			System.out.println(s);
-			for (String ss : map.get(s)) 
-				System.out.println("\t" + ss);
-		}
 	}
 	
 	private static void testAlignment() {

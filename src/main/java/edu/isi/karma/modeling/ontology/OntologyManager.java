@@ -158,6 +158,22 @@ public class OntologyManager {
 		return this.ontCache.getObjectProperties();
 	}
 
+	public HashMap<String, Label> getDataPropertiesWithoutDomain() {
+		return this.ontCache.getDataPropertiesWithoutDomain();
+	}
+
+	public HashMap<String, Label> getObjectPropertiesWithOnlyDomain() {
+		return this.ontCache.getObjectPropertiesWithOnlyDomain();
+	}
+
+	public HashMap<String, Label> getObjectPropertiesWithOnlyRange() {
+		return this.ontCache.getObjectPropertiesWithOnlyRange();
+	}
+
+	public HashMap<String, Label> getObjectPropertiesWithoutDomainAndRange() {
+		return this.ontCache.getObjectPropertiesWithoutDomainAndRange();
+	}
+	
 	public OntologyTreeNode getClassHierarchy() {
 		return this.ontCache.getClassHierarchy();
 	}
@@ -219,7 +235,7 @@ public class OntologyManager {
 //	}
 	
 	public Label getUriLabel(String uri) {
-		return this.ontHandler.getUriLabel(uri);
+		return this.ontCache.getUriLabel(uri);
 	}
 	
 	/**
@@ -325,13 +341,13 @@ public class OntologyManager {
 	 * This method takes @param rangeClassUri and for object properties whose ranges includes this parameter, 
 	 * returns all of their domains.
 	 * If @param recursive is true, it also returns the children of the domains.
-	 * @param rangeClassUri
+	 * @param rangeUri
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getDomainsGivenRange(String rangeClassUri, boolean recursive) {
+	public List<String> getDomainsGivenRange(String rangeUri, boolean recursive) {
 		
-		List<String> objectProperties = ontCache.getDirectInObjectProperties().get(rangeClassUri);
+		List<String> objectProperties = ontCache.getDirectInObjectProperties().get(rangeUri);
 		List<String> results = new ArrayList<String>();
 		List<String> direct = null;
 		List<String> indirect = null;
@@ -437,17 +453,17 @@ public class OntologyManager {
 	/**
 	 * This function takes a class uri and returns the datatype properties who have this class in their domain. 
 	 * If second parameter set to True, it also returns the datatype properties inherited from parents of the given class.
-	 * @param domainClassUri
+	 * @param domainUri
 	 * @param inheritance
 	 * @return
 	 */
-	public List<String> getDataPropertiesOfClass(String domainClassUri, boolean inheritance) {
+	public List<String> getDataPropertiesOfClass(String domainUri, boolean inheritance) {
 
-		List<String> direct = ontCache.getDirectOutDataProperties().get(domainClassUri);
+		List<String> direct = ontCache.getDirectOutDataProperties().get(domainUri);
 		if (!inheritance) return direct;
 		
 		List<String> all = new ArrayList<String>();
-		List<String> indirect = ontCache.getIndirectOutDataProperties().get(domainClassUri);
+		List<String> indirect = ontCache.getIndirectOutDataProperties().get(domainUri);
 		if (direct != null) all.addAll(direct);
 		if (indirect != null) all.addAll(indirect);
 		return all;
@@ -457,19 +473,55 @@ public class OntologyManager {
 	/**
 	 * This function takes a class uri and returns the object properties who have this class in their domain. 
 	 * If second parameter set to True, it also returns the object properties inherited from parents of the given class.
-	 * @param domainClassUri
+	 * @param domainUri
 	 * @param inheritance
 	 * @return
 	 */
-	public List<String> getObjectPropertiesOfClass(String domainClassUri, boolean inheritance) {
+	public List<String> getObjectPropertiesOfClass(String domainUri, boolean inheritance) {
 
-		List<String> direct = ontCache.getDirectOutObjectProperties().get(domainClassUri);
+		List<String> direct = ontCache.getDirectOutObjectProperties().get(domainUri);
 		if (!inheritance) return direct;
 		
 		List<String> all = new ArrayList<String>();
-		List<String> indirect = ontCache.getIndirectOutObjectProperties().get(domainClassUri);
+		List<String> indirect = ontCache.getIndirectOutObjectProperties().get(domainUri);
 		if (direct != null) all.addAll(direct);
 		if (indirect != null) all.addAll(indirect);
 		return all;
+	}
+	
+	public List<String> getObjectPropertiesDirect(String domainUri, String rangeUri) {
+		return this.ontCache.getDomainRangeToDirectProperties().get(domainUri + rangeUri);
+	}
+
+	public List<String> getObjectPropertiesIndirect(String domainUri, String rangeUri) {
+		return this.ontCache.getDomainRangeToIndirectProperties().get(domainUri + rangeUri);
+	}
+
+	public List<String> getObjectPropertiesWithOnlyDomain(String domainUri, String rangeUri) {
+		return this.ontCache.getDomainRangeToRangelessProperties().get(domainUri + rangeUri);
+	}
+
+	public List<String> getObjectPropertiesWithOnlyRange(String domainUri, String rangeUri) {
+		return this.ontCache.getDomainRangeToDomainlessProperties().get(domainUri + rangeUri);
+	}
+
+	public boolean isConnectedByDirectProperty(String domainUri, String rangeUri) {
+		return this.ontCache.getConnectedByDirectProperties().get(domainUri + rangeUri);
+	}
+
+	public boolean isConnectedByIndirectProperty(String domainUri, String rangeUri) {
+		return this.ontCache.getConnectedByIndirectProperties().get(domainUri + rangeUri);
+	}
+
+	public boolean isConnectedByDomainlessProperty(String domainUri, String rangeUri) {
+		return this.ontCache.getConnectedByDomainlessProperties().get(domainUri + rangeUri);
+	}
+
+	public boolean isConnectedByRangelessProperty(String domainUri, String rangeUri) {
+		return this.ontCache.getConnectedByRangelessProperties().get(domainUri + rangeUri);
+	}
+	
+	public boolean isConnectedByDomainlessAndRangelessProperty(String domainUri, String rangeUri) {
+		return (this.ontCache.getObjectPropertiesWithoutDomainAndRange().size() > 0);
 	}
 }

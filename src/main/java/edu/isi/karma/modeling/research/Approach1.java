@@ -83,7 +83,7 @@ public class Approach1 {
 		this.inputSemanticLabels = new ArrayList<SemanticLabel>();
 		this.outputSemanticLabels = new ArrayList<SemanticLabel>();
 		this.directLinkWeight = this.getInitialLinkWeight();
-		this.indirectLinkWeight = this.directLinkWeight + ModelingParams.MIN_WEIGHT;
+		this.indirectLinkWeight = this.directLinkWeight + 10;
 		this.typeToNodesMap = new HashMap<NodeType, List<Node>>();
 		this.uriToNodesMap = new HashMap<String, List<Node>>();
 		this.sourceTargetList = new ArrayList<DomainRangePair>();
@@ -374,17 +374,19 @@ public class Approach1 {
 			
 			w = this.directLinkWeight;
 			
-			if (link.getWeight() == ModelingParams.DEFAULT_WEIGHT + ModelingParams.MIN_WEIGHT)
+			if (link.getWeight() == ModelingParams.PROPERTY_INDIRECT_WEIGHT)
 				w = this.indirectLinkWeight;
 			
 			graph.setEdgeWeight(link, w);
 		}
 		
+		List<String> objectPropertiesDirect;
+		List<String> objectPropertiesIndirect;
+		List<String> objectPropertiesWithOnlyDomain;
+		List<String> objectPropertiesWithOnlyRange;
+
 		for (DomainRangePair dr : this.sourceTargetList) {
 			
-			key = dr.getDomain() + 
-					dr.getRange();
-
 			List<Node> sources = this.uriToNodesMap.get(dr.getDomain());
 			List<Node> targets = this.uriToNodesMap.get(dr.getRange());
 
@@ -397,8 +399,10 @@ public class Approach1 {
 				continue;
 			}
 			
-			List<String> possibleLinksFromSourceToTarget = 
-					this.ontologyManager.getIndirectDomainRangeProperties().get(key);
+			objectPropertiesDirect = ontologyManager.getObjectPropertiesDirect(dr.getDomain(), dr.getRange());
+			objectPropertiesIndirect = ontologyManager.getObjectPropertiesIndirect(dr.getDomain(), dr.getRange());
+			objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyDomain(dr.getDomain(), dr.getRange());
+			objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesWithOnlyRange(dr.getDomain(), dr.getRange());
 
 			HashMap<String, Integer> linkCount = this.sourceTargetToLinkCounterMap.get(key);
 			if (linkCount == null || linkCount.size() == 0) continue;
@@ -406,11 +410,24 @@ public class Approach1 {
 //			for (String s : linkCount.keySet()) 
 //				logger.info(key + " => " + s + " => " + linkCount.get(s));
 			
+			boolean linkExistInOntology = false;
+			
 			for (Node n1 : sources) {
 				for (Node n2 : targets) {
 					for (String s : linkCount.keySet()) {
 						
-						if (!possibleLinksFromSourceToTarget.contains(s)) {
+						if (this.ontologyManager.getObjectPropertiesWithoutDomainAndRange().containsKey(s)) 
+							linkExistInOntology = true;
+						else if (objectPropertiesDirect != null && objectPropertiesDirect.contains(s))
+							linkExistInOntology = true;
+						else if (objectPropertiesIndirect != null && objectPropertiesIndirect.contains(s))
+							linkExistInOntology = true;
+						else if (objectPropertiesWithOnlyDomain != null && objectPropertiesWithOnlyDomain.contains(s))
+							linkExistInOntology = true;
+						else if (objectPropertiesWithOnlyRange != null && objectPropertiesWithOnlyRange.contains(s))
+							linkExistInOntology = true;
+						
+						if (!linkExistInOntology) {
 //							logger.warn("The link " + s + " from " + dr.getDomain() + " to " + dr.getRange() + 
 //									" cannot be inferred from the ontology, so we don't consider it in our graph.");
 //							continue;

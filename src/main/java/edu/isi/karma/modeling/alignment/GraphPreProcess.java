@@ -63,7 +63,7 @@ public class GraphPreProcess {
 
 		if (linksPreferredByUI != null) 
 			for (Link link : linksPreferredByUI) 
-				gPrime.setEdgeWeight(link, ModelingParams.DEFAULT_WEIGHT - ModelingParams.MIN_WEIGHT);
+				gPrime.setEdgeWeight(link, ModelingParams.PROPERTY_UI_PREFERRED_WEIGHT);
 				
 		if (linksForcedByUser != null) 
 			for (Link link : linksForcedByUser) {
@@ -78,7 +78,7 @@ public class GraphPreProcess {
 				// adding the user selected link
 				gPrime.addEdge(link.getSource(), link.getTarget(), link);
 				
-				gPrime.setEdgeWeight(link, ModelingParams.MIN_WEIGHT);
+				gPrime.setEdgeWeight(link, ModelingParams.PROPERTY_USER_PREFERRED_WEIGHT);
 			}			
 
 		logger.debug("exit>");

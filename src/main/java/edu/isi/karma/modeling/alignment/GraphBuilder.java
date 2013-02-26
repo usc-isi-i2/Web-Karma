@@ -23,11 +23,6 @@ package edu.isi.karma.modeling.alignment;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -36,9 +31,7 @@ import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.modeling.ontology.DomainRangePair;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.ontology.SubclassSuperclassPair;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.InternalNode;
@@ -62,8 +55,8 @@ public class GraphBuilder {
 	private NodeIdFactory nodeIdFactory;
 	private LinkIdFactory linkIdFactory;
 	
-	private List<String> visitedSourceTarget; 
-	private List<String> sourceToTargetLinkUris; 
+	private HashMap<String, Boolean> visitedSourceTargetPairs; 
+	private HashMap<String, Boolean> sourceToTargetLinkUris; 
 	private Node thingNode;
 	
 	// HashMaps
@@ -103,8 +96,9 @@ public class GraphBuilder {
 		this.uriClosure = new HashMap<String, List<String>>();
 		
 		this.graph = new DirectedWeightedMultigraph<Node, Link>(Link.class);
-		this.visitedSourceTarget = new ArrayList<String>();
-		this.sourceToTargetLinkUris = new ArrayList<String>();
+		
+		this.visitedSourceTargetPairs = new HashMap<String, Boolean>();
+		this.sourceToTargetLinkUris = new HashMap<String, Boolean>();
 			
 		initialGraph();
 
@@ -264,7 +258,7 @@ public class GraphBuilder {
 		
 		String key = source.getId() + target.getId() + link.getLabel().getUri();
 		// check to see if the link is duplicate or not
-		if (sourceToTargetLinkUris.contains(key))
+		if (sourceToTargetLinkUris.containsKey(key))
 		{
 			logger.debug("There is already a link with label " + link.getLabel().getUri() + 
 					" from " + source.getId() + " to " + target.getId());
@@ -272,9 +266,9 @@ public class GraphBuilder {
 		}
 
 		this.graph.addEdge(source, target, link);
-		double weight = ModelingParams.DEFAULT_WEIGHT;
+		double weight = ModelingParams.PROPERTY_DIRECT_WEIGHT;
 		if (link instanceof SubClassLink)
-			weight = ModelingParams.MAX_WEIGHT;
+			weight = ModelingParams.SUBCLASS_WEIGHT;
 		this.graph.setEdgeWeight(link, weight);
 		
 		// update the corresponding lists and hashmaps
@@ -303,7 +297,7 @@ public class GraphBuilder {
 		}
 		linksWithSameType.add(link);
 		
-		sourceToTargetLinkUris.add(key);
+		sourceToTargetLinkUris.put(key, true);
 		
 		if (source instanceof InternalNode && target instanceof ColumnNode) {
 			List<Node> closure = this.getNodeClosure(source);
@@ -417,7 +411,7 @@ public class GraphBuilder {
 		elapsedTimeSec = (addNodesClosure - start)/1000F;
 		logger.info("time to add nodes closure: " + elapsedTimeSec);
 
-		updateLinks3();
+		updateLinks2();
 		
 		long updateLinks = System.currentTimeMillis();
 		elapsedTimeSec = (updateLinks - addNodesClosure)/1000F;
@@ -672,7 +666,6 @@ public class GraphBuilder {
 		logger.debug("exit>");
 	}
 	
-	@SuppressWarnings("unused")
 	private void updateLinks() {
 		
 		logger.debug("<enter");
@@ -680,18 +673,19 @@ public class GraphBuilder {
 		List<Node> nodes = this.typeToNodesMap.get(NodeType.InternalNode);
 		logger.debug("number of vertices: " + nodes.size());
 
-		List<String> directObjectProperties = new ArrayList<String>();
-		List<String> inheritedObjectProperties = new ArrayList<String>();
-//		List<String> indirectObjectProperties = new ArrayList<String>();
+		List<String> objectPropertiesDirect;
+		List<String> objectPropertiesIndirect;
+		List<String> objectPropertiesWithOnlyDomain;
+		List<String> objectPropertiesWithOnlyRange;
 
 		Node source;
 		Node target;
 		String sourceUri;
 		String targetUri;
 
-		String uri = null;
 		String id = null;
 		Label label = null;
+		String key;
 
 //		System.out.println("size:" + nodes.size() * nodes.size());
 //		int count = 0;
@@ -705,83 +699,90 @@ public class GraphBuilder {
 				if (n1.equals(n2))
 					continue;
 
+				if (this.visitedSourceTargetPairs.containsKey(n1.getId() + n2.getId()))
+					continue;
+				
+				this.visitedSourceTargetPairs.put(n1.getId() + n2.getId(), true);
+
 				source = n1;
 				target = n2;
 
 				sourceUri = source.getLabel().getUri();
 				targetUri = target.getLabel().getUri();
-
-//				// There is no outgoing link from column nodes and literal nodes
-//				if (!(source instanceof InternalNode))
-//					break;
-//
-//				// The alignment explicitly adds a link from the domain to the column node and literal node, 
-//				// so we don't need to worry about it.
-//				if (!(target instanceof InternalNode))
-//					continue;
-
-				// Add object property links between internal nodes
-				// The code for the case that both source and target are internal nodes
 				
 				// create a link from the domain to the range
-				directObjectProperties = ontologyManager.getObjectProperties(sourceUri, targetUri, false);
+				objectPropertiesDirect = ontologyManager.getObjectPropertiesDirect(sourceUri, targetUri);
+				if (objectPropertiesDirect != null)
+				for (String uri : objectPropertiesDirect) {
 
-				for (int u = 0; u < directObjectProperties.size(); u++) {
-					uri = directObjectProperties.get(u);
-
-					String key = source.getId() + target.getId() + uri;
+					key = source.getId() + target.getId() + uri;
 					// check to see if the link is duplicate or not
-					if (sourceToTargetLinkUris.contains(key)) continue;
+					if (sourceToTargetLinkUris.containsKey(key)) continue;
 
 					id = linkIdFactory.getLinkId(uri);
 					label = ontologyManager.getUriLabel(uri);
 					Link link = new ObjectPropertyLink(id, label);
-					addWeightedLink(source, target, link, ModelingParams.DEFAULT_WEIGHT);
+					addWeightedLink(source, target, link, ModelingParams.PROPERTY_DIRECT_WEIGHT);
 				}
 				
 				// create a link from the domain and all its subclasses of ObjectProperties to range and all its subclasses
-				inheritedObjectProperties = ontologyManager.getOnlyInheritedObjectProperties(sourceUri, targetUri);
-				for (int u = 0; u < inheritedObjectProperties.size(); u++) {
-					uri = inheritedObjectProperties.get(u);
+				objectPropertiesIndirect = ontologyManager.getObjectPropertiesIndirect(sourceUri, targetUri);
+				if (objectPropertiesIndirect != null)
+				for (String uri : objectPropertiesIndirect) {
 
-					String key = source.getId() + target.getId() + uri;
+					key = source.getId() + target.getId() + uri;
 					// check to see if the link is duplicate or not
-					if (sourceToTargetLinkUris.contains(key)) continue;
+					if (sourceToTargetLinkUris.containsKey(key)) continue;
 
 					id = linkIdFactory.getLinkId(uri);
 					label = ontologyManager.getUriLabel(uri);
 					Link link = new ObjectPropertyLink(id, label);
 					// prefer the links that are actually defined between source and target in the ontology 
 					// over inherited ones.
-					addWeightedLink(source, target, link, ModelingParams.DEFAULT_WEIGHT + ModelingParams.MIN_WEIGHT);
+					addWeightedLink(source, target, link, ModelingParams.PROPERTY_INDIRECT_WEIGHT);
+				}
+
+				objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyDomain(sourceUri, targetUri);
+				if (objectPropertiesWithOnlyDomain != null)
+				for (String uri : objectPropertiesWithOnlyDomain) {
+
+					key = source.getId() + target.getId() + uri;
+					// check to see if the link is duplicate or not
+					if (sourceToTargetLinkUris.containsKey(key)) continue;
+
+					id = linkIdFactory.getLinkId(uri);
+					label = ontologyManager.getUriLabel(uri);
+					Link link = new ObjectPropertyLink(id, label);
+					// prefer the links that are actually defined between source and target in the ontology 
+					// over inherited ones.
+					addWeightedLink(source, target, link, ModelingParams.PROPERTY_WITH_ONLY_DOMAIN_WEIGHT);
 				}
 				
-//				indirectObjectProperties = ontologyManager.getObjectProperties(sourceUri, targetUri, true);
-//				for (int u = 0; u < indirectObjectProperties.size(); u++) {
-//					uri = indirectObjectProperties.get(u);
-//
-//					String key = source.getId() + target.getId() + uri;
-//					// check to see if the link is duplicate or not
-//					if (sourceToTargetLinkUris.contains(key)) continue;
-//
-//					id = linkIdFactory.getLinkId(uri);
-//					label = ontologyManager.getUriLabel(uri);
-//					Link link = new ObjectPropertyLink(id, label);
-//					// prefer the links that are actually defined between source and target in the ontology 
-//					// over inherited ones.
-//					addWeightedLink(source, target, link, ModelingParams.DEFAULT_WEIGHT);
-//				}
+				objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesWithOnlyRange(sourceUri, targetUri);
+				if (objectPropertiesWithOnlyRange != null)
+				for (String uri : objectPropertiesWithOnlyRange) {
 
+					key = source.getId() + target.getId() + uri;
+					// check to see if the link is duplicate or not
+					if (sourceToTargetLinkUris.containsKey(key)) continue;
+
+					id = linkIdFactory.getLinkId(uri);
+					label = ontologyManager.getUriLabel(uri);
+					Link link = new ObjectPropertyLink(id, label);
+					// prefer the links that are actually defined between source and target in the ontology 
+					// over inherited ones.
+					addWeightedLink(source, target, link, ModelingParams.PROPERTY_WITH_ONLY_RANGE_WEIGHT);
+				}
+				
 				// Add subclass links between internal nodes
-				// we have to check both sides.
 				if (ontologyManager.isSubClass(targetUri, sourceUri, false)) {
 					// target is subclass of source
-					String key = target.getId() + source.getId() + SubClassLink.getFixedLabel().getUri();
+					key = target.getId() + source.getId() + SubClassLink.getFixedLabel().getUri();
 					// check to see if the link is duplicate or not
-					if (sourceToTargetLinkUris.contains(key)) continue;
+					if (sourceToTargetLinkUris.containsKey(key)) continue;
 					id = linkIdFactory.getLinkId(SubClassLink.getFixedLabel().getUri());
 					SubClassLink subClassOfLink = new SubClassLink(id);
-					addWeightedLink(target, source, subClassOfLink, ModelingParams.MAX_WEIGHT);
+					addWeightedLink(target, source, subClassOfLink, ModelingParams.SUBCLASS_WEIGHT);
 				}
 			}
 		}		
@@ -789,18 +790,13 @@ public class GraphBuilder {
 		logger.debug("exit>");
 	}
 	
-	private void updateLinks3() {
+	private void updateLinks2() {
 		
 		logger.debug("<enter");
 		
 		List<Node> nodes = this.typeToNodesMap.get(NodeType.InternalNode);
 		logger.debug("number of internal nodes: " + nodes.size());
 		
-		HashMap<String, Boolean> directConnectivityCheck = 
-				this.ontologyManager.getDirectConnectivityCheck();
-		HashMap<String, Boolean> indirectConnectivityCheck = 
-				this.ontologyManager.getIndirectConnectivityCheck();
-
 		Node source;
 		Node target;
 		String sourceUri;
@@ -826,25 +822,25 @@ public class GraphBuilder {
 				sourceUri = source.getLabel().getUri();
 				targetUri = target.getLabel().getUri();
 
-				if (indirectConnectivityCheck.containsKey(sourceUri + targetUri)) {
-					id = linkIdFactory.getLinkId("SimpleLink");
-					Link link = new SimpleLink(id, null);
-					if (directConnectivityCheck.containsKey(sourceUri + targetUri))
-						addWeightedLink(source, target, link, ModelingParams.DEFAULT_WEIGHT);
-					else
-						addWeightedLink(source, target, link, ModelingParams.DEFAULT_WEIGHT + ModelingParams.MIN_WEIGHT);
-				}
+				id = linkIdFactory.getLinkId("SimpleLink");
+				Link link = new SimpleLink(id, null);
 
+				// order of adding the links is based on the ascending sort of their weight value
+				if (this.ontologyManager.isConnectedByDirectProperty(sourceUri, targetUri)) 
+					addWeightedLink(source, target, link, ModelingParams.PROPERTY_DIRECT_WEIGHT);
+				else if (this.ontologyManager.isConnectedByIndirectProperty(sourceUri, targetUri)) 
+					addWeightedLink(source, target, link, ModelingParams.PROPERTY_INDIRECT_WEIGHT);
+				else if (this.ontologyManager.isConnectedByDomainlessProperty(sourceUri, targetUri)) 
+					addWeightedLink(source, target, link, ModelingParams.PROPERTY_WITH_ONLY_RANGE_WEIGHT);
+				else if (this.ontologyManager.isConnectedByRangelessProperty(sourceUri, targetUri)) 
+					addWeightedLink(source, target, link, ModelingParams.PROPERTY_WITH_ONLY_DOMAIN_WEIGHT);
+				else if (this.ontologyManager.isSubClass(sourceUri, targetUri, false))
+					addWeightedLink(source, target, link, ModelingParams.SUBCLASS_WEIGHT);
+				else if (this.ontologyManager.isSubClass(targetUri, sourceUri, false))
+					addWeightedLink(source, target, link, ModelingParams.SUBCLASS_WEIGHT);
+				else if (this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(sourceUri, targetUri)) 
+					addWeightedLink(source, target, link, ModelingParams.PROPERTY_WITHOUT_DOMAIN_RANGE_WEIGHT);
 
-				// Add subclass links between internal nodes
-				// we have to check both sides.
-				if (ontologyManager.isSubClass(targetUri, sourceUri, false) ||
-					ontologyManager.isSubClass(sourceUri, targetUri, false)) {
-					// target is subclass of source
-					id = linkIdFactory.getLinkId(SubClassLink.getFixedLabel().getUri());
-					SubClassLink subClassOfLink = new SubClassLink(id);
-					addWeightedLink(source, target, subClassOfLink, ModelingParams.MAX_WEIGHT);
-				}
 			}
 		}		
 

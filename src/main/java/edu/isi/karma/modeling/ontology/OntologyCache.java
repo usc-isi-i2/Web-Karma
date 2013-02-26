@@ -259,6 +259,22 @@ class OntologyCache {
 		return objectProperties;
 	}
 
+	public HashMap<String, Label> getDataPropertiesWithoutDomain() {
+		return dataPropertiesWithoutDomain;
+	}
+
+	public HashMap<String, Label> getObjectPropertiesWithOnlyDomain() {
+		return objectPropertiesWithOnlyDomain;
+	}
+
+	public HashMap<String, Label> getObjectPropertiesWithOnlyRange() {
+		return objectPropertiesWithOnlyRange;
+	}
+
+	public HashMap<String, Label> getObjectPropertiesWithoutDomainAndRange() {
+		return objectPropertiesWithoutDomainAndRange;
+	}
+
 	public OntologyTreeNode getClassHierarchy() {
 		return classHierarchy;
 	}
@@ -423,6 +439,13 @@ class OntologyCache {
 		return connectedByRangelessProperties;
 	}
 
+	public Label getUriLabel(String uri) {
+		Label label = this.classes.get(uri);
+		if (label == null) label = this.properties.get(uri);
+		if (label == null) label = this.ontHandler.getUriLabel(uri);
+		return label;
+	}
+	
 	// private methods 
 	
 	private void loadClasses() {
