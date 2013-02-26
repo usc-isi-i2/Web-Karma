@@ -31,13 +31,13 @@ public class OntologyTreeNode {
 	private OntologyTreeNode parent;
 	private List<OntologyTreeNode> children;
 	
-	public OntologyTreeNode(Label uri, OntologyTreeNode parent, List<OntologyTreeNode> children) {
-		this.label = uri;
+	public OntologyTreeNode(Label label, OntologyTreeNode parent, List<OntologyTreeNode> children) {
+		this.label = label;
 		this.parent = parent;
 		this.children = children;
 	}
 	
-	public Label getUri() {
+	public Label getLabel() {
 		return label;
 	}
 	public void setLabel(Label label) {
@@ -66,11 +66,11 @@ public class OntologyTreeNode {
 	
 	private void printRecursively(OntologyTreeNode node, int level) {
 		for (int i = 0; i < level; i++) System.out.print("---"); System.out.print(" ");
-		System.out.println("URI: " + node.getUri().getUri());
+		System.out.println("URI: " + node.getLabel().getUri());
 		for (int i = 0; i < level; i++) System.out.print("   "); System.out.print(" ");
-		System.out.println("Label: " + node.getUri().getRdfsLabel());
+		System.out.println("Label: " + node.getLabel().getRdfsLabel());
 		for (int i = 0; i < level; i++) System.out.print("   "); System.out.print(" ");
-		System.out.println("Comment: " + node.getUri().getRdfsComment());
+		System.out.println("Comment: " + node.getLabel().getRdfsComment());
 		if (node.children == null || node.children.size() == 0)
 			return;
 		for (OntologyTreeNode child : node.getChildren()) {

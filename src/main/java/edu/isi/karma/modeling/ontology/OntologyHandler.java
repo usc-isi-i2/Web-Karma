@@ -64,10 +64,10 @@ class OntologyHandler {
 		return ontModel;
 	}
 
-	public Label getUriLabel(String uriString) {
-		Resource r = ontModel.getResource(uriString);
+	public Label getUriLabel(String uri) {
+		Resource r = ontModel.getResource(uri);
 		if (r == null || !ontModel.containsResource(r)) {
-			logger.debug("Could not find the resource " + uriString + " in the ontology model.");
+			logger.debug("Could not find the resource " + uri + " in the ontology model.");
 			return null;
 		}
 		String ns = r.getNameSpace();
@@ -226,9 +226,12 @@ class OntologyHandler {
 		OntClass c = null;
 		OntProperty p = null;
 		
-		if (r == null || resources == null)
-			return;
+		if (resources == null) 
+			resources = new ArrayList<OntResource>();
 
+		if (r == null)
+			return;
+		
 		if (r.isClass())
 			c = r.asClass();
 		else if  (r.isProperty())
@@ -308,7 +311,10 @@ class OntologyHandler {
 		OntClass c = null;
 		OntProperty p = null;
 		
-		if (r == null || resources == null)
+		if (resources == null) 
+			resources = new ArrayList<OntResource>();
+
+		if (r == null)
 			return;
 
 		if (r.isClass())
@@ -386,7 +392,10 @@ class OntologyHandler {
 	 */
 	public void getMembers(OntResource r, List<OntResource> resources, boolean recursive) {
 
-		if (r == null || resources == null)
+		if (resources == null) 
+			resources = new ArrayList<OntResource>();
+
+		if (r == null)
 			return;
 
 		if (r.isClass()) { 

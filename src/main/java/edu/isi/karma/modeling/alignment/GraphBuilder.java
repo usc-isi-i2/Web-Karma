@@ -62,6 +62,7 @@ public class GraphBuilder {
 	private NodeIdFactory nodeIdFactory;
 	private LinkIdFactory linkIdFactory;
 	
+	private List<String> visitedSourceTarget; 
 	private List<String> sourceToTargetLinkUris; 
 	private Node thingNode;
 	
@@ -101,8 +102,9 @@ public class GraphBuilder {
 		this.nodeReferences = new HashMap<Node, Integer>();
 		this.uriClosure = new HashMap<String, List<String>>();
 		
-		graph = new DirectedWeightedMultigraph<Node, Link>(Link.class);
-		sourceToTargetLinkUris = new ArrayList<String>();
+		this.graph = new DirectedWeightedMultigraph<Node, Link>(Link.class);
+		this.visitedSourceTarget = new ArrayList<String>();
+		this.sourceToTargetLinkUris = new ArrayList<String>();
 			
 		initialGraph();
 
@@ -180,12 +182,6 @@ public class GraphBuilder {
 		elapsedTimeSec = (updateLinks - addNodesClosure)/1000F;
 		logger.info("time to update links of the graph: " + elapsedTimeSec);
 		
-		updateLinksFromThing();
-		
-		long updateLinksFromThing = System.currentTimeMillis();
-		elapsedTimeSec = (updateLinksFromThing - updateLinks)/1000F;
-		logger.info("time to update links to Thing (root): " + elapsedTimeSec);
-
 		logger.info("total number of nodes in graph: " + this.graph.vertexSet().size());
 		logger.info("total number of links in graph: " + this.graph.edgeSet().size());
 
@@ -227,7 +223,8 @@ public class GraphBuilder {
 			elapsedTimeSec = (updateLinks - addNodesClosure)/1000F;
 			logger.info("time to update links of the graph: " + elapsedTimeSec);
 			
-			updateLinksFromThing();
+//			updateLinksFromThing();
+			
 			long updateLinksFromThing = System.currentTimeMillis();
 			elapsedTimeSec = (updateLinksFromThing - updateLinks)/1000F;
 			logger.info("time to update links to Thing (root): " + elapsedTimeSec);
@@ -426,7 +423,7 @@ public class GraphBuilder {
 		elapsedTimeSec = (updateLinks - addNodesClosure)/1000F;
 		logger.info("time to update links of the graph: " + elapsedTimeSec);
 		
-		updateLinksFromThing();
+//		updateLinksFromThing();
 		
 		long updateLinksFromThing = System.currentTimeMillis();
 		elapsedTimeSec = (updateLinksFromThing - updateLinks)/1000F;
@@ -674,154 +671,9 @@ public class GraphBuilder {
 
 		logger.debug("exit>");
 	}
-
-	
-	private void updateLinksFromThing() {
-
-		logger.debug("<enter");
-
-		Node[] nodes = this.graph.vertexSet().toArray(new Node[0]);
-
-		for (Node n : nodes) {
-
-			String uri = n.getLabel().getUri();
-			if (uri == null)
-				continue;
-			
-			if (uri.equalsIgnoreCase(Uris.THING_URI))
-				continue;
-
-			if (!(n instanceof InternalNode))
-				continue;
-
-			boolean parentExist = false;
-			boolean parentThing = false;
-			
-			Link[] outgoingLinks = this.graph.outgoingEdgesOf(n).toArray(new Link[0]); 
-			for (Link outLink: outgoingLinks) {
-				if (outLink.getLabel().getUri() == null)
-					continue;
-				if (outLink.getLabel().getUri().equalsIgnoreCase(Uris.RDFS_SUBCLASS_URI)) {
-					if (!outLink.getTarget().getLabel().getUri().equalsIgnoreCase(Uris.THING_URI))
-						parentExist = true;
-					else
-						parentThing = true;
-				}
-			}
-			
-			// The node already has a parent other than Thing
-			if (parentExist) {
-				this.graph.removeAllEdges(n, thingNode);
-				continue;
-			}
-
-			// The node does not have a parent other than Thing
-			if (parentThing)
-				continue;
-
-			// Create a link from Thing node to nodes who don't have any superclasses
-			String id = linkIdFactory.getLinkId(SubClassLink.getFixedLabel().getUri());
-			SubClassLink subClassOfLink = new SubClassLink(id);
-			addWeightedLink(n, thingNode, subClassOfLink, ModelingParams.MAX_WEIGHT);
-		}
-
-		logger.debug("exit>");
-
-	}
-	
-	private void updateLinks() {
-
-		logger.debug("<enter");
-
-		HashMap<String, List<DomainRangePair>> opDirectDomainRangePairs = 
-				this.ontologyManager.getObjectPropertyDirectDomainRangePairs();
-		HashMap<String, List<DomainRangePair>> opNotDirectDomainRangePairs = 
-				this.ontologyManager.getObjectPropertyNotDirectDomainRangePairs();
-		List<SubclassSuperclassPair> indirectSubclassSuperclassPairs = 
-				this.ontologyManager.getIndirectSubclassSuperclassPairs();
-		
-		String domainUri = "", rangeUri = "";
-		String subclassUri = "", superclassUri = "";
-		
-		String id = "";
-		Label label = null;
-		
-		for (String uri : opDirectDomainRangePairs.keySet()) {
-			for (DomainRangePair dr : opDirectDomainRangePairs.get(uri)) {
-				domainUri = dr.getDomain();
-				rangeUri = dr.getRange();
-				
-				List<Node> domains = this.uriToNodesMap.get(domainUri);
-				List<Node> ranges = this.uriToNodesMap.get(rangeUri);
-				
-				if (domains == null || ranges == null) continue;
-				
-				for (Node source : domains)
-					for (Node target : ranges) {
-						String key = source.getId() + target.getId() + uri;
-						// check to see if the link is duplicate or not
-						if (!sourceToTargetLinkUris.contains(key)) {
-							id = linkIdFactory.getLinkId(uri);
-							label = ontologyManager.getUriLabel(uri);
-							Link link = new ObjectPropertyLink(id, label);
-							addWeightedLink(source, target, link, ModelingParams.DEFAULT_WEIGHT);
-						}
-					}
-			}
-		}
-
-	    for (String uri : opNotDirectDomainRangePairs.keySet()) {
-	    	List<DomainRangePair> domainRangePairs = opNotDirectDomainRangePairs.get(uri);
-			for (DomainRangePair dr : domainRangePairs) {
-				domainUri = dr.getDomain();
-				rangeUri = dr.getRange();
-				
-				List<Node> domains = this.uriToNodesMap.get(domainUri);
-				if (domains == null || domains.size() == 0) continue;
-				List<Node> ranges = this.uriToNodesMap.get(rangeUri);
-				if (ranges == null || ranges.size() == 0) continue;
-				
-				for (Node source : domains)
-					for (Node target : ranges) {
-						String key = source.getId() + target.getId() + uri;
-						// check to see if the link is duplicate or not
-						if (!sourceToTargetLinkUris.contains(key)) {
-							id = linkIdFactory.getLinkId(uri);
-							label = ontologyManager.getUriLabel(uri);
-							Link link = new ObjectPropertyLink(id, label);
-							addWeightedLink(source, target, link, ModelingParams.DEFAULT_WEIGHT + ModelingParams.MIN_WEIGHT);
-						}
-					}
-			}
-		}
-		
-		// subclass links
-		for (SubclassSuperclassPair ss : indirectSubclassSuperclassPairs) {
-			subclassUri = ss.getSubclass();
-			superclassUri = ss.getSuperclass();
-			
-			List<Node> subclasses = this.uriToNodesMap.get(subclassUri);
-			List<Node> superclasses = this.uriToNodesMap.get(superclassUri);
-			
-			if (subclasses == null || superclasses == null) continue;
-			
-			for (Node subclass : subclasses)
-				for (Node superclass : superclasses) {
-					String key = subclass.getId() + superclass.getId() + SubClassLink.getFixedLabel().getUri();
-					// check to see if the link is duplicate or not
-					if (!sourceToTargetLinkUris.contains(key)) {
-						id = linkIdFactory.getLinkId(SubClassLink.getFixedLabel().getUri());
-						SubClassLink subClassOfLink = new SubClassLink(id);
-						addWeightedLink(subclass, superclass, subClassOfLink, ModelingParams.MAX_WEIGHT);
-					}
-				}
-		}
-
-		logger.debug("exit>");
-	}
 	
 	@SuppressWarnings("unused")
-	private void updateLinks2() {
+	private void updateLinks() {
 		
 		logger.debug("<enter");
 		
@@ -995,159 +847,6 @@ public class GraphBuilder {
 				}
 			}
 		}		
-
-		logger.debug("exit>");
-	}
-	
-	private class GraphUpdateLinksThread implements Runnable { 
-
-		private Thread runner;
-		private HashMap<String, List<DomainRangePair>> objectPropertyNotDirectDomainRangePairs;
-		
-		public GraphUpdateLinksThread(HashMap<String, List<DomainRangePair>> objectPropertyNotDirectDomainRangePairs) {
-			this.runner = new Thread(this);
-			this.objectPropertyNotDirectDomainRangePairs = objectPropertyNotDirectDomainRangePairs;
-			runner.start();
-		}
-		
-		@Override
-		public void run() {
-			
-			String domainUri = "", rangeUri = "";
-			
-			String id = "";
-			Label label = null;
-
-			for (String propertyUri : objectPropertyNotDirectDomainRangePairs.keySet()) {
-				List<DomainRangePair> domainRangePairs = objectPropertyNotDirectDomainRangePairs.get(propertyUri);
-				if (domainRangePairs == null) continue;
-				for (DomainRangePair dr : domainRangePairs) {
-					domainUri = dr.getDomain();
-					rangeUri = dr.getRange();
-					
-					List<Node> domains = uriToNodesMap.get(domainUri);
-					if (domains == null || domains.size() == 0) continue;
-					List<Node> ranges = uriToNodesMap.get(rangeUri);
-					if (ranges == null || ranges.size() == 0) continue;
-					
-					for (Node source : domains)
-						for (Node target : ranges) {
-							String key = source.getId() + target.getId() + propertyUri;
-							// check to see if the link is duplicate or not
-							if (!sourceToTargetLinkUris.contains(key)) {
-								id = linkIdFactory.getLinkId(propertyUri);
-								label = ontologyManager.getUriLabel(propertyUri);
-								Link link = new ObjectPropertyLink(id, label);
-								addWeightedLink(source, target, link, ModelingParams.DEFAULT_WEIGHT + ModelingParams.MIN_WEIGHT);
-							}
-						}
-				}	
-				}
-		}
-	}
-	
-	@SuppressWarnings("unused")
-	private void updateLinksMultiThread() {
-
-		logger.debug("<enter");
-
-		HashMap<String, List<DomainRangePair>> opDirectDomainRangePairs = 
-				this.ontologyManager.getObjectPropertyDirectDomainRangePairs();
-		HashMap<String, List<DomainRangePair>> opNotDirectDomainRangePairs = 
-				this.ontologyManager.getObjectPropertyNotDirectDomainRangePairs();
-		List<SubclassSuperclassPair> indirectSubclassSuperclassPairs = 
-				this.ontologyManager.getIndirectSubclassSuperclassPairs();
-		
-		String domainUri = "", rangeUri = "";
-		String subclassUri = "", superclassUri = "";
-		
-		String id = "";
-		Label label = null;
-		
-		for (String uri : opDirectDomainRangePairs.keySet()) {
-			for (DomainRangePair dr : opDirectDomainRangePairs.get(uri)) {
-				domainUri = dr.getDomain();
-				rangeUri = dr.getRange();
-				
-				List<Node> domains = this.uriToNodesMap.get(domainUri);
-				List<Node> ranges = this.uriToNodesMap.get(rangeUri);
-				
-				if (domains == null || ranges == null) continue;
-				
-				for (Node source : domains)
-					for (Node target : ranges) {
-						String key = source.getId() + target.getId() + uri;
-						// check to see if the link is duplicate or not
-						if (!sourceToTargetLinkUris.contains(key)) {
-							id = linkIdFactory.getLinkId(uri);
-							label = ontologyManager.getUriLabel(uri);
-							Link link = new ObjectPropertyLink(id, label);
-							addWeightedLink(source, target, link, ModelingParams.DEFAULT_WEIGHT);
-						}
-					}
-			}
-		}
-
-		int poolSize = 4;
-		int seed = opNotDirectDomainRangePairs.keySet().size() / poolSize;
-		logger.info("thread pool size: " + poolSize);
-	    ExecutorService service = Executors.newFixedThreadPool(poolSize);
-	    List<Future<?>> futures = new ArrayList<Future<?>>();
-	    int count = 0;
-	    
-	    HashMap<String, List<DomainRangePair>> parts = new HashMap<String, List<DomainRangePair>>();
-	    for (Entry<String, List<DomainRangePair>> entry : opNotDirectDomainRangePairs.entrySet()) {
-	    	parts.put(entry.getKey(), entry.getValue());
-	    	count ++;
-	    	
-	    	if (count == seed) {
-				Future<?> f = service.submit(new GraphUpdateLinksThread(parts));
-			    futures.add(f);
-			    parts = new HashMap<String, List<DomainRangePair>>();
-			    count = 0;
-	    	}
-		}
-
-//	    count = 0;
-//	    System.out.println("done submitting ... ");
-	    // wait for all tasks to complete before continuing
-	    for (Future<?> f : futures)
-	    {
-//	    	System.out.println(count);
-	    	try {
-				f.get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-	    	count ++;
-	    }
-
-		//shut down the executor service so that this thread can exit
-		service.shutdownNow();
-		
-		// subclass links
-		for (SubclassSuperclassPair ss : indirectSubclassSuperclassPairs) {
-			subclassUri = ss.getSubclass();
-			superclassUri = ss.getSuperclass();
-			
-			List<Node> subclasses = this.uriToNodesMap.get(subclassUri);
-			List<Node> superclasses = this.uriToNodesMap.get(superclassUri);
-			
-			if (subclasses == null || superclasses == null) continue;
-			
-			for (Node subclass : subclasses)
-				for (Node superclass : superclasses) {
-					String key = subclass.getId() + superclass.getId() + SubClassLink.getFixedLabel().getUri();
-					// check to see if the link is duplicate or not
-					if (!sourceToTargetLinkUris.contains(key)) {
-						id = linkIdFactory.getLinkId(SubClassLink.getFixedLabel().getUri());
-						SubClassLink subClassOfLink = new SubClassLink(id);
-						addWeightedLink(subclass, superclass, subClassOfLink, ModelingParams.MAX_WEIGHT);
-					}
-				}
-		}
 
 		logger.debug("exit>");
 	}
