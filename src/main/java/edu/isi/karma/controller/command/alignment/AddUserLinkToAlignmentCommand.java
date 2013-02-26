@@ -20,6 +20,8 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +34,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.view.VWorkspace;
 
@@ -40,7 +43,9 @@ public class AddUserLinkToAlignmentCommand extends Command {
 	private final String vWorksheetId;
 	private final String edgeId;
 	private final String alignmentId;
-
+	private Alignment 	 oldAlignment;
+	private String edgeLabel;
+	
 	// private String edgeLabel;
 	private static Logger logger = LoggerFactory.getLogger(AddUserLinkToAlignmentCommand.class);
 
@@ -50,7 +55,6 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		this.edgeId = edgeId;
 		this.alignmentId = alignmentId;
 		this.vWorksheetId = vWorksheetId;
-		
 		addTag(CommandTag.Modeling);
 	}
 
@@ -66,7 +70,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 
 	@Override
 	public String getDescription() {
-		return "";
+		return edgeLabel;
 	}
 
 	@Override
@@ -84,8 +88,18 @@ public class AddUserLinkToAlignmentCommand extends Command {
 					"setting the semantic types.");
 			return new UpdateContainer(new ErrorUpdate("Error occured while generating the model for the source."));
 		}
+		// Save the original alignment for undo
+		oldAlignment = alignment.getAlignmentClone();
 		
-		// Add the user provided edge
+		// Set the other links to the target node to normal
+		Link newLink = alignment.getLinkById(edgeId);
+		edgeLabel = newLink.getLabel().getLocalNameWithPrefix();
+		Set<Link> currentLinks = alignment.getCurrentLinksToNode(newLink.getTarget().getId());
+		for (Link currentLink: currentLinks) {
+			alignment.changeLinkStatus(currentLink.getId(), LinkStatus.Normal);
+		}
+		
+		// Change the status of the user selected edge
 		alignment.changeLinkStatus(edgeId, LinkStatus.ForcedByUser);
 		alignment.align();
 		
@@ -94,17 +108,14 @@ public class AddUserLinkToAlignmentCommand extends Command {
 
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		Alignment alignment = AlignmentManager.Instance().getAlignment(
-				alignmentId);
 		Worksheet worksheet = vWorkspace.getViewFactory()
 				.getVWorksheet(vWorksheetId).getWorksheet();
 
-		// Clear the user provided edge
-		alignment.changeLinkStatus(edgeId, LinkStatus.Normal);
-		alignment.align();
+		// Revert to the old alignment
+		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
 
 		// Get the alignment update
-		return getAlignmentUpdateContainer(alignment, worksheet, vWorkspace);
+		return getAlignmentUpdateContainer(oldAlignment, worksheet, vWorkspace);
 	}
 
 	private UpdateContainer getAlignmentUpdateContainer(Alignment alignment,

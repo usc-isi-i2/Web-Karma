@@ -333,7 +333,7 @@ public class GraphBuilder {
 		List<Link> linksWithOldStatus = this.statusToLinksMap.get(oldStatus);
 		if (linksWithOldStatus != null) linksWithOldStatus.remove(link);
 
-		List<Link> linksWithNewStatus = this.statusToLinksMap.get(oldStatus);
+		List<Link> linksWithNewStatus = this.statusToLinksMap.get(newStatus);
 		if (linksWithNewStatus == null) {
 			linksWithNewStatus = new ArrayList<Link>();
 			statusToLinksMap.put(newStatus, linksWithNewStatus);

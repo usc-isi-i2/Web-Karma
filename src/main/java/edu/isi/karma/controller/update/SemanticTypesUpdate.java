@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONStringer;
@@ -217,10 +218,14 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		if (case1)
 			return true;
 		else {	// Check for the class instance link with LinkKeyInfo as UriOfInstance
-			Link incomingLink = alignment.getCurrentLinkToNode(alignmentColumnNode.getId());
-			if (incomingLink != null && (incomingLink instanceof ClassInstanceLink) 
-					&& incomingLink.getKeyType().equals(LinkKeyInfo.UriOfInstance))
-				return true;
+			Set<Link> incomingLinks = alignment.getCurrentLinksToNode(alignmentColumnNode.getId());
+			if (incomingLinks != null && !incomingLinks.isEmpty()) {
+				Link incomingLink = incomingLinks.toArray(new Link[0])[0];
+				if (incomingLink != null && (incomingLink instanceof ClassInstanceLink) 
+						&& incomingLink.getKeyType().equals(LinkKeyInfo.UriOfInstance))
+					return true;
+			}
+			
 		}
 		return false;
 	}
@@ -231,11 +236,15 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		if (alignmentColumnNodes == null)
 			return hNodeIdToDomainNodeMap;
 		for (Node cNode : alignmentColumnNodes) {
-			Link incomingLink = alignment.getCurrentLinkToNode(cNode.getId());
-			if (incomingLink!= null && incomingLink.getSource() instanceof InternalNode) {
-				hNodeIdToDomainNodeMap.put(((ColumnNode)cNode).getHNodeId()
-						, (InternalNode)incomingLink.getSource());
+			Set<Link> incomingLinks = alignment.getCurrentLinksToNode(cNode.getId());
+			if (incomingLinks != null && !incomingLinks.isEmpty()) {
+				Link incomingLink = alignment.getCurrentLinksToNode(cNode.getId()).toArray(new Link[0])[0];
+				if (incomingLink!= null && incomingLink.getSource() instanceof InternalNode) {
+					hNodeIdToDomainNodeMap.put(((ColumnNode)cNode).getHNodeId()
+							, (InternalNode)incomingLink.getSource());
+				}
 			}
+			
 		}
 		return hNodeIdToDomainNodeMap;
 	}

@@ -443,6 +443,7 @@ function changeSemanticType_d3(d, vis, event) {
     $("div#SemanticTypeErrorWindow").hide();
     $(optionsDiv).removeData("selectedPrimaryRow");
     // Deselect all the advanced options check boxes
+    $("div#semanticTypingAdvacedOptionsDiv").hide();
     $("div#semanticTypingAdvacedOptionsDiv input:checkbox").prop('checked', false);
     $("div#semanticTypingAdvacedOptionsDiv input:text").val("");
     

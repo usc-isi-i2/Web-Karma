@@ -88,8 +88,7 @@ public class CRFColumnModel implements Jsonizable {
 		HashMap<String, Double> sortedMap = Util.sortHashMap(scoreMap);
 
 		for (String label : sortedMap.keySet()) {
-			JSONObject oj = new JSONObject();
-			
+			double probability = scoreMap.get(label);
 			// Check if the type contains domain
 			if(label.contains("|")){
 				Label domainURI = ontMgr.getUriLabel(label.split("\\|")[0]);
@@ -97,61 +96,97 @@ public class CRFColumnModel implements Jsonizable {
 				if(domainURI == null || typeURI == null)
 					continue;
 				
-				StringBuilder domainId = new StringBuilder();
-				StringBuilder domainDisplayLabel = new StringBuilder();
 				String clazzLocalNameWithPrefix = domainURI.getLocalNameWithPrefix();
 				
-				getDomainDisplayLabelAndId(domainURI, domainId, domainDisplayLabel, clazzLocalNameWithPrefix, alignment, steinerTreeNodeIds);
-				
-				oj.put(SemanticTypesUpdate.JsonKeys.DisplayDomainLabel.name(), domainDisplayLabel.toString());
-				oj.put(SemanticTypesUpdate.JsonKeys.Domain.name(), domainId.toString());
-				oj.put(SemanticTypesUpdate.JsonKeys.DisplayLabel.name(), typeURI.getLocalNameWithPrefix());
-				oj.put(SemanticTypesUpdate.JsonKeys.FullType.name(), label.split("\\|")[1]);
+				int graphLastIndex = alignment.getLastIndexOfNodeUri(domainURI.getUri());
+				if (graphLastIndex == -1) { // No instance present in the graph
+					insertSemanticTypeSuggestion(arr, clazzLocalNameWithPrefix + "1 (add)", domainURI.getUri(), 
+							typeURI.getLocalNameWithPrefix(), label.split("\\|")[1], probability);
+				} else {
+					boolean hasLastNodeFromSteinerTree = false;
+					for (int i=1; i<= graphLastIndex; i++) {
+						
+						if (steinerTreeNodeIds.contains(domainURI.getUri() + (graphLastIndex))) {
+							insertSemanticTypeSuggestion(arr, clazzLocalNameWithPrefix + i, domainURI.getUri() + i, 
+									typeURI.getLocalNameWithPrefix(), label.split("\\|")[1], probability);
+							if (i == graphLastIndex)
+								hasLastNodeFromSteinerTree = true;
+						} else {
+							Node graphNode = alignment.getNodeById(domainURI.getUri() + i);
+							if (graphNode != null)
+								insertSemanticTypeSuggestion(arr, clazzLocalNameWithPrefix + i + " (add)", graphNode.getId(), 
+									typeURI.getLocalNameWithPrefix(), label.split("\\|")[1], probability);
+						}
+					}
+					// Add an option to add one more node for the domain
+					if (hasLastNodeFromSteinerTree)
+						insertSemanticTypeSuggestion(arr, clazzLocalNameWithPrefix + (graphLastIndex+1) + " (add)", domainURI.getUri(), 
+							typeURI.getLocalNameWithPrefix(), label.split("\\|")[1], probability);
+				}
 			} else {
 				Label typeURI = ontMgr.getUriLabel(label);
 				if(typeURI == null)
 					continue;
 				
-				StringBuilder domainId = new StringBuilder();
-				StringBuilder domainDisplayLabel = new StringBuilder();
 				String clazzLocalNameWithPrefix = typeURI.getLocalNameWithPrefix();
 				
-				getDomainDisplayLabelAndId(typeURI, domainId, domainDisplayLabel, clazzLocalNameWithPrefix, alignment, steinerTreeNodeIds);
-				oj.put(SemanticTypesUpdate.JsonKeys.FullType.name(), domainId.toString());
-				oj.put(SemanticTypesUpdate.JsonKeys.DisplayLabel.name(), domainDisplayLabel.toString());
-				oj.put(SemanticTypesUpdate.JsonKeys.DisplayDomainLabel.name(), "");
-				oj.put(SemanticTypesUpdate.JsonKeys.Domain.name(), "");
+				int graphLastIndex = alignment.getLastIndexOfNodeUri(typeURI.getUri());
+				if (graphLastIndex == -1) { // No instance present in the graph
+					insertSemanticTypeSuggestion(arr, "", "", clazzLocalNameWithPrefix + "1 (add)", typeURI.getUri(), probability);
+				} else {
+					boolean hasLastNodeFromSteinerTree = false;
+					for (int i=1; i<= graphLastIndex; i++) {
+						if (steinerTreeNodeIds.contains(typeURI.getUri() + (graphLastIndex))) {
+							insertSemanticTypeSuggestion(arr, "", "", clazzLocalNameWithPrefix + i, typeURI.getUri() + i, probability);
+						} else {
+							Node graphNode = alignment.getNodeById(typeURI.getUri() + i);
+							if (graphNode != null)
+								insertSemanticTypeSuggestion(arr, "", "", clazzLocalNameWithPrefix + i + " (add)", graphNode.getId(), probability);
+						}
+					}
+					// Add an option to add one more node for the domain
+					if (hasLastNodeFromSteinerTree)
+						insertSemanticTypeSuggestion(arr, "", "", clazzLocalNameWithPrefix + (graphLastIndex+1) + " (add)", typeURI.getUri(), probability);
+				}
 			}
-			
-			oj.put("Probability", scoreMap.get(label));
-			arr.put(oj);
 		}
 		obj.put("Labels", arr);
 		return obj;
 	}
 	
-	private void getDomainDisplayLabelAndId(Label domainURI, StringBuilder domainId, StringBuilder domainDisplayLabel, 
-			String clazzLocalNameWithPrefix, Alignment alignment, Set<String> steinerTreeNodeIds) {
-		int graphLastIndex = alignment.getLastIndexOfNodeUri(domainURI.getUri());
-		if (graphLastIndex == -1) { // No instance present in the graph
-			domainDisplayLabel.append(clazzLocalNameWithPrefix + "1 (add)");
-			domainId.append(domainURI.getUri());
-		} else {
-			// Check if already present in the steiner tree
-			if (steinerTreeNodeIds.contains(domainURI.getUri() + (graphLastIndex))) {
-				domainDisplayLabel.append(clazzLocalNameWithPrefix + (graphLastIndex));
-				domainId.append(domainURI.getUri() + (graphLastIndex));
-			} else {
-				// Check if present in graph and not tree
-				Node graphNode = alignment.getNodeById(domainURI.getUri() + (graphLastIndex));
-				if (graphNode != null) {
-					domainDisplayLabel.append(clazzLocalNameWithPrefix + (graphLastIndex) + " (add)");
-					domainId.append(graphNode.getId());
-				} else {
-					domainDisplayLabel.append(clazzLocalNameWithPrefix + (graphLastIndex+1) + " (add)");
-					domainId.append(domainURI.getUri());
-				}
-			}
-		}
+	private void insertSemanticTypeSuggestion(JSONArray arr, String domainDisplayLabel, 
+			String domain, String typeDisplayLabel, String type, double probability) throws JSONException {
+		JSONObject typeObj = new JSONObject();
+		typeObj.put(SemanticTypesUpdate.JsonKeys.DisplayDomainLabel.name(), domainDisplayLabel);
+		typeObj.put(SemanticTypesUpdate.JsonKeys.Domain.name(), domain);
+		typeObj.put(SemanticTypesUpdate.JsonKeys.DisplayLabel.name(), typeDisplayLabel);
+		typeObj.put(SemanticTypesUpdate.JsonKeys.FullType.name(), type);
+		typeObj.put("Probability", probability);
+		arr.put(typeObj);
 	}
+
+//	private void getDomainDisplayLabelAndId(Label domainURI, StringBuilder domainId, StringBuilder domainDisplayLabel, 
+//			String clazzLocalNameWithPrefix, Alignment alignment, Set<String> steinerTreeNodeIds) {
+//		int graphLastIndex = alignment.getLastIndexOfNodeUri(domainURI.getUri());
+//		if (graphLastIndex == -1) { // No instance present in the graph
+//			domainDisplayLabel.append(clazzLocalNameWithPrefix + "1 (add)");
+//			domainId.append(domainURI.getUri());
+//		} else {
+//			// Check if already present in the steiner tree
+//			if (steinerTreeNodeIds.contains(domainURI.getUri() + (graphLastIndex))) {
+//				domainDisplayLabel.append(clazzLocalNameWithPrefix + (graphLastIndex));
+//				domainId.append(domainURI.getUri() + (graphLastIndex));
+//			} else {
+//				// Check if present in graph and not tree
+//				Node graphNode = alignment.getNodeById(domainURI.getUri() + (graphLastIndex));
+//				if (graphNode != null) {
+//					domainDisplayLabel.append(clazzLocalNameWithPrefix + (graphLastIndex) + " (add)");
+//					domainId.append(graphNode.getId());
+//				} else {
+//					domainDisplayLabel.append(clazzLocalNameWithPrefix + (graphLastIndex+1) + " (add)");
+//					domainId.append(domainURI.getUri());
+//				}
+//			}
+//		}
+//	}
 }

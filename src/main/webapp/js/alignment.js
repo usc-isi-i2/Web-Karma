@@ -370,7 +370,8 @@ function addSemTypeObjectToCurrentTable(semTypeObject, isSelected, isCrfModelSug
         .append($("<td>").append($("<button>").button().text("Edit").click(showSemanticTypeEditOptions)));
 
     if(isCrfModelSuggested)
-        trTag.append($("<td>").addClass("CRFSuggestedText").text("  (CRF Suggested)"));
+        // trTag.append($("<td>").addClass("CRFSuggestedText").text("  (CRF Suggested)"));
+        trTag.append($("<td>").addClass("CRFSuggestedText"));
     else
         trTag.append($("<td>"));
         
