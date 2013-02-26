@@ -70,7 +70,8 @@ public class GraphPreProcess {
 				// removing all the links to target
 				Set<Link> incomingLinks = gPrime.incomingEdgesOf(link.getTarget());
 				if (incomingLinks == null) continue;
-				for (Link inLink: incomingLinks) {
+				Link[] incomingLinksArray = incomingLinks.toArray(new Link[0]);
+				for (Link inLink: incomingLinksArray) {
 					gPrime.removeAllEdges( inLink.getSource(), inLink.getTarget() );
 				}
 	
