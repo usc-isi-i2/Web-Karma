@@ -37,6 +37,7 @@ import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.ModelingParams;
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
@@ -52,6 +53,7 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.SimpleLink;
+import edu.isi.karma.rep.alignment.SubClassLink;
 
 public class Approach1 {
 
@@ -73,17 +75,12 @@ public class Approach1 {
 	private List<SemanticLabel> inputSemanticLabels;
 	private List<SemanticLabel> outputSemanticLabels;
 	
-	private double directLinkWeight;
-	private double indirectLinkWeight;
-	
 	public Approach1(List<ServiceModel> trainingData, OntologyManager ontologyManager) {
 		this.trainingData = trainingData;
 		this.ontologyManager = ontologyManager;
 		this.linkIdFactory = new LinkIdFactory();
 		this.inputSemanticLabels = new ArrayList<SemanticLabel>();
 		this.outputSemanticLabels = new ArrayList<SemanticLabel>();
-		this.directLinkWeight = this.getInitialLinkWeight();
-		this.indirectLinkWeight = this.directLinkWeight + 10;
 		this.typeToNodesMap = new HashMap<NodeType, List<Node>>();
 		this.uriToNodesMap = new HashMap<String, List<Node>>();
 		this.sourceTargetList = new ArrayList<DomainRangePair>();
@@ -109,14 +106,14 @@ public class Approach1 {
 		this.updateHashMaps();
 	}
 	
-	private double getInitialLinkWeight() {
-		double w = 0;
-		for (ServiceModel sm : this.trainingData) {
-			DirectedWeightedMultigraph<Node, Link> m = sm.getModels().get(1);
-			w += m.edgeSet().size();
-		}
-		return w;
-	}
+//	private double getInitialLinkWeight() {
+//		double w = 0;
+//		for (ServiceModel sm : this.trainingData) {
+//			DirectedWeightedMultigraph<Node, Link> m = sm.getModels().get(1);
+//			w += m.edgeSet().size();
+//		}
+//		return w;
+//	}
 	
 	private void buildSourceTargetLinkCounterMap() {
 		Integer count;
@@ -362,28 +359,17 @@ public class Approach1 {
 	
 	private void updateWeights() {
 		
-		String key, id;
+		String id;
 		Integer count;
 		double w;
 		Label label;
-		
-		Link[] links = graph.edgeSet().toArray(new Link[0]);
-		for (Link link : links) {
-			
-			if (!(link instanceof SimpleLink)) continue;
-			
-			w = this.directLinkWeight;
-			
-			if (link.getWeight() == ModelingParams.PROPERTY_INDIRECT_WEIGHT)
-				w = this.indirectLinkWeight;
-			
-			graph.setEdgeWeight(link, w);
-		}
 		
 		List<String> objectPropertiesDirect;
 		List<String> objectPropertiesIndirect;
 		List<String> objectPropertiesWithOnlyDomain;
 		List<String> objectPropertiesWithOnlyRange;
+		HashMap<String, Label> objectPropertiesWithoutDomainAndRange = 
+				ontologyManager.getObjectPropertiesWithoutDomainAndRange();
 
 		for (DomainRangePair dr : this.sourceTargetList) {
 			
@@ -403,20 +389,17 @@ public class Approach1 {
 			objectPropertiesIndirect = ontologyManager.getObjectPropertiesIndirect(dr.getDomain(), dr.getRange());
 			objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyDomain(dr.getDomain(), dr.getRange());
 			objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesWithOnlyRange(dr.getDomain(), dr.getRange());
-
-			HashMap<String, Integer> linkCount = this.sourceTargetToLinkCounterMap.get(key);
+			
+			HashMap<String, Integer> linkCount = this.sourceTargetToLinkCounterMap.get(dr.getDomain() + dr.getRange());
 			if (linkCount == null || linkCount.size() == 0) continue;
 
-//			for (String s : linkCount.keySet()) 
-//				logger.info(key + " => " + s + " => " + linkCount.get(s));
-			
 			boolean linkExistInOntology = false;
 			
 			for (Node n1 : sources) {
 				for (Node n2 : targets) {
 					for (String s : linkCount.keySet()) {
 						
-						if (this.ontologyManager.getObjectPropertiesWithoutDomainAndRange().containsKey(s)) 
+						if (objectPropertiesWithoutDomainAndRange != null && objectPropertiesWithoutDomainAndRange.containsKey(s)) 
 							linkExistInOntology = true;
 						else if (objectPropertiesDirect != null && objectPropertiesDirect.contains(s))
 							linkExistInOntology = true;
@@ -445,7 +428,7 @@ public class Approach1 {
 						// prefer the links that are actually defined between source and target in the ontology 
 						// over inherited ones.
 						graph.addEdge(n1, n2, newLink);
-						graph.setEdgeWeight(newLink, this.indirectLinkWeight - count.intValue());
+						graph.setEdgeWeight(newLink, ModelingParams.PROPERTY_DIRECT_WEIGHT - count.intValue());
 					}					
 				}
 			}
@@ -503,51 +486,104 @@ public class Approach1 {
 	
 	private DirectedWeightedMultigraph<Node, Link> buildOutputTree(DirectedWeightedMultigraph<Node, Link> tree) {
 		
-		String key1, key2;
+		String sourceUri, targetUri;
 		String id;
 		Label label;
+		String uri;
 		Link[] links = tree.edgeSet().toArray(new Link[0]);
+		List<String> possibleLinksFromSourceToTarget = new ArrayList<String>();
+		List<String> possibleLinksFromTargetToSource = new ArrayList<String>();
+
+		List<String> objectPropertiesDirect;
+		List<String> objectPropertiesIndirect;
+		List<String> objectPropertiesWithOnlyDomain;
+		List<String> objectPropertiesWithOnlyRange;
+		HashMap<String, Label> objectPropertiesWithoutDomainAndRange = 
+				ontologyManager.getObjectPropertiesWithoutDomainAndRange();
+		
 		for (Link link : links) {
 			if (!(link instanceof SimpleLink)) continue;
 			
 			// links from source to target
-			List<String> possibleLinksFromSourceToTarget;
-			key1 = link.getSource().getLabel().getUri() + 
-					link.getTarget().getLabel().getUri();
-
-			if (link.getWeight() == this.indirectLinkWeight)
-				possibleLinksFromSourceToTarget = this.ontologyManager.getIndirectDomainRangeProperties().get(key1);
-			else
-				possibleLinksFromSourceToTarget = this.ontologyManager.getDirectDomainRangeProperties().get(key1);
+			sourceUri = link.getSource().getLabel().getUri();
+			targetUri = link.getTarget().getLabel().getUri();
 			
-			// links from target to source
-			List<String> possibleLinksFromTargetToSource;
-			key2 = link.getTarget().getLabel().getUri() + 
-					link.getSource().getLabel().getUri();
+			possibleLinksFromSourceToTarget.clear();
+			possibleLinksFromTargetToSource.clear();
 
-			if (link.getWeight() == this.indirectLinkWeight)
-				possibleLinksFromTargetToSource = this.ontologyManager.getIndirectDomainRangeProperties().get(key2);
-			else
-				possibleLinksFromTargetToSource = this.ontologyManager.getDirectDomainRangeProperties().get(key2);
+			if (link.getWeight() == ModelingParams.PROPERTY_DIRECT_WEIGHT) {
+				objectPropertiesDirect = ontologyManager.getObjectPropertiesDirect(sourceUri, targetUri);
+				if (objectPropertiesDirect != null) possibleLinksFromSourceToTarget.addAll(objectPropertiesDirect);
+				objectPropertiesDirect = ontologyManager.getObjectPropertiesDirect(targetUri, sourceUri);
+				if (objectPropertiesDirect != null) possibleLinksFromTargetToSource.addAll(objectPropertiesDirect);
+			}
 			
-			if (possibleLinksFromSourceToTarget != null && possibleLinksFromSourceToTarget.size() > 0) {
-				id = linkIdFactory.getLinkId(possibleLinksFromSourceToTarget.get(0));
-				label = new Label(possibleLinksFromSourceToTarget.get(0));
-				Link newLink = new ObjectPropertyLink(id, label);
-				// prefer the links that are actually defined between source and target in the ontology 
-				// over inherited ones.
+			if (link.getWeight() == ModelingParams.PROPERTY_INDIRECT_WEIGHT) {
+				objectPropertiesIndirect = ontologyManager.getObjectPropertiesIndirect(sourceUri, targetUri);
+				if (objectPropertiesIndirect != null) possibleLinksFromSourceToTarget.addAll(objectPropertiesIndirect);
+				objectPropertiesIndirect = ontologyManager.getObjectPropertiesIndirect(targetUri, sourceUri);
+				if (objectPropertiesIndirect != null) possibleLinksFromTargetToSource.addAll(objectPropertiesIndirect);
+			} 
+
+			if (link.getWeight() == ModelingParams.PROPERTY_WITH_ONLY_DOMAIN_WEIGHT) {
+				objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyRange(sourceUri, targetUri);
+				if (objectPropertiesWithOnlyDomain != null) possibleLinksFromSourceToTarget.addAll(objectPropertiesWithOnlyDomain);
+				objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyRange(targetUri, sourceUri);
+				if (objectPropertiesWithOnlyDomain != null) possibleLinksFromTargetToSource.addAll(objectPropertiesWithOnlyDomain);
+			} 
+			
+			if (link.getWeight() == ModelingParams.PROPERTY_WITH_ONLY_RANGE_WEIGHT) {
+				objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesIndirect(sourceUri, targetUri);
+				if (objectPropertiesWithOnlyRange != null) possibleLinksFromSourceToTarget.addAll(objectPropertiesWithOnlyRange);
+				objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesIndirect(targetUri, sourceUri);
+				if (objectPropertiesWithOnlyRange != null) possibleLinksFromTargetToSource.addAll(objectPropertiesWithOnlyRange);
+			} 
+			
+			if (link.getWeight() == ModelingParams.PROPERTY_WITHOUT_DOMAIN_RANGE_WEIGHT) {
+				if (objectPropertiesWithoutDomainAndRange != null) {
+					possibleLinksFromSourceToTarget.addAll(objectPropertiesWithoutDomainAndRange.keySet());
+					possibleLinksFromTargetToSource.addAll(objectPropertiesWithoutDomainAndRange.keySet());
+				}
+			}
+			
+			if (link.getWeight() == ModelingParams.SUBCLASS_WEIGHT) {
+				if (ontologyManager.isSubClass(sourceUri, targetUri, true)) 
+					possibleLinksFromSourceToTarget.add(Uris.RDFS_SUBCLASS_URI);
+				if (ontologyManager.isSubClass(targetUri, sourceUri, true)) 
+					possibleLinksFromTargetToSource.add(Uris.RDFS_SUBCLASS_URI);
+			}
+
+			if (possibleLinksFromSourceToTarget.size() > 0) {
+				uri = possibleLinksFromSourceToTarget.get(0);
+				id = linkIdFactory.getLinkId(uri);
+				label = new Label(uri);
+				
+				Link newLink;
+				if (uri.equalsIgnoreCase(Uris.RDFS_SUBCLASS_URI))
+					newLink = new SubClassLink(id);
+				else
+					newLink = new ObjectPropertyLink(id, label);
+				
 				tree.addEdge(link.getSource(), link.getTarget(), newLink);
 				tree.removeEdge(link);
-			} else if (possibleLinksFromTargetToSource != null && possibleLinksFromTargetToSource.size() > 0) {
-				id = linkIdFactory.getLinkId(possibleLinksFromTargetToSource.get(0));
-				label = new Label(possibleLinksFromTargetToSource.get(0));
-				Link newLink = new ObjectPropertyLink(id, label);
-				// prefer the links that are actually defined between source and target in the ontology 
-				// over inherited ones.
+				
+			} else if (possibleLinksFromTargetToSource.size() > 0) {
+				uri = possibleLinksFromTargetToSource.get(0);
+				id = linkIdFactory.getLinkId(uri);
+				label = new Label(uri);
+				
+				Link newLink;
+				if (uri.equalsIgnoreCase(Uris.RDFS_SUBCLASS_URI))
+					newLink = new SubClassLink(id);
+				else
+					newLink = new ObjectPropertyLink(id, label);
+				
 				tree.addEdge(link.getTarget(), link.getSource(), newLink);
 				tree.removeEdge(link);
+				
 			} else {
-				logger.error("Something is going wrong. There should be at least one possible object property.");
+				logger.error("Something is going wrong. There should be at least one possible object property between " +
+						sourceUri + " and " + targetUri);
 				return null;
 			}
 		}

@@ -154,32 +154,23 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 
     	Link link = null;
     	switch (this.type) {
-			case None: { 
-				link = new SimpleLink(this.getId(), this.getLabel()); 
-			} 
-			case ClassInstanceLink: { 
+			case None: 
+				link = new SimpleLink(this.getId(), this.getLabel());
+			case ClassInstanceLink: 
 				link = new ClassInstanceLink(this.getId(), this.getKeyType()); 
-			} 
-			case ColumnSubClassLink: {
+			case ColumnSubClassLink: 
 				link = new ColumnSubClassLink(this.getId());
-			}
 			case DataPropertyLink: 
-			{
 				if (this.getKeyType() == LinkKeyInfo.PartOfKey) 
 					link = new DataPropertyLink(this.getId(), this.getLabel(), true);
 				else
 					link = new DataPropertyLink(this.getId(), this.getLabel());
-			}
-			case DataPropertyOfColumnLink: { 
+			case DataPropertyOfColumnLink:  
 				link = new DataPropertyOfColumnLink(this.getId(), ((DataPropertyOfColumnLink) this).getSpecializedColumnHNodeId());
-			}
-			case ObjectPropertyLink: {
+			case ObjectPropertyLink: 
 				link = new ObjectPropertyLink(this.getId(), this.getLabel());
-			}
-			case SubClassLink: {
+			case SubClassLink: 
 				link = new SubClassLink(this.getId());
-			}
-
 		}
     	
     	if (link != null) 

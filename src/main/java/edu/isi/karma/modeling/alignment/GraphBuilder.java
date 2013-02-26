@@ -816,6 +816,14 @@ public class GraphBuilder {
 //				System.out.println(count);
 //				count++;
 
+				if (n1.equals(n2))
+					continue;
+
+				if (this.visitedSourceTargetPairs.containsKey(n1.getId() + n2.getId()))
+					continue;
+				
+				this.visitedSourceTargetPairs.put(n1.getId() + n2.getId(), true);
+
 				source = n1;
 				target = n2;
 
@@ -826,19 +834,28 @@ public class GraphBuilder {
 				Link link = new SimpleLink(id, null);
 
 				// order of adding the links is based on the ascending sort of their weight value
-				if (this.ontologyManager.isConnectedByDirectProperty(sourceUri, targetUri)) 
+				if (this.ontologyManager.isConnectedByDirectProperty(sourceUri, targetUri) ||
+						this.ontologyManager.isConnectedByDirectProperty(targetUri, sourceUri)) 
 					addWeightedLink(source, target, link, ModelingParams.PROPERTY_DIRECT_WEIGHT);
-				else if (this.ontologyManager.isConnectedByIndirectProperty(sourceUri, targetUri)) 
+				
+				else if (this.ontologyManager.isConnectedByIndirectProperty(sourceUri, targetUri) ||
+						this.ontologyManager.isConnectedByIndirectProperty(targetUri, sourceUri)) 
 					addWeightedLink(source, target, link, ModelingParams.PROPERTY_INDIRECT_WEIGHT);
-				else if (this.ontologyManager.isConnectedByDomainlessProperty(sourceUri, targetUri)) 
+				
+				else if (this.ontologyManager.isConnectedByDomainlessProperty(sourceUri, targetUri) ||
+						this.ontologyManager.isConnectedByDomainlessProperty(targetUri, sourceUri)) 
 					addWeightedLink(source, target, link, ModelingParams.PROPERTY_WITH_ONLY_RANGE_WEIGHT);
-				else if (this.ontologyManager.isConnectedByRangelessProperty(sourceUri, targetUri)) 
+				
+				else if (this.ontologyManager.isConnectedByRangelessProperty(sourceUri, targetUri) ||
+						this.ontologyManager.isConnectedByRangelessProperty(targetUri, sourceUri)) 
 					addWeightedLink(source, target, link, ModelingParams.PROPERTY_WITH_ONLY_DOMAIN_WEIGHT);
-				else if (this.ontologyManager.isSubClass(sourceUri, targetUri, false))
+				
+				else if (this.ontologyManager.isSubClass(sourceUri, targetUri, false) ||
+						this.ontologyManager.isSubClass(targetUri, sourceUri, false)) 
 					addWeightedLink(source, target, link, ModelingParams.SUBCLASS_WEIGHT);
-				else if (this.ontologyManager.isSubClass(targetUri, sourceUri, false))
-					addWeightedLink(source, target, link, ModelingParams.SUBCLASS_WEIGHT);
-				else if (this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(sourceUri, targetUri)) 
+				
+				else if (this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(sourceUri, targetUri) ||
+						this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(targetUri, sourceUri)) 
 					addWeightedLink(source, target, link, ModelingParams.PROPERTY_WITHOUT_DOMAIN_RANGE_WEIGHT);
 
 			}

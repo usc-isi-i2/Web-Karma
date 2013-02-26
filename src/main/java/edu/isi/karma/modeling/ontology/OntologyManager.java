@@ -490,38 +490,47 @@ public class OntologyManager {
 	}
 	
 	public List<String> getObjectPropertiesDirect(String domainUri, String rangeUri) {
+		if (domainUri == null || rangeUri == null) return null;
 		return this.ontCache.getDomainRangeToDirectProperties().get(domainUri + rangeUri);
 	}
 
 	public List<String> getObjectPropertiesIndirect(String domainUri, String rangeUri) {
+		if (domainUri == null || rangeUri == null) return null;
 		return this.ontCache.getDomainRangeToIndirectProperties().get(domainUri + rangeUri);
 	}
 
 	public List<String> getObjectPropertiesWithOnlyDomain(String domainUri, String rangeUri) {
+		if (domainUri == null || rangeUri == null) return null;
 		return this.ontCache.getDomainRangeToRangelessProperties().get(domainUri + rangeUri);
 	}
 
 	public List<String> getObjectPropertiesWithOnlyRange(String domainUri, String rangeUri) {
+		if (domainUri == null || rangeUri == null) return null;
 		return this.ontCache.getDomainRangeToDomainlessProperties().get(domainUri + rangeUri);
 	}
 
 	public boolean isConnectedByDirectProperty(String domainUri, String rangeUri) {
-		return this.ontCache.getConnectedByDirectProperties().get(domainUri + rangeUri);
+		if (domainUri == null || rangeUri == null) return false;
+		return this.ontCache.getConnectedByDirectProperties().containsKey(domainUri + rangeUri);
 	}
 
 	public boolean isConnectedByIndirectProperty(String domainUri, String rangeUri) {
-		return this.ontCache.getConnectedByIndirectProperties().get(domainUri + rangeUri);
+		if (domainUri == null || rangeUri == null) return false;
+		return this.ontCache.getConnectedByIndirectProperties().containsKey(domainUri + rangeUri);
 	}
 
 	public boolean isConnectedByDomainlessProperty(String domainUri, String rangeUri) {
-		return this.ontCache.getConnectedByDomainlessProperties().get(domainUri + rangeUri);
+		if (domainUri == null || rangeUri == null) return false;
+		return this.ontCache.getConnectedByDomainlessProperties().containsKey(domainUri + rangeUri);
 	}
 
 	public boolean isConnectedByRangelessProperty(String domainUri, String rangeUri) {
-		return this.ontCache.getConnectedByRangelessProperties().get(domainUri + rangeUri);
+		if (domainUri == null || rangeUri == null) return false;
+		return this.ontCache.getConnectedByRangelessProperties().containsKey(domainUri + rangeUri);
 	}
 	
 	public boolean isConnectedByDomainlessAndRangelessProperty(String domainUri, String rangeUri) {
+		if (domainUri == null || rangeUri == null) return false;
 		return (this.ontCache.getObjectPropertiesWithoutDomainAndRange().size() > 0);
 	}
 }

@@ -108,10 +108,10 @@ class OntologyCache {
 	private HashMap<String, List<String>> domainRangeToRangelessProperties;
 
 	// hashmap: objectproperty -> <domain, range> pairs
-	private HashMap<String, List<DomainRangePair>> domainRangePairsOfDirectProperties;
-	private HashMap<String, List<DomainRangePair>> domainRangePairsOfIndirectProperties;
-	private HashMap<String, List<DomainRangePair>> domainRangePairsOfDomainlessProperties;
-	private HashMap<String, List<DomainRangePair>> domainRangePairsOfRangelessProperties;
+//	private HashMap<String, List<DomainRangePair>> domainRangePairsOfDirectProperties;
+//	private HashMap<String, List<DomainRangePair>> domainRangePairsOfIndirectProperties;
+//	private HashMap<String, List<DomainRangePair>> domainRangePairsOfDomainlessProperties;
+//	private HashMap<String, List<DomainRangePair>> domainRangePairsOfRangelessProperties;
 	
 	// hashmap: class1 + class2 -> boolean (if c1 is connected to c2)
 	private HashMap<String, Boolean> connectedByDirectProperties;
@@ -179,10 +179,10 @@ class OntologyCache {
 		this.domainRangeToDomainlessProperties = new HashMap<String, List<String>>();
 		this.domainRangeToRangelessProperties = new HashMap<String, List<String>>();
 		
-		this.domainRangePairsOfDirectProperties = new HashMap<String, List<DomainRangePair>>();
-		this.domainRangePairsOfIndirectProperties = new HashMap<String, List<DomainRangePair>>();
-		this.domainRangePairsOfDomainlessProperties = new HashMap<String, List<DomainRangePair>>();
-		this.domainRangePairsOfRangelessProperties = new HashMap<String, List<DomainRangePair>>();
+//		this.domainRangePairsOfDirectProperties = new HashMap<String, List<DomainRangePair>>();
+//		this.domainRangePairsOfIndirectProperties = new HashMap<String, List<DomainRangePair>>();
+//		this.domainRangePairsOfDomainlessProperties = new HashMap<String, List<DomainRangePair>>();
+//		this.domainRangePairsOfRangelessProperties = new HashMap<String, List<DomainRangePair>>();
 
 		this.connectedByDirectProperties = new HashMap<String, Boolean>();
 		this.connectedByIndirectProperties = new HashMap<String, Boolean>();
@@ -227,7 +227,7 @@ class OntologyCache {
 		this.updateMapsWithSubpropertyDefinitions(true);
 		
 		// build hashmaps to speed up adding links to the graph
-		this.buildObjectPropertyDomainRangeMap();
+//		this.buildObjectPropertyDomainRangeMap();
 		
 		// add some common properties like rdfs:label, rdfs:comment, ...
 		this.addPropertiesOfRDFVocabulary();
@@ -407,21 +407,21 @@ class OntologyCache {
 		return domainRangeToRangelessProperties;
 	}
 
-	public HashMap<String, List<DomainRangePair>> getDomainRangePairsOfDirectProperties() {
-		return domainRangePairsOfDirectProperties;
-	}
-
-	public HashMap<String, List<DomainRangePair>> getDomainRangePairsOfIndirectProperties() {
-		return domainRangePairsOfIndirectProperties;
-	}
-
-	public HashMap<String, List<DomainRangePair>> getDomainRangePairsOfDomainlessProperties() {
-		return domainRangePairsOfDomainlessProperties;
-	}
-
-	public HashMap<String, List<DomainRangePair>> getDomainRangePairsOfRangelessProperties() {
-		return domainRangePairsOfRangelessProperties;
-	}
+//	public HashMap<String, List<DomainRangePair>> getDomainRangePairsOfDirectProperties() {
+//		return domainRangePairsOfDirectProperties;
+//	}
+//
+//	public HashMap<String, List<DomainRangePair>> getDomainRangePairsOfIndirectProperties() {
+//		return domainRangePairsOfIndirectProperties;
+//	}
+//
+//	public HashMap<String, List<DomainRangePair>> getDomainRangePairsOfDomainlessProperties() {
+//		return domainRangePairsOfDomainlessProperties;
+//	}
+//
+//	public HashMap<String, List<DomainRangePair>> getDomainRangePairsOfRangelessProperties() {
+//		return domainRangePairsOfRangelessProperties;
+//	}
 
 	public HashMap<String, Boolean> getConnectedByDirectProperties() {
 		return connectedByDirectProperties;
@@ -1008,40 +1008,40 @@ class OntologyCache {
 
 	}
 	
-	private void buildObjectPropertyDomainRangeMap() {
-		
-		for (String op : this.objectProperties.keySet()) {
-			
-			List<DomainRangePair> directDomainRangePairs = new ArrayList<DomainRangePair>();
-			List<DomainRangePair> indirectDomainRangePairs = new ArrayList<DomainRangePair>();
-			
-			this.domainRangePairsOfDirectProperties.put(op, directDomainRangePairs);
-			this.domainRangePairsOfIndirectProperties.put(op, indirectDomainRangePairs);
-			
-			List<String> directDomains = this.propertyDirectDomains.get(op);
-			List<String> directRanges = this.propertyDirectRanges.get(op);
-
-			List<String> indirectDomains = this.propertyIndirectDomains.get(op);
-			List<String> indirectRanges = this.propertyIndirectRanges.get(op);
-
-			// direct
-			if (directDomains != null && directRanges != null) { 
-				for (String d : directDomains)
-					for (String r : directRanges)
-						directDomainRangePairs.add(new DomainRangePair(d, r));
-			}
-			
-			// indirect
-			if (indirectDomains != null && indirectRanges != null) { 
-				for (String d : indirectDomains)
-					for (String r : indirectRanges) {
-						if (directDomains.contains(d) && directRanges.contains(r)) continue;
-						indirectDomainRangePairs.add(new DomainRangePair(d, r));
-					}
-			}
-
-		}
-	}
+//	private void buildObjectPropertyDomainRangeMap() {
+//		
+//		for (String op : this.objectProperties.keySet()) {
+//			
+//			List<DomainRangePair> directDomainRangePairs = new ArrayList<DomainRangePair>();
+//			List<DomainRangePair> indirectDomainRangePairs = new ArrayList<DomainRangePair>();
+//			
+//			this.domainRangePairsOfDirectProperties.put(op, directDomainRangePairs);
+//			this.domainRangePairsOfIndirectProperties.put(op, indirectDomainRangePairs);
+//			
+//			List<String> directDomains = this.propertyDirectDomains.get(op);
+//			List<String> directRanges = this.propertyDirectRanges.get(op);
+//
+//			List<String> indirectDomains = this.propertyIndirectDomains.get(op);
+//			List<String> indirectRanges = this.propertyIndirectRanges.get(op);
+//
+//			// direct
+//			if (directDomains != null && directRanges != null) { 
+//				for (String d : directDomains)
+//					for (String r : directRanges)
+//						directDomainRangePairs.add(new DomainRangePair(d, r));
+//			}
+//			
+//			// indirect
+//			if (indirectDomains != null && indirectRanges != null) { 
+//				for (String d : indirectDomains)
+//					for (String r : indirectRanges) {
+//						if (directDomains.contains(d) && directRanges.contains(r)) continue;
+//						indirectDomainRangePairs.add(new DomainRangePair(d, r));
+//					}
+//			}
+//
+//		}
+//	}
 	
 	private void addPropertiesOfRDFVocabulary() {
 		
