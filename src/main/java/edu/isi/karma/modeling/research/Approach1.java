@@ -333,7 +333,7 @@ public class Approach1 {
 				}
 			}
 		}
-		GraphUtil.printGraphSimple(alignment.getGraph());
+//		GraphUtil.printGraphSimple(alignment.getGraph());
 		alignment.updateGraph();
 		this.graph = alignment.getGraph();
 		this.updateHashMaps();
@@ -612,9 +612,6 @@ public class Approach1 {
 		ontManager.updateCache();
 
 		for (int i = 0; i < serviceModels.size(); i++) {
-			
-			if (i == 12)
-				System.out.println("debug");
 			
 			trainingData.clear();
 			int inputModelIndex = i;

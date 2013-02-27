@@ -470,8 +470,8 @@ public class Alignment implements OntologyUpdateListener {
 			return;
 		}
 
-		System.out.println("*** Steiner Tree ***");
-		GraphUtil.printGraphSimple(tree);
+//		System.out.println("*** Steiner Tree ***");
+//		GraphUtil.printGraphSimple(tree);
 		
 		logger.info("selecting a root for the tree ...");
 		TreePostProcess treePostProcess = new TreePostProcess(tree, this.graphBuilder.getThingNode());
