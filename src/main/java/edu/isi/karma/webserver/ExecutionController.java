@@ -59,6 +59,8 @@ import edu.isi.karma.controller.command.ImportServiceCommandFactory;
 import edu.isi.karma.controller.command.ImportXMLFileCommand;
 import edu.isi.karma.controller.command.ImportXMLFileCommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.command.ResetKarmaCommand;
+import edu.isi.karma.controller.command.ResetKarmaCommandFactory;
 import edu.isi.karma.controller.command.SplitByCommaCommand;
 import edu.isi.karma.controller.command.SplitByCommaCommandFactory;
 import edu.isi.karma.controller.command.TablePagerCommand;
@@ -221,8 +223,8 @@ public class ExecutionController {
 				new PublishCSVCommandFactory());
 		commandFactoryMap.put(SetMetaPropertyCommand.class.getSimpleName(),
 				new SetMetaPropertyCommandFactory());
-		commandFactoryMap.put(ResetModelCommand.class.getSimpleName(),
-				new ResetModelCommandFactory());
+		commandFactoryMap.put(ResetKarmaCommand.class.getSimpleName(),
+				new ResetKarmaCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

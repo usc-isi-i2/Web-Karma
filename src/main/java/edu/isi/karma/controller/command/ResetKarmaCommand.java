@@ -21,12 +21,24 @@
 
 package edu.isi.karma.controller.command;
 
+import java.io.File;
+import java.io.FilenameFilter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ResetKarmaCommand extends Command {
 	private final boolean forgetSemanticTypes;
 	private final boolean forgetModels;
+	
+	private static Logger logger = LoggerFactory.getLogger(ResetKarmaCommand.class);
 	
 	protected ResetKarmaCommand(String id, boolean forgetSemanticTypes, boolean forgetModels) {
 		super(id);
@@ -63,13 +75,45 @@ public class ResetKarmaCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		// TODO Auto-generated method stub
-		return null;
+		if (forgetSemanticTypes) {
+			boolean deletTypes = vWorkspace.getWorkspace().getCrfModelHandler().removeAllLabels();
+			if (!deletTypes && forgetModels)
+				return new UpdateContainer(new ErrorUpdate("Error occured while removing semantic types. Models have also not been reset."));
+			else if (!deletTypes)
+				return new UpdateContainer(new ErrorUpdate("Error occured while removing semantic types."));
+		}
+		
+		if (forgetModels) {
+			final String vwsPrefId = vWorkspace.getPreferencesId();
+			File historyDir = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "publish/History/");
+			if (!historyDir.exists() || !historyDir.isDirectory()) {
+				logger.error("Directory not found where the model histories are stored.");
+				if (forgetSemanticTypes)
+					return new UpdateContainer(new ErrorUpdate("Error occured while removing model histories." +
+							" Learned Semantic types have been reset."));
+				else 
+					return new UpdateContainer(new ErrorUpdate("Error occured while removing model histories."));
+			}
+			
+			File[] workspaceFiles = historyDir.listFiles(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name) {
+					// Remove the workspace name in front of it
+					// If it has been removed and it starts with _, return true
+					return (name.replaceAll(vwsPrefId, "").startsWith("_"));
+				}
+			});
+			if (workspaceFiles != null && workspaceFiles.length != 0) {
+				for (File file: workspaceFiles) {
+					file.delete();
+				}
+			}
+		}
+		return new UpdateContainer(new InfoUpdate("Reset complete"));
 	}
 
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

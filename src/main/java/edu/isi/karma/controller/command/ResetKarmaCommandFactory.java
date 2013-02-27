@@ -32,8 +32,8 @@ public class ResetKarmaCommandFactory extends CommandFactory {
 
 	@Override
 	public Command createCommand(HttpServletRequest request, VWorkspace vWorkspace) {
-		boolean forgetSemanticTypes = Boolean.getBoolean(request.getParameter(Arguments.forgetSemanticTypes.name()));
-		boolean forgetModels = Boolean.getBoolean(request.getParameter(Arguments.forgetModels.name()));
+		boolean forgetSemanticTypes = Boolean.parseBoolean(request.getParameter(Arguments.forgetSemanticTypes.name()));
+		boolean forgetModels = Boolean.parseBoolean(request.getParameter(Arguments.forgetModels.name()));
 		return new ResetKarmaCommand(getNewId(vWorkspace), forgetSemanticTypes, forgetModels);
 	}
 

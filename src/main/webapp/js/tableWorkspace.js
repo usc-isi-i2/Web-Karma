@@ -342,7 +342,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 
 function openWorksheetOptions(event) {
 	$("div#WorksheetOptionsDiv")
-			.css({'position':'relative', 'left':(event.clientX - 75) + 'px', 'top':(event.clientY-90)+'px'})
+			.css({'position':'fixed', 'left':(event.clientX - 75) + 'px', 'top':(event.clientY+4)+'px'})
 			.data("worksheetId", $(this).parents("div.Worksheet").attr("id"))
 			.show();
 }

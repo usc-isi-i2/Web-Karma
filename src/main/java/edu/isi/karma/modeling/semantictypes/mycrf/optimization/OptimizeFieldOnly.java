@@ -61,7 +61,7 @@ public class OptimizeFieldOnly {
 			graph.computeGraphPotentialAndZ() ;
 		}
 		for(int iter=1;iter<=maxIters;iter++) {
-			Prnt.prn("Optimization iteration = " + iter) ;
+//			Prnt.prn("Optimization iteration = " + iter) ;
 			errorValue = globalData.errorValue() ;
 			for(GraphInterface graphI : globalData.trainingGraphs) {
 				GraphFieldOnly graph = (GraphFieldOnly) graphI ;
