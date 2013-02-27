@@ -73,7 +73,7 @@ public class Test {
 					}
 					if(entries.size() <=1)
 						continue;
-					ExampleSelection expsel = new ExampleSelection(2);
+					ExampleSelection expsel = new ExampleSelection();
 					expsel.inite(xHashMap);
 					int target = Integer.parseInt(expsel.Choose());
 					String[] mt = {"<_START>"+entries.get(target)[0]+"<_END>",entries.get(target)[1]};
@@ -139,6 +139,7 @@ public class Test {
 			}
 		}
 		dCollection.print();
+		dCollection.print1();
 	}
 	
 	//test the classifier
@@ -222,6 +223,9 @@ public class Test {
 //	}
 	public static void main(String[] args)
 	{
+		// load parameters
+		ConfigParameters cfg = new ConfigParameters();
+		cfg.initeParameters();
 		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
 		//Test.test3();
 	}

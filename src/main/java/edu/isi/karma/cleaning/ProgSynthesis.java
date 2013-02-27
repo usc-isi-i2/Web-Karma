@@ -1,27 +1,27 @@
 package edu.isi.karma.cleaning;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Vector;
-
-import org.python.antlr.PythonParser.return_stmt_return;
-
-import edu.isi.mediator.domain.parser.grammar.DomainModelParser.null_comparison_return;
 
 
 public class ProgSynthesis{
 	Vector<Vector<TNode>> orgVector = new Vector<Vector<TNode>>();
 	Vector<Vector<TNode>> tarVector = new Vector<Vector<TNode>>();
 	String bestRuleString = "";
-	///for tracking the stats
+	//for tracking the stats
 	public long learnspan = 0;
 	public long genspan = 0;
 	public long ruleNo = 0;
 	public PartitionClassifierType classifier;
+
 	public void inite(Vector<String[]> examples) {
 		for (int i = 0; i < examples.size(); i++) {
 			Ruler r = new Ruler();
-			//System.out.println("Example: "+examples.get(i)[0]);
+			// System.out.println("Example: "+examples.get(i)[0]);
 			r.setNewInput(examples.get(i)[0]);
 			orgVector.add(r.vec);
 			Ruler r1 = new Ruler();
@@ -29,6 +29,7 @@ public class ProgSynthesis{
 			tarVector.add(r1.vec);
 		}
 	}
+
 	public Vector<Vector<Integer>> generateCrossIndex(Vector<Integer> poss,
 			Vector<Vector<Integer>> p, int index) {
 		Vector<Vector<Integer>> qVector = new Vector<Vector<Integer>>();

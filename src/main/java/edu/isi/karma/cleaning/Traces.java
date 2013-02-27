@@ -8,12 +8,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import org.python.antlr.PythonParser.if_stmt_return;
-
-import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIConversion.Static;
-
 
 public class Traces implements GrammarTreeNode {
+	public static int trace_limit = 800;
 	public Vector<TNode> orgNodes;
 	public Vector<TNode> tarNodes;
 	public HashMap<Integer, Template> traceline = new HashMap<Integer, Template>();
@@ -66,7 +63,7 @@ public class Traces implements GrammarTreeNode {
 		}
 		// find all possible segments starting from a position
 		while (tlines.size() > 0) {
-			if(tlines.size()>800)
+			if(tlines.size()>trace_limit)
 			{
 				lines.clear();
 				break; // otherwise takes too much time

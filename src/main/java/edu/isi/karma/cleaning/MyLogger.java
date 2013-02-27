@@ -10,7 +10,7 @@ public class MyLogger {
 		if(out == null)
 		{
 			try {
-				out = new BufferedWriter(new FileWriter(new File("./log/mylog.txt")));
+				out = new BufferedWriter(new FileWriter(new File("./log/mylog.txt"),true));
 			} catch (Exception e) {
 				System.out.println(""+e.toString());
 				out = null;
@@ -20,7 +20,7 @@ public class MyLogger {
 	public static void logsth(String context)
 	{
 		try {
-			out.write(context+"\n");
+			out.write(context);
 			out.flush();
 		} catch (Exception e) {
 			System.out.println(""+e.toString());

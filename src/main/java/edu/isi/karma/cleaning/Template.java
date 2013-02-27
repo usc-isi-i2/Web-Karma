@@ -3,6 +3,7 @@ package edu.isi.karma.cleaning;
 import java.util.Vector;
 
 public class Template implements GrammarTreeNode {
+	public static int temp_limit = 2048;
 	public Vector<GrammarTreeNode> body = new Vector<GrammarTreeNode>();
 	public Vector<Vector<Integer>> indexes = new Vector<Vector<Integer>>();
 	public int curState = 0;
@@ -31,7 +32,7 @@ public class Template implements GrammarTreeNode {
 	public void getCrossIndex(Vector<Long> indexs, int cur, String path,
 			Vector<Vector<Integer>> configs) {
 		String tpath = path;
-		if (configs.size() > 2048) {
+		if (configs.size() > temp_limit) {
 			return;
 		}
 		if (cur >= indexs.size()) {

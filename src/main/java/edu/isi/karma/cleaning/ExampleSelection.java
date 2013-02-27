@@ -26,10 +26,9 @@ import java.util.Vector;
 
 public class ExampleSelection {
 	public HashMap<String, Vector<TNode>> examples = new HashMap<String, Vector<TNode>>();
-	public int way = -1;
-	public ExampleSelection(int way)
+	public static int way = 3;
+	public ExampleSelection()
 	{
-		this.way = way;
 	}
 	public String Choose()
 	{
