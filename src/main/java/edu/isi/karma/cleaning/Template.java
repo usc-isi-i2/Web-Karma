@@ -31,7 +31,7 @@ public class Template implements GrammarTreeNode {
 	public void getCrossIndex(Vector<Long> indexs, int cur, String path,
 			Vector<Vector<Integer>> configs) {
 		String tpath = path;
-		if (configs.size() > 512) {
+		if (configs.size() > 2048) {
 			return;
 		}
 		if (cur >= indexs.size()) {

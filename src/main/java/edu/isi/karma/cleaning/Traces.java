@@ -8,6 +8,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
+import org.python.antlr.PythonParser.if_stmt_return;
+
+import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIConversion.Static;
+
 
 public class Traces implements GrammarTreeNode {
 	public Vector<TNode> orgNodes;
@@ -16,6 +20,8 @@ public class Traces implements GrammarTreeNode {
 	public HashMap<Integer, HashMap<String,Template>> loopline = new HashMap<Integer, HashMap<String,Template>>();
 	private int curState = 0;
 	private Vector<Template> totalOrderVector = new Vector<Template>();
+	//keep all the segment expression to prevent repeated construction
+	private static HashMap<String, Segment> AllSegs = new HashMap<String, Segment>();
 
 	public Traces(Vector<TNode> org, Vector<TNode> tar) {
 		this.orgNodes = org;
@@ -60,6 +66,11 @@ public class Traces implements GrammarTreeNode {
 		}
 		// find all possible segments starting from a position
 		while (tlines.size() > 0) {
+			if(tlines.size()>800)
+			{
+				lines.clear();
+				break; // otherwise takes too much time
+			}
 			Vector<Vector<Segment>> nlines = new Vector<Vector<Segment>>();
 			Vector<Segment> segs = tlines.remove(0);
 			int curPos = segs.get(segs.size() - 1).end;
@@ -121,7 +132,17 @@ public class Traces implements GrammarTreeNode {
 				tmp.add(tarNodes.get(cnt));
 				q = Ruler.Search(orgNodes, tmp, 0);
 			}
-			Segment seg = new Segment(pos,cnt,tvec);
+			String key = UtilTools.print(this.tarNodes)+pos+cnt;
+			Segment seg;
+			if(AllSegs.containsKey(key))
+			{
+				seg = AllSegs.get(key);
+			}
+			else
+			{
+				seg = new Segment(pos,cnt,tvec);
+				AllSegs.put(key, seg);
+			}
 			segs.add(seg);
 			return segs;
 		}
@@ -144,7 +165,17 @@ public class Traces implements GrammarTreeNode {
 					corrm.add(m);
 				}
 				// create a segment now
-				Segment s = new Segment(pos, i + 1, corrm, orgNodes, tarNodes);
+				String key = UtilTools.print(this.tarNodes)+pos+(i+1);
+				Segment s;
+				if(AllSegs.containsKey(key))
+				{
+					s = AllSegs.get(key);
+				}
+				else
+				{
+					s = new Segment(pos, i + 1, corrm, orgNodes, tarNodes);
+					AllSegs.put(key, s);
+				}	
 				segs.add(s);
 				continue;
 			} else if (mappings.size() == 1) {
@@ -154,8 +185,17 @@ public class Traces implements GrammarTreeNode {
 				if (i >= (tarNodes.size() - 1)) {
 					int[] m = { mappings.get(0), mappings.get(0) + tvec.size() };
 					corrm.add(m);
-					Segment s = new Segment(pos, i + 1, corrm, orgNodes,
-							tarNodes);
+					String key = UtilTools.print(this.tarNodes)+pos+(i+1);
+					Segment s;
+					if(AllSegs.containsKey(key))
+					{
+						s = AllSegs.get(key);
+					}
+					else
+					{
+						s = new Segment(pos, i + 1, corrm, orgNodes, tarNodes);
+						AllSegs.put(key, s);
+					}	
 					segs.add(s);
 				} else {
 					tvec.add(tarNodes.get(i + 1));
@@ -173,8 +213,17 @@ public class Traces implements GrammarTreeNode {
 						int[] m = { mappings.get(0),
 								mappings.get(0) + tvec.size() - 1 };
 						corrm.add(m);
-						Segment s = new Segment(pos, i + 1, corrm, orgNodes,
-								tarNodes);
+						String key = UtilTools.print(this.tarNodes)+pos+(i+1);
+						Segment s;
+						if(AllSegs.containsKey(key))
+						{
+							s = AllSegs.get(key);
+						}
+						else
+						{
+							s = new Segment(pos, i + 1, corrm, orgNodes, tarNodes);
+							AllSegs.put(key, s);
+						}	
 						segs.add(s);
 					} else {
 						continue;

@@ -6,7 +6,7 @@ import java.util.Vector;
 
 public class Segment implements GrammarTreeNode {
 	public Vector<Section> section = new Vector<Section>();
-	public static final int cxtsize_limit = 3;
+	public static final int cxtsize_limit = 2;
 	public static final String LEFTPOS = "leftpos";
 	public static final String RIGHTPOS = "rightpos";
 	public static final int CONST = -1;
@@ -343,7 +343,7 @@ public class Segment implements GrammarTreeNode {
 				}
 				if(index< section.get(rules.get(i)).size())
 				{
-					section.get(i).isinloop = this.isinloop;
+					section.get(rules.get(i)).isinloop = this.isinloop;
 					return section.get(rules.get(i)).getRule(index);
 				}
 				else

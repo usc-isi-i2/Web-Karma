@@ -1,11 +1,8 @@
 package edu.isi.karma.cleaning;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Vector;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -61,27 +58,35 @@ public class Test {
 			try
 			{
 				if(f.getName().indexOf(".csv")==(f.getName().length()-4))
-				{					
+				{
+					HashMap<String, String> xHashMap  = new HashMap<String, String>();
 					CSVReader cr = new CSVReader(new FileReader(f), ',','"','\0');
 					String[] pair;
-					String corrResult = "";
+					int index = 0;
 					while ((pair=cr.readNext())!=null)
 					{
 						if(pair == null || pair.length <=1)
 							break;
 						entries.add(pair);
-						corrResult += pair[1]+"\n";
+						xHashMap.put(index+"", pair[0]);
+						index++;
 					}
 					if(entries.size() <=1)
 						continue;
-					String[] mt = {"<_START>"+entries.get(0)[0]+"<_END>",entries.get(0)[1]};
+					ExampleSelection expsel = new ExampleSelection(2);
+					expsel.inite(xHashMap);
+					int target = Integer.parseInt(expsel.Choose());
+					String[] mt = {"<_START>"+entries.get(target)[0]+"<_END>",entries.get(target)[1]};
 					examples.add(mt);
 					while(true) // repeat as no correct answer appears.
 					{
+						xHashMap.clear();
 						ProgSynthesis psProgSynthesis = new ProgSynthesis();
 						psProgSynthesis.inite(examples);
 						Vector<ProgramRule> pls = new Vector<ProgramRule>();
-						pls.addAll(psProgSynthesis.run_main());
+						Collection<ProgramRule> ps = psProgSynthesis.run_main();
+						if(ps != null)
+							pls.addAll(ps);
 						String[] wexam = null;
 						if(pls.size()==0)
 							break;
@@ -91,7 +96,7 @@ public class Test {
 							ProgramRule script = pls.get(i);
 							//System.out.println(script);
 							
-							for(int j = 1; j<entries.size(); j++)
+							for(int j = 0; j<entries.size(); j++)
 							{
 								InterpreterType worker = script.getRuleForValue(entries.get(j)[0]);
 								String s = worker.execute(entries.get(j)[0]);
@@ -99,28 +104,28 @@ public class Test {
 								if(s== null||s.length()==0)
 								{
 									wexam = entries.get(j);
-									String p[] = {"<_START>"+wexam[0]+"<_END>",wexam[1]};
-									wexam = p;
-									s = entries.get(j)[0];
-									break;
+									xHashMap.put(j+"", wexam[0]);
 								}
 								if(s.compareTo(entries.get(j)[1])!=0)
 								{
+									
 									wexam = entries.get(j);
-									String p[] = {"<_START>"+wexam[0]+"<_END>",wexam[1]};
-									wexam = p;
-									s = entries.get(j)[0];
-									break;
+									xHashMap.put(j+"", wexam[0]);
 								}						
 							}
 							if(wexam == null)
 								break;
-						}	
+						}
 						long t2 = System.currentTimeMillis();
-						FileStat fileStat = new FileStat(f.getName(), psProgSynthesis.learnspan, psProgSynthesis.genspan, (t2-t1), examples.size(), examples, psProgSynthesis.ruleNo);
+						FileStat fileStat = new FileStat(f.getName(), psProgSynthesis.learnspan, psProgSynthesis.genspan, (t2-t1), examples.size(), examples, psProgSynthesis.ruleNo,pls.get(0).toString());
 						dCollection.addEntry(fileStat);
 						if(wexam != null)
-							examples.add(wexam);
+						{
+							expsel.inite(xHashMap);
+							int e = Integer.parseInt(expsel.Choose());
+							String[] wexp = {"<_START>"+entries.get(e)[0]+"<_END>",entries.get(e)[1]};
+							examples.add(wexp);
+						}
 						else {
 							break;
 						}

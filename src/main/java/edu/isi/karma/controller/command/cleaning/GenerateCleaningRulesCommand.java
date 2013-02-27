@@ -196,7 +196,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		RamblerTransformationOutput rtf = null;
 		
 		long time1 = System.currentTimeMillis();
-		while(iterNum<2 && !results) // try to find any rule during 5 times running
+		while(iterNum<1 && !results) // try to find any rule during 5 times running
 		{
 			rtf = new RamblerTransformationOutput(inputs);
 			if(rtf.getTransformations().keySet().size()>0)

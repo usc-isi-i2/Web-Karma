@@ -18,6 +18,12 @@ class FeatureFactory:
             ft = CntFeature("attr_"+c,value,c)
             score = ft.computerScore();
             tmplist.append(score)
+        pt1 = PercentageFeature("attr_pernum",value,"\d+")
+        pt2 = PercentageFeature("attr_perU",value,"[A-Z]+")
+        pt3 = PercentageFeature("attr_perL",value,"[a-z]+")
+        tmplist.append(pt1.computerScore())
+        tmplist.append(pt2.computerScore())
+        tmplist.append(pt3.computerScore())
         self.datatable.append(tmplist)
     def getFeatureNames(self):
         return self.specialchars

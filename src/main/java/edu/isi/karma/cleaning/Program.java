@@ -65,7 +65,10 @@ public class Program implements GrammarTreeNode {
 		{
 			for(Partition p:this.partitions)
 			{
-				pr.addRule(p.label, p.toProgram());
+				String rule = p.toProgram();
+				if(rule.contains("null"))
+					return null;
+				pr.addRule(p.label, rule);
 				System.out.println(pr.getStringRule(p.label));
 				score += p.getScore();
 			}
@@ -75,7 +78,9 @@ public class Program implements GrammarTreeNode {
 		}
 		else
 		{
-			String s = partitions.get(0).toProgram(); 
+			String s = partitions.get(0).toProgram();
+			if(s.contains("null"))
+				return null;
 			System.out.println(""+s);
 			score = this.partitions.get(0).getScore();
 			pr.addRule(partitions.get(0).label, s);
