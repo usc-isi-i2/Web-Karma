@@ -86,6 +86,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<script type="text/javascript" src="js/cleaning.js"></script>
 		<script type="text/javascript" src="js/services.js"></script>
 		<script type="text/javascript" src="js/d3-alignment-vis.js"></script>
+		<script type="text/javascript" src="js/reset-options.js"></script>
 		
 		<script type="text/javascript">
 			/* Load and parse initial JSON */
@@ -202,6 +203,9 @@ and related projects, please see: http://www.isi.edu/integration
 				
 				// Assign style and handlers to column heading menu
 				styleAndAssignHandlersToColumnHeadingMenu();
+				
+				// Assign handler and style to the Reset options (in reset-options.js)
+				styleAndAssignHandlerToResetButton();
 				
 				// When the user changes header line index
 				$('.CSVImportOption').change(function() {
@@ -336,7 +340,7 @@ and related projects, please see: http://www.isi.edu/integration
 	<body>
 		<h1 id="banner">Karma <span id="karma-version">v1.41</span></h1>
 		<table id="topMenuBar">
-<tr>
+			<tr>
 				<td>
 					<button id="importDatabaseTableButton" class="importButton" align="top">Import Database Table</button>
 				</td>
@@ -372,6 +376,7 @@ and related projects, please see: http://www.isi.edu/integration
 				</td>
 			</tr>
 		</table>
+		<button id="resetButton" align="right">Reset</button>
 		<div id="commHistoryAndWorkspace">
 			<div id="commandHistory" class="ui-corner-top">
 				<div id="titleCommand" class="ui-corner-top">
@@ -800,6 +805,18 @@ and related projects, please see: http://www.isi.edu/integration
 			</table>
 			<br />
 			<span class="error" style="display: none" id="fileFormatError">Please select the file format!</span>
+		</div>
+		<div id="resetDialogDiv" style="display: none">
+			<table>
+				<tr class="smallSizedFont" >
+					<td><input type="checkbox" id="forgetSemanticTypes"/></td>
+					<td><label for="forgetSemanticTypes">Semantic Types</label></td>
+				</tr>
+				<tr class="smallSizedFont">
+					<td><input type="checkbox" id="forgetModels"/></td>
+					<td><label for="forgetModels">Models</label></td>
+				</tr>
+			</table>
 		</div>
 	</body>
 </html>

@@ -22,6 +22,7 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -80,7 +81,9 @@ public class GetAlternativeLinksCommand extends Command {
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		final List<Link> links = alignment.getAllPossibleLinksToNode(nodeId);
-		final Link currentLink = alignment.getCurrentLinksToNode(nodeId).toArray(new Link[0])[0]; 
+		Set<Link> currentIncomingLinks = alignment.getCurrentLinksToNode(nodeId);
+		final Link currentLink = (currentIncomingLinks != null && !currentIncomingLinks.isEmpty()) ?
+				currentIncomingLinks.iterator().next() : null;
 
 		UpdateContainer upd = new UpdateContainer(new AbstractUpdate() {
 			@Override

@@ -221,6 +221,8 @@ public class ExecutionController {
 				new PublishCSVCommandFactory());
 		commandFactoryMap.put(SetMetaPropertyCommand.class.getSimpleName(),
 				new SetMetaPropertyCommandFactory());
+		commandFactoryMap.put(ResetModelCommand.class.getSimpleName(),
+				new ResetModelCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

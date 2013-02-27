@@ -636,6 +636,7 @@ function showClassHierarchyWindow(event) {
     var info = new Object();
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["command"] = "GetOntologyClassHierarchyCommand";
+    info["vWorksheetId"] = $("#ChangeSemanticTypesDialogBox").data("worksheetId");
     
     var returned = $.ajax({
         url: "RequestController", 
@@ -722,8 +723,11 @@ function populateTreeHierarchy(dataArray, treeDiv , dialogBox, submitHandler) {
             },
             "plugins" : [ "themes", "json_data", "ui" ,"sort", "search"]
         }).bind("select_node.jstree", function (e, data) { 
-            dialogBox.data("uri",data.rslt.obj.data("URI"))
-                  .data("label",data.rslt.obj.context.lastChild.wholeText);
+            dialogBox.data("URIorID",data.rslt.obj.data("URIorId"))
+                  .data("label",data.rslt.obj.context.lastChild.wholeText)
+                  .data("index", data.rslt.obj.data("newIndex"))
+                  .data("isExistingGraphNode", data.rslt.obj.data("isExistingGraphNode"))
+                  .data("isExistingSteinerTreeNode", data.rslt.obj.data("isExistingSteinerTreeNode"));
         });
         dialogBox.dialog({height: 450, buttons: { 
                 "Cancel": function() { $(this).dialog("close"); },  
@@ -734,7 +738,7 @@ function populateTreeHierarchy(dataArray, treeDiv , dialogBox, submitHandler) {
 
 function submitPropertyFromHierarchyWindow() {
     var propertyDialogBox = $("div#propertyOntologyBox");
-    var uri = propertyDialogBox.data("uri");
+    var uri = propertyDialogBox.data("URIorID");
     var label = propertyDialogBox.data("label");
     
     if(uri == "") {
@@ -751,12 +755,19 @@ function submitPropertyFromHierarchyWindow() {
 
 function submitClassFromHierarchyWindow() {
     var classDialogBox = $("div#classOntologyBox");
-    var uri = classDialogBox.data("uri");
+    var uri = classDialogBox.data("URIorID");
     var label = classDialogBox.data("label");
+    var isExistingGraphNode = classDialogBox.data("isExistingGraphNode");
+    var isExistingSteinerTreeNode = classDialogBox.data("isExistingSteinerTreeNode");
+    var indexToAdd = classDialogBox.data("index");
     
     if(uri == "") {
         alert("Nothing to submit! Please select from the hierarchy!");
         return false;
+    }
+    
+    if (!isExistingSteinerTreeNode) {
+    	label += indexToAdd + " (add)";
     }
     
     var classInputBox = $("input#classInputBox");

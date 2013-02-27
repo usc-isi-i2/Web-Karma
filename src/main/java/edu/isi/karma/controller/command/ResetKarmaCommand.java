@@ -18,19 +18,20 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.controller.command.alignment;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.update.OntologyHierarchyUpdate;
+package edu.isi.karma.controller.command;
+
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.view.VWorkspace;
 
-public class GetDataPropertyHierarchyCommand extends Command {
-
-	protected GetDataPropertyHierarchyCommand(String id) {
+public class ResetKarmaCommand extends Command {
+	private final boolean forgetSemanticTypes;
+	private final boolean forgetModels;
+	
+	protected ResetKarmaCommand(String id, boolean forgetSemanticTypes, boolean forgetModels) {
 		super(id);
+		this.forgetSemanticTypes = forgetSemanticTypes;
+		this.forgetModels = forgetModels;
 	}
 
 	@Override
@@ -40,31 +41,35 @@ public class GetDataPropertyHierarchyCommand extends Command {
 
 	@Override
 	public String getTitle() {
-		return "Get Data Property Hierarchy";
+		return "Reset Karma";
 	}
 
 	@Override
 	public String getDescription() {
-		return "";
+		if (forgetSemanticTypes && forgetModels)
+			return "Semantic Types and Models";
+		else if (forgetModels)
+			return "Models";
+		else if(forgetSemanticTypes)
+			return "Semantic Types";
+		else
+			return "";
 	}
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.notInHistory;
+		return CommandType.notUndoable;
 	}
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		UpdateContainer c = new UpdateContainer();
-		
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-		c.add(new OntologyHierarchyUpdate(ontMgr.getDataPropertyHierarchy(), 
-				"DataPropertyListUpdate", false, null));
-		return c;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

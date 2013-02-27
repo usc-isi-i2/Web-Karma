@@ -151,7 +151,7 @@ public class SetSemanticTypeCommand extends Command {
 					Node oldDomainNode = null;
 					if (existingColumnNode != null) {
 						columnNodeAlreadyExisted = true;
-						oldIncomingLinkToColumnNode = alignment.getCurrentLinksToNode(existingColumnNode.getId()).toArray(new Link[0])[0];
+						oldIncomingLinkToColumnNode = alignment.getCurrentLinksToNode(existingColumnNode.getId()).iterator().next();
 						oldDomainNode = oldIncomingLinkToColumnNode.getSource();
 					}
 					

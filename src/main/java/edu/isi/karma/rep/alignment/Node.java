@@ -80,6 +80,11 @@ public abstract class Node implements Comparable<Node>, Serializable {
 		return s;
 	}
 	
+	public String getLocalIdWithPrefixIfAvailable() {
+		return (this.label.getPrefix() != null && !this.label.getPrefix().equals("")) ?
+				this.label.getPrefix() + ":" + this.getLocalId() : this.getLocalId();
+	}
+	
 	public NodeType getType() {
 		return type;
 	}

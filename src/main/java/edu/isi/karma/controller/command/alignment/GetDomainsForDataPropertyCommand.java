@@ -21,7 +21,9 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,13 +36,18 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.OntologyHierarchyUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetDomainsForDataPropertyCommand extends Command {
 
-	final String dataPropertyURI;
+	private final String dataPropertyURI;
+	private final String vWorksheetId;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(GetDomainsForDataPropertyCommand.class.getSimpleName());
@@ -49,9 +56,10 @@ public class GetDomainsForDataPropertyCommand extends Command {
 		updateType, URI, metadata, data
 	}
 
-	public GetDomainsForDataPropertyCommand(String id, String uri) {
+	public GetDomainsForDataPropertyCommand(String id, String uri, String vWorksheetId) {
 		super(id);
 		this.dataPropertyURI = uri;
+		this.vWorksheetId = vWorksheetId;
 	}
 
 	@Override
@@ -79,10 +87,22 @@ public class GetDomainsForDataPropertyCommand extends Command {
 		final OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
 		final List<String> domains = ontMgr.getDomainsOfProperty(
 				dataPropertyURI, true);
+		final Alignment alignment = AlignmentManager.Instance().getAlignment(
+				vWorkspace.getWorkspace().getId(), vWorksheetId);
 
-		// Show all he classes when none are present
+		// Show all the classes when none are present
 		if (domains == null || domains.size() == 0) {
-			return new UpdateContainer(new OntologyHierarchyUpdate(ontMgr.getClassHierarchy(), "OntologyClassHierarchyUpdate"));
+			return new UpdateContainer(new OntologyHierarchyUpdate(ontMgr.getClassHierarchy(), 
+					"OntologyClassHierarchyUpdate", true, alignment));
+		}
+		
+		final Set<String> steinerTreeNodeIds = new HashSet<String>();
+		if (alignment != null && !alignment.isEmpty()) {
+			for (Node node: alignment.getSteinerTree().vertexSet()) {
+				if (node.getType() == NodeType.InternalNode) {
+					steinerTreeNodeIds.add(node.getId());
+				}
+			}
 		}
 
 		return new UpdateContainer(new AbstractUpdate() {
@@ -107,6 +127,22 @@ public class GetDomainsForDataPropertyCommand extends Command {
 						classObject.put(JsonKeys.metadata.name(), metadataObject);
 
 						dataArray.put(classObject);
+						
+						// Populate the graph nodes also
+						if (alignment != null) {
+							List<Node> graphNodes = alignment.getNodesByUri(domain);
+							if (graphNodes != null && graphNodes.size() != 0) {
+								for (Node graphNode: graphNodes) {
+									JSONObject graphNodeObj = new JSONObject();
+									graphNodeObj.put(JsonKeys.data.name(), graphNode.getLocalId());
+									JSONObject metadataObject_gNode = new JSONObject();
+									metadataObject_gNode.put(JsonKeys.URI.name(), graphNode.getId());
+									graphNodeObj.put(JsonKeys.metadata.name(), metadataObject_gNode);
+									dataArray.put(graphNodeObj);
+								}
+							}
+						}
+						
 					}
 					outputObject.put(JsonKeys.data.name(), dataArray);
 

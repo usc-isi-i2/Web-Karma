@@ -122,8 +122,8 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 							.value(type.isPartOfKey())
 							.key(JsonKeys.isPrimary.name())
 							.value(true);
-					String domainDisplayLabel = (domainNode.getLabel().getPrefix() != null || (!domainNode.getLabel().getPrefix().equals(""))) ?
-							(domainNode.getLabel().getPrefix() + ":" + domainNode.getLocalId()) : domainNode.getLocalId();
+//					String domainDisplayLabel = (domainNode.getLabel().getPrefix() != null && (!domainNode.getLabel().getPrefix().equals(""))) ?
+//							(domainNode.getLabel().getPrefix() + ":" + domainNode.getLocalId()) : domainNode.getLocalId();
 					if (!type.isClass()) {
 						writer
 							.key(JsonKeys.FullType.name())
@@ -133,13 +133,13 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 							.key(JsonKeys.Domain.name())
 							.value(domainNode.getId())
 							.key(JsonKeys.DisplayDomainLabel.name())
-							.value(domainDisplayLabel);
+							.value(domainNode.getLocalIdWithPrefixIfAvailable());
 					} else {
 						writer
 							.key(JsonKeys.FullType.name())
 							.value(domainNode.getId())
 							.key(JsonKeys.DisplayLabel.name())
-							.value(domainDisplayLabel)
+							.value(domainNode.getLocalIdWithPrefixIfAvailable())
 							.key(JsonKeys.Domain.name())
 							.value("")
 							.key(JsonKeys.DisplayDomainLabel.name())
@@ -220,7 +220,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		else {	// Check for the class instance link with LinkKeyInfo as UriOfInstance
 			Set<Link> incomingLinks = alignment.getCurrentLinksToNode(alignmentColumnNode.getId());
 			if (incomingLinks != null && !incomingLinks.isEmpty()) {
-				Link incomingLink = incomingLinks.toArray(new Link[0])[0];
+				Link incomingLink = incomingLinks.iterator().next();
 				if (incomingLink != null && (incomingLink instanceof ClassInstanceLink) 
 						&& incomingLink.getKeyType().equals(LinkKeyInfo.UriOfInstance))
 					return true;
@@ -238,7 +238,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		for (Node cNode : alignmentColumnNodes) {
 			Set<Link> incomingLinks = alignment.getCurrentLinksToNode(cNode.getId());
 			if (incomingLinks != null && !incomingLinks.isEmpty()) {
-				Link incomingLink = alignment.getCurrentLinksToNode(cNode.getId()).toArray(new Link[0])[0];
+				Link incomingLink = alignment.getCurrentLinksToNode(cNode.getId()).iterator().next();
 				if (incomingLink!= null && incomingLink.getSource() instanceof InternalNode) {
 					hNodeIdToDomainNodeMap.put(((ColumnNode)cNode).getHNodeId()
 							, (InternalNode)incomingLink.getSource());

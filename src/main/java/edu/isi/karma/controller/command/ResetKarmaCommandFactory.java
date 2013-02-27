@@ -18,26 +18,23 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.controller.command.alignment;
+
+package edu.isi.karma.controller.command;
 
 import javax.servlet.http.HttpServletRequest;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.view.VWorkspace;
 
-public class GetDomainsForDataPropertyCommandFactory extends CommandFactory {
-
-	public enum Arguments {
-		URI, vWorksheetId
+public class ResetKarmaCommandFactory extends CommandFactory {
+	private enum Arguments {
+		forgetSemanticTypes, forgetModels
 	}
-	
+
 	@Override
-	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		String uri = request.getParameter(Arguments.URI.name());
-		String vWorksheetId =request.getParameter(Arguments.vWorksheetId.name());
-		return new GetDomainsForDataPropertyCommand(getNewId(vWorkspace), uri, vWorksheetId);
+	public Command createCommand(HttpServletRequest request, VWorkspace vWorkspace) {
+		boolean forgetSemanticTypes = Boolean.getBoolean(request.getParameter(Arguments.forgetSemanticTypes.name()));
+		boolean forgetModels = Boolean.getBoolean(request.getParameter(Arguments.forgetModels.name()));
+		return new ResetKarmaCommand(getNewId(vWorkspace), forgetSemanticTypes, forgetModels);
 	}
 
 }

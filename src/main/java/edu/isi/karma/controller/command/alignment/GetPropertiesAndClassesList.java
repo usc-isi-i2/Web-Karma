@@ -85,14 +85,14 @@ public class GetPropertiesAndClassesList extends Command {
 //				Set<Node> nodes = alignment.getGraphNodes();
 				for (Node node: alignment.getSteinerTree().vertexSet()) {
 					if (node.getType() == NodeType.InternalNode) {
-						String nodeDisplayLabel = (node.getLabel().getPrefix() != null || (!node.getLabel().getPrefix().equals(""))) ?
-								(node.getLabel().getPrefix() + ":" + node.getLocalId()) : node.getLocalId(); 
+//						String nodeDisplayLabel = (node.getLabel().getPrefix() != null && (!node.getLabel().getPrefix().equals(""))) ?
+//								(node.getLabel().getPrefix() + ":" + node.getLocalId()) : node.getLocalId(); 
 						JSONObject nodeKey = new JSONObject();
-						nodeKey.put(nodeDisplayLabel, node.getId());
+						nodeKey.put(node.getLocalIdWithPrefixIfAvailable(), node.getId());
 						classesMap.put(nodeKey);
 						
 						JSONObject instanceCatObject = new JSONObject();
-						instanceCatObject.put(JsonKeys.label.name(), nodeDisplayLabel);
+						instanceCatObject.put(JsonKeys.label.name(), node.getLocalIdWithPrefixIfAvailable());
 						instanceCatObject.put(JsonKeys.category.name(), JsonValues.Instance.name());
 						classesList.put(instanceCatObject);
 						

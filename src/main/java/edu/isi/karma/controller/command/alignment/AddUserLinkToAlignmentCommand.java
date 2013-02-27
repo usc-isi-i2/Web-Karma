@@ -95,8 +95,10 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		Link newLink = alignment.getLinkById(edgeId);
 		edgeLabel = newLink.getLabel().getLocalNameWithPrefix();
 		Set<Link> currentLinks = alignment.getCurrentLinksToNode(newLink.getTarget().getId());
-		for (Link currentLink: currentLinks) {
-			alignment.changeLinkStatus(currentLink.getId(), LinkStatus.Normal);
+		if (currentLinks != null && !currentLinks.isEmpty()) {
+			for (Link currentLink: currentLinks) {
+				alignment.changeLinkStatus(currentLink.getId(), LinkStatus.Normal);
+			}
 		}
 		
 		// Change the status of the user selected edge
