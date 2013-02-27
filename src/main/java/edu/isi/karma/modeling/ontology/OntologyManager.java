@@ -185,54 +185,6 @@ public class OntologyManager {
 	public OntologyTreeNode getDataPropertyHierarchy() {
 		return this.ontCache.getDataPropertyHierarchy();
 	}
-
-//	public HashMap<String, List<String>> getDomainRangeToDirectProperties() {
-//		return this.ontCache.getDomainRangeToDirectProperties();
-//	}
-//
-//	public HashMap<String, List<String>> getDomainRangeToIndirectProperties() {
-//		return this.ontCache.getDomainRangeToIndirectProperties();
-//	}
-//
-//	public HashMap<String, List<String>> getDomainRangeToDomainlessProperties() {
-//		return this.ontCache.getDomainRangeToDomainlessProperties();
-//	}
-//
-//	public HashMap<String, List<String>> getDomainRangeToRangelessProperties() {
-//		return this.ontCache.getDomainRangeToRangelessProperties();
-//	}
-//
-//	public HashMap<String, List<DomainRangePair>> getDomainRangePairsOfDirectProperties() {
-//		return this.ontCache.getDomainRangePairsOfDirectProperties();
-//	}
-//
-//	public HashMap<String, List<DomainRangePair>> getDomainRangePairsOfIndirectProperties() {
-//		return this.ontCache.getDomainRangePairsOfIndirectProperties();
-//	}
-//
-//	public HashMap<String, List<DomainRangePair>> getDomainRangePairsOfDomainlessProperties() {
-//		return this.ontCache.getDomainRangePairsOfDomainlessProperties();
-//	}
-//
-//	public HashMap<String, List<DomainRangePair>> getDomainRangePairsOfRangelessProperties() {
-//		return this.ontCache.getDomainRangePairsOfRangelessProperties();
-//	}
-//
-//	public HashMap<String, Boolean> getConnectedByDirectProperties() {
-//		return this.ontCache.getConnectedByDirectProperties();
-//	}
-//
-//	public HashMap<String, Boolean> getConnectedByIndirectProperties() {
-//		return this.ontCache.getConnectedByIndirectProperties();
-//	}
-//
-//	public HashMap<String, Boolean> getConnectedByDomainlessProperties() {
-//		return this.ontCache.getConnectedByDomainlessProperties();
-//	}
-//
-//	public HashMap<String, Boolean> getConnectedByRangelessProperties() {
-//		return this.ontCache.getConnectedByRangelessProperties();
-//	}
 	
 	public Label getUriLabel(String uri) {
 		return this.ontCache.getUriLabel(uri);
@@ -489,48 +441,91 @@ public class OntologyManager {
 		return all;
 	}
 	
-	public List<String> getObjectPropertiesDirect(String domainUri, String rangeUri) {
-		if (domainUri == null || rangeUri == null) return null;
-		return this.ontCache.getDomainRangeToDirectProperties().get(domainUri + rangeUri);
+	public List<String> getObjectPropertiesDirect(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return null;
+		return this.ontCache.getDomainRangeToDirectProperties().get(sourceUri + targetUri);
 	}
 
-	public List<String> getObjectPropertiesIndirect(String domainUri, String rangeUri) {
-		if (domainUri == null || rangeUri == null) return null;
-		return this.ontCache.getDomainRangeToIndirectProperties().get(domainUri + rangeUri);
+	public List<String> getObjectPropertiesIndirect(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return null;
+		return this.ontCache.getDomainRangeToIndirectProperties().get(sourceUri + targetUri);
 	}
 
-	public List<String> getObjectPropertiesWithOnlyDomain(String domainUri, String rangeUri) {
-		if (domainUri == null || rangeUri == null) return null;
-		return this.ontCache.getDomainRangeToRangelessProperties().get(domainUri + rangeUri);
+	public List<String> getObjectPropertiesWithOnlyDomain(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return null;
+		
+		List<String> directOutProperties;
+		List<String> indirectOutProperties;
+		List<String> results = new ArrayList<String>();
+
+		directOutProperties = this.ontCache.getDirectInObjectProperties().get(sourceUri);
+		if (directOutProperties != null)
+			for (String s : directOutProperties) 
+				if (this.ontCache.getObjectPropertiesWithOnlyDomain().containsKey(s)) 
+					results.add(s);
+
+		indirectOutProperties = this.ontCache.getIndirectInObjectProperties().get(sourceUri);
+		if (indirectOutProperties != null) 
+			for (String s : indirectOutProperties) 
+				if (this.ontCache.getObjectPropertiesWithOnlyDomain().containsKey(s)) 
+					results.add(s);
+		
+		return results;
 	}
 
-	public List<String> getObjectPropertiesWithOnlyRange(String domainUri, String rangeUri) {
-		if (domainUri == null || rangeUri == null) return null;
-		return this.ontCache.getDomainRangeToDomainlessProperties().get(domainUri + rangeUri);
+	public List<String> getObjectPropertiesWithOnlyRange(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return null;
+		
+		List<String> directInProperties;
+		List<String> indirectInProperties;
+		List<String> results = new ArrayList<String>();
+
+		directInProperties = this.ontCache.getDirectInObjectProperties().get(targetUri);
+		if (directInProperties != null)
+			for (String s : directInProperties) 
+				if (this.ontCache.getObjectPropertiesWithOnlyRange().containsKey(s)) 
+					results.add(s);
+
+		indirectInProperties = this.ontCache.getIndirectInObjectProperties().get(targetUri);
+		if (indirectInProperties != null) 
+			for (String s : indirectInProperties) 
+				if (this.ontCache.getObjectPropertiesWithOnlyRange().containsKey(s)) 
+					results.add(s);
+		
+		return results;
 	}
 
-	public boolean isConnectedByDirectProperty(String domainUri, String rangeUri) {
-		if (domainUri == null || rangeUri == null) return false;
-		return this.ontCache.getConnectedByDirectProperties().containsKey(domainUri + rangeUri);
+	public boolean isConnectedByDirectProperty(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return false;
+		return this.ontCache.getConnectedByDirectProperties().containsKey(sourceUri + targetUri);
 	}
 
-	public boolean isConnectedByIndirectProperty(String domainUri, String rangeUri) {
-		if (domainUri == null || rangeUri == null) return false;
-		return this.ontCache.getConnectedByIndirectProperties().containsKey(domainUri + rangeUri);
+	public boolean isConnectedByIndirectProperty(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return false;
+		return this.ontCache.getConnectedByIndirectProperties().containsKey(sourceUri + targetUri);
 	}
 
-	public boolean isConnectedByDomainlessProperty(String domainUri, String rangeUri) {
-		if (domainUri == null || rangeUri == null) return false;
-		return this.ontCache.getConnectedByDomainlessProperties().containsKey(domainUri + rangeUri);
+	public boolean isConnectedByDomainlessProperty(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return false;
+		return this.ontCache.getConnectedByDomainlessProperties().containsKey(sourceUri + targetUri);
 	}
 
-	public boolean isConnectedByRangelessProperty(String domainUri, String rangeUri) {
-		if (domainUri == null || rangeUri == null) return false;
-		return this.ontCache.getConnectedByRangelessProperties().containsKey(domainUri + rangeUri);
+	public boolean isConnectedByRangelessProperty(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return false;
+		return this.ontCache.getConnectedByRangelessProperties().containsKey(sourceUri + targetUri);
 	}
 	
-	public boolean isConnectedByDomainlessAndRangelessProperty(String domainUri, String rangeUri) {
-		if (domainUri == null || rangeUri == null) return false;
+	public boolean isConnectedByDomainlessAndRangelessProperty(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return false;
 		return (this.ontCache.getObjectPropertiesWithoutDomainAndRange().size() > 0);
 	}
 }

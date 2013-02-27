@@ -25,6 +25,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -159,12 +161,9 @@ public class GraphVizUtil {
 		return gViz;
 	}
 	
-	public static org.kohsuke.graphviz.Graph exportJGraphToGraphviz(DirectedWeightedMultigraph<Node, Link> model, String label) {
+	public static org.kohsuke.graphviz.Graph exportJGraphToGraphviz(DirectedWeightedMultigraph<Node, Link> model) {
 
 		org.kohsuke.graphviz.Graph gViz = new org.kohsuke.graphviz.Graph();
-		gViz.attr("fontcolor", "blue");
-		gViz.attr("remincross", "true");
-		gViz.attr("label", label);
 			
 		org.kohsuke.graphviz.Style internalNodeStyle = new org.kohsuke.graphviz.Style();
 //		internalNodeStyle.attr("shape", "circle");
@@ -264,9 +263,40 @@ public class GraphVizUtil {
 	public static void exportJGraphToGraphvizFile(
 			DirectedWeightedMultigraph<Node, Link> model, String label, String exportPath) 
 					throws FileNotFoundException {
+		org.kohsuke.graphviz.Graph graphViz = exportJGraphToGraphviz(model);
+		graphViz.attr("fontcolor", "blue");
+		graphViz.attr("remincross", "true");
+		graphViz.attr("label", label);
+
 		OutputStream out = new FileOutputStream(exportPath);
-		org.kohsuke.graphviz.Graph graphViz = exportJGraphToGraphviz(model, label);
 		graphViz.writeTo(out);
 	}
 
+	public static void exportJGraphToGraphvizFile(Map<String, DirectedWeightedMultigraph<Node, Link>> models, 
+			String label, String exportPath) throws FileNotFoundException {
+		
+		if (models == null) return;
+		
+		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
+		graphViz.attr("fontcolor", "blue");
+		graphViz.attr("remincross", "true");
+		graphViz.attr("label", label);
+		
+		org.kohsuke.graphviz.Graph cluster = null;
+		int counter = 0;
+		
+		for(Entry<String,DirectedWeightedMultigraph<Node, Link>> entry : models.entrySet()) {
+			cluster = GraphVizUtil.exportJGraphToGraphviz(entry.getValue());
+			cluster.id("cluster_" + counter);
+			cluster.attr("label", entry.getKey());
+			graphViz.subGraph(cluster);
+			counter++;
+		}
+
+		OutputStream out = new FileOutputStream(exportPath);
+		graphViz.writeTo(out);
+
+	}
+	
+	
 }

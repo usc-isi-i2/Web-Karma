@@ -30,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.UndirectedGraph;
@@ -361,7 +362,6 @@ public class Approach1 {
 		
 		String id;
 		Integer count;
-		double w;
 		Label label;
 		
 		List<String> objectPropertiesDirect;
@@ -393,11 +393,13 @@ public class Approach1 {
 			HashMap<String, Integer> linkCount = this.sourceTargetToLinkCounterMap.get(dr.getDomain() + dr.getRange());
 			if (linkCount == null || linkCount.size() == 0) continue;
 
-			boolean linkExistInOntology = false;
+			boolean linkExistInOntology;
 			
 			for (Node n1 : sources) {
 				for (Node n2 : targets) {
 					for (String s : linkCount.keySet()) {
+						
+						linkExistInOntology = false;
 						
 						if (objectPropertiesWithoutDomainAndRange != null && objectPropertiesWithoutDomainAndRange.containsKey(s)) 
 							linkExistInOntology = true;
@@ -416,7 +418,7 @@ public class Approach1 {
 //							continue;
 							logger.warn("The link " + s + " from " + dr.getDomain() + " to " + dr.getRange() + 
 									" cannot be inferred from the ontology, but we assert it because it exists in training data.");
-							continue;
+//							continue;
 						}
 						
 						count = linkCount.get(s);
@@ -626,9 +628,8 @@ public class Approach1 {
 				if (j != inputModelIndex) trainingData.add(serviceModels.get(j));
 			}
 			
-			DirectedWeightedMultigraph<Node, Link> inputModel = 
-					sm.getModels().get(0);
-//			DirectedWeightedMultigraph<Node, Link> oututModel = serviceModels.get(inputModelIndex).getModels().get(1);
+			DirectedWeightedMultigraph<Node, Link> inputModel = sm.getModels().get(0);
+			DirectedWeightedMultigraph<Node, Link> outputModel = sm.getModels().get(1);
 			
 			Approach1 app = new Approach1(trainingData, ontManager);
 			app.preprocess(inputModel);
@@ -658,9 +659,18 @@ public class Approach1 {
 			DirectedWeightedMultigraph<Node, Link> hypothesis = app.hypothesize();
 			if (hypothesis == null)
 				continue;
-			GraphVizUtil.exportJGraphToGraphvizFile(hypothesis, 
+			
+			Map<String, DirectedWeightedMultigraph<Node, Link>> graphs = 
+					new TreeMap<String, DirectedWeightedMultigraph<Node,Link>>();
+			
+			graphs.put("1-input", inputModel);
+			graphs.put("2-output", outputModel);
+			graphs.put("3-hypothesis", hypothesis);
+			
+			GraphVizUtil.exportJGraphToGraphvizFile(graphs, 
 					sm.getServiceDescription(), 
 					Approach1.outputDir + "output" + String.valueOf(i+1) + ".dot");
+			
 			GraphUtil.printGraphSimple(hypothesis);			
 
 		}
