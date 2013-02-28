@@ -104,7 +104,7 @@ public class GetAlternativeLinksCommand extends Command {
 						String edgeSourceLabel = "";
 						Vertex edgeSource = edge.getSource();
 						if(edgeSource.getPrefix() != null && !edgeSource.getPrefix().equals(""))
-							edgeSourceLabel = edgeSource.getPrefix() + ":" + edgeSource.getLocalLabel();
+							edgeSourceLabel = edgeSource.getPrefix() + ":" + edgeSource.getLocalID();
 						else
 							edgeSourceLabel = edgeSource.getLocalID();
 						

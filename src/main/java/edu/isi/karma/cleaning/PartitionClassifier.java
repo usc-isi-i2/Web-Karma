@@ -5,9 +5,6 @@ import java.util.Vector;
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-
 public class PartitionClassifier {
 	private PyObject interpreterClass;
 	public String clssettingString = "";

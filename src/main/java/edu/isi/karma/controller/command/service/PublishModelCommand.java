@@ -150,7 +150,15 @@ public class PublishModelCommand extends Command{
 				addInverseProperties= prefObject.getString("addInverseProperties");
 			}catch(Exception e){
 				//prefix not found, just use the default
+				sourceNamespace = "http://localhost/";
+				sourcePrefix = "s";
+				addInverseProperties = "true";
 			}
+			if(sourceNamespace.trim().isEmpty())
+				sourceNamespace = "http://localhost/";
+			if(sourcePrefix.trim().isEmpty())
+				sourcePrefix = "s";
+
 			SourceDescription desc = new SourceDescription(ws, al, wk,
 					sourcePrefix, sourceNamespace,Boolean.valueOf(addInverseProperties),false);
 			String descString = desc.generateSourceDescription();

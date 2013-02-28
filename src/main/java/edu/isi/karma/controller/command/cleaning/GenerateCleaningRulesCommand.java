@@ -62,18 +62,35 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	final String hNodeId;
 	private Vector<TransformationExample> examples;
+	private HashSet<String> nodeIds = new HashSet<String>();
 	RamblerTransformationInputs inputs;
 	public String compResultString = ""; 
 
-	public GenerateCleaningRulesCommand(String id, String worksheetId, String hNodeId, String examples) {
+	public GenerateCleaningRulesCommand(String id, String worksheetId, String hNodeId, String examples,String cellIDs) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
+		this.nodeIds = parseNodeIds(cellIDs);
 		this.examples = this.parseExample(examples);
 		/************collect info************/
 		MyLogger.logsth(worksheetId+" examples: "+examples);
 		MyLogger.logsth("Time: "+System.currentTimeMillis());
 		/*************************************/
 		
+	}
+	private HashSet<String> parseNodeIds(String Ids)
+	{
+		HashSet<String> tSet = new HashSet<String>();
+		try {
+			JSONArray jsa = new JSONArray(Ids);
+			for(int i = 0; i<jsa.length(); i++)
+			{
+				tSet.add(jsa.getString(i));
+			}
+			
+		} catch (Exception e) {
+			System.out.println(""+e.toString());
+		}
+		return tSet;
 	}
 	public Vector<TransformationExample> parseExample(String example)
 	{
@@ -164,6 +181,8 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		wk.getDataTable().collectNodes(selectedPath, nodes);	
 		for (Node node : nodes) {
 			String id = node.getId();
+			if(!this.nodeIds.contains(id))
+				continue;
 			String originalVal = node.getValue().asString();
 			rows.put(id, originalVal);
 			this.compResultString += originalVal+"\n";
@@ -177,8 +196,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		RamblerTransformationOutput rtf = null;
 		
 		long time1 = System.currentTimeMillis();
-		
-		while(iterNum<2 && !results) // try to find any rule during 5 times running
+		while(iterNum<1 && !results) // try to find any rule during 5 times running
 		{
 			rtf = new RamblerTransformationOutput(inputs);
 			if(rtf.getTransformations().keySet().size()>0)
@@ -246,7 +264,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		String bestRes = "";
 		HashMap<String, Double> topkeys = new HashMap<String, Double>();
 		String switcher = ServletContextParameterMap.getParameterValue(ContextParameter.MSFT);
-		if( rtf.getTransformations().keySet().size()>0)
+		if(rtf.getTransformations().keySet().size()>0)
 		{
 			//ValueCollection rvco = rtf.getTransformedValues("BESTRULE");
 			//bestRes = rvco.getJson().toString(); 

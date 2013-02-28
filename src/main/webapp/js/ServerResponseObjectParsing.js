@@ -802,9 +802,10 @@ function parse(data) {
 		else if(element["updateType"] == "CleaningResultUpdate") {
             if(element["result"] != null) {
             		//var pdata = getVaritions(element["result"]);
-            		if(element["result"].length==0)
+            		if(element["result"][0]==null)
             		{
-            			alert("Cannot find any transformations! Please check your examples!");
+            			$.sticky("Cannot find any transformations! ");
+				return;
             		}
             		var topCol = element["result"][0];
             		var sndCol = element["result"][1];
