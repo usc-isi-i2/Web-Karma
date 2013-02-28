@@ -58,7 +58,7 @@ public class UnionImport {
 		// Import the json file
 		JSONArray json = new JSONArray();
 		ConfigUtil util = new ConfigUtil();
-		inputJsonFile = new File("");
+		inputJsonFile = new File("config/c.json");
 		json = util.loadConfig(inputJsonFile);
 
 		// Create a worksheet, HTable, and input data into it.
@@ -97,7 +97,7 @@ public class UnionImport {
 
 		String[] properties = { "buildingName", "countyName", "stateName",
 				"yInDecimalLatitude", "xInDecimalLongitude", "sridValue",
-				"wellKnownText" };
+				"Polygon" };
 		Table dataTable = worksheet.getDataTable();
 		Map<String, String> mapRows = new HashMap<String, String>();
 		Map<String, HNode> mapForNewNode = new HashMap<String, HNode>();
@@ -106,9 +106,9 @@ public class UnionImport {
 		for (String pro : properties) {
 			String HNode_idnum = map.get(pro);
 			HNode hNode = factory.getHNode(HNode_idnum);
-			HTable Ht = hNode.addNestedTable(pro + "ValuesHTable", worksheet,
+			HTable Ht = hNode.addNestedTable(pro + "Values", worksheet,
 					factory);
-			newHNode = Ht.addHNode(pro + "ValuesHNode", worksheet, factory);
+			newHNode = Ht.addHNode(pro + "Values", worksheet, factory);
 			mapForNewNode.put(pro, newHNode);
 		}
 
@@ -183,7 +183,7 @@ public class UnionImport {
 					ls_sparql_result_S2 = tR.sparqlQueryLiteral(dataSet_path,
 							query, literal);
 					ls_sparql_result.addAll(ls_sparql_result_S2);
-				} else if (pro.equalsIgnoreCase("wellKnownText")) {
+				} else if (pro.equalsIgnoreCase("Polygon")) {
 					query = rdfQuery.createQueryForWellKnownTextS1(str,
 							"BuildingOntology", pro);
 					ls_sparql_result = tR.sparqlQueryLiteral(dataSet_path,
