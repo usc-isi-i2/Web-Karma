@@ -38,6 +38,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.command.Command.CommandType;
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.ResetKarmaCommand;
 import edu.isi.karma.controller.command.UndoRedoCommand;
 import edu.isi.karma.controller.update.HistoryAddCommandUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
@@ -143,12 +144,14 @@ public class CommandHistory {
 		}
 		
 		// Save the modeling commands
-		CommandHistoryWriter chWriter = new CommandHistoryWriter(history, vWorkspace);
-		try {
-			chWriter.writeHistoryPerWorksheet();
-		} catch (JSONException e) {
-			logger.error("Error occured while writing history!" , e);
-			e.printStackTrace();
+		if (!(command instanceof ResetKarmaCommand)) {
+			CommandHistoryWriter chWriter = new CommandHistoryWriter(history, vWorkspace);
+			try {
+				chWriter.writeHistoryPerWorksheet();
+			} catch (JSONException e) {
+				logger.error("Error occured while writing history!" , e);
+				e.printStackTrace();
+			}
 		}
 		
 		return effects;

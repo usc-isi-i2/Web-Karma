@@ -84,6 +84,7 @@ public class ResetKarmaCommand extends Command {
 		}
 		
 		if (forgetModels) {
+			/** Delete the model history files **/
 			final String vwsPrefId = vWorkspace.getPreferencesId();
 			File historyDir = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "publish/History/");
 			if (!historyDir.exists() || !historyDir.isDirectory()) {
