@@ -722,12 +722,14 @@ function populateTreeHierarchy(dataArray, treeDiv , dialogBox, submitHandler) {
                 "show_only_matches": true
             },
             "plugins" : [ "themes", "json_data", "ui" ,"sort", "search"]
-        }).bind("select_node.jstree", function (e, data) { 
-            dialogBox.data("URIorID",data.rslt.obj.data("URIorId"))
+        }).bind("select_node.jstree", function (e, data) {
+        	dialogBox.data("URIorID",data.rslt.obj.data("URIorId"))
                   .data("label",data.rslt.obj.context.lastChild.wholeText)
                   .data("index", data.rslt.obj.data("newIndex"))
-                  .data("isExistingGraphNode", data.rslt.obj.data("isExistingGraphNode"))
+                  // .data("isExistingGraphNode", data.rslt.obj.data("isExistingGraphNode"))
                   .data("isExistingSteinerTreeNode", data.rslt.obj.data("isExistingSteinerTreeNode"));
+			var a = $.jstree._focused().get_selected();
+        	$(treeDiv).jstree("open_node", a);
         });
         dialogBox.dialog({height: 450, buttons: { 
                 "Cancel": function() { $(this).dialog("close"); },  

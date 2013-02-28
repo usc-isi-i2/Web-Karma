@@ -150,6 +150,7 @@ public class OntologyHierarchyUpdate extends AbstractUpdate {
 					metadataObject.put(JsonKeys.URIorId.name(), graphNode.getId());
 //					metadataObject.put(JsonKeys.isExistingGraphNode.name(), true);
 					metadataObject.put(JsonKeys.isExistingSteinerTreeNode.name(), true);
+					metadataObject.put(JsonKeys.newIndex.name(), 1);
 					graphNodeObj.put(JsonKeys.metadata.name(), metadataObject);
 					childrenArray.put(graphNodeObj);
 				}
