@@ -67,6 +67,7 @@ public class GraphPreProcess {
 				
 		if (linksForcedByUser != null) 
 			for (Link link : linksForcedByUser) {
+				
 				// removing all the links to target
 				Set<Link> incomingLinks = gPrime.incomingEdgesOf(link.getTarget());
 				if (incomingLinks == null) continue;

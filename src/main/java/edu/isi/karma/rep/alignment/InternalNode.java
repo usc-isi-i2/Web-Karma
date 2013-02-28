@@ -25,6 +25,11 @@ package edu.isi.karma.rep.alignment;
 
 public class InternalNode extends Node {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public InternalNode(String id, Label label) {
 		super(id, label, NodeType.InternalNode);
 	}

@@ -24,6 +24,8 @@ import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 
+import com.rits.cloning.Cloner;
+
 import edu.isi.karma.util.RandomGUID;
 
 public abstract class Node implements Comparable<Node>, Serializable {
@@ -115,14 +117,17 @@ public abstract class Node implements Comparable<Node>, Serializable {
 
     public Node clone() {
 
-    	switch (this.type) {
-			case None: return new SimpleNode(this.getId(), this.getLabel()); 
-			case ColumnNode: return new ColumnNode(this.getId(), ((ColumnNode)this).getHNodeId(), ((ColumnNode)this).getColumnName()); 
-			case LiteralNode: return new LiteralNode(this.getId(), ((LiteralNode)this).getValue(), ((LiteralNode)this).getDatatype()); 
-			case InternalNode: return new InternalNode(this.getId(), this.getLabel());
-		}
+    	Cloner cloner = new Cloner();
+    	return cloner.deepClone(this);
 
-		logger.error("Cloning the node has been failed. Cannot identify the type of the node.");
-		return null;
+//    	switch (this.type) {
+//			case None: return new SimpleNode(this.getId(), this.getLabel()); 
+//			case ColumnNode: return new ColumnNode(this.getId(), ((ColumnNode)this).getHNodeId(), ((ColumnNode)this).getColumnName()); 
+//			case LiteralNode: return new LiteralNode(this.getId(), ((LiteralNode)this).getValue(), ((LiteralNode)this).getDatatype()); 
+//			case InternalNode: return new InternalNode(this.getId(), this.getLabel());
+//		}
+//
+//		logger.error("Cloning the node has been failed. Cannot identify the type of the node.");
+//		return null;
     }
 }

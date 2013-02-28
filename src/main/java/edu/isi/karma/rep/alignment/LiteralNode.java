@@ -24,6 +24,10 @@ package edu.isi.karma.rep.alignment;
 
 public class LiteralNode extends Node {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final String value;
 	private final Label datatype;
 

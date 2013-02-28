@@ -23,6 +23,7 @@ package edu.isi.karma.modeling.alignment;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -252,7 +253,7 @@ public class GraphBuilder {
 		}
 		
 		if (this.idToLinkMap.containsKey(link.getId())) {
-			logger.debug("The node with id=" + link.getId() + " already exists in the graph");
+			logger.debug("The link with id=" + link.getId() + " already exists in the graph");
 			return false;
 		}
 		
@@ -321,6 +322,8 @@ public class GraphBuilder {
 		if (newStatus == oldStatus)
 			return;
 		
+		link.setStatus(newStatus);
+		
 		List<Link> linksWithOldStatus = this.statusToLinksMap.get(oldStatus);
 		if (linksWithOldStatus != null) linksWithOldStatus.remove(link);
 
@@ -359,9 +362,10 @@ public class GraphBuilder {
 			}
 		}
 		
-		boolean result = this.graph.removeEdge(link);
+		if (!removeSingleLink(link))
+			return false;
 		
-		return result;
+		return true;
 	}
 	
 	public boolean removeNode(Node node) {
@@ -402,10 +406,12 @@ public class GraphBuilder {
 		long start = System.currentTimeMillis();
 		float elapsedTimeSec;
 
-		Node[] internalNodes = this.typeToNodesMap.get(NodeType.InternalNode).toArray(new Node[0]);
-		if (internalNodes != null)
-			for (Node node : internalNodes) 
+		List<Node> internalNodes = this.typeToNodesMap.get(NodeType.InternalNode);
+		if (internalNodes != null) {
+			Node[] nodes = internalNodes.toArray(new Node[0]);
+			for (Node node : nodes) 
 				addNodeClosure(node, new ArrayList<Node>());
+		}
 
 		long addNodesClosure = System.currentTimeMillis();
 		elapsedTimeSec = (addNodesClosure - start)/1000F;
@@ -493,15 +499,21 @@ public class GraphBuilder {
 	private boolean removeSingleNode(Node node) {
 		
 		logger.debug("<enter");
-
-		if (node == null) {
-			logger.debug("The node is null.");
-			return false;
-		}
 		
-		if (idToNodeMap.get(node.getId()) == null) {
-			logger.debug("The node with id=" + node.getId() + " does not exists in the graph.");
-			return false;
+		Set<Link> incomingLinks = this.graph.incomingEdgesOf(node);
+		if (incomingLinks != null) {
+			Link[] incomingLinksArray = incomingLinks.toArray(new Link[0]);
+			for (Link inLink: incomingLinksArray) {
+				this.removeSingleLink(inLink);
+			}
+		}
+
+		Set<Link> outgoingLinks = this.graph.outgoingEdgesOf(node);
+		if (outgoingLinks != null) {
+			Link[] outgoingLinksArray = outgoingLinks.toArray(new Link[0]);
+			for (Link outLink: outgoingLinksArray) {
+				this.removeSingleLink(outLink);
+			}
 		}
 		
 		if (!this.graph.removeVertex(node))
@@ -522,6 +534,34 @@ public class GraphBuilder {
 		this.nodeReferences.remove(node);
 				
 		logger.debug("exit>");		
+		return true;
+	}
+	
+	private boolean removeSingleLink(Link link) {
+		
+		if (!this.graph.removeEdge(link))
+			return false;
+
+		// update hashmaps
+
+		this.idToLinkMap.remove(link.getId());
+
+		List<Link> linksWithSameUri = uriToLinksMap.get(link.getLabel().getUri());
+		if (linksWithSameUri != null) 
+			linksWithSameUri.remove(link);
+		
+		List<Link> linksWithSameType = typeToLinksMap.get(link.getType());
+		if (linksWithSameType != null) 
+			linksWithSameType.remove(link);
+		
+		List<Link> linksWithSameStatus = statusToLinksMap.get(link.getStatus());
+		if (linksWithSameStatus != null) 
+			linksWithSameStatus.remove(link);
+		
+		this.sourceToTargetLinkUris.remove(link.getSource().getId() + 
+				link.getTarget().getId() + 
+				link.getLabel().getUri());
+		
 		return true;
 	}
 
@@ -775,14 +815,14 @@ public class GraphBuilder {
 				}
 				
 				// Add subclass links between internal nodes
-				if (ontologyManager.isSubClass(targetUri, sourceUri, false)) {
+				if (ontologyManager.isSubClass(sourceUri, targetUri, false)) {
 					// target is subclass of source
-					key = target.getId() + source.getId() + SubClassLink.getFixedLabel().getUri();
+					key = source.getId() + target.getId() + SubClassLink.getFixedLabel().getUri();
 					// check to see if the link is duplicate or not
 					if (sourceToTargetLinkUris.containsKey(key)) continue;
 					id = linkIdFactory.getLinkId(SubClassLink.getFixedLabel().getUri());
 					SubClassLink subClassOfLink = new SubClassLink(id);
-					addWeightedLink(target, source, subClassOfLink, ModelingParams.SUBCLASS_WEIGHT);
+					addWeightedLink(source, target, subClassOfLink, ModelingParams.SUBCLASS_WEIGHT);
 				}
 			}
 		}		

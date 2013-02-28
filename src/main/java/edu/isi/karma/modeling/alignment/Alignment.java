@@ -287,18 +287,7 @@ public class Alignment implements OntologyUpdateListener {
 			return false;
 		}
 			
-//		if (!(node instanceof ColumnNode)) {
-//			logger.debug("You can only request to delete a Column Node. Node " + node.getId() + " is not a Column Node");
-//			return false;
-//		}
-//		
-//		Set<Link> incomingLinks = this.steinerTree.incomingEdgesOf(node);
-//		Node domain = null;
-//		if (incomingLinks != null && incomingLinks.size() == 1)
-//			domain = incomingLinks.toArray(new Link[0])[0].getSource();
-		
 		this.graphBuilder.removeNode(node);
-//		this.graphBuilder.removeNode(domain);
 
 		return false;
 	}
@@ -318,52 +307,6 @@ public class Alignment implements OntologyUpdateListener {
 		return false;
 	}
 	
-	//FIXME: This method should be commented, or make it private for now ... 
-//	private List<SemanticType> getSemanticTypes() {
-//		
-//		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
-//		
-//		String hNodeId;
-//		Label type;
-//		Label domain;
-//		Origin origin;
-//		Double probability;
-//		boolean partOfKey;
-//		
-//		List<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
-//		if (columnNodes != null) {
-//			for (Node n : columnNodes) {
-//				
-//				hNodeId = ((ColumnNode)n).getHNodeId();
-//				type = null;
-//				domain = null;
-//				origin = Origin.User;
-//				probability = 1.0;
-//				partOfKey = false;
-//
-//				
-//				Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(n);
-//				if (incomingLinks != null && incomingLinks.size() == 1) {
-//					Link inLink = incomingLinks.toArray(new Link[0])[0];
-//					Node source = inLink.getSource();
-//					if (inLink instanceof DataPropertyLink) {
-//						type = inLink.getLabel();
-//						domain = source.getLabel();
-//					} else
-//						type = source.getLabel();
-//					
-//					if (inLink.getKeyType() == LinkKeyInfo.PartOfKey) partOfKey = true;
-//				} else 
-//					logger.error("The column node " + n.getId() + " does not have any domain or it has more than one domain.");
-//				
-//				SemanticType s = new SemanticType(hNodeId, type, domain, origin, probability, partOfKey);
-//				semanticTypes.add(s);
-//			}
-//		}
-//		
-//		return semanticTypes;
-//	}
-	
 	public Set<Link> getCurrentLinksToNode(String nodeId) {
 		
 		Node node = this.getNodeById(nodeId);
@@ -380,10 +323,8 @@ public class Alignment implements OntologyUpdateListener {
 		if (node == null) return possibleLinks;
 		
 		Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(node);
-		if (incomingLinks != null) {
-
+		if (incomingLinks != null) 
 			possibleLinks = Arrays.asList(incomingLinks.toArray(new Link[0]));
-		}
 		
 		Collections.sort(possibleLinks);
 		return possibleLinks;
@@ -397,7 +338,8 @@ public class Alignment implements OntologyUpdateListener {
 		// Change the status of previously preferred links to normal
 		List<Link> linksInPreviousTree = this.getLinksByStatus(LinkStatus.PreferredByUI);
 		if (linksInPreviousTree != null) {
-			for (Link link : linksInPreviousTree)
+			Link[] links = linksInPreviousTree.toArray(new Link[0]);
+			for (Link link : links)
 				this.graphBuilder.changeLinkStatus(link, LinkStatus.Normal);
 		}
 		
@@ -407,6 +349,7 @@ public class Alignment implements OntologyUpdateListener {
 		}
 	}
 	
+	// FIXME: What if a column node has more than one domain?
 	private List<Node> computeSteinerNodes() {
 		List<Node> steinerNodes = new ArrayList<Node>();
 		
@@ -470,13 +413,14 @@ public class Alignment implements OntologyUpdateListener {
 			return;
 		}
 
-//		System.out.println("*** Steiner Tree ***");
-//		GraphUtil.printGraphSimple(tree);
-		
+		System.out.println("*** Steiner Tree ***");
+		GraphUtil.printGraphSimple(tree);
 		logger.info("selecting a root for the tree ...");
 		TreePostProcess treePostProcess = new TreePostProcess(tree, this.graphBuilder.getThingNode());
 //		removeInvalidForcedLinks(treePostProcess.getDangledVertexList());
 		
+//		GraphUtil.printGraphSimple(GraphUtil.treeToRootedTree(treePostProcess.getTree(), treePostProcess.getRoot(), null));
+
 		this.steinerTree = treePostProcess.getTree();
 		this.root = treePostProcess.getRoot();
 

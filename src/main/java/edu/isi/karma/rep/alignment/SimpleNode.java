@@ -31,6 +31,11 @@ package edu.isi.karma.rep.alignment;
 
 public class SimpleNode extends Node {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public SimpleNode(String id, Label label) {
 		super(id, label, NodeType.None);
 	}

@@ -25,11 +25,15 @@ package edu.isi.karma.rep.alignment;
 
 public class ColumnNode extends Node {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final String hNodeId;
 	private final String columnName;
 	
 	public ColumnNode(String id, String hNodeId, String columnName) {
-		super(id, null, NodeType.ColumnNode);
+		super(id, new Label(hNodeId), NodeType.ColumnNode);
 		this.hNodeId = hNodeId;
 		this.columnName = columnName;
 	}
