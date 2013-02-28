@@ -21,6 +21,7 @@
 
 function styleAndAssignHandlerToResetButton() {
 	$("#resetButton").button().click(function(event) {
+		$("#resetDialogDiv input").attr("checked", false);
 		$("div#resetDialogDiv").dialog({
 			width: 100,
 			position: [event.clientX-50, event.clientY+20],

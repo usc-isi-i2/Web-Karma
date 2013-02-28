@@ -103,49 +103,54 @@ function attachOntologyOptionsRadioButtonHandlers() {
 	
 	/*** Setting advanced semantic typing options ***/
 	$("button#semanticTypingAdvancedOptions").button().click(function(){
-    	$("div#semanticTypingAdvacedOptionsDiv").show();
+		var optionsBox = $("div#semanticTypingAdvacedOptionsDiv"); 
+		var state = optionsBox.data("state");
+		if (state != null && state == "open") {
+			optionsBox.hide().data("state", "close");
+		} else {
+			optionsBox.show().data("state", "open");
     	
-    	var classArray = $("#ChangeSemanticTypesDialogBox").data("classAndPropertyListJson")["elements"][0]["classList"];
-    	var existingLinksMap = $("#ChangeSemanticTypesDialogBox").data("classAndPropertyListJson")["elements"][0]["existingDataPropertyInstances"];
-    	console.log(existingLinksMap);
-    	$("input#isUriOfClassTextBox").autocomplete({autoFocus: true, select:function(event, ui){
-		    $("input#isUriOfClassTextBox").val(ui.item.value);
-		    validateClassInputValue(ui.item.value, false);
-	    }, source: function( request, response ) {
-	        var matches = $.map( classArray, function(cls) {
-	            if ( cls["label"].toUpperCase().indexOf(request.term.toUpperCase()) != -1 ) {
-	                return cls;
-	            }
-	        });
-	            response(matches);
-	        }
-	    });
-	    
-	    $("input#isSubclassOfClassTextBox").autocomplete({autoFocus: true, select:function(event, ui){
-		    $("input#isSubclassOfClassTextBox").val(ui.item.value);
-		    validateClassInputValue(ui.item.value, false);
-	    }, source: function( request, response ) {
-	        var matches = $.map( classArray, function(cls) {
-	            if ( cls["label"].toUpperCase().indexOf(request.term.toUpperCase()) != -1 ) {
-	                return cls;
-	            }
-	        });
-	            response(matches);
-	        }
-	    });
-	    
-	    $("input#isSpecializationForEdgeTextBox").autocomplete({autoFocus: true, select:function(event, ui){
-            // $("input#isSpecializationForEdgeTextBox").val(ui.item.value);
-            // validatePropertyInputValue();
-	    }, source: function( request, response ) {
-	        var matches = $.map( existingLinksMap, function(prop) {
-        		if (prop["label"].toUpperCase().indexOf(request.term.toUpperCase()) != -1 ) {
-                	return prop;
-           		}
-	        });
-	            response(matches);
-	        }
-	    });
+	    	var classArray = $("#ChangeSemanticTypesDialogBox").data("classAndPropertyListJson")["elements"][0]["classList"];
+	    	var existingLinksMap = $("#ChangeSemanticTypesDialogBox").data("classAndPropertyListJson")["elements"][0]["existingDataPropertyInstances"];
+	    	$("input#isUriOfClassTextBox").autocomplete({autoFocus: true, select:function(event, ui){
+			    $("input#isUriOfClassTextBox").val(ui.item.value);
+			    validateClassInputValue(ui.item.value, false);
+		    }, source: function( request, response ) {
+		        var matches = $.map( classArray, function(cls) {
+		            if ( cls["label"].toUpperCase().indexOf(request.term.toUpperCase()) != -1 ) {
+		                return cls;
+		            }
+		        });
+		            response(matches);
+		        }
+		    });
+		    
+		    $("input#isSubclassOfClassTextBox").autocomplete({autoFocus: true, select:function(event, ui){
+			    $("input#isSubclassOfClassTextBox").val(ui.item.value);
+			    validateClassInputValue(ui.item.value, false);
+		    }, source: function( request, response ) {
+		        var matches = $.map( classArray, function(cls) {
+		            if ( cls["label"].toUpperCase().indexOf(request.term.toUpperCase()) != -1 ) {
+		                return cls;
+		            }
+		        });
+		            response(matches);
+		        }
+		    });
+		    
+		    $("input#isSpecializationForEdgeTextBox").autocomplete({autoFocus: true, select:function(event, ui){
+	            // $("input#isSpecializationForEdgeTextBox").val(ui.item.value);
+	            // validatePropertyInputValue();
+		    }, source: function( request, response ) {
+		        var matches = $.map( existingLinksMap, function(prop) {
+	        		if (prop["label"].toUpperCase().indexOf(request.term.toUpperCase()) != -1 ) {
+	                	return prop;
+	           		}
+		        });
+		            response(matches);
+		        }
+		    });
+		}
     });
     
     $("input#isUriOfClassTextBox").blur(function() {
@@ -155,6 +160,10 @@ function attachOntologyOptionsRadioButtonHandlers() {
     $("input#isSubclassOfClassTextBox").blur(function() {
     	if ($("input#isSubclassOfClassTextBox").val() != "")
     		validateClassInputValue($("input#isSubclassOfClassTextBox").val(), false)
+    });
+    
+    $("div#semanticTypingAdvacedOptionsDiv input:text").focus(function() {
+        $(this).parents("tr").find("input[type='checkbox']").attr('checked', true).trigger('change');
     });
 
 }
