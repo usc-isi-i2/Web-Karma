@@ -51,19 +51,6 @@ public class testRepository {
 	private String url2 = "http://www.semanticweb.org/yingzhang/ontologies/2013/1/untitled-ontology-48#:latitude";	
 	private String url3 = "http://www.semanticweb.org/yingzhang/ontologies/2013/1/untitled-ontology-48#:longitude";
 	
-    public testRepository(){
-	    
-		File file = new File("config/b.json");
-		if (!file.exists()) {
-			throw new IllegalArgumentException("file name "
-					+ file.getAbsolutePath() + " does not exist.");
-		}
-
-		ConfigUtil util = new ConfigUtil();
-		// util.loadConstants();
-		this.confArr = util.loadConfig(file);
-    }
-	
 	
 	public void setupDirectoryModelfrom(String DATASET_PATH,
 			String[] SOURCE_PATH) {
