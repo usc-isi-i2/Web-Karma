@@ -48,17 +48,17 @@ public class UnionImport {
 	private final Workspace workspace;
 	private File inputJsonFile;
 	
-	public UnionImport(String worksheetName, Workspace workspace, File inputJsonFile){
+	public UnionImport(String worksheetName, Workspace workspace){
 		this.factory = workspace.getFactory();
 		this.worksheet = factory.createWorksheet(worksheetName, workspace);
 		this.workspace=workspace;
-		this.inputJsonFile = inputJsonFile;
 	}
 	
 	public Worksheet generateWorksheet(){
 		// Import the json file
 		JSONArray json = new JSONArray();
 		ConfigUtil util = new ConfigUtil();
+		inputJsonFile = new File("");
 		json = util.loadConfig(inputJsonFile);
 
 		// Create a worksheet, HTable, and input data into it.

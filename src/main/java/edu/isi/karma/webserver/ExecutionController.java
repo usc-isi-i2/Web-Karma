@@ -56,6 +56,8 @@ import edu.isi.karma.controller.command.ImportOntologyCommand;
 import edu.isi.karma.controller.command.ImportOntologyCommandFactory;
 import edu.isi.karma.controller.command.ImportServiceCommand;
 import edu.isi.karma.controller.command.ImportServiceCommandFactory;
+import edu.isi.karma.controller.command.ImportUnionResultCommand;
+import edu.isi.karma.controller.command.ImportUnionResultCommandFactory;
 import edu.isi.karma.controller.command.ImportXMLFileCommand;
 import edu.isi.karma.controller.command.ImportXMLFileCommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
@@ -97,8 +99,6 @@ import edu.isi.karma.controller.command.cleaning.FetchTransformingDataCommand;
 import edu.isi.karma.controller.command.cleaning.FetchTransformingDataFactory;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommand;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommandFactory;
-import edu.isi.karma.controller.command.publish.PublishCSVCommand;
-import edu.isi.karma.controller.command.publish.PublishCSVCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishDatabaseCommand;
 import edu.isi.karma.controller.command.publish.PublishDatabaseCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommand;
@@ -223,6 +223,8 @@ public class ExecutionController {
 				new ApplyWorksheetHistoryCommandFactory());
 		commandFactoryMap.put(FetchTransformingDataCommand.class.getSimpleName(),
 				new FetchTransformingDataFactory());
+		commandFactoryMap.put(ImportUnionResultCommand.class.getSimpleName(),
+				new ImportUnionResultCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

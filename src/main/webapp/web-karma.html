@@ -207,6 +207,9 @@ and related projects, please see: http://www.isi.edu/integration
 				// Assign style and handlers to column heading menu
 				styleAndAssignHandlersToColumnHeadingMenu();
 				
+				// Assign style and handler to the merge button
+				styleAndAssignHandlersToMergeButton();
+				
 				// When the user changes header line index
 				$('.CSVImportOption').change(function() {
 					CSVImportOptionsChanged("preview");
@@ -347,6 +350,9 @@ and related projects, please see: http://www.isi.edu/integration
 				</td>
 				<td>
 					<button id="importFromServiceButton" class="importButton" align="top">Import from Service</button>
+				</td>
+				<td>
+					<button id="mergeButton" class="importButton" align="top">Merge</button>
 				</td>
 				<td>
 					<div class="container">

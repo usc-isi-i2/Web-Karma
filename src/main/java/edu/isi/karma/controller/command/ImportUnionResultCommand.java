@@ -23,8 +23,6 @@ package edu.isi.karma.controller.command;
 
 
 
-import java.io.File;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,56 +35,43 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
-
-
 public class ImportUnionResultCommand extends Command {
 
-	private File inputJsonFile;
 	private static Logger logger = LoggerFactory.getLogger(ImportJSONFileCommand.class);
 	
-	protected ImportUnionResultCommand(String id, File uploadedFile) {
+	protected ImportUnionResultCommand(String id) {
 		super(id);
-		inputJsonFile = uploadedFile;
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public String getCommandName() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getClass().getSimpleName();
 	}
 
 	@Override
 	public String getTitle() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Merge Datasets";
 	}
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 	@Override
 	public CommandType getCommandType() {
-		// TODO Auto-generated method stub
-		return null;
+		return CommandType.notUndoable;
 	}
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		// TODO Auto-generated method stub
-		
 		Workspace ws = vWorkspace.getWorkspace();
 		UpdateContainer c = new UpdateContainer();
 		try {
 
-			UnionImport uim=new UnionImport("union", ws, inputJsonFile);
+			UnionImport uim=new UnionImport("union", ws);
 			Worksheet wsht=uim.generateWorksheet();
 			
-			
-//			Worksheet wsht = imp.generateWorksheet();
 			vWorkspace.addAllWorksheets();
 			
 			c.add(new WorksheetListUpdate(vWorkspace.getVWorksheetList()));
