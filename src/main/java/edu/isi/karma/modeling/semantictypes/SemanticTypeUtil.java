@@ -155,7 +155,7 @@ public class SemanticTypeUtil {
 			boolean predictResult = crfModelHandler.predictLabelForExamples(
 					trainingExamples, 4, labels, scores, null, columnFeatures);
 			if (!predictResult) {
-				logger.error("Error occured while predicting semantic type.");
+				logger.debug("Error occured while predicting semantic type.");
 				continue;
 			}
 			if (labels.size() == 0) {
@@ -333,7 +333,7 @@ public class SemanticTypeUtil {
 			ArrayList<String> labels = new ArrayList<String>();
 			boolean predictResult = crfModelHandler.predictLabelForExamples(trainingExamples, 4, labels, scores, null, columnFeatures);
 			if (!predictResult) {
-				logger.error("Error occured while predicting semantic type.");
+				logger.debug("Error occured while predicting semantic type.");
 				continue;
 			}
 			if (labels.size() == 0) {
@@ -390,6 +390,7 @@ public class SemanticTypeUtil {
 			worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(), columnModel);
 		}
 	}
+	
 	private static boolean existsInSemanticTypesCollection(Label typeLabel, Label domainLabel, SemanticType existingSemanticType) {
 		if (typeLabel.getUri().equals(existingSemanticType.getType().getUri())) {
 			if (domainLabel == null) {

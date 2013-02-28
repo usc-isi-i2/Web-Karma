@@ -23,7 +23,34 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 public class UtilTools {
 	public static int index = 0;
 	public static Vector<String> results = new Vector<String>();
-
+	public static Vector<Integer> getStringPos(int tokenpos,Vector<TNode> example)
+	{
+		Vector<Integer> poss = new Vector<Integer>();
+		if(tokenpos <= 0)
+			return poss;
+		int pos = 0;
+		int strleng = 0;
+		for(int i=0;i<example.size();i++)
+		{
+			strleng += example.get(i).text.length();
+		}
+		for(int i = 0; i<tokenpos;i++)
+		{
+			pos += example.get(i).text.length();
+		}
+		poss.add(pos);
+		poss.add(pos-strleng);
+		return poss;
+	}
+	public static Vector<GrammarTreeNode> convertSegVector(Vector<Segment> x)
+	{
+		Vector<GrammarTreeNode> res = new Vector<GrammarTreeNode>();
+		for(Segment e:x)
+		{
+			res.add(e);
+		}
+		return res;
+	}
 	public static int multinominalSampler(double[] probs) {
 		Random r = new Random();
 		double x = r.nextDouble();
@@ -47,8 +74,13 @@ public class UtilTools {
 
 	public static String print(Vector<TNode> x) {
 		String str = "";
+		if(x == null)
+			return "null";
 		for (TNode t : x)
-			str += t.text;
+			if(t.text.compareTo("ANYTOK")==0)
+				str += t.getType();
+			else
+				str += t.text;
 		return str;
 	}
 
@@ -71,6 +103,7 @@ public class UtilTools {
 	}
 
 	public static String escape(String s) {
+		s = s.replaceAll("\\\\", "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\");
 		HashMap<String, String> dict = new HashMap<String, String>();
 		dict.put("\\(", "\\\\(");
 		dict.put("\\)", "\\\\)");
@@ -83,12 +116,13 @@ public class UtilTools {
 		dict.put("\\]", "\\\\]");
 		dict.put("\\[", "\\\\[");
 		dict.put("\\/", "\\\\/");
+		dict.put("\\'", "\\\\'");
+		dict.put("\\\"", "\\\\\"");
 		for (String key : dict.keySet()) {
 			s = s.replaceAll(key, dict.get(key));
 		}
 		return s;
 	}
-
 	public static Vector<TNode> subtokenseqs(int a, int b, Vector<TNode> org) {
 		Vector<TNode> xNodes = new Vector<TNode>();
 		if (a < 0 || b >= org.size() || a > b) {

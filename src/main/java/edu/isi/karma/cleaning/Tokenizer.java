@@ -221,7 +221,7 @@ public class Tokenizer extends Lexer {
             // Tokenizer.g:7:5: ( ( SYMBOL ) )
             // Tokenizer.g:
             {
-            if ( input.LA(1)=='!'||(input.LA(1) >= '#' && input.LA(1) <= '/')||(input.LA(1) >= ':' && input.LA(1) <= '@')||(input.LA(1) >= '[' && input.LA(1) <= '`')||(input.LA(1) >= '{' && input.LA(1) <= '~') ) {
+            if ( input.LA(1)=='’'||(input.LA(1) >= '!' && input.LA(1) <= '/')||(input.LA(1) >= ':' && input.LA(1) <= '@')||(input.LA(1) >= '[' && input.LA(1) <= '`')||(input.LA(1) >= '{' && input.LA(1) <= '~') ) {
                 input.consume();
             }
             else {

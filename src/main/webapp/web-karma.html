@@ -206,6 +206,9 @@ and related projects, please see: http://www.isi.edu/integration
 				
 				// Assign handler and style to the Reset options (in reset-options.js)
 				styleAndAssignHandlerToResetButton();
+
+				// Assign style and handler to the merge button
+				styleAndAssignHandlersToMergeButton();
 				
 				// When the user changes header line index
 				$('.CSVImportOption').change(function() {
@@ -338,7 +341,7 @@ and related projects, please see: http://www.isi.edu/integration
 	
 	
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.41</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.42</span></h1>
 		<table id="topMenuBar">
 			<tr>
 				<td>
@@ -346,6 +349,9 @@ and related projects, please see: http://www.isi.edu/integration
 				</td>
 				<td>
 					<button id="importFromServiceButton" class="importButton" align="top">Import from Service</button>
+				</td>
+				<td>
+					<button id="mergeButton" class="importButton" align="top">Merge</button>
 				</td>
 				<td>
 					<div class="container">

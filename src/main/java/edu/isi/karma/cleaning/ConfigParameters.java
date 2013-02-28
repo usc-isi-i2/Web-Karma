@@ -18,26 +18,33 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.controller.command.cleaning;
 
-import javax.servlet.http.HttpServletRequest;
+package edu.isi.karma.cleaning;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.view.VWorkspace;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
-public class GenerateCleaningRulesCommandFactory extends CommandFactory {
-	
-	private enum Arguments {
-		vWorksheetId, hNodeId, examples,cellIDs
+public class ConfigParameters {
+	Properties properties = new Properties();
+	public ConfigParameters()
+	{
 	}
+	public void initeParameters() {
+		// load property file and initialize the parameters;
+		try {
+			// load a properties file
+			properties.load(new FileInputStream(
+					"./config/transformation.properties"));
 
-	@Override
-	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		String examples = request.getParameter(Arguments.examples.name());
-		String cellIDs= request.getParameter(Arguments.cellIDs.name());
-		return new GenerateCleaningRulesCommand(getNewId(vWorkspace), getWorksheetId(request, vWorkspace), hNodeId, examples,cellIDs);
+			// get the property value and print it out
+			Segment.cxtsize_limit = Integer.parseInt(properties.getProperty("cxt_size").trim());
+			Template.temp_limit = Integer.parseInt(properties.getProperty("temp_cap").trim());
+			Traces.trace_limit = Integer.parseInt(properties.getProperty("trace_limit").trim());
+			//System.out.println(properties.getProperty("iter_end"));
+			ExampleSelection.way = Integer.parseInt(properties.getProperty("exmp_sel").trim());
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 	}
 }

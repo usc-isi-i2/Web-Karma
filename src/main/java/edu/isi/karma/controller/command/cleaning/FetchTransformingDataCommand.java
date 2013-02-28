@@ -58,6 +58,9 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 		{
 			sample_size = 50;
 		}
+		else {
+			sample_size = size;
+		}
 		Random rad = new Random();
 		while( inds.size() <sample_size)
 		{
@@ -83,8 +86,8 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 		}	
 		//random nodes 
 		Collection<Node> nodes = new ArrayList<Node>();
-		HashSet<Integer> indSet = this.obtainIndexs(nodes.size());
 		wk.getDataTable().collectNodes(selectedPath, nodes);	
+		HashSet<Integer> indSet = this.obtainIndexs(nodes.size());
 		int index = 0;
 		for (Iterator<Node> iterator = nodes.iterator(); iterator.hasNext();) {
 			Node node = iterator.next();

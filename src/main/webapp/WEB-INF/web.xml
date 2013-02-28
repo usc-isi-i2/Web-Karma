@@ -116,14 +116,26 @@
   </servlet-mapping>
     
   <servlet>
-     <servlet-name>ExtractSpatialInformationServiceHandler</servlet-name>
-     <servlet-class>edu.isi.karma.webserver.ExtractSpatialInformationServiceHandler</servlet-class>
+     <servlet-name>ExtractSpatialInformationFromOSMServiceHandler</servlet-name>
+     <servlet-class>edu.isi.karma.webserver.ExtractSpatialInformationFromOSMServiceHandler</servlet-class>
     </servlet>
     <servlet-mapping>
-     <servlet-name>ExtractSpatialInformationServiceHandler</servlet-name>
+     <servlet-name>ExtractSpatialInformationFromOSMServiceHandler</servlet-name>
      <url-pattern>/ExtractSpacialInformation/*</url-pattern>
   </servlet-mapping>
-   <servlet>
+  
+
+  <servlet>
+     <servlet-name>ExtractSpatialInformationFromWikimapiaServiceHandler</servlet-name>
+     <servlet-class>edu.isi.karma.webserver.ExtractSpatialInformationFromWikimapiaServiceHandler</servlet-class>
+    </servlet>
+    <servlet-mapping>
+     <servlet-name>ExtractSpatialInformationFromWikimapiaServiceHandler</servlet-name>
+     <url-pattern>/ExtractWikimapiaInformation/*</url-pattern>
+  </servlet-mapping>
+
+ 
+<servlet>
      <servlet-name>SpatialReferenceSystemServiceHandler</servlet-name>
      <servlet-class>edu.isi.karma.webserver.SpatialReferenceSystemServiceHandler</servlet-class>
     </servlet>

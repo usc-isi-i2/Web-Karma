@@ -36,6 +36,7 @@ public class Program implements GrammarTreeNode {
 		this.score = 0.0;
 		return r;
 	}
+	
 	public String toProgram() {
 		if(this.partitions.size()>1)
 		{
@@ -64,7 +65,11 @@ public class Program implements GrammarTreeNode {
 		{
 			for(Partition p:this.partitions)
 			{
-				pr.addRule(p.label, p.toProgram());
+				String rule = p.toProgram();
+				if(rule.contains("null"))
+					return null;
+				pr.addRule(p.label, rule);
+				System.out.println(pr.getStringRule(p.label));
 				score += p.getScore();
 			}
 			score = score/this.partitions.size();
@@ -73,7 +78,10 @@ public class Program implements GrammarTreeNode {
 		}
 		else
 		{
-			String s = partitions.get(0).toProgram(); 
+			String s = partitions.get(0).toProgram();
+			if(s.contains("null"))
+				return null;
+			System.out.println(""+s);
 			score = this.partitions.get(0).getScore();
 			pr.addRule(partitions.get(0).label, s);
 			return pr;
@@ -96,5 +104,28 @@ public class Program implements GrammarTreeNode {
 	public String getNodeType()
 	{
 		return "program";
+	}
+	public String getrepString()
+	{
+		return "Program";
+	}
+	@Override
+	public void createTotalOrderVector() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void emptyState() {
+		// TODO Auto-generated method stub
+		
+	}
+	public long size()
+	{
+		long size = 0;
+		for(Partition p:partitions)
+		{
+			size += p.size();
+		}
+		return size;
 	}
 }

@@ -627,6 +627,34 @@ function hideWaitingSignOnScreen() {
     $("div#WaitingDiv").hide();
 }
 
+function styleAndAssignHandlersToMergeButton() {
+	$("button#mergeButton").button().click(function(){
+		var info = new Object();
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "ImportUnionResultCommand";
+            
+        showWaitingSignOnScreen();
+        var returned = $.ajax({
+            url: "RequestController", 
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete : 
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideCleanningWaitingSignOnScreen();
+                },
+            error :
+                function (xhr, textStatus) {
+                    $.sticky("Error occured while doing merge!");
+                    hideCleanningWaitingSignOnScreen();
+                }          
+        });
+	});
+}
+
 
 
 

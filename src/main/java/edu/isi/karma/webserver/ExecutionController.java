@@ -56,6 +56,8 @@ import edu.isi.karma.controller.command.ImportOntologyCommand;
 import edu.isi.karma.controller.command.ImportOntologyCommandFactory;
 import edu.isi.karma.controller.command.ImportServiceCommand;
 import edu.isi.karma.controller.command.ImportServiceCommandFactory;
+import edu.isi.karma.controller.command.ImportUnionResultCommand;
+import edu.isi.karma.controller.command.ImportUnionResultCommandFactory;
 import edu.isi.karma.controller.command.ImportXMLFileCommand;
 import edu.isi.karma.controller.command.ImportXMLFileCommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
@@ -95,6 +97,8 @@ import edu.isi.karma.controller.command.alignment.ShowModelCommand;
 import edu.isi.karma.controller.command.alignment.ShowModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.UnassignSemanticTypeCommandFactory;
+import edu.isi.karma.controller.command.cleaning.FetchTransformingDataCommand;
+import edu.isi.karma.controller.command.cleaning.FetchTransformingDataFactory;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommand;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishCSVCommand;
@@ -225,6 +229,10 @@ public class ExecutionController {
 				new SetMetaPropertyCommandFactory());
 		commandFactoryMap.put(ResetKarmaCommand.class.getSimpleName(),
 				new ResetKarmaCommandFactory());
+		commandFactoryMap.put(FetchTransformingDataCommand.class.getSimpleName(),
+				new FetchTransformingDataFactory());
+		commandFactoryMap.put(ImportUnionResultCommand.class.getSimpleName(),
+				new ImportUnionResultCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

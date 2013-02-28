@@ -20,3 +20,18 @@ class CntFeature:
         list = pattern.findall(self.value)
         cnt = len(list) 
         return cnt*1.0
+class PercentageFeature:
+     def __init__(self,name,value,tar):
+        self.name = name
+        self.value = value
+        self.tar = tar
+     def computerScore(self):
+        cnt = 0
+        # print self.tar
+        pattern = re.compile(self.tar)
+        list = pattern.findall(self.value)
+        tarleng = 0
+        for a in list:
+            tarleng += len(a)
+        return tarleng*1.0/len(self.value)
+    

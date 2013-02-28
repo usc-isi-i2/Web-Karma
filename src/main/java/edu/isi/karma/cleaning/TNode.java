@@ -88,38 +88,18 @@ public class TNode{
 		{
 			return "END";
 		}
+		else if(type == TNode.LWRDTYP)
+		{
+			return "LWD";
+		}
+		else if(type == TNode.UWRDTYP)
+		{
+			return "UWD";
+		}
 		else
 		{
-			return "";
+			return ""+(char)this.type;
 		}
-	}
-	public TNode(String stype,String text)
-	{
-		if(stype.compareTo("ANYTYP")==0)
-		{
-			type = TNode.ANYTYP;
-		}
-		else if(stype.compareTo("Number")==0)
-		{
-			type = TNode.NUMTYP;
-		}
-		else if(stype.compareTo("Symbol")==0)
-		{
-			type = TNode.SYBSTYP;
-		}
-		else if(stype.compareTo("Blank")==0)
-		{
-			type = TNode.BNKTYP;
-		}
-		else if(stype.compareTo("START")==0)
-		{
-			type = TNode.STARTTYP;
-		}
-		else if(stype.compareTo("END")==0)
-		{
-			type = TNode.ENDTYP;
-		}
-		this.text = text;
 	}
 	public boolean sameNode(TNode t)
 	{
@@ -157,9 +137,9 @@ public class TNode{
 		boolean res = this.sameType(t);
 		if(res)
 			return this.type;
-		if((this.type == TNode.UWRDTYP && t.type == TNode.LWRDTYP) ||(this.type == TNode.LWRDTYP && t.type == TNode.UWRDTYP))
+		if((this.type == TNode.UWRDTYP || this.type == TNode.LWRDTYP || this.type == TNode.WORD) &&(t.type == TNode.LWRDTYP || t.type == TNode.UWRDTYP || t.type == TNode.WORD))
 		{
-			return this.WORD;
+			return TNode.WORD;
 		}
 		return -1;
 	}

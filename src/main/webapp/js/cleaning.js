@@ -179,6 +179,7 @@ function handleCleanColumnButton() {
 	// Get the values from the column to be cleaned
 	var selectedHNodeId = columnHeadingMenu.data("parentCellId");
 	var tdTag = $("td#" + selectedHNodeId);
+	var worksheetId = tdTag.parents("div.Worksheet").attr("id");
 	var table = tdTag.parents("table.WorksheetTable");
 	var rows = $("thead tr", table);
 	var index = -1;
@@ -202,22 +203,8 @@ function handleCleanColumnButton() {
 		}
 		return index;
 	});
-	var values = [];
-	$('tbody>tr>td:nth-child(' + (index + 1) + ')', table).each(function() {
-		if($(this).attr("id"))
-		{
-			var value = $(this).text();
-			if ($(this).attr("class").indexOf("hasTruncatedValue")>=0)
-			{
-				value = $(this).data("fullValue");
-			}
-			values.push({
-				"nodeId" : $(this).attr("id"),
-				//"nodeValue" : $(this).text()
-				"nodeValue" : value
-			});
-		}
-	});
+	var values = {};
+	values = FetchCleanningRawData(selectedHNodeId,worksheetId);
 
 	// Create and store a array that stores the user provided examples
 	var examples = [];
@@ -227,23 +214,27 @@ function handleCleanColumnButton() {
 	var cleaningTable = $("table#cleaningExamplesTable");
 	$("tr.nonHeading", cleaningTable).remove();
 	$("tr.suggestion", cleaningTable).remove();
-	var res = new Object();
-	$.each(values, function(index, val) {
-		var tr = $("<tr>").attr("id", val["nodeId"] + "_cl_row").addClass("nonHeading").append($("<td>").text(val["nodeValue"]).attr('id', val['nodeId'] + "_origVal"))//add text and id to the td
-		.append($("<td>").addClass("noBorder"));
-		//add td to seperate org and result
-		res[val["nodeId"]] = val["nodeValue"];
-		tr.data("originalVal",val["nodeValue"]);
-		cleaningTable.append(tr);
-	});
+	var nodeIds = [];
+	for( var nodeId in values) 
+	{
+		if(values.hasOwnProperty(nodeId))
+		{
+			var tr = $("<tr>").attr("id",nodeId+"_cl_row").addClass("nonHeading").append($("<td>").text(values[nodeId]).attr('id', nodeId + "_origVal"))//add text and id to the td
+			.append($("<td>").addClass("noBorder"));
+			//add td to seperate org and result	
+			tr.data("originalVal",values[nodeId]);
+			cleaningTable.append(tr);
+			nodeIds.push(nodeId);
+		}
+	}
 	var initialResultsValues = new Array();
 	var pac = new Object();
-	pac["data"] = res;
+	pac["data"] = values;
 	initialResultsValues.push(pac);
 	$("div#columnHeadingDropDownMenu").data("results", initialResultsValues);
+	$("div#columnHeadingDropDownMenu").data("nodeIds", nodeIds);
 	populateResult(initialResultsValues[0]);
 
-	//
 	$("div#ColumnCleaningPanel").dialog({
 		title : 'Transform',
 		width : 1100,
@@ -446,33 +437,55 @@ function populateVariations(data,data1) {
 					$(trs[trs.length-1]).append($("<td>").addClass("noBorder").append(revertButton));
 					updateResult();
 					return;
-				}));
-				
+				}));	
 			}
 		});
-		
 	});
-	
 }
 
+function FetchCleanningRawData(hnodeId,worksheetId) {
+	var info = new Object();
+	info["vWorksheetId"] = worksheetId;
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["hNodeId"] = hnodeId;
+	info["command"] = "FetchTransformingDataCommand";
+	var json = {};
+	var returned = $.ajax({
+		url : "RequestController",
+		type : "POST",
+		async: false,
+		data : info,
+		dataType : "json",
+		complete : function(xhr, textStatus) {
+			json = $.parseJSON(xhr.responseText);
+			json = json["elements"][0]["result"];
+			hideCleanningWaitingSignOnScreen();
+		},
+		error : function(xhr, textStatus) {
+			hideCleanningWaitingSignOnScreen();
+			$.sticky("Error in Fetching Raw Data!");
+		}
+	});
+	return json;
+}
 function handleGenerateCleaningRulesButton() {
 	var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
 	var selectedHNodeId = columnHeadingMenu.data("parentCellId");
 	if(jQuery.type(selectedHNodeId) === "array")
 	{
 		selectedHNodeId = selectedHNodeId.join("#");
-	}	
+	}
+	
 	var tdTag = $("td#" + selectedHNodeId);
 	var vWorksheetId = tdTag.parents("div.Worksheet").attr("id");
-
 	var examples = columnHeadingMenu.data("cleaningExamples");
-
 	var info = new Object();
 	info["vWorksheetId"] = vWorksheetId;
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["hNodeId"] = selectedHNodeId;
 	info["command"] = "GenerateCleaningRulesCommand";
 	info["examples"] = JSON.stringify(examples);
+	info["cellIDs"] =JSON.stringify($("div#columnHeadingDropDownMenu").data("nodeIds"));
 
 	var returned = $.ajax({
 		url : "RequestController",

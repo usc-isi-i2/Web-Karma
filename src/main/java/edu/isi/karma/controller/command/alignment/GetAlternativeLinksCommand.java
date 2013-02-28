@@ -97,13 +97,9 @@ public class GetAlternativeLinksCommand extends Command {
 					for (Link link : links) {
 						
 						String linkLabel = link.getLabel().getLocalNameWithPrefix();
-						String edgeSourceLabel = "";
 						
 						Node edgeSource = link.getSource();
-//						if(edgeSource.getPrefix() != null && !edgeSource.getPrefix().equals(""))
-//							edgeSourceLabel = edgeSource.getPrefix() + ":" + edgeSource.getLocalLabel();
-//						else
-							edgeSourceLabel = edgeSource.getLocalId();
+						String edgeSourceLabel = edgeSource.getLocalIdWithPrefixIfAvailable();
 						
 						JSONObject edgeObj = new JSONObject();
 						edgeObj.put(JsonKeys.edgeId.name(), link.getId());
