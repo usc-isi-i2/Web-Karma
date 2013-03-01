@@ -730,6 +730,8 @@ public class GraphBuilder {
 //		System.out.println("size:" + nodes.size() * nodes.size());
 //		int count = 0;
 		
+		logger.debug("Number of nodes in the graph: " + nodes.size());
+		
 		for (Node n1 : nodes) {
 			for (Node n2 : nodes) {
 
@@ -738,11 +740,13 @@ public class GraphBuilder {
 				
 				if (n1.equals(n2))
 					continue;
-
+				
 				if (this.visitedSourceTargetPairs.containsKey(n1.getId() + n2.getId()))
 					continue;
 				
 				this.visitedSourceTargetPairs.put(n1.getId() + n2.getId(), true);
+
+//				System.out.println(n1.getId() + " --- " + n2.getId());
 
 				source = n1;
 				target = n2;

@@ -104,6 +104,8 @@ public class Invocation {
 		List<String> columns = new ArrayList<String>();
         HashMap<String, Integer> attributeNameCounter = new HashMap<String, Integer>();
 
+        logger.info("output type is: " + response.getType());
+        
         if (response.getType() == null) {
 			logger.info("The output does not have a type.");
         }
@@ -114,7 +116,12 @@ public class Invocation {
 		} else if (response.getType().indexOf("json") != -1) { // JSON content
 	        JsonManager.getJsonFlat(response.getStream(), columns, results.getValues());
 		} else {
-			logger.info("The output is neither JSON nor XML.");
+			logger.info("The output type is neither JSON nor XML.");
+	        try {
+	        	JsonManager.getJsonFlat(response.getStream(), columns, results.getValues());
+	        } catch (Exception e) {
+				logger.info("Malformed json output.");
+	        }
 		}
 
 		for (String c : columns) {
