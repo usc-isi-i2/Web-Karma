@@ -83,5 +83,19 @@ public class Section implements GrammarTreeNode {
 	public long size() {
 		return pair[0].rules.size()*pair[1].rules.size();
 	}
+	public String toString()
+	{
+		String lp = "";
+		String rp = "";
+		if(pair[0]!=null)
+		{
+			lp = pair[0].toString();
+		}
+		if(pair[1]!=null)
+		{
+			rp = pair[1].toString();
+		}
+		return lp+rp;
+	}
 
 }

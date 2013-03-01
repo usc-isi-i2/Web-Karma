@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 public class DataCollection {
+	public static String config = "";
 	Vector<FileStat> fstates = new Vector<FileStat>();
 	public DataCollection()
 	{
@@ -46,6 +47,7 @@ public class DataCollection {
 	public void print()
 	{
 		MyLogger.logsth("============Detail Information==========="+this.getDate()+"\n");
+		MyLogger.logsth(this.config+"\n");
 		for(FileStat f: fstates)
 		{
 			MyLogger.logsth(""+f.toString());
@@ -77,6 +79,7 @@ public class DataCollection {
 		}
 		// get average value
 		MyLogger.logsth("============Summary Information===========\n"+this.getDate()+"\n");
+		MyLogger.logsth(this.config+"\n");
 		for(String key:stats.keySet())
 		{
 			

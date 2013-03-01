@@ -27,6 +27,7 @@ import java.util.Properties;
 
 public class ConfigParameters {
 	Properties properties = new Properties();
+	String res = "";
 	public ConfigParameters()
 	{
 	}
@@ -43,8 +44,14 @@ public class ConfigParameters {
 			Traces.trace_limit = Integer.parseInt(properties.getProperty("trace_limit").trim());
 			//System.out.println(properties.getProperty("iter_end"));
 			ExampleSelection.way = Integer.parseInt(properties.getProperty("exmp_sel").trim());
+			res = String.format("cxt_limit:%d temp_limit: %d, trace_limit:%d, exp_sel:%d\n",Segment.cxtsize_limit,Template.temp_limit,Traces.trace_limit,ExampleSelection.way);
+			
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
+	}
+	public String getString()
+	{
+		return res;
 	}
 }

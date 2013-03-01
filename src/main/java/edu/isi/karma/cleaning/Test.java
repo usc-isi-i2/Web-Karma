@@ -226,6 +226,7 @@ public class Test {
 		// load parameters
 		ConfigParameters cfg = new ConfigParameters();
 		cfg.initeParameters();
+		DataCollection.config = cfg.getString();
 		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
 		//Test.test3();
 	}
