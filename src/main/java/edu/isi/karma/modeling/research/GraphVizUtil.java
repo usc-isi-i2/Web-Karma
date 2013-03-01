@@ -41,6 +41,9 @@ public class GraphVizUtil {
 	public static org.kohsuke.graphviz.Graph exportJGrapPathToGraphviz(DijkstraShortestPath<Node, Link> path) {
 
 		org.kohsuke.graphviz.Graph gViz = new org.kohsuke.graphviz.Graph();
+
+		if (path == null)
+			return gViz;
 			
 		org.kohsuke.graphviz.Style internalNodeStyle = new org.kohsuke.graphviz.Style();
 //		internalNodeStyle.attr("shape", "circle");
@@ -164,7 +167,10 @@ public class GraphVizUtil {
 	public static org.kohsuke.graphviz.Graph exportJGraphToGraphviz(DirectedWeightedMultigraph<Node, Link> model) {
 
 		org.kohsuke.graphviz.Graph gViz = new org.kohsuke.graphviz.Graph();
-			
+
+		if (model == null)
+			return gViz;
+
 		org.kohsuke.graphviz.Style internalNodeStyle = new org.kohsuke.graphviz.Style();
 //		internalNodeStyle.attr("shape", "circle");
 		internalNodeStyle.attr("style", "filled");
@@ -275,8 +281,6 @@ public class GraphVizUtil {
 	public static void exportJGraphToGraphvizFile(Map<String, DirectedWeightedMultigraph<Node, Link>> models, 
 			String label, String exportPath) throws FileNotFoundException {
 		
-		if (models == null) return;
-		
 		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
 		graphViz.attr("fontcolor", "blue");
 		graphViz.attr("remincross", "true");
@@ -285,12 +289,14 @@ public class GraphVizUtil {
 		org.kohsuke.graphviz.Graph cluster = null;
 		int counter = 0;
 		
-		for(Entry<String,DirectedWeightedMultigraph<Node, Link>> entry : models.entrySet()) {
-			cluster = GraphVizUtil.exportJGraphToGraphviz(entry.getValue());
-			cluster.id("cluster_" + counter);
-			cluster.attr("label", entry.getKey());
-			graphViz.subGraph(cluster);
-			counter++;
+		if (models != null) {
+			for(Entry<String,DirectedWeightedMultigraph<Node, Link>> entry : models.entrySet()) {
+				cluster = GraphVizUtil.exportJGraphToGraphviz(entry.getValue());
+				cluster.id("cluster_" + counter);
+				cluster.attr("label", entry.getKey());
+				graphViz.subGraph(cluster);
+				counter++;
+			}
 		}
 
 		OutputStream out = new FileOutputStream(exportPath);

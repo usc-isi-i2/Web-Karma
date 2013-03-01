@@ -88,7 +88,9 @@ public class Alignment implements OntologyUpdateListener {
 //		cloner.setDumpClonedClasses(true);
 		cloner.dontClone(OntologyManager.class); 
 		cloner.dontCloneInstanceOf(OntologyManager.class); 
-		return cloner.shallowClone(this);
+		cloner.dontClone(DirectedWeightedMultigraph.class); 
+		cloner.dontCloneInstanceOf(DirectedWeightedMultigraph.class); 
+		return cloner.deepClone(this);
 	}
 	
 	public DirectedWeightedMultigraph<Node, Link> getSteinerTree() {
@@ -99,6 +101,10 @@ public class Alignment implements OntologyUpdateListener {
 	
 	public DirectedWeightedMultigraph<Node, Link> getGraph() {
 		return this.graphBuilder.getGraph();
+	}
+	
+	public void setGraph(DirectedWeightedMultigraph<Node, Link> graph) {
+		this.graphBuilder.setGraph(graph);
 	}
 	
 	public Set<Node> getGraphNodes() {
