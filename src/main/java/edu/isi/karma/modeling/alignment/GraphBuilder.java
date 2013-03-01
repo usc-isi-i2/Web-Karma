@@ -112,6 +112,10 @@ public class GraphBuilder {
 		return this.graph;
 	}
 	
+	public void setGraph(DirectedWeightedMultigraph<Node, Link> graph) {
+		this.graph = graph;
+	}
+	
 	public HashMap<String, Node> getIdToNodeMap() {
 		return idToNodeMap;
 	}

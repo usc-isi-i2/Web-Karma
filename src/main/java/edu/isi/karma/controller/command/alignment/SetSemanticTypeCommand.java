@@ -23,6 +23,7 @@ package edu.isi.karma.controller.command.alignment;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,6 +65,7 @@ public class SetSemanticTypeCommand extends Command {
 	private SynonymSemanticTypes newSynonymTypes;
 	private final boolean isPartOfKey;
 	private Alignment oldAlignment;
+	private DirectedWeightedMultigraph<Node, Link> oldGraph;
 //	private Link newLink;
 	
 	private SemanticType oldType;
@@ -103,6 +105,7 @@ public class SetSemanticTypeCommand extends Command {
 		return CommandType.undoable;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		/*** Get the Alignment for this worksheet ***/
@@ -117,6 +120,7 @@ public class SetSemanticTypeCommand extends Command {
 		
 		// Save the original alignment for undo
 		oldAlignment = alignment.getAlignmentClone();
+		oldGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
 		
 		/*** Add the appropriate nodes and links in alignment graph ***/
 		List<SemanticType> typesList = new ArrayList<SemanticType>();
@@ -323,6 +327,11 @@ public class SetSemanticTypeCommand extends Command {
 		// Replace the current alignment with the old alignment
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
+		oldAlignment.setGraph(oldGraph);
+		
+//		System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+//		GraphUtil.printGraph(oldAlignment.getGraph());
+//		GraphUtil.printGraph(oldAlignment.getSteinerTree());
 		
 		// Get the alignment update if any
 		try {
