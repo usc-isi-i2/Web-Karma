@@ -27,6 +27,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
@@ -38,9 +39,17 @@ import edu.isi.karma.rep.alignment.Node;
 
 public class GraphUtil {
 
-//	private static Logger logger = Logger.getLogger(GraphUtil.class);
+	private static Logger logger = Logger.getLogger(GraphUtil.class);
+	
+	// FIXME: change methods to get an Outputstream as input and write on it.
 	
 	private static String getNodeTypeString(Node node) {
+		
+		if (node == null) {
+			System.out.println("node is null.");
+			return null;
+		}
+		
 		String s = node.getClass().getName();
 		if (s.indexOf(".") != -1)
 			s = s.substring(s.lastIndexOf(".") + 1);
@@ -48,43 +57,66 @@ public class GraphUtil {
 	}
 
 	private static String getLinkTypeString(Link link) {
+
+		if (link == null) {
+			System.out.println("link is null.");
+			return null;
+		}
+		
 		String s = link.getClass().getName();
 		if (s.indexOf(".") != -1)
 			s = s.substring(s.lastIndexOf(".") + 1);
     	return s;
 	}
 	
-	public static void printVertex(Node vertex) {
+	public static void printVertex(Node node) {
+		
+		if (node == null) {
+			System.out.println("node is null.");
+			return;
+		}
+		
     	System.out.print("(");
-    	System.out.print( vertex.getLocalId());
+    	System.out.print( node.getLocalId());
 //    	System.out.print( vertex.getID());
     	System.out.print(", ");
-		if (vertex instanceof ColumnNode)
-			System.out.print( ((ColumnNode)vertex).getColumnName());
+		if (node instanceof ColumnNode)
+			System.out.print( ((ColumnNode)node).getColumnName());
 		else
-			System.out.print(vertex.getLabel().getLocalName());
+			System.out.print(node.getLabel().getLocalName());
     	System.out.print(", ");
-    	System.out.print(getNodeTypeString(vertex));
+    	System.out.print(getNodeTypeString(node));
     	System.out.print(")");
 	}
 	
-	public static void printEdge(Link edge) {
+	public static void printEdge(Link link) {
+		
+		if (link == null) {
+			System.out.println("link is null.");
+			return;
+		}
+		
     	System.out.print("(");
-    	System.out.print( edge.getLocalId());
+    	System.out.print( link.getLocalId());
     	System.out.print(", ");
-    	System.out.print(edge.getLabel().getLocalName());
+    	System.out.print(link.getLabel().getLocalName());
     	System.out.print(", ");
-    	System.out.print(getLinkTypeString(edge));
+    	System.out.print(getLinkTypeString(link));
     	System.out.print(", ");
-    	System.out.print(edge.getWeight());
+    	System.out.print(link.getWeight());
     	System.out.print(") - From ");
-    	printVertex(edge.getSource());
+    	printVertex(link.getSource());
     	System.out.print(" To ");
-    	printVertex(edge.getTarget());
+    	printVertex(link.getTarget());
 	}
 
 	public static DirectedGraph<Node, Link> asDirectedGraph(UndirectedGraph<Node, Link> undirectedGraph) {
 		
+		if (undirectedGraph == null) {
+			System.out.println("graph is null.");
+			return null;
+		}		
+
 		DirectedGraph<Node, Link> g = new DirectedWeightedMultigraph<Node, Link>(Link.class);
 		
 		for (Node v : undirectedGraph.vertexSet())
@@ -98,7 +130,12 @@ public class GraphUtil {
 	
 	public static void printGraph(Graph<Node, Link> graph) {
 		
-    	System.out.println("*** Nodes ***");
+		if (graph == null) {
+			System.out.println("graph is null.");
+			return;
+		}		
+
+		System.out.println("*** Nodes ***");
 		for (Node vertex : graph.vertexSet()) {
 			printVertex(vertex);
 			System.out.println();
@@ -114,6 +151,11 @@ public class GraphUtil {
 	
 	public static void printGraphSimple(Graph<Node, Link> graph) {
 		
+		if (graph == null) {
+			System.out.println("The input graph is null.");
+			return;
+		}		
+
 		for (Link edge : graph.edgeSet()) {
 			System.out.print("(");
 			if (edge.getSource() instanceof ColumnNode)
@@ -142,6 +184,11 @@ public class GraphUtil {
 	public static DirectedWeightedMultigraph<Node, Link> treeToRootedTree(
 			DirectedWeightedMultigraph<Node, Link> tree, Node root, Set<String> reversedLinks) {
 		
+		if (tree == null) {
+			logger.error("The input tree is null.");
+			return null;
+		}		
+
 		DirectedWeightedMultigraph<Node, Link> rootedTree = 
 				(DirectedWeightedMultigraph<Node, Link>)tree.clone();
 		if (reversedLinks == null)
@@ -152,6 +199,12 @@ public class GraphUtil {
 	
 	public static void serialize(DirectedWeightedMultigraph<Node, Link> graph, String fileName) throws Exception
 	{
+		
+		if (graph == null) {
+			logger.error("The input graph is null.");
+			return;
+		}		
+
 //		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		FileOutputStream f = new FileOutputStream(fileName);
 		ObjectOutputStream out = new ObjectOutputStream(f);
