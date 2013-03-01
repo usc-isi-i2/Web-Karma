@@ -35,6 +35,10 @@ text.FakeRootLink {
   stroke-width: 1px;
 }
 
+.link.DataPropertyOfColumnLink, .link.ColumnSubClassLink, .link.ClassInstanceLink, .link.horizontalDataPropertyLink {
+	stroke: blue;
+}
+
 rect {
   fill: white;
   stroke: black;
@@ -42,19 +46,19 @@ rect {
   fill-opacity:0.80;
 }
 
-g.DataProperty rect{
+g.ColumnNode rect{
 	fill:black;
 }
 
-g.Class rect {
+g.InternalNode rect {
 	fill: #D3D3D3;
 	z-index: 1;
 }
 
-g.DataProperty:hover {
+g.ColumnNode:hover {
 	cursor: pointer;
 }
-g.Class:hover {
+g.InternalNode:hover {
 	cursor: pointer;
 }
 
@@ -71,7 +75,7 @@ text.LinkLabel:hover {
 	cursor: pointer;
 }
 
-g.Class.highlightOverlay rect{
+g.InternalNode.highlightOverlay rect{
 	fill: #9C9C9C;
 	stroke: black;
 	z-index:10;

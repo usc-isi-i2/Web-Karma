@@ -2,7 +2,6 @@ package edu.isi.karma.webserver.helper;
 
 import java.io.File;
 import java.sql.Connection;
-//import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
@@ -15,6 +14,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+//import java.sql.ResultSet;
 
 public class CreateNodeDataForTable {
 

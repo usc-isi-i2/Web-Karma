@@ -93,3 +93,11 @@ div#OntologyAlternativeLinksPanel input {
 	font-size: 10px;
 }
 
+.ui-autocomplete-category {
+    font-weight: bold;
+    font-size: 10px;
+    /*padding: .2em .4em;
+    margin: 8px 0 2px;*/
+    line-height: 1.5;
+  }
+

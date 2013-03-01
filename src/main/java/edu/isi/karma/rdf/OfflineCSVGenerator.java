@@ -19,11 +19,11 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 
 import edu.isi.karma.imp.csv.CSVFileImport;
+import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
-import edu.isi.karma.service.Namespaces;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.mediator.gav.main.MediatorException;
 

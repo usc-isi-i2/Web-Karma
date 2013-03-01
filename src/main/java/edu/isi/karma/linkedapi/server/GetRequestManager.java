@@ -9,11 +9,11 @@ import org.apache.log4j.Logger;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
-import edu.isi.karma.service.MimeType;
-import edu.isi.karma.service.SerializationLang;
-import edu.isi.karma.service.Service;
-import edu.isi.karma.service.ServiceLoader;
-import edu.isi.karma.service.ServicePublisher;
+import edu.isi.karma.model.serialization.MimeType;
+import edu.isi.karma.model.serialization.SerializationLang;
+import edu.isi.karma.model.serialization.WebServiceLoader;
+import edu.isi.karma.model.serialization.WebServicePublisher;
+import edu.isi.karma.rep.sources.WebService;
 
 
 public class GetRequestManager extends LinkedApiRequestManager {
@@ -33,7 +33,7 @@ public class GetRequestManager extends LinkedApiRequestManager {
 		Model m = null;
 		
 		if (getResourceType() == ResourceType.Service) {
-			m = ServiceLoader.getServiceJenaModelByUri(getServiceUri());
+			m = WebServiceLoader.getInstance().getSourceJenaModel(getServiceUri());
 			if (m == null) {
 				getResponse().setContentType(MimeType.TEXT_PLAIN);
 				pw.write("Could not find the service " + getServiceId() + " in service repository");
@@ -42,17 +42,18 @@ public class GetRequestManager extends LinkedApiRequestManager {
 		}
 		
 		if (getResourceType() == ResourceType.Input || getResourceType() == ResourceType.Output) {
-			Service s = ServiceLoader.getServiceByUri(getServiceUri());
+			WebService s = WebServiceLoader.getInstance().getSourceByUri(getServiceUri());
 			if (s == null) {
 				getResponse().setContentType(MimeType.TEXT_PLAIN);
 				pw.write("Could not find the service " + getServiceId() + " in service repository");
 				return;
 			}
 			
-			edu.isi.karma.service.Model inputModel = s.getInputModel();
-			edu.isi.karma.service.Model outputModel = s.getOutputModel();
+			edu.isi.karma.rep.model.Model inputModel = s.getInputModel();
+			edu.isi.karma.rep.model.Model outputModel = s.getOutputModel();
 			String sparql;
 			
+			WebServicePublisher servicePublisher = new WebServicePublisher(s);
 			if (getResourceType() == ResourceType.Input) {
 				if (getFormat().equalsIgnoreCase(SerializationLang.SPARQL)) {
 					sparql = inputModel.getSparqlConstructQuery(null);
@@ -60,7 +61,7 @@ public class GetRequestManager extends LinkedApiRequestManager {
 					pw.write(sparql);
 					return;
 				} else
-					m = ServicePublisher.generateInputPart(s);
+					m = servicePublisher.generateInputPart();
 			}
 
 			if (getResourceType() == ResourceType.Output) {
@@ -70,7 +71,7 @@ public class GetRequestManager extends LinkedApiRequestManager {
 					pw.write(sparql);
 					return;
 				} else
-					m = ServicePublisher.generateOutputPart(s);;
+					m = servicePublisher.generateOutputPart();;
 			}
 		}
 		

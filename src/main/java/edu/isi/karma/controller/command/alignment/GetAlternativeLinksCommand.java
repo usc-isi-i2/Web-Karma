@@ -22,6 +22,7 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,8 +34,8 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.Vertex;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetAlternativeLinksCommand extends Command {
@@ -78,11 +79,11 @@ public class GetAlternativeLinksCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Alignment alignment = AlignmentManager.Instance().getAlignment(
-				alignmentId);
-		final List<LabeledWeightedEdge> edges = alignment.getAlternatives(
-				nodeId, true);
-		final LabeledWeightedEdge currentLink = alignment.getAssignedLink(nodeId); 
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		final List<Link> links = alignment.getAllPossibleLinksToNode(nodeId);
+		Set<Link> currentIncomingLinks = alignment.getCurrentLinksToNode(nodeId);
+		final Link currentLink = (currentIncomingLinks != null && !currentIncomingLinks.isEmpty()) ?
+				currentIncomingLinks.iterator().next() : null;
 
 		UpdateContainer upd = new UpdateContainer(new AbstractUpdate() {
 			@Override
@@ -93,30 +94,24 @@ public class GetAlternativeLinksCommand extends Command {
 
 				try {
 					obj.put(JsonKeys.updateType.name(), "GetAlternativeLinks");
-					for (LabeledWeightedEdge edge : edges) {
+					for (Link link : links) {
 						
-						String edgeLabel = "";
-						if(edge.getPrefix() != null && !edge.getPrefix().equals(""))
-							edgeLabel = edge.getPrefix() + ":" + edge.getLocalLabel();
-						else
-							edgeLabel = edge.getLocalLabel();
+						String linkLabel = link.getLabel().getLocalNameWithPrefix();
 						
-						String edgeSourceLabel = "";
-						Vertex edgeSource = edge.getSource();
-						if(edgeSource.getPrefix() != null && !edgeSource.getPrefix().equals(""))
-							edgeSourceLabel = edgeSource.getPrefix() + ":" + edgeSource.getLocalID();
-						else
-							edgeSourceLabel = edgeSource.getLocalID();
+						Node edgeSource = link.getSource();
+						String edgeSourceLabel = edgeSource.getLocalIdWithPrefixIfAvailable();
 						
 						JSONObject edgeObj = new JSONObject();
-						edgeObj.put(JsonKeys.edgeId.name(), edge.getID());
-						edgeObj.put(JsonKeys.edgeLabel.name(), edgeLabel);
+						edgeObj.put(JsonKeys.edgeId.name(), link.getId());
+						edgeObj.put(JsonKeys.edgeLabel.name(), linkLabel);
 						edgeObj.put(JsonKeys.edgeSource.name(),edgeSourceLabel);
-						if(currentLink != null && edge.getID().equals(currentLink.getID()))
+//						if (currentLink != null && link.getLabel().getUri().equals(currentLink.getLabel().getUri())
+//								&& edgeSource.getLabel().getUri().equals(currentLink.getLabel().getUri())) {
+						if (link == currentLink) {
 							edgeObj.put(JsonKeys.selected.name(), true);
-						else
+						} else {
 							edgeObj.put(JsonKeys.selected.name(), false);
-
+						}
 						edgesArray.put(edgeObj);
 					}
 					obj.put(JsonKeys.Edges.name(), edgesArray);

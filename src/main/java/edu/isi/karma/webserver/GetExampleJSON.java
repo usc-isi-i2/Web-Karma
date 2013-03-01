@@ -37,6 +37,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
@@ -100,14 +101,14 @@ public class GetExampleJSON extends HttpServlet {
 				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf")) {
 					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
 					try {
-						mgr.doImportWithoutCacheUpdate(ontology);
+						mgr.doImport(ontology);
 					} catch (Exception t) {
 						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
 					}
 				}
 			}
 			// update the cache at the end when all files are added to the model
-			mgr.initCache();
+			mgr.updateCache();
 		} else {
 			logger.info("No directory for preloading ontologies exists.");
 		}
@@ -115,7 +116,7 @@ public class GetExampleJSON extends HttpServlet {
 		//mariam
 		//File file = new File("../demofiles/usc_faculty.csv");
 		
-//		File file = new File("./exper.csv");
+//		File file = new File("SampleData/CSV/WellData.csv");
 //		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
 //		try {
 //			imp.generateWorksheet();

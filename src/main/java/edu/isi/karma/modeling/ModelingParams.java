@@ -21,19 +21,18 @@
 
 package edu.isi.karma.modeling;
 
-import edu.isi.karma.service.Namespaces;
 
 public interface ModelingParams{
 
-	// URIs
-	public static String THING_URI = Namespaces.OWL + "Thing";
-	public static String HAS_SUBCLASS_URI = "http://example.com#hasSubClass";
-	public static final String SUBCLASS_URI = Namespaces.RDFS + "subClassOf"; 
-
 	// Building Graph
-	public static double DEFAULT_WEIGHT = 1.0;	
-	public static double MIN_WEIGHT = 0.000001; // need to be fixed later	
-	public static double MAX_WEIGHT = 1000000;
+	public static double PROPERTY_USER_PREFERRED_WEIGHT = 10;
+	public static double PROPERTY_UI_PREFERRED_WEIGHT = 90;
+	public static double PROPERTY_DIRECT_WEIGHT = 100.0;	
+	public static double PROPERTY_INDIRECT_WEIGHT = 110;
+	public static double PROPERTY_WITH_ONLY_DOMAIN_WEIGHT = 1000;
+	public static double PROPERTY_WITH_ONLY_RANGE_WEIGHT = 1000;
+	public static double SUBCLASS_WEIGHT = 10000;
+	public static double PROPERTY_WITHOUT_DOMAIN_RANGE_WEIGHT = 50000;
 
 	// Prefixes
 	public static String KARMA_SOURCE_PREFIX = "http://isi.edu/integration/karma/sources/";

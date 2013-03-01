@@ -74,7 +74,7 @@ public class BacktrackingLineSearch {
 		int iteration = 1 ;
 		lam1 = 1.0 ;
 		while(true) {
-			Prnt.prn("BacktrackingLineSearch iteration #" + iteration + " and lambda = " + lam1) ;
+//			Prnt.prn("BacktrackingLineSearch iteration #" + iteration + " and lambda = " + lam1) ;
 			
 			for(int i=0;i<dim;i++) 
 				crfModel.weights[i] = currWeights[i] + lam1 * searchDir[i] ; 

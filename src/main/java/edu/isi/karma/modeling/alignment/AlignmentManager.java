@@ -44,6 +44,11 @@ public class AlignmentManager {
 	public Alignment getAlignment(String alignmentId) {
 		return alignmentMap.get(alignmentId);
 	}
+	
+	public Alignment getAlignment(String workspaceId, String vWorksheetId) {
+		String alignmentId = constructAlignmentId(workspaceId, vWorksheetId);
+		return getAlignment(alignmentId);
+	}
 
 	public void removeWorkspaceAlignments(String workspaceId) {
 		ArrayList<String> keysToBeRemoved = new ArrayList<String>();

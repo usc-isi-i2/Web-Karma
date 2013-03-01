@@ -32,14 +32,24 @@ import java.util.regex.Pattern;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.Vertex;
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.InternalNode;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LiteralNode;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.SimpleLink;
 
 
 public class ModelReader {
 	
-	private static String examplesDir = "/Users/mohsen/Dropbox/Service Modeling/research/";
-	private static String typePredicate = "rdf:type";
+//	public static String varPrefix = "var:";
+	public static String attPrefix = "att:";
+	
+	private static String importDir = "/Users/mohsen/Dropbox/Service Modeling/texts/";
+	private static String exportDir = "/Users/mohsen/Dropbox/Service Modeling/dots/";
+	private static String typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+	private static HashMap<String, String> prefixNsMapping;
 
 	static class Statement {
 		
@@ -78,10 +88,12 @@ public class ModelReader {
 		
 			if (serviceModels != null) {
 				for (ServiceModel sm : serviceModels) {
+					sm.computeMatchedSubGraphs(null);
 					sm.computeShortestPaths();
 					sm.print();
-					sm.exportToGraphviz(examplesDir);
-					sm.exportPathsToGraphviz(examplesDir);
+					sm.exportModelsToGraphviz(exportDir);
+					sm.exportMatchedSubGraphToGraphviz(exportDir);
+					sm.exportShortestPathsToGraphviz(exportDir);
 					
 				}
 			}
@@ -91,11 +103,31 @@ public class ModelReader {
 		}
 	}
 	
-	private static List<ServiceModel> importServiceModels() throws IOException {
+	private static void initPrefixNsMapping() {
+		
+		prefixNsMapping = new HashMap<String, String>();
+		
+		prefixNsMapping.put("geo", "http://www.w3.org/2003/01/geo/wgs84_pos#");
+		prefixNsMapping.put("gn", "http://www.geonames.org/ontology#");
+		prefixNsMapping.put("schema", "http://schema.org/");
+		prefixNsMapping.put("dbpprop", "http://dbpedia.org/property/");
+		prefixNsMapping.put("dbpedia-owl", "http://dbpedia.org/ontology/");
+		prefixNsMapping.put("skos", "http://www.w3.org/2004/02/skos/core#");
+		prefixNsMapping.put("tzont", "http://www.w3.org/2006/timezone#");
+		prefixNsMapping.put("qudt", "http://qudt.org/1.1/schema/qudt#");
+		prefixNsMapping.put("yago", "http://dbpedia.org/class/yago/");
+		prefixNsMapping.put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+		prefixNsMapping.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		prefixNsMapping.put("foaf", "http://xmlns.com/foaf/0.1/");
+	}
+	
+	public static List<ServiceModel> importServiceModels() throws IOException {
+		
+		initPrefixNsMapping();
 		
 		List<ServiceModel> serviceModels = new ArrayList<ServiceModel>();
 		
-		File dir = new File(examplesDir);
+		File dir = new File(importDir);
 		File[] modelExamples = dir.listFiles();
 
 		Pattern fileNamePattern = Pattern.compile("s[0-9](|[0-9])-.*\\.txt", Pattern.CASE_INSENSITIVE);
@@ -151,7 +183,7 @@ public class ModelReader {
 					statements.add(st);
 				}
 				
-				DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> graph = buildGraphsFromStatements2(statements);
+				DirectedWeightedMultigraph<Node, Link> graph = buildGraphsFromStatements2(statements);
 				if (graph != null)
 					serviceModel.addModel(graph);
 			
@@ -165,33 +197,33 @@ public class ModelReader {
 	}
 
 	
-//	private static DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> buildGraphsFromStatements(List<Statement> statements) {
+//	private static DirectedWeightedMultigraph<Node, Link> buildGraphsFromStatements(List<Statement> statements) {
 //		
-//		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> graph = 
-//				new DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>(LabeledWeightedEdge.class);
+//		DirectedWeightedMultigraph<Node, Link> graph = 
+//				new DirectedWeightedMultigraph<Node, Link>(Link.class);
 //		
 //		if (statements == null || statements.size() == 0)
 //			return null;
 //		
-//		HashMap<String, Vertex> uri2Nodes = new HashMap<String, Vertex>();
+//		HashMap<String, Node> uri2Nodes = new HashMap<String, Node>();
 //
 //		for (Statement st : statements) {
 //			
-//			Vertex subj = uri2Nodes.get(st.getSubject());
+//			Node subj = uri2Nodes.get(st.getSubject());
 //			if (subj == null) {
-//				subj = new Vertex(st.getSubject(), null, null);
+//				subj = new Node(st.getSubject(), null, null);
 //				uri2Nodes.put(st.getSubject(), subj);
-//				graph.addVertex(subj);
+//				graph.addNode(subj);
 //			}
 //
-//			Vertex obj = uri2Nodes.get(st.getObject());
+//			Node obj = uri2Nodes.get(st.getObject());
 //			if (obj == null) {
-//				obj = new Vertex(st.getObject(), null, null);
+//				obj = new Node(st.getObject(), null, null);
 //				uri2Nodes.put(st.getObject(), obj);
-//				graph.addVertex(obj);
+//				graph.addNode(obj);
 //			}
 //			
-//			LabeledWeightedEdge e = new LabeledWeightedEdge(st.getPredicate(), null, null);
+//			Link e = new Link(st.getPredicate(), null, null);
 //			graph.addEdge(subj, obj, e);
 //			
 //		}
@@ -199,22 +231,45 @@ public class ModelReader {
 //		return graph;
 //	}
 	
-	private static DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> buildGraphsFromStatements2(List<Statement> statements) {
+	private static String getUri(String prefixedUri) {
 		
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> graph = 
-				new DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>(LabeledWeightedEdge.class);
+		String uri = prefixedUri;
+		String prefix = "";
+		String name = "";
+		if (prefixedUri.indexOf(":") != -1) {
+			prefix = prefixedUri.substring(0 , prefixedUri.indexOf(":")).trim();
+			name = prefixedUri.substring(prefixedUri.indexOf(":") + 1 , prefixedUri.length()).trim();
+			if (prefixNsMapping.containsKey(prefix)) {
+				uri = prefixNsMapping.get(prefix) + name;
+			}
+		}
+		return uri;
+	}
+	
+	private static DirectedWeightedMultigraph<Node, Link> buildGraphsFromStatements2(List<Statement> statements) {
+		
+		DirectedWeightedMultigraph<Node, Link> graph = 
+				new DirectedWeightedMultigraph<Node, Link>(Link.class);
 		
 		if (statements == null || statements.size() == 0)
 			return null;
 		
 		// Assumption: there is only one rdf:type for each URI
-		HashMap<String, Vertex> uri2Classes = new HashMap<String, Vertex>();
+		HashMap<String, Node> uri2Classes = new HashMap<String, Node>();
 		for (Statement st : statements) {
 			
-			if (st.getPredicate().equalsIgnoreCase(typePredicate)) {
+			String subjStr = st.getSubject();
+			String predicateStr = st.getPredicate();
+			String objStr = st.getObject();
+			
+			subjStr = getUri(subjStr);
+			predicateStr = getUri(predicateStr);
+			objStr = getUri(objStr);
+
+			if (predicateStr.equalsIgnoreCase(typePredicate)) {
 				
-				Vertex classNode = new Vertex(st.getObject(), null, null);
-				uri2Classes.put(st.getSubject(), classNode);
+				Node classNode = new InternalNode(objStr, new Label(objStr));
+				uri2Classes.put(subjStr, classNode);
 				graph.addVertex(classNode);
 				
 			}
@@ -222,22 +277,36 @@ public class ModelReader {
 		
 		for (Statement st : statements) {
 			
-			if (st.getPredicate().equalsIgnoreCase(typePredicate)) 
+			String subjStr = st.getSubject();
+			String predicateStr = st.getPredicate();
+			String objStr = st.getObject();
+			
+			subjStr = getUri(subjStr);
+			predicateStr = getUri(predicateStr);
+			objStr = getUri(objStr);
+
+			if (predicateStr.equalsIgnoreCase(typePredicate)) 
 				continue;
 			
-			Vertex subj = uri2Classes.get(st.getSubject());
+			Node subj = uri2Classes.get(subjStr);
 			if (subj == null) {
-				subj = new Vertex(st.getSubject(), null, null);
+				subj = new InternalNode(subjStr, new Label(subjStr));
 				graph.addVertex(subj);
 			}
 
-			Vertex obj = uri2Classes.get(st.getObject());
+			Node obj = uri2Classes.get(objStr);
 			if (obj == null) {
-				obj = new Vertex(st.getObject(), null, null);
+				if (objStr.startsWith(attPrefix))
+					obj = new ColumnNode(objStr, null, null);
+				else if (objStr.indexOf(":") == -1 && objStr.indexOf("\"") != -1)
+					obj = new LiteralNode(objStr, objStr, null);
+				else
+					obj = new InternalNode(objStr, new Label(objStr));
+				
 				graph.addVertex(obj);
 			}
 			
-			LabeledWeightedEdge e = new LabeledWeightedEdge(st.getPredicate(), null, null);
+			Link e = new SimpleLink(predicateStr, new Label(predicateStr));
 			graph.addEdge(subj, obj, e);
 			
 		}

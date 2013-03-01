@@ -23,25 +23,25 @@ package edu.isi.karma.modeling.ontology;
 
 import java.util.List;
 
-import edu.isi.karma.modeling.alignment.URI;
+import edu.isi.karma.rep.alignment.Label;
 
 public class OntologyTreeNode {
 	// should change the location of URI class to package karma.modeling 
-	private URI uri;
+	private Label label;
 	private OntologyTreeNode parent;
 	private List<OntologyTreeNode> children;
 	
-	public OntologyTreeNode(URI uri, OntologyTreeNode parent, List<OntologyTreeNode> children) {
-		this.uri = uri;
+	public OntologyTreeNode(Label label, OntologyTreeNode parent, List<OntologyTreeNode> children) {
+		this.label = label;
 		this.parent = parent;
 		this.children = children;
 	}
 	
-	public URI getUri() {
-		return uri;
+	public Label getLabel() {
+		return label;
 	}
-	public void setUri(URI uri) {
-		this.uri = uri;
+	public void setLabel(Label label) {
+		this.label = label;
 	}
 	public OntologyTreeNode getParent() {
 		return parent;
@@ -66,11 +66,11 @@ public class OntologyTreeNode {
 	
 	private void printRecursively(OntologyTreeNode node, int level) {
 		for (int i = 0; i < level; i++) System.out.print("---"); System.out.print(" ");
-		System.out.println("URI: " + node.getUri().getUriString());
+		System.out.println("URI: " + node.getLabel().getUri());
 		for (int i = 0; i < level; i++) System.out.print("   "); System.out.print(" ");
-		System.out.println("Label: " + node.getUri().getRdfsLabel());
+		System.out.println("Label: " + node.getLabel().getRdfsLabel());
 		for (int i = 0; i < level; i++) System.out.print("   "); System.out.print(" ");
-		System.out.println("Comment: " + node.getUri().getRdfsComment());
+		System.out.println("Comment: " + node.getLabel().getRdfsComment());
 		if (node.children == null || node.children.size() == 0)
 			return;
 		for (OntologyTreeNode child : node.getChildren()) {

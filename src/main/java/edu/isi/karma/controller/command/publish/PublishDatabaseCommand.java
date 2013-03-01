@@ -42,7 +42,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.semantictypes.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.JDBCUtilFactory;
 import edu.isi.karma.view.VWorkspace;
@@ -241,6 +241,7 @@ public class PublishDatabaseCommand extends Command {
 		 * @param conn
 		 * @throws SQLException
 		 */
+		@SuppressWarnings("unused")
 		private void createSpatialTable(String tableName, Collection<String> colNames,Connection conn) throws SQLException{
 			//add escaping in case we have unusual chars
 			tableName=dbUtil.prepareName(tableName);

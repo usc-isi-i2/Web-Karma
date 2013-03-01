@@ -26,8 +26,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
+import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.AlignToOntology;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.CellValue;
@@ -107,23 +110,22 @@ public class SplitByCommaCommand extends WorksheetCommand {
 		vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 
 		vw.update(c);
-		// c.add(new SemanticTypesUpdate(wk, vWorksheetId));
 		
 		// Get the alignment update if any
 		if (!wk.getSemanticTypes().getListOfTypes().isEmpty()) {
-			OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-			SemanticTypeUtil.computeSemanticTypesSuggestion(wk, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
-			
-			AlignToOntology align = new AlignToOntology(wk, vWorkspace, vWorksheetId);
 			try {
-				align.alignAndUpdate(c, true);
+				Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
+				// Compute suggestions for the new column added
+				OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+				SemanticTypeUtil.computeSemanticTypesSuggestion(wk, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr, alignment);
+				// Add the alignment update
+				c.add(new SemanticTypesUpdate(wk, vWorksheetId, alignment));
+				c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vw, alignment));
 			} catch (Exception e) {
 				return new UpdateContainer(new ErrorUpdate(
 						"Error occured while generating the model for the source."));
 			}
 		}
-		
-		
 		return c;
 	}
 

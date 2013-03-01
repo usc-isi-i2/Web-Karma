@@ -34,7 +34,6 @@ and related projects, please see: http://www.isi.edu/integration
 		<link rel="stylesheet" type="text/css" href="./css/command_History.css" />
 		<link rel="stylesheet" type="text/css" href="./css/tables_workspace.css" />
 		<link rel="stylesheet" type="text/css" href="./css/jquery.fileupload-ui.css" />
-		<!-- <link rel="stylesheet" type="text/css" href="./css/uploadify.css" /> -->
 		<link rel="stylesheet" type="text/css" href="./css/CSVImport.css" />
 		<link rel="stylesheet" type="text/css" href="./css/DatabaseImport.css" />
 		<link rel="stylesheet" type="text/css" href="./css/ServiceImport.css" />
@@ -49,12 +48,11 @@ and related projects, please see: http://www.isi.edu/integration
 		
 		
 		<!-- Third Party JavaScript files		 -->
-		<script type="text/javascript" src="js/jquery-1.6.2.js"></script>
+		<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+		
 		<script type="text/javascript" src="js/jquery.tmpl.min.js"></script>
 		<script type="text/javascript" src="js/jquery.hoverIntent.js"></script>
-		<!-- <script type="text/javascript" src="js/jquery.uploadify.v2.1.4.js"></script>
-		<script type="text/javascript" src="js/swfobject.js"></script> -->
 		<script type="text/javascript" src="js/jquery.jstree.js"></script>
 		<script type="text/javascript" src="js/jquery.qtip.min.js"></script>
 <!-- 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script> -->
@@ -88,6 +86,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<script type="text/javascript" src="js/cleaning.js"></script>
 		<script type="text/javascript" src="js/services.js"></script>
 		<script type="text/javascript" src="js/d3-alignment-vis.js"></script>
+		<script type="text/javascript" src="js/reset-options.js"></script>
 		
 		<script type="text/javascript">
 			/* Load and parse initial JSON */
@@ -169,8 +168,6 @@ and related projects, please see: http://www.isi.edu/integration
 			        	$.sticky("File upload failed!");	
 			        },
 			        dropZone: $(document)
-			    }).qtip({
-			    	content: {text: "Supported file formats include CSV, XML, JSON, Excel spreadsheet, and OWL ontology"}
 			    });
 			    
 			    // Enable iframe cross-domain access via redirect option:
@@ -206,6 +203,12 @@ and related projects, please see: http://www.isi.edu/integration
 				
 				// Assign style and handlers to column heading menu
 				styleAndAssignHandlersToColumnHeadingMenu();
+				
+				// Assign handler and style to the Reset options (in reset-options.js)
+				styleAndAssignHandlerToResetButton();
+
+				// Assign style and handler to the merge button
+				styleAndAssignHandlersToMergeButton();
 				
 				// When the user changes header line index
 				$('.CSVImportOption').change(function() {
@@ -249,14 +252,14 @@ and related projects, please see: http://www.isi.edu/integration
 								
 								if(cloneTable.data("currentTable") == tableID) {
 									cloneTable.css({position:'fixed',
-							                 top:0, left:288+x});
+							                 top:0, left:280+x});
 									return false;
 								} else {
 									$("table#HeaderScrollPanel tr").remove();
 							        var theadClone = $("table#"+tableID +" thead").clone();
 							        cloneTable.append(theadClone);
 							        cloneTable.css({position:'fixed',
-							                 top:0, left:288+x});
+							                 top:0, left:280+x});
 							                 
 							        $.each($("table#"+tableID+" thead tr"), function(trIndex, originalRow){
 							        	var dupRow = $("thead tr", cloneTable).get(trIndex);
@@ -307,7 +310,6 @@ and related projects, please see: http://www.isi.edu/integration
 				$(document).unbind('keydown').bind('keydown', function (event) {
 				    var doPrevent = false;
 				    if (event.keyCode === 8) {
-				    	// console.log("Delete button detected!");
 				    	var d = event.srcElement || event.target;
 				        if ((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD')) 
 				            || d.tagName.toUpperCase() === 'TEXTAREA') {
@@ -341,12 +343,15 @@ and related projects, please see: http://www.isi.edu/integration
 	<body>
 		<h1 id="banner">Karma <span id="karma-version">v1.42</span></h1>
 		<table id="topMenuBar">
-<tr>
+			<tr>
 				<td>
 					<button id="importDatabaseTableButton" class="importButton" align="top">Import Database Table</button>
 				</td>
 				<td>
 					<button id="importFromServiceButton" class="importButton" align="top">Import from Service</button>
+				</td>
+				<td>
+					<button id="mergeButton" class="importButton" align="top">Merge</button>
 				</td>
 				<td>
 					<div class="container">
@@ -377,6 +382,7 @@ and related projects, please see: http://www.isi.edu/integration
 				</td>
 			</tr>
 		</table>
+		<button id="resetButton" align="right">Reset</button>
 		<div id="commHistoryAndWorkspace">
 			<div id="commandHistory" class="ui-corner-top">
 				<div id="titleCommand" class="ui-corner-top">
@@ -620,26 +626,26 @@ and related projects, please see: http://www.isi.edu/integration
 				</table>
 				<br />
 				<button id="addSemanticType">Add synonym semantic type</button><br />
-				<input type="checkbox" id="chooseClassKey" />
+				<input class="smallSizedFont" type="checkbox" id="chooseClassKey" />
 				<label for="chooseClassKey" class="smallSizedFont">Mark as key for the class.</label><br />
 				
 				<button id="semanticTypingAdvancedOptions">Advanced Options</button><br />
 				<div id="semanticTypingAdvacedOptionsDiv" style="display: none">
 					<table>
 						<tr class="smallSizedFont">
-							<td><input type="checkbox" id="isUriOfClassOption"></input></td>
+							<td><input type="checkbox" id="isUriOfClass"></input></td>
 							<td style="text-align: right;">contains URI for node:</td>
-							<td><input type="text" /></td>
+							<td><input type="text" id="isUriOfClassTextBox"/></td>
 						</tr>
 						<tr class="smallSizedFont">
-							<td><input type="checkbox" id="isSubclassOfClassOption"></input></td>
+							<td><input type="checkbox" id="isSubclassOfClass"></input></td>
 							<td style="text-align: right;">specifies class for node:</td>
-							<td><input type="text" /></td>
+							<td><input type="text" id="isSubclassOfClassTextBox"/></td>
 						</tr>
 						<tr class="smallSizedFont">
-							<td><input type="checkbox" id="isPropertyOfColumnOption"></input></td>
+							<td><input type="checkbox" id="isSpecializationForEdge"></input></td>
 							<td style="text-align: right;">specifies specialization for edge:</td>
-							<td><input type="text" /></td>
+							<td><input type="text" id="isSpecializationForEdgeTextBox"/></td>
 						</tr>
 					</table>
 				</div>
@@ -805,6 +811,18 @@ and related projects, please see: http://www.isi.edu/integration
 			</table>
 			<br />
 			<span class="error" style="display: none" id="fileFormatError">Please select the file format!</span>
+		</div>
+		<div id="resetDialogDiv" style="display: none">
+			<table>
+				<tr class="smallSizedFont" >
+					<td><input type="checkbox" id="forgetSemanticTypes"/></td>
+					<td><label for="forgetSemanticTypes">Semantic Types</label></td>
+				</tr>
+				<tr class="smallSizedFont">
+					<td><input type="checkbox" id="forgetModels"/></td>
+					<td><label for="forgetModels">Model Histories</label></td>
+				</tr>
+			</table>
 		</div>
 	</body>
 </html>

@@ -24,12 +24,16 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.OntologyHierarchyUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetOntologyClassHierarchyCommand extends Command {
+	private final String vWorksheetId;
 
-	protected GetOntologyClassHierarchyCommand(String id) {
+	protected GetOntologyClassHierarchyCommand(String id, String vWorksheetId) {
 		super(id);
+		this.vWorksheetId = vWorksheetId;
 	}
 
 	@Override
@@ -55,7 +59,9 @@ public class GetOntologyClassHierarchyCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
-		c.add(new OntologyHierarchyUpdate(vWorkspace.getWorkspace().getOntologyManager().getOntCache().getClassHierarchy(), "OntologyClassHierarchyUpdate"));
+		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		c.add(new OntologyHierarchyUpdate(vWorkspace.getWorkspace().getOntologyManager().getClassHierarchy(), 
+				"OntologyClassHierarchyUpdate", true, alignment));
 		return c;
 	}
 

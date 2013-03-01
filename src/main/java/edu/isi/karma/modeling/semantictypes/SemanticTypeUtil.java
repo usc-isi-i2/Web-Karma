@@ -32,16 +32,17 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.modeling.alignment.URI;
+import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler.ColumnFeature;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.metadata.Tag;
-import edu.isi.karma.rep.semantictypes.SemanticType;
-import edu.isi.karma.rep.semantictypes.SemanticTypes;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -175,14 +176,14 @@ public class SemanticTypeUtil {
 				type = topLabel.split("\\|")[1];
 			}
 
-			URI typeURI = ontMgr.getURIFromString(type);
+			Label typeURI = ontMgr.getUriLabel(type);
 			if(typeURI == null) {
 				logger.error("Could not find the resource " + type + " in ontology model!");
 				continue;
 			}
-			URI domainURI = null;
+			Label domainURI = null;
 			if (!domain.equals(""))
-				domainURI = ontMgr.getURIFromString(domain);
+				domainURI = ontMgr.getUriLabel(domain);
 			SemanticType semtype = new SemanticType(path.getLeaf().getId(),typeURI, domainURI, SemanticType.Origin.CRFModel,scores.get(0), false);
 
 			// Check if the user already provided a semantic type manually
@@ -312,7 +313,7 @@ public class SemanticTypeUtil {
 	}
 
 	public static void computeSemanticTypesSuggestion(Worksheet worksheet,
-			CRFModelHandler crfModelHandler, OntologyManager ontMgr) {
+			CRFModelHandler crfModelHandler, OntologyManager ontMgr, Alignment alignment) {
 		
 		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : paths) {
@@ -339,11 +340,78 @@ public class SemanticTypeUtil {
 				continue;
 			}
 			
+			/** Remove the labels that are not in the ontology or are already used as the semantic type **/
+			List<String> removeLabels = new ArrayList<String>();
+			for (int i=0; i<labels.size(); i++) {
+				String label = labels.get(i);
+				SemanticType existingSemanticType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(path.getLeaf().getId());
+				/** Check if not in ontology **/
+				if (label.contains("|")) {
+					Label domainUri = ontMgr.getUriLabel(label.split("\\|")[0]);
+					Label typeUri = ontMgr.getUriLabel(label.split("\\|")[1]);
+					
+					// Remove from the list if URI not present in the model
+					if (domainUri == null || typeUri == null) {
+						removeLabels.add(label);
+						continue;
+					}
+					// Check if it is being used as the semantic type already
+					if (existingSemanticType != null && 
+							existsInSemanticTypesCollection(typeUri, domainUri, existingSemanticType)) {
+							removeLabels.add(label);
+					}
+					
+				} else {
+					Label typeUri = ontMgr.getUriLabel(label);
+					// Remove from the list if URI not present in the model
+					if (typeUri == null) {
+						removeLabels.add(label);
+						continue;
+					}
+					// Check if it is being used as the semantic type already
+					if (existingSemanticType != null && 
+							existsInSemanticTypesCollection(typeUri, null, existingSemanticType)) {
+						removeLabels.add(label);
+					}
+				}
+			}
+			for (String removeLabel : removeLabels) {
+				int idx = labels.indexOf(removeLabel);
+//				System.out.println("Removing " + removeLabel);
+//				logger.info("Removing " + removeLabel);
+				labels.remove(removeLabel);
+				scores.remove(idx);
+			}
+			if (labels.size() == 0) {
+				continue;
+			}
+
 			CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
 			worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(), columnModel);
 		}
 	}
 	
+	private static boolean existsInSemanticTypesCollection(Label typeLabel, Label domainLabel, SemanticType existingSemanticType) {
+		if (typeLabel.getUri().equals(existingSemanticType.getType().getUri())) {
+			if (domainLabel == null) {
+				if(existingSemanticType.getDomain() == null)
+					return true;
+				else
+					return false;
+			} else {
+				if (existingSemanticType.getDomain() == null)
+					return false;
+				else {
+					if (existingSemanticType.getDomain().getUri().equals(domainLabel.getUri()))
+						return true;
+					else
+						return false;
+				}
+			}
+		}
+		return false;
+	}
+
 	public static void computeSemanticTypesForAutoModel(Worksheet worksheet,
 			CRFModelHandler crfModelHandler, OntologyManager ontMgr) {
 		

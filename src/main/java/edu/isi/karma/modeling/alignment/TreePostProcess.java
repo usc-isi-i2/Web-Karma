@@ -29,166 +29,124 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
+
 public class TreePostProcess {
 	
 	static Logger logger = Logger.getLogger(TreePostProcess.class);
 
-	private DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree;
-	private Vertex root = null;
-	private List<Vertex> dangledVertexList;
+	private DirectedWeightedMultigraph<Node, Link> tree;
+	private Node root = null;
+	private Node thingNode = null;
+//	private List<Node> dangledVertexList;
 
-	public TreePostProcess(WeightedMultigraph<Vertex, LabeledWeightedEdge> tree) {
+	// Constructor
+	
+	public TreePostProcess(WeightedMultigraph<Node, Link> tree, Node thingNode) {
 		
-		this.tree = (DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>)GraphUtil.asDirectedGraph(tree);
-		dangledVertexList = new ArrayList<Vertex>();
+		this.tree = (DirectedWeightedMultigraph<Node, Link>)GraphUtil.asDirectedGraph(tree);
+		this.thingNode = thingNode;
 		selectRoot(findPossibleRoots());
-		updateLinksDirections(this.root, null);
-		removeDanglingNodes();
+
+//		dangledVertexList = new ArrayList<Node>();
+//		updateLinksDirections(this.root, null);
+//		removeDanglingNodes();
+		
 	}
 	
+	// Public Methods
 	
+	public DirectedWeightedMultigraph<Node, Link> getTree() {
+		return this.tree;
+	}
 	
-	private List<Vertex> findPossibleRoots() {
+	public Node getRoot() {
+		return this.root;
+	}
+	
+	// Private Methods
+	
+	private List<Node> findPossibleRoots() {
 
-		List<Vertex> possibleRoots = new ArrayList<Vertex>();
+		List<Node> possibleRoots = new ArrayList<Node>();
+
+		// If tree contains the Thing, we return it as the root
+		for (Node v: this.tree.vertexSet()) 
+			if (v.equals(this.thingNode)) {
+				possibleRoots.add(v);
+				return possibleRoots;
+			}
 
 		int maxReachableNodes = -1;
 		int reachableNodes = -1;
 		
-		List<Vertex> vertexList = new ArrayList<Vertex>();
+		List<Node> vertexList = new ArrayList<Node>();
 		List<Integer> reachableNodesList = new ArrayList<Integer>();
 		
-//		UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedTree = 
-//			new AsUndirectedGraph<Vertex, LabeledWeightedEdge>(this.tree);
-
-//		boolean connectedToSemanticType = false;
-		for (Vertex v: this.tree.vertexSet()) {
-			BreadthFirstIterator<Vertex, LabeledWeightedEdge> i = 
-				new BreadthFirstIterator<Vertex, LabeledWeightedEdge>(this.tree, v);
-//			connectedToSemanticType = false;
+		for (Node v: this.tree.vertexSet()) {
+			BreadthFirstIterator<Node, Link> i = 
+				new BreadthFirstIterator<Node, Link>(this.tree, v);
 			
 			reachableNodes = -1;
 			while (i.hasNext()) {
-//				Vertex temp = i.next();
 				i.next();
-//				if (temp.getSemanticType() != null)
-//					connectedToSemanticType = true;
 				reachableNodes ++;
 			}
 			
-//			if (connectedToSemanticType == false)
-//				dangledVertexList.add(v);
-//			else 
-			{
-				vertexList.add(v);
-				reachableNodesList.add(reachableNodes);
-				
-				if (reachableNodes > maxReachableNodes) {
-					maxReachableNodes = reachableNodes;
-				}
+			vertexList.add(v);
+			reachableNodesList.add(reachableNodes);
+			
+			if (reachableNodes > maxReachableNodes) {
+				maxReachableNodes = reachableNodes;
 			}
 		}
 		
 		for (int i = 0; i < vertexList.size(); i++)
 			if (reachableNodesList.get(i).intValue() == maxReachableNodes)
 				possibleRoots.add(vertexList.get(i));
-		
-//		for (Vertex v : dangledVertexList)
-//			this.tree.removeVertex(v);
-		
+	
 		return possibleRoots;
 	}
 	
-	private void selectRoot(List<Vertex> possibleRoots) {
+	private void selectRoot(List<Node> possibleRoots) {
 		
 		if (possibleRoots == null || possibleRoots.size() == 0)
 			return;
 		
-		VertexComparatorByID vComp = new VertexComparatorByID();
-		Collections.sort(possibleRoots, vComp);
-		
-//		for (int i = 0; i < possibleRoots.size(); i++)
-//			System.out.print(possibleRoots.get(i).getLocalID());
-//		System.out.println();
+		Collections.sort(possibleRoots);
 		
 		this.root = possibleRoots.get(0);
 	}
+
 	
-	private void updateLinksDirections(Vertex root, LabeledWeightedEdge e) {
-		
-		if (root == null)
-			return;
-		
-		Vertex source, target;
-		LabeledWeightedEdge inLink;
-		
-		LabeledWeightedEdge[] incomingLinks = this.tree.incomingEdgesOf(root).toArray(new LabeledWeightedEdge[0]);
-		if (incomingLinks != null && incomingLinks.length != 0) {
-			for (int i = 0; i < incomingLinks.length; i++) {
-				
-				inLink = incomingLinks[i];
-				source = inLink.getSource();
-				target = inLink.getTarget();
-				
-				// don't remove the incoming link from parent to this node
-				if (e != null && inLink.getID().equalsIgnoreCase(e.getID()))
-					continue;
-				
-				LabeledWeightedEdge inverseLink = new LabeledWeightedEdge(inLink.getID(), new URI(inLink.getUriString(), inLink.getNs(), inLink.getPrefix()), inLink.getLinkType(), true);
-				
-				this.tree.addEdge(target, source, inverseLink);
-				this.tree.setEdgeWeight(inverseLink, inLink.getWeight());
-				this.tree.removeEdge(inLink);
-			}
-		}
+//	private void removeDanglingNodes() {
+//
+//		boolean connectedToColumn = false;
+//		for (Node v: this.tree.vertexSet()) {
+//			BreadthFirstIterator<Node, Link> i = 
+//				new BreadthFirstIterator<Node, Link>(this.tree, v);
+//
+//			connectedToColumn = false;
+//			
+//			while (i.hasNext()) {
+//				Node temp = i.next();
+//				if (temp instanceof ColumnNode)
+//					connectedToColumn = true;
+//			}
+//			
+//			if (connectedToColumn == false)
+//				dangledVertexList.add(v);
+//		}
+//		
+//		for (Node v : dangledVertexList)
+//			this.tree.removeVertex(v);
+//		
+//	}
 
-		LabeledWeightedEdge[] outgoingLinks = this.tree.outgoingEdgesOf(root).toArray(new LabeledWeightedEdge[0]);
-
-		if (outgoingLinks == null || outgoingLinks.length == 0)
-			return;
-		
-		
-		for (int i = 0; i < outgoingLinks.length; i++) {
-			target = outgoingLinks[i].getTarget();
-			updateLinksDirections(target, outgoingLinks[i]);
-		}
-	}
-	
-	private void removeDanglingNodes() {
-
-		boolean connectedToSemanticType = false;
-		for (Vertex v: this.tree.vertexSet()) {
-			BreadthFirstIterator<Vertex, LabeledWeightedEdge> i = 
-				new BreadthFirstIterator<Vertex, LabeledWeightedEdge>(this.tree, v);
-
-			connectedToSemanticType = false;
-			
-			while (i.hasNext()) {
-				Vertex temp = i.next();
-				if (temp.getSemanticType() != null)
-					connectedToSemanticType = true;
-			}
-			
-			if (connectedToSemanticType == false)
-				dangledVertexList.add(v);
-		}
-		
-		for (Vertex v : dangledVertexList)
-			this.tree.removeVertex(v);
-		
-	}
-	
-	public DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> getTree() {
-		return this.tree;
-	}
-	
-	public Vertex getRoot() {
-		return this.root;
-	}
-
-	public List<Vertex> getDangledVertexList() {
-		return dangledVertexList;
-	}
+//	public List<Node> getDangledVertexList() {
+//		return dangledVertexList;
+//	}
 	
 	
 }

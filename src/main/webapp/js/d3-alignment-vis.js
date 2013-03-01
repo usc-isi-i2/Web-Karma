@@ -72,7 +72,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         var width = extremeRightX - extremeLeftX;
         node["width"] = width;
         node["y"] = h - ((node["height"] * levelHeight));
-        if(node["nodeType"] == "DataProperty" || node["nodeType"] == "Unassigned")
+        if(node["nodeType"] == "ColumnNode" || node["nodeType"] == "Unassigned")
             node["y"] -= 5;
         if(node["nodeType"] == "FakeRoot")
             node["y"] += 15;
@@ -103,22 +103,46 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
       .append("svg:path")
         .attr("d", "M0,-5L10,0L0,5");
     
-    
     var link = svg.selectAll("line.link")
         .data(json.links)
         .enter().append("svg:line")
-        .attr("class", "link")
+        .attr("class", function(d) { return "link " + d.linkType; })
         .attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; })
         .attr("id", function(d) { return "line"+d.source.index+"_"+d.target.index; })
         .attr("marker-end", function(d) {
-            if(d.target.nodeType == "DataProperty") 
+            if(d.target.nodeType == "ColumnNode") 
                 return "url(#marker-DataProperty)";
             else
                 return "url(#marker-Class)";
         });
+    
+    // var dataPropertyOfColumnLinks = [];
+    // $.each(json.links, function(i, item) {
+    	// if (item.linkType == "DataPropertyOfColumnLink") {
+    		// dataPropertyOfColumnLinks.push(item);
+    	// }
+    // });
+//     
+    // if (dataPropertyOfColumnLinks.length != 0) {
+    	// var dataPropertyOfColumnSVGLinks = svg.selectAll("line.link")
+        // .data(dataPropertyOfColumnLinks)
+        // .enter().append("svg:line")
+        // .attr("class", function(d) { return "link " + d.linkType; })
+        // .attr("x1", function(d) { return d.source.x; })
+        // .attr("y1", function(d) { return d.source.y; })
+        // .attr("x2", function(d) { return d.target.x; })
+        // .attr("y2", function(d) { return d.target.y; })
+        // .attr("id", function(d) { return "line"+d.source.index+"_"+d.target.index; })
+        // .attr("marker-end", function(d) {
+            // if(d.target.nodeType == "ColumnNode") 
+                // return "url(#marker-DataProperty)";
+            // else
+                // return "url(#marker-Class)";
+        // });
+    // }
         
     svg.selectAll("text")
         .data(json.links)
@@ -139,7 +163,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 return d.target.x;
         })
         .attr("y", function(d) {
-            if(d.target.nodeType == "DataProperty")
+            if(d.target.nodeType == "ColumnNode")
                 return ((d.source.y + d.target.y)/2 + 12);
             if(d.source.nodeType == "FakeRoot")
                 return ((d.source.y + d.target.y)/2 - 4);
@@ -157,10 +181,10 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         }).on("click", function(d){
             showAlternativeParents_d3(d, svg, d3.event);
         }).on("mouseover", function(d){
-            d3.selectAll("g.Class").each(function(d2,i) {
+            d3.selectAll("g.InternalNode").each(function(d2,i) {
                 if(d2 == d.source) {
                     var newRect = $(this).clone();
-                    newRect.attr("class","Class highlightOverlay");
+                    newRect.attr("class","InternalNode highlightOverlay");
                     $("div#svgDiv_" + json["worksheetId"] + " svg").append(newRect);
                     return false;
                 }
@@ -183,14 +207,14 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .attr("dy", ".32em")
         .text(function(d) {
             $(this).data("text",d.label);
-            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
+            if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
                 return "";
             else 
                 return d.label; })
         .attr("width", function(d) {
             var newText = $(this).text();
             if(this.getComputedTextLength() > d["width"]) {
-                if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
+                if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
                     return 0;
                 $(this).qtip({content: {text: $(this).data("text")}});
                 // Trim the string to make it fit inside the rectangle
@@ -208,7 +232,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         })
         .attr("x", function(d){ return this.getComputedTextLength()/2 * -1;})
         .on("click", function(d){
-            if(d["nodeType"] == "Class") {
+            if(d["nodeType"] == "InternalNode") {
                 d["targetNodeId"] = d["id"];
                 showAlternativeParents_d3(d, svg, d3.event);
             }
@@ -218,35 +242,43 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .attr("ry", 6)
         .attr("rx", 6)
         .attr("class", function(d){
-            if(d.nodeType != "DataProperty" && d.nodeType != "Unassigned" && d.nodeType != "FakeRoot")
+            if(d.nodeType != "ColumnNode" && d.nodeType != "Unassigned" && d.nodeType != "FakeRoot")
                 return vworksheetId;
         })
         .attr("y", function(d){
-            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot") {
+            if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot") {
                 return -2;
-            } else
+            } else if (d.nodeType == "DataPropertyOfColumnHolder") 
+            	return 0;
+            else
                 return -10;
         })
         .attr("height", function(d){
-            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
+            if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
                 return 6;
+            else if (d.nodeType == "DataPropertyOfColumnHolder") 
+            	return 0;
             else
                 return 20;  
         })
         .attr("width", function(d) {
-            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
+            if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot")
                 return 6;
+           else if (d.nodeType == "DataPropertyOfColumnHolder") 
+            	return 0;
             else
                 return d["width"];
         }).attr("x", function(d){
-            if(d.nodeType == "DataProperty" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot") {
+            if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot") {
                 return -3;
-            } else
+            } else if (d.nodeType == "DataPropertyOfColumnHolder") 
+            	return 0;
+            else
                 return d.width/2 * -1;
         }).on("click", function(d){
-            if(d["nodeType"] == "DataProperty" || d.nodeType == "Unassigned")
+            if(d["nodeType"] == "ColumnNode" || d.nodeType == "Unassigned")
                 changeSemanticType_d3(d, svg, d3.event);
-            else if(d["nodeType"] == "Class") {
+            else if(d["nodeType"] == "InternalNode") {
                 d["targetNodeId"] = d["id"];
                 showAlternativeParents_d3(d, svg, d3.event);
             }
@@ -330,17 +362,29 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         });
     
     $("text.LinkLabel").qtip({content: {text: "Edit Relationship"}});
-    $("g.DataProperty, g.Unassigned").qtip({content: {text: "Change Semantic Type"}});
-    $("g.Class").qtip({content: {text: "Add Parent Relationship"}});
+    $("g.ColumnNode, g.Unassigned").qtip({content: {text: "Change Semantic Type"}});
+    $("g.InternalNode").qtip({content: {text: "Add Parent Relationship"}});
     
     link.attr("x1", function(d) {
+        if (d.linkType == "horizontalDataPropertyLink") {
+        	return d.source.x;
+        }
+        
         if(d.source.y > d.target.y)
             return d.source.x;
         else
             return d.target.x;
     })
-    .attr("y1", function(d) { return d.source.y; })
+    .attr("y1", function(d) {
+    	if (d.linkType == "DataPropertyOfColumnLink") {
+    		return d.source.y + 18;
+    	}
+    	return d.source.y; 
+    })
     .attr("x2", function(d) {
+    	if (d.linkType == "horizontalDataPropertyLink") {
+        	return d.target.x;
+        }
         if(d.source.y > d.target.y)
             return d.source.x;
         else
@@ -387,16 +431,21 @@ var waitForFinalEvent = (function () {
 
 
 function changeSemanticType_d3(d, vis, event) {
-    var optionsDiv = $("#ChangeSemanticTypesDialogBox");
+	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
     
     var tdTag = $("td#"+d["hNodeId"]); 
     var typeJsonObject = $(tdTag).data("typesJsonObject");
     optionsDiv.data("currentNodeId",typeJsonObject["HNodeId"]);
+    optionsDiv.data("worksheetId", $("td.columnHeadingCell#" + d["hNodeId"]).parents("table.WorksheetTable").attr("id"))
     $("table#currentSemanticTypesTable tr.semTypeRow",optionsDiv).remove();
     $("table#currentSemanticTypesTable tr.editRow",optionsDiv).remove();
     $("input#chooseClassKey").attr("checked", false);
     $("div#SemanticTypeErrorWindow").hide();
     $(optionsDiv).removeData("selectedPrimaryRow");
+    // Deselect all the advanced options check boxes
+    $("div#semanticTypingAdvacedOptionsDiv").hide().data("state","closed");
+    $("div#semanticTypingAdvacedOptionsDiv input:checkbox").prop('checked', false);
+    $("div#semanticTypingAdvacedOptionsDiv input:text").val("");
     
     // Store a copy of the existing types.
     // This is tha JSON array which is changed when the user adds/changes through GUI and is submitted to the server.
@@ -408,7 +457,21 @@ function changeSemanticType_d3(d, vis, event) {
     
     // Populate the table with existing types and CRF suggested types
     $.each(existingTypes, function(index, type){
-        addSemTypeObjectToCurrentTable(type, true, false);
+        // Take care of the special meta properties that are set through the advanced options
+    	if (type["isMetaProperty"]) {
+    		if (type["DisplayLabel"] == "km-dev:classLink") {
+    			$("#isUriOfClass").prop('checked', true);
+    			$("#isUriOfClassTextBox").val(type["DisplayDomainLabel"]);
+    		} else if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
+    			$("#isSubclassOfClass").prop('checked', true);
+    			$("#isSubclassOfClassTextBox").val(type["DisplayDomainLabel"]);
+    		} else if (type["DisplayLabel"] == "km-dev:dataPropertyOfColumnLink") {
+    			$("#isSpecializationForEdge").prop('checked', true);
+    			$("#isSpecializationForEdgeTextBox").val(type["DisplayDomainLabel"]);
+    		}
+    	} else {
+    		addSemTypeObjectToCurrentTable(type, true, false);
+    	}
     });
     if(CRFInfo != null) {
         $.each(CRFInfo["Labels"], function(index, type){
@@ -421,6 +484,7 @@ function changeSemanticType_d3(d, vis, event) {
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["command"] = "GetPropertiesAndClassesList";
     info["vWorksheetId"] = optionsDiv.data("worksheetId");
+    
     var returned = $.ajax({
         url: "RequestController", 
         type: "POST",

@@ -27,8 +27,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.hierarchicalheadings.TNode;
-import edu.isi.karma.rep.semantictypes.SemanticType;
 
 public class AlignmentNode implements TNode {
 	private final String id;

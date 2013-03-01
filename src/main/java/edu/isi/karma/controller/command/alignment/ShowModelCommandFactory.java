@@ -29,17 +29,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
-import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.semantictypes.SemanticType;
-import edu.isi.karma.rep.semantictypes.SemanticType.Origin;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
@@ -93,10 +93,10 @@ public class ShowModelCommandFactory extends CommandFactory implements JSONInput
 				String fullType = (String) value.get(SemanticType.ClientJsonKeys.FullType.name());
 				boolean isPrimary = (Boolean) value.get(SemanticType.ClientJsonKeys.isPrimary.name());
 				
-				URI typeName = ontMgr.getURIFromString(fullType);
-				URI domainName = null;
+				Label typeName = ontMgr.getUriLabel(fullType);
+				Label domainName = null;
 				if (domain != null && !domain.trim().equals(""))
-					domainName = ontMgr.getURIFromString(domain);
+					domainName = ontMgr.getUriLabel(domain);
 				
 				if(typeName != null) {
 					type = new SemanticType(hNodeId, typeName, domainName, Origin.User, 1.00, isPrimary);

@@ -20,138 +20,205 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
+
 public class GraphUtil {
-	private static Logger logger = Logger.getLogger(GraphUtil.class);
+
+//	private static Logger logger = Logger.getLogger(GraphUtil.class);
 	
-	private static String getNodeTypeString(Vertex vertex) {
-    	if (vertex.getNodeType() == NodeType.Class)
-    		return "Class";
-    	else if (vertex.getNodeType() == NodeType.DataProperty)
-    		return "DataProperty";
-    	else
-    		return null;
+	private static String getNodeTypeString(Node node) {
+		String s = node.getClass().getName();
+		if (s.indexOf(".") != -1)
+			s = s.substring(s.lastIndexOf(".") + 1);
+    	return s;
 	}
 
-	private static String getLinkTypeString(LabeledWeightedEdge link) {
-    	if (link.getLinkType() == LinkType.ObjectProperty)
-    		return "ObjectProperty";
-    	if (link.getLinkType() == LinkType.DataProperty)
-    		return "DataProperty";
-    	if (link.getLinkType() == LinkType.HasSubClass)
-    		return "HasSubClass";
-    	if (link.getLinkType() == LinkType.None)
-    		return "None";
-    	else
-    		return null;
+	private static String getLinkTypeString(Link link) {
+		String s = link.getClass().getName();
+		if (s.indexOf(".") != -1)
+			s = s.substring(s.lastIndexOf(".") + 1);
+    	return s;
 	}
 	
-	public static Vertex getVertex(Graph<Vertex, LabeledWeightedEdge> graph, String id) {
-		if (id == null)
-			return null;
-		
-		for (Vertex v : graph.vertexSet())
-			if (v.getID().equalsIgnoreCase(id))
-				return v;
-		return null;
+	public static void printVertex(Node vertex) {
+    	System.out.print("(");
+    	System.out.print( vertex.getLocalId());
+//    	System.out.print( vertex.getID());
+    	System.out.print(", ");
+		if (vertex instanceof ColumnNode)
+			System.out.print( ((ColumnNode)vertex).getColumnName());
+		else
+			System.out.print(vertex.getLabel().getLocalName());
+    	System.out.print(", ");
+    	System.out.print(getNodeTypeString(vertex));
+    	System.out.print(")");
 	}
 	
-	public static void printVertex(Vertex vertex, PrintWriter pw) {
-    	pw.print("(");
-    	pw.print( vertex.getLocalID());
-//    	pw.print( vertex.getID());
-    	pw.print(", ");
-    	pw.print(vertex.getUriString());
-    	pw.print(", ");
-    	pw.print(getNodeTypeString(vertex));
-    	pw.print(")");
-	}
-	
-	public static void printEdge(LabeledWeightedEdge edge, PrintWriter pw) {
-    	pw.print("(");
-		// FIXME
-		if (edge.isInverse()) {
-			pw.print( "inverseOf(" + edge.getLocalID() + ")" );
-		} else 
-			pw.print( edge.getLocalID());
-//    	pw.print( edge.getID());
-    	pw.print(", ");
-    	pw.print(edge.getUriString());
-    	pw.print(", ");
-    	pw.print(getLinkTypeString(edge));
-    	pw.print(", ");
-    	pw.print(edge.getWeight());
-    	pw.print(") - From ");
-    	printVertex(edge.getSource(), pw);
-    	pw.print(" To ");
-    	printVertex(edge.getTarget(), pw);
+	public static void printEdge(Link edge) {
+    	System.out.print("(");
+    	System.out.print( edge.getLocalId());
+    	System.out.print(", ");
+    	System.out.print(edge.getLabel().getLocalName());
+    	System.out.print(", ");
+    	System.out.print(getLinkTypeString(edge));
+    	System.out.print(", ");
+    	System.out.print(edge.getWeight());
+    	System.out.print(") - From ");
+    	printVertex(edge.getSource());
+    	System.out.print(" To ");
+    	printVertex(edge.getTarget());
 	}
 
-	public static DirectedGraph<Vertex, LabeledWeightedEdge> asDirectedGraph(UndirectedGraph<Vertex, LabeledWeightedEdge> undirectedGraph) {
+	public static DirectedGraph<Node, Link> asDirectedGraph(UndirectedGraph<Node, Link> undirectedGraph) {
 		
-		DirectedGraph<Vertex, LabeledWeightedEdge> g = new DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge>(LabeledWeightedEdge.class);
+		DirectedGraph<Node, Link> g = new DirectedWeightedMultigraph<Node, Link>(Link.class);
 		
-		for (Vertex v : undirectedGraph.vertexSet())
+		for (Node v : undirectedGraph.vertexSet())
 			g.addVertex(v);
 		
-		for (LabeledWeightedEdge e: undirectedGraph.edgeSet())
+		for (Link e: undirectedGraph.edgeSet())
 			g.addEdge(e.getSource(), e.getTarget(), e);
 		
 		return g;
 	}
 	
-	public static void printGraph(Graph<Vertex, LabeledWeightedEdge> graph) {
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
+	public static void printGraph(Graph<Node, Link> graph) {
 		
-    	pw.println("*** Nodes ***");
-		for (Vertex vertex : graph.vertexSet()) {
-			printVertex(vertex, pw);
-			pw.println();
+    	System.out.println("*** Nodes ***");
+		for (Node vertex : graph.vertexSet()) {
+			printVertex(vertex);
+			System.out.println();
         }
-    	pw.println("*** Links ***");
-		for (LabeledWeightedEdge edge : graph.edgeSet()) {
-			printEdge(edge, pw);
-			pw.println();
+    	System.out.println("*** Links ***");
+		for (Link edge : graph.edgeSet()) {
+			printEdge(edge);
+			System.out.println();
         }
-		pw.println("------------------------------------------");
-		logger.info("GRAPH: " + sw.toString());
+		System.out.println("------------------------------------------");
+		
 	}
 	
-	public static void printGraphSimple(Graph<Vertex, LabeledWeightedEdge> graph) {
+	public static void printGraphSimple(Graph<Node, Link> graph) {
 		
-//    	System.out.println("*** Nodes ***");
-//		for (Vertex vertex : graph.vertexSet()) {
-//			printVertex(vertex);
-//			System.out.println();
-//        }
-    	System.out.println("*** Graph ***");
-		for (LabeledWeightedEdge edge : graph.edgeSet()) {
+		for (Link edge : graph.edgeSet()) {
 			System.out.print("(");
-			System.out.print(edge.getSource().getLocalID());
+			if (edge.getSource() instanceof ColumnNode)
+				System.out.print( ((ColumnNode)edge.getSource()).getColumnName());
+			else
+				System.out.print(edge.getSource().getLocalId());
 			System.out.print(")");
 			System.out.print(" - ");
 			System.out.print("(");
-			if (edge.isInverse())
-				System.out.print("invOf:");
-			System.out.print(edge.getLocalID());
+			System.out.print(edge.getLocalId());
 			System.out.print(")");
 			System.out.print(" - ");
 			System.out.print("(");
-			System.out.print(edge.getTarget().getLocalID());
+			if (edge.getTarget() instanceof ColumnNode)
+				System.out.print( ((ColumnNode)edge.getTarget()).getColumnName());
+			else
+				System.out.print(edge.getTarget().getLocalId());
 			System.out.print(")");
 			System.out.println();
         }
 		System.out.println("------------------------------------------");
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static DirectedWeightedMultigraph<Node, Link> treeToRootedTree(
+			DirectedWeightedMultigraph<Node, Link> tree, Node root, Set<String> reversedLinks) {
+		
+		DirectedWeightedMultigraph<Node, Link> rootedTree = 
+				(DirectedWeightedMultigraph<Node, Link>)tree.clone();
+		if (reversedLinks == null)
+			reversedLinks = new HashSet<String>();
+		treeToRootedTree(rootedTree, root, null, reversedLinks);
+		return rootedTree;
+	}
+	
+	public static void serialize(DirectedWeightedMultigraph<Node, Link> graph, String fileName) throws Exception
+	{
+//		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		FileOutputStream f = new FileOutputStream(fileName);
+		ObjectOutputStream out = new ObjectOutputStream(f);
+
+		out.writeObject(graph);
+		out.flush();
+		out.close();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static DirectedWeightedMultigraph<Node, Link> deserialize(String fileName) throws Exception
+	{
+//		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		FileInputStream f = new FileInputStream(fileName);
+        ObjectInputStream in = new ObjectInputStream(f);
+
+        Object obj  = in.readObject();
+        in.close();
+        
+        if (obj instanceof DirectedWeightedMultigraph<?, ?>)
+        	return (DirectedWeightedMultigraph<Node, Link>)obj;
+        else 
+        	return null;
+	}
+
+	private static void treeToRootedTree(DirectedWeightedMultigraph<Node, Link> tree, Node node, Link e, Set<String> reversedLinks) {
+		
+		if (node == null)
+			return;
+		
+		Node source, target;
+		
+		Set<Link> incomingLinks = tree.incomingEdgesOf(node);
+		if (incomingLinks != null) {
+			Link[] incomingLinksArr = incomingLinks.toArray(new Link[0]);
+			for (Link inLink : incomingLinksArr) {
+				
+				source = inLink.getSource();
+				target = inLink.getTarget();
+				
+				// don't remove the incoming link from parent to this node
+				if (e != null && inLink.equals(e))
+					continue;
+				
+				// removeEdge method should always be called before addEdge because the new edge has the same id
+				// and JGraph does not add the duplicate link
+//				Label label = new Label(inLink.getLabel().getUri(), inLink.getLabel().getNs(), inLink.getLabel().getPrefix());
+				Link reverseLink = inLink.clone(); //new Link(inLink.getId(), label);
+				tree.removeEdge(inLink);
+				tree.addEdge(target, source, reverseLink);
+				tree.setEdgeWeight(reverseLink, inLink.getWeight());
+				
+				// Save the reversed links information
+				reversedLinks.add(inLink.getId());
+			}
+		}
+
+		Set<Link> outgoingLinks = tree.outgoingEdgesOf(node);
+
+		if (outgoingLinks == null)
+			return;
+		
+		
+		for (Link outLink : outgoingLinks) {
+			target = outLink.getTarget();
+			treeToRootedTree(tree, target, outLink, reversedLinks);
+		}
 	}
 	
 }

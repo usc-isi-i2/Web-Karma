@@ -38,12 +38,12 @@ import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
-import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.ontology.AutoOntology;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.semantictypes.SemanticType;
-import edu.isi.karma.rep.semantictypes.SemanticType.Origin;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -83,7 +83,7 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements JSONI
 		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
 		File autoOtologyFile = new File(path);
 		logger.info("Loading ontology: " + autoOtologyFile.getAbsolutePath());
-		ontMgr.doImport(autoOtologyFile);
+		ontMgr.doImportAndUpdateCache(autoOtologyFile);
 		logger.info("Done loading ontology: " + autoOtologyFile.getAbsolutePath());
 		
 		if(checkHist) {
@@ -114,10 +114,10 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements JSONI
 				String fullType = (String) value.get(SemanticType.ClientJsonKeys.FullType.name());
 				boolean isPrimary = (Boolean) value.get(SemanticType.ClientJsonKeys.isPrimary.name());
 				
-				URI typeName = ontMgr.getURIFromString(fullType);
-				URI domainName = null;
+				Label typeName = ontMgr.getUriLabel(fullType);
+				Label domainName = null;
 				if (domain != null && !domain.trim().equals(""))
-					domainName = ontMgr.getURIFromString(domain);
+					domainName = ontMgr.getUriLabel(domain);
 				
 				if(typeName != null) {
 					type = new SemanticType(hNodeId, typeName, domainName, Origin.User, 1.00, isPrimary);

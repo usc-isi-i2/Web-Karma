@@ -1,7 +1,8 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,28 +10,36 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.alignment.DataPropertyLink;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetPropertiesAndClassesList extends Command {
 
-	private static Logger logger = LoggerFactory
-			.getLogger(GetPropertiesAndClassesList.class.getSimpleName());
+	private final String vWorksheetId;
+	private static Logger logger = LoggerFactory.getLogger(GetPropertiesAndClassesList.class);
 
 	private enum JsonKeys {
-		classList, classMap, propertyList, propertyMap
+		classList, classMap, propertyList, propertyMap, label, category, existingDataPropertyInstances, id
+	}
+	
+	private enum JsonValues {
+		Class, Instance
 	}
 
-	public GetPropertiesAndClassesList(String id) {
+	public GetPropertiesAndClassesList(String id, String vWorksheetId) {
 		super(id);
+		this.vWorksheetId = vWorksheetId;
 	}
 
 	@Override
@@ -60,50 +69,90 @@ public class GetPropertiesAndClassesList extends Command {
 		JSONArray classesMap = new JSONArray();
 		JSONArray propertiesList = new JSONArray();
 		JSONArray propertiesMap = new JSONArray();
+		JSONArray existingDataPropertyInstances = new JSONArray();
 		
-		Map<String, String> prefixMap = vWorkspace.getWorkspace().getOntologyManager().getPrefixMap();
+//		Map<String, String> prefixMap = vWorkspace.getWorkspace().getOntologyManager().getPrefixMap();
 
-		ExtendedIterator<OntClass> iter = ontMgr.getOntModel()
-				.listNamedClasses();
-//		ExtendedIterator<DatatypeProperty> propsIter = ontMgr.getOntModel()
-//				.listDatatypeProperties();
-		ExtendedIterator<OntProperty> propsIter = ontMgr.getOntModel()
-			.listAllOntProperties();
+
 		final JSONObject outputObj = new JSONObject();
 
 		try {
-			while (iter.hasNext()) {
-				OntClass cls = iter.next();
+			/** Add all the class instances and property instances (existing links) **/
+			String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+			Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+			Set<String> steinerTreeNodeIds = new HashSet<String>();
+			if (alignment != null && !alignment.isEmpty()) {
+//				Set<Node> nodes = alignment.getGraphNodes();
+				for (Node node: alignment.getSteinerTree().vertexSet()) {
+					if (node.getType() == NodeType.InternalNode) {
+//						String nodeDisplayLabel = (node.getLabel().getPrefix() != null && (!node.getLabel().getPrefix().equals(""))) ?
+//								(node.getLabel().getPrefix() + ":" + node.getLocalId()) : node.getLocalId(); 
+						JSONObject nodeKey = new JSONObject();
+						nodeKey.put(node.getLocalIdWithPrefixIfAvailable(), node.getId());
+						classesMap.put(nodeKey);
+						
+						JSONObject instanceCatObject = new JSONObject();
+						instanceCatObject.put(JsonKeys.label.name(), node.getLocalIdWithPrefixIfAvailable());
+						instanceCatObject.put(JsonKeys.category.name(), JsonValues.Instance.name());
+						classesList.put(instanceCatObject);
+						
+						steinerTreeNodeIds.add(node.getId());
+					}
+				}
 				
-				String pr = prefixMap.get(cls.getNameSpace());
-				String classLabel = cls.getLocalName();
-//				if (cls.getLabel(null) != null && !cls.getLabel(null).equals(""))
-//					classLabel = cls.getLabel(null);
-				String clsStr = (pr != null && !pr.equals("")) ? pr + ":" + classLabel : classLabel;
-				
-				classesList.put(clsStr);
-				JSONObject classKey = new JSONObject();
-				classKey.put(clsStr, cls.getURI());
-				classesMap.put(classKey);
+				// Store the data property links for specialized edge link options
+				for (Link link:alignment.getGraphLinks()) {
+					if (link instanceof DataPropertyLink) {
+						JSONObject linkObj = new JSONObject();
+						linkObj.put(JsonKeys.label.name(), link.getLocalId());
+						linkObj.put(JsonKeys.id.name(), link.getId());
+						existingDataPropertyInstances.put(linkObj);
+					}
+				}
 			}
-
-			while (propsIter.hasNext()) {
-//				DatatypeProperty prop = propsIter.next();
-				OntProperty prop = propsIter.next();
-
-				if (prop.isObjectProperty() && !prop.isDatatypeProperty())
-					continue;
+			
+			/** Adding all the classes **/
+			for (Label clazz: ontMgr.getClasses().values()) {
+				int graphLastIndex = alignment.getLastIndexOfNodeUri(clazz.getUri());
+				String clazzId = null;
+				String clazzDisplayLabel = null;
+				String clazzLocalNameWithPrefix = clazz.getLocalNameWithPrefix();
+				if (graphLastIndex == -1) { // No instance present in the graph
+					clazzDisplayLabel = clazzLocalNameWithPrefix + "1 (add)";
+					clazzId = clazz.getUri();
+				} else {
+					// Check if already present in the steiner tree
+					if (steinerTreeNodeIds.contains(clazz.getUri() + (graphLastIndex))) {
+						clazzDisplayLabel = clazzLocalNameWithPrefix + (graphLastIndex+1) + " (add)";
+						clazzId = clazz.getUri();
+					} else {
+						// Check if present in graph and not tree
+						Node graphNode = alignment.getNodeById(clazz.getUri() + (graphLastIndex));
+						if (graphNode != null) {
+							clazzDisplayLabel = clazzLocalNameWithPrefix + (graphLastIndex) + " (add)";
+							clazzId = graphNode.getId();
+						} else {
+							clazzDisplayLabel = clazzLocalNameWithPrefix + (graphLastIndex+1) + " (add)";
+							clazzId = clazz.getUri();
+						}
+					}
+				}
+				JSONObject classKey = new JSONObject();
+				classKey.put(clazzDisplayLabel, clazzId);
+				classesMap.put(classKey);
 				
-				String pr = prefixMap.get(prop.getNameSpace());
-				String propLabel = prop.getLocalName();
-//				if (prop.getLabel(null) != null && !prop.getLabel(null).equals(""))
-//					propLabel = prop.getLabel(null);
-				String propStr = (pr != null && !pr.equals("")) ? pr + ":" + propLabel : propLabel; 
-				
-				propertiesList.put(propStr);
+				JSONObject labelObj = new JSONObject();
+				labelObj.put(JsonKeys.label.name(), clazzDisplayLabel);
+				labelObj.put(JsonKeys.category.name(), JsonValues.Class.name());
+				classesList.put(labelObj);
+			}
+			
+			/** Adding all the properties **/
+			for (Label prop: ontMgr.getDataProperties().values()) {
 				JSONObject propKey = new JSONObject();
-				propKey.put(propStr, prop.getURI());
+				propKey.put(prop.getLocalNameWithPrefix(), prop.getUri());
 				propertiesMap.put(propKey);
+				propertiesList.put(prop.getLocalNameWithPrefix());
 			}
 
 			// Populate the JSON object that will hold everything in output
@@ -111,9 +160,9 @@ public class GetPropertiesAndClassesList extends Command {
 			outputObj.put(JsonKeys.classMap.name(), classesMap);
 			outputObj.put(JsonKeys.propertyList.name(), propertiesList);
 			outputObj.put(JsonKeys.propertyMap.name(), propertiesMap);
-
+			outputObj.put(JsonKeys.existingDataPropertyInstances.name(), existingDataPropertyInstances);
 		} catch (JSONException e) {
-			logger.error("Error populating JSON!");
+			logger.error("Error populating JSON!", e);
 		}
 		
 		UpdateContainer upd = new UpdateContainer(new AbstractUpdate() {
@@ -128,7 +177,6 @@ public class GetPropertiesAndClassesList extends Command {
 
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

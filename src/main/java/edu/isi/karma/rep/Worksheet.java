@@ -24,8 +24,8 @@ package edu.isi.karma.rep;
 import java.io.PrintWriter;
 
 import edu.isi.karma.modeling.semantictypes.FullCRFModel;
+import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.metadata.MetadataContainer;
-import edu.isi.karma.rep.semantictypes.SemanticTypes;
 
 /**
  * @author szekely

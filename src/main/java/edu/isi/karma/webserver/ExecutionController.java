@@ -56,9 +56,13 @@ import edu.isi.karma.controller.command.ImportOntologyCommand;
 import edu.isi.karma.controller.command.ImportOntologyCommandFactory;
 import edu.isi.karma.controller.command.ImportServiceCommand;
 import edu.isi.karma.controller.command.ImportServiceCommandFactory;
+import edu.isi.karma.controller.command.ImportUnionResultCommand;
+import edu.isi.karma.controller.command.ImportUnionResultCommandFactory;
 import edu.isi.karma.controller.command.ImportXMLFileCommand;
 import edu.isi.karma.controller.command.ImportXMLFileCommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.command.ResetKarmaCommand;
+import edu.isi.karma.controller.command.ResetKarmaCommandFactory;
 import edu.isi.karma.controller.command.SplitByCommaCommand;
 import edu.isi.karma.controller.command.SplitByCommaCommandFactory;
 import edu.isi.karma.controller.command.TablePagerCommand;
@@ -69,8 +73,6 @@ import edu.isi.karma.controller.command.UndoRedoCommand;
 import edu.isi.karma.controller.command.UndoRedoCommandFactory;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommand;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommandFactory;
-import edu.isi.karma.controller.command.alignment.DuplicateDomainOfLinkCommand;
-import edu.isi.karma.controller.command.alignment.DuplicateDomainOfLinkCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommand;
 import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetDataPropertiesForClassCommand;
@@ -85,6 +87,8 @@ import edu.isi.karma.controller.command.alignment.GetPropertiesAndClassesList;
 import edu.isi.karma.controller.command.alignment.GetPropertiesAndClassesListCommandFactory;
 import edu.isi.karma.controller.command.alignment.ResetModelCommand;
 import edu.isi.karma.controller.command.alignment.ResetModelCommandFactory;
+import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommand;
+import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommand;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommandFactory;
 import edu.isi.karma.controller.command.alignment.ShowAutoModelCommand;
@@ -183,8 +187,6 @@ public class ExecutionController {
 				new ShowAutoModelCommandFactory());
 		commandFactoryMap.put(SplitByCommaCommand.class.getSimpleName(),
 				new SplitByCommaCommandFactory());
-		commandFactoryMap.put(DuplicateDomainOfLinkCommand.class.getSimpleName(),
-				new DuplicateDomainOfLinkCommandFactory());
 		commandFactoryMap.put(CloseWorkspaceCommand.class.getSimpleName(),
 				new CloseWorkspaceCommandFactory());
 		commandFactoryMap.put(PublishKMLLayerCommand.class.getSimpleName(),
@@ -221,8 +223,16 @@ public class ExecutionController {
 				new PublishWorksheetHistoryCommandFactory());
 		commandFactoryMap.put(ApplyWorksheetHistoryCommand.class.getSimpleName(),
 				new ApplyWorksheetHistoryCommandFactory());
+		commandFactoryMap.put(PublishCSVCommand.class.getSimpleName(),
+				new PublishCSVCommandFactory());
+		commandFactoryMap.put(SetMetaPropertyCommand.class.getSimpleName(),
+				new SetMetaPropertyCommandFactory());
+		commandFactoryMap.put(ResetKarmaCommand.class.getSimpleName(),
+				new ResetKarmaCommandFactory());
 		commandFactoryMap.put(FetchTransformingDataCommand.class.getSimpleName(),
 				new FetchTransformingDataFactory());
+		commandFactoryMap.put(ImportUnionResultCommand.class.getSimpleName(),
+				new ImportUnionResultCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

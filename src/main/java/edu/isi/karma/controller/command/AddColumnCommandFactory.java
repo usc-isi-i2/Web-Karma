@@ -22,9 +22,14 @@ package edu.isi.karma.controller.command;
 
 import javax.servlet.http.HttpServletRequest;
 
-import edu.isi.karma.view.VWorkspace;
+import org.json.JSONArray;
+import org.json.JSONException;
 
-public class AddColumnCommandFactory extends CommandFactory {
+import edu.isi.karma.util.CommandInputJSONUtil;
+import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.KarmaException;
+
+public class AddColumnCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 
 	private enum Arguments {
 		vWorksheetId, hTableId, hNodeId,newColumnName
@@ -38,6 +43,19 @@ public class AddColumnCommandFactory extends CommandFactory {
 		String newColumnName = request.getParameter(Arguments.newColumnName.name());
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
 		return new AddColumnCommand(getNewId(vWorkspace), vWorksheetId, getWorksheetId(request, vWorkspace), hTableId, hNodeId, newColumnName);
+	}
+
+	@Override
+	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
+			throws JSONException, KarmaException {
+		/** Parse the input arguments and create proper data structues to be passed to the command **/
+		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
+		String vWorksheetID = CommandInputJSONUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
+		String hTableId = CommandInputJSONUtil.getStringValue(Arguments.hTableId.name(), inputJson);
+		String newColumnName = CommandInputJSONUtil.getStringValue(Arguments.newColumnName.name(), inputJson);
+		return new AddColumnCommand(getNewId(vWorkspace), vWorksheetID, 
+				vWorkspace.getViewFactory().getVWorksheet(vWorksheetID).getWorksheet().getId(),
+				hTableId, hNodeID, newColumnName);
 	}
 
 }

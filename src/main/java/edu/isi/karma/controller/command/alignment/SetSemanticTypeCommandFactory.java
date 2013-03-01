@@ -20,14 +20,10 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,11 +32,6 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
-import edu.isi.karma.modeling.alignment.URI;
-import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.semantictypes.SemanticType;
-import edu.isi.karma.rep.semantictypes.SemanticType.ClientJsonKeys;
-import edu.isi.karma.rep.semantictypes.SynonymSemanticTypes;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
@@ -49,9 +40,10 @@ public class SetSemanticTypeCommandFactory extends CommandFactory implements JSO
 	private enum Arguments {
 		vWorksheetId, hNodeId, isKey, SemanticTypesArray, trainAndShowUpdates
 	}
+	
+	
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass()
-			.getSimpleName());
+	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
@@ -60,46 +52,17 @@ public class SetSemanticTypeCommandFactory extends CommandFactory implements JSO
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
 		boolean isPartOfKey = Boolean.parseBoolean(request.getParameter(Arguments.isKey.name()));
-
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-		/*
-		 * Parse the input JSON Array to get the sem types (including the
-		 * synonym ones)
-		 */
-		List<SemanticType> typesList = new ArrayList<SemanticType>();
-		SemanticType primaryType = null;
 		String arrStr = request.getParameter(SemanticTypesUpdate.JsonKeys.SemanticTypesArray.name());
+		
 		JSONArray arr;
 		try {
 			arr = new JSONArray(arrStr);
-			for (int i = 0; i < arr.length(); i++) {
-				JSONObject type = arr.getJSONObject(i);
-				// Look for the primary semantic type
-				URI typeName = ontMgr.getURIFromString(type.getString(ClientJsonKeys.FullType.name()));
-				if(typeName == null) {
-					logger.error("Could not find the resource " + type.getString(ClientJsonKeys.FullType.name()) + " in ontology model!");
-					return null;
-				}
-				URI domainName = null;
-				if (type.getString(ClientJsonKeys.Domain.name()) != "")
-					domainName = ontMgr.getURIFromString(type.getString(ClientJsonKeys.Domain.name()));
-
-				if (type.getBoolean(ClientJsonKeys.isPrimary.name())) {
-					primaryType = new SemanticType(hNodeId, typeName,domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
-				} else { // Synonym semantic type
-					SemanticType synType = new SemanticType(hNodeId, typeName,domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
-					typesList.add(synType);
-				}
-			}
 		} catch (JSONException e) {
 			logger.error("Bad JSON received from server!", e);
 			return null;
 		}
 
-		SynonymSemanticTypes synTypes = new SynonymSemanticTypes(typesList);
-
-		return new SetSemanticTypeCommand(getNewId(vWorkspace), vWorksheetId,
-				hNodeId, isPartOfKey, primaryType, synTypes, true);
+		return new SetSemanticTypeCommand(getNewId(vWorkspace), vWorksheetId, hNodeId, isPartOfKey, arr, true);
 	}
 
 	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace) throws JSONException, KarmaException {
@@ -109,43 +72,15 @@ public class SetSemanticTypeCommandFactory extends CommandFactory implements JSO
 		boolean isPartOfKey = HistoryJsonUtil.getBooleanValue(Arguments.isKey.name(), inputJson);
 		boolean train = HistoryJsonUtil.getBooleanValue(Arguments.trainAndShowUpdates.name(), inputJson);
 		
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-		/*
-		 * Parse the input JSON Array to get the sem types (including the
-		 * synonym ones)
-		 */
-		List<SemanticType> typesList = new ArrayList<SemanticType>();
-		SemanticType primaryType = null;
-		
 		JSONArray arr;
 		try {
 			arr = new JSONArray(arrStr);
-			for (int i = 0; i < arr.length(); i++) {
-				JSONObject type = arr.getJSONObject(i);
-				// Look for the primary semantic type
-				URI typeName = ontMgr.getURIFromString(type.getString(SemanticTypesUpdate.JsonKeys.FullType.name()));
-				if(typeName == null) {
-					logger.error("Could not find the resource " + type.getString(SemanticTypesUpdate.JsonKeys.FullType.name()) + " in ontology model!");
-					return null;
-				}
-				URI domainName = null;
-				if (type.getString(SemanticTypesUpdate.JsonKeys.Domain.name()) != "")
-					domainName = ontMgr.getURIFromString(type.getString(SemanticTypesUpdate.JsonKeys.Domain.name()));
-
-				if (type.getBoolean(ClientJsonKeys.isPrimary.name())) {
-					primaryType = new SemanticType(hNodeId, typeName,domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
-				} else { // Synonym semantic type
-					SemanticType synType = new SemanticType(hNodeId, typeName,domainName, SemanticType.Origin.User, 1.0,isPartOfKey);
-					typesList.add(synType);
-				}
-			}
 		} catch (JSONException e) {
 			logger.error("Bad JSON received from server!", e);
 			return null;
 		}
-		SynonymSemanticTypes synTypes = new SynonymSemanticTypes(typesList);
 		
-		SetSemanticTypeCommand comm = new SetSemanticTypeCommand(getNewId(vWorkspace), vWorksheetId,hNodeId, isPartOfKey, primaryType, synTypes, train);
+		SetSemanticTypeCommand comm = new SetSemanticTypeCommand(getNewId(vWorkspace), vWorksheetId, hNodeId, isPartOfKey, arr, train);
 		
 		// Change the train flag, so that it does not train while reading from history
 		HistoryJsonUtil.setArgumentValue(Arguments.trainAndShowUpdates.name(), false, inputJson);

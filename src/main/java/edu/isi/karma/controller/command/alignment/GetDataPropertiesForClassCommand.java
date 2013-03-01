@@ -33,8 +33,8 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.URI;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetDataPropertiesForClassCommand extends Command {
@@ -92,11 +92,11 @@ public class GetDataPropertiesForClassCommand extends Command {
 					for (String domain : properties) {
 						JSONObject classObject = new JSONObject();
 
-						URI domainURI = ontMgr.getURIFromString(domain);
+						Label domainURI = ontMgr.getUriLabel(domain);
 						if (domainURI == null)
 							continue;
 						
-						classObject.put(JsonKeys.data.name(), domainURI.getLocalNameWithPrefixIfAvailable());
+						classObject.put(JsonKeys.data.name(), domainURI.getLocalNameWithPrefix());
 						JSONObject metadataObject = new JSONObject();
 						metadataObject.put(JsonKeys.URI.name(), domain);
 						classObject.put(JsonKeys.metadata.name(), metadataObject);

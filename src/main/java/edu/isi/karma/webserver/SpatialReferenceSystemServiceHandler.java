@@ -3,7 +3,6 @@ package edu.isi.karma.webserver;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import java.sql.Connection;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,8 +12,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import edu.isi.karma.geospatial.SpatialReferenceSystemTransformationUtil;
-import edu.isi.karma.service.MimeType;
+import edu.isi.karma.model.serialization.MimeType;
 
 public class SpatialReferenceSystemServiceHandler extends HttpServlet {
 

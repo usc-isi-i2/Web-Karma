@@ -4,8 +4,8 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
+import edu.isi.karma.model.serialization.SerializationLang;
 import edu.isi.karma.modeling.ModelingParams;
-import edu.isi.karma.service.SerializationLang;
 
 public class LinkedApiRequestManager {
 

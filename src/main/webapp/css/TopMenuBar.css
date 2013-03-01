@@ -57,3 +57,10 @@ div.span5 {
 div.progress-extended {
 	font-size: 10px;
 }
+
+button#resetButton {
+	position: absolute;
+	top: 60px;
+	right: 50px;
+	font-size: 20px;
+}

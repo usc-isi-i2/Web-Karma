@@ -27,7 +27,7 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetDataPropertyHierarchyCommandFactory extends CommandFactory {
-
+	
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {

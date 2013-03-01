@@ -17,7 +17,7 @@ import java.net.URLConnection;
 
 import org.apache.commons.lang3.CharEncoding;
 
-import edu.isi.karma.service.MimeType;
+import edu.isi.karma.model.serialization.MimeType;
 
 public class HTTPClientTest {
 

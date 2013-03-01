@@ -23,6 +23,7 @@ import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 
+import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
@@ -33,7 +34,6 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.rep.metadata.SourceInformation;
 import edu.isi.karma.rep.metadata.SourceInformation.InfoAttribute;
-import edu.isi.karma.service.Namespaces;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
 import edu.isi.karma.util.JDBCUtilFactory;

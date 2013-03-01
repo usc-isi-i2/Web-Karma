@@ -20,9 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.rep.metadata;
 
-import edu.isi.karma.rep.semantictypes.SemanticTypes;
-import edu.isi.karma.service.Service;
-import edu.isi.karma.service.Source;
+import edu.isi.karma.rep.alignment.SemanticTypes;
+import edu.isi.karma.rep.sources.DataSource;
+import edu.isi.karma.rep.sources.WebService;
 
 public class MetadataContainer {
 	
@@ -31,8 +31,8 @@ public class MetadataContainer {
 	@SuppressWarnings("unused")
 	private SemanticTypes 	semanticTypes;
 	
-	private Service service;
-	private Source source;
+	private WebService service;
+	private DataSource source;
 	
 	private SourceInformation sourceInfo;
 
@@ -44,19 +44,19 @@ public class MetadataContainer {
 		
 	}
 
-	public Service getService() {
+	public WebService getService() {
 		return service;
 	}
 
-	public void setService(Service service) {
+	public void setService(WebService service) {
 		this.service = service;
 	}
 
-	public Source getSource() {
+	public DataSource getSource() {
 		return source;
 	}
 
-	public void setSource(Source source) {
+	public void setSource(DataSource source) {
 		this.source = source;
 	}
 

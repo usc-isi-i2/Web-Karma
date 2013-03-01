@@ -20,7 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import java.util.Map;
+import java.util.Collection;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,14 +33,16 @@ import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
+import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.AlignToOntology;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.semantictypes.SemanticType;
-import edu.isi.karma.rep.semantictypes.SemanticTypes;
+import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.view.VWorkspace;
 
 public class ShowAutoModelCommand extends WorksheetCommand {
@@ -97,14 +99,21 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 			"No ontology loaded."));
 		
 		SemanticTypeUtil.computeSemanticTypesForAutoModel(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
-		
-		// Get the alignment update if any
-		AlignToOntology align = new AlignToOntology(worksheet, vWorkspace, vWorksheetId);
 
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		if (alignment == null) {
+			alignment = new Alignment(ontMgr);
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		}
 		try {
 			// Save the semantic types in the input parameter JSON
-			saveSemanticTypesInformation(worksheet, vWorkspace);
-			align.alignAndUpdate(c, true);
+			saveSemanticTypesInformation(worksheet, vWorkspace, worksheet.getSemanticTypes().getListOfTypes());
+			
+			// Add the visualization update
+			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
+			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(
+					vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(
@@ -114,10 +123,9 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 		return c;
 	}
 
-	private void saveSemanticTypesInformation(Worksheet worksheet, VWorkspace vWorkspace) throws JSONException {
-		SemanticTypes types = worksheet.getSemanticTypes();
+	private void saveSemanticTypesInformation(Worksheet worksheet, VWorkspace vWorkspace
+			, Collection<SemanticType> semanticTypes) throws JSONException {
 		JSONArray typesArray = new JSONArray();
-		Map<String, SemanticType> typeMap = types.getTypes();
 		
 		// Add the vworksheet information
 		JSONObject vwIDJObj = new JSONObject();
@@ -133,22 +141,21 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 		chIDJObj.put(ClientJsonKeys.value.name(), false);
 		typesArray.put(chIDJObj);
 		
-		for (String hNodeId : typeMap.keySet()) {
+		for (SemanticType type: semanticTypes) {
 			// Add the hNode information
 			JSONObject hNodeJObj = new JSONObject();
 			hNodeJObj.put(ClientJsonKeys.name.name(), ParameterType.hNodeId.name());
 			hNodeJObj.put(ClientJsonKeys.type.name(), ParameterType.hNodeId.name());
-			hNodeJObj.put(ClientJsonKeys.value.name(), hNodeId);
+			hNodeJObj.put(ClientJsonKeys.value.name(), type.getHNodeId());
 			typesArray.put(hNodeJObj);
 			
 			// Add the semantic type information
 			JSONObject typeJObj = new JSONObject();
 			typeJObj.put(ClientJsonKeys.name.name(), ClientJsonKeys.SemanticType.name());
 			typeJObj.put(ClientJsonKeys.type.name(), ParameterType.other.name());
-			typeJObj.put(ClientJsonKeys.value.name(), typeMap.get(hNodeId).getJSONArrayRepresentation());
+			typeJObj.put(ClientJsonKeys.value.name(), type.getJSONArrayRepresentation());
 			typesArray.put(typeJObj);
 		}
-		
 		setInputParameterJson(typesArray.toString(4));
 	}
 

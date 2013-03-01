@@ -34,21 +34,21 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.model.serialization.DataSourceLoader;
+import edu.isi.karma.model.serialization.DataSourcePublisher;
+import edu.isi.karma.model.serialization.Repository;
+import edu.isi.karma.model.serialization.WebServiceLoader;
+import edu.isi.karma.model.serialization.WebServicePublisher;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.Vertex;
 import edu.isi.karma.rdf.SourceDescription;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.metadata.MetadataContainer;
-import edu.isi.karma.service.Repository;
-import edu.isi.karma.service.Service;
-import edu.isi.karma.service.ServiceLoader;
-import edu.isi.karma.service.ServicePublisher;
-import edu.isi.karma.service.Source;
-import edu.isi.karma.service.SourceLoader;
-import edu.isi.karma.service.SourcePublisher;
+import edu.isi.karma.rep.sources.DataSource;
+import edu.isi.karma.rep.sources.WebService;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.ViewPreferences;
 import edu.isi.karma.webserver.KarmaException;
@@ -92,8 +92,8 @@ public class PublishModelCommand extends Command{
 		Workspace ws = vWorkspace.getWorkspace();
 		Worksheet wk = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 
-		Service service = null;
-		Source source = null;
+		WebService service = null;
+		DataSource source = null;
 		
 		if (!wk.containService()) { 
 			logger.info("The worksheet does not have a service object.");
@@ -113,7 +113,7 @@ public class PublishModelCommand extends Command{
 					"Error occured while publishing the source. The alignment model is null."));
 		} 
 		
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = null;
+		DirectedWeightedMultigraph<Node, Link> tree = null;
 		if (al != null) 
 			tree = al.getSteinerTree();
 		
@@ -126,7 +126,7 @@ public class PublishModelCommand extends Command{
 		
 		if (service != null) service.updateModel(tree);
 		else {
-			source = new Source(wk.getTitle(), tree);
+			source = new DataSource(wk.getTitle(), tree);
 			MetadataContainer metaData = wk.getMetadataContainer();
 			if (metaData == null) {
 				metaData = new MetadataContainer();
@@ -170,12 +170,13 @@ public class PublishModelCommand extends Command{
 			
 			if (service != null) {
 				service.setSourceDescription(descString);
-				ServicePublisher.publish(service, Repository.Instance().LANG, true);
+				WebServicePublisher servicePublisher = new WebServicePublisher(service);
+				servicePublisher.publish(Repository.Instance().LANG, true);
 				logger.info("Service model has successfully been published to repository: " + service.getId());
 				return new UpdateContainer(new ErrorUpdate(
 				"Service model has successfully been published to repository: " + service.getId()));
 			} else { //if (source != null) {
-				SourcePublisher sourcePublisher = new SourcePublisher(source, descString, ws.getFactory(), commandsJSON, wk.getMetadataContainer().getSourceInformation());
+				DataSourcePublisher sourcePublisher = new DataSourcePublisher(source, descString, ws.getFactory(), commandsJSON, wk.getMetadataContainer().getSourceInformation());
 				sourcePublisher.publish(Repository.Instance().LANG, true);
 				logger.info("Source model has successfully been published to repository: " + source.getId());
 				return new UpdateContainer(new ErrorUpdate(
@@ -198,8 +199,8 @@ public class PublishModelCommand extends Command{
 
 		Worksheet wk = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 
-		Service service = null;
-		Source source = null;
+		WebService service = null;
+		DataSource source = null;
 		
 		if (!wk.containService()) { 
 			logger.error("The worksheet does not have a service object.");
@@ -224,13 +225,13 @@ public class PublishModelCommand extends Command{
 
 			// deleting the service completely from the repository.
 			if (service != null) {
-				ServiceLoader.deleteServiceByUri(service.getUri());
+				WebServiceLoader.getInstance().deleteSourceByUri(service.getUri());
 				logger.info("Service model has successfully been deleted from repository.");
 				return new UpdateContainer(new ErrorUpdate(
 						"Service model has successfully been deleted from repository."));
 			}
 			else {
-				SourceLoader.deleteSourceByUri(source.getUri());
+				DataSourceLoader.getInstance().deleteSourceByUri(source.getUri());
 				logger.info("Source model has successfully been deleted from repository.");
 				return new UpdateContainer(new ErrorUpdate(
 						"Source model has successfully been deleted from repository."));

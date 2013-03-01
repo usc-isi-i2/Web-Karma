@@ -53,8 +53,6 @@ public class RequestController extends HttpServlet{
 		}
 		
 		String responseString = "";
-		/************collect info************/
-		MyLogger xLogger = new MyLogger();
 		String id = request.getSession().getId();
 		MyLogger.user_id = id;
 		/*************************************/

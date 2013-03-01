@@ -33,8 +33,8 @@ import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.service.Attribute;
-import edu.isi.karma.service.Table;
+import edu.isi.karma.rep.sources.Attribute;
+import edu.isi.karma.rep.sources.Table;
 
 public class ServiceTableUtil {
 

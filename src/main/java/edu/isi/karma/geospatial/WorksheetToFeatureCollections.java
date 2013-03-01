@@ -83,7 +83,7 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.semantictypes.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -153,90 +153,90 @@ public class WorksheetToFeatureCollections {
 		List<String> spatialHNodeIds = new ArrayList<String>();
 
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
-			if (type.getType().getUriString().equals(SRID_PROPERTY)
-					&& type.getDomain().getUriString().equals(SRID_CLASS)) {
+			if (type.getType().getUri().equals(SRID_PROPERTY)
+					&& type.getDomain().getUri().equals(SRID_CLASS)) {
 				SRIDHNodeId = type.getHNodeId();
 				spatialHNodeIds.add(0, SRIDHNodeId);
 			} else if (isSubPropertyOf(
-					type.getType().getUriString().toString(),
+					type.getType().getUri().toString(),
 					"http://www.opengis.net/gml/hasID", true)
-					&& isSubClassOf(type.getDomain().getUriString().toString(),
+					&& isSubClassOf(type.getDomain().getUri().toString(),
 							SRID_CLASS, true)) {
 				System.out.println("POS_LIST_PROPERTY:"
-						+ type.getType().getUriString().toString());
+						+ type.getType().getUri().toString());
 				SRIDHNodeId = type.getHNodeId();
 				spatialHNodeIds.add(0, SRIDHNodeId);
-			} else if (type.getType().getUriString().equals(POINT_POS_PROPERTY)
-					&& type.getDomain().getUriString().equals(POINT_CLASS)
+			} else if (type.getType().getUri().equals(POINT_POS_PROPERTY)
+					&& type.getDomain().getUri().equals(POINT_CLASS)
 					&& pointFeatureHNodeId == "") {
 				spatialHNodeIds.add(0, type.getHNodeId());
 				pointFeatureHNodeId = type.getHNodeId();
 			} else if (isSubPropertyOf(
-					type.getType().getUriString().toString(),
+					type.getType().getUri().toString(),
 					"http://www.opengis.net/gml/pos", true)
-					&& isSubClassOf(type.getDomain().getUriString().toString(),
+					&& isSubClassOf(type.getDomain().getUri().toString(),
 							POINT_CLASS, true)) {
 				System.out.println("POS_LIST_PROPERTY:"
-						+ type.getType().getUriString().toString());
+						+ type.getType().getUri().toString());
 				spatialHNodeIds.add(0, type.getHNodeId());
 				pointFeatureHNodeId = type.getHNodeId();
 			}
 			
-			else if (type.getType().getUriString().equals(WGS84_LAT_PROPERTY)
-					&& type.getDomain().getUriString().equals(POINT_CLASS)
+			else if (type.getType().getUri().equals(WGS84_LAT_PROPERTY)
+					&& type.getDomain().getUri().equals(POINT_CLASS)
 					&& pointFeatureLatHNodeId == "") {
 				spatialHNodeIds.add(0, type.getHNodeId());
 				pointFeatureLatHNodeId = type.getHNodeId();
 			}  else if (isSubPropertyOf(
-					type.getType().getUriString().toString(),
+					type.getType().getUri().toString(),
 					"http://www.w3.org/2003/01/geo/wgs84_pos#lat", true)
-					&& isSubClassOf(type.getDomain().getUriString().toString(),
+					&& isSubClassOf(type.getDomain().getUri().toString(),
 							POINT_CLASS, true) && pointFeatureLatHNodeId == "") {
 				System.out.println("WGS84_LAT_PROPERTY:"
-						+ type.getType().getUriString().toString());
+						+ type.getType().getUri().toString());
 				spatialHNodeIds.add(0, type.getHNodeId());
 				pointFeatureLatHNodeId = type.getHNodeId();
 			}else if (isSubPropertyOf(
-					type.getType().getUriString().toString(),
+					type.getType().getUri().toString(),
 					"http://www.w3.org/2003/01/geo/wgs84_pos#long", true)
-					&& isSubClassOf(type.getDomain().getUriString().toString(),
+					&& isSubClassOf(type.getDomain().getUri().toString(),
 							POINT_CLASS, true) && pointFeatureLonHNodeId == "") {
 				System.out.println("WGS84_LNG_PROPERTY:"
-						+ type.getType().getUriString().toString());
+						+ type.getType().getUri().toString());
 				spatialHNodeIds.add(0, type.getHNodeId());
 				pointFeatureLonHNodeId = type.getHNodeId();
-			}else if (type.getType().getUriString().equals(WGS84_LNG_PROPERTY)
-					&& type.getDomain().getUriString().equals(POINT_CLASS)
+			}else if (type.getType().getUri().equals(WGS84_LNG_PROPERTY)
+					&& type.getDomain().getUri().equals(POINT_CLASS)
 					&& pointFeatureLonHNodeId == "") {
 				spatialHNodeIds.add(0, type.getHNodeId());
 				pointFeatureLonHNodeId = type.getHNodeId();
-			} else if (type.getType().getUriString().equals(POS_LIST_PROPERTY)
-					&& type.getDomain().getUriString().equals(LINE_CLASS)
+			} else if (type.getType().getUri().equals(POS_LIST_PROPERTY)
+					&& type.getDomain().getUri().equals(LINE_CLASS)
 					&& lineFeatureHNodeId == "") {
 				spatialHNodeIds.add(0, type.getHNodeId());
 				lineFeatureHNodeId = type.getHNodeId();
 			} else if (isSubPropertyOf(
-					type.getType().getUriString().toString(),
+					type.getType().getUri().toString(),
 					"http://www.opengis.net/gml/posList", true)
-					&& isSubClassOf(type.getDomain().getUriString().toString(),
+					&& isSubClassOf(type.getDomain().getUri().toString(),
 							LINE_CLASS, true) && lineFeatureHNodeId == "") {
 				System.out.println("POS_LIST_PROPERTY:"
-						+ type.getType().getUriString().toString());
+						+ type.getType().getUri().toString());
 				spatialHNodeIds.add(0, type.getHNodeId());
 				lineFeatureHNodeId = type.getHNodeId();
 
-			} else if (type.getType().getUriString().equals(POS_LIST_PROPERTY)
-					&& type.getDomain().getUriString().equals(POLYGON_CLASS)
+			} else if (type.getType().getUri().equals(POS_LIST_PROPERTY)
+					&& type.getDomain().getUri().equals(POLYGON_CLASS)
 					&& polygonFeatureHNodeId == "") {
 				spatialHNodeIds.add(0, type.getHNodeId());
 				polygonFeatureHNodeId = type.getHNodeId();
 			} else if (isSubPropertyOf(
-					type.getType().getUriString().toString(),
+					type.getType().getUri().toString(),
 					"http://www.opengis.net/gml/posList", true)
-					&& isSubClassOf(type.getDomain().getUriString().toString(),
+					&& isSubClassOf(type.getDomain().getUri().toString(),
 							POLYGON_CLASS, true) && polygonFeatureHNodeId == "") {
 				System.out.println("POS_LIST_PROPERTY:"
-						+ type.getType().getUriString().toString());
+						+ type.getType().getUri().toString());
 				spatialHNodeIds.add(0, type.getHNodeId());
 				polygonFeatureHNodeId = type.getHNodeId();
 			}
