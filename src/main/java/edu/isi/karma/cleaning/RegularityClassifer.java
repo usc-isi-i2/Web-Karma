@@ -72,7 +72,6 @@ public class RegularityClassifer {
 			for(double d : dist) {
 				System.out.print(d + "  ") ;
 			}
-			System.out.println() ;
 		}
 		fileReader.close() ;
 		Prnt.prn(cf) ;

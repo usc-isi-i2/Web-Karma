@@ -71,7 +71,6 @@ public class Partition implements GrammarTreeNode {
 	public String toString()
 	{
 		String s = "partition:"+this.label+"\n";
-		System.out.println(""+trace.toString());
 		s += "Examples:\n";
 		for(int i = 0; i<this.orgNodes.size(); i++)
 		{

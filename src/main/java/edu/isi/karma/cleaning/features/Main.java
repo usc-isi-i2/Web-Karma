@@ -24,6 +24,8 @@ import java.io.FileReader;
 import java.util.Collection;
 import java.util.Vector;
 
+import com.sun.istack.logging.Logger;
+
 import au.com.bytecode.opencsv.CSVReader;
 
 public class Main {
@@ -40,7 +42,6 @@ public class Main {
 				Vector<String> row = new Vector<String>();
 				Vector<String> examples = new Vector<String>();
 				Vector<String> oexamples = new Vector<String>();
-				System.out.println(flist[i].getName());
 				if(!flist[i].getName().contains(".csv"))
 					continue;
 				CSVReader re = new CSVReader(new FileReader(flist[i]), '\t');
@@ -78,7 +79,7 @@ public class Main {
 		}
 		catch(Exception ex)
 		{
-			System.out.println(""+ex.toString());
+			Logger.getLogger(Main.class).info(""+ex.toString());
 		}
 	}
 }

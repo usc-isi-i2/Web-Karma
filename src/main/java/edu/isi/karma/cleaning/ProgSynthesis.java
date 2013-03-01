@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Vector;
 
+import com.sun.tools.jxc.gen.config.Config;
+
 
 public class ProgSynthesis{
 	Vector<Vector<TNode>> orgVector = new Vector<Vector<TNode>>();
@@ -156,7 +158,8 @@ public class ProgSynthesis{
 				if(p.label.compareTo(xString)==0)
 				{
 					String newRule = p.toProgram();
-					System.out.println("updated Rule: "+p.label+": "+newRule);
+					if(ConfigParameters.debug == 1)
+						System.out.println("updated Rule: "+p.label+": "+newRule);
 					if(newRule.contains("null"))
 					{
 						findRule = false;
@@ -172,10 +175,13 @@ public class ProgSynthesis{
 			rules.add(r);
 		
 		this.ruleNo += termCnt; //accumulate the no of rules while the object is alive
-		System.out.println("*********************************");
-		System.out.println("Total program size: "+prog.size());
-		System.out.println("Updated times: "+ termCnt);
-		System.out.println("*********************************");
+		if(ConfigParameters.debug == 1)
+		{
+			System.out.println("*********************************");
+			System.out.println("Total program size: "+prog.size());
+			System.out.println("Updated times: "+ termCnt);
+			System.out.println("*********************************");
+		}
 		return rules;	
 	}
 	public Collection<ProgramRule> run_main() {

@@ -76,7 +76,6 @@ public class RegularityFeatureSet implements FeatureSet {
 			}
 			TNode tx = new TNode(mytype,t.getText());
 			x.add(tx);
-			//System.out.println("cnt: "+t.getText()+" type:"+t.getType());
 			t = tk.nextToken();
 		}
 		return x;

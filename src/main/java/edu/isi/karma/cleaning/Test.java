@@ -100,7 +100,8 @@ public class Test {
 							{
 								InterpreterType worker = script.getRuleForValue(entries.get(j)[0]);
 								String s = worker.execute(entries.get(j)[0]);
-								System.out.println("result:   "+s);
+								if(ConfigParameters.debug == 1)
+									System.out.println("result:   "+s);
 								if(s== null||s.length()==0)
 								{
 									wexam = entries.get(j);

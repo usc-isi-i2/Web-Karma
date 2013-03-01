@@ -5,6 +5,10 @@ import java.io.FileWriter;
 import java.util.Collection;
 import java.util.Vector;
 
+import org.geotools.filter.expression.ThisPropertyAccessorFactory;
+
+import com.sun.istack.logging.Logger;
+
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.CSVLoader;
@@ -29,7 +33,7 @@ public class Data2Features {
 		}
 		catch(Exception ex)
 		{
-			System.out.println(""+ex.toString());
+			Logger.getLogger(Data2Features.class).info(""+ex.toString());
 		}
 	}
 	//cpath is the original data file, label is the class label
@@ -64,7 +68,7 @@ public class Data2Features {
 		}
 		catch(Exception ex)
 		{
-			System.out.println(""+ex.toString());
+			Logger.getLogger(Data2Features.class).info(""+ex.toString());
 			return null;
 		}
 	}
@@ -120,7 +124,7 @@ public class Data2Features {
 		}
 		catch(Exception ex)
 		{
-			System.out.println(""+ex.toString());
+			Logger.getLogger(Data2Features.class).info(""+ex.toString());
 		}
 	}
 }

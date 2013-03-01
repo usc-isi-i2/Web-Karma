@@ -13,6 +13,8 @@ import java.util.Vector;
 
 import org.json.JSONObject;
 
+import com.sun.istack.logging.Logger;
+
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.isi.karma.cleaning.features.Data2Features;
 import edu.isi.karma.cleaning.features.Feature;
@@ -218,7 +220,7 @@ public class UtilTools {
 					"./src/main/webapp/grammar/tmp/tmp.arff");
 			return dirpathString + "grammar/tmp/tmp.arff";
 		} catch (Exception e) {
-			System.out.println("" + e.toString());
+			Logger.getLogger(UtilTools.class).info("" + e.toString());
 			return "";
 		}
 
@@ -338,8 +340,6 @@ public class UtilTools {
 
 	public static void main(String[] args) {
 		String s = "+";
-		System.out.println("" + UtilTools.escape(s));
-		// System.out.println(""+s.replace("(", "\\("));
 	}
 
 }

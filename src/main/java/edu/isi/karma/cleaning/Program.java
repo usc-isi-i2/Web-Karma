@@ -13,7 +13,8 @@ public class Program implements GrammarTreeNode {
 		for(int i=0;i<this.partitions.size();i++)
 		{
 			this.partitions.get(i).setLabel("\'attr_"+i+"\'");
-			System.out.println(this.partitions.get(i).toString());
+			if(ConfigParameters.debug == 1)
+				System.out.println(this.partitions.get(i).toString());
 		}
 		if(partitions.size()>1)
 			this.learnClassifier();
@@ -69,7 +70,8 @@ public class Program implements GrammarTreeNode {
 				if(rule.contains("null"))
 					return null;
 				pr.addRule(p.label, rule);
-				System.out.println(pr.getStringRule(p.label));
+				if(ConfigParameters.debug == 1)
+					System.out.println(pr.getStringRule(p.label));
 				score += p.getScore();
 			}
 			score = score/this.partitions.size();
@@ -81,7 +83,8 @@ public class Program implements GrammarTreeNode {
 			String s = partitions.get(0).toProgram();
 			if(s.contains("null"))
 				return null;
-			System.out.println(""+s);
+			if(ConfigParameters.debug == 1)
+				System.out.println(""+s);
 			score = this.partitions.get(0).getScore();
 			pr.addRule(partitions.get(0).label, s);
 			return pr;

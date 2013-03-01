@@ -37,7 +37,6 @@ public class Interpretor {
     		String scripts="substr(value,indexOf(value,'START','WRD'),indexOf(value,'WRD','SYB'))+'*'+substr(value,indexOf(value,'SYB','NUM'),indexOf(value,'NUM','END'))";
     		String value = "Dositejeva&nbsp;22";
     		InterpreterType worker = it.create(scripts);
-    		System.out.println(worker.execute(value));
     	
     }
 }

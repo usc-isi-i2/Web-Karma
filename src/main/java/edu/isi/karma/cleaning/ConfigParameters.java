@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class ConfigParameters {
+	public static int debug = 0;
 	Properties properties = new Properties();
 	String res = "";
 	public ConfigParameters()
@@ -37,17 +38,16 @@ public class ConfigParameters {
 			// load a properties file
 			properties.load(new FileInputStream(
 					"./config/transformation.properties"));
-
 			// get the property value and print it out
 			Segment.cxtsize_limit = Integer.parseInt(properties.getProperty("cxt_size").trim());
 			Template.temp_limit = Integer.parseInt(properties.getProperty("temp_cap").trim());
 			Traces.trace_limit = Integer.parseInt(properties.getProperty("trace_limit").trim());
-			//System.out.println(properties.getProperty("iter_end"));
+			//properties.getProperty("iter_end");
 			ExampleSelection.way = Integer.parseInt(properties.getProperty("exmp_sel").trim());
 			res = String.format("cxt_limit:%d temp_limit: %d, trace_limit:%d, exp_sel:%d\n",Segment.cxtsize_limit,Template.temp_limit,Traces.trace_limit,ExampleSelection.way);
-			
+			debug = Integer.parseInt(properties.getProperty("debug").trim());
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			return;
 		}
 	}
 	public String getString()
