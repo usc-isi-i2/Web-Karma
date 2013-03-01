@@ -33,10 +33,8 @@ import org.jgrapht.graph.WeightedMultigraph;
 
 import com.rits.cloning.Cloner;
 
-import edu.isi.karma.controller.update.OntologyClassHierarchyUpdate;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.ontology.OntologyTreeNode;
 import edu.isi.karma.modeling.ontology.OntologyUpdateListener;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
