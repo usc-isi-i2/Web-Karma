@@ -352,9 +352,12 @@ public class Alignment implements OntologyUpdateListener {
 				this.graphBuilder.changeLinkStatus(link, LinkStatus.Normal);
 		}
 		
+		List<Link> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
 		for (Link link: this.steinerTree.edgeSet()) {
-			this.graphBuilder.changeLinkStatus(link, LinkStatus.PreferredByUI);
-			logger.debug("link " + link.getId() + " has been added to preferred UI links.");
+			if (linksForcedByUser == null || !linksForcedByUser.contains(link)) {
+				this.graphBuilder.changeLinkStatus(link, LinkStatus.PreferredByUI);
+				logger.debug("link " + link.getId() + " has been added to preferred UI links.");
+			}
 		}
 	}
 	
