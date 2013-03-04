@@ -40,7 +40,7 @@ public class SetMetaPropertyCommandFactory extends CommandFactory implements JSO
 	}
 	
 	private enum Arguments {
-		vWorksheetId, hNodeId, metaPropertyName, metaPropertyValue, trainAndShowUpdates
+		vWorksheetId, hNodeId, metaPropertyName, metaPropertyValue, trainAndShowUpdates, rdfLiteralType
 	}
 	
 	@Override
@@ -48,10 +48,12 @@ public class SetMetaPropertyCommandFactory extends CommandFactory implements JSO
 			VWorkspace vWorkspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
+		String rdfLiteralType = request.getParameter(Arguments.rdfLiteralType.name());
 		
 		METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(request.getParameter(Arguments.metaPropertyName.name()));
 		String propValue = request.getParameter(Arguments.metaPropertyValue.name());
-		return new SetMetaPropertyCommand(getNewId(vWorkspace), vWorksheetId, hNodeId, prop, propValue, true);
+		return new SetMetaPropertyCommand(getNewId(vWorkspace), vWorksheetId, hNodeId, 
+				prop, propValue, true, rdfLiteralType);
 	}
 
 	@Override
@@ -61,8 +63,9 @@ public class SetMetaPropertyCommandFactory extends CommandFactory implements JSO
 		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
 		METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(HistoryJsonUtil.getStringValue(Arguments.metaPropertyName.name(), inputJson));
 		String propValue = HistoryJsonUtil.getStringValue(Arguments.metaPropertyValue.name(), inputJson);
-		
-		SetMetaPropertyCommand comm = new SetMetaPropertyCommand(getNewId(vWorkspace), vWorksheetId, hNodeId, prop, propValue, true);
+		String rdfLiteralType = HistoryJsonUtil.getStringValue(Arguments.rdfLiteralType.name(), inputJson);
+		SetMetaPropertyCommand comm = new SetMetaPropertyCommand(getNewId(vWorkspace), vWorksheetId, 
+				hNodeId, prop, propValue, true, rdfLiteralType);
 		
 		// Change the train flag, so that it does not train while reading from history
 		HistoryJsonUtil.setArgumentValue(Arguments.trainAndShowUpdates.name(), false, inputJson);

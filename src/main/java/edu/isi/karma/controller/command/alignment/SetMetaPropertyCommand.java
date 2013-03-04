@@ -58,6 +58,7 @@ public class SetMetaPropertyCommand extends Command {
 	private final boolean trainAndShowUpdates;
 	private METAPROPERTY_NAME metaPropertyName;
 	private final String metaPropertyValue;
+	private final String rdfLiteralType;
 	
 	private CRFColumnModel oldColumnModel;
 	private SynonymSemanticTypes oldSynonymTypes;
@@ -68,13 +69,15 @@ public class SetMetaPropertyCommand extends Command {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
 	protected SetMetaPropertyCommand(String id, String vWorksheetId, String hNodeId, 
-			METAPROPERTY_NAME metaPropertyName, String metaPropertyValue, boolean trainAndShowUpdates) {
+			METAPROPERTY_NAME metaPropertyName, String metaPropertyValue, boolean trainAndShowUpdates,
+			String rdfLiteralType) {
 		super(id);
 		this.hNodeId = hNodeId;
 		this.vWorksheetId = vWorksheetId;
 		this.trainAndShowUpdates = trainAndShowUpdates;
 		this.metaPropertyName = metaPropertyName;
 		this.metaPropertyValue = metaPropertyValue;
+		this.rdfLiteralType = rdfLiteralType;
 		
 		addTag(CommandTag.Modeling);
 	}
@@ -264,11 +267,11 @@ public class SetMetaPropertyCommand extends Command {
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 		
 		if (columnNode == null) {
-			columnNode = alignment.addColumnNode(hNodeId, columnName);
+			columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType);
 		} else {
 			// Remove old column node if it exists
 			alignment.removeNode(columnNode.getId());
-			columnNode = alignment.addColumnNode(hNodeId, columnName);
+			columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType);
 		}
 		return columnNode;
 	}

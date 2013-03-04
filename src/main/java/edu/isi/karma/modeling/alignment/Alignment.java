@@ -164,10 +164,10 @@ public class Alignment implements OntologyUpdateListener {
 	
 	// AddNode methods
 	
-	public ColumnNode addColumnNode(String hNodeId, String columnName) {
+	public ColumnNode addColumnNode(String hNodeId, String columnName, String rdfLiteralType) {
 		
 		// use hNodeId as id of the node
-		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName);
+		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType);
 		if (this.graphBuilder.addNode(node)) return node;
 		return null;
 	}
@@ -180,10 +180,10 @@ public class Alignment implements OntologyUpdateListener {
 		return null;	
 	}
 	
-	public ColumnNode addColumnNodeWithoutUpdatingGraph(String hNodeId, String columnName) {
+	public ColumnNode addColumnNodeWithoutUpdatingGraph(String hNodeId, String columnName, String rdfLiteralType) {
 		
 		// use hNodeId as id of the node
-		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName);
+		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType);
 		if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) return node;
 		return null;
 	}
@@ -200,10 +200,10 @@ public class Alignment implements OntologyUpdateListener {
 		this.graphBuilder.updateGraph();
 	}
 	
-	public ColumnNode createColumnNode(String hNodeId, String columnName) {
+	public ColumnNode createColumnNode(String hNodeId, String columnName, String rdfLiteralType) {
 		
 		// use hNodeId as id of the node
-		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName);
+		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType);
 		return node;
 	}
 	

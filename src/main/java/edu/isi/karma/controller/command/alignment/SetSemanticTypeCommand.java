@@ -59,6 +59,7 @@ public class SetSemanticTypeCommand extends Command {
 	private final String hNodeId;
 	private final String vWorksheetId;
 	private final boolean trainAndShowUpdates;
+	private final String rdfLiteralType;
 	private CRFColumnModel oldColumnModel;
 	private SynonymSemanticTypes oldSynonymTypes;
 	private JSONArray typesArr;
@@ -74,13 +75,14 @@ public class SetSemanticTypeCommand extends Command {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	protected SetSemanticTypeCommand(String id, String vWorksheetId, String hNodeId, 
-			boolean isPartOfKey, JSONArray typesArr, boolean trainAndShowUpdates) {
+			boolean isPartOfKey, JSONArray typesArr, boolean trainAndShowUpdates, String rdfLiteralType) {
 		super(id);
 		this.hNodeId = hNodeId;
 		this.vWorksheetId = vWorksheetId;
 		this.isPartOfKey = isPartOfKey;
 		this.trainAndShowUpdates = trainAndShowUpdates;
 		this.typesArr = typesArr;
+		this.rdfLiteralType = rdfLiteralType;
 
 		addTag(CommandTag.Modeling);
 	}
@@ -302,11 +304,11 @@ public class SetSemanticTypeCommand extends Command {
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 		
 		if (columnNode == null) {
-			columnNode = alignment.addColumnNode(hNodeId, columnName);
+			columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType);
 		} else {
 			// Remove old column node if it exists
 			alignment.removeNode(columnNode.getId());
-			columnNode = alignment.addColumnNode(hNodeId, columnName);
+			columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType);
 		}
 		return columnNode;
 	}

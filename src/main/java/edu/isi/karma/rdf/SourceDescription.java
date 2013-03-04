@@ -426,6 +426,7 @@ public class SourceDescription {
 		*/
 		/////////
 		String hNodeId = ((ColumnNode) child).getHNodeId();
+		String rdfLiteralType = ((ColumnNode) child).getRdfLiteralType(); 
 		String dataAttribute = factory.getHNode(hNodeId).getColumnName();
 		//System.out.println("COLUMN name='"+dataAttribute+"'");
 		if(!useColumnNames){
@@ -436,9 +437,11 @@ public class SourceDescription {
 		if(reversedLinkIds.contains(e.getId())){
 			throw new KarmaException("A data property cannot be an inverse_of:" + e.getLabel().getUri());
 		}
-		String s = "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
-		//System.out.println("DataProperty:" + s);
-		return s;
+		if (rdfLiteralType != null && !rdfLiteralType.equals("")) {
+			return "`" + propertyName + "@@" + rdfLiteralType + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
+		} else {
+			return "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
+		}
 	}
 
 	/**

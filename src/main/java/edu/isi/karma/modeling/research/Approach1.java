@@ -328,7 +328,7 @@ public class Approach1 {
 				List<SemanticLabel> groupedOutputList = groupedMappedOutputLabelsByNodeUri.get(s);
 				InternalNode n = alignment.addInternalNodeWithoutUpdatingGraph(new Label(s));
 				for (SemanticLabel sl : groupedOutputList) {
-					ColumnNode c = alignment.addColumnNodeWithoutUpdatingGraph(sl.getLeafName(), sl.getLeafName());
+					ColumnNode c = alignment.addColumnNodeWithoutUpdatingGraph(sl.getLeafName(), sl.getLeafName(), "");
 					alignment.addDataPropertyLink(n, c, sl.getLinkLabel(), false);
 				}
 			}

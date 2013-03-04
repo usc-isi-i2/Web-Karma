@@ -916,7 +916,7 @@ public class GraphBuilder {
 		DirectedWeightedMultigraph<Node, Link> g = new 
 				DirectedWeightedMultigraph<Node, Link>(Link.class);
 		
-		Node n1 = new ColumnNode("n1", "h1", "B");
+		Node n1 = new ColumnNode("n1", "h1", "B", "");
 		Node n2 = new InternalNode("n2", null);
 		Link l1 = new DataPropertyLink("e1", null);
 		

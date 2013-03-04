@@ -362,7 +362,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         });
     
     $("text.LinkLabel").qtip({content: {text: "Edit Relationship"}});
-    $("g.ColumnNode, g.Unassigned").qtip({content: {text: "Change Semantic Type"}});
+    // $("g.ColumnNode, g.Unassigned").qtip({content: {text: "Change Semantic Type"}});
     $("g.InternalNode").qtip({content: {text: "Add Parent Relationship"}});
     
     link.attr("x1", function(d) {
@@ -446,6 +446,7 @@ function changeSemanticType_d3(d, vis, event) {
     $("div#semanticTypingAdvacedOptionsDiv").hide().data("state","closed");
     $("div#semanticTypingAdvacedOptionsDiv input:checkbox").prop('checked', false);
     $("div#semanticTypingAdvacedOptionsDiv input:text").val("");
+    $("div#rdfTypeSelectDiv input").val("")
     
     // Store a copy of the existing types.
     // This is tha JSON array which is changed when the user adds/changes through GUI and is submitted to the server.

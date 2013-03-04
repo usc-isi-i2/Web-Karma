@@ -297,7 +297,7 @@ public class ModelReader {
 			Node obj = uri2Classes.get(objStr);
 			if (obj == null) {
 				if (objStr.startsWith(attPrefix))
-					obj = new ColumnNode(objStr, null, null);
+					obj = new ColumnNode(objStr, null, null, "");
 				else if (objStr.indexOf(":") == -1 && objStr.indexOf("\"") != -1)
 					obj = new LiteralNode(objStr, objStr, null);
 				else

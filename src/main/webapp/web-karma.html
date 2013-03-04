@@ -341,7 +341,7 @@ and related projects, please see: http://www.isi.edu/integration
 	
 	
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.43</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.44</span></h1>
 		<table id="topMenuBar">
 			<tr>
 				<td>
@@ -628,7 +628,49 @@ and related projects, please see: http://www.isi.edu/integration
 				<button id="addSemanticType">Add synonym semantic type</button><br />
 				<input class="smallSizedFont" type="checkbox" id="chooseClassKey" />
 				<label for="chooseClassKey" class="smallSizedFont">Mark as key for the class.</label><br />
-				
+				<div class="ui-widget" id="rdfTypeSelectDiv">
+					<label class="smallSizedFont">Literal type: </label>
+					<select class="smallSizedFont" id="rdfTypeSelect">
+						<option>xsd:string</option>
+						<option>xsd:boolean</option>
+						<option>xsd:decimal</option>
+						<option>xsd:integer</option>
+						<option>xsd:double</option>
+						<option>xsd:float</option>
+						<option>xsd:time</option>
+						<option>xsd:dateTime</option>
+						<option>xsd:dateTimeStamp</option>
+						<option>xsd:gYear</option>
+						<option>xsd:gMonth</option>
+						<option>xsd:gDay</option>
+						<option>xsd:gYearMonth</option>
+						<option>xsd:gMonthDay</option>
+						<option>xsd:duration</option>
+						<option>xsd:yearMonthDuration</option>
+						<option>xsd:dayTimeDuration</option>
+						<option>xsd:byte</option>
+						<option>xsd:short</option>
+						<option>xsd:int</option>
+						<option>xsd:long</option>
+						<option>xsd:unsignedByte</option>
+						<option>xsd:unsignedShort</option>
+						<option>xsd:unsignedInt</option>
+						<option>xsd:unsignedLong</option>
+						<option>xsd:positiveInteger</option>
+						<option>xsd:nonNegativeInteger</option>
+						<option>xsd:negativeInteger</option>
+						<option>xsd:nonPositiveInteger</option>
+						<option>xsd:hexBinary</option>
+						<option>xsd:base64Binary</option>
+						<option>xsd:anyURI</option>
+						<option>xsd:language</option>
+						<option>xsd:normalizedString</option>
+						<option>xsd:token</option>
+						<option>xsd:NMTOKEN</option>
+						<option>xsd:Name</option>
+						<option>xsd:NCName</option>
+					</select>
+				</div>
 				<button id="semanticTypingAdvancedOptions">Advanced Options</button><br />
 				<div id="semanticTypingAdvacedOptionsDiv" style="display: none">
 					<table>

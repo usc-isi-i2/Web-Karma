@@ -165,6 +165,99 @@ function attachOntologyOptionsRadioButtonHandlers() {
     $("div#semanticTypingAdvacedOptionsDiv input:text").focus(function() {
         $(this).parents("tr").find("input[type='checkbox']").attr('checked', true).trigger('change');
     });
+    
+    (function( $ ) {
+    $.widget( "ui.combobox", {
+      _create: function() {
+        var input,
+          that = this,
+          wasOpen = false,
+          select = this.element.hide(),
+          selected = select.children( ":selected" ),
+          value = selected.val() ? selected.text() : "",
+          wrapper = this.wrapper = $( "<span>" )
+            .addClass( "ui-combobox" )
+            .insertAfter( select );
+ 
+        input = $( "<input>" )
+          .appendTo( wrapper )
+          .val( value )
+          .attr( "title", "" )
+          .addClass( "ui-state-default ui-combobox-input" )
+          .autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: function( request, response ) {
+              var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+              response( select.children( "option" ).map(function() {
+                var text = $( this ).text();
+                if ( this.value && ( !request.term || matcher.test(text) ) )
+                  return {
+                    // label: text.replace(
+                      // new RegExp(
+                        // "(?![^&;]+;)(?!<[^<>]*)(" +
+                        // $.ui.autocomplete.escapeRegex(request.term) +
+                        // ")(?![^<>]*>)(?![^&;]+;)", "gi"
+                      // ), "<strong>$1</strong>" ),
+                    value: text,
+                    option: this
+                  };
+              }) );
+            },
+            select: function( event, ui ) {
+              ui.item.option.selected = true;
+              that._trigger( "selected", event, {
+                item: ui.item.option
+              });
+            }
+          })
+          .addClass( "ui-widget ui-widget-content ui-corner-left" );
+ 
+        // input.data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+          // return $( "<li>" )
+            // .append( "<a>" + item.label + "</a>" )
+            // .appendTo( ul );
+        // };
+ 
+        $( "<a>" )
+          .attr( "tabIndex", -1 )
+          .attr( "title", "Show All Items" )
+          .appendTo( wrapper )
+          .button({
+            icons: {
+              primary: "ui-icon-triangle-1-s"
+            },
+            text: false
+          })
+          .removeClass( "ui-corner-all" )
+          .addClass( "ui-corner-right ui-combobox-toggle" )
+          .mousedown(function() {
+            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+          })
+          .click(function() {
+            input.focus();
+ 
+            // close if already visible
+            if ( wasOpen ) {
+              return;
+            }
+ 
+            // pass empty string as value to search for, displaying all results
+            input.autocomplete( "search", "" );
+          });
+      },
+ 
+      _destroy: function() {
+        this.wrapper.remove();
+        this.element.show();
+      }
+    });
+  })( jQuery );
+
+	$("#rdfTypeSelect").combobox();
+	$( "#typeListToggle" ).click(function() {
+      	$( "#rdfTypeSelect" ).toggle();
+    });
 
 }
 
@@ -390,6 +483,7 @@ function addSemTypeObjectToCurrentTable(semTypeObject, isSelected, isCrfModelSug
     if(semTypeObject["isPrimary"]) {
         $("input[name='isPrimaryGroup']:radio", trTag).prop('checked', true);
         $("#ChangeSemanticTypesDialogBox").data("selectedPrimaryRow", trTag);
+        $("div#rdfTypeSelectDiv input").val(semTypeObject["rdfLiteralType"]);
     }
         
         
@@ -887,7 +981,7 @@ function submitSemanticTypeChange() {
 	info["hNodeId"] = hNodeId;
 	info["isKey"] = $("input#chooseClassKey").is(":checked");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	
+	info["rdfLiteralType"] = $("div#rdfTypeSelectDiv input").val()
 	
 	// Check if any meta property (advanced options) was selected
 	var isMetaPropertyChecked = false;
@@ -947,6 +1041,7 @@ function submitSemanticTypeChange() {
 	newInfo.push(getParamObject("vWorksheetId", info["vWorksheetId"], "vWorksheetId"));
 	newInfo.push(getParamObject("isKey", $("input#chooseClassKey").is(":checked"), "other"));
 	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
+	newInfo.push(getParamObject("rdfLiteralType", $("div#rdfTypeSelectDiv input").val(), "other"));
 	info["newInfo"] = JSON.stringify(newInfo);
 	
 	

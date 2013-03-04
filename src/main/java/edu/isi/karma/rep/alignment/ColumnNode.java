@@ -31,11 +31,13 @@ public class ColumnNode extends Node {
 	private static final long serialVersionUID = 1L;
 	private final String hNodeId;
 	private final String columnName;
+	private final String rdfLiteralType;
 	
-	public ColumnNode(String id, String hNodeId, String columnName) {
+	public ColumnNode(String id, String hNodeId, String columnName, String rdfLiteralType) {
 		super(id, new Label(hNodeId), NodeType.ColumnNode);
 		this.hNodeId = hNodeId;
 		this.columnName = columnName;
+		this.rdfLiteralType = rdfLiteralType;
 	}
 
 	public String getHNodeId() {
@@ -44,6 +46,10 @@ public class ColumnNode extends Node {
 
 	public String getColumnName() {
 		return columnName;
+	}
+
+	public String getRdfLiteralType() {
+		return rdfLiteralType;
 	}
 	
 	

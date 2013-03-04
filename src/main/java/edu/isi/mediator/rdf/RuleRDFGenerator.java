@@ -442,6 +442,13 @@ public class RuleRDFGenerator {
 		//System.out.println("Predicate Name=" + predicateName);
 		if(predicateName.startsWith("`"))
 			predicateName = predicateName.substring(1,predicateName.length()-1);
+		
+		// Remove the RDF literal type
+		String rdfLiteralType = "";
+		if (predicateName.contains("@@")) {
+			rdfLiteralType = predicateName.substring(predicateName.indexOf("@@") + 2, predicateName.length());
+			predicateName = predicateName.replaceAll("@@" + rdfLiteralType, "");	
+		}
 
 		//the predicate name is the VALUE of the column name (p=`expand@predicate_name(uri(`id`))) ; 
 		//look for the value of column_name in values to find the actual class name 
@@ -512,7 +519,7 @@ public class RuleRDFGenerator {
 			else{
 				//it's another function
 				String value = (String)func.evaluate(values);
-				statement += prepareValue(value);
+				statement += prepareValue(value, rdfLiteralType);
 			}
 		}
 		else{
@@ -521,7 +528,7 @@ public class RuleRDFGenerator {
 			String varValue = values.get(MediatorUtil.removeBacktick(varName));
 			if(varValue==null)
 				throw new MediatorException("The values map does not contain variable: " + varName + " Map is:" + values);
-			statement += prepareValue(varValue);
+			statement += prepareValue(varValue, rdfLiteralType);
 			
 			//I have a key that has no value OR has NULL value=>don't add this triple
 			//all NULL values are transformed to "" before I get here, so that I can
@@ -574,20 +581,28 @@ public class RuleRDFGenerator {
 	/**
 	 * Returns a value valid for RDF N3 notation. It escapes the quotes.
 	 * @param value
+	 * @param rdfLiteralType 
 	 * @return
 	 * 	a value valid for RDF N3 notation.
 	 * <br>Note: look in RuleRDFMapper for a special case where the value is a URI.
 	 */
-	protected String prepareValue(String value){
+	protected String prepareValue(String value, String rdfLiteralType){
 		// Escaping the quotes
 		value = value.replaceAll("\\\\", "\\\\\\\\");
 		value = value.replaceAll("\"", "\\\\\"");
 		
 		// If newline present in the value, quote them around with triple quotes
-		if (value.contains("\n") || value.contains("\r"))	
-			return "\"\"\"" + value + "\"\"\"";
-		else
-			return "\"" + value + "\"";
+		if (value.contains("\n") || value.contains("\r")) {
+			if (rdfLiteralType != null && !rdfLiteralType.equals(""))
+				return "\"\"\"" + value + "\"\"\"" + "^^" + rdfLiteralType;
+			else
+				return "\"\"\"" + value + "\"\"\"";
+		} else {
+			if (rdfLiteralType != null && !rdfLiteralType.equals(""))
+				return "\"" + value + "\""+ "^^" + rdfLiteralType;
+			else
+				return "\"" + value + "\"";
+		}
 	}
 	
 	/**

@@ -60,7 +60,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 	public enum JsonKeys {
 		HNodeId, FullType, ConfidenceLevel, Origin, FullCRFModel, DisplayLabel, 
 		DisplayDomainLabel, Domain, SemanticTypesArray, isPrimary, isPartOfKey, 
-		Types, isMetaProperty
+		Types, isMetaProperty, rdfLiteralType
 	}
 
 	private static Logger logger = LoggerFactory
@@ -122,6 +122,13 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 							.value(type.isPartOfKey())
 							.key(JsonKeys.isPrimary.name())
 							.value(true);
+					
+					// Add the RDF literal type to show in the text box
+					String rdfLiteralType = alignmentColumnNode.getRdfLiteralType();
+					rdfLiteralType = (rdfLiteralType != null && !rdfLiteralType.equals("")) ? rdfLiteralType : "";
+					writer.key(JsonKeys.rdfLiteralType.name())
+						.value(rdfLiteralType);
+					
 //					String domainDisplayLabel = (domainNode.getLabel().getPrefix() != null && (!domainNode.getLabel().getPrefix().equals(""))) ?
 //							(domainNode.getLabel().getPrefix() + ":" + domainNode.getLocalId()) : domainNode.getLocalId();
 					if (!type.isClass()) {
