@@ -22,6 +22,7 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.util.Set;
 
+import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,7 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkStatus;
+import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.view.VWorkspace;
 
 public class AddUserLinkToAlignmentCommand extends Command {
@@ -44,6 +46,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 	private final String edgeId;
 	private final String alignmentId;
 	private Alignment 	 oldAlignment;
+	private DirectedWeightedMultigraph<Node, Link> oldGraph;
 	private String edgeLabel;
 	
 	// private String edgeLabel;
@@ -78,6 +81,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		return CommandType.undoable;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
@@ -90,6 +94,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		}
 		// Save the original alignment for undo
 		oldAlignment = alignment.getAlignmentClone();
+		oldGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
 		
 		// Set the other links to the target node to normal
 		Link newLink = alignment.getLinkById(edgeId);
@@ -115,7 +120,8 @@ public class AddUserLinkToAlignmentCommand extends Command {
 
 		// Revert to the old alignment
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
-
+		oldAlignment.setGraph(oldGraph);
+		
 		// Get the alignment update
 		return getAlignmentUpdateContainer(oldAlignment, worksheet, vWorkspace);
 	}

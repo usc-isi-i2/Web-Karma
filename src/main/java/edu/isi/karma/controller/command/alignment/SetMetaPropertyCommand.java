@@ -21,6 +21,7 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,6 +64,7 @@ public class SetMetaPropertyCommand extends Command {
 	private CRFColumnModel oldColumnModel;
 	private SynonymSemanticTypes oldSynonymTypes;
 	private Alignment oldAlignment;
+	private DirectedWeightedMultigraph<Node, Link> oldGraph;
 	private SemanticType oldType;
 	private SemanticType newType;
 	
@@ -102,6 +104,7 @@ public class SetMetaPropertyCommand extends Command {
 		return CommandType.undoable;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		/*** Get the Alignment for this worksheet ***/
@@ -116,6 +119,7 @@ public class SetMetaPropertyCommand extends Command {
 		
 		// Save the original alignment for undo
 		oldAlignment = alignment.getAlignmentClone();
+		oldGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
 		
 		/*** Add the appropriate nodes and links in alignment graph ***/
 		SemanticType newType = null;
@@ -249,6 +253,7 @@ public class SetMetaPropertyCommand extends Command {
 		// Replace the current alignment with the old alignment
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
+		oldAlignment.setGraph(oldGraph);
 		
 		// Get the alignment update if any
 		try {

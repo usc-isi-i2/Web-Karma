@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,7 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
@@ -54,6 +56,7 @@ public class UnassignSemanticTypeCommand extends Command {
 	private String columnName;
 	private SemanticType oldSemanticType;
 	private Alignment oldAlignment;
+	private DirectedWeightedMultigraph<Node, Link> oldGraph;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(UnassignSemanticTypeCommand.class);
@@ -86,6 +89,7 @@ public class UnassignSemanticTypeCommand extends Command {
 		return CommandType.undoable;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		Worksheet worksheet = vWorkspace.getViewFactory()
@@ -99,6 +103,7 @@ public class UnassignSemanticTypeCommand extends Command {
 		// Save the original alignment for undo
 		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
 		oldAlignment = alignment.getAlignmentClone();
+		oldGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
 		
 		// Remove it from the alignment
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
@@ -168,6 +173,7 @@ public class UnassignSemanticTypeCommand extends Command {
 		// Update with old alignment
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
+		oldAlignment.setGraph(oldGraph);
 		try {
 			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, oldAlignment));
 			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), oldAlignment));
