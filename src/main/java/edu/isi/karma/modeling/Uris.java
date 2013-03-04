@@ -25,6 +25,8 @@ public interface Uris {
 
 	public static final String THING_URI = Namespaces.OWL + "Thing"; 
 	public static final String RDFS_SUBCLASS_URI = Namespaces.RDFS + "subClassOf"; 
+	public static final String RDF_TYPE_URI = Namespaces.RDF + "type"; 
+	public static final String RDFS_CLASS_URI = Namespaces.RDFS + "Class"; 
 
 	// Karma Internal URIs
 	public static final String CLASS_INSTANCE_LINK_URI = Namespaces.KARMA_DEV + "classLink"; 

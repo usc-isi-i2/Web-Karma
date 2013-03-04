@@ -265,9 +265,32 @@ public class Approach1 {
 
 			List<SemanticLabel> matchedSemanticLabels = findMatchedSemanticLabels(sl);
 			if (matchedSemanticLabels == null || matchedSemanticLabels.size() == 0) {
-				logger.info("Cannot find any match for semantic label:");
-				sl.print();
-				continue;
+				
+				HashMap<String, Label> superClasses = 
+						this.ontologyManager.getSuperClasses(sl.getNodeLabel().getUri(), false);
+				
+				if (superClasses == null || superClasses.size() == 0)
+					superClasses = this.ontologyManager.getSuperClasses(sl.getNodeLabel().getUri(), true);
+
+				boolean matchFound = false;
+				if (superClasses != null && superClasses.size() > 0) {
+					for (String s : superClasses.keySet()) {
+						matchedSemanticLabels = findMatchedSemanticLabels(
+								new SemanticLabel(new Label(s), sl.getLinkLabel(), sl.getLeafName()));
+						
+						if (matchedSemanticLabels != null && matchedSemanticLabels.size() > 0) {
+							matchFound = true;
+							logger.info("We use superclass: " + s + " instead of " + sl.getNodeLabel().getUri());
+							break;
+						}
+					}
+				}
+				
+				if (!matchFound) {
+					logger.info("Cannot find any match for semantic label:");
+					sl.print();
+					continue;
+				}
 			}
 			
 			logger.info("Matched Semantic Labels: ");
@@ -606,9 +629,8 @@ public class Approach1 {
 		ontManager.doImport(new File(Approach1.ontologyDir + "foaf.rdf"));
 		ontManager.doImport(new File(Approach1.ontologyDir + "geonames.rdf"));
 		ontManager.doImport(new File(Approach1.ontologyDir + "wgs84_pos.xml"));
+		ontManager.doImport(new File(Approach1.ontologyDir + "schema.rdf"));
 		ontManager.doImport(new File(Approach1.ontologyDir + "helper.owl"));
-//		ontManager.doImport(new File(this.ontologyDir + "wgs84_pos.xml"));
-//		ontManager.doImport(new File(this.ontologyDir + "schema.rdf"));
 		ontManager.updateCache();
 
 		for (int i = 0; i < serviceModels.size(); i++) {

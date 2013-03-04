@@ -31,6 +31,9 @@ import org.apache.log4j.Logger;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.ResIterator;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import edu.isi.karma.modeling.Namespaces;
@@ -464,6 +467,23 @@ class OntologyCache {
 				classes.put(c.getURI(), ontHandler.getResourceLabel(c));
 
 		}
+		
+		Property rdfType = this.ontHandler.getOntModel().createProperty(Uris.RDF_TYPE_URI);
+		Resource classNode = this.ontHandler.getOntModel().createResource(Uris.RDFS_CLASS_URI);
+		ResIterator itr = ontHandler.getOntModel().listSubjectsWithProperty(rdfType, classNode);
+		
+		while (itr.hasNext()) {
+			
+			Resource r = itr.next();
+			
+			if (!r.isURIResource())
+				continue;
+			
+			if (!classes.containsKey(r.getURI()))
+				classes.put(r.getURI(), ontHandler.getResourceLabel(r));
+
+		}
+
 	}
 
 	private void loadProperties() {
