@@ -25,7 +25,6 @@ import java.util.Collection;
 
 import org.json.JSONObject;
 
-import edu.isi.karma.cleaning.MyLogger;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
@@ -131,7 +130,7 @@ public class AddNewColumnCommand extends WorksheetCommand {
 			vw.update(c);
 			String resultString = "";
 
-			/************ collect info ************/
+			/************ collect info ************
 			String id = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId)
 					.getWorksheetId();
 			MyLogger.logsth(id + " results: " + resultString);

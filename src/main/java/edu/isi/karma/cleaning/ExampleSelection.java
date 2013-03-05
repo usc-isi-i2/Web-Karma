@@ -24,8 +24,12 @@ package edu.isi.karma.cleaning;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.python.antlr.PythonParser.return_stmt_return;
+
 public class ExampleSelection {
-	public HashMap<String, Vector<TNode>> examples = new HashMap<String, Vector<TNode>>();
+	public HashMap<String, Vector<TNode>> org = new HashMap<String, Vector<TNode>>();
+	public HashMap<String, Vector<TNode>> tran = new HashMap<String, Vector<TNode>>();
+	public HashMap<String, String[]> raw = new HashMap<String, String[]>();
 	public static int way = 3;
 	public ExampleSelection()
 	{
@@ -43,30 +47,37 @@ public class ExampleSelection {
 		case 3:
 			ID = this.way3();
 			break;
+		case 4:
+			ID = this.way4();
+			break;
 		default:
 			ID = "";
 		}
 		return ID;
 	}
-	public void inite(HashMap<String, String> exps)
+	public void inite(HashMap<String, String[]> exps)
 	{
+		org.clear();
+		tran.clear();
 		Ruler ruler = new Ruler();
-		examples = new HashMap<String, Vector<TNode>>();
 		for(String keyString:exps.keySet())
 		{
-			String e = exps.get(keyString);
+			String e = exps.get(keyString)[0];
 			ruler.setNewInput(e);
-			examples.put(keyString, ruler.vec);
+			org.put(keyString, ruler.vec);
+			//ruler.setNewInput(exps.get(keyString)[1]);
+			//tran.put(keyString, ruler.vec);
 		}
+		this.raw = exps;
 	}
 	// choose the most ambiguous
 	public String way1()
 	{
 		String ID = "";
 		int maximum = -1;
-		for(String key:examples.keySet())
+		for(String key:org.keySet())
 		{
-			int s = this.ambiguityScore(examples.get(key));
+			int s = this.ambiguityScore(org.get(key));
 			if(s>maximum)
 			{
 				ID = key;
@@ -80,9 +91,9 @@ public class ExampleSelection {
 	{
 		String ID = "";
 		int minimum = Integer.MAX_VALUE;
-		for(String key:examples.keySet())
+		for(String key:org.keySet())
 		{
-			int s = this.ambiguityScore(examples.get(key));
+			int s = this.ambiguityScore(org.get(key));
 			if(s<minimum)
 			{
 				ID = key;
@@ -96,7 +107,7 @@ public class ExampleSelection {
 	{
 		String ID = "";
 		int minimum = Integer.MAX_VALUE;
-		for(String key:examples.keySet())
+		for(String key:org.keySet())
 		{
 			int s = Integer.valueOf(key);
 			if(s<minimum)
@@ -128,6 +139,28 @@ public class ExampleSelection {
 			}
 		}
 		return score;
+	}
+	//use the cnt of fatal_error number
+	public String way4()
+	{
+		int max = -1;
+		String example  = "";
+		for(String key:raw.keySet())
+		{
+			int cnt = raw.get(key)[1].split("_FATAL_ERROR_").length;
+			if(cnt > max)
+			{
+				max = cnt;
+				example = key;
+			}
+		}
+		return example;
+	}
+	public void clear()
+	{
+		this.raw.clear();
+		org.clear();
+		tran.clear();
 	}
 
 }

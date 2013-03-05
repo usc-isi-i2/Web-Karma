@@ -54,7 +54,6 @@ public class RequestController extends HttpServlet{
 		
 		String responseString = "";
 		String id = request.getSession().getId();
-		MyLogger.user_id = id;
 		/*************************************/
 		// If the current request is a part of a command that requires user-interaction
 		if(request.getParameter("commandId") != null && !request.getParameter("command").equals("UndoRedoCommand")) {

@@ -19,29 +19,22 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.controller.command.cleaning;
+package edu.isi.karma.cleaning;
 
-import javax.servlet.http.HttpServletRequest;
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.view.VWorkspace;
+import org.json.JSONArray;
 
-public class SubmitCleanningCommandFactory extends CommandFactory{
-
-	private enum Arguments {
-		hNodeID, worksheetID, hTableID, vWorksheetID,examples
+public class TestJAVA {
+	public static void main(String[] args)
+	{
+		String jstr = "[{\"name\":\"id\",\"type\":\"other\",\"value\":\"HN6\"},{\"name\":\"vWorksheetId\",\"type\":\"other\",\"value\":\"VW1\"}]";
+		JSONArray j;
+		try {
+			 j = new JSONArray(jstr);
+			 System.out.println(""+jstr.toString());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("x");
 	}
-	@Override
-	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		String hNodeid = request.getParameter(Arguments.hNodeID.name());
-		String wid = request.getParameter(Arguments.worksheetID.name());
-		String hTableID = request.getParameter(Arguments.hTableID.name());
-		String vw = request.getParameter(Arguments.vWorksheetID.name());
-		String exps = request.getParameter(Arguments.examples.name());
-		
-		SubmitCleanningCommand sCleanningCommand = new SubmitCleanningCommand(getNewId(vWorkspace),wid,hNodeid,hTableID, vw,exps);
-		return sCleanningCommand;
-	}
-
 }

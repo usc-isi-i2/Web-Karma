@@ -4,14 +4,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Vector;
 
-import com.sun.tools.jxc.gen.config.Config;
-
-
-public class ProgSynthesis{
+public class ProgSynthesis {
 	Vector<Vector<TNode>> orgVector = new Vector<Vector<TNode>>();
 	Vector<Vector<TNode>> tarVector = new Vector<Vector<TNode>>();
 	String bestRuleString = "";
-	//for tracking the stats
+	// for tracking the stats
 	public long learnspan = 0;
 	public long genspan = 0;
 	public long ruleNo = 0;
@@ -55,11 +52,9 @@ public class ProgSynthesis{
 		return qVector;
 	}
 
-
 	public double getCompScore(int i, int j, Vector<Partition> pars) {
 		Partition p = pars.get(i).mergewith(pars.get(j));
-		if(p==null)
-		{
+		if (p == null) {
 			return -Double.MAX_VALUE;
 		}
 		int validCnt = 0;
@@ -95,8 +90,7 @@ public class ProgSynthesis{
 		for (int i = 0; i < pars.size(); i++) {
 			for (int j = i + 1; j < pars.size(); j++) {
 				double s = getCompScore(i, j, pars);
-				if(s <0)
-				{
+				if (s < 0) {
 					continue;
 				}
 				if (s >= maxScore) {
@@ -116,113 +110,100 @@ public class ProgSynthesis{
 		pars.remove(j);
 	}
 
-	public String getBestRule()
-	{
+	public String getBestRule() {
 		return this.bestRuleString;
 	}
-	public Vector<Partition> ProducePartitions(boolean condense)
-	{
+
+	public Vector<Partition> ProducePartitions(boolean condense) {
 		Vector<Partition> pars = this.initePartitions();
 		int size = pars.size();
-		while(condense)
-		{
+		while (condense) {
 			this.mergePartitions(pars);
-			if(size == pars.size())
-			{
+			if (size == pars.size()) {
 				break;
-			}
-			else
-			{
+			} else {
 				size = pars.size();
 			}
 		}
 		return pars;
 	}
+
 	public Collection<ProgramRule> producePrograms(Vector<Partition> pars) {
 		Program prog = new Program(pars);
-		ProgramRule r = prog.toProgram1();
-		if(r == null)
-			return null;
-		String xString = "";
-		int termCnt = 0;
-		boolean findRule = true;	
-		while((xString=this.validRule(r))!="GOOD" && findRule)
-		{
-			if(termCnt == 10000)
-			{
-				findRule = false;
-				break;
-			}
-			for(Partition p:prog.partitions)
-			{
-				if(p.label.compareTo(xString)==0)
-				{
-					String newRule = p.toProgram();
-					if(ConfigParameters.debug == 1)
-						System.out.println("updated Rule: "+p.label+": "+newRule);
-					if(newRule.contains("null"))
-					{
-						findRule = false;
-						break;
-					}
-					r.updateClassworker(xString, newRule);
-				}
-			}
-			termCnt ++;
-		}
 		HashSet<ProgramRule> rules = new HashSet<ProgramRule>();
-		if(findRule)
-			rules.add(r);
-		
-		this.ruleNo += termCnt; //accumulate the no of rules while the object is alive
-		if(ConfigParameters.debug == 1)
-		{
-			System.out.println("*********************************");
-			System.out.println("Total program size: "+prog.size());
-			System.out.println("Updated times: "+ termCnt);
-			System.out.println("*********************************");
+		int prog_cnt = 1;
+		int i = 0;
+		while (i < prog_cnt) {
+			ProgramRule r = prog.toProgram1();
+			if (r == null)
+				return null;
+			String xString = "";
+			int termCnt = 0;
+			boolean findRule = true;
+			while ((xString = this.validRule(r)) != "GOOD" && findRule) {
+				if (termCnt == 10000) {
+					findRule = false;
+					break;
+				}
+				for (Partition p : prog.partitions) {
+					if (p.label.compareTo(xString) == 0) {
+						String newRule = p.toProgram();
+						if (ConfigParameters.debug == 1)
+							System.out.println("updated Rule: " + p.label
+									+ ": " + newRule);
+						if (newRule.contains("null")) {
+							findRule = false;
+							break;
+						}
+						r.updateClassworker(xString, newRule);
+					}
+				}
+				termCnt++;
+			}
+			if (findRule)
+				rules.add(r);
+			this.ruleNo += termCnt; // accumulate the no of rules while the
+			i++;
 		}
-		return rules;	
+		return rules;
 	}
+
 	public Collection<ProgramRule> run_main() {
 		long t1 = System.currentTimeMillis();
 		Vector<Partition> vp = this.ProducePartitions(true);
 		long t2 = System.currentTimeMillis();
 		Collection<ProgramRule> cpr = this.producePrograms(vp);
-		if(cpr == null)
-		{
+		if (cpr == null) {
 			return null;
 		}
 		long t3 = System.currentTimeMillis();
-		learnspan = (t2-t1);
-		genspan = (t3-t2);
-		if(cpr.size() == 0)
-		{
+		learnspan = (t2 - t1);
+		genspan = (t3 - t2);
+		if (cpr.size() == 0) {
 			t1 = System.currentTimeMillis();
 			vp = this.ProducePartitions(false);
 			t2 = System.currentTimeMillis();
 			cpr = this.producePrograms(vp);
 			t3 = System.currentTimeMillis();
-			learnspan += t2-t1;
-			genspan += t3-t2;
+			learnspan += t2 - t1;
+			genspan += t3 - t2;
 		}
+		Traces.AllSegs.clear();
 		return cpr;
-		
+
 	}
-	public String validRule(ProgramRule p)
-	{	
-		for(int i=0; i<orgVector.size();i++)
-		{		
+
+	public String validRule(ProgramRule p) {
+		for (int i = 0; i < orgVector.size(); i++) {
 			String s1 = UtilTools.print(orgVector.get(i));
 			String labelString = p.getClassForValue(s1);
-			//System.out.println("Rule: "+ p.getStringRule(labelString));
+			// System.out.println("Rule: "+ p.getStringRule(labelString));
 			InterpreterType worker = p.getWorkerForClass(labelString);
 			String s2 = worker.execute(s1);
 			String s3 = UtilTools.print(tarVector.get(i));
-			
-			//System.out.println("Validation: "+s2+" | "+s3);
-			if(s3.compareTo(s2)!=0)
-			{
+
+			// System.out.println("Validation: "+s2+" | "+s3);
+			if (s3.compareTo(s2) != 0) {
 				return labelString;
 			}
 		}

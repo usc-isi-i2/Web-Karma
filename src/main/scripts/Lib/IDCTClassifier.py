@@ -13,7 +13,6 @@ from FunctionList import *
 class IDCTClassifier(PartitionClassifierType):
     def __init__(self):
         self.path = "./"
-        print "building classifier"
         self.featureFactory = FeatureFactory()
     def addTrainingData(self, value, label):
         self.featureFactory.createFeature(value, label)

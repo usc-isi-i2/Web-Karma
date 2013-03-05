@@ -82,7 +82,6 @@ public class DataCollection {
 		MyLogger.logsth(this.config+"\n");
 		for(String key:stats.keySet())
 		{
-			
 			Double[] value = stats.get(key);
 			Double cnt = value[6];
 			value[1] = value[0]*1.0/cnt;

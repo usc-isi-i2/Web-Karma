@@ -18,7 +18,7 @@ public class Traces implements GrammarTreeNode {
 	private int curState = 0;
 	private Vector<Template> totalOrderVector = new Vector<Template>();
 	//keep all the segment expression to prevent repeated construction
-	private static HashMap<String, Segment> AllSegs = new HashMap<String, Segment>();
+	public static HashMap<String, Segment> AllSegs = new HashMap<String, Segment>();
 
 	public Traces(Vector<TNode> org, Vector<TNode> tar) {
 		this.orgNodes = org;
@@ -113,13 +113,11 @@ public class Traces implements GrammarTreeNode {
 			return segs;
 		Vector<TNode> tmp = new Vector<TNode>();
 		tmp.add(tarNodes.get(pos));
-		// identify the const string
-		
+		// identify the const string	
 		int q = Ruler.Search(orgNodes, tmp, 0);
 		if (q == -1) {
 			int cnt = pos;
 			Vector<TNode> tvec = new Vector<TNode>();
-
 			while (q == -1) {
 				tvec.add(tarNodes.get(cnt));
 				cnt++;
@@ -143,7 +141,6 @@ public class Traces implements GrammarTreeNode {
 			segs.add(seg);
 			return segs;
 		}
-
 		for (int i = pos; i < tarNodes.size(); i++) {
 			Vector<TNode> tvec = new Vector<TNode>();
 			for (int j = pos; j <= i; j++) {
@@ -414,7 +411,11 @@ public class Traces implements GrammarTreeNode {
 				}
 			}
 			boolean loop = s.isinloop || t.isinloop;
-			Segment r = new Segment(sec,loop);
+			Segment r;
+			if(s.isConstSegment() && t.isConstSegment())
+				r = new Segment(sec,loop);
+			else
+				r = s;
 			return r;
 		}
 		if (x.getNodeType().compareTo("loop") == 0
@@ -452,7 +453,12 @@ public class Traces implements GrammarTreeNode {
 			Loop r;
 			if (s.looptype == t.looptype)
 			{
-				Segment loopbody = new Segment(sec,true);
+				Segment loopbody;
+				if(s.loopbody.isConstSegment() && t.loopbody.isConstSegment())
+					loopbody= s.loopbody;
+				else {
+					loopbody = new Segment(sec,true);
+				}
 				r = new Loop(loopbody, t.looptype);
 			}
 			else {

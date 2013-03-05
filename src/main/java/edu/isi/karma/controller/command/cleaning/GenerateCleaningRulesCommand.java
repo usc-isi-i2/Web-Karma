@@ -35,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import au.com.bytecode.opencsv.CSVReader;
+import edu.isi.karma.cleaning.ConfigParameters;
 import edu.isi.karma.cleaning.MyLogger;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
@@ -89,7 +90,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		}
 		return tSet;
 	}
-	public Vector<TransformationExample> parseExample(String example)
+	public static Vector<TransformationExample> parseExample(String example)
 	{
 		Vector<TransformationExample> x = new Vector<TransformationExample>();
 		try
@@ -300,9 +301,12 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		}
 		
 		long time4 = System.currentTimeMillis();
-		System.out.println("program size: "+rtf.getTransformations().keySet().size());
-		System.out.println("Learning Span:"+(time2-time1)+" Excecution time:"+(time3-time2)+" ranking time:"+(time4-time3));
-		System.out.println("Decompose Excecution Time:\n "+"runing time: "+(time6)+" variance time: "+(time7));
+		if(ConfigParameters.debug == 1)
+		{
+			System.out.println("program size: "+rtf.getTransformations().keySet().size());
+			System.out.println("Learning Span:"+(time2-time1)+" Excecution time:"+(time3-time2)+" ranking time:"+(time4-time3));
+			System.out.println("Decompose Excecution Time:\n "+"runing time: "+(time6)+" variance time: "+(time7));
+		}
 		String jsonrep = getVarJSON(sub_vars);
 		return new UpdateContainer(new CleaningResultUpdate(hNodeId, jsons,js2tps,bestRes,jsonrep,topkeys.keySet()));
 	}

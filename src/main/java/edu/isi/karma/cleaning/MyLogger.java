@@ -5,8 +5,6 @@ import java.io.FileWriter;
 import java.util.HashMap;
 
 import com.sun.istack.logging.Logger;
-
-import edu.isi.karma.cleaning.features.Data2Features;
 public class MyLogger {
 	public static BufferedWriter out;
 	public static String user_id = "";
@@ -18,7 +16,7 @@ public class MyLogger {
 			try {
 				out = new BufferedWriter(new FileWriter(new File("./log/mylog.txt"),true));
 			} catch (Exception e) {
-				Logger.getLogger(MyLogger.class).info(e.toString());
+				//Logger.getLogger(MyLogger.class).info(e.toString());
 				out = null;
 			}
 		}
@@ -29,13 +27,12 @@ public class MyLogger {
 			out.write(context);
 			out.flush();
 		} catch (Exception e) {
-			Logger.getLogger(MyLogger.class).info(e.toString());
+			//mvn Logger.getLogger(MyLogger.class).info(e.toString());
 		}
 	}
 	public static void setTime(String id,Long time)
 	{
-		timespan.put(id, time);
-		
+		timespan.put(id, time);		
 	}
 	public static long getDuration(String id)
 	{

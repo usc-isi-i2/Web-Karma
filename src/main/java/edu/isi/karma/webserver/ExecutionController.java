@@ -61,6 +61,8 @@ import edu.isi.karma.controller.command.ImportUnionResultCommandFactory;
 import edu.isi.karma.controller.command.ImportXMLFileCommand;
 import edu.isi.karma.controller.command.ImportXMLFileCommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.command.MultipleValueEditColumnCommand;
+import edu.isi.karma.controller.command.MultipleValueEditColumnCommandFactory;
 import edu.isi.karma.controller.command.ResetKarmaCommand;
 import edu.isi.karma.controller.command.ResetKarmaCommandFactory;
 import edu.isi.karma.controller.command.SplitByCommaCommand;
@@ -101,6 +103,8 @@ import edu.isi.karma.controller.command.cleaning.FetchTransformingDataCommand;
 import edu.isi.karma.controller.command.cleaning.FetchTransformingDataFactory;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommand;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommandFactory;
+import edu.isi.karma.controller.command.cleaning.SubmitCleanningCommand;
+import edu.isi.karma.controller.command.cleaning.SubmitCleanningCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishCSVCommand;
 import edu.isi.karma.controller.command.publish.PublishCSVCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishDatabaseCommand;
@@ -233,6 +237,8 @@ public class ExecutionController {
 				new FetchTransformingDataFactory());
 		commandFactoryMap.put(ImportUnionResultCommand.class.getSimpleName(),
 				new ImportUnionResultCommandFactory());
+		commandFactoryMap.put(MultipleValueEditColumnCommand.class.getSimpleName(), new MultipleValueEditColumnCommandFactory());
+		commandFactoryMap.put(SubmitCleanningCommand.class.getSimpleName(), new SubmitCleanningCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

@@ -10,6 +10,7 @@ public class Position implements GrammarTreeNode {
 	public Vector<TNode> rightContextNodes = new Vector<TNode>();
 	public Vector<Integer> absPosition = new Vector<Integer>();
 	public Vector<Integer> counters = new Vector<Integer>();
+	public static int rulecxtsize = Segment.cxtsize_limit;
 	public boolean isinloop = false;
 	public int curState = 0;
 
