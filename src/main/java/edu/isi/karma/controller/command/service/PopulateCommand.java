@@ -37,6 +37,8 @@ import com.rits.cloning.Cloner;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
+import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.model.serialization.WebServiceLoader;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -184,6 +186,10 @@ public class PopulateCommand extends WorksheetCommand{
 				wk, columnPaths, vWorkspace);
 		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 		vw.update(c);
+		
+		c.add(new SemanticTypesUpdate(wk, vWorksheetId, al));
+		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(
+				vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), al));
 		
 		return c;
 	}

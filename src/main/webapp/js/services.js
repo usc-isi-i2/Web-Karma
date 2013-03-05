@@ -31,7 +31,8 @@ function assignHandlersToServiceInvocationObjects() {
         info["vWorksheetId"] = vWorksheetId;
         info["hNodeId"] = selectedHNodeId;
         info["command"] = "InvokeServiceCommand";
-            
+        
+        showWaitingSignOnScreen();
         var returned = $.ajax({
             url: "RequestController", 
             type: "POST",
@@ -41,6 +42,7 @@ function assignHandlersToServiceInvocationObjects() {
                 function (xhr, textStatus) {
                     var json = $.parseJSON(xhr.responseText);
                     parse(json);
+                    hideWaitingSignOnScreen();
                 },
             error :
                 function (xhr, textStatus) {
