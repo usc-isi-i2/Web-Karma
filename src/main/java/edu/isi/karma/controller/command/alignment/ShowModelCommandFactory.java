@@ -35,6 +35,8 @@ import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.Label;
@@ -65,6 +67,9 @@ public class ShowModelCommandFactory extends CommandFactory implements JSONInput
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 		
 		if(checkHist) {
+			String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getPreferencesId(), vWorksheetId);
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, new Alignment(vWorkspace.getWorkspace().getOntologyManager()));
+			
 			// Check if any command history exists for the worksheet
 			if(HistoryJsonUtil.historyExists(worksheet.getTitle(), vWorkspace.getPreferencesId())) {
 				WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
