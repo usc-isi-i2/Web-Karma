@@ -137,12 +137,13 @@ public class SetMetaPropertyCommand extends Command {
 		
 		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
 			ColumnNode columnNode = null;
+			Node classNode = alignment.getNodeById(metaPropertyValue);
 			if (columnNodeAlreadyExisted) {
-				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment);
+				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment, classNode);
 				columnNode = existingColumnNode;
 			} else
 				columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId)); 
-			Node classNode = alignment.getNodeById(metaPropertyValue);
+			
 			if (classNode == null) {
 				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
 				if (classNodeLabel == null) {
@@ -159,11 +160,6 @@ public class SetMetaPropertyCommand extends Command {
 			newType = new SemanticType(hNodeId, ClassInstanceLink.getFixedLabel(), classNode.getLabel(), SemanticType.Origin.User, 1.0, false);
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
 			ColumnNode columnNode = null;
-			if (columnNodeAlreadyExisted) {
-				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment);
-				columnNode = existingColumnNode;
-			} else
-				columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId)); 
 			Link dataPropertyLink = alignment.getLinkById(metaPropertyValue);
 			if (dataPropertyLink == null) {
 				logger.error("Link should exist in the alignment: " + metaPropertyValue);
@@ -171,6 +167,14 @@ public class SetMetaPropertyCommand extends Command {
 						"Error occured while setting the semantic type!"));
 			}
 			Node classInstanceNode = dataPropertyLink.getSource();
+			
+			if (columnNodeAlreadyExisted) {
+				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment, classInstanceNode);
+				columnNode = existingColumnNode;
+			} else {
+				columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
+			}
+			
 			String targetHNodeId = ((ColumnNode) dataPropertyLink.getTarget()).getHNodeId();
 			alignment.addDataPropertyOfColumnLink(classInstanceNode, columnNode, targetHNodeId);
 			alignment.align();
@@ -179,12 +183,13 @@ public class SetMetaPropertyCommand extends Command {
 			newType = new SemanticType(targetHNodeId, DataPropertyOfColumnLink.getFixedLabel(), classInstanceNode.getLabel(), SemanticType.Origin.User, 1.0, false);
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
 			ColumnNode columnNode = null;
+			Node classNode = alignment.getNodeById(metaPropertyValue);
 			if (columnNodeAlreadyExisted) {
-				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment);
+				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment, classNode);
 				columnNode = existingColumnNode;
 			} else
 				columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId)); 
-			Node classNode = alignment.getNodeById(metaPropertyValue);
+			
 			if (classNode == null) {
 				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
 				if (classNodeLabel == null) {
@@ -232,9 +237,10 @@ public class SetMetaPropertyCommand extends Command {
 	}
 
 	private void clearOldSemanticTypeLink(Link oldIncomingLinkToColumnNode,
-			Node oldDomainNode, Alignment alignment) {
+			Node oldDomainNode, Alignment alignment, Node newDomainNode) {
 		alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-		alignment.removeNode(oldDomainNode.getId());
+		if (oldDomainNode != newDomainNode)
+			alignment.removeNode(oldDomainNode.getId());
 	}
 
 	@Override
