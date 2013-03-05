@@ -86,7 +86,7 @@ public abstract class Node implements Comparable<Node>, Serializable {
 	public String getDisplayId() {
 		
 		if (this.label.getPrefix() == null)
-			return this.id;
+			return this.getLocalId();
 		
 		return this.label.getPrefix() + ":" + this.getLocalId();
 	}

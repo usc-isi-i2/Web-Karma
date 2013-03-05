@@ -122,7 +122,7 @@ public class Label implements Serializable {
 	public String getDisplayName() {
 
 		if (getPrefix() == null)
-			return uri;
+			return getLocalName();
 		
 		return prefix + ":" + getLocalName();
 	}

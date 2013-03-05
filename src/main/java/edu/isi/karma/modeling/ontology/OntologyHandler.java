@@ -65,25 +65,7 @@ class OntologyHandler {
 	}
 
 	public Label getUriLabel(String uri) {
-		Resource r = ontModel.getResource(uri);
-		if (r == null || !ontModel.containsResource(r)) {
-			logger.debug("Could not find the resource " + uri + " in the ontology model.");
-			return null;
-		}
-		String ns = r.getNameSpace();
-		if (ns != null && ns.trim().length() == 0) ns = null;
-		String prefix = ontModel.getNsURIPrefix(r.getNameSpace());
-		if (prefix != null && prefix.trim().length() == 0) prefix = null;
-		
-		OntResource ontR = null;
-		try { ontR = (OntResource)r;} catch(Exception e) {}
-		if (ontR == null)
-			return new Label(r.getURI(), ns, prefix);
-		
-		String rdfsLabel = ontR.getLabel(null);
-		String rdfsComment = ontR.getComment(null);
-		
-		return new Label(r.getURI(), ns, prefix, rdfsLabel, rdfsComment);
+		return getResourceLabel(ontModel.getResource(uri));
 	}
 	
 	public Label getResourceLabel(Resource r) {
@@ -92,9 +74,9 @@ class OntologyHandler {
 			return null;
 		}
 		String ns = r.getNameSpace();
-		if (ns != null && ns.trim().length() == 0) ns = null;
+		if (ns == null || ns.trim().length() == 0) ns = null;
 		String prefix = ontModel.getNsURIPrefix(r.getNameSpace());
-		if (prefix != null && prefix.trim().length() == 0) prefix = null;
+		if (prefix == null || prefix.trim().length() == 0) prefix = null;
 		
 		OntResource ontR = null;
 		try { ontR = (OntResource)r;} catch(Exception e) {}

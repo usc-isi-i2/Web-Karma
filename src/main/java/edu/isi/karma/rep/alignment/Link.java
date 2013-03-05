@@ -100,7 +100,7 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 	public String getDisplayId() {
 		
 		if (this.label.getPrefix() == null)
-			return this.id;
+			return this.getLocalId();
 		
 		return this.label.getPrefix() + ":" + this.getLocalId();
 	}

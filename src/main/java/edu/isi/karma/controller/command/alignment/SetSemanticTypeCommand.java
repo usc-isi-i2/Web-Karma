@@ -131,8 +131,8 @@ public class SetSemanticTypeCommand extends Command {
 				JSONObject type = typesArr.getJSONObject(i);
 				String domainValue = type.getString(ClientJsonKeys.Domain.name());
 				String fullTypeValue = type.getString(ClientJsonKeys.FullType.name());
-				System.out.println("FULL TYPE:" + type.getString(ClientJsonKeys.FullType.name()));
-				System.out.println("Domain: " + type.getString(ClientJsonKeys.Domain.name()));
+//				System.out.println("FULL TYPE:" + type.getString(ClientJsonKeys.FullType.name()));
+//				System.out.println("Domain: " + type.getString(ClientJsonKeys.Domain.name()));
 				
 				// Look if the domain value exists. If it exists, then it is a domain of a data property. If not
 				// then the value in FullType has the the value which indicates if a new class instance is needed

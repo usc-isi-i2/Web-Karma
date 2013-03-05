@@ -34,6 +34,7 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.view.VWorkspace;
@@ -100,6 +101,10 @@ public class GetAlternativeLinksCommand extends Command {
 						
 						Node edgeSource = link.getSource();
 						String edgeSourceLabel = edgeSource.getDisplayId();
+						Label nodeLabel = edgeSource.getLabel();
+						if (nodeLabel.getUri().equalsIgnoreCase(nodeLabel.getNs()))
+							edgeSourceLabel = edgeSource.getId();
+						
 						
 						JSONObject edgeObj = new JSONObject();
 						edgeObj.put(JsonKeys.edgeId.name(), link.getId());
