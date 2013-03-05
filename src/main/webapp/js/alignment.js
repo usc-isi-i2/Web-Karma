@@ -995,6 +995,13 @@ function submitSemanticTypeChange() {
 	newInfo.push(getParamObject("metaPropertyName", $("div#semanticTypingAdvacedOptionsDiv input:checkbox[checked=true]").attr("id"), "other"));
 	if (isMetaPropertyChecked) {
 		var propValue = $("div#semanticTypingAdvacedOptionsDiv input:checkbox[checked=true]").parents("tr").find("input:text").val();
+		if (propValue == null || $.trim(propValue) == "") {
+			$("span#SemanticTypeErrorWindowText").text("Please provide a value!");
+            $("div#SemanticTypeErrorWindow").show();
+            return false;
+		}
+
+			
 		// Get the proper id
 		if (info["metaPropertyName"] == "isUriOfClass" || info["metaPropertyName"] == "isSubclassOfClass") {
 			var classMap = $("#ChangeSemanticTypesDialogBox").data("classAndPropertyListJson")["elements"][0]["classMap"];
