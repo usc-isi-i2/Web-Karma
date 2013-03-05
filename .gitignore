@@ -9,6 +9,7 @@ target
 .DS_Store
 .classpath
 .project
+.idea/
 lastJsonImport.json
 src/main/webapp/UserPrefs/*.json
 UserUploadedFiles

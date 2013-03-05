@@ -102,7 +102,7 @@ public class GetAlternativeLinksCommand extends Command {
 						Node edgeSource = link.getSource();
 						String edgeSourceLabel = edgeSource.getDisplayId();
 						Label nodeLabel = edgeSource.getLabel();
-						if (nodeLabel.getUri().equalsIgnoreCase(nodeLabel.getNs()))
+						if (nodeLabel.getUri() !=null && nodeLabel.getNs() != null && nodeLabel.getUri().equalsIgnoreCase(nodeLabel.getNs()))
 							edgeSourceLabel = edgeSource.getId();
 						
 						
