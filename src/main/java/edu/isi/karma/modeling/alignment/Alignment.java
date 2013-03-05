@@ -336,6 +336,17 @@ public class Alignment implements OntologyUpdateListener {
 			possibleLinks = Arrays.asList(incomingLinks.toArray(new Link[0]));
 		
 		Collections.sort(possibleLinks);
+		
+//		for (Link l : possibleLinks) {
+//			System.out.print(l.getId() + " === ");
+//			System.out.print(l.getSource().getId() + " === ");
+//			System.out.print(l.getSource().getLabel().getNs() + " === ");
+//			System.out.print(l.getSource().getLocalId() + " === ");
+//			System.out.println(l.getSource().getDisplayId());
+//			System.out.print(l.getTarget().getId() + " === ");
+//			System.out.println(l.getLabel().getUri() + " === ");
+//		}
+		
 		return possibleLinks;
 	}
 	

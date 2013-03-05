@@ -98,7 +98,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		
 		// Set the other links to the target node to normal
 		Link newLink = alignment.getLinkById(edgeId);
-		edgeLabel = newLink.getLabel().getLocalNameWithPrefix();
+		edgeLabel = newLink.getLabel().getDisplayName();
 		Set<Link> currentLinks = alignment.getCurrentLinksToNode(newLink.getTarget().getId());
 		if (currentLinks != null && !currentLinks.isEmpty()) {
 			for (Link currentLink: currentLinks) {

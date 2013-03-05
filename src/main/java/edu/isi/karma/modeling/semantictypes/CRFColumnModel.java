@@ -96,39 +96,39 @@ public class CRFColumnModel implements Jsonizable {
 				if(domainURI == null || typeURI == null)
 					continue;
 				
-				String clazzLocalNameWithPrefix = domainURI.getLocalNameWithPrefix();
+				String clazzLocalNameWithPrefix = domainURI.getDisplayName();
 				
 				int graphLastIndex = alignment.getLastIndexOfNodeUri(domainURI.getUri());
 				if (graphLastIndex == -1) { // No instance present in the graph
 					insertSemanticTypeSuggestion(arr, clazzLocalNameWithPrefix + "1 (add)", domainURI.getUri(), 
-							typeURI.getLocalNameWithPrefix(), label.split("\\|")[1], probability);
+							typeURI.getDisplayName(), label.split("\\|")[1], probability);
 				} else {
 					boolean hasLastNodeFromSteinerTree = false;
 					for (int i=1; i<= graphLastIndex; i++) {
 						
 						if (steinerTreeNodeIds.contains(domainURI.getUri() + (graphLastIndex))) {
 							insertSemanticTypeSuggestion(arr, clazzLocalNameWithPrefix + i, domainURI.getUri() + i, 
-									typeURI.getLocalNameWithPrefix(), label.split("\\|")[1], probability);
+									typeURI.getDisplayName(), label.split("\\|")[1], probability);
 							if (i == graphLastIndex)
 								hasLastNodeFromSteinerTree = true;
 						} else {
 							Node graphNode = alignment.getNodeById(domainURI.getUri() + i);
 							if (graphNode != null)
 								insertSemanticTypeSuggestion(arr, clazzLocalNameWithPrefix + i + " (add)", graphNode.getId(), 
-									typeURI.getLocalNameWithPrefix(), label.split("\\|")[1], probability);
+									typeURI.getDisplayName(), label.split("\\|")[1], probability);
 						}
 					}
 					// Add an option to add one more node for the domain
 					if (hasLastNodeFromSteinerTree)
 						insertSemanticTypeSuggestion(arr, clazzLocalNameWithPrefix + (graphLastIndex+1) + " (add)", domainURI.getUri(), 
-							typeURI.getLocalNameWithPrefix(), label.split("\\|")[1], probability);
+							typeURI.getDisplayName(), label.split("\\|")[1], probability);
 				}
 			} else {
 				Label typeURI = ontMgr.getUriLabel(label);
 				if(typeURI == null)
 					continue;
 				
-				String clazzLocalNameWithPrefix = typeURI.getLocalNameWithPrefix();
+				String clazzLocalNameWithPrefix = typeURI.getDisplayName();
 				
 				int graphLastIndex = alignment.getLastIndexOfNodeUri(typeURI.getUri());
 				if (graphLastIndex == -1) { // No instance present in the graph

@@ -108,7 +108,7 @@ public class OntologyHierarchyUpdate extends AbstractUpdate {
 		Label resourceUri = node.getLabel();
 		
 		resourceObject.put(JsonKeys.children.name(), childrenArray);
-		resourceObject.put(JsonKeys.data.name(), resourceUri.getLocalNameWithPrefix());
+		resourceObject.put(JsonKeys.data.name(), resourceUri.getDisplayName());
 		JSONObject metadataObject = new JSONObject();
 		int graphLastIndex = -1;
 		if (addSteinerTreeNodesAsChildren && alignment != null) {
@@ -145,7 +145,7 @@ public class OntologyHierarchyUpdate extends AbstractUpdate {
 			for (Node graphNode : graphNodes) {
 				if (steinerTreeNodeIds.contains(graphNode.getId())) {
 					JSONObject graphNodeObj = new JSONObject();
-					graphNodeObj.put(JsonKeys.data.name(), graphNode.getLocalIdWithPrefixIfAvailable());
+					graphNodeObj.put(JsonKeys.data.name(), graphNode.getDisplayId());
 					JSONObject metadataObject = new JSONObject();
 					metadataObject.put(JsonKeys.URIorId.name(), graphNode.getId());
 //					metadataObject.put(JsonKeys.isExistingGraphNode.name(), true);

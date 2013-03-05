@@ -371,7 +371,7 @@ public class Model {
 						
 						nsToPrefixMapping.put(classAtom.getClassPredicate().getNs(), 
 						classAtom.getClassPredicate().getPrefix());
-						predicateUri = classAtom.getClassPredicate().getLocalNameWithPrefix();
+						predicateUri = classAtom.getClassPredicate().getDisplayName();
 						
 					} else {
 						predicateUri = "<" + classAtom.getClassPredicate().getUri() + ">";
@@ -396,7 +396,7 @@ public class Model {
 						
 						nsToPrefixMapping.put(propertyAtom.getPropertyPredicate().getNs(), 
 						propertyAtom.getPropertyPredicate().getPrefix());
-						predicateUri = propertyAtom.getPropertyPredicate().getLocalNameWithPrefix();
+						predicateUri = propertyAtom.getPropertyPredicate().getDisplayName();
 						
 					} else {
 						predicateUri = "<" + propertyAtom.getPropertyPredicate().getUri() + ">";
@@ -467,7 +467,7 @@ public class Model {
 						
 						nsToPrefixMapping.put(classAtom.getClassPredicate().getNs(), 
 						classAtom.getClassPredicate().getPrefix());
-						predicateUri = classAtom.getClassPredicate().getLocalNameWithPrefix();
+						predicateUri = classAtom.getClassPredicate().getDisplayName();
 						
 					} else {
 						predicateUri = "<" + classAtom.getClassPredicate().getUri() + ">";
@@ -493,7 +493,7 @@ public class Model {
 						
 						nsToPrefixMapping.put(propertyAtom.getPropertyPredicate().getNs(), 
 						propertyAtom.getPropertyPredicate().getPrefix());
-						predicateUri = propertyAtom.getPropertyPredicate().getLocalNameWithPrefix();
+						predicateUri = propertyAtom.getPropertyPredicate().getDisplayName();
 						
 					} else {
 						predicateUri = "<" + propertyAtom.getPropertyPredicate().getUri() + ">";

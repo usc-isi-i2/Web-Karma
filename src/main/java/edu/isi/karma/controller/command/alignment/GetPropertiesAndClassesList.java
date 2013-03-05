@@ -88,11 +88,11 @@ public class GetPropertiesAndClassesList extends Command {
 //						String nodeDisplayLabel = (node.getLabel().getPrefix() != null && (!node.getLabel().getPrefix().equals(""))) ?
 //								(node.getLabel().getPrefix() + ":" + node.getLocalId()) : node.getLocalId(); 
 						JSONObject nodeKey = new JSONObject();
-						nodeKey.put(node.getLocalIdWithPrefixIfAvailable(), node.getId());
+						nodeKey.put(node.getDisplayId(), node.getId());
 						classesMap.put(nodeKey);
 						
 						JSONObject instanceCatObject = new JSONObject();
-						instanceCatObject.put(JsonKeys.label.name(), node.getLocalIdWithPrefixIfAvailable());
+						instanceCatObject.put(JsonKeys.label.name(), node.getDisplayId());
 						instanceCatObject.put(JsonKeys.category.name(), JsonValues.Instance.name());
 						classesList.put(instanceCatObject);
 						
@@ -116,7 +116,7 @@ public class GetPropertiesAndClassesList extends Command {
 				int graphLastIndex = alignment.getLastIndexOfNodeUri(clazz.getUri());
 				String clazzId = null;
 				String clazzDisplayLabel = null;
-				String clazzLocalNameWithPrefix = clazz.getLocalNameWithPrefix();
+				String clazzLocalNameWithPrefix = clazz.getDisplayName();
 				if (graphLastIndex == -1) { // No instance present in the graph
 					clazzDisplayLabel = clazzLocalNameWithPrefix + "1 (add)";
 					clazzId = clazz.getUri();
@@ -150,9 +150,9 @@ public class GetPropertiesAndClassesList extends Command {
 			/** Adding all the properties **/
 			for (Label prop: ontMgr.getDataProperties().values()) {
 				JSONObject propKey = new JSONObject();
-				propKey.put(prop.getLocalNameWithPrefix(), prop.getUri());
+				propKey.put(prop.getDisplayName(), prop.getUri());
 				propertiesMap.put(propKey);
-				propertiesList.put(prop.getLocalNameWithPrefix());
+				propertiesList.put(prop.getDisplayName());
 			}
 
 			// Populate the JSON object that will hold everything in output

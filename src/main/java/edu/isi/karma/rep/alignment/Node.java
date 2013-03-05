@@ -74,17 +74,21 @@ public abstract class Node implements Comparable<Node>, Serializable {
 	}
 	
 	public String getLocalId() {
+		
 		String s = this.id;
 
-		if (this.label != null && this.label.getNs() != null)
+		if (this.label.getNs() != null)
 			s = s.replaceAll(this.label.getNs(), "");
 		
 		return s;
 	}
 	
-	public String getLocalIdWithPrefixIfAvailable() {
-		return (this.label.getPrefix() != null && !this.label.getPrefix().equals("")) ?
-				this.label.getPrefix() + ":" + this.getLocalId() : this.getLocalId();
+	public String getDisplayId() {
+		
+		if (this.label.getPrefix() == null)
+			return this.id;
+		
+		return this.label.getPrefix() + ":" + this.getLocalId();
 	}
 	
 	public NodeType getType() {

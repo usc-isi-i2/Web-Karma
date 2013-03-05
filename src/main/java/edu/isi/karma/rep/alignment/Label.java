@@ -94,14 +94,14 @@ public class Label implements Serializable {
 	}
 
 	public String getNs() {
-		if (ns != null && ns.trim().length() == 0)
+		if (ns == null || ns.trim().length() == 0)
 			return null;		
 		
 		return ns;
 	}
 
 	public String getPrefix() {
-		if (prefix != null && prefix.trim().length() == 0)
+		if (prefix == null || prefix.trim().length() == 0)
 			return null;
 		
 		return prefix;
@@ -111,24 +111,20 @@ public class Label implements Serializable {
 		if (uri == null)
 			return null;
 		
-		String name = uri;
-		if (ns != null)
-			name = name.replaceFirst(ns, "");
+		String localName = uri;
+		String ns = getNs();
+		if (ns != null && !ns.equalsIgnoreCase(localName))
+			localName = localName.replaceFirst(ns, "");
 		
-		return name;
+		return localName;
 	}
 
-	public String getLocalNameWithPrefix() {
+	public String getDisplayName() {
 
-		String localNameWithPrefix = getLocalName();
-		if (localNameWithPrefix == null)
-			return null;
+		if (getPrefix() == null)
+			return uri;
 		
-		if (prefix != null && prefix.trim().length() != 0) 
-			localNameWithPrefix = prefix + ":" + localNameWithPrefix;
-		
-		
-		return localNameWithPrefix;
+		return prefix + ":" + getLocalName();
 	}
 
 	public String getRdfsLabel() {

@@ -136,17 +136,17 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 							.key(JsonKeys.FullType.name())
 							.value(type.getType().getUri())
 							.key(JsonKeys.DisplayLabel.name())
-							.value(type.getType().getLocalNameWithPrefix())
+							.value(type.getType().getDisplayName())
 							.key(JsonKeys.Domain.name())
 							.value(domainNode.getId())
 							.key(JsonKeys.DisplayDomainLabel.name())
-							.value(domainNode.getLocalIdWithPrefixIfAvailable());
+							.value(domainNode.getDisplayId());
 					} else {
 						writer
 							.key(JsonKeys.FullType.name())
 							.value(domainNode.getId())
 							.key(JsonKeys.DisplayLabel.name())
-							.value(domainNode.getLocalIdWithPrefixIfAvailable())
+							.value(domainNode.getDisplayId())
 							.key(JsonKeys.Domain.name())
 							.value("")
 							.key(JsonKeys.DisplayDomainLabel.name())
@@ -177,14 +177,14 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 									.key(JsonKeys.ConfidenceLevel.name())
 									.value(synType.getConfidenceLevel().name())
 									.key(JsonKeys.DisplayLabel.name())
-									.value(synType.getType().getLocalNameWithPrefix())
+									.value(synType.getType().getDisplayName())
 									.key(JsonKeys.isPrimary.name())
 									.value(false);
 							if (!synType.isClass()) {
 								writer.key(JsonKeys.Domain.name())
 									.value(synType.getDomain().getUri())
 									.key(JsonKeys.DisplayDomainLabel.name())
-									.value(synType.getDomain().getLocalNameWithPrefix());
+									.value(synType.getDomain().getDisplayName());
 							} else {
 								writer.key(JsonKeys.Domain.name())
 									.value("")
