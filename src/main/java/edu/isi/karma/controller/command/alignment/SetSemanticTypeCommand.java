@@ -272,10 +272,6 @@ public class SetSemanticTypeCommand extends Command {
 			// Update the synonym semanticTypes
 			newSynonymTypes = new SynonymSemanticTypes(typesList);
 			worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), newSynonymTypes);
-			
-			// Train the semantic type in a separate thread
-			Thread t = new Thread(new SemanticTypeTrainingThread(crfModelHandler, worksheet, newType));
-			t.start();
 		}
 
 
@@ -289,6 +285,9 @@ public class SetSemanticTypeCommand extends Command {
 				return new UpdateContainer(new ErrorUpdate(
 						"Error occured while setting the semantic type!"));
 			}
+			// Train the semantic type in a separate thread
+			Thread t = new Thread(new SemanticTypeTrainingThread(crfModelHandler, worksheet, newType));
+			t.start();
 			return c;
 			
 		} else {
