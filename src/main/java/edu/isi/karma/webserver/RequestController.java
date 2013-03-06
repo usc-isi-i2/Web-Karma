@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.cleaning.MyLogger;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandWithPreview;
@@ -53,7 +52,7 @@ public class RequestController extends HttpServlet{
 		}
 		
 		String responseString = "";
-		String id = request.getSession().getId();
+//		String id = request.getSession().getId();
 		/*************************************/
 		// If the current request is a part of a command that requires user-interaction
 		if(request.getParameter("commandId") != null && !request.getParameter("command").equals("UndoRedoCommand")) {

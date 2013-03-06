@@ -176,7 +176,7 @@ public class OfflineDbRdfGenerator {
 		// Get the column names
 		ArrayList<String> columnNames = dbUtil.getColumnNames(tableName, conn);
 		
-		Workspace workspace = WorkspaceManager.getInstance().getFactory().createWorkspace();
+		Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
 		RepFactory factory = workspace.getFactory();
 		Worksheet wk = factory.createWorksheet(tableName, workspace);
 		ArrayList<String> headersList = addHeaders(wk, columnNames, factory);
@@ -196,7 +196,7 @@ public class OfflineDbRdfGenerator {
 				rdfGen.generateTriplesRow(wk, false, true);
 				
 				WorkspaceManager mgr = WorkspaceManager._getNewInstance();
-				workspace = mgr.getFactory().createWorkspace();
+				workspace = mgr.createWorkspace();
 				factory = workspace.getFactory();
 				
 				wk = factory.createWorksheet(tableName, workspace);

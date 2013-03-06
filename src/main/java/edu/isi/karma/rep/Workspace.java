@@ -39,9 +39,9 @@ import edu.isi.karma.rep.metadata.TagsContainer;
 public class Workspace extends Entity {
 
 	/**
-	 * Keep a copy of RepFactor for convenience.
+	 * Factory to create all the objects in this workspace
 	 */
-	private final RepFactory factory;
+	private final RepFactory factory = new RepFactory();
 
 	/**
 	 * History of commands performed in this workspace.
@@ -71,9 +71,8 @@ public class Workspace extends Entity {
 	/**
 	 * In the future we may need to keep track of user info.
 	 */
-	protected Workspace(String id, RepFactory factory) {
+	protected Workspace(String id) {
 		super(id);
-		this.factory = factory;
 	}
 
 	public CommandHistory getCommandHistory() {

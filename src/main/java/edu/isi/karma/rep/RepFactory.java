@@ -38,17 +38,9 @@ public class RepFactory {
 	private final Map<String, HNode> hNodes = new HashMap<String, HNode>();
 	private final Map<String, HTable> hTables = new HashMap<String, HTable>();
 	private final Map<String, Worksheet> worksheets = new HashMap<String, Worksheet>();
-	private final Map<String, Workspace> workspaces = new HashMap<String, Workspace>();
 	private final Map<String, Table> tables = new HashMap<String, Table>();
 	private final Map<String, Row> rows = new HashMap<String, Row>();
 	private final Map<String, Node> nodes = new HashMap<String, Node>();
-
-	public Workspace createWorkspace() {
-		String id = getNewId("WSP");
-		Workspace wsp = new Workspace(id, this);
-		workspaces.put(id, wsp);
-		return wsp;
-	}
 
 	public Worksheet createWorksheet(String tableName, Workspace workspace) {
 		String id = getNewId("WS");
@@ -65,10 +57,6 @@ public class RepFactory {
 			worksheets.put(id, worksheet);
 			hTables.put(worksheet.getHeaders().getId(), worksheet.getHeaders());
 		}
-	}
-
-	public void removeWorkspace(String workspaceId) {
-		workspaces.remove(workspaceId);
 	}
 
 	public String getNewId(String prefix) {

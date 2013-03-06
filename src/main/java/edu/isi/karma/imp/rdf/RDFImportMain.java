@@ -67,8 +67,7 @@ public class RDFImportMain {
 		ArrayList<String> headersList = null;
 		RepFactory factory;
 		Worksheet worksheet = null;
-		Workspace workspace = WorkspaceManager.getInstance().getFactory()
-				.createWorkspace();
+		Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
 		factory = workspace.getFactory();
 		worksheet = factory.createWorksheet("WorksheetName", workspace);
 

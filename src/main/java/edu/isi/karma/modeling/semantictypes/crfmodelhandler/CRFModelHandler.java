@@ -27,6 +27,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -158,6 +159,7 @@ public class CRFModelHandler {
 	static Logger logger = LoggerFactory.getLogger(CRFModelHandler.class.getSimpleName()) ;
 	static final int MAX_FFs_PER_LABEL = 50;
 	static final int MAX_EXAMPLES_PER_LABEL = 50;
+	static final int MAX_EXAMPLES_SAVED_PER_LABEL = 200;
 
 	/**
 	 * Making the empty constructor private to prevent instantiation of this class.
@@ -1068,6 +1070,17 @@ public class CRFModelHandler {
 				ArrayList<Example> examples;
 				bw.write(label + "\n") ;
 				examples = labelToExamplesMap.get(label) ;
+				
+				// Get random MAX_EXAMPLES_SAVED_PER_LABEL number of examples to be saved
+				if (examples.size() > MAX_EXAMPLES_SAVED_PER_LABEL) {
+					Collections.shuffle(examples);
+					ArrayList<Example> subsetOfExamples = new ArrayList<Example>();
+					for (int i=0; i< MAX_EXAMPLES_SAVED_PER_LABEL; i++) {
+						subsetOfExamples.add(examples.get(i));
+					}
+					examples = subsetOfExamples;
+				}
+				
 				bw.write(examples.size() + "\n") ;
 				for(Example example : examples) {
 					bw.write(example.exampleString.length() + " " + example.exampleString) ;

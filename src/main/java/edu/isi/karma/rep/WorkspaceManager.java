@@ -20,12 +20,19 @@
  ******************************************************************************/
 package edu.isi.karma.rep;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * @author szekely
  *
  */
 public class WorkspaceManager {
+	
+	private int nextId = 1;
+	
+	private final Map<String, Workspace> workspaces = new HashMap<String, Workspace>();
 	
 	private static WorkspaceManager singleton = new WorkspaceManager();
 	
@@ -36,14 +43,20 @@ public class WorkspaceManager {
 	public static WorkspaceManager _getNewInstance() {
 		return new WorkspaceManager();
 	}
-
-	/**
-	 * One factory for all the objects for all users.
-	 */
-	private final RepFactory factory = new RepFactory();
 	
-	public RepFactory getFactory() {
-		return factory;
+	public Workspace createWorkspace() {
+		String id = getNewId("WSP");
+		Workspace wsp = new Workspace(id);
+		workspaces.put(id, wsp);
+		return wsp;
+	}
+	
+	public String getNewId(String prefix) {
+		return prefix + (nextId++);
+	}
+	
+	public void removeWorkspace(String workspaceId) {
+		workspaces.remove(workspaceId);
 	}
 }
  

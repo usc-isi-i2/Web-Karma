@@ -86,9 +86,9 @@ public class OfflineCSVGenerator {
 	    MediatorException, KarmaException {
 
 	// Create the workspace
-	RepFactory factory = WorkspaceManager.getInstance().getFactory();
-	Workspace workspace = factory.createWorkspace();
-
+    Workspace workspace = WorkspaceManager._getNewInstance().createWorkspace();
+    RepFactory factory = workspace.getFactory();
+	
 	// Load the CSV file into a new worksheet
 	CSVFileImport fileImport = new CSVFileImport(1, 2, csvDelimiter, '\"',
 		new File(dataFilePath), factory, workspace);

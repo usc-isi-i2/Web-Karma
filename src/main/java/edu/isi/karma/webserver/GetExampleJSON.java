@@ -37,7 +37,6 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
-import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
@@ -62,8 +61,7 @@ public class GetExampleJSON extends HttpServlet {
 		
 		logger.info("Creating new workspace ...");
 
-		Workspace workspace = WorkspaceManager.getInstance().getFactory()
-				.createWorkspace();
+		Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
 
 		logger.info("done");
 		/* Check if any workspace id is set in cookies. */
@@ -116,7 +114,7 @@ public class GetExampleJSON extends HttpServlet {
 		//mariam
 		//File file = new File("../demofiles/usc_faculty.csv");
 		
-//		File file = new File("SampleData/CSV/WellData.csv");
+//		File file = new File("SampleData/CSV/PharmGKBPathways");
 //		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
 //		try {
 //			imp.generateWorksheet();
