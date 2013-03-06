@@ -538,35 +538,36 @@ function getVaritions(data) {
 	return x;
 }
 
-//submit the transformed result
-function submit() {
-	var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
-	var selectedHNodeId = columnHeadingMenu.data("parentCellId");
-	var tdTag = $("td#" + selectedHNodeId);
-	var vWorksheetId = tdTag.parents("div.Worksheet").attr("id");
-	var transformedRes = $("div#columnHeadingDropDownMenu").data("transformedResult");
-	var info = new Object();
-	info["vWorksheetId"] = vWorksheetId;
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["hNodeId"] = selectedHNodeId;
-	info["command"] = "AddNewColumnCommand";
-	info["result"] = JSON.stringify(transformedRes);
 
-	var returned = $.ajax({
-		url : "RequestController",
-		type : "POST",
-		data : info,
-		dataType : "json",
-		complete : function(xhr, textStatus) {
-			var json = $.parseJSON(xhr.responseText);
-			hideCleanningWaitingSignOnScreen();
-			parse(json);
-		},
-		error : function(xhr, textStatus) {
-			$.sticky("Error in submitting");
-		}
-	});
-}
+	//submit the transformed result apt
+	function submit() {
+		var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+		var selectedHNodeId = columnHeadingMenu.data("parentCellId");
+		var tdTag = $("td#" + selectedHNodeId);
+		var vWorksheetId = tdTag.parents("div.Worksheet").attr("id");
+		var transformedRes = $("div#columnHeadingDropDownMenu").data("transformedResult");
+		var info = new Object();
+		info["vWorksheetID"] = vWorksheetId;
+		info["hNodeID"] = selectedHNodeId;
+		info["command"] = "SubmitCleanningCommand";
+		info["workspaceId"] = $.workspaceGlobalInformation.id;
+		info["examples"] = JSON.stringify(columnHeadingMenu.data("cleaningExamples"));
+		var returned = $.ajax({
+			url : "RequestController",
+			type : "POST",
+			data : info,
+			dataType : "json",
+			complete : function(xhr, textStatus) {
+				var json = $.parseJSON(xhr.responseText);
+				hideCleanningWaitingSignOnScreen();
+				parse(json);
+			},
+			error : function(xhr, textStatus) {
+				$.sticky("Error in submitting");
+			}
+		});
+	} 
+
 
 //add the choosen value to be a new example
 function addExample(nodeID) {
