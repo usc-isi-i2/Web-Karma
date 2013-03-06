@@ -470,6 +470,7 @@ function changeSemanticType_d3(d, vis, event) {
     			$("#isSpecializationForEdge").prop('checked', true);
     			$("#isSpecializationForEdgeTextBox").val(type["DisplayDomainLabel"]);
     		}
+    		$("div#semanticTypingAdvacedOptionsDiv").show().data("state", "open");
     	} else {
     		addSemTypeObjectToCurrentTable(type, true, false);
     	}
