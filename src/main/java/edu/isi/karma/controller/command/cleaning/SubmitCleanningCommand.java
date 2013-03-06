@@ -47,6 +47,7 @@ import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.cleaning.RamblerTransformationInputs;
 import edu.isi.karma.rep.cleaning.RamblerTransformationOutput;
 import edu.isi.karma.rep.cleaning.RamblerValueCollection;
@@ -88,10 +89,10 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 
 	@Override
 	public CommandType getCommandType() {
-		return null;
+		return CommandType.undoable;
 	}
 
-	public JSONArray creatNewColumnCommand(String worksheetId,String hTableId)
+	public JSONArray creatNewColumnCommand(String worksheetId,String hTableId,String colname)
 	{
 		String cmdString = String.format("[{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"},"+
 										"{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"},"+
@@ -101,7 +102,7 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 										"{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"}]",
 										"id",this.id,"vWorksheetId",this.vWorksheetId,
 										"worksheetId",worksheetId,"hTableId",hTableId,
-										"hNodeId",this.hNodeId,"newColumnName","new_column");
+										"hNodeId",this.hNodeId,"newColumnName",colname);
 		System.out.println(""+cmdString);
 		JSONArray jsonArray = new JSONArray();
 		try {
@@ -110,7 +111,7 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 		}
 		return jsonArray;
 	}
-	public JSONArray createMultiCellCmd(ValueCollection vc)
+	public JSONArray createMultiCellCmd(ValueCollection vc,String nHNodeId)
 	{
 		/*super(id);
 		this.hNodeID = hNodeID;
@@ -132,7 +133,7 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 				"{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"},"+
 				"{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"},"+
 				"{\"name\":\"%s\",\"type\":\"other\",\"value\":%s}]",
-				"id",this.id,"hNodeID",this.hNodeId,"vWorksheetID",this.vWorksheetId,"rows",strData.toString()
+				"id",this.id,"hNodeID",nHNodeId,"vWorksheetID",this.vWorksheetId,"rows",strData.toString()
 				);
 		JSONArray cmdArray = new JSONArray();
 		try {
@@ -146,6 +147,7 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 		// create new column command
 		String worksheetId = vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).getWorksheetId();
 		String hTableId = "";
+		String colnameString = "";
 		try
 		{
 			// obtain transformed results
@@ -155,6 +157,7 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 			for (HNodePath path : columnPaths) {
 				if (path.getLeaf().getId().equals(hNodeId)) {
 					hTableId = path.getLeaf().getHTableId();
+					colnameString = path.getLeaf().getColumnName()+"_t";
 					selectedPath = path;
 				}
 			}
@@ -187,7 +190,7 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 			ValueCollection rvco = rtf.getTransformedValues(tpid);
 			vvc.add(rvco);
 			//add a new column
-			JSONArray inputParamArr0 = this.creatNewColumnCommand(worksheetId,hTableId);
+			JSONArray inputParamArr0 = this.creatNewColumnCommand(worksheetId,hTableId,colnameString);
 			ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(vWorkspace.getWorkspace().getId());
 			CommandFactory cf0 = ctrl.getCommandFactoryMap().get(AddColumnCommand.class.getSimpleName());
 			JSONInputCommandFactory scf1 = (JSONInputCommandFactory)cf0;
@@ -204,9 +207,15 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 					vWorkspace.getWorkspace().getCommandHistory().doCommand(comm1, vWorkspace);
 				} catch (CommandException e) {
 				}
-			}	
+			}
+			columnPaths = vWorkspace.getRepFactory().getWorksheet(worksheetId).getHeaders().getAllPaths();
 			// create edit multiple cells command
-			JSONArray inputParamArr = this.createMultiCellCmd(rvco);
+			for (HNodePath path : columnPaths) {
+				if (path.getLeaf().getColumnName().compareTo(colnameString)==0) {
+					selectedPath = path;
+				}
+			}
+			JSONArray inputParamArr = this.createMultiCellCmd(rvco,selectedPath.getLeaf().getId());
 			CommandFactory cf = ctrl.getCommandFactoryMap().get(MultipleValueEditColumnCommand.class.getSimpleName());
 			JSONInputCommandFactory scf = (JSONInputCommandFactory)cf;
 			Command comm = scf.createCommand(inputParamArr, vWorkspace);
@@ -219,7 +228,12 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 		{
 			System.out.println(""+e.toString());
 		}
-		return new UpdateContainer(new InfoUpdate("Submit Complete"));
+		UpdateContainer c = new UpdateContainer();
+		Worksheet worksheet = vWorkspace.getWorkspace().getWorksheet(worksheetId);
+		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,worksheet.getHeaders().getAllPaths(), vWorkspace);
+		vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).update(c);
+		c.add(new InfoUpdate("Submit Complete"));
+		return c;
 	}
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
