@@ -58,7 +58,7 @@ public class Template implements GrammarTreeNode {
 		}
 	}
 
-	public String toProgram1(){
+	public String toProgram(){
 		String res = "";
 		for(int i = 0; i< this.body.size(); i++)
 		{
@@ -97,7 +97,7 @@ public class Template implements GrammarTreeNode {
 			return null;
 		}
 	}
-	public String toProgram() {
+	public String toProgram1() {
 		while (true) {
 			if (curState >= indexes.size())
 				return "null";

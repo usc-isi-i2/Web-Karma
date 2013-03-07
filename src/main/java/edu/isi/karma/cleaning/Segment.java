@@ -1,5 +1,6 @@
 package edu.isi.karma.cleaning;
 
+import java.util.HashSet;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -102,6 +103,7 @@ public class Segment implements GrammarTreeNode {
 		String ruleString = "null";
 		for(Section s:this.section)
 		{
+			s.isinloop = this.isinloop;
 			ruleString = s.verifySpace();
 			if(ruleString.indexOf("null")== -1)
 			{
@@ -117,16 +119,7 @@ public class Segment implements GrammarTreeNode {
 		{
 			int s = elem[0];
 			int e = elem[1];
-			//create the startPosition
-			Vector<Integer> sset = new Vector<Integer>();
-			sset = UtilTools.getStringPos(s, orgNodes);
-			Position sPosition = new Position(sset, getLeftCxt(s, orgNodes), getRightCxt(s, orgNodes),this.isinloop);
-			sPosition.isinloop = this.isinloop;
-			//create the endPosition
-			Vector<Integer> eset = new Vector<Integer>();
-			eset = UtilTools.getStringPos(e, orgNodes);
-			Position ePosition = new Position(eset, getLeftCxt(e, orgNodes), getRightCxt(e, orgNodes),this.isinloop);
-			ePosition.isinloop = this.isinloop;
+			//record the data
 			Vector<String> orgStrings = new Vector<String>();
 			Vector<String> tarStrings = new Vector<String>();
 			String org = "";
@@ -136,6 +129,21 @@ public class Segment implements GrammarTreeNode {
 			}
 			orgStrings.add(org);
 			tarStrings.add(tarString);
+			//create the startPosition
+			Vector<Integer> sset = new Vector<Integer>();
+			sset = UtilTools.getStringPos(s, orgNodes);
+			Vector<String> tars = new Vector<String>();
+			tars.add(sset.get(0).toString());
+			Position sPosition = new Position(sset, getLeftCxt(s, orgNodes), getRightCxt(s, orgNodes),orgStrings,tars,this.isinloop);
+			sPosition.isinloop = this.isinloop;
+			//create the endPosition
+			Vector<Integer> eset = new Vector<Integer>();
+			eset = UtilTools.getStringPos(e, orgNodes);
+			Vector<String> tars1 = new Vector<String>();
+			tars1.add(eset.get(0).toString());
+			Position ePosition = new Position(eset, getLeftCxt(e, orgNodes), getRightCxt(e, orgNodes),orgStrings,tars1,this.isinloop);
+			ePosition.isinloop = this.isinloop;
+			
 			if(sPosition != null && ePosition !=null)
 			{
 				Position[] pair = {sPosition,ePosition};
@@ -199,15 +207,18 @@ public class Segment implements GrammarTreeNode {
 			return res;
 		}
 		//merge the position
+		HashSet<String> uniqueKeys = new HashSet<String>();
 		Vector<Section> newSections = new Vector<Section>();
 		for(Section x:this.section)
 		{
 			for(Section y:s.section)
 			{
 				GrammarTreeNode zSection = x.mergewith(y);
-				if(zSection!=null)
+				String ukey = zSection.toString();
+				if(zSection!=null && !uniqueKeys.contains(ukey))
 				{
 					newSections.add((Section)zSection);
+					uniqueKeys.add(ukey);
 				}
 			}
 		}

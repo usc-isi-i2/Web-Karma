@@ -17,7 +17,7 @@ class Interpreter(InterpreterType):
             print "hello world"
     def execute(self,value):
         value = eval(self.script)
-        return value 
+        return str(value) 
 
 if __name__ == "__main__":
     s = "1 normandie ave, Los angels"

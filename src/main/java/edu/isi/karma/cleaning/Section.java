@@ -2,6 +2,8 @@ package edu.isi.karma.cleaning;
 
 import java.util.Vector;
 
+import org.python.antlr.PythonParser.return_stmt_return;
+
 
 public class Section implements GrammarTreeNode {
 	public Position[] pair;
@@ -19,46 +21,30 @@ public class Section implements GrammarTreeNode {
 		this.tarStrings = tarStrings;
 		if(itInterpretor==null)
 			itInterpretor =  new Interpretor();
-		this.createTotalOrderVector();
+		//this.createTotalOrderVector();
+		this.reiniteRules();
 		this.isinloop = isinloop;
 	}
-	public String verifySpace()
-	{
-		String rule = "null";
-		boolean validSpace = true;
-		Interpretor itInterpretor = new Interpretor();
-		int index = 0;
-		while(rules.size() > 0 )
+	public String verifySpace() {
+		String rule = "";
+		this.pair[0].isinloop = this.isinloop;
+		this.pair[1].isinloop = this.isinloop;
+		while(curState < this.rules.size())
 		{
-			if(isinloop)
+			String rule1 = this.pair[0].VerifySpace(rules.get(curState)[0]);
+			String rule2 = this.pair[1].VerifySpace(rules.get(curState)[1]);
+			curState ++;
+			if (rule1.indexOf("null") == -1 && rule2.indexOf("null") == -1) {
+				rule = String.format("substr(value,%s,%s)", rule1, rule2);
+				return rule;
+			}
+			if(rule1.indexOf("null") != -1 && rule2.indexOf("null")!= -1)
 			{
-				rule = String.format("loop(value,\"%s\")", this.getRule(0));
+				break;
 			}
-			else
-			{
-				rule = this.getRule(0);
-			}
-			boolean isvalid = true;
-			for(int i=0;i <orgStrings.size(); i++)
-			{
-				InterpreterType worker = itInterpretor.create(rule);
-				String s2 = worker.execute(orgStrings.get(i));
-				String s3 = tarStrings.get(i);
-				if (s3.compareTo(s2) != 0) 
-				{
-					isvalid = false;
-				}
-			}
-			if(!isvalid)
-			{
-				rules.remove(0);
-			}
-			else {
-				return this.getRule(0);
-			}
-			index ++;
 		}
 		return "null";
+
 	}
 	@Override
 	public String toProgram() {
@@ -130,7 +116,43 @@ public class Section implements GrammarTreeNode {
 			}
 		}
 	}
-
+	public void reiniteRules()
+	{
+		Vector<Long> indexs = new Vector<Long>();
+		indexs.add((long)16);
+		indexs.add((long)16);
+		Vector<Vector<Integer>> configs = new Vector<Vector<Integer>>();
+		rules.clear();
+		getCrossIndex(indexs, 0, "", configs);
+		for(int i = 0; i<configs.size(); i++)
+		{
+			int[] elem = {configs.get(i).get(0),configs.get(i).get(1)};
+			rules.add(elem);
+		}
+	}
+	public void getCrossIndex(Vector<Long> indexs, int cur, String path,
+			Vector<Vector<Integer>> configs) {
+		String tpath = path;
+		if (cur >= indexs.size()) {
+			// System.out.println(""+tpath);
+			String[] elems = tpath.split(",");
+			Vector<Integer> line = new Vector<Integer>();
+			for (String s : elems) {
+				String x = s.trim();
+				if (x.length() > 0) {
+					line.add(Integer.parseInt(x));
+				}
+			}
+			if (line.size() > 0) {
+				configs.add(line);
+			}
+			return;
+		}
+		for (int i = 0; i < indexs.get(cur); i++) {
+			String xtpath = path + i + ",";
+			getCrossIndex(indexs, cur + 1, xtpath, configs);
+		}
+	}
 	@Override
 	public void emptyState() {
 		this.curState = 0;

@@ -14,6 +14,18 @@ public class ProgramRule {
 		this.pClassifier = prog.classifier;
 		initInterpretor();
 	}
+	public ProgramRule(String rule)
+	{
+		initInterpretor();
+		InterpreterType worker = itInterpretor.create(rule);
+		rules.put("default", worker);
+		
+	}
+	public String transform(String value)
+	{
+		String s2 = rules.get("default").execute(value);
+		return s2;
+	}
 	public void initInterpretor()
 	{
 		if(itInterpretor == null)
