@@ -200,14 +200,16 @@ class OntologyCache {
 		
 		logger.info("number of classes:" + classes.size());
 		logger.info("number of all properties:" + properties.size());
+		logger.info("number of data properties:" + dataProperties.size() );
+		logger.info("number of object properties:" + objectProperties.size() );
 		// A = number of all properties including rdf:Property 
 		// B = number of properties defined as Data Property
 		// C = number of properties defined as Object Property
 		// properties = A
 		// dataproperties = A - C
 		// objectproperties = A - B
-		logger.info("number of data properties:" + (properties.size() - objectProperties.size()) );
-		logger.info("number of object properties:" + (properties.size() - dataProperties.size()) );
+		logger.info("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
+		logger.info("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
 
 		// create a hierarchy of classes and properties of the model
 		this.buildClassHierarchy(classHierarchy);

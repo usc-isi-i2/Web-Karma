@@ -267,11 +267,8 @@ public class Approach1 {
 			if (matchedSemanticLabels == null || matchedSemanticLabels.size() == 0) {
 				
 				HashMap<String, Label> superClasses = 
-						this.ontologyManager.getSuperClasses(sl.getNodeLabel().getUri(), false);
+						this.ontologyManager.getSuperClasses(sl.getNodeLabel().getUri(), true);
 				
-				if (superClasses == null || superClasses.size() == 0)
-					superClasses = this.ontologyManager.getSuperClasses(sl.getNodeLabel().getUri(), true);
-
 				boolean matchFound = false;
 				if (superClasses != null && superClasses.size() > 0) {
 					for (String s : superClasses.keySet()) {
@@ -437,11 +434,10 @@ public class Approach1 {
 						
 						if (!linkExistInOntology) {
 //							logger.warn("The link " + s + " from " + dr.getDomain() + " to " + dr.getRange() + 
-//									" cannot be inferred from the ontology, so we don't consider it in our graph.");
-//							continue;
+//									" cannot be inferred from the ontology, but we assert it because it exists in training data.");
 							logger.warn("The link " + s + " from " + dr.getDomain() + " to " + dr.getRange() + 
-									" cannot be inferred from the ontology, but we assert it because it exists in training data.");
-//							continue;
+									" cannot be inferred from the ontology, so we don't consider it in our graph.");
+							continue;
 						}
 						
 						count = linkCount.get(s);
@@ -498,14 +494,29 @@ public class Approach1 {
 			logger.error("There is no steiner node.");
 			return null;
 		}
+
+		logger.info("updating weights according to training data ...");
+		long start = System.currentTimeMillis();
 		this.updateWeights();
+		long updateWightsElapsedTimeMillis = System.currentTimeMillis() - start;
+		logger.info("time to update weights: " + (updateWightsElapsedTimeMillis/1000F));
 
 		UndirectedGraph<Node, Link> undirectedGraph = new AsUndirectedGraph<Node, Link>(graph);
 		logger.info("computing steiner tree ...");
 		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodes);
 		DirectedWeightedMultigraph<Node, Link> tree = 
 				(DirectedWeightedMultigraph<Node, Link>)GraphUtil.asDirectedGraph(steinerTree.getSteinerTree());
-		return buildOutputTree(tree);
+		
+		long steinerTreeElapsedTimeMillis = System.currentTimeMillis() - updateWightsElapsedTimeMillis;
+		logger.info("total number of nodes in steiner tree: " + tree.vertexSet().size());
+		logger.info("total number of edges in steiner tree: " + tree.edgeSet().size());
+		logger.info("time to compute steiner tree: " + (steinerTreeElapsedTimeMillis/1000F));
+
+		long finalTreeElapsedTimeMillis = System.currentTimeMillis() - steinerTreeElapsedTimeMillis;
+		DirectedWeightedMultigraph<Node, Link> finalTree = buildOutputTree(tree);
+		logger.info("time to build final tree: " + (finalTreeElapsedTimeMillis/1000F));
+
+		return finalTree;
 
 	}
 	
@@ -676,8 +687,8 @@ public class Approach1 {
 	//		GraphUtil.printGraph(graph);
 	
 			DirectedWeightedMultigraph<Node, Link> hypothesis = app.hypothesize();
-			if (hypothesis == null)
-				continue;
+//			if (hypothesis == null)
+//				continue;
 			
 			Map<String, DirectedWeightedMultigraph<Node, Link>> graphs = 
 					new TreeMap<String, DirectedWeightedMultigraph<Node,Link>>();
