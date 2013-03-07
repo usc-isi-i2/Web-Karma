@@ -169,8 +169,9 @@ public class Traces implements GrammarTreeNode {
 				{
 					s = new Segment(pos, i + 1, corrm, orgNodes, tarNodes);
 					AllSegs.put(key, s);
-				}	
-				segs.add(s);
+				}
+				if(s.section.size() >0)
+					segs.add(s);
 				continue;
 			} else if (mappings.size() == 1) {
 				Vector<int[]> corrm = new Vector<int[]>();
@@ -189,8 +190,9 @@ public class Traces implements GrammarTreeNode {
 					{
 						s = new Segment(pos, i + 1, corrm, orgNodes, tarNodes);
 						AllSegs.put(key, s);
-					}	
-					segs.add(s);
+					}
+					if(s.section.size() >0)
+						segs.add(s);
 				} else {
 					tvec.add(tarNodes.get(i + 1));
 					int p = Ruler.Search(orgNodes, tvec, 0);
@@ -217,8 +219,9 @@ public class Traces implements GrammarTreeNode {
 						{
 							s = new Segment(pos, i + 1, corrm, orgNodes, tarNodes);
 							AllSegs.put(key, s);
-						}	
-						segs.add(s);
+						}
+						if(s.section.size() > 0)
+							segs.add(s);
 					} else {
 						continue;
 					}

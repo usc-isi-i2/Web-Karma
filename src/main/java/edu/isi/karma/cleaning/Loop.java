@@ -20,6 +20,10 @@ public class Loop implements GrammarTreeNode {
 		this.looptype = looptype;
 		this.loopbody.isinloop = true;
 	}
+	public String verifySpace()
+	{
+		return this.loopbody.verifySpace();
+	}
 	public Loop mergewith(Loop a)
 	{
 		if(this.looptype == a.looptype)

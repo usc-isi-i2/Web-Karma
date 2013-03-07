@@ -6,13 +6,59 @@ import java.util.Vector;
 public class Section implements GrammarTreeNode {
 	public Position[] pair;
 	public Vector<int[]> rules = new Vector<int[]>();
+	public int rule_cxt_size = Segment.cxtsize_limit;
 	public int curState = 0;
 	public boolean isinloop = false;
-	public Section(Position[] p,boolean isinloop)
+	public Vector<String> orgStrings = new Vector<String>();
+	public Vector<String> tarStrings = new Vector<String>();
+	public static Interpretor itInterpretor = null;
+	public Section(Position[] p,Vector<String> orgStrings,Vector<String> tarStrings,boolean isinloop)
 	{
 		pair = p;
+		this.orgStrings = orgStrings;
+		this.tarStrings = tarStrings;
+		if(itInterpretor==null)
+			itInterpretor =  new Interpretor();
 		this.createTotalOrderVector();
 		this.isinloop = isinloop;
+	}
+	public String verifySpace()
+	{
+		String rule = "null";
+		boolean validSpace = true;
+		Interpretor itInterpretor = new Interpretor();
+		int index = 0;
+		while(rules.size() > 0 )
+		{
+			if(isinloop)
+			{
+				rule = String.format("loop(value,\"%s\")", this.getRule(0));
+			}
+			else
+			{
+				rule = this.getRule(0);
+			}
+			boolean isvalid = true;
+			for(int i=0;i <orgStrings.size(); i++)
+			{
+				InterpreterType worker = itInterpretor.create(rule);
+				String s2 = worker.execute(orgStrings.get(i));
+				String s3 = tarStrings.get(i);
+				if (s3.compareTo(s2) != 0) 
+				{
+					isvalid = false;
+				}
+			}
+			if(!isvalid)
+			{
+				rules.remove(0);
+			}
+			else {
+				return this.getRule(0);
+			}
+			index ++;
+		}
+		return "null";
 	}
 	@Override
 	public String toProgram() {
@@ -31,7 +77,28 @@ public class Section implements GrammarTreeNode {
 		{
 			Position[] pa = {x,y};
 			boolean loop = this.isinloop || sec.isinloop;
-			return new Section(pa,loop);
+			Vector<String> strs = new Vector<String>();
+			Vector<String> tars = new Vector<String>();
+			if(this.orgStrings.size() == sec.orgStrings.size() && this.orgStrings.size() == 1 && this.orgStrings.get(0).compareTo(sec.orgStrings.get(0))==0)
+			{
+				// merge within one example. test the loop expression
+				//
+				strs.addAll(this.orgStrings);
+				tars.add(this.tarStrings.get(0)+sec.tarStrings.get(0));
+				loop = true;
+			}
+			else 
+			{
+				strs.addAll(this.orgStrings);
+				strs.addAll(sec.orgStrings);
+				tars.addAll(this.tarStrings);
+				tars.addAll(sec.tarStrings);
+			}
+			
+			
+			Section st = new Section(pa,strs,tars,loop);
+			return st;
+			
 		}
 	}
 

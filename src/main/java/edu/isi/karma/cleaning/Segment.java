@@ -7,6 +7,7 @@ import java.util.Vector;
 public class Segment implements GrammarTreeNode {
 	public Vector<Section> section = new Vector<Section>();
 	public static int cxtsize_limit = 2;
+	public String tarString = "";
 	public static final String LEFTPOS = "leftpos";
 	public static final String RIGHTPOS = "rightpos";
 	public static final int CONST = -1;
@@ -43,6 +44,10 @@ public class Segment implements GrammarTreeNode {
 		this.start = start;
 		this.end = end;
 		this.mappings = mapping;
+		for(int i = start; i<end; i++)
+		{
+			tarString += tarNodes.get(i).text;
+		}
 		initSections(orgNodes);
 		repString = "";
 		repString += tarNodes.get(this.start).getType();
@@ -50,7 +55,7 @@ public class Segment implements GrammarTreeNode {
 			repString += tarNodes.get(this.end-1).getType();
 		this.createTotalOrderVector();
 	}
-	public void setSections(Vector<Position[]> sections)
+/*	public void setSections(Vector<Position[]> sections)
 	{
 		Vector<Section> s = new Vector<Section>();
 		for(Position[] p:sections)
@@ -60,7 +65,7 @@ public class Segment implements GrammarTreeNode {
 		}
 		this.section = s;
 		this.createTotalOrderVector();
-	}
+	}*/
 	public Vector<TNode> getLeftCxt(int c, Vector<TNode> x)
 	{
 		int i = Segment.cxtsize_limit;
@@ -90,6 +95,21 @@ public class Segment implements GrammarTreeNode {
 		}
 		return res;
 	}
+	//if valid segment reture the first program
+	//else reture "null"
+	public String verifySpace()
+	{
+		String ruleString = "null";
+		for(Section s:this.section)
+		{
+			ruleString = s.verifySpace();
+			if(ruleString.indexOf("null")== -1)
+			{
+				return ruleString;
+			}
+		}
+		return ruleString;
+	}
 	//
 	public void initSections(Vector<TNode> orgNodes)
 	{
@@ -107,10 +127,20 @@ public class Segment implements GrammarTreeNode {
 			eset = UtilTools.getStringPos(e, orgNodes);
 			Position ePosition = new Position(eset, getLeftCxt(e, orgNodes), getRightCxt(e, orgNodes),this.isinloop);
 			ePosition.isinloop = this.isinloop;
+			Vector<String> orgStrings = new Vector<String>();
+			Vector<String> tarStrings = new Vector<String>();
+			String org = "";
+			for(int i = 0; i<orgNodes.size(); i++)
+			{
+				org += orgNodes.get(i).text;
+			}
+			orgStrings.add(org);
+			tarStrings.add(tarString);
 			if(sPosition != null && ePosition !=null)
 			{
 				Position[] pair = {sPosition,ePosition};
-				Section xsec = new Section(pair,isinloop);
+				
+				Section xsec = new Section(pair,orgStrings,tarStrings,isinloop);
 				section.add(xsec);
 			}
 		}
