@@ -89,11 +89,11 @@ public class ModelReader {
 			if (serviceModels != null) {
 				for (ServiceModel sm : serviceModels) {
 					sm.computeMatchedSubGraphs(null);
-					sm.computeShortestPaths();
+//					sm.computeShortestPaths();
 					sm.print();
 					sm.exportModelsToGraphviz(exportDir);
 					sm.exportMatchedSubGraphToGraphviz(exportDir);
-					sm.exportShortestPathsToGraphviz(exportDir);
+//					sm.exportShortestPathsToGraphviz(exportDir);
 					
 				}
 			}
@@ -138,6 +138,8 @@ public class ModelReader {
 		String subject = "", predicate = "", object = "";
 		String serviceName = "";
 		
+		int count = 1;
+		
 		if (modelExamples != null)
 		for (File f : modelExamples) {
 
@@ -146,7 +148,7 @@ public class ModelReader {
 				continue;
 			}
 
-			ServiceModel serviceModel = new ServiceModel();
+			ServiceModel serviceModel = new ServiceModel("S" + String.valueOf(count));
 			
 			LineNumberReader lr = new LineNumberReader(new FileReader(f));
 			String curLine = "";
@@ -191,6 +193,7 @@ public class ModelReader {
 			
 			lr.close();
 			serviceModels.add(serviceModel);
+			count++;
 		}
 		
 		return serviceModels;

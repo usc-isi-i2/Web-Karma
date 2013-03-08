@@ -26,9 +26,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -36,6 +38,8 @@ import org.apache.log4j.Logger;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+
+import com.google.common.collect.Sets;
 
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Uris;
@@ -55,6 +59,9 @@ import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.SimpleLink;
 import edu.isi.karma.rep.alignment.SubClassLink;
+//import com.google.common.base.Function;
+//import com.google.common.collect.Multimap;
+//import com.google.common.collect.Multimaps;
 
 public class Approach1 {
 
@@ -67,16 +74,23 @@ public class Approach1 {
 	private HashMap<String, List<Node>> uriToNodesMap;
 	private LinkIdFactory linkIdFactory;
 	private List<DomainRangePair> sourceTargetList;
-	private HashMap<String, HashMap<String, Integer>> sourceTargetToLinkCounterMap;
+	private HashMap<String, HashMap<String, Double>> sourceTargetToLinkWeightMap;
 	private HashMap<Node, List<SemanticLabel>> nodeToSemanticLabels;
 	private HashMap<SemanticLabel, SemanticLabel> inputLabelsToOutputLabelsMatching;
+	// service model id --> number of common links between the input model and this service model
+	private HashMap<String, Integer> similarityMap;
+	private HashMap<String, Double> modelsWeightsMap;
 	
+	private DirectedWeightedMultigraph<Node, Link> inputModel;
 	private List<ServiceModel> trainingData;
 	private OntologyManager ontologyManager;
 	private List<SemanticLabel> inputSemanticLabels;
 	private List<SemanticLabel> outputSemanticLabels;
-	
-	public Approach1(List<ServiceModel> trainingData, OntologyManager ontologyManager) {
+
+	public Approach1(DirectedWeightedMultigraph<Node, Link> inputModel, 
+			List<ServiceModel> trainingData, 
+			OntologyManager ontologyManager) {
+		this.inputModel = inputModel;
 		this.trainingData = trainingData;
 		this.ontologyManager = ontologyManager;
 		this.linkIdFactory = new LinkIdFactory();
@@ -85,9 +99,11 @@ public class Approach1 {
 		this.typeToNodesMap = new HashMap<NodeType, List<Node>>();
 		this.uriToNodesMap = new HashMap<String, List<Node>>();
 		this.sourceTargetList = new ArrayList<DomainRangePair>();
-		this.sourceTargetToLinkCounterMap = new HashMap<String, HashMap<String,Integer>>();
+		this.sourceTargetToLinkWeightMap = new HashMap<String, HashMap<String,Double>>();
 		this.nodeToSemanticLabels = new HashMap<Node, List<SemanticLabel>>();
 		this.inputLabelsToOutputLabelsMatching = new HashMap<SemanticLabel, SemanticLabel>();
+		this.similarityMap = new HashMap<String, Integer>();
+		this.modelsWeightsMap = new HashMap<String, Double>();
 	}
 
 	public List<SemanticLabel> getInputSemanticLabels() {
@@ -116,28 +132,127 @@ public class Approach1 {
 //		return w;
 //	}
 	
-	private void buildSourceTargetLinkCounterMap() {
-		Integer count;
+	private void buildSimilarityMap() {
+		
+		Set<String> inputModelSourceLinkTargetTriples = new HashSet<String>();
+		for (Link link : this.inputModel.edgeSet()) {
+			if (link.getTarget() instanceof InternalNode)
+				inputModelSourceLinkTargetTriples.add(link.getSource().getLabel().getUri() + 
+						link.getLabel().getUri() +
+						link.getTarget().getLabel().getUri() );
+			else
+				inputModelSourceLinkTargetTriples.add(link.getSource().getLabel().getUri() + 
+						link.getLabel().getUri());
+		}
+		
+		int count;
+		Set<String> modelSourceLinkTargetTriples;
 		for (ServiceModel sm : this.trainingData) {
-			DirectedWeightedMultigraph<Node, Link> m = sm.getModels().get(1);
+			
+			DirectedWeightedMultigraph<Node, Link> m = sm.getModels().get(0);
+			modelSourceLinkTargetTriples = new HashSet<String>();
+
 			for (Link link : m.edgeSet()) {
+				if (link.getTarget() instanceof InternalNode)
+					modelSourceLinkTargetTriples.add(link.getSource().getLabel().getUri() + 
+							link.getLabel().getUri() +
+							link.getTarget().getLabel().getUri() );
+				else
+					modelSourceLinkTargetTriples.add(link.getSource().getLabel().getUri() + 
+							link.getLabel().getUri());
+			}
+			
+			Set<String> commonLinks = 
+					Sets.intersection(inputModelSourceLinkTargetTriples, modelSourceLinkTargetTriples);
+			
+			count = (commonLinks != null)? commonLinks.size() : 0;
+			this.similarityMap.put(sm.getId(), count);
+		}
+	}
+	
+	private void buildSimilarityMap2() {
+		
+		Set<String> inputModelNodes = new HashSet<String>();
+		for (Node node : this.inputModel.vertexSet()) {
+			if (node instanceof InternalNode)
+				inputModelNodes.add(node.getLabel().getUri());
+		}
+		
+		int count;
+		Set<String> modelNodes;
+		for (ServiceModel sm : this.trainingData) {
+			
+			DirectedWeightedMultigraph<Node, Link> m = sm.getModels().get(0);
+			modelNodes = new HashSet<String>();
+
+			for (Node node : m.vertexSet()) {
+				if (node instanceof InternalNode)
+					modelNodes.add(node.getLabel().getUri());
+			}
+			
+			Set<String> commonNodes = 
+					Sets.intersection(inputModelNodes, modelNodes);
+			
+			count = (commonNodes != null)? commonNodes.size() : 0;
+			this.similarityMap.put(sm.getId(), count);
+		}
+	}
+	
+	private void buildModelsWeightMap() {
+		
+//		Function<String, Integer> countFunction = new Function<String, Integer>() {
+//			public Integer apply(String in) {
+//				return similarityMap.containsKey(in)? similarityMap.get(in): 0;
+//		  	}
+//		};		
+//		Multimap<Integer, String> index = Multimaps.index(this.similarityMap.keySet(), countFunction);
+
+		int totalCommonLinks = 0;
+		for (Integer i : this.similarityMap.values()) 
+			if (i != null)
+				totalCommonLinks += i.intValue();
+		
+		int count;
+		for (Entry<String, Integer> entry : this.similarityMap.entrySet()) {
+			if (entry.getValue() != null) {
+				count = entry.getValue().intValue();
+				this.modelsWeightsMap.put(entry.getKey(), ((double)count + 1) / ((double)totalCommonLinks + 1));
+			}
+		}
+	}
+	
+	private void buildSourceTargetLinkWieghtrMap() {
+		
+		Double w;
+		Double modelWeight;
+		
+		for (ServiceModel sm : this.trainingData) {
+			
+			modelWeight = (this.modelsWeightsMap.containsKey(sm.getId())) ? 
+					this.modelsWeightsMap.get(sm.getId()).doubleValue() : 0.0;
+					
+			DirectedWeightedMultigraph<Node, Link> m = sm.getModels().get(1);
+
+			for (Link link : m.edgeSet()) {
+
 				Node source = link.getSource();
 				Node target = link.getTarget();
+				
 				if (source instanceof InternalNode && target instanceof InternalNode) {
 					String key = source.getLabel().getUri() +
 								 target.getLabel().getUri();
 					
-					HashMap<String, Integer> linkCount = this.sourceTargetToLinkCounterMap.get(key);
-					if (linkCount == null) { 
-						linkCount = new HashMap<String, Integer>();
-						linkCount.put(link.getLabel().getUri(), 1);
+					HashMap<String, Double> linkWeight = this.sourceTargetToLinkWeightMap.get(key);
+					if (linkWeight == null) { 
+						linkWeight = new HashMap<String, Double>();
+						linkWeight.put(link.getLabel().getUri(), modelWeight);
 						this.sourceTargetList.add(
 								new DomainRangePair(source.getLabel().getUri(), target.getLabel().getUri()));
-						this.sourceTargetToLinkCounterMap.put(key, linkCount);
+						this.sourceTargetToLinkWeightMap.put(key, linkWeight);
 					} else {
-						count = linkCount.get(link.getLabel().getUri());
-						if (count == null) linkCount.put(link.getLabel().getUri(), 1);
-						else linkCount.put(link.getLabel().getUri(), ++count);
+						w = linkWeight.get(link.getLabel().getUri());
+						if (w == null) linkWeight.put(link.getLabel().getUri(), modelWeight);
+						else linkWeight.put(link.getLabel().getUri(), (w.doubleValue() + modelWeight) );
 					}
 				}
 			}
@@ -145,15 +260,15 @@ public class Approach1 {
 	}
 	
 	private List<SemanticLabel> getModelSemanticLabels(
-			DirectedWeightedMultigraph<Node, Link> serviceModel,
+			DirectedWeightedMultigraph<Node, Link> model,
 			boolean updateNodeToSemanticLabelsMap) {
 		
 		List<SemanticLabel> semanticLabels = new ArrayList<SemanticLabel>();
 
-		for (Node n : serviceModel.vertexSet()) {
+		for (Node n : model.vertexSet()) {
 			if (!(n instanceof ColumnNode) && !(n instanceof LiteralNode)) continue;
 			
-			Set<Link> incomingLinks = serviceModel.incomingEdgesOf(n);
+			Set<Link> incomingLinks = model.incomingEdgesOf(n);
 			if (incomingLinks != null) { // && incomingLinks.size() == 1) {
 				Link link = incomingLinks.toArray(new Link[0])[0];
 				Node domain = link.getSource();
@@ -242,11 +357,13 @@ public class Approach1 {
 		return matchedSemanticLabels.get(indexOfMostFrequentSemanticLabel);
 	}
 
-	public void preprocess(DirectedWeightedMultigraph<Node, Link> serviceModel) {
+	public void preprocess() {
 		
-		this.buildSourceTargetLinkCounterMap();
+		this.buildSimilarityMap2();
+		this.buildModelsWeightMap();
+		this.buildSourceTargetLinkWieghtrMap();
 		
-		this.inputSemanticLabels = getModelSemanticLabels(serviceModel, true);
+		this.inputSemanticLabels = getModelSemanticLabels(this.inputModel, true);
 		if (inputSemanticLabels == null || inputSemanticLabels.size() == 0) {
 			logger.info("The input model does not have any semantic label.");
 			return;
@@ -381,7 +498,7 @@ public class Approach1 {
 	private void updateWeights() {
 		
 		String id;
-		Integer count;
+		Double weight, linkWeightInTrainingset;
 		Label label;
 		
 		List<String> objectPropertiesDirect;
@@ -410,14 +527,18 @@ public class Approach1 {
 			objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyDomain(dr.getDomain(), dr.getRange());
 			objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesWithOnlyRange(dr.getDomain(), dr.getRange());
 			
-			HashMap<String, Integer> linkCount = this.sourceTargetToLinkCounterMap.get(dr.getDomain() + dr.getRange());
-			if (linkCount == null || linkCount.size() == 0) continue;
+			HashMap<String, Double> linkWeight = this.sourceTargetToLinkWeightMap.get(dr.getDomain() + dr.getRange());
+			if (linkWeight == null || linkWeight.size() == 0) continue;
 
 			boolean linkExistInOntology;
 			
 			for (Node n1 : sources) {
 				for (Node n2 : targets) {
-					for (String s : linkCount.keySet()) {
+					for (String s : linkWeight.keySet()) {
+						
+//						System.out.print(n1.getLabel().getUri() + "===");
+//						System.out.print(n2.getLabel().getUri() + "===");
+//						System.out.println(s + "===wieght: " + linkWeight.get(s));
 						
 						linkExistInOntology = false;
 						
@@ -440,8 +561,8 @@ public class Approach1 {
 							continue;
 						}
 						
-						count = linkCount.get(s);
-						if (count == null) continue;
+						linkWeightInTrainingset = linkWeight.get(s);
+						if (linkWeightInTrainingset == null) continue;
 						
 						id = linkIdFactory.getLinkId(s);
 						label = new Label(s);
@@ -449,7 +570,11 @@ public class Approach1 {
 						// prefer the links that are actually defined between source and target in the ontology 
 						// over inherited ones.
 						graph.addEdge(n1, n2, newLink);
-						graph.setEdgeWeight(newLink, ModelingParams.PROPERTY_DIRECT_WEIGHT - count.intValue());
+						
+						weight = ModelingParams.PROPERTY_DIRECT_WEIGHT - 10 * linkWeightInTrainingset.doubleValue();
+						if (weight < 0) weight = 0.0;
+						
+						graph.setEdgeWeight(newLink,  weight);
 					}					
 				}
 			}
@@ -641,10 +766,11 @@ public class Approach1 {
 		ontManager.doImport(new File(Approach1.ontologyDir + "geonames.rdf"));
 		ontManager.doImport(new File(Approach1.ontologyDir + "wgs84_pos.xml"));
 		ontManager.doImport(new File(Approach1.ontologyDir + "schema.rdf"));
-		ontManager.doImport(new File(Approach1.ontologyDir + "helper.owl"));
+//		ontManager.doImport(new File(Approach1.ontologyDir + "helper.owl"));
 		ontManager.updateCache();
 
 		for (int i = 0; i < serviceModels.size(); i++) {
+//		int i = 12; {
 			
 			trainingData.clear();
 			int inputModelIndex = i;
@@ -661,8 +787,8 @@ public class Approach1 {
 			DirectedWeightedMultigraph<Node, Link> inputModel = sm.getModels().get(0);
 			DirectedWeightedMultigraph<Node, Link> outputModel = sm.getModels().get(1);
 			
-			Approach1 app = new Approach1(trainingData, ontManager);
-			app.preprocess(inputModel);
+			Approach1 app = new Approach1(inputModel, trainingData, ontManager);
+			app.preprocess();
 			
 			String graphName = Approach1.outputDir + "graph" + String.valueOf(i+1);
 			if (new File(graphName).exists()) {
@@ -699,7 +825,7 @@ public class Approach1 {
 			
 			GraphVizUtil.exportJGraphToGraphvizFile(graphs, 
 					sm.getServiceDescription(), 
-					Approach1.outputDir + "output" + String.valueOf(i+1) + ".dot");
+					Approach1.outputDir + "output" + String.valueOf(i+1) + "-2.dot");
 			
 			GraphUtil.printGraphSimple(hypothesis);			
 

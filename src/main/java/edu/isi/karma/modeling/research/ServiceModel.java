@@ -41,6 +41,7 @@ import edu.isi.karma.rep.alignment.Node;
 
 public class ServiceModel {
 
+	private String id;
 	private String serviceNameWithPrefix;
 	private String serviceName;
 	private String serviceDescription;
@@ -49,7 +50,8 @@ public class ServiceModel {
 	private HashMap<String, List<DijkstraShortestPath<Node, Link>>> shortestPathsBetweenTwoAttributes; 
 	private List<MatchedSubGraphs> matchedSubGraphs;
 
-	public ServiceModel() {
+	public ServiceModel(String id) {
+		this.id = id;
 		this.models = new ArrayList<DirectedWeightedMultigraph<Node,Link>>();
 		matchedSubGraphs = new ArrayList<MatchedSubGraphs>();
 		shortestPathsBetweenTwoAttributes = new HashMap<String, List<DijkstraShortestPath<Node,Link>>>();
@@ -63,7 +65,9 @@ public class ServiceModel {
 		return matchedSubGraphs;
 	}
 
-
+	public String getId() {
+		return id;
+	}
 
 	public String getServiceName() {
 		return serviceName;

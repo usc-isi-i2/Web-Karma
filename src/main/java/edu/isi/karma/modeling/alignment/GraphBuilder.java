@@ -429,9 +429,9 @@ public class GraphBuilder {
 		
 //		updateLinksFromThing();
 		
-		long updateLinksFromThing = System.currentTimeMillis();
-		elapsedTimeSec = (updateLinksFromThing - updateLinks)/1000F;
-		logger.info("time to update links to Thing (root): " + elapsedTimeSec);
+//		long updateLinksFromThing = System.currentTimeMillis();
+//		elapsedTimeSec = (updateLinksFromThing - updateLinks)/1000F;
+//		logger.info("time to update links to Thing (root): " + elapsedTimeSec);
 
 		logger.info("total number of nodes in graph: " + this.graph.vertexSet().size());
 		logger.info("total number of links in graph: " + this.graph.edgeSet().size());
