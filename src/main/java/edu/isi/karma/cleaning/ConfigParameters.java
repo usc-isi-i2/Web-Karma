@@ -25,6 +25,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import edu.isi.mediator.domain.parser.grammar.DomainModelParser.section_return;
+
 public class ConfigParameters {
 	public static int debug = 0;
 	Properties properties = new Properties();
@@ -46,6 +48,9 @@ public class ConfigParameters {
 			ExampleSelection.way = Integer.parseInt(properties.getProperty("exmp_sel").trim());
 			res = String.format("cxt_limit:%d temp_limit: %d, trace_limit:%d, exp_sel:%d\n",Segment.cxtsize_limit,Template.temp_limit,Traces.trace_limit,ExampleSelection.way);
 			debug = Integer.parseInt(properties.getProperty("debug").trim());
+			Template.supermode = Integer.parseInt(properties.getProperty("supermode").trim());
+			Section.supermode = Integer.parseInt(properties.getProperty("supermode").trim());
+			Position.fixedlength = Integer.parseInt(properties.getProperty("fixedlength").trim());
 		} catch (IOException ex) {
 			return;
 		}

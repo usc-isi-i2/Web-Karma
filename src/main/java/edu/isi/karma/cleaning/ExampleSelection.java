@@ -50,6 +50,9 @@ public class ExampleSelection {
 		case 4:
 			ID = this.way4();
 			break;
+		case 5:
+			ID = this.way5();
+			break;
 		default:
 			ID = "";
 		}
@@ -141,9 +144,15 @@ public class ExampleSelection {
 		return score;
 	}
 	//use the cnt of fatal_error number
+	public boolean firsttime = true;
 	public String way4()
 	{
 		int max = -1;
+		if(firsttime)
+		{
+			firsttime = false;
+			return "0";
+		}
 		String example  = "";
 		for(String key:raw.keySet())
 		{
@@ -155,6 +164,24 @@ public class ExampleSelection {
 			}
 		}
 		return example;
+	}
+	//least ambiguious and more fatal errors
+	public String way5()
+	{
+		String ID = "";
+		float minimum = (float) 100000.0;
+		for(String key:org.keySet())
+		{
+			int s = this.ambiguityScore(org.get(key));
+			int cnt = raw.get(key)[1].split("_FATAL_ERROR_").length;
+			float score = (float) (s*1.0/cnt);
+			if(score<minimum)
+			{
+				ID = key;
+				minimum = score;
+			}
+		}
+		return ID;
 	}
 	public void clear()
 	{

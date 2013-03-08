@@ -27,6 +27,7 @@ public class Position implements GrammarTreeNode {
 	public boolean isinloop = false;
 	public int curState = 0;
 	public static Interpretor itInterpretor = null;
+	public static int fixedlength = 1;
 
 	public Position(Vector<Integer> absPos, Vector<TNode> lcxt,
 			Vector<TNode> rcxt, Vector<String> orgStrings,
@@ -58,15 +59,25 @@ public class Position implements GrammarTreeNode {
 
 	public void getString(Vector<TNode> x, int cur, String path, Double value,
 			HashMap<String, Double> smap, boolean isleft) {
-		if (!smap.keySet().contains(path)) {
-			String res = UtilTools.escape(path);
-			if (!smap.containsKey(res) && res.length() != 0)
-				smap.put(res, value); // store the string of all sizes
+		if(fixedlength == 0)
+		{
+			if (!smap.keySet().contains(path)) {
+				String res = UtilTools.escape(path);
+				if (!smap.containsKey(res) && res.length() != 0)
+					smap.put(res, value); // store the string of all sizes
+			}
 		}
 		if (x == null || x.size() == 0) {
 			return;
 		}
 		if (cur >= x.size() || cur < 0) {
+			if (fixedlength == 1) {
+				if (!smap.keySet().contains(path)) {
+					String res = UtilTools.escape(path);
+					if (!smap.containsKey(res) && res.length() != 0)
+						smap.put(res, value); // store the string of all sizes
+				}
+			}
 			return;
 		}
 		TNode t = x.get(cur);
@@ -302,9 +313,13 @@ public class Position implements GrammarTreeNode {
 		while (ruleNo<this.rules.size()) {
 			rule = getRule(ruleNo);
 			ruleNo++;
-			System.out.println("verifying..."+rule);
+			//System.out.println("verifying..."+rule);
 			if (isinloop) {
 				// replace the counter with number and verify it
+				if(rule.indexOf("counter")==-1)
+				{
+					return "null";
+				}
 				String r = "";
 				int cnt = 1;
 				boolean isvalid = true;

@@ -14,6 +14,7 @@ public class Section implements GrammarTreeNode {
 	public Vector<String> orgStrings = new Vector<String>();
 	public Vector<String> tarStrings = new Vector<String>();
 	public static Interpretor itInterpretor = null;
+	public static int supermode = 0;
 	public Section(Position[] p,Vector<String> orgStrings,Vector<String> tarStrings,boolean isinloop)
 	{
 		pair = p;
@@ -21,8 +22,12 @@ public class Section implements GrammarTreeNode {
 		this.tarStrings = tarStrings;
 		if(itInterpretor==null)
 			itInterpretor =  new Interpretor();
-		//this.createTotalOrderVector();
-		this.reiniteRules();
+		if(supermode == 0)
+			this.createTotalOrderVector();
+		else
+		{
+			this.reiniteRules();
+		}
 		this.isinloop = isinloop;
 	}
 	public String verifySpace() {

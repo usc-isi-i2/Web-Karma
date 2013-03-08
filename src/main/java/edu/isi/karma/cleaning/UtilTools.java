@@ -105,7 +105,7 @@ public class UtilTools {
 	}
 
 	public static String escape(String s) {
-		s = s.replaceAll("\\\\", "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\");
+		s = s.replaceAll("\\\\", "\\\\\\\\\\\\\\\\");
 		HashMap<String, String> dict = new HashMap<String, String>();
 		dict.put("\\(", "\\\\(");
 		dict.put("\\)", "\\\\)");

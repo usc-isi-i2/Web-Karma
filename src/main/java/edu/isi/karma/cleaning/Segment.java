@@ -101,6 +101,16 @@ public class Segment implements GrammarTreeNode {
 	public String verifySpace()
 	{
 		String ruleString = "null";
+		if(this.isConstSegment())
+		{
+			String mdString = "";
+			for(TNode t:this.constNodes)
+			{
+				mdString += t.text;
+			}
+			mdString = "\'"+mdString+"\'";
+			return mdString;
+		}
 		for(Section s:this.section)
 		{
 			s.isinloop = this.isinloop;
@@ -214,11 +224,14 @@ public class Segment implements GrammarTreeNode {
 			for(Section y:s.section)
 			{
 				GrammarTreeNode zSection = x.mergewith(y);
-				String ukey = zSection.toString();
-				if(zSection!=null && !uniqueKeys.contains(ukey))
+				if(zSection!=null )
 				{
-					newSections.add((Section)zSection);
-					uniqueKeys.add(ukey);
+					String ukey = zSection.toString();
+					if(!uniqueKeys.contains(ukey))
+					{
+						newSections.add((Section)zSection);
+						uniqueKeys.add(ukey);
+					}
 				}
 			}
 		}
