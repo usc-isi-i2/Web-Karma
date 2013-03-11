@@ -121,7 +121,7 @@
     </servlet>
     <servlet-mapping>
      <servlet-name>ExtractSpatialInformationFromOSMServiceHandler</servlet-name>
-     <url-pattern>/ExtractSpacialInformation/*</url-pattern>
+     <url-pattern>/ExtractSpatialInformation/*</url-pattern>
   </servlet-mapping>
   
 

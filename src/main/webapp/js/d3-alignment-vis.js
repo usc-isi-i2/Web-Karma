@@ -486,20 +486,29 @@ function changeSemanticType_d3(d, vis, event) {
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["command"] = "GetPropertiesAndClassesList";
     info["vWorksheetId"] = optionsDiv.data("worksheetId");
-    
+
     var returned = $.ajax({
-        url: "RequestController", 
+        url: "RequestController",
         type: "POST",
         data : info,
         dataType : "json",
-        complete : 
+        complete :
             function (xhr, textStatus) {
                 var json = $.parseJSON(xhr.responseText);
                 optionsDiv.data("classAndPropertyListJson", json);
-                
+                if (json) {
+                    json["elements"][0]["classList"].sort(function(a,b) {
+                        return a["label"].toUpperCase().localeCompare(b["label"].toUpperCase());
+                    });
+
+                    json["elements"][0]["propertyList"].sort(function(a,b) {
+                        return a.toUpperCase().localeCompare(b.toUpperCase());
+                    });
+                }
+
                 // Special case when no training has been done to CRF model
                 // Shows an empty semantic type
-                if((!CRFInfo && existingTypes.length == 0) || 
+                if((!CRFInfo && existingTypes.length == 0) ||
                     ((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo.length == 0)) ||
                     ((existingTypes && existingTypes.length == 0) && (CRFInfo && CRFInfo["Labels"].length == 0))) {
                     addEmptySemanticType();

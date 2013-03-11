@@ -199,6 +199,7 @@ div.LowConfidenceLevel:hover {
 	text-align:center;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
+    height: 15px;
 /*	height: 20px;*/
 /*	padding: 3px;*/
 	border-width: 1px;

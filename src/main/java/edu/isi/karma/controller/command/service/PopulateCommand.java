@@ -43,6 +43,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.model.serialization.WebServiceLoader;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
@@ -187,6 +188,8 @@ public class PopulateCommand extends WorksheetCommand{
 		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 		vw.update(c);
 		
+		SemanticTypeUtil.computeSemanticTypesSuggestion(wk, vWorkspace.getWorkspace().getCrfModelHandler(), 
+				vWorkspace.getWorkspace().getOntologyManager(), al);
 		c.add(new SemanticTypesUpdate(wk, vWorksheetId, al));
 		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(
 				vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), al));
