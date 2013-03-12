@@ -70,6 +70,8 @@ public class Alignment implements OntologyUpdateListener {
 		this.nodeIdFactory = new NodeIdFactory();
 		this.linkIdFactory = new LinkIdFactory();
 
+		ontologyManager.subscribeListener(this);
+
 		logger.info("building initial graph ...");
 		graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory, linkIdFactory);
 		

@@ -21,6 +21,10 @@
 package edu.isi.karma.service.json;
 
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -35,13 +39,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import edu.isi.karma.rep.sources.Attribute;
+import edu.isi.karma.rep.sources.Table;
+
 public class JsonManager {
 
     public static void main(String... args) throws Exception {
-        String json1 = 
+        
+    	String json1 = 
             "{"
                 + "'title': 'Computing and Information systems',"
-                + "'id' : 1,"
+                + "'id' : [{'p1' : 'v1'}, {'p2' : 'v2'}],"
                 + "'children' : 'true',"
                 + "'groups' : [{"
                     + "'title' : 'Level one CIS',"
@@ -49,14 +57,15 @@ public class JsonManager {
                     + "'children' : 'true',"
                     + "'groups' : [{"
                         + "'title' : 'Intro To Computing and Internet',"
-                        + "'id' : 3,"
+                        + "'id' : [{'p3' : 'v3'}, {'p4' : 'v4'}],"
+//                        + "'id' : 3,"
                         + "'children': 'false',"
                         + "'groups':[]"
                     + "}]" 
                 + "}]"
             + "}";
         
-        String json2 = 
+    	String json2 = 
         	"{" 
         	+ "'weatherObservation': {"
         	+ "'clouds': 'scattered clouds',"
@@ -82,9 +91,9 @@ public class JsonManager {
         	+ "}"
         	+ "}";
 
-        String json3 = "{'postalCodes':[{'adminCode3':'UK','adminName2':'Surrey County','adminName3':'Tandridge District','adminCode2':'43','distance':'0.48844','adminCode1':'ENG','postalCode':'CR6 9QN','countryCode':'GB','lng':0.0070237530613011506,'placeName':'Chelsham and Farleigh','lat':51.30010642380937,'adminName1':'England'},{'adminCode3':'UK','adminName2':'Surrey County','adminName3':'Tandridge District','adminCode2':'43','distance':'1.06201','adminCode1':'ENG','postalCode':'CR6 9QP','countryCode':'GB','lng':-0.0026705499321176274,'placeName':'Titsey','lat':51.29059577159804,'adminName1':'England'},{'adminCode3':'UK','adminName2':'Surrey County','adminName3':'Tandridge District','adminCode2':'43','distance':'1.1316','adminCode1':'ENG','postalCode':'CR6 9QG','countryCode':'GB','lng':-0.011357770951524116,'placeName':'Chelsham and Farleigh','lat':51.307290694391604,'adminName1':'England'},{'adminCode3':'UK','adminName2':'Surrey County','adminName3':'Tandridge District','adminCode2':'43','distance':'1.13857','adminCode1':'ENG','postalCode':'CR6 9QJ','countryCode':'GB','lng':-0.015818287144742343,'placeName':'Chelsham and Farleigh','lat':51.29734822895096,'adminName1':'England'},{'adminCode3':'AF','adminName3':'Bromley London Boro','adminCode2':'00','distance':'1.26682','adminCode1':'ENG','postalCode':'TN16 3PD','countryCode':'GB','lng':0.01783733164101557,'placeName':'Biggin Hill Ward','lat':51.30233067295212,'adminName1':'England'}]}";
+    	String json3 = "{'postalCodes':[{'adminCode3':'UK','adminName2':'Surrey County','adminName3':'Tandridge District','adminCode2':'43','distance':'0.48844','adminCode1':'ENG','postalCode':'CR6 9QN','countryCode':'GB','lng':0.0070237530613011506,'placeName':'Chelsham and Farleigh','lat':51.30010642380937,'adminName1':'England'},{'adminCode3':'UK','adminName2':'Surrey County','adminName3':'Tandridge District','adminCode2':'43','distance':'1.06201','adminCode1':'ENG','postalCode':'CR6 9QP','countryCode':'GB','lng':-0.0026705499321176274,'placeName':'Titsey','lat':51.29059577159804,'adminName1':'England'},{'adminCode3':'UK','adminName2':'Surrey County','adminName3':'Tandridge District','adminCode2':'43','distance':'1.1316','adminCode1':'ENG','postalCode':'CR6 9QG','countryCode':'GB','lng':-0.011357770951524116,'placeName':'Chelsham and Farleigh','lat':51.307290694391604,'adminName1':'England'},{'adminCode3':'UK','adminName2':'Surrey County','adminName3':'Tandridge District','adminCode2':'43','distance':'1.13857','adminCode1':'ENG','postalCode':'CR6 9QJ','countryCode':'GB','lng':-0.015818287144742343,'placeName':'Chelsham and Farleigh','lat':51.29734822895096,'adminName1':'England'},{'adminCode3':'AF','adminName3':'Bromley London Boro','adminCode2':'00','distance':'1.26682','adminCode1':'ENG','postalCode':'TN16 3PD','countryCode':'GB','lng':0.01783733164101557,'placeName':'Biggin Hill Ward','lat':51.30233067295212,'adminName1':'England'}]}";
         
-        String json4 = "{'data':{" 
+    	String json4 = "{'data':{" 
         				+ "'current_condition':["
         				+ "{"
         				+ "'cloudcover':'0',"
@@ -166,39 +175,67 @@ public class JsonManager {
     					+ "}"
     					+ "}";
 
-        String json5 = "{'data': { 'current_condition': [ {'cloudcover': '75', 'humidity': '83', 'observation_time': '02:56 AM', 'precipMM': '0.0', 'pressure': '1013', 'temp_C': '18', 'temp_F': '64', 'visibility': '16', 'weatherCode': '116',  'weatherDesc': [ {'value': 'Partly Cloudy' } ],  'weatherIconUrl': [ {'value': 'http:\\/\\/www.worldweatheronline.com\\/images\\/wsymbols01_png_64\\/wsymbol_0004_black_low_cloud.png' } ], 'winddir16Point': 'N', 'winddirDegree': '0', 'windspeedKmph': '0', 'windspeedMiles': '0' } ],  'request': [ {'query': 'Los Angeles, United States Of America', 'type': 'City' } ],  'weather': [ {'date': '2011-09-19', 'precipMM': '0.0', 'tempMaxC': '27', 'tempMaxF': '80', 'tempMinC': '18', 'tempMinF': '64', 'weatherCode': '113',  'weatherDesc': [ {'value': 'Sunny' } ],  'weatherIconUrl': [ {'value': 'http:\\/\\/www.worldweatheronline.com\\/images\\/wsymbols01_png_64\\/wsymbol_0001_sunny.png' } ], 'winddir16Point': 'WSW', 'winddirDegree': '239', 'winddirection': 'WSW', 'windspeedKmph': '14', 'windspeedMiles': '9' }, {'date': '2011-09-20', 'precipMM': '0.0', 'tempMaxC': '29', 'tempMaxF': '84', 'tempMinC': '17', 'tempMinF': '62', 'weatherCode': '113',  'weatherDesc': [ {'value': 'Sunny' } ],  'weatherIconUrl': [ {'value': 'http:\\/\\/www.worldweatheronline.com\\/images\\/wsymbols01_png_64\\/wsymbol_0001_sunny.png' } ], 'winddir16Point': 'WSW', 'winddirDegree': '237', 'winddirection': 'WSW', 'windspeedKmph': '14', 'windspeedMiles': '9' }, {'date': '2011-09-21', 'precipMM': '0.0', 'tempMaxC': '30', 'tempMaxF': '85', 'tempMinC': '18', 'tempMinF': '64', 'weatherCode': '113',  'weatherDesc': [ {'value': 'Sunny' } ],  'weatherIconUrl': [ {'value': 'http:\\/\\/www.worldweatheronline.com\\/images\\/wsymbols01_png_64\\/wsymbol_0001_sunny.png' } ], 'winddir16Point': 'SW', 'winddirDegree': '231', 'winddirection': 'SW', 'windspeedKmph': '14', 'windspeedMiles': '9' }, {'date': '2011-09-22', 'precipMM': '0.0', 'tempMaxC': '31', 'tempMaxF': '88', 'tempMinC': '19', 'tempMinF': '66', 'weatherCode': '113',  'weatherDesc': [ {'value': 'Sunny' } ],  'weatherIconUrl': [ {'value': 'http:\\/\\/www.worldweatheronline.com\\/images\\/wsymbols01_png_64\\/wsymbol_0001_sunny.png' } ], 'winddir16Point': 'SW', 'winddirDegree': '218', 'winddirection': 'SW', 'windspeedKmph': '12', 'windspeedMiles': '7' }, {'date': '2011-09-23', 'precipMM': '0.0', 'tempMaxC': '34', 'tempMaxF': '92', 'tempMinC': '22', 'tempMinF': '71', 'weatherCode': '113',  'weatherDesc': [ {'value': 'Sunny' } ],  'weatherIconUrl': [ {'value': 'http:\\/\\/www.worldweatheronline.com\\/images\\/wsymbols01_png_64\\/wsymbol_0001_sunny.png' } ], 'winddir16Point': 'SSW', 'winddirDegree': '206', 'winddirection': 'SSW', 'windspeedKmph': '17', 'windspeedMiles': '11' } ] }}";
-    					
-        // Now do the magic.
-        //Data data = new Gson().fromJson(json, Data.class);
+    	String json5 = "{'data': { 'current_condition': [ {'cloudcover': '75', 'humidity': '83', 'observation_time': '02:56 AM', 'precipMM': '0.0', 'pressure': '1013', 'temp_C': '18', 'temp_F': '64', 'visibility': '16', 'weatherCode': '116',  'weatherDesc': [ {'value': 'Partly Cloudy' } ],  'weatherIconUrl': [ {'value': 'http:\\/\\/www.worldweatheronline.com\\/images\\/wsymbols01_png_64\\/wsymbol_0004_black_low_cloud.png' } ], 'winddir16Point': 'N', 'winddirDegree': '0', 'windspeedKmph': '0', 'windspeedMiles': '0' } ],  'request': [ {'query': 'Los Angeles, United States Of America', 'type': 'City' } ],  'weather': [ {'date': '2011-09-19', 'precipMM': '0.0', 'tempMaxC': '27', 'tempMaxF': '80', 'tempMinC': '18', 'tempMinF': '64', 'weatherCode': '113',  'weatherDesc': [ {'value': 'Sunny' } ],  'weatherIconUrl': [ {'value': 'http:\\/\\/www.worldweatheronline.com\\/images\\/wsymbols01_png_64\\/wsymbol_0001_sunny.png' } ], 'winddir16Point': 'WSW', 'winddirDegree': '239', 'winddirection': 'WSW', 'windspeedKmph': '14', 'windspeedMiles': '9' }, {'date': '2011-09-20', 'precipMM': '0.0', 'tempMaxC': '29', 'tempMaxF': '84', 'tempMinC': '17', 'tempMinF': '62', 'weatherCode': '113',  'weatherDesc': [ {'value': 'Sunny' } ],  'weatherIconUrl': [ {'value': 'http:\\/\\/www.worldweatheronline.com\\/images\\/wsymbols01_png_64\\/wsymbol_0001_sunny.png' } ], 'winddir16Point': 'WSW', 'winddirDegree': '237', 'winddirection': 'WSW', 'windspeedKmph': '14', 'windspeedMiles': '9' }, {'date': '2011-09-21', 'precipMM': '0.0', 'tempMaxC': '30', 'tempMaxF': '85', 'tempMinC': '18', 'tempMinF': '64', 'weatherCode': '113',  'weatherDesc': [ {'value': 'Sunny' } ],  'weatherIconUrl': [ {'value': 'http:\\/\\/www.worldweatheronline.com\\/images\\/wsymbols01_png_64\\/wsymbol_0001_sunny.png' } ], 'winddir16Point': 'SW', 'winddirDegree': '231', 'winddirection': 'SW', 'windspeedKmph': '14', 'windspeedMiles': '9' }, {'date': '2011-09-22', 'precipMM': '0.0', 'tempMaxC': '31', 'tempMaxF': '88', 'tempMinC': '19', 'tempMinF': '66', 'weatherCode': '113',  'weatherDesc': [ {'value': 'Sunny' } ],  'weatherIconUrl': [ {'value': 'http:\\/\\/www.worldweatheronline.com\\/images\\/wsymbols01_png_64\\/wsymbol_0001_sunny.png' } ], 'winddir16Point': 'SW', 'winddirDegree': '218', 'winddirection': 'SW', 'windspeedKmph': '12', 'windspeedMiles': '7' }, {'date': '2011-09-23', 'precipMM': '0.0', 'tempMaxC': '34', 'tempMaxF': '92', 'tempMinC': '22', 'tempMinF': '71', 'weatherCode': '113',  'weatherDesc': [ {'value': 'Sunny' } ],  'weatherIconUrl': [ {'value': 'http:\\/\\/www.worldweatheronline.com\\/images\\/wsymbols01_png_64\\/wsymbol_0001_sunny.png' } ], 'winddir16Point': 'SSW', 'winddirDegree': '206', 'winddirection': 'SSW', 'windspeedKmph': '17', 'windspeedMiles': '11' } ] }}";
+    		
+    	// Guava library
+//    	String text = Files.toString(new File("/Users/mohsen/Desktop/temp/karma issues/Aditya/jsonData.txt"), Charsets.UTF_8);
+    	
+    	String json6 = readFile(new File("/Users/mohsen/Desktop/temp/karma issues/Aditya/jsonData.txt"));
 
-
-
-//        Element e1 = getJsonElements(json1);
-//        Element e2 = getJsonElements(json2);
-//        Element e3 = getJsonElements(json3);
-        
-//        e1.print(e1, 0);
-//        e2.print(e2, 0);
-//        e3.print(e3, 0);
-
-//        getLeavesPath(e1, "", "|", 0);
-//        getLeavesPath(e2, "", "|", 0);
-//        getLeavesPath(e3, "", "|", 0);
-        
-        List<String> columns = new ArrayList<String>();
+    	List<String> columns = new ArrayList<String>();
         List<List<String>> values = new ArrayList<List<String>>();
 
+        System.out.println(json1.replace("'", "\""));
+        System.out.println("===================================================================================");
         getJsonFlat(json1, columns, values);
-        getJsonFlat(json2, columns, values);
-        getJsonFlat(json3, columns, values);
-        getJsonFlat(json4, columns, values);
-        getJsonFlat(json5, columns, values);
-
+        System.out.println("===================================================================================");
         
+        System.out.println(json2.replace("'", "\""));
+        System.out.println("===================================================================================");
+        getJsonFlat(json2, columns, values);
+        System.out.println("===================================================================================");
+        
+        System.out.println(json3.replace("'", "\""));
+        System.out.println("===================================================================================");
+        getJsonFlat(json3, columns, values);
+        System.out.println("===================================================================================");
+        
+        System.out.println(json4.replace("'", "\""));
+        System.out.println("===================================================================================");
+        getJsonFlat(json4, columns, values);
+        System.out.println("===================================================================================");
+        
+        System.out.println(json5.replace("'", "\""));
+        System.out.println("===================================================================================");
+        getJsonFlat(json5, columns, values);
+        System.out.println("===================================================================================");
+
+        System.out.println(json6.replace("'", "\""));
+        System.out.println("===================================================================================");
+        getJsonFlat(json6, columns, values);
+        System.out.println("===================================================================================");
+
         System.out.println();
         System.out.println("*************************************");
         System.out.println("Finished.");
 
+    }
+    
+    public static String readFile(File file) throws IOException {
+    	InputStream in = new FileInputStream(file);
+    	byte[] b  = new byte[(int)file.length()];
+    	int len = b.length;
+    	int total = 0;
+
+    	while (total < len) {
+    	  int result = in.read(b, total, len - total);
+    	  if (result == -1) {
+    	    break;
+    	  }
+    	  total += result;
+    	}
+    	in.close();
+    	return new String(b);
     }
     
     public static Element getJsonElements(String json) {
@@ -206,7 +243,7 @@ public class JsonManager {
     	JsonElement  jse = new JsonParser().parse(json);
         
         Element rootElement = new Element();
-        rootElement.setKey("ROOT");
+        rootElement.setKey("");
         rootElement.setValue(new ArrayValue());
         rootElement.setValueType(ValueType.ARRAY);
         recursiveParse(jse, rootElement);
@@ -215,32 +252,31 @@ public class JsonManager {
         return rootElement;
     }
     
-    private static void getLeavesPath(Element element, String prefix, String separator, int depth) {
-        
-    	if (element.getValueType() == ValueType.SINGLE) {
-    		System.out.println("test");
-    		element.setFullPath(element.getFullPath() + separator + element.getLocalName(depth));
-    	} else {
-    		int count = 0;
-    		for (int i = 0; i < ((ArrayValue)element.getValue()).getElements().size(); i++) {
-    			Element e = ((ArrayValue)element.getValue()).getElements().get(i);
-    			if (e.getValueType() == ValueType.SINGLE) {
-    				prefix = prefix + separator + e.getLocalName(depth);
-    				count ++;
-    			}
-    		}
-    		if (count == ((ArrayValue)element.getValue()).getElements().size() ||
-    				((ArrayValue)element.getValue()).getElements().size() == 0)
-    			element.setFullPath(prefix.substring(1));
-    		for (int i = 0; i < ((ArrayValue)element.getValue()).getElements().size(); i++) {
-    			Element e = ((ArrayValue)element.getValue()).getElements().get(i);
-    			if (e.getValueType() == ValueType.ARRAY)
-    				getLeavesPath(e, prefix, separator, depth + 1);
-    		}
-
-    	}
-    	
-    }
+//    private static void getLeavesPath(Element element, String prefix, String separator, int depth) {
+//        
+//    	if (element.getValueType() == ValueType.SINGLE) {
+//    		element.setFullPath(element.getFullPath() + separator + element.getLocalName(depth));
+//    	} else {
+//    		int count = 0;
+//    		for (int i = 0; i < ((ArrayValue)element.getValue()).getElements().size(); i++) {
+//    			Element e = ((ArrayValue)element.getValue()).getElements().get(i);
+//    			if (e.getValueType() == ValueType.SINGLE) {
+//    				prefix = prefix + separator + e.getLocalName(depth);
+//    				count ++;
+//    			}
+//    		}
+//    		if (count == ((ArrayValue)element.getValue()).getElements().size() ||
+//    				((ArrayValue)element.getValue()).getElements().size() == 0)
+//    			element.setFullPath(prefix.substring(1));
+//    		for (int i = 0; i < ((ArrayValue)element.getValue()).getElements().size(); i++) {
+//    			Element e = ((ArrayValue)element.getValue()).getElements().get(i);
+//    			if (e.getValueType() == ValueType.ARRAY)
+//    				getLeavesPath(e, prefix, separator, depth + 1);
+//    		}
+//
+//    	}
+//    	
+//    }
     
 //    private static String getColumnName(String part) {
 //    	part = part.substring(0, part.indexOf("v="));
@@ -248,37 +284,37 @@ public class JsonManager {
 //    	return part;
 //    }
     
-    private static List<String> getValues(String path) {
-    	List<String> result = new ArrayList<String>();
-    	
-		String[] parts = path.split("\\|");
-
-		String temp = "";
-		for (int i = 0; i < parts.length; i++) {
-			if (parts[i].trim().length() == 0)
-				continue;
-	    	temp = parts[i].substring(parts[i].indexOf("v=") + 2);
-			result.add(temp.trim());
-		}
-		return result;
-    }
+//    private static List<String> getValues(String path) {
+//    	List<String> result = new ArrayList<String>();
+//    	
+//		String[] parts = path.split("\\|");
+//
+//		String temp = "";
+//		for (int i = 0; i < parts.length; i++) {
+//			if (parts[i].trim().length() == 0)
+//				continue;
+//	    	temp = parts[i].substring(parts[i].indexOf("v=") + 2);
+//			result.add(temp.trim());
+//		}
+//		return result;
+//    }
     
-    private static List<String> getColumns(String path) {
-    	List<String> result = new ArrayList<String>();
-    	
-		String[] parts = path.split("\\|");
-
-		String temp = "";
-		for (int i = 0; i < parts.length; i++) {
-			if (parts[i].trim().length() == 0)
-				continue;
-			temp = parts[i].substring(0, parts[i].indexOf("v="));
-			temp = temp.substring(0, temp.length() - 1);
-			result.add(temp.trim());
-		}
-		return result;
-    }
-    
+//    private static List<String> getColumns(String path) {
+//    	List<String> result = new ArrayList<String>();
+//    	
+//		String[] parts = path.split("\\|");
+//
+//		String temp = "";
+//		for (int i = 0; i < parts.length; i++) {
+//			if (parts[i].trim().length() == 0)
+//				continue;
+//			temp = parts[i].substring(0, parts[i].indexOf("v="));
+//			temp = temp.substring(0, temp.length() - 1);
+//			result.add(temp.trim());
+//		}
+//		return result;
+//    }
+//    
     public static void union(List<List<String>> srcColumns, List<List<List<String>>> srcValues, 
     		List<String> columns, List<List<String>> values) {
     	
@@ -358,51 +394,69 @@ public class JsonManager {
 		}
     }
     
-  
     public static void getJsonFlat(String json, List<String> columns, List<List<String>> values) {
     	
     	Element element = JsonManager.getJsonElements(json);
+    	element.updateHeaders();
+    	Table t = element.getFlatTable();
+
+    	if (columns == null)
+    		columns = new ArrayList<String>();
     	
-    	// 
-    	element.moveUpOneValueElements(element);
+    	if (values == null)
+    		values = new ArrayList<List<String>>();
     	
-    	columns.clear();
-    	values.clear();
+    	if (t.getColumnsCount() > 0) {
+	    	for (Attribute att : t.getHeaders())
+	    		columns.add(att.getName());
+	    	
+	    	for (List<String> v : t.getValues()) 
+	    		if (v != null)
+	    			values.add(v);
+    	}
     	
-    	getLeavesPath(element, "", "|", 0);
+//    	t.print();
     	
-    	List<String> fullPaths = new ArrayList<String>();
-    	
-    	element.printFullPaths(element, fullPaths);
-    	
-    	List<List<String>> srcColumns = new ArrayList<List<String>>();
-    	List<List<List<String>>> srcValues = new ArrayList<List<List<String>>>();
-    	
-		for (int i = 0; i < fullPaths.size(); i++) {
-			srcColumns.add(getColumns(fullPaths.get(i)));
-			
-			List<List<String>> onePathValues = new ArrayList<List<String>>();
-			onePathValues.add(getValues(fullPaths.get(i)));
-			srcValues.add(onePathValues);
-		}
-		
-		union(srcColumns, srcValues, columns, values);
-		
-		int[] sameColumnName = new int[columns.size()];
-		for (int i = 0; i < columns.size(); i++) 
-			sameColumnName[i] = 1;
-		
-		String name = "";
-		for (int i = 0; i < columns.size(); i++) {
-			name = columns.get(i);
-			name = name.substring(name.indexOf("k=")+2);
-			int index = columns.indexOf(name);
-			if (index != -1) {
-				sameColumnName[index] ++;
-				name += sameColumnName[index];
-			}
-			columns.set(i, name);
-		}
+//    	element.moveUpOneValueElements();
+//    	
+//    	
+//    	columns.clear();
+//    	values.clear();
+//    	
+//    	getLeavesPath(element, "", "|", 0);
+//    	
+//    	List<String> fullPaths = new ArrayList<String>();
+//    	
+//    	element.computeFullPaths(fullPaths);
+//    	    	
+//    	List<List<String>> srcColumns = new ArrayList<List<String>>();
+//    	List<List<List<String>>> srcValues = new ArrayList<List<List<String>>>();
+//    	
+//		for (int i = 0; i < fullPaths.size(); i++) {
+//			srcColumns.add(getColumns(fullPaths.get(i)));
+//			
+//			List<List<String>> onePathValues = new ArrayList<List<String>>();
+//			onePathValues.add(getValues(fullPaths.get(i)));
+//			srcValues.add(onePathValues);
+//		}
+//		
+//		union(srcColumns, srcValues, columns, values);
+//		
+//		int[] sameColumnName = new int[columns.size()];
+//		for (int i = 0; i < columns.size(); i++) 
+//			sameColumnName[i] = 1;
+//		
+//		String name = "";
+//		for (int i = 0; i < columns.size(); i++) {
+//			name = columns.get(i);
+//			name = name.substring(name.indexOf("k=")+2);
+//			int index = columns.indexOf(name);
+//			if (index != -1) {
+//				sameColumnName[index] ++;
+//				name += sameColumnName[index];
+//			}
+//			columns.set(i, name);
+//		}
     	
     }
     
@@ -518,23 +572,3 @@ public class JsonManager {
 
 }
 
-//class Data {
-//    private String title;
-//    private Long id;
-//    private Boolean children;
-//    private List<Data> groups;
-//
-//    public String getTitle() { return title; }
-//    public Long getId() { return id; }
-//    public Boolean getChildren() { return children; }
-//    public List<Data> getGroups() { return groups; }
-//
-//    public void setTitle(String title) { this.title = title; }
-//    public void setId(Long id) { this.id = id; }
-//    public void setChildren(Boolean children) { this.children = children; }
-//    public void setGroups(List<Data> groups) { this.groups = groups; }
-//
-//    public String toString() {
-//        return String.format("title:%s,id:%d,children:%s,groups:%s", title, id, children, groups);
-//    }
-//}

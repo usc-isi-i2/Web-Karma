@@ -88,12 +88,12 @@ public class Table {
 		System.out.println();
 
 		for (Attribute p: headers) {
-			System.out.print(p.getName() + ",");
+			System.out.print(p.getId() + ",");
 		}
 		System.out.println();
-
+		
 		for (Attribute p: headers) {
-			System.out.print(p.getId() + ",");
+			System.out.print(p.getName() + ",");
 		}
 		System.out.println();
 
@@ -134,6 +134,102 @@ public class Table {
 		return s;
 	}
 
+	private boolean sameHeaders(Table t) {
+		if (t == null)
+			return false;
+		
+		if (this.getColumnsCount() == 0 || t.getColumnsCount() == 0)
+			return false;
+		
+		if (this.getColumnsCount() != t.getColumnsCount())
+			return false;
+		
+		List<String> attNames = new ArrayList<String>();
+		List<String> tAttNames = new ArrayList<String>();
+		
+		for (Attribute att : this.getHeaders()) 
+			attNames.add(att.getName());
+		
+		for (Attribute att : t.getHeaders()) 
+			tAttNames.add(att.getName());
+		
+		if (attNames.containsAll(tAttNames) && tAttNames.containsAll(attNames))
+			return true;
+		
+		return false;
+	}
+	
+    public void cartesianProductOrUnionIfSameHeaders(Table t) {
+    	
+    	int t1Cols = this.getColumnsCount();
+    	int t2Cols = t.getColumnsCount();
+    	
+    	if (t2Cols == 0)
+    		return;
+    	
+    	else if (t1Cols == 0) {
+    		
+    		if (this.headers == null)
+    			this.headers = new ArrayList<Attribute>();
+    		
+    		for (Attribute att : t.getHeaders())
+    			this.headers.add(new Attribute(att));
+
+    		if (this.values == null)
+    			this.values = new ArrayList<List<String>>();
+
+    		if (t.getValues() != null)
+    			for (List<String> v : t.getValues())
+    				if (v != null)
+    					values.add(new ArrayList<String>(v));
+    	} else {
+    		
+    		if (sameHeaders(t)) {
+    			List<Table> tables = new ArrayList<Table>();
+    			tables.add(this);
+    			tables.add(t);
+    			Table result = union(tables);
+    			this.setHeaders(result.getHeaders());
+    			this.setValues(result.getValues());
+    			return;
+    		}
+    		
+    		for (Attribute att : t.getHeaders())
+    			headers.add(new Attribute(att));
+    		
+    		int t1Rows = this.getRowsCount();
+        	int t2Rows = t.getRowsCount();
+        	int totalRows = t1Rows == 0 || t2Rows == 0 ? t1Rows + t2Rows : t1Rows * t2Rows;
+        	
+        	List<List<String>> values = new ArrayList<List<String>>();
+
+    		for (int i = 0; i < totalRows; i++) {
+        		
+        		List<String> row = new ArrayList<String>();
+        		
+        		for (int j = 0; j < t1Cols; j++) {
+        			int index = t1Rows == 0 ? -1 : i % t1Rows;
+        			if (index == -1 || this.values == null || this.values.get(index) == null)
+        				row.add(null);
+        			else
+        				row.add(this.values.get(index).get(j));
+        		}
+        		for (int j = 0; j < t2Cols; j++) {
+        			int index = t2Rows == 0 ? -1 : i % t2Rows;
+        			if (index == -1 || t.getValues() == null || t.getValues().get(index) == null)
+        				row.add(null);
+        			else
+        				row.add(t.getValues().get(index).get(j));
+        		}
+        		
+        		values.add(row);
+
+        	}
+    		
+    		this.values = values;
+    	}
+    }
+    	
 	/**
 	 * Each service invocation might have different columns than other other invocations.
 	 * This method integrates all results into one table.
@@ -204,7 +300,10 @@ public class Table {
 					populatedValues.add(singleValue);
 				}
 				
-				resultRowIds.add(srcRowIds.get(i).get(j));
+				if (srcRowIds != null && srcRowIds.size() > 0 &&
+						srcRowIds.get(i) != null && srcRowIds.get(i).size() > 0 &&  
+						srcRowIds.get(i).get(j) != null)
+					resultRowIds.add(srcRowIds.get(i).get(j));
 				resultValues.add(populatedValues);
 			}
 			

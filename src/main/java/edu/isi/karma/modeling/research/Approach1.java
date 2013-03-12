@@ -170,33 +170,33 @@ public class Approach1 {
 		}
 	}
 	
-	private void buildSimilarityMap2() {
-		
-		Set<String> inputModelNodes = new HashSet<String>();
-		for (Node node : this.inputModel.vertexSet()) {
-			if (node instanceof InternalNode)
-				inputModelNodes.add(node.getLabel().getUri());
-		}
-		
-		int count;
-		Set<String> modelNodes;
-		for (ServiceModel sm : this.trainingData) {
-			
-			DirectedWeightedMultigraph<Node, Link> m = sm.getModels().get(0);
-			modelNodes = new HashSet<String>();
-
-			for (Node node : m.vertexSet()) {
-				if (node instanceof InternalNode)
-					modelNodes.add(node.getLabel().getUri());
-			}
-			
-			Set<String> commonNodes = 
-					Sets.intersection(inputModelNodes, modelNodes);
-			
-			count = (commonNodes != null)? commonNodes.size() : 0;
-			this.similarityMap.put(sm.getId(), count);
-		}
-	}
+//	private void buildSimilarityMap2() {
+//		
+//		Set<String> inputModelNodes = new HashSet<String>();
+//		for (Node node : this.inputModel.vertexSet()) {
+//			if (node instanceof InternalNode)
+//				inputModelNodes.add(node.getLabel().getUri());
+//		}
+//		
+//		int count;
+//		Set<String> modelNodes;
+//		for (ServiceModel sm : this.trainingData) {
+//			
+//			DirectedWeightedMultigraph<Node, Link> m = sm.getModels().get(0);
+//			modelNodes = new HashSet<String>();
+//
+//			for (Node node : m.vertexSet()) {
+//				if (node instanceof InternalNode)
+//					modelNodes.add(node.getLabel().getUri());
+//			}
+//			
+//			Set<String> commonNodes = 
+//					Sets.intersection(inputModelNodes, modelNodes);
+//			
+//			count = (commonNodes != null)? commonNodes.size() : 0;
+//			this.similarityMap.put(sm.getId(), count);
+//		}
+//	}
 	
 	private void buildModelsWeightMap() {
 		
@@ -359,7 +359,7 @@ public class Approach1 {
 
 	public void preprocess() {
 		
-		this.buildSimilarityMap2();
+		this.buildSimilarityMap();
 		this.buildModelsWeightMap();
 		this.buildSourceTargetLinkWieghtrMap();
 		
@@ -769,8 +769,8 @@ public class Approach1 {
 //		ontManager.doImport(new File(Approach1.ontologyDir + "helper.owl"));
 		ontManager.updateCache();
 
-		for (int i = 0; i < serviceModels.size(); i++) {
-//		int i = 12; {
+//		for (int i = 0; i < serviceModels.size(); i++) {
+		int i = 3; {
 			
 			trainingData.clear();
 			int inputModelIndex = i;
@@ -825,7 +825,7 @@ public class Approach1 {
 			
 			GraphVizUtil.exportJGraphToGraphvizFile(graphs, 
 					sm.getServiceDescription(), 
-					Approach1.outputDir + "output" + String.valueOf(i+1) + "-2.dot");
+					Approach1.outputDir + "output" + String.valueOf(i+1) + ".dot");
 			
 			GraphUtil.printGraphSimple(hypothesis);			
 

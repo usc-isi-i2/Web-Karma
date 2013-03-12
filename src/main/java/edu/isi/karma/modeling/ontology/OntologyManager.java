@@ -70,6 +70,14 @@ public class OntologyManager {
 		return this.ontCache.getObjectProperties().containsKey(uri);
 	}
 	
+	public void subscribeListener(OntologyUpdateListener ontUpdateListener) {
+		ontUpdateListeners.add(ontUpdateListener);
+	}
+	
+	public void unsubscribeListener(OntologyUpdateListener ontUpdateListener) {
+		ontUpdateListeners.remove(ontUpdateListener);
+	}
+	
 	private void notifyListeners() {
 		for (OntologyUpdateListener o : ontUpdateListeners)
 			o.ontologyModelUpdated();
