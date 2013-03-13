@@ -76,7 +76,7 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
 		// Get the HNode
-		HashMap<String, String> rows = new HashMap<String,String>();
+		HashMap<String, HashMap<String, String>> rows = new HashMap<String, HashMap<String, String>>();
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = wk.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {
@@ -95,7 +95,12 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 			{
 				String id = node.getId();
 				String originalVal = node.getValue().asString();
-				rows.put(id, originalVal);
+				HashMap<String, String> x = new HashMap<String, String>();
+				x.put("Org", originalVal);
+				x.put("Tar", originalVal);
+				x.put("Orgdis", originalVal);
+				x.put("Tardis", originalVal);
+				rows.put(id, x);
 			}
 			index ++;
 		}

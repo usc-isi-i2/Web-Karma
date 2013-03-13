@@ -26,5 +26,6 @@ import java.util.HashMap;
 public interface TransformationOutput {
 	public abstract HashMap<String,Transformation> getTransformations();
 	public abstract ValueCollection getTransformedValues(String TransformatinId);
+	public abstract ValueCollection getTransformedValues_debug(String TransformationId);
 	public abstract Collection<String> getRecommandedNextExample();
 }

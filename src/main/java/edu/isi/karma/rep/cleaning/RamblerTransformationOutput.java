@@ -79,7 +79,6 @@ public class RamblerTransformationOutput implements TransformationOutput {
 	}
 
 	public ValueCollection getTransformedValues(String TransformatinId) {
-		// TODO Auto-generated method stub
 		Transformation t = transformations.get(TransformatinId);
 		ValueCollection v = input.getInputValues();
 		ValueCollection vo = new RamblerValueCollection();
@@ -97,8 +96,24 @@ public class RamblerTransformationOutput implements TransformationOutput {
 	}
 
 	public Collection<String> getRecommandedNextExample() {
-		// TODO Auto-generated method stub
 		return null;
+	}
+	@Override
+	public ValueCollection getTransformedValues_debug(String TransformationId) {
+		Transformation t = transformations.get(TransformationId);
+		ValueCollection v = input.getInputValues();
+		ValueCollection vo = new RamblerValueCollection();
+		Collection<String> keys = v.getNodeIDs();
+		Iterator<String> iter = keys.iterator();
+		while(iter.hasNext())
+		{
+			String k = iter.next();
+			String val = v.getValue(k);
+			val = t.transform_debug(val);
+			vo.setValue(k, val);
+			//System.out.println(k+","+val);
+		}
+		return vo;
 	}
 
 }

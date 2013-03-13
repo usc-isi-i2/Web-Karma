@@ -46,11 +46,12 @@ public class ConfigParameters {
 			Traces.trace_limit = Integer.parseInt(properties.getProperty("trace_limit").trim());
 			//properties.getProperty("iter_end");
 			ExampleSelection.way = Integer.parseInt(properties.getProperty("exmp_sel").trim());
-			res = String.format("cxt_limit:%d temp_limit: %d, trace_limit:%d, exp_sel:%d\n",Segment.cxtsize_limit,Template.temp_limit,Traces.trace_limit,ExampleSelection.way);
 			debug = Integer.parseInt(properties.getProperty("debug").trim());
 			Template.supermode = Integer.parseInt(properties.getProperty("supermode").trim());
 			Section.supermode = Integer.parseInt(properties.getProperty("supermode").trim());
 			Position.fixedlength = Integer.parseInt(properties.getProperty("fixedlength").trim());
+			res = String.format("cxt_limit:%d temp_limit: %d, trace_limit:%d, exp_sel:%d, supermode:%d,fixedlength:%d\n",Segment.cxtsize_limit,Template.temp_limit,Traces.trace_limit,ExampleSelection.way,Template.supermode,Position.fixedlength);
+
 		} catch (IOException ex) {
 			return;
 		}

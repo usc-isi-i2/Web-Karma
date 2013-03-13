@@ -16,10 +16,8 @@ import edu.isi.karma.view.VWorkspace;
 
 public class CleaningResultUpdate extends AbstractUpdate {
 
-	private Vector<String> jsons;
-	private HashMap<String,Vector<String>> js2tps;
+	private HashMap<String,HashMap<String, String>> map = new HashMap<String, HashMap<String,String>>();
 	private String hNodeId = "";
-	private String bestRes;
 	private String varString;
 	private Set<String> topkey = new HashSet<String>();
 	public enum JsonKeys {
@@ -27,13 +25,11 @@ public class CleaningResultUpdate extends AbstractUpdate {
 	}
 	private static Logger logger = LoggerFactory
 			.getLogger(CleaningResultUpdate.class);
-	public CleaningResultUpdate(String hNodeId, Vector<String> js,HashMap<String,Vector<String>> jstp,String bestRes,String vars,Set<String> keys) {
+	public CleaningResultUpdate(String hNodeId, HashMap<String,HashMap<String, String>> store,String vars,Set<String> keys) {
 		this.hNodeId = hNodeId;
-		jsons = js;
-		js2tps = jstp;
-		this.bestRes = bestRes; 
 		topkey = keys;
 		varString = vars;
+		this.map = store;
 	}
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
@@ -44,43 +40,29 @@ public class CleaningResultUpdate extends AbstractUpdate {
 			obj.put(JsonKeys.hNodeId.name(), hNodeId);
 
 			JSONArray jsa = new JSONArray();
-			for(String s:jsons)
+			JSONObject bestpac = new JSONObject();
+			if(map.keySet().size()>0)
 			{
-				JSONObject pac = new JSONObject();
-				JSONObject jo = new JSONObject(s);
-				Vector<String> tps = js2tps.get(s);
-				JSONArray jstps = new JSONArray();
-				JSONObject tpsjo = new JSONObject();
-				for(int i = 0; i<tps.size();i++)
-				{		
-					tpsjo.put("rule"+i, tps.get(i));
-				}
-				pac.put("data", jo);
-				pac.put("tps", tpsjo);
-				jsa.put(pac);
-			}
-			if(bestRes.compareTo("")!=0)
-			{
-				JSONObject jsBest = new JSONObject(bestRes);
-				JSONObject bestpac = new JSONObject();
-				JSONArray jba = new JSONArray();
-				for(String key:topkey)
-				{
-					jba.put(key);
-				}
+				JSONObject jsBest = new JSONObject(map);
 				bestpac.put("data", jsBest);
-				bestpac.put("tps",new JSONObject());
-				bestpac.put("top", jba);
-				jsa.put(0,bestpac);//put the best one as the first
 			}
+			JSONArray jba = new JSONArray();
+			for(String key:topkey)
+			{
+				jba.put(key);
+			}
+			bestpac.put("tps",new JSONObject());
+			bestpac.put("top", jba);
+			jsa.put(0,bestpac);//put the best one as the first
 			if(varString.compareTo("")!=0)
 			{
-				JSONObject jsBest = new JSONObject(varString);
+				/*JSONObject jsBest = new JSONObject(varString);
 				JSONObject varpac = new JSONObject();
 				JSONArray jba = new JSONArray();
 				varpac.put("data", jsBest);
 				varpac.put("tps",new JSONObject());
 				jsa.put(1,varpac);//put the var as the second
+				*/
 			}
 			
 			obj.put(JsonKeys.result.name(), jsa);

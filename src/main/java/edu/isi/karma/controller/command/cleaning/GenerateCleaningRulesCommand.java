@@ -29,13 +29,17 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.python.antlr.PythonParser.return_stmt_return;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.cleaning.ConfigParameters;
+import edu.isi.karma.cleaning.DataCollection;
+import edu.isi.karma.cleaning.ExampleSelection;
 import edu.isi.karma.cleaning.MyLogger;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
@@ -68,6 +72,9 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.nodeIds = parseNodeIds(cellIDs);
+		ConfigParameters cfg = new ConfigParameters();
+		cfg.initeParameters();
+		DataCollection.config = cfg.getString();
 		this.examples = this.parseExample(examples);
 		/************collect info************/
 		MyLogger.logsth(worksheetId+" examples: "+examples);
@@ -116,6 +123,13 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		}
 		return x;
 	}
+	private String getBestExample(HashMap<String, String[]> xHashMap)
+	{
+		String ID = "";
+		ExampleSelection es = new ExampleSelection();
+		es.inite(xHashMap);
+		return es.Choose();
+	}
 	private static Vector<String> getTopK(Set<String> res,int k,String cmpres)
 	{
 		String dirpathString = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH);
@@ -161,6 +175,80 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	public CommandType getCommandType() {
 		return CommandType.undoable;
 	}
+	public void StringColorCode(String org,String res,HashMap<String, String> dict)
+	{
+		int segmentCnt = 0;
+		String pat = "((?<=\\{_L\\})|(?=\\{_L\\}))";
+		String pat1 = "((?<=\\{_S\\})|(?=\\{_S\\}))";
+		String orgdis = "";
+		String tardis = "";
+		String tar = "";
+		String[] st = res.split(pat);
+		int pre = 0;
+		boolean inloop = false;
+		for(String token:st)
+		{
+			if(token.compareTo("{_L}")==0 && !inloop)
+			{
+				inloop = true;
+				continue;
+			}
+			if(token.compareTo("{_L}")==0 && inloop)
+			{
+				inloop = false;
+				continue;
+			}
+			String[] st1 = token.split(pat1);
+			for(String str:st1)
+			{
+				if(str.compareTo("{_S}")==0||str.compareTo("{_S}")==0)
+				{
+					continue;
+				}
+				if(str.indexOf("{_C}")!=-1)
+				{
+					String[] pos = str.split("\\{_C\\}");
+					String tarseg = org.substring(Integer.valueOf(pos[0]),Integer.valueOf(pos[1]));
+					if(Integer.valueOf(pos[0]) >=pre && pre<org.length())
+					{
+						orgdis += org.substring(pre,Integer.valueOf(pos[0]));
+						orgdis += String.format("<span class=\"a%d\">%s</span>", segmentCnt,tarseg);
+						pre = Integer.valueOf(pos[1]);
+					}
+					
+					
+					if(inloop)
+					{
+						
+						tardis += String.format("<span class=\"a%d\">%s</span>", segmentCnt,tarseg);
+						//orgdis += String.format("<span class=\"a%d\">%s</span>", segmentCnt,tarseg);
+						tar += tarseg;
+					}
+					else
+					{
+						tardis += String.format("<span class=\"a%d\">%s</span>", segmentCnt,tarseg);
+						//orgdis += String.format("<span class=\"a%d\">%s</span>", segmentCnt,tarseg);
+						segmentCnt ++;
+						tar += tarseg;
+					}
+					
+				}
+				else
+				{
+					tardis += String.format("<span class=\"ins\">%s</span>",str);
+					tar += str;
+					if(!inloop)
+						segmentCnt ++;
+				}
+			}
+		}
+		if(pre<org.length())
+			orgdis += org.substring(pre);
+		dict.put("Org", org);
+		dict.put("Tar",tar );
+		dict.put("Orgdis", orgdis);
+		dict.put("Tardis", tardis);
+	}
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
@@ -205,110 +293,51 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		}	
 		long time2 = System.currentTimeMillis();
 		Iterator<String> iter = rtf.getTransformations().keySet().iterator();
-		Vector<ValueCollection> vvc = new Vector<ValueCollection>();
-		HashMap<String, HashMap<String,Integer>> values = new HashMap<String, HashMap<String,Integer>>();
-		HashMap<String,Vector<String>> js2tps = new HashMap<String,Vector<String>>();
-		HashMap<String, HashSet<String>> vars = new HashMap<String, HashSet<String>>();
 		long time6=0,time7=0;
+		//id:{org: tar: orgdis: tardis: }
+		HashMap<String, HashMap<String, String>>  resdata = new HashMap<String, HashMap<String,String>>();
+		HashSet<String> keys = new HashSet<String>();
 		while(iter.hasNext())
 		{
 			long _time5 = System.currentTimeMillis();
-			
 			String tpid = iter.next();
-			ValueCollection rvco = rtf.getTransformedValues(tpid);
+			ValueCollection rvco = rtf.getTransformedValues_debug(tpid);
 			if(rvco==null)
 				continue;
-			vvc.add(rvco);
 			long _time6 = System.currentTimeMillis();
-			updateCandiScore(rvco,values);
-			String reps = rvco.getJson().toString();
-			if(js2tps.containsKey(reps))
+			//constructing displaying data
+			HashMap<String, String[]> xyzHashMap = new HashMap<String, String[]>();
+			for(String key:rvco.getNodeIDs())
 			{
-				js2tps.get(reps).add(tpid); // update the variance dic
-			}
-			else
-			{
-				Vector<String> tps = new Vector<String>();
-				tps.add(tpid);
-				js2tps.put(reps, tps);
-			}
-			Collection<String> ids = rvco.getNodeIDs();
-			for(String id:ids)
-			{
-				String value = rvco.getValue(id);
-				if(vars.containsKey(id))
+				HashMap<String, String> dict = new HashMap<String, String>();
+				// add to the example selection
+				boolean isExp = false;
+				for(TransformationExample exp:examples)
 				{
-					HashSet<String> hsIdSet = vars.get(id);
-					if(!hsIdSet.contains(value))
+					if(exp.getNodeId().compareTo(key)==0)
 					{
-						hsIdSet.add(value);
+						isExp = true;
 					}
 				}
-				else
+				
+				String org = vc.getValue(key);
+				String pretar = rvco.getValue(key);
+				this.StringColorCode(org, pretar, dict);
+				if(!isExp)
 				{
-					HashSet<String> hsIdSet = new HashSet<String>();
-					hsIdSet.add(value);
-					vars.put(id, hsIdSet);
+					String[] pair = {dict.get("Org"),dict.get("Tar")};
+					xyzHashMap.put(key, pair);
 				}
+				resdata.put(key, dict);			
 			}
+			keys.add(getBestExample(xyzHashMap));
 			long _time7 = System.currentTimeMillis();
 			time6 += _time6- _time5;
 			time7 = _time7-_time6;
 		}
-		
-		long time3 = System.currentTimeMillis();
-		
-		//get the best transformed result
-		String bestRes = "";
-		HashMap<String, Double> topkeys = new HashMap<String, Double>();
-		String switcher = ServletContextParameterMap.getParameterValue(ContextParameter.MSFT);
-		if(rtf.getTransformations().keySet().size()>0)
-		{
-			//ValueCollection rvco = rtf.getTransformedValues("BESTRULE");
-			//bestRes = rvco.getJson().toString(); 
-			//
-			topkeys = getScore(amb, values,(switcher.compareTo("True")==0));
-		}
-		Vector<String> jsons = new Vector<String>();
-		if(js2tps.keySet().size()!=0)
-		{
-			 bestRes = getTopK(js2tps.keySet(), 1,this.compResultString).get(0);
-		}
-		else
-		{
-			System.out.println("Didn't find any transformation programs");
-		}
-		//if true use msft algor, randomly choose the result, no top keys and no suggestions
-		if(switcher.compareTo("True")==0)
-		{
-			bestRes = js2tps.keySet().iterator().next();
-			jsons.add(bestRes);
-			//topkeys.clear();
-		}
-		else 
-		{
-			jsons.addAll(js2tps.keySet());
-			jsons.clear();
-			js2tps.clear();
-		}
-		HashMap<String, HashSet<String>> sub_vars = new HashMap<String, HashSet<String>>();
-		for(String tkey:topkeys.keySet())
-		{
-			if(vars.containsKey(tkey))
-			{
-				sub_vars.put(tkey, vars.get(tkey));
-			}
-		}
-		
-		long time4 = System.currentTimeMillis();
-		if(ConfigParameters.debug == 1)
-		{
-			System.out.println("program size: "+rtf.getTransformations().keySet().size());
-			System.out.println("Learning Span:"+(time2-time1)+" Excecution time:"+(time3-time2)+" ranking time:"+(time4-time3));
-			System.out.println("Decompose Excecution Time:\n "+"runing time: "+(time6)+" variance time: "+(time7));
-		}
-		String jsonrep = getVarJSON(sub_vars);
-		return new UpdateContainer(new CleaningResultUpdate(hNodeId, jsons,js2tps,bestRes,jsonrep,topkeys.keySet()));
+		//find the best row
+		String vars = "";
+		return new UpdateContainer(new CleaningResultUpdate(hNodeId, resdata,vars,keys));
 	}
 	public String getVarJSON(HashMap<String, HashSet<String>> values)
 	{

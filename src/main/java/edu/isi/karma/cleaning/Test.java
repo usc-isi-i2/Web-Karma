@@ -6,15 +6,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.geotools.filter.expression.ThisPropertyAccessorFactory;
-
 import au.com.bytecode.opencsv.CSVReader;
 
 public class Test {
 	public static void test1()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"<_START>http://dbpedia.org/resource/European_Aviation_Air_Charter<_END>","European Aviation Air Charter"};
+		String[] xStrings = {"<_START>1337 36th place<_END>","1337 36th place, Los Angeles, CA"};
 		String[] yStrings = {};
 		examples.add(xStrings);
 		//examples.add(yStrings);
@@ -22,6 +20,11 @@ public class Test {
 		psProgSynthesis.inite(examples);
 		Vector<ProgramRule> pls = new Vector<ProgramRule>();
 		Collection<ProgramRule> ps = psProgSynthesis.run_main();
+		ProgramRule pr = ps.iterator().next();
+		String val = "1337 36th place";
+		InterpreterType rule = pr.getRuleForValue(val);
+		System.out.println(rule.execute_debug(val));
+		
 	}
 	public static void test4(String dirpath) {
 		HashMap<String, Vector<String>> records = new HashMap<String, Vector<String>>();
@@ -79,10 +82,13 @@ public class Test {
 							for (int j = 0; j < entries.size(); j++) {
 								InterpreterType worker = script
 										.getRuleForValue(entries.get(j)[0]);
-								String s = worker.execute(entries.get(j)[0]);
+								String tmps = worker.execute_debug(entries.get(j)[0]);
+								HashMap<String, String> dict = new HashMap<String, String>();
+								UtilTools.StringColorCode(entries.get(j)[0], tmps, dict);
+								String s = dict.get("Tar");
 								res += s+"\n";
 								if (ConfigParameters.debug == 1)
-									System.out.println("result:   " + s);
+									System.out.println("result:   " + dict.get("Tardis"));
 								if (s == null || s.length() == 0) {
 									String[] ts = {"<_START>" + entries.get(j)[0] + "<_END>",s};
 									xHashMap.put(j + "", ts);
@@ -263,7 +269,7 @@ public class Test {
 		cfg.initeParameters();
 		DataCollection.config = cfg.getString();
 		//Test.test0("/Users/bowu/Research/testdata/TestSingleFile");
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		//Test.test1();
+		//Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		Test.test1();
 	}
 }

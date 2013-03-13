@@ -144,14 +144,14 @@ public class ExampleSelection {
 		return score;
 	}
 	//use the cnt of fatal_error number
-	public boolean firsttime = true;
+	public static boolean firsttime = true;
 	public String way4()
 	{
 		int max = -1;
 		if(firsttime)
 		{
 			firsttime = false;
-			return "0";
+			return raw.keySet().iterator().next();
 		}
 		String example  = "";
 		for(String key:raw.keySet())

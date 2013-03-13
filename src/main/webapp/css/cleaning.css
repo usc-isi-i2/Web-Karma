@@ -23,6 +23,12 @@ table#cleaningExamplesTable {
 	border-width: 1px; 
 	border-spacing: 1px; 
 	border-collapse: collapse;
+	width: 680px;
+}
+
+table.info{
+	border:none;
+	font-size: 12px;
 }
 
 table#cleaningExamplesTable td{
@@ -30,8 +36,9 @@ table#cleaningExamplesTable td{
 	border: solid 1px;
 	height: 15px;
 	padding: 1px;
+	width: 350px;
 }
-table#cleaningExamplesTable td.ruleResultsValue_begin{
+table td.ruleResultsValue_begin{
 	font-size: 12px;
 	border: 1px solid;
 	height: 15px;
@@ -53,12 +60,18 @@ table#cleaningExamplesTable button.suggestion{
 }
 table#cleaningExamplesTable td.noBorder {
 	border: none;
+	width:10px;
 }
 table#cleaningExamplesTable td.noinnerBorder {
 	font-size: 12px;
 	border: none;
 	height: 15px;
 	padding: 1px;
+}
+
+table#infoPanel td.info {
+	font-size: 12px;
+	border: 1px solid;
 }
 
 table#cleaningExamplesTable td.examplesDivider {
@@ -70,7 +83,42 @@ table#cleaningExamplesTable td.cleaningTableHeading {
 	font-weight: 900;
 	padding-bottom:4px;
 }
-
+span.ins {
+	background:#FDDDDF;
+}
+span.a0 {
+	color:#FF0000;
+}
+span.a1 {
+	color:#AFB812;
+}
+span.a2 {
+	color:#C74A7C;
+}
+span.a3 {
+	color:#0000FF;
+}
+span.a4 {
+	color:#4A97C7;
+}
+span.a5 {
+	color:#00FFFF;
+}
+span.a6 {
+	color:#FF00FF;
+}
+span.a7 {
+	color:#C0C0C0;
+}
+span.a8 {
+	color:#FF66FF;
+}
+span.a9 {
+	color:#6C2E85;
+}
+span.a10 {
+	color:#6600CC;
+}
 div.cleanExampleDiv {
 /*	border: solid #8C8C8C 1px;*/
 	display: block;
@@ -100,14 +148,17 @@ tr#buttonsAndRuleInfoRow td {
 	font-size: 20px;
 }
 
-tr.suggestion td {
-	background-color: #FDDDDF;
-}
 div.undoEditButton {
 	float:right;
 	display: inline;
 	margin-left: 4px;
 	margin-top: 2px;
+	width: 15px;
+	height: 15px;
+}
+button.closeButton{
+	float:right;
+	display: inline;
 	width: 15px;
 	height: 15px;
 }

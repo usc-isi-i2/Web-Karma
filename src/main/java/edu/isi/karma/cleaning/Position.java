@@ -320,10 +320,11 @@ public class Position implements GrammarTreeNode {
 				{
 					return "null";
 				}
-				String r = "";
-				int cnt = 1;
+				
 				boolean isvalid = true;
 				for (int j = 0; j < this.orgStrings.size(); j++) {
+					int cnt = 1;
+					String r = "";
 					while (r.indexOf("None") == -1) {
 						String tmpRule = rule.replace("counter",
 								String.valueOf(cnt));

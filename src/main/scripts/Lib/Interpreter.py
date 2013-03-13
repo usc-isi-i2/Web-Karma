@@ -8,6 +8,7 @@ import re
 from Translator import  *
 import string
 from FunctionList import *
+import FunctionList
 class Interpreter(InterpreterType):
     def __init__(self, script):
           trans = Translator(script)
@@ -16,6 +17,11 @@ class Interpreter(InterpreterType):
         if name == "h":
             print "hello world"
     def execute(self,value):
+        FunctionList.Function_Debug = False;
+        value = eval(self.script)
+        return str(value)
+    def execute_debug(self,value):
+        FunctionList.Function_Debug = True;
         value = eval(self.script)
         return str(value) 
 

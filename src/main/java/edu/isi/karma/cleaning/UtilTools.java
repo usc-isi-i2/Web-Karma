@@ -103,7 +103,77 @@ public class UtilTools {
 		}
 		return true;
 	}
-
+	public static void StringColorCode(String org,String res,HashMap<String, String> dict)
+	{
+		int segmentCnt = 0;
+		String pat = "((?<=\\{_L\\})|(?=\\{_L\\}))";
+		String pat1 = "((?<=\\{_S\\})|(?=\\{_S\\}))";
+		String orgdis = "";
+		String tardis = "";
+		String tar = "";
+		String[] st = res.split(pat);
+		int pre = 0;
+		boolean inloop = false;
+		for(String token:st)
+		{
+			if(token.compareTo("{_L}")==0 && !inloop)
+			{
+				inloop = true;
+				continue;
+			}
+			if(token.compareTo("{_L}")==0 && inloop)
+			{
+				inloop = false;
+				continue;
+			}
+			String[] st1 = token.split(pat1);
+			for(String str:st1)
+			{
+				if(str.compareTo("{_S}")==0||str.compareTo("{_S}")==0)
+				{
+					continue;
+				}
+				if(str.indexOf("{_C}")!=-1)
+				{
+					String[] pos = str.split("\\{_C\\}");
+					String tarseg = org.substring(Integer.valueOf(pos[0]),Integer.valueOf(pos[1]));
+					if(Integer.valueOf(pos[0]) >=pre && pre<org.length())
+					{
+						orgdis += org.substring(pre,Integer.valueOf(pos[0]));
+						orgdis += String.format("[%s]",tarseg);
+						pre = Integer.valueOf(pos[1]);
+					}
+					if(inloop)
+					{	
+						tardis += String.format("[%s]",tarseg);
+						//orgdis += String.format("[%s]",tarseg);
+						tar += tarseg;
+					}
+					else
+					{
+						tardis += String.format("[%s]",tarseg);
+						//orgdis += String.format("[%s]",tarseg);
+						segmentCnt ++;
+						tar += tarseg;
+					}
+					
+				}
+				else
+				{
+					tardis += String.format("{%s}",str);
+					tar += str;
+					if(!inloop)
+						segmentCnt ++;
+				}
+			}
+		}
+		if(pre<org.length())
+			orgdis += org.substring(pre);
+		dict.put("Org", org);
+		dict.put("Tar",tar );
+		dict.put("Orgdis", orgdis);
+		dict.put("Tardis", tardis);
+	}
 	public static String escape(String s) {
 		s = s.replaceAll("\\\\", "\\\\\\\\\\\\\\\\");
 		HashMap<String, String> dict = new HashMap<String, String>();

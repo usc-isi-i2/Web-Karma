@@ -60,7 +60,7 @@ function handleColumnsTransformation() {
 					}
 				});
 				columnselPanel.data("selectcols", HNodeIDs);
-				$("div#columnHeadingDropDownMenu").data("parentCellId",HNodeIDs)
+				$("div#columnHeadingDropDownMenu").data("parentCellId", HNodeIDs)
 				$(this).dialog("close");
 				//open the transformation panel
 				handleMultiColumnsDisplay();
@@ -105,17 +105,16 @@ function gatherData(selectedHNodeIds) {
 	$.each(indexs, function(index, pos) {
 		var cnt = 0;
 		$('tbody>tr>td:nth-child(' + (index + 1) + ')', table).each(function() {
-			
-			if(cnt in values) {
+
+			if( cnt in values) {
 				var elem = values[cnt];
 				elem[$(this).attr("id")] = $(this).text();
-			} 
-			else {
+			} else {
 				var elem = {};
 				elem[$(this).attr("id")] = $(this).text();
 				values[cnt] = elem;
 			}
-			cnt = cnt +1;
+			cnt = cnt + 1;
 		});
 	});
 
@@ -137,14 +136,14 @@ function handleMultiColumnsDisplay() {
 
 	var res = new Object();
 	for(var key in values) {
-		var tr = $("<tr>").attr('id',key+"_cl_row").addClass("nonHeading");
+		var tr = $("<tr>").attr('id', key + "_cl_row").addClass("nonHeading");
 		var constr = "";
 		for(var key2 in values[key]) {
 			tr.append($("<td>").text(values[key][key2]).attr('id', key2 + "_origVal")).append($("<td>").addClass("noBorder"));
 			constr = constr + values[key][key2];
 		}
 		//add td to seperate org and result
-		tr.data("originalVal",constr);
+		tr.data("originalVal", constr);
 		res[key] = constr;
 		cleaningTable.append(tr);
 	}
@@ -203,8 +202,8 @@ function handleCleanColumnButton() {
 		}
 		return index;
 	});
-	var values = {};
-	values = FetchCleanningRawData(selectedHNodeId,worksheetId);
+	var values = [];
+	values = FetchCleanningRawData(selectedHNodeId, worksheetId);
 
 	// Create and store a array that stores the user provided examples
 	var examples = [];
@@ -215,25 +214,26 @@ function handleCleanColumnButton() {
 	$("tr.nonHeading", cleaningTable).remove();
 	$("tr.suggestion", cleaningTable).remove();
 	var nodeIds = [];
-	for( var nodeId in values) 
-	{
-		if(values.hasOwnProperty(nodeId))
-		{
-			var tr = $("<tr>").attr("id",nodeId+"_cl_row").addClass("nonHeading").append($("<td>").text(values[nodeId]).attr('id', nodeId + "_origVal"))//add text and id to the td
+	var data = values[0]["data"]
+	for(var nodeId in data) {
+		if(data.hasOwnProperty(nodeId)) {
+			var tr = $("<tr>").attr("id", nodeId + "_cl_row").addClass("nonHeading").append($("<td>").text(data[nodeId]["Org"]).attr('id', nodeId + "_origVal"))//add text and id to the td
 			.append($("<td>").addClass("noBorder"));
-			//add td to seperate org and result	
-			tr.data("originalVal",values[nodeId]);
+			//add td to seperate org and result
+			tr.data("originalVal", (data[nodeId]["Org"]));
 			cleaningTable.append(tr);
 			nodeIds.push(nodeId);
 		}
 	}
-	var initialResultsValues = new Array();
-	var pac = new Object();
-	pac["data"] = values;
-	initialResultsValues.push(pac);
-	$("div#columnHeadingDropDownMenu").data("results", initialResultsValues);
+	//cleaning
+	var tab1 = $("table#recmd");
+	$("tr", tab1).remove();
+	var tab2 = $("table#examples");
+	$("tr", tab2).remove();
+	$("div#columnHeadingDropDownMenu").data("results", []);
+	$("div#columnHeadingDropDownMenu").data("topkeys", []);
 	$("div#columnHeadingDropDownMenu").data("nodeIds", nodeIds);
-	populateResult(initialResultsValues[0]);
+	populateResult(values[0]);
 
 	$("div#ColumnCleaningPanel").dialog({
 		title : 'Transform',
@@ -252,8 +252,7 @@ function handleCleanColumnButton() {
 	});
 }
 
-function movetop(keys) 
-{
+function movetop(keys) {
 	if(keys == undefined) {
 		return;
 	}
@@ -268,16 +267,73 @@ function movetop(keys)
 		$("tr", cleaningTable).eq(0).after(trtag);
 	}
 }
-function preprocessData(data,nodeIds)
-{
+
+function preprocessData(data, nodeIds) {
 	data = data["data"];
 	$.each(nodeIds, function(index, value) {
 		var x = data[value];
-		data[value+"_suggestion"] = x;
+		data[value + "_suggestion"] = x;
 	});
 }
-     
-function populateResult(rdata,nodeIds) {
+
+function populateInfoPanel() {
+	var nodeId = $("div#columnHeadingDropDownMenu").data("topkeys")[0];
+	var datadict = $("div#columnHeadingDropDownMenu").data("results")[0]["data"];
+	var tab1 = $("table#recmd");
+	var trTag = $("tr#" + nodeId + "_suggestion_cl_row",tab1);
+	$("tr", tab1).remove();
+	// empty an array in JS
+	if(trTag.length == 0) {
+		trTag = $("<tr>").attr("id", nodeId + "_suggestion_cl_row").addClass("suggestion").append($("<td>").html(datadict[nodeId]["Orgdis"]));
+	}
+	else
+	{
+		trTag = trTag[0];
+	}
+	$("td",trTag).addClass("info");
+	tab1.append(trTag);
+	//tab1.append(trTag.clone(true,true));
+	var tab2 = $("table#examples");
+	$("tr", tab2).remove();
+	var examples = $("div#columnHeadingDropDownMenu").data("cleaningExamples", examples);
+	$.each(examples, function(index, value) {
+		var nodeID = value["nodeId"];
+		var trTag1 = $("tr#" + nodeID + "_suggestion_cl_row",tab2);
+		
+		if(trTag1.length == 0) {
+			trTag1 = $("<tr>").attr("id", nodeID + "_suggestion_cl_row").append($("<td>").text($("tr#" + nodeID + "_cl_row").data("originalVal")));
+		}
+		trTag1.append($("<td>").append($("<table>").append($("<tr>").append($("<td>").append($("<div>").data("nodeId", nodeId).data("cellValue", value["after"]).addClass("cleanExampleDiv").html(value["after"]))))));
+		var closeButton = $("<button>");
+		closeButton.attr("id",nodeID);
+		closeButton.addClass("closeButton").button({
+			icons : {
+				primary : "ui-icon-close"
+			},
+			text : false
+		});
+		closeButton.click(function(event) {
+			trTag1.hide();
+			var delInd = -1;
+			var curId = $(this).attr("id");
+			// update examples and rerun the program
+			$.each(examples, function(index2, example) {
+				if(example["nodeId"] == curId)
+					delInd = index2;
+			});
+			if(delInd != -1) {
+				examples.splice(delInd, 1);
+				updateResult();
+			}
+
+		});
+		$("<td>").append(closeButton).appendTo(trTag1);
+		$(">td",trTag1).addClass("info");
+		tab2.append(trTag1);
+	});
+}
+
+function populateResult(rdata, nodeIds) {
 	var examples = $("div#columnHeadingDropDownMenu").data("cleaningExamples", examples);
 	var cleaningTable = $("table#cleaningExamplesTable");
 	var transformedResult = new Object();
@@ -290,28 +346,29 @@ function populateResult(rdata,nodeIds) {
 	var data = rdata["data"];
 	$.each(data, function(nodeId, xval) {
 		var trTag = $("tr#" + nodeId + "_cl_row");
-		if(trTag.length == 0 && nodeId.indexOf("suggestion")>=0)
-		{
-			var orgnodeId = nodeId.substring(0,nodeId.indexOf("_suggestion"));
-			trTag = $("<tr>").attr("id", nodeId+"_cl_row").addClass("suggestion").append($("<td>").text($("tr#"+orgnodeId+"_cl_row").data("originalVal"))).append($("<td>").addClass("noBorder"));
-			$("tr", cleaningTable).eq(0).after(trTag);
-		}
-		if(trTag != null) 
-		{
+
+		if(trTag != null) {
 			transformedResult[nodeId] = xval;
 			if(xval == $("div#" + nodeId).text()) {
-				$("div#" + nodeId).attr("class","cleanExampleDiv");
+				$("div#" + nodeId).attr("class", "cleanExampleDiv");
 				return true;
 			}
 			$("td.ruleResultsValue_begin", trTag).remove();
+			$("#" + nodeId + "_origVal", trTag).html(xval["Orgdis"]).data("CellValue", xval["Org"]);
 			trTag.append($("<td>").addClass("ruleResultsValue_begin").attr("id", nodeId + "_transformed").append($("<table>").append($("<tr>").append($("<td>").addClass("noinnerBorder").append($("<div>").data("nodeId", nodeId)// set the original value for the example
-			.data("cellValue", xval).addClass("cleanExampleDiv").text(xval)//set the result here
-			.attr("id", nodeId).editable(function(value, settings) {
-				if(nodeId.indexOf("suggestion")>=0)
-				{
-					nodeId = nodeId.substring(0,nodeId.indexOf("_suggestion"));
+			.data("cellValue", xval["Tar"]).addClass("cleanExampleDiv").html(xval["Tardis"])//set the result here
+			.attr("id", nodeId)
+			.dblclick(function(){
+				$(this).html(xval["Tar"]);
+			})
+			)))))
+			$("div#"+nodeId,trTag).editable(function(value, settings) {
+				var tmpnodeId = nodeId;
+				if(nodeId.indexOf("suggestion") >= 0) {
+					tmpnodeId = nodeId.substring(0, nodeId.indexOf("_suggestion"));
+					$("div#" + tmpnodeId).text(value);
 				}
-				var editDiv = $("div#"+ nodeId);
+				var editDiv = $("div#" + nodeId);
 				// Add the revert button
 				var revertButton = $("<div>").addClass("undoEditButton").button({
 					icons : {
@@ -319,7 +376,7 @@ function populateResult(rdata,nodeIds) {
 					},
 					text : false
 				}).click(function() {
-					var orgvalue = editDiv.data("cellValue");		
+					var orgvalue = editDiv.data("cellValue");
 					$(this).parent().remove();
 					// Remove the user provided example from the examples JSON object
 					var delInd = -1;
@@ -343,15 +400,15 @@ function populateResult(rdata,nodeIds) {
 				// Remove existing button
 				$("td.noBorder", editDiv.parent().parent()).remove();
 				examples.push({
-					"nodeId" : nodeId,
-					"before" : $("tr#"+nodeId+"_cl_row").data("originalVal"),
+					"nodeId" : tmpnodeId,
+					"before" : $("tr#" + tmpnodeId + "_cl_row").data("originalVal"),
 					"after" : value
 				});
 				$("div#" + nodeId).text(value);
 				updateResult();
-				var trs = $("td#"+nodeId+"_transformed tr");
-				$(trs[trs.length-1]).append($("<td>").addClass("noBorder").append(revertButton));
-				
+				var trs = $("td#" + nodeId + "_transformed tr");
+				$(trs[trs.length - 1]).append($("<td>").addClass("noBorder").append(revertButton));
+
 				//call the update result function
 				return (value);
 			}, {
@@ -360,14 +417,15 @@ function populateResult(rdata,nodeIds) {
 				cancel : 'Cancel',
 				width : 350,
 				onblur : 'ignore',
-			}))))))
+				event:"dblclick"
+			})
 		}
 	});
 
 }
 
 // input: data shows resultual varations for each nodeID
-function populateVariations(data,data1) {
+function populateVariations(data, data1) {
 	var examples = $("div#columnHeadingDropDownMenu").data("cleaningExamples", examples);
 	var cleaningTable = $("table#cleaningExamplesTable");
 	var tmpTr = $("tr#suggestedExample");
@@ -376,23 +434,20 @@ function populateVariations(data,data1) {
 	$("td.ruleResultsValue_rest", cleaningTable).remove();
 	//movetop(rdata["top"]);
 	$.each(data, function(index, nodeId) {
-		$("div#" + nodeId).attr("class","ambExampleDiv");
-		}
-	);
+		$("div#" + nodeId).attr("class", "ambExampleDiv");
+	});
 	$.each(data, function(index, nodeId) {
 		var trTag = $("tr#" + nodeId + "_suggestion_cl_row");
-		trTag.attr("class","suggestion")
+		trTag.attr("class", "suggestion")
 		//$("tr", cleaningTable).eq(0).after(trTag);
 		var values = data1[nodeId];
 		$.each(values, function(index, val) {
-			
+
 			var tdTag = $("td#" + nodeId + "_suggestion_variations");
-			if(tdTag == null || tdTag.length == 0) 
-			{
+			if(tdTag == null || tdTag.length == 0) {
 				tdTag = $("<td>").addClass("ruleResultsValue_rest").attr("id", nodeId + "_suggestion_variations");
 			}
-			if(tdTag != null) 
-			{
+			if(tdTag != null) {
 				trTag.append(tdTag);
 				tdTag.append($("<input>").data("nodeId", nodeId).data("before", $("td#" + nodeId + "_origVal", cleaningTable).text()).attr("type", "button").addClass("suggestion").prop('value', val).click(function() {
 					examples.push({
@@ -401,7 +456,7 @@ function populateVariations(data,data1) {
 						"after" : $(this).attr("value")
 					});
 					$("div#" + nodeId).text($(this).attr("value"));
-					$("div#" + nodeId+"_suggestion").text($(this).attr("value"));
+					$("div#" + nodeId + "_suggestion").text($(this).attr("value"));
 					var revertButton = $("<div>").addClass("undoEditButton").button({
 						icons : {
 							primary : 'ui-icon-arrowreturnthick-1-w'
@@ -410,7 +465,7 @@ function populateVariations(data,data1) {
 					}).click(function() {
 						//editDiv.text(editDiv.data("cellValue"));
 						$(this).remove();
-						var orgvalue = $("div#"+nodeId).data("cellValue");
+						var orgvalue = $("div#" + nodeId).data("cellValue");
 						// Remove the user provided example from the examples JSON object
 						var delInd = -1;
 						$.each(examples, function(index2, example) {
@@ -421,7 +476,7 @@ function populateVariations(data,data1) {
 							examples.splice(delInd, 1);
 							updateResult();
 						}
-						 $("div#"+nodeId).text(orgvalue);
+						$("div#" + nodeId).text(orgvalue);
 					}).qtip({
 						content : {
 							text : 'Undo'
@@ -433,17 +488,17 @@ function populateVariations(data,data1) {
 					// Remove existing button
 					$("td.noBorder", $("div#" + nodeId).parent().parent()).remove();
 					//$("div#" + nodeId).parent().parent().append($("<td>").addClass("noBorder").append(revertButton));
-					var trs = $("td#"+nodeId+"_transformed tr");
-					$(trs[trs.length-1]).append($("<td>").addClass("noBorder").append(revertButton));
+					var trs = $("td#" + nodeId + "_transformed tr");
+					$(trs[trs.length - 1]).append($("<td>").addClass("noBorder").append(revertButton));
 					updateResult();
 					return;
-				}));	
+				}));
 			}
 		});
 	});
 }
 
-function FetchCleanningRawData(hnodeId,worksheetId) {
+function FetchCleanningRawData(hnodeId, worksheetId) {
 	var info = new Object();
 	info["vWorksheetId"] = worksheetId;
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -453,7 +508,7 @@ function FetchCleanningRawData(hnodeId,worksheetId) {
 	var returned = $.ajax({
 		url : "RequestController",
 		type : "POST",
-		async: false,
+		async : false,
 		data : info,
 		dataType : "json",
 		complete : function(xhr, textStatus) {
@@ -468,14 +523,14 @@ function FetchCleanningRawData(hnodeId,worksheetId) {
 	});
 	return json;
 }
+
 function handleGenerateCleaningRulesButton() {
 	var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
 	var selectedHNodeId = columnHeadingMenu.data("parentCellId");
-	if(jQuery.type(selectedHNodeId) === "array")
-	{
+	if(jQuery.type(selectedHNodeId) === "array") {
 		selectedHNodeId = selectedHNodeId.join("#");
 	}
-	
+
 	var tdTag = $("td#" + selectedHNodeId);
 	var vWorksheetId = tdTag.parents("div.Worksheet").attr("id");
 	var examples = columnHeadingMenu.data("cleaningExamples");
@@ -485,7 +540,7 @@ function handleGenerateCleaningRulesButton() {
 	info["hNodeId"] = selectedHNodeId;
 	info["command"] = "GenerateCleaningRulesCommand";
 	info["examples"] = JSON.stringify(examples);
-	info["cellIDs"] =JSON.stringify($("div#columnHeadingDropDownMenu").data("nodeIds"));
+	info["cellIDs"] = JSON.stringify($("div#columnHeadingDropDownMenu").data("nodeIds"));
 
 	var returned = $.ajax({
 		url : "RequestController",
@@ -538,36 +593,34 @@ function getVaritions(data) {
 	return x;
 }
 
-
-	//submit the transformed result apt
-	function submit() {
-		var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
-		var selectedHNodeId = columnHeadingMenu.data("parentCellId");
-		var tdTag = $("td#" + selectedHNodeId);
-		var vWorksheetId = tdTag.parents("div.Worksheet").attr("id");
-		var transformedRes = $("div#columnHeadingDropDownMenu").data("transformedResult");
-		var info = new Object();
-		info["vWorksheetID"] = vWorksheetId;
-		info["hNodeID"] = selectedHNodeId;
-		info["command"] = "SubmitCleanningCommand";
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["examples"] = JSON.stringify(columnHeadingMenu.data("cleaningExamples"));
-		var returned = $.ajax({
-			url : "RequestController",
-			type : "POST",
-			data : info,
-			dataType : "json",
-			complete : function(xhr, textStatus) {
-				var json = $.parseJSON(xhr.responseText);
-				hideCleanningWaitingSignOnScreen();
-				parse(json);
-			},
-			error : function(xhr, textStatus) {
-				$.sticky("Error in submitting");
-			}
-		});
-	} 
-
+//submit the transformed result apt
+function submit() {
+	var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+	var selectedHNodeId = columnHeadingMenu.data("parentCellId");
+	var tdTag = $("td#" + selectedHNodeId);
+	var vWorksheetId = tdTag.parents("div.Worksheet").attr("id");
+	var transformedRes = $("div#columnHeadingDropDownMenu").data("transformedResult");
+	var info = new Object();
+	info["vWorksheetID"] = vWorksheetId;
+	info["hNodeID"] = selectedHNodeId;
+	info["command"] = "SubmitCleanningCommand";
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["examples"] = JSON.stringify(columnHeadingMenu.data("cleaningExamples"));
+	var returned = $.ajax({
+		url : "RequestController",
+		type : "POST",
+		data : info,
+		dataType : "json",
+		complete : function(xhr, textStatus) {
+			var json = $.parseJSON(xhr.responseText);
+			hideCleanningWaitingSignOnScreen();
+			parse(json);
+		},
+		error : function(xhr, textStatus) {
+			$.sticky("Error in submitting");
+		}
+	});
+}
 
 //add the choosen value to be a new example
 function addExample(nodeID) {
@@ -602,13 +655,13 @@ function updateResult() {
 	if(newdata.length == 0) {
 		showCleanningWaitingSignOnScreen();
 		handleGenerateCleaningRulesButton();
-	} 
+	}
 	/*else//use the trimmed data
-	{
-		populateResult(newdata[0]);
-		var pdata = getVaritions(newdata);
-		populateVariations(newdata[0]["top"],pdata);
-	}*/
+	 {
+	 populateResult(newdata[0]);
+	 var pdata = getVaritions(newdata);
+	 populateVariations(newdata[0]["top"],pdata);
+	 }*/
 }
 
 //wait

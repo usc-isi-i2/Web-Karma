@@ -3,12 +3,14 @@ Created on Jul 27, 2012
 
 @author: bowu
 '''
+from FeatureFactory import *
+import math
+import pickle
 import re
 import string
-import math
-from FeatureFactory import *
-import pickle
 '''template function section'''
+Function_Debug = False
+
 def indexOf(str, lregx, rregx, cnt=0):
         '''find the position'''
         pos = -1
@@ -30,19 +32,20 @@ def indexOf(str, lregx, rregx, cnt=0):
             m = pattern.search(str, tpos)
             if m == None:
                 break
-            if len(m.groups()) <2:
+            if len(m.groups()) < 2:
                 tpos = m.start() + 1
             else:
                 tpos = m.start() + len(m.group(2))
-            poslist.append(m.start()+len(m.group(1)))
+            poslist.append(m.start() + len(m.group(1)))
         index = 0;
         if cnt > 0:
-            index = cnt -1
+            index = cnt - 1
         else:
-            index = len(poslist)+cnt
-        if len(poslist) == 0 or index >= len(poslist) or index<0:
+            index = len(poslist) + cnt
+        if len(poslist) == 0 or index >= len(poslist) or index < 0:
             return None
         return poslist[index]
+        
 def loop(value, stript):
     res = "";
     cnt = 1;
@@ -56,16 +59,20 @@ def loop(value, stript):
             break
         res += s
         cnt += 1
-    return res
+    if Function_Debug:
+        return "{_L}%s{_L}"%res
+    else:
+        return res
 def substr(str, p1, p2):
     '''get substring'''
     if p1 == None or p2 == None:
         return "<_FATAL_ERROR_>"
+    if Function_Debug:
+        return "{_S}%d{_C}%d{_S}"%(p1,p2)
     res = str[p1:p2]
     if res != None:
         return res
     else:
-        print '''cannot get substring using''' + str + '(' + p1 + ',' + p2 + ')'
         return "<_FATAL_ERROR_>"
 def foreach(elems, exps):
     '''for each '''

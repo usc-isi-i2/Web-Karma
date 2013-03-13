@@ -3,6 +3,7 @@ package edu.isi.karma.controller.update;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -13,13 +14,13 @@ import edu.isi.karma.view.VWorkspace;
 public class FetchResultUpdate extends AbstractUpdate {
 
 	private String hNodeId;
-	private HashMap<String, String> rawData;
+	private HashMap<String, HashMap<String, String>> rawData;
 	public enum JsonKeys {
 		worksheetId, hNodeId, result
 	}
 	private static Logger logger = LoggerFactory
 			.getLogger(CleaningResultUpdate.class);
-	public FetchResultUpdate(String HNodeId,HashMap<String, String> rows)
+	public FetchResultUpdate(String HNodeId,HashMap<String, HashMap<String, String>> rows)
 	{
 		this.hNodeId = HNodeId;
 		rawData = rows;
@@ -32,14 +33,12 @@ public class FetchResultUpdate extends AbstractUpdate {
 		try {
 			obj.put(GenericJsonKeys.updateType.name(), getUpdateType());
 			obj.put(JsonKeys.hNodeId.name(), hNodeId);
-
-			JSONObject jso = new JSONObject();
-			for(String key:rawData.keySet())
-			{
-				String valueString = rawData.get(key);
-				jso.put(key, valueString);
-			}
-			obj.put(JsonKeys.result.name(), jso);
+			JSONArray jsa = new JSONArray();
+			JSONObject jso = new JSONObject(this.rawData);
+			JSONObject j = new JSONObject();
+			j.put("data", jso);
+			jsa.put(j);
+			obj.put(JsonKeys.result.name(), jsa);
 			pw.print(obj.toString(4));
 		} catch (JSONException e) {
 			logger.error("Error generating JSON!", e);

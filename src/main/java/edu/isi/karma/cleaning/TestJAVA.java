@@ -21,20 +21,87 @@
 
 package edu.isi.karma.cleaning;
 
-import org.json.JSONArray;
+import java.util.HashMap;
+import java.util.StringTokenizer;
+
 
 public class TestJAVA {
+	public void StringColorCode(String org,String res,HashMap<String, String> dict)
+	{
+		int segmentCnt = 0;
+		String pat = "((?<=\\{_L\\})|(?=\\{_L\\}))";
+		String pat1 = "((?<=\\{_S\\})|(?=\\{_S\\}))";
+		String orgdis = "";
+		String tardis = "";
+		String tar = "";
+		String[] st = res.split(pat);
+		int pre = 0;
+		boolean inloop = false;
+		for(String token:st)
+		{
+			if(token.compareTo("{_L}")==0 && !inloop)
+			{
+				inloop = true;
+				continue;
+			}
+			if(token.compareTo("{_L}")==0 && inloop)
+			{
+				inloop = false;
+				continue;
+			}
+			String[] st1 = token.split(pat1);
+			for(String str:st1)
+			{
+				if(str.compareTo("{_S}")==0||str.compareTo("{_S}")==0)
+				{
+					continue;
+				}
+				if(str.indexOf(",")!=-1 && str.length() > 1)
+				{
+					String[] pos = str.split(",");
+					if(Integer.valueOf(pos[0]) >pre && pre<org.length())
+					{
+						orgdis += org.substring(pre,Integer.valueOf(pos[0]));
+						pre = Integer.valueOf(pos[1]);
+					}
+					String tarseg = org.substring(Integer.valueOf(pos[0]),Integer.valueOf(pos[1]));
+					if(inloop)
+					{
+						
+						tardis += String.format("<span class=\"a%d\">%s</span>", segmentCnt,tarseg);
+						orgdis += String.format("<span class=\"a%d\">%s</span>", segmentCnt,tarseg);
+						tar += tarseg;
+					}
+					else
+					{
+						tardis += String.format("<span class=\"a%d\">%s</span>", segmentCnt,tarseg);
+						orgdis += String.format("<span class=\"a%d\">%s</span>", segmentCnt,tarseg);
+						segmentCnt ++;
+						tar += tarseg;
+					}
+					
+				}
+				else
+				{
+					tardis += String.format("<span class=\"ins\">%s</span>",str);
+					tar += str;
+					if(!inloop)
+						segmentCnt ++;
+				}
+			}
+		}
+		if(pre<org.length())
+			orgdis += org.substring(pre);
+		dict.put("Org", org);
+		dict.put("Tar",tar );
+		dict.put("Orgdis", orgdis);
+		dict.put("Tardis", tardis);
+	}
 	public static void main(String[] args)
 	{
-		String jstr = "[{\"name\":\"id\",\"type\":\"other\",\"value\":\"HN6\"},{\"name\":\"vWorksheetId\",\"type\":\"other\",\"value\":\"VW1\"}]";
-		JSONArray j;
-		try {
-			 j = new JSONArray(jstr);
-			 System.out.println(""+jstr.toString());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("x");
+		TestJAVA j = new TestJAVA();
+		HashMap<String, String> dict = new HashMap<String, String>();
+		j.StringColorCode("http://dbpedia.org/resource/Air_Europa", "{_S}28,31{_S}{_L} {_S}32,38{_S}{_L}",dict);
+		System.out.println(""+dict);
 	}
 }

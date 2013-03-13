@@ -65,6 +65,7 @@ public class Traces implements GrammarTreeNode {
 		while (tlines.size() > 0) {
 			if(tlines.size()>trace_limit)
 			{
+				System.out.println("Exceed the limit");
 				lines.clear();
 				break; // otherwise takes too much time
 			}
