@@ -485,7 +485,8 @@ function styleAndAssignHandlersToColumnHeadingMenu() {
 	
 	$("button", columnHeadingMenu).button();
 	
-	optionsDiv.click(openColumnHeadingOptions)
+	optionsDiv
+        .click(openColumnHeadingOptions)
 		.button({
 			icons: {
 				primary: 'ui-icon-triangle-1-s'
@@ -497,7 +498,8 @@ function styleAndAssignHandlersToColumnHeadingMenu() {
 		})	
 		.mouseleave(function(){
 			columnHeadingMenu.hide();
-	})
+	});
+
 	// Hide the option button when mouse leaves the menu
 	columnHeadingMenu.mouseleave(function() {
 		optionsDiv.hide();
@@ -520,6 +522,9 @@ function styleAndAssignHandlersToColumnHeadingMenu() {
     
     // Assign handler to service invocation button (in services.js)
     assignHandlersToServiceInvocationObjects();
+
+    // Assign handler to rename column button (in table_manipulation.js)
+    $("button#renameColumnButton").click(assignHandlersToRenameButton);
 }
 
 function splitColumnByComma() {

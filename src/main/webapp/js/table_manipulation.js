@@ -67,3 +67,55 @@ function submitEdit(value, settings) {
 		   	}
 		});
  }
+
+function assignHandlersToRenameButton(event) {
+    var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+    var hNodeId = columnHeadingMenu.data("parentCellId");
+
+    $("#renameColumnNameInput").val($("td#" + hNodeId + " div.ColumnHeadingNameDiv").text());
+    var renameColumnDiv = $("div#renameColumnDiv");
+    var positionArray = [event.clientX-100		// distance from left
+        , event.clientY-10];	// distance from top
+    renameColumnDiv.dialog({ title: 'Rename column',
+        buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitRenameColumn }, width: 180, height: 180, position: positionArray});
+}
+
+function submitRenameColumn(value, settings) {
+    var newColumnValue = $.trim($("#renameColumnNameInput").val());
+    if (!newColumnValue) {
+        $("div#renameColumnDiv span.error").show();
+        return false;
+    }
+
+    $("div#renameColumnDiv").dialog("close");
+
+    var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+    var hNodeId = columnHeadingMenu.data("parentCellId");
+    var vWorksheetId = $("td#" + hNodeId).parents("table.WorksheetTable").attr("id");
+
+    var info = new Object();
+    var newInfo = [];   // for input parameters
+    newInfo.push(getParamObject("vWorksheetId", vWorksheetId ,"vWorksheetId"));
+    newInfo.push(getParamObject("hNodeId", hNodeId,"hNodeId"));
+    newInfo.push(getParamObject("newColumnName", newColumnValue, "other"));
+    newInfo.push(getParamObject("getAlignmentUpdate", ($("#svgDiv_" + vWorksheetId).length >0), "other"));
+    info["newInfo"] = JSON.stringify(newInfo);
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "RenameColumnCommand";
+
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                parse(json);
+            },
+        error :
+            function (xhr, textStatus) {
+                $.sticky("Error occured while renaming column!");
+            }
+    });
+}

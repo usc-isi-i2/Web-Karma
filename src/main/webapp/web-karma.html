@@ -341,7 +341,7 @@ and related projects, please see: http://www.isi.edu/integration
 	
 	
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.54</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.55</span></h1>
 		<table id="topMenuBar">
 			<tr>
 				<td>
@@ -392,12 +392,12 @@ and related projects, please see: http://www.isi.edu/integration
 			<div id="tablesWorkspace"></div>
 		</div>
 		<div id="columnHeadingDropDownMenu" class="ui-corner-all" style="display: none">
-			<button href="#" id="splitByComma">Split Column</button>
-			<button id="cleanColumnButton">Transform</button>
-			<button id="addColumnButton">Add Column</button>
-			<button id="renameColumnButton" style="display: none">Rename</button>
-			<button id="invokeServiceButton">Invoke Service</button>
-			<button id="hideColumnButton" style="display: none">Hide</button>
+            <button id="addColumnButton">Add Column</button>
+            <button id="invokeServiceButton">Invoke Service</button>
+            <button id="renameColumnButton">Rename</button>
+            <button href="#" id="splitByComma">Split Column</button>
+            <button id="cleanColumnButton">Transform</button>
+            <button id="hideColumnButton" style="display: none">Hide</button>
 		</div>
 		<div id="tableCellToolBarMenu" class="ui-corner-all" style="display: none">
 			<button id="editCellButton">Edit</button>
@@ -866,5 +866,10 @@ and related projects, please see: http://www.isi.edu/integration
 				</tr>
 			</table>
 		</div>
+        <div id="renameColumnDiv" style="display: none">
+            <span class="smallSizedFont">Enter new column name:</span><br>
+            <input type="text" class="smallSizedFont" id="renameColumnNameInput" /><br/>
+            <span class="error smallSizedFont" style="display: none">Please enter a valid name!</span>
+        </div>
 	</body>
 </html>
