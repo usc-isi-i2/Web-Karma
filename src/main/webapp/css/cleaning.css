@@ -148,6 +148,7 @@ tr#buttonsAndRuleInfoRow td {
 	font-size: 20px;
 }
 
+
 div.undoEditButton {
 	float:right;
 	display: inline;
@@ -159,6 +160,14 @@ div.undoEditButton {
 button.closeButton{
 	float:right;
 	display: inline;
+	width: 15px;
+	height: 15px;
+}
+button.editbutton{
+	display:table-cell;
+	vertical-align: middle;
+    text-align: center;
+	float:right;
 	width: 15px;
 	height: 15px;
 }

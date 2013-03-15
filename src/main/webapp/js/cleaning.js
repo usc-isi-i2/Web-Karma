@@ -355,13 +355,22 @@ function populateResult(rdata, nodeIds) {
 			}
 			$("td.ruleResultsValue_begin", trTag).remove();
 			$("#" + nodeId + "_origVal", trTag).html(xval["Orgdis"]).data("CellValue", xval["Org"]);
-			trTag.append($("<td>").addClass("ruleResultsValue_begin").attr("id", nodeId + "_transformed").append($("<table>").append($("<tr>").append($("<td>").addClass("noinnerBorder").append($("<div>").data("nodeId", nodeId)// set the original value for the example
+			trTag.append($("<td>").addClass("ruleResultsValue_begin").attr("id", nodeId + "_transformed").append($("<table>").append($("<tr>").append($("<td>").addClass("noinnerBorder")
+			.append($("<div>")
+			.data("nodeId", nodeId)// set the original value for the example
 			.data("cellValue", xval["Tar"]).addClass("cleanExampleDiv").html(xval["Tardis"])//set the result here
 			.attr("id", nodeId)
-			.dblclick(function(){
-				$(this).html(xval["Tar"]);
-			})
-			)))))
+			)).append($("<td>").addClass("noBorder").append($("<button>").addClass("editbutton").button({
+			icons : {
+				primary : "ui-icon-pencil"
+			},
+			text :false
+			 }).attr("id","edit_"+nodeId).click(function() {
+				$("div",$(this).parent().prev()).html(xval["Tar"]);	
+				$("div",$(this).parent().prev()).trigger("edit");
+				})))
+			
+			)))
 			$("div#"+nodeId,trTag).editable(function(value, settings) {
 				var tmpnodeId = nodeId;
 				if(nodeId.indexOf("suggestion") >= 0) {
@@ -369,36 +378,6 @@ function populateResult(rdata, nodeIds) {
 					$("div#" + tmpnodeId).text(value);
 				}
 				var editDiv = $("div#" + nodeId);
-				// Add the revert button
-				var revertButton = $("<div>").addClass("undoEditButton").button({
-					icons : {
-						primary : 'ui-icon-arrowreturnthick-1-w'
-					},
-					text : false
-				}).click(function() {
-					var orgvalue = editDiv.data("cellValue");
-					$(this).parent().remove();
-					// Remove the user provided example from the examples JSON object
-					var delInd = -1;
-					$.each(examples, function(index2, example) {
-						if(example["nodeId"] == editDiv.data("nodeId"))
-							delInd = index2;
-					});
-					if(delInd != -1) {
-						examples.splice(delInd, 1);
-						updateResult();
-					}
-					editDiv.text(orgvalue);
-				}).qtip({
-					content : {
-						text : 'Undo'
-					},
-					style : {
-						classes : 'ui-tooltip-light ui-tooltip-shadow'
-					}
-				});
-				// Remove existing button
-				$("td.noBorder", editDiv.parent().parent()).remove();
 				examples.push({
 					"nodeId" : tmpnodeId,
 					"before" : $("tr#" + tmpnodeId + "_cl_row").data("originalVal"),
@@ -416,8 +395,11 @@ function populateResult(rdata, nodeIds) {
 				submit : 'OK',
 				cancel : 'Cancel',
 				width : 350,
+				callback:function(){
+					$(this).parent().html(xval["Tardis"]);
+				},
 				onblur : 'ignore',
-				event:"dblclick"
+				event:"edit"
 			})
 		}
 	});
