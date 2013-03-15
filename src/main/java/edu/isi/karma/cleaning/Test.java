@@ -269,7 +269,7 @@ public class Test {
 		cfg.initeParameters();
 		DataCollection.config = cfg.getString();
 		//Test.test0("/Users/bowu/Research/testdata/TestSingleFile");
-		//Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		Test.test1();
+		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		//Test.test1();
 	}
 }

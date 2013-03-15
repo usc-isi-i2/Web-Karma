@@ -65,7 +65,7 @@ def loop(value, stript):
         return res
 def substr(str, p1, p2):
     '''get substring'''
-    if p1 == None or p2 == None:
+    if p1 == None or p2 == None or p1>p2:
         return "<_FATAL_ERROR_>"
     if Function_Debug:
         return "{_S}%d{_C}%d{_S}"%(p1,p2)

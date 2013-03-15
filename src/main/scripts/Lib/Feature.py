@@ -33,5 +33,7 @@ class PercentageFeature:
         tarleng = 0
         for a in list:
             tarleng += len(a)
+        if len(self.value) == 0:
+            return 10000
         return tarleng*1.0/len(self.value)
     

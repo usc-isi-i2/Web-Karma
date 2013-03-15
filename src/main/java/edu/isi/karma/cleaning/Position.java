@@ -3,19 +3,11 @@ package edu.isi.karma.cleaning;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
-
-import javax.naming.InitialContext;
-
-import org.antlr.grammar.v3.ANTLRv3Parser.id_return;
-import org.opengis.filter.expression.Add;
-import org.python.antlr.PythonParser.assert_stmt_return;
-import org.python.antlr.PythonParser.return_stmt_return;
 
 public class Position implements GrammarTreeNode {
 	public Vector<TNode> leftContextNodes = new Vector<TNode>();

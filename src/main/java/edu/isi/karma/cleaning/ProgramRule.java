@@ -39,6 +39,8 @@ public class ProgramRule {
 	public String getClassForValue(String value)
 	{
 		String labelString = "\'attr_0\'";
+		if(value.length() == 0)
+			return labelString;
 		if(pClassifier != null)
 		{
 			labelString = pClassifier.getLabel(value);

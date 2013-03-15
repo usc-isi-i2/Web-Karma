@@ -88,7 +88,10 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		{
 			String k = iter.next();
 			String val = v.getValue(k);
-			val = t.transform(val);
+			if(val.length() >0)
+				val = t.transform(val);
+			else
+				val = "";
 			vo.setValue(k, val);
 			//System.out.println(k+","+val);
 		}
@@ -109,7 +112,10 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		{
 			String k = iter.next();
 			String val = v.getValue(k);
-			val = t.transform_debug(val);
+			if(val.length() >0)
+				val = t.transform_debug(val);
+			else
+				val = "";
 			vo.setValue(k, val);
 			//System.out.println(k+","+val);
 		}

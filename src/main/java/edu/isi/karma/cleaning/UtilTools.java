@@ -105,6 +105,8 @@ public class UtilTools {
 	}
 	public static void StringColorCode(String org,String res,HashMap<String, String> dict)
 	{
+		//System.out.println("res: "+res);
+		//System.out.println("org: "+org);
 		int segmentCnt = 0;
 		String pat = "((?<=\\{_L\\})|(?=\\{_L\\}))";
 		String pat1 = "((?<=\\{_S\\})|(?=\\{_S\\}))";
@@ -136,6 +138,10 @@ public class UtilTools {
 				if(str.indexOf("{_C}")!=-1)
 				{
 					String[] pos = str.split("\\{_C\\}");
+					if(Integer.valueOf(pos[1])<Integer.valueOf(pos[0]))
+					{
+						return;
+					}
 					String tarseg = org.substring(Integer.valueOf(pos[0]),Integer.valueOf(pos[1]));
 					if(Integer.valueOf(pos[0]) >=pre && pre<org.length())
 					{
@@ -182,7 +188,7 @@ public class UtilTools {
 		dict.put("\\+", "\\\\+");
 		dict.put("\\.", "\\\\.");
 		dict.put("\\?", "\\\\?");
-		dict.put("\\$", "\\\\$");
+		dict.put("\\$", "\\\\\\$");
 		dict.put("\\*", "\\\\*");
 		dict.put("\\^", "\\\\^");
 		dict.put("\\]", "\\\\]");

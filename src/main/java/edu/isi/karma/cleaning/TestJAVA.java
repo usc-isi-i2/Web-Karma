@@ -100,8 +100,8 @@ public class TestJAVA {
 	public static void main(String[] args)
 	{
 		TestJAVA j = new TestJAVA();
-		HashMap<String, String> dict = new HashMap<String, String>();
-		j.StringColorCode("http://dbpedia.org/resource/Air_Europa", "{_S}28,31{_S}{_L} {_S}32,38{_S}{_L}",dict);
-		System.out.println(""+dict);
+		//String s = "$";
+		//System.out.println(s.replaceAll("\\$", "\\\\\\$"));
+		System.out.println(UtilTools.escape("$"));
 	}
 }

@@ -26,6 +26,7 @@ class IDCTClassifier(PartitionClassifierType):
            dict['cases'] = 1
            dict['attributes'] = {}
            line = self.featureFactory.datatable[j]
+	   print line
            for i in range(len(line)):
                dict['attributes'][str(i)] = line[i]
                attributes.append(str(i))
