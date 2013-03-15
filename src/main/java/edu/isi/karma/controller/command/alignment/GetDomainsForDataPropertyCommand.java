@@ -53,7 +53,7 @@ public class GetDomainsForDataPropertyCommand extends Command {
 			.getLogger(GetDomainsForDataPropertyCommand.class.getSimpleName());
 
 	public enum JsonKeys {
-		updateType, URI, metadata, data
+		updateType, URI, metadata, data, URIorId
 	}
 
 	public GetDomainsForDataPropertyCommand(String id, String uri, String vWorksheetId) {
@@ -123,7 +123,7 @@ public class GetDomainsForDataPropertyCommand extends Command {
 						classObject.put(JsonKeys.data.name(), domainURI.getDisplayName());
 
 						JSONObject metadataObject = new JSONObject();
-						metadataObject.put(JsonKeys.URI.name(), domain);
+						metadataObject.put(JsonKeys.URIorId.name(), domain);
 						classObject.put(JsonKeys.metadata.name(), metadataObject);
 
 						dataArray.put(classObject);
@@ -136,7 +136,7 @@ public class GetDomainsForDataPropertyCommand extends Command {
 									JSONObject graphNodeObj = new JSONObject();
 									graphNodeObj.put(JsonKeys.data.name(), graphNode.getLocalId());
 									JSONObject metadataObject_gNode = new JSONObject();
-									metadataObject_gNode.put(JsonKeys.URI.name(), graphNode.getId());
+									metadataObject_gNode.put(JsonKeys.URIorId.name(), graphNode.getId());
 									graphNodeObj.put(JsonKeys.metadata.name(), metadataObject_gNode);
 									dataArray.put(graphNodeObj);
 								}

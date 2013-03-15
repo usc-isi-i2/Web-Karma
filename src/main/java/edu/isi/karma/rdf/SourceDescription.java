@@ -37,6 +37,7 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
@@ -354,13 +355,20 @@ public class SourceDescription {
 			throw new KarmaException("Key for " + v.getLabel().getUri() + " is NULL. This should not happen!");
 		}
 		
+		
+		DataPropertyOfColumnLink dLink = (DataPropertyOfColumnLink) e;
+		
+		
 		String hNodeId = ((ColumnNode) child).getHNodeId();
-		String dataAttribute = factory.getHNode(hNodeId).getColumnName();
+		String specializedHNodeId = dLink.getSpecializedColumnHNodeId();
+		String dataAttribute = factory.getHNode(specializedHNodeId).getColumnName();
+		String propertyAttribute = factory.getHNode(hNodeId).getColumnName();
 		if(!useColumnNames){
-			dataAttribute = factory.getHNode(hNodeId).getHNodePath(factory).toColumnNamePath();
+			dataAttribute = factory.getHNode(specializedHNodeId).getHNodePath(factory).toColumnNamePath();
+			propertyAttribute = factory.getHNode(hNodeId).getHNodePath(factory).toColumnNamePath();
 		}
 		ruleAttributes.add(dataAttribute);
-		String propertyName = "expand@" + dataAttribute;
+		String propertyName = "expand@" + propertyAttribute;
 		if(reversedLinkIds.contains(e.getId())){
 			throw new KarmaException("A data property cannot be an inverse_of:" + e.getLabel().getUri());
 		}

@@ -45,7 +45,7 @@ public class GetDataPropertiesForClassCommand extends Command {
 			.getLogger(GetDataPropertiesForClassCommand.class.getSimpleName());
 
 	public enum JsonKeys {
-		updateType, URI, metadata, data
+		updateType, URIorId, metadata, data
 	}
 
 	public GetDataPropertiesForClassCommand(String id, String uri) {
@@ -98,7 +98,7 @@ public class GetDataPropertiesForClassCommand extends Command {
 						
 						classObject.put(JsonKeys.data.name(), domainURI.getDisplayName());
 						JSONObject metadataObject = new JSONObject();
-						metadataObject.put(JsonKeys.URI.name(), domain);
+						metadataObject.put(JsonKeys.URIorId.name(), domain);
 						classObject.put(JsonKeys.metadata.name(), metadataObject);
 
 						dataArray.put(classObject);
