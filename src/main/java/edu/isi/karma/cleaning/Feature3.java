@@ -18,19 +18,38 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.rep.cleaning;
 
-import java.util.Collection;
+package edu.isi.karma.cleaning;
+// reverse count feature
+public class Feature3 implements RecFeature {
+	int rcnt = 0;
+	String resString;
+	//calculate the number of reverse order
+	public Feature3(String res)
+	{
+		this.resString = res;
+	}
+	@Override
+	public double computerScore() {
+		int pre = -1;
+		double cnt = 0;
+		for(int c=0; c<resString.length(); c++)
+		{
+			if(Character.isDigit(resString.charAt(c)))
+			{
+				if(pre != -1)
+				{
+					pre = c;
+					continue;
+				}
+				if(c <pre)
+				{
+					pre = c;
+					cnt ++;
+				}
+			}
+		}
+		return cnt;
+	}
 
-import org.json.JSONObject;
-
-public interface ValueCollection {
-	public abstract String getValue(String id);
-	public abstract Collection<String> getValues();
-	public abstract Collection<String> getNodeIDs();
-	public abstract void setValue(String id, String val);
-	public abstract JSONObject getJson();
-	public abstract String representation();
-	public abstract void setKeyClass(String key,String cLabel);
-	public abstract String getClass(String key);
 }

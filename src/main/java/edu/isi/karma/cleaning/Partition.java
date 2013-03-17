@@ -7,6 +7,7 @@ public class Partition implements GrammarTreeNode {
 	public Traces trace;
 	public Vector<Vector<TNode>> orgNodes;
 	public Vector<Vector<TNode>> tarNodes;
+	public Vector<String> mapping = new Vector<String>();
 	public String label; // the class label of current partition
 	public String cls;
 	public Partition()

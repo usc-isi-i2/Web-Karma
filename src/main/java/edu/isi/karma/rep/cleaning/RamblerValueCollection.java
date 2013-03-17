@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 public class RamblerValueCollection implements ValueCollection {
 	private HashMap<String,String> data;
+	private HashMap<String, String> keyClass = new HashMap<String, String>();
 	public RamblerValueCollection(HashMap<String,String> data)
 	{
 		this.data = data;
@@ -36,6 +37,20 @@ public class RamblerValueCollection implements ValueCollection {
 	public RamblerValueCollection()
 	{
 		data = new HashMap<String,String>();
+	}
+	public void setKeyClass(String key,String cLabel)
+	{
+		keyClass.put(key, cLabel);
+	}
+	public String getClass(String key)
+	{
+		if(keyClass.containsKey(key))
+		{
+			return keyClass.get(key);
+		}
+		else {
+			return "";
+		}
 	}
 	public void setValue(String id, String val)
 	{

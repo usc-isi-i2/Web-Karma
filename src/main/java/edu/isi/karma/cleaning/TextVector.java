@@ -18,19 +18,14 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.rep.cleaning;
 
-import java.util.Collection;
+package edu.isi.karma.cleaning;
 
-import org.json.JSONObject;
+import java.util.Vector;
 
-public interface ValueCollection {
-	public abstract String getValue(String id);
-	public abstract Collection<String> getValues();
-	public abstract Collection<String> getNodeIDs();
-	public abstract void setValue(String id, String val);
-	public abstract JSONObject getJson();
-	public abstract String representation();
-	public abstract void setKeyClass(String key,String cLabel);
-	public abstract String getClass(String key);
+public class TextVector {
+	public TextVector(Vector<String> lines)
+	{
+		
+	}
 }

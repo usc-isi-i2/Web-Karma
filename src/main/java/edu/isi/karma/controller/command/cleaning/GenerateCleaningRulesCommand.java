@@ -123,11 +123,11 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		}
 		return x;
 	}
-	private String getBestExample(HashMap<String, String[]> xHashMap)
+	private String getBestExample(HashMap<String, String[]> xHashMap,HashMap<String, Vector<String[]>> expFeData)
 	{
 		String ID = "";
 		ExampleSelection es = new ExampleSelection();
-		es.inite(xHashMap);
+		es.inite(xHashMap,expFeData);
 		return es.Choose();
 	}
 	private static Vector<String> getTopK(Set<String> res,int k,String cmpres)
@@ -275,6 +275,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			calAmbScore(id,originalVal,amb);
 		}
 		RamblerValueCollection vc = new RamblerValueCollection(rows);
+		HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
 		inputs = new RamblerTransformationInputs(examples, vc);
 		//generate the program
 		boolean results = false;
@@ -312,25 +313,38 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 				HashMap<String, String> dict = new HashMap<String, String>();
 				// add to the example selection
 				boolean isExp = false;
+				String org = vc.getValue(key);
+				String classLabel = rvco.getClass(key);
+				String pretar = rvco.getValue(key);
+				this.StringColorCode(org, pretar, dict);
 				for(TransformationExample exp:examples)
 				{
 					if(exp.getNodeId().compareTo(key)==0)
 					{
-						isExp = true;
+						if(!expFeData.containsKey(classLabel))
+						{
+							Vector<String[]> vstr = new Vector<String[]>();
+							String[] texp = {dict.get("Tar"),pretar};
+							vstr.add(texp);
+							expFeData.put(classLabel, vstr);
+						}
+						else
+						{
+							String[] texp = {dict.get("Tar"),pretar};
+							expFeData.get(classLabel).add(texp);
+						}
+						isExp = true;				
 					}
 				}
 				
-				String org = vc.getValue(key);
-				String pretar = rvco.getValue(key);
-				this.StringColorCode(org, pretar, dict);
 				if(!isExp)
 				{
-					String[] pair = {dict.get("Org"),dict.get("Tar")};
+					String[] pair = {dict.get("Org"),dict.get("Tar"),pretar,classLabel};
 					xyzHashMap.put(key, pair);
 				}
 				resdata.put(key, dict);			
 			}
-			keys.add(getBestExample(xyzHashMap));
+			keys.add(getBestExample(xyzHashMap,expFeData));
 			long _time7 = System.currentTimeMillis();
 			time6 += _time6- _time5;
 			time7 = _time7-_time6;

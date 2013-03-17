@@ -28,6 +28,7 @@ def indexOf(str, lregx, rregx, cnt=0):
         pattern = re.compile(patternstr)
         tpos = 0
         poslist = []
+        pre = -1
         while True:
             m = pattern.search(str, tpos)
             if m == None:
@@ -36,7 +37,10 @@ def indexOf(str, lregx, rregx, cnt=0):
                 tpos = m.start() + 1
             else:
                 tpos = m.start() + len(m.group(2))
-            poslist.append(m.start() + len(m.group(1)))
+            cpos = m.start() + len(m.group(1))
+            if cpos > pre:
+                poslist.append(cpos)
+                pre = cpos
         index = 0;
         if cnt > 0:
             index = cnt - 1

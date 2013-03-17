@@ -24,4 +24,5 @@ public interface Transformation {
 	public abstract String transform(String value);
 	public abstract String transform_debug(String value);
 	public abstract String getId();
+	public abstract String getClassLabel(String value);
 }

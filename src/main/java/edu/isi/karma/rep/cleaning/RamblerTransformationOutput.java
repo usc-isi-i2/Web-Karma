@@ -111,12 +111,21 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		while(iter.hasNext())
 		{
 			String k = iter.next();
-			String val = v.getValue(k);
-			if(val.length() >0)
-				val = t.transform_debug(val);
+			String orgval = v.getValue(k);
+			String cLabel = "";
+			String val = "";
+			if(orgval.length() >0)
+			{
+				val = t.transform_debug(orgval);
+				cLabel = t.getClassLabel(orgval);
+			}
 			else
+			{
 				val = "";
+				cLabel = t.getClassLabel(val);
+			}
 			vo.setValue(k, val);
+			vo.setKeyClass(k, cLabel);
 			//System.out.println(k+","+val);
 		}
 		return vo;
