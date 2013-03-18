@@ -125,6 +125,7 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 			String value = vc.getValue(key);
 			JSONObject jsonObject;
 			try {
+				value = value.replaceAll("\"", "\\\\\"");
 				jsonObject = new JSONObject(String.format("{\"rowID\":\"%s\",\"value\":\"%s\"}", key,value));
 				strData.put(jsonObject);
 			} catch (JSONException e) {

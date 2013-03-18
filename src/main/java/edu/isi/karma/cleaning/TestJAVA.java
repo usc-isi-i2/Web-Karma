@@ -24,6 +24,9 @@ package edu.isi.karma.cleaning;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class TestJAVA {
 	public void StringColorCode(String org,String res,HashMap<String, String> dict)
@@ -102,6 +105,15 @@ public class TestJAVA {
 		TestJAVA j = new TestJAVA();
 		//String s = "$";
 		//System.out.println(s.replaceAll("\\$", "\\\\\\$"));
-		System.out.println(UtilTools.escape("$"));
+		//System.out.println(UtilTools.escape("$"));
+		String key = "xx";
+		String value = "41.9cm x 36.8cm (16 1/2\" x 14 1/2\")";
+		value = value.replaceAll("\"", "\\\\\"");
+		try {
+			JSONObject jsonObject = new JSONObject(String.format("{\"rowID\":\"%s\",\"value\":\"%s\"}", key,value));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
