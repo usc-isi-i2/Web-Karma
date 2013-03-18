@@ -237,8 +237,6 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 				{
 					tardis += String.format("<span class=\"ins\">%s</span>",str);
 					tar += str;
-					if(!inloop)
-						segmentCnt ++;
 				}
 			}
 		}
