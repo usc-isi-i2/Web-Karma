@@ -173,13 +173,10 @@ public class ProgSynthesis {
 		Vector<Partition> vp = this.ProducePartitions(true);
 		long t2 = System.currentTimeMillis();
 		Collection<ProgramRule> cpr = this.producePrograms(vp);
-		if (cpr == null) {
-			return null;
-		}
 		long t3 = System.currentTimeMillis();
 		learnspan = (t2 - t1);
 		genspan = (t3 - t2);
-		if (cpr.size() == 0) {
+		if (cpr == null || cpr.size() == 0 ) {
 			t1 = System.currentTimeMillis();
 			vp = this.ProducePartitions(false);
 			t2 = System.currentTimeMillis();

@@ -70,10 +70,11 @@ public class DataCollection {
 				if(stats.get(fname)[6] < f.exp_cnt)
 					stats.get(fname)[6] = (double) f.exp_cnt;
 				stats.get(fname)[7] += f.ruleNo;
+				stats.get(fname)[8] += f.checkedrow;
 			}
 			else
 			{
-				Double[] x = {(double) f.learnTime,0.0,(double) f.genTime,0.0,(double) f.execTime,0.0,(double) f.exp_cnt,(double) f.ruleNo};
+				Double[] x = {(double) f.learnTime,0.0,(double) f.genTime,0.0,(double) f.execTime,0.0,(double) f.exp_cnt,(double) f.ruleNo,(double) f.checkedrow};
 				stats.put(fname, x);
 			}
 		}
@@ -88,7 +89,7 @@ public class DataCollection {
 			value[3] = value[2]*1.0/cnt;
 			value[5] = value[4]*1.0/cnt;
 			// long the final stats
-			String lineString = String.format("%s,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",key,value[0],value[1],value[2],value[3],value[3],value[4],value[5],value[6],value[7]);
+			String lineString = String.format("%s,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",key,value[0],value[1],value[2],value[3],value[3],value[4],value[5],value[6],value[7],value[8]);
 			MyLogger.logsth(lineString);
 		}
 	}
@@ -103,7 +104,8 @@ class FileStat
 	public String examples = ""; // all the examples
 	public String program = "" ;// the correct program
 	public long ruleNo = 0; // order of the first consistent rule
-	public FileStat(String fname, long l,long g,long e,int exp,Vector<String[]> exps,long ruleNo,String program)
+	public long checkedrow = 0;
+	public FileStat(String fname, long l,long g,long e,int exp,Vector<String[]> exps,long ruleNo,long checkedrow, String program)
 	{
 		this.fileNameString = fname;
 		this.learnTime = l;
@@ -111,6 +113,7 @@ class FileStat
 		this.execTime = e;
 		this.exp_cnt = exp;
 		this.ruleNo = ruleNo;
+		this.checkedrow = checkedrow;
 		examples += "\n";
 		for(String[] p:exps)
 		{
@@ -121,7 +124,7 @@ class FileStat
 	}
 	public String toString()
 	{
-		String resString = String.format("%s,%d,%d,%d,%d,%d", this.fileNameString,this.learnTime,this.genTime,this.execTime,this.exp_cnt,this.ruleNo);
+		String resString = String.format("%s,%d,%d,%d,%d,%d,%d", this.fileNameString,this.learnTime,this.genTime,this.execTime,this.exp_cnt,this.ruleNo,this.checkedrow);
 		resString += this.examples;
 		resString += this.program+"\n";
 		return resString;

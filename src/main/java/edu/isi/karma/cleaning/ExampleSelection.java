@@ -73,7 +73,7 @@ public class ExampleSelection {
 	public void inite(HashMap<String, String[]> exps,
 			HashMap<String, Vector<String[]>> examples) {
 		// inite the class center vector
-		this.clear();
+		//this.clear();
 		if (way == 6) {
 			out.buildMeanVector(examples);
 		}

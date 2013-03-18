@@ -386,8 +386,6 @@ function populateResult(rdata, nodeIds) {
 				$("div#" + nodeId).text(value);
 				updateResult();
 				var trs = $("td#" + nodeId + "_transformed tr");
-				$(trs[trs.length - 1]).append($("<td>").addClass("noBorder").append(revertButton));
-
 				//call the update result function
 				return (value);
 			}, {

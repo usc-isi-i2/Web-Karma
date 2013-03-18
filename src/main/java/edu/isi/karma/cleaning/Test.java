@@ -64,6 +64,7 @@ public class Test {
 					examples.add(mt);
 					while (true) // repeat as no correct answer appears.
 					{
+						long checknumber = 1;
 						HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
 						Vector<String> resultString = new Vector<String>();
 						xHashMap = new HashMap<String, String[]>();
@@ -100,6 +101,7 @@ public class Test {
 									String[] ts = {"<_START>" + entries.get(j)[0] + "<_END>","",tmps,classlabel,"wrong"};
 									xHashMap.put(j + "", ts);
 									wexam = ts;
+									checknumber ++;
 								}
 								boolean isfind = false;
 								for(String[] exppair:examples)
@@ -127,8 +129,7 @@ public class Test {
 										wexam = ts;
 										ts[4] = "wrong";
 									}
-									
-									xHashMap.put(j + "", ts);
+									xHashMap.put(j + "", ts);			
 								}
 							}
 							if (wexam == null)
@@ -137,20 +138,40 @@ public class Test {
 						}
 						records.put(f.getName()+examples.size(), resultString);
 						long t2 = System.currentTimeMillis();
-						FileStat fileStat = new FileStat(f.getName(),
-								psProgSynthesis.learnspan,
-								psProgSynthesis.genspan, (t2 - t1),
-								examples.size(), examples,
-								psProgSynthesis.ruleNo, pls.get(0).toString());
-						dCollection.addEntry(fileStat);
+						
 						if (wexam != null) {
-							expsel.inite(xHashMap,expFeData);
-							int e = Integer.parseInt(expsel.Choose());
-							String[] wexp = {
-									"<_START>" + entries.get(e)[0] + "<_END>",
-									entries.get(e)[1] };
+							String[] wexp = new String[2];							
+							while(true)
+							{
+								expsel = new ExampleSelection();
+								expsel.inite(xHashMap,expFeData);
+								int e = Integer.parseInt(expsel.Choose());
+								if(xHashMap.get(""+e)[4].compareTo("right")!=0)
+								{
+									wexp[0] = "<_START>" + entries.get(e)[0] + "<_END>";
+									wexp[1] = 	entries.get(e)[1];
+									break;
+								}
+								else
+								{
+									xHashMap.remove(""+e);
+								}
+								checknumber ++;
+							}
 							examples.add(wexp);
+							FileStat fileStat = new FileStat(f.getName(),
+									psProgSynthesis.learnspan,
+									psProgSynthesis.genspan, (t2 - t1),
+									examples.size(), examples,
+									psProgSynthesis.ruleNo,checknumber, pls.get(0).toString());
+							dCollection.addEntry(fileStat);
 						} else {
+							FileStat fileStat = new FileStat(f.getName(),
+									psProgSynthesis.learnspan,
+									psProgSynthesis.genspan, (t2 - t1),
+									examples.size(), examples,
+									psProgSynthesis.ruleNo,checknumber, pls.get(0).toString());
+							dCollection.addEntry(fileStat);
 							break;
 						}
 						
