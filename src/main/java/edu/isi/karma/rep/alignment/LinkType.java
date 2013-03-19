@@ -27,5 +27,6 @@ public enum LinkType {
 	SubClassLink,
 	ClassInstanceLink,
 	ColumnSubClassLink,
-	DataPropertyOfColumnLink
+	DataPropertyOfColumnLink,
+	ObjectPropertySpecializationLink
 }

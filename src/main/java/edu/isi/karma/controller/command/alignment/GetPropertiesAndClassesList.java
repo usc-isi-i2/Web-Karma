@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +23,7 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
+import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetPropertiesAndClassesList extends Command {
@@ -69,7 +71,7 @@ public class GetPropertiesAndClassesList extends Command {
 		JSONArray classesMap = new JSONArray();
 		JSONArray propertiesList = new JSONArray();
 		JSONArray propertiesMap = new JSONArray();
-		JSONArray existingDataPropertyInstances = new JSONArray();
+		JSONArray existingPropertyInstances = new JSONArray();
 		
 //		Map<String, String> prefixMap = vWorkspace.getWorkspace().getOntologyManager().getPrefixMap();
 
@@ -83,7 +85,8 @@ public class GetPropertiesAndClassesList extends Command {
 			Set<String> steinerTreeNodeIds = new HashSet<String>();
 			if (alignment != null && !alignment.isEmpty()) {
 //				Set<Node> nodes = alignment.getGraphNodes();
-				for (Node node: alignment.getSteinerTree().vertexSet()) {
+				DirectedWeightedMultigraph<Node, Link> steinerTree = alignment.getSteinerTree(); 
+				for (Node node: steinerTree.vertexSet()) {
 					if (node.getType() == NodeType.InternalNode) {
 //						String nodeDisplayLabel = (node.getLabel().getPrefix() != null && (!node.getLabel().getPrefix().equals(""))) ?
 //								(node.getLabel().getPrefix() + ":" + node.getLocalId()) : node.getLocalId(); 
@@ -102,11 +105,12 @@ public class GetPropertiesAndClassesList extends Command {
 				
 				// Store the data property links for specialized edge link options
 				for (Link link:alignment.getGraphLinks()) {
-					if (link instanceof DataPropertyLink) {
+					if (link instanceof DataPropertyLink || (link instanceof ObjectPropertyLink
+							&& steinerTree.edgeSet().contains(link))) {
 						JSONObject linkObj = new JSONObject();
 						linkObj.put(JsonKeys.label.name(), link.getLocalId());
 						linkObj.put(JsonKeys.id.name(), link.getId());
-						existingDataPropertyInstances.put(linkObj);
+						existingPropertyInstances.put(linkObj);
 					}
 				}
 			}
@@ -160,7 +164,7 @@ public class GetPropertiesAndClassesList extends Command {
 			outputObj.put(JsonKeys.classMap.name(), classesMap);
 			outputObj.put(JsonKeys.propertyList.name(), propertiesList);
 			outputObj.put(JsonKeys.propertyMap.name(), propertiesMap);
-			outputObj.put(JsonKeys.existingDataPropertyInstances.name(), existingDataPropertyInstances);
+			outputObj.put(JsonKeys.existingDataPropertyInstances.name(), existingPropertyInstances);
 		} catch (JSONException e) {
 			logger.error("Error populating JSON!", e);
 		}

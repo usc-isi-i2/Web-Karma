@@ -376,7 +376,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             return d.target.x;
     })
     .attr("y1", function(d) {
-    	if (d.linkType == "DataPropertyOfColumnLink") {
+    	if (d.linkType == "DataPropertyOfColumnLink" || d.linkType == "ObjectPropertySpecializationLink") {
     		return d.source.y + 18;
     	}
     	return d.source.y; 

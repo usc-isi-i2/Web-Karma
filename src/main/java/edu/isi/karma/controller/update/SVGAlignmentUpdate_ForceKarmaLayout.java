@@ -27,6 +27,7 @@ import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
+import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
@@ -177,7 +178,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 					if (link.getType() == LinkType.DataPropertyOfColumnLink) {
 						DataPropertyOfColumnLink dpLink = (DataPropertyOfColumnLink)link;
 						String startHNodeId = dpLink.getSpecializedColumnHNodeId();
-						String endHNodeId = ((ColumnNode)link.getTarget()).getHNodeId();
+
 						// Get height of the class instance node
 						List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
 						int height = getHeight(link.getSource(), nodesWithSemTypesCovered, rootedTree);
@@ -194,11 +195,51 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 						nodesIndexcounter++;
 						
 						// End node
+						String endHNodeId = ((ColumnNode)link.getTarget()).getHNodeId();
 						JSONArray hNodeIdsCoveredByVertex_holder_2 = new JSONArray();
 						hNodeIdsCoveredByVertex_holder_2.put(endHNodeId);
-						JSONObject endNode = getNodeJsonObject("", target.getId()+"_holder"
-								, JsonValues.DataPropertyOfColumnHolder.name(), height-0.35
-								, hNodeIdsCoveredByVertex_holder_2, endHNodeId);
+						JSONObject endNode = getNodeJsonObject("", target.getId()+"_holder", 
+								JsonValues.DataPropertyOfColumnHolder.name(), height-0.35, 
+								hNodeIdsCoveredByVertex_holder_2, endHNodeId);
+						nodesArr.put(endNode);
+
+						nodesIndexcounter++;
+						
+						// Add the horizontal link
+						JSONObject linkObj_holder = getLinkJsonObject("", "", nodesIndexcounter-2, 
+								nodesIndexcounter-1, JsonValues.horizontalDataPropertyLink.name(), "", "", "");
+						linksArr.put(linkObj_holder);
+					} else if (link.getType() == LinkType.ObjectPropertySpecializationLink) {
+						ObjectPropertySpecializationLink opLink = (ObjectPropertySpecializationLink)link;
+						Link specializedLink = opLink.getSpecializedLink();
+						
+						// Get height of the class instance node
+						List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
+						int height = getHeight(specializedLink.getTarget(), nodesWithSemTypesCovered, rootedTree);
+						
+						// Add 2 more holder nodes
+						// Start node
+						JSONArray hNodeIdsCoveredByVertex_holder = new JSONArray();
+						for(Node v : nodesWithSemTypesCovered) {
+							if (v instanceof ColumnNode) {
+								ColumnNode cNode = (ColumnNode) v;
+								hNodeIdsCoveredByVertex_holder.put(cNode.getHNodeId());
+							}
+						}
+						JSONObject startNode = getNodeJsonObject("", source.getId()+"_holder", 
+								JsonValues.DataPropertyOfColumnHolder.name(), 
+								height+0.65, hNodeIdsCoveredByVertex_holder, "");
+						nodesArr.put(startNode);
+						
+						nodesIndexcounter++;
+						
+						// End node
+						String endHNodeId = ((ColumnNode)link.getTarget()).getHNodeId();
+						JSONArray hNodeIdsCoveredByVertex_holder_2 = new JSONArray();
+						hNodeIdsCoveredByVertex_holder_2.put(endHNodeId);
+						JSONObject endNode = getNodeJsonObject("", target.getId()+"_holder", 
+								JsonValues.DataPropertyOfColumnHolder.name(), height+0.65, 
+								hNodeIdsCoveredByVertex_holder_2, endHNodeId);
 						nodesArr.put(endNode);
 
 						nodesIndexcounter++;

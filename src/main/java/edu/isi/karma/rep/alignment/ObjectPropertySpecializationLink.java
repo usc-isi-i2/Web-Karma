@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright 2012 University of Southern California
- *  
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,19 +19,29 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling;
+package edu.isi.karma.rep.alignment;
 
-public interface Uris {
+import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.modeling.Prefixes;
+import edu.isi.karma.modeling.Uris;
 
-	public static final String THING_URI = Namespaces.OWL + "Thing"; 
-	public static final String RDFS_SUBCLASS_URI = Namespaces.RDFS + "subClassOf"; 
-	public static final String RDF_TYPE_URI = Namespaces.RDF + "type"; 
-	public static final String RDFS_CLASS_URI = Namespaces.RDFS + "Class"; 
+public class ObjectPropertySpecializationLink extends Link {
+	
+	private final Link specializedLink;
+	private static final long serialVersionUID = 1L;
+	private static final Label label = 
+			new Label(Uris.OBJECTPROPERTY_SPECIALIZATION_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
 
-	// Karma Internal URIs
-	public static final String CLASS_INSTANCE_LINK_URI = Namespaces.KARMA_DEV + "classLink"; 
-	public static final String COLUMN_SUBCLASS_LINK_URI = Namespaces.KARMA_DEV + "columnSubClassOfLink"; 
-	public static final String DATAPROPERTY_OF_COLUMN_LINK_URI = Namespaces.KARMA_DEV + "dataPropertyOfColumnLink";
-	public static final String OBJECTPROPERTY_SPECIALIZATION_LINK_URI = Namespaces.KARMA_DEV + "objectPropertySpecialization";
+	public ObjectPropertySpecializationLink(String id, Link specializedLink) {
+		super(id, label, LinkType.ObjectPropertySpecializationLink);
+		this.specializedLink = specializedLink;
+	}
 
+	public static Label getFixedLabel() {
+		return label;
+	}
+
+	public Link getSpecializedLink() {
+		return specializedLink;
+	}
 }

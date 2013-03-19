@@ -42,11 +42,14 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
+import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.ObjectPropertyLink;
+import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 import edu.isi.karma.view.VWorksheet;
@@ -160,14 +163,13 @@ public class SetMetaPropertyCommand extends Command {
 			newType = new SemanticType(hNodeId, ClassInstanceLink.getFixedLabel(), classNode.getLabel(), SemanticType.Origin.User, 1.0, false);
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
 			ColumnNode columnNode = null;
-			Link dataPropertyLink = alignment.getLinkById(metaPropertyValue);
-			if (dataPropertyLink == null) {
+			Link propertyLink = alignment.getLinkById(metaPropertyValue);
+			if (propertyLink == null) {
 				logger.error("Link should exist in the alignment: " + metaPropertyValue);
 				return new UpdateContainer(new ErrorUpdate(
 						"Error occured while setting the semantic type!"));
 			}
-			Node classInstanceNode = dataPropertyLink.getSource();
-			
+			Node classInstanceNode = propertyLink.getSource();
 			if (columnNodeAlreadyExisted) {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment, classInstanceNode);
 				columnNode = existingColumnNode;
@@ -175,12 +177,18 @@ public class SetMetaPropertyCommand extends Command {
 				columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
 			}
 			
-			String targetHNodeId = ((ColumnNode) dataPropertyLink.getTarget()).getHNodeId();
-			alignment.addDataPropertyOfColumnLink(classInstanceNode, columnNode, targetHNodeId);
-			alignment.align();
+			if (propertyLink instanceof DataPropertyLink) {
+				String targetHNodeId = ((ColumnNode) propertyLink.getTarget()).getHNodeId();
+				alignment.addDataPropertyOfColumnLink(classInstanceNode, columnNode, targetHNodeId);
+				// Create the semantic type object
+				newType = new SemanticType(hNodeId, DataPropertyOfColumnLink.getFixedLabel(), classInstanceNode.getLabel(), SemanticType.Origin.User, 1.0, false);
+			} else if (propertyLink instanceof ObjectPropertyLink) {
+				alignment.addObjectPropertySpecializationLink(classInstanceNode, columnNode, propertyLink);
+				// Create the semantic type object
+				newType = new SemanticType(hNodeId, ObjectPropertySpecializationLink.getFixedLabel(), classInstanceNode.getLabel(), SemanticType.Origin.User, 1.0, false);
+			}
 			
-			// Create the semantic type object
-			newType = new SemanticType(targetHNodeId, DataPropertyOfColumnLink.getFixedLabel(), classInstanceNode.getLabel(), SemanticType.Origin.User, 1.0, false);
+			alignment.align();
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
 			ColumnNode columnNode = null;
 			Node classNode = alignment.getNodeById(metaPropertyValue);

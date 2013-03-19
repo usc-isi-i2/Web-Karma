@@ -50,6 +50,7 @@ import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
+import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SubClassLink;
 
 
@@ -262,6 +263,13 @@ public class Alignment implements OntologyUpdateListener {
 		DataPropertyOfColumnLink link = new DataPropertyOfColumnLink(id, specializedColumnHNodeId);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
+	}
+	
+	public ObjectPropertySpecializationLink addObjectPropertySpecializationLink(Node source, Node target, Link specializedLink) {
+		String id = linkIdFactory.getLinkId(Uris.OBJECTPROPERTY_SPECIALIZATION_LINK_URI);
+		ObjectPropertySpecializationLink link = new ObjectPropertySpecializationLink(id, specializedLink);
+		if (this.graphBuilder.addLink(source, target, link)) return link;
+		return null;
 	}
 
 	public ColumnSubClassLink addColumnSubClassOfLink(Node source, Node target) {
