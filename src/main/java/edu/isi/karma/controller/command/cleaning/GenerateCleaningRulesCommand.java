@@ -330,7 +330,12 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 				String org = vc.getValue(key);
 				String classLabel = rvco.getClass(key);
 				String pretar = rvco.getValue(key);
-				this.StringColorCode(org, pretar, dict);
+				String dummyValue = pretar;
+				if(pretar.indexOf("_FATAL_ERROR_")!= -1)
+				{
+					dummyValue = org;
+				}
+				this.StringColorCode(org, dummyValue, dict);
 				for (TransformationExample exp : examples) {
 					if (exp.getNodeId().compareTo(key) == 0) {
 						if (!expFeData.containsKey(classLabel)) {

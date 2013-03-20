@@ -24,6 +24,7 @@ package edu.isi.karma.cleaning;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.apache.xpath.axes.AxesWalker;
 import org.python.antlr.PythonParser.return_stmt_return;
 
 import uk.ac.shef.wit.simmetrics.TestArbitrators;
@@ -33,12 +34,11 @@ public class ExampleSelection {
 	public HashMap<String, Vector<TNode>> tran = new HashMap<String, Vector<TNode>>();
 	public HashMap<String, String[]> raw = new HashMap<String, String[]>();
 	public OutlierDetector out;
-	//pid:{rowid:{"orgdis":value ... }}
-	public HashMap<String, HashMap<String,String[]>> testdata = new HashMap<String, HashMap<String,String[]>>();
+	// testdata rowid:{tar, tarcolor}
+	public HashMap<String, HashMap<String, String[]>> testdata = new HashMap<String, HashMap<String, String[]>>();
 	public static int way = 3;
 
 	public ExampleSelection() {
-		out = new OutlierDetector();
 	}
 
 	public String Choose() {
@@ -56,11 +56,11 @@ public class ExampleSelection {
 		case 4:
 			ID = this.way4();
 			break;
-		case 5:
-			ID = this.way5();
-			break;
 		case 6:
 			ID = this.way6();
+			break;
+		case 7:
+			ID = this.way7();
 			break;
 		default:
 			ID = "";
@@ -73,8 +73,9 @@ public class ExampleSelection {
 	public void inite(HashMap<String, String[]> exps,
 			HashMap<String, Vector<String[]>> examples) {
 		// inite the class center vector
-		//this.clear();
-		if (way == 6) {
+	
+		if (way >= 6) {
+			out = new OutlierDetector();
 			out.buildMeanVector(examples);
 		}
 		Ruler ruler = new Ruler();
@@ -82,25 +83,24 @@ public class ExampleSelection {
 			String e = exps.get(keyString)[0];
 			ruler.setNewInput(e);
 			org.put(keyString, ruler.vec);
-			if(way == 6)
-			{
-			String[] pair = { exps.get(keyString)[1], exps.get(keyString)[2] };
-			if (testdata.containsKey(exps.get(keyString)[3])) {
-				HashMap<String, String[]> xelem = testdata.get(exps.get(keyString)[3]);
-				if(!xelem.containsKey(keyString))
-				{
-					xelem.put(keyString, pair);
+			if (way >= 6) {
+				String[] pair = { exps.get(keyString)[1],
+						exps.get(keyString)[2] };
+				if (testdata.containsKey(exps.get(keyString)[3])) {
+					HashMap<String, String[]> xelem = testdata.get(exps
+							.get(keyString)[3]);
+					if (!xelem.containsKey(keyString)) {
+						xelem.put(keyString, pair);
+					}
+				} else {
+					HashMap<String, String[]> vstr = new HashMap<String, String[]>();
+					vstr.put(keyString, pair);
+					testdata.put(exps.get(keyString)[3], vstr);
 				}
-			} else {
-				HashMap<String,String[]> vstr = new HashMap<String,String[]>();
-				vstr.put(keyString, pair);
-				testdata.put(exps.get(keyString)[3], vstr);
-			}
 			}
 		}
 
 		this.raw = exps;
-
 	}
 
 	// choose the most ambiguous
@@ -131,13 +131,13 @@ public class ExampleSelection {
 		return ID;
 	}
 
-	// return the first incorrect one
+	// return the first incorrect one, simulated ideal user
 	public String way3() {
 		String ID = "";
 		int minimum = Integer.MAX_VALUE;
 		for (String key : raw.keySet()) {
 			int s = Integer.valueOf(key);
-			if (s < minimum && raw.get(key)[4].compareTo("wrong")==0) {
+			if (s < minimum) {
 				ID = key;
 				minimum = s;
 			}
@@ -164,59 +164,84 @@ public class ExampleSelection {
 		return score;
 	}
 
-	// use the cnt of fatal_error number
+	//only try to find the wrong ones
 	public static boolean firsttime = true;
 
 	public String way4() {
-		int max = -1;
 		if (firsttime) {
 			firsttime = false;
 			return raw.keySet().iterator().next();
 		}
-		String example = "";
 		for (String key : raw.keySet()) {
-			int cnt = raw.get(key)[1].split("_FATAL_ERROR_").length;
-			if (cnt > max) {
-				max = cnt;
-				example = key;
+			
+			if(raw.get(key)[2].indexOf("_FATAL_ERROR_")!= -1)
+			{
+				return key;
 			}
 		}
-		return example;
+		return this.way2();
 	}
 
-	// least ambiguious and more fatal errors
-	public String way5() {
-		String ID = "";
-		float minimum = (float) 100000.0;
-		for (String key : org.keySet()) {
-			int s = this.ambiguityScore(org.get(key));
-			int cnt = raw.get(key)[1].split("_FATAL_ERROR_").length;
-			float score = (float) (s * 1.0 / cnt);
-			if (score < minimum) {
-				ID = key;
-				minimum = score;
-			}
-		}
-		return ID;
-	}
-	
 	public String way6() {
 		String row = "";
-		if(out.rVectors.size() == 0)
-		{
+		if (out.rVectors.size() == 0) {
 			return this.way2();
 		}
 		double max = -1;
-		for(String key:this.testdata.keySet())
-		{	
-			String trowid = out.getOutliers(testdata.get(key), out.rVectors.get(key),max);
+		for (String key : this.testdata.keySet()) {
+			String trowid = out.getOutliers(testdata.get(key),
+					out.rVectors.get(key), max);
 			max = out.currentMax;
-			if(trowid.length() > 0)
-			{
+			if (trowid.length() > 0) {
 				row = trowid;
 			}
 		}
 		return row;
+	}
+
+	public String way7() {
+		int max = 2; // only the one with _FATAL_ERROR_ inside
+		if (firsttime) {
+			firsttime = false;
+			return this.way2();
+		}
+		Vector<String> examples = new Vector<String>();
+		for (String key : raw.keySet()) {
+			int cnt = raw.get(key)[2].split("_FATAL_ERROR_").length;
+			if (cnt > max) {
+				max = cnt;
+				examples.clear();
+				examples.add(key);
+			}
+			if (cnt == max && max > 1) {
+				examples.add(key);
+			}
+		}
+		if (examples.size() == 0) {
+			String row = "";
+			double tmax = -1;
+			for (String key : this.testdata.keySet()) {
+				String trowid = out.getOutliers(testdata.get(key),
+						out.rVectors.get(key), tmax);
+				tmax = out.currentMax;
+				if (trowid.length() > 0) {
+					row = trowid;
+				}
+			}
+			return row;
+		} else {
+			String idString = "";
+			int min = 10000;
+			for (String key : examples) {
+				int s = this.ambiguityScore(org.get(key));
+				if (s < min) {
+					min = s;
+					idString = key;
+				}
+			}
+			return idString;
+		}
+
 	}
 
 	public void clear() {

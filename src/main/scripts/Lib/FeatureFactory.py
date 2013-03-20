@@ -9,7 +9,7 @@ class FeatureFactory:
     def __init__(self):
         self.datatable = []
         self.specialchars = ("#",";",",","!","~","@","\$","%","\^","&","\*","\("\
-                       ,"\)","_","-","{","}","\[","\]","\"","\'",":","\?","<",">","\.","\/","\\\\","\d+","[A-Z]+","[a-z]+")
+                       ,"\)","_","-","{","}","\[","\]","\"","\'",":","\?","<",">","\.","\/","\\\\","\d+","[A-Z]+","[a-z]+","[\s]")
         self.classes = [];
     def createFeature(self,value,label):
         self.classes.append(label)
@@ -34,4 +34,3 @@ if __name__ == "__main__":
     ff = FeatureFactory()
     for value in s:
         ff.createFeature(value, "-1")
-    print ff.datatable

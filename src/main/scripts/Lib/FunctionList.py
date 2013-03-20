@@ -14,29 +14,34 @@ Function_Debug = False
 def indexOf(str, lregx, rregx, cnt=0):
         '''find the position'''
         pos = -1
-        if lregx == "^":
-           if cnt != 1 and cnt != -1:
-               return None
-           pos = 0
-           return pos
-        if rregx == "$":
-           if cnt != 1 and cnt != -1:
-               return None
-           pos = len(str)
-           return pos
+#        if lregx == "^":
+#           if cnt != 1 and cnt != -1:
+#               return None
+#           pos = 0
+#           return pos
+#        if rregx == "$":
+#           if cnt != 1 and cnt != -1:
+#               return None
+#           pos = len(str)
+#           return pos
         patternstr = "(" + lregx + ")" + rregx
         pattern = re.compile(patternstr)
         tpos = 0
         poslist = []
         pre = -1
         while True:
+            if tpos >= len(str):  # a bug in python regobj search method starpos 
+                break
             m = pattern.search(str, tpos)
             if m == None:
                 break
             if len(m.groups()) < 2:
                 tpos = m.start() + 1
             else:
-                tpos = m.start() + len(m.group(2))
+                if lregx == "^" or rregx == "$":
+                    tpos = m.start()+1
+                else:
+                    tpos = m.start() + len(m.group(2))
             cpos = m.start() + len(m.group(1))
             if cpos > pre:
                 poslist.append(cpos)

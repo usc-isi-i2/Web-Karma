@@ -36,13 +36,13 @@ public class Test {
 		// list all the csv file under the dir
 		for (File f : allfiles) {
 			Vector<String[]> examples = new Vector<String[]>();
+			Vector<String[]> addExamples = new Vector<String[]>();
 			Vector<String[]> entries = new Vector<String[]>();
 			try {
 				
 				if (f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
 					HashMap<String, String[]> xHashMap = new HashMap<String, String[]>();
-					CSVReader cr = new CSVReader(new FileReader(f), ',', '"',
-							'\0');
+					CSVReader cr = new CSVReader(new FileReader(f), ',','"','\0');
 					String[] pair;
 					int index = 0;
 					while ((pair = cr.readNext()) != null) {
@@ -56,6 +56,7 @@ public class Test {
 					if (entries.size() <= 1)
 						continue;
 					ExampleSelection expsel = new ExampleSelection();
+					expsel.firsttime = true;
 					expsel.inite(xHashMap,null);
 					int target = Integer.parseInt(expsel.Choose());
 					String[] mt = {
@@ -122,6 +123,24 @@ public class Test {
 										isfind = true;
 									}
 								}
+								//update positive traing data with user specification
+								for (String[] tmpx : addExamples) {
+									if(tmpx[0].compareTo(dict.get("Org"))==0 && tmpx[1].compareTo(dict.get("Tar"))==0)
+									{
+										String[] exp = {s,tmps};
+										if(!expFeData.containsKey(classlabel))
+										{
+											Vector<String[]> vstr = new Vector<String[]>();
+											vstr.add(exp);
+											expFeData.put(classlabel, vstr);
+										}
+										else
+										{
+											expFeData.get(classlabel).add(exp);
+										}
+										isfind = true;
+									}
+								}
 								if (!isfind) {
 									String[] ts = {"<_START>" + entries.get(j)[0] + "<_END>",s,tmps,classlabel,"right"};
 									if(s.compareTo(entries.get(j)[1]) != 0) 
@@ -154,6 +173,9 @@ public class Test {
 								}
 								else
 								{
+									//update positive training data
+									addExamples.add(entries.get(e));
+									//update the rest dataset
 									xHashMap.remove(""+e);
 								}
 								checknumber ++;

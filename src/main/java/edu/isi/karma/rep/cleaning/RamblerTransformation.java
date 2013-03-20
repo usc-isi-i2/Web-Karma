@@ -72,10 +72,7 @@ public class RamblerTransformation implements Transformation {
 		if(value.length()==0)
 			return "";
 		String s = worker.execute_debug(value);
-		if(s.contains("_FATAL_ERROR_"))
-			return value;
-		else
-			return s;
+		return s;
 	}
 
 }
