@@ -8,6 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import weka.core.logging.Logger;
+import weka.core.logging.Logger.Level;
+
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.FetchResultUpdate;
@@ -54,27 +57,31 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 		HashSet<Integer> inds = new HashSet<Integer>();
 		//select 30% or 50
 		int sample_size = (int)(size*0.3);
-		if(sample_size >=50)
+		if(sample_size >=60)
 		{
-			sample_size = 50;
+			sample_size = 60;
 		}
 		else {
 			sample_size = size;
 		}
-		Random rad = new Random();
+		//Random rad = new Random();
+		int cand = 0;
 		while( inds.size() <sample_size)
 		{
-			int cand = rad.nextInt(size);
+			//int cand = rad.nextInt(size);
 			if(!inds.contains(cand))
 			{
 				inds.add(cand);
 			}
+			cand++;
 		}
 		return inds;
 	}
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
+		String Msg = String.format("Time:%d, Worksheet:%s",System.currentTimeMillis()/1000,worksheetId);
+		Logger.log(Level.INFO, Msg);
 		// Get the HNode
 		HashMap<String, HashMap<String, String>> rows = new HashMap<String, HashMap<String, String>>();
 		HNodePath selectedPath = null;
@@ -104,6 +111,8 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 			}
 			index ++;
 		}
+		Msg = String.format("Time:%d, Worksheet:%s",System.currentTimeMillis()/1000,worksheetId);
+		Logger.log(Level.INFO, Msg);
 		return new UpdateContainer(new FetchResultUpdate(hNodeId,rows));
 	}
 
