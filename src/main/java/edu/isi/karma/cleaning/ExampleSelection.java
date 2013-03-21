@@ -207,7 +207,21 @@ public class ExampleSelection {
 		}
 		Vector<String> examples = new Vector<String>();
 		for (String key : raw.keySet()) {
-			int cnt = raw.get(key)[2].split("_FATAL_ERROR_").length;
+			int cnt = 0;
+			int spos = 0;
+			String[] tmp = raw.get(key)[2].split("((?<=_\\d_FATAL_ERROR_)|(?=_\\d_FATAL_ERROR_))");
+			
+			
+			for(String tmpstring:tmp)
+			{
+				int errnum = 0;
+				if(tmpstring.indexOf("_FATAL_ERROR_")== -1)
+				{
+					continue;
+				}
+				errnum = Integer.valueOf(tmpstring.substring(1, 2));
+				cnt += errnum;
+			}
 			if (cnt > max) {
 				max = cnt;
 				examples.clear();

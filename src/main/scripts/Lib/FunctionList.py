@@ -64,7 +64,7 @@ def loop(value, stript):
             break
         tmpstript = tmpstript.replace("counter", str(cnt))
         s = eval(tmpstript)
-        if s.find("<_FATAL_ERROR_>") != -1:
+        if s.find("_FATAL_ERROR_") != -1:
             break
         res += s
         cnt += 1
@@ -74,15 +74,22 @@ def loop(value, stript):
         return res
 def substr(str, p1, p2):
     '''get substring'''
-    if p1 == None or p2 == None or p1>p2:
-        return "<_FATAL_ERROR_>"
+    if p1 == None and p2 != None:
+        return "<_2_FATAL_ERROR_>"
+    if p1 != None and p2 == None:
+        return "<_2_FATAL_ERROR_>"
+    if p1 == None and p2 == None:
+        return "<_3_FATAL_ERROR_>"
+    if p1>p2:
+        return "<_1_FATAL_ERROR_>"
+        
     if Function_Debug:
         return "{_S}%d{_C}%d{_S}"%(p1,p2)
     res = str[p1:p2]
     if res != None:
         return res
     else:
-        return "<_FATAL_ERROR_>"
+        return "<_1_FATAL_ERROR_>"
 def foreach(elems, exps):
     '''for each '''
     for i in range(len(elems)):
