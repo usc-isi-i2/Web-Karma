@@ -1,4 +1,5 @@
 bin
+config/transformation.properties
 *.class
 *py.class
 *.pydevproject
