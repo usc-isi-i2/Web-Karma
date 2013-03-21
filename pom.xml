@@ -278,6 +278,11 @@
 		    <artifactId>guava</artifactId>
 		    <version>14.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.mahout.commons</groupId>
+			<artifactId>commons-cli</artifactId>
+			<version>2.0-mahout</version>
+		</dependency>
   </dependencies>
   
   <build>

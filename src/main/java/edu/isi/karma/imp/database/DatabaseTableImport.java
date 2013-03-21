@@ -70,8 +70,20 @@ public class DatabaseTableImport {
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		// TODO Limiting the number of rows to 1000 for now to avoid all data in memory
 		ArrayList<ArrayList<String>> data = dbUtil.getDataForLimitedRows(dbType, hostname, 
-				portnumber, username, password, tableName, dBorSIDName, 1000);
+				portnumber, username, password, tableName, dBorSIDName, 100);
+		return generateWorksheet(dbUtil, data);
+	}
+	
+	public Worksheet generateWorksheetForAllRows() throws SQLException, ClassNotFoundException {
+		/** Get the data from the database table **/
+		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		
+		ArrayList<ArrayList<String>> data = dbUtil.getDataForTable(dbType, hostname, 
+				portnumber, username, password, tableName, dBorSIDName);
+		return generateWorksheet(dbUtil, data);
+	}
+
+	private Worksheet generateWorksheet(AbstractJDBCUtil dbUtil, ArrayList<ArrayList<String>> data) {
 		/** Add the headers **/
 		HTable headers = worksheet.getHeaders();
 		ArrayList<String> headersList = new ArrayList<String>();
@@ -100,10 +112,7 @@ public class DatabaseTableImport {
         srcInfo.setAttributeValue(InfoAttribute.dBorSIDName, dBorSIDName);
         srcInfo.setAttributeValue(InfoAttribute.tableName, tableName);
         worksheet.getMetadataContainer().setSourceInformation(srcInfo);
-		
 		return worksheet;
 	}
-
-	
 
 }
