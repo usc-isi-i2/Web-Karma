@@ -160,8 +160,10 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) {
 		// create new column command
-	
+		
 		String worksheetId = vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).getWorksheetId();
+		String Msg = String.format("submit end, Time:%d, Worksheet:%s",System.currentTimeMillis()/1000,worksheetId);
+		logger.info(Msg);
 		String hTableId = "";
 		String colnameString = "";
 		try
@@ -251,8 +253,6 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,worksheet.getHeaders().getAllPaths(), vWorkspace);
 		vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).update(c);
 		c.add(new InfoUpdate("Submit Complete"));
-		String Msg = String.format("submit end Time:%d, Worksheet:%s",System.currentTimeMillis()/1000,worksheetId);
-		logger.info(Msg);
 		return c;
 	}
 	@Override
