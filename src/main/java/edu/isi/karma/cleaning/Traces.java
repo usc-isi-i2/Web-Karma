@@ -539,9 +539,11 @@ public class Traces implements GrammarTreeNode {
 			}
 		}
 		for (Integer key : tmpStore.keySet()) {
+			//System.out.println(""+tmpStore.get(key).toString());
 			Template x = this.consolidate(tmpStore.get(key));
 			resHashMap.put(key, x);
 		}
+		//System.out.println("end consolidating");
 		return resHashMap;
 	}
 	public boolean isLegalVS(Vector<GrammarTreeNode> x)

@@ -29,13 +29,17 @@ import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
+import org.apache.log4j.Level;
 import org.geotools.resources.Java6;
 import org.json.JSONObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.RollingFileAppender;
+import org.apache.log4j.SimpleLayout;
+
 
 import edu.isi.karma.controller.command.AddColumnCommand;
 import edu.isi.karma.controller.command.Command;
@@ -64,7 +68,7 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 	String hNodeId = "";
 	String vWorksheetId = "";
 	String hTableId = "";
-	private static Logger logger = LoggerFactory.getLogger(WorksheetCommandHistoryReader.class);
+	private static Logger logger =Logger.getLogger(SubmitCleanningCommand.class);
 	private Vector<TransformationExample> examples = new Vector<TransformationExample>();
 	protected SubmitCleanningCommand(String id, String worksheetId,String hNodeId, String hTableId, String vWorkSheetId,String Examples) {
 		super(id, worksheetId);
@@ -72,6 +76,14 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 		this.vWorksheetId = vWorkSheetId;
 		this.hTableId = hTableId;
 		this.examples = GenerateCleaningRulesCommand.parseExample(Examples);
+		try
+		{
+			FileAppender appender = new FileAppender(new SimpleLayout(),"./log/cleanning.log");
+			logger.addAppender(appender);
+		}
+		catch (Exception e) {
+
+		}
 	}
 
 	@Override
@@ -148,6 +160,7 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) {
 		// create new column command
+	
 		String worksheetId = vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).getWorksheetId();
 		String hTableId = "";
 		String colnameString = "";
@@ -238,6 +251,8 @@ public class SubmitCleanningCommand extends WorksheetCommand{
 		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,worksheet.getHeaders().getAllPaths(), vWorkspace);
 		vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).update(c);
 		c.add(new InfoUpdate("Submit Complete"));
+		String Msg = String.format("submit end Time:%d, Worksheet:%s",System.currentTimeMillis()/1000,worksheetId);
+		logger.info(Msg);
 		return c;
 	}
 	@Override

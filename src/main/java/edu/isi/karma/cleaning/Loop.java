@@ -108,7 +108,7 @@ public class Loop implements GrammarTreeNode {
 	}
 	@Override
 	public void emptyState() {
-		// TODO Auto-generated method stub
+		this.loopbody.emptyState();
 		
 	}
 }

@@ -7,9 +7,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import org.apache.log4j.Logger;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.RollingFileAppender;
+import org.apache.log4j.SimpleLayout;
 
-import weka.core.logging.Logger;
-import weka.core.logging.Logger.Level;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -30,6 +32,14 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 		this.hNodeId = hNodeId;
 		this.id = id;
 		this.worksheetId = worksheetId;
+		/////log info
+		try
+		{
+			FileAppender appender = new FileAppender(new SimpleLayout(),"./log/cleanning.log");
+			logger.addAppender(appender);
+		}
+		catch (Exception e) {
+		}
 	}
 
 	@Override
@@ -77,11 +87,12 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 		}
 		return inds;
 	}
+	private static Logger logger = Logger.getLogger(FetchTransformingDataCommand.class);
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
-		String Msg = String.format("Time:%d, Worksheet:%s",System.currentTimeMillis()/1000,worksheetId);
-		Logger.log(Level.INFO, Msg);
+		String Msg = String.format("fetch Data begin, Time:%d, Worksheet:%s",System.currentTimeMillis()/1000,worksheetId);
+		logger.info(Msg);
 		// Get the HNode
 		HashMap<String, HashMap<String, String>> rows = new HashMap<String, HashMap<String, String>>();
 		HNodePath selectedPath = null;
@@ -111,8 +122,8 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 			}
 			index ++;
 		}
-		Msg = String.format("Time:%d, Worksheet:%s",System.currentTimeMillis()/1000,worksheetId);
-		Logger.log(Level.INFO, Msg);
+		Msg = String.format("fetch data end, Time:%d, Worksheet:%s",System.currentTimeMillis()/1000,worksheetId);
+		logger.info(Msg);
 		return new UpdateContainer(new FetchResultUpdate(hNodeId,rows));
 	}
 

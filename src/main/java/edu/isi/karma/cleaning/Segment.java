@@ -339,6 +339,10 @@ public class Segment implements GrammarTreeNode {
 	public void emptyState()
 	{
 		this.curState = 0;
+		for(Section s:section)
+		{
+			s.emptyState();
+		}
 	}
 	public String toProgram() {
 		if(curState >=rules.size())

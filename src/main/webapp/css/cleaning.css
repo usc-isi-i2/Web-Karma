@@ -88,39 +88,36 @@ table#cleaningExamplesTable td.cleaningTableHeading {
 	padding-bottom:4px;
 }
 span.ins {
-	background:#FDDDDF;
+	background:#ff7f0e;
 }
 span.a0 {
 	color:#1f77b4;
 }
 span.a1 {
-	color:#ff7f0e;
-}
-span.a2 {
 	color:#2ca02c;
 }
-span.a3 {
+span.a2 {
 	color:#d62728;
 }
-span.a4 {
+span.a3 {
 	color:#9467bd;
 }
-span.a5 {
+span.a4 {
 	color:#8c564b;
 }
-span.a6 {
+span.a5 {
 	color:#e377c2;
 }
-span.a7 {
+span.a6 {
 	color:#7f7f7f;
 }
-span.a8 {
+span.a7 {
 	color:#bcbd22;
 }
-span.a9 {
+span.a8 {
 	color:#17becf;
 }
-span.a10 {
+span.a9 {
 	color:#6600CC;
 }
 div.cleanExampleDiv {

@@ -193,7 +193,10 @@ public class Template implements GrammarTreeNode {
 
 	@Override
 	public void emptyState() {
-		// TODO Auto-generated method stub
+		for(GrammarTreeNode treeNode:body)
+		{
+			treeNode.emptyState();
+		}
 
 	}
 
