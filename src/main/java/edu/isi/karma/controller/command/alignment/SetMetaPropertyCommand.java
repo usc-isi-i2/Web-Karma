@@ -136,6 +136,8 @@ public class SetMetaPropertyCommand extends Command {
 			columnNodeAlreadyExisted = true;
 			oldIncomingLinkToColumnNode = alignment.getCurrentLinksToNode(existingColumnNode.getId()).iterator().next();
 			oldDomainNode = oldIncomingLinkToColumnNode.getSource();
+			if (!rdfLiteralType.equals(existingColumnNode.getRdfLiteralType()))
+				existingColumnNode.setRdfLiteralType(rdfLiteralType);
 		}
 		
 		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {

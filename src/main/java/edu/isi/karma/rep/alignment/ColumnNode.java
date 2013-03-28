@@ -31,7 +31,7 @@ public class ColumnNode extends Node {
 	private static final long serialVersionUID = 1L;
 	private final String hNodeId;
 	private final String columnName;
-	private final String rdfLiteralType;
+	private String rdfLiteralType;
 	
 	public ColumnNode(String id, String hNodeId, String columnName, String rdfLiteralType) {
 		super(id, new Label(hNodeId), NodeType.ColumnNode);
@@ -52,5 +52,7 @@ public class ColumnNode extends Node {
 		return rdfLiteralType;
 	}
 	
-	
+	public void setRdfLiteralType(String rdfLiteralType) {
+		this.rdfLiteralType = rdfLiteralType;
+	}
 }

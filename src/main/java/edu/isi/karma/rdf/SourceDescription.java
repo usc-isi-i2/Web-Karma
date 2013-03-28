@@ -393,12 +393,15 @@ public class SourceDescription {
 		String specializedHNodeId = dLink.getSpecializedColumnHNodeId();
 		String dataAttribute = factory.getHNode(specializedHNodeId).getColumnName();
 		String propertyAttribute = factory.getHNode(hNodeId).getColumnName();
+		String rdfLiteralType = ((ColumnNode) child).getRdfLiteralType(); 
 		if(!useColumnNames){
 			dataAttribute = factory.getHNode(specializedHNodeId).getHNodePath(factory).toColumnNamePath();
 			propertyAttribute = factory.getHNode(hNodeId).getHNodePath(factory).toColumnNamePath();
 		}
 		ruleAttributes.add(dataAttribute);
 		String propertyName = "expand@" + propertyAttribute;
+		if (rdfLiteralType != null && !rdfLiteralType.equals(""))
+			propertyName += "@@" + rdfLiteralType; 
 		if(reversedLinkIds.contains(e.getId())){
 			throw new KarmaException("A data property cannot be an inverse_of:" + e.getLabel().getUri());
 		}
@@ -571,12 +574,18 @@ public class SourceDescription {
 	 */
 	private String generateSynonymStatement(Node child, SemanticType st) {
 		ColumnNode columnNode = (ColumnNode) child;
+		String rdfLiteralType = ((ColumnNode) child).getRdfLiteralType();
+		
 		if(st.isClass()){
+			String s = "";
 			//semantic type is a Class
 			String key = findKey(child);
 			//logger.info("Sem Type is a class:"+st.getType());
 			String className = getPropertyWithPrefix(st.getType());
-			String s = "`" + className + "`(uri(" + key + "))"; 
+			if (rdfLiteralType != null && !rdfLiteralType.equals(""))
+				s = "`" + className + "@@" + rdfLiteralType + "`(uri(" + key + "))";
+			else
+				s = "`" + className + "`(uri(" + key + "))";
 			return s;
 		}
 		else{
@@ -606,8 +615,10 @@ public class SourceDescription {
 			}
 			ruleAttributes.add(dataAttribute);
 			String propertyName = getPropertyWithPrefix(st.getType());
-			s += "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
-			//System.out.println("DataProperty:" + s);
+			if (rdfLiteralType != null && !rdfLiteralType.equals(""))
+				s = "`" + propertyName + "@@" + rdfLiteralType + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
+			else
+				s = "`" + propertyName + "`(uri(" + key + ")," + addBacktick(dataAttribute) + ")";
 			return s;
 		}
 	}
