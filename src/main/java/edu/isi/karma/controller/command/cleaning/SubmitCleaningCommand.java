@@ -57,15 +57,15 @@ import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 
-public class SubmitCleanningCommand extends Command {
+public class SubmitCleaningCommand extends Command {
 	private String hNodeId = "";
 	private String vWorksheetId = "";
 //	private String hTableId = "";
 	private String columnName;
-	private static Logger logger =Logger.getLogger(SubmitCleanningCommand.class);
+	private static Logger logger =Logger.getLogger(SubmitCleaningCommand.class);
 	private Vector<TransformationExample> examples = new Vector<TransformationExample>();
 	
-	protected SubmitCleanningCommand(String id, String hNodeId, String vWorkSheetId, String Examples) {
+	public SubmitCleaningCommand(String id, String hNodeId, String vWorkSheetId, String Examples) {
 		super(id);
 		this.hNodeId = hNodeId;
 		this.vWorksheetId = vWorkSheetId;
@@ -77,6 +77,7 @@ public class SubmitCleanningCommand extends Command {
 		} catch (Exception e) {
 			
 		}
+		addTag(CommandTag.Transformation);
 	}
 
 	@Override

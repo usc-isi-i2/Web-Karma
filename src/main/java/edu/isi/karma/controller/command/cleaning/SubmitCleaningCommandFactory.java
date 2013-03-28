@@ -33,28 +33,30 @@ import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
-public class SubmitCleanningCommandFactory extends CommandFactory implements JSONInputCommandFactory {
+public class SubmitCleaningCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 
 	private enum Arguments {
-		hNodeID, worksheetID, hTableID, vWorksheetID,examples
+		hNodeID, worksheetID, hTableID, vWorksheetId,examples
 	}
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
 		String hNodeid = request.getParameter(Arguments.hNodeID.name());
-		String vw = request.getParameter(Arguments.vWorksheetID.name());
+		String vw = request.getParameter(Arguments.vWorksheetId.name());
 		String exps = request.getParameter(Arguments.examples.name());
 		
-		SubmitCleanningCommand sCleanningCommand = new SubmitCleanningCommand(getNewId(vWorkspace), hNodeid, vw, exps);
+		SubmitCleaningCommand sCleanningCommand = new SubmitCleaningCommand(getNewId(vWorkspace), hNodeid, vw, exps);
 		return sCleanningCommand;
 	}
 	@Override
 	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
 			throws JSONException, KarmaException {
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeID.name(), inputJson);
-		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetID.name(), inputJson);
+		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
 		String examples = HistoryJsonUtil.getStringValue(Arguments.examples.name(), inputJson);
-		return new SubmitCleanningCommand(getNewId(vWorkspace), hNodeId, vWorksheetId, examples);
+		SubmitCleaningCommand comm = new SubmitCleaningCommand(getNewId(vWorkspace), hNodeId, vWorksheetId, examples);
+		comm.setInputParameterJson(inputJson.toString());
+		return comm;
 	}
 
 }

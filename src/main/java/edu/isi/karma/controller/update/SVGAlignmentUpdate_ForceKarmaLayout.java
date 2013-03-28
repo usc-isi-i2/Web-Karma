@@ -268,7 +268,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 			topObj.put(JsonKeys.nodes.name(), nodesArr);
 			topObj.put(JsonKeys.links.name(), linksArr);
 			
-			pw.write(topObj.toString(4));
+			pw.write(topObj.toString());
 		} catch (JSONException e) {
 			logger.error("Error occured while writing JSON!", e);
 		}

@@ -49,14 +49,15 @@ public class ShowModelCommand extends WorksheetCommand {
 
 	private final String vWorksheetId;
 	private String worksheetName;
+	private final boolean addVWorksheetUpdate;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(ShowModelCommand.class);
 
-	protected ShowModelCommand(String id, String worksheetId,
-			String vWorksheetId) {
+	protected ShowModelCommand(String id, String worksheetId, String vWorksheetId, boolean addVWorksheetUpdate) {
 		super(id, worksheetId);
 		this.vWorksheetId = vWorksheetId;
+		this.addVWorksheetUpdate = addVWorksheetUpdate;
 		
 		/** NOTE Not saving this command in history for now since we are 
 		 * not letting CRF model assign semantic types automatically. This command 
@@ -114,6 +115,9 @@ public class ShowModelCommand extends WorksheetCommand {
 			// Save the semantic types in the input parameter JSON
 			saveSemanticTypesInformation(worksheet, vWorkspace, worksheet.getSemanticTypes().getListOfTypes());
 			
+			if (addVWorksheetUpdate) {
+				vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).update(c);
+			}
 			// Add the visualization update
 			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
 			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
