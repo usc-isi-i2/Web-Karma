@@ -22,11 +22,18 @@
 package edu.isi.karma.controller.command.cleaning;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.KarmaException;
 
-public class SubmitCleanningCommandFactory extends CommandFactory{
+public class SubmitCleanningCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 
 	private enum Arguments {
 		hNodeID, worksheetID, hTableID, vWorksheetID,examples
@@ -35,13 +42,19 @@ public class SubmitCleanningCommandFactory extends CommandFactory{
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
 		String hNodeid = request.getParameter(Arguments.hNodeID.name());
-		String wid = request.getParameter(Arguments.worksheetID.name());
-		String hTableID = request.getParameter(Arguments.hTableID.name());
 		String vw = request.getParameter(Arguments.vWorksheetID.name());
 		String exps = request.getParameter(Arguments.examples.name());
 		
-		SubmitCleanningCommand sCleanningCommand = new SubmitCleanningCommand(getNewId(vWorkspace),wid,hNodeid,hTableID, vw,exps);
+		SubmitCleanningCommand sCleanningCommand = new SubmitCleanningCommand(getNewId(vWorkspace), hNodeid, vw, exps);
 		return sCleanningCommand;
+	}
+	@Override
+	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
+			throws JSONException, KarmaException {
+		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeID.name(), inputJson);
+		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetID.name(), inputJson);
+		String examples = HistoryJsonUtil.getStringValue(Arguments.examples.name(), inputJson);
+		return new SubmitCleanningCommand(getNewId(vWorkspace), hNodeId, vWorksheetId, examples);
 	}
 
 }

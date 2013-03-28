@@ -586,6 +586,14 @@ function submit() {
 	info["command"] = "SubmitCleanningCommand";
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["examples"] = JSON.stringify(columnHeadingMenu.data("cleaningExamples"));
+
+    var newInfo = [];
+    newInfo.push(getParamObject("vWorksheetID", vWorksheetId, "vWorksheetId"));
+    newInfo.push(getParamObject("hNodeID", selectedHNodeId, "hNodeId"));
+    newInfo.push(getParamObject("examples", columnHeadingMenu.data("cleaningExamples"), "other"));
+    info["newInfo"] = JSON.stringify(newInfo);
+
+    showLoading(vWorksheetId);
 	var returned = $.ajax({
 		url : "RequestController",
 		type : "POST",
@@ -593,11 +601,12 @@ function submit() {
 		dataType : "json",
 		complete : function(xhr, textStatus) {
 			var json = $.parseJSON(xhr.responseText);
-			hideCleanningWaitingSignOnScreen();
 			parse(json);
+            hideLoading(vWorksheetId);
 		},
 		error : function(xhr, textStatus) {
-			$.sticky("Error in submitting");
+			$.sticky("Error in transformation!");
+            hideLoading(vWorksheetId);
 		}
 	});
 }

@@ -33,7 +33,6 @@ import java.util.Vector;
 
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
-import org.apache.log4j.RollingFileAppender;
 import org.apache.log4j.SimpleLayout;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,7 +41,6 @@ import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.cleaning.ConfigParameters;
 import edu.isi.karma.cleaning.DataCollection;
 import edu.isi.karma.cleaning.ExampleSelection;
-import edu.isi.karma.cleaning.MyLogger;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
 import edu.isi.karma.cleaning.UtilTools;
@@ -78,7 +76,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		ConfigParameters cfg = new ConfigParameters();
 		cfg.initeParameters();
 		DataCollection.config = cfg.getString();
-		this.examples = this.parseExample(examples);
+		this.examples = parseExample(examples);
 		////log info
 		try
 		{
