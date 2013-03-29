@@ -43,6 +43,11 @@
    </repositories>
   <dependencies>
   <dependency>
+	<groupId>com.healthmarketscience.jackcess</groupId>
+	<artifactId>jackcess</artifactId>
+	<version>1.2.10</version>
+</dependency>
+  <dependency>
   		<groupId>org.geotools</groupId>
   		<artifactId>gt-referencing</artifactId>
   		<version>${geotools.version}</version>

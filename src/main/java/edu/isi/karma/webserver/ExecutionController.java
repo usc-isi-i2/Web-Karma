@@ -113,6 +113,8 @@ import edu.isi.karma.controller.command.publish.PublishDatabaseCommand;
 import edu.isi.karma.controller.command.publish.PublishDatabaseCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommand;
 import edu.isi.karma.controller.command.publish.PublishKMLLayerCommandFactory;
+import edu.isi.karma.controller.command.publish.PublishMDBCommand;
+import edu.isi.karma.controller.command.publish.PublishMDBCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishRDFCellCommand;
 import edu.isi.karma.controller.command.publish.PublishRDFCellCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishRDFCommand;
@@ -231,6 +233,8 @@ public class ExecutionController {
 				new ApplyWorksheetHistoryCommandFactory());
 		commandFactoryMap.put(PublishCSVCommand.class.getSimpleName(),
 				new PublishCSVCommandFactory());
+		commandFactoryMap.put(PublishMDBCommand.class.getSimpleName(),
+				new PublishMDBCommandFactory());
 		commandFactoryMap.put(SetMetaPropertyCommand.class.getSimpleName(),
 				new SetMetaPropertyCommandFactory());
 		commandFactoryMap.put(ResetKarmaCommand.class.getSimpleName(),
