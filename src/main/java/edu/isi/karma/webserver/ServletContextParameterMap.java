@@ -37,7 +37,8 @@ public class ServletContextParameterMap {
 		WGS84_LNG_PROPERTY, POINT_POS_PROPERTY, 
 		POS_LIST_PROPERTY, POINT_CLASS, LINE_CLASS, 
 		TRAINING_EXAMPLE_MAX_COUNT, USER_DIRECTORY_PATH,MSFT,
-		PRELOADED_ONTOLOGY_DIRECTORY, POLYGON_CLASS, SRID_PROPERTY, SRID_CLASS, AUTO_MODEL_URI
+		PRELOADED_ONTOLOGY_DIRECTORY, POLYGON_CLASS, SRID_PROPERTY, 
+		SRID_CLASS, AUTO_MODEL_URI, PYTHON_SCRIPTS_DIRECTORY
 	}
 
 	public static void setParameterValue(ContextParameter param, String value) {
@@ -48,7 +49,7 @@ public class ServletContextParameterMap {
 		if (valuesMap.containsKey(param))
 			return valuesMap.get(param);
 		else
-			logger.error("Parameter value does not exist!");
+			logger.error("Parameter value does not exist! " + param);
 
 		return "";
 	}

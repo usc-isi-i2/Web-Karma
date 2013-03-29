@@ -581,15 +581,15 @@ function submit() {
 	var vWorksheetId = tdTag.parents("div.Worksheet").attr("id");
 	var transformedRes = $("div#columnHeadingDropDownMenu").data("transformedResult");
 	var info = new Object();
-	info["vWorksheetID"] = vWorksheetId;
-	info["hNodeID"] = selectedHNodeId;
-	info["command"] = "SubmitCleanningCommand";
+	info["vWorksheetId"] = vWorksheetId;
+	info["hNodeId"] = selectedHNodeId;
+	info["command"] = "SubmitCleaningCommand";
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["examples"] = JSON.stringify(columnHeadingMenu.data("cleaningExamples"));
 
     var newInfo = [];
-    newInfo.push(getParamObject("vWorksheetID", vWorksheetId, "vWorksheetId"));
-    newInfo.push(getParamObject("hNodeID", selectedHNodeId, "hNodeId"));
+    newInfo.push(getParamObject("vWorksheetId", vWorksheetId, "vWorksheetId"));
+    newInfo.push(getParamObject("hNodeId", selectedHNodeId, "hNodeId"));
     newInfo.push(getParamObject("examples", columnHeadingMenu.data("cleaningExamples"), "other"));
     info["newInfo"] = JSON.stringify(newInfo);
 

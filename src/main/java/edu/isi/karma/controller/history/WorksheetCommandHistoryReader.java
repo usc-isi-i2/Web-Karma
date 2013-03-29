@@ -41,25 +41,31 @@ public class WorksheetCommandHistoryReader {
 		this.vWorkspace = vWorkspace;
 	}
 	
-	public void readAndExecuteCommands(CommandTag tag) throws FileNotFoundException, JSONException, KarmaException, CommandException {
+	public HashMap<CommandTag, Integer> readAndExecuteCommands(List<CommandTag> tags) throws FileNotFoundException, JSONException, KarmaException, CommandException {
 		String worksheetName = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet().getTitle();
 		File historyFile = new File(HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(worksheetName, vWorkspace.getPreferencesId()));
 		JSONArray historyJson = (JSONArray) JSONUtil.createJson(new FileReader(historyFile));
-		
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(vWorkspace.getWorkspace().getId());
 		HashMap<String, CommandFactory> commandFactoryMap = ctrl.getCommandFactoryMap();
 		
+		HashMap<CommandTag, Integer> commandsExecutedCountByTag = new HashMap<Command.CommandTag, Integer>();
+		for (CommandTag tag: tags) {
+			commandsExecutedCountByTag.put(tag, 0);
+		}
+		
 		for (int i = 0; i< historyJson.length(); i++) {
 			JSONObject commObject = (JSONObject) historyJson.get(i);
-			JSONArray tags = commObject.getJSONArray(HistoryArguments.tags.name());
-			for (int j=0; j<tags.length(); j++) {
-				String tag2 = tags.getString(j);
-				if(tag2.equals(tag.name())) {
+			JSONArray commandTags = commObject.getJSONArray(HistoryArguments.tags.name());
+			for (int j=0; j<commandTags.length(); j++) {
+				CommandTag tag = CommandTag.valueOf(commandTags.getString(j));
+				if(tags.contains(tag)) {
 					executeCommand(commObject, commandFactoryMap);
+					commandsExecutedCountByTag.put(tag, commandsExecutedCountByTag.get(tag).intValue()+1);
 					break;
 				}
 			}
 		}
+		return commandsExecutedCountByTag;
 	}
 	
 	public void readAndExecuteAllCommandsFromFile(File historyFile) throws JSONException, KarmaException, CommandException, FileNotFoundException {

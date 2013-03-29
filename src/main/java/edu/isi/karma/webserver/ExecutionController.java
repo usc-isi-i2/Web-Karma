@@ -105,8 +105,8 @@ import edu.isi.karma.controller.command.cleaning.FetchTransformingDataCommand;
 import edu.isi.karma.controller.command.cleaning.FetchTransformingDataFactory;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommand;
 import edu.isi.karma.controller.command.cleaning.GenerateCleaningRulesCommandFactory;
-import edu.isi.karma.controller.command.cleaning.SubmitCleanningCommand;
-import edu.isi.karma.controller.command.cleaning.SubmitCleanningCommandFactory;
+import edu.isi.karma.controller.command.cleaning.SubmitCleaningCommand;
+import edu.isi.karma.controller.command.cleaning.SubmitCleaningCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishCSVCommand;
 import edu.isi.karma.controller.command.publish.PublishCSVCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishDatabaseCommand;
@@ -245,8 +245,8 @@ public class ExecutionController {
 				new ImportUnionResultCommandFactory());
 		commandFactoryMap.put(MultipleValueEditColumnCommand.class.getSimpleName(), 
 				new MultipleValueEditColumnCommandFactory());
-		commandFactoryMap.put(SubmitCleanningCommand.class.getSimpleName(), 
-				new SubmitCleanningCommandFactory());
+		commandFactoryMap.put(SubmitCleaningCommand.class.getSimpleName(), 
+				new SubmitCleaningCommandFactory());
 		commandFactoryMap.put(RenameColumnCommand.class.getSimpleName(), 
 				new RenameColumnCommandFactory());
 	}

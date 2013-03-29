@@ -20,6 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
@@ -68,7 +71,9 @@ public class SplitByCommaCommandFactory extends CommandFactory implements
 			if(HistoryJsonUtil.historyExists(worksheet.getTitle(), vWorkspace.getPreferencesId())) {
 				WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
 				try {
-					commReader.readAndExecuteCommands(CommandTag.Modeling);
+					List<CommandTag> tags = new ArrayList<CommandTag>();
+					tags.add(CommandTag.Modeling);
+					commReader.readAndExecuteCommands(tags);
 				} catch (Exception e) {
 					 logger.error("Error occured while reading model commands from history!", e);
 					e.printStackTrace();

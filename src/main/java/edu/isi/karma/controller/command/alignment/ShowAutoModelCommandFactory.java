@@ -22,6 +22,8 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -61,7 +63,7 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements JSONI
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
-		return new ShowModelCommand(getNewId(vWorkspace), getWorksheetId(request, vWorkspace), vWorksheetId);
+		return new ShowModelCommand(getNewId(vWorkspace), getWorksheetId(request, vWorkspace), vWorksheetId, false);
 	}
 
 	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
@@ -91,7 +93,9 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements JSONI
 			if(HistoryJsonUtil.historyExists(worksheet.getTitle(), vWorkspace.getPreferencesId())) {
 				WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
 				try {
-					commReader.readAndExecuteCommands(CommandTag.Modeling);
+					List<CommandTag> tags = new ArrayList<CommandTag>();
+					tags.add(CommandTag.Modeling);
+					commReader.readAndExecuteCommands(tags);
 				} catch (Exception e) {
 					 logger.error("Error occured while reading model commands from history!", e);
 					e.printStackTrace();

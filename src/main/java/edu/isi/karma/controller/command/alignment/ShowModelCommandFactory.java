@@ -20,6 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
@@ -57,7 +60,7 @@ public class ShowModelCommandFactory extends CommandFactory implements JSONInput
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
-		return new ShowModelCommand(getNewId(vWorkspace), getWorksheetId(request, vWorkspace), vWorksheetId);
+		return new ShowModelCommand(getNewId(vWorkspace), getWorksheetId(request, vWorkspace), vWorksheetId, false);
 	}
 
 	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
@@ -69,21 +72,24 @@ public class ShowModelCommandFactory extends CommandFactory implements JSONInput
 		if(checkHist) {
 			String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getPreferencesId(), vWorksheetId);
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, new Alignment(vWorkspace.getWorkspace().getOntologyManager()));
-			
+			int transformationCommandsExecutedCount = 0;
 			// Check if any command history exists for the worksheet
 			if(HistoryJsonUtil.historyExists(worksheet.getTitle(), vWorkspace.getPreferencesId())) {
 				WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
 				try {
-					commReader.readAndExecuteCommands(CommandTag.Modeling);
+					List<CommandTag> tags = new ArrayList<CommandTag>();
+					tags.add(CommandTag.Modeling);
+//					tags.add(CommandTag.Transformation);
+					transformationCommandsExecutedCount = commReader.readAndExecuteCommands(tags).get(CommandTag.Transformation);
 				} catch (Exception e) {
 					 logger.error("Error occured while reading model commands from history!", e);
 					e.printStackTrace();
 				}
 			}
-			return new ShowModelCommand(getNewId(vWorkspace), worksheet.getId(), vWorksheetId);
+			return new ShowModelCommand(getNewId(vWorkspace), worksheet.getId(), vWorksheetId, transformationCommandsExecutedCount>0);
 		}
 		else {
-			ShowModelCommand comm = new ShowModelCommand(getNewId(vWorkspace), worksheet.getId(), vWorksheetId);
+			ShowModelCommand comm = new ShowModelCommand(getNewId(vWorkspace), worksheet.getId(), vWorksheetId, false);
 			OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
 			// Add the semantic types that have saved into the history
 			for (int i=2; i<inputJson.length(); i++) {
