@@ -21,12 +21,12 @@
 
 package edu.isi.karma.controller.command.cleaning;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import java.util.Vector;
 
 import org.apache.log4j.FileAppender;
@@ -45,6 +45,7 @@ import edu.isi.karma.controller.command.MultipleValueEditColumnCommand;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.cleaning.RamblerTransformationInputs;
@@ -154,8 +155,8 @@ public class SubmitCleaningCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) {
 		// create new column command
-		
 		String worksheetId = vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).getWorksheetId();
+		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 		String Msg = String.format("submit end, Time:%d, Worksheet:%s",System.currentTimeMillis()/1000,worksheetId);
 		logger.info(Msg);
 		String hTableId = "";
@@ -165,15 +166,15 @@ public class SubmitCleaningCommand extends Command {
 			// obtain transformed results
 			HashMap<String, String> rows = new HashMap<String,String>();
 			HNodePath selectedPath = null;
-			Random r = new Random();
-			int colno = r.nextInt(1000);
 			List<HNodePath> columnPaths = vWorkspace.getRepFactory().getWorksheet(worksheetId).getHeaders().getAllPaths();
 			for (HNodePath path : columnPaths) {
 				if (path.getLeaf().getId().equals(hNodeId)) {
 					hTableId = path.getLeaf().getHTableId();
-					colnameString = path.getLeaf().getColumnName()+"_"+colno;
-					selectedPath = path;
 					this.columnName = path.getLeaf().getColumnName();
+					HTable hTable = path.getLeaf().getHTable(vWorkspace.getRepFactory()); 
+					colnameString = hTable.getNewColumnName(this.columnName);
+					selectedPath = path;
+					
 				}
 			}
 			Collection<Node> nodes = new ArrayList<Node>();
@@ -217,7 +218,7 @@ public class SubmitCleaningCommand extends Command {
 			} catch (KarmaException e1) {
 				e1.printStackTrace();
 			}
-			if(comm1 != null){
+			if(comm1 != null) {
 				try {
 					vWorkspace.getWorkspace().getCommandHistory().doCommand(comm1, vWorkspace);
 				} catch (CommandException e) {
@@ -239,12 +240,10 @@ public class SubmitCleaningCommand extends Command {
 				vWorkspace.getWorkspace().getCommandHistory().doCommand(comm, vWorkspace);
 			}
 		}
-		catch(Exception e)
-		{
-			System.out.println(""+e.toString());
+		catch(Exception e) {
+			e.printStackTrace();
 		}
 		UpdateContainer c = new UpdateContainer();
-		Worksheet worksheet = vWorkspace.getWorkspace().getWorksheet(worksheetId);
 		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,worksheet.getHeaders().getAllPaths(), vWorkspace);
 		vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).update(c);
 		c.add(new InfoUpdate("Column transformation complete"));

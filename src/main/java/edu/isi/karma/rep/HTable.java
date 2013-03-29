@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import edu.isi.karma.webserver.KarmaException;
 
@@ -100,6 +102,29 @@ public class HTable extends RepEntity {
 	 */
 	public HNode getParentHNode() {
 		return parentHNode;
+	}
+	
+	public String getNewColumnName(String prefix) {
+		Pattern p = Pattern.compile(".*?(_\\d+)");
+		Matcher m = p.matcher(prefix);
+		if (m.find()) {
+			return getNewColumnName(prefix.replaceAll(m.group(1), "")); 
+		} else {
+			for (int i=1; i<1000; i++) {
+				if (isValidNewColumnName(prefix + "_" + i))
+					return prefix + "_" + i;
+			}
+		}
+		// Last resort
+		return "New Column";
+	}
+	
+	private boolean isValidNewColumnName (String columnName) {
+		for (HNode node:nodes.values()) {
+			if (node.getColumnName().equalsIgnoreCase(columnName))
+				return false;
+		}
+		return true;
 	}
 
 	/**

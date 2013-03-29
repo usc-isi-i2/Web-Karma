@@ -36,12 +36,12 @@ import edu.isi.karma.webserver.KarmaException;
 public class SubmitCleaningCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 
 	private enum Arguments {
-		hNodeID, worksheetID, hTableID, vWorksheetId,examples
+		hNodeId, worksheetID, hTableID, vWorksheetId,examples
 	}
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
-		String hNodeid = request.getParameter(Arguments.hNodeID.name());
+		String hNodeid = request.getParameter(Arguments.hNodeId.name());
 		String vw = request.getParameter(Arguments.vWorksheetId.name());
 		String exps = request.getParameter(Arguments.examples.name());
 		
@@ -51,7 +51,7 @@ public class SubmitCleaningCommandFactory extends CommandFactory implements JSON
 	@Override
 	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
 			throws JSONException, KarmaException {
-		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeID.name(), inputJson);
+		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
 		String examples = HistoryJsonUtil.getStringValue(Arguments.examples.name(), inputJson);
 		SubmitCleaningCommand comm = new SubmitCleaningCommand(getNewId(vWorkspace), hNodeId, vWorksheetId, examples);

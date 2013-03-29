@@ -5,13 +5,16 @@ import java.util.Vector;
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 public class PartitionClassifier {
 	private PyObject interpreterClass;
 	public String clssettingString = "";
 	public PartitionClassifier()
 	{
 		
-		String dirpathString = "./src/main/scripts/Lib";
+		String dirpathString = ServletContextParameterMap.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY);
 		PythonInterpreter interpreter = new PythonInterpreter();
         //change the sys.path
 		interpreter.exec("import sys");

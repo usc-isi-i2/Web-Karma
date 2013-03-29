@@ -3,13 +3,16 @@ package edu.isi.karma.cleaning;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
+
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 public class Interpretor {
 	private PyObject interpreterClass;
 
     public Interpretor() {
         PythonInterpreter interpreter = new PythonInterpreter();
         //change the sys.path
-        String dirpathString = "./src/main/scripts/Lib";
+        String dirpathString = ServletContextParameterMap.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY);
         interpreter.exec("import sys");
         interpreter.exec("sys.path.append('"+dirpathString+"')");
         ///Users/bowu/projects/IDCT/src/edu/isi/karma/cleaning
