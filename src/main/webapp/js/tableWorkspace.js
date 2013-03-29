@@ -184,7 +184,14 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		info["hTableId"] = ""
 		info["newColumnName"] = "new_column"
 		info["command"] = "AddColumnCommand";
-			
+
+        var newInfo = [];	// Used for commands that take JSONArray as input
+        newInfo.push(getParamObject("hNodeId", selectedHNodeId,"hNodeId"));
+        newInfo.push(getParamObject("hTableId", "","other"));
+        newInfo.push(getParamObject("vWorksheetId", $("td#" + selectedHNodeId).parents("table.WorksheetTable").attr("id"),"vWorksheetId"));
+        newInfo.push(getParamObject("newColumnName", "new_column","other"));
+        info["newInfo"] = JSON.stringify(newInfo);
+
 		//console.log(info["vWorksheetId"]);
 		showLoading(info["vWorksheetId"]);
 		
