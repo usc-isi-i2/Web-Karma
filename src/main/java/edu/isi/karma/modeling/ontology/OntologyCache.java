@@ -1124,8 +1124,8 @@ class OntologyCache {
 			
 			allSuperPropertiesLocal = new ArrayList<String>();
 			
-			Set<String> directSuperPropertiesLocal = this.directSubProperties.get(p).keySet();
-			Set<String> indirectSuperPropertiesLocal = this.directSubProperties.get(p).keySet();
+			Set<String> directSuperPropertiesLocal = this.directSuperProperties.get(p).keySet();
+			Set<String> indirectSuperPropertiesLocal = this.indirectSuperProperties.get(p).keySet();
 			if (directSuperPropertiesLocal != null) allSuperPropertiesLocal.addAll(directSuperPropertiesLocal);
 			if (indirectSuperPropertiesLocal != null) allSuperPropertiesLocal.addAll(indirectSuperPropertiesLocal);
 			
