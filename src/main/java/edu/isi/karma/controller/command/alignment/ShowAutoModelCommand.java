@@ -42,7 +42,9 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.view.VWorkspace;
 
 public class ShowAutoModelCommand extends WorksheetCommand {
@@ -120,6 +122,11 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 					"Error occured while generating the model for the source."));
 		}
 		c.add(new TagsUpdate());
+		Workspace ws = vWorkspace.getWorkspace();
+		SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, ws
+				.getTagsContainer().getTag(TagName.Outlier), ws
+				.getCrfModelHandler(), ws.getOntologyManager());
+		
 		return c;
 	}
 
