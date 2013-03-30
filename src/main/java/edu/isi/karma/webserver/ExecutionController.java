@@ -233,8 +233,6 @@ public class ExecutionController {
 				new ApplyWorksheetHistoryCommandFactory());
 		commandFactoryMap.put(PublishCSVCommand.class.getSimpleName(),
 				new PublishCSVCommandFactory());
-		commandFactoryMap.put(PublishMDBCommand.class.getSimpleName(),
-				new PublishMDBCommandFactory());
 		commandFactoryMap.put(SetMetaPropertyCommand.class.getSimpleName(),
 				new SetMetaPropertyCommandFactory());
 		commandFactoryMap.put(ResetKarmaCommand.class.getSimpleName(),
@@ -249,6 +247,8 @@ public class ExecutionController {
 				new SubmitCleaningCommandFactory());
 		commandFactoryMap.put(RenameColumnCommand.class.getSimpleName(), 
 				new RenameColumnCommandFactory());
+		commandFactoryMap.put(PublishMDBCommand.class.getSimpleName(), 
+				new PublishMDBCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {
