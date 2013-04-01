@@ -237,7 +237,7 @@ function handleCleanColumnButton() {
 
 	$("div#ColumnCleaningPanel").dialog({
 		title : 'Transform',
-		width : 1200,
+		width : 1000,
 		height : 550,
 		buttons : {
 			"Cancel" : function() {

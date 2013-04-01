@@ -62,6 +62,12 @@ public class ExampleSelection {
 		case 7:
 			ID = this.way7();
 			break;
+		case 8:
+			ID = this.way8();
+			break;
+		case 9:
+			ID = this.way9();
+			break;
 		default:
 			ID = "";
 		}
@@ -256,6 +262,55 @@ public class ExampleSelection {
 			return idString;
 		}
 
+	}
+	//shortest result
+	// exps: rowId: {org, tar, tarcode,classlabel}
+	public String way8()
+	{
+		if (firsttime) {
+			firsttime = false;
+			return this.way3();
+		}
+		String idString = "";
+		int shortest = 10000;
+		for(String rowid:raw.keySet())
+		{
+			String xrow = raw.get(rowid)[1];
+			if(xrow.indexOf("_FATAL_ERROR_") != -1)
+			{
+				xrow = raw.get(rowid)[0];
+			}
+			if(xrow.length() < shortest)
+			{
+				shortest = xrow.length();
+				idString = rowid;
+			}
+		}
+		return idString;
+	}
+	//longest result
+	public String way9()
+	{
+		if (firsttime) {
+			firsttime = false;
+			return this.way3();
+		}
+		String idString = "";
+		int longest = -1;
+		for(String rowid:raw.keySet())
+		{
+			String xrow = raw.get(rowid)[1];
+			if(xrow.indexOf("_FATAL_ERROR_") != -1)
+			{
+				xrow = raw.get(rowid)[0];
+			}
+			if(xrow.length() > longest)
+			{
+				longest = xrow.length();
+				idString = rowid;
+			}
+		}
+		return idString;
 	}
 
 	public void clear() {
