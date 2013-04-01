@@ -21,7 +21,6 @@
 
 package edu.isi.karma.controller.command.cleaning;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

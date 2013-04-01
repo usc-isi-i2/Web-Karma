@@ -174,7 +174,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.undoable;
+		return CommandType.notInHistory;
 	}
 
 	public void StringColorCode(String org, String res,
