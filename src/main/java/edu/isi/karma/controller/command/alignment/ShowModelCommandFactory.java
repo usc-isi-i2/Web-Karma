@@ -72,7 +72,7 @@ public class ShowModelCommandFactory extends CommandFactory implements JSONInput
 		if(checkHist) {
 			String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getPreferencesId(), vWorksheetId);
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, new Alignment(vWorkspace.getWorkspace().getOntologyManager()));
-			int transformationCommandsExecutedCount = 0;
+//			int transformationCommandsExecutedCount = 0;
 			// Check if any command history exists for the worksheet
 			if(HistoryJsonUtil.historyExists(worksheet.getTitle(), vWorkspace.getPreferencesId())) {
 				WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
@@ -80,13 +80,14 @@ public class ShowModelCommandFactory extends CommandFactory implements JSONInput
 					List<CommandTag> tags = new ArrayList<CommandTag>();
 					tags.add(CommandTag.Modeling);
 //					tags.add(CommandTag.Transformation);
-					transformationCommandsExecutedCount = commReader.readAndExecuteCommands(tags).get(CommandTag.Transformation);
+					commReader.readAndExecuteCommands(tags);
+//					transformationCommandsExecutedCount = commReader.readAndExecuteCommands(tags).get(CommandTag.Transformation);
 				} catch (Exception e) {
 					 logger.error("Error occured while reading model commands from history!", e);
 					e.printStackTrace();
 				}
 			}
-			return new ShowModelCommand(getNewId(vWorkspace), worksheet.getId(), vWorksheetId, transformationCommandsExecutedCount>0);
+			return new ShowModelCommand(getNewId(vWorkspace), worksheet.getId(), vWorksheetId, false);
 		}
 		else {
 			ShowModelCommand comm = new ShowModelCommand(getNewId(vWorkspace), worksheet.getId(), vWorksheetId, false);
