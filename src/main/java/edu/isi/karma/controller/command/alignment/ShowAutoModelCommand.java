@@ -43,7 +43,6 @@ import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ColumnNode;
@@ -129,6 +128,10 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 				columnNode = alignment.addColumnNode(hNode.getId(), columnName, "");
 				Label propertyLabel = new Label(ns + columnName, ns, "karma");
 				alignment.addDataPropertyLink(classNode, columnNode, propertyLabel, false);
+				
+				// Create a semantic type object
+				SemanticType type = new SemanticType(hNode.getId(), propertyLabel, internalNodeLabel, SemanticType.Origin.User, 1.0,false);
+				worksheet.getSemanticTypes().addType(type);
 			} else {
 				// User-defined: do nothing
 			}

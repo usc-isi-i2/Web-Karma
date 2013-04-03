@@ -41,6 +41,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.vocabulary.XSD;
 
 import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 
@@ -64,15 +65,17 @@ public class AutoOntology {
 			dp.addDomain(topClass);
 			dp.addRange(XSD.xstring);
 		}
-		ObjectProperty op = autoOntology.createObjectProperty(ns);
+		
+		OntClass thingClass = autoOntology.createClass(Uris.THING_URI);
+		ObjectProperty op = autoOntology.createObjectProperty(ns + "relatedTo");
 		op.addDomain(topClass);
-		//op.addRange(null);
+//		op.addRange(thingClass);
 		
 		Writer outUTF8 =null;
 		try {
 			outUTF8 = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(path), "UTF8"));
-			autoOntology.write(outUTF8, "N3");
+			autoOntology.write(outUTF8, null);
 			outUTF8.flush();
 			outUTF8.close();
 		} catch (UnsupportedEncodingException e) {
