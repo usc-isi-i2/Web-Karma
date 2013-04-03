@@ -4,10 +4,6 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
-  	<context-param>
-		<param-name>AUTO_MODEL_URI</param-name>
-		<param-value>http://www.isi.edu/karma/automodel/AutoModel_</param-value>
-	</context-param>
 	<context-param>
 		<param-name>PUBLIC_KML_ADDRESS</param-name>
 		<param-value>http://128.9.216.81:9999/KML/</param-value>
@@ -22,11 +18,23 @@
 	</context-param>
 	<context-param>
 		<param-name>SRID_CLASS</param-name>
-		<param-value>http://www.opengis.net/gml/SpatialReferenceSystem</param-value>
+		<param-value>SpatialReferenceSystem</param-value>
 	</context-param>
 	<context-param>
 		<param-name>SRID_PROPERTY</param-name>
-		<param-value>http://www.opengis.net/gml/hasID</param-value>
+		<param-value>hasSRID</param-value>
+	</context-param>
+		<context-param>
+		<param-name>KML_CUSTOMIZATION_CLASS</param-name>
+		<param-value>KMLCustomization</param-value>
+	</context-param>
+	<context-param>
+		<param-name>KML_CATEGORY_PROPERTY</param-name>
+		<param-value>hasKMLCategory</param-value>
+	</context-param>
+	<context-param>
+		<param-name>KML_LABEL_PROPERTY</param-name>
+		<param-value>hasKMLLabel</param-value>
 	</context-param>
 	<context-param>
 		<param-name>WGS84_LAT_PROPERTY</param-name>

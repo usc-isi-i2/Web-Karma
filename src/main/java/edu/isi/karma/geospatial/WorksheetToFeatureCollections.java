@@ -22,6 +22,7 @@
 package edu.isi.karma.geospatial;
 
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -78,6 +79,8 @@ import de.micromata.opengis.kml.v_2_2_0.KmlFactory;
 import de.micromata.opengis.kml.v_2_2_0.LinearRing;
 import de.micromata.opengis.kml.v_2_2_0.Placemark;
 import de.micromata.opengis.kml.v_2_2_0.Style;
+import de.micromata.opengis.kml.v_2_2_0.LookAt;
+import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
@@ -97,17 +100,45 @@ public class WorksheetToFeatureCollections {
 	List<SimpleFeature> polygonFeatureList = new ArrayList<SimpleFeature>();
 	List<AttributeDescriptor> featureSchema = new ArrayList<AttributeDescriptor>();
 	List<String> geomHNodeIdList = new ArrayList<String>();
+	List<String> modeledHNodeIds = new ArrayList<String>();
 
+	private HashMap<String, String> kmlStyles = new HashMap<String, String>();
+	private int kmlStylesCounter = 0;
+	private String[] kmlPushPings = { "http://maps.google.com/mapfiles/kml/pushpin/blue-pushpin.png",
+			"http://maps.google.com/mapfiles/kml/pushpin/grn-pushpin.png",
+			"http://maps.google.com/mapfiles/kml/pushpin/ltblu-pushpin.png",
+			"http://maps.google.com/mapfiles/kml/pushpin/pink-pushpin.png",
+			"http://maps.google.com/mapfiles/kml/pushpin/purple-pushpin.png",
+			"http://maps.google.com/mapfiles/kml/pushpin/red-pushpin.png",
+			"http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png",
+			"http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png"
+	};
+	private String[] kmlColors = {"641400FF",
+			"641478FF","6414F0FF","6478FF3C","6478FFB4",
+			"64FF7800","64FF7878","64FF78B4","64FF78F0","64B4FF14","64F0FF14"};
+			
 	private String SRIDHNodeId = "";
 	private String pointFeatureHNodeId = "";
 	private String pointFeatureLatHNodeId = "";
 	private String pointFeatureLonHNodeId = "";
 	private String lineFeatureHNodeId = "";
 	private String polygonFeatureHNodeId = "";
+	private String kmlCategoryHNodeId = "";
+	private String kmlCategoryColumnName = "";
+	private String kmlLabelHNodeId = "";
+	private String kmlLabelColumnName = "";
 	private String zippedSpatialDataFolderAndName = "";
-
-	private static String SRID_PROPERTY = ServletContextParameterMap
+	
+	private double kmlLookAtX = 0;
+	private double kmlLookAtY = 0;
+    private int featureCounter = 0;
+    
+	private static String SRID_PROPERTY = Namespaces.GEOSPATIAL + ServletContextParameterMap
 			.getParameterValue(ContextParameter.SRID_PROPERTY);
+	private static String KML_CATEGORY_PROPERTY = Namespaces.GEOSPATIAL + ServletContextParameterMap
+			.getParameterValue(ContextParameter.KML_CATEGORY_PROPERTY);
+	private static String KML_LABEL_PROPERTY = Namespaces.GEOSPATIAL + ServletContextParameterMap
+			.getParameterValue(ContextParameter.KML_LABEL_PROPERTY);
 	private static String WGS84_LAT_PROPERTY = ServletContextParameterMap
 			.getParameterValue(ContextParameter.WGS84_LAT_PROPERTY);
 	private static String WGS84_LNG_PROPERTY = ServletContextParameterMap
@@ -116,8 +147,10 @@ public class WorksheetToFeatureCollections {
 			.getParameterValue(ContextParameter.POINT_POS_PROPERTY);
 	private static String POS_LIST_PROPERTY = ServletContextParameterMap
 			.getParameterValue(ContextParameter.POS_LIST_PROPERTY);
-	private static String SRID_CLASS = ServletContextParameterMap
+	private static String SRID_CLASS = Namespaces.GEOSPATIAL + ServletContextParameterMap
 			.getParameterValue(ContextParameter.SRID_CLASS);
+	private static String KML_CUSTOMIZATION_CLASS = Namespaces.GEOSPATIAL + ServletContextParameterMap
+			.getParameterValue(ContextParameter.KML_CUSTOMIZATION_CLASS);
 	private static String POINT_CLASS = ServletContextParameterMap
 			.getParameterValue(ContextParameter.POINT_CLASS);
 	private static String LINE_CLASS = ServletContextParameterMap
@@ -149,139 +182,105 @@ public class WorksheetToFeatureCollections {
 		return isSub;
 	}
 
+	private boolean hasType(SemanticType type, String property, String domain) {
+		String typeURI = type.getType().getUri();
+		String domainURI = type.getDomain().getUri();
+		if ((typeURI.equals(property) && domainURI.equals(domain))
+				|| (isSubPropertyOf(typeURI, property, true) && isSubClassOf(
+						domainURI, domain, true)))
+			return true;
+		else
+			return false;
+	}
+	
 	private void prepareFeatureSchema() {
 		List<String> spatialHNodeIds = new ArrayList<String>();
 
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
-			if (type.getType().getUri().equals(SRID_PROPERTY)
-					&& type.getDomain().getUri().equals(SRID_CLASS)) {
+			/*
+			System.out.println("PROPERTY:"
+					+ type.getType().getUri().toString());
+			System.out.println("CLASS:"
+					+ type.getDomain().getUri().toString());*/
+			
+			if(hasType(type,SRID_PROPERTY,SRID_CLASS)) {
 				SRIDHNodeId = type.getHNodeId();
 				spatialHNodeIds.add(0, SRIDHNodeId);
-			} else if (isSubPropertyOf(
-					type.getType().getUri().toString(),
-					"http://www.opengis.net/gml/hasID", true)
-					&& isSubClassOf(type.getDomain().getUri().toString(),
-							SRID_CLASS, true)) {
-				System.out.println("POS_LIST_PROPERTY:"
-						+ type.getType().getUri().toString());
-				SRIDHNodeId = type.getHNodeId();
-				spatialHNodeIds.add(0, SRIDHNodeId);
-			} else if (type.getType().getUri().equals(POINT_POS_PROPERTY)
-					&& type.getDomain().getUri().equals(POINT_CLASS)
+			} else if (hasType(type,POINT_POS_PROPERTY,POINT_CLASS)
 					&& pointFeatureHNodeId == "") {
 				spatialHNodeIds.add(0, type.getHNodeId());
 				pointFeatureHNodeId = type.getHNodeId();
-			} else if (isSubPropertyOf(
-					type.getType().getUri().toString(),
-					"http://www.opengis.net/gml/pos", true)
-					&& isSubClassOf(type.getDomain().getUri().toString(),
-							POINT_CLASS, true)) {
-				System.out.println("POS_LIST_PROPERTY:"
-						+ type.getType().getUri().toString());
-				spatialHNodeIds.add(0, type.getHNodeId());
-				pointFeatureHNodeId = type.getHNodeId();
-			}
-			
-			else if (type.getType().getUri().equals(WGS84_LAT_PROPERTY)
-					&& type.getDomain().getUri().equals(POINT_CLASS)
+			} else if (hasType(type,WGS84_LAT_PROPERTY,POINT_CLASS)
 					&& pointFeatureLatHNodeId == "") {
 				spatialHNodeIds.add(0, type.getHNodeId());
 				pointFeatureLatHNodeId = type.getHNodeId();
-			}  else if (isSubPropertyOf(
-					type.getType().getUri().toString(),
-					"http://www.w3.org/2003/01/geo/wgs84_pos#lat", true)
-					&& isSubClassOf(type.getDomain().getUri().toString(),
-							POINT_CLASS, true) && pointFeatureLatHNodeId == "") {
-				System.out.println("WGS84_LAT_PROPERTY:"
-						+ type.getType().getUri().toString());
-				spatialHNodeIds.add(0, type.getHNodeId());
-				pointFeatureLatHNodeId = type.getHNodeId();
-			}else if (isSubPropertyOf(
-					type.getType().getUri().toString(),
-					"http://www.w3.org/2003/01/geo/wgs84_pos#long", true)
-					&& isSubClassOf(type.getDomain().getUri().toString(),
-							POINT_CLASS, true) && pointFeatureLonHNodeId == "") {
-				System.out.println("WGS84_LNG_PROPERTY:"
-						+ type.getType().getUri().toString());
-				spatialHNodeIds.add(0, type.getHNodeId());
-				pointFeatureLonHNodeId = type.getHNodeId();
-			}else if (type.getType().getUri().equals(WGS84_LNG_PROPERTY)
-					&& type.getDomain().getUri().equals(POINT_CLASS)
+			} else if (hasType(type,WGS84_LNG_PROPERTY,POINT_CLASS)
 					&& pointFeatureLonHNodeId == "") {
 				spatialHNodeIds.add(0, type.getHNodeId());
 				pointFeatureLonHNodeId = type.getHNodeId();
-			} else if (type.getType().getUri().equals(POS_LIST_PROPERTY)
-					&& type.getDomain().getUri().equals(LINE_CLASS)
+			} else if (hasType(type,POS_LIST_PROPERTY,LINE_CLASS)
 					&& lineFeatureHNodeId == "") {
 				spatialHNodeIds.add(0, type.getHNodeId());
 				lineFeatureHNodeId = type.getHNodeId();
-			} else if (isSubPropertyOf(
-					type.getType().getUri().toString(),
-					"http://www.opengis.net/gml/posList", true)
-					&& isSubClassOf(type.getDomain().getUri().toString(),
-							LINE_CLASS, true) && lineFeatureHNodeId == "") {
-				System.out.println("POS_LIST_PROPERTY:"
-						+ type.getType().getUri().toString());
-				spatialHNodeIds.add(0, type.getHNodeId());
-				lineFeatureHNodeId = type.getHNodeId();
-
-			} else if (type.getType().getUri().equals(POS_LIST_PROPERTY)
-					&& type.getDomain().getUri().equals(POLYGON_CLASS)
+			} else if (hasType(type,POS_LIST_PROPERTY,POLYGON_CLASS)
 					&& polygonFeatureHNodeId == "") {
 				spatialHNodeIds.add(0, type.getHNodeId());
 				polygonFeatureHNodeId = type.getHNodeId();
-			} else if (isSubPropertyOf(
-					type.getType().getUri().toString(),
-					"http://www.opengis.net/gml/posList", true)
-					&& isSubClassOf(type.getDomain().getUri().toString(),
-							POLYGON_CLASS, true) && polygonFeatureHNodeId == "") {
-				System.out.println("POS_LIST_PROPERTY:"
-						+ type.getType().getUri().toString());
-				spatialHNodeIds.add(0, type.getHNodeId());
-				polygonFeatureHNodeId = type.getHNodeId();
+			} else if (hasType(type, KML_CATEGORY_PROPERTY,KML_CUSTOMIZATION_CLASS)) {
+				kmlCategoryHNodeId = type.getHNodeId();
+			} else if (hasType(type, KML_LABEL_PROPERTY,KML_CUSTOMIZATION_CLASS)) {
+				kmlLabelHNodeId = type.getHNodeId();
 			}
+			modeledHNodeIds.add(0,type.getHNodeId());
 		}
 
-		if (spatialHNodeIds.size() > 1) {
+		if (spatialHNodeIds.size() > 0) { // for shapefiles
 			List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
 			worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
 			for (HNode hNode : sortedLeafHNodes) {
-				if (!spatialHNodeIds.contains(hNode.getId())) {
+				
+				if (modeledHNodeIds.contains(hNode.getId())&&
+						(!spatialHNodeIds.contains(hNode.getId())||hNode.getId().equals(kmlCategoryHNodeId)||hNode.getId().equals(kmlLabelHNodeId))) {
 					AttributeTypeBuilder build = new AttributeTypeBuilder();
 					build.setNillable(true);
 					build.setBinding(String.class); // might need to change to
-													// specific bindings
+													// specific bindings for sythetic data types
 					AttributeDescriptor descriptor = build
 							.buildDescriptor(hNode.getColumnName());
 					featureSchema.add(descriptor);
 					geomHNodeIdList.add(hNode.getId());
+					
+					if(hNode.getId()==kmlCategoryHNodeId)
+						kmlCategoryColumnName = hNode.getColumnName();
+					if(hNode.getId()==kmlLabelHNodeId)
+						kmlLabelColumnName = hNode.getColumnName();
 				}
 			}
 		}
 
-		if (spatialHNodeIds.size() > 1) { // has spatial data
+		if (spatialHNodeIds.size() > 0) { // has spatial data
 			if (pointFeatureHNodeId != "")
 				populateSimpleFeatures(spatialHNodeIds, pointFeatureHNodeId,
-						"", getRows(), getColumnMap(), pointFeatureList,
+						"", getRows(), pointFeatureList,
 						Point.class);
 			if (pointFeatureLatHNodeId != "" && pointFeatureLonHNodeId != "")
 				populateSimpleFeatures(spatialHNodeIds, pointFeatureLonHNodeId,
-						pointFeatureLatHNodeId, getRows(), getColumnMap(),
+						pointFeatureLatHNodeId, getRows(), 
 						pointFeatureList, Point.class);
 			if (lineFeatureHNodeId != "")
 				populateSimpleFeatures(spatialHNodeIds, lineFeatureHNodeId, "",
-						getRows(), getColumnMap(), lineFeatureList,
+						getRows(),  lineFeatureList,
 						LineString.class);
 			if (polygonFeatureHNodeId != "")
 				populateSimpleFeatures(spatialHNodeIds, polygonFeatureHNodeId,
-						"", getRows(), getColumnMap(), polygonFeatureList,
+						"", getRows(),  polygonFeatureList,
 						Polygon.class);
 		}
 	}
 
 	private void populateSimpleFeatures(List<String> spatialHNodeIds,
 			String geometryHNodeId, String geometry2HNodeId,
-			ArrayList<Row> rows, Map<String, String> columnNameMap,
+			ArrayList<Row> rows,
 			List<SimpleFeature> features, Class binding) {
 
 		for (Row row : rows) {
@@ -295,7 +294,7 @@ public class WorksheetToFeatureCollections {
 					// WKBReader wkbreader = new WKBReader();
 					// byte[] wkbPosList = WKBReader.hexToBytes(posList);
 					// JTSGeometry = wkbreader.read(wkbPosList);
-				} else {
+				} else { // lat and lng case
 					String lon = row.getNode(geometryHNodeId).getValue()
 							.asString();
 					String lat = row.getNode(geometry2HNodeId).getValue()
@@ -315,7 +314,10 @@ public class WorksheetToFeatureCollections {
 				if (JTSGeometry == null)
 					continue;
 
-				String srid = row.getNode(SRIDHNodeId).getValue().asString();
+				String srid="";
+				if(SRIDHNodeId!="") srid= row.getNode(SRIDHNodeId).getValue().asString();
+				else srid = "4326"; //default to WGS84
+				
 				if (!srid.contains(":"))
 					srid = "EPSG:" + srid;
 				CoordinateReferenceSystem sourceCRS = null;
@@ -361,20 +363,56 @@ public class WorksheetToFeatureCollections {
 		return worksheet.getDataTable().getRows(0, numRows);
 	}
 
-	private Map<String, String> getColumnMap() {
-		List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
-		worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
-		Map<String, String> columnNameMap = new HashMap<String, String>();
-		for (HNode hNode : sortedLeafHNodes) {
-			columnNameMap.put(hNode.getId(), hNode.getColumnName());
-		}
-		return columnNameMap;
-	}
-
 	public String getZippedSpatialDataPath() {
 		return zippedSpatialDataFolderAndName;
 	}
 
+	public String SaveSpatialDataAndReturnKMLString() throws Exception {
+		String spatialDataFolder = new RandomGUID().toString();
+		String fileName = worksheet.getTitle();
+		fileName = fileName.substring(0, fileName.length() - 4);
+		zippedSpatialDataFolderAndName = spatialDataFolder + "/" + fileName
+				+ ".zip";
+		spatialDataFolder = ServletContextParameterMap
+				.getParameterValue(ContextParameter.USER_DIRECTORY_PATH)
+				+ "publish/SpatialData/" + spatialDataFolder + "/";
+		File dir = new File(spatialDataFolder);
+		dir.mkdir();
+
+		File kml = publishKML(spatialDataFolder, fileName);
+		if (pointFeatureHNodeId != ""
+				|| (pointFeatureLatHNodeId != "" && pointFeatureLonHNodeId != ""))
+			saveShapefile(pointFeatureList, spatialDataFolder, fileName
+					+ "_point");
+		if (lineFeatureHNodeId != "")
+			saveShapefile(lineFeatureList, spatialDataFolder, fileName
+					+ "_line");
+		if (polygonFeatureHNodeId != "")
+			saveShapefile(polygonFeatureList, spatialDataFolder, fileName
+					+ "_polygon");
+
+		saveSpatialDataToZip(spatialDataFolder, fileName);
+		return fileToString(kml);
+	}
+	 public String fileToString(File f) {
+	        String result = null;
+	        DataInputStream in = null;
+
+	        try {
+	            byte[] buffer = new byte[(int) f.length()];
+	            in = new DataInputStream(new FileInputStream(f));
+	            in.readFully(buffer);
+	            result = new String(buffer);
+	        } catch (IOException e) {
+	            throw new RuntimeException("IO problem in fileToString", e);
+	        } finally {
+	            try {
+	                in.close();
+	            } catch (IOException e) { /* ignore it */
+	            }
+	        }
+	        return result;
+	    }
 	public File SaveSpatialData() throws Exception {
 		String spatialDataFolder = new RandomGUID().toString();
 		String fileName = worksheet.getTitle();
@@ -402,7 +440,6 @@ public class WorksheetToFeatureCollections {
 		saveSpatialDataToZip(spatialDataFolder, fileName);
 		return kml;
 	}
-
 	public File saveShapefile(List<SimpleFeature> features,
 			String spatialDataFolder, String fileName)
 			throws FileNotFoundException, Exception {
@@ -475,6 +512,25 @@ public class WorksheetToFeatureCollections {
 		return outputFile;
 	}
 
+	public String getKMLStyle(String label, Folder folder) {
+		if(kmlStyles.containsKey(label))
+			return (String)kmlStyles.get(label);
+		
+		int pushpingLinkCounter = kmlStylesCounter%kmlPushPings.length;
+		int colorCounter = kmlStylesCounter%kmlColors.length;
+		
+		Style style = folder.createAndAddStyle().withId(String.valueOf(kmlStylesCounter));
+		style.createAndSetIconStyle()
+				.withScale(1.399999976158142)
+				.withIcon(
+						new Icon()
+								.withHref(kmlPushPings[pushpingLinkCounter]));
+		style.createAndSetLineStyle().withColor(kmlColors[colorCounter]).withWidth(2);
+		style.createAndSetPolyStyle().withColor(kmlColors[colorCounter]);
+		kmlStyles.put(label,String.valueOf(kmlStylesCounter));
+		kmlStylesCounter++;
+		return String.valueOf(kmlStylesCounter-1);
+	}
 	public File publishKML(String spatialDataFolder, String fileName)
 			throws IOException {
 		File outputFile = new File(spatialDataFolder + fileName + ".kml");
@@ -482,7 +538,10 @@ public class WorksheetToFeatureCollections {
 		final Kml kml = KmlFactory.createKml();
 		final Folder folder = kml.createAndSetFolder()
 				.withName(worksheet.getTitle()).withOpen(true);
-
+		LookAt lookat = new LookAt();
+		
+		folder.setAbstractView(lookat);
+		/*
 		Style style = folder.createAndAddStyle().withId("karma");
 		style.createAndSetIconStyle()
 				.withScale(1.399999976158142)
@@ -491,9 +550,9 @@ public class WorksheetToFeatureCollections {
 								.withHref("http://maps.google.com/mapfiles/ms/icons/blue-pushpin.png"));
 		style.createAndSetLineStyle().withColor("501400FF").withWidth(2);
 		style.createAndSetPolyStyle().withColor("5014F000");
-
+		 */
 		for (SimpleFeature pointFeature : pointFeatureList) {
-
+			
 			CoordinateReferenceSystem sourceCRS = pointFeature.getType()
 					.getCoordinateReferenceSystem();
 			CoordinateReferenceSystem targetCRS = null;
@@ -519,12 +578,19 @@ public class WorksheetToFeatureCollections {
 			 * (MismatchedDimensionException e) { e.printStackTrace(); } catch
 			 * (TransformException e) { e.printStackTrace(); }
 			 */
+			String name = (String)pointFeature.getAttribute(kmlCategoryColumnName);
+			if(name==null) name="";
 			String htmlDescription = getHTMLDescription(pointFeature);
-			folder.createAndAddPlacemark().withDescription(htmlDescription)
-					.withVisibility(true).withStyleUrl("#karma")
+			String styleID = getKMLStyle(name,folder);
+			String label = (String)pointFeature.getAttribute(kmlLabelColumnName);
+			folder.createAndAddPlacemark().withName(label).withDescription(htmlDescription)
+					.withVisibility(true).withStyleUrl("#"+styleID)
 					.createAndSetPoint()
 					.withAltitudeMode(AltitudeMode.CLAMP_TO_GROUND)
 					.addToCoordinates(p.getX() + "," + p.getY());
+			featureCounter++;
+			kmlLookAtX+=p.getX();
+			kmlLookAtY+=p.getY();
 		}
 		for (SimpleFeature lineFeature : lineFeatureList) {
 			String htmlDescription = getHTMLDescription(lineFeature);
@@ -546,14 +612,23 @@ public class WorksheetToFeatureCollections {
 							sourceCRS, targetCRS);
 
 			List<de.micromata.opengis.kml.v_2_2_0.Coordinate> coordsList = new ArrayList<de.micromata.opengis.kml.v_2_2_0.Coordinate>();
+			double pointX=0, pointY=0;
 			for (int i = 0; i < line.getNumPoints(); i++) {
-
 				de.micromata.opengis.kml.v_2_2_0.Coordinate coord = new de.micromata.opengis.kml.v_2_2_0.Coordinate(
 						line.getPointN(i).getX(), line.getPointN(i).getY());
 				coordsList.add(coord);
+				pointX+=line.getPointN(i).getX();
+				pointY+=line.getPointN(i).getY();
 			}
-			folder.createAndAddPlacemark().withDescription(htmlDescription)
-					.withVisibility(true).withStyleUrl("karma")
+			featureCounter++;
+			kmlLookAtX+=pointX/line.getNumPoints();
+			kmlLookAtY+=pointY/line.getNumPoints();
+			String name = (String)lineFeature.getAttribute(kmlCategoryColumnName);
+			if(name==null) name="";
+			String styleID = getKMLStyle(name,folder);
+			String label = (String)lineFeature.getAttribute(kmlLabelColumnName);
+			folder.createAndAddPlacemark().withName(label).withDescription(htmlDescription)
+					.withVisibility(true).withStyleUrl("#"+styleID)
 					.createAndSetLineString()
 					.withAltitudeMode(AltitudeMode.CLAMP_TO_GROUND)
 					.setCoordinates(coordsList);
@@ -577,10 +652,13 @@ public class WorksheetToFeatureCollections {
 			Polygon polygon = (Polygon) SpatialReferenceSystemTransformationUtil
 					.Transform((Geometry) polygonFeature.getAttribute("GEOM"),
 							sourceCRS, targetCRS);
-
-			Placemark placemark = folder.createAndAddPlacemark()
+			String name = (String)polygonFeature.getAttribute(kmlCategoryColumnName);
+			if(name==null) name="";
+			String styleID = getKMLStyle(name,folder);
+			String label = (String)polygonFeature.getAttribute(kmlLabelColumnName);
+			Placemark placemark = folder.createAndAddPlacemark().withName(label)
 					.withDescription(htmlDescription).withVisibility(true)
-					.withStyleUrl("karma");
+					.withStyleUrl("#"+styleID);
 
 			final de.micromata.opengis.kml.v_2_2_0.Polygon kmlPolygon = new de.micromata.opengis.kml.v_2_2_0.Polygon();
 			placemark.setGeometry(kmlPolygon);
@@ -596,10 +674,15 @@ public class WorksheetToFeatureCollections {
 
 			List<de.micromata.opengis.kml.v_2_2_0.Coordinate> outercoord = new ArrayList<de.micromata.opengis.kml.v_2_2_0.Coordinate>();
 			outerlinearring.setCoordinates(outercoord);
+			double pointX=0, pointY=0;
+			int pointCounter=0;
 			for (int i = 0; i < polygon.getExteriorRing().getNumPoints(); i++) {
 				outercoord.add(new de.micromata.opengis.kml.v_2_2_0.Coordinate(
 						polygon.getExteriorRing().getPointN(i).getX(), polygon
 								.getExteriorRing().getPointN(i).getY()));
+				pointX+=polygon.getExteriorRing().getPointN(i).getX();
+				pointY+=polygon.getExteriorRing().getPointN(i).getY();
+				pointCounter++;
 			}
 			int numOfInnerBoundaries = polygon.getNumInteriorRing();
 			for (int i = 0; i < numOfInnerBoundaries; i++) {
@@ -612,15 +695,33 @@ public class WorksheetToFeatureCollections {
 				List<de.micromata.opengis.kml.v_2_2_0.Coordinate> innercoord = new ArrayList<de.micromata.opengis.kml.v_2_2_0.Coordinate>();
 				innerlinearring.setCoordinates(innercoord);
 				int numOfPoints = polygon.getInteriorRingN(i).getNumPoints();
-				for (int j = 0; j < numOfPoints; j++)
+				for (int j = 0; j < numOfPoints; j++) {
 					innercoord
 							.add(new de.micromata.opengis.kml.v_2_2_0.Coordinate(
 									polygon.getInteriorRingN(i).getPointN(j)
 											.getX(), polygon
 											.getInteriorRingN(i).getPointN(j)
 											.getY()));
+					
+					pointX += polygon.getInteriorRingN(i).getPointN(i)
+							.getX();
+					pointY += polygon.getInteriorRingN(i).getPointN(i)
+							.getY();
+					pointCounter++;
+				}
 			}
+			featureCounter++;
+			kmlLookAtX+=pointX/pointCounter;
+			kmlLookAtY+=pointY/pointCounter;
 		}
+		lookat.setLongitude(kmlLookAtX/featureCounter);
+		lookat.setLatitude(kmlLookAtY/featureCounter);
+		//lookat.setAltitude(2000.0d);
+		lookat.setRange(1000.0);
+		lookat.setTilt(45.0);
+		lookat.setHeading(0.0);
+		lookat.setAltitudeMode(AltitudeMode.CLAMP_TO_GROUND);
+		
 		final StringWriter out = new StringWriter();
 		kml.marshal(out);
 		String test = out.toString();
@@ -644,10 +745,10 @@ public class WorksheetToFeatureCollections {
 		StringBuilder str = new StringBuilder();
 		for (Property property : simpleFeature.getProperties()) {
 			str.append("<b>" + property.getName() + "</b>: ");
-			if(property.getValue()!=null)
-				str.append( property.getValue().toString() + " <br />");
+			if (property.getValue() != null)
+				str.append(property.getValue().toString() + " <br />");
 			else
-				str.append( " <br />");
+				str.append(" <br />");
 		}
 		return str.toString();
 	}

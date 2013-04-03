@@ -95,14 +95,14 @@ public class PublishKMLLayerCommand extends Command {
 		}
 
 		try {
-			final File file = geo.SaveSpatialData();
-			final String zippedSpatialDataPath = geo.getZippedSpatialDataPath();
+			//final File file = geo.SaveSpatialData();
 			// Transfer the file to a public server
-			final String kmlFileName = new RandomGUID().toString();
-			final boolean transfer = transferFileToPublicServer(kmlFileName,file);
-			if (!transfer) {
-				logger.error("Published KML file could not be moved to a public server to display on Google Maps!");
-			}
+			final String kmlFileName = geo.SaveSpatialDataAndReturnKMLString();//new RandomGUID().toString(); // save this line for using networkLink in GE plugin (see geospatial.js)
+			final String zippedSpatialDataPath = geo.getZippedSpatialDataPath();
+			final boolean transfer = true;//transferFileToPublicServer(kmlFileName,file); // save this line for using networkLink in GE plugin (see geospatial.js)
+			//if (!transfer) { // save this line for using networkLink in GE plugin (see geospatial.js)
+			//	logger.error("Published KML file could not be moved to a public server to display on Google Maps!");
+			//}
 
 			return new UpdateContainer(new AbstractUpdate() {
 				@Override
@@ -113,7 +113,8 @@ public class PublishKMLLayerCommand extends Command {
 						outputObject.put(JsonKeys.updateType.name(),
 								"PublishKMLUpdate");
 						outputObject.put(JsonKeys.fileName.name(),
-								publicKMLAddress + kmlFileName+".kml");
+								kmlFileName);
+								//publicKMLAddress + kmlFileName+".kml"); // save this line for using networkLink in GE plugin (see geospatial.js)
 						outputObject.put(JsonKeys.transferSuccessful.name(),
 								transfer);
 						outputObject.put(JsonKeys.localFileName.name(),

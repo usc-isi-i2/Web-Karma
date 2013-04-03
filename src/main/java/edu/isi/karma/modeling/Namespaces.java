@@ -34,6 +34,7 @@ public interface Namespaces {
 	public static final String RULEML = "http://www.w3.org/2003/11/ruleml#";
 	public static final String SWRL = "http://www.w3.org/2003/11/swrl#";
 	public static final String KARMA = "http://isi.edu/integration/karma/ontologies/model/current#";
+	public static final String GEOSPATIAL = KARMA+"geospatial/";
 	public static final String EXAMPLE = "http://example.com#";
 	public static final String KARMA_DEV = "http://isi.edu/integration/karma/dev#";
 

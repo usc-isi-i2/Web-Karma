@@ -33,16 +33,16 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.hp.hpl.jena.ontology.DatatypeProperty;
+import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.vocabulary.XSD;
 
+import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class AutoOntology {
 	static Logger logger = Logger.getLogger(AutoOntology.class.getName());
@@ -52,25 +52,27 @@ public class AutoOntology {
 		this.worksheet = worksheet;
 	}
 	public void Build(String path) throws IOException {
-		String autoModelURI = ServletContextParameterMap
-				.getParameterValue(ContextParameter.AUTO_MODEL_URI);
 		
 		List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
 		worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
 		OntModel autoOntology = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM );
-		String ns = autoModelURI+worksheet.getTitle()+"#";
-		OntClass topClass = autoOntology.createClass( ns + worksheet.getTitle());
+		String ns = Namespaces.KARMA;
+		autoOntology.setNsPrefix("karma", ns);
+		OntClass topClass = autoOntology.createClass( ns + worksheet.getTitle().replaceAll(" ", "_")); // replace blank spaces with undrscore
 		for (HNode hNode : sortedLeafHNodes){
-			DatatypeProperty dp = autoOntology.createDatatypeProperty(ns+hNode.getColumnName());
+			DatatypeProperty dp = autoOntology.createDatatypeProperty(ns+hNode.getColumnName().trim().replaceAll(" ", "_"));
 			dp.addDomain(topClass);
 			dp.addRange(XSD.xstring);
 		}
+		ObjectProperty op = autoOntology.createObjectProperty(ns);
+		op.addDomain(topClass);
+		//op.addRange(null);
 		
 		Writer outUTF8 =null;
 		try {
 			outUTF8 = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(path), "UTF8"));
-			autoOntology.write(outUTF8);
+			autoOntology.write(outUTF8, "N3");
 			outUTF8.flush();
 			outUTF8.close();
 		} catch (UnsupportedEncodingException e) {

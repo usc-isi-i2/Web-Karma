@@ -21,25 +21,16 @@
 
 package edu.isi.karma.imp.mdb;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -50,7 +41,6 @@ import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.ImportFilter;
 import com.healthmarketscience.jackcess.ImportUtil;
 import com.healthmarketscience.jackcess.SimpleImportFilter;
-import com.healthmarketscience.jackcess.Table;
 import com.healthmarketscience.jackcess.TableBuilder;
 
 public class MDBFileExport {
@@ -62,7 +52,6 @@ public class MDBFileExport {
 	}
 	public String publishMDB(String csvFileName) throws FileNotFoundException {
 		String outputFile = "publish/MDB/" + worksheet.getTitle() + ".mdb";
-		String outputCSVFile = "publish/CSV/" + worksheet.getTitle() + ".csv";
 		logger.info("MDB file exported. Location:"
 				+ outputFile);
 
@@ -73,10 +62,9 @@ public class MDBFileExport {
 		Database db;
 		try {
 			db = Database.create(new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH)+outputFile));
-			Table newTable;
+			
 			TableBuilder tb = new TableBuilder(worksheet.getTitle().replaceAll("\\.", "_"));
 			
-			ArrayList<Row> rows =  worksheet.getDataTable().getRows(0, numRows);
 			List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
 			List<String> hNodeIdList = new ArrayList<String>();
 			worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
@@ -86,7 +74,7 @@ public class MDBFileExport {
 				hNodeIdList.add(hNode.getId());
 			}
 			
-			newTable = tb.toTable(db);
+			tb.toTable(db);
 			
 			ImportFilter _filter = SimpleImportFilter.INSTANCE;
 			ImportUtil.importFile(new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +csvFileName),
