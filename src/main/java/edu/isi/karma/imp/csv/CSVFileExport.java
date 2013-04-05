@@ -29,6 +29,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -51,7 +53,11 @@ public class CSVFileExport {
 		String outputFile = "publish/CSV/" + worksheet.getTitle() + ".csv";
 		logger.info("CSV file exported. Location:"
 				+ outputFile);
-
+		HashMap<String, String> modeledColumnTable = new HashMap<String, String>();
+		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
+			modeledColumnTable.put(type.getHNodeId(),"");
+		}
+		if(modeledColumnTable.size()==0) return null;
 		int numRows = worksheet.getDataTable().getNumRows();
 		if(numRows==0) 
 			return "";
@@ -61,10 +67,12 @@ public class CSVFileExport {
 		List<String> hNodeIdList = new ArrayList<String>();
 		worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
 		for (HNode hNode : sortedLeafHNodes) {
-			if(sb.length()!=0)
-				sb.append(",");
-			sb.append(hNode.getColumnName());
-			hNodeIdList.add(hNode.getId());
+			if(modeledColumnTable.containsKey(hNode.getId())) {
+				if (sb.length() != 0)
+					sb.append(",");
+				sb.append(hNode.getColumnName());
+				hNodeIdList.add(hNode.getId());
+			}
 		}
 		sb.append("\n");
 		for (Row row : rows) {

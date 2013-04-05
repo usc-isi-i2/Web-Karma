@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -55,6 +57,10 @@ public class MDBFileExport {
 		logger.info("MDB file exported. Location:"
 				+ outputFile);
 
+		HashMap<String, String> modeledColumnTable = new HashMap<String, String>();
+		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
+			modeledColumnTable.put(type.getHNodeId(),"");
+		}
 		int numRows = worksheet.getDataTable().getNumRows();
 		if(numRows==0) 
 			return "";
@@ -69,9 +75,14 @@ public class MDBFileExport {
 			List<String> hNodeIdList = new ArrayList<String>();
 			worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
 			for (HNode hNode : sortedLeafHNodes) {
-				tb.addColumn(new ColumnBuilder(hNode.getColumnName()).setType(DataType.MEMO)
-						.toColumn());
-				hNodeIdList.add(hNode.getId());
+				if (modeledColumnTable.containsKey(hNode.getId())) {
+					String columnName = hNode.getColumnName();
+					if (columnName.equals(""))
+						columnName = "NA";
+					tb.addColumn(new ColumnBuilder(columnName).setType(
+							DataType.MEMO).toColumn());
+					hNodeIdList.add(hNode.getId());
+				}
 			}
 			
 			tb.toTable(db);

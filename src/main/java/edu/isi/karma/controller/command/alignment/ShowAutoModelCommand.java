@@ -102,8 +102,6 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
 		if(ontMgr.isEmpty())
 			return new UpdateContainer(new ErrorUpdate("No ontology loaded."));
-		
-	
 //SemanticTypeUtil.computeSemanticTypesForAutoModel(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
 
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);

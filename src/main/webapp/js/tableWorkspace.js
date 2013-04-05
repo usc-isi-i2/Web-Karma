@@ -57,6 +57,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                     //alert(xhr.responseText);
                     var json = $.parseJSON(xhr.responseText);
                     parse(json);
+                    hideLoading(info["vWorksheetId"]);
                 },
             error :
                 function (xhr, textStatus) {
@@ -84,6 +85,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                     //alert(xhr.responseText);
                     var json = $.parseJSON(xhr.responseText);
                     parse(json);
+                    hideLoading(info["vWorksheetId"]);
                 },
             error :
                 function (xhr, textStatus) {

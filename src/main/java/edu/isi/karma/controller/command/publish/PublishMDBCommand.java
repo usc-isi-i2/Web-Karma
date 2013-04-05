@@ -32,6 +32,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.imp.csv.CSVFileExport;
 import edu.isi.karma.imp.mdb.MDBFileExport;
@@ -83,6 +84,9 @@ public class PublishMDBCommand extends Command {
 
 		try {
 			final String csvFileName = csvFileExport.publishCSV();
+			if(csvFileName == null)
+				return new UpdateContainer(new ErrorUpdate(
+						"No data to export! Have you aligned the worksheet?"));
 			final String fileName = mdbFileExport.publishMDB(csvFileName);
 
 			return new UpdateContainer(new AbstractUpdate() {
