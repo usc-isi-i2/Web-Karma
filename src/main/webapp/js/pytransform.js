@@ -24,7 +24,6 @@ function styleAndAssignHandlersToPyTransformElements() {
     editor.setTheme("ace/theme/dreamweaver");
     editor.getSession().setMode("ace/mode/python");
     editor.getSession().setUseWrapMode(true);
-    editor.getSession().setValue("return nt(getValue(\"UWI/API\"))+1");
 
     $("#previewPyTransformButton").button().click(submitPythonPreview);
     $("#pyTransformViewErrorButton").button().click(function(event){
