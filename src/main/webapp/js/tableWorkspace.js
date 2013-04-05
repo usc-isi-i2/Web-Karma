@@ -377,7 +377,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 
     // in pytransform.js
     $("button#pyTransform").click(openPyTransformDialogBox);
-}
 
 }
 
