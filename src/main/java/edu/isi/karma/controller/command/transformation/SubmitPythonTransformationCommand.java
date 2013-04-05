@@ -109,10 +109,11 @@ public class SubmitPythonTransformationCommand extends Command {
 		
 		try {
 			PythonInterpreter interpreter = new PythonInterpreter();
+			interpreter.exec(pyHelper.getImportStatements());
 			interpreter.exec(clsStmt);
-			interpreter.exec(transformMethodStmt);
 			interpreter.exec(columnNameDictStmt);
 			interpreter.exec(defGetValueStmt);
+			interpreter.exec(transformMethodStmt);
 			
 			List<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows()-1);
 			Map<String, String> rowToValueMap = new HashMap<String, String>();

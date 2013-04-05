@@ -101,10 +101,11 @@ public class PreviewPythonTransformationResultsCommand extends Command {
 		
 		try {
 			PythonInterpreter interpreter = new PythonInterpreter();
+			interpreter.exec(pyHelper.getImportStatements());
 			interpreter.exec(clsStmt);
-			interpreter.exec(transformMethodStmt);
 			interpreter.exec(columnNameDictStmt);
 			interpreter.exec(defGetValueStmt);
+			interpreter.exec(transformMethodStmt);
 			
 			List<Row> rows = worksheet.getDataTable().getRows(0, 5);
 			final List<String> resultValues = new ArrayList<String>();
@@ -159,7 +160,7 @@ public class PreviewPythonTransformationResultsCommand extends Command {
 			});
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
+			return new UpdateContainer(new ErrorUpdate("Error while creating Python results preview."));
 		}
 	}
 

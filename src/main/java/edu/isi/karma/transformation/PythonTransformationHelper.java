@@ -44,6 +44,13 @@ public class PythonTransformationHelper {
 		
 		return obj.asString();
 	}
+	
+	public String getImportStatements() {
+		StringBuilder importStmt = new StringBuilder();
+		importStmt.append("import re\n");
+		importStmt.append("import datetime\n");
+		return importStmt.toString();
+	}
 
 	
 	public String getPythonClassCreationStatement(Worksheet worksheet, List<String> hNodeIds, Map<String,String> normalizedColumnNamesMap) {
@@ -75,7 +82,10 @@ public class PythonTransformationHelper {
 	public String getPythonTransformMethodDefinitionState(Worksheet worksheet, String transformationCode) {
 		StringBuilder methodStmt = new StringBuilder();
 		methodStmt.append("def transform(r):\n");
-		methodStmt.append("\t" + transformationCode);
+		String lines[] = transformationCode.split("\\r?\\n");
+		for (String line:lines) {
+			methodStmt.append("\t" + line + "\n");
+		}
 		return methodStmt.toString();
 	}
 
