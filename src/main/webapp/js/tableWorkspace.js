@@ -374,6 +374,11 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
         dropZone: null
     });
      $("button#transformcolumns").click(handleColumnsTransformation);
+
+    // in pytransform.js
+    $("button#pyTransform").click(openPyTransformDialogBox);
+}
+
 }
 
 function openWorksheetOptions(event) {

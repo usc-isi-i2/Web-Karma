@@ -31,8 +31,8 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class AddColumnCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 
-	private enum Arguments {
-		vWorksheetId, hTableId, hNodeId,newColumnName
+	public enum Arguments {
+		vWorksheetId, hTableId, hNodeId, newColumnName
 	}
 	
 	@Override

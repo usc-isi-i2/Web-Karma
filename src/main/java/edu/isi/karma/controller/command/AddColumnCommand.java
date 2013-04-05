@@ -200,4 +200,8 @@ public class AddColumnCommand extends WorksheetCommand {
 
 		return c;
 	}
+
+	public String getNewHNodeId() {
+		return newHNodeId;
+	}
 }
