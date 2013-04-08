@@ -45,6 +45,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<link rel="stylesheet" type="text/css" href="./css/alignment.css" />
 		<link rel="stylesheet" type="text/css" href="./css/d3.css" />
 		<link rel="stylesheet" type="text/css" href="./css/main.css" />
+        <link rel="stylesheet" type="text/css" href="./css/pyTransform.css" />
 
 		<!-- Third Party JavaScript files		 -->
 		<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
@@ -62,6 +63,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<script type="text/javascript" src="js/jquery.cookie.js"></script>
 		<script type="text/javascript" src="js/d3.v2.min.js"></script>
 		<script src="js/jquery.iframe-transport.js"></script>
+        <script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 
 		<script src="js/jquery.fileupload.js"></script>
 		<script src="js/jquery.fileupload-ui.js"></script>
@@ -212,6 +214,9 @@ and related projects, please see: http://www.isi.edu/integration
 				// Assign style and handler to the merge button
 				styleAndAssignHandlersToMergeButton();
 
+                // Assign style and handler to Python Transform windows elements (in pytransform.js)
+                styleAndAssignHandlersToPyTransformElements();
+
 				// When the user changes header line index
 				$('.CSVImportOption').change(function() {
 					CSVImportOptionsChanged("preview");
@@ -343,7 +348,7 @@ and related projects, please see: http://www.isi.edu/integration
 	</head>
 
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.69</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.70</span></h1>
 		<table id="topMenuBar">
 			<tr>
 				<td>
@@ -399,9 +404,10 @@ and related projects, please see: http://www.isi.edu/integration
 		</div>
 		<div id="columnHeadingDropDownMenu" class="ui-corner-all" style="display: none">
             <button id="addColumnButton">Add Column</button>
+            <button id="pyTransform">PyTransform</button>
             <button id="invokeServiceButton">Invoke Service</button>
             <button id="renameColumnButton">Rename</button>
-            <button href="#" id="splitByComma">Split Column</button>
+            <button id="splitByComma">Split Column</button>
             <button id="cleanColumnButton">Transform</button>
             <button id="hideColumnButton" style="display: none">Hide</button>
 		</div>
@@ -994,6 +1000,20 @@ and related projects, please see: http://www.isi.edu/integration
             <span class="smallSizedFont">Enter new column name:</span><br>
             <input type="text" class="smallSizedFont" id="renameColumnNameInput" /><br/>
             <span class="error smallSizedFont" style="display: none">Please enter a valid name!</span>
+        </div>
+        <div id="pyTransformDialog" style="display: none">
+            <br><label class="smallSizedFont">Name of new column:</label>
+            <input type="text" class="smallSizedFont" id="pythonTransformNewColumnName">
+            <span class="error smallSizedFont" style="display: none" id="pyTransformColumnNameError">Please provide a new unique column name!</span>
+            <br><br>
+            <div id="transformCodeEditor"></div>
+            <span class="smallSizedFont">On error:</span>
+            <input type="text" class="smallSizedFont" id="pythonTransformErrorDefaultValue">
+            <button id="pyTransformViewErrorButton"  style="margin-left: 20px;">View Errors</button>
+            <button id="previewPyTransformButton"  style="margin-left: 60px">Preview Results for Top 5 Rows</button>
+            <br>
+            <table id="pythonPreviewResultsTable" class="smallSizedFont" style="display: none"></table>
+            <div id="pyTransformErrorWindow" style="display: none"></div>
         </div>
 	</body>
 </html>
