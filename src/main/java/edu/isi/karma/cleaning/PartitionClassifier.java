@@ -13,8 +13,11 @@ public class PartitionClassifier {
 	public String clssettingString = "";
 	public PartitionClassifier()
 	{
-		
 		String dirpathString = ServletContextParameterMap.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY);
+		if(dirpathString.compareTo("")==0)
+		{
+			dirpathString = "./src/main/scripts/Lib";
+		}
 		PythonInterpreter interpreter = new PythonInterpreter();
         //change the sys.path
 		interpreter.exec("import sys");

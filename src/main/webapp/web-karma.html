@@ -342,7 +342,7 @@ and related projects, please see: http://www.isi.edu/integration
 	</head>
 
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.67</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.68</span></h1>
 		<table id="topMenuBar">
 			<tr>
 				<td>
@@ -916,40 +916,37 @@ and related projects, please see: http://www.isi.edu/integration
 			<table >
 				<tbody>
 					<tr>
-					<td  valign="top">
-						<table id="infoPanel">
-							<tbody>
+					<td  valign="top" class="infotable">
+						<table id="infoPanel" class="transform">
+						<tbody>
 								<tr>
-									<td class="heading">Recommended Examples: </td>
+									<td class="heading">Examples You Entered: </td>
 								</tr>
-								<tr>
-									<td >
-									<table id="recmd" title="Recommended Examples:" class="info">
+								<tr class="infotable">
+									<td class="infotable">
+									<table id="examples" title="Previous Examples:" class="transform">
 										
 									</table></td>
 								</tr>
 								<tr>
-									<td class="heading">Examples: </td>
+									<td class="heading">Recommended for Examining:</td>
 								</tr>
-								<tr>
-									<td>
-									<table id="examples" title="Previous Examples:"class="info">
+								<tr class="infotable">
+									<td class="infotable">
+									<table id="recmd" title="Recommended Examples:" class="transform">
 										
 									</table></td>
-								</tr>
+								</tr>						
 							</tbody>
 						</table></td>
 					</tr>
-					</tr>
+					<tr><td class="heading">All Records: </td></tr>
 					<tr>
 						<td>
-						<table id="cleaningExamplesTable">
-							<tr>
-								<td class="cleaningTableHeading noBorder">Original Values</td>
-								<td class="examplesDivider noBorder"></td>
-								<td class="cleaningTableHeading noBorder" colspan=3>Transformed Values</td>
-							</tr>
+						<table id="cleaningExamplesTable" class="transform">
+							
 						</table></td>
+					</tr>
 				</tbody>
 			</table>
 		</div>

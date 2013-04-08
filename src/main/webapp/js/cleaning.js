@@ -284,13 +284,12 @@ function populateInfoPanel() {
 	$("tr", tab1).remove();
 	// empty an array in JS
 	if(trTag.length == 0) {
-		trTag = $("<tr>").attr("id", nodeId + "_suggestion_cl_row").addClass("suggestion").append($("<td>").html(datadict[nodeId]["Orgdis"]));
+		trTag = $("<tr>").attr("id", nodeId + "_suggestion_cl_row").append($("<td>").addClass('info').html(datadict[nodeId]["Orgdis"])).append($("<td>").addClass("noBorder"));
 	}
 	else
 	{
 		trTag = trTag[0];
 	}
-	$("td",trTag).addClass("info");
 	tab1.append(trTag);
 	//tab1.append(trTag.clone(true,true));
 	var tab2 = $("table#examples");
@@ -301,9 +300,9 @@ function populateInfoPanel() {
 		var trTag1 = $("tr#" + nodeID + "_suggestion_cl_row",tab2);
 		
 		if(trTag1.length == 0) {
-			trTag1 = $("<tr>").attr("id", nodeID + "_suggestion_cl_row").append($("<td>").text($("tr#" + nodeID + "_cl_row").data("originalVal")));
+			trTag1 = $("<tr>").attr("id", nodeID + "_suggestion_cl_row").append($("<td>").addClass('info').text($("tr#" + nodeID + "_cl_row").data("originalVal")));
 		}
-		trTag1.append($("<td>").append($("<table>").append($("<tr>").append($("<td>").append($("<div>").data("nodeId", nodeId).data("cellValue", value["after"]).addClass("cleanExampleDiv").html(value["after"]))))));
+		
 		var closeButton = $("<button>");
 		closeButton.attr("id",nodeID);
 		closeButton.addClass("closeButton").button({
@@ -327,8 +326,12 @@ function populateInfoPanel() {
 			}
 
 		});
-		$("<td>").append(closeButton).appendTo(trTag1);
-		$(">td",trTag1).addClass("info");
+		var tdButton = $("<td>").attr("class","infobutton").append(closeButton);
+		
+		trTag1.append($("<td>").addClass('noBorder'))
+		trTag1.append($("<td>").addClass("info").append($("<table>").append($("<tr>").append($("<td>").attr("class","contentNoBorder").append($("<div>").data("nodeId", nodeId).data("cellValue", value["after"]).addClass("cleanExampleDiv").html(value["after"]))).append(tdButton))));
+		
+		//$(">td",trTag1).addClass("info");
 		tab2.append(trTag1);
 	});
 }

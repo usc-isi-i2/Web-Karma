@@ -19,24 +19,36 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-table#cleaningExamplesTable {
-	border-width: 1px; 
-	border-spacing: 1px; 
+table.transform {
+	border:none;
 	border-collapse: collapse;
 	width: 680px;
 }
 
-table.info{
+/*table.info{
 	border:none;
 	font-size: 12px;
+	width: 680px;
+}*/
+table.transform td.contentNoBorder{
+	border:none;
 }
 
-table#cleaningExamplesTable td{
+table.transform td{
 	font-size: 12px;
 	border: solid 1px;
 	height: 15px;
 	padding: 1px;
-	width: 350px;
+	width: 300px;
+}
+table.transform td.infotable
+{
+	border:none;
+}
+
+table.transform tr.infotable
+{
+	border:none;
 }
 table td.ruleResultsValue_begin{
 	font-size: 12px;
@@ -45,10 +57,10 @@ table td.ruleResultsValue_begin{
 	padding: 1px;
 }
 
-table#cleaningExamplesTable td.ruleResultsValue_rest{	
+table.transform td.ruleResultsValue_rest{	
 	border: none;
 }
-table#cleaningExamplesTable button.suggestion{
+table.transform button.suggestion{
    font-size:11px;
    font-family:Arial,sans-serif;
    text-align:left;
@@ -58,32 +70,44 @@ table#cleaningExamplesTable button.suggestion{
    border-style:none;
 
 }
-table#cleaningExamplesTable td.noBorder {
+table.transform td.noBorder {
 	border: none;
 	width:10px;
 }
-table#cleaningExamplesTable td.noinnerBorder {
+table.info td.noBorder {
+	border: none;
+	width:10px;
+}
+table.transform td.noinnerBorder {
 	font-size: 12px;
 	border: none;
 	height: 15px;
 	padding: 1px;
 }
 
-table#infoPanel td.info {
+/*table#infoPanel td.info {
 	font-size: 12px;
 	border: 1px solid;
+	width: 300px;
+}*/
+
+table#infoPanel td.infobutton {
+	border:1px;
+	width:10px;
 }
 table#infoPanel td.heading{
+	border:none;
 	font-size:12px;
 	font-weight:900;
+	width: 300px;
 }
 
-table#cleaningExamplesTable td.examplesDivider {
+table.transform td.examplesDivider {
 	width:20px;
 	border: none;
 }
 
-table#cleaningExamplesTable td.cleaningTableHeading {
+table.transform td.cleaningTableHeading {
 	font-weight: 900;
 	padding-bottom:4px;
 }

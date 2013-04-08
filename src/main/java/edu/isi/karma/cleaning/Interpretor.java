@@ -13,6 +13,10 @@ public class Interpretor {
         PythonInterpreter interpreter = new PythonInterpreter();
         //change the sys.path
         String dirpathString = ServletContextParameterMap.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY);
+        if(dirpathString.compareTo("")==0)
+		{
+			dirpathString = "./src/main/scripts/Lib";
+		}
         interpreter.exec("import sys");
         interpreter.exec("sys.path.append('"+dirpathString+"')");
         ///Users/bowu/projects/IDCT/src/edu/isi/karma/cleaning
