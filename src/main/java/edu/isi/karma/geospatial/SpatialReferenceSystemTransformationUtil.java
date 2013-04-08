@@ -40,86 +40,100 @@ import com.vividsolutions.jts.io.WKTReader;
 public class SpatialReferenceSystemTransformationUtil {
 	private static final Logger logger = LoggerFactory
 			.getLogger(SpatialReferenceSystemTransformationUtil.class);
+
 	public SpatialReferenceSystemTransformationUtil() {
-		
+
 	}
-	public static Geometry Transform(Geometry inGeom, CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem targetCRS) {
+
+	public static Geometry Transform(Geometry inGeom,
+			CoordinateReferenceSystem sourceCRS,
+			CoordinateReferenceSystem targetCRS) {
+		
 		Hints.putSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER,
 				Boolean.TRUE);
-		
-		WKTReader reader = new WKTReader();
 
-		MathTransform transform=null;
+		if(sourceCRS.equals(targetCRS))
+			return inGeom;
+		
+		MathTransform transform = null;
+		
 		try {
-			transform = CRS.findMathTransform(sourceCRS, targetCRS,true);
+			transform = CRS.findMathTransform(sourceCRS, targetCRS, true);
 		} catch (FactoryException e) {
-			logger.error("Cannot find transformation!",e);
+			logger.error("Cannot find a transformation!", e);
 			return inGeom;
 		}
+
+		Geometry outGeom = null;
 		
-		Geometry outGeom=null;
 		try {
-			outGeom = JTS.transform( inGeom, transform);
+			outGeom = JTS.transform(inGeom, transform);
 		} catch (MismatchedDimensionException e) {
-			logger.error("Cannot perform transformation!",e);
+			logger.error("Cannot perform the transformation!", e);
 			return inGeom;
 		} catch (TransformException e) {
-			logger.error("Cannot perform transformation!",e);
+			logger.error("Cannot perform the transformation!", e);
 			return outGeom;
 		}
-		
+
 		return outGeom;
 	}
-	public static String Transform(String inGeomWKT, String fromSRID, String toSRID) {
+
+	public static String Transform(String inGeomWKT, String fromSRID,
+			String toSRID) {
+		
 		Hints.putSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER,
 				Boolean.TRUE);
+		
+		if(fromSRID.equals(toSRID))
+			return inGeomWKT;
 		
 		WKTReader reader = new WKTReader();
 		Geometry JTSGeometry;
 		try {
 			JTSGeometry = reader.read(inGeomWKT);
 		} catch (ParseException e1) {
-			logger.error("Cannot read the input feature!");
-			return inGeomWKT;
-		}
-		
-		if(!fromSRID.contains(":"))
-			fromSRID="EPSG:"+fromSRID;
-		if(!toSRID.contains(":"))
-			toSRID="EPSG:"+toSRID;
-		
-		CoordinateReferenceSystem sourceCRS =null;
-		CoordinateReferenceSystem targetCRS=null;
-		try {
-			sourceCRS = CRS.decode(fromSRID,true);
-			targetCRS = CRS.decode(toSRID,true);
-		} catch (NoSuchAuthorityCodeException e) {
-			logger.error("Cannot read SRID!",e);
-			return inGeomWKT;
-		} catch (FactoryException e) {
-			logger.error("Cannot read SRID!",e);
+			logger.error("Cannot read the input WKT feature!");
 			return inGeomWKT;
 		}
 
-		MathTransform transform=null;
+		if (!fromSRID.contains(":"))
+			fromSRID = "EPSG:" + fromSRID;
+		if (!toSRID.contains(":"))
+			toSRID = "EPSG:" + toSRID;
+
+		CoordinateReferenceSystem sourceCRS = null;
+		CoordinateReferenceSystem targetCRS = null;
 		try {
-			transform = CRS.findMathTransform(sourceCRS, targetCRS,true);
+			sourceCRS = CRS.decode(fromSRID, true);
+			targetCRS = CRS.decode(toSRID, true);
+		} catch (NoSuchAuthorityCodeException e) {
+			logger.error("Cannot read SRID!", e);
+			return inGeomWKT;
 		} catch (FactoryException e) {
-			logger.error("Cannot find transformation!",e);
+			logger.error("Cannot read SRID!", e);
 			return inGeomWKT;
 		}
-		
-		Geometry outGeom=null;
+
+		MathTransform transform = null;
 		try {
-			outGeom = JTS.transform( JTSGeometry, transform);
+			transform = CRS.findMathTransform(sourceCRS, targetCRS, true);
+		} catch (FactoryException e) {
+			logger.error("Cannot find a transformation!", e);
+			return inGeomWKT;
+		}
+
+		Geometry outGeom = null;
+		try {
+			outGeom = JTS.transform(JTSGeometry, transform);
 		} catch (MismatchedDimensionException e) {
-			logger.error("Cannot perform transformation!",e);
+			logger.error("Cannot perform the transformation!", e);
 			return inGeomWKT;
 		} catch (TransformException e) {
-			logger.error("Cannot perform transformation!",e);
+			logger.error("Cannot perform the transformation!", e);
 			return inGeomWKT;
 		}
-		
+
 		return outGeom.toText();
 	}
 }

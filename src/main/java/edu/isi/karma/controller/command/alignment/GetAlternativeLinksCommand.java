@@ -81,7 +81,7 @@ public class GetAlternativeLinksCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		final List<Link> links = alignment.getAllPossibleLinksToNode(nodeId);
+		final List<Link> links = alignment.getIncomingLinks(nodeId);
 		Set<Link> currentIncomingLinks = alignment.getCurrentLinksToNode(nodeId);
 		final Link currentLink = (currentIncomingLinks != null && !currentIncomingLinks.isEmpty()) ?
 				currentIncomingLinks.iterator().next() : null;

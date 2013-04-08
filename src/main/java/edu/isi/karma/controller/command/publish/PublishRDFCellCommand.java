@@ -97,7 +97,7 @@ public class PublishRDFCellCommand extends Command {
 
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				vWorkspace.getWorkspace().getId() + ":" + vWorksheetId + "AL");
-		if (alignment == null) {
+		if (alignment == null || alignment.isEmpty()) {
 			logger.info("Alignment is NULL for " + vWorksheetId);
 			return new UpdateContainer(
 					new ErrorUpdate("Worksheet not modeled!"));

@@ -24,7 +24,7 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.geospatial.WorksheetToFeatureCollections;
+import edu.isi.karma.geospatial.WorksheetToFeatureCollection;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
@@ -86,7 +86,7 @@ public class PublishKMLLayerCommand extends Command {
 		}
 
 		OntologyManager om= ws.getOntologyManager();
-		WorksheetToFeatureCollections geo = new WorksheetToFeatureCollections(worksheet,om);//ying
+		WorksheetToFeatureCollection geo = new WorksheetToFeatureCollection(worksheet,om);//ying
 		//WorksheetToFeatureCollections geo = new WorksheetToFeatureCollections(worksheet);
 		// Send an error update if no geospatial data found!
 		if (geo.hasNoGeospatialData()) {
@@ -95,14 +95,14 @@ public class PublishKMLLayerCommand extends Command {
 		}
 
 		try {
-			final File file = geo.SaveSpatialData();
-			final String zippedSpatialDataPath = geo.getZippedSpatialDataPath();
+			//final File file = geo.SaveSpatialData();
 			// Transfer the file to a public server
-			final String kmlFileName = new RandomGUID().toString();
-			final boolean transfer = transferFileToPublicServer(kmlFileName,file);
-			if (!transfer) {
-				logger.error("Published KML file could not be moved to a public server to display on Google Maps!");
-			}
+			final String kmlFileName = geo.SaveSpatialDataAndReturnKMLString();//new RandomGUID().toString(); // save this line for using networkLink in GE plugin (see geospatial.js)
+			final String zippedSpatialDataPath = geo.getZippedSpatialDataPath();
+			final boolean transfer = true;//transferFileToPublicServer(kmlFileName,file); // save this line for using networkLink in GE plugin (see geospatial.js)
+			//if (!transfer) { // save this line for using networkLink in GE plugin (see geospatial.js)
+			//	logger.error("Published KML file could not be moved to a public server to display on Google Maps!");
+			//}
 
 			return new UpdateContainer(new AbstractUpdate() {
 				@Override
@@ -113,7 +113,8 @@ public class PublishKMLLayerCommand extends Command {
 						outputObject.put(JsonKeys.updateType.name(),
 								"PublishKMLUpdate");
 						outputObject.put(JsonKeys.fileName.name(),
-								publicKMLAddress + kmlFileName+".kml");
+								kmlFileName);
+								//publicKMLAddress + kmlFileName+".kml"); // save this line for using networkLink in GE plugin (see geospatial.js)
 						outputObject.put(JsonKeys.transferSuccessful.name(),
 								transfer);
 						outputObject.put(JsonKeys.localFileName.name(),

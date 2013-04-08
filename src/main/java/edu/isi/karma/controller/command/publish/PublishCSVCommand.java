@@ -22,6 +22,8 @@ package edu.isi.karma.controller.command.publish;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +34,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.imp.csv.CSVFileExport;
 import edu.isi.karma.rep.Worksheet;
@@ -80,8 +83,11 @@ public class PublishCSVCommand extends Command {
 		CSVFileExport csvFileExport = new CSVFileExport(worksheet);
 
 		try {
-			final String fileName = csvFileExport.publishCSV();
 
+			final String fileName = csvFileExport.publishCSV();
+			if(fileName == null)
+				return new UpdateContainer(new ErrorUpdate(
+						"No data to export! Have you aligned the worksheet?"));
 			return new UpdateContainer(new AbstractUpdate() {
 				@Override
 				public void generateJson(String prefix, PrintWriter pw,

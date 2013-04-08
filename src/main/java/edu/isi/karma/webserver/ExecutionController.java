@@ -127,6 +127,10 @@ import edu.isi.karma.controller.command.service.PopulateCommand;
 import edu.isi.karma.controller.command.service.PopulateCommandFactory;
 import edu.isi.karma.controller.command.service.PublishModelCommand;
 import edu.isi.karma.controller.command.service.PublishModelCommandFactory;
+import edu.isi.karma.controller.command.transformation.PreviewPythonTransformationResultsCommand;
+import edu.isi.karma.controller.command.transformation.PreviewPythonTransformationResultsCommandFactory;
+import edu.isi.karma.controller.command.transformation.SubmitPythonTransformationCommand;
+import edu.isi.karma.controller.command.transformation.SubmitPythonTransformationCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
 
@@ -249,6 +253,10 @@ public class ExecutionController {
 				new RenameColumnCommandFactory());
 		commandFactoryMap.put(PublishMDBCommand.class.getSimpleName(), 
 				new PublishMDBCommandFactory());
+		commandFactoryMap.put(PreviewPythonTransformationResultsCommand.class.getSimpleName(), 
+				new PreviewPythonTransformationResultsCommandFactory());
+		commandFactoryMap.put(SubmitPythonTransformationCommand.class.getSimpleName(), 
+				new SubmitPythonTransformationCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

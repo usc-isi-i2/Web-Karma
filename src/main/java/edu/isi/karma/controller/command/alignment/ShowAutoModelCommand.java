@@ -20,7 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,14 +39,16 @@ import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.view.VWorkspace;
 
 public class ShowAutoModelCommand extends WorksheetCommand {
@@ -97,10 +101,8 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 		// Generate the semantic types for the worksheet
 		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
 		if(ontMgr.isEmpty())
-			return new UpdateContainer(new ErrorUpdate(
-			"No ontology loaded."));
-		
-		SemanticTypeUtil.computeSemanticTypesForAutoModel(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
+			return new UpdateContainer(new ErrorUpdate("No ontology loaded."));
+//SemanticTypeUtil.computeSemanticTypesForAutoModel(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
 
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
@@ -108,6 +110,32 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 			alignment = new Alignment(ontMgr);
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
+		
+		String ns = Namespaces.KARMA;
+		// Create the internal node for worksheet
+		Label internalNodeLabel = new Label(ns + worksheet.getTitle().trim().replaceAll(" ", "_"), ns, "karma");
+		Node classNode = alignment.addInternalNode(internalNodeLabel);
+		
+		// Create column nodes for all columns 
+		List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
+		worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
+		for (HNode hNode : sortedLeafHNodes){
+			String columnName = hNode.getColumnName().trim().replaceAll(" ", "_");
+			ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNode.getId());
+			if (columnNode == null) {
+				columnNode = alignment.addColumnNode(hNode.getId(), columnName, "");
+				Label propertyLabel = new Label(ns + columnName, ns, "karma");
+				alignment.addDataPropertyLink(classNode, columnNode, propertyLabel, false);
+				
+				// Create a semantic type object
+				SemanticType type = new SemanticType(hNode.getId(), propertyLabel, internalNodeLabel, SemanticType.Origin.User, 1.0,false);
+				worksheet.getSemanticTypes().addType(type);
+			} else {
+				// User-defined: do nothing
+			}
+		}
+		alignment.align();
+		
 		try {
 			// Save the semantic types in the input parameter JSON
 			saveSemanticTypesInformation(worksheet, vWorkspace, worksheet.getSemanticTypes().getListOfTypes());
@@ -122,10 +150,6 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 					"Error occured while generating the model for the source."));
 		}
 		c.add(new TagsUpdate());
-		Workspace ws = vWorkspace.getWorkspace();
-		SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, ws
-				.getTagsContainer().getTag(TagName.Outlier), ws
-				.getCrfModelHandler(), ws.getOntologyManager());
 		
 		return c;
 	}

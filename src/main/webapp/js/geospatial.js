@@ -190,14 +190,22 @@ function initCB(instance) {
     ge = instance;
     ge.getWindow().setVisibility(true);
     
-    var link = ge.createLink('');
-    var href = $("div#tablesWorkspace").data("currentKMLFile");
-    link.setHref(href);
+    // save these lines for using networkLink in GE plugin
+    //var link = ge.createLink('');
+    //var href = $("div#tablesWorkspace").data("currentKMLFile");
+    //link.setHref(href);
     
-    var networkLink = ge.createNetworkLink('');
-    networkLink.set(link, true, true); // Sets the link, refreshVisibility, and flyToView
+    //var networkLink = ge.createNetworkLink('');
+    //networkLink.set(link, true, true); // Sets the link, refreshVisibility, and flyToView
+    
+    var networkLink = ge.parseKml($("div#tablesWorkspace").data("currentKMLFile"));
+    //networkLink.set(link, true, true); // Sets the link, refreshVisibility, and flyToView
     
     ge.getFeatures().appendChild(networkLink);
+    
+    if (networkLink.getAbstractView()) {
+   		ge.getView().setAbstractView(networkLink.getAbstractView());
+   	}
 }
 
 function failureCB(errorCode) {

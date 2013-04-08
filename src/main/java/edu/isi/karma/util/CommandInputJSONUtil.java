@@ -4,6 +4,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
+import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
+
 
 
 public class CommandInputJSONUtil {
@@ -29,5 +32,13 @@ public class CommandInputJSONUtil {
 
 	public static JSONArray getJSONArrayValue(String name, JSONArray json) throws JSONException {
 		return getJSONObjectWithName(name, json).getJSONArray(JsonKeys.value.name());
+	}
+	
+	public static JSONObject createJsonObject(String name, Object value, ParameterType type) throws JSONException {
+		JSONObject obj = new JSONObject();
+		obj.put(ClientJsonKeys.name.name(), name);
+		obj.put(ClientJsonKeys.value.name(), value);
+		obj.put(ClientJsonKeys.type.name(), type.toString());
+		return obj;
 	}
 }
