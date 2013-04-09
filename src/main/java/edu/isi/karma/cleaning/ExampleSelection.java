@@ -205,11 +205,8 @@ public class ExampleSelection {
 		}
 		return row;
 	}
-	public static int tcnt = 0;
-	public static int ccnt=0;
 	public String way7() {
 		int max = 2; // only the one with _FATAL_ERROR_ inside
-		tcnt ++;
 		if (firsttime) {
 			firsttime = false;
 			return this.way2();
@@ -251,11 +248,6 @@ public class ExampleSelection {
 					row = trowid;
 				}
 			}
-			if (this.raw.get(row)[4].indexOf("wrong")!= -1)
-			{
-				ccnt++;
-			}
-			System.out.println(String.format("%d,%d", ccnt,tcnt));
 			return row;
 		} else {
 			String idString = "";
@@ -267,11 +259,6 @@ public class ExampleSelection {
 					idString = key;
 				}
 			}
-			if (this.raw.get(idString)[4].indexOf("wrong")!= -1)
-			{
-				ccnt++;
-			}
-			System.out.println(String.format("%d,%d", ccnt,tcnt));
 			return idString;
 		}
 
