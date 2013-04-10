@@ -90,7 +90,7 @@ public class ShowModelCommand extends WorksheetCommand {
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
-
+		
 		worksheetName = worksheet.getTitle();
 
 		// Get the Outlier Tag
@@ -111,6 +111,7 @@ public class ShowModelCommand extends WorksheetCommand {
 
 		// Compute the semantic type suggestions
 		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr, alignment);
+//		SemanticTypeUtil.computeOutliersForExistingTypes(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
 		try {
 			// Save the semantic types in the input parameter JSON
 			saveSemanticTypesInformation(worksheet, vWorkspace, worksheet.getSemanticTypes().getListOfTypes());
