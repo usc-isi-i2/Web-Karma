@@ -13,10 +13,19 @@ public class Test {
 	public static void test1()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"<_START>1337 36th place<_END>","1337 36th place, Los Angeles, CA"};
-		String[] yStrings = {};
+		String[] xStrings = {"<_START>On 2 January 2004, in Anantnag,"+
+		"Jammu and Kashmir, India, assailants threw a grenade at an army convoy," +
+		" killing one soldier and one civilian and wounding eight civilians.  This attack occurred one day before the Indian Prime Minister " +
+		"was due to make his first visit to Pakistan in four years.  No group claimed responsibility.<_END_>","On 2 January 2004, in Anantnag, Jammu and Kashmir, India, assailants threw a grenade at an army convoy, killing one soldier and one civilian and wounding eight civilians.  This attack occurred one day before the Indian Prime Minister was due to make his first visit to Pakistan in four years.  No group claimed responsibility."};
+		String[] yStrings = {"<_START_>On 1 January 2004, in Peureulak, Aceh Province, Indonesia, a bomb exploded at a concert, killing ten civilians, wounding 45 others, and causing major damage to the stage area.  Many of the victims were Indonesian teenagers.  Police blamed the Free Aceh Movement (GAM), although the GAM denied responsibility.  No other group claimed responsibility.<_END_>","GAM"};
+		String[] zStrings = {"<_START_>On 2 January 2004, in Nozhay-Yurtovskiy Rayon, Chechnya, Russia, a bomb hidden in a portable stereo " +
+				"exploded as two civilians examined it, seriously injuring the two local residents.  No group claimed responsibility," +
+				" although it was widely believed Chechen separatists were responsible.<_END_>","On 2 January 2004, in Nozhay-Yurtovskiy Rayon, Chechnya, " +
+						"Russia, a bomb hidden in a portable stereo exploded as two civilians examined it, seriously injuring the two local residents.  No group claimed responsibility, " +
+						"although it was widely believed Chechen separatists were responsible."};
 		examples.add(xStrings);
-		//examples.add(yStrings);
+		examples.add(yStrings);
+		examples.add(zStrings);
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(examples);
 		Vector<ProgramRule> pls = new Vector<ProgramRule>();

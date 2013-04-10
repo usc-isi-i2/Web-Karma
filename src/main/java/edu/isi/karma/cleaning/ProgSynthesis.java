@@ -140,7 +140,11 @@ public class ProgSynthesis {
 			String xString = "";
 			int termCnt = 0;
 			boolean findRule = true;
-			while ((xString = this.validRule(r)) != "GOOD" && findRule) {
+			while ((xString = this.validRule(r,pars)) != "GOOD" && findRule) {
+				if(xString.compareTo("NO_CLASIF")==0)
+				{
+					return null; // indistinguishable classes.
+				}
 				if (termCnt == 10000) {
 					findRule = false;
 					break;
@@ -187,21 +191,27 @@ public class ProgSynthesis {
 		}
 		Traces.AllSegs.clear();
 		return cpr;
-
 	}
 
-	public String validRule(ProgramRule p) {
-		for (int i = 0; i < orgVector.size(); i++) {
-			String s1 = UtilTools.print(orgVector.get(i));
-			String labelString = p.getClassForValue(s1);
-			// System.out.println("Rule: "+ p.getStringRule(labelString));
-			InterpreterType worker = p.getWorkerForClass(labelString);
-			String s2 = worker.execute(s1);
-			String s3 = UtilTools.print(tarVector.get(i));
-
-			// System.out.println("Validation: "+s2+" | "+s3);
-			if (s3.compareTo(s2) != 0) {
-				return labelString;
+	public String validRule(ProgramRule p,Vector<Partition> vp) {
+		for(Partition px:vp)
+		{
+			for (int i = 0; i < px.orgNodes.size(); i++) {
+				String s1 = UtilTools.print(px.orgNodes.get(i));
+				String labelString = p.getClassForValue(s1);
+				if(labelString.compareTo(px.label)!=0)
+				{
+					return "NO_CLASIF";
+				}
+				// System.out.println("Rule: "+ p.getStringRule(labelString));
+				InterpreterType worker = p.getWorkerForClass(labelString);
+				String s2 = worker.execute(s1);
+				String s3 = UtilTools.print(px.tarNodes.get(i));
+	
+				// System.out.println("Validation: "+s2+" | "+s3);
+				if (s3.compareTo(s2) != 0) {
+					return labelString;
+				}
 			}
 		}
 		return "GOOD";
