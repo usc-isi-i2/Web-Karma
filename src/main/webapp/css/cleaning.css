@@ -95,7 +95,8 @@ table#infoPanel td.infobutton {
 	border:1px;
 	width:10px;
 }
-table#infoPanel td.heading{
+
+table td.heading{
 	border:none;
 	font-size:12px;
 	font-weight:900;

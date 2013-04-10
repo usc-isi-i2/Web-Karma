@@ -91,7 +91,7 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
-		String Msg = String.format("fetch Data begin, Time:%d, Worksheet:%s",System.currentTimeMillis()/1000,worksheetId);
+		String Msg = String.format("fetch Data begin, Time:%d, Worksheet:%s",System.currentTimeMillis(),worksheetId);
 		logger.info(Msg);
 		// Get the HNode
 		HashMap<String, HashMap<String, String>> rows = new HashMap<String, HashMap<String, String>>();
@@ -122,7 +122,7 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 			}
 			index ++;
 		}
-		Msg = String.format("fetch data end, Time:%d, Worksheet:%s",System.currentTimeMillis()/1000,worksheetId);
+		Msg = String.format("fetch data end, Time:%d, Worksheet:%s",System.currentTimeMillis(),worksheetId);
 		logger.info(Msg);
 		return new UpdateContainer(new FetchResultUpdate(hNodeId,rows));
 	}

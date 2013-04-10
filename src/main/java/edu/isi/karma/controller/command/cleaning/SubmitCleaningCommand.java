@@ -156,7 +156,7 @@ public class SubmitCleaningCommand extends Command {
 		// create new column command
 		String worksheetId = vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).getWorksheetId();
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
-		String Msg = String.format("submit end, Time:%d, Worksheet:%s",System.currentTimeMillis()/1000,worksheetId);
+		String Msg = String.format("submit end, Time:%d, Worksheet:%s",System.currentTimeMillis(),worksheetId);
 		logger.info(Msg);
 		String hTableId = "";
 		String colnameString = "";

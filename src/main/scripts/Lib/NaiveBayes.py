@@ -70,7 +70,7 @@ class NaiveBayes:
     def train(self):
         self.model = {'lprob' : {}, 'cprob' : {}, 'real_stat' : {}}        
         for label in self.stat_labels.keys():
-            self.model['lprob'][label] = self.stat_labels[label]*1.0/ self.numof_instances        
+            self.model['lprob'][label] = self.stat_labels[label] * 1.0 / self.numof_instances        
         for attribute in self.stat_attributes.keys():
             if not self.attribute_type[attribute] == 'real':
                 self.model['cprob'][attribute] = {}
@@ -96,7 +96,7 @@ class NaiveBayes:
                             raise Exception("'*' as attribute value has been reserved")
                         attvals.append('*')
                     for attval in attvals:
-                        self.model['cprob'][attribute][attval][label] /= total*1.0
+                        self.model['cprob'][attribute][attval][label] /= total * 1.0
                         
             else:
                 if attribute in self.smoothing.keys():
@@ -109,12 +109,12 @@ class NaiveBayes:
                         self.model['real_stat'][attribute][label]['sum'] += float(attval) * self.stat_attributes[attribute][attval][label]
                         self.model['real_stat'][attribute][label]['count'] += self.stat_attributes[attribute][attval][label]                    
                         if self.model['real_stat'][attribute][label]['count'] > 0:
-                            self.model['real_stat'][attribute][label]['mean'] = self.model['real_stat'][attribute][label]['sum']*1.0 / self.model['real_stat'][attribute][label]['count']
+                            self.model['real_stat'][attribute][label]['mean'] = self.model['real_stat'][attribute][label]['sum'] * 1.0 / self.model['real_stat'][attribute][label]['count']
                 for attval in self.stat_attributes[attribute].keys():
                     for label in self.stat_attributes[attribute][attval]:
                         self.model['real_stat'][attribute][label]['sigma'] += (float(attval) - self.model['real_stat'][attribute][label]['mean']) ** 2 * self.stat_attributes[attribute][attval][label]           
                 for label in self.model['real_stat'][attribute]:
-                    self.model['real_stat'][attribute][label]['sigma'] = (self.model['real_stat'][attribute][label]['sigma']*1.0 / (self.model['real_stat'][attribute][label]['count'] )) ** (1 / 2)       
+                    self.model['real_stat'][attribute][label]['sigma'] = (self.model['real_stat'][attribute][label]['sigma'] * 1.0 / (self.model['real_stat'][attribute][label]['count'])) ** (1 / 2)       
     def predict(self, params):
         if not 'attributes' in params.keys():
             raise Exception('Missing attributes parameter')
@@ -139,14 +139,16 @@ class NaiveBayes:
                         scores[label] = 0
             else:
                 for label in self.labels:
-                    nscores[label] = self.gaussian*1.0 / self.model['real_stat'][attribute][label]['sigma'] * exp(-0.5 * ((float(params['attributes'][attribute]) - self.model['real_stat'][attribute][label]['mean']) / self.model['real_stat'][attribute][label]['sigma']) ** 2)
+                    nscores[label] = self.gaussian * 1.0 / self.model['real_stat'][attribute][label]['sigma'] * exp(-0.5 * ((float(params['attributes'][attribute]) - self.model['real_stat'][attribute][label]['mean']) / self.model['real_stat'][attribute][label]['sigma']) ** 2) # normalize the attribute value
                     nsum += nscores[label]
                 if not nsum == 0:
                     for label in self.labels:
-                        scores[label] *= nscores[label]       
+                        scores[label] *= nscores[label]
         sumPx = 0
         for label in scores.keys():
             sumPx += scores[label]
+        if sumPx == 0: #muliplication can float
+            sumPx = 1
         for label in scores.keys():
             scores[label] /= sumPx
         return(scores)
@@ -170,7 +172,7 @@ if __name__ == "__main__":
     model.add_instances({'attributes':{'model':1, 'place':0}, 'label':'2', 'cases':1});
     model.add_instances({'attributes':{'model':1, 'place':1}, 'label':'3', 'cases':1});
     model.add_instances({'attributes':{'model':1, 'place':1}, 'label':'3', 'cases':1});
-    model.set_real(["model","place"])
+    model.set_real(["model", "place"])
     model.train() 
     result = model.predict({'attributes' : {'model':-1, 'place':-1}});
     print result

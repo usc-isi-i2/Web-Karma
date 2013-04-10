@@ -34,6 +34,7 @@ public class ProgramRule {
 	public InterpreterType getRuleForValue(String value)
 	{
 		String c = getClassForValue(value);
+		
 		return getWorkerForClass(c);
 	}
 	public String getClassForValue(String value)
