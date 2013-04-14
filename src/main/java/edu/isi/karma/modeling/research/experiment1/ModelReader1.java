@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research;
+package edu.isi.karma.modeling.research.experiment1;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -41,13 +41,13 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SimpleLink;
 
 
-public class ModelReader {
+public class ModelReader1 {
 	
 //	public static String varPrefix = "var:";
 	public static String attPrefix = "att:";
 	
-	private static String importDir = "/Users/mohsen/Dropbox/Service Modeling/texts/";
-	private static String exportDir = "/Users/mohsen/Dropbox/Service Modeling/dots/";
+	private static String importDir = "/Users/mohsen/Dropbox/Service Modeling/experiment1/models/";
+	private static String exportDir = "/Users/mohsen/Dropbox/Service Modeling/experiment1/dots/";
 	private static String typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 	private static HashMap<String, String> prefixNsMapping;
 
@@ -82,12 +82,12 @@ public class ModelReader {
 	
 	public static void main(String[] args) {
 		
-		List<ServiceModel> serviceModels = null;
+		List<ServiceModel1> serviceModels = null;
 		try {
 			serviceModels = importServiceModels();
 		
 			if (serviceModels != null) {
-				for (ServiceModel sm : serviceModels) {
+				for (ServiceModel1 sm : serviceModels) {
 					sm.computeMatchedSubGraphs(null);
 //					sm.computeShortestPaths();
 					sm.print();
@@ -121,11 +121,11 @@ public class ModelReader {
 		prefixNsMapping.put("foaf", "http://xmlns.com/foaf/0.1/");
 	}
 	
-	public static List<ServiceModel> importServiceModels() throws IOException {
+	public static List<ServiceModel1> importServiceModels() throws IOException {
 		
 		initPrefixNsMapping();
 		
-		List<ServiceModel> serviceModels = new ArrayList<ServiceModel>();
+		List<ServiceModel1> serviceModels = new ArrayList<ServiceModel1>();
 		
 		File dir = new File(importDir);
 		File[] modelExamples = dir.listFiles();
@@ -148,7 +148,7 @@ public class ModelReader {
 				continue;
 			}
 
-			ServiceModel serviceModel = new ServiceModel("S" + String.valueOf(count));
+			ServiceModel1 serviceModel = new ServiceModel1("S" + String.valueOf(count));
 			
 			LineNumberReader lr = new LineNumberReader(new FileReader(f));
 			String curLine = "";

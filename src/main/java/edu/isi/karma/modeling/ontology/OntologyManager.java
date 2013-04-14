@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 
 import edu.isi.karma.rep.alignment.Label;
 
-public class OntologyManager {
+public class OntologyManager  {
 	
 	static Logger logger = Logger.getLogger(OntologyManager.class.getName());
 

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright 2012 University of Southern California
- *  
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,25 +19,35 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling;
+package edu.isi.karma.modeling.research.experiment2;
 
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.InternalNode;
+import edu.isi.karma.rep.alignment.Link;
 
-public interface ModelingParams{
+public class LabelStruct {
+	
+	private InternalNode source;
+	private Link link;
+	private ColumnNode target;
+	
+	public LabelStruct(InternalNode source, Link link, ColumnNode target) {
+		this.source = source;
+		this.link = link;
+		this.target = target;
+	}
 
-	// Building Graph
-	public static double PROPERTY_USER_PREFERRED_WEIGHT = 10;
-	public static double PROPERTY_UI_PREFERRED_WEIGHT = 90;
-	public static double PROPERTY_DIRECT_WEIGHT = 100.0;	
-	public static double PROPERTY_INDIRECT_WEIGHT = 110;
-	public static double PROPERTY_WITH_ONLY_DOMAIN_WEIGHT = 1000;
-	public static double PROPERTY_WITH_ONLY_RANGE_WEIGHT = 1000;
-	public static double SUBCLASS_WEIGHT = 10000;
-	public static double PROPERTY_WITHOUT_DOMAIN_RANGE_WEIGHT = 50000;
-	public static double PATTERN_LINK_WEIGHT = 0.01;
+	public InternalNode getSource() {
+		return source;
+	}
 
-	// Prefixes
-	public static String KARMA_SOURCE_PREFIX = "http://isi.edu/integration/karma/sources/";
-	public static String KARMA_SERVICE_PREFIX = "http://isi.edu/integration/karma/services/";
+	public Link getLink() {
+		return link;
+	}
 
+	public ColumnNode getTarget() {
+		return target;
+	}
+	
 	
 }

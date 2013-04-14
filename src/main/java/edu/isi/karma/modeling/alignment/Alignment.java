@@ -280,6 +280,17 @@ public class Alignment implements OntologyUpdateListener {
 		return null;	
 	}
 	
+	public void changeLinkWeight(String linkId, double weight) {
+		
+		Link link = this.getLinkById(linkId);
+		if (link == null) {
+			logger.error("Could not find the link with the id " + linkId);
+			return;
+		}
+		
+		this.graphBuilder.changeLinkWeight(link, weight);
+	}
+	
 	public void changeLinkStatus(String linkId, LinkStatus newStatus) {
 		
 		Link link = this.getLinkById(linkId);

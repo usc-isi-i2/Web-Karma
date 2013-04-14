@@ -19,27 +19,27 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research;
+package edu.isi.karma.modeling.research.experiment1;
 
 import org.apache.log4j.Logger;
 
 import edu.isi.karma.rep.alignment.Label;
 
-public class SemanticLabel implements Comparable<SemanticLabel>{
+public class SemanticLabel1 implements Comparable<SemanticLabel1>{
 
-	static Logger logger = Logger.getLogger(SemanticLabel.class);
+	static Logger logger = Logger.getLogger(SemanticLabel1.class);
 
 	private Label nodeLabel;
 	private Label linkLabel;
 	private String leafName;
 	
-	public SemanticLabel(Label nodeLabel) {
+	public SemanticLabel1(Label nodeLabel) {
 		this.nodeLabel = nodeLabel;
 		this.linkLabel = null;
 		this.leafName = null;
 	}
 	
-	public SemanticLabel(Label nodeLabel, Label linkLabel, String leafName) {
+	public SemanticLabel1(Label nodeLabel, Label linkLabel, String leafName) {
 		this.nodeLabel = nodeLabel;
 		this.linkLabel = linkLabel;
 		this.leafName = leafName;
@@ -58,7 +58,7 @@ public class SemanticLabel implements Comparable<SemanticLabel>{
 	}
 
 	@Override
-	public int compareTo(SemanticLabel sl) {
+	public int compareTo(SemanticLabel1 sl) {
 		if (this.nodeLabel == null || sl.getNodeLabel() == null) return 1;
 		if (this.nodeLabel.getUri() == null || sl.getNodeLabel().getUri() == null) return 1;
 		if (this.nodeLabel.getUri().equalsIgnoreCase(sl.getNodeLabel().getUri ())) {
@@ -77,5 +77,7 @@ public class SemanticLabel implements Comparable<SemanticLabel>{
 		if (this.leafName != null)  s += " --- " + this.leafName;
 		logger.info(s);
 	}
+
+
 	
 }
