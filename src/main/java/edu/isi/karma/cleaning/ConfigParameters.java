@@ -43,14 +43,15 @@ public class ConfigParameters {
 			// get the property value and print it out
 			Segment.cxtsize_limit = Integer.parseInt(properties.getProperty("cxt_size").trim());
 			Template.temp_limit = Integer.parseInt(properties.getProperty("temp_cap").trim());
-			Traces.trace_limit = Integer.parseInt(properties.getProperty("trace_limit").trim());
+			Traces.time_limit = Integer.parseInt(properties.getProperty("time_limit").trim());
+			ProgSynthesis.time_limit = Integer.parseInt(properties.getProperty("time_limit").trim());
 			//properties.getProperty("iter_end");
 			ExampleSelection.way = Integer.parseInt(properties.getProperty("exmp_sel").trim());
 			debug = Integer.parseInt(properties.getProperty("debug").trim());
 			Template.supermode = Integer.parseInt(properties.getProperty("supermode").trim());
 			Section.supermode = Integer.parseInt(properties.getProperty("supermode").trim());
 			Position.fixedlength = Integer.parseInt(properties.getProperty("fixedlength").trim());
-			res = String.format("cxt_limit:%d temp_limit: %d, trace_limit:%d, exp_sel:%d, supermode:%d,fixedlength:%d\n",Segment.cxtsize_limit,Template.temp_limit,Traces.trace_limit,ExampleSelection.way,Template.supermode,Position.fixedlength);
+			res = String.format("cxt_limit:%d temp_limit: %d, time_limit:%d, exp_sel:%d, supermode:%d,fixedlength:%d\n",Segment.cxtsize_limit,Template.temp_limit,Traces.time_limit,ExampleSelection.way,Template.supermode,Position.fixedlength);
 
 		} catch (IOException ex) {
 			return;

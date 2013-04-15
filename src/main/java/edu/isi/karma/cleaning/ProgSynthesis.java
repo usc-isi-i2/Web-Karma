@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Vector;
 
 public class ProgSynthesis {
+	public static int time_limit = 20;
 	Vector<Vector<TNode>> orgVector = new Vector<Vector<TNode>>();
 	Vector<Vector<TNode>> tarVector = new Vector<Vector<TNode>>();
 	String bestRuleString = "";
@@ -133,6 +134,7 @@ public class ProgSynthesis {
 		HashSet<ProgramRule> rules = new HashSet<ProgramRule>();
 		int prog_cnt = 1;
 		int i = 0;
+		long startTime = System.currentTimeMillis();
 		while (i < prog_cnt) {
 			ProgramRule r = prog.toProgram1();
 			if (r == null)
@@ -145,9 +147,13 @@ public class ProgSynthesis {
 				{
 					return null; // indistinguishable classes.
 				}
-				if (termCnt == 10000) {
-					findRule = false;
-					break;
+				if (termCnt == 10) {
+					termCnt = 0;
+					if((System.currentTimeMillis() - startTime)/1000 >= time_limit)
+					{
+						findRule = false;
+						break;
+					}
 				}
 				for (Partition p : prog.partitions) {
 					if (p.label.compareTo(xString) == 0) {

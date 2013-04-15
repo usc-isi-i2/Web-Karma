@@ -10,7 +10,7 @@ import java.util.Vector;
 
 
 public class Traces implements GrammarTreeNode {
-	public static int trace_limit = 800;
+	public static int time_limit = 20;
 	public Vector<TNode> orgNodes;
 	public Vector<TNode> tarNodes;
 	public HashMap<Integer, Template> traceline = new HashMap<Integer, Template>();
@@ -61,11 +61,12 @@ public class Traces implements GrammarTreeNode {
 			vs.add(c);
 			tlines.add(vs);
 		}
+		long stime = System.currentTimeMillis();
 		// find all possible segments starting from a position
 		while (tlines.size() > 0) {
-			if(tlines.size()>trace_limit)
+			if((System.currentTimeMillis()-stime)/1000>time_limit) 
 			{
-				System.out.println("Exceed the limit");
+				System.out.println("Exceed the time limit");
 				lines.clear();
 				break; // otherwise takes too much time
 			}

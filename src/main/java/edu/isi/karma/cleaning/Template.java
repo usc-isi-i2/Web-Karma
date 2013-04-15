@@ -21,7 +21,7 @@ public class Template implements GrammarTreeNode {
 		for (Long k : x) {
 			size *= k;
 		}
-		getCrossIndex(x, 0, "", indexes);
+		getCrossIndex(x, indexes);
 	}
 
 	public String toString() {
@@ -32,7 +32,7 @@ public class Template implements GrammarTreeNode {
 		return str;
 	}
 
-	public void getCrossIndex(Vector<Long> indexs, int cur, String path,
+/*	public void getCrossIndex(Vector<Long> indexs, int cur, String path,
 			Vector<Vector<Integer>> configs) {
 		String tpath = path;
 		if (configs.size() > temp_limit) {
@@ -57,8 +57,37 @@ public class Template implements GrammarTreeNode {
 			String xtpath = path + i + ",";
 			getCrossIndex(indexs, cur + 1, xtpath, configs);
 		}
+	} */
+	//iteratively generate combinations
+	public void getCrossIndex(Vector<Long> indexs,Vector<Vector<Integer>> configs) {
+	    int k = indexs.size();
+		int[] com = new int[k];
+	    for (int i = 0; i < k; i++) 
+	    		com[i] = 0;
+	    while (com[k - 1] < indexs.get(k-1)) {
+	    		Vector<Integer> res = new Vector<Integer>();
+	        for (int i = 0; i < k; i++)
+	        {
+	        		//System.out.print(""+com[i]);
+	            res.add(com[i]);
+	        }
+	        //System.out.println("");
+	        configs.add(res);
+	        if (configs.size() > temp_limit) {
+				return;
+			}
+	        int t = k - 1;
+	        while (t != 0 && com[t] == indexs.get(t)-1) 
+	        		t--;
+	        com[t]++;
+	        if(t==0 && com[t] >= indexs.get(0))
+	        {
+	        		break;
+	        }
+	        for (int i = t + 1; i < k; i++) 
+	        		com[i] = 0;
+	    }
 	}
-
 	public String prog1(){
 		String res = "";
 		for(int i = 0; i< this.body.size(); i++)
