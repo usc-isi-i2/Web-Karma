@@ -7,6 +7,7 @@ import org.python.antlr.PythonParser.return_stmt_return;
 
 public class Section implements GrammarTreeNode {
 	public Position[] pair;
+	public static int time_limit = 10;
 	public Vector<int[]> rules = new Vector<int[]>();
 	public int rule_cxt_size = Segment.cxtsize_limit;
 	public int curState = 0;
@@ -34,8 +35,13 @@ public class Section implements GrammarTreeNode {
 		String rule = "";
 		this.pair[0].isinloop = this.isinloop;
 		this.pair[1].isinloop = this.isinloop;
+		long sec_time_limit = System.currentTimeMillis();
 		while(curState < this.rules.size())
 		{
+			if((System.currentTimeMillis()-sec_time_limit)/1000 > time_limit*1.0/5)
+			{
+				return "null";
+			}
 			String rule1 = this.pair[0].VerifySpace(rules.get(curState)[0]);
 			String rule2 = this.pair[1].VerifySpace(rules.get(curState)[1]);
 			curState ++;

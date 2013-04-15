@@ -8,6 +8,7 @@ import java.util.Vector;
 public class Segment implements GrammarTreeNode {
 	public Vector<Section> section = new Vector<Section>();
 	public static int cxtsize_limit = 2;
+	public static int time_limit = 5;
 	public String tarString = "";
 	public static final String LEFTPOS = "leftpos";
 	public static final String RIGHTPOS = "rightpos";
@@ -111,8 +112,13 @@ public class Segment implements GrammarTreeNode {
 			mdString = "\'"+mdString+"\'";
 			return mdString;
 		}
+		long seg_time_limit = System.currentTimeMillis();
 		for(Section s:this.section)
 		{
+			if((System.currentTimeMillis()-seg_time_limit)/1000>time_limit*1.0/2)
+			{
+				return "null";
+			}
 			s.isinloop = this.isinloop;
 			ruleString = s.verifySpace();
 			if(ruleString.indexOf("null")== -1)

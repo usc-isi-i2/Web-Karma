@@ -670,8 +670,8 @@ function parse(data) {
 		} else if(element["updateType"] == "CleaningResultUpdate") {
 			if(element["result"] != null) {
 				//var pdata = getVaritions(element["result"]);
-				if(element["result"][0] == null) {
-					$.sticky("Cannot find any transformations! ");
+				if(element["result"][0] == null || element["result"][0]["top"].length == 0) {
+				    alert("Cannot find any transformations! ");
 					return;
 				}
 				var topCol = element["result"][0];

@@ -45,6 +45,8 @@ public class ConfigParameters {
 			Template.temp_limit = Integer.parseInt(properties.getProperty("temp_cap").trim());
 			Traces.time_limit = Integer.parseInt(properties.getProperty("time_limit").trim());
 			ProgSynthesis.time_limit = Integer.parseInt(properties.getProperty("time_limit").trim());
+			Segment.time_limit = Integer.parseInt(properties.getProperty("time_limit").trim());
+			Section.time_limit = Integer.parseInt(properties.getProperty("time_limit").trim());
 			//properties.getProperty("iter_end");
 			ExampleSelection.way = Integer.parseInt(properties.getProperty("exmp_sel").trim());
 			debug = Integer.parseInt(properties.getProperty("debug").trim());

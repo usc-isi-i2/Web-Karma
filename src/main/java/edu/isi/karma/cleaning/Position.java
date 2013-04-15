@@ -311,8 +311,7 @@ public class Position implements GrammarTreeNode {
 				if(rule.indexOf("counter")==-1)
 				{
 					return "null";
-				}
-				
+				}				
 				boolean isvalid = true;
 				for (int j = 0; j < this.orgStrings.size(); j++) {
 					int cnt = 1;
@@ -363,7 +362,6 @@ public class Position implements GrammarTreeNode {
 		}
 		return "null";
 	}
-
 	public void createTotalOrderVector() {
 		HashMap<String, Double> lMap = new HashMap<String, Double>();
 		HashMap<String, Double> rMap = new HashMap<String, Double>();

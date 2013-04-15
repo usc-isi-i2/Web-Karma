@@ -378,7 +378,14 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			expstr += String.format("%s|%s", x.getBefore(),x.getAfter());
 		}
 		expstr += "|";
-		recmd = resdata.get(keys.iterator().next()).get("Org");
+		if(!resdata.isEmpty())
+		{
+			recmd = resdata.get(keys.iterator().next()).get("Org");
+		}
+		else
+		{
+			recmd = ""; 
+		}
 		Msg = String.format("Gen rule end, Time:%d, Worksheet:%s,Examples:%s,Recmd:%s",System.currentTimeMillis(),worksheetId,expstr,recmd);
 		logger.info(Msg);
 		return new UpdateContainer(new CleaningResultUpdate(hNodeId, resdata,

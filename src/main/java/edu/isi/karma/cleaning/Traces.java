@@ -98,7 +98,12 @@ public class Traces implements GrammarTreeNode {
 		}
 		// detect loops
 		// verify loops
+		long vgt_time_limit = System.currentTimeMillis();
 		for (Vector<Segment> vgt : lines) {
+			if((System.currentTimeMillis()-vgt_time_limit)/1000>time_limit) 
+			{
+				break; // otherwise takes too much time
+			}
 			Vector<Vector<GrammarTreeNode>> lLine = this.genLoop(vgt);
 			if (lLine != null)
 				lSeg.addAll(lLine);
