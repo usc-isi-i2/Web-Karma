@@ -19,31 +19,36 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.rep.alignment;
+package edu.isi.karma.modeling.research.experiment2;
 
+import java.util.Set;
 
+import edu.isi.karma.rep.alignment.Node;
 
-/**
- * SimpleLink does not have any type.   
- * @author mohsen
- *
- */
+public class RankedSteinerSet implements Comparable<RankedSteinerSet>{
 
-public class SimpleLink extends Link {
-
-	private static final long serialVersionUID = 1L;
-	private static final Label label = 
-			new Label("SimpleLink");
-
-	public SimpleLink(String id) {
-		super(id, label, LinkType.None);
+	private Set<Node> nodes;
+	
+	public RankedSteinerSet(Set<Node> nodes) {
+		this.nodes = nodes;
 	}
 
-	public SimpleLink(String id, Label uri) {
-		super(id, uri, LinkType.None);
+	public Set<Node> getNodes() {
+		return nodes;
 	}
 
-	public static Label getFixedLabel() {
-		return label;
+	@Override
+	public int compareTo(RankedSteinerSet s) {
+		
+		int size1 = this.nodes == null ? 0 : this.nodes.size();
+		int size2 = s.getNodes() == null ? 0 : s.getNodes().size();
+		
+		if (size1 < size2)
+			return -1;
+		else if (size1 > size2)
+			return 1;
+		else 
+			return 0;
 	}
+	
 }

@@ -688,16 +688,16 @@ public class Approach1 {
 			} 
 
 			if (link.getWeight() == ModelingParams.PROPERTY_WITH_ONLY_DOMAIN_WEIGHT) {
-				objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyRange(sourceUri, targetUri);
+				objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyDomain(sourceUri, targetUri);
 				if (objectPropertiesWithOnlyDomain != null) possibleLinksFromSourceToTarget.addAll(objectPropertiesWithOnlyDomain);
-				objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyRange(targetUri, sourceUri);
+				objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyDomain(targetUri, sourceUri);
 				if (objectPropertiesWithOnlyDomain != null) possibleLinksFromTargetToSource.addAll(objectPropertiesWithOnlyDomain);
 			} 
 			
 			if (link.getWeight() == ModelingParams.PROPERTY_WITH_ONLY_RANGE_WEIGHT) {
-				objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesIndirect(sourceUri, targetUri);
+				objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesWithOnlyRange(sourceUri, targetUri);
 				if (objectPropertiesWithOnlyRange != null) possibleLinksFromSourceToTarget.addAll(objectPropertiesWithOnlyRange);
-				objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesIndirect(targetUri, sourceUri);
+				objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesWithOnlyRange(targetUri, sourceUri);
 				if (objectPropertiesWithOnlyRange != null) possibleLinksFromTargetToSource.addAll(objectPropertiesWithOnlyRange);
 			} 
 			

@@ -20,11 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,9 +27,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Namespaces;
@@ -109,17 +101,16 @@ public class GraphBuilder {
 		this.visitedSourceTargetPairs = new HashMap<String, Boolean>();
 		this.sourceToTargetLinkUris = new HashMap<String, Boolean>();
 			
-		initialGraph();
-
+		this.initialGraph();
+		
 		logger.info("initial graph has been created.");
 	}
 	
-	public GraphBuilder() {
+	public GraphBuilder(OntologyManager ontologyManager, DirectedWeightedMultigraph<Node, Link> graph) {
 		
-		this.ontologyManager = new OntologyManager();
-		this.nodeIdFactory = new NodeIdFactory();
-		this.linkIdFactory = new LinkIdFactory();
-
+		this.graph = graph;
+		this.ontologyManager = ontologyManager;
+		
 		this.idToNodeMap = new HashMap<String, Node>();
 		this.idToLinkMap = new HashMap<String, Link>();
 		this.uriToNodesMap = new HashMap<String, List<Node>>();
@@ -128,19 +119,91 @@ public class GraphBuilder {
 		this.typeToLinksMap = new HashMap<LinkType, List<Link>>();
 		this.statusToLinksMap = new HashMap<LinkStatus, List<Link>>();
 		
-		this.nodeReferences = new HashMap<Node, Integer>();
-		this.uriClosure = new HashMap<String, List<String>>();
-		
-		this.graph = new DirectedWeightedMultigraph<Node, Link>(Link.class);
-		
 		this.visitedSourceTargetPairs = new HashMap<String, Boolean>();
 		this.sourceToTargetLinkUris = new HashMap<String, Boolean>();
-			
-		initialGraph();
 
-		logger.info("initial graph has been created.");
+		this.nodeIdFactory = new NodeIdFactory();
+		this.linkIdFactory = new LinkIdFactory();
+		
+		for (Node node : this.graph.vertexSet()) {
+			
+			if (node instanceof InternalNode)
+				nodeIdFactory.getNodeId(node.getLabel().getUri());
+
+			this.idToNodeMap.put(node.getId(), node);
+			
+			List<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
+			if (nodesWithSameUri == null) {
+				nodesWithSameUri = new ArrayList<Node>();
+				uriToNodesMap.put(node.getLabel().getUri(), nodesWithSameUri);
+			}
+			nodesWithSameUri.add(node);
+			
+			List<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
+			if (nodesWithSameType == null) {
+				nodesWithSameType = new ArrayList<Node>();
+				typeToNodesMap.put(node.getType(), nodesWithSameType);
+			}
+			nodesWithSameType.add(node);
+						
+		}
+		
+		Node source;
+		Node target;
+		
+		for (Link link : this.graph.edgeSet()) {
+			
+			source = link.getSource();
+			target = link.getTarget();
+			
+			linkIdFactory.getLinkId(link.getLabel().getUri());
+
+			this.idToLinkMap.put(link.getId(), link);
+			
+			List<Link> linksWithSameUri = uriToLinksMap.get(link.getLabel().getUri());
+			if (linksWithSameUri == null) {
+				linksWithSameUri = new ArrayList<Link>();
+				uriToLinksMap.put(link.getLabel().getUri(), linksWithSameUri);
+			}
+			linksWithSameUri.add(link);
+			
+			List<Link> linksWithSameStatus = statusToLinksMap.get(link.getStatus());
+			if (linksWithSameStatus == null) {
+				linksWithSameStatus = new ArrayList<Link>();
+				statusToLinksMap.put(link.getStatus(), linksWithSameUri);
+			}
+			linksWithSameStatus.add(link);
+			
+			
+			List<Link> linksWithSameType = typeToLinksMap.get(link.getType());
+			if (linksWithSameType == null) {
+				linksWithSameType = new ArrayList<Link>();
+				typeToLinksMap.put(link.getType(), linksWithSameType);
+			}
+			linksWithSameType.add(link);
+			
+			String key = source.getId() + target.getId() + link.getLabel().getUri();
+			sourceToTargetLinkUris.put(key, true);
+			
+			this.visitedSourceTargetPairs.put(source.getId() + target.getId(), true);
+		}
+
+		this.nodeReferences = new HashMap<Node, Integer>();
+		this.uriClosure = new HashMap<String, List<String>>();
+			
+		logger.info("graph has been loaded.");
 	}
 	
+	
+	
+	public NodeIdFactory getNodeIdFactory() {
+		return nodeIdFactory;
+	}
+
+	public LinkIdFactory getLinkIdFactory() {
+		return linkIdFactory;
+	}
+
 	public OntologyManager getOntologyManager() {
 		return this.ontologyManager;
 	}
@@ -349,7 +412,7 @@ public class GraphBuilder {
 			
 			for (Node n : closureIncludingSelf) {
 				Integer refCount = this.nodeReferences.get(n);
-				this.nodeReferences.put(source, ++refCount);
+				if (refCount != null) this.nodeReferences.put(source, ++refCount);
 			}
 		}
 			
@@ -403,7 +466,7 @@ public class GraphBuilder {
 			
 			for (Node n : closureIncludingSelf) {
 				Integer refCount = this.nodeReferences.get(n);
-				this.nodeReferences.put(source, --refCount);
+				if (refCount != null) this.nodeReferences.put(source, --refCount);
 			}
 		}
 		
@@ -432,10 +495,12 @@ public class GraphBuilder {
 
 		for (Node n : closureIncludingSelf) {
 			Integer refCount = this.nodeReferences.get(n);
-			if (refCount.intValue() == 0) 
-				removeSingleNode(n);
+			if (refCount != null) {
+				if (refCount.intValue() == 0) 
+					removeSingleNode(n);
 			else
 				this.nodeReferences.put(n, --refCount);
+			}
 		}
 
 		logger.info("total number of nodes in graph: " + this.graph.vertexSet().size());
@@ -919,8 +984,8 @@ public class GraphBuilder {
 				sourceUri = source.getLabel().getUri();
 				targetUri = target.getLabel().getUri();
 
-				id = linkIdFactory.getLinkId("SimpleLink");
-				Link link = new SimpleLink(id, null);
+				id = linkIdFactory.getLinkId(SimpleLink.getFixedLabel().getUri());
+				Link link = new SimpleLink(id, SimpleLink.getFixedLabel());
 
 				// order of adding the links is based on the ascending sort of their weight value
 				if (this.ontologyManager.isConnectedByDirectProperty(sourceUri, targetUri) ||
@@ -949,17 +1014,50 @@ public class GraphBuilder {
 
 			}
 		}		
+		
+//		List<Node> columnNodes = this.typeToNodesMap.get(NodeType.ColumnNode);
+//		if (columnNodes != null) {
+//			for (Node n2 : columnNodes) {
+//				
+//				Set<Link> incomingLinks = this.graph.incomingEdgesOf(n2);
+//				if (incomingLinks != null) {
+//					Link[] inLinks = incomingLinks.toArray(new Link[0]);
+//					for (Link link : inLinks) {
+//						
+//						Node domain = link.getSource();
+//						
+//						List<Node> nodesWithSameUriOfDomain = this.uriToNodesMap.get(domain.getLabel().getUri());
+//						if (nodesWithSameUriOfDomain != null) {
+//							for (Node n1 : nodesWithSameUriOfDomain) {
+//								if (n1 instanceof InternalNode) {
+//									
+//									if (this.visitedSourceTargetPairs.containsKey(n1.getId() + n2.getId()))
+//										continue;
+//									
+//									this.visitedSourceTargetPairs.put(n1.getId() + n2.getId(), true);
+//
+//									String linkId = linkIdFactory.getLinkId(link.getLabel().getUri());	
+//									Link newLink = new DataPropertyLink(linkId, new Label(link.getLabel()), false);
+//									this.addLink(n1, n2, newLink);
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+
 
 		logger.debug("exit>");
 	}
 	
-	public void serialize(String fileName) throws IOException {
-		
-		/**
-		 * Kryo
-		 */
-
-		// Kryo: problem with classes that do not have zero-arg constructors
+//	public void serialize(String fileName) throws IOException {
+//		
+//		/**
+//		 * Kryo
+//		 */
+//
+//		// Kryo: problem with classes that do not have zero-arg constructors
 //		Kryo kryo = new Kryo();
 //		JavaSerializer javaSerializer = new JavaSerializer();
 //		kryo.register(DirectedWeightedMultigraph.class, javaSerializer);		
@@ -971,11 +1069,11 @@ public class GraphBuilder {
 //		Output output = new Output(new FileOutputStream(fileName));
 //		kryo.writeObject(output, this);
 //		output.close();
-		
-		/**
-		 * Protostuff
-		 */
-
+//		
+//		/**
+//		 * Protostuff
+//		 */
+//
 //		Schema<GraphBuilder> schema = RuntimeSchema.getSchema(GraphBuilder.class);
 //		FileOutputStream f = new FileOutputStream(fileName);
 //		ObjectOutputStream out = new ObjectOutputStream(f);
@@ -989,11 +1087,11 @@ public class GraphBuilder {
 //		{
 //		    buffer.clear();
 //		}
-		
-		/**
-		 * Gson
-		 */
-
+//		
+//		/**
+//		 * Gson
+//		 */
+//
 //		Gson gson = new Gson();
 //		FileOutputStream f = new FileOutputStream(fileName);
 //		ObjectOutputStream out = new ObjectOutputStream(f);
@@ -1003,7 +1101,7 @@ public class GraphBuilder {
 //        gson.toJson(this, GraphBuilder.class, writer);
 //        writer.endArray();
 //        writer.close();
-		
+//		
 //		Kryo kryo = new Kryo();
 //		kryo.register(GraphBuilder.class, new Serializer<GraphBuilder>() {
 //		    
@@ -1022,22 +1120,35 @@ public class GraphBuilder {
 //		        return tile;
 //		    }
 //		}
-		
-		FileOutputStream f = new FileOutputStream(fileName);
-		ObjectOutputStream out = new ObjectOutputStream(f);
-		ObjectMapper mapper = new ObjectMapper();
-//        mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
-        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-        mapper.writeValue(out, this);
-
-	}
+//		
+//	class MyNullKeySerializer extends JsonSerializer<Object>
+//	{
+//	  @Override
+//	  public void serialize(Object nullKey, JsonGenerator jsonGenerator, SerializerProvider unused) 
+//	      throws IOException, JsonProcessingException
+//	  {
+//	    jsonGenerator.writeFieldName("");
+//	  }
+//	}
+//	
+//		FileOutputStream f = new FileOutputStream(fileName);
+//		ObjectOutputStream out = new ObjectOutputStream(f);
+//		ObjectMapper mapper = new ObjectMapper();
+////        mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
+//		mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+//	    mapper.setSerializationInclusion(Include.NON_NULL);
+//	    mapper.getSerializerProvider().setNullKeySerializer(new MyNullKeySerializer());
+//	    mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+//        mapper.writeValue(out, this);
+//
+//	}
 	
-	public static GraphBuilder deserialize(String fileName) throws IOException {
-
-		/**
-		 * Kryo
-		 */
-		
+//	public static GraphBuilder deserialize(String fileName) throws IOException {
+//
+//		/**
+//		 * Kryo
+//		 */
+//		
 //		Kryo kryo = new KryoReflectionFactorySupport();
 //		JavaSerializer javaSerializer = new JavaSerializer();
 //		kryo.register(DirectedWeightedMultigraph.class, javaSerializer);
@@ -1049,11 +1160,11 @@ public class GraphBuilder {
 //		GraphBuilder graphBuilder = kryo.readObject(input, GraphBuilder.class);
 //		input.close();
 //		return graphBuilder;
-		
-		/**
-		 * Protostuff
-		 */
-		
+//		
+//		/**
+//		 * Protostuff
+//		 */
+//		
 //		Schema<GraphBuilder> schema = RuntimeSchema.getSchema(GraphBuilder.class);
 //		FileInputStream f = new FileInputStream(fileName);
 //      ObjectInputStream in = new ObjectInputStream(f);
@@ -1062,11 +1173,11 @@ public class GraphBuilder {
 //		GraphBuilder g = new GraphBuilder();
 //		ProtobufIOUtil.mergeFrom(in, g, schema, buffer);
 //		return g;
-		
-		/**
-		 * Gson
-		 */
-
+//		
+//		/**
+//		 * Gson
+//		 */
+//
 //		Gson gson = new Gson();
 //		FileInputStream f = new FileInputStream(fileName);
 //		ObjectInputStream in = new ObjectInputStream(f);
@@ -1076,14 +1187,14 @@ public class GraphBuilder {
 //        reader.endArray();
 //        reader.close();
 //        return graphBuilder;
-		
-		FileInputStream f = new FileInputStream(fileName);
-		ObjectInputStream in = new ObjectInputStream(f);
-        ObjectMapper mapper = new ObjectMapper();
-        GraphBuilder graphBuilder = mapper.readValue(in, GraphBuilder.class);
-        return graphBuilder;
-
-	}
+//		
+//		FileInputStream f = new FileInputStream(fileName);
+//		ObjectInputStream in = new ObjectInputStream(f);
+//        ObjectMapper mapper = new ObjectMapper();
+//        GraphBuilder graphBuilder = mapper.readValue(in, GraphBuilder.class);
+//        return graphBuilder;
+//
+//	}
 	
 	public static void main(String[] args) throws Exception {
 		

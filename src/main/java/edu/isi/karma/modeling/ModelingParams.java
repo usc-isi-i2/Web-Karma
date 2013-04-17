@@ -33,7 +33,7 @@ public interface ModelingParams{
 	public static double PROPERTY_WITH_ONLY_RANGE_WEIGHT = 1000;
 	public static double SUBCLASS_WEIGHT = 10000;
 	public static double PROPERTY_WITHOUT_DOMAIN_RANGE_WEIGHT = 50000;
-	public static double PATTERN_LINK_WEIGHT = 0.01;
+	public static double PATTERN_LINK_WEIGHT = 1;
 
 	// Prefixes
 	public static String KARMA_SOURCE_PREFIX = "http://isi.edu/integration/karma/sources/";

@@ -29,10 +29,12 @@ public class SemanticLabel2{
 
 	private String nodeUri;
 	private String linkUri;
+	private String leafName;
 	
-	public SemanticLabel2(String nodeUri, String linkUri) {
+	public SemanticLabel2(String nodeUri, String linkUri, String leafName) {
 		this.nodeUri = nodeUri;
 		this.linkUri = linkUri;
+		this.leafName = leafName;
 	}
 
 	
@@ -45,7 +47,10 @@ public class SemanticLabel2{
 		return linkUri;
 	}
 
-
+	public String getLeafName() {
+		return leafName;
+	}
+	
 	public void print() {
 		String s = "";
 		if (this.nodeUri != null) s += this.nodeUri;

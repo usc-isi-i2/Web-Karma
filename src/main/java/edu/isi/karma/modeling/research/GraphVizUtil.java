@@ -24,6 +24,7 @@ package edu.isi.karma.modeling.research;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -92,7 +93,7 @@ public class GraphVizUtil {
 			String uri = source.getLabel().getUri();
 			if (n == null) {
 				n = new org.kohsuke.graphviz.Node();
-				n.attr("label", (uri == null?id:uri));
+				n.attr("label", (uri == null || uri.trim().length() == 0?id:uri));
 				nodeIndex.put(source, n);
 			
 //				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
@@ -114,7 +115,7 @@ public class GraphVizUtil {
 			uri = target.getLabel().getUri();
 			if (n == null) {
 				n = new org.kohsuke.graphviz.Node();
-				n.attr("label", (uri == null?id:uri));
+				n.attr("label", (uri == null || uri.trim().length() == 0?id:uri));
 				nodeIndex.put(target, n);
 			
 //				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
@@ -162,6 +163,11 @@ public class GraphVizUtil {
 
 
 		return gViz;
+	}
+	
+	private static double roundTwoDecimals(double d) {
+        DecimalFormat twoDForm = new DecimalFormat("#.##");
+        return Double.valueOf(twoDForm.format(d));
 	}
 	
 	public static org.kohsuke.graphviz.Graph exportJGraphToGraphviz(DirectedWeightedMultigraph<Node, Link> model) {
@@ -215,7 +221,7 @@ public class GraphVizUtil {
 			String uri = source.getLabel().getUri();
 			if (n == null) {
 				n = new org.kohsuke.graphviz.Node();
-				n.attr("label", (uri == null?id:uri));
+				n.attr("label", (uri == null || uri.trim().length() == 0?id:uri));
 				nodeIndex.put(source, n);
 			
 //				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
@@ -237,7 +243,7 @@ public class GraphVizUtil {
 			uri = target.getLabel().getUri();
 			if (n == null) {
 				n = new org.kohsuke.graphviz.Node();
-				n.attr("label", (uri == null?id:uri));
+				n.attr("label", (uri == null || uri.trim().length() == 0?id:uri));
 				nodeIndex.put(target, n);
 			
 //				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
@@ -257,7 +263,17 @@ public class GraphVizUtil {
 			id = e.getId();
 			uri = e.getLabel().getUri();
 			org.kohsuke.graphviz.Edge edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(source), nodeIndex.get(target));
-			edge.attr("label", (uri == null?id:uri));
+			String label = (uri == null?id:uri);
+			label += "-(" + roundTwoDecimals(e.getWeight()) + ")-";
+			if (e.getPatternIds() != null) {
+				label += "-[";
+				for (String pId : e.getPatternIds())
+					label += pId + ",";
+				if (label.endsWith(","))
+					label = label.substring(0, label.length() - 1);
+				label += "]";
+			}
+			edge.attr("label", label);
 			gViz.edgeWith(edgeStyle);
 			gViz.edge(edge);
 		}

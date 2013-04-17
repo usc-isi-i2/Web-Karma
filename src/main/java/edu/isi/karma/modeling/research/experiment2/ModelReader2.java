@@ -287,7 +287,7 @@ public class ModelReader2 {
 			}
 		}
 		
-		int countOfLiterals = 0;
+//		int countOfLiterals = 0;
 		
 		for (Statement st : statements) {
 			
@@ -313,9 +313,9 @@ public class ModelReader2 {
 				if (objStr.startsWith(attPrefix))
 					obj = new ColumnNode(objStr, null, null, "");
 				else if (objStr.indexOf(":") == -1 && objStr.indexOf("\"") != -1) {
-					String literalId = "lit:" + serviceId + "_l" + String.valueOf(countOfLiterals); 
-					obj = new LiteralNode(literalId, objStr, null);
-					countOfLiterals ++;
+//					String literalId = "lit:" + serviceId + "_l" + String.valueOf(countOfLiterals); 
+					obj = new LiteralNode(objStr, objStr, null);
+//					countOfLiterals ++;
 				} else
 					obj = new InternalNode(objStr, new Label(objStr));
 				
