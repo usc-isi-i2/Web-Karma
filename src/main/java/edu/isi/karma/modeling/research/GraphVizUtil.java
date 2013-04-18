@@ -263,16 +263,16 @@ public class GraphVizUtil {
 			id = e.getId();
 			uri = e.getLabel().getUri();
 			org.kohsuke.graphviz.Edge edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(source), nodeIndex.get(target));
+			
 			String label = (uri == null?id:uri);
 			label += "-(" + roundTwoDecimals(e.getWeight()) + ")-";
-			if (e.getPatternIds() != null) {
-				label += "-[";
-				for (String pId : e.getPatternIds())
-					label += pId + ",";
-				if (label.endsWith(","))
-					label = label.substring(0, label.length() - 1);
-				label += "]";
-			}
+			label += "-[";
+			for (String pId : e.getPatternIds())
+				label += pId + ",";
+			if (label.endsWith(","))
+				label = label.substring(0, label.length() - 1);
+			label += "]";
+
 			edge.attr("label", label);
 			gViz.edgeWith(edgeStyle);
 			gViz.edge(edge);

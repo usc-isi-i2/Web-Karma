@@ -91,6 +91,7 @@ public class Approach2 {
 	private static final int MAX_CANDIDATES = 10;
 	private static final int MAX_STEINER_NODES_SETS = 100;
 	
+	private HashSet<Link> patternLinks;
 	private HashMap<String, Integer> linkCountMap;
 	private HashMap<String, HashMap<String, Integer>> sourceTargetToLinkCountMap;
 	
@@ -105,6 +106,29 @@ public class Approach2 {
 		private String linkUri;
 		private int type;
 		private int count;
+		
+		public double getWeight() {
+			
+			double w = 0.0;
+//			double factor = 0.01;
+			int c = this.count;
+			
+			if (type == 1)
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - c * 0.1;
+			else if (type == 2)
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - c * 0.01;
+			else if (type == 3)
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
+			else if (type == 4)
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.01;
+			else if (type == 5)
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.02;
+			else if (type == 6)
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.03;
+			else if (type == 7)
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.04;
+			return w;
+		}
 		
 		@Override
 		public int compareTo(LinkFrequency o) {
@@ -141,6 +165,7 @@ public class Approach2 {
 		this.graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory, linkIdFactory);
 
 		this.labelToLabelStructs = new HashMap<SemanticLabel2, Set<LabelStruct>>();
+		this.patternLinks = new HashSet<Link>();
 		
 		this.linkCountMap = new HashMap<String, Integer>();
 		this.sourceTargetToLinkCountMap = new HashMap<String, HashMap<String,Integer>>();
@@ -162,7 +187,44 @@ public class Approach2 {
 		this.linkIdFactory = this.graphBuilder.getLinkIdFactory();
 		this.updateHashMaps();
 	}
-	
+
+	private void updateHashMaps() {
+		
+		List<Node> columnNodes = this.graphBuilder.getTypeToNodesMap().get(NodeType.ColumnNode);
+		if (columnNodes != null) {
+			for (Node n : columnNodes) {
+				Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(n);
+				if (incomingLinks != null) {
+					Link[] inLinks = incomingLinks.toArray(new Link[0]);
+					for (Link link : inLinks) {
+						Node domain = link.getSource();
+						
+						if (!(domain instanceof InternalNode)) continue;
+						
+						SemanticLabel2 sl = new SemanticLabel2(domain.getLabel().getUri(), link.getLabel().getUri(), n.getId());
+						
+						Set<LabelStruct> labelStructs = this.labelToLabelStructs.get(sl);
+						if (labelStructs == null) {
+							labelStructs = new HashSet<LabelStruct>();
+							this.labelToLabelStructs.put(sl, labelStructs);
+						}
+						labelStructs.add(new LabelStruct((InternalNode)domain, link, (ColumnNode)n));
+					}
+					
+				} else 
+					logger.error("The column node " + n.getId() + " does not have any domain or it has more than one domain.");
+			}
+		}
+		
+		this.buildLinkCountMap();
+		this.buildSourceTargetLinkCountMap();
+		
+		for (Link l : this.graphBuilder.getGraph().edgeSet()) {
+			if (l.getPatternIds().size() > 0)
+				this.patternLinks.add(l);
+		}
+	}
+
 	private static List<SemanticLabel2> getModelSemanticLabels(
 			DirectedWeightedMultigraph<Node, Link> model) {
 		
@@ -278,6 +340,13 @@ public class Approach2 {
 			
 			if (this.graphBuilder.addLink(n1, n2, link))
 					this.graphBuilder.changeLinkWeight(link, ModelingParams.PATTERN_LINK_WEIGHT);
+			
+			if (!n1.getPatternIds().contains(patternId))
+				n1.getPatternIds().add(patternId);
+			
+			if (!n2.getPatternIds().contains(patternId))
+				n2.getPatternIds().add(patternId);
+
 		}
 
 	}
@@ -363,13 +432,14 @@ public class Approach2 {
 			key2 = link.getTarget().getLabel().getUri() + 
 					link.getSource().getLabel().getUri();
 			
-//			if (link.getSource().getLabel().getUri().indexOf("Country") != -1)
-//				if (link.getTarget().getLabel().getUri().indexOf("Road") != -1)
-//					System.out.println("debug1");
-//
 //			if (link.getSource().getLabel().getUri().indexOf("Place") != -1)
+//				if (link.getTarget().getLabel().getUri().indexOf("City") != -1)
+//					System.out.println("debug1");
+
+//			if (link.getSource().getLabel().getUri().indexOf("City") != -1)
 //				if (link.getTarget().getLabel().getUri().indexOf("Country") != -1)
 //					System.out.println("debug2");
+			
 			lf1 = sourceTargetLinkFrequency.get(key1);
 			if (lf1 == null) {
 				lf1 = this.getMoreFrequentLinkBetweenNodes(link.getSource(), link.getTarget());
@@ -387,12 +457,12 @@ public class Approach2 {
 				sources.add(link.getSource());
 				targets.add(link.getTarget());
 				newLinks.add(lf1.linkUri);
-				weights.add(ModelingParams.PROPERTY_DIRECT_WEIGHT - (lf1.count * 0.1));
+				weights.add(lf1.getWeight());
 			} else if (c < 0) {
 				sources.add(link.getTarget());
 				targets.add(link.getSource());
 				newLinks.add(lf2.linkUri);
-				weights.add(ModelingParams.PROPERTY_DIRECT_WEIGHT - (lf2.count * 0.1));
+				weights.add(lf2.getWeight());
 			} else
 				continue;
 			
@@ -418,60 +488,28 @@ public class Approach2 {
 			this.graphBuilder.changeLinkWeight(newLink, weights.get(i));
 		}
 	}
-	
-	private void updateHashMaps() {
 		
-		List<Node> columnNodes = this.graphBuilder.getTypeToNodesMap().get(NodeType.ColumnNode);
-		if (columnNodes != null) {
-			for (Node n : columnNodes) {
-				Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(n);
-				if (incomingLinks != null) {
-					Link[] inLinks = incomingLinks.toArray(new Link[0]);
-					for (Link link : inLinks) {
-						Node domain = link.getSource();
-						
-						if (!(domain instanceof InternalNode)) continue;
-						
-						SemanticLabel2 sl = new SemanticLabel2(domain.getLabel().getUri(), link.getLabel().getUri(), n.getId());
-						
-						Set<LabelStruct> labelStructs = this.labelToLabelStructs.get(sl);
-						if (labelStructs == null) {
-							labelStructs = new HashSet<LabelStruct>();
-							this.labelToLabelStructs.put(sl, labelStructs);
-						}
-						labelStructs.add(new LabelStruct((InternalNode)domain, link, (ColumnNode)n));
-					}
-					
-				} else 
-					logger.error("The column node " + n.getId() + " does not have any domain or it has more than one domain.");
-			}
-		}
-		
-		this.buildLinkCountMap();
-		this.buildSourceTargetLinkCountMap();
-	}
-	
-	private HashSet<Node> getPatternNodes() {
-		HashSet<Node> patternNodes = new HashSet<Node>();
-		
-		if (this.graphBuilder.getGraph() == null || 
-				this.graphBuilder.getGraph().edgeSet().size() == 0)
-			return patternNodes;
-		
-		for (Link link : this.graphBuilder.getGraph().edgeSet())
-			if (link.getPatternIds() != null && link.getPatternIds().size() > 0) {
-				patternNodes.add(link.getSource());
-				patternNodes.add(link.getTarget());
-			}
-		
-		return patternNodes;
-	}
+//	private HashSet<Node> getPatternNodes() {
+//		HashSet<Node> patternNodes = new HashSet<Node>();
+//		
+//		if (this.graphBuilder.getGraph() == null || 
+//				this.graphBuilder.getGraph().edgeSet().size() == 0)
+//			return patternNodes;
+//		
+//		for (Link link : this.graphBuilder.getGraph().edgeSet())
+//			if (link.getPatternIds().size() > 0) {
+//				patternNodes.add(link.getSource());
+//				patternNodes.add(link.getTarget());
+//			}
+//		
+//		return patternNodes;
+//	}
 	
 	private List<Set<LabelStruct>> getLabelStructSets(List<SemanticLabel2> semanticLabels) {
 
 		List<Set<LabelStruct>> labelStructSets = new ArrayList<Set<LabelStruct>>();
 		
-		HashSet<Node> patternNodes = getPatternNodes();
+//		HashSet<Node> patternNodes = getPatternNodes();
 		
 		for (SemanticLabel2 sl : semanticLabels) {
 			
@@ -489,7 +527,7 @@ public class Approach2 {
 				List<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(sl.getNodeUri());
 				if (nodesWithSameUriOfDomain != null) {
 					for (Node n : nodesWithSameUriOfDomain) {
-						if (n instanceof InternalNode && patternNodes.contains(n)) {
+						if (n instanceof InternalNode && n.getPatternIds().size() == 0) {
 							source = (InternalNode)n;
 							existOutsideOfPattern = true;
 							break;
@@ -503,16 +541,13 @@ public class Approach2 {
 					this.graphBuilder.addNodeWithoutUpdatingGraph(source);
 				}
 				
-				if (source != null)
-					patternNodes.add(source);
-
 				nodeId = nodeIdFactory.getNodeId(sl.getLeafName());
 				ColumnNode target = new ColumnNode(nodeId, "", "", "");
 				this.graphBuilder.addNodeWithoutUpdatingGraph(target);
 
 				String linkId = linkIdFactory.getLinkId(sl.getLinkUri());	
 				Link link = new DataPropertyLink(linkId, new Label(sl.getLinkUri()), false);
-				this.graphBuilder.addLink(source, target, link);
+
 				LabelStruct lbStruct = new LabelStruct(source, link, target);
 				labelStructs.add(lbStruct);
 
@@ -526,7 +561,7 @@ public class Approach2 {
 			List<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(sl.getNodeUri());
 			if (nodesWithSameUriOfDomain != null) {
 				for (Node source : nodesWithSameUriOfDomain) {
-					if (source instanceof InternalNode && patternNodes.contains(source)) {
+					if (source instanceof InternalNode && source.getPatternIds().size() > 0) {
 						
 						boolean propertyLinkExists = false;
 						List<Link> linkWithSameUris = this.graphBuilder.getUriToLinksMap().get(sl.getLinkUri());
@@ -547,6 +582,11 @@ public class Approach2 {
 						String linkId = linkIdFactory.getLinkId(sl.getLinkUri());	
 						Link link = new DataPropertyLink(linkId, new Label(sl.getLinkUri()), false);
 						this.graphBuilder.addLink(source, target, link);
+//						if (source.getPatternIds().size() > 0) {
+//							for (String s : source.getPatternIds())
+//								link.getPatternIds().add(s);
+//							this.graphBuilder.changeLinkWeight(link, ModelingParams.PATTERN_LINK_WEIGHT);
+//						}
 						LabelStruct lbStruct = new LabelStruct((InternalNode)source, link, target);
 						labelStructs.add(lbStruct);
 					}
@@ -608,6 +648,17 @@ public class Approach2 {
 		}
 		
 		List<Node> steinerNodeList = new ArrayList<Node>(steinerNodes); 
+		
+		List<Link> updatedLinks = new ArrayList<Link>();
+		for (Link l : this.patternLinks) { 
+			if (steinerNodes.contains(l.getSource()) && steinerNodes.contains(l.getTarget()))
+				continue;
+			updatedLinks.add(l);
+		}
+		
+		for (Link l : updatedLinks) {
+			this.graphBuilder.changeLinkWeight(l, ModelingParams.PROPERTY_DIRECT_WEIGHT);
+		}
 
 		long start = System.currentTimeMillis();
 		UndirectedGraph<Node, Link> undirectedGraph = new AsUndirectedGraph<Node, Link>(this.graphBuilder.getGraph());
@@ -621,6 +672,10 @@ public class Approach2 {
 		logger.info("total number of edges in steiner tree: " + tree.edgeSet().size());
 		logger.info("time to compute steiner tree: " + (steinerTreeElapsedTimeMillis/1000F));
 
+		for (Link l : updatedLinks) {
+			this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
+		}
+		
 		return tree;
 		
 //		long finalTreeElapsedTimeMillis = System.currentTimeMillis() - steinerTreeElapsedTimeMillis;
@@ -645,7 +700,7 @@ public class Approach2 {
 			RankedModel r = new RankedModel(m);
 			rankedModels.add(r);
 			count ++;
-			logger.info("frequency=" + r.getFrequency() + ", cost=" + r.getCost() + ", cohesion=" + r.getCohesion());
+			logger.info("frequency=" + r.getFrequency() + ", cost=" + r.getCost() + ", cohesion=" + r.getCohesionString());
 		}
 		
 		Collections.sort(rankedModels);
@@ -680,6 +735,9 @@ public class Approach2 {
 //		}
 		
 		List<RankedSteinerSet> rankedSteinerSets = rankSteinerSets(steinerNodeSets);
+		
+//		for (RankedSteinerSet r : rankedSteinerSets)
+//			System.out.println(r.getCohesionString());
 
 		List<DirectedWeightedMultigraph<Node, Link>> models = 
 				new ArrayList<DirectedWeightedMultigraph<Node,Link>>();
@@ -796,13 +854,13 @@ public class Approach2 {
 				type = 5;
 			} else 	if (objectPropertiesWithOnlyRange != null && objectPropertiesWithOnlyRange.size() > 0) {
 				selectedLinkUri = objectPropertiesWithOnlyRange.get(0);
-				type = 6;
+				type = 5;
 			} else if (ontologyManager.isSubClass(sourceUri, targetUri, true)) {
 				selectedLinkUri = Uris.RDFS_SUBCLASS_URI;
-				type = 7;
+				type = 6;
 			} else {	// if (objectPropertiesWithoutDomainAndRange != null && objectPropertiesWithoutDomainAndRange.keySet().size() > 0) {
 				selectedLinkUri = new ArrayList<String>(objectPropertiesWithoutDomainAndRange.keySet()).get(0);
-				type = 8;
+				type = 7;
 			}
 
 			maxCount = 0;
@@ -840,7 +898,7 @@ public class Approach2 {
 		ontManager.updateCache();
 
 //		for (int i = 0; i < serviceModels.size(); i++) {
-		int i = 3; {
+		int i = 6; {
 			
 			trainingData.clear();
 			int newServiceIndex = i;
@@ -895,8 +953,8 @@ public class Approach2 {
 					RankedModel m = hypothesisList.get(k);
 					String label = "candidate" + k + 
 							"-frequency:" + m.getFrequency() +
-							"-cost:" + roundTwoDecimals(m.getCost()) + 
-							"-cohesion:" + m.getCohesion(); 
+							"-cohesion:" + m.getCohesionString() +  
+							"-cost:" + roundTwoDecimals(m.getCost()); 
 					
 					graphs.put(label, m.getModel());
 				}
