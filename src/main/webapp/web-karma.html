@@ -348,7 +348,7 @@ and related projects, please see: http://www.isi.edu/integration
 	</head>
 
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.76</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.77</span></h1>
 		<table id="topMenuBar">
 			<tr>
 				<td>
@@ -1014,6 +1014,21 @@ and related projects, please see: http://www.isi.edu/integration
             <br>
             <table id="pythonPreviewResultsTable" class="smallSizedFont" style="display: none"></table>
             <div id="pyTransformErrorWindow" style="display: none"></div>
+        </div>
+        <div id="addNewColumnDialogDiv" style="display: none" class="smallSizedFont">
+            <table>
+                <tr>
+                    <td><span>Enter new column name:</span></td>
+                    <td><input type="text" id="addNewColumnNameInput" /></td>
+                </tr>
+                <tr>
+                    <td><span>Default Value:</span></td>
+                    <td><input type="text" id="addNewColumnDefaultValueInput" /></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><span class="error" style="display: none">Please enter a unique column name!</span></td>
+                </tr>
+            </table>
         </div>
 	</body>
 </html>

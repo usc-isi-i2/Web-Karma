@@ -21,10 +21,7 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
@@ -38,18 +35,14 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
-import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeTrainingThread;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
-import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler.ColumnFeature;
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Label;
@@ -59,8 +52,6 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
-import edu.isi.karma.rep.metadata.Tag;
-import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.view.VWorkspace;
 
 public class SetSemanticTypeCommand extends Command {
@@ -286,12 +277,12 @@ public class SetSemanticTypeCommand extends Command {
 		}
 
 		// Identify the outliers if the semantic type exists in the crfmodel
-		List<String> existingLabels = new ArrayList<String>();
-		crfModelHandler.getLabels(existingLabels);
-		if (existingLabels.contains(newType.getCrfModelLabelString())) {
-			identifyOutliers(worksheet, vWorkspace, crfModelHandler, newType);
-			c.add(new TagsUpdate());
-		}
+//		List<String> existingLabels = new ArrayList<String>();
+//		crfModelHandler.getLabels(existingLabels);
+//		if (existingLabels.contains(newType.getCrfModelLabelString())) {
+//			identifyOutliers(worksheet, vWorkspace, crfModelHandler, newType);
+//			c.add(new TagsUpdate());
+//		}
 		
 		if(trainAndShowUpdates) {
 			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
@@ -319,25 +310,25 @@ public class SetSemanticTypeCommand extends Command {
 		return c;
 	}
 
-	private void identifyOutliers(Worksheet worksheet,
-			VWorkspace vWorkspace, CRFModelHandler crfModelHandler, SemanticType type) {
-		Tag outlierTag = vWorkspace.getWorkspace().getTagsContainer().getTag(TagName.Outlier);
-		Map<ColumnFeature, Collection<String>> features = new HashMap<ColumnFeature, Collection<String>>();
-		
-		// Get the HNodePath
-		List<HNodePath> allPaths = worksheet.getHeaders().getAllPaths();
-		for (HNodePath currentPath:allPaths) {
-			if (currentPath.getLeaf().getId().equals(hNodeId)) {
-//				List<String> columnNamesList = new ArrayList<String>();
-//				columnNamesList.add(currentPath.getLeaf().getColumnName());
-//				features.put(ColumnFeature.ColumnHeaderName, columnNamesList);
-				String typeString = newType.isClass() ? newType.getType().getUri() : newType.getDomain().getUri() + "|" + newType.getType().getUri();
-				SemanticTypeUtil.identifyOutliers(worksheet, typeString, currentPath, outlierTag, features, crfModelHandler);
-				break;
-			}
-		}
-		
-	}
+//	private void identifyOutliers(Worksheet worksheet,
+//			VWorkspace vWorkspace, CRFModelHandler crfModelHandler, SemanticType type) {
+//		Tag outlierTag = vWorkspace.getWorkspace().getTagsContainer().getTag(TagName.Outlier);
+//		Map<ColumnFeature, Collection<String>> features = new HashMap<ColumnFeature, Collection<String>>();
+//		
+//		// Get the HNodePath
+//		List<HNodePath> allPaths = worksheet.getHeaders().getAllPaths();
+//		for (HNodePath currentPath:allPaths) {
+//			if (currentPath.getLeaf().getId().equals(hNodeId)) {
+////				List<String> columnNamesList = new ArrayList<String>();
+////				columnNamesList.add(currentPath.getLeaf().getColumnName());
+////				features.put(ColumnFeature.ColumnHeaderName, columnNamesList);
+//				String typeString = newType.isClass() ? newType.getType().getUri() : newType.getDomain().getUri() + "|" + newType.getType().getUri();
+//				SemanticTypeUtil.identifyOutliers(worksheet, typeString, currentPath, outlierTag, features, crfModelHandler);
+//				break;
+//			}
+//		}
+//		
+//	}
 
 	private ColumnNode getColumnNode(Alignment alignment, HNode hNode) {
 		String columnName = hNode.getColumnName();
