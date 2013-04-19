@@ -119,9 +119,16 @@ public class PreviewPythonTransformationResultsCommand extends Command {
 					String nodeVal = row.getNode(hNodeId).getValue().asString();
 					if (counter++ != 0)
 						objectCreationStmt.append(",");
-					objectCreationStmt.append("\"" + nodeVal + "\"");
+					if (nodeVal == null || nodeVal.equals("")) {
+						objectCreationStmt.append("\"\"");
+					} else {
+						nodeVal = nodeVal.replaceAll("\"", "\\\\\"");
+						nodeVal = nodeVal.replaceAll("\n", "");
+						objectCreationStmt.append("\"" + nodeVal + "\"");
+					}
 				}
 				objectCreationStmt.append(")");
+				
 				interpreter.exec(objectCreationStmt.toString());
 				try {
 					PyObject output = interpreter.eval("transform(r)");
