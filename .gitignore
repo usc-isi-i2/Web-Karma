@@ -48,3 +48,9 @@ bin/
 *.shx
 src/main/webapp/SpatialData/GET_OPENSTREETMAP.xml
 src/main/scripts/Lib/IDCTClassifier$py.class
+
+src/main/webapp/publish/CSV/Well_Data_Sheet1
+
+.gitignore
+
+.gitignore
