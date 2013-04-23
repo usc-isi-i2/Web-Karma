@@ -380,7 +380,7 @@ public class RuleRDFGenerator {
 		//split class name
 		int ind = className.indexOf(PREFIX_SEPARATOR);
 		//http: is not a prefix
-		if(ind>0 && !className.startsWith("http:")){
+		if(ind>0 && !className.startsWith("http:") && !className.startsWith("<http:")){
 			ontologyPrefixName = className.substring(0,ind); 
 			className = className.substring(ind+1); 
 		}
@@ -404,7 +404,7 @@ public class RuleRDFGenerator {
 		//className = URLEncoder.encode(className, "UTF-8");
 		//String classFullName = "<" + ontologyPrefixName + ":" + className + ">";
 		String classFullName = ontologyPrefixName + ":" + className;
-		if(className.startsWith("http:")){
+		if(className.startsWith("http:") && !className.startsWith("<http:")){
 			classFullName = "<" + className + ">";
 		}
 		
@@ -724,6 +724,14 @@ public class RuleRDFGenerator {
 		//don't include this tuple
 		if(varValue.isEmpty()){
 			return null;
+		}
+		
+		// TEMPORARY FIX TO RESOLVE PROBLEM WITH BAD URIS WHILE USING SUBCLASS LINKS
+		if (className.startsWith("http:") || className.startsWith("<http:")) {
+			if (className.contains("#"))
+				className = className.substring(className.indexOf("#")+1).replaceAll(">", "");
+			else
+				className = className.substring(className.lastIndexOf("/")).replaceAll(">", "");
 		}
 		
 		//set terms for this function
