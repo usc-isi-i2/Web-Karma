@@ -39,7 +39,7 @@ public class ProgramRule {
 	}
 	public String getClassForValue(String value)
 	{
-		String labelString = "\'attr_0\'";
+		String labelString = "attr_0";
 		if(value.length() == 0)
 			return labelString;
 		if(pClassifier != null)
@@ -64,7 +64,6 @@ public class ProgramRule {
 	{
 		this.rules.remove(category);
 		this.strRules.remove(category);
-		//System.out.println("updated Rules: "+newRule);
 		addRule(category, newRule);
 		
 	}

@@ -145,7 +145,6 @@ public class Section implements GrammarTreeNode {
 			Vector<Vector<Integer>> configs) {
 		String tpath = path;
 		if (cur >= indexs.size()) {
-			// System.out.println(""+tpath);
 			String[] elems = tpath.split(",");
 			Vector<Integer> line = new Vector<Integer>();
 			for (String s : elems) {

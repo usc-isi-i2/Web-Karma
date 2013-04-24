@@ -18,17 +18,40 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.cleaning.features;
 
-public class Test {
-	public static void test(String a)
+package edu.isi.karma.cleaning.features;
+//only to test whether a substring exist
+public class RecordTextFeature implements Feature {
+	public double score = 1.0;
+	public String text = "";
+	public String value = "";
+	public RecordTextFeature(String text,String value)
 	{
-		a = a+"hu";
+		this.text = text;
+		this.value = value;
+		this.score = computeScore();
 	}
-	public static void main(String[] args)
+	public double computeScore()
 	{
-		String a = "ren ";
-		Test.test(a);
+		if(this.value.indexOf(text)==-1)
+		{
+			return 0;
+		}
+		else
+		{
+			return 1;
+		}
+	}
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return "attr_"+text;
+	}
+
+	@Override
+	public double getScore() {
+		// TODO Auto-generated method stub
+		return this.score;
 	}
 
 }

@@ -1,8 +1,11 @@
 package edu.isi.karma.cleaning.features;
+
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Vector;
 
 import org.geotools.filter.expression.ThisPropertyAccessorFactory;
@@ -14,117 +17,91 @@ import weka.core.converters.ArffSaver;
 import weka.core.converters.CSVLoader;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
+
 public class Data2Features {
-	//convert the csv file to arff file
-	//return the fpath of arff file
-	public static void csv2arff(String csvpath,String arfpath)
-	{
-		try
-		{
+	// convert the csv file to arff file
+	// return the fpath of arff file
+	public static void Data2arff(String csvpath, String arfpath) {
+		try {
 			CSVLoader loader = new CSVLoader();
-		    loader.setSource(new File(csvpath));
-		    Instances data = loader.getDataSet();
-		    // save ARFF
-		    ArffSaver saver = new ArffSaver();
-		    saver.setInstances(data);
-		    saver.setFile(new File(arfpath));
-		    saver.setDestination(new File(arfpath));
-		    saver.writeBatch();
-		}
-		catch(Exception ex)
-		{
-			Logger.getLogger(Data2Features.class).info(""+ex.toString());
+			loader.setSource(new File(csvpath));
+			Instances data = loader.getDataSet();
+			// save ARFF
+			ArffSaver saver = new ArffSaver();
+			saver.setInstances(data);
+			saver.setFile(new File(arfpath));
+			saver.setDestination(new File(arfpath));
+			saver.writeBatch();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
-	//cpath is the original data file, label is the class label
-	//
-	public static Vector<String> data2CSVfeaturefile(String cpath,String label)
-	{
-		//test the class
-		try
-		{
-			File f = new File(cpath);
-			Vector<String> row = new Vector<String>();
-			Vector<String> oexamples = new Vector<String>();
-			Vector<String> examples = new Vector<String>();
-			CSVReader re = new CSVReader(new FileReader(f), '\t');
-			String[] line = null;
-			re.readNext();//discard the first line
-			while((line=re.readNext() )!= null)
-			{
-				oexamples.add(line[0]);
-				examples.add(line[1]);
-			}
-			RegularityFeatureSet rf = new RegularityFeatureSet();
-			Collection<Feature> cf = rf.computeFeatures(oexamples,examples);
-			Feature[] x = cf.toArray(new Feature[cf.size()]);
-			//row.add(f.getName());
-			for(int k=0;k<cf.size();k++)
-			{
-				row.add(String.valueOf(x[k].getScore()));
-			}
-			row.add(label); // change this according to the dataset.
-			return row;
-		}
-		catch(Exception ex)
-		{
-			Logger.getLogger(Data2Features.class).info(""+ex.toString());
-			return null;
-		}
-	}
-	public static void main(String[] args)
-	{
-		//create a new CSVfile 
-		String fpath = "/Users/bowu/Research/featureValue.csv";
-		String pdir = "/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/pos";
-		//String pdir = "/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/neg";
-		String ndir = "/Users/bowu/Research/dataclean/data/RuleData/rawdata/pairs/neg";
-		try
-		{
-			CSVWriter cw = new CSVWriter(new FileWriter(new File(fpath)),',');
-			//wrtie header into the csvfile
-			//xyz[0] = "name";
-			RegularityFeatureSet rfs = new RegularityFeatureSet();
-			String[] xyz = new String[rfs.fnames.size()+1];
-			for(int i = 0; i<xyz.length-1; i++)
-			{
-				xyz[i] ="a_"+i;
-			}
-			xyz[xyz.length-1] = "label";
-			cw.writeNext(xyz);
-			//write positive rows into csvfile
-			File p = new File(pdir);
-			File[] pfs = p.listFiles();
-			for(int i=0; i<pfs.length; i++)
-			{
-				File f = pfs[i];
-				if(f.getName().indexOf(".csv")==(f.getName().length()-4))
-				{
-					Vector<String> row = Data2Features.data2CSVfeaturefile(f.getAbsolutePath(), "1");
-					cw.writeNext((String[])row.toArray(new String[row.size()]));
+
+	public static void Testdata2CSV(Vector<String> tests, String fpath,RecordFeatureSet rf) {
+		try {
+			CSVWriter writer = new CSVWriter(new FileWriter(new File(fpath)));
+			// get attribute names
+			// get attribute names
+			Collection<String> attrStrings = rf.getFeatureNames();
+			String[] attr_names =attrStrings.toArray(new String[attrStrings.size()+1]);
+			attr_names[attr_names.length - 1] = "label";
+			writer.writeNext(attr_names);
+			for (String Record : tests) {
+				Vector<String> row = new Vector<String>();
+				Collection<Feature> cf = rf.computeFeatures(Record,"");
+				Feature[] x = cf.toArray(new Feature[cf.size()]);
+				// row.add(f.getName());
+				for (int k = 0; k < cf.size(); k++) {
+					row.add(String.valueOf(x[k].getScore()));
 				}
+				row.add("");
+				String[] dataEntry = row.toArray(new String[row.size()]);
+				writer.writeNext(dataEntry);
 			}
-			//write negative rows into csvfile
-			File n = new File(ndir);
-			File[] nfs = n.listFiles();
-			for(int i=0; i<nfs.length; i++)
-			{
-				File f = nfs[i];
-				if(f.getName().indexOf(".csv")==(f.getName().length()-4))
-				{
-					Vector<String> row = Data2Features.data2CSVfeaturefile(f.getAbsolutePath(), "-1");
-					cw.writeNext((String[])row.toArray(new String[row.size()]));
-				}
-			}
-			cw.flush();
-			cw.close();
-			//convert the csv file into arff file
-			String arfpath = "/Users/bowu/Research/features.arff";
-			Data2Features.csv2arff(fpath, arfpath);
-		}
-		catch(Exception ex)
-		{
-			Logger.getLogger(Data2Features.class).info(""+ex.toString());
+			writer.flush();
+			writer.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
+
+	// class: records convert them into csv file
+	public static void Traindata2CSV(
+			HashMap<String, Vector<String>> class2Records, String fpath,RecordFeatureSet rf) {
+		try {
+			CSVWriter writer = new CSVWriter(new FileWriter(new File(fpath)));
+			Vector<String> vsStrings = new Vector<String>();
+			for(Vector<String> vecs:class2Records.values())
+			{
+				vsStrings.addAll(vecs);
+			}
+			rf.initialize(vsStrings);
+			// get attribute names
+			Collection<String> attrStrings = rf.getFeatureNames();
+			String[] attr_names =attrStrings.toArray(new String[attrStrings.size()+1]);
+			attr_names[attr_names.length - 1] = "label";
+			writer.writeNext(attr_names);
+			for (String label : class2Records.keySet()) {
+				
+				for (String Record : class2Records.get(label)) {
+					Vector<String> row = new Vector<String>();
+					Collection<Feature> cf = rf.computeFeatures(Record, label);
+					Feature[] x = cf.toArray(new Feature[cf.size()]);
+					// row.add(f.getName());
+					for (int k = 0; k < cf.size(); k++) {
+						row.add(String.valueOf(x[k].getScore()));
+					}
+					row.add(label); // change this according to the dataset.
+					String[] dataEntry = row.toArray(new String[row.size()]);
+					writer.writeNext(dataEntry);
+				}
+				
+			}
+			writer.flush();
+			writer.close();
+		} catch (Exception ex) {
+			System.out.println("" + ex.toString());
+		}
+	}
+
 }

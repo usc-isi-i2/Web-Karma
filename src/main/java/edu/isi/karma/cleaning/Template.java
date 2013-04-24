@@ -39,7 +39,6 @@ public class Template implements GrammarTreeNode {
 			return;
 		}
 		if (cur >= indexs.size()) {
-			// System.out.println(""+tpath);
 			String[] elems = tpath.split(",");
 			Vector<Integer> line = new Vector<Integer>();
 			for (String s : elems) {
@@ -71,7 +70,6 @@ public class Template implements GrammarTreeNode {
 	        		//System.out.print(""+com[i]);
 	            res.add(com[i]);
 	        }
-	        //System.out.println("");
 	        configs.add(res);
 	        if (configs.size() > temp_limit) {
 				return;

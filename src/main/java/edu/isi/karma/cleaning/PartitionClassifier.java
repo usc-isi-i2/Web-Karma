@@ -5,6 +5,7 @@ import java.util.Vector;
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 
+import edu.isi.karma.cleaning.features.RecordClassifier;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -40,6 +41,22 @@ public class PartitionClassifier {
 		PyObject buildingObject = interpreterClass.__call__();
 		PartitionClassifierType ele =  (PartitionClassifierType)buildingObject.__tojava__(PartitionClassifierType.class);
         //populate the classifier with data
+		for(int i = 0; i<pars.size(); i++)
+		{
+			Partition partition = pars.get(i);
+			for(int j=0;j<partition.orgNodes.size();j++)
+			{
+				String s = UtilTools.print(partition.orgNodes.get(j));
+				String label= partition.label;
+				ele.addTrainingData(s, label);
+			}
+		}
+		this.clssettingString = ele.learnClassifer();
+		return ele;
+	}
+	public PartitionClassifierType create2(Vector<Partition> pars)
+	{
+		RecordClassifier ele = new RecordClassifier();
 		for(int i = 0; i<pars.size(); i++)
 		{
 			Partition partition = pars.get(i);

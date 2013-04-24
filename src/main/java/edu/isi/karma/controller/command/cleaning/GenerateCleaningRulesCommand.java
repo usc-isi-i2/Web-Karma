@@ -133,7 +133,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		return es.Choose();
 	}
 
-	private static Vector<String> getTopK(Set<String> res, int k, String cmpres) {
+/*	private static Vector<String> getTopK(Set<String> res, int k, String cmpres) {
 		String dirpathString = ServletContextParameterMap
 				.getParameterValue(ContextParameter.USER_DIRECTORY_PATH);
 		if (dirpathString.compareTo("") == 0) {
@@ -154,7 +154,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			y.add(x[ins.get(i)]);
 		}
 		return y;
-	}
+	}*/
 
 	@Override
 	public String getCommandName() {

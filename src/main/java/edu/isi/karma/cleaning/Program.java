@@ -2,6 +2,8 @@ package edu.isi.karma.cleaning;
 
 import java.util.Vector;
 
+import edu.isi.karma.cleaning.features.RecordClassifier;
+
 public class Program implements GrammarTreeNode {
 	public Vector<Partition> partitions = new Vector<Partition>();
 	public String cls = "";
@@ -12,7 +14,7 @@ public class Program implements GrammarTreeNode {
 		this.partitions = pars;
 		for(int i=0;i<this.partitions.size();i++)
 		{
-			this.partitions.get(i).setLabel("\'attr_"+i+"\'");
+			this.partitions.get(i).setLabel("attr_"+i);
 			if(ConfigParameters.debug == 1)
 				System.out.println(this.partitions.get(i).toString());
 		}
@@ -22,7 +24,8 @@ public class Program implements GrammarTreeNode {
 	public void learnClassifier()
 	{
 		PartitionClassifier pcf = new PartitionClassifier();
-		PartitionClassifierType classifier= pcf.create(this.partitions);
+		//PartitionClassifierType classifier= pcf.create(this.partitions);
+		PartitionClassifierType classifier= pcf.create2(this.partitions);
 		this.classifier = classifier;
 //		this.cls = pcf.clssettingString;
 		//this.cls = "x";

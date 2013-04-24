@@ -18,7 +18,7 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.cleaning;
+package edu.isi.karma.cleaning.features;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -27,6 +27,7 @@ import java.util.Vector;
 import weka.classifiers.functions.SimpleLogistic;
 import weka.core.Instance;
 import weka.core.Instances;
+import edu.isi.karma.cleaning.UtilTools;
 import edu.isi.karma.util.Prnt;
 
 public class RegularityClassifer {

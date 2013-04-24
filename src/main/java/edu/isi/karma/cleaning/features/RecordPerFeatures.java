@@ -18,17 +18,52 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
+
 package edu.isi.karma.cleaning.features;
 
-public class Test {
-	public static void test(String a)
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+
+public class RecordPerFeatures implements Feature {
+
+	public String name = "";
+	public double score = 0.0;
+	public String value = "";
+	public String tar = "";
+	public RecordPerFeatures(String name, String value,String tar)
 	{
-		a = a+"hu";
+		this.name = "attr_"+name;
+		this.value = value;
+		this.tar = tar;
+		this.score = this.computeScore();
 	}
-	public static void main(String[] args)
+	public double computeScore()
 	{
-		String a = "ren ";
-		Test.test(a);
+		int cnt1 = 0;
+		Pattern p = Pattern.compile(tar);
+		Matcher m = p.matcher(this.value);
+		while(m.find())
+		{
+			cnt1 += m.group().length();
+		}
+		if (value.length() != 0)
+		{
+			return cnt1*1.0/value.length();
+		}
+		else
+		{
+			return 10000;
+		}
+	}
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public double getScore() {
+		return score;
 	}
 
 }

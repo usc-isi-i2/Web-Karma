@@ -13,16 +13,9 @@ public class Test {
 	public static void test1()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"<_START>On 2 January 2004, in Anantnag,"+
-		"Jammu and Kashmir, India, assailants threw a grenade at an army convoy," +
-		" killing one soldier and one civilian and wounding eight civilians.  This attack occurred one day before the Indian Prime Minister " +
-		"was due to make his first visit to Pakistan in four years.  No group claimed responsibility.<_END_>","On 2 January 2004, in Anantnag, Jammu and Kashmir, India, assailants threw a grenade at an army convoy, killing one soldier and one civilian and wounding eight civilians.  This attack occurred one day before the Indian Prime Minister was due to make his first visit to Pakistan in four years.  No group claimed responsibility."};
-		String[] yStrings = {"<_START_>On 1 January 2004, in Peureulak, Aceh Province, Indonesia, a bomb exploded at a concert, killing ten civilians, wounding 45 others, and causing major damage to the stage area.  Many of the victims were Indonesian teenagers.  Police blamed the Free Aceh Movement (GAM), although the GAM denied responsibility.  No other group claimed responsibility.<_END_>","GAM"};
-		String[] zStrings = {"<_START_>On 2 January 2004, in Nozhay-Yurtovskiy Rayon, Chechnya, Russia, a bomb hidden in a portable stereo " +
-				"exploded as two civilians examined it, seriously injuring the two local residents.  No group claimed responsibility," +
-				" although it was widely believed Chechen separatists were responsible.<_END_>","On 2 January 2004, in Nozhay-Yurtovskiy Rayon, Chechnya, " +
-						"Russia, a bomb hidden in a portable stereo exploded as two civilians examined it, seriously injuring the two local residents.  No group claimed responsibility, " +
-						"although it was widely believed Chechen separatists were responsible."};
+		String[] xStrings = {"<_START>Jan<_END>", "05"};
+		String[] yStrings = {"<_START>Feb<_END>", "02"};
+		String[] zStrings = {"<_START>Mar<_END>", "03"};
 		examples.add(xStrings);
 		examples.add(yStrings);
 		examples.add(zStrings);
@@ -31,9 +24,12 @@ public class Test {
 		Vector<ProgramRule> pls = new Vector<ProgramRule>();
 		Collection<ProgramRule> ps = psProgSynthesis.run_main();
 		ProgramRule pr = ps.iterator().next();
-		String val = "1337 36th place";
+		String val = "Jan";
+		String val2 = "Feb";
 		InterpreterType rule = pr.getRuleForValue(val);
 		System.out.println(rule.execute_debug(val));
+		InterpreterType rule1 = pr.getRuleForValue(val2);
+		System.out.println(rule1.execute_debug(val2));
 		
 	}
 	public static void test4(String dirpath) {
@@ -352,7 +348,7 @@ public class Test {
 		cfg.initeParameters();
 		DataCollection.config = cfg.getString();
 		//Test.test0("/Users/bowu/Research/testdata/TestSingleFile");
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		//Test.test1();
+		//Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		Test.test1();
 	}
 }

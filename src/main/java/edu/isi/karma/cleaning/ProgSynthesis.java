@@ -18,7 +18,6 @@ public class ProgSynthesis {
 	public void inite(Vector<String[]> examples) {
 		for (int i = 0; i < examples.size(); i++) {
 			Ruler r = new Ruler();
-			// System.out.println("Example: "+examples.get(i)[0]);
 			r.setNewInput(examples.get(i)[0]);
 			orgVector.add(r.vec);
 			Ruler r1 = new Ruler();
@@ -209,12 +208,9 @@ public class ProgSynthesis {
 				{
 					return "NO_CLASIF";
 				}
-				// System.out.println("Rule: "+ p.getStringRule(labelString));
 				InterpreterType worker = p.getWorkerForClass(labelString);
 				String s2 = worker.execute(s1);
 				String s3 = UtilTools.print(px.tarNodes.get(i));
-	
-				// System.out.println("Validation: "+s2+" | "+s3);
 				if (s3.compareTo(s2) != 0) {
 					return labelString;
 				}
