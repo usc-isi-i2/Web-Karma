@@ -404,8 +404,10 @@ public class RuleRDFGenerator {
 		//className = URLEncoder.encode(className, "UTF-8");
 		//String classFullName = "<" + ontologyPrefixName + ":" + className + ">";
 		String classFullName = ontologyPrefixName + ":" + className;
-		if(className.startsWith("http:") && !className.startsWith("<http:")){
+		if(className.startsWith("http:")){
 			classFullName = "<" + className + ">";
+		} else if (className.startsWith("<http:")) {
+			classFullName = className;
 		}
 		
 		String statement = subject.toString() + " a " + classFullName + " .";
@@ -465,7 +467,7 @@ public class RuleRDFGenerator {
 		//split predicate name
 		int ind = predicateName.indexOf(PREFIX_SEPARATOR);
 		//http: is not a prefix
-		if(ind>0 && !predicateName.startsWith("http:")){
+		if(ind>0 && !predicateName.startsWith("http:") && !predicateName.startsWith("<http:")){
 			//remove the back-tick
 			ontologyPrefixName = predicateName.substring(0,ind); 
 			predicateName = predicateName.substring(ind+1); 
@@ -477,6 +479,8 @@ public class RuleRDFGenerator {
 		String predicate = ontologyPrefixName + ":" +  predicateName;
 		if(predicateName.startsWith("http:")){
 			predicate = "<" + predicateName +">";
+		} else if (predicateName.startsWith("<http:")) {
+			predicate = predicateName;
 		}
 		
 		ArrayList<Term> terms = p.getTerms();
