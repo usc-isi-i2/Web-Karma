@@ -102,7 +102,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		Set<Link> currentLinks = alignment.getCurrentLinksToNode(newLink.getTarget().getId());
 		if (currentLinks != null && !currentLinks.isEmpty()) {
 			for (Link currentLink: currentLinks) {
-				if (currentLink.getSource().getId().equals(newLink.getSource().getId()))
+				//if (currentLink.getSource().getId().equals(newLink.getSource().getId()))
 					alignment.changeLinkStatus(currentLink.getId(), LinkStatus.Normal);
 			}
 		}
