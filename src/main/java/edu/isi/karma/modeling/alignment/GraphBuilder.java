@@ -20,6 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.alignment;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1199,6 +1200,28 @@ public class GraphBuilder {
 	public static void main(String[] args) throws Exception {
 		
 		System.out.println(Integer.class.getFields()[0].getName());
+		
+		/** Check if any ontology needs to be preloaded **/
+		String preloadedOntDir = "/Users/mohsen/Documents/Academic/ISI/_GIT/Web-Karma/preloaded-ontologies/";
+		File ontDir = new File(preloadedOntDir);
+		if (ontDir.exists()) {
+			File[] ontologies = ontDir.listFiles();
+			OntologyManager mgr = new OntologyManager();
+			for (File ontology: ontologies) {
+				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf")) {
+					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
+					try {
+						mgr.doImport(ontology);
+					} catch (Exception t) {
+						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
+					}
+				}
+			}
+			// update the cache at the end when all files are added to the model
+			mgr.updateCache();
+		} else {
+			logger.info("No directory for preloading ontologies exists.");
+		}
 		
 		DirectedWeightedMultigraph<Node, Link> g = new 
 				DirectedWeightedMultigraph<Node, Link>(Link.class);

@@ -521,6 +521,7 @@ class OntologyCache {
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
 			for (String s : this.classes.keySet()) {
+				if (s.equalsIgnoreCase(Uris.THING_URI)) continue;
 				Set<String> superClasses = this.ontHandler.getSuperClasses(s, false).keySet();
 				if (superClasses == null || superClasses.size() == 0) {
 					Label label = this.classes.get(s);
@@ -800,11 +801,15 @@ class OntologyCache {
 			}
 
 			// all domains
-			for (OntResource domain : directDomains) {
-				allDomains.add(domain);
-				ontHandler.getChildren(domain, allDomains, true);
+			if (directDomainsUris.contains(Uris.THING_URI))
+				allDomainsUris = new ArrayList<String>(this.classes.keySet());
+			else {
+				for (OntResource domain : directDomains) {
+					allDomains.add(domain);
+					ontHandler.getChildren(domain, allDomains, true);
+				}
+				allDomainsUris = ontHandler.getResourcesUris(allDomains);
 			}
-			allDomainsUris = ontHandler.getResourcesUris(allDomains);
 
 			// indirect domains
 			for (String domainUri : allDomainsUris) {
@@ -885,7 +890,7 @@ class OntologyCache {
 			OntProperty property = this.ontHandler.getOntModel().getOntProperty(propertyUri);
 			if (!property.isURIResource())
 				continue;
-
+			
 			directDomains = new ArrayList<OntResource>();
 			directDomainsUris = new ArrayList<String>();
 			indirectDomainsUris = new ArrayList<String>();
@@ -921,11 +926,15 @@ class OntologyCache {
 			}
 
 			// all domains
-			for (OntResource domain : directDomains) {
-				allDomains.add(domain);
-				ontHandler.getChildren(domain, allDomains, true);
+			if (directDomainsUris.contains(Uris.THING_URI))
+				allDomainsUris = new ArrayList<String>(this.classes.keySet());
+			else {
+				for (OntResource domain : directDomains) {
+					allDomains.add(domain);
+					ontHandler.getChildren(domain, allDomains, true);
+				}
+				allDomainsUris = ontHandler.getResourcesUris(allDomains);
 			}
-			allDomainsUris = ontHandler.getResourcesUris(allDomains);
 
 			// indirect domains
 			for (String domainUri : allDomainsUris) {
@@ -972,11 +981,15 @@ class OntologyCache {
 			}
 			
 			// all ranges
-			for (OntResource range : directRanges) {
-				allRanges.add(range);
-				ontHandler.getChildren(range, allRanges, true);
+			if (directRangesUris.contains(Uris.THING_URI))
+				allRangesUris = new ArrayList<String>(this.classes.keySet());
+			else {
+				for (OntResource range : directRanges) {
+					allRanges.add(range);
+					ontHandler.getChildren(range, allRanges, true);
+				}
+				allRangesUris = ontHandler.getResourcesUris(allRanges);
 			}
-			allRangesUris = ontHandler.getResourcesUris(allRanges);
 			
 			// indirect ranges
 			for (String rangeUri : allRangesUris) {
