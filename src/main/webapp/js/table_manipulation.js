@@ -69,7 +69,7 @@ function submitEdit(value, settings) {
  }
 
 
-function openAddNewColumnDialog() {
+function openAddNewColumnDialog(event) {
     var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
     var hNodeId = columnHeadingMenu.data("parentCellId");
     $("#addNewColumnNameInput").val("");
