@@ -77,7 +77,8 @@ public class AddColumnCommand extends WorksheetCommand {
 		updateType, hNodeId, vWorksheetId
 	}
 	
-	protected AddColumnCommand(String id, String vWorksheetId, String worksheetId, String hTableId, String hNodeId, String newColumnName, String defaultValue) {
+	protected AddColumnCommand(String id, String vWorksheetId, String worksheetId, 
+			String hTableId, String hNodeId, String newColumnName, String defaultValue) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;

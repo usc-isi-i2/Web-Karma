@@ -24,6 +24,10 @@
 package edu.isi.karma.rep;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -183,5 +187,43 @@ public class Node extends RepEntity {
 		} else {
 			pw.println("<" + value.asString() + ">");
 		}
+	}
+	
+	/**
+	 * It returns a map with hNodId string as key and the its corresponding nodeId string
+	 * in a row. It goes from the belongsToRow (the existing row in which it currently
+	 * is) to all the upper-level rows that contain it, and gets all the nodes for rows
+	 * that do not have nested table.
+	 *  
+	 * @return Map with hNodId as key and NodeId as value
+	 */
+	public Map<String, String> getColumnValues() {
+		Map<String,String> columnValues = new HashMap<String,String>();
+		
+		// Stores all the parent rows that will be scanned later
+		List<Row> rows = new ArrayList<Row>();
+		
+		// Add the current row
+		rows.add(belongsToRow);
+		
+		Table parentTable = belongsToRow.getBelongsToTable();
+		Node parentTableNode = parentTable.getNestedTableInNode();
+		while (parentTableNode != null) {
+			Row row = parentTableNode.getBelongsToRow();
+			rows.add(row);
+			
+			parentTable = row.getBelongsToTable();
+			parentTableNode = parentTable.getNestedTableInNode();
+		}
+		
+		for (Row row: rows) {
+			Map<String, Node> nodes = row.getNodesMap();
+			for (String hNodeIdRow: nodes.keySet()) {
+				if (!nodes.get(hNodeIdRow).hasNestedTable()) {
+					columnValues.put(hNodeIdRow, nodes.get(hNodeIdRow).getId());
+				}
+			}
+		}
+		return columnValues;
 	}
 }
