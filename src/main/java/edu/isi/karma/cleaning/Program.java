@@ -69,6 +69,11 @@ public class Program implements GrammarTreeNode {
 		{
 			for(Partition p:this.partitions)
 			{
+				if(p.tarNodes.get(0).size() == 0)
+				{
+					pr.addRule(p.label, "substr(value,0,0)");
+					continue;
+				}
 				String rule = p.toProgram();
 				if(rule.contains("null"))
 					return null;
@@ -83,6 +88,11 @@ public class Program implements GrammarTreeNode {
 		}
 		else
 		{
+			if(partitions.get(0).tarNodes.get(0).size() ==0)
+			{
+				pr.addRule(partitions.get(0).label, "substr(value,0,0)");
+				return pr;
+			}
 			String s = partitions.get(0).toProgram();
 			if(s.contains("null"))
 				return null;

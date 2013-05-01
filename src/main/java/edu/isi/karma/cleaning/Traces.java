@@ -116,6 +116,15 @@ public class Traces implements GrammarTreeNode {
 	// find all segments starting from pos
 	Vector<Segment> findSegs(int pos) {
 		Vector<Segment> segs = new Vector<Segment>();
+		if(tarNodes.size() == 0)
+		{
+			int[] mapping = {0,0};
+			Vector<int[]> corrm = new Vector<int[]>();
+			corrm.add(mapping);
+			Segment s = new Segment(0, 0, corrm, orgNodes, tarNodes);
+			segs.add(s);
+			return segs;
+		}
 		if (pos >= tarNodes.size())
 			return segs;
 		Vector<TNode> tmp = new Vector<TNode>();

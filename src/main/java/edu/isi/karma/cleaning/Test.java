@@ -13,7 +13,7 @@ public class Test {
 	public static void test1()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"<_START>Jan<_END>", "05"};
+		String[] xStrings = {"<_START>Jan<_END>", ""};
 		String[] yStrings = {"<_START>Feb<_END>", "02"};
 		String[] zStrings = {"<_START>Mar<_END>", "03"};
 		examples.add(xStrings);
@@ -27,9 +27,9 @@ public class Test {
 		String val = "Jan";
 		String val2 = "Feb";
 		InterpreterType rule = pr.getRuleForValue(val);
-		System.out.println(rule.execute_debug(val));
+		System.out.println(rule.execute(val));
 		InterpreterType rule1 = pr.getRuleForValue(val2);
-		System.out.println(rule1.execute_debug(val2));
+		System.out.println(rule1.execute(val2));
 		
 	}
 	public static void test4(String dirpath) {

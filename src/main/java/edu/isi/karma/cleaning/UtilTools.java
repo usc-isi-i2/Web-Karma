@@ -29,7 +29,7 @@ public class UtilTools {
 	public static Vector<Integer> getStringPos(int tokenpos,Vector<TNode> example)
 	{
 		Vector<Integer> poss = new Vector<Integer>();
-		if(tokenpos <= 0)
+		if(tokenpos < 0)
 			return poss;
 		int pos = 0;
 		int strleng = 0;
@@ -41,8 +41,8 @@ public class UtilTools {
 		{
 			pos += example.get(i).text.length();
 		}
-		poss.add(pos);
-		poss.add(pos-strleng);
+		poss.add(pos); // forward position
+		poss.add(pos-strleng); // backward position
 		return poss;
 	}
 	public static Vector<GrammarTreeNode> convertSegVector(Vector<Segment> x)

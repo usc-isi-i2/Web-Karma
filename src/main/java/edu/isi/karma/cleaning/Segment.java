@@ -52,9 +52,16 @@ public class Segment implements GrammarTreeNode {
 		}
 		initSections(orgNodes);
 		repString = "";
-		repString += tarNodes.get(this.start).getType();
-		if(end >start+1)
-			repString += tarNodes.get(this.end-1).getType();
+		if(tarNodes.size() == 0)
+		{
+			repString += "EMPTY";
+		}
+		else
+		{
+			repString += tarNodes.get(this.start).getType();
+			if(end >start+1)
+				repString += tarNodes.get(this.end-1).getType();
+		}
 		this.createTotalOrderVector();
 	}
 /*	public void setSections(Vector<Position[]> sections)
