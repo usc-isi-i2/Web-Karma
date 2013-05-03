@@ -39,6 +39,7 @@ import edu.isi.karma.rep.alignment.ColumnSubClassLink;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
 import edu.isi.karma.rep.alignment.InternalNode;
+import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
@@ -179,6 +180,9 @@ public class KR2RMLMappingGenerator {
 									new StringTemplateTerm(olink.getLabel().getUri()));
 						}
 						poMap.setPredicate(pred);
+						
+						if (generateInverse)
+							addInversePropertyIfExists(subjMap, poMap, olink);
 					}
 					
 					// Create a data property map
@@ -215,6 +219,60 @@ public class KR2RMLMappingGenerator {
 						trMap.addPredicateObjectMap(poMap);
 				}
 			}
+		}
+	}
+
+	private void addInversePropertyIfExists(SubjectMap subjMap,
+			PredicateObjectMap poMap, Link olink) {
+		String propUri = olink.getLabel().getUri();
+		//this can happen if propertyName is not an Object property; it could be a subclass
+		if (!ontMgr.isObjectProperty(propUri))
+			return;
+		
+		Label inversePropLabel = ontMgr.getInverseProperty(propUri);
+		Label inverseOfPropLabel = ontMgr.getInverseOfProperty(propUri);
+		
+		if (inversePropLabel != null) {
+			// Create the Subject Map
+			SubjectMap invSubjMap = subjectMapIndex.get(poMap.getObject().getId());
+			// Create the triples map
+			TriplesMap inverseTrMap = new TriplesMap(invSubjMap);
+			// Create the predicate object map
+			PredicateObjectMap invPoMap = new PredicateObjectMap();
+			// Create the predicate
+			Predicate pred = new Predicate(olink.getId()+"+inverse");
+			pred.getTemplate().addTemplateTermToSet(
+					new StringTemplateTerm(inversePropLabel.getUri()));
+			invPoMap.setPredicate(pred);
+			// Create the object
+			ObjectMap invObjMap = new ObjectMap(subjMap.getId());
+			invObjMap.setTemplate(subjMap.getTemplate());
+			invPoMap.setObject(invObjMap);
+			inverseTrMap.addPredicateObjectMap(invPoMap);
+			
+			// Add to mapping
+			r2rmlMapping.addTriplesMap(inverseTrMap);
+		}
+		if (inverseOfPropLabel != null) {
+			// Create the Subject Map
+			SubjectMap invOfSubjMap = subjectMapIndex.get(poMap.getObject().getId());
+			// Create the triples map
+			TriplesMap inverseOfTrMap = new TriplesMap(invOfSubjMap);
+			// Create the predicate object map
+			PredicateObjectMap invOfPoMap = new PredicateObjectMap();
+			// Create the predicate
+			Predicate pred = new Predicate(olink.getId()+"+inverseOf");
+			pred.getTemplate().addTemplateTermToSet(
+					new StringTemplateTerm(inverseOfPropLabel.getUri()));
+			invOfPoMap.setPredicate(pred);
+			// Create the object
+			ObjectMap invOfObjMap = new ObjectMap(subjMap.getId());
+			invOfObjMap.setTemplate(subjMap.getTemplate());
+			invOfPoMap.setObject(invOfObjMap);
+			inverseOfTrMap.addPredicateObjectMap(invOfPoMap);
+			
+			// Add to mapping
+			r2rmlMapping.addTriplesMap(inverseOfTrMap);
 		}
 	}
 
