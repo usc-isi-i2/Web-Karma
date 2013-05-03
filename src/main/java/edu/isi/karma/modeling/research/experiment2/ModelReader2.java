@@ -46,11 +46,8 @@ public class ModelReader2 {
 //	public static String varPrefix = "var:";
 	public static String attPrefix = "att:";
 	
-	private static String importDir1 = "/Users/mohsen/Dropbox/Service Modeling/experiment2/models/dbpedia/";
-	private static String exportDir1 = "/Users/mohsen/Dropbox/Service Modeling/experiment2/dots/dbpedia/";
-
-	private static String importDir2 = "/Users/mohsen/Dropbox/Service Modeling/experiment2/models/schema/";
-	private static String exportDir2 = "/Users/mohsen/Dropbox/Service Modeling/experiment2/dots/schema/";
+	private static String importDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/models/";
+	private static String exportDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/dots/";
 
 	private static String typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 	private static HashMap<String, String> prefixNsMapping;
@@ -86,24 +83,15 @@ public class ModelReader2 {
 	
 	public static void main(String[] args) {
 		
-		List<ServiceModel2> serviceModels1 = null;
-		List<ServiceModel2> serviceModels2 = null;
+		List<ServiceModel2> serviceModels = null;
 
 		try {
 
-			serviceModels1 = importServiceModels(importDir1);
-			if (serviceModels1 != null) {
-				for (ServiceModel2 sm : serviceModels1) {
+			serviceModels = importServiceModels(importDir);
+			if (serviceModels != null) {
+				for (ServiceModel2 sm : serviceModels) {
 					sm.print();
-					sm.exportModelToGraphviz(exportDir1);
-				}
-			}
-
-			serviceModels2 = importServiceModels(importDir2);
-			if (serviceModels2 != null) {
-				for (ServiceModel2 sm : serviceModels2) {
-					sm.print();
-					sm.exportModelToGraphviz(exportDir2);
+					sm.exportModelToGraphviz(exportDir);
 				}
 			}
 

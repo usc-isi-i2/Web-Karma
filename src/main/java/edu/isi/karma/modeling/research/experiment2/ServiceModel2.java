@@ -97,7 +97,7 @@ public class ServiceModel2 {
 	
 	public void exportModelToGraphviz(String exportDirectory) throws FileNotFoundException {
 		
-		OutputStream out = new FileOutputStream(exportDirectory + this.getServiceNameWithPrefix() + "_models.dot");
+		OutputStream out = new FileOutputStream(exportDirectory + this.getServiceNameWithPrefix() + ".dot");
 		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
 		
 		graphViz.attr("fontcolor", "blue");

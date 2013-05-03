@@ -159,7 +159,7 @@ public class GraphUtil {
 		for (Link edge : graph.edgeSet()) {
 			System.out.print("(");
 			if (edge.getSource() instanceof ColumnNode)
-				System.out.print( ((ColumnNode)edge.getSource()).getColumnName());
+				System.out.print(edge.getSource().getLocalId() + "-" + ((ColumnNode)edge.getSource()).getColumnName());
 			else
 				System.out.print(edge.getSource().getLocalId());
 			System.out.print(")");
@@ -170,10 +170,11 @@ public class GraphUtil {
 			System.out.print(" - ");
 			System.out.print("(");
 			if (edge.getTarget() instanceof ColumnNode)
-				System.out.print( ((ColumnNode)edge.getTarget()).getColumnName());
+				System.out.print(edge.getTarget().getLocalId() + "-" + ((ColumnNode)edge.getTarget()).getColumnName());
 			else
 				System.out.print(edge.getTarget().getLocalId());
 			System.out.print(")");
+			System.out.print(" - w=" + edge.getWeight());
 			System.out.println();
         }
 		System.out.println("------------------------------------------");
