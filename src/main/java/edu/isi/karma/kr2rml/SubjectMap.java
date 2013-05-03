@@ -21,16 +21,27 @@
 
 package edu.isi.karma.kr2rml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SubjectMap extends TermMap {
+	
 	private TemplateTermSet template;
 	private NamedGraph graph;
-	private Type rdfsType;
+	private List<TemplateTermSet> rdfsTypes ;
 	
-	public SubjectMap(TemplateTermSet template, NamedGraph graph, Type rdfsType) {
-		super();
+	public SubjectMap(String id) {
+		super(id);
+		this.template = new TemplateTermSet();
+		this.rdfsTypes = new ArrayList<TemplateTermSet>();
+	}
+	
+	public SubjectMap(String id, TemplateTermSet template, NamedGraph graph, 
+			List<TemplateTermSet> rdfsType) {
+		super(id);
 		this.template = template;
 		this.graph = graph;
-		this.rdfsType = rdfsType;
+		this.rdfsTypes = rdfsType;
 	}
 	
 	public TemplateTermSet getTemplate() {
@@ -45,10 +56,21 @@ public class SubjectMap extends TermMap {
 		this.graph = graph;
 	}
 	
-	public Type getRdfsType() {
-		return rdfsType;
+	public void addRdfsType(TemplateTermSet type) {
+		rdfsTypes.add(type);
 	}
-	public void setRdfsType(Type rdfsType) {
-		this.rdfsType = rdfsType;
+	
+	public List<TemplateTermSet> getRdfsType() {
+		return rdfsTypes;
+	}
+	
+	public void setRdfsType(List<TemplateTermSet> rdfsType) {
+		this.rdfsTypes = rdfsType;
+	}
+
+	@Override
+	public String toString() {
+		return "SubjectMap [template=" + template + ", graph=" + graph
+				+ ", rdfsTypes=" + rdfsTypes + "]";
 	}
 }

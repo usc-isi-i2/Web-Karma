@@ -22,6 +22,7 @@
 package edu.isi.karma.kr2rml;
 
 public class PredicateObjectMap {
+	
 	private Predicate predicate;
 	private ObjectMap object;
 	
@@ -39,6 +40,12 @@ public class PredicateObjectMap {
 	
 	public void setObject(ObjectMap object) {
 		this.object = object;
+	}
+
+	@Override
+	public String toString() {
+		return "PredicateObjectMap [" + predicate + ", "
+				+ object + "]";
 	}
 	
 }

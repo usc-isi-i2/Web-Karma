@@ -22,5 +22,15 @@
 package edu.isi.karma.kr2rml;
 
 public class TermMap {
+	
+	private final String id;
+	
+	public TermMap(String id) {
+		super();
+		this.id = id;
+	}
 
+	public String getId() {
+		return id;
+	}
 }

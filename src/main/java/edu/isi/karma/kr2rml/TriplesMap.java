@@ -28,6 +28,9 @@ public class TriplesMap {
 	private SubjectMap subject;
 	private List<PredicateObjectMap> predicateObjectMaps = new ArrayList<PredicateObjectMap>();
 	
+	public TriplesMap(SubjectMap subject) {
+	}
+	
 	public TriplesMap(SubjectMap subject,
 			List<PredicateObjectMap> predicateObjectMaps) {
 		this.subject = subject;
@@ -37,14 +40,26 @@ public class TriplesMap {
 	public SubjectMap getSubject() {
 		return subject;
 	}
+	
 	public void setSubject(SubjectMap subject) {
 		this.subject = subject;
 	}
+	
 	public List<PredicateObjectMap> getPredicateObjectMaps() {
 		return predicateObjectMaps;
 	}
+	
 	public void setPredicateObjectMaps(List<PredicateObjectMap> predicateObjectMaps) {
 		this.predicateObjectMaps = predicateObjectMaps;
+	}
+	
+	public void addPredicateObjectMap(PredicateObjectMap poMap) {
+		this.predicateObjectMaps.add(poMap);
+	}
+
+	@Override
+	public String toString() {
+		return "TriplesMap [" + subject + ", " + predicateObjectMaps + "]";
 	}
 	
 }
