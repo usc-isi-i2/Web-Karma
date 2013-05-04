@@ -78,7 +78,7 @@ public class Approach2 {
 	private HashMap<SemanticLabel2, Set<LabelStruct>> labelToLabelStructs;
 	
 	private NodeIdFactory nodeIdFactory;
-	private LinkIdFactory linkIdFactory;
+//	private LinkIdFactory linkIdFactory;
 	
 	private List<ServiceModel2> trainingData;
 	private OntologyManager ontologyManager;
@@ -159,10 +159,10 @@ public class Approach2 {
 		this.trainingData = trainingData;
 		this.ontologyManager = ontologyManager;
 		
-		this.linkIdFactory = new LinkIdFactory();
+//		this.linkIdFactory = new LinkIdFactory();
 		this.nodeIdFactory = new NodeIdFactory();
 		
-		this.graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory, linkIdFactory);
+		this.graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory);//, linkIdFactory);
 
 		this.labelToLabelStructs = new HashMap<SemanticLabel2, Set<LabelStruct>>();
 		this.patternLinks = new HashSet<Link>();
@@ -184,7 +184,7 @@ public class Approach2 {
 		DirectedWeightedMultigraph<Node, Link> graph = GraphUtil.deserialize(fileName);
 		this.graphBuilder = new GraphBuilder(ontologyManager, graph);
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
-		this.linkIdFactory = this.graphBuilder.getLinkIdFactory();
+//		this.linkIdFactory = this.graphBuilder.getLinkIdFactory();
 		this.updateHashMaps();
 	}
 
@@ -351,7 +351,7 @@ public class Approach2 {
 			}
 
 			Link link;
-			String id = linkIdFactory.getLinkId(e.getLabel().getUri());	
+			String id = LinkIdFactory.getLinkId(e.getLabel().getUri(), n1.getId(), n2.getId());	
 			if (n2 instanceof ColumnNode) 
 				link = new DataPropertyLink(id, e.getLabel(), false);
 			else 
@@ -504,7 +504,7 @@ public class Approach2 {
 		Link newLink;
 		for (int i = 0; i < newLinks.size(); i++) {
 			uri = newLinks.get(i);
-			id = linkIdFactory.getLinkId(uri);
+			id = LinkIdFactory.getLinkId(uri, sources.get(i).getId(), targets.get(i).getId());
 			label = new Label(uri);
 			if (uri.equalsIgnoreCase(Uris.RDFS_SUBCLASS_URI))
 				newLink = new SubClassLink(id);
@@ -575,7 +575,7 @@ public class Approach2 {
 				ColumnNode target = new ColumnNode(nodeId, "", "", "");
 				this.graphBuilder.addNodeWithoutUpdatingGraph(target);
 
-				String linkId = linkIdFactory.getLinkId(sl.getLinkUri());	
+				String linkId = LinkIdFactory.getLinkId(sl.getLinkUri(), source.getId(), target.getId());	
 				Link link = new DataPropertyLink(linkId, new Label(sl.getLinkUri()), false);
 				this.graphBuilder.addLink(source, target, link);
 
@@ -613,7 +613,7 @@ public class Approach2 {
 						ColumnNode target = new ColumnNode(nodeId, "", "", "");
 						this.graphBuilder.addNodeWithoutUpdatingGraph(target);
 			
-						String linkId = linkIdFactory.getLinkId(sl.getLinkUri());	
+						String linkId = LinkIdFactory.getLinkId(sl.getLinkUri(), source.getId(), target.getId());	
 						Link link = new DataPropertyLink(linkId, new Label(sl.getLinkUri()), false);
 						this.graphBuilder.addLink(source, target, link);
 //						if (source.getPatternIds().size() > 0) {
@@ -806,10 +806,10 @@ public class Approach2 {
 		String sourceUri, targetUri;
 		List<String> possibleLinksFromSourceToTarget = new ArrayList<String>();
 
-		List<String> objectPropertiesDirect;
-		List<String> objectPropertiesIndirect;
-		List<String> objectPropertiesWithOnlyDomain;
-		List<String> objectPropertiesWithOnlyRange;
+		HashSet<String> objectPropertiesDirect;
+		HashSet<String> objectPropertiesIndirect;
+		HashSet<String> objectPropertiesWithOnlyDomain;
+		HashSet<String> objectPropertiesWithOnlyRange;
 		HashMap<String, Label> objectPropertiesWithoutDomainAndRange = 
 				ontologyManager.getObjectPropertiesWithoutDomainAndRange();
 
@@ -880,16 +880,16 @@ public class Approach2 {
 			type = 2;
 		} else {
 			if (objectPropertiesDirect != null && objectPropertiesDirect.size() > 0) {
-				selectedLinkUri = objectPropertiesDirect.get(0);
+				selectedLinkUri = objectPropertiesDirect.iterator().next();
 				type = 3;
 			} else 	if (objectPropertiesIndirect != null && objectPropertiesIndirect.size() > 0) {
-				selectedLinkUri = objectPropertiesIndirect.get(0);
+				selectedLinkUri = objectPropertiesIndirect.iterator().next();
 				type = 4;
 			} else 	if (objectPropertiesWithOnlyDomain != null && objectPropertiesWithOnlyDomain.size() > 0) {
-				selectedLinkUri = objectPropertiesWithOnlyDomain.get(0);
+				selectedLinkUri = objectPropertiesWithOnlyDomain.iterator().next();
 				type = 5;
 			} else 	if (objectPropertiesWithOnlyRange != null && objectPropertiesWithOnlyRange.size() > 0) {
-				selectedLinkUri = objectPropertiesWithOnlyRange.get(0);
+				selectedLinkUri = objectPropertiesWithOnlyRange.iterator().next();;
 				type = 5;
 			} else if (ontologyManager.isSubClass(sourceUri, targetUri, true)) {
 				selectedLinkUri = Uris.RDFS_SUBCLASS_URI;

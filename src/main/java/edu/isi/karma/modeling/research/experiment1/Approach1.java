@@ -73,7 +73,7 @@ public class Approach1 {
 	private DirectedWeightedMultigraph<Node, Link> graph;
 	private HashMap<NodeType, List<Node>> typeToNodesMap;
 	private HashMap<String, List<Node>> uriToNodesMap;
-	private LinkIdFactory linkIdFactory;
+//	private LinkIdFactory linkIdFactory;
 	private List<DomainRangePair> sourceTargetList;
 	private HashMap<String, HashMap<String, Double>> sourceTargetToLinkWeightMap;
 	private HashMap<Node, List<SemanticLabel1>> nodeToSemanticLabels;
@@ -94,7 +94,7 @@ public class Approach1 {
 		this.inputModel = inputModel;
 		this.trainingData = trainingData;
 		this.ontologyManager = ontologyManager;
-		this.linkIdFactory = new LinkIdFactory();
+//		this.linkIdFactory = new LinkIdFactory();
 		this.inputSemanticLabels = new ArrayList<SemanticLabel1>();
 		this.outputSemanticLabels = new ArrayList<SemanticLabel1>();
 		this.typeToNodesMap = new HashMap<NodeType, List<Node>>();
@@ -502,10 +502,10 @@ public class Approach1 {
 		Double weight, linkWeightInTrainingset;
 		Label label;
 		
-		List<String> objectPropertiesDirect;
-		List<String> objectPropertiesIndirect;
-		List<String> objectPropertiesWithOnlyDomain;
-		List<String> objectPropertiesWithOnlyRange;
+		HashSet<String> objectPropertiesDirect;
+		HashSet<String> objectPropertiesIndirect;
+		HashSet<String> objectPropertiesWithOnlyDomain;
+		HashSet<String> objectPropertiesWithOnlyRange;
 		HashMap<String, Label> objectPropertiesWithoutDomainAndRange = 
 				ontologyManager.getObjectPropertiesWithoutDomainAndRange();
 
@@ -565,7 +565,7 @@ public class Approach1 {
 						linkWeightInTrainingset = linkWeight.get(s);
 						if (linkWeightInTrainingset == null) continue;
 						
-						id = linkIdFactory.getLinkId(s);
+						id = LinkIdFactory.getLinkId(s, n1.getId(), n2.getId());
 						label = new Label(s);
 						Link newLink = new ObjectPropertyLink(id, label);
 						// prefer the links that are actually defined between source and target in the ontology 
@@ -656,10 +656,10 @@ public class Approach1 {
 		List<String> possibleLinksFromSourceToTarget = new ArrayList<String>();
 		List<String> possibleLinksFromTargetToSource = new ArrayList<String>();
 
-		List<String> objectPropertiesDirect;
-		List<String> objectPropertiesIndirect;
-		List<String> objectPropertiesWithOnlyDomain;
-		List<String> objectPropertiesWithOnlyRange;
+		Set<String> objectPropertiesDirect;
+		Set<String> objectPropertiesIndirect;
+		Set<String> objectPropertiesWithOnlyDomain;
+		Set<String> objectPropertiesWithOnlyRange;
 		HashMap<String, Label> objectPropertiesWithoutDomainAndRange = 
 				ontologyManager.getObjectPropertiesWithoutDomainAndRange();
 		
@@ -717,7 +717,7 @@ public class Approach1 {
 
 			if (possibleLinksFromSourceToTarget.size() > 0) {
 				uri = possibleLinksFromSourceToTarget.get(0);
-				id = linkIdFactory.getLinkId(uri);
+				id = LinkIdFactory.getLinkId(uri, link.getSource().getId(), link.getTarget().getId());
 				label = new Label(uri);
 				
 				Link newLink;
@@ -731,7 +731,7 @@ public class Approach1 {
 				
 			} else if (possibleLinksFromTargetToSource.size() > 0) {
 				uri = possibleLinksFromTargetToSource.get(0);
-				id = linkIdFactory.getLinkId(uri);
+				id = LinkIdFactory.getLinkId(uri, link.getTarget().getId(), link.getSource().getId());
 				label = new Label(uri);
 				
 				Link newLink;

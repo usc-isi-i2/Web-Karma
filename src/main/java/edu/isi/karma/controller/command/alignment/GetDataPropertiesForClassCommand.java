@@ -21,7 +21,7 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
-import java.util.List;
+import java.util.HashSet;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,7 +76,7 @@ public class GetDataPropertiesForClassCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		final OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-		final List<String> properties = ontMgr.getDataPropertiesOfClass(classURI, true);
+		final HashSet<String> properties = ontMgr.getDataPropertiesOfClass(classURI, true);
 
 		// Generate and return the JSON
 		return new UpdateContainer(new AbstractUpdate() {

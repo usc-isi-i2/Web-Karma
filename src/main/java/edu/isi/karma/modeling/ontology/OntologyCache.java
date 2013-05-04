@@ -22,6 +22,7 @@ package edu.isi.karma.modeling.ontology;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -89,24 +90,24 @@ class OntologyCache {
 	private HashMap<String, Label> propertyInverseOf;
 
 	// hashmap: property -> direct domains
-	private HashMap<String, List<String>> propertyDirectDomains;
-	private HashMap<String, List<String>> propertyIndirectDomains;
+	private HashMap<String, HashSet<String>> propertyDirectDomains;
+	private HashMap<String, HashSet<String>> propertyIndirectDomains;
 	// hashmap: property -> direct ranges
-	private HashMap<String, List<String>> propertyDirectRanges;
-	private HashMap<String, List<String>> propertyIndirectRanges;
+	private HashMap<String, HashSet<String>> propertyDirectRanges;
+	private HashMap<String, HashSet<String>> propertyIndirectRanges;
 
 	// hashmap: class -> properties whose domain(direct) includes this class 
-	private HashMap<String, List<String>> directOutDataProperties; 
-	private HashMap<String, List<String>> indirectOutDataProperties; 
-	private HashMap<String, List<String>> directOutObjectProperties; 
-	private HashMap<String, List<String>> indirectOutObjectProperties; 
+	private HashMap<String, HashSet<String>> directOutDataProperties; 
+	private HashMap<String, HashSet<String>> indirectOutDataProperties; 
+	private HashMap<String, HashSet<String>> directOutObjectProperties; 
+	private HashMap<String, HashSet<String>> indirectOutObjectProperties; 
 	// hashmap: class -> properties whose range(direct) includes this class 
-	private HashMap<String, List<String>> directInObjectProperties; 
-	private HashMap<String, List<String>> indirectInObjectProperties;
+	private HashMap<String, HashSet<String>> directInObjectProperties; 
+	private HashMap<String, HashSet<String>> indirectInObjectProperties;
 	
 	// hashmap: domain+range -> object properties
-	private HashMap<String, List<String>> domainRangeToDirectProperties;
-	private HashMap<String, List<String>> domainRangeToIndirectProperties;
+	private HashMap<String, HashSet<String>> domainRangeToDirectProperties;
+	private HashMap<String, HashSet<String>> domainRangeToIndirectProperties;
 //	private HashMap<String, List<String>> domainRangeToDomainlessProperties;
 //	private HashMap<String, List<String>> domainRangeToRangelessProperties;
 
@@ -165,20 +166,20 @@ class OntologyCache {
 		this.propertyInverse = new HashMap<String, Label>();
 		this.propertyInverseOf = new HashMap<String, Label>();
 		
-		this.propertyDirectDomains = new HashMap<String, List<String>>();
-		this.propertyIndirectDomains = new HashMap<String, List<String>>();
-		this.propertyDirectRanges = new HashMap<String, List<String>>();
-		this.propertyIndirectRanges = new HashMap<String, List<String>>();
+		this.propertyDirectDomains = new HashMap<String, HashSet<String>>();
+		this.propertyIndirectDomains = new HashMap<String, HashSet<String>>();
+		this.propertyDirectRanges = new HashMap<String, HashSet<String>>();
+		this.propertyIndirectRanges = new HashMap<String, HashSet<String>>();
 		
-		this.directOutDataProperties = new HashMap<String, List<String>>();
-		this.indirectOutDataProperties = new HashMap<String, List<String>>();
-		this.directOutObjectProperties = new HashMap<String, List<String>>();
-		this.indirectOutObjectProperties = new HashMap<String, List<String>>();
-		this.directInObjectProperties = new HashMap<String, List<String>>();
-		this.indirectInObjectProperties = new HashMap<String, List<String>>();
+		this.directOutDataProperties = new HashMap<String, HashSet<String>>();
+		this.indirectOutDataProperties = new HashMap<String, HashSet<String>>();
+		this.directOutObjectProperties = new HashMap<String, HashSet<String>>();
+		this.indirectOutObjectProperties = new HashMap<String, HashSet<String>>();
+		this.directInObjectProperties = new HashMap<String, HashSet<String>>();
+		this.indirectInObjectProperties = new HashMap<String, HashSet<String>>();
 		
-		this.domainRangeToDirectProperties = new HashMap<String, List<String>>();
-		this.domainRangeToIndirectProperties = new HashMap<String, List<String>>();
+		this.domainRangeToDirectProperties = new HashMap<String, HashSet<String>>();
+		this.domainRangeToIndirectProperties = new HashMap<String, HashSet<String>>();
 //		this.domainRangeToDomainlessProperties = new HashMap<String, List<String>>();
 //		this.domainRangeToRangelessProperties = new HashMap<String, List<String>>();
 		
@@ -355,51 +356,51 @@ class OntologyCache {
 		return propertyInverseOf;
 	}
 
-	public HashMap<String, List<String>> getPropertyDirectDomains() {
+	public HashMap<String, HashSet<String>> getPropertyDirectDomains() {
 		return propertyDirectDomains;
 	}
 
-	public HashMap<String, List<String>> getPropertyIndirectDomains() {
+	public HashMap<String, HashSet<String>> getPropertyIndirectDomains() {
 		return propertyIndirectDomains;
 	}
 
-	public HashMap<String, List<String>> getPropertyDirectRanges() {
+	public HashMap<String, HashSet<String>> getPropertyDirectRanges() {
 		return propertyDirectRanges;
 	}
 
-	public HashMap<String, List<String>> getPropertyIndirectRanges() {
+	public HashMap<String, HashSet<String>> getPropertyIndirectRanges() {
 		return propertyIndirectRanges;
 	}
 
-	public HashMap<String, List<String>> getDirectOutDataProperties() {
+	public HashMap<String, HashSet<String>> getDirectOutDataProperties() {
 		return directOutDataProperties;
 	}
 
-	public HashMap<String, List<String>> getIndirectOutDataProperties() {
+	public HashMap<String, HashSet<String>> getIndirectOutDataProperties() {
 		return indirectOutDataProperties;
 	}
 
-	public HashMap<String, List<String>> getDirectOutObjectProperties() {
+	public HashMap<String, HashSet<String>> getDirectOutObjectProperties() {
 		return directOutObjectProperties;
 	}
 
-	public HashMap<String, List<String>> getIndirectOutObjectProperties() {
+	public HashMap<String, HashSet<String>> getIndirectOutObjectProperties() {
 		return indirectOutObjectProperties;
 	}
 
-	public HashMap<String, List<String>> getDirectInObjectProperties() {
+	public HashMap<String, HashSet<String>> getDirectInObjectProperties() {
 		return directInObjectProperties;
 	}
 
-	public HashMap<String, List<String>> getIndirectInObjectProperties() {
+	public HashMap<String, HashSet<String>> getIndirectInObjectProperties() {
 		return indirectInObjectProperties;
 	}
 
-	public HashMap<String, List<String>> getDomainRangeToDirectProperties() {
+	public HashMap<String, HashSet<String>> getDomainRangeToDirectProperties() {
 		return domainRangeToDirectProperties;
 	}
 
-	public HashMap<String, List<String>> getDomainRangeToIndirectProperties() {
+	public HashMap<String, HashSet<String>> getDomainRangeToIndirectProperties() {
 		return domainRangeToIndirectProperties;
 	}
 
@@ -745,33 +746,33 @@ class OntologyCache {
 	
 	private void buildDataPropertiesMaps() {
 		
-		List<OntResource> directDomains;
-		List<String> directDomainsUris;
-		List<String> indirectDomainsUris;
-		List<OntResource> allDomains;
-		List<String> allDomainsUris;
-		List<OntResource> directRanges;
-		List<String> directRangesUris;
-		List<String> indirectRangesUris;
-		List<OntResource> allRanges;
-		List<String> allRangesUris;
-		List<String> temp; 
+		HashSet<OntResource> directDomains;
+		HashSet<String> directDomainsUris;
+		HashSet<String> indirectDomainsUris;
+		HashSet<OntResource> allDomains;
+		HashSet<String> allDomainsUris;
+		HashSet<OntResource> directRanges;
+		HashSet<String> directRangesUris;
+		HashSet<String> indirectRangesUris;
+		HashSet<OntResource> allRanges;
+		HashSet<String> allRangesUris;
+		HashSet<String> temp; 
 		
 		OntResource d;
 		OntResource r;
 		
 		for (String propertyUri : this.dataProperties.keySet()) {
 			
-			directDomains = new ArrayList<OntResource>();
-			directDomainsUris = new ArrayList<String>();
-			indirectDomainsUris = new ArrayList<String>();
-			allDomains = new ArrayList<OntResource>();
-			allDomainsUris = new ArrayList<String>();
-			directRanges = new ArrayList<OntResource>();
-			directRangesUris = new ArrayList<String>();
-			indirectRangesUris = new ArrayList<String>();
-			allRanges = new ArrayList<OntResource>();
-			allRangesUris = new ArrayList<String>();
+			directDomains = new HashSet<OntResource>();
+			directDomainsUris = new HashSet<String>();
+			indirectDomainsUris = new HashSet<String>();
+			allDomains = new HashSet<OntResource>();
+			allDomainsUris = new HashSet<String>();
+			directRanges = new HashSet<OntResource>();
+			directRangesUris = new HashSet<String>();
+			indirectRangesUris = new HashSet<String>();
+			allRanges = new HashSet<OntResource>();
+			allRangesUris = new HashSet<String>();
 			
 			OntProperty property = this.ontHandler.getOntModel().getOntProperty(propertyUri);
 			if (!property.isURIResource())
@@ -794,7 +795,7 @@ class OntologyCache {
 			for (OntResource domain : directDomains) {
 				temp = directOutDataProperties.get(domain.getURI());
 				if (temp == null) {
-					temp = new ArrayList<String>();
+					temp = new HashSet<String>();
 					directOutDataProperties.put(domain.getURI(), temp);
 				}
 				temp.add(property.getURI());
@@ -802,7 +803,7 @@ class OntologyCache {
 
 			// all domains
 			if (directDomainsUris.contains(Uris.THING_URI))
-				allDomainsUris = new ArrayList<String>(this.classes.keySet());
+				allDomainsUris = new HashSet<String>(this.classes.keySet());
 			else {
 				for (OntResource domain : directDomains) {
 					allDomains.add(domain);
@@ -826,7 +827,7 @@ class OntologyCache {
 			for (String domainUri : indirectDomainsUris) {
 				temp = indirectOutDataProperties.get(domainUri);
 				if (temp == null) { 
-					temp = new ArrayList<String>();
+					temp = new HashSet<String>();
 					indirectOutDataProperties.put(domainUri, temp);
 				}
 				temp.add(property.getURI());
@@ -870,17 +871,17 @@ class OntologyCache {
 	
 	private void buildObjectPropertiesMaps() {
 		
-		List<OntResource> directDomains;
-		List<String> directDomainsUris;
-		List<String> indirectDomainsUris;
-		List<OntResource> allDomains;
-		List<String> allDomainsUris;
-		List<OntResource> directRanges;
-		List<String> directRangesUris;
-		List<String> indirectRangesUris;
-		List<OntResource> allRanges;
-		List<String> allRangesUris;
-		List<String> temp; 
+		HashSet<OntResource> directDomains;
+		HashSet<String> directDomainsUris;
+		HashSet<String> indirectDomainsUris;
+		HashSet<OntResource> allDomains;
+		HashSet<String> allDomainsUris;
+		HashSet<OntResource> directRanges;
+		HashSet<String> directRangesUris;
+		HashSet<String> indirectRangesUris;
+		HashSet<OntResource> allRanges;
+		HashSet<String> allRangesUris;
+		HashSet<String> temp; 
 		
 		OntResource d;
 		OntResource r;
@@ -891,16 +892,16 @@ class OntologyCache {
 			if (!property.isURIResource())
 				continue;
 			
-			directDomains = new ArrayList<OntResource>();
-			directDomainsUris = new ArrayList<String>();
-			indirectDomainsUris = new ArrayList<String>();
-			allDomains = new ArrayList<OntResource>();
-			allDomainsUris = new ArrayList<String>();
-			directRanges = new ArrayList<OntResource>();
-			directRangesUris = new ArrayList<String>();
-			indirectRangesUris = new ArrayList<String>();
-			allRanges = new ArrayList<OntResource>();
-			allRangesUris = new ArrayList<String>();
+			directDomains = new HashSet<OntResource>();
+			directDomainsUris = new HashSet<String>();
+			indirectDomainsUris = new HashSet<String>();
+			allDomains = new HashSet<OntResource>();
+			allDomainsUris = new HashSet<String>();
+			directRanges = new HashSet<OntResource>();
+			directRangesUris = new HashSet<String>();
+			indirectRangesUris = new HashSet<String>();
+			allRanges = new HashSet<OntResource>();
+			allRangesUris = new HashSet<String>();
 			
 			// direct domain
 			ExtendedIterator<? extends OntResource> itrDomains = property.listDomain();
@@ -919,7 +920,7 @@ class OntologyCache {
 			for (OntResource domain : directDomains) {
 				temp = directOutObjectProperties.get(domain.getURI());
 				if (temp == null) {
-					temp = new ArrayList<String>();
+					temp = new HashSet<String>();
 					directOutObjectProperties.put(domain.getURI(), temp);
 				}
 				temp.add(property.getURI());
@@ -927,7 +928,7 @@ class OntologyCache {
 
 			// all domains
 			if (directDomainsUris.contains(Uris.THING_URI))
-				allDomainsUris = new ArrayList<String>(this.classes.keySet());
+				allDomainsUris = new HashSet<String>(this.classes.keySet());
 			else {
 				for (OntResource domain : directDomains) {
 					allDomains.add(domain);
@@ -951,7 +952,7 @@ class OntologyCache {
 			for (String domainUri : indirectDomainsUris) {
 				temp = indirectOutObjectProperties.get(domainUri);
 				if (temp == null) { 
-					temp = new ArrayList<String>();
+					temp = new HashSet<String>();
 					indirectOutObjectProperties.put(domainUri, temp);
 				}
 				temp.add(property.getURI());
@@ -974,7 +975,7 @@ class OntologyCache {
 			for (OntResource range : directRanges) {
 				temp = directInObjectProperties.get(range.getURI());
 				if (temp == null) {
-					temp = new ArrayList<String>();
+					temp = new HashSet<String>();
 					directInObjectProperties.put(range.getURI(), temp);
 				}
 				temp.add(property.getURI());
@@ -982,7 +983,7 @@ class OntologyCache {
 			
 			// all ranges
 			if (directRangesUris.contains(Uris.THING_URI))
-				allRangesUris = new ArrayList<String>(this.classes.keySet());
+				allRangesUris = new HashSet<String>(this.classes.keySet());
 			else {
 				for (OntResource range : directRanges) {
 					allRanges.add(range);
@@ -1006,7 +1007,7 @@ class OntologyCache {
 			for (String rangeUri : indirectRangesUris) {
 				temp = indirectInObjectProperties.get(rangeUri);
 				if (temp == null) {
-					temp = new ArrayList<String>();
+					temp = new HashSet<String>();
 					indirectInObjectProperties.put(rangeUri, temp);
 				}
 				temp.add(property.getURI());
@@ -1017,11 +1018,10 @@ class OntologyCache {
 					temp = 
 						domainRangeToDirectProperties.get(domain + range);
 					if (temp == null) {
-						temp = new ArrayList<String>();
+						temp = new HashSet<String>();
 						domainRangeToDirectProperties.put(domain + range, temp);
 					}
-					if (!temp.contains(property.getURI()))
-						temp.add(property.getURI());
+					temp.add(property.getURI());
 				}
 			}
 			
@@ -1030,11 +1030,10 @@ class OntologyCache {
 					if (directDomainsUris.contains(domain) && directRangesUris.contains(range)) continue;
 					temp = domainRangeToIndirectProperties.get(domain + range);
 					if (temp == null) {
-						temp = new ArrayList<String>();
+						temp = new HashSet<String>();
 						domainRangeToIndirectProperties.put(domain + range, temp);
 					}
-					if (!temp.contains(property.getURI()))
-						temp.add(property.getURI());
+					temp.add(property.getURI());
 				}
 			}
 
@@ -1089,7 +1088,7 @@ class OntologyCache {
 		uris.add(commentUri);
 		uris.add(valueUri);
 		
-		List<String> temp;
+		HashSet<String> temp;
 		
 		ontHandler.getOntModel().setNsPrefix("rdfs", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 		ontHandler.getOntModel().setNsPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
@@ -1102,7 +1101,7 @@ class OntologyCache {
 		for (String s : this.classes.keySet()) {
 			temp = indirectOutDataProperties.get(s);
 			if (temp == null) {
-				temp = new ArrayList<String>();
+				temp = new HashSet<String>();
 				indirectOutDataProperties.put(s, temp);
 			}
 			for (String uri : uris)
@@ -1113,7 +1112,7 @@ class OntologyCache {
 		for (String uri : uris) {
 			temp = propertyIndirectDomains.get(uri);
 			if (temp == null) {
-				temp = new ArrayList<String>();
+				temp = new HashSet<String>();
 				propertyIndirectDomains.put(labelUri, temp);
 			}
 			for (String s : this.classes.keySet())
@@ -1130,12 +1129,12 @@ class OntologyCache {
 	private void updateMapsWithSubpropertyDefinitions(boolean inheritance) {
 		
 		
-		List<String> allSuperPropertiesLocal;
+		Set<String> allSuperPropertiesLocal;
 
 		// iterate over all properties
 		for (String p : this.properties.keySet()) {
 			
-			allSuperPropertiesLocal = new ArrayList<String>();
+			allSuperPropertiesLocal = new HashSet<String>();
 			
 			Set<String> directSuperPropertiesLocal = this.directSuperProperties.get(p).keySet();
 			Set<String> indirectSuperPropertiesLocal = this.indirectSuperProperties.get(p).keySet();
@@ -1144,11 +1143,11 @@ class OntologyCache {
 			
 			if (allSuperPropertiesLocal.size() == 0) continue;
 			
-			List<String> temp = null;
+			HashSet<String> temp = null;
 			
 			// domains 
-			List<String> seuperDirectDomains = new ArrayList<String>();
-			List<String> seuperIndirectDomains = new ArrayList<String>();
+			HashSet<String> seuperDirectDomains = new HashSet<String>();
+			HashSet<String> seuperIndirectDomains = new HashSet<String>();
 			List<String> superAllDomains = new ArrayList<String>();
 			for (String superP : allSuperPropertiesLocal) {
 				seuperDirectDomains = this.propertyDirectDomains.get(superP);
@@ -1157,9 +1156,9 @@ class OntologyCache {
 				if (seuperIndirectDomains != null && inheritance) superAllDomains.addAll(seuperIndirectDomains);
 			}
 
-			List<String> indirectDomains = propertyIndirectDomains.get(p);
+			HashSet<String> indirectDomains = propertyIndirectDomains.get(p);
 			if (indirectDomains == null) {
-				indirectDomains = new ArrayList<String>();
+				indirectDomains = new HashSet<String>();
 				propertyIndirectDomains.put(p, indirectDomains);
 			}
 			
@@ -1171,21 +1170,21 @@ class OntologyCache {
 			if (this.objectProperties.containsKey(p)) 
 				for (String d : superAllDomains) {
 					temp = indirectOutObjectProperties.get(d);
-					if (temp != null && !temp.contains(p))
+					if (temp != null)
 						temp.add(p);
 				}
 
 			if (this.dataProperties.containsKey(p)) 
 				for (String d : superAllDomains) {
 					temp = indirectOutDataProperties.get(d);
-					if (temp != null && !temp.contains(p))
+					if (temp != null)
 						temp.add(p);
 				}
 
 			// ranges
-			List<String> seuperDirectRanges = new ArrayList<String>();
-			List<String> seuperIndirectRanges = new ArrayList<String>();
-			List<String> superAllRanges = new ArrayList<String>();
+			HashSet<String> seuperDirectRanges = new HashSet<String>();
+			HashSet<String> seuperIndirectRanges = new HashSet<String>();
+			HashSet<String> superAllRanges = new HashSet<String>();
 			for (String superP : allSuperPropertiesLocal) {
 				seuperDirectRanges = this.propertyDirectRanges.get(superP);
 				seuperIndirectRanges = this.propertyIndirectRanges.get(superP);
@@ -1193,9 +1192,9 @@ class OntologyCache {
 				if (seuperIndirectRanges != null && inheritance) superAllRanges.addAll(seuperIndirectRanges);
 			}
 
-			List<String> indirectRanges = propertyIndirectRanges.get(p);
+			HashSet<String> indirectRanges = propertyIndirectRanges.get(p);
 			if (indirectRanges == null) {  
-				indirectRanges = new ArrayList<String>();
+				indirectRanges = new HashSet<String>();
 				propertyIndirectRanges.put(p, indirectRanges);
 			}
 			
@@ -1207,14 +1206,14 @@ class OntologyCache {
 			if (this.objectProperties.containsKey(p)) 
 				for (String r : superAllRanges) {
 					temp = indirectInObjectProperties.get(r);
-					if (temp != null && !temp.contains(p))
+					if (temp != null)
 						temp.add(p);
 				}
 				
-			List<String> directDomains = this.propertyDirectDomains.get(p);
-			List<String> allDomains = new ArrayList<String>();
-			List<String> directRanges = this.propertyDirectRanges.get(p);
-			List<String> allRanges = new ArrayList<String>();
+			HashSet<String> directDomains = this.propertyDirectDomains.get(p);
+			HashSet<String> allDomains = new HashSet<String>();
+			HashSet<String> directRanges = this.propertyDirectRanges.get(p);
+			HashSet<String> allRanges = new HashSet<String>();
 			
 			if (directDomains != null) allRanges.addAll(directDomains);
 			if (indirectDomains != null) allDomains.addAll(indirectDomains);
@@ -1227,11 +1226,10 @@ class OntologyCache {
 					if (directDomains.contains(domain) && directRanges.contains(range)) continue;
 					temp = domainRangeToIndirectProperties.get(domain + range);
 					if (temp == null) {
-						temp = new ArrayList<String>();
+						temp = new HashSet<String>();
 						domainRangeToIndirectProperties.put(domain + range, temp);
 					}
-					if (!temp.contains(p))
-						temp.add(p);
+					temp.add(p);
 				}
 			}
 		}
@@ -1244,10 +1242,10 @@ class OntologyCache {
 		boolean haveRange;
 		Label label;
 		
-		List<String> directDomains;
-		List<String> indirectDomains;
-		List<String> directRanges;
-		List<String> indirectRanges;
+		HashSet<String> directDomains;
+		HashSet<String> indirectDomains;
+		HashSet<String> directRanges;
+		HashSet<String> indirectRanges;
 		
 		for (String p : this.dataProperties.keySet()) {
 			
@@ -1289,24 +1287,24 @@ class OntologyCache {
 			
 			if (haveDomain && !haveRange) 
 				this.objectPropertiesWithOnlyDomain.put(p, label);
-			else if (!haveDomain && haveRange) 
+			else if (!haveDomain && haveRange) {
 				this.objectPropertiesWithOnlyRange.put(p, label);
+			}
 			else if (!haveDomain && !haveRange) 
 				this.objectPropertiesWithoutDomainAndRange.put(p, label);
 		}
-
-	}
+}
 	
 	private void buildConnectivityMaps() {
 		
 		List<String> classList = new ArrayList<String>(this.classes.keySet());
 		
-		List<String> directProperties;
-		List<String> indirectProperties;
-		List<String> directOutProperties;
-		List<String> directInProperties;
-		List<String> indirectOutProperties;
-		List<String> indirectInProperties;
+		HashSet<String> directProperties;
+		HashSet<String> indirectProperties;
+		HashSet<String> directOutProperties;
+		HashSet<String> directInProperties;
+		HashSet<String> indirectOutProperties;
+		HashSet<String> indirectInProperties;
 		boolean foundDomainlessProperty;
 		boolean foundRangelessProperty;
 		

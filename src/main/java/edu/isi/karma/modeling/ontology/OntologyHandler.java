@@ -20,10 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.ontology;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -95,12 +94,11 @@ class OntologyHandler {
 	 * @param resources
 	 * @return
 	 */
-	public List<String> getResourcesUris(List<OntResource> resources) {
-		List<String> resourcesURIs = new ArrayList<String>();
+	public HashSet<String> getResourcesUris(HashSet<OntResource> resources) {
+		HashSet<String> resourcesURIs = new HashSet<String>();
 		if (resources != null)
 			for (OntResource r: resources) {
-				if (resourcesURIs.indexOf(r.getURI()) == -1)
-					resourcesURIs.add(r.getURI());
+				resourcesURIs.add(r.getURI());
 			}
 		return resourcesURIs;
 	}
@@ -110,12 +108,11 @@ class OntologyHandler {
 	 * @param resources
 	 * @return
 	 */
-	public HashMap<String, Label> getResourcesLabels(List<OntResource> resources) {
+	public HashMap<String, Label> getResourcesLabels(HashSet<OntResource> resources) {
 		HashMap<String, Label> resourcesLabels = new HashMap<String, Label>();
 		if (resources != null)
 			for (OntResource r: resources) {
-				if (!resourcesLabels.containsKey(r.getURI()))
-					resourcesLabels.put(r.getURI(), getResourceLabel(r));
+				resourcesLabels.put(r.getURI(), getResourceLabel(r));
 			}
 		return resourcesLabels;
 	}
@@ -203,13 +200,13 @@ class OntologyHandler {
 	 * @param resources
 	 * @param recursive
 	 */
-	public void getParents(OntResource r, List<OntResource> resources, boolean recursive) {
+	public void getParents(OntResource r, HashSet<OntResource> resources, boolean recursive) {
 		
 		OntClass c = null;
 		OntProperty p = null;
 		
 		if (resources == null) 
-			resources = new ArrayList<OntResource>();
+			resources = new HashSet<OntResource>();
 
 		if (r == null)
 			return;
@@ -238,12 +235,12 @@ class OntologyHandler {
                 	if (recursive)
                 		getParents(superC, resources, recursive);
                 } else {
-            		List<OntResource> members = new ArrayList<OntResource>();
+                	HashSet<OntResource> members = new HashSet<OntResource>();
                 	getMembers(superC, members, false);
-                	for (int j = 0; j < members.size(); j++) {
-                		resources.add(members.get(j));
+                	for (OntResource or : members) {
+                		resources.add(or);
                 		if (recursive)
-                			getParents(members.get(j), resources, recursive);
+                			getParents(or, resources, recursive);
                 	}
                 }
             }
@@ -288,13 +285,13 @@ class OntologyHandler {
 	 * @param resources
 	 * @param recursive
 	 */
-	public void getChildren(OntResource r, List<OntResource> resources, boolean recursive) {
+	public void getChildren(OntResource r, HashSet<OntResource> resources, boolean recursive) {
 		
 		OntClass c = null;
 		OntProperty p = null;
 		
 		if (resources == null) 
-			resources = new ArrayList<OntResource>();
+			resources = new HashSet<OntResource>();
 
 		if (r == null)
 			return;
@@ -323,12 +320,12 @@ class OntologyHandler {
                 	if (recursive)
                 		getChildren(subC, resources, recursive);
                 } else {
-            		List<OntResource> members = new ArrayList<OntResource>();
+                	HashSet<OntResource> members = new HashSet<OntResource>();
                 	getMembers(subC, members, false);
-                	for (int j = 0; j < members.size(); j++) {
-                		resources.add(members.get(j));
+                	for (OntResource or : members) {
+                		resources.add(or);
                 		if (recursive)
-                			getChildren(members.get(j), resources, recursive);
+                			getChildren(or, resources, recursive);
                 	}
                 }
             }
@@ -372,10 +369,10 @@ class OntologyHandler {
 	 * @param resources
 	 * @param recursive
 	 */
-	public void getMembers(OntResource r, List<OntResource> resources, boolean recursive) {
+	public void getMembers(OntResource r, HashSet<OntResource> resources, boolean recursive) {
 
 		if (resources == null) 
-			resources = new ArrayList<OntResource>();
+			resources = new HashSet<OntResource>();
 
 		if (r == null)
 			return;
@@ -418,7 +415,7 @@ class OntologyHandler {
 	 */
 	public HashMap<String, Label> getSubClasses(String classUri, boolean recursive) {
 
-		List<OntResource> resources = new ArrayList<OntResource>();
+		HashSet<OntResource> resources = new HashSet<OntResource>();
 		OntResource r = ontModel.getOntClass(classUri);
 		if (r == null) return new HashMap<String, Label>();
 		getChildren(r, resources, recursive);
@@ -433,7 +430,7 @@ class OntologyHandler {
 	 */
 	public HashMap<String, Label> getSuperClasses(String classUri, boolean recursive) {
 		
-		List<OntResource> resources = new ArrayList<OntResource>();
+		HashSet<OntResource> resources = new HashSet<OntResource>();
 		OntResource r = ontModel.getOntClass(classUri);
 		if (r == null) return new HashMap<String, Label>();
 		getParents(r, resources, recursive);
@@ -448,7 +445,7 @@ class OntologyHandler {
 	 */
 	public HashMap<String, Label> getSubProperties(String propertyUri, boolean recursive) {
 
-		List<OntResource> resources = new ArrayList<OntResource>();
+		HashSet<OntResource> resources = new HashSet<OntResource>();
 		OntResource r = ontModel.getOntProperty(propertyUri);
 		if (r == null) return new HashMap<String, Label>();
 		getChildren(r, resources, recursive);
@@ -463,7 +460,7 @@ class OntologyHandler {
 	 */
 	public HashMap<String, Label> getSuperProperties(String propertyUri, boolean recursive) {
 
-		List<OntResource> resources = new ArrayList<OntResource>();
+		HashSet<OntResource> resources = new HashSet<OntResource>();
 		OntResource r = ontModel.getOntProperty(propertyUri);
 		if (r == null) return new HashMap<String, Label>();
 		getParents(r, resources, recursive);
