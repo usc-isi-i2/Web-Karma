@@ -46,4 +46,21 @@ public class TemplateTermSet {
 		}
 		return cnList;
 	}
+
+	public TemplateTermSet clear() {
+		termSet.clear();
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+		for (TemplateTerm term:termSet) {
+			if (term instanceof StringTemplateTerm)
+				str.append("<" + term.getTemplateTermValue() + ">");
+			else if (term instanceof ColumnNameTemplateTerm)
+				str.append("<ColumnHNodeId:" + term.getTemplateTermValue() + ">");
+		}
+		return str.toString();
+	}
 }

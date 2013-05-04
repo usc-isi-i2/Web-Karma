@@ -21,10 +21,19 @@
 
 package edu.isi.karma.kr2rml;
 
-public class GraphMap extends TermMap {
+import java.util.ArrayList;
+import java.util.List;
 
-	public GraphMap(String id) {
-		super(id);
+public class R2RMLMapping {
+	
+	private List<TriplesMap> triplesMap = new ArrayList<TriplesMap>();
+	private List<Prefix> prefixes = new ArrayList<Prefix>();
+	
+	public void addTriplesMap(TriplesMap tmap) {
+		triplesMap.add(tmap);
 	}
-
+	
+	public void addPrefix(Prefix prefix) {
+		prefixes.add(prefix);
+	}
 }

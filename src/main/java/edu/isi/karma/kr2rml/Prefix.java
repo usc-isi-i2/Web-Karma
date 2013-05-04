@@ -21,10 +21,20 @@
 
 package edu.isi.karma.kr2rml;
 
-public class GraphMap extends TermMap {
-
-	public GraphMap(String id) {
-		super(id);
+public class Prefix {
+	private final String prefix;
+	private final String namespace;
+	
+	public Prefix(String prefix, String namespace) {
+		this.prefix = prefix;
+		this.namespace = namespace;
 	}
 
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public String getNamespace() {
+		return namespace;
+	}
 }
