@@ -1057,8 +1057,8 @@ public class GraphBuilder {
 //		HashMap<String, Label> objectPropertiesWithoutDomainAndRange = 
 //				ontologyManager.getObjectPropertiesWithoutDomainAndRange();
 							
-		if (targetUri.endsWith("AdministrativeRegion") && sourceUri.endsWith("Country"))
-			System.out.println("debug");
+//		if (targetUri.endsWith("Person") && sourceUri.endsWith("Organisation"))
+//			System.out.println("debug");
 		
 
 		objectPropertiesDirect = ontologyManager.getObjectPropertiesDirect(sourceUri, targetUri);

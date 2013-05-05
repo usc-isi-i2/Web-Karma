@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
@@ -47,7 +48,8 @@ public class ModelReader2 {
 	public static String attPrefix = "att:";
 	
 	private static String importDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/models/";
-	private static String exportDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/dots/";
+	private static String exportDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/graphviz/";
+	private static String graphDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/jgraph/";
 
 	private static String typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 	private static HashMap<String, String> prefixNsMapping;
@@ -81,7 +83,7 @@ public class ModelReader2 {
 	}
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		
 		List<ServiceModel2> serviceModels = null;
 
@@ -92,6 +94,7 @@ public class ModelReader2 {
 				for (ServiceModel2 sm : serviceModels) {
 					sm.print();
 					sm.exportModelToGraphviz(exportDir);
+					GraphUtil.serialize(sm.getModel(), graphDir + sm.getServiceNameWithPrefix() + ".main.jgraph");
 				}
 			}
 
@@ -116,6 +119,7 @@ public class ModelReader2 {
 		prefixNsMapping.put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 		prefixNsMapping.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 		prefixNsMapping.put("foaf", "http://xmlns.com/foaf/0.1/");
+		prefixNsMapping.put("km", "http://isi.edu/integration/karma/dev#");
 	}
 	
 	public static List<ServiceModel2> importServiceModels(String importDir) throws IOException {

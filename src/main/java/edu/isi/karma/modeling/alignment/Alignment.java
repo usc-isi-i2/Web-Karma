@@ -410,7 +410,7 @@ public class Alignment implements OntologyUpdateListener {
 //			System.out.print(l.getTarget().getId() + " === ");
 //			System.out.println(l.getLabel().getUri() + " === ");
 //		}
-		
+		logger.info("Finished obtaining the incoming links.");
 		return possibleLinks;
 	}
 	
@@ -453,6 +453,7 @@ public class Alignment implements OntologyUpdateListener {
 		
 		Collections.sort(possibleLinks);
 
+		logger.info("Finished obtaining the outgoing links.");
 		return possibleLinks;
 	}
 	

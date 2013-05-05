@@ -73,12 +73,12 @@ public class Approach2 {
 	
 	private static String importDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/models/";
 	private static String exportDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/results/";
-	private static String graphDir1 = "//Users/mohsen/Desktop/graphs/iswc2013/";
+	private static String graphDir1 = "/Users/mohsen/Desktop/graphs/iswc2013/";
+	private static String graphResultsDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/jgraph/";
 	
 	private HashMap<SemanticLabel2, Set<LabelStruct>> labelToLabelStructs;
 	
 	private NodeIdFactory nodeIdFactory;
-//	private LinkIdFactory linkIdFactory;
 	
 	private List<ServiceModel2> trainingData;
 	private OntologyManager ontologyManager;
@@ -92,7 +92,6 @@ public class Approach2 {
 	
 	private HashSet<Link> patternLinks;
 	private HashMap<String, Integer> linkCountMap;
-	private HashMap<String, HashMap<String, Integer>> sourceTargetToLinkCountMap;
 	
 	private class LinkFrequency implements Comparable<LinkFrequency>{
 		
@@ -113,19 +112,25 @@ public class Approach2 {
 			int c = this.count;
 			
 			if (type == 1)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - c * 0.1;
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - c;
 			else if (type == 2)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - c * 0.01;
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - ((c + 0.1) / ModelingParams.PROPERTY_DIRECT_WEIGHT);
 			else if (type == 3)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - ((c + 0.05) / ModelingParams.PROPERTY_DIRECT_WEIGHT);
 			else if (type == 4)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.01;
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - (c / ModelingParams.PROPERTY_DIRECT_WEIGHT);
 			else if (type == 5)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.02;
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
 			else if (type == 6)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.03;
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.01;
 			else if (type == 7)
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.02;
+			else if (type == 8)
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.03;
+			else if (type == 9)
 				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.04;
+			else if (type == 10)
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.05;
 			return w;
 		}
 		
@@ -168,7 +173,7 @@ public class Approach2 {
 		this.patternLinks = new HashSet<Link>();
 		
 		this.linkCountMap = new HashMap<String, Integer>();
-		this.sourceTargetToLinkCountMap = new HashMap<String, HashMap<String,Integer>>();
+//		this.sourceTargetToLinkCountMap = new HashMap<String, HashMap<String,Integer>>();
 		
 	}
 
@@ -217,7 +222,6 @@ public class Approach2 {
 		}
 		
 		this.buildLinkCountMap();
-		this.buildSourceTargetLinkCountMap();
 		
 		for (Link l : this.graphBuilder.getGraph().edgeSet()) {
 			if (l.getPatternIds().size() > 0)
@@ -386,49 +390,37 @@ public class Approach2 {
 	
 	private void buildLinkCountMap() {
 		
+		String key, sourceUri, targetUri, linkUri;
 		for (ServiceModel2 sm : this.trainingData) {
 			
 			DirectedWeightedMultigraph<Node, Link> m = sm.getModel();
 
 			for (Link link : m.edgeSet()) {
 
-				Integer count = this.linkCountMap.get(link.getLabel().getUri());
-				if (count == null) 
-					this.linkCountMap.put(link.getLabel().getUri(), 1);
-				else 
-					this.linkCountMap.put(link.getLabel().getUri(), count.intValue() + 1);
-			}
-		}
-	}
-	
-	private void buildSourceTargetLinkCountMap() {
-		
-		Integer count;
-		
-		for (ServiceModel2 sm : this.trainingData) {
-			
-			DirectedWeightedMultigraph<Node, Link> m = sm.getModel();
-
-			for (Link link : m.edgeSet()) {
-
-				Node source = link.getSource();
-				Node target = link.getTarget();
+				sourceUri = link.getSource().getLabel().getUri();
+				targetUri = link.getTarget().getLabel().getUri();
+				linkUri = link.getLabel().getUri();
 				
-				if (source instanceof InternalNode && target instanceof InternalNode) {
-					String key = source.getLabel().getUri() +
-								 target.getLabel().getUri();
-					
-					HashMap<String, Integer> linkWeight = this.sourceTargetToLinkCountMap.get(key);
-					if (linkWeight == null) { 
-						linkWeight = new HashMap<String, Integer>();
-						linkWeight.put(link.getLabel().getUri(), 1);
-						this.sourceTargetToLinkCountMap.put(key, linkWeight);
-					} else {
-						count = linkWeight.get(link.getLabel().getUri());
-						if (count == null) linkWeight.put(link.getLabel().getUri(), 1);
-						else linkWeight.put(link.getLabel().getUri(), count.intValue() + 1 );
-					}
-				}
+				key = sourceUri + "<" + linkUri + ">" + targetUri;
+				Integer count = this.linkCountMap.get(key);
+				if (count == null) this.linkCountMap.put(key, 1);
+				else this.linkCountMap.put(key, count.intValue() + 1);
+				
+				key = sourceUri+ "<" + linkUri;
+				count = this.linkCountMap.get(key);
+				if (count == null) this.linkCountMap.put(key, 1);
+				else this.linkCountMap.put(key, count.intValue() + 1);
+
+				key = linkUri + ">" + targetUri;
+				count = this.linkCountMap.get(key);
+				if (count == null) this.linkCountMap.put(key, 1);
+				else this.linkCountMap.put(key, count.intValue() + 1);
+
+				key = linkUri;
+				count = this.linkCountMap.get(key);
+				if (count == null) this.linkCountMap.put(key, 1);
+				else this.linkCountMap.put(key, count.intValue() + 1);
+
 			}
 		}
 	}
@@ -843,23 +835,52 @@ public class Approach2 {
 		String selectedLinkUri2 = null;
 		int maxCount2 = 0;
 
+		String selectedLinkUri3 = null;
+		int maxCount3 = 0;
+
+		String selectedLinkUri4 = null;
+		int maxCount4 = 0;
+
+		String key;
+		
 		if (possibleLinksFromSourceToTarget != null  && possibleLinksFromSourceToTarget.size() > 0) {
+
 			for (String s : possibleLinksFromSourceToTarget) {
-				HashMap<String, Integer> linkCount = this.sourceTargetToLinkCountMap.get(sourceUri + targetUri);
-				if (linkCount == null) continue;
-				Integer count1 = linkCount.get(s);
+				key = sourceUri + "<" + s + ">" + targetUri;
+				Integer count1 = this.linkCountMap.get(key);
 				if (count1 != null && count1.intValue() > maxCount1) {
 					maxCount1 = count1.intValue();
 					selectedLinkUri1 = s;
 				}
 			}
+			
 			for (String s : possibleLinksFromSourceToTarget) {
-				Integer count2 = this.linkCountMap.get(s);
+				key = s + ">" + targetUri;
+				Integer count2 = this.linkCountMap.get(key);
 				if (count2 != null && count2.intValue() > maxCount2) {
 					maxCount2 = count2.intValue();
 					selectedLinkUri2 = s;
 				}
 			}
+			
+			for (String s : possibleLinksFromSourceToTarget) {
+				key = sourceUri + "<" + s;
+				Integer count3 = this.linkCountMap.get(key);
+				if (count3 != null && count3.intValue() > maxCount3) {
+					maxCount3 = count3.intValue();
+					selectedLinkUri3 = s;
+				}
+			}
+
+			for (String s : possibleLinksFromSourceToTarget) {
+				key = s;
+				Integer count4 = this.linkCountMap.get(key);
+				if (count4 != null && count4.intValue() > maxCount4) {
+					maxCount4 = count4.intValue();
+					selectedLinkUri4 = s;
+				}
+			}
+
 		} else {
 			logger.error("Something is going wrong. There should be at least one possible object property between " +
 					sourceUri + " and " + targetUri);
@@ -878,25 +899,33 @@ public class Approach2 {
 			selectedLinkUri = selectedLinkUri2;
 			maxCount = maxCount2;
 			type = 2;
+		} else if (selectedLinkUri3 != null && selectedLinkUri3.trim().length() > 0) {
+			selectedLinkUri = selectedLinkUri3;
+			maxCount = maxCount3;
+			type = 3;
+		} else if (selectedLinkUri4 != null && selectedLinkUri4.trim().length() > 0) {
+			selectedLinkUri = selectedLinkUri4;
+			maxCount = maxCount4;
+			type = 4;
 		} else {
 			if (objectPropertiesDirect != null && objectPropertiesDirect.size() > 0) {
 				selectedLinkUri = objectPropertiesDirect.iterator().next();
-				type = 3;
+				type = 5;
 			} else 	if (objectPropertiesIndirect != null && objectPropertiesIndirect.size() > 0) {
 				selectedLinkUri = objectPropertiesIndirect.iterator().next();
-				type = 4;
+				type = 6;
 			} else 	if (objectPropertiesWithOnlyDomain != null && objectPropertiesWithOnlyDomain.size() > 0) {
 				selectedLinkUri = objectPropertiesWithOnlyDomain.iterator().next();
-				type = 5;
+				type = 7;
 			} else 	if (objectPropertiesWithOnlyRange != null && objectPropertiesWithOnlyRange.size() > 0) {
 				selectedLinkUri = objectPropertiesWithOnlyRange.iterator().next();;
-				type = 5;
+				type = 8;
 			} else if (ontologyManager.isSubClass(sourceUri, targetUri, true)) {
 				selectedLinkUri = Uris.RDFS_SUBCLASS_URI;
-				type = 6;
+				type = 9;
 			} else {	// if (objectPropertiesWithoutDomainAndRange != null && objectPropertiesWithoutDomainAndRange.keySet().size() > 0) {
 				selectedLinkUri = new ArrayList<String>(objectPropertiesWithoutDomainAndRange.keySet()).get(0);
-				type = 7;
+				type = 10;
 			}
 
 			maxCount = 0;
@@ -983,6 +1012,15 @@ public class Approach2 {
 			Map<String, DirectedWeightedMultigraph<Node, Link>> graphs = 
 					new TreeMap<String, DirectedWeightedMultigraph<Node,Link>>();
 			
+			if (hypothesisList != null)
+				for (int k = 0; k < hypothesisList.size() && k < 3; k++) {
+					
+					RankedModel m = hypothesisList.get(k);
+					GraphUtil.serialize(m.getModel(), 
+							graphResultsDir1 + newService.getServiceNameWithPrefix() + ".rank" + (k+1) + ".jgraph");
+					
+				}
+			
 			graphs.put("1-correct model", correctModel);
 			if (hypothesisList != null)
 				for (int k = 0; k < hypothesisList.size(); k++) {
@@ -1004,7 +1042,7 @@ public class Approach2 {
 			
 			GraphVizUtil.exportJGraphToGraphvizFile(graphs, 
 					newService.getServiceDescription(), 
-					outputPath + "output" + String.valueOf(i+1) + ".dot");
+					outputPath + serviceModels.get(i).getServiceNameWithPrefix() + ".details.dot");
 			
 		}
 	}

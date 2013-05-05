@@ -181,6 +181,7 @@ public class RankedModel implements Comparable<RankedModel>{
 			size1 = patternToLinks.get(p1).size();
 			for (int j = i + 1; j < patternIds.size(); j++) {
 				p2 = patternIds.get(j);
+				if (!patternToLinks.containsKey(p1)) continue;
 				if (!patternToLinks.containsKey(p2)) continue;
 				size2 = patternToLinks.get(p2).size();
 				
@@ -195,8 +196,7 @@ public class RankedModel implements Comparable<RankedModel>{
 				} else if (size3 == size2 && size3 < size1) { 
 					patternToLinks.remove(p2);
 					patternToFrequency.remove(p2);
-				}
-				else if (size3 == size1 && size3 == size2) {
+				} else if (size3 == size1 && size3 == size2) {
 					Integer count = patternToFrequency.get(p1);
 					patternToFrequency.put(p1, count + 1);
 					patternToLinks.remove(p2);
