@@ -26,25 +26,54 @@ import java.util.HashMap;
 public class LinkIdFactory {
 
 	private HashMap<String, Integer> linksUris = new HashMap<String, Integer>();
+	public static final String separator = "---";
 
-	public String getLinkId(String uri) {
-		
-		int index;
-		String id;
-		
-		if (linksUris.containsKey(uri)) {
-			
-			index = linksUris.get(uri).intValue();
-			linksUris.put(uri, ++index);
-			id = uri + "" + index;
-			
-		} else {
-			index = 1;
-			linksUris.put(uri, index);
-			id = uri + "" + index;
-//			id = uriString;
-		}
-		return id;
+//	public String getLinkId(String uri) {
+//		
+//		int index;
+//		String id;
+//		
+//		if (linksUris.containsKey(uri)) {
+//			
+//			index = linksUris.get(uri).intValue();
+//			linksUris.put(uri, ++index);
+//			id = uri + "" + index;
+//			
+//		} else {
+//			index = 1;
+//			linksUris.put(uri, index);
+//			id = uri + "" + index;
+////			id = uriString;
+//		}
+//		return id;
+//	}
+	
+	public static String getLinkId(String uri, String sourceId, String targetId) {
+		return sourceId + separator + uri + separator + targetId;
+	}
+	
+	public static String getLinkUri(String linkId) {
+		String[] parts = linkId.split(separator);
+		if (parts != null && parts.length == 3)
+			return parts[1];
+		else
+			return null;
+	}
+	
+	public static String getLinkSourceId(String linkId) {
+		String[] parts = linkId.split(separator);
+		if (parts != null && parts.length == 3)
+			return parts[0];
+		else
+			return null;
+	}
+	
+	public static String getLinkTargetId(String linkId) {
+		String[] parts = linkId.split(separator);
+		if (parts != null && parts.length == 3)
+			return parts[2];
+		else
+			return null;
 	}
 	
 	public boolean duplicateUri(String uriString) {

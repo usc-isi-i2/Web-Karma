@@ -41,6 +41,7 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 	private LinkType type;
 	private LinkStatus status;
 	private LinkKeyInfo keyInfo;
+	private LinkPriorityType priorityType;
 	private Set<String> patternIds;
 	
 	public Link(String id, Label label, LinkType type) {
@@ -81,6 +82,7 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		this.type = LinkType.None;
 		this.status = LinkStatus.Normal;
 		this.keyInfo = LinkKeyInfo.None;
+		this.priorityType = LinkPriorityType.None;
 		this.patternIds = new HashSet<String>();
 	}
 	
@@ -120,6 +122,14 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 
 	public void setStatus(LinkStatus status) {
 		this.status = status;
+	}
+
+	public LinkPriorityType getPriorityType() {
+		return priorityType;
+	}
+
+	public void setPriorityType(LinkPriorityType priorityType) {
+		this.priorityType = priorityType;
 	}
 
 	public LinkKeyInfo getKeyType() {

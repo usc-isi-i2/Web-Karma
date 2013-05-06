@@ -23,6 +23,7 @@ package edu.isi.karma.modeling.alignment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -64,17 +65,17 @@ public class Alignment implements OntologyUpdateListener {
 	private Node root = null;
 	
 	private NodeIdFactory nodeIdFactory;
-	private LinkIdFactory linkIdFactory;
+//	private LinkIdFactory linkIdFactory;
 	
 	public Alignment(OntologyManager ontologyManager) {
 
 		this.nodeIdFactory = new NodeIdFactory();
-		this.linkIdFactory = new LinkIdFactory();
+//		this.linkIdFactory = new LinkIdFactory();
 
 		ontologyManager.subscribeListener(this);
 
 		logger.info("building initial graph ...");
-		graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory, linkIdFactory);
+		graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory);//, linkIdFactory);
 		
 	}
 	
@@ -150,9 +151,9 @@ public class Alignment implements OntologyUpdateListener {
 		return this.nodeIdFactory.lastIndexOf(uri);
 	}
 
-	public int getLastIndexOfLinkUri(String uri) {
-		return this.linkIdFactory.lastIndexOf(uri);
-	}
+//	public int getLastIndexOfLinkUri(String uri) {
+//		return this.linkIdFactory.lastIndexOf(uri);
+//	}
 
 	public ColumnNode getColumnNodeByHNodeId(String hNodeId) {
 
@@ -225,7 +226,7 @@ public class Alignment implements OntologyUpdateListener {
 
 	public DataPropertyLink addDataPropertyLink(Node source, Node target, Label label, boolean partOfKey) {
 		
-		String id = linkIdFactory.getLinkId(label.getUri());	
+		String id = LinkIdFactory.getLinkId(label.getUri(), source.getId(), target.getId());	
 		DataPropertyLink link = new DataPropertyLink(id, label, partOfKey);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;
@@ -234,7 +235,7 @@ public class Alignment implements OntologyUpdateListener {
 	// Probably we don't need this function in the interface to GUI
 	public ObjectPropertyLink addObjectPropertyLink(Node source, Node target, Label label) {
 		
-		String id = linkIdFactory.getLinkId(label.getUri());		
+		String id = LinkIdFactory.getLinkId(label.getUri(), source.getId(), target.getId());	
 		ObjectPropertyLink link = new ObjectPropertyLink(id, label);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
@@ -243,7 +244,7 @@ public class Alignment implements OntologyUpdateListener {
 	// Probably we don't need this function in the interface to GUI
 	public SubClassLink addSubClassOfLink(Node source, Node target) {
 		
-		String id = linkIdFactory.getLinkId(Uris.RDFS_SUBCLASS_URI);
+		String id = LinkIdFactory.getLinkId(Uris.RDFS_SUBCLASS_URI, source.getId(), target.getId());
 		SubClassLink link = new SubClassLink(id);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
@@ -251,7 +252,7 @@ public class Alignment implements OntologyUpdateListener {
 	
 	public ClassInstanceLink addClassInstanceLink(Node source, Node target, LinkKeyInfo keyInfo) {
 		
-		String id = linkIdFactory.getLinkId(Uris.CLASS_INSTANCE_LINK_URI);
+		String id = LinkIdFactory.getLinkId(Uris.CLASS_INSTANCE_LINK_URI, source.getId(), target.getId());
 		ClassInstanceLink link = new ClassInstanceLink(id, keyInfo);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;
@@ -259,14 +260,14 @@ public class Alignment implements OntologyUpdateListener {
 	
 	public DataPropertyOfColumnLink addDataPropertyOfColumnLink(Node source, Node target, String specializedColumnHNodeId) {
 		
-		String id = linkIdFactory.getLinkId(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI);
+		String id = LinkIdFactory.getLinkId(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI, source.getId(), target.getId());
 		DataPropertyOfColumnLink link = new DataPropertyOfColumnLink(id, specializedColumnHNodeId);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
 	}
 	
 	public ObjectPropertySpecializationLink addObjectPropertySpecializationLink(Node source, Node target, Link specializedLink) {
-		String id = linkIdFactory.getLinkId(Uris.OBJECTPROPERTY_SPECIALIZATION_LINK_URI);
+		String id = LinkIdFactory.getLinkId(Uris.OBJECTPROPERTY_SPECIALIZATION_LINK_URI, source.getId(), target.getId());
 		ObjectPropertySpecializationLink link = new ObjectPropertySpecializationLink(id, specializedLink);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;
@@ -274,7 +275,7 @@ public class Alignment implements OntologyUpdateListener {
 
 	public ColumnSubClassLink addColumnSubClassOfLink(Node source, Node target) {
 		
-		String id = linkIdFactory.getLinkId(Uris.COLUMN_SUBCLASS_LINK_URI);
+		String id = LinkIdFactory.getLinkId(Uris.COLUMN_SUBCLASS_LINK_URI, source.getId(), target.getId());
 		ColumnSubClassLink link = new ColumnSubClassLink(id);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;	
@@ -295,11 +296,22 @@ public class Alignment implements OntologyUpdateListener {
 		
 		Link link = this.getLinkById(linkId);
 		if (link == null) {
-			logger.error("Could not find the link with the id " + linkId);
-			return;
-		}
-		
-		this.graphBuilder.changeLinkStatus(link, newStatus);
+			if (newStatus == LinkStatus.ForcedByUser) {
+				Node source = this.getNodeById(LinkIdFactory.getLinkSourceId(linkId));
+				Node target = this.getNodeById(LinkIdFactory.getLinkTargetId(linkId));
+				String linkUri = LinkIdFactory.getLinkUri(linkId);
+				Link newLink;
+				if (linkUri.equalsIgnoreCase(Uris.RDFS_SUBCLASS_URI))
+					newLink = new SubClassLink(linkId);
+				else
+					newLink = new ObjectPropertyLink(linkId, 
+							this.graphBuilder.getOntologyManager().getUriLabel(linkUri));
+				
+				newLink.setStatus(LinkStatus.ForcedByUser);
+				this.graphBuilder.addLink(source, target, newLink);
+			}
+		} else
+			this.graphBuilder.changeLinkStatus(link, newStatus);
 	}
 	
 	/**
@@ -345,16 +357,47 @@ public class Alignment implements OntologyUpdateListener {
 			
 		return this.steinerTree.incomingEdgesOf(node);
 	}
-	
+
+	public List<Link> getLinks(String sourceId, String targetId) {
+		return this.graphBuilder.getPossibleLinks(sourceId, targetId);
+	}
+
 	public List<Link> getIncomingLinks(String nodeId) {
 		
-		List<Link> possibleLinks = new ArrayList<Link>();
+		List<Link> possibleLinks  = new ArrayList<Link>();
+		List<Link> temp;
+		HashSet<Link> allLinks = new HashSet<Link>();
+
 		Node node = this.getNodeById(nodeId);
 		if (node == null) return possibleLinks;
 		
 		Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(node);
-		if (incomingLinks != null) 
-			possibleLinks = Arrays.asList(incomingLinks.toArray(new Link[0]));
+		if (incomingLinks != null) {
+			temp = Arrays.asList(incomingLinks.toArray(new Link[0]));
+			allLinks.addAll(temp);
+		}
+		Set<Link> outgoingLinks = this.graphBuilder.getGraph().outgoingEdgesOf(node);
+		if (outgoingLinks != null) {
+			temp = Arrays.asList(outgoingLinks.toArray(new Link[0]));
+			allLinks.addAll(outgoingLinks);
+		}
+		
+		if (allLinks.size() == 0)
+			return possibleLinks;
+		
+		String sourceId, targetId;
+		for (Link e : allLinks) {
+			if (e.getSource().getId().equals(nodeId)) { // outgoing link
+				sourceId = e.getTarget().getId();
+				targetId = nodeId;
+			} else { // incoming link
+				sourceId = e.getSource().getId();
+				targetId = nodeId;
+			}
+			temp = getLinks(sourceId, targetId);
+			if (temp != null)
+				possibleLinks.addAll(temp);
+		}
 		
 		Collections.sort(possibleLinks);
 		
@@ -367,22 +410,50 @@ public class Alignment implements OntologyUpdateListener {
 //			System.out.print(l.getTarget().getId() + " === ");
 //			System.out.println(l.getLabel().getUri() + " === ");
 //		}
-		
+		logger.info("Finished obtaining the incoming links.");
 		return possibleLinks;
 	}
 	
 	public List<Link> getOutgoingLinks(String nodeId) {
 		
-		List<Link> possibleLinks = new ArrayList<Link>();
+		List<Link> possibleLinks  = new ArrayList<Link>();
+		List<Link> temp;
+		HashSet<Link> allLinks = new HashSet<Link>();
+
 		Node node = this.getNodeById(nodeId);
 		if (node == null) return possibleLinks;
 		
+		Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(node);
+		if (incomingLinks != null) {
+			temp = Arrays.asList(incomingLinks.toArray(new Link[0]));
+			allLinks.addAll(temp);
+		}
 		Set<Link> outgoingLinks = this.graphBuilder.getGraph().outgoingEdgesOf(node);
-		if (outgoingLinks != null) 
-			possibleLinks = Arrays.asList(outgoingLinks.toArray(new Link[0]));
+		if (outgoingLinks != null) {
+			temp = Arrays.asList(outgoingLinks.toArray(new Link[0]));
+			allLinks.addAll(outgoingLinks);
+		}
+		
+		if (allLinks.size() == 0)
+			return possibleLinks;
+		
+		String sourceId, targetId;
+		for (Link e : allLinks) {
+			if (e.getSource().getId().equals(nodeId)) { // outgoing link
+				sourceId = nodeId;
+				targetId = e.getTarget().getId();
+			} else { // incoming link
+				sourceId = nodeId;
+				targetId = e.getSource().getId();
+			}
+			temp = getLinks(sourceId, targetId);
+			if (temp != null)
+				possibleLinks.addAll(temp);
+		}
 		
 		Collections.sort(possibleLinks);
 
+		logger.info("Finished obtaining the outgoing links.");
 		return possibleLinks;
 	}
 	
@@ -475,10 +546,8 @@ public class Alignment implements OntologyUpdateListener {
 		System.out.println("*** Steiner Tree ***");
 		GraphUtil.printGraphSimple(tree);
 		logger.info("selecting a root for the tree ...");
-		TreePostProcess treePostProcess = new TreePostProcess(tree, this.graphBuilder.getThingNode());
-//		removeInvalidForcedLinks(treePostProcess.getDangledVertexList());
-		
-//		GraphUtil.printGraphSimple(GraphUtil.treeToRootedTree(treePostProcess.getTree(), treePostProcess.getRoot(), null));
+		TreePostProcess treePostProcess = new TreePostProcess(this.graphBuilder, tree, 
+				this.graphBuilder.getThingNode());
 
 		this.steinerTree = treePostProcess.getTree();
 		this.root = treePostProcess.getRoot();
@@ -496,4 +565,6 @@ public class Alignment implements OntologyUpdateListener {
 		this.graphBuilder.resetOntologyMaps();
 		
 	}
+	
+	
 }

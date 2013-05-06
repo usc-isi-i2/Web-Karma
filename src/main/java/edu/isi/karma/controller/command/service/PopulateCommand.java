@@ -110,6 +110,19 @@ public class PopulateCommand extends WorksheetCommand{
 		String alignmentId = mgr.constructAlignmentId(ws.getId(), vWorksheetId);
 		Alignment al = mgr.getAlignment(alignmentId);
 		
+//		/**
+//		 * 
+//		 */
+//		// FIXME
+//		String exportDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/jgraph/";
+//		try {
+//			GraphUtil.serialize(al.getSteinerTree(), exportDir + wk.getTitle() + ".karma.final.jgraph");
+//		} catch (Exception e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		if (true) return null;
+		
 		if (al == null) { 
 			logger.error("The alignment model is null.");
 			return new UpdateContainer(new ErrorUpdate(

@@ -21,23 +21,25 @@
 
 package edu.isi.karma.rep.alignment;
 
-import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.modeling.Prefixes;
-import edu.isi.karma.modeling.Uris;
+import java.util.Comparator;
 
+public class LinkPriorityComparator implements Comparator<Link> {
 
-public class SubClassLink extends Link {
-
-	private static final long serialVersionUID = 1L;
-	private static final Label label = 
-			new Label(Uris.RDFS_SUBCLASS_URI, Namespaces.RDFS, Prefixes.RDFS);
-
-	public SubClassLink(String id) {
-		super(id, label, LinkType.SubClassLink);
-		this.setPriorityType(LinkPriorityType.SubClassOf);
+	@Override
+	public int compare(Link o1, Link o2) {
+		String p1 = getPriority(o1.getPriorityType());
+		String p2 = getPriority(o2.getPriorityType());
+		return p1.compareTo(p2);
 	}
-	
-	public static Label getFixedLabel() {
-		return label;
+
+	private String getPriority(LinkPriorityType priorityType) {
+		if (priorityType == LinkPriorityType.DirectDataProperty) return "0";
+		else if (priorityType == LinkPriorityType.IndirectObjectProperty) return "1";
+		else if (priorityType == LinkPriorityType.ObjectPropertyWithOnlyDomain) return "2";
+		else if (priorityType == LinkPriorityType.ObjectPropertyWithOnlyRange) return "2";
+		else if (priorityType == LinkPriorityType.SubClassOf) return "3";
+		else if (priorityType == LinkPriorityType.ObjectPropertyWithoutDomainAndRange) return "4";
+		else return "5";
 	}
+
 }
