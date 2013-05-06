@@ -36,8 +36,9 @@ public class RecordFeatureSet {
 	public String record;
 	public String label;
 	public String[] xStrings = { "#", ";", ",", "!", "~", "@", "$", "%", "^",
-			"&", "*", "(", ")", "_", "-", "{", "}", "[", "]", "\"", "\'", ":",
-			"?", "<", ">", ".", "/", "\\", "\\d+", "[A-Z]+", "[a-z]+", "[\\s]" };
+			"&", "\\*", "\\(", "\\)", "_", "-", "\\{", "\\}", "\\[", "\\]", "\\\"", "\\\'", ":",
+			"\\?", "<", ">", "\\.", "/", "\\\\", "\\d+", "[A-Z]+", "[a-z]+", "[\\s]" };
+	//public String[] xStrings = {"\\d+"};
 	public String[] vocabs;
 
 	public RecordFeatureSet() {

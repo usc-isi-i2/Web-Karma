@@ -38,7 +38,7 @@ public class RecordCntFeatures implements Feature {
 	}
 	public double computerScore()
 	{
-		int count = value.split(Pattern.quote(tar)).length -1;
+		int count = value.split(tar).length -1;
 		return count;
 	}
 	@Override

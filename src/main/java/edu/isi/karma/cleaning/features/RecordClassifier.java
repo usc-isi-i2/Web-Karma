@@ -95,18 +95,18 @@ public class RecordClassifier implements PartitionClassifierType{
 			HashMap<String, Vector<String>> trainData = new HashMap<String, Vector<String>>();
 			Vector<String> test = new Vector<String>();
 			Vector<String> par1 = new Vector<String>();
-			par1.add("Jan");
+			par1.add("http://dbpedia.org/resource/Air_Slovakia");
+			par1.add("http://dbpedia.org/resource/S7_Airlines");
 			//par1.add("11 w 37th pl, los angeles");
 			Vector<String> par2 = new Vector<String>();
-			par2.add("Feb");
+			par2.add("http://dbpedia.org/resource/Interflug");
 			//par2.add("1 jefferson st");
 			Vector<String> par3 = new Vector<String>();
-			par3.add("Mar");
 			//par3.add("1 jefferson st#ni bangongshi");
 			trainData.put("c1", par1);
 			trainData.put("c2", par2);
-			trainData.put("c3", par3);
-			test.add("Jan");
+			//trainData.put("c3", par3);
+			test.add("http://dbpedia.org/resource/SunExpress");
 
 			RecordClassifier rc = new RecordClassifier();
 			for(String key:trainData.keySet())
@@ -117,6 +117,7 @@ public class RecordClassifier implements PartitionClassifierType{
 				}
 			}
 			rc.learnClassifer();
+			System.out.println(rc.Classify(test));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

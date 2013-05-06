@@ -546,7 +546,13 @@ public class Traces implements GrammarTreeNode {
 			Vector<Vector<GrammarTreeNode>> paths) {
 		HashMap<Integer, Template> resHashMap = new HashMap<Integer, Template>();
 		HashMap<Integer, Vector<Template>> tmpStore = new HashMap<Integer, Vector<Template>>();
+		long stime = System.currentTimeMillis();
 		for (Vector<GrammarTreeNode> vg : paths) {
+			if((System.currentTimeMillis()-stime)/1000>time_limit) 
+			{
+				System.out.println("Exceed the time limit");
+				break; // otherwise takes too much time
+			}
 			int key = vg.size();
 			if (tmpStore.containsKey(key)) {
 				tmpStore.get(key).add(new Template(vg));
