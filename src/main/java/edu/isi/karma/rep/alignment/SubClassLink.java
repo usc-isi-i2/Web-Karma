@@ -34,6 +34,7 @@ public class SubClassLink extends Link {
 
 	public SubClassLink(String id) {
 		super(id, label, LinkType.SubClassLink);
+		this.setPriorityType(LinkPriorityType.SubClassOf);
 	}
 	
 	public static Label getFixedLabel() {

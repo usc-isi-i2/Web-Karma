@@ -131,4 +131,9 @@ public class SemanticType implements Jsonizable  {
 		writer.key("ConfidenceLevel").value(confidenceLevel.name());
 		writer.endObject();
 	}
+	
+	public String getCrfModelLabelString() {
+		return (this.getDomain() == null) ? 
+				this.getType().getUri() : this.getDomain().getUri() + "|" + this.getType().getUri();
+	}
 }

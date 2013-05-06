@@ -36,7 +36,7 @@ public class Prnt {
 	
 	public static void endIt(String msg) {
 		prn(msg);
-		System.exit(1) ;
+//		System.exit(1) ;
 	}
 	
 	public static void prnCollection(Collection<String> list, String prefix) {

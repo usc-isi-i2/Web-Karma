@@ -21,6 +21,9 @@
 package edu.isi.karma.controller.command;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +40,11 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Node.NodeStatus;
+import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
@@ -56,6 +63,7 @@ public class AddColumnCommand extends WorksheetCommand {
 	//add column to this table
 	private String hTableId;
 	private final String newColumnName;
+	private final String defaultValue;
 	private final String vWorksheetId;
 
 	//the id of the new column that was created
@@ -69,13 +77,14 @@ public class AddColumnCommand extends WorksheetCommand {
 		updateType, hNodeId, vWorksheetId
 	}
 	
-	protected AddColumnCommand(String id, String vWorksheetId,
-			String worksheetId, String hTableId, String hNodeId, String newColumnName) {
+	protected AddColumnCommand(String id, String vWorksheetId, String worksheetId, 
+			String hTableId, String hNodeId, String newColumnName, String defaultValue) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		this.newColumnName=newColumnName;
 		this.vWorksheetId = vWorksheetId;
+		this.defaultValue = defaultValue;
 	}
 
 	@Override
@@ -102,8 +111,6 @@ public class AddColumnCommand extends WorksheetCommand {
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		Worksheet worksheet = vWorkspace.getWorkspace().getWorksheet(
 				worksheetId);
-		System.out.println("Old Size"
-				+ worksheet.getHeaders().getAllPaths().size());
 		
 		try{
 			if(hTableId==null || hTableId.isEmpty()){
@@ -126,8 +133,11 @@ public class AddColumnCommand extends WorksheetCommand {
 			//save the new hNodeId for undo
 			newHNodeId = ndid.getId();
 			
-			System.out.println("Added column:" + ndid.getColumnName());
-		
+			// Populate the column with default value if default value is present
+			if (this.defaultValue != null && !this.defaultValue.equals("")) {
+				populateRowsWithDefaultValues(worksheet, vWorkspace.getRepFactory());
+			}
+			
 			//create container and return hNodeId of newly created column
 			UpdateContainer c =  new UpdateContainer(new AbstractUpdate() {
 				@Override
@@ -147,11 +157,9 @@ public class AddColumnCommand extends WorksheetCommand {
 				}
 			});
 			
-			vWorkspace.getViewFactory()
-			.updateWorksheet(vWorksheetId, worksheet,
+			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,
 					worksheet.getHeaders().getAllPaths(), vWorkspace);
-			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(
-					vWorksheetId);
+			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 			vw.update(c);
 			
 			//THIS HAS A PROBLEM.
@@ -178,6 +186,21 @@ public class AddColumnCommand extends WorksheetCommand {
 		} catch (Exception e) {
 			System.out.println("Error in AddColumnCommand" + e.toString());
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
+		}
+	}
+
+	private void populateRowsWithDefaultValues(Worksheet worksheet, RepFactory factory) {
+		HNodePath selectedPath = null;
+		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
+		for (HNodePath path : columnPaths) {
+			if (path.getLeaf().getId().equals(newHNodeId)) {
+				selectedPath = path;
+			}
+		}
+		Collection<Node> nodes = new ArrayList<Node>();
+		worksheet.getDataTable().collectNodes(selectedPath, nodes);	
+		for (Node node : nodes) {
+			node.setValue(this.defaultValue, NodeStatus.original, factory);
 		}
 	}
 

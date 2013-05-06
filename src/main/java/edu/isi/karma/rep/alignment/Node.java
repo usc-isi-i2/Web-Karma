@@ -21,6 +21,8 @@
 package edu.isi.karma.rep.alignment;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -40,7 +42,8 @@ public abstract class Node implements Comparable<Node>, Serializable {
 	private String id;
 	private Label label;
 	private NodeType type;
-	
+	private Set<String> patternIds;
+
 	public Node(String id, Label label, NodeType type) {
 		
 		this.init();
@@ -63,6 +66,7 @@ public abstract class Node implements Comparable<Node>, Serializable {
 		Label l = null;
 		this.label = new Label(l);
 		this.type = NodeType.None;
+		this.patternIds = new HashSet<String>();
 	}
 	
 	public String getId() {
@@ -93,6 +97,10 @@ public abstract class Node implements Comparable<Node>, Serializable {
 	
 	public NodeType getType() {
 		return type;
+	}
+	
+	public Set<String> getPatternIds() {
+		return patternIds;
 	}
 
 	@Override

@@ -199,52 +199,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		});
 	});
 
-	//just for testing
-	$("button#addColumnButton").click(function(){
-		optionsDiv.hide();
-		
-		var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
-    	var selectedHNodeId = columnHeadingMenu.data("parentCellId");
-		
-		var info = new Object();
-		info["vWorksheetId"] = $("td#" + selectedHNodeId).parents("table.WorksheetTable").attr("id");
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["hNodeId"] = selectedHNodeId
-		info["hTableId"] = ""
-		info["newColumnName"] = "new_column"
-		info["command"] = "AddColumnCommand";
-
-        var newInfo = [];	// Used for commands that take JSONArray as input
-        newInfo.push(getParamObject("hNodeId", selectedHNodeId,"hNodeId"));
-        newInfo.push(getParamObject("hTableId", "","other"));
-        newInfo.push(getParamObject("vWorksheetId", $("td#" + selectedHNodeId).parents("table.WorksheetTable").attr("id"),"vWorksheetId"));
-        newInfo.push(getParamObject("newColumnName", "new_column","other"));
-        info["newInfo"] = JSON.stringify(newInfo);
-
-		//console.log(info["vWorksheetId"]);
-		showLoading(info["vWorksheetId"]);
-		
-		var returned = $.ajax({
-		   	url: "RequestController", 
-		   	type: "POST",
-		   	data : info,
-		   	dataType : "json",
-		   	complete : 
-		   		function (xhr, textStatus) {
-		   			//alert(xhr.responseText);
-		    		var json = $.parseJSON(xhr.responseText);
-		    		parse(json);
-		    		hideLoading(info["vWorksheetId"]);
-			   	},
-			error :
-				function (xhr, textStatus) {
-		   			alert("Error occured while removing semantic types!" + textStatus);
-		   			hideLoading(info["vWorksheetId"]);
-			   	}		   
-		});
-	});
-
-	$("button#publishRDF").click(function(){
+    $("button#publishRDF").click(function(){
 		optionsDiv.hide();
 		showHideRdfInfo();
 		getRDFPreferences();
@@ -565,6 +520,10 @@ function styleAndAssignHandlersToColumnHeadingMenu() {
 
     // Assign handler to rename column button (in table_manipulation.js)
     $("button#renameColumnButton").click(assignHandlersToRenameButton);
+
+    // Assign handler to the add column button (in table_manipulation.js)
+    $("button#addColumnButton").click(openAddNewColumnDialog);
+
 }
 
 function splitColumnByComma() {

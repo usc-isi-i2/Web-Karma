@@ -30,12 +30,15 @@ import org.jgrapht.graph.WeightedMultigraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
 import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LinkPriorityComparator;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.SimpleLink;
 
 public class TreePostProcess {
 	
 	static Logger logger = Logger.getLogger(TreePostProcess.class);
 
+	private GraphBuilder graphBuilder;
 	private DirectedWeightedMultigraph<Node, Link> tree;
 	private Node root = null;
 	private Node thingNode = null;
@@ -43,16 +46,17 @@ public class TreePostProcess {
 
 	// Constructor
 	
-	public TreePostProcess(WeightedMultigraph<Node, Link> tree, Node thingNode) {
+	public TreePostProcess(
+			GraphBuilder graphBuilder,
+			WeightedMultigraph<Node, Link> tree, 
+			Node thingNode) {
 		
+		this.graphBuilder = graphBuilder;
 		this.tree = (DirectedWeightedMultigraph<Node, Link>)GraphUtil.asDirectedGraph(tree);
 		this.thingNode = thingNode;
+		buildOutputTree();
 		selectRoot(findPossibleRoots());
 
-//		dangledVertexList = new ArrayList<Node>();
-//		updateLinksDirections(this.root, null);
-//		removeDanglingNodes();
-		
 	}
 	
 	// Public Methods
@@ -119,6 +123,51 @@ public class TreePostProcess {
 		this.root = possibleRoots.get(0);
 	}
 
+	private DirectedWeightedMultigraph<Node, Link> buildOutputTree() {
+		
+		String sourceId, targetId;
+		Link[] links = tree.edgeSet().toArray(new Link[0]);
+
+		List<Link> temp;
+		List<Link> possibleLinks = new ArrayList<Link>();
+		
+		for (Link link : links) {
+			if (!(link instanceof SimpleLink)) continue;
+			
+			// links from source to target
+			sourceId = link.getSource().getId();
+			targetId = link.getTarget().getId();
+			
+			possibleLinks.clear();
+
+			temp = this.graphBuilder.getPossibleLinks(sourceId, targetId);
+			if (temp != null) possibleLinks.addAll(temp);
+			temp = this.graphBuilder.getPossibleLinks(targetId, sourceId);
+			if (temp != null) possibleLinks.addAll(temp);
+
+			Collections.sort(possibleLinks, new LinkPriorityComparator());
+			if (possibleLinks.size() > 0) {
+				
+				// pick the first one 
+				Link newLink = possibleLinks.get(0);
+				
+				tree.addEdge(link.getSource(), link.getTarget(), newLink);
+				tree.removeEdge(link);
+				
+				this.graphBuilder.addLink(link.getSource(), link.getTarget(), newLink);
+				this.graphBuilder.removeLink(link);
+
+			} else {
+				logger.error("Something is going wrong. " +
+						"There should be at least one possible object property between " +
+						link.getSource().getLabel().getUri() + 
+						" and " + link.getTarget().getLabel().getUri());
+				return null;
+			}
+		}
+		
+		return tree;
+	}
 	
 //	private void removeDanglingNodes() {
 //

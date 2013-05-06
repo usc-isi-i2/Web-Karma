@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ import org.apache.log4j.Logger;
 
 import edu.isi.karma.rep.alignment.Label;
 
-public class OntologyManager {
+public class OntologyManager  {
 	
 	static Logger logger = Logger.getLogger(OntologyManager.class.getName());
 
@@ -260,11 +261,11 @@ public class OntologyManager {
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getDomainsOfProperty(String propertyUri, boolean recursive) {
+	public HashSet<String> getDomainsOfProperty(String propertyUri, boolean recursive) {
 
-		List<String> results = new ArrayList<String>();
-		List<String> direct = null;
-		List<String> indirect = null;
+		HashSet<String> results = new HashSet<String>();
+		HashSet<String> direct = null;
+		HashSet<String> indirect = null;
 		
 		direct = ontCache.getPropertyDirectDomains().get(propertyUri);
 		if (direct != null) results.addAll(direct);
@@ -282,11 +283,11 @@ public class OntologyManager {
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getRangesOfProperty(String propertyUri, boolean recursive) {
+	public HashSet<String> getRangesOfProperty(String propertyUri, boolean recursive) {
 
-		List<String> results = new ArrayList<String>();
-		List<String> direct = null;
-		List<String> indirect = null;
+		HashSet<String> results = new HashSet<String>();
+		HashSet<String> direct = null;
+		HashSet<String> indirect = null;
 		
 		direct = ontCache.getPropertyDirectRanges().get(propertyUri);		
 		if (direct != null) results.addAll(direct);
@@ -305,12 +306,12 @@ public class OntologyManager {
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getDomainsGivenRange(String rangeUri, boolean recursive) {
+	public HashSet<String> getDomainsGivenRange(String rangeUri, boolean recursive) {
 		
-		List<String> objectProperties = ontCache.getDirectInObjectProperties().get(rangeUri);
-		List<String> results = new ArrayList<String>();
-		List<String> direct = null;
-		List<String> indirect = null;
+		HashSet<String> objectProperties = ontCache.getDirectInObjectProperties().get(rangeUri);
+		HashSet<String> results = new HashSet<String>();
+		HashSet<String> direct = null;
+		HashSet<String> indirect = null;
 		
 		if (objectProperties == null)
 			return results;
@@ -417,13 +418,13 @@ public class OntologyManager {
 	 * @param inheritance
 	 * @return
 	 */
-	public List<String> getDataPropertiesOfClass(String domainUri, boolean inheritance) {
+	public HashSet<String> getDataPropertiesOfClass(String domainUri, boolean inheritance) {
 
-		List<String> direct = ontCache.getDirectOutDataProperties().get(domainUri);
+		HashSet<String> direct = ontCache.getDirectOutDataProperties().get(domainUri);
 		if (!inheritance) return direct;
 		
-		List<String> all = new ArrayList<String>();
-		List<String> indirect = ontCache.getIndirectOutDataProperties().get(domainUri);
+		HashSet<String> all = new HashSet<String>();
+		HashSet<String> indirect = ontCache.getIndirectOutDataProperties().get(domainUri);
 		if (direct != null) all.addAll(direct);
 		if (indirect != null) all.addAll(indirect);
 		return all;
@@ -437,45 +438,45 @@ public class OntologyManager {
 	 * @param inheritance
 	 * @return
 	 */
-	public List<String> getObjectPropertiesOfClass(String domainUri, boolean inheritance) {
+	public HashSet<String> getObjectPropertiesOfClass(String domainUri, boolean inheritance) {
 
-		List<String> direct = ontCache.getDirectOutObjectProperties().get(domainUri);
+		HashSet<String> direct = ontCache.getDirectOutObjectProperties().get(domainUri);
 		if (!inheritance) return direct;
 		
-		List<String> all = new ArrayList<String>();
-		List<String> indirect = ontCache.getIndirectOutObjectProperties().get(domainUri);
+		HashSet<String> all = new HashSet<String>();
+		HashSet<String> indirect = ontCache.getIndirectOutObjectProperties().get(domainUri);
 		if (direct != null) all.addAll(direct);
 		if (indirect != null) all.addAll(indirect);
 		return all;
 	}
 	
-	public List<String> getObjectPropertiesDirect(String sourceUri, String targetUri) {
+	public HashSet<String> getObjectPropertiesDirect(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return null;
 		return this.ontCache.getDomainRangeToDirectProperties().get(sourceUri + targetUri);
 	}
 
-	public List<String> getObjectPropertiesIndirect(String sourceUri, String targetUri) {
+	public HashSet<String> getObjectPropertiesIndirect(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return null;
 		return this.ontCache.getDomainRangeToIndirectProperties().get(sourceUri + targetUri);
 	}
 
-	public List<String> getObjectPropertiesWithOnlyDomain(String sourceUri, String targetUri) {
+	public HashSet<String> getObjectPropertiesWithOnlyDomain(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return null;
 		
-		List<String> directOutProperties;
-		List<String> indirectOutProperties;
-		List<String> results = new ArrayList<String>();
+		HashSet<String> directOutProperties;
+		HashSet<String> indirectOutProperties;
+		HashSet<String> results = new HashSet<String>();
 
-		directOutProperties = this.ontCache.getDirectInObjectProperties().get(sourceUri);
+		directOutProperties = this.ontCache.getDirectOutObjectProperties().get(sourceUri);
 		if (directOutProperties != null)
 			for (String s : directOutProperties) 
 				if (this.ontCache.getObjectPropertiesWithOnlyDomain().containsKey(s)) 
 					results.add(s);
 
-		indirectOutProperties = this.ontCache.getIndirectInObjectProperties().get(sourceUri);
+		indirectOutProperties = this.ontCache.getIndirectOutObjectProperties().get(sourceUri);
 		if (indirectOutProperties != null) 
 			for (String s : indirectOutProperties) 
 				if (this.ontCache.getObjectPropertiesWithOnlyDomain().containsKey(s)) 
@@ -484,14 +485,14 @@ public class OntologyManager {
 		return results;
 	}
 
-	public List<String> getObjectPropertiesWithOnlyRange(String sourceUri, String targetUri) {
+	public HashSet<String> getObjectPropertiesWithOnlyRange(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return null;
 		
-		List<String> directInProperties;
-		List<String> indirectInProperties;
-		List<String> results = new ArrayList<String>();
-
+		HashSet<String> directInProperties;
+		HashSet<String> indirectInProperties;
+		HashSet<String> results = new HashSet<String>();
+		
 		directInProperties = this.ontCache.getDirectInObjectProperties().get(targetUri);
 		if (directInProperties != null)
 			for (String s : directInProperties) 

@@ -380,7 +380,7 @@ public class RuleRDFGenerator {
 		//split class name
 		int ind = className.indexOf(PREFIX_SEPARATOR);
 		//http: is not a prefix
-		if(ind>0 && !className.startsWith("http:")){
+		if(ind>0 && !className.startsWith("http:") && !className.startsWith("<http:")){
 			ontologyPrefixName = className.substring(0,ind); 
 			className = className.substring(ind+1); 
 		}
@@ -406,6 +406,8 @@ public class RuleRDFGenerator {
 		String classFullName = ontologyPrefixName + ":" + className;
 		if(className.startsWith("http:")){
 			classFullName = "<" + className + ">";
+		} else if (className.startsWith("<http:")) {
+			classFullName = className;
 		}
 		
 		String statement = subject.toString() + " a " + classFullName + " .";
@@ -465,7 +467,7 @@ public class RuleRDFGenerator {
 		//split predicate name
 		int ind = predicateName.indexOf(PREFIX_SEPARATOR);
 		//http: is not a prefix
-		if(ind>0 && !predicateName.startsWith("http:")){
+		if(ind>0 && !predicateName.startsWith("http:") && !predicateName.startsWith("<http:")){
 			//remove the back-tick
 			ontologyPrefixName = predicateName.substring(0,ind); 
 			predicateName = predicateName.substring(ind+1); 
@@ -477,6 +479,8 @@ public class RuleRDFGenerator {
 		String predicate = ontologyPrefixName + ":" +  predicateName;
 		if(predicateName.startsWith("http:")){
 			predicate = "<" + predicateName +">";
+		} else if (predicateName.startsWith("<http:")) {
+			predicate = predicateName;
 		}
 		
 		ArrayList<Term> terms = p.getTerms();
@@ -724,6 +728,14 @@ public class RuleRDFGenerator {
 		//don't include this tuple
 		if(varValue.isEmpty()){
 			return null;
+		}
+		
+		// TEMPORARY FIX TO RESOLVE PROBLEM WITH BAD URIS WHILE USING SUBCLASS LINKS
+		if (className.startsWith("http:") || className.startsWith("<http:")) {
+			if (className.contains("#"))
+				className = className.substring(className.indexOf("#")+1).replaceAll(">", "");
+			else
+				className = className.substring(className.lastIndexOf("/")).replaceAll(">", "");
 		}
 		
 		//set terms for this function

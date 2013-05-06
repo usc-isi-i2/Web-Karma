@@ -21,7 +21,6 @@
 package edu.isi.karma.modeling.alignment;
 
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.UndirectedGraph;

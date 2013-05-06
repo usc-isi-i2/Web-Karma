@@ -32,7 +32,7 @@ import edu.isi.karma.webserver.KarmaException;
 public class AddColumnCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 
 	public enum Arguments {
-		vWorksheetId, hTableId, hNodeId, newColumnName
+		vWorksheetId, hTableId, hNodeId, newColumnName, defaultValue
 	}
 	
 	@Override
@@ -42,20 +42,23 @@ public class AddColumnCommandFactory extends CommandFactory implements JSONInput
 		String hTableId = request.getParameter(Arguments.hTableId.name());
 		String newColumnName = request.getParameter(Arguments.newColumnName.name());
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
-		return new AddColumnCommand(getNewId(vWorkspace), vWorksheetId, getWorksheetId(request, vWorkspace), hTableId, hNodeId, newColumnName);
+		String defaultValue = request.getParameter(Arguments.defaultValue.name());
+		return new AddColumnCommand(getNewId(vWorkspace), vWorksheetId, getWorksheetId(request, vWorkspace), 
+				hTableId, hNodeId, newColumnName, defaultValue);
 	}
 
 	@Override
 	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
 			throws JSONException, KarmaException {
-		/** Parse the input arguments and create proper data structues to be passed to the command **/
+		/** Parse the input arguments and create proper data structures to be passed to the command **/
 		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String vWorksheetID = CommandInputJSONUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
 		String hTableId = CommandInputJSONUtil.getStringValue(Arguments.hTableId.name(), inputJson);
 		String newColumnName = CommandInputJSONUtil.getStringValue(Arguments.newColumnName.name(), inputJson);
+		String defaultValue = CommandInputJSONUtil.getStringValue(Arguments.defaultValue.name(), inputJson);
 		return new AddColumnCommand(getNewId(vWorkspace), vWorksheetID, 
 				vWorkspace.getViewFactory().getVWorksheet(vWorksheetID).getWorksheet().getId(),
-				hTableId, hNodeID, newColumnName);
+				hTableId, hNodeID, newColumnName, defaultValue);
 	}
 
 }

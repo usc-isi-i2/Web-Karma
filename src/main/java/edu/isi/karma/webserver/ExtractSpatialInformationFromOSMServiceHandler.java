@@ -34,7 +34,7 @@ public class ExtractSpatialInformationFromOSMServiceHandler extends HttpServlet 
 			.getLogger(LinkedApiServiceHandler.class);
 	private String url;
 	private Connection connection = null;
-	private String osmFile_path ="/tmp/GET_OPENSTREETMAP.xml";
+	private String osmFile_path ="GET_OPENSTREETMAP.xml";
 
 
 	public void doGet(HttpServletRequest request,

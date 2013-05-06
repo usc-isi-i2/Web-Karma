@@ -22,6 +22,7 @@
 package edu.isi.karma.rep.alignment;
 
 
+
 /**
  * SimpleLink does not have any type.   
  * @author mohsen
@@ -31,9 +32,18 @@ package edu.isi.karma.rep.alignment;
 public class SimpleLink extends Link {
 
 	private static final long serialVersionUID = 1L;
+	private static final Label label = 
+			new Label("SimpleLink");
+
+	public SimpleLink(String id) {
+		super(id, label, LinkType.None);
+	}
 
 	public SimpleLink(String id, Label uri) {
 		super(id, uri, LinkType.None);
 	}
 
+	public static Label getFixedLabel() {
+		return label;
+	}
 }

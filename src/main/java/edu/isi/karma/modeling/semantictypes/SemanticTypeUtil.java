@@ -247,10 +247,8 @@ public class SemanticTypeUtil {
 	 *            cell)
 	 * @param crfModelHandler
 	 */
-	public static void identifyOutliers(Worksheet worksheet,
-			String predictedType, HNodePath path, Tag outlierTag,
-			Map<ColumnFeature, Collection<String>> columnFeatures,
-			CRFModelHandler crfModelHandler) {
+	public static void identifyOutliers(Worksheet worksheet, String predictedType, HNodePath path, Tag outlierTag,
+			Map<ColumnFeature, Collection<String>> columnFeatures, CRFModelHandler crfModelHandler) {
 		Collection<Node> nodes = new ArrayList<Node>();
 		worksheet.getDataTable().collectNodes(path, nodes);
 
@@ -259,6 +257,7 @@ public class SemanticTypeUtil {
 		Set<String> allNodeIds = new HashSet<String>();
 		Set<String> outlierNodeIds = new HashSet<String>();
 
+		int outlierCounter = 0;
 		for (Node node : nodes) {
 			allNodeIds.add(node.getId());
 
@@ -273,20 +272,21 @@ public class SemanticTypeUtil {
 				boolean result = crfModelHandler.predictLabelForExamples(
 						examples, 1, predictedLabels, confidenceScores, null,
 						columnFeatures);
-				// logger.debug("Example: " + examples.get(0) + " Label: " + predictedLabels + " Score: " + confidenceScores);
+				 
 				if (!result) {
 					logger.error("Error while predicting type for " + nodeVal);
 					continue;
 				}
-
 				// Check here if it is an outlier
+//				System.out.println("Example: " + examples.get(0) + " Label: " + predictedLabels + " Score: " + confidenceScores);
 				if (!predictedLabels.get(0).equalsIgnoreCase(predictedType)) {
-					logger.debug(nodeVal + ": " + predictedLabels + " Prob: "
-							+ confidenceScores);
+					logger.info(nodeVal + ": " + predictedLabels + " Prob: " + confidenceScores);
+					outlierCounter++;
 					outlierNodeIds.add(node.getId());
 				}
 			}
 		}
+		System.out.println("Total outliers: " + outlierCounter);
 		// Remove the existing ones
 		outlierTag.removeNodeIds(allNodeIds);
 		// Add the new ones
