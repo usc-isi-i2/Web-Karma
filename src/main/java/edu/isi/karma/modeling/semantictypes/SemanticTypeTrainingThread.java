@@ -45,18 +45,16 @@ public class SemanticTypeTrainingThread implements Runnable {
 		Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
 
 		// Prepare the column name for training
-		String columnName = currentColumnPath.getLeaf().getColumnName();
-		Collection<String> columnNameList = new ArrayList<String>();
-		columnNameList.add(columnName);
-		columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
+//		String columnName = currentColumnPath.getLeaf().getColumnName();
+//		Collection<String> columnNameList = new ArrayList<String>();
+//		columnNameList.add(columnName);
+//		columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
 
 		// Train the model with the new type
 		ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(worksheet, currentColumnPath);
 		boolean trainingResult = false;
-		String newTypeString = (newType.getDomain() == null) ? 
-				newType.getType().getUri() : newType.getDomain().getUri() + "|" + newType.getType().getUri();
 		
-		trainingResult = crfModelHandler.addOrUpdateLabel(newTypeString,trainingExamples, columnFeatures);
+		trainingResult = crfModelHandler.addOrUpdateLabel(newType.getCrfModelLabelString(),trainingExamples, columnFeatures);
 
 		if (!trainingResult) {
 			logger.error("Error occured while training CRF Model.");

@@ -19,29 +19,21 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research;
+package edu.isi.karma.kr2rml;
 
-import org.jgrapht.graph.DirectedWeightedMultigraph;
+import java.util.ArrayList;
+import java.util.List;
 
-import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.Node;
-
-public class MatchedSubGraphs {
-
-	private DirectedWeightedMultigraph<Node, Link> subGraph1;
-	private DirectedWeightedMultigraph<Node, Link> subGraph2;
+public class R2RMLMapping {
 	
-	public DirectedWeightedMultigraph<Node, Link> getSubGraph1() {
-		return subGraph1;
-	}
-	public DirectedWeightedMultigraph<Node, Link> getSubGraph2() {
-		return subGraph2;
-	}
-
-	public MatchedSubGraphs(DirectedWeightedMultigraph<Node, Link> subGraph1, 
-			DirectedWeightedMultigraph<Node, Link> subGraph2) {
-		this.subGraph1 = subGraph1;
-		this.subGraph2 = subGraph2;
+	private List<TriplesMap> triplesMap = new ArrayList<TriplesMap>();
+	private List<Prefix> prefixes = new ArrayList<Prefix>();
+	
+	public void addTriplesMap(TriplesMap tmap) {
+		triplesMap.add(tmap);
 	}
 	
+	public void addPrefix(Prefix prefix) {
+		prefixes.add(prefix);
+	}
 }

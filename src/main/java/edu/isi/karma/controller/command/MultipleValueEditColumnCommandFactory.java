@@ -20,7 +20,7 @@ public class MultipleValueEditColumnCommandFactory extends CommandFactory implem
 
 	@Override
 	public Command createCommand(HttpServletRequest request, VWorkspace vWorkspace) {
-		return null;
+		return null; // Not to be used
 	}
 
 	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace) throws JSONException, KarmaException {

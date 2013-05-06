@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research;
+package edu.isi.karma.modeling.research.experiment1;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +49,7 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.modeling.ontology.DomainRangePair;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.modeling.research.GraphVizUtil;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
@@ -67,50 +68,50 @@ public class Approach1 {
 
 	private static Logger logger = Logger.getLogger(Approach1.class);
 	private static String ontologyDir = "/Users/mohsen/Dropbox/Service Modeling/ontologies/";
-	private static String outputDir = "/Users/mohsen/Dropbox/Service Modeling/output/";
+	private static String outputDir = "/Users/mohsen/Dropbox/Service Modeling/experiment1/results/";
 	
 	private DirectedWeightedMultigraph<Node, Link> graph;
 	private HashMap<NodeType, List<Node>> typeToNodesMap;
 	private HashMap<String, List<Node>> uriToNodesMap;
-	private LinkIdFactory linkIdFactory;
+//	private LinkIdFactory linkIdFactory;
 	private List<DomainRangePair> sourceTargetList;
 	private HashMap<String, HashMap<String, Double>> sourceTargetToLinkWeightMap;
-	private HashMap<Node, List<SemanticLabel>> nodeToSemanticLabels;
-	private HashMap<SemanticLabel, SemanticLabel> inputLabelsToOutputLabelsMatching;
+	private HashMap<Node, List<SemanticLabel1>> nodeToSemanticLabels;
+	private HashMap<SemanticLabel1, SemanticLabel1> inputLabelsToOutputLabelsMatching;
 	// service model id --> number of common links between the input model and this service model
 	private HashMap<String, Integer> similarityMap;
 	private HashMap<String, Double> modelsWeightsMap;
 	
 	private DirectedWeightedMultigraph<Node, Link> inputModel;
-	private List<ServiceModel> trainingData;
+	private List<ServiceModel1> trainingData;
 	private OntologyManager ontologyManager;
-	private List<SemanticLabel> inputSemanticLabels;
-	private List<SemanticLabel> outputSemanticLabels;
+	private List<SemanticLabel1> inputSemanticLabels;
+	private List<SemanticLabel1> outputSemanticLabels;
 
 	public Approach1(DirectedWeightedMultigraph<Node, Link> inputModel, 
-			List<ServiceModel> trainingData, 
+			List<ServiceModel1> trainingData, 
 			OntologyManager ontologyManager) {
 		this.inputModel = inputModel;
 		this.trainingData = trainingData;
 		this.ontologyManager = ontologyManager;
-		this.linkIdFactory = new LinkIdFactory();
-		this.inputSemanticLabels = new ArrayList<SemanticLabel>();
-		this.outputSemanticLabels = new ArrayList<SemanticLabel>();
+//		this.linkIdFactory = new LinkIdFactory();
+		this.inputSemanticLabels = new ArrayList<SemanticLabel1>();
+		this.outputSemanticLabels = new ArrayList<SemanticLabel1>();
 		this.typeToNodesMap = new HashMap<NodeType, List<Node>>();
 		this.uriToNodesMap = new HashMap<String, List<Node>>();
 		this.sourceTargetList = new ArrayList<DomainRangePair>();
 		this.sourceTargetToLinkWeightMap = new HashMap<String, HashMap<String,Double>>();
-		this.nodeToSemanticLabels = new HashMap<Node, List<SemanticLabel>>();
-		this.inputLabelsToOutputLabelsMatching = new HashMap<SemanticLabel, SemanticLabel>();
+		this.nodeToSemanticLabels = new HashMap<Node, List<SemanticLabel1>>();
+		this.inputLabelsToOutputLabelsMatching = new HashMap<SemanticLabel1, SemanticLabel1>();
 		this.similarityMap = new HashMap<String, Integer>();
 		this.modelsWeightsMap = new HashMap<String, Double>();
 	}
 
-	public List<SemanticLabel> getInputSemanticLabels() {
+	public List<SemanticLabel1> getInputSemanticLabels() {
 		return inputSemanticLabels;
 	}
 
-	public List<SemanticLabel> getOutputSemanticLabels() {
+	public List<SemanticLabel1> getOutputSemanticLabels() {
 		return outputSemanticLabels;
 	}
 
@@ -147,7 +148,7 @@ public class Approach1 {
 		
 		int count;
 		Set<String> modelSourceLinkTargetTriples;
-		for (ServiceModel sm : this.trainingData) {
+		for (ServiceModel1 sm : this.trainingData) {
 			
 			DirectedWeightedMultigraph<Node, Link> m = sm.getModels().get(0);
 			modelSourceLinkTargetTriples = new HashSet<String>();
@@ -226,7 +227,7 @@ public class Approach1 {
 		Double w;
 		Double modelWeight;
 		
-		for (ServiceModel sm : this.trainingData) {
+		for (ServiceModel1 sm : this.trainingData) {
 			
 			modelWeight = (this.modelsWeightsMap.containsKey(sm.getId())) ? 
 					this.modelsWeightsMap.get(sm.getId()).doubleValue() : 0.0;
@@ -259,11 +260,11 @@ public class Approach1 {
 		}
 	}
 	
-	private List<SemanticLabel> getModelSemanticLabels(
+	private List<SemanticLabel1> getModelSemanticLabels(
 			DirectedWeightedMultigraph<Node, Link> model,
 			boolean updateNodeToSemanticLabelsMap) {
 		
-		List<SemanticLabel> semanticLabels = new ArrayList<SemanticLabel>();
+		List<SemanticLabel1> semanticLabels = new ArrayList<SemanticLabel1>();
 
 		for (Node n : model.vertexSet()) {
 			if (!(n instanceof ColumnNode) && !(n instanceof LiteralNode)) continue;
@@ -273,14 +274,14 @@ public class Approach1 {
 				Link link = incomingLinks.toArray(new Link[0])[0];
 				Node domain = link.getSource();
 				
-				SemanticLabel sl = new SemanticLabel(domain.getLabel(), link.getLabel(), n.getId());
+				SemanticLabel1 sl = new SemanticLabel1(domain.getLabel(), link.getLabel(), n.getId());
 				semanticLabels.add(sl);
 				
 				if (!updateNodeToSemanticLabelsMap) continue;
 				
-				List<SemanticLabel> attachedSLs = this.nodeToSemanticLabels.get(domain);
+				List<SemanticLabel1> attachedSLs = this.nodeToSemanticLabels.get(domain);
 				if (attachedSLs == null) {
-					attachedSLs = new ArrayList<SemanticLabel>();
+					attachedSLs = new ArrayList<SemanticLabel1>();
 					this.nodeToSemanticLabels.put(domain, attachedSLs);
 				}
 				attachedSLs.add(sl);
@@ -289,15 +290,15 @@ public class Approach1 {
 		return semanticLabels;
 	}
 	
-	private List<SemanticLabel> findMatchedSemanticLabels(SemanticLabel semanticLabel) {
+	private List<SemanticLabel1> findMatchedSemanticLabels(SemanticLabel1 semanticLabel) {
 
-		List<SemanticLabel> matchedSemanticLabels = new ArrayList<SemanticLabel>();
+		List<SemanticLabel1> matchedSemanticLabels = new ArrayList<SemanticLabel1>();
 		
-		for (ServiceModel sm : trainingData) {
+		for (ServiceModel1 sm : trainingData) {
 			//sm.computeMatchedSubGraphs(1);
 			List<MatchedSubGraphs> matchedSubGraphs = sm.getMatchedSubGraphs();
-			SemanticLabel sl1 = null, sl2 = null;
-			List<SemanticLabel> slList1 = null, slList2 = null;
+			SemanticLabel1 sl1 = null, sl2 = null;
+			List<SemanticLabel1> slList1 = null, slList2 = null;
 			for (MatchedSubGraphs m : matchedSubGraphs) {
 				slList1 = getModelSemanticLabels(m.getSubGraph1(), false);
 				if (slList1 != null && slList1.size() == 1) sl1 = slList1.get(0); else sl1 = null;
@@ -320,7 +321,7 @@ public class Approach1 {
 		return matchedSemanticLabels;
 	}
 	
-	public SemanticLabel selectBestMatchedSemanticLabel(List<SemanticLabel> matchedSemanticLabels) {
+	public SemanticLabel1 selectBestMatchedSemanticLabel(List<SemanticLabel1> matchedSemanticLabels) {
 		
 		// select the most frequent semantic label from the matched list 
 
@@ -333,8 +334,8 @@ public class Approach1 {
 		
 		Collections.sort(matchedSemanticLabels);
 		for (int i = 1; i < matchedSemanticLabels.size(); i++) {
-			SemanticLabel prev = matchedSemanticLabels.get(i - 1);
-			SemanticLabel curr = matchedSemanticLabels.get(i);
+			SemanticLabel1 prev = matchedSemanticLabels.get(i - 1);
+			SemanticLabel1 curr = matchedSemanticLabels.get(i);
 			if (curr.compareTo(prev) == 0) { // they are the same
 				countOfEqualSemanticLabels ++;
 			} else {
@@ -371,16 +372,16 @@ public class Approach1 {
 		
 		logger.info("=====================================================================");
 		logger.info("Input Semantic Labels: ");
-		for (SemanticLabel sl: inputSemanticLabels)
+		for (SemanticLabel1 sl: inputSemanticLabels)
 			sl.print();
 		logger.info("=====================================================================");
 		
-		for (SemanticLabel sl : inputSemanticLabels) {
+		for (SemanticLabel1 sl : inputSemanticLabels) {
 
 			sl.print();
 			logger.info("-------------------------------------------");
 
-			List<SemanticLabel> matchedSemanticLabels = findMatchedSemanticLabels(sl);
+			List<SemanticLabel1> matchedSemanticLabels = findMatchedSemanticLabels(sl);
 			if (matchedSemanticLabels == null || matchedSemanticLabels.size() == 0) {
 				
 				HashMap<String, Label> superClasses = 
@@ -390,7 +391,7 @@ public class Approach1 {
 				if (superClasses != null && superClasses.size() > 0) {
 					for (String s : superClasses.keySet()) {
 						matchedSemanticLabels = findMatchedSemanticLabels(
-								new SemanticLabel(new Label(s), sl.getLinkLabel(), sl.getLeafName()));
+								new SemanticLabel1(new Label(s), sl.getLinkLabel(), sl.getLeafName()));
 						
 						if (matchedSemanticLabels != null && matchedSemanticLabels.size() > 0) {
 							matchFound = true;
@@ -408,13 +409,13 @@ public class Approach1 {
 			}
 			
 			logger.info("Matched Semantic Labels: ");
-			for (SemanticLabel matched: matchedSemanticLabels)
+			for (SemanticLabel1 matched: matchedSemanticLabels)
 				matched.print();
 			logger.info("-------------------------------------------");
 
-			SemanticLabel bestMatch = selectBestMatchedSemanticLabel(matchedSemanticLabels);
-			SemanticLabel outputSemanticLabel = 
-					new SemanticLabel(bestMatch.getNodeLabel(), bestMatch.getLinkLabel(), sl.getLeafName());
+			SemanticLabel1 bestMatch = selectBestMatchedSemanticLabel(matchedSemanticLabels);
+			SemanticLabel1 outputSemanticLabel = 
+					new SemanticLabel1(bestMatch.getNodeLabel(), bestMatch.getLinkLabel(), sl.getLeafName());
 			outputSemanticLabels.add(outputSemanticLabel);
 			this.inputLabelsToOutputLabelsMatching.put(sl, outputSemanticLabel);
 
@@ -430,7 +431,7 @@ public class Approach1 {
 
 		logger.info("=====================================================================");
 		logger.info("Output Semantic Labels: ");
-		for (SemanticLabel sl: outputSemanticLabels)
+		for (SemanticLabel1 sl: outputSemanticLabels)
 			sl.print();
 		logger.info("=====================================================================");
 		
@@ -440,31 +441,31 @@ public class Approach1 {
 		
 		Alignment alignment = new Alignment(this.ontologyManager);
 		
-		for (List<SemanticLabel> slList : this.nodeToSemanticLabels.values()) {
+		for (List<SemanticLabel1> slList : this.nodeToSemanticLabels.values()) {
 			
-			List<SemanticLabel> mappedOutputLabel = new ArrayList<SemanticLabel>();
-			for (SemanticLabel sl : slList)
+			List<SemanticLabel1> mappedOutputLabel = new ArrayList<SemanticLabel1>();
+			for (SemanticLabel1 sl : slList)
 				if (this.inputLabelsToOutputLabelsMatching.get(sl) != null)
 					mappedOutputLabel.add(this.inputLabelsToOutputLabelsMatching.get(sl));
 			
 	
-			Map<String,List<SemanticLabel>> groupedMappedOutputLabelsByNodeUri =
-				    new LinkedHashMap<String,List<SemanticLabel>>();
+			Map<String,List<SemanticLabel1>> groupedMappedOutputLabelsByNodeUri =
+				    new LinkedHashMap<String,List<SemanticLabel1>>();
 				
-			for (SemanticLabel sl : mappedOutputLabel) {
-			    List<SemanticLabel> outputLabelsWithSameNodeUri = 
+			for (SemanticLabel1 sl : mappedOutputLabel) {
+			    List<SemanticLabel1> outputLabelsWithSameNodeUri = 
 			    		groupedMappedOutputLabelsByNodeUri.get(sl.getNodeLabel().getUri());
 			    if (outputLabelsWithSameNodeUri == null) {
-			    	outputLabelsWithSameNodeUri = new ArrayList<SemanticLabel>();
+			    	outputLabelsWithSameNodeUri = new ArrayList<SemanticLabel1>();
 			    	groupedMappedOutputLabelsByNodeUri.put(sl.getNodeLabel().getUri(), outputLabelsWithSameNodeUri);
 			    }
 			    outputLabelsWithSameNodeUri.add(sl);
 			}
 			
 			for (String s : groupedMappedOutputLabelsByNodeUri.keySet()) {
-				List<SemanticLabel> groupedOutputList = groupedMappedOutputLabelsByNodeUri.get(s);
+				List<SemanticLabel1> groupedOutputList = groupedMappedOutputLabelsByNodeUri.get(s);
 				InternalNode n = alignment.addInternalNodeWithoutUpdatingGraph(new Label(s));
-				for (SemanticLabel sl : groupedOutputList) {
+				for (SemanticLabel1 sl : groupedOutputList) {
 					ColumnNode c = alignment.addColumnNodeWithoutUpdatingGraph(sl.getLeafName(), sl.getLeafName(), "");
 					alignment.addDataPropertyLink(n, c, sl.getLinkLabel(), false);
 				}
@@ -501,10 +502,10 @@ public class Approach1 {
 		Double weight, linkWeightInTrainingset;
 		Label label;
 		
-		List<String> objectPropertiesDirect;
-		List<String> objectPropertiesIndirect;
-		List<String> objectPropertiesWithOnlyDomain;
-		List<String> objectPropertiesWithOnlyRange;
+		HashSet<String> objectPropertiesDirect;
+		HashSet<String> objectPropertiesIndirect;
+		HashSet<String> objectPropertiesWithOnlyDomain;
+		HashSet<String> objectPropertiesWithOnlyRange;
 		HashMap<String, Label> objectPropertiesWithoutDomainAndRange = 
 				ontologyManager.getObjectPropertiesWithoutDomainAndRange();
 
@@ -564,7 +565,7 @@ public class Approach1 {
 						linkWeightInTrainingset = linkWeight.get(s);
 						if (linkWeightInTrainingset == null) continue;
 						
-						id = linkIdFactory.getLinkId(s);
+						id = LinkIdFactory.getLinkId(s, n1.getId(), n2.getId());
 						label = new Label(s);
 						Link newLink = new ObjectPropertyLink(id, label);
 						// prefer the links that are actually defined between source and target in the ontology 
@@ -655,10 +656,10 @@ public class Approach1 {
 		List<String> possibleLinksFromSourceToTarget = new ArrayList<String>();
 		List<String> possibleLinksFromTargetToSource = new ArrayList<String>();
 
-		List<String> objectPropertiesDirect;
-		List<String> objectPropertiesIndirect;
-		List<String> objectPropertiesWithOnlyDomain;
-		List<String> objectPropertiesWithOnlyRange;
+		Set<String> objectPropertiesDirect;
+		Set<String> objectPropertiesIndirect;
+		Set<String> objectPropertiesWithOnlyDomain;
+		Set<String> objectPropertiesWithOnlyRange;
 		HashMap<String, Label> objectPropertiesWithoutDomainAndRange = 
 				ontologyManager.getObjectPropertiesWithoutDomainAndRange();
 		
@@ -687,16 +688,16 @@ public class Approach1 {
 			} 
 
 			if (link.getWeight() == ModelingParams.PROPERTY_WITH_ONLY_DOMAIN_WEIGHT) {
-				objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyRange(sourceUri, targetUri);
+				objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyDomain(sourceUri, targetUri);
 				if (objectPropertiesWithOnlyDomain != null) possibleLinksFromSourceToTarget.addAll(objectPropertiesWithOnlyDomain);
-				objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyRange(targetUri, sourceUri);
+				objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyDomain(targetUri, sourceUri);
 				if (objectPropertiesWithOnlyDomain != null) possibleLinksFromTargetToSource.addAll(objectPropertiesWithOnlyDomain);
 			} 
 			
 			if (link.getWeight() == ModelingParams.PROPERTY_WITH_ONLY_RANGE_WEIGHT) {
-				objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesIndirect(sourceUri, targetUri);
+				objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesWithOnlyRange(sourceUri, targetUri);
 				if (objectPropertiesWithOnlyRange != null) possibleLinksFromSourceToTarget.addAll(objectPropertiesWithOnlyRange);
-				objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesIndirect(targetUri, sourceUri);
+				objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesWithOnlyRange(targetUri, sourceUri);
 				if (objectPropertiesWithOnlyRange != null) possibleLinksFromTargetToSource.addAll(objectPropertiesWithOnlyRange);
 			} 
 			
@@ -716,7 +717,7 @@ public class Approach1 {
 
 			if (possibleLinksFromSourceToTarget.size() > 0) {
 				uri = possibleLinksFromSourceToTarget.get(0);
-				id = linkIdFactory.getLinkId(uri);
+				id = LinkIdFactory.getLinkId(uri, link.getSource().getId(), link.getTarget().getId());
 				label = new Label(uri);
 				
 				Link newLink;
@@ -730,7 +731,7 @@ public class Approach1 {
 				
 			} else if (possibleLinksFromTargetToSource.size() > 0) {
 				uri = possibleLinksFromTargetToSource.get(0);
-				id = linkIdFactory.getLinkId(uri);
+				id = LinkIdFactory.getLinkId(uri, link.getTarget().getId(), link.getSource().getId());
 				label = new Label(uri);
 				
 				Link newLink;
@@ -754,11 +755,11 @@ public class Approach1 {
 	
 	private static void testApproach() throws IOException {
 		
-		List<ServiceModel> serviceModels = ModelReader.importServiceModels();
-		for (ServiceModel sm : serviceModels)
+		List<ServiceModel1> serviceModels = ModelReader1.importServiceModels();
+		for (ServiceModel1 sm : serviceModels)
 			sm.computeMatchedSubGraphs(1);
 
-		List<ServiceModel> trainingData = new ArrayList<ServiceModel>();
+		List<ServiceModel1> trainingData = new ArrayList<ServiceModel1>();
 		
 		OntologyManager ontManager = new OntologyManager();
 		ontManager.doImport(new File(Approach1.ontologyDir + "dbpedia_3.8.owl"));
@@ -774,7 +775,7 @@ public class Approach1 {
 			
 			trainingData.clear();
 			int inputModelIndex = i;
-			ServiceModel sm = serviceModels.get(inputModelIndex);
+			ServiceModel1 sm = serviceModels.get(inputModelIndex);
 			
 			logger.info("======================================================");
 			logger.info(sm.getServiceDescription());

@@ -211,7 +211,7 @@
 		<dependency>
 		      <groupId>com.google.code.gson</groupId>
 		      <artifactId>gson</artifactId>
-		      <version>2.1</version>
+		      <version>2.2.2</version>
 		      <scope>compile</scope>
 	    </dependency>
 		<dependency>
@@ -288,6 +288,55 @@
 			<artifactId>commons-cli</artifactId>
 			<version>2.0-mahout</version>
 		</dependency>
+		<!-- 
+		<dependency>
+			<groupId>com.esotericsoftware.kryo</groupId>
+			<artifactId>kryo</artifactId>
+			<version>2.21</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dyuproject.protostuff</groupId>
+			<artifactId>protostuff-api</artifactId>
+			<version>1.0.7</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dyuproject.protostuff</groupId>
+			<artifactId>protostuff-core</artifactId>
+			<version>1.0.7</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dyuproject.protostuff</groupId>
+			<artifactId>protostuff-runtime</artifactId>
+			<version>1.0.7</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dyuproject.protostuff</groupId>
+			<artifactId>protostuff-collectionschema</artifactId>
+			<version>1.0.7</version>
+		</dependency>   
+		<dependency>
+			<groupId>com.dyuproject.protostuff</groupId>
+			<artifactId>protostuff-compiler</artifactId>
+			<version>1.0.7</version>
+		</dependency>   
+		<dependency>
+			<groupId>org.apache.thrift</groupId>
+			<artifactId>libthrift</artifactId>
+			<version>0.9.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.javakaffee</groupId>
+			<artifactId>kryo-serializers</artifactId>
+			<version>0.9</version>
+		</dependency>
+		-->
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-joda</artifactId>
+			<version>2.1.2</version>
+		</dependency>
+                        
+                                       
   </dependencies>
   
   <build>

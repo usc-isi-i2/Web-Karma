@@ -34,6 +34,7 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
@@ -80,7 +81,7 @@ public class GetAlternativeLinksCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		final Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		final List<Link> links = alignment.getIncomingLinks(nodeId);
 		Set<Link> currentIncomingLinks = alignment.getCurrentLinksToNode(nodeId);
 		final Link currentLink = (currentIncomingLinks != null && !currentIncomingLinks.isEmpty()) ?
@@ -99,7 +100,8 @@ public class GetAlternativeLinksCommand extends Command {
 						
 						String linkLabel = link.getLabel().getDisplayName();
 						
-						Node edgeSource = link.getSource();
+						Node edgeSource = 
+								alignment.getNodeById(LinkIdFactory.getLinkSourceId(link.getId()));
 						String edgeSourceLabel = edgeSource.getDisplayId();
 						Label nodeLabel = edgeSource.getLabel();
 						if (nodeLabel.getUri() !=null && nodeLabel.getNs() != null && nodeLabel.getUri().equalsIgnoreCase(nodeLabel.getNs()))

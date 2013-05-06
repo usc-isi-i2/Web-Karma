@@ -276,7 +276,14 @@ public class SetSemanticTypeCommand extends Command {
 			worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), newSynonymTypes);
 		}
 
-
+		// Identify the outliers if the semantic type exists in the crfmodel
+//		List<String> existingLabels = new ArrayList<String>();
+//		crfModelHandler.getLabels(existingLabels);
+//		if (existingLabels.contains(newType.getCrfModelLabelString())) {
+//			identifyOutliers(worksheet, vWorkspace, crfModelHandler, newType);
+//			c.add(new TagsUpdate());
+//		}
+		
 		if(trainAndShowUpdates) {
 			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
 			try {
@@ -287,9 +294,12 @@ public class SetSemanticTypeCommand extends Command {
 				return new UpdateContainer(new ErrorUpdate(
 						"Error occured while setting the semantic type!"));
 			}
+			
+			
 			// Train the semantic type in a separate thread
 			Thread t = new Thread(new SemanticTypeTrainingThread(crfModelHandler, worksheet, newType));
 			t.start();
+			
 			return c;
 			
 		} else {
@@ -299,6 +309,26 @@ public class SetSemanticTypeCommand extends Command {
 		}
 		return c;
 	}
+
+//	private void identifyOutliers(Worksheet worksheet,
+//			VWorkspace vWorkspace, CRFModelHandler crfModelHandler, SemanticType type) {
+//		Tag outlierTag = vWorkspace.getWorkspace().getTagsContainer().getTag(TagName.Outlier);
+//		Map<ColumnFeature, Collection<String>> features = new HashMap<ColumnFeature, Collection<String>>();
+//		
+//		// Get the HNodePath
+//		List<HNodePath> allPaths = worksheet.getHeaders().getAllPaths();
+//		for (HNodePath currentPath:allPaths) {
+//			if (currentPath.getLeaf().getId().equals(hNodeId)) {
+////				List<String> columnNamesList = new ArrayList<String>();
+////				columnNamesList.add(currentPath.getLeaf().getColumnName());
+////				features.put(ColumnFeature.ColumnHeaderName, columnNamesList);
+//				String typeString = newType.isClass() ? newType.getType().getUri() : newType.getDomain().getUri() + "|" + newType.getType().getUri();
+//				SemanticTypeUtil.identifyOutliers(worksheet, typeString, currentPath, outlierTag, features, crfModelHandler);
+//				break;
+//			}
+//		}
+//		
+//	}
 
 	private ColumnNode getColumnNode(Alignment alignment, HNode hNode) {
 		String columnName = hNode.getColumnName();

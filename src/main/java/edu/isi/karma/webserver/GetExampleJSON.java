@@ -122,6 +122,16 @@ public class GetExampleJSON extends HttpServlet {
 //			e.printStackTrace();
 //		}
 		
+//		File file = new File("/Users/mohsen/Desktop/temp/karma issues/Shubham/artworks-list.xml");
+//		String fileContents = FileUtil.readFileContentsToString(file);
+//		JSONObject json;
+//		try {
+//			json = XML.toJSONObject(fileContents);
+//			JsonImport imp = new JsonImport(json, file.getName(), workspace);
+//			imp.generateWorksheet();
+//		} catch (JSONException e1) {
+//			e1.printStackTrace();
+//		}
 
 //		SampleDataFactory.createFromJsonTextFile(workspace,"./SampleData/JSON/Events.json");
 

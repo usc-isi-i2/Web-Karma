@@ -34,6 +34,7 @@ import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkStatus;
@@ -97,12 +98,11 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		oldGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
 		
 		// Set the other links to the target node to normal
-		Link newLink = alignment.getLinkById(edgeId);
-		edgeLabel = newLink.getLabel().getDisplayName();
-		Set<Link> currentLinks = alignment.getCurrentLinksToNode(newLink.getTarget().getId());
+		LinkIdFactory.getLinkTargetId(edgeId);
+		Set<Link> currentLinks = alignment.getCurrentLinksToNode(LinkIdFactory.getLinkTargetId(edgeId));
 		if (currentLinks != null && !currentLinks.isEmpty()) {
 			for (Link currentLink: currentLinks) {
-				if (currentLink.getSource().getId().equals(newLink.getSource().getId()))
+				//if (currentLink.getSource().getId().equals(newLink.getSource().getId()))
 					alignment.changeLinkStatus(currentLink.getId(), LinkStatus.Normal);
 			}
 		}

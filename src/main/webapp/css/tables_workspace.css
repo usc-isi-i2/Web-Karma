@@ -436,6 +436,11 @@ a.KMLDownloadLink {
 	margin-left: 8px;
 }
 
+.SRIDLink A:link {text-decoration: underline; color: blue;}
+.SRIDLink A:visited {text-decoration: underline; color: blue;}
+.SRIDLink A:active {text-decoration: underline; color: blue;}
+.SRIDLink A:hover {text-decoration: underline; color: red;}
+
 div#ExpandCellValueDialog div#cellExpandedValue {
 	font-size: 0.6em;
 /*	font-family: Times;*/

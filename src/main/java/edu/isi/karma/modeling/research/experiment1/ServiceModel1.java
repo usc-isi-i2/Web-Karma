@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research;
+package edu.isi.karma.modeling.research.experiment1;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -36,10 +36,12 @@ import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.research.GraphVizUtil;
+import edu.isi.karma.modeling.research.Util;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
 
-public class ServiceModel {
+public class ServiceModel1 {
 
 	private String id;
 	private String serviceNameWithPrefix;
@@ -50,7 +52,7 @@ public class ServiceModel {
 	private HashMap<String, List<DijkstraShortestPath<Node, Link>>> shortestPathsBetweenTwoAttributes; 
 	private List<MatchedSubGraphs> matchedSubGraphs;
 
-	public ServiceModel(String id) {
+	public ServiceModel1(String id) {
 		this.id = id;
 		this.models = new ArrayList<DirectedWeightedMultigraph<Node,Link>>();
 		matchedSubGraphs = new ArrayList<MatchedSubGraphs>();
@@ -186,9 +188,9 @@ public class ServiceModel {
 					
 					Node source = attributes.get(i);
 					Node target = attributes.get(j);
-					String index = source.getId().replaceAll(ModelReader.attPrefix, "") + 
+					String index = source.getId().replaceAll(ModelReader1.attPrefix, "") + 
 									"-->" + 
-									target.getId().replaceAll(ModelReader.attPrefix, "") + 
+									target.getId().replaceAll(ModelReader1.attPrefix, "") + 
 									" (m" + modelNo + ")";
 					
 					// TODO: How to get all the shortest paths?

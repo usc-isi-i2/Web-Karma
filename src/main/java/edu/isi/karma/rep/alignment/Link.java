@@ -20,6 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.rep.alignment;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
@@ -38,6 +41,8 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 	private LinkType type;
 	private LinkStatus status;
 	private LinkKeyInfo keyInfo;
+	private LinkPriorityType priorityType;
+	private Set<String> patternIds;
 	
 	public Link(String id, Label label, LinkType type) {
 		super();
@@ -77,6 +82,8 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		this.type = LinkType.None;
 		this.status = LinkStatus.Normal;
 		this.keyInfo = LinkKeyInfo.None;
+		this.priorityType = LinkPriorityType.None;
+		this.patternIds = new HashSet<String>();
 	}
 	
 	public String getId() {
@@ -117,6 +124,14 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		this.status = status;
 	}
 
+	public LinkPriorityType getPriorityType() {
+		return priorityType;
+	}
+
+	public void setPriorityType(LinkPriorityType priorityType) {
+		this.priorityType = priorityType;
+	}
+
 	public LinkKeyInfo getKeyType() {
 		return keyInfo;
 	}
@@ -135,6 +150,10 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 	
 	public double getWeight() {
 		return super.getWeight();
+	}
+	
+	public Set<String> getPatternIds() {
+		return patternIds;
 	}
 
 	@Override

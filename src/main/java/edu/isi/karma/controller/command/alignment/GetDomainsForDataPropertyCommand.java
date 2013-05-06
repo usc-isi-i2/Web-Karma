@@ -85,7 +85,7 @@ public class GetDomainsForDataPropertyCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		final OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-		final List<String> domains = ontMgr.getDomainsOfProperty(
+		final HashSet<String> domains = ontMgr.getDomainsOfProperty(
 				dataPropertyURI, true);
 		final Alignment alignment = AlignmentManager.Instance().getAlignment(
 				vWorkspace.getWorkspace().getId(), vWorksheetId);

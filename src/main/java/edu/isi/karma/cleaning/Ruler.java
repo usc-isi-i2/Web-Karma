@@ -44,7 +44,6 @@ public class Ruler {
 		positions = new Vector<Integer>();
 		consPos = new Vector<Integer>();
 		whats = new Vector<TNode>();
-		
 	}
 	public Ruler(String x)
 	{
