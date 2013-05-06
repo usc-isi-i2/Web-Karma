@@ -57,6 +57,7 @@ public class KR2RMLMappingGenerator {
 	
 	// Internal data structures required
 	Map<String, SubjectMap> subjectMapIndex = new HashMap<String, SubjectMap>();
+	Map<String, TriplesMap> triplesMapIndex = new HashMap<String, TriplesMap>();
 	
 	private static Logger logger = LoggerFactory.getLogger(KR2RMLMappingGenerator.class);
 	
@@ -142,6 +143,7 @@ public class KR2RMLMappingGenerator {
 				// Create a TriplesMap corresponding to the Internal node
 				SubjectMap subjMap = subjectMapIndex.get(node.getId());
 				TriplesMap trMap = new TriplesMap(subjMap);
+				triplesMapIndex.put(node.getId(), trMap);
 				this.r2rmlMapping.addTriplesMap(trMap);
 				
 				// Create the predicate object map for each outgoing link
@@ -156,10 +158,10 @@ public class KR2RMLMappingGenerator {
 					
 					// Create an object property map
 					if (target instanceof InternalNode) {
-						// Get the template set of object for the objectmap
-						SubjectMap obj = subjectMapIndex.get(target.getId());
-						ObjectMap objMap = new ObjectMap(target.getId());
-						objMap.setTemplate(obj.getTemplate());
+						// Get the RefObjMap object for the objectmap
+						TriplesMap objTrMap = triplesMapIndex.get(target.getId());
+						RefObjectMap refObjMap = new RefObjectMap(objTrMap);
+						ObjectMap objMap = new ObjectMap(target.getId(), refObjMap);
 						poMap.setObject(objMap);
 						
 						// Create the predicate
@@ -182,7 +184,7 @@ public class KR2RMLMappingGenerator {
 						poMap.setPredicate(pred);
 						
 						if (generateInverse)
-							addInversePropertyIfExists(subjMap, poMap, olink);
+							addInversePropertyIfExists(subjMap, poMap, olink, trMap);
 					}
 					
 					// Create a data property map
@@ -191,8 +193,9 @@ public class KR2RMLMappingGenerator {
 						ColumnNode cnode = (ColumnNode) target;
 						String hNodeId = cnode.getHNodeId();
 						ColumnNameTemplateTerm cnTerm = new ColumnNameTemplateTerm(hNodeId);
-						ObjectMap objMap = new ObjectMap(hNodeId);
-						objMap.getTemplate().addTemplateTermToSet(cnTerm);
+						TemplateTermSet termSet = new TemplateTermSet();
+						termSet.addTemplateTermToSet(cnTerm);
+						ObjectMap objMap = new ObjectMap(hNodeId, termSet);
 						poMap.setObject(objMap);
 						
 						// Create the predicate
@@ -223,7 +226,7 @@ public class KR2RMLMappingGenerator {
 	}
 
 	private void addInversePropertyIfExists(SubjectMap subjMap,
-			PredicateObjectMap poMap, Link olink) {
+			PredicateObjectMap poMap, Link olink, TriplesMap subjTrMap) {
 		String propUri = olink.getLabel().getUri();
 		//this can happen if propertyName is not an Object property; it could be a subclass
 		if (!ontMgr.isObjectProperty(propUri))
@@ -244,9 +247,9 @@ public class KR2RMLMappingGenerator {
 			pred.getTemplate().addTemplateTermToSet(
 					new StringTemplateTerm(inversePropLabel.getUri()));
 			invPoMap.setPredicate(pred);
-			// Create the object
-			ObjectMap invObjMap = new ObjectMap(subjMap.getId());
-			invObjMap.setTemplate(subjMap.getTemplate());
+			// Create the object using RefObjMap
+			RefObjectMap refObjMap = new RefObjectMap(subjTrMap);
+			ObjectMap invObjMap = new ObjectMap(subjMap.getId(), refObjMap);
 			invPoMap.setObject(invObjMap);
 			inverseTrMap.addPredicateObjectMap(invPoMap);
 			
@@ -265,9 +268,9 @@ public class KR2RMLMappingGenerator {
 			pred.getTemplate().addTemplateTermToSet(
 					new StringTemplateTerm(inverseOfPropLabel.getUri()));
 			invOfPoMap.setPredicate(pred);
-			// Create the object
-			ObjectMap invOfObjMap = new ObjectMap(subjMap.getId());
-			invOfObjMap.setTemplate(subjMap.getTemplate());
+			// Create the object using RefObjMap
+			RefObjectMap refObjMap = new RefObjectMap(subjTrMap);
+			ObjectMap invOfObjMap = new ObjectMap(subjMap.getId(), refObjMap);
 			invOfPoMap.setObject(invOfObjMap);
 			inverseOfTrMap.addPredicateObjectMap(invOfPoMap);
 			

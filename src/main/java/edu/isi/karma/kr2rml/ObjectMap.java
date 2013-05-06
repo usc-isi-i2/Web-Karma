@@ -23,22 +23,31 @@ package edu.isi.karma.kr2rml;
 
 public class ObjectMap extends TermMap {
 	
-	private TemplateTermSet template;
+	private final TemplateTermSet template;
+	private final RefObjectMap refObjectMap;
 	
-	public ObjectMap(String id) {
+	public ObjectMap(String id, TemplateTermSet template) {
 		super(id);
+		this.template = template;
+		this.refObjectMap = null;
+	}
+	
+	public ObjectMap(String id, RefObjectMap refObjectMap) {
+		super(id);
+		this.refObjectMap = refObjectMap;
+		this.template = null;
 	}
 
 	public TemplateTermSet getTemplate() {
 		return template;
 	}
 
-	public void setTemplate(TemplateTermSet template) {
-		this.template = template;
-	}
-
 	@Override
 	public String toString() {
 		return "ObjectMap [template=" + template + "]";
+	}
+	
+	public boolean hasRefObjectMap() {
+		return refObjectMap != null;
 	}
 }
