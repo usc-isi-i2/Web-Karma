@@ -73,6 +73,11 @@ public class Traces implements GrammarTreeNode {
 			Vector<Vector<Segment>> nlines = new Vector<Vector<Segment>>();
 			Vector<Segment> segs = tlines.remove(0);
 			int curPos = segs.get(segs.size() - 1).end;
+			if(curPos == 0) // target string is empty
+			{
+				lines.add(segs);
+				break;
+			}
 			if (pos2Segs.containsKey(curPos))
 				children = pos2Segs.get(curPos);
 			else {

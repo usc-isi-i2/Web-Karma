@@ -354,7 +354,7 @@ function populateResult(rdata, nodeIds) {
 			transformedResult[nodeId] = xval;
 			if(xval == $("div#" + nodeId).text()) {
 				$("div#" + nodeId).attr("class", "cleanExampleDiv");
-				return true;
+				//return true;
 			}
 			$("td.ruleResultsValue_begin", trTag).remove();
 			$("#" + nodeId + "_origVal", trTag).html(xval["Orgdis"]).data("CellValue", xval["Org"]);
@@ -387,6 +387,7 @@ function populateResult(rdata, nodeIds) {
 					"after" : value
 				});
 				$("div#" + nodeId).text(value);
+				xval["Tardis"] = value;
 				updateResult();
 				var trs = $("td#" + nodeId + "_transformed tr");
 				//call the update result function
@@ -397,7 +398,7 @@ function populateResult(rdata, nodeIds) {
 				cancel : 'Cancel',
 				width : 350,
 				callback:function(){
-					$(this).parent().html(xval["Tardis"]);
+					$(this).html(xval["Tardis"]);
 				},
 				onblur : 'ignore',
 				event:"edit"
