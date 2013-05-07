@@ -112,7 +112,7 @@ public class PublishModelCommand extends Command{
 //		// FIXME
 //		String exportDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/jgraph/";
 //		try {
-//			GraphUtil.serialize(al.getSteinerTree(), exportDir + wk.getTitle() + ".karma.initial.jgraph");
+//			GraphUtil.serialize(al.getSteinerTree(), exportDir + wk.getTitle() + ".karma.initial2.jgraph");
 //		} catch (Exception e1) {
 //			// TODO Auto-generated catch block
 //			e1.printStackTrace();

@@ -37,6 +37,8 @@ import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import edu.isi.karma.modeling.ModelingParams;
@@ -68,7 +70,7 @@ public class Approach2 {
 
 	private static Logger logger = Logger.getLogger(Approach2.class);
 
-	private static String ontologyDir = "/Users/mohsen/Dropbox/Service Modeling/ontologies/";
+	private static String ontologyDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/ontologies/";
 
 	
 	private static String importDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/models/";
@@ -92,7 +94,8 @@ public class Approach2 {
 	
 	private HashSet<Link> patternLinks;
 	private HashMap<String, Integer> linkCountMap;
-	
+	private Multimap<String, String> sourceToTargetLinks;
+
 	private class LinkFrequency implements Comparable<LinkFrequency>{
 		
 		public LinkFrequency(String linkUri, int type, int count) {
@@ -112,13 +115,13 @@ public class Approach2 {
 			int c = this.count;
 			
 			if (type == 1)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - c;
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - ((c) / ModelingParams.PROPERTY_DIRECT_WEIGHT);
 			else if (type == 2)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - ((c + 0.1) / ModelingParams.PROPERTY_DIRECT_WEIGHT);
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - ((c/10) / ModelingParams.PROPERTY_DIRECT_WEIGHT);
 			else if (type == 3)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - ((c + 0.05) / ModelingParams.PROPERTY_DIRECT_WEIGHT);
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - ((c/10) / ModelingParams.PROPERTY_DIRECT_WEIGHT);
 			else if (type == 4)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - (c / ModelingParams.PROPERTY_DIRECT_WEIGHT);
+				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - ((c/50) / ModelingParams.PROPERTY_DIRECT_WEIGHT);
 			else if (type == 5)
 				w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
 			else if (type == 6)
@@ -173,8 +176,9 @@ public class Approach2 {
 		this.patternLinks = new HashSet<Link>();
 		
 		this.linkCountMap = new HashMap<String, Integer>();
-//		this.sourceTargetToLinkCountMap = new HashMap<String, HashMap<String,Integer>>();
+		this.sourceToTargetLinks = ArrayListMultimap.create();	
 		
+		this.buildLinkCountMap();
 	}
 
 	public DirectedWeightedMultigraph<Node, Link> getGraph() {
@@ -191,6 +195,34 @@ public class Approach2 {
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 //		this.linkIdFactory = this.graphBuilder.getLinkIdFactory();
 		this.updateHashMaps();
+	}
+
+	private void updateGraphWithUserLinks() {
+		
+//		String[] parts;
+//		String sourceUri, targetUri;
+//		String linkId;
+//		
+//		for (String s : this.sourceToTargetLinks.keys()) {
+//			
+//			parts = s.split("---");
+//			if (parts == null || parts.length != 2) continue;
+//			sourceUri = parts[0]; targetUri = parts[1];
+//			
+//			List<Node> sources = this.graphBuilder.getUriToNodesMap().get(sourceUri);
+//			List<Node> targets = this.graphBuilder.getUriToNodesMap().get(targetUri);
+//			
+//			
+//			for (Node source : sources) {
+//				for (Node target : targets) {
+//					if (!this.graphBuilder.isConnected(source.getId(), target.getId())) {
+//						linkId = LinkIdFactory.getLinkId(SimpleLink.getFixedLabel().getUri(), source.getId(), target.getId());
+//						Link link = new SimpleLink(linkId, SimpleLink.getFixedLabel());
+//						this.graphBuilder.addLink(source, target, link);
+//					}
+//				}
+//			}
+//		}
 	}
 
 	private void updateHashMaps() {
@@ -220,8 +252,6 @@ public class Approach2 {
 					logger.error("The column node " + n.getId() + " does not have any domain or it has more than one domain.");
 			}
 		}
-		
-		this.buildLinkCountMap();
 		
 		for (Link l : this.graphBuilder.getGraph().edgeSet()) {
 			if (l.getPatternIds().size() > 0)
@@ -265,10 +295,9 @@ public class Approach2 {
 			addPatternToGraph(patternId, sm.getModel());
 		}
 
-//		GraphUtil.printGraphSimple(alignment.getGraph());
-
 		// adding the links inferred from the ontology
 		this.graphBuilder.updateGraph();
+//		this.updateGraphWithUserLinks();
 		this.updateHashMaps();
 
 	}
@@ -385,6 +414,7 @@ public class Approach2 {
 		addPatternToGraph(patternId, pattern);
 		// adding the links inferred from the ontology
 		this.graphBuilder.updateGraph();
+		this.updateGraphWithUserLinks();
 		this.updateHashMaps();
 	}
 	
@@ -397,6 +427,8 @@ public class Approach2 {
 
 			for (Link link : m.edgeSet()) {
 
+				if (link instanceof DataPropertyLink) continue;
+				
 				sourceUri = link.getSource().getLabel().getUri();
 				targetUri = link.getTarget().getLabel().getUri();
 				linkUri = link.getLabel().getUri();
@@ -421,6 +453,7 @@ public class Approach2 {
 				if (count == null) this.linkCountMap.put(key, 1);
 				else this.linkCountMap.put(key, count.intValue() + 1);
 
+				this.sourceToTargetLinks.put(sourceUri + "---" + targetUri, linkUri);
 			}
 		}
 	}
@@ -506,22 +539,6 @@ public class Approach2 {
 			this.graphBuilder.changeLinkWeight(newLink, weights.get(i));
 		}
 	}
-		
-//	private HashSet<Node> getPatternNodes() {
-//		HashSet<Node> patternNodes = new HashSet<Node>();
-//		
-//		if (this.graphBuilder.getGraph() == null || 
-//				this.graphBuilder.getGraph().edgeSet().size() == 0)
-//			return patternNodes;
-//		
-//		for (Link link : this.graphBuilder.getGraph().edgeSet())
-//			if (link.getPatternIds().size() > 0) {
-//				patternNodes.add(link.getSource());
-//				patternNodes.add(link.getTarget());
-//			}
-//		
-//		return patternNodes;
-//	}
 	
 	private List<Set<LabelStruct>> getLabelStructSets(List<SemanticLabel2> semanticLabels) {
 
@@ -529,13 +546,31 @@ public class Approach2 {
 		
 //		HashSet<Node> patternNodes = getPatternNodes();
 		Set<Node> newInternalNodes = new HashSet<Node>();
+		HashMap<SemanticLabel2, Set<LabelStruct>> matchedLabels = new HashMap<SemanticLabel2, Set<LabelStruct>>();
 		
 		for (SemanticLabel2 sl : semanticLabels) {
 			
-			Set<LabelStruct> labelStructs = this.labelToLabelStructs.get(sl);
+			boolean createNew = false;
+			
+			Set<LabelStruct> labelStructs = null;
+			
+			if (matchedLabels.containsKey(sl)) {
+				Set<LabelStruct> temp = matchedLabels.get(sl);
+				if (temp.size() == 1)
+					createNew = true;
+				else {
+					LabelStruct ll = temp.iterator().next();
+					temp.remove(ll);
+					labelStructs = new HashSet<LabelStruct>();
+					labelStructs.add(ll);
+				}
+			} else {
+				labelStructs = this.labelToLabelStructs.get(sl);
+				matchedLabels.put(sl, labelStructs);
+			}
 			
 			// semantic label is not in the raph
-			if (labelStructs == null || labelStructs.size() == 0) {
+			if (labelStructs == null || labelStructs.size() == 0 || createNew) {
 				
 				labelStructs = new HashSet<LabelStruct>();
 				
@@ -556,7 +591,7 @@ public class Approach2 {
 					}
 				}
 				
-				if (!existOutsideOfPattern) {
+				if (!existOutsideOfPattern || createNew) {
 					nodeId = nodeIdFactory.getNodeId(sl.getNodeUri());
 					source = new InternalNode(nodeId, new Label(sl.getNodeUri()));
 					this.graphBuilder.addNodeWithoutUpdatingGraph(source);
@@ -623,7 +658,8 @@ public class Approach2 {
 		}
 		
 		this.graphBuilder.updateGraph();
-		this.updateHashMaps();
+		this.updateGraphWithUserLinks();
+//		this.updateHashMaps();
 		return labelStructSets;
 	}
 	
@@ -656,9 +692,13 @@ public class Approach2 {
 		
 		for (List<LabelStruct> labelStructs : labelStructLists) {
 			Set<Node> steinerNodes = new HashSet<Node>();
+//			Set<String> debug = new HashSet<String>();
 			for (LabelStruct ls : labelStructs) {
 				steinerNodes.add(ls.getSource());
 				steinerNodes.add(ls.getTarget());
+//				if (debug.contains(ls.getSource().getId() + ls.getLink().getId()))
+//					System.out.println("debug");
+//				debug.add(ls.getSource().getId() + ls.getLink().getId());
 			}
 			steinerNodeSets.add(steinerNodes);
 		}
@@ -674,6 +714,7 @@ public class Approach2 {
 			return null;
 		}
 		
+//		System.out.println(steinerNodes.size());
 		List<Node> steinerNodeList = new ArrayList<Node>(steinerNodes); 
 		
 		List<Link> updatedLinks = new ArrayList<Link>();
@@ -798,6 +839,9 @@ public class Approach2 {
 		String sourceUri, targetUri;
 		List<String> possibleLinksFromSourceToTarget = new ArrayList<String>();
 
+		sourceUri = source.getLabel().getUri();
+		targetUri = target.getLabel().getUri();
+		
 		HashSet<String> objectPropertiesDirect;
 		HashSet<String> objectPropertiesIndirect;
 		HashSet<String> objectPropertiesWithOnlyDomain;
@@ -807,7 +851,7 @@ public class Approach2 {
 
 		sourceUri = source.getLabel().getUri();
 		targetUri = target.getLabel().getUri();
-		
+
 		possibleLinksFromSourceToTarget.clear();
 
 		objectPropertiesDirect = ontologyManager.getObjectPropertiesDirect(sourceUri, targetUri);
@@ -818,16 +862,22 @@ public class Approach2 {
 
 		objectPropertiesWithOnlyDomain = ontologyManager.getObjectPropertiesWithOnlyDomain(sourceUri, targetUri);
 		if (objectPropertiesWithOnlyDomain != null) possibleLinksFromSourceToTarget.addAll(objectPropertiesWithOnlyDomain);
-	
+
 		objectPropertiesWithOnlyRange = ontologyManager.getObjectPropertiesWithOnlyRange(sourceUri, targetUri);
 		if (objectPropertiesWithOnlyRange != null) possibleLinksFromSourceToTarget.addAll(objectPropertiesWithOnlyRange);
 
 		if (ontologyManager.isSubClass(sourceUri, targetUri, true)) 
 			possibleLinksFromSourceToTarget.add(Uris.RDFS_SUBCLASS_URI);
-		
+
 		if (objectPropertiesWithoutDomainAndRange != null) {
 			possibleLinksFromSourceToTarget.addAll(objectPropertiesWithoutDomainAndRange.keySet());
 		}
+		
+//		Collection<String> userLinks = this.sourceToTargetLinks.get(sourceUri + "---" + targetUri);
+//		if (userLinks != null) {
+//			for (String s : userLinks)
+//				possibleLinksFromSourceToTarget.add(s);
+//		}
 
 		String selectedLinkUri1 = null;
 		int maxCount1 = 0;
@@ -957,11 +1007,11 @@ public class Approach2 {
 		ontManager.doImport(new File(Approach2.ontologyDir + "foaf.rdf"));
 		ontManager.doImport(new File(Approach2.ontologyDir + "wgs84_pos.xml"));
 //		ontManager.doImport(new File(Approach2.ontologyDir + "schema.rdf"));
-//		ontManager.doImport(new File(Approach1.ontologyDir + "helper.owl"));
+		ontManager.doImport(new File(Approach2.ontologyDir + "rdf-schema.rdf"));
 		ontManager.updateCache();
 
-//		for (int i = 0; i < serviceModels.size(); i++) {
-		int i = 1; {
+		for (int i = 0; i < serviceModels.size(); i++) {
+//		int i = 16; {
 			trainingData.clear();
 			int newServiceIndex = i;
 			ServiceModel2 newService = serviceModels.get(newServiceIndex);
