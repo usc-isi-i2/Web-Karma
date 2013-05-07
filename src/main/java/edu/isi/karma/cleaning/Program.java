@@ -88,6 +88,10 @@ public class Program implements GrammarTreeNode {
 		}
 		else
 		{
+			if(partitions.size() <= 0)
+			{
+				return null;
+			}
 			if(partitions.get(0).tarNodes.get(0).size() ==0)
 			{
 				pr.addRule(partitions.get(0).label, "substr(value,0,0)");

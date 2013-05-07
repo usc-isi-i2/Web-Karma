@@ -672,6 +672,7 @@ function parse(data) {
 				//var pdata = getVaritions(element["result"]);
 				if(element["result"][0] == null || element["result"][0]["top"].length == 0) {
 				    alert("Cannot find any transformations! ");
+				    populateInfoPanel();
 					return;
 				}
 				var topCol = element["result"][0];

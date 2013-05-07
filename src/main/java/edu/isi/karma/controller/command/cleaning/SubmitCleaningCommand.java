@@ -198,7 +198,16 @@ public class SubmitCleaningCommand extends Command {
 					results = true;
 				}
 				iterNum ++;
-			}	
+			}
+			if(rtf.getTransformations().keySet().size() <= 0)
+			{
+				UpdateContainer c = new UpdateContainer();
+				vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,worksheet.getHeaders().getAllPaths(), vWorkspace);
+				vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).update(c);
+				c.add(new InfoUpdate("No Result Submitted"));
+				return c;
+				
+			}
 			Iterator<String> iter = rtf.getTransformations().keySet().iterator();
 			Vector<ValueCollection> vvc = new Vector<ValueCollection>();
 			String tpid = iter.next();

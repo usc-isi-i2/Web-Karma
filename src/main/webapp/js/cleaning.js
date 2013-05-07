@@ -278,19 +278,6 @@ function preprocessData(data, nodeIds) {
 
 function populateInfoPanel() {
 	var nodeId = $("div#columnHeadingDropDownMenu").data("topkeys")[0];
-	var datadict = $("div#columnHeadingDropDownMenu").data("results")[0]["data"];
-	var tab1 = $("table#recmd");
-	var trTag = $("tr#" + nodeId + "_suggestion_cl_row",tab1);
-	$("tr", tab1).remove();
-	// empty an array in JS
-	if(trTag.length == 0) {
-		trTag = $("<tr>").attr("id", nodeId + "_suggestion_cl_row").append($("<td>").addClass('info').html(datadict[nodeId]["Orgdis"])).append($("<td>").addClass("noBorder"));
-	}
-	else
-	{
-		trTag = trTag[0];
-	}
-	tab1.append(trTag);
 	//tab1.append(trTag.clone(true,true));
 	var tab2 = $("table#examples");
 	$("tr", tab2).remove();
@@ -329,11 +316,26 @@ function populateInfoPanel() {
 		var tdButton = $("<td>").attr("class","infobutton").append(closeButton);
 		
 		trTag1.append($("<td>").addClass('noBorder'))
-		trTag1.append($("<td>").addClass("info").append($("<table>").append($("<tr>").append($("<td>").attr("class","contentNoBorder").append($("<div>").data("nodeId", nodeId).data("cellValue", value["after"]).addClass("cleanExampleDiv").html(value["after"]))).append(tdButton))));
+		trTag1.append($("<td>").addClass("info").append($("<table>").append($("<tr>").append($("<td>").attr("class","contentNoBorder").append($("<div>").data("nodeId", nodeID).data("cellValue", value["after"]).addClass("cleanExampleDiv").html(value["after"]))).append(tdButton))));
 		
 		//$(">td",trTag1).addClass("info");
 		tab2.append(trTag1);
 	});
+	// recommanded examples
+	
+	var datadict = $("div#columnHeadingDropDownMenu").data("results")[0]["data"];
+	var tab1 = $("table#recmd");
+	var trTag = $("tr#" + nodeId + "_suggestion_cl_row",tab1);
+	$("tr", tab1).remove();
+	// empty an array in JS
+	if(trTag.length == 0) {
+		trTag = $("<tr>").attr("id", nodeId + "_suggestion_cl_row").append($("<td>").addClass('info').html(datadict[nodeId]["Orgdis"])).append($("<td>").addClass("noBorder"));
+	}
+	else
+	{
+		trTag = trTag[0];
+	}
+	tab1.append(trTag);
 }
 
 function populateResult(rdata, nodeIds) {
