@@ -227,10 +227,10 @@ public class OntologyManager  {
 	 */
 	public boolean isSubClass(String subClassUri, String superClassUri, boolean recursive) {
 		
-		if (ontCache.getDirectSubClassCheck().containsKey(subClassUri + superClassUri))
+		if (ontCache.getDirectSubClassCheck().contains(subClassUri + superClassUri))
 			return true;
 		else if (recursive) 
-			return ontCache.getIndirectSubClassCheck().containsKey(subClassUri + superClassUri);
+			return ontCache.getIndirectSubClassCheck().contains(subClassUri + superClassUri);
 		
 		return false;
 	}
@@ -245,10 +245,10 @@ public class OntologyManager  {
 	 */
 	public boolean isSubProperty(String subPropertyUri, String superPropertyUri, boolean recursive) {
 		
-		if (ontCache.getDirectSubPropertyCheck().containsKey(subPropertyUri + superPropertyUri))
+		if (ontCache.getDirectSubPropertyCheck().contains(subPropertyUri + superPropertyUri))
 			return true;
 		else if (recursive) 
-			return ontCache.getIndirectSubPropertyCheck().containsKey(subPropertyUri + superPropertyUri);
+			return ontCache.getIndirectSubPropertyCheck().contains(subPropertyUri + superPropertyUri);
 		
 		return false;
 	}
@@ -511,25 +511,25 @@ public class OntologyManager  {
 	public boolean isConnectedByDirectProperty(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return false;
-		return this.ontCache.getConnectedByDirectProperties().containsKey(sourceUri + targetUri);
+		return this.ontCache.getConnectedByDirectProperties().contains(sourceUri + targetUri);
 	}
 
 	public boolean isConnectedByIndirectProperty(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return false;
-		return this.ontCache.getConnectedByIndirectProperties().containsKey(sourceUri + targetUri);
+		return this.ontCache.getConnectedByIndirectProperties().contains(sourceUri + targetUri);
 	}
 
 	public boolean isConnectedByDomainlessProperty(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return false;
-		return this.ontCache.getConnectedByDomainlessProperties().containsKey(sourceUri + targetUri);
+		return this.ontCache.getConnectedByDomainlessProperties().contains(sourceUri + targetUri);
 	}
 
 	public boolean isConnectedByRangelessProperty(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return false;
-		return this.ontCache.getConnectedByRangelessProperties().containsKey(sourceUri + targetUri);
+		return this.ontCache.getConnectedByRangelessProperties().contains(sourceUri + targetUri);
 	}
 	
 	public boolean isConnectedByDomainlessAndRangelessProperty(String sourceUri, String targetUri) {

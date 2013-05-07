@@ -69,8 +69,8 @@ class OntologyCache {
 	private HashMap<String, HashMap<String, Label>> directSuperClasses;
 	private HashMap<String, HashMap<String, Label>> indirectSuperClasses;
 	// hashmap: class1 + class2 -> boolean (if c1 is subClassOf c2)
-	private HashMap<String, Boolean> directSubClassCheck;
-	private HashMap<String, Boolean> indirectSubClassCheck;
+	private HashSet<String> directSubClassCheck;
+	private HashSet<String> indirectSubClassCheck;
 	// List <subclass, superclass> pairs
 	private List<SubclassSuperclassPair> directSubclassSuperclassPairs;
 	private List<SubclassSuperclassPair> indirectSubclassSuperclassPairs;
@@ -82,8 +82,8 @@ class OntologyCache {
 	private HashMap<String, HashMap<String, Label>> directSuperProperties;
 	private HashMap<String, HashMap<String, Label>> indirectSuperProperties;
 	// hashmap: property1 + property2 -> boolean (if p1 is subPropertyOf p2)
-	private HashMap<String, Boolean> directSubPropertyCheck;
-	private HashMap<String, Boolean> indirectSubPropertyCheck;
+	private HashSet<String> directSubPropertyCheck;
+	private HashSet<String> indirectSubPropertyCheck;
 	
 	// hashmap: property -> property inverse and inverseOf
 	private HashMap<String, Label> propertyInverse;
@@ -118,10 +118,10 @@ class OntologyCache {
 //	private HashMap<String, List<DomainRangePair>> domainRangePairsOfRangelessProperties;
 	
 	// hashmap: class1 + class2 -> boolean (if c1 is connected to c2)
-	private HashMap<String, Boolean> connectedByDirectProperties;
-	private HashMap<String, Boolean> connectedByIndirectProperties;
-	private HashMap<String, Boolean> connectedByDomainlessProperties;
-	private HashMap<String, Boolean> connectedByRangelessProperties;
+	private HashSet<String> connectedByDirectProperties;
+	private HashSet<String> connectedByIndirectProperties;
+	private HashSet<String> connectedByDomainlessProperties;
+	private HashSet<String> connectedByRangelessProperties;
 
 	// public methods
 	
@@ -151,8 +151,8 @@ class OntologyCache {
 		this.indirectSubClasses = new HashMap<String, HashMap<String, Label>>();
 		this.directSuperClasses = new HashMap<String, HashMap<String, Label>>();
 		this.indirectSuperClasses = new HashMap<String, HashMap<String, Label>>();
-		this.directSubClassCheck = new HashMap<String, Boolean>();
-		this.indirectSubClassCheck = new HashMap<String, Boolean>();
+		this.directSubClassCheck = new HashSet<String>();
+		this.indirectSubClassCheck = new HashSet<String>();
 		this.directSubclassSuperclassPairs = new ArrayList<SubclassSuperclassPair>();
 		this.indirectSubclassSuperclassPairs = new ArrayList<SubclassSuperclassPair>();
 		
@@ -160,8 +160,8 @@ class OntologyCache {
 		this.indirectSubProperties = new HashMap<String, HashMap<String, Label>>();
 		this.directSuperProperties = new HashMap<String, HashMap<String, Label>>();
 		this.indirectSuperProperties = new HashMap<String, HashMap<String, Label>>();
-		this.directSubPropertyCheck = new HashMap<String, Boolean>();
-		this.indirectSubPropertyCheck = new HashMap<String, Boolean>();
+		this.directSubPropertyCheck = new HashSet<String>();
+		this.indirectSubPropertyCheck = new HashSet<String>();
 		
 		this.propertyInverse = new HashMap<String, Label>();
 		this.propertyInverseOf = new HashMap<String, Label>();
@@ -188,10 +188,10 @@ class OntologyCache {
 //		this.domainRangePairsOfDomainlessProperties = new HashMap<String, List<DomainRangePair>>();
 //		this.domainRangePairsOfRangelessProperties = new HashMap<String, List<DomainRangePair>>();
 
-		this.connectedByDirectProperties = new HashMap<String, Boolean>();
-		this.connectedByIndirectProperties = new HashMap<String, Boolean>();
-		this.connectedByDomainlessProperties = new HashMap<String, Boolean>();
-		this.connectedByRangelessProperties = new HashMap<String, Boolean>();
+		this.connectedByDirectProperties = new HashSet<String>();
+		this.connectedByIndirectProperties = new HashSet<String>();
+		this.connectedByDomainlessProperties = new HashSet<String>();
+		this.connectedByRangelessProperties = new HashSet<String>();
 		
 		long start = System.currentTimeMillis();
 		
@@ -308,11 +308,11 @@ class OntologyCache {
 		return indirectSuperClasses;
 	}
 
-	public HashMap<String, Boolean> getDirectSubClassCheck() {
+	public HashSet<String> getDirectSubClassCheck() {
 		return directSubClassCheck;
 	}
 
-	public HashMap<String, Boolean> getIndirectSubClassCheck() {
+	public HashSet<String> getIndirectSubClassCheck() {
 		return indirectSubClassCheck;
 	}
 	
@@ -340,11 +340,11 @@ class OntologyCache {
 		return indirectSuperProperties;
 	}
 
-	public HashMap<String, Boolean> getDirectSubPropertyCheck() {
+	public HashSet<String> getDirectSubPropertyCheck() {
 		return directSubPropertyCheck;
 	}
 
-	public HashMap<String, Boolean> getIndirectSubPropertyCheck() {
+	public HashSet<String> getIndirectSubPropertyCheck() {
 		return indirectSubPropertyCheck;
 	}
 
@@ -428,19 +428,19 @@ class OntologyCache {
 //		return domainRangePairsOfRangelessProperties;
 //	}
 
-	public HashMap<String, Boolean> getConnectedByDirectProperties() {
+	public HashSet<String> getConnectedByDirectProperties() {
 		return connectedByDirectProperties;
 	}
 
-	public HashMap<String, Boolean> getConnectedByIndirectProperties() {
+	public HashSet<String> getConnectedByIndirectProperties() {
 		return connectedByIndirectProperties;
 	}
 
-	public HashMap<String, Boolean> getConnectedByDomainlessProperties() {
+	public HashSet<String> getConnectedByDomainlessProperties() {
 		return connectedByDomainlessProperties;
 	}
 
-	public HashMap<String, Boolean> getConnectedByRangelessProperties() {
+	public HashSet<String> getConnectedByRangelessProperties() {
 		return connectedByRangelessProperties;
 	}
 
@@ -639,10 +639,10 @@ class OntologyCache {
 			this.indirectSubClasses.put(c, indirectSubClassesLocal);
 
 			for (String s : directSubClassesLocal.keySet())
-				this.directSubClassCheck.put(s + c, true);
+				this.directSubClassCheck.add(s + c);
 			
 			for (String s : indirectSubClassesLocal.keySet())
-				this.indirectSubClassCheck.put(s + c, true);
+				this.indirectSubClassCheck.add(s + c);
 		}
 		
 		for (String superclass : this.directSubClasses.keySet()) {
@@ -708,10 +708,10 @@ class OntologyCache {
 			this.indirectSubProperties.put(p, indirectSubPropertiesLocal);
 
 			for (String s : directSubPropertiesLocal.keySet())
-				this.directSubPropertyCheck.put(s + p, true);
+				this.directSubPropertyCheck.add(s + p);
 
 			for (String s : indirectSubPropertiesLocal.keySet())
-				this.indirectSubPropertyCheck.put(s + p, true);
+				this.indirectSubPropertyCheck.add(s + p);
 		}
 	}
 
@@ -1310,18 +1310,19 @@ class OntologyCache {
 		
 		for (int i = 0; i < classList.size(); i++) {
 			String c1 = classList.get(i);
-			for (int j = i+1; j < classList.size(); j++) {
+			for (int j = 0; j < classList.size(); j++) {
 				String c2 = classList.get(j);
+				
+				if (c1.equals(c2))
+					continue;
 				
 				directProperties = this.domainRangeToDirectProperties.get(c1+c2);
 				if (directProperties != null && directProperties.size() > 0) { 
-					this.connectedByDirectProperties.put(c1+c2, true);
-					this.connectedByDirectProperties.put(c2+c1, true);
+					this.connectedByDirectProperties.add(c1+c2);
 				}
 				indirectProperties = this.domainRangeToIndirectProperties.get(c1+c2);
 				if (indirectProperties != null && indirectProperties.size() > 0) { 
-					this.connectedByIndirectProperties.put(c1+c2, true);
-					this.connectedByIndirectProperties.put(c2+c1, true);
+					this.connectedByIndirectProperties.add(c1+c2);
 				}
 				
 				// domainless property
@@ -1403,12 +1404,10 @@ class OntologyCache {
 				}				
 				
 				if (foundRangelessProperty) { 
-					this.connectedByRangelessProperties.put(c1+c2, true);
-					this.connectedByRangelessProperties.put(c2+c1, true);
+					this.connectedByRangelessProperties.add(c1+c2);
 				}
 				if (foundDomainlessProperty) { 
-					this.connectedByDomainlessProperties.put(c1+c2, true);
-					this.connectedByDomainlessProperties.put(c2+c1, true);
+					this.connectedByDomainlessProperties.add(c1+c2);
 				}
 			}
 		}

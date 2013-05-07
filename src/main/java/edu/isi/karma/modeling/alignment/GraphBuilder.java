@@ -1009,6 +1009,10 @@ public class GraphBuilder {
 
 				sourceUri = source.getLabel().getUri();
 				targetUri = target.getLabel().getUri();
+				
+//				if (sourceUri.endsWith("Vehicle") && targetUri.endsWith("Observation") ||
+//						targetUri.endsWith("Vehicle") && sourceUri.endsWith("Observation"))
+//					System.out.println("debug");
 
 				id = LinkIdFactory.getLinkId(SimpleLink.getFixedLabel().getUri(), source.getId(), target.getId());
 				Link link = new SimpleLink(id, SimpleLink.getFixedLabel());
@@ -1044,8 +1048,8 @@ public class GraphBuilder {
 					addLink(source, target, link);
 				}
 				
-				else if (this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(sourceUri, targetUri) ||
-						this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(targetUri, sourceUri)) { 
+				else if (this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(sourceUri, targetUri)) {// ||
+//						this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(targetUri, sourceUri)) { 
 					link.setPriorityType(LinkPriorityType.ObjectPropertyWithoutDomainAndRange);
 					addLink(source, target, link);
 				}
