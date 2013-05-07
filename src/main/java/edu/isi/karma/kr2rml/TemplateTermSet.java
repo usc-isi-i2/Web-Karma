@@ -63,4 +63,8 @@ public class TemplateTermSet {
 		}
 		return str.toString();
 	}
+	
+	public boolean isEmpty() {
+		return termSet.size() == 0;
+	}
 }

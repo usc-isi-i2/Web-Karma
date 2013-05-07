@@ -21,53 +21,28 @@
 
 package edu.isi.karma.kr2rml;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class SubjectMap extends TermMap {
-	
-	private NamedGraph graph;
-	private List<TemplateTermSet> rdfsTypes ;
-	
-	public SubjectMap(String id) {
-		super(id);
-		this.template = new TemplateTermSet();
-		this.rdfsTypes = new ArrayList<TemplateTermSet>();
-	}
-	
-	public SubjectMap(String id, TemplateTermSet template, NamedGraph graph, 
-			List<TemplateTermSet> rdfsType) {
-		super(id);
-		this.template = template;
-		this.graph = graph;
-		this.rdfsTypes = rdfsType;
-	}
-	
-	public NamedGraph getGraph() {
-		return graph;
-	}
-	
-	public void setGraph(NamedGraph graph) {
-		this.graph = graph;
-	}
-	
-	public void addRdfsType(TemplateTermSet type) {
-		rdfsTypes.add(type);
-	}
-	
-	public List<TemplateTermSet> getRdfsType() {
-		return rdfsTypes;
-	}
-	
-	public void setRdfsType(List<TemplateTermSet> rdfsType) {
-		this.rdfsTypes = rdfsType;
-	}
+import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.Worksheet;
 
-	@Override
-	public String toString() {
-		return "SubjectMap [\n" +
-				"\t\ttemplate=" + template + ",\n" +
-				"\t\tgraph=" + graph + ",\n" +
-				"\t\trdfsTypes=" + rdfsTypes + "]\n";
+public class KR2RMLWorksheetRDFGenerator {
+	private final Worksheet worksheet;
+	private final R2RMLMapping mapping;
+	private final RepFactory factory;
+	
+	private Logger logger = LoggerFactory.getLogger(KR2RMLWorksheetRDFGenerator.class);
+
+	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet,
+			R2RMLMapping mapping, RepFactory factory) {
+		super();
+		this.worksheet = worksheet;
+		this.mapping = mapping;
+		this.factory = factory;
+	}
+	
+	public void generate() {
+		System.out.println(mapping.toString());
 	}
 }
