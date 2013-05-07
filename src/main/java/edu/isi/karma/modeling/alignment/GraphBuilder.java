@@ -1119,6 +1119,11 @@ public class GraphBuilder {
 			return sortedLinks;
 		}
 
+		if (source instanceof ColumnNode || target instanceof ColumnNode) {
+			logger.debug("Source or target is a column node.");
+			return sortedLinks;
+		}
+
 		String sourceUri, targetUri;
 		sourceUri = source.getLabel().getUri();
 		targetUri = target.getLabel().getUri();
