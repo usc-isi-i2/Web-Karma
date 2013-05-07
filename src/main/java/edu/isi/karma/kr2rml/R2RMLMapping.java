@@ -36,4 +36,14 @@ public class R2RMLMapping {
 	public void addPrefix(Prefix prefix) {
 		prefixes.add(prefix);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+		str.append("R2RMLMapping [triplesMapSet=\n");
+		for (TriplesMap trMap:triplesMap)
+			str.append("\t" + trMap.toString() + "\n");
+		str.append("]");
+		return str.toString();
+	}
 }

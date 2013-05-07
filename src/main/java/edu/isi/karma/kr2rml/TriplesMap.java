@@ -25,14 +25,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TriplesMap {
+	
+	private final String id;
 	private SubjectMap subject;
 	private List<PredicateObjectMap> predicateObjectMaps = new ArrayList<PredicateObjectMap>();
 	
-	public TriplesMap(SubjectMap subject) {
+	public TriplesMap(String id, SubjectMap subject) {
+		this.id = id;
+		this.subject = subject;
 	}
 	
-	public TriplesMap(SubjectMap subject,
+	public TriplesMap(String id, SubjectMap subject,
 			List<PredicateObjectMap> predicateObjectMaps) {
+		this.id = id;
 		this.subject = subject;
 		this.predicateObjectMaps = predicateObjectMaps;
 	}
@@ -57,9 +62,22 @@ public class TriplesMap {
 		this.predicateObjectMaps.add(poMap);
 	}
 
+
+	public String getId() {
+		return id;
+	}
+
 	@Override
 	public String toString() {
-		return "TriplesMap [" + subject + ", " + predicateObjectMaps + "]";
+		StringBuilder predStr = new StringBuilder();
+		for (PredicateObjectMap poMap:predicateObjectMaps) {
+			predStr.append("\t\t" + poMap.toString() + "\n");
+		}
+		
+		return "TriplesMap [" +
+				"\tid=" + id + ",\n" +
+				"\tsubject=" + subject + ",\n" +
+				"\tpredicateObjectMaps=\n" + predStr.toString() + "]\n";
 	}
 	
 }

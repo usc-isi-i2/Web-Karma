@@ -22,10 +22,15 @@
 package edu.isi.karma.kr2rml;
 
 public class RefObjectMap {
-	TriplesMap parentTriplesMap;
+	
+	private TriplesMap parentTriplesMap;
 
 	public RefObjectMap(TriplesMap parentTriplesMap) {
 		super();
 		this.parentTriplesMap = parentTriplesMap;
+	}
+	
+	public TriplesMap getParentTriplesMap() {
+		return parentTriplesMap;
 	}
 }
