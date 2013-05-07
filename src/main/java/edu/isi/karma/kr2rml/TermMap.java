@@ -24,13 +24,23 @@ package edu.isi.karma.kr2rml;
 public class TermMap {
 	
 	private final String id;
+	protected TemplateTermSet template;
 	
 	public TermMap(String id) {
 		super();
 		this.id = id;
+		this.template = new TemplateTermSet();
 	}
 
 	public String getId() {
 		return id;
+	}
+	
+	public TemplateTermSet getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(TemplateTermSet template) {
+		this.template = template;
 	}
 }

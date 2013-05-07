@@ -49,7 +49,9 @@ public class ComputeGED {
 		File ff = new File(importDir);
 		File[] files = ff.listFiles();
 		
-		DirectedWeightedMultigraph<Node, Link> gMain, gKarmaInitial, gKarmaFinal, gRank1, gRank2, gRank3;
+		DirectedWeightedMultigraph<Node, Link> gMain, 
+			gKarmaInitial, gKarmaInitial2, gKarmaFinal, 
+			gRank1, gRank2, gRank3;
 		
 		HashSet<File> fileSet = new HashSet<File>(Arrays.asList(files));
 		
@@ -67,7 +69,7 @@ public class ComputeGED {
 			System.out.println(s);
 			Collection<File> serviceFiles = index.get(s);
 			gMain = null; 
-			gKarmaInitial = null; gKarmaFinal = null; 
+			gKarmaInitial = null; gKarmaInitial2 = null; gKarmaFinal = null; 
 			gRank1 = null; gRank2 = null; gRank3 = null;
 			
 			for (File f : serviceFiles) {
@@ -75,6 +77,8 @@ public class ComputeGED {
 					gMain = GraphUtil.deserialize(f.getPath());
 				} else if (f.getName().endsWith(".karma.initial.jgraph")) {
 					gKarmaInitial = GraphUtil.deserialize(f.getPath());
+				} else if (f.getName().endsWith(".karma.initial2.jgraph")) {
+					gKarmaInitial2 = GraphUtil.deserialize(f.getPath());
 				} else if (f.getName().endsWith(".karma.final.jgraph")) {
 					gKarmaFinal = GraphUtil.deserialize(f.getPath());
 				} else if (f.getName().endsWith(".rank1.jgraph")) {
@@ -92,13 +96,19 @@ public class ComputeGED {
 			Map<String, DirectedWeightedMultigraph<Node, Link>> graphs = 
 					new TreeMap<String, DirectedWeightedMultigraph<Node,Link>>();
 			
-			label = "1- Main";
+			label = "0- Main";
 			graphs.put(label, gMain);
 
 			if (gKarmaInitial != null) {
 				distance = Util.getDistance(gMain, gKarmaInitial);
-				label = "2-Karma Initial" + "-distance:" + distance;
+				label = "1-Karma Initial" + "-distance:" + distance;
 				graphs.put(label, gKarmaInitial);
+			}
+			
+			if (gKarmaInitial2 != null) {
+				distance = Util.getDistance(gMain, gKarmaInitial2);
+				label = "2-Karma Initial2" + "-distance:" + distance;
+				graphs.put(label, gKarmaInitial2);
 			}
 			
 			if (gKarmaFinal != null) {

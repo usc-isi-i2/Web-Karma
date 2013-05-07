@@ -21,20 +21,10 @@
 
 package edu.isi.karma.kr2rml;
 
-public class Predicate extends TermMap {
-
-	private TemplateTermSet template;
+public class Predicate extends TermMap {	
 	
 	public Predicate(String id) {
 		super(id);
-	}
-
-	public TemplateTermSet getTemplate() {
-		return template;
-	}
-
-	public void setTemplate(TemplateTermSet template) {
-		this.template = template;
 	}
 
 	@Override

@@ -28,6 +28,30 @@ public class GraphEditDistance {
 		this.costMatrix = createCostMatrix();
 	}
 
+	public static void main(String[] args) {
+		Graph g1 = new Graph();
+		Graph g2 = new Graph();
+		
+		Node m1 = new Node("", "1");
+		Node m2 = new Node("", "2");
+		Edge e1 = new Edge("", m1, m2, "e1");
+		
+		Node n1 = new Node("", "1");
+		Node n2 = new Node("", "2");
+		Edge l1 = new Edge("", n1, n2, "e2");
+		
+		g1.addNode(m1);
+		g1.addNode(m2);
+		g1.addEdge(e1);
+		
+		g2.addNode(n1);
+		g2.addNode(n2);
+		g2.addEdge(l1);
+		
+		System.out.println(new GraphEditDistance(g1, g2).getDistance());
+		System.out.println(new GraphEditDistance(g1, g2).getNormalizedDistance());
+	}
+	
 	public GraphEditDistance(Graph g1, Graph g2) {
 		this(g1, g2, 1, 1, 1);
 	}

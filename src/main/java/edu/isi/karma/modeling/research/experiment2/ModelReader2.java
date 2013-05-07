@@ -34,12 +34,13 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.SimpleLink;
+import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 
 
 public class ModelReader2 {
@@ -314,7 +315,11 @@ public class ModelReader2 {
 				graph.addVertex(obj);
 			}
 			
-			Link e = new SimpleLink(predicateStr, new Label(predicateStr));
+			Link e;
+			if (obj instanceof InternalNode)
+				e = new ObjectPropertyLink(predicateStr, new Label(predicateStr));
+			else
+				e = new DataPropertyLink(predicateStr, new Label(predicateStr));
 			graph.addEdge(subj, obj, e);
 			
 		}

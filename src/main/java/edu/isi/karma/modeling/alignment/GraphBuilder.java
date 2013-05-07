@@ -60,8 +60,10 @@ public class GraphBuilder {
 	private NodeIdFactory nodeIdFactory;
 //	private LinkIdFactory linkIdFactory;
 	
-	private HashMap<String, Boolean> visitedSourceTargetPairs; 
-	private HashMap<String, Boolean> sourceToTargetLinkUris; 
+	private HashSet<String> visitedSourceTargetPairs; 
+	private HashSet<String> sourceToTargetLinkUris;
+	private HashSet<String> sourceToTargetConnectivity; 
+
 	private Node thingNode;
 	
 	// HashMaps
@@ -102,8 +104,9 @@ public class GraphBuilder {
 		
 		this.graph = new DirectedWeightedMultigraph<Node, Link>(Link.class);
 		
-		this.visitedSourceTargetPairs = new HashMap<String, Boolean>();
-		this.sourceToTargetLinkUris = new HashMap<String, Boolean>();
+		this.visitedSourceTargetPairs = new HashSet<String>();
+		this.sourceToTargetLinkUris = new HashSet<String>();
+		this.sourceToTargetConnectivity = new HashSet<String>();
 			
 		this.initialGraph();
 		
@@ -123,8 +126,9 @@ public class GraphBuilder {
 		this.typeToLinksMap = new HashMap<LinkType, List<Link>>();
 		this.statusToLinksMap = new HashMap<LinkStatus, List<Link>>();
 		
-		this.visitedSourceTargetPairs = new HashMap<String, Boolean>();
-		this.sourceToTargetLinkUris = new HashMap<String, Boolean>();
+		this.visitedSourceTargetPairs = new HashSet<String>();
+		this.sourceToTargetLinkUris = new HashSet<String>();
+		this.sourceToTargetConnectivity = new HashSet<String>();
 
 		this.nodeIdFactory = new NodeIdFactory();
 //		this.linkIdFactory = new LinkIdFactory();
@@ -185,9 +189,9 @@ public class GraphBuilder {
 			linksWithSameType.add(link);
 			
 			String key = source.getId() + target.getId() + link.getLabel().getUri();
-			sourceToTargetLinkUris.put(key, true);
+			sourceToTargetLinkUris.add(key);
 			
-			this.visitedSourceTargetPairs.put(source.getId() + target.getId(), true);
+			this.visitedSourceTargetPairs.add(source.getId() + target.getId());
 		}
 
 		this.nodeReferences = new HashMap<Node, Integer>();
@@ -202,6 +206,10 @@ public class GraphBuilder {
 		return nodeIdFactory;
 	}
 
+	public boolean isConnected(String nodeId1, String nodeId2) {
+		return this.sourceToTargetConnectivity.contains(nodeId1 + nodeId2);
+	}
+	
 //	public LinkIdFactory getLinkIdFactory() {
 //		return linkIdFactory;
 //	}
@@ -365,7 +373,7 @@ public class GraphBuilder {
 		
 		String key = source.getId() + target.getId() + link.getLabel().getUri();
 		// check to see if the link is duplicate or not
-		if (sourceToTargetLinkUris.containsKey(key))
+		if (sourceToTargetLinkUris.contains(key))
 		{
 			logger.debug("There is already a link with label " + link.getLabel().getUri() + 
 					" from " + source.getId() + " to " + target.getId());
@@ -373,6 +381,9 @@ public class GraphBuilder {
 		}
 
 		this.graph.addEdge(source, target, link);
+		
+		this.sourceToTargetConnectivity.add(source.getId() + target.getId());
+		this.sourceToTargetConnectivity.add(target.getId() + source.getId());
 		
 		double w = 0.0;
 		if (link.getPriorityType() == LinkPriorityType.DirectDataProperty)
@@ -418,7 +429,7 @@ public class GraphBuilder {
 		}
 		linksWithSameType.add(link);
 		
-		sourceToTargetLinkUris.put(key, true);
+		sourceToTargetLinkUris.add(key);
 		
 		if (source instanceof InternalNode && target instanceof ColumnNode) {
 			List<Node> closure = this.getNodeClosure(source);
@@ -860,10 +871,10 @@ public class GraphBuilder {
 				if (n1.equals(n2))
 					continue;
 				
-				if (this.visitedSourceTargetPairs.containsKey(n1.getId() + n2.getId()))
+				if (this.visitedSourceTargetPairs.contains(n1.getId() + n2.getId()))
 					continue;
 				
-				this.visitedSourceTargetPairs.put(n1.getId() + n2.getId(), true);
+				this.visitedSourceTargetPairs.add(n1.getId() + n2.getId());
 
 //				System.out.println(n1.getId() + " --- " + n2.getId());
 
@@ -880,7 +891,7 @@ public class GraphBuilder {
 
 					key = source.getId() + target.getId() + uri;
 					// check to see if the link is duplicate or not
-					if (sourceToTargetLinkUris.containsKey(key)) continue;
+					if (sourceToTargetLinkUris.contains(key)) continue;
 
 					id = LinkIdFactory.getLinkId(uri, source.getId(), target.getId());
 					label = ontologyManager.getUriLabel(uri);
@@ -896,7 +907,7 @@ public class GraphBuilder {
 
 					key = source.getId() + target.getId() + uri;
 					// check to see if the link is duplicate or not
-					if (sourceToTargetLinkUris.containsKey(key)) continue;
+					if (sourceToTargetLinkUris.contains(key)) continue;
 
 					id = LinkIdFactory.getLinkId(uri, source.getId(), target.getId());
 					label = ontologyManager.getUriLabel(uri);
@@ -913,7 +924,7 @@ public class GraphBuilder {
 
 					key = source.getId() + target.getId() + uri;
 					// check to see if the link is duplicate or not
-					if (sourceToTargetLinkUris.containsKey(key)) continue;
+					if (sourceToTargetLinkUris.contains(key)) continue;
 
 					id = LinkIdFactory.getLinkId(uri, source.getId(), target.getId());
 					label = ontologyManager.getUriLabel(uri);
@@ -930,7 +941,7 @@ public class GraphBuilder {
 
 					key = source.getId() + target.getId() + uri;
 					// check to see if the link is duplicate or not
-					if (sourceToTargetLinkUris.containsKey(key)) continue;
+					if (sourceToTargetLinkUris.contains(key)) continue;
 
 					id = LinkIdFactory.getLinkId(uri, source.getId(), target.getId());
 					label = ontologyManager.getUriLabel(uri);
@@ -946,7 +957,7 @@ public class GraphBuilder {
 					// target is subclass of source
 					key = source.getId() + target.getId() + SubClassLink.getFixedLabel().getUri();
 					// check to see if the link is duplicate or not
-					if (sourceToTargetLinkUris.containsKey(key)) continue;
+					if (sourceToTargetLinkUris.contains(key)) continue;
 					id = LinkIdFactory.getLinkId(SubClassLink.getFixedLabel().getUri(), source.getId(), target.getId());
 					SubClassLink subClassOfLink = new SubClassLink(id);
 					addLink(source, target, subClassOfLink);
@@ -986,12 +997,12 @@ public class GraphBuilder {
 				if (n1.equals(n2))
 					continue;
 
-				if (this.visitedSourceTargetPairs.containsKey(n1.getId() + n2.getId()))
+				if (this.visitedSourceTargetPairs.contains(n1.getId() + n2.getId()))
 					continue;
-				if (this.visitedSourceTargetPairs.containsKey(n2.getId() + n1.getId()))
+				if (this.visitedSourceTargetPairs.contains(n2.getId() + n1.getId()))
 					continue;
 				
-				this.visitedSourceTargetPairs.put(n1.getId() + n2.getId(), true);
+				this.visitedSourceTargetPairs.add(n1.getId() + n2.getId());
 
 				source = n1;
 				target = n2;
@@ -1033,11 +1044,11 @@ public class GraphBuilder {
 					addLink(source, target, link);
 				}
 				
-//				else if (this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(sourceUri, targetUri) ||
-//						this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(targetUri, sourceUri)) { 
-//					link.setPriorityType(LinkPriorityType.ObjectPropertyWithoutDomainAndRange);
-//					addLink(source, target, link);
-//				}
+				else if (this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(sourceUri, targetUri) ||
+						this.ontologyManager.isConnectedByDomainlessAndRangelessProperty(targetUri, sourceUri)) { 
+					link.setPriorityType(LinkPriorityType.ObjectPropertyWithoutDomainAndRange);
+					addLink(source, target, link);
+				}
 
 			}
 		}
@@ -1054,8 +1065,8 @@ public class GraphBuilder {
 		HashSet<String> objectPropertiesIndirect;
 		HashSet<String> objectPropertiesWithOnlyDomain;
 		HashSet<String> objectPropertiesWithOnlyRange;
-//		HashMap<String, Label> objectPropertiesWithoutDomainAndRange = 
-//				ontologyManager.getObjectPropertiesWithoutDomainAndRange();
+		HashMap<String, Label> objectPropertiesWithoutDomainAndRange = 
+				ontologyManager.getObjectPropertiesWithoutDomainAndRange();
 							
 //		if (targetUri.endsWith("Person") && sourceUri.endsWith("Organisation"))
 //			System.out.println("debug");
@@ -1088,10 +1099,10 @@ public class GraphBuilder {
 		if (ontologyManager.isSubClass(sourceUri, targetUri, true)) 
 			linkUris.put(Uris.RDFS_SUBCLASS_URI, LinkPriorityType.SubClassOf);
 		
-//		if (objectPropertiesWithoutDomainAndRange != null) {
-//			for (String s : objectPropertiesWithoutDomainAndRange.keySet())
-//			linkUris.put(s, LinkPriorityType.ObjectPropertyWithoutDomainAndRange);
-//		}
+		if (objectPropertiesWithoutDomainAndRange != null) {
+			for (String s : objectPropertiesWithoutDomainAndRange.keySet())
+			linkUris.put(s, LinkPriorityType.ObjectPropertyWithoutDomainAndRange);
+		}
 
 		return linkUris;
 	}
