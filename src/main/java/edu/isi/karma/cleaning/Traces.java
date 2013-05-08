@@ -66,7 +66,7 @@ public class Traces implements GrammarTreeNode {
 		while (tlines.size() > 0) {
 			if((System.currentTimeMillis()-stime)/1000>time_limit) 
 			{
-				System.out.println("Exceed the time limit");
+				//System.out.println("Exceed the time limit");
 				lines.clear();
 				break; // otherwise takes too much time
 			}
@@ -550,7 +550,7 @@ public class Traces implements GrammarTreeNode {
 		for (Vector<GrammarTreeNode> vg : paths) {
 			if((System.currentTimeMillis()-stime)/1000>time_limit) 
 			{
-				System.out.println("Exceed the time limit");
+				//System.out.println("Exceed the time limit");
 				break; // otherwise takes too much time
 			}
 			int key = vg.size();

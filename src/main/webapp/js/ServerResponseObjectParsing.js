@@ -670,10 +670,10 @@ function parse(data) {
 		} else if(element["updateType"] == "CleaningResultUpdate") {
 			if(element["result"] != null) {
 				//var pdata = getVaritions(element["result"]);
-				if(element["result"][0] == null || element["result"][0]["top"].length == 0) {
+				if(element["result"][0] == null || element["result"][0]["top"].size()==0) {
 				    alert("Cannot find any transformations! ");
-				    populateInfoPanel();
-					return;
+				    //populateInfoPanel();
+					//return;
 				}
 				var topCol = element["result"][0];
 				//var sndCol = element["result"][1];

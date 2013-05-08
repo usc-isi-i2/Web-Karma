@@ -305,8 +305,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		RamblerTransformationOutput rtf = null;
 
 		long time1 = System.currentTimeMillis();
-		while (iterNum < 1 && !results) // try to find any rule during 5 times
-										// running
+		while (iterNum < 1 && !results) // try to find an program within iterNum
 		{
 			rtf = new RamblerTransformationOutput(inputs);
 			if (rtf.getTransformations().keySet().size() > 0) {
@@ -346,7 +345,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 					if (exp.getNodeId().compareTo(key) == 0) {
 						if (!expFeData.containsKey(classLabel)) {
 							Vector<String[]> vstr = new Vector<String[]>();
-							String[] texp = { dict.get("Tar"), pretar };
+							String[] texp = {dict.get("Tar"), pretar};
 							vstr.add(texp);
 							expFeData.put(classLabel, vstr);
 						} else {
@@ -364,7 +363,8 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 				}
 				resdata.put(key, dict);
 			}
-			keys.add(getBestExample(xyzHashMap, expFeData));
+			if(!rtf.nullRule)
+				keys.add(getBestExample(xyzHashMap, expFeData));
 			long _time7 = System.currentTimeMillis();
 			time6 += _time6 - _time5;
 			time7 = _time7 - _time6;
@@ -378,7 +378,12 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			expstr += String.format("%s|%s", x.getBefore(),x.getAfter());
 		}
 		expstr += "|";
-		if(!resdata.isEmpty())
+		if(rtf.nullRule)
+		{
+			keys.clear();
+			//keys.add("-2"); // "-2 indicates null rule"
+		}
+		if(!resdata.isEmpty() && !rtf.nullRule)
 		{
 			recmd = resdata.get(keys.iterator().next()).get("Org");
 		}

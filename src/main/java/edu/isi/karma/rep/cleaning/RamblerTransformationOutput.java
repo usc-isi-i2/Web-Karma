@@ -33,6 +33,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 
 	private RamblerTransformationInputs input;
 	private HashMap<String,Transformation> transformations; 
+	public boolean nullRule = false;
 	public RamblerTransformationOutput(RamblerTransformationInputs input)
 	{
 		this.input = input;
@@ -59,7 +60,12 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		Collection<ProgramRule> rules = psProgSynthesis.run_main();
 		if(rules == null ||rules.size() == 0)
 		{
-			return;
+			ProgramRule r = new ProgramRule(ProgramRule.IDENTITY);
+			r.nullRule = true;
+			this.nullRule = true;
+			rules = new Vector<ProgramRule>();
+			rules.add(r);
+			//return;
 		}
 		Iterator<ProgramRule> iterator = rules.iterator();
 		while(iterator.hasNext())

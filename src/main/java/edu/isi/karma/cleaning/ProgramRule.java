@@ -9,6 +9,8 @@ public class ProgramRule {
 	public PartitionClassifierType pClassifier;
 	public static Interpretor itInterpretor;
 	public String signString = "";
+	public static String IDENTITY = "substr(value,'START','END')";
+	public boolean nullRule = false;
 	public ProgramRule(Program prog)
 	{
 		this.pClassifier = prog.classifier;
@@ -18,12 +20,12 @@ public class ProgramRule {
 	{
 		initInterpretor();
 		InterpreterType worker = itInterpretor.create(rule);
-		rules.put("default", worker);
+		rules.put( "attr_0", worker);
 		
 	}
 	public String transform(String value)
 	{
-		String s2 = rules.get("default").execute(value);
+		String s2 = rules.get("attr_0").execute(value);
 		return s2;
 	}
 	public void initInterpretor()
