@@ -414,13 +414,10 @@ public class GraphBuilder {
 		}
 		linksWithSameUri.add(link);
 		
-		List<Link> linksWithSameStatus = statusToLinksMap.get(link.getStatus());
-		if (linksWithSameStatus == null) {
-			linksWithSameStatus = new ArrayList<Link>();
-			statusToLinksMap.put(link.getStatus(), linksWithSameUri);
-		}
-		linksWithSameStatus.add(link);
-		
+//		if (link.getId().equals("http://km.aifb.kit.edu/projects/d3/cruiser#Vehicle1---http://km.aifb.kit.edu/projects/d3/cruiser#at---http://www.w3.org/2003/01/geo/wgs84_pos#Point1"))
+//			System.out.println("debug1");
+
+		changeLinkStatus(link, link.getStatus());
 		
 		List<Link> linksWithSameType = typeToLinksMap.get(link.getType());
 		if (linksWithSameType == null) {
@@ -449,9 +446,12 @@ public class GraphBuilder {
 	
 	public void changeLinkStatus(Link link, LinkStatus newStatus) {
 
+//		if (link.getId().equals("http://km.aifb.kit.edu/projects/d3/cruiser#Vehicle1---http://km.aifb.kit.edu/projects/d3/cruiser#at---http://www.w3.org/2003/01/geo/wgs84_pos#Point1"))
+//			System.out.println("debug3");
+		
 		LinkStatus oldStatus = link.getStatus();
-		if (newStatus == oldStatus)
-			return;
+//		if (newStatus == oldStatus)
+//			return;
 		
 		link.setStatus(newStatus);
 		
@@ -1075,6 +1075,9 @@ public class GraphBuilder {
 //		if (targetUri.endsWith("Person") && sourceUri.endsWith("Organisation"))
 //			System.out.println("debug");
 		
+//		if (sourceUri.endsWith("Vehicle") && targetUri.endsWith("Observation") ||
+//		targetUri.endsWith("Vehicle") && sourceUri.endsWith("Observation"))
+//				System.out.println("debug");
 
 		objectPropertiesDirect = ontologyManager.getObjectPropertiesDirect(sourceUri, targetUri);
 		if (objectPropertiesDirect != null) {

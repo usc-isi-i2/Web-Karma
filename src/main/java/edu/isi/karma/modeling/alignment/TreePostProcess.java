@@ -127,6 +127,7 @@ public class TreePostProcess {
 		
 		String sourceId, targetId;
 		Link[] links = tree.edgeSet().toArray(new Link[0]);
+		String linkSourceId;//, linkTargetId;
 
 		List<Link> temp;
 		List<Link> possibleLinks = new ArrayList<Link>();
@@ -139,7 +140,7 @@ public class TreePostProcess {
 			targetId = link.getTarget().getId();
 			
 			possibleLinks.clear();
-
+			
 			temp = this.graphBuilder.getPossibleLinks(sourceId, targetId);
 			if (temp != null) possibleLinks.addAll(temp);
 			temp = this.graphBuilder.getPossibleLinks(targetId, sourceId);
@@ -151,10 +152,18 @@ public class TreePostProcess {
 				// pick the first one 
 				Link newLink = possibleLinks.get(0);
 				
-				tree.addEdge(link.getSource(), link.getTarget(), newLink);
-				tree.removeEdge(link);
+				linkSourceId = LinkIdFactory.getLinkSourceId(newLink.getId());
+				//linkTargetId = LinkIdFactory.getLinkTargetId(newLink.getId());
 				
-				this.graphBuilder.addLink(link.getSource(), link.getTarget(), newLink);
+				if (linkSourceId.equals(sourceId)) {
+					tree.addEdge(link.getSource(), link.getTarget(), newLink);
+					this.graphBuilder.addLink(link.getSource(), link.getTarget(), newLink);
+				} else {
+					tree.addEdge(link.getTarget(), link.getSource(), newLink);
+					this.graphBuilder.addLink(link.getTarget(), link.getSource(), newLink);
+				}
+				
+				tree.removeEdge(link);
 				this.graphBuilder.removeLink(link);
 
 			} else {

@@ -294,6 +294,11 @@ public class Alignment implements OntologyUpdateListener {
 	
 	public void changeLinkStatus(String linkId, LinkStatus newStatus) {
 		
+//		if (linkId.equals("http://km.aifb.kit.edu/projects/d3/cruiser#Vehicle1---http://km.aifb.kit.edu/projects/d3/cruiser#at---http://www.w3.org/2003/01/geo/wgs84_pos#Point1"))
+//			System.out.println("debug1");
+//		if (linkId.equals("http://km.aifb.kit.edu/projects/d3/cruiser#Observation1---http://km.aifb.kit.edu/projects/d3/cruiser#at---http://www.w3.org/2003/01/geo/wgs84_pos#Point1"))
+//			System.out.println("debug2");
+		
 		Link link = this.getLinkById(linkId);
 		if (link == null) {
 			if (newStatus == LinkStatus.ForcedByUser) {
