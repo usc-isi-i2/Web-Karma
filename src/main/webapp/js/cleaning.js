@@ -361,7 +361,6 @@ function populateResult(rdata, nodeIds) {
 				$("div#" + nodeId).attr("class", "cleanExampleDiv");
 				//return true;
 			}
-			console.log(nodeId);
 			$("td.ruleResultsValue_begin", trTag).remove();
 			$("#" + nodeId + "_origVal", trTag).html(xval["Orgdis"]).data("CellValue", xval["Org"]);
 			trTag.append($("<td>").addClass("ruleResultsValue_begin").attr("id", nodeId + "_transformed").append($("<table>").append($("<tr>").append($("<td>").addClass("noinnerBorder")
