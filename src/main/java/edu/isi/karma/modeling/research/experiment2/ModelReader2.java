@@ -48,7 +48,7 @@ public class ModelReader2 {
 //	public static String varPrefix = "var:";
 	public static String attPrefix = "att:";
 	
-	private static String importDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/models/";
+	private static String importDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/input/";
 	private static String exportDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/graphviz/";
 	private static String graphDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/jgraph/";
 

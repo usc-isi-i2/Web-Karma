@@ -259,66 +259,115 @@ public class PostRequestManager extends LinkedApiRequestManager {
 //		}
 //		System.out.println("END");
 		
-		PrintWriter pw = getResponse().getWriter();
+		boolean blankInput = false;
 		
-		if (!validateInputSyntax()) {
-			getResponse().setContentType(MimeType.TEXT_PLAIN);
-			pw.write("Could not validate the syntax of input RDF.");
-			return;
-		}
+		PrintWriter pw = getResponse().getWriter();
 		
 		if (!loadService()) {
 			getResponse().setContentType(MimeType.TEXT_PLAIN);
 			pw.write("Could not find the service " + getServiceId() + " in service repository");
 			return;
 		}
+
+		if (this.service.getInputAttributes() == null ||
+				this.service.getInputAttributes().size() == 0) {
+			blankInput = true;
+		} else {
 		
-		if (!validateInputSemantic()) {
-			getResponse().setContentType(MimeType.TEXT_PLAIN);
-			pw.write("The input RDF does not have a matching pattern for service input model. ");
-			return;
+			if (!validateInputSyntax()) {
+				getResponse().setContentType(MimeType.TEXT_PLAIN);
+				pw.write("Could not validate the syntax of input RDF.");
+				return;
+			}
+			
+			if (!blankInput && !validateInputSemantic()) {
+				getResponse().setContentType(MimeType.TEXT_PLAIN);
+				pw.write("The input RDF does not have a matching pattern for service input model. ");
+				return;
+			}
 		}
 
 		// including the statements of the input model in the output model
 		this.outputJenaModel = ModelFactory.createDefaultModel();
-		this.outputJenaModel.add(this.inputJenaModel);
-		this.outputJenaModel.setNsPrefixes(this.inputJenaModel.getNsPrefixMap());
+		if (this.inputJenaModel != null) {
+			this.outputJenaModel.add(this.inputJenaModel);
+			this.outputJenaModel.setNsPrefixes(this.inputJenaModel.getNsPrefixMap());
+		}
 		
 		Map<String, String> outputAttNameToAttIds = new HashMap<String, String>();
 		Map<String, String> outputAttValues = new HashMap<String, String>();
-		for (Map<String,String> inputAttValues : listOfInputAttValues) {
-			
-			// invoking the Web API and load the response in a table
-			String invocationURL = getUrlString(service, inputAttValues);
+		
+		if (blankInput) { // service without input parameter
+			String invocationURL = getUrlString(service, new HashMap<String, String>());
 			Table table = invokeWebAPI(invocationURL);
 
 			if (table == null || table.getHeaders() == null) {
 				logger.info("Error in invoking " + invocationURL);
-				continue;
-			}
+			} else {
 			
-			// creating a mapping from attribute names (table headers) to attribute Ids
-			outputAttNameToAttIds.clear();
-			for (Attribute header : table.getHeaders()) {
-				String name = header.getName();
-				Attribute serviceAtt = service.getOutputAttributeByName(name);
-				if (serviceAtt == null) {
-					logger.info("Could not find the attribute " + name + " in service output attributes.");
+				// creating a mapping from attribute names (table headers) to attribute Ids
+				outputAttNameToAttIds.clear();
+				for (Attribute header : table.getHeaders()) {
+					String name = header.getName();
+					Attribute serviceAtt = service.getOutputAttributeByName(name);
+					if (serviceAtt == null) {
+						logger.info("Could not find the attribute " + name + " in service output attributes.");
+						continue;
+					}
+					outputAttNameToAttIds.put(name, serviceAtt.getId());
+				}
+				
+				// iterating over the rows to create the output RDF
+				outputAttValues.clear();
+				for (List<String> values : table.getValues()) {
+					for (int i = 0; i < table.getColumnsCount(); i++) {
+						String attId = outputAttNameToAttIds.get(table.getHeaders().get(i).getName());
+						if (attId == null) continue;
+						String value = values.get(i);
+						outputAttValues.put(attId, value);
+					}
+					addStatementsToJenaModel(this.service, this.outputJenaModel, new HashMap<String, String>(), outputAttValues);
+				}
+			}
+		} else if (listOfInputAttValues == null) {
+			getResponse().setContentType(MimeType.TEXT_PLAIN);
+			pw.write("Cannot extract the input values from the service input model. ");
+			return;
+		} else {
+			for (Map<String,String> inputAttValues : listOfInputAttValues) {
+				
+				// invoking the Web API and load the response in a table
+				String invocationURL = getUrlString(service, inputAttValues);
+				Table table = invokeWebAPI(invocationURL);
+	
+				if (table == null || table.getHeaders() == null) {
+					logger.info("Error in invoking " + invocationURL);
 					continue;
 				}
-				outputAttNameToAttIds.put(name, serviceAtt.getId());
-			}
-			
-			// iterating over the rows to create the output RDF
-			outputAttValues.clear();
-			for (List<String> values : table.getValues()) {
-				for (int i = 0; i < table.getColumnsCount(); i++) {
-					String attId = outputAttNameToAttIds.get(table.getHeaders().get(i).getName());
-					if (attId == null) continue;
-					String value = values.get(i);
-					outputAttValues.put(attId, value);
+				
+				// creating a mapping from attribute names (table headers) to attribute Ids
+				outputAttNameToAttIds.clear();
+				for (Attribute header : table.getHeaders()) {
+					String name = header.getName();
+					Attribute serviceAtt = service.getOutputAttributeByName(name);
+					if (serviceAtt == null) {
+						logger.info("Could not find the attribute " + name + " in service output attributes.");
+						continue;
+					}
+					outputAttNameToAttIds.put(name, serviceAtt.getId());
 				}
-				addStatementsToJenaModel(this.service, this.outputJenaModel, inputAttValues, outputAttValues);
+				
+				// iterating over the rows to create the output RDF
+				outputAttValues.clear();
+				for (List<String> values : table.getValues()) {
+					for (int i = 0; i < table.getColumnsCount(); i++) {
+						String attId = outputAttNameToAttIds.get(table.getHeaders().get(i).getName());
+						if (attId == null) continue;
+						String value = values.get(i);
+						outputAttValues.put(attId, value);
+					}
+					addStatementsToJenaModel(this.service, this.outputJenaModel, inputAttValues, outputAttValues);
+				}
 			}
 		}
 		

@@ -43,7 +43,7 @@ import edu.isi.karma.rep.alignment.Node;
 public class ComputeGED {
 
 	private static String importDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/jgraph/";
-	private static String exportDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/results/";
+	private static String exportDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/output/";
 
 	public static void main(String[] args) throws Exception {
 		File ff = new File(importDir);

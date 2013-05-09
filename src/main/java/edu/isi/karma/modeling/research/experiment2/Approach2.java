@@ -73,8 +73,8 @@ public class Approach2 {
 	private static String ontologyDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/ontologies/";
 
 	
-	private static String importDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/models/";
-	private static String exportDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/results/";
+	private static String importDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/input/";
+	private static String exportDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/output/";
 	private static String graphDir1 = "/Users/mohsen/Desktop/graphs/iswc2013/";
 	private static String graphResultsDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/jgraph/";
 	
