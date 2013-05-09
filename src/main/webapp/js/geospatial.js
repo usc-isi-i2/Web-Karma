@@ -64,7 +64,7 @@ function showMapViewForWorksheet() {
                         var titleDiv = $("div#" + worksheetId +" div.WorksheetTitleDiv");
                         // Remove existing link if any
                         $("a.KMLDownloadLink", titleDiv).remove();
-                        var downloadLink = $("<a>").attr("href",json["elements"][0]["localFileName"]).text("Spatial Data").addClass("KMLDownloadLink DownloadLink").attr("target","_blank");
+                        var downloadLink = $("<a>").attr("href",json["elements"][0]["localFileName"]).text("SPATIAL DATA").addClass("KMLDownloadLink DownloadLink").attr("target","_blank");
                         $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
                     }
                 },

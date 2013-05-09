@@ -61,7 +61,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                 },
             error :
                 function (xhr, textStatus) {
-                    alert("Error occured while export CSV!" + textStatus);
+                    alert("Error occured while exporting CSV!" + textStatus);
                     hideLoading(info["vWorksheetId"]);
                 }          
         });
@@ -89,11 +89,39 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                 },
             error :
                 function (xhr, textStatus) {
-                    alert("Error occured while export MDB!" + textStatus);
+                    alert("Error occured while exporting MDB!" + textStatus);
                     hideLoading(info["vWorksheetId"]);
                 }          
         });
         
+    });
+    $("button#spatialdataExport").click(function(){
+        optionsDiv.hide();
+        var info = new Object();
+        info["vWorksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "PublishSpatialDataCommand";
+
+        showLoading(info["vWorksheetId"]);
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(info["vWorksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while exporting spatial data!" + textStatus);
+                    hideLoading(info["vWorksheetId"]);
+                }
+        });
+
     });
 	$("button#showModel").click(function(){
 		optionsDiv.hide();

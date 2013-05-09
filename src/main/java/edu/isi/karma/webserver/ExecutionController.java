@@ -119,6 +119,8 @@ import edu.isi.karma.controller.command.publish.PublishRDFCellCommand;
 import edu.isi.karma.controller.command.publish.PublishRDFCellCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishRDFCommand;
 import edu.isi.karma.controller.command.publish.PublishRDFCommandFactory;
+import edu.isi.karma.controller.command.publish.PublishSpatialDataCommand;
+import edu.isi.karma.controller.command.publish.PublishSpatialDataCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishWorksheetHistoryCommand;
 import edu.isi.karma.controller.command.publish.PublishWorksheetHistoryCommandFactory;
 import edu.isi.karma.controller.command.service.InvokeServiceCommand;
@@ -253,6 +255,8 @@ public class ExecutionController {
 				new RenameColumnCommandFactory());
 		commandFactoryMap.put(PublishMDBCommand.class.getSimpleName(), 
 				new PublishMDBCommandFactory());
+		commandFactoryMap.put(PublishSpatialDataCommand.class.getSimpleName(), 
+				new PublishSpatialDataCommandFactory());
 		commandFactoryMap.put(PreviewPythonTransformationResultsCommand.class.getSimpleName(), 
 				new PreviewPythonTransformationResultsCommandFactory());
 		commandFactoryMap.put(SubmitPythonTransformationCommand.class.getSimpleName(), 
