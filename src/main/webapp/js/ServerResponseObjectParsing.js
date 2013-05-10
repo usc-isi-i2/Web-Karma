@@ -647,6 +647,15 @@ function parse(data) {
 			var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("ACCESS MDB").addClass("MDBDownloadLink  DownloadLink").attr("target", "_blank");
 			$("div.tableTitleTextDiv", titleDiv).after(downloadLink);
 			$.sticky("MDB file published");
+		} else if(element["updateType"] == "PublishSpatialDataUpdate") {
+                $("a.SpatialDataDownloadLink", titleDiv).remove();
+                console.log("test");
+                var titleDiv = $("div#" + element["vWorksheetId"] + " div.WorksheetTitleDiv");
+                // Remove existing link if any
+                hideLoading(element["vWorksheetId"]);
+                var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("SPATIAL DATA").addClass("SpatialDataDownloadLink  DownloadLink").attr("target", "_blank");
+                $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+                $.sticky("Spatial data published");
 		} else if(element["updateType"] == "PublishRDFUpdate") {
 			var titleDiv = $("div#" + element["vWorksheetId"] + " div.WorksheetTitleDiv");
 			// Remove existing link if any
