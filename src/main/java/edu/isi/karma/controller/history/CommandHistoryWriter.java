@@ -77,7 +77,8 @@ public class CommandHistoryWriter {
 					commArr.put(commObj);
 			}
 //			System.out.println(commArr.toString(4));
-			JSONUtil.writeJsonFile(commArr, HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(wkName, vWorkspace.getPreferencesId()));
+			JSONUtil.writeJsonFile(commArr, HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(wkName, 
+					vWorkspace.getPreferencesId()));
 		}
 	}
 	

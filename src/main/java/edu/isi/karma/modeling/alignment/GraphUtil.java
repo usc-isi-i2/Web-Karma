@@ -165,7 +165,7 @@ public class GraphUtil {
 			System.out.print(")");
 			System.out.print(" - ");
 			System.out.print("(");
-			System.out.print(edge.getLocalId());
+			System.out.print(edge.getId());
 			System.out.print(")");
 			System.out.print(" - ");
 			System.out.print("(");

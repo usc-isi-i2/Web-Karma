@@ -8,7 +8,14 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
+import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
+import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
 public class ApplyWorksheetHistoryCommand extends Command {
@@ -40,7 +47,7 @@ public class ApplyWorksheetHistoryCommand extends Command {
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.notUndoable;
+		return CommandType.notInHistory;
 	}
 
 	@Override
@@ -54,7 +61,31 @@ public class ApplyWorksheetHistoryCommand extends Command {
 			return new UpdateContainer(new ErrorUpdate(msg));
 		}
 		
-		return new UpdateContainer(new InfoUpdate("History successfully applied!"));
+		// Add worksheet updates that could have resulted out of the transformation commands
+		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		UpdateContainer c =  new UpdateContainer();
+		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,
+				worksheet.getHeaders().getAllPaths(), vWorkspace);
+		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+		vw.update(c);
+		
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
+				vWorkspace.getWorkspace().getId(), vWorksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		if (alignment == null) {
+			alignment = new Alignment(vWorkspace.getWorkspace().getOntologyManager());
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		}
+
+		// Compute the semantic type suggestions
+		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), 
+				vWorkspace.getWorkspace().getOntologyManager(), alignment);
+		// Add the alignment update
+		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
+		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
+		
+		c.add(new InfoUpdate("History successfully applied!"));
+		return c;
 	}
 
 	@Override

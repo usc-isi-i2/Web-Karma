@@ -116,39 +116,39 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements
 			}
 			return new ShowAutoModelCommand(getNewId(vWorkspace),
 					worksheet.getId(), vWorksheetId);
-		} else {
-			ShowAutoModelCommand comm = new ShowAutoModelCommand(
-					getNewId(vWorkspace), worksheet.getId(), vWorksheetId);
-			// Add the semantic types that have saved into the history
-			for (int i = 2; i < inputJson.length(); i++) {
-				JSONObject hnodeObj = (JSONObject) inputJson.get(i);
-				String hNodeId = (String) hnodeObj.get(ClientJsonKeys.value
-						.name());
-
-				JSONObject typeObj = (JSONObject) inputJson.get(++i);
-				JSONObject value = (JSONObject) typeObj
-						.get(ClientJsonKeys.value.name());
-
-				SemanticType type = null;
-				String domain = (String) value
-						.get(SemanticType.ClientJsonKeys.Domain.name());
-				String fullType = (String) value
-						.get(SemanticType.ClientJsonKeys.FullType.name());
-				boolean isPrimary = (Boolean) value
-						.get(SemanticType.ClientJsonKeys.isPrimary.name());
-
-				Label typeName = ontMgr.getUriLabel(fullType);
-				Label domainName = null;
-				if (domain != null && !domain.trim().equals(""))
-					domainName = ontMgr.getUriLabel(domain);
-
-				if (typeName != null) {
-					type = new SemanticType(hNodeId, typeName, domainName,
-							Origin.User, 1.00, isPrimary);
-					worksheet.getSemanticTypes().addType(type);
-				}
-			}
-			return comm;
 		}
+		
+		ShowAutoModelCommand comm = new ShowAutoModelCommand(
+				getNewId(vWorkspace), worksheet.getId(), vWorksheetId);
+		// Add the semantic types that have saved into the history
+		for (int i = 2; i < inputJson.length(); i++) {
+			JSONObject hnodeObj = (JSONObject) inputJson.get(i);
+			String hNodeId = (String) hnodeObj.get(ClientJsonKeys.value
+					.name());
+
+			JSONObject typeObj = (JSONObject) inputJson.get(++i);
+			JSONObject value = (JSONObject) typeObj
+					.get(ClientJsonKeys.value.name());
+
+			SemanticType type = null;
+			String domain = (String) value
+					.get(SemanticType.ClientJsonKeys.Domain.name());
+			String fullType = (String) value
+					.get(SemanticType.ClientJsonKeys.FullType.name());
+			boolean isPrimary = (Boolean) value
+					.get(SemanticType.ClientJsonKeys.isPrimary.name());
+
+			Label typeName = ontMgr.getUriLabel(fullType);
+			Label domainName = null;
+			if (domain != null && !domain.trim().equals(""))
+				domainName = ontMgr.getUriLabel(domain);
+
+			if (typeName != null) {
+				type = new SemanticType(hNodeId, typeName, domainName,
+						Origin.User, 1.00, isPrimary);
+				worksheet.getSemanticTypes().addType(type);
+			}
+		}
+		return comm;
 	}
 }

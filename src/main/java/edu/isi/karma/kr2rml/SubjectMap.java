@@ -27,12 +27,14 @@ import java.util.List;
 public class SubjectMap extends TermMap {
 	
 	private NamedGraph graph;
-	private List<TemplateTermSet> rdfsTypes ;
+	private List<TemplateTermSet> rdfsTypes;
+	private boolean isBlankNode;
 	
 	public SubjectMap(String id) {
 		super(id);
 		this.template = new TemplateTermSet();
 		this.rdfsTypes = new ArrayList<TemplateTermSet>();
+		this.isBlankNode = false;
 	}
 	
 	public SubjectMap(String id, TemplateTermSet template, NamedGraph graph, 
@@ -41,6 +43,10 @@ public class SubjectMap extends TermMap {
 		this.template = template;
 		this.graph = graph;
 		this.rdfsTypes = rdfsType;
+	}
+	
+	public void setAsBlankNode() {
+		this.isBlankNode = true;
 	}
 	
 	public NamedGraph getGraph() {
@@ -66,8 +72,13 @@ public class SubjectMap extends TermMap {
 	@Override
 	public String toString() {
 		return "SubjectMap [\n" +
-				"\t\ttemplate=" + template + ",\n" +
-				"\t\tgraph=" + graph + ",\n" +
-				"\t\trdfsTypes=" + rdfsTypes + "]\n";
+				"\t\t\ttemplate=" + template + ",\n" +
+				"\t\t\tgraph=" + graph + ",\n" +
+				"\t\t\trdfsTypes=" + rdfsTypes + ",\n" +
+				"\t\t\tisBlankNode=" +isBlankNode+ "]";
+	}
+	
+	public boolean isBlankNode() {
+		return isBlankNode;
 	}
 }

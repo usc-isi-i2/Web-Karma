@@ -62,7 +62,6 @@ public class TriplesMap {
 		this.predicateObjectMaps.add(poMap);
 	}
 
-
 	public String getId() {
 		return id;
 	}
@@ -71,13 +70,13 @@ public class TriplesMap {
 	public String toString() {
 		StringBuilder predStr = new StringBuilder();
 		for (PredicateObjectMap poMap:predicateObjectMaps) {
-			predStr.append("\t\t" + poMap.toString() + "\n");
+			predStr.append("\t\t\t" + poMap.toString() + "\n");
 		}
 		
-		return "TriplesMap [" +
-				"\tid=" + id + ",\n" +
-				"\tsubject=" + subject + ",\n" +
-				"\tpredicateObjectMaps=\n" + predStr.toString() + "]\n";
+		return "TriplesMap [\n" +
+				"\t\tid=" + id + ",\n" +
+				"\t\tsubject=" + subject + ",\n" +
+				"\t\tpredicateObjectMaps=\n" + predStr.toString() + "\n\t]";
 	}
 	
 }

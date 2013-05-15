@@ -60,18 +60,18 @@ function publishRDFToFile(info) {
 }
 
 function publishRDFToStore(info) {
-		
+
 		showLoadingRDF(info["vWorksheetId"],"Saving to RDF store...");
-		returnFunc(info);		
+		returnFunc(info);
 }
 
 function returnFunc(info) {
 		var returned = $.ajax({
-		   	url: "RequestController", 
+		   	url: "RequestController",
 		   	type: "POST",
 		   	data : info,
 		   	dataType : "json",
-		   	complete : 
+		   	complete :
 		   		function (xhr, textStatus) {
 		    		var json = $.parseJSON(xhr.responseText);
 		    		parse(json);
@@ -81,7 +81,7 @@ function returnFunc(info) {
 				function (xhr, textStatus) {
 		   			alert("Error occured while generating RDF!" + textStatus);
 		   			hideLoading(info["vWorksheetId"]);
-			   	}		   
+			   	}
 		});
 }
 

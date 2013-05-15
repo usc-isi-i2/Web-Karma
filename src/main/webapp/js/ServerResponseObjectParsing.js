@@ -663,6 +663,22 @@ function parse(data) {
 
 			var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("RDF").addClass("RdfDownloadLink  DownloadLink").attr("target", "_blank");
 			$("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+			
+			var errorArr = $.parseJSON(element["errorReport"]);
+            if (errorArr && errorArr.length !=0) {
+                var errorWindow = $("#rdfGenerationErrorWindow");
+                errorWindow.empty();
+
+                $.each(errorArr, function(index, errorMessage){
+                    console.log(errorMessage);
+                    errorWindow.append("<b>Error # " + (index+1) + "</b><br>");
+                    errorWindow.append("<b>Description:</b> " + errorMessage.title + "<br>");
+                    errorWindow.append("<b>Reason:</b> " + errorMessage.description + "<br>");
+                    errorWindow.append("<hr>")
+                });
+
+                errorWindow.dialog({title: "RDF Generation Error Report", width: 900});
+            }
 		} else if(element["updateType"] == "PublishWorksheetHistoryUpdate") {
 			var titleDiv = $("div#" + element["vWorksheetId"] + " div.WorksheetTitleDiv");
 			// Remove existing link if any

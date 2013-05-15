@@ -1018,9 +1018,10 @@ function submitSemanticTypeChange() {
 		} else {
 			var existingLinksMap = $("#ChangeSemanticTypesDialogBox").data("classAndPropertyListJson")["elements"][0]["existingDataPropertyInstances"];
 			$.each(existingLinksMap, function(index, prop) {
-				if (prop["label"] == propValue)
-					info["metaPropertyValue"] = prop["id"];
-					newInfo.push(getParamObject("metaPropertyValue", prop["id"], "other"));
+				if (prop["label"] == propValue) {
+                    info["metaPropertyValue"] = prop["id"];
+                    newInfo.push(getParamObject("metaPropertyValue", prop["id"], "other"));
+                }
 			});
 		}
 		info["command"] = "SetMetaPropertyCommand";

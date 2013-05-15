@@ -97,7 +97,7 @@ public class ImportServiceCommand extends Command {
 	public String getDescription() {
 		if(sourceName==null)
 			return "";
-		else return sourceName;
+		return sourceName;
 	}
 
 	@Override

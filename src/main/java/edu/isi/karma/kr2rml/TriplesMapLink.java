@@ -21,41 +21,26 @@
 
 package edu.isi.karma.kr2rml;
 
-public class PredicateObjectMap {
+public class TriplesMapLink {
+	private final TriplesMap sourceMap;
+	private final TriplesMap targetMap;
+	private final PredicateObjectMap pom;
 	
-	// Parent TriplesMap. Useful for traversal
-	private final TriplesMap triplesMap;
-	private Predicate predicate;
-	private ObjectMap object;
-	
-	public PredicateObjectMap(TriplesMap triplesMap) {
-		this.triplesMap = triplesMap;
+	public TriplesMapLink(TriplesMap sourceMap, TriplesMap targetMap, PredicateObjectMap pom) {
+		this.sourceMap = sourceMap;
+		this.targetMap = targetMap;
+		this.pom = pom;
 	}
 
-	public Predicate getPredicate() {
-		return predicate;
-	}
-	
-	public void setPredicate(Predicate predicate) {
-		this.predicate = predicate;
-	}
-	
-	public ObjectMap getObject() {
-		return object;
-	}
-	
-	public TriplesMap getTriplesMap() {
-		return triplesMap;
+	public TriplesMap getTargetMap() {
+		return targetMap;
 	}
 
-	public void setObject(ObjectMap object) {
-		this.object = object;
+	public TriplesMap getSourceMap() {
+		return sourceMap;
 	}
 
-	@Override
-	public String toString() {
-		return "PredicateObjectMap [" + predicate + ", "
-				+ object + "]";
+	public PredicateObjectMap getPredicateObjectMapLink() {
+		return pom;
 	}
-	
 }

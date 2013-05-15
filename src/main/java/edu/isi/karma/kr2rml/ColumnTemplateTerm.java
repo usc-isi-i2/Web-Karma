@@ -21,41 +21,9 @@
 
 package edu.isi.karma.kr2rml;
 
-public class PredicateObjectMap {
+public class ColumnTemplateTerm extends TemplateTerm {
 	
-	// Parent TriplesMap. Useful for traversal
-	private final TriplesMap triplesMap;
-	private Predicate predicate;
-	private ObjectMap object;
-	
-	public PredicateObjectMap(TriplesMap triplesMap) {
-		this.triplesMap = triplesMap;
+	public ColumnTemplateTerm(String termValue) {
+		super(termValue);
 	}
-
-	public Predicate getPredicate() {
-		return predicate;
-	}
-	
-	public void setPredicate(Predicate predicate) {
-		this.predicate = predicate;
-	}
-	
-	public ObjectMap getObject() {
-		return object;
-	}
-	
-	public TriplesMap getTriplesMap() {
-		return triplesMap;
-	}
-
-	public void setObject(ObjectMap object) {
-		this.object = object;
-	}
-
-	@Override
-	public String toString() {
-		return "PredicateObjectMap [" + predicate + ", "
-				+ object + "]";
-	}
-	
 }

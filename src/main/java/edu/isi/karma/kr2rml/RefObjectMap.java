@@ -23,14 +23,26 @@ package edu.isi.karma.kr2rml;
 
 public class RefObjectMap {
 	
+	private final String id;
 	private TriplesMap parentTriplesMap;
 
-	public RefObjectMap(TriplesMap parentTriplesMap) {
+	public RefObjectMap(String id, TriplesMap parentTriplesMap) {
 		super();
+		this.id = id;
 		this.parentTriplesMap = parentTriplesMap;
+	}
+
+	public String getId() {
+		return id;
 	}
 	
 	public TriplesMap getParentTriplesMap() {
 		return parentTriplesMap;
+	}
+
+	@Override
+	public String toString() {
+		return "RefObjectMap [id=" + id + ", parentTriplesMap="
+				+ parentTriplesMap + "]";
 	}
 }

@@ -21,17 +21,21 @@
 
 package edu.isi.karma.kr2rml;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.jgrapht.traverse.BreadthFirstIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
@@ -42,37 +46,57 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticTypes;
+import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 
 public class KR2RMLMappingGenerator {
 
-	private int triplesMapCounter = 1;
-	private R2RMLMapping r2rmlMapping;
 	private OntologyManager ontMgr;
 	private String sourceNamespace;
+//	private ErrorReport errorReport;
+	private R2RMLMapping r2rmlMapping;
+	private int triplesMapCounter = 0;
+	private final Node steinerTreeRoot;
+	private int refObjectMapCounter = 0;
+	private SemanticTypes semanticTypes;
 	private DirectedWeightedMultigraph<Node, Link> steinerTree;
 	
 	// Internal data structures required
-	Map<String, SubjectMap> subjectMapIndex = new HashMap<String, SubjectMap>();
-	Map<String, TriplesMap> triplesMapIndex = new HashMap<String, TriplesMap>();
+	private Map<String, SubjectMap> subjectMapIndex;
+	private Map<String, TriplesMap> triplesMapIndex;
+	private KR2RMLMappingAuxillaryInformation auxInfo;
 	
 	private final static String TRIPLES_MAP_PREFIX = "TriplesMap";
+	private final static String REFOBJECT_MAP_PREFIX = "RefObjectMap";
 	private static Logger logger = LoggerFactory.getLogger(KR2RMLMappingGenerator.class);
 	
 	public KR2RMLMappingGenerator(OntologyManager ontMgr, Alignment alignment, 
-			Worksheet worksheet, String sourcePrefix, String sourceNamespace, 
-			boolean generateInverse) {
+			SemanticTypes semanticTypes, String sourcePrefix, String sourceNamespace, 
+			boolean generateInverse, ErrorReport errorReport) {
 
-		this.sourceNamespace = sourceNamespace;
 		this.ontMgr = ontMgr;
-		this.steinerTree = alignment.getSteinerTree();
+//		this.errorReport = errorReport;
+		this.semanticTypes = semanticTypes;
+		this.sourceNamespace = sourceNamespace;
 		this.r2rmlMapping = new R2RMLMapping();
+		this.steinerTree = alignment.getSteinerTree();
+		this.steinerTreeRoot = alignment.GetTreeRoot();
+		this.auxInfo = new KR2RMLMappingAuxillaryInformation();
+		this.subjectMapIndex = new HashMap<String, SubjectMap>();
+		this.triplesMapIndex = new HashMap<String, TriplesMap>();
 		
 		// Generate the R2RML data structures
 		generateMappingFromSteinerTree(generateInverse);
 	}
 	
-	public R2RMLMapping getR2rmlMapping() {
+	public KR2RMLMappingAuxillaryInformation getMappingAuxillaryInformation() {
+		return this.auxInfo;
+	}
+
+	public R2RMLMapping getR2RMLMapping() {
 		return this.r2rmlMapping;
 	}
 
@@ -85,6 +109,50 @@ public class KR2RMLMappingGenerator {
 		
 		// Identify the object property links
 		createPredicateObjectMaps(generateInverse);
+		
+		// Identify blank nodes and generate backward links data structure for the triple maps
+		identifyBlankNodes();
+		
+		// Calculate the nodes covered by each InternalNode
+		calculateColumnNodesCoveredByBlankNodes();
+	}
+
+	private void identifyBlankNodes() {
+		for (SubjectMap subjMap:subjectMapIndex.values()) {
+			if (subjMap.getTemplate().getAllTerms().size() == 1 &&
+					(subjMap.getTemplate().getAllTerms().get(0) instanceof StringTemplateTerm)) {
+				String str = subjMap.getTemplate().getAllTerms().get(0).getTemplateTermValue();
+				if (str.equals(sourceNamespace)) 
+					subjMap.setAsBlankNode();
+			}
+		}
+	}
+	
+	private void calculateColumnNodesCoveredByBlankNodes() {
+		Set<String> reversedLinks = new HashSet<String>();
+		DirectedWeightedMultigraph<Node, Link> rootedTree = GraphUtil.treeToRootedTree(this.steinerTree,
+				this.steinerTreeRoot, reversedLinks);
+		
+		for (Node treeNode:rootedTree.vertexSet()) {
+			List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
+			if (treeNode instanceof InternalNode && subjectMapIndex.containsKey(treeNode.getId())) {
+				SubjectMap subjMap = subjectMapIndex.get(treeNode.getId());
+				if (subjMap.isBlankNode()) {
+					List<String> hNodeIdsCovered = new ArrayList<String>();
+					BreadthFirstIterator<Node, Link> itr = 
+							new BreadthFirstIterator<Node, Link>(rootedTree, treeNode);
+					while(itr.hasNext()) {
+						Node v = itr.next();
+						if(v.getType() == NodeType.ColumnNode) {
+							nodesWithSemTypesCovered.add(v);
+							hNodeIdsCovered.add(v.getId());
+						}
+					}
+					auxInfo.getBlankNodesColumnCoverage().put(treeNode.getId(), hNodeIdsCovered);
+					auxInfo.getBlankNodesUriPrefixMap().put(treeNode.getId(), treeNode.getDisplayId());
+				}
+			}
+		}
 	}
 
 	private void createTripleMaps() {
@@ -93,7 +161,7 @@ public class KR2RMLMappingGenerator {
 			if (node instanceof InternalNode) {
 				// Create a TriplesMap corresponding to the Internal node
 				SubjectMap subjMap = subjectMapIndex.get(node.getId());
-				TriplesMap trMap = new TriplesMap(TRIPLES_MAP_PREFIX + ++triplesMapCounter, subjMap);
+				TriplesMap trMap = new TriplesMap(getNewTriplesMapId(), subjMap);
 				triplesMapIndex.put(node.getId(), trMap);
 				this.r2rmlMapping.addTriplesMap(trMap);
 			}
@@ -123,7 +191,7 @@ public class KR2RMLMappingGenerator {
 						if (tNode instanceof ColumnNode) {
 							ColumnNode cnode = (ColumnNode) tNode;
 							String hNodeId = cnode.getHNodeId();
-							ColumnNameTemplateTerm cnTerm = new ColumnNameTemplateTerm(hNodeId);
+							ColumnTemplateTerm cnTerm = new ColumnTemplateTerm(hNodeId);
 							
 							// Identify classInstance links to set the template
 							if (link instanceof ClassInstanceLink) {
@@ -158,23 +226,25 @@ public class KR2RMLMappingGenerator {
 			if (node instanceof InternalNode) {
 				// Create a TriplesMap corresponding to the Internal node
 				SubjectMap subjMap = subjectMapIndex.get(node.getId());
-				TriplesMap trMap = triplesMapIndex.get(node.getId());
+				TriplesMap subjTrMap = triplesMapIndex.get(node.getId());
 				
 				// Create the predicate object map for each outgoing link
 				Set<Link> outgoingEdges = steinerTree.outgoingEdgesOf(node);
 				for (Link olink:outgoingEdges) {
 					if (olink instanceof ObjectPropertySpecializationLink 
-							|| olink instanceof DataPropertyOfColumnLink)
+							|| olink instanceof DataPropertyOfColumnLink 
+							|| olink instanceof ClassInstanceLink 
+							|| olink instanceof ColumnSubClassLink)
 						continue;
 					
-					PredicateObjectMap poMap = new PredicateObjectMap();
+					PredicateObjectMap poMap = new PredicateObjectMap(subjTrMap);
 					Node target = olink.getTarget();
 					
 					// Create an object property map
 					if (target instanceof InternalNode) {
 						// Get the RefObjMap object for the objectmap
 						TriplesMap objTrMap = triplesMapIndex.get(target.getId());
-						RefObjectMap refObjMap = new RefObjectMap(objTrMap);
+						RefObjectMap refObjMap = new RefObjectMap(getNewRefObjectMapId(), objTrMap);
 						ObjectMap objMap = new ObjectMap(target.getId(), refObjMap);
 						poMap.setObject(objMap);
 						
@@ -186,8 +256,8 @@ public class KR2RMLMappingGenerator {
 						if (specializedEdge != null) {
 							Node specializedEdgeTarget = specializedEdge.getTarget();
 							if (specializedEdgeTarget instanceof ColumnNode) {
-								ColumnNameTemplateTerm cnTerm = 
-										new ColumnNameTemplateTerm(
+								ColumnTemplateTerm cnTerm = 
+										new ColumnTemplateTerm(
 												((ColumnNode) specializedEdgeTarget).getHNodeId());
 								pred.getTemplate().addTemplateTermToSet(cnTerm);
 							}
@@ -197,7 +267,11 @@ public class KR2RMLMappingGenerator {
 						}
 						poMap.setPredicate(pred);
 						if (generateInverse)
-							addInversePropertyIfExists(subjMap, poMap, olink, trMap);
+							addInversePropertyIfExists(subjMap, poMap, olink, subjTrMap);
+						
+						// Add the links in the graph links data structure
+						TriplesMapLink link = new TriplesMapLink(subjTrMap, objTrMap, poMap);  
+						auxInfo.getTriplesMapGraph().addLink(link);
 					}
 					
 					// Create a data property map
@@ -205,7 +279,7 @@ public class KR2RMLMappingGenerator {
 						// Create the object map
 						ColumnNode cnode = (ColumnNode) target;
 						String hNodeId = cnode.getHNodeId();
-						ColumnNameTemplateTerm cnTerm = new ColumnNameTemplateTerm(hNodeId);
+						ColumnTemplateTerm cnTerm = new ColumnTemplateTerm(hNodeId);
 						TemplateTermSet termSet = new TemplateTermSet();
 						termSet.addTemplateTermToSet(cnTerm);
 						ObjectMap objMap = new ObjectMap(hNodeId, termSet);
@@ -219,8 +293,8 @@ public class KR2RMLMappingGenerator {
 						if (specializedEdge != null) {
 							Node specializedEdgeTarget = specializedEdge.getTarget();
 							if (specializedEdgeTarget instanceof ColumnNode) {
-								ColumnNameTemplateTerm cnsplTerm = 
-										new ColumnNameTemplateTerm(
+								ColumnTemplateTerm cnsplTerm = 
+										new ColumnTemplateTerm(
 												((ColumnNode) specializedEdgeTarget).getHNodeId());
 								pred.getTemplate().addTemplateTermToSet(cnsplTerm);
 							}
@@ -229,11 +303,59 @@ public class KR2RMLMappingGenerator {
 									new StringTemplateTerm(olink.getLabel().getUri()));
 						}
 						poMap.setPredicate(pred);
+						
+						// Save link from the HNodeId to the its PredicateObjectMap in the auxillary information
+						saveLinkFromHNodeIdToPredicateObjectMap(hNodeId, poMap);
+						
+						// Check for synonym types for this column
+						addSynonymTypesPredicateObjectMaps(subjTrMap, hNodeId);
 					}
 					// Add the predicateobjectmap to the triples map after a sanity check
 					if (poMap.getObject() != null && poMap.getPredicate() != null)
-						trMap.addPredicateObjectMap(poMap);
+						subjTrMap.addPredicateObjectMap(poMap);
 				}
+			}
+		}
+	}
+
+	private void saveLinkFromHNodeIdToPredicateObjectMap(String hNodeId, PredicateObjectMap poMap) {
+		List<PredicateObjectMap> pomList = this.auxInfo.getHNodeIdToPredObjLinks().get(hNodeId);  
+		if (pomList == null) {
+			pomList = new ArrayList<PredicateObjectMap>();
+		}
+		pomList.add(poMap);
+		this.auxInfo.getHNodeIdToPredObjLinks().put(hNodeId, pomList);
+	}
+
+	private void addSynonymTypesPredicateObjectMaps(TriplesMap subjTrMap, String hNodeId) {
+		SynonymSemanticTypes synonyms = this.semanticTypes.getSynonymTypesForHNodeId(hNodeId);
+		if (synonyms != null && !synonyms.getSynonyms().isEmpty()){
+			for (SemanticType synType:synonyms.getSynonyms()) {
+				if (synType.isClass()) {
+					logger.error("Synonym type as class with no property are not allowed.");
+					continue;
+				}
+				
+				PredicateObjectMap poMap = new PredicateObjectMap(subjTrMap);
+				
+				// Create the object map
+				ColumnTemplateTerm cnTerm = new ColumnTemplateTerm(hNodeId);
+				TemplateTermSet termSet = new TemplateTermSet();
+				termSet.addTemplateTermToSet(cnTerm);
+				ObjectMap objMap = new ObjectMap(hNodeId, termSet);
+				poMap.setObject(objMap);
+				
+				// Create the predicate
+				Predicate pred = new Predicate(synType.getType().getUri() + "-synonym");
+				pred.getTemplate().addTemplateTermToSet(
+						new StringTemplateTerm(synType.getType().getUri()));
+				poMap.setPredicate(pred);
+				
+				// Add the predicate object map to the triples map
+				subjTrMap.addPredicateObjectMap(poMap);
+				
+				// Save the link from hNodeId to PredicateObjectMap
+				saveLinkFromHNodeIdToPredicateObjectMap(hNodeId, poMap);
 			}
 		}
 	}
@@ -249,46 +371,40 @@ public class KR2RMLMappingGenerator {
 		Label inverseOfPropLabel = ontMgr.getInverseOfProperty(propUri);
 		
 		if (inversePropLabel != null) {
-			// Create the Subject Map
-			SubjectMap invSubjMap = subjectMapIndex.get(poMap.getObject().getId());
-			// Create the triples map
-			TriplesMap inverseTrMap = new TriplesMap(TRIPLES_MAP_PREFIX + ++triplesMapCounter, invSubjMap);
+			TriplesMap inverseTrMap = triplesMapIndex.get(poMap.getObject().getId());
 			// Create the predicate object map
-			PredicateObjectMap invPoMap = new PredicateObjectMap();
+			PredicateObjectMap invPoMap = new PredicateObjectMap(inverseTrMap);
 			// Create the predicate
 			Predicate pred = new Predicate(olink.getId()+"+inverse");
 			pred.getTemplate().addTemplateTermToSet(
 					new StringTemplateTerm(inversePropLabel.getUri()));
 			invPoMap.setPredicate(pred);
 			// Create the object using RefObjMap
-			RefObjectMap refObjMap = new RefObjectMap(subjTrMap);
+			RefObjectMap refObjMap = new RefObjectMap(getNewRefObjectMapId(), subjTrMap);
 			ObjectMap invObjMap = new ObjectMap(subjMap.getId(), refObjMap);
 			invPoMap.setObject(invObjMap);
 			inverseTrMap.addPredicateObjectMap(invPoMap);
-			
-			// Add to mapping
-			this.r2rmlMapping.addTriplesMap(inverseTrMap);
+			// Add the link to the link set
+			auxInfo.getTriplesMapGraph().addLink(new TriplesMapLink(inverseTrMap, subjTrMap, invPoMap));
 		}
 		if (inverseOfPropLabel != null) {
-			// Create the Subject Map
-			SubjectMap invOfSubjMap = subjectMapIndex.get(poMap.getObject().getId());
 			// Create the triples map
-			TriplesMap inverseOfTrMap = new TriplesMap(TRIPLES_MAP_PREFIX + ++triplesMapCounter, invOfSubjMap);
-			// Create the predicate object map
-			PredicateObjectMap invOfPoMap = new PredicateObjectMap();
+			// Get the object's triples map
+			TriplesMap inverseOfTrMap = triplesMapIndex.get(poMap.getObject().getId());
+			
+			PredicateObjectMap invOfPoMap = new PredicateObjectMap(inverseOfTrMap);
 			// Create the predicate
 			Predicate pred = new Predicate(olink.getId()+"+inverseOf");
 			pred.getTemplate().addTemplateTermToSet(
 					new StringTemplateTerm(inverseOfPropLabel.getUri()));
 			invOfPoMap.setPredicate(pred);
 			// Create the object using RefObjMap
-			RefObjectMap refObjMap = new RefObjectMap(subjTrMap);
+			RefObjectMap refObjMap = new RefObjectMap(getNewRefObjectMapId(), subjTrMap);
 			ObjectMap invOfObjMap = new ObjectMap(subjMap.getId(), refObjMap);
 			invOfPoMap.setObject(invOfObjMap);
 			inverseOfTrMap.addPredicateObjectMap(invOfPoMap);
-			
-			// Add to mapping
-			this.r2rmlMapping.addTriplesMap(inverseOfTrMap);
+			// Add the link to the link set
+			auxInfo.getTriplesMapGraph().addLink(new TriplesMapLink(inverseOfTrMap, subjTrMap, invOfPoMap));
 		}
 	}
 
@@ -313,6 +429,14 @@ public class KR2RMLMappingGenerator {
 			}
 		}
 		return null;
+	}
+	
+	private String getNewRefObjectMapId() {
+		return REFOBJECT_MAP_PREFIX + ++refObjectMapCounter;
+	}
+	
+	private String getNewTriplesMapId() {
+		return TRIPLES_MAP_PREFIX + ++triplesMapCounter;
 	}
 }
 

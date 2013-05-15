@@ -27,21 +27,25 @@ import java.util.List;
 
 public class TemplateTermSet {
 	
-	private final List<TemplateTerm> termSet = new LinkedList<TemplateTerm>();
+	private final List<TemplateTerm> termSet;
+	
+	public TemplateTermSet() {
+		termSet = new LinkedList<TemplateTerm>();
+	}
 	
 	public void addTemplateTermToSet(TemplateTerm term) {
 		this.termSet.add(term);
 	}
 	
-	public List<TemplateTerm> getTermSet() {
+	public List<TemplateTerm> getAllTerms() {
 		return this.termSet;
 	}
 	
-	public List<ColumnNameTemplateTerm> getAllColumnNameTermElements() {
-		List<ColumnNameTemplateTerm> cnList = new ArrayList<ColumnNameTemplateTerm>();
+	public List<ColumnTemplateTerm> getAllColumnNameTermElements() {
+		List<ColumnTemplateTerm> cnList = new ArrayList<ColumnTemplateTerm>();
 		for (TemplateTerm term:termSet) {
-			if (term instanceof ColumnNameTemplateTerm) {
-				cnList.add((ColumnNameTemplateTerm)term);
+			if (term instanceof ColumnTemplateTerm) {
+				cnList.add((ColumnTemplateTerm)term);
 			}
 		}
 		return cnList;
@@ -58,7 +62,7 @@ public class TemplateTermSet {
 		for (TemplateTerm term:termSet) {
 			if (term instanceof StringTemplateTerm)
 				str.append("<" + term.getTemplateTermValue() + ">");
-			else if (term instanceof ColumnNameTemplateTerm)
+			else if (term instanceof ColumnTemplateTerm)
 				str.append("<ColumnHNodeId:" + term.getTemplateTermValue() + ">");
 		}
 		return str.toString();

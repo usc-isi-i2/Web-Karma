@@ -396,18 +396,13 @@ public class SemanticTypeUtil {
 			if (domainLabel == null) {
 				if(existingSemanticType.getDomain() == null)
 					return true;
-				else
-					return false;
-			} else {
-				if (existingSemanticType.getDomain() == null)
-					return false;
-				else {
-					if (existingSemanticType.getDomain().getUri().equals(domainLabel.getUri()))
-						return true;
-					else
-						return false;
-				}
+				return false;
 			}
+			if (existingSemanticType.getDomain() == null)
+				return false;
+			if (existingSemanticType.getDomain().getUri().equals(domainLabel.getUri()))
+				return true;
+			return false;
 		}
 		return false;
 	}

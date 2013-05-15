@@ -41,20 +41,19 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
+import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.rdf.SourceDescription;
-import edu.isi.karma.rdf.WorksheetRDFGenerator;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PublishRDFCommand extends Command {
 	private final String vWorksheetId;
-//	private String publicRDFAddress;
 	private String rdfSourcePrefix;
 	private String rdfSourceNamespace;
 	private String addInverseProperties;
@@ -64,9 +63,10 @@ public class PublishRDFCommand extends Command {
 	private String userName;
 	private String password;
 	private String modelName;
+	private String worksheetName;
 	
 	public enum JsonKeys {
-		updateType, fileUrl, vWorksheetId
+		updateType, fileUrl, vWorksheetId, errorReport
 	}
 
 	private static Logger logger = LoggerFactory
@@ -81,7 +81,6 @@ public class PublishRDFCommand extends Command {
 			String saveToStore,String hostName,String dbName,String userName,String password, String modelName) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
-//		this.publicRDFAddress = publicRDFAddress;
 		this.rdfSourcePrefix = rdfSourcePrefix;
 		this.rdfSourceNamespace = rdfSourceNamespace;
 		this.addInverseProperties = addInverseProperties;
@@ -108,7 +107,7 @@ public class PublishRDFCommand extends Command {
 
 	@Override
 	public String getDescription() {
-		return null;
+		return this.worksheetName;
 	}
 
 	@Override
@@ -122,76 +121,62 @@ public class PublishRDFCommand extends Command {
 		//save the preferences 
 		savePreferences(vWorkspace);
 
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		this.worksheetName = worksheet.getTitle();
+		
+		// Prepare the file path and names
+		final String rdfFileName = vWorkspace.getPreferencesId() + vWorksheetId + ".ttl"; 
+		final String rdfFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +  
+				"RDF/" + rdfFileName;
 
-		//use the unique workspace id saved for this user
-		//I want to have only one RDF file per user/browser
-		final String rdfFileName = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +  
-				"RDF/" + vWorkspace.getPreferencesId() + vWorksheetId
-				+ ".n3";
-
-		// get alignment for this worksheet
-		logger.info("Get alignment for " + vWorksheetId);
+		// Get the alignment for this worksheet
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
-				vWorkspace.getWorkspace().getId() + ":" + vWorksheetId + "AL");
+				AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId));
+		
 		if (alignment == null) {
 			logger.info("Alignment is NULL for " + vWorksheetId);
 			return new UpdateContainer(new ErrorUpdate(
 					"Please align the worksheet before generating RDF!"));
 		}
-
+		
+		// Generate the KR2RML data structures for the RDF generation
 		Node root = alignment.GetTreeRoot();
+		final ErrorReport errorReport = new ErrorReport();
+		KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(vWorkspace.getWorkspace().getOntologyManager(), 
+				alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
+				Boolean.valueOf(addInverseProperties), errorReport);
+		
+		System.out.println(mappingGen.getR2RMLMapping().toString());
+		
+		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
+				vWorkspace.getRepFactory(), vWorkspace.getWorkspace().getOntologyManager(),
+				rdfFileLocalPath, mappingGen.getMappingAuxillaryInformation(), errorReport, root);
+		
+		// Generate the RDF using KR2RML data structures
+		try {
+			rdfGen.generateRDF();
+			logger.info("RDF written to file: " + rdfFileLocalPath);
+			if(saveToStore){
+				//take the contents of the RDF file and save them to the store
+				logger.info("Using Jena DB:" + hostName + "/"+dbName + " user="+userName);
+				saveToStore(rdfFileLocalPath);
+			}
+		} catch (Exception e1) {
+			logger.error("Error occured while generating RDF!", e1);
+			return new UpdateContainer(new ErrorUpdate(
+					"Error occured while generating RDF!"));
+		}
 
 		try {
-			if (root != null) {
-				// Write the source description
-				// use true to generate a SD with column names (for use
-				// "outside" of Karma)
-				// use false for internal use
-				SourceDescription desc = new SourceDescription(vWorkspace.getWorkspace(), alignment, worksheet,
-						rdfSourcePrefix, rdfSourceNamespace,  Boolean.valueOf(addInverseProperties),false);
-				String descString = desc.generateSourceDescription();
-				logger.info("SD=" + descString);
-				WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(
-						vWorkspace.getRepFactory(), descString, rdfFileName);
-				if (worksheet.getHeaders().hasNestedTables()) {
-					//logger.info("Alignment of nested tables is work in progress. No RDF generated!");
-					wrg.generateTriplesCell(worksheet,true);
-				} else {
-					//System.out.println("RDF start="+ Calendar.getInstance().getTimeInMillis());
-					wrg.generateTriplesRow(worksheet, true);
-					//System.out.println("RDF end="+ Calendar.getInstance().getTimeInMillis());
-				}
-				String fileName = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "publish/Source Description/W"
-						+ worksheet.getId() + ".txt";
-				FileUtil.writeStringToFile(descString, fileName);
-				logger.info("Source description written to file: " + fileName);
-				logger.info("RDF written to file: " + rdfFileName);
-				if(saveToStore){
-					//take the contents of the RDF file and save them to the store
-					logger.info("Using Jena DB:" + hostName + "/"+dbName + " user="+userName);
-					saveToStore(rdfFileName);
-				}
-				// //////////////////
-
-			} else {
-				return new UpdateContainer(new ErrorUpdate(
-						"Alignment returned null root!!"));
-			}
-
 			return new UpdateContainer(new AbstractUpdate() {
-				@Override
 				public void generateJson(String prefix, PrintWriter pw,
 						VWorkspace vWorkspace) {
 					JSONObject outputObject = new JSONObject();
 					try {
-						outputObject.put(JsonKeys.updateType.name(),
-								"PublishRDFUpdate");
-						outputObject.put(JsonKeys.fileUrl.name(),
-								"RDF/" + vWorkspace.getPreferencesId() + vWorksheetId + ".n3");
-						outputObject.put(JsonKeys.vWorksheetId.name(),
-								vWorksheetId);
+						outputObject.put(JsonKeys.updateType.name(), "PublishRDFUpdate");
+						outputObject.put(JsonKeys.fileUrl.name(), "RDF/" + rdfFileName);
+						outputObject.put(JsonKeys.vWorksheetId.name(), vWorksheetId);
+						outputObject.put(JsonKeys.errorReport.name(), errorReport.toJSONString());
 						pw.println(outputObject.toString(4));
 					} catch (JSONException e) {
 						logger.error("Error occured while generating JSON!");

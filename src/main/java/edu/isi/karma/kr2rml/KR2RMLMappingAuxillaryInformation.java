@@ -21,9 +21,36 @@
 
 package edu.isi.karma.kr2rml;
 
-public class ColumnNameTemplateTerm extends TemplateTerm {
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class KR2RMLMappingAuxillaryInformation {
+	private TriplesMapGraph triplesMapGraph;
+	private Map<String, List<String>> blankNodesColumnCoverage;
+	private Map<String, String> blankNodesUriPrefixMap;
+	private Map<String, List<PredicateObjectMap>> hNodeIdToPredObjMLinks;
 	
-	public ColumnNameTemplateTerm(String termValue) {
-		super(termValue);
+	public KR2RMLMappingAuxillaryInformation() {
+		this.triplesMapGraph = new TriplesMapGraph();
+		this.blankNodesUriPrefixMap = new HashMap<String, String>();
+		this.blankNodesColumnCoverage = new HashMap<String, List<String>>();
+		this.hNodeIdToPredObjMLinks = new HashMap<String, List<PredicateObjectMap>>();
+	}
+
+	public TriplesMapGraph getTriplesMapGraph() {
+		return triplesMapGraph;
+	}
+
+	public Map<String, List<String>> getBlankNodesColumnCoverage() {
+		return blankNodesColumnCoverage;
+	}
+
+	public Map<String, String> getBlankNodesUriPrefixMap() {
+		return blankNodesUriPrefixMap;
+	}
+	
+	public Map<String, List<PredicateObjectMap>> getHNodeIdToPredObjLinks() {
+		return this.hNodeIdToPredObjMLinks;
 	}
 }

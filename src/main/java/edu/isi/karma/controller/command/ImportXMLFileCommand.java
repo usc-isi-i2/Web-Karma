@@ -63,9 +63,8 @@ public class ImportXMLFileCommand extends Command {
 	public String getDescription() {
 		if (isExecuted()) {
 			return xmlFile.getName() + " imported";
-		} else {
-			return "";
 		}
+		return "";
 	}
 
 	@Override

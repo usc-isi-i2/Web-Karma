@@ -35,6 +35,7 @@ import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
 import edu.isi.karma.rep.HNode;
@@ -171,7 +172,8 @@ public class SetMetaPropertyCommand extends Command {
 				return new UpdateContainer(new ErrorUpdate(
 						"Error occured while setting the semantic type!"));
 			}
-			Node classInstanceNode = propertyLink.getSource();
+			
+			Node classInstanceNode = alignment.getNodeById(LinkIdFactory.getLinkSourceId(metaPropertyValue));
 			if (columnNodeAlreadyExisted) {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment, classInstanceNode);
 				columnNode = existingColumnNode;
@@ -179,6 +181,7 @@ public class SetMetaPropertyCommand extends Command {
 				columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
 			}
 			
+
 			if (propertyLink instanceof DataPropertyLink) {
 				String targetHNodeId = ((ColumnNode) propertyLink.getTarget()).getHNodeId();
 				alignment.addDataPropertyOfColumnLink(classInstanceNode, columnNode, targetHNodeId);

@@ -59,12 +59,11 @@ public class MultipleValueEditColumnCommand extends Command {
 			if (existingNode.hasNestedTable()) {
 				logger.error("Existing node has a nested table. Cannot overwrite such node with new value. NodeID: " + existingNode.getId());
 				continue;
-			} else {
-				String existingCellValue = existingNode.getValue().asString();
-				oldRowValueMap.put(rowID, existingCellValue);
-				String newCellValue = newRowValueMap.get(rowID);
-				row.setValue(hNodeID, newCellValue, factory);
 			}
+			String existingCellValue = existingNode.getValue().asString();
+			oldRowValueMap.put(rowID, existingCellValue);
+			String newCellValue = newRowValueMap.get(rowID);
+			row.setValue(hNodeID, newCellValue, factory);
 		}
 		vw.update(c);
 		return c;
@@ -82,10 +81,9 @@ public class MultipleValueEditColumnCommand extends Command {
 			if (existingNode.hasNestedTable()) {
 				logger.error("Existing node has a nested table. Cannot overwrite such node with new value. NodeID: " + existingNode.getId());
 				continue;
-			} else {
-				String oldCellValue = oldRowValueMap.get(rowID);
-				row.setValue(hNodeID, oldCellValue, factory);
 			}
+			String oldCellValue = oldRowValueMap.get(rowID);
+			row.setValue(hNodeID, oldCellValue, factory);
 		}
 		vw.update(c);
 		return c;

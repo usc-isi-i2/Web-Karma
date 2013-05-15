@@ -98,11 +98,9 @@ public class EditCellCommand extends WorksheetCommand {
 			if (newValueArg.asString().length() > 20)
 				return "Set value to "
 						+ newValueArg.asString().substring(0, 19) + "...";
-			else
-				return "Set value to " + newValueArg.asString();
-		} else {
-			return "";
+			return "Set value to " + newValueArg.asString();
 		}
+		return "";
 	}
 
 	@Override

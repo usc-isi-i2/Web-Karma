@@ -106,7 +106,7 @@ public class AddNewColumnCommand extends WorksheetCommand {
 		// vWorkspace.getRepFactory(), existingColumnName+"_copy", worksheet);
 		HNode ndid = xHNode.getHTable(vWorkspace.getRepFactory())
 				.getHNodeFromColumnName(existingColumnName + "_copy");
-		System.out.println("" + ndid.getColumnName());
+//		System.out.println("" + ndid.getColumnName());
 		Collection<Node> nodes = new ArrayList<Node>();
 		worksheet.getDataTable().collectNodes(index, nodes);
 		try {
@@ -120,15 +120,15 @@ public class AddNewColumnCommand extends WorksheetCommand {
 				r.setValue(ndid.getId(), t, vWorkspace.getRepFactory());
 
 			}
-			System.out.println("Old VW ID: " + vWorksheetId);
+//			System.out.println("Old VW ID: " + vWorksheetId);
 			vWorkspace.getViewFactory()
 					.updateWorksheet(vWorksheetId, worksheet,
 							worksheet.getHeaders().getAllPaths(), vWorkspace);
 			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(
 					vWorksheetId);
-			System.out.println("New VW ID: " + vw.getId());
+//			System.out.println("New VW ID: " + vw.getId());
 			vw.update(c);
-			String resultString = "";
+//			String resultString = "";
 
 			/************ collect info ************
 			String id = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId)

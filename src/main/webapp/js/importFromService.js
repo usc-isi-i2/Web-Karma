@@ -194,7 +194,7 @@ function sendImportSourceRequest() {
 				if(flag != -1) {
 					parse(json);
 					hideWaitingSignOnScreen();
-    				alert("Source imported in workspace!");
+//    				alert("Source imported in workspace!");
 				}
     			
 		   	},

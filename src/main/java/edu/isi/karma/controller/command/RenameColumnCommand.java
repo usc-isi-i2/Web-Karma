@@ -63,8 +63,7 @@ public class RenameColumnCommand extends Command {
 	public String getDescription() {
 		if (newColumnName.length() > 20)
 			return newColumnName.substring(0, 19) + "...";
-		else
-			return newColumnName;
+		return newColumnName;
 	}
 
 	@Override

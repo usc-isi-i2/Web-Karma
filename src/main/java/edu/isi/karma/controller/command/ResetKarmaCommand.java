@@ -92,8 +92,7 @@ public class ResetKarmaCommand extends Command {
 				if (forgetSemanticTypes)
 					return new UpdateContainer(new ErrorUpdate("Error occured while removing model histories." +
 							" Learned Semantic types have been reset."));
-				else 
-					return new UpdateContainer(new ErrorUpdate("Error occured while removing model histories."));
+				return new UpdateContainer(new ErrorUpdate("Error occured while removing model histories."));
 			}
 			
 			File[] workspaceFiles = historyDir.listFiles(new FilenameFilter() {

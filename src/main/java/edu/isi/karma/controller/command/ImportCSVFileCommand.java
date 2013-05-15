@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.cleaning.MyLogger;
 import edu.isi.karma.controller.update.CSVImportPreviewUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -107,9 +106,8 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 	public String getDescription() {
 		if (isExecuted()) {
 			return csvFile.getName();
-		} else {
-			return "";
 		}
+		return "";
 	}
 
 	@Override

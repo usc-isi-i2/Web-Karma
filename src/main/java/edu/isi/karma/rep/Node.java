@@ -195,7 +195,7 @@ public class Node extends RepEntity {
 	 * is) to all the upper-level rows that contain it, and gets all the nodes for rows
 	 * that do not have nested table.
 	 *  
-	 * @return Map with hNodId as key and NodeId as value
+	 * @return Map with hNodeId as key and NodeId as value
 	 */
 	public Map<String, String> getColumnValues() {
 		Map<String,String> columnValues = new HashMap<String,String>();

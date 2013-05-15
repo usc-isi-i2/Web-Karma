@@ -60,9 +60,8 @@ public class ImportJSONFileCommand extends Command {
 	public String getDescription() {
 		if (isExecuted()) {
 			return jsonFile.getName() + " imported";
-		} else {
-			return "";
 		}
+		return "";
 	}
 
 	@Override

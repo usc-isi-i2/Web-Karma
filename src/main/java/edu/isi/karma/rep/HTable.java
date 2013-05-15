@@ -109,11 +109,10 @@ public class HTable extends RepEntity {
 		Matcher m = p.matcher(prefix);
 		if (m.find()) {
 			return getNewColumnName(prefix.replaceAll(m.group(1), "")); 
-		} else {
-			for (int i=1; i<1000; i++) {
-				if (isValidNewColumnName(prefix + "_" + i))
-					return prefix + "_" + i;
-			}
+		}
+		for (int i=1; i<1000; i++) {
+			if (isValidNewColumnName(prefix + "_" + i))
+				return prefix + "_" + i;
 		}
 		// Last resort
 		return "New Column";

@@ -224,15 +224,12 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 				|| type.getUri().equals(ColumnSubClassLink.getFixedLabel().getUri()));
 		if (case1)
 			return true;
-		else {	// Check for the class instance link with LinkKeyInfo as UriOfInstance
-			Set<Link> incomingLinks = alignment.getCurrentLinksToNode(alignmentColumnNode.getId());
-			if (incomingLinks != null && !incomingLinks.isEmpty()) {
-				Link incomingLink = incomingLinks.iterator().next();
-				if (incomingLink != null && (incomingLink instanceof ClassInstanceLink) 
-						&& incomingLink.getKeyType().equals(LinkKeyInfo.UriOfInstance))
-					return true;
-			}
-			
+		Set<Link> incomingLinks = alignment.getCurrentLinksToNode(alignmentColumnNode.getId());
+		if (incomingLinks != null && !incomingLinks.isEmpty()) {
+			Link incomingLink = incomingLinks.iterator().next();
+			if (incomingLink != null && (incomingLink instanceof ClassInstanceLink) 
+					&& incomingLink.getKeyType().equals(LinkKeyInfo.UriOfInstance))
+				return true;
 		}
 		return false;
 	}
