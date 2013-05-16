@@ -413,7 +413,7 @@ public class KR2RMLWorksheetRDFGenerator {
 	
 	private String getNormalizedPredicateUri(String predicate) {
 		// Check if the predicate contains a predicate.
-		if (!predicate.startsWith("http:")) {
+		if (!predicate.startsWith("http:") && predicate.contains(":")) {
 			// Replace the prefix with proper namespace by looking into the ontology manager
 			String prefix = predicate.substring(0, predicate.indexOf(":"));
 			
