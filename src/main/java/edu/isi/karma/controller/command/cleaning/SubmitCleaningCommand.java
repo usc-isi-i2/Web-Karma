@@ -52,6 +52,7 @@ import edu.isi.karma.rep.cleaning.RamblerTransformationOutput;
 import edu.isi.karma.rep.cleaning.RamblerValueCollection;
 import edu.isi.karma.rep.cleaning.TransformationExample;
 import edu.isi.karma.rep.cleaning.ValueCollection;
+import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
@@ -60,8 +61,10 @@ import edu.isi.karma.webserver.WorkspaceRegistry;
 public class SubmitCleaningCommand extends Command {
 	private String hNodeId = "";
 	private String vWorksheetId = "";
-//	private String hTableId = "";
+	private String newHNodeId = "";
+	private String hTableId = "";
 	private String columnName;
+	
 	private static Logger logger =Logger.getLogger(SubmitCleaningCommand.class);
 	private Vector<TransformationExample> examples = new Vector<TransformationExample>();
 	
@@ -158,7 +161,6 @@ public class SubmitCleaningCommand extends Command {
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 		String Msg = String.format("submit end, Time:%d, Worksheet:%s",System.currentTimeMillis(),worksheetId);
 		logger.info(Msg);
-		String hTableId = "";
 		String colnameString = "";
 		try
 		{
@@ -237,6 +239,7 @@ public class SubmitCleaningCommand extends Command {
 			for (HNodePath path : columnPaths) {
 				if (path.getLeaf().getColumnName().compareTo(colnameString)==0) {
 					selectedPath = path;
+					this.newHNodeId = path.getLeaf().getId();
 				}
 			}
 			JSONArray inputParamArr = this.createMultiCellCmd(rvco,selectedPath.getLeaf().getId());
@@ -257,9 +260,22 @@ public class SubmitCleaningCommand extends Command {
 		c.add(new InfoUpdate("Column transformation complete"));
 		return c;
 	}
+	// remove the added column
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		return null;
+		Worksheet worksheet = vWorkspace.getViewFactory()
+				.getVWorksheet(vWorksheetId).getWorksheet();
+
+		HTable currentTable = vWorkspace.getRepFactory().getHTable(hTableId);
+		// remove the new column
+		currentTable.removeHNode(newHNodeId, worksheet);
+
+		UpdateContainer c = new UpdateContainer();
+		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,
+				worksheet.getHeaders().getAllPaths(), vWorkspace);
+		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+		vw.update(c);
+		return c;
 	}
 
 }
