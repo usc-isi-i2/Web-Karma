@@ -1,4 +1,5 @@
 bin
+config/.*
 config/transformation.properties
 *.class
 *py.class
