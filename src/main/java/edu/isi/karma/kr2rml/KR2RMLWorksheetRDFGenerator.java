@@ -396,7 +396,8 @@ public class KR2RMLWorksheetRDFGenerator {
 				if (columnValues.containsKey(hNodeId)) {
 					Node node = factory.getNode(columnValues.get(hNodeId));
 					if (node != null) {
-						if (node.getValue().asString() == null) {
+						if (node.getValue().asString() == null 
+								|| node.getValue().asString().equals("")) {
 							throw new NoValueFoundInNodeException();
 						}
 						output.append(node.getValue().asString());
