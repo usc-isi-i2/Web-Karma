@@ -1,27 +1,9 @@
 package edu.isi.karma.cleaning;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Random;
-import java.util.Set;
 import java.util.Vector;
-
-import org.json.JSONObject;
-
-import com.sun.istack.logging.Logger;
-
-import au.com.bytecode.opencsv.CSVWriter;
-import edu.isi.karma.cleaning.features.Data2Features;
-import edu.isi.karma.cleaning.features.Feature;
-import edu.isi.karma.cleaning.features.RegularityClassifer;
-import edu.isi.karma.cleaning.features.RegularityFeatureSet;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class UtilTools {
 	public static int index = 0;

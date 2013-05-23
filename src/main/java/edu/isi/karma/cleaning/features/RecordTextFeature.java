@@ -20,27 +20,37 @@
  ******************************************************************************/
 
 package edu.isi.karma.cleaning.features;
+
+import java.util.Vector;
+
+import edu.isi.karma.cleaning.Ruler;
+import edu.isi.karma.cleaning.TNode;
+
 //only to test whether a substring exist
 public class RecordTextFeature implements Feature {
 	public double score = 1.0;
 	public String text = "";
+	public Vector<TNode> nodes = new Vector<TNode>();
 	public String value = "";
 	public RecordTextFeature(String text,String value)
 	{
 		this.text = text;
 		this.value = value;
+		Ruler ruler = new Ruler();
+		ruler.setNewInput(value);
+		nodes = ruler.vec;
 		this.score = computeScore();
 	}
 	public double computeScore()
 	{
-		if(this.value.indexOf(text)==-1)
+		for(TNode t:nodes)
 		{
-			return 0;
+			if(t.text.compareTo(text)==0)
+			{
+				return 1;
+			}
 		}
-		else
-		{
-			return 1;
-		}
+		return 0;
 	}
 	@Override
 	public String getName() {

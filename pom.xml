@@ -97,13 +97,13 @@
 		<artifactId>xml-apis</artifactId>
 		<version>2.0.2</version>
 	</dependency>
-	<dependency>
+	<!--<dependency>
 	    <groupId>weka</groupId>
 	    <artifactId>weka</artifactId>
 	    <version>3.6</version>
 	    <scope>system</scope>
 	    <systemPath>${project.basedir}/lib/weka.jar</systemPath>
-	</dependency>
+	</dependency> -->
     <!-- The Java API for KML -->
    <dependency>
       <groupId>de.micromata.jak</groupId>
@@ -289,10 +289,15 @@
 		    <version>14.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.mahout.commons</groupId>
-			<artifactId>commons-cli</artifactId>
-			<version>2.0-mahout</version>
-		</dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-core</artifactId>
+            <version>0.20.205.0</version> <!-- or whatever version -->
+        </dependency>
+   		<dependency>
+        	<groupId>org.apache.mahout</groupId>
+        	<artifactId>mahout-core</artifactId>
+        	<version>0.5</version>
+    	</dependency>
 		<!-- 
 		<dependency>
 			<groupId>com.esotericsoftware.kryo</groupId>

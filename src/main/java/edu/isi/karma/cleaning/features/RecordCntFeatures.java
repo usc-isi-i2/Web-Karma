@@ -23,6 +23,8 @@ package edu.isi.karma.cleaning.features;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
+
 
 public class RecordCntFeatures implements Feature {
 	public String name = "";
@@ -38,7 +40,8 @@ public class RecordCntFeatures implements Feature {
 	}
 	public double computerScore()
 	{
-		int count = value.split(tar).length -1;
+		String tstr = value+" ";
+		int count = tstr.split(tar).length -1;
 		return count;
 	}
 	@Override

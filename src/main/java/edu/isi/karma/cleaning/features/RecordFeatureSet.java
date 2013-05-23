@@ -34,13 +34,16 @@ import edu.isi.karma.cleaning.TNode;
 public class RecordFeatureSet {
 	public Collection<Feature> features;
 	public String record;
-	public String label;
+	public HashSet<String> labels = new HashSet<String>();
 	public String[] xStrings = { "#", ";", ",", "!", "~", "@", "$", "%", "^",
 			"&", "\\*", "\\(", "\\)", "_", "-", "\\{", "\\}", "\\[", "\\]", "\\\"", "\\\'", ":",
 			"\\?", "<", ">", "\\.", "/", "\\\\", "\\d+", "[A-Z]+", "[a-z]+", "[\\s]" };
 	//public String[] xStrings = {"\\d+"};
 	public String[] vocabs;
-
+	public String[] getLabels()
+	{
+		return labels.toArray(new String[labels.size()]);
+	}
 	public RecordFeatureSet() {
 
 	}
@@ -71,7 +74,10 @@ public class RecordFeatureSet {
 			Feature f = new RecordTextFeature(c, record);
 			xCollection.add(f);
 		}
-		// to add other type of features
+		if(!labels.contains(label))
+		{
+			this.labels.add(label);
+		}
 		return xCollection;
 	}
 

@@ -1,27 +1,17 @@
 package edu.isi.karma.cleaning.features;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.geotools.filter.expression.ThisPropertyAccessorFactory;
-
-import com.sun.istack.logging.Logger;
-
-import weka.core.Instances;
-import weka.core.converters.ArffSaver;
-import weka.core.converters.CSVLoader;
-import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
 public class Data2Features {
 	// convert the csv file to arff file
 	// return the fpath of arff file
-	public static void Data2arff(String csvpath, String arfpath) {
+	/*public static void Data2arff(String csvpath, String arfpath) {
 		try {
 			CSVLoader loader = new CSVLoader();
 			loader.setSource(new File(csvpath));
@@ -35,7 +25,7 @@ public class Data2Features {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	}
+	}*/
 
 	public static void Testdata2CSV(Vector<String> tests, String fpath,RecordFeatureSet rf) {
 		try {
