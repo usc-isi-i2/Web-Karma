@@ -173,7 +173,7 @@ public class PopulateCommand extends WorksheetCommand{
 		
 		InvocationManager invocatioManager;
 		try {
-			invocatioManager = new InvocationManager(requestIds, requestURLStrings);
+			invocatioManager = new InvocationManager(getUrlColumnName(wk), requestIds, requestURLStrings);
 			logger.info("Requesting data with includeURL=" + true + ",includeInput=" + true + ",includeOutput=" + true);
 			Table serviceTable = invocatioManager.getServiceData(false, false, true);
 //			logger.debug(serviceTable.getPrintInfo());
@@ -210,6 +210,11 @@ public class PopulateCommand extends WorksheetCommand{
 		return c;
 	}
 
+	private String getUrlColumnName(Worksheet wk) {
+		// TODO
+		return null;
+	}
+	
 	private List<String> getUrlStrings(WebService service, DataSource source, 
 			Worksheet wk, Map<String, String> serviceToSourceAttMapping, 
 			List<String> requestIds) {

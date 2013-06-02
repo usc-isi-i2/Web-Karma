@@ -51,6 +51,7 @@ public class Invocation {
 	private Request request;
 	private Response response;
 	private Table jointInputAndOutput;
+	private String jsonResponse;
 	
 	public Request getRequest() {
 		return request;
@@ -65,7 +66,10 @@ public class Invocation {
 		return response;
 	}
 
-
+	public String getJsonResponse() {
+		return jsonResponse;
+	}
+	
 	public void setResponse(Response response) {
 		this.response = response;
 	}
@@ -105,21 +109,22 @@ public class Invocation {
         HashMap<String, Integer> attributeNameCounter = new HashMap<String, Integer>();
 
         logger.info("output type is: " + response.getType());
-        
         if (response.getType() == null) {
 			logger.info("The output does not have a type.");
-        }
-        else if (response.getType().indexOf("xml") != -1) { // XML content
+        } else if (response.getType().indexOf("xml") != -1) { // XML content
 			// The library has a bug, some values are wrong, e.g., adminCode2: 061 --> 49 			
 			String json = JsonManager.convertXML2JSON(response.getStream());
+			this.jsonResponse = json;
 	        JsonManager.getJsonFlat(json, columns, results.getValues());
 		} else if (response.getType().indexOf("json") != -1) { // JSON content
+			this.jsonResponse = response.getStream();
 	        JsonManager.getJsonFlat(response.getStream(), columns, results.getValues());
 		} else {
 			logger.info("The output type is neither JSON nor XML.");
-	        try {
+			if (JsonManager.parse(response.getStream())) {
+	        	this.jsonResponse = response.getStream();
 	        	JsonManager.getJsonFlat(response.getStream(), columns, results.getValues());
-	        } catch (Exception e) {
+	        } else {
 				logger.info("Malformed json output.");
 	        }
 		}

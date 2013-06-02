@@ -64,6 +64,17 @@ public class JsonImport {
 		this(JSONUtil.createJson(jsonString), worksheetName, workspace);
 	}
 
+	public JsonImport(String jsonString, Worksheet wk, RepFactory repFactory) {
+		this.worksheet = wk;
+		this.factory = repFactory;
+		json = JSONUtil.createJson(jsonString);
+		try {
+			populateWorksheet();
+		} catch (JSONException e) {
+			logger.error("Error in populating the worksheet with Json");
+		}
+	}
+	
 	public Worksheet generateWorksheet() throws JSONException {
 
 		if (json instanceof JSONArray) {
@@ -87,6 +98,27 @@ public class JsonImport {
 		return worksheet;
 	}
 
+	public void populateWorksheet() throws JSONException {
+		if (json instanceof JSONArray) {
+			JSONArray a = (JSONArray) json;
+			for (int i = 0; i < a.length(); i++) {
+				addListElement(a.get(i), worksheet.getHeaders(),
+						worksheet.getDataTable());
+			}
+		}
+
+		else if (json instanceof JSONObject) {
+			addKeysAndValues((JSONObject) json, worksheet.getHeaders(),
+					worksheet.getDataTable());
+		}
+
+		else {
+			throw new Error("Can only import objects or arrays.");
+		}
+
+		writeJsonFile(json);
+	}
+	
 	private static void writeJsonFile(Object o) {
 		JSONUtil.writeJsonFile(o, "lastJsonImport.json");
 	}

@@ -133,7 +133,7 @@ public class PostRequestManager extends LinkedApiRequestManager {
 		
 		InvocationManager invocatioManager;
 		try {
-			invocatioManager = new InvocationManager(requestURLString);
+			invocatioManager = new InvocationManager(null, requestURLString);
 			logger.info("Requesting data with includeURL=" + true + ",includeInput=" + true + ",includeOutput=" + true);
 			Table serviceTable = invocatioManager.getServiceData(false, false, true);
 			logger.debug(serviceTable.getPrintInfo());

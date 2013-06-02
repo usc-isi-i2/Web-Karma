@@ -95,11 +95,19 @@ public class InvokeServiceCommand extends WorksheetCommand {
 
 		InvocationManager invocatioManager;
 		try {
-			invocatioManager = new InvocationManager(requestIds, requestURLStrings);
+			invocatioManager = new InvocationManager(getUrlColumnName(wk), requestIds, requestURLStrings);
 			logger.info("Requesting data with includeURL=" + false + ",includeInput=" + true + ",includeOutput=" + true);
+			
+			// This generate a flat table of the json results
 			Table serviceTable = invocatioManager.getServiceData(false, true, true);
-//			logger.debug(serviceTable.getPrintInfo());
 			ServiceTableUtil.populateWorksheet(serviceTable, wk, ws.getFactory());
+			
+			// FIXME
+			String json = invocatioManager.getServiceJson();
+//			new JsonImport(json, wk, ws.getFactory());
+//			System.out.println(json);
+
+
 			
 			WebService service = invocatioManager.getInitialServiceModel(null);
 			MetadataContainer metaData = wk.getMetadataContainer();
@@ -130,6 +138,11 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		vw.update(c);
 		
 		return c;
+	}
+	
+	private String getUrlColumnName(Worksheet wk) {
+		// TODO
+		return null;
 	}
 	
 	public Worksheet generateWorksheet(Workspace workspace, String title) throws KarmaException, IOException {

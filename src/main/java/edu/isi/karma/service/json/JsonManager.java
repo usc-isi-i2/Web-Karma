@@ -237,10 +237,24 @@ public class JsonManager {
     	in.close();
     	return new String(b);
     }
+
+    public static boolean parse(String json) {
+        try {
+        	new JsonParser().parse(json);
+        	return true;
+        } catch (Exception e) {
+        	return false;
+        }
+    }
     
     public static Element getJsonElements(String json) {
-        
-    	JsonElement  jse = new JsonParser().parse(json);
+
+    	JsonElement  jse = null;
+    	try {
+    		jse = new JsonParser().parse(json);
+    	} catch (Exception e) {
+    		return null;
+    	}
         
         Element rootElement = new Element();
         rootElement.setKey("");

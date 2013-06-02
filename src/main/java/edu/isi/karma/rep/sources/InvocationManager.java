@@ -30,6 +30,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpMethods;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import edu.isi.karma.model.serialization.Repository;
 import edu.isi.karma.modeling.Test;
 import edu.isi.karma.util.RandomGUID;
@@ -43,9 +48,19 @@ public class InvocationManager {
 	private List<String> idList;
 	private List<Invocation> invocations;
 	private Table serviceData;
+	private String urlColumnName;
 	
-	public InvocationManager(List<String> idList, List<String> requestURLStrings) 
+	private JsonArray json;
+	private JsonArray jsonUrl;
+	private JsonArray jsonInputs;
+	private JsonArray jsonOutputs;
+	private JsonArray jsonUrlAndInputs;
+	private JsonArray jsonUrlAndOutputs;
+	private JsonArray jsonInputsAndOutputs;
+	
+	public InvocationManager(String urlColumnName, List<String> idList, List<String> requestURLStrings) 
 	throws MalformedURLException, KarmaException {
+		this.urlColumnName = (urlColumnName == null || urlColumnName.trim().length() == 0) ? "url" : urlColumnName;
 		this.idList = idList;
 		requestURLs = URLManager.getURLsFromStrings(requestURLStrings);
 		if (requestURLs == null || requestURLs.size() == 0)
@@ -53,10 +68,21 @@ public class InvocationManager {
 		
 		this.serviceData = null;
 		this.invocations = new ArrayList<Invocation>();
+		
+		json = new JsonArray();
+		jsonUrl = new JsonArray();
+		jsonInputs = new JsonArray();
+		jsonOutputs = new JsonArray();
+		jsonUrlAndInputs = new JsonArray();
+		jsonUrlAndOutputs = new JsonArray();
+		jsonInputsAndOutputs = new JsonArray();
+		
+		invokeAndGetResponse();
 	}
 	
-	public InvocationManager(String requestURLString) 
+	public InvocationManager(String urlColumnName, String requestURLString) 
 	throws MalformedURLException, KarmaException {
+		this.urlColumnName = (urlColumnName == null || urlColumnName.trim().length() == 0) ? "url" : urlColumnName;
 		this.idList = new ArrayList<String>();
 		this.idList.add("1");
 		List<String> requestURLList = new ArrayList<String>();
@@ -67,6 +93,16 @@ public class InvocationManager {
 		
 		this.serviceData = null;
 		this.invocations = new ArrayList<Invocation>();
+		
+		json = new JsonArray();
+		jsonUrl = new JsonArray();
+		jsonInputs = new JsonArray();
+		jsonOutputs = new JsonArray();
+		jsonUrlAndInputs = new JsonArray();
+		jsonUrlAndOutputs = new JsonArray();
+		jsonInputsAndOutputs = new JsonArray();
+		
+		invokeAndGetResponse();
 	}
 	
 	private void invokeAndGetResponse() {
@@ -83,6 +119,7 @@ public class InvocationManager {
 		}
 		List<Table> invocationData = new ArrayList<Table>();
 		for (Invocation inv : this.invocations) {
+			populateJsonArraysFromInvocation(inv);
 			invocationData.add(inv.getJointInputAndOutput());
 		}
 		
@@ -92,11 +129,76 @@ public class InvocationManager {
 		this.serviceData = result;
 	}
 	
+	
+	private void populateJsonArraysFromInvocation(Invocation inv) {
+		
+		try {
+			JsonElement out = new JsonParser().parse(inv.getJsonResponse());
+//			JsonArray outArray = new JsonArray();
+//			outArray.add(out);
+			this.jsonOutputs.add(out);
+			
+			JsonObject url = new JsonObject();
+			url.addProperty(this.urlColumnName, inv.getRequest().getUrl().toString());
+//			JsonArray urlArray = new JsonArray();
+//			urlArray.add(url);
+			this.jsonUrl.add(url);
+			
+			JsonObject in = new JsonObject();
+			for (Attribute att : inv.getRequest().getAttributes()) 
+				in.addProperty(att.getName(), att.getValue());
+//			JsonArray inArray = new JsonArray();
+//			inArray.add(in);
+			this.jsonInputs.add(in);
+			
+			JsonObject urlAndIn = new JsonObject();
+			urlAndIn.addProperty(this.urlColumnName, inv.getRequest().getUrl().toString());
+			for (Attribute att : inv.getRequest().getAttributes()) 
+				urlAndIn.addProperty(att.getName(), att.getValue());
+			this.jsonUrlAndInputs.add(urlAndIn);
+			
+			JsonArray urlAndOut = new JsonArray();
+			urlAndOut.add(url);
+			urlAndOut.add(out);
+			this.jsonUrlAndOutputs.add(urlAndOut);
+			
+			JsonArray inAndOut = new JsonArray();
+			inAndOut.add(in);
+			inAndOut.add(out);
+			this.jsonInputsAndOutputs.add(inAndOut);
+			
+			JsonArray all = new JsonArray();
+			all.add(urlAndIn);
+			all.add(out);
+			this.json.add(all);
+			
+			
+		} catch (Exception e) {
+			logger.debug("Error in parsing json returned by the invocation " + inv.getRequest().getUrl().toString());
+		}
+	}
+	
+	public String getServiceJson(boolean includeURL, boolean includeInputAttributes, boolean includeOutputAttributes) {
+		if (includeURL && includeInputAttributes && includeOutputAttributes)		
+			return this.json.toString();
+		else if (includeURL && includeInputAttributes)
+			return this.jsonUrlAndInputs.toString();
+		else if (includeURL && includeOutputAttributes)
+			return this.jsonUrlAndOutputs.toString();
+		else if (includeInputAttributes && includeOutputAttributes)
+			return this.jsonInputsAndOutputs.toString();
+		else if (includeURL)
+			return this.jsonUrl.toString();
+		else if (includeInputAttributes)
+			return this.jsonInputs.toString();
+		else if (includeOutputAttributes)
+			return this.jsonOutputs.toString();
+		else 
+			return "";
+	}
+	
 	public Table getServiceData(boolean includeURL, boolean includeInputAttributes, boolean includeOutputAttributes) {
-		
-		if (this.serviceData == null)
-			invokeAndGetResponse();
-		
+
 		if (includeURL && includeInputAttributes && includeOutputAttributes)
 			return this.serviceData;
 		
@@ -141,6 +243,10 @@ public class InvocationManager {
 	
 	public Table getServiceData() {
 		return getServiceData(true, true, true);
+	}
+	
+	public String getServiceJson() {
+		return getServiceJson(true, true, true);
 	}
 	
 	private List<Attribute> getInputAttributes() {
@@ -215,7 +321,7 @@ public class InvocationManager {
 //		ids.add("3");
 
 		try {
-			InvocationManager sb = new InvocationManager(ids, urls);
+			InvocationManager sb = new InvocationManager(null, ids, urls);
 			Table tb = sb.getServiceData(false, false, true);
 			
 //			String str = tb.asCSV();
