@@ -47,7 +47,6 @@ import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -140,7 +139,6 @@ public class PublishRDFCommand extends Command {
 		}
 		
 		// Generate the KR2RML data structures for the RDF generation
-		Node root = alignment.GetTreeRoot();
 		final ErrorReport errorReport = new ErrorReport();
 		KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(vWorkspace.getWorkspace().getOntologyManager(), 
 				alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
@@ -150,7 +148,7 @@ public class PublishRDFCommand extends Command {
 		
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
 				vWorkspace.getRepFactory(), vWorkspace.getWorkspace().getOntologyManager(),
-				rdfFileLocalPath, mappingGen.getMappingAuxillaryInformation(), errorReport, root);
+				rdfFileLocalPath, mappingGen.getMappingAuxillaryInformation(), errorReport);
 		
 		// Generate the RDF using KR2RML data structures
 		try {

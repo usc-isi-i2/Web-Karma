@@ -97,7 +97,7 @@ public class WorksheetCommandHistoryReader {
 		
 		logger.info("Command in history: " + commObject.get(HistoryArguments.commandName.name()));
 		// Change the hNode ids, vworksheet id to point to the current worksheet ids
-		if(normalizeJsonInput(inputParamArr)) {
+		if(normalizeCommandHistoryJsonInput(vWorkspace, vWorksheetId, inputParamArr)) {
 			// Invoke the command
 			CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
 			if(cf != null && cf instanceof JSONInputCommandFactory) {
@@ -113,41 +113,6 @@ public class WorksheetCommandHistoryReader {
 							+ commObject.get(HistoryArguments.commandName.name()));
 			}
 		}
-	}
-
-	private boolean normalizeJsonInput(JSONArray inputArr) throws JSONException {
-		HTable hTable = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet().getHeaders();
-		for (int i = 0; i < inputArr.length(); i++) {
-			JSONObject inpP = inputArr.getJSONObject(i);
-			
-			/*** Check the input parameter type and accordingly make changes ***/
-			if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.hNodeId) {
-				JSONArray hNodeJSONRep = new JSONArray(inpP.getString(ClientJsonKeys.value.name()));
-				for (int j=0; j<hNodeJSONRep.length(); j++) {
-					JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);
-					if(hTable == null) {
-						logger.error("NULL HTABLE while normalizing JSON input for the command.");
-						return false;
-					}
-					logger.debug("Column being normalized: "+ cNameObj.getString("columnName"));
-					HNode node = hTable.getHNodeFromColumnName(cNameObj.getString("columnName"));
-					if(node == null) {
-						logger.error("NULL HNODE while normalizing JSON input for the command.");
-						return false;
-					}
-					
-					if (j == hNodeJSONRep.length()-1) {		// Found!
-						inpP.put(ClientJsonKeys.value.name(), node.getId());
-						hTable = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet().getHeaders();
-					} else {
-						hTable = node.getNestedTable();
-					}
-				}
-			} else if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.vWorksheetId) {
-				inpP.put(ClientJsonKeys.value.name(), this.vWorksheetId);
-			}
-		}
-		return true;
 	}
 
 	public List<String> getJSONForCommands(CommandTag tag) {
@@ -175,5 +140,42 @@ public class WorksheetCommandHistoryReader {
 		}
 		
 		return commandsJSON;
+	}
+	
+	public static boolean normalizeCommandHistoryJsonInput(VWorkspace vWorkspace, String vWorksheetId, 
+			JSONArray inputArr) throws JSONException {
+		HTable hTable = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet().getHeaders();
+		for (int i = 0; i < inputArr.length(); i++) {
+			JSONObject inpP = inputArr.getJSONObject(i);
+			
+			/*** Check the input parameter type and accordingly make changes ***/
+			if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.hNodeId) {
+				JSONArray hNodeJSONRep = new JSONArray(inpP.getString(ClientJsonKeys.value.name()));
+				for (int j=0; j<hNodeJSONRep.length(); j++) {
+					JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);
+					if(hTable == null) {
+						logger.error("NULL HTABLE while normalizing JSON input for the command.");
+						return false;
+					}
+					logger.debug("Column being normalized: "+ cNameObj.getString("columnName"));
+					HNode node = hTable.getHNodeFromColumnName(cNameObj.getString("columnName"));
+					if(node == null) {
+						logger.error("NULL HNODE while normalizing JSON input for the command.");
+						return false;
+					}
+					
+					if (j == hNodeJSONRep.length()-1) {		// Found!
+						inpP.put(ClientJsonKeys.value.name(), node.getId());
+						hTable = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).
+								getWorksheet().getHeaders();
+					} else {
+						hTable = node.getNestedTable();
+					}
+				}
+			} else if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.vWorksheetId) {
+				inpP.put(ClientJsonKeys.value.name(), vWorksheetId);
+			}
+		}
+		return true;
 	}
 }

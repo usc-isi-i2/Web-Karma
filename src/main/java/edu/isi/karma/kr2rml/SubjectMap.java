@@ -29,12 +29,14 @@ public class SubjectMap extends TermMap {
 	private NamedGraph graph;
 	private List<TemplateTermSet> rdfsTypes;
 	private boolean isBlankNode;
+	private boolean isSteinerTreeRootNode;
 	
 	public SubjectMap(String id) {
 		super(id);
 		this.template = new TemplateTermSet();
 		this.rdfsTypes = new ArrayList<TemplateTermSet>();
 		this.isBlankNode = false;
+		this.setAsSteinerTreeRootNode(false);
 	}
 	
 	public SubjectMap(String id, TemplateTermSet template, NamedGraph graph, 
@@ -45,8 +47,8 @@ public class SubjectMap extends TermMap {
 		this.rdfsTypes = rdfsType;
 	}
 	
-	public void setAsBlankNode() {
-		this.isBlankNode = true;
+	public void setAsBlankNode(boolean flag) {
+		this.isBlankNode = flag;
 	}
 	
 	public NamedGraph getGraph() {
@@ -75,10 +77,19 @@ public class SubjectMap extends TermMap {
 				"\t\t\ttemplate=" + template + ",\n" +
 				"\t\t\tgraph=" + graph + ",\n" +
 				"\t\t\trdfsTypes=" + rdfsTypes + ",\n" +
-				"\t\t\tisBlankNode=" +isBlankNode+ "]";
+				"\t\t\tisBlankNode=" +isBlankNode+ ",\n"+
+				"\t\t\tisSteinerTreeRootNode=" +isSteinerTreeRootNode+ "]";
 	}
 	
 	public boolean isBlankNode() {
 		return isBlankNode;
+	}
+
+	public boolean isSteinerTreeRootNode() {
+		return isSteinerTreeRootNode;
+	}
+
+	public void setAsSteinerTreeRootNode(boolean isSteinerTreeRootNode) {
+		this.isSteinerTreeRootNode = isSteinerTreeRootNode;
 	}
 }

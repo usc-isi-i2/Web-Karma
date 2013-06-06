@@ -22,6 +22,12 @@
 package edu.isi.karma.kr2rml;
 
 public class TriplesMapLink {
+	@Override
+	public String toString() {
+		return "TriplesMapLink [sourceMap=" + sourceMap + ", targetMap="
+				+ targetMap + ", pom=" + pom + "]";
+	}
+
 	private final TriplesMap sourceMap;
 	private final TriplesMap targetMap;
 	private final PredicateObjectMap pom;

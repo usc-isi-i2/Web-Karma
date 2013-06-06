@@ -361,6 +361,35 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
     // in pytransform.js
     $("button#pyTransform").click(openPyTransformDialogBox);
 
+    $("button#publishR2RML").click(function(){
+        optionsDiv.hide();
+
+        var info = new Object();
+        info["vWorksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "GenerateR2RMLModelCommand";
+
+        showLoading(info["vWorksheetId"]);
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(info["vWorksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while publishing service model!" + textStatus);
+                    hideLoading(info["vWorksheetId"]);
+                }
+        });
+
+    });
+
 }
 
 function openWorksheetOptions(event) {

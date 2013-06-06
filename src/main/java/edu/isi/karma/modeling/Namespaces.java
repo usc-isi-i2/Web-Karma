@@ -37,5 +37,6 @@ public interface Namespaces {
 	public static final String GEOSPATIAL = KARMA+"geospatial/";
 	public static final String EXAMPLE = "http://example.com#";
 	public static final String KARMA_DEV = "http://isi.edu/integration/karma/dev#";
+	public static final String RR = "http://www.w3.org/ns/r2rml#";
 
 }

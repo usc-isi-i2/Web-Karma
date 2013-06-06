@@ -77,6 +77,8 @@ import edu.isi.karma.controller.command.UndoRedoCommand;
 import edu.isi.karma.controller.command.UndoRedoCommandFactory;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommand;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommandFactory;
+import edu.isi.karma.controller.command.alignment.GenerateR2RMLModelCommand;
+import edu.isi.karma.controller.command.alignment.GenerateR2RMLModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommand;
 import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetDataPropertiesForClassCommand;
@@ -261,6 +263,8 @@ public class ExecutionController {
 				new PreviewPythonTransformationResultsCommandFactory());
 		commandFactoryMap.put(SubmitPythonTransformationCommand.class.getSimpleName(), 
 				new SubmitPythonTransformationCommandFactory());
+		commandFactoryMap.put(GenerateR2RMLModelCommand.class.getSimpleName(), 
+				new GenerateR2RMLModelCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

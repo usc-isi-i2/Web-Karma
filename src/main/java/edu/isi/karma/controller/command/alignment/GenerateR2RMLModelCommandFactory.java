@@ -19,44 +19,25 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.kr2rml;
+package edu.isi.karma.controller.command.alignment;
 
-public class PredicateObjectMap {
-	
-	// Parent TriplesMap. Useful for traversal
-	private final TriplesMap triplesMap;
-	
-	private Predicate predicate;
-	private ObjectMap object;
-	
-	public PredicateObjectMap(TriplesMap triplesMap) {
-		this.triplesMap = triplesMap;
-	}
+import javax.servlet.http.HttpServletRequest;
 
-	public Predicate getPredicate() {
-		return predicate;
-	}
-	
-	public void setPredicate(Predicate predicate) {
-		this.predicate = predicate;
-	}
-	
-	public ObjectMap getObject() {
-		return object;
-	}
-	
-	public TriplesMap getTriplesMap() {
-		return triplesMap;
-	}
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.view.VWorkspace;
 
-	public void setObject(ObjectMap object) {
-		this.object = object;
+public class GenerateR2RMLModelCommandFactory extends CommandFactory {
+	
+	private enum Arguments {
+		vWorksheetId, addInverseProperties, rdfPrefix, rdfNamespace
 	}
 
 	@Override
-	public String toString() {
-		return "PredicateObjectMap [" + predicate + ", "
-				+ object + "]";
+	public Command createCommand(HttpServletRequest request,
+			VWorkspace vWorkspace) {
+		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
+		return new GenerateR2RMLModelCommand(getNewId(vWorkspace), vWorksheetId);
 	}
-	
+
 }

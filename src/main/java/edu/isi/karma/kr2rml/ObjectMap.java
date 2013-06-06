@@ -49,4 +49,8 @@ public class ObjectMap extends TermMap {
 	public boolean hasRefObjectMap() {
 		return refObjectMap != null;
 	}
+
+	public RefObjectMap getRefObjectMap() {
+		return refObjectMap;
+	}
 }

@@ -22,9 +22,19 @@
 package edu.isi.karma.kr2rml;
 
 public class StringTemplateTerm extends TemplateTerm {
+	private final boolean hasFullUri;
 
 	public StringTemplateTerm(String termValue) {
 		super(termValue);
+		hasFullUri = false;
 	}
 
+	public StringTemplateTerm(String termValue, boolean hasUri) {
+		super(termValue);
+		this.hasFullUri = hasUri;
+	}
+	
+	public boolean hasFullUri() {
+		return this.hasFullUri;
+	}
 }

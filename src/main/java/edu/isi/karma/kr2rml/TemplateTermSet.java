@@ -25,6 +25,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.RepFactory;
+
 public class TemplateTermSet {
 	
 	private final List<TemplateTerm> termSet;
@@ -70,5 +77,88 @@ public class TemplateTermSet {
 	
 	public boolean isEmpty() {
 		return termSet.size() == 0;
+	}
+	
+	public String getR2rmlTemplateString(RepFactory factory) {
+		StringBuilder str = new StringBuilder();
+		for (TemplateTerm term:termSet) {
+			if (term instanceof StringTemplateTerm) {
+				str.append(term.getTemplateTermValue());
+			} else if (term instanceof ColumnTemplateTerm) {
+				HNode hNode = factory.getHNode(term.getTemplateTermValue());
+				if (hNode != null) {
+					String colNameStr = "";
+					try {
+						JSONArray colNameArr = hNode.getJSONArrayRepresentation(factory);
+						if (colNameArr.length() == 1) {
+							colNameStr = (String) 
+									(((JSONObject)colNameArr.get(0)).get("columnName"));
+						} else {
+							JSONArray colNames = new JSONArray();
+							for (int i=0; i<colNameArr.length();i++) {
+								colNames.put((String)
+										(((JSONObject)colNameArr.get(i)).get("columnName")));
+							}
+							colNameStr = colNames.toString();
+						}
+						str.append("{\"" + colNameStr + "\"}");
+					} catch (JSONException e) {
+						continue;
+					}
+				}
+				else {
+					str.append("{\"" + term.getTemplateTermValue() + "\"}");
+				}
+			}
+		}
+		return str.toString();
+	}
+	
+	public String getColumnNameR2RMLRepresentation(RepFactory factory) {
+		StringBuilder str = new StringBuilder();
+		for (TemplateTerm term:termSet) {
+			if (term instanceof StringTemplateTerm) {
+				str.append(term.getTemplateTermValue());
+			} else if (term instanceof ColumnTemplateTerm) {
+				HNode hNode = factory.getHNode(term.getTemplateTermValue());
+				if (hNode != null) {
+					String colNameStr = "";
+					try {
+						JSONArray colNameArr = hNode.getJSONArrayRepresentation(factory);
+						if (colNameArr.length() == 1) {
+							colNameStr = (String) 
+									(((JSONObject)colNameArr.get(0)).get("columnName"));
+						} else {
+							JSONArray colNames = new JSONArray();
+							for (int i=0; i<colNameArr.length();i++) {
+								colNames.put((String)
+										(((JSONObject)colNameArr.get(i)).get("columnName")));
+							}
+							colNameStr = colNames.toString();
+						}
+						str.append(colNameStr);
+					} catch (JSONException e) {
+						continue;
+					}
+				}
+				else {
+					str.append(term.getTemplateTermValue());
+				}
+			}
+		}
+		return str.toString();
+	}
+
+	public boolean isSingleUriString() {
+		if (termSet.size() == 1 && termSet.get(0) instanceof StringTemplateTerm)
+			return ((StringTemplateTerm)termSet.get(0)).hasFullUri();
+		
+		return false;
+	}
+
+	public boolean isSingleColumnTerm() {
+		if (termSet.size() == 1 && termSet.get(0) instanceof ColumnTemplateTerm)
+			return true;
+		return false;
 	}
 }

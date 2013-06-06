@@ -31,12 +31,14 @@ import java.util.Set;
 public class TriplesMapGraph {
 	private Set<TriplesMapLink> links;
 	private Map<String, List<TriplesMapLink>> neighboringTriplesMapCache;
-	private Map<String, List<TriplesMapLink>> incomingTriplesMapCache;
 	
 	public TriplesMapGraph() {
 		this.links = new HashSet<TriplesMapLink>();
-		this.incomingTriplesMapCache = new HashMap<String, List<TriplesMapLink>>();
 		this.neighboringTriplesMapCache = new HashMap<String, List<TriplesMapLink>>();
+	}
+
+	public Set<TriplesMapLink> getLinks() {
+		return links;
 	}
 
 	public void addLink(TriplesMapLink link) {
@@ -45,14 +47,6 @@ public class TriplesMapGraph {
 	}
 	
 	private void updateCache(TriplesMapLink link) {
-		// Add to incoming links cache
-//		List<TriplesMapLink> incomingLinks = incomingTriplesMapCache.get(link.getTargetMap().getId());
-//		if (incomingLinks == null) {
-//			incomingLinks = new ArrayList<TriplesMapLink>();
-//		}
-//		incomingLinks.add(link);
-//		incomingTriplesMapCache.put(link.getTargetMap().getId(), incomingLinks);
-		
 		// Add source neighboring links to the cache
 		List<TriplesMapLink> sourceNeighbouringLinks = neighboringTriplesMapCache.get(link.getSourceMap().getId());
 		if (sourceNeighbouringLinks == null) {
@@ -69,13 +63,6 @@ public class TriplesMapGraph {
 		targetNeighbouringLinks.add(link);
 		neighboringTriplesMapCache.put(link.getTargetMap().getId(), targetNeighbouringLinks);
 	}
-
-//	public List<TriplesMapLink> getAllIncomingTriplesMap(String triplesMapId) {
-//		if (incomingTriplesMapCache.get(triplesMapId) == null)
-//			return new ArrayList<TriplesMapLink>();
-//		
-//		return incomingTriplesMapCache.get(triplesMapId);
-//	}
 	
 	public List<TriplesMapLink> getAllNeighboringTriplesMap(String triplesMapId) {
 		if (neighboringTriplesMapCache.get(triplesMapId) == null)

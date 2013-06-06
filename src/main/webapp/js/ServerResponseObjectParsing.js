@@ -640,14 +640,22 @@ function parse(data) {
 			$.sticky("CSV file published");
 		} else if(element["updateType"] == "PublishMDBUpdate") {
 			$("a.MDBDownloadLink", titleDiv).remove();
-			console.log("test");
 			var titleDiv = $("div#" + element["vWorksheetId"] + " div.WorksheetTitleDiv");
 			// Remove existing link if any
 			hideLoading(element["vWorksheetId"]);
 			var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("ACCESS MDB").addClass("MDBDownloadLink  DownloadLink").attr("target", "_blank");
 			$("div.tableTitleTextDiv", titleDiv).after(downloadLink);
 			$.sticky("MDB file published");
-		} else if(element["updateType"] == "PublishSpatialDataUpdate") {
+		} else if(element["updateType"] == "PublishR2RMLUpdate") {
+            // Remove existing link if any
+            $("a.R2RMLDownloadLink", titleDiv).remove();
+
+            var titleDiv = $("div#" + element["vWorksheetId"] + " div.WorksheetTitleDiv");
+            hideLoading(element["vWorksheetId"]);
+            var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("R2RML Model").addClass("R2RMLDownloadLink  DownloadLink").attr("target", "_blank");
+            $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
+            $.sticky("R2RML Model published");
+        } else if(element["updateType"] == "PublishSpatialDataUpdate") {
                 $("a.SpatialDataDownloadLink", titleDiv).remove();
                 console.log("test");
                 var titleDiv = $("div#" + element["vWorksheetId"] + " div.WorksheetTitleDiv");

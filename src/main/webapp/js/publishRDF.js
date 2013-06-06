@@ -120,7 +120,6 @@ function getRDFPreferences() {
 	    					$("input#rdfPrefix").val(element["PreferenceValues"]["rdfPrefix"]);
 	    					$("input#rdfNamespace").val(element["PreferenceValues"]["rdfNamespace"]);
 	    					$("input#saveToRDFStore").val(element["PreferenceValues"]["saveToStore"]);
-	    					$("input#saveToRDFStore").val(element["PreferenceValues"]["saveToStore"]);
 	    					$("input#addInverseProperties").val(element["PreferenceValues"]["addInverseProperties"]);
 	    				}
 	    			}

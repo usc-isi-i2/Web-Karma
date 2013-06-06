@@ -36,5 +36,6 @@ public interface Prefixes {
 	public static final String SWRL = "swrl";
 	public static final String EXAMPLE = "ex";
 	public static final String KARMA_DEV = "km-dev";
+	public static final String RR = "rr";
 
 }

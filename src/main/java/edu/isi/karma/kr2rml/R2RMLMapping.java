@@ -26,11 +26,18 @@ import java.util.List;
 
 public class R2RMLMapping {
 	
-	private List<TriplesMap> triplesMap = new ArrayList<TriplesMap>();
+	private List<TriplesMap> triplesMapList = new ArrayList<TriplesMap>();
 	private List<Prefix> prefixes = new ArrayList<Prefix>();
 	
+//	private static Logger logger = LoggerFactory
+//			.getLogger(R2RMLMapping.class);
+	
+	public List<TriplesMap> getTriplesMapList() {
+		return triplesMapList;
+	}
+
 	public void addTriplesMap(TriplesMap tmap) {
-		triplesMap.add(tmap);
+		triplesMapList.add(tmap);
 	}
 	
 	public void addPrefix(Prefix prefix) {
@@ -41,7 +48,7 @@ public class R2RMLMapping {
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 		str.append("R2RMLMapping [triplesMapSet=\n");
-		for (TriplesMap trMap:triplesMap)
+		for (TriplesMap trMap:triplesMapList)
 			str.append("\t" + trMap.toString() + "\n");
 		str.append("]");
 		return str.toString();

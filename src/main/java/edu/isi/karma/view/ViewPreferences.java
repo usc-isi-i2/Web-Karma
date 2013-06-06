@@ -130,7 +130,7 @@ public class ViewPreferences {
 	
 	
 	public JSONObject getCommandPreferencesJSONObject(String commandName){
-		System.out.println("Command name:" + commandName);
+//		System.out.println("Command name:" + commandName);
 		try {
 			JSONArray commArray = json.getJSONArray("Commands");
 			for(int i=0; i<commArray.length(); i++) {

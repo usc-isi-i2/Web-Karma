@@ -68,6 +68,7 @@ public class KR2RMLMappingGenerator {
 	private Map<String, SubjectMap> subjectMapIndex;
 	private Map<String, TriplesMap> triplesMapIndex;
 	private KR2RMLMappingAuxillaryInformation auxInfo;
+	private int synonymIdCounter;
 	
 	private final static String TRIPLES_MAP_PREFIX = "TriplesMap";
 	private final static String REFOBJECT_MAP_PREFIX = "RefObjectMap";
@@ -92,6 +93,10 @@ public class KR2RMLMappingGenerator {
 		generateMappingFromSteinerTree(generateInverse);
 	}
 	
+	public Node getSteinerTreeRoot() {
+		return steinerTreeRoot;
+	}
+
 	public KR2RMLMappingAuxillaryInformation getMappingAuxillaryInformation() {
 		return this.auxInfo;
 	}
@@ -123,7 +128,7 @@ public class KR2RMLMappingGenerator {
 					(subjMap.getTemplate().getAllTerms().get(0) instanceof StringTemplateTerm)) {
 				String str = subjMap.getTemplate().getAllTerms().get(0).getTemplateTermValue();
 				if (str.equals(sourceNamespace)) 
-					subjMap.setAsBlankNode();
+					subjMap.setAsBlankNode(true);
 			}
 		}
 	}
@@ -173,9 +178,13 @@ public class KR2RMLMappingGenerator {
 		for (Node node:nodes) {
 			if (node instanceof InternalNode) {
 				SubjectMap subj = new SubjectMap(node.getId());
+				
+				if (node.getId().equals(steinerTreeRoot.getId()))
+					subj.setAsSteinerTreeRootNode(true);
+				
 				// Add the user provided namespace as the first template term
 				subj.getTemplate().addTemplateTermToSet(new StringTemplateTerm(sourceNamespace));
-				StringTemplateTerm typeTerm = new StringTemplateTerm(node.getLabel().getUri());
+				StringTemplateTerm typeTerm = new StringTemplateTerm(node.getLabel().getUri(), true);
 				TemplateTermSet typeTermSet = new TemplateTermSet();
 				typeTermSet.addTemplateTermToSet(typeTerm);
 				subj.addRdfsType(typeTermSet);
@@ -263,7 +272,7 @@ public class KR2RMLMappingGenerator {
 							}
 						} else {
 							pred.getTemplate().addTemplateTermToSet(
-									new StringTemplateTerm(olink.getLabel().getUri()));
+									new StringTemplateTerm(olink.getLabel().getUri(), true));
 						}
 						poMap.setPredicate(pred);
 						if (generateInverse)
@@ -300,11 +309,11 @@ public class KR2RMLMappingGenerator {
 							}
 						} else {
 							pred.getTemplate().addTemplateTermToSet(
-									new StringTemplateTerm(olink.getLabel().getUri()));
+									new StringTemplateTerm(olink.getLabel().getUri(), true));
 						}
 						poMap.setPredicate(pred);
 						
-						// Save link from the HNodeId to the its PredicateObjectMap in the auxillary information
+						// Save link from the HNodeId to the its PredicateObjectMap in the auxiliary information
 						saveLinkFromHNodeIdToPredicateObjectMap(hNodeId, poMap);
 						
 						// Check for synonym types for this column
@@ -346,9 +355,10 @@ public class KR2RMLMappingGenerator {
 				poMap.setObject(objMap);
 				
 				// Create the predicate
-				Predicate pred = new Predicate(synType.getType().getUri() + "-synonym");
+				Predicate pred = new Predicate(synType.getType().getUri() + "-synonym" + 
+						getNewSynonymIdCount());
 				pred.getTemplate().addTemplateTermToSet(
-						new StringTemplateTerm(synType.getType().getUri()));
+						new StringTemplateTerm(synType.getType().getUri(), true));
 				poMap.setPredicate(pred);
 				
 				// Add the predicate object map to the triples map
@@ -358,6 +368,10 @@ public class KR2RMLMappingGenerator {
 				saveLinkFromHNodeIdToPredicateObjectMap(hNodeId, poMap);
 			}
 		}
+	}
+
+	private int getNewSynonymIdCount() {
+		return synonymIdCounter++;
 	}
 
 	private void addInversePropertyIfExists(SubjectMap subjMap,
@@ -377,7 +391,7 @@ public class KR2RMLMappingGenerator {
 			// Create the predicate
 			Predicate pred = new Predicate(olink.getId()+"+inverse");
 			pred.getTemplate().addTemplateTermToSet(
-					new StringTemplateTerm(inversePropLabel.getUri()));
+					new StringTemplateTerm(inversePropLabel.getUri(), true));
 			invPoMap.setPredicate(pred);
 			// Create the object using RefObjMap
 			RefObjectMap refObjMap = new RefObjectMap(getNewRefObjectMapId(), subjTrMap);
@@ -396,7 +410,7 @@ public class KR2RMLMappingGenerator {
 			// Create the predicate
 			Predicate pred = new Predicate(olink.getId()+"+inverseOf");
 			pred.getTemplate().addTemplateTermToSet(
-					new StringTemplateTerm(inverseOfPropLabel.getUri()));
+					new StringTemplateTerm(inverseOfPropLabel.getUri(), true));
 			invOfPoMap.setPredicate(pred);
 			// Create the object using RefObjMap
 			RefObjectMap refObjMap = new RefObjectMap(getNewRefObjectMapId(), subjTrMap);
