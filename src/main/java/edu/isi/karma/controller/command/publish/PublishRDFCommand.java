@@ -126,7 +126,7 @@ public class PublishRDFCommand extends Command {
 		// Prepare the file path and names
 		final String rdfFileName = vWorkspace.getPreferencesId() + vWorksheetId + ".ttl"; 
 		final String rdfFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +  
-				"RDF/" + rdfFileName;
+				"publish/RDF/" + rdfFileName;
 
 		// Get the alignment for this worksheet
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
@@ -172,7 +172,7 @@ public class PublishRDFCommand extends Command {
 					JSONObject outputObject = new JSONObject();
 					try {
 						outputObject.put(JsonKeys.updateType.name(), "PublishRDFUpdate");
-						outputObject.put(JsonKeys.fileUrl.name(), "RDF/" + rdfFileName);
+						outputObject.put(JsonKeys.fileUrl.name(), "publish/RDF/" + rdfFileName);
 						outputObject.put(JsonKeys.vWorksheetId.name(), vWorksheetId);
 						outputObject.put(JsonKeys.errorReport.name(), errorReport.toJSONString());
 						pw.println(outputObject.toString(4));
