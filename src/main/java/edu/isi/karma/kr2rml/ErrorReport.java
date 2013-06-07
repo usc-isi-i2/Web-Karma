@@ -30,6 +30,7 @@ import org.json.JSONObject;
 
 public class ErrorReport {
 	private Set<ReportMessage> reports;
+	
 	private enum JsonKeys {
 		title, description, priority
 	}
@@ -39,77 +40,25 @@ public class ErrorReport {
 	}
 	
 	public ErrorReport() {
-		this.reports = new HashSet<ErrorReport.ReportMessage>();
+		this.reports = new HashSet<ReportMessage>();
 	}
 	
-	public void addReportMessage(String title, String description, Priority priority) {
+	public ReportMessage createReportMessage(String title, String description, Priority priority) {
 		ReportMessage rep = new ReportMessage(title, description, priority);
-		reports.add(rep);
+		return rep;
 	}
 	
-	private class ReportMessage {
-		private String title;
-		private String description;
-		private Priority priority;
-		
-		public ReportMessage(String title, String description, Priority priority) {
-			super();
-			this.title = title;
-			this.description = description;
-			this.priority = priority;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result
-					+ ((description == null) ? 0 : description.hashCode());
-			result = prime * result
-					+ ((priority == null) ? 0 : priority.hashCode());
-			result = prime * result + ((title == null) ? 0 : title.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (!(obj instanceof ReportMessage))
-				return false;
-			ReportMessage other = (ReportMessage) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
-			if (description == null) {
-				if (other.description != null)
-					return false;
-			} else if (!description.equals(other.description))
-				return false;
-			if (priority != other.priority)
-				return false;
-			if (title == null) {
-				if (other.title != null)
-					return false;
-			} else if (!title.equals(other.title))
-				return false;
-			return true;
-		}
-
-		private ErrorReport getOuterType() {
-			return ErrorReport.this;
-		}
+	public void addReportMessage(ReportMessage errMsg) {
+		reports.add(errMsg);
 	}
 	
 	public String toJSONString() throws JSONException {
 		JSONArray repArr = new JSONArray();
 		for (ReportMessage rep:reports) {
 			JSONObject repObj = new JSONObject();
-			repObj.put(JsonKeys.title.name(), rep.title);
-			repObj.put(JsonKeys.description.name(), rep.description);
-			repObj.put(JsonKeys.priority.name(), rep.priority);
+			repObj.put(JsonKeys.title.name(), rep.getTitle());
+			repObj.put(JsonKeys.description.name(), rep.getDescription());
+			repObj.put(JsonKeys.priority.name(), rep.getPriority());
 			
 			repArr.put(repObj);
 		}
