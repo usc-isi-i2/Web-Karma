@@ -348,7 +348,7 @@ and related projects, please see: http://www.isi.edu/integration
 	</head>
 
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.96</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.97</span></h1>
 		<table id="topMenuBar">
 			<tr>
 				<td>
@@ -537,43 +537,29 @@ and related projects, please see: http://www.isi.edu/integration
 			<table>
 				<tbody>
 					<tr>
-						<td> URL:
-						<input type="textarea" id="ServiceUrl" value="" class="DatabaseImportOption" maxlength="100" size="50"/>
-						</td>
+						<td>Web Service URL:</td>
 						<td>
-						<button id="ServiceImportFieldsButton" type="button">
-							Get Available Sources
-						</button></td>
+                            <input type="textarea" id="serviceUrl" value="" class="smallSizedFont" maxlength="300" size="50"/>
+						</td>
 					</tr>
+                    <tr>
+                        <td> Worksheet Name:</td>
+                        <td>
+                            <input type="textarea" id="serviceWorksheetName" value="" class="smallSizedFont" maxlength="100" size="20"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="checkbox" id="includeInputAttributesService">
+                            <label for="includeInputAttributesService">Include input attributes in the output worksheet</label>
+                        </td>
+                    </tr>
+                    <tr id="serviceErrorRow" class="error" style="display: none">
+                       <td colspan="2">
+                            Please provide values for both text fields!
+                       </td>
+                    </tr>
 				</tbody>
-			</table>
-			<br>
-			<div class="ui-widget" id="ServiceImportErrorWindow" style="display: none">
-				<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-					<p id="serviceImportErrorWindow">
-						<span class="ui-icon ui-icon-alert"
-						style="float: left; margin-right: .3em;"></span>
-						<span id="ServiceImportErrorWindowText"></span>
-					</p>
-					<br />
-				</div>
-			</div>
-			<!-- For showing available sources -->
-			<table id="ServiceImportSourceList">
-				<tr>
-					<td> Choose Source: </td>
-				</tr>
-				<tr>
-					<td>
-					<input type="textarea" id="serviceTableFilterTable" class="DatabaseImportOption dbTableColumn" size="12"/>
-					</td>
-				</tr>
-				<tr>
-					<td>
-					<div id="ServiceSourceList">
-						<table></table>
-					</div></td>
-				</tr>
 			</table>
 			<br>
 		</div>

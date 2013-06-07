@@ -103,7 +103,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			ServiceTableUtil.populateWorksheet(serviceTable, wk, ws.getFactory());
 			
 			// FIXME
-			String json = invocatioManager.getServiceJson();
+			String json = invocatioManager.getServiceJson(true);
 //			new JsonImport(json, wk, ws.getFactory());
 //			System.out.println(json);
 

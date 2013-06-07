@@ -481,7 +481,7 @@ span.bold {
 	font-weight: 900;
 }
 
-span.error {
+.error {
 	color: red;
 }
 

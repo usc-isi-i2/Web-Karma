@@ -245,8 +245,10 @@ public class InvocationManager {
 		return getServiceData(true, true, true);
 	}
 	
-	public String getServiceJson() {
-		return getServiceJson(true, true, true);
+	public String getServiceJson(boolean includeInputAttributes) {
+		if (includeInputAttributes)
+			return getServiceJson(true, true, true);
+		return getServiceJson(false, false, true);
 	}
 	
 	private List<Attribute> getInputAttributes() {

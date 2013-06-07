@@ -26,21 +26,16 @@ import edu.isi.karma.view.VWorkspace;
 
 public class ImportServiceCommandFactory extends CommandFactory {
 	private enum Arguments {
-		vWorksheetId, ServiceUrl,sourceName,commandType
+		serviceUrl, worksheetName, includeInputAttributes
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
-
-		String commandType = request.getParameter(Arguments.commandType.name());
-		
-		ImportServiceCommand comm = new ImportServiceCommand(getNewId(vWorkspace), 
-				commandType,
-				request.getParameter(Arguments.ServiceUrl.name()),
-				request.getParameter(Arguments.sourceName.name())
-				);
-		return comm;
+		return new ImportServiceCommand(getNewId(vWorkspace), 
+				request.getParameter(Arguments.serviceUrl.name()),
+				request.getParameter(Arguments.worksheetName.name()),
+				Boolean.parseBoolean(request.getParameter(Arguments.includeInputAttributes.name())));
 	}
 
 }

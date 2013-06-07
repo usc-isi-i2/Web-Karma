@@ -22,7 +22,8 @@
 #ServiceImportDiv td {
 	padding: 3px;
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 10px;
+	font-size: 12px;
+    padding: 5px;
 }
 
 td#ServiceImportErrorWindow {
