@@ -26,8 +26,7 @@ function openDatabaseTableImportDialog() {
 	$("#DatabasePassword").val("");
 	sendDBTableImportCommandCreateRequest();
 	$("#DatabaseImportDiv").dialog({ modal: true , title: 'Import Database Table', width: 900,
-		height: 650, buttons: { "Cancel": function() { $(this).dialog("close"); }, 
-			"OK":function() { $(this).dialog("close"); }}});
+		height: 600});
 }
 
 function styleAndAssignHandlerstoDatabaseImportObjects(){
