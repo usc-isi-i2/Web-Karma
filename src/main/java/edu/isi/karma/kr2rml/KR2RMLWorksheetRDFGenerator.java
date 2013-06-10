@@ -87,7 +87,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.outWriter = writer;;
 		this.errorReport = errorReport;
 		this.prefixToNamespaceMap = new HashMap<String, String>();
-		
+	
 		populatePrefixToNamespaceMap();
 	}
 	
@@ -219,9 +219,10 @@ public class KR2RMLWorksheetRDFGenerator {
 		} catch (ValueNotFoundKarmaException ve) {
 			ReportMessage msg = createReportMessage("Could not generate subject's RDF and URI for <i>predicate:" + 
 					 pom.getPredicate().getTemplate().toString().replaceAll("<", "{").replaceAll(">", "}") +
-					 ", subject: " + subjMap.getId()+"</i>", ve, 
+					 ", subject node: " + subjMap.getId()+"</i>", ve, 
 					 this.factory.getHNode(hNodeId).getColumnName());
 			predicatesFailed.put(pom.getPredicate().getId(), msg);
+			return;
 		} catch (NoValueFoundInNodeException e) {
 			logger.debug("No value found in a node required to generate subject's RDF or URI.");
 		}
@@ -235,9 +236,10 @@ public class KR2RMLWorksheetRDFGenerator {
 		} catch (ValueNotFoundKarmaException ve) {
 			ReportMessage msg = createReportMessage("Could not generate predicate's URI for <i>predicate:" + 
 					pom.getPredicate().getTemplate().toString().replaceAll("<", "{").replaceAll(">", "}") + 
-					", subject: " + subjMap.getId() + "</i>",  ve, 
+					", subject node: " + subjMap.getId() + "</i>",  ve, 
 					this.factory.getHNode(hNodeId).getColumnName());
 			predicatesFailed.put(pom.getPredicate().getId(), msg);
+			return;
 		} catch (NoValueFoundInNodeException e) {
 			logger.debug("No value found in a node required to generate predicate's URI.");
 		}
@@ -255,9 +257,10 @@ public class KR2RMLWorksheetRDFGenerator {
 				ReportMessage msg = createReportMessage("Could not generate object's URI for <i>predicate:" + 
 						pom.getPredicate().getTemplate().toString()
 						.replaceAll("<", "{").replaceAll(">", "}") + 
-						", subject: " + pom.getTriplesMap().getSubject().getId()+"</i>", ve
+						", subject node: " + pom.getTriplesMap().getSubject().getId()+"</i>", ve
 						, this.factory.getHNode(hNodeId).getColumnName());
 				predicatesFailed.put(pom.getPredicate().getId(), msg);
+				return;
 			} catch (NoValueFoundInNodeException e) {
 				logger.debug("No value found in a node required to generate object's URI for a predicate.");
 			}
@@ -279,9 +282,10 @@ public class KR2RMLWorksheetRDFGenerator {
 			} catch (ValueNotFoundKarmaException ve) {
 				ReportMessage msg = createReportMessage("Could not retrieve value for the <i>predicate:" + 
 						pom.getPredicate().getTemplate().toString().replaceAll("<", "{").replaceAll(">", "}") +
-						", subject: " + subjMap.getId()+"</i>", ve, 
+						", subject node: " + subjMap.getId()+"</i>", ve, 
 						this.factory.getHNode(hNodeId).getColumnName());
 				predicatesFailed.put(pom.getPredicate().getId(), msg);
+				return;
 			} catch (NoValueFoundInNodeException e) {
 				logger.debug("No value found in a node required to generate value for a predicate.");
 			}
@@ -384,7 +388,7 @@ public class KR2RMLWorksheetRDFGenerator {
 					String columnName = this.factory.getHNode(hNodeId).getColumnName();
 //					System.out.println("Value not found for " + hNodeId + " Column name:" + columnName);
 					throw new ValueNotFoundKarmaException("Could not retrieve value while constructing " +
-							"blank URI from column:" + columnName + ". ", hNodeId);
+							"blank URI of column:" + columnName + ". ", hNodeId);
 				}
 			}
 		}
