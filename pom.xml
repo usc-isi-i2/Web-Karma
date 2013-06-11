@@ -25,6 +25,9 @@
     <repository>
       <id>JGraphT Repository</id>
       <url>http://tanesha.net/maven2/</url>
+      <snapshots>
+         <enabled>false</enabled>
+      </snapshots>
  	</repository>
  	<repository>
       <id>maven2-repository.dev.java.net</id>
@@ -32,7 +35,8 @@
       <url>http://download.java.net/maven/2</url>
       <layout>default</layout>
       <snapshots>
-         <enabled>true</enabled>
+         <enabled>false</enabled>
+         <updatePolicy>never</updatePolicy>
       </snapshots>
       </repository>
       <repository>

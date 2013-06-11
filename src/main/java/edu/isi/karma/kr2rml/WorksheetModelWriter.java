@@ -56,6 +56,7 @@ public class WorksheetModelWriter {
 	private PrintWriter writer;
 	private RepFactory factory;
 	private OntologyManager ontMgr;
+	private String worksheetName;
 	private Repository myRepository;
 	
 	// Internal instance variables
@@ -84,6 +85,7 @@ public class WorksheetModelWriter {
 		URI sourceNameUri = f.createURI(Uris.KM_SOURCE_NAME_URI);
 		mappingRes = f.createBNode();
 		con.add(mappingRes, RDF.TYPE, r2rmlMapUri);
+		this.worksheetName = worksheetName;
 		Value srcNameVal = f.createLiteral(worksheetName);
 		con.add(mappingRes, sourceNameUri, srcNameVal);
 	}
@@ -108,6 +110,8 @@ public class WorksheetModelWriter {
 			URI predObjMapMapUri = f.createURI(Uris.RR_PRED_OBJ_MAP_URI);
 			URI blankNodeUri = f.createURI(Uris.RR_BLANK_NODE_URI);
 			URI termTypeUri = f.createURI(Uris.RR_TERM_TYPE_URI);
+			URI logicalTableUri = f.createURI(Uris.RR_LOGICAL_TABLE_URI);
+			URI tableNameUri = f.createURI(Uris.RR_TABLENAME_URI);
 			
 			URI coversColUri = f.createURI(Uris.KM_BLANK_NODE_COVERS_COLUMN_URI);
 			URI bnNamePrefixUri = f.createURI(Uris.KM_BLANK_NODE_PREFIX_URI);
@@ -123,6 +127,11 @@ public class WorksheetModelWriter {
 				con.add(trMapUri, RDF.TYPE, trTypeUri);
 				// Associate it with the source mapping URI
 				con.add(mappingRes, hasTrMapUri, trMapUri);
+				
+				// Add the Logical table information
+				BNode logTableBNode = f.createBNode();
+				con.add(logTableBNode, tableNameUri, f.createLiteral(worksheetName));
+				con.add(trMapUri, logicalTableUri, logTableBNode);
 				
 				// Add the subject map statements
 				SubjectMap sjMap = trMap.getSubject();
