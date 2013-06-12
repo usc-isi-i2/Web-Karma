@@ -232,6 +232,7 @@ public class KR2RMLWorksheetRDFGenerator {
 			return;
 		} catch (NoValueFoundInNodeException e) {
 			logger.debug("No value found in a node required to generate predicate's URI.");
+			return;
 		}
 		
 		// Generate subject RDF
@@ -248,6 +249,7 @@ public class KR2RMLWorksheetRDFGenerator {
 			return;
 		} catch (NoValueFoundInNodeException e) {
 			logger.debug("No value found in a node required to generate subject's RDF or URI.");
+			return;
 		}
 		
 		// Object property
@@ -270,6 +272,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				return;
 			} catch (NoValueFoundInNodeException e) {
 				logger.debug("No value found in a node required to generate object's URI for a predicate.");
+				return;
 			}
 			
 			String triple = constructTripleWithURIObject(subjUri, predicateUri, objUri);
@@ -296,6 +299,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				return;
 			} catch (NoValueFoundInNodeException e) {
 				logger.debug("No value found in a node required to generate value for a predicate.");
+				return;
 			}
 			String triple = constructTripleWithLiteralObject(subjUri, predicateUri, value, "");
 			if (!existingTopRowTriples.contains(triple)) {
