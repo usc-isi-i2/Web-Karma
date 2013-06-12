@@ -63,8 +63,8 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 		List<HNodePath> columns = vWorksheet.getColumns();
 		for(HNodePath path:columns)
 			hNodeIdList.add(path.getLeaf().getId());
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), 
-				vWorksheet.getId());
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
+				vWorkspace.getWorkspace().getId(), vWorksheet.getId());
 		
 		JSONObject topObj = new JSONObject();
 		try {
@@ -75,7 +75,9 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 			
 			// Reversing the inverse links for easy traversal through graph
 			Set<String> reversedLinks = new HashSet<String>();
-			DirectedWeightedMultigraph<Node, Link> rootedTree = GraphUtil.treeToRootedTree(tree, this.root, reversedLinks);
+			DirectedWeightedMultigraph<Node, Link> rootedTree = GraphUtil.treeToRootedTree(
+					tree, this.root, reversedLinks);
+			GraphUtil.printGraphSimple(rootedTree);
 
 			/*** Add the nodes and the links from the Steiner tree ***/
 			List<String> hNodeIdsAdded = new ArrayList<String>();
@@ -92,6 +94,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 					/** Get info about the nodes that this node covers or sits above **/
 					List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
 					int height = getHeight(node, nodesWithSemTypesCovered, rootedTree);
+					
 					if(height >= maxTreeHeight) {
 						maxTreeHeight = height;
 					}
@@ -274,10 +277,12 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 		}
 	}
 
-	private int getHeight(Node vertex, List<Node> nodesWithSemTypesCovered, DirectedWeightedMultigraph<Node, Link> treeClone) {
+	private int getHeight(Node vertex, List<Node> nodesWithSemTypesCovered, 
+			DirectedWeightedMultigraph<Node, Link> treeClone) {
 		BreadthFirstIterator<Node, Link> itr = new BreadthFirstIterator<Node, Link>(treeClone, vertex);
 		Node lastNodeWithSemanticType = null;
 		int height = 0;
+		
 		while(itr.hasNext()) {
 			Node v = itr.next();
 			if(v.getType() == NodeType.ColumnNode) {
@@ -287,15 +292,33 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 		}
 		
 		if(lastNodeWithSemanticType != null) {
-			height = new DijkstraShortestPath<Node, Link>(treeClone, vertex, lastNodeWithSemanticType).getPathEdgeList().size();
-			if(lastNodeWithSemanticType.getType() == NodeType.InternalNode && lastNodeWithSemanticType.getType() == NodeType.ColumnNode && vertex != lastNodeWithSemanticType) {
+			height = new DijkstraShortestPath<Node, Link>(treeClone, vertex, 
+					lastNodeWithSemanticType).getPathEdgeList().size();
+			if(lastNodeWithSemanticType.getType() == NodeType.InternalNode && 
+					lastNodeWithSemanticType.getType() == NodeType.ColumnNode && 
+					vertex != lastNodeWithSemanticType) {
 				height += getHeight(lastNodeWithSemanticType, new ArrayList<Node>(), treeClone);  
 			}
 			
-			if(vertex == lastNodeWithSemanticType && vertex.getType() == NodeType.InternalNode && vertex.getType() == NodeType.ColumnNode) {
+			if(vertex == lastNodeWithSemanticType && vertex.getType() == NodeType.InternalNode && 
+					vertex.getType() == NodeType.ColumnNode) {
 				height = 1;
 			}
-				
+		} else {
+			while (nodesWithSemTypesCovered.isEmpty()) {
+				Set<Link> incomingEdges = treeClone.incomingEdgesOf(vertex);
+				if (incomingEdges.isEmpty())
+					return height;
+				else {
+					for (Link incomingLink: incomingEdges) {
+						Node source = incomingLink.getSource();
+						height = getHeight(source, nodesWithSemTypesCovered, treeClone) + 1;
+						if (!nodesWithSemTypesCovered.isEmpty())
+							break;
+						vertex = source;
+					}
+				}
+			}
 		}
 		return height;
 	}
@@ -314,7 +337,8 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 	}
 	
 	private JSONObject getLinkJsonObject(String label, String id, int sourceIndex, int targetIndex
-			, String linkType, String sourceNodeId, String targetNodeId, String linkStatus) throws JSONException {
+			, String linkType, String sourceNodeId, String targetNodeId, String linkStatus) 
+					throws JSONException {
 		JSONObject linkObj = new JSONObject();
 		linkObj.put(JsonKeys.label.name(), label);
 		linkObj.put(JsonKeys.id.name(), id);

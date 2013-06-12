@@ -139,22 +139,41 @@ public class KR2RMLMappingGenerator {
 				this.steinerTreeRoot, reversedLinks);
 		
 		for (Node treeNode:rootedTree.vertexSet()) {
-			List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
+//			List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
 			if (treeNode instanceof InternalNode && subjectMapIndex.containsKey(treeNode.getId())) {
 				SubjectMap subjMap = subjectMapIndex.get(treeNode.getId());
 				if (subjMap.isBlankNode()) {
 					List<String> hNodeIdsCovered = new ArrayList<String>();
-					BreadthFirstIterator<Node, Link> itr = 
-							new BreadthFirstIterator<Node, Link>(rootedTree, treeNode);
-					while(itr.hasNext()) {
-						Node v = itr.next();
-						if(v.getType() == NodeType.ColumnNode) {
-							nodesWithSemTypesCovered.add(v);
-							hNodeIdsCovered.add(v.getId());
-						}
-					}
+					calculateColumnNodesCoveredByNode(hNodeIdsCovered, treeNode, rootedTree);
+					
 					auxInfo.getBlankNodesColumnCoverage().put(treeNode.getId(), hNodeIdsCovered);
 					auxInfo.getBlankNodesUriPrefixMap().put(treeNode.getId(), treeNode.getDisplayId());
+				}
+			}
+		}
+	}
+	
+	private void calculateColumnNodesCoveredByNode(List<String> hNodeIdsCovered, Node treeNode, 
+			DirectedWeightedMultigraph<Node, Link> rootedTree) {
+		BreadthFirstIterator<Node, Link> itr = 
+				new BreadthFirstIterator<Node, Link>(rootedTree, treeNode);
+		while(itr.hasNext()) {
+			Node v = itr.next();
+			if(v.getType() == NodeType.ColumnNode) {
+				hNodeIdsCovered.add(v.getId());
+			}
+		}
+		while (hNodeIdsCovered.isEmpty()) {
+			Set<Link> incomingEdges = rootedTree.incomingEdgesOf(treeNode);
+			if (incomingEdges.isEmpty())
+				return;
+			else {
+				for (Link incomingLink: incomingEdges) {
+					Node source = incomingLink.getSource();
+					calculateColumnNodesCoveredByNode(hNodeIdsCovered, source, rootedTree);
+					if (!hNodeIdsCovered.isEmpty())
+						break;
+					treeNode = source; 
 				}
 			}
 		}
@@ -241,8 +260,7 @@ public class KR2RMLMappingGenerator {
 				Set<Link> outgoingEdges = steinerTree.outgoingEdgesOf(node);
 				for (Link olink:outgoingEdges) {
 					if (olink instanceof ObjectPropertySpecializationLink 
-							|| olink instanceof DataPropertyOfColumnLink 
-							|| olink instanceof ClassInstanceLink 
+							|| olink instanceof DataPropertyOfColumnLink  
 							|| olink instanceof ColumnSubClassLink)
 						continue;
 					
