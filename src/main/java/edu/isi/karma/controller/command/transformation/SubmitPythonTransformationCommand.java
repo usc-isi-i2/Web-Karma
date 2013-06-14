@@ -115,7 +115,7 @@ public class SubmitPythonTransformationCommand extends Command {
 			interpreter.exec(defGetValueStmt);
 			interpreter.exec(transformMethodStmt);
 			
-			List<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows()-1);
+			List<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows());
 			Map<String, String> rowToValueMap = new HashMap<String, String>();
 			// Invoke the transformation and store the values in map
 			for (Row row:rows) {
