@@ -97,11 +97,11 @@ public class KR2RMLWorksheetRDFGenerator {
 		// Prepare the output writer
 		BufferedWriter bw = null;
 		try {
-			if(this.outputFileName != null){
+			if(this.outWriter == null && this.outputFileName != null){
 				bw = new BufferedWriter(
 						new OutputStreamWriter(new FileOutputStream(this.outputFileName),"UTF-8"));
 				outWriter = new PrintWriter (bw);
-			}else{
+			} else if (this.outWriter == null && this.outputFileName == null) {
 				outWriter = new PrintWriter (System.out);			
 			}
 			
