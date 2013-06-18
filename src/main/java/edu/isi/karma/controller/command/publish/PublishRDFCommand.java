@@ -148,7 +148,7 @@ public class PublishRDFCommand extends Command {
 		
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
 				vWorkspace.getRepFactory(), vWorkspace.getWorkspace().getOntologyManager(),
-				rdfFileLocalPath, mappingGen.getMappingAuxillaryInformation(), errorReport);
+				rdfFileLocalPath, false, mappingGen.getMappingAuxillaryInformation(), errorReport);
 		
 		// Generate the RDF using KR2RML data structures
 		try {

@@ -43,6 +43,7 @@ import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.command.MultipleValueEditColumnCommand;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
@@ -241,6 +242,12 @@ public class SubmitCleaningCommand extends Command {
 					selectedPath = path;
 					this.newHNodeId = path.getLeaf().getId();
 				}
+			}
+			
+			// Set the new column as derived from original column
+			HNode newHNode = vWorkspace.getRepFactory().getHNode(newHNodeId);
+			if (newHNode != null) {
+				newHNode.setAsDerivedFromAnotherColumn(hNodeId);
 			}
 			JSONArray inputParamArr = this.createMultiCellCmd(rvco,selectedPath.getLeaf().getId());
 			CommandFactory cf = ctrl.getCommandFactoryMap().get(MultipleValueEditColumnCommand.class.getSimpleName());

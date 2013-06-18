@@ -26,7 +26,8 @@ public interface Uris {
 	public static final String THING_URI = Namespaces.OWL + "Thing"; 
 	public static final String RDFS_SUBCLASS_URI = Namespaces.RDFS + "subClassOf"; 
 	public static final String RDF_TYPE_URI = Namespaces.RDF + "type"; 
-	public static final String RDFS_CLASS_URI = Namespaces.RDFS + "Class"; 
+	public static final String RDFS_CLASS_URI = Namespaces.RDFS + "Class";
+	public static final String RDFS_LABEL_URI = Namespaces.RDFS + "label";
 
 	// Karma Internal URIs
 	public static final String CLASS_INSTANCE_LINK_URI = Namespaces.KARMA_DEV + "classLink"; 
@@ -57,4 +58,7 @@ public interface Uris {
 	public static final String KM_SOURCE_NAME_URI = Namespaces.KARMA_DEV + "sourceName";
 	public static final String KM_HAS_TRIPLES_MAP_URI = Namespaces.KARMA_DEV + "hasTriplesMap";
 	public static final String KM_HAS_TRANSFORMATION_URI = Namespaces.KARMA_DEV + "hasColumnTransformation";
+	
+	public static final String PROV_ENTITY_URI = Namespaces.PROV + "Entity";
+	public static final String PROV_WAS_DERIVED_FROM_URI = Namespaces.PROV + "wasDerivedFrom";
 }

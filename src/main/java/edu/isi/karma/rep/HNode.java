@@ -49,6 +49,9 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 	// this to make sure that we don't over-write columns that came from source
 	// data.
 	private final boolean automaticallyAdded;
+	
+	private boolean derivedFromAnotherColumn;
+	private String originalColumnHNodeId;
 
 	HNode(String id, String hTableId, String columnName,
 			boolean automaticallyAdded) {
@@ -83,6 +86,23 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 	
 	boolean isAutomaticallyAdded() {
 		return automaticallyAdded;
+	}
+	
+	public void setAsDerivedFromAnotherColumn(String originalColumnHNodeId) {
+		this.derivedFromAnotherColumn = true;
+		this.originalColumnHNodeId = originalColumnHNodeId;
+	}
+
+	public boolean isDerivedFromAnotherColumn() {
+		return derivedFromAnotherColumn;
+	}
+
+	public String getOriginalColumnHNodeId() {
+		return originalColumnHNodeId;
+	}
+
+	public void setOriginalColumnHNodeId(String originalColumnHNodeId) {
+		this.originalColumnHNodeId = originalColumnHNodeId;
 	}
 
 	public void setNestedTable(HTable nestedTable) {
