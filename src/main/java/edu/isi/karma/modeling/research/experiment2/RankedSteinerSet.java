@@ -103,18 +103,35 @@ public class RankedSteinerSet implements Comparable<RankedSteinerSet>{
 			return 0;
 	}
 	
+//	@Override
+//	public int compareTo(RankedSteinerSet s) {
+//		
+//		int size1 = this.nodes == null ? 0 : this.nodes.size();
+//		int size2 = s.getNodes() == null ? 0 : s.getNodes().size();
+//		
+//		if (size1 < size2)
+//			return -1;
+//		else if (size1 > size2)
+//			return 1;
+//		else
+//			return -compareCohesions(this.cohesion, s.cohesion);
+//	}
+
 	@Override
 	public int compareTo(RankedSteinerSet s) {
 		
 		int size1 = this.nodes == null ? 0 : this.nodes.size();
 		int size2 = s.getNodes() == null ? 0 : s.getNodes().size();
 		
-		if (size1 < size2)
+		int k = compareCohesions(this.cohesion, s.cohesion);
+		if (k > 0)
 			return -1;
-		else if (size1 > size2)
+		else if (k < 0)
 			return 1;
-		else
-			return -compareCohesions(this.cohesion, s.cohesion);
-		}
-	
+		else if (size1 < size2)
+			return -1;
+		else 
+			return 1;
+	}
+
 }

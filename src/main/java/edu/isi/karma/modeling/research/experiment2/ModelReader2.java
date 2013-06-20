@@ -48,9 +48,9 @@ public class ModelReader2 {
 //	public static String varPrefix = "var:";
 	public static String attPrefix = "att:";
 	
-	private static String importDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/input/";
-	private static String exportDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/graphviz/";
-	private static String graphDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/jgraph/";
+	private static String importDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-exp2/input/";
+	private static String exportDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-exp2/graphviz/";
+	private static String graphDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-exp2/jgraph/";
 
 	private static String typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 	private static HashMap<String, String> prefixNsMapping;
@@ -108,19 +108,54 @@ public class ModelReader2 {
 		
 		prefixNsMapping = new HashMap<String, String>();
 		
-		prefixNsMapping.put("geo", "http://www.w3.org/2003/01/geo/wgs84_pos#");
-		prefixNsMapping.put("gn", "http://www.geonames.org/ontology#");
+//		// experiment 1
+//		prefixNsMapping.put("geo", "http://www.w3.org/2003/01/geo/wgs84_pos#");
+//		prefixNsMapping.put("gn", "http://www.geonames.org/ontology#");
+//		prefixNsMapping.put("schema", "http://schema.org/");
+//		prefixNsMapping.put("dbpprop", "http://dbpedia.org/property/");
+//		prefixNsMapping.put("dbpedia-owl", "http://dbpedia.org/ontology/");
+//		prefixNsMapping.put("skos", "http://www.w3.org/2004/02/skos/core#");
+//		prefixNsMapping.put("tzont", "http://www.w3.org/2006/timezone#");
+//		prefixNsMapping.put("qudt", "http://qudt.org/1.1/schema/qudt#");
+//		prefixNsMapping.put("yago", "http://dbpedia.org/class/yago/");
+//		prefixNsMapping.put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+//		prefixNsMapping.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+//		prefixNsMapping.put("foaf", "http://xmlns.com/foaf/0.1/");
+//		prefixNsMapping.put("km", "http://isi.edu/integration/karma/dev#");
+		
+				
+		// experiment 2 - museum data
+		prefixNsMapping.put("status", "http://metadataregistry.org/uri/RegStatus/");
+		prefixNsMapping.put("owl2xml", "http://www.w3.org/2006/12/owl2-xml#");
 		prefixNsMapping.put("schema", "http://schema.org/");
-		prefixNsMapping.put("dbpprop", "http://dbpedia.org/property/");
-		prefixNsMapping.put("dbpedia-owl", "http://dbpedia.org/ontology/");
-		prefixNsMapping.put("skos", "http://www.w3.org/2004/02/skos/core#");
-		prefixNsMapping.put("tzont", "http://www.w3.org/2006/timezone#");
-		prefixNsMapping.put("qudt", "http://qudt.org/1.1/schema/qudt#");
-		prefixNsMapping.put("yago", "http://dbpedia.org/class/yago/");
+		prefixNsMapping.put("aac-ont", "http://www.americanartcollaborative.org/ontology/");
 		prefixNsMapping.put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-		prefixNsMapping.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		prefixNsMapping.put("reg", "http://metadataregistry.org/uri/profile/RegAp/");
 		prefixNsMapping.put("foaf", "http://xmlns.com/foaf/0.1/");
-		prefixNsMapping.put("km", "http://isi.edu/integration/karma/dev#");
+		prefixNsMapping.put("dcterms", "http://purl.org/dc/terms/");
+		prefixNsMapping.put("xsd", "http://www.w3.org/2001/XMLSchema#");
+		prefixNsMapping.put("DOLCE-Lite", "http://www.loa-cnr.it/ontologies/DOLCE-Lite.owl#");
+		prefixNsMapping.put("dcmitype", "http://purl.org/dc/dcmitype/");
+		prefixNsMapping.put("wgs84_pos", "http://www.w3.org/2003/01/geo/wgs84_pos#");
+		prefixNsMapping.put("FRBRentitiesRDA", "http://rdvocab.info/uri/schema/FRBRentitiesRDA/");
+		prefixNsMapping.put("saam-ont", "http://americanart.si.edu/ontology/");
+		prefixNsMapping.put("wot", "http://xmlns.com/wot/0.1/");
+		prefixNsMapping.put("edm", "http://www.europeana.eu/schemas/edm/");
+		prefixNsMapping.put("dc", "http://purl.org/dc/elements/1.1/");
+		prefixNsMapping.put("ElementsGr2", "http://rdvocab.info/ElementsGr2/");
+		prefixNsMapping.put("skos", "http://www.w3.org/2008/05/skos#");
+		prefixNsMapping.put("crm", "http://www.cidoc-crm.org/rdfs/cidoc-crm#");
+		prefixNsMapping.put("vs", "http://www.w3.org/2003/06/sw-vocab-status/ns#");
+		prefixNsMapping.put("frbr_core", "http://purl.org/vocab/frbr/core#");
+		prefixNsMapping.put("owl", "http://www.w3.org/2002/07/owl#");
+		prefixNsMapping.put("ore", "http://www.openarchives.org/ore/terms/");
+		prefixNsMapping.put("abc", "http://metadata.net/harmony/abc#");
+		prefixNsMapping.put("dcam", "http://purl.org/dc/dcam/");
+		prefixNsMapping.put("rdfg", "http://www.w3.org/2004/03/trix/rdfg-1/");
+		prefixNsMapping.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		prefixNsMapping.put("rr", "http://www.w3.org/ns/r2rml#");
+		prefixNsMapping.put("km-dev", "http://isi.edu/integration/karma/dev#");
+
 	}
 	
 	public static List<ServiceModel2> importServiceModels(String importDir) throws IOException {
@@ -173,6 +208,8 @@ public class ModelReader2 {
 					if (curLine.trim().startsWith("</N3>"))
 						break;
 //					System.out.println(curLine);
+					if (curLine.trim().startsWith("#"))
+						continue;
 					
 					String[] parts = curLine.trim().split("\\s+");
 					if (parts == null || parts.length < 3) {

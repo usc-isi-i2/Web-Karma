@@ -303,6 +303,29 @@ public class RankedModel implements Comparable<RankedModel>{
 //	@Override
 //	public int compareTo(RankedModel m) {
 //		
+//		if (this.cost < m.cost)
+//			return -1;
+//		else if (m.cost < this.cost)
+//			return 1;
+//		else {
+//			int k = compareCoherence(this.coherence, m.coherence);
+//			if (k > 0)
+//				return -1;
+//			else if (k < 0)
+//				return 1;
+//			else if (this.cost < m.cost)
+//				return -1;
+//			else if (m.cost < this.cost)
+//				return 1;
+//			else {
+//				return 0;
+//			}
+//		}
+//	}
+	
+//	@Override
+//	public int compareTo(RankedModel m) {
+//		
 //		if (this.frequency > m.getFrequency())
 //			return -1;
 //		else if (m.getFrequency() > this.frequency)

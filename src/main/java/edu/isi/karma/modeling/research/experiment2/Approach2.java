@@ -70,13 +70,13 @@ public class Approach2 {
 
 	private static Logger logger = Logger.getLogger(Approach2.class);
 
-	private static String ontologyDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/ontologies/";
+	private static String ontologyDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-exp2/ontologies/";
 
 	
-	private static String importDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/input/";
-	private static String exportDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/output/";
-	private static String graphDir1 = "/Users/mohsen/Desktop/graphs/iswc2013/";
-	private static String graphResultsDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/jgraph/";
+	private static String importDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-exp2/input/";
+	private static String exportDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-exp2/output/";
+	private static String graphDir1 = "/Users/mohsen/Desktop/graphs/iswc2013-exp2/";
+	private static String graphResultsDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-exp2/jgraph/";
 	
 	private HashMap<SemanticLabel2, Set<LabelStruct>> labelToLabelStructs;
 	
@@ -90,7 +90,7 @@ public class Approach2 {
 
 	
 	private static final int MAX_CANDIDATES = 5;
-	private static final int MAX_STEINER_NODES_SETS = 50;
+	private static final int MAX_STEINER_NODES_SETS = 100;
 	
 	private HashSet<Link> patternLinks;
 	private HashMap<String, Integer> linkCountMap;
@@ -546,30 +546,38 @@ public class Approach2 {
 		
 //		HashSet<Node> patternNodes = getPatternNodes();
 		Set<Node> newInternalNodes = new HashSet<Node>();
-		HashMap<SemanticLabel2, Set<LabelStruct>> matchedLabels = new HashMap<SemanticLabel2, Set<LabelStruct>>();
+//		HashMap<SemanticLabel2, Set<LabelStruct>> matchedLabels = new HashMap<SemanticLabel2, Set<LabelStruct>>();
 		
 		for (SemanticLabel2 sl : semanticLabels) {
+			
+			//TODO
+			
+//			if (sl.getLinkUri().contains("classLink"))
+//				System.out.println("debug");
 			
 			boolean createNew = false;
 			
 			Set<LabelStruct> labelStructs = null;
 			
-			if (matchedLabels.containsKey(sl)) {
-				Set<LabelStruct> temp = matchedLabels.get(sl);
-				if (temp.size() == 1)
-					createNew = true;
-				else {
-					LabelStruct ll = temp.iterator().next();
-					temp.remove(ll);
-					labelStructs = new HashSet<LabelStruct>();
-					labelStructs.add(ll);
-				}
-			} else {
-				labelStructs = this.labelToLabelStructs.get(sl);
-				matchedLabels.put(sl, labelStructs);
-			}
+//			if (matchedLabels.containsKey(sl)) {
+//				Set<LabelStruct> temp = matchedLabels.get(sl);
+//				if (temp.size() == 1)
+//					createNew = true;
+//				else {
+//					LabelStruct ll = temp.iterator().next();
+//					temp.remove(ll);
+//					labelStructs = new HashSet<LabelStruct>();
+//					labelStructs.add(ll);
+//				}
+//			} else {
+//				labelStructs = this.labelToLabelStructs.get(sl);
+//				if (labelStructs != null)
+//					matchedLabels.put(sl, labelStructs);
+//			}
 			
-			// semantic label is not in the raph
+			labelStructs = this.labelToLabelStructs.get(sl);
+
+			// semantic label is not in the graph
 			if (labelStructs == null || labelStructs.size() == 0 || createNew) {
 				
 				labelStructs = new HashSet<LabelStruct>();
@@ -623,17 +631,19 @@ public class Approach2 {
 							!newInternalNodes.contains(source) &&
 							source.getPatternIds().size() > 0) {
 						
-						boolean propertyLinkExists = false;
+//						boolean propertyLinkExists = false;
+						int countOfExistingPropertyLinks = 0;
 						List<Link> linkWithSameUris = this.graphBuilder.getUriToLinksMap().get(sl.getLinkUri());
 						if (linkWithSameUris != null)
 						for (Link l : linkWithSameUris) {
 							if (l.getSource().equals(source)) {
-								propertyLinkExists = true;
-								break;
+								countOfExistingPropertyLinks ++;
+//								propertyLinkExists = true;
+//								break;
 							}
 						}
 						
-						if (propertyLinkExists)
+						if (countOfExistingPropertyLinks >= 1)
 							continue;
 
 						String nodeId = nodeIdFactory.getNodeId(sl.getLeafName());
@@ -663,11 +673,12 @@ public class Approach2 {
 		return labelStructSets;
 	}
 	
-	private List<RankedSteinerSet> rankSteinerSets(Set<Set<Node>> steinerNodeSets) {
+	private List<RankedSteinerSet> rankSteinerSets(List<Set<Node>> steinerNodeSets) {
 		
 		List<RankedSteinerSet> rankedSteinerSets = new ArrayList<RankedSteinerSet>();
 		for (Set<Node> nodes : steinerNodeSets) {
-//			System.out.println(nodes.size());
+//			if (nodes.size() == 17)
+//				System.out.println(nodes.size());
 			RankedSteinerSet r = new RankedSteinerSet(nodes);
 			rankedSteinerSets.add(r);
 		}
@@ -681,26 +692,33 @@ public class Approach2 {
 		return rankedSteinerSets;
 	}
 	
-	private Set<Set<Node>> getSteinerNodeSets(List<Set<LabelStruct>> labelStructSets) {
+	private List<Set<Node>> getSteinerNodeSets(List<Set<LabelStruct>> labelStructSets, int numOfAttributes) {
 
 		if (labelStructSets == null)
 			return null;
 		
 		Set<List<LabelStruct>> labelStructLists = Sets.cartesianProduct(labelStructSets);
+		logger.info("cartesian product of label structs is done, size: " + labelStructLists.size());
 		
-		Set<Set<Node>> steinerNodeSets = new HashSet<Set<Node>>();
+		List<Set<Node>> steinerNodeSets = new ArrayList<Set<Node>>();
 		
+		int numOfTargets;
 		for (List<LabelStruct> labelStructs : labelStructLists) {
+//			System.out.println(i++);
+			numOfTargets = 0;
 			Set<Node> steinerNodes = new HashSet<Node>();
 //			Set<String> debug = new HashSet<String>();
 			for (LabelStruct ls : labelStructs) {
 				steinerNodes.add(ls.getSource());
+				if (!steinerNodes.contains(ls.getTarget()))
+					numOfTargets ++;
 				steinerNodes.add(ls.getTarget());
 //				if (debug.contains(ls.getSource().getId() + ls.getLink().getId()))
 //					System.out.println("debug");
 //				debug.add(ls.getSource().getId() + ls.getLink().getId());
 			}
-			steinerNodeSets.add(steinerNodes);
+			if (numOfTargets == numOfAttributes)
+				steinerNodeSets.add(steinerNodes);
 		}
 		
 		return steinerNodeSets;
@@ -776,7 +794,7 @@ public class Approach2 {
 		return rankedModels;
 	}
 	
-	public List<RankedModel> hypothesize(List<SemanticLabel2> semanticLabels) {
+	public List<RankedModel> hypothesize(List<SemanticLabel2> semanticLabels, int numOfAttributes) {
 
 		List<Set<LabelStruct>> labelStructSets = getLabelStructSets(semanticLabels);
 		if (labelStructSets == null || labelStructSets.size() == 0) return null;
@@ -785,7 +803,7 @@ public class Approach2 {
 			logger.info("set of " + labelStructs.size() + " label structs.");
 		}
 
-		Set<Set<Node>> steinerNodeSets = getSteinerNodeSets(labelStructSets);
+		List<Set<Node>> steinerNodeSets = getSteinerNodeSets(labelStructSets, numOfAttributes);
 		if (steinerNodeSets == null || steinerNodeSets.size() == 0) return null;
 		
 		logger.info("number of possible steiner nodes sets:" + steinerNodeSets.size());
@@ -1002,16 +1020,30 @@ public class Approach2 {
 
 		List<ServiceModel2> trainingData = new ArrayList<ServiceModel2>();
 		
+//		// experiment 1
+//		OntologyManager ontManager = new OntologyManager();
+//		ontManager.doImport(new File(Approach2.ontologyDir + "dbpedia_3.8.owl"));
+//		ontManager.doImport(new File(Approach2.ontologyDir + "foaf.rdf"));
+//		ontManager.doImport(new File(Approach2.ontologyDir + "wgs84_pos.xml"));
+//		ontManager.doImport(new File(Approach2.ontologyDir + "rdf-schema.rdf"));
+//		ontManager.updateCache();
+
+		// experiment 2 - museum data
 		OntologyManager ontManager = new OntologyManager();
-		ontManager.doImport(new File(Approach2.ontologyDir + "dbpedia_3.8.owl"));
-		ontManager.doImport(new File(Approach2.ontologyDir + "foaf.rdf"));
-		ontManager.doImport(new File(Approach2.ontologyDir + "wgs84_pos.xml"));
-//		ontManager.doImport(new File(Approach2.ontologyDir + "schema.rdf"));
-		ontManager.doImport(new File(Approach2.ontologyDir + "rdf-schema.rdf"));
+		ontManager.doImport(new File(Approach2.ontologyDir + "100_rdf.owl"));
+		ontManager.doImport(new File(Approach2.ontologyDir + "105_Rdf-schema.owl"));
+		ontManager.doImport(new File(Approach2.ontologyDir + "120_dcterms.rdf"));
+		ontManager.doImport(new File(Approach2.ontologyDir + "140_foaf.owl"));
+		ontManager.doImport(new File(Approach2.ontologyDir + "180_rdaGr2.rdf"));
+		ontManager.doImport(new File(Approach2.ontologyDir + "190_ore.owl"));
+		ontManager.doImport(new File(Approach2.ontologyDir + "220_edm_from_xuming.owl"));
+		ontManager.doImport(new File(Approach2.ontologyDir + "230_saam-ont.owl"));
+		ontManager.doImport(new File(Approach2.ontologyDir + "250_skos.owl"));
+		ontManager.doImport(new File(Approach2.ontologyDir + "260_aac-ont.owl"));
 		ontManager.updateCache();
 
-		for (int i = 0; i < serviceModels.size(); i++) {
-//		int i = 16; {
+//		for (int i = 0; i < serviceModels.size(); i++) {
+		int i = 5; {
 			trainingData.clear();
 			int newServiceIndex = i;
 			ServiceModel2 newService = serviceModels.get(newServiceIndex);
@@ -1055,7 +1087,8 @@ public class Approach2 {
 			DirectedWeightedMultigraph<Node, Link> correctModel = newService.getModel();
 			// we just get the semantic labels of the correct model
 			List<SemanticLabel2> newServiceSemanticLabel2s = getModelSemanticLabels(correctModel);
-			List<RankedModel> hypothesisList = app.hypothesize(newServiceSemanticLabel2s);
+			int numOfattributes = newServiceSemanticLabel2s.size();
+			List<RankedModel> hypothesisList = app.hypothesize(newServiceSemanticLabel2s, numOfattributes);
 //			if (hypothesis == null)
 //				continue;
 			

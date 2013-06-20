@@ -114,7 +114,7 @@ public class PopulateCommand extends WorksheetCommand{
 //		 * 
 //		 */
 //		// FIXME
-//		String exportDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013/jgraph/";
+//		String exportDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-exp2/jgraph/";
 //		try {
 //			GraphUtil.serialize(al.getSteinerTree(), exportDir + wk.getTitle() + ".karma.final.jgraph");
 //		} catch (Exception e1) {
