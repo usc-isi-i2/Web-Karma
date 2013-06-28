@@ -231,6 +231,7 @@ public class SubmitCleaningCommand extends Command {
 			}
 			if(comm1 != null) {
 				try {
+					comm1.saveInHistory(false);
 					vWorkspace.getWorkspace().getCommandHistory().doCommand(comm1, vWorkspace);
 				} catch (CommandException e) {
 				}

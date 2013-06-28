@@ -32,7 +32,8 @@ public class CommandHistoryWriter {
 	public void writeHistoryPerWorksheet() throws JSONException {
 		HashMap<String, List<Command>> comMap = new HashMap<String, List<Command>>();
 		for(Command command : history) {
-			if(command.hasTag(CommandTag.Modeling) || command.hasTag(CommandTag.Transformation)) {
+			if(command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
+					|| command.hasTag(CommandTag.Transformation))) {
 				JSONArray json = new JSONArray(command.getInputParameterJson());
 				String vWorksheetId = HistoryJsonUtil.getStringValue(HistoryArguments.vWorksheetId.name(), json);
 				String worksheetName = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet().getTitle(); 

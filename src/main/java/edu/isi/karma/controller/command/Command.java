@@ -83,6 +83,11 @@ public abstract class Command extends Entity {
 	 * Has this command been executed already?
 	 */
 	private boolean isExecuted = false;
+	
+	/**
+	 * Flag that should be unset if you don't want this command instance to be written into the history
+	 */
+	private boolean saveInHistory = true;
 
 	/**
 	 * List of tags for the command
@@ -105,6 +110,14 @@ public abstract class Command extends Entity {
 
 	public void setExecuted(boolean isExecuted) {
 		this.isExecuted = isExecuted;
+	}
+	
+	public boolean isSavedInHistory() {
+		return saveInHistory;
+	}
+	
+	public void saveInHistory(boolean flag) {
+		this.saveInHistory = flag;
 	}
 
 	/**

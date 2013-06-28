@@ -18,25 +18,27 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
+
 package edu.isi.karma.controller.command;
+
+import java.io.File;
 
 import javax.servlet.http.HttpServletRequest;
 
+import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.view.VWorkspace;
 
-public class AddNewColumnCommandFactory extends CommandFactory {
-
+public class ApplyHistoryFromR2RMLModelCommandFactory extends CommandFactory {
 	private enum Arguments {
-		vWorksheetId, hNodeId,result
+		vWorksheetId
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
-		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
-		String result = request.getParameter(Arguments.result.name());
-		return new AddNewColumnCommand(getNewId(vWorkspace), vWorksheetId, getWorksheetId(request, vWorkspace), hNodeId, result);
+		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
+		return new ApplyHistoryFromR2RMLModelCommand(getNewId(vWorkspace), uploadedFile, vWorksheetId);
 	}
 
 }

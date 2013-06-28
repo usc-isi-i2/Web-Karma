@@ -85,6 +85,8 @@ public class AddColumnCommand extends WorksheetCommand {
 		this.newColumnName=newColumnName;
 		this.vWorksheetId = vWorksheetId;
 		this.defaultValue = defaultValue;
+		
+		addTag(CommandTag.Transformation);
 	}
 
 	@Override
@@ -99,7 +101,10 @@ public class AddColumnCommand extends WorksheetCommand {
 
 	@Override
 	public String getDescription() {
-		return "";
+		if (newColumnName != null)
+			return newColumnName;
+		else
+			return "";
 	}
 
 	@Override

@@ -72,7 +72,11 @@ public class WorksheetCommandHistoryReader {
 	public void readAndExecuteAllCommandsFromFile(File historyFile) 
 			throws JSONException, KarmaException, CommandException, FileNotFoundException {
 		JSONArray historyJson = (JSONArray) JSONUtil.createJson(new FileReader(historyFile));
-		
+		readAndExecuteAllCommands(historyJson);
+	}
+	
+	public void readAndExecuteAllCommands(JSONArray historyJson) 
+			throws JSONException, KarmaException, CommandException {
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(vWorkspace.getWorkspace().getId());
 		HashMap<String, CommandFactory> commandFactoryMap = ctrl.getCommandFactoryMap();
 		for (int i = 0; i< historyJson.length(); i++) {

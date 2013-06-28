@@ -148,6 +148,7 @@ public class SubmitPythonTransformationCommand extends Command {
 			JSONArray addColumnInput = getAddColumnCommandInputJSON();
 			AddColumnCommandFactory addColumnFac = (AddColumnCommandFactory)ctrl.getCommandFactoryMap().get(AddColumnCommand.class.getSimpleName());
 			addColCmd = (AddColumnCommand) addColumnFac.createCommand(addColumnInput, vWorkspace);
+			addColCmd.saveInHistory(false);
 			addColCmd.doIt(vWorkspace);
 			
 			// Invoke the MultipleValueEditColumnCommand

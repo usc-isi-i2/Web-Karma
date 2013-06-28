@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.AddColumnCommand;
 import edu.isi.karma.controller.command.AddColumnCommandFactory;
-import edu.isi.karma.controller.command.AddNewColumnCommand;
-import edu.isi.karma.controller.command.AddNewColumnCommandFactory;
+import edu.isi.karma.controller.command.ApplyHistoryFromR2RMLModelCommand;
+import edu.isi.karma.controller.command.ApplyHistoryFromR2RMLModelCommandFactory;
 import edu.isi.karma.controller.command.ApplyWorksheetHistoryCommand;
 import edu.isi.karma.controller.command.ApplyWorksheetHistoryCommandFactory;
 import edu.isi.karma.controller.command.CloseWorkspaceCommand;
@@ -215,8 +215,6 @@ public class ExecutionController {
 				new PublishRDFCommandFactory());
 		commandFactoryMap.put(PublishDatabaseCommand.class.getSimpleName(),
 				new PublishDatabaseCommandFactory());
-		commandFactoryMap.put(AddNewColumnCommand.class.getSimpleName(),
-				new AddNewColumnCommandFactory());
 		commandFactoryMap.put(AddColumnCommand.class.getSimpleName(),
 				new AddColumnCommandFactory());
 		commandFactoryMap.put(PublishRDFCellCommand.class.getSimpleName(),
@@ -265,6 +263,8 @@ public class ExecutionController {
 				new SubmitPythonTransformationCommandFactory());
 		commandFactoryMap.put(GenerateR2RMLModelCommand.class.getSimpleName(), 
 				new GenerateR2RMLModelCommandFactory());
+		commandFactoryMap.put(ApplyHistoryFromR2RMLModelCommand.class.getSimpleName(), 
+				new ApplyHistoryFromR2RMLModelCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

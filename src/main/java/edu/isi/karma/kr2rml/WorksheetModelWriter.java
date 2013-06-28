@@ -21,6 +21,8 @@
 
 package edu.isi.karma.kr2rml;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +53,7 @@ import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.util.FileUtil;
 
 public class WorksheetModelWriter {
 	private PrintWriter writer;
@@ -271,5 +274,24 @@ public class WorksheetModelWriter {
 	public void close() throws RepositoryException {
 		con.close();
 		myRepository.shutDown();
+	}
+
+	public void writeCompleteWorksheetHistory(String historyFilePath) 
+			throws RepositoryException {
+		File historyFile = new File(historyFilePath);
+		URI hasWorksheetHistoryUri = f.createURI(Uris.KM_HAS_WORKSHEET_HISTORY_URI);
+		if (!historyFile.exists()) {
+			logger.error("Worksheet history file not found! Can't write worksheet history " +
+					"into R2RML model. Path:" + historyFile.getAbsolutePath());
+			return;
+		}
+		try {
+			String historyJsonStr = FileUtil.readFileContentsToString(historyFile);
+			Value historyLiteral = f.createLiteral(historyJsonStr);
+			con.add(mappingRes, hasWorksheetHistoryUri, historyLiteral);
+		} catch (IOException e) {
+			logger.error("IO Exception occured while writing worksheet history into R2RML model", e);
+			return;
+		}
 	}
 }

@@ -251,10 +251,14 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
         optionsDiv.hide();
         
         var info = new Object();
-        info["vWorksheetId"] = optionsDiv.data("worksheetId");
+//        info["vWorksheetId"] = optionsDiv.data("worksheetId");
         info["workspaceId"] = $.workspaceGlobalInformation.id;
         info["command"] = "PopulateCommand";
-            
+
+        var newInfo = [];	// Used for commands that take JSONArray as input
+        newInfo.push(getParamObject("vWorksheetId", optionsDiv.data("worksheetId"), "vWorksheetId"));
+        info["newInfo"] = JSON.stringify(newInfo);
+
         showLoading(info["vWorksheetId"]);
         var returned = $.ajax({
             url: "RequestController", 
@@ -340,7 +344,8 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	$("#applyWorksheetHistory").fileupload({
         add : function (e, data) {
             $("#applyWorksheetHistory").fileupload({
-                url: "RequestController?workspaceId=" + $.workspaceGlobalInformation.id + "&command=ApplyWorksheetHistoryCommand&vWorksheetId="+optionsDiv.data("worksheetId")
+                url: "RequestController?workspaceId=" + $.workspaceGlobalInformation.id +
+                    "&command=ApplyHistoryFromR2RMLModelCommand&vWorksheetId="+optionsDiv.data("worksheetId")
             });
             showLoading(optionsDiv.data("worksheetId"));
             data.submit();

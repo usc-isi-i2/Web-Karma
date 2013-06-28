@@ -58,6 +58,7 @@ public interface Uris {
 	public static final String KM_SOURCE_NAME_URI = Namespaces.KARMA_DEV + "sourceName";
 	public static final String KM_HAS_TRIPLES_MAP_URI = Namespaces.KARMA_DEV + "hasTriplesMap";
 	public static final String KM_HAS_TRANSFORMATION_URI = Namespaces.KARMA_DEV + "hasColumnTransformation";
+	public static final String KM_HAS_WORKSHEET_HISTORY_URI = Namespaces.KARMA_DEV + "hasWorksheetHistory";
 	
 	public static final String PROV_ENTITY_URI = Namespaces.PROV + "Entity";
 	public static final String PROV_WAS_DERIVED_FROM_URI = Namespaces.PROV + "wasDerivedFrom";

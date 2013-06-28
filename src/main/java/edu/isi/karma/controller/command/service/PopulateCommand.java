@@ -73,6 +73,8 @@ public class PopulateCommand extends WorksheetCommand{
 	public PopulateCommand(String id, String worksheetId, String vWorksheetId) {
 		super(id, worksheetId);
 		this.vWorksheetId = vWorksheetId;
+		
+		addTag(CommandTag.Transformation);
 	}
 
 	@Override
@@ -82,7 +84,7 @@ public class PopulateCommand extends WorksheetCommand{
 
 	@Override
 	public String getTitle() {
-		return "Populating the Source";
+		return "Populating Source";
 	}
 
 	@Override

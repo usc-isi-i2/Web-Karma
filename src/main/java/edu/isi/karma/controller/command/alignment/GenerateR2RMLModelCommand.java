@@ -33,6 +33,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.publish.PublishRDFCommand;
 import edu.isi.karma.controller.command.publish.PublishRDFCommand.PreferencesKeys;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
@@ -143,6 +144,10 @@ public class GenerateR2RMLModelCommand extends Command {
 			if (!commandsJSON.isEmpty()) {
 				modelWriter.writeTransformationHistory(commandsJSON);
 			}
+			// Write the worksheet history
+			String historyFilePath = HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(
+					worksheet.getTitle(), vWorkspace.getPreferencesId());
+			modelWriter.writeCompleteWorksheetHistory(historyFilePath);
 			
 			// Write the R2RML mapping
 			modelWriter.writeR2RMLMapping(ontMgr, mappingGen);

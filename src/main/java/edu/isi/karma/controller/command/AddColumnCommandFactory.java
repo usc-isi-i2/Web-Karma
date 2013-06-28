@@ -56,9 +56,12 @@ public class AddColumnCommandFactory extends CommandFactory implements JSONInput
 		String hTableId = CommandInputJSONUtil.getStringValue(Arguments.hTableId.name(), inputJson);
 		String newColumnName = CommandInputJSONUtil.getStringValue(Arguments.newColumnName.name(), inputJson);
 		String defaultValue = CommandInputJSONUtil.getStringValue(Arguments.defaultValue.name(), inputJson);
-		return new AddColumnCommand(getNewId(vWorkspace), vWorksheetID, 
+		
+		AddColumnCommand colCmd = new AddColumnCommand(getNewId(vWorkspace), vWorksheetID, 
 				vWorkspace.getViewFactory().getVWorksheet(vWorksheetID).getWorksheet().getId(),
 				hTableId, hNodeID, newColumnName, defaultValue);
+		colCmd.setInputParameterJson(inputJson.toString());
+		return colCmd;
 	}
 
 }
