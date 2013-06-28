@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,7 +142,8 @@ public class KR2RMLWorksheetRDFGenerator {
 		} finally {
 			outWriter.flush();
 			outWriter.close();
-			bw.close();
+			if(bw != null)
+				bw.close();
 		}
 		// An attempt to prevent an occasional error that occurs on Windows platform
 		// The requested operation cannot be performed on a file with a user-mapped section open
@@ -387,24 +389,16 @@ public class KR2RMLWorksheetRDFGenerator {
 			String literalType) {
 		if (!subjUri.startsWith(BLANK_NODE_PREFIX))
 			subjUri = "<" + subjUri + ">";
-		
-		// Escaping the quotes
-		value = value.replaceAll("\\\\", "\\\\\\\\");
-		value = value.replaceAll("\"", "\\\\\"");
-		
-		// Take care of the new lines that may appear in text
-		if (value.contains("\n") || value.contains("\r")) {
-			value = "\"\"\"" + value + "\"\"\"";
-		} else {
-			value = "\"" + value + "\"";
-		}
+
+		// Use Apache Commons to escape the value
+		value = StringEscapeUtils.escapeJava(value);
 		
 		// Add the RDF literal type to the literal if present
 		if (literalType != null && !literalType.equals("")) {
 			return subjUri + " " + getNormalizedPredicateUri(predicateUri) + " \"" + value + 
 					"\"" + "^^" + literalType + " .";
 		}
-		return subjUri + " " + getNormalizedPredicateUri(predicateUri) + " " + value + " .";
+		return subjUri + " " + getNormalizedPredicateUri(predicateUri) + " \"" + value + "\" .";
 	}
 	
 	private String constructQuadWithLiteralObject(String subjUri, String predicateUri, 
