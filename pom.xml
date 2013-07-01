@@ -35,8 +35,7 @@
       <url>http://download.java.net/maven/2</url>
       <layout>default</layout>
       <snapshots>
-         <enabled>false</enabled>
-         <updatePolicy>never</updatePolicy>
+         <enabled>true</enabled>
       </snapshots>
       </repository>
       <repository>
