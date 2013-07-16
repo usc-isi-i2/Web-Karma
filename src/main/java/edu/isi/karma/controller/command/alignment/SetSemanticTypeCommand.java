@@ -157,7 +157,7 @@ public class SetSemanticTypeCommand extends Command {
 					Node oldDomainNode = null;
 					if (existingColumnNode != null) {
 						columnNodeAlreadyExisted = true;
-						oldIncomingLinkToColumnNode = alignment.getCurrentLinksToNode(existingColumnNode.getId()).iterator().next();
+						oldIncomingLinkToColumnNode = alignment.getCurrentIncomingLinksToNode(existingColumnNode.getId()).iterator().next();
 						oldDomainNode = oldIncomingLinkToColumnNode.getSource();
 						if (!rdfLiteralType.equals(existingColumnNode.getRdfLiteralType()))
 							existingColumnNode.setRdfLiteralType(rdfLiteralType);
@@ -221,7 +221,9 @@ public class SetSemanticTypeCommand extends Command {
 						// For all other cases where the columnNode did not exist yet
 						else {
 							if (!domainNodeAlreadyExistsInGraph) {
+//								System.out.println("Value: " + domainValue);
 								Label domainLabel = ontMgr.getUriLabel(domainValue);
+//								System.out.println(domainLabel);
 								newDomainNode = alignment.addInternalNode(domainLabel);
 							}
 							

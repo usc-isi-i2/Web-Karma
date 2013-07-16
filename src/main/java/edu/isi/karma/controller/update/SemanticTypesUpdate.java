@@ -224,7 +224,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 				|| type.getUri().equals(ColumnSubClassLink.getFixedLabel().getUri()));
 		if (case1)
 			return true;
-		Set<Link> incomingLinks = alignment.getCurrentLinksToNode(alignmentColumnNode.getId());
+		Set<Link> incomingLinks = alignment.getCurrentIncomingLinksToNode(alignmentColumnNode.getId());
 		if (incomingLinks != null && !incomingLinks.isEmpty()) {
 			Link incomingLink = incomingLinks.iterator().next();
 			if (incomingLink != null && (incomingLink instanceof ClassInstanceLink) 
@@ -240,9 +240,9 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		if (alignmentColumnNodes == null)
 			return hNodeIdToDomainNodeMap;
 		for (Node cNode : alignmentColumnNodes) {
-			Set<Link> incomingLinks = alignment.getCurrentLinksToNode(cNode.getId());
+			Set<Link> incomingLinks = alignment.getCurrentIncomingLinksToNode(cNode.getId());
 			if (incomingLinks != null && !incomingLinks.isEmpty()) {
-				Link incomingLink = alignment.getCurrentLinksToNode(cNode.getId()).iterator().next();
+				Link incomingLink = alignment.getCurrentIncomingLinksToNode(cNode.getId()).iterator().next();
 				if (incomingLink!= null && incomingLink.getSource() instanceof InternalNode) {
 					hNodeIdToDomainNodeMap.put(((ColumnNode)cNode).getHNodeId()
 							, (InternalNode)incomingLink.getSource());

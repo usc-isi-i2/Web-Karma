@@ -77,16 +77,24 @@ import edu.isi.karma.controller.command.UndoRedoCommand;
 import edu.isi.karma.controller.command.UndoRedoCommandFactory;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommand;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommandFactory;
+import edu.isi.karma.controller.command.alignment.ChangeInternalNodeLinksCommand;
+import edu.isi.karma.controller.command.alignment.ChangeInternalNodeLinksCommandFactory;
 import edu.isi.karma.controller.command.alignment.GenerateR2RMLModelCommand;
 import edu.isi.karma.controller.command.alignment.GenerateR2RMLModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommand;
 import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommandFactory;
+import edu.isi.karma.controller.command.alignment.GetCurrentLinksOfInternalNodeCommand;
+import edu.isi.karma.controller.command.alignment.GetCurrentLinksOfInternalNodeCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetDataPropertiesForClassCommand;
 import edu.isi.karma.controller.command.alignment.GetDataPropertiesForClassCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetDataPropertyHierarchyCommand;
 import edu.isi.karma.controller.command.alignment.GetDataPropertyHierarchyCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetDomainsForDataPropertyCommand;
 import edu.isi.karma.controller.command.alignment.GetDomainsForDataPropertyCommandFactory;
+import edu.isi.karma.controller.command.alignment.GetInternalNodesListOfAlignmentCommand;
+import edu.isi.karma.controller.command.alignment.GetInternalNodesListOfAlignmentCommandFactory;
+import edu.isi.karma.controller.command.alignment.GetLinksOfAlignmentCommand;
+import edu.isi.karma.controller.command.alignment.GetLinksOfAlignmentCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyCommand;
 import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetPropertiesAndClassesList;
@@ -265,6 +273,14 @@ public class ExecutionController {
 				new GenerateR2RMLModelCommandFactory());
 		commandFactoryMap.put(ApplyHistoryFromR2RMLModelCommand.class.getSimpleName(), 
 				new ApplyHistoryFromR2RMLModelCommandFactory());
+		commandFactoryMap.put(GetCurrentLinksOfInternalNodeCommand.class.getSimpleName(), 
+				new GetCurrentLinksOfInternalNodeCommandFactory());
+		commandFactoryMap.put(GetInternalNodesListOfAlignmentCommand.class.getSimpleName(), 
+				new GetInternalNodesListOfAlignmentCommandFactory());
+		commandFactoryMap.put(GetLinksOfAlignmentCommand.class.getSimpleName(), 
+				new GetLinksOfAlignmentCommandFactory());
+		commandFactoryMap.put(ChangeInternalNodeLinksCommand.class.getSimpleName(), 
+				new ChangeInternalNodeLinksCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

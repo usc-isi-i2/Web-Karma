@@ -141,12 +141,13 @@ and related projects, please see: http://www.isi.edu/integration
 									$(this).dialog("close");
 								},
 								"Submit" : function() {
-									var selectedFormat = $("input:radio[@name='FileFormatSelection']:checked").val();
+                                    var selectedFormat = $("input:radio[name='FileFormatSelection']:checked").val();
 									if(selectedFormat == null || selectedFormat == "") {
 										$("span#fileFormatError").show();
 										return false;
 									}
-									var urlString = "RequestController?workspaceId=" + $.workspaceGlobalInformation.id + "&command=";
+
+                                    var urlString = "RequestController?workspaceId=" + $.workspaceGlobalInformation.id + "&command=";
 
 									// Change the command according to the selected format
 									if(selectedFormat == "CSV") {
@@ -348,7 +349,7 @@ and related projects, please see: http://www.isi.edu/integration
 	</head>
 
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.110</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.111</span></h1>
 		<table id="topMenuBar">
 			<tr>
 				<td>
@@ -501,7 +502,7 @@ and related projects, please see: http://www.isi.edu/integration
 			<br>
 			<div class="ui-widget" id="DatabaseImportErrorWindow" style="display: none">
 				<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-					<p id="databaseImportErrorWindow">
+					<p>
 						<span class="ui-icon ui-icon-alert"
 						style="float: left; margin-right: .3em;"></span>
 						<span id="DatabaseImportErrorWindowText"></span>
@@ -731,7 +732,7 @@ and related projects, please see: http://www.isi.edu/integration
 			<div class="ui-widget" id="SemanticTypeErrorWindow" style="display: none">
 				<br />
 				<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-					<p id="semanticTypeErrorWindow">
+					<p>
 						<span class="ui-icon ui-icon-alert"
 						style="float: left; margin-right: .3em;"></span>
 						<span id="SemanticTypeErrorWindowText"></span>
@@ -1025,6 +1026,75 @@ and related projects, please see: http://www.isi.edu/integration
                 </tr>
             </table>
         </div>
+
+
+        <div class="smallSizedFont" id="currentLinksInternalNodeDialog" style="display: none">
+            <div id="CurrentLinksBox" class="ui-corner-all">
+                <h3>Incoming Links:</h3>
+                <table id="currentIncomingLinksTable">
+                </table>
+                <br>
+                <button id="addIncomingInternalNodeLink">
+                    Add Incoming link
+                </button>
+                <br><br>
+                <h3>Outgoing Links:</h3>
+                <table id="currentOutgoingLinksTable">
+                </table>
+                <br>
+                <button id="addOutgoingInternalNodeLink">
+                    Add Outgoing link
+                </button><br>
+            </div>
+            <div class="ui-widget" id="currentLinksErrorWindowBox" style="display: none">
+                <br>
+                <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+                    <p id="currentLinksErrorWindow">
+						<span class="ui-icon ui-icon-alert"
+                              style="float: left; margin-right: .3em;"></span>
+                        <span id="currentLinksWindowText"></span>
+                    </p>
+                    <br />
+                </div>
+                <br />
+            </div>
+        </div>
+        <div id="chooseNodeDialog" style="display: none">
+            <div id="entitiesFacetPanel" class="smallSizedFont">
+                Show
+                <input type="radio" name="chooseNodeGroup" value="existingNodes" id="chooseExistingNodes" checked>
+                <label for="chooseExistingNodes">Nodes in model</label>
+                <!--<input type="radio" name="chooseNodeGroup" value="domains" id="chooseDomain" disabled>-->
+                <!--<label for="chooseDomain">Domains of property</label><br>-->
+                <input type="radio" name="chooseNodeGroup" value="allNodes" id="chooseAllNodes">
+                <label for="chooseAllNodes">All nodes</label><br><br>
+
+                <span class="error" style="display: none">Please select a value!</span>
+            </div>
+            <div id="entitiesListPanel" class="chooseNodeLinkPanel smallSizedFont">
+                <table id="nodesList">
+
+                </table>
+            </div>
+        </div>
+        <div id="chooseLinkDialog" style="display: none">
+            <div id="linksFacetPanel" class="smallSizedFont">
+                <input type="radio" name="chooseLinkGroup" value="existingLinks" id="chooseExistingLinks" disabled>
+                <label for="chooseExistingLinks">Compatible links</label>
+                <!--<input type="radio" name="chooseLinkGroup" value="domains" id="choosePropertyWithDomainAndRange" disabled>-->
+                <!--<label for="choosePropertyWithDomainAndRange">Property that links</label><br>-->
+                <input type="radio" name="chooseLinkGroup" value="allLinks" id="chooseAllLinks" checked>
+                <label for="chooseAllLinks">All possible links</label><br><br>
+
+                <span class="error" style="display: none">Please select a value!</span>
+            </div>
+            <div id="linksListPanel" class="chooseNodeLinkPanel smallSizedFont">
+                <table id="linksList">
+
+                </table>
+            </div>
+        </div>
+
         <div id="rdfGenerationErrorWindow" style="display: none" class="smallSizedFont"></div>
 	</body>
 </html>

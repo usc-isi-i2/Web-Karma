@@ -88,7 +88,14 @@ public abstract class Command extends Entity {
 	 * Flag that should be unset if you don't want this command instance to be written into the history
 	 */
 	private boolean saveInHistory = true;
-
+	
+	/**
+	 * Flag to tell if the command history should be written after this command has been executed
+	 */
+	private boolean writeWorksheetHistoryAfterCommandExecutes = true;
+	
+	private boolean appendToHistory = false;
+	
 	/**
 	 * List of tags for the command
 	 */
@@ -118,6 +125,14 @@ public abstract class Command extends Entity {
 	
 	public void saveInHistory(boolean flag) {
 		this.saveInHistory = flag;
+	}
+	
+	public void writeWorksheetHistoryAfterCommandExecutes(boolean flag) {
+		this.writeWorksheetHistoryAfterCommandExecutes = flag;
+	}
+	
+	public boolean writeWorksheetHistoryAfterCommandExecutes() {
+		return this.writeWorksheetHistoryAfterCommandExecutes;
 	}
 
 	/**
@@ -161,5 +176,13 @@ public abstract class Command extends Entity {
 
 	public List<CommandTag> getTags() {
 		return tags;
+	}
+
+	public boolean appendToHistory() {
+		return appendToHistory;
+	}
+
+	public void setAppendToHistory(boolean appendToHistory) {
+		this.appendToHistory = appendToHistory;
 	}
 }

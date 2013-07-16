@@ -30,6 +30,10 @@ public class HistoryJsonUtil {
 		return null;
 	}
 	
+	public static JSONArray getJSONArrayValue(String arg, JSONArray json) throws JSONException {
+		return getJSONObjectWithName(arg, json).getJSONArray(ClientJsonKeys.value.name());
+	}
+	
 	public static ParameterType getParameterType(JSONObject json) throws JSONException {
 		return ParameterType.valueOf(json.getString(ClientJsonKeys.type.name()));
 	}

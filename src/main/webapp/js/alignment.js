@@ -259,6 +259,9 @@ function attachOntologyOptionsRadioButtonHandlers() {
       	$( "#rdfTypeSelect" ).toggle();
     });
 
+    // In d3-alignment-vis.js
+    attachHandlersToChangeObjPropertyObjects();
+
 }
 
 function semanticTypesAdvancedOptionsHandler() {

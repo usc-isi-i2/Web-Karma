@@ -58,7 +58,7 @@ public class UnionImport {
 		// Import the json file
 		JSONArray json = new JSONArray();
 		ConfigUtil util = new ConfigUtil();
-		inputJsonFile = new File("config/c.json");
+		inputJsonFile = new File("/Users/shubhamgupta/Documents/Archive/Demo/MergeDemo/n3filesformergecode/c.json");
 		json = util.loadConfig(inputJsonFile);
 
 		// Create a worksheet, HTable, and input data into it.
@@ -75,10 +75,10 @@ public class UnionImport {
 
 
 		String source_path[] = {
-				"/Users/yingzhang/Documents/USC/Building_ontology/n3/Union-n3/OSM_buildings.n3",
-				"/Users/yingzhang/Documents/USC/Building_ontology/n3/Union-n3/Wikimapia_buildings.n3",
-				"/Users/yingzhang/Documents/USC/Building_ontology/n3/Union-n3/sameAs.n3" };
-		String dataSet_path = "/Users/yingzhang/Documents/USC/Building_ontology/Repository";
+				"/Users/shubhamgupta/Documents/Archive/Demo/MergeDemo/n3filesformergecode/OSM_buildings.n3",
+				"/Users/shubhamgupta/Documents/Archive/Demo/MergeDemo/n3filesformergecode/Wikimapia_buildings.n3",
+				"/Users/shubhamgupta/Documents/Archive/Demo/MergeDemo/n3filesformergecode/sameAs.n3" };
+		String dataSet_path = "/Users/shubhamgupta/Documents/Archive/Demo/MergeDemo/n3filesformergecode/Repository";
 		String query = null;
 		testRepository tR = new testRepository();
 
@@ -242,9 +242,9 @@ public class UnionImport {
 
 		}
 		/* show the result */
-		pw = new PrintWriter(System.out, true);
-		System.out.println("PRINTING THE DATA IN TABLE:)))))))");
-		dataTable.prettyPrint("", pw, factory); // show the data in HTable;
+//		pw = new PrintWriter(System.out, true);
+//		System.out.println("PRINTING THE DATA IN TABLE:)))))))");
+//		dataTable.prettyPrint("", pw, factory); // show the data in HTable;
 		return worksheet;
 	}
 

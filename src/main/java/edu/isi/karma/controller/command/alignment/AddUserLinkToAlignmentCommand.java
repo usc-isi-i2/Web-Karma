@@ -59,6 +59,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		this.edgeId = edgeId;
 		this.alignmentId = alignmentId;
 		this.vWorksheetId = vWorksheetId;
+		
 		addTag(CommandTag.Modeling);
 	}
 
@@ -99,7 +100,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		
 		// Set the other links to the target node to normal
 		LinkIdFactory.getLinkTargetId(edgeId);
-		Set<Link> currentLinks = alignment.getCurrentLinksToNode(LinkIdFactory.getLinkTargetId(edgeId));
+		Set<Link> currentLinks = alignment.getCurrentIncomingLinksToNode(LinkIdFactory.getLinkTargetId(edgeId));
 		if (currentLinks != null && !currentLinks.isEmpty()) {
 			for (Link currentLink: currentLinks) {
 				//if (currentLink.getSource().getId().equals(newLink.getSource().getId()))

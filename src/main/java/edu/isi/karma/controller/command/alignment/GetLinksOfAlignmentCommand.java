@@ -18,10 +18,12 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
+
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.json.JSONArray;
@@ -34,29 +36,34 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.view.VWorkspace;
 
-public class GetAlternativeLinksCommand extends Command {
-	private final String nodeId;
+public class GetLinksOfAlignmentCommand extends Command {
+	
 	private final String alignmentId;
-
+	private final LINKS_RANGE linksRange;
+	@SuppressWarnings("unused")
+	private final String domain;
+	@SuppressWarnings("unused")
+	private final String range;
+	
 	private enum JsonKeys {
-		updateType, edgeLabel, edgeId, edgeSource, Edges, selected
+		updateType, edgeLabel, edgeId, edges
 	}
-
-	public String getNodeId() {
-		return nodeId;
+	
+	public enum LINKS_RANGE {
+		existingLinks, linksWithDomainAndRange, allObjectProperties;
 	}
-
-	protected GetAlternativeLinksCommand(String id, String nodeId,
-			String alignmentId) {
+	
+	public GetLinksOfAlignmentCommand(String id, String alignmentId,
+			LINKS_RANGE linksRange, String domain, String range) {
 		super(id);
-		this.nodeId = nodeId;
 		this.alignmentId = alignmentId;
+		this.linksRange = linksRange;
+		this.domain = domain;
+		this.range = range;
 	}
 
 	@Override
@@ -66,12 +73,12 @@ public class GetAlternativeLinksCommand extends Command {
 
 	@Override
 	public String getTitle() {
-		return "Get Alternative Links";
+		return "Get Alignment Links";
 	}
 
 	@Override
 	public String getDescription() {
-		return null;
+		return "";
 	}
 
 	@Override
@@ -82,46 +89,45 @@ public class GetAlternativeLinksCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		final Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		final List<Link> links = alignment.getIncomingLinks(nodeId);
-		Set<Link> currentIncomingLinks = alignment.getCurrentIncomingLinksToNode(nodeId);
-		final Link currentLink = (currentIncomingLinks != null && !currentIncomingLinks.isEmpty()) ?
-				currentIncomingLinks.iterator().next() : null;
-
+		Map<String, Label> linkList = new HashMap<String, Label>();
+		
+		if (linksRange == LINKS_RANGE.allObjectProperties) {
+			linkList = vWorkspace.getWorkspace().
+					getOntologyManager().getObjectProperties();
+			
+		} else if (linksRange == LINKS_RANGE.existingLinks) {
+			Set<Link> linksSet = alignment.getSteinerTree().edgeSet();
+			linkList = new HashMap<String, Label>();
+			for (Link link: linksSet) {
+				linkList.put(link.getLabel().getUri(), link.getLabel());
+			}
+		}
+		final Map<String, Label> finalLinksSet = linkList;
+		
 		UpdateContainer upd = new UpdateContainer(new AbstractUpdate() {
 			@Override
 			public void generateJson(String prefix, PrintWriter pw,
 					VWorkspace vWorkspace) {
 				JSONObject obj = new JSONObject();
-				JSONArray edgesArray = new JSONArray();
+				JSONArray nodesArray = new JSONArray();
 
 				try {
-					obj.put(JsonKeys.updateType.name(), "GetAlternativeLinks");
-					for (Link link : links) {
-						
-						String linkLabel = link.getLabel().getDisplayName();
-						
-						Node edgeSource = 
-								alignment.getNodeById(LinkIdFactory.getLinkSourceId(link.getId()));
-						String edgeSourceLabel = edgeSource.getDisplayId();
-						Label nodeLabel = edgeSource.getLabel();
-						if (nodeLabel.getUri() !=null && nodeLabel.getNs() != null && nodeLabel.getUri().equalsIgnoreCase(nodeLabel.getNs()))
-							edgeSourceLabel = edgeSource.getId();
-						
-						
+					obj.put(JsonKeys.updateType.name(), "LinksList");
+					
+					for (Label linkLabel:finalLinksSet.values()) {
+						String edgeLabelStr = linkLabel.getDisplayName();
 						JSONObject edgeObj = new JSONObject();
-						edgeObj.put(JsonKeys.edgeId.name(), link.getId());
-						edgeObj.put(JsonKeys.edgeLabel.name(), linkLabel);
-						edgeObj.put(JsonKeys.edgeSource.name(),edgeSourceLabel);
-//						if (currentLink != null && link.getLabel().getUri().equals(currentLink.getLabel().getUri())
-//								&& edgeSource.getLabel().getUri().equals(currentLink.getLabel().getUri())) {
-						if (link == currentLink) {
-							edgeObj.put(JsonKeys.selected.name(), true);
-						} else {
-							edgeObj.put(JsonKeys.selected.name(), false);
+						if (linkLabel.getUri() !=null && linkLabel.getNs() != null 
+								&& linkLabel.getUri().equalsIgnoreCase(linkLabel.getNs())) {
+							edgeLabelStr = linkLabel.getUri();
 						}
-						edgesArray.put(edgeObj);
+						
+						edgeObj.put(JsonKeys.edgeLabel.name(), edgeLabelStr);
+						edgeObj.put(JsonKeys.edgeId.name(), linkLabel.getUri());
+						nodesArray.put(edgeObj);
 					}
-					obj.put(JsonKeys.Edges.name(), edgesArray);
+					
+					obj.put(JsonKeys.edges.name(), nodesArray);
 					pw.println(obj.toString());
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -133,7 +139,7 @@ public class GetAlternativeLinksCommand extends Command {
 
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		// Not required!
+		// Not required
 		return null;
 	}
 

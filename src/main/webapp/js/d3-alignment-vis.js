@@ -234,7 +234,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .on("click", function(d){
             if(d["nodeType"] == "InternalNode") {
                 d["targetNodeId"] = d["id"];
-                showAlternativeParents_d3(d, svg, d3.event);
+                showLinksForInternalNode(d, svg, d3.event);
             }
         });
         
@@ -280,7 +280,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 changeSemanticType_d3(d, svg, d3.event);
             else if(d["nodeType"] == "InternalNode") {
                 d["targetNodeId"] = d["id"];
-                showAlternativeParents_d3(d, svg, d3.event);
+                showLinksForInternalNode(d, svg, d3.event);
             }
         });
     
@@ -429,7 +429,6 @@ var waitForFinalEvent = (function () {
     };
 })();
 
-
 function changeSemanticType_d3(d, vis, event) {
 	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
     
@@ -536,7 +535,6 @@ function changeSemanticType_d3(d, vis, event) {
     });
 }
 
-
 function showAlternativeParents_d3(d, vis, event) {
     var info = new Object();
     info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -636,11 +634,470 @@ function showAlternativeParents_d3(d, vis, event) {
     });
 }
 
+function showLinksForInternalNode(d, vis, event) {
+    // Hide the error window if it was open before
+    $("div#currentLinksErrorWindowBox").hide();
+
+    var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["nodeId"] = d["targetNodeId"];
+    info["command"] = "GetCurrentLinksOfInternalNodeCommand";
+    info["alignmentId"] = $(vis).data("alignmentId");
+    info["worksheetId"] = $(vis).data("worksheetId");
+
+    var optionsDiv = $("div#currentLinksInternalNodeDialog");
+    optionsDiv.data("alignmentId", info["alignmentId"]);
+    optionsDiv.data("worksheetId", info["worksheetId"]);
+    optionsDiv.data("internalNodeId", d["targetNodeId"]);
+    optionsDiv.data("internalNodeLabel", d["label"]);
+    optionsDiv.data("worksheetId", info["worksheetId"]);
+
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+//                alert(xhr.responseText);
+                var json = $.parseJSON(xhr.responseText);
+                $.each(json["elements"], function(index, element) {
+                    if(element["updateType"] == "GetCurrentLinks") {
 
 
+                        optionsDiv.data("initialEdges", element["edges"]);
 
+                        var inLinksTable = $("table#currentIncomingLinksTable", optionsDiv);
+                        var outLinksTable = $("table#currentOutgoingLinksTable", optionsDiv);
+                        $("tr", inLinksTable).remove();
+                        $("tr", outLinksTable).remove();
 
+                        var positionArray = [event.clientX+20       // distance from left
+                            , event.clientY+10];    // distance from top
 
+                        $.each(element["edges"], function(index2, edge) {
+                            var trTag = $("<tr>").addClass("InternalNodeLink");
+
+                            var srcTd = $("<td>").addClass("sourceNode").append(
+                                            $("<span>").text(edge["edgeSource"])
+                                                .addClass("node-or-edge-label").click(showChooseNodeDialog))
+                                        .data("nodeId", edge["edgeSourceId"]);
+
+                            var targetTd = $("<td>").addClass("targetNode").append(
+                                                $("<span>").text(edge["edgeTarget"])
+                                                    .addClass("node-or-edge-label").click(showChooseNodeDialog))
+                                            .data("nodeId", edge["edgeTargetId"]);
+
+                            var edgeLabelTd = $("<td>").addClass("edgeLabel").data("edgeId", edge["edgeId"]).append(
+                                                    $("<span>").text(edge["edgeLabel"])
+                                                        .addClass("node-or-edge-label").click(showChooseLinkDialog));
+
+                            var delButton = $("<td>").append($("<button>").button({
+                                                icons: {
+                                                    primary: "ui-icon-close"
+                                                },
+                                                text: false
+                                            }).addClass("deleteLink").click(
+                                                function(){
+                                                    $(this).parents("tr.InternalNodeLink").remove();
+                                            }));
+
+                            trTag.data("linkDirection", edge["direction"]);
+
+                            if (edge["direction"] == "incoming") {
+                                trTag.append($("<td>").append($("<span>").text("from")))
+                                    .append(srcTd)
+                                    .append($("<td>").text("via"))
+                                    .append(edgeLabelTd)
+                                    .append(targetTd).append(delButton);
+                                targetTd.hide();
+                                inLinksTable.append(trTag);
+                            } else if (edge["direction"] == "outgoing"){
+                                trTag.append($("<td>").text("to"))
+                                    .append(srcTd).append(targetTd)
+                                    .append($("<td>").text("via"))
+                                    .append(edgeLabelTd).append(delButton);
+                                srcTd.hide();
+                                outLinksTable.append(trTag);
+                            }
+                        });
+
+                        if ($("tr", inLinksTable).length == 0) {
+                            $(inLinksTable).append($("<tr>").addClass("emptyRow").append($("<td>").text("none")));
+                        }
+
+                        if ($("tr", outLinksTable).length == 0) {
+                            $(outLinksTable).append($("<tr>").addClass("emptyRow").append($("<td>").text("none")));
+                        }
+                        // Show the dialog box
+                        optionsDiv.dialog({width: 350, height: 380, position: positionArray, title: d["label"]
+                            , buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitInternalNodesLinksChange }});
+                    }
+                });
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occurred while getting alternative links!" + textStatus);
+            }
+    });
+}
+
+function submitInternalNodesLinksChange() {
+    var optionsDiv = $("div#currentLinksInternalNodeDialog");
+    var table = $("table", optionsDiv);
+
+    var info = new Object();
+    info["command"] = "ChangeInternalNodeLinksCommand";
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+
+    var newInfo = [];
+    newInfo.push(getParamObject("initialEdges", optionsDiv.data("initialEdges"), "other"));
+    newInfo.push(getParamObject("alignmentId", optionsDiv.data("alignmentId"), "other"));
+    newInfo.push(getParamObject("vWorksheetId", optionsDiv.data("worksheetId"), "vWorksheetId"));
+
+    // Get the new edges information
+    var newEdges = [];
+    var invalidValueExists = false;
+    var invalidRow;
+    $.each($("tr", table), function (index, row) {
+        if ($(row).hasClass("emptyRow"))
+            return true;
+
+        var edgeObj = {};
+        edgeObj["edgeSourceId"] = $("td.sourceNode", row).data("nodeId");
+        edgeObj["edgeTargetId"] = $("td.targetNode", row).data("nodeId");
+        edgeObj["edgeId"] = $("td.edgeLabel", $(row)).data("edgeId");
+
+        // Check for the empty nodes and links
+        if (edgeObj["edgeSourceId"] == "emptyNodeId" || edgeObj["edgeTargetId"] == "emptyNodeId"
+            || edgeObj["edgeId"] == "emptyEdgeId") {
+            invalidValueExists = true;
+            invalidRow = row;
+            return false;
+        }
+        newEdges.push(edgeObj);
+    });
+
+    // Show error and return if row with invalid value exists
+    if (invalidValueExists) {
+        console.log("Invalid value exists!");
+        $(invalidRow).addClass("fixMe");
+        $("span#currentLinksWindowText").text("Please provide valid value!");
+        $("div#currentLinksErrorWindowBox").show();
+        return false;
+    }
+
+    newInfo.push(getParamObject("newEdges", newEdges, "other"));
+
+    info["newEdges"] = newEdges;
+    info["newInfo"] = JSON.stringify(newInfo);
+
+    // console.log(info);
+
+    showLoading(optionsDiv.data("worksheetId"));
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                parse(json);
+                hideLoading(optionsDiv.data("worksheetId"));
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while getting nodes list!");
+                hideLoading(optionsDiv.data("worksheetId"));
+            }
+    });
+    optionsDiv.dialog("close");
+}
+
+function showChooseNodeDialog(event) {
+    var optionsDiv = $("div#chooseNodeDialog");
+    optionsDiv.data("currentEditedCell", $(this).parent());
+
+    $(this).parents("tr.fixMe").removeClass("fixMe");
+    $("div#currentLinksErrorWindowBox").hide();
+    $(this).parent().addClass("currentEditedCell");
+
+    $("#chooseExistingNodes").trigger("click");
+
+    var positionArray = [event.clientX+20       // distance from left
+        , event.clientY+10];    // distance from top
+
+    // Show the dialog box
+    optionsDiv.dialog({width: 250, height: 400, position: positionArray, title: "Choose Node"
+        , buttons: { "Cancel": function() {
+            $(this).dialog("close");
+        }, "Submit":submitInternalNodeChange }});
+}
+
+function showChooseLinkDialog() {
+    var optionsDiv = $("div#chooseLinkDialog");
+    optionsDiv.data("currentEditedCell", $(this).parent());
+    $(this).parents("tr.fixMe").removeClass("fixMe");
+    $("div#currentLinksErrorWindowBox").hide();
+    $(this).parent().addClass("currentEditedCell");
+
+    $("#chooseAllLinks").trigger("click");
+
+    var positionArray = [event.clientX+20       // distance from left
+        , event.clientY+10];    // distance from top
+
+    // Show the dialog box
+    optionsDiv.dialog({width: 250, height: 400, position: positionArray, title: "Choose Link"
+        , buttons: { "Cancel": function() {
+            $(this).dialog("close");
+        }, "Submit":submitLinkChange }});
+}
+
+function submitLinkChange() {
+    var optionsDiv = $("div#chooseLinkDialog");
+
+    var table = $("#linksList");
+    // Flag error if no value has been selected
+    if ($("td.selected", table).length == 0) {
+        $("span.error", optionsDiv).show();
+        return false;
+    }
+    var selectedLinkId = $("td.selected", table).data("edgeId");
+    var selectedLinkLabel = $("td.selected span", table).text();
+
+    optionsDiv.dialog("close");
+
+    // Remove the selection highlighting
+    $("#currentIncomingLinksTable td.currentEditedCell").removeClass("currentEditedCell");
+    $("#currentOutgoingLinksTable td.currentEditedCell").removeClass("currentEditedCell");
+
+    var cellChanged = $(optionsDiv.data("currentEditedCell"));
+    $("span", cellChanged).text(selectedLinkLabel);
+    $(cellChanged).data("edgeId", selectedLinkId).addClass("valueChangedCell");
+}
+
+function attachHandlersToChangeObjPropertyObjects() {
+    $("#chooseExistingNodes, #chooseDomain, #chooseAllNodes").click(populateNodesListFromServer);
+    $("#chooseExistingLinks, #choosePropertyWithDomainAndRange, #chooseAllLinks").click(populateLinksListFromServer);
+
+    $("#addIncomingInternalNodeLink, #addOutgoingInternalNodeLink").button().click(function() {
+        var table;
+        var srcTd;
+        var targetTd;
+
+        var optionsDiv = $("div#currentLinksInternalNodeDialog");
+
+        if ($(this).attr("id") == "addIncomingInternalNodeLink") {
+            table = $("table#currentIncomingLinksTable");
+            targetTd = $("<td>").addClass("targetNode").data("nodeId", optionsDiv.data("internalNodeId"))
+                .append($("<span>").text(optionsDiv.data("internalNodeLabel"))
+                                .click(showChooseNodeDialog)
+                                .addClass("node-or-edge-label"));
+            targetTd.hide();
+        } else {
+            table = $("table#currentOutgoingLinksTable");
+            srcTd = $("<td>").addClass("sourceNode").data("nodeId", optionsDiv.data("internalNodeId"))
+                .append($("<span>").text(optionsDiv.data("internalNodeLabel"))
+                            .click(showChooseNodeDialog)
+                            .addClass("node-or-edge-label"));
+            srcTd.hide();
+        }
+
+        var trTag = $("<tr>").addClass("InternalNodeLink");
+        if (srcTd == null) {
+            srcTd = $("<td>").addClass("sourceNode").data("nodeId", "emptyNodeId")
+                        .append($("<span>").text("class").addClass("node-or-edge-label")
+                            .click(showChooseNodeDialog));
+        }
+
+        if (targetTd == null) {
+            targetTd = $("<td>").addClass("targetNode").data("nodeId", "emptyNodeId")
+                .append($("<span>").text("class").addClass("node-or-edge-label")
+                    .click(showChooseNodeDialog));
+        }
+
+        var edgeLabelTd = $("<td>").addClass("edgeLabel").data("edgeId", "emptyEdgeId")
+                    .append($("<span>").text("property").addClass("node-or-edge-label")
+                    .click(showChooseLinkDialog));
+
+        var delButton = $("<td>").append($("<button>").button({
+                icons: {
+                    primary: "ui-icon-close"
+                },
+                text: false
+            }).addClass("deleteLink").click(function(){
+                $(this).parents("tr.InternalNodeLink").remove();
+            }));
+
+        if ($(this).attr("id") == "addIncomingInternalNodeLink") {
+            trTag.append($("<td>").text("from"))
+                .append(srcTd).append($("<td>").text("via"))
+                .append(edgeLabelTd).append(targetTd).append(delButton);
+        } else {
+            trTag.append($("<td>").text("to"))
+                .append(srcTd).append(targetTd).append($("<td>").text("via"))
+                .append(edgeLabelTd).append(delButton);
+        }
+
+        // Remove the "none" row if present
+        $("tr.emptyRow", table).remove();
+
+        table.append(trTag);
+
+    });
+
+    $("div#chooseLinkDialog, div#chooseNodeDialog").bind('dialogclose', function(event) {
+        $("#currentIncomingLinksTable td.currentEditedCell").removeClass("currentEditedCell");
+        $("#currentOutgoingLinksTable td.currentEditedCell").removeClass("currentEditedCell");
+    });
+}
+
+function submitInternalNodeChange() {
+    var optionsDiv = $("div#chooseNodeDialog");
+
+    var table = $("#nodesList");
+    // Flag error if no value has been selected
+    if ($("td.selected", table).length == 0) {
+        $("span.error", optionsDiv).show();
+        return false;
+    }
+    var selectedNodeId = $("td.selected", table).data("nodeId");
+    var selectedNodeLabel = $("td.selected span", table).text();
+
+    optionsDiv.dialog("close");
+
+    // Remove the selection highlighting
+    $("#currentLinksTable td.currentEditedCell").removeClass("currentEditedCell");
+
+    var cellChanged = $(optionsDiv.data("currentEditedCell"));
+    $("span", cellChanged).text(selectedNodeLabel);
+    $(cellChanged).data("nodeId", selectedNodeId).addClass("valueChangedCell");
+}
+
+function populateNodesListFromServer(event) {
+    var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "GetInternalNodesListOfAlignmentCommand";
+    info["alignmentId"] = $("div#currentLinksInternalNodeDialog").data("alignmentId");
+
+    if ($(this).attr("id") == "chooseExistingNodes") {
+        info["nodesRange"] = "existingTreeNodes";
+    } else if ($(this).attr("id") == "chooseDomain") {
+        info["nodesRange"] = "domainNodesOfProperty";
+        info["property"] = "";
+    } else {
+        info["nodesRange"] = "allGraphNodes";
+    }
+    var currentSelectedNodeId = $($("div#chooseNodeDialog").data("currentEditedCell")).data("nodeId");
+
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                $.each(json["elements"], function(index, element) {
+                    if(element["updateType"] == "InternalNodesList") {
+                        var table = $("#nodesList");
+                        $("tr", table).remove();
+                        $("div#chooseNodeDialog span.error").hide();
+
+                        element["nodes"].sort(function(a,b) {
+                            return a["nodeLabel"].toUpperCase().localeCompare(b["nodeLabel"].toUpperCase());
+                        });
+
+                        $.each(element["nodes"], function(index2, node) {
+                            var trTag = $("<tr>");
+                            var nodeTd = $("<td>").append($("<span>").text(node["nodeLabel"]))
+                                                .data("nodeId", node["nodeId"])
+                                    .click(function(){
+                                        $("td", table).removeClass("selected");
+                                        $(this).addClass("selected");
+                                    });
+                            if (nodeTd.data("nodeId") == currentSelectedNodeId) {
+                                nodeTd.addClass("selected");
+                            }
+
+                            trTag.append(nodeTd)
+                            table.append(trTag);
+                        });
+                    }
+                });
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while getting nodes list!");
+            }
+    });
+}
+
+function populateLinksListFromServer() {
+    // Remove existing links in the table
+    var table = $("#linksList");
+    $("tr", table).remove();
+    $("div#chooseLinkDialog span.error").hide();
+
+    // Prepare the request
+    var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "GetLinksOfAlignmentCommand";
+    info["alignmentId"] = $("div#currentLinksInternalNodeDialog").data("alignmentId");
+
+    if ($(this).attr("id") == "chooseExistingLinks") {
+        info["linksRange"] = "existingLinks";
+    } else if ($(this).attr("id") == "choosePropertyWithDomainAndRange") {
+        info["linksRange"] = "linksWithDomainAndRange";
+        info["domain"] = "";
+        info["range"] = "";
+    } else {
+        info["linksRange"] = "allObjectProperties";
+    }
+
+    var currentSelectedLinkId = $($("div#chooseLinkDialog").data("currentEditedCell")).data("edgeId");
+
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                $.each(json["elements"], function(index, element) {
+                    if(element["updateType"] == "LinksList") {
+                        // Sort the list
+                        element["edges"].sort(function(a,b) {
+                            return a["edgeLabel"].toUpperCase().localeCompare(b["edgeLabel"].toUpperCase());
+                        });
+
+                        $.each(element["edges"], function(index2, node) {
+                            var trTag = $("<tr>");
+                            var edgeTd = $("<td>").append($("<span>").text(node["edgeLabel"]))
+                                .data("edgeId", node["edgeId"])
+                                .click(function(){
+                                    $("td", table).removeClass("selected");
+                                    $(this).addClass("selected");
+                                });
+
+                            if (edgeTd.data("edgeId") == currentSelectedLinkId) {
+                                edgeTd.addClass("selected");
+                            }
+
+                            trTag.append(edgeTd)
+                            table.append(trTag);
+                        });
+                    }
+                });
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occurred while getting links list!");
+            }
+    });
+}
 
 
 

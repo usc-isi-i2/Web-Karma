@@ -354,13 +354,22 @@ public class Alignment implements OntologyUpdateListener {
 		return false;
 	}
 	
-	public Set<Link> getCurrentLinksToNode(String nodeId) {
+	public Set<Link> getCurrentIncomingLinksToNode(String nodeId) {
 		
 		Node node = this.getNodeById(nodeId);
 		if (node == null) return null;
 		if (!this.steinerTree.containsVertex(node)) return null;
 			
 		return this.steinerTree.incomingEdgesOf(node);
+	}
+	
+	public Set<Link> getCurrentOutgoingLinksToNode(String nodeId) {
+		
+		Node node = this.getNodeById(nodeId);
+		if (node == null) return null;
+		if (!this.steinerTree.containsVertex(node)) return null;
+			
+		return this.steinerTree.outgoingEdgesOf(node);
 	}
 
 	public List<Link> getLinks(String sourceId, String targetId) {
