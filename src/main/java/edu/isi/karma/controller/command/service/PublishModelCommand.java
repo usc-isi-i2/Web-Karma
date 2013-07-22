@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +40,6 @@ import edu.isi.karma.model.serialization.WebServiceLoader;
 import edu.isi.karma.model.serialization.WebServicePublisher;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.rdf.SourceDescription;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Link;
@@ -50,8 +48,6 @@ import edu.isi.karma.rep.metadata.MetadataContainer;
 import edu.isi.karma.rep.sources.DataSource;
 import edu.isi.karma.rep.sources.WebService;
 import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.view.ViewPreferences;
-import edu.isi.karma.webserver.KarmaException;
 
 public class PublishModelCommand extends Command{
 
@@ -150,46 +146,18 @@ public class PublishModelCommand extends Command{
 		}
 		
 		try {
-			//construct the SD
-			//get from preferences saved source prefix
-			String sourceNamespace = "http://localhost/";
-			String sourcePrefix = "s";
-			String addInverseProperties = "true";
-			try{
-				ViewPreferences prefs = vWorkspace.getPreferences();
-				JSONObject prefObject = prefs.getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
-				sourcePrefix = prefObject.getString("rdfPrefix");
-				sourceNamespace = prefObject.getString("rdfNamespace");
-				addInverseProperties= prefObject.getString("addInverseProperties");
-			}catch(Exception e){
-				//prefix not found, just use the default
-				sourceNamespace = "http://localhost/";
-				sourcePrefix = "s";
-				addInverseProperties = "true";
-			}
-			if(sourceNamespace.trim().isEmpty())
-				sourceNamespace = "http://localhost/";
-			if(sourcePrefix.trim().isEmpty())
-				sourcePrefix = "s";
-
-			SourceDescription desc = new SourceDescription(ws, al, wk,
-					sourcePrefix, sourceNamespace,Boolean.valueOf(addInverseProperties),false);
-			String descString = desc.generateSourceDescription();
-			/////////////////
-			
 			// Get the transformation commands JSON list
 			WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
 			List<String> commandsJSON = histReader.getJSONForCommands(CommandTag.Transformation);
 			
 			if (service != null) {
-				service.setSourceDescription(descString);
 				WebServicePublisher servicePublisher = new WebServicePublisher(service);
 				servicePublisher.publish(Repository.Instance().LANG, true);
 				logger.info("Service model has successfully been published to repository: " + service.getId());
 				return new UpdateContainer(new ErrorUpdate(
 				"Service model has successfully been published to repository: " + service.getId()));
 			} else { //if (source != null) {
-				DataSourcePublisher sourcePublisher = new DataSourcePublisher(source, descString, ws.getFactory(), commandsJSON, wk.getMetadataContainer().getSourceInformation());
+				DataSourcePublisher sourcePublisher = new DataSourcePublisher(source, ws.getFactory(), commandsJSON, wk.getMetadataContainer().getSourceInformation());
 				sourcePublisher.publish(Repository.Instance().LANG, true);
 				logger.info("Source model has successfully been published to repository: " + source.getId());
 				return new UpdateContainer(new ErrorUpdate(
@@ -200,10 +168,6 @@ public class PublishModelCommand extends Command{
 			logger.error("Error occured while publishing the source/service ", e);
 			return new UpdateContainer(new ErrorUpdate(
 			"Error occured while publishing the source/service "));
-		}catch(KarmaException e){
-			logger.error("Error occured while generating the source description. ", e);
-			return new UpdateContainer(new ErrorUpdate(
-			"Error occured while generating the source description."));
 		}
 	}
 

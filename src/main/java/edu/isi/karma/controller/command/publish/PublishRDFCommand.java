@@ -152,7 +152,7 @@ public class PublishRDFCommand extends Command {
 		
 		// Generate the RDF using KR2RML data structures
 		try {
-			rdfGen.generateRDF();
+			rdfGen.generateRDF(true);
 			logger.info("RDF written to file: " + rdfFileLocalPath);
 			if(saveToStore){
 				//take the contents of the RDF file and save them to the store

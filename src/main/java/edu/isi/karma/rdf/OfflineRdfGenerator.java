@@ -24,13 +24,13 @@ package edu.isi.karma.rdf;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.cli2.CommandLine;
@@ -49,15 +49,16 @@ import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import edu.isi.karma.imp.csv.CSVFileImport;
-import edu.isi.karma.imp.database.DatabaseTableImport;
 import edu.isi.karma.imp.json.JsonImport;
-import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
+import edu.isi.karma.kr2rml.WorksheetR2RMLJenaModelParser;
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -65,10 +66,17 @@ import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.JSONUtil;
+import edu.isi.karma.view.VWorksheet;
+import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import edu.isi.karma.webserver.WorkspaceRegistry;
 
 public class OfflineRdfGenerator {
 	private static Logger logger = LoggerFactory.getLogger(OfflineRdfGenerator.class);
+	
 	
 	public static void main(String []args) {
 		Group options = createCommandLineOptions();
@@ -97,7 +105,8 @@ public class OfflineRdfGenerator {
 			String modelFilePath = (String) cl.getValue("--modelfilepath");
 			String outputFilePath = (String) cl.getValue("--outputfile");
 			if (modelFilePath == null || outputFilePath == null || inputType==null) {
-				System.out.println("Mandatory value missing. Please provide argument value for sourcetype, modelfilepath and outputfile.");
+				System.out.println("Mandatory value missing. Please provide argument value " +
+						"for sourcetype, modelfilepath and outputfile.");
 				return;
 			}
 			
@@ -107,8 +116,12 @@ public class OfflineRdfGenerator {
 				System.out.println("File not found: " + modelFile.getAbsolutePath());
 				return;
 			}
-			if (!inputType.equalsIgnoreCase("DB") && !inputType.equalsIgnoreCase("CSV") && !inputType.equalsIgnoreCase("XML") && !inputType.equalsIgnoreCase("JSON")) {
-				System.out.println("Invalid source type: " + inputType + ". Please choose from: DB, CSV, XML, JSON.");
+			if (!inputType.equalsIgnoreCase("DB") 
+					&& !inputType.equalsIgnoreCase("CSV") 
+					&& !inputType.equalsIgnoreCase("XML") 
+					&& !inputType.equalsIgnoreCase("JSON")) {
+				System.out.println("Invalid source type: " + inputType + 
+						". Please choose from: DB, CSV, XML, JSON.");
 				return;
 			}
 			
@@ -116,8 +129,27 @@ public class OfflineRdfGenerator {
 		    Workspace workspace = WorkspaceManager._getNewInstance().createWorkspace();
 		    RepFactory factory = workspace.getFactory();
 		    Worksheet worksheet = null;
+		    ServletContextParameterMap.setParameterValue(
+		    		ContextParameter.USER_DIRECTORY_PATH, "src/main/webapp/");
+		    VWorkspace vWorkspace = new VWorkspace(workspace, "WSP100");
+		    WorkspaceRegistry.getInstance().register(new ExecutionController(vWorkspace));
 		    
-			// Create the Worksheet depending on the source type
+		    /** LOAD THE R2RML MODEL FILE INTO A JENA MODEL **/
+			System.out.print("Loading the R2RML model file...");
+		    Model model = loadSourceModelIntoJenaModel(modelFile);
+		    String worksheetName = getWorksheetTitleFromJenaModel(model);
+		    if (worksheetName == null) {
+		    	throw new KarmaException("No source name found in the model.");
+		    }
+		    System.out.println("done");
+		    
+		    /** PREPATRE THE OUTPUT OBJECTS **/
+		    OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
+			BufferedWriter bw = new BufferedWriter(fw);
+			PrintWriter pw = new PrintWriter(bw);
+		    
+			/** Generate RDF on the source type **/
+			// Database table
 			if (inputType.equals("DB")) {
 				String dbtypeStr = (String) cl.getValue("--dbtype");
 				String hostname = (String) cl.getValue("--hostname");
@@ -127,63 +159,69 @@ public class OfflineRdfGenerator {
 				try {
 					portnumber = Integer.parseInt(cl.getValue("--portnumber").toString());
 				} catch (Throwable t) {
-					System.out.println("Error occured while parsing value for portnumber. Provided value: " + cl.getValue("--portnumber"));
+					System.out.println("Error occured while parsing value for portnumber." +
+							" Provided value: " + cl.getValue("--portnumber"));
+					pw.close();
 					return;
 				}
 				String dBorSIDName = (String) cl.getValue("--dbname");
 				String tablename = (String) cl.getValue("--tablename");
 				
 				// Validate the arguments
-				if (dbtypeStr == null || dbtypeStr.equals("") || hostname == null || hostname.equals("") ||
-						username == null || username.equals("") || password == null || password.equals("") ||
-						dBorSIDName == null || dBorSIDName.equals("") || tablename == null || tablename.equals("") ||
+				if (dbtypeStr == null || dbtypeStr.equals("") || hostname == null 
+						|| hostname.equals("") || username == null || username.equals("") 
+						|| password == null || password.equals("") || dBorSIDName == null 
+						|| dBorSIDName.equals("") || tablename == null || tablename.equals("") ||
 						tablename == null || tablename.equals("")) {
-					System.out.println("A mandatory value is missing for fetching data from a database. Please provide" +
-							" argument values for dbtype, hostname, username, password, portnumber, dbname and tablename.");
+					System.out.println("A mandatory value is missing for fetching data from " +
+							"a database. Please provide argument values for dbtype, hostname, " +
+							"username, password, portnumber, dbname and tablename.");
+					pw.close();
 					return;
 				}
 				
 				DBType dbType = DBType.valueOf(dbtypeStr);
 				if (dbType == null) {
-					System.out.println("Unidentified database type. Valid values: Oracle, MySQL, SQLServer, PostGIS");
+					System.out.println("Unidentified database type. Valid values: " +
+							"Oracle, MySQL, SQLServer, PostGIS");
+					pw.close();
 					return;
 				}
-				System.out.print("Generating worksheet from the data source ...");
-				worksheet = generateWorksheetFromDBTable(dbType, hostname, portnumber, username, password, dBorSIDName, tablename, factory, workspace);
-			} else {
+				DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType, 
+						hostname, portnumber, username, password, dBorSIDName, tablename);
+				dbRdfGen.generateRDF(vWorkspace, pw, model);
+			} 
+			// File based worksheets such as JSON, XML, CSV
+			else {
 				String sourceFilePath = (String) cl.getValue("--filepath");
 				File inputFile = new File(sourceFilePath);
 				if (!inputFile.exists()) {
 					System.out.println("File not found: " + inputFile.getAbsolutePath());
+					pw.close();
 					return;
 				}
 				System.out.print("Generating worksheet from the data source ...");
 				worksheet = generateWorksheetFromFile(inputFile, inputType, factory, workspace);
+				System.out.println("done");
+				/** GENERATE RDF FROM WORKSHEET OBJECT **/
+			    System.out.print("Generating RDF...");
+				vWorkspace.addAllWorksheets();
+				VWorksheet vWorksheet = vWorkspace.getVWorksheet(worksheet.getId());
+				WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(
+						vWorksheet, vWorkspace, model, worksheetName);
+				
+				// Gets all the errors generated during the RDF generation
+				ErrorReport errorReport = new ErrorReport();
+				
+				// RDF generation object initialization
+				KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
+						workspace.getFactory(), workspace.getOntologyManager(), pw, 
+						parserTest.getAuxInfo(), errorReport, false);
+
+				// Generate the rdf
+				rdfGen.generateRDF(false);
 			}
-			// SANITY CHECK
-			if (worksheet == null) {
-				System.out.println("Error occured while creating the worksheet object.");
-				return;
-			}
-			System.out.println("done");
-			
-			/** GET THE SOURCE DESCRIPTION FROM THE MODEL FILE **/
-			System.out.print("Extracting source description from the model file...");
-		    String sourceDescription = getSourceDescription(modelFile);
-		    System.out.println("done");
-			
-			/** GENERATE RDF FROM WORKSHEET OBJECT **/
-		    System.out.print("Generating RDF...");
-			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
-			BufferedWriter bw = new BufferedWriter(fw);
-			PrintWriter pw = new PrintWriter(bw);
-			WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(factory, sourceDescription, pw);
-			if (worksheet.getHeaders().hasNestedTables()) {
-				wrg.generateTriplesCell(worksheet,true);
-			} else {
-				wrg.generateTriplesRow(worksheet, true);
-			}
-			
+			pw.flush();
 			pw.close();
 			System.out.println("done");
 			
@@ -192,13 +230,27 @@ public class OfflineRdfGenerator {
 			logger.error("Error occured while generating RDF!", e);
 		}
 	}
+	
 
-	private static Worksheet generateWorksheetFromDBTable(DBType dbType, String hostname,
-			int portnumber, String username, String password, String dBorSIDName, String tableName, 
-			RepFactory factory, Workspace workspace) throws SQLException, ClassNotFoundException {
-		DatabaseTableImport  dbTableImport = new DatabaseTableImport(dbType, hostname, portnumber, username, 
-				password, dBorSIDName, tableName, workspace);
-		return dbTableImport.generateWorksheetForAllRows();
+	private static Model loadSourceModelIntoJenaModel(File modelFile) throws FileNotFoundException {
+		// Create an empty Model
+		Model model = ModelFactory.createDefaultModel();
+		InputStream s = new FileInputStream(modelFile);
+		model.read(s, null, "TURTLE");
+		return model;
+	}
+	
+	private static String getWorksheetTitleFromJenaModel(Model model) throws KarmaException {
+		Property sourceNameProp = model.getProperty(Uris.KM_SOURCE_NAME_URI);
+		NodeIterator itr = model.listObjectsOfProperty(sourceNameProp);
+		List<RDFNode> list = itr.toList();
+		
+		if (list.size() > 1) {
+			throw new KarmaException("More than one resource exists with source name.");
+		} else if (list.size() == 1) {
+			return list.get(0).toString();
+		} else 
+			return null;
 	}
 
 	private static Worksheet generateWorksheetFromFile(File inputFile, String inputType,
@@ -225,23 +277,6 @@ public class OfflineRdfGenerator {
 		}
 			
 		return worksheet;
-	}
-
-	private static String getSourceDescription(File modelFile) throws IOException, KarmaException {
-		Model model = ModelFactory.createDefaultModel();
-		InputStream s = new FileInputStream(modelFile);
-		model.read(s, null, "N3");
-		s.close();
-
-		// Get the alignment rules
-		Property hasSourceDesc = model.createProperty(Namespaces.KARMA, "hasSourceDescription");
-		ResIterator itr = model.listResourcesWithProperty(hasSourceDesc);
-		List<Resource> sourceList = itr.toList();
-		if (sourceList.size() == 0)
-		    throw new KarmaException("No source found in the model file.");
-		Resource resource = sourceList.get(0);
-		Statement stmt = model.getProperty(resource, hasSourceDesc);
-		return stmt.getObject().toString();
 	}
 
 	private static Group createCommandLineOptions() {

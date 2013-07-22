@@ -41,7 +41,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 	private enum JsonKeys {
 		worksheetId, alignmentId, label, id, hNodeId, nodeType, source,
 		target, linkType, sourceNodeId, targetNodeId, height, hNodesCovered,
-		nodes, links, maxTreeHeight, linkStatus
+		nodes, links, maxTreeHeight, linkStatus, linkUri
 	}
 
 	private enum JsonValues {
@@ -150,6 +150,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 					linkObj.put(JsonKeys.label.name(), link.getLabel().getLocalName());
 					linkObj.put(JsonKeys.id.name(), link.getId()+"");
 					linkObj.put(JsonKeys.linkStatus.name(), link.getStatus().name());
+					linkObj.put(JsonKeys.linkUri.name(), link.getLabel().getUri());
 
 					if(target.getType() == NodeType.ColumnNode && outEdges.isEmpty()) {
 						linkObj.put(JsonKeys.linkType.name(), JsonValues.holderLink.name());

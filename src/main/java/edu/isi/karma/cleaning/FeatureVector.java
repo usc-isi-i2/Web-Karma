@@ -23,8 +23,6 @@ package edu.isi.karma.cleaning;
 
 import java.util.Vector;
 
-import edu.isi.mediator.domain.parser.grammar.DomainModelParser.in_comparison_return;
-
 public class FeatureVector {
 	String[] symbol = {"#",";",",","!","~","@","$","%","^","&","*","(",")","_","-","{","}","[","]","\"","'",":","?","<",">","."};
 	int[] types = {TNode.NUMTYP,TNode.SYBSTYP,TNode.LWRDTYP,TNode.UWRDTYP};

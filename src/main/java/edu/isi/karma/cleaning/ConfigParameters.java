@@ -25,8 +25,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import edu.isi.mediator.domain.parser.grammar.DomainModelParser.section_return;
-
 public class ConfigParameters {
 	public static int debug = 0;
 	Properties properties = new Properties();

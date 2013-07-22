@@ -349,7 +349,7 @@ and related projects, please see: http://www.isi.edu/integration
 	</head>
 
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.111</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.112</span></h1>
 		<table id="topMenuBar">
 			<tr>
 				<td>
@@ -1096,5 +1096,16 @@ and related projects, please see: http://www.isi.edu/integration
         </div>
 
         <div id="rdfGenerationErrorWindow" style="display: none" class="smallSizedFont"></div>
+        <div id="alternativeLinkDialog" style="display: none" class="smallSizedFont">
+            <input type="radio" name="chooseLinkGroup" value="compatibleLinks" id="showCompatibleLinks">
+            <label for="showCompatibleLinks">Compatible links</label>
+            <input type="radio" name="chooseLinkGroup" value="allObjectProperties" id="showAllAlternativeLinks" checked>
+            <label for="showAllAlternativeLinks">All links</label><br><br>
+
+            <span class="error" style="display: none">Please select a value!</span><br>
+            <table id="alternativeLinksList">
+
+            </table>
+        </div>
 	</body>
 </html>

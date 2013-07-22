@@ -24,19 +24,25 @@ import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommand.ALTERNATIVE_LINKS_RANGE;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetAlternativeLinksCommandFactory extends CommandFactory {
 	private enum Arguments {
-		nodeId, alignmentId
+		sourceNodeId, alignmentId, targetNodeId, linksRange
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
-		String nodeId =request.getParameter(Arguments.nodeId.name());
+		String sourceNodeId =request.getParameter(Arguments.sourceNodeId.name());
+		String targetNodeId =request.getParameter(Arguments.targetNodeId.name());
 		String alignmentId =request.getParameter(Arguments.alignmentId.name());
-		return new GetAlternativeLinksCommand(getNewId(vWorkspace),nodeId, alignmentId);
+		ALTERNATIVE_LINKS_RANGE linksRange = ALTERNATIVE_LINKS_RANGE.valueOf(
+				request.getParameter(Arguments.linksRange.name()));
+		
+		return new GetAlternativeLinksCommand(getNewId(vWorkspace), sourceNodeId,
+				targetNodeId, alignmentId, linksRange);
 	}
 
 }

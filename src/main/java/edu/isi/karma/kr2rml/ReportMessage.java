@@ -23,7 +23,7 @@ package edu.isi.karma.kr2rml;
 
 import edu.isi.karma.kr2rml.ErrorReport.Priority;
 
-class ReportMessage {
+public class ReportMessage {
 	private String title;
 	private String description;
 	private Priority priority;

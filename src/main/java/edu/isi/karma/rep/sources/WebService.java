@@ -58,7 +58,6 @@ public class WebService extends Source {
 	private String address;
 	private URL urlExample;
 	private String operationName;
-	private String sourceDescription;
 
 	private List<Attribute> inputAttributes;
 	private List<Attribute> outputAttributes;
@@ -75,7 +74,6 @@ public class WebService extends Source {
 	public WebService(String id, URL urlExample) {
 		super(id, URLManager.getOperationName(urlExample));
 		this.urlExample= urlExample;
-		this.sourceDescription = "";
 		this.hNodeIdToAttribute = new HashMap<String, Attribute>();
 		this.variables = new ArrayList<String>();
 		this.inputAttributes = new ArrayList<Attribute>();
@@ -86,7 +84,6 @@ public class WebService extends Source {
 	public WebService(String id, String name, URL urlExample) {
 		super(id, name);
 		this.urlExample= urlExample;
-		this.sourceDescription = "";
 		this.setMethod(HttpMethods.GET);
 		this.urlExample = urlExample;
 		this.inputAttributes = new ArrayList<Attribute>();
@@ -100,7 +97,6 @@ public class WebService extends Source {
 		this.inputAttributes = new ArrayList<Attribute>();
 		this.outputAttributes = new ArrayList<Attribute>();
 		this.attIdToAttMap = new HashMap<String, Attribute>();
-		this.sourceDescription = "";
 	}
 	
 	public WebService(String id, String name, String addressTemplate) {
@@ -110,7 +106,6 @@ public class WebService extends Source {
 		this.inputAttributes = new ArrayList<Attribute>();
 		this.outputAttributes = new ArrayList<Attribute>();
 		this.attIdToAttMap = new HashMap<String, Attribute>();
-		this.sourceDescription = "";
 	}
 
 	public WebService(String id, String name, URL urlExample, String method) {
@@ -120,7 +115,6 @@ public class WebService extends Source {
 		this.inputAttributes = new ArrayList<Attribute>();
 		this.outputAttributes = new ArrayList<Attribute>();
 		this.attIdToAttMap = new HashMap<String, Attribute>();
-		this.sourceDescription = "";
 	}
 
 	public String getUri() {
@@ -137,14 +131,6 @@ public class WebService extends Source {
 	
 	public void setVariables(List<String> variables) {
 		this.variables = variables;
-	}
-
-	public String getSourceDescription() {
-		return sourceDescription;
-	}
-
-	public void setSourceDescription(String serviceDescription) {
-		this.sourceDescription = serviceDescription;
 	}
 
 	/**

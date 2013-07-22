@@ -99,8 +99,6 @@ import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyComma
 import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetPropertiesAndClassesList;
 import edu.isi.karma.controller.command.alignment.GetPropertiesAndClassesListCommandFactory;
-import edu.isi.karma.controller.command.alignment.ResetModelCommand;
-import edu.isi.karma.controller.command.alignment.ResetModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommand;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommand;
@@ -229,8 +227,6 @@ public class ExecutionController {
 				new PublishRDFCellCommandFactory());
 		commandFactoryMap.put(FetchPreferencesCommand.class.getSimpleName(),
 				new FetchPreferencesCommandFactory());
-		commandFactoryMap.put(ResetModelCommand.class.getSimpleName(),
-				new ResetModelCommandFactory());
 		commandFactoryMap.put(GenerateCleaningRulesCommand.class.getSimpleName(),
 				new GenerateCleaningRulesCommandFactory());
 		commandFactoryMap.put(InvokeServiceCommand.class.getSimpleName(),

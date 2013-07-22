@@ -179,7 +179,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             return "translate(" + (this.getComputedTextLength()/2 * -1) + ")";
             // return "translate(" + (this.getComputedTextLength()/2 * -1) + ") rotate(-8 " +X+","+Y+ ")";  
         }).on("click", function(d){
-            showAlternativeParents_d3(d, svg, d3.event);
+            showAlternativeLinksDialog(d, svg, d3.event);
         }).on("mouseover", function(d){
             d3.selectAll("g.InternalNode").each(function(d2,i) {
                 if(d2 == d.source) {
@@ -535,102 +535,148 @@ function changeSemanticType_d3(d, vis, event) {
     });
 }
 
-function showAlternativeParents_d3(d, vis, event) {
+function showAlternativeLinksDialog(d, vis, event) {
+    var optionsDiv = $("#alternativeLinkDialog");
+    optionsDiv.data("sourceNodeId", d["sourceNodeId"]);
+    optionsDiv.data("targetNodeId", d["targetNodeId"]);
+    optionsDiv.data("currentEdgeId", d["id"]);
+    optionsDiv.data("currentEdgeUri", d["linkUri"]);
+    optionsDiv.data("alignmentId", $(vis).data("alignmentId"));
+    optionsDiv.data("worksheetId",$(vis).data("worksheetId"));
+
+    $("#showCompatibleLinks").trigger("click");
+
+    var positionArray = [event.clientX+20       // distance from left
+        , event.clientY+10];    // distance from top
+
+    // Show the dialog box
+    optionsDiv.dialog({width: 250, height: 400, position: positionArray, title: "Choose Link"
+        , buttons: { "Cancel": function() {
+            $(this).dialog("close");
+        }, "Submit":submitDirectLinkChange }});
+}
+
+function submitDirectLinkChange() {
+    var optionsDiv = $("#alternativeLinkDialog");
+
+    var table = $("#alternativeLinksList");
+    // Flag error if no value has been selected
+    if ($("td.selected", table).length == 0) {
+        $("span.error", optionsDiv).show();
+        return false;
+    }
+    optionsDiv.dialog("close");
+
     var info = new Object();
     info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["nodeId"] = d["targetNodeId"];
-    info["command"] = "GetAlternativeLinksCommand";
-    info["alignmentId"] = $(vis).data("alignmentId");
-    info["worksheetId"] = $(vis).data("worksheetId");
-    $("#alternativeParentsTableFilter").val("");
-        
+    info["command"] = "ChangeInternalNodeLinksCommand";
+
+    // Prepare the input for command
+    var newInfo = [];
+    newInfo.push(getParamObject("alignmentId", optionsDiv.data("alignmentId"), "other"));
+    newInfo.push(getParamObject("vWorksheetId", optionsDiv.data("worksheetId"), "other"));
+
+    // Put the new edge information
+    var newEdges = [];
+    var newEdgeObj = {};
+    newEdgeObj["edgeSourceId"] = optionsDiv.data("sourceNodeId");
+    newEdgeObj["edgeTargetId"] = optionsDiv.data("targetNodeId");
+    newEdgeObj["edgeId"] = $("td.selected", table).data("edgeId");
+    newEdges.push(newEdgeObj);
+    newInfo.push(getParamObject("newEdges", newEdges, "other"));
+
+    // Put the old edge information
+    var initialEdges = [];
+    var oldEdgeObj = {};
+    oldEdgeObj["edgeSourceId"] = optionsDiv.data("sourceNodeId");
+    oldEdgeObj["edgeTargetId"] = optionsDiv.data("targetNodeId");
+    oldEdgeObj["edgeId"] = optionsDiv.data("currentEdgeUri");
+    initialEdges.push(oldEdgeObj);
+    newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
+
+    info["newInfo"] = JSON.stringify(newInfo);
+
+    showLoading(optionsDiv.data("worksheetId"));
     var returned = $.ajax({
-        url: "RequestController", 
+        url: "RequestController",
         type: "POST",
         data : info,
         dataType : "json",
-        complete : 
+        complete :
             function (xhr, textStatus) {
-                // alert(xhr.responseText);
+                var json = $.parseJSON(xhr.responseText);
+                parse(json);
+                hideLoading(optionsDiv.data("worksheetId"));
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while getting nodes list!");
+                hideLoading(optionsDiv.data("worksheetId"));
+            }
+    });
+}
+
+function populateAlternativeLinks() {
+    var optionsDiv = $("#alternativeLinkDialog");
+
+    var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["sourceNodeId"] = optionsDiv.data("sourceNodeId");
+    info["targetNodeId"] = optionsDiv.data("targetNodeId");
+    info["command"] = "GetAlternativeLinksCommand";
+    info["alignmentId"] = optionsDiv.data("alignmentId");
+    info["worksheetId"] = optionsDiv.data("worksheetId");
+
+    if ($(this).attr("id") == "showCompatibleLinks") {
+        info["linksRange"] = "compatibleLinks";
+    } else {
+        info["linksRange"] = "allObjectProperties";
+    }
+
+    var table =  $("#alternativeLinksList");
+    $("tr", table).remove();
+    var currentSelectedLinkId = optionsDiv.data("currentEdgeUri");
+
+//    console.log(info);
+
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
                 var json = $.parseJSON(xhr.responseText);
                 $.each(json["elements"], function(index, element) {
-                    if(element["updateType"] == "GetAlternativeLinks") {
-                        var optionsDiv = $("div#OntologyAlternativeLinksPanel");
-                        var table = $("table", optionsDiv);
-                        $("tr", table).remove();
-                        var positionArray = [event.clientX+20       // distance from left
-                                    , event.clientY+10];    // distance from top
-                        
-                        // Sort the edges by class names
-                        if(element["Edges"] && element["Edges"].length != 0) {
-                            element["Edges"].sort(function(a,b){
-                                var aName = a.edgeSource.toLowerCase();
-                                var bName = b.edgeSource.toLowerCase();
-                                
-                                if(aName == bName) {
-                                    var aEdge = a.edgeLabel.toLowerCase();
-                                    var bEdge = b.edgeLabel.toLowerCase();
-                                    return ((aEdge < bEdge) ? -1 : ((aEdge > bEdge) ? 1 : 0));
-                                } else
-                                    return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));   
-                            });
-                        }
-                        
-                        $.each(element["Edges"], function(index2, edge) {
-                            var trTag = $("<tr>").addClass("AlternativeLink");
-                            
-                            var radioButton = $("<input>")
-                                .attr("type", "radio")
-                                .attr("id", edge["edgeId"])
-                                .attr("name", "AlternativeLinksGroup")
-                                .attr("value", edge["edgeId"])
-                                .val(edge["edgeLabel"])
-                                .data("isDuplicate", false);
-                                
-                            var typeItalicSpan = $("<span>").addClass("italic").text(edge["edgeLabel"]);    
-                            var linkLabel = $("<label>").attr("for",edge["edgeId"]).text(edge["edgeSource"] + " ").append(typeItalicSpan);
-                            var linkLabelTd = $("<td>").append(linkLabel); 
-                            
-                            trTag.append($("<td>").append(radioButton))
-                                .append(linkLabelTd)
-                                .data("edgeLabel", linkLabel.text());
-                                
-                            if(edge["selected"]) {
-                                radioButton.attr("checked", true);
-                                // Add the Duplicate button
-                                var dupButton = $("<button>").addClass("duplicateClass").text("Duplicate").click(duplicateLink);
-                                $(dupButton).button();
-                                linkLabelTd.append(dupButton);
-                            }
-                                
-                            table.append(trTag);
+                    if(element["updateType"] == "LinksList") {
+                        // Sort the list
+                        element["edges"].sort(function(a,b) {
+                            return a["edgeLabel"].toUpperCase().localeCompare(b["edgeLabel"].toUpperCase());
                         });
-                        // Show the dialog box
-                        optionsDiv.dialog({width: 300, height: 400, position: positionArray
-                            , buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitAlignmentLinkChange }});
-                            
-                        $("input:radio[@name='AlternativeLinksGroup']").change(function(){
-                            if($(this).data("isDuplicate"))
-                                optionsDiv.data("currentSelection", $(this).data("edgeId"));
-                            else
-                                optionsDiv.data("currentSelection", $(this).attr("id"));
-                                
-                            // Remove the button from the previously selected radio button and add it to the current one
-                            var buttonClone = $("button", optionsDiv).clone(true);
-                            $("button", optionsDiv).remove();
-                            $("td:eq(1)",$(this).parents("tr")).append(buttonClone);
-                                
-                            optionsDiv.data("alignmentId", info["alignmentId"]);
-                            optionsDiv.data("worksheetId", info["worksheetId"]);
-                            optionsDiv.data("isDuplicate", $(this).data("isDuplicate"));
+
+                        $.each(element["edges"], function(index2, node) {
+                            var trTag = $("<tr>");
+                            var edgeTd = $("<td>").append($("<span>").text(node["edgeLabel"]))
+                                .data("edgeId", node["edgeId"])
+                                .click(function(){
+                                    $("td", table).removeClass("selected");
+                                    $(this).addClass("selected");
+                                });
+
+                            if (edgeTd.data("edgeId") == currentSelectedLinkId) {
+                                edgeTd.addClass("selected");
+                            }
+
+                            trTag.append(edgeTd)
+                            table.append(trTag);
                         });
                     }
                 });
             },
         error :
             function (xhr, textStatus) {
-                alert("Error occured while getting alternative links!" + textStatus);
-            }          
+                alert("Error occurred while getting links list!");
+            }
     });
 }
 
@@ -792,7 +838,7 @@ function submitInternalNodesLinksChange() {
     info["newEdges"] = newEdges;
     info["newInfo"] = JSON.stringify(newInfo);
 
-    // console.log(info);
+//    console.log(info);
 
     showLoading(optionsDiv.data("worksheetId"));
     var returned = $.ajax({
@@ -880,6 +926,8 @@ function submitLinkChange() {
 function attachHandlersToChangeObjPropertyObjects() {
     $("#chooseExistingNodes, #chooseDomain, #chooseAllNodes").click(populateNodesListFromServer);
     $("#chooseExistingLinks, #choosePropertyWithDomainAndRange, #chooseAllLinks").click(populateLinksListFromServer);
+
+    $("#showCompatibleLinks, #showAllAlternativeLinks").click(populateAlternativeLinks);
 
     $("#addIncomingInternalNodeLink, #addOutgoingInternalNodeLink").button().click(function() {
         var table;

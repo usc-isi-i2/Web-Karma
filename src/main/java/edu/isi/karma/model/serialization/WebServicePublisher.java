@@ -188,12 +188,6 @@ public class WebServicePublisher extends SourcePublisher {
 			my_variable.addProperty(rdf_type, variavle_resource);
 			myservice.addProperty(has_variable, my_variable);
 		}
-		
-		//for source description
-		Property hasSourceDesc = model.createProperty(Namespaces.KARMA, "hasSourceDescription");
-		String sourceDescription = service.getSourceDescription();
-		sourceDescription = sourceDescription.replaceAll("\n", " ").replaceAll("\r", " ");
-		myservice.addProperty(hasSourceDesc, sourceDescription);
 			
 		Resource my_input = addInput(model, true);
 		if (my_input != null) myservice.addProperty(has_input, my_input);

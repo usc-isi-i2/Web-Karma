@@ -51,7 +51,6 @@ public class DataSourcePublisher extends SourcePublisher {
 
 	private DataSource source;
 	private Model model = null;
-	private String sourceDescription;
 	private RepFactory factory;
 	private List<String> transformationCommandsJSON;
 	private SourceInformation sourceInfo;
@@ -59,9 +58,8 @@ public class DataSourcePublisher extends SourcePublisher {
 	//MARIAM
 	//I had to add factory, so that I can get to the columnName
 	//I tried to do it in a nicer way but couldn't figure out how to add it to the Attribute
-	public DataSourcePublisher(DataSource source, String sourceDescription, RepFactory factory, List<String> transformationCommandJSON, SourceInformation sourceInfo) {
+	public DataSourcePublisher(DataSource source, RepFactory factory, List<String> transformationCommandJSON, SourceInformation sourceInfo) {
 		this.source = source;
-		this.sourceDescription=sourceDescription;
 		this.factory=factory;
 		this.transformationCommandsJSON = transformationCommandJSON;
 		this.sourceInfo = sourceInfo;
@@ -166,10 +164,6 @@ public class DataSourcePublisher extends SourcePublisher {
 			}
 			addModelPart(model, my_source, this.source.getModel());
 		}
-		//for source description
-		Property hasSourceDesc = model.createProperty(Namespaces.KARMA, "hasSourceDescription");
-		sourceDescription=sourceDescription.replaceAll("\n", " ").replaceAll("\r", " ");
-		my_source.addProperty(hasSourceDesc, sourceDescription);
 		
 		// Add transformations
 		Property has_columnTransformation = model.createProperty(Namespaces.KARMA, "hasColumnTransformation");

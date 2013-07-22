@@ -22,6 +22,10 @@ package edu.isi.karma.controller.command.publish;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONException;
@@ -34,12 +38,14 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
+import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
+import edu.isi.karma.kr2rml.ReportMessage;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.rdf.SourceDescription;
-import edu.isi.karma.rdf.WorksheetRDFGenerator;
+import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.view.VWorkspace;
 
 public class PublishRDFCellCommand extends Command {
@@ -49,6 +55,7 @@ public class PublishRDFCellCommand extends Command {
 	private String rdfSourceNamespace;
 	// rdf for this cell
 	private StringWriter outRdf = new StringWriter();
+	private PrintWriter pw = new PrintWriter(outRdf);
 
 	public enum JsonKeys {
 		updateType, cellRdf, vWorksheetId
@@ -88,46 +95,42 @@ public class PublishRDFCellCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-
-		// get alignment for this worksheet
-		logger.info("Get alignment for " + vWorksheetId);
-
 		Worksheet worksheet = vWorkspace.getViewFactory()
-		.getVWorksheet(vWorksheetId).getWorksheet();
+				.getVWorksheet(vWorksheetId).getWorksheet();
 
+		// Get the alignment for this worksheet
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
-				vWorkspace.getWorkspace().getId() + ":" + vWorksheetId + "AL");
+				AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(),
+						vWorksheetId));
+		
 		if (alignment == null || alignment.isEmpty()) {
 			logger.info("Alignment is NULL for " + vWorksheetId);
 			return new UpdateContainer(
 					new ErrorUpdate("Worksheet not modeled!"));
 		}
 
-		Node root = alignment.GetTreeRoot();
-
 		try {
-			if (root != null) {
-				// Write the source description
-				// use true to generate a SD with column names (for use
-				// "outside" of Karma)
-				// use false for internal use
-				SourceDescription desc = new SourceDescription(
-						vWorkspace.getWorkspace(), alignment, worksheet,
-						rdfSourcePrefix,rdfSourceNamespace, true, false);
-				String descString = desc.generateSourceDescription();
-				logger.info("SD=" + descString);
-				PrintWriter outWriter = new PrintWriter(outRdf);
-				WorksheetRDFGenerator wrg = new WorksheetRDFGenerator(
-						vWorkspace.getRepFactory(), descString, outWriter);
-				wrg.generateTriplesCell(nodeId,true);
-				//logger.info("OUT RDF="+outRdf);
-				// //////////////////
-
-			} else {
-				return new UpdateContainer(new ErrorUpdate(
-						"Alignment returned null root!!"));
-			}
-
+			// Generate the KR2RML data structures for the RDF generation
+			final ErrorReport errorReport = new ErrorReport();
+			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(
+					vWorkspace.getWorkspace().getOntologyManager(), 
+					alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
+					false, errorReport);
+			
+			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
+					vWorkspace.getRepFactory(), vWorkspace.getWorkspace().getOntologyManager(),
+					pw, mappingGen.getMappingAuxillaryInformation(), errorReport, false);
+			
+			// Create empty data structures
+			Set<String> existingTopRowTriples = new HashSet<String>();
+			Set<String> predicatesCovered = new HashSet<String>();
+			Map<String, ReportMessage> predicatesFailed = new HashMap<String, ReportMessage>();
+			Set<String> predicatesSuccessful = new HashSet<String>();
+			
+			Node node = vWorkspace.getRepFactory().getNode(nodeId);
+			rdfGen.generateTriplesForCell(node, existingTopRowTriples, node.getHNodeId(), 
+					predicatesCovered, predicatesFailed, predicatesSuccessful);
+			
 			return new UpdateContainer(new AbstractUpdate() {
 				@Override
 				public void generateJson(String prefix, PrintWriter pw,
