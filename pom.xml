@@ -50,11 +50,6 @@
 	<artifactId>jackcess</artifactId>
 	<version>1.2.10</version>
 </dependency>
-<dependency>
-	<groupId>org.apache.hadoop</groupId>
-	<artifactId>hadoop-core</artifactId>
-	<version>0.20.2</version>
-</dependency>
   <dependency>
   		<groupId>org.geotools</groupId>
   		<artifactId>gt-referencing</artifactId>
@@ -98,15 +93,8 @@
 	<dependency>
 		<groupId>xml-apis</groupId>
 		<artifactId>xml-apis</artifactId>
-		<version>2.0.2</version>
+		<version>1.0.b2</version>
 	</dependency>
-	<!--<dependency>
-	    <groupId>weka</groupId>
-	    <artifactId>weka</artifactId>
-	    <version>3.6</version>
-	    <scope>system</scope>
-	    <systemPath>${project.basedir}/lib/weka.jar</systemPath>
-	</dependency> -->
     <!-- The Java API for KML -->
    <dependency>
       <groupId>de.micromata.jak</groupId>
@@ -230,41 +218,10 @@
               <artifactId>cloning</artifactId>
               <version>1.8.5</version>
         </dependency>
-            
-        <dependency>
-        	<groupId>net.sourceforge.jtds</groupId>
-        	<artifactId>jtds</artifactId>
-        	<version>1.2.4</version>
-        </dependency>
-        
-        <dependency>
-	        <groupId>uk.ac.shef.wit.simmetrics</groupId>
-	        <artifactId>simmetrics</artifactId>
-	        <version>1.6.2</version>
-	        <scope>system</scope>
-	    	<systemPath>${project.basedir}/lib/simmetrics_jar_v1_6_2_d07_02_07.jar</systemPath>
-	    </dependency>
         <dependency>
         	<groupId>postgresql</groupId>
         	<artifactId>postgresql</artifactId>
         	<version>9.1-901.jdbc4</version>
-        </dependency>
-        <dependency>
-			<groupId>com.vividsolutions</groupId>
-			<artifactId>jts</artifactId>
-			<version>1.8</version>
-		</dependency>
-        <dependency>
-	        <groupId>com.jspsmart.upload</groupId>
-	        <artifactId>jspsmartupload</artifactId>
-	        <version>1.1</version>
-	        <scope>system</scope>
-	    	<systemPath>${project.basedir}/lib/jsmartupload.jar</systemPath>
-	    </dependency>
-        <dependency>
-        	<groupId>javax.servlet.jsp</groupId>
-        	<artifactId>javax.servlet.jsp-api</artifactId>
-        	<version>2.2.1</version>
         </dependency>
         <dependency>
         	<groupId>org.apache.httpcomponents</groupId>
@@ -286,11 +243,6 @@
 		    <artifactId>guava</artifactId>
 		    <version>14.0</version>
 		</dependency>
-		<dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-core</artifactId>
-            <version>0.20.205.0</version> <!-- or whatever version -->
-        </dependency>
    		<dependency>
         	<groupId>org.apache.mahout</groupId>
         	<artifactId>mahout-core</artifactId>
@@ -338,11 +290,6 @@
 			<version>0.9</version>
 		</dependency>
 		-->
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-joda</artifactId>
-			<version>2.1.2</version>
-		</dependency>
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-repository</artifactId>

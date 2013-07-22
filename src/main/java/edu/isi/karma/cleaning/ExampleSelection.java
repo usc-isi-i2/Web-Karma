@@ -24,12 +24,6 @@ package edu.isi.karma.cleaning;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.apache.xpath.axes.AxesWalker;
-import org.geotools.filter.expression.ThisPropertyAccessorFactory;
-import org.python.antlr.PythonParser.return_stmt_return;
-
-import uk.ac.shef.wit.simmetrics.TestArbitrators;
-
 public class ExampleSelection {
 	public HashMap<String, Vector<TNode>> org = new HashMap<String, Vector<TNode>>();
 	public HashMap<String, Vector<TNode>> tran = new HashMap<String, Vector<TNode>>();
