@@ -586,6 +586,8 @@ function styleAndAssignHandlersToColumnHeadingMenu() {
     // Assign handler to the add column button (in table_manipulation.js)
     $("button#addColumnButton").click(openAddNewColumnDialog);
 
+    // Assign handler to the show chart button (in cleaning-charts.js)
+    $("button#showChartButton").click(showChartButtonHandler);
 }
 
 function splitColumnByComma() {
