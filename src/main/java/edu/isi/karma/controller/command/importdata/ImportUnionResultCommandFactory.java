@@ -19,70 +19,26 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-#commHistoryAndWorkspace{
-	position:relative;
-}
-#commandHistory{
-	background-color: #F0F0F0;
-	position:absolute;
-	top:10px;
-	left: 0px;
-	margin-bottom: 10px;
-	padding: 5px;
-	height:500px;
-	width: 250px;
-	margin-left: 10px;
-	overflow:auto;
-}
-#titleCommand{
-	background-color: #050505;
-	font-family: Arial, sans-serif;
-	font-size: 18px;
-	color: white;
-	margin-bottom:8px;
-	text-align: center;
-	padding: 5px;
-}
+package edu.isi.karma.controller.command.importdata;
 
-.CommandDiv.undo-state {
-	background-color: #3D3D3D;
-	padding: 4px;
-	border: solid 1px;
-	border-color:white;
-	font-family: Arial, sans-serif;
-	font-size: 12px;
-	color: white;
-}
-.CommandDiv.undoselected {
-	background-color: #ADADAD;
-}
+import javax.servlet.http.HttpServletRequest;
 
-.CommandDiv.redo-state {
-	background-color: #ADADAD;
-	padding: 4px;
-	border: solid 1px;
-	border-color:white;
-	font-family: Arial, sans-serif;
-	font-size: 12px;
-	color: white;
-}
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-.CommandDiv.redoselected {
-	background-color: #3D3D3D;
-}
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.view.VWorkspace;
 
-.CommandDiv.notUndoable {
-	background-color: black;
-}
-.iconDiv img {
-	height: 20px; 
-	width:20px;
-}
+public class ImportUnionResultCommandFactory extends CommandFactory {
 
-.iconDiv {
-	position: absolute;
-	top:2px; 
-	right:3px; 
-	visibility: hidden;
-	cursor: pointer;
+	static Logger logger = LoggerFactory
+			.getLogger(ImportJSONFileCommandFactory.class);
+
+	@Override
+	public Command createCommand(HttpServletRequest request,
+			VWorkspace vWorkspace) {
+		return new ImportUnionResultCommand(getNewId(vWorkspace));
+	}
+
 }

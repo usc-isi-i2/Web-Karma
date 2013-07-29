@@ -137,6 +137,9 @@ public class GenerateR2RMLModelCommand extends Command {
 			WorksheetModelWriter modelWriter = new WorksheetModelWriter(writer, 
 					vWorkspace.getRepFactory(), ontMgr, worksheet.getTitle());
 
+			// Writer worksheet properties such as Service URL
+			modelWriter.writeWorksheetProperties(worksheet);
+			
 			// Write the transformation commands if any
 			WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(vWorksheetId, 
 					vWorkspace);

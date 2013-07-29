@@ -18,71 +18,24 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
+package edu.isi.karma.controller.command.importdata;
 
-#commHistoryAndWorkspace{
-	position:relative;
-}
-#commandHistory{
-	background-color: #F0F0F0;
-	position:absolute;
-	top:10px;
-	left: 0px;
-	margin-bottom: 10px;
-	padding: 5px;
-	height:500px;
-	width: 250px;
-	margin-left: 10px;
-	overflow:auto;
-}
-#titleCommand{
-	background-color: #050505;
-	font-family: Arial, sans-serif;
-	font-size: 18px;
-	color: white;
-	margin-bottom:8px;
-	text-align: center;
-	padding: 5px;
-}
+import java.io.File;
 
-.CommandDiv.undo-state {
-	background-color: #3D3D3D;
-	padding: 4px;
-	border: solid 1px;
-	border-color:white;
-	font-family: Arial, sans-serif;
-	font-size: 12px;
-	color: white;
-}
-.CommandDiv.undoselected {
-	background-color: #ADADAD;
-}
+import javax.servlet.http.HttpServletRequest;
 
-.CommandDiv.redo-state {
-	background-color: #ADADAD;
-	padding: 4px;
-	border: solid 1px;
-	border-color:white;
-	font-family: Arial, sans-serif;
-	font-size: 12px;
-	color: white;
-}
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.util.FileUtil;
+import edu.isi.karma.view.VWorkspace;
 
-.CommandDiv.redoselected {
-	background-color: #3D3D3D;
-}
+public class ImportOntologyCommandFactory extends CommandFactory {
 
-.CommandDiv.notUndoable {
-	background-color: black;
-}
-.iconDiv img {
-	height: 20px; 
-	width:20px;
-}
+	@Override
+	public Command createCommand(HttpServletRequest request,
+			VWorkspace vWorkspace) {
+		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
+		return new ImportOntologyCommand(getNewId(vWorkspace), uploadedFile);
+	}
 
-.iconDiv {
-	position: absolute;
-	top:2px; 
-	right:3px; 
-	visibility: hidden;
-	cursor: pointer;
 }

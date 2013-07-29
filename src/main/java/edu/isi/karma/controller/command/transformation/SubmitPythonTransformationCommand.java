@@ -34,12 +34,12 @@ import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.AddColumnCommand;
-import edu.isi.karma.controller.command.AddColumnCommandFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.MultipleValueEditColumnCommand;
-import edu.isi.karma.controller.command.MultipleValueEditColumnCommandFactory;
+import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
+import edu.isi.karma.controller.command.worksheet.AddColumnCommandFactory;
+import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand;
+import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;

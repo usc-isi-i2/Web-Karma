@@ -40,9 +40,9 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-import edu.isi.karma.controller.command.SplitByCommaCommandFactory.Arguments;
-import edu.isi.karma.controller.command.SplitColumnByDelimiter;
 import edu.isi.karma.controller.command.cleaning.SubmitCleaningCommand;
+import edu.isi.karma.controller.command.worksheet.SplitColumnByDelimiter;
+import edu.isi.karma.controller.command.worksheet.SplitByCommaCommandFactory.Arguments;
 import edu.isi.karma.controller.history.CommandHistoryWriter.HistoryArguments;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;

@@ -62,4 +62,11 @@ public interface Uris {
 	
 	public static final String PROV_ENTITY_URI = Namespaces.PROV + "Entity";
 	public static final String PROV_WAS_DERIVED_FROM_URI = Namespaces.PROV + "wasDerivedFrom";
+	
+	// Worksheet properties related URIs
+	public static final String KM_MODEL_NAME_URI = Namespaces.KARMA_DEV + "modelName";
+	public static final String KM_SERVICE_OPTIONS_URI = Namespaces.KARMA_DEV + "hasServiceOptions";
+	public static final String KM_SERVICE_URL_URI = Namespaces.KARMA_DEV + "serviceUrl";
+	public static final String KM_SERVICE_REQ_METHOD_URI = Namespaces.KARMA_DEV + "serviceRequestMethod";
+	public static final String KM_SERVICE_POST_METHOD_TYPE_URI = Namespaces.KARMA_DEV + "servicePostMethodType";
 }

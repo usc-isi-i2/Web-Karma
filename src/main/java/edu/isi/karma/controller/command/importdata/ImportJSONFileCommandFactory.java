@@ -18,42 +18,29 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.controller.update;
+package edu.isi.karma.controller.command.importdata;
 
-import java.io.PrintWriter;
+import java.io.File;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.importdata.ImportDatabaseTableCommand;
+import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.view.VWorkspace;
 
-public class NewDatabaseCommandUpdate extends AbstractUpdate{
-	private Command command;
-	private static Logger logger = LoggerFactory.getLogger(NewDatabaseCommandUpdate.class);
+public class ImportJSONFileCommandFactory extends CommandFactory {
 	
-	public enum JsonKeys {
-		commandId
-	}
-
-	public NewDatabaseCommandUpdate(ImportDatabaseTableCommand command) {
-		this.command = command;
-	}
-
+	static Logger logger = LoggerFactory.getLogger(ImportJSONFileCommandFactory.class);
+	
 	@Override
-	public void generateJson(String prefix, PrintWriter pw,
+	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
-		JSONObject responseObj = new JSONObject();
-		try {
-			responseObj.put(JsonKeys.commandId.name(), command.getId());
-			responseObj.put(GenericJsonKeys.updateType.name(), "NewImportDatabaseTableCommandUpdate");
-			pw.print(responseObj.toString(4));
-		} catch (JSONException e) {
-			logger.error("Error generating JSON!", e);
-		}
+				
+		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
+		return new ImportJSONFileCommand(getNewId(vWorkspace), uploadedFile);
 	}
-
 }

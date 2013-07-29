@@ -27,6 +27,7 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jetty.http.HttpMethods;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,6 +54,9 @@ import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.metadata.WorksheetProperties;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.util.FileUtil;
 
 public class WorksheetModelWriter {
@@ -292,6 +296,45 @@ public class WorksheetModelWriter {
 		} catch (IOException e) {
 			logger.error("IO Exception occured while writing worksheet history into R2RML model", e);
 			return;
+		}
+	}
+	
+	public void writeWorksheetProperties(Worksheet worksheet) throws RepositoryException {
+		WorksheetProperties props = worksheet.getMetadataContainer().getWorksheetProperties();
+		if (props == null) {
+			return;
+		}
+		// Model name triple
+		if (props.getPropertyValue(Property.modelName) != null && 
+				!props.getPropertyValue(Property.modelName).equals("")) {
+			URI modelNameUri = f.createURI(Uris.KM_MODEL_NAME_URI);
+			Value modelName = f.createLiteral(props.getPropertyValue(Property.modelName));
+			con.add(mappingRes, modelNameUri, modelName);
+		}
+		
+		
+		// Service options (if present)
+		if (props.hasServiceProperties()) {
+			if (props.getPropertyValue(Property.serviceUrl) == null) {
+				return;
+			}
+			
+			// Request method triple
+			URI reqMethodUri = f.createURI(Uris.KM_SERVICE_REQ_METHOD_URI);
+			Value method = f.createLiteral(props.getPropertyValue(Property.serviceRequestMethod));
+			con.add(mappingRes, reqMethodUri, method);
+			
+			// Service Url triple
+			URI serUrlUri = f.createURI(Uris.KM_SERVICE_URL_URI);
+			Value servUrl = f.createLiteral(props.getPropertyValue(Property.serviceUrl));
+			con.add(mappingRes, serUrlUri, servUrl);
+			
+			if (props.getPropertyValue(Property.serviceRequestMethod).equals(HttpMethods.POST)) {
+				// POST method related option triple
+				URI postMethodUri = f.createURI(Uris.KM_SERVICE_POST_METHOD_TYPE_URI);
+				Value methodUrl = f.createLiteral(props.getPropertyValue(Property.serviceDataPostMethod));
+				con.add(mappingRes, postMethodUri, methodUrl);
+			}
 		}
 	}
 }

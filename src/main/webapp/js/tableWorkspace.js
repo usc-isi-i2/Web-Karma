@@ -395,6 +395,36 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 
     });
 
+    $('#serviceOptions').click( function() {
+        $('#worksheetServiceOptions').toggle();
+    });
+
+
+    $('#serviceRequestMethod').change(function() {
+        if ($(this).attr('value') == "POST") {
+            $("#servicePostOptions").show();
+        } else {
+            $("#servicePostOptions").hide();
+        }
+    });
+
+    $("#setWorksheetProperties").click(function(){
+        optionsDiv.hide();
+        var settingsBox = $("div#setPropertiesDialog");
+
+        // Show the dialog box
+        settingsBox.dialog({width: 300, title: "Set Properties"
+            , buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": submitWorksheetProperties }});
+
+        // Close the service options
+        if ($('#worksheetServiceOptions').is(':visible')) {
+            $('#serviceOptions').trigger('click');
+        }
+
+        // Check for existing values
+        fetchExistingWorksheetOptions(optionsDiv.data("worksheetId"));
+    });
+
 }
 
 function openWorksheetOptions(event) {
@@ -723,11 +753,118 @@ function styleAndAssignHandlersToMergeButton() {
 	});
 }
 
+function submitWorksheetProperties() {
+    // Prepare the input data
+    var worksheetProps = new Object();
+    worksheetProps["modelName"] = $("#modelNameInput").val();
+
+    // Set service options if the window is visible
+    if ($('#worksheetServiceOptions').is(':visible')) {
+        worksheetProps["hasServiceProperties"] = true;
+        worksheetProps["serviceUrl"] = $("#serviceUrlInput").val();
+        worksheetProps["serviceRequestMethod"] = $("#serviceRequestMethod option:selected").text();
+        if ($("#serviceRequestMethod option:selected").text() == "POST") {
+            worksheetProps["serviceDataPostMethod"] = $("input:radio[name=serviceDataPostMethod]:checked").val();
+        }
+
+    } else {
+        worksheetProps["hasServiceProperties"] = false;
+    }
+
+    var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "SetWorksheetPropertiesCommand";
+
+    var newInfo = [];   // for input parameters
+    newInfo.push(getParamObject("vWorksheetId", $("div#WorksheetOptionsDiv").data("worksheetId") ,"vWorksheetId"));
+    newInfo.push(getParamObject("properties", worksheetProps, "other"));
+    info["newInfo"] = JSON.stringify(newInfo);
+    // Store the data to be shown later when the dialog is opened again
+    $("div#" + info["vWorksheetId"]).data("worksheetProperties", worksheetProps);
+
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                //alert(xhr.responseText);
+                var json = $.parseJSON(xhr.responseText);
+                parse(json);
+            },
+        error :
+            function (xhr, textStatus) {
+                $.sticky("Error occurred while setting properties!");
+            }
+    });
+    $("div#setPropertiesDialog").dialog("close");
+}
 
 
+function fetchExistingWorksheetOptions(worksheetId) {
+    // Uncheck the service options
+    if ($("#serviceOptions").is(":checked")) {
+        $("#serviceOptions").trigger("click");
+    }
+    $('#serviceRequestMethod').val('GET')
+        .trigger('change');
+    $("#servicePostOptions").hide();
 
+    var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "FetchExistingWorksheetPropertiesCommand";
+    info["vWorksheetId"] = worksheetId;
 
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                var props = json["elements"][0]["properties"];
 
+                // Set model name
+                if (props["modelName"] != null) {
+                    $("#modelNameInput").val(props["modelName"]);
+                } else {
+                    $("#modelNameInput").val("");
+                }
+                // Set service options if present
+                if (props["hasServiceProperties"]) {
+                    // Select the service option checkbox
+                    $("#serviceOptions").trigger("click");
+
+                    // Set the service URL
+                    if (props["serviceUrl"] != null) {
+                        $("#serviceUrlInput").val(props["serviceUrl"]);
+                    } else {
+                        $("#serviceUrlInput").val("");
+                    }
+
+                    // Set the request method
+                    var index = (props["serviceRequestMethod"] === "GET") ? 0 : 1;
+                    $('#serviceRequestMethod option').eq(index).prop('selected', true);
+
+                    // Set the POST request invocation method
+                    if (props["serviceRequestMethod"] === "POST") {
+                        $("#servicePostOptions").show();
+                        $(":radio[value=" +props["serviceDataPostMethod"]+"]").prop('checked',true);
+                    }
+
+                } else {
+                    $("#serviceUrlInput").val("");
+                    $('#serviceRequestMethod option').eq(0).prop('selected', true);
+                }
+            },
+        error :
+            function (xhr, textStatus) {
+                $.sticky("Error occurred while fetching worksheet properties!");
+            }
+    });
+}
 
 
 

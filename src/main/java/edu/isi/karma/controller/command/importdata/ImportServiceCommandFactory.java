@@ -18,42 +18,26 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.controller.update;
+package edu.isi.karma.controller.command.importdata;
 
-import java.io.PrintWriter;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.importdata.ImportDatabaseTableCommand;
+import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.view.VWorkspace;
 
-public class NewDatabaseCommandUpdate extends AbstractUpdate{
-	private Command command;
-	private static Logger logger = LoggerFactory.getLogger(NewDatabaseCommandUpdate.class);
-	
-	public enum JsonKeys {
-		commandId
-	}
-
-	public NewDatabaseCommandUpdate(ImportDatabaseTableCommand command) {
-		this.command = command;
+public class ImportServiceCommandFactory extends CommandFactory {
+	private enum Arguments {
+		serviceUrl, worksheetName, includeInputAttributes
 	}
 
 	@Override
-	public void generateJson(String prefix, PrintWriter pw,
+	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
-		JSONObject responseObj = new JSONObject();
-		try {
-			responseObj.put(JsonKeys.commandId.name(), command.getId());
-			responseObj.put(GenericJsonKeys.updateType.name(), "NewImportDatabaseTableCommandUpdate");
-			pw.print(responseObj.toString(4));
-		} catch (JSONException e) {
-			logger.error("Error generating JSON!", e);
-		}
+		return new ImportServiceCommand(getNewId(vWorkspace), 
+				request.getParameter(Arguments.serviceUrl.name()),
+				request.getParameter(Arguments.worksheetName.name()),
+				Boolean.parseBoolean(request.getParameter(Arguments.includeInputAttributes.name())));
 	}
 
 }

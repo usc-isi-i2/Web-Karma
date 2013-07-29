@@ -34,6 +34,7 @@ public class MetadataContainer {
 	private WebService service;
 	private DataSource source;
 	
+	private WorksheetProperties worksheetProperties;
 	private SourceInformation sourceInfo;
 
 	public void initializeFromJSON() {
@@ -66,5 +67,16 @@ public class MetadataContainer {
 
 	public void setSourceInformation(SourceInformation sourceInfo) {
 		this.sourceInfo = sourceInfo;
+	}
+
+	public WorksheetProperties getWorksheetProperties() {
+		if (worksheetProperties == null) {
+			worksheetProperties = new WorksheetProperties();
+		}
+		return worksheetProperties;
+	}
+
+	public void setWorksheetProperties(WorksheetProperties worksheetProperties) {
+		this.worksheetProperties = worksheetProperties;
 	}	
 }

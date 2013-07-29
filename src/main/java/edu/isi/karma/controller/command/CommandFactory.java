@@ -25,7 +25,7 @@ package edu.isi.karma.controller.command;
 
 import javax.servlet.http.HttpServletRequest;
 
-import edu.isi.karma.controller.command.EditCellCommandFactory.Arguments;
+import edu.isi.karma.controller.command.worksheet.EditCellCommandFactory.Arguments;
 import edu.isi.karma.view.VWorkspace;
 
 /**

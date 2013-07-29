@@ -30,7 +30,7 @@ import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONWriter;
 
-import edu.isi.karma.controller.command.ImportDatabaseTableCommand;
+import edu.isi.karma.controller.command.importdata.ImportDatabaseTableCommand;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.JDBCUtilFactory;
 import edu.isi.karma.view.VWorkspace;

@@ -35,12 +35,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.isi.karma.controller.command.AddColumnCommand;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.controller.command.MultipleValueEditColumnCommand;
+import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
+import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNode;

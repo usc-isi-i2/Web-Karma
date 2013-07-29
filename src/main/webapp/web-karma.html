@@ -350,7 +350,7 @@ and related projects, please see: http://www.isi.edu/integration
 	</head>
 
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.114</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.115</span></h1>
 		<table id="topMenuBar">
 			<tr>
 				<td>
@@ -574,6 +574,9 @@ and related projects, please see: http://www.isi.edu/integration
             </button>
             <button href="#" id="publishR2RML">
                 Publish R2RML Model
+            </button>
+            <button href="#" id="setWorksheetProperties">
+                Set properties
             </button>
             <button href="#" id="showAutoModel">
                 Show AutoModel
@@ -1108,6 +1111,29 @@ and related projects, please see: http://www.isi.edu/integration
             <table id="alternativeLinksList">
 
             </table>
+        </div>
+        <div id="setPropertiesDialog" style="display: none" class="smallSizedFont">
+            <div>
+                <br><label>Model Name:</label><input type="text" maxlength="80" id="modelNameInput"><br><br><br>
+            </div>
+
+            <input type="checkbox" id="serviceOptions"> <label for="serviceOptions">Set Service Options</label><br><br>
+
+            <div id="worksheetServiceOptions" style="display: none" class="smallSizedFont">
+                <label>Service URL:</label><input type="text" maxlength="80" id="serviceUrlInput"><br><br>
+                <label>Request method: </label>
+                <select class="smallSizedFont" id="serviceRequestMethod">
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                </select><br><br>
+
+                <div style="display: none" id="servicePostOptions">
+                    <input type="radio" id="invokePerRow" value="invokePerRow" name="serviceDataPostMethod" checked>
+                    <label for="invokePerRow">Invoke service one row at a time</label><br>
+                    <input type="radio" id="invokeWholeWorksheet" value="invokeWithWholeWorksheet" name="serviceDataPostMethod">
+                    <label for="invokeWholeWorksheet">Post whole worksheet</label>
+                </div>
+            </div>
         </div>
 	</body>
 </html>
