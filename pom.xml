@@ -346,11 +346,11 @@
 			    <contextHandlers>
 			      <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
 			        <war>${project.basedir}/external_webapps/openrdf-workbench.war</war>
-			        <contextPath>/workbench</contextPath>
+			        <contextPath>/openrdf-workbench</contextPath>
 			      </contextHandler>
 			      <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
 			        <war>${project.basedir}/external_webapps/openrdf-sesame.war</war>
-			        <contextPath>/triplestore</contextPath>
+			        <contextPath>/openrdf-sesame</contextPath>
 			      </contextHandler>
 			    </contextHandlers>
 		    
