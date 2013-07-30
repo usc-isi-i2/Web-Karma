@@ -727,6 +727,20 @@ function parse(data) {
 			// In d3-alignment-vis.js
 		} else if(element["updateType"] == "KarmaInfo") {
 			$.sticky(element["Info"]);
+		} else if(element["updateType"] == "R2RMLModelUpdate") {
+			
+			var modelListRadioBtnGrp = $("#modelListRadioBtnGrp");
+			modelListRadioBtnGrp.html('');
+			var rows = element["models"]
+			for(var x in rows) {
+				modelListRadioBtnGrp.append('<input type="radio" name="group1" value="'+rows[x]+'" />'+rows[x]+' <br />');
+			}
+			var positionArray = [200		// distance from left
+			 					, 200];	// distance from top
+			var modelListDiv = $('div#modelListDiv');
+			modelListDiv.dialog({ title: 'Select a model to be applied',
+				buttons: { "Cancel": function() { $(this).dialog("close"); }, "Select": submitSelectedModelNameToBeLoaded }, width: 300, height: 150, position: positionArray});
+			
 		}
 	});
 }
