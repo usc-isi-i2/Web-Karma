@@ -468,6 +468,10 @@ and related projects, please see: http://www.isi.edu/integration
 			</div>
 		</div>
 		<div id="tableCellEditDiv" style="display: none"></div>
+		<div id="modelListDiv" style="display: none">
+			<form id="modelListRadioBtnGrp"></form>
+		</div>
+		<div id="r2rmlModelNameDiv" style="display: none"> <textarea id="txtR2RMLModelName" style="width: 100%"> </textarea> </div>
 		<div id="DatabaseImportDiv" style="display: none">
 			<table>
 				<tbody>
@@ -572,9 +576,6 @@ and related projects, please see: http://www.isi.edu/integration
             <button href="#" id="showModel">
                 Show Model
             </button>
-            <button href="#" id="publishR2RML">
-                Publish R2RML Model
-            </button>
             <button href="#" id="setWorksheetProperties">
                 Set properties
             </button>
@@ -590,6 +591,12 @@ and related projects, please see: http://www.isi.edu/integration
             <button href="#" id="publishRDF">
                 Publish RDF
             </button>
+            <button href="#" id="publishR2RML">
+                Publish Model
+            </button>
+            <!-- <button href="#" id="saveR2RMLToTripleStore">
+                Publish Model
+            </button> -->
             <button href="#" id="populateSource">
                 Populate Source
             </button>
@@ -607,6 +614,9 @@ and related projects, please see: http://www.isi.edu/integration
             </button>
             <button href="#" id="publishServiceModel">
                 Publish Service Model
+            </button>
+            <button href="#" id="showR2RMLFromTripleStore">
+                Training
             </button>
             <!--<button href="#" id="transformcolumns">-->
             <!--Transform Columns-->
@@ -851,6 +861,25 @@ and related projects, please see: http://www.isi.edu/integration
 					</tr>
 				</table>
 			</div>
+			<br />
+		</div>
+		<div id="PublishR2RMLModelDialogBox" style="display: none">
+			<span class="smallSizedFont">
+				<table>
+					<tr>
+						<td>Triple Store URL</td>
+						<td>
+						<input type="text" id="txtR2RML_URL" value="" maxlength="100" size="40"/>
+						</td>
+					</tr>
+					<tr>
+						<td>R2RML Model Identifier</td>
+						<td>
+						<input type="text" id="txtR2RML_ID" value="" maxlength="100" size="40"/>
+						</td>
+					</tr>
+				</table> 
+			</span>
 			<br />
 		</div>
 		<div id="PublishDatabaseDialogBox" style="display: none">

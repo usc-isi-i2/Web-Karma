@@ -67,6 +67,11 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
         });
         
     });
+	 
+//	$('button#saveR2RMLToTripleStore').click(function(event){
+//		handlePublishModelToStoreButton(event);
+//	});
+	 
     $("button#mdbExport").click(function(){
         optionsDiv.hide();
         var info = new Object();
@@ -156,6 +161,41 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		   			hideLoading(info["vWorksheetId"]);
 			   	}		   
 		});
+	});
+	
+	
+	$("button#showR2RMLFromTripleStore").click(function() {
+		var info = new Object();
+		info["vWorksheetId"] = optionsDiv.data("worksheetId");
+		info["workspaceId"] = $.workspaceGlobalInformation.id;
+		info["command"] = "FetchR2RMLModelsCommand";
+		
+		var returned = $.ajax({
+		   	url: "RequestController", 
+		   	type: "POST",
+		   	data : info,
+		   	dataType : "json",
+		   	complete : 
+		   		function (xhr, textStatus) {
+		    		var json = $.parseJSON(xhr.responseText);
+		    		parse(json);
+		    		hideLoading(info["vWorksheetId"]);
+			   	},
+			error :
+				function (xhr, textStatus) {
+		   			alert("Error occured while generating the automatic model!" + textStatus);
+		   			hideLoading(info["vWorksheetId"]);
+			   	}		   
+		});
+		
+//		var modelListRadioBtnGrp = $("#modelListRadioBtnGrp");
+//		modelListRadioBtnGrp.append('<input type="radio" name="group1" value="test2" />test2 <br />');
+//		modelListRadioBtnGrp.append('<input type="radio" name="group1" value="this_is_test" />this_is_test');
+//		
+//		modelListDiv.dialog({ title: 'Select a model to be applied',
+//			buttons: { "Cancel": function() { $(this).dialog("close"); }, "Select": function(){ alert('yo'); } }, width: 300, height: 150, position: positionArray});
+//		
+//		return;
 	});
 	
 	$("button#showAutoModel").click(function(){
@@ -366,9 +406,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
     // in pytransform.js
     $("button#pyTransform").click(openPyTransformDialogBox);
 
-    $("button#publishR2RML").click(function(){
+    $("button#publishR2RML").click(function(event){
         optionsDiv.hide();
+        handlePublishModelToStoreButton(event);
 
+        
+        /*
         var info = new Object();
         info["vWorksheetId"] = optionsDiv.data("worksheetId");
         info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -392,6 +435,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                     hideLoading(info["vWorksheetId"]);
                 }
         });
+        */
 
     });
 
