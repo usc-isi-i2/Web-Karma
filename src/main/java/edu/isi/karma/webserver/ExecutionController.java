@@ -129,6 +129,8 @@ import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommandFactory;
 import edu.isi.karma.controller.command.worksheet.ApplyHistoryFromR2RMLModelCommand;
 import edu.isi.karma.controller.command.worksheet.ApplyHistoryFromR2RMLModelCommandFactory;
+import edu.isi.karma.controller.command.alignment.FetchR2RMLModelsCommand;
+import edu.isi.karma.controller.command.alignment.FetchR2RMLModelsCommandFactory;
 import edu.isi.karma.controller.command.worksheet.ApplyWorksheetHistoryCommand;
 import edu.isi.karma.controller.command.worksheet.ApplyWorksheetHistoryCommandFactory;
 import edu.isi.karma.controller.command.worksheet.EditCellCommand;
@@ -149,6 +151,7 @@ import edu.isi.karma.controller.command.worksheet.TablePagerResizeCommand;
 import edu.isi.karma.controller.command.worksheet.TablePagerResizeCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
+
 
 /**
  * There is one ExecutionManager per user. In the HttpServlet implementation we
@@ -289,6 +292,8 @@ public class ExecutionController {
 				new SetWorksheetPropertiesCommandFactory());
 		commandFactoryMap.put(FetchExistingWorksheetPropertiesCommand.class.getSimpleName(), 
 				new FetchExistingWorksheetPropertiesCommandFactory());
+		commandFactoryMap.put(FetchR2RMLModelsCommand.class.getSimpleName(), 
+				new FetchR2RMLModelsCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {
