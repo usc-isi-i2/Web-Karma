@@ -22,6 +22,7 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.List;
 
 import org.json.JSONException;
@@ -38,6 +39,7 @@ import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
 import edu.isi.karma.kr2rml.WorksheetModelWriter;
@@ -55,17 +57,38 @@ public class GenerateR2RMLModelCommand extends Command {
 	
 	private final String vWorksheetId;
 	private String worksheetName;
+	private String modelIdentifier;
+	private String tripleStoreUrl;
+	private String graphContext;
 	
-	private static Logger logger = LoggerFactory
-			.getLogger(GenerateR2RMLModelCommand.class);
+	private static Logger logger = LoggerFactory.getLogger(GenerateR2RMLModelCommand.class);
 	
 	public enum JsonKeys {
 		updateType, fileUrl, vWorksheetId
 	}
 	
-	protected GenerateR2RMLModelCommand(String id, String vWorksheetId) {
+	protected GenerateR2RMLModelCommand(String id, String vWorksheetId, String modelName, String url, String context) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
+		this.modelIdentifier = modelName;
+		this.tripleStoreUrl = url;
+		this.graphContext = context;
+	}
+
+	public String getTripleStoreUrl() {
+		return tripleStoreUrl;
+	}
+
+	public void setTripleStoreUrl(String tripleStoreUrl) {
+		this.tripleStoreUrl = tripleStoreUrl;
+	}
+	
+	public String getGraphContext() {
+		return graphContext;
+	}
+
+	public void setGraphContext(String graphContext) {
+		this.graphContext = graphContext;
 	}
 
 	@Override
@@ -87,6 +110,15 @@ public class GenerateR2RMLModelCommand extends Command {
 	public CommandType getCommandType() {
 		return CommandType.notUndoable;
 	}
+	
+	public String getModelIdentifier() {
+		return modelIdentifier;
+	}
+
+	public void setModelIdentifier(String modelIdentifier) {
+		this.modelIdentifier = modelIdentifier;
+	}
+
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
@@ -158,21 +190,36 @@ public class GenerateR2RMLModelCommand extends Command {
 			writer.flush();
 			writer.close();
 			
-			return new UpdateContainer(new AbstractUpdate() {
-				public void generateJson(String prefix, PrintWriter pw,
-						VWorkspace vWorkspace) {
-					JSONObject outputObject = new JSONObject();
-					try {
-						outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
-						outputObject.put(JsonKeys.fileUrl.name(), "publish/R2RML/" + modelFileName);
-						outputObject.put(JsonKeys.vWorksheetId.name(), vWorksheetId);
-						pw.println(outputObject.toString());
-					} catch (JSONException e) {
-						logger.error("Error occured while generating JSON!");
+			// Write the model to the triple store
+			TripleStoreUtil utilObj = new TripleStoreUtil();
+//			URL url = new URL("http://localhost:8080/publish/R2RML/" + modelFileName);
+//			if (modelIdentifier == null || modelIdentifier.isEmpty()) {
+//				modelIdentifier = modelFileName;
+//			}
+			boolean result = utilObj.saveModel(modelIdentifier, modelFileLocalPath, tripleStoreUrl, null, false);
+			if (result) {
+				logger.info("Saved model to triple store : modelId: " + modelIdentifier);
+				return new UpdateContainer(new AbstractUpdate() {
+					public void generateJson(String prefix, PrintWriter pw,	
+							VWorkspace vWorkspace) {
+						JSONObject outputObject = new JSONObject();
+						try {
+							outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
+							outputObject.put(JsonKeys.fileUrl.name(), "publish/R2RML/" + modelFileName);
+							outputObject.put(JsonKeys.vWorksheetId.name(), vWorksheetId);
+							pw.println(outputObject.toString());
+						} catch (JSONException e) {
+							logger.error("Error occured while generating JSON!");
+						}
 					}
-				}
-			});
+				});
+			} 
+			
+			return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
+			
 		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
 			return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
 		}
 	}
