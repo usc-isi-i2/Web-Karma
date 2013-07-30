@@ -202,3 +202,80 @@ function submitRenameColumn(value, settings) {
             }
     });
 }
+
+
+
+
+function handlePublishModelToStoreButton(event) {
+	var tableCellDiv = $("div#r2rmlModelNameDiv");
+	var positionArray = [event.clientX-150		// distance from left
+					, event.clientY-10];	// distance from top
+	$('#txtR2RMLModelName').val('');
+	
+	var r2rmlDialogBox = $("div#PublishR2RMLModelDialogBox");
+	 $('#txtR2RML_ID').val('');
+	 $('#txtR2RML_URL').val('http://'+window.location.host + '/triplestore/repositories/dim_repo');
+	// Show the dialog box
+	r2rmlDialogBox.dialog({width: 300
+		, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": submitModelName }});
+	
+	/*
+	tableCellDiv.dialog({ title: 'R2RML Model Name',
+			buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitModelName }, width: 300, height: 150, position: positionArray});
+		*/
+}
+
+function submitModelName(value, settings) {
+	$("div#PublishR2RMLModelDialogBox").dialog("close");
+
+	var info = new Object();
+	info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "GenerateR2RMLModelCommand";
+	info['modelName'] = $('#txtR2RML_ID').val();
+	info['tripleStoreUrl'] = $('#txtR2RML_URL').val();
+        
+    showLoading(info["vWorksheetId"]);
+    var returned = $.ajax({
+        url: "RequestController", 
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete : 
+            function (xhr, textStatus) {
+                //alert(xhr.responseText);
+                var json = $.parseJSON(xhr.responseText);
+                parse(json);
+                hideLoading(info["vWorksheetId"]);
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while exporting CSV!" + textStatus);
+                hideLoading(info["vWorksheetId"]);
+            }          
+    });
+ }
+
+
+function submitSelectedModelNameToBeLoaded() {
+	$('div#modelListDiv').dialog("close");
+	var optionsDiv = $("div#WorksheetOptionsDiv");
+    
+	var value = $("#modelListRadioBtnGrp").find("input:checked");
+    var returned = $.ajax({
+		url: "RequestController?workspaceId=" + $.workspaceGlobalInformation.id +
+		"&command=ApplyR2RMLModelCommand&vWorksheetId="+optionsDiv.data("worksheetId") + '&modelName='+value.val(), 
+		type: "POST",
+//		data : '',
+		dataType : "json",
+		complete : 
+			function (xhr, textStatus) {
+			var json = $.parseJSON(xhr.responseText);
+			parse(json);
+		},
+		error :
+			function (xhr, textStatus) {
+			alert("Error occured while applying model from Triple Store!" + textStatus);
+		}		   
+	});
+ }
