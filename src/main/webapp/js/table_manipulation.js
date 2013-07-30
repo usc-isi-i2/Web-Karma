@@ -213,12 +213,15 @@ function handlePublishModelToStoreButton(event) {
 	$('#txtR2RMLModelName').val('');
 	
 	var r2rmlDialogBox = $("div#PublishR2RMLModelDialogBox");
-	 $('#txtR2RML_ID').val('');
-	 $('#txtR2RML_URL').val('http://'+window.location.host + '/triplestore/repositories/dim_repo');
+	 $('#txtR2RML_URL').val('http://'+window.location.host + '/openrdf-sesame/repositories/dim_repo');
 	// Show the dialog box
-	r2rmlDialogBox.dialog({width: 300
-		, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": submitModelName }});
-	
+	r2rmlDialogBox.dialog({
+		width: 400, 
+		buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": submitModelName },
+		resize: function(event, ui) { 
+		}
+		
+	});
 	/*
 	tableCellDiv.dialog({ title: 'R2RML Model Name',
 			buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitModelName }, width: 300, height: 150, position: positionArray});
@@ -232,7 +235,6 @@ function submitModelName(value, settings) {
 	info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "GenerateR2RMLModelCommand";
-	info['modelName'] = $('#txtR2RML_ID').val();
 	info['tripleStoreUrl'] = $('#txtR2RML_URL').val();
         
     showLoading(info["vWorksheetId"]);
