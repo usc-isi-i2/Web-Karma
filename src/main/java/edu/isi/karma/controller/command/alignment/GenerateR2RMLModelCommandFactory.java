@@ -30,17 +30,16 @@ import edu.isi.karma.view.VWorkspace;
 public class GenerateR2RMLModelCommandFactory extends CommandFactory {
 	
 	private enum Arguments {
-		vWorksheetId, addInverseProperties, rdfPrefix, rdfNamespace, modelName, tripleStoreUrl, graphContext
+		vWorksheetId, addInverseProperties, rdfPrefix, rdfNamespace, tripleStoreUrl, graphContext
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
-		String modelName = request.getParameter(Arguments.modelName.name());
 		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.graphContext.name());
-		return new GenerateR2RMLModelCommand(getNewId(vWorkspace), vWorksheetId, modelName, tripleStoreUrl, context);
+		return new GenerateR2RMLModelCommand(getNewId(vWorkspace), vWorksheetId, tripleStoreUrl, context);
 	}
 
 }
