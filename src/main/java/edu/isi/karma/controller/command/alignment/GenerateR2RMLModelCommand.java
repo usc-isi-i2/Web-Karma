@@ -57,7 +57,6 @@ public class GenerateR2RMLModelCommand extends Command {
 	
 	private final String vWorksheetId;
 	private String worksheetName;
-	private String modelIdentifier;
 	private String tripleStoreUrl;
 	private String graphContext;
 	
@@ -67,10 +66,9 @@ public class GenerateR2RMLModelCommand extends Command {
 		updateType, fileUrl, vWorksheetId
 	}
 	
-	protected GenerateR2RMLModelCommand(String id, String vWorksheetId, String modelName, String url, String context) {
+	protected GenerateR2RMLModelCommand(String id, String vWorksheetId, String url, String context) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
-		this.modelIdentifier = modelName;
 		this.tripleStoreUrl = url;
 		this.graphContext = context;
 	}
@@ -111,14 +109,6 @@ public class GenerateR2RMLModelCommand extends Command {
 		return CommandType.notUndoable;
 	}
 	
-	public String getModelIdentifier() {
-		return modelIdentifier;
-	}
-
-	public void setModelIdentifier(String modelIdentifier) {
-		this.modelIdentifier = modelIdentifier;
-	}
-
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
@@ -196,9 +186,9 @@ public class GenerateR2RMLModelCommand extends Command {
 //			if (modelIdentifier == null || modelIdentifier.isEmpty()) {
 //				modelIdentifier = modelFileName;
 //			}
-			boolean result = utilObj.saveModel(modelIdentifier, modelFileLocalPath, tripleStoreUrl, null, false);
+			boolean result = utilObj.saveModel(modelFileLocalPath, tripleStoreUrl, null, false);
 			if (result) {
-				logger.info("Saved model to triple store : modelId: " + modelIdentifier);
+				logger.info("Saved model to triple store");
 				return new UpdateContainer(new AbstractUpdate() {
 					public void generateJson(String prefix, PrintWriter pw,	
 							VWorkspace vWorkspace) {
