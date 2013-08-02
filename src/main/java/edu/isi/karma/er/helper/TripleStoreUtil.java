@@ -51,15 +51,82 @@ import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.rep.sources.Response;
-
 public class TripleStoreUtil {
 	
 	private static Logger logger = LoggerFactory.getLogger(TripleStoreUtil.class);
-	private static final String defaultServerUrl = "http://localhost:8080/triplestore/repositories/dim_repo";
+	private static final String defaultServerUrl = "http://localhost:8080/openrdf-sesame/repositories";
+	private static final String defaultWorkbenchUrl = "http://localhost:8080/openrdf-workbench/repositories";
+	private static final String karma_model_repo = "karma_models";
+	private static final String karma_data_repo = "karma_data";
 	
-	private boolean checkConnection(String url) {
+	static {
+		initialize();
+	}
+	
+	/**
+	 * This method check for the default karma repositories in the local server 
+	 * If not, it creates them
+	 * */
+	public static boolean initialize() {
+		boolean retVal = false;
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpGet httpget;
+		HttpResponse response;
+		HttpEntity entity;
+		ArrayList<String> repositories = new ArrayList<String>();
+		
+		try {
+			// query the list of repositories
+			httpget = new HttpGet(defaultServerUrl);
+			httpget.setHeader("Accept", "application/sparql-results+json, */*;q=0.5");
+			response = httpclient.execute(httpget);
+			entity = response.getEntity();
+			if (entity != null) {
+				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
+				String s = buf.readLine();
+				StringBuffer line = new StringBuffer(); 
+				while(s != null) {
+					line.append(s);
+					s = buf.readLine();
+				}
+				JSONObject data = JSONObject.fromObject(line.toString());
+				JSONArray repoList = data.getJSONObject("results").getJSONArray("bindings");
+				Iterator<JSONObject> itr = repoList.iterator();
+				while(itr.hasNext()) {
+					JSONObject obj = itr.next();
+					repositories.add(obj.optJSONObject("id").optString("value"));
+				}
+				// check for karama_models repo
+				if (!repositories.contains(karma_model_repo)) {
+					System.out.println("karma_models not found");
+					if (create_repo(karma_model_repo, "Karma default model repository", "native")) {
+						retVal = true;
+					} else {
+						logger.error("Could not create repository : " + karma_model_repo);
+						retVal = false;
+					}
+				}
+				// check for karama_data repo
+				if (!repositories.contains(karma_data_repo)) {
+					System.out.println("karma_data not found");
+					if (create_repo(karma_data_repo, "Karma default data repository", "native")) {
+						retVal = true;
+					} else {
+						logger.error("Could not create repository : " + karma_data_repo);
+						retVal = false;
+					}
+				}
+			}
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return retVal;
+	}
+	
+	private static boolean checkConnection(String url) {
+//		initialize();
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpGet httpget;
 		HttpResponse response;
@@ -102,7 +169,7 @@ public class TripleStoreUtil {
 	 * */
 	public ArrayList<String> fetchModelNames(String TripleStoreURL) { 
 		if(TripleStoreURL == null || TripleStoreURL.isEmpty()) {
-			TripleStoreURL = defaultServerUrl;
+			TripleStoreURL = defaultServerUrl + "/"  +karma_model_repo;
 		}
 		ArrayList<String> list = new ArrayList<String>();
 		HttpClient httpclient = new DefaultHttpClient();
@@ -112,9 +179,16 @@ public class TripleStoreUtil {
 		}
 		logger.info("Repositoty URL : " + TripleStoreURL);
 		
+		// check the connection first
+		if (checkConnection(TripleStoreURL)) {
+			logger.info("Connection Test passed");
+		} else {
+			logger.info("Failed connection test : " + TripleStoreURL);
+			return new ArrayList<String>();
+		}
+		
 		try {
 			String queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?y WHERE { ?x km-dev:sourceName ?y . }";
-			
 			logger.debug("query: " + queryString);
 			
 			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
@@ -158,14 +232,13 @@ public class TripleStoreUtil {
 	}
 
 	/**
-	 * @param modelName : The given model identifier by the user
 	 * @param fileUrl : the url of the file from where the RDF is read
 	 * @param tripleStoreURL : the triple store URL
 	 * @param context : The graph context for the RDF
 	 * @param replaceFlag : Whether to replace the contents of the graph
 	 * 
 	 * */
-	public boolean saveModel(String modelName, String filePath, String tripleStoreURL, String context, boolean replaceFlag) {
+	public boolean saveModel(String filePath, String tripleStoreURL, String context, boolean replaceFlag) {
 		boolean retVal = false;
 		
 		// check the connection first
@@ -207,7 +280,7 @@ public class TripleStoreUtil {
 				logger.info(h.getName() +  " : " + h.getValue());
 			}
 			int code = response.getStatusLine().getStatusCode();
-			if(code >= 200 && code < 400) {
+			if(code >= 200 && code < 300) {
 				retVal = true;
 			}
 		} catch (Exception e) {
@@ -218,8 +291,54 @@ public class TripleStoreUtil {
 	
 	}
 	
-	public boolean saveModel(String modelName, String fileUrl) {
-		return saveModel(modelName, fileUrl,defaultServerUrl, null, true);
+	public boolean saveModel(String fileUrl) {
+		return saveModel(fileUrl,defaultServerUrl + "/" + karma_model_repo, null, true);
+	}
+	
+	
+	public static boolean create_repo(String repo_name, String repo_desc, String type ) {
+		// TODO : Take the repository type as an enum - native, memory, etc
+		boolean retVal = false;
+		if (repo_name == null || repo_name.isEmpty() ) {
+			logger.error("Invalid repo name : " + repo_name);
+			return retVal;
+		}
+		if (repo_desc == null || repo_desc.isEmpty()) {
+			repo_desc = repo_name;
+		}
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpResponse response;
+		try {
+			HttpPost httppost = new HttpPost(defaultWorkbenchUrl+"/NONE/create");
+			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+			formparams.add(new BasicNameValuePair("Repository ID",repo_name));
+			formparams.add(new BasicNameValuePair("Repository title",repo_name));
+			formparams.add(new BasicNameValuePair("Triple indexes","spoc,posc"));
+			formparams.add(new BasicNameValuePair("type","native"));
+			httppost.setEntity(new UrlEncodedFormEntity(formparams, "UTF-8"));
+			httppost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+			response = httpclient.execute(httppost);
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				StringBuffer out = new StringBuffer();
+				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
+				String line = buf.readLine();
+				while(line != null) {
+					System.out.println(line);
+					out.append(line);
+					line = buf.readLine();
+				}
+				logger.info(out.toString());
+			}
+			int status = response.getStatusLine().getStatusCode();
+			if ( status >= 200 || status < 300) {
+				logger.info("Created repository : " + repo_name);
+				retVal = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return retVal;
 	}
 
 }
