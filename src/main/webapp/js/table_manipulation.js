@@ -213,7 +213,8 @@ function handlePublishModelToStoreButton(event) {
 	$('#txtR2RMLModelName').val('');
 	
 	var r2rmlDialogBox = $("div#PublishR2RMLModelDialogBox");
-	 $('#txtR2RML_URL').val('http://'+window.location.host + '/openrdf-sesame/repositories/dim_repo');
+	 $('#txtR2RML_URL').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+	 $('#browseRepo').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/');
 	// Show the dialog box
 	r2rmlDialogBox.dialog({
 		width: 400, 
