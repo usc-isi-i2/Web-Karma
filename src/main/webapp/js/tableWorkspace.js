@@ -164,29 +164,15 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	});
 	
 	
-	$("button#showR2RMLFromTripleStore").click(function() {
-		var info = new Object();
-		info["vWorksheetId"] = optionsDiv.data("worksheetId");
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "FetchR2RMLModelsCommand";
+	$("button#showR2RMLFromTripleStore").click(function(event) {
+		var dialog = $('#FetchR2RMLModelDialogBox');
+		$('#txtR2RML_URL_fetch').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+		dialog.dialog(
+			{ title: 'Triple store URL',
+				buttons: { "Cancel": function() { $(this).dialog("close"); }, 
+					"Fetch": renderR2RMLModels }, width: 400, height: 150});
+	
 		
-		var returned = $.ajax({
-		   	url: "RequestController", 
-		   	type: "POST",
-		   	data : info,
-		   	dataType : "json",
-		   	complete : 
-		   		function (xhr, textStatus) {
-		    		var json = $.parseJSON(xhr.responseText);
-		    		parse(json);
-		    		hideLoading(info["vWorksheetId"]);
-			   	},
-			error :
-				function (xhr, textStatus) {
-		   			alert("Error occured while generating the automatic model!" + textStatus);
-		   			hideLoading(info["vWorksheetId"]);
-			   	}		   
-		});
 		
 //		var modelListRadioBtnGrp = $("#modelListRadioBtnGrp");
 //		modelListRadioBtnGrp.append('<input type="radio" name="group1" value="test2" />test2 <br />');
@@ -910,7 +896,33 @@ function fetchExistingWorksheetOptions(worksheetId) {
     });
 }
 
-
+function renderR2RMLModels() {
+	var optionsDiv = $("div#WorksheetOptionsDiv");
+	$('#FetchR2RMLModelDialogBox').dialog("close");
+	var info = new Object();
+	info["vWorksheetId"] = optionsDiv.data("worksheetId");
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "FetchR2RMLModelsCommand";
+	info['tripleStoreUrl'] = $('#txtR2RML_URL_fetch').val();
+	
+	var returned = $.ajax({
+	   	url: "RequestController", 
+	   	type: "POST",
+	   	data : info,
+	   	dataType : "json",
+	   	complete : 
+	   		function (xhr, textStatus) {
+	    		var json = $.parseJSON(xhr.responseText);
+	    		parse(json);
+	    		hideLoading(info["vWorksheetId"]);
+		   	},
+		error :
+			function (xhr, textStatus) {
+	   			alert("Error occured while generating the automatic model!" + textStatus);
+	   			hideLoading(info["vWorksheetId"]);
+		   	}		   
+	});				
+}
 
 
 
