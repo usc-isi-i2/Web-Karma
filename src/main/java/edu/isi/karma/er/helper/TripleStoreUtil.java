@@ -54,10 +54,10 @@ import org.slf4j.LoggerFactory;
 public class TripleStoreUtil {
 	
 	private static Logger logger = LoggerFactory.getLogger(TripleStoreUtil.class);
-	private static final String defaultServerUrl = "http://localhost:8080/openrdf-sesame/repositories";
-	private static final String defaultWorkbenchUrl = "http://localhost:8080/openrdf-workbench/repositories";
-	private static final String karma_model_repo = "karma_models";
-	private static final String karma_data_repo = "karma_data";
+	public static final String defaultServerUrl = "http://localhost:8080/openrdf-sesame/repositories";
+	public static final String defaultWorkbenchUrl = "http://localhost:8080/openrdf-workbench/repositories";
+	public static final String karma_model_repo = "karma_models";
+	public static final String karma_data_repo = "karma_data";
 	
 	static {
 		initialize();
