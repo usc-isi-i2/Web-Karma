@@ -36,11 +36,25 @@ import edu.isi.karma.view.VWorkspace;
 public class FetchR2RMLModelsCommand extends Command {
 	private final String vWorksheetId;
 	
+	private String tripleStoreUrl;
+	
+	public String getTripleStoreUrl() {
+		return tripleStoreUrl;
+	}
+
+	public void setTripleStoreUrl(String tripleStoreUrl) {
+		this.tripleStoreUrl = tripleStoreUrl;
+	}
+
 	private static Logger logger = LoggerFactory.getLogger(FetchR2RMLModelsCommand.class);
 
-	protected FetchR2RMLModelsCommand(String id, String vWorksheetId) {
+	protected FetchR2RMLModelsCommand(String id, String vWorksheetId, String url) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
+		if (url == null || url.isEmpty()) {
+			url = TripleStoreUtil.defaultServerUrl + "/" + TripleStoreUtil.karma_model_repo;
+		}
+		this.tripleStoreUrl = url;
 	}
 
 	@Override
@@ -66,9 +80,8 @@ public class FetchR2RMLModelsCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 
-		// TODO : Fetch the triple store url from the user preferences or accept from the UI as input
 		TripleStoreUtil utilObj = new TripleStoreUtil();
-		ArrayList<String> list = utilObj.fetchModelNames(null);
+		ArrayList<String> list = utilObj.fetchModelNames(this.tripleStoreUrl);
 		return new UpdateContainer(new FetchR2RMLUpdate(list));
 	}
 
