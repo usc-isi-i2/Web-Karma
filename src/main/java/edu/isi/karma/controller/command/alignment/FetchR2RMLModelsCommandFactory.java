@@ -29,14 +29,15 @@ import edu.isi.karma.view.VWorkspace;
 
 public class FetchR2RMLModelsCommandFactory extends CommandFactory {
 	private enum Arguments {
-		vWorksheetId
+		vWorksheetId, tripleStoreUrl
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
-		return new FetchR2RMLModelsCommand(getNewId(vWorkspace), vWorksheetId);
+		String url = request.getParameter(Arguments.tripleStoreUrl.name());
+		return new FetchR2RMLModelsCommand(getNewId(vWorkspace), vWorksheetId, url);
 	}
 
 }
