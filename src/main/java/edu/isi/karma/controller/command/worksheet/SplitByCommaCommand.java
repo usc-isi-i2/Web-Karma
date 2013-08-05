@@ -33,7 +33,6 @@ import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.HNode;
@@ -113,21 +112,9 @@ public class SplitByCommaCommand extends WorksheetCommand {
 
 		vw.update(c);
 		
-		// Get the alignment update if any
-		if (!wk.getSemanticTypes().getListOfTypes().isEmpty()) {
-			try {
-				Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
-				// Compute suggestions for the new column added
-				OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-				SemanticTypeUtil.computeSemanticTypesSuggestion(wk, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr, alignment);
-				// Add the alignment update
-				c.add(new SemanticTypesUpdate(wk, vWorksheetId, alignment));
-				c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vw, alignment));
-			} catch (Exception e) {
-				return new UpdateContainer(new ErrorUpdate(
-						"Error occured while generating the model for the source."));
-			}
-		}
+		// Add updates related to the alignment
+		addAlignmentUpdate(c, vWorkspace, wk);
+		
 		return c;
 	}
 
@@ -174,5 +161,21 @@ public class SplitByCommaCommand extends WorksheetCommand {
 
 		vw.update(c);
 		return c;
+	}
+	
+	private void addAlignmentUpdate(UpdateContainer c, VWorkspace vWorkspace, Worksheet worksheet) {
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
+				vWorkspace.getWorkspace().getId(), vWorksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		if (alignment == null) {
+			alignment = new Alignment(vWorkspace.getWorkspace().getOntologyManager());
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		}
+		// Compute the semantic type suggestions
+		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace()
+				.getCrfModelHandler(), vWorkspace.getWorkspace().getOntologyManager(), alignment);
+		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
+		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().
+				getVWorksheet(vWorksheetId), alignment));
 	}
 }

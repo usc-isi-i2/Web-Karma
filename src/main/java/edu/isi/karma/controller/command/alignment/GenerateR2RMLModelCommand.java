@@ -22,7 +22,6 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.List;
 
 import org.json.JSONException;

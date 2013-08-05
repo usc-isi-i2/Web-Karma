@@ -153,7 +153,7 @@ div#rdfTypeSelectDiv {
     display: inline;
 }
 
-#nodesList td, #linksList td, #alternativeLinksList td {
+#nodesList td, #linksList td, #alternativeLinksList td, #modelsList td {
     height: 20px;
     background-color: #F0F0F0;
     padding-left: 10px;
@@ -165,12 +165,12 @@ div#rdfTypeSelectDiv {
     position: relative;
 }
 
-#nodesList td:hover, #linksList td:hover, #alternativeLinksList td:hover {
+#nodesList td:hover, #linksList td:hover, #alternativeLinksList td:hover, #modelsList td:hover {
     cursor: pointer;
     background-color: #E0E0E0;
 }
 
-#nodesList td.selected, #linksList td.selected, #alternativeLinksList td.selected {
+#nodesList td.selected, #linksList td.selected, #alternativeLinksList td.selected, #modelsList td.selected {
     background-color: #D0D0D0;
 }
 
@@ -195,4 +195,13 @@ table#currentIncomingLinksTable button,  table#currentOutgoingLinksTable button 
 
 button.deleteLink {
     margin-left: 15px;
+}
+
+div.italic {
+    font-style: italic;
+}
+
+#showExistingModelDialog div.error {
+    margin-left: 20px;
+    margin-bottom: 5px;
 }

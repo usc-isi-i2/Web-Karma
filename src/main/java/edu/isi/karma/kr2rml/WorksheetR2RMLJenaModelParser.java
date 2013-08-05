@@ -314,6 +314,7 @@ public class WorksheetR2RMLJenaModelParser {
 		Property subjMapProp = model.getProperty(Uris.RR_SUBJECTMAP_URI);
 		Property templateProp = model.getProperty(Uris.RR_TEMPLATE_URI);
 		Property rdfTypeProp = model.getProperty(Uris.RDF_TYPE_URI);
+		Property rrClassProp = model.getProperty(Uris.RR_CLASS_URI);
 		Resource steinerTreeRootNodeRes = model.getResource(Uris.KM_STEINER_TREE_ROOT_NODE);
 		
 		NodeIterator subjMapsItr = model.listObjectsOfProperty(trMapRes, subjMapProp);
@@ -337,7 +338,7 @@ public class WorksheetR2RMLJenaModelParser {
 			subjMap.setTemplate(subjTemplTermSet);
 			
 			// Get the subject type
-			NodeIterator rdfTypesItr = model.listObjectsOfProperty(subjMapBlankRes, rdfTypeProp);
+			NodeIterator rdfTypesItr = model.listObjectsOfProperty(subjMapBlankRes, rrClassProp);
 			while (rdfTypesItr.hasNext()) {
 				RDFNode typeNode = rdfTypesItr.next();
 				if (typeNode instanceof Resource) {

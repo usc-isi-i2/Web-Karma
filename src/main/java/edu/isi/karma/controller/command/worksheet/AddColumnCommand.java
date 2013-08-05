@@ -167,26 +167,9 @@ public class AddColumnCommand extends WorksheetCommand {
 			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 			vw.update(c);
 			
-			//THIS HAS A PROBLEM.
-			//The alignment isn't generated
-			// Get the alignment update if any
-			// Shubham 2012/10/28 to move the red dots in case the the model is
-			// being shown
-			Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
-			if (!worksheet.getSemanticTypes().getListOfTypes().isEmpty() && alignment!= null && alignment.isEmpty()) {
-				try {
-					// Compute suggestions for the new column 
-					OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-					SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr, alignment);
-
-					// Get the updated alignment
-					c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
-					c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vw, alignment));
-				} catch (Exception e) {
-					return new UpdateContainer(
-							new ErrorUpdate("Error occured while generating the model for the source."));
-				}
-			}
+			// Add updates related to the alignment
+			addAlignmentUpdate(c, vWorkspace, worksheet);
+			
 			return c;
 		} catch (Exception e) {
 			System.out.println("Error in AddColumnCommand" + e.toString());
@@ -231,5 +214,21 @@ public class AddColumnCommand extends WorksheetCommand {
 
 	public String getNewHNodeId() {
 		return newHNodeId;
+	}
+	
+	private void addAlignmentUpdate(UpdateContainer c, VWorkspace vWorkspace, Worksheet worksheet) {
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
+				vWorkspace.getWorkspace().getId(), vWorksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		if (alignment == null) {
+			alignment = new Alignment(vWorkspace.getWorkspace().getOntologyManager());
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		}
+		// Compute the semantic type suggestions
+		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace()
+				.getCrfModelHandler(), vWorkspace.getWorkspace().getOntologyManager(), alignment);
+		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
+		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().
+				getVWorksheet(vWorksheetId), alignment));
 	}
 }
