@@ -925,5 +925,19 @@ function renderR2RMLModels() {
 	});				
 }
 
+function drawBigChart() {
+	var bigChartDiv = $("div#drawBigChartId");
 
+	$("div#smallChart").click(function(){
+		optionsDiv.hide();
+		showHideRdfInfo();
+		getRDFPreferences();
+		var rdfDialogBox = $("div#PublishRDFDialogBox");
+		// Show the dialog box
+		rdfDialogBox.dialog({width: 300
+			, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": publishRDFFunction }});
 
+	});
+	
+	
+}

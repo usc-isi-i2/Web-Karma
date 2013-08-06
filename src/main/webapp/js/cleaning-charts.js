@@ -35,7 +35,7 @@ function showChartButtonHandler() {
 
 function drawChart(element)  {
 	var divId = "#" + element["hNodeId"];
-	console.log(divId);
+	//console.log(divId);
 	var margin = {top: 0, right: 0, bottom: 0, left: 0},
 	 w = 100 - margin.left - margin.right,
 	h = 30 - margin.top - margin.bottom;
@@ -46,7 +46,7 @@ function drawChart(element)  {
 	var yPadding = 2;
 			
 	var dataArray = eval(element["chartData"].histogram);
-		console.log(dataArray);
+	//console.log(dataArray);
 	var xLabel = element["chartData"].xLabel;
 	var yLabel = element["chartData"].yLabel;
 	var containsInvalid = (dataArray[dataArray.length-1][0].toUpperCase() == "INVALID".toUpperCase());
@@ -98,6 +98,7 @@ function drawChart(element)  {
 				.attr("width", w  + margin.left + margin.right)
 				.attr("height", h + margin.top + margin.bottom)
 				.attr("style", "background: #00174D")
+				.attr("id", "smallChart")
 			.append("g")
 				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 	// Bars
