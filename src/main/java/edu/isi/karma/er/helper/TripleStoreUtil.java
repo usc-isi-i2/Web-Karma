@@ -25,8 +25,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,6 +44,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -60,9 +63,34 @@ public class TripleStoreUtil {
 	public static final String karma_model_repo = "karma_models";
 	public static final String karma_data_repo = "karma_data";
 	
+	private static HashMap<String, String> mime_types;
+	
+	public enum RDF_Types {
+		TriG,
+		BinaryRDF,
+		TriX,
+		N_Triples,
+		N_Quads,
+		N3,
+		RDF_XML,
+		RDF_JSON,
+		Turtle
+	}
 	
 	static {
 		initialize();
+		
+		mime_types = new HashMap<String, String>();
+		mime_types.put(RDF_Types.TriG.name(), "application/x-trig");
+		mime_types.put(RDF_Types.BinaryRDF.name(), "application/x-binary-rdf");
+		mime_types.put(RDF_Types.TriX.name(), "application/trix");
+		mime_types.put(RDF_Types.N_Triples.name(), "text/plain");
+		mime_types.put(RDF_Types.N_Quads.name(), "text/x-nquads");
+		mime_types.put(RDF_Types.N3.name(), "text/rdf+n3");
+		mime_types.put(RDF_Types.Turtle.name(), "application/x-turtle");
+		mime_types.put(RDF_Types.RDF_XML.name(), "application/rdf+xml");
+		mime_types.put(RDF_Types.RDF_JSON.name(), "application/rdf+json");
+		
 	}
 	
 	/**
@@ -70,6 +98,8 @@ public class TripleStoreUtil {
 	 * If not, it creates them
 	 * */
 	public static boolean initialize() {
+		
+		
 		boolean retVal = false;
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpGet httpget;
@@ -238,9 +268,11 @@ public class TripleStoreUtil {
 	 * @param tripleStoreURL : the triple store URL
 	 * @param context : The graph context for the RDF
 	 * @param replaceFlag : Whether to replace the contents of the graph
+	 * @param deleteSrcFile : Whether to delete the source R2RML file or not
+	 * @param rdfType : The RDF type based on which the headers for the request are set
 	 * 
 	 * */
-	public boolean saveModel(String filePath, String tripleStoreURL, String context, boolean replaceFlag) {
+	private boolean saveToStore(String filePath, String tripleStoreURL, String context, boolean replaceFlag, boolean deleteSrcFile, String rdfType) {
 		boolean retVal = false;
 		
 		// check the connection first
@@ -269,13 +301,18 @@ public class TripleStoreUtil {
 				}
 			}
 			
+			if (mime_types.get(rdfType) == null) {
+				throw new Exception("Could not find spefied rdf type: " + rdfType);
+			}
+			
 			// build the POST params
 			URI uri = builder.build();
 			HttpClient httpclient = new DefaultHttpClient();
 			File file = new File(filePath);
-			FileEntity entity = new FileEntity(file, ContentType.create("application/x-turtle", "UTF-8"));        
+			FileEntity entity = new FileEntity(file, ContentType.create(mime_types.get(rdfType), "UTF-8"));        
 			HttpPost httppost = new HttpPost(uri);
 			httppost.setEntity(entity);
+			
 			HttpResponse response = httpclient.execute(httppost);
 			logger.info("StatusCode: " + response.getStatusLine().getStatusCode());
 			for(Header h : response.getAllHeaders()) {
@@ -285,6 +322,9 @@ public class TripleStoreUtil {
 			if(code >= 200 && code < 300) {
 				retVal = true;
 			}
+			if(deleteSrcFile) {
+				file.delete();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getClass().getName() + " : " + e.getMessage());
@@ -293,9 +333,52 @@ public class TripleStoreUtil {
 	
 	}
 	
-	public boolean saveModel(String fileUrl) {
-		return saveModel(fileUrl,defaultServerUrl + "/" + karma_model_repo, null, true);
+	
+	/**
+	 * @param fileUrl : the url of the file from where the RDF is read
+	 * @param tripleStoreURL : the triple store URL
+	 * @param context : The graph context for the RDF
+	 * @param replaceFlag : Whether to replace the contents of the graph
+	 * deleteSrcFile default : false
+	 * rdfType default: Turtle
+	 * 
+	 * */
+	public boolean saveToStore(String filePath, String tripleStoreURL, String context, boolean replaceFlag) {
+		return saveToStore(filePath, tripleStoreURL, context, replaceFlag, false);
 	}
+	
+	
+	
+	/**
+	 * @param fileUrl : the url of the file from where the RDF is read
+	 * 
+	 * Default_Parameters <br />
+	 * tripleStoreURL : the local triple store URL
+	 * context : null
+	 * rdfType : Turtle
+	 * deleteSrcFile : False (will retain the source file)
+	 * replaceFlag : true
+	 * 
+	 * */
+	public boolean saveToStore(String fileUrl) {
+		return saveToStore(fileUrl,defaultServerUrl + "/" + karma_model_repo, null, true);
+	}
+	
+	/**
+	 * @param fileUrl : the url of the file from where the RDF is read
+	 * @param tripleStoreURL : the triple store URL
+	 * @param context : The graph context for the RDF
+	 * @param replaceFlag : Whether to replace the contents of the graph
+	 * @param deleteSrcFile : Whether to delete the source R2RML file or not
+	 * 
+	 * rdfType default : Turtle
+	 * 
+	 * */
+	public boolean saveToStore(String filePath, String tripleStoreURL, String context, boolean replaceFlag, boolean deleteSrcFile) {
+		return saveToStore(filePath, tripleStoreURL, context, replaceFlag, deleteSrcFile, RDF_Types.Turtle.name());
+	}
+	
+	
 	
 	/**
 	 * Invokes a SPARQL query on the given Triple Store URL and returns the JSON object
