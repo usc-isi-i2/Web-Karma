@@ -49,6 +49,7 @@ public interface Uris {
 	public static final String RR_PARENT_TRIPLE_MAP_URI = Namespaces.RR + "parentTriplesMap";
 	public static final String RR_TERM_TYPE_URI = Namespaces.RR + "termType";
 	public static final String RR_BLANK_NODE_URI = Namespaces.RR + "BlankNode";
+	public static final String RR_CLASS_URI = Namespaces.RR + "class";
 	
 	public static final String KM_BLANK_NODE_COVERS_COLUMN_URI = Namespaces.KARMA_DEV + "coversColumn";
 	public static final String KM_BLANK_NODE_PREFIX_URI = Namespaces.KARMA_DEV + "namePrefix";

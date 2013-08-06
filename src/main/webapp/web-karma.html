@@ -89,6 +89,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<script type="text/javascript" src="js/reset-options.js"></script>
         <script type="text/javascript" src="js/pytransform.js"></script>
         <script type="text/javascript" src="js/cleaning-charts.js"></script>
+        <script type="text/javascript" src="js/showModel.js"></script>
 
 		<script type="text/javascript">
 			/* Load and parse initial JSON */
@@ -164,6 +165,7 @@ and related projects, please see: http://www.isi.edu/integration
 											url : urlString + "Import" + selectedFormat + "Command",
 											done : function(e, data) {
 												parse(data.result);
+                                                showDialogToLoadModel();
 											}
 										});
 									}
@@ -218,6 +220,9 @@ and related projects, please see: http://www.isi.edu/integration
 
                 // Assign style and handler to Python Transform windows elements (in pytransform.js)
                 styleAndAssignHandlersToPyTransformElements();
+
+                // Assign style and handler to select model for worksheet dialog (in showModel.js)
+                styleAndAssignHandlersToApplyModelDialog();
 
 				// When the user changes header line index
 				$('.CSVImportOption').change(function() {
@@ -350,7 +355,7 @@ and related projects, please see: http://www.isi.edu/integration
 	</head>
 
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.115</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.116</span></h1>
 		<table id="topMenuBar">
 			<tr>
 				<td>
@@ -1165,6 +1170,27 @@ and related projects, please see: http://www.isi.edu/integration
                     <input type="radio" id="invokeWholeWorksheet" value="invokeWithWholeWorksheet" name="serviceDataPostMethod">
                     <label for="invokeWholeWorksheet">Post whole worksheet</label>
                 </div>
+            </div>
+        </div>
+        <div id="showExistingModelDialog" style="display: none" class="smallSizedFont">
+            <input type="radio" name="chooseModelGroup" value="matchingModels" id="chooseMatchingModels">
+            <label for="chooseMatchingModels">Matching source name</label>
+            <!--<input type="radio" name="chooseLinkGroup" value="domains" id="choosePropertyWithDomainAndRange" disabled>-->
+            <!--<label for="choosePropertyWithDomainAndRange">Property that links</label><br>-->
+            <input type="radio" name="chooseModelGroup" value="allModels" id="chooseAllModels" checked>
+            <label for="chooseAllModels">All models</label><br><br>
+
+            <div class="error" style="display: none">
+                <span class="error">Please select a model!</span>
+            </div>
+            <div class="italic noItems" style="display: none">
+                <span>none</span>
+            </div>
+
+            <div id="modelsListPanel" class="smallSizedFont">
+                <table id="modelsList">
+
+                </table>
             </div>
         </div>
 	</body>

@@ -43,8 +43,16 @@ import edu.isi.karma.controller.command.UndoRedoCommand;
 import edu.isi.karma.controller.command.UndoRedoCommandFactory;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommand;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommandFactory;
+import edu.isi.karma.controller.command.alignment.ApplyModelFromTripleStoreCommand;
+import edu.isi.karma.controller.command.alignment.ApplyModelFromTripleStoreCommandFactory;
 import edu.isi.karma.controller.command.alignment.ChangeInternalNodeLinksCommand;
 import edu.isi.karma.controller.command.alignment.ChangeInternalNodeLinksCommandFactory;
+import edu.isi.karma.controller.command.alignment.CreateNewModelCommand;
+import edu.isi.karma.controller.command.alignment.CreateNewModelCommandFactory;
+import edu.isi.karma.controller.command.alignment.FetchExistingModelsForWorksheetCommand;
+import edu.isi.karma.controller.command.alignment.FetchExistingModelsForWorksheetCommandFactory;
+import edu.isi.karma.controller.command.alignment.FetchR2RMLModelsCommand;
+import edu.isi.karma.controller.command.alignment.FetchR2RMLModelsCommandFactory;
 import edu.isi.karma.controller.command.alignment.GenerateR2RMLModelCommand;
 import edu.isi.karma.controller.command.alignment.GenerateR2RMLModelCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetAlternativeLinksCommand;
@@ -129,8 +137,6 @@ import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommandFactory;
 import edu.isi.karma.controller.command.worksheet.ApplyHistoryFromR2RMLModelCommand;
 import edu.isi.karma.controller.command.worksheet.ApplyHistoryFromR2RMLModelCommandFactory;
-import edu.isi.karma.controller.command.alignment.FetchR2RMLModelsCommand;
-import edu.isi.karma.controller.command.alignment.FetchR2RMLModelsCommandFactory;
 import edu.isi.karma.controller.command.worksheet.ApplyWorksheetHistoryCommand;
 import edu.isi.karma.controller.command.worksheet.ApplyWorksheetHistoryCommandFactory;
 import edu.isi.karma.controller.command.worksheet.EditCellCommand;
@@ -294,6 +300,12 @@ public class ExecutionController {
 				new FetchExistingWorksheetPropertiesCommandFactory());
 		commandFactoryMap.put(FetchR2RMLModelsCommand.class.getSimpleName(), 
 				new FetchR2RMLModelsCommandFactory());
+		commandFactoryMap.put(FetchExistingModelsForWorksheetCommand.class.getSimpleName(), 
+				new FetchExistingModelsForWorksheetCommandFactory());
+		commandFactoryMap.put(ApplyModelFromTripleStoreCommand.class.getSimpleName(), 
+				new ApplyModelFromTripleStoreCommandFactory());
+		commandFactoryMap.put(CreateNewModelCommand.class.getSimpleName(), 
+				new CreateNewModelCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

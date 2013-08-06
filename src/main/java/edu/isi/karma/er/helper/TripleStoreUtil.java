@@ -23,11 +23,9 @@ package edu.isi.karma.er.helper;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.InputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +34,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -47,6 +46,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,9 +54,12 @@ public class TripleStoreUtil {
 	
 	private static Logger logger = LoggerFactory.getLogger(TripleStoreUtil.class);
 	public static final String defaultServerUrl = "http://localhost:8080/openrdf-sesame/repositories";
+	public static final String defaultModelsRepoUrl = "http://localhost:8080/openrdf-sesame/repositories/karma_models";
+	public static final String defaultDataRepoUrl = "http://localhost:8080/openrdf-sesame/repositories/karma_data";
 	public static final String defaultWorkbenchUrl = "http://localhost:8080/openrdf-workbench/repositories";
 	public static final String karma_model_repo = "karma_models";
 	public static final String karma_data_repo = "karma_data";
+	
 	
 	static {
 		initialize();
@@ -294,6 +297,49 @@ public class TripleStoreUtil {
 		return saveModel(fileUrl,defaultServerUrl + "/" + karma_model_repo, null, true);
 	}
 	
+	/**
+	 * Invokes a SPARQL query on the given Triple Store URL and returns the JSON object
+	 * containing the result. The content type of the result is application/sparql-results+json. 
+	 * 
+	 * @param query: SPARQL query
+	 * @param tripleStoreUrl: SPARQL endpoint address of the triple store
+	 * @return
+	 * @throws ClientProtocolException
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public static org.json.JSONObject invokeSparqlQuery(String query, 
+			String tripleStoreUrl) throws ClientProtocolException, IOException, JSONException {
+		
+		HttpClient httpclient = new DefaultHttpClient();
+		
+		// Prepare the parameters
+		List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+		formparams.add(new BasicNameValuePair("query", query));
+		formparams.add(new BasicNameValuePair("queryLn", "SPARQL"));
+		
+		HttpPost httppost = new HttpPost(tripleStoreUrl);
+		httppost.setEntity(new UrlEncodedFormEntity(formparams, "UTF-8"));
+		httppost.setHeader("Accept", "application/sparql-results+json");
+		
+		// Execute the request
+		HttpResponse response = httpclient.execute(httppost);
+		
+		// Parse the response and store it in a String
+		HttpEntity entity = response.getEntity();
+		StringBuilder responseString = new StringBuilder();
+		if (entity != null) {
+			BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
+			
+			String line = buf.readLine();
+			while(line != null) {
+				responseString.append(line);
+				line = buf.readLine();
+			}
+		}
+		
+		return new org.json.JSONObject(responseString.toString());
+	}
 	
 	public static boolean create_repo(String repo_name, String repo_desc, String type ) {
 		// TODO : Take the repository type as an enum - native, memory, etc

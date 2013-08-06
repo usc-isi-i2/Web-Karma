@@ -42,7 +42,12 @@ import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand;
 import edu.isi.karma.controller.update.InfoUpdate;
+import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
+import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
@@ -265,6 +270,10 @@ public class SubmitCleaningCommand extends Command {
 		UpdateContainer c = new UpdateContainer();
 		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,worksheet.getHeaders().getAllPaths(), vWorkspace);
 		vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).update(c);
+		
+		/** Add the alignment update **/
+		addAlignmentUpdate(c, vWorkspace, worksheet);
+		
 		c.add(new InfoUpdate("Column transformation complete"));
 		return c;
 	}
@@ -285,5 +294,20 @@ public class SubmitCleaningCommand extends Command {
 		vw.update(c);
 		return c;
 	}
-
+	
+	private void addAlignmentUpdate(UpdateContainer c, VWorkspace vWorkspace, Worksheet worksheet) {
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
+				vWorkspace.getWorkspace().getId(), vWorksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		if (alignment == null) {
+			alignment = new Alignment(vWorkspace.getWorkspace().getOntologyManager());
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		}
+		// Compute the semantic type suggestions
+		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace()
+				.getCrfModelHandler(), vWorkspace.getWorkspace().getOntologyManager(), alignment);
+		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
+		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().
+				getVWorksheet(vWorksheetId), alignment));
+	}
 }

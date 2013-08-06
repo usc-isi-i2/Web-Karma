@@ -128,7 +128,7 @@ function getRDFPreferences() {
 		   	},
 		error :
 			function (xhr, textStatus) {
-	   			alert("Error occured with fetching new rows! " + textStatus);
+	   			alert("Error occurred with fetching new rows! " + textStatus);
 		   	}		   
 	});
 }

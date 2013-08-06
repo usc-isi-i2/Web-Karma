@@ -116,6 +116,7 @@ function CSVImportOptionsChanged(flag) {
 	    			var json = $.parseJSON(xhr.responseText);
 	    			parse(json);
 	    			hideWaitingSignOnScreen();
+                    showDialogToLoadModel();
 	    		}		
 		   	}
 		});	

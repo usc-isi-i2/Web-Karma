@@ -119,6 +119,7 @@ public class WorksheetModelWriter {
 			URI termTypeUri = f.createURI(Uris.RR_TERM_TYPE_URI);
 			URI logicalTableUri = f.createURI(Uris.RR_LOGICAL_TABLE_URI);
 			URI tableNameUri = f.createURI(Uris.RR_TABLENAME_URI);
+			URI classUri = f.createURI(Uris.RR_CLASS_URI);
 			
 			URI coversColUri = f.createURI(Uris.KM_BLANK_NODE_COVERS_COLUMN_URI);
 			URI bnNamePrefixUri = f.createURI(Uris.KM_BLANK_NODE_PREFIX_URI);
@@ -157,7 +158,7 @@ public class WorksheetModelWriter {
 				for (TemplateTermSet typeTermSet:rdfsTypes) {
 					if (typeTermSet.isSingleUriString()) {
 						URI sjTypeUri = f.createURI(typeTermSet.getR2rmlTemplateString(factory));
-						con.add(sjBlankNode, RDF.TYPE, sjTypeUri);
+						con.add(sjBlankNode, classUri, sjTypeUri);
 					}
 				}
 				
