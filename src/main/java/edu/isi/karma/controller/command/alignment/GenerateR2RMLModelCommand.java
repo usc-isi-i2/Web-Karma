@@ -185,7 +185,7 @@ public class GenerateR2RMLModelCommand extends Command {
 //			if (modelIdentifier == null || modelIdentifier.isEmpty()) {
 //				modelIdentifier = modelFileName;
 //			}
-			boolean result = utilObj.saveModel(modelFileLocalPath, tripleStoreUrl, null, false);
+			boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, null, false);
 			if (result) {
 				logger.info("Saved model to triple store");
 				return new UpdateContainer(new AbstractUpdate() {

@@ -41,6 +41,7 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
@@ -163,6 +164,14 @@ public class PublishRDFCommand extends Command {
 			logger.error("Error occured while generating RDF!", e1);
 			return new UpdateContainer(new ErrorUpdate(
 					"Error occured while generating RDF!"));
+		}
+		
+		TripleStoreUtil utilObj = new TripleStoreUtil();
+		boolean result = utilObj.saveToStore(rdfFileLocalPath, TripleStoreUtil.defaultDataRepoUrl, null, false, false);
+		if(result) {
+			logger.info("Saved rdf to store");
+		} else {
+			logger.error("Falied to store rdf to karma_data store");
 		}
 
 		try {
