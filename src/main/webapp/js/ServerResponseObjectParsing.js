@@ -742,11 +742,11 @@ function parse(data) {
 				buttons: { "Cancel": function() { $(this).dialog("close"); }, "Select": submitSelectedModelNameToBeLoaded }, width: 300, height: 150, position: positionArray});
 			
 		} else if(element["updateType"] == "CleaningServiceOutput") {
-			console.log(element);
-			console.log(element["hNodeId"]);
-			console.log(element["chartData"]);
+			//console.log(element);
+			//console.log(element["hNodeId"]);
+			//console.log(element["chartData"]);
 				
-				drawChart(element);
+			drawChart(element);
 		}
 	});
 }

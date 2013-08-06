@@ -111,14 +111,14 @@ public class InvokeCleaningServiceCommand extends Command {
 				jsonRecord.put("id", id);
 				jsonRecord.put("value", originalVal);
 				requestJsonArray.put(jsonRecord);
-				System.out.println(id + " " + originalVal);
+				//System.out.println(id + " " + originalVal);
 			}
 			String jsonString = null;
 			jsonString = requestJsonArray.toString();
-			System.out.println(jsonString);
+			//System.out.println(jsonString);
 
 			String url = "http://localhost:8080/cleaningService/IdentifyData";
-			System.out.println(url);
+			//System.out.println(url);
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = null;
 			HttpResponse response = null;
@@ -142,29 +142,24 @@ public class InvokeCleaningServiceCommand extends Command {
 					line = buf.readLine();
 				}
 			}	
-			System.out.println(out.toString());
+			//System.out.println(out.toString());
 			logger.info("Connnection success : " + url + " Successful.");
-			System.out.println("Connnection success : " + url + " Successful.");
-
-			//final JSONObject data = JSONObject.fromObject(out.toString());
+			//System.out.println("Connnection success : " + url + " Successful.");
 			final JSONObject data1  = new JSONObject(out.toString());
-
-			//System.out.println("Data--->" + data);
-			System.out.println("Data--->" + data1);
+			//System.out.println("Data--->" + data1);
 			return new UpdateContainer(new AbstractUpdate() {
 
 				@Override
 				public void generateJson(String prefix, PrintWriter pw,
 						VWorkspace vWorkspace) {
 					JSONObject response = new JSONObject();
-					System.out.println("Reached here");
+					//System.out.println("Reached here");
 					try {
 						response.put("updateType", "CleaningServiceOutput");
 						response.put("chartData", data1);
 						response.put("hNodeId", hNodeId); 
-						System.out.print(response.toString(4));
+						//System.out.print(response.toString(4));
 					} catch (JSONException e) {
-						System.out.println(e);
 						pw.print("Error");
 					}
 
