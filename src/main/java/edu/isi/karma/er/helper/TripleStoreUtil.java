@@ -199,11 +199,11 @@ public class TripleStoreUtil {
 	 * This method fetches all the source names of the models from the triple store
 	 * @param TripleStoreURL : the triple store URL
 	 * */
-	public ArrayList<String> fetchModelNames(String TripleStoreURL) { 
+	public HashMap<String, String> fetchModelNames(String TripleStoreURL) { 
 		if(TripleStoreURL == null || TripleStoreURL.isEmpty()) {
 			TripleStoreURL = defaultServerUrl + "/"  +karma_model_repo;
 		}
-		ArrayList<String> list = new ArrayList<String>();
+		HashMap<String, String> list = new HashMap<String, String>();
 		HttpClient httpclient = new DefaultHttpClient();
 		
 		if(TripleStoreURL.charAt(TripleStoreURL.length() - 1) == '/') {
@@ -216,11 +216,11 @@ public class TripleStoreUtil {
 			logger.info("Connection Test passed");
 		} else {
 			logger.info("Failed connection test : " + TripleStoreURL);
-			return new ArrayList<String>();
+			return new HashMap<String, String>();
 		}
 		
 		try {
-			String queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?y WHERE { ?x km-dev:sourceName ?y . }";
+			String queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?y ?z where { ?x km-dev:sourceName ?y . ?x km-dev:serviceUrl ?z . } ORDER BY ?y ?z";
 			logger.debug("query: " + queryString);
 			
 			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
@@ -252,7 +252,7 @@ public class TripleStoreUtil {
 				int count = 0;
 				while(count < values.length()) {
 					JSONObject o = values.getJSONObject(count++);
-					list.add(o.getJSONObject("y").getString("value"));
+					list.put(o.getJSONObject("y").getString("value"), o.getJSONObject("z").getString("value"));
 				}
 			}
 			logger.debug("repositories fetched: " + list.toString());

@@ -23,6 +23,8 @@ package edu.isi.karma.controller.update;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,7 +37,7 @@ public class FetchR2RMLUpdate extends AbstractUpdate {
 
 	private static Logger logger = LoggerFactory.getLogger(FetchR2RMLUpdate.class);
 	
-	private ArrayList<String> models;
+	private HashMap<String, String> models;
 	
 	private enum JsonKeys {
 		models
@@ -45,7 +47,7 @@ public class FetchR2RMLUpdate extends AbstractUpdate {
 		R2RMLModelUpdate
 	}
 
-	public FetchR2RMLUpdate(ArrayList<String> model_list)
+	public FetchR2RMLUpdate(HashMap<String, String> model_list)
 	{
 		this.models = model_list;
 	}
@@ -54,8 +56,14 @@ public class FetchR2RMLUpdate extends AbstractUpdate {
 	{
 		JSONArray list = new JSONArray();
 		try {
-			for(String s : models) {
-				list.put(s);
+			Iterator<String> itr = models.keySet().iterator();
+			while(itr.hasNext()) {
+				JSONObject obj = new JSONObject();
+				String key = itr.next();
+				obj.put("name", key);
+				obj.put("url", models.get(key));
+				list.put(obj);
+				
 			}
 			JSONObject obj = new JSONObject();
 			obj.put(GenericJsonKeys.updateType.name(), JsonValues.R2RMLModelUpdate.name());
