@@ -32,9 +32,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -48,6 +45,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,11 +88,11 @@ public class TripleStoreUtil {
 					line.append(s);
 					s = buf.readLine();
 				}
-				JSONObject data = JSONObject.fromObject(line.toString());
+				JSONObject data = new  JSONObject(line.toString());
 				JSONArray repoList = data.getJSONObject("results").getJSONArray("bindings");
-				Iterator<JSONObject> itr = repoList.iterator();
-				while(itr.hasNext()) {
-					JSONObject obj = itr.next();
+				int count  = 0;
+				while(count < repoList.length()) {
+					JSONObject obj = repoList.getJSONObject(count++);
 					repositories.add(obj.optJSONObject("id").optString("value"));
 				}
 				// check for karama_models repo
@@ -215,11 +214,11 @@ public class TripleStoreUtil {
 					line = buf.readLine();
 				}
 				
-				JSONObject data = JSONObject.fromObject(jsonString.toString());
+				JSONObject data = new JSONObject(jsonString.toString());
 				JSONArray values = data.getJSONObject("results").getJSONArray("bindings");
-				Iterator<JSONObject> itr = values.iterator();
-				while(itr.hasNext()) {
-					JSONObject o = itr.next();
+				int count = 0;
+				while(count < values.length()) {
+					JSONObject o = values.getJSONObject(count++);
 					list.add(o.getJSONObject("y").getString("value"));
 				}
 			}

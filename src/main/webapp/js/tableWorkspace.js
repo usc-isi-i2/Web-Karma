@@ -167,10 +167,11 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	$("button#showR2RMLFromTripleStore").click(function(event) {
 		var dialog = $('#FetchR2RMLModelDialogBox');
 		$('#txtR2RML_URL_fetch').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+		$('#browseRepo_fetch').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/');
 		dialog.dialog(
 			{ title: 'Triple store URL',
 				buttons: { "Cancel": function() { $(this).dialog("close"); }, 
-					"Fetch": renderR2RMLModels }, width: 400, height: 150});
+					"Fetch": renderR2RMLModels }, width: 400, height: 170});
 	
 		
 		
