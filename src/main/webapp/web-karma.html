@@ -20,8 +20,7 @@ University of Southern California.  For more information, publications,
 and related projects, please see: http://www.isi.edu/integration
 
 -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
-"http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -165,7 +164,9 @@ and related projects, please see: http://www.isi.edu/integration
 											url : urlString + "Import" + selectedFormat + "Command",
 											done : function(e, data) {
 												parse(data.result);
-                                                showDialogToLoadModel();
+                                                if (selectedFormat !== "Ontology") {
+                                                    showDialogToLoadModel();
+                                                }
 											}
 										});
 									}
@@ -355,7 +356,7 @@ and related projects, please see: http://www.isi.edu/integration
 	</head>
 
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.117</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.118</span></h1>
 		<table id="topMenuBar">
 			<tr>
 				<td>
