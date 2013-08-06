@@ -169,7 +169,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		$('#txtR2RML_URL_fetch').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
 		$('#browseRepo_fetch').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/');
 		dialog.dialog(
-			{ title: 'Triple store URL',
+			{ title: 'SPARQL End point',
 				buttons: { "Cancel": function() { $(this).dialog("close"); }, 
 					"Fetch": renderR2RMLModels }, width: 400, height: 170});
 	
