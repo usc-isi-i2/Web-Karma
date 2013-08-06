@@ -1,0 +1,37 @@
+@CHARSET "ISO-8859-1";
+
+.axis path,.axis line {
+			fill: none;
+			stroke: black;
+			stroke-width: 4 shape-rendering:  crispEdges;
+		}
+		
+		.axis text {
+			font-family: sans-serif;
+			font-size: 8px;
+		}
+		
+		.x.axis path {
+			display: none;
+		}
+		
+		.cleaningRectInvalid {
+			fill: orangered;
+			stroke: none;
+			fill-opacity: 1.0;	
+		}
+		
+		.cleaningRectMissing{
+			fill: white;
+			stroke: none;
+			fill-opacity: 1.0;
+		}
+		
+		.cleaningRectDefault {
+			fill: rgb(163, 252, 6);
+			stroke: none;
+			fill-opacity: 1.0;
+		}
+		.xaxisText {
+		font-size: 8px;
+		}

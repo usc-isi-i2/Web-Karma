@@ -352,6 +352,10 @@
 			        <war>${project.basedir}/external_webapps/openrdf-sesame.war</war>
 			        <contextPath>/openrdf-sesame</contextPath>
 			      </contextHandler>
+			      <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+			        <war>${project.basedir}/external_webapps/cleaningService.war</war>
+			        <contextPath>/cleaningService</contextPath>
+			      </contextHandler>
 			    </contextHandlers>
 		    
 	        </configuration>
