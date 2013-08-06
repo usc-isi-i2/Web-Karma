@@ -214,10 +214,11 @@ function handlePublishModelToStoreButton(event) {
 	
 	var r2rmlDialogBox = $("div#PublishR2RMLModelDialogBox");
 	 $('#txtR2RML_URL').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-	 $('#browseRepo').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/');
+	 $('#browseRepo').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/karma_models/summary');
 	// Show the dialog box
 	r2rmlDialogBox.dialog({
 		width: 400, 
+		title : "Publish Model",
 		buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": submitModelName },
 		resize: function(event, ui) { 
 		}
@@ -259,17 +260,23 @@ function submitModelName(value, settings) {
     });
  }
 
-
+ 
 function submitSelectedModelNameToBeLoaded() {
 	$('div#modelListDiv').dialog("close");
 	var optionsDiv = $("div#WorksheetOptionsDiv");
-    
 	var value = $("#modelListRadioBtnGrp").find("input:checked");
+	
+	var info = new Object();
+	info["vWorksheetId"] = optionsDiv.data("worksheetId");
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "InvokeDataMiningServiceCommand";
+	info['modelName'] = value.val();
+    
+	
     var returned = $.ajax({
-		url: "RequestController?workspaceId=" + $.workspaceGlobalInformation.id +
-		"&command=ApplyR2RMLModelCommand&vWorksheetId="+optionsDiv.data("worksheetId") + '&modelName='+value.val(), 
+		url: "RequestController", 
 		type: "POST",
-//		data : '',
+		data : info,
 		dataType : "json",
 		complete : 
 			function (xhr, textStatus) {

@@ -167,7 +167,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	$("button#showR2RMLFromTripleStore").click(function(event) {
 		var dialog = $('#FetchR2RMLModelDialogBox');
 		$('#txtR2RML_URL_fetch').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-		$('#browseRepo_fetch').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/');
+		$('#browseRepo_fetch').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/karma_models/summary');
 		dialog.dialog(
 			{ title: 'SPARQL End point',
 				buttons: { "Cancel": function() { $(this).dialog("close"); }, 
