@@ -21,11 +21,14 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +51,8 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.metadata.WorksheetProperties;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -154,38 +159,23 @@ public class GenerateR2RMLModelCommand extends Command {
 			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(ontMgr, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
 			
-			PrintWriter writer = new PrintWriter(modelFileLocalPath, "UTF-8");
-			WorksheetModelWriter modelWriter = new WorksheetModelWriter(writer, 
-					vWorkspace.getRepFactory(), ontMgr, worksheet.getTitle());
-
-			// Writer worksheet properties such as Service URL
-			modelWriter.writeWorksheetProperties(worksheet);
-			
-			// Write the transformation commands if any
-			WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(vWorksheetId, 
-					vWorkspace);
-			List<String> commandsJSON = histReader.getJSONForCommands(CommandTag.Transformation);
-			if (!commandsJSON.isEmpty()) {
-				modelWriter.writeTransformationHistory(commandsJSON);
-			}
-			// Write the worksheet history
-			String historyFilePath = HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(
-					worksheet.getTitle(), vWorkspace.getPreferencesId());
-			modelWriter.writeCompleteWorksheetHistory(historyFilePath);
-			
-			// Write the R2RML mapping
-			modelWriter.writeR2RMLMapping(ontMgr, mappingGen);
-			modelWriter.close();
-			writer.flush();
-			writer.close();
+			// Write the model
+			writeModel(vWorkspace, ontMgr, mappingGen, worksheet, modelFileLocalPath);
 			
 			// Write the model to the triple store
 			TripleStoreUtil utilObj = new TripleStoreUtil();
-//			URL url = new URL("http://localhost:8080/publish/R2RML/" + modelFileName);
-//			if (modelIdentifier == null || modelIdentifier.isEmpty()) {
-//				modelIdentifier = modelFileName;
-//			}
-			boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, null, false);
+
+			// Get the graph name from properties
+			String graphName = worksheet.getMetadataContainer().getWorksheetProperties()
+					.getPropertyValue(Property.graphName);
+			if (graphName == null || graphName.isEmpty()) {
+				// Set to default
+				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+						Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
+				graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
+			}
+			
+			boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, false);
 			if (result) {
 				logger.info("Saved model to triple store");
 				return new UpdateContainer(new AbstractUpdate() {
@@ -217,6 +207,36 @@ public class GenerateR2RMLModelCommand extends Command {
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
 		// Not required
 		return null;
+	}
+	
+	private void writeModel(VWorkspace vWorkspace, OntologyManager ontMgr, 
+			KR2RMLMappingGenerator mappingGen, Worksheet worksheet, String modelFileLocalPath) 
+					throws RepositoryException, FileNotFoundException, 
+							UnsupportedEncodingException, JSONException {
+		PrintWriter writer = new PrintWriter(modelFileLocalPath, "UTF-8");
+		WorksheetModelWriter modelWriter = new WorksheetModelWriter(writer, 
+				vWorkspace.getRepFactory(), ontMgr, worksheet.getTitle());
+
+		// Writer worksheet properties such as Service URL
+		modelWriter.writeWorksheetProperties(worksheet);
+		
+		// Write the transformation commands if any
+		WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(vWorksheetId, 
+				vWorkspace);
+		List<String> commandsJSON = histReader.getJSONForCommands(CommandTag.Transformation);
+		if (!commandsJSON.isEmpty()) {
+			modelWriter.writeTransformationHistory(commandsJSON);
+		}
+		// Write the worksheet history
+		String historyFilePath = HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(
+				worksheet.getTitle(), vWorkspace.getPreferencesId());
+		modelWriter.writeCompleteWorksheetHistory(historyFilePath);
+		
+		// Write the R2RML mapping
+		modelWriter.writeR2RMLMapping(ontMgr, mappingGen);
+		modelWriter.close();
+		writer.flush();
+		writer.close();
 	}
 
 }

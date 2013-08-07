@@ -23,6 +23,7 @@ package edu.isi.karma.controller.command.worksheet;
 
 import java.io.PrintWriter;
 
+import org.apache.commons.httpclient.URIException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 
 public class FetchExistingWorksheetPropertiesCommand extends Command {
@@ -74,6 +76,22 @@ public class FetchExistingWorksheetPropertiesCommand extends Command {
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		
+		// Check if the model name exists. If not set to a default one
+		String graphName = worksheet.getMetadataContainer().getWorksheetProperties().
+				getPropertyValue(Property.graphName); 
+
+		if (graphName == null || graphName.isEmpty()) {
+			try {
+				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+						Property.graphName, 
+						WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
+			} catch (URIException e) {
+				logger.error("Error occurred while fetching worksheet properties!", e);
+				return new UpdateContainer(new ErrorUpdate("Error occurred while fetching " +
+						"worksheet properties!"));
+			}
+		}
 		
 		WorksheetProperties props = worksheet.getMetadataContainer().getWorksheetProperties();
 		try {

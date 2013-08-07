@@ -24,6 +24,8 @@ package edu.isi.karma.rep.metadata;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.httpclient.URIException;
+import org.apache.commons.httpclient.util.URIUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,8 +33,10 @@ public class WorksheetProperties {
 	private Map<Property, String> propertyValueMap;
 	private boolean hasServiceProperties;
 	
+	public static String DEFAULT_GRAPH_NAME_PREFIX = "http://localhost/worksheets/";
+	
 	public enum Property {
-		serviceRequestMethod, serviceDataPostMethod, modelName, serviceUrl, hasServiceProperties
+		serviceRequestMethod, serviceDataPostMethod, graphName, serviceUrl, hasServiceProperties
 	}
 	
 	public WorksheetProperties() {
@@ -71,5 +75,9 @@ public class WorksheetProperties {
 			obj.put(Property.hasServiceProperties.name(), false);
 		}
 		return obj;
+	}
+
+	public static String createDefaultGraphName(String worksheetTitle) throws URIException {
+		return DEFAULT_GRAPH_NAME_PREFIX + URIUtil.encodePath(worksheetTitle);
 	}
 }
