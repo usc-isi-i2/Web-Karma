@@ -175,7 +175,7 @@ public class GenerateR2RMLModelCommand extends Command {
 				graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
 			}
 			
-			boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, false);
+			boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true);
 			if (result) {
 				logger.info("Saved model to triple store");
 				return new UpdateContainer(new AbstractUpdate() {
