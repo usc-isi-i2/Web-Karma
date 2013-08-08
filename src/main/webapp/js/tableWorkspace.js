@@ -444,7 +444,23 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
         // Check for existing values
         fetchExistingWorksheetOptions(optionsDiv.data("worksheetId"));
     });
+    
+    $('body').delegate('.smallChart', 'click', function() {
+    	//alert("Reached here smallchart");
+    	var dialogBox = $("div#drawBigChartId");
+		dialogBox.dialog({width: 550, title: 'Chart'
+			, buttons: { "Close": function() { $(this).dialog("close"); } }})
+    });
+    
+    /*
+    $("div#smallChart").click(function(){
+    	alert("Reached here smallchart");
+		var rdfDialogBox = $("div#PublishRDFDialogBox");
+		rdfDialogBox.dialog({width: 700
+			, buttons: { "Ok": function() { $(this).dialog("close"); } });
 
+	});*/
+    
 }
 
 function openWorksheetOptions(event) {
@@ -914,19 +930,15 @@ function renderR2RMLModels() {
 	});				
 }
 
-function drawBigChart() {
+/*function drawBigChart() {
 	var bigChartDiv = $("div#drawBigChartId");
 
 	$("div#smallChart").click(function(){
-		optionsDiv.hide();
-		showHideRdfInfo();
-		getRDFPreferences();
 		var rdfDialogBox = $("div#PublishRDFDialogBox");
-		// Show the dialog box
-		rdfDialogBox.dialog({width: 300
-			, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": publishRDFFunction }});
+		rdfDialogBox.dialog({width: 700
+			, buttons: { "Ok": function() { $(this).dialog("close"); } });
 
 	});
 	
 	
-}
+}*/
