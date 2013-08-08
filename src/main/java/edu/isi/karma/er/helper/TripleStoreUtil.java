@@ -41,6 +41,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
@@ -310,10 +311,10 @@ public class TripleStoreUtil {
 			HttpClient httpclient = new DefaultHttpClient();
 			File file = new File(filePath);
 			FileEntity entity = new FileEntity(file, ContentType.create(mime_types.get(rdfType), "UTF-8"));        
-			HttpPost httppost = new HttpPost(uri);
-			httppost.setEntity(entity);
+			HttpPut httpput = new HttpPut(uri);
+			httpput.setEntity(entity);
 			
-			HttpResponse response = httpclient.execute(httppost);
+			HttpResponse response = httpclient.execute(httpput);
 			logger.info("StatusCode: " + response.getStatusLine().getStatusCode());
 			int code = response.getStatusLine().getStatusCode();
 			if(code >= 200 && code < 300) {
