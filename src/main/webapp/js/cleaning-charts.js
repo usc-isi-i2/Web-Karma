@@ -20,9 +20,9 @@ function showChartButtonHandler() {
         dataType : "json",
         complete :
             function (xhr, textStatus) {
-        		console.log(xhr.responseText);
+        		//console.log(xhr.responseText);
                 var json = $.parseJSON(xhr.responseText);
-                console.log(json);
+                //console.log(json);
                 parse(json);
             },
         error :
@@ -49,10 +49,22 @@ function drawChart(element)  {
 	//console.log(dataArray);
 	var xLabel = element["chartData"].xLabel;
 	var yLabel = element["chartData"].yLabel;
-	var containsInvalid = (dataArray[dataArray.length-1][0].toUpperCase() == "INVALID".toUpperCase());
-	var containsRemaining = (dataArray[dataArray.length-1][0].toUpperCase() == "Remaining".toUpperCase());
-	var containsMissing = (dataArray[dataArray.length-2][0].toUpperCase() == "MISSING".toUpperCase()) 
+	var containsInvalid = false;
+	if(dataArray.length>0)
+		containsInvalid = (dataArray[dataArray.length-1][0].toUpperCase() == "INVALID".toUpperCase());
+	if (containsInvalid == false && dataArray.length >= 2)
+		containsInvalid = (dataArray[dataArray.length-2][0].toUpperCase() == "INVALID".toUpperCase());
+	var containsRemaining = false;
+	if(dataArray.length>0)
+		containsRemaining = (dataArray[dataArray.length-1][0].toUpperCase() == "Remaining".toUpperCase());
+	if (containsRemaining == false && dataArray.length>1)
+		containsRemaining = (dataArray[dataArray.length-2][0].toUpperCase() == "Remaining".toUpperCase());
+	var containsMissing = false;
+	if (dataArray.length >= 2)
+		containsMissing = (dataArray[dataArray.length-2][0].toUpperCase() == "MISSING".toUpperCase()) 
 							||(dataArray[dataArray.length-1][0].toUpperCase() == "MISSING".toUpperCase());
+	if (containsMissing == false && dataArray.length>0)
+		containsMissing = (dataArray[dataArray.length-1][0].toUpperCase() == "MISSING".toUpperCase());
 	
 	var counters = [];
 	
@@ -91,6 +103,13 @@ function drawChart(element)  {
 	//Create SVG element
 	//$("div" + divId).append("<br>");
 	
+	var br1 = d3.select(divId) 
+				.select("br")
+				.remove();
+	var svg1 = d3.select(divId)
+				 .select("#smallChart")
+			 	 .remove();
+
 	var br = d3.select(divId) 
 			   .append("br");
 	var svg = d3.select(divId)
