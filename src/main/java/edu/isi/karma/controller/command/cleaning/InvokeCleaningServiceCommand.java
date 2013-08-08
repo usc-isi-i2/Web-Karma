@@ -118,6 +118,7 @@ public class InvokeCleaningServiceCommand extends Command {
 			//System.out.println(jsonString);
 
 			String url = "http://localhost:8080/cleaningService/IdentifyData";
+			//String url = "http://localhost:8070/myWS/IdentifyData";
 			//System.out.println(url);
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = null;
