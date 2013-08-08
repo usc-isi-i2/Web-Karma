@@ -274,7 +274,7 @@ public class TripleStoreUtil {
 	 * */
 	private boolean saveToStore(String filePath, String tripleStoreURL, String context, boolean replaceFlag, boolean deleteSrcFile, String rdfType) {
 		boolean retVal = false;
-		
+		System.out.println("replaceFlag : " + replaceFlag);
 		// check the connection first
 		if (checkConnection(tripleStoreURL)) {
 			logger.info("Connection Test passed");
@@ -294,10 +294,10 @@ public class TripleStoreUtil {
 			if (context == null || context.isEmpty()) {
 				builder.setParameter("context", "null");
 			} else {
-				builder.setParameter("context", context);
+				builder.setParameter("context", "<"+context+">");
 				// if the context is given, then only we consider the option of replacing the old contents
 				if (replaceFlag) {
-					builder.setParameter("baseURI", context);
+					builder.setParameter("baseURI", "<"+context+">");
 				}
 			}
 			
@@ -305,8 +305,8 @@ public class TripleStoreUtil {
 				throw new Exception("Could not find spefied rdf type: " + rdfType);
 			}
 			
-			// build the POST params
 			URI uri = builder.build();
+			logger.info("request url : " + uri.toString());
 			HttpClient httpclient = new DefaultHttpClient();
 			File file = new File(filePath);
 			FileEntity entity = new FileEntity(file, ContentType.create(mime_types.get(rdfType), "UTF-8"));        
@@ -315,9 +315,6 @@ public class TripleStoreUtil {
 			
 			HttpResponse response = httpclient.execute(httppost);
 			logger.info("StatusCode: " + response.getStatusLine().getStatusCode());
-			for(Header h : response.getAllHeaders()) {
-				logger.info(h.getName() +  " : " + h.getValue());
-			}
 			int code = response.getStatusLine().getStatusCode();
 			if(code >= 200 && code < 300) {
 				retVal = true;
