@@ -24,6 +24,7 @@ package edu.isi.karma.kr2rml;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -95,6 +96,10 @@ public class WorksheetModelWriter {
 		this.worksheetName = worksheetName;
 		Value srcNameVal = f.createLiteral(worksheetName);
 		con.add(mappingRes, sourceNameUri, srcNameVal);
+		
+		// Add the timestamp
+		URI pubTime = f.createURI(Uris.KM_MODEL_PUBLICATION_TIME_URI);
+		con.add(mappingRes, pubTime, f.createLiteral(new Date().getTime()));
 	}
 	
 	public boolean writeR2RMLMapping(OntologyManager ontManager, KR2RMLMappingGenerator mappingGen)
@@ -305,14 +310,6 @@ public class WorksheetModelWriter {
 		if (props == null) {
 			return;
 		}
-		// Model name triple
-		if (props.getPropertyValue(Property.modelName) != null && 
-				!props.getPropertyValue(Property.modelName).equals("")) {
-			URI modelNameUri = f.createURI(Uris.KM_MODEL_NAME_URI);
-			Value modelName = f.createLiteral(props.getPropertyValue(Property.modelName));
-			con.add(mappingRes, modelNameUri, modelName);
-		}
-		
 		
 		// Service options (if present)
 		if (props.hasServiceProperties()) {

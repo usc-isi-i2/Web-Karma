@@ -172,17 +172,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 			{ title: 'SPARQL End point',
 				buttons: { "Cancel": function() { $(this).dialog("close"); }, 
 					"Fetch": renderR2RMLModels }, width: 400, height: 170});
-	
-		
-		
-//		var modelListRadioBtnGrp = $("#modelListRadioBtnGrp");
-//		modelListRadioBtnGrp.append('<input type="radio" name="group1" value="test2" />test2 <br />');
-//		modelListRadioBtnGrp.append('<input type="radio" name="group1" value="this_is_test" />this_is_test');
-//		
-//		modelListDiv.dialog({ title: 'Select a model to be applied',
-//			buttons: { "Cancel": function() { $(this).dialog("close"); }, "Select": function(){ alert('yo'); } }, width: 300, height: 150, position: positionArray});
-//		
-//		return;
 	});
 	
 	$("button#showAutoModel").click(function(){
@@ -787,7 +776,7 @@ function styleAndAssignHandlersToMergeButton() {
 function submitWorksheetProperties() {
     // Prepare the input data
     var worksheetProps = new Object();
-    worksheetProps["modelName"] = $("#modelNameInput").val();
+    worksheetProps["graphName"] = $("#graphNameInput").val();
 
     // Set service options if the window is visible
     if ($('#worksheetServiceOptions').is(':visible')) {
@@ -858,10 +847,10 @@ function fetchExistingWorksheetOptions(worksheetId) {
                 var props = json["elements"][0]["properties"];
 
                 // Set model name
-                if (props["modelName"] != null) {
-                    $("#modelNameInput").val(props["modelName"]);
+                if (props["graphName"] != null) {
+                    $("#graphNameInput").val(props["graphName"]);
                 } else {
-                    $("#modelNameInput").val("");
+                    $("#graphNameInput").val("");
                 }
                 // Set service options if present
                 if (props["hasServiceProperties"]) {

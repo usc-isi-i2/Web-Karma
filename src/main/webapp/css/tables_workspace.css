@@ -506,3 +506,7 @@ span#applyHistoryButton {
 	width: 128px;
 	height: 20px;
 }
+
+#setPropertiesDialog input[type=text] {
+    width: 70%;
+}
