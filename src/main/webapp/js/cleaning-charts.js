@@ -151,20 +151,19 @@ function drawChart(element)  {
 
 function drawBigChart()  {
 	var divId = "#drawBigChartId";
-	var margin = {top: 10, right: 20, bottom: 35, left: 10},
+	var margin = {top: 10, right: 20, bottom: 35, left: 20},
 	 w = 500 - margin.left - margin.right,
 	h = 300 - margin.top - margin.bottom;
 	
 	var barPadding = 5;
-	var yaxispadding = 10;
-	var xPadding = 10;
+	var yaxispadding = 20;
+	var xPadding = 20;
 	var yPadding = 2;
 	element = elementBigChart;
 	
 	
-	
 	var dataArray = eval(element["chartData"].histogram);
-	console.log(dataArray);
+	//console.log(dataArray);
 	var xLabel = element["chartData"].xLabel;
 	var yLabel = element["chartData"].yLabel;
 	var containsInvalid = false;
