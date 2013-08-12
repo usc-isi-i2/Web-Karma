@@ -446,6 +446,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
     });
     
     $('body').delegate('.smallChart', 'click', function() {
+    	drawBigChart();
     	//alert("Reached here smallchart");
     	var dialogBox = $("div#drawBigChartId");
 		dialogBox.dialog({width: 550, title: 'Chart'

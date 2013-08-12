@@ -125,7 +125,7 @@ public class InvokeCleaningServiceCommand extends Command {
 			HttpResponse response = null;
 			HttpEntity entity;
 			StringBuffer out = new StringBuffer();
-			logger.info(url);
+			//logger.info(url);
 			URI u = null ;
 			u = new URI(url) ;
 			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
@@ -144,7 +144,7 @@ public class InvokeCleaningServiceCommand extends Command {
 				}
 			}	
 			//System.out.println(out.toString());
-			logger.info("Connnection success : " + url + " Successful.");
+			//logger.info("Connnection success : " + url + " Successful.");
 			//System.out.println("Connnection success : " + url + " Successful.");
 			final JSONObject data1  = new JSONObject(out.toString());
 			//System.out.println("Data--->" + data1);

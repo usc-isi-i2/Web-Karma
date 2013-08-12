@@ -747,7 +747,7 @@ function parse(data) {
 			//console.log(element["chartData"]);
 				
 			drawChart(element);
-			drawBigChart(element) ;
+			//drawBigChart() ;
 		}
 	});
 }

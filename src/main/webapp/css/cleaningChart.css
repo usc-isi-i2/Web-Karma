@@ -8,7 +8,8 @@
 		
 		.axis text {
 			font-family: sans-serif;
-			font-size: 8px;
+			text-anchor: end;
+			font-size: 13px;
 		}
 		
 		.x.axis path {
@@ -35,5 +36,13 @@
 		.xaxisText {
 		font-size: 8px;
 		font-family: sans-serif;
+		}
+		
+		.smallChart {
+		background: #00174D;
+		}
+		
+		#bigChart {
+		background: rgb(186, 224, 218);
 		}
 		
