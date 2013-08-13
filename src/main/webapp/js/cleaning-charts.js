@@ -121,7 +121,8 @@ function drawChart(element)  {
 				.attr("class", "smallChart")
 				.attr("id", "smallChart")
 			.append("g")
-				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+				.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+				;
 	// Bars
 	svg.selectAll("rect")
 	.data(counters)
@@ -144,8 +145,9 @@ function drawChart(element)  {
 	.attr("height",	function(d, i) {
 				return yScale(d);
 			})
-	.append("title")
-	.text(tooltip);
+	;
+	svg.append("title")
+	 .text(tooltip);
 	
 }
 
