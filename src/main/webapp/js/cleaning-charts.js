@@ -20,9 +20,7 @@ function showChartButtonHandler() {
         dataType : "json",
         complete :
             function (xhr, textStatus) {
-        		//console.log(xhr.responseText);
                 var json = $.parseJSON(xhr.responseText);
-                //console.log(json);
                 parse(json);
             },
         error :
@@ -47,7 +45,7 @@ function drawChart(element)  {
 	var yPadding = 2;
 			
 	var dataArray = eval(element["chartData"].histogram);
-	//console.log(dataArray);
+	//console.log(dataArray); 
 	var xLabel = element["chartData"].xLabel;
 	var yLabel = element["chartData"].yLabel;
 	console.log(element["chartData"]);
@@ -59,16 +57,12 @@ function drawChart(element)  {
 		containsInvalid = (dataArray[dataArray.length-1][0].toUpperCase() == "INVALID".toUpperCase());
 	if (containsInvalid == false && dataArray.length >= 2)
 		containsInvalid = (dataArray[dataArray.length-2][0].toUpperCase() == "INVALID".toUpperCase());
-	var containsRemaining = false;
-	if(dataArray.length>0)
-		containsRemaining = (dataArray[dataArray.length-1][0].toUpperCase() == "Remaining".toUpperCase());
-	if (containsRemaining == false && dataArray.length>1)
-		containsRemaining = (dataArray[dataArray.length-2][0].toUpperCase() == "Remaining".toUpperCase());
 	var containsMissing = false;
-	if (dataArray.length >= 2)
+	if (dataArray.length > 1) 
 		containsMissing = (dataArray[dataArray.length-2][0].toUpperCase() == "MISSING".toUpperCase()) 
 							||(dataArray[dataArray.length-1][0].toUpperCase() == "MISSING".toUpperCase());
-	if (containsMissing == false && dataArray.length>0)
+	// Redundant code ??
+	if (containsMissing == false && dataArray.length > 0)
 		containsMissing = (dataArray[dataArray.length-1][0].toUpperCase() == "MISSING".toUpperCase());
 	
 	var counters = [];
@@ -129,9 +123,9 @@ function drawChart(element)  {
 	.enter()
 	.append("rect")
 	.attr("class", function(d, i) {
-		if (i == counters.length -1 && (containsInvalid || containsRemaining))
+		if (i == counters.length -1 && containsInvalid)
 			return "cleaningRectInvalid";
-		if ((i == counters.length -2  && containsMissing && (containsInvalid || containsRemaining)) || ( i == counters.length -1 && containsMissing))
+		if ((i == counters.length -2  && containsMissing && containsInvalid ) || ( i == counters.length -1 && containsMissing))
 			return "cleaningRectMissing";
 		return "cleaningRectDefault";
 		})
@@ -173,11 +167,7 @@ function drawBigChart()  {
 		containsInvalid = (dataArray[dataArray.length-1][0].toUpperCase() == "INVALID".toUpperCase());
 	if (containsInvalid == false && dataArray.length >= 2)
 		containsInvalid = (dataArray[dataArray.length-2][0].toUpperCase() == "INVALID".toUpperCase());
-	var containsRemaining = false;
-	if(dataArray.length>0)
-		containsRemaining = (dataArray[dataArray.length-1][0].toUpperCase() == "Remaining".toUpperCase());
-	if (containsRemaining == false && dataArray.length>1)
-		containsRemaining = (dataArray[dataArray.length-2][0].toUpperCase() == "Remaining".toUpperCase());
+	
 	var containsMissing = false;
 	if (dataArray.length >= 2)
 		containsMissing = (dataArray[dataArray.length-2][0].toUpperCase() == "MISSING".toUpperCase()) 
@@ -237,12 +227,12 @@ function drawBigChart()  {
 	.enter()
 	.append("rect")
 	.attr("class", function(d, i) {
-		if (i == counters.length -1 && (containsInvalid || containsRemaining))
+		if (i == counters.length -1 && containsInvalid)
 			return "cleaningRectInvalid";
-		if ((i == counters.length -2  && containsMissing && (containsInvalid || containsRemaining)) || ( i == counters.length -1 && containsMissing))
+		if ((i == counters.length -2  && containsMissing && containsInvalid ) || ( i == counters.length -1 && containsMissing))
 			return "cleaningRectMissing";
 		return "cleaningRectDefault";
-		})
+	})
 	.attr("x", function(d, i) {
 				return i * ((w-xPadding) / counters.length) + xPadding;
 			})
@@ -252,15 +242,7 @@ function drawBigChart()  {
 	.attr("width", (w-xPadding) / counters.length - barPadding)
 	.attr("height",	function(d, i) {
 				return yScale(d);
-			})
-	/*.attr("fill", function(d, i) {
-		if (i == counters.length -1 && containsInvalid)
-			return "orangered";
-		if ((i == counters.length -2  && containsMissing && containsInvalid) || ( i == counters.length -1 && containsMissing))
-			return "Gray";
-		return "slateblue";
-	})*/
-	;
+			});
 				
 	//Text
 	svg.selectAll("text")
