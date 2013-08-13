@@ -123,7 +123,7 @@ function drawChart(element)  {
 				.attr("width", w  + margin.left + margin.right)
 				.attr("height", h + margin.top + margin.bottom)
 				.attr("class", "smallChart") // ui-button
-				.attr("id", "smallChart")
+				//.attr("id", "smallChart")
 			.append("g")
 				.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 				;
@@ -278,20 +278,29 @@ function drawBigChart(pid)  {
 	.enter()
 	.append("text")
 	.text(function(d) {
+			if (d[0].length > 9) {
+				d[0] = d[0].substring(0, 7) + "..";
+			}
 				return d[0];
 			})
 	.attr("text-anchor", "middle")
-	.attr("x", function(d, i) {
+	/*.attr("x", function(d, i) {
 				return i * ((w-xPadding) / counters.length)
 						+ ((w-xPadding) / counters.length - barPadding) / 2 + xPadding;
 			})
 	.attr("y", function(d) {
+		console.log(h + margin.top +1 );
 			return h + margin.top +1 ;
-	})
+	})*/
 	.attr("font-family", "sans-serif")
 	.attr("font-size", "8px")
 	.attr("class", "xaxisText")
-	.attr("fill", "black");
+	.attr("fill", "black")
+	.attr("transform",function(d, i) {
+		/*console.log("translate("+ i * ((w-xPadding) / counters.length)	
+			+ ((w-xPadding) / counters.length - barPadding) / 2 + xPadding +"," + h + margin.top +1 +") rotate(-25)");*/
+			return "translate("+ (i * ((w-xPadding) / counters.length) + ((w-xPadding) / counters.length - barPadding) / 2 + xPadding - 2) +"," + (h + margin.top +8) +") rotate(-25)";
+			});
 		
 	//Create Y axis
 	svg.append("g")
