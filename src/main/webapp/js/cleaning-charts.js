@@ -59,6 +59,14 @@ function drawChart(element)  {
 		containsInvalid = (dataArray[dataArray.length-1][0].toUpperCase() == "INVALID".toUpperCase());
 	if (containsInvalid == false && dataArray.length >= 2)
 		containsInvalid = (dataArray[dataArray.length-2][0].toUpperCase() == "INVALID".toUpperCase());
+	var containsRemaining = false;
+	if(dataArray.length>0)
+		containsRemaining = (dataArray[dataArray.length-1][0].toUpperCase() == "Remaining".toUpperCase());
+	if (containsRemaining == false && dataArray.length > 1)
+		containsRemaining = (dataArray[dataArray.length-2][0].toUpperCase() == "Remaining".toUpperCase());
+	if (containsRemaining == false && dataArray.length > 2)
+		containsRemaining = (dataArray[dataArray.length-3][0].toUpperCase() == "Remaining".toUpperCase());
+
 	var containsMissing = false;
 	if (dataArray.length > 1) 
 		containsMissing = (dataArray[dataArray.length-2][0].toUpperCase() == "MISSING".toUpperCase()) 
@@ -125,6 +133,11 @@ function drawChart(element)  {
 	.enter()
 	.append("rect")
 	.attr("class", function(d, i) {
+		if ((i == counters.length-1 && !containsInvalid && containsRemaining) || (i == counters.length-2 && containsInvalid && containsRemaining)
+		||(i == counters.length-2 && containsMissing && containsRemaining) || (i == counters.length-3 && containsInvalid && containsMissing &&  containsRemaining)) {
+			containsRemaining = false;
+			return "cleaningRectRemaining";
+		}
 		if (i == counters.length -1 && containsInvalid)
 			return "cleaningRectInvalid";
 		if ((i == counters.length -2  && containsMissing && containsInvalid ) || ( i == counters.length -1 && containsMissing))
@@ -170,7 +183,13 @@ function drawBigChart(pid)  {
 		containsInvalid = (dataArray[dataArray.length-1][0].toUpperCase() == "INVALID".toUpperCase());
 	if (containsInvalid == false && dataArray.length >= 2)
 		containsInvalid = (dataArray[dataArray.length-2][0].toUpperCase() == "INVALID".toUpperCase());
-	
+	var containsRemaining = false;
+	if(dataArray.length>0)
+		containsRemaining = (dataArray[dataArray.length-1][0].toUpperCase() == "Remaining".toUpperCase());
+	if (containsRemaining == false && dataArray.length > 1)
+		containsRemaining = (dataArray[dataArray.length-2][0].toUpperCase() == "Remaining".toUpperCase());
+	if (containsRemaining == false && dataArray.length > 2)
+		containsRemaining = (dataArray[dataArray.length-3][0].toUpperCase() == "Remaining".toUpperCase());
 	var containsMissing = false;
 	if (dataArray.length >= 2)
 		containsMissing = (dataArray[dataArray.length-2][0].toUpperCase() == "MISSING".toUpperCase()) 
@@ -230,12 +249,18 @@ function drawBigChart(pid)  {
 	.enter()
 	.append("rect")
 	.attr("class", function(d, i) {
+		if ((i == counters.length-1 && !containsInvalid && containsRemaining) || (i == counters.length-2 && containsInvalid && containsRemaining)
+		||(i == counters.length-2 && containsMissing && containsRemaining) || (i == counters.length-3 && containsInvalid && containsMissing &&  containsRemaining)) {
+			containsRemaining = false;
+			return "cleaningRectRemaining";
+		}
+			
 		if (i == counters.length -1 && containsInvalid)
 			return "cleaningRectInvalid";
 		if ((i == counters.length -2  && containsMissing && containsInvalid ) || ( i == counters.length -1 && containsMissing))
 			return "cleaningRectMissing";
 		return "cleaningRectDefault";
-	})
+		})
 	.attr("x", function(d, i) {
 				return i * ((w-xPadding) / counters.length) + xPadding;
 			})

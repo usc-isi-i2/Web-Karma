@@ -28,6 +28,12 @@
 			fill-opacity: 1.0;
 		}
 		
+		.cleaningRectRemaining{ 
+			fill: yellow;
+			stroke: none;
+			fill-opacity: 1.0;
+		}
+		
 		.cleaningRectDefault {
 			fill: rgb(163, 252, 6);
 			stroke: none;
