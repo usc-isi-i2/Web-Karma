@@ -89,6 +89,10 @@
     <param-name>PYTHON_SCRIPTS_DIRECTORY</param-name>
     <param-value>./src/main/scripts/Lib</param-value>
   </context-param>
+  <context-param>
+    <param-name>CLEANING_SERVICE_URL</param-name>
+    <param-value>http://localhost:8080/cleaningService/IdentifyData</param-value>
+  </context-param>
 
   
   	<servlet>
