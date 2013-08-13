@@ -445,8 +445,10 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
         fetchExistingWorksheetOptions(optionsDiv.data("worksheetId"));
     });
     
-    $('body').delegate('.smallChart', 'click', function() {
-    	drawBigChart();
+    $('body').delegate('#smallChart', 'click', function() {
+    	var pid = $(this).parent().attr('id');
+    	//console.log(pid);
+    	drawBigChart(pid);
     	//alert("Reached here smallchart");
     	var dialogBox = $("div#drawBigChartId");
 		dialogBox.dialog({width: 550, title: 'Chart'

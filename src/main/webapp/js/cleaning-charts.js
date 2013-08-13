@@ -1,3 +1,4 @@
+Window.cleaningStore = {};
 function showChartButtonHandler() {
     var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
     var hNodeId = columnHeadingMenu.data("parentCellId");
@@ -35,6 +36,7 @@ function drawChart(element)  {
 	var divId = "#" + element["hNodeId"];
 	elementBigChart = element;
 	//console.log(divId);
+	Window.cleaningStore[element["hNodeId"]] = element;
 	var margin = {top: 0, right: 0, bottom: 0, left: 0},
 	 w = 100 - margin.left - margin.right,
 	h = 30 - margin.top - margin.bottom;
@@ -48,7 +50,7 @@ function drawChart(element)  {
 	//console.log(dataArray); 
 	var xLabel = element["chartData"].xLabel;
 	var yLabel = element["chartData"].yLabel;
-	console.log(element["chartData"]);
+	//console.log(element["chartData"]);
 	var tooltip = "Data Type Detected: " + element["chartData"].Category  + "\nTotal Data: " + element["chartData"].Total_ID_Count + 
 	"\nTotal Valid Data: " + element["chartData"].Valid_ID_Count
 	+ "\nTotal Invalid Data: "	+ element["chartData"].Invalid_ID_Count;
@@ -67,7 +69,7 @@ function drawChart(element)  {
 	
 	var counters = [];
 	
-	for (i=0; i<dataArray.length; i++)
+	for (i=0; i < dataArray.length; i++)
 	{
 		count = dataArray[i][1].split(":");
 		num = parseInt(count[0], 10);
@@ -112,7 +114,7 @@ function drawChart(element)  {
 				.append("svg")
 				.attr("width", w  + margin.left + margin.right)
 				.attr("height", h + margin.top + margin.bottom)
-				.attr("class", "smallChart")
+				.attr("class", "smallChart") // ui-button
 				.attr("id", "smallChart")
 			.append("g")
 				.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
@@ -145,7 +147,7 @@ function drawChart(element)  {
 	
 }
 
-function drawBigChart()  {
+function drawBigChart(pid)  {
 	var divId = "#drawBigChartId";
 	var margin = {top: 10, right: 20, bottom: 35, left: 20},
 	 w = 500 - margin.left - margin.right,
@@ -156,8 +158,9 @@ function drawBigChart()  {
 	var xPadding = 20;
 	var yPadding = 2;
 	element = elementBigChart;
-	
-	
+	//console.log(pid);
+	element = Window.cleaningStore[pid];
+	//console.log(element);
 	var dataArray = eval(element["chartData"].histogram);
 	//console.log(dataArray);
 	var xLabel = element["chartData"].xLabel;

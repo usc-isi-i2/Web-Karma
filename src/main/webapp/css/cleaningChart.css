@@ -38,8 +38,9 @@
 		font-family: sans-serif;
 		}
 		
-		.smallChart {
+		#smallChart {
 		background: #00174D;
+		cursor: pointer;
 		}
 		
 		#bigChart {
