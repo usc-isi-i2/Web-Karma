@@ -24,6 +24,8 @@
 package edu.isi.karma.rep;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import org.json.JSONArray;
@@ -196,5 +198,22 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 		}
 		return arr;
 	}
-
+	
+	public List<HNode> getHNodesAccessibleList(RepFactory f) {
+		List<HNode> hNodeList = new ArrayList<HNode>();
+		HTable table = this.getHTable(f);
+		
+		while (table != null) {
+			for (HNode hNode:table.getHNodes()) {
+				hNodeList.add(hNode);
+			}
+			HNode tableHNode = table.getParentHNode();
+			if (tableHNode == null) {
+				break;
+			} else {
+				table = tableHNode.getHTable(f);
+			}
+		}
+		return hNodeList;
+	}
 }

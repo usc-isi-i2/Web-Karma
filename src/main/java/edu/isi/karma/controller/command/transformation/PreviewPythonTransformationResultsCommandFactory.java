@@ -30,7 +30,7 @@ import edu.isi.karma.view.VWorkspace;
 
 public class PreviewPythonTransformationResultsCommandFactory extends CommandFactory {
 	private enum Arguments {
-		vWorksheetId, transformationCode, errorDefaultValue
+		vWorksheetId, transformationCode, errorDefaultValue, hNodeId
 	}
 
 	@Override
@@ -39,8 +39,10 @@ public class PreviewPythonTransformationResultsCommandFactory extends CommandFac
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
 		String transformationCode = request.getParameter(Arguments.transformationCode.name());
 		String errorDefaultValue = request.getParameter(Arguments.errorDefaultValue.name());
+		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		
-		return new PreviewPythonTransformationResultsCommand(getNewId(vWorkspace), vWorksheetId, transformationCode, errorDefaultValue);
+		return new PreviewPythonTransformationResultsCommand(getNewId(vWorkspace), vWorksheetId, 
+				transformationCode, errorDefaultValue, hNodeId);
 	}
 
 }

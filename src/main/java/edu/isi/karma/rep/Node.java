@@ -190,7 +190,7 @@ public class Node extends RepEntity {
 	}
 	
 	/**
-	 * It returns a map with hNodId string as key and the its corresponding nodeId string
+	 * It returns a map with hNodeId string as key and the its corresponding nodeId string
 	 * in a row. It goes from the belongsToRow (the existing row in which it currently
 	 * is) to all the upper-level rows that contain it, and gets all the nodes for rows
 	 * that do not have nested table.

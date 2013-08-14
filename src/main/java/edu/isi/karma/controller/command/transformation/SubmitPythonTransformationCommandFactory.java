@@ -42,7 +42,6 @@ public class SubmitPythonTransformationCommandFactory extends CommandFactory imp
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			VWorkspace vWorkspace) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

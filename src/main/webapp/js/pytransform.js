@@ -24,7 +24,9 @@ function styleAndAssignHandlersToPyTransformElements() {
     editor.setTheme("ace/theme/dreamweaver");
     editor.getSession().setMode("ace/mode/python");
     editor.getSession().setUseWrapMode(true);
+    editor.getSession().setValue("return getValue(\"state\")");
 
+    // $("#transformCodeEditor").resizable();
     $("#previewPyTransformButton").button().click(submitPythonPreview);
     $("#pyTransformViewErrorButton").button().click(function(event){
         var positionArray = [event.clientX, event.clientY];
@@ -38,7 +40,7 @@ function openPyTransformDialogBox() {
     $("span#pyTransformColumnNameError").hide();
     $("#pyTransformViewErrorButton").button('disable');
     var dialogBox = $("div#pyTransformDialog");
-    dialogBox.dialog({width: 540, height: 460, title:"Python Transform"
+    dialogBox.dialog({width: 540, height: 460, title:"Python Transform", resizable:true
         , buttons: {
             "Cancel": function() { $(this).dialog("close"); },
             "Submit": submitPythonTransform}
@@ -50,6 +52,7 @@ function submitPythonPreview() {
     var hNodeId = columnHeadingMenu.data("parentCellId");
     // prepare the JSON Object to be sent to the server
     var info = {};
+    info["hNodeId"] = hNodeId;
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["vWorksheetId"] = $("td#" + hNodeId).parents("table.WorksheetTable").attr("id");;
     info["transformationCode"] = ace.edit("transformCodeEditor").getValue();
