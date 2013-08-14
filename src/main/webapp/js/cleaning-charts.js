@@ -56,31 +56,33 @@ function drawChart(element)  {
 	+ "\nTotal Invalid Data: "	+ element["chartData"].Invalid_ID_Count;
 	var containsInvalid = false;
 	if(dataArray.length>0)
-		containsInvalid = (dataArray[dataArray.length-1][0].toUpperCase() == "INVALID".toUpperCase());
+		containsInvalid = (dataArray[dataArray.length-1].Value.toUpperCase() == "INVALID".toUpperCase());
 	if (containsInvalid == false && dataArray.length >= 2)
-		containsInvalid = (dataArray[dataArray.length-2][0].toUpperCase() == "INVALID".toUpperCase());
+		containsInvalid = (dataArray[dataArray.length-2].Value.toUpperCase() == "INVALID".toUpperCase());
 	var containsRemaining = false;
 	if(dataArray.length>0)
-		containsRemaining = (dataArray[dataArray.length-1][0].toUpperCase() == "Remaining".toUpperCase());
+		containsRemaining = (dataArray[dataArray.length-1].Value.toUpperCase() == "Remaining".toUpperCase());
 	if (containsRemaining == false && dataArray.length > 1)
-		containsRemaining = (dataArray[dataArray.length-2][0].toUpperCase() == "Remaining".toUpperCase());
+		containsRemaining = (dataArray[dataArray.length-2].Value.toUpperCase() == "Remaining".toUpperCase());
 	if (containsRemaining == false && dataArray.length > 2)
-		containsRemaining = (dataArray[dataArray.length-3][0].toUpperCase() == "Remaining".toUpperCase());
+		containsRemaining = (dataArray[dataArray.length-3].Value.toUpperCase() == "Remaining".toUpperCase());
 
 	var containsMissing = false;
 	if (dataArray.length > 1) 
-		containsMissing = (dataArray[dataArray.length-2][0].toUpperCase() == "MISSING".toUpperCase()) 
-							||(dataArray[dataArray.length-1][0].toUpperCase() == "MISSING".toUpperCase());
+		containsMissing = (dataArray[dataArray.length-2].Value.toUpperCase() == "MISSING".toUpperCase()) 
+							||(dataArray[dataArray.length-1].Value.toUpperCase() == "MISSING".toUpperCase());
 	// Redundant code ??
 	if (containsMissing == false && dataArray.length > 0)
-		containsMissing = (dataArray[dataArray.length-1][0].toUpperCase() == "MISSING".toUpperCase());
+		containsMissing = (dataArray[dataArray.length-1].Value.toUpperCase() == "MISSING".toUpperCase());
 	
 	var counters = [];
+	//console.log(dataArray);
 	
 	for (i=0; i < dataArray.length; i++)
 	{
-		count = dataArray[i][1].split(":");
-		num = parseInt(count[0], 10);
+		//count = dataArray[i].Frequency.split(":");
+		//num = parseInt(count[0], 10);
+		num = parseInt(dataArray[i].Frequency, 10);
 		counters.push(num);
 	}
 	
@@ -180,29 +182,30 @@ function drawBigChart(pid)  {
 	var yLabel = element["chartData"].yLabel;
 	var containsInvalid = false;
 	if(dataArray.length>0)
-		containsInvalid = (dataArray[dataArray.length-1][0].toUpperCase() == "INVALID".toUpperCase());
+		containsInvalid = (dataArray[dataArray.length-1].Value.toUpperCase() == "INVALID".toUpperCase());
 	if (containsInvalid == false && dataArray.length >= 2)
-		containsInvalid = (dataArray[dataArray.length-2][0].toUpperCase() == "INVALID".toUpperCase());
+		containsInvalid = (dataArray[dataArray.length-2].Value.toUpperCase() == "INVALID".toUpperCase());
 	var containsRemaining = false;
 	if(dataArray.length>0)
-		containsRemaining = (dataArray[dataArray.length-1][0].toUpperCase() == "Remaining".toUpperCase());
+		containsRemaining = (dataArray[dataArray.length-1].Value.toUpperCase() == "Remaining".toUpperCase());
 	if (containsRemaining == false && dataArray.length > 1)
-		containsRemaining = (dataArray[dataArray.length-2][0].toUpperCase() == "Remaining".toUpperCase());
+		containsRemaining = (dataArray[dataArray.length-2].Value.toUpperCase() == "Remaining".toUpperCase());
 	if (containsRemaining == false && dataArray.length > 2)
-		containsRemaining = (dataArray[dataArray.length-3][0].toUpperCase() == "Remaining".toUpperCase());
+		containsRemaining = (dataArray[dataArray.length-3].Value.toUpperCase() == "Remaining".toUpperCase());
 	var containsMissing = false;
 	if (dataArray.length >= 2)
-		containsMissing = (dataArray[dataArray.length-2][0].toUpperCase() == "MISSING".toUpperCase()) 
-							||(dataArray[dataArray.length-1][0].toUpperCase() == "MISSING".toUpperCase());
+		containsMissing = (dataArray[dataArray.length-2].Value.toUpperCase() == "MISSING".toUpperCase()) 
+							||(dataArray[dataArray.length-1].Value.toUpperCase() == "MISSING".toUpperCase());
 	if (containsMissing == false && dataArray.length>0)
-		containsMissing = (dataArray[dataArray.length-1][0].toUpperCase() == "MISSING".toUpperCase());
+		containsMissing = (dataArray[dataArray.length-1].Value.toUpperCase() == "MISSING".toUpperCase());
 	
 	var counters = [];
 	
 	for (i=0; i<dataArray.length; i++)
 	{
-		count = dataArray[i][1].split(":");
-		num = parseInt(count[0], 10);
+		//count = dataArray[i].Frequency.split(":");
+		//num = parseInt(count[0], 10);
+		num = parseInt(dataArray[i].Frequency, 10);
 		counters.push(num);
 	}
 	
@@ -278,10 +281,10 @@ function drawBigChart(pid)  {
 	.enter()
 	.append("text")
 	.text(function(d) {
-			if (d[0].length > 9) {
-				d[0] = d[0].substring(0, 7) + "..";
+			if (d.Value.length > 9) {
+				d.Value = d.Value.substring(0, 7) + "..";
 			}
-				return d[0];
+				return d.Value;
 			})
 	.attr("text-anchor", "middle")
 	/*.attr("x", function(d, i) {
