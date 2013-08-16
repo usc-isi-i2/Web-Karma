@@ -449,7 +449,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
     	var pid = $(this).parent().attr('id');
     	//console.log(pid);
     	drawBigChart(pid);
-    	//alert("Reached here smallchart");
     	var dialogBox = $("div#drawBigChartId");
 		dialogBox.dialog({width: 550, title: 'Chart'
 			, buttons: { "Close": function() { $(this).dialog("close"); } }})

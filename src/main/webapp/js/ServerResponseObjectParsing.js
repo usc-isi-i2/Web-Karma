@@ -751,7 +751,7 @@ function parse(data) {
 		} else if (element["updateType"] === "WorksheetCleaningServiceInvocationResultsUpdate") {
             var worksheetChartData = element["worksheetChartData"];
             $.each(worksheetChartData, function(index, columnData){
-                console.log(columnData)
+                //console.log(columnData)
                 drawChart(columnData);
             });
         }
