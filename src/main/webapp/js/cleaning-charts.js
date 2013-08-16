@@ -146,7 +146,6 @@ function drawChart(element)  {
 	;
 	svg.append("title")
 	 .text(tooltip);
-	
 }
 
 function drawBigChart(pid)  {
@@ -304,11 +303,11 @@ function drawBigChart(pid)  {
 	var colID = element.hNodeId;
 	var colName = $("#"+colID).children().eq(0).text();
 	var chartTitle = "";
-	if (element.chartData.Category == "String" || element.chartData.Category == "Boolean" || element.chartData.Category == "DayOfWeek") {
-		chartTitle = "Count of '" + colName + "' (Detected as " + element.chartData.Category + ")";
+	if (xLabel == "String" || xLabel == "Boolean" || xLabel == "DayOfWeek") {
+		chartTitle = "Count of '" + colName + "' (Detected as " + xLabel + ")";
 	}
 	else {
-		chartTitle = "Frequency in the range of '" + colName + "' (Detected as " + element.chartData.Category + ")";
+		chartTitle = "Frequency in the range of '" + colName + "' (Detected as " + xLabel + ")";
 	}
 	
 	$("#bigChartTitle").text(chartTitle);
