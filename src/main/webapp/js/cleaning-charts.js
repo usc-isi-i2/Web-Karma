@@ -310,5 +310,6 @@ function drawBigChart(pid)  {
 		chartTitle = "Frequency in the range of '" + colName + "' (Detected as " + xLabel + ")";
 	}
 	
-	$("#bigChartTitle").text(chartTitle);
+	//$("#bigChartTitle").text(chartTitle);
+	return chartTitle;
 }
