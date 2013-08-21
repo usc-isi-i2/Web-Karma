@@ -308,10 +308,13 @@ public class TripleStoreUtil {
 			HttpClient httpclient = new DefaultHttpClient();
 			File file = new File(filePath);
 			FileEntity entity = new FileEntity(file, ContentType.create(mime_types.get(rdfType), "UTF-8"));        
-			HttpPut httpput = new HttpPut(uri);
-			httpput.setEntity(entity);
+//			HttpPut httpput = new HttpPut(uri);
+//			httpput.setEntity(entity);
 			
-			HttpResponse response = httpclient.execute(httpput);
+			HttpPost httpPost = new HttpPost(uri);
+			httpPost.setEntity(entity);
+			
+			HttpResponse response = httpclient.execute(httpPost);
 			logger.info("StatusCode: " + response.getStatusLine().getStatusCode());
 			int code = response.getStatusLine().getStatusCode();
 			if(code >= 200 && code < 300) {
