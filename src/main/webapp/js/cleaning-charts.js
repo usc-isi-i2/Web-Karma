@@ -31,11 +31,8 @@ function showChartButtonHandler() {
     });
 }
 
-var elementBigChart = null;
 function drawChart(element)  {
 	var divId = "#" + element["hNodeId"];
-	elementBigChart = element;
-	//console.log(divId);
 	Window.cleaningStore[element["hNodeId"]] = element;
 	var margin = {top: 0, right: 0, bottom: 0, left: 0},
 	 w = 100 - margin.left - margin.right,
@@ -50,7 +47,6 @@ function drawChart(element)  {
 	//console.log(dataArray); 
 	var xLabel = element["chartData"].xLabel;
 	var yLabel = element["chartData"].yLabel;
-	//console.log(element["chartData"]);
 	var tooltip = "Data Type Detected: " + element["chartData"].Category  + "\nTotal Data: " + element["chartData"].Total_ID_Count + 
 	"\nTotal Valid Data: " + element["chartData"].Valid_ID_Count
 	+ "\nTotal Invalid Data: "	+ element["chartData"].Invalid_ID_Count;
@@ -71,17 +67,13 @@ function drawChart(element)  {
 	if (dataArray.length > 1) 
 		containsMissing = (dataArray[dataArray.length-2].Value.toUpperCase() == "MISSING".toUpperCase()) 
 							||(dataArray[dataArray.length-1].Value.toUpperCase() == "MISSING".toUpperCase());
-	// Redundant code ??
 	if (containsMissing == false && dataArray.length > 0)
 		containsMissing = (dataArray[dataArray.length-1].Value.toUpperCase() == "MISSING".toUpperCase());
 	
 	var counters = [];
-	//console.log(dataArray);
 	
 	for (i=0; i < dataArray.length; i++)
 	{
-		//count = dataArray[i].Frequency.split(":");
-		//num = parseInt(count[0], 10);
 		num = parseInt(dataArray[i].Frequency, 10);
 		counters.push(num);
 	}
@@ -115,17 +107,12 @@ function drawChart(element)  {
 
 	var br = d3.select(divId) 
 			   .append("br");
-	var data = d3.select(divId) 
-	   .append("div")
-	   .attr("id", "elementData_"+ divId)
-	   .attr("style","display: none")
-	   .text(element);
+	
 	var svg = d3.select(divId)
 				.append("svg")
 				.attr("width", w  + margin.left + margin.right)
 				.attr("height", h + margin.top + margin.bottom)
-				.attr("class", "smallChart") // ui-button
-				//.attr("id", "smallChart")
+				.attr("class", "smallChart")
 			.append("g")
 				.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 				;
@@ -159,7 +146,6 @@ function drawChart(element)  {
 	;
 	svg.append("title")
 	 .text(tooltip);
-	
 }
 
 function drawBigChart(pid)  {
@@ -172,12 +158,8 @@ function drawBigChart(pid)  {
 	var yaxispadding = 20;
 	var xPadding = 20;
 	var yPadding = 2;
-	element = elementBigChart;
-	//console.log(pid);
 	element = Window.cleaningStore[pid];
-	//console.log(element);
 	var dataArray = eval(element["chartData"].histogram);
-	//console.log(dataArray);
 	var xLabel = element["chartData"].xLabel;
 	var yLabel = element["chartData"].yLabel;
 	var containsInvalid = false;
@@ -203,8 +185,6 @@ function drawBigChart(pid)  {
 	
 	for (i=0; i<dataArray.length; i++)
 	{
-		//count = dataArray[i].Frequency.split(":");
-		//num = parseInt(count[0], 10);
 		num = parseInt(dataArray[i].Frequency, 10);
 		counters.push(num);
 	}
@@ -287,21 +267,11 @@ function drawBigChart(pid)  {
 				return d.Value;
 			})
 	.attr("text-anchor", "middle")
-	/*.attr("x", function(d, i) {
-				return i * ((w-xPadding) / counters.length)
-						+ ((w-xPadding) / counters.length - barPadding) / 2 + xPadding;
-			})
-	.attr("y", function(d) {
-		console.log(h + margin.top +1 );
-			return h + margin.top +1 ;
-	})*/
 	.attr("font-family", "sans-serif")
 	.attr("font-size", "8px")
 	.attr("class", "xaxisText")
 	.attr("fill", "black")
 	.attr("transform",function(d, i) {
-		/*console.log("translate("+ i * ((w-xPadding) / counters.length)	
-			+ ((w-xPadding) / counters.length - barPadding) / 2 + xPadding +"," + h + margin.top +1 +") rotate(-25)");*/
 			return "translate("+ (i * ((w-xPadding) / counters.length) + ((w-xPadding) / counters.length - barPadding) / 2 + xPadding - 2) +"," + (h + margin.top +8) +") rotate(-25)";
 			});
 		
@@ -315,22 +285,31 @@ function drawBigChart(pid)  {
         .attr("y", 6)
         .attr("dy", ".71em")
         .attr("x", 7)
-        //.style("text-anchor", "end")
-        //.style("font-size","13")
         .text(yLabel);
-        ;
 
 	//Create X axis
 	svg.append("g")
 		.attr("class", "axis")
 		.attr("transform", "translate(" + xPadding +"," + (h) + ")")
-		.call(xAxis)
-	.append("text")
+		.call(xAxis);
+	/*.append("text")
 	      .attr("transform", "rotate(0)")
 	      .attr("x", w/2)
 	      .attr("dx", ".71em")
 	      .attr("y", 32)
-	      //.style("text-anchor", "end")
-	      //.style("font-size","13")
 	      .text(xLabel);
+	*/
+
+	var colID = element.hNodeId;
+	var colName = $("#"+colID).children().eq(0).text();
+	var chartTitle = "";
+	if (xLabel == "String" || xLabel == "Boolean" || xLabel == "DayOfWeek") {
+		chartTitle = "Count of '" + colName + "' (Detected as " + xLabel + ")";
+	}
+	else {
+		chartTitle = "Frequency in the range of '" + colName + "' (Detected as " + xLabel + ")";
+	}
+	
+	//$("#bigChartTitle").text(chartTitle);
+	return chartTitle;
 }

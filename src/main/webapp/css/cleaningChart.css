@@ -52,4 +52,8 @@
 		#bigChart {
 		background: rgb(186, 224, 218);
 		}
-		
+
+		#bigChartTitle {
+		font-size: 14px;
+		text-align: center;
+		}
