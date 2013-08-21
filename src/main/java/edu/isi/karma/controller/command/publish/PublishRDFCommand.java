@@ -167,7 +167,7 @@ public class PublishRDFCommand extends Command {
 		}
 		
 		TripleStoreUtil utilObj = new TripleStoreUtil();
-		boolean result = utilObj.saveToStore(rdfFileLocalPath, TripleStoreUtil.defaultDataRepoUrl, null, true, true);
+		boolean result = utilObj.saveToStore(rdfFileLocalPath, TripleStoreUtil.defaultDataRepoUrl, null, false, true);
 		if(result) {
 			logger.info("Saved rdf to store");
 		} else {
