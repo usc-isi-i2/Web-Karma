@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 
+import org.apache.commons.httpclient.URIException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -48,6 +49,8 @@ import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.metadata.WorksheetProperties;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -165,15 +168,28 @@ public class PublishRDFCommand extends Command {
 			return new UpdateContainer(new ErrorUpdate(
 					"Error occured while generating RDF!"));
 		}
-		
-		TripleStoreUtil utilObj = new TripleStoreUtil();
-		boolean result = utilObj.saveToStore(rdfFileLocalPath, TripleStoreUtil.defaultDataRepoUrl, null, true, true);
-		if(result) {
-			logger.info("Saved rdf to store");
-		} else {
-			logger.error("Falied to store rdf to karma_data store");
+		try {
+			// Get the graph name from properties
+			String graphName = worksheet.getMetadataContainer().getWorksheetProperties()
+					.getPropertyValue(Property.graphName);
+			if (graphName == null || graphName.isEmpty()) {
+				// Set to default
+				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+						Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
+				graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
+			}
+			TripleStoreUtil utilObj = new TripleStoreUtil();
+			boolean result = utilObj.saveToStore(rdfFileLocalPath, TripleStoreUtil.defaultDataRepoUrl, graphName, true);
+			if(result) {
+				logger.info("Saved rdf to store");
+			} else {
+				logger.error("Falied to store rdf to karma_data store");
+			}
+		} catch (URIException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
-
+		
 		try {
 			return new UpdateContainer(new AbstractUpdate() {
 				public void generateJson(String prefix, PrintWriter pw,
