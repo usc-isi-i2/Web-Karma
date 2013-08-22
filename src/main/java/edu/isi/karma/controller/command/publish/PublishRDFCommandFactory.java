@@ -30,7 +30,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PublishRDFCommandFactory extends CommandFactory {
 	private enum Arguments {
-		vWorksheetId, addInverseProperties, rdfPrefix, rdfNamespace, saveToStore,hostName,dbName,userName,password,modelName
+		vWorksheetId, addInverseProperties, rdfPrefix, rdfNamespace, saveToStore,hostName,dbName,userName,password,modelName, tripleStoreUrl
 	}
 
 	@Override
@@ -54,7 +54,9 @@ public class PublishRDFCommandFactory extends CommandFactory {
 				request.getParameter(Arguments.dbName.name()),
 				request.getParameter(Arguments.userName.name()),
 				request.getParameter(Arguments.password.name()),
-				request.getParameter(Arguments.modelName.name()));
+				request.getParameter(Arguments.modelName.name()),
+				request.getParameter(Arguments.tripleStoreUrl.name())
+				);
 		
 		return comm;
 	}

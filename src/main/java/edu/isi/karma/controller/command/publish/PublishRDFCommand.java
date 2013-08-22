@@ -67,6 +67,7 @@ public class PublishRDFCommand extends Command {
 	private String password;
 	private String modelName;
 	private String worksheetName;
+	private String tripleStoreUrl;
 	
 	public enum JsonKeys {
 		updateType, fileUrl, vWorksheetId, errorReport
@@ -76,12 +77,12 @@ public class PublishRDFCommand extends Command {
 			.getLogger(PublishRDFCommand.class);
 
 	public enum PreferencesKeys {
-		rdfPrefix, rdfNamespace, addInverseProperties, saveToStore, dbName, hostName, userName, modelName
+		rdfPrefix, rdfNamespace, addInverseProperties, saveToStore, dbName, hostName, userName, modelName, tripleStoreUrl
 	}
 
 	protected PublishRDFCommand(String id, String vWorksheetId,
 			String publicRDFAddress, String rdfSourcePrefix, String rdfSourceNamespace, String addInverseProperties,
-			String saveToStore,String hostName,String dbName,String userName,String password, String modelName) {
+			String saveToStore,String hostName,String dbName,String userName,String password, String modelName, String tripleStoreUrl) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
 		this.rdfSourcePrefix = rdfSourcePrefix;
@@ -96,6 +97,7 @@ public class PublishRDFCommand extends Command {
 			this.modelName="karma";
 		else
 			this.modelName=modelName;
+		this.tripleStoreUrl = tripleStoreUrl;
 	}
 
 	@Override
@@ -178,8 +180,12 @@ public class PublishRDFCommand extends Command {
 						Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
 				graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
 			}
+			if (tripleStoreUrl == null || tripleStoreUrl.isEmpty()) {
+				tripleStoreUrl = TripleStoreUtil.defaultDataRepoUrl;
+			}
+			logger.info("tripleStoreURl : " + tripleStoreUrl);
 			TripleStoreUtil utilObj = new TripleStoreUtil();
-			boolean result = utilObj.saveToStore(rdfFileLocalPath, TripleStoreUtil.defaultDataRepoUrl, graphName, true);
+			boolean result = utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, graphName, true);
 			if(result) {
 				logger.info("Saved rdf to store");
 			} else {
