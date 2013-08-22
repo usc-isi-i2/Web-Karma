@@ -44,6 +44,7 @@ function publishRDFFunction() {
 		info["userName"] = $("input#userName").val();
 		info["password"] = $("input#password").val();
 		info["modelName"] = $("input#modelName").val();
+		info["tripleStoreUrl"] = $("input#rdfSPAQRLEndPoint").val();
 
 		if( $("input#saveToRDFStore").is(":checked")) {
 			publishRDFToStore(info);

@@ -248,9 +248,11 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		showHideRdfInfo();
 		getRDFPreferences();
 		var rdfDialogBox = $("div#PublishRDFDialogBox");
+		$('#rdfSPAQRLEndPoint').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_data');
+		$('#rdfBrowseRepo').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/karma_data/summary');
 		// Show the dialog box
-		rdfDialogBox.dialog({width: 300
-			, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": publishRDFFunction }});
+		rdfDialogBox.dialog({width: 400, title:'Publish RDF',
+			buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": publishRDFFunction }});
 
 	});
 
