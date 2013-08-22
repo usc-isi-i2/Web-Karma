@@ -73,6 +73,8 @@ import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyComma
 import edu.isi.karma.controller.command.alignment.GetOntologyClassHierarchyCommandFactory;
 import edu.isi.karma.controller.command.alignment.GetPropertiesAndClassesList;
 import edu.isi.karma.controller.command.alignment.GetPropertiesAndClassesListCommandFactory;
+import edu.isi.karma.controller.command.alignment.InvokeDataMiningServiceCommand;
+import edu.isi.karma.controller.command.alignment.InvokeDataMiningServiceCommandFactory;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommand;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory;
 import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommand;
@@ -306,6 +308,8 @@ public class ExecutionController {
 				new ApplyModelFromTripleStoreCommandFactory());
 		commandFactoryMap.put(CreateNewModelCommand.class.getSimpleName(), 
 				new CreateNewModelCommandFactory());
+		commandFactoryMap.put(InvokeDataMiningServiceCommand.class.getSimpleName(), 
+				new InvokeDataMiningServiceCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {
