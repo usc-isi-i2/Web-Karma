@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sf.json.JSON;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -346,7 +348,6 @@ public class TripleStoreUtil {
 	}
 	
 	
-	
 	/**
 	 * @param fileUrl : the url of the file from where the RDF is read
 	 * 
@@ -361,6 +362,7 @@ public class TripleStoreUtil {
 	public boolean saveToStore(String fileUrl) {
 		return saveToStore(fileUrl,defaultServerUrl + "/" + karma_model_repo, null, true);
 	}
+	
 	
 	/**
 	 * @param fileUrl : the url of the file from where the RDF is read
@@ -421,6 +423,7 @@ public class TripleStoreUtil {
 		
 		return new org.json.JSONObject(responseString.toString());
 	}
+
 	
 	public static boolean create_repo(String repo_name, String repo_desc, String type ) {
 		// TODO : Take the repository type as an enum - native, memory, etc
@@ -467,4 +470,32 @@ public class TripleStoreUtil {
 		return retVal;
 	}
 
+	
+	
+	public org.json.JSONObject fetch_data(String graph, String tripleStoreUrl) throws ClientProtocolException, IOException, JSONException {
+		if (tripleStoreUrl == null || tripleStoreUrl.isEmpty()) {
+			tripleStoreUrl = defaultDataRepoUrl;
+		}
+		JSONObject retVal = new JSONObject();
+		String queryString = "SELECT ?x ?z "
+				+ "WHERE { GRAPH <"+graph.trim()+"> { "
+				+ "?x  ?p <http://isi.edu/integration/karma/ontologies/model/current/Input> . "
+				+ "?x  <http://isi.edu/integration/karma/ontologies/model/current/hasValue> ?z . } }";
+		
+		JSONObject data = invokeSparqlQuery(queryString, tripleStoreUrl);
+		JSONArray d1 = data.getJSONObject("results").getJSONArray("bindings");
+		int count = 0;
+		HashMap<String, ArrayList<String>> results = new HashMap<String, ArrayList<String>>();
+		while(count < d1.length()) {
+			JSONObject obj = d1.getJSONObject(count++);
+			String key = obj.getJSONObject("x").getString("value");
+			String val = obj.getJSONObject("z").getString("value");
+			
+			if (!results.keySet().contains(key)) {
+				results.put(key, new ArrayList<String>());
+			} 
+			results.get(key).add(val);
+		}
+		return new JSONObject(results);
+	}
 }
