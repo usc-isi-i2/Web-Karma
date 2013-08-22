@@ -22,8 +22,14 @@
 			fill-opacity: 1.0;	
 		}
 		
-		.cleaningRectMissing{
+		.cleaningRectMissing{ 
 			fill: white;
+			stroke: none;
+			fill-opacity: 1.0;
+		}
+		
+		.cleaningRectRemaining{ 
+			fill: yellow;
 			stroke: none;
 			fill-opacity: 1.0;
 		}
@@ -34,15 +40,20 @@
 			fill-opacity: 1.0;
 		}
 		.xaxisText {
-		font-size: 8px;
+		font-size: 10px;
 		font-family: sans-serif;
 		}
 		
-		.smallChart {
+		#smallChart {
 		background: #00174D;
+		cursor: pointer;
 		}
 		
 		#bigChart {
 		background: rgb(186, 224, 218);
 		}
-		
+
+		#bigChartTitle {
+		font-size: 14px;
+		text-align: center;
+		}

@@ -347,7 +347,12 @@
 	        	<webApp>
 			      <contextPath>/</contextPath>
 			    </webApp>
-			    
+			    <connectors>
+					<!-- work around file locking on windows -->
+					<connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
+						<port>8080</port><!-- this connector defaults to 1300 for some reason -->
+					</connector>
+        		</connectors>
 			    <contextHandlers>
 			      <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
 			        <war>${project.basedir}/external_webapps/openrdf-workbench.war</war>

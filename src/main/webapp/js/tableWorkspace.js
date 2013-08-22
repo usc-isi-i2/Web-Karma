@@ -446,10 +446,11 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
     });
     
     $('body').delegate('.smallChart', 'click', function() {
-    	drawBigChart();
-    	//alert("Reached here smallchart");
+    	var pid = $(this).parent().attr('id');
+    	//console.log(pid);
+    	var chartTitle = drawBigChart(pid);
     	var dialogBox = $("div#drawBigChartId");
-		dialogBox.dialog({width: 550, title: 'Chart'
+		dialogBox.dialog({width: 550, title: chartTitle
 			, buttons: { "Close": function() { $(this).dialog("close"); } }})
     });
     

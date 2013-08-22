@@ -22,7 +22,6 @@
 package edu.isi.karma.transformation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -53,21 +52,21 @@ public class PythonTransformationHelper {
 	}
 
 	
-	public String getPythonClassCreationStatement(Worksheet worksheet, List<String> hNodeIds, Map<String,String> normalizedColumnNamesMap) {
+	public String getPythonClassCreationStatement(Worksheet worksheet, 
+			Map<String,String> normalizedColumnNamesMap, List<HNode> accessibleHNodes) {
+		
 		StringBuilder pyClass = new StringBuilder();
 		pyClass.append("class " + normalizeString(worksheet.getTitle()) + ":\n");
 		pyClass.append("\tdef __init__(self");
-		Collection<HNode> hNodes = worksheet.getHeaders().getHNodes();
+		
 		List<String> propertyNames = new ArrayList<String>();
-		for (HNode hNode: hNodes) {
-			if (hNode.hasNestedTable())
-				continue;
+		for (HNode hNode: accessibleHNodes) {
 			String propertyName = normalizeString(hNode.getColumnName());
 			normalizedColumnNamesMap.put(hNode.getColumnName(), propertyName);
 			pyClass.append("," + propertyName);
 			propertyNames.add(propertyName);
-			hNodeIds.add(hNode.getId());
 		}
+		
 		pyClass.append("):\n");
 		for (String propertyName:propertyNames) {
 			pyClass.append("\t\tself."+propertyName + " = " +propertyName +"\n");
@@ -97,7 +96,7 @@ public class PythonTransformationHelper {
 		for (String columnName:columnNameMap.keySet()) {
 			if (counter != 0)
 				dictStmt.append(",");
-			dictStmt.append("\"" + columnName + "\":\"" + columnNameMap.get(columnName) + "\"");
+			dictStmt.append("\"" + columnName + "\":\"" + columnNameMap.get(columnName).replaceAll("\"", "\\\\\"") + "\"");
 			counter++;
 		}
 		dictStmt.append("}");

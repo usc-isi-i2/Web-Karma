@@ -436,7 +436,7 @@ public class GraphBuilder {
 			
 			for (Node n : closureIncludingSelf) {
 				Integer refCount = this.nodeReferences.get(n);
-				if (refCount != null) this.nodeReferences.put(source, ++refCount);
+				if (refCount != null) this.nodeReferences.put(n, ++refCount);
 			}
 		}
 			
@@ -493,7 +493,7 @@ public class GraphBuilder {
 			
 			for (Node n : closureIncludingSelf) {
 				Integer refCount = this.nodeReferences.get(n);
-				if (refCount != null) this.nodeReferences.put(source, --refCount);
+				if (refCount != null) this.nodeReferences.put(n, --refCount);
 			}
 		}
 		

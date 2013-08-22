@@ -285,7 +285,7 @@ function submitSelectedModelNameToBeLoaded() {
 		},
 		error :
 			function (xhr, textStatus) {
-			alert("Error occured while applying model from Triple Store!" + textStatus);
+			alert("Error occured while invoking the selected service!" + textStatus);
 		}		   
 	});
  }

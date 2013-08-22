@@ -23,6 +23,7 @@ package edu.isi.karma.controller.command.transformation;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,12 +43,15 @@ import edu.isi.karma.controller.command.alignment.GetDataPropertiesForClassComma
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.transformation.PythonTransformationHelper;
 import edu.isi.karma.view.VWorkspace;
 
 public class PreviewPythonTransformationResultsCommand extends Command {
+	final private String hNodeId;
 	final private String vWorksheetId;
 	final private String transformationCode;
 	final private String errorDefaultValue;
@@ -59,8 +63,10 @@ public class PreviewPythonTransformationResultsCommand extends Command {
 		updateType, result, errors, row, error
 	}
 	
-	protected PreviewPythonTransformationResultsCommand(String id, String vWorksheetId, String transformationCode, String errorDefaultValue) {
+	protected PreviewPythonTransformationResultsCommand(String id, String vWorksheetId, 
+			String transformationCode, String errorDefaultValue, String hNodeId) {
 		super(id);
+		this.hNodeId = hNodeId;
 		this.vWorksheetId = vWorksheetId;
 		this.transformationCode = transformationCode;
 		this.errorDefaultValue = errorDefaultValue;
@@ -88,14 +94,36 @@ public class PreviewPythonTransformationResultsCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		PythonTransformationHelper pyHelper = new PythonTransformationHelper();
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
-		List<String> hNodeIds = new ArrayList<String>();
-		Map<String,String> columnNameMap = new HashMap<String,String>();
-		String clsStmt = pyHelper.getPythonClassCreationStatement(worksheet, hNodeIds, columnNameMap);
+		RepFactory f = vWorkspace.getRepFactory();
+		HNode hNode = f.getHNode(hNodeId);
+		
+		List<HNode> accessibleHNodes = f.getHNode(hNodeId).getHNodesAccessibleList(f);
+		List<HNode> nodesWithNestedTable = new ArrayList<HNode>();
+		Map<String, String> hNodeIdtoColumnNameMap = new HashMap<String, String>();
+		for (HNode accessibleHNode:accessibleHNodes) {
+			if(accessibleHNode.hasNestedTable()) {
+				nodesWithNestedTable.add(accessibleHNode);
+			} else {
+				hNodeIdtoColumnNameMap.put(accessibleHNode.getId(), accessibleHNode.getColumnName());
+			}
+		}
+		accessibleHNodes.removeAll(nodesWithNestedTable);
+		
+		PythonTransformationHelper pyHelper = new PythonTransformationHelper();
+		Map<String,String> normalizedColumnNameMap = new HashMap<String,String>();
+		String clsStmt = pyHelper.getPythonClassCreationStatement(worksheet, normalizedColumnNameMap, accessibleHNodes);
 		String transformMethodStmt = pyHelper.getPythonTransformMethodDefinitionState(worksheet, transformationCode);
-		String columnNameDictStmt = pyHelper.getColumnNameDictionaryStatement(columnNameMap);
-		String defGetValueStmt = pyHelper.getGetValueDefStatement(columnNameMap);
+		String columnNameDictStmt = pyHelper.getColumnNameDictionaryStatement(normalizedColumnNameMap);
+		String defGetValueStmt = pyHelper.getGetValueDefStatement(normalizedColumnNameMap);
+		
+		
+		// Create a map from hNodeId to normalized column name
+		Map<String, String> hNodeIdToNormalizedColumnName = new HashMap<String, String>();
+		for (HNode accHNode:accessibleHNodes) {
+			hNodeIdToNormalizedColumnName.put(accHNode.getId(), 
+					normalizedColumnNameMap.get(accHNode.getColumnName()));
+		}
 		
 		final JSONArray errorsArray = new JSONArray();
 		
@@ -107,24 +135,29 @@ public class PreviewPythonTransformationResultsCommand extends Command {
 			interpreter.exec(defGetValueStmt);
 			interpreter.exec(transformMethodStmt);
 			
-			List<Row> rows = worksheet.getDataTable().getRows(0, 5);
+			Collection<Node> nodes = new ArrayList<Node>();
+			worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes);
 			final List<String> resultValues = new ArrayList<String>();
-			int rowCounter = 1;
-			// Get preview values for the top 5 rows
-			for (Row row:rows) {
+			
+			int counter = 1;
+			for (Node node:nodes) {
+				Map<String, String> values = node.getColumnValues();
 				StringBuilder objectCreationStmt = new StringBuilder();
 				objectCreationStmt.append("r = " + pyHelper.normalizeString(worksheet.getTitle()) + "(");
-				int counter = 0;
-				for (String hNodeId:hNodeIds) {
-					String nodeVal = row.getNode(hNodeId).getValue().asString();
-					if (counter++ != 0)
+				
+				int keyCounter = 0;
+				for (String valHNodeId : values.keySet()) {
+					String nodeId = values.get(valHNodeId);
+					String nodeVal = f.getNode(nodeId).getValue().asString();
+					
+					if (keyCounter++ != 0)
 						objectCreationStmt.append(",");
-					if (nodeVal == null || nodeVal.equals("")) {
-						objectCreationStmt.append("\"\"");
+					if (nodeVal == null || nodeVal.isEmpty()) {
+						objectCreationStmt.append(hNodeIdToNormalizedColumnName.get(valHNodeId) + "=\"\"");
 					} else {
 						nodeVal = nodeVal.replaceAll("\"", "\\\\\"");
-						nodeVal = nodeVal.replaceAll("\n", "");
-						objectCreationStmt.append("\"" + nodeVal + "\"");
+						nodeVal = nodeVal.replaceAll("\n", " ");
+						objectCreationStmt.append(hNodeIdToNormalizedColumnName.get(valHNodeId) + "=\"" + nodeVal + "\"");
 					}
 				}
 				objectCreationStmt.append(")");
@@ -136,15 +169,18 @@ public class PreviewPythonTransformationResultsCommand extends Command {
 				} catch (PyException p) {
 					p.printStackTrace();
 					resultValues.add(errorDefaultValue);
-					errorsArray.put(new JSONObject().put(JsonKeys.row.name(), rowCounter)
+					errorsArray.put(new JSONObject().put(JsonKeys.row.name(), counter)
 							.put(JsonKeys.error.name(), p.value));
 				} catch (Exception t) {
 					t.printStackTrace();
 					logger.debug("Error occured while transforming.", t);
 					resultValues.add(errorDefaultValue);
 				}
-				rowCounter++;
+				if (++counter > 5) {
+					break;
+				}
 			}
+			
 			
 			return new UpdateContainer(new AbstractUpdate() {
 				@Override

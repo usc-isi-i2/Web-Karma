@@ -748,7 +748,13 @@ function parse(data) {
 				
 			drawChart(element);
 			//drawBigChart() ;
-		}
+		} else if (element["updateType"] === "WorksheetCleaningServiceInvocationResultsUpdate") {
+            var worksheetChartData = element["worksheetChartData"];
+            $.each(worksheetChartData, function(index, columnData){
+                //console.log(columnData)
+                drawChart(columnData);
+            });
+        }
 	});
 }
 

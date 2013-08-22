@@ -25,11 +25,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import net.sf.json.JSON;
@@ -47,12 +45,11 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -313,10 +310,13 @@ public class TripleStoreUtil {
 			HttpClient httpclient = new DefaultHttpClient();
 			File file = new File(filePath);
 			FileEntity entity = new FileEntity(file, ContentType.create(mime_types.get(rdfType), "UTF-8"));        
-			HttpPut httpput = new HttpPut(uri);
-			httpput.setEntity(entity);
+//			HttpPut httpput = new HttpPut(uri);
+//			httpput.setEntity(entity);
 			
-			HttpResponse response = httpclient.execute(httpput);
+			HttpPost httpPost = new HttpPost(uri);
+			httpPost.setEntity(entity);
+			
+			HttpResponse response = httpclient.execute(httpPost);
 			logger.info("StatusCode: " + response.getStatusLine().getStatusCode());
 			int code = response.getStatusLine().getStatusCode();
 			if(code >= 200 && code < 300) {

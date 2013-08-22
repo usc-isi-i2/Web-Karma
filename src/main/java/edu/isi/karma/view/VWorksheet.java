@@ -32,6 +32,7 @@ import org.json.JSONWriter;
 
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetCleaningServiceInvocationResultsUpdate;
 import edu.isi.karma.controller.update.WorksheetDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
@@ -247,6 +248,7 @@ public class VWorksheet extends ViewEntity {
 	public void update(UpdateContainer c) {
 		c.add(new WorksheetHierarchicalHeadersUpdate(this));
 		c.add(new WorksheetHierarchicalDataUpdate(this));
+		c.add(new WorksheetCleaningServiceInvocationResultsUpdate(this));
 	}
 
 	public void updateHeaders(UpdateContainer c) {
