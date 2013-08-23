@@ -41,6 +41,7 @@ import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.SPARQLGeneratorUtil;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
@@ -158,6 +159,8 @@ public class GenerateR2RMLModelCommand extends Command {
 			OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
 			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(ontMgr, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
+			
+			SPARQLGeneratorUtil.get_query(mappingGen.getR2RMLMapping());
 			
 			// Write the model
 			writeModel(vWorkspace, ontMgr, mappingGen, worksheet, modelFileLocalPath);

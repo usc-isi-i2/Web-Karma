@@ -51,8 +51,8 @@ import edu.isi.karma.controller.command.publish.PublishRDFCommand.PreferencesKey
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.FetchR2RMLUpdate;
-import edu.isi.karma.controller.update.SPARQLGeneratorUtil;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.SPARQLGeneratorUtil;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
@@ -108,8 +108,8 @@ public class InvokeDataMiningServiceCommand extends Command {
 		return CommandType.notUndoable;
 	}
 	
-	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	private String fetch_data_temp() 
+	{
 		HttpClient httpclient = new DefaultHttpClient();
 		TripleStoreUtil utilObj = new TripleStoreUtil();
 		StringBuffer jsonString = new StringBuffer();
@@ -140,7 +140,19 @@ public class InvokeDataMiningServiceCommand extends Command {
 				}
 
 			}
-
+			return jsonString.toString();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return "";
+	}
+	
+	@Override
+	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+		
+//		String jsonString = fetch_data_temp();
+		try {
+			
 			// Get the alignment for this Worksheet
 			Alignment alignment = AlignmentManager.Instance().getAlignment(AlignmentManager.
 					Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId));
@@ -180,12 +192,14 @@ public class InvokeDataMiningServiceCommand extends Command {
 			logger.error(e.getMessage());
 			return new UpdateContainer(new ErrorUpdate("Error !"));
 		}
-		return new UpdateContainer(new ErrorUpdate(jsonString.toString()));
+//		return new UpdateContainer(new ErrorUpdate(jsonString));
+		return new UpdateContainer();
 
 //		TripleStoreUtil utilObj = new TripleStoreUtil();
 //		ArrayList<String> list = utilObj.fetchModelNames(this.tripleStoreUrl);
 //		return new UpdateContainer(new FetchR2RMLUpdate(list));
 	}
+	
 
 	@Override
 	public UpdateContainer undoIt(VWorkspace vWorkspace) {
