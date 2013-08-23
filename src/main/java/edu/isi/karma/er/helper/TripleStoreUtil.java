@@ -30,8 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import net.sf.json.JSON;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -274,6 +272,8 @@ public class TripleStoreUtil {
 	 * */
 	private boolean saveToStore(String filePath, String tripleStoreURL, String context, boolean replaceFlag, boolean deleteSrcFile, String rdfType) {
 		boolean retVal = false;
+		URI uri = null;
+		HttpResponse response = null;
 		System.out.println("replaceFlag : " + replaceFlag);
 		// check the connection first
 		if (checkConnection(tripleStoreURL)) {
@@ -290,33 +290,44 @@ public class TripleStoreUtil {
 		try {
 			URIBuilder builder = new URIBuilder(tripleStoreURL);
 			
+			// initialize the http entity
+			HttpClient httpclient = new DefaultHttpClient();
+			File file = new File(filePath);
+			if (mime_types.get(rdfType) == null) {
+				throw new Exception("Could not find spefied rdf type: " + rdfType);
+			}
+			FileEntity entity = new FileEntity(file, ContentType.create(mime_types.get(rdfType), "UTF-8"));
+			
 			// check if we need to specify the context
 			if (context == null || context.isEmpty()) {
 				builder.setParameter("context", "null");
-			} else {
+				
+				// as we dont have the context, we use HttpPost over HttpPut, for put will replace the entire repo with an empty graph
+				uri = builder.build();
+				HttpPost httpPost = new HttpPost(uri);
+				httpPost.setEntity(entity);
+				
+				// executing the http request
+				response = httpclient.execute(httpPost);
+			} 
+			else 
+			{
 				builder.setParameter("context", "<"+context+">");
 				// if the context is given, then only we consider the option of replacing the old contents
 				if (replaceFlag) {
 					builder.setParameter("baseURI", "<"+context+">");
+					uri = builder.build();
+					
+					// we use HttpPut to replace the context
+					HttpPut httpput = new HttpPut(uri);
+					httpput.setEntity(entity);
+					
+					// executing the http request
+					response = httpclient.execute(httpput);
 				}
 			}
 			
-			if (mime_types.get(rdfType) == null) {
-				throw new Exception("Could not find spefied rdf type: " + rdfType);
-			}
-			
-			URI uri = builder.build();
 			logger.info("request url : " + uri.toString());
-			HttpClient httpclient = new DefaultHttpClient();
-			File file = new File(filePath);
-			FileEntity entity = new FileEntity(file, ContentType.create(mime_types.get(rdfType), "UTF-8"));        
-//			HttpPut httpput = new HttpPut(uri);
-//			httpput.setEntity(entity);
-			
-			HttpPost httpPost = new HttpPost(uri);
-			httpPost.setEntity(entity);
-			
-			HttpResponse response = httpclient.execute(httpPost);
 			logger.info("StatusCode: " + response.getStatusLine().getStatusCode());
 			int code = response.getStatusLine().getStatusCode();
 			if(code >= 200 && code < 300) {
