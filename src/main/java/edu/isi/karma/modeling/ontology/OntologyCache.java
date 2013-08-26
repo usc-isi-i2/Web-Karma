@@ -500,6 +500,9 @@ class OntologyCache {
 			if (!p.isURIResource())
 				continue;
 			
+//			if (p.isAnnotationProperty())
+//				continue;
+			
 			if (!properties.containsKey(p.getURI()))
 				properties.put(p.getURI(), ontHandler.getResourceLabel(p));
 			
