@@ -131,6 +131,8 @@ public class OfflineRdfGenerator {
 		    Worksheet worksheet = null;
 		    ServletContextParameterMap.setParameterValue(
 		    		ContextParameter.USER_DIRECTORY_PATH, "src/main/webapp/");
+		    ServletContextParameterMap.setParameterValue(
+		    		ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "200");
 		    VWorkspace vWorkspace = new VWorkspace(workspace, "WSP100");
 		    WorkspaceRegistry.getInstance().register(new ExecutionController(vWorkspace));
 		    

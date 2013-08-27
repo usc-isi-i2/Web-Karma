@@ -152,7 +152,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		System.gc();
 	}
 	
-	private void generateTriplesForRow(Row row, Set<String> existingTopRowTriples, 
+	public void generateTriplesForRow(Row row, Set<String> existingTopRowTriples, 
 			Set<String> predicatesCovered, Map<String, ReportMessage> predicatesFailed, 
 			Set<String> predicatesSuccessful) {
 		Map<String, Node> rowNodes = row.getNodesMap();
@@ -375,6 +375,10 @@ public class KR2RMLWorksheetRDFGenerator {
 		return uri;
 	}
 	
+	public String normalizeUri(String inputUri) {
+		return inputUri.replaceAll(" ", "").replaceAll("[,`']", "_");
+	}
+	
 	private String constructTripleWithURIObject(String subjUri, String predicateUri, String objectUri) {
 		if (!subjUri.startsWith(BLANK_NODE_PREFIX))
 			subjUri = "<" + subjUri + ">";
@@ -444,7 +448,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		return output.toString();
 	}
 
-	private String getTemplateTermSetPopulatedWithValues(Map<String, String> columnValues, 
+	public String getTemplateTermSetPopulatedWithValues(Map<String, String> columnValues, 
 			TemplateTermSet termSet) throws ValueNotFoundKarmaException, NoValueFoundInNodeException {
 		StringBuilder output = new StringBuilder();
 		for (TemplateTerm term:termSet.getAllTerms()) {

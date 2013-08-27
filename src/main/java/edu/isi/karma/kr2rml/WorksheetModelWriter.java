@@ -164,6 +164,13 @@ public class WorksheetModelWriter {
 					if (typeTermSet.isSingleUriString()) {
 						URI sjTypeUri = f.createURI(typeTermSet.getR2rmlTemplateString(factory));
 						con.add(sjBlankNode, classUri, sjTypeUri);
+					} else {
+						if (typeTermSet.isSingleColumnTerm()) {
+							BNode typeBlankNode = f.createBNode();
+							String colRepr  = typeTermSet.getR2rmlTemplateString(factory);
+							con.add(typeBlankNode, templateUri, f.createLiteral(colRepr));
+							con.add(sjBlankNode, classUri, typeBlankNode);
+						}
 					}
 				}
 				

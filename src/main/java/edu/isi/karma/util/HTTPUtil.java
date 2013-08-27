@@ -35,6 +35,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -50,8 +51,7 @@ public class HTTPUtil {
 	public static String executeHTTPPostRequest(String serviceURL, String contentType, 
 			String acceptContentType, Map<String, String> formParameters) 
 					throws ClientProtocolException, IOException {
-		HttpClient httpClient = new DefaultHttpClient();
-
+		
 		// Prepare the message body parameters
 		List<NameValuePair> formParams = new ArrayList<NameValuePair>();
 		for (String param:formParameters.keySet()) {
@@ -59,17 +59,34 @@ public class HTTPUtil {
 		}
 		
 		// Prepare the headers
-		HttpPost httppost = new HttpPost(serviceURL);
-		httppost.setEntity(new UrlEncodedFormEntity(formParams, "UTF-8"));
-		if (acceptContentType != null) {
-			httppost.setHeader(HTTP_HEADERS.Accept.name(), acceptContentType);	
+		HttpPost httpPost = new HttpPost(serviceURL);
+		httpPost.setEntity(new UrlEncodedFormEntity(formParams, "UTF-8"));
+		return invokeHTTPRequest(httpPost, contentType, acceptContentType);
+	}
+	
+	public static String executeHTTPPostRequest(String serviceURL, String contentType, 
+			String acceptContentType, String rawPostBodyData) 
+					throws ClientProtocolException, IOException {
+		
+		// Prepare the headers
+		HttpPost httpPost = new HttpPost(serviceURL);
+		httpPost.setEntity(new StringEntity(rawPostBodyData));
+		return invokeHTTPRequest(httpPost, contentType, acceptContentType);
+	}
+	
+	private static String invokeHTTPRequest(HttpPost httpPost, String contentType, 
+			String acceptContentType) throws ClientProtocolException, IOException {
+		HttpClient httpClient = new DefaultHttpClient();
+		
+		if (acceptContentType != null && !acceptContentType.isEmpty()) {
+			httpPost.setHeader(HTTP_HEADERS.Accept.name(), acceptContentType);	
 		}
-		if (contentType != null) {
-			httppost.setHeader("Content-Type", contentType);
+		if (contentType != null && !contentType.isEmpty()) {
+			httpPost.setHeader("Content-Type", contentType);
 		}
 		
 		// Execute the request
-		HttpResponse response = httpClient.execute(httppost);
+		HttpResponse response = httpClient.execute(httpPost);
 		
 		// Parse the response and store it in a String
 		HttpEntity entity = response.getEntity();

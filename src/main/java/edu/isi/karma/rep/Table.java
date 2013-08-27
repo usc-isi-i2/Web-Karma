@@ -26,7 +26,6 @@ package edu.isi.karma.rep;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -125,17 +124,6 @@ public class Table extends RepEntity {
 		}
 	}
 
-	public List<Row> getRandomRows(int maxNumber) {
-		List<Row> result = new LinkedList<Row>();
-		int count = 0;
-		for (Row r : rows) {
-			result.add(r);
-			count++;
-			if (count >= maxNumber)
-				return result;
-		}
-		return result;
-	}
 
 	/**
 	 * @param startIndex

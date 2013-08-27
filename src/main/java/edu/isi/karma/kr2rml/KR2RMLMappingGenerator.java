@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
@@ -58,9 +59,7 @@ public class KR2RMLMappingGenerator {
 	private String sourceNamespace;
 //	private ErrorReport errorReport;
 	private R2RMLMapping r2rmlMapping;
-	private int triplesMapCounter = 0;
 	private final Node steinerTreeRoot;
-	private int refObjectMapCounter = 0;
 	private SemanticTypes semanticTypes;
 	private DirectedWeightedMultigraph<Node, Link> steinerTree;
 	
@@ -465,11 +464,15 @@ public class KR2RMLMappingGenerator {
 	}
 	
 	private String getNewRefObjectMapId() {
-		return REFOBJECT_MAP_PREFIX + ++refObjectMapCounter;
+		return REFOBJECT_MAP_PREFIX + "_" + UUID.randomUUID();
 	}
 	
 	private String getNewTriplesMapId() {
-		return TRIPLES_MAP_PREFIX + ++triplesMapCounter;
+		return TRIPLES_MAP_PREFIX + "_" + UUID.randomUUID();
+	}
+	
+	public TriplesMap getTriplesMapForNodeId(String nodeId) {
+		return this.triplesMapIndex.get(nodeId);
 	}
 }
 

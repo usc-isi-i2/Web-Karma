@@ -44,8 +44,7 @@ public class RenameColumnCommandFactory extends CommandFactory implements JSONIn
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String newColumnName = request.getParameter(Arguments.newColumnName.name());
-		boolean getAlignmentUpdate = Boolean.parseBoolean(request.getParameter(Arguments.getAlignmentUpdate.name()));
-		return new RenameColumnCommand(getNewId(vWorkspace), newColumnName, hNodeId, vWorksheetId, getAlignmentUpdate);
+		return new RenameColumnCommand(getNewId(vWorkspace), newColumnName, hNodeId, vWorksheetId);
 	}
 
 	@Override
@@ -54,8 +53,10 @@ public class RenameColumnCommandFactory extends CommandFactory implements JSONIn
 		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String newColumnName = HistoryJsonUtil.getStringValue(Arguments.newColumnName.name(), inputJson);
-		boolean getAlignmentUpdate = HistoryJsonUtil.getBooleanValue(Arguments.getAlignmentUpdate.name(), inputJson);
-		return new RenameColumnCommand(getNewId(vWorkspace), newColumnName, hNodeId, vWorksheetId, getAlignmentUpdate);
+		
+		RenameColumnCommand renCommand = new RenameColumnCommand(getNewId(vWorkspace), newColumnName, hNodeId, vWorksheetId);
+		renCommand.setInputParameterJson(inputJson.toString());
+		return renCommand;
 	}
 
 }

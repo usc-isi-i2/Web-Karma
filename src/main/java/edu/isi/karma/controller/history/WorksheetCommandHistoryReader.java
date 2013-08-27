@@ -158,13 +158,13 @@ public class WorksheetCommandHistoryReader {
 				for (int j=0; j<hNodeJSONRep.length(); j++) {
 					JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);
 					if(hTable == null) {
-						logger.error("NULL HTABLE while normalizing JSON input for the command.");
+						logger.error("null HTable while normalizing JSON input for the command.");
 						return false;
 					}
 					logger.debug("Column being normalized: "+ cNameObj.getString("columnName"));
 					HNode node = hTable.getHNodeFromColumnName(cNameObj.getString("columnName"));
 					if(node == null) {
-						logger.error("NULL HNODE while normalizing JSON input for the command.");
+						logger.error("null HNode while normalizing JSON input for the command.");
 						return false;
 					}
 					

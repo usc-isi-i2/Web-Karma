@@ -28,7 +28,6 @@ import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
@@ -39,15 +38,13 @@ public class RenameColumnCommand extends Command {
 	final private String newColumnName;
 	final private String hNodeId;
 	final private String vWorksheetId;
-	final private boolean getAlignmentUpdate;
 	private String oldColumnName;
 
-	public RenameColumnCommand(String id, String newColumnName, String hNodeId, String vWorksheetId, boolean getAlignmentUpdate) {
+	public RenameColumnCommand(String id, String newColumnName, String hNodeId, String vWorksheetId) {
 		super(id);
 		this.newColumnName = newColumnName;
 		this.hNodeId = hNodeId;
 		this.vWorksheetId = vWorksheetId;
-		this.getAlignmentUpdate = getAlignmentUpdate;
 	}
 
 	@Override
@@ -88,10 +85,10 @@ public class RenameColumnCommand extends Command {
 		UpdateContainer c =  new UpdateContainer();
 		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, wk, wk.getHeaders().getAllPaths(), vWorkspace);
 		vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-		vw.updateHeaders(c);
-		if (getAlignmentUpdate) {
-			addAlignmentUpdate(vWorkspace, wk, vw, c);
-		}
+		vw.update(c);
+		
+		// Add updates related to the alignment
+		addAlignmentUpdate(c, vWorkspace, wk);
 		return c;
 	}
 
@@ -108,25 +105,29 @@ public class RenameColumnCommand extends Command {
 		UpdateContainer c =  new UpdateContainer();
 		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, wk, wk.getHeaders().getAllPaths(), vWorkspace);
 		vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-		vw.updateHeaders(c);
+		vw.update(c);
 		
-		if (getAlignmentUpdate) {
-			addAlignmentUpdate(vWorkspace, wk, vw, c);
-		}
+		// Add updates related to the alignment
+		addAlignmentUpdate(c, vWorkspace, wk);
 		
 		return c;
 	}
 	
 
-	private void addAlignmentUpdate(VWorkspace vWorkspace, Worksheet wk,
-			VWorksheet vw, UpdateContainer c) {
-		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-		SemanticTypeUtil.computeSemanticTypesSuggestion(wk, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr, alignment);
-
-		// Get the updated alignment
-		c.add(new SemanticTypesUpdate(wk, vWorksheetId, alignment));
-		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vw, alignment));
+	private void addAlignmentUpdate(UpdateContainer c, VWorkspace vWorkspace, Worksheet worksheet) {
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
+				vWorkspace.getWorkspace().getId(), vWorksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		if (alignment == null) {
+			alignment = new Alignment(vWorkspace.getWorkspace().getOntologyManager());
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		}
+		// Compute the semantic type suggestions
+		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace()
+				.getCrfModelHandler(), vWorkspace.getWorkspace().getOntologyManager(), alignment);
+		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
+		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().
+				getVWorksheet(vWorksheetId), alignment));
 	}
 
 }
