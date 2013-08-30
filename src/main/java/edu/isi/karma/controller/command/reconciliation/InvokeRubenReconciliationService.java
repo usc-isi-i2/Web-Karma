@@ -138,7 +138,6 @@ public class InvokeRubenReconciliationService extends Command {
 		// For through each row, generate the RDF, and invoke the service
 		try {
 			for (Node node:nodes) {
-				System.out.println("*****************************" + node.getId());
 				Row row = node.getBelongsToRow();
 				
 				// Generate the RDF
