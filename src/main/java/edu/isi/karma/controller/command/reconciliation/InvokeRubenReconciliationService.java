@@ -201,7 +201,7 @@ public class InvokeRubenReconciliationService extends Command {
 						"  ?x d:possibleMatch ?match . " +
 						"  ?match d:entity ?entity . " +
 						"  ?match d:similarity ?score . " +
-						"}";
+						"} ORDER BY DESC(?score)";
 //				System.out.println(query);
 				JSONObject queryRes = TripleStoreUtil.invokeSparqlQuery(query, TripleStoreUtil.defaultDataRepoUrl);
 				if (queryRes != null) {
