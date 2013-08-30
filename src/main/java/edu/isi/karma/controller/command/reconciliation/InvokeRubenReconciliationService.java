@@ -214,8 +214,8 @@ public class InvokeRubenReconciliationService extends Command {
 						JSONObject binding = bindings.getJSONObject(i);
 						Row r1 = linkingDataTable.addRow(f);
 						String score = binding.getJSONObject("score").getString("value");
-						if (score.length() > 4) {
-							score = score.substring(0, 3);
+						if (score.length() > 5) {
+							score = score.substring(0, 4);
 						}
 						r1.setValue(entityColHNode.getId(), binding.getJSONObject("entity").getString("value"), f);
 						r1.setValue(scoreColHNode.getId(), score, f);
