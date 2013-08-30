@@ -56,6 +56,19 @@ function styleAndAssignHandlersToModelingVizElements() {
                 }
         });
     });
+
+    // Adding mouse handlers to the div
+    dropDownMenu.mouseenter(function() {
+        if ($(this).data("timer") != null)
+            clearTimeout($(this).data("timer"));
+        $(this).show();
+    });
+    dropDownMenu.mouseleave(function() {
+        var timer = setTimeout(function() {
+            $("#modelingClassDropDownMenu").hide();
+        }, 700);
+        $(this).data("timer", timer);
+    });
 }
 
 function displayAlignmentTree_ForceKarmaLayout(json) {
@@ -343,12 +356,10 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot" || d.nodeType == "DataPropertyOfColumnHolder") {
                 return 0;
             } else {
-                console.log(d["width"]);
                 return d["width"]-5;
             }
         }).on("click", function(d){
             if(d["nodeType"] == "InternalNode") {
-                console.log(d);
                 var menu = $("div#modelingClassDropDownMenu");
                 menu.data("nodeId", d.id);
                 menu.data("worksheetId", vworksheetId);
@@ -356,6 +367,11 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                     "top":$(this).offset().top + 5,
                     "left": $(this).offset().left + $(this).width()/2 - $(menu).width()/2}).show();
             }
+        }).on("mouseout", function(d){
+            var timer = setTimeout(function() {
+                $("#modelingClassDropDownMenu").hide();
+            }, 700);
+            $("#modelingClassDropDownMenu").data("timer", timer);
         });
 
     /*** Check for collisions between labels and rectangles ***/
