@@ -21,6 +21,7 @@
 
 package edu.isi.karma.controller.command.reconciliation;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -29,7 +30,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.isi.karma.controller.command.Command;
@@ -163,7 +166,16 @@ public class InvokeRubenReconciliationService extends Command {
 				String keyUri = rdfGen.normalizeUri(rdfGen.getTemplateTermSetPopulatedWithValues(node.getColumnValues()
 						, trMap.getSubject().getTemplate()));
 				rowToUriMap.put(row, keyUri);
-			
+				
+				// Check if the macthes already exist in the triple store
+				if (checkTripleStoreIfMatchAlreadyExists(keyUri)) {
+					outRdf.close();
+					pw.close();
+					count++;
+					continue;
+				}
+				
+				// Invoke the linking service if no match exists in the triple store
 				String serviceInput = rdf.replaceAll('<' + keyUri + '>', "?x");
 				String res = invokeReconcilitaionService(serviceInput);
 				
@@ -249,6 +261,24 @@ public class InvokeRubenReconciliationService extends Command {
 //	private void filterTripleMapsAndAuxillaryInformation() {
 //		
 //	}
+
+	private boolean checkTripleStoreIfMatchAlreadyExists(String keyUri) 
+			throws ClientProtocolException, IOException, JSONException {
+		// Query the triple store to get a list of matches
+		String query = "PREFIX d:<http://entities.restdesc.org/terms#> " +
+				"SELECT ?match WHERE " +
+				"{ <" + keyUri + "> <" + Uris.KM_LINKING_MATCHES_URI + "> ?x ." +
+				"  ?x d:possibleMatch ?match . " +
+				"}";
+		JSONObject queryRes = TripleStoreUtil.invokeSparqlQuery(query, TripleStoreUtil.defaultDataRepoUrl);
+		if (queryRes != null
+				&& queryRes.getJSONObject("results") != null 
+				&& queryRes.getJSONObject("results").getJSONArray("bindings") != null
+				&& queryRes.getJSONObject("results").getJSONArray("bindings").length() != 0) {
+			return true;
+		}
+		return false;
+	}
 
 	private String invokeReconcilitaionService(String serviceInput) {
 		try {
