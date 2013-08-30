@@ -35,7 +35,7 @@
    limitations under the License.
 ==================================================================== */
 
-package edu.isi.karma.excel;
+package edu.isi.karma.imp.excel;
 
 import java.io.BufferedWriter;
 import java.io.File;

@@ -248,7 +248,7 @@ public class VWorksheet extends ViewEntity {
 	public void update(UpdateContainer c) {
 		c.add(new WorksheetHierarchicalHeadersUpdate(this));
 		c.add(new WorksheetHierarchicalDataUpdate(this));
-		c.add(new WorksheetCleaningServiceInvocationResultsUpdate(this));
+//		c.add(new WorksheetCleaningServiceInvocationResultsUpdate(this));
 	}
 
 	public void updateHeaders(UpdateContainer c) {

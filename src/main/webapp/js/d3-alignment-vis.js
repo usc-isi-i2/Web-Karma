@@ -19,6 +19,45 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
+function styleAndAssignHandlersToModelingVizElements() {
+    var dropDownMenu = $("div#modelingClassDropDownMenu");
+    $("button", dropDownMenu).button();
+
+    $("#invokeRubenReconciliationService").click(function() {
+        console.log("I am clicked!!")
+        dropDownMenu.hide();
+        var info = new Object();
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "InvokeRubenReconciliationService";
+
+        var newInfo = [];
+        newInfo.push(getParamObject("alignmentNodeId", dropDownMenu.data("nodeId"), "other"));
+        newInfo.push(getParamObject("vWorksheetId", dropDownMenu.data("worksheetId"), "other"));
+
+        info["newInfo"] = JSON.stringify(newInfo);
+
+        showLoading(dropDownMenu.data("worksheetId"));
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(dropDownMenu.data("worksheetId"));
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while exporting CSV!" + textStatus);
+                    hideLoading(dropDownMenu.data("worksheetId"));
+                }
+        });
+    });
+}
+
 function displayAlignmentTree_ForceKarmaLayout(json) {
     var vworksheetId = json["worksheetId"];
     var showHideDiv = $("div#showHideSpace_"+vworksheetId);
@@ -283,7 +322,42 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 showLinksForInternalNode(d, svg, d3.event);
             }
         });
-    
+
+    node.insert("path")
+        .attr("d", function(d) {
+            if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot" || d.nodeType == "DataPropertyOfColumnHolder") {
+                return "M0 0Z";
+            } else {
+                var w = d.width/2;
+                return "M" + (w-12) + " -2 L" + (w-2) + " -2 L" + (w-7) + " 3 Z";
+            }
+        })
+        .attr("y", function(d){
+            if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot" || d.nodeType == "DataPropertyOfColumnHolder") {
+                return -2;
+            }
+            else {
+                return -10;
+            }
+        }).attr("x", function(d){
+            if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot" || d.nodeType == "DataPropertyOfColumnHolder") {
+                return 0;
+            } else {
+                console.log(d["width"]);
+                return d["width"]-5;
+            }
+        }).on("click", function(d){
+            if(d["nodeType"] == "InternalNode") {
+                console.log(d);
+                var menu = $("div#modelingClassDropDownMenu");
+                menu.data("nodeId", d.id);
+                menu.data("worksheetId", vworksheetId);
+                menu.css({"position":"absolute",
+                    "top":$(this).offset().top + 5,
+                    "left": $(this).offset().left + $(this).width()/2 - $(menu).width()/2}).show();
+            }
+        });
+
     /*** Check for collisions between labels and rectangles ***/
     d3.selectAll("text.LinkLabel." + vworksheetId)
         .sort(comparator)

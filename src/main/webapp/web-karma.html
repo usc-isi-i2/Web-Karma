@@ -227,6 +227,9 @@ and related projects, please see: http://www.isi.edu/integration
                 // Assign style and handler to select model for worksheet dialog (in showModel.js)
                 styleAndAssignHandlersToApplyModelDialog();
 
+                // Assign style and handler to the modeling class bubble options
+                styleAndAssignHandlersToModelingVizElements();
+
 				// When the user changes header line index
 				$('.CSVImportOption').change(function() {
 					CSVImportOptionsChanged("preview");
@@ -1208,6 +1211,10 @@ and related projects, please see: http://www.isi.edu/integration
 
                 </table>
             </div>
+        </div>
+        <div id="modelingClassDropDownMenu" class="ui-corner-all" style="display: none">
+            <button id="invokeRubenReconciliationService">Invoke Reconciliation Service</button>
+            <button id="invokeMachineLearningService">Invoke M/L Service</button>
         </div>
 	</body>
 </html>
