@@ -137,7 +137,12 @@ public class InvokeRubenReconciliationService extends Command {
 		Map<Row, String> rowToUriMap = new HashMap<Row, String>();
 		// For through each row, generate the RDF, and invoke the service
 		try {
+			int count = 1;
 			for (Node node:nodes) {
+				if (count % 5 ==0) {
+					System.out.println("Done invoking linking service for " + count + " rows");
+				}
+				
 				Row row = node.getBelongsToRow();
 				
 				// Generate the RDF
@@ -179,6 +184,7 @@ public class InvokeRubenReconciliationService extends Command {
 				
 				outRdf.close();
 				pw.close();
+				count++;
 			}
 			
 			// Add a column at the same level as key column
