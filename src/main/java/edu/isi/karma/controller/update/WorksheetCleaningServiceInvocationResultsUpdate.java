@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +76,7 @@ public class WorksheetCleaningServiceInvocationResultsUpdate extends
 					String originalVal = node.getValue().asString();
 					JSONObject jsonRecord = new JSONObject();
 					jsonRecord.put(JsonKeys.id.name(), id);
+					originalVal = originalVal == null ? "" : originalVal;
 					jsonRecord.put(JsonKeys.value.name(), originalVal);
 					requestJsonArray.put(jsonRecord);
 				}
@@ -93,7 +93,7 @@ public class WorksheetCleaningServiceInvocationResultsUpdate extends
 				cleaningInvocationOutput.put(path.getLeaf().getId(), reqResponse);
 				
 			} catch (Exception e) {
-				
+				logger.error("Error while invoking cleaning service", e);
 			}
 		}
 		
@@ -113,8 +113,9 @@ public class WorksheetCleaningServiceInvocationResultsUpdate extends
 			}
 			response.put(JsonKeys.worksheetChartData.name(), chartData);
 			pw.print(response.toString());
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			logger.error("Error occured while writing to JSON!", e);
+			return;
 		}
 	}
 }
