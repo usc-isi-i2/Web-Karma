@@ -128,7 +128,7 @@ public class TripleStoreUtil {
 				}
 				// check for karama_models repo
 				if (!repositories.contains(karma_model_repo)) {
-					System.out.println("karma_models not found");
+					logger.info("karma_models not found");
 					if (create_repo(karma_model_repo, "Karma default model repository", "native")) {
 						retVal = true;
 					} else {
@@ -138,7 +138,7 @@ public class TripleStoreUtil {
 				}
 				// check for karama_data repo
 				if (!repositories.contains(karma_data_repo)) {
-					System.out.println("karma_data not found");
+					logger.info("karma_data not found");
 					if (create_repo(karma_data_repo, "Karma default data repository", "native")) {
 						retVal = true;
 					} else {
@@ -240,7 +240,7 @@ public class TripleStoreUtil {
 				StringBuffer jsonString = new StringBuffer();
 				String line = buf.readLine();
 				while(line != null) {
-					System.out.println(line);
+					logger.debug(line);
 					jsonString.append(line);
 					line = buf.readLine();
 				}
@@ -274,7 +274,6 @@ public class TripleStoreUtil {
 		boolean retVal = false;
 		URI uri = null;
 		HttpResponse response = null;
-		System.out.println("replaceFlag : " + replaceFlag);
 		// check the connection first
 		if (checkConnection(tripleStoreURL)) {
 			logger.info("Connection Test passed");
@@ -464,7 +463,7 @@ public class TripleStoreUtil {
 				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
 				String line = buf.readLine();
 				while(line != null) {
-					System.out.println(line);
+					logger.info(line);
 					out.append(line);
 					line = buf.readLine();
 				}
