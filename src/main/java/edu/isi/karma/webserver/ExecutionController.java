@@ -125,6 +125,8 @@ import edu.isi.karma.controller.command.publish.PublishSpatialDataCommand;
 import edu.isi.karma.controller.command.publish.PublishSpatialDataCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishWorksheetHistoryCommand;
 import edu.isi.karma.controller.command.publish.PublishWorksheetHistoryCommandFactory;
+import edu.isi.karma.controller.command.reconciliation.InvokeRubenReconciliationService;
+import edu.isi.karma.controller.command.reconciliation.InvokeRubenReconciliationServiceFactory;
 import edu.isi.karma.controller.command.service.InvokeServiceCommand;
 import edu.isi.karma.controller.command.service.InvokeServiceCommandFactory;
 import edu.isi.karma.controller.command.service.PopulateCommand;
@@ -310,6 +312,8 @@ public class ExecutionController {
 				new CreateNewModelCommandFactory());
 		commandFactoryMap.put(InvokeDataMiningServiceCommand.class.getSimpleName(), 
 				new InvokeDataMiningServiceCommandFactory());
+		commandFactoryMap.put(InvokeRubenReconciliationService.class.getSimpleName(), 
+				new InvokeRubenReconciliationServiceFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

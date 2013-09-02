@@ -22,13 +22,13 @@
   </properties>
   
   <repositories>
-    <repository>
+    <!-- <repository>
       <id>JGraphT Repository</id>
       <url>http://tanesha.net/maven2/</url>
       <snapshots>
          <enabled>false</enabled>
       </snapshots>
- 	</repository>
+ 	</repository> -->
  	<repository>
       <id>maven2-repository.dev.java.net</id>
       <name>Java.net Maven 2 Repository</name>
@@ -127,9 +127,9 @@
     	<version>0.8.10</version>
     </dependency>
     <dependency>
-		<groupId>jgrapht</groupId>
+		<groupId>net.sf.jgrapht</groupId>
 		<artifactId>jgrapht</artifactId>
-		<version>0.8.2</version>
+		<version>0.8.3</version>
 	</dependency>
     <dependency>
       <groupId>junit</groupId>

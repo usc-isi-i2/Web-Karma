@@ -28,10 +28,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-/*
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
- */
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -43,8 +40,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
@@ -55,11 +50,15 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.view.VWorkspace;
+/*
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+ */
 
 public class InvokeCleaningServiceCommand extends Command {
 	private String hNodeId;
 	private String vWorksheetId;
-	private static Logger logger = LoggerFactory.getLogger(InvokeCleaningServiceCommand.class);
+//	private static Logger logger = LoggerFactory.getLogger(InvokeCleaningServiceCommand.class);
 
 	public InvokeCleaningServiceCommand(String id, String hNodeId, String vWorksheetId) {
 		super(id);
@@ -102,6 +101,7 @@ public class InvokeCleaningServiceCommand extends Command {
 		Collection<Node> nodes = new ArrayList<Node>();
 		vWorkspace.getRepFactory().getWorksheet(worksheetId).getDataTable()
 		.collectNodes(selectedPath, nodes);
+		
 		try {
 			JSONArray requestJsonArray = new JSONArray();  
 			for (Node node : nodes) {
@@ -109,23 +109,21 @@ public class InvokeCleaningServiceCommand extends Command {
 				String originalVal = node.getValue().asString();
 				JSONObject jsonRecord = new JSONObject();
 				jsonRecord.put("id", id);
+				originalVal = originalVal == null ? "" : originalVal;
 				jsonRecord.put("value", originalVal);
 				requestJsonArray.put(jsonRecord);
-				//System.out.println(id + " " + originalVal);
 			}
 			String jsonString = null;
 			jsonString = requestJsonArray.toString();
-			//System.out.println(jsonString);
 
 			String url = "http://localhost:8080/cleaningService/IdentifyData";
-			//String url = "http://localhost:8070/myWS/IdentifyData";
-			//System.out.println(url);
+			
 			HttpClient httpclient = new DefaultHttpClient(); 
 			HttpPost httppost = null;
 			HttpResponse response = null;
 			HttpEntity entity;
 			StringBuffer out = new StringBuffer();
-			//logger.info(url);
+			
 			URI u = null ;
 			u = new URI(url) ;
 			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
@@ -168,6 +166,7 @@ public class InvokeCleaningServiceCommand extends Command {
 				}
 			});
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new UpdateContainer(new ErrorUpdate("Error!"));
 		}
 	} 

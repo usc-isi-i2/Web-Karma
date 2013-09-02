@@ -29,6 +29,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -50,6 +51,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.util.HTTPUtil;
 
 public class TripleStoreUtil {
 	
@@ -404,34 +407,16 @@ public class TripleStoreUtil {
 	public static org.json.JSONObject invokeSparqlQuery(String query, 
 			String tripleStoreUrl) throws ClientProtocolException, IOException, JSONException {
 		
-		HttpClient httpclient = new DefaultHttpClient();
+		Map<String, String> formParams = new HashMap<String, String>();
+		formParams.put("query", query);
+		formParams.put("queryLn", "SPARQL");
 		
-		// Prepare the parameters
-		List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-		formparams.add(new BasicNameValuePair("query", query));
-		formparams.add(new BasicNameValuePair("queryLn", "SPARQL"));
+		String response = HTTPUtil.executeHTTPPostRequest(tripleStoreUrl,
+				"", "application/sparql-results+json", formParams);
 		
-		HttpPost httppost = new HttpPost(tripleStoreUrl);
-		httppost.setEntity(new UrlEncodedFormEntity(formparams, "UTF-8"));
-		httppost.setHeader("Accept", "application/sparql-results+json");
+		if (response == null || response.isEmpty()) return null;
 		
-		// Execute the request
-		HttpResponse response = httpclient.execute(httppost);
-		
-		// Parse the response and store it in a String
-		HttpEntity entity = response.getEntity();
-		StringBuilder responseString = new StringBuilder();
-		if (entity != null) {
-			BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
-			
-			String line = buf.readLine();
-			while(line != null) {
-				responseString.append(line);
-				line = buf.readLine();
-			}
-		}
-		
-		return new org.json.JSONObject(responseString.toString());
+		return new org.json.JSONObject(response);
 	}
 
 	
@@ -479,7 +464,6 @@ public class TripleStoreUtil {
 		}
 		return retVal;
 	}
-
 	
 	
 	public org.json.JSONObject fetch_data(String graph, String tripleStoreUrl) throws ClientProtocolException, IOException, JSONException {

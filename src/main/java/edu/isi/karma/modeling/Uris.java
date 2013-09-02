@@ -70,4 +70,7 @@ public interface Uris {
 	public static final String KM_SERVICE_URL_URI = Namespaces.KARMA_DEV + "serviceUrl";
 	public static final String KM_SERVICE_REQ_METHOD_URI = Namespaces.KARMA_DEV + "serviceRequestMethod";
 	public static final String KM_SERVICE_POST_METHOD_TYPE_URI = Namespaces.KARMA_DEV + "servicePostMethodType";
+	
+	// Linking related URIs
+	public static final String KM_LINKING_MATCHES_URI = Namespaces.KARMA_DEV + "possibleLinkingMatches";
 }
