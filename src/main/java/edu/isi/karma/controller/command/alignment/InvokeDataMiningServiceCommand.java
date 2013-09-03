@@ -68,7 +68,16 @@ public class InvokeDataMiningServiceCommand extends Command {
 	private final String vWorksheetId;
 	
 	private String tripleStoreUrl;
+	private String modelContext;
 	
+	public String getModelContext() {
+		return modelContext;
+	}
+
+	public void setModelContext(String modelContext) {
+		this.modelContext = modelContext;
+	}
+
 	public String getTripleStoreUrl() {
 		return tripleStoreUrl;
 	}
@@ -79,13 +88,14 @@ public class InvokeDataMiningServiceCommand extends Command {
 
 	private static Logger logger = LoggerFactory.getLogger(InvokeDataMiningServiceCommand.class);
 
-	protected InvokeDataMiningServiceCommand(String id, String vWorksheetId, String url) {
+	protected InvokeDataMiningServiceCommand(String id, String vWorksheetId, String url, String graph) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
 		if (url == null || url.isEmpty()) {
 			url = TripleStoreUtil.defaultDataRepoUrl;
 		}
 		this.tripleStoreUrl = url;
+		this.modelContext = graph;
 	}
 
 	@Override
@@ -115,7 +125,7 @@ public class InvokeDataMiningServiceCommand extends Command {
 		StringBuffer jsonString = new StringBuffer();
 		try {
 
-			JSONObject result = utilObj.fetch_data("http://localhost/worksheets/converted_data_5.txt", null);
+			JSONObject result = utilObj.fetch_data(this.modelContext, null);
 			System.out.println(result.toString());
 			
 			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
@@ -186,7 +196,8 @@ public class InvokeDataMiningServiceCommand extends Command {
 			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(ontMgr, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
 			
-			SPARQLGeneratorUtil.get_query(mappingGen.getR2RMLMapping());
+			SPARQLGeneratorUtil genObj = new SPARQLGeneratorUtil();
+			genObj.get_query(mappingGen.getR2RMLMapping(), this.modelContext);
 			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
