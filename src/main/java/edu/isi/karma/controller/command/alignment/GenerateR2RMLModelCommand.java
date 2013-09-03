@@ -160,8 +160,6 @@ public class GenerateR2RMLModelCommand extends Command {
 			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(ontMgr, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
 			
-			SPARQLGeneratorUtil.get_query(mappingGen.getR2RMLMapping());
-			
 			// Write the model
 			writeModel(vWorkspace, ontMgr, mappingGen, worksheet, modelFileLocalPath);
 			
