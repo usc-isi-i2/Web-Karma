@@ -29,7 +29,7 @@ import edu.isi.karma.view.VWorkspace;
 
 public class InvokeDataMiningServiceCommandFactory extends CommandFactory {
 	private enum Arguments {
-		vWorksheetId, tripleStoreUrl, modelContext
+		vWorksheetId, tripleStoreUrl, modelContext, dataMiningURL
 	}
 	
 	@Override
@@ -38,7 +38,8 @@ public class InvokeDataMiningServiceCommandFactory extends CommandFactory {
 		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
 		String url = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.modelContext.name());
-		return new InvokeDataMiningServiceCommand(getNewId(vWorkspace), vWorksheetId, url, context);
+		String dmURL = request.getParameter(Arguments.dataMiningURL.name());
+		return new InvokeDataMiningServiceCommand(getNewId(vWorkspace), vWorksheetId, url, context, dmURL);
 	}
 
 }
