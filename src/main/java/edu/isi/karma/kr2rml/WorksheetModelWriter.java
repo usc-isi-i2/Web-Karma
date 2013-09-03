@@ -207,6 +207,10 @@ public class WorksheetModelWriter {
 					if (predTermSet.isSingleUriString()) {
 						URI predValUri = f.createURI(predTermSet
 								.getR2rmlTemplateString(factory));
+						
+						// Skip the class instance special meta property
+						if (predValUri.stringValue().equals(Uris.CLASS_INSTANCE_LINK_URI)) continue;
+						
 						con.add(pomBlankNode, predUri, predValUri);
 					} else {
 						Value predValLiteratl = f.createLiteral(predTermSet.

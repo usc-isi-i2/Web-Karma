@@ -234,26 +234,6 @@ public class KR2RMLWorksheetRDFGenerator {
 			Map<String, ReportMessage> predicatesFailed, Set<String> predicatesSuccessful) {
 		SubjectMap subjMap = pom.getTriplesMap().getSubject();
 		
-		// Generate the predicate RDF
-		String predicateUri = "";
-		try {
-			predicateUri = getTemplateTermSetPopulatedWithValues(columnValues,  
-					pom.getPredicate().getTemplate()).replaceAll(" ", "");
-			if (predicateUri.equals(Uris.CLASS_INSTANCE_LINK_URI))
-				return;
-		} catch (ValueNotFoundKarmaException ve) {
-			ReportMessage msg = createReportMessage("Could not generate predicate's URI for <i>predicate:" + 
-					pom.getPredicate().getTemplate().toString().replaceAll("<", "{").replaceAll(">", "}") + 
-					", subject node: " + subjMap.getId() + "</i>",  ve, 
-					this.factory.getHNode(hNodeId).getColumnName());
-			if (!predicatesSuccessful.contains(pom.getPredicate().getId()))
-				predicatesFailed.put(pom.getPredicate().getId(), msg);
-			return;
-		} catch (NoValueFoundInNodeException e) {
-			logger.debug("No value found in a node required to generate predicate's URI.");
-			return;
-		}
-		
 		// Generate subject RDF
 		String subjUri = "";
 		try {
@@ -270,6 +250,30 @@ public class KR2RMLWorksheetRDFGenerator {
 			logger.debug("No value found in a node required to generate subject's RDF or URI.");
 			return;
 		}
+		
+		// Generate the predicate RDF
+		String predicateUri = "";
+		try {
+			predicateUri = getTemplateTermSetPopulatedWithValues(columnValues,  
+					pom.getPredicate().getTemplate()).replaceAll(" ", "");
+			if (predicateUri.equals(Uris.CLASS_INSTANCE_LINK_URI) 
+					|| predicateUri.equals(Uris.COLUMN_SUBCLASS_LINK_URI)) {
+				return;
+			}
+			
+		} catch (ValueNotFoundKarmaException ve) {
+			ReportMessage msg = createReportMessage("Could not generate predicate's URI for <i>predicate:" + 
+					pom.getPredicate().getTemplate().toString().replaceAll("<", "{").replaceAll(">", "}") + 
+					", subject node: " + subjMap.getId() + "</i>",  ve, 
+					this.factory.getHNode(hNodeId).getColumnName());
+			if (!predicatesSuccessful.contains(pom.getPredicate().getId()))
+				predicatesFailed.put(pom.getPredicate().getId(), msg);
+			return;
+		} catch (NoValueFoundInNodeException e) {
+			logger.debug("No value found in a node required to generate predicate's URI.");
+			return;
+		}
+		
 		
 		// Object property
 		if (pom.getObject().hasRefObjectMap()) {

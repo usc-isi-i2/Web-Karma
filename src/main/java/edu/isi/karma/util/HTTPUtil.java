@@ -34,6 +34,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -87,6 +88,29 @@ public class HTTPUtil {
 		
 		// Execute the request
 		HttpResponse response = httpClient.execute(httpPost);
+		
+		// Parse the response and store it in a String
+		HttpEntity entity = response.getEntity();
+		StringBuilder responseString = new StringBuilder();
+		if (entity != null) {
+			BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
+			
+			String line = buf.readLine();
+			while(line != null) {
+				responseString.append(line);
+				line = buf.readLine();
+			}
+		}
+		return responseString.toString();
+	}
+	
+	public static String executeHTTPGetRequest(String uri, String acceptContentType) 
+			throws ClientProtocolException, IOException {
+		HttpClient httpClient = new DefaultHttpClient();
+		
+		HttpGet request = new HttpGet(uri);
+		request.setHeader(HTTP_HEADERS.Accept.name(), acceptContentType);
+		HttpResponse response = httpClient.execute(request);
 		
 		// Parse the response and store it in a String
 		HttpEntity entity = response.getEntity();
