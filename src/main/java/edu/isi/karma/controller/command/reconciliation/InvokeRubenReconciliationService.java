@@ -221,7 +221,13 @@ public class InvokeRubenReconciliationService extends Command {
 						"  ?match d:similarity ?score . " +
 						"} ORDER BY DESC(?score)";
 //				System.out.println(query);
-				JSONObject queryRes = TripleStoreUtil.invokeSparqlQuery(query, TripleStoreUtil.defaultDataRepoUrl);
+				String sData = TripleStoreUtil.invokeSparqlQuery(query, TripleStoreUtil.defaultModelsRepoUrl, "application/sparql-results+json", null);
+				if (sData == null | sData.isEmpty()) {
+					System.out.println("Empty response object from query : " + query);
+				}
+				JSONObject queryRes = new JSONObject(sData);
+				
+//				JSONObject queryRes = TripleStoreUtil.invokeSparqlQuery(query, TripleStoreUtil.defaultDataRepoUrl);
 				if (queryRes != null) {
 					Table linkingDataTable = row.getNode(linkingHNode.getId()).getNestedTable();
 					
@@ -270,7 +276,14 @@ public class InvokeRubenReconciliationService extends Command {
 				"{ <" + keyUri + "> <" + Uris.KM_LINKING_MATCHES_URI + "> ?x ." +
 				"  ?x d:possibleMatch ?match . " +
 				"}";
-		JSONObject queryRes = TripleStoreUtil.invokeSparqlQuery(query, TripleStoreUtil.defaultDataRepoUrl);
+		
+		String sData = TripleStoreUtil.invokeSparqlQuery(query, TripleStoreUtil.defaultModelsRepoUrl, "application/sparql-results+json", null);
+		if (sData == null | sData.isEmpty()) {
+			System.out.println("Empty response object from query : " + query);
+		}
+		JSONObject queryRes = new JSONObject(sData);
+		
+//		JSONObject queryRes = TripleStoreUtil.invokeSparqlQuery(query, TripleStoreUtil.defaultDataRepoUrl);
 		if (queryRes != null
 				&& queryRes.getJSONObject("results") != null 
 				&& queryRes.getJSONObject("results").getJSONArray("bindings") != null

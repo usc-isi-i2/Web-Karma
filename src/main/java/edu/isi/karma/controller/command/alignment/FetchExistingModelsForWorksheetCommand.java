@@ -87,8 +87,13 @@ public class FetchExistingModelsForWorksheetCommand extends Command {
 				"{ ?x km-dev:modelName ?modelName ." +
 				"  ?x km-dev:sourceName ?sourceName . }";
 		try {
-			final JSONObject sprqlOutput = TripleStoreUtil.invokeSparqlQuery(sparqlQuery,
-					TripleStoreUtil.defaultModelsRepoUrl);
+			String sData = TripleStoreUtil.invokeSparqlQuery(sparqlQuery, TripleStoreUtil.defaultModelsRepoUrl, "application/sparql-results+json", null);
+			if (sData == null | sData.isEmpty()) {
+				logger.error("Empty response object from query : " + sparqlQuery);
+			}
+			final JSONObject sprqlOutput = new JSONObject(sData);
+//			final JSONObject sprqlOutput = TripleStoreUtil.invokeSparqlQuery(sparqlQuery,
+//					TripleStoreUtil.defaultModelsRepoUrl);
 			
 			return new UpdateContainer(new AbstractUpdate() {
 				

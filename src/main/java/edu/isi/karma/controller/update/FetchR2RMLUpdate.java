@@ -45,7 +45,7 @@ public class FetchR2RMLUpdate extends AbstractUpdate {
 	}
 	
 	private enum JsonValues {
-		R2RMLModelUpdate
+		FetchDataMiningModelsUpdate
 	}
 
 	public FetchR2RMLUpdate(ArrayList<String> names, ArrayList<String> urls)
@@ -69,7 +69,7 @@ public class FetchR2RMLUpdate extends AbstractUpdate {
 				
 			}
 			JSONObject obj = new JSONObject();
-			obj.put(GenericJsonKeys.updateType.name(), JsonValues.R2RMLModelUpdate.name());
+			obj.put(GenericJsonKeys.updateType.name(), JsonValues.FetchDataMiningModelsUpdate.name());
 			obj.put(JsonKeys.models.name(), list);
 			pw.print(obj.toString());
 		} catch (Exception e) {

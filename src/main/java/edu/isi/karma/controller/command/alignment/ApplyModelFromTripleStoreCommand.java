@@ -92,7 +92,12 @@ public class ApplyModelFromTripleStoreCommand extends Command {
 				"{ ?x km-dev:modelName \"" + modelName + "\" ." +
 				"  ?x km-dev:hasWorksheetHistory ?history . }";
 		try {
-			JSONObject res = TripleStoreUtil.invokeSparqlQuery(query, TripleStoreUtil.defaultModelsRepoUrl);
+//			JSONObject res = TripleStoreUtil.invokeSparqlQuery(query, TripleStoreUtil.defaultModelsRepoUrl);
+			String sData = TripleStoreUtil.invokeSparqlQuery(query, TripleStoreUtil.defaultModelsRepoUrl, "application/sparql-results+json", null);
+			if (sData == null | sData.isEmpty()) {
+				logger.error("Empty response object from query : " + query);
+			}
+			JSONObject res = new JSONObject(sData);
 			
 			JSONArray bindings = res.getJSONObject(sparqlKeys.results.name())
 					.getJSONArray(sparqlKeys.bindings.name());
