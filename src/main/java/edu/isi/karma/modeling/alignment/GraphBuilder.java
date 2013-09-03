@@ -1010,6 +1010,15 @@ public class GraphBuilder {
 				sourceUri = source.getLabel().getUri();
 				targetUri = target.getLabel().getUri();
 				
+//				if ((sourceUri.contains("E42") && targetUri.contains("E54")) ||
+//						(sourceUri.contains("E54") && targetUri.contains("E42")))
+//					System.out.println("debug1");
+//				
+//				if ((sourceUri.contains("E22") && targetUri.contains("E54")) ||
+//						(sourceUri.contains("E54") && targetUri.contains("E22")))
+//					System.out.println("debug2");
+
+				
 //				if (sourceUri.endsWith("Vehicle") && targetUri.endsWith("Observation") ||
 //						targetUri.endsWith("Vehicle") && sourceUri.endsWith("Observation"))
 //					System.out.println("debug");
@@ -1020,30 +1029,35 @@ public class GraphBuilder {
 				// order of adding the links is based on the ascending sort of their weight value
 				if (this.ontologyManager.isConnectedByDirectProperty(sourceUri, targetUri) ||
 						this.ontologyManager.isConnectedByDirectProperty(targetUri, sourceUri)) {
+					logger.debug( sourceUri + " and " + targetUri + " are connected by a direct object property.");
 					link.setPriorityType(LinkPriorityType.DirectObjectProperty);
 					addLink(source, target, link);
 				}
 				
 				else if (this.ontologyManager.isConnectedByIndirectProperty(sourceUri, targetUri) ||
 						this.ontologyManager.isConnectedByIndirectProperty(targetUri, sourceUri)) { 
+					logger.debug( sourceUri + " and " + targetUri + " are connected by an indirect object property.");
 					link.setPriorityType(LinkPriorityType.IndirectObjectProperty);
 					addLink(source, target, link);				
 				}
 				
 				else if (this.ontologyManager.isConnectedByDomainlessProperty(sourceUri, targetUri) ||
 						this.ontologyManager.isConnectedByDomainlessProperty(targetUri, sourceUri)) { 
+					logger.debug( sourceUri + " and " + targetUri + " are connected by an object property whose range is " + sourceUri + " or " + targetUri);
 					link.setPriorityType(LinkPriorityType.ObjectPropertyWithOnlyRange);
 					addLink(source, target, link);				
 				}
 				
 				else if (this.ontologyManager.isConnectedByRangelessProperty(sourceUri, targetUri) ||
 						this.ontologyManager.isConnectedByRangelessProperty(targetUri, sourceUri)) { 
+					logger.debug( sourceUri + " and " + targetUri + " are connected by an object property whose domain is " + sourceUri + " or " + targetUri);
 					link.setPriorityType(LinkPriorityType.ObjectPropertyWithOnlyDomain);
 					addLink(source, target, link);				
 				}
 				
 				else if (this.ontologyManager.isSubClass(sourceUri, targetUri, false) ||
 						this.ontologyManager.isSubClass(targetUri, sourceUri, false)) {
+					logger.debug( sourceUri + " and " + targetUri + " are connected by a subClassOf relation.");
 					link.setPriorityType(LinkPriorityType.SubClassOf);
 					addLink(source, target, link);
 				}

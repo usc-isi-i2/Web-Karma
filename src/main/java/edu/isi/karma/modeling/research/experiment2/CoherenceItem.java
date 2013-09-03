@@ -19,27 +19,44 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.rep.alignment;
+package edu.isi.karma.modeling.research.experiment2;
 
-import java.util.Comparator;
+public class CoherenceItem implements Comparable<CoherenceItem>{
 
-public class LinkPriorityComparator implements Comparator<Link> {
+	private int x; // explain this
+	private int y; // explain this
+	
+	public CoherenceItem(int x, int y) {		
+		this.x = x;
+		this.y = y;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
 
 	@Override
-	public int compare(Link o1, Link o2) {
-		String p1 = getPriority(o1.getPriorityType());
-		String p2 = getPriority(o2.getPriorityType());
-		return p1.compareTo(p2);
+	public int compareTo(CoherenceItem o) {
+		if (this.x > o.x)
+			return 1;
+		else if (this.x < o.x)
+			return -1;
+		else {
+			if (this.y > o.y)
+				return 1;
+			else if (this.y < o.y)
+				return -1;
+			else
+				return 0;
+		}
 	}
 
-	private String getPriority(LinkPriorityType priorityType) {
-		if (priorityType == LinkPriorityType.DirectDataProperty) return "0";
-		else if (priorityType == LinkPriorityType.IndirectObjectProperty) return "1";
-		else if (priorityType == LinkPriorityType.ObjectPropertyWithOnlyDomain) return "2";
-		else if (priorityType == LinkPriorityType.ObjectPropertyWithOnlyRange) return "2";
-		else if (priorityType == LinkPriorityType.SubClassOf) return "3";
-		else if (priorityType == LinkPriorityType.ObjectPropertyWithoutDomainAndRange) return "4";
-		else return "5";
+	public double getDouble() {
+		return this.x * 10 + this.y;
 	}
-
+	
 }

@@ -19,27 +19,41 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.rep.alignment;
+package edu.isi.karma.modeling.research.experiment2;
 
-import java.util.Comparator;
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.InternalNode;
+import edu.isi.karma.rep.alignment.Link;
 
-public class LinkPriorityComparator implements Comparator<Link> {
+public class MappingStruct {
+	
+	private InternalNode source;
+	private Link link;
+	private ColumnNode target;
 
-	@Override
-	public int compare(Link o1, Link o2) {
-		String p1 = getPriority(o1.getPriorityType());
-		String p2 = getPriority(o2.getPriorityType());
-		return p1.compareTo(p2);
+	public MappingStruct(InternalNode source) {
+		this.source = source;
+		this.link = null;
+		this.target = null;
+	}
+	
+	public MappingStruct(InternalNode source, Link link, ColumnNode target) {
+		this.source = source;
+		this.link = link;
+		this.target = target;
 	}
 
-	private String getPriority(LinkPriorityType priorityType) {
-		if (priorityType == LinkPriorityType.DirectDataProperty) return "0";
-		else if (priorityType == LinkPriorityType.IndirectObjectProperty) return "1";
-		else if (priorityType == LinkPriorityType.ObjectPropertyWithOnlyDomain) return "2";
-		else if (priorityType == LinkPriorityType.ObjectPropertyWithOnlyRange) return "2";
-		else if (priorityType == LinkPriorityType.SubClassOf) return "3";
-		else if (priorityType == LinkPriorityType.ObjectPropertyWithoutDomainAndRange) return "4";
-		else return "5";
+	public InternalNode getSource() {
+		return source;
 	}
 
+	public Link getLink() {
+		return link;
+	}
+
+	public ColumnNode getTarget() {
+		return target;
+	}
+
+	
 }
