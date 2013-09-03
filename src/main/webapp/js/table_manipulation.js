@@ -271,6 +271,7 @@ function submitSelectedModelNameToBeLoaded() {
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "InvokeDataMiningServiceCommand";
 	info['modelContext'] = value.val();
+	info['dataMiningURL'] = value.attr('rel');
     
 	
     var returned = $.ajax({
