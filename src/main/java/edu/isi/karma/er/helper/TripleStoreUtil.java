@@ -52,6 +52,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.micromata.opengis.kml.v_2_2_0.Data;
 import edu.isi.karma.util.HTTPUtil;
 
 public class TripleStoreUtil {
@@ -200,12 +201,16 @@ public class TripleStoreUtil {
 	 * This method fetches all the source names of the models from the triple store
 	 * @param TripleStoreURL : the triple store URL
 	 * */
-	public HashMap<String, String> fetchModelNames(String TripleStoreURL) { 
+	public HashMap<String, ArrayList<String>> fetchModelNames(String TripleStoreURL) { 
 		if(TripleStoreURL == null || TripleStoreURL.isEmpty()) {
 			TripleStoreURL = defaultServerUrl + "/"  +karma_model_repo;
 		}
-		HashMap<String, String> list = new HashMap<String, String>();
-		HttpClient httpclient = new DefaultHttpClient();
+//		HashMap<String, String> list = new HashMap<String, String>();
+//		HttpClient httpclient = new DefaultHttpClient();
+		
+		ArrayList<String> names = new ArrayList<String>();
+		ArrayList<String> urls = new ArrayList<String>();
+//		JSONArray list = new JSONArray();
 		
 		if(TripleStoreURL.charAt(TripleStoreURL.length() - 1) == '/') {
 			TripleStoreURL = TripleStoreURL.substring(0, TripleStoreURL.length()-2);
@@ -217,51 +222,60 @@ public class TripleStoreUtil {
 			logger.info("Connection Test passed");
 		} else {
 			logger.info("Failed connection test : " + TripleStoreURL);
-			return new HashMap<String, String>();
+			return null;
 		}
 		
 		try {
 			String queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?y ?z where { ?x km-dev:sourceName ?y . ?x km-dev:serviceUrl ?z . } ORDER BY ?y ?z";
 			logger.debug("query: " + queryString);
 			
-			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-			formparams.add(new BasicNameValuePair("query",queryString));
-			formparams.add(new BasicNameValuePair("queryLn","SPARQL"));
+//			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+//			formparams.add(new BasicNameValuePair("query",queryString));
+//			formparams.add(new BasicNameValuePair("queryLn","SPARQL"));
 			
-			HttpPost httppost = new HttpPost(TripleStoreURL);
-			httppost.setEntity(new UrlEncodedFormEntity(formparams, "UTF-8"));
-			httppost.setHeader("Accept", "application/sparql-results+json");
-			HttpResponse response = httpclient.execute(httppost);
+			Map<String, String> formparams = new HashMap<String, String>();
+			formparams.put("query", queryString);
+			formparams.put("queryLn", "SPARQL");
+			String responseString =  HTTPUtil.executeHTTPPostRequest(TripleStoreURL, null, "application/sparql-results+json", formparams);
 			
-			for(Header h : response.getAllHeaders()) {
-				logger.debug(h.getName() +  " : " + h.getValue());
-			}
-			logger.info("StatusCode: " + response.getStatusLine().getStatusCode());
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
-				StringBuffer jsonString = new StringBuffer();
-				String line = buf.readLine();
-				while(line != null) {
-					logger.debug(line);
-					jsonString.append(line);
-					line = buf.readLine();
-				}
+//			HttpPost httppost = new HttpPost(TripleStoreURL);
+//			httppost.setEntity(new UrlEncodedFormEntity(formparams, "UTF-8"));
+//			httppost.setHeader("Accept", "application/sparql-results+json");
+//			HttpResponse response = httpclient.execute(httppost);
+			
+//			for(Header h : response.getAllHeaders()) {
+//				logger.debug(h.getName() +  " : " + h.getValue());
+//			}
+//			logger.info("StatusCode: " + response.getStatusLine().getStatusCode());
+//			HttpEntity entity = response.getEntity();
+			
+			if (responseString != null) {
+//				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
+//				StringBuffer jsonString = new StringBuffer();
+//				String line = buf.readLine();
+//				while(line != null) {
+//					logger.debug(line);
+//					jsonString.append(line);
+//					line = buf.readLine();
+//				}
 				
-				JSONObject data = new JSONObject(jsonString.toString());
-				JSONArray values = data.getJSONObject("results").getJSONArray("bindings");
+				JSONObject models = new JSONObject(responseString);
+				JSONArray values = models.getJSONObject("results").getJSONArray("bindings");
 				int count = 0;
 				while(count < values.length()) {
 					JSONObject o = values.getJSONObject(count++);
-					list.put(o.getJSONObject("y").getString("value"), o.getJSONObject("z").getString("value"));
+					names.add(o.getJSONObject("y").getString("value"));
+					urls.add(o.getJSONObject("z").getString("value"));
 				}
 			}
-			logger.debug("repositories fetched: " + list.toString());
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
-		return list;
+		HashMap<String, ArrayList<String>> values = new HashMap<String, ArrayList<String>>();
+		values.put("model_names", names);
+		values.put("model_urls", urls);
+		return values;
 	}
 
 	/**

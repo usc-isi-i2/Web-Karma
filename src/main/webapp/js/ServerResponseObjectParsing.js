@@ -733,13 +733,11 @@ function parse(data) {
 			modelListRadioBtnGrp.html('');
 			var rows = element["models"]
 			for(var x in rows) {
-				modelListRadioBtnGrp.append('<input type="radio" name="group1" id="model_'+x+'" value="'+rows[x].name+'" /> <label for="model_'+x+'">'+rows[x].name+' ('+rows[x].url+') </label> <br />');
+				modelListRadioBtnGrp.append('<input type="radio" name="group1" id="model_'+x+'" value="'+rows[x].url+'" /> <label for="model_'+x+'">'+rows[x].name+' ('+rows[x].url+') </label> <br />');
 			}
-			var positionArray = [200		// distance from left
-			 					, 200];	// distance from top
 			var modelListDiv = $('div#modelListDiv');
 			modelListDiv.dialog({ title: 'Select a service',
-				buttons: { "Cancel": function() { $(this).dialog("close"); }, "Select": submitSelectedModelNameToBeLoaded }, width: 300, height: 150, position: positionArray});
+				buttons: { "Cancel": function() { $(this).dialog("close"); }, "Select": submitSelectedModelNameToBeLoaded }, width: 300, height: 150 });
 			
 		} else if(element["updateType"] == "CleaningServiceOutput") {
 			//console.log(element);

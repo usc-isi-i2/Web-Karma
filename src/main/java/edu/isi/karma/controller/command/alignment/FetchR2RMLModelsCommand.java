@@ -24,6 +24,7 @@ package edu.isi.karma.controller.command.alignment;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,8 +83,8 @@ public class FetchR2RMLModelsCommand extends Command {
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 
 		TripleStoreUtil utilObj = new TripleStoreUtil();
-		HashMap<String, String> list = utilObj.fetchModelNames(this.tripleStoreUrl);
-		return new UpdateContainer(new FetchR2RMLUpdate(list));
+		HashMap<String, ArrayList<String>> list = utilObj.fetchModelNames(this.tripleStoreUrl);
+		return new UpdateContainer(new FetchR2RMLUpdate(list.get("model_names"), list.get("model_urls")));
 	}
 
 	@Override

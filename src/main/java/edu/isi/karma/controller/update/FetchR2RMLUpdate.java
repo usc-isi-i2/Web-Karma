@@ -37,7 +37,8 @@ public class FetchR2RMLUpdate extends AbstractUpdate {
 
 	private static Logger logger = LoggerFactory.getLogger(FetchR2RMLUpdate.class);
 	
-	private HashMap<String, String> models;
+	private ArrayList<String> model_Names;
+	private ArrayList<String> model_Urls;
 	
 	private enum JsonKeys {
 		models
@@ -47,21 +48,23 @@ public class FetchR2RMLUpdate extends AbstractUpdate {
 		R2RMLModelUpdate
 	}
 
-	public FetchR2RMLUpdate(HashMap<String, String> model_list)
+	public FetchR2RMLUpdate(ArrayList<String> names, ArrayList<String> urls)
 	{
-		this.models = model_list;
+		this.model_Names = names;
+		this.model_Urls = urls;
+		
 	}
 	@Override
 	public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) 
 	{
 		JSONArray list = new JSONArray();
 		try {
-			Iterator<String> itr = models.keySet().iterator();
-			while(itr.hasNext()) {
+			int count = 0;
+			while(count < this.model_Names.size()) {
 				JSONObject obj = new JSONObject();
-				String key = itr.next();
-				obj.put("name", key);
-				obj.put("url", models.get(key));
+				obj.put("name", this.model_Names.get(count));
+				obj.put("url",  this.model_Urls.get(count));
+				count++;
 				list.put(obj);
 				
 			}
