@@ -260,8 +260,7 @@ public class KR2RMLMappingGenerator {
 				for (Link olink:outgoingEdges) {
 					if (olink instanceof ObjectPropertySpecializationLink 
 							|| olink instanceof DataPropertyOfColumnLink  
-							|| olink instanceof ColumnSubClassLink
-							|| olink instanceof ClassInstanceLink)
+							|| olink instanceof ColumnSubClassLink)
 						continue;
 					
 					PredicateObjectMap poMap = new PredicateObjectMap(subjTrMap);
