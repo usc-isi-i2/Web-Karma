@@ -58,7 +58,7 @@ public class SPARQLGeneratorUtil {
 	}
 	
 	
-	private void generate_sparql(TriplesMap node, String node_symbol, String graph) {
+	private String generate_sparql(TriplesMap node, String node_symbol, String graph) {
 		
 		ArrayList<Object> queue = new ArrayList<Object>();
 		queue.add(node);
@@ -155,24 +155,23 @@ public class SPARQLGeneratorUtil {
 		
 		// generate the query from the list of prefix and the param lists
 		Iterator<String> itr =  this.prefix_list.keySet().iterator();
+		StringBuffer sQuery = new StringBuffer();
 		while(itr.hasNext()) {
 			String key = itr.next();
-			System.out.println(" PREFIX " + this.prefix_list.get(key) + ": " + key);
+			sQuery.append(" PREFIX ").append(this.prefix_list.get(key)).append(": ").append(key);
 		}
 		if(graph == null || graph.isEmpty()) {
-			System.out.println("select " + select_params + " where { " + query.toString() + " }");
+			sQuery.append(" select ").append(select_params).append(" where { ").append(query.toString()).append(" } ");
 		} else {
-			System.out.println("select " + select_params + 
-					" where { GRAPH <"+graph+"> { " + query.toString() + " } }");
+			sQuery.append(" select ").append(select_params).append(" where { GRAPH <").append(graph)
+				.append("> { ").append(query.toString()).append(" } }");
 		}
+		System.out.println("Query : " + sQuery);
+		return sQuery.toString();
 	}
 	
-	public void get_query(R2RMLMapping r2rmlMap, String graph) {
+	public String get_query(R2RMLMapping r2rmlMap, String graph) {
 		
-//		StringBuffer query = new StringBuffer();
-//		StringBuffer select_terms = new StringBuffer();
-		
-		System.out.println(r2rmlMap.toString());
 		List<TriplesMap> triples = r2rmlMap.getTriplesMapList();
 		TriplesMap root_node = null;
 
@@ -183,43 +182,7 @@ public class SPARQLGeneratorUtil {
 				break;
 			}
 		}
-		
-//		qSPARQL = new StringBuffer();
-//		this.select_params = new StringBuffer();
-//		this.prefix_list = new HashMap<String, String>();
-//		this.class_type_params = new ArrayList<String>();
-//		var_count = 1;
-		generate_sparql(root_node, "x"+var_count, graph);
-//		// print the prefix list
-//		
-//		Iterator<String> itr =  this.prefix_list.keySet().iterator();
-//		while(itr.hasNext()) {
-//			String key = itr.next();
-//			System.out.println("PREFIX " + this.prefix_list.get(key) + ": " + key);
-//		}
-//		if(graph == null || graph.isEmpty()) {
-//			System.out.println("select " + select_params + " where { " + qSPARQL + " }");
-//		} else {
-//			System.out.println("select " + select_params + 
-//					" where { GRAPH <"+graph+"> { " + qSPARQL + " } }");
-//		}
-		
-//		int var_count = 1;
-//		query.append(" ?x ?p <").append(root_node.getSubject().getRdfsType().get(0) + ">");
-//		List<PredicateObjectMap> predicates = root_node.getPredicateObjectMaps();
-//		for (PredicateObjectMap p_map : predicates) {
-//			// this is a nested reference
-//			if(p_map.getObject().hasRefObjectMap()) {
-//				
-//			} 
-//			// this is simple reference
-//			else  {
-//				query.append(" ?xx" + var_count + " <" + p_map.getPredicate().getTemplate() + "> ?zz"+ (var_count++) + " . ");
-//			} 
-//					
-//		}
-//		System.out.println(query);
-//		
+		return generate_sparql(root_node, "x"+var_count, graph);
 	}
 
 }
