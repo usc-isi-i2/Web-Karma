@@ -230,7 +230,7 @@ class OntologyCache {
 		this.buildDataPropertiesMaps();
 		this.buildObjectPropertiesMaps();
 		// update hashmaps to include the subproperty relations  
-		this.updateMapsWithSubpropertyDefinitions();
+		this.updateMapsWithSubpropertyDefinitions(true);
 		
 		// classify different types of properties
 		this.classifyProperties();
@@ -1125,7 +1125,11 @@ class OntologyCache {
 		
 	}
 	
-	private void updateMapsWithSubpropertyDefinitions() {
+	/**
+	 * If the inheritance is true, it adds all the sub-classes of the domain and range of super-properties too.
+	 * @param inheritance
+	 */
+	private void updateMapsWithSubpropertyDefinitions(boolean inheritance) {
 		
 		
 		Set<String> allSuperPropertiesLocal;
@@ -1144,170 +1148,96 @@ class OntologyCache {
 			
 			HashSet<String> temp = null;
 			
+			// domains 
+			HashSet<String> seuperDirectDomains = new HashSet<String>();
+			HashSet<String> seuperIndirectDomains = new HashSet<String>();
+			List<String> superAllDomains = new ArrayList<String>();
+			for (String superP : allSuperPropertiesLocal) {
+				seuperDirectDomains = this.propertyDirectDomains.get(superP);
+				seuperIndirectDomains = this.propertyIndirectDomains.get(superP);
+				if (seuperDirectDomains != null) superAllDomains.addAll(seuperDirectDomains);
+				if (seuperIndirectDomains != null && inheritance) superAllDomains.addAll(seuperIndirectDomains);
+			}
+
+			HashSet<String> indirectDomains = propertyIndirectDomains.get(p);
+			if (indirectDomains == null) {
+				indirectDomains = new HashSet<String>();
+				propertyIndirectDomains.put(p, indirectDomains);
+			}
+			
+			for (String d : superAllDomains) {
+				if (!indirectDomains.contains(d))
+					indirectDomains.add(d);
+			}
+			
+			if (this.objectProperties.containsKey(p)) 
+				for (String d : superAllDomains) {
+					temp = indirectOutObjectProperties.get(d);
+					if (temp != null)
+						temp.add(p);
+				}
+
+			if (this.dataProperties.containsKey(p)) 
+				for (String d : superAllDomains) {
+					temp = indirectOutDataProperties.get(d);
+					if (temp != null)
+						temp.add(p);
+				}
+
+			// ranges
+			HashSet<String> seuperDirectRanges = new HashSet<String>();
+			HashSet<String> seuperIndirectRanges = new HashSet<String>();
+			HashSet<String> superAllRanges = new HashSet<String>();
+			for (String superP : allSuperPropertiesLocal) {
+				seuperDirectRanges = this.propertyDirectRanges.get(superP);
+				seuperIndirectRanges = this.propertyIndirectRanges.get(superP);
+				if (seuperDirectRanges != null) superAllRanges.addAll(seuperDirectRanges);
+				if (seuperIndirectRanges != null && inheritance) superAllRanges.addAll(seuperIndirectRanges);
+			}
+
+			HashSet<String> indirectRanges = propertyIndirectRanges.get(p);
+			if (indirectRanges == null) {  
+				indirectRanges = new HashSet<String>();
+				propertyIndirectRanges.put(p, indirectRanges);
+			}
+			
+			for (String r : superAllRanges) {
+				if (!indirectRanges.contains(r))
+					indirectRanges.add(r);
+			}
+			
+			if (this.objectProperties.containsKey(p)) 
+				for (String r : superAllRanges) {
+					temp = indirectInObjectProperties.get(r);
+					if (temp != null)
+						temp.add(p);
+				}
+				
 			HashSet<String> directDomains = this.propertyDirectDomains.get(p);
-			HashSet<String> indirectDomains = this.propertyIndirectDomains.get(p);
 			HashSet<String> allDomains = new HashSet<String>();
-			if (directDomains != null) allDomains.addAll(directDomains);
+			HashSet<String> directRanges = this.propertyDirectRanges.get(p);
+			HashSet<String> allRanges = new HashSet<String>();
+			
+			if (directDomains != null) allRanges.addAll(directDomains);
 			if (indirectDomains != null) allDomains.addAll(indirectDomains);
 
-			HashSet<String> directRanges = this.propertyDirectRanges.get(p);
-			HashSet<String> indirectRanges = this.propertyIndirectRanges.get(p);
-			HashSet<String> allRanges = new HashSet<String>();
-			if (directRanges != null) allRanges.addAll(directRanges);
+			if (directRanges != null) allDomains.addAll(directRanges);
 			if (indirectRanges != null) allRanges.addAll(indirectRanges);
-
-			for (String d : allDomains) {
-				temp = indirectOutObjectProperties.get(d);
-				if (temp == null) {
-					temp = new HashSet<String>();
-					indirectOutObjectProperties.put(d,  temp);
-				}
-				for (String superP : allSuperPropertiesLocal) {
-						temp.add(superP);
-				}
-			}
-
-			for (String r : allRanges) {
-				temp = indirectInObjectProperties.get(r);
-				if (temp == null) {
-					temp = new HashSet<String>();
-					indirectInObjectProperties.put(r,  temp);
-				}
-				for (String superP : allSuperPropertiesLocal) {
-						temp.add(superP);
-				}
-			}
-
+			
 			for (String domain : allDomains) {
 				for (String range : allRanges) {
+					if (directDomains.contains(domain) && directRanges.contains(range)) continue;
 					temp = domainRangeToIndirectProperties.get(domain + range);
 					if (temp == null) {
 						temp = new HashSet<String>();
 						domainRangeToIndirectProperties.put(domain + range, temp);
 					}
-					for (String superP : allSuperPropertiesLocal) {
-						if (superP.compareTo(p) != 0)
-							temp.add(superP);
-					}
+					temp.add(p);
 				}
 			}
 		}
 
 	}
-	
-//	/**
-//	 * If the inheritance is true, it adds all the sub-classes of the domain and range of super-properties too.
-//	 * @param inheritance
-//	 */
-//	private void updateMapsWithSubpropertyDefinitions(boolean inheritance) {
-//		
-//		
-//		Set<String> allSuperPropertiesLocal;
-//
-//		// iterate over all properties
-//		for (String p : this.properties.keySet()) {
-//			
-//			allSuperPropertiesLocal = new HashSet<String>();
-//			
-//			Set<String> directSuperPropertiesLocal = this.directSuperProperties.get(p).keySet();
-//			Set<String> indirectSuperPropertiesLocal = this.indirectSuperProperties.get(p).keySet();
-//			if (directSuperPropertiesLocal != null) allSuperPropertiesLocal.addAll(directSuperPropertiesLocal);
-//			if (indirectSuperPropertiesLocal != null) allSuperPropertiesLocal.addAll(indirectSuperPropertiesLocal);
-//			
-//			if (allSuperPropertiesLocal.size() == 0) continue;
-//			
-//			HashSet<String> temp = null;
-//			
-//			// domains 
-//			HashSet<String> seuperDirectDomains = new HashSet<String>();
-//			HashSet<String> seuperIndirectDomains = new HashSet<String>();
-//			List<String> superAllDomains = new ArrayList<String>();
-//			for (String superP : allSuperPropertiesLocal) {
-//				seuperDirectDomains = this.propertyDirectDomains.get(superP);
-//				seuperIndirectDomains = this.propertyIndirectDomains.get(superP);
-//				if (seuperDirectDomains != null) superAllDomains.addAll(seuperDirectDomains);
-//				if (seuperIndirectDomains != null && inheritance) superAllDomains.addAll(seuperIndirectDomains);
-//			}
-//
-//			HashSet<String> indirectDomains = propertyIndirectDomains.get(p);
-//			if (indirectDomains == null) {
-//				indirectDomains = new HashSet<String>();
-//				propertyIndirectDomains.put(p, indirectDomains);
-//			}
-//			
-//			for (String d : superAllDomains) {
-//				if (!indirectDomains.contains(d))
-//					indirectDomains.add(d);
-//			}
-//			
-//			if (this.objectProperties.containsKey(p)) 
-//				for (String d : superAllDomains) {
-//					temp = indirectOutObjectProperties.get(d);
-//					if (temp != null)
-//						temp.add(p);
-//				}
-//
-//			if (this.dataProperties.containsKey(p)) 
-//				for (String d : superAllDomains) {
-//					temp = indirectOutDataProperties.get(d);
-//					if (temp != null)
-//						temp.add(p);
-//				}
-//
-//			// ranges
-//			HashSet<String> seuperDirectRanges = new HashSet<String>();
-//			HashSet<String> seuperIndirectRanges = new HashSet<String>();
-//			HashSet<String> superAllRanges = new HashSet<String>();
-//			for (String superP : allSuperPropertiesLocal) {
-//				seuperDirectRanges = this.propertyDirectRanges.get(superP);
-//				seuperIndirectRanges = this.propertyIndirectRanges.get(superP);
-//				if (seuperDirectRanges != null) superAllRanges.addAll(seuperDirectRanges);
-//				if (seuperIndirectRanges != null && inheritance) superAllRanges.addAll(seuperIndirectRanges);
-//			}
-//
-//			HashSet<String> indirectRanges = propertyIndirectRanges.get(p);
-//			if (indirectRanges == null) {  
-//				indirectRanges = new HashSet<String>();
-//				propertyIndirectRanges.put(p, indirectRanges);
-//			}
-//			
-//			for (String r : superAllRanges) {
-//				if (!indirectRanges.contains(r))
-//					indirectRanges.add(r);
-//			}
-//			
-//			if (this.objectProperties.containsKey(p)) 
-//				for (String r : superAllRanges) {
-//					temp = indirectInObjectProperties.get(r);
-//					if (temp != null)
-//						temp.add(p);
-//				}
-//				
-//			HashSet<String> directDomains = this.propertyDirectDomains.get(p);
-//			HashSet<String> allDomains = new HashSet<String>();
-//			HashSet<String> directRanges = this.propertyDirectRanges.get(p);
-//			HashSet<String> allRanges = new HashSet<String>();
-//			
-//			if (directDomains != null) allDomains.addAll(directDomains);
-//			if (indirectDomains != null) allDomains.addAll(indirectDomains);
-//
-//			if (directRanges != null) allRanges.addAll(directRanges);
-//			if (indirectRanges != null) allRanges.addAll(indirectRanges);
-//			
-//			for (String domain : allDomains) {
-//				for (String range : allRanges) {
-//					if (directDomains.contains(domain) && directRanges.contains(range)) continue;
-//					temp = domainRangeToIndirectProperties.get(domain + range);
-//					if (temp == null) {
-//						temp = new HashSet<String>();
-//						domainRangeToIndirectProperties.put(domain + range, temp);
-//					}
-//					temp.add(p);
-//				}
-//			}
-//		}
-//
-//	}
 
 	private void classifyProperties() {
 

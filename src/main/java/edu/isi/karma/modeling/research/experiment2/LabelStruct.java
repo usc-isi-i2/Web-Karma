@@ -21,48 +21,33 @@
 
 package edu.isi.karma.modeling.research.experiment2;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.InternalNode;
+import edu.isi.karma.rep.alignment.Link;
 
-import edu.isi.karma.rep.alignment.SemanticType;
-
-public class SemanticTypeMapping {
-
-	private SemanticType semanticType;
-	private MappingType type;
-	private Set<MappingStruct> mappingStructs;
+public class LabelStruct {
 	
-	public SemanticTypeMapping(SemanticType semanticType, MappingType type) {
-		this.semanticType = semanticType;
-		this.mappingStructs = new HashSet<MappingStruct>();
-		this.type = MappingType.ClassNode;
-	}
-
-	public SemanticTypeMapping(SemanticType semanticType, MappingType type, Set<MappingStruct> mappingStructs) {
-		this.semanticType = semanticType;
-		this.type = MappingType.ClassNode;
-		this.mappingStructs = mappingStructs;
-	}
-
-	public SemanticType getSemanticType() {
-		return semanticType;
-	}
+	private InternalNode source;
+	private Link link;
+	private ColumnNode target;
 	
-	public Set<MappingStruct> getMappingStructs() {
-		return Collections.unmodifiableSet(mappingStructs);
+	public LabelStruct(InternalNode source, Link link, ColumnNode target) {
+		this.source = source;
+		this.link = link;
+		this.target = target;
 	}
 
-	public MappingType getType() {
-		return type;
+	public InternalNode getSource() {
+		return source;
+	}
+
+	public Link getLink() {
+		return link;
+	}
+
+	public ColumnNode getTarget() {
+		return target;
 	}
 	
-	public void addMappingStruct(MappingStruct mappingStruct) {
-		this.mappingStructs.add(mappingStruct);
-	}
 	
-	public double getConfidence() {
-		// FIXME
-		return 1.0;
-	}
 }

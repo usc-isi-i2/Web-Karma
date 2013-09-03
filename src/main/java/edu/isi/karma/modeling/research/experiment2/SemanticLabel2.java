@@ -30,21 +30,11 @@ public class SemanticLabel2{
 	private String nodeUri;
 	private String linkUri;
 	private String leafName;
-	private SemanticLabelType type;
-	
-	public SemanticLabel2(String nodeUri) {
-		this.nodeUri = nodeUri;
-		this.linkUri = null;
-		this.leafName = null;
-		this.type = SemanticLabelType.Class;
-	}
 	
 	public SemanticLabel2(String nodeUri, String linkUri, String leafName) {
 		this.nodeUri = nodeUri;
 		this.linkUri = linkUri;
 		this.leafName = leafName;
-		if (this.linkUri == null) this.type = SemanticLabelType.Class;
-		else this.type = SemanticLabelType.DataProperty;
 	}
 
 	
@@ -61,10 +51,6 @@ public class SemanticLabel2{
 		return leafName;
 	}
 	
-	public SemanticLabelType getType() {
-		return type;
-	}
-
 	public void print() {
 		String s = "";
 		if (this.nodeUri != null) s += this.nodeUri;

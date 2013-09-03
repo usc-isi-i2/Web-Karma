@@ -29,7 +29,7 @@ public class LinkPriorityComparator implements Comparator<Link> {
 	public int compare(Link o1, Link o2) {
 		String p1 = getPriority(o1.getPriorityType());
 		String p2 = getPriority(o2.getPriorityType());
-		return p1.compareTo(p2);
+		return -p1.compareTo(p2);
 	}
 
 	private String getPriority(LinkPriorityType priorityType) {
