@@ -361,15 +361,16 @@ public class KR2RMLWorksheetRDFGenerator {
 		// Generate URI for subject
 		String uri = "";
 		if (subjMap.isBlankNode()) {
-			uri = getBlankNodeUri(subjMap.getId(), columnValues).replaceAll(" ", "")
-					.replaceAll("[,`']", "_");
-		} else 
-			uri = getTemplateTermSetPopulatedWithValues(columnValues, subjMap.getTemplate())
-				.replaceAll(" ", "").replaceAll("[,`']", "_");
+			uri = getExpandedAndNormalizedUri(getBlankNodeUri(subjMap.getId(), columnValues));
+		} else {
+			uri = getExpandedAndNormalizedUri(getTemplateTermSetPopulatedWithValues(columnValues,
+					subjMap.getTemplate()));
+		}
 		
 		// Generate triples for specifying the types
 		for (TemplateTermSet typeTerm:subjMap.getRdfsType()) {
-			String typeUri = getTemplateTermSetPopulatedWithValues(columnValues, typeTerm);
+			String typeUri = getExpandedAndNormalizedUri(getTemplateTermSetPopulatedWithValues(
+					columnValues, typeTerm));
 			String triple = constructTripleWithURIObject(uri, Uris.RDF_TYPE_URI, typeUri);
 			if (!existingTopRowTriples.contains(triple)) {
 				existingTopRowTriples.add(triple);
@@ -379,36 +380,23 @@ public class KR2RMLWorksheetRDFGenerator {
 		return uri;
 	}
 	
-	public String normalizeUri(String inputUri) {
-		return inputUri.replaceAll(" ", "").replaceAll("[,`']", "_");
-	}
-	
 	private String constructTripleWithURIObject(String subjUri, String predicateUri, String objectUri) {
-		if (!subjUri.startsWith(BLANK_NODE_PREFIX))
-			subjUri = "<" + subjUri + ">";
-		
-		if (!objectUri.startsWith(BLANK_NODE_PREFIX))
-			objectUri = "<" + objectUri + ">";
-		
 		return subjUri + " " 
-				+ getNormalizedPredicateUri(predicateUri) + " " 
-				+ objectUri.replaceAll(" ", "").replaceAll("[,`']", "_") + " .";
+				+ getExpandedAndNormalizedUri(predicateUri) + " " 
+				+ objectUri + " .";
 	}
 	
 	private String constructTripleWithLiteralObject(String subjUri, String predicateUri, String value, 
 			String literalType) {
-		if (!subjUri.startsWith(BLANK_NODE_PREFIX))
-			subjUri = "<" + subjUri + ">";
-
 		// Use Apache Commons to escape the value
 		value = StringEscapeUtils.escapeJava(value);
 		
 		// Add the RDF literal type to the literal if present
 		if (literalType != null && !literalType.equals("")) {
-			return subjUri + " " + getNormalizedPredicateUri(predicateUri) + " \"" + value + 
+			return subjUri + " " + getExpandedAndNormalizedUri(predicateUri) + " \"" + value + 
 					"\"" + "^^" + literalType + " .";
 		}
-		return subjUri + " " + getNormalizedPredicateUri(predicateUri) + " \"" + value + "\" .";
+		return subjUri + " " + getExpandedAndNormalizedUri(predicateUri) + " \"" + value + "\" .";
 	}
 	
 	private String constructQuadWithLiteralObject(String subjUri, String predicateUri, 
@@ -482,23 +470,38 @@ public class KR2RMLWorksheetRDFGenerator {
 		return output.toString();
 	}
 	
-	private String getNormalizedPredicateUri(String predicate) {
+	private String getExpandedAndNormalizedUri(String uri) {
 		// Check if the predicate contains a predicate.
-		if (!predicate.startsWith("http:") && predicate.contains(":")) {
+		if (!uri.startsWith("http:") && uri.contains(":")) {
 			// Replace the prefix with proper namespace by looking into the ontology manager
-			String prefix = predicate.substring(0, predicate.indexOf(":"));
+			String prefix = uri.substring(0, uri.indexOf(":"));
 			
 			String namespace = this.prefixToNamespaceMap.get(prefix);
 			if (namespace == null || namespace.isEmpty()) {
-				this.errorReport.createReportMessage("Error creating predicate's URI: " + predicate, 
+				this.errorReport.createReportMessage("Error creating predicate's URI: " + uri, 
 						"No namespace found for the prefix: " + prefix, Priority.high);
 //				logger.error("No namespace found for the predicate prefix: " + prefix);
 			} else {
-				predicate = namespace + predicate.substring(predicate.indexOf(":")+1);
+				uri = namespace + uri.substring(uri.indexOf(":")+1);
 			}
 		}
-		return "<" + predicate.replaceAll(" ", "").replaceAll("[,`']", "_") + ">";
+		
+		// Remove all unwanted characters
+		uri = normalizeUri(uri);
+		
+		// Put angled brackets if required
+		if (!uri.startsWith(BLANK_NODE_PREFIX)) {
+			uri = "<" + uri + ">";
+		}
+			
+		return uri;
 	}
+	
+	public String normalizeUri(String inputUri) {
+		return inputUri.replaceAll(" ", "").replaceAll("[,`']", "_");
+	}
+	
+	
 	
 	private void populatePrefixToNamespaceMap() {
 		Map<String, String> prefixMapOntMgr = this.ontMgr.getPrefixMap(); 

@@ -42,6 +42,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.cleaning.SubmitCleaningCommand;
+import edu.isi.karma.controller.command.reconciliation.InvokeRubenReconciliationService;
 import edu.isi.karma.controller.command.transformation.SubmitPythonTransformationCommand;
 import edu.isi.karma.controller.command.worksheet.RenameColumnCommand;
 import edu.isi.karma.controller.command.worksheet.SplitByCommaCommandFactory.Arguments;
@@ -81,7 +82,8 @@ public class WorksheetR2RMLJenaModelParser {
 	private enum TransformationCommandKeysAndValues {
 		commandName, SubmitCleaningCommand, SplitByCommaCommand, examples, 
 		SubmitPythonTransformationCommand, newColumnName, transformationCode,
-		errorDefaultValue, RenameColumnCommand
+		errorDefaultValue, RenameColumnCommand, InvokeRubenReconciliationService,
+		alignmentNodeId
 	}
 	
 	public WorksheetR2RMLJenaModelParser(VWorksheet vWorksheet, VWorkspace vWorkspace, Model model,
@@ -144,6 +146,7 @@ public class WorksheetR2RMLJenaModelParser {
 			String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputParams);
 			
 			// Check for the type of command to execute
+			// TODO: Needs cleanup. Use Command Factories.
 			if (commandName.equals(TransformationCommandKeysAndValues.SplitByCommaCommand.name())) {
 				String delimiter = HistoryJsonUtil.getStringValue(Arguments.delimiter.name(), 
 						inputParams);
@@ -180,6 +183,17 @@ public class WorksheetR2RMLJenaModelParser {
 					comm.doIt(vWorkspace);
 				} catch (CommandException e) {
 					logger.error("Error executing Rename Column command", e);
+					e.printStackTrace();
+				}
+			}  else if (commandName.equals(TransformationCommandKeysAndValues.InvokeRubenReconciliationService.name())) {
+				String alignmentNodeId = HistoryJsonUtil.getStringValue(
+						TransformationCommandKeysAndValues.alignmentNodeId.name(), inputParams);
+				InvokeRubenReconciliationService comm = new InvokeRubenReconciliationService("", 
+						alignmentNodeId, vWorksheet.getId());
+				try {
+					comm.doIt(vWorkspace);
+				} catch (CommandException e) {
+					logger.error("Error executing Reconcilitation service command", e);
 					e.printStackTrace();
 				}
 			}

@@ -221,9 +221,26 @@ public class SetSemanticTypeCommand extends Command {
 						// For all other cases where the columnNode did not exist yet
 						else {
 							if (!domainNodeAlreadyExistsInGraph) {
-//								System.out.println("Value: " + domainValue);
+//								System.out.println("Domain Value: " + domainValue);
 								Label domainLabel = ontMgr.getUriLabel(domainValue);
-//								System.out.println(domainLabel);
+//								System.out.println("Domain Label" + domainLabel);
+								
+								// Check for the case when domainLabel is null and 
+								// the node id has a integer in the end
+								if (domainLabel == null) {
+									int len = domainValue.length(); 
+									if ((len > 1) && Character.isDigit(domainValue.charAt(len-1))) {
+										String newDomainValue = domainValue.substring(0, len-1);
+										domainLabel = ontMgr.getUriLabel(newDomainValue);
+									}
+									// If still node is not found
+									if (domainLabel == null) {
+										logger.error("No graph node found for the node: " + domainValue);
+										return new UpdateContainer(new ErrorUpdate("" +
+												"Error occured while setting semantic type!"));
+									}
+								}
+								
 								newDomainNode = alignment.addInternalNode(domainLabel);
 							}
 							

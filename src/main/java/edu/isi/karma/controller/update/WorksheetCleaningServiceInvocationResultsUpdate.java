@@ -80,6 +80,11 @@ public class WorksheetCleaningServiceInvocationResultsUpdate extends
 					jsonRecord.put(JsonKeys.value.name(), originalVal);
 					requestJsonArray.put(jsonRecord);
 				}
+				if (requestJsonArray.length() == 0) {
+					logger.error("Empty values input for path" + path.toColumnNamePath());
+					continue;
+				}
+				
 				String jsonString = requestJsonArray.toString();
 				
 				String cleaningServiceURL = ServletContextParameterMap.getParameterValue(
