@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,8 +113,14 @@ public class WorksheetCleaningServiceInvocationResultsUpdate extends
 			for (String hNodeId:cleaningInvocationOutput.keySet()) {
 				JSONObject columnChartData = new JSONObject();
 				columnChartData.put(JsonKeys.hNodeId.name(), hNodeId);
-				columnChartData.put(JsonKeys.chartData.name(), 
-						new JSONObject(cleaningInvocationOutput.get(hNodeId)));
+				try {
+					columnChartData.put(JsonKeys.chartData.name(), 
+							new JSONObject(cleaningInvocationOutput.get(hNodeId)));
+				} catch (JSONException e) {
+					logger.error("Error occured with cleaning service for HNode: " + hNodeId, e);
+					continue;
+				}
+				
 				chartData.put(columnChartData);
 			}
 			response.put(JsonKeys.worksheetChartData.name(), chartData);
