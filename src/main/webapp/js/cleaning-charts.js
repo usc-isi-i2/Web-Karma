@@ -42,7 +42,9 @@ function drawChart(element)  {
 	var yaxispadding = 10;
 	var xPadding = 10;
 	var yPadding = 2;
-			
+
+	if (element["chartData"].histogram == "undefined")
+		return;
 	var dataArray = eval(element["chartData"].histogram);
 	//console.log(dataArray); 
 	var xLabel = element["chartData"].xLabel;
@@ -159,6 +161,8 @@ function drawBigChart(pid)  {
 	var xPadding = 20;
 	var yPadding = 2;
 	element = Window.cleaningStore[pid];
+	if (element["chartData"].histogram == "undefined")
+		return;
 	var dataArray = eval(element["chartData"].histogram);
 	var xLabel = element["chartData"].xLabel;
 	var yLabel = element["chartData"].yLabel;
