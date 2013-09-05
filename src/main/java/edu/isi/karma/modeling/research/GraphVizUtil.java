@@ -28,6 +28,7 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -170,7 +171,38 @@ public class GraphVizUtil {
         return Double.valueOf(twoDForm.format(d));
 	}
 	
-	public static org.kohsuke.graphviz.Graph exportJGraphToGraphviz(DirectedWeightedMultigraph<Node, Link> model) {
+	public static String getLocalName(String uri) {
+
+		if (uri == null)
+			return "";
+		
+		String localName = uri;
+		
+		if (uri.contains("#") && !uri.endsWith("#"))
+			localName = uri.substring(uri.lastIndexOf('#') + 1);
+		else {
+			if (uri.endsWith("/"))
+				uri = uri.substring(0, uri.length() - 2);
+			if (uri.contains("/"))
+				localName = uri.substring(uri.lastIndexOf('/') + 1);
+		}
+		return localName;
+	}
+	
+	private static String getPatterns(Set<String> patternIds) {
+		String label = "";
+		if (patternIds == null || patternIds.size() == 0)
+			return label;
+		label += "[";
+		for (String pId : patternIds)
+			label += pId + ",";
+		if (label.endsWith(","))
+			label = label.substring(0, label.length() - 1);
+		label += "]";
+		return label;
+	}
+	
+	public static org.kohsuke.graphviz.Graph exportJGraphToGraphviz(DirectedWeightedMultigraph<Node, Link> model, boolean showDescription) {
 
 		org.kohsuke.graphviz.Graph gViz = new org.kohsuke.graphviz.Graph();
 
@@ -219,9 +251,14 @@ public class GraphVizUtil {
 			org.kohsuke.graphviz.Node n = nodeIndex.get(source);
 			String id = source.getId();
 			String uri = source.getLabel().getUri();
+			String localName = getLocalName(uri);
+			String label;
 			if (n == null) {
 				n = new org.kohsuke.graphviz.Node();
-				n.attr("label", (uri == null || uri.trim().length() == 0?id:uri));
+//				label = (uri == null || uri.trim().length() == 0?id:uri));
+				label = (localName == null || localName.trim().length() == 0?id:localName);
+				if (showDescription) label += " " + getPatterns(source.getPatternIds()); 
+				n.attr("label", label);
 				nodeIndex.put(source, n);
 			
 //				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
@@ -241,9 +278,13 @@ public class GraphVizUtil {
 			n = nodeIndex.get(target);
 			id = target.getId();
 			uri = target.getLabel().getUri();
+			localName = getLocalName(uri);
 			if (n == null) {
 				n = new org.kohsuke.graphviz.Node();
-				n.attr("label", (uri == null || uri.trim().length() == 0?id:uri));
+//				label = (uri == null || uri.trim().length() == 0?id:uri));
+				label = (localName == null || localName.trim().length() == 0?id:localName);
+				if (showDescription) label += " " + getPatterns(target.getPatternIds()); 
+				n.attr("label", label);
 				nodeIndex.put(target, n);
 			
 //				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
@@ -262,16 +303,16 @@ public class GraphVizUtil {
 			
 			id = e.getId();
 			uri = e.getLabel().getUri();
+			localName = getLocalName(uri);
 			org.kohsuke.graphviz.Edge edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(source), nodeIndex.get(target));
 			
-			String label = (uri == null?id:uri);
-			label += "-(" + roundTwoDecimals(e.getWeight()) + ")-";
-			label += "-[";
-			for (String pId : e.getPatternIds())
-				label += pId + ",";
-			if (label.endsWith(","))
-				label = label.substring(0, label.length() - 1);
-			label += "]";
+//			String label = (uri == null?id:uri);
+			label = (localName == null?id:localName);
+			if (showDescription) {
+				label += "-(" + roundTwoDecimals(e.getWeight()) + ")-";
+				label += " ";
+				label += getPatterns(e.getPatternIds());
+			}
 
 			edge.attr("label", label);
 			gViz.edgeWith(edgeStyle);
@@ -285,7 +326,7 @@ public class GraphVizUtil {
 	public static void exportJGraphToGraphvizFile(
 			DirectedWeightedMultigraph<Node, Link> model, String label, String exportPath) 
 					throws FileNotFoundException {
-		org.kohsuke.graphviz.Graph graphViz = exportJGraphToGraphviz(model);
+		org.kohsuke.graphviz.Graph graphViz = exportJGraphToGraphviz(model, true);
 		graphViz.attr("fontcolor", "blue");
 		graphViz.attr("remincross", "true");
 		graphViz.attr("label", label);
@@ -305,9 +346,11 @@ public class GraphVizUtil {
 		org.kohsuke.graphviz.Graph cluster = null;
 		int counter = 0;
 		
+		boolean showLinkDescription;
 		if (models != null) {
 			for(Entry<String,DirectedWeightedMultigraph<Node, Link>> entry : models.entrySet()) {
-				cluster = GraphVizUtil.exportJGraphToGraphviz(entry.getValue());
+				if (entry.getKey() == "1-correct model") showLinkDescription = false; else showLinkDescription = true;
+				cluster = GraphVizUtil.exportJGraphToGraphviz(entry.getValue(), showLinkDescription);
 				cluster.id("cluster_" + counter);
 				cluster.attr("label", entry.getKey());
 				graphViz.subGraph(cluster);

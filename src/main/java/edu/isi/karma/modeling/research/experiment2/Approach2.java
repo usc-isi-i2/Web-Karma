@@ -22,7 +22,6 @@
 package edu.isi.karma.modeling.research.experiment2;
 
 import java.io.File;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -89,7 +88,7 @@ public class Approach2 {
 
 	
 	private static final int MAX_CANDIDATES = 5;
-//	private static final int MAX_STEINER_NODES_SETS = 100;
+	private static final int MAX_STEINER_NODES_SETS = 100;
 	
 	private HashSet<Link> patternLinks;
 	private HashMap<String, Integer> linkCountMap;
@@ -109,31 +108,33 @@ public class Approach2 {
 		
 		public double getWeight() {
 			
-			double w = 0.0;
+			double weight = 0.0;
+			double w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
+			double epsilon = ModelingParams.PATTERN_LINK_WEIGHT;
 //			double factor = 0.01;
-			int c = this.count;
+			int c = this.count < (int)w ? this.count : (int)w - 1;
 			
-			if (type == 1)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - ((c) / ModelingParams.PROPERTY_DIRECT_WEIGHT);
-			else if (type == 2)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - ((c/10) / ModelingParams.PROPERTY_DIRECT_WEIGHT);
-			else if (type == 3)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - ((c/10) / ModelingParams.PROPERTY_DIRECT_WEIGHT);
-			else if (type == 4)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT - ((c/50) / ModelingParams.PROPERTY_DIRECT_WEIGHT);
-			else if (type == 5)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
-			else if (type == 6)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.01;
-			else if (type == 7)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.02;
-			else if (type == 8)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.03;
-			else if (type == 9)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.04;
-			else if (type == 10)
-				w = ModelingParams.PROPERTY_DIRECT_WEIGHT + 0.05;
-			return w;
+			if (type == 1) // match domain, link, and range
+				weight = w - (epsilon / (w - c));
+			else if (type == 2) // match link and range
+				weight = w - (epsilon / ((w - c) * w));
+			else if (type == 3) // match domain and link
+				weight = w - (epsilon / ((w - c) * w));
+			else if (type == 4) // match link
+				weight = w - (epsilon / ((w - c) * w * w));
+			else if (type == 5) // direct property
+				weight = w;
+			else if (type == 6) // indirect property
+				weight = w + epsilon - (epsilon / (w - c));
+			else if (type == 7) // property with only domain
+				weight = w + epsilon + (epsilon / ((w - c) * w));
+			else if (type == 8) // property with only range
+				weight = w + epsilon + (epsilon / ((w - c) * w));
+			else if (type == 9) // subClass
+				weight = w + epsilon + (epsilon / ((w - c) * w * w));
+			else if (type == 10) // property without domain and range
+				weight = w + epsilon + (epsilon / ((w - c) * w * w * w));
+			return weight;
 		}
 		
 		@Override
@@ -475,8 +476,9 @@ public class Approach2 {
 		String key1, key2;
 		for (Link link : this.graphBuilder.getGraph().edgeSet()) {
 			
-			if (!(link instanceof SimpleLink))
+			if (!(link instanceof SimpleLink)) {
 				continue;
+			}
 			
 			key1 = link.getSource().getLabel().getUri() + 
 					link.getTarget().getLabel().getUri();
@@ -606,7 +608,15 @@ public class Approach2 {
 	
 	private CandidateSteinerSets getCandidateSteinerSets(List<SemanticLabel2> semanticLabels, Set<Node> addedNodes) {
 
-		CandidateSteinerSets candidateSteinerSets = new CandidateSteinerSets();
+		int maxNumberOfMappedNodes = 0;
+		for (SemanticLabel2 sl : semanticLabels) {
+			if (sl.getType() == SemanticLabelType.Class)
+				maxNumberOfMappedNodes += 1;
+			else
+				maxNumberOfMappedNodes += 2;
+		}
+		
+		CandidateSteinerSets candidateSteinerSets = new CandidateSteinerSets(maxNumberOfMappedNodes);
 		if (addedNodes == null) 
 			addedNodes = new HashSet<Node>();
 		
@@ -752,25 +762,25 @@ public class Approach2 {
 
 	}
 		
-	private List<RankedModel> rankModels(List<DirectedWeightedMultigraph<Node, Link>> models) {
-		
-		List<RankedModel> rankedModels = new ArrayList<RankedModel>();
-		if (models == null || models.size() == 0)
-			return rankedModels;
-
-		int count = 1;
-		
-		for (DirectedWeightedMultigraph<Node, Link> m : models) {
-			logger.info("computing raking factors for model " + count + " ...");
-			RankedModel r = new RankedModel(m);
-			rankedModels.add(r);
-			count ++;
-			logger.info("coherence=" + r.getCoherenceString() + ", cost=" + r.getCost());
-		}
-		
-		Collections.sort(rankedModels);
-		return rankedModels;
-	}
+//	private List<RankedModel> rankModels(List<DirectedWeightedMultigraph<Node, Link>> models) {
+//		
+//		List<RankedModel> rankedModels = new ArrayList<RankedModel>();
+//		if (models == null || models.size() == 0)
+//			return rankedModels;
+//
+//		int count = 1;
+//		
+//		for (DirectedWeightedMultigraph<Node, Link> m : models) {
+//			logger.info("computing raking factors for model " + count + " ...");
+//			RankedModel r = new RankedModel(m);
+//			rankedModels.add(r);
+//			count ++;
+//			logger.info("coherence=" + r.getCoherenceString() + ", cost=" + r.getCost());
+//		}
+//		
+////		Collections.sort(rankedModels);
+//		return rankedModels;
+//	}
 	
 	public List<RankedModel> hypothesize(List<SemanticLabel2> semanticLabels, int numOfAttributes) {
 
@@ -802,9 +812,6 @@ public class Approach2 {
 ////		for (RankedSteinerSet r : rankedSteinerSets)
 ////			System.out.println(r.getCohesionString());
 
-		List<DirectedWeightedMultigraph<Node, Link>> models = 
-				new ArrayList<DirectedWeightedMultigraph<Node,Link>>();
-		
 		logger.info("updating weights according to training data ...");
 		long start = System.currentTimeMillis();
 		this.updateWeights();
@@ -819,18 +826,27 @@ public class Approach2 {
 //			if (tree != null) models.add(tree);
 //		}
 
+//		List<DirectedWeightedMultigraph<Node, Link>> models = 
+//				new ArrayList<DirectedWeightedMultigraph<Node,Link>>();
+		
+		List<RankedModel> rankedModels = new ArrayList<RankedModel>();
 		int count = 1;
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
 			logger.info("computing steiner tree for steiner nodes set " + count + " ...");
+			sn.print();
 			DirectedWeightedMultigraph<Node, Link> tree = computeSteinerTree(sn.getNodes());
 			count ++;
-			if (tree != null) models.add(tree);
+			if (tree != null) {
+				RankedModel r = new RankedModel(tree, sn);
+				rankedModels.add(r);
+			}
+			if (count == MAX_STEINER_NODES_SETS)
+				break;
 		}
 		
-		List<RankedModel> rankedModels = rankModels(models);
+		Collections.sort(rankedModels);
 		if (rankedModels != null && rankedModels.size() > MAX_CANDIDATES )
 			return rankedModels.subList(0, MAX_CANDIDATES);
-		
 		
 		return rankedModels;
 
@@ -946,19 +962,19 @@ public class Approach2 {
 		if (selectedLinkUri1 != null && selectedLinkUri1.trim().length() > 0) {
 			selectedLinkUri = selectedLinkUri1;
 			maxCount = maxCount1;
-			type = 1;
+			type = 1; // match domain and link and range
 		} else if (selectedLinkUri2 != null && selectedLinkUri2.trim().length() > 0) {
 			selectedLinkUri = selectedLinkUri2;
 			maxCount = maxCount2;
-			type = 2;
+			type = 2; // match link and range
 		} else if (selectedLinkUri3 != null && selectedLinkUri3.trim().length() > 0) {
 			selectedLinkUri = selectedLinkUri3;
 			maxCount = maxCount3;
-			type = 3;
+			type = 3; // match domain and link
 		} else if (selectedLinkUri4 != null && selectedLinkUri4.trim().length() > 0) {
 			selectedLinkUri = selectedLinkUri4;
 			maxCount = maxCount4;
-			type = 4;
+			type = 4; // match link label
 		} else {
 			if (objectPropertiesDirect != null && objectPropertiesDirect.size() > 0) {
 				selectedLinkUri = objectPropertiesDirect.iterator().next();
@@ -989,10 +1005,10 @@ public class Approach2 {
 		
 	}
 	
-	private static double roundTwoDecimals(double d) {
-        DecimalFormat twoDForm = new DecimalFormat("#.##");
-        return Double.valueOf(twoDForm.format(d));
-	}
+//	private static double roundTwoDecimals(double d) {
+//        DecimalFormat twoDForm = new DecimalFormat("#.##");
+//        return Double.valueOf(twoDForm.format(d));
+//	}
 	
 	private static void testApproach() throws Exception {
 		
@@ -1026,8 +1042,8 @@ public class Approach2 {
 		ontManager.doImport(new File(Approach2.ontologyDir + "260_aac-ont.owl"));
 		ontManager.updateCache();
 
-//		for (int i = 0; i < serviceModels.size(); i++) {
-		int i = 0; {
+		for (int i = 0; i < serviceModels.size(); i++) {
+//		int i = 0; {
 			trainingData.clear();
 			int newServiceIndex = i;
 			ServiceModel2 newService = serviceModels.get(newServiceIndex);
@@ -1101,8 +1117,7 @@ public class Approach2 {
 					
 					String label = "candidate" + k + 
 							"--distance:" + distance +
-							"-coherence:" + m.getCoherenceString() +
-							"-cost:" + roundTwoDecimals(m.getCost()); 
+							"---" + m.getDescription();
 					
 					graphs.put(label, m.getModel());
 				}

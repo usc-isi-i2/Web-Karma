@@ -27,10 +27,12 @@ import java.util.List;
 
 public class CandidateSteinerSets {
 	
-	private static final int MAX_SIZE = 100;
+	private static final int MAX_SIZE = 1000;
+	private int maxNumberOfSteinerNodes;
 	private List<SteinerNodes> steinerSets;
 	
-	public CandidateSteinerSets() {
+	public CandidateSteinerSets(int maxNumberOfSteinerNodes) {
+		this.maxNumberOfSteinerNodes = maxNumberOfSteinerNodes;
 		this.steinerSets = new ArrayList<SteinerNodes>();
 	}
 	
@@ -48,7 +50,7 @@ public class CandidateSteinerSets {
 		
 		if (this.steinerSets.size() == 0) {
 			for (MappingStruct ms : mapping.getMappingStructs()) {
-				SteinerNodes sn = new SteinerNodes();
+				SteinerNodes sn = new SteinerNodes(maxNumberOfSteinerNodes);
 				sn.addNode(ms.getSource(), 1.0);
 				if (mapping.getType() == MappingType.DataNode) {
 					sn.addNode(ms.getTarget(), sn.getConfidence());
@@ -65,7 +67,7 @@ public class CandidateSteinerSets {
 							continue;
 						sn.addNode(ms.getSource(), sn.getConfidence());
 					}
-					if (mapping.getType() == MappingType.DataNode) {
+					else if (mapping.getType() == MappingType.DataNode) {
 						if (nodeSet.getNodes().contains(ms.getSource()) &&
 								nodeSet.getNodes().contains(ms.getTarget()))
 							continue;

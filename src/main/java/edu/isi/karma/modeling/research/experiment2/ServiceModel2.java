@@ -105,7 +105,7 @@ public class ServiceModel2 {
 		graphViz.attr("label", this.getServiceDescription());
 //		graphViz.attr("page", "8.5,11");
 
-		org.kohsuke.graphviz.Graph gViz = GraphVizUtil.exportJGraphToGraphviz(this.model);
+		org.kohsuke.graphviz.Graph gViz = GraphVizUtil.exportJGraphToGraphviz(this.model, true);
 		gViz.attr("label", "model");
 		gViz.id("cluster");
 		graphViz.subGraph(gViz);
