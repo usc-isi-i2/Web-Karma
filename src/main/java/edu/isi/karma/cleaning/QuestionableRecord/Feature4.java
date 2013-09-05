@@ -21,38 +21,41 @@
 
 package edu.isi.karma.cleaning.QuestionableRecord;
 
-import edu.isi.karma.cleaning.RecFeature;
+import java.util.Vector;
 
-// reverse count feature
-public class Feature3 implements RecFeature {
-	int rcnt = 0;
-	String resString;
-	//calculate the number of reverse order
-	public Feature3(String res)
-	{
-		this.resString = res;
-	}
-	@Override
-	public double computerScore() {
-		int pre = -1;
-		double cnt = 0;
-		for(int c=0; c<resString.length(); c++)
+import org.python.antlr.PythonParser.return_stmt_return;
+
+import edu.isi.karma.cleaning.RecFeature;
+import edu.isi.karma.cleaning.TNode;
+
+public class Feature4 implements RecFeature{
+		public String target;
+		public Vector<TNode> xNodes =new Vector<TNode>();
+		public Vector<TNode> yNodes =new Vector<TNode>();
+		public Feature4(String tar,Vector<TNode> xNodes,Vector<TNode> yNodes)
 		{
-			if(Character.isDigit(resString.charAt(c)))
+			target = tar;
+			this.xNodes = xNodes;
+			this.yNodes = yNodes;
+		}
+		public double computerScore()
+		{
+			int tarCnt = 0;
+			int orgCnt = 0;
+			for (TNode t:xNodes)
 			{
-				if(pre != -1)
+				if(t.text.compareTo(target) == 0)
 				{
-					pre = c;
-					continue;
-				}
-				if(c <pre)
-				{
-					pre = c;
-					cnt ++;
+					orgCnt += 1;
 				}
 			}
+			for(TNode t:yNodes)
+			{
+				if(t.text.compareTo(target) == 0)
+				{
+					tarCnt += 1;
+				}
+			}
+			return tarCnt - orgCnt;
 		}
-		return cnt;
 	}
-
-}

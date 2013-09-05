@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*- 
 '''
 Created on Jul 27, 2012
 
@@ -17,11 +18,13 @@ class Interpreter(InterpreterType):
         if name == "h":
             print "hello world"
     def execute(self,value):
+        value = value.encode("utf-8","ignore")
         FunctionList.Function_Debug = False;
         value = eval(self.script)
         return str(value)
     def execute_debug(self,value):
         FunctionList.Function_Debug = True;
+        value = value.encode("utf-8","ignore")
         value = eval(self.script)
         return str(value) 
 

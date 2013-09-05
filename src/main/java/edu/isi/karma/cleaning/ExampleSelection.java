@@ -22,16 +22,21 @@
 package edu.isi.karma.cleaning;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Vector;
+
+import edu.isi.karma.cleaning.QuestionableRecord.OutlierDetector;
 
 public class ExampleSelection {
 	public HashMap<String, Vector<TNode>> org = new HashMap<String, Vector<TNode>>();
 	public HashMap<String, Vector<TNode>> tran = new HashMap<String, Vector<TNode>>();
 	public HashMap<String, String[]> raw = new HashMap<String, String[]>();
+	public boolean isDetectingQuestionableRecord = false;
 	public OutlierDetector out;
 	// testdata rowid:{tar, tarcolor}
 	public HashMap<String, HashMap<String, String[]>> testdata = new HashMap<String, HashMap<String, String[]>>();
 	public static int way = 3;
+	public HashSet<String> dictionary = new HashSet<String>();
 
 	public ExampleSelection() {
 	}
@@ -68,7 +73,17 @@ public class ExampleSelection {
 		}
 		return ID;
 	}
-
+	public Vector<String[]> getOrgTarPair(HashMap<String, String[]> exps)
+	{
+		Vector<String[]> result = new Vector<String[]>();
+		for (String key:exps.keySet())
+		{
+			String[] record = exps.get(key);
+			String[] tmp = {record[0],record[1]};
+			result.add(tmp);
+		}
+		return result;
+	}
 	// exps: rowId: {org, tar, tarcode,classlabel}
 	// example: partition id: [{tar,tarcode}]
 	public void inite(HashMap<String, String[]> exps,
@@ -77,7 +92,12 @@ public class ExampleSelection {
 	
 		if (way >= 6) {
 			out = new OutlierDetector();
-			out.buildMeanVector(examples);
+			if(firsttime)
+			{
+				out.buildDict(this.getOrgTarPair(exps));
+				this.dictionary = out.dict;
+			}
+			out.buildMeanVector(examples,this.dictionary);
 		}
 		Ruler ruler = new Ruler();
 		for (String keyString : exps.keySet()) {
@@ -85,7 +105,7 @@ public class ExampleSelection {
 			ruler.setNewInput(e);
 			org.put(keyString, ruler.vec);
 			if (way >= 6) {
-				String[] pair = { exps.get(keyString)[1],
+				String[] pair = { exps.get(keyString)[0],
 						exps.get(keyString)[2] };
 				if (testdata.containsKey(exps.get(keyString)[3])) {
 					HashMap<String, String[]> xelem = testdata.get(exps
@@ -184,21 +204,56 @@ public class ExampleSelection {
 	}
 
 	public String way6() {
-		String row = "";
-		if (out.rVectors.size() == 0) {
+		int max = 2; // only the one with _FATAL_ERROR_ inside
+		if (firsttime) {
+			firsttime = false;
 			return this.way2();
 		}
-		double max = -1;
-		for (String key : this.testdata.keySet()) {
-			String trowid = out.getOutliers(testdata.get(key),
-					out.rVectors.get(key), max);
-			max = out.currentMax;
-			if (trowid.length() > 0) {
-				row = trowid;
+		Vector<String> examples = new Vector<String>();
+		for (String key : raw.keySet()) {
+			int cnt = 0;
+			int spos = 0;
+			String[] tmp = raw.get(key)[2].split("((?<=_\\d_FATAL_ERROR_)|(?=_\\d_FATAL_ERROR_))");
+			
+			
+			for(String tmpstring:tmp)
+			{
+				int errnum = 0;
+				if(tmpstring.indexOf("_FATAL_ERROR_")== -1)
+				{
+					continue;
+				}
+				errnum = Integer.valueOf(tmpstring.substring(1, 2));
+				cnt += errnum;
+			}
+			if (cnt > max) {
+				max = cnt;
+				examples.clear();
+				examples.add(key);
+			}
+			if (cnt == max && max > 1) {
+				examples.add(key);
 			}
 		}
-		return row;
+		// if now _FATAL_ERROR_ detected use outlier detection
+		if (examples.size() == 0) {
+			String row = "";
+			row = way8();
+			return row;
+		} else { // select the most ambigious among all the record with same number of FATALERROR
+			String idString = "";
+			int min = 10000;
+			for (String key : examples) {
+				int s = this.ambiguityScore(org.get(key));
+				if (s < min) {
+					min = s;
+					idString = key;
+				}
+			}
+			return idString;
+		}
 	}
+	
 	public String way7() {
 		int max = 2; // only the one with _FATAL_ERROR_ inside
 		if (firsttime) {
@@ -231,19 +286,22 @@ public class ExampleSelection {
 				examples.add(key);
 			}
 		}
+		// if no _FATAL_ERROR_ detected use outlier detection
 		if (examples.size() == 0) {
+			isDetectingQuestionableRecord = true;
 			String row = "";
 			double tmax = -1;
 			for (String key : this.testdata.keySet()) {
 				String trowid = out.getOutliers(testdata.get(key),
-						out.rVectors.get(key), tmax);
+						out.rVectors.get(key), tmax,this.dictionary);
 				tmax = out.currentMax;
 				if (trowid.length() > 0) {
 					row = trowid;
 				}
 			}
 			return row;
-		} else {
+		} else { // select the most ambigious among all the record with same number of FATALERROR
+			isDetectingQuestionableRecord = false;
 			String idString = "";
 			int min = 10000;
 			for (String key : examples) {
@@ -255,7 +313,6 @@ public class ExampleSelection {
 			}
 			return idString;
 		}
-
 	}
 	//shortest result
 	// exps: rowId: {org, tar, tarcode,classlabel}

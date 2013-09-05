@@ -19,9 +19,12 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.cleaning;
+package edu.isi.karma.cleaning.QuestionableRecord;
 
 import java.util.Vector;
+
+import edu.isi.karma.cleaning.RecFeature;
+import edu.isi.karma.cleaning.TNode;
 
 //counting  text feature
 public class Feature1 implements RecFeature{

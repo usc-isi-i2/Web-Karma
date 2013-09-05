@@ -57,7 +57,7 @@ public class DataCollection {
 	{
 		// int[] 0 avg total learn time, 1 avg learn time, 2 t gen time, 3 avg gen time
 		// 4 tot exec time 5 ave exec time
-		// 6 exp num 7 tot ruleNo
+		// 6 exp num 7 tot ruleNo 8 checkedrows
 		HashMap<String, Double[]> stats = new HashMap<String, Double[]>();
 		for(FileStat f:fstates)
 		{

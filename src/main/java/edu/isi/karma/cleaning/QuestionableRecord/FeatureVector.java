@@ -19,24 +19,35 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.cleaning;
+package edu.isi.karma.cleaning.QuestionableRecord;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Vector;
+
+import org.python.antlr.PythonParser.dictmaker_return;
+import org.python.antlr.PythonParser.print_stmt_return;
+
+import edu.isi.karma.cleaning.RecFeature;
+import edu.isi.karma.cleaning.Ruler;
+import edu.isi.karma.cleaning.TNode;
+import edu.isi.karma.cleaning.UtilTools;
 
 public class FeatureVector {
 	String[] symbol = {"#",";",",","!","~","@","$","%","^","&","*","(",")","_","-","{","}","[","]","\"","'",":","?","<",">","."};
 	int[] types = {TNode.NUMTYP,TNode.SYBSTYP,TNode.LWRDTYP,TNode.UWRDTYP};
 	Vector<RecFeature> x = new Vector<RecFeature>();
+	HashSet<String> dictionary = new HashSet<String>();
 	public int size;
 	
-	public FeatureVector()
+	public FeatureVector(HashSet<String> dic)
 	{
-		
-		
+		this.dictionary = dic;
+		this.dictionary.clear();
 	}
 	public int size()
 	{
-		return symbol.length+types.length+1;
+		return this.symbol.length+this.types.length+1+this.dictionary.size();
 	}
 	public Vector<RecFeature> createVector(String raw,String color)
 	{
@@ -45,23 +56,35 @@ public class FeatureVector {
 		r.setNewInput(raw);
 		Vector<TNode> vt = new Vector<TNode>();
 		vt = r.vec;
-		constructVector(vt,color,v);
+		HashMap<String, String> tmp = new HashMap<String, String>();
+		System.out.println("raw: "+raw+" color: "+color);
+		UtilTools.StringColorCode(raw, color, tmp);
+		String tar = tmp.get("Tar");
+		r.setNewInput(tar);
+		Vector<TNode> tarNodes = r.vec;
+		constructVector(vt,tarNodes,color,v,this.dictionary);
+		this.size = v.size();
 		return v;
 	}
-	public void constructVector(Vector<TNode> t,String color,Vector<RecFeature> v)
+	public void constructVector(Vector<TNode> t,Vector<TNode> tarNodes,String color,Vector<RecFeature> v,HashSet<String> dic)
 	{
 		
 		for(String s:symbol)
 		{
-			Feature1 feature1 = new Feature1(s, t);
+			Feature1 feature1 = new Feature1(s, tarNodes);
 			v.add(feature1);
 		}
 		for(int type:types)
 		{
-			Feature2 feature2 = new Feature2(type, t);
+			Feature2 feature2 = new Feature2(type, tarNodes);
 			v.add(feature2);
 		}
 		Feature3 feature3 = new Feature3(color);
 		v.add(feature3);
+		for(String s:dic)
+		{
+			Feature4 f4 = new Feature4(s,t,tarNodes);
+			v.add(f4);
+		}
 	}
 }

@@ -4,8 +4,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Vector;
+
+import org.apache.mahout.math.Arrays;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -13,23 +14,48 @@ public class Test {
 	public static void test1()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"<_START>Jan<_END>", ""};
-		String[] yStrings = {"<_START>Feb<_END>", "02"};
-		String[] zStrings = {"<_START>Mar<_END>", "03"};
+		String[] xStrings = {"<_START>Technische Universität Berlin, DAI-Labor, Berlin, Germany<_END>", "Technische Universität Berlin"};
+		String[] yStrings = {"<_START>Stanford University, Stanford, California, United States<_END>", "Stanford University"};
+		//String[] zStrings = {"<_START>Faculdade de Ciências, Universidade de Lisboa, Lisboa, Portugal<_END>", "Portugal"};
 		examples.add(xStrings);
+		System.out.println("length: "+xStrings[1].length());
 		examples.add(yStrings);
-		examples.add(zStrings);
+		//examples.add(zStrings);
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(examples);
 		Vector<ProgramRule> pls = new Vector<ProgramRule>();
 		Collection<ProgramRule> ps = psProgSynthesis.run_main();
 		ProgramRule pr = ps.iterator().next();
-		String val = "Jan";
-		String val2 = "Feb";
+		String val = "Faculdade de Ciências, Universidade de Lisboa, Lisboa, Portugal";
 		InterpreterType rule = pr.getRuleForValue(val);
 		System.out.println(rule.execute(val));
-		InterpreterType rule1 = pr.getRuleForValue(val2);
-		System.out.println(rule1.execute(val2));
+	}
+	//check whether it longest or shortest
+	public static boolean visible(HashMap<String, String[]> xHashMap,String Id)
+	{
+		String[] pair = xHashMap.get(Id);
+		HashMap<String, String> tmp = new HashMap<String, String>();
+		UtilTools.StringColorCode(pair[0], pair[1], tmp);
+		String tar = tmp.get("Tar");
+		int length = tar.length();
+		boolean shortest = true;
+		boolean longest = true;
+		for (String[] elem : xHashMap.values())
+		{
+			HashMap<String, String> t = new HashMap<String, String>();
+			UtilTools.StringColorCode(elem[0], elem[1], t);
+			String tres = tmp.get("Tar");
+			int newl = tres.length();
+			if (newl > length)
+			{
+				longest = false;
+			}
+			if (newl <length)
+			{
+				shortest = false;
+			}
+		}
+		return (shortest || longest);
 		
 	}
 	public static void test4(String dirpath) {
@@ -68,9 +94,11 @@ public class Test {
 							"<_START>" + entries.get(target)[0] + "<_END>",
 							entries.get(target)[1] };
 					examples.add(mt);
+					expsel.firsttime = false;
 					while (true) // repeat as no correct answer appears.
 					{
 						long checknumber = 1;
+						long iterAfterNoFatalError = 1;
 						HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
 						Vector<String> resultString = new Vector<String>();
 						xHashMap = new HashMap<String, String[]>();
@@ -102,7 +130,9 @@ public class Test {
 								String s = dict.get("Tar");
 								res += s+"\n";
 								if (ConfigParameters.debug == 1)
-									System.out.println("result:   " + dict.get("Tardis"));
+								{
+									System.out.println("result:   " + dict.get("Org")+"   "+dict.get("Tardis"));
+								}
 								if (s == null || s.length() == 0) {
 									String[] ts = {"<_START>" + entries.get(j)[0] + "<_END>","",tmps,classlabel,"wrong"};
 									xHashMap.put(j + "", ts);
@@ -114,7 +144,7 @@ public class Test {
 								{
 									if(exppair[0].compareTo("<_START>"+dict.get("Org")+"<_END>")==0)
 									{
-										String[] exp = {s,tmps};
+										String[] exp = {dict.get("Org"),tmps};
 										if(!expFeData.containsKey(classlabel))
 										{
 											Vector<String[]> vstr = new Vector<String[]>();
@@ -132,7 +162,7 @@ public class Test {
 								for (String[] tmpx : addExamples) {
 									if(tmpx[0].compareTo(dict.get("Org"))==0 && tmpx[1].compareTo(dict.get("Tar"))==0)
 									{
-										String[] exp = {s,tmps};
+										String[] exp = {dict.get("Org"),tmps};
 										if(!expFeData.containsKey(classlabel))
 										{
 											Vector<String[]> vstr = new Vector<String[]>();
@@ -170,10 +200,19 @@ public class Test {
 								expsel = new ExampleSelection();
 								expsel.inite(xHashMap,expFeData);
 								int e = Integer.parseInt(expsel.Choose());
+								///
+								System.out.println("Recommand Example: "+ Arrays.toString(xHashMap.get(""+e)));
+								///
 								if(xHashMap.get(""+e)[4].compareTo("right")!=0)
 								{
 									wexp[0] = "<_START>" + entries.get(e)[0] + "<_END>";
 									wexp[1] = 	entries.get(e)[1];
+									if(expsel.isDetectingQuestionableRecord)
+									{
+										iterAfterNoFatalError ++; 
+										//check whether this record is has the longest or shortest result
+										
+									}
 									break;
 								}
 								else

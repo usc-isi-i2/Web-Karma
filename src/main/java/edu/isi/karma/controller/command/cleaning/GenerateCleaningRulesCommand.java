@@ -345,11 +345,11 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 					if (exp.getNodeId().compareTo(key) == 0) {
 						if (!expFeData.containsKey(classLabel)) {
 							Vector<String[]> vstr = new Vector<String[]>();
-							String[] texp = {dict.get("Tar"), pretar};
+							String[] texp = {dict.get("Org"), pretar};
 							vstr.add(texp);
 							expFeData.put(classLabel, vstr);
 						} else {
-							String[] texp = { dict.get("Tar"), pretar };
+							String[] texp = { dict.get("Org"), pretar };
 							expFeData.get(classLabel).add(texp);
 						}
 						isExp = true;
