@@ -21,6 +21,7 @@
 
 package edu.isi.karma.modeling.research.experiment2;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,12 +70,25 @@ public class RankedModel implements Comparable<RankedModel>{
 	private DirectedWeightedMultigraph<Node, Link> model;
 	private double cost;
 	private List<Coherence> coherence;
+	private SteinerNodes steinerNodes;
 	
 	// the number of patterns shared among all the links 
 //	private int frequency;
 //	private List<Integer> cohesion;
 	
-
+	public RankedModel(DirectedWeightedMultigraph<Node, Link> model, SteinerNodes steinerNodes) {
+		
+		this.model = model; 
+		this.steinerNodes = steinerNodes;
+		
+		if (this.model != null && this.model.edgeSet().size() > 0) {
+			this.cost = this.computeCost();
+//			this.frequency = this.computeFrequency();
+//			this.cohesion = this.computeCohesion();
+			this.coherence = this.computeCoherence();
+		}
+	}
+	
 	public RankedModel(DirectedWeightedMultigraph<Node, Link> model) {
 		
 		this.model = model; 
@@ -91,10 +105,35 @@ public class RankedModel implements Comparable<RankedModel>{
 		return cost;
 	}
 
-	public String getCoherenceString() {
+	public SteinerNodes getSteinerNodes() {
+		return this.steinerNodes;
+	}
+	
+	public String getEdgeCoherenceString() {
 		String s = "";
 		for (Coherence c : this.coherence)
 			s += "(" + c.linkCount + "," + c.patternFrequency + ")";
+		return s;
+	}
+	
+	private static double roundTwoDecimals(double d) {
+        DecimalFormat twoDForm = new DecimalFormat("#.##");
+        return Double.valueOf(twoDForm.format(d));
+	}
+	
+	public String getDescription() {
+		String s = "";
+		
+		s += "coherence: ";
+		for (CoherenceItem ci : this.getSteinerNodes().getCoherenceList())
+			s += "(" + ci.getX() + "," + ci.getY() + ")";
+		s += " --- ";
+		
+		s += "score: " + this.steinerNodes.getScore();
+		s += " --- ";
+		
+		s += "cost: " + roundTwoDecimals(this.getCost());
+
 		return s;
 	}
 	
@@ -265,31 +304,32 @@ public class RankedModel implements Comparable<RankedModel>{
 //			return 0;
 //	}
 	
-	private int compareCoherence(List<Coherence> c1, List<Coherence> c2) {
-		if (c1 == null || c2 == null)
-			return 0;
-		
-		for (int i = 0; i < c1.size(); i++) {
-			if (i < c2.size()) {
-				if (c1.get(i).compareTo(c2.get(i)) > 0) return 1;
-				else if (c1.get(i).compareTo(c2.get(i)) < 0) return -1;
-			}
-		}
-		if (c1.size() < c2.size())
-			return 1;
-		else if (c2.size() < c1.size())
-			return -1;
-		else
-			return 0;
-	}
+//	private int compareCoherence(List<Coherence> c1, List<Coherence> c2) {
+//		if (c1 == null || c2 == null)
+//			return 0;
+//		
+//		for (int i = 0; i < c1.size(); i++) {
+//			if (i < c2.size()) {
+//				if (c1.get(i).compareTo(c2.get(i)) > 0) return 1;
+//				else if (c1.get(i).compareTo(c2.get(i)) < 0) return -1;
+//			}
+//		}
+//		if (c1.size() < c2.size())
+//			return 1;
+//		else if (c2.size() < c1.size())
+//			return -1;
+//		else
+//			return 0;
+//	}
 	
 	@Override
 	public int compareTo(RankedModel m) {
 		
-		int k = compareCoherence(this.coherence, m.coherence);
-		if (k > 0)
+		double score1 = this.getSteinerNodes().getScore();
+		double score2 = m.getSteinerNodes().getScore();
+		if (score1 > score2)
 			return -1;
-		else if (k < 0)
+		else if (score1 < score2)
 			return 1;
 		else if (this.cost < m.cost)
 			return -1;
@@ -299,6 +339,23 @@ public class RankedModel implements Comparable<RankedModel>{
 			return 0;
 		}
 	}
+	
+//	@Override
+//	public int compareTo(RankedModel m) {
+//		
+//		int k = compareCoherence(this.coherence, m.coherence);
+//		if (k > 0)
+//			return -1;
+//		else if (k < 0)
+//			return 1;
+//		else if (this.cost < m.cost)
+//			return -1;
+//		else if (m.cost < this.cost)
+//			return 1;
+//		else {
+//			return 0;
+//		}
+//	}
 	
 //	@Override
 //	public int compareTo(RankedModel m) {

@@ -227,7 +227,7 @@ public class ServiceModel1 {
 
 		int modelNo = 1;
 		for (DirectedWeightedMultigraph<Node, Link> model : this.models) {
-			org.kohsuke.graphviz.Graph gViz = GraphVizUtil.exportJGraphToGraphviz(model);
+			org.kohsuke.graphviz.Graph gViz = GraphVizUtil.exportJGraphToGraphviz(model, true);
 			gViz.attr("label", "model_" + modelNo);
 			gViz.id("cluster_" + modelNo);
 			graphViz.subGraph(gViz);
@@ -262,9 +262,9 @@ public class ServiceModel1 {
 			cluster.attr("label", "");
 			graphViz.subGraph(cluster);
 
-			gViz = GraphVizUtil.exportJGraphToGraphviz(m.getSubGraph1());
+			gViz = GraphVizUtil.exportJGraphToGraphviz(m.getSubGraph1(), true);
 			cluster.subGraph(gViz);
-			gViz = GraphVizUtil.exportJGraphToGraphviz(m.getSubGraph2());
+			gViz = GraphVizUtil.exportJGraphToGraphviz(m.getSubGraph2(), true);
 			cluster.subGraph(gViz);
 			counter ++;
 		}

@@ -45,11 +45,13 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	private static final double MIN_CONFIDENCE = 1E-6;
 	
 	private Set<Node> nodes;
+	private int maxNodeCount;
 	private List<Double> confidenceList;
 	private List<CoherenceItem> coherenceList;
 	private double confidence;
 	private double coherence;
 	private int frequency;
+	private double score;
 	
 //	class ValueComparator implements Comparator<String> {
 //
@@ -68,13 +70,15 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 //	    }
 //	}
 	
-	public SteinerNodes() {
+	public SteinerNodes(int maxNodeCount) {
 		this.nodes = new HashSet<Node>();
+		this.maxNodeCount = maxNodeCount;
 		this.confidenceList = new Vector<Double>();
 		this.coherenceList = new ArrayList<CoherenceItem>();
 		this.frequency = 0;
 		this.confidence = 1.0;
 		this.coherence = 0.0;
+		this.score = 0.0;
 	}
 	
 	public SteinerNodes(SteinerNodes steinerNodes) {
@@ -84,12 +88,18 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		this.frequency = steinerNodes.getFrequency();
 		this.confidence = steinerNodes.getConfidence();
 		this.coherence = steinerNodes.getCoherence();
+		this.maxNodeCount = steinerNodes.getMaxNodeCount();
+		this.score = steinerNodes.getScore();
 	}
 	
 	public Set<Node> getNodes() {
 		return Collections.unmodifiableSet(this.nodes);
 	}
 	
+	public int getMaxNodeCount() {
+		return maxNodeCount;
+	}
+
 	public boolean addNode(Node n, double confidence) {
 		if (this.nodes.contains(n))
 			return false;
@@ -107,6 +117,8 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		this.computeCoherenceList();
 		this.computeCoherenceValue();
 		
+		this.computeScore();
+		
 		return true;
 		
 	}
@@ -117,6 +129,10 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	
 	public int getNodeCount() {
 		return this.nodes.size();
+	}
+	
+	public double getScore() {
+		return this.score;
 	}
 	
 	public List<CoherenceItem> getCoherenceList() {
@@ -135,6 +151,13 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		return coherence;
 	}
 	
+	public double getSize() {
+//		if (this.maxNodeCount == 0)
+//			return 0;
+//		return (double) this.getNodeCount() / (double) this.maxNodeCount;
+		return (double) (this.maxNodeCount - this.getNodeCount()) / 10.0;
+		
+	}
 	
 //	private int computeFrequency() {
 //		int frequency = 0;
@@ -164,24 +187,6 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		
 		if (nodes == null || nodes.size() == 0)
 			return;
-		  
-		
-//		Map<String, Set<Node>> patternToNodeMap = new HashMap<String, Set<Node>>();
-//		ValueComparator valueComparator = new ValueComparator(patternToNodeMap);
-//		SortedMap<String, Set<Node>> sortedPatternToNodeMap = new TreeMap<String, Set<Node>>(valueComparator);
-//		
-//		for (Node n : nodes) {
-//			for (String p : n.getPatternIds()) {
-//				Set<Node> nodes = patternToNodeMap.get(p);
-//				if (nodes == null) {
-//					nodes = new HashSet<Node>();
-//					patternToNodeMap.put(p, nodes);
-//				}
-//				nodes.add(n);
-//			}
-//		}
-//		
-//		sortedPatternToNodeMap.putAll(patternToNodeMap);
 
 		Map<String, Integer> patternSize = new HashMap<String, Integer>();
 		Map<String, String> patternGuid = new HashMap<String, String>();
@@ -224,7 +229,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 				nodeMaxPatterns[size - 1] += patternGuid.get(p);
 			}
 			for (int i = maxPatternSize - 1; i >= 0; i--) {
-				if (nodeMaxPatterns[i] != null) {
+				if (nodeMaxPatterns[i] != null && nodeMaxPatterns[i].trim().length() > 0) {
 					listOfNodesLargestPatterns.add(nodeMaxPatterns[i]);
 					break;
 				}
@@ -243,8 +248,10 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		this.coherenceList.clear();
 		int x, y;
 		for (String s : index.keySet()) {
+			if (s.trim().length() == 0)
+				continue;
 			x = index.get(s).size();
-			y = index.get(s).size() / guidSize; 
+			y = x > 0 ? index.get(s).iterator().next().length() / guidSize : 0; 
 			CoherenceItem ci = new CoherenceItem(x, y);
 			this.coherenceList.add(ci);
 		}
@@ -262,40 +269,50 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		BigDecimal b;
 		
 		for (CoherenceItem ci : this.coherenceList) {
-			denominator.multiply(factor);
+			denominator = denominator.multiply(factor);
 			b = new BigDecimal(ci.getDouble());
-			b.divide(denominator);
-			value.add(b);
+			b= b.divide(denominator);
+			value = value.add(b);
 		}
 		
 		this.coherence = value.doubleValue();
 	}
 
 		
-	public double computeScore() {
+	private void computeScore() {
 		
-		double score = 0.0;
-		
-		double confidence = this.getCoherence();
-		int nodeCount = this.getNodeCount();
+		//double confidence = this.getCoherence();
+		double size = this.getSize();
 		double coherence = this.getCoherence();
-		int frequency = this.getFrequency();
+		//int frequency = this.getFrequency();
 		
-		score = coherence;
-		return score;
+		this.score = coherence + size;
 	}
 
 	@Override
 	public int compareTo(SteinerNodes target) {
 		
-		double score1 = this.computeScore();
-		double score2 = target.computeScore();
+		double score1 = this.getScore();
+		double score2 = target.getScore();
 		
 		if (score1 < score2)
-			return -1;
-		else if (score1 > score2)
 			return 1;
+		else if (score1 > score2)
+			return -1;
 		else return 0;
+	}
+	
+	public void print() {
+//		this.computeCoherenceList();
+		System.out.print("coherence list: ");
+		for (CoherenceItem ci : this.coherenceList) {
+			System.out.print("(" + ci.getX() + "," + ci.getY() + ")");
+		}
+		System.out.println();
+		System.out.println("coherence value: " + this.coherence);
+		System.out.println("size: " + this.getSize());
+		System.out.println("total number of patterns: " + this.frequency);
+		System.out.println("final score: " + this.getScore());
 	}
 		
 }

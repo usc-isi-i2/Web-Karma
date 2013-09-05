@@ -36,7 +36,7 @@ public class SemanticTypeMapping {
 	public SemanticTypeMapping(SemanticType semanticType, MappingType type) {
 		this.semanticType = semanticType;
 		this.mappingStructs = new HashSet<MappingStruct>();
-		this.type = MappingType.ClassNode;
+		this.type = type;
 	}
 
 	public SemanticTypeMapping(SemanticType semanticType, MappingType type, Set<MappingStruct> mappingStructs) {
