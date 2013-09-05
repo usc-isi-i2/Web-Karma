@@ -361,7 +361,7 @@ and related projects, please see: http://www.isi.edu/integration
 	</head>
 
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.137</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.138</span></h1>
 		<table id="topMenuBar">
 			<tr>
 				<td>
@@ -531,7 +531,7 @@ and related projects, please see: http://www.isi.edu/integration
 				</tr>
 				<tr>
 					<td>
-					<input type="textarea" id="databaseTableFilterTable" class="DatabaseImportOption dbTableColumn" size="12"/>
+					<input type="text" id="databaseTableFilterTable" class="DatabaseImportOption dbTableColumn" size="12"/>
 					</td>
 					<td rowspan=2 id="DatabasePreviewCell"><span id="dbPreviewTableName"></span>
 					<div id="DatabaseTablePreview">
@@ -1136,6 +1136,7 @@ and related projects, please see: http://www.isi.edu/integration
 
                 <span class="error" style="display: none">Please select a value!</span>
             </div>
+            <label class="smallSizedFont">Search: </label><input type="text" id="nodesTableFilter" class="smallSizedFont" size="25"/><br>
             <div id="entitiesListPanel" class="chooseNodeLinkPanel smallSizedFont">
                 <table id="nodesList">
 
@@ -1153,6 +1154,7 @@ and related projects, please see: http://www.isi.edu/integration
 
                 <span class="error" style="display: none">Please select a value!</span>
             </div>
+            <label class="smallSizedFont">Search: </label><input type="text" id="linksTableFilter" class="smallSizedFont" size="25"/><br>
             <div id="linksListPanel" class="chooseNodeLinkPanel smallSizedFont">
                 <table id="linksList">
 
@@ -1166,7 +1168,7 @@ and related projects, please see: http://www.isi.edu/integration
             <label for="showCompatibleLinks">Compatible links</label>
             <input type="radio" name="chooseLinkGroup" value="allObjectProperties" id="showAllAlternativeLinks" checked>
             <label for="showAllAlternativeLinks">All links</label><br><br>
-
+            <label class="smallSizedFont">Search: </label><input type="text" id="alternateLinksTableFilter" class="smallSizedFont" size="25"/><br>
             <span class="error" style="display: none">Please select a value!</span><br>
             <table id="alternativeLinksList">
 

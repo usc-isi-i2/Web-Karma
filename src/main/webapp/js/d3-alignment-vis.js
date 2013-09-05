@@ -69,6 +69,66 @@ function styleAndAssignHandlersToModelingVizElements() {
         }, 700);
         $(this).data("timer", timer);
     });
+
+    // Filter for the links
+    $("#linksTableFilter").keyup( function (event) {
+        // fire the above change event after every letter
+
+        //if esc is pressed or nothing is entered
+        if (event.keyCode == 27 || $(this).val() == '') {
+            //if esc is pressed we want to clear the value of search box
+            $(this).val('');
+
+            //we want each row to be visible because if nothing
+            //is entered then all rows are matched.
+            $('tr').removeClass('visible').show().addClass('visible');
+        }
+
+        //if there is text, lets filter
+        else {
+            filter('#linksList tr', $(this).val(), "edgeLabel");
+        }
+    });
+
+    // Filter for the nodes
+    $("#nodesTableFilter").keyup( function (event) {
+        // fire the above change event after every letter
+
+        //if esc is pressed or nothing is entered
+        if (event.keyCode == 27 || $(this).val() == '') {
+            //if esc is pressed we want to clear the value of search box
+            $(this).val('');
+
+            //we want each row to be visible because if nothing
+            //is entered then all rows are matched.
+            $('tr').removeClass('visible').show().addClass('visible');
+        }
+
+        //if there is text, lets filter
+        else {
+            filter('#nodesList tr', $(this).val(), "nodeLabel");
+        }
+    });
+
+    // Filter for the nodes
+    $("#alternateLinksTableFilter").keyup( function (event) {
+        // fire the above change event after every letter
+
+        //if esc is pressed or nothing is entered
+        if (event.keyCode == 27 || $(this).val() == '') {
+            //if esc is pressed we want to clear the value of search box
+            $(this).val('');
+
+            //we want each row to be visible because if nothing
+            //is entered then all rows are matched.
+            $('tr').removeClass('visible').show().addClass('visible');
+        }
+
+        //if there is text, lets filter
+        else {
+            filter('#alternativeLinksList tr', $(this).val(), "edgeLabel");
+        }
+    });
 }
 
 function displayAlignmentTree_ForceKarmaLayout(json) {
@@ -451,9 +511,9 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             });
         });
     
-    $("text.LinkLabel").qtip({content: {text: "Edit Relationship"}});
+//    $("text.LinkLabel").qtip({content: {text: "Edit Relationship"}});
     // $("g.ColumnNode, g.Unassigned").qtip({content: {text: "Change Semantic Type"}});
-    $("g.InternalNode").qtip({content: {text: "Add Parent Relationship"}});
+//    $("g.InternalNode").qtip({content: {text: "Add Parent Relationship"}});
     
     link.attr("x1", function(d) {
         if (d.linkType == "horizontalDataPropertyLink") {
@@ -634,6 +694,8 @@ function showAlternativeLinksDialog(d, vis, event) {
     optionsDiv.data("alignmentId", $(vis).data("alignmentId"));
     optionsDiv.data("worksheetId",$(vis).data("worksheetId"));
 
+    $("#alternateLinksTableFilter").val("");
+
     $("#showCompatibleLinks").trigger("click");
 
     var positionArray = [event.clientX+20       // distance from left
@@ -757,7 +819,7 @@ function populateAlternativeLinks() {
                                 edgeTd.addClass("selected");
                             }
 
-                            trTag.append(edgeTd)
+                            trTag.append(edgeTd).data("edgeLabel", node["edgeLabel"])
                             table.append(trTag);
                         });
                     }
@@ -958,6 +1020,7 @@ function showChooseNodeDialog(event) {
     $(this).parents("tr.fixMe").removeClass("fixMe");
     $("div#currentLinksErrorWindowBox").hide();
     $(this).parent().addClass("currentEditedCell");
+    $("#nodesTableFilter").val("");
 
     $("#chooseExistingNodes").trigger("click");
 
@@ -977,6 +1040,7 @@ function showChooseLinkDialog() {
     $(this).parents("tr.fixMe").removeClass("fixMe");
     $("div#currentLinksErrorWindowBox").hide();
     $(this).parent().addClass("currentEditedCell");
+    $("#linksTableFilter").val("");
 
     $("#chooseAllLinks").trigger("click");
 
@@ -984,7 +1048,7 @@ function showChooseLinkDialog() {
         , event.clientY+10];    // distance from top
 
     // Show the dialog box
-    optionsDiv.dialog({width: 250, height: 400, position: positionArray, title: "Choose Link"
+    optionsDiv.dialog({width: 280, height: 400, position: positionArray, title: "Choose Link"
         , buttons: { "Cancel": function() {
             $(this).dialog("close");
         }, "Submit":submitLinkChange }});
@@ -1159,7 +1223,7 @@ function populateNodesListFromServer(event) {
                                 nodeTd.addClass("selected");
                             }
 
-                            trTag.append(nodeTd)
+                            trTag.append(nodeTd).data("nodeLabel", node["nodeLabel"]);
                             table.append(trTag);
                         });
                     }
@@ -1215,6 +1279,7 @@ function populateLinksListFromServer() {
                             var trTag = $("<tr>");
                             var edgeTd = $("<td>").append($("<span>").text(node["edgeLabel"]))
                                 .data("edgeId", node["edgeId"])
+                                .addClass("visible")
                                 .click(function(){
                                     $("td", table).removeClass("selected");
                                     $(this).addClass("selected");
@@ -1224,7 +1289,7 @@ function populateLinksListFromServer() {
                                 edgeTd.addClass("selected");
                             }
 
-                            trTag.append(edgeTd)
+                            trTag.append(edgeTd).data("edgeLabel", node["edgeLabel"]);
                             table.append(trTag);
                         });
                     }
