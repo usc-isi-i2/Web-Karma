@@ -20,6 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.util;
 
+import edu.isi.karma.mvs.EncodingDetector;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -133,7 +134,14 @@ public class FileUtil {
 		  try {
 		    FileChannel fc = stream.getChannel();
 		    MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-		    /* Instead of using default, pass in a decoder. */
+		    
+                    //MVS: Detect encoding of textfile dynamically
+                    String encoding = EncodingDetector.detect(stream);
+                    
+                    if (encoding != null) {
+                        return Charset.forName(encoding).decode(bb).toString();
+                    }
+                    /* Instead of using default, pass in a decoder. */
 		    return Charset.defaultCharset().decode(bb).toString();
 		  }
 		  finally {
