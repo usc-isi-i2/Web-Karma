@@ -488,4 +488,37 @@ public class TripleStoreUtil {
 		return new JSONObject(results);
 	}
 	
+	/**
+	 * This method fetches all the context from the given triplestore Url
+	 * */
+	public ArrayList<String> getContexts(String url) {
+		if(url==null || url.isEmpty()) {
+			url = defaultModelsRepoUrl;
+		} 
+		url += "/contexts";
+		ArrayList<String> graphs = new ArrayList<String>();
+		
+		String responseString;
+		try {
+			responseString = HTTPUtil.executeHTTPGetRequest(url, "application/sparql-results+json");
+			if (responseString != null) {
+				JSONObject models = new JSONObject(responseString);
+				JSONArray values = models.getJSONObject("results").getJSONArray("bindings");
+				int count = 0;
+				while(count < values.length()) {
+					JSONObject o = values.getJSONObject(count++);
+					graphs.add(o.getJSONObject("contextID").getString("value"));
+				}
+			}
+		} catch (ClientProtocolException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return graphs;
+	}
+	
 }
