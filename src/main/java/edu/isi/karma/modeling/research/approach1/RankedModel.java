@@ -105,6 +105,10 @@ public class RankedModel implements Comparable<RankedModel>{
 		return cost;
 	}
 
+	public double getScore() {
+		return this.steinerNodes.getScore();
+	}
+	
 	public SteinerNodes getSteinerNodes() {
 		return this.steinerNodes;
 	}

@@ -845,11 +845,24 @@ public class Approach1 {
 				break;
 		}
 		
-		Collections.sort(rankedModels);
-		if (rankedModels != null && rankedModels.size() > MAX_CANDIDATES )
-			return rankedModels.subList(0, MAX_CANDIDATES);
+		List<RankedModel> uniqueModels = new ArrayList<RankedModel>();
+		RankedModel current, previous;
+		if (rankedModels != null) {
+			if (rankedModels.size() > 0)
+				uniqueModels.add(rankedModels.get(0));
+			Collections.sort(rankedModels);			
+			for (int i = 1; i < rankedModels.size(); i++) {
+				current = rankedModels.get(i);
+				previous = rankedModels.get(i - 1);
+				if (current.getScore() == previous.getScore() && current.getCost() == previous.getCost())
+					continue;
+				uniqueModels.add(current);
+			}
+			if (uniqueModels.size() > MAX_CANDIDATES )
+				return uniqueModels.subList(0, MAX_CANDIDATES);
+		}
 		
-		return rankedModels;
+		return uniqueModels;
 
 	}
 	
@@ -1051,8 +1064,8 @@ public class Approach1 {
 //		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "260_aac-ont.owl"));
 //		ontManager.updateCache();
 
-		for (int i = 0; i < serviceModels.size(); i++) {
-//		int i = 5; {
+//		for (int i = 0; i < serviceModels.size(); i++) {
+		int i = 2; {
 			trainingData.clear();
 			int newServiceIndex = i;
 			ServiceModel newService = serviceModels.get(newServiceIndex);
