@@ -45,6 +45,7 @@ function publishRDFFunction() {
 		info["password"] = $("input#password").val();
 		info["modelName"] = $("input#modelName").val();
 		info["tripleStoreUrl"] = $("input#rdfSPAQRLEndPoint").val();
+		info["graphUri"] = $("input#rdfSPAQRLGraph").val();
 
 		if( $("input#saveToRDFStore").is(":checked")) {
 			publishRDFToStore(info);
@@ -122,6 +123,13 @@ function getRDFPreferences() {
 	    					$("input#rdfNamespace").val(element["PreferenceValues"]["rdfNamespace"]);
 	    					$("input#saveToRDFStore").val(element["PreferenceValues"]["saveToStore"]);
 	    					$("input#addInverseProperties").val(element["PreferenceValues"]["addInverseProperties"]);
+	    					if(element["PreferenceValues"]["rdfSparqlEndPoint"] && element["PreferenceValues"]["rdfSparqlEndPoint"] == '' || element["PreferenceValues"]["rdfSparqlEndPoint"].length < 2) {
+	    						$("input#rdfSPAQRLEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_data');
+	    					} else {
+	    						$("input#rdfSPAQRLEndPoint").val(element["PreferenceValues"]["rdfSparqlEndPoint"]);
+	    					}
+	    				} else {
+	    					$("input#rdfSPAQRLEndPoint").val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_data');
 	    				}
 	    			}
 	    		});
@@ -130,6 +138,38 @@ function getRDFPreferences() {
 		error :
 			function (xhr, textStatus) {
 	   			alert("Error occurred with fetching new rows! " + textStatus);
+		   	}		   
+	});
+}
+
+
+
+function fetchGraphsFromTripleStore(url) {
+	var info = new Object();
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "FetchGraphsFromTripleStoreCommand";
+	var returned = $.ajax({
+	   	url: "RequestController", 
+	   	type: "POST",
+	   	data : info,
+	   	dataType : "json",
+	   	complete : 
+	   		function (xhr, textStatus) {
+	   			var json = $.parseJSON(xhr.responseText);
+	   			var graphs = json["elements"][0]['graphs'];
+	   			var graphListRadioBtnGrp = $("#graphListRadioBtnGrp");
+	   			graphListRadioBtnGrp.html('');
+	   			for (var x in graphs) {
+	   				graphListRadioBtnGrp.append('<input type="radio" name="group1" id="graph_'+x+'" value="'+graphs[x]+'" /> <label for="graph_'+x+'">'+graphs[x]+' </label> <br />');
+	   			}
+	   			graphListRadioBtnGrp.unbind('change');
+	   			graphListRadioBtnGrp.change(function() {
+	   				$('#rdfSPAQRLGraph').val($('#graphListRadioBtnGrp').find("input:checked").val());
+	   			});
+		   	},
+		error :
+			function (xhr, textStatus) {
+	   			alert("Error occurred with fetching graphs! " + textStatus);
 		   	}		   
 	});
 }
