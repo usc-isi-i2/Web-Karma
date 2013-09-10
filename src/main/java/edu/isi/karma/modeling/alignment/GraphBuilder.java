@@ -266,8 +266,13 @@ public class GraphBuilder {
 	}
 	
 	public void addNodeList(List<Node> nodes) {
+		addNodeList(nodes, null);
+	}
+	
+	public void addNodeList(List<Node> nodes, Set<Node> addedNodes) {
 		
 		logger.debug("<enter");
+		if (addedNodes == null) addedNodes = new HashSet<Node>();
 
 		long start = System.currentTimeMillis();
 		float elapsedTimeSec;
@@ -277,8 +282,10 @@ public class GraphBuilder {
 			if (!addSingleNode(node))
 				continue;
 				
-			if (node instanceof InternalNode) 
-				addNodeClosure(node, new ArrayList<Node>());
+			addedNodes.add(node);
+			if (node instanceof InternalNode) {
+				addNodeClosure(node, addedNodes);
+			}
 		}
 
 		long addNodesClosure = System.currentTimeMillis();
@@ -298,8 +305,13 @@ public class GraphBuilder {
 	}
 
 	public boolean addNode(Node node) {
+		return addNode(node, null);
+	}
+
+	public boolean addNode(Node node, Set<Node> addedNodes) {
 		
 		logger.debug("<enter");
+		if (addedNodes == null) addedNodes = new HashSet<Node>();
 
 		if (!addSingleNode(node))
 			return false;
@@ -315,7 +327,8 @@ public class GraphBuilder {
 //			newNodes.add(node);
 //			addNodeClosure(node, newNodes);
 			
-			addNodeClosure(node, new ArrayList<Node>());
+			addedNodes.add(node);
+			addNodeClosure(node, addedNodes);
 			long addNodesClosure = System.currentTimeMillis();
 			elapsedTimeSec = (addNodesClosure - start)/1000F;
 			logger.info("time to add nodes closure: " + elapsedTimeSec);
@@ -535,10 +548,15 @@ public class GraphBuilder {
 		
 		return true;
 	}
-	
+
 	public void updateGraph() {
+		updateGraph(null);
+	}
+	
+	public void updateGraph(Set<Node> addedNodes) {
 		
 		logger.debug("<enter");
+		if (addedNodes == null) addedNodes = new HashSet<Node>();
 
 		long start = System.currentTimeMillis();
 		float elapsedTimeSec;
@@ -547,7 +565,7 @@ public class GraphBuilder {
 		if (internalNodes != null) {
 			Node[] nodes = internalNodes.toArray(new Node[0]);
 			for (Node node : nodes) 
-				addNodeClosure(node, new ArrayList<Node>());
+				addNodeClosure(node, addedNodes);
 		}
 
 		long addNodesClosure = System.currentTimeMillis();
@@ -813,11 +831,11 @@ public class GraphBuilder {
 	 * by ObjectProperty or SubClass links
 	 * @return
 	 */
-	private void addNodeClosure(Node node, List<Node> newAddedNodes) {
+	private void addNodeClosure(Node node, Set<Node> newAddedNodes) {
 
 		logger.debug("<enter");
 		
-		if (newAddedNodes == null) newAddedNodes = new ArrayList<Node>();
+		if (newAddedNodes == null) newAddedNodes = new HashSet<Node>();
 		
 		String uri = node.getLabel().getUri();
 
@@ -1009,6 +1027,10 @@ public class GraphBuilder {
 
 				sourceUri = source.getLabel().getUri();
 				targetUri = target.getLabel().getUri();
+				
+//				if ((sourceUri.contains("Person") && targetUri.contains("CulturalHeritage")) ||
+//						(sourceUri.contains("CulturalHeritage") && targetUri.contains("Person")))
+//					System.out.println("debug1");
 				
 //				if ((sourceUri.contains("E42") && targetUri.contains("E54")) ||
 //						(sourceUri.contains("E54") && targetUri.contains("E42")))

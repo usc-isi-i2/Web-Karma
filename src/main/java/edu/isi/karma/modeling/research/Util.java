@@ -38,7 +38,6 @@ import edu.isi.karma.rep.alignment.Node;
 
 public class Util {
 
-	
 	public static List<Node> getAttributes(DirectedWeightedMultigraph<Node, Link> graph) {
 		List<Node> attributes = new ArrayList<Node>();
 		for (Node n : graph.vertexSet()) {

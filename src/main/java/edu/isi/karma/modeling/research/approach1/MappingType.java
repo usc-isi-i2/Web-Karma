@@ -19,41 +19,9 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research.experiment2;
+package edu.isi.karma.modeling.research.approach1;
 
-import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.InternalNode;
-import edu.isi.karma.rep.alignment.Link;
-
-public class MappingStruct {
-	
-	private InternalNode source;
-	private Link link;
-	private ColumnNode target;
-
-	public MappingStruct(InternalNode source) {
-		this.source = source;
-		this.link = null;
-		this.target = null;
-	}
-	
-	public MappingStruct(InternalNode source, Link link, ColumnNode target) {
-		this.source = source;
-		this.link = link;
-		this.target = target;
-	}
-
-	public InternalNode getSource() {
-		return source;
-	}
-
-	public Link getLink() {
-		return link;
-	}
-
-	public ColumnNode getTarget() {
-		return target;
-	}
-
-	
+public enum MappingType {
+	ClassNode,
+	DataNode
 }

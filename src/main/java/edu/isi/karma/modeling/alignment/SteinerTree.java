@@ -273,8 +273,9 @@ public class SteinerTree {
 
 		logger.debug("step1 ...");
 		Pseudograph<Node, Link> g1 = step1();
-//		GraphUtil.printGraph(g1);
+//		logger.info("after doing step 1 ....................................................................");
 //		GraphUtil.printGraphSimple(g1);
+//		GraphUtil.printGraph(g1);
 		
 		if (g1.vertexSet().size() < 2) {
 			this.tree = new WeightedMultigraph<Node, Link>(Link.class);
@@ -284,25 +285,29 @@ public class SteinerTree {
 		
 		logger.debug("step2 ...");
 		WeightedMultigraph<Node, Link> g2 = step2(g1);
-//		GraphUtil.printGraph(g2);
+//		logger.info("after doing step 2 ....................................................................");
 //		GraphUtil.printGraphSimple(g2);
+//		GraphUtil.printGraph(g2);
 
 		
 		logger.debug("step3 ...");
 		WeightedMultigraph<Node, Link> g3 = step3(g2);
-//		GraphUtil.printGraph(g3);
+//		logger.info("after doing step 3 ....................................................................");
 //		GraphUtil.printGraphSimple(g3);
+//		GraphUtil.printGraph(g3);
 		
 		logger.debug("step4 ...");
 		WeightedMultigraph<Node, Link> g4 = step4(g3);
-//		GraphUtil.printGraph(g4);
+//		logger.info("after doing step 4 ....................................................................");
 //		GraphUtil.printGraphSimple(g4);
+//		GraphUtil.printGraph(g4);
 
 		
 		logger.debug("step5 ...");
 		WeightedMultigraph<Node, Link> g5 = step5(g4);
-//		GraphUtil.printGraph(g5);
+//		logger.info("after doing step 5 ....................................................................");
 //		GraphUtil.printGraphSimple(g5);
+//		GraphUtil.printGraph(g5);
 		
 		this.tree = g5;
 		logger.debug("exit>");

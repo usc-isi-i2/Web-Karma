@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research.experiment2;
+package edu.isi.karma.modeling.research;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -28,11 +28,10 @@ import java.io.OutputStream;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.modeling.alignment.GraphUtil;
-import edu.isi.karma.modeling.research.GraphVizUtil;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
 
-public class ServiceModel2 {
+public class ServiceModel {
 
 	private String id;
 	private String serviceNameWithPrefix;
@@ -41,7 +40,7 @@ public class ServiceModel2 {
 	
 	private DirectedWeightedMultigraph<Node, Link> model;
 
-	public ServiceModel2(String id) {
+	public ServiceModel(String id) {
 		this.id = id;
 	}
 

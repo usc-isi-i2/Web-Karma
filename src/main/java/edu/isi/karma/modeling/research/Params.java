@@ -19,29 +19,20 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research.experiment1;
+package edu.isi.karma.modeling.research;
 
-import org.jgrapht.graph.DirectedWeightedMultigraph;
+public class Params {
 
-import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.Node;
-
-public class MatchedSubGraphs {
-
-	private DirectedWeightedMultigraph<Node, Link> subGraph1;
-	private DirectedWeightedMultigraph<Node, Link> subGraph2;
+	private static String DATASET_NAME = "ds1";
+	private static String ROOT_DIR = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-" + DATASET_NAME + "/";
 	
-	public DirectedWeightedMultigraph<Node, Link> getSubGraph1() {
-		return subGraph1;
-	}
-	public DirectedWeightedMultigraph<Node, Link> getSubGraph2() {
-		return subGraph2;
-	}
-
-	public MatchedSubGraphs(DirectedWeightedMultigraph<Node, Link> subGraph1, 
-			DirectedWeightedMultigraph<Node, Link> subGraph2) {
-		this.subGraph1 = subGraph1;
-		this.subGraph2 = subGraph2;
-	}
+	public static String ONTOLOGY_DIR = ROOT_DIR + "ontologies/";
 	
+	public static String INPUT_DIR = ROOT_DIR + "input/";
+	public static String OUTPUT_DIR = ROOT_DIR + "output/";
+
+	public static String GRAPHS_DIR = ROOT_DIR + "graph/";
+	public static String JGRAPHT_DIR = ROOT_DIR + "jgrapht/";
+	public static String GRAPHVIS_DIR = ROOT_DIR + "graphviz/";
+
 }
