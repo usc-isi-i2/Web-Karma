@@ -68,6 +68,7 @@ public class PublishRDFCommand extends Command {
 	private String modelName;
 	private String worksheetName;
 	private String tripleStoreUrl;
+	private String graphUri;
 	
 	public enum JsonKeys {
 		updateType, fileUrl, vWorksheetId, errorReport
@@ -77,12 +78,13 @@ public class PublishRDFCommand extends Command {
 			.getLogger(PublishRDFCommand.class);
 
 	public enum PreferencesKeys {
-		rdfPrefix, rdfNamespace, addInverseProperties, saveToStore, dbName, hostName, userName, modelName, tripleStoreUrl
+		rdfPrefix, rdfNamespace, addInverseProperties, saveToStore, dbName, hostName, userName, modelName, rdfSparqlEndPoint
 	}
 
 	protected PublishRDFCommand(String id, String vWorksheetId,
 			String publicRDFAddress, String rdfSourcePrefix, String rdfSourceNamespace, String addInverseProperties,
-			String saveToStore,String hostName,String dbName,String userName,String password, String modelName, String tripleStoreUrl) {
+			String saveToStore,String hostName,String dbName,String userName,String password, String modelName, String tripleStoreUrl,
+			String graphUri) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
 		this.rdfSourcePrefix = rdfSourcePrefix;
@@ -98,6 +100,7 @@ public class PublishRDFCommand extends Command {
 		else
 			this.modelName=modelName;
 		this.tripleStoreUrl = tripleStoreUrl;
+		this.graphUri = graphUri;
 	}
 
 	@Override
@@ -171,27 +174,29 @@ public class PublishRDFCommand extends Command {
 					"Error occured while generating RDF!"));
 		}
 		try {
-			// Get the graph name from properties
-			String graphName = worksheet.getMetadataContainer().getWorksheetProperties()
-					.getPropertyValue(Property.graphName);
-			if (graphName == null || graphName.isEmpty()) {
-				// Set to default
-				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
-						Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
-				graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
-			}
+			
+			// Get the graph name from properties if empty graph uri 
+//			String graphName = worksheet.getMetadataContainer().getWorksheetProperties()
+//					.getPropertyValue(Property.graphName);
+//			if (this.graphUri == null || this.graphUri.isEmpty()) {
+//				// Set to default
+//				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+//						Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
+//				this.graphUri = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
+//			}
+			
 			if (tripleStoreUrl == null || tripleStoreUrl.isEmpty()) {
 				tripleStoreUrl = TripleStoreUtil.defaultDataRepoUrl;
 			}
 			logger.info("tripleStoreURl : " + tripleStoreUrl);
 			TripleStoreUtil utilObj = new TripleStoreUtil();
-			boolean result = utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, graphName, true);
+			boolean result = utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, true);
 			if(result) {
 				logger.info("Saved rdf to store");
 			} else {
 				logger.error("Falied to store rdf to karma_data store");
 			}
-		} catch (URIException e) {
+		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
@@ -228,6 +233,7 @@ public class PublishRDFCommand extends Command {
 			prefObject.put(PreferencesKeys.hostName.name(), hostName);
 			prefObject.put(PreferencesKeys.modelName.name(), modelName);
 			prefObject.put(PreferencesKeys.userName.name(), userName);
+			prefObject.put(PreferencesKeys.rdfSparqlEndPoint.name(), tripleStoreUrl);
 			vWorkspace.getPreferences().setCommandPreferences(
 					"PublishRDFCommandPreferences", prefObject);
 			
