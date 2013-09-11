@@ -75,8 +75,9 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 			
 			// Reversing the inverse links for easy traversal through graph
 			Set<String> reversedLinks = new HashSet<String>();
+			Set<String> removedLinks = new HashSet<String>();
 			DirectedWeightedMultigraph<Node, Link> rootedTree = GraphUtil.treeToRootedTree(
-					tree, this.root, reversedLinks);
+					tree, this.root, reversedLinks, removedLinks);
 			GraphUtil.printGraphSimple(rootedTree);
 
 			/*** Add the nodes and the links from the Steiner tree ***/

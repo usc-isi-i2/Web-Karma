@@ -23,7 +23,7 @@ package edu.isi.karma.modeling.research;
 
 public class Params {
 
-	private static String DATASET_NAME = "ds1";
+	private static String DATASET_NAME = "ds2";
 	private static String ROOT_DIR = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-" + DATASET_NAME + "/";
 	
 	public static String ONTOLOGY_DIR = ROOT_DIR + "ontologies/";

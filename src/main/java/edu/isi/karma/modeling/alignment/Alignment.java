@@ -561,7 +561,7 @@ public class Alignment implements OntologyUpdateListener {
 		GraphUtil.printGraphSimple(tree);
 		logger.info("selecting a root for the tree ...");
 		TreePostProcess treePostProcess = new TreePostProcess(this.graphBuilder, tree, 
-				this.graphBuilder.getThingNode());
+				getLinksByStatus(LinkStatus.ForcedByUser), this.graphBuilder.getThingNode());
 
 		this.steinerTree = treePostProcess.getTree();
 		this.root = treePostProcess.getRoot();

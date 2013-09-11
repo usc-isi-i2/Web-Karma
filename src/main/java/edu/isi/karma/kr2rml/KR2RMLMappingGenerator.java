@@ -134,8 +134,9 @@ public class KR2RMLMappingGenerator {
 	
 	private void calculateColumnNodesCoveredByBlankNodes() {
 		Set<String> reversedLinks = new HashSet<String>();
+		Set<String> removedLinks = new HashSet<String>();
 		DirectedWeightedMultigraph<Node, Link> rootedTree = GraphUtil.treeToRootedTree(this.steinerTree,
-				this.steinerTreeRoot, reversedLinks);
+				this.steinerTreeRoot, reversedLinks, removedLinks);
 		
 		for (Node treeNode:rootedTree.vertexSet()) {
 //			List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
