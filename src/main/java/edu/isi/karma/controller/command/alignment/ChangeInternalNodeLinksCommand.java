@@ -34,7 +34,6 @@ import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
@@ -108,8 +107,6 @@ public class ChangeInternalNodeLinksCommand extends Command {
 			deleteLinks(alignment);
 			addNewLinks(alignment, ontMgr);
 			alignment.align();
-			
-			GraphUtil.printGraphSimple(alignment.getSteinerTree());
 			
 		} catch (JSONException e) {
 			e.printStackTrace();

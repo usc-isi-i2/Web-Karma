@@ -158,22 +158,23 @@ public class GraphUtil {
 
 		for (Link edge : graph.edgeSet()) {
 			System.out.print("(");
-			if (edge.getSource() instanceof ColumnNode)
-				System.out.print(edge.getSource().getLocalId() + "-" + ((ColumnNode)edge.getSource()).getColumnName());
-			else
-				System.out.print(edge.getSource().getLocalId());
-			System.out.print(")");
-			System.out.print(" - ");
-			System.out.print("(");
+//			if (edge.getSource() instanceof ColumnNode)
+//				System.out.print(edge.getSource().getLocalId() + "-" + ((ColumnNode)edge.getSource()).getColumnName());
+//			else
+//				System.out.print(edge.getSource().getLocalId());
+//			System.out.print(")");
+//			System.out.print(" - ");
+//			System.out.print("(");
 			System.out.print(edge.getId());
-			System.out.print(")");
-			System.out.print(" - ");
-			System.out.print("(");
-			if (edge.getTarget() instanceof ColumnNode)
-				System.out.print(edge.getTarget().getLocalId() + "-" + ((ColumnNode)edge.getTarget()).getColumnName());
-			else
-				System.out.print(edge.getTarget().getLocalId());
-			System.out.print(")");
+//			System.out.print(")");
+//			System.out.print(" - ");
+//			System.out.print("(");
+//			if (edge.getTarget() instanceof ColumnNode)
+//				System.out.print(edge.getTarget().getLocalId() + "-" + ((ColumnNode)edge.getTarget()).getColumnName());
+//			else
+//				System.out.print(edge.getTarget().getLocalId());
+//			System.out.print(")");
+			System.out.print(" - status=" + edge.getStatus().name());
 			System.out.print(" - w=" + edge.getWeight());
 			System.out.println();
         }
@@ -197,7 +198,17 @@ public class GraphUtil {
 		if (removedLinks == null)
 			removedLinks = new HashSet<String>();
 		treeToRootedTree(rootedTree, root, null, new HashSet<Node>(), reversedLinks, removedLinks);
-//		printGraphSimple(rootedTree);
+		
+		logger.info("model after converting to a rooted tree: ");
+		printGraphSimple(rootedTree);
+		
+		logger.info("reversed links:");
+		for (String s : reversedLinks)
+			System.out.println("\t" + s);
+		logger.info("removed links:");
+		for (String s : removedLinks)
+			System.out.println("\t" + s);
+
 		return rootedTree;
 	}
 	

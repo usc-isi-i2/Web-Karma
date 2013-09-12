@@ -299,6 +299,7 @@ public class Alignment implements OntologyUpdateListener {
 //		if (linkId.equals("http://km.aifb.kit.edu/projects/d3/cruiser#Observation1---http://km.aifb.kit.edu/projects/d3/cruiser#at---http://www.w3.org/2003/01/geo/wgs84_pos#Point1"))
 //			System.out.println("debug2");
 		
+		logger.debug("changing the status of link " + linkId + " to " + newStatus.name());
 		Link link = this.getLinkById(linkId);
 		if (link == null) {
 			if (newStatus == LinkStatus.ForcedByUser) {
@@ -536,9 +537,15 @@ public class Alignment implements OntologyUpdateListener {
 
 		long start = System.currentTimeMillis();
 		
-		logger.info("Updating UI preferred links ...");
+		logger.info("updating UI preferred links ...");
 		this.updateLinksPreferredByUI();
 
+		logger.info("forced links ...");
+		if (this.getLinksByStatus(LinkStatus.ForcedByUser) != null) {
+			for (Link link: this.getLinksByStatus(LinkStatus.ForcedByUser))
+				System.out.println("\t" + link.getId());
+		}
+		
 		logger.info("preparing G Prime for steiner algorithm input ...");
 		
 		GraphPreProcess graphPreProcess = new GraphPreProcess(this.graphBuilder.getGraph(), 
@@ -549,6 +556,12 @@ public class Alignment implements OntologyUpdateListener {
 		logger.info("computing steiner nodes ...");
 		List<Node> steinerNodes = this.computeSteinerNodes();
 
+		logger.info("steiner nodes ...");
+		if (steinerNodes != null) {
+			for (Node node: steinerNodes)
+				System.out.println("\t" + node.getId());
+		}
+
 		logger.info("computing steiner tree ...");
 		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodes);
 		WeightedMultigraph<Node, Link> tree = steinerTree.getSteinerTree();
@@ -557,14 +570,17 @@ public class Alignment implements OntologyUpdateListener {
 			return;
 		}
 
-		System.out.println("*** Steiner Tree ***");
+		System.out.println("*** steiner tree before post processing step ***");
 		GraphUtil.printGraphSimple(tree);
-		logger.info("selecting a root for the tree ...");
+//		logger.info("selecting a root for the tree ...");
 		TreePostProcess treePostProcess = new TreePostProcess(this.graphBuilder, tree, 
 				getLinksByStatus(LinkStatus.ForcedByUser), this.graphBuilder.getThingNode());
 
 		this.steinerTree = treePostProcess.getTree();
 		this.root = treePostProcess.getRoot();
+
+		System.out.println("*** steiner tree after post processing step ***");
+		GraphUtil.printGraphSimple(this.steinerTree);
 
 		long elapsedTimeMillis = System.currentTimeMillis() - start;
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
