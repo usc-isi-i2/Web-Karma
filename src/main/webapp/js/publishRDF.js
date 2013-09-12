@@ -46,6 +46,7 @@ function publishRDFFunction() {
 		info["modelName"] = $("input#modelName").val();
 		info["tripleStoreUrl"] = $("input#rdfSPAQRLEndPoint").val();
 		info["graphUri"] = $("input#rdfSPAQRLGraph").val();
+		info["replaceContext"] = $('#graphReplace_1').is(':checked');
 
 		if( $("input#saveToRDFStore").is(":checked")) {
 			publishRDFToStore(info);
