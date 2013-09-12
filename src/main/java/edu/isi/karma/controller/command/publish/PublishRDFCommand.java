@@ -69,6 +69,7 @@ public class PublishRDFCommand extends Command {
 	private String worksheetName;
 	private String tripleStoreUrl;
 	private String graphUri;
+	private boolean replaceContext;
 	
 	public enum JsonKeys {
 		updateType, fileUrl, vWorksheetId, errorReport
@@ -84,7 +85,7 @@ public class PublishRDFCommand extends Command {
 	protected PublishRDFCommand(String id, String vWorksheetId,
 			String publicRDFAddress, String rdfSourcePrefix, String rdfSourceNamespace, String addInverseProperties,
 			String saveToStore,String hostName,String dbName,String userName,String password, String modelName, String tripleStoreUrl,
-			String graphUri) {
+			String graphUri, boolean replace) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
 		this.rdfSourcePrefix = rdfSourcePrefix;
@@ -101,6 +102,7 @@ public class PublishRDFCommand extends Command {
 			this.modelName=modelName;
 		this.tripleStoreUrl = tripleStoreUrl;
 		this.graphUri = graphUri;
+		this.replaceContext = replace;
 	}
 
 	@Override
@@ -190,7 +192,7 @@ public class PublishRDFCommand extends Command {
 			}
 			logger.info("tripleStoreURl : " + tripleStoreUrl);
 			TripleStoreUtil utilObj = new TripleStoreUtil();
-			boolean result = utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, true);
+			boolean result = utilObj.saveToStore(rdfFileLocalPath, tripleStoreUrl, this.graphUri, this.replaceContext);
 			if(result) {
 				logger.info("Saved rdf to store");
 			} else {
