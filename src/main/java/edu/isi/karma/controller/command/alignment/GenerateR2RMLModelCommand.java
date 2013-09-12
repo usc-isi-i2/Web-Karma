@@ -71,6 +71,10 @@ public class GenerateR2RMLModelCommand extends Command {
 		updateType, fileUrl, vWorksheetId
 	}
 	
+	public enum PreferencesKeys {
+		rdfPrefix, rdfNamespace, modelSparqlEndPoint
+	}
+	
 	protected GenerateR2RMLModelCommand(String id, String vWorksheetId, String url, String context) {
 		super(id);
 		this.vWorksheetId = vWorksheetId;
@@ -117,6 +121,10 @@ public class GenerateR2RMLModelCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+		
+		//save the preferences 
+		savePreferences(vWorkspace);
+				
 		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 		this.worksheetName = worksheet.getTitle();
 		
@@ -240,4 +248,16 @@ public class GenerateR2RMLModelCommand extends Command {
 		writer.close();
 	}
 
+	
+	private void savePreferences(VWorkspace vWorkspace){
+		try{
+			JSONObject prefObject = new JSONObject();
+			prefObject.put(PreferencesKeys.modelSparqlEndPoint.name(), tripleStoreUrl);
+			vWorkspace.getPreferences().setCommandPreferences(
+					"GenerateR2RMLModelCommandPreferences", prefObject);
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
 }

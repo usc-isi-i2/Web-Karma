@@ -34,7 +34,6 @@ import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
@@ -109,8 +108,6 @@ public class ChangeInternalNodeLinksCommand extends Command {
 			addNewLinks(alignment, ontMgr);
 			alignment.align();
 			
-			GraphUtil.printGraphSimple(alignment.getSteinerTree());
-			
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -177,8 +174,8 @@ public class ChangeInternalNodeLinksCommand extends Command {
 						initialEdge.getString(JsonKeys.edgeSourceId.name()), 
 						initialEdge.getString(JsonKeys.edgeTargetId.name()));
 				
-//				alignment.changeLinkStatus(linkId, LinkStatus.Normal);
-				alignment.removeLink(linkId);
+				alignment.changeLinkStatus(linkId, LinkStatus.Normal);
+//				alignment.removeLink(linkId);
 			}
 		}
 	}

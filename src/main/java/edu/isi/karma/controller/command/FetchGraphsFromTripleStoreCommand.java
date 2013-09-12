@@ -18,27 +18,33 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
+package edu.isi.karma.controller.command;
 
-package edu.isi.karma.controller.command.alignment;
-
+import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.update.FetchR2RMLUpdate;
+import edu.isi.karma.controller.update.AbstractUpdate;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.view.VWorkspace;
 
-public class FetchR2RMLModelsCommand extends Command {
-	private final String vWorksheetId;
-	
+/**
+ * Class responsible for fetching all the graphs in the tripleStore
+ */
+public class FetchGraphsFromTripleStoreCommand extends Command {
 	private String tripleStoreUrl;
+	
+	private enum JsonKeys {
+		updateType, graphs
+	}
+	
+	private static Logger logger = LoggerFactory.getLogger(FetchGraphsFromTripleStoreCommand.class);
 	
 	public String getTripleStoreUrl() {
 		return tripleStoreUrl;
@@ -48,25 +54,19 @@ public class FetchR2RMLModelsCommand extends Command {
 		this.tripleStoreUrl = tripleStoreUrl;
 	}
 
-	private static Logger logger = LoggerFactory.getLogger(FetchR2RMLModelsCommand.class);
-
-	protected FetchR2RMLModelsCommand(String id, String vWorksheetId, String url) {
+	protected FetchGraphsFromTripleStoreCommand(String id, String url){
 		super(id);
-		this.vWorksheetId = vWorksheetId;
-		if (url == null || url.isEmpty()) {
-			url = TripleStoreUtil.defaultServerUrl + "/" + TripleStoreUtil.karma_model_repo;
-		}
-		this.tripleStoreUrl = url;
+		this.tripleStoreUrl=url;
 	}
 
 	@Override
 	public String getCommandName() {
-		return FetchR2RMLModelsCommand.class.getName();
+		return this.getClass().getSimpleName();
 	}
 
 	@Override
 	public String getTitle() {
-		return "Fetch R2RML from Triple Store";
+		return "FetchGraphsFromTripleStore";
 	}
 
 	@Override
@@ -78,13 +78,32 @@ public class FetchR2RMLModelsCommand extends Command {
 	public CommandType getCommandType() {
 		return CommandType.notInHistory;
 	}
-	
+
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-
 		TripleStoreUtil utilObj = new TripleStoreUtil();
-		HashMap<String, ArrayList<String>> list = utilObj.fetchModelNames(this.tripleStoreUrl);
-		return new UpdateContainer(new FetchR2RMLUpdate(list.get("model_names"), list.get("model_urls")));
+		final ArrayList<String> graphs = utilObj.getContexts(this.tripleStoreUrl);
+		logger.info("Graphs fetched : " + graphs.size());
+		
+		try {
+			return new UpdateContainer(new AbstractUpdate() {
+				
+				@Override
+				public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
+					JSONObject obj = new JSONObject();
+					try {
+						obj.put(JsonKeys.updateType.name(), "FetchGraphsFromTripleStore");
+						obj.put(JsonKeys.graphs.name(), graphs);
+						pw.println(obj.toString());
+					} catch (JSONException e) {
+						logger.error("Error occurred while fetching worksheet properties!", e);
+					}
+				}
+			});
+		} catch (Exception e) {
+			logger.error("Error occurred while fetching graphs!", e);
+			return new UpdateContainer(new ErrorUpdate("Error occurred while fetching graphs!"));
+		}
 	}
 
 	@Override

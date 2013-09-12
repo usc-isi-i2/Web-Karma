@@ -361,7 +361,7 @@ and related projects, please see: http://www.isi.edu/integration
 	</head>
 
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.142</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.145</span></h1>
 		<table id="topMenuBar">
 			<tr>
 				<td>
@@ -827,6 +827,25 @@ and related projects, please see: http://www.isi.edu/integration
 							<tr><td><label for="rdfSPAQRLEndPoint">SPARQL End Point</label></td></tr>
 							<tr><td><input type="text" id="rdfSPAQRLEndPoint" value="" size="65"/></td></tr>
 							<tr><td> <a style="color: blue; float:right" id="rdfBrowseRepo" target="_blank" href="">Browse</a> </td></tr>
+							<tr><td><label for="rdfSPAQRLGraph">Context</label></td></tr>
+							<tr><td>
+								<span class="smallSizedFont">
+									<select id="modelGraphList"></select>
+								</span>
+							</td></tr>
+							<tr><td><input type="text" id="rdfSPAQRLGraph" value="" size="65"/></td></tr>
+							<tr><td>&nbsp;</td></tr>
+							<tr><td>
+								<span class="smallSizedFont">
+									<form id="graphReplaceOptions">
+										<input type="radio" name="group1" id="graphReplace_1" 
+											value="replace" /> <label for="graphReplace_1">Replace existing data in context</label> <br />
+										<input type="radio" name="group1" id="graphReplace_2" 
+											value="append" /> <label for="graphReplace_2">Append to context</label> <br />
+									</form>
+								</span>
+							</td></tr>
+							<tr><td>&nbsp;</td></tr>
 						</table>
 					</tr>
 				</table> 

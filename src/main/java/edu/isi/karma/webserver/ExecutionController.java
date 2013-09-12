@@ -34,6 +34,8 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.CommandWithPreview;
+import edu.isi.karma.controller.command.FetchGraphsFromTripleStoreCommand;
+import edu.isi.karma.controller.command.FetchGraphsFromTripleStoreCommandFactory;
 import edu.isi.karma.controller.command.FetchPreferencesCommand;
 import edu.isi.karma.controller.command.FetchPreferencesCommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
@@ -314,6 +316,8 @@ public class ExecutionController {
 				new InvokeDataMiningServiceCommandFactory());
 		commandFactoryMap.put(InvokeRubenReconciliationService.class.getSimpleName(), 
 				new InvokeRubenReconciliationServiceFactory());
+		commandFactoryMap.put(FetchGraphsFromTripleStoreCommand.class.getSimpleName(), 
+				new FetchGraphsFromTripleStoreCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

@@ -247,9 +247,36 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		optionsDiv.hide();
 		showHideRdfInfo();
 		getRDFPreferences();
+		
 		var rdfDialogBox = $("div#PublishRDFDialogBox");
-		$('#rdfSPAQRLEndPoint').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_data');
 		$('#rdfBrowseRepo').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/karma_data/summary');
+		
+		// get the graph uri for the worksheet
+		var info = new Object();
+	    info["workspaceId"] = $.workspaceGlobalInformation.id;
+	    info["command"] = "FetchExistingWorksheetPropertiesCommand";
+	    info["vWorksheetId"] = optionsDiv.data("worksheetId");
+
+	    var returned = $.ajax({
+	        url: "RequestController",
+	        type: "POST",
+	        data : info,
+	        dataType : "json",
+	        complete :
+	            function (xhr, textStatus) {
+	                var json = $.parseJSON(xhr.responseText);
+	                var props = json["elements"][0]["properties"];
+
+	                // Set graph name
+	                if (props["graphName"] != null) {
+	                    $("#rdfSPAQRLGraph").val(props["graphName"]);
+	                } else {
+	                    $("#rdfSPAQRLGraph").val("");
+	                }
+	        }
+	    });
+	    fetchGraphsFromTripleStore($("#rdfSPAQRLEndPoint").val());
+	    
 		// Show the dialog box
 		rdfDialogBox.dialog({width: 400, title:'Publish RDF',
 			buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": publishRDFFunction }});

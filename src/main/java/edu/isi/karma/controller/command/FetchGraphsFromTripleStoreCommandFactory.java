@@ -18,21 +18,25 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
+package edu.isi.karma.controller.command;
 
-package edu.isi.karma.modeling.research;
+import javax.servlet.http.HttpServletRequest;
 
-public class Params {
+import edu.isi.karma.view.VWorkspace;
 
-	private static String DATASET_NAME = "ds2";
-	private static String ROOT_DIR = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-" + DATASET_NAME + "/";
-	
-	public static String ONTOLOGY_DIR = ROOT_DIR + "ontologies/";
-	
-	public static String INPUT_DIR = ROOT_DIR + "input/";
-	public static String OUTPUT_DIR = ROOT_DIR + "output/";
+public class FetchGraphsFromTripleStoreCommandFactory extends CommandFactory {
+	private enum Arguments {
+		tripleStoreUrl
+	}
 
-	public static String GRAPHS_DIR = ROOT_DIR + "graph/";
-	public static String JGRAPHT_DIR = ROOT_DIR + "jgrapht/";
-	public static String GRAPHVIS_DIR = ROOT_DIR + "graphviz/";
+	@Override
+	public Command createCommand(HttpServletRequest request,
+			VWorkspace vWorkspace) {
+
+		FetchGraphsFromTripleStoreCommand comm = new FetchGraphsFromTripleStoreCommand(getNewId(vWorkspace), 
+				request.getParameter(Arguments.tripleStoreUrl.name()));
+		
+		return comm;
+	}
 
 }

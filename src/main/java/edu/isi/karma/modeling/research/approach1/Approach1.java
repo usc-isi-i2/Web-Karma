@@ -848,9 +848,9 @@ public class Approach1 {
 		List<RankedModel> uniqueModels = new ArrayList<RankedModel>();
 		RankedModel current, previous;
 		if (rankedModels != null) {
+			Collections.sort(rankedModels);			
 			if (rankedModels.size() > 0)
 				uniqueModels.add(rankedModels.get(0));
-			Collections.sort(rankedModels);			
 			for (int i = 1; i < rankedModels.size(); i++) {
 				current = rankedModels.get(i);
 				previous = rankedModels.get(i - 1);
@@ -1064,8 +1064,8 @@ public class Approach1 {
 //		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "260_aac-ont.owl"));
 //		ontManager.updateCache();
 
-//		for (int i = 0; i < serviceModels.size(); i++) {
-		int i = 2; {
+		for (int i = 0; i < serviceModels.size(); i++) {
+//		int i = 2; {
 			trainingData.clear();
 			int newServiceIndex = i;
 			ServiceModel newService = serviceModels.get(newServiceIndex);

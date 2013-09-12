@@ -158,22 +158,23 @@ public class GraphUtil {
 
 		for (Link edge : graph.edgeSet()) {
 			System.out.print("(");
-			if (edge.getSource() instanceof ColumnNode)
-				System.out.print(edge.getSource().getLocalId() + "-" + ((ColumnNode)edge.getSource()).getColumnName());
-			else
-				System.out.print(edge.getSource().getLocalId());
-			System.out.print(")");
-			System.out.print(" - ");
-			System.out.print("(");
+//			if (edge.getSource() instanceof ColumnNode)
+//				System.out.print(edge.getSource().getLocalId() + "-" + ((ColumnNode)edge.getSource()).getColumnName());
+//			else
+//				System.out.print(edge.getSource().getLocalId());
+//			System.out.print(")");
+//			System.out.print(" - ");
+//			System.out.print("(");
 			System.out.print(edge.getId());
-			System.out.print(")");
-			System.out.print(" - ");
-			System.out.print("(");
-			if (edge.getTarget() instanceof ColumnNode)
-				System.out.print(edge.getTarget().getLocalId() + "-" + ((ColumnNode)edge.getTarget()).getColumnName());
-			else
-				System.out.print(edge.getTarget().getLocalId());
-			System.out.print(")");
+//			System.out.print(")");
+//			System.out.print(" - ");
+//			System.out.print("(");
+//			if (edge.getTarget() instanceof ColumnNode)
+//				System.out.print(edge.getTarget().getLocalId() + "-" + ((ColumnNode)edge.getTarget()).getColumnName());
+//			else
+//				System.out.print(edge.getTarget().getLocalId());
+//			System.out.print(")");
+			System.out.print(" - status=" + edge.getStatus().name());
 			System.out.print(" - w=" + edge.getWeight());
 			System.out.println();
         }
@@ -183,7 +184,7 @@ public class GraphUtil {
 	
 	@SuppressWarnings("unchecked")
 	public static DirectedWeightedMultigraph<Node, Link> treeToRootedTree(
-			DirectedWeightedMultigraph<Node, Link> tree, Node root, Set<String> reversedLinks) {
+			DirectedWeightedMultigraph<Node, Link> tree, Node root, Set<String> reversedLinks, Set<String> removedLinks) {
 		
 		if (tree == null) {
 			logger.error("The input tree is null.");
@@ -194,7 +195,20 @@ public class GraphUtil {
 				(DirectedWeightedMultigraph<Node, Link>)tree.clone();
 		if (reversedLinks == null)
 			reversedLinks = new HashSet<String>();
-		treeToRootedTree(rootedTree, root, null, reversedLinks);
+		if (removedLinks == null)
+			removedLinks = new HashSet<String>();
+		treeToRootedTree(rootedTree, root, null, new HashSet<Node>(), reversedLinks, removedLinks);
+		
+		logger.info("model after converting to a rooted tree: ");
+		printGraphSimple(rootedTree);
+		
+		logger.info("reversed links:");
+		for (String s : reversedLinks)
+			System.out.println("\t" + s);
+		logger.info("removed links:");
+		for (String s : removedLinks)
+			System.out.println("\t" + s);
+
 		return rootedTree;
 	}
 	
@@ -231,10 +245,15 @@ public class GraphUtil {
         	return null;
 	}
 
-	private static void treeToRootedTree(DirectedWeightedMultigraph<Node, Link> tree, Node node, Link e, Set<String> reversedLinks) {
+	private static void treeToRootedTree(DirectedWeightedMultigraph<Node, Link> tree, Node node, Link e, Set<Node> visitedNodes, Set<String> reversedLinks, Set<String> removedLinks) {
 		
 		if (node == null)
 			return;
+		
+		if (visitedNodes.contains(node)) // prevent having loop in the tree
+			return;
+		
+		visitedNodes.add(node);
 		
 		Node source, target;
 		
@@ -269,9 +288,15 @@ public class GraphUtil {
 			return;
 		
 		
-		for (Link outLink : outgoingLinks) {
+		Link[] outgoingLinksArr = outgoingLinks.toArray(new Link[0]);
+		for (Link outLink : outgoingLinksArr) {
 			target = outLink.getTarget();
-			treeToRootedTree(tree, target, outLink, reversedLinks);
+			if (visitedNodes.contains(target)) {
+				tree.removeEdge(outLink);
+				removedLinks.add(outLink.getId());
+			} else {
+				treeToRootedTree(tree, target, outLink, visitedNodes, reversedLinks, removedLinks);
+			}
 		}
 	}
 	
