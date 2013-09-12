@@ -46,7 +46,7 @@ function publishRDFFunction() {
 		info["modelName"] = $("input#modelName").val();
 		info["tripleStoreUrl"] = $("input#rdfSPAQRLEndPoint").val();
 		info["graphUri"] = $("input#rdfSPAQRLGraph").val();
-		info["replaceContext"] = $('#graphReplace_1').is(':checked');
+		info["replaceContext"] = $('#modelGraphList').val();
 
 		if( $("input#saveToRDFStore").is(":checked")) {
 			publishRDFToStore(info);
@@ -158,14 +158,14 @@ function fetchGraphsFromTripleStore(url) {
 	   		function (xhr, textStatus) {
 	   			var json = $.parseJSON(xhr.responseText);
 	   			var graphs = json["elements"][0]['graphs'];
-	   			var graphListRadioBtnGrp = $("#graphListRadioBtnGrp");
-	   			graphListRadioBtnGrp.html('');
+	   			var modelGraphList = $("#modelGraphList");
+	   			modelGraphList.html('');
 	   			for (var x in graphs) {
-	   				graphListRadioBtnGrp.append('<input type="radio" name="group1" id="graph_'+x+'" value="'+graphs[x]+'" /> <label for="graph_'+x+'">'+graphs[x]+' </label> <br />');
+	   				modelGraphList.append('<option value="'+graphs[x]+'">'+graphs[x]+'</option>');
 	   			}
-	   			graphListRadioBtnGrp.unbind('change');
-	   			graphListRadioBtnGrp.change(function() {
-	   				$('#rdfSPAQRLGraph').val($('#graphListRadioBtnGrp').find("input:checked").val());
+	   			modelGraphList.unbind('change');
+	   			modelGraphList.change(function() {
+	   				$('#rdfSPAQRLGraph').val($('#modelGraphList').val());
 	   			});
 		   	},
 		error :
