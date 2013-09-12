@@ -289,10 +289,18 @@ public class TripleStoreUtil {
 			FileEntity entity = new FileEntity(file, ContentType.create(mime_types.get(rdfType), "UTF-8"));
 			
 			// check if we need to specify the context
-			if (context == null || context.isEmpty()) {
-				builder.setParameter("context", "null");
+			if (!replaceFlag) {
+				if (context == null || context.isEmpty()) {
+					context = "null";
+				} else {
+					context = "<" + context + ">";
+					builder.setParameter("baseURI", "<"+context+">");
+				}
+				builder.setParameter("context", context);
 				
-				// as we dont have the context, we use HttpPost over HttpPut, for put will replace the entire repo with an empty graph
+				// as we dont have the context or we want to append to context 
+				// we use HttpPost over HttpPut, for put will replace the entire repo with an empty graph
+				logger.info("Using POST to save rdf to triple store");
 				uri = builder.build();
 				HttpPost httpPost = new HttpPost(uri);
 				httpPost.setEntity(entity);
@@ -303,18 +311,16 @@ public class TripleStoreUtil {
 			else 
 			{
 				builder.setParameter("context", "<"+context+">");
-				// if the context is given, then only we consider the option of replacing the old contents
-				if (replaceFlag) {
-					builder.setParameter("baseURI", "<"+context+">");
-					uri = builder.build();
-					
-					// we use HttpPut to replace the context
-					HttpPut httpput = new HttpPut(uri);
-					httpput.setEntity(entity);
-					
-					// executing the http request
-					response = httpclient.execute(httpput);
-				}
+				builder.setParameter("baseURI", "<"+context+">");
+				uri = builder.build();
+				
+				// we use HttpPut to replace the context
+				logger.info("Using PUT to save rdf to triple store");
+				HttpPut httpput = new HttpPut(uri);
+				httpput.setEntity(entity);
+				
+				// executing the http request
+				response = httpclient.execute(httpput);
 			}
 			
 			logger.info("request url : " + uri.toString());
