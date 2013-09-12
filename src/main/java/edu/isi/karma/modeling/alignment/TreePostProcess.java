@@ -49,12 +49,14 @@ public class TreePostProcess {
 	public TreePostProcess(
 			GraphBuilder graphBuilder,
 			WeightedMultigraph<Node, Link> tree, 
+			List<Link> newLinks,
 			Node thingNode) {
 		
 		this.graphBuilder = graphBuilder;
 		this.tree = (DirectedWeightedMultigraph<Node, Link>)GraphUtil.asDirectedGraph(tree);
 		this.thingNode = thingNode;
 		buildOutputTree();
+		addLinks(newLinks);
 		selectRoot(findPossibleRoots());
 
 	}
@@ -178,6 +180,20 @@ public class TreePostProcess {
 		return tree;
 	}
 	
+	private void addLinks(List<Link> links) {
+		if (links == null)
+			return;
+		
+		for (Link link : links) {
+			if (!this.tree.containsEdge(link) &&
+					this.tree.containsVertex(link.getSource()) &&
+					this.tree.containsVertex(link.getTarget())) {
+				this.tree.addEdge(link.getSource(), link.getTarget(), link);
+			}
+		}
+	}
+	
+
 //	private void removeDanglingNodes() {
 //
 //		boolean connectedToColumn = false;

@@ -183,7 +183,7 @@ public class GraphUtil {
 	
 	@SuppressWarnings("unchecked")
 	public static DirectedWeightedMultigraph<Node, Link> treeToRootedTree(
-			DirectedWeightedMultigraph<Node, Link> tree, Node root, Set<String> reversedLinks) {
+			DirectedWeightedMultigraph<Node, Link> tree, Node root, Set<String> reversedLinks, Set<String> removedLinks) {
 		
 		if (tree == null) {
 			logger.error("The input tree is null.");
@@ -194,7 +194,10 @@ public class GraphUtil {
 				(DirectedWeightedMultigraph<Node, Link>)tree.clone();
 		if (reversedLinks == null)
 			reversedLinks = new HashSet<String>();
-		treeToRootedTree(rootedTree, root, null, reversedLinks);
+		if (removedLinks == null)
+			removedLinks = new HashSet<String>();
+		treeToRootedTree(rootedTree, root, null, new HashSet<Node>(), reversedLinks, removedLinks);
+//		printGraphSimple(rootedTree);
 		return rootedTree;
 	}
 	
@@ -231,10 +234,15 @@ public class GraphUtil {
         	return null;
 	}
 
-	private static void treeToRootedTree(DirectedWeightedMultigraph<Node, Link> tree, Node node, Link e, Set<String> reversedLinks) {
+	private static void treeToRootedTree(DirectedWeightedMultigraph<Node, Link> tree, Node node, Link e, Set<Node> visitedNodes, Set<String> reversedLinks, Set<String> removedLinks) {
 		
 		if (node == null)
 			return;
+		
+		if (visitedNodes.contains(node)) // prevent having loop in the tree
+			return;
+		
+		visitedNodes.add(node);
 		
 		Node source, target;
 		
@@ -269,9 +277,15 @@ public class GraphUtil {
 			return;
 		
 		
-		for (Link outLink : outgoingLinks) {
+		Link[] outgoingLinksArr = outgoingLinks.toArray(new Link[0]);
+		for (Link outLink : outgoingLinksArr) {
 			target = outLink.getTarget();
-			treeToRootedTree(tree, target, outLink, reversedLinks);
+			if (visitedNodes.contains(target)) {
+				tree.removeEdge(outLink);
+				removedLinks.add(outLink.getId());
+			} else {
+				treeToRootedTree(tree, target, outLink, visitedNodes, reversedLinks, removedLinks);
+			}
 		}
 	}
 	

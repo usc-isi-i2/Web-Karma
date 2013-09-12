@@ -177,8 +177,8 @@ public class ChangeInternalNodeLinksCommand extends Command {
 						initialEdge.getString(JsonKeys.edgeSourceId.name()), 
 						initialEdge.getString(JsonKeys.edgeTargetId.name()));
 				
-//				alignment.changeLinkStatus(linkId, LinkStatus.Normal);
-				alignment.removeLink(linkId);
+				alignment.changeLinkStatus(linkId, LinkStatus.Normal);
+//				alignment.removeLink(linkId);
 			}
 		}
 	}
