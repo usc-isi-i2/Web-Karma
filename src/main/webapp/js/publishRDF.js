@@ -70,6 +70,7 @@ function validateAndPublishRDF() {
 function publishRDFFunction(graphUri) {
 	
 	$("div#PublishRDFDialogBox").dialog("close");
+	$("div#confirmPublishRDFDialogBox").dialog("close");
 
 	var info = new Object();
 	info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
