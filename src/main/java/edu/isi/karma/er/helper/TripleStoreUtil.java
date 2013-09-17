@@ -164,12 +164,7 @@ public class TripleStoreUtil {
 		return retVal;
 	}
 	
-	private static boolean checkConnection(String url) {
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpGet httpget;
-		HttpResponse response;
-		HttpEntity entity;
-		StringBuffer out = new StringBuffer();
+	public static boolean checkConnection(String url) {
 		boolean retval = false;
 		try {
 			if(url.charAt(url.length()-1) != '/') {
@@ -177,24 +172,14 @@ public class TripleStoreUtil {
 			}
 			url = url +  "size";
 			logger.info(url);
-			httpget = new HttpGet(url);
-			response = httpclient.execute(httpget);
-			entity = response.getEntity();
-			if (entity != null) {
-				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
-				String line = buf.readLine();
-				while(line != null) {
-					out.append(line);
-					line = buf.readLine();
-				}
+			String response = HTTPUtil.executeHTTPGetRequest(url, null);
 				try {
-					int i = Integer.parseInt(out.toString());
+					int i = Integer.parseInt(response);
 					logger.debug("Connnection to repo : " + url + " Successful.\t Size : " + i);
 					 retval = true;
 				} catch (Exception e) {
 					logger.error("Could not parse size of repository query result.");
 				}
-			}
 		} catch(Exception e) {
 			e.printStackTrace();
 		} 
