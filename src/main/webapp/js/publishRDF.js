@@ -27,6 +27,33 @@ function showHideRdfInfo() {
 			$("div#rdfStoreInfo").hide();
 		}
 }
+function testSparqlEndPoint(url) {
+	var info = new Object();
+	info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "TestSPARQLEndPointCommand";
+	info["tripleStoreUrl"] = url;
+	window.conncetionStat = false;
+	var returned = $.ajax({
+	   	url: "RequestController",
+	   	type: "POST",
+	   	data : info,
+	   	dataType : "json",
+	   	async : false,
+	   	complete :
+	   		function (xhr, textStatus) {
+	    		var json = $.parseJSON(xhr.responseText);
+	    		if(json['elements'] && json['elements'][0]['connectionStatus'] && json['elements'][0]['connectionStatus'] == 1) {
+	    			window.conncetionStat = true;
+	    		}
+		   	},
+		error :
+			function (xhr, textStatus) {
+	   			alert("Error occured while testing connection to sparql endpoint!" + textStatus);
+		   	}
+	});
+	return window.conncetionStat;
+}
 function validateAndPublishRDF() {
 	var expression = /(^|\s)((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)/gi; 
 		// /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
@@ -39,6 +66,13 @@ function validateAndPublishRDF() {
 	} else {
 		graphUri = $('#modelGraphList').val();
 	}
+	// validate the sparql endpoint
+	if(!testSparqlEndPoint($("input#rdfSPAQRLEndPoint").val())) {
+		alert("Invalid sparql end point. Could not establish connection.");
+		return;
+	}
+	
+	// validate the graph uri
 	if(needsValidation) {
 		if(graphUri.length < 3) {
 			alert("Context field is empty");
