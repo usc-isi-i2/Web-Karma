@@ -233,6 +233,12 @@ function handlePublishModelToStoreButton(event) {
 function submitModelName(value, settings) {
 	$("div#PublishR2RMLModelDialogBox").dialog("close");
 
+	// validate the sparql endpoint
+	if(!testSparqlEndPoint($("input#txtR2RML_URL").val())) {
+		alert("Invalid sparql end point. Could not establish connection.");
+		return;
+	}
+	
 	var info = new Object();
 	info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
