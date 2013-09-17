@@ -38,6 +38,8 @@ import edu.isi.karma.controller.command.FetchGraphsFromTripleStoreCommand;
 import edu.isi.karma.controller.command.FetchGraphsFromTripleStoreCommandFactory;
 import edu.isi.karma.controller.command.FetchPreferencesCommand;
 import edu.isi.karma.controller.command.FetchPreferencesCommandFactory;
+import edu.isi.karma.controller.command.GetUniqueGraphUrlCommand;
+import edu.isi.karma.controller.command.GetUniqueGraphUrlCommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.command.ResetKarmaCommand;
 import edu.isi.karma.controller.command.ResetKarmaCommandFactory;
@@ -318,6 +320,8 @@ public class ExecutionController {
 				new InvokeRubenReconciliationServiceFactory());
 		commandFactoryMap.put(FetchGraphsFromTripleStoreCommand.class.getSimpleName(), 
 				new FetchGraphsFromTripleStoreCommandFactory());
+		commandFactoryMap.put(GetUniqueGraphUrlCommand.class.getSimpleName(), 
+				new GetUniqueGraphUrlCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {
