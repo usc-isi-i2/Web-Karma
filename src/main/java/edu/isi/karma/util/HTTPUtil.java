@@ -109,7 +109,9 @@ public class HTTPUtil {
 		HttpClient httpClient = new DefaultHttpClient();
 		
 		HttpGet request = new HttpGet(uri);
-		request.setHeader(HTTP_HEADERS.Accept.name(), acceptContentType);
+		if(acceptContentType != null && !acceptContentType.isEmpty()) {
+			request.setHeader(HTTP_HEADERS.Accept.name(), acceptContentType);
+		}
 		HttpResponse response = httpClient.execute(request);
 		
 		// Parse the response and store it in a String
