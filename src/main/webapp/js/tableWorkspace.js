@@ -278,8 +278,8 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	    fetchGraphsFromTripleStore($("#rdfSPAQRLEndPoint").val());
 	    
 		// Show the dialog box
-		rdfDialogBox.dialog({width: 400, title:'Publish RDF',
-			buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": publishRDFFunction }});
+		rdfDialogBox.dialog({width: 500, height:420, title:'Publish RDF',
+			buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": validateAndPublishRDF }});
 
 	});
 
