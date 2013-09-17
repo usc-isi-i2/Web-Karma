@@ -332,7 +332,7 @@ and related projects, please see: http://www.isi.edu/integration
 					var doPrevent = false;
 					if(event.keyCode === 8) {
 						var d = event.srcElement || event.target;
-						if((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD')) || d.tagName.toUpperCase() === 'TEXTAREA') {
+						if((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD' || d.type.toUpperCase() === 'URL')) || d.tagName.toUpperCase() === 'TEXTAREA') {
 							doPrevent = d.readOnly || d.disabled;
 						} else {
 							doPrevent = true;
@@ -827,7 +827,7 @@ and related projects, please see: http://www.isi.edu/integration
 					</tr>
 					<tr>
 						<td><label for="rdfSPAQRLEndPoint">SPARQL End Point</label></td>
-						<td><input type="text" id="rdfSPAQRLEndPoint" value="" style="width:100%"/> 
+						<td><input type="url" id="rdfSPAQRLEndPoint" required value="" style="width:100%" /> 
 						<br /><a style="color: blue; float:right" id="rdfBrowseRepo" target="_blank" href="">Browse</a>
 						</td>
 					</tr>
@@ -841,7 +841,7 @@ and related projects, please see: http://www.isi.edu/integration
 					</tr>
 					<tr>
 						<td> <label id="labelFor_rdfSPAQRLGraph" for="rdfSPAQRLGraph">Create new context</label> </td>
-						<td> <input type="text" id="rdfSPAQRLGraph" value="" style="width:100%"/> </td>
+						<td> <input type="url" id="rdfSPAQRLGraph" value="" style="width:100%"/> </td>
 					</tr>
 					<tr>
 					<td colspan="2">
