@@ -247,9 +247,10 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		optionsDiv.hide();
 		showHideRdfInfo();
 		getRDFPreferences();
+		window.rdfSPAQRLEndPoint = null;
 		
 		var rdfDialogBox = $("div#PublishRDFDialogBox");
-		$('#rdfBrowseRepo').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/karma_data/summary');
+		$('#rdfBrowseRepo').attr('href', $("input#rdfSPAQRLEndPoint").val()+ '/summary');
 		
 		// get the graph uri for the worksheet
 		var info = new Object();
@@ -280,6 +281,16 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		// Show the dialog box
 		rdfDialogBox.dialog({width: 500, height:420, title:'Publish RDF',
 			buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": validateAndPublishRDF }});
+		
+		// bind the change event for the sparqlEndPoint
+		$('input#rdfSPAQRLEndPoint').unbind('focusout');
+		
+		$('input#rdfSPAQRLEndPoint').focusout(function(event){
+			if (window.rdfSPAQRLEndPoint != $('input#rdfSPAQRLEndPoint').val()) {
+				// get the list of repo
+				fetchGraphsFromTripleStore($("#rdfSPAQRLEndPoint").val());
+			}
+		});
 
 	});
 

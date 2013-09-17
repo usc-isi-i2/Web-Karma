@@ -41,17 +41,13 @@ public class FetchGraphsFromTripleStoreCommand extends Command {
 	private String tripleStoreUrl;
 	
 	private enum JsonKeys {
-		updateType, graphs
+		updateType, graphs, tripleStoreUrl
 	}
 	
 	private static Logger logger = LoggerFactory.getLogger(FetchGraphsFromTripleStoreCommand.class);
 	
 	public String getTripleStoreUrl() {
 		return tripleStoreUrl;
-	}
-
-	public void setTripleStoreUrl(String tripleStoreUrl) {
-		this.tripleStoreUrl = tripleStoreUrl;
 	}
 
 	protected FetchGraphsFromTripleStoreCommand(String id, String url){
@@ -83,6 +79,9 @@ public class FetchGraphsFromTripleStoreCommand extends Command {
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
 		TripleStoreUtil utilObj = new TripleStoreUtil();
 		final ArrayList<String> graphs = utilObj.getContexts(this.tripleStoreUrl);
+		if(graphs == null) {
+			return new UpdateContainer(new ErrorUpdate("Error occurred while fetching graphs!"));
+		}
 		logger.info("Graphs fetched : " + graphs.size());
 		
 		try {

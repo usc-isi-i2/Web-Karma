@@ -518,12 +518,10 @@ public class TripleStoreUtil {
 					graphs.add(o.getJSONObject("contextID").getString("value"));
 				}
 			}
-		} catch (ClientProtocolException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
+			graphs = null;
 		}
 		
 		return graphs;
@@ -533,6 +531,9 @@ public class TripleStoreUtil {
 		logger.info("Checking for unique graphUri for url : " + graphUrl + " at endPoint : " + tripleStoreUrl);
 		boolean retVal = true;
 		ArrayList<String> urls = this.getContexts(tripleStoreUrl);
+		if(urls == null ){
+			return false;
+		}
 		// need to compare each url in case-insensitive form
 		for(String url : urls) {
 			if (url.equalsIgnoreCase(graphUrl)) {

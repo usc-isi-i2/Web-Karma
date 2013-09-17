@@ -149,6 +149,7 @@ function getRDFPreferences() {
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",
+	   	async: false,
 	   	complete : 
 	   		function (xhr, textStatus) {
 	   			var json = $.parseJSON(xhr.responseText);
@@ -190,6 +191,7 @@ function fetchGraphsFromTripleStore(url) {
 	var info = new Object();
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "FetchGraphsFromTripleStoreCommand";
+	info["tripleStoreUrl"] = url;
 	var returned = $.ajax({
 	   	url: "RequestController", 
 	   	type: "POST",
@@ -198,7 +200,10 @@ function fetchGraphsFromTripleStore(url) {
 	   	complete : 
 	   		function (xhr, textStatus) {
 	   			var json = $.parseJSON(xhr.responseText);
-	   			var graphs = json["elements"][0]['graphs'];
+	   			graphs = [];
+	   			if(json["elements"] && json["elements"][0]['graphs']) {
+	   				graphs = json["elements"][0]['graphs'];
+	   			}
 	   			var modelGraphList = $("#modelGraphList");
 	   			modelGraphList.html('<option value="create_new_context">Create New Context </option>');
 	   			for (var x in graphs) {
