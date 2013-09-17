@@ -43,10 +43,11 @@ function drawChart(element)  {
 	var xPadding = 10;
 	var yPadding = 2;
 
-	if (element["chartData"].histogram == "undefined")
+	//console.log("histogram:-" + element["chartData"].histogram);
+	if (element["chartData"].histogram == null)
 		return;
 	var dataArray = eval(element["chartData"].histogram);
-	//console.log(dataArray); 
+	//console.log("dataArray:-" + dataArray); 
 	var xLabel = element["chartData"].xLabel;
 	var yLabel = element["chartData"].yLabel;
 	var tooltip = "Data Type Detected: " + element["chartData"].Category  + "\nTotal Data: " + element["chartData"].Total_ID_Count + 
@@ -161,7 +162,7 @@ function drawBigChart(pid)  {
 	var xPadding = 20;
 	var yPadding = 2;
 	element = Window.cleaningStore[pid];
-	if (element["chartData"].histogram == "undefined")
+	if (element["chartData"].histogram == null)
 		return;
 	var dataArray = eval(element["chartData"].histogram);
 	var xLabel = element["chartData"].xLabel;
