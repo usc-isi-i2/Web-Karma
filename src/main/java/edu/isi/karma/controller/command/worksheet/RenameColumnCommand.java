@@ -21,30 +21,21 @@
 
 package edu.isi.karma.controller.command.worksheet;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
-public class RenameColumnCommand extends Command {
+public class RenameColumnCommand extends WorksheetCommand {
 	final private String newColumnName;
 	final private String hNodeId;
-	final private String vWorksheetId;
 	private String oldColumnName;
 
-	public RenameColumnCommand(String id, String newColumnName, String hNodeId, String vWorksheetId) {
-		super(id);
+	public RenameColumnCommand(String id, String newColumnName, String hNodeId, String worksheetId) {
+		super(id, worksheetId);
 		this.newColumnName = newColumnName;
 		this.hNodeId = hNodeId;
-		this.vWorksheetId = vWorksheetId;
 	}
 
 	@Override
@@ -71,63 +62,35 @@ public class RenameColumnCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		HNode columnNode = vWorkspace.getWorkspace().getFactory().getHNode(hNodeId);
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		HNode columnNode = workspace.getFactory().getHNode(hNodeId);
 		oldColumnName = columnNode.getColumnName();
 		
 		// Change the column name
 		columnNode.setColumnName(newColumnName);
 		
 		// Prepare the output to be sent
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-		Worksheet wk = vw.getWorksheet();
-		
 		UpdateContainer c =  new UpdateContainer();
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, wk, wk.getHeaders().getAllPaths(), vWorkspace);
-		vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-		vw.update(c);
-		
+		this.generateRegenerateWorksheetUpdates(c);
 		// Add updates related to the alignment
-		addAlignmentUpdate(c, vWorkspace, wk);
+		addAlignmentUpdate(c, workspace);
 		return c;
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		HNode columnNode = vWorkspace.getWorkspace().getFactory().getHNode(hNodeId);
+	public UpdateContainer undoIt(Workspace workspace) {
+		HNode columnNode = workspace.getFactory().getHNode(hNodeId);
 		// Change the column name
 		columnNode.setColumnName(oldColumnName);
 		
 		// Prepare the output to be sent
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-		Worksheet wk = vw.getWorksheet();
-		
+	
 		UpdateContainer c =  new UpdateContainer();
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, wk, wk.getHeaders().getAllPaths(), vWorkspace);
-		vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-		vw.update(c);
-		
+		this.generateRegenerateWorksheetUpdates(c);
 		// Add updates related to the alignment
-		addAlignmentUpdate(c, vWorkspace, wk);
+		addAlignmentUpdate(c, workspace);
 		
 		return c;
 	}
 	
-
-	private void addAlignmentUpdate(UpdateContainer c, VWorkspace vWorkspace, Worksheet worksheet) {
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
-				vWorkspace.getWorkspace().getId(), vWorksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		if (alignment == null) {
-			alignment = new Alignment(vWorkspace.getWorkspace().getOntologyManager());
-			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
-		}
-		// Compute the semantic type suggestions
-		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace()
-				.getCrfModelHandler(), vWorkspace.getWorkspace().getOntologyManager(), alignment);
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
-		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().
-				getVWorksheet(vWorksheetId), alignment));
-	}
-
 }

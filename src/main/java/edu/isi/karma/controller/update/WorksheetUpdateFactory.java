@@ -18,24 +18,23 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.controller.command.importdata;
 
-import java.io.File;
+package edu.isi.karma.controller.update;
 
-import javax.servlet.http.HttpServletRequest;
+public class WorksheetUpdateFactory {
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.util.FileUtil;
-
-public class ImportOntologyCommandFactory extends CommandFactory {
-
-	@Override
-	public Command createCommand(HttpServletRequest request,
-			Workspace workspace) {
-		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
-		return new ImportOntologyCommand(getNewId(workspace), uploadedFile);
+	public static void update(UpdateContainer c, String worksheetId) {
+		c.add(new WorksheetHeadersUpdate(worksheetId));
+		c.add(new WorksheetHierarchicalHeadersUpdate(worksheetId));
+		c.add(new WorksheetHierarchicalDataUpdate(worksheetId));
+		c.add(new WorksheetCleaningServiceInvocationResultsUpdate(worksheetId));
 	}
 
+	public static void updateHeaders(UpdateContainer c, String worksheetId) {
+		c.add(new WorksheetHierarchicalHeadersUpdate(worksheetId));
+	}
+
+	public static void updateContent(UpdateContainer c, String worksheetId) {
+		c.add(new WorksheetHierarchicalDataUpdate(worksheetId));
+	}
 }

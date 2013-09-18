@@ -29,17 +29,17 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
-public class FetchExistingModelsForWorksheetCommand extends Command {
-	private final String vWorksheetId;
+public class FetchExistingModelsForWorksheetCommand extends WorksheetCommand {
 	
 	private enum sparqlKeys {
 		results, bindings, modelName, sourceName, value
@@ -51,9 +51,8 @@ public class FetchExistingModelsForWorksheetCommand extends Command {
 	
 	private static Logger logger = LoggerFactory.getLogger(FetchExistingModelsForWorksheetCommand.class);
 
-	public FetchExistingModelsForWorksheetCommand(String id, String vWorksheetId) {
-		super(id);
-		this.vWorksheetId = vWorksheetId;
+	public FetchExistingModelsForWorksheetCommand(String id, String worksheetId) {
+		super(id,worksheetId);
 	}
 
 	@Override
@@ -77,8 +76,8 @@ public class FetchExistingModelsForWorksheetCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		final String wkName = worksheet.getTitle();
 		
 		
@@ -138,7 +137,7 @@ public class FetchExistingModelsForWorksheetCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// Not required
 		return null;
 	}

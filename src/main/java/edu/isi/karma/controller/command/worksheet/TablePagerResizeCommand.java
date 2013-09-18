@@ -27,21 +27,19 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetDataUpdate;
-import edu.isi.karma.rep.TablePager;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class TablePagerResizeCommand extends Command {
 
 	private final String tableIdArg;
-	private final String vWorksheetIdArg;
+	private final String worksheetId;
 	private final int	newPageSize;
 
-	protected TablePagerResizeCommand(String id, String vWorksheetIdArg,
+	protected TablePagerResizeCommand(String id, String worksheetId,
 			String tableIdArg, String newPageSize) {
 		super(id);
 		this.tableIdArg = tableIdArg;
-		this.vWorksheetIdArg = vWorksheetIdArg;
+		this.worksheetId = worksheetId;
 		this.newPageSize = Integer.parseInt(newPageSize);
 	}
 
@@ -66,17 +64,13 @@ public class TablePagerResizeCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		VWorksheet vWorksheet = vWorkspace.getViewFactory().getVWorksheet(
-				vWorksheetIdArg);
-		TablePager pager = vWorksheet.getTablePager(tableIdArg);
-		pager.setDesiredSize(newPageSize);
-		vWorksheet.udateDataTable(vWorkspace.getViewFactory());
-		return new UpdateContainer(new WorksheetDataUpdate(vWorksheet));
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		
+		return new UpdateContainer(new WorksheetDataUpdate(worksheetId, tableIdArg, null, newPageSize));
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// not undoable.
 		return new UpdateContainer();
 	}

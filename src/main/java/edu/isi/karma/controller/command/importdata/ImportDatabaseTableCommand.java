@@ -31,12 +31,12 @@ import edu.isi.karma.controller.update.FetchPreferencesUpdate;
 import edu.isi.karma.controller.update.NewDatabaseCommandUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.database.DatabaseTableImport;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
 
 public class ImportDatabaseTableCommand extends CommandWithPreview {
 	// Database Type
@@ -68,13 +68,13 @@ public class ImportDatabaseTableCommand extends CommandWithPreview {
 		generateTableList, importTable, getPreferencesValues, previewTable
 	}
 
-	protected ImportDatabaseTableCommand(String id, VWorkspace vWorkspace) {
+	protected ImportDatabaseTableCommand(String id) {
 		super(id);
 	}
 
 	public ImportDatabaseTableCommand(String id, String dbType,
 			String hostname, int portNumber, String userName, String password,
-			String dBorSIDName, VWorkspace vWorkspace) {
+			String dBorSIDName) {
 		super(id);
 		this.dbType = AbstractJDBCUtil.DBType.valueOf(dbType);
 		this.hostname = hostname;
@@ -93,11 +93,11 @@ public class ImportDatabaseTableCommand extends CommandWithPreview {
 	}
 
 	@Override
-	public UpdateContainer showPreview(VWorkspace vWorkspace)
+	public UpdateContainer showPreview(Workspace workspace)
 			throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		if(requestedInteractionType == InteractionType.getPreferencesValues) {
-			c.add(new FetchPreferencesUpdate(vWorkspace, ImportDatabaseTableCommand.class.getSimpleName()+"Preferences"));
+			c.add(new FetchPreferencesUpdate(ImportDatabaseTableCommand.class.getSimpleName()+"Preferences"));
 			return c;
 		}
 		
@@ -165,28 +165,24 @@ public class ImportDatabaseTableCommand extends CommandWithPreview {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		setRequestedInteractionType(InteractionType.importTable);
 		
 		UpdateContainer c = new UpdateContainer();
 		try {
 			DatabaseTableImport  dbTableImport = new DatabaseTableImport(
 					dbType, hostname, portnumber, username, password, dBorSIDName, 
-					tableName, vWorkspace.getWorkspace());
+					tableName, workspace);
 			
 			Worksheet wsht = dbTableImport.generateWorksheet();
-//			Worksheet wsht = dbTableImport.generateWorksheetForAllRows();
-			vWorkspace.addAllWorksheets();
-			
-			c.add(new WorksheetListUpdate(vWorkspace.getVWorksheetList()));
-			VWorksheet vw = vWorkspace.getVWorksheet(wsht.getId());
-			vw.update(c);
-			
+	
+			c.add(new WorksheetListUpdate());
+			WorksheetUpdateFactory.update(c, wsht.getId());
 			// Create a new Database Import Command. The interface allows the user to import 
 			// multiple tables
-			ImportDatabaseTableCommand comm = new ImportDatabaseTableCommand(vWorkspace.getRepFactory().getNewId("C"), 
-					dbType.name(), hostname, portnumber, username, password, dBorSIDName, vWorkspace);
-			vWorkspace.getWorkspace().getCommandHistory().setCurrentCommand(comm);
+			ImportDatabaseTableCommand comm = new ImportDatabaseTableCommand(workspace.getFactory().getNewId("C"), 
+					dbType.name(), hostname, portnumber, username, password, dBorSIDName);
+			workspace.getCommandHistory().setCurrentCommand(comm);
 			NewDatabaseCommandUpdate upd = new NewDatabaseCommandUpdate(comm);
 			c.add(upd);
 		} catch (Throwable e) {
@@ -199,7 +195,7 @@ public class ImportDatabaseTableCommand extends CommandWithPreview {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// Nothing to do! This command can't be undone.
 		return null;
 	}

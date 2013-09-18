@@ -31,11 +31,10 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.rdf.UnionImport;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
 
 public class ImportUnionResultCommand extends Command {
 
@@ -66,19 +65,17 @@ public class ImportUnionResultCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Workspace ws = vWorkspace.getWorkspace();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+	
 		UpdateContainer c = new UpdateContainer();
 		try {
 
-			UnionImport uim=new UnionImport("union", ws);
+			UnionImport uim=new UnionImport("union", workspace);
 			Worksheet wsht=uim.generateWorksheet();
+		
 			
-			vWorkspace.addAllWorksheets();
-			
-			c.add(new WorksheetListUpdate(vWorkspace.getVWorksheetList()));
-			VWorksheet vw = vWorkspace.getVWorksheet(wsht.getId());
-			vw.update(c);
+			c.add(new WorksheetListUpdate());
+			WorksheetUpdateFactory.update(c, wsht.getId());
 		} catch (Exception e) {
 			logger.error("Error occured while generating worksheet from JSON!", e);
 			return new UpdateContainer(new ErrorUpdate(
@@ -88,7 +85,7 @@ public class ImportUnionResultCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace)  {
+	public UpdateContainer undoIt(Workspace workspace)  {
         return null;
 	}
 

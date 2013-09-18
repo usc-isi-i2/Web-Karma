@@ -45,8 +45,8 @@ public class AlignmentManager {
 		return alignmentMap.get(alignmentId);
 	}
 	
-	public Alignment getAlignment(String workspaceId, String vWorksheetId) {
-		String alignmentId = constructAlignmentId(workspaceId, vWorksheetId);
+	public Alignment getAlignment(String workspaceId, String worksheetId) {
+		String alignmentId = constructAlignmentId(workspaceId, worksheetId);
 		return getAlignment(alignmentId);
 	}
 
@@ -63,7 +63,7 @@ public class AlignmentManager {
 		}
 	}
 	
-	public String constructAlignmentId(String workspaceId, String vWorksheetId) {
-		return workspaceId + ":" + vWorksheetId + "AL";
+	public String constructAlignmentId(String workspaceId, String worksheetId) {
+		return workspaceId + ":" + worksheetId + "AL";
 	}
 }

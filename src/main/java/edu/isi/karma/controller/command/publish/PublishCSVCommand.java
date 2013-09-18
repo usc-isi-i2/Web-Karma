@@ -22,8 +22,6 @@ package edu.isi.karma.controller.command.publish;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,25 +32,25 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.imp.csv.CSVFileExport;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
 public class PublishCSVCommand extends Command {
-	private final String vWorksheetId;
+	private final String worksheetId;
 
 	private enum JsonKeys {
-		updateType, fileUrl, vWorksheetId
+		updateType, fileUrl, worksheetId
 	}
 
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishCSVCommand.class);
 
-	protected PublishCSVCommand(String id, String vWorksheetId) {
+	protected PublishCSVCommand(String id, String worksheetId) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 	}
 
 	@Override
@@ -76,9 +74,8 @@ public class PublishCSVCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		CSVFileExport csvFileExport = new CSVFileExport(worksheet);
 
@@ -98,8 +95,8 @@ public class PublishCSVCommand extends Command {
 								"PublishCSVUpdate");
 						outputObject.put(JsonKeys.fileUrl.name(),
 								fileName);
-						outputObject.put(JsonKeys.vWorksheetId.name(),
-								vWorksheetId);
+						outputObject.put(JsonKeys.worksheetId.name(),
+								worksheetId);
 						pw.println(outputObject.toString(4));
 						
 					} catch (JSONException e) {
@@ -116,7 +113,7 @@ public class PublishCSVCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// TODO Auto-generated method stub
 		return null;
 	}

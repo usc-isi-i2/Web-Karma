@@ -29,32 +29,31 @@ import org.json.JSONException;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class PopulateCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 	
 	public enum Arguments {
-		vWorksheetId
+		worksheetId
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 
-		String vWorksheetId =request.getParameter(Arguments.vWorksheetId.name());
-		return new PopulateCommand(getNewId(vWorkspace), 
-				getWorksheetId(request, vWorkspace), vWorksheetId);
+		String worksheetId =request.getParameter(Arguments.worksheetId.name());
+		return new PopulateCommand(getNewId(workspace), 
+				worksheetId);
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
+	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
-		String vWorksheetId = CommandInputJSONUtil.getStringValue(Arguments.vWorksheetId.name()
+		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name()
 				, inputJson);
-		return new PopulateCommand(getNewId(vWorkspace), 
-				vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet().getId(), 
-				vWorksheetId);
+		return new PopulateCommand(getNewId(workspace), 
+				worksheetId);
 	}
 }

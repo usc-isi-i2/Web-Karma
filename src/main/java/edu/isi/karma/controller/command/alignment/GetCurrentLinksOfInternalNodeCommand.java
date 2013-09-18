@@ -35,6 +35,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
@@ -81,7 +82,7 @@ public class GetCurrentLinksOfInternalNodeCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		final Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		final Set<Link> incomingLinks = alignment.getCurrentIncomingLinksToNode(nodeId);
 		final Set<Link> outgoingLinks = alignment.getCurrentOutgoingLinksToNode(nodeId);
@@ -159,7 +160,7 @@ public class GetCurrentLinksOfInternalNodeCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 

@@ -30,6 +30,7 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
 public class ImportOntologyCommand extends Command {
@@ -70,8 +71,8 @@ public class ImportOntologyCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		OntologyManager ontManager = vWorkspace.getWorkspace().getOntologyManager();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		OntologyManager ontManager = workspace.getOntologyManager();
 		logger.info("Loading ontology: " + ontologyFile.getAbsolutePath());
 		final boolean success = ontManager.doImportAndUpdateCache(ontologyFile);
 		logger.info("Done loading ontology: " + ontologyFile.getAbsolutePath());
@@ -88,7 +89,7 @@ public class ImportOntologyCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// Not required
 		return null;
 	}

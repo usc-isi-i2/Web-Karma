@@ -22,11 +22,8 @@
 package edu.isi.karma.cleaning.features;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
-
-import com.sun.tools.xjc.reader.xmlschema.bindinfo.BIConversion.Static;
 
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;

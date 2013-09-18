@@ -390,7 +390,7 @@ function changeSemanticType(event) {
     var info = new Object();
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["command"] = "GetPropertiesAndClassesList";
-    info["vWorksheetId"] = optionsDiv.data("worksheetId");
+    info["vorksheetId"] = optionsDiv.data("worksheetId");
     var returned = $.ajax({
         url: "RequestController", 
         type: "POST",
@@ -742,7 +742,7 @@ function showClassHierarchyWindow(event) {
     var info = new Object();
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["command"] = "GetOntologyClassHierarchyCommand";
-    info["vWorksheetId"] = $("#ChangeSemanticTypesDialogBox").data("worksheetId");
+    info["worksheetId"] = $("#ChangeSemanticTypesDialogBox").data("worksheetId");
     
     var returned = $.ajax({
         url: "RequestController", 
@@ -980,7 +980,7 @@ function submitSemanticTypeChange() {
 	var info = new Object();
 	var newInfo = [];	// Used for commands that take JSONArray as input and are saved in the history 
 	var hNodeId = optionsDiv.data("currentNodeId");
-	info["vWorksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
+	info["worksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
 	info["hNodeId"] = hNodeId;
 	info["isKey"] = $("input#chooseClassKey").is(":checked");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -1040,7 +1040,7 @@ function submitSemanticTypeChange() {
 	        info["command"] = "SetSemanticTypeCommand";
 	}
 
-	// info["vWorksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
+	// info["worksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
 	// info["hNodeId"] = hNodeId;
 	// info["isKey"] = $("input#chooseClassKey").is(":checked");
 	// info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -1049,14 +1049,14 @@ function submitSemanticTypeChange() {
 	
 	newInfo.push(getParamObject("hNodeId", hNodeId,"hNodeId"));
 	newInfo.push(getParamObject("SemanticTypesArray", semTypesArray, "other"));
-	newInfo.push(getParamObject("vWorksheetId", info["vWorksheetId"], "vWorksheetId"));
+	newInfo.push(getParamObject("worksheetId", info["worksheetId"], "worksheetId"));
 	newInfo.push(getParamObject("isKey", $("input#chooseClassKey").is(":checked"), "other"));
 	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
 	newInfo.push(getParamObject("rdfLiteralType", $("div#rdfTypeSelectDiv input").val(), "other"));
 	info["newInfo"] = JSON.stringify(newInfo);
 	
 	
-	showLoading(info["vWorksheetId"]);
+	showLoading(info["worksheetId"]);
 	var returned = $.ajax({
 	   	url: "RequestController", 
 	   	type: "POST",
@@ -1067,12 +1067,12 @@ function submitSemanticTypeChange() {
 	    		var json = $.parseJSON(xhr.responseText);
 	    		parse(json);
 	    		$(optionsDiv).removeData("classAndPropertyListJson");
-	    		hideLoading(info["vWorksheetId"]);
+	    		hideLoading(info["worksheetId"]);
 		   	},
 		error :
 			function (xhr, textStatus) {
 	   			alert("Error occured with fetching new rows! " + textStatus);
-	   			hideLoading(info["vWorksheetId"]);
+	   			hideLoading(info["worksheetId"]);
 		   	}
 	});
 	
@@ -1207,7 +1207,7 @@ function submitAlignmentLinkChange() {
 		info["command"] = "DuplicateDomainOfLinkCommand";
 	else
 		info["command"] = "AddUserLinkToAlignmentCommand";
-	info["vWorksheetId"] = optionsDiv.data("worksheetId");
+	info["worksheetId"] = optionsDiv.data("worksheetId");
 	info["alignmentId"] = optionsDiv.data("alignmentId");
 	info["edgeId"] = optionsDiv.data("currentSelection");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -1215,10 +1215,10 @@ function submitAlignmentLinkChange() {
 	var newInfo = [];
     newInfo.push(getParamObject("edgeId", optionsDiv.data("currentSelection"), "other"));
     newInfo.push(getParamObject("alignmentId", optionsDiv.data("alignmentId"), "other"));
-    newInfo.push(getParamObject("vWorksheetId", optionsDiv.data("worksheetId"), "vWorksheetId"));
+    newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "worksheetId"));
     info["newInfo"] = JSON.stringify(newInfo);
 	
-	showLoading(info["vWorksheetId"]);
+	showLoading(info["worksheetId"]);
 	var returned = $.ajax({
 	   	url: "RequestController", 
 	   	type: "POST",
@@ -1228,12 +1228,12 @@ function submitAlignmentLinkChange() {
 	   		function (xhr, textStatus) {
 	   			var json = $.parseJSON(xhr.responseText);
 	    		parse(json);
-	    		hideLoading(info["vWorksheetId"]);
+	    		hideLoading(info["worksheetId"]);
 		   	},
 		error :
 			function (xhr, textStatus) {
 	   			alert("Error occured with fetching new rows! " + textStatus);
-	   			hideLoading(info["vWorksheetId"]);
+	   			hideLoading(info["worksheetId"]);
 		   	}
 	});
 	

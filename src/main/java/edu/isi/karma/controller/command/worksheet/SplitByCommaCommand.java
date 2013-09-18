@@ -28,24 +28,17 @@ import java.util.List;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class SplitByCommaCommand extends WorksheetCommand {
 	private final String hNodeId;
-	private final String vWorksheetId;
 	private final String delimiter;
 	private String columnName;
 	private HNode hNode;
@@ -57,10 +50,9 @@ public class SplitByCommaCommand extends WorksheetCommand {
 //	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	protected SplitByCommaCommand(String id, String worksheetId,
-			String hNodeId, String vWorksheetId, String delimiter) {
+			String hNodeId, String delimiter) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
-		this.vWorksheetId = vWorksheetId;
 		this.delimiter = delimiter;
 		
 		 addTag(CommandTag.Transformation);
@@ -87,13 +79,12 @@ public class SplitByCommaCommand extends WorksheetCommand {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Worksheet wk = workspace.getWorksheet(worksheetId);
 		UpdateContainer c = new UpdateContainer();
-		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
 
 		// Get the HNode
-		hNode = vWorkspace.getRepFactory().getHNode(hNodeId);
+		hNode = workspace.getFactory().getHNode(hNodeId);
 		// The column should not have a nested table but check to make sure!
 		if (hNode.hasNestedTable()) {
 			c.add(new ErrorUpdate("Cannot split column with nested table!"));
@@ -101,28 +92,22 @@ public class SplitByCommaCommand extends WorksheetCommand {
 		}
 		columnName = hNode.getColumnName();
 		
-		SplitColumnByDelimiter split = new SplitColumnByDelimiter(hNodeId, wk, delimiter, vWorkspace.getWorkspace());
+		SplitColumnByDelimiter split = new SplitColumnByDelimiter(hNodeId, wk, delimiter, workspace);
 		split.split(oldNodeValueMap, oldNodeStatusMap);
 		splitValueHNodeID = split.getSplitValueHNodeID();
 
-		List<HNodePath> columnPaths = wk.getHeaders().getAllPaths();
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, wk,
-				columnPaths, vWorkspace);
-		vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-
-		vw.update(c);
+		this.generateRegenerateWorksheetUpdates(c);
 		
 		// Add updates related to the alignment
-		addAlignmentUpdate(c, vWorkspace, wk);
+		addAlignmentUpdate(c, workspace);
 		
 		return c;
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		UpdateContainer c = new UpdateContainer();
-		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+		Worksheet wk = workspace.getFactory().getWorksheet(worksheetId);
 		List<HNodePath> columnPaths = wk.getHeaders().getAllPaths();
 
 		// Get the path which has the split value hNodeId
@@ -151,31 +136,11 @@ public class SplitByCommaCommand extends WorksheetCommand {
 
 		for (Node node : nodes) {
 			//pedro 2012-09-15 this does not look correct.
-			node.setNestedTable(null, vWorkspace.getRepFactory());
-			node.setValue(oldNodeValueMap.get(node), oldNodeStatusMap.get(node), vWorkspace.getRepFactory());
+			node.setNestedTable(null, workspace.getFactory());
+			node.setValue(oldNodeValueMap.get(node), oldNodeStatusMap.get(node), workspace.getFactory());
 		}
 
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, wk,
-				columnPaths, vWorkspace);
-		vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-
-		vw.update(c);
+		this.generateRegenerateWorksheetUpdates(c);
 		return c;
-	}
-	
-	private void addAlignmentUpdate(UpdateContainer c, VWorkspace vWorkspace, Worksheet worksheet) {
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
-				vWorkspace.getWorkspace().getId(), vWorksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		if (alignment == null) {
-			alignment = new Alignment(vWorkspace.getWorkspace().getOntologyManager());
-			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
-		}
-		// Compute the semantic type suggestions
-		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace()
-				.getCrfModelHandler(), vWorkspace.getWorkspace().getOntologyManager(), alignment);
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
-		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().
-				getVWorksheet(vWorksheetId), alignment));
 	}
 }

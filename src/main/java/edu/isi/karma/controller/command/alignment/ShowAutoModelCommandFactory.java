@@ -43,10 +43,10 @@ import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.modeling.ontology.AutoOntology;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -58,27 +58,24 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements
 			.getLogger(ShowAutoModelCommandFactory.class);
 
 	private enum Arguments {
-		vWorksheetId, checkHistory
+		worksheetId, checkHistory
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId
-				.name());
-		return new ShowModelCommand(getNewId(vWorkspace), getWorksheetId(
-				request, vWorkspace), vWorksheetId, false);
+			Workspace workspace) {
+		return new ShowModelCommand(getNewId(workspace), getWorksheetId(
+				request, workspace), false);
 	}
 
-	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
+	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
 
-		String vWorksheetId = HistoryJsonUtil.getStringValue(
-				Arguments.vWorksheetId.name(), inputJson);
+		String worksheetId = HistoryJsonUtil.getStringValue(
+				Arguments.worksheetId.name(), inputJson);
 		boolean checkHist = HistoryJsonUtil.getBooleanValue(
 				Arguments.checkHistory.name(), inputJson);
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		AutoOntology autoOntology = new AutoOntology(worksheet);
 		String path = ServletContextParameterMap
@@ -90,7 +87,7 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements
 			logger.error("Error occured while creating auto model!", e);
 		}
 
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+		OntologyManager ontMgr = workspace.getOntologyManager();
 		File autoOtologyFile = new File(path);
 		logger.info("Loading ontology: " + autoOtologyFile.getAbsolutePath());
 		ontMgr.doImportAndUpdateCache(autoOtologyFile);
@@ -100,9 +97,9 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements
 		if (checkHist) {
 			// Check if any command history exists for the worksheet
 			if (HistoryJsonUtil.historyExists(worksheet.getTitle(),
-					vWorkspace.getPreferencesId())) {
+					workspace.getCommandPreferencesId())) {
 				WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(
-						vWorksheetId, vWorkspace);
+						worksheetId, workspace);
 				try {
 					List<CommandTag> tags = new ArrayList<CommandTag>();
 					tags.add(CommandTag.Modeling);
@@ -114,12 +111,12 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements
 					e.printStackTrace();
 				}
 			}
-			return new ShowAutoModelCommand(getNewId(vWorkspace),
-					worksheet.getId(), vWorksheetId);
+			return new ShowAutoModelCommand(getNewId(workspace),
+					worksheet.getId());
 		}
 		
 		ShowAutoModelCommand comm = new ShowAutoModelCommand(
-				getNewId(vWorkspace), worksheet.getId(), vWorksheetId);
+				getNewId(workspace), worksheet.getId());
 		// Add the semantic types that have saved into the history
 		for (int i = 2; i < inputJson.length(); i++) {
 			JSONObject hnodeObj = (JSONObject) inputJson.get(i);

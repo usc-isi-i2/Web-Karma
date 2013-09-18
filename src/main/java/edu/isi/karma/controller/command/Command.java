@@ -29,6 +29,7 @@ import java.util.List;
 
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Entity;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
 
@@ -74,10 +75,10 @@ public abstract class Command extends Entity {
 	 */
 	public abstract CommandType getCommandType();
 
-	public abstract UpdateContainer doIt(VWorkspace vWorkspace)
+	public abstract UpdateContainer doIt(Workspace workspace)
 			throws CommandException;
 
-	public abstract UpdateContainer undoIt(VWorkspace vWorkspace);
+	public abstract UpdateContainer undoIt(Workspace workspace);
 
 	/**
 	 * Has this command been executed already?

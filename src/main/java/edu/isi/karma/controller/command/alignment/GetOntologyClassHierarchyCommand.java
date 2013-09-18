@@ -26,14 +26,14 @@ import edu.isi.karma.controller.update.OntologyHierarchyUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class GetOntologyClassHierarchyCommand extends Command {
-	private final String vWorksheetId;
+	private final String worksheetId;
 
-	protected GetOntologyClassHierarchyCommand(String id, String vWorksheetId) {
+	protected GetOntologyClassHierarchyCommand(String id, String worksheetId) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 	}
 
 	@Override
@@ -57,16 +57,16 @@ public class GetOntologyClassHierarchyCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
-		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
-		c.add(new OntologyHierarchyUpdate(vWorkspace.getWorkspace().getOntologyManager().getClassHierarchy(), 
+		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
+		c.add(new OntologyHierarchyUpdate(workspace.getOntologyManager().getClassHierarchy(), 
 				"OntologyClassHierarchyUpdate", true, alignment));
 		return c;
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// TODO Auto-generated method stub
 		return null;
 	}

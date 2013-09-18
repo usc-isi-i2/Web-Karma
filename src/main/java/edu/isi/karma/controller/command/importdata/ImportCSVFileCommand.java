@@ -33,11 +33,10 @@ import edu.isi.karma.controller.update.CSVImportPreviewUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
 
 public class ImportCSVFileCommand extends CommandWithPreview {
 
@@ -58,7 +57,7 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 	// Escape character
 	private char escapeCharacter = '\\';
 
-	private VWorkspace vWorkspace;
+	private Workspace workspace;
 
 	protected enum InteractionType {
 		generatePreview, importTable
@@ -88,10 +87,10 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 		this.escapeCharacter = escapeCharacter;
 	}
 
-	public ImportCSVFileCommand(String id, File file, VWorkspace vWorkspace) {
+	public ImportCSVFileCommand(String id, File file, Workspace workspace) {
 		super(id);
 		this.csvFile = file;
-		this.vWorkspace = vWorkspace;
+		this.workspace = workspace;
 	}
 
 	@Override
@@ -118,19 +117,17 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Workspace ws = vWorkspace.getWorkspace();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+	
 		CSVFileImport imp = new CSVFileImport(headerRowIndex,
 				dataStartRowIndex, delimiter, quoteCharacter, csvFile,
-				ws.getFactory(), ws);
+				workspace.getFactory(), workspace);
 		UpdateContainer c = new UpdateContainer();
 		Worksheet wsht = null;
 		try {
 			wsht = imp.generateWorksheet();
-			vWorkspace.addAllWorksheets();
-			c.add(new WorksheetListUpdate(vWorkspace.getVWorksheetList()));
-			VWorksheet vw = vWorkspace.getVWorksheet(wsht.getId());
-			vw.update(c);
+			c.add(new WorksheetListUpdate());
+			WorksheetUpdateFactory.update(c, wsht.getId());
 		} catch (Exception e) {
 			logger.error("Error occured while importing CSV file.", e);
 			return new UpdateContainer(new ErrorUpdate(
@@ -140,13 +137,13 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// Do nothing!
 		return null;
 	}
 
 	@Override
-	public UpdateContainer showPreview(VWorkspace vWorkspace)
+	public UpdateContainer showPreview(Workspace workspace)
 			throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		c.add(new CSVImportPreviewUpdate(delimiter, quoteCharacter,
@@ -202,7 +199,7 @@ public class ImportCSVFileCommand extends CommandWithPreview {
 		switch (type) {
 		case generatePreview: {
 			try {
-				c = showPreview(vWorkspace);
+				c = showPreview(workspace);
 			} catch (CommandException e) {
 				logger.error(
 						"Error occured while creating utput JSON for CSV Import",

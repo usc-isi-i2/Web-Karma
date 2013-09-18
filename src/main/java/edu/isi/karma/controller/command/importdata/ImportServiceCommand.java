@@ -20,6 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.importdata;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,14 +31,15 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.sources.InvocationManager;
-import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
 public class ImportServiceCommand extends Command {
@@ -83,12 +85,10 @@ public class ImportServiceCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		//save the preferences 
-		savePreferences(vWorkspace);
 
 		UpdateContainer c = new UpdateContainer();
-		Workspace ws = vWorkspace.getWorkspace();
 		
 		List<String> urls = new ArrayList<String>();
 		urls.add(serviceUrl);
@@ -98,16 +98,46 @@ public class ImportServiceCommand extends Command {
 			InvocationManager invocatioManager = new InvocationManager(null, ids, urls);
 			String json = invocatioManager.getServiceJson(includeInputAttributes);
 //			System.out.println(json);
-			JsonImport imp = new JsonImport(json, worksheetName, ws);
+			JsonImport imp = new JsonImport(json, worksheetName, workspace);
 			
 			Worksheet wsht = imp.generateWorksheet();
-			vWorkspace.addAllWorksheets();
+			c.add(new AbstractUpdate(){
+				@Override
+				public void applyUpdate(VWorkspace vWorkspace)
+				{
+					savePreferences(vWorkspace);
+				}
+
+				@Override
+				public void generateJson(String prefix, PrintWriter pw,
+						VWorkspace vWorkspace) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				private void savePreferences(VWorkspace vWorkspace){
+					try{
+						JSONObject prefObject = new JSONObject();
+						prefObject.put(PreferencesKeys.ServiceUrl.name(), serviceUrl);
+						prefObject.put(PreferencesKeys.WorksheetName.name(), worksheetName);
+						vWorkspace.getWorkspace().getCommandPreferences().setCommandPreferences(
+								"ImportServiceCommandPreferences", prefObject);
+						
+						/*
+						System.out.println("I Saved .....");
+						ViewPreferences prefs = vWorkspace.getPreferences();
+						JSONObject prefObject1 = prefs.getCommandPreferencesJSONObject("PublishDatabaseCommandPreferences");
+						System.out.println("I Saved ....."+prefObject1);
+						 */
+						
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+			});
 			
-			
-			c.add(new WorksheetListUpdate(vWorkspace.getVWorksheetList()));
-			VWorksheet vw = vWorkspace.getVWorksheet(wsht.getId());
-			vw.update(c);
-			
+			c.add(new WorksheetListUpdate());
+			WorksheetUpdateFactory.update(c, wsht.getId());
 			return c;
 		} catch (Exception e) {
 			logger.error("Error occured while creating worksheet from web-service: " + serviceUrl);
@@ -115,28 +145,9 @@ public class ImportServiceCommand extends Command {
 		}
 	}
 
-	private void savePreferences(VWorkspace vWorkspace){
-		try{
-			JSONObject prefObject = new JSONObject();
-			prefObject.put(PreferencesKeys.ServiceUrl.name(), serviceUrl);
-			prefObject.put(PreferencesKeys.WorksheetName.name(), worksheetName);
-			vWorkspace.getPreferences().setCommandPreferences(
-					"ImportServiceCommandPreferences", prefObject);
-			
-			/*
-			System.out.println("I Saved .....");
-			ViewPreferences prefs = vWorkspace.getPreferences();
-			JSONObject prefObject1 = prefs.getCommandPreferencesJSONObject("PublishDatabaseCommandPreferences");
-			System.out.println("I Saved ....."+prefObject1);
-			 */
-			
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 

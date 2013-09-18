@@ -31,7 +31,7 @@ import edu.isi.karma.view.alignmentHeadings.AlignmentForest;
 
 public class AlignmentHeadersUpdate extends AbstractUpdate {
 
-	private String vWorksheetId;
+	private String worksheetId;
 	private String alignmentId;
 	AlignmentForest forest;
 
@@ -41,7 +41,7 @@ public class AlignmentHeadersUpdate extends AbstractUpdate {
 
 	public AlignmentHeadersUpdate(AlignmentForest forest, String worksheetId, String alignmentId) {
 		this.forest = forest;
-		this.vWorksheetId = worksheetId;
+		this.worksheetId = worksheetId;
 		this.alignmentId = alignmentId;
 	}
 
@@ -51,7 +51,7 @@ public class AlignmentHeadersUpdate extends AbstractUpdate {
 		HHTree hHtree = new HHTree();
 		hHtree.constructHHTree(forest);
 		
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
+		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
 		hHtree.computeHTMLColSpanUsingLeafColumnIndices(vw.getColumnCoordinatesSet(), vw.getLeafColIndexMap());
 
 		HHTable table = new HHTable();
@@ -61,7 +61,7 @@ public class AlignmentHeadersUpdate extends AbstractUpdate {
 		pw.println(prefix + "{");
 		pw.println("\"" + GenericJsonKeys.updateType.name()
 				+ "\": \""+AlignmentHeadersUpdate.class.getSimpleName()+"\",");
-		pw.println("\"" + JsonKeys.worksheetId.name() + "\": \"" + vWorksheetId
+		pw.println("\"" + JsonKeys.worksheetId.name() + "\": \"" + worksheetId
 				+ "\",");
 		pw.println("\"" + JsonKeys.alignmentId.name() + "\": \"" + alignmentId
 				+ "\",");

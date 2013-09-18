@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class ImportUnionResultCommandFactory extends CommandFactory {
 
@@ -37,8 +37,8 @@ public class ImportUnionResultCommandFactory extends CommandFactory {
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		return new ImportUnionResultCommand(getNewId(vWorkspace));
+			Workspace workspace) {
+		return new ImportUnionResultCommand(getNewId(workspace));
 	}
 
 }

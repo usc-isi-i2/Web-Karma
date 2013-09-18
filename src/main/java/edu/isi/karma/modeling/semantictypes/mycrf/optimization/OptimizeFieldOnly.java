@@ -26,7 +26,6 @@ import edu.isi.karma.modeling.semantictypes.mycrf.globaldata.GlobalDataFieldOnly
 import edu.isi.karma.modeling.semantictypes.mycrf.graph.GraphFieldOnly;
 import edu.isi.karma.modeling.semantictypes.mycrf.graph.GraphInterface;
 import edu.isi.karma.modeling.semantictypes.mycrf.math.Matrix;
-import edu.isi.karma.modeling.semantictypes.myutils.Prnt;
 
 /**
  * This is the class that performs the optimization of the CRF model.

@@ -36,8 +36,8 @@ import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommandFactory;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand;
@@ -45,27 +45,21 @@ import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.transformation.PythonTransformationHelper;
 import edu.isi.karma.util.CommandInputJSONUtil;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 
-public class SubmitPythonTransformationCommand extends Command {
+public class SubmitPythonTransformationCommand extends WorksheetCommand {
 	final private String newColumnName;
 	final private String transformationCode;
-	final private String vWorksheetId;
 	final private String hNodeId;
 	final private String hTableId;
 	final private String errorDefaultValue;
@@ -75,11 +69,10 @@ public class SubmitPythonTransformationCommand extends Command {
 			.getLogger(SubmitPythonTransformationCommand.class);
 
 	public SubmitPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
-			String vWorksheetId, String hNodeId, String hTableId, String errorDefaultValue) {
-		super(id);
+			String worksheetId, String hNodeId, String hTableId, String errorDefaultValue) {
+		super(id, worksheetId);
 		this.newColumnName = newColumnName;
 		this.transformationCode = transformationCode;
-		this.vWorksheetId = vWorksheetId;
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		this.errorDefaultValue = errorDefaultValue;
@@ -108,12 +101,12 @@ public class SubmitPythonTransformationCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
-		RepFactory f = vWorkspace.getRepFactory();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		RepFactory f = workspace.getFactory();
 		HNode hNode = f.getHNode(hNodeId);
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
-				vWorkspace.getWorkspace().getId());
+				workspace.getId());
 		
 		List<HNode> accessibleHNodes = f.getHNode(hNodeId).getHNodesAccessibleList(f);
 		List<HNode> nodesWithNestedTable = new ArrayList<HNode>();
@@ -201,16 +194,16 @@ public class SubmitPythonTransformationCommand extends Command {
 			JSONArray addColumnInput = getAddColumnCommandInputJSON();
 			AddColumnCommandFactory addColumnFac = (AddColumnCommandFactory)ctrl.
 					getCommandFactoryMap().get(AddColumnCommand.class.getSimpleName());
-			addColCmd = (AddColumnCommand) addColumnFac.createCommand(addColumnInput, vWorkspace);
+			addColCmd = (AddColumnCommand) addColumnFac.createCommand(addColumnInput, workspace);
 			addColCmd.saveInHistory(false);
-			addColCmd.doIt(vWorkspace);
+			addColCmd.doIt(workspace);
 			
 			// Invoke the MultipleValueEditColumnCommand
 			JSONArray multiCellEditInput = getMultiCellValueEditInputJSON(rowToValueMap, addColCmd.getNewHNodeId());
 			MultipleValueEditColumnCommandFactory mfc = (MultipleValueEditColumnCommandFactory)
 					ctrl.getCommandFactoryMap().get(MultipleValueEditColumnCommand.class.getSimpleName());
-			MultipleValueEditColumnCommand mvecc = (MultipleValueEditColumnCommand) mfc.createCommand(multiCellEditInput, vWorkspace);
-			mvecc.doIt(vWorkspace);
+			MultipleValueEditColumnCommand mvecc = (MultipleValueEditColumnCommand) mfc.createCommand(multiCellEditInput, workspace);
+			mvecc.doIt(workspace);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -220,11 +213,9 @@ public class SubmitPythonTransformationCommand extends Command {
 		
 		// Prepare the output container
 		UpdateContainer c = new UpdateContainer();
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,worksheet.getHeaders().getAllPaths(), vWorkspace);
-		vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).update(c);
-		
+		this.generateRegenerateWorksheetUpdates(c);
 		/** Add the alignment update **/
-		 addAlignmentUpdate(c, vWorkspace, worksheet);
+		 addAlignmentUpdate(c, workspace);
 		
 		c.add(new InfoUpdate("Transformation complete"));
 		return c;
@@ -232,10 +223,10 @@ public class SubmitPythonTransformationCommand extends Command {
 
 	private JSONArray getMultiCellValueEditInputJSON(Map<String, String> rowToValueMap, String newHNodeId) throws JSONException {
 		JSONArray arr = new JSONArray();
-		arr.put(CommandInputJSONUtil.createJsonObject(MultipleValueEditColumnCommandFactory.Arguments.vWorksheetID.name(), 
-				vWorksheetId, ParameterType.vWorksheetId));
+		arr.put(CommandInputJSONUtil.createJsonObject(MultipleValueEditColumnCommandFactory.Arguments.worksheetId.name(), 
+				worksheetId, ParameterType.worksheetId));
 		arr.put(CommandInputJSONUtil.createJsonObject(MultipleValueEditColumnCommandFactory.Arguments.hNodeID.name(), 
-				newHNodeId, ParameterType.vWorksheetId));
+				newHNodeId, ParameterType.worksheetId));
 		JSONArray rowsArray = new JSONArray();
 		for (String rowId: rowToValueMap.keySet()) {
 			JSONObject row = new JSONObject();
@@ -252,35 +243,19 @@ public class SubmitPythonTransformationCommand extends Command {
 		JSONArray arr = new JSONArray();
 		arr.put(CommandInputJSONUtil.createJsonObject(AddColumnCommandFactory.Arguments.newColumnName.name(), newColumnName, ParameterType.other));
 		arr.put(CommandInputJSONUtil.createJsonObject(AddColumnCommandFactory.Arguments.hTableId.name(), hTableId, ParameterType.other));
-		arr.put(CommandInputJSONUtil.createJsonObject(AddColumnCommandFactory.Arguments.vWorksheetId.name(), vWorksheetId, ParameterType.vWorksheetId));
-		arr.put(CommandInputJSONUtil.createJsonObject(AddColumnCommandFactory.Arguments.hNodeId.name(), hNodeId, ParameterType.vWorksheetId));
+		arr.put(CommandInputJSONUtil.createJsonObject(AddColumnCommandFactory.Arguments.worksheetId.name(), worksheetId, ParameterType.worksheetId));
+		arr.put(CommandInputJSONUtil.createJsonObject(AddColumnCommandFactory.Arguments.hNodeId.name(), hNodeId, ParameterType.worksheetId));
 		return arr;
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
-		addColCmd.undoIt(vWorkspace);
-		
+	public UpdateContainer undoIt(Workspace workspace) {
+		addColCmd.undoIt(workspace);
+
 		UpdateContainer c = new UpdateContainer();
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,worksheet.getHeaders().getAllPaths(), vWorkspace);
-		vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).update(c);
+
+		this.generateRegenerateWorksheetUpdates(c);
 		return c;
 	}
 
-	private void addAlignmentUpdate(UpdateContainer c, VWorkspace vWorkspace, Worksheet worksheet) {
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
-				vWorkspace.getWorkspace().getId(), vWorksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		if (alignment == null) {
-			alignment = new Alignment(vWorkspace.getWorkspace().getOntologyManager());
-			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
-		}
-		// Compute the semantic type suggestions
-		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace()
-				.getCrfModelHandler(), vWorkspace.getWorkspace().getOntologyManager(), alignment);
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
-		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().
-				getVWorksheet(vWorksheetId), alignment));
-	}
 }

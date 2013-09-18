@@ -26,25 +26,17 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
-public class ApplyModelFromTripleStoreCommand extends Command {
+public class ApplyModelFromTripleStoreCommand extends WorksheetCommand {
 	
-	private final String vWorksheetId;
 	private final String modelName;
 //	private final String sourceName;
 	
@@ -54,10 +46,9 @@ public class ApplyModelFromTripleStoreCommand extends Command {
 	
 	private static Logger logger = LoggerFactory.getLogger(ApplyModelFromTripleStoreCommand.class);
 	
-	public ApplyModelFromTripleStoreCommand(String id, String vWorksheetId, String modelName, 
+	public ApplyModelFromTripleStoreCommand(String id, String worksheetId, String modelName, 
 			String sourceName) {
-		super(id);
-		this.vWorksheetId = vWorksheetId;
+		super(id, worksheetId);
 		this.modelName = modelName;
 //		this.sourceName = sourceName;
 	}
@@ -83,8 +74,7 @@ public class ApplyModelFromTripleStoreCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		
 		// Get the command history from model by doing a sparql query on the Triple store
 		String query = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> " +
@@ -113,7 +103,7 @@ public class ApplyModelFromTripleStoreCommand extends Command {
 	
 			// Execute the history
 			WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(
-					vWorksheetId, vWorkspace);
+					worksheetId, workspace);
 
 
 			if (history.isEmpty()) {
@@ -125,27 +115,8 @@ public class ApplyModelFromTripleStoreCommand extends Command {
 			
 			// Add worksheet updates that could have resulted out of the transformation commands
 			UpdateContainer c =  new UpdateContainer();
-			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,
-					worksheet.getHeaders().getAllPaths(), vWorkspace);
-			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-			vw.update(c);
-
-			String alignmentId = AlignmentManager.Instance().constructAlignmentId(
-					vWorkspace.getWorkspace().getId(), vWorksheetId);
-			Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-			if (alignment == null) {
-				alignment = new Alignment(vWorkspace.getWorkspace().getOntologyManager());
-				AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
-			}
-
-			// Compute the semantic type suggestions
-			SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), 
-					vWorkspace.getWorkspace().getOntologyManager(), alignment);
-			
-			// Add the alignment update
-			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
-			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
-
+			this.generateRegenerateWorksheetUpdates(c);
+			this.addAlignmentUpdate(c, workspace);
 			c.add(new InfoUpdate("Model successfully applied!"));
 			return c;
 			
@@ -156,7 +127,7 @@ public class ApplyModelFromTripleStoreCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// Not required
 		return null;
 	}

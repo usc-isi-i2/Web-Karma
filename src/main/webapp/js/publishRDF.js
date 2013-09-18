@@ -32,7 +32,7 @@ function publishRDFFunction() {
 		$("div#PublishRDFDialogBox").dialog("close");
 
 		var info = new Object();
-		info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
+		info["worksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
 		info["command"] = "PublishRDFCommand";
 		info["addInverseProperties"] = $("input#addInverseProperties").is(":checked");
@@ -58,13 +58,13 @@ function publishRDFFunction() {
 
 function publishRDFToFile(info) {
 
-		showLoadingRDF(info["vWorksheetId"],"Saving to file...");
+		showLoadingRDF(info["worksheetId"],"Saving to file...");
 		returnFunc(info);
 }
 
 function publishRDFToStore(info) {
 
-		showLoadingRDF(info["vWorksheetId"],"Saving to RDF store...");
+		showLoadingRDF(info["worksheetId"],"Saving to RDF store...");
 		returnFunc(info);
 }
 
@@ -78,12 +78,12 @@ function returnFunc(info) {
 		   		function (xhr, textStatus) {
 		    		var json = $.parseJSON(xhr.responseText);
 		    		parse(json);
-		    		hideLoading(info["vWorksheetId"]);
+		    		hideLoading(info["worksheetId"]);
 			   	},
 			error :
 				function (xhr, textStatus) {
 		   			alert("Error occured while generating RDF!" + textStatus);
-		   			hideLoading(info["vWorksheetId"]);
+		   			hideLoading(info["worksheetId"]);
 			   	}
 		});
 }

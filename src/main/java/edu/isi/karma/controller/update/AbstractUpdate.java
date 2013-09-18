@@ -50,4 +50,7 @@ public abstract class AbstractUpdate {
 	protected String getUpdateType() {
 		return this.getClass().getSimpleName();
 	}
+
+	public void applyUpdate(VWorkspace vWorkspace) {
+	}
 }

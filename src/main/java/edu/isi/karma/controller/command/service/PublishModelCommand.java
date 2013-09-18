@@ -47,19 +47,18 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.metadata.MetadataContainer;
 import edu.isi.karma.rep.sources.DataSource;
 import edu.isi.karma.rep.sources.WebService;
-import edu.isi.karma.view.VWorkspace;
 
 public class PublishModelCommand extends Command{
 
-	private final String vWorksheetId;
+	private final String worksheetId;
 
 	// Logger object
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishModelCommand.class.getSimpleName());
 
-	public PublishModelCommand(String id, String vWorksheetId) {
+	public PublishModelCommand(String id, String worksheetId) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 	}
 
 	@Override
@@ -83,10 +82,9 @@ public class PublishModelCommand extends Command{
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		
-		Workspace ws = vWorkspace.getWorkspace();
-		Worksheet wk = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet wk = workspace.getWorksheet(worksheetId);
 
 		WebService service = null;
 		DataSource source = null;
@@ -99,7 +97,7 @@ public class PublishModelCommand extends Command{
 			service = wk.getMetadataContainer().getService();
 		
 		AlignmentManager mgr = AlignmentManager.Instance();
-		String alignmentId = mgr.constructAlignmentId(ws.getId(), vWorksheetId);
+		String alignmentId = mgr.constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment al = mgr.getAlignment(alignmentId);
 		
 //		/**
@@ -147,7 +145,7 @@ public class PublishModelCommand extends Command{
 		
 		try {
 			// Get the transformation commands JSON list
-			WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
+			WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(worksheetId, workspace);
 			List<String> commandsJSON = histReader.getJSONForCommands(CommandTag.Transformation);
 			
 			if (service != null) {
@@ -157,7 +155,7 @@ public class PublishModelCommand extends Command{
 				return new UpdateContainer(new ErrorUpdate(
 				"Service model has successfully been published to repository: " + service.getId()));
 			} else { //if (source != null) {
-				DataSourcePublisher sourcePublisher = new DataSourcePublisher(source, ws.getFactory(), commandsJSON, wk.getMetadataContainer().getSourceInformation());
+				DataSourcePublisher sourcePublisher = new DataSourcePublisher(source, workspace.getFactory(), commandsJSON, wk.getMetadataContainer().getSourceInformation());
 				sourcePublisher.publish(Repository.Instance().LANG, true);
 				logger.info("Source model has successfully been published to repository: " + source.getId());
 				return new UpdateContainer(new ErrorUpdate(
@@ -172,9 +170,9 @@ public class PublishModelCommand extends Command{
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 
-		Worksheet wk = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet wk = workspace.getWorksheet(worksheetId);
 
 		WebService service = null;
 		DataSource source = null;

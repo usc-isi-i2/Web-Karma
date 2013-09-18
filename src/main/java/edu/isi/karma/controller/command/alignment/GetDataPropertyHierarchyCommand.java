@@ -25,7 +25,7 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.OntologyHierarchyUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class GetDataPropertyHierarchyCommand extends Command {
 
@@ -54,17 +54,17 @@ public class GetDataPropertyHierarchyCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+		OntologyManager ontMgr = workspace.getOntologyManager();
 		c.add(new OntologyHierarchyUpdate(ontMgr.getDataPropertyHierarchy(), 
 				"DataPropertyListUpdate", false, null));
 		return c;
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 

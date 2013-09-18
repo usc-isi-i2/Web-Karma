@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 import org.apache.log4j.FileAppender;
@@ -43,7 +42,6 @@ import edu.isi.karma.cleaning.DataCollection;
 import edu.isi.karma.cleaning.ExampleSelection;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
-import edu.isi.karma.cleaning.UtilTools;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.CleaningResultUpdate;
@@ -51,15 +49,13 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.cleaning.RamblerTransformationExample;
 import edu.isi.karma.rep.cleaning.RamblerTransformationInputs;
 import edu.isi.karma.rep.cleaning.RamblerTransformationOutput;
 import edu.isi.karma.rep.cleaning.RamblerValueCollection;
 import edu.isi.karma.rep.cleaning.TransformationExample;
 import edu.isi.karma.rep.cleaning.ValueCollection;
-import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	final String hNodeId;
@@ -270,8 +266,8 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	}
 	private static Logger logger = Logger.getLogger(GenerateCleaningRulesCommand.class);
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Worksheet wk = workspace.getFactory().getWorksheet(worksheetId);
 		String Msg = String.format("Gen rule start,Time:%d, Worksheet:%s",System.currentTimeMillis(),worksheetId);
 		logger.info(Msg);
 		// Get the HNode
@@ -492,7 +488,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// TODO Auto-generated method stub
 		return null;
 	}

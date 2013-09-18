@@ -35,12 +35,13 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 
 public class FetchExistingWorksheetPropertiesCommand extends Command {
-	private final String vWorksheetId;
+	private final String worksheetId;
 	private static Logger logger = LoggerFactory
 			.getLogger(FetchExistingWorksheetPropertiesCommand.class);
 	
@@ -48,9 +49,9 @@ public class FetchExistingWorksheetPropertiesCommand extends Command {
 		updateType, properties
 	}
 
-	public FetchExistingWorksheetPropertiesCommand(String id, String vWorksheetId) {
+	public FetchExistingWorksheetPropertiesCommand(String id, String worksheetId) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 	}
 
 	@Override
@@ -74,8 +75,8 @@ public class FetchExistingWorksheetPropertiesCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		
 		// Check if the model name exists. If not set to a default one
 		String graphName = worksheet.getMetadataContainer().getWorksheetProperties().
@@ -120,7 +121,7 @@ public class FetchExistingWorksheetPropertiesCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 

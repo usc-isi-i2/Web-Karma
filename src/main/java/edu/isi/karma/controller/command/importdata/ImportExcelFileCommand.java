@@ -31,12 +31,11 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.imp.excel.ToCSV;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -47,8 +46,7 @@ public class ImportExcelFileCommand extends Command {
 	private static Logger logger = LoggerFactory
 			.getLogger(ImportExcelFileCommand.class.getSimpleName());
 
-	protected ImportExcelFileCommand(String id, File excelFile,
-			VWorkspace vWorkspace) {
+	protected ImportExcelFileCommand(String id, File excelFile) {
 		super(id);
 		this.excelFile = excelFile;
 	}
@@ -74,8 +72,7 @@ public class ImportExcelFileCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Workspace ws = vWorkspace.getWorkspace();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 
 		// Convert the Excel file to a CSV file.
@@ -95,13 +92,11 @@ public class ImportExcelFileCommand extends Command {
 		if (csvFiles.size() != 0) {
 			for(File csvFile:csvFiles) {
 				CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', csvFile,
-						ws.getFactory(), ws);
+						workspace.getFactory(), workspace);
 				try {
 					Worksheet wsht = imp.generateWorksheet();
-					vWorkspace.addAllWorksheets();
-					c.add(new WorksheetListUpdate(vWorkspace.getVWorksheetList()));
-					VWorksheet vw = vWorkspace.getVWorksheet(wsht.getId());
-					vw.update(c);
+					c.add(new WorksheetListUpdate());
+					WorksheetUpdateFactory.update(c, wsht.getId());
 				} catch (Exception e) {
 					logger.error("Error occured while importing CSV file.", e);
 					return new UpdateContainer(new ErrorUpdate(
@@ -113,7 +108,7 @@ public class ImportExcelFileCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// Not required
 		return null;
 	}

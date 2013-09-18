@@ -42,11 +42,11 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 	 $("button#csvExport").click(function(){
         optionsDiv.hide();
         var info = new Object();
-        info["vWorksheetId"] = optionsDiv.data("worksheetId");
+        info["worksheetId"] = optionsDiv.data("worksheetId");
         info["workspaceId"] = $.workspaceGlobalInformation.id;
         info["command"] = "PublishCSVCommand";
             
-        showLoading(info["vWorksheetId"]);
+        showLoading(info["worksheetId"]);
         var returned = $.ajax({
             url: "RequestController", 
             type: "POST",
@@ -57,12 +57,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                     //alert(xhr.responseText);
                     var json = $.parseJSON(xhr.responseText);
                     parse(json);
-                    hideLoading(info["vWorksheetId"]);
+                    hideLoading(info["worksheetId"]);
                 },
             error :
                 function (xhr, textStatus) {
                     alert("Error occured while exporting CSV!" + textStatus);
-                    hideLoading(info["vWorksheetId"]);
+                    hideLoading(info["worksheetId"]);
                 }          
         });
         
@@ -75,11 +75,11 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
     $("button#mdbExport").click(function(){
         optionsDiv.hide();
         var info = new Object();
-        info["vWorksheetId"] = optionsDiv.data("worksheetId");
+        info["worksheetId"] = optionsDiv.data("worksheetId");
         info["workspaceId"] = $.workspaceGlobalInformation.id;
         info["command"] = "PublishMDBCommand";
             
-        showLoading(info["vWorksheetId"]);
+        showLoading(info["worksheetId"]);
         var returned = $.ajax({
             url: "RequestController", 
             type: "POST",
@@ -90,12 +90,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                     //alert(xhr.responseText);
                     var json = $.parseJSON(xhr.responseText);
                     parse(json);
-                    hideLoading(info["vWorksheetId"]);
+                    hideLoading(info["worksheetId"]);
                 },
             error :
                 function (xhr, textStatus) {
                     alert("Error occured while exporting MDB!" + textStatus);
-                    hideLoading(info["vWorksheetId"]);
+                    hideLoading(info["worksheetId"]);
                 }          
         });
         
@@ -103,11 +103,11 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
     $("button#spatialdataExport").click(function(){
         optionsDiv.hide();
         var info = new Object();
-        info["vWorksheetId"] = optionsDiv.data("worksheetId");
+        info["worksheetId"] = optionsDiv.data("worksheetId");
         info["workspaceId"] = $.workspaceGlobalInformation.id;
         info["command"] = "PublishSpatialDataCommand";
 
-        showLoading(info["vWorksheetId"]);
+        showLoading(info["worksheetId"]);
         var returned = $.ajax({
             url: "RequestController",
             type: "POST",
@@ -118,12 +118,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                     //alert(xhr.responseText);
                     var json = $.parseJSON(xhr.responseText);
                     parse(json);
-                    hideLoading(info["vWorksheetId"]);
+                    hideLoading(info["worksheetId"]);
                 },
             error :
                 function (xhr, textStatus) {
                     alert("Error occured while exporting spatial data!" + textStatus);
-                    hideLoading(info["vWorksheetId"]);
+                    hideLoading(info["worksheetId"]);
                 }
         });
 
@@ -133,16 +133,16 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		 //alert("test");
 		// console.log("Showing model for table with ID: " +optionsDiv.data("worksheetId"));
 		var info = new Object();
-		info["vWorksheetId"] = optionsDiv.data("worksheetId");
+		info["worksheetId"] = optionsDiv.data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
 		info["command"] = "ShowModelCommand";
 	   
 	    var newInfo = [];
-        newInfo.push(getParamObject("vWorksheetId", optionsDiv.data("worksheetId"), "vWorksheetId"));
+        newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "worksheetId"));
         newInfo.push(getParamObject("checkHistory", true, "other"));
         info["newInfo"] = JSON.stringify(newInfo);
 	   
-		showLoading(info["vWorksheetId"]);
+		showLoading(info["worksheetId"]);
 		var returned = $.ajax({
 		   	url: "RequestController", 
 		   	type: "POST",
@@ -153,12 +153,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		   			//alert(xhr.responseText);
 		    		var json = $.parseJSON(xhr.responseText);
 		    		parse(json);
-		    		hideLoading(info["vWorksheetId"]);
+		    		hideLoading(info["worksheetId"]);
 			   	},
 			error :
 				function (xhr, textStatus) {
 		   			alert("Error occured while generating semantic types!" + textStatus);
-		   			hideLoading(info["vWorksheetId"]);
+		   			hideLoading(info["worksheetId"]);
 			   	}		   
 		});
 	});
@@ -179,16 +179,16 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		 //alert("test");
 		// console.log("Showing model for table with ID: " +optionsDiv.data("worksheetId"));
 		var info = new Object();
-		info["vWorksheetId"] = optionsDiv.data("worksheetId");
+		info["worksheetId"] = optionsDiv.data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
 		info["command"] = "ShowAutoModelCommand";
 	   
 	    var newInfo = [];
-        newInfo.push(getParamObject("vWorksheetId", optionsDiv.data("worksheetId"), "vWorksheetId"));
+        newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "worksheetId"));
         newInfo.push(getParamObject("checkHistory", true, "other"));
         info["newInfo"] = JSON.stringify(newInfo);
 	   
-		showLoading(info["vWorksheetId"]);
+		showLoading(info["worksheetId"]);
 		var returned = $.ajax({
 		   	url: "RequestController", 
 		   	type: "POST",
@@ -199,12 +199,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		   			//alert(xhr.responseText);
 		    		var json = $.parseJSON(xhr.responseText);
 		    		parse(json);
-		    		hideLoading(info["vWorksheetId"]);
+		    		hideLoading(info["worksheetId"]);
 			   	},
 			error :
 				function (xhr, textStatus) {
 		   			alert("Error occured while generating the automatic model!" + textStatus);
-		   			hideLoading(info["vWorksheetId"]);
+		   			hideLoading(info["worksheetId"]);
 			   	}		   
 		});
 	});
@@ -218,11 +218,11 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		optionsDiv.hide();
 		
 		var info = new Object();
-		info["vWorksheetId"] = optionsDiv.data("worksheetId");
+		info["worksheetId"] = optionsDiv.data("worksheetId");
 		info["workspaceId"] = $.workspaceGlobalInformation.id;
 		info["command"] = "ResetModelCommand";
 			
-		showLoading(info["vWorksheetId"]);
+		showLoading(info["worksheetId"]);
 		var returned = $.ajax({
 		   	url: "RequestController", 
 		   	type: "POST",
@@ -233,12 +233,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		   			//alert(xhr.responseText);
 		    		var json = $.parseJSON(xhr.responseText);
 		    		parse(json);
-		    		hideLoading(info["vWorksheetId"]);
+		    		hideLoading(info["worksheetId"]);
 			   	},
 			error :
 				function (xhr, textStatus) {
 		   			alert("Error occured while removing semantic types!" + textStatus);
-		   			hideLoading(info["vWorksheetId"]);
+		   			hideLoading(info["worksheetId"]);
 			   	}		   
 		});
 	});
@@ -255,7 +255,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 		var info = new Object();
 	    info["workspaceId"] = $.workspaceGlobalInformation.id;
 	    info["command"] = "FetchExistingWorksheetPropertiesCommand";
-	    info["vWorksheetId"] = optionsDiv.data("worksheetId");
+	    info["worksheetId"] = optionsDiv.data("worksheetId");
 
 	    var returned = $.ajax({
 	        url: "RequestController",
@@ -296,15 +296,15 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
         optionsDiv.hide();
         
         var info = new Object();
-//        info["vWorksheetId"] = optionsDiv.data("worksheetId");
+//        info["worksheetId"] = optionsDiv.data("worksheetId");
         info["workspaceId"] = $.workspaceGlobalInformation.id;
         info["command"] = "PopulateCommand";
 
         var newInfo = [];	// Used for commands that take JSONArray as input
-        newInfo.push(getParamObject("vWorksheetId", optionsDiv.data("worksheetId"), "vWorksheetId"));
+        newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "worksheetId"));
         info["newInfo"] = JSON.stringify(newInfo);
 
-        showLoading(info["vWorksheetId"]);
+        showLoading(info["worksheetId"]);
         var returned = $.ajax({
             url: "RequestController", 
             type: "POST",
@@ -315,12 +315,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                     //alert(xhr.responseText);
                     var json = $.parseJSON(xhr.responseText);
                     parse(json);
-                    hideLoading(info["vWorksheetId"]);
+                    hideLoading(info["worksheetId"]);
                 },
             error :
                 function (xhr, textStatus) {
                     alert("Error occured while populating source!" + textStatus);
-                    hideLoading(info["vWorksheetId"]);
+                    hideLoading(info["worksheetId"]);
                 }          
         });
         
@@ -330,11 +330,11 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
         optionsDiv.hide();
         
         var info = new Object();
-        info["vWorksheetId"] = optionsDiv.data("worksheetId");
+        info["worksheetId"] = optionsDiv.data("worksheetId");
         info["workspaceId"] = $.workspaceGlobalInformation.id;
         info["command"] = "PublishModelCommand";
             
-        showLoading(info["vWorksheetId"]);
+        showLoading(info["worksheetId"]);
         var returned = $.ajax({
             url: "RequestController", 
             type: "POST",
@@ -345,12 +345,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                     //alert(xhr.responseText);
                     var json = $.parseJSON(xhr.responseText);
                     parse(json);
-                    hideLoading(info["vWorksheetId"]);
+                    hideLoading(info["worksheetId"]);
                 },
             error :
                 function (xhr, textStatus) {
                     alert("Error occured while publishing service model!" + textStatus);
-                    hideLoading(info["vWorksheetId"]);
+                    hideLoading(info["worksheetId"]);
                 }          
         });
         
@@ -360,11 +360,11 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
         optionsDiv.hide();
         
         var info = new Object();
-        info["vWorksheetId"] = optionsDiv.data("worksheetId");
+        info["worksheetId"] = optionsDiv.data("worksheetId");
         info["workspaceId"] = $.workspaceGlobalInformation.id;
         info["command"] = "PublishWorksheetHistoryCommand";
             
-        showLoading(info["vWorksheetId"]);
+        showLoading(info["worksheetId"]);
         var returned = $.ajax({
             url: "RequestController", 
             type: "POST",
@@ -375,12 +375,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                     //alert(xhr.responseText);
                     var json = $.parseJSON(xhr.responseText);
                     parse(json);
-                    hideLoading(info["vWorksheetId"]);
+                    hideLoading(info["worksheetId"]);
                 },
             error :
                 function (xhr, textStatus) {
                     alert("Error occured while publishing worksheet history!" + textStatus);
-                    hideLoading(info["vWorksheetId"]);
+                    hideLoading(info["worksheetId"]);
                 }          
         });
         
@@ -390,7 +390,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
         add : function (e, data) {
             $("#applyWorksheetHistory").fileupload({
                 url: "RequestController?workspaceId=" + $.workspaceGlobalInformation.id +
-                    "&command=ApplyHistoryFromR2RMLModelCommand&vWorksheetId="+optionsDiv.data("worksheetId")
+                    "&command=ApplyHistoryFromR2RMLModelCommand&worksheetId="+optionsDiv.data("worksheetId")
             });
             showLoading(optionsDiv.data("worksheetId"));
             data.submit();
@@ -418,11 +418,11 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
         
         /*
         var info = new Object();
-        info["vWorksheetId"] = optionsDiv.data("worksheetId");
+        info["worksheetId"] = optionsDiv.data("worksheetId");
         info["workspaceId"] = $.workspaceGlobalInformation.id;
         info["command"] = "GenerateR2RMLModelCommand";
 
-        showLoading(info["vWorksheetId"]);
+        showLoading(info["worksheetId"]);
         var returned = $.ajax({
             url: "RequestController",
             type: "POST",
@@ -432,12 +432,12 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                 function (xhr, textStatus) {
                     var json = $.parseJSON(xhr.responseText);
                     parse(json);
-                    hideLoading(info["vWorksheetId"]);
+                    hideLoading(info["worksheetId"]);
                 },
             error :
                 function (xhr, textStatus) {
                     alert("Error occured while publishing service model!" + textStatus);
-                    hideLoading(info["vWorksheetId"]);
+                    hideLoading(info["worksheetId"]);
                 }
         });
         */
@@ -571,7 +571,7 @@ function handleTableCellExpandButton(event) {
 	// Get the RDF text (if it exists)
 	var info = new Object();
 	info["nodeId"] = tdTagId;
-	info["vWorksheetId"] = tdTag.parents("div.Worksheet").attr("id");
+	info["worksheetId"] = tdTag.parents("div.Worksheet").attr("id");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "PublishRDFCellCommand";
 	
@@ -703,20 +703,20 @@ function splitColumnByComma() {
     $("div#SplitByCommaColumnListPanel").dialog("close");
     
     var info = new Object();
-    info["vWorksheetId"] = $("td#" + selectedHNodeId).parents("table.WorksheetTable").attr("id");
+    info["worksheetId"] = $("td#" + selectedHNodeId).parents("table.WorksheetTable").attr("id");
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["hNodeId"] = selectedHNodeId;
     info["delimiter"] = inputVal;
     info["command"] = "SplitByCommaCommand";
     
     var newInfo = [];
-    newInfo.push(getParamObject("vWorksheetId", $("td#" + selectedHNodeId).parents("table.WorksheetTable").attr("id"), "vWorksheetId"));
+    newInfo.push(getParamObject("worksheetId", $("td#" + selectedHNodeId).parents("table.WorksheetTable").attr("id"), "worksheetId"));
     newInfo.push(getParamObject("hNodeId", selectedHNodeId,"hNodeId"));
     newInfo.push(getParamObject("delimiter", inputVal, "other"));
     newInfo.push(getParamObject("checkHistory", true, "other"));
     info["newInfo"] = JSON.stringify(newInfo);
             
-    showLoading(info["vWorksheetId"]);
+    showLoading(info["worksheetId"]);
     var returned = $.ajax({
         url: "RequestController", 
         type: "POST",
@@ -727,12 +727,12 @@ function splitColumnByComma() {
                 // alert(xhr.responseText);
                 var json = $.parseJSON(xhr.responseText);
                 parse(json);
-                hideLoading(info["vWorksheetId"]);
+                hideLoading(info["worksheetId"]);
             },
         error :
             function (xhr, textStatus) {
                 alert("Error occured while splitting a column by comma! " + textStatus);
-                hideLoading(info["vWorksheetId"]);
+                hideLoading(info["worksheetId"]);
             }          
     });
 }
@@ -843,11 +843,11 @@ function submitWorksheetProperties() {
     info["command"] = "SetWorksheetPropertiesCommand";
 
     var newInfo = [];   // for input parameters
-    newInfo.push(getParamObject("vWorksheetId", $("div#WorksheetOptionsDiv").data("worksheetId") ,"vWorksheetId"));
+    newInfo.push(getParamObject("worksheetId", $("div#WorksheetOptionsDiv").data("worksheetId") ,"worksheetId"));
     newInfo.push(getParamObject("properties", worksheetProps, "other"));
     info["newInfo"] = JSON.stringify(newInfo);
     // Store the data to be shown later when the dialog is opened again
-    $("div#" + info["vWorksheetId"]).data("worksheetProperties", worksheetProps);
+    $("div#" + info["worksheetId"]).data("worksheetProperties", worksheetProps);
 
     var returned = $.ajax({
         url: "RequestController",
@@ -881,7 +881,7 @@ function fetchExistingWorksheetOptions(worksheetId) {
     var info = new Object();
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["command"] = "FetchExistingWorksheetPropertiesCommand";
-    info["vWorksheetId"] = worksheetId;
+    info["worksheetId"] = worksheetId;
 
     var returned = $.ajax({
         url: "RequestController",
@@ -937,7 +937,7 @@ function renderR2RMLModels() {
 	var optionsDiv = $("div#WorksheetOptionsDiv");
 	$('#FetchR2RMLModelDialogBox').dialog("close");
 	var info = new Object();
-	info["vWorksheetId"] = optionsDiv.data("worksheetId");
+	info["worksheetId"] = optionsDiv.data("worksheetId");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "FetchR2RMLModelsCommand";
 	info['tripleStoreUrl'] = $('#txtR2RML_URL_fetch').val();
@@ -951,12 +951,12 @@ function renderR2RMLModels() {
 	   		function (xhr, textStatus) {
 	    		var json = $.parseJSON(xhr.responseText);
 	    		parse(json);
-	    		hideLoading(info["vWorksheetId"]);
+	    		hideLoading(info["worksheetId"]);
 		   	},
 		error :
 			function (xhr, textStatus) {
 	   			alert("Error occured while generating the automatic model!" + textStatus);
-	   			hideLoading(info["vWorksheetId"]);
+	   			hideLoading(info["worksheetId"]);
 		   	}		   
 	});				
 }

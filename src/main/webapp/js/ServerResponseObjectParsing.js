@@ -115,11 +115,11 @@ function parse(data) {
 					// Add the row options
 					var pagerOptionsDiv = $("<div>").addClass("topLevelpagerOptions pager ui-corner-bottom").attr("id", "topLevelpagerOptions" + worksheet["worksheetId"]).append($("<div>").addClass("rowCountDiv").append($("<span>").text("Show: ")).append($("<a>").addClass("pagerResizeLink")
 					//.attr("id", "pagerResizeLink10"+ worksheet["worksheetId"])
-					.addClass("pagerSizeSelected").data("rowCount", 10).data("vWorksheetId", worksheet["worksheetId"]).attr("href", "JavaScript:void(0);").text("10 ").bind("click", handlePagerResize)).append($("<a>").addClass("pagerResizeLink")
+					.addClass("pagerSizeSelected").data("rowCount", 10).data("worksheetId", worksheet["worksheetId"]).attr("href", "JavaScript:void(0);").text("10 ").bind("click", handlePagerResize)).append($("<a>").addClass("pagerResizeLink")
 					//.attr("id", "pagerResizeLink20"+ worksheet["worksheetId"])
-					.data("rowCount", 20).data("vWorksheetId", worksheet["worksheetId"]).attr("href", "JavaScript:void(0);").text("20 ").bind("click", handlePagerResize)).append($("<a>").addClass("pagerResizeLink")
+					.data("rowCount", 20).data("worksheetId", worksheet["worksheetId"]).attr("href", "JavaScript:void(0);").text("20 ").bind("click", handlePagerResize)).append($("<a>").addClass("pagerResizeLink")
 					//.attr("id", "pagerResizeLink50"+ worksheet["worksheetId"])
-					.data("rowCount", 50).data("vWorksheetId", worksheet["worksheetId"]).attr("href", "JavaScript:void(0);").text("50 ").bind("click", handlePagerResize)).append($("<span>").text(" records"))).append($("<div>").addClass("prevNextRowsDiv").append($("<a>").attr("id", "previousLink" + worksheet["worksheetId"]).attr("href", "JavaScript:void(0);").data("direction", "showPrevious").data("vWorksheetId", worksheet["worksheetId"]).addClass("inactiveLink").text("Previous ").bind("click", handlePrevNextLink)).append($("<span>").attr("id", "previousNextText" + worksheet["worksheetId"]).addClass("previousNextText")).append($("<a>").attr("id", "nextLink" + worksheet["worksheetId"]).attr("href", "JavaScript:void(0);#").data("direction", "showNext").data("vWorksheetId", worksheet["worksheetId"]).addClass("inactiveLink").text("  Next").bind("click", handlePrevNextLink))).mouseleave(function() {
+					.data("rowCount", 50).data("worksheetId", worksheet["worksheetId"]).attr("href", "JavaScript:void(0);").text("50 ").bind("click", handlePagerResize)).append($("<span>").text(" records"))).append($("<div>").addClass("prevNextRowsDiv").append($("<a>").attr("id", "previousLink" + worksheet["worksheetId"]).attr("href", "JavaScript:void(0);").data("direction", "showPrevious").data("worksheetId", worksheet["worksheetId"]).addClass("inactiveLink").text("Previous ").bind("click", handlePrevNextLink)).append($("<span>").attr("id", "previousNextText" + worksheet["worksheetId"]).addClass("previousNextText")).append($("<a>").attr("id", "nextLink" + worksheet["worksheetId"]).attr("href", "JavaScript:void(0);#").data("direction", "showNext").data("worksheetId", worksheet["worksheetId"]).addClass("inactiveLink").text("  Next").bind("click", handlePrevNextLink))).mouseleave(function() {
 						// Hiding the option buttons for the heading and the data cell
 						$("div#tableCellMenuButtonDiv").hide();
 						$("div#columnHeadingMenuButtonDiv").hide();
@@ -434,15 +434,15 @@ function parse(data) {
 		// .mouseleave(function(){
 		// $(this).hide();
 		// });
-		// $($("a", nestedTablePager)[3]).data("vWorksheetId", element["worksheetId"]);
-		// $($("a", nestedTablePager)[4]).data("vWorksheetId", element["worksheetId"]);
+		// $($("a", nestedTablePager)[3]).data("worksheetId", element["worksheetId"]);
+		// $($("a", nestedTablePager)[4]).data("worksheetId", element["worksheetId"]);
 		// // Change the row count values to 5, 10, 20
 		// $($("a.pagerResizeLink", nestedTablePager)[0]).text("5 ")
-		// .data("rowCount", 5).data("vWorksheetId", element["worksheetId"]);
+		// .data("rowCount", 5).data("worksheetId", element["worksheetId"]);
 		// $($("a.pagerResizeLink", nestedTablePager)[1]).text("10 ")
-		// .data("rowCount", 10).data("vWorksheetId", element["worksheetId"]);
+		// .data("rowCount", 10).data("worksheetId", element["worksheetId"]);
 		// $($("a.pagerResizeLink", nestedTablePager)[2]).text("20 ")
-		// .data("rowCount", 20).data("vWorksheetId", element["worksheetId"]);
+		// .data("rowCount", 20).data("worksheetId", element["worksheetId"]);
 		//
 		// //table.append(nestedTablePager);
 		// $("body").append(nestedTablePager);
@@ -632,17 +632,17 @@ function parse(data) {
 		} else if(element["updateType"] == "PublishCSVUpdate") {
 			$("a.CSVDownloadLink", titleDiv).remove();
 			console.log("test");
-			var titleDiv = $("div#" + element["vWorksheetId"] + " div.WorksheetTitleDiv");
+			var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
 			// Remove existing link if any
-			hideLoading(element["vWorksheetId"]);
+			hideLoading(element["worksheetId"]);
 			var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("CSV").addClass("CSVDownloadLink  DownloadLink").attr("target", "_blank");
 			$("div.tableTitleTextDiv", titleDiv).after(downloadLink);
 			$.sticky("CSV file published");
 		} else if(element["updateType"] == "PublishMDBUpdate") {
 			$("a.MDBDownloadLink", titleDiv).remove();
-			var titleDiv = $("div#" + element["vWorksheetId"] + " div.WorksheetTitleDiv");
+			var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
 			// Remove existing link if any
-			hideLoading(element["vWorksheetId"]);
+			hideLoading(element["worksheetId"]);
 			var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("ACCESS MDB").addClass("MDBDownloadLink  DownloadLink").attr("target", "_blank");
 			$("div.tableTitleTextDiv", titleDiv).after(downloadLink);
 			$.sticky("MDB file published");
@@ -650,22 +650,22 @@ function parse(data) {
             // Remove existing link if any
             $("a.R2RMLDownloadLink", titleDiv).remove();
 
-            var titleDiv = $("div#" + element["vWorksheetId"] + " div.WorksheetTitleDiv");
-            hideLoading(element["vWorksheetId"]);
+            var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
+            hideLoading(element["worksheetId"]);
             var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("R2RML Model").addClass("R2RMLDownloadLink  DownloadLink").attr("target", "_blank");
             $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
             $.sticky("R2RML Model published");
         } else if(element["updateType"] == "PublishSpatialDataUpdate") {
                 $("a.SpatialDataDownloadLink", titleDiv).remove();
                 console.log("test");
-                var titleDiv = $("div#" + element["vWorksheetId"] + " div.WorksheetTitleDiv");
+                var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
                 // Remove existing link if any
-                hideLoading(element["vWorksheetId"]);
+                hideLoading(element["worksheetId"]);
                 var downloadLink = $("<a>").attr("href", element["fileUrl"]).text("SPATIAL DATA").addClass("SpatialDataDownloadLink  DownloadLink").attr("target", "_blank");
                 $("div.tableTitleTextDiv", titleDiv).after(downloadLink);
                 $.sticky("Spatial data published");
 		} else if(element["updateType"] == "PublishRDFUpdate") {
-			var titleDiv = $("div#" + element["vWorksheetId"] + " div.WorksheetTitleDiv");
+			var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
 			// Remove existing link if any
 			$("a.RdfDownloadLink", titleDiv).remove();
 
@@ -688,7 +688,7 @@ function parse(data) {
                 errorWindow.dialog({title: "RDF Generation Error Report", width: 900});
             }
 		} else if(element["updateType"] == "PublishWorksheetHistoryUpdate") {
-			var titleDiv = $("div#" + element["vWorksheetId"] + " div.WorksheetTitleDiv");
+			var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
 			// Remove existing link if any
 			$("a.HistoryDownloadLink", titleDiv).remove();
 

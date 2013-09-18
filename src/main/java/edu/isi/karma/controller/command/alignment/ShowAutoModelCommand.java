@@ -45,24 +45,22 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.view.VWorkspace;
 
 public class ShowAutoModelCommand extends WorksheetCommand {
 
-	private final String vWorksheetId;
 	private String worksheetName;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(ShowAutoModelCommand.class);
 
-	protected ShowAutoModelCommand(String id, String worksheetId,
-			String vWorksheetId) {
+	protected ShowAutoModelCommand(String id, String worksheetId)
+			{
 		super(id, worksheetId);
-		this.vWorksheetId = vWorksheetId;
 		
 		/** NOTE Not saving this command in history for now since we are 
 		 * not letting CRF model assign semantic types automatically. This command 
@@ -92,19 +90,19 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		worksheetName = worksheet.getTitle();
 
 		// Generate the semantic types for the worksheet
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+		OntologyManager ontMgr = workspace.getOntologyManager();
 		if(ontMgr.isEmpty())
 			return new UpdateContainer(new ErrorUpdate("No ontology loaded."));
 //SemanticTypeUtil.computeSemanticTypesForAutoModel(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
 
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		if (alignment == null) {
 			alignment = new Alignment(ontMgr);
@@ -138,12 +136,12 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 		
 		try {
 			// Save the semantic types in the input parameter JSON
-			saveSemanticTypesInformation(worksheet, vWorkspace, worksheet.getSemanticTypes().getListOfTypes());
+			saveSemanticTypesInformation(worksheet, workspace, worksheet.getSemanticTypes().getListOfTypes());
 			
 			// Add the visualization update
-			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
+			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
 			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(
-					vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
+					worksheetId, alignment));
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(
@@ -154,15 +152,15 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 		return c;
 	}
 
-	private void saveSemanticTypesInformation(Worksheet worksheet, VWorkspace vWorkspace
+	private void saveSemanticTypesInformation(Worksheet worksheet, Workspace workspace
 			, Collection<SemanticType> semanticTypes) throws JSONException {
 		JSONArray typesArray = new JSONArray();
 		
 		// Add the vworksheet information
 		JSONObject vwIDJObj = new JSONObject();
-		vwIDJObj.put(ClientJsonKeys.name.name(), ParameterType.vWorksheetId.name());
-		vwIDJObj.put(ClientJsonKeys.type.name(), ParameterType.vWorksheetId.name());
-		vwIDJObj.put(ClientJsonKeys.value.name(), vWorksheetId);
+		vwIDJObj.put(ClientJsonKeys.name.name(), ParameterType.worksheetId.name());
+		vwIDJObj.put(ClientJsonKeys.type.name(), ParameterType.worksheetId.name());
+		vwIDJObj.put(ClientJsonKeys.value.name(), worksheetId);
 		typesArray.put(vwIDJObj);
 		
 		// Add the check history information
@@ -191,7 +189,7 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 }

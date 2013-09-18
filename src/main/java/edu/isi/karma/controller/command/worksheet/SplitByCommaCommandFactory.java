@@ -37,42 +37,41 @@ import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class SplitByCommaCommandFactory extends CommandFactory implements
 		JSONInputCommandFactory {
 	
 	public enum Arguments {
-		vWorksheetId, hNodeId, delimiter, checkHistory
+		worksheetId, hNodeId, delimiter, checkHistory
 	}
 	
 	private static Logger logger = LoggerFactory.getLogger(SplitByCommaCommandFactory.class);
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
+		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String delimiter = request.getParameter(Arguments.delimiter.name());
 
-		return new SplitByCommaCommand(getNewId(vWorkspace), getWorksheetId(
-				request, vWorkspace), hNodeId, vWorksheetId, delimiter);
+		return new SplitByCommaCommand(getNewId(workspace), worksheetId, hNodeId, delimiter);
 	}
 
-	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
+	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
-		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
+		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String delimiter = HistoryJsonUtil.getStringValue(Arguments.delimiter.name(), inputJson);
 		boolean checkHist = HistoryJsonUtil.getBooleanValue(Arguments.checkHistory.name(), inputJson);
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		
 		// TODO This logic needs to be refactored and this should be moved from here
 		if(checkHist) {
 			// Check if any command history exists for the worksheet
-			if(HistoryJsonUtil.historyExists(worksheet.getTitle(), vWorkspace.getPreferencesId())) {
-				WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
+			if(HistoryJsonUtil.historyExists(worksheet.getTitle(), workspace.getCommandPreferencesId())) {
+				WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(worksheetId, workspace);
 				try {
 					List<CommandTag> tags = new ArrayList<CommandTag>();
 					tags.add(CommandTag.Modeling);
@@ -86,9 +85,9 @@ public class SplitByCommaCommandFactory extends CommandFactory implements
 
 		HistoryJsonUtil.setArgumentValue(Arguments.checkHistory.name(), false, inputJson);
 		
-		SplitByCommaCommand comm = new SplitByCommaCommand(getNewId(vWorkspace), 
-				vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheetId(), hNodeId,
-				vWorksheetId, delimiter);
+		SplitByCommaCommand comm = new SplitByCommaCommand(getNewId(workspace), 
+				worksheetId, hNodeId,
+				delimiter);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

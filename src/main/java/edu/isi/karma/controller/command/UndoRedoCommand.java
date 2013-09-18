@@ -22,7 +22,7 @@ package edu.isi.karma.controller.command;
 
 import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class UndoRedoCommand extends Command {
 
@@ -54,17 +54,17 @@ public class UndoRedoCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		UpdateContainer undoEffects = vWorkspace.getWorkspace().getCommandHistory().undoOrRedoCommandsUntil(
-				vWorkspace, commandIdArg);
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		UpdateContainer undoEffects = workspace.getCommandHistory().undoOrRedoCommandsUntil(
+				workspace, commandIdArg);
 		UpdateContainer result = new UpdateContainer(new HistoryUpdate(
-				vWorkspace.getWorkspace().getCommandHistory()));
+				workspace.getCommandHistory()));
 		result.append(undoEffects);
 		return result;
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// not undoable.
 		return new UpdateContainer();
 	}

@@ -26,6 +26,7 @@ package edu.isi.karma.view;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
@@ -108,5 +109,17 @@ public class ViewFactory {
 
 	public VWorksheet getVWorksheet(String vWorksheetId) {
 		return vWorksheets.get(vWorksheetId);
+	}
+	
+	public VWorksheet getVWorksheetByWorksheetId(String worksheetId)
+	{
+		for(VWorksheet vw : this.vWorksheets.values())
+		{
+			if(vw.getWorksheetId().compareTo(worksheetId) == 0)
+			{
+				return vw;
+			}
+		}
+		return null;
 	}
 }

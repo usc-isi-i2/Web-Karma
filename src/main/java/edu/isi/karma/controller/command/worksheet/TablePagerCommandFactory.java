@@ -24,21 +24,21 @@ import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class TablePagerCommandFactory extends CommandFactory {
 
 	public enum Arguments {
-		vWorksheetId, direction, tableId
+		worksheetId, direction, tableId
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 		String tableId = request.getParameter(Arguments.tableId.name());
 		String direction =request.getParameter(Arguments.direction.name());
-		String vWorksheetId =request.getParameter(Arguments.vWorksheetId.name());
-		return new TablePagerCommand(getNewId(vWorkspace), vWorksheetId, tableId, direction);
+		String worksheetId =request.getParameter(Arguments.worksheetId.name());
+		return new TablePagerCommand(getNewId(workspace), worksheetId, tableId, direction);
 	}
 
 }

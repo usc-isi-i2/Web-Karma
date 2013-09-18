@@ -99,7 +99,7 @@ public class DatabaseTableRDFGenerator {
 		Worksheet wk = factory.createWorksheet(tablename, workspace);
 		ArrayList<String> headersList = addHeaders(wk, columnNames, factory);
 		vWorkspace.addAllWorksheets();
-		VWorksheet vWorksheet = vWorkspace.getVWorksheet(wk.getId());
+		VWorksheet vWorksheet =  vWorkspace.getViewFactory().getVWorksheetByWorksheetId(wk.getId());
 		
 		
 		int counter = 0;
@@ -113,7 +113,7 @@ public class DatabaseTableRDFGenerator {
 				wk = factory.createWorksheet(tablename, workspace);
 				headersList = addHeaders(wk, columnNames, factory);
 				vWorkspace.addAllWorksheets();
-				vWorksheet = vWorkspace.getVWorksheet(wk.getId());
+				vWorksheet =  vWorkspace.getViewFactory().getVWorksheetByWorksheetId(wk.getId());
 				
 			}
 			

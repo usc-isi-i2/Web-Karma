@@ -30,31 +30,31 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class SubmitCleaningCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 
 	private enum Arguments {
-		hNodeId, worksheetID, hTableID, vWorksheetId,examples
+		hNodeId, worksheetId, hTableId,examples
 	}
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 		String hNodeid = request.getParameter(Arguments.hNodeId.name());
-		String vw = request.getParameter(Arguments.vWorksheetId.name());
+		String w = request.getParameter(Arguments.worksheetId.name());
 		String exps = request.getParameter(Arguments.examples.name());
 		
-		SubmitCleaningCommand sCleanningCommand = new SubmitCleaningCommand(getNewId(vWorkspace), hNodeid, vw, exps);
+		SubmitCleaningCommand sCleanningCommand = new SubmitCleaningCommand(getNewId(workspace), hNodeid, w, exps);
 		return sCleanningCommand;
 	}
 	@Override
-	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
+	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
-		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
+		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String examples = HistoryJsonUtil.getStringValue(Arguments.examples.name(), inputJson);
-		SubmitCleaningCommand comm = new SubmitCleaningCommand(getNewId(vWorkspace), hNodeId, vWorksheetId, examples);
+		SubmitCleaningCommand comm = new SubmitCleaningCommand(getNewId(workspace), hNodeId, worksheetId, examples);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

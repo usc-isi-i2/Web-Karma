@@ -23,42 +23,23 @@
  */
 package edu.isi.karma.view;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.util.FileUtil;
-import edu.isi.karma.util.JSONUtil;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import edu.isi.karma.util.Preferences;
 
 /**
  * @author szekely
  * 
  */
-public class ViewPreferences {
+public class ViewPreferences extends Preferences{
 	
-	/**
-	 * Pointer to the file where the preferences for each workspace is saved.
-	 */
-	private File jsonFile;
-	
-	/**
-	 * Id of the workspace. Each workspace has its own view preference object.
-	 */
-	private String preferencesId;
-	
-	private JSONObject json;
-	
-	private static Logger logger = LoggerFactory.getLogger(ViewPreferences.class.getSimpleName());
-	
+	public ViewPreferences(String preferencesId) {
+		super(preferencesId);
+	}
+
 	public enum ViewPreference {
 		maxCharactersInHeader, maxCharactersInCell, maxRowsToShowInNestedTables, defaultRowsToShowInTopTables;
 		
@@ -73,41 +54,6 @@ public class ViewPreferences {
 		}
 	}
 
-	public ViewPreferences(String preferencesId) {
-		this.preferencesId = preferencesId;
-		populatePreferences();
-	}
-	
-	private void populatePreferences() {
-		try {
-			jsonFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
-					"UserPrefs/" + preferencesId + ".json");
-			if(jsonFile.exists()){
-				// Populate from the existing preferences JSON file
-				json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
-				if(json == null) {
-					// If error occurred with preferences file, create a new one
-					logger.error("Preferences file corrupt! Creating new from template.");
-					createNewPreferencesFileFromTemplate();
-				}
-			} else {
-				// Create a new JSON preference file using the template preferences file
-				createNewPreferencesFileFromTemplate();
-			} 
-		} catch(FileNotFoundException f) {
-			logger.error("Preferences file not found! ", f);
-		} catch (IOException e) {
-			logger.error("Error occured while creating preferences file!", e);
-		}
-	}
-	
-	private void createNewPreferencesFileFromTemplate() throws IOException {
-		jsonFile.createNewFile();
-		File template_file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
-				"UserPrefs/WorkspacePref.template");
-		FileUtil.copyFiles(jsonFile, template_file);
-		json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
-	}
 
 	public int getIntViewPreferenceValue(ViewPreference pref) {
 		try {
@@ -128,59 +74,6 @@ public class ViewPreferences {
 		return -1;
 	}
 	
-	
-	public JSONObject getCommandPreferencesJSONObject(String commandName){
-		try {
-			JSONArray commArray = json.getJSONArray("Commands");
-			for(int i=0; i<commArray.length(); i++) {
-				JSONObject obj = commArray.getJSONObject(i);
-				if(obj.getString("Command").equals(commandName)) {
-					return obj.getJSONObject("PreferenceValues");
-				}
-			}
-		} catch (JSONException e) {
-			return null;
-		}
-		return null;
-	}
-	
-	public void setCommandPreferences(String commandName, JSONObject prefValues) {
-		try {
-			JSONArray commArray = null;
-			
-			// Check if the Commands element exists
-			commArray = json.optJSONArray("Commands");
-			if(commArray==null)	
-				commArray = new JSONArray();
-			
-			// Check if the command already exists. In that case, we overwrite the values
-			for(int i=0; i<commArray.length(); i++) {
-				JSONObject obj = commArray.getJSONObject(i);
-				if(obj.getString("Command").equals(commandName)) {
-					obj.put("PreferenceValues", prefValues);
-					// Save the new preferences to the file
-					FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
-					return;
-				}
-			}
-			
-			// If the command does not exists, create a new element
-			JSONObject commObj = new JSONObject();
-			commObj.put("Command", commandName);
-			commObj.put("PreferenceValues", prefValues);
-			commArray.put(commObj);
-			json.put("Commands", commArray);
-			
-			// Write the new preferences to the file
-			FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-		
 	public void setIntViewPreferenceValue(ViewPreference pref,
 			int value) {
 		try {

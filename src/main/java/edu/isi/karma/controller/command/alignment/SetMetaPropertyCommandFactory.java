@@ -30,7 +30,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class SetMetaPropertyCommandFactory extends CommandFactory implements JSONInputCommandFactory {
@@ -40,31 +40,31 @@ public class SetMetaPropertyCommandFactory extends CommandFactory implements JSO
 	}
 	
 	private enum Arguments {
-		vWorksheetId, hNodeId, metaPropertyName, metaPropertyValue, trainAndShowUpdates, rdfLiteralType
+		worksheetId, hNodeId, metaPropertyName, metaPropertyValue, trainAndShowUpdates, rdfLiteralType
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
+		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String rdfLiteralType = request.getParameter(Arguments.rdfLiteralType.name());
 		
 		METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(request.getParameter(Arguments.metaPropertyName.name()));
 		String propValue = request.getParameter(Arguments.metaPropertyValue.name());
-		return new SetMetaPropertyCommand(getNewId(vWorkspace), vWorksheetId, hNodeId, 
+		return new SetMetaPropertyCommand(getNewId(workspace), worksheetId, hNodeId, 
 				prop, propValue, true, rdfLiteralType);
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
+	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
-		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
+		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(HistoryJsonUtil.getStringValue(Arguments.metaPropertyName.name(), inputJson));
 		String propValue = HistoryJsonUtil.getStringValue(Arguments.metaPropertyValue.name(), inputJson);
 		String rdfLiteralType = HistoryJsonUtil.getStringValue(Arguments.rdfLiteralType.name(), inputJson);
-		SetMetaPropertyCommand comm = new SetMetaPropertyCommand(getNewId(vWorkspace), vWorksheetId, 
+		SetMetaPropertyCommand comm = new SetMetaPropertyCommand(getNewId(workspace), worksheetId, 
 				hNodeId, prop, propValue, true, rdfLiteralType);
 		
 		// Change the train flag, so that it does not train while reading from history

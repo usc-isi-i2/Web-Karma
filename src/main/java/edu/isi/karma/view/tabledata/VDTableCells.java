@@ -388,7 +388,7 @@ public class VDTableCells {
 					.value(WorksheetHierarchicalDataUpdate.class
 							.getSimpleName())
 					//
-					.key(worksheetId.name()).value(vWorksheet.getId())//
+					.key(worksheetId.name()).value(vWorksheet.getWorksheetId())//
 					.key(rows.name()).array()//
 			;
 			generateAllJsonRows(jw, vWorksheet, vWorkspace);

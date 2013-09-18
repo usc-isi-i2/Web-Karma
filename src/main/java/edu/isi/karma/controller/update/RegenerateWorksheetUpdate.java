@@ -18,43 +18,49 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
+
 package edu.isi.karma.controller.update;
 
 import java.io.PrintWriter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
-public class FetchPreferencesUpdate extends AbstractUpdate {
-	String commandName;
+public class RegenerateWorksheetUpdate extends AbstractUpdate {
 
-	private static Logger logger = LoggerFactory.getLogger(FetchPreferencesUpdate.class);
-	
-	public FetchPreferencesUpdate(String commandName) {
-		this.commandName = commandName;
+	private String worksheetId;
+	public RegenerateWorksheetUpdate(String worksheetId)
+	{
+		this.worksheetId = worksheetId;
 	}
-
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
-		JSONObject prefObject = vWorkspace.getWorkspace().getCommandPreferences().getCommandPreferencesJSONObject(commandName);
-		JSONObject responseObj = new JSONObject();
+		JSONObject obj = new JSONObject();
 		try {
-			responseObj.put("commandId", vWorkspace.getWorkspace().getCommandHistory().getCurrentCommand().getId());
-			responseObj.put("updateType", commandName);
-			
-			// Populate the preferences if there are any
-			if(prefObject != null) {
-				responseObj.put("PreferenceValues", prefObject);
-			}
-			pw.print(responseObj.toString());
+			obj.put(GenericJsonKeys.updateType.name(), "regenerateworksheetupdate");
+			pw.println(obj.toString());
 		} catch (JSONException e) {
-			logger.error("Error writing JSON values for the preference update!", e);
+			System.err.println("ohno!");
 		}
+
 	}
+	@Override
+	public void applyUpdate(VWorkspace vWorkspace)
+	{
+		VWorksheet vWorksheet =  vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
+		if(vWorksheet == null)
+		{
+			System.out.println("this is a place to park");
+		}
+		Worksheet worksheet = vWorksheet.getWorksheet();
+		vWorkspace.getViewFactory().updateWorksheet(vWorksheet.getId(), worksheet,
+				worksheet.getHeaders().getAllPaths(), vWorkspace);
+	}
+
 
 }

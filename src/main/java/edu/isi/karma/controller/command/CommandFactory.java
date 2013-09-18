@@ -26,7 +26,7 @@ package edu.isi.karma.controller.command;
 import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.worksheet.EditCellCommandFactory.Arguments;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 /**
  * @author szekely
@@ -35,17 +35,15 @@ import edu.isi.karma.view.VWorkspace;
 public abstract class CommandFactory {
 
 	public abstract Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace);
+			Workspace workspace);
 
 	public String getWorksheetId(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId
+			Workspace workspace) {
+		return request.getParameter(Arguments.worksheetId
 				.name());
-		return vWorkspace.getViewFactory().getVWorksheet(vWorksheetId)
-				.getWorksheet().getId();
 	}
 	
-	protected String getNewId(VWorkspace vWorkspace){
-		return vWorkspace.getWorkspace().getFactory().getNewId("C");
+	protected String getNewId(Workspace workspace){
+		return workspace.getFactory().getNewId("C");
 	}
 }

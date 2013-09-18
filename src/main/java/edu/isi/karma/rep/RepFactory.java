@@ -24,6 +24,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.uuid.EthernetAddress;
+import com.fasterxml.uuid.Generators;
+import com.fasterxml.uuid.impl.RandomBasedGenerator;
+
 /**
  * @author szekely
  * 
@@ -31,9 +35,11 @@ import java.util.Map;
 public class RepFactory {
 
 	public RepFactory() {
+			uuidGenerator = Generators.randomBasedGenerator();
+		
 	}
-
-	private int nextId = 1;
+	EthernetAddress nic;
+	RandomBasedGenerator uuidGenerator;
 
 	private final Map<String, HNode> hNodes = new HashMap<String, HNode>();
 	private final Map<String, HTable> hTables = new HashMap<String, HTable>();
@@ -60,15 +66,20 @@ public class RepFactory {
 	}
 
 	public String getNewId(String prefix) {
-		return prefix + (nextId++);
+		return prefix + uuidGenerator.generate().toString();
 	}
 
-	HNode createHNode(String hTableId, String columnName,
+	HNode createHNode(String id, String hTableId, String columnName,
 			boolean automaticallyAdded) {
-		String id = getNewId("HN");
 		HNode hn = new HNode(id, hTableId, columnName, automaticallyAdded);
 		hNodes.put(id, hn);
 		return hn;
+	}
+	
+	HNode createHNode(String hTableId, String columnName,
+			boolean automaticallyAdded) {
+		String id = getNewId("HN");
+		return createHNode(id, hTableId, columnName, automaticallyAdded);
 	}
 
 	// added for testing (mariam)
@@ -109,22 +120,29 @@ public class RepFactory {
 		return rows.get(id);
 	}
 
-	HTable createHTable(String tableName) {
-		String id = getNewId("HT");
+	HTable createHTable(String id, String tableName) {
 		HTable ht = new HTable(id, tableName);
 		hTables.put(id, ht);
 		return ht;
 	}
+	
+	HTable createHTable(String tableName) {
+		String id = getNewId("HT");
+		return createHTable(id, tableName);
+	}
 
-	Table createTable(String hTableId, String worksheetId) {
-		String id = getNewId("T");
+	Table createTable(String id, String hTableId, String worksheetId) {
 		Table t = new Table(worksheetId, id, hTableId);
 		tables.put(id, t);
 		return t;
 	}
+	
+	Table createTable(String hTableId, String worksheetId) {
+		String id = getNewId("T");
+		return createTable(id, hTableId, worksheetId);
+	}
 
-	Row createRow(String hTableId, String worksheetId) {
-		String id = getNewId("R");
+	Row createRow(String id, String hTableId, String worksheetId) {
 		Row r = new Row(id);
 		rows.put(id, r);
 
@@ -136,9 +154,12 @@ public class RepFactory {
 
 		return r;
 	}
-
-	Node createNode(String hNodeId, String worksheetId) {
-		String id = getNewId("N");
+	Row createRow(String hTableId, String worksheetId) {
+		String id = getNewId("R");
+		return createRow(id, hTableId, worksheetId);
+	}
+	
+	Node createNode(String id, String hNodeId, String worksheetId) {
 		Node n = new Node(id, hNodeId);
 		nodes.put(id, n);
 		HNode hn = hNodes.get(hNodeId);
@@ -147,6 +168,11 @@ public class RepFactory {
 			n.setNestedTable(createTable(nestedHTable.getId(), worksheetId), this);
 		}
 		return n;
+	}
+	
+	Node createNode(String hNodeId, String worksheetId) {
+		String id = getNewId("N");
+		return createNode(id, hNodeId, worksheetId);
 	}
 
 }

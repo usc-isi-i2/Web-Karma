@@ -35,6 +35,7 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Node;
@@ -83,7 +84,7 @@ public class GetInternalNodesListOfAlignmentCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		final Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		Set<Node> nodeSet = null;
 		if (range == INTERNAL_NODES_RANGE.existingTreeNodes) {
@@ -135,7 +136,7 @@ public class GetInternalNodesListOfAlignmentCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// Not required
 		return null;
 	}

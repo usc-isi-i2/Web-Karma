@@ -23,7 +23,7 @@ package edu.isi.karma.controller.command;
 
 import javax.servlet.http.HttpServletRequest;
 
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class ResetKarmaCommandFactory extends CommandFactory {
 	private enum Arguments {
@@ -31,10 +31,10 @@ public class ResetKarmaCommandFactory extends CommandFactory {
 	}
 
 	@Override
-	public Command createCommand(HttpServletRequest request, VWorkspace vWorkspace) {
+	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		boolean forgetSemanticTypes = Boolean.parseBoolean(request.getParameter(Arguments.forgetSemanticTypes.name()));
 		boolean forgetModels = Boolean.parseBoolean(request.getParameter(Arguments.forgetModels.name()));
-		return new ResetKarmaCommand(getNewId(vWorkspace), forgetSemanticTypes, forgetModels);
+		return new ResetKarmaCommand(getNewId(workspace), forgetSemanticTypes, forgetModels);
 	}
 
 }

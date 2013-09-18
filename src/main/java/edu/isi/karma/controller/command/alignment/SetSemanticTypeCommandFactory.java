@@ -32,23 +32,23 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class SetSemanticTypeCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 
 	private enum Arguments {
-		vWorksheetId, hNodeId, isKey, SemanticTypesArray, trainAndShowUpdates, rdfLiteralType
+		worksheetId, hNodeId, isKey, SemanticTypesArray, trainAndShowUpdates, rdfLiteralType
 	}
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
+		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		boolean isPartOfKey = Boolean.parseBoolean(request.getParameter(Arguments.isKey.name()));
 		String arrStr = request.getParameter(SemanticTypesUpdate.JsonKeys.SemanticTypesArray.name());
 		String rdfLiteralType = request.getParameter(Arguments.rdfLiteralType.name());
@@ -61,13 +61,13 @@ public class SetSemanticTypeCommandFactory extends CommandFactory implements JSO
 			return null;
 		}
 
-		return new SetSemanticTypeCommand(getNewId(vWorkspace), vWorksheetId, hNodeId, 
+		return new SetSemanticTypeCommand(getNewId(workspace), worksheetId, hNodeId, 
 				isPartOfKey, arr, true, rdfLiteralType);
 	}
 
-	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace) throws JSONException, KarmaException {
+	public Command createCommand(JSONArray inputJson, Workspace workspace) throws JSONException, KarmaException {
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
-		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
+		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String arrStr = HistoryJsonUtil.getStringValue(Arguments.SemanticTypesArray.name(), inputJson);
 		boolean isPartOfKey = HistoryJsonUtil.getBooleanValue(Arguments.isKey.name(), inputJson);
 		boolean train = HistoryJsonUtil.getBooleanValue(Arguments.trainAndShowUpdates.name(), inputJson);
@@ -81,8 +81,8 @@ public class SetSemanticTypeCommandFactory extends CommandFactory implements JSO
 			return null;
 		}
 		
-		SetSemanticTypeCommand comm = new SetSemanticTypeCommand(getNewId(vWorkspace), 
-				vWorksheetId, hNodeId, isPartOfKey, arr, train, rdfLiteralType);
+		SetSemanticTypeCommand comm = new SetSemanticTypeCommand(getNewId(workspace), 
+				worksheetId, hNodeId, isPartOfKey, arr, train, rdfLiteralType);
 		
 		// Change the train flag, so that it does not train while reading from history
 		HistoryJsonUtil.setArgumentValue(Arguments.trainAndShowUpdates.name(), false, inputJson);

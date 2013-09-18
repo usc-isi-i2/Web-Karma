@@ -40,8 +40,8 @@ function showDialogToLoadModel() {
     var info = new Object();
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["command"] = "FetchExistingModelsForWorksheetCommand";
-    info["vWorksheetId"] = lastWorksheetLoaded.attr("id");
-
+    info["worksheetId"] = lastWorksheetLoaded.attr("id");
+    info["garbage"] = "garbage";
     var returned = $.ajax({
         url: "RequestController",
         type: "POST",
@@ -110,7 +110,7 @@ function submitModelForWorksheet() {
     var info = {};
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["command"] = "ApplyModelFromTripleStoreCommand";
-    info["vWorksheetId"] = $("div.Worksheet").last().attr("id");
+    info["worksheetId"] = $("div.Worksheet").last().attr("id");
 
     var table = $("#modelsList");
     if ($("td.selected", table).length == 0) {
@@ -122,7 +122,7 @@ function submitModelForWorksheet() {
     info["modelName"] = $("td.selected span", table).text();
 
     optionsDiv.dialog("close");
-    showLoading(info["vWorksheetId"]);
+    showLoading(info["worksheetId"]);
     var returned = $.ajax({
         url: "RequestController",
         type: "POST",
@@ -132,12 +132,12 @@ function submitModelForWorksheet() {
             function (xhr, textStatus) {
                 var json = $.parseJSON(xhr.responseText);
                 parse(json);
-                hideLoading(info["vWorksheetId"]);
+                hideLoading(info["worksheetId"]);
             },
         error :
             function (xhr, textStatus) {
                 $.sticky("Error occurred applying model!");
-                hideLoading(info["vWorksheetId"]);
+                hideLoading(info["worksheetId"]);
             }
     });
 }
@@ -149,9 +149,9 @@ function createNewModelForWorksheet() {
     var info = {};
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["command"] = "CreateNewModelCommand";
-    info["vWorksheetId"] = $("div.Worksheet").last().attr("id");
+    info["worksheetId"] = $("div.Worksheet").last().attr("id");
 
-    showLoading(info["vWorksheetId"]);
+    showLoading(info["worksheetId"]);
     var returned = $.ajax({
         url: "RequestController",
         type: "POST",
@@ -161,12 +161,12 @@ function createNewModelForWorksheet() {
             function (xhr, textStatus) {
                 var json = $.parseJSON(xhr.responseText);
                 parse(json);
-                hideLoading(info["vWorksheetId"]);
+                hideLoading(info["worksheetId"]);
             },
         error :
             function (xhr, textStatus) {
                 $.sticky("Error occurred applying model!");
-                hideLoading(info["vWorksheetId"]);
+                hideLoading(info["worksheetId"]);
             }
     });
 }

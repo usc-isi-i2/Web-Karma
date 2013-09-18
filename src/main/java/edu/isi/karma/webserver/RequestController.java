@@ -67,15 +67,20 @@ public class RequestController extends HttpServlet{
 						((CommandWithPreview) currentCommand).handleUserActions(request);
 						
 						UpdateContainer updateContainer = ctrl.getvWorkspace().getWorkspace()
-						.getCommandHistory().doCommand(currentCommand, ctrl.getvWorkspace());
-						
+						.getCommandHistory().doCommand(currentCommand, ctrl.getvWorkspace().getWorkspace());
+
+						updateContainer.applyUpdates(ctrl.getvWorkspace());
 						responseString = updateContainer.generateJson(ctrl.getvWorkspace());
 					} catch (CommandException e) {
 						logger.error("Error occured while executing command: " + currentCommand.getCommandName(), e);
 					}
 				} else
-					responseString = ((CommandWithPreview) currentCommand).handleUserActions(request)
-							.generateJson(ctrl.getvWorkspace());
+				{
+					UpdateContainer updateContainer = 
+					((CommandWithPreview) currentCommand).handleUserActions(request);
+							updateContainer.applyUpdates(ctrl.getvWorkspace());
+				responseString =  updateContainer.generateJson(ctrl.getvWorkspace());
+				}
 			}
 		} else {
 			Command command = ctrl.getCommand(request);

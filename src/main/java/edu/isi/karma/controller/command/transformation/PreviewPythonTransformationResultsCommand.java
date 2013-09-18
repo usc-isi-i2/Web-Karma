@@ -47,12 +47,13 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.transformation.PythonTransformationHelper;
 import edu.isi.karma.view.VWorkspace;
 
 public class PreviewPythonTransformationResultsCommand extends Command {
 	final private String hNodeId;
-	final private String vWorksheetId;
+	final private String worksheetId;
 	final private String transformationCode;
 	final private String errorDefaultValue;
 	
@@ -63,11 +64,11 @@ public class PreviewPythonTransformationResultsCommand extends Command {
 		updateType, result, errors, row, error
 	}
 	
-	protected PreviewPythonTransformationResultsCommand(String id, String vWorksheetId, 
+	protected PreviewPythonTransformationResultsCommand(String id, String worksheetId, 
 			String transformationCode, String errorDefaultValue, String hNodeId) {
 		super(id);
 		this.hNodeId = hNodeId;
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 		this.transformationCode = transformationCode;
 		this.errorDefaultValue = errorDefaultValue;
 	}
@@ -93,9 +94,9 @@ public class PreviewPythonTransformationResultsCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
-		RepFactory f = vWorkspace.getRepFactory();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		RepFactory f = workspace.getFactory();
 		HNode hNode = f.getHNode(hNodeId);
 		
 		List<HNode> accessibleHNodes = f.getHNode(hNodeId).getHNodesAccessibleList(f);
@@ -208,7 +209,7 @@ public class PreviewPythonTransformationResultsCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// TODO Auto-generated method stub
 		return null;
 	}

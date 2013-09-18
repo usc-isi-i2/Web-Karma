@@ -31,12 +31,8 @@ import java.util.Map;
 import org.json.JSONWriter;
 
 import edu.isi.karma.controller.update.AbstractUpdate;
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetCleaningServiceInvocationResultsUpdate;
 import edu.isi.karma.controller.update.WorksheetDataUpdate;
 import edu.isi.karma.controller.update.WorksheetHeadersUpdate;
-import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
-import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Table;
@@ -244,20 +240,6 @@ public class VWorksheet extends ViewEntity {
 	void addColumnHeader(VColumnHeader vch) {
 		columnHeaders.add(vch);
 	}
-
-	public void update(UpdateContainer c) {
-		c.add(new WorksheetHierarchicalHeadersUpdate(this));
-		c.add(new WorksheetHierarchicalDataUpdate(this));
-		c.add(new WorksheetCleaningServiceInvocationResultsUpdate(this));
-	}
-
-	public void updateHeaders(UpdateContainer c) {
-		c.add(new WorksheetHierarchicalHeadersUpdate(this));
-	}
-
-	public void updateContent(UpdateContainer c) {
-		c.add(new WorksheetHierarchicalDataUpdate(this));
-	}
 	
 	public void generateWorksheetHeadersJson(String prefix, PrintWriter pw,
 			ViewFactory factory) {
@@ -311,7 +293,7 @@ public class VWorksheet extends ViewEntity {
 		String newPref = prefix + "  ";
 
 		pw.println(newPref
-				+ JSONUtil.json(WorksheetListUpdate.JsonKeys.worksheetId, getId()));
+				+ JSONUtil.json(WorksheetListUpdate.JsonKeys.worksheetId, this.getWorksheetId()));
 		pw.println(newPref
 				+ JSONUtil.json(WorksheetListUpdate.JsonKeys.isUpToDate, upToDate));
 		pw.println(newPref

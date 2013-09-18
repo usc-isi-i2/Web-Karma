@@ -28,40 +28,39 @@ import org.json.JSONException;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class AddColumnCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 
 	public enum Arguments {
-		vWorksheetId, hTableId, hNodeId, newColumnName, defaultValue
+		worksheetId, hTableId, hNodeId, newColumnName, defaultValue
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String hTableId = request.getParameter(Arguments.hTableId.name());
 		String newColumnName = request.getParameter(Arguments.newColumnName.name());
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
+		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String defaultValue = request.getParameter(Arguments.defaultValue.name());
-		return new AddColumnCommand(getNewId(vWorkspace), vWorksheetId, getWorksheetId(request, vWorkspace), 
+		return new AddColumnCommand(getNewId(workspace), worksheetId, 
 				hTableId, hNodeId, newColumnName, defaultValue);
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
+	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
 		/** Parse the input arguments and create proper data structures to be passed to the command **/
 		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
-		String vWorksheetID = CommandInputJSONUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
+		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hTableId = CommandInputJSONUtil.getStringValue(Arguments.hTableId.name(), inputJson);
 		String newColumnName = CommandInputJSONUtil.getStringValue(Arguments.newColumnName.name(), inputJson);
 		String defaultValue = CommandInputJSONUtil.getStringValue(Arguments.defaultValue.name(), inputJson);
 		
-		AddColumnCommand colCmd = new AddColumnCommand(getNewId(vWorkspace), vWorksheetID, 
-				vWorkspace.getViewFactory().getVWorksheet(vWorksheetID).getWorksheet().getId(),
+		AddColumnCommand colCmd = new AddColumnCommand(getNewId(workspace), worksheetId,
 				hTableId, hNodeID, newColumnName, defaultValue);
 		colCmd.setInputParameterJson(inputJson.toString());
 		return colCmd;

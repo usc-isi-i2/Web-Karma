@@ -32,7 +32,7 @@ function styleAndAssignHandlersToModelingVizElements() {
 
         var newInfo = [];
         newInfo.push(getParamObject("alignmentNodeId", dropDownMenu.data("nodeId"), "other"));
-        newInfo.push(getParamObject("vWorksheetId", dropDownMenu.data("worksheetId"), "other"));
+        newInfo.push(getParamObject("worksheetId", dropDownMenu.data("worksheetId"), "other"));
 
         info["newInfo"] = JSON.stringify(newInfo);
 
@@ -634,7 +634,7 @@ function changeSemanticType_d3(d, vis, event) {
     var info = new Object();
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["command"] = "GetPropertiesAndClassesList";
-    info["vWorksheetId"] = optionsDiv.data("worksheetId");
+    info["worksheetId"] = optionsDiv.data("worksheetId");
 
     var returned = $.ajax({
         url: "RequestController",
@@ -726,7 +726,7 @@ function submitDirectLinkChange() {
     // Prepare the input for command
     var newInfo = [];
     newInfo.push(getParamObject("alignmentId", optionsDiv.data("alignmentId"), "other"));
-    newInfo.push(getParamObject("vWorksheetId", optionsDiv.data("worksheetId"), "other"));
+    newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "other"));
 
     // Put the new edge information
     var newEdges = [];
@@ -951,7 +951,7 @@ function submitInternalNodesLinksChange() {
     var newInfo = [];
     newInfo.push(getParamObject("initialEdges", optionsDiv.data("initialEdges"), "other"));
     newInfo.push(getParamObject("alignmentId", optionsDiv.data("alignmentId"), "other"));
-    newInfo.push(getParamObject("vWorksheetId", optionsDiv.data("worksheetId"), "vWorksheetId"));
+    newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "worksheetId"));
 
     // Get the new edges information
     var newEdges = [];

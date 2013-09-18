@@ -43,8 +43,13 @@ public class WorksheetListUpdate extends AbstractUpdate {
 		worksheets, worksheetId, title, isUpToDate, isCollapsed
 	}
 
-	private final VWorksheetList vWorksheetList;
+	private VWorksheetList vWorksheetList;
 
+	public WorksheetListUpdate() {
+		super();
+		this.vWorksheetList = null;
+	}
+	
 	public WorksheetListUpdate(VWorksheetList vWorksheetList) {
 		super();
 		this.vWorksheetList = vWorksheetList;
@@ -52,6 +57,11 @@ public class WorksheetListUpdate extends AbstractUpdate {
 
 	@Override
 	public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
+		if(vWorksheetList == null)
+		{
+			vWorksheetList = vWorkspace.getVWorksheetList();
+		}
+			
 		pw.println(prefix + "{");
 		String prefix1 = prefix + "  ";
 		pw.println(prefix1
@@ -63,4 +73,9 @@ public class WorksheetListUpdate extends AbstractUpdate {
 
 	}
 
+	@Override
+	public void applyUpdate(VWorkspace vWorkspace)
+	{
+		vWorkspace.addAllWorksheets();
+	}
 }

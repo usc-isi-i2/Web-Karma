@@ -3,9 +3,6 @@
  */
 package edu.isi.karma.modeling.research.graphmatching.algorithms;
 
-import java.io.FileInputStream;
-import java.util.Properties;
-
 import edu.isi.karma.modeling.research.graphmatching.util.CostFunction;
 import edu.isi.karma.modeling.research.graphmatching.util.EditDistance;
 import edu.isi.karma.modeling.research.graphmatching.util.Graph;

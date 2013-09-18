@@ -334,13 +334,13 @@ public class ExecutionController {
 			if (cf instanceof JSONInputCommandFactory) {
 				try {
 					JSONInputCommandFactory scf = (JSONInputCommandFactory)cf;
-					return scf.createCommand(new JSONArray(request.getParameter("newInfo")), vWorkspace);
+					return scf.createCommand(new JSONArray(request.getParameter("newInfo")), vWorkspace.getWorkspace());
 				}  catch (Exception e) {
 					e.printStackTrace();
 					return null;
 				} 
 			} else
-				return cf.createCommand(request, vWorkspace);
+				return cf.createCommand(request, vWorkspace.getWorkspace());
 		} else {
 			logger.error("Command " + request.getParameter("command")
 					+ " not found!");
@@ -354,11 +354,11 @@ public class ExecutionController {
 				UpdateContainer updateContainer = null;
 				vWorkspace.getWorkspace().getCommandHistory().setCurrentCommand(command);
 				if(command instanceof CommandWithPreview){
-					updateContainer = ((CommandWithPreview)command).showPreview(vWorkspace);
+					updateContainer = ((CommandWithPreview)command).showPreview(vWorkspace.getWorkspace());
 				} else {
-					updateContainer = vWorkspace.getWorkspace().getCommandHistory().doCommand(command, vWorkspace);
+					updateContainer = vWorkspace.getWorkspace().getCommandHistory().doCommand(command, vWorkspace.getWorkspace());
 				}
-				
+				updateContainer.applyUpdates(vWorkspace);
 				String responseJson = updateContainer.generateJson(vWorkspace);
 				//logger.info(responseJson);
 				return responseJson;
