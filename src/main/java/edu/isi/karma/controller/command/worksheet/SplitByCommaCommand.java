@@ -29,6 +29,7 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
@@ -96,17 +97,17 @@ public class SplitByCommaCommand extends WorksheetCommand {
 		split.split(oldNodeValueMap, oldNodeStatusMap);
 		splitValueHNodeID = split.getSplitValueHNodeID();
 
-		this.generateRegenerateWorksheetUpdates(c);
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
 		
-		// Add updates related to the alignment
-		addAlignmentUpdate(c, workspace);
+		/** Add the alignment update **/
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		
 		return c;
 	}
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		UpdateContainer c = new UpdateContainer();
+		
 		Worksheet wk = workspace.getFactory().getWorksheet(worksheetId);
 		List<HNodePath> columnPaths = wk.getHeaders().getAllPaths();
 
@@ -140,7 +141,7 @@ public class SplitByCommaCommand extends WorksheetCommand {
 			node.setValue(oldNodeValueMap.get(node), oldNodeStatusMap.get(node), workspace.getFactory());
 		}
 
-		this.generateRegenerateWorksheetUpdates(c);
-		return c;
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		
 	}
 }

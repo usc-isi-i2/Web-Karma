@@ -23,6 +23,8 @@ package edu.isi.karma.modeling.alignment;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.isi.karma.modeling.ontology.OntologyManager;
+
 public class AlignmentManager {
 	private static HashMap<String, Alignment> alignmentMap = null;
 	private static AlignmentManager _InternalInstance = null;
@@ -50,6 +52,16 @@ public class AlignmentManager {
 		return getAlignment(alignmentId);
 	}
 
+	public Alignment getAlignmentOrCreateIt(String workspaceId, String worksheetId, OntologyManager ontologyManager){
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
+				workspaceId, worksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		if (alignment == null) {
+			alignment = new Alignment(ontologyManager);
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		}
+		return alignment;
+	}
 	public void removeWorkspaceAlignments(String workspaceId) {
 		ArrayList<String> keysToBeRemoved = new ArrayList<String>();
 		for(String key:alignmentMap.keySet()) {

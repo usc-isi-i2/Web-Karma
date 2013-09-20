@@ -25,6 +25,8 @@ import java.io.PrintWriter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.view.VWorksheet;
@@ -32,6 +34,8 @@ import edu.isi.karma.view.VWorkspace;
 
 public class RegenerateWorksheetUpdate extends AbstractUpdate {
 
+	private static Logger logger = LoggerFactory.getLogger(RegenerateWorksheetUpdate.class);
+	
 	private String worksheetId;
 	public RegenerateWorksheetUpdate(String worksheetId)
 	{
@@ -42,10 +46,10 @@ public class RegenerateWorksheetUpdate extends AbstractUpdate {
 			VWorkspace vWorkspace) {
 		JSONObject obj = new JSONObject();
 		try {
-			obj.put(GenericJsonKeys.updateType.name(), "regenerateworksheetupdate");
+			obj.put(GenericJsonKeys.updateType.name(), "RegenerateWorksheetUpdate");
 			pw.println(obj.toString());
 		} catch (JSONException e) {
-			System.err.println("ohno!");
+			logger.error("Unable to generate Json", e);
 		}
 
 	}
@@ -53,10 +57,6 @@ public class RegenerateWorksheetUpdate extends AbstractUpdate {
 	public void applyUpdate(VWorkspace vWorkspace)
 	{
 		VWorksheet vWorksheet =  vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
-		if(vWorksheet == null)
-		{
-			System.out.println("this is a place to park");
-		}
 		Worksheet worksheet = vWorksheet.getWorksheet();
 		vWorkspace.getViewFactory().updateWorksheet(vWorksheet.getId(), worksheet,
 				worksheet.getHeaders().getAllPaths(), vWorkspace);

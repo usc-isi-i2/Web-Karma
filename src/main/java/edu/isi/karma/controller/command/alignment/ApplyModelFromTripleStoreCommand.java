@@ -32,6 +32,7 @@ import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.rep.Workspace;
 
@@ -114,9 +115,8 @@ public class ApplyModelFromTripleStoreCommand extends WorksheetCommand {
 			histReader.readAndExecuteAllCommands(historyJson);
 			
 			// Add worksheet updates that could have resulted out of the transformation commands
-			UpdateContainer c =  new UpdateContainer();
-			this.generateRegenerateWorksheetUpdates(c);
-			this.addAlignmentUpdate(c, workspace);
+			UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			c.add(new InfoUpdate("Model successfully applied!"));
 			return c;
 			

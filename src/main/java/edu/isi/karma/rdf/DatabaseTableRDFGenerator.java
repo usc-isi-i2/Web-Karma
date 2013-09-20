@@ -98,9 +98,7 @@ public class DatabaseTableRDFGenerator {
 		// Prepare required Karma objects
 		Worksheet wk = factory.createWorksheet(tablename, workspace);
 		ArrayList<String> headersList = addHeaders(wk, columnNames, factory);
-		vWorkspace.addAllWorksheets();
-		VWorksheet vWorksheet =  vWorkspace.getViewFactory().getVWorksheetByWorksheetId(wk.getId());
-		
+		VWorksheet vWorksheet =  vWorkspace.getViewFactory().createVWorksheetWithDefaultPreferences(vWorkspace, wk);
 		
 		int counter = 0;
 		
@@ -112,7 +110,7 @@ public class DatabaseTableRDFGenerator {
 				
 				wk = factory.createWorksheet(tablename, workspace);
 				headersList = addHeaders(wk, columnNames, factory);
-				vWorkspace.addAllWorksheets();
+				vWorkspace.createVWorksheetsForAllWorksheets();
 				vWorksheet =  vWorkspace.getViewFactory().getVWorksheetByWorksheetId(wk.getId());
 				
 			}

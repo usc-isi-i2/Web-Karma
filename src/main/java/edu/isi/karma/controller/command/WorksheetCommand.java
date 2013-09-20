@@ -20,16 +20,13 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
-import edu.isi.karma.controller.update.RegenerateWorksheetUpdate;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+
 
 /**
  * Commands that operate on a worksheet.
@@ -49,27 +46,22 @@ public abstract class WorksheetCommand extends Command {
 	public String getWorksheetId() {
 		return worksheetId;
 	}
-
-	protected void generateRegenerateWorksheetUpdates(UpdateContainer c) {
-		RegenerateWorksheetUpdate rwu = new RegenerateWorksheetUpdate(worksheetId);
-		c.add(rwu);
 	
-		WorksheetUpdateFactory.update(c, worksheetId);
+	private Alignment getAlignmentOrCreateIt(Workspace workspace)
+	{
+		return AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, workspace.getOntologyManager());
 	}
-	protected void addAlignmentUpdate(UpdateContainer c, Workspace workspace) {
-		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
-				workspace.getId(), worksheetId);
-		//TODO verify this is cool switching to workspace id + worksheet id
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		if (alignment == null) {
-			alignment = new Alignment(workspace.getOntologyManager());
-			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
-		}
+	private void computeSemanticTypesSuggestions(Workspace workspace, Alignment alignment)
+	{
 		// Compute the semantic type suggestions
-		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, workspace
+		SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(worksheetId), workspace
 				.getCrfModelHandler(), workspace.getOntologyManager(), alignment);
-		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(worksheetId, alignment));
+	}
+	
+	public UpdateContainer computeAlignmentAndSemanticTypesAndCreateUpdates(Workspace workspace)
+	{
+		Alignment alignment = getAlignmentOrCreateIt(workspace);
+		computeSemanticTypesSuggestions(workspace, alignment);
+		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);
 	}
 }

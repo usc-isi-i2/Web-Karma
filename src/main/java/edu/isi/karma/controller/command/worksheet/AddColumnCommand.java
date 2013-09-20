@@ -20,21 +20,19 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.worksheet;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.update.AbstractUpdate;
+import edu.isi.karma.controller.update.AddColumnUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
@@ -43,7 +41,6 @@ import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
 /**
@@ -136,36 +133,13 @@ public class AddColumnCommand extends WorksheetCommand {
 			}
 			
 			//create container and return hNodeId of newly created column
-			UpdateContainer c =  new UpdateContainer(new AbstractUpdate(){
-				@Override
-				public void generateJson(String prefix, PrintWriter pw,
-						VWorkspace vWorkspace) {
-					JSONObject outputObject = new JSONObject();
-					try {
-						outputObject.put(JsonKeys.updateType.name(),
-								"AddColumnUpdate");
-						outputObject.put(JsonKeys.hNodeId.name(),newHNodeId);
-						outputObject.put(JsonKeys.worksheetId.name(),
-								worksheetId);
-						pw.println(outputObject.toString(4));
-					} catch (JSONException e) {
-						logger.error("Error occured while generating JSON!");
-					}
-					
-				}
-				@Override
-				public void applyUpdate(VWorkspace vWorkspace)
-				{
-					
-				}
-				
-			});
+			UpdateContainer c =  new UpdateContainer(new AddColumnUpdate(newHNodeId, worksheetId));
 			
-			generateRegenerateWorksheetUpdates(c);
-			addAlignmentUpdate(c, workspace);
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		} catch (Exception e) {
-			System.out.println("Error in AddColumnCommand" + e.toString());
+			logger.error("Error in AddColumnCommand" + e.toString());
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}
 	}
@@ -193,9 +167,7 @@ public class AddColumnCommand extends WorksheetCommand {
 		//remove the new column
 		currentTable.removeHNode(newHNodeId, worksheet);
 
-		UpdateContainer c = new UpdateContainer();
-		generateRegenerateWorksheetUpdates(c);
-		return c;
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
 	}
 
 

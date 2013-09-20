@@ -40,6 +40,7 @@ import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
@@ -250,11 +251,8 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 		}
 		
 		// Prepare the output container
-		UpdateContainer c = new UpdateContainer();
-		generateRegenerateWorksheetUpdates(c);
-		/** Add the alignment update **/
-		 addAlignmentUpdate(c, workspace);
-		
+		UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		c.add(new InfoUpdate("Linking complete"));
 		return c;
 	}

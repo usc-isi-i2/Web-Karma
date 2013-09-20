@@ -21,20 +21,35 @@
 
 package edu.isi.karma.controller.update;
 
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+
 public class WorksheetUpdateFactory {
 
-	public static void update(UpdateContainer c, String worksheetId) {
-		c.add(new WorksheetHeadersUpdate(worksheetId));
+	public static UpdateContainer createWorksheetHierarchicalAndCleaningResultsUpdates(String worksheetId) {
+		UpdateContainer c = new UpdateContainer();
+		createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, c);
+		return c;
+	}
+	private static void createWorksheetHierarchicalAndCleaningResultsUpdates(
+			String worksheetId, UpdateContainer c) {
 		c.add(new WorksheetHierarchicalHeadersUpdate(worksheetId));
 		c.add(new WorksheetHierarchicalDataUpdate(worksheetId));
 		c.add(new WorksheetCleaningServiceInvocationResultsUpdate(worksheetId));
 	}
-
-	public static void updateHeaders(UpdateContainer c, String worksheetId) {
-		c.add(new WorksheetHierarchicalHeadersUpdate(worksheetId));
+	public static UpdateContainer createRegenerateWorksheetUpdates(String worksheetId) {
+		UpdateContainer c = new UpdateContainer();
+		c.add(new RegenerateWorksheetUpdate(worksheetId));
+		createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId,c);
+		return c;
 	}
-
-	public static void updateContent(UpdateContainer c, String worksheetId) {
-		c.add(new WorksheetHierarchicalDataUpdate(worksheetId));
+	public static UpdateContainer createSemanticTypesAndSVGAlignmentUpdates(String worksheetId, Workspace workspace, Alignment alignment)
+	{
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		UpdateContainer c = new UpdateContainer();
+		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(worksheetId, alignment));
+		return c;
 	}
 }

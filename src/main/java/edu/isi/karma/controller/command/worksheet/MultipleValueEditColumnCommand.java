@@ -50,7 +50,6 @@ public class MultipleValueEditColumnCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		UpdateContainer c = new UpdateContainer();
 		RepFactory factory = workspace.getFactory();
 		for (String rowID: newRowValueMap.keySet()) {
 			Row row = factory.getRow(rowID);
@@ -64,15 +63,11 @@ public class MultipleValueEditColumnCommand extends WorksheetCommand {
 			String newCellValue = newRowValueMap.get(rowID);
 			row.setValue(hNodeID, newCellValue, factory);
 		}
-		
-		//TODO is this a safe replacement?
-		WorksheetUpdateFactory.update(c, this.worksheetId);
-		return c;
+		return WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(this.worksheetId);
 	}
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		UpdateContainer c = new UpdateContainer();
 		RepFactory factory = workspace.getFactory();
 		for (String rowID: oldRowValueMap.keySet()) {
 			Row row = factory.getRow(rowID);
@@ -85,10 +80,7 @@ public class MultipleValueEditColumnCommand extends WorksheetCommand {
 			String oldCellValue = oldRowValueMap.get(rowID);
 			row.setValue(hNodeID, oldCellValue, factory);
 		}
-		//TODO is this a safe replacement?
-		this.generateRegenerateWorksheetUpdates(c);
-				
-		return c;
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
 	}
 
 }

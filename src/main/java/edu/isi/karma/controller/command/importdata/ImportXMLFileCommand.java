@@ -79,16 +79,14 @@ public class ImportXMLFileCommand extends Command {
 		UpdateContainer c = new UpdateContainer();
 		try {
 			String fileContents = FileUtil.readFileContentsToString(xmlFile);
-//			System.out.println(fileContents);
+
 			// Converting the XML to JSON
 			JSONObject json = XML.toJSONObject(fileContents);
-//			System.out.println(json.toString(4));
 			JsonImport imp = new JsonImport(json, xmlFile.getName(), workspace);
 			
 			Worksheet wsht = imp.generateWorksheet();
-			
 			c.add(new WorksheetListUpdate());
-			WorksheetUpdateFactory.update(c, wsht.getId());
+			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
 		} catch (FileNotFoundException e) {
 			logger.error("File Not Found", e);
 		} catch (JSONException e) {

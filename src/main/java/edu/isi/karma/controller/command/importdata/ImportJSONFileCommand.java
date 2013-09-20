@@ -80,7 +80,7 @@ public class ImportJSONFileCommand extends Command {
 			
 			Worksheet wsht = imp.generateWorksheet();
 			c.add(new WorksheetListUpdate());
-			WorksheetUpdateFactory.update(c, wsht.getId());
+			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
 		} catch (Exception e) {
 			logger.error("Error occured while generating worksheet from JSON!", e);
 			return new UpdateContainer(new ErrorUpdate(

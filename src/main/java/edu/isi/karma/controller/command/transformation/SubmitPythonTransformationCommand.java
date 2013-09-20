@@ -46,6 +46,7 @@ import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
@@ -213,9 +214,10 @@ public class SubmitPythonTransformationCommand extends WorksheetCommand {
 		
 		// Prepare the output container
 		UpdateContainer c = new UpdateContainer();
-		this.generateRegenerateWorksheetUpdates(c);
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		
 		/** Add the alignment update **/
-		 addAlignmentUpdate(c, workspace);
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		
 		c.add(new InfoUpdate("Transformation complete"));
 		return c;
@@ -251,11 +253,7 @@ public class SubmitPythonTransformationCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		addColCmd.undoIt(workspace);
-
-		UpdateContainer c = new UpdateContainer();
-
-		this.generateRegenerateWorksheetUpdates(c);
-		return c;
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
 	}
 
 }

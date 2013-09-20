@@ -72,10 +72,8 @@ public class ImportUnionResultCommand extends Command {
 
 			UnionImport uim=new UnionImport("union", workspace);
 			Worksheet wsht=uim.generateWorksheet();
-		
-			
 			c.add(new WorksheetListUpdate());
-			WorksheetUpdateFactory.update(c, wsht.getId());
+			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
 		} catch (Exception e) {
 			logger.error("Error occured while generating worksheet from JSON!", e);
 			return new UpdateContainer(new ErrorUpdate(

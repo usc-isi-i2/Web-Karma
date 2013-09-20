@@ -137,7 +137,7 @@ public class ImportServiceCommand extends Command {
 			});
 			
 			c.add(new WorksheetListUpdate());
-			WorksheetUpdateFactory.update(c, wsht.getId());
+			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
 			return c;
 		} catch (Exception e) {
 			logger.error("Error occured while creating worksheet from web-service: " + serviceUrl);

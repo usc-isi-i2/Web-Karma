@@ -19,48 +19,45 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.controller.command.alignment;
+package edu.isi.karma.controller.update;
 
-import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.rep.Workspace;
+import java.io.PrintWriter;
 
-public class CreateNewModelCommand extends WorksheetCommand {
-	public CreateNewModelCommand(String id, String worksheetId) {
-		super(id, worksheetId);
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import edu.isi.karma.controller.command.worksheet.AddColumnCommand.JsonKeys;
+import edu.isi.karma.view.VWorkspace;
+
+public class AddColumnUpdate extends AbstractUpdate {
+
+	private static Logger logger =Logger.getLogger(AddColumnUpdate.class);
+	
+	private final String newHNodeId;
+	private final String worksheetId;
+
+	public AddColumnUpdate(String newHNodeId, String worksheetId)
+	{
+		this.newHNodeId = newHNodeId;
+		this.worksheetId = worksheetId;
 	}
-
+	
 	@Override
-	public String getCommandName() {
-		return this.getClass().getSimpleName();
-	}
-
-	@Override
-	public String getTitle() {
-		return "Create new model";
-	}
-
-	@Override
-	public String getDescription() {
-		return "";
-	}
-
-	@Override
-	public CommandType getCommandType() {
-		return CommandType.notInHistory;
-	}
-
-	@Override
-	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		// Add the alignment update
-		return computeAlignmentAndSemanticTypesAndCreateUpdates(workspace);
-	}
-
-	@Override
-	public UpdateContainer undoIt(Workspace workspace) {
-		// Not required
-		return null;
+	public void generateJson(String prefix, PrintWriter pw,
+			VWorkspace vWorkspace) {
+		JSONObject outputObject = new JSONObject();
+		try {
+			outputObject.put(JsonKeys.updateType.name(),
+					"AddColumnUpdate");
+			outputObject.put(JsonKeys.hNodeId.name(),newHNodeId);
+			outputObject.put(JsonKeys.worksheetId.name(),
+					worksheetId);
+			pw.println(outputObject.toString(4));
+		} catch (JSONException e) {
+			logger.error("Error occured while generating JSON!");
+		}
+		
 	}
 
 }

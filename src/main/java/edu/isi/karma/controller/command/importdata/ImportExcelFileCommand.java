@@ -96,7 +96,7 @@ public class ImportExcelFileCommand extends Command {
 				try {
 					Worksheet wsht = imp.generateWorksheet();
 					c.add(new WorksheetListUpdate());
-					WorksheetUpdateFactory.update(c, wsht.getId());
+					c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
 				} catch (Exception e) {
 					logger.error("Error occured while importing CSV file.", e);
 					return new UpdateContainer(new ErrorUpdate(

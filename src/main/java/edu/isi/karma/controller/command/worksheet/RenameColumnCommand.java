@@ -24,6 +24,7 @@ package edu.isi.karma.controller.command.worksheet;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Workspace;
 
@@ -70,10 +71,8 @@ public class RenameColumnCommand extends WorksheetCommand {
 		columnNode.setColumnName(newColumnName);
 		
 		// Prepare the output to be sent
-		UpdateContainer c =  new UpdateContainer();
-		this.generateRegenerateWorksheetUpdates(c);
-		// Add updates related to the alignment
-		addAlignmentUpdate(c, workspace);
+		UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}
 
@@ -85,11 +84,8 @@ public class RenameColumnCommand extends WorksheetCommand {
 		
 		// Prepare the output to be sent
 	
-		UpdateContainer c =  new UpdateContainer();
-		this.generateRegenerateWorksheetUpdates(c);
-		// Add updates related to the alignment
-		addAlignmentUpdate(c, workspace);
-		
+		UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}
 	

@@ -192,8 +192,8 @@ public class PopulateCommand extends WorksheetCommand{
 			columnPaths.add(path);
 		}
 		
-		this.generateRegenerateWorksheetUpdates(c);
-		this.addAlignmentUpdate(c, workspace);
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 				
 		return c;
 	}
@@ -264,7 +264,7 @@ public class PopulateCommand extends WorksheetCommand{
 		workspace.getFactory().replaceWorksheet(this.worksheetId, this.worksheetBeforeInvocation);
 		
 		c.add(new ReplaceWorksheetUpdate(worksheetId, this.worksheetBeforeInvocation));
-		WorksheetUpdateFactory.update(c, worksheetId);
+		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId));
 		
 		return c;	
 		

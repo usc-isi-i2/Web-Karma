@@ -287,8 +287,7 @@ public class VWorksheet extends ViewEntity {
 		pw.println(prefix + "}");
 	}
 
-	public void generateWorksheetListJson(String prefix, PrintWriter pw,
-			ViewFactory factory) {
+	public void generateWorksheetListJson(String prefix, PrintWriter pw) {
 		pw.println(prefix + "{");
 		String newPref = prefix + "  ";
 

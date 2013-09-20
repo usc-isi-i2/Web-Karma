@@ -130,9 +130,8 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			columnPaths.add(path);
 		}
 
-		this.generateRegenerateWorksheetUpdates(c);
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
 		
-		return c;
 	}
 	
 	private String getUrlColumnName(Worksheet wk) {
@@ -160,9 +159,9 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			HNodePath path = new HNodePath(node);
 			columnPaths.add(path);
 		}
-		workspace.getFactory().replaceWorksheet(this.worksheetId, this.worksheetBeforeInvocation);
-		c.add(new ReplaceWorksheetUpdate(this.worksheetId, this.worksheetBeforeInvocation));
-		WorksheetUpdateFactory.update(c, worksheetId);
+		workspace.getFactory().replaceWorksheet(worksheetId, worksheetBeforeInvocation);
+		c.add(new ReplaceWorksheetUpdate(worksheetId, worksheetBeforeInvocation));
+		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId));
 	
 		return c;	
 	}

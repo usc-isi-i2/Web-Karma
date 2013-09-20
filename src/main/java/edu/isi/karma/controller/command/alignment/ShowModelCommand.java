@@ -33,15 +33,10 @@ import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.SemanticType;
@@ -99,29 +94,16 @@ public class ShowModelCommand extends WorksheetCommand {
 		OntologyManager ontMgr = workspace.getOntologyManager();
 		if(ontMgr.isEmpty())
 			return new UpdateContainer(new ErrorUpdate("No ontology loaded."));
-//		SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, outlierTag, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
 		
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		if (alignment == null) {
-			alignment = new Alignment(ontMgr);
-			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		if (addVWorksheetUpdate) {
+			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId));
 		}
-
-		// Compute the semantic type suggestions
-		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, workspace.getCrfModelHandler(), ontMgr, alignment);
-//		SemanticTypeUtil.computeOutliersForExistingTypes(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		c.add(new TagsUpdate());
 		try {
 			// Save the semantic types in the input parameter JSON
 			saveSemanticTypesInformation(worksheet, workspace, worksheet.getSemanticTypes().getListOfTypes());
-			
-			if (addVWorksheetUpdate) {
-				WorksheetUpdateFactory.update(c, alignmentId);
-			}
-			// Add the visualization update
-			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(worksheetId, alignment));
-			c.add(new TagsUpdate());
+		
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(
