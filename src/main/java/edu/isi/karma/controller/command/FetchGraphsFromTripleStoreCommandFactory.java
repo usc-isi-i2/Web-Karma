@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright 2012 University of Southern California
- *  
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,27 +18,25 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
+package edu.isi.karma.controller.command;
 
-package edu.isi.karma.modeling;
+import javax.servlet.http.HttpServletRequest;
 
+import edu.isi.karma.view.VWorkspace;
 
-public interface ModelingParams{
+public class FetchGraphsFromTripleStoreCommandFactory extends CommandFactory {
+	private enum Arguments {
+		tripleStoreUrl
+	}
 
-	// Building Graph
-	public static double PROPERTY_USER_PREFERRED_WEIGHT = 10;
-	public static double PROPERTY_UI_PREFERRED_WEIGHT = 90;
-	public static double PROPERTY_DIRECT_WEIGHT = 100;	
-	public static double PROPERTY_INDIRECT_WEIGHT = 100.01;
-	public static double PROPERTY_WITH_ONLY_DOMAIN_WEIGHT = 1000;
-	public static double PROPERTY_WITH_ONLY_RANGE_WEIGHT = 1000;
-	public static double SUBCLASS_WEIGHT = 10000;
-	public static double PROPERTY_WITHOUT_DOMAIN_RANGE_WEIGHT = 50000;
-	public static double PATTERN_LINK_WEIGHT = 1;
-	public static double DATA_PROPERTY_WEIGHT = 100;
+	@Override
+	public Command createCommand(HttpServletRequest request,
+			VWorkspace vWorkspace) {
 
-	// Prefixes
-	public static String KARMA_SOURCE_PREFIX = "http://isi.edu/integration/karma/sources/";
-	public static String KARMA_SERVICE_PREFIX = "http://isi.edu/integration/karma/services/";
+		FetchGraphsFromTripleStoreCommand comm = new FetchGraphsFromTripleStoreCommand(getNewId(vWorkspace), 
+				request.getParameter(Arguments.tripleStoreUrl.name()));
+		
+		return comm;
+	}
 
-	
 }

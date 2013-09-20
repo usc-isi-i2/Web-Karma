@@ -18,42 +18,25 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
+package edu.isi.karma.controller.command;
 
-package edu.isi.karma.modeling.research.experiment2;
+import javax.servlet.http.HttpServletRequest;
 
-import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.InternalNode;
-import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.view.VWorkspace;
 
-public class MappingStruct {
-	
-	private InternalNode source;
-	private Link link;
-	private ColumnNode target;
-
-	public MappingStruct(InternalNode source) {
-		this.source = source;
-		this.link = null;
-		this.target = null;
-	}
-	
-	public MappingStruct(InternalNode source, Link link, ColumnNode target) {
-		this.source = source;
-		this.link = link;
-		this.target = target;
+public class TestSPARQLEndPointCommandFactory extends CommandFactory {
+	private enum Arguments {
+		tripleStoreUrl
 	}
 
-	public InternalNode getSource() {
-		return source;
+	@Override
+	public Command createCommand(HttpServletRequest request,
+			VWorkspace vWorkspace) {
+
+		TestSPARQLEndPointCommand comm = new TestSPARQLEndPointCommand(getNewId(vWorkspace), 
+				request.getParameter(Arguments.tripleStoreUrl.name()));
+		
+		return comm;
 	}
 
-	public Link getLink() {
-		return link;
-	}
-
-	public ColumnNode getTarget() {
-		return target;
-	}
-
-	
 }

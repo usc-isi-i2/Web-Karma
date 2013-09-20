@@ -37,7 +37,6 @@ import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
@@ -266,8 +265,13 @@ public class GraphBuilder {
 	}
 	
 	public void addNodeList(List<Node> nodes) {
+		addNodeList(nodes, null);
+	}
+	
+	public void addNodeList(List<Node> nodes, Set<Node> addedNodes) {
 		
 		logger.debug("<enter");
+		if (addedNodes == null) addedNodes = new HashSet<Node>();
 
 		long start = System.currentTimeMillis();
 		float elapsedTimeSec;
@@ -277,8 +281,10 @@ public class GraphBuilder {
 			if (!addSingleNode(node))
 				continue;
 				
-			if (node instanceof InternalNode) 
-				addNodeClosure(node, new ArrayList<Node>());
+			addedNodes.add(node);
+			if (node instanceof InternalNode) {
+				addNodeClosure(node, addedNodes);
+			}
 		}
 
 		long addNodesClosure = System.currentTimeMillis();
@@ -298,8 +304,13 @@ public class GraphBuilder {
 	}
 
 	public boolean addNode(Node node) {
+		return addNode(node, null);
+	}
+
+	public boolean addNode(Node node, Set<Node> addedNodes) {
 		
 		logger.debug("<enter");
+		if (addedNodes == null) addedNodes = new HashSet<Node>();
 
 		if (!addSingleNode(node))
 			return false;
@@ -315,7 +326,8 @@ public class GraphBuilder {
 //			newNodes.add(node);
 //			addNodeClosure(node, newNodes);
 			
-			addNodeClosure(node, new ArrayList<Node>());
+			addedNodes.add(node);
+			addNodeClosure(node, addedNodes);
 			long addNodesClosure = System.currentTimeMillis();
 			elapsedTimeSec = (addNodesClosure - start)/1000F;
 			logger.info("time to add nodes closure: " + elapsedTimeSec);
@@ -535,10 +547,15 @@ public class GraphBuilder {
 		
 		return true;
 	}
-	
+
 	public void updateGraph() {
+		updateGraph(null);
+	}
+	
+	public void updateGraph(Set<Node> addedNodes) {
 		
 		logger.debug("<enter");
+		if (addedNodes == null) addedNodes = new HashSet<Node>();
 
 		long start = System.currentTimeMillis();
 		float elapsedTimeSec;
@@ -547,7 +564,7 @@ public class GraphBuilder {
 		if (internalNodes != null) {
 			Node[] nodes = internalNodes.toArray(new Node[0]);
 			for (Node node : nodes) 
-				addNodeClosure(node, new ArrayList<Node>());
+				addNodeClosure(node, addedNodes);
 		}
 
 		long addNodesClosure = System.currentTimeMillis();
@@ -813,11 +830,11 @@ public class GraphBuilder {
 	 * by ObjectProperty or SubClass links
 	 * @return
 	 */
-	private void addNodeClosure(Node node, List<Node> newAddedNodes) {
+	private void addNodeClosure(Node node, Set<Node> newAddedNodes) {
 
 		logger.debug("<enter");
 		
-		if (newAddedNodes == null) newAddedNodes = new ArrayList<Node>();
+		if (newAddedNodes == null) newAddedNodes = new HashSet<Node>();
 		
 		String uri = node.getLabel().getUri();
 
@@ -1009,6 +1026,10 @@ public class GraphBuilder {
 
 				sourceUri = source.getLabel().getUri();
 				targetUri = target.getLabel().getUri();
+				
+//				if ((sourceUri.contains("Person") && targetUri.contains("CulturalHeritage")) ||
+//						(sourceUri.contains("CulturalHeritage") && targetUri.contains("Person")))
+//					System.out.println("debug1");
 				
 //				if ((sourceUri.contains("E42") && targetUri.contains("E54")) ||
 //						(sourceUri.contains("E54") && targetUri.contains("E42")))
@@ -1349,14 +1370,42 @@ public class GraphBuilder {
 		DirectedWeightedMultigraph<Node, Link> g = new 
 				DirectedWeightedMultigraph<Node, Link>(Link.class);
 		
-		Node n1 = new ColumnNode("n1", "h1", "B", "");
+		Node n1 = new InternalNode("n1", null);
 		Node n2 = new InternalNode("n2", null);
-		Link l1 = new DataPropertyLink("e1", null);
+		Node n3 = new InternalNode("n3", null);
+		Node n4 = new InternalNode("n4", null);
+		Node n8 = new ColumnNode("n8", "h1", "B", "");
+		Node n9 = new ColumnNode("n9", "h2", "B", "");
+		
+		Link l1 = new ObjectPropertyLink("e1", null);
+		Link l2 = new ObjectPropertyLink("e2", null);
+		Link l3 = new ObjectPropertyLink("e3", null);
+		Link l4 = new ObjectPropertyLink("e4", null);
+		Link l5 = new ObjectPropertyLink("e5", null);
+		Link l6 = new ObjectPropertyLink("e6", null);
+//		Link l7 = new ObjectPropertyLink("e7", null);
+//		Link l8 = new DataPropertyLink("e8", null);
+//		Link l9 = new DataPropertyLink("e9", null);
 		
 		g.addVertex(n1);
 		g.addVertex(n2);
+		g.addVertex(n3);
+		g.addVertex(n4);
+		g.addVertex(n8);
+		g.addVertex(n9);
+		
 		g.addEdge(n1, n2, l1);
+		g.addEdge(n1, n3, l2);
+		g.addEdge(n2, n3, l6);
+		g.addEdge(n2, n4, l3);
+		g.addEdge(n4, n8, l4);
+		g.addEdge(n3, n9, l5);
+		
 		GraphUtil.printGraph(g);
+		
+		HashMap<Node, Integer> nodeLevels = GraphUtil.levelingCyclicGraph(g);
+		for (Node n : g.vertexSet())
+			System.out.println(n.getId() + " --- " + nodeLevels.get(n));
 		
 //		GraphUtil.serialize(g, "test");
 //		DirectedWeightedMultigraph<Node, Link> gprime = GraphUtil.deserialize("test");

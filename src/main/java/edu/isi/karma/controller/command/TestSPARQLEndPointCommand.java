@@ -18,55 +18,47 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
+package edu.isi.karma.controller.command;
 
-package edu.isi.karma.controller.command.alignment;
-
+import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.update.FetchR2RMLUpdate;
+import edu.isi.karma.controller.update.AbstractUpdate;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.view.VWorkspace;
 
-public class FetchR2RMLModelsCommand extends Command {
-	private final String vWorksheetId;
-	
+/**
+ * Class responsible for fetching all the graphs in the tripleStore
+ */
+public class TestSPARQLEndPointCommand extends Command {
 	private String tripleStoreUrl;
 	
-	public String getTripleStoreUrl() {
-		return tripleStoreUrl;
+	private enum JsonKeys {
+		tripleStoreUrl, connectionStatus, updateType
 	}
-
-	public void setTripleStoreUrl(String tripleStoreUrl) {
-		this.tripleStoreUrl = tripleStoreUrl;
-	}
-
-	private static Logger logger = LoggerFactory.getLogger(FetchR2RMLModelsCommand.class);
-
-	protected FetchR2RMLModelsCommand(String id, String vWorksheetId, String url) {
+	
+	private static Logger logger = LoggerFactory.getLogger(TestSPARQLEndPointCommand.class);
+	
+	protected TestSPARQLEndPointCommand(String id, String url){
 		super(id);
-		this.vWorksheetId = vWorksheetId;
-		if (url == null || url.isEmpty()) {
-			url = TripleStoreUtil.defaultServerUrl + "/" + TripleStoreUtil.karma_model_repo;
-		}
-		this.tripleStoreUrl = url;
+		this.tripleStoreUrl=url;
 	}
 
 	@Override
 	public String getCommandName() {
-		return FetchR2RMLModelsCommand.class.getName();
+		return this.getClass().getSimpleName();
 	}
 
 	@Override
 	public String getTitle() {
-		return "Fetch R2RML from Triple Store";
+		return "TestSPARQLEndPoint";
 	}
 
 	@Override
@@ -78,13 +70,38 @@ public class FetchR2RMLModelsCommand extends Command {
 	public CommandType getCommandType() {
 		return CommandType.notInHistory;
 	}
-	
+
 	@Override
 	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-
-		TripleStoreUtil utilObj = new TripleStoreUtil();
-		HashMap<String, ArrayList<String>> list = utilObj.fetchModelNames(this.tripleStoreUrl);
-		return new UpdateContainer(new FetchR2RMLUpdate(list.get("model_names"), list.get("model_urls")));
+		if(TripleStoreUtil.checkConnection(this.tripleStoreUrl)) {
+			return new UpdateContainer(new AbstractUpdate() {
+				@Override
+				public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
+					JSONObject obj = new JSONObject();
+					try {
+						obj.put(JsonKeys.updateType.name(), "TestSPARQLEndPoint");
+						obj.put(JsonKeys.connectionStatus.name(), 1);
+						pw.println(obj.toString());
+					} catch (JSONException e) {
+						logger.error("Error occurred while performing connection test for sparql endpoint!", e);
+					}
+				}
+			});
+		}
+		
+		return new UpdateContainer(new AbstractUpdate() {
+			@Override
+			public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
+				JSONObject obj = new JSONObject();
+				try {
+					obj.put(JsonKeys.updateType.name(), "TestSPARQLEndPoint");
+					obj.put(JsonKeys.connectionStatus.name(), 0);
+					pw.println(obj.toString());
+				} catch (JSONException e) {
+					logger.error("Error occurred while performing connection test for sparql endpoint!", e);
+				}
+			}
+		});
 	}
 
 	@Override

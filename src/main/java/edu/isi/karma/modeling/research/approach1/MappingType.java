@@ -19,9 +19,9 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research.experiment2;
+package edu.isi.karma.modeling.research.approach1;
 
-public enum SemanticLabelType {
-	Class,
-	DataProperty
+public enum MappingType {
+	ClassNode,
+	DataNode
 }

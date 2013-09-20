@@ -250,7 +250,7 @@ public class GraphVizUtil {
 			
 			org.kohsuke.graphviz.Node n = nodeIndex.get(source);
 			String id = source.getId();
-			String uri = source.getLabel().getUri();
+			String uri = id;//source.getLabel().getUri();
 			String localName = getLocalName(uri);
 			String label;
 			if (n == null) {
@@ -277,7 +277,7 @@ public class GraphVizUtil {
 
 			n = nodeIndex.get(target);
 			id = target.getId();
-			uri = target.getLabel().getUri();
+			uri = id;//target.getLabel().getUri();
 			localName = getLocalName(uri);
 			if (n == null) {
 				n = new org.kohsuke.graphviz.Node();

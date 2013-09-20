@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research.experiment2;
+package edu.isi.karma.modeling.research.approach1;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -48,6 +48,11 @@ import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.research.GraphVizUtil;
+import edu.isi.karma.modeling.research.ModelReader;
+import edu.isi.karma.modeling.research.Params;
+import edu.isi.karma.modeling.research.PatternContainment;
+import edu.isi.karma.modeling.research.SemanticLabel;
+import edu.isi.karma.modeling.research.ServiceModel;
 import edu.isi.karma.modeling.research.Util;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
@@ -64,23 +69,15 @@ import edu.isi.karma.rep.alignment.SubClassLink;
 //import com.google.common.collect.Multimap;
 //import com.google.common.collect.Multimaps;
 
-public class Approach2 {
+public class Approach1 {
 
-	private static Logger logger = Logger.getLogger(Approach2.class);
+	private static Logger logger = Logger.getLogger(Approach1.class);
 
-	private static String ontologyDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-exp2/ontologies/";
-
-	
-	private static String importDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-exp2/input/";
-	private static String exportDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-exp2/output/";
-	private static String graphDir1 = "/Users/mohsen/Desktop/graphs/iswc2013-exp2/";
-	private static String graphResultsDir1 = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-exp2/jgraph/";
-	
-	private HashMap<SemanticLabel2, Set<MappingStruct>> labelToMappingStructs;
+	private HashMap<SemanticLabel, Set<MappingStruct>> labelToMappingStructs;
 	
 	private NodeIdFactory nodeIdFactory;
 	
-	private List<ServiceModel2> trainingData;
+	private List<ServiceModel> trainingData;
 	private OntologyManager ontologyManager;
 	private GraphBuilder graphBuilder;
 	
@@ -160,7 +157,7 @@ public class Approach2 {
 		}
 	}
 	
-	public Approach2(List<ServiceModel2> trainingData, 
+	public Approach1(List<ServiceModel> trainingData, 
 			OntologyManager ontologyManager) {
 		
 		this.graphComponents = new HashSet<DirectedWeightedMultigraph<Node,Link>>();
@@ -172,7 +169,7 @@ public class Approach2 {
 		
 		this.graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory);//, linkIdFactory);
 
-		this.labelToMappingStructs = new HashMap<SemanticLabel2, Set<MappingStruct>>();
+		this.labelToMappingStructs = new HashMap<SemanticLabel, Set<MappingStruct>>();
 		this.patternLinks = new HashSet<Link>();
 		
 		this.linkCountMap = new HashMap<String, Integer>();
@@ -239,7 +236,7 @@ public class Approach2 {
 						
 						if (!(domain instanceof InternalNode)) continue;
 						
-						SemanticLabel2 sl = new SemanticLabel2(domain.getLabel().getUri(), link.getLabel().getUri(), n.getId());
+						SemanticLabel sl = new SemanticLabel(domain.getLabel().getUri(), link.getLabel().getUri(), n.getId());
 						
 						Set<MappingStruct> labelStructs = this.labelToMappingStructs.get(sl);
 						if (labelStructs == null) {
@@ -260,10 +257,10 @@ public class Approach2 {
 		}
 	}
 
-	private static List<SemanticLabel2> getModelSemanticLabels(
+	private static List<SemanticLabel> getModelSemanticLabels(
 			DirectedWeightedMultigraph<Node, Link> model) {
 		
-		List<SemanticLabel2> SemanticLabel2s = new ArrayList<SemanticLabel2>();
+		List<SemanticLabel> SemanticLabel2s = new ArrayList<SemanticLabel>();
 
 		for (Node n : model.vertexSet()) {
 			if (!(n instanceof ColumnNode) && !(n instanceof LiteralNode)) continue;
@@ -273,7 +270,7 @@ public class Approach2 {
 				Link link = incomingLinks.toArray(new Link[0])[0];
 				Node domain = link.getSource();
 				
-				SemanticLabel2 sl = new SemanticLabel2(domain.getLabel().getUri(), link.getLabel().getUri(), n.getId());
+				SemanticLabel sl = new SemanticLabel(domain.getLabel().getUri(), link.getLabel().getUri(), n.getId());
 				SemanticLabel2s.add(sl);
 			} 
 		}
@@ -286,7 +283,7 @@ public class Approach2 {
 		
 		// adding the patterns to the graph
 		
-		for (ServiceModel2 sm : this.trainingData) {
+		for (ServiceModel sm : this.trainingData) {
 			
 			if (sm.getModel() == null) 
 				continue;
@@ -422,7 +419,7 @@ public class Approach2 {
 	private void buildLinkCountMap() {
 		
 		String key, sourceUri, targetUri, linkUri;
-		for (ServiceModel2 sm : this.trainingData) {
+		for (ServiceModel sm : this.trainingData) {
 			
 			DirectedWeightedMultigraph<Node, Link> m = sm.getModel();
 
@@ -565,14 +562,16 @@ public class Approach2 {
 						}
 					}
 					
-					if (countOfExistingPropertyLinks >= 1)
+					if (countOfExistingPropertyLinks >= 2)
 						continue;
 
 					String nodeId = nodeIdFactory.getNodeId(columnNodeName);
+					while (this.graphBuilder.getIdToNodeMap().get(nodeId) != null)
+						nodeId = nodeIdFactory.getNodeId(columnNodeName);
 					ColumnNode target = new ColumnNode(nodeId, "", "", "");
 					this.graphBuilder.addNodeWithoutUpdatingGraph(target);
 					addedNodes.add(target);
-		
+					
 					String linkId = LinkIdFactory.getLinkId(propertyUri, source.getId(), target.getId());	
 					Link link = new DataPropertyLink(linkId, new Label(propertyUri), false);
 					this.graphBuilder.addLink(source, target, link);
@@ -582,7 +581,7 @@ public class Approach2 {
 		return addedNodes;
 	}
 	
-	private Set<Node> addSemanticLabel(SemanticLabel2 sl) {
+	private Set<Node> addSemanticLabel(SemanticLabel sl) {
 
 		Set<Node> addedNodes = new HashSet<Node>();
 
@@ -590,11 +589,12 @@ public class Approach2 {
 		String nodeId;
 		nodeId = nodeIdFactory.getNodeId(sl.getNodeUri());
 		source = new InternalNode(nodeId, new Label(sl.getNodeUri()));
-		this.graphBuilder.addNodeWithoutUpdatingGraph(source);
-		addedNodes.add(source);
+		this.graphBuilder.addNode(source, addedNodes);
 		
 		if (sl.getType() == SemanticLabelType.DataProperty) {
 			nodeId = nodeIdFactory.getNodeId(sl.getLeafName());
+			while (this.graphBuilder.getIdToNodeMap().get(nodeId) != null)
+				nodeId = nodeIdFactory.getNodeId(sl.getLeafName());
 			ColumnNode target = new ColumnNode(nodeId, "", "", "");
 			this.graphBuilder.addNodeWithoutUpdatingGraph(target);
 			addedNodes.add(target);
@@ -606,10 +606,10 @@ public class Approach2 {
 		return addedNodes;
 	}
 	
-	private CandidateSteinerSets getCandidateSteinerSets(List<SemanticLabel2> semanticLabels, Set<Node> addedNodes) {
+	private CandidateSteinerSets getCandidateSteinerSets(List<SemanticLabel> semanticLabels, Set<Node> addedNodes) {
 
 		int maxNumberOfMappedNodes = 0;
-		for (SemanticLabel2 sl : semanticLabels) {
+		for (SemanticLabel sl : semanticLabels) {
 			if (sl.getType() == SemanticLabelType.Class)
 				maxNumberOfMappedNodes += 1;
 			else
@@ -621,7 +621,7 @@ public class Approach2 {
 			addedNodes = new HashSet<Node>();
 		
 		Set<Node> tempNodeSet = null;
-		for (SemanticLabel2 sl : semanticLabels) {
+		for (SemanticLabel sl : semanticLabels) {
 			
 			SemanticTypeMapping mapping;
 			if (sl.getType() == SemanticLabelType.Class)
@@ -660,6 +660,7 @@ public class Approach2 {
 		
 		return candidateSteinerSets;
 	}
+	
 	
 //	private List<RankedSteinerSet> rankSteinerSets(List<Set<Node>> steinerNodeSets) {
 //		
@@ -723,33 +724,37 @@ public class Approach2 {
 //		System.out.println(steinerNodes.size());
 		List<Node> steinerNodeList = new ArrayList<Node>(steinerNodes); 
 		
-		List<Link> updatedLinks = new ArrayList<Link>();
-		for (Link l : this.patternLinks) { 
-			if (steinerNodes.contains(l.getSource()) && steinerNodes.contains(l.getTarget()))
-				continue;
-			updatedLinks.add(l);
-		}
-		
-		for (Link l : updatedLinks) {
-			this.graphBuilder.changeLinkWeight(l, ModelingParams.PROPERTY_DIRECT_WEIGHT);
-		}
+//		List<Link> updatedLinks = new ArrayList<Link>();
+//		for (Link l : this.patternLinks) { 
+//			if (steinerNodes.contains(l.getSource()) && steinerNodes.contains(l.getTarget()))
+//				continue;
+//			updatedLinks.add(l);
+//		}
+//		
+//		for (Link l : updatedLinks) {
+//			this.graphBuilder.changeLinkWeight(l, ModelingParams.PROPERTY_DIRECT_WEIGHT);
+//		}
 
+//		GraphUtil.printGraphSimple(this.graphBuilder.getGraph());
+		
 		long start = System.currentTimeMillis();
 		UndirectedGraph<Node, Link> undirectedGraph = new AsUndirectedGraph<Node, Link>(this.graphBuilder.getGraph());
+
 		logger.info("computing steiner tree ...");
 		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodeList);
 		DirectedWeightedMultigraph<Node, Link> tree = 
 				(DirectedWeightedMultigraph<Node, Link>)GraphUtil.asDirectedGraph(steinerTree.getSteinerTree());
-//		GraphUtil.printGraphSimple(tree);
+		
+		GraphUtil.printGraphSimple(tree);
 		
 		long steinerTreeElapsedTimeMillis = System.currentTimeMillis() - start;
 		logger.info("total number of nodes in steiner tree: " + tree.vertexSet().size());
 		logger.info("total number of edges in steiner tree: " + tree.edgeSet().size());
 		logger.info("time to compute steiner tree: " + (steinerTreeElapsedTimeMillis/1000F));
 
-		for (Link l : updatedLinks) {
-			this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
-		}
+//		for (Link l : updatedLinks) {
+//			this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
+//		}
 		
 		return tree;
 		
@@ -782,7 +787,7 @@ public class Approach2 {
 //		return rankedModels;
 //	}
 	
-	public List<RankedModel> hypothesize(List<SemanticLabel2> semanticLabels, int numOfAttributes) {
+	public List<RankedModel> hypothesize(List<SemanticLabel> semanticLabels, int numOfAttributes) {
 
 		Set<Node> addedNodes = new HashSet<Node>(); //They should be deleted from the graph after computing the semantic models
 		CandidateSteinerSets candidateSteinerSets = getCandidateSteinerSets(semanticLabels, addedNodes);
@@ -844,11 +849,24 @@ public class Approach2 {
 				break;
 		}
 		
-		Collections.sort(rankedModels);
-		if (rankedModels != null && rankedModels.size() > MAX_CANDIDATES )
-			return rankedModels.subList(0, MAX_CANDIDATES);
+		List<RankedModel> uniqueModels = new ArrayList<RankedModel>();
+		RankedModel current, previous;
+		if (rankedModels != null) {
+			Collections.sort(rankedModels);			
+			if (rankedModels.size() > 0)
+				uniqueModels.add(rankedModels.get(0));
+			for (int i = 1; i < rankedModels.size(); i++) {
+				current = rankedModels.get(i);
+				previous = rankedModels.get(i - 1);
+				if (current.getScore() == previous.getScore() && current.getCost() == previous.getCost())
+					continue;
+				uniqueModels.add(current);
+			}
+			if (uniqueModels.size() > MAX_CANDIDATES )
+				return uniqueModels.subList(0, MAX_CANDIDATES);
+		}
 		
-		return rankedModels;
+		return uniqueModels;
 
 	}
 	
@@ -1012,41 +1030,49 @@ public class Approach2 {
 	
 	private static void testApproach() throws Exception {
 		
-		String inputPath = importDir1;
-		String outputPath = exportDir1;
-		String graphPath = graphDir1;
+		String inputPath = Params.INPUT_DIR;
+		String outputPath = Params.OUTPUT_DIR;
+		String graphPath = Params.GRAPHS_DIR;
 		
-		List<ServiceModel2> serviceModels = ModelReader2.importServiceModels(inputPath);
+		List<ServiceModel> serviceModels = ModelReader.importServiceModels(inputPath);
 
-		List<ServiceModel2> trainingData = new ArrayList<ServiceModel2>();
+		List<ServiceModel> trainingData = new ArrayList<ServiceModel>();
 		
+		OntologyManager ontManager = new OntologyManager();
+		File ff = new File(Params.ONTOLOGY_DIR);
+		File[] files = ff.listFiles();
+		for (File f : files) {
+			ontManager.doImport(f);
+		}
+		ontManager.updateCache();
+
 //		// experiment 1
 //		OntologyManager ontManager = new OntologyManager();
-//		ontManager.doImport(new File(Approach2.ontologyDir + "dbpedia_3.8.owl"));
-//		ontManager.doImport(new File(Approach2.ontologyDir + "foaf.rdf"));
-//		ontManager.doImport(new File(Approach2.ontologyDir + "wgs84_pos.xml"));
-//		ontManager.doImport(new File(Approach2.ontologyDir + "rdf-schema.rdf"));
+//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "dbpedia_3.8.owl"));
+//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "foaf.rdf"));
+//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "wgs84_pos.xml"));
+//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "rdf-schema.rdf"));
 //		ontManager.updateCache();
 
 		// experiment 2 - museum data
-		OntologyManager ontManager = new OntologyManager();
-		ontManager.doImport(new File(Approach2.ontologyDir + "100_rdf.owl"));
-		ontManager.doImport(new File(Approach2.ontologyDir + "105_Rdf-schema.owl"));
-		ontManager.doImport(new File(Approach2.ontologyDir + "120_dcterms.rdf"));
-		ontManager.doImport(new File(Approach2.ontologyDir + "140_foaf.owl"));
-		ontManager.doImport(new File(Approach2.ontologyDir + "180_rdaGr2.rdf"));
-		ontManager.doImport(new File(Approach2.ontologyDir + "190_ore.owl"));
-		ontManager.doImport(new File(Approach2.ontologyDir + "220_edm_from_xuming.owl"));
-		ontManager.doImport(new File(Approach2.ontologyDir + "230_saam-ont.owl"));
-		ontManager.doImport(new File(Approach2.ontologyDir + "250_skos.owl"));
-		ontManager.doImport(new File(Approach2.ontologyDir + "260_aac-ont.owl"));
-		ontManager.updateCache();
+//		OntologyManager ontManager = new OntologyManager();
+//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "100_rdf.owl"));
+//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "105_Rdf-schema.owl"));
+//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "120_dcterms.rdf"));
+//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "140_foaf.owl"));
+//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "180_rdaGr2.rdf"));
+//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "190_ore.owl"));
+//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "220_edm_from_xuming.owl"));
+//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "230_saam-ont.owl"));
+//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "250_skos.owl"));
+//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "260_aac-ont.owl"));
+//		ontManager.updateCache();
 
-		for (int i = 0; i < serviceModels.size(); i++) {
-//		int i = 0; {
+//		for (int i = 0; i < serviceModels.size(); i++) {
+		int i = 1; {
 			trainingData.clear();
 			int newServiceIndex = i;
-			ServiceModel2 newService = serviceModels.get(newServiceIndex);
+			ServiceModel newService = serviceModels.get(newServiceIndex);
 			
 			logger.info("======================================================");
 			logger.info(newService.getServiceDescription());
@@ -1059,7 +1085,7 @@ public class Approach2 {
 					trainingData.add(serviceModels.get(j));
 			}
 			
-			Approach2 app = new Approach2(trainingData, ontManager);
+			Approach1 app = new Approach1(trainingData, ontManager);
 			
 			String graphName = graphPath + "graph" + String.valueOf(i+1);
 			if (new File(graphName).exists()) {
@@ -1086,7 +1112,7 @@ public class Approach2 {
 	
 			DirectedWeightedMultigraph<Node, Link> correctModel = newService.getModel();
 			// we just get the semantic labels of the correct model
-			List<SemanticLabel2> newServiceSemanticLabel2s = getModelSemanticLabels(correctModel);
+			List<SemanticLabel> newServiceSemanticLabel2s = getModelSemanticLabels(correctModel);
 			int numOfattributes = newServiceSemanticLabel2s.size();
 			List<RankedModel> hypothesisList = app.hypothesize(newServiceSemanticLabel2s, numOfattributes);
 //			if (hypothesis == null)
@@ -1100,7 +1126,7 @@ public class Approach2 {
 					
 					RankedModel m = hypothesisList.get(k);
 					GraphUtil.serialize(m.getModel(), 
-							graphResultsDir1 + newService.getServiceNameWithPrefix() + ".rank" + (k+1) + ".jgraph");
+							Params.JGRAPHT_DIR + newService.getServiceNameWithPrefix() + ".app1.rank" + (k+1) + ".jgraph");
 					
 				}
 			
@@ -1124,7 +1150,7 @@ public class Approach2 {
 			
 			GraphVizUtil.exportJGraphToGraphvizFile(graphs, 
 					newService.getServiceDescription(), 
-					outputPath + serviceModels.get(i).getServiceNameWithPrefix() + ".details.dot");
+					outputPath + serviceModels.get(i).getServiceNameWithPrefix() + ".app1.details.dot");
 			
 		}
 	}

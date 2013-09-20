@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research.experiment2;
+package edu.isi.karma.modeling.research;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -43,15 +43,11 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 
 
-public class ModelReader2 {
+public class ModelReader {
 	
 //	public static String varPrefix = "var:";
 	public static String attPrefix = "att:";
 	
-	private static String importDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-exp2/input/";
-	private static String exportDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-exp2/graphviz/";
-	private static String graphDir = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-exp2/jgraph/";
-
 	private static String typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 	private static HashMap<String, String> prefixNsMapping;
 
@@ -86,16 +82,16 @@ public class ModelReader2 {
 	
 	public static void main(String[] args) throws Exception {
 		
-		List<ServiceModel2> serviceModels = null;
+		List<ServiceModel> serviceModels = null;
 
 		try {
 
-			serviceModels = importServiceModels(importDir);
+			serviceModels = importServiceModels(Params.INPUT_DIR);
 			if (serviceModels != null) {
-				for (ServiceModel2 sm : serviceModels) {
+				for (ServiceModel sm : serviceModels) {
 					sm.print();
-					sm.exportModelToGraphviz(exportDir);
-					GraphUtil.serialize(sm.getModel(), graphDir + sm.getServiceNameWithPrefix() + ".main.jgraph");
+					sm.exportModelToGraphviz(Params.GRAPHVIS_DIR);
+					GraphUtil.serialize(sm.getModel(), Params.JGRAPHT_DIR + sm.getServiceNameWithPrefix() + ".main.jgraph");
 				}
 			}
 
@@ -109,19 +105,19 @@ public class ModelReader2 {
 		prefixNsMapping = new HashMap<String, String>();
 		
 //		// experiment 1
-//		prefixNsMapping.put("geo", "http://www.w3.org/2003/01/geo/wgs84_pos#");
-//		prefixNsMapping.put("gn", "http://www.geonames.org/ontology#");
-//		prefixNsMapping.put("schema", "http://schema.org/");
-//		prefixNsMapping.put("dbpprop", "http://dbpedia.org/property/");
-//		prefixNsMapping.put("dbpedia-owl", "http://dbpedia.org/ontology/");
-//		prefixNsMapping.put("skos", "http://www.w3.org/2004/02/skos/core#");
-//		prefixNsMapping.put("tzont", "http://www.w3.org/2006/timezone#");
-//		prefixNsMapping.put("qudt", "http://qudt.org/1.1/schema/qudt#");
-//		prefixNsMapping.put("yago", "http://dbpedia.org/class/yago/");
-//		prefixNsMapping.put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-//		prefixNsMapping.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
-//		prefixNsMapping.put("foaf", "http://xmlns.com/foaf/0.1/");
-//		prefixNsMapping.put("km", "http://isi.edu/integration/karma/dev#");
+		prefixNsMapping.put("geo", "http://www.w3.org/2003/01/geo/wgs84_pos#");
+		prefixNsMapping.put("gn", "http://www.geonames.org/ontology#");
+		prefixNsMapping.put("schema", "http://schema.org/");
+		prefixNsMapping.put("dbpprop", "http://dbpedia.org/property/");
+		prefixNsMapping.put("dbpedia-owl", "http://dbpedia.org/ontology/");
+		prefixNsMapping.put("skos", "http://www.w3.org/2004/02/skos/core#");
+		prefixNsMapping.put("tzont", "http://www.w3.org/2006/timezone#");
+		prefixNsMapping.put("qudt", "http://qudt.org/1.1/schema/qudt#");
+		prefixNsMapping.put("yago", "http://dbpedia.org/class/yago/");
+		prefixNsMapping.put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+		prefixNsMapping.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		prefixNsMapping.put("foaf", "http://xmlns.com/foaf/0.1/");
+		prefixNsMapping.put("km", "http://isi.edu/integration/karma/dev#");
 		
 				
 		// experiment 2 - museum data
@@ -158,11 +154,11 @@ public class ModelReader2 {
 
 	}
 	
-	public static List<ServiceModel2> importServiceModels(String importDir) throws IOException {
+	public static List<ServiceModel> importServiceModels(String importDir) throws IOException {
 		
 		initPrefixNsMapping();
 		
-		List<ServiceModel2> serviceModels = new ArrayList<ServiceModel2>();
+		List<ServiceModel> serviceModels = new ArrayList<ServiceModel>();
 		
 		File dir = new File(importDir);
 		File[] modelExamples = dir.listFiles();
@@ -185,7 +181,7 @@ public class ModelReader2 {
 				continue;
 			}
 
-			ServiceModel2 serviceModel = new ServiceModel2("s" + String.valueOf(count));
+			ServiceModel serviceModel = new ServiceModel("s" + String.valueOf(count));
 			
 			LineNumberReader lr = new LineNumberReader(new FileReader(f));
 			String curLine = "";

@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research.experiment2;
+package edu.isi.karma.modeling.research.approach1;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -151,14 +151,6 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		return coherence;
 	}
 	
-	public double getSize() {
-//		if (this.maxNodeCount == 0)
-//			return 0;
-//		return (double) this.getNodeCount() / (double) this.maxNodeCount;
-		return (double) (this.maxNodeCount - this.getNodeCount()) / 10.0;
-		
-	}
-	
 //	private int computeFrequency() {
 //		int frequency = 0;
 //		for (Node n : this.nodes)
@@ -282,11 +274,14 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	private void computeScore() {
 		
 		//double confidence = this.getCoherence();
-		double size = this.getSize();
+		double distnaceToMaxSize = (double) (this.maxNodeCount - this.getNodeCount());
 		double coherence = this.getCoherence();
 		//int frequency = this.getFrequency();
 		
-		this.score = coherence + size;
+		double alpha = 1.0;
+		double beta = 0.2;
+		
+		this.score = alpha * coherence + beta * distnaceToMaxSize;
 	}
 
 	@Override
@@ -310,7 +305,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		}
 		System.out.println();
 		System.out.println("coherence value: " + this.coherence);
-		System.out.println("size: " + this.getSize());
+		System.out.println("size: " + (double) (this.getNodeCount()));
 		System.out.println("total number of patterns: " + this.frequency);
 		System.out.println("final score: " + this.getScore());
 	}

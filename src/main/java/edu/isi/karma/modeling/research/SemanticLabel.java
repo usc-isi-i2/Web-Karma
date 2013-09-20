@@ -19,27 +19,29 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research.experiment2;
+package edu.isi.karma.modeling.research;
 
 import org.apache.log4j.Logger;
 
-public class SemanticLabel2{
+import edu.isi.karma.modeling.research.approach1.SemanticLabelType;
 
-	static Logger logger = Logger.getLogger(SemanticLabel2.class);
+public class SemanticLabel{
+
+	static Logger logger = Logger.getLogger(SemanticLabel.class);
 
 	private String nodeUri;
 	private String linkUri;
 	private String leafName;
 	private SemanticLabelType type;
 	
-	public SemanticLabel2(String nodeUri) {
+	public SemanticLabel(String nodeUri) {
 		this.nodeUri = nodeUri;
 		this.linkUri = null;
 		this.leafName = null;
 		this.type = SemanticLabelType.Class;
 	}
 	
-	public SemanticLabel2(String nodeUri, String linkUri, String leafName) {
+	public SemanticLabel(String nodeUri, String linkUri, String leafName) {
 		this.nodeUri = nodeUri;
 		this.linkUri = linkUri;
 		this.leafName = leafName;
@@ -91,7 +93,7 @@ public class SemanticLabel2{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SemanticLabel2 other = (SemanticLabel2) obj;
+		SemanticLabel other = (SemanticLabel) obj;
 		if (linkUri == null) {
 			if (other.linkUri != null)
 				return false;
