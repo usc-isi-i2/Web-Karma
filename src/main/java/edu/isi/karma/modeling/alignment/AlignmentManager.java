@@ -23,6 +23,8 @@ package edu.isi.karma.modeling.alignment;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.isi.karma.modeling.ontology.OntologyManager;
+
 public class AlignmentManager {
 	private static HashMap<String, Alignment> alignmentMap = null;
 	private static AlignmentManager _InternalInstance = null;
@@ -45,11 +47,21 @@ public class AlignmentManager {
 		return alignmentMap.get(alignmentId);
 	}
 	
-	public Alignment getAlignment(String workspaceId, String vWorksheetId) {
-		String alignmentId = constructAlignmentId(workspaceId, vWorksheetId);
+	public Alignment getAlignment(String workspaceId, String worksheetId) {
+		String alignmentId = constructAlignmentId(workspaceId, worksheetId);
 		return getAlignment(alignmentId);
 	}
 
+	public Alignment getAlignmentOrCreateIt(String workspaceId, String worksheetId, OntologyManager ontologyManager){
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
+				workspaceId, worksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		if (alignment == null) {
+			alignment = new Alignment(ontologyManager);
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		}
+		return alignment;
+	}
 	public void removeWorkspaceAlignments(String workspaceId) {
 		ArrayList<String> keysToBeRemoved = new ArrayList<String>();
 		for(String key:alignmentMap.keySet()) {
@@ -63,7 +75,7 @@ public class AlignmentManager {
 		}
 	}
 	
-	public String constructAlignmentId(String workspaceId, String vWorksheetId) {
-		return workspaceId + ":" + vWorksheetId + "AL";
+	public String constructAlignmentId(String workspaceId, String worksheetId) {
+		return workspaceId + ":" + worksheetId + "AL";
 	}
 }

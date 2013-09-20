@@ -34,16 +34,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetHierarchicalDataUpdate;
-import edu.isi.karma.controller.update.WorksheetHierarchicalHeadersUpdate;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.rep.metadata.Tag;
 import edu.isi.karma.rep.metadata.TagsContainer.Color;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
-import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -96,7 +95,7 @@ public class GetExampleJSON extends HttpServlet {
 			File[] ontologies = ontDir.listFiles();
 			OntologyManager mgr = workspace.getOntologyManager();
 			for (File ontology: ontologies) {
-				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf")) {
+				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf") || ontology.getName().endsWith(".xml")) {
 					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
 					try {
 						mgr.doImport(ontology);
@@ -180,18 +179,17 @@ public class GetExampleJSON extends HttpServlet {
 		// SampleDataFactory.createFromJsonTextFile(workspace,
 		// "createSampleJsonWithNestedTable2_VD.json");
 		// Put all created worksheet models in the view.
-		vwsp.addAllWorksheets();
 
 		UpdateContainer c = new UpdateContainer();
-		c.add(new WorksheetListUpdate(vwsp.getVWorksheetList()));
-		for (VWorksheet vw : vwsp.getVWorksheetList().getVWorksheets()) {
-			c.add(new WorksheetHierarchicalHeadersUpdate(vw));
-			c.add(new WorksheetHierarchicalDataUpdate(vw));
+		c.add(new WorksheetListUpdate());
+		
+		for (Worksheet w : vwsp.getWorkspace().getWorksheets()) {
+			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(w.getId())); 
 		}
 
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
-
+		c.applyUpdates(vwsp);
 		c.generateJson("", pw, vwsp);
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_OK);

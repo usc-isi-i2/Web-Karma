@@ -22,7 +22,7 @@ package edu.isi.karma.controller.command;
 
 import javax.servlet.http.HttpServletRequest;
 
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class FetchPreferencesCommandFactory extends CommandFactory {
 	private enum Arguments {
@@ -31,9 +31,9 @@ public class FetchPreferencesCommandFactory extends CommandFactory {
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 
-		FetchPreferencesCommand comm = new FetchPreferencesCommand(getNewId(vWorkspace), 
+		FetchPreferencesCommand comm = new FetchPreferencesCommand(getNewId(workspace), 
 				request.getParameter(Arguments.preferenceCommand.name()));
 		
 		return comm;

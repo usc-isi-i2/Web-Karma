@@ -42,13 +42,14 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.JDBCUtilFactory;
 import edu.isi.karma.view.VWorkspace;
 
 public class PublishDatabaseCommand extends Command {
-	private final String vWorksheetId;
+	private final String worksheetId;
 	private String hostName;
 	private String port;
 	private String dbName;
@@ -66,7 +67,7 @@ public class PublishDatabaseCommand extends Command {
 	int numRowsNotInserted = 0;
 
 	public enum JsonKeys {
-		updateType, vWorksheetId, numRowsNotInserted
+		updateType, worksheetId, numRowsNotInserted
 	}
 
 	private static Logger logger = LoggerFactory
@@ -79,11 +80,11 @@ public class PublishDatabaseCommand extends Command {
 	/**
 	 * dbType one of MySQL, SQLServer, Oracle
 	 */
-	protected PublishDatabaseCommand(String id, String vWorksheetId,
+	protected PublishDatabaseCommand(String id, String worksheetId,
 			String dbType, String hostName, String port, String dbName,String userName,String password, String tableName, 
 			String overwrite, String insert) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 		this.hostName=hostName;
 		this.dbName=dbName;
 		this.userName=userName;
@@ -117,14 +118,12 @@ public class PublishDatabaseCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		
-	
-		//save the preferences 
-		savePreferences(vWorkspace);
+		savePreferences(workspace);
+		
 
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		//for now don't save a nested table (we may want to save it as multiple tables with foreign keys)
 		if (worksheet.getHeaders().hasNestedTables()) {
@@ -185,8 +184,8 @@ public class PublishDatabaseCommand extends Command {
 					try {
 						outputObject.put(JsonKeys.updateType.name(),
 								"PublishDatabaseUpdate");
-						outputObject.put(JsonKeys.vWorksheetId.name(),
-								vWorksheetId);
+						outputObject.put(JsonKeys.worksheetId.name(),
+								worksheetId);
 						outputObject.put(JsonKeys.numRowsNotInserted.name(),
 								numRowsNotInserted);
 						pw.println(outputObject.toString(4));
@@ -437,7 +436,13 @@ public class PublishDatabaseCommand extends Command {
 		return result;
 	}
 
-	private void savePreferences(VWorkspace vWorkspace){
+
+	@Override
+	public UpdateContainer undoIt(Workspace workspace) {
+		return null;
+	}
+
+	private void savePreferences(Workspace workspace){
 		try{
 			JSONObject prefObject = new JSONObject();
 			prefObject.put(PreferencesKeys.dbType.name(), dbType);
@@ -450,7 +455,7 @@ public class PublishDatabaseCommand extends Command {
 			//look in publishDatabse.js
 			prefObject.put(PreferencesKeys.overwriteTable.name(), overwrite);
 			prefObject.put(PreferencesKeys.insertTable.name(), overwrite);
-			vWorkspace.getPreferences().setCommandPreferences(
+			workspace.getCommandPreferences().setCommandPreferences(
 					"PublishDatabaseCommandPreferences", prefObject);
 			
 			/*
@@ -464,10 +469,4 @@ public class PublishDatabaseCommand extends Command {
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		return null;
-	}
-
 }

@@ -40,6 +40,7 @@ import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
@@ -53,13 +54,11 @@ import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
 
 public class SetMetaPropertyCommand extends Command {
 
 	private final String hNodeId;
-	private final String vWorksheetId;
+	private final String worksheetId;
 	private final boolean trainAndShowUpdates;
 	private METAPROPERTY_NAME metaPropertyName;
 	private final String metaPropertyValue;
@@ -74,12 +73,12 @@ public class SetMetaPropertyCommand extends Command {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
-	protected SetMetaPropertyCommand(String id, String vWorksheetId, String hNodeId, 
+	protected SetMetaPropertyCommand(String id, String worksheetId, String hNodeId, 
 			METAPROPERTY_NAME metaPropertyName, String metaPropertyValue, boolean trainAndShowUpdates,
 			String rdfLiteralType) {
 		super(id);
 		this.hNodeId = hNodeId;
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 		this.trainAndShowUpdates = trainAndShowUpdates;
 		this.metaPropertyName = metaPropertyName;
 		this.metaPropertyValue = metaPropertyValue;
@@ -110,11 +109,11 @@ public class SetMetaPropertyCommand extends Command {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		/*** Get the Alignment for this worksheet ***/
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		OntologyManager ontMgr = workspace.getOntologyManager();
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		if (alignment == null) {
 			alignment = new Alignment(ontMgr);
@@ -148,7 +147,7 @@ public class SetMetaPropertyCommand extends Command {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment, classNode);
 				columnNode = existingColumnNode;
 			} else
-				columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId)); 
+				columnNode = getColumnNode(alignment, workspace.getFactory().getHNode(hNodeId)); 
 			
 			if (classNode == null) {
 				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
@@ -178,7 +177,7 @@ public class SetMetaPropertyCommand extends Command {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment, classInstanceNode);
 				columnNode = existingColumnNode;
 			} else {
-				columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
+				columnNode = getColumnNode(alignment, workspace.getFactory().getHNode(hNodeId));
 			}
 			
 
@@ -201,7 +200,7 @@ public class SetMetaPropertyCommand extends Command {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment, classNode);
 				columnNode = existingColumnNode;
 			} else
-				columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId)); 
+				columnNode = getColumnNode(alignment, workspace.getFactory().getHNode(hNodeId)); 
 			
 			if (classNode == null) {
 				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
@@ -233,11 +232,10 @@ public class SetMetaPropertyCommand extends Command {
 //		worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), newSynonymTypes);
 
 		if(trainAndShowUpdates) {
-			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
+			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
 			try {
 				// Add the visualization update
-				c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vw, alignment));
+				c.add(new SVGAlignmentUpdate_ForceKarmaLayout(worksheetId, alignment));
 			} catch (Exception e) {
 				logger.error("Error occured while setting the semantic type!", e);
 				return new UpdateContainer(new ErrorUpdate(
@@ -257,9 +255,9 @@ public class SetMetaPropertyCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		UpdateContainer c = new UpdateContainer();
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		if (oldType == null) {
 			worksheet.getSemanticTypes().unassignColumnSemanticType(newType.getHNodeId());
 		} else {
@@ -270,14 +268,14 @@ public class SetMetaPropertyCommand extends Command {
 		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), oldColumnModel);
 
 		// Replace the current alignment with the old alignment
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
 		oldAlignment.setGraph(oldGraph);
 		
 		// Get the alignment update if any
 		try {
-			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, oldAlignment));
-			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), oldAlignment));
+			c.add(new SemanticTypesUpdate(worksheet, worksheetId, oldAlignment));
+			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(worksheetId, oldAlignment));
 		} catch (Exception e) {
 			logger.error("Error occured while unsetting the semantic type!", e);
 			return new UpdateContainer(new ErrorUpdate(

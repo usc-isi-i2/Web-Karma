@@ -27,6 +27,34 @@ function showHideRdfInfo() {
 			$("div#rdfStoreInfo").hide();
 		}
 }
+
+function testSparqlEndPoint(url) {
+	var info = new Object();
+	info["worksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
+	info["command"] = "TestSPARQLEndPointCommand";
+	info["tripleStoreUrl"] = url;
+	window.conncetionStat = false;
+	var returned = $.ajax({
+	   	url: "RequestController",
+	   	type: "POST",
+	   	data : info,
+	   	dataType : "json",
+	   	async : false,
+	   	complete :
+	   		function (xhr, textStatus) {
+	    		var json = $.parseJSON(xhr.responseText);
+	    		if(json['elements'] && json['elements'][0]['connectionStatus'] && json['elements'][0]['connectionStatus'] == 1) {
+	    			window.conncetionStat = true;
+	    		}
+		   	},
+		error :
+			function (xhr, textStatus) {
+	   			alert("Error occured while testing connection to sparql endpoint!" + textStatus);
+		   	}
+	});
+	return window.conncetionStat;
+}
 function validateAndPublishRDF() {
 	var expression = /(^|\s)((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)/gi; 
 		// /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
@@ -39,6 +67,13 @@ function validateAndPublishRDF() {
 	} else {
 		graphUri = $('#modelGraphList').val();
 	}
+	// validate the sparql endpoint
+	if(!testSparqlEndPoint($("input#rdfSPAQRLEndPoint").val())) {
+		alert("Invalid sparql end point. Could not establish connection.");
+		return;
+	}
+	
+	// validate the graph uri
 	if(needsValidation) {
 		if(graphUri.length < 3) {
 			alert("Context field is empty");
@@ -73,7 +108,7 @@ function publishRDFFunction(graphUri) {
 	$("div#confirmPublishRDFDialogBox").dialog("close");
 
 	var info = new Object();
-	info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
+	info["worksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "PublishRDFCommand";
 	info["addInverseProperties"] = $("input#addInverseProperties").is(":checked");
@@ -98,13 +133,13 @@ function publishRDFFunction(graphUri) {
 
 function publishRDFToFile(info) {
 
-		showLoadingRDF(info["vWorksheetId"],"Saving to file...");
+		showLoadingRDF(info["worksheetId"],"Saving to file...");
 		returnFunc(info);
 }
 
 function publishRDFToStore(info) {
 
-		showLoadingRDF(info["vWorksheetId"],"Saving to RDF store...");
+		showLoadingRDF(info["worksheetId"],"Saving to RDF store...");
 		returnFunc(info);
 }
 
@@ -118,12 +153,12 @@ function returnFunc(info) {
 		   		function (xhr, textStatus) {
 		    		var json = $.parseJSON(xhr.responseText);
 		    		parse(json);
-		    		hideLoading(info["vWorksheetId"]);
+		    		hideLoading(info["worksheetId"]);
 			   	},
 			error :
 				function (xhr, textStatus) {
 		   			alert("Error occured while generating RDF!" + textStatus);
-		   			hideLoading(info["vWorksheetId"]);
+		   			hideLoading(info["worksheetId"]);
 			   	}
 		});
 }
@@ -149,6 +184,7 @@ function getRDFPreferences() {
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",
+	   	async: false,
 	   	complete : 
 	   		function (xhr, textStatus) {
 	   			var json = $.parseJSON(xhr.responseText);
@@ -190,6 +226,7 @@ function fetchGraphsFromTripleStore(url) {
 	var info = new Object();
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "FetchGraphsFromTripleStoreCommand";
+	info["tripleStoreUrl"] = url;
 	var returned = $.ajax({
 	   	url: "RequestController", 
 	   	type: "POST",
@@ -198,7 +235,10 @@ function fetchGraphsFromTripleStore(url) {
 	   	complete : 
 	   		function (xhr, textStatus) {
 	   			var json = $.parseJSON(xhr.responseText);
-	   			var graphs = json["elements"][0]['graphs'];
+	   			graphs = [];
+	   			if(json["elements"] && json["elements"][0]['graphs']) {
+	   				graphs = json["elements"][0]['graphs'];
+	   			}
 	   			var modelGraphList = $("#modelGraphList");
 	   			modelGraphList.html('<option value="create_new_context">Create New Context </option>');
 	   			for (var x in graphs) {
@@ -238,7 +278,7 @@ function fetchGraphsFromTripleStore(url) {
 
 function getUniqueGraphUri(graphUriTobeValidated) {
 	var info = new Object();
-	info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
+	info["worksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["tripleStoreUrl"] = $("input#rdfSPAQRLEndPoint").val();
 	if(graphUriTobeValidated && graphUriTobeValidated != null) {

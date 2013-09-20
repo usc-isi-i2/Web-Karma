@@ -25,6 +25,7 @@ package edu.isi.karma.controller.update;
 
 import java.io.PrintWriter;
 
+import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
@@ -36,7 +37,10 @@ import edu.isi.karma.view.VWorkspace;
  */
 public class WorksheetDataUpdate extends AbstractUpdate {
 
-	private final VWorksheet vWorksheet;
+	private String worksheetId;
+	private String tableId;
+	private String direction;
+	private Integer size;
 
 	public enum JsonKeys {
 		worksheetId, rows, cells, path, nodeId, value, status, tableCssTag, 
@@ -47,15 +51,37 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 		numRecordsShown, numRecordsBefore, numRecordsAfter, tableId, desiredNumRecordsShown
 	}
 
-	public WorksheetDataUpdate(VWorksheet vWorksheet) {
+	public WorksheetDataUpdate(String worksheetId, String tableId, String direction, Integer size) {
 		super();
-		this.vWorksheet = vWorksheet;
+		this.worksheetId = worksheetId;
+		this.tableId = tableId;
+		this.direction = direction;
+		this.size = size;
+	}
+	
+	@Override
+	public void applyUpdate(VWorkspace vWorkspace)
+	{
+		VWorksheet vWorksheet =  vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
+		TablePager pager = vWorksheet.getTablePager(tableId);
+		if(null != direction)
+		{
+		if(direction.equalsIgnoreCase("up"))
+			pager.moveToPreviousPage();
+		if(direction.equalsIgnoreCase("down"));
+			pager.moveToNextPage();
+		}
+		if(size != null)
+		{
+			pager.setDesiredSize(size);
+		}
+		vWorksheet.udateDataTable(vWorkspace.getViewFactory());
 	}
 
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
-		vWorksheet.generateWorksheetDataJson(prefix, pw,
+		 vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId).generateWorksheetDataJson(prefix, pw,
 				vWorkspace.getViewFactory());
 	}
 

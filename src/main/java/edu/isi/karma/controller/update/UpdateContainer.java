@@ -79,6 +79,14 @@ public class UpdateContainer {
 		pw.println(newPref + "]");
 		pw.println(prefix + "}");
 	}
+	
+	public void applyUpdates(VWorkspace vWorkspace)
+	{
+		Iterator<AbstractUpdate> it = updates.iterator();
+		while (it.hasNext()) {
+			it.next().applyUpdate(vWorkspace);
+		}
+	}
 
 	/**
 	 * @param vWorkspace

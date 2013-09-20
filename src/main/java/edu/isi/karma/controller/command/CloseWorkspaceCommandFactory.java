@@ -22,7 +22,7 @@ package edu.isi.karma.controller.command;
 
 import javax.servlet.http.HttpServletRequest;
 
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class CloseWorkspaceCommandFactory extends CommandFactory {
 	
@@ -32,9 +32,9 @@ public class CloseWorkspaceCommandFactory extends CommandFactory {
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 		String workspaceId = request.getParameter(Arguments.workspaceId.name());
-		return new CloseWorkspaceCommand(getNewId(vWorkspace), workspaceId);
+		return new CloseWorkspaceCommand(getNewId(workspace), workspaceId);
 	}
 
 }

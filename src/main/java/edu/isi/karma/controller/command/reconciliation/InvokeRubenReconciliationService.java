@@ -35,13 +35,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
@@ -51,7 +50,6 @@ import edu.isi.karma.kr2rml.TriplesMap;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
@@ -60,27 +58,24 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.util.HTTPUtil;
-import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.view.ViewPreferences;
 
-public class InvokeRubenReconciliationService extends Command {
+public class InvokeRubenReconciliationService extends WorksheetCommand {
 	private final String alignmentNodeId;
-	private final String vWorksheetId;
 	private String rdfPrefix;
 	private String rdfNamespace;
 
 	private final String reconciliationServiceUrl = "http://entities.restdesc.org/disambiguations/";
 	
-	public InvokeRubenReconciliationService(String id, String alignmentNodeId, String vWorksheetId) {
-		super(id);
+	public InvokeRubenReconciliationService(String id, String alignmentNodeId, String worksheetId) {
+		super(id, worksheetId);
 		this.alignmentNodeId = alignmentNodeId;
-		this.vWorksheetId = vWorksheetId;
 		
 		addTag(CommandTag.Transformation);
 	}
@@ -106,20 +101,20 @@ public class InvokeRubenReconciliationService extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		RepFactory f = vWorkspace.getRepFactory();
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		RepFactory f = workspace.getFactory();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
-				AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(),
-						vWorksheetId));
+				AlignmentManager.Instance().constructAlignmentId(workspace.getId(),
+						worksheetId));
 	
 		// Set the prefix and namespace to be used while generating RDF
-		fetchRdfPrefixAndNamespaceFromPreferences(vWorkspace);
+		fetchRdfPrefixAndNamespaceFromPreferences(workspace);
 		
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
 		KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(
-				vWorkspace.getWorkspace().getOntologyManager(), alignment, 
+				workspace.getOntologyManager(), alignment, 
 				worksheet.getSemanticTypes(), rdfPrefix, rdfNamespace,
 				true, errorReport);
 		TriplesMap trMap = mappingGen.getTriplesMapForNodeId(alignmentNodeId);
@@ -155,7 +150,7 @@ public class InvokeRubenReconciliationService extends Command {
 				StringWriter outRdf = new StringWriter();
 				PrintWriter pw = new PrintWriter(outRdf);
 				KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
-						vWorkspace.getRepFactory(), vWorkspace.getWorkspace().getOntologyManager(),
+						workspace.getFactory(), workspace.getOntologyManager(),
 						pw, mappingGen.getMappingAuxillaryInformation(), errorReport, false);
 				
 				rdfGen.generateTriplesForRow(row, new HashSet<String>(), new HashSet<String>(),
@@ -256,13 +251,8 @@ public class InvokeRubenReconciliationService extends Command {
 		}
 		
 		// Prepare the output container
-		UpdateContainer c = new UpdateContainer();
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,worksheet.getHeaders().getAllPaths(), vWorkspace);
-		vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).update(c);
-		
-		/** Add the alignment update **/
-		 addAlignmentUpdate(c, vWorkspace, worksheet);
-		
+		UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		c.add(new InfoUpdate("Linking complete"));
 		return c;
 	}
@@ -329,14 +319,13 @@ public class InvokeRubenReconciliationService extends Command {
 	
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 	
-	private void fetchRdfPrefixAndNamespaceFromPreferences(VWorkspace vWorkspace) {
+	private void fetchRdfPrefixAndNamespaceFromPreferences(Workspace workspace) {
 		//get the rdf prefix from the preferences
-		ViewPreferences prefs = vWorkspace.getPreferences();
-		JSONObject prefObject = prefs.getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
+		JSONObject prefObject = workspace.getCommandPreferences().getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
 		this.rdfNamespace = "http://localhost/source/";
 		this.rdfPrefix = "s";
 		if(prefObject!=null){
@@ -348,19 +337,4 @@ public class InvokeRubenReconciliationService extends Command {
 		}
 	}
 	
-	private void addAlignmentUpdate(UpdateContainer c, VWorkspace vWorkspace, Worksheet worksheet) {
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
-				vWorkspace.getWorkspace().getId(), vWorksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		if (alignment == null) {
-			alignment = new Alignment(vWorkspace.getWorkspace().getOntologyManager());
-			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
-		}
-		// Compute the semantic type suggestions
-		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace()
-				.getCrfModelHandler(), vWorkspace.getWorkspace().getOntologyManager(), alignment);
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
-		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().
-				getVWorksheet(vWorksheetId), alignment));
-	}
 }

@@ -25,13 +25,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.Vector;
 
 import au.com.bytecode.opencsv.CSVReader;
-
-import com.hp.hpl.jena.tdb.store.Hash;
 
 //select the most reprentative records from a huge list of rows
 //to ensure that the program learned from the subset could work correctly on the whole dataset

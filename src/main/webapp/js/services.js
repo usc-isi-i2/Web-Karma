@@ -24,11 +24,11 @@ function assignHandlersToServiceInvocationObjects() {
         var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
         var selectedHNodeId = columnHeadingMenu.data("parentCellId");
         var tdTag = $("td#"+selectedHNodeId);
-        var vWorksheetId = tdTag.parents("div.Worksheet").attr("id");
+        var worksheetId = tdTag.parents("div.Worksheet").attr("id");
         
         var info = new Object();
         info["workspaceId"] = $.workspaceGlobalInformation.id;
-        info["vWorksheetId"] = vWorksheetId;
+        info["worksheetId"] = worksheetId;
         info["hNodeId"] = selectedHNodeId;
         info["command"] = "InvokeServiceCommand";
         

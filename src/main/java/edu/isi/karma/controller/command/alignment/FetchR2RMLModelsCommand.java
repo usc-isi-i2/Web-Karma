@@ -24,19 +24,14 @@ package edu.isi.karma.controller.command.alignment;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.json.JSONArray;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.FetchR2RMLUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class FetchR2RMLModelsCommand extends Command {
-	private final String vWorksheetId;
 	
 	private String tripleStoreUrl;
 	
@@ -48,11 +43,8 @@ public class FetchR2RMLModelsCommand extends Command {
 		this.tripleStoreUrl = tripleStoreUrl;
 	}
 
-	private static Logger logger = LoggerFactory.getLogger(FetchR2RMLModelsCommand.class);
-
-	protected FetchR2RMLModelsCommand(String id, String vWorksheetId, String url) {
+	protected FetchR2RMLModelsCommand(String id, String url) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
 		if (url == null || url.isEmpty()) {
 			url = TripleStoreUtil.defaultServerUrl + "/" + TripleStoreUtil.karma_model_repo;
 		}
@@ -80,7 +72,7 @@ public class FetchR2RMLModelsCommand extends Command {
 	}
 	
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 
 		TripleStoreUtil utilObj = new TripleStoreUtil();
 		HashMap<String, ArrayList<String>> list = utilObj.fetchModelNames(this.tripleStoreUrl);
@@ -88,7 +80,7 @@ public class FetchR2RMLModelsCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 

@@ -34,12 +34,11 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.FileUtil;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
 
 public class ImportXMLFileCommand extends Command {
 	private File xmlFile;
@@ -75,23 +74,19 @@ public class ImportXMLFileCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Workspace ws = vWorkspace.getWorkspace();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		
 		UpdateContainer c = new UpdateContainer();
 		try {
 			String fileContents = FileUtil.readFileContentsToString(xmlFile);
-//			System.out.println(fileContents);
+
 			// Converting the XML to JSON
 			JSONObject json = XML.toJSONObject(fileContents);
-//			System.out.println(json.toString(4));
-			JsonImport imp = new JsonImport(json, xmlFile.getName(), ws);
+			JsonImport imp = new JsonImport(json, xmlFile.getName(), workspace);
 			
 			Worksheet wsht = imp.generateWorksheet();
-			vWorkspace.addAllWorksheets();
-			
-			c.add(new WorksheetListUpdate(vWorkspace.getVWorksheetList()));
-			VWorksheet vw = vWorkspace.getVWorksheet(wsht.getId());
-			vw.update(c);
+			c.add(new WorksheetListUpdate());
+			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
 		} catch (FileNotFoundException e) {
 			logger.error("File Not Found", e);
 		} catch (JSONException e) {
@@ -104,7 +99,7 @@ public class ImportXMLFileCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// TODO Auto-generated method stub
 		return null;
 	}

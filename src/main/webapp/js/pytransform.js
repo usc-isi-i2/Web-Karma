@@ -54,7 +54,7 @@ function submitPythonPreview() {
     var info = {};
     info["hNodeId"] = hNodeId;
     info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["vWorksheetId"] = $("td#" + hNodeId).parents("table.WorksheetTable").attr("id");;
+    info["worksheetId"] = $("td#" + hNodeId).parents("table.WorksheetTable").attr("id");;
     info["transformationCode"] = ace.edit("transformCodeEditor").getValue();
     info["errorDefaultValue"] = $("#pythonTransformErrorDefaultValue").val();
     info["command"] = "PreviewPythonTransformationResultsCommand";
@@ -134,7 +134,7 @@ function submitPythonTransform() {
     var newInfo = [];
     newInfo.push(getParamObject("newColumnName",columnName, "other"));
     newInfo.push(getParamObject("transformationCode", ace.edit("transformCodeEditor").getValue(), "other"));
-    newInfo.push(getParamObject("vWorksheetId", worksheetId, "vWorksheetId"));
+    newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
     newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
     newInfo.push(getParamObject("hTableId", "", "other"));
     newInfo.push(getParamObject("errorDefaultValue", $("#pythonTransformErrorDefaultValue").val(), "other"));

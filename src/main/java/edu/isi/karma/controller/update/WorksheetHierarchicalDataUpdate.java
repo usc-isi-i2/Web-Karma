@@ -35,7 +35,7 @@ import edu.isi.karma.view.tabledata.VDCell;
  */
 public class WorksheetHierarchicalDataUpdate extends AbstractUpdate {
 
-	private final VWorksheet vWorksheet;
+	private final String worksheetId;
 
 	/**
 	 * The types of cells in the display of data.
@@ -72,14 +72,15 @@ public class WorksheetHierarchicalDataUpdate extends AbstractUpdate {
 		value, status, attr, nodeId, isTruncated, fullValue
 	}
 
-	public WorksheetHierarchicalDataUpdate(VWorksheet vWorksheet) {
+	public WorksheetHierarchicalDataUpdate(String worksheetId) {
 		super();
-		this.vWorksheet = vWorksheet;
+		this.worksheetId = worksheetId;
 	}
 
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
+		VWorksheet vWorksheet =  vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
 		vWorksheet.generateWorksheetHierarchicalDataJson(pw, vWorkspace);
 	}
 

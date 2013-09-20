@@ -25,9 +25,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
-import org.python.antlr.PythonParser.dictmaker_return;
-import org.python.antlr.PythonParser.print_stmt_return;
-
 import edu.isi.karma.cleaning.RecFeature;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;

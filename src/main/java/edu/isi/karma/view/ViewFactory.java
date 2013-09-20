@@ -23,7 +23,9 @@
  */
 package edu.isi.karma.view;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -106,7 +108,50 @@ public class ViewFactory {
 		vw.setLeafColIndexMap(new LeafColumnIndexMap(hHtree));
 	}
 
+	public Collection<VWorksheet> getVWorksheets()
+	{
+		return vWorksheets.values();
+	}
+	
 	public VWorksheet getVWorksheet(String vWorksheetId) {
 		return vWorksheets.get(vWorksheetId);
+	}
+	
+	public VWorksheet getVWorksheetByWorksheetId(String worksheetId)
+	{
+		for(VWorksheet vw : this.vWorksheets.values())
+		{
+			if(vw.getWorksheetId().compareTo(worksheetId) == 0)
+			{
+				return vw;
+			}
+		}
+		return null;
+	}
+	
+	public void addWorksheets(Collection<Worksheet> worksheets, VWorkspace vWorkspace) {
+		List<VWorksheet> newWorksheets = new LinkedList<VWorksheet>();
+		for (Worksheet w : worksheets) {
+			if (null == getVWorksheetByWorksheetId(w.getId())) {
+				newWorksheets
+						.add(createVWorksheetWithDefaultPreferences(vWorkspace, w));
+			}
+		}
+	}
+
+	public VWorksheet createVWorksheetWithDefaultPreferences(
+			VWorkspace vWorkspace, Worksheet w) {
+
+		ViewPreferences pref = vWorkspace.getPreferences();
+		return vWorkspace
+				.getViewFactory()
+				.createVWorksheet(
+						w,
+						w.getHeaders().getAllPaths(),
+						w.getDataTable()
+								.getRows(
+										0,
+										pref.getIntViewPreferenceValue(ViewPreference.defaultRowsToShowInTopTables)),
+						vWorkspace);
 	}
 }

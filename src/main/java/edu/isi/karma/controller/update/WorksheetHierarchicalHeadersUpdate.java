@@ -38,7 +38,6 @@ import edu.isi.karma.view.tableheadings.HeadersColorKeyTranslator;
  */
 public class WorksheetHierarchicalHeadersUpdate extends AbstractUpdate {
 
-	private final VWorksheet vWorksheet;
 
 	public enum JsonKeys {
 		worksheetId, rows, hTableId,
@@ -52,16 +51,19 @@ public class WorksheetHierarchicalHeadersUpdate extends AbstractUpdate {
 		border, heading, headingPadding
 	}
 
-	public WorksheetHierarchicalHeadersUpdate(VWorksheet vWorksheet) {
+	private final String worksheetId;
+
+	public WorksheetHierarchicalHeadersUpdate(String worksheetId) {
 		super();
-		this.vWorksheet = vWorksheet;
+		this.worksheetId = worksheetId;
 	}
 
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
 		//vWorksheet.generateWorksheetHierarchicalHeadersJson(pw, vWorkspace);
-		
+
+		VWorksheet vWorksheet =  vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
 		HHTree hHtree = new HHTree();
 		hHtree.constructHHTree(vWorksheet.getvHeaderForest());
 		
@@ -80,7 +82,7 @@ public class WorksheetHierarchicalHeadersUpdate extends AbstractUpdate {
 		pw.println(prefix + "{");
 		pw.println("\"" + GenericJsonKeys.updateType.name()
 				+ "\": \"WorksheetHierarchicalHeadersUpdate\",");
-		pw.println("\"" + JsonKeys.worksheetId.name() + "\": \"" + vWorksheet.getId()
+		pw.println("\"" + JsonKeys.worksheetId.name() + "\": \"" + vWorksheet.getWorksheetId()
 				+ "\",");
 		pw.println("\""+JsonKeys.rows.name()+ "\":");
 		table.generateJson(pw, trans, false);

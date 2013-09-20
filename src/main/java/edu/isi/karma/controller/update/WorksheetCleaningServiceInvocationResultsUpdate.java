@@ -45,7 +45,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class WorksheetCleaningServiceInvocationResultsUpdate extends
 		AbstractUpdate {
-	private VWorksheet vWorksheet;
+	private String worksheetId;
 
 	private static Logger logger = LoggerFactory.getLogger(
 			WorksheetCleaningServiceInvocationResultsUpdate.class);
@@ -54,13 +54,14 @@ public class WorksheetCleaningServiceInvocationResultsUpdate extends
 		worksheetId, hNodeId, worksheetChartData, chartData, id, value, json
 	}
 	
-	public WorksheetCleaningServiceInvocationResultsUpdate(VWorksheet vWorksheet) {
-		this.vWorksheet = vWorksheet;
+	public WorksheetCleaningServiceInvocationResultsUpdate(String worksheetId) {
+		this.worksheetId = worksheetId;
 	}
 
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
+		VWorksheet vWorksheet = vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
 		Worksheet worksheet = vWorksheet.getWorksheet();
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
 		
@@ -107,7 +108,7 @@ public class WorksheetCleaningServiceInvocationResultsUpdate extends
 		JSONObject response = new JSONObject();
 		try {
 			response.put(GenericJsonKeys.updateType.name(), this.getClass().getSimpleName());
-			response.put(JsonKeys.worksheetId.name(), vWorksheet.getId());
+			response.put(JsonKeys.worksheetId.name(), vWorksheet.getWorksheetId());
 			JSONArray chartData = new JSONArray();
 			
 			for (String hNodeId:cleaningInvocationOutput.keySet()) {

@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class GetDataPropertiesForClassCommandFactory extends CommandFactory {
 
@@ -34,9 +34,9 @@ public class GetDataPropertiesForClassCommandFactory extends CommandFactory {
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 		String uri = request.getParameter(Arguments.URI.name());
-		return new GetDataPropertiesForClassCommand(getNewId(vWorkspace), uri);
+		return new GetDataPropertiesForClassCommand(getNewId(workspace), uri);
 	}
 
 }

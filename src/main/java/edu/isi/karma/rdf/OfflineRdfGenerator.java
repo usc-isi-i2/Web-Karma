@@ -207,8 +207,7 @@ public class OfflineRdfGenerator {
 				System.out.println("done");
 				/** GENERATE RDF FROM WORKSHEET OBJECT **/
 			    System.out.print("Generating RDF...");
-				vWorkspace.addAllWorksheets();
-				VWorksheet vWorksheet = vWorkspace.getVWorksheet(worksheet.getId());
+				VWorksheet vWorksheet =  vWorkspace.getViewFactory().createVWorksheetWithDefaultPreferences(vWorkspace, worksheet);
 				WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(
 						vWorksheet, vWorkspace, model, worksheetName);
 				

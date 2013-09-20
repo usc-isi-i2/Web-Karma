@@ -37,7 +37,6 @@ import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
@@ -1371,14 +1370,42 @@ public class GraphBuilder {
 		DirectedWeightedMultigraph<Node, Link> g = new 
 				DirectedWeightedMultigraph<Node, Link>(Link.class);
 		
-		Node n1 = new ColumnNode("n1", "h1", "B", "");
+		Node n1 = new InternalNode("n1", null);
 		Node n2 = new InternalNode("n2", null);
-		Link l1 = new DataPropertyLink("e1", null);
+		Node n3 = new InternalNode("n3", null);
+		Node n4 = new InternalNode("n4", null);
+		Node n8 = new ColumnNode("n8", "h1", "B", "");
+		Node n9 = new ColumnNode("n9", "h2", "B", "");
+		
+		Link l1 = new ObjectPropertyLink("e1", null);
+		Link l2 = new ObjectPropertyLink("e2", null);
+		Link l3 = new ObjectPropertyLink("e3", null);
+		Link l4 = new ObjectPropertyLink("e4", null);
+		Link l5 = new ObjectPropertyLink("e5", null);
+		Link l6 = new ObjectPropertyLink("e6", null);
+//		Link l7 = new ObjectPropertyLink("e7", null);
+//		Link l8 = new DataPropertyLink("e8", null);
+//		Link l9 = new DataPropertyLink("e9", null);
 		
 		g.addVertex(n1);
 		g.addVertex(n2);
+		g.addVertex(n3);
+		g.addVertex(n4);
+		g.addVertex(n8);
+		g.addVertex(n9);
+		
 		g.addEdge(n1, n2, l1);
+		g.addEdge(n1, n3, l2);
+		g.addEdge(n2, n3, l6);
+		g.addEdge(n2, n4, l3);
+		g.addEdge(n4, n8, l4);
+		g.addEdge(n3, n9, l5);
+		
 		GraphUtil.printGraph(g);
+		
+		HashMap<Node, Integer> nodeLevels = GraphUtil.levelingCyclicGraph(g);
+		for (Node n : g.vertexSet())
+			System.out.println(n.getId() + " --- " + nodeLevels.get(n));
 		
 //		GraphUtil.serialize(g, "test");
 //		DirectedWeightedMultigraph<Node, Link> gprime = GraphUtil.deserialize("test");

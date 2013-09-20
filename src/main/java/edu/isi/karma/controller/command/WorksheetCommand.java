@@ -20,6 +20,14 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
+import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.rep.Workspace;
+
+
 /**
  * Commands that operate on a worksheet.
  * 
@@ -38,5 +46,22 @@ public abstract class WorksheetCommand extends Command {
 	public String getWorksheetId() {
 		return worksheetId;
 	}
-
+	
+	private Alignment getAlignmentOrCreateIt(Workspace workspace)
+	{
+		return AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, workspace.getOntologyManager());
+	}
+	private void computeSemanticTypesSuggestions(Workspace workspace, Alignment alignment)
+	{
+		// Compute the semantic type suggestions
+		SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(worksheetId), workspace
+				.getCrfModelHandler(), workspace.getOntologyManager(), alignment);
+	}
+	
+	public UpdateContainer computeAlignmentAndSemanticTypesAndCreateUpdates(Workspace workspace)
+	{
+		Alignment alignment = getAlignmentOrCreateIt(workspace);
+		computeSemanticTypesSuggestions(workspace, alignment);
+		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);
+	}
 }

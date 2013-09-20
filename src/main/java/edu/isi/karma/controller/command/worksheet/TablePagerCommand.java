@@ -27,9 +27,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetDataUpdate;
-import edu.isi.karma.rep.TablePager;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 /**
  * @author szekely
@@ -54,13 +52,13 @@ public class TablePagerCommand extends Command {
 	}
 
 	private final Direction directionArg;
-	private final String vWorksheetIdArg;
+	private final String worksheetIdArg;
 
-	protected TablePagerCommand(String id, String vWorksheetIdArg,
+	protected TablePagerCommand(String id, String worksheetIdArg,
 			String tableIdArg, String direction) {
 		super(id);
 		this.tableIdArg = tableIdArg;
-		this.vWorksheetIdArg = vWorksheetIdArg;
+		this.worksheetIdArg = worksheetIdArg;
 		this.directionArg = Direction.valueOf(direction);
 	}
 
@@ -85,23 +83,13 @@ public class TablePagerCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		VWorksheet vWorksheet = vWorkspace.getViewFactory().getVWorksheet(
-				vWorksheetIdArg);
-		TablePager pager = vWorksheet.getTablePager(tableIdArg);
-		switch (directionArg) {
-		case showPrevious:
-			pager.moveToPreviousPage();
-			break;
-		case showNext:
-			pager.moveToNextPage();
-		}
-		vWorksheet.udateDataTable(vWorkspace.getViewFactory());
-		return new UpdateContainer(new WorksheetDataUpdate(vWorksheet));
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		
+		return new UpdateContainer(new WorksheetDataUpdate(worksheetIdArg, tableIdArg, directionArg.getUserLabel(), null));
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// not undoable.
 		return new UpdateContainer();
 	}

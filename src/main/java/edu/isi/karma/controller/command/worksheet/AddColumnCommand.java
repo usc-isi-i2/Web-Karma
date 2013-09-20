@@ -20,26 +20,19 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.worksheet;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.update.AbstractUpdate;
+import edu.isi.karma.controller.update.AddColumnUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
@@ -47,8 +40,7 @@ import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
 /**
@@ -65,7 +57,6 @@ public class AddColumnCommand extends WorksheetCommand {
 	private String hTableId;
 	private final String newColumnName;
 	private final String defaultValue;
-	private final String vWorksheetId;
 
 	//the id of the new column that was created
 	//needed for undo
@@ -75,16 +66,15 @@ public class AddColumnCommand extends WorksheetCommand {
 	.getLogger(AddColumnCommand.class);
 	
 	public enum JsonKeys {
-		updateType, hNodeId, vWorksheetId
+		updateType, hNodeId, worksheetId
 	}
 	
-	protected AddColumnCommand(String id, String vWorksheetId, String worksheetId, 
+	protected AddColumnCommand(String id,String worksheetId, 
 			String hTableId, String hNodeId, String newColumnName, String defaultValue) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		this.newColumnName=newColumnName;
-		this.vWorksheetId = vWorksheetId;
 		this.defaultValue = defaultValue;
 		
 		addTag(CommandTag.Transformation);
@@ -114,8 +104,8 @@ public class AddColumnCommand extends WorksheetCommand {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Worksheet worksheet = vWorkspace.getWorkspace().getWorksheet(
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Worksheet worksheet = workspace.getWorksheet(
 				worksheetId);
 		
 		try{
@@ -123,14 +113,14 @@ public class AddColumnCommand extends WorksheetCommand {
 				//get table id based on the hNodeId
 				if(hNodeId==null)
 					throw new KarmaException("TableId and NodeId are empty. Can't add column.");
-				hTableId = vWorkspace.getRepFactory().getHNode(hNodeId).getHTableId();
+				hTableId = workspace.getFactory().getHNode(hNodeId).getHTableId();
 			}
 						
 			//get the HTable
-			HTable currentTable = vWorkspace.getRepFactory().getHTable(hTableId);
+			HTable currentTable = workspace.getFactory().getHTable(hTableId);
 			//add new column to this table
 			//add column after the column with hNodeId
-			HNode ndid = currentTable.addNewHNodeAfter(hNodeId, vWorkspace.getRepFactory(), newColumnName, worksheet,true);
+			HNode ndid = currentTable.addNewHNodeAfter(hNodeId, workspace.getFactory(), newColumnName, worksheet,true);
 			//add as first column in the table if hNodeId is null
 			//HNode ndid = currentTable.addNewHNodeAfter(null, vWorkspace.getRepFactory(), newColumnName, worksheet,true);
 
@@ -139,39 +129,17 @@ public class AddColumnCommand extends WorksheetCommand {
 			
 			// Populate the column with default value if default value is present
 			if (this.defaultValue != null && !this.defaultValue.equals("")) {
-				populateRowsWithDefaultValues(worksheet, vWorkspace.getRepFactory());
+				populateRowsWithDefaultValues(worksheet, workspace.getFactory());
 			}
 			
 			//create container and return hNodeId of newly created column
-			UpdateContainer c =  new UpdateContainer(new AbstractUpdate() {
-				@Override
-				public void generateJson(String prefix, PrintWriter pw,
-						VWorkspace vWorkspace) {
-					JSONObject outputObject = new JSONObject();
-					try {
-						outputObject.put(JsonKeys.updateType.name(),
-								"AddColumnUpdate");
-						outputObject.put(JsonKeys.hNodeId.name(),newHNodeId);
-						outputObject.put(JsonKeys.vWorksheetId.name(),
-								vWorksheetId);
-						pw.println(outputObject.toString(4));
-					} catch (JSONException e) {
-						logger.error("Error occured while generating JSON!");
-					}
-				}
-			});
+			UpdateContainer c =  new UpdateContainer(new AddColumnUpdate(newHNodeId, worksheetId));
 			
-			vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,
-					worksheet.getHeaders().getAllPaths(), vWorkspace);
-			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-			vw.update(c);
-			
-			// Add updates related to the alignment
-			addAlignmentUpdate(c, vWorkspace, worksheet);
-			
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		} catch (Exception e) {
-			System.out.println("Error in AddColumnCommand" + e.toString());
+			logger.error("Error in AddColumnCommand" + e.toString());
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
 		}
 	}
@@ -192,42 +160,20 @@ public class AddColumnCommand extends WorksheetCommand {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		Worksheet worksheet = vWorkspace.getViewFactory()
-		.getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer undoIt(Workspace workspace) {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
-		HTable currentTable = vWorkspace.getRepFactory().getHTable(hTableId);
+		HTable currentTable = workspace.getFactory().getHTable(hTableId);
 		//remove the new column
 		currentTable.removeHNode(newHNodeId, worksheet);
 
-		UpdateContainer c = new UpdateContainer();
-		vWorkspace.getViewFactory()
-		.updateWorksheet(vWorksheetId, worksheet,
-				worksheet.getHeaders().getAllPaths(), vWorkspace);
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(
-				vWorksheetId);
-		vw.update(c);
-
-		return c;
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
 	}
+
 
 	public String getNewHNodeId() {
 		return newHNodeId;
 	}
 	
-	private void addAlignmentUpdate(UpdateContainer c, VWorkspace vWorkspace, Worksheet worksheet) {
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
-				vWorkspace.getWorkspace().getId(), vWorksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		if (alignment == null) {
-			alignment = new Alignment(vWorkspace.getWorkspace().getOntologyManager());
-			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
-		}
-		// Compute the semantic type suggestions
-		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace()
-				.getCrfModelHandler(), vWorkspace.getWorkspace().getOntologyManager(), alignment);
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
-		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().
-				getVWorksheet(vWorksheetId), alignment));
-	}
+
 }

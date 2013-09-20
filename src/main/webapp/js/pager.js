@@ -24,10 +24,10 @@ function handlePrevNextLink() {
 		return;
 	// Prepare the data to be sent to the server	
 	var info = new Object();
-	var worksheetId = $(this).data("vWorksheetId");
+	var worksheetId = $(this).data("worksheetId");
 	info["tableId"] = $(this).parents("div.pager").data("tableId");
 	info["direction"] = $(this).data("direction");
-	info["vWorksheetId"] = worksheetId;
+	info["worksheetId"] = worksheetId;
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "TablePagerCommand";
 		
@@ -62,10 +62,10 @@ function handlePagerResize() {
 	// // Prepare the data to be sent to the server	
 	// var info = new Object();
 // 	
-	// var worksheetId = $(this).data("vWorksheetId");
+	// var worksheetId = $(this).data("worksheetId");
 	// info["newPageSize"] = $(this).data("rowCount");
 	// info["tableId"] = $(this).parents("div.pager").data("tableId");
-	// info["vWorksheetId"] = worksheetId;
+	// info["worksheetId"] = worksheetId;
 	// info["workspaceId"] = $.workspaceGlobalInformation.id;
 	// info["command"] = "TablePagerResizeCommand";
 // 		

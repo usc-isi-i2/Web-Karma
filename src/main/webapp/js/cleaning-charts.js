@@ -3,11 +3,11 @@ function showChartButtonHandler() {
     var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
     var hNodeId = columnHeadingMenu.data("parentCellId");
 
-    var vWorksheetId = $("td#" + hNodeId).parents("table.WorksheetTable").attr("id");
+    var worksheetId = $("td#" + hNodeId).parents("table.WorksheetTable").attr("id");
 
     var info = new Object();
     var newInfo = [];   // for input parameters
-    newInfo.push(getParamObject("vWorksheetId", vWorksheetId ,"vWorksheetId"));
+    newInfo.push(getParamObject("worksheetId", worksheetId ,"worksheetId"));
     newInfo.push(getParamObject("hNodeId", hNodeId,"hNodeId"));
 
     info["newInfo"] = JSON.stringify(newInfo);

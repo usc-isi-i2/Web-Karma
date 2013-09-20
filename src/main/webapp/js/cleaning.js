@@ -489,7 +489,7 @@ function populateVariations(data, data1) {
 
 function FetchCleanningRawData(hnodeId, worksheetId) {
 	var info = new Object();
-	info["vWorksheetId"] = worksheetId;
+	info["worksheetId"] = worksheetId;
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["hNodeId"] = hnodeId;
 	info["command"] = "FetchTransformingDataCommand";
@@ -521,10 +521,10 @@ function handleGenerateCleaningRulesButton() {
 	}
 
 	var tdTag = $("td#" + selectedHNodeId);
-	var vWorksheetId = tdTag.parents("div.Worksheet").attr("id");
+	var worksheetId = tdTag.parents("div.Worksheet").attr("id");
 	var examples = columnHeadingMenu.data("cleaningExamples");
 	var info = new Object();
-	info["vWorksheetId"] = vWorksheetId;
+	info["worksheetId"] = worksheetId;
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["hNodeId"] = selectedHNodeId;
 	info["command"] = "GenerateCleaningRulesCommand";
@@ -587,22 +587,22 @@ function submit() {
 	var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
 	var selectedHNodeId = columnHeadingMenu.data("parentCellId");
 	var tdTag = $("td#" + selectedHNodeId);
-	var vWorksheetId = tdTag.parents("div.Worksheet").attr("id");
+	var worksheetId = tdTag.parents("div.Worksheet").attr("id");
 	var transformedRes = $("div#columnHeadingDropDownMenu").data("transformedResult");
 	var info = new Object();
-	info["vWorksheetId"] = vWorksheetId;
+	info["worksheetId"] = worksheetId;
 	info["hNodeId"] = selectedHNodeId;
 	info["command"] = "SubmitCleaningCommand";
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["examples"] = JSON.stringify(columnHeadingMenu.data("cleaningExamples"));
 
     var newInfo = [];
-    newInfo.push(getParamObject("vWorksheetId", vWorksheetId, "vWorksheetId"));
+    newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
     newInfo.push(getParamObject("hNodeId", selectedHNodeId, "hNodeId"));
     newInfo.push(getParamObject("examples", columnHeadingMenu.data("cleaningExamples"), "other"));
     info["newInfo"] = JSON.stringify(newInfo);
 
-    showLoading(vWorksheetId);
+    showLoading(worksheetId);
 	var returned = $.ajax({
 		url : "RequestController",
 		type : "POST",
@@ -611,11 +611,11 @@ function submit() {
 		complete : function(xhr, textStatus) {
 			var json = $.parseJSON(xhr.responseText);
 			parse(json);
-            hideLoading(vWorksheetId);
+            hideLoading(worksheetId);
 		},
 		error : function(xhr, textStatus) {
 			$.sticky("Error in transformation!");
-            hideLoading(vWorksheetId);
+            hideLoading(worksheetId);
 		}
 	});
 }

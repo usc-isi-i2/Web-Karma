@@ -51,7 +51,7 @@ function submitEdit(value, settings) {
 	edits["value"] = $("#editCellTextArea").val();
 	edits["command"] = "EditCellCommand";
 	edits["nodeId"] = $(tdTag).attr("id");
-	edits["vWorksheetId"] = $(tdTag).parents(".Worksheet").attr("id");
+	edits["worksheetId"] = $(tdTag).parents(".Worksheet").attr("id");
 	
 	edits["workspaceId"] = $.workspaceGlobalInformation.id;
 
@@ -113,7 +113,7 @@ function submitAddNewColumn() {
     $("div#addNewColumnDialogDiv").dialog("close");
 
     var info = new Object();
-    info["vWorksheetId"] = $("td#" + selectedHNodeId).parents("table.WorksheetTable").attr("id");
+    info["worksheetId"] = $("td#" + selectedHNodeId).parents("table.WorksheetTable").attr("id");
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["hNodeId"] = selectedHNodeId
     info["hTableId"] = ""
@@ -123,13 +123,13 @@ function submitAddNewColumn() {
     var newInfo = [];	// Used for commands that take JSONArray as input
     newInfo.push(getParamObject("hNodeId", selectedHNodeId,"hNodeId"));
     newInfo.push(getParamObject("hTableId", "","other"));
-    newInfo.push(getParamObject("vWorksheetId", $("td#" + selectedHNodeId).parents("table.WorksheetTable").attr("id"),"vWorksheetId"));
+    newInfo.push(getParamObject("worksheetId", $("td#" + selectedHNodeId).parents("table.WorksheetTable").attr("id"),"worksheetId"));
     newInfo.push(getParamObject("newColumnName", newColumnValue,"other"));
     newInfo.push(getParamObject("defaultValue", defaultValue,"other"));
     info["newInfo"] = JSON.stringify(newInfo);
 
-    //console.log(info["vWorksheetId"]);
-    showLoading(info["vWorksheetId"]);
+    //console.log(info["worksheetId"]);
+    showLoading(info["worksheetId"]);
 
     var returned = $.ajax({
         url: "RequestController",
@@ -141,12 +141,12 @@ function submitAddNewColumn() {
                 //alert(xhr.responseText);
                 var json = $.parseJSON(xhr.responseText);
                 parse(json);
-                hideLoading(info["vWorksheetId"]);
+                hideLoading(info["worksheetId"]);
             },
         error :
             function (xhr, textStatus) {
                 alert("Error occured while removing semantic types!" + textStatus);
-                hideLoading(info["vWorksheetId"]);
+                hideLoading(info["worksheetId"]);
             }
     });
 }
@@ -174,14 +174,14 @@ function submitRenameColumn(value, settings) {
 
     var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
     var hNodeId = columnHeadingMenu.data("parentCellId");
-    var vWorksheetId = $("td#" + hNodeId).parents("table.WorksheetTable").attr("id");
+    var worksheetId = $("td#" + hNodeId).parents("table.WorksheetTable").attr("id");
 
     var info = new Object();
     var newInfo = [];   // for input parameters
-    newInfo.push(getParamObject("vWorksheetId", vWorksheetId ,"vWorksheetId"));
+    newInfo.push(getParamObject("worksheetId", worksheetId ,"worksheetId"));
     newInfo.push(getParamObject("hNodeId", hNodeId,"hNodeId"));
     newInfo.push(getParamObject("newColumnName", newColumnValue, "other"));
-    newInfo.push(getParamObject("getAlignmentUpdate", ($("#svgDiv_" + vWorksheetId).length >0), "other"));
+    newInfo.push(getParamObject("getAlignmentUpdate", ($("#svgDiv_" + worksheetId).length >0), "other"));
     info["newInfo"] = JSON.stringify(newInfo);
     info["workspaceId"] = $.workspaceGlobalInformation.id;
     info["command"] = "RenameColumnCommand";
@@ -233,13 +233,19 @@ function handlePublishModelToStoreButton(event) {
 function submitModelName(value, settings) {
 	$("div#PublishR2RMLModelDialogBox").dialog("close");
 
+	// validate the sparql endpoint
+	if(!testSparqlEndPoint($("input#txtR2RML_URL").val())) {
+		alert("Invalid sparql end point. Could not establish connection.");
+		return;
+	}
+	
 	var info = new Object();
-	info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
+	info["worksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "GenerateR2RMLModelCommand";
 	info['tripleStoreUrl'] = $('#txtR2RML_URL').val();
         
-    showLoading(info["vWorksheetId"]);
+    showLoading(info["worksheetId"]);
     var returned = $.ajax({
         url: "RequestController", 
         type: "POST",
@@ -250,12 +256,12 @@ function submitModelName(value, settings) {
                 //alert(xhr.responseText);
                 var json = $.parseJSON(xhr.responseText);
                 parse(json);
-                hideLoading(info["vWorksheetId"]);
+                hideLoading(info["worksheetId"]);
             },
         error :
             function (xhr, textStatus) {
                 alert("Error occured while exporting CSV!" + textStatus);
-                hideLoading(info["vWorksheetId"]);
+                hideLoading(info["worksheetId"]);
             }          
     });
  }
@@ -267,7 +273,7 @@ function submitSelectedModelNameToBeLoaded() {
 	var value = $("#modelListRadioBtnGrp").find("input:checked");
 	
 	var info = new Object();
-	info["vWorksheetId"] = optionsDiv.data("worksheetId");
+	info["worksheetId"] = optionsDiv.data("worksheetId");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "InvokeDataMiningServiceCommand";
 	info['modelContext'] = value.val();

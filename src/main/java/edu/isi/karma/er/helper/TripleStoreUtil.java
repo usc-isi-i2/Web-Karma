@@ -164,12 +164,7 @@ public class TripleStoreUtil {
 		return retVal;
 	}
 	
-	private static boolean checkConnection(String url) {
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpGet httpget;
-		HttpResponse response;
-		HttpEntity entity;
-		StringBuffer out = new StringBuffer();
+	public static boolean checkConnection(String url) {
 		boolean retval = false;
 		try {
 			if(url.charAt(url.length()-1) != '/') {
@@ -177,24 +172,14 @@ public class TripleStoreUtil {
 			}
 			url = url +  "size";
 			logger.info(url);
-			httpget = new HttpGet(url);
-			response = httpclient.execute(httpget);
-			entity = response.getEntity();
-			if (entity != null) {
-				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
-				String line = buf.readLine();
-				while(line != null) {
-					out.append(line);
-					line = buf.readLine();
-				}
+			String response = HTTPUtil.executeHTTPGetRequest(url, null);
 				try {
-					int i = Integer.parseInt(out.toString());
+					int i = Integer.parseInt(response);
 					logger.debug("Connnection to repo : " + url + " Successful.\t Size : " + i);
 					 retval = true;
 				} catch (Exception e) {
 					logger.error("Could not parse size of repository query result.");
 				}
-			}
 		} catch(Exception e) {
 			e.printStackTrace();
 		} 
@@ -518,12 +503,10 @@ public class TripleStoreUtil {
 					graphs.add(o.getJSONObject("contextID").getString("value"));
 				}
 			}
-		} catch (ClientProtocolException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
+			graphs = null;
 		}
 		
 		return graphs;
@@ -533,6 +516,9 @@ public class TripleStoreUtil {
 		logger.info("Checking for unique graphUri for url : " + graphUrl + " at endPoint : " + tripleStoreUrl);
 		boolean retVal = true;
 		ArrayList<String> urls = this.getContexts(tripleStoreUrl);
+		if(urls == null ){
+			return false;
+		}
 		// need to compare each url in case-insensitive form
 		for(String url : urls) {
 			if (url.equalsIgnoreCase(graphUrl)) {

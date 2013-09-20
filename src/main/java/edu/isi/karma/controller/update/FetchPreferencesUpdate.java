@@ -28,24 +28,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.view.ViewPreferences;
 
 public class FetchPreferencesUpdate extends AbstractUpdate {
-	VWorkspace vWorkspace;
 	String commandName;
 
 	private static Logger logger = LoggerFactory.getLogger(FetchPreferencesUpdate.class);
 	
-	public FetchPreferencesUpdate(VWorkspace vWorkspace, String commandName) {
-		this.vWorkspace = vWorkspace;
+	public FetchPreferencesUpdate(String commandName) {
 		this.commandName = commandName;
 	}
 
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
-		ViewPreferences prefs = vWorkspace.getPreferences();
-		JSONObject prefObject = prefs.getCommandPreferencesJSONObject(commandName);
+		JSONObject prefObject = vWorkspace.getWorkspace().getCommandPreferences().getCommandPreferencesJSONObject(commandName);
 		JSONObject responseObj = new JSONObject();
 		try {
 			responseObj.put("commandId", vWorkspace.getWorkspace().getCommandHistory().getCurrentCommand().getId());

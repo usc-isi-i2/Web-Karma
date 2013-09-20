@@ -25,23 +25,23 @@ import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 
 public class PreviewPythonTransformationResultsCommandFactory extends CommandFactory {
 	private enum Arguments {
-		vWorksheetId, transformationCode, errorDefaultValue, hNodeId
+		worksheetId, transformationCode, errorDefaultValue, hNodeId
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
+			Workspace workspace) {
+		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String transformationCode = request.getParameter(Arguments.transformationCode.name());
 		String errorDefaultValue = request.getParameter(Arguments.errorDefaultValue.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		
-		return new PreviewPythonTransformationResultsCommand(getNewId(vWorkspace), vWorksheetId, 
+		return new PreviewPythonTransformationResultsCommand(getNewId(workspace), worksheetId, 
 				transformationCode, errorDefaultValue, hNodeId);
 	}
 

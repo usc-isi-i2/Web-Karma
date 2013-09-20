@@ -23,7 +23,7 @@ package edu.isi.karma.controller.command;
 import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public abstract class CommandWithPreview extends Command {
 
@@ -31,7 +31,7 @@ public abstract class CommandWithPreview extends Command {
 		super(id);
 	}
 
-	public abstract UpdateContainer showPreview(VWorkspace vWorkspace)
+	public abstract UpdateContainer showPreview(Workspace workspace)
 			throws CommandException;
 
 	public abstract UpdateContainer handleUserActions(HttpServletRequest request);
