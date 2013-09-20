@@ -24,7 +24,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -228,7 +233,190 @@ public class GraphUtil {
 		out.flush();
 		out.close();
 	}
+	
+	private static Set<Node> getNeighbors(DirectedWeightedMultigraph<Node, Link> g, Node n) {
+		
+		Set<Node> neighbors = new HashSet<Node>();
+		if (g == null || n == null || !g.vertexSet().contains(n))
+			return neighbors;
+		
+		Set<Link> outgoingLinks = g.outgoingEdgesOf(n);
+		if (outgoingLinks != null) {
+			for (Link l : outgoingLinks) {
+				neighbors.add(l.getTarget());
+			}
+		}
+		
+		return neighbors;
+	}
 
+	private static HashMap<Node, Integer> inDegreeInSet(DirectedWeightedMultigraph<Node, Link> g, 
+			Set<Node> nodes, boolean includeSelfLinks) {
+		
+		HashMap<Node, Integer> nodeToInDegree = new HashMap<Node, Integer>();
+		if (g == null || nodes == null) return nodeToInDegree;
+		for (Node n : nodes) {
+			Set<Link> incomingLinks = g.incomingEdgesOf(n);
+			if (incomingLinks == null || incomingLinks.size() == 0) {
+				nodeToInDegree.put(n, 0);
+			} else {
+				int count = 0;
+				for (Link l : incomingLinks) {
+					if (includeSelfLinks) {
+						if (nodes.contains(l.getSource())) count++;
+					} else {
+						if (nodes.contains(l.getSource()) && !n.equals(l.getSource())) count++;
+					}
+				}
+				nodeToInDegree.put(n, count);
+			}
+		}
+		return nodeToInDegree;
+	}
+	
+	private static HashMap<Node, Integer> outDegreeInSet(DirectedWeightedMultigraph<Node, Link> g, 
+			Set<Node> nodes, boolean includeSelfLinks) {
+		
+		HashMap<Node, Integer> nodeToOutDegree = new HashMap<Node, Integer>();
+		if (g == null || nodes == null) return nodeToOutDegree;
+		for (Node n : nodes) {
+			Set<Link> outgoingLinks = g.outgoingEdgesOf(n);
+			if (outgoingLinks == null || outgoingLinks.size() == 0) {
+				nodeToOutDegree.put(n, 0);
+			} else {
+				int count = 0;
+				for (Link l : outgoingLinks) {
+					if (includeSelfLinks) {
+						if (nodes.contains(l.getSource())) count++;
+					} else {
+						if (nodes.contains(l.getSource()) && !n.equals(l.getSource())) count++;
+					}
+				}
+				nodeToOutDegree.put(n, count);
+			}
+		}
+		return nodeToOutDegree;
+	}
+	
+	public static HashMap<Node, Integer> levelingCyclicGraph(DirectedWeightedMultigraph<Node, Link> g) {
+		
+		HashMap<Node, Integer> nodeLevels = new HashMap<Node, Integer>();
+		if (g == null || g.vertexSet() == null || g.vertexSet().size() == 0) {
+			logger.info("graph does not have any node.");
+			return nodeLevels;
+		}
+		
+//		if (root != null && !g.vertexSet().contains(root)) {
+//			logger.error("graph does not contain the specified root node.");
+//			return nodeLevels;
+//		}
+		
+		Set<Node> markedNodes = new HashSet<Node>();
+		for (Node u : g.vertexSet()) {
+			if (u instanceof ColumnNode)
+				markedNodes.add(u);
+		}
+		
+		Queue<Node> q = new LinkedList<Node>();
+		int maxLevel = g.vertexSet().size();
+		
+		List<Set<Node>> nodesIndexedByLevel = new ArrayList<Set<Node>>();
+		for (int i = 0; i < maxLevel; i++) nodesIndexedByLevel.add(new HashSet<Node>());
+		
+//		Set<Node> initialSeed;
+//		if (root == null) {
+//			initialSeed = g.vertexSet();
+//		} else {
+//			initialSeed = new HashSet<Node>();
+//			initialSeed.add(root);
+//		}
+		
+//		for (Node u : initialSeed) {
+		for (Node u : g.vertexSet()) {
+			if (!markedNodes.contains(u)) {
+				q.add(u);
+				markedNodes.add(u);
+				
+				nodeLevels.put(u, 0);
+				nodesIndexedByLevel.get(0).add(u);
+				
+				while (!q.isEmpty()) {
+					Node v = q.remove();
+					Set<Node> neighbors = getNeighbors(g, v);
+					for (Node w : neighbors) {
+						if (!markedNodes.contains(w)) {
+							markedNodes.add(w);
+							int level = nodeLevels.get(v).intValue() + 1;
+							nodeLevels.put(w, level);
+							nodesIndexedByLevel.get(level).add(w);
+							q.add(w);
+						}
+					}
+				}
+			}
+		}
+		
+		// find in/out degree in each level
+		// TODO: check each pair of nodes in the same level to see whether they are directly connected
+		int k = 0;
+		while (true) {
+			
+			if (k >= maxLevel) break;
+			
+			Node nodeWithMaxDegree = null;
+			while (true) { // until there is a direct link between two nodes in the same level
+				
+				Set<Node> nodes = nodesIndexedByLevel.get(k);
+				if (nodes == null || nodes.size() == 0) break;
+				
+				HashMap<Node, Integer> nodeToInDegree = inDegreeInSet(g, nodes, false);
+				HashMap<Node, Integer> nodeToOutDegree = outDegreeInSet(g, nodes, false);
+				
+				int sum = 0, d = 0;
+				int maxDegree = -1;
+				
+				for (Node u : nodes) {
+					d = nodeToInDegree.get(u);
+					sum += d;
+					if (d > maxDegree) {
+						maxDegree = d;
+						nodeWithMaxDegree = u;
+					}
+					d = nodeToOutDegree.get(u);
+					sum += d;
+					if (d > maxDegree) {
+						maxDegree = d;
+						nodeWithMaxDegree = u;
+					}
+				}
+				if (sum == 0) break; // there is no interlink in level k
+				
+				// moving nodeWithMaxDegree to the next level 
+				nodeLevels.put(nodeWithMaxDegree, k + 1);
+				nodesIndexedByLevel.get(k).remove(nodeWithMaxDegree);
+				nodesIndexedByLevel.get(k + 1).add(nodeWithMaxDegree);
+			}
+			
+			k ++; // checking next level
+		}
+		
+		
+		// add all column nodes to the (last level + 1).
+		int lastLevel = 0;
+		for (k = maxLevel - 1; k > 0; k--) {
+			if (nodesIndexedByLevel.get(k).size() != 0) {
+				lastLevel = k;
+				break;
+			}
+		}
+		for (Node u : g.vertexSet()) {
+			if (u instanceof ColumnNode)
+				nodeLevels.put(u, lastLevel + 1);
+		}
+		
+		return nodeLevels;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static DirectedWeightedMultigraph<Node, Link> deserialize(String fileName) throws Exception
 	{

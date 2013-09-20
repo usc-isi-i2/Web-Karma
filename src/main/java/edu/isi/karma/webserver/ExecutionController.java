@@ -38,9 +38,13 @@ import edu.isi.karma.controller.command.FetchGraphsFromTripleStoreCommand;
 import edu.isi.karma.controller.command.FetchGraphsFromTripleStoreCommandFactory;
 import edu.isi.karma.controller.command.FetchPreferencesCommand;
 import edu.isi.karma.controller.command.FetchPreferencesCommandFactory;
+import edu.isi.karma.controller.command.GetUniqueGraphUrlCommand;
+import edu.isi.karma.controller.command.GetUniqueGraphUrlCommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.command.ResetKarmaCommand;
 import edu.isi.karma.controller.command.ResetKarmaCommandFactory;
+import edu.isi.karma.controller.command.TestSPARQLEndPointCommand;
+import edu.isi.karma.controller.command.TestSPARQLEndPointCommandFactory;
 import edu.isi.karma.controller.command.UndoRedoCommand;
 import edu.isi.karma.controller.command.UndoRedoCommandFactory;
 import edu.isi.karma.controller.command.alignment.AddUserLinkToAlignmentCommand;
@@ -318,6 +322,10 @@ public class ExecutionController {
 				new InvokeRubenReconciliationServiceFactory());
 		commandFactoryMap.put(FetchGraphsFromTripleStoreCommand.class.getSimpleName(), 
 				new FetchGraphsFromTripleStoreCommandFactory());
+		commandFactoryMap.put(GetUniqueGraphUrlCommand.class.getSimpleName(), 
+				new GetUniqueGraphUrlCommandFactory());
+		commandFactoryMap.put(TestSPARQLEndPointCommand.class.getSimpleName(), 
+				new TestSPARQLEndPointCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {

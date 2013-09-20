@@ -21,7 +21,6 @@
 package edu.isi.karma.controller.command;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.AbstractUpdate;
-import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.rep.Workspace;
@@ -38,20 +36,16 @@ import edu.isi.karma.view.VWorkspace;
 /**
  * Class responsible for fetching all the graphs in the tripleStore
  */
-public class FetchGraphsFromTripleStoreCommand extends Command {
+public class TestSPARQLEndPointCommand extends Command {
 	private String tripleStoreUrl;
 	
 	private enum JsonKeys {
-		updateType, graphs, tripleStoreUrl
+		tripleStoreUrl, connectionStatus, updateType
 	}
 	
-	private static Logger logger = LoggerFactory.getLogger(FetchGraphsFromTripleStoreCommand.class);
+	private static Logger logger = LoggerFactory.getLogger(TestSPARQLEndPointCommand.class);
 	
-	public String getTripleStoreUrl() {
-		return tripleStoreUrl;
-	}
-
-	protected FetchGraphsFromTripleStoreCommand(String id, String url){
+	protected TestSPARQLEndPointCommand(String id, String url){
 		super(id);
 		this.tripleStoreUrl=url;
 	}
@@ -63,7 +57,7 @@ public class FetchGraphsFromTripleStoreCommand extends Command {
 
 	@Override
 	public String getTitle() {
-		return "FetchGraphsFromTripleStore";
+		return "TestSPARQLEndPoint";
 	}
 
 	@Override
@@ -78,36 +72,39 @@ public class FetchGraphsFromTripleStoreCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		TripleStoreUtil utilObj = new TripleStoreUtil();
-		final ArrayList<String> graphs = utilObj.getContexts(this.tripleStoreUrl);
-		if(graphs == null) {
-			return new UpdateContainer(new ErrorUpdate("Error occurred while fetching graphs!"));
-		}
-		logger.info("Graphs fetched : " + graphs.size());
-		
-		try {
+		if(TripleStoreUtil.checkConnection(this.tripleStoreUrl)) {
 			return new UpdateContainer(new AbstractUpdate() {
-				
 				@Override
 				public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
 					JSONObject obj = new JSONObject();
 					try {
-						obj.put(JsonKeys.updateType.name(), "FetchGraphsFromTripleStore");
-						obj.put(JsonKeys.graphs.name(), graphs);
+						obj.put(JsonKeys.updateType.name(), "TestSPARQLEndPoint");
+						obj.put(JsonKeys.connectionStatus.name(), 1);
 						pw.println(obj.toString());
 					} catch (JSONException e) {
-						logger.error("Error occurred while fetching worksheet properties!", e);
+						logger.error("Error occurred while performing connection test for sparql endpoint!", e);
 					}
 				}
 			});
-		} catch (Exception e) {
-			logger.error("Error occurred while fetching graphs!", e);
-			return new UpdateContainer(new ErrorUpdate("Error occurred while fetching graphs!"));
 		}
+		
+		return new UpdateContainer(new AbstractUpdate() {
+			@Override
+			public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
+				JSONObject obj = new JSONObject();
+				try {
+					obj.put(JsonKeys.updateType.name(), "TestSPARQLEndPoint");
+					obj.put(JsonKeys.connectionStatus.name(), 0);
+					pw.println(obj.toString());
+				} catch (JSONException e) {
+					logger.error("Error occurred while performing connection test for sparql endpoint!", e);
+				}
+			}
+		});
 	}
 
 	@Override
-	public UpdateContainer undoIt(Workspace workspace) {
+	public UpdateContainer undoIt(Workspace vorkspace) {
 		return null;
 	}
 

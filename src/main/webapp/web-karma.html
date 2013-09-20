@@ -332,7 +332,7 @@ and related projects, please see: http://www.isi.edu/integration
 					var doPrevent = false;
 					if(event.keyCode === 8) {
 						var d = event.srcElement || event.target;
-						if((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD')) || d.tagName.toUpperCase() === 'TEXTAREA') {
+						if((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD' || d.type.toUpperCase() === 'URL')) || d.tagName.toUpperCase() === 'TEXTAREA') {
 							doPrevent = d.readOnly || d.disabled;
 						} else {
 							doPrevent = true;
@@ -361,7 +361,7 @@ and related projects, please see: http://www.isi.edu/integration
 	</head>
 
 	<body>
-		<h1 id="banner">Karma <span id="karma-version">v1.145</span></h1>
+		<h1 id="banner">Karma <span id="karma-version">v1.149</span></h1>
 		<table id="topMenuBar">
 			<tr>
 				<td>
@@ -807,56 +807,65 @@ and related projects, please see: http://www.isi.edu/integration
 		</div>
 		<div id="tableCellMenuButtonDiv" style="display: none"></div>
 		<div id="columnHeadingMenuButtonDiv" style="display: none"></div>
+		<div id="confirmPublishRDFDialogBox" style="display: none">
+			<span class="smallSizedFont"></span>
+		</div>
 		<div id="PublishRDFDialogBox" style="display: none">
 			<span class="smallSizedFont">
 				<table>
 					<tr>
 						<td>RDF namespace</td>
 						<td>
-						<input type="text" id="rdfNamespace" value="http://localhost:8080/source/" maxlength="100" size="48"/>
+						<input type="text" id="rdfNamespace" value="http://localhost:8080/source/" maxlength="100" style="width:100%"/>
 						</td>
 					</tr>
 					<tr>
 						<td>RDF prefix</td>
 						<td>
-						<input type="text" id="rdfPrefix" value="s" maxlength="100" size="48"/>
+						<input type="text" id="rdfPrefix" value="s" maxlength="100" style="width:100%"/>
 						</td>
 					</tr>
 					<tr>
-						<table>
-							<tr><td><label for="rdfSPAQRLEndPoint">SPARQL End Point</label></td></tr>
-							<tr><td><input type="text" id="rdfSPAQRLEndPoint" value="" size="65"/></td></tr>
-							<tr><td> <a style="color: blue; float:right" id="rdfBrowseRepo" target="_blank" href="">Browse</a> </td></tr>
-							<tr><td><label for="rdfSPAQRLGraph">Context</label></td></tr>
-							<tr><td>
-								<span class="smallSizedFont">
-									<select id="modelGraphList"></select>
-								</span>
-							</td></tr>
-							<tr><td><input type="text" id="rdfSPAQRLGraph" value="" size="65"/></td></tr>
-							<tr><td>&nbsp;</td></tr>
-							<tr><td>
-								<span class="smallSizedFont">
-									<form id="graphReplaceOptions">
-										<input type="radio" name="group1" id="graphReplace_1" 
-											value="replace" /> <label for="graphReplace_1">Replace existing data in context</label> <br />
-										<input type="radio" name="group1" id="graphReplace_2" 
-											value="append" /> <label for="graphReplace_2">Append to context</label> <br />
-									</form>
-								</span>
-							</td></tr>
-							<tr><td>&nbsp;</td></tr>
-						</table>
+						<td><label for="rdfSPAQRLEndPoint">SPARQL End Point</label></td>
+						<td><input type="url" id="rdfSPAQRLEndPoint" required value="" style="width:100%" /> 
+						<br /><a style="color: blue; float:right" id="rdfBrowseRepo" target="_blank" href="">Browse</a>
+						</td>
 					</tr>
+					<tr> <td colspan="2"> &nbsp;</td> </tr>
+					<tr>
+						<td><label for="modelGraphList">Use existing context</label></td>
+						<td> <span class="smallSizedFont">
+								<select id="modelGraphList" style="width:100%"></select>
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td> <label id="labelFor_rdfSPAQRLGraph" for="rdfSPAQRLGraph">Create new context</label> </td>
+						<td> <input type="url" id="rdfSPAQRLGraph" value="" style="width:100%"/> </td>
+					</tr>
+					<tr>
+					<td colspan="2">
+					<span class="smallSizedFont">
+							<form id="graphReplaceOptions">
+								<input type="radio" name="group1" id="graphReplace_1"
+									value="replace" /> <label for="graphReplace_1">Replace
+									existing data in context</label> <br /> <input type="radio"
+									name="group1" id="graphReplace_2" checked="checked" value="append" /> <label
+									for="graphReplace_2">Append to context</label> <br />
+							</form>
+					</span>
+					</td>
+					</tr>
+					<tr> <td colspan="2"> &nbsp;</td> </tr>
 				</table> 
 			</span>
 			<input type="checkbox" id="addInverseProperties" unchecked />
 			<label for="addInverseProperties" class="smallSizedFont">Add Inverse Properties</label>
 			<br>
 			<br>
-			<input type="checkbox" id="saveToRDFStore" onChange = "showHideRdfInfo()"/>
+			<!-- <input type="checkbox" id="saveToRDFStore" onChange = "showHideRdfInfo()"/>
 			<label for="saveToRDFStore" class="smallSizedFont">Save to Jena RDF Store</label>
-			<br />
+			<br /> -->
 			<br />
 			<div class="smallSizedFont" id="rdfStoreInfo">
 				<table>
@@ -902,7 +911,7 @@ and related projects, please see: http://www.isi.edu/integration
 			<span class="smallSizedFont">
 				<table>
 					<tr><td>SPARQL End Point</td></tr>
-					<tr><td><input type="text" id="txtR2RML_URL" value="" size="65"/></td></tr>
+					<tr><td><input type="url" id="txtR2RML_URL" value="" size="65" required/></td></tr>
 					<tr><td> <a style="color: blue; float:right" id="browseRepo" target="_blank" href="">Browse</a> </td></tr>
 				</table> 
 			</span>

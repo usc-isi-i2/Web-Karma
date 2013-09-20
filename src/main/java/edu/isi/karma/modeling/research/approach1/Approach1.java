@@ -562,14 +562,16 @@ public class Approach1 {
 						}
 					}
 					
-					if (countOfExistingPropertyLinks >= 1)
+					if (countOfExistingPropertyLinks >= 2)
 						continue;
 
 					String nodeId = nodeIdFactory.getNodeId(columnNodeName);
+					while (this.graphBuilder.getIdToNodeMap().get(nodeId) != null)
+						nodeId = nodeIdFactory.getNodeId(columnNodeName);
 					ColumnNode target = new ColumnNode(nodeId, "", "", "");
 					this.graphBuilder.addNodeWithoutUpdatingGraph(target);
 					addedNodes.add(target);
-		
+					
 					String linkId = LinkIdFactory.getLinkId(propertyUri, source.getId(), target.getId());	
 					Link link = new DataPropertyLink(linkId, new Label(propertyUri), false);
 					this.graphBuilder.addLink(source, target, link);
@@ -591,6 +593,8 @@ public class Approach1 {
 		
 		if (sl.getType() == SemanticLabelType.DataProperty) {
 			nodeId = nodeIdFactory.getNodeId(sl.getLeafName());
+			while (this.graphBuilder.getIdToNodeMap().get(nodeId) != null)
+				nodeId = nodeIdFactory.getNodeId(sl.getLeafName());
 			ColumnNode target = new ColumnNode(nodeId, "", "", "");
 			this.graphBuilder.addNodeWithoutUpdatingGraph(target);
 			addedNodes.add(target);
@@ -1064,8 +1068,8 @@ public class Approach1 {
 //		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "260_aac-ont.owl"));
 //		ontManager.updateCache();
 
-		for (int i = 0; i < serviceModels.size(); i++) {
-//		int i = 2; {
+//		for (int i = 0; i < serviceModels.size(); i++) {
+		int i = 1; {
 			trainingData.clear();
 			int newServiceIndex = i;
 			ServiceModel newService = serviceModels.get(newServiceIndex);
