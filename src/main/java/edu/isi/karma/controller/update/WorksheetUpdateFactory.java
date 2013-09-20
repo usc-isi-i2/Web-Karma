@@ -34,9 +34,20 @@ public class WorksheetUpdateFactory {
 	}
 	private static void createWorksheetHierarchicalAndCleaningResultsUpdates(
 			String worksheetId, UpdateContainer c) {
+		createWorksheetHierarchicalUpdates(worksheetId, c);
+		c.add(new WorksheetCleaningServiceInvocationResultsUpdate(worksheetId));
+	}
+	
+	public static UpdateContainer createWorksheetHierarchicalUpdates(String worksheetId) {
+		UpdateContainer c = new UpdateContainer();
+		createWorksheetHierarchicalUpdates(worksheetId, c);
+		return c;
+	}
+	
+	private static void createWorksheetHierarchicalUpdates(String worksheetId,
+			UpdateContainer c) {
 		c.add(new WorksheetHierarchicalHeadersUpdate(worksheetId));
 		c.add(new WorksheetHierarchicalDataUpdate(worksheetId));
-		c.add(new WorksheetCleaningServiceInvocationResultsUpdate(worksheetId));
 	}
 	public static UpdateContainer createRegenerateWorksheetUpdates(String worksheetId) {
 		UpdateContainer c = new UpdateContainer();

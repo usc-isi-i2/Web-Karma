@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.PrintWriter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,7 +125,13 @@ public class ResetKarmaCommand extends Command {
 			@Override
 			public void generateJson(String prefix, PrintWriter pw,
 					VWorkspace vWorkspace) {
-				// TODO Auto-generated method stub
+				JSONObject obj = new JSONObject();
+				try {
+					obj.put(GenericJsonKeys.updateType.name(), "ResetKarmaCommandUpdate");
+					pw.println(obj.toString());
+				} catch (JSONException e) {
+					logger.error("Unable to generate Json", e);
+				}
 				
 			}
 			});

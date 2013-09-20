@@ -175,7 +175,7 @@ public class ImportDatabaseTableCommand extends CommandWithPreview {
 					tableName, workspace);
 			
 			Worksheet wsht = dbTableImport.generateWorksheet();
-	
+			
 			c.add(new WorksheetListUpdate());
 			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
 			// Create a new Database Import Command. The interface allows the user to import 

@@ -110,8 +110,7 @@ public class DatabaseTableRDFGenerator {
 				
 				wk = factory.createWorksheet(tablename, workspace);
 				headersList = addHeaders(wk, columnNames, factory);
-				vWorkspace.createVWorksheetsForAllWorksheets();
-				vWorksheet =  vWorkspace.getViewFactory().getVWorksheetByWorksheetId(wk.getId());
+				vWorksheet =  vWorkspace.getViewFactory().createVWorksheetWithDefaultPreferences(vWorkspace, wk);
 				
 			}
 			

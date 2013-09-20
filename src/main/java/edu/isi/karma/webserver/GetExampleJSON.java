@@ -184,7 +184,7 @@ public class GetExampleJSON extends HttpServlet {
 		c.add(new WorksheetListUpdate());
 		
 		for (Worksheet w : vwsp.getWorkspace().getWorksheets()) {
-			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(w.getId())); 
+			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(w.getId())); 
 		}
 
 		StringWriter sw = new StringWriter();

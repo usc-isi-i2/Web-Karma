@@ -20,19 +20,16 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.importdata;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.ImportServiceCommandPreferencesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
@@ -40,7 +37,6 @@ import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.sources.InvocationManager;
-import edu.isi.karma.view.VWorkspace;
 
 public class ImportServiceCommand extends Command {
 	private static Logger logger = LoggerFactory.getLogger(ImportServiceCommand.class);
@@ -101,40 +97,7 @@ public class ImportServiceCommand extends Command {
 			JsonImport imp = new JsonImport(json, worksheetName, workspace);
 			
 			Worksheet wsht = imp.generateWorksheet();
-			c.add(new AbstractUpdate(){
-				@Override
-				public void applyUpdate(VWorkspace vWorkspace)
-				{
-					savePreferences(vWorkspace);
-				}
-
-				@Override
-				public void generateJson(String prefix, PrintWriter pw,
-						VWorkspace vWorkspace) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				private void savePreferences(VWorkspace vWorkspace){
-					try{
-						JSONObject prefObject = new JSONObject();
-						prefObject.put(PreferencesKeys.ServiceUrl.name(), serviceUrl);
-						prefObject.put(PreferencesKeys.WorksheetName.name(), worksheetName);
-						vWorkspace.getWorkspace().getCommandPreferences().setCommandPreferences(
-								"ImportServiceCommandPreferences", prefObject);
-						
-						/*
-						System.out.println("I Saved .....");
-						ViewPreferences prefs = vWorkspace.getPreferences();
-						JSONObject prefObject1 = prefs.getCommandPreferencesJSONObject("PublishDatabaseCommandPreferences");
-						System.out.println("I Saved ....."+prefObject1);
-						 */
-						
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				}
-			});
+			c.add(new ImportServiceCommandPreferencesUpdate(serviceUrl, worksheetName));
 			
 			c.add(new WorksheetListUpdate());
 			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
