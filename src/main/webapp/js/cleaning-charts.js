@@ -50,7 +50,10 @@ function drawChart(element)  {
 	//console.log("dataArray:-" + dataArray); 
 	var xLabel = element["chartData"].xLabel;
 	var yLabel = element["chartData"].yLabel;
-	var tooltip = "Data Type Detected: " + element["chartData"].Category  + "\nTotal Data: " + element["chartData"].Total_ID_Count + 
+	/*var tooltip = "Data Type Detected: " + element["chartData"].Category  + "\nTotal Data: " + element["chartData"].Total_ID_Count + 
+	"\nTotal Valid Data: " + element["chartData"].Valid_ID_Count
+	+ "\nTotal Invalid Data: "	+ element["chartData"].Invalid_ID_Count;*/
+	var tooltip = "Data Type Detected: " + element["chartData"].xLabel  + "\nTotal Data: " + element["chartData"].Total_ID_Count + 
 	"\nTotal Valid Data: " + element["chartData"].Valid_ID_Count
 	+ "\nTotal Invalid Data: "	+ element["chartData"].Invalid_ID_Count;
 	var containsInvalid = false;
