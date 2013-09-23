@@ -269,8 +269,22 @@ function drawBigChart(pid)  {
 	.enter()
 	.append("text")
 	.text(function(d) {
-			if (d.Value.length > 11) {
-				d.Value = d.Value.substring(0, 10) + "..";
+		// TO CHECK FOR String
+			if (xLabel == "Date")
+				{
+					if (d.Value.length > 21)
+					{
+			
+						d.Value = d.Value.substring(0, 20) + "..";
+					}
+				}
+			else
+			{
+				if (d.Value.length > 9)
+				{
+		
+					d.Value = d.Value.substring(0, 8) + "..";
+				}
 			}
 				return d.Value;
 			})
@@ -315,7 +329,10 @@ function drawBigChart(pid)  {
 		chartTitle = "Count of '" + colName + "' (Detected as " + xLabel + ")";
 	}
 	else {
+		
 		chartTitle = "Frequency in the range of '" + colName + "' (Detected as " + xLabel + ")";
+		if (element["chartData"].histogram_Colwidth != null )
+			chartTitle  += " Width of each column: " + element["chartData"].histogram_Colwidth
 	}
 	
 	//$("#bigChartTitle").text(chartTitle);
