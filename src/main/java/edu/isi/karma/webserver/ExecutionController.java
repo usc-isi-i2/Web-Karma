@@ -33,7 +33,6 @@ import edu.isi.karma.controller.command.CloseWorkspaceCommandFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.controller.command.CommandWithPreview;
 import edu.isi.karma.controller.command.FetchGraphsFromTripleStoreCommand;
 import edu.isi.karma.controller.command.FetchGraphsFromTripleStoreCommandFactory;
 import edu.isi.karma.controller.command.FetchPreferencesCommand;
@@ -166,6 +165,7 @@ import edu.isi.karma.controller.command.worksheet.TablePagerCommandFactory;
 import edu.isi.karma.controller.command.worksheet.TablePagerResizeCommand;
 import edu.isi.karma.controller.command.worksheet.TablePagerResizeCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.mvs.IPreviewable;
 import edu.isi.karma.view.VWorkspace;
 
 
@@ -361,8 +361,8 @@ public class ExecutionController {
 			try {
 				UpdateContainer updateContainer = null;
 				vWorkspace.getWorkspace().getCommandHistory().setCurrentCommand(command);
-				if(command instanceof CommandWithPreview){
-					updateContainer = ((CommandWithPreview)command).showPreview(vWorkspace.getWorkspace());
+				if(command instanceof IPreviewable){
+					updateContainer = ((IPreviewable)command).showPreview();
 				} else {
 					updateContainer = vWorkspace.getWorkspace().getCommandHistory().doCommand(command, vWorkspace.getWorkspace());
 				}

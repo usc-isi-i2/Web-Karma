@@ -20,10 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.importdata;
 
-import javax.servlet.http.HttpServletRequest;
-
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.CommandWithPreview;
 import edu.isi.karma.controller.update.DatabaseTablePreviewUpdate;
 import edu.isi.karma.controller.update.DatabaseTablesListUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
@@ -33,12 +30,15 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.database.DatabaseTableImport;
+import edu.isi.karma.mvs.IPreviewable;
+import edu.isi.karma.mvs.ImportCommand;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
+import javax.servlet.http.HttpServletRequest;
 
-public class ImportDatabaseTableCommand extends CommandWithPreview {
+public class ImportDatabaseTableCommand extends ImportCommand implements IPreviewable {
 	// Database Type
 	private AbstractJDBCUtil.DBType dbType;
 	
@@ -93,7 +93,7 @@ public class ImportDatabaseTableCommand extends CommandWithPreview {
 	}
 
 	@Override
-	public UpdateContainer showPreview(Workspace workspace)
+	public UpdateContainer showPreview()
 			throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		if(requestedInteractionType == InteractionType.getPreferencesValues) {
@@ -159,10 +159,6 @@ public class ImportDatabaseTableCommand extends CommandWithPreview {
 		return "";
 	}
 
-	@Override
-	public CommandType getCommandType() {
-		return CommandType.notUndoable;
-	}
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
@@ -194,10 +190,5 @@ public class ImportDatabaseTableCommand extends CommandWithPreview {
 		return c;
 	}
 
-	@Override
-	public UpdateContainer undoIt(Workspace workspace) {
-		// Nothing to do! This command can't be undone.
-		return null;
-	}
 
 }

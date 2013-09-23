@@ -32,8 +32,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.CommandWithPreview;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.mvs.IPreviewable;
 
 public class RequestController extends HttpServlet{
 
@@ -64,7 +64,7 @@ public class RequestController extends HttpServlet{
 					try {
 						
 						// Set the parameters if any changed after the user preview
-						((CommandWithPreview) currentCommand).handleUserActions(request);
+						((IPreviewable) currentCommand).handleUserActions(request);
 						
 						UpdateContainer updateContainer = ctrl.getvWorkspace().getWorkspace()
 						.getCommandHistory().doCommand(currentCommand, ctrl.getvWorkspace().getWorkspace());
@@ -77,7 +77,7 @@ public class RequestController extends HttpServlet{
 				} else
 				{
 					UpdateContainer updateContainer = 
-					((CommandWithPreview) currentCommand).handleUserActions(request);
+					((IPreviewable) currentCommand).handleUserActions(request);
 							updateContainer.applyUpdates(ctrl.getvWorkspace());
 				responseString =  updateContainer.generateJson(ctrl.getvWorkspace());
 				}

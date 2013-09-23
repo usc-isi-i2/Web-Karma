@@ -20,31 +20,28 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.importdata;
 
+import edu.isi.karma.mvs.ImportFileCommand;
 import java.io.File;
-import java.io.FileReader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.json.JsonImport;
+import edu.isi.karma.mvs.Import;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.util.JSONUtil;
 
-public class ImportJSONFileCommand extends Command {
-	private File jsonFile;
-	
+public class ImportJSONFileCommand extends ImportFileCommand {
+
 	private static Logger logger = LoggerFactory.getLogger(ImportJSONFileCommand.class);
 
 	public ImportJSONFileCommand(String id, File file) {
-		super(id);
-		this.jsonFile = file;
+		super(id, file);
 	}
 
 	@Override
@@ -60,23 +57,16 @@ public class ImportJSONFileCommand extends Command {
 	@Override
 	public String getDescription() {
 		if (isExecuted()) {
-			return jsonFile.getName() + " imported";
+			return getFile().getName() + " imported";
 		}
 		return "";
-	}
-
-	@Override
-	public CommandType getCommandType() {
-		return CommandType.notUndoable;
 	}
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		try {
-			FileReader reader = new FileReader(jsonFile);
-			Object json = JSONUtil.createJson(reader);
-			JsonImport imp = new JsonImport(json, jsonFile.getName(), workspace);
+			Import imp = new JsonImport(getFile(), getFile().getName(), workspace);
 			
 			Worksheet wsht = imp.generateWorksheet();
 			c.add(new WorksheetListUpdate());
@@ -87,11 +77,5 @@ public class ImportJSONFileCommand extends Command {
 					"Error occured while importing JSON File."));
 		} 
 		return c;
-	}
-
-	@Override
-	public UpdateContainer undoIt(Workspace workspace) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

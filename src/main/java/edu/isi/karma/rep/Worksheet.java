@@ -32,6 +32,9 @@ import edu.isi.karma.rep.metadata.MetadataContainer;
  * 
  */
 public class Worksheet extends RepEntity {
+    
+        //MVS: add revision worksheet
+        private Worksheet revision = null;
 
 	private HTable headers;
 	private Table dataTable;
@@ -46,6 +49,13 @@ public class Worksheet extends RepEntity {
 		pw.println("Worksheet/" + id);
 		headers.prettyPrint(prefix + "  ", pw, factory);
 		dataTable.prettyPrint(prefix + "  ", pw, factory);
+	}
+        
+        Worksheet(String id, HTable headers, Table dataTable, Worksheet revision) {
+		super(id);
+		this.headers = headers;
+		this.dataTable = dataTable;
+                this.revision = revision;
 	}
 
 	Worksheet(String id, HTable headers, Table dataTable) {

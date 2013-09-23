@@ -36,7 +36,7 @@ public class ImportCSVFileCommandFactory extends CommandFactory{
 			Workspace workspace) {
 		
 		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
-		return new ImportCSVFileCommand(getNewId(workspace), uploadedFile, workspace);
+		return new ImportCSVFileCommand(getNewId(workspace), uploadedFile);
 	}
 
 }
