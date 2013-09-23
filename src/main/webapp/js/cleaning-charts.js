@@ -50,7 +50,10 @@ function drawChart(element)  {
 	//console.log("dataArray:-" + dataArray); 
 	var xLabel = element["chartData"].xLabel;
 	var yLabel = element["chartData"].yLabel;
-	var tooltip = "Data Type Detected: " + element["chartData"].Category  + "\nTotal Data: " + element["chartData"].Total_ID_Count + 
+	/*var tooltip = "Data Type Detected: " + element["chartData"].Category  + "\nTotal Data: " + element["chartData"].Total_ID_Count + 
+	"\nTotal Valid Data: " + element["chartData"].Valid_ID_Count
+	+ "\nTotal Invalid Data: "	+ element["chartData"].Invalid_ID_Count;*/
+	var tooltip = "Data Type Detected: " + element["chartData"].xLabel  + "\nTotal Data: " + element["chartData"].Total_ID_Count + 
 	"\nTotal Valid Data: " + element["chartData"].Valid_ID_Count
 	+ "\nTotal Invalid Data: "	+ element["chartData"].Invalid_ID_Count;
 	var containsInvalid = false;
@@ -266,8 +269,22 @@ function drawBigChart(pid)  {
 	.enter()
 	.append("text")
 	.text(function(d) {
-			if (d.Value.length > 9) {
-				d.Value = d.Value.substring(0, 7) + "..";
+		// TO CHECK FOR String
+			if (xLabel == "Date")
+				{
+					if (d.Value.length > 21)
+					{
+			
+						d.Value = d.Value.substring(0, 20) + "..";
+					}
+				}
+			else
+			{
+				if (d.Value.length > 9)
+				{
+		
+					d.Value = d.Value.substring(0, 8) + "..";
+				}
 			}
 				return d.Value;
 			})
@@ -312,7 +329,10 @@ function drawBigChart(pid)  {
 		chartTitle = "Count of '" + colName + "' (Detected as " + xLabel + ")";
 	}
 	else {
+		
 		chartTitle = "Frequency in the range of '" + colName + "' (Detected as " + xLabel + ")";
+		if (element["chartData"].histogram_Colwidth != null )
+			chartTitle  += " Width of each column: " + element["chartData"].histogram_Colwidth
 	}
 	
 	//$("#bigChartTitle").text(chartTitle);
