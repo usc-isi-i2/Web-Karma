@@ -269,8 +269,8 @@ function drawBigChart(pid)  {
 	.enter()
 	.append("text")
 	.text(function(d) {
-			if (d.Value.length > 9) {
-				d.Value = d.Value.substring(0, 7) + "..";
+			if (d.Value.length > 11) {
+				d.Value = d.Value.substring(0, 10) + "..";
 			}
 				return d.Value;
 			})
