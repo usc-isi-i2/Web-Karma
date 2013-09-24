@@ -18,25 +18,25 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.view.alignmentHeadings;
 
-import java.util.HashMap;
+package edu.isi.karma.controller.command.worksheet;
 
-import edu.isi.karma.rep.hierarchicalheadings.ColorKeyTranslator;
+import javax.servlet.http.HttpServletRequest;
 
-public class AlignmentColorKeyTranslator implements ColorKeyTranslator {
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.rep.Workspace;
 
-	private static final HashMap<Integer, String> depthCssMap = new HashMap<Integer, String>();
-	static {
-		depthCssMap.put(0, "topLevelAlignmentTableCell");
-		depthCssMap.put(1, "AlignmentTable01cell");
-		depthCssMap.put(2, "AlignmentTable02cell");
-		depthCssMap.put(3, "AlignmentTable03cell");
-		depthCssMap.put(4, "AlignmentTable04cell");
+public class LoadAdditionalWorksheetRowsCommandFactory extends CommandFactory {
+	private enum Arguments {
+		worksheetId, tableId
 	}
 	
-	public String getCssTag(String colorKey, int depth) {
-		return depthCssMap.get(depth%5);
+	@Override
+	public Command createCommand(HttpServletRequest request, Workspace workspace) {
+		String tableId = request.getParameter(Arguments.tableId.name());
+		String vWorksheetId = request.getParameter(Arguments.worksheetId.name());
+		return new LoadAdditionalWorksheetRowsCommand(getNewId(workspace), tableId, vWorksheetId);
 	}
 
 }

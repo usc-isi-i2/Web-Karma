@@ -33,13 +33,8 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.hierarchicalheadings.ColspanMap;
-import edu.isi.karma.rep.hierarchicalheadings.ColumnCoordinateSet;
-import edu.isi.karma.rep.hierarchicalheadings.HHTree;
-import edu.isi.karma.rep.hierarchicalheadings.LeafColumnIndexMap;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
-import edu.isi.karma.view.tableheadings.VColumnHeader;
 
 /**
  * @author szekely
@@ -100,12 +95,6 @@ public class ViewFactory {
 			VWorkspace vWorkspace) {
 		VWorksheet vw = new VWorksheet(vWorksheetId, worksheet, columns, vWorkspace);
 		vWorksheets.put(vWorksheetId, vw);
-		
-		// Update the coordinate set
-		HHTree hHtree = new HHTree();
-		hHtree.constructHHTree(vw.getvHeaderForest());
-		vw.setColumnCoordinatesSet(new ColumnCoordinateSet(hHtree, new ColspanMap(hHtree)));
-		vw.setLeafColIndexMap(new LeafColumnIndexMap(hHtree));
 	}
 
 	public Collection<VWorksheet> getVWorksheets()

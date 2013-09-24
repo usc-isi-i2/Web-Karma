@@ -18,27 +18,55 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
+
 package edu.isi.karma.controller.command.worksheet;
 
-import javax.servlet.http.HttpServletRequest;
-
 import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.update.AdditionalRowsUpdate;
+import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
 
-public class TablePagerCommandFactory extends CommandFactory {
-
-	public enum Arguments {
-		worksheetId, direction, tableId
-	}
+public class LoadAdditionalWorksheetRowsCommand extends Command {
+	private final String worksheetId;
+	private final String tableId;
 	
+	protected LoadAdditionalWorksheetRowsCommand(String id, String tableId, String worksheetId) {
+		super(id);
+		this.tableId = tableId;
+		this.worksheetId = worksheetId;
+	}
+
 	@Override
-	public Command createCommand(HttpServletRequest request,
-			Workspace workspace) {
-		String tableId = request.getParameter(Arguments.tableId.name());
-		String direction =request.getParameter(Arguments.direction.name());
-		String worksheetId =request.getParameter(Arguments.worksheetId.name());
-		return new TablePagerCommand(getNewId(workspace), worksheetId, tableId, direction);
+	public String getCommandName() {
+		return this.getClass().getSimpleName();
+	}
+
+	@Override
+	public String getTitle() {
+		return "Load Additional Worksheet Rows";
+	}
+
+	@Override
+	public String getDescription() {
+		return "";
+	}
+
+	@Override
+	public CommandType getCommandType() {
+		return CommandType.notInHistory;
+	}
+
+	@Override
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		return new UpdateContainer(new AdditionalRowsUpdate(worksheetId, tableId));
+		
+	}
+
+	@Override
+	public UpdateContainer undoIt(Workspace workspace) {
+		// Not required
+		return null;
 	}
 
 }

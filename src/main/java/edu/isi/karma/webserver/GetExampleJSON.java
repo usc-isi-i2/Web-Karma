@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -110,74 +111,22 @@ public class GetExampleJSON extends HttpServlet {
 			logger.info("No directory for preloading ontologies exists.");
 		}
 
-		//mariam
-		//File file = new File("../demofiles/usc_faculty.csv");
+		// Loading a CSV file in each workspace
+		File file = new File("./SampleData/CSV/Nation_Data.csv");
+		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
+		try {
+			imp.generateWorksheet();
+		} catch (KarmaException e) {
+			e.printStackTrace();
+		}
 		
-//		File file = new File("SampleData/CSV/PharmGKBPathways");
-//		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
-//		try {
-//			imp.generateWorksheet();
-//		} catch (KarmaException e) {
-//			e.printStackTrace();
-//		}
-		
-//		File file = new File("/Users/mohsen/Desktop/temp/karma issues/Shubham/artworks-list.xml");
-//		String fileContents = FileUtil.readFileContentsToString(file);
-//		JSONObject json;
-//		try {
-//			json = XML.toJSONObject(fileContents);
-//			JsonImport imp = new JsonImport(json, file.getName(), workspace);
-//			imp.generateWorksheet();
-//		} catch (JSONException e1) {
-//			e1.printStackTrace();
-//		}
-
-//		SampleDataFactory.createFromJsonTextFile(workspace,"./SampleData/JSON/Events.json");
+		// Loading a JSON file in each workspace
+//		SampleDataFactory.createFromJsonTextFile(workspace,"./SampleData/JSON/Hierarchical_Dataset.json");
 
 		// Initialize the Outlier tag
 		Tag outlierTag = new Tag(TagName.Outlier, Color.Red);
 		workspace.getTagsContainer().addTag(outlierTag);
 
-		// SampleDataFactory.createSample1small(workspace);
-//		SampleDataFactory.createSample1(workspace);
-		// SampleDataFactory.createSampleJsonWithNestedTable2(false/* true: 2
-		// rows */,
-		// vwsp.getWorkspace());
-		// //SampleDataFactory.createFlatWorksheet(workspace, 10000, 6);
-		// SampleDataFactory.createFlatWorksheet(workspace, 2, 2);
-		// //SampleDataFactory.createFromJsonTextFile(workspace,
-		// "samplejson-1.txt");
-		// SampleDataFactory.createJsonWithFunnyCharacters(workspace);
-		// SampleDataFactory.createSampleJson(workspace, 3);
-		// SampleDataFactory.createSampleJsonWithEmptyNestedTable1(workspace);
-		// SampleDataFactory.createSampleJsonWithEmptyNestedTable2(workspace);
-		// SampleDataFactory.createSampleJsonWithEmptyNestedTable3(workspace);
-		// SampleDataFactory.createSampleJsonWithEmptyNestedTable4(workspace);
-		// SampleDataFactory.createUnitTest1(workspace);
-		// SampleDataFactory.createUnitTest2(workspace);
-		// SampleDataFactory.createUnitTest3(workspace);
-		// SampleDataFactory.createUnitTest4(workspace);
-		// SampleDataFactory.createUnitTest5(workspace);
-		// SampleDataFactory.createUnitTest6(workspace);
-		// // SampleDataFactory.createFromJsonTextFile(workspace,
-		// "unit-test-json.json");
-		// // SampleDataFactory.createFromJsonTextFile(workspace,
-		// "testUnitTest1.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace,
-		// "testUnitTest2.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace,
-		// "testUnitTest4.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace,
-		// "testUnitTest5.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace,
-		// "testUnitTest6.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace,
-		// "testSampleJsonWithEmptyNestedTable1.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace,
-		// "createSampleJsonWithNestedTable2.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace, "f6.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace,
-		// "createSampleJsonWithNestedTable2_VD.json");
 		// Put all created worksheet models in the view.
 
 		UpdateContainer c = new UpdateContainer();

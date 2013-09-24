@@ -133,17 +133,17 @@ function styleAndAssignHandlersToModelingVizElements() {
 
 function displayAlignmentTree_ForceKarmaLayout(json) {
     var vworksheetId = json["worksheetId"];
-    var showHideDiv = $("div#showHideSpace_"+vworksheetId);
-    var tableLeftOffset = $("table#"+vworksheetId).offset().left;
+    var mainWorksheetDiv = $("div#"+vworksheetId);
+    var tableLeftOffset = mainWorksheetDiv.offset().left;
     
     var w = 0;
     var levelHeight = 50;
-    if($(showHideDiv).data("svgVis") != null) {
+    if($(mainWorksheetDiv).data("svgVis") != null) {
         w = $("div#svgDiv_"+vworksheetId).width();
         $("div#svgDiv_"+vworksheetId).remove();
     }
     
-    $("<div>").attr("id","svgDiv_"+vworksheetId).insertBefore('table#'+vworksheetId);
+    $("<div>").attr("id","svgDiv_"+vworksheetId).addClass("svg-model").insertBefore('div#'+vworksheetId + " > div.table-container");
     
     var h = 0;
     // if(json["maxTreeHeight"] == 0)
@@ -160,8 +160,8 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     $(svg).data("alignmentId", json["alignmentId"]);
     $(svg).data("worksheetId", json["worksheetId"]);
     
-    $(showHideDiv).data("svgVis", svg);
-    $(showHideDiv).data("forceLayoutObject", force);
+    $(mainWorksheetDiv).data("svgVis", svg);
+    $(mainWorksheetDiv).data("forceLayoutObject", force);
     
     $.each(json["nodes"], function(index, node){
         node["fixed"] = true;
@@ -171,6 +171,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         var extremeRightX = Number.MIN_VALUE;
         $.each(hNodeList, function(index2, hNode){
             var hNodeTD = $("td#"+hNode);
+
             if(hNodeTD != null) {
                 var leftX = $(hNodeTD).offset().left - tableLeftOffset;
                 var rightX = $(hNodeTD).offset().left - tableLeftOffset + $(hNodeTD).width();
@@ -180,8 +181,9 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                     extremeRightX = rightX;
             }
         });
-        
-        var width = extremeRightX - extremeLeftX;
+
+        // Add 18 to account for the padding in cells
+        var width = extremeRightX - extremeLeftX + 18;
         node["width"] = width;
         node["y"] = h - ((node["height"] * levelHeight));
         if(node["nodeType"] == "ColumnNode" || node["nodeType"] == "Unassigned")
@@ -585,7 +587,7 @@ function changeSemanticType_d3(d, vis, event) {
     var tdTag = $("td#"+d["hNodeId"]); 
     var typeJsonObject = $(tdTag).data("typesJsonObject");
     optionsDiv.data("currentNodeId",typeJsonObject["HNodeId"]);
-    optionsDiv.data("worksheetId", $("td.columnHeadingCell#" + d["hNodeId"]).parents("table.WorksheetTable").attr("id"))
+    optionsDiv.data("worksheetId", tdTag.parents("div.Worksheet").attr("id"))
     $("table#currentSemanticTypesTable tr.semTypeRow",optionsDiv).remove();
     $("table#currentSemanticTypesTable tr.editRow",optionsDiv).remove();
     $("input#chooseClassKey").attr("checked", false);
@@ -674,7 +676,7 @@ function changeSemanticType_d3(d, vis, event) {
     });
     
     // Get the column name to show in dalog box
-    var columnName = $("div.ColumnHeadingNameDiv", tdTag).text();
+    var columnName = $("div.wk-header", tdTag).text();
     
     // Show the dialog box
     var positionArray = [event.clientX+20, event.clientY+10];
@@ -989,8 +991,6 @@ function submitInternalNodesLinksChange() {
 
     info["newEdges"] = newEdges;
     info["newInfo"] = JSON.stringify(newInfo);
-
-//    console.log(info);
 
     showLoading(optionsDiv.data("worksheetId"));
     var returned = $.ajax({

@@ -46,6 +46,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<link rel="stylesheet" type="text/css" href="./css/main.css" />
         <link rel="stylesheet" type="text/css" href="./css/pyTransform.css" />
         <link rel="stylesheet" type="text/css" href="./css/cleaningChart.css" />
+        <link rel="stylesheet/less" type="text/css" href="./css/styles-03d-fixed-pixel.less" />
 
 		<!-- Third Party JavaScript files		 -->
 		<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
@@ -63,12 +64,14 @@ and related projects, please see: http://www.isi.edu/integration
 		<script type="text/javascript" src="js/jquery.cookie.js"></script>
 		<script type="text/javascript" src="js/d3.v2.min.js"></script>
 		<script src="js/jquery.iframe-transport.js"></script>
-        <script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/ace.js" type="text/javascript" charset="utf-8"></script>
 
 		<script src="js/jquery.fileupload.js"></script>
 		<script src="js/jquery.fileupload-ui.js"></script>
 		<script src="js/jquery.fileupload-jui.js"></script>
 		<script src="js/locale.js"></script>
+        <script type="text/javascript" src="js/less-1.4.1.min.js"></script>
+        <script type="text/javascript" src="js/modernizr.custom.59953.js"></script>
 
 		<!-- Home grown JavaScript files -->
 		<script type="text/javascript" src="js/table_manipulation.js"></script>
@@ -233,78 +236,6 @@ and related projects, please see: http://www.isi.edu/integration
 				// When the user changes header line index
 				$('.CSVImportOption').change(function() {
 					CSVImportOptionsChanged("preview");
-				});
-
-				// Function responsible for scrolling the headers when the user scrolls in the window
-				var timer = null;
-				$(window).scroll(function() {
-					if(timer !== null) {
-						clearTimeout(timer);
-					}
-					timer = setTimeout(function() {
-
-						// Scroll the command history
-						$("div#commandHistory").stop().animate({
-							"marginTop" : ($(window).scrollTop()) + "px"
-						}, "fast");
-
-						// Scroll the table headers if required
-						var scroll = $(window).scrollTop();
-						var x = 0 - $(this).scrollLeft();
-
-						$.each($("table.WorksheetTable"), function(index, tableDivElement) {
-							var anchor_top = $(tableDivElement).offset().top;
-							var tableID = $(this).attr("id");
-							var anchor_bottom = $("div#" + tableID + "bottomAnchor").offset().top;
-
-							if(scroll > anchor_bottom)
-								return true;
-
-							if(scroll > anchor_top && scroll < (anchor_bottom - $("table#" + tableID + " thead").height() - $("div#topLevelpagerOptions" + tableID).height())) {
-								var cloneTable = $("table#HeaderScrollPanel");
-
-								if(cloneTable.length == 0) {
-									cloneTable = $("<table>").attr("id", "HeaderScrollPanel");
-								}
-
-								if(cloneTable.data("currentTable") == tableID) {
-									cloneTable.css({
-										position : 'fixed',
-										top : 0,
-										left : 280 + x
-									});
-									return false;
-								} else {
-									$("table#HeaderScrollPanel tr").remove();
-									var theadClone = $("table#" + tableID + " thead").clone();
-									cloneTable.append(theadClone);
-									cloneTable.css({
-										position : 'fixed',
-										top : 0,
-										left : 280 + x
-									});
-
-									$.each($("table#" + tableID + " thead tr"), function(trIndex, originalRow) {
-										var dupRow = $("thead tr", cloneTable).get(trIndex);
-										$.each($("td", $(originalRow)), function(tdIndex, originalTD) {
-											var dupTD = $("td", $(dupRow)).get(tdIndex);
-											$(dupTD).width($(originalTD).width());
-										});
-									});
-
-									cloneTable.data("currentTable", tableID);
-
-									cloneTable.width($("table#" + tableID).width());
-									$("div#ScrollHeadersPlaceholder").append(cloneTable);
-								}
-								return false;
-							} else {
-								$("table#HeaderScrollPanel").remove();
-							}
-
-						});
-
-					}, 100);
 				});
 
 				// Clear the workspace when closing the window

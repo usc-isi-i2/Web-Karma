@@ -46,8 +46,8 @@ public class WorksheetUpdateFactory {
 	
 	private static void createWorksheetHierarchicalUpdates(String worksheetId,
 			UpdateContainer c) {
-		c.add(new WorksheetHierarchicalHeadersUpdate(worksheetId));
-		c.add(new WorksheetHierarchicalDataUpdate(worksheetId));
+		c.add(new WorksheetHeadersUpdate(worksheetId));
+		c.add(new WorksheetDataUpdate(worksheetId));
 	}
 	public static UpdateContainer createRegenerateWorksheetUpdates(String worksheetId) {
 		UpdateContainer c = new UpdateContainer();

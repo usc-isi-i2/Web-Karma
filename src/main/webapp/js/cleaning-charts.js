@@ -3,7 +3,9 @@ function showChartButtonHandler() {
     var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
     var hNodeId = columnHeadingMenu.data("parentCellId");
 
-    var worksheetId = $("td#" + hNodeId).parents("table.WorksheetTable").attr("id");
+
+    var worksheetId = $("td#" + hNodeId).parents("div.Worksheet").attr("id");
+
 
     var info = new Object();
     var newInfo = [];   // for input parameters
@@ -32,12 +34,15 @@ function showChartButtonHandler() {
 }
 
 function drawChart(element)  {
+
 	var divId = "#" + element["hNodeId"];
 	Window.cleaningStore[element["hNodeId"]] = element;
 	var margin = {top: 0, right: 0, bottom: 0, left: 0},
-	 w = 100 - margin.left - margin.right,
+//	 w = 100 - margin.left - margin.right,
+        w = $(divId).width(),
 	h = 30 - margin.top - margin.bottom;
-	
+
+
 	var barPadding = 5;
 	var yaxispadding = 10;
 	var xPadding = 10;
