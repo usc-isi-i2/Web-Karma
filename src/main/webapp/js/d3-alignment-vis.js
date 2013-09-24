@@ -132,18 +132,18 @@ function styleAndAssignHandlersToModelingVizElements() {
 }
 
 function displayAlignmentTree_ForceKarmaLayout(json) {
-    var vworksheetId = json["worksheetId"];
-    var mainWorksheetDiv = $("div#"+vworksheetId);
+    var worksheetId = json["worksheetId"];
+    var mainWorksheetDiv = $("div#"+worksheetId);
     var tableLeftOffset = mainWorksheetDiv.offset().left;
     
     var w = 0;
     var levelHeight = 50;
     if($(mainWorksheetDiv).data("svgVis") != null) {
-        w = $("div#svgDiv_"+vworksheetId).width();
-        $("div#svgDiv_"+vworksheetId).remove();
+        w = $("div#svgDiv_"+worksheetId).width();
+        $("div#svgDiv_"+worksheetId).remove();
     }
     
-    $("<div>").attr("id","svgDiv_"+vworksheetId).addClass("svg-model").insertBefore('div#'+vworksheetId + " > div.table-container");
+    $("<div>").attr("id","svgDiv_"+worksheetId).addClass("svg-model").insertBefore('div#'+worksheetId + " > div.table-container");
     
     var h = 0;
     // if(json["maxTreeHeight"] == 0)
@@ -151,9 +151,9 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     // else
         h = levelHeight * (json["maxTreeHeight"] + 0.4);
     if(w == 0)
-        w = $("div#"+vworksheetId + "TableDiv").width();
+        w = $("div#"+worksheetId + "TableDiv").width();
     
-    var svg = d3.select("div#svgDiv_"+vworksheetId).append("svg:svg")
+    var svg = d3.select("div#svgDiv_"+worksheetId).append("svg:svg")
         .attr("width", w)
         .attr("height", h);
         
@@ -266,9 +266,9 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         })
         .attr("class", function(d) {
             if(d.id != "FakeRootLink")
-                return "LinkLabel "+vworksheetId + " " + d.linkStatus;
+                return "LinkLabel "+worksheetId + " " + d.linkStatus;
             else
-                return "LinkLabel FakeRootLink "+vworksheetId;
+                return "LinkLabel FakeRootLink "+worksheetId;
         })
         .attr("x", function(d) {
             if(d.source.y > d.target.y)
@@ -357,7 +357,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .attr("rx", 6)
         .attr("class", function(d){
             if(d.nodeType != "ColumnNode" && d.nodeType != "Unassigned" && d.nodeType != "FakeRoot")
-                return vworksheetId;
+                return worksheetId;
         })
         .attr("y", function(d){
             if(d.nodeType == "ColumnNode" || d.nodeType == "Unassigned" || d.nodeType == "FakeRoot") {
@@ -424,7 +424,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             if(d["nodeType"] == "InternalNode") {
                 var menu = $("div#modelingClassDropDownMenu");
                 menu.data("nodeId", d.id);
-                menu.data("worksheetId", vworksheetId);
+                menu.data("worksheetId", worksheetId);
                 menu.css({"position":"absolute",
                     "top":$(this).offset().top + 5,
                     "left": $(this).offset().left + $(this).width()/2 - $(menu).width()/2}).show();
@@ -437,7 +437,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         });
 
     /*** Check for collisions between labels and rectangles ***/
-    d3.selectAll("text.LinkLabel." + vworksheetId)
+    d3.selectAll("text.LinkLabel." + worksheetId)
         .sort(comparator)
         .each(function(d1,i1) {
             // console.log("^^^^^^^^^^^^^^^^^^^^^^^" + d1.label)
@@ -447,7 +447,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             var height1 = this.getBBox().height;
             
             var cur1 = $(this);
-            d3.selectAll("rect." + vworksheetId).each(function(d2,i2){
+            d3.selectAll("rect." + worksheetId).each(function(d2,i2){
                 var x2 = d2.px + this.getBBox().x;
                 var y2 = d2.py + this.getBBox().y;
                 var width2 = this.getBBox().width;
@@ -476,7 +476,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         
     /*** Check for collisions between labels ***/
     var flag = 0;
-    d3.selectAll("text.LinkLabel." + vworksheetId)
+    d3.selectAll("text.LinkLabel." + worksheetId)
         .sort(comparator)
         .each(function(d1,i1) {
             var x1 = this.getBBox().x;
@@ -485,7 +485,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             var height1 = this.getBBox().height;
             var cur1 = $(this);
             // console.log("^^^^^^^^^^^^");
-            d3.selectAll("text.LinkLabel." + vworksheetId)
+            d3.selectAll("text.LinkLabel." + worksheetId)
                .sort(comparator)
                .each(function(d2,i2) {
                    var x2 = this.getBBox().x;
@@ -549,7 +549,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     $(window).resize(function() {
          waitForFinalEvent(function(){
             displayAlignmentTree_ForceKarmaLayout(json);
-         }, 500, vworksheetId);
+         }, 500, worksheetId);
     });
 }
 

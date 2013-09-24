@@ -42,6 +42,8 @@ function drawChart(element)  {
         w = $(divId).width(),
 	h = 30 - margin.top - margin.bottom;
 
+    // Check w for maximum width
+    w = (w > 150) ? 150 : w;
 
 	var barPadding = 5;
 	var yaxispadding = 10;

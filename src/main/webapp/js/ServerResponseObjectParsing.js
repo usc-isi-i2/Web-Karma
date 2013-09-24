@@ -47,7 +47,6 @@ function parse(data) {
         data["elements"].push(cleaningUpdate);
     }
 
-
     // Loop through each update from the server and take required action for the GUI
     $.each(data["elements"], function(i, element) {
         if(element["updateType"] == "WorksheetListUpdate") {
@@ -168,20 +167,21 @@ function parse(data) {
             if (tableHeaderContainer.length == 0) {
                 tableHeaderContainer = $("<div>").addClass("table-header-container");
                 tableContainer.append(tableHeaderContainer);
-            } else {
-                // Empty all the contents on the existing header container
-                tableHeaderContainer.empty();
             }
 
             var headersTable = $("table.wk-table", tableHeaderContainer);
             if (headersTable.length == 0) {
                 headersTable = $("<table>").addClass("wk-table htable-odd");
                 tableHeaderContainer.append(headersTable);
+            } else {
+                $("tr", headersTable).addClass("deleteMe");
             }
 
             var colWidths = addColumnHeadersRecurse(element["columns"], headersTable, true);
-
             var stylesheet = document.styleSheets[0];
+
+            // Remove the previous rows if any
+            $("tr.deleteMe", headersTable).remove();
 
             $.each(colWidths, function(index2, colWidth){
                 var selector = "." + colWidth.columnClass;
@@ -356,7 +356,6 @@ function parse(data) {
         }
         else if(element["updateType"] == "PublishCSVUpdate") {
             $("a.CSVDownloadLink", titleDiv).remove();
-            console.log("test");
             var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
             // Remove existing link if any
             hideLoading(element["worksheetId"]);
@@ -392,7 +391,6 @@ function parse(data) {
         }
         else if(element["updateType"] == "PublishSpatialDataUpdate") {
             $("a.SpatialDataDownloadLink", titleDiv).remove();
-            console.log("test");
             var titleDiv = $("div#" + element["worksheetId"] + " div.WorksheetTitleDiv");
             // Remove existing link if any
             hideLoading(element["worksheetId"]);
@@ -414,7 +412,6 @@ function parse(data) {
                 errorWindow.empty();
 
                 $.each(errorArr, function(index, errorMessage){
-                    console.log(errorMessage);
                     errorWindow.append("<b>Error # " + (index+1) + "</b><br>");
                     errorWindow.append("<b>Description:</b> " + errorMessage.title + "<br>");
                     errorWindow.append("<b>Reason:</b> " + errorMessage.description + "<br>");
@@ -464,8 +461,9 @@ function parse(data) {
             $.sticky(element["Info"]);
         }
         else if(element["updateType"] == "SVGAlignmentUpdate_ForceKarmaLayout") {
-            displayAlignmentTree_ForceKarmaLayout(element);
             // In d3-alignment-vis.js
+            displayAlignmentTree_ForceKarmaLayout(element);
+
         }
         else if(element["updateType"] == "KarmaInfo") {
             $.sticky(element["Info"]);
@@ -533,6 +531,7 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
 
     var columnWidths = [];
     $.each (columns, function (index, column) {
+
         var td = $("<td>").addClass("wk-cell").attr("id", column.hNodeId);
         var headerDiv = $("<div>").addClass(column["columnClass"]);
 

@@ -34,7 +34,7 @@ public class WorksheetUpdateFactory {
 	}
 	private static void createWorksheetHierarchicalAndCleaningResultsUpdates(
 			String worksheetId, UpdateContainer c) {
-		c.add(new WorksheetCleaningUpdate(worksheetId, false));
+		c.add(new WorksheetCleaningUpdate(worksheetId, true));
 		createWorksheetHierarchicalUpdates(worksheetId, c);
 	}
 	
