@@ -740,8 +740,8 @@ function showColumnOptionButton(event) {
     optionsDiv.data("parentCellId", tdTag.attr("id"));
 
     // Show it at the right place
-    var top = $(tdTag).offset().top + $(tdTag).height()-12;
-    var left = $(tdTag).offset().left + $(tdTag).width()-10;
+    var top = $(this).offset().top + $(this).height()-22;
+    var left = $(this).offset().left + $(this).width()-17;
     optionsDiv.css({"position":"absolute",
         "top":top,
         "left": left}).show();

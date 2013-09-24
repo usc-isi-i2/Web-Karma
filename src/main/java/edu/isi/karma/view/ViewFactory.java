@@ -51,18 +51,8 @@ public class ViewFactory {
 
 	private Map<String, VWorksheet> vWorksheets = new HashMap<String, VWorksheet>();
 
-	/**
-	 * Maps table Ids to CSS tags. By putting it here the same table type will
-	 * have the same color in all worksheets.
-	 */
-	private final VTableCssTags tableCssTags = new VTableCssTags();
-
 	private String getId(String prefix) {
 		return prefix + (nextId++);
-	}
-
-	public VTableCssTags getTableCssTags() {
-		return tableCssTags;
 	}
 
 	VColumnHeader createVColumnHeader(HNodePath path,
@@ -78,7 +68,7 @@ public class ViewFactory {
 							preferences
 									.getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader));
 		}
-		tableCssTags.registerTablesInPath(path);
+//		tableCssTags.registerTablesInPath(path);
 		return new VColumnHeader(path.toString(), columnNameFull,
 				columnNameShort);
 	}

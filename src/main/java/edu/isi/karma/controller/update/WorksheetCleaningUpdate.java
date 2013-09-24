@@ -47,8 +47,9 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class WorksheetCleaningUpdate extends
 		AbstractUpdate {
-	private VWorksheet		vWorksheet;
-	private boolean			forceUpdates;
+	
+	private String	worksheetId;
+	private boolean	forceUpdates;
 
 	private static Logger logger = LoggerFactory.getLogger(
 			WorksheetCleaningUpdate.class);
@@ -60,14 +61,15 @@ public class WorksheetCleaningUpdate extends
 		worksheetId, hNodeId, worksheetChartData, chartData, id, value, json, Preferred_Length
 	}
 	
-	public WorksheetCleaningUpdate(VWorksheet vWorksheet, boolean forceUpdates) {
-		this.vWorksheet = vWorksheet;
+	public WorksheetCleaningUpdate(String worksheetId, boolean forceUpdates) {
+		this.worksheetId = worksheetId;
 		this.forceUpdates = forceUpdates;
 	}
 
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
+		VWorksheet vWorksheet = vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
 		Worksheet worksheet = vWorksheet.getWorksheet();
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
 		ColumnMetadata colMetadata = worksheet.getMetadataContainer().getColumnMetadata();
