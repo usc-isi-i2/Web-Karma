@@ -101,12 +101,12 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
    <servlet>
-    <servlet-name>exampleJSON</servlet-name>
-    <servlet-class>edu.isi.karma.webserver.GetExampleJSON</servlet-class>
+    <servlet-name>KarmaServlet</servlet-name>
+    <servlet-class>edu.isi.karma.webserver.KarmaServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>exampleJSON</servlet-name>
-    <url-pattern>/getExampleNestedJSON</url-pattern>
+    <servlet-name>KarmaServlet</servlet-name>
+    <url-pattern>/KarmaServlet</url-pattern>
   </servlet-mapping>
   
   <servlet>

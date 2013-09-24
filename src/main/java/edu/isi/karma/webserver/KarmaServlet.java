@@ -47,14 +47,14 @@ import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class GetExampleJSON extends HttpServlet {
+public class KarmaServlet extends HttpServlet {
 	private enum Arguments {
 		hasPreferenceId, workspacePreferencesId
 	}
 
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = LoggerFactory.getLogger(GetExampleJSON.class);
+	private static Logger logger = LoggerFactory.getLogger(KarmaServlet.class);
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
@@ -112,13 +112,13 @@ public class GetExampleJSON extends HttpServlet {
 		}
 
 		// Loading a CSV file in each workspace
-		File file = new File("./SampleData/CSV/Nation_Data.csv");
-		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
-		try {
-			imp.generateWorksheet();
-		} catch (KarmaException e) {
-			e.printStackTrace();
-		}
+//		File file = new File("./SampleData/CSV/Nation_Data.csv");
+//		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
+//		try {
+//			imp.generateWorksheet();
+//		} catch (KarmaException e) {
+//			e.printStackTrace();
+//		}
 		
 		// Loading a JSON file in each workspace
 //		SampleDataFactory.createFromJsonTextFile(workspace,"./SampleData/JSON/Hierarchical_Dataset.json");
