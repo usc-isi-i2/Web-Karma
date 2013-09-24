@@ -40,7 +40,7 @@ import edu.isi.karma.view.ViewPreferences.ViewPreference;
 public class NodeChangedUpdate extends AbstractUpdate {
 
 	public enum JsonKeys {
-		worksheet, nodeId, newStatus, displayValue, fullValue, isTruncated
+		worksheet, nodeId, newStatus, displayValue, expandedValue
 	}
 	
 	private final String worksheetId;
@@ -68,18 +68,16 @@ public class NodeChangedUpdate extends AbstractUpdate {
 		pw.println(newPref + JSONUtil.json(JsonKeys.worksheet, worksheetId));
 		pw.println(newPref + JSONUtil.json(JsonKeys.nodeId, nodeId));
 		pw.println(newPref + JSONUtil.json(JsonKeys.newStatus, newStatus.getCodedStatus()));
-		pw.println(newPref + JSONUtil.json(JsonKeys.fullValue, newValue.asString()));
+		pw.println(newPref + JSONUtil.json(JsonKeys.expandedValue, newValue.asString()));
 		
 		String displayValueString = newValue.asString();
-		boolean isTruncated = false;
 		int maxValueLength = vWorkspace.getPreferences().getIntViewPreferenceValue(
 				ViewPreference.maxCharactersInCell);
 		if(displayValueString.length() > maxValueLength) {
 			displayValueString = JSONUtil.truncateCellValue(
 					displayValueString,maxValueLength);
-			isTruncated = true;
 		}
-		pw.println(newPref + JSONUtil.json(JsonKeys.isTruncated, isTruncated));
+		
 		pw.println(newPref + JSONUtil.jsonLast(JsonKeys.displayValue, displayValueString));
 		pw.println(prefix + "}");
 	}

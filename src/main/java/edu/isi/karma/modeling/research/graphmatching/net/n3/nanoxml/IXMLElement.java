@@ -29,9 +29,7 @@
 package edu.isi.karma.modeling.research.graphmatching.net.n3.nanoxml;
 
 
-import java.io.Serializable;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
 

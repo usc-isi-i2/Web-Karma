@@ -22,8 +22,8 @@ package edu.isi.karma.controller.command;
 
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 
 public class CloseWorkspaceCommand extends Command {
@@ -55,13 +55,13 @@ public class CloseWorkspaceCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		WorkspaceManager mgr = WorkspaceManager.getInstance();
 		// Remove it from the rep factory
 		mgr.removeWorkspace(workspaceId);
 		
 		// Remove any alignments from the AlignmentManager
-		AlignmentManager.Instance().removeWorkspaceAlignments(vWorkspace.getWorkspace().getId());
+		AlignmentManager.Instance().removeWorkspaceAlignments(workspace.getId());
 		
 		// Remove it from the workspace registry
 		WorkspaceRegistry.getInstance().deregister(workspaceId);
@@ -70,7 +70,7 @@ public class CloseWorkspaceCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// Not required
 		return null;
 	}

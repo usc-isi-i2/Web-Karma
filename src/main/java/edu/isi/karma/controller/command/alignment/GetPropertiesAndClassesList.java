@@ -18,6 +18,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
@@ -28,7 +29,7 @@ import edu.isi.karma.view.VWorkspace;
 
 public class GetPropertiesAndClassesList extends Command {
 
-	private final String vWorksheetId;
+	private final String worksheetId;
 	private static Logger logger = LoggerFactory.getLogger(GetPropertiesAndClassesList.class);
 
 	private enum JsonKeys {
@@ -39,9 +40,9 @@ public class GetPropertiesAndClassesList extends Command {
 		Class, Instance
 	}
 
-	public GetPropertiesAndClassesList(String id, String vWorksheetId) {
+	public GetPropertiesAndClassesList(String id, String worksheetId) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 	}
 
 	@Override
@@ -65,8 +66,8 @@ public class GetPropertiesAndClassesList extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		OntologyManager ontMgr = workspace.getOntologyManager();
 		JSONArray classesList = new JSONArray();
 		JSONArray classesMap = new JSONArray();
 		JSONArray propertiesList = new JSONArray();
@@ -80,7 +81,7 @@ public class GetPropertiesAndClassesList extends Command {
 
 		try {
 			/** Add all the class instances and property instances (existing links) **/
-			String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+			String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 			Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 			Set<String> steinerTreeNodeIds = new HashSet<String>();
 			if (alignment != null && !alignment.isEmpty()) {
@@ -180,7 +181,7 @@ public class GetPropertiesAndClassesList extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 

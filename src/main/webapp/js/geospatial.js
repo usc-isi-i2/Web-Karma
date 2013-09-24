@@ -12,7 +12,7 @@ function showMapViewForWorksheet() {
     if(state == "table") {
         var info = new Object();
         info["workspaceId"] = $.workspaceGlobalInformation.id;
-        info["vWorksheetId"] = worksheetId;
+        info["worksheetId"] = worksheetId;
         info["command"] = "PublishKMLLayerCommand";
         
         showLoading(worksheetId);

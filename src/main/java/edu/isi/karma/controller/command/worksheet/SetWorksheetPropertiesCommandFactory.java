@@ -30,34 +30,34 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class SetWorksheetPropertiesCommandFactory extends CommandFactory 
 	implements JSONInputCommandFactory {
 	private enum Arguments {
-		properties, vWorksheetId
+		properties, worksheetId
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
+			Workspace workspace) {
+		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String properties = request.getParameter(Arguments.properties.name());
 		
-		return new SetWorksheetPropertiesCommand(getNewId(vWorkspace), vWorksheetId, properties);
+		return new SetWorksheetPropertiesCommand(getNewId(workspace), worksheetId, properties);
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
+	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
-		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), 
+		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), 
 				inputJson);
 		String properties = HistoryJsonUtil.getStringValue(Arguments.properties.name(), 
 				inputJson);
 		
 		SetWorksheetPropertiesCommand cmd = new SetWorksheetPropertiesCommand(
-				getNewId(vWorkspace), vWorksheetId, properties);
+				getNewId(workspace), worksheetId, properties);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}

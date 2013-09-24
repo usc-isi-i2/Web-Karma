@@ -31,36 +31,36 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class ChangeInternalNodeLinksCommandFactory extends CommandFactory 
 	implements JSONInputCommandFactory{
 
 	private enum Arguments {
-		initialEdges, alignmentId, vWorksheetId, newEdges
+		initialEdges, alignmentId, worksheetId, newEdges
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 
 		return null;
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
+	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
-		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), 
+		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), 
 				inputJson);
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
-				vWorkspace.getWorkspace().getId(), vWorksheetId);
+				workspace.getId(), worksheetId);
 		JSONArray initialEdges = HistoryJsonUtil.getJSONArrayValue(Arguments.initialEdges.name(), 
 				inputJson);
 		JSONArray newEdges = HistoryJsonUtil.getJSONArrayValue(Arguments.newEdges.name(), inputJson);
 		
-		ChangeInternalNodeLinksCommand cmd = new ChangeInternalNodeLinksCommand(getNewId(vWorkspace)
-				, vWorksheetId, alignmentId, initialEdges, newEdges);
+		ChangeInternalNodeLinksCommand cmd = new ChangeInternalNodeLinksCommand(getNewId(workspace)
+				, worksheetId, alignmentId, initialEdges, newEdges);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}

@@ -84,7 +84,7 @@ public class DatabaseTablesListUpdate extends AbstractUpdate {
 			prefObject.put(JsonKeys.portnumber.name(), portnumber);
 			prefObject.put(JsonKeys.username.name(), username);
 			prefObject.put(JsonKeys.dBorSIDName.name(), dBorSIDName);
-			vWorkspace.getPreferences().setCommandPreferences(
+			vWorkspace.getWorkspace().getCommandPreferences().setCommandPreferences(
 					ImportDatabaseTableCommand.class.getSimpleName()+"Preferences", prefObject);
 
 			JSONStringer jsonStr = new JSONStringer();

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import org.apache.mahout.math.Arrays;
+import org.geotools.filter.expression.ThisPropertyAccessorFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -98,7 +99,8 @@ public class Test {
 					while (true) // repeat as no correct answer appears.
 					{
 						long checknumber = 1;
-						long iterAfterNoFatalError = 1;
+						long iterAfterNoFatalError = 0;
+						long isvisible = 0;
 						HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
 						Vector<String> resultString = new Vector<String>();
 						xHashMap = new HashMap<String, String[]>();
@@ -211,7 +213,11 @@ public class Test {
 									{
 										iterAfterNoFatalError ++; 
 										//check whether this record is has the longest or shortest result
-										
+										Boolean v = visible(xHashMap, ""+e);
+										if (v)
+										{
+											isvisible += 1;
+										}
 									}
 									break;
 								}
@@ -229,14 +235,14 @@ public class Test {
 									psProgSynthesis.learnspan,
 									psProgSynthesis.genspan, (t2 - t1),
 									examples.size(), examples,
-									psProgSynthesis.ruleNo,checknumber, pls.get(0).toString());
+									psProgSynthesis.ruleNo,checknumber,iterAfterNoFatalError, isvisible,pls.get(0).toString());
 							dCollection.addEntry(fileStat);
 						} else {
 							FileStat fileStat = new FileStat(f.getName(),
 									psProgSynthesis.learnspan,
 									psProgSynthesis.genspan, (t2 - t1),
 									examples.size(), examples,
-									psProgSynthesis.ruleNo,checknumber, pls.get(0).toString());
+									psProgSynthesis.ruleNo,checknumber,iterAfterNoFatalError,isvisible, pls.get(0).toString());
 							dCollection.addEntry(fileStat);
 							break;
 						}

@@ -27,9 +27,10 @@ function showHideRdfInfo() {
 			$("div#rdfStoreInfo").hide();
 		}
 }
+
 function testSparqlEndPoint(url) {
 	var info = new Object();
-	info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
+	info["worksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "TestSPARQLEndPointCommand";
 	info["tripleStoreUrl"] = url;
@@ -107,7 +108,7 @@ function publishRDFFunction(graphUri) {
 	$("div#confirmPublishRDFDialogBox").dialog("close");
 
 	var info = new Object();
-	info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
+	info["worksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["command"] = "PublishRDFCommand";
 	info["addInverseProperties"] = $("input#addInverseProperties").is(":checked");
@@ -132,13 +133,13 @@ function publishRDFFunction(graphUri) {
 
 function publishRDFToFile(info) {
 
-		showLoadingRDF(info["vWorksheetId"],"Saving to file...");
+		showLoadingRDF(info["worksheetId"],"Saving to file...");
 		returnFunc(info);
 }
 
 function publishRDFToStore(info) {
 
-		showLoadingRDF(info["vWorksheetId"],"Saving to RDF store...");
+		showLoadingRDF(info["worksheetId"],"Saving to RDF store...");
 		returnFunc(info);
 }
 
@@ -152,12 +153,12 @@ function returnFunc(info) {
 		   		function (xhr, textStatus) {
 		    		var json = $.parseJSON(xhr.responseText);
 		    		parse(json);
-		    		hideLoading(info["vWorksheetId"]);
+		    		hideLoading(info["worksheetId"]);
 			   	},
 			error :
 				function (xhr, textStatus) {
 		   			alert("Error occured while generating RDF!" + textStatus);
-		   			hideLoading(info["vWorksheetId"]);
+		   			hideLoading(info["worksheetId"]);
 			   	}
 		});
 }
@@ -277,7 +278,7 @@ function fetchGraphsFromTripleStore(url) {
 
 function getUniqueGraphUri(graphUriTobeValidated) {
 	var info = new Object();
-	info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
+	info["worksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
 	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["tripleStoreUrl"] = $("input#rdfSPAQRLEndPoint").val();
 	if(graphUriTobeValidated && graphUriTobeValidated != null) {

@@ -39,6 +39,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
@@ -47,7 +48,7 @@ import edu.isi.karma.view.VWorkspace;
 public class GetDomainsForDataPropertyCommand extends Command {
 
 	private final String dataPropertyURI;
-	private final String vWorksheetId;
+	private final String worksheetId;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(GetDomainsForDataPropertyCommand.class.getSimpleName());
@@ -56,10 +57,10 @@ public class GetDomainsForDataPropertyCommand extends Command {
 		updateType, URI, metadata, data, URIorId
 	}
 
-	public GetDomainsForDataPropertyCommand(String id, String uri, String vWorksheetId) {
+	public GetDomainsForDataPropertyCommand(String id, String uri, String worksheetId) {
 		super(id);
 		this.dataPropertyURI = uri;
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 	}
 
 	@Override
@@ -83,12 +84,12 @@ public class GetDomainsForDataPropertyCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		final OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		final OntologyManager ontMgr = workspace.getOntologyManager();
 		final HashSet<String> domains = ontMgr.getDomainsOfProperty(
 				dataPropertyURI, true);
 		final Alignment alignment = AlignmentManager.Instance().getAlignment(
-				vWorkspace.getWorkspace().getId(), vWorksheetId);
+				workspace.getId(), worksheetId);
 
 		// Show all the classes when none are present
 		if (domains == null || domains.size() == 0) {
@@ -155,7 +156,7 @@ public class GetDomainsForDataPropertyCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// Not required
 		return null;
 	}

@@ -153,6 +153,8 @@ import edu.isi.karma.controller.command.worksheet.EditCellCommand;
 import edu.isi.karma.controller.command.worksheet.EditCellCommandFactory;
 import edu.isi.karma.controller.command.worksheet.FetchExistingWorksheetPropertiesCommand;
 import edu.isi.karma.controller.command.worksheet.FetchExistingWorksheetPropertiesCommandFactory;
+import edu.isi.karma.controller.command.worksheet.LoadAdditionalWorksheetRowsCommand;
+import edu.isi.karma.controller.command.worksheet.LoadAdditionalWorksheetRowsCommandFactory;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommandFactory;
 import edu.isi.karma.controller.command.worksheet.RenameColumnCommand;
@@ -161,10 +163,6 @@ import edu.isi.karma.controller.command.worksheet.SetWorksheetPropertiesCommand;
 import edu.isi.karma.controller.command.worksheet.SetWorksheetPropertiesCommandFactory;
 import edu.isi.karma.controller.command.worksheet.SplitByCommaCommand;
 import edu.isi.karma.controller.command.worksheet.SplitByCommaCommandFactory;
-import edu.isi.karma.controller.command.worksheet.TablePagerCommand;
-import edu.isi.karma.controller.command.worksheet.TablePagerCommandFactory;
-import edu.isi.karma.controller.command.worksheet.TablePagerResizeCommand;
-import edu.isi.karma.controller.command.worksheet.TablePagerResizeCommandFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
 
@@ -198,10 +196,6 @@ public class ExecutionController {
 				new EditCellCommandFactory());
 		commandFactoryMap.put(UndoRedoCommand.class.getSimpleName(),
 				new UndoRedoCommandFactory());
-		commandFactoryMap.put(TablePagerCommand.class.getSimpleName(),
-				new TablePagerCommandFactory());
-		commandFactoryMap.put(TablePagerResizeCommand.class.getSimpleName(),
-				new TablePagerResizeCommandFactory());
 		commandFactoryMap.put(ImportJSONFileCommand.class.getSimpleName(),
 				new ImportJSONFileCommandFactory());
 		commandFactoryMap.put(ImportCSVFileCommand.class.getSimpleName(),
@@ -326,6 +320,8 @@ public class ExecutionController {
 				new GetUniqueGraphUrlCommandFactory());
 		commandFactoryMap.put(TestSPARQLEndPointCommand.class.getSimpleName(), 
 				new TestSPARQLEndPointCommandFactory());
+		commandFactoryMap.put(LoadAdditionalWorksheetRowsCommand.class.getSimpleName(), 
+				new LoadAdditionalWorksheetRowsCommandFactory());
 	}
 
 	public VWorkspace getvWorkspace() {
@@ -342,13 +338,13 @@ public class ExecutionController {
 			if (cf instanceof JSONInputCommandFactory) {
 				try {
 					JSONInputCommandFactory scf = (JSONInputCommandFactory)cf;
-					return scf.createCommand(new JSONArray(request.getParameter("newInfo")), vWorkspace);
+					return scf.createCommand(new JSONArray(request.getParameter("newInfo")), vWorkspace.getWorkspace());
 				}  catch (Exception e) {
 					e.printStackTrace();
 					return null;
 				} 
 			} else
-				return cf.createCommand(request, vWorkspace);
+				return cf.createCommand(request, vWorkspace.getWorkspace());
 		} else {
 			logger.error("Command " + request.getParameter("command")
 					+ " not found!");
@@ -362,11 +358,11 @@ public class ExecutionController {
 				UpdateContainer updateContainer = null;
 				vWorkspace.getWorkspace().getCommandHistory().setCurrentCommand(command);
 				if(command instanceof CommandWithPreview){
-					updateContainer = ((CommandWithPreview)command).showPreview(vWorkspace);
+					updateContainer = ((CommandWithPreview)command).showPreview(vWorkspace.getWorkspace());
 				} else {
-					updateContainer = vWorkspace.getWorkspace().getCommandHistory().doCommand(command, vWorkspace);
+					updateContainer = vWorkspace.getWorkspace().getCommandHistory().doCommand(command, vWorkspace.getWorkspace());
 				}
-				
+				updateContainer.applyUpdates(vWorkspace);
 				String responseJson = updateContainer.generateJson(vWorkspace);
 				//logger.info(responseJson);
 				return responseJson;

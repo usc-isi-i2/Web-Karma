@@ -32,6 +32,7 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
 /**
@@ -39,19 +40,19 @@ import edu.isi.karma.view.VWorkspace;
  */
 public class GetUniqueGraphUrlCommand extends Command {
 	private String tripleStoreUrl;
-	private String vWorksheetId;
+	private String worksheetId;
 	private String graphUriTobeValidated;
 	
 	private enum JsonKeys {
-		updateType, graphUri, vWorksheetId
+		updateType, graphUri, worksheetId
 	}
 	
 	private static Logger logger = LoggerFactory.getLogger(GetUniqueGraphUrlCommand.class);
 	
-	protected GetUniqueGraphUrlCommand(String id, String vWorksheetId, String url, String context ){
+	protected GetUniqueGraphUrlCommand(String id, String worksheetId, String url, String context ){
 		super(id);
 		this.tripleStoreUrl=url;
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 		this.graphUriTobeValidated = context;
 	}
 
@@ -76,11 +77,11 @@ public class GetUniqueGraphUrlCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		TripleStoreUtil utilObj = new TripleStoreUtil();
 
 		// get the source name for this work sheet
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).getWorksheet();
+		Worksheet worksheet = workspace.getWorksheet(this.worksheetId);
 		
 		// prepare the graph url if graphUri is not provided
 		if(this.graphUriTobeValidated == null || this.graphUriTobeValidated.isEmpty()) {
@@ -120,7 +121,7 @@ public class GetUniqueGraphUrlCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 

@@ -46,10 +46,11 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
 public class PublishRDFCellCommand extends Command {
-	private final String vWorksheetId;
+	private final String worksheetId;
 	private final String nodeId;
 	private String rdfSourcePrefix;
 	private String rdfSourceNamespace;
@@ -58,16 +59,16 @@ public class PublishRDFCellCommand extends Command {
 	private PrintWriter pw = new PrintWriter(outRdf);
 
 	public enum JsonKeys {
-		updateType, cellRdf, vWorksheetId
+		updateType, cellRdf, worksheetId
 	}
 
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishRDFCellCommand.class);
 
-	protected PublishRDFCellCommand(String id, String vWorksheetId,
+	protected PublishRDFCellCommand(String id, String worksheetId,
 			String nodeId, String rdfSourcePrefix, String rdfSourceNamespace) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 		this.nodeId = nodeId;
 		this.rdfSourcePrefix = rdfSourcePrefix;
 		this.rdfSourceNamespace = rdfSourceNamespace;
@@ -94,17 +95,16 @@ public class PublishRDFCellCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		// Get the alignment for this worksheet
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
-				AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(),
-						vWorksheetId));
+				AlignmentManager.Instance().constructAlignmentId(workspace.getId(),
+						worksheetId));
 		
 		if (alignment == null || alignment.isEmpty()) {
-			logger.info("Alignment is NULL for " + vWorksheetId);
+			logger.info("Alignment is NULL for " + worksheetId);
 			return new UpdateContainer(
 					new ErrorUpdate("Worksheet not modeled!"));
 		}
@@ -113,12 +113,12 @@ public class PublishRDFCellCommand extends Command {
 			// Generate the KR2RML data structures for the RDF generation
 			final ErrorReport errorReport = new ErrorReport();
 			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(
-					vWorkspace.getWorkspace().getOntologyManager(), 
+					workspace.getOntologyManager(), 
 					alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
 					false, errorReport);
 			
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
-					vWorkspace.getRepFactory(), vWorkspace.getWorkspace().getOntologyManager(),
+					workspace.getFactory(), workspace.getOntologyManager(),
 					pw, mappingGen.getMappingAuxillaryInformation(), errorReport, false);
 			
 			// Create empty data structures
@@ -127,7 +127,7 @@ public class PublishRDFCellCommand extends Command {
 			Map<String, ReportMessage> predicatesFailed = new HashMap<String, ReportMessage>();
 			Set<String> predicatesSuccessful = new HashSet<String>();
 			
-			Node node = vWorkspace.getRepFactory().getNode(nodeId);
+			Node node = workspace.getFactory().getNode(nodeId);
 			rdfGen.generateTriplesForCell(node, existingTopRowTriples, node.getHNodeId(), 
 					predicatesCovered, predicatesFailed, predicatesSuccessful);
 			
@@ -144,8 +144,8 @@ public class PublishRDFCellCommand extends Command {
 								.escapeHtml(outRdf.toString());
 						outputObject.put(JsonKeys.cellRdf.name(),
 								rdfCellEscapeString.replaceAll("\\n", "<br />"));
-						outputObject.put(JsonKeys.vWorksheetId.name(),
-								vWorksheetId);
+						outputObject.put(JsonKeys.worksheetId.name(),
+								worksheetId);
 						pw.println(outputObject.toString(4));
 					} catch (JSONException e) {
 						logger.error("Error occured while generating JSON!");
@@ -158,7 +158,7 @@ public class PublishRDFCellCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// TODO Auto-generated method stub
 		return null;
 	}

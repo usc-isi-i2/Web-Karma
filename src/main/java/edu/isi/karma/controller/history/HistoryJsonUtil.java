@@ -16,7 +16,7 @@ public class HistoryJsonUtil {
 	}
 	
 	public enum ParameterType {
-		hNodeId, vWorksheetId, other, checkHistory
+		hNodeId, worksheetId, other, checkHistory
 	}
 	
 	public static JSONObject getJSONObjectWithName(String arg, JSONArray json) throws JSONException {

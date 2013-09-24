@@ -31,12 +31,11 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
 
 public class ImportJSONFileCommand extends Command {
 	private File jsonFile;
@@ -72,20 +71,16 @@ public class ImportJSONFileCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Workspace ws = vWorkspace.getWorkspace();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		try {
 			FileReader reader = new FileReader(jsonFile);
 			Object json = JSONUtil.createJson(reader);
-			JsonImport imp = new JsonImport(json, jsonFile.getName(), ws);
+			JsonImport imp = new JsonImport(json, jsonFile.getName(), workspace);
 			
 			Worksheet wsht = imp.generateWorksheet();
-			vWorkspace.addAllWorksheets();
-			
-			c.add(new WorksheetListUpdate(vWorkspace.getVWorksheetList()));
-			VWorksheet vw = vWorkspace.getVWorksheet(wsht.getId());
-			vw.update(c);
+			c.add(new WorksheetListUpdate());
+			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
 		} catch (Exception e) {
 			logger.error("Error occured while generating worksheet from JSON!", e);
 			return new UpdateContainer(new ErrorUpdate(
@@ -95,7 +90,7 @@ public class ImportJSONFileCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// TODO Auto-generated method stub
 		return null;
 	}

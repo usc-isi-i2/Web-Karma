@@ -158,7 +158,7 @@ public class WorksheetR2RMLJenaModelParser {
 						TransformationCommandKeysAndValues.examples.name(), inputParams);
 				SubmitCleaningCommand comm = new SubmitCleaningCommand("", hNodeId, 
 						vWorksheet.getId(), examples);
-				comm.doIt(vWorkspace);
+				comm.doIt(vWorkspace.getWorkspace());
 			} else if (commandName.equals(TransformationCommandKeysAndValues.SubmitPythonTransformationCommand.name())) {
 				String newColumnName = HistoryJsonUtil.getStringValue(
 						TransformationCommandKeysAndValues.newColumnName.name(), inputParams);
@@ -170,7 +170,7 @@ public class WorksheetR2RMLJenaModelParser {
 						"", newColumnName, transformationCode, vWorksheet.getId(), hNodeId, 
 						"", errorDefaultValue);
 				try {
-					comm.doIt(vWorkspace);
+					comm.doIt(vWorkspace.getWorkspace());
 				} catch (CommandException e) {
 					logger.error("Error executing Python Transformation command", e);
 					e.printStackTrace();
@@ -180,7 +180,7 @@ public class WorksheetR2RMLJenaModelParser {
 						TransformationCommandKeysAndValues.newColumnName.name(), inputParams);
 				RenameColumnCommand comm = new RenameColumnCommand("", newColumnName, hNodeId, vWorksheet.getId());
 				try {
-					comm.doIt(vWorkspace);
+					comm.doIt(vWorkspace.getWorkspace());
 				} catch (CommandException e) {
 					logger.error("Error executing Rename Column command", e);
 					e.printStackTrace();
@@ -191,7 +191,7 @@ public class WorksheetR2RMLJenaModelParser {
 				InvokeRubenReconciliationService comm = new InvokeRubenReconciliationService("", 
 						alignmentNodeId, vWorksheet.getId());
 				try {
-					comm.doIt(vWorkspace);
+					comm.doIt(vWorkspace.getWorkspace());
 				} catch (CommandException e) {
 					logger.error("Error executing Reconcilitation service command", e);
 					e.printStackTrace();
@@ -211,7 +211,7 @@ public class WorksheetR2RMLJenaModelParser {
 					get(HistoryArguments.inputParameters.name());
 			
 			boolean result = WorksheetCommandHistoryReader.normalizeCommandHistoryJsonInput(
-					vWorkspace, vWorksheet.getId(), inputParamArr);
+					vWorkspace.getWorkspace(), vWorksheet.getWorksheetId(), inputParamArr);
 			if (!result) {
 				logger.error("Error occured while normalizing the JSONinput for transformation " +
 						"commands.");

@@ -21,9 +21,6 @@
 
 package edu.isi.karma.cleaning.features;
 
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
 
 
 public class RecordCntFeatures implements Feature {

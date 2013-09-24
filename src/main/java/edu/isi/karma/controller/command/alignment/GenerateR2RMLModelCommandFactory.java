@@ -25,21 +25,21 @@ import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class GenerateR2RMLModelCommandFactory extends CommandFactory {
 	
 	private enum Arguments {
-		vWorksheetId, addInverseProperties, rdfPrefix, rdfNamespace, tripleStoreUrl, graphContext
+		worksheetId, addInverseProperties, rdfPrefix, rdfNamespace, tripleStoreUrl, graphContext
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
+			Workspace workspace) {
+		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.graphContext.name());
-		return new GenerateR2RMLModelCommand(getNewId(vWorkspace), vWorksheetId, tripleStoreUrl, context);
+		return new GenerateR2RMLModelCommand(getNewId(workspace), worksheetId, tripleStoreUrl, context);
 	}
 
 }

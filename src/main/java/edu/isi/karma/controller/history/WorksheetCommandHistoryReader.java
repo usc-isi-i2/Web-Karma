@@ -23,30 +23,30 @@ import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 
 public class WorksheetCommandHistoryReader {
-	private final String vWorksheetId;
-	private final VWorkspace vWorkspace;
+	private final String worksheetId;
+	private final Workspace workspace;
 	
 	private static Logger logger = LoggerFactory.getLogger(WorksheetCommandHistoryReader.class);
 	
-	public WorksheetCommandHistoryReader(String vWorksheetId, VWorkspace vWorkspace) {
+	public WorksheetCommandHistoryReader(String worksheetId, Workspace workspace) {
 		super();
-		this.vWorksheetId = vWorksheetId;
-		this.vWorkspace = vWorkspace;
+		this.worksheetId = worksheetId;
+		this.workspace = workspace;
 	}
 	
 	public HashMap<CommandTag, Integer> readAndExecuteCommands(List<CommandTag> tags) 
 			throws FileNotFoundException, JSONException, KarmaException, CommandException {
-		String worksheetName = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet().getTitle();
-		File historyFile = new File(HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(worksheetName, vWorkspace.getPreferencesId()));
+		String worksheetName = workspace.getWorksheet(worksheetId).getTitle();
+		File historyFile = new File(HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(worksheetName, workspace.getCommandPreferencesId()));
 		JSONArray historyJson = (JSONArray) JSONUtil.createJson(new FileReader(historyFile));
-		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(vWorkspace.getWorkspace().getId());
+		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspace.getId());
 		HashMap<String, CommandFactory> commandFactoryMap = ctrl.getCommandFactoryMap();
 		
 		HashMap<CommandTag, Integer> commandsExecutedCountByTag = new HashMap<Command.CommandTag, Integer>();
@@ -77,7 +77,7 @@ public class WorksheetCommandHistoryReader {
 	
 	public void readAndExecuteAllCommands(JSONArray historyJson) 
 			throws JSONException, KarmaException, CommandException {
-		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(vWorkspace.getWorkspace().getId());
+		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspace.getId());
 		HashMap<String, CommandFactory> commandFactoryMap = ctrl.getCommandFactoryMap();
 		for (int i = 0; i< historyJson.length(); i++) {
 			JSONObject commObject = (JSONObject) historyJson.get(i);
@@ -86,7 +86,7 @@ public class WorksheetCommandHistoryReader {
 	}
 	
 	public void executeListOfCommands(List<String> commandsJsonList) throws JSONException, KarmaException, CommandException {
-		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(vWorkspace.getWorkspace().getId());
+		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspace.getId());
 		HashMap<String, CommandFactory> commandFactoryMap = ctrl.getCommandFactoryMap();
 		
 		for(String commJson : commandsJsonList) {
@@ -101,16 +101,16 @@ public class WorksheetCommandHistoryReader {
 		
 		logger.info("Command in history: " + commObject.get(HistoryArguments.commandName.name()));
 		// Change the hNode ids, vworksheet id to point to the current worksheet ids
-		if(normalizeCommandHistoryJsonInput(vWorkspace, vWorksheetId, inputParamArr)) {
+		if(normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr)) {
 			// Invoke the command
 			CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
 			if(cf != null && cf instanceof JSONInputCommandFactory) {
 //				logger.info("Executing command from history: " + commObject.get(HistoryArguments.commandName.name()));
 				JSONInputCommandFactory scf = (JSONInputCommandFactory)cf;
-				Command comm = scf.createCommand(inputParamArr, vWorkspace);
+				Command comm = scf.createCommand(inputParamArr, workspace);
 				if(comm != null){
 //					logger.info("Executing command: " + commObject.get(HistoryArguments.commandName.name()));
-					vWorkspace.getWorkspace().getCommandHistory().doCommand(comm, vWorkspace);
+					workspace.getCommandHistory().doCommand(comm, workspace);
 				}
 				else
 					logger.error("Error occured while creating command (Could not create Command object): " 
@@ -121,8 +121,8 @@ public class WorksheetCommandHistoryReader {
 
 	public List<String> getJSONForCommands(CommandTag tag) {
 		List<String> commandsJSON = new ArrayList<String>();
-		String worksheetName = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet().getTitle();
-		File historyFile = new File(HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(worksheetName, vWorkspace.getPreferencesId()));
+		String worksheetName = workspace.getWorksheet(worksheetId).getTitle();
+		File historyFile = new File(HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(worksheetName, workspace.getCommandPreferencesId()));
 		
 		try {
 			JSONArray historyJson = (JSONArray) JSONUtil.createJson(new FileReader(historyFile));
@@ -146,9 +146,9 @@ public class WorksheetCommandHistoryReader {
 		return commandsJSON;
 	}
 	
-	public static boolean normalizeCommandHistoryJsonInput(VWorkspace vWorkspace, String vWorksheetId, 
+	public static boolean normalizeCommandHistoryJsonInput(Workspace workspace, String worksheetId, 
 			JSONArray inputArr) throws JSONException {
-		HTable hTable = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet().getHeaders();
+		HTable hTable = workspace.getWorksheet(worksheetId).getHeaders();
 		for (int i = 0; i < inputArr.length(); i++) {
 			JSONObject inpP = inputArr.getJSONObject(i);
 			
@@ -170,14 +170,14 @@ public class WorksheetCommandHistoryReader {
 					
 					if (j == hNodeJSONRep.length()-1) {		// Found!
 						inpP.put(ClientJsonKeys.value.name(), node.getId());
-						hTable = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).
-								getWorksheet().getHeaders();
+						hTable = workspace.
+								getWorksheet(worksheetId).getHeaders();
 					} else {
 						hTable = node.getNestedTable();
 					}
 				}
-			} else if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.vWorksheetId) {
-				inpP.put(ClientJsonKeys.value.name(), vWorksheetId);
+			} else if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.worksheetId) {
+				inpP.put(ClientJsonKeys.value.name(), worksheetId);
 			}
 		}
 		return true;

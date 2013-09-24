@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class GetCurrentLinksOfInternalNodeCommandFactory extends CommandFactory {
 	private enum ARGUMENTS {
@@ -34,10 +34,10 @@ public class GetCurrentLinksOfInternalNodeCommandFactory extends CommandFactory 
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 		String nodeId =request.getParameter(ARGUMENTS.nodeId.name());
 		String alignmentId =request.getParameter(ARGUMENTS.alignmentId.name());
-		return new GetCurrentLinksOfInternalNodeCommand(getNewId(vWorkspace),nodeId, alignmentId);
+		return new GetCurrentLinksOfInternalNodeCommand(getNewId(workspace),nodeId, alignmentId);
 	}
 
 }

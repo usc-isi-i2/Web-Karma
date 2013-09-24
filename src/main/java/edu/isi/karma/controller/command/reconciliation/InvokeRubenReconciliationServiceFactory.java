@@ -30,29 +30,29 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class InvokeRubenReconciliationServiceFactory extends CommandFactory implements JSONInputCommandFactory {
 	
 	private enum Arguments {
-		vWorksheetId, alignmentNodeId
+		worksheetId, alignmentNodeId
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 		// Not needed
 		return null;
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
+	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
-		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
+		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String alignmentNodeId = HistoryJsonUtil.getStringValue(Arguments.alignmentNodeId.name(), inputJson);
 		InvokeRubenReconciliationService comm = new InvokeRubenReconciliationService(
-				getNewId(vWorkspace), alignmentNodeId, vWorksheetId);
+				getNewId(workspace), alignmentNodeId, worksheetId);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

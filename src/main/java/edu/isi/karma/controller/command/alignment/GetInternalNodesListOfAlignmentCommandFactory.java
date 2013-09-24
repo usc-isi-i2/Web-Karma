@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.alignment.GetInternalNodesListOfAlignmentCommand.INTERNAL_NODES_RANGE;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class GetInternalNodesListOfAlignmentCommandFactory extends CommandFactory {
 
@@ -35,14 +35,14 @@ public class GetInternalNodesListOfAlignmentCommandFactory extends CommandFactor
 	}
 	
 	@Override
-	public Command createCommand(HttpServletRequest request, VWorkspace vWorkspace) {
+	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String alignmentId = request.getParameter(Arguments.alignmentId.name());
 		INTERNAL_NODES_RANGE range = INTERNAL_NODES_RANGE.valueOf(
 				request.getParameter(Arguments.nodesRange.name()));
 		String property = null;
 		if (range == INTERNAL_NODES_RANGE.domainNodesOfProperty)
 			property = request.getParameter(Arguments.property.name());
-		return new GetInternalNodesListOfAlignmentCommand(getNewId(vWorkspace), alignmentId,
+		return new GetInternalNodesListOfAlignmentCommand(getNewId(workspace), alignmentId,
 				range, property);
 	}
 

@@ -41,17 +41,17 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
-import edu.isi.karma.view.VWorkspace;
 
 public class UnassignSemanticTypeCommand extends Command {
 
-	private final String vWorksheetId;
+	private final String worksheetId;
 	private final String hNodeId;
 	private String columnName;
 	private SemanticType oldSemanticType;
@@ -61,10 +61,10 @@ public class UnassignSemanticTypeCommand extends Command {
 	private static Logger logger = LoggerFactory
 			.getLogger(UnassignSemanticTypeCommand.class);
 
-	public UnassignSemanticTypeCommand(String id, String hNodeId, String vWorksheetId) {
+	public UnassignSemanticTypeCommand(String id, String hNodeId, String worksheetId) {
 		super(id);
 		this.hNodeId = hNodeId;
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 		
 		addTag(CommandTag.Modeling);
 	}
@@ -91,9 +91,8 @@ public class UnassignSemanticTypeCommand extends Command {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		// Save the old SemanticType object for undo
 		SemanticTypes types = worksheet.getSemanticTypes();
@@ -101,7 +100,7 @@ public class UnassignSemanticTypeCommand extends Command {
 		types.unassignColumnSemanticType(hNodeId);
 
 		// Save the original alignment for undo
-		Alignment alignment = AlignmentManager.Instance().getAlignment(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
 		oldAlignment = alignment.getAlignmentClone();
 		oldGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
 		
@@ -138,16 +137,16 @@ public class UnassignSemanticTypeCommand extends Command {
 		for (edu.isi.karma.rep.Node node : nodes) {
 			nodeIds.add(node.getId());
 		}
-		vWorkspace.getWorkspace().getTagsContainer().getTag(TagName.Outlier)
+		workspace.getTagsContainer().getTag(TagName.Outlier)
 				.removeNodeIds(nodeIds);
 
 		// Update the container
 		UpdateContainer c = new UpdateContainer();
 		
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
+		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
 		// Add the alignment update
 		try {
-			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
+			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(worksheetId, alignment));
 		} catch (Exception e) {
 			logger.error("Error occured while unassigning the semantic type!",e);
 			return new UpdateContainer(new ErrorUpdate("Error occured while unassigning the semantic type!"));
@@ -158,9 +157,8 @@ public class UnassignSemanticTypeCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer undoIt(Workspace workspace) {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		// Add the old SemanticType object if it is not null
 		SemanticTypes types = worksheet.getSemanticTypes();
@@ -171,12 +169,12 @@ public class UnassignSemanticTypeCommand extends Command {
 		UpdateContainer c = new UpdateContainer();
 		
 		// Update with old alignment
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
 		oldAlignment.setGraph(oldGraph);
 		try {
-			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, oldAlignment));
-			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), oldAlignment));
+			c.add(new SemanticTypesUpdate(worksheet, worksheetId, oldAlignment));
+			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(worksheetId, oldAlignment));
 		} catch (Exception e) {
 			logger.error("Error occured during undo of unassigning the semantic type!", e);
 			return new UpdateContainer(new ErrorUpdate("Error occured during undo of unassigning the semantic type!"));

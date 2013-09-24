@@ -30,31 +30,31 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class RenameColumnCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 	public enum Arguments {
-		vWorksheetId, hNodeId, newColumnName, getAlignmentUpdate
+		worksheetId, hNodeId, newColumnName, getAlignmentUpdate
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
+			Workspace workspace) {
+		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String newColumnName = request.getParameter(Arguments.newColumnName.name());
-		return new RenameColumnCommand(getNewId(vWorkspace), newColumnName, hNodeId, vWorksheetId);
+		return new RenameColumnCommand(getNewId(workspace), newColumnName, hNodeId, worksheetId);
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
+	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
-		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
+		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String newColumnName = HistoryJsonUtil.getStringValue(Arguments.newColumnName.name(), inputJson);
 		
-		RenameColumnCommand renCommand = new RenameColumnCommand(getNewId(vWorkspace), newColumnName, hNodeId, vWorksheetId);
+		RenameColumnCommand renCommand = new RenameColumnCommand(getNewId(workspace), newColumnName, hNodeId, worksheetId);
 		renCommand.setInputParameterJson(inputJson.toString());
 		return renCommand;
 	}

@@ -36,6 +36,7 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.view.VWorkspace;
@@ -87,12 +88,12 @@ public class GetLinksOfAlignmentCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		final Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		Map<String, Label> linkList = new HashMap<String, Label>();
 		
 		if (linksRange == LINKS_RANGE.allObjectProperties) {
-			linkList = vWorkspace.getWorkspace().
+			linkList = workspace.
 					getOntologyManager().getObjectProperties();
 			
 		} else if (linksRange == LINKS_RANGE.existingLinks) {
@@ -138,7 +139,7 @@ public class GetLinksOfAlignmentCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// Not required
 		return null;
 	}

@@ -31,18 +31,18 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
-import edu.isi.karma.view.VWorkspace;
 
 public class SetWorksheetPropertiesCommand extends Command {
-	final private String vWorksheetId;
+	final private String worksheetId;
 	final private String properties;
 	private Worksheet worksheet;
 
-	public SetWorksheetPropertiesCommand(String id, String vWorksheetId, String properties) {
+	public SetWorksheetPropertiesCommand(String id, String worksheetId, String properties) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 		this.properties = properties;
 		
 		addTag(CommandTag.Modeling);
@@ -69,8 +69,8 @@ public class SetWorksheetPropertiesCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		worksheet = workspace.getWorksheet(worksheetId);
 		
 		JSONObject propertiesJson = null;
 		try {
@@ -110,7 +110,7 @@ public class SetWorksheetPropertiesCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// Not required
 		return null;
 	}

@@ -3,8 +3,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.HashMap;
-
-import com.sun.istack.logging.Logger;
 public class MyLogger {
 	public static BufferedWriter out;
 	public static String user_id = "";

@@ -27,7 +27,7 @@ function publishDatabaseFunction() {
 			$("div#PublishDatabaseDialogBox").dialog("close");
 
 			var info = new Object();
-			info["vWorksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
+			info["worksheetId"] = $("div#WorksheetOptionsDiv").data("worksheetId");
 			info["workspaceId"] = $.workspaceGlobalInformation.id;
 			info["command"] = "PublishDatabaseCommand";
 			info["dbType"] = $("select#dbType").val();
@@ -40,7 +40,7 @@ function publishDatabaseFunction() {
 			info["overwriteTable"] = $("input#overwriteTable").is(":checked");
 			info["insertTable"] = $("input#insertTable").is(":checked");
 
-			showLoadingDatabase(info["vWorksheetId"],"Saving to database...");
+			showLoadingDatabase(info["worksheetId"],"Saving to database...");
 			returnFunc(info);
 		}
 }
@@ -94,12 +94,12 @@ function returnFunc(info) {
 		   		function (xhr, textStatus) {
 		    		var json = $.parseJSON(xhr.responseText);
 		    		parse(json);
-		    		hideLoading(info["vWorksheetId"]);
+		    		hideLoading(info["worksheetId"]);
 			   	},
 			error :
 				function (xhr, textStatus) {
 		   			alert("Error occured while saving to database!" + textStatus);
-		   			hideLoading(info["vWorksheetId"]);
+		   			hideLoading(info["worksheetId"]);
 			   	}		   
 		});
 }

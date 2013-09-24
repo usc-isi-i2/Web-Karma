@@ -29,7 +29,6 @@
 package edu.isi.karma.modeling.research.graphmatching.net.n3.nanoxml;
 
 
-import java.io.IOException;
 
 
 /**

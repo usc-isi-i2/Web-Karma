@@ -22,7 +22,7 @@ package edu.isi.karma.controller.command;
 
 import javax.servlet.http.HttpServletRequest;
 
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class TestSPARQLEndPointCommandFactory extends CommandFactory {
 	private enum Arguments {
@@ -31,9 +31,9 @@ public class TestSPARQLEndPointCommandFactory extends CommandFactory {
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 
-		TestSPARQLEndPointCommand comm = new TestSPARQLEndPointCommand(getNewId(vWorkspace), 
+		TestSPARQLEndPointCommand comm = new TestSPARQLEndPointCommand(getNewId(workspace), 
 				request.getParameter(Arguments.tripleStoreUrl.name()));
 		
 		return comm;
