@@ -59,16 +59,30 @@ import org.slf4j.LoggerFactory;
 
 import de.micromata.opengis.kml.v_2_2_0.Data;
 import edu.isi.karma.util.HTTPUtil;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 
 public class TripleStoreUtil {
 	
 	private static Logger logger = LoggerFactory.getLogger(TripleStoreUtil.class);
-	public static final String defaultServerUrl = "http://localhost:8080/openrdf-sesame/repositories";
-	public static final String defaultModelsRepoUrl = "http://localhost:8080/openrdf-sesame/repositories/karma_models";
-	public static final String defaultDataRepoUrl = "http://localhost:8080/openrdf-sesame/repositories/karma_data";
-	public static final String defaultWorkbenchUrl = "http://localhost:8080/openrdf-workbench/repositories";
+	
+	
+	public static final String defaultServerUrl;
+	public static final String defaultModelsRepoUrl;
+	public static final String defaultDataRepoUrl;
+	public static final String defaultWorkbenchUrl;
 	public static final String karma_model_repo = "karma_models";
 	public static final String karma_data_repo = "karma_data";
+	
+	static 
+	{
+		String host = ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.JETTY_HOST);
+		String port = ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT);
+		final String baseURL = host+":"+port+"/openrdf-sesame";
+		defaultServerUrl = baseURL + "/repositories";
+		defaultModelsRepoUrl = defaultServerUrl + "/karma_models";
+		defaultDataRepoUrl = defaultServerUrl + "/karma_data";
+		defaultWorkbenchUrl = host+":"+port + "/openrdf-workbench/repositories";
+	}
 	
 	private static HashMap<String, String> mime_types;
 	
