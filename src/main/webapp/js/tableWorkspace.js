@@ -400,6 +400,7 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                 url: "RequestController?workspaceId=" + $.workspaceGlobalInformation.id +
                     "&command=ApplyHistoryFromR2RMLModelCommand&worksheetId="+optionsDiv.data("worksheetId")
             });
+            optionsDiv.hide();
             showLoading(optionsDiv.data("worksheetId"));
             data.submit();
         },
