@@ -33,7 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import edu.isi.karma.er.helper.ConfigUtil;
-import edu.isi.karma.mvs.Import;
+import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;

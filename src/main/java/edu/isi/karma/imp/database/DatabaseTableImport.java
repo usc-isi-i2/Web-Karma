@@ -22,13 +22,9 @@
  */
 package edu.isi.karma.imp.database;
 
-import edu.isi.karma.mvs.Import;
-import java.sql.SQLException;
-import java.util.ArrayList;
-
+import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
-import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
@@ -38,9 +34,8 @@ import edu.isi.karma.rep.metadata.SourceInformation.InfoAttribute;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
 import edu.isi.karma.util.JDBCUtilFactory;
-import edu.isi.karma.webserver.KarmaException;
-import java.io.IOException;
-import org.json.JSONException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class DatabaseTableImport extends Import {
     
@@ -57,6 +52,19 @@ public class DatabaseTableImport extends Import {
             String username, String password, String dBorSIDName,
             String tableName, Workspace workspace) {
         super(tableName, workspace);
+        this.dbType = dbType;
+        this.hostname = hostname;
+        this.portnumber = portnumber;
+        this.username = username;
+        this.password = password;
+        this.dBorSIDName = dBorSIDName;
+        this.tableName = tableName;
+    }
+    
+    public DatabaseTableImport(DBType dbType, String hostname, int portnumber,
+            String username, String password, String dBorSIDName,
+            String tableName, Workspace workspace, Worksheet revisedWorksheet) {
+        super(tableName, workspace, revisedWorksheet);
         this.dbType = dbType;
         this.hostname = hostname;
         this.portnumber = portnumber;

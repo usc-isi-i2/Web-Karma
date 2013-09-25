@@ -57,6 +57,18 @@ public class RepFactory {
 		worksheets.put(id, ws);
 		return ws;
 	}
+        
+        public Worksheet createWorksheet(String tableName, Workspace workspace, Worksheet revisedWorksheet) {
+		String id = getNewId("WS");
+		HTable headers = createHTable(tableName);
+		Table dataTable = createTable(headers.getId(), id);
+                //Worksheet where this worksheet is a revision of
+                
+		Worksheet ws = new Worksheet(id, headers, dataTable, revisedWorksheet);
+		workspace.addWorksheet(ws);
+		worksheets.put(id, ws);
+		return ws;
+	}
 
 	public void replaceWorksheet(String id, Worksheet worksheet) {
 		if (worksheets.containsKey(id)) {

@@ -22,7 +22,6 @@
  */
 package edu.isi.karma.controller.command.importdata;
 
-import edu.isi.karma.mvs.ImportFileCommand;
 import edu.isi.karma.controller.command.Command.CommandType;
 import java.io.File;
 import java.io.PrintWriter;

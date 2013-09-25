@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
-import edu.isi.karma.mvs.Import;
+import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
@@ -57,7 +57,8 @@ public class CSVFileImport extends Import {
 
     public CSVFileImport(int headerRowIndex, int dataStartRowIndex,
             char delimiter, char quoteCharacter, File csvFile,
-            RepFactory factory, Workspace workspace) {
+            Workspace workspace) {
+        
         super(csvFile.getName(), workspace);
         this.headerRowIndex = headerRowIndex;
         this.dataStartRowIndex = dataStartRowIndex;
@@ -65,7 +66,18 @@ public class CSVFileImport extends Import {
         this.quoteCharacter = quoteCharacter;
         this.csvFile = csvFile;
     }
-
+    
+    public CSVFileImport(int headerRowIndex, int dataStartRowIndex,
+            char delimiter, char quoteCharacter, File csvFile,
+            Workspace workspace, Worksheet revisedWorksheet) {
+        super(csvFile.getName(), workspace, revisedWorksheet);
+        this.headerRowIndex = headerRowIndex;
+        this.dataStartRowIndex = dataStartRowIndex;
+        this.delimiter = delimiter;
+        this.quoteCharacter = quoteCharacter;
+        this.csvFile = csvFile;
+    }
+        
     @Override
     public Worksheet generateWorksheet() throws IOException, KarmaException {
         Table dataTable = getWorksheet().getDataTable();

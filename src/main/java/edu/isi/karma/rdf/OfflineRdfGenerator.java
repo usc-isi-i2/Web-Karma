@@ -53,6 +53,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
+import edu.isi.karma.imp.Import;
 
 import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.imp.json.JsonImport;
@@ -60,8 +61,6 @@ import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.mvs.Import;
-import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
@@ -76,7 +75,6 @@ import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 import java.sql.SQLException;
-import java.util.logging.Level;
 
 public class OfflineRdfGenerator {
 
@@ -137,7 +135,6 @@ public class OfflineRdfGenerator {
              * CREATE THE REQUIRED KARMA OBJECTS *
              */
             Workspace workspace = WorkspaceManager._getNewInstance().createWorkspace();
-            RepFactory factory = workspace.getFactory();
             Worksheet worksheet = null;
             ServletContextParameterMap.setParameterValue(
                     ContextParameter.USER_DIRECTORY_PATH, "src/main/webapp/");
@@ -218,7 +215,7 @@ public class OfflineRdfGenerator {
                     return;
                 }
                 System.out.print("Generating worksheet from the data source ...");
-                worksheet = generateWorksheetFromFile(inputFile, inputType, factory, workspace);
+                worksheet = generateWorksheetFromFile(inputFile, inputType, workspace);
                 System.out.println("done");
                 /**
                  * GENERATE RDF FROM WORKSHEET OBJECT *
@@ -272,7 +269,7 @@ public class OfflineRdfGenerator {
     }
 
     private static Worksheet generateWorksheetFromFile(File inputFile, String inputType,
-            RepFactory factory, Workspace workspace) throws JSONException, IOException, KarmaException, ClassNotFoundException, SQLException {
+            Workspace workspace) throws JSONException, IOException, KarmaException, ClassNotFoundException, SQLException {
         Worksheet worksheet = null;
 
         if (inputType.equalsIgnoreCase("JSON")) {
@@ -286,7 +283,7 @@ public class OfflineRdfGenerator {
             JsonImport imp = new JsonImport(json, inputFile.getName(), workspace);
             worksheet = imp.generateWorksheet();
         } else if (inputType.equalsIgnoreCase("CSV")) {
-            Import fileImport = new CSVFileImport(1, 2, ',', '\"', inputFile, factory, workspace);
+            Import fileImport = new CSVFileImport(1, 2, ',', '\"', inputFile, workspace);
 
             worksheet = fileImport.generateWorksheet();
         }

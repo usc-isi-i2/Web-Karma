@@ -25,15 +25,7 @@
  */
 package edu.isi.karma.imp.json;
 
-import edu.isi.karma.mvs.Import;
-import java.util.Iterator;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
@@ -45,6 +37,12 @@ import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.JSONUtil;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author szekely
@@ -59,6 +57,24 @@ public class JsonImport extends Import {
     public JsonImport(Object json, String worksheetName, Workspace workspace) {
         super(worksheetName, workspace);
         this.json = json;
+    }
+    
+    public JsonImport(Object json, String worksheetName, Workspace workspace, Worksheet revisedWorksheet) {
+        super(worksheetName, workspace, revisedWorksheet);
+        this.json = json;
+    }
+    
+    public JsonImport(File jsonFile, String worksheetName, Workspace workspace, Worksheet revisedWorksheet){
+        super(worksheetName, workspace, revisedWorksheet);
+        
+        String fileContents = null;
+        try {
+            fileContents = FileUtil.readFileContentsToString(jsonFile);
+        } catch (IOException ex) {
+            logger.error("Error in reading the JSON file");
+        }
+
+        this.json = JSONUtil.createJson(fileContents);
     }
 
     public JsonImport(File jsonFile, String worksheetName, Workspace workspace){
@@ -79,6 +95,11 @@ public class JsonImport extends Import {
             Workspace workspace) {
         this(JSONUtil.createJson(jsonString), worksheetName, workspace);
     }
+    
+    public JsonImport(String jsonString, String worksheetName,
+            Workspace workspace, Worksheet revisedWorksheet) {
+        this(JSONUtil.createJson(jsonString), worksheetName, workspace, revisedWorksheet);
+    }
 
     public JsonImport(String jsonString, Worksheet wk, RepFactory repFactory) {
         super(repFactory, wk);
@@ -89,6 +110,7 @@ public class JsonImport extends Import {
             logger.error("Error in populating the worksheet with Json");
         }
     }
+
 
     @Override
     public Worksheet generateWorksheet() throws JSONException {

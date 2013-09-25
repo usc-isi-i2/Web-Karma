@@ -1,5 +1,5 @@
 
-package edu.isi.karma.mvs;
+package edu.isi.karma.controller.command;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.UpdateContainer;

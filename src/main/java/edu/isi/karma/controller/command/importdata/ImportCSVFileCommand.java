@@ -18,11 +18,10 @@
  * Karma project at the Information Sciences Institute of the University of
  * Southern California. For more information, publications, and related
  * projects, please see: http://www.isi.edu/integration
- *****************************************************************************
+ * ****************************************************************************
  */
 package edu.isi.karma.controller.command.importdata;
 
-import edu.isi.karma.mvs.ImportFileCommand;
 import java.io.File;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,8 +36,9 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.csv.CSVFileImport;
-import edu.isi.karma.mvs.IPreviewable;
-import edu.isi.karma.mvs.Import;
+import edu.isi.karma.controller.command.IPreviewable;
+import edu.isi.karma.imp.Import;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
@@ -54,9 +54,9 @@ public class ImportCSVFileCommand extends ImportFileCommand implements IPreviewa
     private char quoteCharacter = '"';
     // Escape character
     private char escapeCharacter = '\\';
-    
 
     protected enum InteractionType {
+
         generatePreview, importTable
     }
     // Logger object
@@ -87,6 +87,10 @@ public class ImportCSVFileCommand extends ImportFileCommand implements IPreviewa
         super(id, file);
     }
 
+    public ImportCSVFileCommand(String id, String revisedId, File file) {
+        super(id, revisedId, file);
+    }
+
     @Override
     public String getCommandName() {
         return this.getClass().getSimpleName();
@@ -107,10 +111,20 @@ public class ImportCSVFileCommand extends ImportFileCommand implements IPreviewa
 
     @Override
     public UpdateContainer doIt(Workspace workspace) throws CommandException {
+        Import imp = null;
+        if (hasRevisionId()) {
+            Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
 
-        Import imp = new CSVFileImport(headerRowIndex,
-                dataStartRowIndex, delimiter, quoteCharacter, getFile(),
-                workspace.getFactory(), workspace);
+            imp = new CSVFileImport(headerRowIndex,
+                    dataStartRowIndex, delimiter, quoteCharacter, getFile(),
+                    workspace, revisedWorksheet);
+           
+        } else {
+            imp = new CSVFileImport(headerRowIndex,
+                    dataStartRowIndex, delimiter, quoteCharacter, getFile(),
+                    workspace);
+        }
+
         UpdateContainer c = new UpdateContainer();
         Worksheet wsht = null;
         try {

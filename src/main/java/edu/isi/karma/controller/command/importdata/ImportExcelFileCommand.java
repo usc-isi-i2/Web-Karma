@@ -18,11 +18,10 @@
  * Karma project at the Information Sciences Institute of the University of
  * Southern California. For more information, publications, and related
  * projects, please see: http://www.isi.edu/integration
- *****************************************************************************
+ * ****************************************************************************
  */
 package edu.isi.karma.controller.command.importdata;
 
-import edu.isi.karma.mvs.ImportFileCommand;
 import java.io.File;
 import java.util.List;
 
@@ -37,7 +36,7 @@ import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.imp.excel.ToCSV;
-import edu.isi.karma.mvs.Import;
+import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -51,6 +50,10 @@ public class ImportExcelFileCommand extends ImportFileCommand {
 
     protected ImportExcelFileCommand(String id, File excelFile) {
         super(id, excelFile);
+    }
+
+    protected ImportExcelFileCommand(String id, String revisedId, File uploadedFile) {
+        super(id, revisedId, uploadedFile);
     }
 
     @Override
@@ -90,11 +93,21 @@ public class ImportExcelFileCommand extends ImportFileCommand {
 
         List<File> csvFiles = csvConverter.getCsvFiles();
 
+
+
         // Each sheet is written to a separate CSV file
         if (!csvFiles.isEmpty()) {
             for (File csvFile : csvFiles) {
-                Import imp = new CSVFileImport(1, 2, ',', '"', csvFile,
-                        workspace.getFactory(), workspace);
+                Import imp = null;
+                if (hasRevisionId()) {
+                    Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
+
+                    imp = new CSVFileImport(1, 2, ',', '"', csvFile,
+                            workspace, revisedWorksheet);
+                } else {
+                    imp = new CSVFileImport(1, 2, ',', '"', csvFile,
+                            workspace);
+                }
                 try {
                     Worksheet wsht = imp.generateWorksheet();
                     c.add(new WorksheetListUpdate());

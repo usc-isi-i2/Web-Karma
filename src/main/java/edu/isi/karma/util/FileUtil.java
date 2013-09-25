@@ -20,7 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.util;
 
-import edu.isi.karma.mvs.EncodingDetector;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;

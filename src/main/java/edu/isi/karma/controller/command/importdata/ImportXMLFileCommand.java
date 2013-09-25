@@ -18,11 +18,10 @@
  * Karma project at the Information Sciences Institute of the University of
  * Southern California. For more information, publications, and related
  * projects, please see: http://www.isi.edu/integration
- *****************************************************************************
+ * ****************************************************************************
  */
 package edu.isi.karma.controller.command.importdata;
 
-import edu.isi.karma.mvs.ImportFileCommand;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -35,8 +34,8 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.mvs.Import;
-import edu.isi.karma.mvs.XMLImport;
+import edu.isi.karma.imp.Import;
+import edu.isi.karma.imp.json.XMLImport;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
@@ -48,6 +47,10 @@ public class ImportXMLFileCommand extends ImportFileCommand {
 
     protected ImportXMLFileCommand(String id, File uploadedFile) {
         super(id, uploadedFile);
+    }
+
+    protected ImportXMLFileCommand(String id, String revisedId, File uploadedFile) {
+        super(id, revisedId, uploadedFile);
     }
 
     @Override
@@ -68,14 +71,18 @@ public class ImportXMLFileCommand extends ImportFileCommand {
         return "";
     }
 
-
     @Override
     public UpdateContainer doIt(Workspace workspace) throws CommandException {
 
         UpdateContainer c = new UpdateContainer();
         try {
-            Import imp = new XMLImport(getFile(), getFile().getName(), workspace);
-
+            Import imp = null;
+            if (hasRevisionId()) {
+                Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
+                imp = new XMLImport(getFile(), getFile().getName(), workspace, revisedWorksheet);
+            } else {
+                imp = new XMLImport(getFile(), getFile().getName(), workspace);
+            }
             Worksheet wsht = imp.generateWorksheet();
 
             c.add(new WorksheetListUpdate());
@@ -96,5 +103,4 @@ public class ImportXMLFileCommand extends ImportFileCommand {
 
         return c;
     }
-
 }

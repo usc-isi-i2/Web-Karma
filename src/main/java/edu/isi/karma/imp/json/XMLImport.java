@@ -2,9 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.isi.karma.mvs;
+package edu.isi.karma.imp.json;
 
 import edu.isi.karma.imp.json.JsonImport;
+import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.FileUtil;
@@ -31,6 +32,22 @@ public class XMLImport extends Import {
         super(worksheetName, workspace);
         
         
+        try {
+            String fileContents = FileUtil.readFileContentsToString(xmlFile);
+
+            // Converting the XML to JSON
+            JSONObject json = XML.toJSONObject(fileContents);
+            jsonImport = new JsonImport(json, xmlFile.getName(), workspace);
+        } catch (JSONException ex) {
+            logger.error("Error in populating the worksheet with XML");
+        } catch (IOException ex) {
+            logger.error("Error in reading the XML file");
+        }
+    }
+    
+    public XMLImport(File xmlFile, String worksheetName, Workspace workspace, Worksheet revisedWorksheet) {
+        super(worksheetName, workspace, revisedWorksheet);
+
         try {
             String fileContents = FileUtil.readFileContentsToString(xmlFile);
 

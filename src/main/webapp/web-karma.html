@@ -138,6 +138,23 @@ and related projects, please see: http://www.isi.edu/integration
               modal : true,
               open : function(event, ui) {
                 $('.ui-dialog-buttonset  button:last').filter(":last").focus();
+                
+                var worksheets = $('.Worksheet');
+                if (worksheets.size() > 0){
+                  $('#revisedWorksheetSelector').prop('disabled', false);
+                  $("input:checkbox[name='RevisionCheck']").prop('disabled', false);
+                  
+                  $('.Worksheet').each(function(){
+                    var item = $('<option />');
+                    item.val($(this).attr('id'));
+                    item.text($(this).find('.tableTitleTextDiv').text());
+
+                    $('#revisedWorksheetSelector').append(item);
+                  });
+                } else {
+                  $('#revisedWorksheetSelector').prop('disabled', true);
+                  $("input:checkbox[name='RevisionCheck']").prop('disabled', true);
+                }
               },
               buttons : {
                 "Cancel" : function() {
@@ -150,7 +167,13 @@ and related projects, please see: http://www.isi.edu/integration
                     return false;
                   }
 
-                  var urlString = "RequestController?workspaceId=" + $.workspaceGlobalInformation.id + "&revision="+$("input:checkbox[name='RevisionCheck']").prop('checked') + "&command=";
+                  var urlString = "RequestController?workspaceId=" + $.workspaceGlobalInformation.id;
+                  
+                  if ($("input:checkbox[name='RevisionCheck']").prop('checked')) {
+                    urlString += "&revisedWorksheet=" + $('#revisedWorksheetSelector').val();
+                  }
+                  
+                  urlString += "&command=";
                   
                   // Change the command according to the selected format
                   if(selectedFormat == "CSV") {
@@ -1070,7 +1093,7 @@ and related projects, please see: http://www.isi.edu/integration
       </div>
       <div>
         <input name="RevisionCheck" type="checkbox" />
-        <label for="RevisionCheck">Revision of a previous file</label>
+        <label for="RevisionCheck">Revision of worksheet <select id="revisedWorksheetSelector"></select></label>
       </div>
       <div class="error" style="display: none" id="fileFormatError">Please select the file format!</div>
     </div>

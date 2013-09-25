@@ -31,8 +31,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.rdf.UnionImport;
-import edu.isi.karma.mvs.Import;
-import edu.isi.karma.mvs.ImportCommand;
+import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 

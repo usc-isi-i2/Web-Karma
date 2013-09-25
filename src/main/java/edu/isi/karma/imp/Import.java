@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.isi.karma.mvs;
+package edu.isi.karma.imp;
 
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
@@ -29,6 +29,11 @@ public abstract class Import {
     public Import(RepFactory factory, Worksheet worksheet) {
         this.factory = factory;
         this.worksheet = worksheet;
+    }
+    
+    public Import(String worksheetName, Workspace workspace, Worksheet revisedWorksheet) {
+        this.factory = workspace.getFactory();
+        this.worksheet = factory.createWorksheet(worksheetName, workspace, revisedWorksheet);
     }
 
     public RepFactory getFactory() {
