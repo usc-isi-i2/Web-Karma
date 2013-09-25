@@ -39,6 +39,7 @@ import edu.isi.karma.controller.command.IPreviewable;
 
 public class RequestController extends HttpServlet {
 
+<<<<<<< HEAD
     private static final long serialVersionUID = 1L;
     private static Logger logger = LoggerFactory.getLogger(RequestController.class);
 
@@ -53,6 +54,48 @@ public class RequestController extends HttpServlet {
         }
 
         String responseString = "";
+=======
+	private static final long serialVersionUID = 1L;
+	
+	private static Logger logger = LoggerFactory.getLogger(RequestController.class);
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		// initilaize the JETTY_PORT for the first request
+		if(ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT).isEmpty()) {
+			String port = String.valueOf(request.getServerPort());
+			String protocol = request.getProtocol().split("/")[0];
+			String host = protocol.toLowerCase() + "://" + request.getServerName();
+			
+			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT,  port);
+			logger.info("JETTY_PORT initilized to " + port);
+		
+			
+			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_HOST,  host);
+			logger.info("JETTY_HOST initilized to " + host);
+			
+			// also set PUBLIC_RDF_ADDRESS
+			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.PUBLIC_RDF_ADDRESS, 
+					host + ":"+ port + "/RDF/");
+			
+			// also set CLEANING_SERVICE_URL
+			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL, 
+					host + ":"+ port + 
+					ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL)
+				);
+		}
+		
+		String workspaceId = request.getParameter("workspaceId");
+		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspaceId);
+		if (ctrl == null) {
+			logger.debug("No execution controller found. This sometime happens when the server is restarted and " +
+					"an already open window is refereshed (and is okay to happen). A command is sent to the server " +
+					"to destroy all workspace objects.");
+			return;
+		}
+		
+		String responseString = "";
+>>>>>>> 0b94ee009d5565a1b686e26667ef8e5e98e731ec
 //		String id = request.getSession().getId();
         /**
          * **********************************
@@ -72,6 +115,7 @@ public class RequestController extends HttpServlet {
                         UpdateContainer updateContainer = ctrl.getvWorkspace().getWorkspace()
                                 .getCommandHistory().doCommand(currentCommand, ctrl.getvWorkspace().getWorkspace());
 
+<<<<<<< HEAD
                         updateContainer.applyUpdates(ctrl.getvWorkspace());
                         responseString = updateContainer.generateJson(ctrl.getvWorkspace());
                     } catch (CommandException e) {
@@ -97,4 +141,32 @@ public class RequestController extends HttpServlet {
         response.getWriter().write(responseString);
         response.flushBuffer();
     }
+=======
+						updateContainer.applyUpdates(ctrl.getvWorkspace());
+						responseString = updateContainer.generateJson(ctrl.getvWorkspace());
+					} catch (CommandException e) {
+						logger.error("Error occured while executing command: " + currentCommand.getCommandName(), e);
+					}
+				} else
+				{
+					UpdateContainer updateContainer = 
+					((CommandWithPreview) currentCommand).handleUserActions(request);
+							updateContainer.applyUpdates(ctrl.getvWorkspace());
+				responseString =  updateContainer.generateJson(ctrl.getvWorkspace());
+				}
+			}
+		} else {
+			Command command = ctrl.getCommand(request);
+			if(command != null)
+				responseString = ctrl.invokeCommand(command);
+			else
+				logger.error("Error occured while creating command (Could not create Command object): " + request.getParameter("command"));
+		}
+		
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(responseString);
+		response.flushBuffer();
+	}
+	
+>>>>>>> 0b94ee009d5565a1b686e26667ef8e5e98e731ec
 }

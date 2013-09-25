@@ -33,13 +33,8 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.hierarchicalheadings.ColspanMap;
-import edu.isi.karma.rep.hierarchicalheadings.ColumnCoordinateSet;
-import edu.isi.karma.rep.hierarchicalheadings.HHTree;
-import edu.isi.karma.rep.hierarchicalheadings.LeafColumnIndexMap;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
-import edu.isi.karma.view.tableheadings.VColumnHeader;
 
 /**
  * @author szekely
@@ -56,18 +51,8 @@ public class ViewFactory {
 
 	private Map<String, VWorksheet> vWorksheets = new HashMap<String, VWorksheet>();
 
-	/**
-	 * Maps table Ids to CSS tags. By putting it here the same table type will
-	 * have the same color in all worksheets.
-	 */
-	private final VTableCssTags tableCssTags = new VTableCssTags();
-
 	private String getId(String prefix) {
 		return prefix + (nextId++);
-	}
-
-	public VTableCssTags getTableCssTags() {
-		return tableCssTags;
 	}
 
 	VColumnHeader createVColumnHeader(HNodePath path,
@@ -83,7 +68,7 @@ public class ViewFactory {
 							preferences
 									.getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader));
 		}
-		tableCssTags.registerTablesInPath(path);
+//		tableCssTags.registerTablesInPath(path);
 		return new VColumnHeader(path.toString(), columnNameFull,
 				columnNameShort);
 	}
@@ -100,12 +85,6 @@ public class ViewFactory {
 			VWorkspace vWorkspace) {
 		VWorksheet vw = new VWorksheet(vWorksheetId, worksheet, columns, vWorkspace);
 		vWorksheets.put(vWorksheetId, vw);
-		
-		// Update the coordinate set
-		HHTree hHtree = new HHTree();
-		hHtree.constructHHTree(vw.getvHeaderForest());
-		vw.setColumnCoordinatesSet(new ColumnCoordinateSet(hHtree, new ColspanMap(hHtree)));
-		vw.setLeafColIndexMap(new LeafColumnIndexMap(hHtree));
 	}
 
 	public Collection<VWorksheet> getVWorksheets()

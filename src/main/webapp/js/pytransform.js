@@ -54,7 +54,7 @@ function submitPythonPreview() {
     var info = {};
     info["hNodeId"] = hNodeId;
     info["workspaceId"] = $.workspaceGlobalInformation.id;
-    info["worksheetId"] = $("td#" + hNodeId).parents("table.WorksheetTable").attr("id");;
+    info["worksheetId"] = $("td#" + hNodeId).parents("div.Worksheet").attr("id");;
     info["transformationCode"] = ace.edit("transformCodeEditor").getValue();
     info["errorDefaultValue"] = $("#pythonTransformErrorDefaultValue").val();
     info["command"] = "PreviewPythonTransformationResultsCommand";

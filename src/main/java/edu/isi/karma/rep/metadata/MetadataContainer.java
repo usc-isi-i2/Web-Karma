@@ -20,6 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.rep.metadata;
 
+import edu.isi.karma.rep.ColumnMetadata;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.sources.DataSource;
 import edu.isi.karma.rep.sources.WebService;
@@ -36,14 +37,7 @@ public class MetadataContainer {
 	
 	private WorksheetProperties worksheetProperties;
 	private SourceInformation sourceInfo;
-
-	public void initializeFromJSON() {
-		
-	}
-	
-	public void save() {
-		
-	}
+	private ColumnMetadata columnMetadata;
 
 	public WebService getService() {
 		return service;
@@ -78,5 +72,16 @@ public class MetadataContainer {
 
 	public void setWorksheetProperties(WorksheetProperties worksheetProperties) {
 		this.worksheetProperties = worksheetProperties;
+	}
+
+	public ColumnMetadata getColumnMetadata() {
+		if (columnMetadata == null) {
+			columnMetadata = new ColumnMetadata();
+		}
+		return columnMetadata;
+	}
+
+	public void setColumnMetadata(ColumnMetadata columnMetadata) {
+		this.columnMetadata = columnMetadata;
 	}	
 }

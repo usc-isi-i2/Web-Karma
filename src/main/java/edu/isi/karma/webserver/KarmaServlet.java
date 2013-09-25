@@ -46,14 +46,14 @@ import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class GetExampleJSON extends HttpServlet {
+public class KarmaServlet extends HttpServlet {
 	private enum Arguments {
 		hasPreferenceId, workspacePreferencesId
 	}
 
 	private static final long serialVersionUID = 1L;
 	
-	private static Logger logger = LoggerFactory.getLogger(GetExampleJSON.class);
+	private static Logger logger = LoggerFactory.getLogger(KarmaServlet.class);
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
@@ -110,10 +110,8 @@ public class GetExampleJSON extends HttpServlet {
 			logger.info("No directory for preloading ontologies exists.");
 		}
 
-		//mariam
-		//File file = new File("../demofiles/usc_faculty.csv");
-		
-//		File file = new File("SampleData/CSV/PharmGKBPathways");
+		// Loading a CSV file in each workspace
+//		File file = new File("./SampleData/CSV/Nation_Data.csv");
 //		CSVFileImport imp = new CSVFileImport(1, 2, ',', '"', file, workspace.getFactory(), workspace);
 //		try {
 //			imp.generateWorksheet();
@@ -121,63 +119,13 @@ public class GetExampleJSON extends HttpServlet {
 //			e.printStackTrace();
 //		}
 		
-//		File file = new File("/Users/mohsen/Desktop/temp/karma issues/Shubham/artworks-list.xml");
-//		String fileContents = FileUtil.readFileContentsToString(file);
-//		JSONObject json;
-//		try {
-//			json = XML.toJSONObject(fileContents);
-//			JsonImport imp = new JsonImport(json, file.getName(), workspace);
-//			imp.generateWorksheet();
-//		} catch (JSONException e1) {
-//			e1.printStackTrace();
-//		}
-
-//		SampleDataFactory.createFromJsonTextFile(workspace,"./SampleData/JSON/Events.json");
+		// Loading a JSON file in each workspace
+//		SampleDataFactory.createFromJsonTextFile(workspace,"./SampleData/JSON/Hierarchical_Dataset.json");
 
 		// Initialize the Outlier tag
 		Tag outlierTag = new Tag(TagName.Outlier, Color.Red);
 		workspace.getTagsContainer().addTag(outlierTag);
 
-		// SampleDataFactory.createSample1small(workspace);
-//		SampleDataFactory.createSample1(workspace);
-		// SampleDataFactory.createSampleJsonWithNestedTable2(false/* true: 2
-		// rows */,
-		// vwsp.getWorkspace());
-		// //SampleDataFactory.createFlatWorksheet(workspace, 10000, 6);
-		// SampleDataFactory.createFlatWorksheet(workspace, 2, 2);
-		// //SampleDataFactory.createFromJsonTextFile(workspace,
-		// "samplejson-1.txt");
-		// SampleDataFactory.createJsonWithFunnyCharacters(workspace);
-		// SampleDataFactory.createSampleJson(workspace, 3);
-		// SampleDataFactory.createSampleJsonWithEmptyNestedTable1(workspace);
-		// SampleDataFactory.createSampleJsonWithEmptyNestedTable2(workspace);
-		// SampleDataFactory.createSampleJsonWithEmptyNestedTable3(workspace);
-		// SampleDataFactory.createSampleJsonWithEmptyNestedTable4(workspace);
-		// SampleDataFactory.createUnitTest1(workspace);
-		// SampleDataFactory.createUnitTest2(workspace);
-		// SampleDataFactory.createUnitTest3(workspace);
-		// SampleDataFactory.createUnitTest4(workspace);
-		// SampleDataFactory.createUnitTest5(workspace);
-		// SampleDataFactory.createUnitTest6(workspace);
-		// // SampleDataFactory.createFromJsonTextFile(workspace,
-		// "unit-test-json.json");
-		// // SampleDataFactory.createFromJsonTextFile(workspace,
-		// "testUnitTest1.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace,
-		// "testUnitTest2.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace,
-		// "testUnitTest4.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace,
-		// "testUnitTest5.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace,
-		// "testUnitTest6.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace,
-		// "testSampleJsonWithEmptyNestedTable1.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace,
-		// "createSampleJsonWithNestedTable2.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace, "f6.json");
-		// SampleDataFactory.createFromJsonTextFile(workspace,
-		// "createSampleJsonWithNestedTable2_VD.json");
 		// Put all created worksheet models in the view.
 
 		UpdateContainer c = new UpdateContainer();
