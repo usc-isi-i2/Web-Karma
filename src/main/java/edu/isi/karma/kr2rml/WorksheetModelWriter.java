@@ -28,7 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpMethod;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -338,7 +338,7 @@ public class WorksheetModelWriter {
 			Value servUrl = f.createLiteral(props.getPropertyValue(Property.serviceUrl));
 			con.add(mappingRes, serUrlUri, servUrl);
 			
-			if (props.getPropertyValue(Property.serviceRequestMethod).equals(HttpMethods.POST)) {
+			if (props.getPropertyValue(Property.serviceRequestMethod).equals(HttpMethod.POST.name())) {
 				// POST method related option triple
 				URI postMethodUri = f.createURI(Uris.KM_SERVICE_POST_METHOD_TYPE_URI);
 				Value methodUrl = f.createLiteral(props.getPropertyValue(Property.serviceDataPostMethod));

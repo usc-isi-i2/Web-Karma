@@ -26,7 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpMethod;
 
 public class Request {
 	
@@ -43,12 +43,12 @@ public class Request {
 	}
 	
 	public Request(URL url) {
-		this.type = HttpMethods.GET;
+		this.type = HttpMethod.GET.name();
 		this.url = url;
 	}
 	
 	public Request(String urlString) throws MalformedURLException {
-		this.type = HttpMethods.GET;
+		this.type = HttpMethod.GET.name();
 		setUrl(urlString);
 	}
 	
