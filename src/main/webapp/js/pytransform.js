@@ -106,7 +106,7 @@ function submitPythonPreview() {
 function submitPythonTransform() {
     var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
     var hNodeId = columnHeadingMenu.data("parentCellId");
-    var worksheetId = $("td#" + hNodeId).parents("table.WorksheetTable").attr("id");
+    var worksheetId = $("td#" + hNodeId).parents("div.Worksheet").attr("id");
     var columnName = $("#pythonTransformNewColumnName").val();
     // Validate new column name
     var validationResult = true;

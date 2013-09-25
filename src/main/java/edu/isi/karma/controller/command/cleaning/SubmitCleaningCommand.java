@@ -327,7 +327,8 @@ public class SubmitCleaningCommand extends WorksheetCommand {
 		// remove the new column
 		currentTable.removeHNode(newHNodeId, worksheet);
 
-
-		return computeAlignmentAndSemanticTypesAndCreateUpdates(workspace);
+		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		return c;
 	}
 }

@@ -253,7 +253,9 @@ public class SubmitPythonTransformationCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		addColCmd.undoIt(workspace);
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		return c;
 	}
 
 }
