@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpMethod;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -84,7 +84,7 @@ public class WebService extends Source {
 	public WebService(String id, String name, URL urlExample) {
 		super(id, name);
 		this.urlExample= urlExample;
-		this.setMethod(HttpMethods.GET);
+		this.setMethod(HttpMethod.GET.name());
 		this.urlExample = urlExample;
 		this.inputAttributes = new ArrayList<Attribute>();
 		this.outputAttributes = new ArrayList<Attribute>();

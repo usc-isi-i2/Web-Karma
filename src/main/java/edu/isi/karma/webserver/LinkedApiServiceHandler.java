@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpMethod;
 
 import edu.isi.karma.linkedapi.server.GetRequestManager;
 import edu.isi.karma.linkedapi.server.PostRequestManager;
@@ -54,7 +54,7 @@ public class LinkedApiServiceHandler extends HttpServlet {
 			if (pathInfo == null || pathInfo.trim().length() == 0)
 				return;
 			
-			if (method == HttpMethods.GET) {
+			if (method == HttpMethod.GET.name()) {
 				matcher = getInputOrOutputWithFormatPattern.matcher(pathInfo);
 				if (matcher.find()) {
 					logger.debug(getInputOrOutputWithFormatRegex);
@@ -121,7 +121,7 @@ public class LinkedApiServiceHandler extends HttpServlet {
 		try {
 			String url = request.getPathInfo();
 			if (request.getQueryString() != null) url += "?" + request.getQueryString();
-			restRequest = new RestRequest(url , HttpMethods.GET);
+			restRequest = new RestRequest(url , HttpMethod.GET.name());
 		} catch (ServletException e) {
 			response.setContentType(MimeType.TEXT_PLAIN);
 			response.getWriter().write("Invalid URL!");
@@ -157,7 +157,7 @@ public class LinkedApiServiceHandler extends HttpServlet {
 		try {
 			String url = request.getPathInfo();
 			if (request.getQueryString() != null) url += "?" + request.getQueryString();
-			restRequest = new RestRequest(url, HttpMethods.POST);
+			restRequest = new RestRequest(url, HttpMethod.POST.name());
 		} catch (ServletException e) {
 			response.setContentType(MimeType.TEXT_PLAIN);
 			response.getWriter().write("Invalid URL!");

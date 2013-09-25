@@ -9,7 +9,7 @@
   <url>http://maven.apache.org</url>
   
   <properties>
-    <jettyVersion>8.0.3.v20111011</jettyVersion>
+    <jettyVersion>9.0.5.v20130815</jettyVersion>
     <project.build.sourceEncoding>
       UTF-8
     </project.build.sourceEncoding>
@@ -346,10 +346,13 @@
   <build>
     <plugins>
       	<plugin>
-        	<groupId>org.mortbay.jetty</groupId>
+        	<groupId>org.eclipse.jetty</groupId>
         	<artifactId>jetty-maven-plugin</artifactId>
         	<version>${jettyVersion}</version>
         	<configuration>
+<!--         		<jettyXml> -->
+<!--         			jetty.xml -->
+<!--         		</jettyXml> -->
 	        	<webApp>
 			      <contextPath>/</contextPath>
 			    </webApp>

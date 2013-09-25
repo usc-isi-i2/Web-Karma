@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpMethod;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -296,7 +296,7 @@ public class InvocationManager {
 		else
 			service = new WebService(guid, serviceName, sampleUrl);
 
-		service.setMethod(HttpMethods.GET);
+		service.setMethod(HttpMethod.GET.name());
 
 		service.setInputAttributes(getInputAttributes());
 		service.setOutputAttributes(getOutputAttributes());

@@ -21,7 +21,7 @@
 
 package edu.isi.karma.controller.command.worksheet;
 
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpMethod;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -96,7 +96,7 @@ public class SetWorksheetPropertiesCommand extends Command {
 						propertiesJson.getString(Property.serviceRequestMethod.name()));
 				// Set the service invocation style if http method is POST 
 				if (propertiesJson.getString(Property.serviceRequestMethod.name())
-						.equals(HttpMethods.POST)) {
+						.equals(HttpMethod.POST.name())) {
 					props.setPropertyValue(Property.serviceDataPostMethod, 
 							propertiesJson.getString(Property.serviceDataPostMethod.name()));
 				}
