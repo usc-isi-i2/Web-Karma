@@ -98,18 +98,17 @@ public class ImportExcelFileCommand extends ImportFileCommand {
         // Each sheet is written to a separate CSV file
         if (!csvFiles.isEmpty()) {
             for (File csvFile : csvFiles) {
-                Import imp = null;
-                if (hasRevisionId()) {
-                    Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
+                Import imp = new CSVFileImport(1, 2, ',', '"', csvFile,
+                        workspace);
 
-                    imp = new CSVFileImport(1, 2, ',', '"', csvFile,
-                            workspace, revisedWorksheet);
-                } else {
-                    imp = new CSVFileImport(1, 2, ',', '"', csvFile,
-                            workspace);
-                }
                 try {
                     Worksheet wsht = imp.generateWorksheet();
+
+                    if (hasRevisionId()) {
+                        Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
+                        wsht.setRevisedWorksheet(revisedWorksheet);
+                    }
+
                     c.add(new WorksheetListUpdate());
                     c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
                 } catch (Exception e) {

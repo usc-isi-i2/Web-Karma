@@ -30,23 +30,7 @@ public class XMLImport extends Import {
 
     public XMLImport(File xmlFile, String worksheetName, Workspace workspace) {
         super(worksheetName, workspace);
-        
-        
-        try {
-            String fileContents = FileUtil.readFileContentsToString(xmlFile);
 
-            // Converting the XML to JSON
-            JSONObject json = XML.toJSONObject(fileContents);
-            jsonImport = new JsonImport(json, xmlFile.getName(), workspace);
-        } catch (JSONException ex) {
-            logger.error("Error in populating the worksheet with XML");
-        } catch (IOException ex) {
-            logger.error("Error in reading the XML file");
-        }
-    }
-    
-    public XMLImport(File xmlFile, String worksheetName, Workspace workspace, Worksheet revisedWorksheet) {
-        super(worksheetName, workspace, revisedWorksheet);
 
         try {
             String fileContents = FileUtil.readFileContentsToString(xmlFile);
@@ -60,6 +44,7 @@ public class XMLImport extends Import {
             logger.error("Error in reading the XML file");
         }
     }
+
 
     @Override
     public Worksheet generateWorksheet() throws JSONException, IOException, KarmaException, ClassNotFoundException, SQLException {

@@ -53,14 +53,6 @@ public class Worksheet extends RepEntity {
         dataTable.prettyPrint(prefix + "  ", pw, factory);
     }
 
-    Worksheet(String id, HTable headers, Table dataTable, Worksheet revisedWorksheet) {
-        super(id);
-        this.headers = headers;
-        this.dataTable = dataTable;
-        this.revisedWorksheet = revisedWorksheet;
-        
-    }
-
     Worksheet(String id, HTable headers, Table dataTable) {
         super(id);
         this.headers = headers;
@@ -68,7 +60,7 @@ public class Worksheet extends RepEntity {
     }
     
     /*
-     * Method for accessing the original file
+     * Method for accessing the revised file
      */
     public Worksheet getRevised() {
         return revisedWorksheet;
@@ -76,6 +68,13 @@ public class Worksheet extends RepEntity {
     
     /*
      * 
+     */
+    public void setRevisedWorksheet(Worksheet revisedWorksheet) {
+        this.revisedWorksheet = revisedWorksheet;
+    }
+
+    /*
+     * Check if this worksheet is revising another worksheet
      */
     public boolean hasRevision(){
         return getRevised() != null;

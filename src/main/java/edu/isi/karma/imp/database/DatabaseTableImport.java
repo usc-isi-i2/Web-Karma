@@ -38,7 +38,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class DatabaseTableImport extends Import {
-    
+
     private AbstractJDBCUtil.DBType dbType;
     private String hostname;
     private int portnumber;
@@ -60,20 +60,8 @@ public class DatabaseTableImport extends Import {
         this.dBorSIDName = dBorSIDName;
         this.tableName = tableName;
     }
-    
-    public DatabaseTableImport(DBType dbType, String hostname, int portnumber,
-            String username, String password, String dBorSIDName,
-            String tableName, Workspace workspace, Worksheet revisedWorksheet) {
-        super(tableName, workspace, revisedWorksheet);
-        this.dbType = dbType;
-        this.hostname = hostname;
-        this.portnumber = portnumber;
-        this.username = username;
-        this.password = password;
-        this.dBorSIDName = dBorSIDName;
-        this.tableName = tableName;
-    }
-    
+
+
     @Override
     public Worksheet generateWorksheet() throws SQLException, ClassNotFoundException {
         /**
@@ -85,18 +73,18 @@ public class DatabaseTableImport extends Import {
                 portnumber, username, password, tableName, dBorSIDName, 100);
         return generateWorksheet(dbUtil, data);
     }
-    
+
     public Worksheet generateWorksheetForAllRows() throws SQLException, ClassNotFoundException {
         /**
          * Get the data from the database table *
          */
         AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
-        
+
         ArrayList<ArrayList<String>> data = dbUtil.getDataForTable(dbType, hostname,
                 portnumber, username, password, tableName, dBorSIDName);
         return generateWorksheet(dbUtil, data);
     }
-    
+
     private Worksheet generateWorksheet(AbstractJDBCUtil dbUtil, ArrayList<ArrayList<String>> data) {
         /**
          * Add the headers *
@@ -135,7 +123,7 @@ public class DatabaseTableImport extends Import {
         getWorksheet().getMetadataContainer().setSourceInformation(srcInfo);
         return getWorksheet();
     }
-    
+
     @Override
     public void populateWorksheet() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Not supported yet.");

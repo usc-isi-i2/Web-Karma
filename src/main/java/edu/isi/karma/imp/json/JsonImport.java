@@ -58,28 +58,10 @@ public class JsonImport extends Import {
         super(worksheetName, workspace);
         this.json = json;
     }
-    
-    public JsonImport(Object json, String worksheetName, Workspace workspace, Worksheet revisedWorksheet) {
-        super(worksheetName, workspace, revisedWorksheet);
-        this.json = json;
-    }
-    
-    public JsonImport(File jsonFile, String worksheetName, Workspace workspace, Worksheet revisedWorksheet){
-        super(worksheetName, workspace, revisedWorksheet);
-        
-        String fileContents = null;
-        try {
-            fileContents = FileUtil.readFileContentsToString(jsonFile);
-        } catch (IOException ex) {
-            logger.error("Error in reading the JSON file");
-        }
 
-        this.json = JSONUtil.createJson(fileContents);
-    }
-
-    public JsonImport(File jsonFile, String worksheetName, Workspace workspace){
+    public JsonImport(File jsonFile, String worksheetName, Workspace workspace) {
         super(worksheetName, workspace);
-        
+
         String fileContents = null;
         try {
             fileContents = FileUtil.readFileContentsToString(jsonFile);
@@ -95,11 +77,6 @@ public class JsonImport extends Import {
             Workspace workspace) {
         this(JSONUtil.createJson(jsonString), worksheetName, workspace);
     }
-    
-    public JsonImport(String jsonString, String worksheetName,
-            Workspace workspace, Worksheet revisedWorksheet) {
-        this(JSONUtil.createJson(jsonString), worksheetName, workspace, revisedWorksheet);
-    }
 
     public JsonImport(String jsonString, Worksheet wk, RepFactory repFactory) {
         super(repFactory, wk);
@@ -110,7 +87,6 @@ public class JsonImport extends Import {
             logger.error("Error in populating the worksheet with Json");
         }
     }
-
 
     @Override
     public Worksheet generateWorksheet() throws JSONException {

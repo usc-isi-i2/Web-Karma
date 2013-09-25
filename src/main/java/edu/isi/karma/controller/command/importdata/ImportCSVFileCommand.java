@@ -111,24 +111,21 @@ public class ImportCSVFileCommand extends ImportFileCommand implements IPreviewa
 
     @Override
     public UpdateContainer doIt(Workspace workspace) throws CommandException {
-        Import imp = null;
-        if (hasRevisionId()) {
-            Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
-
-            imp = new CSVFileImport(headerRowIndex,
-                    dataStartRowIndex, delimiter, quoteCharacter, getFile(),
-                    workspace, revisedWorksheet);
-           
-        } else {
-            imp = new CSVFileImport(headerRowIndex,
+        Import imp = new CSVFileImport(headerRowIndex,
                     dataStartRowIndex, delimiter, quoteCharacter, getFile(),
                     workspace);
-        }
+        
 
         UpdateContainer c = new UpdateContainer();
         Worksheet wsht = null;
         try {
             wsht = imp.generateWorksheet();
+            
+            if (hasRevisionId()) {
+                Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
+                wsht.setRevisedWorksheet(revisedWorksheet);
+            } 
+            
             c.add(new WorksheetListUpdate());
             c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
         } catch (Exception e) {

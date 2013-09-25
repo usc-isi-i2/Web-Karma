@@ -76,14 +76,14 @@ public class ImportXMLFileCommand extends ImportFileCommand {
 
         UpdateContainer c = new UpdateContainer();
         try {
-            Import imp = null;
+            Import imp = new XMLImport(getFile(), getFile().getName(), workspace);
+            
+            Worksheet wsht = imp.generateWorksheet();
+            
             if (hasRevisionId()) {
                 Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
-                imp = new XMLImport(getFile(), getFile().getName(), workspace, revisedWorksheet);
-            } else {
-                imp = new XMLImport(getFile(), getFile().getName(), workspace);
-            }
-            Worksheet wsht = imp.generateWorksheet();
+                wsht.setRevisedWorksheet(revisedWorksheet);
+            } 
 
             c.add(new WorksheetListUpdate());
             c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));

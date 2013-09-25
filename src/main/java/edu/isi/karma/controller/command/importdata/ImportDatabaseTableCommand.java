@@ -18,7 +18,7 @@
  * Karma project at the Information Sciences Institute of the University of
  * Southern California. For more information, publications, and related
  * projects, please see: http://www.isi.edu/integration
- *****************************************************************************
+ * ****************************************************************************
  */
 package edu.isi.karma.controller.command.importdata;
 
@@ -177,19 +177,16 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
 
         UpdateContainer c = new UpdateContainer();
         try {
-            Import imp = null;
-            if (hasRevisionId()) {
-                Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
-                
-                imp = new DatabaseTableImport(
-                        dbType, hostname, portnumber, username, password, dBorSIDName,
-                        tableName, workspace, revisedWorksheet);
-            } else {
-                imp = new DatabaseTableImport(
+            Import imp = new DatabaseTableImport(
                         dbType, hostname, portnumber, username, password, dBorSIDName,
                         tableName, workspace);
-            }
+            
             Worksheet wsht = imp.generateWorksheet();
+            
+            if (hasRevisionId()) {
+                Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
+                wsht.setRevisedWorksheet(revisedWorksheet);
+            } 
 
             c.add(new WorksheetListUpdate());
             c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));

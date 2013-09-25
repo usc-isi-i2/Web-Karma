@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import org.json.JSONException;
 
 /**
+ * 
+ * This abstract class in an interface to all classes with import functionality
  *
  * @author mielvandersande
  */
@@ -30,11 +32,6 @@ public abstract class Import {
         this.factory = factory;
         this.worksheet = worksheet;
     }
-    
-    public Import(String worksheetName, Workspace workspace, Worksheet revisedWorksheet) {
-        this.factory = workspace.getFactory();
-        this.worksheet = factory.createWorksheet(worksheetName, workspace, revisedWorksheet);
-    }
 
     public RepFactory getFactory() {
         return factory;
@@ -43,8 +40,14 @@ public abstract class Import {
     public Worksheet getWorksheet() {
         return worksheet;
     }
-
+    
+    /*
+     * Generate worksheet from data
+     */
     public abstract Worksheet generateWorksheet() throws JSONException, IOException, KarmaException, ClassNotFoundException, SQLException;
     
+    /*
+     * Fill the worksheet with data
+     */
     public abstract void populateWorksheet() throws JSONException, IOException, KarmaException, ClassNotFoundException, SQLException;
 }

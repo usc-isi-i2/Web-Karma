@@ -71,14 +71,15 @@ public class ImportJSONFileCommand extends ImportFileCommand {
     public UpdateContainer doIt(Workspace workspace) throws CommandException {
         UpdateContainer c = new UpdateContainer();
         try {
-            Import imp = null;
+            Import imp = new JsonImport(getFile(), getFile().getName(), workspace);
+            
+            Worksheet wsht = imp.generateWorksheet();
+            
             if (hasRevisionId()) {
                 Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
-                imp = new JsonImport(getFile(), getFile().getName(), workspace, revisedWorksheet);
-            } else {
-                imp = new JsonImport(getFile(), getFile().getName(), workspace);
-            }
-            Worksheet wsht = imp.generateWorksheet();
+                wsht.setRevisedWorksheet(revisedWorksheet);
+            } 
+            
             c.add(new WorksheetListUpdate());
             c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
         } catch (Exception e) {

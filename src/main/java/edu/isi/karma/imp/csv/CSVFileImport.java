@@ -18,7 +18,7 @@
  * Karma project at the Information Sciences Institute of the University of
  * Southern California. For more information, publications, and related
  * projects, please see: http://www.isi.edu/integration
- *****************************************************************************
+ * ****************************************************************************
  */
 package edu.isi.karma.imp.csv;
 
@@ -58,7 +58,7 @@ public class CSVFileImport extends Import {
     public CSVFileImport(int headerRowIndex, int dataStartRowIndex,
             char delimiter, char quoteCharacter, File csvFile,
             Workspace workspace) {
-        
+
         super(csvFile.getName(), workspace);
         this.headerRowIndex = headerRowIndex;
         this.dataStartRowIndex = dataStartRowIndex;
@@ -66,18 +66,7 @@ public class CSVFileImport extends Import {
         this.quoteCharacter = quoteCharacter;
         this.csvFile = csvFile;
     }
-    
-    public CSVFileImport(int headerRowIndex, int dataStartRowIndex,
-            char delimiter, char quoteCharacter, File csvFile,
-            Workspace workspace, Worksheet revisedWorksheet) {
-        super(csvFile.getName(), workspace, revisedWorksheet);
-        this.headerRowIndex = headerRowIndex;
-        this.dataStartRowIndex = dataStartRowIndex;
-        this.delimiter = delimiter;
-        this.quoteCharacter = quoteCharacter;
-        this.csvFile = csvFile;
-    }
-        
+
     @Override
     public Worksheet generateWorksheet() throws IOException, KarmaException {
         Table dataTable = getWorksheet().getDataTable();
