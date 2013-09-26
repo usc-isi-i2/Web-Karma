@@ -24,6 +24,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.WorkspaceManager;
 
 public class AlignmentManager {
 	private static HashMap<String, Alignment> alignmentMap = null;
@@ -59,6 +63,15 @@ public class AlignmentManager {
 		if (alignment == null) {
 			alignment = new Alignment(ontologyManager);
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+			
+			Worksheet worksheet = WorkspaceManager.getInstance().getWorkspace(workspaceId).getWorksheet(worksheetId);
+			
+			// Create column nodes for the alignment
+			for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
+				HNode node = path.getLeaf();
+				// TODO: adding list of CRF semantic types
+				alignment.addColumnNode(node.getId(), node.getColumnName(), "", null);
+			}
 		}
 		return alignment;
 	}

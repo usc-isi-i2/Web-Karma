@@ -440,6 +440,9 @@ public class GraphBuilder {
 		
 		sourceToTargetLinkUris.add(key);
 		
+		logger.debug("adding the link " + link.getId());
+		logger.debug("<<< ref count of " + source.getId() + " : " + this.nodeReferences.get(source));
+
 		if (source instanceof InternalNode && target instanceof ColumnNode) {
 			List<Node> closure = this.getNodeClosure(source);
 			List<Node> closureIncludingSelf = new ArrayList<Node>();
@@ -450,7 +453,28 @@ public class GraphBuilder {
 				Integer refCount = this.nodeReferences.get(n);
 				if (refCount != null) this.nodeReferences.put(n, ++refCount);
 			}
+			
+			// Example: if A, B are added before and C is a new node which is in the closure of both A and B,
+			// in this case, deleting the links from A and B to column nodes should not cause to delete C
+//			List<Node> columnNodes = this.typeToNodesMap.get(NodeType.ColumnNode);
+//			for (Node node : columnNodes) {
+//				if (node == target) continue;
+//				Node domain;
+//				Set<Link> incomingLinks = this.getGraph().incomingEdgesOf(node);
+//				if (incomingLinks != null && !incomingLinks.isEmpty()) {
+//					domain = incomingLinks.toArray(new Link[0])[0].getSource();
+//					if (domain == source) continue;
+//					closure = this.getNodeClosure(domain);
+//					if (closure.contains(source)) {
+//						Integer refCount = this.nodeReferences.get(source);
+//						if (refCount != null) this.nodeReferences.put(source, ++refCount);
+//					}					
+//				}
+//			}
+			
 		}
+		
+		logger.debug(">>> ref count of " + source.getId() + " : " + this.nodeReferences.get(source));
 			
 		logger.debug("exit>");		
 		return true;
@@ -497,18 +521,27 @@ public class GraphBuilder {
 		Node source = link.getSource();
 		Node target = link.getTarget();
 		
+		logger.debug("removing the link " + link.getId());
+		logger.debug("<<< ref count of " + source.getId() + " : " + this.nodeReferences.get(source));
+
 		if (source instanceof InternalNode && target instanceof ColumnNode) {
-			List<Node> closure = this.getNodeClosure(source);
-			List<Node> closureIncludingSelf = new ArrayList<Node>();
-			if (closure != null) closureIncludingSelf.addAll(closure);
-			if (!closureIncludingSelf.contains(source)) closureIncludingSelf.add(source);
 			
-			for (Node n : closureIncludingSelf) {
-				Integer refCount = this.nodeReferences.get(n);
-				if (refCount != null) this.nodeReferences.put(n, --refCount);
-			}
+//			Integer refCount = this.nodeReferences.get(source);
+//			if (refCount != null && refCount != 0) this.nodeReferences.put(source, --refCount);
+			
+//			List<Node> closure = this.getNodeClosure(source);
+//			List<Node> closureIncludingSelf = new ArrayList<Node>();
+//			if (closure != null) closureIncludingSelf.addAll(closure);
+//			if (!closureIncludingSelf.contains(source)) closureIncludingSelf.add(source);
+//			
+//			for (Node n : closureIncludingSelf) {
+//				Integer refCount = this.nodeReferences.get(n);
+//				if (refCount != null && refCount != 0) this.nodeReferences.put(n, --refCount);
+//			}
 		}
 		
+		logger.debug(">>> ref count of " + source.getId() + " : " + this.nodeReferences.get(source));
+
 		if (!removeSingleLink(link))
 			return false;
 		
@@ -527,6 +560,9 @@ public class GraphBuilder {
 			return false;
 		}
 		
+		logger.debug("removing the node " + node.getId());
+		logger.debug("<<< ref count of " + node.getId() + " : " + this.nodeReferences.get(node));
+		
 		List<Node> closure = this.getNodeClosure(node);
 		List<Node> closureIncludingSelf = new ArrayList<Node>();
 		if (closure != null) closureIncludingSelf.addAll(closure);
@@ -537,10 +573,12 @@ public class GraphBuilder {
 			if (refCount != null) {
 				if (refCount.intValue() == 0) 
 					removeSingleNode(n);
-			else
-				this.nodeReferences.put(n, --refCount);
+				else
+					this.nodeReferences.put(n, --refCount);
 			}
 		}
+
+		logger.debug(">>> ref count of " + node.getId() + " : " + this.nodeReferences.get(node));
 
 		logger.info("total number of nodes in graph: " + this.graph.vertexSet().size());
 		logger.info("total number of links in graph: " + this.graph.edgeSet().size());
@@ -1374,8 +1412,8 @@ public class GraphBuilder {
 		Node n2 = new InternalNode("n2", null);
 		Node n3 = new InternalNode("n3", null);
 		Node n4 = new InternalNode("n4", null);
-		Node n8 = new ColumnNode("n8", "h1", "B", "");
-		Node n9 = new ColumnNode("n9", "h2", "B", "");
+		Node n8 = new ColumnNode("n8", "h1", "B", "", null);
+		Node n9 = new ColumnNode("n9", "h2", "B", "", null);
 		
 		Link l1 = new ObjectPropertyLink("e1", null);
 		Link l2 = new ObjectPropertyLink("e2", null);

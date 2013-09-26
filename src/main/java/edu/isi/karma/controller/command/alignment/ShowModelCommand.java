@@ -36,7 +36,11 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.SemanticType;
@@ -95,6 +99,7 @@ public class ShowModelCommand extends WorksheetCommand {
 		if(ontMgr.isEmpty())
 			return new UpdateContainer(new ErrorUpdate("No ontology loaded."));
 		
+		
 		if (addVWorksheetUpdate) {
 			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId));
 		}
@@ -109,6 +114,16 @@ public class ShowModelCommand extends WorksheetCommand {
 			return new UpdateContainer(new ErrorUpdate(
 					"Error occured while generating the model for the source."));
 		}
+
+		// Create column nodes for the alignment
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
+			HNode node = path.getLeaf();
+			// TODO: adding list of CRF semantic types
+			alignment.addColumnNode(node.getId(), node.getColumnName(), "", null);
+		}
+
 		return c;
 	}
 

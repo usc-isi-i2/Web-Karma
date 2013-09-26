@@ -21,6 +21,8 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.List;
+
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +40,6 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
-import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
@@ -128,26 +129,24 @@ public class SetMetaPropertyCommand extends Command {
 		SemanticType newType = null;
 
 		/** Check if a semantic type already exists for the column **/
-		ColumnNode existingColumnNode = alignment.getColumnNodeByHNodeId(hNodeId);
-		boolean columnNodeAlreadyExisted = false;
+		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+		boolean semanticTypeAlreadyExists = false;
 		Link oldIncomingLinkToColumnNode = null;
 		Node oldDomainNode = null;
-		if (existingColumnNode != null) {
-			columnNodeAlreadyExisted = true;
-			oldIncomingLinkToColumnNode = alignment.getCurrentIncomingLinksToNode(existingColumnNode.getId()).iterator().next();
+		List<Link> columnNodeIncomingLinks = alignment.getIncomingLinks(columnNode.getId());
+		if (columnNodeIncomingLinks != null && !columnNodeIncomingLinks.isEmpty()) { // SemanticType already assigned
+			semanticTypeAlreadyExists = true;
+			oldIncomingLinkToColumnNode = columnNodeIncomingLinks.get(0);
 			oldDomainNode = oldIncomingLinkToColumnNode.getSource();
-			if (!rdfLiteralType.equals(existingColumnNode.getRdfLiteralType()))
-				existingColumnNode.setRdfLiteralType(rdfLiteralType);
+			if (!rdfLiteralType.equals(columnNode.getRdfLiteralType()))
+				columnNode.setRdfLiteralType(rdfLiteralType);
 		}
 		
 		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
-			ColumnNode columnNode = null;
 			Node classNode = alignment.getNodeById(metaPropertyValue);
-			if (columnNodeAlreadyExisted) {
+			if (semanticTypeAlreadyExists) {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment, classNode);
-				columnNode = existingColumnNode;
-			} else
-				columnNode = getColumnNode(alignment, workspace.getFactory().getHNode(hNodeId)); 
+			}
 			
 			if (classNode == null) {
 				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
@@ -164,7 +163,6 @@ public class SetMetaPropertyCommand extends Command {
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId, ClassInstanceLink.getFixedLabel(), classNode.getLabel(), SemanticType.Origin.User, 1.0, false);
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
-			ColumnNode columnNode = null;
 			Link propertyLink = alignment.getLinkById(metaPropertyValue);
 			if (propertyLink == null) {
 				logger.error("Link should exist in the alignment: " + metaPropertyValue);
@@ -173,13 +171,9 @@ public class SetMetaPropertyCommand extends Command {
 			}
 			
 			Node classInstanceNode = alignment.getNodeById(LinkIdFactory.getLinkSourceId(metaPropertyValue));
-			if (columnNodeAlreadyExisted) {
+			if (semanticTypeAlreadyExists) {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment, classInstanceNode);
-				columnNode = existingColumnNode;
-			} else {
-				columnNode = getColumnNode(alignment, workspace.getFactory().getHNode(hNodeId));
 			}
-			
 
 			if (propertyLink instanceof DataPropertyLink) {
 				String targetHNodeId = ((ColumnNode) propertyLink.getTarget()).getHNodeId();
@@ -194,13 +188,10 @@ public class SetMetaPropertyCommand extends Command {
 			
 			alignment.align();
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
-			ColumnNode columnNode = null;
 			Node classNode = alignment.getNodeById(metaPropertyValue);
-			if (columnNodeAlreadyExisted) {
+			if (semanticTypeAlreadyExists) {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment, classNode);
-				columnNode = existingColumnNode;
-			} else
-				columnNode = getColumnNode(alignment, workspace.getFactory().getHNode(hNodeId)); 
+			}
 			
 			if (classNode == null) {
 				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
@@ -216,6 +207,8 @@ public class SetMetaPropertyCommand extends Command {
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId, ColumnSubClassLink.getFixedLabel(), classNode.getLabel(), SemanticType.Origin.User, 1.0, false);
 		}
+		
+		columnNode.setUserSelectedSemanticType(newType);
 		
 		UpdateContainer c = new UpdateContainer();
 //		CRFModelHandler crfModelHandler = vWorkspace.getWorkspace().getCrfModelHandler();
@@ -284,18 +277,18 @@ public class SetMetaPropertyCommand extends Command {
 		return c;
 	}
 	
-	private ColumnNode getColumnNode(Alignment alignment, HNode hNode) {
-		String columnName = hNode.getColumnName();
-		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
-		
-		if (columnNode == null) {
-			columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType);
-		} else {
-			// Remove old column node if it exists
-			alignment.removeNode(columnNode.getId());
-			columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType);
-		}
-		return columnNode;
-	}
+//	private ColumnNode getColumnNode(Alignment alignment, HNode hNode) {
+//		String columnName = hNode.getColumnName();
+//		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+//		
+//		if (columnNode == null) {
+//			columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType, null);
+//		} else {
+//			// Remove old column node if it exists
+//			alignment.removeNode(columnNode.getId());
+//			columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType, null);
+//		}
+//		return columnNode;
+//	}
 
 }

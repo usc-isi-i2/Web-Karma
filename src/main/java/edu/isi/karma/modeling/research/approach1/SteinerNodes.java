@@ -279,7 +279,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		//int frequency = this.getFrequency();
 		
 		double alpha = 1.0;
-		double beta = 0.2;
+		double beta = 0.1;
 		
 		this.score = alpha * coherence + beta * distnaceToMaxSize;
 	}

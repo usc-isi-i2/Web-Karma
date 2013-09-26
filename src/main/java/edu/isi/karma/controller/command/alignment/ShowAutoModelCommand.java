@@ -48,6 +48,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 
@@ -120,14 +121,16 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 		for (HNode hNode : sortedLeafHNodes){
 			String columnName = hNode.getColumnName().trim().replaceAll(" ", "_");
 			ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNode.getId());
-			if (columnNode == null) {
-				columnNode = alignment.addColumnNode(hNode.getId(), columnName, "");
+			
+			List<Link> columnNodeIncomingLinks = alignment.getIncomingLinks(columnNode.getId());
+			if (columnNodeIncomingLinks == null || columnNodeIncomingLinks.isEmpty()) { // SemanticType not yet assigned
 				Label propertyLabel = new Label(ns + columnName, ns, "karma");
 				alignment.addDataPropertyLink(classNode, columnNode, propertyLabel, false);
 				
 				// Create a semantic type object
 				SemanticType type = new SemanticType(hNode.getId(), propertyLabel, internalNodeLabel, SemanticType.Origin.User, 1.0,false);
 				worksheet.getSemanticTypes().addType(type);
+				columnNode.setUserSelectedSemanticType(type);
 			} else {
 				// User-defined: do nothing
 			}

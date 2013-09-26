@@ -33,6 +33,7 @@ public class SemanticType implements Jsonizable  {
 	private final Origin origin;
 	private final boolean isPartOfKey; 
 	private final ConfidenceLevel confidenceLevel;
+	private Double confidenceScore;
 	
 
 	public enum Origin {
@@ -53,6 +54,7 @@ public class SemanticType implements Jsonizable  {
 		this.origin = origin;
 		this.clazz = domain;
 		this.isPartOfKey = isPartOfKey;
+		this.confidenceScore = probability;
 		
 		if(probability > 0.8)
 			confidenceLevel = ConfidenceLevel.High;
@@ -76,6 +78,10 @@ public class SemanticType implements Jsonizable  {
 
 	public Origin getOrigin() {
 		return origin;
+	}
+
+	public Double getConfidenceScore() {
+		return confidenceScore;
 	}
 
 	@Override

@@ -52,6 +52,7 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
+import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SubClassLink;
 
 
@@ -157,22 +158,29 @@ public class Alignment implements OntologyUpdateListener {
 
 	public ColumnNode getColumnNodeByHNodeId(String hNodeId) {
 
-		List<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
-		if (columnNodes == null) return null;
-		for (Node cNode : columnNodes) {
-			if (((ColumnNode)cNode).getHNodeId().equals(hNodeId))
-				return (ColumnNode)cNode;
-		}
-		return null;
+		Node n = this.graphBuilder.getIdToNodeMap().get(hNodeId);
+		if (n != null && n instanceof ColumnNode)		
+			return (ColumnNode)n;
+		else 
+			return null;
+		
+//		List<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
+//		if (columnNodes == null) return null;
+//		for (Node cNode : columnNodes) {
+//			if (((ColumnNode)cNode).getHNodeId().equals(hNodeId))
+//				return (ColumnNode)cNode;
+//		}
+//		return null;
 	}
 	
 	// AddNode methods
 	
-	public ColumnNode addColumnNode(String hNodeId, String columnName, String rdfLiteralType) {
+	public ColumnNode addColumnNode(String hNodeId, String columnName, String rdfLiteralType, List<SemanticType> crfSuggestedSemanticTypes) {
 		
 		// use hNodeId as id of the node
-		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType);
-		if (this.graphBuilder.addNode(node)) return node;
+		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType, crfSuggestedSemanticTypes);
+		if (this.graphBuilder.addNode(node)) 
+			return node;
 		return null;
 	}
 	
@@ -184,10 +192,10 @@ public class Alignment implements OntologyUpdateListener {
 		return null;	
 	}
 	
-	public ColumnNode addColumnNodeWithoutUpdatingGraph(String hNodeId, String columnName, String rdfLiteralType) {
+	public ColumnNode addColumnNodeWithoutUpdatingGraph(String hNodeId, String columnName, String rdfLiteralType, List<SemanticType> crfSuggestedSemanticTypes) {
 		
 		// use hNodeId as id of the node
-		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType);
+		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType, crfSuggestedSemanticTypes);
 		if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) return node;
 		return null;
 	}
@@ -204,19 +212,20 @@ public class Alignment implements OntologyUpdateListener {
 		this.graphBuilder.updateGraph();
 	}
 	
-	public ColumnNode createColumnNode(String hNodeId, String columnName, String rdfLiteralType) {
-		
-		// use hNodeId as id of the node
-		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType);
-		return node;
-	}
-	
-	public InternalNode createInternalNode(Label label) {
-
-		String id = nodeIdFactory.getNodeId(label.getUri());
-		InternalNode node = new InternalNode(id, label);
-		return node;
-	}
+//	public ColumnNode createColumnNode(String hNodeId, String columnName, String rdfLiteralType, 
+//			List<SemanticType> crfSuggestedSemanticTypes, SemanticType userSelectedSemanticType) {
+//		
+//		// use hNodeId as id of the node
+//		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType);
+//		return node;
+//	}
+//	
+//	public InternalNode createInternalNode(Label label) {
+//
+//		String id = nodeIdFactory.getNodeId(label.getUri());
+//		InternalNode node = new InternalNode(id, label);
+//		return node;
+//	}
 	
 	public void addNodeList(List<Node> nodes) {
 		this.graphBuilder.addNodeList(nodes);
@@ -380,7 +389,7 @@ public class Alignment implements OntologyUpdateListener {
 	public List<Link> getIncomingLinks(String nodeId) {
 		
 		List<Link> possibleLinks  = new ArrayList<Link>();
-		List<Link> temp;
+		List<Link> temp = null;
 		HashSet<Link> allLinks = new HashSet<Link>();
 
 		Node node = this.getNodeById(nodeId);
@@ -391,27 +400,33 @@ public class Alignment implements OntologyUpdateListener {
 			temp = Arrays.asList(incomingLinks.toArray(new Link[0]));
 			allLinks.addAll(temp);
 		}
-		Set<Link> outgoingLinks = this.graphBuilder.getGraph().outgoingEdgesOf(node);
-		if (outgoingLinks != null) {
-			temp = Arrays.asList(outgoingLinks.toArray(new Link[0]));
-			allLinks.addAll(outgoingLinks);
-		}
 		
-		if (allLinks.size() == 0)
-			return possibleLinks;
-		
-		String sourceId, targetId;
-		for (Link e : allLinks) {
-			if (e.getSource().getId().equals(nodeId)) { // outgoing link
-				sourceId = e.getTarget().getId();
-				targetId = nodeId;
-			} else { // incoming link
-				sourceId = e.getSource().getId();
-				targetId = nodeId;
-			}
-			temp = getLinks(sourceId, targetId);
+		if (node instanceof ColumnNode) {
 			if (temp != null)
 				possibleLinks.addAll(temp);
+		} else {
+			Set<Link> outgoingLinks = this.graphBuilder.getGraph().outgoingEdgesOf(node);
+			if (outgoingLinks != null) {
+				temp = Arrays.asList(outgoingLinks.toArray(new Link[0]));
+				allLinks.addAll(outgoingLinks);
+			}
+			
+			if (allLinks.size() == 0)
+				return possibleLinks;
+			
+			String sourceId, targetId;
+			for (Link e : allLinks) {
+				if (e.getSource().getId().equals(nodeId)) { // outgoing link
+					sourceId = e.getTarget().getId();
+					targetId = nodeId;
+				} else { // incoming link
+					sourceId = e.getSource().getId();
+					targetId = nodeId;
+				}
+				temp = getLinks(sourceId, targetId);
+				if (temp != null)
+					possibleLinks.addAll(temp);
+			}
 		}
 		
 		Collections.sort(possibleLinks);
@@ -436,7 +451,7 @@ public class Alignment implements OntologyUpdateListener {
 		HashSet<Link> allLinks = new HashSet<Link>();
 
 		Node node = this.getNodeById(nodeId);
-		if (node == null) return possibleLinks;
+		if (node == null || node instanceof ColumnNode) return possibleLinks;
 		
 		Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(node);
 		if (incomingLinks != null) {
