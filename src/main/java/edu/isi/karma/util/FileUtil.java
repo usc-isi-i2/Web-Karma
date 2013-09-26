@@ -53,6 +53,9 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import org.apache.commons.io.IOUtils;
 
 public class FileUtil {
 
@@ -133,22 +136,23 @@ public class FileUtil {
     }
 
     public static String readFileContentsToString(File file) throws IOException {
-        FileInputStream stream = new FileInputStream(file);
-        try {
-            FileChannel fc = stream.getChannel();
-            MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-
-            //MVS: Detect encoding of textfile dynamically
-            String encoding = EncodingDetector.detect(stream);
-
-            if (encoding != null) {
-                return Charset.forName(encoding).decode(bb).toString();
-            }
-            /* Instead of using default, pass in a decoder. */
-            return Charset.defaultCharset().decode(bb).toString();
-        } finally {
-            stream.close();
-        }
+//        FileInputStream stream = new FileInputStream(file);
+//        try {
+//            FileChannel fc = stream.getChannel();
+//            MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+//
+//            //MVS: Detect encoding of textfile dynamically
+//            String encoding = EncodingDetector.detect(stream);
+//
+//            if (encoding != null) {
+//                return Charset.forName(encoding).decode(bb).toString();
+//            }
+//            /* Instead of using default, pass in a decoder. */
+//            return Charset.defaultCharset().decode(bb).toString();
+//        } finally {
+//            stream.close();
+//        }
+        return EncodingDetector.getString(file);
     }
 
     /**

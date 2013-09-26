@@ -4,7 +4,6 @@
  */
 package edu.isi.karma.imp.json;
 
-import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -30,7 +29,6 @@ public class XMLImport extends Import {
 
     public XMLImport(File xmlFile, String worksheetName, Workspace workspace) {
         super(worksheetName, workspace);
-
 
         try {
             String fileContents = FileUtil.readFileContentsToString(xmlFile);

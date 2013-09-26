@@ -42,7 +42,13 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import javax.xml.stream.events.EndDocument;
 import org.json.JSONException;
 
 public class CSVFileImport extends Import {
@@ -72,7 +78,11 @@ public class CSVFileImport extends Import {
         Table dataTable = getWorksheet().getDataTable();
 
         // Prepare the reader for reading file line by line
-        BufferedReader br = new BufferedReader(new FileReader(csvFile));
+        
+        InputStreamReader isr = EncodingDetector.getInputStreamReader(csvFile);
+        
+        BufferedReader br = new BufferedReader(isr);
+
 
         // Index for row currently being read
         int rowCount = 0;
