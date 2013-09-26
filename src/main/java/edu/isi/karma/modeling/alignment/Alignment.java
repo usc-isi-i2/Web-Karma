@@ -329,25 +329,25 @@ public class Alignment implements OntologyUpdateListener {
 			this.graphBuilder.changeLinkStatus(link, newStatus);
 	}
 	
-	/**
-	 * This method removes a node from the graph and also all the links and the nodes that 
-	 * are added to the graph by adding the specified node.
-	 * This method is useful when the user changes the semantic type assigned to a column.
-	 * The GUI needs to call the method by sending a Column Node  
-	 * @param nodeId
-	 */
-	public boolean removeNode(String nodeId) {
-
-		Node node = this.getNodeById(nodeId);
-		if (node == null) {
-			logger.debug("Cannot find the node " + nodeId + " in the graph.");
-			return false;
-		}
-			
-		this.graphBuilder.removeNode(node);
-
-		return false;
-	}
+//	/**
+//	 * This method removes a node from the graph and also all the links and the nodes that 
+//	 * are added to the graph by adding the specified node.
+//	 * This method is useful when the user changes the semantic type assigned to a column.
+//	 * The GUI needs to call the method by sending a Column Node  
+//	 * @param nodeId
+//	 */
+//	public boolean removeNode(String nodeId) {
+//
+//		Node node = this.getNodeById(nodeId);
+//		if (node == null) {
+//			logger.debug("Cannot find the node " + nodeId + " in the graph.");
+//			return false;
+//		}
+//			
+//		this.graphBuilder.removeNode(node);
+//
+//		return false;
+//	}
 
 	/**
 	 * This method just deletes the specified link from the graph and leaves the rest of the graph untouched.

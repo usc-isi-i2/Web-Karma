@@ -112,9 +112,9 @@ public class UnassignSemanticTypeCommand extends Command {
 			// Remove the existing link
 			alignment.removeLink(currentLink.getId());
 			// Remove the column node
-			alignment.removeNode(columnNode.getId());
+//			alignment.removeNode(columnNode.getId());
 			// Remove the source node
-			alignment.removeNode(domainNodeId);
+//			alignment.removeNode(domainNodeId);
 			
 		}
 		alignment.align();

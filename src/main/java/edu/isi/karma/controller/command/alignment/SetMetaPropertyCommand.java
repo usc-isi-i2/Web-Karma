@@ -243,8 +243,8 @@ public class SetMetaPropertyCommand extends Command {
 	private void clearOldSemanticTypeLink(Link oldIncomingLinkToColumnNode,
 			Node oldDomainNode, Alignment alignment, Node newDomainNode) {
 		alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-		if (oldDomainNode != newDomainNode)
-			alignment.removeNode(oldDomainNode.getId());
+//		if (oldDomainNode != newDomainNode)
+//			alignment.removeNode(oldDomainNode.getId());
 	}
 
 	@Override

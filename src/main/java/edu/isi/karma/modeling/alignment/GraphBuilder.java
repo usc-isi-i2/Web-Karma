@@ -529,15 +529,15 @@ public class GraphBuilder {
 //			Integer refCount = this.nodeReferences.get(source);
 //			if (refCount != null && refCount != 0) this.nodeReferences.put(source, --refCount);
 			
-//			List<Node> closure = this.getNodeClosure(source);
-//			List<Node> closureIncludingSelf = new ArrayList<Node>();
-//			if (closure != null) closureIncludingSelf.addAll(closure);
-//			if (!closureIncludingSelf.contains(source)) closureIncludingSelf.add(source);
-//			
-//			for (Node n : closureIncludingSelf) {
-//				Integer refCount = this.nodeReferences.get(n);
-//				if (refCount != null && refCount != 0) this.nodeReferences.put(n, --refCount);
-//			}
+			List<Node> closure = this.getNodeClosure(source);
+			List<Node> closureIncludingSelf = new ArrayList<Node>();
+			if (closure != null) closureIncludingSelf.addAll(closure);
+			if (!closureIncludingSelf.contains(source)) closureIncludingSelf.add(source);
+			
+			for (Node n : closureIncludingSelf) {
+				Integer refCount = this.nodeReferences.get(n);
+				if (refCount != null && refCount != 0) this.nodeReferences.put(n, --refCount);
+			}
 		}
 		
 		logger.debug(">>> ref count of " + source.getId() + " : " + this.nodeReferences.get(source));
@@ -551,16 +551,22 @@ public class GraphBuilder {
 	public boolean removeNode(Node node) {
 		
 		if (node == null) {
-			logger.debug("The node is null");
+			logger.error("The node is null");
 			return false;
 		}
 		
 		if (idToNodeMap.get(node.getId()) == null) {
-			logger.debug("The node with id=" + node.getId() + " does not exists in the graph.");
+			logger.error("The node with id=" + node.getId() + " does not exists in the graph.");
 			return false;
 		}
-		
-		logger.debug("removing the node " + node.getId());
+
+		Integer refCount = this.nodeReferences.get(node);
+		if (refCount != null && refCount.intValue() != 0) { 
+				logger.error("The node with id=" + node.getId() + " cannot be deleted because it has at least one reference.");
+				return false;
+		}
+
+		logger.info("removing the node " + node.getId() + "...");
 		logger.debug("<<< ref count of " + node.getId() + " : " + this.nodeReferences.get(node));
 		
 		List<Node> closure = this.getNodeClosure(node);
@@ -569,12 +575,12 @@ public class GraphBuilder {
 		if (!closureIncludingSelf.contains(node)) closureIncludingSelf.add(node);
 
 		for (Node n : closureIncludingSelf) {
-			Integer refCount = this.nodeReferences.get(n);
+			refCount = this.nodeReferences.get(n);
 			if (refCount != null) {
 				if (refCount.intValue() == 0) 
 					removeSingleNode(n);
-				else
-					this.nodeReferences.put(n, --refCount);
+//				else
+//					this.nodeReferences.put(n, --refCount);
 			}
 		}
 
@@ -683,7 +689,8 @@ public class GraphBuilder {
 	private boolean removeSingleNode(Node node) {
 		
 		logger.debug("<enter");
-		
+		logger.debug("removing the node " + node.getId() + "...");
+
 		Set<Link> incomingLinks = this.graph.incomingEdgesOf(node);
 		if (incomingLinks != null) {
 			Link[] incomingLinksArray = incomingLinks.toArray(new Link[0]);
@@ -723,6 +730,9 @@ public class GraphBuilder {
 	
 	private boolean removeSingleLink(Link link) {
 		
+		logger.debug("<enter");
+		logger.debug("removing the node " + link.getId() + "...");
+
 		if (!this.graph.removeEdge(link))
 			return false;
 
@@ -746,6 +756,7 @@ public class GraphBuilder {
 				link.getTarget().getId() + 
 				link.getLabel().getUri());
 		
+		logger.debug("exit>");
 		return true;
 	}
 
