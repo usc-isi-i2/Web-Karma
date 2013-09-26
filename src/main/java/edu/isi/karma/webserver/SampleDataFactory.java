@@ -648,7 +648,7 @@ public class SampleDataFactory {
 					.key("HTML").value(html).key("URL").value("http://cnn.com")
 					.endObject();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Funny Characters", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -679,7 +679,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Empty Nested Table 1", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -709,7 +709,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Empty Nested Table 2", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -737,7 +737,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Empty Nested Table 3", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -769,7 +769,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Empty Nested Table 4", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -809,7 +809,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Nested Table 1", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -883,7 +883,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Nested Table 2", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;

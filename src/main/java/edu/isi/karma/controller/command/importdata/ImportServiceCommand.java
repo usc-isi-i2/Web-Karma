@@ -20,13 +20,13 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.importdata;
 
+import edu.isi.karma.controller.command.Command.CommandType;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.ImportServiceCommandPreferencesUpdate;
@@ -34,11 +34,12 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.json.JsonImport;
+import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.sources.InvocationManager;
 
-public class ImportServiceCommand extends Command {
+public class ImportServiceCommand extends ImportCommand {
 	private static Logger logger = LoggerFactory.getLogger(ImportServiceCommand.class);
 
 	private String serviceUrl;
@@ -76,11 +77,6 @@ public class ImportServiceCommand extends Command {
 	}
 
 	@Override
-	public CommandType getCommandType() {
-		return CommandType.notUndoable;
-	}
-
-	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		//save the preferences 
 
@@ -94,7 +90,7 @@ public class ImportServiceCommand extends Command {
 			InvocationManager invocatioManager = new InvocationManager(null, ids, urls);
 			String json = invocatioManager.getServiceJson(includeInputAttributes);
 //			System.out.println(json);
-			JsonImport imp = new JsonImport(json, worksheetName, workspace);
+			Import imp = new JsonImport(json, worksheetName, workspace);
 			
 			Worksheet wsht = imp.generateWorksheet();
 			c.add(new ImportServiceCommandPreferencesUpdate(serviceUrl, worksheetName));
@@ -106,12 +102,6 @@ public class ImportServiceCommand extends Command {
 			logger.error("Error occured while creating worksheet from web-service: " + serviceUrl);
 			return new UpdateContainer(new ErrorUpdate("Error creating worksheet from web-service"));
 		}
-	}
-
-
-	@Override
-	public UpdateContainer undoIt(Workspace workspace) {
-		return null;
 	}
 
 }
