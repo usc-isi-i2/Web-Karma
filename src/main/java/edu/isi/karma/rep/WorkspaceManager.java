@@ -65,5 +65,9 @@ public class WorkspaceManager {
 	public void removeWorkspace(String workspaceId) {
 		workspaces.remove(workspaceId);
 	}
+	
+	public Workspace getWorkspace(String workspaceId) {
+		return workspaces.get(workspaceId);
+	}
 }
  

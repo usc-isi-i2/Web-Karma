@@ -305,84 +305,84 @@ and related projects, please see: http://www.isi.edu/integration
                         } else {
                             doPrevent = true;
                         }
+						if(doPrevent) {
+							var ans = confirm("Are you sure you want to go back? You will lose all the progress.");
+							if(ans) {
+								// Go with normal behavior
+							} else {
+								event.preventDefault();
+							}
+						}
+					}
+				});
+			});
+		</script>
+		<script type="text/javascript">
+			google.load("earth", "1", {
+				"callback" : earthCallback
+			});
+			function earthCallback() {
+				// alert("Earth namespace loaded!");
+			}
+		</script>
+	</head>
 
-                        if(doPrevent) {
-                            var ans = confirm("Are you sure you want to go back? You will lose all the progress.");
-                            if(ans) {
-                                // Go with normal behavior
-                            } else {
-                                event.preventDefault();
-                            }
-                        }
-                    }
-                });
-            });
-        </script>
-        <script type="text/javascript">
-            google.load("earth", "1", {
-                "callback" : earthCallback
-            });
-            function earthCallback() {
-                // alert("Earth namespace loaded!");
-            }
-        </script>
-    </head>
-    <body>
-        <h1 id="banner">Karma <span id="karma-version">v1.156</span></h1>
-        <table id="topMenuBar">
-            <tr>
-                <td>
-                    <button id="importDatabaseTableButton" class="importButton" align="top">
-                        Import Database Table
-                    </button></td>
-                <td>
-                    <button id="importFromServiceButton" class="importButton" align="top">
-                        Import from Service
-                    </button></td>
-                <td>
-                    <button id="mergeButton" class="importButton" align="top" style="display: none">
-                        Merge
-                    </button></td>
-                <td>
-                    <div class="container">
-                        <!-- <input type="file" name="file1" id="uploadFile_JSON"> -->
-                        <form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">
-                            <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
-                            <div class="row fileupload-buttonbar">
-                                <div class="span7">
-                                    <!-- The fileinput-button span is used to style the file input field as button -->
-                                    <span class="btn btn-success fileinput-button importButton"> <i class="icon-plus icon-white"></i> <span>Import File...</span>
-                                        <input type="file" name="files[]" multiple>
-                                    </span>
-                                </div>
-                                <!-- The global progress information -->
-                                <div class="span5 fileupload-progress fade">
-                                    <!-- The global progress bar -->
-                                    <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                                        <div class="bar" style="width:0%;"></div>
-                                    </div>
-                                    <!-- The extended global progress information -->
-                                    <div class="progress-extended">
-                                        &nbsp;
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div></td>
-            </tr>
-        </table>
-        <button id="resetButton" align="right">
-            Reset
-        </button>
-        <div id="commHistoryAndWorkspace">
-            <div id="commandHistory" class="ui-corner-top">
-                <div id="titleCommand" class="ui-corner-top">
-                    <span>Command History</span>
-                </div>
-            </div>
-            <div id="tablesWorkspace"></div>
-        </div>
-        <div id="columnHeadingDropDownMenu" class="ui-corner-all" style="display: none">
+	<body>
+		<h1 id="banner">Karma <span id="karma-version">v1.157</span></h1>
+		<table id="topMenuBar">
+			<tr>
+				<td>
+				<button id="importDatabaseTableButton" class="importButton" align="top">
+					Import Database Table
+				</button></td>
+				<td>
+				<button id="importFromServiceButton" class="importButton" align="top">
+					Import from Service
+				</button></td>
+				<td>
+				<button id="mergeButton" class="importButton" align="top" style="display: none">
+					Merge
+				</button></td>
+				<td>
+				<div class="container">
+					<!-- <input type="file" name="file1" id="uploadFile_JSON"> -->
+					<form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">
+						<!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+						<div class="row fileupload-buttonbar">
+							<div class="span7">
+								<!-- The fileinput-button span is used to style the file input field as button -->
+								<span class="btn btn-success fileinput-button importButton"> <i class="icon-plus icon-white"></i> <span>Import File...</span>
+									<input type="file" name="files[]" multiple>
+								</span>
+							</div>
+							<!-- The global progress information -->
+							<div class="span5 fileupload-progress fade">
+								<!-- The global progress bar -->
+								<div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+									<div class="bar" style="width:0%;"></div>
+								</div>
+								<!-- The extended global progress information -->
+								<div class="progress-extended">
+									&nbsp;
+								</div>
+							</div>
+						</div>
+					</form>
+				</div></td>
+			</tr>
+		</table>
+		<button id="resetButton" align="right">
+			Reset
+		</button>
+		<div id="commHistoryAndWorkspace">
+			<div id="commandHistory" class="ui-corner-top">
+				<div id="titleCommand" class="ui-corner-top">
+					<span>Command History</span>
+				</div>
+			</div>
+			<div id="tablesWorkspace"></div>
+		</div>
+		<div id="columnHeadingDropDownMenu" class="ui-corner-all" style="display: none">
             <button id="addColumnButton">Add Column</button>
             <button id="pyTransform">PyTransform</button>
             <button id="invokeServiceButton">Invoke Service</button>

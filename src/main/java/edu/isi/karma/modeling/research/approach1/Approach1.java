@@ -562,7 +562,7 @@ public class Approach1 {
 						}
 					}
 					
-					if (countOfExistingPropertyLinks >= 2)
+					if (countOfExistingPropertyLinks >= 1)
 						continue;
 
 					String nodeId = nodeIdFactory.getNodeId(columnNodeName);
@@ -1030,11 +1030,12 @@ public class Approach1 {
 	
 	private static void testApproach() throws Exception {
 		
-		String inputPath = Params.INPUT_DIR;
+//		String inputPath = Params.INPUT_DIR;
 		String outputPath = Params.OUTPUT_DIR;
 		String graphPath = Params.GRAPHS_DIR;
 		
-		List<ServiceModel> serviceModels = ModelReader.importServiceModels(inputPath);
+//		List<ServiceModel> serviceModels = ModelReader.importServiceModels(inputPath);
+		List<ServiceModel> serviceModels = ModelReader.importServiceModelsFromJGraphModels(Params.JGRAPHT_DIR, ".main.jgraph");
 
 		List<ServiceModel> trainingData = new ArrayList<ServiceModel>();
 		
@@ -1068,8 +1069,8 @@ public class Approach1 {
 //		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "260_aac-ont.owl"));
 //		ontManager.updateCache();
 
-//		for (int i = 0; i < serviceModels.size(); i++) {
-		int i = 1; {
+		for (int i = 0; i < serviceModels.size(); i++) {
+//		int i = 0; {
 			trainingData.clear();
 			int newServiceIndex = i;
 			ServiceModel newService = serviceModels.get(newServiceIndex);
