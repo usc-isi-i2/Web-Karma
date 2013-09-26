@@ -51,7 +51,7 @@ public class VWorkspace {
 		super();
 		this.workspace = workspace;
 		preferences = new ViewPreferences(workspacePreferencesId);
-		preferencesId=workspacePreferencesId;
+		preferencesId = workspacePreferencesId;
 	}
 
 	public Workspace getWorkspace() {

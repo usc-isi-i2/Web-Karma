@@ -58,23 +58,22 @@ public class KarmaServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		
-		logger.info("Creating new workspace ...");
-
-		Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
-
-		logger.info("done");
 		/* Check if any workspace id is set in cookies. */
 		boolean hasWorkspaceCookieId = request.getParameter(Arguments.hasPreferenceId.name()).equals("true");
+		Workspace workspace = null;
 		VWorkspace vwsp = null;
 		File crfModelFile = null;
 		
 		/* If set, pick the right preferences and CRF Model file */
 		if(hasWorkspaceCookieId) {
 			String cachedWorkspaceId = request.getParameter(Arguments.workspacePreferencesId.name());
+			
+			workspace = WorkspaceManager.getInstance().createWorkspaceWithPreferencesId(cachedWorkspaceId);
 			vwsp = new VWorkspace(workspace, cachedWorkspaceId);
 			crfModelFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
 					"CRF_Models/"+cachedWorkspaceId+"_CRFModel.txt");
 		} else {
+			workspace = WorkspaceManager.getInstance().createWorkspace();
 			vwsp = new VWorkspace(workspace);
 			crfModelFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
 					"CRF_Models/"+workspace.getId()+"_CRFModel.txt");

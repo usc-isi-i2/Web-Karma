@@ -80,6 +80,12 @@ public class Workspace extends Entity {
 		commandPreferences = new CommandPreferences(this.getId());
 		commandPreferencesId=this.getId();
 	}
+	
+	protected Workspace(String id, String cachedPreferencesId) {
+		super(id);
+		this.commandPreferences = new CommandPreferences(cachedPreferencesId);
+		this.commandPreferencesId = cachedPreferencesId;
+	}
 
 	public CommandHistory getCommandHistory() {
 		return commandHistory;

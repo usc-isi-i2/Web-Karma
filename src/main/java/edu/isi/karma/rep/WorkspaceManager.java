@@ -51,6 +51,13 @@ public class WorkspaceManager {
 		return wsp;
 	}
 	
+	public Workspace createWorkspaceWithPreferencesId(String preferenceId) {
+		String id = getNewId("WSP");
+		Workspace wsp = new Workspace(id, preferenceId);
+		workspaces.put(id, wsp);
+		return wsp;
+	}
+	
 	public String getNewId(String prefix) {
 		return prefix + (nextId++);
 	}
