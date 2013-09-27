@@ -22,6 +22,7 @@ package edu.isi.karma.modeling.alignment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypePredictionThread;
@@ -31,6 +32,8 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 
 public class AlignmentManager {
@@ -72,14 +75,25 @@ public class AlignmentManager {
 		if (alignment == null) {
 			alignment = new Alignment(ontologyManager);
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
-			
-			for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
-				HNode node = path.getLeaf();
-				String hNodeId = node.getId();
+		}
+	
+		List<HNodePath> paths = new ArrayList<>();
+		for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
+			HNode node = path.getLeaf();
+			String hNodeId = node.getId();
+			Node n = alignment.getNodeById(hNodeId);
+			if (n == null) {
+				paths.add(path);
 				alignment.addColumnNode(hNodeId, node.getColumnName(), "", new ArrayList<SemanticType>());
+			} else if (n instanceof ColumnNode) {
+				ColumnNode c =  ((ColumnNode)n);
+				if (c.getCrfSuggestedSemanticTypes() == null || c.getCrfSuggestedSemanticTypes().isEmpty())
+					paths.add(path);
 			}
+		}
 			
-			Thread t = new Thread(new SemanticTypePredictionThread(worksheet, crfModelHandler, ontologyManager, alignment));
+		if (!paths.isEmpty()) {
+			Thread t = new Thread(new SemanticTypePredictionThread(worksheet, paths, crfModelHandler, ontologyManager, alignment));
 			t.start();
 		}
 		

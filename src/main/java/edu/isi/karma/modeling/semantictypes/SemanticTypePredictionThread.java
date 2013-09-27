@@ -25,28 +25,36 @@ import edu.isi.karma.rep.alignment.SemanticType.Origin;
 
 public class SemanticTypePredictionThread implements Runnable {
 
-	private final CRFModelHandler crfModelHandler;
 	private final Worksheet worksheet;
-	private Alignment alignment;
+	List<HNodePath> hNodePaths;
+	private final CRFModelHandler crfModelHandler;
 	private OntologyManager ontologyManager;
+	private Alignment alignment;
 	
 	
 	private final Logger logger = LoggerFactory.getLogger(SemanticTypePredictionThread.class);
 	
 	public SemanticTypePredictionThread(Worksheet worksheet,
-			CRFModelHandler crfModelHandler, OntologyManager ontologyManager, Alignment alignment) {
-		this.crfModelHandler = crfModelHandler;
+			List<HNodePath> hNodePaths,
+			CRFModelHandler crfModelHandler, 
+			OntologyManager ontologyManager, 
+			Alignment alignment) {
 		this.worksheet = worksheet;
-		this.alignment = alignment;
+		this.hNodePaths = hNodePaths;
+		this.crfModelHandler = crfModelHandler;
 		this.ontologyManager = ontologyManager;
+		this.alignment = alignment;
 	}
 
 	
 	public void run() {
 
-		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
-
-		for (HNodePath path : paths) {
+		if (hNodePaths == null)
+			return;
+		
+		for (HNodePath path : this.hNodePaths) {
+			
+			logger.info("predict labels for the column " + path.getLeaf().getColumnName());
 
 			ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(worksheet,
 					path);
@@ -105,7 +113,7 @@ public class SemanticTypePredictionThread implements Runnable {
 		Double confidence;
 		String[] parts;
 		String key;
-		for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
+		for (HNodePath path : this.hNodePaths) {
 			HNode node = path.getLeaf();
 			String hNodeId = node.getId();
 			crfSuggestedSemanticTypes = new ArrayList<SemanticType>();
@@ -137,9 +145,12 @@ public class SemanticTypePredictionThread implements Runnable {
 				}
 			}
 			Node c = alignment.getNodeById(hNodeId);
-			if (c != null && c instanceof ColumnNode) 
+			if (c != null && c instanceof ColumnNode) {
 				((ColumnNode)c).setCrfSuggestedSemanticTypes(crfSuggestedSemanticTypes);
+				logger.info("CRF semantic types added to the column node " + ((ColumnNode)c).getColumnName());
+			}
 		}
+		
 
 	}
 
