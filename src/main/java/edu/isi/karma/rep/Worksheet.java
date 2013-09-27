@@ -22,14 +22,11 @@
  */
 package edu.isi.karma.rep;
 
-import com.vividsolutions.jts.util.CollectionUtil;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
 import java.io.PrintWriter;
 
 import edu.isi.karma.modeling.semantictypes.FullCRFModel;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.metadata.MetadataContainer;
-import java.util.Collection;
 
 /**
  * @author szekely

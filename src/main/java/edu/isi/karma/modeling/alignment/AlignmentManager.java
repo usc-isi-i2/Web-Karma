@@ -24,10 +24,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.modeling.semantictypes.SemanticTypePredictionThread;
+import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
+import edu.isi.karma.rep.alignment.SemanticType;
 
 public class AlignmentManager {
 	private static HashMap<String, Alignment> alignmentMap = null;
@@ -59,20 +63,26 @@ public class AlignmentManager {
 	public Alignment getAlignmentOrCreateIt(String workspaceId, String worksheetId, OntologyManager ontologyManager){
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				workspaceId, worksheetId);
+		
+		Workspace workspace = WorkspaceManager.getInstance().getWorkspace(workspaceId);
+		Worksheet worksheet = WorkspaceManager.getInstance().getWorkspace(workspaceId).getWorksheet(worksheetId);
+		CRFModelHandler crfModelHandler = workspace.getCrfModelHandler();
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		
 		if (alignment == null) {
 			alignment = new Alignment(ontologyManager);
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 			
-			Worksheet worksheet = WorkspaceManager.getInstance().getWorkspace(workspaceId).getWorksheet(worksheetId);
-			
-			// Create column nodes for the alignment
 			for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
 				HNode node = path.getLeaf();
-				// TODO: adding list of CRF semantic types
-				alignment.addColumnNode(node.getId(), node.getColumnName(), "", null);
+				String hNodeId = node.getId();
+				alignment.addColumnNode(hNodeId, node.getColumnName(), "", new ArrayList<SemanticType>());
 			}
+			
+			Thread t = new Thread(new SemanticTypePredictionThread(worksheet, crfModelHandler, ontologyManager, alignment));
+			t.start();
 		}
+		
 		return alignment;
 	}
 	public void removeWorkspaceAlignments(String workspaceId) {

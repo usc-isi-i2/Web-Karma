@@ -83,6 +83,10 @@ public class ColumnNode extends Node {
 	public List<SemanticType> getCrfSuggestedSemanticTypes() {
 		return crfSuggestedSemanticTypes;
 	}
-	
+
+	public void setCrfSuggestedSemanticTypes(
+			List<SemanticType> crfSuggestedSemanticTypes) {
+		this.crfSuggestedSemanticTypes = crfSuggestedSemanticTypes;
+	}
 	
 }
