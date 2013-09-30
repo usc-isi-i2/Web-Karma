@@ -88,7 +88,7 @@
 
 @cell-left-right-padding: floor(@packing-factor*@base-cell-left-right-padding);
 @cell-top-bottom-padding: floor(@packing-factor*@packing-factor*@base-cell-top-bottom-padding);
-@cell-border-width: 1px; 
+@cell-border-width: 1px;
 
 /**********************************************************************
  * 
@@ -397,50 +397,50 @@ body
  *
  **************************************************************/
 
-.col-01 {
-    width: 10*@cell-font-size-px*@cell-width-stretch-factor;
-}
-.col-02 { 
-    width: 10*@cell-font-size-px*@cell-width-stretch-factor;
-}
-
-
-@col-03-width:  @cell-border-width 
-                + 3*@cell-border-width
-                + 3*2*@cell-left-right-padding
-                + 10*@cell-font-size-px*@cell-width-stretch-factor
-                + 17*@cell-font-size-px*@cell-width-stretch-factor
-                + 10*@cell-font-size-px*@cell-width-stretch-factor;
-
-.col-03 {
-    /* The width of the contents of the cell (without the padding) */ 
-    width: @col-03-width; 
-}
-
-.col-04 {
-    width: 10*@cell-font-size-px*@cell-width-stretch-factor;
-}
-
-.col-a01 { 
-    width: 10*@cell-font-size-px*@cell-width-stretch-factor;
-}
-.col-a02 {
-    width: 17*@cell-font-size-px*@cell-width-stretch-factor;  
-}
-.col-a03 {    
-    width: 10*@cell-font-size-px*@cell-width-stretch-factor;  
-}
-
-@table-01-width:    2*@cell-border-width
-                    + 3*@cell-border-width
-                    + 4*2*@cell-left-right-padding
-                    + 10*@cell-font-size-px*@cell-width-stretch-factor
-                    + 10*@cell-font-size-px*@cell-width-stretch-factor
-                    + @col-03-width
-                    + 10*@cell-font-size-px*@cell-width-stretch-factor;
-
-.table-01-width {
-    /* The width of the whole top-level table */
-    width: @table-01-width;
-}
+//.col-01 {
+//    width: 10*@cell-font-size-px*@cell-width-stretch-factor;
+//}
+//.col-02 {
+//    width: 10*@cell-font-size-px*@cell-width-stretch-factor;
+//}
+//
+//
+//@col-03-width:  @cell-border-width
+//                + 3*@cell-border-width
+//                + 3*2*@cell-left-right-padding
+//                + 10*@cell-font-size-px*@cell-width-stretch-factor
+//                + 17*@cell-font-size-px*@cell-width-stretch-factor
+//                + 10*@cell-font-size-px*@cell-width-stretch-factor;
+//
+//.col-03 {
+//    /* The width of the contents of the cell (without the padding) */
+//    width: @col-03-width;
+//}
+//
+//.col-04 {
+//    width: 10*@cell-font-size-px*@cell-width-stretch-factor;
+//}
+//
+//.col-a01 {
+//    width: 10*@cell-font-size-px*@cell-width-stretch-factor;
+//}
+//.col-a02 {
+//    width: 17*@cell-font-size-px*@cell-width-stretch-factor;
+//}
+//.col-a03 {
+//    width: 10*@cell-font-size-px*@cell-width-stretch-factor;
+//}
+//
+//@table-01-width:    2*@cell-border-width
+//                    + 3*@cell-border-width
+//                    + 4*2*@cell-left-right-padding
+//                    + 10*@cell-font-size-px*@cell-width-stretch-factor
+//                    + 10*@cell-font-size-px*@cell-width-stretch-factor
+//                    + @col-03-width
+//                    + 10*@cell-font-size-px*@cell-width-stretch-factor;
+//
+//.table-01-width {
+//    /* The width of the whole top-level table */
+//    width: @table-01-width;
+//}
 

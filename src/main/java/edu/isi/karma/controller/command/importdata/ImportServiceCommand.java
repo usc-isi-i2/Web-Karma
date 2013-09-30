@@ -20,7 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.importdata;
 
-import edu.isi.karma.controller.command.Command.CommandType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +32,8 @@ import edu.isi.karma.controller.update.ImportServiceCommandPreferencesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.imp.Import;
+import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.sources.InvocationManager;

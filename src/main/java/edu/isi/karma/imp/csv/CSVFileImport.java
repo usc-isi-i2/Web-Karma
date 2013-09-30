@@ -24,12 +24,13 @@ package edu.isi.karma.imp.csv;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,12 +45,6 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import javax.xml.stream.events.EndDocument;
-import org.json.JSONException;
 
 public class CSVFileImport extends Import {
 

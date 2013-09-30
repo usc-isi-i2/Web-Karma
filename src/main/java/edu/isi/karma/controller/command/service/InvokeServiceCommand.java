@@ -70,7 +70,6 @@ public class InvokeServiceCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		UpdateContainer c = new UpdateContainer();
 		Worksheet wk = workspace.getWorksheet(worksheetId);
 		
 		// Clone the worksheet just before the invocation
@@ -100,7 +99,8 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			ServiceTableUtil.populateWorksheet(serviceTable, wk, workspace.getFactory());
 			
 			// FIXME
-			String json = invocatioManager.getServiceJson(true);
+//			String json = invocatioManager.getServiceJson(true);
+			invocatioManager.getServiceJson(true);
 //			new JsonImport(json, wk, ws.getFactory());
 //			System.out.println(json);
 

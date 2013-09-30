@@ -81,7 +81,6 @@ public class VWorksheet extends ViewEntity {
 						ViewPreference.maxRowsToShowInNestedTables);
 
 		// Force creation of the TablePager for the top table.
-		System.out.println("Main table id:" + worksheet.getDataTable().getId());
 		getTablePager(worksheet.getDataTable(),
 				vWorkspace.getPreferences().getIntViewPreferenceValue(
 						ViewPreference.defaultRowsToShowInTopTables));

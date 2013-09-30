@@ -34,9 +34,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.List;
 
@@ -53,9 +50,6 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import org.apache.commons.io.IOUtils;
 
 public class FileUtil {
 
