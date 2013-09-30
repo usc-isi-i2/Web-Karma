@@ -20,13 +20,20 @@
  ******************************************************************************/
 package edu.isi.karma.rep.alignment;
 
+import java.io.Serializable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import edu.isi.karma.util.Jsonizable;
 
-public class SemanticType implements Jsonizable  {
+public class SemanticType implements Jsonizable, Serializable, Comparable<SemanticType>  {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private final String hNodeId;
 	private final Label type;
 	private final Label clazz;
@@ -81,6 +88,8 @@ public class SemanticType implements Jsonizable  {
 	}
 
 	public Double getConfidenceScore() {
+		if (this.confidenceScore == null)
+			return Double.MIN_VALUE;
 		return confidenceScore;
 	}
 
@@ -141,5 +150,17 @@ public class SemanticType implements Jsonizable  {
 	public String getCrfModelLabelString() {
 		return (this.getDomain() == null) ? 
 				this.getType().getUri() : this.getDomain().getUri() + "|" + this.getType().getUri();
+	}
+
+	@Override
+	public int compareTo(SemanticType o) {
+		if (this.confidenceScore == null && o.confidenceScore == null)
+			return 0;
+		else if (this.confidenceScore == null)
+			return -1;
+		else if (o.confidenceScore == null)
+			return 1;
+		else
+			return this.confidenceScore.compareTo(o.confidenceScore);
 	}
 }

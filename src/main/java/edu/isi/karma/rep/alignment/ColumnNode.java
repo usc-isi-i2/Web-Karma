@@ -21,6 +21,8 @@
 
 package edu.isi.karma.rep.alignment;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -87,6 +89,19 @@ public class ColumnNode extends Node {
 	public void setCrfSuggestedSemanticTypes(
 			List<SemanticType> crfSuggestedSemanticTypes) {
 		this.crfSuggestedSemanticTypes = crfSuggestedSemanticTypes;
+	}
+	
+	public List<SemanticType> getTop3Suggestions() {
+		
+		List<SemanticType> semanticTypes = new ArrayList<>();
+		if (this.crfSuggestedSemanticTypes == null || this.crfSuggestedSemanticTypes.isEmpty())
+			return semanticTypes;
+		
+		Collections.sort(this.crfSuggestedSemanticTypes, Collections.reverseOrder());
+		for (int i = 0; i < 3 && i < this.crfSuggestedSemanticTypes.size(); i++)
+			semanticTypes.add(this.crfSuggestedSemanticTypes.get(i));
+		
+		return semanticTypes;
 	}
 	
 }
