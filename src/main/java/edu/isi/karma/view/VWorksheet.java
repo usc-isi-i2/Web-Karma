@@ -69,7 +69,7 @@ public class VWorksheet extends ViewEntity {
 	 * We create a TablePager for the top level table and every nested table we
 	 * see. It records how the table is scrolled.
 	 */
-	private final Map<String, TablePager> tableId2TablePager = new HashMap<String, TablePager>();
+	private Map<String, TablePager> tableId2TablePager = new HashMap<String, TablePager>();
 	
 	VWorksheet(String id, Worksheet worksheet, List<HNodePath> columns,
 			VWorkspace vWorkspace) {
@@ -107,6 +107,16 @@ public class VWorksheet extends ViewEntity {
 
 	public TablePager getTablePager(String tableId) {
 		return tableId2TablePager.get(tableId);
+	}
+
+	
+	
+	public Map<String, TablePager> getTableId2TablePager() {
+		return tableId2TablePager;
+	}
+
+	public void setTableId2TablePager(Map<String, TablePager> tableId2TablePager) {
+		this.tableId2TablePager = tableId2TablePager;
 	}
 
 	public String getWorksheetId() {
