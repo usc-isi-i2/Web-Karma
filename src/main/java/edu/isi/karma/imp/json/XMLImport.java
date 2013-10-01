@@ -35,7 +35,7 @@ public class XMLImport extends Import {
 
             // Converting the XML to JSON
             JSONObject json = XML.toJSONObject(fileContents);
-            jsonImport = new JsonImport(json, xmlFile.getName(), workspace);
+            jsonImport = new JsonImport(json, this.getFactory(), this.getWorksheet());
         } catch (JSONException ex) {
             logger.error("Error in populating the worksheet with XML");
         } catch (IOException ex) {
