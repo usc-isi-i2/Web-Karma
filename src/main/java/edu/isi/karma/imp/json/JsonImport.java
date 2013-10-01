@@ -25,9 +25,22 @@
  */
 package edu.isi.karma.imp.json;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
@@ -35,14 +48,6 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.JSONUtil;
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author szekely
@@ -136,9 +141,13 @@ public class JsonImport extends Import {
     private void addObjectElement(String key, Object value, HTable headers,
             Row row) throws JSONException {
         HNode hNode = addHNode(headers, key);
+        
         String hNodeId = hNode.getId();
 
         if (value instanceof String) {
+        	if (((String) value).isEmpty() && hNode.hasNestedTable()) {
+        		addEmptyRow(row.getNode(hNodeId).getNestedTable(), hNode);
+        	}
             row.setValue(hNodeId, (String) value, getFactory());
         } else if (value instanceof Integer) {
             row.setValue(hNodeId, value.toString(), getFactory());
@@ -149,11 +158,11 @@ public class JsonImport extends Import {
         } else if (value instanceof Boolean) {
             row.setValue(hNodeId, value.toString(), getFactory());
         } else if (value instanceof JSONObject) {
-            HTable nestedHTable = addNestedHTable(hNode, key);
+            HTable nestedHTable = addNestedHTable(hNode, key, row);
             Table nestedTable = row.getNode(hNodeId).getNestedTable();
             addKeysAndValues((JSONObject) value, nestedHTable, nestedTable);
         } else if (value instanceof JSONArray) {
-            HTable nestedHTable = addNestedHTable(hNode, key);
+            HTable nestedHTable = addNestedHTable(hNode, key, row);
             Table nestedTable = row.getNode(hNodeId).getNestedTable();
             JSONArray a = (JSONArray) value;
             for (int i = 0; i < a.length(); i++) {
@@ -166,7 +175,19 @@ public class JsonImport extends Import {
         }
     }
 
-    private void addKeysAndValues(JSONObject object, HTable nestedHTable,
+    private void addEmptyRow(Table nestedTable, HNode hNode) {
+		HTable headersNestedTable = hNode.getNestedTable();
+		Row emptyRow = nestedTable.addRow(getFactory());
+		for (HNode nestedHNode: headersNestedTable.getHNodes()) {
+			if (nestedHNode.hasNestedTable()) {
+				addEmptyRow(emptyRow.getNode(nestedHNode.getId()).getNestedTable(), nestedHNode);
+			} else {
+				emptyRow.setValue(nestedHNode.getId(), "", getFactory());
+			}
+		}
+	}
+
+	private void addKeysAndValues(JSONObject object, HTable nestedHTable,
             Table nestedTable) throws JSONException {
         Row nestedRow = nestedTable.addRow(getFactory());
         @SuppressWarnings("unchecked")
@@ -212,8 +233,8 @@ public class JsonImport extends Import {
         } else if (listValue instanceof JSONArray) {
             HNode hNode = addHNode(headers, "nested array");
             String hNodeId = hNode.getId();
-            HTable nestedHTable = addNestedHTable(hNode, "nested array values");
             Row row = dataTable.addRow(getFactory());
+            HTable nestedHTable = addNestedHTable(hNode, "nested array values", row);
             Table nestedTable = row.getNode(hNodeId).getNestedTable();
             JSONArray a = (JSONArray) listValue;
             for (int i = 0; i < a.length(); i++) {
@@ -231,11 +252,23 @@ public class JsonImport extends Import {
                 || value instanceof Long;
     }
 
-    private HTable addNestedHTable(HNode hNode, String key) {
-        HTable ht = hNode.getNestedTable();
+    private HTable addNestedHTable(HNode hNode, String key, Row row) {
+    	HTable ht = hNode.getNestedTable();
         if (ht == null) {
             ht = hNode.addNestedTable(createNestedTableName(key), getWorksheet(),
                     getFactory());
+            
+            // Check for all the nodes that have value and nested tables
+            Collection<Node> nodes = new ArrayList<Node>();
+            getWorksheet().getDataTable().collectNodes(hNode.getHNodePath(getFactory()), nodes);
+            for (Node node:nodes) {
+            	if (node.getBelongsToRow() == row) break;
+            	
+            	// Add an empty row for each nested table that does not have any row
+            	if (node.getNestedTable().getNumRows() == 0) {
+            		addEmptyRow(node.getNestedTable(), hNode);
+            	}
+            }
         }
         return ht;
     }

@@ -21,48 +21,70 @@
 
 package edu.isi.karma.modeling.research.approach1;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.InternalNode;
+import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.SemanticType;
 
 public class SemanticTypeMapping {
-
+	
 	private SemanticType semanticType;
-	private MappingType type;
-	private Set<MappingStruct> mappingStructs;
+	private InternalNode source;
+	private Link link;
+	private ColumnNode target;
 	
-	public SemanticTypeMapping(SemanticType semanticType, MappingType type) {
+	public SemanticTypeMapping(SemanticType semanticType, InternalNode source, Link link, ColumnNode target) {
 		this.semanticType = semanticType;
-		this.mappingStructs = new HashSet<MappingStruct>();
-		this.type = type;
+		this.source = source;
+		this.link = link;
+		this.target = target;
 	}
 
-	public SemanticTypeMapping(SemanticType semanticType, MappingType type, Set<MappingStruct> mappingStructs) {
-		this.semanticType = semanticType;
-		this.type = MappingType.ClassNode;
-		this.mappingStructs = mappingStructs;
+	public InternalNode getSource() {
+		return source;
 	}
 
-	public SemanticType getSemanticType() {
-		return semanticType;
-	}
-	
-	public Set<MappingStruct> getMappingStructs() {
-		return Collections.unmodifiableSet(mappingStructs);
+	public Link getLink() {
+		return link;
 	}
 
-	public MappingType getType() {
-		return type;
-	}
-	
-	public void addMappingStruct(MappingStruct mappingStruct) {
-		this.mappingStructs.add(mappingStruct);
+	public ColumnNode getTarget() {
+		return target;
 	}
 	
 	public double getConfidence() {
-		// FIXME
-		return 1.0;
+		return this.semanticType.getConfidenceScore();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((link == null) ? 0 : link.hashCode());
+		result = prime * result + ((source == null) ? 0 : source.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SemanticTypeMapping other = (SemanticTypeMapping) obj;
+		if (link == null) {
+			if (other.link != null)
+				return false;
+		} else if (!link.equals(other.link))
+			return false;
+		if (source == null) {
+			if (other.source != null)
+				return false;
+		} else if (!source.equals(other.source))
+			return false;
+		return true;
 	}
 }

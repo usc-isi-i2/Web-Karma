@@ -225,7 +225,7 @@ function parse(data) {
             var additionalRowsAvail = element["additionalRowsCount"];
             var moreRowsDiv = $("<div>").addClass("load-more");
             if (additionalRowsAvail == 0) {
-
+                // Do nothing
             } else {
                 // Remove any existing rows available links
                 $("div.load-more", tableDataContainer).remove();
@@ -513,7 +513,7 @@ function parse(data) {
 
             if (additionalRecordsLeft == 0) {
                 loadMoreLink.remove();
-                $("div#" + element.tableId +  " > div.load-more").text("No records left");
+                $("div#" + element.tableId +  " > div.load-more").remove();
             } else {
                 loadMoreLink.text(additionalRecordsLeft + " additional records, load more...");
             }
@@ -562,12 +562,12 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
             // Add padding for nested cells
             colWidthNumber += (colAdded * 2 * 9);
             // Add border width
-            colWidthNumber += (colAdded * 1.1);
+            colWidthNumber += (colAdded + 1);
 
             headerDiv.append(pElem).append(nestedTableContainer.append(nestedTableHeaderContainer.append(nestedTable)));
         } else {
             headerDiv.addClass("wk-header").text(column["columnName"]).mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);
-            colWidthNumber = column.characterLength * 15 * 0.5;
+            colWidthNumber = Math.floor(column.characterLength * 12 * 0.9);
         }
 
         var colWidth = {};

@@ -22,12 +22,19 @@ package edu.isi.karma.modeling.alignment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.modeling.semantictypes.SemanticTypePredictionThread;
+import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.SemanticType;
 
 public class AlignmentManager {
 	private static HashMap<String, Alignment> alignmentMap = null;
@@ -59,20 +66,37 @@ public class AlignmentManager {
 	public Alignment getAlignmentOrCreateIt(String workspaceId, String worksheetId, OntologyManager ontologyManager){
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				workspaceId, worksheetId);
+		
+		Workspace workspace = WorkspaceManager.getInstance().getWorkspace(workspaceId);
+		Worksheet worksheet = WorkspaceManager.getInstance().getWorkspace(workspaceId).getWorksheet(worksheetId);
+		CRFModelHandler crfModelHandler = workspace.getCrfModelHandler();
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		
 		if (alignment == null) {
 			alignment = new Alignment(ontologyManager);
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
-			
-			Worksheet worksheet = WorkspaceManager.getInstance().getWorkspace(workspaceId).getWorksheet(worksheetId);
-			
-			// Create column nodes for the alignment
-			for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
-				HNode node = path.getLeaf();
-				// TODO: adding list of CRF semantic types
-				alignment.addColumnNode(node.getId(), node.getColumnName(), "", null);
+		}
+	
+		List<HNodePath> paths = new ArrayList<>();
+		for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
+			HNode node = path.getLeaf();
+			String hNodeId = node.getId();
+			Node n = alignment.getNodeById(hNodeId);
+			if (n == null) {
+				paths.add(path);
+				alignment.addColumnNode(hNodeId, node.getColumnName(), "", new ArrayList<SemanticType>());
+			} else if (n instanceof ColumnNode) {
+				ColumnNode c =  ((ColumnNode)n);
+				if (c.getCrfSuggestedSemanticTypes() == null || c.getCrfSuggestedSemanticTypes().isEmpty())
+					paths.add(path);
 			}
 		}
+			
+		if (!paths.isEmpty()) {
+			Thread t = new Thread(new SemanticTypePredictionThread(worksheet, paths, crfModelHandler, ontologyManager, alignment));
+			t.start();
+		}
+		
 		return alignment;
 	}
 	public void removeWorkspaceAlignments(String workspaceId) {

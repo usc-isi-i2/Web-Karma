@@ -207,8 +207,8 @@ public class SetSemanticTypeCommand extends Command {
 							// do nothing;
 						} else if (semanticTypeAlreadyExists) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+//							alignment.removeNode(oldDomainNode.getId());
 							alignment.addClassInstanceLink(domain, columnNode, keyInfo);
-							alignment.removeNode(oldDomainNode.getId());
 						} else {
 							alignment.addClassInstanceLink(domain, columnNode, keyInfo);
 						}
@@ -224,8 +224,8 @@ public class SetSemanticTypeCommand extends Command {
 						// When there was an existing semantic type and the new domain is a new node in the graph and semantic type already existed 
 						else if (semanticTypeAlreadyExists) {
 							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+//							alignment.removeNode(oldDomainNode.getId());
 							alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
-							alignment.removeNode(oldDomainNode.getId());
 						} else {
 							alignment.addDataPropertyLink(domain, columnNode, linkLabel, isPartOfKey);
 						}						

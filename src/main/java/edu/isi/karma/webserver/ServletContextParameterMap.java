@@ -22,14 +22,11 @@ package edu.isi.karma.webserver;
 
 import java.util.HashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class ServletContextParameterMap {
 	private static HashMap<ContextParameter, String> valuesMap = new HashMap<ContextParameter, String>();
 
-	private static Logger logger = LoggerFactory
-			.getLogger(ServletContextParameterMap.class);
+//	private static Logger logger = LoggerFactory
+//			.getLogger(ServletContextParameterMap.class);
 
 	public enum ContextParameter {
 		PUBLIC_RDF_ADDRESS,PUBLIC_KML_ADDRESS, 
@@ -50,7 +47,7 @@ public class ServletContextParameterMap {
 	public static String getParameterValue(ContextParameter param) {
 		if (valuesMap.containsKey(param))
 			return valuesMap.get(param);
-		logger.error("Parameter value does not exist! " + param);
+//		logger.error("Parameter value does not exist! " + param);
 
 		return "";
 	}

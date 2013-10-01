@@ -32,6 +32,7 @@ import java.util.Map;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
@@ -83,8 +84,12 @@ public class ViewFactory {
 
 	public void updateWorksheet(String vWorksheetId, Worksheet worksheet, List<HNodePath> columns,
 			VWorkspace vWorkspace) {
+		// Grab reference to the pager in the old worksheet
+		Map<String, TablePager> vwPager = getVWorksheet(vWorksheetId).getTableId2TablePager();
+		
 		VWorksheet vw = new VWorksheet(vWorksheetId, worksheet, columns, vWorkspace);
 		vWorksheets.put(vWorksheetId, vw);
+		vw.setTableId2TablePager(vwPager);
 	}
 
 	public Collection<VWorksheet> getVWorksheets()
