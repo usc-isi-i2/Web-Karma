@@ -22,7 +22,7 @@ public abstract class Import {
 
     private final RepFactory factory;
     private final Worksheet worksheet;
-
+    
     public Import(String worksheetName, Workspace workspace) {
         this.factory = workspace.getFactory();
         this.worksheet = factory.createWorksheet(worksheetName, workspace);

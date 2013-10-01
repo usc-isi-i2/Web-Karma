@@ -73,14 +73,17 @@ public class JsonImport extends Import {
 
     }
 
-    public JsonImport(String jsonString, String worksheetName,
-            Workspace workspace) {
+    public JsonImport(String jsonString, String worksheetName, Workspace workspace) {
         this(JSONUtil.createJson(jsonString), worksheetName, workspace);
     }
 
-    public JsonImport(String jsonString, Worksheet wk, RepFactory repFactory) {
+    public JsonImport(String jsonString, RepFactory repFactory, Worksheet wk) {
+        this(JSONUtil.createJson(jsonString), repFactory, wk);
+    }
+    
+    public JsonImport(Object json, RepFactory repFactory, Worksheet wk) {
         super(repFactory, wk);
-        this.json = JSONUtil.createJson(jsonString);
+        this.json = json;
         try {
             populateWorksheet();
         } catch (JSONException e) {
