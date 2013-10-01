@@ -196,31 +196,31 @@ function parse(data) {
         else if(element["updateType"] == "WorksheetDataUpdate") {
             var worksheetPanel = $("div.Worksheet#" + element["worksheetId"]);
 
-            var tableDataContainer = $("div.table-data-container", worksheetPanel);
+            var tableDataContainer = $(worksheetPanel).children("div.table-data-container");
             if (tableDataContainer.length == 0) {
                 tableDataContainer = $("<div>").addClass("table-data-container").attr("id", element["tableId"]);
                 worksheetPanel.append(tableDataContainer);
             }
 
-            var dataTable = $("table.wk-table", tableDataContainer);
+            var dataTable = $(tableDataContainer).children("table.wk-table");
             if (dataTable.length == 0) {
                 dataTable = $("<table>").addClass("wk-table");
                 tableDataContainer.append(dataTable);
             }
 
             // Check if the table has tbody for data rows. if not, then create one.
-            var tBody = $("tbody", dataTable);
+            var tBody = $(dataTable).children("tbody");
             if(tBody.length != 0) {
                 // Mark the rows that need to be deleted later
-                if($("tr", tBody).length != 0) {
-                    $("tr", tBody).addClass("deleteMe");
+                if($(tBody).children("tr").length != 0) {
+                    $(tBody).children("tr").addClass("deleteMe");
                 }
             }
 
             addWorksheetDataRecurse(element["rows"], dataTable, true);
 
             // Delete the old rows
-            $("tr.deleteMe", tBody).remove();
+            $(tBody).children("tr.deleteMe").remove();
 
             var additionalRowsAvail = element["additionalRowsCount"];
             var moreRowsDiv = $("<div>").addClass("load-more");

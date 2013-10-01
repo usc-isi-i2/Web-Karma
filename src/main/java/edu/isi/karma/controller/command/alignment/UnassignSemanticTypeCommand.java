@@ -108,7 +108,7 @@ public class UnassignSemanticTypeCommand extends Command {
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 		if (columnNode != null) {
 			Link currentLink = alignment.getCurrentIncomingLinksToNode(columnNode.getId()).iterator().next();
-			String domainNodeId = currentLink.getSource().getId();
+//			String domainNodeId = currentLink.getSource().getId();
 			// Remove the existing link
 			alignment.removeLink(currentLink.getId());
 			// Remove the column node
