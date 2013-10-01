@@ -728,7 +728,7 @@ function submitDirectLinkChange() {
     // Prepare the input for command
     var newInfo = [];
     newInfo.push(getParamObject("alignmentId", optionsDiv.data("alignmentId"), "other"));
-    newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "other"));
+    newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "worksheetId"));
 
     // Put the new edge information
     var newEdges = [];

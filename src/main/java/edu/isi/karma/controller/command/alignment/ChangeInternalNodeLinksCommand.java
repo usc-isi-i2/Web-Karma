@@ -94,6 +94,7 @@ public class ChangeInternalNodeLinksCommand extends Command {
 	@SuppressWarnings("unchecked")
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+//		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		OntologyManager ontMgr = workspace.getOntologyManager();
