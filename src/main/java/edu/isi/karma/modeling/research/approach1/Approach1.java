@@ -476,10 +476,8 @@ public class Approach1 {
 					if (countOfExistingPropertyLinks >= 1)
 						continue;
 
-					String nodeId = nodeIdFactory.getNodeId(columnNodeName);
-					while (this.graphBuilder.getIdToNodeMap().get(nodeId) != null)
-						nodeId = nodeIdFactory.getNodeId(columnNodeName);
-					ColumnNode target = new ColumnNode(nodeId, "", "", "");
+					String nodeId = new RandomGUID().toString();;
+					ColumnNode target = new ColumnNode(nodeId, nodeId, columnNodeName, "");
 					this.graphBuilder.addNodeWithoutUpdatingGraph(target);
 					addedNodes.add(target);
 					
@@ -545,9 +543,11 @@ public class Approach1 {
 		
 		for (ColumnNode n : columnNodes) {
 			
-			crfSuggestions = n.getTop3Suggestions();
+			crfSuggestions = n.getTopKSuggestions(4);
 			if (crfSuggestions == null || crfSuggestions.isEmpty())
 				continue;
+			
+			logger.info("===== Column: " + n.getColumnName());
 			
 			Set<SemanticTypeMapping> semanticTypeMappings = new HashSet<SemanticTypeMapping>();
 			for (SemanticType semanticType: crfSuggestions) {
@@ -557,6 +557,8 @@ public class Approach1 {
 				domainUri = semanticType.getDomain().getUri();
 				linkUri = semanticType.getType().getUri();
 				
+				logger.info("            ===== Semantic Type: " + domainUri + "|" + linkUri + "|" + semanticType.getConfidenceScore());
+
 				if (domainUri == null || domainUri.isEmpty()) {
 					logger.info("semantic type does not have any domain");
 					continue;
@@ -889,8 +891,8 @@ public class Approach1 {
 //		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "260_aac-ont.owl"));
 //		ontManager.updateCache();
 
-		for (int i = 0; i < serviceModels.size(); i++) {
-//		int i = 0; {
+//		for (int i = 0; i < serviceModels.size(); i++) {
+		int i = 0; {
 			trainingData.clear();
 			int newServiceIndex = i;
 			ServiceModel newService = serviceModels.get(newServiceIndex);

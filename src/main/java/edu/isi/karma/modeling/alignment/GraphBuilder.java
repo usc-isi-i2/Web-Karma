@@ -1456,6 +1456,16 @@ public class GraphBuilder {
 		for (Node n : g.vertexSet())
 			System.out.println(n.getId() + " --- " + nodeLevels.get(n));
 		
+		HashMap<InternalNode, Set<ColumnNode>> coveredColumnNodes = 
+				GraphUtil.getInternalNodesCoverage(g, nodeLevels);
+		
+		System.out.println("Internal Nodes Coverage ...");
+		for (Entry<InternalNode, Set<ColumnNode>> entry : coveredColumnNodes.entrySet()) {
+			System.out.println(entry.getKey().getId());
+			for (Node n : entry.getValue())
+				System.out.println("-----" + n.getId());
+		}
+		
 //		GraphUtil.serialize(g, "test");
 //		DirectedWeightedMultigraph<Node, Link> gprime = GraphUtil.deserialize("test");
 //		

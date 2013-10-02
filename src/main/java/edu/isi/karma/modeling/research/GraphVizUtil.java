@@ -275,11 +275,6 @@ public class GraphVizUtil {
 				gViz.node(n);
 			}
 
-			String edgeId = e.getId();
-			String edgetUri = e.getLabel().getUri();
-			String edgeLocalName = getLocalName(edgetUri);
-			String edgeLabel = (edgeLocalName == null?edgeId:edgeLocalName);
-
 			n = nodeIndex.get(target);
 			String targetId = target.getId();
 			String targetUri = targetId;//target.getLabel().getUri();
@@ -289,7 +284,7 @@ public class GraphVizUtil {
 				n = new org.kohsuke.graphviz.Node();
 //				label = (uri == null || uri.trim().length() == 0?id:uri));
 				targetLabel = (targetLocalName == null || targetLocalName.trim().length() == 0?targetId:targetLocalName);
-				if (target instanceof ColumnNode) targetLabel = edgeLabel;
+				if (target instanceof ColumnNode) targetLabel = ((ColumnNode)target).getColumnName();
 				if (showDescription) targetLabel += " " + getPatterns(target.getPatternIds()); 
 				n.attr("label", targetLabel);
 				nodeIndex.put(target, n);
@@ -310,6 +305,11 @@ public class GraphVizUtil {
 			
 			org.kohsuke.graphviz.Edge edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(source), nodeIndex.get(target));
 			
+			String edgeId = e.getId();
+			String edgetUri = e.getLabel().getUri();
+			String edgeLocalName = getLocalName(edgetUri);
+			String edgeLabel = (edgeLocalName == null?edgeId:edgeLocalName);
+
 			if (showDescription) {
 				edgeLabel += "-(" + roundTwoDecimals(e.getWeight()) + ")-";
 				edgeLabel += " ";

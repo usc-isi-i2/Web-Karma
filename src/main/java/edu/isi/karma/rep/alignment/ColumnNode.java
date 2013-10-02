@@ -91,17 +91,15 @@ public class ColumnNode extends Node {
 		this.crfSuggestedSemanticTypes = crfSuggestedSemanticTypes;
 	}
 	
-	public List<SemanticType> getTop3Suggestions() {
+	public List<SemanticType> getTopKSuggestions(int k) {
 		
 		List<SemanticType> semanticTypes = new ArrayList<>();
 		if (this.crfSuggestedSemanticTypes == null || this.crfSuggestedSemanticTypes.isEmpty())
 			return semanticTypes;
 		
+		int n = Math.min(k, this.crfSuggestedSemanticTypes.size());
 		Collections.sort(this.crfSuggestedSemanticTypes, Collections.reverseOrder());
-		for (int i = 0; i < 3 && i < this.crfSuggestedSemanticTypes.size(); i++)
-			semanticTypes.add(this.crfSuggestedSemanticTypes.get(i));
-		
-		return semanticTypes;
+		return this.crfSuggestedSemanticTypes.subList(0, n);
 	}
 	
 }
