@@ -198,6 +198,7 @@ public class Approach1 {
 				continue;
 			
 			patternId = sm.getId();
+			logger.info("adding pattern " + patternId + " to the graph ...");
 			
 			addPatternToGraph(patternId, sm.getModel());
 		}
@@ -539,7 +540,8 @@ public class Approach1 {
 		
 		Set<SemanticTypeMapping> tempSemanticTypeMappings;
 		List<SemanticType> crfSuggestions;
-		String domainUri, linkUri;
+		String domainUri = "", linkUri = "";
+		double confidence = 0.0;
 		
 		for (ColumnNode n : columnNodes) {
 			
@@ -548,6 +550,13 @@ public class Approach1 {
 				continue;
 			
 			logger.info("===== Column: " + n.getColumnName());
+			SemanticType userSelectedSemanticType = n.getUserSelectedSemanticType();
+			if (userSelectedSemanticType != null) {
+				domainUri = userSelectedSemanticType.getDomain().getUri();
+				linkUri = userSelectedSemanticType.getType().getUri();
+				confidence = userSelectedSemanticType.getConfidenceScore();
+			}
+			logger.info("======================= User Selected Semantic Type: " + domainUri + "|" + linkUri + "|" + confidence);
 			
 			Set<SemanticTypeMapping> semanticTypeMappings = new HashSet<SemanticTypeMapping>();
 			for (SemanticType semanticType: crfSuggestions) {
@@ -556,8 +565,9 @@ public class Approach1 {
 				
 				domainUri = semanticType.getDomain().getUri();
 				linkUri = semanticType.getType().getUri();
+				confidence = semanticType.getConfidenceScore();
 				
-				logger.info("            ===== Semantic Type: " + domainUri + "|" + linkUri + "|" + semanticType.getConfidenceScore());
+				logger.info("======================= Suggested Semantic Type: " + domainUri + "|" + linkUri + "|" + confidence);
 
 				if (domainUri == null || domainUri.isEmpty()) {
 					logger.info("semantic type does not have any domain");

@@ -193,6 +193,7 @@ public class ModelReader {
 				model = GraphUtil.deserialize(f.getAbsolutePath()); 
 				serviceModel.addModel(model);
 				serviceModels.add(serviceModel);
+				count++;
 			}
 		}
 		
