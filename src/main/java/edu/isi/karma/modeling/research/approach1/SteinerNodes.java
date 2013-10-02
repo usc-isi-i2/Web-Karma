@@ -273,15 +273,18 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		
 	private void computeScore() {
 		
-		//double confidence = this.getCoherence();
+		double confidence = this.getConfidence();
 		double distnaceToMaxSize = (double) (this.maxNodeCount - this.getNodeCount());
 		double coherence = this.getCoherence();
 		//int frequency = this.getFrequency();
 		
-		double alpha = 0.0;
-		double beta = 1.0;
+		double alpha = 1.0;
+		double beta = 0.1;
+		double gamma = 1.0;
 		
-		this.score = alpha * coherence + beta * distnaceToMaxSize;
+		this.score = alpha * coherence + 
+				beta * distnaceToMaxSize + 
+				gamma * confidence;
 	}
 
 	@Override

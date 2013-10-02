@@ -84,5 +84,15 @@ public class CandidateSteinerSets {
 
 		}
 		
+//		for (SteinerNodes steinerNodes : this.steinerSets) {
+//			System.out.println("***********************************************");
+//			for (Node n : steinerNodes.getNodes()) {
+//				if (n instanceof ColumnNode)
+//					System.out.println("=========>" + ((ColumnNode)n).getColumnName());
+//				else
+//					System.out.println("=========>" + n.getId());
+//			}
+//		}
+		
 	}
 }

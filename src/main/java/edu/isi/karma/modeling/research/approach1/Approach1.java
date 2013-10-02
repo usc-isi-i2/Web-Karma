@@ -257,7 +257,7 @@ public class Approach1 {
 				}
 				else {
 					String id = nodeIdFactory.getNodeId(source.getId());
-					ColumnNode node = new ColumnNode(id, id, "", "");
+					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), "");
 					if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) {
 						n1 = node;
 						component.addVertex(node);
@@ -278,7 +278,8 @@ public class Approach1 {
 					} else continue;
 				}
 				else {
-					ColumnNode node = new ColumnNode(target.getId(), "", "", "");
+					String id = nodeIdFactory.getNodeId(target.getId());
+					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), "");
 					if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) {
 						n2 = node;
 						component.addVertex(node);
@@ -458,8 +459,7 @@ public class Approach1 {
 		List<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(domainUri);
 		if (nodesWithSameUriOfDomain != null) {
 			for (Node source : nodesWithSameUriOfDomain) {
-				if (source instanceof InternalNode && 
-						source.getPatternIds().size() > 0) {
+				if (source instanceof InternalNode) {
 					
 //					boolean propertyLinkExists = false;
 					int countOfExistingPropertyLinks = 0;

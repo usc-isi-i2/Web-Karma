@@ -434,12 +434,12 @@ public class GraphUtil {
 		return nodeLevels;
 	}
 	
-	public static HashMap<InternalNode, Set<ColumnNode>> getInternalNodesCoverage(
+	public static HashMap<Node, Set<ColumnNode>> getNodesCoverage(
 			DirectedWeightedMultigraph<Node, Link> g, 
 			HashMap<Node, Integer> nodeLevels) {
 		
-		HashMap<InternalNode, Set<ColumnNode>> coveredColumnNodes = 
-				new HashMap<InternalNode, Set<ColumnNode>>();
+		HashMap<Node, Set<ColumnNode>> coveredColumnNodes = 
+				new HashMap<Node, Set<ColumnNode>>();
 
 		if (g == null || g.vertexSet() == null || g.vertexSet().size() == 0) {
 			logger.info("graph does not have any node.");
@@ -448,10 +448,8 @@ public class GraphUtil {
 		
 		// Add empty set for all internal nodes
 		for (Node n : g.vertexSet()) {
-			if (n instanceof InternalNode) {
-				Set<ColumnNode> columnNodes = new HashSet<ColumnNode>();
-				coveredColumnNodes.put((InternalNode)n, columnNodes);
-			}
+			Set<ColumnNode> columnNodes = new HashSet<ColumnNode>();
+			coveredColumnNodes.put((InternalNode)n, columnNodes);
 		}
 		
 		HashMap<Integer, List<Node>> levelToNodes = 
@@ -471,12 +469,17 @@ public class GraphUtil {
 			}
 		}
 		
-		int i = maxLevel - 1;
+		int i = maxLevel;
 		while (i >= 0) {
 			
 			List<Node> nodes = levelToNodes.get(i);
 			if (nodes != null && !nodes.isEmpty()) {
 				for (Node n : nodes) {
+					
+					if (n instanceof ColumnNode) {
+						coveredColumnNodes.get(n).add((ColumnNode)n);
+						continue;
+					}
 					
 					List<Node> neighborsInLowerLevel = new ArrayList<Node>();
 					
