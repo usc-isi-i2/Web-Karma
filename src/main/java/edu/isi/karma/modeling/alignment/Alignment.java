@@ -517,6 +517,7 @@ public class Alignment implements OntologyUpdateListener {
 		List<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
 		if (columnNodes != null) {
 			for (Node n : columnNodes) {
+				if (!(n instanceof ColumnNode)) continue;
 				Set<Link> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(n);
 				if (incomingLinks != null && incomingLinks.size() == 1) {
 					Node domain = incomingLinks.toArray(new Link[0])[0].getSource();
@@ -525,7 +526,7 @@ public class Alignment implements OntologyUpdateListener {
 					// adding the domain
 					steinerNodes.add(domain);
 				} else 
-					logger.error("The column node " + n.getId() + " does not have any domain or it has more than one domain.");
+					logger.info("The column node " + ((ColumnNode)n).getColumnName() + " does not have any domain or it has more than one domain.");
 			}
 		}
 
