@@ -460,7 +460,7 @@ function parse(data) {
         else if(element["updateType"] == "InfoUpdate") {
             $.sticky(element["Info"]);
         }
-        else if(element["updateType"] == "SVGAlignmentUpdate_ForceKarmaLayout") {
+        else if(element["updateType"] == "AlignmentSVGVisualizationUpdate") {
             // In d3-alignment-vis.js
             displayAlignmentTree_ForceKarmaLayout(element);
 

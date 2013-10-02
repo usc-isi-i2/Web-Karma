@@ -189,35 +189,35 @@ public class GraphUtil {
 		
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static DirectedWeightedMultigraph<Node, Link> treeToRootedTree(
-			DirectedWeightedMultigraph<Node, Link> tree, Node root, Set<String> reversedLinks, Set<String> removedLinks) {
-		
-		if (tree == null) {
-			logger.error("The input tree is null.");
-			return null;
-		}		
-
-		DirectedWeightedMultigraph<Node, Link> rootedTree = 
-				(DirectedWeightedMultigraph<Node, Link>)tree.clone();
-		if (reversedLinks == null)
-			reversedLinks = new HashSet<String>();
-		if (removedLinks == null)
-			removedLinks = new HashSet<String>();
-		treeToRootedTree(rootedTree, root, null, new HashSet<Node>(), reversedLinks, removedLinks);
-		
-		logger.info("model after converting to a rooted tree: ");
-		printGraphSimple(rootedTree);
-		
-		logger.info("reversed links:");
-		for (String s : reversedLinks)
-			System.out.println("\t" + s);
-		logger.info("removed links:");
-		for (String s : removedLinks)
-			System.out.println("\t" + s);
-
-		return rootedTree;
-	}
+//	@SuppressWarnings("unchecked")
+//	public static DirectedWeightedMultigraph<Node, Link> treeToRootedTree(
+//			DirectedWeightedMultigraph<Node, Link> tree, Node root, Set<String> reversedLinks, Set<String> removedLinks) {
+//		
+//		if (tree == null) {
+//			logger.error("The input tree is null.");
+//			return null;
+//		}		
+//
+//		DirectedWeightedMultigraph<Node, Link> rootedTree = 
+//				(DirectedWeightedMultigraph<Node, Link>)tree.clone();
+//		if (reversedLinks == null)
+//			reversedLinks = new HashSet<String>();
+//		if (removedLinks == null)
+//			removedLinks = new HashSet<String>();
+//		treeToRootedTree(rootedTree, root, null, new HashSet<Node>(), reversedLinks, removedLinks);
+//		
+//		logger.info("model after converting to a rooted tree: ");
+//		printGraphSimple(rootedTree);
+//		
+//		logger.info("reversed links:");
+//		for (String s : reversedLinks)
+//			System.out.println("\t" + s);
+//		logger.info("removed links:");
+//		for (String s : removedLinks)
+//			System.out.println("\t" + s);
+//
+//		return rootedTree;
+//	}
 	
 	public static void serialize(DirectedWeightedMultigraph<Node, Link> graph, String fileName) throws Exception
 	{
@@ -514,64 +514,64 @@ public class GraphUtil {
 		
 	}
 
-	private static void treeToRootedTree(
-			DirectedWeightedMultigraph<Node, Link> tree, 
-			Node node, Link e, 
-			Set<Node> visitedNodes, 
-			Set<String> reversedLinks, 
-			Set<String> removedLinks) {
-		
-		if (node == null)
-			return;
-		
-		if (visitedNodes.contains(node)) // prevent having loop in the tree
-			return;
-		
-		visitedNodes.add(node);
-		
-		Node source, target;
-		
-		Set<Link> incomingLinks = tree.incomingEdgesOf(node);
-		if (incomingLinks != null) {
-			Link[] incomingLinksArr = incomingLinks.toArray(new Link[0]);
-			for (Link inLink : incomingLinksArr) {
-				
-				source = inLink.getSource();
-				target = inLink.getTarget();
-				
-				// don't remove the incoming link from parent to this node
-				if (e != null && inLink.equals(e))
-					continue;
-				
-				// removeEdge method should always be called before addEdge because the new edge has the same id
-				// and JGraph does not add the duplicate link
-//				Label label = new Label(inLink.getLabel().getUri(), inLink.getLabel().getNs(), inLink.getLabel().getPrefix());
-				Link reverseLink = inLink.clone(); //new Link(inLink.getId(), label);
-				tree.removeEdge(inLink);
-				tree.addEdge(target, source, reverseLink);
-				tree.setEdgeWeight(reverseLink, inLink.getWeight());
-				
-				// Save the reversed links information
-				reversedLinks.add(inLink.getId());
-			}
-		}
-
-		Set<Link> outgoingLinks = tree.outgoingEdgesOf(node);
-
-		if (outgoingLinks == null)
-			return;
-		
-		
-		Link[] outgoingLinksArr = outgoingLinks.toArray(new Link[0]);
-		for (Link outLink : outgoingLinksArr) {
-			target = outLink.getTarget();
-			if (visitedNodes.contains(target)) {
-				tree.removeEdge(outLink);
-				removedLinks.add(outLink.getId());
-			} else {
-				treeToRootedTree(tree, target, outLink, visitedNodes, reversedLinks, removedLinks);
-			}
-		}
-	}
+//	private static void treeToRootedTree(
+//			DirectedWeightedMultigraph<Node, Link> tree, 
+//			Node node, Link e, 
+//			Set<Node> visitedNodes, 
+//			Set<String> reversedLinks, 
+//			Set<String> removedLinks) {
+//		
+//		if (node == null)
+//			return;
+//		
+//		if (visitedNodes.contains(node)) // prevent having loop in the tree
+//			return;
+//		
+//		visitedNodes.add(node);
+//		
+//		Node source, target;
+//		
+//		Set<Link> incomingLinks = tree.incomingEdgesOf(node);
+//		if (incomingLinks != null) {
+//			Link[] incomingLinksArr = incomingLinks.toArray(new Link[0]);
+//			for (Link inLink : incomingLinksArr) {
+//				
+//				source = inLink.getSource();
+//				target = inLink.getTarget();
+//				
+//				// don't remove the incoming link from parent to this node
+//				if (e != null && inLink.equals(e))
+//					continue;
+//				
+//				// removeEdge method should always be called before addEdge because the new edge has the same id
+//				// and JGraph does not add the duplicate link
+////				Label label = new Label(inLink.getLabel().getUri(), inLink.getLabel().getNs(), inLink.getLabel().getPrefix());
+//				Link reverseLink = inLink.clone(); //new Link(inLink.getId(), label);
+//				tree.removeEdge(inLink);
+//				tree.addEdge(target, source, reverseLink);
+//				tree.setEdgeWeight(reverseLink, inLink.getWeight());
+//				
+//				// Save the reversed links information
+//				reversedLinks.add(inLink.getId());
+//			}
+//		}
+//
+//		Set<Link> outgoingLinks = tree.outgoingEdgesOf(node);
+//
+//		if (outgoingLinks == null)
+//			return;
+//		
+//		
+//		Link[] outgoingLinksArr = outgoingLinks.toArray(new Link[0]);
+//		for (Link outLink : outgoingLinksArr) {
+//			target = outLink.getTarget();
+//			if (visitedNodes.contains(target)) {
+//				tree.removeEdge(outLink);
+//				removedLinks.add(outLink.getId());
+//			} else {
+//				treeToRootedTree(tree, target, outLink, visitedNodes, reversedLinks, removedLinks);
+//			}
+//		}
+//	}
 	
 }

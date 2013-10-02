@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
+import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -146,7 +146,7 @@ public class UnassignSemanticTypeCommand extends Command {
 		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
 		// Add the alignment update
 		try {
-			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(worksheetId, alignment));
+			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
 		} catch (Exception e) {
 			logger.error("Error occured while unassigning the semantic type!",e);
 			return new UpdateContainer(new ErrorUpdate("Error occured while unassigning the semantic type!"));
@@ -174,7 +174,7 @@ public class UnassignSemanticTypeCommand extends Command {
 		oldAlignment.setGraph(oldGraph);
 		try {
 			c.add(new SemanticTypesUpdate(worksheet, worksheetId, oldAlignment));
-			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(worksheetId, oldAlignment));
+			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, oldAlignment));
 		} catch (Exception e) {
 			logger.error("Error occured during undo of unassigning the semantic type!", e);
 			return new UpdateContainer(new ErrorUpdate("Error occured during undo of unassigning the semantic type!"));

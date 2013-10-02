@@ -1,15 +1,33 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
+
 package edu.isi.karma.controller.update;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.jgrapht.traverse.BreadthFirstIterator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,12 +49,11 @@ import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 
-public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
+public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 	private final String worksheetId;
-	private final DirectedWeightedMultigraph<Node, Link> tree;
-	private final Node root;
+	private final DirectedWeightedMultigraph<Node, Link> alignmentGraph;
 	
-	private static Logger logger = LoggerFactory.getLogger(SVGAlignmentUpdate_ForceKarmaLayout.class);
+	private static Logger logger = LoggerFactory.getLogger(AlignmentSVGVisualizationUpdate.class);
 
 	private enum JsonKeys {
 		worksheetId, alignmentId, label, id, hNodeId, nodeType, source,
@@ -49,11 +66,10 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 		Add_Parent, DataPropertyOfColumnHolder, horizontalDataPropertyLink
 	}
 
-	public SVGAlignmentUpdate_ForceKarmaLayout(String worksheetId, Alignment alignment) {
+	public AlignmentSVGVisualizationUpdate(String worksheetId, Alignment alignment) {
 		super();
 		this.worksheetId = worksheetId;
-		this.tree = alignment.getSteinerTree();
-		this.root = alignment.GetTreeRoot();
+		this.alignmentGraph = alignment.getSteinerTree();
 	}
 	
 	@Override
@@ -70,46 +86,48 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 		JSONObject topObj = new JSONObject();
 		try {
 			topObj.put(GenericJsonKeys.updateType.name(),
-					SVGAlignmentUpdate_ForceKarmaLayout.class.getSimpleName());
+					AlignmentSVGVisualizationUpdate.class.getSimpleName());
 			topObj.put(JsonKeys.alignmentId.name(), alignmentId);
 			topObj.put(JsonKeys.worksheetId.name(), worksheetId);
 			
-			// Reversing the inverse links for easy traversal through graph
-			Set<String> reversedLinks = new HashSet<String>();
-			Set<String> removedLinks = new HashSet<String>();
-			DirectedWeightedMultigraph<Node, Link> rootedTree = GraphUtil.treeToRootedTree(
-					tree, this.root, reversedLinks, removedLinks);
-			GraphUtil.printGraphSimple(rootedTree);
+			// Using Mohsen's GraphUtils method for graph traversal
+			HashMap<Node, Integer> nodeHeightsMap = GraphUtil.levelingCyclicGraph(alignmentGraph);
+			HashMap<Node, Set<ColumnNode>> nodeCoverage = 
+					GraphUtil.getNodesCoverage(alignmentGraph, nodeHeightsMap);
+			/** Identify the max height **/
+			int maxTreeHeight = 0;
+			for (Node node:nodeHeightsMap.keySet()) {
+				if(nodeHeightsMap.get(node) >= maxTreeHeight) {
+					maxTreeHeight = nodeHeightsMap.get(node);
+				}
+			}
 
 			/*** Add the nodes and the links from the Steiner tree ***/
 			List<String> hNodeIdsAdded = new ArrayList<String>();
 			JSONArray nodesArr = new JSONArray();
 			JSONArray linksArr = new JSONArray();
-			int maxTreeHeight = 0;
 			
-			if (rootedTree != null && rootedTree.vertexSet().size() != 0) {
+			
+			if (alignmentGraph != null && alignmentGraph.vertexSet().size() != 0) {
 				/** Add the nodes **/
-				Set<Node> nodes = rootedTree.vertexSet();
+				Set<Node> nodes = alignmentGraph.vertexSet();
 				HashMap<Node, Integer> verticesIndex = new HashMap<Node, Integer>();
 				int nodesIndexcounter = 0;
 				for (Node node : nodes) {
 					/** Get info about the nodes that this node covers or sits above **/
-					List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
-					int height = getHeight(node, nodesWithSemTypesCovered, rootedTree);
-					
-					if(height >= maxTreeHeight) {
-						maxTreeHeight = height;
-					}
+					int height = maxTreeHeight - nodeHeightsMap.get(node);
 					
 					/** Add the hnode ids of the columns that this vertex covers **/
 					JSONArray hNodeIdsCoveredByVertex = new JSONArray();
-					for(Node v : nodesWithSemTypesCovered) {
+					for(Node v : nodeCoverage.get(node)) {
 						if (v instanceof ColumnNode) {
 							ColumnNode cNode = (ColumnNode) v;
 							hNodeIdsCoveredByVertex.put(cNode.getHNodeId());
 						}
 					}
+					
 					String hNodeId = "";
+					
 					/** Add the semantic type information **/
 					if (node instanceof ColumnNode) {
 						ColumnNode cNode = (ColumnNode) node;
@@ -123,13 +141,13 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 				}
 				
 				/*** Add the links ***/
-				Set<Link> links = rootedTree.edgeSet();
+				Set<Link> links = alignmentGraph.edgeSet();
 				for (Link link : links) {
 					Node source = link.getSource();
 					Integer sourceIndex = verticesIndex.get(source);
 					Node target = link.getTarget();
 					Integer targetIndex = verticesIndex.get(target);
-					Set<Link> outEdges = rootedTree.outgoingEdgesOf(target);
+					Set<Link> outEdges = alignmentGraph.outgoingEdgesOf(target);
 					
 					if(sourceIndex == null || targetIndex == null) {
 						logger.error("Edge vertex index not found!");
@@ -137,17 +155,10 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 					}
 
 					JSONObject linkObj = new JSONObject();
-					if (reversedLinks.contains(link.getId())) {
-						linkObj.put(JsonKeys.source.name(), targetIndex);
-						linkObj.put(JsonKeys.target.name(), sourceIndex);
-						linkObj.put(JsonKeys.sourceNodeId.name(), target.getId());
-						linkObj.put(JsonKeys.targetNodeId.name(), source.getId());
-					} else {
-						linkObj.put(JsonKeys.source.name(), sourceIndex);
-						linkObj.put(JsonKeys.target.name(), targetIndex);
-						linkObj.put(JsonKeys.sourceNodeId.name(), source.getId());
-						linkObj.put(JsonKeys.targetNodeId.name(), target.getId());
-					}
+					linkObj.put(JsonKeys.source.name(), sourceIndex);
+					linkObj.put(JsonKeys.target.name(), targetIndex);
+					linkObj.put(JsonKeys.sourceNodeId.name(), source.getId());
+					linkObj.put(JsonKeys.targetNodeId.name(), target.getId());
 					
 					linkObj.put(JsonKeys.label.name(), link.getLabel().getLocalName());
 					linkObj.put(JsonKeys.id.name(), link.getId()+"");
@@ -186,8 +197,7 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 						String startHNodeId = dpLink.getSpecializedColumnHNodeId();
 
 						// Get height of the class instance node
-						List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
-						int height = getHeight(link.getSource(), nodesWithSemTypesCovered, rootedTree);
+						int height = maxTreeHeight - nodeHeightsMap.get(link.getSource());
 						
 						// Add 2 more holder nodes
 						// Start node
@@ -220,13 +230,12 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 						Link specializedLink = opLink.getSpecializedLink();
 						
 						// Get height of the class instance node
-						List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
-						int height = getHeight(specializedLink.getTarget(), nodesWithSemTypesCovered, rootedTree);
+						int height = nodeHeightsMap.get(specializedLink.getTarget());
 						
 						// Add 2 more holder nodes
 						// Start node
 						JSONArray hNodeIdsCoveredByVertex_holder = new JSONArray();
-						for(Node v : nodesWithSemTypesCovered) {
+						for(Node v : nodeCoverage.get(specializedLink.getTarget())) {
 							if (v instanceof ColumnNode) {
 								ColumnNode cNode = (ColumnNode) v;
 								hNodeIdsCoveredByVertex_holder.put(cNode.getHNodeId());
@@ -280,52 +289,6 @@ public class SVGAlignmentUpdate_ForceKarmaLayout extends AbstractUpdate {
 		}
 	}
 
-	private int getHeight(Node vertex, List<Node> nodesWithSemTypesCovered, 
-			DirectedWeightedMultigraph<Node, Link> treeClone) {
-		BreadthFirstIterator<Node, Link> itr = new BreadthFirstIterator<Node, Link>(treeClone, vertex);
-		Node lastNodeWithSemanticType = null;
-		int height = 0;
-		
-		while(itr.hasNext()) {
-			Node v = itr.next();
-			if(v.getType() == NodeType.ColumnNode) {
-				lastNodeWithSemanticType = v;
-				nodesWithSemTypesCovered.add(v);
-			}
-		}
-		
-		if(lastNodeWithSemanticType != null) {
-			height = new DijkstraShortestPath<Node, Link>(treeClone, vertex, 
-					lastNodeWithSemanticType).getPathEdgeList().size();
-			if(lastNodeWithSemanticType.getType() == NodeType.InternalNode && 
-					lastNodeWithSemanticType.getType() == NodeType.ColumnNode && 
-					vertex != lastNodeWithSemanticType) {
-				height += getHeight(lastNodeWithSemanticType, new ArrayList<Node>(), treeClone);  
-			}
-			
-			if(vertex == lastNodeWithSemanticType && vertex.getType() == NodeType.InternalNode && 
-					vertex.getType() == NodeType.ColumnNode) {
-				height = 1;
-			}
-		} else {
-			while (nodesWithSemTypesCovered.isEmpty()) {
-				Set<Link> incomingEdges = treeClone.incomingEdgesOf(vertex);
-				if (incomingEdges.isEmpty())
-					return height;
-				else {
-					for (Link incomingLink: incomingEdges) {
-						Node source = incomingLink.getSource();
-						height = getHeight(source, nodesWithSemTypesCovered, treeClone) + 1;
-						if (!nodesWithSemTypesCovered.isEmpty())
-							break;
-						vertex = source;
-					}
-				}
-			}
-		}
-		return height;
-	}
-	
 	private JSONObject getNodeJsonObject(String label, String id, String nodeType
 			, double height, JSONArray hNodeIdsCoveredByVertex, String hNodeId) throws JSONException {
 		JSONObject nodeObj = new JSONObject();

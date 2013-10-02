@@ -32,7 +32,7 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory.METAPROPERTY_NAME;
 import edu.isi.karma.controller.update.EmptyUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
+import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -228,7 +228,7 @@ public class SetMetaPropertyCommand extends Command {
 			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
 			try {
 				// Add the visualization update
-				c.add(new SVGAlignmentUpdate_ForceKarmaLayout(worksheetId, alignment));
+				c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
 			} catch (Exception e) {
 				logger.error("Error occured while setting the semantic type!", e);
 				return new UpdateContainer(new ErrorUpdate(
@@ -268,7 +268,7 @@ public class SetMetaPropertyCommand extends Command {
 		// Get the alignment update if any
 		try {
 			c.add(new SemanticTypesUpdate(worksheet, worksheetId, oldAlignment));
-			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(worksheetId, oldAlignment));
+			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, oldAlignment));
 		} catch (Exception e) {
 			logger.error("Error occured while unsetting the semantic type!", e);
 			return new UpdateContainer(new ErrorUpdate(
