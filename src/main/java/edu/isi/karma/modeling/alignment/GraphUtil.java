@@ -449,7 +449,7 @@ public class GraphUtil {
 		// Add empty set for all internal nodes
 		for (Node n : g.vertexSet()) {
 			Set<ColumnNode> columnNodes = new HashSet<ColumnNode>();
-			coveredColumnNodes.put((InternalNode)n, columnNodes);
+			coveredColumnNodes.put(n, columnNodes);
 		}
 		
 		HashMap<Integer, List<Node>> levelToNodes = 
