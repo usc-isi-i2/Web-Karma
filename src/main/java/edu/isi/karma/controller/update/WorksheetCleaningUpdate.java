@@ -56,6 +56,7 @@ public class WorksheetCleaningUpdate extends
 	
 	public static int DEFAULT_COLUMN_LENGTH = 10;
 	public static int MIN_COLUMN_LENGTH = 10;
+	public static int MAX_COLUMN_DATA_LENGTH = 25;
 	
 	private enum JsonKeys {
 		worksheetId, hNodeId, worksheetChartData, chartData, id, value, json, Preferred_Length
@@ -169,8 +170,11 @@ public class WorksheetCleaningUpdate extends
 		int colLength = serviceResults.getInt(JsonKeys.Preferred_Length.name());
 		colLength = (colLength == -1 || colLength == 0) ? DEFAULT_COLUMN_LENGTH : colLength;
 		
-		// Check if it is greater than minimum required for the cleaning chart
+		// Check if it is lesser than minimum required for the cleaning chart
 		colLength = (colLength < MIN_COLUMN_LENGTH) ? MIN_COLUMN_LENGTH : colLength;
+		
+		// Check if it is greater that max column data length
+		colLength = (colLength > MAX_COLUMN_DATA_LENGTH) ? MAX_COLUMN_DATA_LENGTH : colLength;
 		
 		// Check if column name requires more characters
 		String colName = hNode.getColumnName();
