@@ -175,21 +175,8 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
     public UpdateContainer doIt(Workspace workspace) throws CommandException {
         setRequestedInteractionType(InteractionType.importTable);
 
-        UpdateContainer c = new UpdateContainer();
+        UpdateContainer c = super.doIt(workspace);
         try {
-            Import imp = new DatabaseTableImport(
-                        dbType, hostname, portnumber, username, password, dBorSIDName,
-                        tableName, workspace);
-            
-            Worksheet wsht = imp.generateWorksheet();
-            
-            if (hasRevisionId()) {
-                Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
-                wsht.setRevisedWorksheet(revisedWorksheet);
-            } 
-
-            c.add(new WorksheetListUpdate());
-            c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
             // Create a new Database Import Command. The interface allows the user to import 
             // multiple tables
             ImportDatabaseTableCommand comm = new ImportDatabaseTableCommand(workspace.getFactory().getNewId("C"),
@@ -204,5 +191,12 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
             c.add(errUpdt);
         }
         return c;
+    }
+
+    @Override
+    protected Import createImport(Workspace workspace) {
+        return new DatabaseTableImport(
+                    dbType, hostname, portnumber, username, password, dBorSIDName,
+                    tableName, workspace);
     }
 }

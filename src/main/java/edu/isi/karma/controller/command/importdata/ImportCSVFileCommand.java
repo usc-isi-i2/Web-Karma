@@ -38,6 +38,7 @@ import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.csv.CSVFileImport;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
@@ -109,31 +110,12 @@ public class ImportCSVFileCommand extends ImportFileCommand implements IPreviewa
     }
 
     @Override
-    public UpdateContainer doIt(Workspace workspace) throws CommandException {
-        Import imp = new CSVFileImport(headerRowIndex,
-                    dataStartRowIndex, delimiter, quoteCharacter, getFile(),
-                    workspace);
-        
-
-        UpdateContainer c = new UpdateContainer();
-        Worksheet wsht = null;
-        try {
-            wsht = imp.generateWorksheet();
-            
-            if (hasRevisionId()) {
-                Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
-                wsht.setRevisedWorksheet(revisedWorksheet);
-            } 
-            
-            c.add(new WorksheetListUpdate());
-            c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
-        } catch (Exception e) {
-            logger.error("Error occured while importing CSV file.", e);
-            return new UpdateContainer(new ErrorUpdate(
-                    "Error occured while importing CSV File."));
-        }
-        return c;
+    protected Import createImport(Workspace workspace) {
+        return new CSVFileImport(headerRowIndex,
+                dataStartRowIndex, delimiter, quoteCharacter, getFile(),
+                workspace);
     }
+
 
     @Override
     public UpdateContainer showPreview()

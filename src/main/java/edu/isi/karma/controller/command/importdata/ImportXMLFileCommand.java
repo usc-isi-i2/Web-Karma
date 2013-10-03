@@ -43,8 +43,6 @@ import java.sql.SQLException;
 
 public class ImportXMLFileCommand extends ImportFileCommand {
 
-    private static Logger logger = LoggerFactory.getLogger(ImportXMLFileCommand.class);
-
     protected ImportXMLFileCommand(String id, File uploadedFile) {
         super(id, uploadedFile);
     }
@@ -72,35 +70,7 @@ public class ImportXMLFileCommand extends ImportFileCommand {
     }
 
     @Override
-    public UpdateContainer doIt(Workspace workspace) throws CommandException {
-
-        UpdateContainer c = new UpdateContainer();
-        try {
-            Import imp = new XMLImport(getFile(), getFile().getName(), workspace);
-            
-            Worksheet wsht = imp.generateWorksheet();
-            
-            if (hasRevisionId()) {
-                Worksheet revisedWorksheet = workspace.getWorksheet(getRevisionId());
-                wsht.setRevisedWorksheet(revisedWorksheet);
-            } 
-
-            c.add(new WorksheetListUpdate());
-            c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
-        } catch (ClassNotFoundException e) {
-            logger.error("Class Not Found", e);
-        } catch (SQLException e) {
-            logger.error("SQL Error", e);
-        } catch (FileNotFoundException e) {
-            logger.error("File Not Found", e);
-        } catch (JSONException e) {
-            logger.error("JSON Exception!", e);
-        } catch (IOException e) {
-            logger.error("I/O Exception occured while reading file contents!", e);
-        } catch (KarmaException e) {
-            logger.error("Karma Exception!", e);
-        }
-
-        return c;
+    protected Import createImport(Workspace workspace) {
+        return new XMLImport(getFile(), getFile().getName(), workspace);
     }
 }

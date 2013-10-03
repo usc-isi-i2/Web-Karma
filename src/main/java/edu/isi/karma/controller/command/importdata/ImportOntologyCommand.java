@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.imp.Import;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
@@ -37,6 +38,11 @@ import edu.isi.karma.view.VWorkspace;
 public class ImportOntologyCommand extends ImportFileCommand {
 
     private static Logger logger = Logger.getLogger(ImportOntologyCommand.class);
+
+    @Override
+    protected Import createImport(Workspace workspace) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     private enum JsonKeys {
         Import

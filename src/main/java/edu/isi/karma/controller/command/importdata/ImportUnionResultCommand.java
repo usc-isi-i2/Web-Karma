@@ -59,20 +59,7 @@ public class ImportUnionResultCommand extends ImportCommand {
     }
 
     @Override
-    public UpdateContainer doIt(Workspace workspace) throws CommandException {
-
-        UpdateContainer c = new UpdateContainer();
-        try {
-            Import uim = new UnionImport("union", workspace);
-            Worksheet wsht = uim.generateWorksheet();
-            
-            c.add(new WorksheetListUpdate());
-            c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
-        } catch (Exception e) {
-            logger.error("Error occured while generating worksheet from JSON!", e);
-            return new UpdateContainer(new ErrorUpdate(
-                    "Error occured while importing JSON File."));
-        }
-        return c;
+    protected Import createImport(Workspace workspace) {
+        return new UnionImport("union", workspace);
     }
 }
