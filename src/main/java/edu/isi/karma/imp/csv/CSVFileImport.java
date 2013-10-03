@@ -205,8 +205,4 @@ public class CSVFileImport extends Import {
         return headersList;
     }
 
-    @Override
-    public void populateWorksheet() throws JSONException, IOException, KarmaException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

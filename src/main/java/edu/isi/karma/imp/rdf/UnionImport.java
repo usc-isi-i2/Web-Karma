@@ -248,9 +248,4 @@ public class UnionImport extends Import {
 //		dataTable.prettyPrint("", pw, factory); // show the data in HTable;
         return getWorksheet();
     }
-
-    @Override
-    public void populateWorksheet() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

@@ -89,11 +89,6 @@ public class JsonImport extends Import {
     public JsonImport(Object json, RepFactory repFactory, Worksheet wk) {
         super(repFactory, wk);
         this.json = json;
-        try {
-            populateWorksheet();
-        } catch (JSONException e) {
-            logger.error("Error in populating the worksheet with Json");
-        }
     }
 
     @Override
@@ -116,23 +111,6 @@ public class JsonImport extends Import {
         return getWorksheet();
     }
 
-    @Override
-    public void populateWorksheet() throws JSONException {
-        if (json instanceof JSONArray) {
-            JSONArray a = (JSONArray) json;
-            for (int i = 0; i < a.length(); i++) {
-                addListElement(a.get(i), getWorksheet().getHeaders(),
-                        getWorksheet().getDataTable());
-            }
-        } else if (json instanceof JSONObject) {
-            addKeysAndValues((JSONObject) json, getWorksheet().getHeaders(),
-                    getWorksheet().getDataTable());
-        } else {
-            throw new Error("Can only import objects or arrays.");
-        }
-
-        writeJsonFile(json);
-    }
 
     private static void writeJsonFile(Object o) {
         JSONUtil.writeJsonFile(o, "lastJsonImport.json");
