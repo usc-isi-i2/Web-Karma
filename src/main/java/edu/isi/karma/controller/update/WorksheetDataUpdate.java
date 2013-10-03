@@ -44,7 +44,7 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 	
 	private final String worksheetId;
 	private static Logger logger = LoggerFactory.getLogger(WorksheetDataUpdate.class);
-
+	
 	private enum JsonKeys {
 		worksheetId, rows, columnName, characterLength, hasNestedTable, columnClass,
 		displayValue, expandedValue, nestedRows, additionalRowsCount, tableId, nodeId
@@ -130,7 +130,8 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 				} else {
 					String nodeVal = node.getValue().asString();
 					nodeVal = (nodeVal == null) ? "" : nodeVal;
-					String displayVal = (nodeVal.length() > 30) ? nodeVal.substring(0, 30) + "..." : nodeVal;
+					String displayVal = (nodeVal.length() > WorksheetCleaningUpdate.MAX_COLUMN_DATA_LENGTH) 
+							? nodeVal.substring(0, WorksheetCleaningUpdate.MAX_COLUMN_DATA_LENGTH) + "..." : nodeVal;
 					nodeObj.put(JsonKeys.displayValue.name(), displayVal);
 					nodeObj.put(JsonKeys.expandedValue.name(), nodeVal);
 					nodeObj.put(JsonKeys.hasNestedTable.name(), false);

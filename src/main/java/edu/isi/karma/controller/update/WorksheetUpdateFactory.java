@@ -60,7 +60,7 @@ public class WorksheetUpdateFactory {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		UpdateContainer c = new UpdateContainer();
 		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(worksheetId, alignment));
+		c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
 		return c;
 	}
 }

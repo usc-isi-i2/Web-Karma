@@ -29,7 +29,7 @@ import org.json.JSONObject;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
+import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -200,7 +200,7 @@ public class ChangeInternalNodeLinksCommand extends Command {
 		// Add the visualization update
 		UpdateContainer c = new UpdateContainer();
 		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(
+		c.add(new AlignmentSVGVisualizationUpdate(
 				worksheetId, alignment));
 		return c;
 	}

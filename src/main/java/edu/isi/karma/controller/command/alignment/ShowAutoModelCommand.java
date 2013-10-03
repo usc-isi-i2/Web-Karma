@@ -35,7 +35,7 @@ import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
+import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -143,7 +143,7 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 			
 			// Add the visualization update
 			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(
+			c.add(new AlignmentSVGVisualizationUpdate(
 					worksheetId, alignment));
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);

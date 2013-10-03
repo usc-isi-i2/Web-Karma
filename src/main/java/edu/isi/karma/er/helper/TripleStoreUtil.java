@@ -27,15 +27,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpUtils;
-
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -50,14 +45,12 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.eclipse.jetty.http.HttpURI;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.micromata.opengis.kml.v_2_2_0.Data;
 import edu.isi.karma.util.HTTPUtil;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 

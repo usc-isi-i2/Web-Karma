@@ -567,7 +567,7 @@ public class Approach1 {
 				linkUri = semanticType.getType().getUri();
 				confidence = semanticType.getConfidenceScore();
 				
-				logger.info("======================= Suggested Semantic Type: " + domainUri + "|" + linkUri + "|" + confidence);
+				logger.info("======================= CRF Suggested Semantic Type: " + domainUri + "|" + linkUri + "|" + confidence);
 
 				if (domainUri == null || domainUri.isEmpty()) {
 					logger.info("semantic type does not have any domain");
