@@ -6,7 +6,7 @@ Karma is an information integration tool that enables users to quickly and easil
 You can find useful tutorials on the project Website: [http://www.isi.edu/integration/karma/](http://www.isi.edu/integration/karma/)
 
 ## Installation and Setup ##
-System Requirements: Java 1.6, Maven 3.0 and above.
+System Requirements: Java 1.7, Maven 3.0 and above.
 
 To run the jetty server, execute the following command from webkarma top directory:
 `mvn jetty:run`. Once the server has started point your browser to **http://localhost:8080/web-karma.html**. To start it on a port other than 8080 (e.g. Port number 9999) 
