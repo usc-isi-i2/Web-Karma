@@ -50,10 +50,12 @@ import edu.isi.karma.kr2rml.TriplesMap;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
@@ -165,7 +167,7 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 						, trMap.getSubject().getTemplate()));
 				rowToUriMap.put(row, keyUri);
 				
-				// Check if the macthes already exist in the triple store
+				// Check if the matches already exist in the triple store
 				if (checkTripleStoreIfMatchAlreadyExists(keyUri)) {
 					System.out.println("Match already exists!");
 					outRdf.close();
@@ -230,7 +232,13 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 					Table linkingDataTable = row.getNode(linkingHNode.getId()).getNestedTable();
 					
 					JSONArray bindings = queryRes.getJSONObject("results").getJSONArray("bindings");
-					if (bindings == null || bindings.length() == 0) continue;
+					// No bindings present, add empty row
+					if (bindings == null || bindings.length() == 0) {
+						Row r1 = linkingDataTable.addRow(f);
+						r1.setValue(entityColHNode.getId(), CellValue.getEmptyValue(), NodeStatus.original, f);
+						r1.setValue(scoreColHNode.getId(), CellValue.getEmptyValue(), NodeStatus.original, f);
+						continue;
+					}
 					
 					for (int i=0; i<bindings.length(); i++) {
 						JSONObject binding = bindings.getJSONObject(i);
