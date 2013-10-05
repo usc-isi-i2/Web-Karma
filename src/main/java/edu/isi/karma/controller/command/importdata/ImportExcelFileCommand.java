@@ -71,11 +71,6 @@ public class ImportExcelFileCommand extends ImportFileCommand {
     }
 
     @Override
-    public CommandType getCommandType() {
-        return CommandType.notUndoable;
-    }
-
-    @Override
     public UpdateContainer doIt(Workspace workspace) throws CommandException {
         UpdateContainer c = new UpdateContainer();
 
@@ -91,8 +86,6 @@ public class ImportExcelFileCommand extends ImportFileCommand {
         }
 
         List<File> csvFiles = csvConverter.getCsvFiles();
-
-
 
         // Each sheet is written to a separate CSV file
         if (!csvFiles.isEmpty()) {
@@ -121,8 +114,7 @@ public class ImportExcelFileCommand extends ImportFileCommand {
     }
 
     @Override
-    public UpdateContainer undoIt(Workspace workspace) {
-        // Not required
-        return null;
+    protected Import createImport(Workspace workspace) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

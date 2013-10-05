@@ -49,8 +49,4 @@ public class XMLImport extends Import {
         return jsonImport.generateWorksheet();
     }
 
-    @Override
-    public void populateWorksheet() throws JSONException, IOException, KarmaException, ClassNotFoundException, SQLException {
-        jsonImport.populateWorksheet();
-    }
 }

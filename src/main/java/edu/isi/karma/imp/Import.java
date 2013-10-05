@@ -46,8 +46,4 @@ public abstract class Import {
      */
     public abstract Worksheet generateWorksheet() throws JSONException, IOException, KarmaException, ClassNotFoundException, SQLException;
     
-    /*
-     * Fill the worksheet with data
-     */
-    public abstract void populateWorksheet() throws JSONException, IOException, KarmaException, ClassNotFoundException, SQLException;
 }

@@ -567,7 +567,7 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
             headerDiv.append(pElem).append(nestedTableContainer.append(nestedTableHeaderContainer.append(nestedTable)));
         } else {
             headerDiv.addClass("wk-header").text(column["columnName"]).mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);
-            colWidthNumber = Math.floor(column.characterLength * 12 * 0.9);
+            colWidthNumber = Math.floor(column.characterLength * 12 * 0.75);
         }
 
         var colWidth = {};

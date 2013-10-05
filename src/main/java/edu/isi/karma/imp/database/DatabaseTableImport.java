@@ -124,8 +124,4 @@ public class DatabaseTableImport extends Import {
         return getWorksheet();
     }
 
-    @Override
-    public void populateWorksheet() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }
