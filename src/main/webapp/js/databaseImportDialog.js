@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
+
 function openDatabaseTableImportDialog() {
 	$("#DatabaseImportTableListAndPreview tr").hide();
 	$("#DatabaseTablePreview table tr").remove();
@@ -5,16 +26,15 @@ function openDatabaseTableImportDialog() {
 	$("#DatabasePassword").val("");
 	sendDBTableImportCommandCreateRequest();
 	$("#DatabaseImportDiv").dialog({ modal: true , title: 'Import Database Table', width: 900,
-		height: 650, buttons: { "Cancel": function() { $(this).dialog("close"); }, 
-			"OK":function() { $(this).dialog("close"); }}});
+		height: 600});
 }
 
-function styleDatabaseDialogObjects() {
-	$("#DatabaseImportErrorWindow").hide();
-	$("#DatabaseImportFieldsButton").button();
-}
-
-function addDatabaseImportClickHandlers() {
+function styleAndAssignHandlerstoDatabaseImportObjects(){
+	$("button#importDatabaseTableButton").button();
+	$("button#DatabaseImportFieldsButton").button();
+	
+	$("#importDatabaseTableButton").click(openDatabaseTableImportDialog);
+	
 	// Click handler for button that loads the databases or tables
 	$("#DatabaseImportFieldsButton").click(function (){
 		// Check if any field has been left empty
@@ -58,20 +78,21 @@ function addDatabaseImportClickHandlers() {
 	  
 	    //if there is text, lets filter
 	    else {  
-	      filter('#DatabaseTablesList tr', $(this).val());  
+	      filter('#DatabaseTablesList tr', $(this).val(), "tableName");  
 	    }
   	});
 }
 
 //filter results
-function filter(selector, query) {
-	  query	= $.trim(query); //trim white space
-	  query = query.replace(/ /gi, '|'); //add OR for regex query
-	
-	  $(selector).each(function() {
-	    ($(this).data("tableName").search(new RegExp(query, "i")) < 0) 
-	    	? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
-	  });
+function filter(selector, query, dataAttribute) {
+      query = $.trim(query); //trim white space
+      query = query.replace(/ /gi, '|'); //add OR for regex query
+    
+        
+      $(selector).each(function() {
+        ($(this).data(dataAttribute).search(new RegExp(query, "i")) < 0) 
+            ? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');
+      });
 }
 
 function isNumeric(input){
@@ -88,7 +109,7 @@ function populateTableList(json) {
 	$("#DatabaseTablePreview table tr").remove();
 	$("#dbPreviewTableName").text("");
 	
-	table.data("commandId", json["elements"][0]["commandId"])
+	table.data("commandId", json["elements"][0]["commandId"]);
 	$.each(json["elements"][0]["TableList"][0] , function(index, value) {
 		var tr = $("<tr>").data("tableName", value);
 		var tableNametd = $("<td>");
@@ -133,7 +154,7 @@ function sendDBTableImportCommandCreateRequest() {
 	info["interactionType"] = "getPreferencesValues";
 	
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",
@@ -172,21 +193,20 @@ function sendGenerateTableListRequest() {
 	info["username"] = $.trim($("#DatabaseUsername").val());
 	info["password"] = $.trim($("#DatabasePassword").val());
 	info["dBorSIDName"] = $.trim($("#DatabaseName").val());
-	info["workspaceId"] = "WSP1";
+	info["workspaceId"] = $.workspaceGlobalInformation.id;
 	info["commandId"] = $("#DatabaseImportDiv").data("commandId");
 	info["command"] = "ImportDatabaseTableCommand";
 	info["interactionType"] = "generateTableList";
 		
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",
 	   	complete : 
 	   		function (xhr, textStatus) {
-	   			//alert(xhr.responseText);
 	    		var json = $.parseJSON(xhr.responseText);
-	    		if( json["elements"][0]["updateType"] == "databaseImportError")
+	    		if( json["elements"][0]["updateType"] == "KarmaError")
 	    			showDatabaseImportError(json);
 	    		else if (json["elements"][0]["updateType"] == "GetDatabaseTableList")
 	    			populateTableList(json);
@@ -210,7 +230,7 @@ function sendImportTableRequest() {
 	info["execute"] = true;
 		
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",
@@ -220,7 +240,7 @@ function sendImportTableRequest() {
 	   			var json = $.parseJSON(xhr.responseText);
 	   			var flag = 0;
 	   			$.each(json["elements"], function(index, element) {
-	   				if( element["updateType"] == "databaseImportError") {
+	   				if( element["updateType"] == "KarmaError") {
 	    				showDatabaseImportError(json);
 	    				flag = -1;
 	    			}
@@ -249,7 +269,7 @@ function sendPreviewTableRequest() {
 	// options["execute"] = true;
 		
 	var returned = $.ajax({
-	   	url: "/RequestController", 
+	   	url: "RequestController", 
 	   	type: "POST",
 	   	data : info,
 	   	dataType : "json",
@@ -304,7 +324,7 @@ function showDatabaseImportError(json) {
 	$("#DatabaseImportTableListAndPreview tr").hide();
 	
 	$.each(json["elements"], function(index, element) {
-		if( element["updateType"] == "databaseImportError") {
+		if( element["updateType"] == "KarmaError") {
 			$("#DatabaseImportErrorWindowText").text(element["Error"]);
 			$("#DatabaseImportErrorWindow").show();
 		}

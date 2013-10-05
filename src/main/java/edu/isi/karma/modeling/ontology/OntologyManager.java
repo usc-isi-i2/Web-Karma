@@ -1,258 +1,220 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
 package edu.isi.karma.modeling.ontology;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.ontology.IntersectionClass;
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntDocumentManager;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.ontology.UnionClass;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import edu.isi.karma.rep.alignment.Label;
 
-public class OntologyManager {
+public class OntologyManager  {
 	
 	static Logger logger = Logger.getLogger(OntologyManager.class.getName());
 
-	private static OntModel ontModel = null;
+	private OntologyHandler ontHandler = null;
+	private OntologyCache ontCache = null;
+	private List<OntologyUpdateListener> ontUpdateListeners; 
+	
+	public OntologyManager() {
+		ontHandler = new OntologyHandler();
+		ontCache = new OntologyCache(ontHandler);
+		ontUpdateListeners = new ArrayList<OntologyUpdateListener>();	
+	}
 
-	private static OntologyManager _InternalInstance = null;
-	public static OntologyManager Instance()
-	{
-		if (_InternalInstance == null)
-		{
-			OntDocumentManager mgr = new OntDocumentManager();
-			mgr.setProcessImports(false);
-			OntModelSpec s = new OntModelSpec( OntModelSpec.OWL_MEM );
-			s.setDocumentManager( mgr );
-			ontModel = ModelFactory.createOntologyModel(s);
-			_InternalInstance = new OntologyManager();
+	public boolean isEmpty() {
+		return ontHandler.getOntModel().isEmpty();
+	}
+	
+	public boolean isClass(String uri) {
+
+		return this.ontCache.getClasses().containsKey(uri);
+	}
+
+	public boolean isProperty(String uri) {
+
+		return this.ontCache.getProperties().containsKey(uri);
+	}
+
+	public boolean isDataProperty(String uri) {
+
+		return this.ontCache.getDataProperties().containsKey(uri);
+	}
+
+	public boolean isObjectProperty(String uri) {
+
+		return this.ontCache.getObjectProperties().containsKey(uri);
+	}
+	
+	public void subscribeListener(OntologyUpdateListener ontUpdateListener) {
+		ontUpdateListeners.add(ontUpdateListener);
+	}
+	
+	public void unsubscribeListener(OntologyUpdateListener ontUpdateListener) {
+		ontUpdateListeners.remove(ontUpdateListener);
+	}
+	
+	private void notifyListeners() {
+		for (OntologyUpdateListener o : ontUpdateListeners)
+			o.ontologyModelUpdated();
+	}
+	
+	public boolean doImportAndUpdateCache(File sourceFile) {
+
+		if (sourceFile == null) {
+			logger.debug("input file is null.");
+			return false;
 		}
-		return _InternalInstance;
+		
+		logger.debug("Importing " + sourceFile.getName() + " OWL Ontology ...");
+
+		if(!sourceFile.exists()){
+			logger.error("file does not exist  " + sourceFile.getAbsolutePath());
+			return false;
+		}
+		
+		try {
+			InputStream s = new FileInputStream(sourceFile);
+			ontHandler.getOntModel().read(s, null);
+		} catch (Throwable t) {
+			logger.error("Error reading the OWL ontology file!", t);
+			return false;
+		}
+		
+		// update the cache
+		ontCache = new OntologyCache(ontHandler);
+		ontCache.init();
+		
+		// notify listeners
+		this.notifyListeners();
+		
+		logger.debug("done.");
+		return true;
 	}
 	
-	public OntModel getOntModel() {
-		return ontModel;
-	}
+	public boolean doImport(File sourceFile) {
 
+		if (sourceFile == null) {
+			logger.debug("input file is null.");
+			return false;
+		}
+		
+		logger.debug("Importing " + sourceFile.getName() + " OWL Ontology ...");
+
+		if(!sourceFile.exists()){
+			logger.error("file does not exist  " + sourceFile.getAbsolutePath());
+			return false;
+		}
+		
+		try {
+			InputStream s = new FileInputStream(sourceFile);
+			ontHandler.getOntModel().read(s, null);
+		} catch (Throwable t) {
+			logger.error("Error reading the OWL ontology file!", t);
+			return false;
+		}
+		
+		// notify listeners
+		this.notifyListeners();
+
+		logger.debug("done.");
+		return true;
+	}
 	
-	public boolean isClass(String label) {
-		
-		OntClass c = ontModel.getOntClass(label);
-		if (c != null)
-			return true;
-		
-		return false;
+	public void updateCache() {
+		ontCache = new OntologyCache(ontHandler);
+		ontCache.init();
 	}
 	
-	public boolean isDataProperty(String label) {
-
-		DatatypeProperty dp = ontModel.getDatatypeProperty(label);
-		if (dp != null)
-			return true;
-		
-		return false;
+	public HashMap<String, Label> getClasses() {
+		return this.ontCache.getClasses();
 	}
-		
-	public boolean isObjectProperty(String label) {
 
-		ObjectProperty op = ontModel.getObjectProperty(label);
-		if (op != null)
-			return true;
-		
-		return false;
+	public HashMap<String, Label> getProperties() {
+		return this.ontCache.getProperties();
+	}
+
+	public HashMap<String, Label> getDataProperties() {
+		return this.ontCache.getDataProperties();
+	}
+
+	public HashMap<String, Label> getObjectProperties() {
+		return this.ontCache.getObjectProperties();
+	}
+
+	public HashMap<String, Label> getDataPropertiesWithoutDomain() {
+		return this.ontCache.getDataPropertiesWithoutDomain();
+	}
+
+	public HashMap<String, Label> getObjectPropertiesWithOnlyDomain() {
+		return this.ontCache.getObjectPropertiesWithOnlyDomain();
+	}
+
+	public HashMap<String, Label> getObjectPropertiesWithOnlyRange() {
+		return this.ontCache.getObjectPropertiesWithOnlyRange();
+	}
+
+	public HashMap<String, Label> getObjectPropertiesWithoutDomainAndRange() {
+		return this.ontCache.getObjectPropertiesWithoutDomainAndRange();
+	}
+	
+	public OntologyTreeNode getClassHierarchy() {
+		return this.ontCache.getClassHierarchy();
+	}
+
+	public OntologyTreeNode getObjectPropertyHierarchy() {
+		return this.ontCache.getObjectPropertyHierarchy();
+	}
+
+	public OntologyTreeNode getDataPropertyHierarchy() {
+		return this.ontCache.getDataPropertyHierarchy();
+	}
+	
+	public Label getUriLabel(String uri) {
+		return this.ontCache.getUriLabel(uri);
 	}
 	
 	/**
-	 * This method gets a resource (class or property) and adds the parents of the resource to the second parameter.
-	 * If third parameter is set to true, it adds the parents recursively.
-	 * @param r
-	 * @param resources
-	 * @param recursive
+	 * Returns the inverse property of the property with given URI
+	 * @param uri
+	 * @return
 	 */
-	public void getParents(OntResource r, List<OntResource> resources, boolean recursive) {
-		
-		OntClass c = null;
-		OntProperty p = null;
-		
-		if (r == null || resources == null)
-			return;
-
-		if (r.isClass())
-			c = r.asClass();
-		else if  (r.isProperty())
-			p = r.asProperty();
-		else
-			return;
-		
-		if (c != null && c.hasSuperClass()) {
-			ExtendedIterator<OntClass> i;
-			if (recursive)
-				i = c.listSuperClasses(false);
-			else
-				i = c.listSuperClasses(true);
-            for (; i.hasNext();) {
-                OntClass superC = (OntClass) i.next();
-                if (superC.isURIResource())
-                	resources.add(superC);
-                else {
-            		List<OntResource> members = new ArrayList<OntResource>();
-                	getMembers(superC, members, false);
-                	for (int j = 0; j < members.size(); j++) {
-                		resources.add(members.get(j));
-                		if (recursive)
-                			getParents(members.get(j), resources, recursive);
-                	}
-                }
-            }
-		}
-
-		if (p != null) {
-			ExtendedIterator<? extends OntProperty> i;
-			if (recursive)
-				i = p.listSuperProperties(false);
-			else
-				i = p.listSuperProperties(true);
-			
-            for (; i.hasNext();) {
-                OntProperty superP = (OntProperty) i.next();
-                if (superP.isURIResource()) {
-                	resources.add(superP);
-                	if (recursive)
-                		getParents(superP, resources, recursive);
-                } else {
-            		List<OntResource> members = new ArrayList<OntResource>();
-                	getMembers(superP, members, false);
-                	for (int j = 0; j < members.size(); j++) {
-                		resources.add(members.get(j));
-                		if (recursive)
-                			getParents(members.get(j), resources, recursive);
-                	}
-                }
-            }
-		}
+	public Label getInverseProperty(String uri) {
+		return this.ontCache.getPropertyInverse().get(uri);
 	}
-
+	
 	/**
-	 * This method gets a resource (class or property) and adds the children of the resource to the second parameter.
-	 * If third parameter is set to true, it adds the children recursively.
-	 * @param r
-	 * @param resources
-	 * @param recursive
+	 * Returns the inverseOf property of the property with given URI
+	 * @param uri
+	 * @return
 	 */
-	public void getChildren(OntResource r, List<OntResource> resources, boolean recursive) {
-		
-		OntClass c = null;
-		OntProperty p = null;
-		
-		if (r == null || resources == null)
-			return;
-
-		if (r.isClass())
-			c = r.asClass();
-		else if  (r.isProperty())
-			p = r.asProperty();
-		else
-			return;
-		
-		if (c != null && c.hasSubClass()) {
-			ExtendedIterator<OntClass> i;
-			if (recursive)
-				i = c.listSubClasses(false);
-			else
-				i = c.listSubClasses(true);
-            for (; i.hasNext();) {
-                OntClass subC = (OntClass) i.next();
-                if (subC.isURIResource()) {
-                	resources.add(subC);
-                	if (recursive)
-                		getChildren(subC, resources, recursive);
-                } else {
-            		List<OntResource> members = new ArrayList<OntResource>();
-                	getMembers(subC, members, false);
-                	for (int j = 0; j < members.size(); j++) {
-                		resources.add(members.get(j));
-                		if (recursive)
-                			getChildren(members.get(j), resources, recursive);
-                	}
-                }
-            }
-		}
-
-		if (p != null) {
-			ExtendedIterator<? extends OntProperty> i;
-			if (recursive)
-				i = p.listSubProperties(false);
-			else
-				i = p.listSubProperties(true);
-			
-            for (; i.hasNext();) {
-                OntProperty subP = (OntProperty) i.next();
-                if (subP.isURIResource())
-                	resources.add(subP);
-                else {
-            		List<OntResource> members = new ArrayList<OntResource>();
-                	getMembers(subP, members, false);
-                	for (int j = 0; j < members.size(); j++) {
-                		resources.add(members.get(j));
-                		if (recursive)
-                			getParents(members.get(j), resources, recursive);
-                	}
-                }
-            }
-		}
-	}
-
-	/**
-	 * This method gets a resource and adds the members of the resource to the second parameter.
-	 * For example, for a resource like "A or (B and C)", it extracts three elements A, B, C.
-	 * If third parameter is set to true, it also adds the children of each member.
-	 * @param r
-	 * @param resources
-	 * @param recursive
-	 */
-	public void getMembers(OntResource r, List<OntResource> resources, boolean recursive) {
-
-		if (r == null || resources == null)
-			return;
-
-		if (r.isClass()) { 
-			OntClass c = r.asClass();
-			
-			// simple class
-			if (c.isURIResource()) {
-				resources.add(c);
-				if (recursive)
-					getChildren(c, resources, true);
-				return;
-			}
-			
-			// unionOf
-			else if (c.isUnionClass()) { // in form of unionOf or intersectionOf
-				UnionClass uc = c.asUnionClass();
-				  for (Iterator<? extends OntClass> i = uc.listOperands(); i.hasNext(); ) {
-				      OntClass op = (OntClass) i.next();
-			    	  getMembers(op, resources, recursive);
-				  }
-			
-			// intersectionOf
-			} else if (c.isIntersectionClass()) {
-				IntersectionClass ic = c.asIntersectionClass();
-				  for (Iterator<? extends OntClass> i = ic.listOperands(); i.hasNext(); ) {
-				      OntClass op = (OntClass) i.next();
-			    	  getMembers(op, resources, recursive);
-				  }
-			}
-		}
+	public Label getInverseOfProperty(String uri) {
+		return this.ontCache.getPropertyInverseOf().get(uri);		
 	}
 	
 	/**
@@ -263,38 +225,116 @@ public class OntologyManager {
 	 * @param recursive
 	 * @return
 	 */
-	public boolean isSuperClass(String superClassUri, String subClassUri, boolean recursive) {
+	public boolean isSubClass(String subClassUri, String superClassUri, boolean recursive) {
 		
-		List<String> superClasses = getSuperClasses(subClassUri, recursive);
-		
-		for (int i = 0; i < superClasses.size(); i++) {
-			if (superClassUri.equalsIgnoreCase(superClasses.get(i).toString() )) {
-				return true;
-			}
-		}
+		if (ontCache.getDirectSubClassCheck().contains(subClassUri + superClassUri))
+			return true;
+		else if (recursive) 
+			return ontCache.getIndirectSubClassCheck().contains(subClassUri + superClassUri);
 		
 		return false;
 	}
 	
 	/**
-	 * If @param subClassUri is a subclass of @param superClassUri, it returns true; otherwise, false.
-	 * If third parameter is set to true, it also considers indirect subclaases.
-	 * @param subClassUri
+	 * If @param subPropertyUri is a subProperty of @param superPropertyUri, it returns true; otherwise, false.
+	 * If third parameter is set to true, it also considers indirect subproperties.
+	 * @param subPropertyUri
 	 * @param superClassUri
 	 * @param recursive
 	 * @return
 	 */
-	public boolean isSubClass(String subClassUri, String superClassUri, boolean recursive) {
+	public boolean isSubProperty(String subPropertyUri, String superPropertyUri, boolean recursive) {
 		
-		List<String> subClasses = getSubClasses(superClassUri, recursive);
-		
-		for (int i = 0; i < subClasses.size(); i++) {
-			if (subClassUri.equalsIgnoreCase(subClasses.get(i).toString() )) {
-				return true;
-			}
-		}
+		if (ontCache.getDirectSubPropertyCheck().contains(subPropertyUri + superPropertyUri))
+			return true;
+		else if (recursive) 
+			return ontCache.getIndirectSubPropertyCheck().contains(subPropertyUri + superPropertyUri);
 		
 		return false;
+	}
+		
+	
+	/**
+	 * This method takes a property URI and returns domains of that property.
+	 * If @param recursive is true, it also returns the children of the domains.
+	 * @param propertyUri
+	 * @param recursive
+	 * @return
+	 */
+	public HashSet<String> getDomainsOfProperty(String propertyUri, boolean recursive) {
+
+		HashSet<String> results = new HashSet<String>();
+		HashSet<String> direct = null;
+		HashSet<String> indirect = null;
+		
+		direct = ontCache.getPropertyDirectDomains().get(propertyUri);
+		if (direct != null) results.addAll(direct);
+		if (recursive) indirect = ontCache.getPropertyIndirectDomains().get(propertyUri);
+		if (indirect != null) results.addAll(indirect);
+		
+		return results;
+
+	}
+
+	/**
+	 * This method takes a property URI and returns ranges of that property.
+	 * If @param recursive is true, it also returns the children of the domains.
+	 * @param propertyUri
+	 * @param recursive
+	 * @return
+	 */
+	public HashSet<String> getRangesOfProperty(String propertyUri, boolean recursive) {
+
+		HashSet<String> results = new HashSet<String>();
+		HashSet<String> direct = null;
+		HashSet<String> indirect = null;
+		
+		direct = ontCache.getPropertyDirectRanges().get(propertyUri);		
+		if (direct != null) results.addAll(direct);
+		if (recursive) indirect = ontCache.getPropertyIndirectRanges().get(propertyUri);
+		if (indirect != null) results.addAll(indirect);
+		
+		return results;
+
+	}
+	
+	/**
+	 * This method takes @param rangeClassUri and for object properties whose ranges includes this parameter, 
+	 * returns all of their domains.
+	 * If @param recursive is true, it also returns the children of the domains.
+	 * @param rangeUri
+	 * @param recursive
+	 * @return
+	 */
+	public HashSet<String> getDomainsGivenRange(String rangeUri, boolean recursive) {
+		
+		HashSet<String> objectProperties = ontCache.getDirectInObjectProperties().get(rangeUri);
+		HashSet<String> results = new HashSet<String>();
+		HashSet<String> direct = null;
+		HashSet<String> indirect = null;
+		
+		if (objectProperties == null)
+			return results;
+		
+		for (String op : objectProperties) {
+			direct = ontCache.getPropertyDirectDomains().get(op);
+			if (direct != null) results.addAll(direct);
+			if (recursive) indirect = ontCache.getPropertyIndirectDomains().get(op);
+			if (indirect != null) results.addAll(indirect);
+		}
+		
+		return results;
+	}
+	
+	public Map<String, String> getPrefixMap () {
+		Map<String, String> nsMap = ontHandler.getOntModel().getNsPrefixMap();
+		Map<String, String> prefixMap = new HashMap<String, String>();
+		
+		for(String ns: nsMap.keySet()) {
+			if (!ns.equals("") && !prefixMap.containsKey(nsMap.get(ns)))
+				prefixMap.put(nsMap.get(ns), ns);
+		}
+		return prefixMap;
 	}
 	
 	/**
@@ -303,12 +343,16 @@ public class OntologyManager {
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getSubClasses(String classUri, boolean recursive) {
-
-		List<OntResource> resources = new ArrayList<OntResource>();
-		OntResource r = ontModel.getOntClass(classUri);
-		getChildren(r, resources, recursive);
-		return getResourcesURIs(resources);
+	public HashMap<String, Label> getSubClasses(String classUri, boolean recursive) {
+		
+		HashMap<String, Label> direct = ontCache.getDirectSubClasses().get(classUri);
+		if (!recursive) return direct;
+		
+		HashMap<String, Label> all = new HashMap<String, Label>();
+		HashMap<String, Label> indirect = ontCache.getIndirectSubClasses().get(classUri);
+		if (direct != null) all.putAll(direct);
+		if (indirect != null) all.putAll(indirect);
+		return all;
 	}
 	
 	/**
@@ -317,172 +361,180 @@ public class OntologyManager {
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getSuperClasses(String classUri, boolean recursive) {
+	public HashMap<String, Label> getSuperClasses(String classUri, boolean recursive) {
 		
-		List<OntResource> resources = new ArrayList<OntResource>();
-		OntResource r = ontModel.getOntClass(classUri);
-		getParents(r, resources, recursive);
-		return getResourcesURIs(resources);
+		HashMap<String, Label> direct = ontCache.getDirectSuperClasses().get(classUri);
+		if (!recursive) return direct;
+		
+		HashMap<String, Label> all = new HashMap<String, Label>();
+		HashMap<String, Label> indirect = ontCache.getIndirectSuperClasses().get(classUri);
+		if (direct != null) all.putAll(direct);
+		if (indirect != null) all.putAll(indirect);
+		return all;
 	}
 	
 	/**
-	 * returns URIs of given resources.
-	 * @param resources
-	 * @return
-	 */
-	public List<String> getResourcesURIs(List<OntResource> resources) {
-		List<String> resourcesURIs = new ArrayList<String>();
-		if (resources != null)
-			for (OntResource r: resources) {
-				resourcesURIs.add(r.getURI());
-			}
-		return resourcesURIs;
-	}
-	
-	/**
-	 * This method takes a property URI and returns all domains of that property.
-	 * If @param recursive is true, it also returns the children of the domains.
+	 * returns URIs of all sub-properties of @param propertyUri
 	 * @param propertyUri
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getDomainsGivenProperty(String propertyUri, boolean recursive) {
-		// should add all subclasses to the results
-		List<String> results;
+	public HashMap<String, Label> getSubProperties(String propertyUri, boolean recursive) {
 
-		if (!recursive)
-			results = OntologyCache.Instance().getPropertyDirectDomains().get(propertyUri);
-		else
-			results = OntologyCache.Instance().getPropertyIndirectDomains().get(propertyUri);
+		HashMap<String, Label> direct = ontCache.getDirectSubProperties().get(propertyUri);
+		if (!recursive) return direct;
 		
-		if (results == null)
-			return new ArrayList<String>();
-		
-		return results;
+		HashMap<String, Label> all = new HashMap<String, Label>();
+		HashMap<String, Label> indirect = ontCache.getIndirectSubProperties().get(propertyUri);
+		if (direct != null) all.putAll(direct);
+		if (indirect != null) all.putAll(indirect);
+		return all;
 
 	}
-
+	
 	/**
-	 * This method takes @param rangeClassUri and for object properties whose ranges includes this parameter, 
-	 * returns all of their domains.
-	 * If @param recursive is true, it also returns the children of the domains.
-	 * @param rangeClassUri
+	 * returns URIs of all super-properties of @param propertyUri
+	 * @param propertyUri
 	 * @param recursive
 	 * @return
 	 */
-	public List<String> getDomainsGivenRange(String rangeClassUri, boolean recursive) {
-		
-		List<String> objectProperties = OntologyCache.Instance().getDirectInObjectProperties().get(rangeClassUri);
-		List<String> domains = new ArrayList<String>();
-		List<String> temp;
-		
-		if (objectProperties == null)
-			return domains;
-		
-		for (int i = 0; i < objectProperties.size(); i++) {
-			if (!recursive) 
-				temp = OntologyCache.Instance().getPropertyDirectDomains().get(objectProperties.get(i));
-			else
-				temp = OntologyCache.Instance().getPropertyIndirectDomains().get(objectProperties.get(i));
-			if (temp != null)
-				domains.addAll(temp);
-		}
-		
-		return domains;
-	}
-	
-	/**
-	 * This function takes a class and a data property and says if the class is in domain of that data property or not.
-	 * If @param includeinheritance is true, it also returns the data properties inherited from parents, for example, 
-	 * if A is superclass of B, and we have a datatype property P from A to xsd:int, then calling this function with 
-	 * (B, P, false) returns nothing, but calling with (B, P, true) returns the property P.
-	 * @param domainClassUri
-	 * @param propertyUri
-	 * @param inheritance
-	 * @return
-	 */
-	public List<String> getDataProperties(String domainClassUri, String propertyUri, boolean inheritance) {
+	public HashMap<String, Label> getSuperProperties(String propertyUri, boolean recursive) {
 
-		List<String> propertyDomains;
-		List<String> results = new ArrayList<String>();
-
-		if (!inheritance)
-			propertyDomains = OntologyCache.Instance().getPropertyDirectDomains().get(propertyUri);
-		else
-			propertyDomains = OntologyCache.Instance().getPropertyIndirectDomains().get(propertyUri);
+		HashMap<String, Label> direct = ontCache.getDirectSuperProperties().get(propertyUri);
+		if (!recursive) return direct;
 		
-		if (propertyDomains != null && propertyDomains.indexOf(domainClassUri) != -1)
-			results.add(propertyUri);
-		
-		return results;
+		HashMap<String, Label> all = new HashMap<String, Label>();
+		HashMap<String, Label> indirect = ontCache.getIndirectSuperProperties().get(propertyUri);
+		if (direct != null) all.putAll(direct);
+		if (indirect != null) all.putAll(indirect);
+		return all;
 
 	}
-	
-	/**
-	 * This method extracts all the object properties between two classes (object properties 
-	 * who have @param domainClassUri in their domain and @param rangeClassUri in their range).
-	 * If @param inheritance is true, it also returns the object properties inherited from parents.
-	 * @param domainClassUri
-	 * @param rangeClassUri
-	 * @param inheritance
-	 * @return
-	 */
-	public List<String> getObjectProperties(String domainClassUri, String rangeClassUri, boolean inheritance) {
-		
-		List<String> results;
 
-		if (!inheritance)
-			results = OntologyCache.Instance().getDirectDomainRangeProperties().get(domainClassUri+rangeClassUri);
-		else
-			results = OntologyCache.Instance().getIndirectDomainRangeProperties().get(domainClassUri+rangeClassUri);
-		
-		if (results == null)
-			return new ArrayList<String>();
-		
-		return results;	}
-	
 	/**
 	 * This function takes a class uri and returns the datatype properties who have this class in their domain. 
 	 * If second parameter set to True, it also returns the datatype properties inherited from parents of the given class.
-	 * @param domainClassUri
+	 * @param domainUri
 	 * @param inheritance
 	 * @return
 	 */
-	public List<String> getDataPropertiesOfClass(String domainClassUri, boolean inheritance) {
-		
-		List<String> results;
+	public HashSet<String> getDataPropertiesOfClass(String domainUri, boolean inheritance) {
 
-		if (!inheritance)
-			results = OntologyCache.Instance().getDirectOutDataProperties().get(domainClassUri);
-		else
-			results = OntologyCache.Instance().getIndirectOutDataProperties().get(domainClassUri);
+		HashSet<String> direct = ontCache.getDirectOutDataProperties().get(domainUri);
+		if (!inheritance) return direct;
 		
-		if (results == null)
-			return new ArrayList<String>();
-		
-		return results;
+		HashSet<String> all = new HashSet<String>();
+		HashSet<String> indirect = ontCache.getIndirectOutDataProperties().get(domainUri);
+		if (direct != null) all.addAll(direct);
+		if (indirect != null) all.addAll(indirect);
+		return all;
+
 	}
 
 	/**
 	 * This function takes a class uri and returns the object properties who have this class in their domain. 
 	 * If second parameter set to True, it also returns the object properties inherited from parents of the given class.
-	 * @param domainClassUri
+	 * @param domainUri
 	 * @param inheritance
 	 * @return
 	 */
-	public List<String> getObjectPropertiesOfClass(String domainClassUri, boolean inheritance) {
-		
-		List<String> results;
+	public HashSet<String> getObjectPropertiesOfClass(String domainUri, boolean inheritance) {
 
-		if (!inheritance)
-			results = OntologyCache.Instance().getDirectOutObjectProperties().get(domainClassUri);
-		else
-			results = OntologyCache.Instance().getIndirectOutObjectProperties().get(domainClassUri);
+		HashSet<String> direct = ontCache.getDirectOutObjectProperties().get(domainUri);
+		if (!inheritance) return direct;
 		
-		if (results == null)
-			return new ArrayList<String>();
+		HashSet<String> all = new HashSet<String>();
+		HashSet<String> indirect = ontCache.getIndirectOutObjectProperties().get(domainUri);
+		if (direct != null) all.addAll(direct);
+		if (indirect != null) all.addAll(indirect);
+		return all;
+	}
+	
+	public HashSet<String> getObjectPropertiesDirect(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return null;
+		return this.ontCache.getDomainRangeToDirectProperties().get(sourceUri + targetUri);
+	}
+
+	public HashSet<String> getObjectPropertiesIndirect(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return null;
+		return this.ontCache.getDomainRangeToIndirectProperties().get(sourceUri + targetUri);
+	}
+
+	public HashSet<String> getObjectPropertiesWithOnlyDomain(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return null;
+		
+		HashSet<String> directOutProperties;
+		HashSet<String> indirectOutProperties;
+		HashSet<String> results = new HashSet<String>();
+
+		directOutProperties = this.ontCache.getDirectOutObjectProperties().get(sourceUri);
+		if (directOutProperties != null)
+			for (String s : directOutProperties) 
+				if (this.ontCache.getObjectPropertiesWithOnlyDomain().containsKey(s)) 
+					results.add(s);
+
+		indirectOutProperties = this.ontCache.getIndirectOutObjectProperties().get(sourceUri);
+		if (indirectOutProperties != null) 
+			for (String s : indirectOutProperties) 
+				if (this.ontCache.getObjectPropertiesWithOnlyDomain().containsKey(s)) 
+					results.add(s);
 		
 		return results;
 	}
 
+	public HashSet<String> getObjectPropertiesWithOnlyRange(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return null;
+		
+		HashSet<String> directInProperties;
+		HashSet<String> indirectInProperties;
+		HashSet<String> results = new HashSet<String>();
+		
+		directInProperties = this.ontCache.getDirectInObjectProperties().get(targetUri);
+		if (directInProperties != null)
+			for (String s : directInProperties) 
+				if (this.ontCache.getObjectPropertiesWithOnlyRange().containsKey(s)) 
+					results.add(s);
+
+		indirectInProperties = this.ontCache.getIndirectInObjectProperties().get(targetUri);
+		if (indirectInProperties != null) 
+			for (String s : indirectInProperties) 
+				if (this.ontCache.getObjectPropertiesWithOnlyRange().containsKey(s)) 
+					results.add(s);
+		
+		return results;
+	}
+
+	public boolean isConnectedByDirectProperty(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return false;
+		return this.ontCache.getConnectedByDirectProperties().contains(sourceUri + targetUri);
+	}
+
+	public boolean isConnectedByIndirectProperty(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return false;
+		return this.ontCache.getConnectedByIndirectProperties().contains(sourceUri + targetUri);
+	}
+
+	public boolean isConnectedByDomainlessProperty(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return false;
+		return this.ontCache.getConnectedByDomainlessProperties().contains(sourceUri + targetUri);
+	}
+
+	public boolean isConnectedByRangelessProperty(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return false;
+		return this.ontCache.getConnectedByRangelessProperties().contains(sourceUri + targetUri);
+	}
+	
+	public boolean isConnectedByDomainlessAndRangelessProperty(String sourceUri, String targetUri) {
+		
+		if (sourceUri == null || targetUri == null) return false;
+		return (this.ontCache.getObjectPropertiesWithoutDomainAndRange().size() > 0);
+	}
 }

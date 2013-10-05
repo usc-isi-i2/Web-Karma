@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
 package edu.isi.karma.webserver;
 
 import java.io.File;
@@ -57,67 +77,72 @@ public class SampleDataFactory {
 
 		// Row 1
 		Row r1 = w.addRow(f);
-		r1.setValue(ss, "123-45-6789");
-		r1.addNestedRow(personContainer, f).setValue(firstName, "Pedro")
-				.setValue(lastName, "Szekely");
-		r1.addNestedRow(personContainer, f).setValue(firstName, "Peter")
-				.setValue(lastName, "Szekely");
-		r1.addNestedRow(personContainer, f).setValue(firstName, "P Alejandro")
-				.setValue(lastName, "Szekely");
-		r1.addNestedRow(personContainer, f).setValue(firstName, "Pedro A")
-				.setValue(lastName, "Szekely");
-		r1.addNestedRow(personContainer, f).setValue(firstName, "Pablo")
-				.setValue(lastName, "Szekely");
-		r1.addNestedRow(personContainer, f).setValue(firstName, "Piotr")
-				.setValue(lastName, "Szekely");
-		r1.addNestedRow(personContainer, f).setValue(firstName, "Peter")
-				.setValue(lastName, "Szekeli");
-		r1.addNestedRow(personContainer, f).setValue(firstName, "Peter")
-				.setValue(lastName, "CK Lee");
-		r1.addNestedRow(personContainer, f).setValue(firstName, "Peter")
-				.setValue(lastName, "Zekely");
-		r1.addNestedRow(personContainer, f).setValue(firstName, "Peter")
-				.setValue(lastName, "Zsekely");
-		r1.addNestedRow(personContainer, f).setValue(firstName, "Peter")
-				.setValue(lastName, "Szeke");
-		r1.addNestedRow(personContainer, f).setValue(firstName, "Peter")
-				.setValue(lastName, "Sequeli");
-		r1.addNestedRow(addressContainer, f).setValue(what, "home")
-				.setValue(address, "1401 E Maple Ave, El Segundo, CA 90245");
+		r1.setValue(ss, "123-45-6789", f);
+		r1.addNestedRow(personContainer, f).setValue(firstName, "Pedro", f)
+				.setValue(lastName, "Szekely", f);
+		r1.addNestedRow(personContainer, f).setValue(firstName, "Peter", f)
+				.setValue(lastName, "Szekely", f);
+		r1.addNestedRow(personContainer, f)
+				.setValue(firstName, "P Alejandro", f)
+				.setValue(lastName, "Szekely", f);
+		r1.addNestedRow(personContainer, f).setValue(firstName, "Pedro A", f)
+				.setValue(lastName, "Szekely", f);
+		r1.addNestedRow(personContainer, f).setValue(firstName, "Pablo", f)
+				.setValue(lastName, "Szekely", f);
+		r1.addNestedRow(personContainer, f).setValue(firstName, "Piotr", f)
+				.setValue(lastName, "Szekely", f);
+		r1.addNestedRow(personContainer, f).setValue(firstName, "Peter", f)
+				.setValue(lastName, "Szekeli", f);
+		r1.addNestedRow(personContainer, f).setValue(firstName, "Peter", f)
+				.setValue(lastName, "CK Lee", f);
+		r1.addNestedRow(personContainer, f).setValue(firstName, "Peter", f)
+				.setValue(lastName, "Zekely", f);
+		r1.addNestedRow(personContainer, f).setValue(firstName, "Peter", f)
+				.setValue(lastName, "Zsekely", f);
+		r1.addNestedRow(personContainer, f).setValue(firstName, "Peter", f)
+				.setValue(lastName, "Szeke", f);
+		r1.addNestedRow(personContainer, f).setValue(firstName, "Peter", f)
+				.setValue(lastName, "Sequeli", f);
+		r1.addNestedRow(addressContainer, f).setValue(what, "home", f)
+				.setValue(address, "1401 E Maple Ave, El Segundo, CA 90245", f);
 		r1.addNestedRow(addressContainer, f)
-				.setValue(what, "work")
+				.setValue(what, "work", f)
 				.setValue(address,
-						"4676 Admiralty Way #1000, Marina del Rey, CA 90292");
+						"4676 Admiralty Way #1000, Marina del Rey, CA 90292", f);
 		r1.addNestedRow(relativesContainer, f)
-				.setValue(relFirstName, "Claudia")
-				.setValue(relLastName, "Szekely");
-		r1.addNestedRow(relativesContainer, f).setValue(relFirstName, "Susana")
-				.setValue(relLastName, "Szekely");
+				.setValue(relFirstName, "Claudia", f)
+				.setValue(relLastName, "Szekely", f);
 		r1.addNestedRow(relativesContainer, f)
-				.setValue(relFirstName, "Cristina")
-				.setValue(relLastName, "Sierra");
+				.setValue(relFirstName, "Susana", f)
+				.setValue(relLastName, "Szekely", f);
+		r1.addNestedRow(relativesContainer, f)
+				.setValue(relFirstName, "Cristina", f)
+				.setValue(relLastName, "Sierra", f);
 
 		Row r2 = w.addRow(f);
-		r2.setValue(ss, "007-00-7007");
-		r2.addNestedRow(personContainer, f).setValue(firstName, "Shubham")
-				.setValue(lastName, "Gupta");
+		r2.setValue(ss, "007-00-7007", f);
+		r2.addNestedRow(personContainer, f).setValue(firstName, "Shubham", f)
+				.setValue(lastName, "Gupta", f);
 		r2.addNestedRow(addressContainer, f)
-				.setValue(what, "home")
+				.setValue(what, "home", f)
 				.setValue(address,
-						"7077 Alvern St # 118, Los Angeles, CA - 90045");
+						"7077 Alvern St # 118, Los Angeles, CA - 90045", f);
 		r2.addNestedRow(addressContainer, f)
-				.setValue(what, "work")
+				.setValue(what, "work", f)
 				.setValue(address,
-						"4676 Admiralty Way #1000, Marina del Rey, CA 90292");
+						"4676 Admiralty Way #1000, Marina del Rey, CA 90292", f);
 		r2.addNestedRow(relativesContainer, f)
-				.setValue(relFirstName, "Anushree")
-				.setValue(relLastName, "Mehra");
-		r2.addNestedRow(relativesContainer, f).setValue(relFirstName, "Sameer")
-				.setValue(relLastName, "Mohan");
-		r2.addNestedRow(relativesContainer, f).setValue(relFirstName, "Suhani")
-				.setValue(relLastName, "Gupta");
-		r2.addNestedRow(relativesContainer, f).setValue(relFirstName, "Sarika")
-				.setValue(relLastName, "Saxena");
+				.setValue(relFirstName, "Anushree", f)
+				.setValue(relLastName, "Mehra", f);
+		r2.addNestedRow(relativesContainer, f)
+				.setValue(relFirstName, "Sameer", f)
+				.setValue(relLastName, "Mohan", f);
+		r2.addNestedRow(relativesContainer, f)
+				.setValue(relFirstName, "Suhani", f)
+				.setValue(relLastName, "Gupta", f);
+		r2.addNestedRow(relativesContainer, f)
+				.setValue(relFirstName, "Sarika", f)
+				.setValue(relLastName, "Saxena", f);
 		return w;
 	}
 
@@ -149,21 +174,22 @@ public class SampleDataFactory {
 
 		// Row 1
 		Row r1 = w.addRow(f);
-		r1.setValue(ss, "123-45-6789");
-		r1.addNestedRow(personContainer, f).setValue(firstName, "Pedro")
-				.setValue(lastName, "Szekely");
-		r1.addNestedRow(addressContainer, f).setValue(what, "home")
-				.setValue(address, "1401 E Maple Ave");
-		r1.addNestedRow(addressContainer, f).setValue(what, "work")
-				.setValue(address, "4676 Admiralty");
+		r1.setValue(ss, "123-45-6789", f);
+		r1.addNestedRow(personContainer, f).setValue(firstName, "Pedro", f)
+				.setValue(lastName, "Szekely", f);
+		r1.addNestedRow(addressContainer, f).setValue(what, "home", f)
+				.setValue(address, "1401 E Maple Ave", f);
+		r1.addNestedRow(addressContainer, f).setValue(what, "work", f)
+				.setValue(address, "4676 Admiralty", f);
 		r1.addNestedRow(relativesContainer, f)
-				.setValue(relFirstName, "Claudia")
-				.setValue(relLastName, "Szekely");
-		r1.addNestedRow(relativesContainer, f).setValue(relFirstName, "Susana")
-				.setValue(relLastName, "Szekely");
+				.setValue(relFirstName, "Claudia", f)
+				.setValue(relLastName, "Szekely", f);
 		r1.addNestedRow(relativesContainer, f)
-				.setValue(relFirstName, "Cristina")
-				.setValue(relLastName, "Sierra");
+				.setValue(relFirstName, "Susana", f)
+				.setValue(relLastName, "Szekely", f);
+		r1.addNestedRow(relativesContainer, f)
+				.setValue(relFirstName, "Cristina", f)
+				.setValue(relLastName, "Sierra", f);
 
 		return w;
 	}
@@ -182,7 +208,7 @@ public class SampleDataFactory {
 		for (int r = 1; r <= numRows; r++) {
 			Row row = w.addRow(wsp.getFactory());
 			for (HNode hn : w.getHeaders().getSortedHNodes()) {
-				row.setValue(hn.getId(), "Value " + vCount);
+				row.setValue(hn.getId(), "Value " + vCount, wsp.getFactory());
 				vCount += 1;
 			}
 		}
@@ -198,7 +224,8 @@ public class SampleDataFactory {
 			Object o = JSONUtil.createJson(r);
 			// System.err.println("JSON:" + o.toString());
 			// System.err.println("JSON:" + JSONObject.quote(o.toString()));
-			JsonImport ji = new JsonImport(o, fileName, workspace);
+			File f = new File(fileName);
+			JsonImport ji = new JsonImport(o, f.getName(), workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
 		} catch (FileNotFoundException e) {
@@ -621,7 +648,7 @@ public class SampleDataFactory {
 					.key("HTML").value(html).key("URL").value("http://cnn.com")
 					.endObject();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Funny Characters", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -652,7 +679,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Empty Nested Table 1", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -682,7 +709,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Empty Nested Table 2", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -710,7 +737,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Empty Nested Table 3", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -742,7 +769,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Empty Nested Table 4", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -782,7 +809,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Nested Table 1", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -856,7 +883,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Nested Table 2", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -865,4 +892,114 @@ public class SampleDataFactory {
 			return null;
 		}
 	}
+
+	public static Worksheet createSamplePathwaysWorksheet(Workspace workspace) {
+		String json = "["
+				+ "{"
+				+ "\"ACCESSION_ID\": \"PA2039\","
+				+ "\"NAME\": \"Methotrexate Pathway\","
+				+ "\"DRUG_ID\": \"PA452621\","
+				+ "\"DRUG_NAME\": \"antineoplastic agents\","
+				+ "\"GENE_ID\": \"PA267\","
+				+ "\"GENE_NAME\": \"ABCB1\","
+				+ "\"DISEASE_ID\": \"PA443434\","
+				+ "\"DISEASE_NAME\": \"Arthritis, Rheumatoid\""
+				+ "},"
+				+ "{"
+				+ "\"ACCESSION_ID\": \"PA2040\","
+				+ "\"NAME\": \"Thiopurine Pathway\","
+				+ "\"DRUG_ID\": \"PA452621\","
+				+ "\"DRUG_NAME\": \"antineoplastic agents\","
+				+ "\"GENE_ID\": \"PA397\","
+				+ "\"GENE_NAME\": \"ABCC4\","
+				+ "\"DISEASE_ID\": \"PA446116\","
+				+ "\"DISEASE_NAME\": \"Inflammatory Bowel Diseases\""
+				+ "},"
+				+ "{"
+				+ "\"ACCESSION_ID\": \"PA145011108\","
+				+ "\"NAME\": \"Statin Pathway (PK)\","
+				+ "\"DRUG_ID\": \"PA448500\","
+				+ "\"DRUG_NAME\": \"atorvastatin\","
+				+ "\"GENE_ID\": \"PA267\","
+				+ "\"GENE_NAME\": \"ABCB1\","
+				+ "\"DISEASE_ID\": \"PA443635\","
+				+ "\"DISEASE_NAME\": \"Cardiovascular Diseases\""
+				+ "},"
+				+ "{"
+				+ "\"ACCESSION_ID\": \"PA145011115\","
+				+ "\"NAME\": \"Phenytoin Pathway (PK)\","
+				+ "\"DRUG_ID\": \"PA450947\","
+				+ "\"DRUG_NAME\": \"phenytoin\","
+				+ "\"GENE_ID\": \"PA27093\","
+				+ "\"GENE_NAME\": \"CYP1A2\","
+				+ "\"DISEASE_ID\": \"PA444065\","
+				+ "\"DISEASE_NAME\": \"Epilepsy\""
+				+ "},"
+				+ "{"
+				+ "\"ACCESSION_ID\": \"PA164713560\","
+				+ "\"NAME\": \"il22 soluble receptor signaling pathway - (BioCarta via Pathway Interaction Database)\","
+				+ "\"DRUG_ID\": \"\"," + "\"DRUG_NAME\": \"\","
+				+ "\"GENE_ID\": \"PA29779\"," + "\"GENE_NAME\": \"IL10RA\","
+				+ "\"DISEASE_ID\": \"\"," + "\"DISEASE_NAME\": \"\"" + "}"
+				+ "];";
+		System.out.println(json);
+		return createWorksheetFromJsonString("PathwaysPharmGKB", json,
+				workspace);
+	}
+
+	public static Worksheet createSamplePathwaysWithNestingWorksheet(
+			Workspace workspace) {
+		String json = "["
+				+ "{"
+				+ "\"ACCESSION_ID\": \"PA2039\","
+				+ "\"NAME\": \"Methotrexate Pathway\","
+				+ "\"DRUG\": {"
+				+ "\"DRUG_ID\": \"PA452621\","
+				+ "\"DRUG_NAME\": ["
+				+ "\"antineoplastic agents\","
+				+ "\"TEST1\","
+				+ "\"TEST2\""
+				+ "]"
+				+ "},"
+				+ "\"GENE_ID\": \"PA267\","
+				+ "\"GENE_NAME\": \"ABCB1\","
+				+ "\"DISEASE_ID\": \"PA443434\","
+				+ "\"DISEASE_NAME\": \"Arthritis, Rheumatoid\""
+				+ "},"
+				+
+				/*
+				 * "{" + "\"ACCESSION_ID\": \"PA2040\"," +
+				 * "\"NAME\": \"Thiopurine Pathway\"," + "\"DRUG\": {"+
+				 * "\"DRUG_ID\": \"PA452621\","+ "\"DRUG_NAME\": ["+
+				 * "\"antineoplastic agents\","+ "\"TEST3\","+ "\"TEST4\""+ "]"+
+				 * "},"+ "\"GENE_ID\": \"PA397\"," + "\"GENE_NAME\": \"ABCC4\","
+				 * + "\"DISEASE_ID\": \"PA446116\"," +
+				 * "\"DISEASE_NAME\": \"Inflammatory Bowel Diseases\"" + "}," +
+				 * "{" + "\"ACCESSION_ID\": \"PA145011108\"," +
+				 * "\"NAME\": \"Statin Pathway (PK)\"," + "\"DRUG\": {"+
+				 * "\"DRUG_ID\": \"PA448500\","+ "\"DRUG_NAME\": ["+
+				 * "\"atorvastatin\","+ "\"TEST5\","+ "\"TEST6\""+ "]"+ "},"+
+				 * "\"GENE_ID\": \"PA267\"," + "\"GENE_NAME\": \"ABCB1\"," +
+				 * "\"DISEASE_ID\": \"PA443635\"," +
+				 * "\"DISEASE_NAME\": \"Cardiovascular Diseases\"" + "}," + "{"
+				 * + "\"ACCESSION_ID\": \"PA145011115\"," +
+				 * "\"NAME\": \"Phenytoin Pathway (PK)\"," + "\"DRUG\": {"+
+				 * "\"DRUG_ID\": \"PA450947\","+ "\"DRUG_NAME\": ["+
+				 * "\"phenytoin\","+ "\"TEST1\","+ "\"TEST2\""+ "]"+ "},"+
+				 * "\"GENE_ID\": \"PA27093\"," + "\"GENE_NAME\": \"CYP1A2\"," +
+				 * "\"DISEASE_ID\": \"PA444065\"," +
+				 * "\"DISEASE_NAME\": \"Epilepsy\"" + "}," +
+				 */
+				"{"
+				+ "\"ACCESSION_ID\": \"PA164713560\","
+				+ "\"NAME\": \"il22 soluble receptor signaling pathway - (BioCarta via Pathway Interaction Database)\","
+				+ "\"DRUG\": {" + "\"DRUG_ID\": \"\"," + "\"DRUG_NAME\": ["
+				+ "\"\"," + "]" + "}," + "\"GENE_ID\": \"PA29779\","
+				+ "\"GENE_NAME\": \"IL10RA\"," + "\"DISEASE_ID\": \"\","
+				+ "\"DISEASE_NAME\": \"\"" + "}" + "];";
+		System.out.println(json);
+		return createWorksheetFromJsonString("PathwaysPharmGKBNesting", json,
+				workspace);
+	}
+
 }

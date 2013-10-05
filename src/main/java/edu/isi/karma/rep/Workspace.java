@@ -1,13 +1,34 @@
-/**
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
  * 
- */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
 package edu.isi.karma.rep;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.isi.karma.controller.command.CommandPreferences;
 import edu.isi.karma.controller.history.CommandHistory;
+import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
+import edu.isi.karma.rep.metadata.TagsContainer;
 
 /**
  * Contains all the data to support a single instance of Karma, called a
@@ -19,9 +40,9 @@ import edu.isi.karma.controller.history.CommandHistory;
 public class Workspace extends Entity {
 
 	/**
-	 * Keep a copy of RepFactor for convenience.
+	 * Factory to create all the objects in this workspace
 	 */
-	private final RepFactory factory;
+	private final RepFactory factory = new RepFactory();
 
 	/**
 	 * History of commands performed in this workspace.
@@ -32,13 +53,38 @@ public class Workspace extends Entity {
 	 * Record all the worksheets defined in this workspace.
 	 */
 	private final Map<String, Worksheet> worksheets = new HashMap<String, Worksheet>();
+	
+	/**
+	 * Saves all the tagging information
+	 */
+	private final TagsContainer tagsContainer = new TagsContainer();
 
+	/**
+	 * Manages the model constructed from the imported ontologies
+	 */
+	private final OntologyManager ontologyManager = new OntologyManager();
+	
+	/**
+	 * The CRF Model for the workspace
+	 */
+	private final CRFModelHandler crfModelHandler = new CRFModelHandler();
+	
+	private final CommandPreferences commandPreferences;
+
+	private final String commandPreferencesId;
 	/**
 	 * In the future we may need to keep track of user info.
 	 */
-	protected Workspace(String id, RepFactory factory) {
+	protected Workspace(String id) {
 		super(id);
-		this.factory = factory;
+		commandPreferences = new CommandPreferences(this.getId());
+		commandPreferencesId=this.getId();
+	}
+	
+	protected Workspace(String id, String cachedPreferencesId) {
+		super(id);
+		this.commandPreferences = new CommandPreferences(cachedPreferencesId);
+		this.commandPreferencesId = cachedPreferencesId;
 	}
 
 	public CommandHistory getCommandHistory() {
@@ -59,5 +105,25 @@ public class Workspace extends Entity {
 
 	public RepFactory getFactory() {
 		return factory;
+	}
+
+	public TagsContainer getTagsContainer() {
+		return tagsContainer;
+	}
+
+	public OntologyManager getOntologyManager() {
+		return ontologyManager;
+	}
+
+	public CRFModelHandler getCrfModelHandler() {
+		return crfModelHandler;
+	}
+
+	public CommandPreferences getCommandPreferences() {
+		return commandPreferences;
+	}
+
+	public String getCommandPreferencesId() {
+		return commandPreferencesId;
 	}
 }

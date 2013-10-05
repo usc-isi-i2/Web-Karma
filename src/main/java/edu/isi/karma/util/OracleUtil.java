@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
 package edu.isi.karma.util;
 
 import java.sql.Connection;
@@ -11,22 +31,17 @@ public class OracleUtil extends AbstractJDBCUtil {
 	
 	static final String DRIVER = 
 		"oracle.jdbc.driver.OracleDriver";
-	
 	static final String CONNECT_STRING_TEMPLATE = 
-		"jdbc:oracle:thin:username/pwd@//host:port/sid";
+		"jdbc:oracle:thin:username/pwd@//host:port/dbname";
 
 	@Override
-	public ArrayList<String> getListOfTables(DBType dbType, String hostname,
-			int portnumber, String username, String password, String dBorSIDName)
+	public ArrayList<String> getListOfTables(Connection conn)
 			throws SQLException, ClassNotFoundException {
-		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
-		Connection conn = getConnection(DRIVER, connectString);
-		
 		ArrayList<String> tableNames = new ArrayList<String>();
 		
 		Statement stmt = conn.createStatement(); 
 	    ResultSet rs = stmt.executeQuery("select object_name from user_objects " +
-	    		"where object_type = 'TABLE'");
+	    		"where object_type = 'TABLE' or object_type = 'VIEW'");
 
 	    while (rs.next()) {
 	      String tableName = rs.getString(1);
@@ -34,25 +49,6 @@ public class OracleUtil extends AbstractJDBCUtil {
 	    }
 	    Collections.sort(tableNames);
 		return tableNames;
-	}
-
-	@Override
-	public ArrayList<ArrayList<String>> getDataForTable(DBType dbType, String hostname,
-			int portnumber, String username, String password, String tableName,
-			String dBorSIDName) throws SQLException, ClassNotFoundException {
-		
-		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
-		Connection conn = getConnection(DRIVER, connectString);
-		
-		return getDataForTable(conn, tableName);
-	}
-	
-	private String getConnectString (String hostname, int portnumber, String username, String password, String dBorSIDName) {
-		return CONNECT_STRING_TEMPLATE.replaceAll("host", hostname)
-		.replaceAll("port", Integer.toString(portnumber))
-		.replaceAll("sid", dBorSIDName)
-		.replaceAll("username", username)
-		.replaceAll("pwd", password);
 	}
 
 	@Override
@@ -77,6 +73,24 @@ public class OracleUtil extends AbstractJDBCUtil {
 		r.close();
 		s.close();
 		return vals;
+	}
+	
+	@Override
+	public String prepareName(String name) {
+		String s = name;
+		s = name.replace('-', '_');
+		s = "`" + s + "`";
+		return s;
+	}
+
+	@Override
+	protected String getDriver() {
+		return DRIVER;
+	}
+
+	@Override
+	protected String getConnectStringTemplate() {
+		return CONNECT_STRING_TEMPLATE;
 	}
 
 }

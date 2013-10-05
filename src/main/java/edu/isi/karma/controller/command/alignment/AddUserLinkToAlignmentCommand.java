@@ -1,41 +1,66 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.update.AlignmentHeadersUpdate;
+import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.GraphUtil;
-import edu.isi.karma.modeling.alignment.LabeledWeightedEdge;
-import edu.isi.karma.modeling.alignment.Vertex;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNodePath;
+import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.view.alignmentHeadings.AlignmentForest;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LinkStatus;
+import edu.isi.karma.rep.alignment.Node;
 
 public class AddUserLinkToAlignmentCommand extends Command {
 
-	private final String vWorksheetId;
+	private final String worksheetId;
 	private final String edgeId;
 	private final String alignmentId;
-
+	private Alignment 	 oldAlignment;
+	private DirectedWeightedMultigraph<Node, Link> oldGraph;
+	private String edgeLabel;
+	
 	// private String edgeLabel;
+	private static Logger logger = LoggerFactory.getLogger(AddUserLinkToAlignmentCommand.class);
 
 	public AddUserLinkToAlignmentCommand(String id, String edgeId,
-			String alignmentId, String vWorksheetId) {
+			String alignmentId, String worksheetId) {
 		super(id);
 		this.edgeId = edgeId;
 		this.alignmentId = alignmentId;
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
+		
+		addTag(CommandTag.Modeling);
 	}
 
 	@Override
@@ -50,7 +75,7 @@ public class AddUserLinkToAlignmentCommand extends Command {
 
 	@Override
 	public String getDescription() {
-		return "";
+		return edgeLabel;
 	}
 
 	@Override
@@ -58,60 +83,57 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		return CommandType.undoable;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Alignment alignment = AlignmentManager.Instance().getAlignment(
-				alignmentId);
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
-		// Add the user provided edge
-		alignment.addUserLink(edgeId);
-
-		return getAlignmentUpdateContainer(alignment, worksheet, vWorkspace);
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		if(alignment == null || alignment.getGraphLinks().size() == 0) {
+			logger.error("Alignment cannot be null before calling this command since the alignment is created while " +
+					"setting the semantic types.");
+			return new UpdateContainer(new ErrorUpdate("Error occured while generating the model for the source."));
+		}
+		// Save the original alignment for undo
+		oldAlignment = alignment.getAlignmentClone();
+		oldGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
+		
+		// Set the other links to the target node to normal
+		LinkIdFactory.getLinkTargetId(edgeId);
+		Set<Link> currentLinks = alignment.getCurrentIncomingLinksToNode(LinkIdFactory.getLinkTargetId(edgeId));
+		if (currentLinks != null && !currentLinks.isEmpty()) {
+			for (Link currentLink: currentLinks) {
+				//if (currentLink.getSource().getId().equals(newLink.getSource().getId()))
+					alignment.changeLinkStatus(currentLink.getId(), LinkStatus.Normal);
+			}
+		}
+		
+		// Change the status of the user selected edge
+		alignment.changeLinkStatus(edgeId, LinkStatus.ForcedByUser);
+		alignment.align();
+		
+		return getAlignmentUpdateContainer(alignment, worksheet, workspace);
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		Alignment alignment = AlignmentManager.Instance().getAlignment(
-				alignmentId);
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer undoIt(Workspace workspace) {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
-		// Clear the user provided edge
-		alignment.clearUserLink(edgeId);
-
+		// Revert to the old alignment
+		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
+		oldAlignment.setGraph(oldGraph);
+		
 		// Get the alignment update
-		return getAlignmentUpdateContainer(alignment, worksheet, vWorkspace);
+		return getAlignmentUpdateContainer(oldAlignment, worksheet, workspace);
 	}
 
 	private UpdateContainer getAlignmentUpdateContainer(Alignment alignment,
-			Worksheet worksheet, VWorkspace vWorkspace) {
-		DirectedWeightedMultigraph<Vertex, LabeledWeightedEdge> tree = alignment
-				.getSteinerTree();
-		Vertex root = alignment.GetTreeRoot();
-
-		List<HNode> sortedHeaders = worksheet.getHeaders().getSortedHNodes();
-		// Convert the tree into a AlignmentForest
-		AlignmentForest forest = AlignmentForest.constructFromSteinerTree(tree,
-				root, sortedHeaders);
-		AlignmentHeadersUpdate alignmentUpdate = new AlignmentHeadersUpdate(
-				forest, vWorksheetId, alignmentId);
-		GraphUtil.printGraph(tree);
-		
-		// Create new vWorksheet using the new header order
-		List<HNodePath> columnPaths = new ArrayList<HNodePath>();
-		for (HNode node : sortedHeaders) {
-			HNodePath path = new HNodePath(node);
-			columnPaths.add(path);
-		}
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,
-				columnPaths, vWorkspace);
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-
+			Worksheet worksheet, Workspace workspace) {
+		// Add the visualization update
 		UpdateContainer c = new UpdateContainer();
-		c.add(alignmentUpdate);
-		vw.update(c);
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId));
+		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+		c.add(new AlignmentSVGVisualizationUpdate(
+				worksheetId, alignment));
 		return c;
 	}
 }

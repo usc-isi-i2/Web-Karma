@@ -1,726 +1,968 @@
-function attachOntologyOptionsRadioButtonHandlers() {
-	$("select#toggleOntologyHierarchy").change(function(){
-		if($("select#toggleOntologyHierarchy").val() == "class"){
-			$("td#firstColumnLabel").text("Class");
-			$("td#secondColumnLabel").text("Data Property").hide();
-		} else {
-			$("td#firstColumnLabel").text("Data Property");
-			$("td#secondColumnLabel").text("Domain (Class)").hide();
-		}
-		
-		populatefirstColumnOntologyBox();
-		$("div#secondColumnOntologyBox").hide();
-	});
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * This code was developed by the Information Integration Group as part
+ * of the Karma project at the Information Sciences Institute of the
+ * University of Southern California.  For more information, publications,
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
 
-	$("div#secondColumnOntologyBox").hide();
-	
-	// Add handler for the search button
-	$("#firstColumnKeyword").keyup(function(event) {
-		if(event.keyCode == 13){
-    		$("#submitFirstColumnSearch").click();
-  		}
-	});
-	$("#secondColumnKeyword").keyup(function(event) {
-		if(event.keyCode == 13){
-    		$("#submitSecondColumnSearch").click();
-  		}
-	});
-	$("#submitFirstColumnSearch").click(function(){
-		$("div#firstColumnTree").jstree("search", $("#firstColumnKeyword").val());
-	});
-	$("#submitSecondColumnSearch").click(function(){
-		$("div#secondColumnTree").jstree("search", $("#secondColumnKeyword").val());
-	});
-	
-	// Assign empty domain to the Unassigned radio button
-	$("input#UnassignTypeButton").data("Domain", "");
-}
+function styleAndAssignHandlersToWorksheetOptionButtons() {
+    var optionsDiv = $("div#WorksheetOptionsDiv");
+    // Styling the elements
+    optionsDiv.addClass("ui-corner-all");
+    $("button", optionsDiv).button();
 
-function changeSemanticType(event) {
-	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
-	
-	optionsDiv.data("currentNodeId",$(this).data("hNodeId"));
-	$("table#CRFSuggestedLabelsTable tr",optionsDiv).remove();
-	$("#firstColumnKeyword").val("");
-	$("#secondColumnKeyword").val("");
-	$("div#secondColumnOntologyBox").hide();
-	//$("div#ontologyOptionsTable", optionsDiv).hide();
-	
-	var positionArray = [event.clientX+20		// distance from left
-					, event.clientY+10];	// distance from top
-	
-	// Populate with possible labels that CRF Model suggested
-	var labelsTable = $("table#CRFSuggestedLabelsTable");
-	var labelsElem = $(this).data("crfInfo");
-	var fullType = $(this).data("fullType");
-	var domain = $(this).data("domain");
-	var origin = $(this).data("origin");
-	
-	if(labelsElem != null){
-		$("span", labelsTable).remove();
-		$.each(labelsElem["Labels"], function(index, label) {
-			// Turning the probability into percentage
-			var prob = label["Probability"];
-			var percentage = Math.floor(prob*100);
-			var trTag = $("<tr>");
-			var radioButton = $("<input>")
-							.attr("type", "radio")
-							.attr("id", label["Type"] + "|" + label["Domain"])
-							.attr("name", "semanticTypeGroup")
-							.attr("value", label["Type"])
-							.val(label["Type"]);
-				
-			if(label["Domain"] != null)
-				radioButton.data("domain", label["Domain"]);
-				
-			var selectedFlag = false;
-			if(fullType == label["Type"]) {
-				if(domain == "") {
-					radioButton.attr('checked',true);
-					selectedFlag = true;
-				} else {
-					if(label["Domain"] != null) {
-						if(domain == label["Domain"]){
-							radioButton.attr('checked',true);
-							selectedFlag = true;
-						}
-					}
-				}
-			}
-				
-				
-			var typeLabel = $("<label>").attr("for",label["Type"] + "|" + label["Domain"]);
-			
-			// Check if the domain needs to be displayed
-			if($.trim(label["DisplayDomainLabel"]) == "")
-				typeLabel.text(label["DisplayLabel"]);
-			else
-				typeLabel.text(label["DisplayLabel"] + " of " + label['DisplayDomainLabel']);
-				
-			// Check if the label was assigned by the user
-			var score = "";
-			if(selectedFlag && origin == "User")
-				score = "Probability: " + percentage+"% (User Assigned)"
-			else
-				score = "Probability: " + percentage+"%";
-				
-			trTag.append($("<td>").append(radioButton))
-				.append($("<td>").append(typeLabel))
-				.append($("<td>").text(score));
-			labelsTable.prepend(trTag);
-		});
-	} else {
-		labelsTable.html("<span class='smallSizedFont'><i>&nbsp;&nbsp;none</i></span>");
-	}
-	
-	if(fullType == "Unassigned") {
-		$("input#UnassignTypeButton").attr("checked", true);
-	}
-	
-	// Adding the handlers to the radio buttons
-	$("input:radio[@name='semanticTypeGroup']").change(function(){
-		optionsDiv.data("type", $(this).val());
-		if($(this).data("domain") != null)
-			optionsDiv.data("domain", $(this).data("domain"));
-		optionsDiv.data("source", "RadioButtonList");
-		$("div#firstColumnTree").jstree("deselect_all");
-		$("div#secondColumnTree").jstree("deselect_all");
-	});
-	
-	// Populate the class tree
-	$("#toggleOntologyHierarchy").val("class");
-	$("td#firstColumnLabel").text("Class");
-	$("td#secondColumnLabel").text("Data Property").hide();
-	// Send a request to get the JSON for displaying the list of classes
-	optionsDiv.data("secondColumnSelection","");
-	optionsDiv.data("firstColumnSelection","");
-	populatefirstColumnOntologyBox();
-	
-	
-	// Show the dialog box
-	optionsDiv.dialog({width: 400, height: 650, position: positionArray
-		, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitSemanticTypeChange }});
-}
+    // Adding mouse handlers to the div
+    optionsDiv.mouseenter(function() {
+        if ($(this).data("timer") != null)
+            clearTimeout($(this).data("timer"));
+        $(this).show();
+    });
+    optionsDiv.mouseleave(function() {
+        var timer = setTimeout(function() {
+            $("#WorksheetOptionsDiv").hide();
+        }, 700);
+        $(this).data("timer", timer);
+    });
 
-function populatefirstColumnOntologyBox(){
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	
-	if($("#toggleOntologyHierarchy").val() == "class")
-		info["command"] = "GetOntologyClassHierarchyCommand";
-	else 
-		info["command"] = "GetDataPropertyHierarchyCommand";
-		
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			//alert(xhr.responseText);
-	    		var json = $.parseJSON(xhr.responseText);
-	    		var dataArray = json["elements"][0]["data"];
-	    		
-	    		var listDiv = $("div#firstColumnTree");
-	    		
-	    		if(dataArray.length == 0) {
-	    			$(listDiv).html("<i>none</i>")
-	    		} else {
-	    			$(listDiv).jstree({ 
-						"json_data" : {
-							"data" : dataArray
-						},
-						"themes" : {
-							"theme" : "apple",
-							"url": "css/jstree-themes/apple/style.css",
-							"dots" : true,
-							"icons" : false
-						},
-						
-						"plugins" : [ "themes", "json_data", "ui" ,"sort", "search"]
-					}).bind("select_node.jstree", function (e, data) { 
-						$("#ChangeSemanticTypesDialogBox").data("source","OntologyHierarchy");
-						$("#ChangeSemanticTypesDialogBox").data("firstColumnSelection",data.rslt.obj.data("URI"));
-						$("input:radio[@name='semanticTypeGroup']").attr("checked", false);
-						$("#UnassignTypeButton").attr('checked',false);
-						populateSecondColumnOntologyBox();
-					});
-	    		} 
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured while fetching ontology data!" + textStatus);
-		   	}		   
-	});
-}
+    // Adding handlers to the buttons
+    $("button#csvExport").click(function(){
+        optionsDiv.hide();
+        var info = new Object();
+        info["worksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "PublishCSVCommand";
 
-function populateSecondColumnOntologyBox() {
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["URI"] = $("#ChangeSemanticTypesDialogBox").data("firstColumnSelection");
-	
-	if($("#toggleOntologyHierarchy").val() == "class")
-		info["command"] = "GetDataPropertiesForClassCommand";
-	else 
-		info["command"] = "GetDomainsForDataPropertyCommand";
-		
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			//alert(xhr.responseText);
-	    		var json = $.parseJSON(xhr.responseText);
-	    		var dataArray = json["elements"][0]["data"];
-	    		var listDiv = $("div#secondColumnTree");
-	    		
-	    		if(dataArray.length == 0) {
-	    			$(listDiv).html("<i>none</i>")
-	    		} else {
-	    			$(listDiv).jstree({ 
-						"json_data" : {
-							"data" : dataArray
-						},
-						"themes" : {
-							"theme" : "apple",
-							"url": "css/jstree-themes/apple/style.css",
-							"dots" : true,
-							"icons" : false
-						},
-						
-						"plugins" : [ "themes", "json_data", "ui" ,"sort", "search"]
-					}).bind("select_node.jstree", function (e, data) { 
-						$("#ChangeSemanticTypesDialogBox").data("secondColumnSelection",data.rslt.obj.data("URI"));
-					});
-	    		}
-	    		
-				$("div#secondColumnOntologyBox").show();
-				$("td#secondColumnLabel").show();
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured while fetching ontology data!" + textStatus);
-		   	}		   
-	});
-}
+        showLoading(info["worksheetId"]);
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(info["worksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while exporting CSV!" + textStatus);
+                    hideLoading(info["worksheetId"]);
+                }
+        });
 
-function submitSemanticTypeChange() {
-	var optionsDiv = $("#ChangeSemanticTypesDialogBox");
-	if($("#toggleOntologyHierarchy").val() == "dataProperty" 
-		&& optionsDiv.data("secondColumnSelection") == "") {
-		alert("Please specify the domain for the data property!");
-		return;
-	}
-	
-	var info = new Object();
-	var hNodeId = optionsDiv.data("currentNodeId");
-	info["command"] = "SetSemanticTypeCommand";
-	info["vWorksheetId"] = $("td.columnHeadingCell#" + hNodeId).parents("table.WorksheetTable").attr("id");
-	info["hNodeId"] = hNodeId;
-	
-	if(optionsDiv.data("source") == "RadioButtonList") {
-		info["type"] = optionsDiv.data("type");
-		if(optionsDiv.data("domain") != null)
-			info["domain"] = optionsDiv.data("domain");
-		else
-			info["domain"] = "";
-		
-		// Check if the user selected the unassigned  option
-		if(info["type"] == "UnassignType") {
-			info["command"] = "UnassignSemanticTypeCommand";
-		}
-		
-		if(info["domain"] == "")
-			info["resourceType"] = "Class";
-		else
-			info["resourceType"] = "DataProperty";
-			
-	} else if (optionsDiv.data("source") == "OntologyHierarchy") {
-		if($("#toggleOntologyHierarchy").val() == "class") {
-			if(optionsDiv.data("secondColumnSelection") == "") {
-				info["resourceType"] = "Class";
-				info["type"] = optionsDiv.data("firstColumnSelection");
-			} else {
-				info["resourceType"] = "DataProperty";
-				info["domain"] = optionsDiv.data("firstColumnSelection");
-				info["type"] = optionsDiv.data("secondColumnSelection");
-			}
-		} else {
-			info["resourceType"] = "DataProperty";
-			info["type"] = optionsDiv.data("firstColumnSelection");
-			info["domain"] = optionsDiv.data("secondColumnSelection");
-		}
-	}
-	
-	
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	    		var json = $.parseJSON(xhr.responseText);
-	    		parse(json);
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured with fetching new rows! " + textStatus);
-		   	}
-	});
-	
-	optionsDiv.dialog("close");
-}
+    });
 
-function handlePrevNextLink() {
-	if($(this).hasClass("inactiveLink"))
-		return;
-	// Prepare the data to be sent to the server	
-	var info = new Object();
-	var worksheetId = $(this).data("vWorksheetId");
-	info["tableId"] = $(this).parents("div.pager").data("tableId");
-	info["direction"] = $(this).data("direction");
-	info["vWorksheetId"] = worksheetId;
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "TablePagerCommand";
-		
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			//alert(xhr.responseText);
-	    		var json = $.parseJSON(xhr.responseText);
-	    		parse(json);
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured with fetching new rows! " + textStatus);
-		   	}		   
-	});
-	return false;
-	$(this).preventDefault();
-}
+//	$('button#saveR2RMLToTripleStore').click(function(event){
+//		handlePublishModelToStoreButton(event);
+//	});
 
-function handlePagerResize() {
-	if($(this).hasClass("pagerSizeSelected"))
-		return;
-		
-	// $(this).siblings().removeClass("pagerSizeSelected");	
-	// $(this).addClass("pagerSizeSelected");	
-	
-	// Prepare the data to be sent to the server	
-	var info = new Object();
-	
-	var worksheetId = $(this).data("vWorksheetId");
-	info["newPageSize"] = $(this).data("rowCount");
-	info["tableId"] = $(this).parents("div.pager").data("tableId");
-	info["vWorksheetId"] = worksheetId;
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["command"] = "TablePagerResizeCommand";
-		
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			//alert(xhr.responseText);
-	    		var json = $.parseJSON(xhr.responseText);
-	    		parse(json);
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured with fetching new rows! " + textStatus);
-	   			
-		   	}		   
-	});
-	return false;
-	$(this).preventDefault();
-}
+    $("button#mdbExport").click(function(){
+        optionsDiv.hide();
+        var info = new Object();
+        info["worksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "PublishMDBCommand";
 
-function showCSVImportOptions(response) {
-	// TODO Reset the CSV import options
-	$("#CSVPreviewTable tr").remove();
-	$("#CSVPreviewTable").append($("<tr>").append($("<td>").addClass("rowIndexCell").text("File Row Number")));
-	
-	var responseJSON = $.parseJSON(response);
-	var headers = responseJSON["elements"][0]["headers"];
-	
-	//Change the source name
-	$("#CSVSourceName").text(responseJSON["elements"][0]["fileName"]);
-	
-	// Populate the headers
-	if(headers != null)  {
-		var trTag = $("<tr>");
-		$.each(headers, function(index, val) {
-			if(index == 0){
-				trTag.append($("<td>").addClass("rowIndexCell").text(val));
-			} else {
-				trTag.append($("<th>").text(val));
-			}
-		});
-		$("#CSVPreviewTable").append(trTag);
-	} else {
-		// Put empty column names
-		var trTag = $("<tr>");
-		$.each(responseJSON["elements"][0]["rows"][0], function(index, val) {
-			if(index == 0){
-				trTag.append($("<td>").addClass("rowIndexCell").text("-"));
-			} else {
-				trTag.append($("<th>").text("Column_" + index).addClass("ItalicColumnNames"));
-			}
-			
-		});
-		$("#CSVPreviewTable").append(trTag);
-	}
-	
-	// Populate the data
-	var rows = responseJSON["elements"][0]["rows"];
-	$.each(rows, function(index, row) {
-		var trTag = $("<tr>");
-		$.each(row, function(index2, val) {
-			var displayVal = val;
-			if(displayVal.length > 20) {
-				displayVal = displayVal.substring(0,20) + "...";
-			}
-			if(index2 == 0) {
-				trTag.append($("<td>").addClass("rowIndexCell").text(displayVal));
-			} else {
-				trTag.append($("<td>").text(displayVal));
-			}
-		});
-		$("#CSVPreviewTable").append(trTag);
-	});
-	
-	// Attach the command ID
-	$("#CSVImportDiv").data("commandId", responseJSON["elements"][0]["commandId"]);
-	
-	// Open the dialog
-	$("#CSVImportDiv").dialog({ modal: true , width: 820, title: 'Import CSV File Options',
-		buttons: { "Cancel": function() { $(this).dialog("close"); }, "Import":CSVImportOptionsChanged}});
-}
+        showLoading(info["worksheetId"]);
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(info["worksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while exporting MDB!" + textStatus);
+                    hideLoading(info["worksheetId"]);
+                }
+        });
 
-function CSVImportOptionsChanged(flag) {
-	
-	var options = new Object();
-	options["command"] = "ImportCSVFileCommand";
-	options["commandId"] = $("#CSVImportDiv").data("commandId");
-	options["delimiter"] = $("#delimiterSelector").val();
-	options["CSVHeaderLineIndex"] = $("#CSVHeaderLineIndex").val();
-	options["startRowIndex"] = $("#startRowIndex").val();
-	options["textQualifier"] = $("#textQualifier").val();
-	options["workspaceId"] = $.workspaceGlobalInformation.id;
-	options["interactionType"] = "generatePreview";
-	
-	// Import the CSV if Import button invoked this function
-	if(typeof(flag) == "object") {
-		options["execute"] = true;
-		options["interactionType"] = "importTable";
-	}
-		
+    });
+    $("button#spatialdataExport").click(function(){
+        optionsDiv.hide();
+        var info = new Object();
+        info["worksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "PublishSpatialDataCommand";
 
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : options,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			if(!options["execute"])
-	    			showCSVImportOptions(xhr.responseText);
-	    		else{
-	    			$("#CSVImportDiv").dialog("close");
-	    			parse($.parseJSON(xhr.responseText));
-	    		}		
-		   	}
-		});	
-}
+        showLoading(info["worksheetId"]);
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(info["worksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while exporting spatial data!" + textStatus);
+                    hideLoading(info["worksheetId"]);
+                }
+        });
 
-function resetCSVDialogOptions() {
-	$("#delimiterSelector :nth-child(1)").attr('selected', 'selected');
-	$("#CSVHeaderLineIndex").val("1");
-	$("#startRowIndex").val("2");
-	$("#textQualifier").val("\"");
-}
+    });
+    $("button#showModel").click(function(){
+        optionsDiv.hide();
+        var info = new Object();
+        info["worksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "ShowModelCommand";
 
-function handleTableCellEditButton(event) {
-	var tdTagId = $("#tableCellToolBarMenu").data("parentCellId");
-	$("#tableCellEditDiv #editCellTextArea").remove();
-	
-	if($("#"+tdTagId).hasClass("expandValueCell")) {
-		$("#tableCellEditDiv").append($("<textarea>")
-						.attr("id", "editCellTextArea")
-						.text($("#"+tdTagId).data("fullValue")));
-	} else {
-		$("#tableCellEditDiv").append($("<textarea>")
-						.attr("id", "editCellTextArea")
-						.text($("#"+tdTagId + " div.cellValue").text()));
-	}
-	
-	var positionArray = [event.clientX-150		// distance from left
-					, event.clientY-10];	// distance from top
-	
-	$("#tableCellEditDiv").dialog({ title: 'Edit Cell Value',
-			buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitEdit }, width: 300, height: 150, position: positionArray});
-	// console.log(tdTagId);
-	$("#tableCellEditDiv").data("tdTagId", tdTagId);
-}
+        var newInfo = [];
+        newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "worksheetId"));
+        newInfo.push(getParamObject("checkHistory", true, "other"));
+        info["newInfo"] = JSON.stringify(newInfo);
 
-function showAlternativeParents(event) {
-	var info = new Object();
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	info["nodeId"] = $(this).parents("td.columnHeadingCell").data("jsonElement")["contentCell"]["id"];
-	info["command"] = "GetAlternativeLinksCommand";
-	info["alignmentId"] = $(this).parents("table.WorksheetTable").data("alignmentId");
-	info["worksheetId"] = $(this).parents("table.WorksheetTable").attr("id");
-		
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			// alert(xhr.responseText);
-	    		var json = $.parseJSON(xhr.responseText);
-	    		$.each(json["elements"], function(index, element) {
-	    			if(element["updateType"] == "GetAlternativeLinks") {
-	    				var optionsDiv = $("div#OntologyAlternativeLinksPanel");
-	    				var table = $("table", optionsDiv);
-	    				$("tr", table).remove();
-	    				var positionArray = [event.clientX+20		// distance from left
-									, event.clientY+10];	// distance from top
-						
-						$.each(element["Edges"], function(index2, edge) {
-							var trTag = $("<tr>");
-							
-							var radioButton = $("<input>")
-								.attr("type", "radio")
-								.attr("id", edge["edgeId"])
-								.attr("name", "AlternativeLinksGroup")
-								.attr("value", edge["edgeId"])
-								.val(edge["edgeLabel"]);
-								
-							var linkLabel = $("<label>").attr("for",edge["edgeId"]).text(edge["edgeSource"] + " " + edge["edgeLabel"]);
-							
-							trTag.append($("<td>").append(radioButton))
-								.append($("<td>").append(linkLabel));
-								
-							table.append(trTag);
-						});
-						// Show the dialog box
-						optionsDiv.dialog({width: 300, height: 300, position: positionArray
-							, buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit":submitAlignmentLinkChange }});
-							
-						$("input:radio[@name='AlternativeLinksGroup']").change(function(){
-							optionsDiv.data("currentSelection", $(this).attr("id"));
-							optionsDiv.data("alignmentId", info["alignmentId"]);
-							optionsDiv.data("worksheetId", info["worksheetId"]);
-						});
-	    			}
-	    		});
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured while getting alternative links!" + textStatus);
-		   	}		   
-	});
-}
+        showLoading(info["worksheetId"]);
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(info["worksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while generating semantic types!" + textStatus);
+                    hideLoading(info["worksheetId"]);
+                }
+        });
+    });
 
-function submitAlignmentLinkChange() {
-	var optionsDiv = $("div#OntologyAlternativeLinksPanel");
-	
-	var info = new Object();
-	info["command"] = "AddUserLinkToAlignmentCommand";
-	info["vWorksheetId"] = optionsDiv.data("worksheetId");
-	info["alignmentId"] = optionsDiv.data("alignmentId");
-	info["edgeId"] = optionsDiv.data("currentSelection");
-	
-	
-	info["workspaceId"] = $.workspaceGlobalInformation.id;
-	
-	var returned = $.ajax({
-	   	url: "/RequestController", 
-	   	type: "POST",
-	   	data : info,
-	   	dataType : "json",
-	   	complete : 
-	   		function (xhr, textStatus) {
-	   			var json = $.parseJSON(xhr.responseText);
-	    		parse(json);
-		   	},
-		error :
-			function (xhr, textStatus) {
-	   			alert("Error occured with fetching new rows! " + textStatus);
-		   	}
-	});
-	
-	optionsDiv.dialog("close");
+
+    $("button#showR2RMLFromTripleStore").click(function(event) {
+        var dialog = $('#FetchR2RMLModelDialogBox');
+        $('#txtR2RML_URL_fetch').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
+        $('#browseRepo_fetch').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/karma_models/summary');
+        dialog.dialog(
+            { title: 'SPARQL End point',
+                buttons: { "Cancel": function() { $(this).dialog("close"); },
+                    "Fetch": renderR2RMLModels }, width: 400, height: 170});
+    });
+
+    $("button#showAutoModel").click(function(){
+        optionsDiv.hide();
+        //alert("test");
+        // console.log("Showing model for table with ID: " +optionsDiv.data("worksheetId"));
+        var info = new Object();
+        info["worksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "ShowAutoModelCommand";
+
+        var newInfo = [];
+        newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "worksheetId"));
+        newInfo.push(getParamObject("checkHistory", true, "other"));
+        info["newInfo"] = JSON.stringify(newInfo);
+
+        showLoading(info["worksheetId"]);
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(info["worksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while generating the automatic model!" + textStatus);
+                    hideLoading(info["worksheetId"]);
+                }
+        });
+    });
+
+    $("button#hideModel").click(function(){
+        optionsDiv.hide();
+        $("div#svgDiv_" + optionsDiv.data("worksheetId")).remove();
+    });
+
+    $("button#resetModel").click(function(){
+        optionsDiv.hide();
+
+        var info = new Object();
+        info["worksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "ResetModelCommand";
+
+        showLoading(info["worksheetId"]);
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(info["worksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while removing semantic types!" + textStatus);
+                    hideLoading(info["worksheetId"]);
+                }
+        });
+    });
+
+    $("button#publishRDF").click(function(){
+        optionsDiv.hide();
+        showHideRdfInfo();
+        getRDFPreferences();
+        window.rdfSPAQRLEndPoint = null;
+
+        var rdfDialogBox = $("div#PublishRDFDialogBox");
+        $('#rdfBrowseRepo').attr('href', $("input#rdfSPAQRLEndPoint").val()+ '/summary');
+
+        // get the graph uri for the worksheet
+        var info = new Object();
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "FetchExistingWorksheetPropertiesCommand";
+        info["worksheetId"] = optionsDiv.data("worksheetId");
+
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    var json = $.parseJSON(xhr.responseText);
+                    var props = json["elements"][0]["properties"];
+
+                    // Set graph name
+                    if (props["graphName"] != null) {
+                        $("#rdfSPAQRLGraph").val(props["graphName"]);
+                    } else {
+                        $("#rdfSPAQRLGraph").val("");
+                    }
+                }
+        });
+        fetchGraphsFromTripleStore($("#rdfSPAQRLEndPoint").val());
+
+        // Show the dialog box
+        rdfDialogBox.dialog({width: 500, height:420, title:'Publish RDF',
+            buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": validateAndPublishRDF }});
+
+        // bind the change event for the sparqlEndPoint
+        $('input#rdfSPAQRLEndPoint').unbind('focusout');
+
+        $('input#rdfSPAQRLEndPoint').focusout(function(event){
+            if (window.rdfSPAQRLEndPoint != $('input#rdfSPAQRLEndPoint').val()) {
+                // get the list of repo
+                fetchGraphsFromTripleStore($("#rdfSPAQRLEndPoint").val());
+            }
+        });
+
+    });
+
+    $("button#publishDatabase").click(function(){
+        optionsDiv.hide();
+        getDatabasePreferences();
+        var dbDialogBox = $("div#PublishDatabaseDialogBox");
+        // Show the dialog box
+        dbDialogBox.dialog({width: 300
+            , buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": publishDatabaseFunction }});
+    });
+
+    $("button#populateSource").click(function(){
+        optionsDiv.hide();
+
+        var info = new Object();
+//        info["worksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "PopulateCommand";
+
+        var newInfo = [];	// Used for commands that take JSONArray as input
+        newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "worksheetId"));
+        info["newInfo"] = JSON.stringify(newInfo);
+
+        showLoading(info["worksheetId"]);
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(info["worksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while populating source!" + textStatus);
+                    hideLoading(info["worksheetId"]);
+                }
+        });
+
+    });
+
+    $("button#publishServiceModel").click(function(){
+        optionsDiv.hide();
+
+        var info = new Object();
+        info["worksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "PublishModelCommand";
+
+        showLoading(info["worksheetId"]);
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(info["worksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while publishing service model!" + textStatus);
+                    hideLoading(info["worksheetId"]);
+                }
+        });
+
+    });
+
+    $("button#publishWorksheetHistory").click(function(){
+        optionsDiv.hide();
+
+        var info = new Object();
+        info["worksheetId"] = optionsDiv.data("worksheetId");
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "PublishWorksheetHistoryCommand";
+
+        showLoading(info["worksheetId"]);
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideLoading(info["worksheetId"]);
+                },
+            error :
+                function (xhr, textStatus) {
+                    alert("Error occured while publishing worksheet history!" + textStatus);
+                    hideLoading(info["worksheetId"]);
+                }
+        });
+
+    });
+
+    $("#applyWorksheetHistory").fileupload({
+        add : function (e, data) {
+            $("#applyWorksheetHistory").fileupload({
+                url: "RequestController?workspaceId=" + $.workspaceGlobalInformation.id +
+                    "&command=ApplyHistoryFromR2RMLModelCommand&worksheetId="+optionsDiv.data("worksheetId")
+            });
+            optionsDiv.hide();
+            showLoading(optionsDiv.data("worksheetId"));
+            data.submit();
+        },
+        done: function(e, data) {
+            $("div.span5", optionsDiv).remove();
+            parse(data.result);
+            hideLoading(optionsDiv.data("worksheetId"));
+        },
+        fail: function(e, data) {
+            $.sticky("History file upload failed!");
+            hideLoading(optionsDiv.data("worksheetId"));
+        },
+        dropZone: null
+    });
+    $("button#transformcolumns").click(handleColumnsTransformation);
+
+    // in pytransform.js
+    $("button#pyTransform").click(openPyTransformDialogBox);
+
+    $("button#publishR2RML").click(function(event){
+        optionsDiv.hide();
+        handlePublishModelToStoreButton(event);
+
+
+        /*
+         var info = new Object();
+         info["worksheetId"] = optionsDiv.data("worksheetId");
+         info["workspaceId"] = $.workspaceGlobalInformation.id;
+         info["command"] = "GenerateR2RMLModelCommand";
+
+         showLoading(info["worksheetId"]);
+         var returned = $.ajax({
+         url: "RequestController",
+         type: "POST",
+         data : info,
+         dataType : "json",
+         complete :
+         function (xhr, textStatus) {
+         var json = $.parseJSON(xhr.responseText);
+         parse(json);
+         hideLoading(info["worksheetId"]);
+         },
+         error :
+         function (xhr, textStatus) {
+         alert("Error occured while publishing service model!" + textStatus);
+         hideLoading(info["worksheetId"]);
+         }
+         });
+         */
+
+    });
+
+    $('#serviceOptions').click( function() {
+        $('#worksheetServiceOptions').toggle();
+    });
+
+
+    $('#serviceRequestMethod').change(function() {
+        if ($(this).attr('value') == "POST") {
+            $("#servicePostOptions").show();
+        } else {
+            $("#servicePostOptions").hide();
+        }
+    });
+
+    $("#setWorksheetProperties").click(function(){
+        optionsDiv.hide();
+        var settingsBox = $("div#setPropertiesDialog");
+
+        // Show the dialog box
+        settingsBox.dialog({width: 300, title: "Set Properties"
+            , buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": submitWorksheetProperties }});
+
+        // Close the service options
+        if ($('#worksheetServiceOptions').is(':visible')) {
+            $('#serviceOptions').trigger('click');
+        }
+
+        // Check for existing values
+        fetchExistingWorksheetOptions(optionsDiv.data("worksheetId"));
+    });
+
+    $('body').delegate('.smallChart', 'click', function() {
+        var pid = $(this).parent().attr('id');
+        //console.log(pid);
+        var chartTitle = drawBigChart(pid);
+        var dialogBox = $("div#drawBigChartId");
+        dialogBox.dialog({width: 550, title: chartTitle
+            , buttons: { "Close": function() { $(this).dialog("close"); } }})
+    });
+
+    /*
+     $("div#smallChart").click(function(){
+     alert("Reached here smallchart");
+     var rdfDialogBox = $("div#PublishRDFDialogBox");
+     rdfDialogBox.dialog({width: 700
+     , buttons: { "Ok": function() { $(this).dialog("close"); } });
+
+     });*/
+
 }
 
 function openWorksheetOptions(event) {
-	$("#WorksheetOptionsDiv").css({'position':'fixed', 
-			'left':(event.clientX - 75) + 'px', 'top':(event.clientY+4)+'px'});
-	$("#WorksheetOptionsDiv").show();
-	
-	$("#WorksheetOptionsDiv").data("worksheetId", $(this).parents("div.Worksheet").attr("id"));
-}
-
-function styleAndAssignHandlersToWorksheetOptionButtons() {
-	// Styling the elements
-	$("#WorksheetOptionsDiv").hide().addClass("ui-corner-all");
-	$("#WorksheetOptionsDiv button").button();
-	
-	// Adding mouse handlers to the div
-	$("#WorksheetOptionsDiv").mouseenter(function() {
-		$(this).show();
-	});
-	$("#WorksheetOptionsDiv").mouseleave(function() {
-		$(this).hide();
-	});
-	
-	// Adding handlers to the buttons
-	$("#generateSemanticTypesButton").click(function(){
-		$("#WorksheetOptionsDiv").hide();
-		
-		console.log("Generating semantic types for table with ID: " + $("#WorksheetOptionsDiv").data("worksheetId"));
-		var info = new Object();
-		info["vWorksheetId"] = $("#WorksheetOptionsDiv").data("worksheetId");
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "GenerateSemanticTypesCommand";
-			
-		var returned = $.ajax({
-		   	url: "/RequestController", 
-		   	type: "POST",
-		   	data : info,
-		   	dataType : "json",
-		   	complete : 
-		   		function (xhr, textStatus) {
-		   			//alert(xhr.responseText);
-		    		var json = $.parseJSON(xhr.responseText);
-		    		parse(json);
-			   	},
-			error :
-				function (xhr, textStatus) {
-		   			alert("Error occured while generating semantic types!" + textStatus);
-			   	}		   
-		});
-	});
-	
-	$("button#showModel").click(function(){
-		$("#WorksheetOptionsDiv").hide();
-		
-		console.log("Showing model for table with ID: " + $("#WorksheetOptionsDiv").data("worksheetId"));
-		var info = new Object();
-		info["vWorksheetId"] = $("#WorksheetOptionsDiv").data("worksheetId");
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "ShowModelCommand";
-			
-		var returned = $.ajax({
-		   	url: "/RequestController", 
-		   	type: "POST",
-		   	data : info,
-		   	dataType : "json",
-		   	complete : 
-		   		function (xhr, textStatus) {
-		   			//alert(xhr.responseText);
-		    		var json = $.parseJSON(xhr.responseText);
-		    		parse(json);
-			   	},
-			error :
-				function (xhr, textStatus) {
-		   			alert("Error occured while generating semantic types!" + textStatus);
-			   	}		   
-		});
-	});
-	
-	$("button#hideModel").click(function(){
-		$("#WorksheetOptionsDiv").hide();
-		var table = $("table#" + $("#WorksheetOptionsDiv").data("worksheetId"));
-		$("tr.AlignmentRow", table).remove();
-		$("div.semanticTypeDiv", table).remove();
-	});
-	
-	$("#alignToOntologyButton").click(function(){
-		$("#WorksheetOptionsDiv").hide();
-		
-		console.log("Aligning the table with ID: " + $("#WorksheetOptionsDiv").data("worksheetId"));
-		var info = new Object();
-		info["vWorksheetId"] = $("#WorksheetOptionsDiv").data("worksheetId");
-		info["workspaceId"] = $.workspaceGlobalInformation.id;
-		info["command"] = "AlignToOntologyCommand";
-			
-		var returned = $.ajax({
-		   	url: "/RequestController", 
-		   	type: "POST",
-		   	data : info,
-		   	dataType : "json",
-		   	complete : 
-		   		function (xhr, textStatus) {
-		   			//alert(xhr.responseText);
-		    		var json = $.parseJSON(xhr.responseText);
-		    		parse(json);
-			   	},
-			error :
-				function (xhr, textStatus) {
-		   			//alert("Error occured while generating semantic types!" + textStatus);
-			   	}		   
-		});
-	});
+    $("div#WorksheetOptionsDiv")
+        .css({'position':'fixed', 'left':(event.clientX - 75) + 'px', 'top':(event.clientY+4)+'px'})
+        .data("worksheetId", $(this).parents("div.Worksheet").attr("id"))
+        .show();
 }
 
 
+function styleAndAssignHandlersToTableCellMenu() {
+    var optionsDiv = $("div#tableCellMenuButtonDiv");
+    var tableCellMenu = $("div#tableCellToolBarMenu");
+
+    // Stylize the buttons
+    $("button", tableCellMenu).button();
+
+    // Assign handlers
+    optionsDiv.click(openTableCellOptions)
+        .button({
+            icons: {
+                primary: 'ui-icon-triangle-1-s'
+            },
+            text: false
+        })
+        .mouseenter(function(){
+            $(this).show();
+        })
+        .mouseleave(function(){
+            tableCellMenu.hide();
+        })
+
+    $("button#editCellButton").click(function(event){
+        handleTableCellEditButton(event);
+    });
+
+    $("button#expandValueButton" ).click(function(event){
+        handleTableCellExpandButton(event);
+    });
+
+    // Hide the option button when mouse leaves the menu
+    tableCellMenu.mouseenter(function(){
+        $(this).show();
+    })
+        .mouseleave(function() {
+            optionsDiv.hide();
+            $(this).hide();
+        });
+}
+
+function handleTableCellExpandButton(event) {
+    var tdTagId = $("#tableCellToolBarMenu").data("parentCellId");
+    // Get the full expanded value
+    var cellValueTag = $("div#"+tdTagId);
+    var value = cellValueTag.data("expandedValue");
+
+    // Get the RDF text (if it exists)
+    var info = new Object();
+    info["nodeId"] = tdTagId;
+    info["worksheetId"] = cellValueTag.parents("div.Worksheet").attr("id");
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "PublishRDFCellCommand";
+
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                if(json["elements"][0]["updateType"] == "PublishCellRDFUpdate") {
+                    var rdfText = json["elements"][0]["cellRdf"];
+                    $("div#rdfValue", expandDiv).html(rdfText);
+                } else if (json["elements"][0]["updateType"] == "KarmaError") {
+                    var rdfText = "<i>" + json["elements"][0]["Error"] + "<i>";
+                    $("div#rdfValue", expandDiv).html(rdfText);
+                }
+            },
+        error :
+            function (xhr, textStatus) {
+                $.sticky("Error occured while getting RDF triples for the cell! " + textStatus);
+            }
+    });
 
 
+    var expandDiv = $("div#ExpandCellValueDialog");
+    // Add the cell value
+    $("div#cellExpandedValue", expandDiv).text(value);
+
+    var positionArray = [event.clientX-150		// distance from left
+        , event.clientY-10];	// distance from top
+    expandDiv.show().dialog({height: 300, width: 500, show:'blind', position: positionArray});
+}
+
+function openTableCellOptions() {
+    var tableCellMenu = $("div#tableCellToolBarMenu");
+    tableCellMenu.data("parentCellId", $(this).data("parentCellId"));
+    tableCellMenu.css({"position":"absolute",
+        "top":$(this).offset().top + 15,
+        "left": $(this).offset().left + $(this).width()/2 - $(tableCellMenu).width()/2}).show();
+}
+
+function showTableCellMenuButton() {
+    // Get the parent table
+    var cellDiv = $(this);
+    var cellTd = cellDiv.parent();
+
+    var optionsDiv = $("div#tableCellMenuButtonDiv");
+    optionsDiv.data("parentCellId", cellDiv.attr("id"));
+
+    // Show it at the right place
+    var top = $(cellTd).offset().top + $(cellTd).height()-12;
+    var left = $(cellTd).offset().left + $(cellTd).width()-10;
+    optionsDiv.css({"position":"absolute",
+        "top":top,
+        "left": left}).show();
+}
+
+function hideTableCellMenuButton() {
+    $("div#tableCellMenuButtonDiv").hide();
+}
+
+function styleAndAssignHandlersToColumnHeadingMenu() {
+    var optionsDiv = $("div#columnHeadingMenuButtonDiv");
+    var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+
+    $("button", columnHeadingMenu).button();
+
+    optionsDiv
+        .click(openColumnHeadingOptions)
+        .button({
+            icons: {
+                primary: 'ui-icon-triangle-1-s'
+            },
+            text: false
+        })
+        .mouseenter(function(){
+            $(this).show();
+        })
+        .mouseleave(function(){
+            columnHeadingMenu.hide();
+        });
+
+    // Hide the option button when mouse leaves the menu
+    columnHeadingMenu.mouseleave(function() {
+        optionsDiv.hide();
+        columnHeadingMenu.hide();
+    }).mouseenter(function(){
+            $(this).show();
+        });
+
+    // Handle split column button
+    $("button#splitByComma").click(function(){
+        optionsDiv.hide();
+
+        var splitPanel = $("div#SplitByCommaColumnListPanel");
+        splitPanel.dialog({width: 300, height: 200
+            , buttons: { "Cancel": function() { $(this).dialog("close"); }, "Submit": splitColumnByComma }});
+    });
+
+    // Assign handler to column clean button (in cleaning.js)
+    assignHandlersToCleaningPanelObjects();
+
+    // Assign handler to service invocation button (in services.js)
+    assignHandlersToServiceInvocationObjects();
+
+    // Assign handler to rename column button (in table_manipulation.js)
+    $("button#renameColumnButton").click(assignHandlersToRenameButton);
+
+    // Assign handler to the add column button (in table_manipulation.js)
+    $("button#addColumnButton").click(openAddNewColumnDialog);
+
+    // Assign handler to the show chart button (in cleaning-charts.js)
+    $("button#showChartButton").click(showChartButtonHandler);
+}
+
+function splitColumnByComma() {
+    var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+    var selectedHNodeId = columnHeadingMenu.data("parentCellId");
+    var splitPanel = $("div#SplitByCommaColumnListPanel");
+
+    $("div#errorPanel", splitPanel).remove();
+
+    var inputVal = $("input#columnSplitDelimiter").val();
+    if(inputVal != "space" && inputVal != "tab" && inputVal.length != 1) {
+        splitPanel.append($("<div>").attr("id", "errorPanel").append($("<span>").addClass("error smallSizedFont").text("Length of the delimiter should be 1!")));
+        return false;
+    }
+
+    $("div#SplitByCommaColumnListPanel").dialog("close");
+    var info = new Object();
+    info["worksheetId"] = $("td#" + selectedHNodeId).parents("div.Worksheet").attr("id");
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["hNodeId"] = selectedHNodeId;
+    info["delimiter"] = inputVal;
+    info["command"] = "SplitByCommaCommand";
+
+    var newInfo = [];
+    newInfo.push(getParamObject("worksheetId", $("td#" + selectedHNodeId).parents("div.Worksheet").attr("id"), "worksheetId"));
+    newInfo.push(getParamObject("hNodeId", selectedHNodeId,"hNodeId"));
+    newInfo.push(getParamObject("delimiter", inputVal, "other"));
+    newInfo.push(getParamObject("checkHistory", true, "other"));
+    info["newInfo"] = JSON.stringify(newInfo);
+
+    showLoading(info["worksheetId"]);
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                // alert(xhr.responseText);
+                var json = $.parseJSON(xhr.responseText);
+                parse(json);
+                hideLoading(info["worksheetId"]);
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while splitting a column by comma! " + textStatus);
+                hideLoading(info["worksheetId"]);
+            }
+    });
+}
+
+function openColumnHeadingOptions() {
+    var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+    columnHeadingMenu.data("parentCellId", $(this).data("parentCellId"));
+    columnHeadingMenu.css({"position":"absolute",
+        "top":$(this).offset().top + 15,
+        "left": $(this).offset().left + $(this).width()/2 - $(columnHeadingMenu).width()/2}).show();
+}
+
+function showColumnOptionButton(event) {
+    var tdTag = $(this).parents("td.wk-cell").first();
+    var optionsDiv = $("div#columnHeadingMenuButtonDiv");
+    optionsDiv.data("parentCellId", tdTag.attr("id"));
+
+    // Show it at the right place
+    var top = $(this).offset().top + $(this).height()-22;
+    var left = $(this).offset().left + $(this).width()-17;
+    optionsDiv.css({"position":"absolute",
+        "top":top,
+        "left": left}).show();
+}
+
+function hideColumnOptionButton() {
+    $("div#columnHeadingMenuButtonDiv").hide();
+}
+
+function showLoading(worksheetId) {
+    // Remove any existing coverDiv
+    $("div#WaitingDiv_" + worksheetId).remove();
+
+    // Create a new cover
+    var coverDiv = $("<div>").attr("id","WaitingDiv_"+worksheetId).addClass('waitingDiv')
+        .append($("<div>").html('<b>Please wait</b>')
+            .append($('<img>').attr("src","images/ajax-loader.gif"))
+        );
+
+    var spaceToCoverDiv = $("div#"+worksheetId);
+    spaceToCoverDiv.append(coverDiv.css({"position":"absolute", "height":spaceToCoverDiv.height(),
+        "width": spaceToCoverDiv.width(), "top":spaceToCoverDiv.position().top, "left":spaceToCoverDiv.position().left}).show());
+}
+
+function hideLoading(worksheetId) {
+    $("div#WaitingDiv_"+worksheetId).hide();
+}
+
+function showWaitingSignOnScreen() {
+    var coverDiv = $("<div>").attr("id","WaitingDiv").addClass('waitingDiv')
+        .append($("<div>").html('<b>Please wait</b>')
+            .append($('<img>').attr("src","images/ajax-loader.gif"))
+        );
+
+    var spaceToCoverDiv = $('body');
+    spaceToCoverDiv.append(coverDiv.css({"position":"fixed", "height":$(document).height(),
+        "width": $(document).width(), "zIndex":100,"top":spaceToCoverDiv.position().top, "left":spaceToCoverDiv.position().left}).show());
+}
+
+function hideWaitingSignOnScreen() {
+    $("div#WaitingDiv").hide();
+}
+
+function styleAndAssignHandlersToMergeButton() {
+    $("button#mergeButton").button().click(function(){
+        var info = new Object();
+        info["workspaceId"] = $.workspaceGlobalInformation.id;
+        info["command"] = "ImportUnionResultCommand";
+
+        showWaitingSignOnScreen();
+        var returned = $.ajax({
+            url: "RequestController",
+            type: "POST",
+            data : info,
+            dataType : "json",
+            complete :
+                function (xhr, textStatus) {
+                    //alert(xhr.responseText);
+                    var json = $.parseJSON(xhr.responseText);
+                    parse(json);
+                    hideCleanningWaitingSignOnScreen();
+                },
+            error :
+                function (xhr, textStatus) {
+                    $.sticky("Error occured while doing merge!");
+                    hideCleanningWaitingSignOnScreen();
+                }
+        });
+    });
+}
+
+function submitWorksheetProperties() {
+    // Prepare the input data
+    var worksheetProps = new Object();
+    worksheetProps["graphName"] = $("#graphNameInput").val();
+
+    // Set service options if the window is visible
+    if ($('#worksheetServiceOptions').is(':visible')) {
+        worksheetProps["hasServiceProperties"] = true;
+        worksheetProps["serviceUrl"] = $("#serviceUrlInput").val();
+        worksheetProps["serviceRequestMethod"] = $("#serviceRequestMethod option:selected").text();
+        if ($("#serviceRequestMethod option:selected").text() == "POST") {
+            worksheetProps["serviceDataPostMethod"] = $("input:radio[name=serviceDataPostMethod]:checked").val();
+        }
+
+    } else {
+        worksheetProps["hasServiceProperties"] = false;
+    }
+
+    var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "SetWorksheetPropertiesCommand";
+
+    var newInfo = [];   // for input parameters
+    newInfo.push(getParamObject("worksheetId", $("div#WorksheetOptionsDiv").data("worksheetId") ,"worksheetId"));
+    newInfo.push(getParamObject("properties", worksheetProps, "other"));
+    info["newInfo"] = JSON.stringify(newInfo);
+    // Store the data to be shown later when the dialog is opened again
+    $("div#" + info["worksheetId"]).data("worksheetProperties", worksheetProps);
+
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                //alert(xhr.responseText);
+                var json = $.parseJSON(xhr.responseText);
+                parse(json);
+            },
+        error :
+            function (xhr, textStatus) {
+                $.sticky("Error occurred while setting properties!");
+            }
+    });
+    $("div#setPropertiesDialog").dialog("close");
+}
+
+function fetchExistingWorksheetOptions(worksheetId) {
+    // Uncheck the service options
+    if ($("#serviceOptions").is(":checked")) {
+        $("#serviceOptions").trigger("click");
+    }
+    $('#serviceRequestMethod').val('GET')
+        .trigger('change');
+    $("#servicePostOptions").hide();
+
+    var info = new Object();
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "FetchExistingWorksheetPropertiesCommand";
+    info["worksheetId"] = worksheetId;
+
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                var props = json["elements"][0]["properties"];
+
+                // Set model name
+                if (props["graphName"] != null) {
+                    $("#graphNameInput").val(props["graphName"]);
+                } else {
+                    $("#graphNameInput").val("");
+                }
+                // Set service options if present
+                if (props["hasServiceProperties"]) {
+                    // Select the service option checkbox
+                    $("#serviceOptions").trigger("click");
+
+                    // Set the service URL
+                    if (props["serviceUrl"] != null) {
+                        $("#serviceUrlInput").val(props["serviceUrl"]);
+                    } else {
+                        $("#serviceUrlInput").val("");
+                    }
+
+                    // Set the request method
+                    var index = (props["serviceRequestMethod"] === "GET") ? 0 : 1;
+                    $('#serviceRequestMethod option').eq(index).prop('selected', true);
+
+                    // Set the POST request invocation method
+                    if (props["serviceRequestMethod"] === "POST") {
+                        $("#servicePostOptions").show();
+                        $(":radio[value=" +props["serviceDataPostMethod"]+"]").prop('checked',true);
+                    }
+
+                } else {
+                    $("#serviceUrlInput").val("");
+                    $('#serviceRequestMethod option').eq(0).prop('selected', true);
+                }
+            },
+        error :
+            function (xhr, textStatus) {
+                $.sticky("Error occurred while fetching worksheet properties!");
+            }
+    });
+}
+
+function renderR2RMLModels() {
+    var optionsDiv = $("div#WorksheetOptionsDiv");
+    $('#FetchR2RMLModelDialogBox').dialog("close");
+    var info = new Object();
+    info["worksheetId"] = optionsDiv.data("worksheetId");
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "FetchR2RMLModelsCommand";
+    info['tripleStoreUrl'] = $('#txtR2RML_URL_fetch').val();
+
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                parse(json);
+                hideLoading(info["worksheetId"]);
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while generating the automatic model!" + textStatus);
+                hideLoading(info["worksheetId"]);
+            }
+    });
+}
+
+/*function drawBigChart() {
+ var bigChartDiv = $("div#drawBigChartId");
+
+ $("div#smallChart").click(function(){
+ var rdfDialogBox = $("div#PublishRDFDialogBox");
+ rdfDialogBox.dialog({width: 700
+ , buttons: { "Ok": function() { $(this).dialog("close"); } });
+
+ });
 
 
-
+ }*/

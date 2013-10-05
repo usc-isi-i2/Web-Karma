@@ -1,0 +1,23 @@
+rule	:	operator what dest;
+what	:	tokenspec;
+	
+tokenspec :	singletokenspec| singletokenspec tokenspec;
+dtokenspec:	singletokenspec| singletokenspec dtokenspec;
+singletokenspec: token;
+
+
+operator :	INS;
+
+
+token:	TOKEN  ;
+
+
+scanningOrder :	FRMB|FRME;
+	
+dest:	 scanningOrder dwherequantifier;
+
+
+dwherequantifier :	FST INCLD? dtokenspec |dnum;
+
+dnum	:	NUM;
+

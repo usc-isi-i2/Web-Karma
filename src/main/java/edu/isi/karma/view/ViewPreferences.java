@@ -1,48 +1,52 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
 /**
  * 
  */
 package edu.isi.karma.view;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.util.FileUtil;
-import edu.isi.karma.util.JSONUtil;
+import edu.isi.karma.util.Preferences;
 
 /**
  * @author szekely
  * 
  */
-public class ViewPreferences {
+public class ViewPreferences extends Preferences{
 	
-	/**
-	 * Pointer to the file where the preferences for each workspace is saved.
-	 */
-	private File jsonFile;
-	
-	/**
-	 * Id of the workspace. Each workspace has its own view preference object.
-	 */
-	private String workspaceId;
-	
-	private JSONObject json;
-	
-	private static Logger logger = LoggerFactory.getLogger(ViewPreferences.class.getSimpleName());
-	
+	public ViewPreferences(String preferencesId) {
+		super(preferencesId);
+	}
+
 	public enum ViewPreference {
-		maxCharactersInHeader, maxRowsToShowInNestedTables, defaultRowsToShowInTopTables;
+		maxCharactersInHeader, maxCharactersInCell, maxRowsToShowInNestedTables, defaultRowsToShowInTopTables;
 		
 		public int getIntDefaultValue() {
 			switch(this) {
 			case maxCharactersInHeader: return 10;
+			case maxCharactersInCell: return 100;
 			case maxRowsToShowInNestedTables: return 5;
 			case defaultRowsToShowInTopTables: return 10;
 			}
@@ -50,31 +54,6 @@ public class ViewPreferences {
 		}
 	}
 
-	public ViewPreferences(String workspaceId) {
-		this.workspaceId = workspaceId;
-		populatePreferences();
-	}
-	
-	private void populatePreferences() {
-		try {
-			// TODO Make this path to user preferences configurable through web.xml
-			jsonFile = new File("./UserPrefs/" + workspaceId + ".json");
-			if(jsonFile.exists()){
-				// Populate from the existing preferences JSON file
-				json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
-			} else {
-				// Create a new JSON preference file using the template preferences file
-				jsonFile.createNewFile();
-				File template_file = new File("./UserPrefs/WorkspacePref.template");
-				FileUtil.copyFiles(jsonFile, template_file);
-				json = (JSONObject) JSONUtil.createJson(new FileReader(jsonFile));
-			} 
-		} catch(FileNotFoundException f) {
-			logger.error("Preferences file not found! ", f);
-		} catch (IOException e) {
-			logger.error("Error occured while creating preferences file!", e);
-		}
-	}
 
 	public int getIntViewPreferenceValue(ViewPreference pref) {
 		try {
@@ -95,63 +74,6 @@ public class ViewPreferences {
 		return -1;
 	}
 	
-	
-	public JSONObject getCommandPreferencesJSONObject(String commandName){
-		System.out.println("Command name:" + commandName);
-		try {
-			JSONArray commArray = json.getJSONArray("Commands");
-			for(int i=0; i<commArray.length(); i++) {
-				JSONObject obj = commArray.getJSONObject(i);
-				if(obj.getString("Command").equals(commandName)) {
-					return obj.getJSONObject("PreferenceValues");
-				}
-			}
-		} catch (JSONException e) {
-			return null;
-		}
-		return null;
-	}
-	
-	public void setCommandPreferences(String commandName, JSONObject prefValues) {
-		try {
-			JSONArray commArray = null;
-			
-			// Check if the Commands element exists
-			try{
-				commArray = json.getJSONArray("Commands");
-			} catch (JSONException e) {
-				commArray = new JSONArray();
-				e.printStackTrace();
-			}
-			
-			// Check if the command already exists. In that case, we overwrite the values
-			for(int i=0; i<commArray.length(); i++) {
-				JSONObject obj = commArray.getJSONObject(i);
-				if(obj.getString("Command").equals(commandName)) {
-					obj.put("PreferenceValues", prefValues);
-					// Save the new preferences to the file
-					FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
-					return;
-				}
-			}
-			
-			// If the command does not exists, create a new element
-			JSONObject commObj = new JSONObject();
-			commObj.put("Command", commandName);
-			commObj.put("PreferenceValues", prefValues);
-			commArray.put(commObj);
-			json.put("Commands", commArray);
-			
-			// Write the new preferences to the file
-			FileUtil.writePrettyPrintedJSONObjectToFile(json, jsonFile);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-		
 	public void setIntViewPreferenceValue(ViewPreference pref,
 			int value) {
 		try {

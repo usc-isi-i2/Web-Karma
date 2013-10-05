@@ -1,33 +1,63 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
 package edu.isi.karma.webserver;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Enumeration;
+
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import java.io.IOException;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
- 
-public class ServerStart extends AbstractHandler
-{
-    public void handle(String target,
-                       Request baseRequest,
-                       HttpServletRequest request,
-                       HttpServletResponse response) 
-        throws IOException, ServletException
-    {
-        response.setContentType("text/html;charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
-        baseRequest.setHandled(true);
-        response.getWriter().println("<h1>Welcome to Web Karma Web App</h1>");
-    }
- 
-    public static void main(String[] args) throws Exception
-    {
-        Server server = new Server(8087);
-        server.setHandler(new ServerStart());
- 
-        server.start();
-        server.join();
-    }
+import javax.servlet.http.HttpServlet;
+
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
+public class ServerStart extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	// private static Logger logger = LoggerFactory.getLogger(ServerStart.class);
+
+	public void init() throws ServletException {
+		// Populate the ServletContextParameterMap data structure
+		// Only the parameters that are specified in the
+		// ServletContextParameterMap are valid. So, to use a context init
+		// parameter, add it to the ServletContextParameterMap
+		ServletContext ctx = getServletContext();
+		Enumeration<?> params = ctx.getInitParameterNames();
+		ArrayList<String> validParams = new ArrayList<String>();
+		for (ContextParameter param : ContextParameter.values()) {
+			validParams.add(param.name());
+		}
+		while (params.hasMoreElements()) {
+			String param = params.nextElement().toString();
+			if (validParams.contains(param)) {
+				ContextParameter mapParam = ContextParameter.valueOf(param);
+
+				ServletContextParameterMap.setParameterValue(mapParam,
+						ctx.getInitParameter(param));
+			}
+		}
+
+		System.out.println("************");
+		System.out.println("Server start servlet initialized successfully..");
+		System.out.println("***********");
+
+	}		
 }

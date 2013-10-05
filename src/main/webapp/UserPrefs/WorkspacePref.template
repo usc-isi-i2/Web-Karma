@@ -1,0 +1,8 @@
+{
+    "ViewPreferences": {
+        "maxCharactersInHeader": 10,
+        "maxCharactersInCell": 80,
+        "maxRowsToShowInNestedTables": 5,
+		"defaultRowsToShowInTopTables":150
+    }
+}

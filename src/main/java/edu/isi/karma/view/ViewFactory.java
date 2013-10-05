@@ -1,19 +1,41 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
 /**
  * 
  */
 package edu.isi.karma.view;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
-import edu.isi.karma.view.tableheadings.VColumnHeader;
 
 /**
  * @author szekely
@@ -30,18 +52,8 @@ public class ViewFactory {
 
 	private Map<String, VWorksheet> vWorksheets = new HashMap<String, VWorksheet>();
 
-	/**
-	 * Maps table Ids to CSS tags. By putting it here the same table type will
-	 * have the same color in all worksheets.
-	 */
-	private final VTableCssTags tableCssTags = new VTableCssTags();
-
 	private String getId(String prefix) {
 		return prefix + (nextId++);
-	}
-
-	public VTableCssTags getTableCssTags() {
-		return tableCssTags;
 	}
 
 	VColumnHeader createVColumnHeader(HNodePath path,
@@ -57,7 +69,7 @@ public class ViewFactory {
 							preferences
 									.getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader));
 		}
-		tableCssTags.registerTablesInPath(path);
+//		tableCssTags.registerTablesInPath(path);
 		return new VColumnHeader(path.toString(), columnNameFull,
 				columnNameShort);
 	}
@@ -72,11 +84,58 @@ public class ViewFactory {
 
 	public void updateWorksheet(String vWorksheetId, Worksheet worksheet, List<HNodePath> columns,
 			VWorkspace vWorkspace) {
+		// Grab reference to the pager in the old worksheet
+		Map<String, TablePager> vwPager = getVWorksheet(vWorksheetId).getTableId2TablePager();
+		
 		VWorksheet vw = new VWorksheet(vWorksheetId, worksheet, columns, vWorkspace);
 		vWorksheets.put(vWorksheetId, vw);
+		vw.setTableId2TablePager(vwPager);
 	}
 
+	public Collection<VWorksheet> getVWorksheets()
+	{
+		return vWorksheets.values();
+	}
+	
 	public VWorksheet getVWorksheet(String vWorksheetId) {
 		return vWorksheets.get(vWorksheetId);
+	}
+	
+	public VWorksheet getVWorksheetByWorksheetId(String worksheetId)
+	{
+		for(VWorksheet vw : this.vWorksheets.values())
+		{
+			if(vw.getWorksheetId().compareTo(worksheetId) == 0)
+			{
+				return vw;
+			}
+		}
+		return null;
+	}
+	
+	public void addWorksheets(Collection<Worksheet> worksheets, VWorkspace vWorkspace) {
+		List<VWorksheet> newWorksheets = new LinkedList<VWorksheet>();
+		for (Worksheet w : worksheets) {
+			if (null == getVWorksheetByWorksheetId(w.getId())) {
+				newWorksheets
+						.add(createVWorksheetWithDefaultPreferences(vWorkspace, w));
+			}
+		}
+	}
+
+	public VWorksheet createVWorksheetWithDefaultPreferences(
+			VWorkspace vWorkspace, Worksheet w) {
+
+		ViewPreferences pref = vWorkspace.getPreferences();
+		return vWorkspace
+				.getViewFactory()
+				.createVWorksheet(
+						w,
+						w.getHeaders().getAllPaths(),
+						w.getDataTable()
+								.getRows(
+										0,
+										pref.getIntViewPreferenceValue(ViewPreference.defaultRowsToShowInTopTables)),
+						vWorkspace);
 	}
 }

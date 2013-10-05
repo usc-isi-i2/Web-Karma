@@ -1,0 +1,63 @@
+@CHARSET "ISO-8859-1";
+
+.axis path,.axis line {
+			fill: none;
+			stroke: black;
+			stroke-width: 4 shape-rendering:  crispEdges;
+		}
+		
+		.axis text {
+			font-family: sans-serif;
+			text-anchor: end;
+			font-size: 13px;
+		}
+		
+		.x.axis path {
+			display: none;
+		}
+		
+		.cleaningRectInvalid {
+			fill: orangered;
+			stroke: none;
+			fill-opacity: 1.0;	
+		}
+		
+		.cleaningRectMissing{ 
+			fill: white;
+			stroke: none;
+			fill-opacity: 1.0;
+		}
+		
+		.cleaningRectRemaining{ 
+			fill: yellow;
+			stroke: none;
+			fill-opacity: 1.0;
+		}
+		
+		.cleaningRectDefault {
+			fill: rgb(163, 252, 6);
+			stroke: none;
+			fill-opacity: 1.0;
+		}
+		.xaxisText {
+		font-size: 10px;
+		font-family: sans-serif;
+		}
+		
+		#smallChart {
+		background: #00174D;
+		cursor: pointer;
+		}
+		
+		#bigChart {
+		background: rgb(186, 224, 218);
+		}
+
+		#bigChartTitle {
+		font-size: 14px;
+		text-align: center;
+		}
+
+        .smallChart {
+            cursor: pointer;
+        }
