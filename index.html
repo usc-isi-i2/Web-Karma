@@ -1,88 +1,138 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset='utf-8'>
 
-  <title>InformationIntegrationGroup/Web-Karma @ GitHub</title>
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Web-Karma : Information Integration Tool" />
 
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #ffffff;
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #000000;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #000000; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #000000; }
-    h3 { text-align: center; color: #000000; }
-    a { color: #000000; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
-</head>
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-<body>
-  <a href="https://github.com/InformationIntegrationGroup/Web-Karma"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+    <title>Web-Karma</title>
+  </head>
 
-  <div id="container">
+  <body>
 
-    <div class="download">
-      <a href="https://github.com/InformationIntegrationGroup/Web-Karma/zipball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/zip.png"></a>
-      <a href="https://github.com/InformationIntegrationGroup/Web-Karma/tarball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/tar.png"></a>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/InformationIntegrationGroup/Web-Karma">View on GitHub</a>
+
+          <h1 id="project_title">Web-Karma</h1>
+          <h2 id="project_tagline">Information Integration Tool</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/InformationIntegrationGroup/Web-Karma/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/InformationIntegrationGroup/Web-Karma/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
     </div>
 
-    <h1><a href="https://github.com/InformationIntegrationGroup/Web-Karma">Web-Karma</a>
-      <span class="small">by <a href="https://github.com/InformationIntegrationGroup">InformationIntegrationGroup</a></span></h1>
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="karma-a-data-integration-tool" class="anchor" href="#karma-a-data-integration-tool"><span class="octicon octicon-link"></span></a>Karma: A Data Integration Tool</h1>
 
-    <div class="description">
-      
+<p>Karma is an information integration tool that enables users to quickly and easily integrate data from a variety of data sources including databases, spreadsheets, delimited text files, XML, JSON, KML and Web APIs. Users integrate information by modeling it according to an ontology of their choice using a graphical user interface that automates much of the process. Karma learns to recognize the mapping of data to ontology classes and then uses the ontology to propose a model that ties together these classes. Users then interact with the system to adjust the automatically generated model. During this process, users can transform the data as needed to normalize data expressed in different formats and to restructure it. Once the model is complete, users can published the integrated data as RDF or store it in a database.</p>
+
+<p>You can find useful tutorials on the project Website: <a href="http://www.isi.edu/integration/karma/">http://www.isi.edu/integration/karma/</a></p>
+
+<h2>
+<a name="installation-and-setup" class="anchor" href="#installation-and-setup"><span class="octicon octicon-link"></span></a>Installation and Setup</h2>
+
+<p>System Requirements: Java 1.7, Maven 3.0 and above.</p>
+
+<p>To run the jetty server, execute the following command from webkarma top directory:
+<code>mvn jetty:run</code>. Once the server has started point your browser to <strong>http://localhost:8080/web-karma.html</strong>. To start it on a port other than 8080 (e.g. Port number 9999) 
+<code>mvn -Djetty.port=9999 jetty:run</code></p>
+
+<p>To start in logging mode (where all the logs are stored in the log folder), use the following command to start the server:
+    <code>mvn -Dslf4j=false -Dlog4j.configuration=file:./config/log4j.properties jetty:run</code></p>
+
+<h2>
+<a name="frequently-asked-questions" class="anchor" href="#frequently-asked-questions"><span class="octicon octicon-link"></span></a>Frequently Asked Questions</h2>
+
+<h3>
+<a name="how-to-perform-offline-rdf-generation-for-a-data-source-using-a-published-model" class="anchor" href="#how-to-perform-offline-rdf-generation-for-a-data-source-using-a-published-model"><span class="octicon octicon-link"></span></a>How to perform offline RDF generation for a data source using a published model?</h3>
+
+<ol>
+<li>Model your source and publish it's model (the published models are located at <code>src/main/webapp/repository/sources/</code> inside the Karma directory).</li>
+<li>
+<p>To generate RDF of a CSV/JSON/XML file, go to the top level Karma directory and run the following command from terminal:</p>
+
+<pre><code>mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineDbRdfGenerator" -Dexec.args="--sourcetype 
+&lt;sourcetype&gt; --filepath &lt;filepath&gt; --modelfilepath &lt;modelfilepath&gt; --outputfile &lt;outputfile&gt;"
+</code></pre>
+
+<p>Valid argument values for sourcetype are: CSV, JSON, XML. Also, you need to escape the double quotes that go inside argument values. Example invocation for a JSON file:</p>
+
+<pre><code>mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="
+--sourcetype JSON 
+--filepath \"/Users/shubhamgupta/Documents/wikipedia.json\" 
+--modelfilepath \"/Users/shubhamgupta/Documents/model-wikipedia.n3\" 
+--outputfile wikipedia-rdf.n3"
+</code></pre>
+</li>
+<li>
+<p>To generate RDF of a database table, go to the top level Karma directory and run the following command from terminal:</p>
+
+<pre><code>mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineDbRdfGenerator" -Dexec.args="--sourcetype DB
+--modelfilepath &lt;modelfilepath&gt; --outputfile &lt;outputfile&gt; --dbtype &lt;dbtype&gt; --hostname &lt;hostname&gt; 
+--username &lt;username&gt; --password &lt;password&gt; --portnumber &lt;portnumber&gt; --dbname &lt;dbname&gt; --tablename &lt;tablename&gt;"
+</code></pre>
+
+<p>Valid argument values for <code>dbtype</code> are Oracle, MySQL, SQLServer, PostGIS. Example invocation:</p>
+
+<pre><code>mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="
+--sourcetype DB --dbtype SQLServer 
+--hostname www.example.org --username root 
+--password secret --portnumber 1433 
+--dbname dbpedia --tablename people 
+--modelfilepath \"/Users/shubhamgupta/Documents/model-people.n3\" --outputfile tmp/dbtest.n3"
+</code></pre>
+</li>
+</ol><p>You can do <code>mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--help"</code> to get information about required arguments.</p>
+
+<h3>
+<a name="how-to-set-up-password-protection-for-accessing-karma" class="anchor" href="#how-to-set-up-password-protection-for-accessing-karma"><span class="octicon octicon-link"></span></a>How to set up password protection for accessing Karma?</h3>
+
+<ul>
+<li>in /config/jettyrealm.properties change user/password (if you wish)</li>
+<li>in /src/main/webapp/WEB-INF/web.xml uncomment security section at the end of the file</li>
+<li>in pom.xml uncomment security section (search for loginServices)</li>
+</ul><h3>
+<a name="are-there-additional-steps-required-to-import-data-from-oracle-database" class="anchor" href="#are-there-additional-steps-required-to-import-data-from-oracle-database"><span class="octicon octicon-link"></span></a>Are there additional steps required to import data from Oracle database?</h3>
+
+<p>Yes. Due to Oracles binary license issues, we can't distribute the JAR file that is required for importing data from an Oracle database. Following are the steps to resolve the runtime error that you will get if you try to do it with the current source code:</p>
+
+<ol>
+<li>Download the appropriate JDBC drive JAR file (for JDK 1.5 and above) that matches your Oracle DB version. Link: <a href="http://www.oracle.com/technetwork/database/features/jdbc/index-091264.html">http://www.oracle.com/technetwork/database/features/jdbc/index-091264.html</a>
+</li>
+<li>Put the downloaded JAR file inside <code>lib</code> folder of the Karma source code. </li>
+<li>Add the following snippet in the <code>pom.xml</code> file (present inside the top level folder of Karma source code) inside the dependencies XML element: </li>
+</ol><pre><code>&lt;dependency&gt; 
+    &lt;groupId&gt;com.oracle&lt;/groupId&gt; 
+    &lt;artifactId&gt;ojdbc&lt;/artifactId&gt; 
+    &lt;version&gt;14&lt;/version&gt; 
+    &lt;scope&gt;system&lt;/scope&gt; 
+    &lt;systemPath&gt;${project.basedir}/lib/ojdbc14.jar&lt;/systemPath&gt; 
+&lt;/dependency&gt; 
+</code></pre>
+
+<p>Make sure that the filename mentioned in the <code>systemPath</code> element matches with your downloaded JAR file.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Web-Karma maintained by <a href="https://github.com/InformationIntegrationGroup">InformationIntegrationGroup</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
     </div>
 
     
 
-    
-
-    
-
-    
-
-    
-      <h2>Authors</h2>
-      <p>amangoel (amangoel@isi.edu)<br/>mariamuslea (mariam@isi.edu)<br/>Mohsen Taheriyan (mohsen@isi.edu)<br/>Shubham Gupta (shuby.gupta@gmail.com)<br/>Pedro Szekely (szekely1401@gmail.com)<br/>      </p>
-    
-
-    
-      <h2>Contact</h2>
-      <p>Pedro Szekely ()<br/>      </p>
-    
-
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="https://github.com/InformationIntegrationGroup/Web-Karma/zipball/master">zip</a> or
-      <a href="https://github.com/InformationIntegrationGroup/Web-Karma/tarball/master">tar formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/InformationIntegrationGroup/Web-Karma</pre>
-    </p>
-
-    <div class="footer">
-      get the source code on GitHub : <a href="https://github.com/InformationIntegrationGroup/Web-Karma">InformationIntegrationGroup/Web-Karma</a>
-    </div>
-
-  </div>
-
-</body>
+  </body>
 </html>
