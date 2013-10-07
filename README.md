@@ -18,6 +18,10 @@ To start in logging mode (where all the logs are stored in the log folder), use 
 
 ## Frequently Asked Questions ##
 ### How to perform offline RDF generation for a data source using a published model? ###
+
+Note: This capability is broken and we are actively working to fix it. -- Oct 6, 2013.
+
+
 1. Model your source and publish it's model (the published models are located at `src/main/webapp/repository/sources/` inside the Karma directory).
 2. To generate RDF of a CSV/JSON/XML file, go to the top level Karma directory and run the following command from terminal:
 ```
