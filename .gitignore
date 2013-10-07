@@ -9,7 +9,6 @@ config/transformation.properties
 *.swp
 target
 .DS_Store
-.classpath
 .project
 .idea/
 lastJsonImport.json
