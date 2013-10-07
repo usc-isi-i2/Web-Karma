@@ -56,7 +56,7 @@ public class WorksheetCleaningUpdate extends
 	
 	public static int DEFAULT_COLUMN_LENGTH = 10;
 	public static int MIN_COLUMN_LENGTH = 10;
-	public static int MAX_COLUMN_DATA_LENGTH = 25;
+	public static int MAX_COLUMN_DATA_LENGTH = 150;
 	
 	private enum JsonKeys {
 		worksheetId, hNodeId, worksheetChartData, chartData, id, value, json, Preferred_Length
