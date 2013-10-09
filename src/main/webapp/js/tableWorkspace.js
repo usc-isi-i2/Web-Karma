@@ -607,14 +607,13 @@ function openTableCellOptions() {
 function showTableCellMenuButton() {
     // Get the parent table
     var cellDiv = $(this);
-    var cellTd = cellDiv.parent();
 
     var optionsDiv = $("div#tableCellMenuButtonDiv");
     optionsDiv.data("parentCellId", cellDiv.attr("id"));
 
     // Show it at the right place
-    var top = $(cellTd).offset().top + $(cellTd).height()-12;
-    var left = $(cellTd).offset().left + $(cellTd).width()-10;
+    var top = $(cellDiv).offset().top + $(cellDiv).height()-20;
+    var left = $(cellDiv).offset().left + $(cellDiv).width()-20;
     optionsDiv.css({"position":"absolute",
         "top":top,
         "left": left}).show();
