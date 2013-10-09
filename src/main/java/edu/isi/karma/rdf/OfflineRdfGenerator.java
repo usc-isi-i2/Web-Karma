@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.cli2.CommandLine;
@@ -53,8 +54,8 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
-import edu.isi.karma.imp.Import;
 
+import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.kr2rml.ErrorReport;
@@ -67,14 +68,9 @@ import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.JSONUtil;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-import edu.isi.karma.webserver.WorkspaceRegistry;
-import java.sql.SQLException;
 
 public class OfflineRdfGenerator {
 
@@ -134,15 +130,13 @@ public class OfflineRdfGenerator {
             /**
              * CREATE THE REQUIRED KARMA OBJECTS *
              */
-            Workspace workspace = WorkspaceManager._getNewInstance().createWorkspace();
-            Worksheet worksheet = null;
             ServletContextParameterMap.setParameterValue(
                     ContextParameter.USER_DIRECTORY_PATH, "src/main/webapp/");
             ServletContextParameterMap.setParameterValue(
                     ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "200");
-            VWorkspace vWorkspace = new VWorkspace(workspace, "WSP100");
-            WorkspaceRegistry.getInstance().register(new ExecutionController(vWorkspace));
-
+            Workspace workspace = WorkspaceManager._getNewInstance().createWorkspace();
+            Worksheet worksheet = null;
+            
             /**
              * LOAD THE R2RML MODEL FILE INTO A JENA MODEL *
              */
@@ -204,7 +198,7 @@ public class OfflineRdfGenerator {
                 }
                 DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
                         hostname, portnumber, username, password, dBorSIDName, tablename);
-                dbRdfGen.generateRDF(vWorkspace, pw, model);
+                dbRdfGen.generateRDF(workspace, pw, model);
             } // File based worksheets such as JSON, XML, CSV
             else {
                 String sourceFilePath = (String) cl.getValue("--filepath");
@@ -221,9 +215,8 @@ public class OfflineRdfGenerator {
                  * GENERATE RDF FROM WORKSHEET OBJECT *
                  */
                 System.out.print("Generating RDF...");
-                VWorksheet vWorksheet = vWorkspace.getViewFactory().createVWorksheetWithDefaultPreferences(vWorkspace, worksheet);
                 WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(
-                        vWorksheet, vWorkspace, model, worksheetName);
+                        worksheet, workspace, model, worksheetName);
 
                 // Gets all the errors generated during the RDF generation
                 ErrorReport errorReport = new ErrorReport();

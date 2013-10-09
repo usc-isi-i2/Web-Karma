@@ -55,8 +55,8 @@ src/main/webapp/publish/CSV/Well_Data_Sheet1
 
 .gitignore
 
-.gitignore
-
 nbactions.xml
 
 preloaded-library
+
+temp/
