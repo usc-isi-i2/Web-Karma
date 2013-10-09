@@ -42,6 +42,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.util.HTTPUtil;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.ViewPreferences.ViewPreference;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -56,7 +57,6 @@ public class WorksheetCleaningUpdate extends
 	
 	public static int DEFAULT_COLUMN_LENGTH = 10;
 	public static int MIN_COLUMN_LENGTH = 10;
-	public static int MAX_COLUMN_DATA_LENGTH = 150;
 	
 	private enum JsonKeys {
 		worksheetId, hNodeId, worksheetChartData, chartData, id, value, json, Preferred_Length
@@ -119,7 +119,9 @@ public class WorksheetCleaningUpdate extends
 						colMetadata.addColumnHistogramData(leafHNodeId, output);
 	
 						// Parse the request response to populate the column metadata for the worksheet
-						int colLength = getColumnLength(path.getLeaf(), output);
+						int colLength = getColumnLength(path.getLeaf(), output, 
+								vWorkspace.getPreferences().getIntViewPreferenceValue(
+										ViewPreference.maxCharactersInCell));
 						colMetadata.addColumnPreferredLength(leafHNodeId, colLength);
 						
 						// Add the hNodeId to the list for which we invoked successfully
@@ -166,15 +168,16 @@ public class WorksheetCleaningUpdate extends
 		}
 	}
 	
-	private int getColumnLength(HNode hNode, JSONObject serviceResults) throws JSONException {
+	private int getColumnLength(HNode hNode, JSONObject serviceResults, int maxColumnWidth)
+			throws JSONException {
 		int colLength = serviceResults.getInt(JsonKeys.Preferred_Length.name());
 		colLength = (colLength == -1 || colLength == 0) ? DEFAULT_COLUMN_LENGTH : colLength;
 		
+		// Check if it is greater that max column data length
+		colLength = (colLength > maxColumnWidth) ? maxColumnWidth : colLength;
+		
 		// Check if it is lesser than minimum required for the cleaning chart
 		colLength = (colLength < MIN_COLUMN_LENGTH) ? MIN_COLUMN_LENGTH : colLength;
-		
-		// Check if it is greater that max column data length
-		colLength = (colLength > MAX_COLUMN_DATA_LENGTH) ? MAX_COLUMN_DATA_LENGTH : colLength;
 		
 		// Check if column name requires more characters
 		String colName = hNode.getColumnName();
