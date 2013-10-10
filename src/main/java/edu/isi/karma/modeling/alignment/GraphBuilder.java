@@ -22,6 +22,7 @@ package edu.isi.karma.modeling.alignment;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +41,7 @@ import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LinkPriorityComparator;
 import edu.isi.karma.rep.alignment.LinkPriorityType;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.LinkType;
@@ -398,7 +400,7 @@ public class GraphBuilder {
 		this.sourceToTargetConnectivity.add(target.getId() + source.getId());
 		
 		double w = 0.0;
-		if (link.getPriorityType() == LinkPriorityType.DirectDataProperty)
+		if (link.getPriorityType() == LinkPriorityType.DirectObjectProperty)
 			w = ModelingParams.PROPERTY_DIRECT_WEIGHT;
 		else if (link.getPriorityType() == LinkPriorityType.IndirectObjectProperty)
 			w = ModelingParams.PROPERTY_INDIRECT_WEIGHT;
@@ -1241,6 +1243,8 @@ public class GraphBuilder {
 			newLink.setPriorityType(entry.getValue());
 			sortedLinks.add(newLink);
 		}
+		
+		Collections.sort(sortedLinks, new LinkPriorityComparator());
 		
 		return sortedLinks;
 	}

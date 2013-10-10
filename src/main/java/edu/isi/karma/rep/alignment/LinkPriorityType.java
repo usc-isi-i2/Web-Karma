@@ -27,7 +27,7 @@ public enum LinkPriorityType {
 	ObjectPropertyWithOnlyDomain,
 	ObjectPropertyWithOnlyRange,
 	ObjectPropertyWithoutDomainAndRange,
-	DirectDataProperty,
+	//DirectDataProperty,
 	IndirectDataProperty,
 	SubClassOf
 }
