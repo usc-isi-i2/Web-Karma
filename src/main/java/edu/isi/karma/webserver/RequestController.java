@@ -36,6 +36,8 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.VWorkspaceRegistry;
 
 public class RequestController extends HttpServlet {
 
@@ -76,6 +78,7 @@ public class RequestController extends HttpServlet {
             return;
         }
 
+        VWorkspace vWorkspace = VWorkspaceRegistry.getInstance().getVWorkspace(workspaceId);
         String responseString = "";
 //		String id = request.getSession().getId();
         /**
@@ -83,7 +86,7 @@ public class RequestController extends HttpServlet {
          */
         // If the current request is a part of a command that requires user-interaction
         if (request.getParameter("commandId") != null && !request.getParameter("command").equals("UndoRedoCommand")) {
-            Command currentCommand = ctrl.getvWorkspace().getWorkspace().getCommandHistory().getCurrentCommand();
+            Command currentCommand = ctrl.getWorkspace().getCommandHistory().getCurrentCommand();
 
             if (currentCommand != null && request.getParameter("commandId").equals(currentCommand.getId())) {
                 // Check if the command needs to be executed
@@ -93,25 +96,28 @@ public class RequestController extends HttpServlet {
                         // Set the parameters if any changed after the user preview
                         ((IPreviewable) currentCommand).handleUserActions(request);
 
-                        UpdateContainer updateContainer = ctrl.getvWorkspace().getWorkspace()
-                                .getCommandHistory().doCommand(currentCommand, ctrl.getvWorkspace().getWorkspace());
+                        UpdateContainer updateContainer = ctrl.getWorkspace()
+                                .getCommandHistory().doCommand(currentCommand, ctrl.getWorkspace());
 
-                        updateContainer.applyUpdates(ctrl.getvWorkspace());
-                        responseString = updateContainer.generateJson(ctrl.getvWorkspace());
+                        updateContainer.applyUpdates(vWorkspace);
+                        responseString = updateContainer.generateJson(vWorkspace);
                     } catch (CommandException e) {
                         logger.error("Error occured while executing command: " + currentCommand.getCommandName(), e);
                     }
                 } else {
                     UpdateContainer updateContainer =
                             ((IPreviewable) currentCommand).handleUserActions(request);
-                    updateContainer.applyUpdates(ctrl.getvWorkspace());
-                    responseString = updateContainer.generateJson(ctrl.getvWorkspace());
+                    updateContainer.applyUpdates(vWorkspace);
+                    responseString = updateContainer.generateJson(vWorkspace);
                 }
             }
         } else {
             Command command = ctrl.getCommand(request);
             if (command != null) {
-                responseString = ctrl.invokeCommand(command);
+            	UpdateContainer updateContainer =ctrl.invokeCommand(command);
+            	 updateContainer.applyUpdates(vWorkspace);
+                 responseString = updateContainer.generateJson(vWorkspace);
+                 
             } else {
                 logger.error("Error occured while creating command (Could not create Command object): " + request.getParameter("command"));
             }

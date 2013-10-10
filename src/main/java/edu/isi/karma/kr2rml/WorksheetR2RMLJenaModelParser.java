@@ -56,17 +56,15 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class WorksheetR2RMLJenaModelParser {
 	private Model model;
 	private String sourceName;
 	
-	private VWorksheet vWorksheet;
 	private Worksheet worksheet;
-	private VWorkspace vWorkspace;
+	private Workspace workspace;
 	private RepFactory factory;
 	
 	// Internal data structures required
@@ -86,15 +84,14 @@ public class WorksheetR2RMLJenaModelParser {
 		alignmentNodeId
 	}
 	
-	public WorksheetR2RMLJenaModelParser(VWorksheet vWorksheet, VWorkspace vWorkspace, Model model,
+	public WorksheetR2RMLJenaModelParser(Worksheet worksheet, Workspace workspace, Model model,
 			String sourceName) throws IOException, JSONException, KarmaException {
 		this.model = model;
 		this.sourceName = sourceName;
 		
-		this.vWorksheet = vWorksheet;
-		this.worksheet = vWorksheet.getWorksheet();
-		this.vWorkspace = vWorkspace;
-		this.factory = vWorkspace.getRepFactory();
+		this.worksheet = worksheet;
+		this.workspace = workspace;
+		this.factory = workspace.getFactory();
 		
 		
 		this.r2rmlMapping = new R2RMLMapping();
@@ -151,14 +148,14 @@ public class WorksheetR2RMLJenaModelParser {
 				String delimiter = HistoryJsonUtil.getStringValue(Arguments.delimiter.name(), 
 						inputParams);
 				SplitColumnByDelimiter splitByDelim = new SplitColumnByDelimiter(hNodeId, 
-						worksheet, delimiter, vWorkspace.getWorkspace());
+						worksheet, delimiter, workspace);
 				splitByDelim.split(null, null);
 			} else if (commandName.equals(TransformationCommandKeysAndValues.SubmitCleaningCommand.name())) {
 				String examples = HistoryJsonUtil.getStringValue(
 						TransformationCommandKeysAndValues.examples.name(), inputParams);
 				SubmitCleaningCommand comm = new SubmitCleaningCommand("", hNodeId, 
-						vWorksheet.getId(), examples);
-				comm.doIt(vWorkspace.getWorkspace());
+						worksheet.getId(), examples);
+				comm.doIt(workspace);
 			} else if (commandName.equals(TransformationCommandKeysAndValues.SubmitPythonTransformationCommand.name())) {
 				String newColumnName = HistoryJsonUtil.getStringValue(
 						TransformationCommandKeysAndValues.newColumnName.name(), inputParams);
@@ -167,10 +164,10 @@ public class WorksheetR2RMLJenaModelParser {
 				String errorDefaultValue = HistoryJsonUtil.getStringValue(
 						TransformationCommandKeysAndValues.errorDefaultValue.name(), inputParams);
 				SubmitPythonTransformationCommand comm = new SubmitPythonTransformationCommand(
-						"", newColumnName, transformationCode, vWorksheet.getId(), hNodeId, 
+						"", newColumnName, transformationCode, worksheet.getId(), hNodeId, 
 						"", errorDefaultValue);
 				try {
-					comm.doIt(vWorkspace.getWorkspace());
+					comm.doIt(workspace);
 				} catch (CommandException e) {
 					logger.error("Error executing Python Transformation command", e);
 					e.printStackTrace();
@@ -178,9 +175,9 @@ public class WorksheetR2RMLJenaModelParser {
 			} else if (commandName.equals(TransformationCommandKeysAndValues.RenameColumnCommand.name())) {
 				String newColumnName = HistoryJsonUtil.getStringValue(
 						TransformationCommandKeysAndValues.newColumnName.name(), inputParams);
-				RenameColumnCommand comm = new RenameColumnCommand("", newColumnName, hNodeId, vWorksheet.getId());
+				RenameColumnCommand comm = new RenameColumnCommand("", newColumnName, hNodeId, worksheet.getId());
 				try {
-					comm.doIt(vWorkspace.getWorkspace());
+					comm.doIt(workspace);
 				} catch (CommandException e) {
 					logger.error("Error executing Rename Column command", e);
 					e.printStackTrace();
@@ -189,9 +186,9 @@ public class WorksheetR2RMLJenaModelParser {
 				String alignmentNodeId = HistoryJsonUtil.getStringValue(
 						TransformationCommandKeysAndValues.alignmentNodeId.name(), inputParams);
 				InvokeRubenReconciliationService comm = new InvokeRubenReconciliationService("", 
-						alignmentNodeId, vWorksheet.getId());
+						alignmentNodeId, worksheet.getId());
 				try {
-					comm.doIt(vWorkspace.getWorkspace());
+					comm.doIt(workspace);
 				} catch (CommandException e) {
 					logger.error("Error executing Reconcilitation service command", e);
 					e.printStackTrace();
@@ -211,7 +208,7 @@ public class WorksheetR2RMLJenaModelParser {
 					get(HistoryArguments.inputParameters.name());
 			
 			boolean result = WorksheetCommandHistoryReader.normalizeCommandHistoryJsonInput(
-					vWorkspace.getWorkspace(), vWorksheet.getWorksheetId(), inputParamArr);
+					workspace, worksheet.getId(), inputParamArr);
 			if (!result) {
 				logger.error("Error occured while normalizing the JSONinput for transformation " +
 						"commands.");

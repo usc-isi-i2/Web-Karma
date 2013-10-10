@@ -46,8 +46,6 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
 import edu.isi.karma.util.JDBCUtilFactory;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class DatabaseTableRDFGenerator {
@@ -74,12 +72,11 @@ public class DatabaseTableRDFGenerator {
 		this.tablename = tablename;
 	}
 	
-	public void generateRDF(VWorkspace vWorkspace, PrintWriter pw, Model model) 
+	public void generateRDF(Workspace workspace, PrintWriter pw, Model model) 
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
 		System.out.println("Generating RDF...");
 		
-		RepFactory factory = vWorkspace.getRepFactory();
-		Workspace workspace = vWorkspace.getWorkspace();
+		RepFactory factory = workspace.getFactory();
 		
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		Connection conn = dbUtil.getConnection(hostname, portnumber, username, password, dBorSIDName);
@@ -98,19 +95,17 @@ public class DatabaseTableRDFGenerator {
 		// Prepare required Karma objects
 		Worksheet wk = factory.createWorksheet(tablename, workspace);
 		ArrayList<String> headersList = addHeaders(wk, columnNames, factory);
-		VWorksheet vWorksheet =  vWorkspace.getViewFactory().createVWorksheetWithDefaultPreferences(vWorkspace, wk);
 		
 		int counter = 0;
 		
 		while (r.next()) {
 			// Generate RDF and create a new worksheet for every DATABASE_TABLE_FETCH_SIZE rows
 			if(counter%DATABASE_TABLE_FETCH_SIZE == 0 && counter != 0) {
-				generateRDFFromWorksheet(vWorksheet, wk, vWorkspace, model, pw);
+				generateRDFFromWorksheet(wk, workspace, model, pw);
 				System.out.println("Done for " + counter + " rows ..." );
 				
 				wk = factory.createWorksheet(tablename, workspace);
 				headersList = addHeaders(wk, columnNames, factory);
-				vWorksheet =  vWorkspace.getViewFactory().createVWorksheetWithDefaultPreferences(vWorkspace, wk);
 				
 			}
 			
@@ -124,7 +119,7 @@ public class DatabaseTableRDFGenerator {
 			counter++;
 		}
 		
-		generateRDFFromWorksheet(vWorksheet, wk, vWorkspace, model, pw);
+		generateRDFFromWorksheet(wk, workspace, model, pw);
 		
 		// Releasing all the resources
 		r.close();
@@ -133,14 +128,12 @@ public class DatabaseTableRDFGenerator {
 		System.out.println("done");
 	}
 	
-	private void generateRDFFromWorksheet(VWorksheet vw, Worksheet wk, 
-			VWorkspace vWorkspace, Model model, PrintWriter pw) 
+	private void generateRDFFromWorksheet(Worksheet wk, 
+			Workspace workspace, Model model, PrintWriter pw) 
 					throws IOException, JSONException, KarmaException {
-		Workspace workspace = vWorkspace.getWorkspace();
-		
 		// Generate RDF for the remaining rows
 		WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(
-				vw, vWorkspace, model, tablename);
+				wk, workspace, model, tablename);
 		
 		// Gets all the errors generated during the RDF generation
 		ErrorReport errorReport = new ErrorReport();
