@@ -135,26 +135,6 @@
     <servlet-name>LinkedAPIServiceHandler</servlet-name>
     <url-pattern>/services/*</url-pattern>
   </servlet-mapping>
-    
-  <servlet>
-     <servlet-name>ExtractSpatialInformationFromOSMServiceHandler</servlet-name>
-     <servlet-class>edu.isi.karma.webserver.ExtractSpatialInformationFromOSMServiceHandler</servlet-class>
-    </servlet>
-    <servlet-mapping>
-     <servlet-name>ExtractSpatialInformationFromOSMServiceHandler</servlet-name>
-     <url-pattern>/ExtractSpatialInformation/*</url-pattern>
-  </servlet-mapping>
-  
-
-  <servlet>
-     <servlet-name>ExtractSpatialInformationFromWikimapiaServiceHandler</servlet-name>
-     <servlet-class>edu.isi.karma.webserver.ExtractSpatialInformationFromWikimapiaServiceHandler</servlet-class>
-    </servlet>
-    <servlet-mapping>
-     <servlet-name>ExtractSpatialInformationFromWikimapiaServiceHandler</servlet-name>
-     <url-pattern>/ExtractWikimapiaInformation/*</url-pattern>
-  </servlet-mapping>
-
  
 <servlet>
      <servlet-name>SpatialReferenceSystemServiceHandler</servlet-name>

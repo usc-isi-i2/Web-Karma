@@ -44,6 +44,7 @@ import edu.isi.karma.rep.metadata.Tag;
 import edu.isi.karma.rep.metadata.TagsContainer.Color;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.VWorkspaceRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class KarmaServlet extends HttpServlet {
@@ -85,8 +86,8 @@ public class KarmaServlet extends HttpServlet {
 		if (!result)
 			logger.error("Error occured while reading CRF Model!");
 		
-		WorkspaceRegistry.getInstance().register(new ExecutionController(vwsp));
-		
+		WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
+		VWorkspaceRegistry.getInstance().registerVWorkspace(workspace.getId(), vwsp);
 		/** Check if any ontology needs to be preloaded **/
 		String preloadedOntDir = ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.PRELOADED_ONTOLOGY_DIRECTORY);
 		File ontDir = new File(preloadedOntDir);

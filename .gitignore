@@ -9,7 +9,6 @@ config/transformation.properties
 *.swp
 target
 .DS_Store
-.classpath
 .project
 .idea/
 lastJsonImport.json
@@ -56,8 +55,8 @@ src/main/webapp/publish/CSV/Well_Data_Sheet1
 
 .gitignore
 
-.gitignore
-
 nbactions.xml
 
 preloaded-library
+
+temp/
