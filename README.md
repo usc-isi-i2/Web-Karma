@@ -5,8 +5,6 @@ Karma is an information integration tool that enables users to quickly and easil
 
 You can find useful tutorials on the project Website: [http://www.isi.edu/integration/karma/](http://www.isi.edu/integration/karma/)
 
-**The project [wiki](https://github.com/InformationIntegrationGroup/Web-Karma/wiki) has a detailed user guide.**
-
 ## Installation and Setup ##
 System Requirements: Java 1.7, Maven 3.0 and above.
 
@@ -20,14 +18,10 @@ To start in logging mode (where all the logs are stored in the log folder), use 
 
 ## Frequently Asked Questions ##
 ### How to perform offline RDF generation for a data source using a published model? ###
-
-Note: This capability is broken and we are actively working to fix it. -- Oct 6, 2013.
-
-
-1. Model your source and publish it's model (the published models are located at `src/main/webapp/repository/sources/` inside the Karma directory).
+1. Model your source and publish it's model (the published models are located at `src/main/webapp/publish/R2RML/` inside the Karma directory).
 2. To generate RDF of a CSV/JSON/XML file, go to the top level Karma directory and run the following command from terminal:
 ```
-mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineDbRdfGenerator" -Dexec.args="--sourcetype 
+mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--sourcetype 
 <sourcetype> --filepath <filepath> --modelfilepath <modelfilepath> --outputfile <outputfile>"
 ```
 
@@ -41,7 +35,7 @@ mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.ar
 ```
 3. To generate RDF of a database table, go to the top level Karma directory and run the following command from terminal:
 ```
-mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineDbRdfGenerator" -Dexec.args="--sourcetype DB
+mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--sourcetype DB
 --modelfilepath <modelfilepath> --outputfile <outputfile> --dbtype <dbtype> --hostname <hostname> 
 --username <username> --password <password> --portnumber <portnumber> --dbname <dbname> --tablename <tablename>"
 ```
@@ -49,10 +43,10 @@ mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineDbRdfGenerator" -Dexec.
 ```
 mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="
 --sourcetype DB --dbtype SQLServer 
---hostname www.example.org --username root 
---password secret --portnumber 1433 
---dbname dbpedia --tablename people 
---modelfilepath \"/Users/shubhamgupta/Documents/model-people.n3\" --outputfile tmp/dbtest.n3"
+--hostname example.com --username root --password secret 
+--portnumber 1433 --dbname Employees --tablename Person 
+--modelfilepath \"/Users/shubhamgupta/Documents/db-r2rml-model.ttl\"
+--outputfile db-rdf.n3"
 ```
 
 You can do `mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--help"` to get information about required arguments.
