@@ -68,8 +68,10 @@ import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.JSONUtil;
+import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.WorkspaceRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class OfflineRdfGenerator {
@@ -134,9 +136,10 @@ public class OfflineRdfGenerator {
                     ContextParameter.USER_DIRECTORY_PATH, "src/main/webapp/");
             ServletContextParameterMap.setParameterValue(
                     ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "200");
-            Workspace workspace = WorkspaceManager._getNewInstance().createWorkspace();
+            Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
             Worksheet worksheet = null;
-            
+            WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
+    		
             /**
              * LOAD THE R2RML MODEL FILE INTO A JENA MODEL *
              */
