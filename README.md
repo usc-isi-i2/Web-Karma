@@ -5,6 +5,8 @@ Karma is an information integration tool that enables users to quickly and easil
 
 You can find useful tutorials on the project Website: [http://www.isi.edu/integration/karma/](http://www.isi.edu/integration/karma/)
 
+**The project [wiki](https://github.com/InformationIntegrationGroup/Web-Karma/wiki) has a detailed user guide.**
+
 ## Installation and Setup ##
 System Requirements: Java 1.7, Maven 3.0 and above.
 
