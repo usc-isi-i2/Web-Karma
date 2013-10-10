@@ -29,12 +29,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
 
 /**
@@ -56,23 +54,23 @@ public class ViewFactory {
 		return prefix + (nextId++);
 	}
 
-	VColumnHeader createVColumnHeader(HNodePath path,
-			ViewPreferences preferences) {
-		HNode hn = path.getLeaf();
-		String columnNameFull = hn.getColumnName();
-		String columnNameShort = columnNameFull;
-		if (columnNameFull.length() > preferences
-				.getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader)) {
-			columnNameShort = JSONUtil
-					.truncateForHeader(
-							columnNameFull,
-							preferences
-									.getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader));
-		}
-//		tableCssTags.registerTablesInPath(path);
-		return new VColumnHeader(path.toString(), columnNameFull,
-				columnNameShort);
-	}
+//	VColumnHeader createVColumnHeader(HNodePath path,
+//			ViewPreferences preferences) {
+//		HNode hn = path.getLeaf();
+//		String columnNameFull = hn.getColumnName();
+//		String columnNameShort = columnNameFull;
+//		if (columnNameFull.length() > preferences
+//				.getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader)) {
+//			columnNameShort = JSONUtil
+//					.truncateForHeader(
+//							columnNameFull,
+//							preferences
+//									.getIntViewPreferenceValue(ViewPreference.maxCharactersInHeader));
+//		}
+////		tableCssTags.registerTablesInPath(path);
+//		return new VColumnHeader(path.toString(), columnNameFull,
+//				columnNameShort);
+//	}
 
 	public VWorksheet createVWorksheet(Worksheet worksheet,
 			List<HNodePath> columns, List<Row> rows, VWorkspace vWorkspace) {

@@ -18,37 +18,32 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.webserver;
+
+package edu.isi.karma.view;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Singleton class to map Workspace Ids to ExecutionController objects
- * 
- * @author szekely
- * 
- */
-public class WorkspaceRegistry {
+public class VWorkspaceRegistry {
 
-	private static WorkspaceRegistry singleton = new WorkspaceRegistry();
+	private static Map<String, VWorkspace> registry = new HashMap<String, VWorkspace>();
 
-	private final Map<String, ExecutionController> workspaceId2ExecutionController = new HashMap<String, ExecutionController>();
-
-	public static WorkspaceRegistry getInstance() {
-		return singleton;
+	private static VWorkspaceRegistry instance = new VWorkspaceRegistry();
+	private VWorkspaceRegistry()
+	{
+		
 	}
-
-	public void register(ExecutionController executionController) {
-		workspaceId2ExecutionController.put(executionController
-				.getWorkspace().getId(), executionController);
+	public static VWorkspaceRegistry getInstance()
+	{
+		return instance;
 	}
-
-	public ExecutionController getExecutionController(String workspaceId) {
-		return workspaceId2ExecutionController.get(workspaceId);
+	public void registerVWorkspace(String workspaceId, VWorkspace vWorkspace)
+	{
+		registry.put(workspaceId, vWorkspace);
 	}
 	
-	public void deregister(String workspaceId) {
-		workspaceId2ExecutionController.remove(workspaceId);
+	public VWorkspace getVWorkspace(String workspaceId)
+	{
+		return registry.get(workspaceId);
 	}
 }
