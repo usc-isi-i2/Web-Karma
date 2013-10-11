@@ -46,6 +46,7 @@ import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
+import edu.isi.karma.rep.alignment.LinkPriorityComparator;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
@@ -429,7 +430,7 @@ public class Alignment implements OntologyUpdateListener {
 			}
 		}
 		
-		Collections.sort(possibleLinks);
+		Collections.sort(possibleLinks, new LinkPriorityComparator());
 		
 //		for (Link l : possibleLinks) {
 //			System.out.print(l.getId() + " === ");
@@ -481,7 +482,7 @@ public class Alignment implements OntologyUpdateListener {
 				possibleLinks.addAll(temp);
 		}
 		
-		Collections.sort(possibleLinks);
+		Collections.sort(possibleLinks, new LinkPriorityComparator());
 
 		logger.info("Finished obtaining the outgoing links.");
 		return possibleLinks;

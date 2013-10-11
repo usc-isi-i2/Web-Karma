@@ -165,7 +165,9 @@ class OntologyHandler {
 		OntProperty inverseProp = null;
 		try {
 			inverseProp = op.getInverse();
-		} catch (ConversionException e) {}
+		} catch (ConversionException e) {
+			logger.error(e.getMessage());
+		}
 		if (inverseProp != null) {
 			return getUriLabel(inverseProp.getURI());
 		}
@@ -185,7 +187,9 @@ class OntologyHandler {
 		OntProperty inverseOfProp = null;
 		try {
 			inverseOfProp = op.getInverse();
-		} catch (ConversionException e) {}
+		} catch (ConversionException e) {
+			logger.error(e.getMessage());
+		}
 		if (inverseOfProp != null) {
 			return getUriLabel(inverseOfProp.getURI());
 		}
@@ -392,16 +396,26 @@ class OntologyHandler {
 			else if (c.isUnionClass()) { // in form of unionOf or intersectionOf
 				UnionClass uc = c.asUnionClass();
 				  for (Iterator<? extends OntClass> i = uc.listOperands(); i.hasNext(); ) {
-				      OntClass op = (OntClass) i.next();
-			    	  getMembers(op, resources, recursive);
+				      try {
+				    	  OntResource op = i.next();
+//				    	  OntClass op = (OntClass) i.next();
+				    	  getMembers(op, resources, recursive);
+				      } catch (ConversionException e) {
+				    	  logger.error(e.getMessage());
+				      }
 				  }
 			
 			// intersectionOf
 			} else if (c.isIntersectionClass()) {
 				IntersectionClass ic = c.asIntersectionClass();
 				  for (Iterator<? extends OntClass> i = ic.listOperands(); i.hasNext(); ) {
-				      OntClass op = (OntClass) i.next();
-			    	  getMembers(op, resources, recursive);
+				      try {
+				    	  OntResource op = i.next();
+//				    	  OntClass op = (OntClass) i.next();
+				    	  getMembers(op, resources, recursive);
+				      } catch (ConversionException e) {
+				    	  logger.error(e.getMessage());
+				      }
 				  }
 			}
 		}
