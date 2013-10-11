@@ -397,7 +397,8 @@ class OntologyHandler {
 				UnionClass uc = c.asUnionClass();
 				  for (Iterator<? extends OntClass> i = uc.listOperands(); i.hasNext(); ) {
 				      try {
-				    	  OntClass op = (OntClass) i.next();
+				    	  OntResource op = i.next();
+//				    	  OntClass op = (OntClass) i.next();
 				    	  getMembers(op, resources, recursive);
 				      } catch (ConversionException e) {
 				    	  logger.error(e.getMessage());
@@ -409,7 +410,8 @@ class OntologyHandler {
 				IntersectionClass ic = c.asIntersectionClass();
 				  for (Iterator<? extends OntClass> i = ic.listOperands(); i.hasNext(); ) {
 				      try {
-				    	  OntClass op = (OntClass) i.next();
+				    	  OntResource op = i.next();
+//				    	  OntClass op = (OntClass) i.next();
 				    	  getMembers(op, resources, recursive);
 				      } catch (ConversionException e) {
 				    	  logger.error(e.getMessage());
