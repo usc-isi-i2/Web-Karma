@@ -92,7 +92,7 @@ public class ImportServiceCommand extends ImportCommand {
         try {
             InvocationManager invocatioManager = new InvocationManager(null, ids, urls);
             String json = invocatioManager.getServiceJson(includeInputAttributes);
-//			System.out.println(json);
+			logger.debug(json);
             Import imp = new JsonImport(json, worksheetName, workspace);
 
             Worksheet wsht = imp.generateWorksheet();

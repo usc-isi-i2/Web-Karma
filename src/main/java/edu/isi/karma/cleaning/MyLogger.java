@@ -14,7 +14,7 @@ public class MyLogger {
 			try {
 				out = new BufferedWriter(new FileWriter(new File("./log/mylog.txt"),true));
 			} catch (Exception e) {
-				//Logger.getLogger(MyLogger.class).info(e.toString());
+				//LoggerFactory.getLogger(MyLogger.class).info(e.toString());
 				out = null;
 			}
 		}
@@ -25,7 +25,7 @@ public class MyLogger {
 			out.write(context);
 			out.flush();
 		} catch (Exception e) {
-			//mvn Logger.getLogger(MyLogger.class).info(e.toString());
+			//mvn LoggerFactory.getLogger(MyLogger.class).info(e.toString());
 		}
 	}
 	public static void setTime(String id,Long time)

@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
@@ -38,7 +39,7 @@ import edu.isi.karma.rep.sources.Table;
 
 public class ServiceTableUtil {
 
-	static Logger logger = Logger.getLogger(ServiceTableUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(ServiceTableUtil.class);
 
 	
 	public static void populateEmptyWorksheet(Table table, Worksheet worksheet, RepFactory factory) {
@@ -141,12 +142,12 @@ public class ServiceTableUtil {
 				else 
 					row = dataTable.addRow(factory);
 				
-//				System.out.println(hNodeIdList.size());
+//				logger.debug(hNodeIdList.size());
 				for (int j = 0; j < hNodeIdList.size(); j++) {
 					// the first column in the table is the url column which should not be added to the table
-//					System.out.println("j:" + j);
-//					System.out.println(hNodeIdList.get(j));
-//					System.out.println(rowValues.get(j + 1));
+//					logger.debug("j:" + j);
+//					logger.debug(hNodeIdList.get(j));
+//					logger.debug(rowValues.get(j + 1));
 					row.setValue(hNodeIdList.get(j), rowValues.get(j), factory);
 				}
 				

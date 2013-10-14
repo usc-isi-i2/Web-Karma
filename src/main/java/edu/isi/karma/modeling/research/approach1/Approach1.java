@@ -31,10 +31,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -71,7 +72,7 @@ import edu.isi.karma.util.RandomGUID;
 
 public class Approach1 {
 
-	private static Logger logger = Logger.getLogger(Approach1.class);
+	private static Logger logger = LoggerFactory.getLogger(Approach1.class);
 
 	private NodeIdFactory nodeIdFactory;
 	

@@ -30,7 +30,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

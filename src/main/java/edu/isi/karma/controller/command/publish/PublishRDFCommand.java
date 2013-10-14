@@ -153,7 +153,7 @@ public class PublishRDFCommand extends Command {
 				alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
 				Boolean.valueOf(addInverseProperties), errorReport);
 		
-		System.out.println(mappingGen.getR2RMLMapping().toString());
+		logger.debug(mappingGen.getR2RMLMapping().toString());
 		
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
 				workspace.getFactory(), workspace.getOntologyManager(),
@@ -238,10 +238,10 @@ public class PublishRDFCommand extends Command {
 					"PublishRDFCommandPreferences", prefObject);
 			
 			/*
-			System.out.println("I Saved .....");
+			logger.debug("I Saved .....");
 			ViewPreferences prefs = vWorkspace.getPreferences();
 			JSONObject prefObject1 = prefs.getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
-			System.out.println("I Saved ....."+prefObject1);
+			logger.debug("I Saved ....."+prefObject1);
 			 */
 			
 		} catch (JSONException e) {

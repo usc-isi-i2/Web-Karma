@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
@@ -44,7 +45,7 @@ import edu.isi.karma.rep.alignment.Label;
 
 class OntologyCache {
 	
-	static Logger logger = Logger.getLogger(OntologyCache.class.getName());
+	static Logger logger = LoggerFactory.getLogger(OntologyCache.class.getName());
 	
 	private OntologyHandler ontHandler = null;
 
@@ -131,7 +132,7 @@ class OntologyCache {
 
 	public void init() {
 
-		logger.info("start building the ontology cache ...");
+		logger.debug("start building the ontology cache ...");
 		
 		this.classes = new HashMap<String, Label>();
 		this.properties = new HashMap<String, Label>();
@@ -199,18 +200,18 @@ class OntologyCache {
 		this.loadClasses();
 		this.loadProperties();
 		
-		logger.info("number of classes:" + classes.size());
-		logger.info("number of all properties:" + properties.size());
-		logger.info("number of data properties:" + dataProperties.size() );
-		logger.info("number of object properties:" + objectProperties.size() );
+		logger.debug("number of classes:" + classes.size());
+		logger.debug("number of all properties:" + properties.size());
+		logger.debug("number of data properties:" + dataProperties.size() );
+		logger.debug("number of object properties:" + objectProperties.size() );
 		// A = number of all properties including rdf:Property 
 		// B = number of properties defined as Data Property
 		// C = number of properties defined as Object Property
 		// properties = A
 		// dataproperties = A - C
 		// objectproperties = A - B
-		logger.info("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
-		logger.info("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
+		logger.debug("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
+		logger.debug("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
 
 		// create a hierarchy of classes and properties of the model
 		this.buildClassHierarchy(classHierarchy);
@@ -245,7 +246,7 @@ class OntologyCache {
 		this.addPropertiesOfRDFVocabulary();
 		
 		float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
-		logger.info("time to build the ontology cache: " + elapsedTimeSec);
+		logger.debug("time to build the ontology cache: " + elapsedTimeSec);
 	}
 	
 	public HashMap<String, Label> getClasses() {

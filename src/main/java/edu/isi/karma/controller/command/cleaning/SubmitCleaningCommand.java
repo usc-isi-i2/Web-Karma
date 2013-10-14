@@ -28,12 +28,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
@@ -67,19 +66,14 @@ public class SubmitCleaningCommand extends WorksheetCommand {
 	private String hTableId = "";
 	private String columnName;
 	
-	private static Logger logger =Logger.getLogger(SubmitCleaningCommand.class);
+	private static Logger logger =LoggerFactory.getLogger(SubmitCleaningCommand.class);
 	private Vector<TransformationExample> examples = new Vector<TransformationExample>();
 	
 	public SubmitCleaningCommand(String id, String hNodeId, String worksheetId, String Examples) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
 		this.examples = GenerateCleaningRulesCommand.parseExample(Examples);
-		try {
-			FileAppender appender = new FileAppender(new SimpleLayout(),"./log/cleanning.log");
-			logger.addAppender(appender);
-		} catch (Exception e) {
-			
-		}
+
 		addTag(CommandTag.Transformation);
 	}
 
@@ -113,7 +107,7 @@ public class SubmitCleaningCommand extends WorksheetCommand {
 										"id",this.id,
 										"worksheetId",worksheetId,"hTableId",hTableId,
 										"hNodeId",this.hNodeId,"newColumnName",colname);
-		System.out.println(""+cmdString);
+		logger.debug(""+cmdString);
 		JSONArray jsonArray = new JSONArray();
 		try {
 			jsonArray= new JSONArray(cmdString);

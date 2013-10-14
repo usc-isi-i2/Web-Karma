@@ -10,9 +10,12 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
 import org.mozilla.universalchardet.UniversalDetector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EncodingDetector {
     
+	private static Logger logger = LoggerFactory.getLogger(EncodingDetector.class);
     private final static String DEFAULT = StandardCharsets.UTF_8.name();
 
     public static String detect(InputStream is) throws IOException {
@@ -32,9 +35,9 @@ public class EncodingDetector {
         // (4)
         String encoding = detector.getDetectedCharset();
         if (encoding != null) {
-            System.out.println("Detected encoding = " + encoding);
+            logger.debug("Detected encoding = " + encoding);
         } else {
-            System.out.println("No encoding detected, using default: " + DEFAULT);
+            logger.debug("No encoding detected, using default: " + DEFAULT);
         }
 
         // (5)

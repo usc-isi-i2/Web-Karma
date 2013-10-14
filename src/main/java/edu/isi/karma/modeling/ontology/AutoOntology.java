@@ -30,7 +30,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.ObjectProperty;
@@ -46,7 +47,7 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 
 public class AutoOntology {
-	static Logger logger = Logger.getLogger(AutoOntology.class.getName());
+	static Logger logger = LoggerFactory.getLogger(AutoOntology.class.getName());
 
 	private Worksheet worksheet;
 	public AutoOntology(Worksheet worksheet) {

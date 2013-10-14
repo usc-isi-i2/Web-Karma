@@ -25,12 +25,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.cleaning.RecFeature;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
 import edu.isi.karma.cleaning.UtilTools;
 
 public class FeatureVector {
+	private static Logger logger = LoggerFactory.getLogger(FeatureVector.class);
 	String[] symbol = {"#",";",",","!","~","@","$","%","^","&","*","(",")","_","-","{","}","[","]","\"","'",":","?","<",">","."};
 	int[] types = {TNode.NUMTYP,TNode.SYBSTYP,TNode.LWRDTYP,TNode.UWRDTYP};
 	Vector<RecFeature> x = new Vector<RecFeature>();
@@ -54,7 +58,7 @@ public class FeatureVector {
 		Vector<TNode> vt = new Vector<TNode>();
 		vt = r.vec;
 		HashMap<String, String> tmp = new HashMap<String, String>();
-		System.out.println("raw: "+raw+" color: "+color);
+		logger.debug("raw: "+raw+" color: "+color);
 		UtilTools.StringColorCode(raw, color, tmp);
 		String tar = tmp.get("Tar");
 		r.setNewInput(tar);

@@ -30,6 +30,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
@@ -49,6 +51,8 @@ import edu.isi.karma.util.JDBCUtilFactory;
 import edu.isi.karma.webserver.KarmaException;
 
 public class DatabaseTableRDFGenerator {
+	
+	private static Logger logger = LoggerFactory.getLogger(DatabaseTableRDFGenerator.class);
 	private DBType dbType;
 	private String hostname;
 	private int portnumber;
@@ -74,7 +78,7 @@ public class DatabaseTableRDFGenerator {
 	
 	public void generateRDF(Workspace workspace, PrintWriter pw, Model model) 
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
-		System.out.println("Generating RDF...");
+		logger.debug("Generating RDF...");
 		
 		RepFactory factory = workspace.getFactory();
 		
@@ -102,7 +106,7 @@ public class DatabaseTableRDFGenerator {
 			// Generate RDF and create a new worksheet for every DATABASE_TABLE_FETCH_SIZE rows
 			if(counter%DATABASE_TABLE_FETCH_SIZE == 0 && counter != 0) {
 				generateRDFFromWorksheet(wk, workspace, model, pw);
-				System.out.println("Done for " + counter + " rows ..." );
+				logger.debug("Done for " + counter + " rows ..." );
 				
 				wk = factory.createWorksheet(tablename, workspace);
 				headersList = addHeaders(wk, columnNames, factory);
@@ -125,7 +129,7 @@ public class DatabaseTableRDFGenerator {
 		r.close();
 		conn.close();
 		stmt.close();
-		System.out.println("done");
+		logger.debug("done");
 	}
 	
 	private void generateRDFFromWorksheet(Worksheet wk, 

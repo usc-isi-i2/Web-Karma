@@ -79,7 +79,7 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 			response.put(JsonKeys.tableId.name(), dataTable.getId());
 			response.put(JsonKeys.rows.name(), rows);
 			
-//			System.out.println(response.toString(2));
+//			logger.debug(response.toString(2));
 			pw.println(response.toString());
 		} catch (JSONException e) {
 			e.printStackTrace();

@@ -362,6 +362,12 @@
         	<artifactId>jetty-maven-plugin</artifactId>
         	<version>${jettyVersion}</version>
         	<configuration>
+        	<systemProperties>
+            <systemProperty>
+                <name>log4j.configuration</name>
+                <value>log4j-jetty.properties</value>
+            </systemProperty>
+         </systemProperties>
 <!--         		<jettyXml> -->
 <!--         			jetty.xml -->
 <!--         		</jettyXml> -->

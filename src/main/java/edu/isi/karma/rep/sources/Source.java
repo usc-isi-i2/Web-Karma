@@ -21,13 +21,9 @@
 
 package edu.isi.karma.rep.sources;
 
-import org.apache.log4j.Logger;
-
 import edu.isi.karma.modeling.ModelingParams;
 
 public abstract class Source {
-
-	static Logger logger = Logger.getLogger(Source.class);
 
 	private String id;
 	private String name;
