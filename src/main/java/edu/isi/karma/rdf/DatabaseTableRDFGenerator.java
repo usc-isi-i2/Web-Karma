@@ -72,6 +72,10 @@ public class DatabaseTableRDFGenerator {
 		this.tablename = tablename;
 	}
 	
+	/*
+	 * Only warn about SQL exception once. //Pedro //TODO: this whole code is copy-pasted
+	 */
+	private static boolean warnedSqlException = false;
 	public void generateRDF(Workspace workspace, PrintWriter pw, Model model) 
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
 		System.out.println("Generating RDF...");
@@ -113,7 +117,16 @@ public class DatabaseTableRDFGenerator {
 	        Table dataTable = wk.getDataTable();
 	        Row row = dataTable.addRow(factory);
 			for (int i = 1; i <= meta.getColumnCount(); i++) {
-				String val = r.getString(i);
+				String val;
+				try {
+					val = r.getString(i);
+				} catch (SQLException e) {
+					if (!warnedSqlException) {
+						//logger.warn(e.getMessage());
+						warnedSqlException = true;
+					}
+					val = "SQLException";
+				}
 				row.setValue(headersList.get(i-1), val, factory);
 			}
 			counter++;
