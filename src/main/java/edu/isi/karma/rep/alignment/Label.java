@@ -121,10 +121,10 @@ public class Label implements Serializable {
 
 	public String getDisplayName() {
 
-		if (getPrefix() == null)
-			return getLocalName();
-		
-		return prefix + ":" + getLocalName();
+		if (getPrefix() == null) {
+			return getUri();
+		} else
+			return prefix + ":" + getLocalName();
 	}
 
 	public String getRdfsLabel() {
