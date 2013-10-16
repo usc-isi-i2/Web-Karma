@@ -544,6 +544,11 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
         {
         	td.data("previousCommandId", column["previousCommandId"]);
         }
+        if (column["columnDerivedFrom"])
+        {
+        	td.data("columnDerivedFrom", column["columnDerivedFrom"]);
+        }
+        
         if (column["hasNestedTable"]) {
             var pElem = $("<div>").addClass("wk-header wk-subtable-header").text(column["columnName"])
                 .mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);

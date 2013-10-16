@@ -69,6 +69,7 @@ public abstract class MutatingPythonTransformationCommand extends
 		try {
 			JSONArray transformedRows = new JSONArray();
 			JSONArray errorValues = new JSONArray();
+			System.out.println("something");
 			 generateTransformedValues(
 					worksheet, f, hNode, transformedRows, errorValues, null);
 
@@ -87,7 +88,7 @@ public abstract class MutatingPythonTransformationCommand extends
 
 		worksheet.getMetadataContainer().getColumnMetadata().addColumnPythonTransformation(newHNodeId, this.transformationCode);
 		worksheet.getMetadataContainer().getColumnMetadata().addPreviousCommandId(newHNodeId, this.id);
-		
+		worksheet.getMetadataContainer().getColumnMetadata().addColumnDerivedFrom(newHNodeId, hNodeId);
 		// Prepare the output container
 		UpdateContainer c = new UpdateContainer();
 		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));

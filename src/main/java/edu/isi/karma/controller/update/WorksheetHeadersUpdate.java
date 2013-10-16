@@ -41,7 +41,7 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 
 	private enum JsonKeys {
 		worksheetId, columns, columnName, characterLength, hasNestedTable, 
-		columnClass, hNodeId, pythonTransformation, previousCommandId
+		columnClass, hNodeId, pythonTransformation, previousCommandId, columnDerivedFrom
 	}
 
 	public WorksheetHeadersUpdate(String worksheetId) {
@@ -114,6 +114,11 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 		if(previousCommandId != null)
 		{
 			hNodeObj.put(JsonKeys.previousCommandId.name(), previousCommandId);
+		}
+		String columnDerivedFrom = colMeta.getColumnDerivedFrom(hNode.getId());
+		if(columnDerivedFrom != null)
+		{
+			hNodeObj.put(JsonKeys.columnDerivedFrom.name(), columnDerivedFrom);
 		}
 				
 		return hNodeObj;

@@ -86,9 +86,10 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
 				workspace.getId());
 		// Invoke the add column command
+		logger.info(hNodeId);
 		try
 		{
-			if(null == addColCmd || null != hTable.getHNode(hTableId))
+			if(null == addColCmd )
 			{
 			JSONArray addColumnInput = getAddColumnCommandInputJSON(hTableId);
 			AddColumnCommandFactory addColumnFac = (AddColumnCommandFactory)ctrl.
@@ -96,6 +97,10 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			addColCmd = (AddColumnCommand) addColumnFac.createCommand(addColumnInput, workspace);
 			addColCmd.saveInHistory(false);
 			addColCmd.doIt(workspace);
+			}
+			else if(null == hTable.getHNode(addColCmd.getNewHNodeId()))
+			{
+				addColCmd.doIt(workspace);
 			}
 			
 		}
