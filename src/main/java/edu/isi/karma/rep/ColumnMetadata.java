@@ -33,6 +33,7 @@ public class ColumnMetadata {
 //	private Map<String, List<String>>	invalidNodeIds;
 	private Map<String, JSONObject>		columnHistogramData;
 	private Map<String, String>			columnPythonTransform;
+	private Map<String, String>			columnPreviousCommandId;
 	
 	public ColumnMetadata() {
 		super();
@@ -41,6 +42,7 @@ public class ColumnMetadata {
 //		this.invalidNodeIds 		= new HashMap<String, List<String>>();
 		this.columnHistogramData	= new HashMap<String, JSONObject>();
 		this.columnPythonTransform  = new HashMap<String, String>();
+		this.columnPreviousCommandId = new HashMap<String, String>();
 	}
 	
 	
@@ -69,8 +71,17 @@ public class ColumnMetadata {
 		return columnPythonTransform.get(hNodeId);
 	}
 	
+	public String getColumnPreviousCommandId(String hNodeId)
+	{
+		return columnPreviousCommandId.get(hNodeId);
+	}
+	
 	public void addColumnPythonTransformation(String hNodeId, String pythonTransform)
 	{
 		columnPythonTransform.put(hNodeId, pythonTransform);
+	}
+
+	public void addPreviousCommandId(String hNodeId, String commandId) {
+		columnPreviousCommandId.put(hNodeId, commandId);		
 	}
 }

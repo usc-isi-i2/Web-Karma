@@ -86,6 +86,7 @@ public abstract class MutatingPythonTransformationCommand extends
 		}
 
 		worksheet.getMetadataContainer().getColumnMetadata().addColumnPythonTransformation(newHNodeId, this.transformationCode);
+		worksheet.getMetadataContainer().getColumnMetadata().addPreviousCommandId(newHNodeId, this.id);
 		
 		// Prepare the output container
 		UpdateContainer c = new UpdateContainer();

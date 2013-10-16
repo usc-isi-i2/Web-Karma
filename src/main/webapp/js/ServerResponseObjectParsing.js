@@ -540,6 +540,10 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
         {
         	td.data("pythonTransformation", column["pythonTransformation"]);
         }
+        if (column["previousCommandId"])
+        {
+        	td.data("previousCommandId", column["previousCommandId"]);
+        }
         if (column["hasNestedTable"]) {
             var pElem = $("<div>").addClass("wk-header wk-subtable-header").text(column["columnName"])
                 .mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);
