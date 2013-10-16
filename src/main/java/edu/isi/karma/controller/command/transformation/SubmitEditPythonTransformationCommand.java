@@ -21,39 +21,31 @@
 
 package edu.isi.karma.controller.command.transformation;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
-import edu.isi.karma.controller.command.worksheet.AddColumnCommandFactory;
-import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 
-public class SubmitPythonTransformationCommand extends MutatingPythonTransformationCommand {
+public class SubmitEditPythonTransformationCommand extends SubmitPythonTransformationCommand {
 	
-	protected AddColumnCommand addColCmd;
-	
+	private Command previousPythonTransformationCommand;
+	private String previousCommandId;
 	private static Logger logger = LoggerFactory
-			.getLogger(SubmitPythonTransformationCommand.class);
+			.getLogger(SubmitEditPythonTransformationCommand.class);
 
-	public SubmitPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
-			String worksheetId, String hNodeId, String errorDefaultValue) {
+	public SubmitEditPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
+			String worksheetId, String hNodeId, String hTableId, String errorDefaultValue, String previousCommandId) {
 		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
-		
-		addTag(CommandTag.Transformation);
+		this.previousCommandId = previousCommandId;
 	}
 
 	@Override
@@ -63,7 +55,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 
 	@Override
 	public String getTitle() {
-		return "Python Transformation";
+		return "Edit Python Transformation";
 	}
 
 	@Override
@@ -79,60 +71,42 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		HTable hTable = worksheet.getHeaders();
-		String hTableId = hTable.getId();
 		RepFactory f = workspace.getFactory();
 		HNode hNode = f.getHNode(hNodeId);
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
 				workspace.getId());
-		// Invoke the add column command
-		try
+		
+		this.previousPythonTransformationCommand = ctrl.getWorkspace().getCommandHistory().getCommand(previousCommandId);
+		if(previousPythonTransformationCommand == null || !(previousPythonTransformationCommand instanceof SubmitPythonTransformationCommand) )
 		{
-			if(null == addColCmd || null != hTable.getHNode(hTableId))
-			{
-			JSONArray addColumnInput = getAddColumnCommandInputJSON(hTableId);
-			AddColumnCommandFactory addColumnFac = (AddColumnCommandFactory)ctrl.
-					getCommandFactoryMap().get(AddColumnCommand.class.getSimpleName());
-			addColCmd = (AddColumnCommand) addColumnFac.createCommand(addColumnInput, workspace);
-			addColCmd.saveInHistory(false);
-			addColCmd.doIt(workspace);
-			}
-			
+			logger.error("Previous Python Transformation Command Doesn't exist!");
+			return new UpdateContainer(new ErrorUpdate("Error occured while editing previous python transformation command."));
 		}
-		catch (Exception e)
-		{
-			logger.error("Error occured during python transformation.",e);
-			return new UpdateContainer(new ErrorUpdate("Error occured while creating new column for applying Python transformation to the column."));
-		}
+		this.addColCmd = ((SubmitPythonTransformationCommand)this.previousPythonTransformationCommand).addColCmd;
 		try
 		{
 			UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
-				hNode, ctrl, addColCmd.getNewHNodeId());
+				hNode, ctrl, this.addColCmd.getNewHNodeId());
 			return c;
 		}
 		catch (Exception e )
 		{
-			addColCmd.undoIt(workspace);
 			logger.error("Error occured during python transformation.",e);
 			return new UpdateContainer(new ErrorUpdate("Error occured while creating applying Python transformation to the column."));
 		}
 	}
 
-	private JSONArray getAddColumnCommandInputJSON(String hTableId) throws JSONException {
-		JSONArray arr = new JSONArray();
-		arr.put(CommandInputJSONUtil.createJsonObject(AddColumnCommandFactory.Arguments.newColumnName.name(), newColumnName, ParameterType.other));
-		arr.put(CommandInputJSONUtil.createJsonObject(AddColumnCommandFactory.Arguments.hTableId.name(), hTableId, ParameterType.other));
-		arr.put(CommandInputJSONUtil.createJsonObject(AddColumnCommandFactory.Arguments.worksheetId.name(), worksheetId, ParameterType.worksheetId));
-		arr.put(CommandInputJSONUtil.createJsonObject(AddColumnCommandFactory.Arguments.hNodeId.name(), hNodeId, ParameterType.worksheetId));
-		return arr;
-	}
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		addColCmd.undoIt(workspace);
-		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
-		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
-		return c;
+		
+		try {
+			return previousPythonTransformationCommand.doIt(workspace);
+		} catch (CommandException e) {
+			return new UpdateContainer(new ErrorUpdate("Error occured while  applying previous Python transformation to the column."));
+		
+		}
+		
 	}
 
 }

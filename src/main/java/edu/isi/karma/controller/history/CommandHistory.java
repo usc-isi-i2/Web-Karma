@@ -288,4 +288,17 @@ public class CommandHistory {
 		}
 		history.removeAll(commandsToBeRemoved);
 	}
+	
+	public Command getCommand(String commandId)
+	{
+		for(Command  c: this.history)
+		{
+			if(c.getId().equals(commandId))
+			{
+				return c;
+			}
+		}
+		return null;
+			
+	}
 }

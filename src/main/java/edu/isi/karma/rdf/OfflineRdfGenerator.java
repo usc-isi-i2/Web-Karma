@@ -71,8 +71,8 @@ import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.WorkspaceRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import edu.isi.karma.webserver.WorkspaceRegistry;
 
 public class OfflineRdfGenerator {
 

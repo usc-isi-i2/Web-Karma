@@ -32,6 +32,7 @@ public class ColumnMetadata {
 //	private Map<String, COLUMN_TYPE>	columnTypes;
 //	private Map<String, List<String>>	invalidNodeIds;
 	private Map<String, JSONObject>		columnHistogramData;
+	private Map<String, String>			columnPythonTransform;
 	
 	public ColumnMetadata() {
 		super();
@@ -39,6 +40,7 @@ public class ColumnMetadata {
 //		this.columnTypes 			= new HashMap<String, ColumnMetadata.COLUMN_TYPE>();
 //		this.invalidNodeIds 		= new HashMap<String, List<String>>();
 		this.columnHistogramData	= new HashMap<String, JSONObject>();
+		this.columnPythonTransform  = new HashMap<String, String>();
 	}
 	
 	
@@ -60,5 +62,15 @@ public class ColumnMetadata {
 	
 	public void addColumnHistogramData(String hNodeId, JSONObject data) {
 		columnHistogramData.put(hNodeId, data);
+	}
+	
+	public String getColumnPython(String hNodeId)
+	{
+		return columnPythonTransform.get(hNodeId);
+	}
+	
+	public void addColumnPythonTransformation(String hNodeId, String pythonTransform)
+	{
+		columnPythonTransform.put(hNodeId, pythonTransform);
 	}
 }

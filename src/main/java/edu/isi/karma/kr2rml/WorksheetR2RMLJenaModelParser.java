@@ -165,7 +165,7 @@ public class WorksheetR2RMLJenaModelParser {
 						TransformationCommandKeysAndValues.errorDefaultValue.name(), inputParams);
 				SubmitPythonTransformationCommand comm = new SubmitPythonTransformationCommand(
 						"", newColumnName, transformationCode, worksheet.getId(), hNodeId, 
-						"", errorDefaultValue);
+						 errorDefaultValue);
 				try {
 					comm.doIt(workspace);
 				} catch (CommandException e) {

@@ -419,7 +419,8 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 
     // in pytransform.js
     $("button#pyTransform").click(openPyTransformDialogBox);
-
+    $("button#editPyTransform").click(openEditPyTransformDialogBox);
+    
     $("button#publishR2RML").click(function(event){
         optionsDiv.hide();
         handlePublishModelToStoreButton(event);

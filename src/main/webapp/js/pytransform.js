@@ -35,9 +35,32 @@ function styleAndAssignHandlersToPyTransformElements() {
 
 }
 
+function openEditPyTransformDialogBox() {
+    $("table#pythonPreviewResultsTable").hide();
+    $("span#pyTransformColumnNameError").hide();
+    var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+    var hNodeId = columnHeadingMenu.data("parentCellId");
+    var hNode = $("td#" + hNodeId);
+    
+    	var editor = ace.edit("transformCodeEditor");
+        editor.getSession().setValue(hNode.data("pythonTransformation"));
+        var columnName = $("div.wk-header", hNode).text();
+        $("#pythonTransformNewColumnName").attr("value", (columnName));
+    
+    $("#pyTransformViewErrorButton").button('disable');
+    var dialogBox = $("div#pyTransformDialog");
+    dialogBox.dialog({width: 540, height: 460, title:"Edit Python Transform", resizable:true
+        , buttons: {
+            "Cancel": function() { $(this).dialog("close"); },
+            "Submit": submitEditPythonTransform}
+    });
+}
 function openPyTransformDialogBox() {
     $("table#pythonPreviewResultsTable").hide();
     $("span#pyTransformColumnNameError").hide();
+    var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+    var hNodeId = columnHeadingMenu.data("parentCellId");
+
     $("#pyTransformViewErrorButton").button('disable');
     var dialogBox = $("div#pyTransformDialog");
     dialogBox.dialog({width: 540, height: 460, title:"Python Transform", resizable:true
@@ -74,7 +97,7 @@ function submitPythonPreview() {
                     if(element["updateType"] == "PythonPreviewResultsUpdate") {
                         var result = element["result"];
                         $.each(result, function(index2, resVal){
-                            previewTable.append($("<tr>").append($("<td>").text(resVal)));
+                            previewTable.append($("<tr>").append($("<td>").text(resVal.value)));
                         });
                         $("div.pythonError", errorWindow).remove();
                         var errors = element["errors"];
@@ -103,10 +126,14 @@ function submitPythonPreview() {
     });
 }
 
+function submitEditPythonTransform() {
+	
+}
 function submitPythonTransform() {
     var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
     var hNodeId = columnHeadingMenu.data("parentCellId");
-    var worksheetId = $("td#" + hNodeId).parents("div.Worksheet").attr("id");
+    var hNode = $("td#" + hNodeId);
+    var worksheetId = hNode.parents("div.Worksheet").attr("id");
     var columnName = $("#pythonTransformNewColumnName").val();
     // Validate new column name
     var validationResult = true;
