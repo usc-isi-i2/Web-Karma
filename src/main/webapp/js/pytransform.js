@@ -42,11 +42,11 @@ function openEditPyTransformDialogBox() {
     var hNodeId = columnHeadingMenu.data("parentCellId");
     var hNode = $("td#" + hNodeId);
     
-    	var editor = ace.edit("transformCodeEditor");
-        editor.getSession().setValue(hNode.data("pythonTransformation"));
-        var columnName = $("div.wk-header", hNode).text();
-        $("#pythonTransformNewColumnName").attr("value", (columnName));
-    
+    var editor = ace.edit("transformCodeEditor");
+    editor.getSession().setValue(hNode.data("pythonTransformation"));
+    var columnName = $("div.wk-header", hNode).text();
+    $("#pythonTransformNewColumnName").attr("value", (columnName));
+    $("#pythonTransformNewColumnName").attr('disabled','disabled');
     $("#pyTransformViewErrorButton").button('disable');
     var dialogBox = $("div#pyTransformDialog");
     dialogBox.dialog({width: 540, height: 460, title:"Edit Python Transform", resizable:true
@@ -62,6 +62,7 @@ function openPyTransformDialogBox() {
     var hNodeId = columnHeadingMenu.data("parentCellId");
 
     $("#pyTransformViewErrorButton").button('disable');
+    $("input").removeAttr('disabled');
     var dialogBox = $("div#pyTransformDialog");
     dialogBox.dialog({width: 540, height: 460, title:"Python Transform", resizable:true
         , buttons: {
