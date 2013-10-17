@@ -308,10 +308,15 @@ public class KR2RMLWorksheetRDFGenerator {
 		else {
 			// Get the value
 			String value = "";
+			String rdfLiteralType = "";
 			try {
 				value = getTemplateTermSetPopulatedWithValues(columnValues, pom.getObject().getTemplate());
 				if (value == null || value.trim().equals(""))
 					return;
+				TemplateTermSet rdfLiteralTypeTermSet = pom.getObject().getRdfLiteralType();
+				if (rdfLiteralTypeTermSet != null) {
+					rdfLiteralType = rdfLiteralTypeTermSet.getR2rmlTemplateString(factory);
+				}
 			} catch (ValueNotFoundKarmaException ve) {
 				ReportMessage msg = createReportMessage("Could not retrieve value for the <i>predicate:" + 
 						pom.getPredicate().getTemplate().toString().replaceAll("<", "{").replaceAll(">", "}") +
@@ -329,14 +334,14 @@ public class KR2RMLWorksheetRDFGenerator {
 				if (templ.isSingleColumnTerm()) {
 					String hNodeId_val = templ.getAllTerms().get(0).getTemplateTermValue();
 					String quad = constructQuadWithLiteralObject(subjUri, predicateUri, value,
-							"", hNodeId_val);
+							rdfLiteralType, hNodeId_val);
 					if (!existingTopRowTriples.contains(quad)) {
 						existingTopRowTriples.add(quad);
 						outWriter.println(quad);
 					}
 				}
 			} else {
-				String triple = constructTripleWithLiteralObject(subjUri, predicateUri, value, "");
+				String triple = constructTripleWithLiteralObject(subjUri, predicateUri, value, rdfLiteralType);
 				if (!existingTopRowTriples.contains(triple)) {
 					existingTopRowTriples.add(triple);
 					outWriter.println(triple);

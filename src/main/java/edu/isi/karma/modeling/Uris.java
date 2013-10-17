@@ -44,6 +44,7 @@ public interface Uris {
 	public static final String RR_PREDICATE_URI = Namespaces.RR + "predicate";
 	public static final String RR_OBJECTMAP_URI = Namespaces.RR + "objectMap";
 	public static final String RR_COLUMN_URI = Namespaces.RR + "column";
+	public static final String RR_DATATYPE_URI = Namespaces.RR + "datatype";
 	public static final String RR_LOGICAL_TABLE_URI = Namespaces.RR + "logicalTable";
 	public static final String RR_REF_OBJECT_MAP_URI = Namespaces.RR + "RefObjectMap";
 	public static final String RR_PARENT_TRIPLE_MAP_URI = Namespaces.RR + "parentTriplesMap";

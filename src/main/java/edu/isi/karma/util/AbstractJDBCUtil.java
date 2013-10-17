@@ -123,6 +123,11 @@ public abstract class AbstractJDBCUtil {
 		return vals;
 	}
 	
+	/*
+	 * Only warn about SQL exception once. //Pedro
+	 */
+	private static boolean warnedSqlException = false;
+	
 	protected ArrayList<ArrayList<String>> parseResultSetIntoArrayListOfRows(ResultSet r) throws SQLException {
 		ArrayList<ArrayList<String>> vals = new ArrayList<ArrayList<String>>();
 
@@ -139,7 +144,17 @@ public abstract class AbstractJDBCUtil {
 		while (r.next()) {
 			ArrayList<String> row = new ArrayList<String>();
 			for (int i = 1; i <= meta.getColumnCount(); i++) {
-				String val = r.getString(i);
+
+				String val;
+				try {
+					val = r.getString(i);
+				} catch (SQLException e) {
+					if (!warnedSqlException) {
+						logger.warn(e.getMessage());
+						warnedSqlException = true;
+					}
+					val = "SQLException";
+				}
 				row.add(val);
 			}
 			vals.add(row);

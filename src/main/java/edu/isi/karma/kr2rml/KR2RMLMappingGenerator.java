@@ -85,6 +85,11 @@ public class KR2RMLMappingGenerator {
 		this.subjectMapIndex = new HashMap<String, SubjectMap>();
 		this.triplesMapIndex = new HashMap<String, TriplesMap>();
 		
+//		for (Node n : alignmentGraph.vertexSet()) {
+//			if (n instanceof ColumnNode) {
+//				System.out.println(n.getId() + " -----> " + ((ColumnNode)n).getRdfLiteralType());
+//			}
+//		}
 		// Generate the R2RML data structures
 		generateMappingFromSteinerTree(generateInverse);
 	}
@@ -278,10 +283,16 @@ public class KR2RMLMappingGenerator {
 						// Create the object map
 						ColumnNode cnode = (ColumnNode) target;
 						String hNodeId = cnode.getHNodeId();
+
 						ColumnTemplateTerm cnTerm = new ColumnTemplateTerm(hNodeId);
 						TemplateTermSet termSet = new TemplateTermSet();
 						termSet.addTemplateTermToSet(cnTerm);
-						ObjectMap objMap = new ObjectMap(hNodeId, termSet);
+
+						StringTemplateTerm rdfLiteralTypeTerm = new StringTemplateTerm(cnode.getRdfLiteralType(), true);
+						TemplateTermSet rdfLiteralTypeTermSet = new TemplateTermSet();
+						rdfLiteralTypeTermSet.addTemplateTermToSet(rdfLiteralTypeTerm);
+
+						ObjectMap objMap = new ObjectMap(hNodeId, termSet, rdfLiteralTypeTermSet);
 						poMap.setObject(objMap);
 						
 						// Create the predicate
@@ -341,7 +352,7 @@ public class KR2RMLMappingGenerator {
 				ColumnTemplateTerm cnTerm = new ColumnTemplateTerm(hNodeId);
 				TemplateTermSet termSet = new TemplateTermSet();
 				termSet.addTemplateTermToSet(cnTerm);
-				ObjectMap objMap = new ObjectMap(hNodeId, termSet);
+				ObjectMap objMap = new ObjectMap(hNodeId, termSet, null);
 				poMap.setObject(objMap);
 				
 				// Create the predicate

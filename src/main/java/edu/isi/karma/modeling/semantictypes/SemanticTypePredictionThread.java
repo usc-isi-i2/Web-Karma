@@ -54,7 +54,7 @@ public class SemanticTypePredictionThread implements Runnable {
 		
 		for (HNodePath path : this.hNodePaths) {
 			
-			logger.info("predict labels for the column " + path.getLeaf().getColumnName());
+			logger.debug("predict labels for the column " + path.getLeaf().getColumnName());
 
 			ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(worksheet,
 					path);
@@ -147,7 +147,7 @@ public class SemanticTypePredictionThread implements Runnable {
 			Node c = alignment.getNodeById(hNodeId);
 			if (c != null && c instanceof ColumnNode) {
 				((ColumnNode)c).setCrfSuggestedSemanticTypes(crfSuggestedSemanticTypes);
-				logger.info("CRF semantic types added to the column node " + ((ColumnNode)c).getColumnName());
+				logger.debug("CRF semantic types added to the column node " + ((ColumnNode)c).getColumnName());
 			}
 		}
 		
