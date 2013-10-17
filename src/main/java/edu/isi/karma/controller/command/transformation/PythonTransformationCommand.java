@@ -172,11 +172,10 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 				addError(errorValues, row, counter, p.value);
 			} catch (Exception t) {
 				// Error occured in the Python method execution
-				t.printStackTrace();
 				logger.debug("Error occured while transforming.", t);
 				rowToValueMap.put(row.getId(), errorDefaultValue);
 			}
-			if (limit != null && ++counter > 5) {
+			if (limit != null && ++counter >= limit) {
 				break;
 			}
 		}

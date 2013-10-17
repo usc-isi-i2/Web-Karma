@@ -188,13 +188,12 @@ public class SetSemanticTypeCommand extends Command {
 					
 				// Check if a semantic type already exists for the column
 				ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+				columnNode.setRdfLiteralType(rdfLiteralType);
 				List<Link> columnNodeIncomingLinks = alignment.getIncomingLinks(columnNode.getId());
 				Link oldIncomingLinkToColumnNode = null;
 				Node oldDomainNode = null;
 				if (columnNodeIncomingLinks != null && !columnNodeIncomingLinks.isEmpty()) { // SemanticType already assigned
 					semanticTypeAlreadyExists = true;
-					if (!rdfLiteralType.equals(columnNode.getRdfLiteralType()))
-						columnNode.setRdfLiteralType(rdfLiteralType);
 					oldIncomingLinkToColumnNode = columnNodeIncomingLinks.get(0);
 					oldDomainNode = oldIncomingLinkToColumnNode.getSource();
 				}

@@ -69,8 +69,7 @@ public abstract class MutatingPythonTransformationCommand extends
 		try {
 			JSONArray transformedRows = new JSONArray();
 			JSONArray errorValues = new JSONArray();
-			System.out.println("something");
-			 generateTransformedValues(
+			generateTransformedValues(
 					worksheet, f, hNode, transformedRows, errorValues, null);
 
 			// Invoke the MultipleValueEditColumnCommand
@@ -81,7 +80,6 @@ public abstract class MutatingPythonTransformationCommand extends
 			mvecc.doIt(workspace);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error("Error occured during python transformation.",e);
 			return new UpdateContainer(new ErrorUpdate("Error occured while applying Python transformation to the column."));
 		}

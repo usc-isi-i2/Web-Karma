@@ -24,23 +24,35 @@ package edu.isi.karma.kr2rml;
 public class ObjectMap extends TermMap {
 	
 	private final RefObjectMap refObjectMap;
-	
-	public ObjectMap(String id, TemplateTermSet template) {
-		super(id);
-		this.template = template;
-		this.refObjectMap = null;
-	}
+	private TemplateTermSet rdfLiteralType;
+
+//	public ObjectMap(String id, TemplateTermSet template) {
+//		super(id);
+//		this.template = template;
+//		this.refObjectMap = null;
+//		this.rdfLiteralType = null;
+//	}
 	
 	public ObjectMap(String id, RefObjectMap refObjectMap) {
 		super(id);
 		this.refObjectMap = refObjectMap;
 		this.template = null;
+		this.rdfLiteralType = null;
+	}
+
+	public ObjectMap(String id, TemplateTermSet template, TemplateTermSet rdfLiteralTye) {
+		super(id);
+		this.template = template;
+		this.refObjectMap = null;
+		this.rdfLiteralType = rdfLiteralTye;
 	}
 
 	@Override
 	public String toString() {
 		if (template != null)
-			return "ObjectMap [template=" + template + "]";
+			return "ObjectMap [\n" +
+					"template=" + template + ",\n" +
+					"rdfLiteralType+" + rdfLiteralType + "]";
 		else if (refObjectMap != null)
 			return "RefObjectMap [" + refObjectMap.getParentTriplesMap().getId() + "]";
 		else return "<No ObjectMap or RefObjectMap found for the ObjectMap!>";
@@ -53,4 +65,10 @@ public class ObjectMap extends TermMap {
 	public RefObjectMap getRefObjectMap() {
 		return refObjectMap;
 	}
+
+	public TemplateTermSet getRdfLiteralType() {
+		return rdfLiteralType;
+	}
+	
+	
 }

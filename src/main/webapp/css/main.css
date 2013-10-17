@@ -40,11 +40,19 @@ body {
 	text-decoration: none; 
 }
 
+.karma-header-links li a:link
+{
+	color: #FC0;
+} 
 .karma-header-links li a:visited
 {
 	color: #FC0;
 } 
 .karma-header-links li a:hover
+{
+	color: #fff;
+}
+.karma-header-links li a:active
 {
 	color: #fff;
 }

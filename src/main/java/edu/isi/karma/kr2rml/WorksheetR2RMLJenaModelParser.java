@@ -39,6 +39,7 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.cleaning.SubmitCleaningCommand;
@@ -252,6 +253,7 @@ public class WorksheetR2RMLJenaModelParser {
 		Property predProp = model.getProperty(Uris.RR_PREDICATE_URI);
 		Property objectMapProp = model.getProperty(Uris.RR_OBJECTMAP_URI);
 		Property columnProp = model.getProperty(Uris.RR_COLUMN_URI);
+		Property rdfLiteralTypeProp = model.getProperty(Uris.RR_DATATYPE_URI);
 		Resource rfObjClassUri = model.getResource(Uris.RR_REF_OBJECT_MAP_URI);
 		Property parentTriplesMapProp = model.getProperty(Uris.RR_PARENT_TRIPLE_MAP_URI);
 		Property rdfTypeProp = model.getProperty(Uris.RDF_TYPE_URI);
@@ -311,11 +313,21 @@ public class WorksheetR2RMLJenaModelParser {
 					}
 				} else {
 					NodeIterator objMapColStmts = model.listObjectsOfProperty(objNode, columnProp);
+					
+					// RDF Literal Type
+					Statement objMapRdfLiteralTypeStmt = model.getProperty(objNode, rdfLiteralTypeProp);
+					TemplateTermSet rdfLiteralTypeTermSet = null;
+					if (objMapRdfLiteralTypeStmt != null && objMapRdfLiteralTypeStmt.getObject().isLiteral()) {
+						StringTemplateTerm rdfLiteralTypeTerm = 
+								new StringTemplateTerm(objMapRdfLiteralTypeStmt.getObject().toString(), true);
+						rdfLiteralTypeTermSet = new TemplateTermSet();
+						rdfLiteralTypeTermSet.addTemplateTermToSet(rdfLiteralTypeTerm);
+					}
 					while (objMapColStmts.hasNext()) {
 						RDFNode colNode = objMapColStmts.next(); 
 						objMap = new ObjectMap(getNewObjectMapId(), 
 								TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlColumnString(
-										colNode.toString(), worksheet, factory));
+										colNode.toString(), worksheet, factory), rdfLiteralTypeTermSet);
 					}
 					// Check if anything needs to be added to the hNodeIdToPredicateObjectMap Map
 					addHNodeIdToPredObjectMapLink(objMap, pom);
