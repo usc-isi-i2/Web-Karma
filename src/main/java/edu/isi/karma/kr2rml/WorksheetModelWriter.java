@@ -117,6 +117,7 @@ public class WorksheetModelWriter {
 			URI predUri = f.createURI(Uris.RR_PREDICATE_URI);
 			URI objectMapUri = f.createURI(Uris.RR_OBJECTMAP_URI);
 			URI columnUri = f.createURI(Uris.RR_COLUMN_URI);
+			URI rdfLiteralTypeUri = f.createURI(Uris.RR_DATATYPE_URI);
 			URI rfObjClassUri = f.createURI(Uris.RR_REF_OBJECT_MAP_URI);
 			URI parentTriplesMapUri = f.createURI(Uris.RR_PARENT_TRIPLE_MAP_URI);
 			URI predObjMapMapUri = f.createURI(Uris.RR_PRED_OBJ_MAP_URI);
@@ -232,11 +233,20 @@ public class WorksheetModelWriter {
 						con.add(pomBlankNode, objectMapUri, rfUri);
 					} else {
 						TemplateTermSet objTermSet = pom.getObject().getTemplate();
+						TemplateTermSet rdfLiteralTypeTermSet = pom.getObject().getRdfLiteralType();
+							
 						if (objTermSet.isSingleColumnTerm()) {
 							BNode cnBnode = f.createBNode();
 							Value cnVal = f.createLiteral(objTermSet.
 									getColumnNameR2RMLRepresentation(factory));
 							con.add(cnBnode, columnUri, cnVal);
+
+							if (rdfLiteralTypeTermSet != null && rdfLiteralTypeTermSet.isSingleUriString()) {
+								Value cnRdfLiteralType = f.createLiteral(rdfLiteralTypeTermSet.
+									getR2rmlTemplateString(factory));
+								con.add(cnBnode, rdfLiteralTypeUri, cnRdfLiteralType);
+
+							}
 							
 							// Add the link b/w blank node and object map
 							con.add(pomBlankNode, objectMapUri, cnBnode);

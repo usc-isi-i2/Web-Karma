@@ -152,6 +152,7 @@ public class WorksheetR2RMLSesameModelParser {
 		URI predUri = f.createURI(Uris.RR_PREDICATE_URI);
 		URI objectMapUri = f.createURI(Uris.RR_OBJECTMAP_URI);
 		URI columnUri = f.createURI(Uris.RR_COLUMN_URI);
+		URI rdfLiteralTypeUri = f.createURI(Uris.RR_DATATYPE_URI);
 		URI rfObjClassUri = f.createURI(Uris.RR_REF_OBJECT_MAP_URI);
 		URI parentTriplesMapUri = f.createURI(Uris.RR_PARENT_TRIPLE_MAP_URI);
 		
@@ -217,12 +218,23 @@ public class WorksheetR2RMLSesameModelParser {
 				} else {
 					RepositoryResult<Statement> objMapColStmts = con.getStatements(objNode, 
 							columnUri, null, false);
+					
+					// RDF Literal Type
+					RepositoryResult<Statement> objMapRdfLiteralTypeStmt = con.getStatements(objNode, 
+							rdfLiteralTypeUri, null, false);
+					TemplateTermSet rdfLiteralTypeTermSet = null;
+					if (objMapRdfLiteralTypeStmt != null && objMapRdfLiteralTypeStmt.hasNext()) {
+						StringTemplateTerm rdfLiteralTypeTerm = 
+								new StringTemplateTerm(objMapRdfLiteralTypeStmt.next().getObject().stringValue(), true);
+						rdfLiteralTypeTermSet = new TemplateTermSet();
+						rdfLiteralTypeTermSet.addTemplateTermToSet(rdfLiteralTypeTerm);
+					}
 					while (objMapColStmts.hasNext()) {
 						Statement objMapColStmt = objMapColStmts.next(); 
 						Value colVal = objMapColStmt.getObject();
 						objMap = new ObjectMap(getNewObjectMapId(), 
 								TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlColumnString(
-										colVal.stringValue(), worksheet, factory));
+										colVal.stringValue(), worksheet, factory), rdfLiteralTypeTermSet);
 					}
 					// Check if anything needs to be added to the hNodeIdToPredicateObjectMap Map
 					addHNodeIdToPredObjectMapLink(objMap, pom);
