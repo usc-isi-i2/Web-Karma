@@ -27,8 +27,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -42,7 +43,7 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class InvocationManager {
 
-	static Logger logger = Logger.getLogger(InvocationManager.class);
+	static Logger logger = LoggerFactory.getLogger(InvocationManager.class);
 
 	private List<URL> requestURLs;
 	private List<String> idList;

@@ -6,9 +6,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import au.com.bytecode.opencsv.CSVWriter;
 
 public class Data2Features {
+	
+	private static Logger logger = LoggerFactory.getLogger(Data2Features.class);
 	// convert the csv file to arff file
 	// return the fpath of arff file
 	/*public static void Data2arff(String csvpath, String arfpath) {
@@ -90,7 +95,7 @@ public class Data2Features {
 			writer.flush();
 			writer.close();
 		} catch (Exception ex) {
-			System.out.println("" + ex.toString());
+			logger.error("" + ex.toString());
 		}
 	}
 

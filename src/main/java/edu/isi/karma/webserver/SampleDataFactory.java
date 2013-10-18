@@ -222,8 +222,6 @@ public class SampleDataFactory {
 		try {
 			r = new FileReader(fileName);
 			Object o = JSONUtil.createJson(r);
-			// System.err.println("JSON:" + o.toString());
-			// System.err.println("JSON:" + JSONObject.quote(o.toString()));
 			File f = new File(fileName);
 			JsonImport ji = new JsonImport(o, f.getName(), workspace);
 			Worksheet w = ji.generateWorksheet();
@@ -243,11 +241,8 @@ public class SampleDataFactory {
 		File xmlFile = new File(fileName);
 		try {
 			String fileContents = FileUtil.readFileContentsToString(xmlFile);
-			// System.out.println(fileContents);
 			// Converting the XML to JSON
 			JSONObject json = XML.toJSONObject(fileContents);
-			// System.err.println("JSON:" + o.toString());
-			// System.err.println("JSON:" + JSONObject.quote(o.toString()));
 			JsonImport ji = new JsonImport(json, fileName, workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -942,7 +937,7 @@ public class SampleDataFactory {
 				+ "\"GENE_ID\": \"PA29779\"," + "\"GENE_NAME\": \"IL10RA\","
 				+ "\"DISEASE_ID\": \"\"," + "\"DISEASE_NAME\": \"\"" + "}"
 				+ "];";
-		System.out.println(json);
+		logger.debug(json);
 		return createWorksheetFromJsonString("PathwaysPharmGKB", json,
 				workspace);
 	}
@@ -997,7 +992,7 @@ public class SampleDataFactory {
 				+ "\"\"," + "]" + "}," + "\"GENE_ID\": \"PA29779\","
 				+ "\"GENE_NAME\": \"IL10RA\"," + "\"DISEASE_ID\": \"\","
 				+ "\"DISEASE_NAME\": \"\"" + "}" + "];";
-		System.out.println(json);
+		logger.debug(json);
 		return createWorksheetFromJsonString("PathwaysPharmGKBNesting", json,
 				workspace);
 	}

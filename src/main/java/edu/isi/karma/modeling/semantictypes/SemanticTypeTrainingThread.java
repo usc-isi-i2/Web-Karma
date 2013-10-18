@@ -73,7 +73,7 @@ public class SemanticTypeTrainingThread implements Runnable {
 
 		long elapsedTimeMillis = System.currentTimeMillis() - start;
 		float elapsedTimeSec = elapsedTimeMillis / 1000F;
-		logger.info("Time required for training the semantic type: " + elapsedTimeSec);
+		logger.debug("Time required for training the semantic type: " + elapsedTimeSec);
 		
 //		long t2 = System.currentTimeMillis();
 		

@@ -27,7 +27,8 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -47,7 +48,7 @@ import edu.isi.karma.rep.sources.DataSource;
 
 public class DataSourcePublisher extends SourcePublisher {
 
-	static Logger logger = Logger.getLogger(DataSourcePublisher.class);
+	static Logger logger = LoggerFactory.getLogger(DataSourcePublisher.class);
 
 	private DataSource source;
 	private Model model = null;

@@ -23,13 +23,9 @@ package edu.isi.karma.model.serialization;
 
 import java.io.FileNotFoundException;
 
-import org.apache.log4j.Logger;
-
 import com.hp.hpl.jena.rdf.model.Model;
 
 public abstract class SourcePublisher {
-
-	static Logger logger = Logger.getLogger(SourcePublisher.class);
 
 	public abstract Model exportToJenaModel();
 	public abstract void publish(String lang, boolean writeToFile) throws FileNotFoundException;	

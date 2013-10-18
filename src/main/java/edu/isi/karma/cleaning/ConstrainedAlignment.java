@@ -2,6 +2,9 @@ package edu.isi.karma.cleaning;
 
 import java.util.Vector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ConstrainedAlignment {
 	public Vector<Vector<TNode>> olist;
 	public Vector<Vector<TNode>> tlist;
@@ -37,6 +40,8 @@ public class ConstrainedAlignment {
 	}
 }
 class LatentState{
+
+	private static Logger logger = LoggerFactory.getLogger(LatentState.class);
 	static final int SEG = 1;//a segement state
 	static final int UND = 2;
 	static final int ANC = 3;//a anchor state
@@ -49,7 +54,7 @@ class LatentState{
 		segments = new Vector<int[]>();
 		if(segments.size() !=spos.size())
 		{
-			System.out.println("Length different");
+			logger.error("Length different");
 			return;
 		}
 		for(int i = 0; i<spos.size(); i++)

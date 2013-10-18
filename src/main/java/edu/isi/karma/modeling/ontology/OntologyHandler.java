@@ -24,7 +24,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.ontology.ConversionException;
 import com.hp.hpl.jena.ontology.DatatypeProperty;
@@ -46,7 +47,7 @@ import edu.isi.karma.rep.alignment.Label;
 
 class OntologyHandler {
 	
-	static Logger logger = Logger.getLogger(OntologyHandler.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(OntologyHandler.class.getName());
 
 	private static OntModel ontModel = null;
 	

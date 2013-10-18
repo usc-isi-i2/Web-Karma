@@ -25,9 +25,12 @@ import java.util.HashMap;
 import java.util.Set;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class RamblerValueCollection implements ValueCollection {
+	private static Logger logger = LoggerFactory.getLogger(RamblerValueCollection.class);
 	private HashMap<String,String> data;
 	private HashMap<String, String> keyClass = new HashMap<String, String>();
 	public RamblerValueCollection(HashMap<String,String> data)
@@ -98,7 +101,7 @@ public class RamblerValueCollection implements ValueCollection {
 		}
 		catch(Exception ex)
 		{
-			System.out.println(""+ex.toString());
+			logger.error(""+ex.toString());
 			return null;
 		}
 	}

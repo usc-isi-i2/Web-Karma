@@ -143,6 +143,8 @@ import edu.isi.karma.controller.command.service.PublishModelCommand;
 import edu.isi.karma.controller.command.service.PublishModelCommandFactory;
 import edu.isi.karma.controller.command.transformation.PreviewPythonTransformationResultsCommand;
 import edu.isi.karma.controller.command.transformation.PreviewPythonTransformationResultsCommandFactory;
+import edu.isi.karma.controller.command.transformation.SubmitEditPythonTransformationCommand;
+import edu.isi.karma.controller.command.transformation.SubmitEditPythonTransformationCommandFactory;
 import edu.isi.karma.controller.command.transformation.SubmitPythonTransformationCommand;
 import edu.isi.karma.controller.command.transformation.SubmitPythonTransformationCommandFactory;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
@@ -284,6 +286,8 @@ public class ExecutionController {
                 new PreviewPythonTransformationResultsCommandFactory());
         commandFactoryMap.put(SubmitPythonTransformationCommand.class.getSimpleName(),
                 new SubmitPythonTransformationCommandFactory());
+        commandFactoryMap.put(SubmitEditPythonTransformationCommand.class.getSimpleName(), 
+        		new SubmitEditPythonTransformationCommandFactory());
         commandFactoryMap.put(GenerateR2RMLModelCommand.class.getSimpleName(),
                 new GenerateR2RMLModelCommandFactory());
         commandFactoryMap.put(ApplyHistoryFromR2RMLModelCommand.class.getSimpleName(),

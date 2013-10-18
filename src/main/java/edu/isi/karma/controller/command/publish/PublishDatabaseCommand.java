@@ -459,14 +459,14 @@ public class PublishDatabaseCommand extends Command {
 					"PublishDatabaseCommandPreferences", prefObject);
 			
 			/*
-			System.out.println("I Saved .....");
+			logger.trace("I Saved .....");
 			ViewPreferences prefs = vWorkspace.getPreferences();
 			JSONObject prefObject1 = prefs.getCommandPreferencesJSONObject("PublishDatabaseCommandPreferences");
-			System.out.println("I Saved ....."+prefObject1);
+			logger.trace("I Saved ....."+prefObject1);
 			 */
 			
 		} catch (JSONException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 	}
 }

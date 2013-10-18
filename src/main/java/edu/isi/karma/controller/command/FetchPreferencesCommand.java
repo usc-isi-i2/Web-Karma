@@ -60,12 +60,12 @@ public class FetchPreferencesCommand extends Command {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		/*
-		System.out.println("FetchPreferences....");
+		logger.debug("FetchPreferences....");
 		
-		System.out.println("I get 1.....");
+		logger.debug("I get 1.....");
 		ViewPreferences prefs = vWorkspace.getPreferences();
 		JSONObject prefObject1 = prefs.getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
-		System.out.println("I get 1....."+prefObject1);
+		logger.debug("I get 1....."+prefObject1);
 		 */
 		UpdateContainer c = new UpdateContainer();
 		c.add(new FetchPreferencesUpdate( commandName+"Preferences"));

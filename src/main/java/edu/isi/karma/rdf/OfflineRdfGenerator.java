@@ -71,8 +71,8 @@ import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.WorkspaceRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import edu.isi.karma.webserver.WorkspaceRegistry;
 
 public class OfflineRdfGenerator {
 
@@ -107,7 +107,7 @@ public class OfflineRdfGenerator {
             String modelFilePath = (String) cl.getValue("--modelfilepath");
             String outputFilePath = (String) cl.getValue("--outputfile");
             if (modelFilePath == null || outputFilePath == null || inputType == null) {
-                System.out.println("Mandatory value missing. Please provide argument value "
+                logger.error("Mandatory value missing. Please provide argument value "
                         + "for sourcetype, modelfilepath and outputfile.");
                 return;
             }
@@ -117,14 +117,14 @@ public class OfflineRdfGenerator {
              */
             File modelFile = new File(modelFilePath);
             if (!modelFile.exists()) {
-                System.out.println("File not found: " + modelFile.getAbsolutePath());
+                logger.error("File not found: " + modelFile.getAbsolutePath());
                 return;
             }
             if (!inputType.equalsIgnoreCase("DB")
                     && !inputType.equalsIgnoreCase("CSV")
                     && !inputType.equalsIgnoreCase("XML")
                     && !inputType.equalsIgnoreCase("JSON")) {
-                System.out.println("Invalid source type: " + inputType
+                logger.error("Invalid source type: " + inputType
                         + ". Please choose from: DB, CSV, XML, JSON.");
                 return;
             }
@@ -143,13 +143,13 @@ public class OfflineRdfGenerator {
             /**
              * LOAD THE R2RML MODEL FILE INTO A JENA MODEL *
              */
-            System.out.print("Loading the R2RML model file...");
+           logger.info("Loading the R2RML model file...");
             Model model = loadSourceModelIntoJenaModel(modelFile);
             String worksheetName = getWorksheetTitleFromJenaModel(model);
             if (worksheetName == null) {
                 throw new KarmaException("No source name found in the model.");
             }
-            System.out.println("done");
+            logger.info("done");
 
             /**
              * PREPATRE THE OUTPUT OBJECTS *
@@ -171,7 +171,7 @@ public class OfflineRdfGenerator {
                 try {
                     portnumber = Integer.parseInt(cl.getValue("--portnumber").toString());
                 } catch (Throwable t) {
-                    System.out.println("Error occured while parsing value for portnumber."
+                    logger.error("Error occured while parsing value for portnumber."
                             + " Provided value: " + cl.getValue("--portnumber"));
                     pw.close();
                     return;
@@ -185,7 +185,7 @@ public class OfflineRdfGenerator {
                         || password == null || password.equals("") || dBorSIDName == null
                         || dBorSIDName.equals("") || tablename == null || tablename.equals("")
                         || tablename == null || tablename.equals("")) {
-                    System.out.println("A mandatory value is missing for fetching data from "
+                    logger.error("A mandatory value is missing for fetching data from "
                             + "a database. Please provide argument values for dbtype, hostname, "
                             + "username, password, portnumber, dbname and tablename.");
                     pw.close();
@@ -194,7 +194,7 @@ public class OfflineRdfGenerator {
 
                 DBType dbType = DBType.valueOf(dbtypeStr);
                 if (dbType == null) {
-                    System.out.println("Unidentified database type. Valid values: "
+                    logger.error("Unidentified database type. Valid values: "
                             + "Oracle, MySQL, SQLServer, PostGIS");
                     pw.close();
                     return;
@@ -207,17 +207,17 @@ public class OfflineRdfGenerator {
                 String sourceFilePath = (String) cl.getValue("--filepath");
                 File inputFile = new File(sourceFilePath);
                 if (!inputFile.exists()) {
-                    System.out.println("File not found: " + inputFile.getAbsolutePath());
+                    logger.error("File not found: " + inputFile.getAbsolutePath());
                     pw.close();
                     return;
                 }
-                System.out.print("Generating worksheet from the data source ...");
+                logger.info("Generating worksheet from the data source ...");
                 worksheet = generateWorksheetFromFile(inputFile, inputType, workspace);
-                System.out.println("done");
+                logger.info("done");
                 /**
                  * GENERATE RDF FROM WORKSHEET OBJECT *
                  */
-                System.out.print("Generating RDF...");
+                logger.info("Generating RDF...");
                 WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(
                         worksheet, workspace, model, worksheetName);
 
@@ -234,9 +234,9 @@ public class OfflineRdfGenerator {
             }
             pw.flush();
             pw.close();
-            System.out.println("done");
+            logger.info("done");
 
-            System.out.println("RDF published at: " + outputFilePath);
+            logger.info("RDF published at: " + outputFilePath);
         } catch (Exception e) {
             logger.error("Error occured while generating RDF!", e);
         }

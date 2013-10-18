@@ -35,10 +35,34 @@ function styleAndAssignHandlersToPyTransformElements() {
 
 }
 
+function openEditPyTransformDialogBox() {
+    $("table#pythonPreviewResultsTable").hide();
+    $("span#pyTransformColumnNameError").hide();
+    var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+    var hNodeId = columnHeadingMenu.data("parentCellId");
+    var hNode = $("td#" + hNodeId);
+    
+    var editor = ace.edit("transformCodeEditor");
+    editor.getSession().setValue(hNode.data("pythonTransformation"));
+    var columnName = $("div.wk-header", hNode).text();
+    $("#pythonTransformNewColumnName").attr("value", (columnName));
+    $("#pythonTransformNewColumnName").attr('disabled','disabled');
+    $("#pyTransformViewErrorButton").button('disable');
+    var dialogBox = $("div#pyTransformDialog");
+    dialogBox.dialog({width: 540, height: 460, title:"Edit Python Transform", resizable:true
+        , buttons: {
+            "Cancel": function() { $(this).dialog("close"); },
+            "Submit": submitEditPythonTransform}
+    });
+}
 function openPyTransformDialogBox() {
     $("table#pythonPreviewResultsTable").hide();
     $("span#pyTransformColumnNameError").hide();
+    var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+    var hNodeId = columnHeadingMenu.data("parentCellId");
+
     $("#pyTransformViewErrorButton").button('disable');
+    $("input").removeAttr('disabled');
     var dialogBox = $("div#pyTransformDialog");
     dialogBox.dialog({width: 540, height: 460, title:"Python Transform", resizable:true
         , buttons: {
@@ -74,7 +98,7 @@ function submitPythonPreview() {
                     if(element["updateType"] == "PythonPreviewResultsUpdate") {
                         var result = element["result"];
                         $.each(result, function(index2, resVal){
-                            previewTable.append($("<tr>").append($("<td>").text(resVal)));
+                            previewTable.append($("<tr>").append($("<td>").text(resVal.value)));
                         });
                         $("div.pythonError", errorWindow).remove();
                         var errors = element["errors"];
@@ -103,10 +127,38 @@ function submitPythonPreview() {
     });
 }
 
+function submitEditPythonTransform() {
+	 var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
+	    var hNodeId = columnHeadingMenu.data("parentCellId");
+	    var hNode = $("td#" + hNodeId);
+	    var worksheetId = hNode.parents("div.Worksheet").attr("id");
+	    var columnName = $("#pythonTransformNewColumnName").val();
+	
+
+	    $("div#pyTransformDialog").dialog("close");
+    // prepare the JSON Object to be sent to the server
+    var info = {};
+    info["workspaceId"] = $.workspaceGlobalInformation.id;
+    info["command"] = "SubmitEditPythonTransformationCommand";
+
+    var newInfo = [];
+    newInfo.push(getParamObject("newColumnName",columnName, "other"));
+    newInfo.push(getParamObject("transformationCode", ace.edit("transformCodeEditor").getValue(), "other"));
+    newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+    newInfo.push(getParamObject("hNodeId", hNode.data("columnDerivedFrom"), "hNodeId"));
+    newInfo.push(getParamObject("previousCommandId", hNode.data("previousCommandId"), "other"));
+    newInfo.push(getParamObject("errorDefaultValue", $("#pythonTransformErrorDefaultValue").val(), "other"));
+    newInfo.push(getParamObject("targetHNodeId", hNodeId, "hNodeId"));
+    info["newInfo"] = JSON.stringify(newInfo);
+
+    showLoading(worksheetId)
+    sendRequest(info, worksheetId);
+}
 function submitPythonTransform() {
     var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
     var hNodeId = columnHeadingMenu.data("parentCellId");
-    var worksheetId = $("td#" + hNodeId).parents("div.Worksheet").attr("id");
+    var hNode = $("td#" + hNodeId);
+    var worksheetId = hNode.parents("div.Worksheet").attr("id");
     var columnName = $("#pythonTransformNewColumnName").val();
     // Validate new column name
     var validationResult = true;
@@ -136,12 +188,16 @@ function submitPythonTransform() {
     newInfo.push(getParamObject("transformationCode", ace.edit("transformCodeEditor").getValue(), "other"));
     newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
     newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
-    newInfo.push(getParamObject("hTableId", "", "other"));
     newInfo.push(getParamObject("errorDefaultValue", $("#pythonTransformErrorDefaultValue").val(), "other"));
     info["newInfo"] = JSON.stringify(newInfo);
 
     showLoading(worksheetId)
-    // Send the request
+    sendRequest(info, worksheetId);
+}
+
+function sendRequest(info, worksheetId)
+{
+	 // Send the request
     $.ajax({
         url: "RequestController",
         type: "POST",

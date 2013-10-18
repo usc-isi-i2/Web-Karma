@@ -21,13 +21,14 @@
 
 package edu.isi.karma.modeling.research;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.research.approach1.SemanticLabelType;
 
 public class SemanticLabel{
 
-	static Logger logger = Logger.getLogger(SemanticLabel.class);
+	static Logger logger = LoggerFactory.getLogger(SemanticLabel.class);
 
 	private String nodeUri;
 	private String linkUri;

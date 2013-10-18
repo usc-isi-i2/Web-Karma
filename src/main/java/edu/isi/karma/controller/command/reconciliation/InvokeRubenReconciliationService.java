@@ -34,6 +34,8 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -69,6 +71,7 @@ import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.util.HTTPUtil;
 
 public class InvokeRubenReconciliationService extends WorksheetCommand {
+	private static Logger logger = LoggerFactory.getLogger(InvokeRubenReconciliationService.class);
 	private final String alignmentNodeId;
 	private String rdfPrefix;
 	private String rdfNamespace;
@@ -143,7 +146,7 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 			int count = 1;
 			for (Node node:nodes) {
 				if (count % 5 ==0) {
-					System.out.println("Done invoking linking service for " + count + " rows");
+					logger.debug("Done invoking linking service for " + count + " rows");
 				}
 				
 				Row row = node.getBelongsToRow();
@@ -169,7 +172,7 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 				
 				// Check if the matches already exist in the triple store
 				if (checkTripleStoreIfMatchAlreadyExists(keyUri)) {
-					System.out.println("Match already exists!");
+					logger.debug("Match already exists!");
 					outRdf.close();
 					pw.close();
 					count++;
@@ -181,7 +184,7 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 				String res = invokeReconcilitaionService(serviceInput);
 				
 				if (res == null || res.isEmpty()) {
-					System.out.println("No linking output for " + serviceInput);
+					logger.debug("No linking output for " + serviceInput);
 					continue;
 				}
 				
@@ -224,7 +227,7 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 
 				String sData = TripleStoreUtil.invokeSparqlQuery(query, TripleStoreUtil.defaultDataRepoUrl, "application/sparql-results+json", null);
 				if (sData == null | sData.isEmpty()) {
-					System.out.println("Empty response object from query : " + query);
+					logger.debug("Empty response object from query : " + query);
 				}
 				JSONObject queryRes = new JSONObject(sData);
 				
@@ -255,7 +258,7 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 		}
 		
 		// Prepare the output container
@@ -280,7 +283,7 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 		
 		String sData = TripleStoreUtil.invokeSparqlQuery(query, TripleStoreUtil.defaultDataRepoUrl, "application/sparql-results+json", null);
 		if (sData == null | sData.isEmpty()) {
-			System.out.println("Empty response object from query : " + query);
+			logger.debug("Empty response object from query : " + query);
 		}
 		JSONObject queryRes = new JSONObject(sData);
 		

@@ -279,7 +279,7 @@ public class UtilTools {
 					"./src/main/webapp/grammar/tmp/tmp.arff");
 			return dirpathString + "grammar/tmp/tmp.arff";
 		} catch (Exception e) {
-			Logger.getLogger(UtilTools.class).info("" + e.toString());
+			LoggerFactory.getLogger(UtilTools.class).info("" + e.toString());
 			return "";
 		}
 

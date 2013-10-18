@@ -26,11 +26,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.cleaning.RecFeature;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
 
 public class OutlierDetector {
+	private static Logger logger = LoggerFactory.getLogger(FeatureVector.class);
 	public HashMap<String,double[]> rVectors = new HashMap<String,double[]>();
 	public double currentMax = -1;
 	public HashSet<String> dict = new HashSet<String>();
@@ -87,9 +91,9 @@ public class OutlierDetector {
 				x[i] = vRecFeatures.get(i).computerScore();
 			}
 			double value = this.getDistance(x, meanVector);
-			/*System.out.println("current: "+ vpair[0]+ " "+Max);
-			System.out.println("=======\n"+this.test(x)+"\n"+this.test(meanVector));
-			System.out.println("distance: "+value);*/
+			logger.trace("current: "+ vpair[0]+ " "+Max);
+			logger.trace("=======\n"+this.test(x)+"\n"+this.test(meanVector));
+			logger.trace("distance: "+value);
 			if(value > Max)
 			{
 				Max = value;

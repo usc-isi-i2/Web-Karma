@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import org.apache.mahout.math.Arrays;
-import org.geotools.filter.expression.ThisPropertyAccessorFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
 

@@ -108,9 +108,9 @@ public class WorksheetCleaningUpdate extends
 					String reqResponse = HTTPUtil.executeHTTPPostRequest(cleaningServiceURL, null,
 							null, formParams);
 //					
-//					System.out.println("***");
-//					System.out.println(path.getLeaf().getColumnName());
-//					System.out.println(reqResponse);
+//					logger.debug("***");
+//					logger.debug(path.getLeaf().getColumnName());
+//					logger.debug(reqResponse);
 					try {
 						// Test if the output is valid JSON object. Throws exception if not.
 						JSONObject output = new JSONObject(reqResponse);

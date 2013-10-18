@@ -23,42 +23,41 @@ package edu.isi.karma.controller.update;
 
 import java.io.PrintWriter;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.worksheet.AddColumnCommand.JsonKeys;
 import edu.isi.karma.view.VWorkspace;
 
-public class AddColumnUpdate extends AbstractUpdate {
-
-	private static Logger logger =LoggerFactory.getLogger(AddColumnUpdate.class);
+public class PythonPreviewResultsUpdate extends AbstractUpdate{
 	
-	private final String newHNodeId;
-	private final String worksheetId;
-
-	public AddColumnUpdate(String newHNodeId, String worksheetId)
+	private static Logger logger = LoggerFactory.getLogger(PythonPreviewResultsUpdate.class);
+	private enum JsonKeys {
+		updateType, result, errors, row, error
+	}
+	private JSONArray transformedRows;
+	private JSONArray errorValues;
+	
+	public PythonPreviewResultsUpdate(JSONArray transformedRows, JSONArray errorValues)
 	{
-		this.newHNodeId = newHNodeId;
-		this.worksheetId = worksheetId;
+		super();
+		this.transformedRows = transformedRows;
+		this.errorValues = errorValues;
 	}
-	
 	@Override
-	public void generateJson(String prefix, PrintWriter pw,
-			VWorkspace vWorkspace) {
-		JSONObject outputObject = new JSONObject();
+	public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
 		try {
-			outputObject.put(JsonKeys.updateType.name(),
-					"AddColumnUpdate");
-			outputObject.put(JsonKeys.hNodeId.name(),newHNodeId);
-			outputObject.put(JsonKeys.worksheetId.name(),
-					worksheetId);
-			pw.println(outputObject.toString(4));
+			JSONObject outputObject = new JSONObject();
+			outputObject.put(JsonKeys.updateType.name(), "PythonPreviewResultsUpdate");
+			
+			outputObject.put(JsonKeys.result.name(), transformedRows);
+			outputObject.put(JsonKeys.errors.name(), errorValues);
+			pw.println(outputObject.toString());
 		} catch (JSONException e) {
-			logger.error("Error occured while generating JSON!");
+			logger.error("Error while creating output update.", e);
+			new ErrorUpdate("Error while creating Python results preview.").generateJson(prefix, pw, vWorkspace);
 		}
-		
 	}
-
 }
