@@ -29,7 +29,6 @@ import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,14 +41,6 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.cleaning.SubmitCleaningCommand;
-import edu.isi.karma.controller.command.reconciliation.InvokeRubenReconciliationService;
-import edu.isi.karma.controller.command.transformation.SubmitPythonTransformationCommand;
-import edu.isi.karma.controller.command.worksheet.RenameColumnCommand;
-import edu.isi.karma.controller.command.worksheet.SplitByCommaCommandFactory.Arguments;
-import edu.isi.karma.controller.command.worksheet.SplitColumnByDelimiter;
-import edu.isi.karma.controller.history.CommandHistoryWriter.HistoryArguments;
-import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.HNode;
@@ -78,12 +69,6 @@ public class WorksheetR2RMLJenaModelParser {
 	private List<Resource> subjectMapResources;
 	private static Logger logger = LoggerFactory.getLogger(WorksheetR2RMLJenaModelParser.class);
 	
-	private enum TransformationCommandKeysAndValues {
-		commandName, SubmitCleaningCommand, SplitByCommaCommand, examples, 
-		SubmitPythonTransformationCommand, newColumnName, transformationCode,
-		errorDefaultValue, RenameColumnCommand, InvokeRubenReconciliationService,
-		alignmentNodeId
-	}
 	
 	public WorksheetR2RMLJenaModelParser(Worksheet worksheet, Workspace workspace, Model model,
 			String sourceName) throws IOException, JSONException, KarmaException {
@@ -135,87 +120,25 @@ public class WorksheetR2RMLJenaModelParser {
 	}
 	
 	private void performTransformations(Resource mappingResource) throws JSONException {
-		List<String> normalizedCommandsJSON = getNormalizedTransformCommandsJSON(mappingResource);
-		
-		for (String commJson:normalizedCommandsJSON) {
-			JSONObject commObj = new JSONObject(commJson);
-			String commandName = commObj.getString("commandName");
-			JSONArray inputParams = commObj.getJSONArray(HistoryArguments.inputParameters.name());
-			String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputParams);
-			
-			// Check for the type of command to execute
-			// TODO: Needs cleanup. Use Command Factories.
-			if (commandName.equals(TransformationCommandKeysAndValues.SplitByCommaCommand.name())) {
-				String delimiter = HistoryJsonUtil.getStringValue(Arguments.delimiter.name(), 
-						inputParams);
-				SplitColumnByDelimiter splitByDelim = new SplitColumnByDelimiter(hNodeId, 
-						worksheet, delimiter, workspace);
-				splitByDelim.split(null, null);
-			} else if (commandName.equals(TransformationCommandKeysAndValues.SubmitCleaningCommand.name())) {
-				String examples = HistoryJsonUtil.getStringValue(
-						TransformationCommandKeysAndValues.examples.name(), inputParams);
-				SubmitCleaningCommand comm = new SubmitCleaningCommand("", hNodeId, 
-						worksheet.getId(), examples);
-				comm.doIt(workspace);
-			} else if (commandName.equals(TransformationCommandKeysAndValues.SubmitPythonTransformationCommand.name())) {
-				String newColumnName = HistoryJsonUtil.getStringValue(
-						TransformationCommandKeysAndValues.newColumnName.name(), inputParams);
-				String transformationCode = HistoryJsonUtil.getStringValue(
-						TransformationCommandKeysAndValues.transformationCode.name(), inputParams);
-				String errorDefaultValue = HistoryJsonUtil.getStringValue(
-						TransformationCommandKeysAndValues.errorDefaultValue.name(), inputParams);
-				SubmitPythonTransformationCommand comm = new SubmitPythonTransformationCommand(
-						"", newColumnName, transformationCode, worksheet.getId(), hNodeId, 
-						 errorDefaultValue);
-				try {
-					comm.doIt(workspace);
-				} catch (CommandException e) {
-					logger.error("Error executing Python Transformation command", e);
-					e.printStackTrace();
-				}
-			} else if (commandName.equals(TransformationCommandKeysAndValues.RenameColumnCommand.name())) {
-				String newColumnName = HistoryJsonUtil.getStringValue(
-						TransformationCommandKeysAndValues.newColumnName.name(), inputParams);
-				RenameColumnCommand comm = new RenameColumnCommand("", newColumnName, hNodeId, worksheet.getId());
-				try {
-					comm.doIt(workspace);
-				} catch (CommandException e) {
-					logger.error("Error executing Rename Column command", e);
-					e.printStackTrace();
-				}
-			}  else if (commandName.equals(TransformationCommandKeysAndValues.InvokeRubenReconciliationService.name())) {
-				String alignmentNodeId = HistoryJsonUtil.getStringValue(
-						TransformationCommandKeysAndValues.alignmentNodeId.name(), inputParams);
-				InvokeRubenReconciliationService comm = new InvokeRubenReconciliationService("", 
-						alignmentNodeId, worksheet.getId());
-				try {
-					comm.doIt(workspace);
-				} catch (CommandException e) {
-					logger.error("Error executing Reconcilitation service command", e);
-					e.printStackTrace();
-				}
-			}
+		List<String> normalizedCommandsJSON = getTransformCommandsJSON(mappingResource);
+		WorksheetCommandHistoryReader wchr = new WorksheetCommandHistoryReader(worksheet.getId(), workspace);
+		try
+		{
+			wchr.executeListOfCommands(normalizedCommandsJSON);
+		}
+		catch (CommandException | KarmaException e)
+		{
+			logger.error("Unable to execute column transformations", e);
 		}
 	}
 
-	private List<String> getNormalizedTransformCommandsJSON(Resource mappingResource) throws JSONException {
+	private List<String> getTransformCommandsJSON(Resource mappingResource) throws JSONException {
 		Property hasTransformation = model.getProperty(Uris.KM_HAS_TRANSFORMATION_URI);
 		NodeIterator transItr = model.listObjectsOfProperty(mappingResource, hasTransformation);
 		List<String> commsJSON = new ArrayList<String>();
 		while (transItr.hasNext()) {
-			String unnormalizedCommJson = transItr.next().toString();
-			JSONObject unnormalizedCommObj = new JSONObject(unnormalizedCommJson);
-			JSONArray inputParamArr = (JSONArray) unnormalizedCommObj.
-					get(HistoryArguments.inputParameters.name());
-			
-			boolean result = WorksheetCommandHistoryReader.normalizeCommandHistoryJsonInput(
-					workspace, worksheet.getId(), inputParamArr);
-			if (!result) {
-				logger.error("Error occured while normalizing the JSONinput for transformation " +
-						"commands.");
-				continue;
-			}
-			commsJSON.add(unnormalizedCommObj.toString());
+
+			commsJSON.add(transItr.next().toString());
 		}
 		return commsJSON;
 	}

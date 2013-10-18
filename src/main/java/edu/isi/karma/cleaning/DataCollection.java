@@ -47,7 +47,7 @@ public class DataCollection {
 	public void print()
 	{
 		MyLogger.logsth("============Detail Information==========="+this.getDate()+"\n");
-		MyLogger.logsth(this.config+"\n");
+		MyLogger.logsth(config+"\n");
 		for(FileStat f: fstates)
 		{
 			MyLogger.logsth(""+f.toString());
@@ -82,7 +82,7 @@ public class DataCollection {
 		}
 		// get average value
 		MyLogger.logsth("============Summary Information===========\n"+this.getDate()+"\n");
-		MyLogger.logsth(this.config+"\n");
+		MyLogger.logsth(config+"\n");
 		for(String key:stats.keySet())
 		{
 			Double[] value = stats.get(key);

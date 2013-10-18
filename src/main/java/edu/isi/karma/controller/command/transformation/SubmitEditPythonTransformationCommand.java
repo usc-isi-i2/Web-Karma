@@ -38,14 +38,16 @@ import edu.isi.karma.webserver.WorkspaceRegistry;
 public class SubmitEditPythonTransformationCommand extends SubmitPythonTransformationCommand {
 	
 	private Command previousPythonTransformationCommand;
-	private String previousCommandId;
+	private final String previousCommandId;
+	private final String targetHNodeId;
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitEditPythonTransformationCommand.class);
 
 	public SubmitEditPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
-			String worksheetId, String hNodeId, String hTableId, String errorDefaultValue, String previousCommandId) {
+			String worksheetId, String hNodeId, String errorDefaultValue, String previousCommandId, String targetHNodeId) {
 		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
 		this.previousCommandId = previousCommandId;
+		this.targetHNodeId = targetHNodeId;
 	}
 
 	@Override
@@ -79,14 +81,12 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 		this.previousPythonTransformationCommand = ctrl.getWorkspace().getCommandHistory().getCommand(previousCommandId);
 		if(previousPythonTransformationCommand == null || !(previousPythonTransformationCommand instanceof SubmitPythonTransformationCommand) )
 		{
-			logger.error("Previous Python Transformation Command Doesn't exist!");
-			return new UpdateContainer(new ErrorUpdate("Error occured while editing previous python transformation command."));
+			logger.info("Previous Python Transformation Command Doesn't exist!");
 		}
-		this.addColCmd = ((SubmitPythonTransformationCommand)this.previousPythonTransformationCommand).addColCmd;
 		try
 		{
 			UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
-				hNode, ctrl, this.addColCmd.getNewHNodeId());
+				hNode, ctrl, targetHNodeId);
 			return c;
 		}
 		catch (Exception e )

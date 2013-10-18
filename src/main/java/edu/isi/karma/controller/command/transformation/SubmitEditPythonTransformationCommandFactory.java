@@ -36,7 +36,7 @@ import edu.isi.karma.webserver.KarmaException;
 public class SubmitEditPythonTransformationCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 
 	private enum Arguments {
-		newColumnName, transformationCode, worksheetId, hTableId, hNodeId, errorDefaultValue, previousCommandId
+		newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, previousCommandId, targetHNodeId
 	}
 	
 	@Override
@@ -50,12 +50,12 @@ public class SubmitEditPythonTransformationCommandFactory extends CommandFactory
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String newColumnName = HistoryJsonUtil.getStringValue(Arguments.newColumnName.name(), inputJson);
 		String code = HistoryJsonUtil.getStringValue(Arguments.transformationCode.name(), inputJson);
-		String hTableId = HistoryJsonUtil.getStringValue(Arguments.hTableId.name(), inputJson);
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String errorDefaultValue = HistoryJsonUtil.getStringValue(Arguments.errorDefaultValue.name(), inputJson);
 		String previousCommandId = HistoryJsonUtil.getStringValue(Arguments.previousCommandId.name(), inputJson);
+		String targetHNodeId = HistoryJsonUtil.getStringValue(Arguments.targetHNodeId.name(), inputJson);
 		SubmitEditPythonTransformationCommand comm = new SubmitEditPythonTransformationCommand(getNewId(workspace), 
-				newColumnName, code, worksheetId, hNodeId, hTableId, errorDefaultValue, previousCommandId);
+				newColumnName, code, worksheetId, hNodeId, errorDefaultValue, previousCommandId, targetHNodeId);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

@@ -21,7 +21,6 @@
 
 package edu.isi.karma.imp.rdf;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +36,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.tdb.TDB;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.util.FileManager;
-
-import edu.isi.karma.er.helper.ConfigUtil;
 
 public class testRepository {
 

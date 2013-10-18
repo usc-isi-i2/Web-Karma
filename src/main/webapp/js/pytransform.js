@@ -146,9 +146,9 @@ function submitEditPythonTransform() {
     newInfo.push(getParamObject("transformationCode", ace.edit("transformCodeEditor").getValue(), "other"));
     newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
     newInfo.push(getParamObject("hNodeId", hNode.data("columnDerivedFrom"), "hNodeId"));
-    newInfo.push(getParamObject("hTableId", "", "other"));
     newInfo.push(getParamObject("previousCommandId", hNode.data("previousCommandId"), "other"));
     newInfo.push(getParamObject("errorDefaultValue", $("#pythonTransformErrorDefaultValue").val(), "other"));
+    newInfo.push(getParamObject("targetHNodeId", hNodeId, "hNodeId"));
     info["newInfo"] = JSON.stringify(newInfo);
 
     showLoading(worksheetId)
@@ -188,7 +188,6 @@ function submitPythonTransform() {
     newInfo.push(getParamObject("transformationCode", ace.edit("transformCodeEditor").getValue(), "other"));
     newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
     newInfo.push(getParamObject("hNodeId", hNodeId, "hNodeId"));
-    newInfo.push(getParamObject("hTableId", "", "other"));
     newInfo.push(getParamObject("errorDefaultValue", $("#pythonTransformErrorDefaultValue").val(), "other"));
     info["newInfo"] = JSON.stringify(newInfo);
 
