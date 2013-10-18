@@ -29,7 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -49,7 +50,7 @@ import edu.isi.karma.rep.sources.IOType;
 
 public class Model {
 	
-	static Logger logger = Logger.getLogger(Model.class);
+	private static Logger logger = LoggerFactory.getLogger(Model.class);
 
 	private String id;
 	private String baseUri;

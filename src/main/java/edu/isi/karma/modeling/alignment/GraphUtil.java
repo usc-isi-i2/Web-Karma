@@ -33,11 +33,12 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;
@@ -46,14 +47,14 @@ import edu.isi.karma.rep.alignment.Node;
 
 public class GraphUtil {
 
-	private static Logger logger = Logger.getLogger(GraphUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(GraphUtil.class);
 	
 	// FIXME: change methods to get an Outputstream as input and write on it.
 	
-	private static String getNodeTypeString(Node node) {
+	private static String getNodeTypeString(Node node, StringBuffer sb) {
 		
 		if (node == null) {
-			System.out.println("node is null.");
+			sb.append("node is null.");
 			return null;
 		}
 		
@@ -63,10 +64,10 @@ public class GraphUtil {
     	return s;
 	}
 
-	private static String getLinkTypeString(Link link) {
+	private static String getLinkTypeString(Link link, StringBuffer sb) {
 
 		if (link == null) {
-			System.out.println("link is null.");
+			sb.append("link is null.");
 			return null;
 		}
 		
@@ -76,51 +77,51 @@ public class GraphUtil {
     	return s;
 	}
 	
-	public static void printVertex(Node node) {
+	public static void printVertex(Node node, StringBuffer sb) {
 		
 		if (node == null) {
-			System.out.println("node is null.");
+			sb.append("node is null.");
 			return;
 		}
 		
-    	System.out.print("(");
-    	System.out.print( node.getLocalId());
-//    	System.out.print( vertex.getID());
-    	System.out.print(", ");
+		sb.append("(");
+		sb.append( node.getLocalId());
+//    	sb.append( vertex.getID());
+		sb.append(", ");
 		if (node instanceof ColumnNode)
-			System.out.print( ((ColumnNode)node).getColumnName());
+			sb.append( ((ColumnNode)node).getColumnName());
 		else
-			System.out.print(node.getLabel().getLocalName());
-    	System.out.print(", ");
-    	System.out.print(getNodeTypeString(node));
-    	System.out.print(")");
+			sb.append(node.getLabel().getLocalName());
+		sb.append(", ");
+		sb.append(getNodeTypeString(node, sb));
+		sb.append(")");
 	}
 	
-	public static void printEdge(Link link) {
+	public static void printEdge(Link link, StringBuffer sb) {
 		
 		if (link == null) {
-			System.out.println("link is null.");
+			sb.append("link is null.");
 			return;
 		}
 		
-    	System.out.print("(");
-    	System.out.print( link.getLocalId());
-    	System.out.print(", ");
-    	System.out.print(link.getLabel().getLocalName());
-    	System.out.print(", ");
-    	System.out.print(getLinkTypeString(link));
-    	System.out.print(", ");
-    	System.out.print(link.getWeight());
-    	System.out.print(") - From ");
-    	printVertex(link.getSource());
-    	System.out.print(" To ");
-    	printVertex(link.getTarget());
+		sb.append("(");
+    	sb.append( link.getLocalId());
+    	sb.append(", ");
+    	sb.append(link.getLabel().getLocalName());
+    	sb.append(", ");
+    	sb.append(getLinkTypeString(link, sb));
+    	sb.append(", ");
+    	sb.append(link.getWeight());
+    	sb.append(") - From ");
+    	printVertex(link.getSource(), sb);
+    	sb.append(" To ");
+    	printVertex(link.getTarget(), sb);
 	}
 
 	public static DirectedGraph<Node, Link> asDirectedGraph(UndirectedGraph<Node, Link> undirectedGraph) {
 		
 		if (undirectedGraph == null) {
-			System.out.println("graph is null.");
+			logger.debug("graph is null.");
 			return null;
 		}		
 
@@ -138,54 +139,57 @@ public class GraphUtil {
 	public static void printGraph(Graph<Node, Link> graph) {
 		
 		if (graph == null) {
-			System.out.println("graph is null.");
+			logger.debug("graph is null.");
 			return;
 		}		
-
-		System.out.println("*** Nodes ***");
+		StringBuffer sb = new StringBuffer();
+		sb.append("*** Nodes ***");
 		for (Node vertex : graph.vertexSet()) {
-			printVertex(vertex);
-			System.out.println();
+			printVertex(vertex, sb);
+			sb.append("\n");
         }
-    	System.out.println("*** Links ***");
+		sb.append("*** Links ***");
 		for (Link edge : graph.edgeSet()) {
-			printEdge(edge);
-			System.out.println();
+			printEdge(edge, sb);
+			sb.append("\n");
         }
-		System.out.println("------------------------------------------");
+		sb.append("------------------------------------------");
+		logger.debug(sb.toString());
 		
 	}
 	
 	public static void printGraphSimple(Graph<Node, Link> graph) {
 		
 		if (graph == null) {
-			System.out.println("The input graph is null.");
+			logger.debug("The input graph is null.");
 			return;
 		}		
 
+		StringBuffer sb = new StringBuffer();
 		for (Link edge : graph.edgeSet()) {
-			System.out.print("(");
+			sb.append("(");
 //			if (edge.getSource() instanceof ColumnNode)
-//				System.out.print(edge.getSource().getLocalId() + "-" + ((ColumnNode)edge.getSource()).getColumnName());
+//				sb.append(edge.getSource().getLocalId() + "-" + ((ColumnNode)edge.getSource()).getColumnName());
 //			else
-//				System.out.print(edge.getSource().getLocalId());
-//			System.out.print(")");
-//			System.out.print(" - ");
-//			System.out.print("(");
-			System.out.print(edge.getId());
-//			System.out.print(")");
-//			System.out.print(" - ");
-//			System.out.print("(");
+//				sb.append(edge.getSource().getLocalId());
+//			sb.append(")");
+//			sb.append(" - ");
+//			sb.append("(");
+			sb.append(edge.getId());
+//			sb.append(")");
+//			sb.append(" - ");
+//			sb.append("(");
 //			if (edge.getTarget() instanceof ColumnNode)
-//				System.out.print(edge.getTarget().getLocalId() + "-" + ((ColumnNode)edge.getTarget()).getColumnName());
+//				sb.append(edge.getTarget().getLocalId() + "-" + ((ColumnNode)edge.getTarget()).getColumnName());
 //			else
-//				System.out.print(edge.getTarget().getLocalId());
-//			System.out.print(")");
-			System.out.print(" - status=" + edge.getStatus().name());
-			System.out.print(" - w=" + edge.getWeight());
-			System.out.println();
+//				sb.append(edge.getTarget().getLocalId());
+//			sb.append(")");
+			sb.append(" - status=" + edge.getStatus().name());
+			sb.append(" - w=" + edge.getWeight());
+			sb.append("\n");
         }
-		System.out.println("------------------------------------------");
+		sb.append("------------------------------------------");
+		logger.debug(sb.toString());
 		
 	}
 	
@@ -211,10 +215,10 @@ public class GraphUtil {
 //		
 //		logger.info("reversed links:");
 //		for (String s : reversedLinks)
-//			System.out.println("\t" + s);
+//			logger.info("\t" + s);
 //		logger.info("removed links:");
 //		for (String s : removedLinks)
-//			System.out.println("\t" + s);
+//			logger.info("\t" + s);
 //
 //		return rootedTree;
 //	}
@@ -320,7 +324,7 @@ public class GraphUtil {
 		
 		HashMap<Node, Integer> nodeLevels = new HashMap<Node, Integer>();
 		if (g == null || g.vertexSet() == null || g.vertexSet().size() == 0) {
-			logger.info("graph does not have any node.");
+			logger.debug("graph does not have any node.");
 			return nodeLevels;
 		}
 		
@@ -442,7 +446,7 @@ public class GraphUtil {
 				new HashMap<Node, Set<ColumnNode>>();
 
 		if (g == null || g.vertexSet() == null || g.vertexSet().size() == 0) {
-			logger.info("graph does not have any node.");
+			logger.debug("graph does not have any node.");
 			return coveredColumnNodes;
 		}
 		

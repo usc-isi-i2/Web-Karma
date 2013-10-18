@@ -4,27 +4,23 @@
  */
 package edu.isi.karma.controller.command.importdata;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
+import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.imp.Import;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
-import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This abstract class in an interface to all Commands that Import data

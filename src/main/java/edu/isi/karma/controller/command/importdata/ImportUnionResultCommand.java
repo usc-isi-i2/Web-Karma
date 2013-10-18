@@ -22,22 +22,11 @@
  */
 package edu.isi.karma.controller.command.importdata;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetListUpdate;
-import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.imp.rdf.UnionImport;
 import edu.isi.karma.imp.Import;
-import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.imp.rdf.UnionImport;
 import edu.isi.karma.rep.Workspace;
 
 public class ImportUnionResultCommand extends ImportCommand {
-
-    private static Logger logger = LoggerFactory.getLogger(ImportJSONFileCommand.class);
 
     protected ImportUnionResultCommand(String id) {
         super(id);

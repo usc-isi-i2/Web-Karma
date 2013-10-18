@@ -22,10 +22,11 @@ package edu.isi.karma.modeling.alignment;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.rep.alignment.Link;
@@ -33,7 +34,7 @@ import edu.isi.karma.rep.alignment.Node;
 
 public class GraphPreProcess {
 
-	static Logger logger = Logger.getLogger(GraphPreProcess.class);
+	static Logger logger = LoggerFactory.getLogger(GraphPreProcess.class);
 
 	DirectedWeightedMultigraph<Node, Link> gPrime;
 	List<Link> linksPreferredByUI;

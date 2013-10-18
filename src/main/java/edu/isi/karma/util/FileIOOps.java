@@ -3,7 +3,7 @@ package edu.isi.karma.util ;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-
+@Deprecated
 public class FileIOOps {
 
 	public static ArrayList<String> allLinesFromFile(String file, boolean removeEmptyLines)  {

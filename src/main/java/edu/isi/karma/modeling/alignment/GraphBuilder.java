@@ -29,8 +29,9 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Namespaces;
@@ -53,7 +54,7 @@ import edu.isi.karma.rep.alignment.SubClassLink;
 
 public class GraphBuilder {
 
-	static Logger logger = Logger.getLogger(GraphBuilder.class);
+	static Logger logger = LoggerFactory.getLogger(GraphBuilder.class);
 
 	private DirectedWeightedMultigraph<Node, Link> graph;
 	private OntologyManager ontologyManager;
@@ -111,7 +112,7 @@ public class GraphBuilder {
 			
 		this.initialGraph();
 		
-		logger.info("initial graph has been created.");
+		logger.debug("initial graph has been created.");
 	}
 	
 	public GraphBuilder(OntologyManager ontologyManager, DirectedWeightedMultigraph<Node, Link> graph) {
@@ -198,7 +199,7 @@ public class GraphBuilder {
 		this.nodeReferences = new HashMap<Node, Integer>();
 		this.uriClosure = new HashMap<String, List<String>>();
 			
-		logger.info("graph has been loaded.");
+		logger.debug("graph has been loaded.");
 	}
 	
 	
@@ -291,16 +292,16 @@ public class GraphBuilder {
 
 		long addNodesClosure = System.currentTimeMillis();
 		elapsedTimeSec = (addNodesClosure - start)/1000F;
-		logger.info("time to add nodes closure: " + elapsedTimeSec);
+		logger.debug("time to add nodes closure: " + elapsedTimeSec);
 
 		updateLinks2();
 		
 		long updateLinks = System.currentTimeMillis();
 		elapsedTimeSec = (updateLinks - addNodesClosure)/1000F;
-		logger.info("time to update links of the graph: " + elapsedTimeSec);
+		logger.debug("time to update links of the graph: " + elapsedTimeSec);
 		
-		logger.info("total number of nodes in graph: " + this.graph.vertexSet().size());
-		logger.info("total number of links in graph: " + this.graph.edgeSet().size());
+		logger.debug("total number of nodes in graph: " + this.graph.vertexSet().size());
+		logger.debug("total number of links in graph: " + this.graph.edgeSet().size());
 
 		logger.debug("exit>");		
 	}
@@ -332,7 +333,7 @@ public class GraphBuilder {
 			addNodeClosure(node, addedNodes);
 			long addNodesClosure = System.currentTimeMillis();
 			elapsedTimeSec = (addNodesClosure - start)/1000F;
-			logger.info("time to add nodes closure: " + elapsedTimeSec);
+			logger.debug("time to add nodes closure: " + elapsedTimeSec);
 
 			updateLinks2();
 //			updateLinks();
@@ -344,16 +345,16 @@ public class GraphBuilder {
 			//		This is because all the nodes that are reachable from S1 are added to the graph before adding new nodes in S2.
 			long updateLinks = System.currentTimeMillis();
 			elapsedTimeSec = (updateLinks - addNodesClosure)/1000F;
-			logger.info("time to update links of the graph: " + elapsedTimeSec);
+			logger.debug("time to update links of the graph: " + elapsedTimeSec);
 			
 //			updateLinksFromThing();
 			
 			long updateLinksFromThing = System.currentTimeMillis();
 			elapsedTimeSec = (updateLinksFromThing - updateLinks)/1000F;
-			logger.info("time to update links to Thing (root): " + elapsedTimeSec);
+			logger.debug("time to update links to Thing (root): " + elapsedTimeSec);
 
-			logger.info("total number of nodes in graph: " + this.graph.vertexSet().size());
-			logger.info("total number of links in graph: " + this.graph.edgeSet().size());
+			logger.debug("total number of nodes in graph: " + this.graph.vertexSet().size());
+			logger.debug("total number of links in graph: " + this.graph.edgeSet().size());
 		}
 
 		logger.debug("exit>");		
@@ -429,7 +430,7 @@ public class GraphBuilder {
 		linksWithSameUri.add(link);
 		
 //		if (link.getId().equals("http://km.aifb.kit.edu/projects/d3/cruiser#Vehicle1---http://km.aifb.kit.edu/projects/d3/cruiser#at---http://www.w3.org/2003/01/geo/wgs84_pos#Point1"))
-//			System.out.println("debug1");
+//			logger.debug("debug1");
 
 		changeLinkStatus(link, link.getStatus());
 		
@@ -485,7 +486,7 @@ public class GraphBuilder {
 	public void changeLinkStatus(Link link, LinkStatus newStatus) {
 
 //		if (link.getId().equals("http://km.aifb.kit.edu/projects/d3/cruiser#Vehicle1---http://km.aifb.kit.edu/projects/d3/cruiser#at---http://www.w3.org/2003/01/geo/wgs84_pos#Point1"))
-//			System.out.println("debug3");
+//			logger.debug("debug3");
 		
 		LinkStatus oldStatus = link.getStatus();
 //		if (newStatus == oldStatus)
@@ -568,7 +569,7 @@ public class GraphBuilder {
 				return false;
 		}
 
-		logger.info("removing the node " + node.getId() + "...");
+		logger.debug("removing the node " + node.getId() + "...");
 		logger.debug("<<< ref count of " + node.getId() + " : " + this.nodeReferences.get(node));
 		
 		List<Node> closure = this.getNodeClosure(node);
@@ -588,8 +589,8 @@ public class GraphBuilder {
 
 		logger.debug(">>> ref count of " + node.getId() + " : " + this.nodeReferences.get(node));
 
-		logger.info("total number of nodes in graph: " + this.graph.vertexSet().size());
-		logger.info("total number of links in graph: " + this.graph.edgeSet().size());
+		logger.debug("total number of nodes in graph: " + this.graph.vertexSet().size());
+		logger.debug("total number of links in graph: " + this.graph.edgeSet().size());
 		
 		return true;
 	}
@@ -615,13 +616,13 @@ public class GraphBuilder {
 
 		long addNodesClosure = System.currentTimeMillis();
 		elapsedTimeSec = (addNodesClosure - start)/1000F;
-		logger.info("time to add nodes closure: " + elapsedTimeSec);
+		logger.debug("time to add nodes closure: " + elapsedTimeSec);
 
 		updateLinks2();
 		
 		long updateLinks = System.currentTimeMillis();
 		elapsedTimeSec = (updateLinks - addNodesClosure)/1000F;
-		logger.info("time to update links of the graph: " + elapsedTimeSec);
+		logger.debug("time to update links of the graph: " + elapsedTimeSec);
 		
 //		updateLinksFromThing();
 		
@@ -629,8 +630,8 @@ public class GraphBuilder {
 //		elapsedTimeSec = (updateLinksFromThing - updateLinks)/1000F;
 //		logger.info("time to update links to Thing (root): " + elapsedTimeSec);
 
-		logger.info("total number of nodes in graph: " + this.graph.vertexSet().size());
-		logger.info("total number of links in graph: " + this.graph.edgeSet().size());
+		logger.debug("total number of nodes in graph: " + this.graph.vertexSet().size());
+		logger.debug("total number of links in graph: " + this.graph.edgeSet().size());
 
 		logger.debug("exit>");		
 	}
@@ -925,7 +926,7 @@ public class GraphBuilder {
 		Label label = null;
 		String key;
 
-//		System.out.println("size:" + nodes.size() * nodes.size());
+//		logger.debug("size:" + nodes.size() * nodes.size());
 //		int count = 0;
 		
 		logger.debug("Number of nodes in the graph: " + nodes.size());
@@ -933,7 +934,7 @@ public class GraphBuilder {
 		for (Node n1 : nodes) {
 			for (Node n2 : nodes) {
 
-//				System.out.println(count);
+//				logger.debug(count);
 //				count++;
 				
 				if (n1.equals(n2))
@@ -944,7 +945,7 @@ public class GraphBuilder {
 				
 				this.visitedSourceTargetPairs.add(n1.getId() + n2.getId());
 
-//				System.out.println(n1.getId() + " --- " + n2.getId());
+//				logger.debug(n1.getId() + " --- " + n2.getId());
 
 				source = n1;
 				target = n2;
@@ -1051,7 +1052,7 @@ public class GraphBuilder {
 		String id = null;
 //		int count = 0;
 
-//		System.out.println("size:" + nodes.size() * nodes.size());
+//		logger.debug("size:" + nodes.size() * nodes.size());
 		
 		for (int i = 0; i < nodes.size(); i++) {
 			
@@ -1059,7 +1060,7 @@ public class GraphBuilder {
 			for (int j = i+1; j < nodes.size(); j++) {
 
 				Node n2 = nodes.get(j);
-//				System.out.println(count);
+//				logger.debug(count);
 //				count++;
 
 				if (n1.equals(n2))
@@ -1080,20 +1081,20 @@ public class GraphBuilder {
 				
 //				if ((sourceUri.contains("Person") && targetUri.contains("CulturalHeritage")) ||
 //						(sourceUri.contains("CulturalHeritage") && targetUri.contains("Person")))
-//					System.out.println("debug1");
+//					logger.debug("debug1");
 				
 //				if ((sourceUri.contains("E42") && targetUri.contains("E54")) ||
 //						(sourceUri.contains("E54") && targetUri.contains("E42")))
-//					System.out.println("debug1");
+//					logger.debug("debug1");
 //				
 //				if ((sourceUri.contains("E22") && targetUri.contains("E54")) ||
 //						(sourceUri.contains("E54") && targetUri.contains("E22")))
-//					System.out.println("debug2");
+//					logger.debug("debug2");
 
 				
 //				if (sourceUri.endsWith("Vehicle") && targetUri.endsWith("Observation") ||
 //						targetUri.endsWith("Vehicle") && sourceUri.endsWith("Observation"))
-//					System.out.println("debug");
+//					logger.debug("debug");
 
 				id = LinkIdFactory.getLinkId(SimpleLink.getFixedLabel().getUri(), source.getId(), target.getId());
 				Link link = new SimpleLink(id, SimpleLink.getFixedLabel());
@@ -1159,11 +1160,11 @@ public class GraphBuilder {
 				ontologyManager.getObjectPropertiesWithoutDomainAndRange();
 							
 //		if (targetUri.endsWith("Person") && sourceUri.endsWith("Organisation"))
-//			System.out.println("debug");
+//			logger.debug("debug");
 		
 //		if (sourceUri.endsWith("Vehicle") && targetUri.endsWith("Observation") ||
 //		targetUri.endsWith("Vehicle") && sourceUri.endsWith("Observation"))
-//				System.out.println("debug");
+//				logger.debug("debug");
 
 		objectPropertiesDirect = ontologyManager.getObjectPropertiesDirect(sourceUri, targetUri);
 		if (objectPropertiesDirect != null) {
@@ -1396,7 +1397,7 @@ public class GraphBuilder {
 	
 	public static void main(String[] args) throws Exception {
 		
-		System.out.println(Integer.class.getFields()[0].getName());
+		logger.info(Integer.class.getFields()[0].getName());
 		
 		/** Check if any ontology needs to be preloaded **/
 		String preloadedOntDir = "/Users/mohsen/Documents/Academic/ISI/_GIT/Web-Karma/preloaded-ontologies/";
@@ -1458,16 +1459,16 @@ public class GraphBuilder {
 		
 		HashMap<Node, Integer> nodeLevels = GraphUtil.levelingCyclicGraph(g);
 		for (Node n : g.vertexSet())
-			System.out.println(n.getId() + " --- " + nodeLevels.get(n));
+			logger.info(n.getId() + " --- " + nodeLevels.get(n));
 		
 		HashMap<Node, Set<ColumnNode>> coveredColumnNodes = 
 				GraphUtil.getNodesCoverage(g, nodeLevels);
 		
-		System.out.println("Internal Nodes Coverage ...");
+		logger.info("Internal Nodes Coverage ...");
 		for (Entry<Node, Set<ColumnNode>> entry : coveredColumnNodes.entrySet()) {
-			System.out.println(entry.getKey().getId());
+			logger.info(entry.getKey().getId());
 			for (Node n : entry.getValue())
-				System.out.println("-----" + n.getId());
+				logger.info("-----" + n.getId());
 		}
 		
 //		GraphUtil.serialize(g, "test");

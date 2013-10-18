@@ -27,10 +27,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.rits.cloning.Cloner;
 
@@ -60,7 +61,7 @@ import edu.isi.karma.rep.alignment.SubClassLink;
 
 public class Alignment implements OntologyUpdateListener {
 
-	static Logger logger = Logger.getLogger(Alignment.class);
+	static Logger logger = LoggerFactory.getLogger(Alignment.class);
 
 	private GraphBuilder graphBuilder;
 	private DirectedWeightedMultigraph<Node, Link> steinerTree = null;
@@ -76,7 +77,7 @@ public class Alignment implements OntologyUpdateListener {
 
 		ontologyManager.subscribeListener(this);
 
-		logger.info("building initial graph ...");
+		logger.debug("building initial graph ...");
 		graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory);//, linkIdFactory);
 		
 	}
@@ -305,9 +306,9 @@ public class Alignment implements OntologyUpdateListener {
 	public void changeLinkStatus(String linkId, LinkStatus newStatus) {
 		
 //		if (linkId.equals("http://km.aifb.kit.edu/projects/d3/cruiser#Vehicle1---http://km.aifb.kit.edu/projects/d3/cruiser#at---http://www.w3.org/2003/01/geo/wgs84_pos#Point1"))
-//			System.out.println("debug1");
+//			logger.debug("debug1");
 //		if (linkId.equals("http://km.aifb.kit.edu/projects/d3/cruiser#Observation1---http://km.aifb.kit.edu/projects/d3/cruiser#at---http://www.w3.org/2003/01/geo/wgs84_pos#Point1"))
-//			System.out.println("debug2");
+//			logger.debug("debug2");
 		
 		logger.debug("changing the status of link " + linkId + " to " + newStatus.name());
 		Link link = this.getLinkById(linkId);
@@ -433,15 +434,19 @@ public class Alignment implements OntologyUpdateListener {
 		Collections.sort(possibleLinks, new LinkPriorityComparator());
 		
 //		for (Link l : possibleLinks) {
-//			System.out.print(l.getId() + " === ");
-//			System.out.print(l.getSource().getId() + " === ");
-//			System.out.print(l.getSource().getLabel().getNs() + " === ");
-//			System.out.print(l.getSource().getLocalId() + " === ");
-//			System.out.println(l.getSource().getDisplayId());
-//			System.out.print(l.getTarget().getId() + " === ");
-//			System.out.println(l.getLabel().getUri() + " === ");
+//			StringBuilder sb = new StringBuilder();
+//			sb.append(l.getId() + " === ");
+//			sb.append(l.getSource().getId() + " === ");
+//			sb.append(l.getSource().getLabel().getNs() + " === ");
+//			sb.append(l.getSource().getLocalId() + " === ");
+//			sb.append(l.getSource().getDisplayId());
+//			sb.append("\n");
+//			sb.append(l.getTarget().getId() + " === ");
+//			sb.append(l.getLabel().getUri() + " === ");
+//			sb.append("\n");
+//			logger.debug(sb.toString());
 //		}
-		logger.info("Finished obtaining the incoming links.");
+		logger.debug("Finished obtaining the incoming links.");
 		return possibleLinks;
 	}
 	
@@ -484,7 +489,7 @@ public class Alignment implements OntologyUpdateListener {
 		
 		Collections.sort(possibleLinks, new LinkPriorityComparator());
 
-		logger.info("Finished obtaining the outgoing links.");
+		logger.debug("Finished obtaining the outgoing links.");
 		return possibleLinks;
 	}
 	
@@ -527,7 +532,7 @@ public class Alignment implements OntologyUpdateListener {
 					// adding the domain
 					steinerNodes.add(domain);
 				} else 
-					logger.info("The column node " + ((ColumnNode)n).getColumnName() + " does not have any domain or it has more than one domain.");
+					logger.debug("The column node " + ((ColumnNode)n).getColumnName() + " does not have any domain or it has more than one domain.");
 			}
 		}
 
@@ -549,62 +554,62 @@ public class Alignment implements OntologyUpdateListener {
 	
 	public void align() {
 		
-//    	System.out.println("*** Graph ***");
+//    	logger.debug("*** Graph ***");
 //		GraphUtil.printGraphSimple(this.graphBuilder.getGraph());
 
 		long start = System.currentTimeMillis();
 		
-		logger.info("updating UI preferred links ...");
+		logger.debug("updating UI preferred links ...");
 		this.updateLinksPreferredByUI();
 
-		logger.info("forced links ...");
+		logger.debug("forced links ...");
 		if (this.getLinksByStatus(LinkStatus.ForcedByUser) != null) {
 			for (Link link: this.getLinksByStatus(LinkStatus.ForcedByUser))
-				System.out.println("\t" + link.getId());
+				logger.debug("\t" + link.getId());
 		}
 		
-		logger.info("preparing G Prime for steiner algorithm input ...");
+		logger.debug("preparing G Prime for steiner algorithm input ...");
 		
 		GraphPreProcess graphPreProcess = new GraphPreProcess(this.graphBuilder.getGraph(), 
 				this.getLinksByStatus(LinkStatus.PreferredByUI),
 				this.getLinksByStatus(LinkStatus.ForcedByUser));		
 		UndirectedGraph<Node, Link> undirectedGraph = graphPreProcess.getUndirectedGraph();
 
-		logger.info("computing steiner nodes ...");
+		logger.debug("computing steiner nodes ...");
 		List<Node> steinerNodes = this.computeSteinerNodes();
 
-		logger.info("steiner nodes ...");
+		logger.debug("steiner nodes ...");
 		if (steinerNodes != null) {
 			for (Node node: steinerNodes)
-				System.out.println("\t" + node.getId());
+				logger.debug("\t" + node.getId());
 		}
 
-		logger.info("computing steiner tree ...");
+		logger.debug("computing steiner tree ...");
 		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodes);
 		WeightedMultigraph<Node, Link> tree = steinerTree.getSteinerTree();
 		if (tree == null) {
-			logger.info("resulting tree is null ...");
+			logger.debug("resulting tree is null ...");
 			return;
 		}
 
-		System.out.println("*** steiner tree before post processing step ***");
+		logger.debug("*** steiner tree before post processing step ***");
 		GraphUtil.printGraphSimple(tree);
-//		logger.info("selecting a root for the tree ...");
+//		logger.debug("selecting a root for the tree ...");
 		TreePostProcess treePostProcess = new TreePostProcess(this.graphBuilder, tree, 
 				getLinksByStatus(LinkStatus.ForcedByUser), this.graphBuilder.getThingNode());
 
 		this.steinerTree = treePostProcess.getTree();
 		this.root = treePostProcess.getRoot();
 
-		System.out.println("*** steiner tree after post processing step ***");
+		logger.debug("*** steiner tree after post processing step ***");
 		GraphUtil.printGraphSimple(this.steinerTree);
 
 		long elapsedTimeMillis = System.currentTimeMillis() - start;
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
 		
-		logger.info("total number of nodes in steiner tree: " + this.steinerTree.vertexSet().size());
-		logger.info("total number of edges in steiner tree: " + this.steinerTree.edgeSet().size());
-		logger.info("time to compute steiner tree: " + elapsedTimeSec);
+		logger.debug("total number of nodes in steiner tree: " + this.steinerTree.vertexSet().size());
+		logger.debug("total number of edges in steiner tree: " + this.steinerTree.edgeSet().size());
+		logger.debug("time to compute steiner tree: " + elapsedTimeSec);
 	}
 
 	@Override

@@ -77,7 +77,7 @@ public class CommandHistoryWriter {
 				 if(!commandAlreadyexists(commArr, commObj))
 					commArr.put(commObj);
 			}
-//			System.out.println(commArr.toString(4));
+//			logger.debug(commArr.toString(4));
 			JSONUtil.writeJsonFile(commArr, HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(wkName, 
 					workspace.getCommandPreferencesId()));
 		}

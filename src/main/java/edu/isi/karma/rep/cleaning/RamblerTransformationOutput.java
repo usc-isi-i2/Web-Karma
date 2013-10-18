@@ -99,7 +99,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 			else
 				val = "";
 			vo.setValue(k, val);
-			//System.out.println(k+","+val);
+			//logger.debug(k+","+val);
 		}
 		return vo;
 	}
@@ -132,7 +132,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 			}
 			vo.setValue(k, val);
 			vo.setKeyClass(k, cLabel);
-			//System.out.println(k+","+val);
+			//logger.debug(k+","+val);
 		}
 		return vo;
 	}

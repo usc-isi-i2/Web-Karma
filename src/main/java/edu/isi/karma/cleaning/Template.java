@@ -2,8 +2,6 @@ package edu.isi.karma.cleaning;
 
 import java.util.Vector;
 
-import org.python.antlr.PythonParser.return_stmt_return;
-
 public class Template implements GrammarTreeNode {
 	public static int temp_limit = 2048;
 	public static int supermode = 0;

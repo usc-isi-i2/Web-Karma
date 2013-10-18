@@ -7,9 +7,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -21,21 +20,14 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
 public class FetchTransformingDataCommand extends WorksheetCommand {
-	private final String worksheetId;
+
+	private static Logger logger = LoggerFactory.getLogger(FetchTransformingDataCommand.class);
 	private final String hNodeId;
 	public FetchTransformingDataCommand(String id, String worksheetId, String hNodeId)
 	{
 		super(id,worksheetId);
 		this.hNodeId = hNodeId;
-		this.worksheetId = worksheetId;
-		/////log info
-		try
-		{
-			FileAppender appender = new FileAppender(new SimpleLayout(),"./log/cleanning.log");
-			logger.addAppender(appender);
-		}
-		catch (Exception e) {
-		}
+
 	}
 
 	@Override
@@ -83,7 +75,6 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 		}
 		return inds;
 	}
-	private static Logger logger = Logger.getLogger(FetchTransformingDataCommand.class);
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getFactory().getWorksheet(worksheetId);

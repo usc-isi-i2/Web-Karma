@@ -57,7 +57,7 @@ public abstract class WorksheetCommand extends Command {
 		SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(worksheetId), workspace
 				.getCrfModelHandler(), workspace.getOntologyManager(), alignment);
 	}
-	
+	// TODO break this method up.  
 	public UpdateContainer computeAlignmentAndSemanticTypesAndCreateUpdates(Workspace workspace)
 	{
 		Alignment alignment = getAlignmentOrCreateIt(workspace);

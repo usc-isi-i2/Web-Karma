@@ -35,6 +35,8 @@ import org.apache.mahout.classifier.sgd.OnlineLogisticRegression;
 import org.apache.mahout.classifier.sgd.RecordFactory;
 import org.apache.mahout.math.DenseVector;
 import org.apache.mahout.math.RandomAccessSparseVector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
@@ -42,6 +44,7 @@ import com.google.common.io.Closeables;
 import edu.isi.karma.cleaning.PartitionClassifierType;
 
 public class RecordClassifier2 implements PartitionClassifierType {
+	private static Logger logger = LoggerFactory.getLogger(RecordClassifier2.class);
 	HashMap<String, Vector<String>> trainData = new HashMap<String, Vector<String>>();
 	RecordFeatureSet rf = new RecordFeatureSet();
 	OnlineLogisticRegression cf;
@@ -102,6 +105,7 @@ public class RecordClassifier2 implements PartitionClassifierType {
 
 	}
 
+	@Deprecated
 	private static double predictorWeight(OnlineLogisticRegression lr, int row,
 			RecordFactory csv, String predictor) {
 		double weight = 0;
@@ -144,7 +148,7 @@ public class RecordClassifier2 implements PartitionClassifierType {
 		try {
 			this.cf = this.train(trainData);
 		} catch (Exception e) {
-			System.out.println("" );
+			logger.error(e.getMessage());
 		}
 		return this.cf.toString();
 	}
@@ -189,9 +193,9 @@ public class RecordClassifier2 implements PartitionClassifierType {
 				}
 			}
 			rc.learnClassifer();
-			System.out.println(rc.Classify(test.get(0)));
+			logger.debug(rc.Classify(test.get(0)));
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 	}
 }

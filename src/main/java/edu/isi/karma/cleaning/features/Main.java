@@ -24,7 +24,7 @@ import java.io.FileReader;
 import java.util.Collection;
 import java.util.Vector;
 
-import com.sun.istack.logging.Logger;
+import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -79,7 +79,7 @@ public class Main {
 		}
 		catch(Exception ex)
 		{
-			Logger.getLogger(Main.class).info(""+ex.toString());
+			LoggerFactory.getLogger(Main.class).info(""+ex.toString());
 		}
 	}
 }

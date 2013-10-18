@@ -792,10 +792,7 @@ public class ToCSV {
 		// program. It should however, ideally be replaced with one or more
 		// catch clauses optimised to handle more specific problems.
 		catch (Exception ex) {
-			logger.info("Caught an: " + ex.getClass().getName());
-			logger.info("Message: " + ex.getMessage());
-			logger.info("Stacktrace follows:.....");
-			ex.printStackTrace(System.out);
+			logger.error("Unable to process to csv", ex);
 		}
 	}
 

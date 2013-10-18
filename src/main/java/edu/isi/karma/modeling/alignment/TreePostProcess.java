@@ -24,10 +24,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkPriorityComparator;
@@ -36,7 +37,7 @@ import edu.isi.karma.rep.alignment.SimpleLink;
 
 public class TreePostProcess {
 	
-	static Logger logger = Logger.getLogger(TreePostProcess.class);
+	static Logger logger = LoggerFactory.getLogger(TreePostProcess.class);
 
 	private GraphBuilder graphBuilder;
 	private DirectedWeightedMultigraph<Node, Link> tree;

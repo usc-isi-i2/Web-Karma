@@ -5,7 +5,8 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
@@ -18,7 +19,7 @@ import edu.isi.karma.rep.sources.WebService;
 
 public class GetRequestManager extends LinkedApiRequestManager {
 
-	static Logger logger = Logger.getLogger(GetRequestManager.class);
+	static Logger logger = LoggerFactory.getLogger(GetRequestManager.class);
 
 	public GetRequestManager(String serviceId, 
 			ResourceType resourceType, 

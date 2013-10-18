@@ -36,7 +36,6 @@ import edu.isi.karma.er.helper.ConfigUtil;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
-import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;

@@ -30,11 +30,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.cleaning.ConfigParameters;
@@ -63,6 +62,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	private HashSet<String> nodeIds = new HashSet<String>();
 	RamblerTransformationInputs inputs;
 	public String compResultString = "";
+	private static Logger logger = LoggerFactory.getLogger(GenerateCleaningRulesCommand.class);
 
 	public GenerateCleaningRulesCommand(String id, String worksheetId,
 			String hNodeId, String examples, String cellIDs) {
@@ -73,14 +73,6 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		cfg.initeParameters();
 		DataCollection.config = cfg.getString();
 		this.examples = parseExample(examples);
-		////log info
-		try
-		{
-			FileAppender appender = new FileAppender(new SimpleLayout(),"./log/cleanning.log");
-			logger.addAppender(appender);
-		}
-		catch (Exception e) {
-		}
 
 	}
 
@@ -93,7 +85,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			}
 
 		} catch (Exception e) {
-			System.out.println("" + e.toString());
+			logger.error("" + e.toString());
 		}
 		return tSet;
 	}
@@ -116,7 +108,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 				x.add(re);
 			}
 		} catch (Exception ex) {
-			System.out.println("" + ex.toString());
+			logger.error("" + ex.toString());
 		}
 		return x;
 	}
@@ -139,12 +131,12 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		String trainPath = dirpathString + "grammar/features.arff";
 		//
 		String[] x = (String[]) res.toArray(new String[res.size()]);
-		System.out.println("" + x);
+		logger.trace("" + x);
 		// Vector<Double> scores = UtilTools.getScores(x, trainPath);
 		Vector<Double> scores = UtilTools.getScores2(x, cmpres);
-		System.out.println("Scores: " + scores);
+		logger.trace("Scores: " + scores);
 		Vector<Integer> ins = UtilTools.topKindexs(scores, k);
-		System.out.println("Indexs: " + ins);
+		logger.trace("Indexs: " + ins);
 		Vector<String> y = new Vector<String>();
 		for (int i = 0; i < k && i < ins.size(); i++) {
 			y.add(x[ins.get(i)]);
@@ -264,7 +256,6 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		dict.put("Orgdis", orgdis);
 		dict.put("Tardis", tardis);
 	}
-	private static Logger logger = Logger.getLogger(GenerateCleaningRulesCommand.class);
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getFactory().getWorksheet(worksheetId);
@@ -404,7 +395,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 				jsobj.put(key, jsonArray);
 			}
 		} catch (Exception e) {
-			System.out.println("value generation error");
+			logger.error("value generation error");
 		}
 		return jsobj.toString();
 	}
@@ -545,15 +536,15 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 					}
 					// //////
 					if (js2tps.keySet().size() == 0) {
-						System.out.println("No Rules have been found");
+						logger.debug("No Rules have been found");
 						return;
 					}
 					for (String s : js2tps.keySet()) {
-						System.out.println("" + s);
+						logger.debug("" + s);
 					}
 				}
 			} catch (Exception ex) {
-				System.out.println("" + ex.toString());
+				logger.error("" + ex.toString());
 			}
 		}
 	}
