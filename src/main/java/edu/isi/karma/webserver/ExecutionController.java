@@ -113,8 +113,6 @@ import edu.isi.karma.controller.command.importdata.ImportOntologyCommand;
 import edu.isi.karma.controller.command.importdata.ImportOntologyCommandFactory;
 import edu.isi.karma.controller.command.importdata.ImportServiceCommand;
 import edu.isi.karma.controller.command.importdata.ImportServiceCommandFactory;
-import edu.isi.karma.controller.command.importdata.ImportUnionResultCommand;
-import edu.isi.karma.controller.command.importdata.ImportUnionResultCommandFactory;
 import edu.isi.karma.controller.command.importdata.ImportXMLFileCommand;
 import edu.isi.karma.controller.command.importdata.ImportXMLFileCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishCSVCommand;
@@ -270,8 +268,6 @@ public class ExecutionController {
                 new ResetKarmaCommandFactory());
         commandFactoryMap.put(FetchTransformingDataCommand.class.getSimpleName(),
                 new FetchTransformingDataFactory());
-        commandFactoryMap.put(ImportUnionResultCommand.class.getSimpleName(),
-                new ImportUnionResultCommandFactory());
         commandFactoryMap.put(MultipleValueEditColumnCommand.class.getSimpleName(),
                 new MultipleValueEditColumnCommandFactory());
         commandFactoryMap.put(SubmitCleaningCommand.class.getSimpleName(),
