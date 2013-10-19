@@ -1,0 +1,765 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
+
+/*td {
+	text-align:center;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	border-width: 1px;
+}*/
+td.cs {
+	width: 3px;
+}
+
+td.rs {
+	height:5px;
+}
+
+/*table {
+	border-collapse: collapse;
+}*/
+/*tr.separatorRow td {
+	height: 10px;
+}
+
+td.cs {
+	width: 10px;
+	height: 10px;
+}*/
+
+/*.bordertdTags {
+	width: 5px;
+}*/
+
+/* TopLevelTable classes */
+.filltopLevelTableCell {
+	background: #00174D;
+	color: #E6EDFF;
+}
+
+.datatopLevelTableCell {
+	background: #F0F3FF;
+	color: #002D94;
+}
+
+.topBorderoutertopLevelTableCell {
+	border-top-style: solid;
+	border-top-color: #80A6FF;
+}
+
+.topBorderinnertopLevelTableCell {
+	border-top-style: dotted;
+	border-top-color: #80A6FF;
+}
+
+.topBordernonetopLevelTableCell {
+	border-top-style: none;
+	border-top-color: #80A6FF;
+}
+
+.leftBorderoutertopLevelTableCell {
+	border-left-style: solid;
+	border-left-color: #80A6FF;
+}
+
+.leftBorderinnertopLevelTableCell {
+	border-left-style: dotted;
+	border-left-color: #80A6FF;
+}
+
+.leftBordernonetopLevelTableCell {
+	border-left-style: none;
+	border-left-color: #80A6FF;
+}
+
+.rightBorderoutertopLevelTableCell {
+	border-right-style: solid;
+	border-right-color: #80A6FF;
+}
+
+.rightBorderinnertopLevelTableCell {
+	border-right-style: dotted;
+	border-right-color: #80A6FF;
+}
+
+.rightBordernonetopLevelTableCell {
+	border-right-style: none;
+	border-right-color: #80A6FF;
+}
+
+.bottomBorderoutertopLevelTableCell {
+	border-bottom-style: solid;
+	border-bottom-color: #80A6FF;
+}
+
+.bottomBorderinnertopLevelTableCell {
+	border-bottom-style: dotted;
+	border-bottom-color: #80A6FF;
+}
+
+.bottomBordernonetopLevelTableCell {
+	border-bottom-style: none;
+	border-bottom-color: #80A6FF;
+}
+
+/* Table01Cell classes */
+.filltable01cell {
+	background: #4D4800;
+	color: #FFFDE6;
+}
+
+.datatable01cell {
+	background: #FEFFFC;
+	color: #455A2D;
+}
+
+.topBorderoutertable01cell {
+	border-top-style: solid;
+	border-top-color: #C0B512;
+}
+
+.topBorderinnertable01cell {
+	border-top-style: dotted;
+	border-top-color: #C0B512;
+}
+
+.topBordernonetable01cell {
+	border-top-style: none;
+	border-top-color: #C0B512;
+}
+
+.leftBorderoutertable01cell {
+	border-left-style: solid;
+	border-left-color: #C0B512;
+}
+
+.leftBorderinnertable01cell {
+	border-left-style: dotted;
+	border-left-color: #C0B512;
+}
+
+.leftBordernonetable01cell {
+	border-left-style: none;
+	border-left-color: #C0B512;
+}
+
+.rightBorderoutertable01cell {
+	border-right-style: solid;
+	border-right-color: #C0B512;
+}
+
+.rightBorderinnertable01cell {
+	border-right-style: dotted;
+	border-right-color: #C0B512;
+}
+
+.rightBordernonetable01cell {
+	border-right-style: none;
+	border-right-color: #C0B512;
+}
+
+.bottomBorderoutertable01cell {
+	border-bottom-style: solid;
+	border-bottom-color: #C0B512;
+}
+
+.bottomBorderinnertable01cell {
+	border-bottom-style: dotted;
+	border-bottom-color: #C0B512;
+}
+
+.bottomBordernonetable01cell {
+	border-bottom-style: none;
+	border-bottom-color: #C0B512;
+}
+
+/* Table02Cell classes */
+.filltable02cell {
+	background: #4D1000;
+	color: #FFFDE6;
+}
+
+.datatable02cell {
+	background: #FFF7F5;
+	color: #6F4338;
+}
+
+.topBorderoutertable02cell {
+	border-top-style: solid;
+	border-top-color: #FF9A80;
+}
+
+.topBorderinnertable02cell {
+	border-top-style: dotted;
+	border-top-color: #FF9A80;
+}
+
+.topBordernonetable02cell {
+	border-top-style: none;
+	border-top-color: #FF9A80;
+}
+
+.leftBorderoutertable02cell {
+	border-left-style: solid;
+	border-left-color: #FF9A80;
+}
+
+.leftBorderinnertable02cell {
+	border-left-style: dotted;
+	border-left-color: #FF9A80;
+}
+
+.leftBordernonetable02cell {
+	border-left-style: none;
+	border-left-color: #FF9A80;
+}
+
+.rightBorderoutertable02cell {
+	border-right-style: solid;
+	border-right-color: #FF9A80;
+}
+
+.rightBorderinnertable02cell {
+	border-right-style: dotted;
+	border-right-color: #FF9A80;
+}
+
+.rightBordernonetable02cell {
+	border-right-style: none;
+	border-right-color: #FF9A80;
+}
+
+.bottomBorderoutertable02cell {
+	border-bottom-style: solid;
+	border-bottom-color: #FF9A80;
+}
+
+.bottomBorderinnertable02cell {
+	border-bottom-style: dotted;
+	border-bottom-color: #FF9A80;
+}
+
+.bottomBordernonetable02cell {
+	border-bottom-style: none;
+	border-bottom-color: #FF9A80;
+}
+
+/* Table03Cell classes */
+.filltable03cell {
+	background: #2F004D;
+	color: #F5E6FF;
+}
+
+.datatable03cell {
+	background: #F8EDFF;
+	color: #674080;
+}
+
+.topBorderoutertable03cell {
+	border-top-style: solid;
+	border-top-color: #CE80FF;
+}
+
+.topBorderinnertable03cell {
+	border-top-style: dotted;
+	border-top-color: #CE80FF;
+}
+
+.topBordernonetable03cell {
+	border-top-style: none;
+	border-top-color: #CE80FF;
+}
+
+.leftBorderoutertable03cell {
+	border-left-style: solid;
+	border-left-color: #CE80FF;
+}
+
+.leftBorderinnertable03cell {
+	border-left-style: dotted;
+	border-left-color: #CE80FF;
+}
+
+.leftBordernonetable03cell {
+	border-left-style: none;
+	border-left-color: #CE80FF;
+}
+
+.rightBorderoutertable03cell {
+	border-right-style: solid;
+	border-right-color: #CE80FF;
+}
+
+.rightBorderinnertable03cell {
+	border-right-style: dotted;
+	border-right-color: #CE80FF;
+}
+
+.rightBordernonetable03cell {
+	border-right-style: none;
+	border-right-color: #CE80FF;
+}
+
+.bottomBorderoutertable03cell {
+	border-bottom-style: solid;
+	border-bottom-color: #CE80FF;
+}
+
+.bottomBorderinnertable03cell {
+	border-bottom-style: dotted;
+	border-bottom-color: #CE80FF;
+}
+
+.bottomBordernonetable03cell {
+	border-bottom-style: none;
+	border-bottom-color: #CE80FF;
+}
+
+/* Table04Cell classes */
+.filltable04cell {
+	background: #1E4D00;
+	color: #F0FFE6;
+}
+
+.datatable04cell {
+	background: #F9FFF5;
+	color: #385128;
+}
+
+.topBorderoutertable04cell {
+	border-top-style: solid;
+	border-top-color: #B2FF80;
+}
+
+.topBorderinnertable04cell {
+	border-top-style: dotted;
+	border-top-color: #B2FF80;
+}
+
+.topBordernonetable04cell {
+	border-top-style: none;
+	border-top-color: #B2FF80;
+}
+
+.leftBorderoutertable04cell {
+	border-left-style: solid;
+	border-left-color: #B2FF80;
+}
+
+.leftBorderinnertable04cell {
+	border-left-style: dotted;
+	border-left-color: #B2FF80;
+}
+
+.leftBordernonetable04cell {
+	border-left-style: none;
+	border-left-color: #B2FF80;
+}
+
+.rightBorderoutertable04cell {
+	border-right-style: solid;
+	border-right-color: #B2FF80;
+}
+
+.rightBorderinnertable04cell {
+	border-right-style: dotted;
+	border-right-color: #B2FF80;
+}
+
+.rightBordernonetable04cell {
+	border-right-style: none;
+	border-right-color: #B2FF80;
+}
+
+.bottomBorderoutertable04cell {
+	border-bottom-style: solid;
+	border-bottom-color: #B2FF80;
+}
+
+.bottomBorderinnertable04cell {
+	border-bottom-style: dotted;
+	border-bottom-color: #B2FF80;
+}
+
+.bottomBordernonetable04cell {
+	border-bottom-style: none;
+	border-bottom-color: #B2FF80;
+}
+
+/* Table05Cell classes */
+.filltable05cell {
+	background: #4D3600;
+	color: #FFF8E6;
+}
+
+.datatable05cell {
+	background: #FFFAF0;
+	color: #584B2C;
+}
+
+.topBorderoutertable05cell {
+	border-top-style: solid;
+	border-top-color: #FFDA80;
+}
+
+.topBorderinnertable05cell {
+	border-top-style: dotted;
+	border-top-color: #FFDA80;
+}
+
+.topBordernonetable05cell {
+	border-top-style: none;
+	border-top-color: #FFDA80;
+}
+
+.leftBorderoutertable05cell {
+	border-left-style: solid;
+	border-left-color: #FFDA80;
+}
+
+.leftBorderinnertable05cell {
+	border-left-style: dotted;
+	border-left-color: #FFDA80;
+}
+
+.leftBordernonetable05cell {
+	border-left-style: none;
+	border-left-color: #FFDA80;
+}
+
+.rightBorderoutertable05cell {
+	border-right-style: solid;
+	border-right-color: #FFDA80;
+}
+
+.rightBorderinnertable05cell {
+	border-right-style: dotted;
+	border-right-color: #FFDA80;
+}
+
+.rightBordernonetable05cell {
+	border-right-style: none;
+	border-right-color: #FFDA80;
+}
+
+.bottomBorderoutertable05cell {
+	border-bottom-style: solid;
+	border-bottom-color: #FFDA80;
+}
+
+.bottomBorderinnertable05cell {
+	border-bottom-style: dotted;
+	border-bottom-color: #FFDA80;
+}
+
+.bottomBordernonetable05cell {
+	border-bottom-style: none;
+	border-bottom-color: #FFDA80;
+}
+
+/* Table06Cell classes */
+.filltable06cell {
+	background: #4D0037;
+	color: #FFE6F8;
+}
+
+.datatable06cell {
+	background: #FFF4FC;
+	color: #5E2F51;
+}
+
+.topBorderoutertable06cell {
+	border-top-style: solid;
+	border-top-color: #FF80B7;
+}
+
+.topBorderinnertable06cell {
+	border-top-style: dotted;
+	border-top-color: #FF80B7;
+}
+
+.topBordernonetable06cell {
+	border-top-style: none;
+	border-top-color: #FF80B7;
+}
+
+.leftBorderoutertable06cell {
+	border-left-style: solid;
+	border-left-color: #FF80B7;
+}
+
+.leftBorderinnertable06cell {
+	border-left-style: dotted;
+	border-left-color: #FF80B7;
+}
+
+.leftBordernonetable06cell {
+	border-left-style: none;
+	border-left-color: #FF80B7;
+}
+
+.rightBorderoutertable06cell {
+	border-right-style: solid;
+	border-right-color: #FF80B7;
+}
+
+.rightBorderinnertable06cell {
+	border-right-style: dotted;
+	border-right-color: #FF80B7;
+}
+
+.rightBordernonetable06cell {
+	border-right-style: none;
+	border-right-color: #FF80B7;
+}
+
+.bottomBorderoutertable06cell {
+	border-bottom-style: solid;
+	border-bottom-color: #FF80B7;
+}
+
+.bottomBorderinnertable06cell {
+	border-bottom-style: dotted;
+	border-bottom-color: #FF80B7;
+}
+
+.bottomBordernonetable06cell {
+	border-bottom-style: none;
+	border-bottom-color: #FF80B7;
+}
+
+/* Table07Cell classes */
+.filltable07cell {
+	background: #004D44;
+	color: #E6FFFC;
+}
+
+.datatable07cell {
+	background: #EFFFFD;
+	color: #284F4B;
+}
+
+.topBorderoutertable07cell {
+	border-top-style: solid;
+	border-top-color: #6C9995;
+}
+
+.topBorderinnertable07cell {
+	border-top-style: dotted;
+	border-top-color: #6C9995;
+}
+
+.topBordernonetable07cell {
+	border-top-style: none;
+	border-top-color: #6C9995;
+}
+
+.leftBorderoutertable07cell {
+	border-left-style: solid;
+	border-left-color: #6C9995;
+}
+
+.leftBorderinnertable07cell {
+	border-left-style: dotted;
+	border-left-color: #6C9995;
+}
+
+.leftBordernonetable07cell {
+	border-left-style: none;
+	border-left-color: #6C9995;
+}
+
+.rightBorderoutertable07cell {
+	border-right-style: solid;
+	border-right-color: #6C9995;
+}
+
+.rightBorderinnertable07cell {
+	border-right-style: dotted;
+	border-right-color: #6C9995;
+}
+
+.rightBordernonetable07cell {
+	border-right-style: none;
+	border-right-color: #6C9995;
+}
+
+.bottomBorderoutertable07cell {
+	border-bottom-style: solid;
+	border-bottom-color: #6C9995;
+}
+
+.bottomBorderinnertable07cell {
+	border-bottom-style: dotted;
+	border-bottom-color: #6C9995;
+}
+
+.bottomBordernonetable07cell {
+	border-bottom-style: none;
+	border-bottom-color: #6C9995;
+}
+
+/* Table08Cell classes */
+.filltable08cell {
+	background: #794080;
+	color: #FDE6FF;
+}
+
+.datatable08cell {
+	background: #FFF5FF;
+	color: #5A005E;
+}
+
+.topBorderoutertable08cell {
+	border-top-style: solid;
+	border-top-color: #F380FF;
+}
+
+.topBorderinnertable08cell {
+	border-top-style: dotted;
+	border-top-color: #F380FF;
+}
+
+.topBordernonetable08cell {
+	border-top-style: none;
+	border-top-color: #F380FF;
+}
+
+.leftBorderoutertable08cell {
+	border-left-style: solid;
+	border-left-color: #F380FF;
+}
+
+.leftBorderinnertable08cell {
+	border-left-style: dotted;
+	border-left-color: #F380FF;
+}
+
+.leftBordernonetable08cell {
+	border-left-style: none;
+	border-left-color: #F380FF;
+}
+
+.rightBorderoutertable08cell {
+	border-right-style: solid;
+	border-right-color: #F380FF;
+}
+
+.rightBorderinnertable08cell {
+	border-right-style: dotted;
+	border-right-color: #F380FF;
+}
+
+.rightBordernonetable08cell {
+	border-right-style: none;
+	border-right-color: #F380FF;
+}
+
+.bottomBorderoutertable08cell {
+	border-bottom-style: solid;
+	border-bottom-color: #F380FF;
+}
+
+.bottomBorderinnertable08cell {
+	border-bottom-style: dotted;
+	border-bottom-color: #F380FF;
+}
+
+.bottomBordernonetable08cell {
+	border-bottom-style: none;
+	border-bottom-color: #F380FF;
+}
+
+/* Table09Cell classes */
+.filltable09cell {
+	background: #804040;
+	color: #FFE6E6;
+}
+
+.datatable09cell {
+	background: #FFFCFC;
+	color: #670005;
+}
+
+.topBorderoutertable09cell {
+	border-top-style: solid;
+	border-top-color: #FF8080;
+}
+
+.topBorderinnertable09cell {
+	border-top-style: dotted;
+	border-top-color: #FF8080;
+}
+
+.topBordernonetable09cell {
+	border-top-style: none;
+	border-top-color: #FF8080;
+}
+
+.leftBorderoutertable09cell {
+	border-left-style: solid;
+	border-left-color: #FF8080;
+}
+
+.leftBorderinnertable09cell {
+	border-left-style: dotted;
+	border-left-color: #FF8080;
+}
+
+.leftBordernonetable09cell {
+	border-left-style: none;
+	border-left-color: #FF8080;
+}
+
+.rightBorderoutertable09cell {
+	border-right-style: solid;
+	border-right-color: #FF8080;
+}
+
+.rightBorderinnertable09cell {
+	border-right-style: dotted;
+	border-right-color: #FF8080;
+}
+
+.rightBordernonetable09cell {
+	border-right-style: none;
+	border-right-color: #FF8080;
+}
+
+.bottomBorderoutertable09cell {
+	border-bottom-style: solid;
+	border-bottom-color: #FF8080;
+}
+
+.bottomBorderinnertable09cell {
+	border-bottom-style: dotted;
+	border-bottom-color: #FF8080;
+}
+
+.bottomBordernonetable09cell {
+	border-bottom-style: none;
+	border-bottom-color: #FF8080;
+}
+
+
+
+
+

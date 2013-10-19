@@ -1,0 +1,98 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
+
+#CSVImportDiv {
+	width: 60%;
+}
+
+#CSVImportDiv.button-form {
+	height: 24px;
+	width: 60px;
+}
+
+#CSVImportDiv table {
+	border-width: 0px; 
+	border-spacing: 0px; 
+	border-collapse: collapse;
+}
+
+#CSVImportOptionsTable td {
+	font-family: Helvetica, sans-serif;
+	text-align: left;
+	font-size: 12px;
+	height: 20px;
+	padding: 3px;
+}
+
+#CSVPreviewTable td {
+	font-family: Arial, sans-serif;
+	text-align: left;
+	font-size: 10px;
+	padding: 2px;
+}
+
+#CSVPreviewTable {
+	margin: 5px;
+}
+
+#CSVPreviewTable th {
+	font-family: Arial, sans-serif;
+	text-align: left;
+	font-size: 12px;
+	border-collapse: collapse;
+	border: solid 1px #000000;
+	padding: 2px;
+}
+
+#CSVPreviewTable th.ItalicColumnNames {
+	font-style: italic;
+}
+
+#CSVPreviewTable td {
+	border: 1px solid #000000;
+	border-collapse: collapse;
+}
+
+#CSVPreviewTable td.rowIndexCell {
+	border: 1px dotted #000000;
+	width: 60px;
+	text-align: center;
+}
+
+#CSVImportDiv td.inputElement {
+	text-align: right;
+	padding-left: 20px;
+}
+
+#CSVSourceName {
+	font-family: Helvetica;
+	font-size: 16px;
+}
+
+#importOptionsHeader {
+	font-weight: 700;
+}
+
+#previewTableHeader {
+	padding: 5px;
+	font-size: 14px;
+}
+

@@ -1,0 +1,75 @@
+@relation featureValue
+
+@attribute a_0 numeric
+@attribute a_1 numeric
+@attribute a_2 numeric
+@attribute a_3 numeric
+@attribute a_4 numeric
+@attribute a_5 numeric
+@attribute a_6 numeric
+@attribute a_7 numeric
+@attribute a_8 numeric
+@attribute a_9 numeric
+@attribute a_10 numeric
+@attribute a_11 numeric
+@attribute a_12 numeric
+@attribute a_13 numeric
+@attribute a_14 numeric
+@attribute a_15 numeric
+@attribute a_16 numeric
+@attribute a_17 numeric
+@attribute a_18 numeric
+@attribute a_19 numeric
+@attribute a_20 numeric
+@attribute a_21 numeric
+@attribute a_22 numeric
+@attribute a_23 numeric
+@attribute a_24 numeric
+@attribute a_25 numeric
+@attribute a_26 numeric
+@attribute a_27 numeric
+@attribute a_28 numeric
+@attribute a_29 numeric
+@attribute a_30 numeric
+@attribute a_31 numeric
+@attribute a_32 numeric
+@attribute a_33 numeric
+@attribute a_34 numeric
+@attribute a_35 numeric
+@attribute a_36 numeric
+@attribute a_37 numeric
+@attribute a_38 numeric
+@attribute a_39 numeric
+@attribute a_40 numeric
+@attribute a_41 numeric
+@attribute a_42 numeric
+@attribute a_43 numeric
+@attribute a_44 numeric
+@attribute a_45 numeric
+@attribute a_46 numeric
+@attribute a_47 numeric
+@attribute a_48 numeric
+@attribute a_49 numeric
+@attribute a_50 numeric
+@attribute a_51 numeric
+@attribute a_52 numeric
+@attribute a_53 numeric
+@attribute a_54 numeric
+@attribute a_55 numeric
+@attribute label {-1,1}
+
+@data
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+0,0.176764,0,0,0,0,0,0,0,0.171574,0.114354,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.198386,0.321291,0.31988,0.258538,0,0.176764,0,0,0,0,0,0,0,0.171574,0.114354,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1
+0,0,0.21503,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.130019,0,0,0,0.025598,0.377962,0.282106,0.38078,0.24488,0,0,0.21503,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.130019,0,0,0,0.025598,-1
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.234754,0,0,0,0,0,0,0,0,0,0,0,0,0.291881,0,0.229092,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.173745,0,0,0,0,0,0,0,0,0,0,0,-1
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.162313,0,0,0,0,0,0,0,0,0,0,0,0,0.290565,0,0.272081,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.162313,0,0,0,0,0,0,0,0,0,0,0,-1
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.214596,0,0,0,0,0,0,0.130019,0,0.143033,0.168951,0,0.30481,0.40629,0.211908,0.288389,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.214596,0,0,0,0,0,0,0.130019,0,0.143033,0.168951,0,-1
+0,0,0,0,0,0,0,0,0,0,0,0.084676,0.025598,0,0.171574,0,0,0,0,0,0,0,0,0,0,0,0.201878,0.240771,0,0.228091,0,0,0,0,0,0,0,0,0,0,0,0.084676,0.025598,0,0.171574,0,0,0,0,0,0,0,0,0,0,0,-1
+0,0,0.043818,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.185812,0,0,0,0,0.352202,0.198158,0.217424,0.361594,0,0,0.043818,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.185812,0,0,0,0,-1

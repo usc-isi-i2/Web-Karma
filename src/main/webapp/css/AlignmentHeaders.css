@@ -1,0 +1,406 @@
+/*******************************************************************************
+ * Copyright 2012 University of Southern California
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * This code was developed by the Information Integration Group as part 
+ * of the Karma project at the Information Sciences Institute of the 
+ * University of Southern California.  For more information, publications, 
+ * and related projects, please see: http://www.isi.edu/integration
+ ******************************************************************************/
+
+span.KeyAtrributeLabel {
+	font-style: italic;
+	font-size: 10px;
+}
+
+span.italic {
+	font-style: italic;
+}
+
+div.AlignmentHeadingNameDiv {
+	display: inline;
+}
+
+div.AlignmentLinkConfigDiv {
+	padding-right: 5px;
+	font-style: italic;
+	display: inline;
+}
+
+button.duplicateClass {
+	font-size: 1.6em !important;
+	margin-left: 5px;
+}
+
+div#CurrentSemanticTypesBox {
+}
+
+div#CurrentSemanticTypesBox td {
+	font-size: 10px;
+}
+
+/* TopLevelAlignmentTable classes */
+.filltopLevelAlignmentTableCell {
+	background: #1A1A1A;
+	color: #FFFFFF;
+}
+
+.datatopLevelAlignmentTableCell {
+	background: #FF80DC;
+	color: #000000;
+}
+
+.topBorderoutertopLevelAlignmentTableCell {
+	border-top-style: solid;
+	border-top-color: #FFFFFF;
+}
+
+.topBorderinnertopLevelAlignmentTableCell {
+	border-top-style: dotted;
+	border-top-color: #FFFFFF;
+}
+
+.topBordernonetopLevelAlignmentTableCell {
+	border-top-style: none;
+	border-top-color: #FFFFFF;
+}
+
+.leftBorderoutertopLevelAlignmentTableCell {
+	border-left-style: solid;
+	border-left-color: #FFFFFF;
+}
+
+.leftBorderinnertopLevelAlignmentTableCell {
+	border-left-style: dotted;
+	border-left-color: #FFFFFF;
+}
+
+.leftBordernonetopLevelAlignmentTableCell {
+	border-left-style: none;
+	border-left-color: #FFFFFF;
+}
+
+.rightBorderoutertopLevelAlignmentTableCell {
+	border-right-style: solid;
+	border-right-color: #FFFFFF;
+}
+
+.rightBorderinnertopLevelAlignmentTableCell {
+	border-right-style: dotted;
+	border-right-color: #FFFFFF;
+}
+
+.rightBordernonetopLevelAlignmentTableCell {
+	border-right-style: none;
+	border-right-color: #FFFFFF;
+}
+
+.bottomBorderoutertopLevelAlignmentTableCell {
+	border-bottom-style: solid;
+	border-bottom-color: #FFFFFF;
+}
+
+.bottomBorderinnertopLevelAlignmentTableCell {
+	border-bottom-style: dotted;
+	border-bottom-color: #FFFFFF;
+}
+
+.bottomBordernonetopLevelAlignmentTableCell {
+	border-bottom-style: none;
+	border-bottom-color: #FFFFFF;
+}
+
+/* AlignmentTable01Cell classes */
+.fillAlignmentTable01cell {
+	background: #404040;
+	color: #FFFFFF;
+}
+
+.dataAlignmentTable01cell {
+	background: #FFFFFF;
+	color: #000000;
+}
+
+.topBorderouterAlignmentTable01cell {
+	border-top-style: solid;
+	border-top-color: #FFFFFF;
+}
+
+.topBorderinnerAlignmentTable01cell {
+	border-top-style: dotted;
+	border-top-color: #FFFFFF;
+}
+
+.topBordernoneAlignmentTable01cell {
+	border-top-style: none;
+	border-top-color: #FFFFFF;
+}
+
+.leftBorderouterAlignmentTable01cell {
+	border-left-style: solid;
+	border-left-color: #FFFFFF;
+}
+
+.leftBorderinnerAlignmentTable01cell {
+	border-left-style: dotted;
+	border-left-color: #FFFFFF;
+}
+
+.leftBordernoneAlignmentTable01cell {
+	border-left-style: none;
+	border-left-color: #FFFFFF;
+}
+
+.rightBorderouterAlignmentTable01cell {
+	border-right-style: solid;
+	border-right-color: #FFFFFF;
+}
+
+.rightBorderinnerAlignmentTable01cell {
+	border-right-style: dotted;
+	border-right-color: #FFFFFF;
+}
+
+.rightBordernoneAlignmentTable01cell {
+	border-right-style: none;
+	border-right-color: #FFFFFF;
+}
+
+.bottomBorderouterAlignmentTable01cell {
+	border-bottom-style: solid;
+	border-bottom-color: #FFFFFF;
+}
+
+.bottomBorderinnerAlignmentTable01cell {
+	border-bottom-style: dotted;
+	border-bottom-color: #FFFFFF;
+}
+
+.bottomBordernoneAlignmentTable01cell {
+	border-bottom-style: none;
+	border-bottom-color: #FFFFFF;
+}
+
+/* AlignmentTable02Cell classes */
+.fillAlignmentTable02cell {
+	background: #666666;
+	color: #FFFFFF;
+}
+
+.dataAlignmentTable02cell {
+	background: #CCCCCC;
+	color: #000000;
+}
+
+.topBorderouterAlignmentTable02cell {
+	border-top-style: solid;
+	border-top-color: #FFFFFF;
+}
+
+.topBorderinnerAlignmentTable02cell {
+	border-top-style: dotted;
+	border-top-color: #FFFFFF;
+}
+
+.topBordernoneAlignmentTable02cell {
+	border-top-style: none;
+	border-top-color: #FFFFFF;
+}
+
+.leftBorderouterAlignmentTable02cell {
+	border-left-style: solid;
+	border-left-color: #FFFFFF;
+}
+
+.leftBorderinnerAlignmentTable02cell {
+	border-left-style: dotted;
+	border-left-color: #FFFFFF;
+}
+
+.leftBordernoneAlignmentTable02cell {
+	border-left-style: none;
+	border-left-color: #FFFFFF;
+}
+
+.rightBorderouterAlignmentTable02cell {
+	border-right-style: solid;
+	border-right-color: #FFFFFF;
+}
+
+.rightBorderinnerAlignmentTable02cell {
+	border-right-style: dotted;
+	border-right-color: #FFFFFF;
+}
+
+.rightBordernoneAlignmentTable02cell {
+	border-right-style: none;
+	border-right-color: #FFFFFF;
+}
+
+.bottomBorderouterAlignmentTable02cell {
+	border-bottom-style: solid;
+	border-bottom-color: #FFFFFF;
+}
+
+.bottomBorderinnerAlignmentTable02cell {
+	border-bottom-style: dotted;
+	border-bottom-color: #FFFFFF;
+}
+
+.bottomBordernoneAlignmentTable02cell {
+	border-bottom-style: none;
+	border-bottom-color: #FFFFFF;
+}
+
+/* AlignmentTable03Cell classes */
+.fillAlignmentTable03cell {
+	background: #8C8C8C;
+	color: #FFFFFF;
+}
+
+.dataAlignmentTable03cell {
+	background: #B3B3B3;
+	color: #000000;
+}
+
+.topBorderouterAlignmentTable03cell {
+	border-top-style: solid;
+	border-top-color: #FFFFFF;
+}
+
+.topBorderinnerAlignmentTable03cell {
+	border-top-style: dotted;
+	border-top-color: #FFFFFF;
+}
+
+.topBordernoneAlignmentTable03cell {
+	border-top-style: none;
+	border-top-color: #FFFFFF;
+}
+
+.leftBorderouterAlignmentTable03cell {
+	border-left-style: solid;
+	border-left-color: #FFFFFF;
+}
+
+.leftBorderinnerAlignmentTable03cell {
+	border-left-style: dotted;
+	border-left-color: #FFFFFF;
+}
+
+.leftBordernoneAlignmentTable03cell {
+	border-left-style: none;
+	border-left-color: #FFFFFF;
+}
+
+.rightBorderouterAlignmentTable03cell {
+	border-right-style: solid;
+	border-right-color: #FFFFFF;
+}
+
+.rightBorderinnerAlignmentTable03cell {
+	border-right-style: dotted;
+	border-right-color: #FFFFFF;
+}
+
+.rightBordernoneAlignmentTable03cell {
+	border-right-style: none;
+	border-right-color: #FFFFFF;
+}
+
+.bottomBorderouterAlignmentTable03cell {
+	border-bottom-style: solid;
+	border-bottom-color: #FFFFFF;
+}
+
+.bottomBorderinnerAlignmentTable03cell {
+	border-bottom-style: dotted;
+	border-bottom-color: #FFFFFF;
+}
+
+.bottomBordernoneAlignmentTable03cell {
+	border-bottom-style: none;
+	border-bottom-color: #FFFFFF;
+}
+
+/* AlignmentTable04Cell classes */
+.fillAlignmentTable04cell {
+	background: #B3B3B3;
+	color: #FFFFFF;
+}
+
+.dataAlignmentTable04cell {
+	background: #999999;
+	color: #000000;
+}
+
+.topBorderouterAlignmentTable04cell {
+	border-top-style: solid;
+	border-top-color: #FFFFFF;
+}
+
+.topBorderinnerAlignmentTable04cell {
+	border-top-style: dotted;
+	border-top-color: #FFFFFF;
+}
+
+.topBordernoneAlignmentTable04cell {
+	border-top-style: none;
+	border-top-color: #FFFFFF;
+}
+
+.leftBorderouterAlignmentTable04cell {
+	border-left-style: solid;
+	border-left-color: #FFFFFF;
+}
+
+.leftBorderinnerAlignmentTable04cell {
+	border-left-style: dotted;
+	border-left-color: #FFFFFF;
+}
+
+.leftBordernoneAlignmentTable04cell {
+	border-left-style: none;
+	border-left-color: #FFFFFF;
+}
+
+.rightBorderouterAlignmentTable04cell {
+	border-right-style: solid;
+	border-right-color: #FFFFFF;
+}
+
+.rightBorderinnerAlignmentTable04cell {
+	border-right-style: dotted;
+	border-right-color: #FFFFFF;
+}
+
+.rightBordernoneAlignmentTable04cell {
+	border-right-style: none;
+	border-right-color: #FFFFFF;
+}
+
+.bottomBorderouterAlignmentTable04cell {
+	border-bottom-style: solid;
+	border-bottom-color: #FFFFFF;
+}
+
+.bottomBorderinnerAlignmentTable04cell {
+	border-bottom-style: dotted;
+	border-bottom-color: #FFFFFF;
+}
+
+.bottomBordernoneAlignmentTable04cell {
+	border-bottom-style: none;
+	border-bottom-color: #FFFFFF;
+}
