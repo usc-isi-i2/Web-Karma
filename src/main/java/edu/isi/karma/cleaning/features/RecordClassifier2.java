@@ -23,14 +23,11 @@ package edu.isi.karma.cleaning.features;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Vector;
 
 import org.apache.mahout.classifier.sgd.CsvRecordFactory;
@@ -53,7 +50,6 @@ public class RecordClassifier2 implements PartitionClassifierType {
 	public RecordClassifier2() {
 
 	}
-
 	public OnlineLogisticRegression train(
 			HashMap<String, Vector<String>> traindata) throws Exception {
 		String csvTrainFile = "./target/tmp/csvtrain.csv";
@@ -91,7 +87,7 @@ public class RecordClassifier2 implements PartitionClassifierType {
 					RandomAccessSparseVector input = new RandomAccessSparseVector(
 							lmp.getNumFeatures());
 					int targetValue = csv.processLine(line, input);
-					String label = csv.getTargetCategories().get(lr.classifyFull(input).maxValueIndex());
+					//String label = csv.getTargetCategories().get(lr.classifyFull(input).maxValueIndex());
 					// now update model
 					lr.train(targetValue, input);
 					line = in.readLine();
@@ -149,7 +145,14 @@ public class RecordClassifier2 implements PartitionClassifierType {
 		} catch (Exception e) {
 			System.out.println("" );
 		}
-		return this.cf.toString();
+		if(cf ==null)
+		{
+			return "";
+		}
+		else
+		{
+			return this.cf.toString();
+		}
 	}
 
 	@Override
@@ -172,18 +175,17 @@ public class RecordClassifier2 implements PartitionClassifierType {
 			HashMap<String, Vector<String>> trainData = new HashMap<String, Vector<String>>();
 			Vector<String> test = new Vector<String>();
 			Vector<String> par1 = new Vector<String>();
-			par1.add("1286 adams blvd");
-			par1.add("3711 catalina st");
-			// par1.add("11 w 37th pl, los angeles");
+			par1.add("L: 11.5 in, Diam: .875 in");
+			par1.add("L: 9.5 in, W: 4.5 in");
 			Vector<String> par2 = new Vector<String>();
-			par2.add("1142 37st");
-			// par2.add("1 jefferson st");
-			Vector<String> par3 = new Vector<String>();
-			par3.add("710 27");
+			par2.add("H: 40 in, W: 31 in");
+			par2.add("Neg Type: 120.00 mm");
 			trainData.put("c1", par1);
 			trainData.put("c2", par2);
-			trainData.put("c3", par3);
-			test.add("2353 portland st");
+			//trainData.put("c3", par3);
+			//trainData.put("c4", par4);
+			//trainData.put("c5", par5);
+			test.add("L: 13 in, W: 13.5 in");
 
 			RecordClassifier2 rc = new RecordClassifier2();
 			for (String key : trainData.keySet()) {
