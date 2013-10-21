@@ -61,5 +61,5 @@ preloaded-library
 
 temp/
 
-dot-classpath
-dot-settings/*
+.classpath
+.settings/*
