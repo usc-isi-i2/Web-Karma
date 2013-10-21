@@ -60,3 +60,6 @@ nbactions.xml
 preloaded-library
 
 temp/
+
+dot-classpath
+dot-settings/*
