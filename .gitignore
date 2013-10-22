@@ -22,7 +22,7 @@ log/*
 src/main/webapp/publish/KML/*.*
 src/main/webapp/publish/Source Description/*.*
 src/main/webapp/publish/History/*.*
-src/main/webapp/publish/CSV/*.csv
+src/main/webapp/publish/CSV/*
 src/main/webapp/publish/RDF/*
 src/main/webapp/publish/MDB/*
 src/main/webapp/publish/AutoOntology/*
