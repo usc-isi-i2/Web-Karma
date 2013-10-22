@@ -59,7 +59,11 @@ public class ServiceModel {
 
 
 	public String getServiceNameWithPrefix() {
-		return serviceNameWithPrefix;
+		if (serviceName == null || serviceName.trim().length() == 0)
+			return this.id;
+		else if (serviceNameWithPrefix == null || serviceNameWithPrefix.trim().length() == 0)
+			return this.serviceName;
+		else return serviceNameWithPrefix;
 	}
 
 
@@ -69,7 +73,12 @@ public class ServiceModel {
 
 
 	public String getServiceDescription() {
-		return serviceDescription;
+		if (serviceDescription == null || serviceDescription.trim().length() == 0) {
+			if (serviceName == null || serviceName.trim().length() == 0)
+				return this.id;
+			else return this.serviceName;
+		}
+		else return serviceDescription;
 	}
 
 

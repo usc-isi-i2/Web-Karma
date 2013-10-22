@@ -23,8 +23,6 @@ package edu.isi.karma.cleaning.QuestionableRecord;
 
 import java.util.Vector;
 
-import org.python.antlr.PythonParser.return_stmt_return;
-
 import edu.isi.karma.cleaning.RecFeature;
 import edu.isi.karma.cleaning.TNode;
 

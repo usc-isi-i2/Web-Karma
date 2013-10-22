@@ -29,29 +29,32 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
 
 public class GraphUtil {
 
-	private static Logger logger = Logger.getLogger(GraphUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(GraphUtil.class);
 	
 	// FIXME: change methods to get an Outputstream as input and write on it.
 	
-	private static String getNodeTypeString(Node node) {
+	private static String getNodeTypeString(Node node, StringBuffer sb) {
 		
 		if (node == null) {
-			System.out.println("node is null.");
+			sb.append("node is null.");
 			return null;
 		}
 		
@@ -61,10 +64,10 @@ public class GraphUtil {
     	return s;
 	}
 
-	private static String getLinkTypeString(Link link) {
+	private static String getLinkTypeString(Link link, StringBuffer sb) {
 
 		if (link == null) {
-			System.out.println("link is null.");
+			sb.append("link is null.");
 			return null;
 		}
 		
@@ -74,51 +77,51 @@ public class GraphUtil {
     	return s;
 	}
 	
-	public static void printVertex(Node node) {
+	public static void printVertex(Node node, StringBuffer sb) {
 		
 		if (node == null) {
-			System.out.println("node is null.");
+			sb.append("node is null.");
 			return;
 		}
 		
-    	System.out.print("(");
-    	System.out.print( node.getLocalId());
-//    	System.out.print( vertex.getID());
-    	System.out.print(", ");
+		sb.append("(");
+		sb.append( node.getLocalId());
+//    	sb.append( vertex.getID());
+		sb.append(", ");
 		if (node instanceof ColumnNode)
-			System.out.print( ((ColumnNode)node).getColumnName());
+			sb.append( ((ColumnNode)node).getColumnName());
 		else
-			System.out.print(node.getLabel().getLocalName());
-    	System.out.print(", ");
-    	System.out.print(getNodeTypeString(node));
-    	System.out.print(")");
+			sb.append(node.getLabel().getLocalName());
+		sb.append(", ");
+		sb.append(getNodeTypeString(node, sb));
+		sb.append(")");
 	}
 	
-	public static void printEdge(Link link) {
+	public static void printEdge(Link link, StringBuffer sb) {
 		
 		if (link == null) {
-			System.out.println("link is null.");
+			sb.append("link is null.");
 			return;
 		}
 		
-    	System.out.print("(");
-    	System.out.print( link.getLocalId());
-    	System.out.print(", ");
-    	System.out.print(link.getLabel().getLocalName());
-    	System.out.print(", ");
-    	System.out.print(getLinkTypeString(link));
-    	System.out.print(", ");
-    	System.out.print(link.getWeight());
-    	System.out.print(") - From ");
-    	printVertex(link.getSource());
-    	System.out.print(" To ");
-    	printVertex(link.getTarget());
+		sb.append("(");
+    	sb.append( link.getLocalId());
+    	sb.append(", ");
+    	sb.append(link.getLabel().getLocalName());
+    	sb.append(", ");
+    	sb.append(getLinkTypeString(link, sb));
+    	sb.append(", ");
+    	sb.append(link.getWeight());
+    	sb.append(") - From ");
+    	printVertex(link.getSource(), sb);
+    	sb.append(" To ");
+    	printVertex(link.getTarget(), sb);
 	}
 
 	public static DirectedGraph<Node, Link> asDirectedGraph(UndirectedGraph<Node, Link> undirectedGraph) {
 		
 		if (undirectedGraph == null) {
-			System.out.println("graph is null.");
+			logger.debug("graph is null.");
 			return null;
 		}		
 
@@ -136,86 +139,89 @@ public class GraphUtil {
 	public static void printGraph(Graph<Node, Link> graph) {
 		
 		if (graph == null) {
-			System.out.println("graph is null.");
+			logger.debug("graph is null.");
 			return;
 		}		
-
-		System.out.println("*** Nodes ***");
+		StringBuffer sb = new StringBuffer();
+		sb.append("*** Nodes ***");
 		for (Node vertex : graph.vertexSet()) {
-			printVertex(vertex);
-			System.out.println();
+			printVertex(vertex, sb);
+			sb.append("\n");
         }
-    	System.out.println("*** Links ***");
+		sb.append("*** Links ***");
 		for (Link edge : graph.edgeSet()) {
-			printEdge(edge);
-			System.out.println();
+			printEdge(edge, sb);
+			sb.append("\n");
         }
-		System.out.println("------------------------------------------");
+		sb.append("------------------------------------------");
+		logger.debug(sb.toString());
 		
 	}
 	
 	public static void printGraphSimple(Graph<Node, Link> graph) {
 		
 		if (graph == null) {
-			System.out.println("The input graph is null.");
+			logger.debug("The input graph is null.");
 			return;
 		}		
 
+		StringBuffer sb = new StringBuffer();
 		for (Link edge : graph.edgeSet()) {
-			System.out.print("(");
+			sb.append("(");
 //			if (edge.getSource() instanceof ColumnNode)
-//				System.out.print(edge.getSource().getLocalId() + "-" + ((ColumnNode)edge.getSource()).getColumnName());
+//				sb.append(edge.getSource().getLocalId() + "-" + ((ColumnNode)edge.getSource()).getColumnName());
 //			else
-//				System.out.print(edge.getSource().getLocalId());
-//			System.out.print(")");
-//			System.out.print(" - ");
-//			System.out.print("(");
-			System.out.print(edge.getId());
-//			System.out.print(")");
-//			System.out.print(" - ");
-//			System.out.print("(");
+//				sb.append(edge.getSource().getLocalId());
+//			sb.append(")");
+//			sb.append(" - ");
+//			sb.append("(");
+			sb.append(edge.getId());
+//			sb.append(")");
+//			sb.append(" - ");
+//			sb.append("(");
 //			if (edge.getTarget() instanceof ColumnNode)
-//				System.out.print(edge.getTarget().getLocalId() + "-" + ((ColumnNode)edge.getTarget()).getColumnName());
+//				sb.append(edge.getTarget().getLocalId() + "-" + ((ColumnNode)edge.getTarget()).getColumnName());
 //			else
-//				System.out.print(edge.getTarget().getLocalId());
-//			System.out.print(")");
-			System.out.print(" - status=" + edge.getStatus().name());
-			System.out.print(" - w=" + edge.getWeight());
-			System.out.println();
+//				sb.append(edge.getTarget().getLocalId());
+//			sb.append(")");
+			sb.append(" - status=" + edge.getStatus().name());
+			sb.append(" - w=" + edge.getWeight());
+			sb.append("\n");
         }
-		System.out.println("------------------------------------------");
+		sb.append("------------------------------------------");
+		logger.debug(sb.toString());
 		
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static DirectedWeightedMultigraph<Node, Link> treeToRootedTree(
-			DirectedWeightedMultigraph<Node, Link> tree, Node root, Set<String> reversedLinks, Set<String> removedLinks) {
-		
-		if (tree == null) {
-			logger.error("The input tree is null.");
-			return null;
-		}		
-
-		DirectedWeightedMultigraph<Node, Link> rootedTree = 
-				(DirectedWeightedMultigraph<Node, Link>)tree.clone();
-		if (reversedLinks == null)
-			reversedLinks = new HashSet<String>();
-		if (removedLinks == null)
-			removedLinks = new HashSet<String>();
-		treeToRootedTree(rootedTree, root, null, new HashSet<Node>(), reversedLinks, removedLinks);
-		
-		logger.info("model after converting to a rooted tree: ");
-		printGraphSimple(rootedTree);
-		
-		logger.info("reversed links:");
-		for (String s : reversedLinks)
-			System.out.println("\t" + s);
-		logger.info("removed links:");
-		for (String s : removedLinks)
-			System.out.println("\t" + s);
-
-		return rootedTree;
-	}
+//	@SuppressWarnings("unchecked")
+//	public static DirectedWeightedMultigraph<Node, Link> treeToRootedTree(
+//			DirectedWeightedMultigraph<Node, Link> tree, Node root, Set<String> reversedLinks, Set<String> removedLinks) {
+//		
+//		if (tree == null) {
+//			logger.error("The input tree is null.");
+//			return null;
+//		}		
+//
+//		DirectedWeightedMultigraph<Node, Link> rootedTree = 
+//				(DirectedWeightedMultigraph<Node, Link>)tree.clone();
+//		if (reversedLinks == null)
+//			reversedLinks = new HashSet<String>();
+//		if (removedLinks == null)
+//			removedLinks = new HashSet<String>();
+//		treeToRootedTree(rootedTree, root, null, new HashSet<Node>(), reversedLinks, removedLinks);
+//		
+//		logger.info("model after converting to a rooted tree: ");
+//		printGraphSimple(rootedTree);
+//		
+//		logger.info("reversed links:");
+//		for (String s : reversedLinks)
+//			logger.info("\t" + s);
+//		logger.info("removed links:");
+//		for (String s : removedLinks)
+//			logger.info("\t" + s);
+//
+//		return rootedTree;
+//	}
 	
 	public static void serialize(DirectedWeightedMultigraph<Node, Link> graph, String fileName) throws Exception
 	{
@@ -232,6 +238,22 @@ public class GraphUtil {
 		out.writeObject(graph);
 		out.flush();
 		out.close();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static DirectedWeightedMultigraph<Node, Link> deserialize(String fileName) throws Exception
+	{
+//		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		FileInputStream f = new FileInputStream(fileName);
+        ObjectInputStream in = new ObjectInputStream(f);
+
+        Object obj  = in.readObject();
+        in.close();
+        
+        if (obj instanceof DirectedWeightedMultigraph<?, ?>)
+        	return (DirectedWeightedMultigraph<Node, Link>)obj;
+        else 
+        	return null;
 	}
 	
 	private static Set<Node> getNeighbors(DirectedWeightedMultigraph<Node, Link> g, Node n) {
@@ -302,7 +324,7 @@ public class GraphUtil {
 		
 		HashMap<Node, Integer> nodeLevels = new HashMap<Node, Integer>();
 		if (g == null || g.vertexSet() == null || g.vertexSet().size() == 0) {
-			logger.info("graph does not have any node.");
+			logger.debug("graph does not have any node.");
 			return nodeLevels;
 		}
 		
@@ -357,7 +379,6 @@ public class GraphUtil {
 		}
 		
 		// find in/out degree in each level
-		// TODO: check each pair of nodes in the same level to see whether they are directly connected
 		int k = 0;
 		while (true) {
 			
@@ -404,7 +425,7 @@ public class GraphUtil {
 		// add all column nodes to the (last level + 1).
 		int lastLevel = 0;
 		for (k = maxLevel - 1; k > 0; k--) {
-			if (nodesIndexedByLevel.get(k).size() != 0) {
+			if (!nodesIndexedByLevel.get(k).isEmpty()) {
 				lastLevel = k;
 				break;
 			}
@@ -417,75 +438,144 @@ public class GraphUtil {
 		return nodeLevels;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static DirectedWeightedMultigraph<Node, Link> deserialize(String fileName) throws Exception
-	{
-//		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		FileInputStream f = new FileInputStream(fileName);
-        ObjectInputStream in = new ObjectInputStream(f);
+	public static HashMap<Node, Set<ColumnNode>> getNodesCoverage(
+			DirectedWeightedMultigraph<Node, Link> g, 
+			HashMap<Node, Integer> nodeLevels) {
+		
+		HashMap<Node, Set<ColumnNode>> coveredColumnNodes = 
+				new HashMap<Node, Set<ColumnNode>>();
 
-        Object obj  = in.readObject();
-        in.close();
-        
-        if (obj instanceof DirectedWeightedMultigraph<?, ?>)
-        	return (DirectedWeightedMultigraph<Node, Link>)obj;
-        else 
-        	return null;
-	}
-
-	private static void treeToRootedTree(DirectedWeightedMultigraph<Node, Link> tree, Node node, Link e, Set<Node> visitedNodes, Set<String> reversedLinks, Set<String> removedLinks) {
+		if (g == null || g.vertexSet() == null || g.vertexSet().size() == 0) {
+			logger.debug("graph does not have any node.");
+			return coveredColumnNodes;
+		}
 		
-		if (node == null)
-			return;
+		// Add empty set for all internal nodes
+		for (Node n : g.vertexSet()) {
+			Set<ColumnNode> columnNodes = new HashSet<ColumnNode>();
+			coveredColumnNodes.put(n, columnNodes);
+		}
 		
-		if (visitedNodes.contains(node)) // prevent having loop in the tree
-			return;
+		HashMap<Integer, List<Node>> levelToNodes = 
+				new HashMap<Integer, List<Node>>();
 		
-		visitedNodes.add(node);
-		
-		Node source, target;
-		
-		Set<Link> incomingLinks = tree.incomingEdgesOf(node);
-		if (incomingLinks != null) {
-			Link[] incomingLinksArr = incomingLinks.toArray(new Link[0]);
-			for (Link inLink : incomingLinksArr) {
-				
-				source = inLink.getSource();
-				target = inLink.getTarget();
-				
-				// don't remove the incoming link from parent to this node
-				if (e != null && inLink.equals(e))
-					continue;
-				
-				// removeEdge method should always be called before addEdge because the new edge has the same id
-				// and JGraph does not add the duplicate link
-//				Label label = new Label(inLink.getLabel().getUri(), inLink.getLabel().getNs(), inLink.getLabel().getPrefix());
-				Link reverseLink = inLink.clone(); //new Link(inLink.getId(), label);
-				tree.removeEdge(inLink);
-				tree.addEdge(target, source, reverseLink);
-				tree.setEdgeWeight(reverseLink, inLink.getWeight());
-				
-				// Save the reversed links information
-				reversedLinks.add(inLink.getId());
+		int maxLevel = 0;
+		for (Entry<Node, Integer> entry : nodeLevels.entrySet()) {
+			List<Node> nodes = levelToNodes.get(entry.getValue());
+			if (nodes == null) {
+				nodes = new ArrayList<Node>();
+				levelToNodes.put(entry.getValue(), nodes);
+			}
+			nodes.add(entry.getKey());
+			
+			if (entry.getValue().intValue() > maxLevel) {
+				maxLevel = entry.getValue().intValue();
 			}
 		}
-
-		Set<Link> outgoingLinks = tree.outgoingEdgesOf(node);
-
-		if (outgoingLinks == null)
-			return;
 		
-		
-		Link[] outgoingLinksArr = outgoingLinks.toArray(new Link[0]);
-		for (Link outLink : outgoingLinksArr) {
-			target = outLink.getTarget();
-			if (visitedNodes.contains(target)) {
-				tree.removeEdge(outLink);
-				removedLinks.add(outLink.getId());
-			} else {
-				treeToRootedTree(tree, target, outLink, visitedNodes, reversedLinks, removedLinks);
+		int i = maxLevel;
+		while (i >= 0) {
+			
+			List<Node> nodes = levelToNodes.get(i);
+			if (nodes != null && !nodes.isEmpty()) {
+				for (Node n : nodes) {
+					
+					if (n instanceof ColumnNode) {
+						coveredColumnNodes.get(n).add((ColumnNode)n);
+						continue;
+					}
+					
+					List<Node> neighborsInLowerLevel = new ArrayList<Node>();
+					
+					// finding the nodes connected to n (incoming & outgoing) from a lower leve
+					Set<Link> outgoingLinks = g.outgoingEdgesOf(n);
+					if (outgoingLinks != null && !outgoingLinks.isEmpty()) 
+						for (Link l : outgoingLinks) 
+							if (nodeLevels.get(l.getTarget()) > nodeLevels.get(n))
+								neighborsInLowerLevel.add(l.getTarget());
+					
+					Set<Link> incomingLinks = g.incomingEdgesOf(n);
+					if (incomingLinks != null && !incomingLinks.isEmpty()) 
+						for (Link l : incomingLinks) 
+							if (nodeLevels.get(l.getSource()) > nodeLevels.get(n))
+								neighborsInLowerLevel.add(l.getSource());
+					
+					for (Node nn : neighborsInLowerLevel) {
+						if (nn instanceof ColumnNode) {
+							coveredColumnNodes.get(n).add((ColumnNode)nn);
+						} else if (nn instanceof InternalNode) {
+							coveredColumnNodes.get(n).addAll(coveredColumnNodes.get((InternalNode)nn));
+						}
+					}
+					
+				}
 			}
+			
+			i--;
 		}
+		
+		return coveredColumnNodes;
+		
 	}
+
+//	private static void treeToRootedTree(
+//			DirectedWeightedMultigraph<Node, Link> tree, 
+//			Node node, Link e, 
+//			Set<Node> visitedNodes, 
+//			Set<String> reversedLinks, 
+//			Set<String> removedLinks) {
+//		
+//		if (node == null)
+//			return;
+//		
+//		if (visitedNodes.contains(node)) // prevent having loop in the tree
+//			return;
+//		
+//		visitedNodes.add(node);
+//		
+//		Node source, target;
+//		
+//		Set<Link> incomingLinks = tree.incomingEdgesOf(node);
+//		if (incomingLinks != null) {
+//			Link[] incomingLinksArr = incomingLinks.toArray(new Link[0]);
+//			for (Link inLink : incomingLinksArr) {
+//				
+//				source = inLink.getSource();
+//				target = inLink.getTarget();
+//				
+//				// don't remove the incoming link from parent to this node
+//				if (e != null && inLink.equals(e))
+//					continue;
+//				
+//				// removeEdge method should always be called before addEdge because the new edge has the same id
+//				// and JGraph does not add the duplicate link
+////				Label label = new Label(inLink.getLabel().getUri(), inLink.getLabel().getNs(), inLink.getLabel().getPrefix());
+//				Link reverseLink = inLink.clone(); //new Link(inLink.getId(), label);
+//				tree.removeEdge(inLink);
+//				tree.addEdge(target, source, reverseLink);
+//				tree.setEdgeWeight(reverseLink, inLink.getWeight());
+//				
+//				// Save the reversed links information
+//				reversedLinks.add(inLink.getId());
+//			}
+//		}
+//
+//		Set<Link> outgoingLinks = tree.outgoingEdgesOf(node);
+//
+//		if (outgoingLinks == null)
+//			return;
+//		
+//		
+//		Link[] outgoingLinksArr = outgoingLinks.toArray(new Link[0]);
+//		for (Link outLink : outgoingLinksArr) {
+//			target = outLink.getTarget();
+//			if (visitedNodes.contains(target)) {
+//				tree.removeEdge(outLink);
+//				removedLinks.add(outLink.getId());
+//			} else {
+//				treeToRootedTree(tree, target, outLink, visitedNodes, reversedLinks, removedLinks);
+//			}
+//		}
+//	}
 	
 }

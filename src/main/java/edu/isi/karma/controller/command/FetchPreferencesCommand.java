@@ -22,7 +22,7 @@ package edu.isi.karma.controller.command;
 
 import edu.isi.karma.controller.update.FetchPreferencesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 /**
  * Class responsible for fetching saved preferences for the command "commandName"
@@ -58,23 +58,23 @@ public class FetchPreferencesCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		/*
-		System.out.println("FetchPreferences....");
+		logger.debug("FetchPreferences....");
 		
-		System.out.println("I get 1.....");
+		logger.debug("I get 1.....");
 		ViewPreferences prefs = vWorkspace.getPreferences();
 		JSONObject prefObject1 = prefs.getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
-		System.out.println("I get 1....."+prefObject1);
+		logger.debug("I get 1....."+prefObject1);
 		 */
 		UpdateContainer c = new UpdateContainer();
-		c.add(new FetchPreferencesUpdate(vWorkspace, commandName+"Preferences"));
+		c.add(new FetchPreferencesUpdate( commandName+"Preferences"));
 		return c;
 		
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 

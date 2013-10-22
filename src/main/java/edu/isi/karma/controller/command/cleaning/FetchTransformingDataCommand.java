@@ -6,12 +6,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
-import org.apache.log4j.Logger;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.RollingFileAppender;
-import org.apache.log4j.SimpleLayout;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -20,26 +17,17 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class FetchTransformingDataCommand extends WorksheetCommand {
-	private final String id;
-	private final String worksheetId;
+
+	private static Logger logger = LoggerFactory.getLogger(FetchTransformingDataCommand.class);
 	private final String hNodeId;
 	public FetchTransformingDataCommand(String id, String worksheetId, String hNodeId)
 	{
 		super(id,worksheetId);
 		this.hNodeId = hNodeId;
-		this.id = id;
-		this.worksheetId = worksheetId;
-		/////log info
-		try
-		{
-			FileAppender appender = new FileAppender(new SimpleLayout(),"./log/cleanning.log");
-			logger.addAppender(appender);
-		}
-		catch (Exception e) {
-		}
+
 	}
 
 	@Override
@@ -87,10 +75,9 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 		}
 		return inds;
 	}
-	private static Logger logger = Logger.getLogger(FetchTransformingDataCommand.class);
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Worksheet wk = workspace.getFactory().getWorksheet(worksheetId);
 		String Msg = String.format("fetch Data begin, Time:%d, Worksheet:%s",System.currentTimeMillis(),worksheetId);
 		logger.info(Msg);
 		// Get the HNode
@@ -128,7 +115,7 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 }

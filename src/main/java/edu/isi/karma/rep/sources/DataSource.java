@@ -26,8 +26,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.rep.alignment.ColumnNode;
@@ -44,7 +45,7 @@ import edu.isi.karma.util.RandomGUID;
 
 public class DataSource extends Source {
 
-	static Logger logger = Logger.getLogger(DataSource.class);
+	static Logger logger = LoggerFactory.getLogger(DataSource.class);
 
 	private List<Attribute> attributes;
 	private Model model;

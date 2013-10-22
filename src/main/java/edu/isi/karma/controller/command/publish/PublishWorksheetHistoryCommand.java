@@ -14,21 +14,22 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
 public class PublishWorksheetHistoryCommand extends Command {
-	private final String vWorksheetId;
+	private final String worksheetId;
 	
 	private enum JsonKeys {
-		updateType, fileUrl, vWorksheetId
+		updateType, fileUrl, worksheetId
 	}
 	
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishWorksheetHistoryCommand.class);
 
-	protected PublishWorksheetHistoryCommand(String id, String vWorksheetId) {
+	protected PublishWorksheetHistoryCommand(String id, String worksheetId) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 	}
 
 	@Override
@@ -53,10 +54,10 @@ public class PublishWorksheetHistoryCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		final String wkName = worksheet.getTitle();
-		final String wsPreferenceId = vWorkspace.getPreferencesId();
+		final String wsPreferenceId = workspace.getCommandPreferencesId();
 		if(!HistoryJsonUtil.historyExists(wkName, wsPreferenceId)) {
 			return new UpdateContainer(new ErrorUpdate("No history exists for the worksheet!"));
 		}
@@ -82,8 +83,8 @@ public class PublishWorksheetHistoryCommand extends Command {
 							"PublishWorksheetHistoryUpdate");
 					outputObject.put(JsonKeys.fileUrl.name(),
 							"publish/History/" + HistoryJsonUtil.constructWorksheetHistoryJsonFileName(wkName, wsPreferenceId));
-					outputObject.put(JsonKeys.vWorksheetId.name(),
-							vWorksheetId);
+					outputObject.put(JsonKeys.worksheetId.name(),
+							worksheetId);
 					pw.println(outputObject.toString(4));
 				} catch (JSONException e) {
 					logger.error("Error occured while generating JSON!");
@@ -93,7 +94,7 @@ public class PublishWorksheetHistoryCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// TODO Auto-generated method stub
 		return null;
 	}

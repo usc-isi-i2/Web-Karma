@@ -18,3 +18,41 @@ body {
 #karma-version {
 	font-size: small;
 }
+
+.karma-header {
+	display: inline;
+}
+
+.karma-header-links {
+	float: right;
+	margin-top: 20px
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+.karma-header-links li { 
+	display: inline; 
+	padding: .1em 1em;
+}
+
+.karma-header-links li a { 
+	text-decoration: none; 
+}
+
+.karma-header-links li a:link
+{
+	color: #FC0;
+} 
+.karma-header-links li a:visited
+{
+	color: #FC0;
+} 
+.karma-header-links li a:hover
+{
+	color: #fff;
+}
+.karma-header-links li a:active
+{
+	color: #fff;
+}

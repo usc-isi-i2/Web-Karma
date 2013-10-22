@@ -49,6 +49,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 /*
 import net.sf.json.JSONArray;
@@ -57,13 +58,13 @@ import net.sf.json.JSONObject;
 
 public class InvokeCleaningServiceCommand extends Command {
 	private String hNodeId;
-	private String vWorksheetId;
+	private String worksheetId;
 //	private static Logger logger = LoggerFactory.getLogger(InvokeCleaningServiceCommand.class);
 
-	public InvokeCleaningServiceCommand(String id, String hNodeId, String vWorksheetId) {
+	public InvokeCleaningServiceCommand(String id, String hNodeId, String worksheetId) {
 		super(id);
 		this.hNodeId = hNodeId;
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 	}
 
 	@Override
@@ -87,9 +88,8 @@ public class InvokeCleaningServiceCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		String worksheetId = vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).getWorksheetId();
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
@@ -99,7 +99,7 @@ public class InvokeCleaningServiceCommand extends Command {
 			}
 		}
 		Collection<Node> nodes = new ArrayList<Node>();
-		vWorkspace.getRepFactory().getWorksheet(worksheetId).getDataTable()
+		workspace.getFactory().getWorksheet(worksheetId).getDataTable()
 		.collectNodes(selectedPath, nodes);
 		
 		try {
@@ -116,8 +116,8 @@ public class InvokeCleaningServiceCommand extends Command {
 			String jsonString = null;
 			jsonString = requestJsonArray.toString();
 
-			String url = "http://localhost:8080/cleaningService/IdentifyData";
-			//String url = "http://localhost:8070/myWS/IdentifyData";
+			//String url = "http://localhost:8080/cleaningService/IdentifyData";
+			String url = "http://localhost:8070/myWS/IdentifyData";
 			
 			HttpClient httpclient = new DefaultHttpClient(); 
 			HttpPost httppost = null;
@@ -142,23 +142,22 @@ public class InvokeCleaningServiceCommand extends Command {
 					line = buf.readLine();
 				}
 			}	
-			//System.out.println(out.toString());
+			//logger.trace(out.toString());
 			//logger.info("Connnection success : " + url + " Successful.");
-			//System.out.println("Connnection success : " + url + " Successful.");
 			final JSONObject data1  = new JSONObject(out.toString());
-			//System.out.println("Data--->" + data1);
+			//logger.trace("Data--->" + data1);
 			return new UpdateContainer(new AbstractUpdate() {
 
 				@Override
 				public void generateJson(String prefix, PrintWriter pw,
 						VWorkspace vWorkspace) {
 					JSONObject response = new JSONObject();
-					//System.out.println("Reached here");
+					//logger.trace("Reached here");
 					try {
 						response.put("updateType", "CleaningServiceOutput");
 						response.put("chartData", data1);
 						response.put("hNodeId", hNodeId); 
-						//System.out.print(response.toString(4));
+						//logger.trace(response.toString(4));
 					} catch (JSONException e) {
 						pw.print("Error");
 					}
@@ -173,7 +172,7 @@ public class InvokeCleaningServiceCommand extends Command {
 	} 
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 

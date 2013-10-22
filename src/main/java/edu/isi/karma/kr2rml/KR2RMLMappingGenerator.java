@@ -23,14 +23,12 @@ package edu.isi.karma.kr2rml;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.jgrapht.traverse.BreadthFirstIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +45,6 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
@@ -61,7 +58,7 @@ public class KR2RMLMappingGenerator {
 	private R2RMLMapping r2rmlMapping;
 	private final Node steinerTreeRoot;
 	private SemanticTypes semanticTypes;
-	private DirectedWeightedMultigraph<Node, Link> steinerTree;
+	private DirectedWeightedMultigraph<Node, Link> alignmentGraph;
 	
 	// Internal data structures required
 	private Map<String, SubjectMap> subjectMapIndex;
@@ -82,12 +79,17 @@ public class KR2RMLMappingGenerator {
 		this.semanticTypes = semanticTypes;
 		this.sourceNamespace = sourceNamespace;
 		this.r2rmlMapping = new R2RMLMapping();
-		this.steinerTree = alignment.getSteinerTree();
+		this.alignmentGraph = alignment.getSteinerTree();
 		this.steinerTreeRoot = alignment.GetTreeRoot();
 		this.auxInfo = new KR2RMLMappingAuxillaryInformation();
 		this.subjectMapIndex = new HashMap<String, SubjectMap>();
 		this.triplesMapIndex = new HashMap<String, TriplesMap>();
 		
+//		for (Node n : alignmentGraph.vertexSet()) {
+//			if (n instanceof ColumnNode) {
+//				System.out.println(n.getId() + " -----> " + ((ColumnNode)n).getRdfLiteralType());
+//			}
+//		}
 		// Generate the R2RML data structures
 		generateMappingFromSteinerTree(generateInverse);
 	}
@@ -133,18 +135,19 @@ public class KR2RMLMappingGenerator {
 	}
 	
 	private void calculateColumnNodesCoveredByBlankNodes() {
-		Set<String> reversedLinks = new HashSet<String>();
-		Set<String> removedLinks = new HashSet<String>();
-		DirectedWeightedMultigraph<Node, Link> rootedTree = GraphUtil.treeToRootedTree(this.steinerTree,
-				this.steinerTreeRoot, reversedLinks, removedLinks);
+		HashMap<Node, Integer> nodeHeightsMap = GraphUtil.levelingCyclicGraph(alignmentGraph);
+		HashMap<Node, Set<ColumnNode>> nodeCoverage = 
+				GraphUtil.getNodesCoverage(alignmentGraph, nodeHeightsMap);
 		
-		for (Node treeNode:rootedTree.vertexSet()) {
-//			List<Node> nodesWithSemTypesCovered = new ArrayList<Node>();
+		for (Node treeNode:alignmentGraph.vertexSet()) {
 			if (treeNode instanceof InternalNode && subjectMapIndex.containsKey(treeNode.getId())) {
 				SubjectMap subjMap = subjectMapIndex.get(treeNode.getId());
 				if (subjMap.isBlankNode()) {
+					Set<ColumnNode> columnNodesCovered = nodeCoverage.get(treeNode); 
 					List<String> hNodeIdsCovered = new ArrayList<String>();
-					calculateColumnNodesCoveredByNode(hNodeIdsCovered, treeNode, rootedTree);
+					for (ColumnNode columnNode:columnNodesCovered) {
+						hNodeIdsCovered.add(columnNode.getId());
+					}
 					
 					auxInfo.getBlankNodesColumnCoverage().put(treeNode.getId(), hNodeIdsCovered);
 					auxInfo.getBlankNodesUriPrefixMap().put(treeNode.getId(), treeNode.getDisplayId());
@@ -152,35 +155,9 @@ public class KR2RMLMappingGenerator {
 			}
 		}
 	}
-	
-	private void calculateColumnNodesCoveredByNode(List<String> hNodeIdsCovered, Node treeNode, 
-			DirectedWeightedMultigraph<Node, Link> rootedTree) {
-		BreadthFirstIterator<Node, Link> itr = 
-				new BreadthFirstIterator<Node, Link>(rootedTree, treeNode);
-		while(itr.hasNext()) {
-			Node v = itr.next();
-			if(v.getType() == NodeType.ColumnNode) {
-				hNodeIdsCovered.add(v.getId());
-			}
-		}
-		while (hNodeIdsCovered.isEmpty()) {
-			Set<Link> incomingEdges = rootedTree.incomingEdgesOf(treeNode);
-			if (incomingEdges.isEmpty())
-				return;
-			else {
-				for (Link incomingLink: incomingEdges) {
-					Node source = incomingLink.getSource();
-					calculateColumnNodesCoveredByNode(hNodeIdsCovered, source, rootedTree);
-					if (!hNodeIdsCovered.isEmpty())
-						break;
-					treeNode = source; 
-				}
-			}
-		}
-	}
 
 	private void createTripleMaps() {
-		Set<Node> nodes = steinerTree.vertexSet();
+		Set<Node> nodes = alignmentGraph.vertexSet();
 		for (Node node:nodes) {
 			if (node instanceof InternalNode) {
 				// Create a TriplesMap corresponding to the Internal node
@@ -193,7 +170,7 @@ public class KR2RMLMappingGenerator {
 	}
 
 	private void createSubjectMaps() {
-		Set<Node> nodes = steinerTree.vertexSet();
+		Set<Node> nodes = alignmentGraph.vertexSet();
 		for (Node node:nodes) {
 			if (node instanceof InternalNode) {
 				SubjectMap subj = new SubjectMap(node.getId());
@@ -209,7 +186,7 @@ public class KR2RMLMappingGenerator {
 				subj.addRdfsType(typeTermSet);
 				subjectMapIndex.put(node.getId(), subj);
 				
-				Set<Link> outgoingLinks = steinerTree.outgoingEdgesOf(node);
+				Set<Link> outgoingLinks = alignmentGraph.outgoingEdgesOf(node);
 				for (Link link:outgoingLinks) {
 					
 					if (link instanceof ClassInstanceLink || link instanceof ColumnSubClassLink
@@ -249,7 +226,7 @@ public class KR2RMLMappingGenerator {
 	}
 	
 	private void createPredicateObjectMaps(boolean generateInverse) {
-		Set<Node> nodes = steinerTree.vertexSet();
+		Set<Node> nodes = alignmentGraph.vertexSet();
 		for (Node node:nodes) {
 			if (node instanceof InternalNode) {
 				// Create a TriplesMap corresponding to the Internal node
@@ -257,7 +234,7 @@ public class KR2RMLMappingGenerator {
 				TriplesMap subjTrMap = triplesMapIndex.get(node.getId());
 				
 				// Create the predicate object map for each outgoing link
-				Set<Link> outgoingEdges = steinerTree.outgoingEdgesOf(node);
+				Set<Link> outgoingEdges = alignmentGraph.outgoingEdgesOf(node);
 				for (Link olink:outgoingEdges) {
 					if (olink instanceof ObjectPropertySpecializationLink 
 							|| olink instanceof DataPropertyOfColumnLink  
@@ -306,10 +283,16 @@ public class KR2RMLMappingGenerator {
 						// Create the object map
 						ColumnNode cnode = (ColumnNode) target;
 						String hNodeId = cnode.getHNodeId();
+
 						ColumnTemplateTerm cnTerm = new ColumnTemplateTerm(hNodeId);
 						TemplateTermSet termSet = new TemplateTermSet();
 						termSet.addTemplateTermToSet(cnTerm);
-						ObjectMap objMap = new ObjectMap(hNodeId, termSet);
+
+						StringTemplateTerm rdfLiteralTypeTerm = new StringTemplateTerm(cnode.getRdfLiteralType(), true);
+						TemplateTermSet rdfLiteralTypeTermSet = new TemplateTermSet();
+						rdfLiteralTypeTermSet.addTemplateTermToSet(rdfLiteralTypeTerm);
+
+						ObjectMap objMap = new ObjectMap(hNodeId, termSet, rdfLiteralTypeTermSet);
 						poMap.setObject(objMap);
 						
 						// Create the predicate
@@ -369,7 +352,7 @@ public class KR2RMLMappingGenerator {
 				ColumnTemplateTerm cnTerm = new ColumnTemplateTerm(hNodeId);
 				TemplateTermSet termSet = new TemplateTermSet();
 				termSet.addTemplateTermToSet(cnTerm);
-				ObjectMap objMap = new ObjectMap(hNodeId, termSet);
+				ObjectMap objMap = new ObjectMap(hNodeId, termSet, null);
 				poMap.setObject(objMap);
 				
 				// Create the predicate
@@ -441,7 +424,7 @@ public class KR2RMLMappingGenerator {
 	}
 
 	private Link getSpecializationLinkIfExists(Link link, Node sourceNode) {
-		Set<Link> outgoingEdges = this.steinerTree.outgoingEdgesOf(sourceNode);
+		Set<Link> outgoingEdges = this.alignmentGraph.outgoingEdgesOf(sourceNode);
 		for (Link olink:outgoingEdges) {
 			// Check for the object property specialization
 			if (olink instanceof ObjectPropertySpecializationLink ) {

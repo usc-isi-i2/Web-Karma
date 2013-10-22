@@ -24,20 +24,20 @@ import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class GenerateCleaningRulesCommandFactory extends CommandFactory {
 	
 	private enum Arguments {
-		vWorksheetId, hNodeId, examples,cellIDs
+		worksheetId, hNodeId, examples,cellIDs
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String examples = request.getParameter(Arguments.examples.name());
 		String cellIDs= request.getParameter(Arguments.cellIDs.name());
-		return new GenerateCleaningRulesCommand(getNewId(vWorkspace), getWorksheetId(request, vWorkspace), hNodeId, examples,cellIDs);
+		return new GenerateCleaningRulesCommand(getNewId(workspace), getWorksheetId(request, workspace), hNodeId, examples,cellIDs);
 	}
 }

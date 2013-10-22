@@ -21,7 +21,6 @@
 package edu.isi.karma.controller.command;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,9 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.AbstractUpdate;
-import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
 /**
@@ -72,7 +71,7 @@ public class TestSPARQLEndPointCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		if(TripleStoreUtil.checkConnection(this.tripleStoreUrl)) {
 			return new UpdateContainer(new AbstractUpdate() {
 				@Override
@@ -105,7 +104,7 @@ public class TestSPARQLEndPointCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace vorkspace) {
 		return null;
 	}
 

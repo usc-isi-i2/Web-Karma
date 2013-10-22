@@ -23,8 +23,9 @@ package edu.isi.karma.rep.alignment;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.rits.cloning.Cloner;
 
@@ -34,7 +35,7 @@ import edu.isi.karma.util.RandomGUID;
 public abstract class Link extends DefaultWeightedEdge implements Comparable<Link> {
 	
 	private static final long serialVersionUID = 1L;
-	static Logger logger = Logger.getLogger(Link.class);
+	static Logger logger = LoggerFactory.getLogger(Link.class);
 
 	private String id;
 	private Label label;

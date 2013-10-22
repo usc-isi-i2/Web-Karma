@@ -29,21 +29,21 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
+import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.view.VWorkspace;
 
 public class AddUserLinkToAlignmentCommand extends Command {
 
-	private final String vWorksheetId;
+	private final String worksheetId;
 	private final String edgeId;
 	private final String alignmentId;
 	private Alignment 	 oldAlignment;
@@ -54,11 +54,11 @@ public class AddUserLinkToAlignmentCommand extends Command {
 	private static Logger logger = LoggerFactory.getLogger(AddUserLinkToAlignmentCommand.class);
 
 	public AddUserLinkToAlignmentCommand(String id, String edgeId,
-			String alignmentId, String vWorksheetId) {
+			String alignmentId, String worksheetId) {
 		super(id);
 		this.edgeId = edgeId;
 		this.alignmentId = alignmentId;
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 		
 		addTag(CommandTag.Modeling);
 	}
@@ -85,10 +85,10 @@ public class AddUserLinkToAlignmentCommand extends Command {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		if(alignment == null || alignment.getGraphLinks().size() == 0) {
 			logger.error("Alignment cannot be null before calling this command since the alignment is created while " +
 					"setting the semantic types.");
@@ -112,29 +112,28 @@ public class AddUserLinkToAlignmentCommand extends Command {
 		alignment.changeLinkStatus(edgeId, LinkStatus.ForcedByUser);
 		alignment.align();
 		
-		return getAlignmentUpdateContainer(alignment, worksheet, vWorkspace);
+		return getAlignmentUpdateContainer(alignment, worksheet, workspace);
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer undoIt(Workspace workspace) {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		// Revert to the old alignment
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
 		oldAlignment.setGraph(oldGraph);
 		
 		// Get the alignment update
-		return getAlignmentUpdateContainer(oldAlignment, worksheet, vWorkspace);
+		return getAlignmentUpdateContainer(oldAlignment, worksheet, workspace);
 	}
 
 	private UpdateContainer getAlignmentUpdateContainer(Alignment alignment,
-			Worksheet worksheet, VWorkspace vWorkspace) {
+			Worksheet worksheet, Workspace workspace) {
 		// Add the visualization update
 		UpdateContainer c = new UpdateContainer();
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
-		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(
-				vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
+		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+		c.add(new AlignmentSVGVisualizationUpdate(
+				worksheetId, alignment));
 		return c;
 	}
 }

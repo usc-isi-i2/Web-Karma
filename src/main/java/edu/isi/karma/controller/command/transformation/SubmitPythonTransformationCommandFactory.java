@@ -30,32 +30,31 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class SubmitPythonTransformationCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 
 	private enum Arguments {
-		newColumnName, transformationCode, vWorksheetId, hTableId, hNodeId, errorDefaultValue
+		newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 		return null;
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace) throws JSONException, KarmaException {
-		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
+	public Command createCommand(JSONArray inputJson, Workspace workspace) throws JSONException, KarmaException {
+		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String newColumnName = HistoryJsonUtil.getStringValue(Arguments.newColumnName.name(), inputJson);
 		String code = HistoryJsonUtil.getStringValue(Arguments.transformationCode.name(), inputJson);
-		String hTableId = HistoryJsonUtil.getStringValue(Arguments.hTableId.name(), inputJson);
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String errorDefaultValue = HistoryJsonUtil.getStringValue(Arguments.errorDefaultValue.name(), inputJson);
 		
-		SubmitPythonTransformationCommand comm = new SubmitPythonTransformationCommand(getNewId(vWorkspace), 
-				newColumnName, code, vWorksheetId, hNodeId, hTableId, errorDefaultValue);
+		SubmitPythonTransformationCommand comm = new SubmitPythonTransformationCommand(getNewId(workspace), 
+				newColumnName, code, worksheetId, hNodeId, errorDefaultValue);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

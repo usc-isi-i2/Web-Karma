@@ -28,7 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -59,7 +60,7 @@ import edu.isi.karma.rep.sources.Source;
 
 public class DataSourceLoader extends SourceLoader {
 
-	static Logger logger = Logger.getLogger(DataSourceLoader.class);
+	private static Logger logger = LoggerFactory.getLogger(DataSourceLoader.class);
 	private static DataSourceLoader instance = null;
 	private static final int DEFAULT_SOURCE_RESULTS_SIZE = 10;
 

@@ -21,6 +21,8 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.List;
+
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +32,7 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory.METAPROPERTY_NAME;
 import edu.isi.karma.controller.update.EmptyUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
+import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -38,8 +40,8 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.CRFColumnModel;
-import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
@@ -53,13 +55,11 @@ import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
 
 public class SetMetaPropertyCommand extends Command {
 
 	private final String hNodeId;
-	private final String vWorksheetId;
+	private final String worksheetId;
 	private final boolean trainAndShowUpdates;
 	private METAPROPERTY_NAME metaPropertyName;
 	private final String metaPropertyValue;
@@ -74,12 +74,12 @@ public class SetMetaPropertyCommand extends Command {
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
-	protected SetMetaPropertyCommand(String id, String vWorksheetId, String hNodeId, 
+	protected SetMetaPropertyCommand(String id, String worksheetId, String hNodeId, 
 			METAPROPERTY_NAME metaPropertyName, String metaPropertyValue, boolean trainAndShowUpdates,
 			String rdfLiteralType) {
 		super(id);
 		this.hNodeId = hNodeId;
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 		this.trainAndShowUpdates = trainAndShowUpdates;
 		this.metaPropertyName = metaPropertyName;
 		this.metaPropertyValue = metaPropertyValue;
@@ -110,11 +110,11 @@ public class SetMetaPropertyCommand extends Command {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		/*** Get the Alignment for this worksheet ***/
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		OntologyManager ontMgr = workspace.getOntologyManager();
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		if (alignment == null) {
 			alignment = new Alignment(ontMgr);
@@ -129,26 +129,23 @@ public class SetMetaPropertyCommand extends Command {
 		SemanticType newType = null;
 
 		/** Check if a semantic type already exists for the column **/
-		ColumnNode existingColumnNode = alignment.getColumnNodeByHNodeId(hNodeId);
-		boolean columnNodeAlreadyExisted = false;
+		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+		columnNode.setRdfLiteralType(rdfLiteralType);
+		boolean semanticTypeAlreadyExists = false;
 		Link oldIncomingLinkToColumnNode = null;
 		Node oldDomainNode = null;
-		if (existingColumnNode != null) {
-			columnNodeAlreadyExisted = true;
-			oldIncomingLinkToColumnNode = alignment.getCurrentIncomingLinksToNode(existingColumnNode.getId()).iterator().next();
+		List<Link> columnNodeIncomingLinks = alignment.getIncomingLinks(columnNode.getId());
+		if (columnNodeIncomingLinks != null && !columnNodeIncomingLinks.isEmpty()) { // SemanticType already assigned
+			semanticTypeAlreadyExists = true;
+			oldIncomingLinkToColumnNode = columnNodeIncomingLinks.get(0);
 			oldDomainNode = oldIncomingLinkToColumnNode.getSource();
-			if (!rdfLiteralType.equals(existingColumnNode.getRdfLiteralType()))
-				existingColumnNode.setRdfLiteralType(rdfLiteralType);
 		}
 		
 		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
-			ColumnNode columnNode = null;
 			Node classNode = alignment.getNodeById(metaPropertyValue);
-			if (columnNodeAlreadyExisted) {
+			if (semanticTypeAlreadyExists) {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment, classNode);
-				columnNode = existingColumnNode;
-			} else
-				columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId)); 
+			}
 			
 			if (classNode == null) {
 				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
@@ -165,7 +162,6 @@ public class SetMetaPropertyCommand extends Command {
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId, ClassInstanceLink.getFixedLabel(), classNode.getLabel(), SemanticType.Origin.User, 1.0, false);
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
-			ColumnNode columnNode = null;
 			Link propertyLink = alignment.getLinkById(metaPropertyValue);
 			if (propertyLink == null) {
 				logger.error("Link should exist in the alignment: " + metaPropertyValue);
@@ -174,13 +170,9 @@ public class SetMetaPropertyCommand extends Command {
 			}
 			
 			Node classInstanceNode = alignment.getNodeById(LinkIdFactory.getLinkSourceId(metaPropertyValue));
-			if (columnNodeAlreadyExisted) {
+			if (semanticTypeAlreadyExists) {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment, classInstanceNode);
-				columnNode = existingColumnNode;
-			} else {
-				columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId));
 			}
-			
 
 			if (propertyLink instanceof DataPropertyLink) {
 				String targetHNodeId = ((ColumnNode) propertyLink.getTarget()).getHNodeId();
@@ -195,13 +187,10 @@ public class SetMetaPropertyCommand extends Command {
 			
 			alignment.align();
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
-			ColumnNode columnNode = null;
 			Node classNode = alignment.getNodeById(metaPropertyValue);
-			if (columnNodeAlreadyExisted) {
+			if (semanticTypeAlreadyExists) {
 				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode, oldDomainNode, alignment, classNode);
-				columnNode = existingColumnNode;
-			} else
-				columnNode = getColumnNode(alignment, vWorkspace.getRepFactory().getHNode(hNodeId)); 
+			}
 			
 			if (classNode == null) {
 				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyValue);
@@ -218,6 +207,8 @@ public class SetMetaPropertyCommand extends Command {
 			newType = new SemanticType(hNodeId, ColumnSubClassLink.getFixedLabel(), classNode.getLabel(), SemanticType.Origin.User, 1.0, false);
 		}
 		
+		columnNode.setUserSelectedSemanticType(newType);
+		
 		UpdateContainer c = new UpdateContainer();
 //		CRFModelHandler crfModelHandler = vWorkspace.getWorkspace().getCrfModelHandler();
 
@@ -233,11 +224,10 @@ public class SetMetaPropertyCommand extends Command {
 //		worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), newSynonymTypes);
 
 		if(trainAndShowUpdates) {
-			VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
+			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
 			try {
 				// Add the visualization update
-				c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vw, alignment));
+				c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
 			} catch (Exception e) {
 				logger.error("Error occured while setting the semantic type!", e);
 				return new UpdateContainer(new ErrorUpdate(
@@ -252,14 +242,14 @@ public class SetMetaPropertyCommand extends Command {
 	private void clearOldSemanticTypeLink(Link oldIncomingLinkToColumnNode,
 			Node oldDomainNode, Alignment alignment, Node newDomainNode) {
 		alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-		if (oldDomainNode != newDomainNode)
-			alignment.removeNode(oldDomainNode.getId());
+//		if (oldDomainNode != newDomainNode)
+//			alignment.removeNode(oldDomainNode.getId());
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		UpdateContainer c = new UpdateContainer();
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		if (oldType == null) {
 			worksheet.getSemanticTypes().unassignColumnSemanticType(newType.getHNodeId());
 		} else {
@@ -270,14 +260,14 @@ public class SetMetaPropertyCommand extends Command {
 		worksheet.getCrfModel().addColumnModel(newType.getHNodeId(), oldColumnModel);
 
 		// Replace the current alignment with the old alignment
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
 		oldAlignment.setGraph(oldGraph);
 		
 		// Get the alignment update if any
 		try {
-			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, oldAlignment));
-			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), oldAlignment));
+			c.add(new SemanticTypesUpdate(worksheet, worksheetId, oldAlignment));
+			c.add(new AlignmentSVGVisualizationUpdate(worksheetId, oldAlignment));
 		} catch (Exception e) {
 			logger.error("Error occured while unsetting the semantic type!", e);
 			return new UpdateContainer(new ErrorUpdate(
@@ -286,18 +276,18 @@ public class SetMetaPropertyCommand extends Command {
 		return c;
 	}
 	
-	private ColumnNode getColumnNode(Alignment alignment, HNode hNode) {
-		String columnName = hNode.getColumnName();
-		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
-		
-		if (columnNode == null) {
-			columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType);
-		} else {
-			// Remove old column node if it exists
-			alignment.removeNode(columnNode.getId());
-			columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType);
-		}
-		return columnNode;
-	}
+//	private ColumnNode getColumnNode(Alignment alignment, HNode hNode) {
+//		String columnName = hNode.getColumnName();
+//		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+//		
+//		if (columnNode == null) {
+//			columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType, null);
+//		} else {
+//			// Remove old column node if it exists
+//			alignment.removeNode(columnNode.getId());
+//			columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType, null);
+//		}
+//		return columnNode;
+//	}
 
 }

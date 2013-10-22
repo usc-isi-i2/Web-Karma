@@ -42,18 +42,18 @@ import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.view.VWorkspace;
 
 public class PublishSpatialDataCommand extends Command {
-	private final String vWorksheetId;
+	private final String worksheetId;
 
 	private enum JsonKeys {
-		updateType, fileUrl, vWorksheetId
+		updateType, fileUrl, worksheetId
 	}
 
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishSpatialDataCommand.class);
 
-	protected PublishSpatialDataCommand(String id, String vWorksheetId) {
+	protected PublishSpatialDataCommand(String id, String worksheetId) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 	}
 
 	@Override
@@ -77,18 +77,16 @@ public class PublishSpatialDataCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
-		Workspace ws = vWorkspace.getWorkspace();
 		if (worksheet.getSemanticTypes().getListOfTypes().size() == 0) {
-			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, ws
-					.getTagsContainer().getTag(TagName.Outlier), ws
-					.getCrfModelHandler(), ws.getOntologyManager());
+			SemanticTypeUtil.populateSemanticTypesUsingCRF(worksheet, workspace
+					.getTagsContainer().getTag(TagName.Outlier), workspace
+					.getCrfModelHandler(), workspace.getOntologyManager());
 		}
 
-		OntologyManager om= ws.getOntologyManager();
+		OntologyManager om= workspace.getOntologyManager();
 		WorksheetToFeatureCollection geo = new WorksheetToFeatureCollection(worksheet,om);//ying
 		
 		// Send an error update if no geospatial data found!
@@ -112,8 +110,8 @@ public class PublishSpatialDataCommand extends Command {
 								"PublishSpatialDataUpdate");
 						outputObject.put(JsonKeys.fileUrl.name(),
 								"publish/SpatialData/" + zippedSpatialDataPath);
-						outputObject.put(JsonKeys.vWorksheetId.name(),
-								vWorksheetId);
+						outputObject.put(JsonKeys.worksheetId.name(),
+								worksheetId);
 						pw.println(outputObject.toString(4));
 						
 					} catch (JSONException e) {
@@ -135,7 +133,7 @@ public class PublishSpatialDataCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// TODO Auto-generated method stub
 		return null;
 	}

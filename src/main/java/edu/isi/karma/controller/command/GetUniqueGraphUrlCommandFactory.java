@@ -22,18 +22,18 @@ package edu.isi.karma.controller.command;
 
 import javax.servlet.http.HttpServletRequest;
 
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class GetUniqueGraphUrlCommandFactory extends CommandFactory {
 	private enum Arguments {
-		tripleStoreUrl, vWorksheetId, graphUri
+		tripleStoreUrl, worksheetId, graphUri
 	}
 
 	@Override
-	public Command createCommand(HttpServletRequest request, VWorkspace vWorkspace) {
+	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 
-		GetUniqueGraphUrlCommand comm = new GetUniqueGraphUrlCommand(getNewId(vWorkspace),
-				request.getParameter(Arguments.vWorksheetId.name()),
+		GetUniqueGraphUrlCommand comm = new GetUniqueGraphUrlCommand(getNewId(workspace),
+				request.getParameter(Arguments.worksheetId.name()),
 				request.getParameter(Arguments.tripleStoreUrl.name()),
 				request.getParameter(Arguments.graphUri.name())
 				);

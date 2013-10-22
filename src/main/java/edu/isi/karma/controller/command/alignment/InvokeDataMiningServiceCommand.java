@@ -23,13 +23,11 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -39,20 +37,15 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.alignment.GenerateR2RMLModelCommand.JsonKeys;
 import edu.isi.karma.controller.command.publish.PublishRDFCommand;
 import edu.isi.karma.controller.command.publish.PublishRDFCommand.PreferencesKeys;
-import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.FetchR2RMLUpdate;
 import edu.isi.karma.controller.update.InvokeDataMiningServiceUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.SPARQLGeneratorUtil;
@@ -65,11 +58,12 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.HTTPUtil;
-import edu.isi.karma.view.VWorkspace;
 
 public class InvokeDataMiningServiceCommand extends Command {
-	private final String vWorksheetId;
+	private static Logger logger = LoggerFactory.getLogger(InvokeDataMiningServiceCommand.class);
+	private final String worksheetId;
 	
 	private String tripleStoreUrl;
 	private String modelContext;
@@ -99,11 +93,9 @@ public class InvokeDataMiningServiceCommand extends Command {
 		this.tripleStoreUrl = tripleStoreUrl;
 	}
 
-	private static Logger logger = LoggerFactory.getLogger(InvokeDataMiningServiceCommand.class);
-
-	protected InvokeDataMiningServiceCommand(String id, String vWorksheetId, String url, String graph, String miningUrl) {
+	protected InvokeDataMiningServiceCommand(String id, String worksheetId, String url, String graph, String miningUrl) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 		if (url == null || url.isEmpty()) {
 			url = TripleStoreUtil.defaultDataRepoUrl;
 		}
@@ -132,6 +124,8 @@ public class InvokeDataMiningServiceCommand extends Command {
 		return CommandType.notUndoable;
 	}
 	
+	// Pedro: this is not being used. Candidate for deletion.
+	//
 	private String fetch_data_temp() 
 	{
 		HttpClient httpclient = new DefaultHttpClient();
@@ -140,7 +134,7 @@ public class InvokeDataMiningServiceCommand extends Command {
 		try {
 
 			JSONObject result = utilObj.fetch_data(this.modelContext, null);
-			System.out.println(result.toString());
+			logger.debug(result.toString());
 			
 			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
 			formparams = new ArrayList<NameValuePair>();
@@ -151,14 +145,14 @@ public class InvokeDataMiningServiceCommand extends Command {
 			HttpResponse response = httpclient.execute(httppost);
 
 			for(Header h : response.getAllHeaders()) {
-				System.out.println(h.getName() +  " : " + h.getValue());
+				logger.debug(h.getName() +  " : " + h.getValue());
 			}
 			HttpEntity entity = response.getEntity();
 			if (entity != null) {
 				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
 				String line = buf.readLine();
 				while(line != null) {
-					System.out.println(line);
+					logger.debug(line);
 					jsonString.append(line);
 					line = buf.readLine();
 				}
@@ -172,24 +166,24 @@ public class InvokeDataMiningServiceCommand extends Command {
 	}
 	
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		
 //		String jsonString = fetch_data_temp();
 		try {
 			
 			// Get the alignment for this Worksheet
 			Alignment alignment = AlignmentManager.Instance().getAlignment(AlignmentManager.
-					Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId));
+					Instance().constructAlignmentId(workspace.getId(), worksheetId));
 			
 			if (alignment == null) {
-				logger.info("Alignment is NULL for " + vWorksheetId);
+				logger.info("Alignment is NULL for " + worksheetId);
 				return new UpdateContainer(new ErrorUpdate(
 						"Please align the worksheet before generating R2RML Model!"));
 			}
 			// Get the namespace and prefix from the preferences
 			String namespace = "";
 			String prefix = "";
-			JSONObject prefObject = vWorkspace.getPreferences().getCommandPreferencesJSONObject(
+			JSONObject prefObject = workspace.getCommandPreferences().getCommandPreferencesJSONObject(
 					PublishRDFCommand.class.getSimpleName()+"Preferences");
 			if (prefObject != null) {
 				namespace = prefObject.getString(PreferencesKeys.rdfNamespace.name());
@@ -203,10 +197,10 @@ public class InvokeDataMiningServiceCommand extends Command {
 				prefix = Prefixes.KARMA_DEV;
 			}
 
-			Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+			Worksheet worksheet = workspace.getWorksheet(worksheetId);
 			// Generate the KR2RML data structures for the RDF generation
 			final ErrorReport errorReport = new ErrorReport();
-			OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+			OntologyManager ontMgr = workspace.getOntologyManager();
 			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(ontMgr, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
 			
@@ -220,7 +214,7 @@ public class InvokeDataMiningServiceCommand extends Command {
 			// prepare the input for the data mining service
 //			int row_num = 0;
 			
-			System.out.println(data);
+			logger.debug(data);
 			
 			// post the results 
 			//TODO : integrate the service with karma
@@ -239,7 +233,7 @@ public class InvokeDataMiningServiceCommand extends Command {
 	
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 

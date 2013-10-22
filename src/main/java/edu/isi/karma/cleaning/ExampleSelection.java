@@ -43,7 +43,7 @@ public class ExampleSelection {
 
 	public String Choose() {
 		String ID = "";
-		switch (this.way) {
+		switch (way) {
 		case 1:
 			ID = this.way1();
 			break;

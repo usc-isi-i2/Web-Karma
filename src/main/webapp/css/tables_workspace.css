@@ -126,7 +126,7 @@ div.rightOptionsToolbar {
 }
 
 div.toggleMapView {
-	display: none;
+    display: inline;
 	cursor: pointer;
 }
 
@@ -202,7 +202,7 @@ div.LowConfidenceLevel:hover {
     height: 15px;
 /*	height: 20px;*/
 /*	padding: 3px;*/
-	border-width: 1px;
+	/*border-width: 1px;*/
 }
 
 #commHistoryAndWorkspace div.nestedTableLastRow img {

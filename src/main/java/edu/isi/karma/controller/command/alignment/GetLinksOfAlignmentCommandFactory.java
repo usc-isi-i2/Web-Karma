@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.alignment.GetLinksOfAlignmentCommand.LINKS_RANGE;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class GetLinksOfAlignmentCommandFactory extends CommandFactory {
 	private enum Arguments {
@@ -35,7 +35,7 @@ public class GetLinksOfAlignmentCommandFactory extends CommandFactory {
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 		String alignmentId = request.getParameter(Arguments.alignmentId.name());
 		LINKS_RANGE linksRange = LINKS_RANGE.valueOf(
 				request.getParameter(Arguments.linksRange.name()));
@@ -47,7 +47,7 @@ public class GetLinksOfAlignmentCommandFactory extends CommandFactory {
 			range = request.getParameter(Arguments.range.name());
 		}
 			
-		return new GetLinksOfAlignmentCommand(getNewId(vWorkspace), alignmentId, linksRange,
+		return new GetLinksOfAlignmentCommand(getNewId(workspace), alignmentId, linksRange,
 				domain, range);
 	}
 

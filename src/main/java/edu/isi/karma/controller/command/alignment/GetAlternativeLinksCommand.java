@@ -22,8 +22,8 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,13 +32,12 @@ import org.json.JSONObject;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
-import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetAlternativeLinksCommand extends Command {
@@ -85,29 +84,22 @@ public class GetAlternativeLinksCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		final Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+//		OntologyManager ontMgr = workspace.getOntologyManager();
 		
 		Map<String, Label> linkList = new HashMap<String, Label>();
 		if (linksRange == ALTERNATIVE_LINKS_RANGE.allObjectProperties) {
-			linkList = vWorkspace.getWorkspace().
+			linkList = workspace.
 					getOntologyManager().getObjectProperties();
 			
 		} else if (linksRange == ALTERNATIVE_LINKS_RANGE.compatibleLinks) {
-			Node sourceNode = alignment.getNodeById(sourceNodeId);
-			Node targetNode = alignment.getNodeById(targetNodeId);
 			
-			if (sourceNode == null || targetNode == null) {
-				return new UpdateContainer(new ErrorUpdate("Error occured while getting links!"));
-			}
-			
-			Set<String> possibleLinks = ontMgr.getObjectPropertiesIndirect(
-							sourceNode.getLabel().getUri(), targetNode.getLabel().getUri());
-			if (possibleLinks != null) {
-				for (String linkUri:possibleLinks) {
-					Label linkLabel = ontMgr.getUriLabel(linkUri);
-					linkList.put(linkUri, linkLabel);
+			List<Link> compatibleLinks = alignment.getLinks(sourceNodeId, targetNodeId);
+			if (compatibleLinks != null) {
+				for (Link link : compatibleLinks) {
+					if (link.getLabel() != null)
+						linkList.put(link.getLabel().getUri(), link.getLabel());
 				}
 			}
 		}
@@ -148,7 +140,7 @@ public class GetAlternativeLinksCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// Not required!
 		return null;
 	}

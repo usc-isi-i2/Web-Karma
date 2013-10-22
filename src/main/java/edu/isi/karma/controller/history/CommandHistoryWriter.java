@@ -13,20 +13,20 @@ import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;
-import edu.isi.karma.view.VWorkspace;
 
 public class CommandHistoryWriter {
 	private final ArrayList<Command> history;
-	private VWorkspace vWorkspace;
+	private Workspace workspace;
 	
 	public enum HistoryArguments {
-		vWorksheetId, commandName, inputParameters, hNodeId, tags
+		worksheetId, commandName, inputParameters, hNodeId, tags
 	}
 
-	public CommandHistoryWriter(ArrayList<Command> history, VWorkspace vWorkspace) {
+	public CommandHistoryWriter(ArrayList<Command> history, Workspace workspace) {
 		this.history = history;
-		this.vWorkspace = vWorkspace;
+		this.workspace = workspace;
 	}
 
 	public void writeHistoryPerWorksheet() throws JSONException {
@@ -35,8 +35,8 @@ public class CommandHistoryWriter {
 			if(command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
 					|| command.hasTag(CommandTag.Transformation))) {
 				JSONArray json = new JSONArray(command.getInputParameterJson());
-				String vWorksheetId = HistoryJsonUtil.getStringValue(HistoryArguments.vWorksheetId.name(), json);
-				String worksheetName = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet().getTitle(); 
+				String worksheetId = HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json);
+				String worksheetName = workspace.getWorksheet(worksheetId).getTitle(); 
 				if(comMap.get(worksheetName) == null)
 					comMap.put(worksheetName, new ArrayList<Command>());
 				comMap.get(worksheetName).add(command);
@@ -63,12 +63,12 @@ public class CommandHistoryWriter {
 					/*** Check the input parameter type and accordingly make changes ***/
 					if(HistoryJsonUtil.getParameterType(inpP) == ParameterType.hNodeId) {
 						String hNodeId = inpP.getString(ClientJsonKeys.value.name());
-						HNode node = vWorkspace.getRepFactory().getHNode(hNodeId);
-						JSONArray hNodeRepresentation = node.getJSONArrayRepresentation(vWorkspace.getRepFactory());
+						HNode node = workspace.getFactory().getHNode(hNodeId);
+						JSONArray hNodeRepresentation = node.getJSONArrayRepresentation(workspace.getFactory());
 						inpP.put(ClientJsonKeys.value.name(), hNodeRepresentation);
 					
-					} else if (HistoryJsonUtil.getParameterType(inpP) == ParameterType.vWorksheetId) {
-						inpP.put(ClientJsonKeys.value.name(), "VW");
+					} else if (HistoryJsonUtil.getParameterType(inpP) == ParameterType.worksheetId) {
+						inpP.put(ClientJsonKeys.value.name(), "W");
 					} else {
 						// do nothing
 					}
@@ -77,9 +77,9 @@ public class CommandHistoryWriter {
 				 if(!commandAlreadyexists(commArr, commObj))
 					commArr.put(commObj);
 			}
-//			System.out.println(commArr.toString(4));
+//			logger.debug(commArr.toString(4));
 			JSONUtil.writeJsonFile(commArr, HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(wkName, 
-					vWorkspace.getPreferencesId()));
+					workspace.getCommandPreferencesId()));
 		}
 	}
 	

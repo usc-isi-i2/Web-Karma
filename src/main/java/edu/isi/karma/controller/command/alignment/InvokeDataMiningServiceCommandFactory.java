@@ -25,21 +25,21 @@ import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class InvokeDataMiningServiceCommandFactory extends CommandFactory {
 	private enum Arguments {
-		vWorksheetId, tripleStoreUrl, modelContext, dataMiningURL
+		worksheetId, tripleStoreUrl, modelContext, dataMiningURL
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
+			Workspace workspace) {
+		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String url = request.getParameter(Arguments.tripleStoreUrl.name());
 		String context = request.getParameter(Arguments.modelContext.name());
 		String dmURL = request.getParameter(Arguments.dataMiningURL.name());
-		return new InvokeDataMiningServiceCommand(getNewId(vWorkspace), vWorksheetId, url, context, dmURL);
+		return new InvokeDataMiningServiceCommand(getNewId(workspace), worksheetId, url, context, dmURL);
 	}
 
 }

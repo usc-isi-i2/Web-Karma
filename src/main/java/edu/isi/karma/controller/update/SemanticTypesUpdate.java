@@ -54,7 +54,7 @@ import edu.isi.karma.view.VWorkspace;
 
 public class SemanticTypesUpdate extends AbstractUpdate {
 	private Worksheet worksheet;
-	private String vWorksheetId;
+	private String worksheetId;
 	private Alignment alignment;
 
 	public enum JsonKeys {
@@ -66,10 +66,10 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 	private static Logger logger = LoggerFactory
 			.getLogger(SemanticTypesUpdate.class);
 
-	public SemanticTypesUpdate(Worksheet worksheet, String vWorksheetId, Alignment alignment) {
+	public SemanticTypesUpdate(Worksheet worksheet, String worksheetId, Alignment alignment) {
 		super();
 		this.worksheet = worksheet;
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 		this.alignment = alignment;
 	}
 
@@ -83,8 +83,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		JSONStringer jsonStr = new JSONStringer();
 		try {
 			JSONWriter writer = jsonStr.object();
-
-			writer.key("worksheetId").value(vWorksheetId).key("updateType")
+			writer.key("worksheetId").value(worksheetId).key("updateType")
 					.value("SemanticTypesUpdate");
 
 			writer.key(JsonKeys.Types.name());

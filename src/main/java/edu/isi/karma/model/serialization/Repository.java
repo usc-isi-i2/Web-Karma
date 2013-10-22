@@ -25,7 +25,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -48,7 +49,7 @@ public class Repository {
 //	* The default value, represented by null is "RDF/XML".
 	public final String LANG = SerializationLang.N3;
 	
-	static Logger logger = Logger.getLogger(Repository.class);
+	private static Logger logger = LoggerFactory.getLogger(Repository.class);
 
 	private Dataset dataset;
 

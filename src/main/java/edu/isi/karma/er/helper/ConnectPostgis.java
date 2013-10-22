@@ -4,8 +4,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ConnectPostgis {
 
+	private static Logger logger = LoggerFactory.getLogger(ConnectPostgis.class);
 	public ConnectPostgis() {
 	}
 
@@ -15,17 +19,16 @@ public class ConnectPostgis {
 			Class.forName("org.postgresql.Driver");
 		} catch (ClassNotFoundException e) {
 
-			System.out.println("Where is your PostgreSQL JDBC Driver? "
-					+ "Include in your library path!");
-			e.printStackTrace();
+			logger.error("Where is your PostgreSQL JDBC Driver? "
+					+ "Include in your library path!", e);
 
 		}
 		try {
 			//connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgis", "postgres","dd251314");
+			//TODO remove this connection!
 			connection = DriverManager.getConnection("jdbc:postgresql://fusion.isi.edu:54322/testGIS","karma","2xpd516");
 		} catch (SQLException e) {
-			System.out.println("Connection Failed! Check output console");
-			e.printStackTrace();
+			logger.error("Connection Failed! Check output console", e);
 		}
 		return connection;
 
@@ -36,9 +39,8 @@ public class ConnectPostgis {
 			Class.forName("org.postgresql.Driver");
 		} catch (ClassNotFoundException e) {
 
-			System.out.println("Where is your PostgreSQL JDBC Driver? "
-					+ "Include in your library path!");
-			e.printStackTrace();
+			logger.error("Where is your PostgreSQL JDBC Driver? "
+					+ "Include in your library path!", e);
 
 		}
 		try {
@@ -46,8 +48,7 @@ public class ConnectPostgis {
 					ConnectionString, user,
 					password);
 		} catch (SQLException e) {
-			System.out.println("Connection Failed! Check output console");
-			e.printStackTrace();
+			logger.error("Connection Failed! Check output console", e);
 		}
 		return connection;
 

@@ -35,13 +35,11 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.publish.PublishRDFCommand;
-import edu.isi.karma.controller.command.publish.PublishRDFCommand.PreferencesKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.er.helper.SPARQLGeneratorUtil;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
@@ -52,6 +50,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
@@ -60,7 +59,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class GenerateR2RMLModelCommand extends Command {
 	
-	private final String vWorksheetId;
+	private final String worksheetId;
 	private String worksheetName;
 	private String tripleStoreUrl;
 	private String graphContext;
@@ -68,16 +67,16 @@ public class GenerateR2RMLModelCommand extends Command {
 	private static Logger logger = LoggerFactory.getLogger(GenerateR2RMLModelCommand.class);
 	
 	public enum JsonKeys {
-		updateType, fileUrl, vWorksheetId
+		updateType, fileUrl, worksheetId
 	}
 	
 	public enum PreferencesKeys {
 		rdfPrefix, rdfNamespace, modelSparqlEndPoint
 	}
 	
-	protected GenerateR2RMLModelCommand(String id, String vWorksheetId, String url, String context) {
+	protected GenerateR2RMLModelCommand(String id, String worksheetId, String url, String context) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 		this.tripleStoreUrl = url;
 		this.graphContext = context;
 	}
@@ -120,26 +119,26 @@ public class GenerateR2RMLModelCommand extends Command {
 	
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		
 		//save the preferences 
-		savePreferences(vWorkspace);
+		savePreferences(workspace);
 				
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		this.worksheetName = worksheet.getTitle();
 		
 		// Prepare the model file path and names
-		final String modelFileName = vWorkspace.getPreferencesId() + vWorksheetId + "-" + 
+		final String modelFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
 				this.worksheetName +  "-model.ttl"; 
 		final String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
 				ContextParameter.USER_DIRECTORY_PATH) +  "publish/R2RML/" + modelFileName;
 
 		// Get the alignment for this Worksheet
 		Alignment alignment = AlignmentManager.Instance().getAlignment(AlignmentManager.
-				Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId));
+				Instance().constructAlignmentId(workspace.getId(), worksheetId));
 		
 		if (alignment == null) {
-			logger.info("Alignment is NULL for " + vWorksheetId);
+			logger.info("Alignment is NULL for " + worksheetId);
 			return new UpdateContainer(new ErrorUpdate(
 					"Please align the worksheet before generating R2RML Model!"));
 		}
@@ -148,7 +147,7 @@ public class GenerateR2RMLModelCommand extends Command {
 			// Get the namespace and prefix from the preferences
 			String namespace = "";
 			String prefix = "";
-			JSONObject prefObject = vWorkspace.getPreferences().getCommandPreferencesJSONObject(
+			JSONObject prefObject = workspace.getCommandPreferences().getCommandPreferencesJSONObject(
 					PublishRDFCommand.class.getSimpleName()+"Preferences");
 			if (prefObject != null) {
 				namespace = prefObject.getString(PreferencesKeys.rdfNamespace.name());
@@ -164,12 +163,12 @@ public class GenerateR2RMLModelCommand extends Command {
 			
 			// Generate the KR2RML data structures for the RDF generation
 			final ErrorReport errorReport = new ErrorReport();
-			OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+			OntologyManager ontMgr = workspace.getOntologyManager();
 			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(ontMgr, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
 			
 			// Write the model
-			writeModel(vWorkspace, ontMgr, mappingGen, worksheet, modelFileLocalPath);
+			writeModel(workspace, ontMgr, mappingGen, worksheet, modelFileLocalPath);
 			
 			// Write the model to the triple store
 			TripleStoreUtil utilObj = new TripleStoreUtil();
@@ -194,7 +193,7 @@ public class GenerateR2RMLModelCommand extends Command {
 						try {
 							outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
 							outputObject.put(JsonKeys.fileUrl.name(), "publish/R2RML/" + modelFileName);
-							outputObject.put(JsonKeys.vWorksheetId.name(), vWorksheetId);
+							outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
 							pw.println(outputObject.toString());
 						} catch (JSONException e) {
 							logger.error("Error occured while generating JSON!");
@@ -213,32 +212,32 @@ public class GenerateR2RMLModelCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// Not required
 		return null;
 	}
 	
-	private void writeModel(VWorkspace vWorkspace, OntologyManager ontMgr, 
+	private void writeModel(Workspace workspace, OntologyManager ontMgr, 
 			KR2RMLMappingGenerator mappingGen, Worksheet worksheet, String modelFileLocalPath) 
 					throws RepositoryException, FileNotFoundException, 
 							UnsupportedEncodingException, JSONException {
 		PrintWriter writer = new PrintWriter(modelFileLocalPath, "UTF-8");
 		WorksheetModelWriter modelWriter = new WorksheetModelWriter(writer, 
-				vWorkspace.getRepFactory(), ontMgr, worksheet.getTitle());
+				workspace.getFactory(), ontMgr, worksheet.getTitle());
 
 		// Writer worksheet properties such as Service URL
 		modelWriter.writeWorksheetProperties(worksheet);
 		
 		// Write the transformation commands if any
-		WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(vWorksheetId, 
-				vWorkspace);
+		WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(worksheetId, 
+				workspace);
 		List<String> commandsJSON = histReader.getJSONForCommands(CommandTag.Transformation);
 		if (!commandsJSON.isEmpty()) {
 			modelWriter.writeTransformationHistory(commandsJSON);
 		}
 		// Write the worksheet history
 		String historyFilePath = HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(
-				worksheet.getTitle(), vWorkspace.getPreferencesId());
+				worksheet.getTitle(), workspace.getCommandPreferencesId());
 		modelWriter.writeCompleteWorksheetHistory(historyFilePath);
 		
 		// Write the R2RML mapping
@@ -249,11 +248,11 @@ public class GenerateR2RMLModelCommand extends Command {
 	}
 
 	
-	private void savePreferences(VWorkspace vWorkspace){
+	private void savePreferences(Workspace workspace){
 		try{
 			JSONObject prefObject = new JSONObject();
 			prefObject.put(PreferencesKeys.modelSparqlEndPoint.name(), tripleStoreUrl);
-			vWorkspace.getPreferences().setCommandPreferences(
+			workspace.getCommandPreferences().setCommandPreferences(
 					"GenerateR2RMLModelCommandPreferences", prefObject);
 			
 		} catch (JSONException e) {

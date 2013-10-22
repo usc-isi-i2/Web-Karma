@@ -4,10 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigUtil {
 
@@ -114,7 +115,7 @@ public class ConfigUtil {
 			Constants.PATH_N3_FILE = json.optString("path_n3_file");
 			Constants.PATH_RATIO_FILE = json.optString("path_ratio_file");
 			Constants.PATH_SCORE_BOARD_FILE = json.optString("path_score_board_file");
-			Logger log = Logger.getRootLogger();
+			Logger log = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 			log.info("Constants PATH_BASE is successfully set to " + Constants.PATH_BASE);
 			log.info("Constants PATH_REPOSITORY is successfully set to " + Constants.PATH_REPOSITORY);
 			log.info("Constants PATH_N3_FILE is successfully set to " + Constants.PATH_N3_FILE);

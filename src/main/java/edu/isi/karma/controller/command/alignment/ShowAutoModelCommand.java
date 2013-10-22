@@ -35,7 +35,7 @@ import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
+import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -45,24 +45,23 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.view.VWorkspace;
 
 public class ShowAutoModelCommand extends WorksheetCommand {
 
-	private final String vWorksheetId;
 	private String worksheetName;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(ShowAutoModelCommand.class);
 
-	protected ShowAutoModelCommand(String id, String worksheetId,
-			String vWorksheetId) {
+	protected ShowAutoModelCommand(String id, String worksheetId)
+			{
 		super(id, worksheetId);
-		this.vWorksheetId = vWorksheetId;
 		
 		/** NOTE Not saving this command in history for now since we are 
 		 * not letting CRF model assign semantic types automatically. This command 
@@ -92,19 +91,19 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		worksheetName = worksheet.getTitle();
 
 		// Generate the semantic types for the worksheet
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+		OntologyManager ontMgr = workspace.getOntologyManager();
 		if(ontMgr.isEmpty())
 			return new UpdateContainer(new ErrorUpdate("No ontology loaded."));
 //SemanticTypeUtil.computeSemanticTypesForAutoModel(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
 
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		if (alignment == null) {
 			alignment = new Alignment(ontMgr);
@@ -122,14 +121,16 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 		for (HNode hNode : sortedLeafHNodes){
 			String columnName = hNode.getColumnName().trim().replaceAll(" ", "_");
 			ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNode.getId());
-			if (columnNode == null) {
-				columnNode = alignment.addColumnNode(hNode.getId(), columnName, "");
+			
+			List<Link> columnNodeIncomingLinks = alignment.getIncomingLinks(columnNode.getId());
+			if (columnNodeIncomingLinks == null || columnNodeIncomingLinks.isEmpty()) { // SemanticType not yet assigned
 				Label propertyLabel = new Label(ns + columnName, ns, "karma");
 				alignment.addDataPropertyLink(classNode, columnNode, propertyLabel, false);
 				
 				// Create a semantic type object
 				SemanticType type = new SemanticType(hNode.getId(), propertyLabel, internalNodeLabel, SemanticType.Origin.User, 1.0,false);
 				worksheet.getSemanticTypes().addType(type);
+				columnNode.setUserSelectedSemanticType(type);
 			} else {
 				// User-defined: do nothing
 			}
@@ -138,12 +139,12 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 		
 		try {
 			// Save the semantic types in the input parameter JSON
-			saveSemanticTypesInformation(worksheet, vWorkspace, worksheet.getSemanticTypes().getListOfTypes());
+			saveSemanticTypesInformation(worksheet, workspace, worksheet.getSemanticTypes().getListOfTypes());
 			
 			// Add the visualization update
-			c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
-			c.add(new SVGAlignmentUpdate_ForceKarmaLayout(
-					vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
+			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+			c.add(new AlignmentSVGVisualizationUpdate(
+					worksheetId, alignment));
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(
@@ -154,15 +155,15 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 		return c;
 	}
 
-	private void saveSemanticTypesInformation(Worksheet worksheet, VWorkspace vWorkspace
+	private void saveSemanticTypesInformation(Worksheet worksheet, Workspace workspace
 			, Collection<SemanticType> semanticTypes) throws JSONException {
 		JSONArray typesArray = new JSONArray();
 		
 		// Add the vworksheet information
 		JSONObject vwIDJObj = new JSONObject();
-		vwIDJObj.put(ClientJsonKeys.name.name(), ParameterType.vWorksheetId.name());
-		vwIDJObj.put(ClientJsonKeys.type.name(), ParameterType.vWorksheetId.name());
-		vwIDJObj.put(ClientJsonKeys.value.name(), vWorksheetId);
+		vwIDJObj.put(ClientJsonKeys.name.name(), ParameterType.worksheetId.name());
+		vwIDJObj.put(ClientJsonKeys.type.name(), ParameterType.worksheetId.name());
+		vwIDJObj.put(ClientJsonKeys.value.name(), worksheetId);
 		typesArray.put(vwIDJObj);
 		
 		// Add the check history information
@@ -191,7 +192,7 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 }

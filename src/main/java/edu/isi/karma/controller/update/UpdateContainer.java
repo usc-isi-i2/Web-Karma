@@ -71,13 +71,21 @@ public class UpdateContainer {
 		pw.println(newPref + JSONUtil.jsonStartList(JsonKeys.elements));
 		Iterator<AbstractUpdate> it = updates.iterator();
 		while (it.hasNext()) {
-			it.next().generateJson(newPref + "  ", pw, vWorkspace);
+			 it.next().generateJson(newPref + "  ", pw, vWorkspace);
 			if (it.hasNext()) {
 				pw.println(newPref + "  ,");
 			}
 		}
 		pw.println(newPref + "]");
 		pw.println(prefix + "}");
+	}
+	
+	public void applyUpdates(VWorkspace vWorkspace)
+	{
+		Iterator<AbstractUpdate> it = updates.iterator();
+		while (it.hasNext()) {
+			it.next().applyUpdate(vWorkspace);
+		}
 	}
 
 	/**

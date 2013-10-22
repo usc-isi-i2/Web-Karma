@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 
-import org.apache.commons.httpclient.URIException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -49,14 +48,13 @@ import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.metadata.WorksheetProperties;
-import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PublishRDFCommand extends Command {
-	private final String vWorksheetId;
+	private final String worksheetId;
 	private String rdfSourcePrefix;
 	private String rdfSourceNamespace;
 	private String addInverseProperties;
@@ -72,7 +70,7 @@ public class PublishRDFCommand extends Command {
 	private boolean replaceContext;
 	
 	public enum JsonKeys {
-		updateType, fileUrl, vWorksheetId, errorReport
+		updateType, fileUrl, worksheetId, errorReport
 	}
 
 	private static Logger logger = LoggerFactory
@@ -82,12 +80,12 @@ public class PublishRDFCommand extends Command {
 		rdfPrefix, rdfNamespace, addInverseProperties, saveToStore, dbName, hostName, userName, modelName, rdfSparqlEndPoint
 	}
 
-	protected PublishRDFCommand(String id, String vWorksheetId,
+	protected PublishRDFCommand(String id, String worksheetId,
 			String publicRDFAddress, String rdfSourcePrefix, String rdfSourceNamespace, String addInverseProperties,
 			String saveToStore,String hostName,String dbName,String userName,String password, String modelName, String tripleStoreUrl,
 			String graphUri, boolean replace) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 		this.rdfSourcePrefix = rdfSourcePrefix;
 		this.rdfSourceNamespace = rdfSourceNamespace;
 		this.addInverseProperties = addInverseProperties;
@@ -126,39 +124,39 @@ public class PublishRDFCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		
 		//save the preferences 
-		savePreferences(vWorkspace);
+		savePreferences(workspace);
 
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		this.worksheetName = worksheet.getTitle();
 		
 		// Prepare the file path and names
-		final String rdfFileName = vWorkspace.getPreferencesId() + vWorksheetId + ".ttl"; 
+		final String rdfFileName = workspace.getCommandPreferencesId() + worksheetId + ".ttl"; 
 		final String rdfFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +  
 				"publish/RDF/" + rdfFileName;
 
 		// Get the alignment for this worksheet
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
-				AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId));
+				AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId));
 		
 		if (alignment == null) {
-			logger.info("Alignment is NULL for " + vWorksheetId);
+			logger.info("Alignment is NULL for " + worksheetId);
 			return new UpdateContainer(new ErrorUpdate(
 					"Please align the worksheet before generating RDF!"));
 		}
 		
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
-		KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(vWorkspace.getWorkspace().getOntologyManager(), 
+		KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace.getOntologyManager(), 
 				alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
 				Boolean.valueOf(addInverseProperties), errorReport);
 		
-		System.out.println(mappingGen.getR2RMLMapping().toString());
+		logger.debug(mappingGen.getR2RMLMapping().toString());
 		
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
-				vWorkspace.getRepFactory(), vWorkspace.getWorkspace().getOntologyManager(),
+				workspace.getFactory(), workspace.getOntologyManager(),
 				rdfFileLocalPath, false, mappingGen.getMappingAuxillaryInformation(), errorReport);
 		
 		// Generate the RDF using KR2RML data structures
@@ -211,7 +209,7 @@ public class PublishRDFCommand extends Command {
 					try {
 						outputObject.put(JsonKeys.updateType.name(), "PublishRDFUpdate");
 						outputObject.put(JsonKeys.fileUrl.name(), "publish/RDF/" + rdfFileName);
-						outputObject.put(JsonKeys.vWorksheetId.name(), vWorksheetId);
+						outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
 						outputObject.put(JsonKeys.errorReport.name(), errorReport.toJSONString());
 						pw.println(outputObject.toString(4));
 					} catch (JSONException e) {
@@ -224,7 +222,7 @@ public class PublishRDFCommand extends Command {
 		}
 	}
 
-	private void savePreferences(VWorkspace vWorkspace){
+	private void savePreferences(Workspace workspace){
 		try{
 			JSONObject prefObject = new JSONObject();
 			prefObject.put(PreferencesKeys.addInverseProperties.name(), addInverseProperties);
@@ -236,14 +234,14 @@ public class PublishRDFCommand extends Command {
 			prefObject.put(PreferencesKeys.modelName.name(), modelName);
 			prefObject.put(PreferencesKeys.userName.name(), userName);
 			prefObject.put(PreferencesKeys.rdfSparqlEndPoint.name(), tripleStoreUrl);
-			vWorkspace.getPreferences().setCommandPreferences(
+			workspace.getCommandPreferences().setCommandPreferences(
 					"PublishRDFCommandPreferences", prefObject);
 			
 			/*
-			System.out.println("I Saved .....");
+			logger.debug("I Saved .....");
 			ViewPreferences prefs = vWorkspace.getPreferences();
 			JSONObject prefObject1 = prefs.getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
-			System.out.println("I Saved ....."+prefObject1);
+			logger.debug("I Saved ....."+prefObject1);
 			 */
 			
 		} catch (JSONException e) {
@@ -270,7 +268,7 @@ public class PublishRDFCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 

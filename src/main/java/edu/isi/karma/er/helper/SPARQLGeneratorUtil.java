@@ -26,16 +26,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
-import edu.isi.karma.kr2rml.ObjectMap;
 import edu.isi.karma.kr2rml.Predicate;
 import edu.isi.karma.kr2rml.PredicateObjectMap;
 import edu.isi.karma.kr2rml.R2RMLMapping;
 import edu.isi.karma.kr2rml.RefObjectMap;
-import edu.isi.karma.kr2rml.SubjectMap;
 import edu.isi.karma.kr2rml.TriplesMap;
 
+/*
+ * Pedro: This code needs an author. Who wrote this?
+ */
 public class SPARQLGeneratorUtil {
 	
 	private StringBuffer select_params;

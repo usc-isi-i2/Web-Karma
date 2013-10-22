@@ -28,64 +28,52 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
 import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.cleaning.RamblerTransformationInputs;
 import edu.isi.karma.rep.cleaning.RamblerTransformationOutput;
 import edu.isi.karma.rep.cleaning.RamblerValueCollection;
 import edu.isi.karma.rep.cleaning.TransformationExample;
 import edu.isi.karma.rep.cleaning.ValueCollection;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 
-public class SubmitCleaningCommand extends Command {
+public class SubmitCleaningCommand extends WorksheetCommand {
 	private String hNodeId = "";
-	private String vWorksheetId = "";
 	private String newHNodeId = "";
 	private String hTableId = "";
 	private String columnName;
 	
-	private static Logger logger =Logger.getLogger(SubmitCleaningCommand.class);
+	private static Logger logger =LoggerFactory.getLogger(SubmitCleaningCommand.class);
 	private Vector<TransformationExample> examples = new Vector<TransformationExample>();
 	
-	public SubmitCleaningCommand(String id, String hNodeId, String vWorkSheetId, String Examples) {
-		super(id);
+	public SubmitCleaningCommand(String id, String hNodeId, String worksheetId, String Examples) {
+		super(id, worksheetId);
 		this.hNodeId = hNodeId;
-		this.vWorksheetId = vWorkSheetId;
-//		this.hTableId = hTableId;
 		this.examples = GenerateCleaningRulesCommand.parseExample(Examples);
-		try {
-			FileAppender appender = new FileAppender(new SimpleLayout(),"./log/cleanning.log");
-			logger.addAppender(appender);
-		} catch (Exception e) {
-			
-		}
+
 		addTag(CommandTag.Transformation);
 	}
 
@@ -115,12 +103,11 @@ public class SubmitCleaningCommand extends Command {
 										"{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"},"+
 										"{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"},"+
 										"{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"},"+
-										"{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"},"+
 										"{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"}]",
-										"id",this.id,"vWorksheetId",this.vWorksheetId,
+										"id",this.id,
 										"worksheetId",worksheetId,"hTableId",hTableId,
 										"hNodeId",this.hNodeId,"newColumnName",colname);
-		System.out.println(""+cmdString);
+		logger.debug(""+cmdString);
 		JSONArray jsonArray = new JSONArray();
 		try {
 			jsonArray= new JSONArray(cmdString);
@@ -130,10 +117,6 @@ public class SubmitCleaningCommand extends Command {
 	}
 	public JSONArray createMultiCellCmd(ValueCollection vc,String nHNodeId)
 	{
-		/*super(id);
-		this.hNodeID = hNodeID;
-		this.vWorksheetId = vWorksheetID;
-		this.newRowValueMap = rowValueMap;*/
 		JSONArray strData = new JSONArray();
 		for(String key:vc.getNodeIDs())
 		{
@@ -151,7 +134,7 @@ public class SubmitCleaningCommand extends Command {
 				"{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"},"+
 				"{\"name\":\"%s\",\"type\":\"other\",\"value\":\"%s\"},"+
 				"{\"name\":\"%s\",\"type\":\"other\",\"value\":%s}]",
-				"id",this.id,"hNodeID",nHNodeId,"vWorksheetID",this.vWorksheetId,"rows",strData.toString()
+				"id",this.id,"hNodeID",nHNodeId,"worksheetId",worksheetId,"rows",strData.toString()
 				);
 		JSONArray cmdArray = new JSONArray();
 		try {
@@ -161,153 +144,185 @@ public class SubmitCleaningCommand extends Command {
 		return cmdArray;
 	}
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) {
+	public UpdateContainer doIt(Workspace workspace) {
 		// create new column command
-		String worksheetId = vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).getWorksheetId();
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
 		String Msg = String.format("submit end, Time:%d, Worksheet:%s",System.currentTimeMillis(),worksheetId);
 		logger.info(Msg);
 		String colnameString = "";
+		UpdateContainer c = new UpdateContainer();
 		try
 		{
 			// obtain transformed results
 			HashMap<String, String> rows = new HashMap<String,String>();
-			HNodePath selectedPath = null;
-			List<HNodePath> columnPaths = vWorkspace.getRepFactory().getWorksheet(worksheetId).getHeaders().getAllPaths();
-			for (HNodePath path : columnPaths) {
-				if (path.getLeaf().getId().equals(hNodeId)) {
-					hTableId = path.getLeaf().getHTableId();
-					this.columnName = path.getLeaf().getColumnName();
-					HTable hTable = path.getLeaf().getHTable(vWorkspace.getRepFactory()); 
-					colnameString = hTable.getNewColumnName(this.columnName);
-					selectedPath = path;
-					
-				}
-			}
-			Collection<Node> nodes = new ArrayList<Node>();
-			vWorkspace.getRepFactory().getWorksheet(worksheetId).getDataTable().collectNodes(selectedPath, nodes);	
-			for (Node node : nodes) {
-				String id = node.getBelongsToRow().getId();
-				String originalVal = node.getValue().asString();
-				if(!rows.containsKey(id))
-					rows.put(id, originalVal);
-			}
-			RamblerValueCollection vc = new RamblerValueCollection(rows);
-			RamblerTransformationInputs inputs = new RamblerTransformationInputs(examples, vc);
-			//generate the program
-			boolean results = false;
-			int iterNum = 0;
-			RamblerTransformationOutput rtf = null;
-			while(iterNum<1 && !results) // try to find any rule during 1 times running
-			{
-				rtf = new RamblerTransformationOutput(inputs);
-				if(rtf.getTransformations().keySet().size()>0)
-				{
-					results = true;
-				}
-				iterNum ++;
-			}
+			colnameString = obtainTransformedResultsAndFindNewColumnName(workspace, rows);
+			
+			RamblerTransformationOutput rtf = applyRamblerTransformation(rows);
 			if(rtf.getTransformations().keySet().size() <= 0)
 			{
-				UpdateContainer c = new UpdateContainer();
-				vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,worksheet.getHeaders().getAllPaths(), vWorkspace);
-				vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).update(c);
+				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
 				c.add(new InfoUpdate("No Result Submitted"));
-				return c;
-				
+				return c;			
 			}
-			Iterator<String> iter = rtf.getTransformations().keySet().iterator();
-			Vector<ValueCollection> vvc = new Vector<ValueCollection>();
-			String tpid = iter.next();
-			ValueCollection rvco = rtf.getTransformedValues(tpid);
-			vvc.add(rvco);
-			//add a new column
-			JSONArray inputParamArr0 = this.creatNewColumnCommand(worksheetId,hTableId,colnameString);
-			ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(vWorkspace.getWorkspace().getId());
-			CommandFactory cf0 = ctrl.getCommandFactoryMap().get(AddColumnCommand.class.getSimpleName());
-			JSONInputCommandFactory scf1 = (JSONInputCommandFactory)cf0;
-			Command comm1 = null;
-			try {
-				comm1 = scf1.createCommand(inputParamArr0, vWorkspace);
-			} catch (JSONException e1) {
-				e1.printStackTrace();
-			} catch (KarmaException e1) {
-				e1.printStackTrace();
-			}
-			if(comm1 != null) {
-				try {
-					comm1.saveInHistory(false);
-					vWorkspace.getWorkspace().getCommandHistory().doCommand(comm1, vWorkspace);
-				} catch (CommandException e) {
-				}
-			}
-			columnPaths = vWorkspace.getRepFactory().getWorksheet(worksheetId).getHeaders().getAllPaths();
-			// create edit multiple cells command
-			for (HNodePath path : columnPaths) {
-				if (path.getLeaf().getColumnName().compareTo(colnameString)==0) {
-					selectedPath = path;
-					this.newHNodeId = path.getLeaf().getId();
-				}
-			}
+
+			createAndExecuteNewAddColumnCommand(workspace, colnameString);
 			
-			// Set the new column as derived from original column
-			HNode newHNode = vWorkspace.getRepFactory().getHNode(newHNodeId);
-			if (newHNode != null) {
-				newHNode.setAsDerivedFromAnotherColumn(hNodeId);
-			}
-			JSONArray inputParamArr = this.createMultiCellCmd(rvco,selectedPath.getLeaf().getId());
-			CommandFactory cf = ctrl.getCommandFactoryMap().get(MultipleValueEditColumnCommand.class.getSimpleName());
-			JSONInputCommandFactory scf = (JSONInputCommandFactory)cf;
-			Command comm = scf.createCommand(inputParamArr, vWorkspace);
-			if(comm != null){
-//				logger.info("Executing command: " + commObject.get(HistoryArguments.commandName.name()));
-				vWorkspace.getWorkspace().getCommandHistory().doCommand(comm, vWorkspace);
-			}
+			ValueCollection rvco = getValueCollectionFromRamblerTranformationOutput(rtf);
+			HNodePath selectedPath = findPathForNewColumn(workspace,
+					colnameString);
+			findNewHNodeIdAndHNodeAsDerived(workspace, selectedPath);
+			// create edit multiple cells command
+			createAndExecuteMultiCellCmd(workspace, selectedPath, rvco);
 		}
 		catch(Exception e) {
-			e.printStackTrace();
+			logger.error("Unable to complete processing of cleaning command", e);
+			c.add(new ErrorUpdate("Unable to complete processing of cleaning command"));
+			//TODO do we need to clean up?
 		}
-		UpdateContainer c = new UpdateContainer();
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,worksheet.getHeaders().getAllPaths(), vWorkspace);
-		vWorkspace.getViewFactory().getVWorksheet(this.vWorksheetId).update(c);
+	
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
 		
 		/** Add the alignment update **/
-		addAlignmentUpdate(c, vWorkspace, worksheet);
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		
 		c.add(new InfoUpdate("Column transformation complete"));
 		return c;
 	}
+
+	private HNodePath findPathForNewColumn(Workspace workspace,
+			String colnameString) {
+		List<HNodePath> columnPaths = workspace.getFactory().getWorksheet(worksheetId).getHeaders().getAllPaths();
+		HNodePath selectedPath = null;
+		for (HNodePath path : columnPaths) {
+			if (path.getLeaf().getColumnName().compareTo(colnameString)==0) {
+				selectedPath = path;
+				break;
+			}
+		}
+
+		return selectedPath;
+	}
+
+	private void findNewHNodeIdAndHNodeAsDerived(Workspace workspace,
+			HNodePath selectedPath) {
+		this.newHNodeId = selectedPath.getLeaf().getId();
+		// Set the new column as derived from original column
+		HNode newHNode = workspace.getFactory().getHNode(newHNodeId);
+		if (newHNode != null) {
+			newHNode.setAsDerivedFromAnotherColumn(hNodeId);
+		}
+	}
+
+	private ValueCollection getValueCollectionFromRamblerTranformationOutput(
+			RamblerTransformationOutput rtf) {
+		Iterator<String> iter = rtf.getTransformations().keySet().iterator();
+		Vector<ValueCollection> vvc = new Vector<ValueCollection>();
+		String tpid = iter.next();
+		ValueCollection rvco = rtf.getTransformedValues(tpid);
+		vvc.add(rvco);
+		return rvco;
+	}
+
+	private RamblerTransformationOutput applyRamblerTransformation(
+			HashMap<String, String> rows) {
+		RamblerValueCollection vc = new RamblerValueCollection(rows);
+		RamblerTransformationInputs inputs = new RamblerTransformationInputs(examples, vc);
+		//generate the program
+		boolean results = false;
+		int iterNum = 0;
+		RamblerTransformationOutput rtf = null;
+		while(iterNum<1 && !results) // try to find any rule during 1 times running
+		{
+			rtf = new RamblerTransformationOutput(inputs);
+			if(rtf.getTransformations().keySet().size()>0)
+			{
+				results = true;
+			}
+			iterNum ++;
+		}
+		return rtf;
+	}
+
+	private String obtainTransformedResultsAndFindNewColumnName(Workspace workspace,
+			 HashMap<String, String> rows) {
+		
+		String colnameString = "";
+		HNodePath selectedPath = null;
+		List<HNodePath> columnPaths = workspace.getFactory().getWorksheet(worksheetId).getHeaders().getAllPaths();
+		for (HNodePath path : columnPaths) {
+			if (path.getLeaf().getId().equals(hNodeId)) {
+				hTableId = path.getLeaf().getHTableId();
+				this.columnName = path.getLeaf().getColumnName();
+				HTable hTable = path.getLeaf().getHTable(workspace.getFactory()); 
+				colnameString = hTable.getNewColumnName(this.columnName);
+				selectedPath = path;
+				
+			}
+		}
+		Collection<Node> nodes = new ArrayList<Node>();
+		workspace.getFactory().getWorksheet(worksheetId).getDataTable().collectNodes(selectedPath, nodes);	
+		for (Node node : nodes) {
+			String id = node.getBelongsToRow().getId();
+			String originalVal = node.getValue().asString();
+			if(!rows.containsKey(id))
+				rows.put(id, originalVal);
+		}
+		
+		return colnameString;
+	}
+
+	private void createAndExecuteMultiCellCmd(Workspace workspace,
+			HNodePath selectedPath, ValueCollection rvco) throws JSONException, KarmaException,
+			CommandException {
+		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspace.getId());
+		JSONArray inputParamArr = this.createMultiCellCmd(rvco,selectedPath.getLeaf().getId());
+		CommandFactory cf = ctrl.getCommandFactoryMap().get(MultipleValueEditColumnCommand.class.getSimpleName());
+		JSONInputCommandFactory scf = (JSONInputCommandFactory)cf;
+		
+		//TODO handle exceptions intelligently
+		Command comm = scf.createCommand(inputParamArr, workspace);
+		if(comm != null){
+//				logger.info("Executing command: " + commObject.get(HistoryArguments.commandName.name()));
+			workspace.getCommandHistory().doCommand(comm, workspace);
+		}
+	}
+
+	private void createAndExecuteNewAddColumnCommand(
+			Workspace workspace, String colnameString) {
+		//add a new column
+		JSONArray inputParamArr0 = this.creatNewColumnCommand(worksheetId,hTableId,colnameString);
+		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspace.getId());
+		CommandFactory cf0 = ctrl.getCommandFactoryMap().get(AddColumnCommand.class.getSimpleName());
+		JSONInputCommandFactory scf1 = (JSONInputCommandFactory)cf0;
+		Command comm1 = null;
+		
+		//TODO handle exceptions intelligently
+		try {
+			comm1 = scf1.createCommand(inputParamArr0, workspace);
+		} catch (JSONException e1) {
+			logger.error("Error creating new "+AddColumnCommand.class.getSimpleName(), e1);
+		} catch (KarmaException e1) {
+			logger.error("Error creating new "+AddColumnCommand.class.getSimpleName(), e1);
+		}
+		if(comm1 != null) {
+			try {
+				comm1.saveInHistory(false);
+				workspace.getCommandHistory().doCommand(comm1, workspace);
+			} catch (CommandException e) {
+				logger.error("Error executing new "+AddColumnCommand.class.getSimpleName(), e);
+			}
+		}
+	}
 	// remove the added column
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer undoIt(Workspace workspace) {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
-		HTable currentTable = vWorkspace.getRepFactory().getHTable(hTableId);
+		HTable currentTable = workspace.getFactory().getHTable(hTableId);
 		// remove the new column
 		currentTable.removeHNode(newHNodeId, worksheet);
 
-		UpdateContainer c = new UpdateContainer();
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId, worksheet,
-				worksheet.getHeaders().getAllPaths(), vWorkspace);
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-		vw.update(c);
+		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
-	}
-	
-	private void addAlignmentUpdate(UpdateContainer c, VWorkspace vWorkspace, Worksheet worksheet) {
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
-				vWorkspace.getWorkspace().getId(), vWorksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		if (alignment == null) {
-			alignment = new Alignment(vWorkspace.getWorkspace().getOntologyManager());
-			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
-		}
-		// Compute the semantic type suggestions
-		SemanticTypeUtil.computeSemanticTypesSuggestion(worksheet, vWorkspace.getWorkspace()
-				.getCrfModelHandler(), vWorkspace.getWorkspace().getOntologyManager(), alignment);
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
-		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(vWorkspace.getViewFactory().
-				getVWorksheet(vWorksheetId), alignment));
 	}
 }

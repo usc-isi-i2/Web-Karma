@@ -86,12 +86,12 @@ public class ModelReader {
 
 		try {
 
-			serviceModels = importServiceModels(Params.INPUT_DIR);
+			serviceModels = importServiceModelsFromJGraphModels(Params.JGRAPHT_DIR, ".main.jgraph");
 			if (serviceModels != null) {
 				for (ServiceModel sm : serviceModels) {
 					sm.print();
 					sm.exportModelToGraphviz(Params.GRAPHVIS_DIR);
-					GraphUtil.serialize(sm.getModel(), Params.JGRAPHT_DIR + sm.getServiceNameWithPrefix() + ".main.jgraph");
+//					GraphUtil.serialize(sm.getModel(), Params.JGRAPHT_DIR + sm.getServiceNameWithPrefix() + ".main.jgraph");
 				}
 			}
 
@@ -99,6 +99,26 @@ public class ModelReader {
 			e.printStackTrace();
 		}
 	}
+	
+//	public static void main(String[] args) throws Exception {
+//		
+//		List<ServiceModel> serviceModels = null;
+//
+//		try {
+//
+//			serviceModels = importServiceModels(Params.INPUT_DIR);
+//			if (serviceModels != null) {
+//				for (ServiceModel sm : serviceModels) {
+//					sm.print();
+//					sm.exportModelToGraphviz(Params.GRAPHVIS_DIR);
+//					GraphUtil.serialize(sm.getModel(), Params.JGRAPHT_DIR + sm.getServiceNameWithPrefix() + ".main.jgraph");
+//				}
+//			}
+//
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	private static void initPrefixNsMapping() {
 		
@@ -151,6 +171,33 @@ public class ModelReader {
 		prefixNsMapping.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 		prefixNsMapping.put("rr", "http://www.w3.org/ns/r2rml#");
 		prefixNsMapping.put("km-dev", "http://isi.edu/integration/karma/dev#");
+
+	}
+	
+	public static List<ServiceModel> importServiceModelsFromJGraphModels(String path, String fileExtension) throws Exception {
+
+		File ff = new File(path);
+		File[] files = ff.listFiles();
+		
+		List<ServiceModel> serviceModels = new ArrayList<ServiceModel>();
+		String serviceName;
+		DirectedWeightedMultigraph<Node, Link> model;
+		int count = 1;
+		
+		for (File f : files) {
+			if (f.getName().endsWith(fileExtension)) {
+				serviceName = f.getName().replace(fileExtension, "");
+				ServiceModel serviceModel = new ServiceModel("s" + String.valueOf(count));
+				serviceModel.setServiceName(serviceName);
+				serviceModel.setServiceDescription("");
+				model = GraphUtil.deserialize(f.getAbsolutePath()); 
+				serviceModel.addModel(model);
+				serviceModels.add(serviceModel);
+				count++;
+			}
+		}
+		
+		return serviceModels;
 
 	}
 	
@@ -337,7 +384,7 @@ public class ModelReader {
 			Node obj = uri2Classes.get(objStr);
 			if (obj == null) {
 				if (objStr.startsWith(attPrefix))
-					obj = new ColumnNode(objStr, null, null, "");
+					obj = new ColumnNode(objStr, null, null, "", null);
 				else if (objStr.indexOf(":") == -1 && objStr.indexOf("\"") != -1) {
 //					String literalId = "lit:" + serviceId + "_l" + String.valueOf(countOfLiterals); 
 					obj = new LiteralNode(objStr, objStr, null);

@@ -24,6 +24,7 @@ package edu.isi.karma.modeling.research.approach1;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 
 public class CandidateSteinerSets {
@@ -45,36 +46,27 @@ public class CandidateSteinerSets {
 		return this.steinerSets;
 	}
 	
-	public void updateSteinerSets(SemanticTypeMapping mapping) {
+	public void updateSteinerSets(Set<SemanticTypeMapping> mappings) {
 		
 		List<SteinerNodes> newSteinerNodes = new ArrayList<SteinerNodes>();
+		if (mappings == null || mappings.isEmpty()) 
+			return;
 		
 		if (this.steinerSets.size() == 0) {
-			for (MappingStruct ms : mapping.getMappingStructs()) {
+			for (SemanticTypeMapping stm : mappings) {
 				SteinerNodes sn = new SteinerNodes(maxNumberOfSteinerNodes);
-				sn.addNode(ms.getSource(), 1.0);
-				if (mapping.getType() == MappingType.DataNode) {
-					sn.addNode(ms.getTarget(), sn.getConfidence());
-				}
+				sn.addNodes(stm.getSource(), stm.getTarget(), stm.getConfidence());
 				this.steinerSets.add(sn);
 			}			
 		} else {
 			for (SteinerNodes nodeSet : this.steinerSets) {
-				for (MappingStruct ms : mapping.getMappingStructs()) {
+				for (SemanticTypeMapping stm : mappings) {
 					SteinerNodes sn = new SteinerNodes(nodeSet);
 					
-					if (mapping.getType() == MappingType.ClassNode) {
-						if (nodeSet.getNodes().contains(ms.getSource()))
-							continue;
-						sn.addNode(ms.getSource(), sn.getConfidence());
-					}
-					else if (mapping.getType() == MappingType.DataNode) {
-						if (nodeSet.getNodes().contains(ms.getSource()) &&
-								nodeSet.getNodes().contains(ms.getTarget()))
-							continue;
-						sn.addNode(ms.getSource(), sn.getConfidence());
-						sn.addNode(ms.getTarget(), sn.getConfidence());
-					}
+					if (nodeSet.getNodes().contains(stm.getSource()) &&
+							nodeSet.getNodes().contains(stm.getTarget()))
+						continue;
+					sn.addNodes(stm.getSource(), stm.getTarget(), stm.getConfidence());
 					newSteinerNodes.add(sn);
 				}
 			}
@@ -88,6 +80,16 @@ public class CandidateSteinerSets {
 				this.steinerSets.add(newSteinerNodes.get(i));
 
 		}
+		
+//		for (SteinerNodes steinerNodes : this.steinerSets) {
+//			System.out.println("***********************************************");
+//			for (Node n : steinerNodes.getNodes()) {
+//				if (n instanceof ColumnNode)
+//					System.out.println("=========>" + ((ColumnNode)n).getColumnName());
+//				else
+//					System.out.println("=========>" + n.getId());
+//			}
+//		}
 		
 	}
 }

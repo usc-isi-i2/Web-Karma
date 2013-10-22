@@ -31,11 +31,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpMethod;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.alignment.SteinerTree;
@@ -52,7 +53,7 @@ import edu.isi.karma.rep.model.Model;
 
 public class WebService extends Source {
 	
-	static Logger logger = Logger.getLogger(WebService.class);
+	static Logger logger = LoggerFactory.getLogger(WebService.class);
 
 	private String method;
 	private String address;
@@ -84,7 +85,7 @@ public class WebService extends Source {
 	public WebService(String id, String name, URL urlExample) {
 		super(id, name);
 		this.urlExample= urlExample;
-		this.setMethod(HttpMethods.GET);
+		this.setMethod(HttpMethod.GET.name());
 		this.urlExample = urlExample;
 		this.inputAttributes = new ArrayList<Attribute>();
 		this.outputAttributes = new ArrayList<Attribute>();

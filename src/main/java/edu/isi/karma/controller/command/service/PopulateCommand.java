@@ -37,13 +37,12 @@ import com.rits.cloning.Cloner;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
-import edu.isi.karma.controller.update.SemanticTypesUpdate;
+import edu.isi.karma.controller.update.ReplaceWorksheetUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.model.serialization.WebServiceLoader;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
@@ -56,13 +55,10 @@ import edu.isi.karma.rep.sources.DataSource;
 import edu.isi.karma.rep.sources.InvocationManager;
 import edu.isi.karma.rep.sources.Table;
 import edu.isi.karma.rep.sources.WebService;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class PopulateCommand extends WorksheetCommand{
 
-	private final String vWorksheetId;
 
 	private Worksheet worksheetBeforeInvocation = null;
 
@@ -70,9 +66,8 @@ public class PopulateCommand extends WorksheetCommand{
 	private static Logger logger = LoggerFactory
 			.getLogger(PopulateCommand.class.getSimpleName());
 
-	public PopulateCommand(String id, String worksheetId, String vWorksheetId) {
+	public PopulateCommand(String id, String worksheetId) {
 		super(id, worksheetId);
-		this.vWorksheetId = vWorksheetId;
 		
 		addTag(CommandTag.Transformation);
 	}
@@ -98,18 +93,17 @@ public class PopulateCommand extends WorksheetCommand{
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		
 		UpdateContainer c = new UpdateContainer();
-		Workspace ws = vWorkspace.getWorkspace();
-		Worksheet wk = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet wk = workspace.getWorksheet(worksheetId);
 
 		// Clone the worksheet just before the invocation
 		Cloner cloner = new Cloner();
 		this.worksheetBeforeInvocation = cloner.deepClone(wk);
 
 		AlignmentManager mgr = AlignmentManager.Instance();
-		String alignmentId = mgr.constructAlignmentId(ws.getId(), vWorksheetId);
+		String alignmentId = mgr.constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment al = mgr.getAlignment(alignmentId);
 		
 //		/**
@@ -179,7 +173,7 @@ public class PopulateCommand extends WorksheetCommand{
 			logger.info("Requesting data with includeURL=" + true + ",includeInput=" + true + ",includeOutput=" + true);
 			Table serviceTable = invocatioManager.getServiceData(false, false, true);
 //			logger.debug(serviceTable.getPrintInfo());
-			ServiceTableUtil.populateWorksheet(serviceTable, wk, ws.getFactory());
+			ServiceTableUtil.populateWorksheet(serviceTable, wk, workspace.getFactory());
 			logger.info("The service " + service.getUri() + " has been invoked successfully.");
 
 
@@ -198,17 +192,9 @@ public class PopulateCommand extends WorksheetCommand{
 			columnPaths.add(path);
 		}
 		
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
-				wk, columnPaths, vWorkspace);
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-		vw.update(c);
-		
-		SemanticTypeUtil.computeSemanticTypesSuggestion(wk, vWorkspace.getWorkspace().getCrfModelHandler(), 
-				vWorkspace.getWorkspace().getOntologyManager(), al);
-		c.add(new SemanticTypesUpdate(wk, vWorksheetId, al));
-		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(
-				vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), al));
-		
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+				
 		return c;
 	}
 
@@ -265,7 +251,7 @@ public class PopulateCommand extends WorksheetCommand{
 	}
 	
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 
 		UpdateContainer c = new UpdateContainer();
 		
@@ -275,11 +261,10 @@ public class PopulateCommand extends WorksheetCommand{
 			HNodePath path = new HNodePath(node);
 			columnPaths.add(path);
 		}
-		vWorkspace.getRepFactory().replaceWorksheet(this.worksheetId, this.worksheetBeforeInvocation);
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
-				this.worksheetBeforeInvocation, columnPaths, vWorkspace);
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-		vw.update(c);
+		workspace.getFactory().replaceWorksheet(this.worksheetId, this.worksheetBeforeInvocation);
+		
+		c.add(new ReplaceWorksheetUpdate(worksheetId, this.worksheetBeforeInvocation));
+		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId));
 		
 		return c;	
 		

@@ -25,20 +25,20 @@ import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class ApplyModelFromTripleStoreCommandFactory extends CommandFactory {
 
 	private enum Arguments {
-		vWorksheetId, modelName, sourceName 
+		worksheetId, modelName, sourceName 
 	}
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
+			Workspace workspace) {
+		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String modelName = request.getParameter(Arguments.modelName.name());
 		String sourceName = request.getParameter(Arguments.sourceName.name());
-		return new ApplyModelFromTripleStoreCommand(getNewId(vWorkspace), vWorksheetId, 
+		return new ApplyModelFromTripleStoreCommand(getNewId(workspace), worksheetId, 
 				modelName, sourceName);
 	}
 

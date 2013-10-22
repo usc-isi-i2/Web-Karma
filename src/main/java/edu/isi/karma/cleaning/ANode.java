@@ -22,8 +22,6 @@
 package edu.isi.karma.cleaning;
 
 import java.util.Vector;
-
-import org.python.antlr.PythonParser.return_stmt_return;
 //used in alignment
 public class ANode {
 	public Vector<Integer> orgPos = new Vector<Integer>();

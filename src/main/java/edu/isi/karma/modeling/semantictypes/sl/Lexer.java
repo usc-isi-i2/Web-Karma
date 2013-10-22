@@ -57,7 +57,7 @@ public class Lexer {
 		field = field.replaceAll("^", "") ;
 		
 		if(field.equals("") || field == null) {
-			Prnt.prn("Lexer got empty string or null string in tokenizeField") ;
+			// Prnt.prn("Lexer got empty string or null string in tokenizeField") ;
 			return part_list ;
 		}
 			

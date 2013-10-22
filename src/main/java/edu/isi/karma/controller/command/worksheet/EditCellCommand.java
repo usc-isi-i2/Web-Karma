@@ -30,7 +30,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.StringCellValue;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 /**
  * @author szekely
@@ -67,8 +67,8 @@ public class EditCellCommand extends WorksheetCommand {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		Node node = vWorkspace.getWorkspace().getFactory().getNode(nodeIdArg);
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Node node = workspace.getFactory().getNode(nodeIdArg);
 		previousValue = node.getValue();
 		previousStatus = node.getStatus();
 		if (node.hasNestedTable()) {
@@ -76,15 +76,15 @@ public class EditCellCommand extends WorksheetCommand {
 					+ " has a nested table. It cannot be edited.");
 		}
 		node.setValue(newValueArg, Node.NodeStatus.edited,
-				vWorkspace.getRepFactory());
+				workspace.getFactory());
 		return new UpdateContainer(new NodeChangedUpdate(worksheetId,
 				nodeIdArg, newValueArg, Node.NodeStatus.edited));
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		Node node = vWorkspace.getWorkspace().getFactory().getNode(nodeIdArg);
-		node.setValue(previousValue, previousStatus, vWorkspace.getRepFactory());
+	public UpdateContainer undoIt(Workspace workspace) {
+		Node node = workspace.getFactory().getNode(nodeIdArg);
+		node.setValue(previousValue, previousStatus, workspace.getFactory());
 		return new UpdateContainer(new NodeChangedUpdate(worksheetId,
 				nodeIdArg, previousValue, previousStatus));
 	}

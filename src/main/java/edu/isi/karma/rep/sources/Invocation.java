@@ -30,7 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.service.json.JsonManager;
 
@@ -38,7 +39,7 @@ import edu.isi.karma.service.json.JsonManager;
 public class Invocation {
 
 	private static final String REQUEST_COLUMN_NAME = "request";
-	static Logger logger = Logger.getLogger(Invocation.class);
+	static Logger logger = LoggerFactory.getLogger(Invocation.class);
 	
 	private String requestId;
 

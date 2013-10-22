@@ -25,7 +25,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -46,7 +47,7 @@ import edu.isi.karma.rep.sources.WebService;
 
 public class WebServicePublisher extends SourcePublisher {
 
-	static Logger logger = Logger.getLogger(WebServicePublisher.class);
+	static Logger logger = LoggerFactory.getLogger(WebServicePublisher.class);
 	
 	private WebService service;
 	private Model model = null;

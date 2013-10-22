@@ -42,10 +42,10 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class ShowModelCommandFactory extends CommandFactory implements JSONInputCommandFactory {
@@ -53,29 +53,28 @@ public class ShowModelCommandFactory extends CommandFactory implements JSONInput
 	private static Logger logger = LoggerFactory.getLogger(ShowModelCommandFactory.class);
 	
 	private enum Arguments {
-		vWorksheetId, checkHistory
+		worksheetId, checkHistory
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId.name());
-		return new ShowModelCommand(getNewId(vWorkspace), getWorksheetId(request, vWorkspace), vWorksheetId, false);
+			Workspace workspace) {
+		return new ShowModelCommand(getNewId(workspace), getWorksheetId(request, workspace),false);
 	}
 
-	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace)
+	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
-		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
+		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		boolean checkHist = HistoryJsonUtil.getBooleanValue(Arguments.checkHistory.name(), inputJson);
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		
 		if(checkHist) {
-			String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getPreferencesId(), vWorksheetId);
-			AlignmentManager.Instance().addAlignmentToMap(alignmentId, new Alignment(vWorkspace.getWorkspace().getOntologyManager()));
+			String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getCommandPreferencesId(), worksheetId);
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, new Alignment(workspace.getOntologyManager()));
 //			int transformationCommandsExecutedCount = 0;
 			// Check if any command history exists for the worksheet
-			if(HistoryJsonUtil.historyExists(worksheet.getTitle(), vWorkspace.getPreferencesId())) {
-				WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(vWorksheetId, vWorkspace);
+			if(HistoryJsonUtil.historyExists(worksheet.getTitle(), workspace.getCommandPreferencesId())) {
+				WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(worksheetId, workspace);
 				try {
 					List<CommandTag> tags = new ArrayList<CommandTag>();
 //					tags.add(CommandTag.Transformation);
@@ -87,11 +86,11 @@ public class ShowModelCommandFactory extends CommandFactory implements JSONInput
 					e.printStackTrace();
 				}
 			}
-			return new ShowModelCommand(getNewId(vWorkspace), worksheet.getId(), vWorksheetId, false);
+			return new ShowModelCommand(getNewId(workspace), worksheet.getId(), false);
 		}
 		
-		ShowModelCommand comm = new ShowModelCommand(getNewId(vWorkspace), worksheet.getId(), vWorksheetId, false);
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+		ShowModelCommand comm = new ShowModelCommand(getNewId(workspace), worksheet.getId(), false);
+		OntologyManager ontMgr = workspace.getOntologyManager();
 		// Add the semantic types that have saved into the history
 		for (int i=2; i<inputJson.length(); i++) {
 			JSONObject hnodeObj = (JSONObject) inputJson.get(i);

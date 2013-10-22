@@ -24,20 +24,20 @@ import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PublishRDFCommandFactory extends CommandFactory {
 	private enum Arguments {
-		vWorksheetId, addInverseProperties, rdfPrefix, rdfNamespace, saveToStore,hostName,dbName,userName,password,modelName, 
+		worksheetId, addInverseProperties, rdfPrefix, rdfNamespace, saveToStore,hostName,dbName,userName,password,modelName, 
 		tripleStoreUrl, graphUri, replaceContext
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId
+			Workspace workspace) {
+		String worksheetId = request.getParameter(Arguments.worksheetId
 				.name());
 		String addInverseProperties = request.getParameter(Arguments.addInverseProperties
 				.name());
@@ -46,7 +46,7 @@ public class PublishRDFCommandFactory extends CommandFactory {
 		String rdfNamespace = request.getParameter(Arguments.rdfNamespace
 				.name());
 
-		PublishRDFCommand comm = new PublishRDFCommand(getNewId(vWorkspace), vWorksheetId,
+		PublishRDFCommand comm = new PublishRDFCommand(getNewId(workspace), worksheetId,
 				ServletContextParameterMap
 				.getParameterValue(ContextParameter.PUBLIC_RDF_ADDRESS),
 				rdfPrefix, rdfNamespace, addInverseProperties,

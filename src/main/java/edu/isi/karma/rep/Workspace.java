@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.isi.karma.controller.command.CommandPreferences;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
@@ -68,11 +69,22 @@ public class Workspace extends Entity {
 	 */
 	private final CRFModelHandler crfModelHandler = new CRFModelHandler();
 	
+	private final CommandPreferences commandPreferences;
+
+	private final String commandPreferencesId;
 	/**
 	 * In the future we may need to keep track of user info.
 	 */
 	protected Workspace(String id) {
 		super(id);
+		commandPreferences = new CommandPreferences(this.getId());
+		commandPreferencesId=this.getId();
+	}
+	
+	protected Workspace(String id, String cachedPreferencesId) {
+		super(id);
+		this.commandPreferences = new CommandPreferences(cachedPreferencesId);
+		this.commandPreferencesId = cachedPreferencesId;
 	}
 
 	public CommandHistory getCommandHistory() {
@@ -105,5 +117,13 @@ public class Workspace extends Entity {
 
 	public CRFModelHandler getCrfModelHandler() {
 		return crfModelHandler;
+	}
+
+	public CommandPreferences getCommandPreferences() {
+		return commandPreferences;
+	}
+
+	public String getCommandPreferencesId() {
+		return commandPreferencesId;
 	}
 }

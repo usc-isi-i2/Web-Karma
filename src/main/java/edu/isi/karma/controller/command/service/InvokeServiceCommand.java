@@ -26,14 +26,17 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.rits.cloning.Cloner;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.ReplaceWorksheetUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
@@ -43,8 +46,6 @@ import edu.isi.karma.rep.metadata.MetadataContainer;
 import edu.isi.karma.rep.sources.InvocationManager;
 import edu.isi.karma.rep.sources.Table;
 import edu.isi.karma.rep.sources.WebService;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
 /**
@@ -53,16 +54,14 @@ import edu.isi.karma.webserver.KarmaException;
  */
 public class InvokeServiceCommand extends WorksheetCommand {
 
-	static Logger logger = Logger.getLogger(InvokeServiceCommand.class);
+	private static Logger logger = LoggerFactory.getLogger(InvokeServiceCommand.class);
 	private final String hNodeId;
-	private final String vWorksheetId;
 	
 	private Worksheet worksheetBeforeInvocation = null;
 
-	InvokeServiceCommand(String id, String worksheetId, String vWorksheetId, String hNodeId) {
+	InvokeServiceCommand(String id, String worksheetId, String hNodeId) {
 		super(id, worksheetId);
 		this.hNodeId = hNodeId;
-		this.vWorksheetId = vWorksheetId;
 	}
 
 	@Override
@@ -71,10 +70,8 @@ public class InvokeServiceCommand extends WorksheetCommand {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		UpdateContainer c = new UpdateContainer();
-		Workspace ws = vWorkspace.getWorkspace();
-		Worksheet wk = vWorkspace.getRepFactory().getWorksheet(worksheetId);
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		Worksheet wk = workspace.getWorksheet(worksheetId);
 		
 		// Clone the worksheet just before the invocation
 		Cloner cloner = new Cloner();
@@ -100,12 +97,13 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			
 			// This generate a flat table of the json results
 			Table serviceTable = invocatioManager.getServiceData(false, true, true);
-			ServiceTableUtil.populateWorksheet(serviceTable, wk, ws.getFactory());
+			ServiceTableUtil.populateWorksheet(serviceTable, wk, workspace.getFactory());
 			
 			// FIXME
-			String json = invocatioManager.getServiceJson(true);
+//			String json = invocatioManager.getServiceJson(true);
+			invocatioManager.getServiceJson(true);
 //			new JsonImport(json, wk, ws.getFactory());
-//			System.out.println(json);
+//			logger.debug(json);
 
 
 			
@@ -132,12 +130,9 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			HNodePath path = new HNodePath(node);
 			columnPaths.add(path);
 		}
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
-				wk, columnPaths, vWorkspace);
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-		vw.update(c);
+
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
 		
-		return c;
 	}
 	
 	private String getUrlColumnName(Worksheet wk) {
@@ -156,7 +151,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 	}
 	
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		UpdateContainer c = new UpdateContainer();
 		
 		// Create new vWorksheet using the new header order
@@ -165,12 +160,10 @@ public class InvokeServiceCommand extends WorksheetCommand {
 			HNodePath path = new HNodePath(node);
 			columnPaths.add(path);
 		}
-		vWorkspace.getRepFactory().replaceWorksheet(this.worksheetId, this.worksheetBeforeInvocation);
-		vWorkspace.getViewFactory().updateWorksheet(vWorksheetId,
-				this.worksheetBeforeInvocation, columnPaths, vWorkspace);
-		VWorksheet vw = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId);
-		vw.update(c);
-		
+		workspace.getFactory().replaceWorksheet(worksheetId, worksheetBeforeInvocation);
+		c.add(new ReplaceWorksheetUpdate(worksheetId, worksheetBeforeInvocation));
+		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId));
+	
 		return c;	
 	}
 

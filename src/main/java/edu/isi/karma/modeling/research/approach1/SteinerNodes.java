@@ -100,11 +100,13 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		return maxNodeCount;
 	}
 
-	public boolean addNode(Node n, double confidence) {
-		if (this.nodes.contains(n))
+	public boolean addNodes(Node n1, Node n2, double confidence) {
+		
+		if (this.nodes.contains(n1) && this.nodes.contains(n2))
 			return false;
 		
-		this.nodes.add(n);
+		this.nodes.add(n1);
+		this.nodes.add(n2);
 		
 		if (confidence <= 0 || confidence > 1)
 			confidence = MIN_CONFIDENCE;
@@ -112,7 +114,8 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		this.confidenceList.add(confidence);
 		this.confidence *= confidence;
 		
-		this.frequency += n.getPatternIds().size();
+		this.frequency += n1.getPatternIds().size();
+		this.frequency += n2.getPatternIds().size();
 		
 		this.computeCoherenceList();
 		this.computeCoherenceValue();
@@ -273,15 +276,18 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		
 	private void computeScore() {
 		
-		//double confidence = this.getCoherence();
+		double confidence = this.getConfidence();
 		double distnaceToMaxSize = (double) (this.maxNodeCount - this.getNodeCount());
 		double coherence = this.getCoherence();
 		//int frequency = this.getFrequency();
 		
 		double alpha = 1.0;
-		double beta = 0.2;
+		double beta = 0.1;
+		double gamma = 0.5;
 		
-		this.score = alpha * coherence + beta * distnaceToMaxSize;
+		this.score = alpha * coherence + 
+				beta * distnaceToMaxSize + 
+				gamma * confidence;
 	}
 
 	@Override

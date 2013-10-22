@@ -36,8 +36,6 @@ public class VWorkspace {
 
 	private final ViewFactory viewFactory = new ViewFactory();
 
-	private final VWorksheetList vWorksheets = new VWorksheetList();
-
 	private final ViewPreferences preferences;
 	
 	private final String preferencesId;
@@ -53,7 +51,7 @@ public class VWorkspace {
 		super();
 		this.workspace = workspace;
 		preferences = new ViewPreferences(workspacePreferencesId);
-		preferencesId=workspacePreferencesId;
+		preferencesId = workspacePreferencesId;
 	}
 
 	public Workspace getWorkspace() {
@@ -68,25 +66,14 @@ public class VWorkspace {
 		return viewFactory;
 	}
 
-	public VWorksheetList getVWorksheetList() {
-		return vWorksheets;
-	}
-
 	public ViewPreferences getPreferences() {
 		return preferences;
 	}
 	public String getPreferencesId() {
 		return preferencesId;
 	}
-	
-	/**
-	 * View all worksheets.
-	 */
-	public void addAllWorksheets() {
-		vWorksheets.addWorksheets(workspace.getWorksheets(), this);
-	}
 
-	public VWorksheet getVWorksheet(String worksheetId) {
-		return vWorksheets.getVWorksheet(worksheetId);
+	public void createVWorksheetsForAllWorksheets() {
+		viewFactory.addWorksheets(workspace.getWorksheets(), this);
 	}
 }

@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.FileUtil;
-import edu.isi.karma.view.VWorkspace;
 
 public class ImportJSONFileCommandFactory extends CommandFactory {
 	
@@ -38,9 +38,14 @@ public class ImportJSONFileCommandFactory extends CommandFactory {
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 				
 		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
-		return new ImportJSONFileCommand(getNewId(vWorkspace), uploadedFile);
+                
+                if (request.getParameter("revisedWorksheet") == null) {
+		return new ImportJSONFileCommand(getNewId(workspace), uploadedFile);
+                }
+                
+                return new ImportJSONFileCommand(getNewId(workspace), request.getParameter("revisedWorksheet"), uploadedFile);
 	}
 }

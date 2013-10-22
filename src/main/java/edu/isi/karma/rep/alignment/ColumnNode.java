@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 University of Southern California
+,. * Copyright 2012 University of Southern California
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,10 @@
 
 package edu.isi.karma.rep.alignment;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 
 
 public class ColumnNode extends Node {
@@ -33,11 +37,25 @@ public class ColumnNode extends Node {
 	private final String columnName;
 	private String rdfLiteralType;
 	
+	private List<SemanticType> crfSuggestedSemanticTypes;
+	private SemanticType userSelectedSemanticType;
+	
+	public ColumnNode(String id, String hNodeId, String columnName, String rdfLiteralType, List<SemanticType> crfSuggestedSemanticTypes) {
+		super(id, new Label(hNodeId), NodeType.ColumnNode);
+		this.hNodeId = hNodeId;
+		this.columnName = columnName;
+		this.rdfLiteralType = rdfLiteralType;
+		this.crfSuggestedSemanticTypes = crfSuggestedSemanticTypes;
+		this.userSelectedSemanticType = null;
+	}
+	
 	public ColumnNode(String id, String hNodeId, String columnName, String rdfLiteralType) {
 		super(id, new Label(hNodeId), NodeType.ColumnNode);
 		this.hNodeId = hNodeId;
 		this.columnName = columnName;
 		this.rdfLiteralType = rdfLiteralType;
+		this.crfSuggestedSemanticTypes = null;
+		this.userSelectedSemanticType = null;
 	}
 
 	public String getHNodeId() {
@@ -55,4 +73,33 @@ public class ColumnNode extends Node {
 	public void setRdfLiteralType(String rdfLiteralType) {
 		this.rdfLiteralType = rdfLiteralType;
 	}
+
+	public SemanticType getUserSelectedSemanticType() {
+		return userSelectedSemanticType;
+	}
+
+	public void setUserSelectedSemanticType(SemanticType userSelectedSemanticType) {
+		this.userSelectedSemanticType = userSelectedSemanticType;
+	}
+
+	public List<SemanticType> getCrfSuggestedSemanticTypes() {
+		return crfSuggestedSemanticTypes;
+	}
+
+	public void setCrfSuggestedSemanticTypes(
+			List<SemanticType> crfSuggestedSemanticTypes) {
+		this.crfSuggestedSemanticTypes = crfSuggestedSemanticTypes;
+	}
+	
+	public List<SemanticType> getTopKSuggestions(int k) {
+		
+		List<SemanticType> semanticTypes = new ArrayList<>();
+		if (this.crfSuggestedSemanticTypes == null || this.crfSuggestedSemanticTypes.isEmpty())
+			return semanticTypes;
+		
+		int n = Math.min(k, this.crfSuggestedSemanticTypes.size());
+		Collections.sort(this.crfSuggestedSemanticTypes, Collections.reverseOrder());
+		return this.crfSuggestedSemanticTypes.subList(0, n);
+	}
+	
 }

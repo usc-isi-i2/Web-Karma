@@ -20,19 +20,27 @@
  ******************************************************************************/
 package edu.isi.karma.rep.alignment;
 
+import java.io.Serializable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
 import edu.isi.karma.util.Jsonizable;
 
-public class SemanticType implements Jsonizable  {
+public class SemanticType implements Jsonizable, Serializable, Comparable<SemanticType>  {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private final String hNodeId;
 	private final Label type;
 	private final Label clazz;
 	private final Origin origin;
 	private final boolean isPartOfKey; 
 	private final ConfidenceLevel confidenceLevel;
+	private Double confidenceScore;
 	
 
 	public enum Origin {
@@ -53,6 +61,7 @@ public class SemanticType implements Jsonizable  {
 		this.origin = origin;
 		this.clazz = domain;
 		this.isPartOfKey = isPartOfKey;
+		this.confidenceScore = probability;
 		
 		if(probability > 0.8)
 			confidenceLevel = ConfidenceLevel.High;
@@ -76,6 +85,12 @@ public class SemanticType implements Jsonizable  {
 
 	public Origin getOrigin() {
 		return origin;
+	}
+
+	public Double getConfidenceScore() {
+		if (this.confidenceScore == null)
+			return Double.MIN_VALUE;
+		return confidenceScore;
 	}
 
 	@Override
@@ -135,5 +150,17 @@ public class SemanticType implements Jsonizable  {
 	public String getCrfModelLabelString() {
 		return (this.getDomain() == null) ? 
 				this.getType().getUri() : this.getDomain().getUri() + "|" + this.getType().getUri();
+	}
+
+	@Override
+	public int compareTo(SemanticType o) {
+		if (this.confidenceScore == null && o.confidenceScore == null)
+			return 0;
+		else if (this.confidenceScore == null)
+			return -1;
+		else if (o.confidenceScore == null)
+			return 1;
+		else
+			return this.confidenceScore.compareTo(o.confidenceScore);
 	}
 }

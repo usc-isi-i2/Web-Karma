@@ -29,13 +29,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.rep.alignment.Label;
 
 public class OntologyManager  {
 	
-	static Logger logger = Logger.getLogger(OntologyManager.class.getName());
+	static Logger logger = LoggerFactory.getLogger(OntologyManager.class.getName());
 
 	private OntologyHandler ontHandler = null;
 	private OntologyCache ontCache = null;

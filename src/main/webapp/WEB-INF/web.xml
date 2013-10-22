@@ -91,7 +91,7 @@
   </context-param>
   <context-param>
     <param-name>CLEANING_SERVICE_URL</param-name>
-    <param-value>http://localhost:8080/cleaningService/IdentifyData</param-value>
+    <param-value>/cleaningService/IdentifyData</param-value>
   </context-param>
 
   
@@ -101,12 +101,12 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
    <servlet>
-    <servlet-name>exampleJSON</servlet-name>
-    <servlet-class>edu.isi.karma.webserver.GetExampleJSON</servlet-class>
+    <servlet-name>KarmaServlet</servlet-name>
+    <servlet-class>edu.isi.karma.webserver.KarmaServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>exampleJSON</servlet-name>
-    <url-pattern>/getExampleNestedJSON</url-pattern>
+    <servlet-name>KarmaServlet</servlet-name>
+    <url-pattern>/KarmaServlet</url-pattern>
   </servlet-mapping>
   
   <servlet>
@@ -135,26 +135,6 @@
     <servlet-name>LinkedAPIServiceHandler</servlet-name>
     <url-pattern>/services/*</url-pattern>
   </servlet-mapping>
-    
-  <servlet>
-     <servlet-name>ExtractSpatialInformationFromOSMServiceHandler</servlet-name>
-     <servlet-class>edu.isi.karma.webserver.ExtractSpatialInformationFromOSMServiceHandler</servlet-class>
-    </servlet>
-    <servlet-mapping>
-     <servlet-name>ExtractSpatialInformationFromOSMServiceHandler</servlet-name>
-     <url-pattern>/ExtractSpatialInformation/*</url-pattern>
-  </servlet-mapping>
-  
-
-  <servlet>
-     <servlet-name>ExtractSpatialInformationFromWikimapiaServiceHandler</servlet-name>
-     <servlet-class>edu.isi.karma.webserver.ExtractSpatialInformationFromWikimapiaServiceHandler</servlet-class>
-    </servlet>
-    <servlet-mapping>
-     <servlet-name>ExtractSpatialInformationFromWikimapiaServiceHandler</servlet-name>
-     <url-pattern>/ExtractWikimapiaInformation/*</url-pattern>
-  </servlet-mapping>
-
  
 <servlet>
      <servlet-name>SpatialReferenceSystemServiceHandler</servlet-name>

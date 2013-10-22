@@ -22,24 +22,29 @@ package edu.isi.karma.controller.command.publish;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class PublishDatabaseCommandFactory extends CommandFactory {
+	
+	private static Logger logger = LoggerFactory.getLogger(PublishDatabaseCommandFactory.class);
 	private enum Arguments {
-		vWorksheetId, overwriteTable, insertTable, dbType,hostName,port,dbName,userName,password,tableName
+		worksheetId, overwriteTable, insertTable, dbType,hostName,port,dbName,userName,password,tableName
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId
+			Workspace workspace) {
+		String worksheetId = request.getParameter(Arguments.worksheetId
 				.name());
 
-		System.out.println("host="+request.getParameter(Arguments.hostName.name()));
+		logger.debug("host="+request.getParameter(Arguments.hostName.name()));
 		
-		PublishDatabaseCommand comm = new PublishDatabaseCommand(getNewId(vWorkspace), vWorksheetId,
+		PublishDatabaseCommand comm = new PublishDatabaseCommand(getNewId(workspace), worksheetId,
 				request.getParameter(Arguments.dbType.name()),
 				request.getParameter(Arguments.hostName.name()),
 				request.getParameter(Arguments.port.name()),

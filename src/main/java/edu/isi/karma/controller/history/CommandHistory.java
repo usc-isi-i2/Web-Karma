@@ -43,6 +43,7 @@ import edu.isi.karma.controller.command.UndoRedoCommand;
 import edu.isi.karma.controller.update.HistoryAddCommandUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
 /**
@@ -124,10 +125,10 @@ public class CommandHistory {
 	 * @return UpdateContainer with all the changes done by the command.
 	 * @throws CommandException
 	 */
-	public UpdateContainer doCommand(Command command, VWorkspace vWorkspace)
+	public UpdateContainer doCommand(Command command, Workspace workspace)
 			throws CommandException {
 		UpdateContainer effects = new UpdateContainer();
-		effects.append(command.doIt(vWorkspace));
+		effects.append(command.doIt(workspace));
 		command.setExecuted(true);
 		
 		if (command.getCommandType() != CommandType.notInHistory) {
@@ -145,7 +146,7 @@ public class CommandHistory {
 		
 		// Save the modeling commands
 		if (!(command instanceof ResetKarmaCommand)) {
-			CommandHistoryWriter chWriter = new CommandHistoryWriter(history, vWorkspace);
+			CommandHistoryWriter chWriter = new CommandHistoryWriter(history, workspace);
 			try {
 				chWriter.writeHistoryPerWorksheet();
 			} catch (JSONException e) {
@@ -165,17 +166,17 @@ public class CommandHistory {
 	 * @return the effects of the undone or redone commands.
 	 * @throws CommandException
 	 */
-	public UpdateContainer undoOrRedoCommandsUntil(VWorkspace vWorkspace,
+	public UpdateContainer undoOrRedoCommandsUntil(Workspace workspace,
 			String commandId) throws CommandException {
 		List<Command> commandsToUndo = getCommandsUntil(history, commandId);
 		if (!commandsToUndo.isEmpty()) {
 			lastCommandWasUndo = true;
-			return undoCommands(vWorkspace, commandsToUndo);
+			return undoCommands(workspace, commandsToUndo);
 		} else {
 			List<Command> commandsToRedo = getCommandsUntil(redoStack,
 					commandId);
 			if (!commandsToRedo.isEmpty()) {
-				return redoCommands(vWorkspace, commandsToRedo);
+				return redoCommands(workspace, commandsToRedo);
 			} else {
 				return new UpdateContainer();
 			}
@@ -190,14 +191,14 @@ public class CommandHistory {
 	 * 
 	 * @return UpdateContainer with the effects of all undone commands.
 	 */
-	private UpdateContainer undoCommands(VWorkspace vWorkspace,
+	private UpdateContainer undoCommands(Workspace workspace,
 			List<Command> commandsToUndo) {
 
 		UpdateContainer effects = new UpdateContainer();
 		for (Command c : commandsToUndo) {
 			history.remove(c);
 			redoStack.add(c);
-			effects.append(c.undoIt(vWorkspace));
+			effects.append(c.undoIt(workspace));
 		}
 		return effects;
 	}
@@ -210,7 +211,7 @@ public class CommandHistory {
 	 * @return
 	 * @throws CommandException
 	 */
-	private UpdateContainer redoCommands(VWorkspace vWorkspace,
+	private UpdateContainer redoCommands(Workspace workspace,
 			List<Command> commandsToRedo) throws CommandException {
 		if (!redoStack.isEmpty()) {
 
@@ -218,7 +219,7 @@ public class CommandHistory {
 			for (Command c : commandsToRedo) {
 				redoStack.remove(c);
 				history.add(c);
-				effects.append(c.doIt(vWorkspace));
+				effects.append(c.doIt(workspace));
 			}
 			return effects;
 		} else {
@@ -286,5 +287,18 @@ public class CommandHistory {
 				commandsToBeRemoved.add(command);
 		}
 		history.removeAll(commandsToBeRemoved);
+	}
+	
+	public Command getCommand(String commandId)
+	{
+		for(Command  c: this.history)
+		{
+			if(c.getId().equals(commandId))
+			{
+				return c;
+			}
+		}
+		return null;
+			
 	}
 }

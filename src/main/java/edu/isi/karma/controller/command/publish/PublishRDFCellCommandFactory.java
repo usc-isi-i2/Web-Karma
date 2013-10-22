@@ -26,23 +26,21 @@ import org.json.JSONObject;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.view.ViewPreferences;
+import edu.isi.karma.rep.Workspace;
 
 public class PublishRDFCellCommandFactory extends CommandFactory {
 	private enum Arguments {
-		vWorksheetId,
+		worksheetId,
 		nodeId
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
-		String vWorksheetId = request.getParameter(Arguments.vWorksheetId
+			Workspace workspace) {
+		String worksheetId = request.getParameter(Arguments.worksheetId
 				.name());
 		//get the rdf prefix from the preferences
-		ViewPreferences prefs = vWorkspace.getPreferences();
-		JSONObject prefObject = prefs.getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
+		JSONObject prefObject = workspace.getCommandPreferences().getCommandPreferencesJSONObject("PublishRDFCommandPreferences");
 		String rdfNamespace = "http://localhost/source/";
 		String rdfPrefix = "s";
 		if(prefObject!=null){
@@ -51,7 +49,7 @@ public class PublishRDFCellCommandFactory extends CommandFactory {
 		if(rdfPrefix==null || rdfPrefix.trim().isEmpty())
 			rdfPrefix = "http://localhost/source/"; 
 		String nodeId = request.getParameter(Arguments.nodeId.name());
-		return new PublishRDFCellCommand(getNewId(vWorkspace), vWorksheetId, nodeId,
+		return new PublishRDFCellCommand(getNewId(workspace), worksheetId, nodeId,
 				rdfPrefix,rdfNamespace);
 	}
 

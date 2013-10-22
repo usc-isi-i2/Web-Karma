@@ -95,7 +95,7 @@ public class OntologyHierarchyUpdate extends AbstractUpdate {
 			JSONObject outputObject = new JSONObject();
 			outputObject.put(GenericJsonKeys.updateType.name(), updateType);
 			outputObject.put(JsonKeys.data.name(), dataArray);
-//			System.out.println(outputObject.toString(4));
+//			logger.debug(outputObject.toString(4));
 			pw.println(outputObject.toString());
 		} catch (JSONException e) {
 			logger.error("Error occured while creating ontology hierarchy JSON!", e);

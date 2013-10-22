@@ -24,11 +24,12 @@ package edu.isi.karma.rep.sources;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Table {
 	
-	static Logger logger = Logger.getLogger(Table.class);
+	static Logger logger = LoggerFactory.getLogger(Table.class);
 
 	private List<Attribute> headers;
 	private List<List<String>> values;

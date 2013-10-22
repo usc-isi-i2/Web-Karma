@@ -21,15 +21,16 @@
 
 package edu.isi.karma.controller.command.alignment;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.update.SVGAlignmentUpdate_ForceKarmaLayout;
+import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -37,14 +38,14 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.view.VWorkspace;
 
 public class ChangeInternalNodeLinksCommand extends Command {
-	private final String vWorksheetId;
+	private final String worksheetId;
 	private final String alignmentId;
 	private JSONArray initialEdges;
 	private JSONArray newEdges;
@@ -54,16 +55,16 @@ public class ChangeInternalNodeLinksCommand extends Command {
 	private DirectedWeightedMultigraph<Node, Link> oldGraph;
 	
 	private StringBuilder descStr = new StringBuilder();
-	private static Logger logger = Logger.getLogger(ChangeInternalNodeLinksCommand.class);
+	private static Logger logger = LoggerFactory.getLogger(ChangeInternalNodeLinksCommand.class);
 	
 	private enum JsonKeys {
 		edgeSourceId, edgeId, edgeTargetId
 	}
 	
-	public ChangeInternalNodeLinksCommand(String id, String vWorksheetId,
+	public ChangeInternalNodeLinksCommand(String id, String worksheetId,
 			String alignmentId, JSONArray initialEdges, JSONArray newEdges) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 		this.alignmentId = alignmentId;
 		this.initialEdges = initialEdges;
 		this.newEdges = newEdges;
@@ -93,10 +94,11 @@ public class ChangeInternalNodeLinksCommand extends Command {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+//		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		Worksheet worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
-		OntologyManager ontMgr = vWorkspace.getWorkspace().getOntologyManager();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		OntologyManager ontMgr = workspace.getOntologyManager();
 		
 		// Save the original alignment for undo
 		oldAlignment = alignment.getAlignmentClone();
@@ -112,7 +114,7 @@ public class ChangeInternalNodeLinksCommand extends Command {
 			e.printStackTrace();
 		}
 		
-		return getAlignmentUpdateContainer(alignment, worksheet, vWorkspace);
+		return getAlignmentUpdateContainer(alignment, worksheet, workspace);
 	}
 
 	private void addNewLinks(Alignment alignment, OntologyManager ontMgr) throws JSONException {
@@ -181,25 +183,26 @@ public class ChangeInternalNodeLinksCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
-		Worksheet worksheet = vWorkspace.getViewFactory()
-				.getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer undoIt(Workspace workspace) {
+		Worksheet worksheet = workspace
+				.getWorksheet(worksheetId);
 
 		// Revert to the old alignment
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
 		oldAlignment.setGraph(oldGraph);
 		
 		// Get the alignment update
-		return getAlignmentUpdateContainer(oldAlignment, worksheet, vWorkspace);
+		return getAlignmentUpdateContainer(oldAlignment, worksheet, workspace);
 	}
 	
+	//TODO this is in worksheetcommand
 	private UpdateContainer getAlignmentUpdateContainer(Alignment alignment,
-			Worksheet worksheet, VWorkspace vWorkspace) {
+			Worksheet worksheet, Workspace workspace) {
 		// Add the visualization update
 		UpdateContainer c = new UpdateContainer();
-		c.add(new SemanticTypesUpdate(worksheet, vWorksheetId, alignment));
-		c.add(new SVGAlignmentUpdate_ForceKarmaLayout(
-				vWorkspace.getViewFactory().getVWorksheet(vWorksheetId), alignment));
+		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+		c.add(new AlignmentSVGVisualizationUpdate(
+				worksheetId, alignment));
 		return c;
 	}
 

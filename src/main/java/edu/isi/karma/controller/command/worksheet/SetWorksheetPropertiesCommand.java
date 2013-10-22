@@ -21,7 +21,7 @@
 
 package edu.isi.karma.controller.command.worksheet;
 
-import org.eclipse.jetty.http.HttpMethods;
+import org.eclipse.jetty.http.HttpMethod;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,18 +31,18 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
-import edu.isi.karma.view.VWorkspace;
 
 public class SetWorksheetPropertiesCommand extends Command {
-	final private String vWorksheetId;
+	final private String worksheetId;
 	final private String properties;
 	private Worksheet worksheet;
 
-	public SetWorksheetPropertiesCommand(String id, String vWorksheetId, String properties) {
+	public SetWorksheetPropertiesCommand(String id, String worksheetId, String properties) {
 		super(id);
-		this.vWorksheetId = vWorksheetId;
+		this.worksheetId = worksheetId;
 		this.properties = properties;
 		
 		addTag(CommandTag.Modeling);
@@ -69,8 +69,8 @@ public class SetWorksheetPropertiesCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
-		worksheet = vWorkspace.getViewFactory().getVWorksheet(vWorksheetId).getWorksheet();
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		worksheet = workspace.getWorksheet(worksheetId);
 		
 		JSONObject propertiesJson = null;
 		try {
@@ -96,7 +96,7 @@ public class SetWorksheetPropertiesCommand extends Command {
 						propertiesJson.getString(Property.serviceRequestMethod.name()));
 				// Set the service invocation style if http method is POST 
 				if (propertiesJson.getString(Property.serviceRequestMethod.name())
-						.equals(HttpMethods.POST)) {
+						.equals(HttpMethod.POST.name())) {
 					props.setPropertyValue(Property.serviceDataPostMethod, 
 							propertiesJson.getString(Property.serviceDataPostMethod.name()));
 				}
@@ -110,7 +110,7 @@ public class SetWorksheetPropertiesCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		// Not required
 		return null;
 	}

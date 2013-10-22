@@ -30,28 +30,28 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 public class AddUserLinkToAlignmentCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 	private enum Arguments {
-		edgeId, alignmentId, vWorksheetId
+		edgeId, alignmentId, worksheetId
 	}
 	
 	@Override
 	public Command createCommand(HttpServletRequest request,
-			VWorkspace vWorkspace) {
+			Workspace workspace) {
 		String edgeId =request.getParameter(Arguments.edgeId.name());
 		String alignmentId =request.getParameter(Arguments.alignmentId.name());
-		String vWorksheetId =request.getParameter(Arguments.vWorksheetId.name());
-		return new AddUserLinkToAlignmentCommand(getNewId(vWorkspace),edgeId, alignmentId, vWorksheetId);
+		String worksheetId =request.getParameter(Arguments.worksheetId.name());
+		return new AddUserLinkToAlignmentCommand(getNewId(workspace),edgeId, alignmentId, worksheetId);
 	}
 
-	public Command createCommand(JSONArray inputJson, VWorkspace vWorkspace) throws JSONException {
+	public Command createCommand(JSONArray inputJson, Workspace workspace) throws JSONException {
 		String edgeId = HistoryJsonUtil.getStringValue(Arguments.edgeId.name(), inputJson);
-		String vWorksheetId = HistoryJsonUtil.getStringValue(Arguments.vWorksheetId.name(), inputJson);
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(vWorkspace.getWorkspace().getId(), vWorksheetId);
+		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		
-		AddUserLinkToAlignmentCommand comm = new AddUserLinkToAlignmentCommand(getNewId(vWorkspace),edgeId, alignmentId, vWorksheetId); 
+		AddUserLinkToAlignmentCommand comm = new AddUserLinkToAlignmentCommand(getNewId(workspace),edgeId, alignmentId, worksheetId); 
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

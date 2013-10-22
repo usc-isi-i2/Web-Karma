@@ -32,6 +32,7 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 
 /**
@@ -76,7 +77,7 @@ public class FetchGraphsFromTripleStoreCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer doIt(VWorkspace vWorkspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		TripleStoreUtil utilObj = new TripleStoreUtil();
 		final ArrayList<String> graphs = utilObj.getContexts(this.tripleStoreUrl);
 		if(graphs == null) {
@@ -106,7 +107,7 @@ public class FetchGraphsFromTripleStoreCommand extends Command {
 	}
 
 	@Override
-	public UpdateContainer undoIt(VWorkspace vWorkspace) {
+	public UpdateContainer undoIt(Workspace workspace) {
 		return null;
 	}
 

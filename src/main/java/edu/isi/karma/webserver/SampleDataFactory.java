@@ -222,8 +222,6 @@ public class SampleDataFactory {
 		try {
 			r = new FileReader(fileName);
 			Object o = JSONUtil.createJson(r);
-			// System.err.println("JSON:" + o.toString());
-			// System.err.println("JSON:" + JSONObject.quote(o.toString()));
 			File f = new File(fileName);
 			JsonImport ji = new JsonImport(o, f.getName(), workspace);
 			Worksheet w = ji.generateWorksheet();
@@ -243,11 +241,8 @@ public class SampleDataFactory {
 		File xmlFile = new File(fileName);
 		try {
 			String fileContents = FileUtil.readFileContentsToString(xmlFile);
-			// System.out.println(fileContents);
 			// Converting the XML to JSON
 			JSONObject json = XML.toJSONObject(fileContents);
-			// System.err.println("JSON:" + o.toString());
-			// System.err.println("JSON:" + JSONObject.quote(o.toString()));
 			JsonImport ji = new JsonImport(json, fileName, workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -648,7 +643,7 @@ public class SampleDataFactory {
 					.key("HTML").value(html).key("URL").value("http://cnn.com")
 					.endObject();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Funny Characters", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -679,7 +674,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Empty Nested Table 1", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -709,7 +704,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Empty Nested Table 2", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -737,7 +732,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Empty Nested Table 3", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -769,7 +764,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Empty Nested Table 4", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -809,7 +804,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Nested Table 1", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -883,7 +878,7 @@ public class SampleDataFactory {
 
 			topA.endArray();
 
-			JsonImport ji = new JsonImport(JSONUtil.createJson(x.toString()),
+			JsonImport ji = new JsonImport(x.toString(),
 					"Nested Table 2", workspace);
 			Worksheet w = ji.generateWorksheet();
 			return w;
@@ -942,7 +937,7 @@ public class SampleDataFactory {
 				+ "\"GENE_ID\": \"PA29779\"," + "\"GENE_NAME\": \"IL10RA\","
 				+ "\"DISEASE_ID\": \"\"," + "\"DISEASE_NAME\": \"\"" + "}"
 				+ "];";
-		System.out.println(json);
+		logger.debug(json);
 		return createWorksheetFromJsonString("PathwaysPharmGKB", json,
 				workspace);
 	}
@@ -997,7 +992,7 @@ public class SampleDataFactory {
 				+ "\"\"," + "]" + "}," + "\"GENE_ID\": \"PA29779\","
 				+ "\"GENE_NAME\": \"IL10RA\"," + "\"DISEASE_ID\": \"\","
 				+ "\"DISEASE_NAME\": \"\"" + "}" + "];";
-		System.out.println(json);
+		logger.debug(json);
 		return createWorksheetFromJsonString("PathwaysPharmGKBNesting", json,
 				workspace);
 	}
