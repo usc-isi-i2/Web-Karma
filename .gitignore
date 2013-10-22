@@ -9,6 +9,7 @@ config/transformation.properties
 *.swp
 target
 .DS_Store
+.classpath
 .project
 .idea/
 lastJsonImport.json
@@ -49,17 +50,9 @@ bin/
 *.shx
 src/main/webapp/SpatialData/GET_OPENSTREETMAP.xml
 src/main/scripts/Lib/IDCTClassifier$py.class
-
 src/main/webapp/publish/CSV/Well_Data_Sheet1
-.settings/org.eclipse.wst.validation.prefs 
 
 .gitignore
 
-nbactions.xml
+.gitignore
 
-preloaded-library
-
-temp/
-
-.classpath
-.settings/*
