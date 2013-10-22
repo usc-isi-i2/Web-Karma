@@ -89,15 +89,20 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		logger.info(hNodeId);
 		try
 		{
+			if(null != hTable.getHNodeFromColumnName(newColumnName))
+			{
+				logger.error("PyTransform failed because the new column " + newColumnName + " already exists!");
+				return new UpdateContainer(new ErrorUpdate("PyTransform failed because the new column " + newColumnName + " already exists!"));					
+			}
 			if(null == addColCmd )
 			{
-			JSONArray addColumnInput = getAddColumnCommandInputJSON(hTableId);
-			AddColumnCommandFactory addColumnFac = (AddColumnCommandFactory)ctrl.
-					getCommandFactoryMap().get(AddColumnCommand.class.getSimpleName());
-			addColCmd = (AddColumnCommand) addColumnFac.createCommand(addColumnInput, workspace);
-			addColCmd.saveInHistory(false);
-			addColCmd.doIt(workspace);
-			}
+				JSONArray addColumnInput = getAddColumnCommandInputJSON(hTableId);
+				AddColumnCommandFactory addColumnFac = (AddColumnCommandFactory)ctrl.
+						getCommandFactoryMap().get(AddColumnCommand.class.getSimpleName());
+				addColCmd = (AddColumnCommand) addColumnFac.createCommand(addColumnInput, workspace);
+				addColCmd.saveInHistory(false);
+				addColCmd.doIt(workspace);
+				}
 			else if(null == hTable.getHNode(addColCmd.getNewHNodeId()))
 			{
 				addColCmd.doIt(workspace);
