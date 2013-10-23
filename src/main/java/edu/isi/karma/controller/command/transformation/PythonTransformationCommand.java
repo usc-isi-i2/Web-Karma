@@ -30,6 +30,7 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.python.core.PyCode;
 import org.python.core.PyException;
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
@@ -92,7 +93,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		return CommandType.undoable;
 	}
 
-	protected void generateTransformedValues(Worksheet worksheet,
+	protected void generateTransformedValues(Workspace workspace, Worksheet worksheet,
 			RepFactory f, HNode hNode,  JSONArray transformedRows, JSONArray errorValues, Integer limit) throws JSONException {
 		List<HNode> accessibleHNodes = f.getHNode(hNodeId).getHNodesAccessibleList(f);
 		List<HNode> nodesWithNestedTable = new ArrayList<HNode>();
@@ -108,9 +109,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		
 		PythonTransformationHelper pyHelper = new PythonTransformationHelper();
 		Map<String,String> normalizedColumnNameMap = new HashMap<String,String>();
-		String clsStmt = pyHelper.getPythonClassCreationStatement(worksheet, normalizedColumnNameMap, accessibleHNodes);
 		String transformMethodStmt = pyHelper.getPythonTransformMethodDefinitionState(worksheet, transformationCode);
-		String columnNameDictStmt = pyHelper.getColumnNameDictionaryStatement(normalizedColumnNameMap);
 		String defGetValueStmt = pyHelper.getGetValueDefStatement(normalizedColumnNameMap);
 		
 		
@@ -123,8 +122,6 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		// Prepare the Python interpreter
 		PythonInterpreter interpreter = new PythonInterpreter();
 		interpreter.exec(pyHelper.getImportStatements());
-		interpreter.exec(clsStmt);
-		interpreter.exec(columnNameDictStmt);
 		interpreter.exec(defGetValueStmt);
 		interpreter.exec(transformMethodStmt);
 		
@@ -134,39 +131,22 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		Map<String, String> rowToValueMap = new HashMap<String, String>();
 		
 		int counter = 0;
+		long starttime = System.currentTimeMillis();
 		// Go through all nodes collected for the column with given hNodeId
+		PyCode py =interpreter.compile("transform(nodeid)");
+		
 		for (Node node:nodes) {
 			Row row = node.getBelongsToRow();
-			Map<String, String> values = node.getColumnValues();
-			StringBuilder objectCreationStmt = new StringBuilder();
-			objectCreationStmt.append("r = " + pyHelper.normalizeString(worksheet.getTitle()) + "(");
 			
-			int keyCounter = 0;
-			for (String valHNodeId : values.keySet()) {
-				String nodeId = values.get(valHNodeId);
-				String nodeVal = f.getNode(nodeId).getValue().asString();
-				
-				if (keyCounter++ != 0)
-					objectCreationStmt.append(",");
-				if (nodeVal == null || nodeVal.isEmpty()) {
-					objectCreationStmt.append(hNodeIdToNormalizedColumnName.get(valHNodeId) + "=\"\"");
-				} else {
-					nodeVal = nodeVal.replaceAll("\"", "\\\\\"");
-					nodeVal = nodeVal.replaceAll("\n", " ");
-					objectCreationStmt.append(hNodeIdToNormalizedColumnName.get(valHNodeId) + "=\"" + nodeVal + "\"");
-				}
-			}
-			objectCreationStmt.append(")");
+			interpreter.set("nodeid", node.getId());
+			interpreter.set("workspaceid", workspace.getId());
 			
-			interpreter.exec(objectCreationStmt.toString());
 			try {
-				PyObject output = interpreter.eval("transform(r)");
+				PyObject output = interpreter.eval(py);
 				String transformedValue = pyHelper.getPyObjectValueAsString(output);
 				addTransformedValue(transformedRows, row, transformedValue);
-				// Execution ran successfully, put the value returned in the HashMap
-			//	rowToValueMap.put(row.getId(), pyHelper.getPyObjectValueAsString(output));
 			} catch (PyException p) {
-				p.printStackTrace();
+				logger.error("error in evaluation python", p);
 				// Error occured in the Python method execution
 				addTransformedValue(transformedRows, row, errorDefaultValue);
 				addError(errorValues, row, counter, p.value);
@@ -179,6 +159,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 				break;
 			}
 		}
+		logger.info("transform time " +( System.currentTimeMillis() - starttime)); 
 	}
 
 	private void addError(JSONArray errorValues, Row row, int counter, PyObject value) throws JSONException {

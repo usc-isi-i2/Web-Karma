@@ -69,7 +69,7 @@ public abstract class MutatingPythonTransformationCommand extends
 		try {
 			JSONArray transformedRows = new JSONArray();
 			JSONArray errorValues = new JSONArray();
-			generateTransformedValues(
+			generateTransformedValues(workspace, 
 					worksheet, f, hNode, transformedRows, errorValues, null);
 
 			// Invoke the MultipleValueEditColumnCommand
