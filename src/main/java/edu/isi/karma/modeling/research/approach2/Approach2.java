@@ -275,7 +275,7 @@ public class Approach2 {
 				}
 				else {
 					String id = nodeIdFactory.getNodeId(source.getId());
-					ColumnNode node = new ColumnNode(id, id, "", "");
+					ColumnNode node = new ColumnNode(id, id, "", null);
 					if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) {
 						n1 = node;
 						component.addVertex(node);
@@ -296,7 +296,7 @@ public class Approach2 {
 					} else continue;
 				}
 				else {
-					ColumnNode node = new ColumnNode(target.getId(), "", "", "");
+					ColumnNode node = new ColumnNode(target.getId(), "", "", null);
 					if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) {
 						n2 = node;
 						component.addVertex(node);
@@ -493,7 +493,7 @@ public class Approach2 {
 		
 		String nodeId;
 		nodeId = nodeIdFactory.getNodeId("*");
-		ColumnNode target = new ColumnNode(nodeId, "", "", "");
+		ColumnNode target = new ColumnNode(nodeId, "", "", null);
 		this.graphBuilder.addNodeWithoutUpdatingGraph(target);
 		addedNodes.add(target);
 		

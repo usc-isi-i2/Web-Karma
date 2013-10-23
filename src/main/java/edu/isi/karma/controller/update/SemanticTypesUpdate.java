@@ -123,8 +123,8 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 							.value(true);
 					
 					// Add the RDF literal type to show in the text box
-					String rdfLiteralType = alignmentColumnNode.getRdfLiteralType();
-					rdfLiteralType = (rdfLiteralType != null && !rdfLiteralType.equals("")) ? rdfLiteralType : "";
+					String rdfLiteralType = alignmentColumnNode.getRdfLiteralType() == null? "" : 
+						alignmentColumnNode.getRdfLiteralType().getDisplayName();
 					writer.key(JsonKeys.rdfLiteralType.name())
 						.value(rdfLiteralType);
 					
