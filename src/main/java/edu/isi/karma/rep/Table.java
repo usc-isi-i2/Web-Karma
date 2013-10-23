@@ -164,8 +164,9 @@ public class Table extends RepEntity {
 	 *            Collection of nodes that satisfy the path
 	 */
 	public void collectNodes(HNodePath path, Collection<Node> nodes) {
-		if (nodes == null)
+		if (nodes == null) {
 			nodes = new ArrayList<Node>();
+		}
 		collectNodes(path, nodes, rows);
 	}
 

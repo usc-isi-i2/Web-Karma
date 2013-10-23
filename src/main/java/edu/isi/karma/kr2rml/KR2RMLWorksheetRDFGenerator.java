@@ -500,8 +500,9 @@ public class KR2RMLWorksheetRDFGenerator {
 		return uri;
 	}
 	
+	// Pedro: replaceAll uses regex, which is really expensive
 	public String normalizeUri(String inputUri) {
-		return inputUri.replaceAll(" ", "").replaceAll("[,`']", "_");
+		return inputUri.replace(" ", "").replaceAll("[,`']", "_");
 	}
 	
 	
