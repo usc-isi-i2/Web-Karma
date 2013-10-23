@@ -50,7 +50,7 @@ import edu.isi.karma.util.AbstractJDBCUtil.DBType;
 import edu.isi.karma.util.JDBCUtilFactory;
 import edu.isi.karma.webserver.KarmaException;
 
-public class DatabaseTableRDFGenerator {
+public class DatabaseTableRDFGenerator extends RdfGenerator {
 	
 	private static Logger logger = LoggerFactory.getLogger(DatabaseTableRDFGenerator.class);
 	private DBType dbType;
@@ -80,11 +80,10 @@ public class DatabaseTableRDFGenerator {
 	 * Only warn about SQL exception once. //Pedro //TODO: this whole code is copy-pasted
 	 */
 	private static boolean warnedSqlException = false;
-	public void generateRDF(Workspace workspace, PrintWriter pw, Model model) 
+	public void generateRDF(PrintWriter pw, Model model) 
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
 		logger.debug("Generating RDF...");
-		
-		RepFactory factory = workspace.getFactory();
+
 		
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		Connection conn = dbUtil.getConnection(hostname, portnumber, username, password, dBorSIDName);
@@ -101,6 +100,9 @@ public class DatabaseTableRDFGenerator {
 		ArrayList<String> columnNames = dbUtil.getColumnNames(tablename, conn);
 		
 		// Prepare required Karma objects
+	     Workspace workspace = initializeWorkspace();
+ 	
+		RepFactory factory = workspace.getFactory();
 		Worksheet wk = factory.createWorksheet(tablename, workspace);
 		ArrayList<String> headersList = addHeaders(wk, columnNames, factory);
 		
@@ -111,7 +113,8 @@ public class DatabaseTableRDFGenerator {
 			if(counter%DATABASE_TABLE_FETCH_SIZE == 0 && counter != 0) {
 				generateRDFFromWorksheet(wk, workspace, model, pw);
 				logger.debug("Done for " + counter + " rows ..." );
-				
+			    removeWorkspace(workspace);
+			    workspace = initializeWorkspace();
 				wk = factory.createWorksheet(tablename, workspace);
 				headersList = addHeaders(wk, columnNames, factory);
 				
@@ -144,7 +147,7 @@ public class DatabaseTableRDFGenerator {
 		stmt.close();
 		logger.debug("done");
 	}
-	
+
 	private void generateRDFFromWorksheet(Worksheet wk, 
 			Workspace workspace, Model model, PrintWriter pw) 
 					throws IOException, JSONException, KarmaException {

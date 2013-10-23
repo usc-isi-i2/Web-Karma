@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -44,8 +43,6 @@ import org.apache.commons.cli2.builder.GroupBuilder;
 import org.apache.commons.cli2.commandline.Parser;
 import org.apache.commons.cli2.util.HelpFormatter;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,24 +52,11 @@ import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
-import edu.isi.karma.imp.Import;
-import edu.isi.karma.imp.csv.CSVFileImport;
-import edu.isi.karma.imp.json.JsonImport;
-import edu.isi.karma.kr2rml.ErrorReport;
-import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
-import edu.isi.karma.kr2rml.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
-import edu.isi.karma.util.FileUtil;
-import edu.isi.karma.util.JSONUtil;
-import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-import edu.isi.karma.webserver.WorkspaceRegistry;
 
 public class OfflineRdfGenerator {
 
@@ -136,10 +120,7 @@ public class OfflineRdfGenerator {
                     ContextParameter.USER_DIRECTORY_PATH, "src/main/webapp/");
             ServletContextParameterMap.setParameterValue(
                     ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "200");
-            Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
-            Worksheet worksheet = null;
-            WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
-    		
+       	
             /**
              * LOAD THE R2RML MODEL FILE INTO A JENA MODEL *
              */
@@ -163,76 +144,11 @@ public class OfflineRdfGenerator {
              */
             // Database table
             if (inputType.equals("DB")) {
-                String dbtypeStr = (String) cl.getValue("--dbtype");
-                String hostname = (String) cl.getValue("--hostname");
-                String username = (String) cl.getValue("--username");
-                String password = (String) cl.getValue("--password");
-                int portnumber = 0;
-                try {
-                    portnumber = Integer.parseInt(cl.getValue("--portnumber").toString());
-                } catch (Throwable t) {
-                    logger.error("Error occured while parsing value for portnumber."
-                            + " Provided value: " + cl.getValue("--portnumber"));
-                    pw.close();
-                    return;
-                }
-                String dBorSIDName = (String) cl.getValue("--dbname");
-                String tablename = (String) cl.getValue("--tablename");
-
-                // Validate the arguments
-                if (dbtypeStr == null || dbtypeStr.equals("") || hostname == null
-                        || hostname.equals("") || username == null || username.equals("")
-                        || password == null || password.equals("") || dBorSIDName == null
-                        || dBorSIDName.equals("") || tablename == null || tablename.equals("")
-                        || tablename == null || tablename.equals("")) {
-                    logger.error("A mandatory value is missing for fetching data from "
-                            + "a database. Please provide argument values for dbtype, hostname, "
-                            + "username, password, portnumber, dbname and tablename.");
-                    pw.close();
-                    return;
-                }
-
-                DBType dbType = DBType.valueOf(dbtypeStr);
-                if (dbType == null) {
-                    logger.error("Unidentified database type. Valid values: "
-                            + "Oracle, MySQL, SQLServer, PostGIS");
-                    pw.close();
-                    return;
-                }
-                DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
-                        hostname, portnumber, username, password, dBorSIDName, tablename);
-                dbRdfGen.generateRDF(workspace, pw, model);
+                generateRdfFromDatabaseTable(cl, model, pw);
             } // File based worksheets such as JSON, XML, CSV
             else {
-                String sourceFilePath = (String) cl.getValue("--filepath");
-                File inputFile = new File(sourceFilePath);
-                if (!inputFile.exists()) {
-                    logger.error("File not found: " + inputFile.getAbsolutePath());
-                    pw.close();
-                    return;
-                }
-                logger.info("Generating worksheet from the data source ...");
-                worksheet = generateWorksheetFromFile(inputFile, inputType, workspace);
-                logger.info("done");
-                /**
-                 * GENERATE RDF FROM WORKSHEET OBJECT *
-                 */
-                logger.info("Generating RDF...");
-                WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(
-                        worksheet, workspace, model, worksheetName);
-
-                // Gets all the errors generated during the RDF generation
-                ErrorReport errorReport = new ErrorReport();
-
-                // RDF generation object initialization
-                KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
-                        workspace.getFactory(), workspace.getOntologyManager(), pw,
-                        parserTest.getAuxInfo(), errorReport, false);
-
-                // Generate the rdf
-                rdfGen.generateRDF(false);
+                generateRdfFromFile(cl, inputType, model, worksheetName, pw);
             }
-            pw.flush();
             pw.close();
             logger.info("done");
 
@@ -241,6 +157,68 @@ public class OfflineRdfGenerator {
             logger.error("Error occured while generating RDF!", e);
         }
     }
+
+	private static void generateRdfFromDatabaseTable(CommandLine cl, Model model,
+			PrintWriter pw) throws IOException, JSONException, KarmaException,
+			SQLException, ClassNotFoundException {
+		String dbtypeStr = (String) cl.getValue("--dbtype");
+		String hostname = (String) cl.getValue("--hostname");
+		String username = (String) cl.getValue("--username");
+		String password = (String) cl.getValue("--password");
+		int portnumber = 0;
+		try {
+		    portnumber = Integer.parseInt(cl.getValue("--portnumber").toString());
+		} catch (Throwable t) {
+		    logger.error("Error occured while parsing value for portnumber."
+		            + " Provided value: " + cl.getValue("--portnumber"));
+		    pw.close();
+		    return;
+		}
+		String dBorSIDName = (String) cl.getValue("--dbname");
+		String tablename = (String) cl.getValue("--tablename");
+
+		// Validate the arguments
+		if (dbtypeStr == null || dbtypeStr.equals("") || hostname == null
+		        || hostname.equals("") || username == null || username.equals("")
+		        || password == null || password.equals("") || dBorSIDName == null
+		        || dBorSIDName.equals("") || tablename == null || tablename.equals("")
+		        || tablename == null || tablename.equals("")) {
+		    logger.error("A mandatory value is missing for fetching data from "
+		            + "a database. Please provide argument values for dbtype, hostname, "
+		            + "username, password, portnumber, dbname and tablename.");
+		    pw.close();
+		    return;
+		}
+
+		DBType dbType = DBType.valueOf(dbtypeStr);
+		if (dbType == null) {
+		    logger.error("Unidentified database type. Valid values: "
+		            + "Oracle, MySQL, SQLServer, PostGIS");
+		    pw.close();
+		    return;
+		}
+		DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
+		        hostname, portnumber, username, password, dBorSIDName, tablename);
+		
+		dbRdfGen.generateRDF(pw, model);
+        pw.flush();
+	}
+
+	private static void generateRdfFromFile(CommandLine cl, String inputType,
+			Model model, String worksheetName, PrintWriter pw)
+			throws JSONException, IOException, KarmaException,
+			ClassNotFoundException, SQLException {
+		String sourceFilePath = (String) cl.getValue("--filepath");
+		File inputFile = new File(sourceFilePath);
+		if (!inputFile.exists()) {
+		    logger.error("File not found: " + inputFile.getAbsolutePath());
+		    pw.close();
+		    return;
+		}
+		FileRdfGenerator.generateRdf(inputType, model, worksheetName, pw, inputFile);
+        pw.flush();
+	}
+
 
     private static Model loadSourceModelIntoJenaModel(File modelFile) throws FileNotFoundException {
         // Create an empty Model
@@ -262,29 +240,6 @@ public class OfflineRdfGenerator {
         } else {
             return null;
         }
-    }
-
-    private static Worksheet generateWorksheetFromFile(File inputFile, String inputType,
-            Workspace workspace) throws JSONException, IOException, KarmaException, ClassNotFoundException, SQLException {
-        Worksheet worksheet = null;
-
-        if (inputType.equalsIgnoreCase("JSON")) {
-            FileReader reader = new FileReader(inputFile);
-            Object json = JSONUtil.createJson(reader);
-            JsonImport imp = new JsonImport(json, inputFile.getName(), workspace);
-            worksheet = imp.generateWorksheet();
-        } else if (inputType.equalsIgnoreCase("XML")) {
-            String fileContents = FileUtil.readFileContentsToString(inputFile);
-            JSONObject json = XML.toJSONObject(fileContents);
-            JsonImport imp = new JsonImport(json, inputFile.getName(), workspace);
-            worksheet = imp.generateWorksheet();
-        } else if (inputType.equalsIgnoreCase("CSV")) {
-            Import fileImport = new CSVFileImport(1, 2, ',', '\"', inputFile, workspace);
-
-            worksheet = fileImport.generateWorksheet();
-        }
-
-        return worksheet;
     }
 
     private static Group createCommandLineOptions() {

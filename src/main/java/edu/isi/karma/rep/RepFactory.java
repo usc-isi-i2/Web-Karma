@@ -41,12 +41,12 @@ public class RepFactory {
 	EthernetAddress nic;
 	RandomBasedGenerator uuidGenerator;
 
-	private final Map<String, HNode> hNodes = new HashMap<String, HNode>();
-	private final Map<String, HTable> hTables = new HashMap<String, HTable>();
-	private final Map<String, Worksheet> worksheets = new HashMap<String, Worksheet>();
-	private final Map<String, Table> tables = new HashMap<String, Table>();
-	private final Map<String, Row> rows = new HashMap<String, Row>();
-	private final Map<String, Node> nodes = new HashMap<String, Node>();
+	private final Map<String, HNode> hNodes = new HashMap<String, HNode>(100);
+	private final Map<String, HTable> hTables = new HashMap<String, HTable>(10);
+	private final Map<String, Worksheet> worksheets = new HashMap<String, Worksheet>(10);
+	private final Map<String, Table> tables = new HashMap<String, Table>(10);
+	private final Map<String, Row> rows = new HashMap<String, Row>(1000);
+	private final Map<String, Node> nodes = new HashMap<String, Node>(10000);
 
 	public Worksheet createWorksheet(String tableName, Workspace workspace) {
 		String id = getNewId("WS");
