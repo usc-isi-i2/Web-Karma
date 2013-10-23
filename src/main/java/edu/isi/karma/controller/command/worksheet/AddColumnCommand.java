@@ -115,7 +115,14 @@ public class AddColumnCommand extends WorksheetCommand {
 					throw new KarmaException("TableId and NodeId are empty. Can't add column.");
 				hTableId = workspace.getFactory().getHNode(hNodeId).getHTableId();
 			}
-						
+			 HTable hTable = workspace.getFactory().getHTable(hTableId);
+			if (null != hTable.getHNodeFromColumnName(newColumnName)) {
+				logger.error("Add column failed to create " + newColumnName
+						+ " because it already exists!");
+				return new UpdateContainer(new ErrorUpdate(
+						"Add column failed to create " + newColumnName
+								+ " because it already exists!"));
+			}   
 			//get the HTable
 			HTable currentTable = workspace.getFactory().getHTable(hTableId);
 			//add new column to this table
