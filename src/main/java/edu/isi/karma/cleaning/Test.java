@@ -14,19 +14,22 @@ public class Test {
 	public static void test1()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] xStrings = {"<_START>Technische Universität Berlin, DAI-Labor, Berlin, Germany<_END>", "Technische Universität Berlin"};
-		String[] yStrings = {"<_START>Stanford University, Stanford, California, United States<_END>", "Stanford University"};
-		//String[] zStrings = {"<_START>Faculdade de Ciências, Universidade de Lisboa, Lisboa, Portugal<_END>", "Portugal"};
-		examples.add(xStrings);
-		System.out.println("length: "+xStrings[1].length());
-		examples.add(yStrings);
-		//examples.add(zStrings);
+		String[] x7 = {"<_START>Curley-Custer Scout-Crow.Crow Agency.Montana.1912, 1912<_END>", " 1912"};
+		//String[] x8 = {"<_START>Deborah Pugh, \"Egyptian Group Claims New Attacks,\" The Guardian (London), January 8, 1993. <_END>", "Egyptian Group Claims New Attacks"};
+		//String[] x9 = {"<_START>09:58 am<_END>", "09:58 AM"};
+		examples.add(x7);
+		//examples.add(x8);
+		//examples.add(x9);
+		
+		for(String[] elem:examples)
+		{
+			System.out.println("Examples inputed: "+Arrays.toString(elem));
+		}
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(examples);
-		Vector<ProgramRule> pls = new Vector<ProgramRule>();
 		Collection<ProgramRule> ps = psProgSynthesis.run_main();
 		ProgramRule pr = ps.iterator().next();
-		String val = "Faculdade de Ciências, Universidade de Lisboa, Lisboa, Portugal";
+		String val = "Deborah Pugh, \"Egyptian Group Claims New Attacks,\" The Guardian (London), January 8, 1993. ";
 		InterpreterType rule = pr.getRuleForValue(val);
 		System.out.println(rule.execute(val));
 	}
@@ -35,28 +38,52 @@ public class Test {
 	{
 		String[] pair = xHashMap.get(Id);
 		HashMap<String, String> tmp = new HashMap<String, String>();
-		UtilTools.StringColorCode(pair[0], pair[1], tmp);
+		try
+		{
+			UtilTools.StringColorCode(pair[0], pair[1], tmp);
+		}
+		catch(Exception e)
+		{
+			tmp.put("Org", pair[0]);
+			tmp.put("Tar", "ERROR");
+			tmp.put("Orgdis", pair[0]);
+			tmp.put("Tardis", "ERROR");
+		}
 		String tar = tmp.get("Tar");
 		int length = tar.length();
+		boolean sequalBefore = false;
+		boolean lequalBefore = false;
 		boolean shortest = true;
 		boolean longest = true;
 		for (String[] elem : xHashMap.values())
 		{
 			HashMap<String, String> t = new HashMap<String, String>();
-			UtilTools.StringColorCode(elem[0], elem[1], t);
+			try
+			{
+				UtilTools.StringColorCode(elem[0], elem[1], t);
+			}
+			catch(Exception ex){
+				tmp.put("Org", elem[0]);
+				tmp.put("Tar", "ERROR");
+				tmp.put("Orgdis", elem[0]);
+				tmp.put("Tardis", "ERROR");
+			}
 			String tres = tmp.get("Tar");
 			int newl = tres.length();
-			if (newl > length)
+			if (newl >= length)
 			{
-				longest = false;
+				if (lequalBefore)
+					longest = false;
+				lequalBefore = true;
 			}
-			if (newl <length)
+			if (newl <=length)
 			{
-				shortest = false;
+				if (sequalBefore)
+					shortest = false;
+				sequalBefore = true;
 			}
 		}
-		return (shortest || longest);
-		
+		return (shortest || longest);		
 	}
 	public static void test4(String dirpath) {
 		HashMap<String, Vector<String>> records = new HashMap<String, Vector<String>>();
@@ -69,32 +96,36 @@ public class Test {
 			Vector<String[]> examples = new Vector<String[]>();
 			Vector<String[]> addExamples = new Vector<String[]>();
 			Vector<String[]> entries = new Vector<String[]>();
-			try {
-				
+			try {				
 				if (f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
 					HashMap<String, String[]> xHashMap = new HashMap<String, String[]>();
+					@SuppressWarnings("resource")
 					CSVReader cr = new CSVReader(new FileReader(f), ',','"','\0');
 					String[] pair;
 					int index = 0;
+					Vector<String> vtmp = new Vector<String>();
 					while ((pair = cr.readNext()) != null) {
 						if (pair == null || pair.length <= 1)
 							break;
 						entries.add(pair);
+						vtmp.add(pair[0]);
 						String[] line = {pair[0],pair[1],"","","wrong"}; // org, tar, tarcode, label
 						xHashMap.put(index + "", line);
 						index++;
 					}
+					Vector<String> vob = UtilTools.buildDict(vtmp);
+					ProgramRule.setVocb(vob);
 					if (entries.size() <= 1)
 						continue;
 					ExampleSelection expsel = new ExampleSelection();
-					expsel.firsttime = true;
+					ExampleSelection.firsttime = true;
 					expsel.inite(xHashMap,null);
 					int target = Integer.parseInt(expsel.Choose());
 					String[] mt = {
 							"<_START>" + entries.get(target)[0] + "<_END>",
 							entries.get(target)[1] };
 					examples.add(mt);
-					expsel.firsttime = false;
+					ExampleSelection.firsttime = false;
 					while (true) // repeat as no correct answer appears.
 					{
 						long checknumber = 1;
@@ -132,7 +163,10 @@ public class Test {
 								res += s+"\n";
 								if (ConfigParameters.debug == 1)
 								{
-									System.out.println("result:   " + dict.get("Org")+"   "+dict.get("Tardis"));
+									String indicator = "wrong";
+									if (s.compareTo(entries.get(j)[1]) == 0)
+										indicator = "correct";
+									System.out.println("result:   " + dict.get("Org")+"   "+dict.get("Tardis")+"    "+ indicator);
 								}
 								if (s == null || s.length() == 0) {
 									String[] ts = {"<_START>" + entries.get(j)[0] + "<_END>","",tmps,classlabel,"wrong"};
@@ -336,14 +370,13 @@ public class Test {
 	public static void test0(String dirpath) {
 		File nf = new File(dirpath);
 		File[] allfiles = nf.listFiles();
-		// statistics
-		DataCollection dCollection = new DataCollection();
 		// list all the csv file under the dir
 		for (File f : allfiles) {
 			Vector<String[]> examples = new Vector<String[]>();
 			Vector<String[]> entries = new Vector<String[]>();
 			try {
 				if (f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
+					@SuppressWarnings("resource")
 					CSVReader cr = new CSVReader(new FileReader(f), ',', '"',
 							'\0');
 					String[] pair;

@@ -19,8 +19,9 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.cleaning;
+package edu.isi.karma.cleaning.QuestionableRecord;
 
 public interface RecFeature {
 	public double computerScore();
+	public String getName();
 }

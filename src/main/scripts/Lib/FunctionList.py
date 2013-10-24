@@ -75,9 +75,9 @@ def loop(value, stript):
         return res
 def substr(str, p1, p2):
     '''get substring'''
-    if p1 == None and p2 != None:
+    if (p1 == None or p1 < 0) and p2 != None:
         return "<_2_FATAL_ERROR_>"
-    if p1 != None and p2 == None:
+    if p1 != None and (p2 == None or p2 > len(str)):
         return "<_2_FATAL_ERROR_>"
     if p1 == None and p2 == None:
         return "<_3_FATAL_ERROR_>"

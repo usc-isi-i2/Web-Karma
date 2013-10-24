@@ -7,7 +7,7 @@ import java.util.Vector;
 
 public class Segment implements GrammarTreeNode {
 	public Vector<Section> section = new Vector<Section>();
-	public static int cxtsize_limit = 2;
+	public static int cxtsize_limit = 4;
 	public static int time_limit = 5;
 	public String tarString = "";
 	public static final String LEFTPOS = "leftpos";

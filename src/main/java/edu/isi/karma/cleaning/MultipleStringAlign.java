@@ -22,11 +22,7 @@
 package edu.isi.karma.cleaning;
 import java.util.Vector;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class MultipleStringAlign {
-	private static Logger logger = LoggerFactory.getLogger(MultipleStringAlign.class);
 	public MultipleStringAlign(Vector<String[]> strs)
 	{
 		
@@ -99,6 +95,7 @@ public class MultipleStringAlign {
 	    }
 	}
 	//{[orgstartPos, orgendPos ], ...}
+	@SuppressWarnings("unused")
 	public Vector<int[]> findNext(String org, String tar, int pos)
 	{
 		Vector<int[]> segs = new Vector<int[]>();
@@ -112,7 +109,6 @@ public class MultipleStringAlign {
 			return segs;
 		String tmp = "";
 		tmp += tar.charAt(pos);
-		// identify the const string	 
 		int q = org.indexOf(tmp);
 		if (q == -1) {
 			int cnt = pos;
@@ -184,21 +180,5 @@ public class MultipleStringAlign {
 			}
 		}
 		return segs;
-	}
-	public static void main(String[] args)
-	{
-		Vector<String[]> strs = new Vector<String[]>();
-		MultipleStringAlign msa = new MultipleStringAlign(strs);
-		String org = "hello world";
-		String tar = "world";
-		for(int i = 0; i<tar.length(); i++)
-		{
-			logger.info("starting pos: "+i);
-			Vector<int[]> result = msa.findNext(org, tar, i);
-			for(int[] seg:result)
-			{
-				logger.info(""+org.substring(seg[0],seg[1]));
-			}
-		}
 	}
 }

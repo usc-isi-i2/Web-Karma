@@ -238,7 +238,7 @@ function handleCleanColumnButton() {
 	$("div#ColumnCleaningPanel").dialog({
 		title : 'Transform',
 		width : 'auto',
-		height : 550,
+		height : 780,
 		buttons : {
 			"Cancel" : function() {
 				$(this).dialog("close");
@@ -250,6 +250,7 @@ function handleCleanColumnButton() {
 			}
 		}
 	});
+	pagnation();
 }
 
 function movetop(keys) {
@@ -340,7 +341,37 @@ function populateInfoPanel() {
 	}
 	tab1.append(trTag);
 }
-
+function pagnation() {
+	//clean previous page number 
+	$("span.page").remove();
+	$("span.hover").remove();
+	var rows = $('table#cleaningExamplesTable').find('tbody tr').length;
+	var no_rec_per_page = 50;
+	var no_pages = Math.ceil(rows / no_rec_per_page);
+	var $pagenumbers = $('<div id="pages"></div>');
+	for( i = 0; i < no_pages; i++) {
+		$('<span class="page">' + (i + 1) + '</span>').appendTo($pagenumbers);
+	}
+	$pagenumbers.insertAfter('table#cleaningExamplesTable');
+	$('.page').hover(function() {
+		$(this).addClass('hover');
+	}, function() {
+		$(this).removeClass('hover');
+	});
+	$('table#cleaningExamplesTable').find('tbody tr').hide();
+	var tr = $('table#cleaningExamplesTable tbody tr');
+	for(var i = 0; i <= no_rec_per_page - 1; i++) {
+		$(tr[i]).show();
+	}
+	$('span').click(function(event) {
+		$('table#cleaningExamplesTable').find('tbody tr').hide();
+		for( i = ($(this).text() - 1) * no_rec_per_page; i <= $(this).text() * no_rec_per_page - 1; i++) {
+			var trx = $(tr[i]);
+			$(tr[i]).show()
+			$(":hidden",trx).show();
+		}
+	});
+}
 function populateResult(rdata, nodeIds) {
 	var examples = $("div#columnHeadingDropDownMenu").data("cleaningExamples", examples);
 	var cleaningTable = $("table#cleaningExamplesTable");

@@ -146,7 +146,7 @@ public class SubmitCleaningCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) {
 		// create new column command
-		String Msg = String.format("submit end, Time:%d, Worksheet:%s",System.currentTimeMillis(),worksheetId);
+		String Msg = String.format("submit end, Time,%d, Worksheet,%s",System.currentTimeMillis(),worksheetId);
 		logger.info(Msg);
 		String colnameString = "";
 		UpdateContainer c = new UpdateContainer();

@@ -1,6 +1,7 @@
 package edu.isi.karma.cleaning;
 
 import java.util.HashMap;
+import java.util.Vector;
 
 
 public class ProgramRule {
@@ -10,11 +11,16 @@ public class ProgramRule {
 	public static Interpretor itInterpretor;
 	public String signString = "";
 	public static String IDENTITY = "substr(value,'START','END')";
+	public static Vector<String> vocb = null;
 	public boolean nullRule = false;
 	public ProgramRule(Program prog)
 	{
 		this.pClassifier = prog.classifier;
 		initInterpretor();
+	}
+	public static void setVocb(Vector<String> v)
+	{
+		vocb = v;
 	}
 	public ProgramRule(String rule)
 	{
