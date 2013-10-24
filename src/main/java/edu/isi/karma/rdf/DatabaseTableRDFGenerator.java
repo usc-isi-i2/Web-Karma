@@ -115,6 +115,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 				logger.debug("Done for " + counter + " rows ..." );
 			    removeWorkspace(workspace);
 			    workspace = initializeWorkspace();
+			    factory = workspace.getFactory();
 				wk = factory.createWorksheet(tablename, workspace);
 				headersList = addHeaders(wk, columnNames, factory);
 				
