@@ -1,7 +1,11 @@
 package edu.isi.karma.cleaning;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Vector;
 
@@ -86,80 +90,94 @@ public class UtilTools {
 		}
 		return true;
 	}
-	public static void StringColorCode(String org,String res,HashMap<String, String> dict)
-	{
-		//System.out.println("res: "+res);
-		//System.out.println("org: "+org);
+	public static void StringColorCode(String org, String res,
+			HashMap<String, String> dict) throws Exception{
 		int segmentCnt = 0;
+		Vector<int[]> allUpdates = new Vector<int[]>();
 		String pat = "((?<=\\{_L\\})|(?=\\{_L\\}))";
 		String pat1 = "((?<=\\{_S\\})|(?=\\{_S\\}))";
 		String orgdis = "";
 		String tardis = "";
 		String tar = "";
 		String[] st = res.split(pat);
-		int pre = 0;
 		boolean inloop = false;
-		for(String token:st)
-		{
-			if(token.compareTo("{_L}")==0 && !inloop)
-			{
+		for (String token : st) {
+			if (token.compareTo("{_L}") == 0 && !inloop) {
 				inloop = true;
 				continue;
 			}
-			if(token.compareTo("{_L}")==0 && inloop)
-			{
+			if (token.compareTo("{_L}") == 0 && inloop) {
 				inloop = false;
 				continue;
 			}
 			String[] st1 = token.split(pat1);
-			for(String str:st1)
-			{
-				if(str.compareTo("{_S}")==0||str.compareTo("{_S}")==0)
-				{
+			for (String str : st1) {
+				if (str.compareTo("{_S}") == 0 || str.compareTo("{_S}") == 0) {
 					continue;
 				}
-				if(str.indexOf("{_C}")!=-1)
-				{
+				if (str.indexOf("{_C}") != -1) {
 					String[] pos = str.split("\\{_C\\}");
-					if(Integer.valueOf(pos[1])<Integer.valueOf(pos[0]))
-					{
-						return;
+					int[] poses = { Integer.valueOf(pos[0]),
+							Integer.valueOf(pos[1]),segmentCnt};
+					boolean findPos = false;
+					for (int i = 0; i < allUpdates.size(); i++) {
+						int[] cur = allUpdates.get(i);
+						if (poses[0] <= cur[0]) {
+							findPos = true;
+							allUpdates.add(i, poses);
+							break; // avoid infinite adding
+						}
 					}
-					String tarseg = org.substring(Integer.valueOf(pos[0]),Integer.valueOf(pos[1]));
-					if(Integer.valueOf(pos[0]) >=pre && pre<org.length())
+					if(!findPos)
 					{
-						orgdis += org.substring(pre,Integer.valueOf(pos[0]));
-						orgdis += String.format("[%s]",tarseg);
-						pre = Integer.valueOf(pos[1]);
+						allUpdates.add(poses);
 					}
-					if(inloop)
-					{	
-						tardis += String.format("[%s]",tarseg);
-						//orgdis += String.format("[%s]",tarseg);
+					String tarseg = org.substring(Integer.valueOf(pos[0]),
+							Integer.valueOf(pos[1]));
+
+					if (inloop) {
+
+						tardis += String.format(
+								"<span class=\"a%d\">%s</span>", segmentCnt,
+								tarseg);
+						// orgdis +=
+						// String.format("<span class=\"a%d\">%s</span>",
+						// segmentCnt,tarseg);
+						tar += tarseg;
+					} else {
+						tardis += String.format(
+								"<span class=\"a%d\">%s</span>", segmentCnt,
+								tarseg);
+						// orgdis +=
+						// String.format("<span class=\"a%d\">%s</span>",
+						// segmentCnt,tarseg);
+						segmentCnt++;
 						tar += tarseg;
 					}
-					else
-					{
-						tardis += String.format("[%s]",tarseg);
-						//orgdis += String.format("[%s]",tarseg);
-						segmentCnt ++;
-						tar += tarseg;
-					}
-					
-				}
-				else
-				{
-					tardis += String.format("{%s}",str);
+
+				} else {
+					tardis += String.format("<span class=\"ins\">%s</span>",
+							str);
 					tar += str;
-					if(!inloop)
-						segmentCnt ++;
 				}
 			}
 		}
-		if(pre<org.length())
+		int pre = 0;
+		for(int[] update:allUpdates)
+		{
+			if(update[0] >= pre)
+			{
+				orgdis += org.substring(pre,update[0]);
+				orgdis += String.format(
+						"<span class=\"a%d\">%s</span>", update[2],
+						org.substring(update[0],update[1]));
+				pre = update[1];
+			}
+		}
+		if(org.length() > pre)
 			orgdis += org.substring(pre);
 		dict.put("Org", org);
-		dict.put("Tar",tar );
+		dict.put("Tar", tar);
 		dict.put("Orgdis", orgdis);
 		dict.put("Tardis", tardis);
 	}
@@ -397,10 +415,64 @@ public class UtilTools {
 		return vds;
 	}*/
 
-	public static void main(String[] args) {
-		String s = "+";
+	public static Vector<String> buildDict(Collection<String> data)
+	{
+		HashMap<String,Integer> mapHashSet = new HashMap<String, Integer>();
+		for(String pair:data)
+		{
+			String s1 = pair;
+			if (s1.contains("<_START>"))
+			{
+				s1 = s1.replace("<_START>", "");
+			}
+			if (s1.contains("<_END>"))
+			{
+				s1 = s1.replace("<_END>", "");
+			}
+			Ruler r = new Ruler();
+			r.setNewInput(s1);
+			Vector<TNode> v = r.vec;
+			HashSet<String> curRow = new HashSet<String>();
+			for (TNode t : v)
+			{
+				String k = t.text;
+				k = k.replaceAll("[0-9]+", "DIGITs");
+				if(k.trim().length() ==0)
+					continue;
+				//only consider K once in one row
+				if(curRow.contains(k))
+				{
+					continue;
+				}
+				else
+				{
+					curRow.add(k);
+				}
+				if (mapHashSet.containsKey(k))
+				{
+					mapHashSet.put(k,mapHashSet.get(k)+1);
+				}
+				else
+				{
+					mapHashSet.put(k,1);
+				}
+			}
+		}
+		//prune infrequent terms
+		int thresdhold =5;
+		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet().iterator();
+		while(iter.hasNext())
+		{
+			Entry<String, Integer> e = iter.next();
+			if(e.getValue() < thresdhold)
+			{
+				iter.remove();
+			}
+		}
+		Vector<String> res = new Vector<String>();
+		res.addAll(mapHashSet.keySet());
+		return res;
 	}
-
 }
 
 // used to sort the score in decend order
@@ -415,6 +487,7 @@ class ScoreObj {
 
 }
 
+@SuppressWarnings("rawtypes")
 class DoubleCompare implements Comparator {
 	public int compare(Object x1, Object x2) {
 		ScoreObj a1 = (ScoreObj) x1;

@@ -54,10 +54,10 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 	{
 		HashSet<Integer> inds = new HashSet<Integer>();
 		//select 30% or 50
-		int sample_size = (int)(size*0.3);
-		if(sample_size >=60)
+		int sample_size =size;
+		if(sample_size >=500)
 		{
-			sample_size = 60;
+			sample_size = 500;
 		}
 		else {
 			sample_size = size;
@@ -77,8 +77,8 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 	}
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		Worksheet wk = workspace.getFactory().getWorksheet(worksheetId);
-		String Msg = String.format("fetch Data begin, Time:%d, Worksheet:%s",System.currentTimeMillis(),worksheetId);
+		Worksheet wk = workspace.getWorksheet(worksheetId);
+		String Msg = String.format("begin, Time,%d, Worksheet,%s",System.currentTimeMillis(),worksheetId);
 		logger.info(Msg);
 		// Get the HNode
 		HashMap<String, HashMap<String, String>> rows = new HashMap<String, HashMap<String, String>>();
@@ -109,7 +109,7 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 			}
 			index ++;
 		}
-		Msg = String.format("fetch data end, Time:%d, Worksheet:%s",System.currentTimeMillis(),worksheetId);
+		Msg = String.format("end, Time,%d, Worksheet,%s",System.currentTimeMillis(),worksheetId);
 		logger.info(Msg);
 		return new UpdateContainer(new FetchResultUpdate(hNodeId,rows));
 	}

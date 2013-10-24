@@ -124,6 +124,8 @@ public class InvokeDataMiningServiceCommand extends Command {
 		return CommandType.notUndoable;
 	}
 	
+	// Pedro: this is not being used. Candidate for deletion.
+	//
 	private String fetch_data_temp() 
 	{
 		HttpClient httpclient = new DefaultHttpClient();

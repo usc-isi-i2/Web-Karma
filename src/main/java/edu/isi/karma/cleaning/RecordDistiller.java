@@ -29,14 +29,13 @@ import java.util.Vector;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-//select the most reprentative records from a huge list of rows
-//to ensure that the program learned from the subset could work correctly on the whole dataset
-// first support 
+
 public class RecordDistiller {
 	// {anchor:{"Id": , "Count": , "LefContext":[], "RigContext":[]}
 	public static int cxt_limit = 3;
 	public int totalnumber = 0;
 	public HashMap<String,Anchor> anchors = new  HashMap<String,Anchor>(); 
+	@SuppressWarnings("static-access")
 	public void readRecord(String ID, Vector<TNode> record)
 	{
 		HashMap<String, Integer> curIndices = new HashMap<String, Integer>();
@@ -207,6 +206,7 @@ public class RecordDistiller {
 		for (File f : allfiles) {
 			try {
 				if (f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
+					@SuppressWarnings("resource")
 					CSVReader cr = new CSVReader(new FileReader(f), ',','"','\0');
 					String[] pair;
 					int id = 0;

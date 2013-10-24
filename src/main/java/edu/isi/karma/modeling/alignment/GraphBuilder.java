@@ -1428,8 +1428,8 @@ public class GraphBuilder {
 		Node n2 = new InternalNode("n2", null);
 		Node n3 = new InternalNode("n3", null);
 		Node n4 = new InternalNode("n4", null);
-		Node n8 = new ColumnNode("n8", "h1", "B", "");
-		Node n9 = new ColumnNode("n9", "h2", "B", "");
+		Node n8 = new ColumnNode("n8", "h1", "B", null);
+		Node n9 = new ColumnNode("n9", "h2", "B", null);
 		
 		Link l1 = new ObjectPropertyLink("e1", null);
 		Link l2 = new ObjectPropertyLink("e2", null);

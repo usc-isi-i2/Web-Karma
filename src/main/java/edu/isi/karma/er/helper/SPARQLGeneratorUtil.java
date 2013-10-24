@@ -32,6 +32,9 @@ import edu.isi.karma.kr2rml.R2RMLMapping;
 import edu.isi.karma.kr2rml.RefObjectMap;
 import edu.isi.karma.kr2rml.TriplesMap;
 
+/*
+ * Pedro: This code needs an author. Who wrote this?
+ */
 public class SPARQLGeneratorUtil {
 	
 	private StringBuffer select_params;

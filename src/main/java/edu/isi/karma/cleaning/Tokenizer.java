@@ -1,28 +1,29 @@
-// $ANTLR 3.4 Tokenizer.g 2012-08-31 09:41:11
+// $ANTLR 3.4 Tokenizer.g 2013-09-07 10:41:09
 package edu.isi.karma.cleaning;
-import org.antlr.runtime.CharStream;
-import org.antlr.runtime.EarlyExitException;
-import org.antlr.runtime.Lexer;
-import org.antlr.runtime.MismatchedSetException;
-import org.antlr.runtime.NoViableAltException;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.RecognizerSharedState;
+import org.antlr.runtime.*;
+import java.util.Stack;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 @SuppressWarnings({"all", "warnings", "unchecked"})
 public class Tokenizer extends Lexer {
     public static final int EOF=-1;
     public static final int BLANK=4;
-    public static final int DIGIT=5;
-    public static final int END=6;
-    public static final int LETTER=7;
-    public static final int LOWER=8;
-    public static final int LWRD=9;
-    public static final int NUMBER=10;
-    public static final int START=11;
-    public static final int SYBS=12;
-    public static final int SYMBOL=13;
-    public static final int UPPER=14;
-    public static final int UWRD=15;
+    public static final int COL=5;
+    public static final int DIGIT=6;
+    public static final int END=7;
+    public static final int LETTER=8;
+    public static final int LOWER=9;
+    public static final int LWRD=10;
+    public static final int NUMBER=11;
+    public static final int ROW=12;
+    public static final int START=13;
+    public static final int SYBS=14;
+    public static final int SYMBOL=15;
+    public static final int UPPER=16;
+    public static final int UWRD=17;
 
     // delegates
     // delegators
@@ -39,18 +40,70 @@ public class Tokenizer extends Lexer {
     }
     public String getGrammarFileName() { return "Tokenizer.g"; }
 
+    public Token nextToken() {
+        while (true) {
+            if ( input.LA(1)==CharStream.EOF ) {
+                Token eof = new CommonToken((CharStream)input,Token.EOF,
+                                            Token.DEFAULT_CHANNEL,
+                                            input.index(),input.index());
+                eof.setLine(getLine());
+                eof.setCharPositionInLine(getCharPositionInLine());
+                return eof;
+            }
+            state.token = null;
+    	state.channel = Token.DEFAULT_CHANNEL;
+            state.tokenStartCharIndex = input.index();
+            state.tokenStartCharPositionInLine = input.getCharPositionInLine();
+            state.tokenStartLine = input.getLine();
+    	state.text = null;
+            try {
+                int m = input.mark();
+                state.backtracking=1; 
+                state.failed=false;
+                mTokens();
+                state.backtracking=0;
+                if ( state.failed ) {
+                    input.rewind(m);
+                    input.consume(); 
+                }
+                else {
+                    emit();
+                    return state.token;
+                }
+            }
+            catch (RecognitionException re) {
+                // shouldn't happen in backtracking mode, but...
+                reportError(re);
+                recover(re);
+            }
+        }
+    }
+
+    public void memoize(IntStream input,
+    		int ruleIndex,
+    		int ruleStartIndex)
+    {
+    if ( state.backtracking>1 ) super.memoize(input, ruleIndex, ruleStartIndex);
+    }
+
+    public boolean alreadyParsedRule(IntStream input, int ruleIndex) {
+    if ( state.backtracking>1 ) return super.alreadyParsedRule(input, ruleIndex);
+    return false;
+    }
     // $ANTLR start "BLANK"
     public final void mBLANK() throws RecognitionException {
         try {
             int _type = BLANK;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Tokenizer.g:3:6: ( ( '\\t' | ' ' | '\\r' | '\\n' | '\\u000C' ) )
+            // Tokenizer.g:4:6: ( ( '\\t' | ' ' | '\\r' | '\\n' | '\\u000C' ) )
             // Tokenizer.g:
             {
             if ( (input.LA(1) >= '\t' && input.LA(1) <= '\n')||(input.LA(1) >= '\f' && input.LA(1) <= '\r')||input.LA(1)==' ' ) {
                 input.consume();
+                state.failed=false;
             }
             else {
+                if (state.backtracking>0) {state.failed=true; return ;}
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
                 throw mse;
@@ -73,13 +126,15 @@ public class Tokenizer extends Lexer {
         try {
             int _type = UWRD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Tokenizer.g:4:6: ( UPPER )
+            // Tokenizer.g:5:6: ( UPPER )
             // Tokenizer.g:
             {
             if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z') ) {
                 input.consume();
+                state.failed=false;
             }
             else {
+                if (state.backtracking>0) {state.failed=true; return ;}
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
                 throw mse;
@@ -102,10 +157,10 @@ public class Tokenizer extends Lexer {
         try {
             int _type = LWRD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Tokenizer.g:5:6: ( ( LOWER )+ )
-            // Tokenizer.g:5:8: ( LOWER )+
+            // Tokenizer.g:6:6: ( ( LOWER )+ )
+            // Tokenizer.g:6:8: ( LOWER )+
             {
-            // Tokenizer.g:5:8: ( LOWER )+
+            // Tokenizer.g:6:8: ( LOWER )+
             int cnt1=0;
             loop1:
             do {
@@ -123,8 +178,10 @@ public class Tokenizer extends Lexer {
             	    {
             	    if ( (input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
             	        input.consume();
+            	        state.failed=false;
             	    }
             	    else {
+            	        if (state.backtracking>0) {state.failed=true; return ;}
             	        MismatchedSetException mse = new MismatchedSetException(null,input);
             	        recover(mse);
             	        throw mse;
@@ -136,6 +193,7 @@ public class Tokenizer extends Lexer {
 
             	default :
             	    if ( cnt1 >= 1 ) break loop1;
+            	    if (state.backtracking>0) {state.failed=true; return ;}
                         EarlyExitException eee =
                             new EarlyExitException(1, input);
                         throw eee;
@@ -160,10 +218,10 @@ public class Tokenizer extends Lexer {
         try {
             int _type = NUMBER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Tokenizer.g:6:7: ( ( DIGIT )+ )
-            // Tokenizer.g:6:9: ( DIGIT )+
+            // Tokenizer.g:7:7: ( ( DIGIT )+ )
+            // Tokenizer.g:7:9: ( DIGIT )+
             {
-            // Tokenizer.g:6:9: ( DIGIT )+
+            // Tokenizer.g:7:9: ( DIGIT )+
             int cnt2=0;
             loop2:
             do {
@@ -181,8 +239,10 @@ public class Tokenizer extends Lexer {
             	    {
             	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
             	        input.consume();
+            	        state.failed=false;
             	    }
             	    else {
+            	        if (state.backtracking>0) {state.failed=true; return ;}
             	        MismatchedSetException mse = new MismatchedSetException(null,input);
             	        recover(mse);
             	        throw mse;
@@ -194,6 +254,7 @@ public class Tokenizer extends Lexer {
 
             	default :
             	    if ( cnt2 >= 1 ) break loop2;
+            	    if (state.backtracking>0) {state.failed=true; return ;}
                         EarlyExitException eee =
                             new EarlyExitException(2, input);
                         throw eee;
@@ -218,14 +279,15 @@ public class Tokenizer extends Lexer {
         try {
             int _type = SYBS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Tokenizer.g:7:5: ( ( SYMBOL ) )
+            // Tokenizer.g:8:5: ( ( SYMBOL ) )
             // Tokenizer.g:
             {
-
-            if ( input.LA(1)=='<'||(input.LA(1) >= '!' && input.LA(1) <= '/')||(input.LA(1) >= ':' && input.LA(1) <= '@')||(input.LA(1) >= '[' && input.LA(1) <= '`')||(input.LA(1) >= '{' && input.LA(1) <= '~') ) {
+            if ( (input.LA(1) >= '!' && input.LA(1) <= '/')||(input.LA(1) >= ':' && input.LA(1) <= '@')||(input.LA(1) >= '[' && input.LA(1) <= '`')||(input.LA(1) >= '{' && input.LA(1) <= '~')||input.LA(1)=='€' ) {
                 input.consume();
+                state.failed=false;
             }
             else {
+                if (state.backtracking>0) {state.failed=true; return ;}
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
                 throw mse;
@@ -248,10 +310,10 @@ public class Tokenizer extends Lexer {
         try {
             int _type = START;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Tokenizer.g:8:7: ( '<_START>' )
-            // Tokenizer.g:8:9: '<_START>'
+            // Tokenizer.g:9:7: ( '<_START>' )
+            // Tokenizer.g:9:9: '<_START>'
             {
-            match("<_START>"); 
+            match("<_START>"); if (state.failed) return ;
 
 
 
@@ -271,10 +333,10 @@ public class Tokenizer extends Lexer {
         try {
             int _type = END;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // Tokenizer.g:9:5: ( '<_END>' )
-            // Tokenizer.g:9:7: '<_END>'
+            // Tokenizer.g:10:5: ( '<_END>' )
+            // Tokenizer.g:10:7: '<_END>'
             {
-            match("<_END>"); 
+            match("<_END>"); if (state.failed) return ;
 
 
 
@@ -289,16 +351,64 @@ public class Tokenizer extends Lexer {
     }
     // $ANTLR end "END"
 
+    // $ANTLR start "COL"
+    public final void mCOL() throws RecognitionException {
+        try {
+            int _type = COL;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // Tokenizer.g:11:5: ( '<_COL>' )
+            // Tokenizer.g:11:7: '<_COL>'
+            {
+            match("<_COL>"); if (state.failed) return ;
+
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "COL"
+
+    // $ANTLR start "ROW"
+    public final void mROW() throws RecognitionException {
+        try {
+            int _type = ROW;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // Tokenizer.g:12:5: ( '<_ROW>' )
+            // Tokenizer.g:12:7: '<_ROW>'
+            {
+            match("<_ROW>"); if (state.failed) return ;
+
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "ROW"
+
     // $ANTLR start "SYMBOL"
     public final void mSYMBOL() throws RecognitionException {
         try {
-            // Tokenizer.g:12:2: ( '!' | '#' .. '/' | ':' .. '@' | '[' .. '`' | '{' .. '~' )
+            // Tokenizer.g:15:2: ( '!' .. '/' | ':' .. '@' | '[' .. '`' | '{' .. '~' | '�' )
             // Tokenizer.g:
             {
-            if ( input.LA(1)=='!'||(input.LA(1) >= '#' && input.LA(1) <= '/')||(input.LA(1) >= ':' && input.LA(1) <= '@')||(input.LA(1) >= '[' && input.LA(1) <= '`')||(input.LA(1) >= '{' && input.LA(1) <= '~') ) {
+            if ( (input.LA(1) >= '!' && input.LA(1) <= '/')||(input.LA(1) >= ':' && input.LA(1) <= '@')||(input.LA(1) >= '[' && input.LA(1) <= '`')||(input.LA(1) >= '{' && input.LA(1) <= '~')||input.LA(1)=='€' ) {
                 input.consume();
+                state.failed=false;
             }
             else {
+                if (state.backtracking>0) {state.failed=true; return ;}
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
                 throw mse;
@@ -318,13 +428,15 @@ public class Tokenizer extends Lexer {
     // $ANTLR start "LETTER"
     public final void mLETTER() throws RecognitionException {
         try {
-            // Tokenizer.g:14:2: ( LOWER | UPPER )
+            // Tokenizer.g:17:2: ( LOWER | UPPER )
             // Tokenizer.g:
             {
             if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
                 input.consume();
+                state.failed=false;
             }
             else {
+                if (state.backtracking>0) {state.failed=true; return ;}
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
                 throw mse;
@@ -344,13 +456,15 @@ public class Tokenizer extends Lexer {
     // $ANTLR start "LOWER"
     public final void mLOWER() throws RecognitionException {
         try {
-            // Tokenizer.g:16:2: ( 'a' .. 'z' )
+            // Tokenizer.g:19:2: ( 'a' .. 'z' )
             // Tokenizer.g:
             {
             if ( (input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
                 input.consume();
+                state.failed=false;
             }
             else {
+                if (state.backtracking>0) {state.failed=true; return ;}
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
                 throw mse;
@@ -370,13 +484,15 @@ public class Tokenizer extends Lexer {
     // $ANTLR start "UPPER"
     public final void mUPPER() throws RecognitionException {
         try {
-            // Tokenizer.g:18:2: ( 'A' .. 'Z' )
+            // Tokenizer.g:21:2: ( 'A' .. 'Z' )
             // Tokenizer.g:
             {
             if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z') ) {
                 input.consume();
+                state.failed=false;
             }
             else {
+                if (state.backtracking>0) {state.failed=true; return ;}
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
                 throw mse;
@@ -396,13 +512,15 @@ public class Tokenizer extends Lexer {
     // $ANTLR start "DIGIT"
     public final void mDIGIT() throws RecognitionException {
         try {
-            // Tokenizer.g:19:16: ( '0' .. '9' )
+            // Tokenizer.g:22:16: ( '0' .. '9' )
             // Tokenizer.g:
             {
             if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
                 input.consume();
+                state.failed=false;
             }
             else {
+                if (state.backtracking>0) {state.failed=true; return ;}
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
                 throw mse;
@@ -420,8 +538,8 @@ public class Tokenizer extends Lexer {
     // $ANTLR end "DIGIT"
 
     public void mTokens() throws RecognitionException {
-        // Tokenizer.g:1:8: ( BLANK | UWRD | LWRD | NUMBER | SYBS | START | END )
-        int alt3=7;
+        // Tokenizer.g:1:39: ( BLANK | UWRD | LWRD | NUMBER | SYBS | START | END | COL | ROW )
+        int alt3=9;
         switch ( input.LA(1) ) {
         case '\t':
         case '\n':
@@ -507,32 +625,33 @@ public class Tokenizer extends Lexer {
             }
             break;
         case '<':
-            {
-            int LA3_5 = input.LA(2);
+        {
+        int LA3_5 = input.LA(2);
 
-            if ( (LA3_5=='_') ) {
-                int LA3_7 = input.LA(3);
+        if ( (LA3_5=='_') ) {
+            int LA3_7 = input.LA(3);
 
-                if ( (LA3_7=='S') ) {
-                    alt3=6;
-                }
-                else if ( (LA3_7=='E') ) {
-                    alt3=7;
-                }
-                else {
-                    NoViableAltException nvae =
-                        new NoViableAltException("", 3, 7, input);
-
-                    throw nvae;
-
-                }
+            if ( (LA3_7=='S') ) {
+                alt3=6;
+            }
+            else if ( (LA3_7=='E') ) {
+                alt3=7;
             }
             else {
-                alt3=5;
+                NoViableAltException nvae =
+                    new NoViableAltException("", 3, 7, input);
+
+                throw nvae;
+
             }
-            }
-            break;
+        }
+        else {
+            alt3=5;
+        }
+        }
+        break;
         case '!':
+        case '\"':
         case '#':
         case '$':
         case '%':
@@ -562,11 +681,13 @@ public class Tokenizer extends Lexer {
         case '|':
         case '}':
         case '~':
+        case '€':
             {
             alt3=5;
             }
             break;
         default:
+            if (state.backtracking>0) {state.failed=true; return ;}
             NoViableAltException nvae =
                 new NoViableAltException("", 3, 0, input);
 
@@ -576,57 +697,73 @@ public class Tokenizer extends Lexer {
 
         switch (alt3) {
             case 1 :
-                // Tokenizer.g:1:10: BLANK
+                // Tokenizer.g:1:41: BLANK
                 {
-                mBLANK(); 
+                mBLANK(); if (state.failed) return ;
 
 
                 }
                 break;
             case 2 :
-                // Tokenizer.g:1:16: UWRD
+                // Tokenizer.g:1:47: UWRD
                 {
-                mUWRD(); 
+                mUWRD(); if (state.failed) return ;
 
 
                 }
                 break;
             case 3 :
-                // Tokenizer.g:1:21: LWRD
+                // Tokenizer.g:1:52: LWRD
                 {
-                mLWRD(); 
+                mLWRD(); if (state.failed) return ;
 
 
                 }
                 break;
             case 4 :
-                // Tokenizer.g:1:26: NUMBER
+                // Tokenizer.g:1:57: NUMBER
                 {
-                mNUMBER(); 
+                mNUMBER(); if (state.failed) return ;
 
 
                 }
                 break;
             case 5 :
-                // Tokenizer.g:1:33: SYBS
+                // Tokenizer.g:1:64: SYBS
                 {
-                mSYBS(); 
+                mSYBS(); if (state.failed) return ;
 
 
                 }
                 break;
             case 6 :
-                // Tokenizer.g:1:38: START
+                // Tokenizer.g:1:69: START
                 {
-                mSTART(); 
+                mSTART(); if (state.failed) return ;
 
 
                 }
                 break;
             case 7 :
-                // Tokenizer.g:1:44: END
+                // Tokenizer.g:1:75: END
                 {
-                mEND(); 
+                mEND(); if (state.failed) return ;
+
+
+                }
+                break;
+            case 8 :
+                // Tokenizer.g:1:79: COL
+                {
+                mCOL(); if (state.failed) return ;
+
+
+                }
+                break;
+            case 9 :
+                // Tokenizer.g:1:83: ROW
+                {
+                mROW(); if (state.failed) return ;
 
 
                 }
@@ -634,6 +771,124 @@ public class Tokenizer extends Lexer {
 
         }
 
+    }
+
+    // $ANTLR start synpred5_Tokenizer
+    public final void synpred5_Tokenizer_fragment() throws RecognitionException {
+        // Tokenizer.g:1:64: ( SYBS )
+        // Tokenizer.g:
+        {
+        if ( (input.LA(1) >= '!' && input.LA(1) <= '/')||(input.LA(1) >= ':' && input.LA(1) <= '@')||(input.LA(1) >= '[' && input.LA(1) <= '`')||(input.LA(1) >= '{' && input.LA(1) <= '~')||input.LA(1)=='€' ) {
+            input.consume();
+            state.failed=false;
+        }
+        else {
+            if (state.backtracking>0) {state.failed=true; return ;}
+            MismatchedSetException mse = new MismatchedSetException(null,input);
+            recover(mse);
+            throw mse;
+        }
+
+
+        }
+
+    }
+    // $ANTLR end synpred5_Tokenizer
+
+    // $ANTLR start synpred6_Tokenizer
+    public final void synpred6_Tokenizer_fragment() throws RecognitionException {
+        // Tokenizer.g:1:69: ( START )
+        // Tokenizer.g:1:69: START
+        {
+        mSTART(); if (state.failed) return ;
+
+
+        }
+
+    }
+    // $ANTLR end synpred6_Tokenizer
+
+    // $ANTLR start synpred7_Tokenizer
+    public final void synpred7_Tokenizer_fragment() throws RecognitionException {
+        // Tokenizer.g:1:75: ( END )
+        // Tokenizer.g:1:75: END
+        {
+        mEND(); if (state.failed) return ;
+
+
+        }
+
+    }
+    // $ANTLR end synpred7_Tokenizer
+
+    // $ANTLR start synpred8_Tokenizer
+    public final void synpred8_Tokenizer_fragment() throws RecognitionException {
+        // Tokenizer.g:1:79: ( COL )
+        // Tokenizer.g:1:79: COL
+        {
+        mCOL(); if (state.failed) return ;
+
+
+        }
+
+    }
+    // $ANTLR end synpred8_Tokenizer
+
+    public final boolean synpred8_Tokenizer() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred8_Tokenizer_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred5_Tokenizer() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred5_Tokenizer_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred7_Tokenizer() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred7_Tokenizer_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred6_Tokenizer() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred6_Tokenizer_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
     }
 
 

@@ -21,6 +21,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
+
 import org.apache.hadoop.io.Writable;
 import org.apache.mahout.classifier.sgd.CsvRecordFactory;
 import org.apache.mahout.classifier.sgd.L1;
@@ -115,7 +116,8 @@ public class LogisticModelParameters implements Writable {
    * Reads a model from a file.
    * @throws IOException If there is an error opening or closing the file.
    */
-  public static LogisticModelParameters loadFrom(File in) throws IOException {
+  @SuppressWarnings("deprecation")
+public static LogisticModelParameters loadFrom(File in) throws IOException {
     InputStream input = new FileInputStream(in);
     try {
       return loadFrom(input);

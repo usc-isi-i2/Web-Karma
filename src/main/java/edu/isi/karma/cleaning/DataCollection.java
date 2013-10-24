@@ -30,6 +30,7 @@ import java.util.Vector;
 public class DataCollection {
 	public static String config = "";
 	Vector<FileStat> fstates = new Vector<FileStat>();
+	@SuppressWarnings("unused")
 	public DataCollection()
 	{
 		MyLogger myLogger = new MyLogger();
@@ -47,7 +48,7 @@ public class DataCollection {
 	public void print()
 	{
 		MyLogger.logsth("============Detail Information==========="+this.getDate()+"\n");
-		MyLogger.logsth(config+"\n");
+		MyLogger.logsth(DataCollection.config+"\n");
 		for(FileStat f: fstates)
 		{
 			MyLogger.logsth(""+f.toString());
@@ -82,7 +83,7 @@ public class DataCollection {
 		}
 		// get average value
 		MyLogger.logsth("============Summary Information===========\n"+this.getDate()+"\n");
-		MyLogger.logsth(config+"\n");
+		MyLogger.logsth(DataCollection.config+"\n");
 		for(String key:stats.keySet())
 		{
 			Double[] value = stats.get(key);
@@ -91,7 +92,7 @@ public class DataCollection {
 			value[3] = value[2]*1.0/cnt;
 			value[5] = value[4]*1.0/cnt;
 			// long the final stats
-			String lineString = String.format("%s,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",key,value[0],value[1],value[2],value[3],value[3],value[4],value[5],value[6],value[7],value[8],value[9],value[10]);
+			String lineString = String.format("%s,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n",key,value[0],value[1],value[2],value[3],value[3],value[4],value[5],value[6],value[7],value[8],value[9],value[10]);
 			MyLogger.logsth(lineString);
 		}
 	}

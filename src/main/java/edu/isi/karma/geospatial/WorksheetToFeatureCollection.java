@@ -304,7 +304,7 @@ public class WorksheetToFeatureCollection {
 
 	private void populateSimpleFeatures(
 			String geometryHNodeId, String geometry2HNodeId,
-			ArrayList<Row> rows, List<SimpleFeature> features, Class binding) {
+			ArrayList<Row> rows, List<SimpleFeature> features, @SuppressWarnings("rawtypes") Class binding) {
 
 		for (Row row : rows) {
 			try {
