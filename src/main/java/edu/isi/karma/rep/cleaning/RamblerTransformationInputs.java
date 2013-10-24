@@ -27,7 +27,7 @@ public class RamblerTransformationInputs implements TransformationInputs {
 
 	private Collection<TransformationExample> examples;
 	private ValueCollection inputValues;
-	private Transformation preferedTransformation;
+	//private Transformation preferedTransformation;
 	public RamblerTransformationInputs(Collection<TransformationExample> examples,ValueCollection inputValues)
 	{
 		this.examples = examples;
@@ -43,6 +43,6 @@ public class RamblerTransformationInputs implements TransformationInputs {
 	}
 	public void setPreferredRule(Transformation t) {
 		// TODO Auto-generated method stub
-		this.preferedTransformation = t;
+		//this.preferedTransformation = t;
 	}
 }

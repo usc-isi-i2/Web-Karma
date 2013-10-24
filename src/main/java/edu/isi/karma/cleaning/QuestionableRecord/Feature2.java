@@ -23,7 +23,6 @@ package edu.isi.karma.cleaning.QuestionableRecord;
 
 import java.util.Vector;
 
-import edu.isi.karma.cleaning.RecFeature;
 import edu.isi.karma.cleaning.TNode;
 
 //type count feature
@@ -31,10 +30,16 @@ public class Feature2 implements RecFeature {
 
 	public int type;
 	public Vector<TNode> xNodes =new Vector<TNode>();
-	public Feature2(int type,Vector<TNode> xNodes)
+	public double weight = 1.0;
+	public Feature2(int type,Vector<TNode> xNodes,double weight)
 	{
 		this.type = type;
 		this.xNodes = xNodes;
+		this.weight = weight;
+	}
+	public String getName()
+	{
+		return type+"";
 	}
 	public double computerScore()
 	{
@@ -46,7 +51,7 @@ public class Feature2 implements RecFeature {
 			if(x.type == type)
 				res += 1;
 		}
-		return res;
+		return res*weight;
 	}
 
 }

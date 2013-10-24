@@ -259,7 +259,7 @@ public class Approach1 {
 				}
 				else {
 					String id = nodeIdFactory.getNodeId(source.getId());
-					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), "");
+					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), null);
 					if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) {
 						n1 = node;
 						component.addVertex(node);
@@ -281,7 +281,7 @@ public class Approach1 {
 				}
 				else {
 					String id = nodeIdFactory.getNodeId(target.getId());
-					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), "");
+					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), null);
 					if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) {
 						n2 = node;
 						component.addVertex(node);
@@ -479,7 +479,7 @@ public class Approach1 {
 						continue;
 
 					String nodeId = new RandomGUID().toString();;
-					ColumnNode target = new ColumnNode(nodeId, nodeId, columnNodeName, "");
+					ColumnNode target = new ColumnNode(nodeId, nodeId, columnNodeName, null);
 					this.graphBuilder.addNodeWithoutUpdatingGraph(target);
 					addedNodes.add(target);
 					
@@ -511,7 +511,7 @@ public class Approach1 {
 		this.graphBuilder.addNode(source, addedNodes);
 		
 		nodeId = new RandomGUID().toString();
-		ColumnNode target = new ColumnNode(nodeId, nodeId, columnName, "");
+		ColumnNode target = new ColumnNode(nodeId, nodeId, columnName, null);
 		this.graphBuilder.addNodeWithoutUpdatingGraph(target);
 		addedNodes.add(target);
 

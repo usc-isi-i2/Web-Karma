@@ -110,8 +110,6 @@ public class ImportCSVFileCommand extends ImportFileCommand implements IPreviewa
                 dataStartRowIndex, delimiter, quoteCharacter, getFile(),
                 workspace);
     }
-
-
     @Override
     public UpdateContainer showPreview()
             throws CommandException {

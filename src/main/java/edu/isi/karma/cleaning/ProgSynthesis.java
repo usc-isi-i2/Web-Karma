@@ -42,6 +42,7 @@ public class ProgSynthesis {
 		} else {
 			for (int j = 0; j < p.size(); j++) {
 				for (int i = 0; i < curleng; i++) {
+					@SuppressWarnings("unchecked")
 					Vector<Integer> x = (Vector<Integer>) p.get(j).clone();
 					x.add(i);
 					qVector.add(x);
@@ -69,7 +70,6 @@ public class ProgSynthesis {
 		}
 		return validCnt;
 	}
-
 	public Vector<Partition> initePartitions() {
 		Vector<Partition> pars = new Vector<Partition>();
 		// inite partition for each example

@@ -288,7 +288,8 @@ public class KR2RMLMappingGenerator {
 						TemplateTermSet termSet = new TemplateTermSet();
 						termSet.addTemplateTermToSet(cnTerm);
 
-						StringTemplateTerm rdfLiteralTypeTerm = new StringTemplateTerm(cnode.getRdfLiteralType(), true);
+						String rdfLiteralUri = 	cnode.getRdfLiteralType() == null? "" : cnode.getRdfLiteralType().getUri();
+						StringTemplateTerm rdfLiteralTypeTerm = new StringTemplateTerm(rdfLiteralUri, true);
 						TemplateTermSet rdfLiteralTypeTermSet = new TemplateTermSet();
 						rdfLiteralTypeTermSet.addTemplateTermToSet(rdfLiteralTypeTerm);
 

@@ -19,7 +19,7 @@ public class Position implements GrammarTreeNode {
 	public boolean isinloop = false;
 	public int curState = 0;
 	public static Interpretor itInterpretor = null;
-	public static int fixedlength = 1;
+	public static int fixedlength = 0;
 
 	public Position(Vector<Integer> absPos, Vector<TNode> lcxt,
 			Vector<TNode> rcxt, Vector<String> orgStrings,
@@ -238,6 +238,7 @@ public class Position implements GrammarTreeNode {
 	}
 
 	// return indexOf(value,left,right) or position
+	@SuppressWarnings("unused")
 	private double score = 0.0;
 
 	// score sum(gToken)/size
