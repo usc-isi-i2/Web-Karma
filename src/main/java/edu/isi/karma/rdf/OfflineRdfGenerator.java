@@ -53,6 +53,7 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 import edu.isi.karma.modeling.Uris;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -63,6 +64,7 @@ public class OfflineRdfGenerator {
     private static Logger logger = LoggerFactory.getLogger(OfflineRdfGenerator.class);
 
     public static void main(String[] args) {
+    	
         Group options = createCommandLineOptions();
         Parser parser = new Parser();
         parser.setGroup(options);
@@ -142,6 +144,7 @@ public class OfflineRdfGenerator {
             /**
              * Generate RDF on the source type *
              */
+            SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
             // Database table
             if (inputType.equals("DB")) {
                 generateRdfFromDatabaseTable(cl, model, pw);

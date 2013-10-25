@@ -22,6 +22,7 @@ package edu.isi.karma.modeling.semantictypes;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -58,6 +59,8 @@ public class SemanticTypeUtil {
 	private static Logger logger = LoggerFactory
 			.getLogger(SemanticTypeUtil.class);
 
+	private static boolean isSemanticTypeTrainingEnabled = true;
+	
 	private final static int TRAINING_EXAMPLE_MAX_COUNT = Integer
 			.parseInt(ServletContextParameterMap
 					.getParameterValue(ContextParameter.TRAINING_EXAMPLE_MAX_COUNT));
@@ -77,28 +80,42 @@ public class SemanticTypeUtil {
 	 */
 	public static ArrayList<String> getTrainingExamples(Worksheet worksheet,
 			HNodePath path) {
-		Collection<Node> nodes = new ArrayList<Node>(Math.max(100, worksheet.getDataTable().getNumRows()));
+		if(!getSemanticTypeTrainingEnabled())
+		{
+			return new ArrayList<String>();
+		}
+		ArrayList<Node> nodes = new ArrayList<Node>(Math.max(100, worksheet.getDataTable().getNumRows()));
 		worksheet.getDataTable().collectNodes(path, nodes);
 
-		ArrayList<String> nodeValues = new ArrayList<String>(nodes.size());
-		for (Node n : nodes) {
-			String nodeValue = n.getValue().asString();
-			if (nodeValue != null && !nodeValue.equals(""))
-				nodeValues.add(nodeValue);
-		}
-		
-		// Shuffling the values so that we get randomly chosen values to train
-		//Collections.shuffle(nodeValues);
-
 		Random r = new Random();
-		if (nodeValues.size() > TRAINING_EXAMPLE_MAX_COUNT) {
-			ArrayList<String> subset = new ArrayList<String>();
+		ArrayList<String> subset = new ArrayList<String>(TRAINING_EXAMPLE_MAX_COUNT);
+		if (nodes.size() > TRAINING_EXAMPLE_MAX_COUNT *2) {
+			HashSet<Integer> seenValues = new HashSet<Integer>(TRAINING_EXAMPLE_MAX_COUNT);
 			// SubList method of ArrayList causes ClassCast exception
-			for (int i = 0; i < TRAINING_EXAMPLE_MAX_COUNT; i++)
-				nodeValues.get(r.nextInt(nodeValues.size()));
-			return subset;
+			int attempts = 0;
+			while(subset.size() < TRAINING_EXAMPLE_MAX_COUNT && attempts < Math.min(nodes.size(), TRAINING_EXAMPLE_MAX_COUNT*2))
+			{
+				int randValue = r.nextInt(nodes.size());
+				String nodeValue = nodes.get(randValue).getValue().asString();
+				if(seenValues.add(randValue) && (nodeValue != null && !nodeValue.isEmpty()))
+				{
+					subset.add(nodeValue);
+				}
+				attempts++;
+			}
+			
 		}
-		return nodeValues;
+		else
+		{
+			Collections.shuffle(nodes);
+			for(int i = 0; i < nodes.size() && subset.size() < TRAINING_EXAMPLE_MAX_COUNT; i++)
+			{
+				String nodeValue = nodes.get(i).getValue().asString();
+				if (nodeValue != null && !nodeValue.equals(""))
+					subset.add(nodeValue);
+			}
+		}
+		return subset;
 	}
 
 	/**
@@ -315,81 +332,94 @@ public class SemanticTypeUtil {
 
 	public static void computeSemanticTypesSuggestion(Worksheet worksheet,
 			CRFModelHandler crfModelHandler, OntologyManager ontMgr, Alignment alignment) {
-		
+		if(!getSemanticTypeTrainingEnabled())
+		{
+			return;
+		}
 		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : paths) {
-			ArrayList<String> trainingExamples = getTrainingExamples(worksheet, path);
+			computeSemanticTypesSuggestion(worksheet, crfModelHandler, ontMgr,alignment, path);
+		}
+	}
+	
+	public static void computeSemanticTypesSuggestion(Worksheet worksheet,
+			CRFModelHandler crfModelHandler, OntologyManager ontMgr, Alignment alignment, HNodePath path)
+	{
+		if(!getSemanticTypeTrainingEnabled())
+		{
+			return;
+		}
+		ArrayList<String> trainingExamples = getTrainingExamples(worksheet, path);
 
-			Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
+		Map<ColumnFeature, Collection<String>> columnFeatures = new HashMap<ColumnFeature, Collection<String>>();
 
-			// Prepare the column name feature
-			String columnName = path.getLeaf().getColumnName();
-			Collection<String> columnNameList = new ArrayList<String>();
-			columnNameList.add(columnName);
-			columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
-			
-			// Stores the probability scores
-			ArrayList<Double> scores = new ArrayList<Double>();
-			// Stores the predicted labels
-			ArrayList<String> labels = new ArrayList<String>();
-			boolean predictResult = crfModelHandler.predictLabelForExamples(trainingExamples, 4, labels, scores, null, columnFeatures);
-			if (!predictResult) {
-				logger.debug("Error occured while predicting semantic type.");
-				continue;
-			}
-			if (labels.size() == 0) {
-				continue;
-			}
-			
-			/** Remove the labels that are not in the ontology or are already used as the semantic type **/
-			List<String> removeLabels = new ArrayList<String>();
-			for (int i=0; i<labels.size(); i++) {
-				String label = labels.get(i);
-				SemanticType existingSemanticType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(path.getLeaf().getId());
-				/** Check if not in ontology **/
-				if (label.contains("|")) {
-					Label domainUri = ontMgr.getUriLabel(label.split("\\|")[0]);
-					Label typeUri = ontMgr.getUriLabel(label.split("\\|")[1]);
-					
-					// Remove from the list if URI not present in the model
-					if (domainUri == null || typeUri == null) {
+		// Prepare the column name feature
+		String columnName = path.getLeaf().getColumnName();
+		Collection<String> columnNameList = new ArrayList<String>();
+		columnNameList.add(columnName);
+		columnFeatures.put(ColumnFeature.ColumnHeaderName, columnNameList);
+		
+		// Stores the probability scores
+		ArrayList<Double> scores = new ArrayList<Double>();
+		// Stores the predicted labels
+		ArrayList<String> labels = new ArrayList<String>();
+		boolean predictResult = crfModelHandler.predictLabelForExamples(trainingExamples, 4, labels, scores, null, columnFeatures);
+		if (!predictResult) {
+			logger.debug("Error occured while predicting semantic type.");
+			return;
+		}
+		if (labels.size() == 0) {
+			return;
+		}
+		
+		/** Remove the labels that are not in the ontology or are already used as the semantic type **/
+		List<String> removeLabels = new ArrayList<String>();
+		for (int i=0; i<labels.size(); i++) {
+			String label = labels.get(i);
+			SemanticType existingSemanticType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(path.getLeaf().getId());
+			/** Check if not in ontology **/
+			if (label.contains("|")) {
+				Label domainUri = ontMgr.getUriLabel(label.split("\\|")[0]);
+				Label typeUri = ontMgr.getUriLabel(label.split("\\|")[1]);
+				
+				// Remove from the list if URI not present in the model
+				if (domainUri == null || typeUri == null) {
+					removeLabels.add(label);
+					continue;
+				}
+				// Check if it is being used as the semantic type already
+				if (existingSemanticType != null && 
+						existsInSemanticTypesCollection(typeUri, domainUri, existingSemanticType)) {
 						removeLabels.add(label);
-						continue;
-					}
-					// Check if it is being used as the semantic type already
-					if (existingSemanticType != null && 
-							existsInSemanticTypesCollection(typeUri, domainUri, existingSemanticType)) {
-							removeLabels.add(label);
-					}
-					
-				} else {
-					Label typeUri = ontMgr.getUriLabel(label);
-					// Remove from the list if URI not present in the model
-					if (typeUri == null) {
-						removeLabels.add(label);
-						continue;
-					}
-					// Check if it is being used as the semantic type already
-					if (existingSemanticType != null && 
-							existsInSemanticTypesCollection(typeUri, null, existingSemanticType)) {
-						removeLabels.add(label);
-					}
+				}
+				
+			} else {
+				Label typeUri = ontMgr.getUriLabel(label);
+				// Remove from the list if URI not present in the model
+				if (typeUri == null) {
+					removeLabels.add(label);
+					continue;
+				}
+				// Check if it is being used as the semantic type already
+				if (existingSemanticType != null && 
+						existsInSemanticTypesCollection(typeUri, null, existingSemanticType)) {
+					removeLabels.add(label);
 				}
 			}
-			for (String removeLabel : removeLabels) {
-				int idx = labels.indexOf(removeLabel);
-//				System.out.println("Removing " + removeLabel);
-//				logger.info("Removing " + removeLabel);
-				labels.remove(removeLabel);
-				scores.remove(idx);
-			}
-			if (labels.size() == 0) {
-				continue;
-			}
-
-			CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
-			worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(), columnModel);
 		}
+		for (String removeLabel : removeLabels) {
+			int idx = labels.indexOf(removeLabel);
+//			System.out.println("Removing " + removeLabel);
+//			logger.info("Removing " + removeLabel);
+			labels.remove(removeLabel);
+			scores.remove(idx);
+		}
+		if (labels.size() == 0) {
+			return;
+		}
+
+		CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
+		worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(), columnModel);
 	}
 	
 	private static boolean existsInSemanticTypesCollection(Label typeLabel, Label domainLabel, SemanticType existingSemanticType) {
@@ -438,5 +468,15 @@ public class SemanticTypeUtil {
 			CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
 			worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(), columnModel);
 		}
+	}
+	
+	public  static void setSemanticTypeTrainingStatus(boolean status)
+	{
+		isSemanticTypeTrainingEnabled = status;
+	}
+	
+	public static boolean getSemanticTypeTrainingEnabled()
+	{
+		return isSemanticTypeTrainingEnabled;
 	}
 }

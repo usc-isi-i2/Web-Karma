@@ -151,7 +151,7 @@ public class AddColumnCommand extends WorksheetCommand {
 			UpdateContainer c =  new UpdateContainer(new AddColumnUpdate(newHNodeId, worksheetId));
 			
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
-			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace, ndid.getHNodePath(workspace.getFactory())));
 			return c;
 		} catch (Exception e) {
 			logger.error("Error in AddColumnCommand" + e.toString());
