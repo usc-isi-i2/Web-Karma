@@ -67,3 +67,6 @@ temp/
 .settings/org.eclipse.core.resources.prefs
 
 .settings/org.eclipse.core.resources.prefs
+
+*.n3
+*.ttl

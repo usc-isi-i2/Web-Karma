@@ -504,10 +504,10 @@ public class KR2RMLWorksheetRDFGenerator {
 
 		boolean foundIssue = false;
 		StringBuilder sb = new StringBuilder();
-		char[] chars = inputUri.toCharArray();
-		for(int i = 0; i < chars.length; i++)
+		
+		for(int i = 0; i < inputUri.length(); i++)
 		{
-			char value = chars[i];
+			char value = inputUri.charAt(i);
 			if(value == ' ')
 			{
 				if(!foundIssue)
