@@ -397,7 +397,7 @@
 		    
 	        </configuration>
 	        
-<!-- change user/pwd in config/jettyrealm.properties -->
+<!-- change user/pwd in src/main/config/jettyrealm.properties -->
 <!--  <configuration>
    <webAppConfig>
       <contextPath>/*</contextPath>
@@ -405,7 +405,7 @@
     <loginServices>
       <loginService implementation="org.eclipse.jetty.security.HashLoginService">
         <name>TestRealm</name>
-        <config>${project.basedir}/config/jettyrealm.properties</config>
+        <config>${project.basedir}/src/main/config/jettyrealm.properties</config>
       </loginService>
     </loginServices>
   </configuration>

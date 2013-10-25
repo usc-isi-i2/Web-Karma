@@ -21,6 +21,8 @@
 
 package edu.isi.karma.rep.alignment;
 
+import edu.isi.karma.modeling.Uris;
+
 
 
 /**
@@ -29,17 +31,17 @@ package edu.isi.karma.rep.alignment;
  *
  */
 
-public class SimpleLink extends Link {
+public class PlainLink extends Link {
 
 	private static final long serialVersionUID = 1L;
 	private static final Label label = 
-			new Label("SimpleLink");
+			new Label(Uris.PLAIN_LINK_URI);
 
-	public SimpleLink(String id) {
+	public PlainLink(String id) {
 		super(id, label, LinkType.None);
 	}
 
-	public SimpleLink(String id, Label uri) {
+	public PlainLink(String id, Label uri) {
 		super(id, uri, LinkType.None);
 	}
 

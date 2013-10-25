@@ -62,8 +62,8 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
+import edu.isi.karma.rep.alignment.ObjectPropertyType;
 import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.rep.alignment.SimpleLink;
 import edu.isi.karma.rep.alignment.SubClassLink;
 import edu.isi.karma.util.RandomGUID;
 //import com.google.common.base.Function;
@@ -293,10 +293,14 @@ public class Approach1 {
 
 			Link link;
 			String id = LinkIdFactory.getLinkId(e.getLabel().getUri(), n1.getId(), n2.getId());	
-			if (n2 instanceof ColumnNode) 
+			if (e instanceof DataPropertyLink) 
 				link = new DataPropertyLink(id, e.getLabel(), false);
-			else 
-				link = new ObjectPropertyLink(id, e.getLabel());
+			else if (e instanceof ObjectPropertyLink)
+				link = new ObjectPropertyLink(id, e.getLabel(), ((ObjectPropertyLink)e).getObjectPropertyType());
+			else if (e instanceof SubClassLink)
+				link = new SubClassLink(id);
+			else
+				link = new ObjectPropertyLink(id, e.getLabel(), ObjectPropertyType.None); 
 			
 			
 			link.getPatternIds().add(patternId);
@@ -372,7 +376,7 @@ public class Approach1 {
 		
 		List<Node> sources = new ArrayList<Node>();
 		List<Node> targets = new ArrayList<Node>();
-		List<String> newLinks = new ArrayList<String>();
+		List<Link> newLinks = new ArrayList<Link>();
 		List<Double> weights = new ArrayList<Double>();
 		
 		HashMap<String, LinkFrequency> sourceTargetLinkFrequency = 
@@ -383,7 +387,7 @@ public class Approach1 {
 		String key1, key2;
 		for (Link link : this.graphBuilder.getGraph().edgeSet()) {
 			
-			if (!(link instanceof SimpleLink)) {
+			if (!link.getLabel().getUri().equalsIgnoreCase(Uris.PLAIN_LINK_URI)) {
 				continue;
 			}
 			
@@ -391,14 +395,6 @@ public class Approach1 {
 					link.getTarget().getLabel().getUri();
 			key2 = link.getTarget().getLabel().getUri() + 
 					link.getSource().getLabel().getUri();
-			
-//			if (link.getSource().getLabel().getUri().indexOf("Place") != -1)
-//				if (link.getTarget().getLabel().getUri().indexOf("City") != -1)
-//					System.out.println("debug1");
-
-//			if (link.getSource().getLabel().getUri().indexOf("City") != -1)
-//				if (link.getTarget().getLabel().getUri().indexOf("Country") != -1)
-//					System.out.println("debug2");
 			
 			lf1 = sourceTargetLinkFrequency.get(key1);
 			if (lf1 == null) {
@@ -413,15 +409,28 @@ public class Approach1 {
 			}
 			
 			int c = lf1.compareTo(lf2);
+			String id = null;
 			if (c > 0) {
 				sources.add(link.getSource());
 				targets.add(link.getTarget());
-				newLinks.add(lf1.linkUri);
+				
+				id = LinkIdFactory.getLinkId(lf1.linkUri, link.getSource().getId(), link.getTarget().getId());
+				if (link instanceof ObjectPropertyLink)
+					newLinks.add(new ObjectPropertyLink(id, new Label(lf1.linkUri), ((ObjectPropertyLink) link).getObjectPropertyType()));
+				else if (link instanceof SubClassLink)
+					newLinks.add(new SubClassLink(id));
+				
 				weights.add(lf1.getWeight());
 			} else if (c < 0) {
 				sources.add(link.getTarget());
 				targets.add(link.getSource());
-				newLinks.add(lf2.linkUri);
+				
+				id = LinkIdFactory.getLinkId(lf2.linkUri, link.getSource().getId(), link.getTarget().getId());
+				if (link instanceof ObjectPropertyLink)
+					newLinks.add(new ObjectPropertyLink(id, new Label(lf2.linkUri), ((ObjectPropertyLink) link).getObjectPropertyType()));
+				else if (link instanceof SubClassLink)
+					newLinks.add(new SubClassLink(id));
+				
 				weights.add(lf2.getWeight());
 			} else
 				continue;
@@ -432,18 +441,9 @@ public class Approach1 {
 		for (Link link : oldLinks)
 			this.graphBuilder.getGraph().removeEdge(link);
 		
-		String id;
-		String uri;
-		Label label;
 		Link newLink;
 		for (int i = 0; i < newLinks.size(); i++) {
-			uri = newLinks.get(i);
-			id = LinkIdFactory.getLinkId(uri, sources.get(i).getId(), targets.get(i).getId());
-			label = new Label(uri);
-			if (uri.equalsIgnoreCase(Uris.RDFS_SUBCLASS_URI))
-				newLink = new SubClassLink(id);
-			else
-				newLink = new ObjectPropertyLink(id, label);
+			newLink = newLinks.get(i);
 			this.graphBuilder.addLink(sources.get(i), targets.get(i), newLink);
 			this.graphBuilder.changeLinkWeight(newLink, weights.get(i));
 		}
