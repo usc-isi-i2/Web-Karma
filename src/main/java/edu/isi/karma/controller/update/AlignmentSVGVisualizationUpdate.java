@@ -36,10 +36,10 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
+import edu.isi.karma.rep.alignment.DisplayModel;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkType;
@@ -91,9 +91,10 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			topObj.put(JsonKeys.worksheetId.name(), worksheetId);
 			
 			// Using Mohsen's GraphUtils method for graph traversal
-			HashMap<Node, Integer> nodeHeightsMap = GraphUtil.levelingCyclicGraph(alignmentGraph);
-			HashMap<Node, Set<ColumnNode>> nodeCoverage = 
-					GraphUtil.getNodesCoverage(alignmentGraph, nodeHeightsMap);
+			DisplayModel dm = new DisplayModel(alignmentGraph);
+			HashMap<Node, Integer> nodeHeightsMap = dm.getNodesLevel();
+			HashMap<Node, Set<ColumnNode>> nodeCoverage = dm.getNodesSpan();
+			
 			/** Identify the max height **/
 			int maxTreeHeight = 0;
 			for (Node node:nodeHeightsMap.keySet()) {
