@@ -14,13 +14,12 @@ public class Test {
 	public static void test1()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] x7 = {"<_START>Curley-Custer Scout-Crow.Crow Agency.Montana.1912, 1912<_END>", " 1912"};
+		String[] x7 = {"<_START>er stîget ûf, mit grôzer kraft<_END>", "mit"}; // 15th  element start.
 		//String[] x8 = {"<_START>Deborah Pugh, \"Egyptian Group Claims New Attacks,\" The Guardian (London), January 8, 1993. <_END>", "Egyptian Group Claims New Attacks"};
 		//String[] x9 = {"<_START>09:58 am<_END>", "09:58 AM"};
 		examples.add(x7);
 		//examples.add(x8);
-		//examples.add(x9);
-		
+		//examples.add(x9);	
 		for(String[] elem:examples)
 		{
 			System.out.println("Examples inputed: "+Arrays.toString(elem));
@@ -29,7 +28,7 @@ public class Test {
 		psProgSynthesis.inite(examples);
 		Collection<ProgramRule> ps = psProgSynthesis.run_main();
 		ProgramRule pr = ps.iterator().next();
-		String val = "Deborah Pugh, \"Egyptian Group Claims New Attacks,\" The Guardian (London), January 8, 1993. ";
+		String val = "Sîne, klâwen durh die";
 		InterpreterType rule = pr.getRuleForValue(val);
 		System.out.println(rule.execute(val));
 	}
@@ -425,7 +424,7 @@ public class Test {
 		cfg.initeParameters();
 		DataCollection.config = cfg.getString();
 		//Test.test0("/Users/bowu/Research/testdata/TestSingleFile");
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		//Test.test1();
+		//Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		Test.test1();
 	}
 }

@@ -129,7 +129,7 @@ public class Tokenizer extends Lexer {
             // Tokenizer.g:5:6: ( UPPER )
             // Tokenizer.g:
             {
-            if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z') ) {
+                if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= '\u00C0' && input.LA(1) <= '\u00D6')||(input.LA(1) >= '\u00D8' && input.LA(1) <= '\u00DE') ) {
                 input.consume();
                 state.failed=false;
             }
@@ -167,7 +167,7 @@ public class Tokenizer extends Lexer {
                 int alt1=2;
                 int LA1_0 = input.LA(1);
 
-                if ( ((LA1_0 >= 'a' && LA1_0 <= 'z')) ) {
+                if ( ((LA1_0 >= 'a' && LA1_0 <= 'z')||(LA1_0 >= '\u00DF' && LA1_0 <= '\u00F6')||(LA1_0 >= '\u00F8' && LA1_0 <= '\u00FF')) ) {
                     alt1=1;
                 }
 
@@ -176,7 +176,7 @@ public class Tokenizer extends Lexer {
             	case 1 :
             	    // Tokenizer.g:
             	    {
-            	    if ( (input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
+                	    if ( (input.LA(1) >= 'a' && input.LA(1) <= 'z')||(input.LA(1) >= '\u00DF' && input.LA(1) <= '\u00F6')||(input.LA(1) >= '\u00F8' && input.LA(1) <= '\u00FF') ) {
             	        input.consume();
             	        state.failed=false;
             	    }
@@ -282,7 +282,7 @@ public class Tokenizer extends Lexer {
             // Tokenizer.g:8:5: ( ( SYMBOL ) )
             // Tokenizer.g:
             {
-            if ( (input.LA(1) >= '!' && input.LA(1) <= '/')||(input.LA(1) >= ':' && input.LA(1) <= '@')||(input.LA(1) >= '[' && input.LA(1) <= '`')||(input.LA(1) >= '{' && input.LA(1) <= '~')||input.LA(1)=='€' ) {
+                if ( (input.LA(1) >= '!' && input.LA(1) <= '/')||(input.LA(1) >= ':' && input.LA(1) <= '@')||(input.LA(1) >= '[' && input.LA(1) <= '`')||(input.LA(1) >= '{' && input.LA(1) <= '~')||input.LA(1)=='€' ) {
                 input.consume();
                 state.failed=false;
             }
@@ -403,7 +403,7 @@ public class Tokenizer extends Lexer {
             // Tokenizer.g:15:2: ( '!' .. '/' | ':' .. '@' | '[' .. '`' | '{' .. '~' | '�' )
             // Tokenizer.g:
             {
-            if ( (input.LA(1) >= '!' && input.LA(1) <= '/')||(input.LA(1) >= ':' && input.LA(1) <= '@')||(input.LA(1) >= '[' && input.LA(1) <= '`')||(input.LA(1) >= '{' && input.LA(1) <= '~')||input.LA(1)=='€' ) {
+                if ( (input.LA(1) >= '!' && input.LA(1) <= '/')||(input.LA(1) >= ':' && input.LA(1) <= '@')||(input.LA(1) >= '[' && input.LA(1) <= '`')||(input.LA(1) >= '{' && input.LA(1) <= '~')||input.LA(1)=='€' ) {
                 input.consume();
                 state.failed=false;
             }
@@ -431,7 +431,7 @@ public class Tokenizer extends Lexer {
             // Tokenizer.g:17:2: ( LOWER | UPPER )
             // Tokenizer.g:
             {
-            if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
+                if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z')||(input.LA(1) >= '\u00C0' && input.LA(1) <= '\u00D6')||(input.LA(1) >= '\u00D8' && input.LA(1) <= '\u00F6')||(input.LA(1) >= '\u00F8' && input.LA(1) <= '\u00FF') ) {
                 input.consume();
                 state.failed=false;
             }
@@ -456,10 +456,10 @@ public class Tokenizer extends Lexer {
     // $ANTLR start "LOWER"
     public final void mLOWER() throws RecognitionException {
         try {
-            // Tokenizer.g:19:2: ( 'a' .. 'z' )
+            // Tokenizer.g:19:2: ( '\\u0061' .. '\\u007a' | '\\u00df' .. '\\u00f6' | '\\u00f8' .. '\\u00ff' )
             // Tokenizer.g:
             {
-            if ( (input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
+                if ( (input.LA(1) >= 'a' && input.LA(1) <= 'z')||(input.LA(1) >= '\u00DF' && input.LA(1) <= '\u00F6')||(input.LA(1) >= '\u00F8' && input.LA(1) <= '\u00FF') ) {
                 input.consume();
                 state.failed=false;
             }
@@ -487,7 +487,7 @@ public class Tokenizer extends Lexer {
             // Tokenizer.g:21:2: ( 'A' .. 'Z' )
             // Tokenizer.g:
             {
-            if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z') ) {
+                if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= '\u00C0' && input.LA(1) <= '\u00D6')||(input.LA(1) >= '\u00D8' && input.LA(1) <= '\u00DE') ) {
                 input.consume();
                 state.failed=false;
             }
@@ -576,6 +576,36 @@ public class Tokenizer extends Lexer {
         case 'X':
         case 'Y':
         case 'Z':
+        case '\u00C0':
+        case '\u00C1':
+        case '\u00C2':
+        case '\u00C3':
+        case '\u00C4':
+        case '\u00C5':
+        case '\u00C6':
+        case '\u00C7':
+        case '\u00C8':
+        case '\u00C9':
+        case '\u00CA':
+        case '\u00CB':
+        case '\u00CC':
+        case '\u00CD':
+        case '\u00CE':
+        case '\u00CF':
+        case '\u00D0':
+        case '\u00D1':
+        case '\u00D2':
+        case '\u00D3':
+        case '\u00D4':
+        case '\u00D5':
+        case '\u00D6':
+        case '\u00D8':
+        case '\u00D9':
+        case '\u00DA':
+        case '\u00DB':
+        case '\u00DC':
+        case '\u00DD':
+        case '\u00DE':
             {
             alt3=2;
             }
@@ -606,6 +636,38 @@ public class Tokenizer extends Lexer {
         case 'x':
         case 'y':
         case 'z':
+        case '\u00DF':
+        case '\u00E0':
+        case '\u00E1':
+        case '\u00E2':
+        case '\u00E3':
+        case '\u00E4':
+        case '\u00E5':
+        case '\u00E6':
+        case '\u00E7':
+        case '\u00E8':
+        case '\u00E9':
+        case '\u00EA':
+        case '\u00EB':
+        case '\u00EC':
+        case '\u00ED':
+        case '\u00EE':
+        case '\u00EF':
+        case '\u00F0':
+        case '\u00F1':
+        case '\u00F2':
+        case '\u00F3':
+        case '\u00F4':
+        case '\u00F5':
+        case '\u00F6':
+        case '\u00F8':
+        case '\u00F9':
+        case '\u00FA':
+        case '\u00FB':
+        case '\u00FC':
+        case '\u00FD':
+        case '\u00FE':
+        case '\u00FF':
             {
             alt3=3;
             }
