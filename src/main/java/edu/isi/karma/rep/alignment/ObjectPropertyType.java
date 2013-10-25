@@ -18,16 +18,14 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
+
 package edu.isi.karma.rep.alignment;
 
-public enum LinkPriorityType {
+public enum ObjectPropertyType {
 	None, 
-	DirectObjectProperty,
-	IndirectObjectProperty,
-	ObjectPropertyWithOnlyDomain,
-	ObjectPropertyWithOnlyRange,
-	ObjectPropertyWithoutDomainAndRange,
-	//DirectDataProperty,
-	IndirectDataProperty,
-	SubClassOf
+	Direct,
+	Indirect,
+	WithOnlyDomain,
+	WithOnlyRange,
+	WithoutDomainAndRange
 }

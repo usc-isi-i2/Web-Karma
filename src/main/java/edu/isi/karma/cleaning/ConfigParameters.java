@@ -37,7 +37,7 @@ public class ConfigParameters {
 		try {
 			// load a properties file
 			properties.load(new FileInputStream(
-					"./config/transformation.properties"));
+					".src/main/config/transformation.properties"));
 			// get the property value and print it out
 			Segment.cxtsize_limit = Integer.parseInt(properties.getProperty("cxt_size").trim());
 			Template.temp_limit = Integer.parseInt(properties.getProperty("temp_cap").trim());

@@ -21,7 +21,7 @@
 
 package edu.isi.karma.rep.sources;
 
-import edu.isi.karma.modeling.ModelingParams;
+import edu.isi.karma.modeling.ModelingConfiguration;
 
 public abstract class Source {
 
@@ -47,7 +47,7 @@ public abstract class Source {
 	}
 	
 	public String getUri() {
-		return ModelingParams.KARMA_SOURCE_PREFIX + getId() + "#";
+		return ModelingConfiguration.getKarmaSourcePrefix() + getId() + "#";
 	}
 
 	public String getId() {

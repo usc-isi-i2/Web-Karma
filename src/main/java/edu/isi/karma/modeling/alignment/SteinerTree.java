@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.SimpleLink;
+import edu.isi.karma.rep.alignment.PlainLink;
 
 /**
  * The approach is taken from the paper "A fast algorithm for steiner trees" by L. Kou et. al.
@@ -86,7 +86,7 @@ public class SteinerTree {
 				if (g.containsEdge(n1, n2))
 					continue;
 				
-				Link e = new SimpleLink(null, null);
+				Link e = new PlainLink(null, null);
 				g.addEdge(n1, n2, e);
 				g.setEdgeWeight(e, path.getCost(n2));
 				

@@ -193,44 +193,9 @@ public class Alignment implements OntologyUpdateListener {
 		if (this.graphBuilder.addNode(node)) return node;
 		return null;	
 	}
-	
-	public ColumnNode addColumnNodeWithoutUpdatingGraph(String hNodeId, String columnName, String rdfLiteralType, List<SemanticType> crfSuggestedSemanticTypes) {
-		
-		// use hNodeId as id of the node
-		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType, crfSuggestedSemanticTypes);
-		if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) return node;
-		return null;
-	}
-	
-	public InternalNode addInternalNodeWithoutUpdatingGraph(Label label) {
-		
-		String id = nodeIdFactory.getNodeId(label.getUri());
-		InternalNode node = new InternalNode(id, label);
-		if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) return node;
-		return null;	
-	}
-	
+
 	public void updateGraph() {
 		this.graphBuilder.updateGraph();
-	}
-	
-//	public ColumnNode createColumnNode(String hNodeId, String columnName, String rdfLiteralType, 
-//			List<SemanticType> crfSuggestedSemanticTypes, SemanticType userSelectedSemanticType) {
-//		
-//		// use hNodeId as id of the node
-//		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType);
-//		return node;
-//	}
-//	
-//	public InternalNode createInternalNode(Label label) {
-//
-//		String id = nodeIdFactory.getNodeId(label.getUri());
-//		InternalNode node = new InternalNode(id, label);
-//		return node;
-//	}
-	
-	public void addNodeList(List<Node> nodes) {
-		this.graphBuilder.addNodeList(nodes);
 	}
 	
 	// AddLink methods
@@ -243,14 +208,15 @@ public class Alignment implements OntologyUpdateListener {
 		return null;
 	}
 	
-	// Probably we don't need this function in the interface to GUI
-	public ObjectPropertyLink addObjectPropertyLink(Node source, Node target, Label label) {
-		
-		String id = LinkIdFactory.getLinkId(label.getUri(), source.getId(), target.getId());	
-		ObjectPropertyLink link = new ObjectPropertyLink(id, label);
-		if (this.graphBuilder.addLink(source, target, link)) return link;
-		return null;	
-	}
+
+    public ObjectPropertyLink addObjectPropertyLink(Node source, Node target, Label label) {
+            
+            String id = LinkIdFactory.getLinkId(label.getUri(), source.getId(), target.getId());        
+            ObjectPropertyLink link = new ObjectPropertyLink(id, label, 
+            		this.graphBuilder.getOntologyManager().getObjectPropertyType(source.getLabel().getUri(), target.getLabel().getUri(), label.getUri()));
+            if (this.graphBuilder.addLink(source, target, link)) return link;
+            return null;        
+    }
 	
 	// Probably we don't need this function in the interface to GUI
 	public SubClassLink addSubClassOfLink(Node source, Node target) {
@@ -304,12 +270,7 @@ public class Alignment implements OntologyUpdateListener {
 	}
 	
 	public void changeLinkStatus(String linkId, LinkStatus newStatus) {
-		
-//		if (linkId.equals("http://km.aifb.kit.edu/projects/d3/cruiser#Vehicle1---http://km.aifb.kit.edu/projects/d3/cruiser#at---http://www.w3.org/2003/01/geo/wgs84_pos#Point1"))
-//			logger.debug("debug1");
-//		if (linkId.equals("http://km.aifb.kit.edu/projects/d3/cruiser#Observation1---http://km.aifb.kit.edu/projects/d3/cruiser#at---http://www.w3.org/2003/01/geo/wgs84_pos#Point1"))
-//			logger.debug("debug2");
-		
+
 		logger.debug("changing the status of link " + linkId + " to " + newStatus.name());
 		Link link = this.getLinkById(linkId);
 		if (link == null) {
@@ -322,7 +283,8 @@ public class Alignment implements OntologyUpdateListener {
 					newLink = new SubClassLink(linkId);
 				else
 					newLink = new ObjectPropertyLink(linkId, 
-							this.graphBuilder.getOntologyManager().getUriLabel(linkUri));
+							this.graphBuilder.getOntologyManager().getUriLabel(linkUri), 
+							this.graphBuilder.getOntologyManager().getObjectPropertyType(source.getLabel().getUri(), target.getLabel().getUri(), linkUri));
 				
 				newLink.setStatus(LinkStatus.ForcedByUser);
 				this.graphBuilder.addLink(source, target, newLink);
@@ -353,7 +315,6 @@ public class Alignment implements OntologyUpdateListener {
 
 	/**
 	 * This method just deletes the specified link from the graph and leaves the rest of the graph untouched.
-	 * Probably we don't need to use this function.
 	 * @param linkId
 	 * @return
 	 */
