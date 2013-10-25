@@ -63,8 +63,17 @@ public class DisplayModel {
 		this.hTable = hTable;
 		
 		levelingCyclicGraph();
+		printLevels();
+
 		computeNodeSpan();
+		printSpans();
+		
 		updateNodeLevelsConsideringOverlaps();
+		
+		printLevels();
+		printSpans();
+		
+		logger.debug("finished leveling the model.");
 	}
 
 	public DirectedWeightedMultigraph<Node, Link> getModel() {
@@ -165,6 +174,9 @@ public class DisplayModel {
 				}
 				if (sum == 0) break; // there is no interlink in level k
 				
+				if (levelToNodes.get(k + 1) == null) {
+					levelToNodes.put(k + 1, new HashSet<Node>());
+				}
 				// moving nodeWithMaxDegree to the next level 
 				nodesLevel.put(nodeWithMaxDegree, k + 1);
 				levelToNodes.get(k).remove(nodeWithMaxDegree);
@@ -285,7 +297,7 @@ public class DisplayModel {
 		}
 	}
 	
-	private boolean overLap(Node n1, Node n2) {
+	private boolean overlap(Node n1, Node n2) {
 		
 		if (this.hTable == null || this.hTable.getOrderedNodeIds() == null)
 			return false;
@@ -315,20 +327,24 @@ public class DisplayModel {
 			String hNodeId = this.hTable.getOrderedNodeIds().get(i);
 			if (n1NodeIds.contains(hNodeId))
 				n1SpanPositions.add(i);
-			else if (n2NodeIds.contains(hNodeId))
+			if (n2NodeIds.contains(hNodeId))
 				n2SpanPositions.add(i);
 		}
 		
 		if (n1SpanPositions.isEmpty() || n2SpanPositions.isEmpty())
 			return false;
 		
-		if (n1SpanPositions.get(0) <= n2SpanPositions.get(n2SpanPositions.size() - 1))
-			return false;
+		if (n1SpanPositions.get(0) <= n2SpanPositions.get(0) && n1SpanPositions.get(n1SpanPositions.size() - 1) >= n2SpanPositions.get(0)) {
+			logger.debug("node " + n1.getId() + " overlaps node " + n2.getId());
+			return true;
+		}
 		
-		if (n2SpanPositions.get(0) <= n1SpanPositions.get(n1SpanPositions.size() - 1))
-			return false;
+		if (n2SpanPositions.get(0) <= n1SpanPositions.get(0) && n2SpanPositions.get(n2SpanPositions.size() - 1) >= n1SpanPositions.get(0)) {
+			logger.debug("node " + n1.getId() + " overlaps node " + n2.getId());
+			return true;
+		}
 		
-		return true;
+		return false;
 	}
 	
 	private HashMap<Node, Integer> getNodeOverlap(Set<Node> nodes) {
@@ -341,7 +357,7 @@ public class DisplayModel {
 			for (Node n2 : nodes) {
 				if (n1.equals(n2))
 					continue;
-				if (overLap(n1, n2))
+				if (overlap(n1, n2))
 					count++;
 			}
 			nodesOverlap.put(n1, count);
@@ -404,6 +420,10 @@ public class DisplayModel {
 				
 				if (sumOfIntraLinks == 0 && sumOfOverlaps == 0) break; // there is no interlink in level k and there is no overlap
 				
+				if (levelToNodes.get(k + 1) == null) {
+					levelToNodes.put(k + 1, new HashSet<Node>());
+				}
+				
 				if (sumOfIntraLinks != 0 && sumOfOverlaps == 0) {
 					// moving nodeWithMaxDegree to the next level 
 					nodesLevel.put(nodeWithMaxDegree, k + 1);
@@ -437,5 +457,21 @@ public class DisplayModel {
 		
 	}
 	
+	public void printLevels() {
+		for (Entry<Node, Integer> entry : this.nodesLevel.entrySet()) {
+			logger.debug(entry.getKey().getId() + " ---> " + entry.getValue().intValue());
+		}
+	}
+	
+	public void printSpans() {
+		for (Entry<Node, Set<ColumnNode>> entry : this.nodesSpan.entrySet()) {
+			logger.debug(entry.getKey().getId() + " spans ---> ");
+			if (entry.getValue() != null)
+				for (ColumnNode columnNode : entry.getValue()) {
+					logger.debug("\t" + columnNode.getColumnName());
+				}
+		}
+	}
+
 	
 }
