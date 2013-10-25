@@ -91,7 +91,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			topObj.put(JsonKeys.worksheetId.name(), worksheetId);
 			
 			// Using Mohsen's GraphUtils method for graph traversal
-			DisplayModel dm = new DisplayModel(alignmentGraph);
+			DisplayModel dm = new DisplayModel(alignmentGraph, vWorksheet.getWorksheet().getHeaders());
 			HashMap<Node, Integer> nodeHeightsMap = dm.getNodesLevel();
 			HashMap<Node, Set<ColumnNode>> nodeCoverage = dm.getNodesSpan();
 			

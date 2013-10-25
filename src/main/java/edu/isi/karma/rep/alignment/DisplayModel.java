@@ -90,6 +90,143 @@ public class DisplayModel {
 	public void setNodesSpan(HashMap<Node, Set<ColumnNode>> nodesSpan) {
 		this.nodesSpan = nodesSpan;
 	}
+
+	private void levelingCyclicGraph() {
+		
+		if (this.model == null || this.model.vertexSet() == null || this.model.vertexSet().size() == 0) {
+			logger.debug("graph does not have any node.");
+			return ;
+		}
+		
+		Set<Node> markedNodes = new HashSet<Node>();
+		for (Node u : this.model.vertexSet()) {
+			if (u instanceof ColumnNode)
+				markedNodes.add(u);
+		}
+		
+		Queue<Node> q = new LinkedList<Node>();
+		int maxLevel = this.model.vertexSet().size();
+				
+		for (Node u : this.model.vertexSet()) {
+			if (!markedNodes.contains(u)) {
+				q.add(u);
+				markedNodes.add(u);
+				
+				nodesLevel.put(u, 0);
+				
+				while (!q.isEmpty()) {
+					Node v = q.remove();
+					Set<Node> neighbors = GraphUtil.getOutNeighbors(this.model, v);
+					for (Node w : neighbors) {
+						if (!markedNodes.contains(w)) {
+							markedNodes.add(w);
+							int level = nodesLevel.get(v).intValue() + 1;
+							nodesLevel.put(w, level);
+							q.add(w);
+						}
+					}
+				}
+			}
+		}
+		
+		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes();
+		
+		// find in/out degree in each level
+		int k = 0;
+		while (true) {
+			
+			if (k >= maxLevel) break;
+			
+			Node nodeWithMaxDegree = null;
+			while (true) { // until there is a direct link between two nodes in the same level
+				
+				Set<Node> nodes = levelToNodes.get(k);
+				if (nodes == null || nodes.size() == 0) break;
+				
+				HashMap<Node, Integer> nodeToInDegree = GraphUtil.inDegreeInSet(this.model, nodes, false);
+				HashMap<Node, Integer> nodeToOutDegree = GraphUtil.outDegreeInSet(this.model, nodes, false);
+				
+				int sum = 0, d = 0;
+				int maxDegree = -1;
+				
+				for (Node u : nodes) {
+					d = nodeToInDegree.get(u);
+					sum += d;
+					if (d > maxDegree) {
+						maxDegree = d;
+						nodeWithMaxDegree = u;
+					}
+					d = nodeToOutDegree.get(u);
+					sum += d;
+					if (d > maxDegree) {
+						maxDegree = d;
+						nodeWithMaxDegree = u;
+					}
+				}
+				if (sum == 0) break; // there is no interlink in level k
+				
+				// moving nodeWithMaxDegree to the next level 
+				nodesLevel.put(nodeWithMaxDegree, k + 1);
+				levelToNodes.get(k).remove(nodeWithMaxDegree);
+				levelToNodes.get(k + 1).add(nodeWithMaxDegree);
+			}
+			
+			k ++; // checking next level
+		}
+		
+		
+		// add all column nodes to the (last level + 1).
+		int lastLevel = 0;
+		for (k = maxLevel - 1; k > 0; k--) {
+			if (levelToNodes.get(k) != null && !levelToNodes.get(k).isEmpty()) {
+				lastLevel = k;
+				break;
+			}
+		}
+		for (Node u : this.model.vertexSet()) {
+			if (u instanceof ColumnNode)
+				nodesLevel.put(u, lastLevel + 1);
+		}
+		
+	}
+	
+	public HashMap<Integer, Set<Node>> getLevelToNodes() {
+
+		HashMap<Integer, Set<Node>> levelToNodes = 
+				new HashMap<Integer, Set<Node>>();
+		
+		if (this.nodesLevel == null)
+			return levelToNodes;
+		
+		for (Entry<Node, Integer> entry : nodesLevel.entrySet()) {
+			Set<Node> nodes = levelToNodes.get(entry.getValue());
+			if (nodes == null) {
+				nodes = new HashSet<Node>();
+				levelToNodes.put(entry.getValue(), nodes);
+			}
+			nodes.add(entry.getKey());
+			
+		}
+		
+		return levelToNodes;
+	}
+	
+	public int getMaxLevel() {
+		
+		if (this.nodesLevel == null)
+			return 0;
+
+		int maxLevel = 0;
+
+		for (Entry<Node, Integer> entry : nodesLevel.entrySet()) {
+
+			if (entry.getValue().intValue() > maxLevel) {
+				maxLevel = entry.getValue().intValue();
+			}
+		}
+		
+		return maxLevel;
+	}
 	
 	private void computeNodeSpan() {
 		
@@ -104,27 +241,12 @@ public class DisplayModel {
 			nodesSpan.put(n, columnNodes);
 		}
 		
-		HashMap<Integer, List<Node>> levelToNodes = 
-				new HashMap<Integer, List<Node>>();
+		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes();
 		
-		int maxLevel = 0;
-		for (Entry<Node, Integer> entry : nodesLevel.entrySet()) {
-			List<Node> nodes = levelToNodes.get(entry.getValue());
-			if (nodes == null) {
-				nodes = new ArrayList<Node>();
-				levelToNodes.put(entry.getValue(), nodes);
-			}
-			nodes.add(entry.getKey());
-			
-			if (entry.getValue().intValue() > maxLevel) {
-				maxLevel = entry.getValue().intValue();
-			}
-		}
-		
-		int i = maxLevel;
+		int i = getMaxLevel();
 		while (i >= 0) {
 			
-			List<Node> nodes = levelToNodes.get(i);
+			Set<Node> nodes = levelToNodes.get(i);
 			if (nodes != null && !nodes.isEmpty()) {
 				for (Node n : nodes) {
 					
@@ -163,95 +285,136 @@ public class DisplayModel {
 		}
 	}
 	
-	private void updateNodeLevelsConsideringOverlaps() {
+	private boolean overLap(Node n1, Node n2) {
 		
-		if (hTable == null)
-			return;
+		if (this.hTable == null || this.hTable.getOrderedNodeIds() == null)
+			return false;
+
+		Set<ColumnNode> n1Span = this.nodesSpan.get(n1);
+		Set<ColumnNode> n2Span = this.nodesSpan.get(n2);
 		
+		if (n1Span == null || n2Span == null)
+			return false;
+
+		Set<String> n1NodeIds = new HashSet<String>();
+		Set<String> n2NodeIds = new HashSet<String>();
 		
+		for (ColumnNode c : n1Span)
+			if (c != null)
+				n1NodeIds.add(c.getHNodeId());
+
+		for (ColumnNode c : n2Span)
+			if (c != null)
+				n2NodeIds.add(c.getHNodeId());
+
+		
+		List<Integer> n1SpanPositions = new ArrayList<Integer>();
+		List<Integer> n2SpanPositions = new ArrayList<Integer>();
+		
+		for (int i = 0; i < this.hTable.getOrderedNodeIds().size(); i++) {
+			String hNodeId = this.hTable.getOrderedNodeIds().get(i);
+			if (n1NodeIds.contains(hNodeId))
+				n1SpanPositions.add(i);
+			else if (n2NodeIds.contains(hNodeId))
+				n2SpanPositions.add(i);
+		}
+		
+		if (n1SpanPositions.isEmpty() || n2SpanPositions.isEmpty())
+			return false;
+		
+		if (n1SpanPositions.get(0) <= n2SpanPositions.get(n2SpanPositions.size() - 1))
+			return false;
+		
+		if (n2SpanPositions.get(0) <= n1SpanPositions.get(n1SpanPositions.size() - 1))
+			return false;
+		
+		return true;
 	}
 	
-	private void levelingCyclicGraph() {
+	private HashMap<Node, Integer> getNodeOverlap(Set<Node> nodes) {
 		
-		if (this.model == null || this.model.vertexSet() == null || this.model.vertexSet().size() == 0) {
-			logger.debug("graph does not have any node.");
-			return ;
-		}
+		HashMap<Node, Integer> nodesOverlap = new HashMap<Node, Integer>();
 		
-		Set<Node> markedNodes = new HashSet<Node>();
-		for (Node u : this.model.vertexSet()) {
-			if (u instanceof ColumnNode)
-				markedNodes.add(u);
-		}
-		
-		Queue<Node> q = new LinkedList<Node>();
-		int maxLevel = this.model.vertexSet().size();
-		
-		List<Set<Node>> nodesIndexedByLevel = new ArrayList<Set<Node>>();
-		for (int i = 0; i < maxLevel; i++) nodesIndexedByLevel.add(new HashSet<Node>());
-		
-		for (Node u : this.model.vertexSet()) {
-			if (!markedNodes.contains(u)) {
-				q.add(u);
-				markedNodes.add(u);
-				
-				nodesLevel.put(u, 0);
-				nodesIndexedByLevel.get(0).add(u);
-				
-				while (!q.isEmpty()) {
-					Node v = q.remove();
-					Set<Node> neighbors = GraphUtil.getOutNeighbors(this.model, v);
-					for (Node w : neighbors) {
-						if (!markedNodes.contains(w)) {
-							markedNodes.add(w);
-							int level = nodesLevel.get(v).intValue() + 1;
-							nodesLevel.put(w, level);
-							nodesIndexedByLevel.get(level).add(w);
-							q.add(w);
-						}
-					}
-				}
+		int count;
+		for (Node n1 : nodes) {
+			count = 0;
+			for (Node n2 : nodes) {
+				if (n1.equals(n2))
+					continue;
+				if (overLap(n1, n2))
+					count++;
 			}
+			nodesOverlap.put(n1, count);
 		}
+		return nodesOverlap;
+	}
+	
+	private void updateNodeLevelsConsideringOverlaps() {
 		
+		if (hTable == null || this.nodesLevel == null || this.nodesSpan == null)
+			return;
+		
+		int maxLevel = this.model.vertexSet().size();
+
+		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes();
+
 		// find in/out degree in each level
 		int k = 0;
 		while (true) {
 			
 			if (k >= maxLevel) break;
 			
-			Node nodeWithMaxDegree = null;
+			Node nodeWithMaxDegree = null, nodeWithMaxOverlap = null;
 			while (true) { // until there is a direct link between two nodes in the same level
 				
-				Set<Node> nodes = nodesIndexedByLevel.get(k);
+				Set<Node> nodes = levelToNodes.get(k);
 				if (nodes == null || nodes.size() == 0) break;
 				
+				HashMap<Node, Integer> nodesOverlap = getNodeOverlap(nodes);
 				HashMap<Node, Integer> nodeToInDegree = GraphUtil.inDegreeInSet(this.model, nodes, false);
 				HashMap<Node, Integer> nodeToOutDegree = GraphUtil.outDegreeInSet(this.model, nodes, false);
 				
-				int sum = 0, d = 0;
-				int maxDegree = -1;
+				int sumOfIntraLinks = 0, sumOfOverlaps = 0; 
+				int d = 0, overlap = 0;
+				int maxDegree = -1, maxOverlap = -1;
 				
 				for (Node u : nodes) {
+					
 					d = nodeToInDegree.get(u);
-					sum += d;
+					sumOfIntraLinks += d;
 					if (d > maxDegree) {
 						maxDegree = d;
 						nodeWithMaxDegree = u;
 					}
+					
 					d = nodeToOutDegree.get(u);
-					sum += d;
+					sumOfIntraLinks += d;
 					if (d > maxDegree) {
 						maxDegree = d;
 						nodeWithMaxDegree = u;
+					}
+					
+					overlap = nodesOverlap.get(u);
+					sumOfOverlaps += overlap;
+					if (overlap > maxOverlap) {
+						maxOverlap = overlap;
+						nodeWithMaxOverlap = u;
 					}
 				}
-				if (sum == 0) break; // there is no interlink in level k
 				
-				// moving nodeWithMaxDegree to the next level 
-				nodesLevel.put(nodeWithMaxDegree, k + 1);
-				nodesIndexedByLevel.get(k).remove(nodeWithMaxDegree);
-				nodesIndexedByLevel.get(k + 1).add(nodeWithMaxDegree);
+				if (sumOfIntraLinks == 0 && sumOfOverlaps == 0) break; // there is no interlink in level k and there is no overlap
+				
+				if (sumOfIntraLinks != 0 && sumOfOverlaps == 0) {
+					// moving nodeWithMaxDegree to the next level 
+					nodesLevel.put(nodeWithMaxDegree, k + 1);
+					levelToNodes.get(k).remove(nodeWithMaxDegree);
+					levelToNodes.get(k + 1).add(nodeWithMaxDegree);
+				} else 	{
+					// moving nodeWithMaxDegree to the next level 
+					nodesLevel.put(nodeWithMaxOverlap, k + 1);
+					levelToNodes.get(k).remove(nodeWithMaxOverlap);
+					levelToNodes.get(k + 1).add(nodeWithMaxOverlap);
+				}
 			}
 			
 			k ++; // checking next level
@@ -259,9 +422,9 @@ public class DisplayModel {
 		
 		
 		// add all column nodes to the (last level + 1).
-		int lastLevel = 0;
+		int lastLevel = maxLevel;
 		for (k = maxLevel - 1; k > 0; k--) {
-			if (!nodesIndexedByLevel.get(k).isEmpty()) {
+			if (levelToNodes.get(k) != null && !levelToNodes.get(k).isEmpty()) {
 				lastLevel = k;
 				break;
 			}
@@ -271,6 +434,8 @@ public class DisplayModel {
 				nodesLevel.put(u, lastLevel + 1);
 		}
 		
+		
 	}
+	
 	
 }
