@@ -125,7 +125,7 @@ public abstract class PythonTransformationCommand extends WorksheetCommand {
 		interpreter.exec(defGetValueStmt);
 		interpreter.exec(transformMethodStmt);
 		
-		Collection<Node> nodes = new ArrayList<Node>(worksheet.getDataTable().getNumRows());
+		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet.getDataTable().getNumRows()));
 		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes);
 		
 		Map<String, String> rowToValueMap = new HashMap<String, String>();

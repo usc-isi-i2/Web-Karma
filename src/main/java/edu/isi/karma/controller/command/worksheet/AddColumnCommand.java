@@ -167,7 +167,7 @@ public class AddColumnCommand extends WorksheetCommand {
 				selectedPath = path;
 			}
 		}
-		Collection<Node> nodes = new ArrayList<Node>();
+		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet.getDataTable().getNumRows()));
 		worksheet.getDataTable().collectNodes(selectedPath, nodes);	
 		for (Node node : nodes) {
 			node.setValue(this.defaultValue, NodeStatus.original, factory);

@@ -61,7 +61,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 	private String dBorSIDName;
 	private String tablename;
 	
-	private static int DATABASE_TABLE_FETCH_SIZE = 1000;
+	private static int DATABASE_TABLE_FETCH_SIZE = 10000;
 	
 	public DatabaseTableRDFGenerator(DBType dbType, String hostname,
 			int portnumber, String username, String password,

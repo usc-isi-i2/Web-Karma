@@ -22,11 +22,11 @@ package edu.isi.karma.modeling.semantictypes;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -77,24 +77,25 @@ public class SemanticTypeUtil {
 	 */
 	public static ArrayList<String> getTrainingExamples(Worksheet worksheet,
 			HNodePath path) {
-		Collection<Node> nodes = new ArrayList<Node>();
+		Collection<Node> nodes = new ArrayList<Node>(Math.max(100, worksheet.getDataTable().getNumRows()));
 		worksheet.getDataTable().collectNodes(path, nodes);
 
-		ArrayList<String> nodeValues = new ArrayList<String>();
+		ArrayList<String> nodeValues = new ArrayList<String>(nodes.size());
 		for (Node n : nodes) {
 			String nodeValue = n.getValue().asString();
 			if (nodeValue != null && !nodeValue.equals(""))
 				nodeValues.add(nodeValue);
 		}
-
+		
 		// Shuffling the values so that we get randomly chosen values to train
-		Collections.shuffle(nodeValues);
+		//Collections.shuffle(nodeValues);
 
+		Random r = new Random();
 		if (nodeValues.size() > TRAINING_EXAMPLE_MAX_COUNT) {
 			ArrayList<String> subset = new ArrayList<String>();
 			// SubList method of ArrayList causes ClassCast exception
 			for (int i = 0; i < TRAINING_EXAMPLE_MAX_COUNT; i++)
-				subset.add(nodeValues.get(i));
+				nodeValues.get(r.nextInt(nodeValues.size()));
 			return subset;
 		}
 		return nodeValues;
