@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,9 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
+import edu.isi.karma.controller.history.CommandHistoryWriter.HistoryArguments;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
@@ -133,12 +136,25 @@ public class WorksheetR2RMLJenaModelParser {
 	}
 
 	private List<String> getTransformCommandsJSON(Resource mappingResource) throws JSONException {
-		Property hasTransformation = model.getProperty(Uris.KM_HAS_TRANSFORMATION_URI);
+		Property hasTransformation = model.getProperty(Uris.KM_HAS_WORKSHEET_HISTORY_URI);
 		NodeIterator transItr = model.listObjectsOfProperty(mappingResource, hasTransformation);
 		List<String> commsJSON = new ArrayList<String>();
 		while (transItr.hasNext()) {
-
-			commsJSON.add(transItr.next().toString());
+			String commands = transItr.next().toString();
+			JSONArray historyJson = new JSONArray(commands);
+			for(int i = 0; i < historyJson.length(); i++)
+			{
+				JSONObject commObject = (JSONObject) historyJson.get(i);
+				JSONArray commandTags = commObject.getJSONArray(HistoryArguments.tags.name());
+				for (int j=0; j<commandTags.length(); j++) {
+					CommandTag tag = CommandTag.valueOf(commandTags.getString(j));
+					if(tag.compareTo(CommandTag.Transformation) == 0) {
+						commsJSON.add(commObject.toString());
+					}
+				}
+				
+			}
+			break;		
 		}
 		return commsJSON;
 	}
