@@ -40,6 +40,7 @@ import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.DisplayModel;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
@@ -995,12 +996,12 @@ public class GraphBuilder {
 		
 		GraphUtil.printGraph(g);
 		
-		HashMap<Node, Integer> nodeLevels = GraphUtil.levelingCyclicGraph(g);
+		DisplayModel dm = new DisplayModel(g);
+		HashMap<Node, Integer> nodeLevels = dm.getNodesLevel();
 		for (Node n : g.vertexSet())
 			logger.info(n.getId() + " --- " + nodeLevels.get(n));
 		
-		HashMap<Node, Set<ColumnNode>> coveredColumnNodes = 
-				GraphUtil.getNodesCoverage(g, nodeLevels);
+		HashMap<Node, Set<ColumnNode>> coveredColumnNodes = dm.getNodesSpan();
 		
 		logger.info("Internal Nodes Coverage ...");
 		for (Entry<Node, Set<ColumnNode>> entry : coveredColumnNodes.entrySet()) {

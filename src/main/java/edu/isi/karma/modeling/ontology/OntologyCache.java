@@ -915,6 +915,9 @@ class OntologyCache {
 			}
 			directDomainsUris = ontHandler.getResourcesUris(directDomains);
 			
+			if (directDomainsUris != null && directDomainsUris.contains(Uris.THING_URI))
+				directDomainsUris.remove(Uris.THING_URI);
+			
 			temp  = propertyDirectDomains.get(property.getURI());
 			if (temp == null)
 				propertyDirectDomains.put(property.getURI(), directDomainsUris);
@@ -969,6 +972,9 @@ class OntologyCache {
 				ontHandler.getMembers(r, directRanges, false);
 			}
 			directRangesUris = ontHandler.getResourcesUris(directRanges);
+			
+			if (directRangesUris != null && directRangesUris.contains(Uris.THING_URI))
+				directRangesUris.remove(Uris.THING_URI);
 
 			temp  = propertyDirectRanges.get(property.getURI());
 			if (temp == null)
@@ -1016,7 +1022,7 @@ class OntologyCache {
 				}
 				temp.add(property.getURI());
 			}
-			
+				
 			for (String domain : directDomainsUris) {
 				for (String range : directRangesUris) {
 					temp = 
@@ -1361,17 +1367,9 @@ class OntologyCache {
 					(indirectDomains == null || indirectDomains.size() == 0))
 				haveDomain = false;
 			
-//			if (directDomains != null && directDomains.size() == 1 &&
-//					directDomains.iterator().next().equalsIgnoreCase(Uris.THING_URI))
-//				haveDomain = false;
-
 			if ((directRanges == null || directRanges.size() == 0) &&
 					(indirectRanges == null || indirectRanges.size() == 0))
 				haveRange = false;
-			
-//			if (directRanges != null && directRanges.size() == 1 &&
-//					directRanges.iterator().next().equalsIgnoreCase(Uris.THING_URI))
-//				haveRange = false;
 			
 			if (haveDomain && !haveRange) 
 				this.objectPropertiesWithOnlyDomain.put(p, label);
