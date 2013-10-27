@@ -53,7 +53,6 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			String worksheetId, String hNodeId, String errorDefaultValue) {
 		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
 		
-		addTag(CommandTag.Transformation);
 	}
 
 	@Override

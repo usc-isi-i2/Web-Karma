@@ -150,6 +150,7 @@ public class WorksheetR2RMLJenaModelParser {
 					CommandTag tag = CommandTag.valueOf(commandTags.getString(j));
 					if(tag.compareTo(CommandTag.Transformation) == 0) {
 						commsJSON.add(commObject.toString());
+						break;
 					}
 				}
 				
