@@ -250,7 +250,6 @@ function handleCleanColumnButton() {
 			}
 		}
 	});
-	pagnation();
 }
 
 function movetop(keys) {
