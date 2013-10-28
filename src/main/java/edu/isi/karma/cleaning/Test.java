@@ -14,7 +14,7 @@ public class Test {
 	public static void test1()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] x7 = {"<_START>er stîget ûf, mit grôzer kraft<_END>", "mit"}; // 15th  element start.
+		String[] x7 = {"<_START>er stîget ûf, mit grôzer kraft<_END>", "stîget ûf, mit grôzer kraft"}; // 15th  element start.
 		//String[] x8 = {"<_START>Deborah Pugh, \"Egyptian Group Claims New Attacks,\" The Guardian (London), January 8, 1993. <_END>", "Egyptian Group Claims New Attacks"};
 		//String[] x9 = {"<_START>09:58 am<_END>", "09:58 AM"};
 		examples.add(x7);

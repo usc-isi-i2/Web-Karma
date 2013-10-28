@@ -237,10 +237,6 @@ public class Position implements GrammarTreeNode {
 		this.isinloop = res;
 	}
 
-	// return indexOf(value,left,right) or position
-	@SuppressWarnings("unused")
-	private double score = 0.0;
-
 	// score sum(gToken)/size
 	public double getScore() {
 		double sum = 0.0;

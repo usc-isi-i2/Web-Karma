@@ -209,7 +209,15 @@ public class ProgSynthesis {
 					return "NO_CLASIF";
 				}
 				InterpreterType worker = p.getWorkerForClass(labelString);
-				String s2 = worker.execute(s1);
+				String s2 = "";
+				try
+				{
+					s2 = new String(worker.execute(s1).getBytes(), "UTF-8");
+				}
+				catch(Exception e)
+				{
+					return "DECODE_ERROR";
+				}
 				String s3 = UtilTools.print(px.tarNodes.get(i));
 				if (s3.compareTo(s2) != 0) {
 					return labelString;

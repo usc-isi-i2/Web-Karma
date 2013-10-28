@@ -4,7 +4,7 @@ import java.util.Vector;
 
 public class Template implements GrammarTreeNode {
 	public static int temp_limit = 2048;
-	public static int supermode = 0;
+	public static int supermode = 1;
 	public Vector<GrammarTreeNode> body = new Vector<GrammarTreeNode>();
 	public Vector<Vector<Integer>> indexes = new Vector<Vector<Integer>>();
 	public int curState = 0;
