@@ -20,24 +20,17 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.Command.CommandTag;
-import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.command.ModelingHistoryCheckingCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
-import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
@@ -48,10 +41,9 @@ import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.webserver.KarmaException;
 
-public class ShowModelCommandFactory extends CommandFactory implements JSONInputCommandFactory {
+public class ShowModelCommandFactory extends ModelingHistoryCheckingCommandFactory implements JSONInputCommandFactory {
 	
-	private static Logger logger = LoggerFactory.getLogger(ShowModelCommandFactory.class);
-	
+
 	private enum Arguments {
 		worksheetId, checkHistory
 	}
@@ -71,21 +63,8 @@ public class ShowModelCommandFactory extends CommandFactory implements JSONInput
 		if(checkHist) {
 			String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getCommandPreferencesId(), worksheetId);
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, new Alignment(workspace.getOntologyManager()));
-//			int transformationCommandsExecutedCount = 0;
-			// Check if any command history exists for the worksheet
-			if(HistoryJsonUtil.historyExists(worksheet.getTitle(), workspace.getCommandPreferencesId())) {
-				WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(worksheetId, workspace);
-				try {
-					List<CommandTag> tags = new ArrayList<CommandTag>();
-//					tags.add(CommandTag.Transformation);
-					tags.add(CommandTag.Modeling);
-					commReader.readAndExecuteCommands(tags);
-//					transformationCommandsExecutedCount = commReader.readAndExecuteCommands(tags).get(CommandTag.Transformation);
-				} catch (Exception e) {
-					 logger.error("Error occured while reading model commands from history!", e);
-					e.printStackTrace();
-				}
-			}
+			executeModelingCommands(workspace, worksheetId, worksheet);
+			
 			return new ShowModelCommand(getNewId(workspace), worksheet.getId(), false);
 		}
 		

@@ -22,8 +22,6 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,12 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.Command.CommandTag;
-import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.command.ModelingHistoryCheckingCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
-import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.modeling.ontology.AutoOntology;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
@@ -51,7 +47,7 @@ import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class ShowAutoModelCommandFactory extends CommandFactory implements
+public class ShowAutoModelCommandFactory extends ModelingHistoryCheckingCommandFactory implements
 		JSONInputCommandFactory {
 
 	private static Logger logger = LoggerFactory
@@ -95,22 +91,7 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements
 				+ autoOtologyFile.getAbsolutePath());
 
 		if (checkHist) {
-			// Check if any command history exists for the worksheet
-			if (HistoryJsonUtil.historyExists(worksheet.getTitle(),
-					workspace.getCommandPreferencesId())) {
-				WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(
-						worksheetId, workspace);
-				try {
-					List<CommandTag> tags = new ArrayList<CommandTag>();
-					tags.add(CommandTag.Modeling);
-					commReader.readAndExecuteCommands(tags);
-				} catch (Exception e) {
-					logger.error(
-							"Error occured while reading model commands from history!",
-							e);
-					e.printStackTrace();
-				}
-			}
+			executeModelingCommands(workspace, worksheetId, worksheet);
 			return new ShowAutoModelCommand(getNewId(workspace),
 					worksheet.getId());
 		}
@@ -148,4 +129,5 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements
 		}
 		return comm;
 	}
+
 }

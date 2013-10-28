@@ -24,9 +24,11 @@ package edu.isi.karma.model.serialization;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,13 +55,13 @@ public class DataSourcePublisher extends SourcePublisher {
 	private DataSource source;
 	private Model model = null;
 	private RepFactory factory;
-	private List<String> transformationCommandsJSON;
+	private JSONArray transformationCommandsJSON;
 	private SourceInformation sourceInfo;
 	
 	//MARIAM
 	//I had to add factory, so that I can get to the columnName
 	//I tried to do it in a nicer way but couldn't figure out how to add it to the Attribute
-	public DataSourcePublisher(DataSource source, RepFactory factory, List<String> transformationCommandJSON, SourceInformation sourceInfo) {
+	public DataSourcePublisher(DataSource source, RepFactory factory, JSONArray transformationCommandJSON, SourceInformation sourceInfo) {
 		this.source = source;
 		this.factory=factory;
 		this.transformationCommandsJSON = transformationCommandJSON;
@@ -168,8 +170,15 @@ public class DataSourcePublisher extends SourcePublisher {
 		
 		// Add transformations
 		Property has_columnTransformation = model.createProperty(Namespaces.KARMA, "hasColumnTransformation");
-		for(String commJson : transformationCommandsJSON)
-			my_source.addProperty(has_columnTransformation, commJson);
+		for(int i = 0; i < transformationCommandsJSON.length(); i++)
+		{
+			try {
+				JSONObject commJson = (JSONObject) transformationCommandsJSON.get(i);
+				my_source.addProperty(has_columnTransformation, commJson.toString());
+			} catch (JSONException e) {
+				logger.trace("Unable to parse command from JSON", e);
+			}
+		}
 		
 		// Add source information if any present
 		if(sourceInfo != null) {

@@ -24,7 +24,6 @@ package edu.isi.karma.controller.command.alignment;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,7 +35,6 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.publish.PublishRDFCommand;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -228,13 +226,6 @@ public class GenerateR2RMLModelCommand extends Command {
 		// Writer worksheet properties such as Service URL
 		modelWriter.writeWorksheetProperties(worksheet);
 		
-		// Write the transformation commands if any
-		WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(worksheetId, 
-				workspace);
-		List<String> commandsJSON = histReader.getJSONForCommands(CommandTag.Transformation);
-		if (!commandsJSON.isEmpty()) {
-			modelWriter.writeTransformationHistory(commandsJSON);
-		}
 		// Write the worksheet history
 		String historyFilePath = HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(
 				worksheet.getTitle(), workspace.getCommandPreferencesId());
