@@ -118,10 +118,6 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		{
 			String k = iter.next();
 			String orgval = v.getValue(k);
-			if (orgval.compareTo("0")==0)
-			{
-				System.out.println("Hello World");
-			}
 			String cLabel = "";
 			String val = "";
 			if(orgval.length() >0)

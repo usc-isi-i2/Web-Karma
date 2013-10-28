@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.cleaning;
+package edu.isi.karma.cleaning.Research;
 
 import java.io.File;
 import java.io.FileReader;
@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
+import edu.isi.karma.cleaning.Ruler;
+import edu.isi.karma.cleaning.TNode;
 import au.com.bytecode.opencsv.CSVReader;
 
 
@@ -35,7 +37,6 @@ public class RecordDistiller {
 	public static int cxt_limit = 3;
 	public int totalnumber = 0;
 	public HashMap<String,Anchor> anchors = new  HashMap<String,Anchor>(); 
-	@SuppressWarnings("static-access")
 	public void readRecord(String ID, Vector<TNode> record)
 	{
 		HashMap<String, Integer> curIndices = new HashMap<String, Integer>();
@@ -58,7 +59,7 @@ public class RecordDistiller {
 			//get left and right context
 			String lcxt = "";
 			String rcxt = "";
-			for(int j = i; j<i+this.cxt_limit && j <record.size(); j++)
+			for(int j = i; j<i+RecordDistiller.cxt_limit && j <record.size(); j++)
 			{
 				rcxt += record.get(j).getType();
 			}

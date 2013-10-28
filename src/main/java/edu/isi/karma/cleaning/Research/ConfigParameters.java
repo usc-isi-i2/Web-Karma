@@ -19,11 +19,19 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.cleaning;
+package edu.isi.karma.cleaning.Research;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+
+import edu.isi.karma.cleaning.ExampleSelection;
+import edu.isi.karma.cleaning.Position;
+import edu.isi.karma.cleaning.ProgSynthesis;
+import edu.isi.karma.cleaning.Section;
+import edu.isi.karma.cleaning.Segment;
+import edu.isi.karma.cleaning.Template;
+import edu.isi.karma.cleaning.Traces;
 
 public class ConfigParameters {
 	public static int debug = 0;

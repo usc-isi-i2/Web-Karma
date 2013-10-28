@@ -1,4 +1,4 @@
-package edu.isi.karma.cleaning;
+package edu.isi.karma.cleaning.Research;
 
 import java.io.File;
 import java.io.FileReader;
@@ -8,6 +8,11 @@ import java.util.Vector;
 
 import org.apache.mahout.math.Arrays;
 
+import edu.isi.karma.cleaning.ExampleSelection;
+import edu.isi.karma.cleaning.InterpreterType;
+import edu.isi.karma.cleaning.ProgSynthesis;
+import edu.isi.karma.cleaning.ProgramRule;
+import edu.isi.karma.cleaning.UtilTools;
 import au.com.bytecode.opencsv.CSVReader;
 
 public class Test {

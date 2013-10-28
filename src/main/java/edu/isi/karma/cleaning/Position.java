@@ -429,4 +429,10 @@ public class Position implements GrammarTreeNode {
 	public String getrepString() {
 		return this.toString();
 	}
+
+	@Override
+	public void loadParams() {
+		// TODO Auto-generated method stub
+		
+	}
 }

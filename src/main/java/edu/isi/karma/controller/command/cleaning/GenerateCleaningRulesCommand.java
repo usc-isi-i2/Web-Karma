@@ -33,13 +33,13 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.cleaning.ConfigParameters;
-import edu.isi.karma.cleaning.DataCollection;
 import edu.isi.karma.cleaning.ExampleSelection;
 import edu.isi.karma.cleaning.ProgramRule;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
 import edu.isi.karma.cleaning.UtilTools;
+import edu.isi.karma.cleaning.Research.ConfigParameters;
+import edu.isi.karma.cleaning.Research.DataCollection;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.CleaningResultUpdate;
@@ -256,8 +256,8 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
-		String Msg = String.format("Gen rule start,Time,%d, Worksheet,%s",System.currentTimeMillis(),worksheetId);
-		logger.info(Msg);
+		String msg = String.format("Gen rule start,Time,%d, Worksheet,%s",System.currentTimeMillis(),worksheetId);
+		logger.info(msg);
 		// Get the HNode
 		HashMap<String, String> rows = new HashMap<String, String>();
 		HashMap<String, Integer> amb = new HashMap<String, Integer>();
@@ -397,8 +397,8 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		{
 			recmd = ""; 
 		}
-		Msg = String.format("Gen rule end, Time,%d, Worksheet,%s,Examples:%s,Recmd:%s",System.currentTimeMillis(),worksheetId,expstr,recmd);
-		logger.info(Msg);
+		msg = String.format("Gen rule end, Time,%d, Worksheet,%s,Examples:%s,Recmd:%s",System.currentTimeMillis(),worksheetId,expstr,recmd);
+		logger.info(msg);
 		return new UpdateContainer(new CleaningResultUpdate(hNodeId, resdata,
 				vars, keys));
 	}

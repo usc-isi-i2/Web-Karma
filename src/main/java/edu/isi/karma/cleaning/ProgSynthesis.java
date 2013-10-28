@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Vector;
 
+import edu.isi.karma.cleaning.Research.ConfigParameters;
+
 public class ProgSynthesis {
 	public static int time_limit = 20;
 	Vector<Vector<TNode>> orgVector = new Vector<Vector<TNode>>();

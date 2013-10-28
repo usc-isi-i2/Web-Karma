@@ -29,6 +29,8 @@ import java.util.Vector;
 
 import org.apache.mahout.math.Arrays;
 
+import edu.isi.karma.cleaning.Research.ConfigParameters;
+import edu.isi.karma.cleaning.Research.DataCollection;
 import au.com.bytecode.opencsv.CSVWriter;
 
 public class Tools {

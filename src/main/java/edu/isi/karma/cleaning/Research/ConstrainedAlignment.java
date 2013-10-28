@@ -1,9 +1,11 @@
-package edu.isi.karma.cleaning;
+package edu.isi.karma.cleaning.Research;
 
 import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.cleaning.TNode;
 
 public class ConstrainedAlignment {
 	public Vector<Vector<TNode>> olist;
