@@ -12,7 +12,7 @@ public class Section implements GrammarTreeNode {
 	public Vector<String> orgStrings = new Vector<String>();
 	public Vector<String> tarStrings = new Vector<String>();
 	public static Interpretor itInterpretor = null;
-	public static int supermode = 1;
+	public static final int supermode = 1;
 	public Section(Position[] p,Vector<String> orgStrings,Vector<String> tarStrings,boolean isinloop)
 	{
 		pair = p;

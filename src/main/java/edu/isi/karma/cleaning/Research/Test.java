@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import org.apache.mahout.math.Arrays;
-
+import edu.isi.karma.cleaning.*;
 import edu.isi.karma.cleaning.ExampleSelection;
 import edu.isi.karma.cleaning.InterpreterType;
 import edu.isi.karma.cleaning.ProgSynthesis;
@@ -429,7 +429,7 @@ public class Test {
 		cfg.initeParameters();
 		DataCollection.config = cfg.getString();
 		//Test.test0("/Users/bowu/Research/testdata/TestSingleFile");
-		//Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		Test.test1();
+		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		//Test.test1();
 	}
 }

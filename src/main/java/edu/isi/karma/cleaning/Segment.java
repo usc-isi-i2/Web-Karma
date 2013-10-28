@@ -5,10 +5,12 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import org.antlr.grammar.v3.ANTLRv3Parser.finallyClause_return;
+
 public class Segment implements GrammarTreeNode {
 	public Vector<Section> section = new Vector<Section>();
-	public static int cxtsize_limit = 4;
-	public static int time_limit = 5;
+	public static final int cxtsize_limit = 4;
+	public static final int time_limit = 5;
 	public String tarString = "";
 	public static final String LEFTPOS = "leftpos";
 	public static final String RIGHTPOS = "rightpos";
@@ -77,7 +79,7 @@ public class Segment implements GrammarTreeNode {
 	}*/
 	public Vector<TNode> getLeftCxt(int c, Vector<TNode> x)
 	{
-		int i = Segment.cxtsize_limit;
+		int i = cxtsize_limit;
 		Vector<TNode> res = new Vector<TNode>();
 		while(i>0)
 		{
@@ -95,7 +97,7 @@ public class Segment implements GrammarTreeNode {
 	{
 		int i = 0;
 		Vector<TNode> res = new Vector<TNode>();
-		while(i<Segment.cxtsize_limit)
+		while(i<cxtsize_limit)
 		{
 			if((c+i)>=x.size())
 				break;

@@ -19,7 +19,7 @@ public class Position implements GrammarTreeNode {
 	public boolean isinloop = false;
 	public int curState = 0;
 	public static Interpretor itInterpretor = null;
-	public static int fixedlength = 0;
+	public int fixedlength = 0;
 
 	public Position(Vector<Integer> absPos, Vector<TNode> lcxt,
 			Vector<TNode> rcxt, Vector<String> orgStrings,
@@ -428,11 +428,5 @@ public class Position implements GrammarTreeNode {
 
 	public String getrepString() {
 		return this.toString();
-	}
-
-	@Override
-	public void loadParams() {
-		// TODO Auto-generated method stub
-		
 	}
 }

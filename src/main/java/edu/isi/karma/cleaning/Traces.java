@@ -10,7 +10,7 @@ import java.util.Vector;
 
 
 public class Traces implements GrammarTreeNode {
-	public static int time_limit = 20;
+	public static final int time_limit = 20;
 	public Vector<TNode> orgNodes;
 	public Vector<TNode> tarNodes;
 	public HashMap<Integer, Template> traceline = new HashMap<Integer, Template>();

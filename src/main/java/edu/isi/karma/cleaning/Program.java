@@ -148,9 +148,4 @@ public class Program implements GrammarTreeNode {
 		}
 		return size;
 	}
-	@Override
-	public void loadParams() {
-		// TODO Auto-generated method stub
-		
-	}
 }

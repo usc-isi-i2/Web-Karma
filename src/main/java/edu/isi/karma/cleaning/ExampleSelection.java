@@ -34,18 +34,19 @@ public class ExampleSelection {
 	public HashMap<String, Vector<TNode>> tran = new HashMap<String, Vector<TNode>>();
 	public HashMap<String, String[]> raw = new HashMap<String, String[]>();
 	public boolean isDetectingQuestionableRecord = false;
-	public static OutlierDetector out;
+	public OutlierDetector out;
 	// testdata rowid:{tar, tarcolor}
 	public HashMap<String, HashMap<String, String[]>> testdata = new HashMap<String, HashMap<String, String[]>>();
-	public static int way = 3;
-	public static HashSet<String> dictionary = new HashSet<String>();
+	public int way = 7;
+	public HashSet<String> dictionary = new HashSet<String>();
 
 	public ExampleSelection() {
+		this.out = new OutlierDetector();
 	}
 
 	public String Choose() {
 		String ID = "";
-		switch (ExampleSelection.way) {
+		switch (way) {
 	case 1:
 			ID = this.way1();
 			break;
@@ -96,9 +97,9 @@ public class ExampleSelection {
 			if (firsttime) {
 				out = new OutlierDetector();
 				out.buildDict(this.getOrgTarPair(exps));
-				ExampleSelection.dictionary = out.dict;
+				dictionary = out.dict;
 			}
-			out.buildMeanVector(examples, ExampleSelection.dictionary);
+			out.buildMeanVector(examples, dictionary);
 		}
 		Ruler ruler = new Ruler();
 		for (String keyString : exps.keySet()) {
@@ -289,7 +290,7 @@ public class ExampleSelection {
 			for (String key : this.testdata.keySet()) {
 				String trowid = out.getOutliers(testdata.get(key),
 						out.rVectors.get(key), tmax,
-						ExampleSelection.dictionary);
+						dictionary);
 				tmax = out.currentMax;
 				if (trowid.length() > 0) {
 					row = trowid;
