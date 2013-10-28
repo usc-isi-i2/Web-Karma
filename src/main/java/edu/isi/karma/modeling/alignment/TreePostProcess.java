@@ -30,10 +30,13 @@ import org.jgrapht.traverse.BreadthFirstIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkPriorityComparator;
+import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.SimpleLink;
+import edu.isi.karma.rep.alignment.ObjectPropertyLink;
+import edu.isi.karma.rep.alignment.SubClassLink;
 
 public class TreePostProcess {
 	
@@ -132,11 +135,12 @@ public class TreePostProcess {
 		Link[] links = tree.edgeSet().toArray(new Link[0]);
 		String linkSourceId;//, linkTargetId;
 
-		List<Link> temp;
+		List<Link> temp1 = null;
+		List<Link> temp2 = null;
 		List<Link> possibleLinks = new ArrayList<Link>();
 		
 		for (Link link : links) {
-			if (!(link instanceof SimpleLink)) continue;
+			if (!(link.getLabel().getUri().equalsIgnoreCase(Uris.PLAIN_LINK_URI))) continue;
 			
 			// links from source to target
 			sourceId = link.getSource().getId();
@@ -144,10 +148,17 @@ public class TreePostProcess {
 			
 			possibleLinks.clear();
 			
-			temp = this.graphBuilder.getPossibleLinks(sourceId, targetId);
-			if (temp != null) possibleLinks.addAll(temp);
-			temp = this.graphBuilder.getPossibleLinks(targetId, sourceId);
-			if (temp != null) possibleLinks.addAll(temp);
+			if (link instanceof SubClassLink) {
+				temp1 = this.graphBuilder.getPossibleLinks(sourceId, targetId, LinkType.SubClassLink, null);
+				temp2 = this.graphBuilder.getPossibleLinks(targetId, sourceId, LinkType.SubClassLink, null);
+			} else if (link instanceof ObjectPropertyLink) {
+				temp1 = this.graphBuilder.getPossibleLinks(sourceId, targetId, 
+						LinkType.ObjectPropertyLink, ((ObjectPropertyLink) link).getObjectPropertyType());
+				temp2 = this.graphBuilder.getPossibleLinks(targetId, sourceId, 
+						LinkType.ObjectPropertyLink, ((ObjectPropertyLink) link).getObjectPropertyType());
+			}
+			if (temp1 != null) possibleLinks.addAll(temp1);
+			if (temp2 != null) possibleLinks.addAll(temp2);
 
 			Collections.sort(possibleLinks, new LinkPriorityComparator());
 			if (possibleLinks.size() > 0) {
@@ -193,35 +204,6 @@ public class TreePostProcess {
 			}
 		}
 	}
-	
-
-//	private void removeDanglingNodes() {
-//
-//		boolean connectedToColumn = false;
-//		for (Node v: this.tree.vertexSet()) {
-//			BreadthFirstIterator<Node, Link> i = 
-//				new BreadthFirstIterator<Node, Link>(this.tree, v);
-//
-//			connectedToColumn = false;
-//			
-//			while (i.hasNext()) {
-//				Node temp = i.next();
-//				if (temp instanceof ColumnNode)
-//					connectedToColumn = true;
-//			}
-//			
-//			if (connectedToColumn == false)
-//				dangledVertexList.add(v);
-//		}
-//		
-//		for (Node v : dangledVertexList)
-//			this.tree.removeVertex(v);
-//		
-//	}
-
-//	public List<Node> getDangledVertexList() {
-//		return dangledVertexList;
-//	}
 	
 	
 }

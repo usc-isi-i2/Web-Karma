@@ -33,13 +33,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
+import edu.isi.karma.rep.alignment.DisplayModel;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
@@ -135,9 +135,8 @@ public class KR2RMLMappingGenerator {
 	}
 	
 	private void calculateColumnNodesCoveredByBlankNodes() {
-		HashMap<Node, Integer> nodeHeightsMap = GraphUtil.levelingCyclicGraph(alignmentGraph);
-		HashMap<Node, Set<ColumnNode>> nodeCoverage = 
-				GraphUtil.getNodesCoverage(alignmentGraph, nodeHeightsMap);
+		DisplayModel dm = new DisplayModel(alignmentGraph);
+		HashMap<Node, Set<ColumnNode>> nodeCoverage = dm.getNodesSpan();
 		
 		for (Node treeNode:alignmentGraph.vertexSet()) {
 			if (treeNode instanceof InternalNode && subjectMapIndex.containsKey(treeNode.getId())) {
@@ -288,7 +287,8 @@ public class KR2RMLMappingGenerator {
 						TemplateTermSet termSet = new TemplateTermSet();
 						termSet.addTemplateTermToSet(cnTerm);
 
-						StringTemplateTerm rdfLiteralTypeTerm = new StringTemplateTerm(cnode.getRdfLiteralType(), true);
+						String rdfLiteralUri = 	cnode.getRdfLiteralType() == null? "" : cnode.getRdfLiteralType().getUri();
+						StringTemplateTerm rdfLiteralTypeTerm = new StringTemplateTerm(rdfLiteralUri, true);
 						TemplateTermSet rdfLiteralTypeTermSet = new TemplateTermSet();
 						rdfLiteralTypeTermSet.addTemplateTermToSet(rdfLiteralTypeTerm);
 
