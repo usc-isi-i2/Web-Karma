@@ -53,7 +53,6 @@ public class DataSourcePublisher extends SourcePublisher {
 	private DataSource source;
 	private Model model = null;
 	private RepFactory factory;
-	private List<String> transformationCommandsJSON;
 	private SourceInformation sourceInfo;
 	
 	//MARIAM
@@ -62,7 +61,6 @@ public class DataSourcePublisher extends SourcePublisher {
 	public DataSourcePublisher(DataSource source, RepFactory factory, List<String> transformationCommandJSON, SourceInformation sourceInfo) {
 		this.source = source;
 		this.factory=factory;
-		this.transformationCommandsJSON = transformationCommandJSON;
 		this.sourceInfo = sourceInfo;
 	}
 	
@@ -165,12 +163,7 @@ public class DataSourcePublisher extends SourcePublisher {
 			}
 			addModelPart(model, my_source, this.source.getModel());
 		}
-		
-		// Add transformations
-		Property has_columnTransformation = model.createProperty(Namespaces.KARMA, "hasColumnTransformation");
-		for(String commJson : transformationCommandsJSON)
-			my_source.addProperty(has_columnTransformation, commJson);
-		
+
 		// Add source information if any present
 		if(sourceInfo != null) {
 			Map<InfoAttribute, String> attributeValueMap = sourceInfo.getAttributeValueMap();

@@ -32,7 +32,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler;
 import edu.isi.karma.modeling.semantictypes.crfmodelhandler.CRFModelHandler.ColumnFeature;
@@ -313,7 +312,7 @@ public class SemanticTypeUtil {
 	}
 
 	public static void computeSemanticTypesSuggestion(Worksheet worksheet,
-			CRFModelHandler crfModelHandler, OntologyManager ontMgr, Alignment alignment) {
+			CRFModelHandler crfModelHandler, OntologyManager ontMgr) {
 		
 		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
 		for (HNodePath path : paths) {

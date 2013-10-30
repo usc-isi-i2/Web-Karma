@@ -154,38 +154,23 @@ public class GraphUtil {
 		
 	}
 	
-	public static void printGraphSimple(Graph<Node, Link> graph) {
+	public static String graphToString(Graph<Node, Link> graph) {
 		
 		if (graph == null) {
-			logger.debug("The input graph is null.");
-			return;
+			logger.error("The input graph is null.");
+			return "";
 		}		
 
 		StringBuffer sb = new StringBuffer();
 		for (Link edge : graph.edgeSet()) {
 			sb.append("(");
-//			if (edge.getSource() instanceof ColumnNode)
-//				sb.append(edge.getSource().getLocalId() + "-" + ((ColumnNode)edge.getSource()).getColumnName());
-//			else
-//				sb.append(edge.getSource().getLocalId());
-//			sb.append(")");
-//			sb.append(" - ");
-//			sb.append("(");
 			sb.append(edge.getId());
-//			sb.append(")");
-//			sb.append(" - ");
-//			sb.append("(");
-//			if (edge.getTarget() instanceof ColumnNode)
-//				sb.append(edge.getTarget().getLocalId() + "-" + ((ColumnNode)edge.getTarget()).getColumnName());
-//			else
-//				sb.append(edge.getTarget().getLocalId());
-//			sb.append(")");
 			sb.append(" - status=" + edge.getStatus().name());
 			sb.append(" - w=" + edge.getWeight());
 			sb.append("\n");
         }
 		sb.append("------------------------------------------");
-		logger.debug(sb.toString());
+		return sb.toString();
 		
 	}
 	
