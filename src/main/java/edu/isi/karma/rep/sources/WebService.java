@@ -38,7 +38,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.modeling.ModelingParams;
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Label;
@@ -119,7 +119,7 @@ public class WebService extends Source {
 	}
 
 	public String getUri() {
-		return ModelingParams.KARMA_SERVICE_PREFIX + getId() + "#";
+		return ModelingConfiguration.getKarmaServicePrefix() + getId() + "#";
 	}
 
 	public String getOperationName() {

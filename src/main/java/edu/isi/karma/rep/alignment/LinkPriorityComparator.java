@@ -27,18 +27,18 @@ public class LinkPriorityComparator implements Comparator<Link> {
 
 	@Override
 	public int compare(Link o1, Link o2) {
-		String p1 = getPriority(o1.getPriorityType());
-		String p2 = getPriority(o2.getPriorityType());
+		String p1 = getPriority(o1);
+		String p2 = getPriority(o2);
 		return p1.compareTo(p2);
 	}
 
-	private String getPriority(LinkPriorityType priorityType) {
-		if (priorityType == LinkPriorityType.DirectObjectProperty) return "0";
-		else if (priorityType == LinkPriorityType.IndirectObjectProperty) return "1";
-		else if (priorityType == LinkPriorityType.ObjectPropertyWithOnlyDomain) return "2";
-		else if (priorityType == LinkPriorityType.ObjectPropertyWithOnlyRange) return "2";
-		else if (priorityType == LinkPriorityType.SubClassOf) return "3";
-		else if (priorityType == LinkPriorityType.ObjectPropertyWithoutDomainAndRange) return "4";
+	private String getPriority(Link link) {
+		if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Direct) return "0";
+		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.Indirect) return "1";
+		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithOnlyDomain) return "2";
+		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithOnlyRange) return "2";
+		else if (link instanceof ObjectPropertyLink && ((ObjectPropertyLink)link).getObjectPropertyType() == ObjectPropertyType.WithoutDomainAndRange) return "4";
+		else if (link instanceof SubClassLink) return "3";
 		else return "5";
 	}
 

@@ -915,6 +915,9 @@ class OntologyCache {
 			}
 			directDomainsUris = ontHandler.getResourcesUris(directDomains);
 			
+			if (directDomainsUris != null && directDomainsUris.contains(Uris.THING_URI))
+				directDomainsUris.remove(Uris.THING_URI);
+			
 			temp  = propertyDirectDomains.get(property.getURI());
 			if (temp == null)
 				propertyDirectDomains.put(property.getURI(), directDomainsUris);
@@ -969,6 +972,9 @@ class OntologyCache {
 				ontHandler.getMembers(r, directRanges, false);
 			}
 			directRangesUris = ontHandler.getResourcesUris(directRanges);
+			
+			if (directRangesUris != null && directRangesUris.contains(Uris.THING_URI))
+				directRangesUris.remove(Uris.THING_URI);
 
 			temp  = propertyDirectRanges.get(property.getURI());
 			if (temp == null)
@@ -1016,7 +1022,7 @@ class OntologyCache {
 				}
 				temp.add(property.getURI());
 			}
-			
+				
 			for (String domain : directDomainsUris) {
 				for (String range : directRangesUris) {
 					temp = 
@@ -1196,6 +1202,8 @@ class OntologyCache {
 
 	}
 	
+// 	Please don't remove this commented method. We had this before to implement SubProperty inference, but later we changed our interpretation of SubProperty.
+// 	It is better to keep that for a while.
 //	/**
 //	 * If the inheritance is true, it adds all the sub-classes of the domain and range of super-properties too.
 //	 * @param inheritance
@@ -1334,6 +1342,10 @@ class OntologyCache {
 					(indirectDomains == null || indirectDomains.size() == 0))
 				haveDomain = false;
 			
+			if (directDomains != null && directDomains.size() == 1 &&
+					directDomains.iterator().next().equalsIgnoreCase(Uris.THING_URI))
+				haveDomain = false;
+			
 			if (!haveDomain)
 				this.dataPropertiesWithoutDomain.put(p, label);
 		}
@@ -1387,8 +1399,8 @@ class OntologyCache {
 			for (int j = 0; j < classList.size(); j++) {
 				String c2 = classList.get(j);
 				
-				if (c1.equals(c2))
-					continue;
+//				if (c1.equals(c2))
+//					continue;
 				
 				directProperties = this.domainRangeToDirectProperties.get(c1+c2);
 				if (directProperties != null && directProperties.size() > 0) { 

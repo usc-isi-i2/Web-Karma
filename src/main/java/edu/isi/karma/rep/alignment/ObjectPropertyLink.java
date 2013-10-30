@@ -27,14 +27,21 @@ public class ObjectPropertyLink extends Link {
 
 	private static final long serialVersionUID = 1L;
 	private boolean inverse;
+	private ObjectPropertyType objectPropertyType;
 	
-	public ObjectPropertyLink(String id, Label label) {
+	public ObjectPropertyLink(String id, Label label, ObjectPropertyType objectPropertyType) {
 		super(id, label, LinkType.ObjectPropertyLink);
 		this.inverse = false;
+		this.objectPropertyType = objectPropertyType;
 	}
 
 	public boolean isInverse() {
 		return this.inverse;
 	}
 
+	public ObjectPropertyType getObjectPropertyType() {
+		return objectPropertyType;
+	}
+
+	
 }

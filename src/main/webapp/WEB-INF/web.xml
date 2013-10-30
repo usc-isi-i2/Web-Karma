@@ -145,7 +145,7 @@
      <url-pattern>/SpatialReferenceSystemService/*</url-pattern>
   </servlet-mapping>
 
-<!-- uncomment for password protection; change user/pwd in config/jettyrealm.properties -->
+<!-- uncomment for password protection; change user/pwd in src/main/config/jettyrealm.properties -->
 <!-- 
  <security-constraint>
     <web-resource-collection>
