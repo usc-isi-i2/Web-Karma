@@ -1,11 +1,17 @@
 package edu.isi.karma.controller.history;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.isi.karma.controller.command.Command.CommandTag;
+import edu.isi.karma.controller.history.CommandHistoryWriter.HistoryArguments;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -16,7 +22,7 @@ public class HistoryJsonUtil {
 	}
 	
 	public enum ParameterType {
-		hNodeId, worksheetId, other, checkHistory
+		hNodeId, worksheetId, other
 	}
 	
 	public static JSONObject getJSONObjectWithName(String arg, JSONArray json) throws JSONException {
@@ -70,7 +76,40 @@ public class HistoryJsonUtil {
 		return false;
 	}
 
-//	private double getDoubleValue(String arg, JSONArray json) throws JSONException {
-//	return getJSONObjectWithName(arg, json).getDouble(ClientJsonKeys.value.name());
-//}
+
+	public static JSONArray filterCommandsByTag(List<CommandTag> filters,
+			 JSONArray historyJson)
+			throws JSONException {
+		JSONArray commandsJSON = new JSONArray();
+		
+		for (int i = 0; i< historyJson.length(); i++) {
+			JSONObject commObject = (JSONObject) historyJson.get(i);
+			JSONArray tags = commObject.getJSONArray(HistoryArguments.tags.name());
+			boolean match = false;
+			for (int j=0; j< tags.length(); j++) {
+				
+				String tag2 = tags.getString(j);
+				for(CommandTag filter : filters)
+				{
+					if(tag2.equals(filter.name()))
+					{
+						commandsJSON.put(commObject);
+						match = true;
+						break;
+					}
+					
+				}
+				if(match)
+				{
+					break;
+				}
+			}
+		}
+		return commandsJSON;
+	}
+	
+	public static JSONArray readCommandsFromFile(File historyFile) 
+			throws JSONException, FileNotFoundException {
+		return (JSONArray) JSONUtil.createJson(new FileReader(historyFile));
+	}
 }

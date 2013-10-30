@@ -4,13 +4,14 @@
  */
 package edu.isi.karma.imp;
 
+import java.io.IOException;
+
+import org.json.JSONException;
+
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
-import java.io.IOException;
-import java.sql.SQLException;
-import org.json.JSONException;
 
 /**
  * 
@@ -44,6 +45,6 @@ public abstract class Import {
     /*
      * Generate worksheet from data
      */
-    public abstract Worksheet generateWorksheet() throws JSONException, IOException, KarmaException, ClassNotFoundException, SQLException;
+    public abstract Worksheet generateWorksheet() throws JSONException, IOException, KarmaException, ClassNotFoundException;
     
 }

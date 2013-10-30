@@ -25,8 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
@@ -43,10 +41,9 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class ShowModelCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 	
-	private static Logger logger = LoggerFactory.getLogger(ShowModelCommandFactory.class);
-	
+
 	private enum Arguments {
-		worksheetId, checkHistory
+		worksheetId
 	}
 
 	@Override
@@ -59,31 +56,6 @@ public class ShowModelCommandFactory extends CommandFactory implements JSONInput
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		
-		logger.debug("creating showModel command ...");
-		
-//		boolean checkHist = HistoryJsonUtil.getBooleanValue(Arguments.checkHistory.name(), inputJson);
-//		if(checkHist) {
-//			String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getCommandPreferencesId(), worksheetId);
-//			AlignmentManager.Instance().addAlignmentToMap(alignmentId, new Alignment(workspace.getOntologyManager()));
-////			int transformationCommandsExecutedCount = 0;
-//			// Check if any command history exists for the worksheet
-//			
-//			if(HistoryJsonUtil.historyExists(worksheet.getTitle(), workspace.getCommandPreferencesId())) {
-//				WorksheetCommandHistoryReader commReader = new WorksheetCommandHistoryReader(worksheetId, workspace);
-//				try {
-//					List<CommandTag> tags = new ArrayList<CommandTag>();
-////					tags.add(CommandTag.Transformation);
-//					tags.add(CommandTag.Modeling);
-//					commReader.readAndExecuteCommands(tags);
-////					transformationCommandsExecutedCount = commReader.readAndExecuteCommands(tags).get(CommandTag.Transformation);
-//				} catch (Exception e) {
-//					 logger.error("Error occured while reading model commands from history!", e);
-//					e.printStackTrace();
-//				}
-//			}
-//			return new ShowModelCommand(getNewId(workspace), worksheet.getId(), false);
-//		}
 		
 		ShowModelCommand comm = new ShowModelCommand(getNewId(workspace), worksheet.getId(), false);
 		OntologyManager ontMgr = workspace.getOntologyManager();

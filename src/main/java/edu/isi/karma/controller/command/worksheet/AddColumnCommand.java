@@ -115,7 +115,12 @@ public class AddColumnCommand extends WorksheetCommand {
 					throw new KarmaException("TableId and NodeId are empty. Can't add column.");
 				hTableId = workspace.getFactory().getHNode(hNodeId).getHTableId();
 			}
-			 HTable hTable = workspace.getFactory().getHTable(hTableId);
+			HTable hTable = workspace.getFactory().getHTable(hTableId);
+			if(hTable == null)
+			{
+				logger.error("No HTable for id "+ hTableId);
+				throw new KarmaException("No HTable for id "+ hTableId );
+			}
 			if (null != hTable.getHNodeFromColumnName(newColumnName)) {
 				logger.error("Add column failed to create " + newColumnName
 						+ " because it already exists!");
@@ -123,11 +128,14 @@ public class AddColumnCommand extends WorksheetCommand {
 						"Add column failed to create " + newColumnName
 								+ " because it already exists!"));
 			}   
-			//get the HTable
-			HTable currentTable = workspace.getFactory().getHTable(hTableId);
 			//add new column to this table
 			//add column after the column with hNodeId
-			HNode ndid = currentTable.addNewHNodeAfter(hNodeId, workspace.getFactory(), newColumnName, worksheet,true);
+			HNode ndid = hTable.addNewHNodeAfter(hNodeId, workspace.getFactory(), newColumnName, worksheet,true);
+			if(ndid == null)
+			{
+				logger.error("Unable to add new HNode!");
+				throw new KarmaException("Unable to add new HNode!");
+			}
 			//add as first column in the table if hNodeId is null
 			//HNode ndid = currentTable.addNewHNodeAfter(null, vWorkspace.getRepFactory(), newColumnName, worksheet,true);
 
@@ -143,7 +151,7 @@ public class AddColumnCommand extends WorksheetCommand {
 			UpdateContainer c =  new UpdateContainer(new AddColumnUpdate(newHNodeId, worksheetId));
 			
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
-			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace, ndid.getHNodePath(workspace.getFactory())));
 			return c;
 		} catch (Exception e) {
 			logger.error("Error in AddColumnCommand" + e.toString());
@@ -159,7 +167,7 @@ public class AddColumnCommand extends WorksheetCommand {
 				selectedPath = path;
 			}
 		}
-		Collection<Node> nodes = new ArrayList<Node>();
+		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet.getDataTable().getNumRows()));
 		worksheet.getDataTable().collectNodes(selectedPath, nodes);	
 		for (Node node : nodes) {
 			node.setValue(this.defaultValue, NodeStatus.original, factory);

@@ -166,7 +166,7 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 				// Sanity check
 				if (rdf == null || rdf.trim().isEmpty()) continue;
 				
-				String keyUri = rdfGen.normalizeUri(rdfGen.getTemplateTermSetPopulatedWithValues(node.getColumnValues()
+				String keyUri = rdfGen.normalizeUri(rdfGen.getTemplateTermSetPopulatedWithValues(node
 						, trMap.getSubject().getTemplate()));
 				rowToUriMap.put(row, keyUri);
 				

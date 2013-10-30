@@ -293,15 +293,6 @@ public class WorksheetModelWriter {
 		return colNameStr;
 	}
 
-	public boolean writeTransformationHistory(List<String> commandsJSON) throws RepositoryException {
-		URI hasTransformationUri = f.createURI(Uris.KM_HAS_TRANSFORMATION_URI);
-		for (String commandJson : commandsJSON) {
-			Value commandLiteral = f.createLiteral(commandJson);
-			con.add(mappingRes, hasTransformationUri, commandLiteral);
-		}
-		return true;
-	}
-
 	public void close() throws RepositoryException {
 		con.close();
 		myRepository.shutDown();

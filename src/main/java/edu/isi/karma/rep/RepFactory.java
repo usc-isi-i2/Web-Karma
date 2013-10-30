@@ -24,30 +24,20 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.uuid.EthernetAddress;
-import com.fasterxml.uuid.Generators;
-import com.fasterxml.uuid.impl.RandomBasedGenerator;
-
 /**
  * @author szekely
  * 
  */
 public class RepFactory {
 
-	public RepFactory() {
-			uuidGenerator = Generators.randomBasedGenerator();
-		
-	}
-	EthernetAddress nic;
-	RandomBasedGenerator uuidGenerator;
 
-	private final Map<String, HNode> hNodes = new HashMap<String, HNode>();
-	private final Map<String, HTable> hTables = new HashMap<String, HTable>();
-	private final Map<String, Worksheet> worksheets = new HashMap<String, Worksheet>();
-	private final Map<String, Table> tables = new HashMap<String, Table>();
-	private final Map<String, Row> rows = new HashMap<String, Row>();
-	private final Map<String, Node> nodes = new HashMap<String, Node>();
-
+	private final Map<String, HNode> hNodes = new HashMap<String, HNode>(100);
+	private final Map<String, HTable> hTables = new HashMap<String, HTable>(10);
+	private final Map<String, Worksheet> worksheets = new HashMap<String, Worksheet>(10);
+	private final Map<String, Table> tables = new HashMap<String, Table>(10);
+	private final Map<String, Row> rows = new HashMap<String, Row>(1000);
+	private final Map<String, Node> nodes = new HashMap<String, Node>(10000);
+	private int id = 0;
 	public Worksheet createWorksheet(String tableName, Workspace workspace) {
 		String id = getNewId("WS");
 		HTable headers = createHTable(tableName);
@@ -58,7 +48,6 @@ public class RepFactory {
 		return ws;
 	}
         
-
 	public void replaceWorksheet(String id, Worksheet worksheet) {
 		if (worksheets.containsKey(id)) {
 			worksheets.put(id, worksheet);
@@ -67,7 +56,7 @@ public class RepFactory {
 	}
 
 	public String getNewId(String prefix) {
-		return prefix + uuidGenerator.generate().toString();
+		return prefix + id++;
 	}
 
 	HNode createHNode(String id, String hTableId, String columnName,

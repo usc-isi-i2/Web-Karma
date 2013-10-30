@@ -79,7 +79,7 @@ public class WorksheetCleaningUpdate extends
 		
 		for (HNodePath path:columnPaths) {
 			String leafHNodeId = path.getLeaf().getId();
-			Collection<Node> nodes = new ArrayList<Node>();
+			Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet.getDataTable().getNumRows()));
 			worksheet.getDataTable().collectNodes(path, nodes);
 			try {
 				// Check if the column metadata doesn't contains the cleaning information

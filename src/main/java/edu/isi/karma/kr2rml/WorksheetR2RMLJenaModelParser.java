@@ -40,8 +40,9 @@ import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 
+import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
+import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
@@ -120,11 +121,13 @@ public class WorksheetR2RMLJenaModelParser {
 	}
 	
 	private void performTransformations(Resource mappingResource) throws JSONException {
-		List<String> normalizedCommandsJSON = getTransformCommandsJSON(mappingResource);
-		WorksheetCommandHistoryReader wchr = new WorksheetCommandHistoryReader(worksheet.getId(), workspace);
+		JSONArray normalizedCommandsJSON = getWorksheetHistory(mappingResource);
+		WorksheetCommandHistoryExecutor wchr = new WorksheetCommandHistoryExecutor(worksheet.getId(), workspace);
 		try
 		{
-			wchr.executeListOfCommands(normalizedCommandsJSON);
+			List<CommandTag> tags = new ArrayList<CommandTag>();
+			tags.add(CommandTag.Transformation);
+			wchr.executeCommandsByTags(tags, normalizedCommandsJSON);
 		}
 		catch (CommandException | KarmaException e)
 		{
@@ -132,15 +135,14 @@ public class WorksheetR2RMLJenaModelParser {
 		}
 	}
 
-	private List<String> getTransformCommandsJSON(Resource mappingResource) throws JSONException {
-		Property hasTransformation = model.getProperty(Uris.KM_HAS_TRANSFORMATION_URI);
+	private JSONArray getWorksheetHistory(Resource mappingResource) throws JSONException {
+		Property hasTransformation = model.getProperty(Uris.KM_HAS_WORKSHEET_HISTORY_URI);
 		NodeIterator transItr = model.listObjectsOfProperty(mappingResource, hasTransformation);
-		List<String> commsJSON = new ArrayList<String>();
 		while (transItr.hasNext()) {
-
-			commsJSON.add(transItr.next().toString());
+			String commands = transItr.next().toString();
+			return new JSONArray(commands);
 		}
-		return commsJSON;
+		return new JSONArray();
 	}
 
 	private void createPredicateObjectMaps(Resource mappingResource) throws JSONException {

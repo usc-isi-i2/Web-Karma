@@ -125,13 +125,6 @@ public class ShowModelCommand extends WorksheetCommand {
 		vwIDJObj.put(ClientJsonKeys.value.name(), worksheetId);
 		typesArray.put(vwIDJObj);
 		
-		// Add the check history information
-		JSONObject chIDJObj = new JSONObject();
-		chIDJObj.put(ClientJsonKeys.name.name(), ParameterType.checkHistory.name());
-		chIDJObj.put(ClientJsonKeys.type.name(), ParameterType.other.name());
-		chIDJObj.put(ClientJsonKeys.value.name(), false);
-		typesArray.put(chIDJObj);
-		
 		for (SemanticType type: semanticTypes) {
 			// Add the hNode information
 			JSONObject hNodeJObj = new JSONObject();

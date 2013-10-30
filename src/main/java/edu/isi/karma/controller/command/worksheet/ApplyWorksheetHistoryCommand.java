@@ -2,12 +2,14 @@ package edu.isi.karma.controller.command.worksheet;
 
 import java.io.File;
 
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
+import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -46,9 +48,11 @@ public class ApplyWorksheetHistoryCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(worksheetId, workspace);
+		
 		try {
-			histReader.readAndExecuteAllCommandsFromFile(historyFile);
+			JSONArray historyJSON = HistoryJsonUtil.readCommandsFromFile(historyFile);
+			WorksheetCommandHistoryExecutor histExecutor = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
+			histExecutor.executeAllCommands(historyJSON);
 		} catch (Exception e) {
 			String msg = "Error occured while applying history!";
 			logger.error(msg, e);
