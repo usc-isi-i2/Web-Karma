@@ -101,7 +101,7 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 		OntologyManager ontMgr = workspace.getOntologyManager();
 		if(ontMgr.isEmpty())
 			return new UpdateContainer(new ErrorUpdate("No ontology loaded."));
-//SemanticTypeUtil.computeSemanticTypesForAutoModel(worksheet, vWorkspace.getWorkspace().getCrfModelHandler(), ontMgr);
+
 
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
@@ -165,14 +165,7 @@ public class ShowAutoModelCommand extends WorksheetCommand {
 		vwIDJObj.put(ClientJsonKeys.type.name(), ParameterType.worksheetId.name());
 		vwIDJObj.put(ClientJsonKeys.value.name(), worksheetId);
 		typesArray.put(vwIDJObj);
-		
-		// Add the check history information
-		JSONObject chIDJObj = new JSONObject();
-		chIDJObj.put(ClientJsonKeys.name.name(), ParameterType.checkHistory.name());
-		chIDJObj.put(ClientJsonKeys.type.name(), ParameterType.other.name());
-		chIDJObj.put(ClientJsonKeys.value.name(), false);
-		typesArray.put(chIDJObj);
-		
+	
 		for (SemanticType type: semanticTypes) {
 			// Add the hNode information
 			JSONObject hNodeJObj = new JSONObject();

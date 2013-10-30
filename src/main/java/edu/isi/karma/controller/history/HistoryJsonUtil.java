@@ -22,7 +22,7 @@ public class HistoryJsonUtil {
 	}
 	
 	public enum ParameterType {
-		hNodeId, worksheetId, other, checkHistory
+		hNodeId, worksheetId, other
 	}
 	
 	public static JSONObject getJSONObjectWithName(String arg, JSONArray json) throws JSONException {
@@ -112,7 +112,4 @@ public class HistoryJsonUtil {
 			throws JSONException, FileNotFoundException {
 		return (JSONArray) JSONUtil.createJson(new FileReader(historyFile));
 	}
-//	private double getDoubleValue(String arg, JSONArray json) throws JSONException {
-//	return getJSONObjectWithName(arg, json).getDouble(ClientJsonKeys.value.name());
-//}
 }

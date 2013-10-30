@@ -156,7 +156,6 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
 
     @Override
     public String getTitle() {
-        // TODO Auto-generated method stub
         return "Import Database Table";
     }
 
@@ -183,7 +182,6 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
             NewDatabaseCommandUpdate upd = new NewDatabaseCommandUpdate(comm);
             c.add(upd);
         } catch (Throwable e) {
-            e.printStackTrace();
             String message = e.getMessage().replaceAll("\n", "").replaceAll("\"", "\\\"");
             ErrorUpdate errUpdt = new ErrorUpdate(message);
             c.add(errUpdt);

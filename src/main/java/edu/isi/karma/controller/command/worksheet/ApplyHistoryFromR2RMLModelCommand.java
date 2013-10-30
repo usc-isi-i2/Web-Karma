@@ -84,14 +84,15 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		WorksheetCommandHistoryExecutor histExecutor = new WorksheetCommandHistoryExecutor(
-				worksheetId, workspace);
+
 		try {
 			String historyStr = extractHistoryFromModel();
 			if (historyStr.isEmpty()) {
 				return new UpdateContainer(new ErrorUpdate("No history found in R2RML Model!"));
 			}
 			JSONArray historyJson = new JSONArray(historyStr);
+			WorksheetCommandHistoryExecutor histExecutor = new WorksheetCommandHistoryExecutor(
+					worksheetId, workspace);
 			histExecutor.executeAllCommands(historyJson);
 		} catch (Exception e) {
 			String msg = "Error occured while applying history!";

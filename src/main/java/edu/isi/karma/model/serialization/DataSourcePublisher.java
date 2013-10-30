@@ -26,9 +26,6 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,16 +52,14 @@ public class DataSourcePublisher extends SourcePublisher {
 	private DataSource source;
 	private Model model = null;
 	private RepFactory factory;
-	private JSONArray transformationCommandsJSON;
 	private SourceInformation sourceInfo;
 	
 	//MARIAM
 	//I had to add factory, so that I can get to the columnName
 	//I tried to do it in a nicer way but couldn't figure out how to add it to the Attribute
-	public DataSourcePublisher(DataSource source, RepFactory factory, JSONArray transformationCommandJSON, SourceInformation sourceInfo) {
+	public DataSourcePublisher(DataSource source, RepFactory factory, SourceInformation sourceInfo) {
 		this.source = source;
 		this.factory=factory;
-		this.transformationCommandsJSON = transformationCommandJSON;
 		this.sourceInfo = sourceInfo;
 	}
 	
@@ -80,7 +75,6 @@ public class DataSourcePublisher extends SourcePublisher {
 		model.setNsPrefix(Prefixes.RDFS, Namespaces.RDFS);
 		model.setNsPrefix(Prefixes.SWRL, Namespaces.SWRL);
 
-		addTransformationCommandsHistory(model);
 		addSourceInfoPart(model);
 		
 		return model;
@@ -168,18 +162,6 @@ public class DataSourcePublisher extends SourcePublisher {
 			addModelPart(model, my_source, this.source.getModel());
 		}
 		
-		// Add transformations
-		Property has_columnTransformation = model.createProperty(Namespaces.KARMA, "hasColumnTransformation");
-		for(int i = 0; i < transformationCommandsJSON.length(); i++)
-		{
-			try {
-				JSONObject commJson = (JSONObject) transformationCommandsJSON.get(i);
-				my_source.addProperty(has_columnTransformation, commJson.toString());
-			} catch (JSONException e) {
-				logger.trace("Unable to parse command from JSON", e);
-			}
-		}
-		
 		// Add source information if any present
 		if(sourceInfo != null) {
 			Map<InfoAttribute, String> attributeValueMap = sourceInfo.getAttributeValueMap();
@@ -188,10 +170,6 @@ public class DataSourcePublisher extends SourcePublisher {
 				my_source.addProperty(attrProp, attributeValueMap.get(attr));
 			}
 		}
-		
-	}
-	
-	private void addTransformationCommandsHistory(Model model2) {
 		
 	}
 	

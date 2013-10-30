@@ -26,18 +26,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.controller.command.ModelingHistoryCheckingCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
-public class SplitByCommaCommandFactory extends ModelingHistoryCheckingCommandFactory implements
+public class SplitByCommaCommandFactory extends CommandFactory implements
 		JSONInputCommandFactory {
 	
 	public enum Arguments {
-		worksheetId, hNodeId, delimiter, checkHistory
+		worksheetId, hNodeId, delimiter
 	}
 
 	@Override
@@ -55,14 +54,6 @@ public class SplitByCommaCommandFactory extends ModelingHistoryCheckingCommandFa
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String delimiter = HistoryJsonUtil.getStringValue(Arguments.delimiter.name(), inputJson);
-		boolean checkHist = HistoryJsonUtil.getBooleanValue(Arguments.checkHistory.name(), inputJson);
-		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		
-		if(checkHist) {
-			executeModelingCommands(workspace, worksheetId, worksheet);	
-		}
-
-		HistoryJsonUtil.setArgumentValue(Arguments.checkHistory.name(), false, inputJson);
 		
 		SplitByCommaCommand comm = new SplitByCommaCommand(getNewId(workspace), 
 				worksheetId, hNodeId,

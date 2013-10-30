@@ -27,12 +27,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.controller.command.ModelingHistoryCheckingCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -41,11 +39,11 @@ import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.webserver.KarmaException;
 
-public class ShowModelCommandFactory extends ModelingHistoryCheckingCommandFactory implements JSONInputCommandFactory {
+public class ShowModelCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 	
 
 	private enum Arguments {
-		worksheetId, checkHistory
+		worksheetId
 	}
 
 	@Override
@@ -57,16 +55,7 @@ public class ShowModelCommandFactory extends ModelingHistoryCheckingCommandFacto
 	public Command createCommand(JSONArray inputJson, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
-		boolean checkHist = HistoryJsonUtil.getBooleanValue(Arguments.checkHistory.name(), inputJson);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		
-		if(checkHist) {
-			String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getCommandPreferencesId(), worksheetId);
-			AlignmentManager.Instance().addAlignmentToMap(alignmentId, new Alignment(workspace.getOntologyManager()));
-			executeModelingCommands(workspace, worksheetId, worksheet);
-			
-			return new ShowModelCommand(getNewId(workspace), worksheet.getId(), false);
-		}
 		
 		ShowModelCommand comm = new ShowModelCommand(getNewId(workspace), worksheet.getId(), false);
 		OntologyManager ontMgr = workspace.getOntologyManager();

@@ -85,11 +85,11 @@ public class WorksheetCommandHistoryExecutor {
 			// Invoke the command
 			CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
 			if(cf != null && cf instanceof JSONInputCommandFactory) {
-//				logger.info("Executing command from history: " + commObject.get(HistoryArguments.commandName.name()));
+
 				JSONInputCommandFactory scf = (JSONInputCommandFactory)cf;
 				Command comm = scf.createCommand(inputParamArr, workspace);
 				if(comm != null){
-//					logger.info("Executing command: " + commObject.get(HistoryArguments.commandName.name()));
+					logger.info("Executing command: " + commObject.get(HistoryArguments.commandName.name()));
 					workspace.getCommandHistory().doCommand(comm, workspace);
 				}
 				else

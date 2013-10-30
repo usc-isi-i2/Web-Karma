@@ -22,6 +22,7 @@
 package edu.isi.karma.kr2rml;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -108,8 +109,11 @@ public class KR2RMLWorksheetRDFGenerator {
 		BufferedWriter bw = null;
 		try {
 			if(this.outWriter == null && this.outputFileName != null){
+				File f = new File(this.outputFileName);
+				File parentDir = f.getParentFile();
+				parentDir.mkdirs();
 				bw = new BufferedWriter(
-						new OutputStreamWriter(new FileOutputStream(this.outputFileName),"UTF-8"));
+						new OutputStreamWriter(new FileOutputStream(f),"UTF-8"));
 				outWriter = new PrintWriter (bw);
 			} else if (this.outWriter == null && this.outputFileName == null) {
 				outWriter = new PrintWriter (System.out);			
@@ -139,7 +143,11 @@ public class KR2RMLWorksheetRDFGenerator {
 				generateColumnProvenanceInformation();
 			}
 				
-		} finally {
+		} catch (Exception e)
+		{
+			logger.error("Unable to generate RDF: ", e);
+		}
+		finally {
 			if (closeWriterAfterGeneration) {
 				outWriter.flush();
 				outWriter.close();

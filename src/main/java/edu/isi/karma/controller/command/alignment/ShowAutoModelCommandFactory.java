@@ -32,8 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.controller.command.ModelingHistoryCheckingCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.modeling.ontology.AutoOntology;
@@ -47,14 +47,14 @@ import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class ShowAutoModelCommandFactory extends ModelingHistoryCheckingCommandFactory implements
+public class ShowAutoModelCommandFactory extends CommandFactory implements
 		JSONInputCommandFactory {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(ShowAutoModelCommandFactory.class);
 
 	private enum Arguments {
-		worksheetId, checkHistory
+		worksheetId
 	}
 
 	@Override
@@ -69,8 +69,6 @@ public class ShowAutoModelCommandFactory extends ModelingHistoryCheckingCommandF
 
 		String worksheetId = HistoryJsonUtil.getStringValue(
 				Arguments.worksheetId.name(), inputJson);
-		boolean checkHist = HistoryJsonUtil.getBooleanValue(
-				Arguments.checkHistory.name(), inputJson);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		AutoOntology autoOntology = new AutoOntology(worksheet);
@@ -89,12 +87,6 @@ public class ShowAutoModelCommandFactory extends ModelingHistoryCheckingCommandF
 		ontMgr.doImportAndUpdateCache(autoOtologyFile);
 		logger.info("Done loading ontology: "
 				+ autoOtologyFile.getAbsolutePath());
-
-		if (checkHist) {
-			executeModelingCommands(workspace, worksheetId, worksheet);
-			return new ShowAutoModelCommand(getNewId(workspace),
-					worksheet.getId());
-		}
 		
 		ShowAutoModelCommand comm = new ShowAutoModelCommand(
 				getNewId(workspace), worksheet.getId());

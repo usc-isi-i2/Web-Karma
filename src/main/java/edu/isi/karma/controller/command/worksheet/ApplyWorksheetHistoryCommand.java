@@ -48,9 +48,10 @@ public class ApplyWorksheetHistoryCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		WorksheetCommandHistoryExecutor histExecutor = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
+		
 		try {
 			JSONArray historyJSON = HistoryJsonUtil.readCommandsFromFile(historyFile);
+			WorksheetCommandHistoryExecutor histExecutor = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
 			histExecutor.executeAllCommands(historyJSON);
 		} catch (Exception e) {
 			String msg = "Error occured while applying history!";
