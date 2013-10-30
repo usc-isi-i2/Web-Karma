@@ -32,7 +32,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.alignment.ObjectPropertyType;
 
 public class OntologyManager  {
 	
@@ -184,6 +186,26 @@ public class OntologyManager  {
 		return this.ontCache.getObjectPropertiesWithoutDomainAndRange();
 	}
 	
+	public ObjectPropertyType getObjectPropertyType(String sourceUri, String targetUri, String linkUri) {
+		if (getObjectPropertiesDirect(sourceUri, targetUri) != null &&
+			getObjectPropertiesDirect(sourceUri, targetUri).contains(linkUri))
+				return ObjectPropertyType.Direct;
+		else if (getObjectPropertiesIndirect(sourceUri, targetUri) != null &&
+			getObjectPropertiesIndirect(sourceUri, targetUri).contains(linkUri))
+				return ObjectPropertyType.Indirect;
+		else if (getObjectPropertiesWithOnlyDomain(sourceUri, targetUri) != null &&
+			getObjectPropertiesWithOnlyDomain(sourceUri, targetUri).contains(linkUri))
+				return ObjectPropertyType.WithOnlyDomain;
+		else if (getObjectPropertiesWithOnlyRange(sourceUri, targetUri) != null &&
+			getObjectPropertiesWithOnlyRange(sourceUri, targetUri).contains(linkUri))
+				return ObjectPropertyType.WithOnlyRange;
+		else if (getObjectPropertiesWithoutDomainAndRange() != null &&
+			getObjectPropertiesWithoutDomainAndRange().keySet().contains(linkUri))
+				return ObjectPropertyType.WithoutDomainAndRange;
+		else
+			return ObjectPropertyType.None;
+	}
+	
 	public OntologyTreeNode getClassHierarchy() {
 		return this.ontCache.getClassHierarchy();
 	}
@@ -198,6 +220,60 @@ public class OntologyManager  {
 	
 	public Label getUriLabel(String uri) {
 		return this.ontCache.getUriLabel(uri);
+	}
+	
+	public HashSet<String> getPossibleUris(String sourceUri, String targetUri) {
+
+		HashSet<String> linkUris = 
+				new HashSet<String>();
+
+		HashSet<String> objectPropertiesDirect;
+		HashSet<String> objectPropertiesIndirect;
+		HashSet<String> objectPropertiesWithOnlyDomain;
+		HashSet<String> objectPropertiesWithOnlyRange;
+		HashMap<String, Label> objectPropertiesWithoutDomainAndRange = 
+				getObjectPropertiesWithoutDomainAndRange();
+							
+//		if (targetUri.endsWith("Person") && sourceUri.endsWith("Organisation"))
+//			logger.debug("debug");
+		
+//		if (sourceUri.endsWith("Vehicle") && targetUri.endsWith("Observation") ||
+//		targetUri.endsWith("Vehicle") && sourceUri.endsWith("Observation"))
+//				logger.debug("debug");
+
+		objectPropertiesDirect = getObjectPropertiesDirect(sourceUri, targetUri);
+		if (objectPropertiesDirect != null) {
+			for (String s : objectPropertiesDirect)
+			linkUris.add(s);
+		}
+
+		objectPropertiesIndirect = getObjectPropertiesIndirect(sourceUri, targetUri);
+		if (objectPropertiesIndirect != null) {
+			for (String s : objectPropertiesIndirect)
+				linkUris.add(s);
+		}		
+
+		objectPropertiesWithOnlyDomain = getObjectPropertiesWithOnlyDomain(sourceUri, targetUri);
+		if (objectPropertiesWithOnlyDomain != null) {
+			for (String s : objectPropertiesWithOnlyDomain)
+				linkUris.add(s);
+		}	
+	
+		objectPropertiesWithOnlyRange = getObjectPropertiesWithOnlyRange(sourceUri, targetUri);
+		if (objectPropertiesWithOnlyRange != null) {
+			for (String s : objectPropertiesWithOnlyRange)
+				linkUris.add(s);
+		}	
+
+		if (isSubClass(sourceUri, targetUri, true)) 
+			linkUris.add(Uris.RDFS_SUBCLASS_URI);
+		
+		if (objectPropertiesWithoutDomainAndRange != null) {
+			for (String s : objectPropertiesWithoutDomainAndRange.keySet())
+				linkUris.add(s);
+		}
+
+		return linkUris;
 	}
 	
 	/**

@@ -137,7 +137,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 
         var newInfo = [];
         newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "worksheetId"));
-        newInfo.push(getParamObject("checkHistory", true, "other"));
         info["newInfo"] = JSON.stringify(newInfo);
 
         showLoading(info["worksheetId"]);
@@ -182,7 +181,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 
         var newInfo = [];
         newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "worksheetId"));
-        newInfo.push(getParamObject("checkHistory", true, "other"));
         info["newInfo"] = JSON.stringify(newInfo);
 
         showLoading(info["worksheetId"]);
@@ -204,11 +202,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                     hideLoading(info["worksheetId"]);
                 }
         });
-    });
-
-    $("button#hideModel").click(function(){
-        optionsDiv.hide();
-        $("div#svgDiv_" + optionsDiv.data("worksheetId")).remove();
     });
 
     $("button#resetModel").click(function(){
@@ -703,7 +696,6 @@ function splitColumnByComma() {
     newInfo.push(getParamObject("worksheetId", $("td#" + selectedHNodeId).parents("div.Worksheet").attr("id"), "worksheetId"));
     newInfo.push(getParamObject("hNodeId", selectedHNodeId,"hNodeId"));
     newInfo.push(getParamObject("delimiter", inputVal, "other"));
-    newInfo.push(getParamObject("checkHistory", true, "other"));
     info["newInfo"] = JSON.stringify(newInfo);
 
     showLoading(info["worksheetId"]);

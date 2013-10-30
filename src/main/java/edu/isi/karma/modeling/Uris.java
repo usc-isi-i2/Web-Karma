@@ -30,6 +30,13 @@ public interface Uris {
 	public static final String RDFS_LABEL_URI = Namespaces.RDFS + "label";
 
 	// Karma Internal URIs
+	public static final String PLAIN_LINK_URI = Namespaces.KARMA_DEV + "plainLink"; 
+//	public static final String OBJECT_PROPERTY_DIRECT_LINK_URI = Namespaces.KARMA_DEV + "objectPropertyDirectLink"; 
+//	public static final String OBJECT_PROPERTY_INDIRECT_LINK_URI = Namespaces.KARMA_DEV + "objectPropertyIndirectLink"; 
+//	public static final String OBJECT_PROPERTY_WITH_ONLY_DOMAIN_LINK_URI = Namespaces.KARMA_DEV + "objectPropertyWithOnlyDomainLink"; 
+//	public static final String OBJECT_PROPERTY_WITH_ONLY_RANGE_LINK_URI = Namespaces.KARMA_DEV + "objectPropertyWithOnlyRangeLink"; 
+//	public static final String OBJECT_PROPERTY_WITHOUT_DOMAIN_AND_RANGE_LINK_URI = Namespaces.KARMA_DEV + "objectPropertyWithoutDomainAndRangeLink"; 
+	
 	public static final String CLASS_INSTANCE_LINK_URI = Namespaces.KARMA_DEV + "classLink"; 
 	public static final String COLUMN_SUBCLASS_LINK_URI = Namespaces.KARMA_DEV + "columnSubClassOfLink"; 
 	public static final String DATAPROPERTY_OF_COLUMN_LINK_URI = Namespaces.KARMA_DEV + "dataPropertyOfColumnLink";
@@ -59,7 +66,6 @@ public interface Uris {
 	public static final String KM_STEINER_TREE_ROOT_NODE = Namespaces.KARMA_DEV + "steinerTreeRootNode";
 	public static final String KM_SOURCE_NAME_URI = Namespaces.KARMA_DEV + "sourceName";
 	public static final String KM_HAS_TRIPLES_MAP_URI = Namespaces.KARMA_DEV + "hasTriplesMap";
-	public static final String KM_HAS_TRANSFORMATION_URI = Namespaces.KARMA_DEV + "hasColumnTransformation";
 	public static final String KM_HAS_WORKSHEET_HISTORY_URI = Namespaces.KARMA_DEV + "hasWorksheetHistory";
 	public static final String KM_MODEL_PUBLICATION_TIME_URI = Namespaces.KARMA_DEV + "modelPublicationTime";
 	
