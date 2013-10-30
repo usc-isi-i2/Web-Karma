@@ -409,8 +409,6 @@ public class SemanticTypeUtil {
 		}
 		for (String removeLabel : removeLabels) {
 			int idx = labels.indexOf(removeLabel);
-//			System.out.println("Removing " + removeLabel);
-//			logger.info("Removing " + removeLabel);
 			labels.remove(removeLabel);
 			scores.remove(idx);
 		}

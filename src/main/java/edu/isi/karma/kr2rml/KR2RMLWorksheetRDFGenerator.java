@@ -177,7 +177,6 @@ public class KR2RMLWorksheetRDFGenerator {
 	public void generateTriplesForCell(Node node, Set<String> existingTopRowTriples, 
 			String hNodeId, Set<String> predicatesCovered, 
 			Map<String, ReportMessage> predicatesFailed, Set<String> predicatesSuccessful) {
-		//Map<String, String> columnValues = node.getColumnValues();
 		List<PredicateObjectMap> pomList = this.auxInfo.getHNodeIdToPredObjLinks().get(hNodeId);
 		if (pomList == null || pomList.isEmpty())
 			return;
