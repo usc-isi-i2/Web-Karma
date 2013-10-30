@@ -115,15 +115,6 @@ public class ShowModelCommand extends WorksheetCommand {
 					"Error occured while generating the model for the source."));
 		}
 
-		// Create column nodes for the alignment
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
-			HNode node = path.getLeaf();
-			// TODO: adding list of CRF semantic types
-			alignment.addColumnNode(node.getId(), node.getColumnName(), "", null);
-		}
-
 		return c;
 	}
 

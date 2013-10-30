@@ -98,7 +98,7 @@ public class ServiceModel {
 	public void print() {
 		System.out.println(this.getServiceName());
 		System.out.println();
-		GraphUtil.printGraphSimple(this.model);
+		System.out.println(GraphUtil.graphToString(this.model));
 		System.out.println();
 	}
 

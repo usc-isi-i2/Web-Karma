@@ -51,17 +51,17 @@ public abstract class WorksheetCommand extends Command {
 	{
 		return AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, workspace.getOntologyManager());
 	}
-	private void computeSemanticTypesSuggestions(Workspace workspace, Alignment alignment)
+	private void computeSemanticTypesSuggestions(Workspace workspace)
 	{
 		// Compute the semantic type suggestions
 		SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(worksheetId), workspace
-				.getCrfModelHandler(), workspace.getOntologyManager(), alignment);
+				.getCrfModelHandler(), workspace.getOntologyManager());
 	}
 	// TODO break this method up.  
 	public UpdateContainer computeAlignmentAndSemanticTypesAndCreateUpdates(Workspace workspace)
 	{
 		Alignment alignment = getAlignmentOrCreateIt(workspace);
-		computeSemanticTypesSuggestions(workspace, alignment);
+		computeSemanticTypesSuggestions(workspace);
 		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);
 	}
 }

@@ -554,7 +554,7 @@ public class Alignment implements OntologyUpdateListener {
 		}
 
 		logger.debug("*** steiner tree before post processing step ***");
-		GraphUtil.printGraphSimple(tree);
+		logger.info(GraphUtil.graphToString(this.steinerTree));
 //		logger.debug("selecting a root for the tree ...");
 		TreePostProcess treePostProcess = new TreePostProcess(this.graphBuilder, tree, 
 				getLinksByStatus(LinkStatus.ForcedByUser), this.graphBuilder.getThingNode());
@@ -563,7 +563,7 @@ public class Alignment implements OntologyUpdateListener {
 		this.root = treePostProcess.getRoot();
 
 		logger.debug("*** steiner tree after post processing step ***");
-		GraphUtil.printGraphSimple(this.steinerTree);
+		logger.info(GraphUtil.graphToString(this.steinerTree));
 
 		long elapsedTimeMillis = System.currentTimeMillis() - start;
 		float elapsedTimeSec = elapsedTimeMillis/1000F;

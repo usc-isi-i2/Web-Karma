@@ -618,7 +618,7 @@ public class Approach1 {
 		DirectedWeightedMultigraph<Node, Link> tree = 
 				(DirectedWeightedMultigraph<Node, Link>)GraphUtil.asDirectedGraph(steinerTree.getSteinerTree());
 		
-		GraphUtil.printGraphSimple(tree);
+		logger.info(GraphUtil.graphToString(tree));
 		
 		long steinerTreeElapsedTimeMillis = System.currentTimeMillis() - start;
 		logger.info("total number of nodes in steiner tree: " + tree.vertexSet().size());
