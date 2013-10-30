@@ -20,16 +20,12 @@
  ******************************************************************************/
 package edu.isi.karma.rep.cleaning;
 
-import java.util.Vector;
-
 import edu.isi.karma.cleaning.InterpreterType;
 import edu.isi.karma.cleaning.ProgramRule;
 
 
 
 public class RamblerTransformation implements Transformation {
-
-	private Vector<String> rules = new Vector<String>();
 	public String signature = "";
 	private ProgramRule prog;
 	public RamblerTransformation(ProgramRule prog)

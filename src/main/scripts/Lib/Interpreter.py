@@ -10,23 +10,27 @@ from Translator import  *
 import string
 from FunctionList import *
 import FunctionList
+import sys
 class Interpreter(InterpreterType):
     def __init__(self, script):
-          trans = Translator(script)
-          self.script=trans.translate(script) 
+	sys.setdefaultencoding("utf-8")
+        trans = Translator(script)
+        self.script=trans.translate(script) 
     def func(self,name,paramlist):
         if name == "h":
             print "hello world"
     def execute(self,value):
         value = value.encode("utf-8","ignore")
+	value = value.decode("utf-8")
         FunctionList.Function_Debug = False;
         value = eval(self.script)
-        return str(value)
+	return str(value).decode("utf-8")
     def execute_debug(self,value):
         FunctionList.Function_Debug = True;
         value = value.encode("utf-8","ignore")
+	value = value.decode("utf-8")
         value = eval(self.script)
-        return str(value) 
+        return str(value).decode("utf-8")
 
 if __name__ == "__main__":
     s = "1 normandie ave, Los angels"

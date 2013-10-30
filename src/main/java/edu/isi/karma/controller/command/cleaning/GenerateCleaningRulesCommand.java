@@ -20,8 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.cleaning;
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,12 +33,13 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVReader;
-import edu.isi.karma.cleaning.ConfigParameters;
-import edu.isi.karma.cleaning.DataCollection;
 import edu.isi.karma.cleaning.ExampleSelection;
+import edu.isi.karma.cleaning.ProgramRule;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
+import edu.isi.karma.cleaning.UtilTools;
+import edu.isi.karma.cleaning.Research.ConfigParameters;
+import edu.isi.karma.cleaning.Research.DataCollection;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.update.CleaningResultUpdate;
@@ -55,7 +54,6 @@ import edu.isi.karma.rep.cleaning.RamblerTransformationOutput;
 import edu.isi.karma.rep.cleaning.RamblerValueCollection;
 import edu.isi.karma.rep.cleaning.TransformationExample;
 import edu.isi.karma.rep.cleaning.ValueCollection;
-
 public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	final String hNodeId;
 	private Vector<TransformationExample> examples;
@@ -115,7 +113,6 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 
 	private String getBestExample(HashMap<String, String[]> xHashMap,
 			HashMap<String, Vector<String[]>> expFeData) {
-		String ID = "";
 		ExampleSelection es = new ExampleSelection();
 		es.inite(xHashMap, expFeData);
 		return es.Choose();
@@ -166,7 +163,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	}
 
 	public void StringColorCode(String org, String res,
-			HashMap<String, String> dict) {
+			HashMap<String, String> dict) throws Exception{
 		int segmentCnt = 0;
 		Vector<int[]> allUpdates = new Vector<int[]>();
 		String pat = "((?<=\\{_L\\})|(?=\\{_L\\}))";
@@ -258,13 +255,12 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 	}
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		Worksheet wk = workspace.getFactory().getWorksheet(worksheetId);
-		String Msg = String.format("Gen rule start,Time:%d, Worksheet:%s",System.currentTimeMillis(),worksheetId);
-		logger.info(Msg);
+		Worksheet wk = workspace.getWorksheet(worksheetId);
+		String msg = String.format("Gen rule start,Time,%d, Worksheet,%s",System.currentTimeMillis(),worksheetId);
+		logger.info(msg);
 		// Get the HNode
 		HashMap<String, String> rows = new HashMap<String, String>();
 		HashMap<String, Integer> amb = new HashMap<String, Integer>();
-		boolean firstCol = true;
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = wk.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {
@@ -290,8 +286,18 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		boolean results = false;
 		int iterNum = 0;
 		RamblerTransformationOutput rtf = null;
-
-		long time1 = System.currentTimeMillis();
+		// initialize the vocabulary
+		Iterator<String> iterx = inputs.getInputValues().getValues().iterator();
+		Vector<String> v = new Vector<String>();
+		int vb_cnt = 0;
+		while(iterx.hasNext() && vb_cnt < 30)
+		{
+			String eString = iterx.next();
+			v.add(eString);
+			vb_cnt ++;
+		}
+		Vector<String> vob = UtilTools.buildDict(v);
+		ProgramRule.setVocb(vob);
 		while (iterNum < 1 && !results) // try to find an program within iterNum
 		{
 			rtf = new RamblerTransformationOutput(inputs);
@@ -300,9 +306,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			}
 			iterNum++;
 		}
-		long time2 = System.currentTimeMillis();
 		Iterator<String> iter = rtf.getTransformations().keySet().iterator();
-		long time6 = 0, time7 = 0;
 		// id:{org: tar: orgdis: tardis: }
 		HashMap<String, HashMap<String, String>> resdata = new HashMap<String, HashMap<String, String>>();
 		HashSet<String> keys = new HashSet<String>();
@@ -325,9 +329,22 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 				String dummyValue = pretar;
 				if(pretar.indexOf("_FATAL_ERROR_")!= -1)
 				{
-					dummyValue = org;
+					//dummyValue = org;
+					dummyValue = "#ERROR";
 				}
-				this.StringColorCode(org, dummyValue, dict);
+				try
+				{
+					UtilTools.StringColorCode(org, dummyValue, dict);
+				}
+				catch(Exception ex)
+				{
+					logger.info(String.format("ColorCoding Exception%s, %s", org,dummyValue));
+					//set dict 
+					dict.put("Org", org);
+					dict.put("Tar", "ERROR");
+					dict.put("Orgdis", org);
+					dict.put("Tardis", "ERROR");
+				}
 				for (TransformationExample exp : examples) {
 					if (exp.getNodeId().compareTo(key) == 0) {
 						if (!expFeData.containsKey(classLabel)) {
@@ -353,6 +370,8 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			if(!rtf.nullRule)
 				keys.add(getBestExample(xyzHashMap, expFeData));
 			long _time7 = System.currentTimeMillis();
+			long time6 = 0;
+			long time7 = 0;
 			time6 += _time6 - _time5;
 			time7 = _time7 - _time6;
 		}
@@ -378,8 +397,8 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		{
 			recmd = ""; 
 		}
-		Msg = String.format("Gen rule end, Time:%d, Worksheet:%s,Examples:%s,Recmd:%s",System.currentTimeMillis(),worksheetId,expstr,recmd);
-		logger.info(Msg);
+		msg = String.format("Gen rule end, Time,%d, Worksheet,%s,Examples:%s,Recmd:%s",System.currentTimeMillis(),worksheetId,expstr,recmd);
+		logger.info(msg);
 		return new UpdateContainer(new CleaningResultUpdate(hNodeId, resdata,
 				vars, keys));
 	}
@@ -449,18 +468,9 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		Iterator<String> iditer = dicts.keySet().iterator();
 		while (iditer.hasNext()) {
 			String id = iditer.next();
-			int amb = dicts.get(id);
 			HashMap<String, Integer> hm = values.get(id);
 			int div = 0;
-			int squrecnt = 0;
-			Iterator<String> iters = hm.keySet().iterator();
-			while (iters.hasNext()) {
-				String value = iters.next();
-				squrecnt += Math.pow(hm.get(value), 2);
-			}
 			div = hm.keySet().size();
-			// double entro = squrecnt*1.0/div;
-			// double score = amb*1.0/entro;
 			double score = div;
 			if (topK.keySet().size() < topKsize && div > 1) {
 				topK.put(id, score);
@@ -477,14 +487,15 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 		}
 		return topK;
 	}
-
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public static void main(String[] args) {
+	/* save for future use
+	 * public static void main(String[] args) {
+	 *
 		String dirpath = "/Users/bowu/Research/testdata/TestSingleFile";
 		File nf = new File(dirpath);
 		File[] allfiles = nf.listFiles();
@@ -547,5 +558,5 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 				logger.error("" + ex.toString());
 			}
 		}
-	}
+	}*/
 }

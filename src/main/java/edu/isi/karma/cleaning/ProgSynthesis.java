@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Vector;
 
+import edu.isi.karma.cleaning.Research.ConfigParameters;
+
 public class ProgSynthesis {
 	public static int time_limit = 20;
 	Vector<Vector<TNode>> orgVector = new Vector<Vector<TNode>>();
@@ -42,6 +44,7 @@ public class ProgSynthesis {
 		} else {
 			for (int j = 0; j < p.size(); j++) {
 				for (int i = 0; i < curleng; i++) {
+					@SuppressWarnings("unchecked")
 					Vector<Integer> x = (Vector<Integer>) p.get(j).clone();
 					x.add(i);
 					qVector.add(x);
@@ -69,7 +72,6 @@ public class ProgSynthesis {
 		}
 		return validCnt;
 	}
-
 	public Vector<Partition> initePartitions() {
 		Vector<Partition> pars = new Vector<Partition>();
 		// inite partition for each example
@@ -209,7 +211,15 @@ public class ProgSynthesis {
 					return "NO_CLASIF";
 				}
 				InterpreterType worker = p.getWorkerForClass(labelString);
-				String s2 = worker.execute(s1);
+				String s2 = "";
+				try
+				{
+					s2 = new String(worker.execute(s1).getBytes(), "UTF-8");
+				}
+				catch(Exception e)
+				{
+					return "DECODE_ERROR";
+				}
 				String s3 = UtilTools.print(px.tarNodes.get(i));
 				if (s3.compareTo(s2) != 0) {
 					return labelString;
