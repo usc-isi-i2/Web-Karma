@@ -315,6 +315,7 @@ and related projects, please see: http://www.isi.edu/integration
 						}
 					}
 				});
+                $('#sparql_end_point_link').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/');
 			});
 		</script>
 		<script type="text/javascript">
@@ -333,6 +334,7 @@ and related projects, please see: http://www.isi.edu/integration
             <ul class="karma-header-links">
               <li><a target="_blank" href="https://github.com/InformationIntegrationGroup/Web-Karma/wiki">User Guide</a></li>
               <li><a target="_blank" href="http://isi.edu/integration/karma">Karma Home</a></li>
+              <li><a target="_blank" href="" id="sparql_end_point_link">Sparql Endpoint</a></li>
             </ul>
         </div>
 		<table id="topMenuBar">
@@ -802,7 +804,6 @@ and related projects, please see: http://www.isi.edu/integration
                     <tr>
                         <td><label for="rdfSPAQRLEndPoint">SPARQL End Point</label></td>
                         <td><input type="url" id="rdfSPAQRLEndPoint" required value="" style="width:100%" /> 
-                            <br /><a style="color: blue; float:right" id="rdfBrowseRepo" target="_blank" href="">Browse</a>
                         </td>
                     </tr>
                     <tr> <td colspan="2"> &nbsp;</td> </tr>
@@ -886,7 +887,6 @@ and related projects, please see: http://www.isi.edu/integration
                 <table>
                     <tr><td>SPARQL End Point</td></tr>
                     <tr><td><input type="url" id="txtR2RML_URL" value="" size="65" required/></td></tr>
-                    <tr><td> <a style="color: blue; float:right" id="browseRepo" target="_blank" href="">Browse</a> </td></tr>
                 </table> 
             </span>
             <br />
@@ -896,7 +896,6 @@ and related projects, please see: http://www.isi.edu/integration
                 <table>
                     <tr><td>SPARQL End Point</td></tr>
                     <tr><td><input type="text" id="txtR2RML_URL_fetch" value="" size="65"/></td></tr>
-                    <tr><td> <a style="color: blue; float:right" id="browseRepo_fetch" target="_blank" href="">Browse</a> </td></tr>
                 </table> 
             </span>
             <br />
