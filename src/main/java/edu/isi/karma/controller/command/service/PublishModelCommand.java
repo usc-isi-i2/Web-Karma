@@ -100,9 +100,11 @@ public class PublishModelCommand extends Command{
 		String alignmentId = mgr.constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment al = mgr.getAlignment(alignmentId);
 		
-		/**
-		 * 
-		 */
+		// ****************************************************************
+		// ****************************************************************
+		// mohsen: please ignore this part of the code, this is for my own test!
+		// ****************************************************************
+		// ****************************************************************
 		// FIXME
 		String exportDir = Params.JGRAPHT_DIR;
 		try {
@@ -112,9 +114,13 @@ public class PublishModelCommand extends Command{
 			}
 			GraphUtil.serialize(al.getSteinerTree(), exportDir + name + ".main.jgraph");
 		} catch (Exception e1) {
-			logger.error("Ignore this error message. this is just for my own test!");
-			e1.printStackTrace();
+//			logger.error("Ignore this error message. this is just for my own test!");
+//			e1.printStackTrace();
 		}
+		// ****************************************************************
+		// ****************************************************************
+		// ****************************************************************
+		// ****************************************************************
 		
 		if (al == null) { 
 			logger.error("The alignment model is null.");

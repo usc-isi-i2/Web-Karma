@@ -21,6 +21,7 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -219,7 +220,10 @@ public class GenerateR2RMLModelCommand extends Command {
 			KR2RMLMappingGenerator mappingGen, Worksheet worksheet, String modelFileLocalPath) 
 					throws RepositoryException, FileNotFoundException, 
 							UnsupportedEncodingException, JSONException {
-		PrintWriter writer = new PrintWriter(modelFileLocalPath, "UTF-8");
+		File f = new File(modelFileLocalPath);
+		File parentDir = f.getParentFile();
+		parentDir.mkdirs();
+		PrintWriter writer = new PrintWriter(f, "UTF-8");
 		WorksheetModelWriter modelWriter = new WorksheetModelWriter(writer, 
 				workspace.getFactory(), ontMgr, worksheet.getTitle());
 

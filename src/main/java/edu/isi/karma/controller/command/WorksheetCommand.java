@@ -59,7 +59,7 @@ public abstract class WorksheetCommand extends Command {
 		Alignment alignment = getAlignmentOrCreateIt(workspace);
 		// Compute the semantic type suggestions
 		SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(worksheetId), workspace
-				.getCrfModelHandler(), workspace.getOntologyManager(), alignment, path);
+				.getCrfModelHandler(), workspace.getOntologyManager(), path);
 		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);
 	}
 		
@@ -69,7 +69,7 @@ public abstract class WorksheetCommand extends Command {
 		Alignment alignment = getAlignmentOrCreateIt(workspace);
 		// Compute the semantic type suggestions
 		SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(worksheetId), workspace
-				.getCrfModelHandler(), workspace.getOntologyManager(), alignment);
+				.getCrfModelHandler(), workspace.getOntologyManager());
 		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);
 	}
 }

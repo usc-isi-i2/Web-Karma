@@ -161,7 +161,6 @@ public class DataSourcePublisher extends SourcePublisher {
 			}
 			addModelPart(model, my_source, this.source.getModel());
 		}
-		
 		// Add source information if any present
 		if(sourceInfo != null) {
 			Map<InfoAttribute, String> attributeValueMap = sourceInfo.getAttributeValueMap();

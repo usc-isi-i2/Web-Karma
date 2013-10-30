@@ -228,7 +228,7 @@ public class Test {
 
 //		GraphUtil.printGraphSimple(alignment.getSteinerTree());
 		steinerTree = alignment.getSteinerTree();
-		GraphUtil.printGraphSimple(alignment.getSteinerTree());
+		System.out.println(GraphUtil.graphToString(alignment.getSteinerTree()));
 		return steinerTree;
 	}
 	
