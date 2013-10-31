@@ -68,10 +68,11 @@ public class DisplayModel {
 		computeNodeSpan();
 		printSpans();
 		
-		updateNodeLevelsConsideringOverlaps();
+		// comment this line since GUI has problems in showing some models after resolving overlapping parts 
+//		updateNodeLevelsConsideringOverlaps();
 		
-		printLevels();
-		printSpans();
+//		printLevels();
+//		printSpans();
 		
 		logger.debug("finished leveling the model.");
 	}

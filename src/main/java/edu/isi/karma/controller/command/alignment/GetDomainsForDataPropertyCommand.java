@@ -22,7 +22,6 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.json.JSONArray;
@@ -131,7 +130,7 @@ public class GetDomainsForDataPropertyCommand extends Command {
 						
 						// Populate the graph nodes also
 						if (alignment != null) {
-							List<Node> graphNodes = alignment.getNodesByUri(domain);
+							Set<Node> graphNodes = alignment.getNodesByUri(domain);
 							if (graphNodes != null && graphNodes.size() != 0) {
 								for (Node graphNode: graphNodes) {
 									JSONObject graphNodeObj = new JSONObject();

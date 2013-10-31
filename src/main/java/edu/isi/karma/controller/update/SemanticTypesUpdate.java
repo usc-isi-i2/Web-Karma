@@ -22,7 +22,6 @@ package edu.isi.karma.controller.update;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -235,7 +234,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 
 	private Map<String, InternalNode> createDomainNodeMap() {
 		Map<String, InternalNode> hNodeIdToDomainNodeMap = new HashMap<String, InternalNode>();
-		List<Node> alignmentColumnNodes = alignment.getNodesByType(NodeType.ColumnNode);
+		Set<Node> alignmentColumnNodes = alignment.getNodesByType(NodeType.ColumnNode);
 		if (alignmentColumnNodes == null)
 			return hNodeIdToDomainNodeMap;
 		for (Node cNode : alignmentColumnNodes) {
@@ -253,7 +252,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 	}
 
 	private Map<String, ColumnNode> createColumnNodeMap() {
-		List<Node> alignmentColumnNodes = alignment.getNodesByType(NodeType.ColumnNode);
+		Set<Node> alignmentColumnNodes = alignment.getNodesByType(NodeType.ColumnNode);
 		Map<String, ColumnNode> hNodeIdToColumnNodeMap = new HashMap<String, ColumnNode>();
 		if (alignmentColumnNodes == null)
 			return hNodeIdToColumnNodeMap;
