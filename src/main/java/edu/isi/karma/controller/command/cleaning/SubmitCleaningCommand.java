@@ -150,6 +150,7 @@ public class SubmitCleaningCommand extends WorksheetCommand {
 		logger.info(Msg);
 		String colnameString = "";
 		UpdateContainer c = new UpdateContainer();
+		HNodePath selectedPath = null;
 		try
 		{
 			// obtain transformed results
@@ -167,7 +168,7 @@ public class SubmitCleaningCommand extends WorksheetCommand {
 			createAndExecuteNewAddColumnCommand(workspace, colnameString);
 			
 			ValueCollection rvco = getValueCollectionFromRamblerTranformationOutput(rtf);
-			HNodePath selectedPath = findPathForNewColumn(workspace,
+			selectedPath = findPathForNewColumn(workspace,
 					colnameString);
 			findNewHNodeIdAndHNodeAsDerived(workspace, selectedPath);
 			// create edit multiple cells command
@@ -179,10 +180,12 @@ public class SubmitCleaningCommand extends WorksheetCommand {
 			//TODO do we need to clean up?
 		}
 	
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
-		
-		/** Add the alignment update **/
-		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		if(selectedPath != null)
+		{
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+			/** Add the alignment update **/
+			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace, selectedPath));
+		}
 		
 		c.add(new InfoUpdate("Column transformation complete"));
 		return c;
@@ -322,6 +325,7 @@ public class SubmitCleaningCommand extends WorksheetCommand {
 		currentTable.removeHNode(newHNodeId, worksheet);
 
 		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		// TODO is it necessary to compute alignment and semantic types for everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

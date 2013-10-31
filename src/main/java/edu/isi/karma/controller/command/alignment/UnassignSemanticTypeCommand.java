@@ -107,7 +107,13 @@ public class UnassignSemanticTypeCommand extends Command {
 		// Remove it from the alignment
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 		if (columnNode != null) {
-			Link currentLink = alignment.getCurrentIncomingLinksToNode(columnNode.getId()).iterator().next();
+			Set<Link> links =  alignment.getCurrentIncomingLinksToNode(columnNode.getId());
+			if(links == null)
+			{
+				logger.error("No semantic type to unassign!");
+				return new UpdateContainer(new ErrorUpdate("No semantic type to unassign!"));
+			}
+			Link currentLink = links.iterator().next();
 //			String domainNodeId = currentLink.getSource().getId();
 			// Remove the existing link
 			alignment.removeLink(currentLink.getId());

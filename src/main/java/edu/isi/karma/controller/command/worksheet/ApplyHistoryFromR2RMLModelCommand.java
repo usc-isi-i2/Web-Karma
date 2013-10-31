@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
+import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -84,15 +84,16 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(
-				worksheetId, workspace);
+
 		try {
 			String historyStr = extractHistoryFromModel();
 			if (historyStr.isEmpty()) {
 				return new UpdateContainer(new ErrorUpdate("No history found in R2RML Model!"));
 			}
 			JSONArray historyJson = new JSONArray(historyStr);
-			histReader.readAndExecuteAllCommands(historyJson);
+			WorksheetCommandHistoryExecutor histExecutor = new WorksheetCommandHistoryExecutor(
+					worksheetId, workspace);
+			histExecutor.executeAllCommands(historyJson);
 		} catch (Exception e) {
 			String msg = "Error occured while applying history!";
 			logger.error(msg, e);

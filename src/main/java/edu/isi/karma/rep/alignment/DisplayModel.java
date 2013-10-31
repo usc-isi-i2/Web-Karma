@@ -70,8 +70,8 @@ public class DisplayModel {
 		
 		updateNodeLevelsConsideringOverlaps();
 		
-		printLevels();
-		printSpans();
+//		printLevels();
+//		printSpans();
 		
 		logger.debug("finished leveling the model.");
 	}
@@ -380,7 +380,7 @@ public class DisplayModel {
 			
 			if (k >= maxLevel) break;
 			
-			Node nodeWithMaxDegree = null, nodeWithMaxOverlap = null;
+			Node nodeWithMaxDegree = null, nodeWithMinOverlap = null;
 			while (true) { // until there is a direct link between two nodes in the same level
 				
 				Set<Node> nodes = levelToNodes.get(k);
@@ -392,7 +392,7 @@ public class DisplayModel {
 				
 				int sumOfIntraLinks = 0, sumOfOverlaps = 0; 
 				int d = 0, overlap = 0;
-				int maxDegree = -1, maxOverlap = -1;
+				int maxDegree = -1, minOverlap = Integer.MAX_VALUE;
 				
 				for (Node u : nodes) {
 					
@@ -410,11 +410,16 @@ public class DisplayModel {
 						nodeWithMaxDegree = u;
 					}
 					
-					overlap = nodesOverlap.get(u);
+					overlap = nodesOverlap.get(u); // move the node with minimum number of overlaps (probably higher span) to the next level
 					sumOfOverlaps += overlap;
-					if (overlap > maxOverlap) {
-						maxOverlap = overlap;
-						nodeWithMaxOverlap = u;
+					if (overlap < minOverlap || 
+							(overlap == minOverlap && 
+							this.nodesSpan.get(u) != null &&
+							this.nodesSpan.get(nodeWithMinOverlap) != null && 
+							this.nodesSpan.get(u).size() < this.nodesSpan.get(nodeWithMinOverlap).size())
+						) {
+						minOverlap = overlap;
+						nodeWithMinOverlap = u;
 					}
 				}
 				
@@ -431,9 +436,9 @@ public class DisplayModel {
 					levelToNodes.get(k + 1).add(nodeWithMaxDegree);
 				} else 	{
 					// moving nodeWithMaxDegree to the next level 
-					nodesLevel.put(nodeWithMaxOverlap, k + 1);
-					levelToNodes.get(k).remove(nodeWithMaxOverlap);
-					levelToNodes.get(k + 1).add(nodeWithMaxOverlap);
+					nodesLevel.put(nodeWithMinOverlap, k + 1);
+					levelToNodes.get(k).remove(nodeWithMinOverlap);
+					levelToNodes.get(k + 1).add(nodeWithMinOverlap);
 				}
 			}
 			

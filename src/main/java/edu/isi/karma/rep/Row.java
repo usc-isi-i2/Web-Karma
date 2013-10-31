@@ -32,7 +32,7 @@ import java.util.Map;
  * @author szekely
  * 
  */
-public class Row extends RepEntity {
+public class Row extends RepEntity implements Neighbor{
 	// My nodes, columns containing cells or nested tables, a map from HNode ids
 	// to Node.
 	private final Map<String, Node> nodes = new HashMap<String, Node>();
@@ -205,5 +205,41 @@ public class Row extends RepEntity {
 				}
 			}
 		}
+	}
+
+	@Override
+	public boolean canReachNeighbor(String hNodeId) {
+		
+		return nodes.containsKey(hNodeId) || 
+				(belongsToTable.getNestedTableInNode() != null && belongsToTable.getNestedTableInNode().canReachNeighbor(hNodeId));
+	}
+
+	@Override
+	public Node getNeighbor(String hNodeId) {
+		if(nodes.containsKey(hNodeId))
+		{
+			return nodes.get(hNodeId);
+		}
+		else if(belongsToTable.getNestedTableInNode() != null)
+		{
+			return belongsToTable.getNestedTableInNode().getNeighbor(hNodeId);
+		}
+		return null;
+	}
+
+	@Override
+	public Node getNeighborByColumnName(String columnName, RepFactory factory) {
+		String hTableId = belongsToTable.getHTableId();
+		HTable hTable = factory.getHTable(hTableId);
+		String hNodeId = hTable.getHNodeIdFromColumnName(columnName);
+		if(null != hNodeId)
+		{
+			return getNeighbor(hNodeId);
+		}
+		else if(belongsToTable.getNestedTableInNode() != null)
+		{
+			return belongsToTable.getNestedTableInNode().getNeighborByColumnName(columnName, factory);
+		}
+		return null;
 	}
 }

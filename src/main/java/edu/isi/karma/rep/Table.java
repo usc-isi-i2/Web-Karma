@@ -164,38 +164,40 @@ public class Table extends RepEntity {
 	 *            Collection of nodes that satisfy the path
 	 */
 	public void collectNodes(HNodePath path, Collection<Node> nodes) {
-		if (nodes == null)
+		if (nodes == null) {
 			nodes = new ArrayList<Node>();
+		}
 		collectNodes(path, nodes, rows);
 	}
 
 	private void collectNodes(HNodePath path, Collection<Node> nodes,
 			List<Row> rows) {
 		RowIterator: for (Row r : rows) {
-			Collection<Node> nodesInRow = r.getNodes();
 
-			for (Node n : nodesInRow) {
-				if (n.getHNodeId().equals(path.getFirst().getId())) {
-					// Check if the path has only one HNode
-					if (path.getRest() == null || path.getRest().isEmpty()) {
-						nodes.add(n);
-						continue RowIterator;
-					}
+			Node n = r.getNode(path.getFirst().getId());
+			if (n == null) {
+				continue RowIterator;
+			}
+			// Check if the path has only one HNode
+			if (path.getRest() == null || path.getRest().isEmpty()) {
+				nodes.add(n);
+				continue RowIterator;
+			}
 
-					// Check if the node has a nested table
-					if (n.hasNestedTable()) {
-						int numRows = n.getNestedTable().getNumRows();
-						if (numRows == 0)
-							continue RowIterator;
+			// Check if the node has a nested table
+			if (n.hasNestedTable()) {
+				int numRows = n.getNestedTable().getNumRows();
+				if (numRows == 0)
+					continue RowIterator;
 
-						List<Row> rowsNestedTable = n.getNestedTable().getRows(
-								0, numRows);
-						if (rowsNestedTable != null
-								&& rowsNestedTable.size() != 0)
-							collectNodes(path.getRest(), nodes, rowsNestedTable);
-					}
+				List<Row> rowsNestedTable = n.getNestedTable().getRows(0,
+						numRows);
+				if (rowsNestedTable != null && rowsNestedTable.size() != 0) {
+					collectNodes(path.getRest(), nodes, rowsNestedTable);
+					continue RowIterator;
 				}
 			}
+
 		}
 	}
 

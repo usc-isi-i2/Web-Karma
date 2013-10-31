@@ -140,7 +140,7 @@ public class OntologyHierarchyUpdate extends AbstractUpdate {
 
 	private void addSteinerTreeNodes(OntologyTreeNode node, JSONArray childrenArray, Set<String> steinerTreeNodeIds) throws JSONException {
 		String nodeUri = node.getLabel().getUri();
-		List<Node> graphNodes = alignment.getNodesByUri(nodeUri);
+		Set<Node> graphNodes = alignment.getNodesByUri(nodeUri);
 		if (graphNodes != null && !graphNodes.isEmpty()) {
 			for (Node graphNode : graphNodes) {
 				if (steinerTreeNodeIds.contains(graphNode.getId())) {

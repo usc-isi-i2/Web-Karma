@@ -126,11 +126,11 @@ public class Alignment implements OntologyUpdateListener {
 		return this.graphBuilder.getIdToNodeMap().get(nodeId);
 	}
 	
-	public List<Node> getNodesByUri(String uriString) {
+	public Set<Node> getNodesByUri(String uriString) {
 		return this.graphBuilder.getUriToNodesMap().get(uriString);
 	}
 	
-	public List<Node> getNodesByType(NodeType type) {
+	public Set<Node> getNodesByType(NodeType type) {
 		return this.graphBuilder.getTypeToNodesMap().get(type);
 	}
 	
@@ -138,15 +138,15 @@ public class Alignment implements OntologyUpdateListener {
 		return this.graphBuilder.getIdToLinkMap().get(linkId);
 	}
 	
-	public List<Link> getLinksByUri(String uriString) {
+	public Set<Link> getLinksByUri(String uriString) {
 		return this.graphBuilder.getUriToLinksMap().get(uriString);
 	}
 	
-	public List<Link> getLinksByType(LinkType type) {
+	public Set<Link> getLinksByType(LinkType type) {
 		return this.graphBuilder.getTypeToLinksMap().get(type);
 	}
 	
-	public List<Link> getLinksByStatus(LinkStatus status) {
+	public Set<Link> getLinksByStatus(LinkStatus status) {
 		return this.graphBuilder.getStatusToLinksMap().get(status);
 	}
 
@@ -460,14 +460,14 @@ public class Alignment implements OntologyUpdateListener {
 			return;
 		
 		// Change the status of previously preferred links to normal
-		List<Link> linksInPreviousTree = this.getLinksByStatus(LinkStatus.PreferredByUI);
+		Set<Link> linksInPreviousTree = this.getLinksByStatus(LinkStatus.PreferredByUI);
 		if (linksInPreviousTree != null) {
 			Link[] links = linksInPreviousTree.toArray(new Link[0]);
 			for (Link link : links)
 				this.graphBuilder.changeLinkStatus(link, LinkStatus.Normal);
 		}
 		
-		List<Link> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
+		Set<Link> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
 		for (Link link: this.steinerTree.edgeSet()) {
 			if (linksForcedByUser == null || !linksForcedByUser.contains(link)) {
 				this.graphBuilder.changeLinkStatus(link, LinkStatus.PreferredByUI);
@@ -481,7 +481,7 @@ public class Alignment implements OntologyUpdateListener {
 		List<Node> steinerNodes = new ArrayList<Node>();
 		
 		// Add column nodes and their domain
-		List<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
+		Set<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
 		if (columnNodes != null) {
 			for (Node n : columnNodes) {
 				if (!(n instanceof ColumnNode)) continue;
@@ -498,7 +498,7 @@ public class Alignment implements OntologyUpdateListener {
 		}
 
 		// Add source and target of the links forced by the user
-		List<Link> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
+		Set<Link> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
 		if (linksForcedByUser != null) {
 			for (Link link : linksForcedByUser) {
 				
@@ -554,7 +554,7 @@ public class Alignment implements OntologyUpdateListener {
 		}
 
 		logger.debug("*** steiner tree before post processing step ***");
-		GraphUtil.printGraphSimple(tree);
+		logger.info(GraphUtil.graphToString(this.steinerTree));
 //		logger.debug("selecting a root for the tree ...");
 		TreePostProcess treePostProcess = new TreePostProcess(this.graphBuilder, tree, 
 				getLinksByStatus(LinkStatus.ForcedByUser), this.graphBuilder.getThingNode());
@@ -563,7 +563,7 @@ public class Alignment implements OntologyUpdateListener {
 		this.root = treePostProcess.getRoot();
 
 		logger.debug("*** steiner tree after post processing step ***");
-		GraphUtil.printGraphSimple(this.steinerTree);
+		logger.info(GraphUtil.graphToString(this.steinerTree));
 
 		long elapsedTimeMillis = System.currentTimeMillis() - start;
 		float elapsedTimeSec = elapsedTimeMillis/1000F;

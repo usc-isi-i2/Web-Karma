@@ -22,6 +22,9 @@
  */
 package edu.isi.karma.imp.database;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
@@ -34,8 +37,7 @@ import edu.isi.karma.rep.metadata.SourceInformation.InfoAttribute;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
 import edu.isi.karma.util.JDBCUtilFactory;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import edu.isi.karma.webserver.KarmaException;
 
 public class DatabaseTableImport extends Import {
 
@@ -63,14 +65,19 @@ public class DatabaseTableImport extends Import {
 
 
     @Override
-    public Worksheet generateWorksheet() throws SQLException, ClassNotFoundException {
+    public Worksheet generateWorksheet() throws KarmaException {
         /**
          * Get the data from the database table *
          */
         AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
         // TODO Limiting the number of rows to 1000 for now to avoid all data in memory
-        ArrayList<ArrayList<String>> data = dbUtil.getDataForLimitedRows(dbType, hostname,
-                portnumber, username, password, tableName, dBorSIDName, 100);
+        ArrayList<ArrayList<String>> data;
+		try {
+			data = dbUtil.getDataForLimitedRows(dbType, hostname,
+			        portnumber, username, password, tableName, dBorSIDName, 100);
+		} catch (SQLException | ClassNotFoundException e) {
+			throw new KarmaException("Unable to get data for limited rows " + e.getLocalizedMessage());
+		}
         return generateWorksheet(dbUtil, data);
     }
 

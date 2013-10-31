@@ -468,7 +468,7 @@ public class Approach2 {
 	private void addDataPropertyLinksToDataNodes(String domainUri, String propertyUri, Node dataNode) {
 		
 		// add dataproperty to existing classes if sl is a data node mapping
-		List<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(domainUri);
+		Set<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(domainUri);
 		if (nodesWithSameUriOfDomain != null) {
 			for (Node source : nodesWithSameUriOfDomain) {
 				if (source instanceof InternalNode) {
@@ -495,7 +495,7 @@ public class Approach2 {
 
 		if (addedNodes == null) addedNodes = new HashSet<Node>();
 
-		List<Node> similarDomainsInGraph = this.graphBuilder.getUriToNodesMap().get(sl.getNodeUri());
+		Set<Node> similarDomainsInGraph = this.graphBuilder.getUriToNodesMap().get(sl.getNodeUri());
 		if (similarDomainsInGraph == null || similarDomainsInGraph.size() == 0) // domain does not exist in the graph
 			addClassSemanticLabel(new SemanticLabel(sl.getNodeUri()), addedNodes);
 		

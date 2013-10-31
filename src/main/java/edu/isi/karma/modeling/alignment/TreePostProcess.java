@@ -23,6 +23,7 @@ package edu.isi.karma.modeling.alignment;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
@@ -53,7 +54,7 @@ public class TreePostProcess {
 	public TreePostProcess(
 			GraphBuilder graphBuilder,
 			WeightedMultigraph<Node, Link> tree, 
-			List<Link> newLinks,
+			Set<Link> newLinks,
 			Node thingNode) {
 		
 		this.graphBuilder = graphBuilder;
@@ -192,7 +193,7 @@ public class TreePostProcess {
 		return tree;
 	}
 	
-	private void addLinks(List<Link> links) {
+	private void addLinks(Set<Link> links) {
 		if (links == null)
 			return;
 		
