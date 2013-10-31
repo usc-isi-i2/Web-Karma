@@ -385,9 +385,7 @@ public class GraphBuilder {
 			uriToLinksMap.put(link.getLabel().getUri(), linksWithSameUri);
 		}
 		linksWithSameUri.add(link);
-		
-		changeLinkStatus(link, link.getStatus());
-		
+				
 		Set<Link> linksWithSameType = typeToLinksMap.get(link.getType());
 		if (linksWithSameType == null) {
 			linksWithSameType = new HashSet<Link>();
@@ -395,6 +393,14 @@ public class GraphBuilder {
 		}
 		linksWithSameType.add(link);
 		
+		if (link.getStatus() != LinkStatus.Normal) {
+			Set<Link> linksWithSameStatus = statusToLinksMap.get(link.getStatus());
+			if (linksWithSameStatus == null) { 
+				linksWithSameStatus = new HashSet<Link>();
+				statusToLinksMap.put(link.getStatus(), linksWithSameStatus);
+			}
+		}
+
 		sourceToTargetLinkUris.add(key);
 		
 		logger.debug("exit>");		
@@ -403,12 +409,9 @@ public class GraphBuilder {
 	
 	public void changeLinkStatus(Link link, LinkStatus newStatus) {
 
-//		if (link.getId().equals("http://km.aifb.kit.edu/projects/d3/cruiser#Vehicle1---http://km.aifb.kit.edu/projects/d3/cruiser#at---http://www.w3.org/2003/01/geo/wgs84_pos#Point1"))
-//			logger.debug("debug3");
-		
 		LinkStatus oldStatus = link.getStatus();
-//		if (newStatus == oldStatus)
-//			return;
+		if (newStatus == oldStatus)
+			return;
 		
 		link.setStatus(newStatus);
 		
