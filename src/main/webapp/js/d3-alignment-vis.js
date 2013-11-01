@@ -163,10 +163,11 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     $(mainWorksheetDiv).data("svgVis", svg);
     $(mainWorksheetDiv).data("forceLayoutObject", force);
     
+    console.log("There are " + json["links"].length + " links, " + json["nodes"].length + " nodes");
     $.each(json["nodes"], function(index, node){
         node["fixed"] = true;
         var hNodeList = node["hNodesCovered"];
-        
+       
         var extremeLeftX = Number.MAX_VALUE;
         var extremeRightX = Number.MIN_VALUE;
         $.each(hNodeList, function(index2, hNode){
@@ -181,17 +182,79 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                     extremeRightX = rightX;
             }
         });
-
-        // Add 18 to account for the padding in cells
-        var width = extremeRightX - extremeLeftX + 18;
-        node["width"] = width;
-        node["y"] = h - ((node["height"] * levelHeight));
-        if(node["nodeType"] == "ColumnNode" || node["nodeType"] == "Unassigned")
-            node["y"] -= 5;
-        if(node["nodeType"] == "FakeRoot")
-            node["y"] += 15;
-        node["x"] = extremeLeftX + width/2;
+        
+        if(hNodeList.length != 0) {
+	        // Add 18 to account for the padding in cells
+	        var width = extremeRightX - extremeLeftX + 18;
+	        node["width"] = width;
+	        node["y"] = h - ((node["height"] * levelHeight));
+	        if(node["nodeType"] == "ColumnNode" || node["nodeType"] == "Unassigned")
+	            node["y"] -= 5;
+	        if(node["nodeType"] == "FakeRoot")
+	            node["y"] += 15;
+	        node["x"] = extremeLeftX + width/2;
+        }
     });
+    
+    
+  //Take into account where hNodesCovered is empty as this node does
+    //not anchor to anything in the table
+    
+    $.each(json["nodes"], function(index, node){
+        node["fixed"] = true;
+        var hNodeList = node["hNodesCovered"];
+        
+       console.log("Hnode:" + node["id"] + "->" + hNodeList.length);
+        if(hNodeList.length == 0) {
+        	//This node does not anchor to the table.
+        	//So, to calculate width, we need to go and get information
+        	//from the links
+        	var linkList = [];
+        	$.each(json["links"], function(index2, link) {
+        		var source = link["source"];
+        		if(typeof source == "object")
+        			source = source["index"];
+        		var target = link["target"];
+        		if(typeof target == "object")
+        			target = target["index"];
+        		
+        		if(source == index) {
+        			linkList.push(target);
+        		} else if(target == index) {
+        			linkList.push(source);
+        		}
+        	});
+       
+	        var extremeLeftX = Number.MAX_VALUE;
+	        var extremeRightX = Number.MIN_VALUE;
+	        $.each(linkList, function(index2, hNodeIdx){
+	            var nodeConnect = json["nodes"][hNodeIdx];
+	            var width = nodeConnect["width"];
+	            var x = nodeConnect["x"];
+	            //var y = nodeConnect["y"];
+	            var leftX = x - (width/2);
+	            var rightX = x + (width/2);
+	            if(leftX < extremeLeftX)
+	                extremeLeftX = leftX;
+	            if(rightX > extremeRightX)
+	                extremeRightX = rightX;
+	        });
+	        console.log("HNode:" + node["id"] + " has " + linkList.length + " links");
+	        console.log("left, right: " + extremeLeftX + ":" + extremeRightX);
+	        
+	        var width = extremeRightX - extremeLeftX + 18;
+	        node["width"] = width;
+	        node["y"] = h - ((node["height"] * levelHeight));
+	        if(node["nodeType"] == "ColumnNode" || node["nodeType"] == "Unassigned")
+	            node["y"] -= 5;
+	        if(node["nodeType"] == "FakeRoot")
+	            node["y"] += 15;
+	        node["x"] = extremeLeftX + width/2;
+	        
+	        console.log("x:" + node["x"] + ", y:" + node["y"] + ", width:" + node["width"]);
+        }
+    });
+    
     
     var force = self.force = d3.layout.force()
         .nodes(json.nodes)
