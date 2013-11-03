@@ -18,7 +18,8 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-
+span.hover { background-color: #106166; color: #fff; cursor:pointer; }
+span.page{ margin:5px;}
 table#cleaningExamplesTable {
 	border-width: 1px; 
 	border-spacing: 1px; 
@@ -56,7 +57,10 @@ table#cleaningExamplesTable button.suggestion{
    width:90px;
    background-color:#FDDDDF;
    border-style:none;
+}
 
+table#infoPanel {
+	visibility:hidden;
 }
 table#cleaningExamplesTable td.noBorder {
 	border: none;

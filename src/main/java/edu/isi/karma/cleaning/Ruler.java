@@ -156,6 +156,7 @@ public class Ruler {
 			}
 			else
 			{
+				@SuppressWarnings("unchecked")
 				Vector<TNode> tmpvec = (Vector<TNode>)this.vec.clone();
 				Collections.reverse(tmpvec);
 				int pos = Ruler.Search(tmpvec,t, 0);
