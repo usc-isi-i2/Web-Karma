@@ -63,10 +63,10 @@ public class DisplayModel {
 		this.hTable = hTable;
 		
 		levelingCyclicGraph();
-		printLevels();
+//		printLevels();
 
 		computeNodeSpan();
-		printSpans();
+//		printSpans();
 		
 		updateNodeLevelsConsideringOverlaps();
 		
@@ -188,13 +188,7 @@ public class DisplayModel {
 		
 		
 		// add all column nodes to the (last level + 1).
-		int lastLevel = 0;
-		for (k = maxLevel - 1; k > 0; k--) {
-			if (levelToNodes.get(k) != null && !levelToNodes.get(k).isEmpty()) {
-				lastLevel = k;
-				break;
-			}
-		}
+		int lastLevel = getMaxLevel(false);
 		for (Node u : this.model.vertexSet()) {
 			if (u instanceof ColumnNode)
 				nodesLevel.put(u, lastLevel + 1);
@@ -223,7 +217,7 @@ public class DisplayModel {
 		return levelToNodes;
 	}
 	
-	public int getMaxLevel() {
+	public int getMaxLevel(boolean considerColumnNodes) {
 		
 		if (this.nodesLevel == null)
 			return 0;
@@ -232,8 +226,12 @@ public class DisplayModel {
 
 		for (Entry<Node, Integer> entry : nodesLevel.entrySet()) {
 
-			if (entry.getValue().intValue() > maxLevel) {
-				maxLevel = entry.getValue().intValue();
+			if (!considerColumnNodes) {
+				if (!(entry.getKey() instanceof ColumnNode) && entry.getValue().intValue() > maxLevel) 
+					maxLevel = entry.getValue().intValue();
+			} else {
+				if (entry.getValue().intValue() > maxLevel) 
+					maxLevel = entry.getValue().intValue();
 			}
 		}
 		
@@ -255,7 +253,7 @@ public class DisplayModel {
 		
 		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes();
 		
-		int i = getMaxLevel();
+		int i = getMaxLevel(true);
 		while (i >= 0) {
 			
 			Set<Node> nodes = levelToNodes.get(i);
@@ -447,13 +445,7 @@ public class DisplayModel {
 		
 		
 		// add all column nodes to the (last level + 1).
-		int lastLevel = maxLevel;
-		for (k = maxLevel - 1; k > 0; k--) {
-			if (levelToNodes.get(k) != null && !levelToNodes.get(k).isEmpty()) {
-				lastLevel = k;
-				break;
-			}
-		}
+		int lastLevel = getMaxLevel(false);
 		for (Node u : this.model.vertexSet()) {
 			if (u instanceof ColumnNode)
 				nodesLevel.put(u, lastLevel + 1);
