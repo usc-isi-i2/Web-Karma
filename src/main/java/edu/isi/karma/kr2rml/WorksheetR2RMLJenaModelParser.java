@@ -111,13 +111,38 @@ public class WorksheetR2RMLJenaModelParser {
 		RDFNode node = model.createLiteral(sourceName);
 		ResIterator res = model.listResourcesWithProperty(sourceNameProp, node);
 		List<Resource> resList = res.toList();
+		
 		if (resList.size() > 1) {
 			throw new KarmaException("More than one resource exists with source name: " + sourceName);
 		} else if (resList.size() == 1) {
 			return resList.get(0);
-		} else 
+		} else {
+			//If we didnt find the sourceName in the model, maybe it is a different source with the
+			//same schema.
+			//Maybe we need to substitute the sourceName in the model with this one
+			NodeIterator sourceObjectIter = model.listObjectsOfProperty(sourceNameProp);
+			List<RDFNode> sourceObjects = sourceObjectIter.toList();
+			
+			if(sourceObjects.size() > 1) {
+				throw new KarmaException("More than one resource exists with source name: " + sourceName);
+			} else if(sourceObjects.size() == 1) {
+				RDFNode prevSourceObject = sourceObjects.get(0);
+				
+				//We got the previous source object, now get the Subject Node for this
+				ResIterator prevSourceSubjectsIter = model.listResourcesWithProperty(sourceNameProp, prevSourceObject);
+				List<Resource> prevSourceSubjects = prevSourceSubjectsIter.toList();
+				
+				if (prevSourceSubjects.size() == 1) {
+					Resource subject = prevSourceSubjects.get(0);
+					model.remove(subject, sourceNameProp, prevSourceObject);
+					model.add(subject, sourceNameProp, node);
+					return subject;
+				} else if(prevSourceSubjects.size() > 1) {
+					throw new KarmaException("More than one resource exists with model source name: " + prevSourceObject.toString());
+				}
+			}
 			return null;
-		
+		}
 	}
 	
 	private void performTransformations(Resource mappingResource) throws JSONException {
