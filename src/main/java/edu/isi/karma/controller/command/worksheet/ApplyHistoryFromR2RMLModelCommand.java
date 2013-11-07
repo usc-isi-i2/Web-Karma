@@ -87,7 +87,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 		WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(
 				worksheetId, workspace);
 		try {
-			String historyStr = extractHistoryFromModel();
+			String historyStr = extractHistoryFromModel(r2rmlModelFile);
 			if (historyStr.isEmpty()) {
 				return new UpdateContainer(new ErrorUpdate("No history found in R2RML Model!"));
 			}
@@ -106,7 +106,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 		return c;
 	}
 
-	private String extractHistoryFromModel() 
+	static private String extractHistoryFromModel(File r2rmlModelFile) 
 			throws RepositoryException, RDFParseException, IOException {
 		Repository myRepository = new SailRepository(new MemoryStore());
 		myRepository.initialize();
