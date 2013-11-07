@@ -10,7 +10,7 @@ import java.util.Vector;
 
 
 public class Traces implements GrammarTreeNode {
-	public static int time_limit = 20;
+	public static final int time_limit = 20;
 	public Vector<TNode> orgNodes;
 	public Vector<TNode> tarNodes;
 	public HashMap<Integer, Template> traceline = new HashMap<Integer, Template>();
@@ -201,7 +201,7 @@ public class Traces implements GrammarTreeNode {
 				if (i >= (tarNodes.size() - 1)) {
 					int[] m = { mappings.get(0), mappings.get(0) + tvec.size() };
 					corrm.add(m);
-					String key = UtilTools.print(this.tarNodes)+pos+(i+1);
+					String key = UtilTools.print(this.tarNodes)+UtilTools.print(this.orgNodes);
 					Segment s;
 					if(AllSegs.containsKey(key))
 					{
@@ -268,7 +268,6 @@ public class Traces implements GrammarTreeNode {
 			Template nLine = (Template)line1.mergewith(line2);
 			if(nLine == null)
 				continue;
-			boolean isfind = true;
 			nLines.put(index, nLine);
 		}
 		// merge loop and segment lines
@@ -798,9 +797,7 @@ public class Traces implements GrammarTreeNode {
 		if (span == 1) {
 			int startpos = rep.get(0);
 			int endpos = rep.get(rep.size() - 1);
-			Segment seg = curPath.get(startpos);
 			for (int i = 0; i < curPath.size(); i++) {
-				Segment segb = curPath.get(i);
 				if (i < startpos) {
 					nodelist.add(curPath.get(i));
 				} else if ( i == endpos) {
@@ -818,7 +815,6 @@ public class Traces implements GrammarTreeNode {
 			// left overflow
 			if ((startpos - span + 1) < 0 && endpos + span <= curPath.size()) {
 				for (int i = 0; i < curPath.size(); i++) {
-					Segment segb = curPath.get(i);
 					if (i < startpos) {
 						nodelist.add(curPath.get(i));
 					}
@@ -836,7 +832,6 @@ public class Traces implements GrammarTreeNode {
 			else if ((startpos - span + 1) >= 0
 					&& endpos + span > curPath.size()) {
 				for (int i = 0; i < curPath.size(); i++) {
-					Segment segb = curPath.get(i);
 					if (i < startpos - span + 1) {
 						nodelist.add(curPath.get(i));
 					}
@@ -856,7 +851,6 @@ public class Traces implements GrammarTreeNode {
 				// skip the startpos
 				for (int i = 0; i < curPath.size(); i++) 
 				{
-					Segment segb = curPath.get(i);
 					if (i <= startpos) {
 						nodelist.add(curPath.get(i));
 					}

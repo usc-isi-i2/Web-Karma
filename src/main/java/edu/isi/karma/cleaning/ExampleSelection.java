@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
+import org.apache.mahout.math.Arrays;
+
 import edu.isi.karma.cleaning.QuestionableRecord.OutlierDetector;
 
 public class ExampleSelection {
@@ -35,16 +37,17 @@ public class ExampleSelection {
 	public OutlierDetector out;
 	// testdata rowid:{tar, tarcolor}
 	public HashMap<String, HashMap<String, String[]>> testdata = new HashMap<String, HashMap<String, String[]>>();
-	public static int way = 3;
+	public int way = 7;
 	public HashSet<String> dictionary = new HashSet<String>();
 
 	public ExampleSelection() {
+		this.out = new OutlierDetector();
 	}
 
 	public String Choose() {
 		String ID = "";
 		switch (way) {
-		case 1:
+	case 1:
 			ID = this.way1();
 			break;
 		case 2:
@@ -73,31 +76,30 @@ public class ExampleSelection {
 		}
 		return ID;
 	}
-	public Vector<String[]> getOrgTarPair(HashMap<String, String[]> exps)
-	{
+
+	public Vector<String[]> getOrgTarPair(HashMap<String, String[]> exps) {
 		Vector<String[]> result = new Vector<String[]>();
-		for (String key:exps.keySet())
-		{
+		for (String key : exps.keySet()) {
 			String[] record = exps.get(key);
-			String[] tmp = {record[0],record[1]};
+			String[] tmp = { record[0], record[1] };
 			result.add(tmp);
 		}
 		return result;
 	}
+
 	// exps: rowId: {org, tar, tarcode,classlabel}
-	// example: partition id: [{tar,tarcode}]
+	// example: partition id: [{raw,tarcode}]
 	public void inite(HashMap<String, String[]> exps,
 			HashMap<String, Vector<String[]>> examples) {
 		// inite the class center vector
-	
+
 		if (way >= 6) {
-			out = new OutlierDetector();
-			if(firsttime)
-			{
+			if (firsttime) {
+				out = new OutlierDetector();
 				out.buildDict(this.getOrgTarPair(exps));
-				this.dictionary = out.dict;
+				dictionary = out.dict;
 			}
-			out.buildMeanVector(examples,this.dictionary);
+			out.buildMeanVector(examples, dictionary);
 		}
 		Ruler ruler = new Ruler();
 		for (String keyString : exps.keySet()) {
@@ -105,8 +107,8 @@ public class ExampleSelection {
 			ruler.setNewInput(e);
 			org.put(keyString, ruler.vec);
 			if (way >= 6) {
-				String[] pair = { exps.get(keyString)[0],
-						exps.get(keyString)[2] };
+				String raw = exps.get(keyString)[0];
+				String[] pair = { raw, exps.get(keyString)[2] };
 				if (testdata.containsKey(exps.get(keyString)[3])) {
 					HashMap<String, String[]> xelem = testdata.get(exps
 							.get(keyString)[3]);
@@ -185,7 +187,7 @@ public class ExampleSelection {
 		return score;
 	}
 
-	//only try to find the wrong ones
+	// only try to find the wrong ones
 	public static boolean firsttime = true;
 
 	public String way4() {
@@ -194,9 +196,8 @@ public class ExampleSelection {
 			return raw.keySet().iterator().next();
 		}
 		for (String key : raw.keySet()) {
-			
-			if(raw.get(key)[2].indexOf("_FATAL_ERROR_")!= -1)
-			{
+
+			if (raw.get(key)[2].indexOf("_FATAL_ERROR_") != -1) {
 				return key;
 			}
 		}
@@ -212,15 +213,12 @@ public class ExampleSelection {
 		Vector<String> examples = new Vector<String>();
 		for (String key : raw.keySet()) {
 			int cnt = 0;
-			int spos = 0;
-			String[] tmp = raw.get(key)[2].split("((?<=_\\d_FATAL_ERROR_)|(?=_\\d_FATAL_ERROR_))");
-			
-			
-			for(String tmpstring:tmp)
-			{
+			String[] tmp = raw.get(key)[2]
+					.split("((?<=_\\d_FATAL_ERROR_)|(?=_\\d_FATAL_ERROR_))");
+
+			for (String tmpstring : tmp) {
 				int errnum = 0;
-				if(tmpstring.indexOf("_FATAL_ERROR_")== -1)
-				{
+				if (tmpstring.indexOf("_FATAL_ERROR_") == -1) {
 					continue;
 				}
 				errnum = Integer.valueOf(tmpstring.substring(1, 2));
@@ -240,7 +238,8 @@ public class ExampleSelection {
 			String row = "";
 			row = way8();
 			return row;
-		} else { // select the most ambigious among all the record with same number of FATALERROR
+		} else { // select the most ambigious among all the record with same
+					// number of FATALERROR
 			String idString = "";
 			int min = 10000;
 			for (String key : examples) {
@@ -253,8 +252,9 @@ public class ExampleSelection {
 			return idString;
 		}
 	}
-	
+
 	public String way7() {
+		// this.printdata();
 		int max = 2; // only the one with _FATAL_ERROR_ inside
 		if (firsttime) {
 			firsttime = false;
@@ -263,15 +263,11 @@ public class ExampleSelection {
 		Vector<String> examples = new Vector<String>();
 		for (String key : raw.keySet()) {
 			int cnt = 0;
-			int spos = 0;
-			String[] tmp = raw.get(key)[2].split("((?<=_\\d_FATAL_ERROR_)|(?=_\\d_FATAL_ERROR_))");
-			
-			
-			for(String tmpstring:tmp)
-			{
+			String[] tmp = raw.get(key)[2]
+					.split("((?<=_\\d_FATAL_ERROR_)|(?=_\\d_FATAL_ERROR_))");
+			for (String tmpstring : tmp) {
 				int errnum = 0;
-				if(tmpstring.indexOf("_FATAL_ERROR_")== -1)
-				{
+				if (tmpstring.indexOf("_FATAL_ERROR_") == -1) {
 					continue;
 				}
 				errnum = Integer.valueOf(tmpstring.substring(1, 2));
@@ -293,14 +289,16 @@ public class ExampleSelection {
 			double tmax = -1;
 			for (String key : this.testdata.keySet()) {
 				String trowid = out.getOutliers(testdata.get(key),
-						out.rVectors.get(key), tmax,this.dictionary);
+						out.rVectors.get(key), tmax,
+						dictionary);
 				tmax = out.currentMax;
 				if (trowid.length() > 0) {
 					row = trowid;
 				}
 			}
 			return row;
-		} else { // select the most ambigious among all the record with same number of FATALERROR
+		} else { // select the most ambigious among all the record with same
+					// number of FATALERROR
 			isDetectingQuestionableRecord = false;
 			String idString = "";
 			int min = 10000;
@@ -314,49 +312,43 @@ public class ExampleSelection {
 			return idString;
 		}
 	}
-	//shortest result
+
+	// shortest result
 	// exps: rowId: {org, tar, tarcode,classlabel}
-	public String way8()
-	{
+	public String way8() {
 		if (firsttime) {
 			firsttime = false;
 			return this.way3();
 		}
 		String idString = "";
 		int shortest = 10000;
-		for(String rowid:raw.keySet())
-		{
+		for (String rowid : raw.keySet()) {
 			String xrow = raw.get(rowid)[1];
-			if(xrow.indexOf("_FATAL_ERROR_") != -1)
-			{
+			if (xrow.indexOf("_FATAL_ERROR_") != -1) {
 				xrow = raw.get(rowid)[0];
 			}
-			if(xrow.length() < shortest)
-			{
+			if (xrow.length() < shortest) {
 				shortest = xrow.length();
 				idString = rowid;
 			}
 		}
 		return idString;
 	}
-	//longest result
-	public String way9()
-	{
+
+	// longest result
+	public String way9() {
 		if (firsttime) {
 			firsttime = false;
 			return this.way3();
 		}
 		String idString = "";
 		int longest = -1;
-		for(String rowid:raw.keySet())
-		{
+		for (String rowid : raw.keySet()) {
 			String xrow = raw.get(rowid)[1];
-			if(xrow.indexOf("_FATAL_ERROR_") != -1)
-			{
+			if (xrow.indexOf("_FATAL_ERROR_") != -1) {
 				xrow = raw.get(rowid)[0];
 			}
-			if(xrow.length() > longest)
-			{
+			if (xrow.length() > longest) {
 				longest = xrow.length();
 				idString = rowid;
 			}
@@ -369,6 +361,24 @@ public class ExampleSelection {
 		org.clear();
 		tran.clear();
 		this.testdata.clear();
+	}
+
+	public void printdata() {
+		String s1 = "";
+		String s2 = "";
+		for (String key : this.testdata.keySet()) {
+			HashMap<String, String[]> r = testdata.get(key);
+			s1 += "partition " + key + "\n";
+			for (String[] elem : r.values()) {
+				s1 += Arrays.toString(elem) + "\n";
+			}
+		}
+		System.out.println("" + s1);
+		for (String[] v : this.raw.values()) {
+			s2 += Arrays.toString(v) + "\n";
+		}
+		System.out.println(s2);
+
 	}
 
 }

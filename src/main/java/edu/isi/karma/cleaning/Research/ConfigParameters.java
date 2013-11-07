@@ -19,11 +19,19 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.cleaning;
+package edu.isi.karma.cleaning.Research;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+
+import edu.isi.karma.cleaning.ExampleSelection;
+import edu.isi.karma.cleaning.Position;
+import edu.isi.karma.cleaning.ProgSynthesis;
+import edu.isi.karma.cleaning.Section;
+import edu.isi.karma.cleaning.Segment;
+import edu.isi.karma.cleaning.Template;
+import edu.isi.karma.cleaning.Traces;
 
 public class ConfigParameters {
 	public static int debug = 0;
@@ -37,21 +45,21 @@ public class ConfigParameters {
 		try {
 			// load a properties file
 			properties.load(new FileInputStream(
-					".src/main/config/transformation.properties"));
+					"./src/main/config/transformation.properties"));
 			// get the property value and print it out
-			Segment.cxtsize_limit = Integer.parseInt(properties.getProperty("cxt_size").trim());
-			Template.temp_limit = Integer.parseInt(properties.getProperty("temp_cap").trim());
-			Traces.time_limit = Integer.parseInt(properties.getProperty("time_limit").trim());
-			ProgSynthesis.time_limit = Integer.parseInt(properties.getProperty("time_limit").trim());
-			Segment.time_limit = Integer.parseInt(properties.getProperty("time_limit").trim());
-			Section.time_limit = Integer.parseInt(properties.getProperty("time_limit").trim());
+			//Segment.cxtsize_limit = Integer.parseInt(properties.getProperty("cxt_size").trim());
+			//Template.temp_limit = Integer.parseInt(properties.getProperty("temp_cap").trim());
+			//Traces.time_limit = Integer.parseInt(properties.getProperty("time_limit").trim());
+			//ProgSynthesis.time_limit = Integer.parseInt(properties.getProperty("time_limit").trim());
+			//Segment.time_limit = Integer.parseInt(properties.getProperty("time_limit").trim());
+			//Section.time_limit = Integer.parseInt(properties.getProperty("time_limit").trim());
 			//properties.getProperty("iter_end");
-			ExampleSelection.way = Integer.parseInt(properties.getProperty("exmp_sel").trim());
+			//ExampleSelection.way = Integer.parseInt(properties.getProperty("exmp_sel").trim());
 			debug = Integer.parseInt(properties.getProperty("debug").trim());
-			Template.supermode = Integer.parseInt(properties.getProperty("supermode").trim());
-			Section.supermode = Integer.parseInt(properties.getProperty("supermode").trim());
-			Position.fixedlength = Integer.parseInt(properties.getProperty("fixedlength").trim());
-			res = String.format("cxt_limit:%d temp_limit: %d, time_limit:%d, exp_sel:%d, supermode:%d,fixedlength:%d\n",Segment.cxtsize_limit,Template.temp_limit,Traces.time_limit,ExampleSelection.way,Template.supermode,Position.fixedlength);
+			//Template.supermode = Integer.parseInt(properties.getProperty("supermode").trim());
+			//Section.supermode = Integer.parseInt(properties.getProperty("supermode").trim());
+			//Position.fixedlength = Integer.parseInt(properties.getProperty("fixedlength").trim());
+			//res = String.format("cxt_limit:%d temp_limit: %d, time_limit:%d, exp_sel:%d, supermode:%d,fixedlength:%d\n",Segment.cxtsize_limit,Template.temp_limit,Traces.time_limit,ExampleSelection.way,Template.supermode,Position.fixedlength);
 
 		} catch (IOException ex) {
 			return;

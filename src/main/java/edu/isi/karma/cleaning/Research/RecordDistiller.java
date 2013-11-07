@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.cleaning;
+package edu.isi.karma.cleaning.Research;
 
 import java.io.File;
 import java.io.FileReader;
@@ -27,11 +27,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
+import edu.isi.karma.cleaning.Ruler;
+import edu.isi.karma.cleaning.TNode;
 import au.com.bytecode.opencsv.CSVReader;
 
-//select the most reprentative records from a huge list of rows
-//to ensure that the program learned from the subset could work correctly on the whole dataset
-// first support 
+
 public class RecordDistiller {
 	// {anchor:{"Id": , "Count": , "LefContext":[], "RigContext":[]}
 	public static int cxt_limit = 3;
@@ -59,7 +59,7 @@ public class RecordDistiller {
 			//get left and right context
 			String lcxt = "";
 			String rcxt = "";
-			for(int j = i; j<i+this.cxt_limit && j <record.size(); j++)
+			for(int j = i; j<i+RecordDistiller.cxt_limit && j <record.size(); j++)
 			{
 				rcxt += record.get(j).getType();
 			}
@@ -207,6 +207,7 @@ public class RecordDistiller {
 		for (File f : allfiles) {
 			try {
 				if (f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
+					@SuppressWarnings("resource")
 					CSVReader cr = new CSVReader(new FileReader(f), ',','"','\0');
 					String[] pair;
 					int id = 0;

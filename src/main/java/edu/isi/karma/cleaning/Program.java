@@ -2,6 +2,8 @@ package edu.isi.karma.cleaning;
 
 import java.util.Vector;
 
+import edu.isi.karma.cleaning.Research.ConfigParameters;
+
 public class Program implements GrammarTreeNode {
 	public Vector<Partition> partitions = new Vector<Partition>();
 	public String cls = "";

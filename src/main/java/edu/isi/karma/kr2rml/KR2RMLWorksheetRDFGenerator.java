@@ -260,8 +260,8 @@ public class KR2RMLWorksheetRDFGenerator {
 		// Generate the predicate RDF
 		String predicateUri = "";
 		try {
-			predicateUri = getTemplateTermSetPopulatedWithValues(node,  
-					pom.getPredicate().getTemplate()).replaceAll(" ", "");
+			predicateUri = normalizeUri(getTemplateTermSetPopulatedWithValues(node,  
+					pom.getPredicate().getTemplate()));
 			if (predicateUri.equals(Uris.CLASS_INSTANCE_LINK_URI) 
 					|| predicateUri.equals(Uris.COLUMN_SUBCLASS_LINK_URI)) {
 				return;
