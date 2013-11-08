@@ -82,6 +82,8 @@ public class KarmaServletTest {
         Mockito.when(response.getWriter()).thenReturn(writer);
         this.instance = new KarmaServlet();
         
+        
+        
     }
 	
     @Test
