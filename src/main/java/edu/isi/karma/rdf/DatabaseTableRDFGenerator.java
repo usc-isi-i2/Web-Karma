@@ -28,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -87,7 +88,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		Connection conn = dbUtil.getConnection(hostname, portnumber, username, password, dBorSIDName);
-		
+		conn.setAutoCommit(false);
 		String query = "Select * FROM " + tablename;
 		java.sql.Statement stmt = conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
 				java.sql.ResultSet.CONCUR_READ_ONLY);
@@ -97,14 +98,15 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		ResultSetMetaData meta = r.getMetaData();;
 		
 		// Get the column names
-		ArrayList<String> columnNames = dbUtil.getColumnNames(tablename, conn);
+		
+		List<String> columnNames = dbUtil.getColumnNames(dBorSIDName, tablename, conn);
 		
 		// Prepare required Karma objects
 	     Workspace workspace = initializeWorkspace();
  	
 		RepFactory factory = workspace.getFactory();
 		Worksheet wk = factory.createWorksheet(tablename, workspace);
-		ArrayList<String> headersList = addHeaders(wk, columnNames, factory);
+		List<String> headersList = addHeaders(wk, columnNames, factory);
 		
 		int counter = 0;
 		
@@ -168,7 +170,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		rdfGen.generateRDF(false);
 	}
 	
-	private ArrayList<String> addHeaders (Worksheet wk, ArrayList<String> columnNames,
+	private List<String> addHeaders (Worksheet wk, List<String> columnNames,
 			RepFactory factory) {
 		HTable headers = wk.getHeaders();
 		ArrayList<String> headersList = new ArrayList<String>();

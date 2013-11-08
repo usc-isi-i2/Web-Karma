@@ -27,6 +27,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,37 +181,22 @@ public abstract class AbstractJDBCUtil {
 		return false;
 	}
 	
+	
 	/**
-	 * Returns the column names for a given table.
+	 * Returns the names of the columns for the specified table
+	 * @param db
 	 * @param tableName
 	 * @param conn
 	 * @return
-	 * 		column names for a given table.
 	 * @throws SQLException
 	 */
-	public ArrayList<String> getColumnNames(String tableName, Connection conn) throws SQLException {
-		ArrayList<String> columnNames = new ArrayList<String>();
-		String query = "select * from " + tableName;
-		if (conn == null)
-			return columnNames;
-		try {
-			Statement s = conn.createStatement();
-			ResultSet r = s.executeQuery(query);
-			ResultSetMetaData meta = null;
-
-			if (r == null) {
-				s.close();
-				return null;
-			}
-
-			meta = r.getMetaData();
-			for (int i = 1; i <= meta.getColumnCount(); i++) {
-				columnNames.add(meta.getColumnName(i));
-			}
-			r.close();
-			s.close();
-		} catch (SQLException e) {
-			throw e;
+	public List<String> getColumnNames(String db, String tableName, Connection conn) throws SQLException
+	{
+		List<String> columnNames = new ArrayList<String>(10);
+		ResultSet rs = conn.getMetaData().getColumns(db, null, tableName, null);
+		while(rs.next())
+		{
+			columnNames.add(rs.getString("COLUMN_NAME"));
 		}
 		return columnNames;
 	}
@@ -223,38 +209,17 @@ public abstract class AbstractJDBCUtil {
 	 * 		column types for a given table.
 	 * @throws SQLException
 	 */
-	public ArrayList<String> getColumnTypes(String tableName, Connection conn) throws SQLException {
-		ArrayList<String> columnTypes = new ArrayList<String>();
-		
-		String query = "select * from " + tableName;
-
-		// String res = executeQuery(connectString, query);
-		// logger.debug("RES="+res);
-
-		if (conn == null)
-			return columnTypes;
-		try {
-			Statement s = conn.createStatement();
-			ResultSet r = s.executeQuery(query);
-			ResultSetMetaData meta = null;
-
-			if (r == null) {
-				s.close();
-				return null;
-			}
-
-			meta = r.getMetaData();
-			for (int i = 1; i <= meta.getColumnCount(); i++) {
-				logger.debug("Type= " + meta.getColumnTypeName(i));
-				columnTypes.add(meta.getColumnTypeName(i));
-			}
-			r.close();
-			s.close();
-		} catch (SQLException e) {
-			throw e;		}
+	public List<String> getColumnTypes(String db, String tableName, Connection conn) throws SQLException
+	{
+		List<String> columnTypes = new ArrayList<String>(10);
+		ResultSet rs = conn.getMetaData().getColumns(db, null, tableName, null);
+		while(rs.next())
+		{
+			columnTypes.add(rs.getString("TYPE_NAME"));
+		}
 		return columnTypes;
 	}
-
+	
 	/**
 	 * 	Executes a SQL query.
 	 * @param conn
