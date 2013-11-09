@@ -16,6 +16,7 @@ public class ProgSynthesis {
 	public long genspan = 0;
 	public long ruleNo = 0;
 	public PartitionClassifierType classifier;
+	public String[] vocab = null;
 
 	public void inite(Vector<String[]> examples) {
 		for (int i = 0; i < examples.size(); i++) {
@@ -131,7 +132,7 @@ public class ProgSynthesis {
 	}
 
 	public Collection<ProgramRule> producePrograms(Vector<Partition> pars) {
-		Program prog = new Program(pars);
+		Program prog = new Program(pars,this.vocab);
 		HashSet<ProgramRule> rules = new HashSet<ProgramRule>();
 		int prog_cnt = 1;
 		int i = 0;

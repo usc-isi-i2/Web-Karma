@@ -13,6 +13,8 @@ import FunctionList
 import sys
 class Interpreter(InterpreterType):
     def __init__(self, script):
+	script = script.encode("utf-8","ignore")
+	script = script.decode("utf-8")
 	sys.setdefaultencoding("utf-8")
         trans = Translator(script)
         self.script=trans.translate(script) 

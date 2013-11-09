@@ -86,9 +86,9 @@ public class RecordFeatureSet {
 				words.add(k);
 			}
 		}
-		if(ProgramRule.vocb != null)
+		if(this.vocabs != null && this.vocabs.length >0)
 		{
-		  for(String w:ProgramRule.vocb)
+		  for(String w:this.vocabs)
 		  {
 			  if(!words.contains(w))
 			  {
