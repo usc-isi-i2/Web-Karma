@@ -48,6 +48,10 @@ public class PythonTransformationHelper {
 		StringBuilder importStmt = new StringBuilder();
 		importStmt.append("import re\n");
 		importStmt.append("import datetime\n");
+		importStmt.append("import edu.isi.karma.rep.WorkspaceManager\n");
+		importStmt.append("import edu.isi.karma.rep.Workspace\n");
+		importStmt.append("import edu.isi.karma.rep.Node\n");
+		importStmt.append("import edu.isi.karma.rep.RepFactory\n");
 		return importStmt.toString();
 	}
 
@@ -107,7 +111,10 @@ public class PythonTransformationHelper {
 	public String getGetValueDefStatement(Map<String, String> columnNameMap) {
 		StringBuilder methodStmt = new StringBuilder();
 		methodStmt.append("def getValue(columnName):\n");
-		methodStmt.append("\treturn getattr(r,columnNameMap[columnName])\n");
+		methodStmt.append("	factory = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getFactory()\n");
+		methodStmt.append("	node = factory.getNode(nodeid)\n");
+		methodStmt.append("	return node.getNeighborByColumnName(columnName, factory).getValue().asString()");
+
 		return methodStmt.toString();
 	}
 }

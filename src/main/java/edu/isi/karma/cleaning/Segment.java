@@ -5,8 +5,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import org.antlr.grammar.v3.ANTLRv3Parser.finallyClause_return;
-
 public class Segment implements GrammarTreeNode {
 	public Vector<Section> section = new Vector<Section>();
 	public static final int cxtsize_limit = 4;

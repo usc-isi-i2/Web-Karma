@@ -25,6 +25,7 @@ import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Workspace;
 
 
@@ -51,17 +52,24 @@ public abstract class WorksheetCommand extends Command {
 	{
 		return AlignmentManager.Instance().getAlignmentOrCreateIt(workspace.getId(), worksheetId, workspace.getOntologyManager());
 	}
-	private void computeSemanticTypesSuggestions(Workspace workspace)
+	
+	// TODO break this method up.  
+	public UpdateContainer computeAlignmentAndSemanticTypesAndCreateUpdates(Workspace workspace, HNodePath path)
 	{
+		Alignment alignment = getAlignmentOrCreateIt(workspace);
 		// Compute the semantic type suggestions
 		SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(worksheetId), workspace
-				.getCrfModelHandler(), workspace.getOntologyManager());
+				.getCrfModelHandler(), workspace.getOntologyManager(), path);
+		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);
 	}
+		
 	// TODO break this method up.  
 	public UpdateContainer computeAlignmentAndSemanticTypesAndCreateUpdates(Workspace workspace)
 	{
 		Alignment alignment = getAlignmentOrCreateIt(workspace);
-		computeSemanticTypesSuggestions(workspace);
+		// Compute the semantic type suggestions
+		SemanticTypeUtil.computeSemanticTypesSuggestion(workspace.getWorksheet(worksheetId), workspace
+				.getCrfModelHandler(), workspace.getOntologyManager());
 		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace, alignment);
 	}
 }

@@ -74,7 +74,7 @@ public class PreviewPythonTransformationResultsCommand extends PythonTransformat
 		final JSONArray transformedRows = new JSONArray();
 		final JSONArray errorValues = new JSONArray();
 		try {
-			this.generateTransformedValues(worksheet, f, hNode, transformedRows, errorValues, 5);
+			this.generateTransformedValues(workspace, worksheet, f, hNode, transformedRows, errorValues, 5);
 			return new UpdateContainer(new PythonPreviewResultsUpdate(transformedRows, errorValues));
 		} catch (Exception e) {
 			logger.error("Error while creating python results preview", e);

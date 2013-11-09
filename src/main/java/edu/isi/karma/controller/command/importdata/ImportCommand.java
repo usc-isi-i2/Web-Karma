@@ -5,7 +5,6 @@
 package edu.isi.karma.controller.command.importdata;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -69,7 +68,7 @@ public abstract class ImportCommand extends Command {
 
             c.add(new WorksheetListUpdate());
             c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
-        } catch (JSONException | IOException | KarmaException | ClassNotFoundException | SQLException e) {
+        } catch (JSONException | IOException | KarmaException | ClassNotFoundException e) {
             logger.error("Error occured while generating worksheet from " + getTitle() + "!", e);
             return new UpdateContainer(new ErrorUpdate(
                     "Error occured while importing JSON File."));

@@ -458,14 +458,14 @@ public class Approach1 {
 		Set<SemanticTypeMapping> mappings = new HashSet<SemanticTypeMapping>();
 		
 		// add dataproperty to existing classes if sl is a data node mapping
-		List<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(domainUri);
+		Set<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(domainUri);
 		if (nodesWithSameUriOfDomain != null) {
 			for (Node source : nodesWithSameUriOfDomain) {
 				if (source instanceof InternalNode) {
 					
 //					boolean propertyLinkExists = false;
 					int countOfExistingPropertyLinks = 0;
-					List<Link> linkWithSameUris = this.graphBuilder.getUriToLinksMap().get(propertyUri);
+					Set<Link> linkWithSameUris = this.graphBuilder.getUriToLinksMap().get(propertyUri);
 					if (linkWithSameUris != null)
 					for (Link l : linkWithSameUris) {
 						if (l.getSource().equals(source)) {

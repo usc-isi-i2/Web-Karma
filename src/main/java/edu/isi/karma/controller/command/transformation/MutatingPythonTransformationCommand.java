@@ -69,7 +69,7 @@ public abstract class MutatingPythonTransformationCommand extends
 		try {
 			JSONArray transformedRows = new JSONArray();
 			JSONArray errorValues = new JSONArray();
-			generateTransformedValues(
+			generateTransformedValues(workspace, 
 					worksheet, f, hNode, transformedRows, errorValues, null);
 
 			// Invoke the MultipleValueEditColumnCommand
@@ -92,7 +92,7 @@ public abstract class MutatingPythonTransformationCommand extends
 		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
 		
 		/** Add the alignment update **/
-		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace, workspace.getFactory().getHNode(newHNodeId).getHNodePath(workspace.getFactory())));
 		
 		c.add(new InfoUpdate("Transformation complete"));
 		return c;

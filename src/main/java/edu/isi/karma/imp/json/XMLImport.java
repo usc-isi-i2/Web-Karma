@@ -4,19 +4,20 @@
  */
 package edu.isi.karma.imp.json;
 
-import edu.isi.karma.imp.Import;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.util.FileUtil;
-import edu.isi.karma.webserver.KarmaException;
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.imp.Import;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.FileUtil;
+import edu.isi.karma.webserver.KarmaException;
 
 /**
  *
@@ -45,7 +46,7 @@ public class XMLImport extends Import {
 
 
     @Override
-    public Worksheet generateWorksheet() throws JSONException, IOException, KarmaException, ClassNotFoundException, SQLException {
+    public Worksheet generateWorksheet() throws JSONException, IOException, KarmaException, ClassNotFoundException {
         return jsonImport.generateWorksheet();
     }
 

@@ -53,7 +53,6 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			String worksheetId, String hNodeId, String errorDefaultValue) {
 		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
 		
-		addTag(CommandTag.Transformation);
 	}
 
 	@Override
@@ -145,6 +144,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	public UpdateContainer undoIt(Workspace workspace) {
 		addColCmd.undoIt(workspace);
 		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		// TODO is it necessary to compute alignment and semantic types for everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

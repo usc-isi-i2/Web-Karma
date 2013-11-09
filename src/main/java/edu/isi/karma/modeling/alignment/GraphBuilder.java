@@ -74,15 +74,15 @@ public class GraphBuilder {
 	private HashMap<String, Node> idToNodeMap;
 	private HashMap<String, Link> idToLinkMap;
 
-	private HashMap<String, List<Node>> uriToNodesMap;
-	private HashMap<String, List<Link>> uriToLinksMap;
+	private HashMap<String, Set<Node>> uriToNodesMap;
+	private HashMap<String, Set<Link>> uriToLinksMap;
 	
-	private HashMap<NodeType, List<Node>> typeToNodesMap;
-	private HashMap<LinkType, List<Link>> typeToLinksMap;
+	private HashMap<NodeType, Set<Node>> typeToNodesMap;
+	private HashMap<LinkType, Set<Link>> typeToLinksMap;
 
-	private HashMap<LinkStatus, List<Link>> statusToLinksMap;
+	private HashMap<LinkStatus, Set<Link>> statusToLinksMap;
 	
-	private HashMap<String, List<String>> uriClosure;
+	private HashMap<String, Set<String>> uriClosure;
 
 	// Constructor
 	
@@ -94,13 +94,13 @@ public class GraphBuilder {
 
 		this.idToNodeMap = new HashMap<String, Node>();
 		this.idToLinkMap = new HashMap<String, Link>();
-		this.uriToNodesMap = new HashMap<String, List<Node>>();
-		this.uriToLinksMap = new HashMap<String, List<Link>>();
-		this.typeToNodesMap = new HashMap<NodeType, List<Node>>();
-		this.typeToLinksMap = new HashMap<LinkType, List<Link>>();
-		this.statusToLinksMap = new HashMap<LinkStatus, List<Link>>();
+		this.uriToNodesMap = new HashMap<String, Set<Node>>();
+		this.uriToLinksMap = new HashMap<String, Set<Link>>();
+		this.typeToNodesMap = new HashMap<NodeType, Set<Node>>();
+		this.typeToLinksMap = new HashMap<LinkType, Set<Link>>();
+		this.statusToLinksMap = new HashMap<LinkStatus, Set<Link>>();
 		
-		this.uriClosure = new HashMap<String, List<String>>();
+		this.uriClosure = new HashMap<String, Set<String>>();
 		
 		this.graph = new DirectedWeightedMultigraph<Node, Link>(Link.class);
 		
@@ -120,11 +120,11 @@ public class GraphBuilder {
 		
 		this.idToNodeMap = new HashMap<String, Node>();
 		this.idToLinkMap = new HashMap<String, Link>();
-		this.uriToNodesMap = new HashMap<String, List<Node>>();
-		this.uriToLinksMap = new HashMap<String, List<Link>>();
-		this.typeToNodesMap = new HashMap<NodeType, List<Node>>();
-		this.typeToLinksMap = new HashMap<LinkType, List<Link>>();
-		this.statusToLinksMap = new HashMap<LinkStatus, List<Link>>();
+		this.uriToNodesMap = new HashMap<String, Set<Node>>();
+		this.uriToLinksMap = new HashMap<String, Set<Link>>();
+		this.typeToNodesMap = new HashMap<NodeType, Set<Node>>();
+		this.typeToLinksMap = new HashMap<LinkType, Set<Link>>();
+		this.statusToLinksMap = new HashMap<LinkStatus, Set<Link>>();
 		
 		this.visitedSourceTargetPairs = new HashSet<String>();
 		this.sourceToTargetLinkUris = new HashSet<String>();
@@ -140,16 +140,16 @@ public class GraphBuilder {
 
 			this.idToNodeMap.put(node.getId(), node);
 			
-			List<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
+			Set<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
 			if (nodesWithSameUri == null) {
-				nodesWithSameUri = new ArrayList<Node>();
+				nodesWithSameUri = new HashSet<Node>();
 				uriToNodesMap.put(node.getLabel().getUri(), nodesWithSameUri);
 			}
 			nodesWithSameUri.add(node);
 			
-			List<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
+			Set<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
 			if (nodesWithSameType == null) {
-				nodesWithSameType = new ArrayList<Node>();
+				nodesWithSameType = new HashSet<Node>();
 				typeToNodesMap.put(node.getType(), nodesWithSameType);
 			}
 			nodesWithSameType.add(node);
@@ -166,24 +166,24 @@ public class GraphBuilder {
 			
 			this.idToLinkMap.put(link.getId(), link);
 			
-			List<Link> linksWithSameUri = uriToLinksMap.get(link.getLabel().getUri());
+			Set<Link> linksWithSameUri = uriToLinksMap.get(link.getLabel().getUri());
 			if (linksWithSameUri == null) {
-				linksWithSameUri = new ArrayList<Link>();
+				linksWithSameUri = new HashSet<Link>();
 				uriToLinksMap.put(link.getLabel().getUri(), linksWithSameUri);
 			}
 			linksWithSameUri.add(link);
 			
-			List<Link> linksWithSameStatus = statusToLinksMap.get(link.getStatus());
+			Set<Link> linksWithSameStatus = statusToLinksMap.get(link.getStatus());
 			if (linksWithSameStatus == null) {
-				linksWithSameStatus = new ArrayList<Link>();
+				linksWithSameStatus = new HashSet<Link>();
 				statusToLinksMap.put(link.getStatus(), linksWithSameUri);
 			}
 			linksWithSameStatus.add(link);
 			
 			
-			List<Link> linksWithSameType = typeToLinksMap.get(link.getType());
+			Set<Link> linksWithSameType = typeToLinksMap.get(link.getType());
 			if (linksWithSameType == null) {
-				linksWithSameType = new ArrayList<Link>();
+				linksWithSameType = new HashSet<Link>();
 				typeToLinksMap.put(link.getType(), linksWithSameType);
 			}
 			linksWithSameType.add(link);
@@ -194,7 +194,7 @@ public class GraphBuilder {
 			this.visitedSourceTargetPairs.add(source.getId() + target.getId());
 		}
 
-		this.uriClosure = new HashMap<String, List<String>>();
+		this.uriClosure = new HashMap<String, Set<String>>();
 			
 		logger.debug("graph has been loaded.");
 	}
@@ -231,23 +231,23 @@ public class GraphBuilder {
 		return idToLinkMap;
 	}
 
-	public HashMap<String, List<Node>> getUriToNodesMap() {
+	public HashMap<String, Set<Node>> getUriToNodesMap() {
 		return uriToNodesMap;
 	}
 
-	public HashMap<String, List<Link>> getUriToLinksMap() {
+	public HashMap<String, Set<Link>> getUriToLinksMap() {
 		return uriToLinksMap;
 	}
 
-	public HashMap<NodeType, List<Node>> getTypeToNodesMap() {
+	public HashMap<NodeType, Set<Node>> getTypeToNodesMap() {
 		return typeToNodesMap;
 	}
 
-	public HashMap<LinkType, List<Link>> getTypeToLinksMap() {
+	public HashMap<LinkType, Set<Link>> getTypeToLinksMap() {
 		return typeToLinksMap;
 	}
 
-	public HashMap<LinkStatus, List<Link>> getStatusToLinksMap() {
+	public HashMap<LinkStatus, Set<Link>> getStatusToLinksMap() {
 		return statusToLinksMap;
 	}
 	
@@ -379,22 +379,28 @@ public class GraphBuilder {
 		
 		this.idToLinkMap.put(link.getId(), link);
 		
-		List<Link> linksWithSameUri = uriToLinksMap.get(link.getLabel().getUri());
+		Set<Link> linksWithSameUri = uriToLinksMap.get(link.getLabel().getUri());
 		if (linksWithSameUri == null) {
-			linksWithSameUri = new ArrayList<Link>();
+			linksWithSameUri = new HashSet<Link>();
 			uriToLinksMap.put(link.getLabel().getUri(), linksWithSameUri);
 		}
 		linksWithSameUri.add(link);
-		
-		changeLinkStatus(link, link.getStatus());
-		
-		List<Link> linksWithSameType = typeToLinksMap.get(link.getType());
+				
+		Set<Link> linksWithSameType = typeToLinksMap.get(link.getType());
 		if (linksWithSameType == null) {
-			linksWithSameType = new ArrayList<Link>();
+			linksWithSameType = new HashSet<Link>();
 			typeToLinksMap.put(link.getType(), linksWithSameType);
 		}
 		linksWithSameType.add(link);
 		
+		if (link.getStatus() != LinkStatus.Normal) {
+			Set<Link> linksWithSameStatus = statusToLinksMap.get(link.getStatus());
+			if (linksWithSameStatus == null) { 
+				linksWithSameStatus = new HashSet<Link>();
+				statusToLinksMap.put(link.getStatus(), linksWithSameStatus);
+			}
+		}
+
 		sourceToTargetLinkUris.add(key);
 		
 		logger.debug("exit>");		
@@ -403,21 +409,21 @@ public class GraphBuilder {
 	
 	public void changeLinkStatus(Link link, LinkStatus newStatus) {
 
-//		if (link.getId().equals("http://km.aifb.kit.edu/projects/d3/cruiser#Vehicle1---http://km.aifb.kit.edu/projects/d3/cruiser#at---http://www.w3.org/2003/01/geo/wgs84_pos#Point1"))
-//			logger.debug("debug3");
-		
 		LinkStatus oldStatus = link.getStatus();
-//		if (newStatus == oldStatus)
-//			return;
+		if (newStatus == oldStatus)
+			return;
 		
 		link.setStatus(newStatus);
 		
-		List<Link> linksWithOldStatus = this.statusToLinksMap.get(oldStatus);
+		Set<Link> linksWithOldStatus = this.statusToLinksMap.get(oldStatus);
 		if (linksWithOldStatus != null) linksWithOldStatus.remove(link);
 
-		List<Link> linksWithNewStatus = this.statusToLinksMap.get(newStatus);
+		if (newStatus == LinkStatus.Normal) // we don't need to index normal links 
+			return;
+		
+		Set<Link> linksWithNewStatus = this.statusToLinksMap.get(newStatus);
 		if (linksWithNewStatus == null) {
-			linksWithNewStatus = new ArrayList<Link>();
+			linksWithNewStatus = new HashSet<Link>();
 			statusToLinksMap.put(newStatus, linksWithNewStatus);
 		}
 		linksWithNewStatus.add(link);
@@ -451,15 +457,15 @@ public class GraphBuilder {
 
 		this.idToLinkMap.remove(link.getId());
 
-		List<Link> linksWithSameUri = uriToLinksMap.get(link.getLabel().getUri());
+		Set<Link> linksWithSameUri = uriToLinksMap.get(link.getLabel().getUri());
 		if (linksWithSameUri != null) 
 			linksWithSameUri.remove(link);
 		
-		List<Link> linksWithSameType = typeToLinksMap.get(link.getType());
+		Set<Link> linksWithSameType = typeToLinksMap.get(link.getType());
 		if (linksWithSameType != null) 
 			linksWithSameType.remove(link);
 		
-		List<Link> linksWithSameStatus = statusToLinksMap.get(link.getStatus());
+		Set<Link> linksWithSameStatus = statusToLinksMap.get(link.getStatus());
 		if (linksWithSameStatus != null) 
 			linksWithSameStatus.remove(link);
 		
@@ -507,11 +513,11 @@ public class GraphBuilder {
 		
 		this.idToNodeMap.remove(node.getId());
 		
-		List<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
+		Set<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
 		if (nodesWithSameUri != null) 
 			nodesWithSameUri.remove(node);
 		
-		List<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
+		Set<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
 		if (nodesWithSameType != null) 
 			nodesWithSameType.remove(node);
 		
@@ -533,7 +539,7 @@ public class GraphBuilder {
 		long start = System.currentTimeMillis();
 		float elapsedTimeSec;
 
-		List<Node> internalNodes = this.typeToNodesMap.get(NodeType.InternalNode);
+		Set<Node> internalNodes = this.typeToNodesMap.get(NodeType.InternalNode);
 		if (internalNodes != null) {
 			Node[] nodes = internalNodes.toArray(new Node[0]);
 			for (Node node : nodes) 
@@ -591,16 +597,16 @@ public class GraphBuilder {
 		
 		this.idToNodeMap.put(node.getId(), node);
 		
-		List<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
+		Set<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
 		if (nodesWithSameUri == null) {
-			nodesWithSameUri = new ArrayList<Node>();
+			nodesWithSameUri = new HashSet<Node>();
 			uriToNodesMap.put(node.getLabel().getUri(), nodesWithSameUri);
 		}
 		nodesWithSameUri.add(node);
 		
-		List<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
+		Set<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
 		if (nodesWithSameType == null) {
-			nodesWithSameType = new ArrayList<Node>();
+			nodesWithSameType = new HashSet<Node>();
 			typeToNodesMap.put(node.getType(), nodesWithSameType);
 		}
 		nodesWithSameType.add(node);
@@ -631,15 +637,15 @@ public class GraphBuilder {
 		return uriDirectConnections;
 	}
 
-	private List<String> computeUriClosure(String uri) {
+	private Set<String> computeUriClosure(String uri) {
 		
-		List<String> closure = this.uriClosure.get(uri);
+		Set<String> closure = this.uriClosure.get(uri);
 		if (closure != null) 
 			return closure;
 	
-		closure = new ArrayList<String>();
+		closure = new HashSet<String>();
 		List<String> closedList = new ArrayList<String>();
-		HashMap<String, List<String>> dependentUrisMap = new HashMap<String, List<String>>();
+		HashMap<String, Set<String>> dependentUrisMap = new HashMap<String, Set<String>>();
 		computeUriClosureRecursive(uri, closure, closedList, dependentUrisMap);
 		if (closedList.contains(uri) && !closure.contains(uri))
 			closure.add(uri);
@@ -648,8 +654,8 @@ public class GraphBuilder {
 		while (count != 0) {
 			count = 0;
 			for (String s : dependentUrisMap.keySet()) {
-				List<String> temp = this.uriClosure.get(s);
-				List<String> dependentUris = dependentUrisMap.get(s);
+				Set<String> temp = this.uriClosure.get(s);
+				Set<String> dependentUris = dependentUrisMap.get(s);
 				for (String ss : dependentUris) {
 					if (!temp.contains(ss)) { temp.add(ss); count++;}
 					if (this.uriClosure.get(ss) != null) {
@@ -666,12 +672,13 @@ public class GraphBuilder {
 		return closure;
 	}
 
-	private void computeUriClosureRecursive(String uri, List<String> closure, List<String> closedList, HashMap<String, List<String>> dependentUrisMap) {
+	private void computeUriClosureRecursive(String uri, Set<String> closure, 
+			List<String> closedList, HashMap<String, Set<String>> dependentUrisMap) {
 		
 		logger.debug("<enter");
 		
 		closedList.add(uri);
-		List<String> currentClosure = this.uriClosure.get(uri);
+		Set<String> currentClosure = this.uriClosure.get(uri);
 		if (currentClosure != null) {
 			closure.addAll(currentClosure);
 			return;
@@ -679,13 +686,13 @@ public class GraphBuilder {
 
 		HashSet<String> uriDirectConnections = getUriDirectConnections(uri);
 		if (uriDirectConnections.size() == 0) {
-			this.uriClosure.put(uri, new ArrayList<String>());
+			this.uriClosure.put(uri, new HashSet<String>());
 		} else {
 			for (String c : uriDirectConnections) {
 				if (closedList.contains(c)) {
-					List<String> dependentUris = dependentUrisMap.get(uri);
+					Set<String> dependentUris = dependentUrisMap.get(uri);
 					if (dependentUris == null) {
-						dependentUris = new ArrayList<String>();
+						dependentUris = new HashSet<String>();
 						dependentUrisMap.put(uri, dependentUris);
 					}
 					if (!dependentUris.contains(c)) dependentUris.add(c);
@@ -693,7 +700,7 @@ public class GraphBuilder {
 				}
 				if (!closure.contains(c)) closure.add(c);
 				if (!closedList.contains(c)) closedList.add(c);
-				List<String> localClosure = new ArrayList<String>();
+				Set<String> localClosure = new HashSet<String>();
 				computeUriClosureRecursive(c, localClosure, closedList, dependentUrisMap);
 				for (String s : localClosure)
 					if (!closure.contains(s)) closure.add(s);
@@ -710,12 +717,12 @@ public class GraphBuilder {
 		if (node instanceof ColumnNode) return nodeClosure;
 		
 		String uri = node.getLabel().getUri();
-		List<String> closure = this.uriClosure.get(uri); 
+		Set<String> closure = this.uriClosure.get(uri); 
 		if (closure == null) {  // the closure has already been computed.
 			closure = computeUriClosure(uri);
 		} 
 		for (String s : closure) {
-			List<Node> nodes = uriToNodesMap.get(s);
+			Set<Node> nodes = uriToNodesMap.get(s);
 			if (nodes != null) nodeClosure.addAll(nodes);
 		}
 		return nodeClosure;
@@ -736,10 +743,10 @@ public class GraphBuilder {
 		
 		String uri = node.getLabel().getUri();
 
-		List<String> uriClosure = computeUriClosure(uri);
+		Set<String> uriClosure = computeUriClosure(uri);
 
 		for (String c : uriClosure) {
-			List<Node> nodesOfSameUri = this.uriToNodesMap.get(c);
+			Set<Node> nodesOfSameUri = this.uriToNodesMap.get(c);
 			if (nodesOfSameUri == null || nodesOfSameUri.size() == 0) { // the internal node is not added to the graph before
 				Node nn = new InternalNode(nodeIdFactory.getNodeId(c), 
 						ontologyManager.getUriLabel(c));
@@ -754,7 +761,11 @@ public class GraphBuilder {
 		
 		logger.debug("<enter");
 		
-		List<Node> nodes = this.typeToNodesMap.get(NodeType.InternalNode);
+		Set<Node> nodeSet = this.typeToNodesMap.get(NodeType.InternalNode);
+		if (nodeSet == null || nodeSet.isEmpty())
+			return;
+		
+		List<Node> nodes = new ArrayList<Node>(nodeSet);
 		logger.debug("number of internal nodes: " + nodes.size());
 		
 		Node source;

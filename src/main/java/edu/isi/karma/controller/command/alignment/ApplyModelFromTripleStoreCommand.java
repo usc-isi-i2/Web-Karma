@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
-import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
+import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -103,7 +103,7 @@ public class ApplyModelFromTripleStoreCommand extends WorksheetCommand {
 			
 	
 			// Execute the history
-			WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(
+			WorksheetCommandHistoryExecutor histExecutor = new WorksheetCommandHistoryExecutor(
 					worksheetId, workspace);
 
 
@@ -112,7 +112,7 @@ public class ApplyModelFromTripleStoreCommand extends WorksheetCommand {
 			}
 			
 			JSONArray historyJson = new JSONArray(history);
-			histReader.readAndExecuteAllCommands(historyJson);
+			histExecutor.executeAllCommands(historyJson);
 			
 			// Add worksheet updates that could have resulted out of the transformation commands
 			UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
