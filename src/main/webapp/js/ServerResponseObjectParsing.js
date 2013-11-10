@@ -25,14 +25,25 @@ function parse(data) {
         "id" : data["workspaceId"]
     }
 
+    var isError = false;
+    var error = [];
     // Check for errors
     $.each(data["elements"], function(i, element) {
+    	
         if(element["updateType"] == "KarmaError") {
-            $.sticky(element["Error"]);
-            return false;
+        	if(error[element["Error"]]) {
+        		//ignore;
+        	} else {
+	            $.sticky(element["Error"]);
+	            isError = true;
+	            error[element["Error"]] = true;
+        	}
         }
     });
 
+    if(isError)
+    	return false;
+    
     /* Always add the charts from cleaning service in end, so pushing that CleaningServiceUpdate in the end of updates array (if present) */
     // Identify the index
     var cleaningUpdateIndex = -1;

@@ -404,7 +404,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		// Add the RDF literal type to the literal if present
 		if (literalType != null && !literalType.equals("")) {
 			return subjUri + " " + getExpandedAndNormalizedUri(predicateUri) + " \"" + value + 
-					"\"" + "^^" + literalType + " .";
+					"\"" + "^^<" + literalType + "> .";
 		}
 		return subjUri + " " + getExpandedAndNormalizedUri(predicateUri) + " \"" + value + "\" .";
 	}

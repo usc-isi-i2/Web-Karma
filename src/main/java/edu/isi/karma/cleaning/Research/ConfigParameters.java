@@ -25,14 +25,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import edu.isi.karma.cleaning.ExampleSelection;
-import edu.isi.karma.cleaning.Position;
-import edu.isi.karma.cleaning.ProgSynthesis;
-import edu.isi.karma.cleaning.Section;
-import edu.isi.karma.cleaning.Segment;
-import edu.isi.karma.cleaning.Template;
-import edu.isi.karma.cleaning.Traces;
-
 public class ConfigParameters {
 	public static int debug = 0;
 	Properties properties = new Properties();
