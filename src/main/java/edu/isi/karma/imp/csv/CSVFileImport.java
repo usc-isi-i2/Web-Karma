@@ -201,6 +201,7 @@ public class CSVFileImport extends Import {
                 scanner.nextLine();
             }
         }
+        scanner.close();
         return headersList;
     }
 
