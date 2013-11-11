@@ -38,6 +38,8 @@ import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.history.CommandHistoryWriter.HistoryArguments;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
+import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Workspace;
@@ -58,28 +60,32 @@ public class WorksheetCommandHistoryExecutor {
 		this.workspace = workspace;
 	}
 	
-	public void executeCommandsByTags(
+	public UpdateContainer executeCommandsByTags(
 			List<CommandTag> tags, JSONArray historyJson) throws JSONException,
 			KarmaException, CommandException {
 		JSONArray filteredCommands = HistoryJsonUtil.filterCommandsByTag(tags, historyJson);
-		executeAllCommands(filteredCommands);
+		return executeAllCommands(filteredCommands);
 	}
-	public void executeAllCommands(JSONArray historyJson) 
+	public UpdateContainer executeAllCommands(JSONArray historyJson) 
 			throws JSONException, KarmaException, CommandException {
+		UpdateContainer uc =new UpdateContainer();
 		for (int i = 0; i< historyJson.length(); i++) {
 			JSONObject commObject = (JSONObject) historyJson.get(i);
-			executeCommand(commObject);
+			UpdateContainer update = executeCommand(commObject);
+			if(update != null)
+				uc.append(update);
 		}
+		return uc;
 	}
 	
-	private void executeCommand(JSONObject commObject) 
+	private UpdateContainer executeCommand(JSONObject commObject) 
 			throws JSONException, KarmaException, CommandException {
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspace.getId());
 		HashMap<String, CommandFactory> commandFactoryMap = ctrl.getCommandFactoryMap();
 		
 		JSONArray inputParamArr = (JSONArray) commObject.get(HistoryArguments.inputParameters.name());
-		
-		logger.info("Command in history: " + commObject.get(HistoryArguments.commandName.name()));
+		String commandName = (String)commObject.get(HistoryArguments.commandName.name());
+		logger.info("Command in history: " + commandName);
 		// Change the hNode ids, vworksheet id to point to the current worksheet ids
 		if(normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr)) {
 			// Invoke the command
@@ -89,15 +95,26 @@ public class WorksheetCommandHistoryExecutor {
 				JSONInputCommandFactory scf = (JSONInputCommandFactory)cf;
 				Command comm = scf.createCommand(inputParamArr, workspace);
 				if(comm != null){
-					logger.info("Executing command: " + commObject.get(HistoryArguments.commandName.name()));
-					workspace.getCommandHistory().doCommand(comm, workspace);
+					try {
+						logger.info("Executing command: " + commandName);
+						workspace.getCommandHistory().doCommand(comm, workspace);
+					} catch(Exception e) {
+						logger.error("Error executing command: "+ commandName + ". Please notify this error");
+						return new UpdateContainer(new ErrorUpdate("Error executing command " + commandName + " from history"));
+					}
 				}
-				else
+				else {
 					logger.error("Error occured while creating command (Could not create Command object): " 
 							+ commObject.get(HistoryArguments.commandName.name()));
+					return new UpdateContainer(new ErrorUpdate("Error executing command " + commandName + " from history"));
+				}
 			}
+		} else {
+			return new UpdateContainer(new ErrorUpdate("null HTable while normalizing JSON input for the command " + commandName));
 		}
+		return null;
 	}
+	
 	private boolean normalizeCommandHistoryJsonInput(Workspace workspace, String worksheetId, 
 			JSONArray inputArr) throws JSONException {
 		HTable hTable = workspace.getWorksheet(worksheetId).getHeaders();
