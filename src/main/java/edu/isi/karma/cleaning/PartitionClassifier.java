@@ -6,12 +6,14 @@ import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 
 import edu.isi.karma.cleaning.features.RecordClassifier2;
+import edu.isi.karma.cleaning.features.RecordFeatureSet;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PartitionClassifier {
 	private PyObject interpreterClass;
 	public String clssettingString = "";
+	public String[] vocabs;
 	public PartitionClassifier()
 	{
 		String dirpathString = ServletContextParameterMap.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY);
@@ -56,7 +58,9 @@ public class PartitionClassifier {
 	}
 	public PartitionClassifierType create2(Vector<Partition> pars)
 	{
-		RecordClassifier2 ele = new RecordClassifier2();
+		RecordFeatureSet rfs = new RecordFeatureSet();
+		rfs.vocabs = this.vocabs;
+		RecordClassifier2 ele = new RecordClassifier2(rfs);
 		for(int i = 0; i<pars.size(); i++)
 		{
 			Partition partition = pars.get(i);

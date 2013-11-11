@@ -297,7 +297,7 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 			vb_cnt ++;
 		}
 		Vector<String> vob = UtilTools.buildDict(v);
-		ProgramRule.setVocb(vob);
+		inputs.setVocab(new String[vob.size()]);
 		while (iterNum < 1 && !results) // try to find an program within iterNum
 		{
 			rtf = new RamblerTransformationOutput(inputs);
