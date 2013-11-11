@@ -81,7 +81,7 @@ public class RecordFeatureSet {
 		HashSet<String> words = new HashSet<String>();
 		for (String k:vs)
 		{
-			if(!words.contains(k))
+			if(!words.contains(k) && k!= null)
 			{
 				words.add(k);
 			}
@@ -90,7 +90,7 @@ public class RecordFeatureSet {
 		{
 		  for(String w:this.vocabs)
 		  {
-			  if(!words.contains(w))
+			  if(!words.contains(w) && w != null)
 			  {
 				  words.add(w);
 			  }
@@ -124,10 +124,13 @@ public class RecordFeatureSet {
 			Feature f = new RecordCntFeatures(c, record, c);
 			xCollection.add(f);
 		}
-		for(String c:vocabs)
+		if(this.vocabs.length>0)
 		{
-			Feature f = new RecordTextFeature(c, record);
-			xCollection.add(f);
+			for(String c:vocabs)
+			{
+				Feature f = new RecordTextFeature(c, record);
+				xCollection.add(f);
+			}
 		}
 		if(!labels.contains(label))
 		{
