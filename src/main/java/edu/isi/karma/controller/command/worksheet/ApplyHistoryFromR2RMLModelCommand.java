@@ -84,7 +84,8 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-
+		UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		
 		try {
 			String historyStr = extractHistoryFromModel();
 			if (historyStr.isEmpty()) {
@@ -93,7 +94,9 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 			JSONArray historyJson = new JSONArray(historyStr);
 			WorksheetCommandHistoryExecutor histExecutor = new WorksheetCommandHistoryExecutor(
 					worksheetId, workspace);
-			histExecutor.executeAllCommands(historyJson);
+			UpdateContainer hc = histExecutor.executeAllCommands(historyJson);
+			if(hc != null)
+				c.append(hc);
 		} catch (Exception e) {
 			String msg = "Error occured while applying history!";
 			logger.error(msg, e);
@@ -101,7 +104,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 		}
 		
 		// Add worksheet updates that could have resulted out of the transformation commands
-		UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId);
+		
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));		
 		c.add(new InfoUpdate("Model successfully applied!"));
 		return c;
