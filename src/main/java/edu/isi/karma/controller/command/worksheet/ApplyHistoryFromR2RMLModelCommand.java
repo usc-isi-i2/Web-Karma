@@ -47,8 +47,10 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.kr2rml.KR2RMLModelGenerator;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.Workspace;
+import java.io.FileInputStream;
 
 public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 	private final File r2rmlModelFile;
@@ -86,8 +88,11 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		WorksheetCommandHistoryReader histReader = new WorksheetCommandHistoryReader(
 				worksheetId, workspace);
+                
+                KR2RMLModelGenerator modelGenerator = new KR2RMLModelGenerator();
 		try {
-			String historyStr = extractHistoryFromModel();
+                        FileInputStream fis = new FileInputStream(r2rmlModelFile);
+			String historyStr = modelGenerator.extractHistoryFromModel(fis);
 			if (historyStr.isEmpty()) {
 				return new UpdateContainer(new ErrorUpdate("No history found in R2RML Model!"));
 			}
@@ -104,27 +109,6 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));		
 		c.add(new InfoUpdate("Model successfully applied!"));
 		return c;
-	}
-
-	private String extractHistoryFromModel() 
-			throws RepositoryException, RDFParseException, IOException {
-		Repository myRepository = new SailRepository(new MemoryStore());
-		myRepository.initialize();
-		RepositoryConnection con = myRepository.getConnection();
-		ValueFactory f = con.getValueFactory();
-		con.add(r2rmlModelFile, "", RDFFormat.TURTLE);
-		
-		URI wkHistUri = f.createURI(Uris.KM_HAS_WORKSHEET_HISTORY_URI);
-		
-		RepositoryResult<Statement> wkHistStmts = con.getStatements(null, wkHistUri, 
-				null, false);
-		while (wkHistStmts.hasNext()) {
-			// Return the object value of the first history statement
-			Statement st = wkHistStmts.next();
-			Value histVal = st.getObject();
-			return histVal.stringValue();
-		}
-		return "";
 	}
 
 	@Override
