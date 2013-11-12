@@ -35,7 +35,7 @@ function parse(data) {
         	if(error[element["Error"]]) {
         		//ignore;
         	} else {
-	            $.sticky(element["Error"]);
+	            $.sticky("<span class='karmaError'>" + element["Error"] + "</span>");
 	            isError = true;
 	            error[element["Error"]] = true;
         	}
