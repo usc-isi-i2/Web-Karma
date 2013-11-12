@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.IPreviewable;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.VWorkspaceRegistry;
@@ -103,23 +104,42 @@ public class RequestController extends HttpServlet {
                         responseString = updateContainer.generateJson(vWorkspace);
                     } catch (CommandException e) {
                         logger.error("Error occured while executing command: " + currentCommand.getCommandName(), e);
+                        UpdateContainer updateContainer = new UpdateContainer();
+                		updateContainer.add(new ErrorUpdate("Error occured while executing command: " + currentCommand.getCommandName() + ":" + e.getMessage()));
+                		responseString = updateContainer.generateJson(vWorkspace);
                     }
                 } else {
-                    UpdateContainer updateContainer =
-                            ((IPreviewable) currentCommand).handleUserActions(request);
-                    updateContainer.applyUpdates(vWorkspace);
-                    responseString = updateContainer.generateJson(vWorkspace);
+                	try {
+	                    UpdateContainer updateContainer =
+	                            ((IPreviewable) currentCommand).handleUserActions(request);
+	                    updateContainer.applyUpdates(vWorkspace);
+	                    responseString = updateContainer.generateJson(vWorkspace);
+                	} catch(Exception e) {
+                		UpdateContainer updateContainer = new UpdateContainer();
+                		updateContainer.add(new ErrorUpdate("Error:" + e.getMessage()));
+                		responseString = updateContainer.generateJson(vWorkspace);
+                	}
                 }
             }
         } else {
             Command command = ctrl.getCommand(request);
             if (command != null) {
-            	UpdateContainer updateContainer =ctrl.invokeCommand(command);
-            	 updateContainer.applyUpdates(vWorkspace);
-                 responseString = updateContainer.generateJson(vWorkspace);
+            	try {
+            		UpdateContainer updateContainer =ctrl.invokeCommand(command);
+            		updateContainer.applyUpdates(vWorkspace);
+            		responseString = updateContainer.generateJson(vWorkspace);
+            	} catch(Exception e) {
+            		UpdateContainer updateContainer = new UpdateContainer();
+            		updateContainer.add(new ErrorUpdate("Error: " + e.getMessage()));
+            		responseString = updateContainer.generateJson(vWorkspace);
+            	}
                  
             } else {
-                logger.error("Error occured while creating command (Could not create Command object): " + request.getParameter("command"));
+            	String msg = "Error: Could not create Command object '" + request.getParameter("command") + "'";
+                logger.error(msg);
+                UpdateContainer updateContainer = new UpdateContainer();
+        		updateContainer.add(new ErrorUpdate(msg));
+        		responseString = updateContainer.generateJson(vWorkspace);
             }
         }
 
