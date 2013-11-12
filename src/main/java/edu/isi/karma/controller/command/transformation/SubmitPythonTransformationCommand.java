@@ -21,64 +21,38 @@
 
 package edu.isi.karma.controller.command.transformation;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.python.core.PyException;
-import org.python.core.PyObject;
-import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommandFactory;
-import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand;
-import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommandFactory;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
-import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.transformation.PythonTransformationHelper;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 
-public class SubmitPythonTransformationCommand extends WorksheetCommand {
-	final private String newColumnName;
-	final private String transformationCode;
-	final private String hNodeId;
-	final private String hTableId;
-	final private String errorDefaultValue;
-	private AddColumnCommand addColCmd;
+public class SubmitPythonTransformationCommand extends MutatingPythonTransformationCommand {
+	
+	protected AddColumnCommand addColCmd;
 	
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitPythonTransformationCommand.class);
 
 	public SubmitPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
-			String worksheetId, String hNodeId, String hTableId, String errorDefaultValue) {
-		super(id, worksheetId);
-		this.newColumnName = newColumnName;
-		this.transformationCode = transformationCode;
-		this.hNodeId = hNodeId;
-		this.hTableId = hTableId;
-		this.errorDefaultValue = errorDefaultValue;
+			String worksheetId, String hNodeId, String errorDefaultValue) {
+		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
 		
-		addTag(CommandTag.Transformation);
 	}
 
 	@Override
@@ -104,144 +78,60 @@ public class SubmitPythonTransformationCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		HTable hTable = worksheet.getHeaders();
+		String hTableId = hTable.getId();
 		RepFactory f = workspace.getFactory();
 		HNode hNode = f.getHNode(hNodeId);
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
 				workspace.getId());
-		
-		List<HNode> accessibleHNodes = f.getHNode(hNodeId).getHNodesAccessibleList(f);
-		List<HNode> nodesWithNestedTable = new ArrayList<HNode>();
-		Map<String, String> hNodeIdtoColumnNameMap = new HashMap<String, String>();
-		for (HNode accessibleHNode:accessibleHNodes) {
-			if(accessibleHNode.hasNestedTable()) {
-				nodesWithNestedTable.add(accessibleHNode);
-			} else {
-				hNodeIdtoColumnNameMap.put(accessibleHNode.getId(), accessibleHNode.getColumnName());
+		// Invoke the add column command
+		logger.info(hNodeId);
+		try
+		{
+			if(null != hTable.getHNodeFromColumnName(newColumnName) )
+			{
+				logger.error("PyTransform failed because the new column "
+						+ newColumnName + " already exists!");
+				return new UpdateContainer(new ErrorUpdate(
+						"PyTransform failed because the new column "
+								+ newColumnName + " already exists!"));
 			}
-		}
-		accessibleHNodes.removeAll(nodesWithNestedTable);
-		
-		PythonTransformationHelper pyHelper = new PythonTransformationHelper();
-		Map<String,String> normalizedColumnNameMap = new HashMap<String,String>();
-		String clsStmt = pyHelper.getPythonClassCreationStatement(worksheet, normalizedColumnNameMap, accessibleHNodes);
-		String transformMethodStmt = pyHelper.getPythonTransformMethodDefinitionState(worksheet, transformationCode);
-		String columnNameDictStmt = pyHelper.getColumnNameDictionaryStatement(normalizedColumnNameMap);
-		String defGetValueStmt = pyHelper.getGetValueDefStatement(normalizedColumnNameMap);
-		
-		
-		// Create a map from hNodeId to normalized column name
-		Map<String, String> hNodeIdToNormalizedColumnName = new HashMap<String, String>();
-		for (HNode accHNode:accessibleHNodes) {
-			hNodeIdToNormalizedColumnName.put(accHNode.getId(), 
-					normalizedColumnNameMap.get(accHNode.getColumnName()));
-		}
-		
-		try {
-			// Prepare the Python interpreter
-			PythonInterpreter interpreter = new PythonInterpreter();
-			interpreter.exec(pyHelper.getImportStatements());
-			interpreter.exec(clsStmt);
-			interpreter.exec(columnNameDictStmt);
-			interpreter.exec(defGetValueStmt);
-			interpreter.exec(transformMethodStmt);
-			
-			Collection<Node> nodes = new ArrayList<Node>();
-			worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes);
-			
-			Map<String, String> rowToValueMap = new HashMap<String, String>();
-			
-			// Go through all nodes collected for the column with given hNodeId
-			for (Node node:nodes) {
-				Row row = node.getBelongsToRow();
-				Map<String, String> values = node.getColumnValues();
-				StringBuilder objectCreationStmt = new StringBuilder();
-				objectCreationStmt.append("r = " + pyHelper.normalizeString(worksheet.getTitle()) + "(");
-				
-				int keyCounter = 0;
-				for (String valHNodeId : values.keySet()) {
-					String nodeId = values.get(valHNodeId);
-					String nodeVal = f.getNode(nodeId).getValue().asString();
-					
-					if (keyCounter++ != 0)
-						objectCreationStmt.append(",");
-					if (nodeVal == null || nodeVal.isEmpty()) {
-						objectCreationStmt.append(hNodeIdToNormalizedColumnName.get(valHNodeId) + "=\"\"");
-					} else {
-						nodeVal = nodeVal.replaceAll("\"", "\\\\\"");
-						nodeVal = nodeVal.replaceAll("\n", " ");
-						objectCreationStmt.append(hNodeIdToNormalizedColumnName.get(valHNodeId) + "=\"" + nodeVal + "\"");
-					}
-				}
-				objectCreationStmt.append(")");
-				
-				interpreter.exec(objectCreationStmt.toString());
-				try {
-					PyObject output = interpreter.eval("transform(r)");
-					// Execution ran successfully, put the value returned in the HashMap
-					rowToValueMap.put(row.getId(), pyHelper.getPyObjectValueAsString(output));
-				} catch (PyException p) {
-					p.printStackTrace();
-					// Error occured in the Python method execution
-					rowToValueMap.put(row.getId(), errorDefaultValue);
-				} catch (Exception t) {
-					// Error occured in the Python method execution
-					t.printStackTrace();
-					logger.debug("Error occured while transforming.", t);
-					rowToValueMap.put(row.getId(), errorDefaultValue);
-				}
+			if (null == addColCmd) {
+				JSONArray addColumnInput = getAddColumnCommandInputJSON(hTableId);
+				AddColumnCommandFactory addColumnFac = (AddColumnCommandFactory) ctrl
+						.getCommandFactoryMap().get(
+								AddColumnCommand.class.getSimpleName());
+				addColCmd = (AddColumnCommand) addColumnFac.createCommand(
+						addColumnInput, workspace);
+				addColCmd.saveInHistory(false);
+				addColCmd.doIt(workspace);
+			}
+			else if(null == hTable.getHNode(addColCmd.getNewHNodeId()))
+			{
+				addColCmd.doIt(workspace);
 			}
 			
-			// Invoke the add column command
-			JSONArray addColumnInput = getAddColumnCommandInputJSON();
-			AddColumnCommandFactory addColumnFac = (AddColumnCommandFactory)ctrl.
-					getCommandFactoryMap().get(AddColumnCommand.class.getSimpleName());
-			addColCmd = (AddColumnCommand) addColumnFac.createCommand(addColumnInput, workspace);
-			addColCmd.saveInHistory(false);
-			addColCmd.doIt(workspace);
-			
-			// Invoke the MultipleValueEditColumnCommand
-			JSONArray multiCellEditInput = getMultiCellValueEditInputJSON(rowToValueMap, addColCmd.getNewHNodeId());
-			MultipleValueEditColumnCommandFactory mfc = (MultipleValueEditColumnCommandFactory)
-					ctrl.getCommandFactoryMap().get(MultipleValueEditColumnCommand.class.getSimpleName());
-			MultipleValueEditColumnCommand mvecc = (MultipleValueEditColumnCommand) mfc.createCommand(multiCellEditInput, workspace);
-			mvecc.doIt(workspace);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+		catch (Exception e)
+		{
 			logger.error("Error occured during python transformation.",e);
-			return new UpdateContainer(new ErrorUpdate("Error occured while applying Python transformation to the column."));
+			return new UpdateContainer(new ErrorUpdate("Error occured while creating new column for applying Python transformation to the column."));
 		}
-		
-		// Prepare the output container
-		UpdateContainer c = new UpdateContainer();
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
-		
-		/** Add the alignment update **/
-		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
-		
-		c.add(new InfoUpdate("Transformation complete"));
-		return c;
+		try
+		{
+			UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
+				hNode, ctrl, addColCmd.getNewHNodeId());
+			return c;
+		}
+		catch (Exception e )
+		{
+			addColCmd.undoIt(workspace);
+			logger.error("Error occured during python transformation.",e);
+			return new UpdateContainer(new ErrorUpdate("Error occured while creating applying Python transformation to the column."));
+		}
 	}
 
-	private JSONArray getMultiCellValueEditInputJSON(Map<String, String> rowToValueMap, String newHNodeId) throws JSONException {
-		JSONArray arr = new JSONArray();
-		arr.put(CommandInputJSONUtil.createJsonObject(MultipleValueEditColumnCommandFactory.Arguments.worksheetId.name(), 
-				worksheetId, ParameterType.worksheetId));
-		arr.put(CommandInputJSONUtil.createJsonObject(MultipleValueEditColumnCommandFactory.Arguments.hNodeID.name(), 
-				newHNodeId, ParameterType.worksheetId));
-		JSONArray rowsArray = new JSONArray();
-		for (String rowId: rowToValueMap.keySet()) {
-			JSONObject row = new JSONObject();
-			row.put(MultipleValueEditColumnCommandFactory.Arguments.rowID.name(), rowId);
-			row.put(MultipleValueEditColumnCommandFactory.Arguments.value.name(), rowToValueMap.get(rowId));
-			rowsArray.put(row);
-		}
-		arr.put(CommandInputJSONUtil.createJsonObject(MultipleValueEditColumnCommandFactory.Arguments.rows.name(), 
-				rowsArray, ParameterType.other));
-		return arr;
-	}
-
-	private JSONArray getAddColumnCommandInputJSON() throws JSONException {
+	private JSONArray getAddColumnCommandInputJSON(String hTableId) throws JSONException {
 		JSONArray arr = new JSONArray();
 		arr.put(CommandInputJSONUtil.createJsonObject(AddColumnCommandFactory.Arguments.newColumnName.name(), newColumnName, ParameterType.other));
 		arr.put(CommandInputJSONUtil.createJsonObject(AddColumnCommandFactory.Arguments.hTableId.name(), hTableId, ParameterType.other));
@@ -254,6 +144,7 @@ public class SubmitPythonTransformationCommand extends WorksheetCommand {
 	public UpdateContainer undoIt(Workspace workspace) {
 		addColCmd.undoIt(workspace);
 		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
+		// TODO is it necessary to compute alignment and semantic types for everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

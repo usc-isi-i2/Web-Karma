@@ -21,13 +21,9 @@
 
 package edu.isi.karma.rep.sources;
 
-import org.apache.log4j.Logger;
-
-import edu.isi.karma.modeling.ModelingParams;
+import edu.isi.karma.modeling.ModelingConfiguration;
 
 public abstract class Source {
-
-	static Logger logger = Logger.getLogger(Source.class);
 
 	private String id;
 	private String name;
@@ -51,7 +47,7 @@ public abstract class Source {
 	}
 	
 	public String getUri() {
-		return ModelingParams.KARMA_SOURCE_PREFIX + getId() + "#";
+		return ModelingConfiguration.getKarmaSourcePrefix() + getId() + "#";
 	}
 
 	public String getId() {

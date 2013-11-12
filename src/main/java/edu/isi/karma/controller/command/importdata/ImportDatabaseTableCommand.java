@@ -22,23 +22,21 @@
  */
 package edu.isi.karma.controller.command.importdata;
 
+import javax.servlet.http.HttpServletRequest;
+
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.controller.update.DatabaseTablePreviewUpdate;
 import edu.isi.karma.controller.update.DatabaseTablesListUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.FetchPreferencesUpdate;
 import edu.isi.karma.controller.update.NewDatabaseCommandUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetListUpdate;
-import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.imp.database.DatabaseTableImport;
-import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.imp.Import;
-import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.imp.database.DatabaseTableImport;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
-import javax.servlet.http.HttpServletRequest;
 
 public class ImportDatabaseTableCommand extends ImportCommand implements IPreviewable {
     // Database Type
@@ -158,7 +156,6 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
 
     @Override
     public String getTitle() {
-        // TODO Auto-generated method stub
         return "Import Database Table";
     }
 
@@ -185,7 +182,6 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
             NewDatabaseCommandUpdate upd = new NewDatabaseCommandUpdate(comm);
             c.add(upd);
         } catch (Throwable e) {
-            e.printStackTrace();
             String message = e.getMessage().replaceAll("\n", "").replaceAll("\"", "\\\"");
             ErrorUpdate errUpdt = new ErrorUpdate(message);
             c.add(errUpdt);

@@ -41,6 +41,7 @@ import edu.isi.karma.controller.command.FetchPreferencesCommand;
 import edu.isi.karma.controller.command.FetchPreferencesCommandFactory;
 import edu.isi.karma.controller.command.GetUniqueGraphUrlCommand;
 import edu.isi.karma.controller.command.GetUniqueGraphUrlCommandFactory;
+import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
 import edu.isi.karma.controller.command.ResetKarmaCommand;
 import edu.isi.karma.controller.command.ResetKarmaCommandFactory;
@@ -112,8 +113,6 @@ import edu.isi.karma.controller.command.importdata.ImportOntologyCommand;
 import edu.isi.karma.controller.command.importdata.ImportOntologyCommandFactory;
 import edu.isi.karma.controller.command.importdata.ImportServiceCommand;
 import edu.isi.karma.controller.command.importdata.ImportServiceCommandFactory;
-import edu.isi.karma.controller.command.importdata.ImportUnionResultCommand;
-import edu.isi.karma.controller.command.importdata.ImportUnionResultCommandFactory;
 import edu.isi.karma.controller.command.importdata.ImportXMLFileCommand;
 import edu.isi.karma.controller.command.importdata.ImportXMLFileCommandFactory;
 import edu.isi.karma.controller.command.publish.PublishCSVCommand;
@@ -142,6 +141,8 @@ import edu.isi.karma.controller.command.service.PublishModelCommand;
 import edu.isi.karma.controller.command.service.PublishModelCommandFactory;
 import edu.isi.karma.controller.command.transformation.PreviewPythonTransformationResultsCommand;
 import edu.isi.karma.controller.command.transformation.PreviewPythonTransformationResultsCommandFactory;
+import edu.isi.karma.controller.command.transformation.SubmitEditPythonTransformationCommand;
+import edu.isi.karma.controller.command.transformation.SubmitEditPythonTransformationCommandFactory;
 import edu.isi.karma.controller.command.transformation.SubmitPythonTransformationCommand;
 import edu.isi.karma.controller.command.transformation.SubmitPythonTransformationCommandFactory;
 import edu.isi.karma.controller.command.worksheet.AddColumnCommand;
@@ -164,9 +165,9 @@ import edu.isi.karma.controller.command.worksheet.SetWorksheetPropertiesCommand;
 import edu.isi.karma.controller.command.worksheet.SetWorksheetPropertiesCommandFactory;
 import edu.isi.karma.controller.command.worksheet.SplitByCommaCommand;
 import edu.isi.karma.controller.command.worksheet.SplitByCommaCommandFactory;
+import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.command.IPreviewable;
-import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.rep.Workspace;
 
 /**
  * There is one ExecutionManager per user. In the HttpServlet implementation we
@@ -181,10 +182,10 @@ public class ExecutionController {
     private static Logger logger = LoggerFactory
             .getLogger(ExecutionController.class);
     private final HashMap<String, CommandFactory> commandFactoryMap = new HashMap<String, CommandFactory>();
-    private final VWorkspace vWorkspace;
+    private final Workspace workspace;
 
-    public ExecutionController(VWorkspace vWorkspace) {
-        this.vWorkspace = vWorkspace;
+    public ExecutionController(Workspace workspace) {
+        this.workspace = workspace;
         initializeCommandFactoryMap();
     }
 
@@ -267,8 +268,6 @@ public class ExecutionController {
                 new ResetKarmaCommandFactory());
         commandFactoryMap.put(FetchTransformingDataCommand.class.getSimpleName(),
                 new FetchTransformingDataFactory());
-        commandFactoryMap.put(ImportUnionResultCommand.class.getSimpleName(),
-                new ImportUnionResultCommandFactory());
         commandFactoryMap.put(MultipleValueEditColumnCommand.class.getSimpleName(),
                 new MultipleValueEditColumnCommandFactory());
         commandFactoryMap.put(SubmitCleaningCommand.class.getSimpleName(),
@@ -283,6 +282,8 @@ public class ExecutionController {
                 new PreviewPythonTransformationResultsCommandFactory());
         commandFactoryMap.put(SubmitPythonTransformationCommand.class.getSimpleName(),
                 new SubmitPythonTransformationCommandFactory());
+        commandFactoryMap.put(SubmitEditPythonTransformationCommand.class.getSimpleName(), 
+        		new SubmitEditPythonTransformationCommandFactory());
         commandFactoryMap.put(GenerateR2RMLModelCommand.class.getSimpleName(),
                 new GenerateR2RMLModelCommandFactory());
         commandFactoryMap.put(ApplyHistoryFromR2RMLModelCommand.class.getSimpleName(),
@@ -323,8 +324,8 @@ public class ExecutionController {
                 new LoadAdditionalWorksheetRowsCommandFactory());
     }
 
-    public VWorkspace getvWorkspace() {
-        return vWorkspace;
+    public Workspace getWorkspace() {
+        return workspace;
     }
 
     public HashMap<String, CommandFactory> getCommandFactoryMap() {
@@ -337,13 +338,13 @@ public class ExecutionController {
             if (cf instanceof JSONInputCommandFactory) {
                 try {
                     JSONInputCommandFactory scf = (JSONInputCommandFactory) cf;
-                    return scf.createCommand(new JSONArray(request.getParameter("newInfo")), vWorkspace.getWorkspace());
+                    return scf.createCommand(new JSONArray(request.getParameter("newInfo")), workspace);
                 } catch (Exception e) {
                     e.printStackTrace();
                     return null;
                 }
             } else {
-                return cf.createCommand(request, vWorkspace.getWorkspace());
+                return cf.createCommand(request, workspace);
             }
         } else {
             logger.error("Command " + request.getParameter("command")
@@ -352,26 +353,26 @@ public class ExecutionController {
         }
     }
 
-    public String invokeCommand(Command command) {
+    public UpdateContainer invokeCommand(Command command) {
         synchronized (this) {
             try {
                 UpdateContainer updateContainer = null;
-                vWorkspace.getWorkspace().getCommandHistory().setCurrentCommand(command);
+                workspace.getCommandHistory().setCurrentCommand(command);
 
                 if (command instanceof IPreviewable) {
                     updateContainer = ((IPreviewable) command).showPreview();
                 } else {
-                    updateContainer = vWorkspace.getWorkspace().getCommandHistory().doCommand(command, vWorkspace.getWorkspace());
+                    updateContainer = workspace.getCommandHistory().doCommand(command, workspace);
                 }
 
-                updateContainer.applyUpdates(vWorkspace);
-                String responseJson = updateContainer.generateJson(vWorkspace);
-                //logger.info(responseJson);
-                return responseJson;
+               //logger.info(responseJson);
+                return updateContainer;
             } catch (CommandException e) {
                 logger.error(
                         "Error occured with command " + command.toString(), e);
-                return ""; // TODO probably need a return that indicates an
+                UpdateContainer updateContainer = new UpdateContainer();
+                updateContainer.add(new ErrorUpdate("Error occured with command " + command.toString()));
+                return updateContainer; // TODO probably need a return that indicates an
                 // error.
             }
         }

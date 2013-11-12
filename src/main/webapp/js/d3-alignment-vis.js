@@ -163,10 +163,11 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     $(mainWorksheetDiv).data("svgVis", svg);
     $(mainWorksheetDiv).data("forceLayoutObject", force);
     
+    //console.log("There are " + json["links"].length + " links, " + json["nodes"].length + " nodes");
     $.each(json["nodes"], function(index, node){
         node["fixed"] = true;
         var hNodeList = node["hNodesCovered"];
-        
+       
         var extremeLeftX = Number.MAX_VALUE;
         var extremeRightX = Number.MIN_VALUE;
         $.each(hNodeList, function(index2, hNode){
@@ -181,17 +182,79 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                     extremeRightX = rightX;
             }
         });
-
-        // Add 18 to account for the padding in cells
-        var width = extremeRightX - extremeLeftX + 18;
-        node["width"] = width;
-        node["y"] = h - ((node["height"] * levelHeight));
-        if(node["nodeType"] == "ColumnNode" || node["nodeType"] == "Unassigned")
-            node["y"] -= 5;
-        if(node["nodeType"] == "FakeRoot")
-            node["y"] += 15;
-        node["x"] = extremeLeftX + width/2;
+        
+        if(hNodeList.length != 0) {
+	        // Add 18 to account for the padding in cells
+	        var width = extremeRightX - extremeLeftX + 18;
+	        node["width"] = width;
+	        node["y"] = h - ((node["height"] * levelHeight));
+	        if(node["nodeType"] == "ColumnNode" || node["nodeType"] == "Unassigned")
+	            node["y"] -= 5;
+	        if(node["nodeType"] == "FakeRoot")
+	            node["y"] += 15;
+	        node["x"] = extremeLeftX + width/2;
+        }
     });
+    
+    
+  //Take into account where hNodesCovered is empty as this node does
+    //not anchor to anything in the table
+    
+    $.each(json["nodes"], function(index, node){
+        node["fixed"] = true;
+        var hNodeList = node["hNodesCovered"];
+        
+       ///console.log("Hnode:" + node["id"] + "->" + hNodeList.length);
+        if(hNodeList.length == 0) {
+        	//This node does not anchor to the table.
+        	//So, to calculate width, we need to go and get information
+        	//from the links
+        	var linkList = [];
+        	$.each(json["links"], function(index2, link) {
+        		var source = link["source"];
+        		if(typeof source == "object")
+        			source = source["index"];
+        		var target = link["target"];
+        		if(typeof target == "object")
+        			target = target["index"];
+        		
+        		if(source == index) {
+        			linkList.push(target);
+        		} else if(target == index) {
+        			linkList.push(source);
+        		}
+        	});
+       
+	        var extremeLeftX = Number.MAX_VALUE;
+	        var extremeRightX = Number.MIN_VALUE;
+	        $.each(linkList, function(index2, hNodeIdx){
+	            var nodeConnect = json["nodes"][hNodeIdx];
+	            var width = nodeConnect["width"];
+	            var x = nodeConnect["x"];
+	            //var y = nodeConnect["y"];
+	            var leftX = x - (width/2);
+	            var rightX = x + (width/2);
+	            if(leftX < extremeLeftX)
+	                extremeLeftX = leftX;
+	            if(rightX > extremeRightX)
+	                extremeRightX = rightX;
+	        });
+	        //console.log("HNode:" + node["id"] + " has " + linkList.length + " links");
+	        //console.log("left, right: " + extremeLeftX + ":" + extremeRightX);
+	        
+	        var width = extremeRightX - extremeLeftX + 18;
+	        node["width"] = width;
+	        node["y"] = h - ((node["height"] * levelHeight));
+	        if(node["nodeType"] == "ColumnNode" || node["nodeType"] == "Unassigned")
+	            node["y"] -= 5;
+	        if(node["nodeType"] == "FakeRoot")
+	            node["y"] += 15;
+	        node["x"] = extremeLeftX + width/2;
+	        
+	        //console.log("x:" + node["x"] + ", y:" + node["y"] + ", width:" + node["width"]);
+        }
+    });
+    
     
     var force = self.force = d3.layout.force()
         .nodes(json.nodes)
@@ -217,6 +280,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
       .append("svg:path")
         .attr("d", "M0,-5L10,0L0,5");
     
+    //Hanlde drawing of the links
     var link = svg.selectAll("line.link")
         .data(json.links)
         .enter().append("svg:line")
@@ -233,31 +297,82 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 return "url(#marker-Class)";
         });
     
-    // var dataPropertyOfColumnLinks = [];
-    // $.each(json.links, function(i, item) {
-    	// if (item.linkType == "DataPropertyOfColumnLink") {
-    		// dataPropertyOfColumnLinks.push(item);
-    	// }
-    // });
-//     
-    // if (dataPropertyOfColumnLinks.length != 0) {
-    	// var dataPropertyOfColumnSVGLinks = svg.selectAll("line.link")
-        // .data(dataPropertyOfColumnLinks)
-        // .enter().append("svg:line")
-        // .attr("class", function(d) { return "link " + d.linkType; })
-        // .attr("x1", function(d) { return d.source.x; })
-        // .attr("y1", function(d) { return d.source.y; })
-        // .attr("x2", function(d) { return d.target.x; })
-        // .attr("y2", function(d) { return d.target.y; })
-        // .attr("id", function(d) { return "line"+d.source.index+"_"+d.target.index; })
-        // .attr("marker-end", function(d) {
-            // if(d.target.nodeType == "ColumnNode") 
-                // return "url(#marker-DataProperty)";
-            // else
-                // return "url(#marker-Class)";
-        // });
-    // }
+    
+  //Now, let us try to get straight line links
+    link.attr("x1", function(d) {
+        if (d.linkType == "horizontalDataPropertyLink") {
+        	return d.source.x;
+        }
         
+        var x1;
+        if(d.source.y > d.target.y)
+            x1 = d.source.x;
+        else
+            x1 = d.target.x;
+        
+        var tx1 = d.target.x - d.target.width/2;
+        var tx2 = d.target.x + d.target.width/2;
+        var sx1 = d.source.x - d.source.width/2;
+        var sx2 = d.source.x + d.source.width/2;
+        
+        d.calculateOverlap = 0;
+        
+        if(!(x1 >= sx1 && x1 <=sx2)) {
+        	d.calculateOverlap = 1;
+        	x1 = getOverlappingCenter(sx1, sx2, tx1, tx2);
+        	d.overlapx = x1;
+        }
+        
+        var x2;
+        if(d.source.y > d.target.y)
+            x2 = d.source.x;
+        else
+            x2 = d.target.x;
+        
+        if(!(x2 >= tx1 && x2 <=tx2)) {
+        	d.calculateOverlap = 1;
+        	x1 = getOverlappingCenter(sx1, sx2, tx1, tx2);
+        	d.overlapx = x1;
+        }
+        
+        
+        return x1;
+    })
+    .attr("y1", function(d) {
+    	if (d.linkType == "DataPropertyOfColumnLink" || d.linkType == "ObjectPropertySpecializationLink") {
+    		return d.source.y + 18;
+    	}
+    	return d.source.y; 
+    })
+    .attr("x2", function(d) {
+    	if (d.linkType == "horizontalDataPropertyLink") {
+        	return d.target.x;
+        }
+    	
+    	if(d.calculateOverlap) {
+    		return d.overlapx;
+    	}
+    	
+    	var x2;
+        if(d.source.y > d.target.y)
+            x2 = d.source.x;
+        else
+            x2 = d.target.x; 
+        
+        var minX2 = d.target.x - d.target.width/2;
+        var maxX2 = d.target.x + d.target.width/2;
+        
+        if(!(x2 >= minX2 && x2 <=maxX2)) {
+        	//Arrow is not wihin the box now
+        	console.log("x2 of Arrow not in limits: " + x2 + ", Source:" + d.source.x + "," + d.source.width 
+        			+ " Target:" + d.target.x + "," + d.target.y);
+        	x2 = d.target.x;
+        }
+        return x2;
+    })
+    .attr("y2", function(d) { return d.target.y; });
+    
+    //Hanlde drawing of the link labels
     svg.selectAll("text")
         .data(json.links)
         .enter().append("text")
@@ -271,6 +386,10 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 return "LinkLabel FakeRootLink "+worksheetId;
         })
         .attr("x", function(d) {
+        	if(d.calculateOverlap) {
+        		return d.overlapx;
+        	}
+        	
             if(d.source.y > d.target.y)
                 return d.source.x;
             else
@@ -309,6 +428,8 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
             $("g.highlightOverlay").remove();
         });
     
+    
+    //Handle drawing of nodes
     var node = svg.selectAll("g.node")
         .data(json.nodes);
         
@@ -495,17 +616,24 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                    if(d1.id != d2.id) {
                        if(y1 == y2) {
                            if(((x1 + width1) > x2) && (x2+width2>x1+width1)){
-                               // console.log("Collision detected!");
+                                //console.log("Collision detected!");
                                // console.log(d1);
                                // console.log(d2);
                                // console.log("Existing: " + $(cur1).attr("y"));
                                // console.log("Flag: " + flag);
                                if(flag%2 == 0)
-                                   $(cur1).attr("y", Number($(cur1).attr("y"))-8);
+                                   $(cur1).attr("y", Number($(cur1).attr("y"))-12);
                                else
                                    $(cur1).attr("y", Number($(cur1).attr("y"))+5);
                                flag++;
                            }
+                       } else if(y2 >= y1 && y2 <= y1+height1) {
+                    	   //console.log("Collision2 detected!");
+                    	   if(flag%2 == 0)
+                               $(cur1).attr("y", Number($(cur1).attr("y"))-6);
+                           else
+                               $(cur1).attr("y", Number($(cur1).attr("y"))+3);
+                           flag++;
                        }
                        if(x1+width1 < x2)
                             return false;
@@ -517,32 +645,8 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
     // $("g.ColumnNode, g.Unassigned").qtip({content: {text: "Change Semantic Type"}});
 //    $("g.InternalNode").qtip({content: {text: "Add Parent Relationship"}});
     
-    link.attr("x1", function(d) {
-        if (d.linkType == "horizontalDataPropertyLink") {
-        	return d.source.x;
-        }
-        
-        if(d.source.y > d.target.y)
-            return d.source.x;
-        else
-            return d.target.x;
-    })
-    .attr("y1", function(d) {
-    	if (d.linkType == "DataPropertyOfColumnLink" || d.linkType == "ObjectPropertySpecializationLink") {
-    		return d.source.y + 18;
-    	}
-    	return d.source.y; 
-    })
-    .attr("x2", function(d) {
-    	if (d.linkType == "horizontalDataPropertyLink") {
-        	return d.target.x;
-        }
-        if(d.source.y > d.target.y)
-            return d.source.x;
-        else
-            return d.target.x; 
-    })
-    .attr("y2", function(d) { return d.target.y; });
+    
+    
 
     node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
     
@@ -552,6 +656,19 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
          }, 500, worksheetId);
     });
 }
+
+var getOverlappingCenter = function(line1x1, line1x2, line2x1, line2x2) {
+	var start = line1x1;
+	if(line2x1 > start) 
+		start = line2x1;
+	
+	var end = line1x2;
+	if(line2x2 < end)
+		end = line2x2;
+	
+	var width = end - start;
+	return start + width/2;
+};
 
 var comparator = function(a,b){
     var x1 = 0;

@@ -25,7 +25,8 @@ package edu.isi.karma.controller.command.importdata;
 import java.io.File;
 import java.io.PrintWriter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.update.AbstractUpdate;
@@ -37,7 +38,7 @@ import edu.isi.karma.view.VWorkspace;
 
 public class ImportOntologyCommand extends ImportFileCommand {
 
-    private static Logger logger = Logger.getLogger(ImportOntologyCommand.class);
+    private static Logger logger = LoggerFactory.getLogger(ImportOntologyCommand.class);
 
     @Override
     protected Import createImport(Workspace workspace) {
@@ -72,9 +73,9 @@ public class ImportOntologyCommand extends ImportFileCommand {
         OntologyManager ontManager = workspace.getOntologyManager();
 
 
-        logger.info("Loading ontology: " + getFile().getAbsolutePath());
+        logger.debug("Loading ontology: " + getFile().getAbsolutePath());
         final boolean success = ontManager.doImportAndUpdateCache(getFile());
-        logger.info("Done loading ontology: " + getFile().getAbsolutePath());
+        logger.debug("Done loading ontology: " + getFile().getAbsolutePath());
         return new UpdateContainer(new AbstractUpdate() {
             @Override
             public void generateJson(String prefix, PrintWriter pw,

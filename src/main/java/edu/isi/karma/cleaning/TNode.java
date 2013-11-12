@@ -59,7 +59,6 @@ public class TNode{
 	}
 	public String getType()
 	{
-		
 		if(type == TNode.ANYTYP)
 		{
 			return "ANYTYP";

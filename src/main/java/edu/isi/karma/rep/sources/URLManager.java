@@ -30,15 +30,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.webserver.KarmaException;
 
 public class URLManager {
 
-	static Logger logger = Logger.getLogger(URLManager.class);
+	static Logger logger = LoggerFactory.getLogger(URLManager.class);
 
 	public URLManager() {
 		

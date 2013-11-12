@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.modeling.Prefixes;
+
 
 
 public class ColumnNode extends Node {
@@ -35,7 +38,7 @@ public class ColumnNode extends Node {
 	private static final long serialVersionUID = 1L;
 	private final String hNodeId;
 	private final String columnName;
-	private String rdfLiteralType;
+	private Label rdfLiteralType;
 	
 	private List<SemanticType> crfSuggestedSemanticTypes;
 	private SemanticType userSelectedSemanticType;
@@ -44,16 +47,16 @@ public class ColumnNode extends Node {
 		super(id, new Label(hNodeId), NodeType.ColumnNode);
 		this.hNodeId = hNodeId;
 		this.columnName = columnName;
-		this.rdfLiteralType = rdfLiteralType;
+		this.setRdfLiteralType(rdfLiteralType);
 		this.crfSuggestedSemanticTypes = crfSuggestedSemanticTypes;
 		this.userSelectedSemanticType = null;
 	}
 	
-	public ColumnNode(String id, String hNodeId, String columnName, String rdfLiteralType) {
+	public ColumnNode(String id, String hNodeId, String columnName, Label rdfLiteralType) {
 		super(id, new Label(hNodeId), NodeType.ColumnNode);
 		this.hNodeId = hNodeId;
 		this.columnName = columnName;
-		this.rdfLiteralType = rdfLiteralType;
+		this.setRdfLiteralType(rdfLiteralType);
 		this.crfSuggestedSemanticTypes = null;
 		this.userSelectedSemanticType = null;
 	}
@@ -66,14 +69,23 @@ public class ColumnNode extends Node {
 		return columnName;
 	}
 
-	public String getRdfLiteralType() {
+	public Label getRdfLiteralType() {
 		return rdfLiteralType;
 	}
 	
 	public void setRdfLiteralType(String rdfLiteralType) {
-		this.rdfLiteralType = rdfLiteralType;
+		if (rdfLiteralType != null && rdfLiteralType.trim().length() > 0) {
+			rdfLiteralType = rdfLiteralType.replace(Prefixes.XSD + ":", Namespaces.XSD);
+			this.rdfLiteralType = new Label(rdfLiteralType, Namespaces.XSD, Prefixes.XSD);
+		} else {
+			this.rdfLiteralType = null;
+		}
 	}
 
+	public void setRdfLiteralType(Label rdfLiteralType) {
+		this.rdfLiteralType = rdfLiteralType;
+	}
+	
 	public SemanticType getUserSelectedSemanticType() {
 		return userSelectedSemanticType;
 	}

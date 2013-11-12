@@ -23,15 +23,11 @@ package edu.isi.karma.model.serialization;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import com.hp.hpl.jena.rdf.model.Model;
 
 import edu.isi.karma.rep.sources.Source;
 
 public abstract class SourceLoader {
-
-	static Logger logger = Logger.getLogger(SourceLoader.class);
 
 	public abstract Source getSourceByUri(String uri);
 	public abstract void deleteSourceByUri(String uri);

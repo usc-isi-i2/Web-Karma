@@ -20,20 +20,24 @@
  ******************************************************************************/
 
 package edu.isi.karma.cleaning.QuestionableRecord;
-
 import java.util.Vector;
 
-import edu.isi.karma.cleaning.RecFeature;
 import edu.isi.karma.cleaning.TNode;
 
-//counting  text feature
+//counting text feature
 public class Feature1 implements RecFeature{
 	public String target;
 	public Vector<TNode> xNodes =new Vector<TNode>();
-	public Feature1(String tar,Vector<TNode> xNodes)
+	public double weight = 1.0;
+	public Feature1(String tar,Vector<TNode> xNodes,double weight)
 	{
 		target = tar;
 		this.xNodes = xNodes;
+		this.weight = weight;
+	}
+	public String getName()
+	{
+		return target;
 	}
 	public double computerScore()
 	{
@@ -45,6 +49,6 @@ public class Feature1 implements RecFeature{
 			if(x.text.compareTo(target)==0)
 				res += 1;
 		}
-		return res;
+		return res*this.weight;
 	}
 }

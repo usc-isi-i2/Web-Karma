@@ -24,7 +24,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.ontology.ConversionException;
 import com.hp.hpl.jena.ontology.DatatypeProperty;
@@ -46,7 +47,7 @@ import edu.isi.karma.rep.alignment.Label;
 
 class OntologyHandler {
 	
-	static Logger logger = Logger.getLogger(OntologyHandler.class.getName());
+	private static Logger logger = LoggerFactory.getLogger(OntologyHandler.class.getName());
 
 	private static OntModel ontModel = null;
 	
@@ -165,7 +166,9 @@ class OntologyHandler {
 		OntProperty inverseProp = null;
 		try {
 			inverseProp = op.getInverse();
-		} catch (ConversionException e) {}
+		} catch (ConversionException e) {
+			logger.error(e.getMessage());
+		}
 		if (inverseProp != null) {
 			return getUriLabel(inverseProp.getURI());
 		}
@@ -185,7 +188,9 @@ class OntologyHandler {
 		OntProperty inverseOfProp = null;
 		try {
 			inverseOfProp = op.getInverse();
-		} catch (ConversionException e) {}
+		} catch (ConversionException e) {
+			logger.error(e.getMessage());
+		}
 		if (inverseOfProp != null) {
 			return getUriLabel(inverseOfProp.getURI());
 		}
@@ -392,16 +397,26 @@ class OntologyHandler {
 			else if (c.isUnionClass()) { // in form of unionOf or intersectionOf
 				UnionClass uc = c.asUnionClass();
 				  for (Iterator<? extends OntClass> i = uc.listOperands(); i.hasNext(); ) {
-				      OntClass op = (OntClass) i.next();
-			    	  getMembers(op, resources, recursive);
+				      try {
+				    	  OntResource op = i.next();
+//				    	  OntClass op = (OntClass) i.next();
+				    	  getMembers(op, resources, recursive);
+				      } catch (ConversionException e) {
+				    	  logger.error(e.getMessage());
+				      }
 				  }
 			
 			// intersectionOf
 			} else if (c.isIntersectionClass()) {
 				IntersectionClass ic = c.asIntersectionClass();
 				  for (Iterator<? extends OntClass> i = ic.listOperands(); i.hasNext(); ) {
-				      OntClass op = (OntClass) i.next();
-			    	  getMembers(op, resources, recursive);
+				      try {
+				    	  OntResource op = i.next();
+//				    	  OntClass op = (OntClass) i.next();
+				    	  getMembers(op, resources, recursive);
+				      } catch (ConversionException e) {
+				    	  logger.error(e.getMessage());
+				      }
 				  }
 			}
 		}

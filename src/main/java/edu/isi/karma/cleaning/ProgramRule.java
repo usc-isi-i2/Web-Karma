@@ -1,6 +1,7 @@
 package edu.isi.karma.cleaning;
 
 import java.util.HashMap;
+import java.util.Vector;
 
 
 public class ProgramRule {
@@ -9,7 +10,7 @@ public class ProgramRule {
 	public PartitionClassifierType pClassifier;
 	public static Interpretor itInterpretor;
 	public String signString = "";
-	public static String IDENTITY = "substr(value,'START','END')";
+	public static final String IDENTITY = "substr(value,'START','END')";
 	public boolean nullRule = false;
 	public ProgramRule(Program prog)
 	{

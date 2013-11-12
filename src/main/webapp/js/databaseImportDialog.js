@@ -175,7 +175,6 @@ function sendDBTableImportCommandCreateRequest() {
 	    				}
 	    			}
 	    		});
-	    		
 		   	},
 		error :
 			function (xhr, textStatus) {
@@ -249,6 +248,7 @@ function sendImportTableRequest() {
 				if(flag != -1) {
 					parse(json);
     				alert("Table imported in the workspace!");
+    	    		showDialogToLoadModel();
 				}
     			
 		   	},

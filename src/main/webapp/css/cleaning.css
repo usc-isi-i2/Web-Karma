@@ -18,7 +18,8 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-
+.hover { background-color: #106166; color: #fff; cursor:pointer; }
+.page{ margin:5px;}
 table.transform {
 	border:none;
 	border-collapse: collapse;

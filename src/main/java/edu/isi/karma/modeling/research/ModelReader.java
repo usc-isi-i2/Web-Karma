@@ -41,6 +41,7 @@ import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
+import edu.isi.karma.rep.alignment.ObjectPropertyType;
 
 
 public class ModelReader {
@@ -397,7 +398,7 @@ public class ModelReader {
 			
 			Link e;
 			if (obj instanceof InternalNode)
-				e = new ObjectPropertyLink(predicateStr, new Label(predicateStr));
+				e = new ObjectPropertyLink(predicateStr, new Label(predicateStr), ObjectPropertyType.None);
 			else
 				e = new DataPropertyLink(predicateStr, new Label(predicateStr));
 			graph.addEdge(subj, obj, e);

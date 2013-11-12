@@ -23,8 +23,9 @@ package edu.isi.karma.rep.alignment;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.rits.cloning.Cloner;
 
@@ -34,14 +35,13 @@ import edu.isi.karma.util.RandomGUID;
 public abstract class Link extends DefaultWeightedEdge implements Comparable<Link> {
 	
 	private static final long serialVersionUID = 1L;
-	static Logger logger = Logger.getLogger(Link.class);
+	static Logger logger = LoggerFactory.getLogger(Link.class);
 
 	private String id;
 	private Label label;
 	private LinkType type;
 	private LinkStatus status;
 	private LinkKeyInfo keyInfo;
-	private LinkPriorityType priorityType;
 	private Set<String> patternIds;
 	
 	public Link(String id, Label label, LinkType type) {
@@ -82,7 +82,6 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		this.type = LinkType.None;
 		this.status = LinkStatus.Normal;
 		this.keyInfo = LinkKeyInfo.None;
-		this.priorityType = LinkPriorityType.None;
 		this.patternIds = new HashSet<String>();
 	}
 	
@@ -122,14 +121,6 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 
 	public void setStatus(LinkStatus status) {
 		this.status = status;
-	}
-
-	public LinkPriorityType getPriorityType() {
-		return priorityType;
-	}
-
-	public void setPriorityType(LinkPriorityType priorityType) {
-		this.priorityType = priorityType;
 	}
 
 	public LinkKeyInfo getKeyType() {

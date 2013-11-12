@@ -24,7 +24,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.rits.cloning.Cloner;
 
@@ -37,7 +38,7 @@ public abstract class Node implements Comparable<Node>, Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	static Logger logger = Logger.getLogger(Node.class);
+	static Logger logger = LoggerFactory.getLogger(Node.class);
 
 	private String id;
 	private Label label;

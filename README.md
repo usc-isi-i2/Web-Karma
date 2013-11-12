@@ -52,7 +52,7 @@ mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.ar
 You can do `mvn exec:java -Dexec.mainClass="edu.isi.karma.rdf.OfflineRdfGenerator" -Dexec.args="--help"` to get information about required arguments.
 
 ### How to set up password protection for accessing Karma? ###
-- in /config/jettyrealm.properties change user/password (if you wish)
+- in /src/main/config/jettyrealm.properties change user/password (if you wish)
 - in /src/main/webapp/WEB-INF/web.xml uncomment security section at the end of the file
 - in pom.xml uncomment security section (search for loginServices)
 

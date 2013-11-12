@@ -25,17 +25,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.BellmanFordShortestPath;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.alg.KruskalMinimumSpanningTree;
 import org.jgrapht.graph.Pseudograph;
 import org.jgrapht.graph.WeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.SimpleLink;
+import edu.isi.karma.rep.alignment.PlainLink;
 
 /**
  * The approach is taken from the paper "A fast algorithm for steiner trees" by L. Kou et. al.
@@ -44,7 +45,7 @@ import edu.isi.karma.rep.alignment.SimpleLink;
  */
 public class SteinerTree {
 	
-	static Logger logger = Logger.getLogger(SteinerTree.class);
+	static Logger logger = LoggerFactory.getLogger(SteinerTree.class);
 
 	UndirectedGraph<Node, Link> graph;
 	WeightedMultigraph<Node, Link> tree;
@@ -85,7 +86,7 @@ public class SteinerTree {
 				if (g.containsEdge(n1, n2))
 					continue;
 				
-				Link e = new SimpleLink(null, null);
+				Link e = new PlainLink(null, null);
 				g.addEdge(n1, n2, e);
 				g.setEdgeWeight(e, path.getCost(n2));
 				
@@ -111,7 +112,7 @@ public class SteinerTree {
 		KruskalMinimumSpanningTree<Node, Link> mst =
             new KruskalMinimumSpanningTree<Node, Link>(g1);
 
-//    	System.out.println("Total MST Cost: " + mst.getSpanningTreeCost());
+//    	logger.debug("Total MST Cost: " + mst.getSpanningTreeCost());
 
         Set<Link> edges = mst.getEdgeSet();
 
@@ -199,7 +200,7 @@ public class SteinerTree {
 		KruskalMinimumSpanningTree<Node, Link> mst =
             new KruskalMinimumSpanningTree<Node, Link>(g3);
 
-//    	System.out.println("Total MST Cost: " + mst.getSpanningTreeCost());
+//    	logger.debug("Total MST Cost: " + mst.getSpanningTreeCost());
 
         Set<Link> edges = mst.getEdgeSet();
 
@@ -395,7 +396,7 @@ public class SteinerTree {
 //			sum += steiner.getEdgeWeight(edge);
 //        }
 //		
-//		System.out.println("Steiner Cost: " + sum);
+//		logger.debug("Steiner Cost: " + sum);
 //
 //	}
 }

@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
@@ -44,7 +45,7 @@ import edu.isi.karma.rep.alignment.Label;
 
 class OntologyCache {
 	
-	static Logger logger = Logger.getLogger(OntologyCache.class.getName());
+	static Logger logger = LoggerFactory.getLogger(OntologyCache.class.getName());
 	
 	private OntologyHandler ontHandler = null;
 
@@ -131,7 +132,7 @@ class OntologyCache {
 
 	public void init() {
 
-		logger.info("start building the ontology cache ...");
+		logger.debug("start building the ontology cache ...");
 		
 		this.classes = new HashMap<String, Label>();
 		this.properties = new HashMap<String, Label>();
@@ -199,18 +200,18 @@ class OntologyCache {
 		this.loadClasses();
 		this.loadProperties();
 		
-		logger.info("number of classes:" + classes.size());
-		logger.info("number of all properties:" + properties.size());
-		logger.info("number of data properties:" + dataProperties.size() );
-		logger.info("number of object properties:" + objectProperties.size() );
+		logger.debug("number of classes:" + classes.size());
+		logger.debug("number of all properties:" + properties.size());
+		logger.debug("number of data properties:" + dataProperties.size() );
+		logger.debug("number of object properties:" + objectProperties.size() );
 		// A = number of all properties including rdf:Property 
 		// B = number of properties defined as Data Property
 		// C = number of properties defined as Object Property
 		// properties = A
 		// dataproperties = A - C
 		// objectproperties = A - B
-		logger.info("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
-		logger.info("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
+		logger.debug("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
+		logger.debug("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
 
 		// create a hierarchy of classes and properties of the model
 		this.buildClassHierarchy(classHierarchy);
@@ -245,7 +246,7 @@ class OntologyCache {
 		this.addPropertiesOfRDFVocabulary();
 		
 		float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
-		logger.info("time to build the ontology cache: " + elapsedTimeSec);
+		logger.debug("time to build the ontology cache: " + elapsedTimeSec);
 	}
 	
 	public HashMap<String, Label> getClasses() {
@@ -914,6 +915,9 @@ class OntologyCache {
 			}
 			directDomainsUris = ontHandler.getResourcesUris(directDomains);
 			
+			if (directDomainsUris != null && directDomainsUris.contains(Uris.THING_URI))
+				directDomainsUris.remove(Uris.THING_URI);
+			
 			temp  = propertyDirectDomains.get(property.getURI());
 			if (temp == null)
 				propertyDirectDomains.put(property.getURI(), directDomainsUris);
@@ -968,6 +972,9 @@ class OntologyCache {
 				ontHandler.getMembers(r, directRanges, false);
 			}
 			directRangesUris = ontHandler.getResourcesUris(directRanges);
+			
+			if (directRangesUris != null && directRangesUris.contains(Uris.THING_URI))
+				directRangesUris.remove(Uris.THING_URI);
 
 			temp  = propertyDirectRanges.get(property.getURI());
 			if (temp == null)
@@ -1015,7 +1022,7 @@ class OntologyCache {
 				}
 				temp.add(property.getURI());
 			}
-			
+				
 			for (String domain : directDomainsUris) {
 				for (String range : directRangesUris) {
 					temp = 
@@ -1195,6 +1202,8 @@ class OntologyCache {
 
 	}
 	
+// 	Please don't remove this commented method. We had this before to implement SubProperty inference, but later we changed our interpretation of SubProperty.
+// 	It is better to keep that for a while.
 //	/**
 //	 * If the inheritance is true, it adds all the sub-classes of the domain and range of super-properties too.
 //	 * @param inheritance
@@ -1333,6 +1342,10 @@ class OntologyCache {
 					(indirectDomains == null || indirectDomains.size() == 0))
 				haveDomain = false;
 			
+			if (directDomains != null && directDomains.size() == 1 &&
+					directDomains.iterator().next().equalsIgnoreCase(Uris.THING_URI))
+				haveDomain = false;
+			
 			if (!haveDomain)
 				this.dataPropertiesWithoutDomain.put(p, label);
 		}
@@ -1386,8 +1399,8 @@ class OntologyCache {
 			for (int j = 0; j < classList.size(); j++) {
 				String c2 = classList.get(j);
 				
-				if (c1.equals(c2))
-					continue;
+//				if (c1.equals(c2))
+//					continue;
 				
 				directProperties = this.domainRangeToDirectProperties.get(c1+c2);
 				if (directProperties != null && directProperties.size() > 0) { 

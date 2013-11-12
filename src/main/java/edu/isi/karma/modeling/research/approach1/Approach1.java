@@ -31,10 +31,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -61,8 +62,8 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
+import edu.isi.karma.rep.alignment.ObjectPropertyType;
 import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.rep.alignment.SimpleLink;
 import edu.isi.karma.rep.alignment.SubClassLink;
 import edu.isi.karma.util.RandomGUID;
 //import com.google.common.base.Function;
@@ -71,7 +72,7 @@ import edu.isi.karma.util.RandomGUID;
 
 public class Approach1 {
 
-	private static Logger logger = Logger.getLogger(Approach1.class);
+	private static Logger logger = LoggerFactory.getLogger(Approach1.class);
 
 	private NodeIdFactory nodeIdFactory;
 	
@@ -258,7 +259,7 @@ public class Approach1 {
 				}
 				else {
 					String id = nodeIdFactory.getNodeId(source.getId());
-					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), "");
+					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), null);
 					if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) {
 						n1 = node;
 						component.addVertex(node);
@@ -280,7 +281,7 @@ public class Approach1 {
 				}
 				else {
 					String id = nodeIdFactory.getNodeId(target.getId());
-					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), "");
+					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), null);
 					if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) {
 						n2 = node;
 						component.addVertex(node);
@@ -292,10 +293,14 @@ public class Approach1 {
 
 			Link link;
 			String id = LinkIdFactory.getLinkId(e.getLabel().getUri(), n1.getId(), n2.getId());	
-			if (n2 instanceof ColumnNode) 
+			if (e instanceof DataPropertyLink) 
 				link = new DataPropertyLink(id, e.getLabel(), false);
-			else 
-				link = new ObjectPropertyLink(id, e.getLabel());
+			else if (e instanceof ObjectPropertyLink)
+				link = new ObjectPropertyLink(id, e.getLabel(), ((ObjectPropertyLink)e).getObjectPropertyType());
+			else if (e instanceof SubClassLink)
+				link = new SubClassLink(id);
+			else
+				link = new ObjectPropertyLink(id, e.getLabel(), ObjectPropertyType.None); 
 			
 			
 			link.getPatternIds().add(patternId);
@@ -371,7 +376,7 @@ public class Approach1 {
 		
 		List<Node> sources = new ArrayList<Node>();
 		List<Node> targets = new ArrayList<Node>();
-		List<String> newLinks = new ArrayList<String>();
+		List<Link> newLinks = new ArrayList<Link>();
 		List<Double> weights = new ArrayList<Double>();
 		
 		HashMap<String, LinkFrequency> sourceTargetLinkFrequency = 
@@ -382,7 +387,7 @@ public class Approach1 {
 		String key1, key2;
 		for (Link link : this.graphBuilder.getGraph().edgeSet()) {
 			
-			if (!(link instanceof SimpleLink)) {
+			if (!link.getLabel().getUri().equalsIgnoreCase(Uris.PLAIN_LINK_URI)) {
 				continue;
 			}
 			
@@ -390,14 +395,6 @@ public class Approach1 {
 					link.getTarget().getLabel().getUri();
 			key2 = link.getTarget().getLabel().getUri() + 
 					link.getSource().getLabel().getUri();
-			
-//			if (link.getSource().getLabel().getUri().indexOf("Place") != -1)
-//				if (link.getTarget().getLabel().getUri().indexOf("City") != -1)
-//					System.out.println("debug1");
-
-//			if (link.getSource().getLabel().getUri().indexOf("City") != -1)
-//				if (link.getTarget().getLabel().getUri().indexOf("Country") != -1)
-//					System.out.println("debug2");
 			
 			lf1 = sourceTargetLinkFrequency.get(key1);
 			if (lf1 == null) {
@@ -412,15 +409,28 @@ public class Approach1 {
 			}
 			
 			int c = lf1.compareTo(lf2);
+			String id = null;
 			if (c > 0) {
 				sources.add(link.getSource());
 				targets.add(link.getTarget());
-				newLinks.add(lf1.linkUri);
+				
+				id = LinkIdFactory.getLinkId(lf1.linkUri, link.getSource().getId(), link.getTarget().getId());
+				if (link instanceof ObjectPropertyLink)
+					newLinks.add(new ObjectPropertyLink(id, new Label(lf1.linkUri), ((ObjectPropertyLink) link).getObjectPropertyType()));
+				else if (link instanceof SubClassLink)
+					newLinks.add(new SubClassLink(id));
+				
 				weights.add(lf1.getWeight());
 			} else if (c < 0) {
 				sources.add(link.getTarget());
 				targets.add(link.getSource());
-				newLinks.add(lf2.linkUri);
+				
+				id = LinkIdFactory.getLinkId(lf2.linkUri, link.getSource().getId(), link.getTarget().getId());
+				if (link instanceof ObjectPropertyLink)
+					newLinks.add(new ObjectPropertyLink(id, new Label(lf2.linkUri), ((ObjectPropertyLink) link).getObjectPropertyType()));
+				else if (link instanceof SubClassLink)
+					newLinks.add(new SubClassLink(id));
+				
 				weights.add(lf2.getWeight());
 			} else
 				continue;
@@ -431,18 +441,9 @@ public class Approach1 {
 		for (Link link : oldLinks)
 			this.graphBuilder.getGraph().removeEdge(link);
 		
-		String id;
-		String uri;
-		Label label;
 		Link newLink;
 		for (int i = 0; i < newLinks.size(); i++) {
-			uri = newLinks.get(i);
-			id = LinkIdFactory.getLinkId(uri, sources.get(i).getId(), targets.get(i).getId());
-			label = new Label(uri);
-			if (uri.equalsIgnoreCase(Uris.RDFS_SUBCLASS_URI))
-				newLink = new SubClassLink(id);
-			else
-				newLink = new ObjectPropertyLink(id, label);
+			newLink = newLinks.get(i);
 			this.graphBuilder.addLink(sources.get(i), targets.get(i), newLink);
 			this.graphBuilder.changeLinkWeight(newLink, weights.get(i));
 		}
@@ -457,14 +458,14 @@ public class Approach1 {
 		Set<SemanticTypeMapping> mappings = new HashSet<SemanticTypeMapping>();
 		
 		// add dataproperty to existing classes if sl is a data node mapping
-		List<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(domainUri);
+		Set<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(domainUri);
 		if (nodesWithSameUriOfDomain != null) {
 			for (Node source : nodesWithSameUriOfDomain) {
 				if (source instanceof InternalNode) {
 					
 //					boolean propertyLinkExists = false;
 					int countOfExistingPropertyLinks = 0;
-					List<Link> linkWithSameUris = this.graphBuilder.getUriToLinksMap().get(propertyUri);
+					Set<Link> linkWithSameUris = this.graphBuilder.getUriToLinksMap().get(propertyUri);
 					if (linkWithSameUris != null)
 					for (Link l : linkWithSameUris) {
 						if (l.getSource().equals(source)) {
@@ -478,7 +479,7 @@ public class Approach1 {
 						continue;
 
 					String nodeId = new RandomGUID().toString();;
-					ColumnNode target = new ColumnNode(nodeId, nodeId, columnNodeName, "");
+					ColumnNode target = new ColumnNode(nodeId, nodeId, columnNodeName, null);
 					this.graphBuilder.addNodeWithoutUpdatingGraph(target);
 					addedNodes.add(target);
 					
@@ -510,7 +511,7 @@ public class Approach1 {
 		this.graphBuilder.addNode(source, addedNodes);
 		
 		nodeId = new RandomGUID().toString();
-		ColumnNode target = new ColumnNode(nodeId, nodeId, columnName, "");
+		ColumnNode target = new ColumnNode(nodeId, nodeId, columnName, null);
 		this.graphBuilder.addNodeWithoutUpdatingGraph(target);
 		addedNodes.add(target);
 
@@ -617,7 +618,7 @@ public class Approach1 {
 		DirectedWeightedMultigraph<Node, Link> tree = 
 				(DirectedWeightedMultigraph<Node, Link>)GraphUtil.asDirectedGraph(steinerTree.getSteinerTree());
 		
-		GraphUtil.printGraphSimple(tree);
+		logger.info(GraphUtil.graphToString(tree));
 		
 		long steinerTreeElapsedTimeMillis = System.currentTimeMillis() - start;
 		logger.info("total number of nodes in steiner tree: " + tree.vertexSet().size());

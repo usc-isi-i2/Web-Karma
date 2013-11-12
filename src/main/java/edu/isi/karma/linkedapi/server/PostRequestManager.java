@@ -11,7 +11,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -35,7 +36,7 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class PostRequestManager extends LinkedApiRequestManager {
 
-	static Logger logger = Logger.getLogger(PostRequestManager.class);
+	static Logger logger = LoggerFactory.getLogger(PostRequestManager.class);
 
 	private InputStream inputStream;
 	private String inputLang;

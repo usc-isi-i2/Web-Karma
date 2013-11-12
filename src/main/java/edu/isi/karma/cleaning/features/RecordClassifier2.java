@@ -32,9 +32,10 @@ import java.util.Vector;
 
 import org.apache.mahout.classifier.sgd.CsvRecordFactory;
 import org.apache.mahout.classifier.sgd.OnlineLogisticRegression;
-import org.apache.mahout.classifier.sgd.RecordFactory;
 import org.apache.mahout.math.DenseVector;
 import org.apache.mahout.math.RandomAccessSparseVector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
@@ -42,15 +43,20 @@ import com.google.common.io.Closeables;
 import edu.isi.karma.cleaning.PartitionClassifierType;
 
 public class RecordClassifier2 implements PartitionClassifierType {
+	private static Logger logger = LoggerFactory
+			.getLogger(RecordClassifier2.class);
 	HashMap<String, Vector<String>> trainData = new HashMap<String, Vector<String>>();
 	RecordFeatureSet rf = new RecordFeatureSet();
 	OnlineLogisticRegression cf;
 	List<String> labels = new ArrayList<String>();
 	LogisticModelParameters lmp;
 	public RecordClassifier2() {
-
+	}
+	public RecordClassifier2(RecordFeatureSet rf) {
+		this.rf = rf;
 	}
 
+	@SuppressWarnings({ "deprecation" })
 	public OnlineLogisticRegression train(
 			HashMap<String, Vector<String>> traindata) throws Exception {
 		String csvTrainFile = "./target/tmp/csvtrain.csv";
@@ -88,7 +94,8 @@ public class RecordClassifier2 implements PartitionClassifierType {
 					RandomAccessSparseVector input = new RandomAccessSparseVector(
 							lmp.getNumFeatures());
 					int targetValue = csv.processLine(line, input);
-					String label = csv.getTargetCategories().get(lr.classifyFull(input).maxValueIndex());
+					// String label =
+					// csv.getTargetCategories().get(lr.classifyFull(input).maxValueIndex());
 					// now update model
 					lr.train(targetValue, input);
 					line = in.readLine();
@@ -102,15 +109,6 @@ public class RecordClassifier2 implements PartitionClassifierType {
 
 	}
 
-	private static double predictorWeight(OnlineLogisticRegression lr, int row,
-			RecordFactory csv, String predictor) {
-		double weight = 0;
-		for (Integer column : csv.getTraceDictionary().get(predictor)) {
-			weight += lr.getBeta().get(row, column);
-		}
-		return weight;
-	}
-
 	public String Classify(String instance) {
 		Collection<Feature> cfeat = rf.computeFeatures(instance, "");
 		Feature[] x = cfeat.toArray(new Feature[cfeat.size()]);
@@ -118,9 +116,9 @@ public class RecordClassifier2 implements PartitionClassifierType {
 		RandomAccessSparseVector row = new RandomAccessSparseVector(x.length);
 		String line = "";
 		for (int k = 0; k < cfeat.size(); k++) {
-			line += x[k].getScore()+",";
+			line += x[k].getScore() + ",";
 		}
-		line +="label"; // dummy class label for testing
+		line += "label"; // dummy class label for testing
 		CsvRecordFactory csv = lmp.getCsvRecordFactory();
 		csv.processLine(line, row);
 		DenseVector dvec = (DenseVector) this.cf.classifyFull(row);
@@ -144,9 +142,13 @@ public class RecordClassifier2 implements PartitionClassifierType {
 		try {
 			this.cf = this.train(trainData);
 		} catch (Exception e) {
-			System.out.println("" );
+			logger.error(e.getMessage());
 		}
-		return this.cf.toString();
+		if (cf == null) {
+			return "";
+		} else {
+			return this.cf.toString();
+		}
 	}
 
 	@Override
@@ -169,18 +171,17 @@ public class RecordClassifier2 implements PartitionClassifierType {
 			HashMap<String, Vector<String>> trainData = new HashMap<String, Vector<String>>();
 			Vector<String> test = new Vector<String>();
 			Vector<String> par1 = new Vector<String>();
-			par1.add("1286 adams blvd");
-			par1.add("3711 catalina st");
-			// par1.add("11 w 37th pl, los angeles");
+			par1.add("L: 11.5 in, Diam: .875 in");
+			par1.add("L: 9.5 in, W: 4.5 in");
 			Vector<String> par2 = new Vector<String>();
-			par2.add("1142 37st");
-			// par2.add("1 jefferson st");
-			Vector<String> par3 = new Vector<String>();
-			par3.add("710 27");
+			par2.add("H: 40 in, W: 31 in");
+			par2.add("Neg Type: 120.00 mm");
 			trainData.put("c1", par1);
 			trainData.put("c2", par2);
-			trainData.put("c3", par3);
-			test.add("2353 portland st");
+			// trainData.put("c3", par3);
+			// trainData.put("c4", par4);
+			// trainData.put("c5", par5);
+			test.add("L: 13 in, W: 13.5 in");
 
 			RecordClassifier2 rc = new RecordClassifier2();
 			for (String key : trainData.keySet()) {
@@ -189,9 +190,9 @@ public class RecordClassifier2 implements PartitionClassifierType {
 				}
 			}
 			rc.learnClassifer();
-			System.out.println(rc.Classify(test.get(0)));
+			logger.debug(rc.Classify(test.get(0)));
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 	}
 }

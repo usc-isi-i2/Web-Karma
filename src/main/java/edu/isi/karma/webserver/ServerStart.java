@@ -27,9 +27,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ServerStart extends HttpServlet {
+	private static Logger logger = LoggerFactory.getLogger(ServerStart.class);
 	private static final long serialVersionUID = 1L;
 
 	// private static Logger logger = LoggerFactory.getLogger(ServerStart.class);
@@ -55,9 +59,9 @@ public class ServerStart extends HttpServlet {
 			}
 		}
 
-		System.out.println("************");
-		System.out.println("Server start servlet initialized successfully..");
-		System.out.println("***********");
+		logger.info("************");
+		logger.info("Server start servlet initialized successfully..");
+		logger.info("***********");
 
 	}		
 }

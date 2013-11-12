@@ -142,23 +142,22 @@ public class InvokeCleaningServiceCommand extends Command {
 					line = buf.readLine();
 				}
 			}	
-			//System.out.println(out.toString());
+			//logger.trace(out.toString());
 			//logger.info("Connnection success : " + url + " Successful.");
-			//System.out.println("Connnection success : " + url + " Successful.");
 			final JSONObject data1  = new JSONObject(out.toString());
-			//System.out.println("Data--->" + data1);
+			//logger.trace("Data--->" + data1);
 			return new UpdateContainer(new AbstractUpdate() {
 
 				@Override
 				public void generateJson(String prefix, PrintWriter pw,
 						VWorkspace vWorkspace) {
 					JSONObject response = new JSONObject();
-					//System.out.println("Reached here");
+					//logger.trace("Reached here");
 					try {
 						response.put("updateType", "CleaningServiceOutput");
 						response.put("chartData", data1);
 						response.put("hNodeId", hNodeId); 
-						//System.out.print(response.toString(4));
+						//logger.trace(response.toString(4));
 					} catch (JSONException e) {
 						pw.print("Error");
 					}

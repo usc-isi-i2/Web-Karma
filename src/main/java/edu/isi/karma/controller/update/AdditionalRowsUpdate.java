@@ -34,6 +34,7 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.ViewPreferences.ViewPreference;
 
 public class AdditionalRowsUpdate extends AbstractUpdate {
 
@@ -63,7 +64,9 @@ public class AdditionalRowsUpdate extends AbstractUpdate {
 		WorksheetDataUpdate upd = new WorksheetDataUpdate(vWorksheet.getId());
 		
 		try {
-			JSONArray rowsJson = upd.getRowsJsonArray(additionalRows, vWorksheet, vWorkspace.getRepFactory());
+			JSONArray rowsJson = upd.getRowsJsonArray(additionalRows, vWorksheet, 
+					vWorkspace.getRepFactory(), vWorkspace.getPreferences().getIntViewPreferenceValue(
+							ViewPreference.maxCharactersInCell));
 			
 			JSONObject responseObj = new JSONObject();
 			responseObj.put(JsonKeys.tableId.name(), tableId);

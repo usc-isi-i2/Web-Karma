@@ -23,16 +23,17 @@ package edu.isi.karma.controller.update;
 
 import java.io.PrintWriter;
 
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.worksheet.AddColumnCommand.JsonKeys;
 import edu.isi.karma.view.VWorkspace;
 
 public class AddColumnUpdate extends AbstractUpdate {
 
-	private static Logger logger =Logger.getLogger(AddColumnUpdate.class);
+	private static Logger logger =LoggerFactory.getLogger(AddColumnUpdate.class);
 	
 	private final String newHNodeId;
 	private final String worksheetId;

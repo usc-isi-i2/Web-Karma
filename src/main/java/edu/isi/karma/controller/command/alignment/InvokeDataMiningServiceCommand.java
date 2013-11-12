@@ -62,6 +62,7 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.HTTPUtil;
 
 public class InvokeDataMiningServiceCommand extends Command {
+	private static Logger logger = LoggerFactory.getLogger(InvokeDataMiningServiceCommand.class);
 	private final String worksheetId;
 	
 	private String tripleStoreUrl;
@@ -91,8 +92,6 @@ public class InvokeDataMiningServiceCommand extends Command {
 	public void setTripleStoreUrl(String tripleStoreUrl) {
 		this.tripleStoreUrl = tripleStoreUrl;
 	}
-
-	private static Logger logger = LoggerFactory.getLogger(InvokeDataMiningServiceCommand.class);
 
 	protected InvokeDataMiningServiceCommand(String id, String worksheetId, String url, String graph, String miningUrl) {
 		super(id);
@@ -125,6 +124,8 @@ public class InvokeDataMiningServiceCommand extends Command {
 		return CommandType.notUndoable;
 	}
 	
+	// Pedro: this is not being used. Candidate for deletion.
+	//
 	private String fetch_data_temp() 
 	{
 		HttpClient httpclient = new DefaultHttpClient();
@@ -133,7 +134,7 @@ public class InvokeDataMiningServiceCommand extends Command {
 		try {
 
 			JSONObject result = utilObj.fetch_data(this.modelContext, null);
-			System.out.println(result.toString());
+			logger.debug(result.toString());
 			
 			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
 			formparams = new ArrayList<NameValuePair>();
@@ -144,14 +145,14 @@ public class InvokeDataMiningServiceCommand extends Command {
 			HttpResponse response = httpclient.execute(httppost);
 
 			for(Header h : response.getAllHeaders()) {
-				System.out.println(h.getName() +  " : " + h.getValue());
+				logger.debug(h.getName() +  " : " + h.getValue());
 			}
 			HttpEntity entity = response.getEntity();
 			if (entity != null) {
 				BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
 				String line = buf.readLine();
 				while(line != null) {
-					System.out.println(line);
+					logger.debug(line);
 					jsonString.append(line);
 					line = buf.readLine();
 				}
@@ -213,7 +214,7 @@ public class InvokeDataMiningServiceCommand extends Command {
 			// prepare the input for the data mining service
 //			int row_num = 0;
 			
-			System.out.println(data);
+			logger.debug(data);
 			
 			// post the results 
 			//TODO : integrate the service with karma

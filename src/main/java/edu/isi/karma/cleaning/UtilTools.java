@@ -1,7 +1,10 @@
 package edu.isi.karma.cleaning;
 
-import java.util.Comparator;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Vector;
 
@@ -86,80 +89,94 @@ public class UtilTools {
 		}
 		return true;
 	}
-	public static void StringColorCode(String org,String res,HashMap<String, String> dict)
-	{
-		//System.out.println("res: "+res);
-		//System.out.println("org: "+org);
+	public static void StringColorCode(String org, String res,
+			HashMap<String, String> dict) throws Exception{
 		int segmentCnt = 0;
+		Vector<int[]> allUpdates = new Vector<int[]>();
 		String pat = "((?<=\\{_L\\})|(?=\\{_L\\}))";
 		String pat1 = "((?<=\\{_S\\})|(?=\\{_S\\}))";
 		String orgdis = "";
 		String tardis = "";
 		String tar = "";
 		String[] st = res.split(pat);
-		int pre = 0;
 		boolean inloop = false;
-		for(String token:st)
-		{
-			if(token.compareTo("{_L}")==0 && !inloop)
-			{
+		for (String token : st) {
+			if (token.compareTo("{_L}") == 0 && !inloop) {
 				inloop = true;
 				continue;
 			}
-			if(token.compareTo("{_L}")==0 && inloop)
-			{
+			if (token.compareTo("{_L}") == 0 && inloop) {
 				inloop = false;
 				continue;
 			}
 			String[] st1 = token.split(pat1);
-			for(String str:st1)
-			{
-				if(str.compareTo("{_S}")==0||str.compareTo("{_S}")==0)
-				{
+			for (String str : st1) {
+				if (str.compareTo("{_S}") == 0 || str.compareTo("{_S}") == 0) {
 					continue;
 				}
-				if(str.indexOf("{_C}")!=-1)
-				{
+				if (str.indexOf("{_C}") != -1) {
 					String[] pos = str.split("\\{_C\\}");
-					if(Integer.valueOf(pos[1])<Integer.valueOf(pos[0]))
-					{
-						return;
+					int[] poses = { Integer.valueOf(pos[0]),
+							Integer.valueOf(pos[1]),segmentCnt};
+					boolean findPos = false;
+					for (int i = 0; i < allUpdates.size(); i++) {
+						int[] cur = allUpdates.get(i);
+						if (poses[0] <= cur[0]) {
+							findPos = true;
+							allUpdates.add(i, poses);
+							break; // avoid infinite adding
+						}
 					}
-					String tarseg = org.substring(Integer.valueOf(pos[0]),Integer.valueOf(pos[1]));
-					if(Integer.valueOf(pos[0]) >=pre && pre<org.length())
+					if(!findPos)
 					{
-						orgdis += org.substring(pre,Integer.valueOf(pos[0]));
-						orgdis += String.format("[%s]",tarseg);
-						pre = Integer.valueOf(pos[1]);
+						allUpdates.add(poses);
 					}
-					if(inloop)
-					{	
-						tardis += String.format("[%s]",tarseg);
-						//orgdis += String.format("[%s]",tarseg);
+					String tarseg = org.substring(Integer.valueOf(pos[0]),
+							Integer.valueOf(pos[1]));
+
+					if (inloop) {
+
+						tardis += String.format(
+								"<span class=\"a%d\">%s</span>", segmentCnt,
+								tarseg);
+						// orgdis +=
+						// String.format("<span class=\"a%d\">%s</span>",
+						// segmentCnt,tarseg);
+						tar += tarseg;
+					} else {
+						tardis += String.format(
+								"<span class=\"a%d\">%s</span>", segmentCnt,
+								tarseg);
+						// orgdis +=
+						// String.format("<span class=\"a%d\">%s</span>",
+						// segmentCnt,tarseg);
+						segmentCnt++;
 						tar += tarseg;
 					}
-					else
-					{
-						tardis += String.format("[%s]",tarseg);
-						//orgdis += String.format("[%s]",tarseg);
-						segmentCnt ++;
-						tar += tarseg;
-					}
-					
-				}
-				else
-				{
-					tardis += String.format("{%s}",str);
+
+				} else {
+					tardis += String.format("<span class=\"ins\">%s</span>",
+							str);
 					tar += str;
-					if(!inloop)
-						segmentCnt ++;
 				}
 			}
 		}
-		if(pre<org.length())
+		int pre = 0;
+		for(int[] update:allUpdates)
+		{
+			if(update[0] >= pre)
+			{
+				orgdis += org.substring(pre,update[0]);
+				orgdis += String.format(
+						"<span class=\"a%d\">%s</span>", update[2],
+						org.substring(update[0],update[1]));
+				pre = update[1];
+			}
+		}
+		if(org.length() > pre)
 			orgdis += org.substring(pre);
 		dict.put("Org", org);
-		dict.put("Tar",tar );
+		dict.put("Tar", tar);
 		dict.put("Orgdis", orgdis);
 		dict.put("Tardis", tardis);
 	}
@@ -201,229 +218,62 @@ public class UtilTools {
 		index = 0;
 	}
 
-	/*public static String dic2Arff(String[] dic, String s) {
-		String dirpathString = ServletContextParameterMap
-				.getParameterValue(ContextParameter.USER_DIRECTORY_PATH);
-		if (dirpathString.compareTo("") == 0) {
-			dirpathString = "./src/main/webapp/";
-		}
-		UtilTools.clearTmpVars();
-		try {
-			CSVWriter cw = new CSVWriter(new FileWriter(new File(dirpathString
-					+ "grammar/tmp/tmp.csv")), ',');
-			// write header into the csv file
-			Vector<String> tmp = new Vector<String>();
-			Vector<String> tmp1 = new Vector<String>();
-			RegularityFeatureSet rfs = new RegularityFeatureSet();
-			Collection<Feature> cols = rfs.computeFeatures(tmp, tmp1);
-			String[] xyz = new String[rfs.fnames.size() + 1];
-			for (int i = 0; i < xyz.length - 1; i++) {
-				xyz[i] = "a_" + i;
-			}
-			xyz[xyz.length - 1] = "label";
-			cw.writeNext(xyz);
-			// write the data
-			Vector<String> examples = new Vector<String>();
-			if (s != null && s.length() > 0) {
-				String[] z = s.split("\n");
-				for (String elem : z) {
-					if (elem.trim().length() > 0) {
-						examples.add(elem.trim());
-					}
-				}
-			}
-			for (String o : dic) {
-				UtilTools.results.add(o);
-				Vector<String> row = new Vector<String>();
-				if (s != null && o.compareTo(s) == 0) {
-					RegularityFeatureSet rf = new RegularityFeatureSet();
-					Vector<String> oexamples = new Vector<String>();
-					String[] y = o.split("\n");
-					for (String elem : y) {
-						if (elem.trim().length() > 0) {
-							oexamples.add(elem.trim());
-						}
-					}
-					Collection<Feature> cf = rf.computeFeatures(oexamples,
-							examples);
-					Feature[] x = cf.toArray(new Feature[cf.size()]);
-					// row.add(f.getName());
-					for (int k = 0; k < cf.size(); k++) {
-						row.add(String.valueOf(x[k].getScore()));
-					}
-					row.add("3"); // change this according to the dataset.
-				} else {
-					RegularityFeatureSet rf = new RegularityFeatureSet();
-					Vector<String> oexamples = new Vector<String>();
-					String[] y = o.split("\n");
-					for (String elem : y) {
-						if (elem.trim().length() > 0) {
-							oexamples.add(elem.trim());
-						}
-					}
-					Collection<Feature> cf = rf.computeFeatures(oexamples,
-							examples);
-					Feature[] x = cf.toArray(new Feature[cf.size()]);
-					// row.add(f.getName());
-					for (int k = 0; k < cf.size(); k++) {
-						row.add(String.valueOf(x[k].getScore()));
-					}
-					row.add("0"); // change this according to the dataset.
-
-				}
-				cw.writeNext((String[]) row.toArray(new String[row.size()]));
-			}
-			cw.flush();
-			cw.close();
-			Data2Features.csv2arff(dirpathString + "grammar/tmp/tmp.csv",
-					"./src/main/webapp/grammar/tmp/tmp.arff");
-			return dirpathString + "grammar/tmp/tmp.arff";
-		} catch (Exception e) {
-			Logger.getLogger(UtilTools.class).info("" + e.toString());
-			return "";
-		}
-
-	}
-
-	public static Vector<Integer> topKindexs(Vector<Double> scores, int k) {
-		int cnt = 0;
-		Vector<Integer> res = new Vector<Integer>();
-		ScoreObj[] sas = new ScoreObj[scores.size()];
-		for (int i = 0; i < scores.size(); i++) {
-			sas[i] = new ScoreObj(i, scores.get(i));
-		}
-		Arrays.sort(sas, new DoubleCompare());
-		while (cnt < k && cnt < sas.length) {
-			res.add(sas[cnt].index);
-			cnt++;
-		}
-		return res;
-	}
-
-	// unsupervised learning
-	public static Vector<Double> getScores2(String[] res, String cpres) {
-		Vector<Double> vds = new Vector<Double>();
-		// convert the json format to \n seperated format
-		try {
-			String[] csvres = new String[res.length];
-			for (int i = 0; i < res.length; i++) {
-				JSONObject jso = new JSONObject(res[i]);
-				Iterator<String> iter = jso.keys();
-				String lines = "";
-				while (iter.hasNext()) {
-					lines += jso.getString(iter.next()) + "\n";
-				}
-				csvres[i] = lines;
-			}
-			Vector<String> examples = new Vector<String>();
-			String s = cpres;
-			String[] sy = cpres.split("\n");
-			for(String tp:sy)
+	public static Vector<String> buildDict(Collection<String> data)
+	{
+		HashMap<String,Integer> mapHashSet = new HashMap<String, Integer>();
+		for(String pair:data)
+		{
+			String s1 = pair;
+			if (s1.contains("<_START>"))
 			{
-				if (tp.trim().length() > 0) {
-					examples.add(tp.trim());
+				s1 = s1.replace("<_START>", "");
+			}
+			if (s1.contains("<_END>"))
+			{
+				s1 = s1.replace("<_END>", "");
+			}
+			Ruler r = new Ruler();
+			r.setNewInput(s1);
+			Vector<TNode> v = r.vec;
+			HashSet<String> curRow = new HashSet<String>();
+			for (TNode t : v)
+			{
+				String k = t.text;
+				k = k.replaceAll("[0-9]+", "DIGITs");
+				if(k.trim().length() ==0)
+					continue;
+				//only consider K once in one row
+				if(curRow.contains(k))
+				{
+					continue;
+				}
+				else
+				{
+					curRow.add(k);
+				}
+				if (mapHashSet.containsKey(k))
+				{
+					mapHashSet.put(k,mapHashSet.get(k)+1);
+				}
+				else
+				{
+					mapHashSet.put(k,1);
 				}
 			}
-			for (String o : csvres) {
-				double soc = 0.0;
-				RegularityFeatureSet rf = new RegularityFeatureSet();
-				Vector<String> oexamples = new Vector<String>();
-				String[] y = o.split("\n");
-				for (String elem : y) {
-					if (elem.trim().length() > 0) {
-						oexamples.add(elem.trim());
-					}
-				}
-				Collection<Feature> cf = rf
-						.computeFeatures(oexamples, examples);
-				Feature[] x = cf.toArray(new Feature[cf.size()]);
-				// row.add(f.getName());
-				for (int k = 0; k < cf.size(); k++) {
-					soc += x[k].getScore();
-				}
-				vds.add(cf.size() - soc);
-			}
-			return vds;
-		} catch (Exception ex) {
-			System.out.println("Get Scores error: " + ex.toString());
-			return vds;
 		}
-	}
-
-	public static int rank(HashMap<String, Integer> dic, String s,
-			String trainPath) {
-		Set<String> keys = dic.keySet();
-		String[] ks = (String[]) keys.toArray(new String[keys.size()]);
-		String fpath = UtilTools.dic2Arff(ks, s);
-		RegularityClassifer rc = new RegularityClassifer(trainPath);
-		try {
-			int rank = rc.getRank(fpath);
-			if (rank < 0) {
-				return -1;
-			} else
-				return rank;
-		} catch (Exception ex) {
-			System.out.println("" + ex.toString());
-			return -1;
-		}
-	}
-
-	public static Vector<Double> getScores(String[] res, String trainPath) {
-		Vector<Double> vds = new Vector<Double>();
-		// convert the json format to \n seperated format
-		try {
-			String[] csvres = new String[res.length];
-			for (int i = 0; i < res.length; i++) {
-				JSONObject jso = new JSONObject(res[i]);
-				Iterator<String> iter = jso.keys();
-				String lines = "";
-				while (iter.hasNext()) {
-					lines += jso.getString(iter.next()) + "\n";
-				}
-				csvres[i] = lines;
+		//prune infrequent terms
+		int thresdhold =5;
+		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet().iterator();
+		while(iter.hasNext())
+		{
+			Entry<String, Integer> e = iter.next();
+			if(e.getValue() < thresdhold)
+			{
+				iter.remove();
 			}
-			String fpath = UtilTools.dic2Arff(csvres, null);
-			RegularityClassifer rc = new RegularityClassifer(trainPath);
-			try {
-				vds = rc.getScores(fpath);
-				return vds;
-			} catch (Exception ex) {
-				System.out.println("get Scores error: " + ex.toString());
-				return null;
-			}
-		} catch (Exception ex) {
-			System.out.println("Get Scores error: " + ex.toString());
 		}
-		return vds;
-	}*/
-
-	public static void main(String[] args) {
-		String s = "+";
-	}
-
-}
-
-// used to sort the score in decend order
-class ScoreObj {
-	int index;
-	double score;
-
-	public ScoreObj(int index, double score) {
-		this.index = index;
-		this.score = score;
-	}
-
-}
-
-class DoubleCompare implements Comparator {
-	public int compare(Object x1, Object x2) {
-		ScoreObj a1 = (ScoreObj) x1;
-		ScoreObj a2 = (ScoreObj) x2;
-		if (a1.score > a2.score) {
-			return -1;
-		} else if (a1.score < a2.score) {
-			return 1;
-		} else
-			return 0;
+		Vector<String> res = new Vector<String>();
+		res.addAll(mapHashSet.keySet());
+		return res;
 	}
 }

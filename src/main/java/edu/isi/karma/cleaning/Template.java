@@ -2,11 +2,9 @@ package edu.isi.karma.cleaning;
 
 import java.util.Vector;
 
-import org.python.antlr.PythonParser.return_stmt_return;
-
 public class Template implements GrammarTreeNode {
-	public static int temp_limit = 2048;
-	public static int supermode = 0;
+	public static final int temp_limit = 2048;
+	public int supermode = 1;
 	public Vector<GrammarTreeNode> body = new Vector<GrammarTreeNode>();
 	public Vector<Vector<Integer>> indexes = new Vector<Vector<Integer>>();
 	public int curState = 0;
@@ -32,75 +30,60 @@ public class Template implements GrammarTreeNode {
 		return str;
 	}
 
-/*	public void getCrossIndex(Vector<Long> indexs, int cur, String path,
+	/*
+	 * public void getCrossIndex(Vector<Long> indexs, int cur, String path,
+	 * Vector<Vector<Integer>> configs) { String tpath = path; if
+	 * (configs.size() > temp_limit) { return; } if (cur >= indexs.size()) {
+	 * String[] elems = tpath.split(","); Vector<Integer> line = new
+	 * Vector<Integer>(); for (String s : elems) { String x = s.trim(); if
+	 * (x.length() > 0) { line.add(Integer.parseInt(x)); } } if (line.size() >
+	 * 0) { configs.add(line); } return; } for (int i = 0; i < indexs.get(cur);
+	 * i++) { String xtpath = path + i + ","; getCrossIndex(indexs, cur + 1,
+	 * xtpath, configs); } }
+	 */
+	// iteratively generate combinations
+	public void getCrossIndex(Vector<Long> indexs,
 			Vector<Vector<Integer>> configs) {
-		String tpath = path;
-		if (configs.size() > temp_limit) {
-			return;
-		}
-		if (cur >= indexs.size()) {
-			String[] elems = tpath.split(",");
-			Vector<Integer> line = new Vector<Integer>();
-			for (String s : elems) {
-				String x = s.trim();
-				if (x.length() > 0) {
-					line.add(Integer.parseInt(x));
-				}
-			}
-			if (line.size() > 0) {
-				configs.add(line);
-			}
-			return;
-		}
-		for (int i = 0; i < indexs.get(cur); i++) {
-			String xtpath = path + i + ",";
-			getCrossIndex(indexs, cur + 1, xtpath, configs);
-		}
-	} */
-	//iteratively generate combinations
-	public void getCrossIndex(Vector<Long> indexs,Vector<Vector<Integer>> configs) {
-	    int k = indexs.size();
+		int k = indexs.size();
 		int[] com = new int[k];
-	    for (int i = 0; i < k; i++) 
-	    		com[i] = 0;
-	    while (com[k - 1] < indexs.get(k-1)) {
-	    		Vector<Integer> res = new Vector<Integer>();
-	        for (int i = 0; i < k; i++)
-	        {
-	        		//System.out.print(""+com[i]);
-	            res.add(com[i]);
-	        }
-	        configs.add(res);
-	        if (configs.size() > temp_limit) {
+		for (int i = 0; i < k; i++)
+			com[i] = 0;
+		while (com[k - 1] < indexs.get(k - 1)) {
+			Vector<Integer> res = new Vector<Integer>();
+			for (int i = 0; i < k; i++) {
+				// System.out.print(""+com[i]);
+				res.add(com[i]);
+			}
+			configs.add(res);
+			if (configs.size() > temp_limit) {
 				return;
 			}
-	        int t = k - 1;
-	        while (t != 0 && com[t] == indexs.get(t)-1) 
-	        		t--;
-	        com[t]++;
-	        if(t==0 && com[t] >= indexs.get(0))
-	        {
-	        		break;
-	        }
-	        for (int i = t + 1; i < k; i++) 
-	        		com[i] = 0;
-	    }
+			int t = k - 1;
+			while (t != 0 && com[t] == indexs.get(t) - 1)
+				t--;
+			com[t]++;
+			if (t == 0 && com[t] >= indexs.get(0)) {
+				break;
+			}
+			for (int i = t + 1; i < k; i++)
+				com[i] = 0;
+		}
 	}
-	public String prog1(){
+
+	public String prog1() {
 		String res = "";
-		for(int i = 0; i< this.body.size(); i++)
-		{
+		for (int i = 0; i < this.body.size(); i++) {
 			GrammarTreeNode gt = body.get(i);
 			if (gt.getNodeType().compareTo("segment") == 0) {
-				Segment seg = (Segment)gt;
+				Segment seg = (Segment) gt;
 				String s = seg.verifySpace();
-				if (s.indexOf("null")!= -1)
+				if (s.indexOf("null") != -1)
 					return "null";
-				res += s+"+";
+				res += s + "+";
 			} else if (gt.getNodeType().compareTo("loop") == 0) {
 				Loop p = (Loop) gt;
 				String x = p.verifySpace();
-				if(x.indexOf("null")!= -1)
+				if (x.indexOf("null") != -1)
 					return "null";
 				if (p.looptype == Loop.LOOP_START) {
 					res += "loop(value,r\"" + x + "+";
@@ -119,23 +102,19 @@ public class Template implements GrammarTreeNode {
 		}
 		if (res.length() > 0 && !res.contains("null")) {
 			return res;
-		}
-		else
-		{
+		} else {
 			return null;
 		}
 	}
-	public String toProgram()
-	{
-		if(supermode == 0)
-		{
+
+	public String toProgram() {
+		if (supermode == 0) {
 			return prog0();
-		}
-		else
-		{
+		} else {
 			return prog1();
 		}
 	}
+
 	public String prog0() {
 		while (true) {
 			if (curState >= indexes.size())
@@ -220,8 +199,7 @@ public class Template implements GrammarTreeNode {
 
 	@Override
 	public void emptyState() {
-		for(GrammarTreeNode treeNode:body)
-		{
+		for (GrammarTreeNode treeNode : body) {
 			treeNode.emptyState();
 		}
 

@@ -22,10 +22,10 @@
  */
 package edu.isi.karma.controller.command.alignment;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,14 +37,12 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.publish.PublishRDFCommand;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.controller.history.WorksheetCommandHistoryReader;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
-import edu.isi.karma.kr2rml.KR2RMLModelGenerator;
 import edu.isi.karma.kr2rml.WorksheetModelWriter;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
@@ -120,74 +118,99 @@ public class GenerateR2RMLModelCommand extends Command {
     public CommandType getCommandType() {
         return CommandType.notUndoable;
     }
-
+    
     @Override
-    public UpdateContainer doIt(Workspace workspace) throws CommandException {
+	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		
+		//save the preferences 
+		savePreferences(workspace);
+				
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		this.worksheetName = worksheet.getTitle();
+		
+		// Prepare the model file path and names
+		final String modelFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
+				this.worksheetName +  "-model.ttl"; 
+		final String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
+				ContextParameter.USER_DIRECTORY_PATH) +  "publish/R2RML/" + modelFileName;
 
-        //save the preferences 
-        savePreferences(workspace);
+		// Get the alignment for this Worksheet
+		Alignment alignment = AlignmentManager.Instance().getAlignment(AlignmentManager.
+				Instance().constructAlignmentId(workspace.getId(), worksheetId));
+		
+		if (alignment == null) {
+			logger.info("Alignment is NULL for " + worksheetId);
+			return new UpdateContainer(new ErrorUpdate(
+					"Please align the worksheet before generating R2RML Model!"));
+		}
+		
+		try {
+			// Get the namespace and prefix from the preferences
+			String namespace = "";
+			String prefix = "";
+			JSONObject prefObject = workspace.getCommandPreferences().getCommandPreferencesJSONObject(
+					PublishRDFCommand.class.getSimpleName()+"Preferences");
+			if (prefObject != null) {
+				namespace = prefObject.getString(PreferencesKeys.rdfNamespace.name());
+				prefix = prefObject.getString(PreferencesKeys.rdfPrefix.name());
+				namespace = ((namespace == null) || (namespace.equals(""))) ? 
+						Namespaces.KARMA_DEV : namespace;
+				prefix = ((prefix == null) || (prefix.equals(""))) ? 
+						Prefixes.KARMA_DEV : prefix;
+			} else {
+				namespace = Namespaces.KARMA_DEV;
+				prefix = Prefixes.KARMA_DEV;
+			}
+			
+			// Generate the KR2RML data structures for the RDF generation
+			final ErrorReport errorReport = new ErrorReport();
+			OntologyManager ontMgr = workspace.getOntologyManager();
+			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(ontMgr, alignment, 
+					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
+			
+			// Write the model
+			writeModel(workspace, ontMgr, mappingGen, worksheet, modelFileLocalPath);
+			
+			// Write the model to the triple store
+			TripleStoreUtil utilObj = new TripleStoreUtil();
 
-        Worksheet worksheet = workspace.getWorksheet(worksheetId);
-        this.worksheetName = worksheet.getTitle();
-
-        // Prepare the model file path and names
-        final String modelFileName = workspace.getCommandPreferencesId() + worksheetId + "-"
-                + this.worksheetName + "-model.ttl";
-        final String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
-                ContextParameter.USER_DIRECTORY_PATH) + "publish/R2RML/" + modelFileName;
-        
-
-        try {
-            KR2RMLModelGenerator modelGenerator = new KR2RMLModelGenerator();
-            
-            KR2RMLMappingGenerator mappingGen = modelGenerator.generateModel(workspace, worksheet);
-            // Write the model
-            PrintWriter writer = new PrintWriter(modelFileLocalPath, "UTF-8");
-            modelGenerator.writeModel(workspace, mappingGen, worksheet, writer);
-
-            // Write the model to the triple store
-            TripleStoreUtil utilObj = new TripleStoreUtil();
-
-            // Get the graph name from properties
-            String graphName = worksheet.getMetadataContainer().getWorksheetProperties()
-                    .getPropertyValue(Property.graphName);
-            if (graphName == null || graphName.isEmpty()) {
-                // Set to default
-                worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
-                        Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
-                graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
-            }
-
-            boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true);
-            if (result) {
-                logger.info("Saved model to triple store");
-                return new UpdateContainer(new AbstractUpdate() {
-                    public void generateJson(String prefix, PrintWriter pw,
-                            VWorkspace vWorkspace) {
-                        JSONObject outputObject = new JSONObject();
-                        try {
-                            outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
-                            outputObject.put(JsonKeys.fileUrl.name(), "publish/R2RML/" + modelFileName);
-                            outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
-                            pw.println(outputObject.toString());
-                        } catch (JSONException e) {
-                            logger.error("Error occured while generating JSON!");
-                        }
-                    }
-                });
-            }
-
-            return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
-
-        } catch (NullPointerException e) {
-            logger.info("Alignment is NULL for " + worksheet.getId());
-            return new UpdateContainer(new ErrorUpdate(e.getMessage()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error(e.getMessage());
-            return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
-        }
-    }
+			// Get the graph name from properties
+			String graphName = worksheet.getMetadataContainer().getWorksheetProperties()
+					.getPropertyValue(Property.graphName);
+			if (graphName == null || graphName.isEmpty()) {
+				// Set to default
+				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+						Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
+				graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
+			}
+			
+			boolean result = utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true);
+			if (result) {
+				logger.info("Saved model to triple store");
+				return new UpdateContainer(new AbstractUpdate() {
+					public void generateJson(String prefix, PrintWriter pw,	
+							VWorkspace vWorkspace) {
+						JSONObject outputObject = new JSONObject();
+						try {
+							outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
+							outputObject.put(JsonKeys.fileUrl.name(), "publish/R2RML/" + modelFileName);
+							outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
+							pw.println(outputObject.toString());
+						} catch (JSONException e) {
+							logger.error("Error occured while generating JSON!");
+						}
+					}
+				});
+			} 
+			
+			return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+			return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
+		}
+	}
 
     @Override
     public UpdateContainer undoIt(Workspace workspace) {
@@ -195,7 +218,31 @@ public class GenerateR2RMLModelCommand extends Command {
         return null;
     }
 
-    
+    private void writeModel(Workspace workspace, OntologyManager ontMgr,
+            KR2RMLMappingGenerator mappingGen, Worksheet worksheet, String modelFileLocalPath)
+            throws RepositoryException, FileNotFoundException,
+            UnsupportedEncodingException, JSONException {
+        File f = new File(modelFileLocalPath);
+        File parentDir = f.getParentFile();
+        parentDir.mkdirs();
+        PrintWriter writer = new PrintWriter(f, "UTF-8");
+        WorksheetModelWriter modelWriter = new WorksheetModelWriter(writer,
+                workspace.getFactory(), ontMgr, worksheet.getTitle());
+
+        // Writer worksheet properties such as Service URL
+        modelWriter.writeWorksheetProperties(worksheet);
+
+        // Write the worksheet history
+        String historyFilePath = HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(
+                worksheet.getTitle(), workspace.getCommandPreferencesId());
+        modelWriter.writeCompleteWorksheetHistory(historyFilePath);
+
+        // Write the R2RML mapping
+        modelWriter.writeR2RMLMapping(ontMgr, mappingGen);
+        modelWriter.close();
+        writer.flush();
+        writer.close();
+    }
 
     private void savePreferences(Workspace workspace) {
         try {

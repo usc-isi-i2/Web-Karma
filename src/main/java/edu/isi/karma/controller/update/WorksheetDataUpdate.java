@@ -39,6 +39,7 @@ import edu.isi.karma.rep.TablePager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.view.ViewPreferences.ViewPreference;
 
 public class WorksheetDataUpdate extends AbstractUpdate {
 	
@@ -70,14 +71,15 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 			TablePager pager = vWorksheet.getTopTablePager();
 			
 			JSONArray rows = getRowsUsingPager(dataTable, vWorkspace.getRepFactory(), 
-					pager, vWorksheet);
+					pager, vWorksheet, vWorkspace.getPreferences().getIntViewPreferenceValue(
+							ViewPreference.maxCharactersInCell));
 			int rowsLeft = dataTable.getNumRows() - rows.length();
 			rowsLeft = rowsLeft < 0 ? 0 : rowsLeft;
 			response.put(JsonKeys.additionalRowsCount.name(), rowsLeft);
 			response.put(JsonKeys.tableId.name(), dataTable.getId());
 			response.put(JsonKeys.rows.name(), rows);
 			
-//			System.out.println(response.toString(2));
+//			logger.debug(response.toString(2));
 			pw.println(response.toString());
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -85,11 +87,12 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 	}
 
 	private JSONArray getRowsUsingPager(Table dataTable, RepFactory repFactory, 
-			TablePager pager, VWorksheet vWorksheet) throws JSONException {
-		return getRowsJsonArray(pager.getRows(), vWorksheet, repFactory);
+			TablePager pager, VWorksheet vWorksheet, int maxDataDisplayLength) throws JSONException {
+		return getRowsJsonArray(pager.getRows(), vWorksheet, repFactory, maxDataDisplayLength);
 	}
 	
-	public JSONArray getRowsJsonArray(List<Row> rows, VWorksheet vWorksheet, RepFactory repFactory) throws JSONException {
+	public JSONArray getRowsJsonArray(List<Row> rows, VWorksheet vWorksheet, RepFactory repFactory,
+			int maxDataDisplayLength) throws JSONException {
 		JSONArray rowsArr = new JSONArray();
 		
 		HTable hTable = null;
@@ -119,7 +122,8 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 					nodeObj.put(JsonKeys.hasNestedTable.name(), true);
 					Table nestedTable = node.getNestedTable();
 					JSONArray nestedTableRows = getRowsUsingPager(nestedTable, repFactory, 
-							vWorksheet.getNestedTablePager(nestedTable), vWorksheet);
+							vWorksheet.getNestedTablePager(nestedTable), vWorksheet, 
+							maxDataDisplayLength);
 					nodeObj.put(JsonKeys.nestedRows.name(), nestedTableRows);
 					nodeObj.put(JsonKeys.tableId.name(), node.getNestedTable().getId());
 					
@@ -130,8 +134,8 @@ public class WorksheetDataUpdate extends AbstractUpdate {
 				} else {
 					String nodeVal = node.getValue().asString();
 					nodeVal = (nodeVal == null) ? "" : nodeVal;
-					String displayVal = (nodeVal.length() > WorksheetCleaningUpdate.MAX_COLUMN_DATA_LENGTH) 
-							? nodeVal.substring(0, WorksheetCleaningUpdate.MAX_COLUMN_DATA_LENGTH) + "..." : nodeVal;
+					String displayVal = (nodeVal.length() > maxDataDisplayLength) 
+							? nodeVal.substring(0, maxDataDisplayLength) + "..." : nodeVal;
 					nodeObj.put(JsonKeys.displayValue.name(), displayVal);
 					nodeObj.put(JsonKeys.expandedValue.name(), nodeVal);
 					nodeObj.put(JsonKeys.hasNestedTable.name(), false);

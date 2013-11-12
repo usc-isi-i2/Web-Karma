@@ -36,7 +36,7 @@ import edu.isi.karma.webserver.KarmaException;
 public class SubmitPythonTransformationCommandFactory extends CommandFactory implements JSONInputCommandFactory {
 
 	private enum Arguments {
-		newColumnName, transformationCode, worksheetId, hTableId, hNodeId, errorDefaultValue
+		newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue
 	}
 	
 	@Override
@@ -50,12 +50,11 @@ public class SubmitPythonTransformationCommandFactory extends CommandFactory imp
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String newColumnName = HistoryJsonUtil.getStringValue(Arguments.newColumnName.name(), inputJson);
 		String code = HistoryJsonUtil.getStringValue(Arguments.transformationCode.name(), inputJson);
-		String hTableId = HistoryJsonUtil.getStringValue(Arguments.hTableId.name(), inputJson);
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String errorDefaultValue = HistoryJsonUtil.getStringValue(Arguments.errorDefaultValue.name(), inputJson);
 		
 		SubmitPythonTransformationCommand comm = new SubmitPythonTransformationCommand(getNewId(workspace), 
-				newColumnName, code, worksheetId, hNodeId, hTableId, errorDefaultValue);
+				newColumnName, code, worksheetId, hNodeId, errorDefaultValue);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

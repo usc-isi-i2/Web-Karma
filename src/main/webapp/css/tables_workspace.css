@@ -126,7 +126,7 @@ div.rightOptionsToolbar {
 }
 
 div.toggleMapView {
-	display: none;
+    display: inline;
 	cursor: pointer;
 }
 

@@ -25,7 +25,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -33,7 +34,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-import edu.isi.karma.modeling.ModelingParams;
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.rep.model.Atom;
@@ -46,7 +47,7 @@ import edu.isi.karma.rep.sources.WebService;
 
 public class WebServicePublisher extends SourcePublisher {
 
-	static Logger logger = Logger.getLogger(WebServicePublisher.class);
+	static Logger logger = LoggerFactory.getLogger(WebServicePublisher.class);
 	
 	private WebService service;
 	private Model model = null;
@@ -369,7 +370,7 @@ public class WebServicePublisher extends SourcePublisher {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException {
-		String serviceUri = ModelingParams.KARMA_SERVICE_PREFIX + "CDA81BE4-DD77-E0D3-D033-FC771B2F4800" + "#";
+		String serviceUri = ModelingConfiguration.getKarmaServicePrefix() + "CDA81BE4-DD77-E0D3-D033-FC771B2F4800" + "#";
 		WebService service = WebServiceLoader.getInstance().getSourceByUri(serviceUri);
 		
 		String service_file = Repository.Instance().SERVICE_REPOSITORY_DIR + 

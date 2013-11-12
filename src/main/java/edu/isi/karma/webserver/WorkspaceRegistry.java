@@ -40,7 +40,7 @@ public class WorkspaceRegistry {
 	}
 
 	public void register(ExecutionController executionController) {
-		workspaceId2ExecutionController.put(executionController.getvWorkspace()
+		workspaceId2ExecutionController.put(executionController
 				.getWorkspace().getId(), executionController);
 	}
 

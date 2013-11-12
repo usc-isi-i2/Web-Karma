@@ -24,9 +24,10 @@ package edu.isi.karma.cleaning.QuestionableRecord;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Vector;
 
-import edu.isi.karma.cleaning.RecFeature;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
 
@@ -52,23 +53,70 @@ public class OutlierDetector {
 	//find all the word appearing in org and tar records
 	public void buildDict(Collection<String[]> data)
 	{
-		HashSet<String> xHashSet = new HashSet<String>();
+		HashMap<String,Integer> mapHashSet = new HashMap<String, Integer>();
 		for(String[] pair:data)
 		{
+			String s1 = pair[0];
+			String s2 = pair[1];
+			if (s1.contains("<_START>"))
+			{
+				s1 = s1.replace("<_START>", "");
+			}
+			if (s1.contains("<_END>"))
+			{
+				s1 = s1.replace("<_END>", "");
+			}
+			if (s2.contains("<_START>"))
+			{
+				s2 = s2.replace("<_START>", "");
+			}
+			if (s2.contains("<_END>"))
+			{
+				s2 = s2.replace("<_END>", "");
+			}
 			Ruler r = new Ruler();
-			r.setNewInput(pair[0]);
+			r.setNewInput(s1);
 			Vector<TNode> v = r.vec;
-			r.setNewInput(pair[1]);
+			r.setNewInput(s2);
 			v.addAll(r.vec);
+			HashSet<String> curRow = new HashSet<String>();
 			for (TNode t : v)
 			{
-				if(! xHashSet.contains(t.text))
+				String k = t.text;
+				k = k.replaceAll("[0-9]+", "DIGITs");
+				if(k.trim().length() ==0)
+					continue;
+				//only consider K once in one row
+				if(curRow.contains(k))
 				{
-					xHashSet.add(t.text);
+					continue;
+				}
+				else
+				{
+					curRow.add(k);
+				}
+				if (mapHashSet.containsKey(k))
+				{
+					mapHashSet.put(k,mapHashSet.get(k)+1);
+				}
+				else
+				{
+					mapHashSet.put(k,1);
 				}
 			}
 		}
-		this.dict = xHashSet;
+		//prune infrequent terms
+		int thresdhold =(int)(data.size() * 0.5);
+		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet().iterator();
+		while(iter.hasNext())
+		{
+			Entry<String, Integer> e = iter.next();
+			if(e.getValue() < thresdhold)
+			{
+				iter.remove();
+			}
+		}
+		this.dict = new HashSet<String>(mapHashSet.keySet());
 	}
 	// find outliers for one partition
 	//simple 2d distance
@@ -87,9 +135,6 @@ public class OutlierDetector {
 				x[i] = vRecFeatures.get(i).computerScore();
 			}
 			double value = this.getDistance(x, meanVector);
-			/*System.out.println("current: "+ vpair[0]+ " "+Max);
-			System.out.println("=======\n"+this.test(x)+"\n"+this.test(meanVector));
-			System.out.println("distance: "+value);*/
 			if(value > Max)
 			{
 				Max = value;
@@ -102,6 +147,8 @@ public class OutlierDetector {
 	// pid: [{rawstring, code}]
 	public void buildMeanVector(HashMap<String,Vector<String[]>> data,HashSet<String> dict)
 	{
+		rVectors.clear();
+		this.currentMax = -1;
 		if(data == null)
 			return;
 		for(String key:data.keySet())

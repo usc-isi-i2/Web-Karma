@@ -28,8 +28,11 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.rdf.model.Model;
 
@@ -46,11 +49,11 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
 import edu.isi.karma.util.JDBCUtilFactory;
-import edu.isi.karma.view.VWorksheet;
-import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
-public class DatabaseTableRDFGenerator {
+public class DatabaseTableRDFGenerator extends RdfGenerator {
+	
+	private static Logger logger = LoggerFactory.getLogger(DatabaseTableRDFGenerator.class);
 	private DBType dbType;
 	private String hostname;
 	private int portnumber;
@@ -59,7 +62,7 @@ public class DatabaseTableRDFGenerator {
 	private String dBorSIDName;
 	private String tablename;
 	
-	private static int DATABASE_TABLE_FETCH_SIZE = 1000;
+	private static int DATABASE_TABLE_FETCH_SIZE = 10000;
 	
 	public DatabaseTableRDFGenerator(DBType dbType, String hostname,
 			int portnumber, String username, String password,
@@ -74,16 +77,18 @@ public class DatabaseTableRDFGenerator {
 		this.tablename = tablename;
 	}
 	
-	public void generateRDF(VWorkspace vWorkspace, PrintWriter pw, Model model) 
+	/*
+	 * Only warn about SQL exception once. //Pedro //TODO: this whole code is copy-pasted
+	 */
+	private static boolean warnedSqlException = false;
+	public void generateRDF(PrintWriter pw, Model model) 
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
-		System.out.println("Generating RDF...");
-		
-		RepFactory factory = vWorkspace.getRepFactory();
-		Workspace workspace = vWorkspace.getWorkspace();
+		logger.debug("Generating RDF...");
+
 		
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		Connection conn = dbUtil.getConnection(hostname, portnumber, username, password, dBorSIDName);
-		
+		conn.setAutoCommit(false);
 		String query = "Select * FROM " + tablename;
 		java.sql.Statement stmt = conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
 				java.sql.ResultSet.CONCUR_READ_ONLY);
@@ -93,24 +98,28 @@ public class DatabaseTableRDFGenerator {
 		ResultSetMetaData meta = r.getMetaData();;
 		
 		// Get the column names
-		ArrayList<String> columnNames = dbUtil.getColumnNames(tablename, conn);
+		
+		List<String> columnNames = dbUtil.getColumnNames(dBorSIDName, tablename, conn);
 		
 		// Prepare required Karma objects
+	     Workspace workspace = initializeWorkspace();
+ 	
+		RepFactory factory = workspace.getFactory();
 		Worksheet wk = factory.createWorksheet(tablename, workspace);
-		ArrayList<String> headersList = addHeaders(wk, columnNames, factory);
-		VWorksheet vWorksheet =  vWorkspace.getViewFactory().createVWorksheetWithDefaultPreferences(vWorkspace, wk);
+		List<String> headersList = addHeaders(wk, columnNames, factory);
 		
 		int counter = 0;
 		
 		while (r.next()) {
 			// Generate RDF and create a new worksheet for every DATABASE_TABLE_FETCH_SIZE rows
 			if(counter%DATABASE_TABLE_FETCH_SIZE == 0 && counter != 0) {
-				generateRDFFromWorksheet(vWorksheet, wk, vWorkspace, model, pw);
-				System.out.println("Done for " + counter + " rows ..." );
-				
+				generateRDFFromWorksheet(wk, workspace, model, pw);
+				logger.debug("Done for " + counter + " rows ..." );
+			    removeWorkspace(workspace);
+			    workspace = initializeWorkspace();
+			    factory = workspace.getFactory();
 				wk = factory.createWorksheet(tablename, workspace);
 				headersList = addHeaders(wk, columnNames, factory);
-				vWorksheet =  vWorkspace.getViewFactory().createVWorksheetWithDefaultPreferences(vWorkspace, wk);
 				
 			}
 			
@@ -118,29 +127,36 @@ public class DatabaseTableRDFGenerator {
 	        Table dataTable = wk.getDataTable();
 	        Row row = dataTable.addRow(factory);
 			for (int i = 1; i <= meta.getColumnCount(); i++) {
-				String val = r.getString(i);
+				String val;
+				try {
+					val = r.getString(i);
+				} catch (SQLException e) {
+					if (!warnedSqlException) {
+						//logger.warn(e.getMessage());
+						warnedSqlException = true;
+					}
+					val = "SQLException";
+				}
 				row.setValue(headersList.get(i-1), val, factory);
 			}
 			counter++;
 		}
 		
-		generateRDFFromWorksheet(vWorksheet, wk, vWorkspace, model, pw);
+		generateRDFFromWorksheet(wk, workspace, model, pw);
 		
 		// Releasing all the resources
 		r.close();
 		conn.close();
 		stmt.close();
-		System.out.println("done");
+		logger.debug("done");
 	}
-	
-	private void generateRDFFromWorksheet(VWorksheet vw, Worksheet wk, 
-			VWorkspace vWorkspace, Model model, PrintWriter pw) 
+
+	private void generateRDFFromWorksheet(Worksheet wk, 
+			Workspace workspace, Model model, PrintWriter pw) 
 					throws IOException, JSONException, KarmaException {
-		Workspace workspace = vWorkspace.getWorkspace();
-		
 		// Generate RDF for the remaining rows
 		WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(
-				vw, vWorkspace, model, tablename);
+				wk, workspace, model, tablename);
 		
 		// Gets all the errors generated during the RDF generation
 		ErrorReport errorReport = new ErrorReport();
@@ -154,7 +170,7 @@ public class DatabaseTableRDFGenerator {
 		rdfGen.generateRDF(false);
 	}
 	
-	private ArrayList<String> addHeaders (Worksheet wk, ArrayList<String> columnNames,
+	private List<String> addHeaders (Worksheet wk, List<String> columnNames,
 			RepFactory factory) {
 		HTable headers = wk.getHeaders();
 		ArrayList<String> headersList = new ArrayList<String>();

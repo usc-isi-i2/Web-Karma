@@ -95,7 +95,7 @@ public class OntologyHierarchyUpdate extends AbstractUpdate {
 			JSONObject outputObject = new JSONObject();
 			outputObject.put(GenericJsonKeys.updateType.name(), updateType);
 			outputObject.put(JsonKeys.data.name(), dataArray);
-//			System.out.println(outputObject.toString(4));
+//			logger.debug(outputObject.toString(4));
 			pw.println(outputObject.toString());
 		} catch (JSONException e) {
 			logger.error("Error occured while creating ontology hierarchy JSON!", e);
@@ -140,7 +140,7 @@ public class OntologyHierarchyUpdate extends AbstractUpdate {
 
 	private void addSteinerTreeNodes(OntologyTreeNode node, JSONArray childrenArray, Set<String> steinerTreeNodeIds) throws JSONException {
 		String nodeUri = node.getLabel().getUri();
-		List<Node> graphNodes = alignment.getNodesByUri(nodeUri);
+		Set<Node> graphNodes = alignment.getNodesByUri(nodeUri);
 		if (graphNodes != null && !graphNodes.isEmpty()) {
 			for (Node graphNode : graphNodes) {
 				if (steinerTreeNodeIds.contains(graphNode.getId())) {

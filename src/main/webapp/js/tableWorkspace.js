@@ -137,7 +137,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 
         var newInfo = [];
         newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "worksheetId"));
-        newInfo.push(getParamObject("checkHistory", true, "other"));
         info["newInfo"] = JSON.stringify(newInfo);
 
         showLoading(info["worksheetId"]);
@@ -164,7 +163,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
     $("button#showR2RMLFromTripleStore").click(function(event) {
         var dialog = $('#FetchR2RMLModelDialogBox');
         $('#txtR2RML_URL_fetch').val('http://'+window.location.host + '/openrdf-sesame/repositories/karma_models');
-        $('#browseRepo_fetch').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/karma_models/summary');
         dialog.dialog(
             { title: 'SPARQL End point',
                 buttons: { "Cancel": function() { $(this).dialog("close"); },
@@ -182,7 +180,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 
         var newInfo = [];
         newInfo.push(getParamObject("worksheetId", optionsDiv.data("worksheetId"), "worksheetId"));
-        newInfo.push(getParamObject("checkHistory", true, "other"));
         info["newInfo"] = JSON.stringify(newInfo);
 
         showLoading(info["worksheetId"]);
@@ -204,11 +201,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
                     hideLoading(info["worksheetId"]);
                 }
         });
-    });
-
-    $("button#hideModel").click(function(){
-        optionsDiv.hide();
-        $("div#svgDiv_" + optionsDiv.data("worksheetId")).remove();
     });
 
     $("button#resetModel").click(function(){
@@ -247,7 +239,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
         window.rdfSPAQRLEndPoint = null;
 
         var rdfDialogBox = $("div#PublishRDFDialogBox");
-        $('#rdfBrowseRepo').attr('href', $("input#rdfSPAQRLEndPoint").val()+ '/summary');
 
         // get the graph uri for the worksheet
         var info = new Object();
@@ -419,7 +410,8 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 
     // in pytransform.js
     $("button#pyTransform").click(openPyTransformDialogBox);
-
+    $("button#editPyTransform").click(openEditPyTransformDialogBox);
+    
     $("button#publishR2RML").click(function(event){
         optionsDiv.hide();
         handlePublishModelToStoreButton(event);
@@ -607,14 +599,13 @@ function openTableCellOptions() {
 function showTableCellMenuButton() {
     // Get the parent table
     var cellDiv = $(this);
-    var cellTd = cellDiv.parent();
 
     var optionsDiv = $("div#tableCellMenuButtonDiv");
     optionsDiv.data("parentCellId", cellDiv.attr("id"));
 
     // Show it at the right place
-    var top = $(cellTd).offset().top + $(cellTd).height()-12;
-    var left = $(cellTd).offset().left + $(cellTd).width()-10;
+    var top = $(cellDiv).offset().top + $(cellDiv).height()-20;
+    var left = $(cellDiv).offset().left + $(cellDiv).width()-20;
     optionsDiv.css({"position":"absolute",
         "top":top,
         "left": left}).show();
@@ -703,7 +694,6 @@ function splitColumnByComma() {
     newInfo.push(getParamObject("worksheetId", $("td#" + selectedHNodeId).parents("div.Worksheet").attr("id"), "worksheetId"));
     newInfo.push(getParamObject("hNodeId", selectedHNodeId,"hNodeId"));
     newInfo.push(getParamObject("delimiter", inputVal, "other"));
-    newInfo.push(getParamObject("checkHistory", true, "other"));
     info["newInfo"] = JSON.stringify(newInfo);
 
     showLoading(info["worksheetId"]);
@@ -730,6 +720,18 @@ function splitColumnByComma() {
 function openColumnHeadingOptions() {
     var columnHeadingMenu = $("div#columnHeadingDropDownMenu");
     columnHeadingMenu.data("parentCellId", $(this).data("parentCellId"));
+    
+    var hNodeId = columnHeadingMenu.data("parentCellId");
+    var hNode = $("td#" + hNodeId);
+    if(hNode.data("pythonTransformation"))
+    {
+    	$("button#editPyTransform").show();
+    }
+    else
+    {
+    	$("button#editPyTransform").hide();
+    }
+    
     columnHeadingMenu.css({"position":"absolute",
         "top":$(this).offset().top + 15,
         "left": $(this).offset().left + $(this).width()/2 - $(columnHeadingMenu).width()/2}).show();

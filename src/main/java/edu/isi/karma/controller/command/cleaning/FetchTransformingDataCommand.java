@@ -7,9 +7,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
@@ -21,21 +20,14 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 
 public class FetchTransformingDataCommand extends WorksheetCommand {
-	private final String worksheetId;
+
+	private static Logger logger = LoggerFactory.getLogger(FetchTransformingDataCommand.class);
 	private final String hNodeId;
 	public FetchTransformingDataCommand(String id, String worksheetId, String hNodeId)
 	{
 		super(id,worksheetId);
 		this.hNodeId = hNodeId;
-		this.worksheetId = worksheetId;
-		/////log info
-		try
-		{
-			FileAppender appender = new FileAppender(new SimpleLayout(),"./log/cleanning.log");
-			logger.addAppender(appender);
-		}
-		catch (Exception e) {
-		}
+
 	}
 
 	@Override
@@ -62,10 +54,10 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 	{
 		HashSet<Integer> inds = new HashSet<Integer>();
 		//select 30% or 50
-		int sample_size = (int)(size*0.3);
-		if(sample_size >=60)
+		int sample_size =size;
+		if(sample_size >=500)
 		{
-			sample_size = 60;
+			sample_size = 500;
 		}
 		else {
 			sample_size = size;
@@ -83,11 +75,10 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 		}
 		return inds;
 	}
-	private static Logger logger = Logger.getLogger(FetchTransformingDataCommand.class);
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		Worksheet wk = workspace.getFactory().getWorksheet(worksheetId);
-		String Msg = String.format("fetch Data begin, Time:%d, Worksheet:%s",System.currentTimeMillis(),worksheetId);
+		Worksheet wk = workspace.getWorksheet(worksheetId);
+		String Msg = String.format("begin, Time,%d, Worksheet,%s",System.currentTimeMillis(),worksheetId);
 		logger.info(Msg);
 		// Get the HNode
 		HashMap<String, HashMap<String, String>> rows = new HashMap<String, HashMap<String, String>>();
@@ -118,7 +109,7 @@ public class FetchTransformingDataCommand extends WorksheetCommand {
 			}
 			index ++;
 		}
-		Msg = String.format("fetch data end, Time:%d, Worksheet:%s",System.currentTimeMillis(),worksheetId);
+		Msg = String.format("end, Time,%d, Worksheet,%s",System.currentTimeMillis(),worksheetId);
 		logger.info(Msg);
 		return new UpdateContainer(new FetchResultUpdate(hNodeId,rows));
 	}

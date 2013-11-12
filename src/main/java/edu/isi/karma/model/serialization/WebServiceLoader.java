@@ -28,7 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -59,7 +60,7 @@ import edu.isi.karma.rep.sources.WebService;
 
 public class WebServiceLoader extends SourceLoader {
 
-	private static Logger logger = Logger.getLogger(WebServiceLoader.class);
+	private static Logger logger = LoggerFactory.getLogger(WebServiceLoader.class);
 	private static WebServiceLoader instance = null;
 	private final int DEFAULT_SERVICE_RESULTS_SIZE = 10;
 

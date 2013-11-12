@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -290,8 +291,8 @@ public class PublishDatabaseCommand extends Command {
 		//some databases are case sensitive when referring to column/table names, so we have
 		//to use the "real" case in the queries
 		//I don't do this check for now; not sure for which DBs it is required
-		ArrayList<String> existingColNames = dbUtil.getColumnNames(tableName, conn);
-		ArrayList<String> existingColTypes = dbUtil.getColumnTypes(tableName, conn);
+		List<String> existingColNames = dbUtil.getColumnNames(null, tableName, conn);
+		List<String> existingColTypes = dbUtil.getColumnTypes(null, tableName, conn);
 		//add in the insert only values for these columns; other columns do not exist in the remote table
 		Map<String, String> addTheseColumns = new HashMap<String, String>();
 		//the types of the columns 
@@ -459,14 +460,14 @@ public class PublishDatabaseCommand extends Command {
 					"PublishDatabaseCommandPreferences", prefObject);
 			
 			/*
-			System.out.println("I Saved .....");
+			logger.trace("I Saved .....");
 			ViewPreferences prefs = vWorkspace.getPreferences();
 			JSONObject prefObject1 = prefs.getCommandPreferencesJSONObject("PublishDatabaseCommandPreferences");
-			System.out.println("I Saved ....."+prefObject1);
+			logger.trace("I Saved ....."+prefObject1);
 			 */
 			
 		} catch (JSONException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 	}
 }

@@ -134,8 +134,8 @@ public class SetSemanticTypeCommand extends Command {
 				// For class semantic type, class uri goes "fullTypeValue" and "domainValue" is empty.
 				String domainValue = type.getString(ClientJsonKeys.Domain.name());
 				String fullTypeValue = type.getString(ClientJsonKeys.FullType.name());
-//				System.out.println("FULL TYPE:" + type.getString(ClientJsonKeys.FullType.name()));
-//				System.out.println("Domain: " + type.getString(ClientJsonKeys.Domain.name()));
+//				logger.trace("FULL TYPE:" + type.getString(ClientJsonKeys.FullType.name()));
+//				logger.trace("Domain: " + type.getString(ClientJsonKeys.Domain.name()));
 				
 				// Look if the domain value exists. If it exists, then it is a domain of a data property. If not
 				// then the value in FullType has the the value which indicates if a new class instance is needed
@@ -188,13 +188,12 @@ public class SetSemanticTypeCommand extends Command {
 					
 				// Check if a semantic type already exists for the column
 				ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+				columnNode.setRdfLiteralType(rdfLiteralType);
 				List<Link> columnNodeIncomingLinks = alignment.getIncomingLinks(columnNode.getId());
 				Link oldIncomingLinkToColumnNode = null;
 				Node oldDomainNode = null;
 				if (columnNodeIncomingLinks != null && !columnNodeIncomingLinks.isEmpty()) { // SemanticType already assigned
 					semanticTypeAlreadyExists = true;
-					if (!rdfLiteralType.equals(columnNode.getRdfLiteralType()))
-						columnNode.setRdfLiteralType(rdfLiteralType);
 					oldIncomingLinkToColumnNode = columnNodeIncomingLinks.get(0);
 					oldDomainNode = oldIncomingLinkToColumnNode.getSource();
 				}
@@ -351,7 +350,7 @@ public class SetSemanticTypeCommand extends Command {
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
 		oldAlignment.setGraph(oldGraph);
 		
-//		System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+//		logger.trace("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 //		GraphUtil.printGraph(oldAlignment.getGraph());
 //		GraphUtil.printGraph(oldAlignment.getSteinerTree());
 		

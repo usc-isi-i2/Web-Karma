@@ -26,7 +26,8 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.rits.cloning.Cloner;
 
@@ -53,7 +54,7 @@ import edu.isi.karma.webserver.KarmaException;
  */
 public class InvokeServiceCommand extends WorksheetCommand {
 
-	static Logger logger = Logger.getLogger(InvokeServiceCommand.class);
+	private static Logger logger = LoggerFactory.getLogger(InvokeServiceCommand.class);
 	private final String hNodeId;
 	
 	private Worksheet worksheetBeforeInvocation = null;
@@ -102,7 +103,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 //			String json = invocatioManager.getServiceJson(true);
 			invocatioManager.getServiceJson(true);
 //			new JsonImport(json, wk, ws.getFactory());
-//			System.out.println(json);
+//			logger.debug(json);
 
 
 			

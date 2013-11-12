@@ -36,11 +36,7 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
-import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.SemanticType;
@@ -115,15 +111,6 @@ public class ShowModelCommand extends WorksheetCommand {
 					"Error occured while generating the model for the source."));
 		}
 
-		// Create column nodes for the alignment
-		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
-		for (HNodePath path : worksheet.getHeaders().getAllPaths()) {
-			HNode node = path.getLeaf();
-			// TODO: adding list of CRF semantic types
-			alignment.addColumnNode(node.getId(), node.getColumnName(), "", null);
-		}
-
 		return c;
 	}
 
@@ -137,13 +124,6 @@ public class ShowModelCommand extends WorksheetCommand {
 		vwIDJObj.put(ClientJsonKeys.type.name(), ParameterType.worksheetId.name());
 		vwIDJObj.put(ClientJsonKeys.value.name(), worksheetId);
 		typesArray.put(vwIDJObj);
-		
-		// Add the check history information
-		JSONObject chIDJObj = new JSONObject();
-		chIDJObj.put(ClientJsonKeys.name.name(), ParameterType.checkHistory.name());
-		chIDJObj.put(ClientJsonKeys.type.name(), ParameterType.other.name());
-		chIDJObj.put(ClientJsonKeys.value.name(), false);
-		typesArray.put(chIDJObj);
 		
 		for (SemanticType type: semanticTypes) {
 			// Add the hNode information

@@ -24,10 +24,10 @@ package edu.isi.karma.model.serialization;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -47,21 +47,19 @@ import edu.isi.karma.rep.sources.DataSource;
 
 public class DataSourcePublisher extends SourcePublisher {
 
-	static Logger logger = Logger.getLogger(DataSourcePublisher.class);
+	static Logger logger = LoggerFactory.getLogger(DataSourcePublisher.class);
 
 	private DataSource source;
 	private Model model = null;
 	private RepFactory factory;
-	private List<String> transformationCommandsJSON;
 	private SourceInformation sourceInfo;
 	
 	//MARIAM
 	//I had to add factory, so that I can get to the columnName
 	//I tried to do it in a nicer way but couldn't figure out how to add it to the Attribute
-	public DataSourcePublisher(DataSource source, RepFactory factory, List<String> transformationCommandJSON, SourceInformation sourceInfo) {
+	public DataSourcePublisher(DataSource source, RepFactory factory, SourceInformation sourceInfo) {
 		this.source = source;
 		this.factory=factory;
-		this.transformationCommandsJSON = transformationCommandJSON;
 		this.sourceInfo = sourceInfo;
 	}
 	
@@ -77,7 +75,6 @@ public class DataSourcePublisher extends SourcePublisher {
 		model.setNsPrefix(Prefixes.RDFS, Namespaces.RDFS);
 		model.setNsPrefix(Prefixes.SWRL, Namespaces.SWRL);
 
-		addTransformationCommandsHistory(model);
 		addSourceInfoPart(model);
 		
 		return model;
@@ -164,12 +161,6 @@ public class DataSourcePublisher extends SourcePublisher {
 			}
 			addModelPart(model, my_source, this.source.getModel());
 		}
-		
-		// Add transformations
-		Property has_columnTransformation = model.createProperty(Namespaces.KARMA, "hasColumnTransformation");
-		for(String commJson : transformationCommandsJSON)
-			my_source.addProperty(has_columnTransformation, commJson);
-		
 		// Add source information if any present
 		if(sourceInfo != null) {
 			Map<InfoAttribute, String> attributeValueMap = sourceInfo.getAttributeValueMap();
@@ -178,10 +169,6 @@ public class DataSourcePublisher extends SourcePublisher {
 				my_source.addProperty(attrProp, attributeValueMap.get(attr));
 			}
 		}
-		
-	}
-	
-	private void addTransformationCommandsHistory(Model model2) {
 		
 	}
 	

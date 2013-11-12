@@ -33,13 +33,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.Alignment;
-import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
+import edu.isi.karma.rep.alignment.DisplayModel;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Link;
@@ -85,6 +85,11 @@ public class KR2RMLMappingGenerator {
 		this.subjectMapIndex = new HashMap<String, SubjectMap>();
 		this.triplesMapIndex = new HashMap<String, TriplesMap>();
 		
+//		for (Node n : alignmentGraph.vertexSet()) {
+//			if (n instanceof ColumnNode) {
+//				System.out.println(n.getId() + " -----> " + ((ColumnNode)n).getRdfLiteralType());
+//			}
+//		}
 		// Generate the R2RML data structures
 		generateMappingFromSteinerTree(generateInverse);
 	}
@@ -130,9 +135,8 @@ public class KR2RMLMappingGenerator {
 	}
 	
 	private void calculateColumnNodesCoveredByBlankNodes() {
-		HashMap<Node, Integer> nodeHeightsMap = GraphUtil.levelingCyclicGraph(alignmentGraph);
-		HashMap<Node, Set<ColumnNode>> nodeCoverage = 
-				GraphUtil.getNodesCoverage(alignmentGraph, nodeHeightsMap);
+		DisplayModel dm = new DisplayModel(alignmentGraph);
+		HashMap<Node, Set<ColumnNode>> nodeCoverage = dm.getNodesSpan();
 		
 		for (Node treeNode:alignmentGraph.vertexSet()) {
 			if (treeNode instanceof InternalNode && subjectMapIndex.containsKey(treeNode.getId())) {
@@ -278,10 +282,17 @@ public class KR2RMLMappingGenerator {
 						// Create the object map
 						ColumnNode cnode = (ColumnNode) target;
 						String hNodeId = cnode.getHNodeId();
+
 						ColumnTemplateTerm cnTerm = new ColumnTemplateTerm(hNodeId);
 						TemplateTermSet termSet = new TemplateTermSet();
 						termSet.addTemplateTermToSet(cnTerm);
-						ObjectMap objMap = new ObjectMap(hNodeId, termSet);
+
+						String rdfLiteralUri = 	cnode.getRdfLiteralType() == null? "" : cnode.getRdfLiteralType().getUri();
+						StringTemplateTerm rdfLiteralTypeTerm = new StringTemplateTerm(rdfLiteralUri, true);
+						TemplateTermSet rdfLiteralTypeTermSet = new TemplateTermSet();
+						rdfLiteralTypeTermSet.addTemplateTermToSet(rdfLiteralTypeTerm);
+
+						ObjectMap objMap = new ObjectMap(hNodeId, termSet, rdfLiteralTypeTermSet);
 						poMap.setObject(objMap);
 						
 						// Create the predicate
@@ -341,7 +352,7 @@ public class KR2RMLMappingGenerator {
 				ColumnTemplateTerm cnTerm = new ColumnTemplateTerm(hNodeId);
 				TemplateTermSet termSet = new TemplateTermSet();
 				termSet.addTemplateTermToSet(cnTerm);
-				ObjectMap objMap = new ObjectMap(hNodeId, termSet);
+				ObjectMap objMap = new ObjectMap(hNodeId, termSet, null);
 				poMap.setObject(objMap);
 				
 				// Create the predicate

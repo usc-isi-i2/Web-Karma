@@ -130,6 +130,7 @@ public class SetMetaPropertyCommand extends Command {
 
 		/** Check if a semantic type already exists for the column **/
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+		columnNode.setRdfLiteralType(rdfLiteralType);
 		boolean semanticTypeAlreadyExists = false;
 		Link oldIncomingLinkToColumnNode = null;
 		Node oldDomainNode = null;
@@ -138,8 +139,6 @@ public class SetMetaPropertyCommand extends Command {
 			semanticTypeAlreadyExists = true;
 			oldIncomingLinkToColumnNode = columnNodeIncomingLinks.get(0);
 			oldDomainNode = oldIncomingLinkToColumnNode.getSource();
-			if (!rdfLiteralType.equals(columnNode.getRdfLiteralType()))
-				columnNode.setRdfLiteralType(rdfLiteralType);
 		}
 		
 		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {

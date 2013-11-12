@@ -26,7 +26,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /*
@@ -104,7 +105,7 @@ public class RandomGUID extends Object {
     private static Random myRand;
     private static SecureRandom mySecureRand;
     
-    private static Logger logger = Logger.getLogger(RandomGUID.class);
+    private static Logger logger = LoggerFactory.getLogger(RandomGUID.class);
 
     private static String s_id;
 
@@ -158,7 +159,7 @@ public class RandomGUID extends Object {
         try {
             md5 = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("Error: " + e);
+            logger.error("Error: " + e);
             logger.warn(e.getMessage());
             new LogStackTrace(e, logger);
         }
@@ -199,7 +200,7 @@ public class RandomGUID extends Object {
             valueAfterMD5 = sb.toString();
 
         } catch (Exception e) {
-            System.out.println("Error:" + e);
+        	logger.error("Error:" + e);
             logger.warn(e.getMessage());
             new LogStackTrace(e, logger);
         }
@@ -233,9 +234,9 @@ public class RandomGUID extends Object {
     public static void main(String args[]) {
         for (int i=0; i< 100; i++) {
 	    RandomGUID myGUID = new RandomGUID();
-	    System.out.println("Seeding String=" + myGUID.valueBeforeMD5);
-	    System.out.println("rawGUID=" + myGUID.valueAfterMD5);
-	    System.out.println("RandomGUID=" + myGUID.toString());
+	    logger.info("Seeding String=" + myGUID.valueBeforeMD5);
+	    logger.info("rawGUID=" + myGUID.valueAfterMD5);
+	    logger.info("RandomGUID=" + myGUID.toString());
         }
     }
 }

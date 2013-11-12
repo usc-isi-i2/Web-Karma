@@ -1,7 +1,7 @@
 package edu.isi.karma.util ;
 
 import java.util.Collection;
-
+@Deprecated
 public class Prnt {
 	
 	public static void prn(Object obj) {

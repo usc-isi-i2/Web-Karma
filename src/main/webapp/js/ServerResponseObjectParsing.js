@@ -25,14 +25,26 @@ function parse(data) {
         "id" : data["workspaceId"]
     }
 
+    var isError = false;
+    var error = [];
+    var infos = [];
     // Check for errors
     $.each(data["elements"], function(i, element) {
+    	
         if(element["updateType"] == "KarmaError") {
-            $.sticky(element["Error"]);
-            return false;
+        	if(error[element["Error"]]) {
+        		//ignore;
+        	} else {
+	            $.sticky(element["Error"]);
+	            isError = true;
+	            error[element["Error"]] = true;
+        	}
         }
     });
 
+    if(isError)
+    	return false;
+    
     /* Always add the charts from cleaning service in end, so pushing that CleaningServiceUpdate in the end of updates array (if present) */
     // Identify the index
     var cleaningUpdateIndex = -1;
@@ -466,7 +478,13 @@ function parse(data) {
 
         }
         else if(element["updateType"] == "KarmaInfo") {
-            $.sticky(element["Info"]);
+        	if(infos[element["Info"]]) {
+        		//ignore;
+        	} else {
+	            $.sticky(element["Info"]);
+	            
+	            infos[element["Info"]] = true;
+        	}
         }
         else if(element["updateType"] == "FetchDataMiningModelsUpdate") {
 
@@ -536,6 +554,19 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
         var headerDiv = $("<div>").addClass(column["columnClass"]);
 
         var colWidthNumber = 0;
+        if (column["pythonTransformation"])
+        {
+        	td.data("pythonTransformation", column["pythonTransformation"]);
+        }
+        if (column["previousCommandId"])
+        {
+        	td.data("previousCommandId", column["previousCommandId"]);
+        }
+        if (column["columnDerivedFrom"])
+        {
+        	td.data("columnDerivedFrom", column["columnDerivedFrom"]);
+        }
+        
         if (column["hasNestedTable"]) {
             var pElem = $("<div>").addClass("wk-header wk-subtable-header").text(column["columnName"])
                 .mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);

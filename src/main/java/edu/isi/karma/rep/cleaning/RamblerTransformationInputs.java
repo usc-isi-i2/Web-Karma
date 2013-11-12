@@ -27,11 +27,20 @@ public class RamblerTransformationInputs implements TransformationInputs {
 
 	private Collection<TransformationExample> examples;
 	private ValueCollection inputValues;
-	private Transformation preferedTransformation;
+	private String[] vocab;
+	//private Transformation preferedTransformation;
 	public RamblerTransformationInputs(Collection<TransformationExample> examples,ValueCollection inputValues)
 	{
 		this.examples = examples;
 		this.inputValues = inputValues;
+	}
+	public void setVocab(String[] vocab)
+	{
+		this.vocab = vocab;
+	}
+	public String[] getVocab()
+	{
+		return this.vocab;
 	}
 	public Collection<TransformationExample> getExamples() {
 		// TODO Auto-generated method stub
@@ -43,6 +52,6 @@ public class RamblerTransformationInputs implements TransformationInputs {
 	}
 	public void setPreferredRule(Transformation t) {
 		// TODO Auto-generated method stub
-		this.preferedTransformation = t;
+		//this.preferedTransformation = t;
 	}
 }
