@@ -27,6 +27,7 @@ function parse(data) {
 
     var isError = false;
     var error = [];
+    var infos = [];
     // Check for errors
     $.each(data["elements"], function(i, element) {
     	
@@ -34,7 +35,7 @@ function parse(data) {
         	if(error[element["Error"]]) {
         		//ignore;
         	} else {
-	            $.sticky(element["Error"]);
+	            $.sticky("<span class='karmaError'>" + element["Error"] + "</span>");
 	            isError = true;
 	            error[element["Error"]] = true;
         	}
@@ -477,7 +478,13 @@ function parse(data) {
 
         }
         else if(element["updateType"] == "KarmaInfo") {
-            $.sticky(element["Info"]);
+        	if(infos[element["Info"]]) {
+        		//ignore;
+        	} else {
+	            $.sticky(element["Info"]);
+	            
+	            infos[element["Info"]] = true;
+        	}
         }
         else if(element["updateType"] == "FetchDataMiningModelsUpdate") {
 

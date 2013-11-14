@@ -100,66 +100,61 @@
     	<servlet-class>edu.isi.karma.webserver.ServerStart</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	
+	<servlet>
+    <servlet-name>KMLFileTransferHandler</servlet-name>
+    <servlet-class>edu.isi.karma.webserver.KMLFileTransferHandler</servlet-class>
+  </servlet>
+  
    <servlet>
     <servlet-name>KarmaServlet</servlet-name>
     <servlet-class>edu.isi.karma.webserver.KarmaServlet</servlet-class>
   </servlet>
-  <servlet-mapping>
-    <servlet-name>KarmaServlet</servlet-name>
-    <url-pattern>/KarmaServlet</url-pattern>
-  </servlet-mapping>
   
   <servlet>
     <servlet-name>requestController</servlet-name>
     <servlet-class>edu.isi.karma.webserver.RequestController</servlet-class>
   </servlet>
+  
+   <servlet>
+    <servlet-name>LinkedAPIServiceHandler</servlet-name>
+    <servlet-class>edu.isi.karma.webserver.LinkedApiServiceHandler</servlet-class>
+  </servlet>
+  
+  <servlet>
+     <servlet-name>SpatialReferenceSystemServiceHandler</servlet-name>
+     <servlet-class>edu.isi.karma.webserver.SpatialReferenceSystemServiceHandler</servlet-class>
+    </servlet>
+    
+  <servlet-mapping>
+    <servlet-name>KarmaServlet</servlet-name>
+    <url-pattern>/KarmaServlet</url-pattern>
+  </servlet-mapping>
+  
+  
   <servlet-mapping>
     <servlet-name>requestController</servlet-name>
     <url-pattern>/RequestController</url-pattern>
   </servlet-mapping>
   
-  <servlet>
-    <servlet-name>KMLFileTransferHandler</servlet-name>
-    <servlet-class>edu.isi.karma.webserver.KMLFileTransferHandler</servlet-class>
-  </servlet>
+  
   <servlet-mapping>
     <servlet-name>KMLFileTransferHandler</servlet-name>
     <url-pattern>/KMLFileTransferHandler</url-pattern>
   </servlet-mapping>
   
-  <servlet>
-    <servlet-name>LinkedAPIServiceHandler</servlet-name>
-    <servlet-class>edu.isi.karma.webserver.LinkedApiServiceHandler</servlet-class>
-  </servlet>
+ 
   <servlet-mapping>
     <servlet-name>LinkedAPIServiceHandler</servlet-name>
     <url-pattern>/services/*</url-pattern>
   </servlet-mapping>
  
-<servlet>
-     <servlet-name>SpatialReferenceSystemServiceHandler</servlet-name>
-     <servlet-class>edu.isi.karma.webserver.SpatialReferenceSystemServiceHandler</servlet-class>
-    </servlet>
+
     <servlet-mapping>
      <servlet-name>SpatialReferenceSystemServiceHandler</servlet-name>
      <url-pattern>/SpatialReferenceSystemService/*</url-pattern>
   </servlet-mapping>
 
-<!-- uncomment for password protection; change user/pwd in src/main/config/jettyrealm.properties -->
-<!-- 
- <security-constraint>
-    <web-resource-collection>
-      <url-pattern>/web-karma.html</url-pattern>
-    </web-resource-collection>
-    <auth-constraint>
-      <role-name>karma</role-name>
-    </auth-constraint>
-  </security-constraint>
 
-  <login-config>
-    <auth-method>DIGEST</auth-method>
-    <realm-name>TestRealm</realm-name>
-  </login-config>
--->
 
 </web-app>

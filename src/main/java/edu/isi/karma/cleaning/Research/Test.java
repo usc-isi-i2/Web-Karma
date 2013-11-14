@@ -19,8 +19,8 @@ public class Test {
 	public static void test1()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] x7 = {"<_START>er stîget ûf, mit grôzer kraft<_END>", "stîget ûf, mit grôzer kraft"}; // 15th  element start.
-		//String[] x8 = {"<_START>Deborah Pugh, \"Egyptian Group Claims New Attacks,\" The Guardian (London), January 8, 1993. <_END>", "Egyptian Group Claims New Attacks"};
+		String[] x7 = {"<_START>€164.04 billion\"@en<_END>", "164.04"}; // 15th  element start.
+		//String[] x8 = {"<_START>dbpedia:XTO_Energy<_END>", "XTO Energy"};
 		//String[] x9 = {"<_START>09:58 am<_END>", "09:58 AM"};
 		examples.add(x7);
 		//examples.add(x8);
@@ -33,7 +33,7 @@ public class Test {
 		psProgSynthesis.inite(examples);
 		Collection<ProgramRule> ps = psProgSynthesis.run_main();
 		ProgramRule pr = ps.iterator().next();
-		String val = "Sîne, klâwen durh die";
+		String val = "US$ 232.982 billion\"@en";
 		InterpreterType rule = pr.getRuleForValue(val);
 		System.out.println(rule.execute(val));
 	}
@@ -118,7 +118,6 @@ public class Test {
 						index++;
 					}
 					Vector<String> vob = UtilTools.buildDict(vtmp);
-					ProgramRule.setVocb(vob);
 					if (entries.size() <= 1)
 						continue;
 					ExampleSelection expsel = new ExampleSelection();
@@ -139,6 +138,7 @@ public class Test {
 						Vector<String> resultString = new Vector<String>();
 						xHashMap = new HashMap<String, String[]>();
 						ProgSynthesis psProgSynthesis = new ProgSynthesis();
+						psProgSynthesis.vocab = vob.toArray(new String[vob.size()]);
 						psProgSynthesis.inite(examples);
 						Vector<ProgramRule> pls = new Vector<ProgramRule>();
 						Collection<ProgramRule> ps = psProgSynthesis.run_main();
@@ -429,7 +429,7 @@ public class Test {
 		cfg.initeParameters();
 		DataCollection.config = cfg.getString();
 		//Test.test0("/Users/bowu/Research/testdata/TestSingleFile");
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
-		//Test.test1();
+		//Test.test4("/Users/bowu/Research/testdata/TestSingleFile");
+		Test.test1();
 	}
 }

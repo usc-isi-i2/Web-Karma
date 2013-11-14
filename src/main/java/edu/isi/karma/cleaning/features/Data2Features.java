@@ -2,6 +2,7 @@ package edu.isi.karma.cleaning.features;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
@@ -95,7 +96,7 @@ public class Data2Features {
 			writer.flush();
 			writer.close();
 		} catch (Exception ex) {
-			logger.error("" + ex.toString());
+			logger.error("" + Arrays.toString(ex.getStackTrace()));
 		}
 	}
 
