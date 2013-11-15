@@ -21,6 +21,7 @@
 
 package edu.isi.karma.controller.history;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,8 +39,8 @@ import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.history.CommandHistoryWriter.HistoryArguments;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
-import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
+import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
@@ -54,6 +55,9 @@ public class WorksheetCommandHistoryExecutor {
 	private final Workspace workspace;
 	
 	private static Logger logger = LoggerFactory.getLogger(WorksheetCommandHistoryExecutor.class);
+	private static String[] commandsIgnoreNodeBefore = { "AddColumnCommand",
+		"SubmitPythonTransformationCommand"
+	};
 	
 	public WorksheetCommandHistoryExecutor(String worksheetId, Workspace workspace) {
 		super();
@@ -87,6 +91,10 @@ public class WorksheetCommandHistoryExecutor {
 		JSONArray inputParamArr = (JSONArray) commObject.get(HistoryArguments.inputParameters.name());
 		String commandName = (String)commObject.get(HistoryArguments.commandName.name());
 		logger.info("Command in history: " + commandName);
+		if(commandName.equals("AddColumnCommand")) {
+			logger.info("Need to debug this");
+		}
+			
 		// Change the hNode ids, vworksheet id to point to the current worksheet ids
 		
 		UpdateContainer uc = normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
@@ -104,17 +112,28 @@ public class WorksheetCommandHistoryExecutor {
 					} catch(Exception e) {
 						logger.error("Error executing command: "+ commandName + ". Please notify this error");
 						//make these InfoUpdates so that the UI can still process the rest of the model
-						return new UpdateContainer(new InfoUpdate("Error executing command " + commandName + " from history"));
+						return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
 					}
 				}
 				else {
 					logger.error("Error occured while creating command (Could not create Command object): " 
 							+ commObject.get(HistoryArguments.commandName.name()));
-					return new UpdateContainer(new InfoUpdate("Error executing command " + commandName + " from history"));
+					return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
 				}
 			}
 		} 
 		return uc;
+	}
+	
+	private boolean ignoreIfBeforeColumnDoesntExist(String commandName) {
+		boolean ignore = false;
+		for(String ignoreCom : commandsIgnoreNodeBefore) {
+			if(commandName.equals(ignoreCom)) {
+				ignore = true;
+				break;
+			}
+		}
+		return ignore;
 	}
 	
 	private UpdateContainer normalizeCommandHistoryJsonInput(Workspace workspace, String worksheetId, 
@@ -129,22 +148,30 @@ public class WorksheetCommandHistoryExecutor {
 				for (int j=0; j<hNodeJSONRep.length(); j++) {
 					JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);
 					if(hTable == null) {
-						return new UpdateContainer(new InfoUpdate("null HTable while normalizing JSON input for the command " + commandName));
+						return new UpdateContainer(new TrivialErrorUpdate("null HTable while normalizing JSON input for the command " + commandName));
 					}
 					String nameObjColumnName = cNameObj.getString("columnName");
 					logger.debug("Column being normalized: "+ nameObjColumnName);
 					HNode node = hTable.getHNodeFromColumnName(nameObjColumnName);
-					if(node == null) {
+					if(node == null && !ignoreIfBeforeColumnDoesntExist(commandName)) { //Because add column can happen even if the column after which it is to be added is not present
 						logger.info("null HNode " + nameObjColumnName + " while normalizing JSON input for the command " + commandName);
-						return new UpdateContainer(new InfoUpdate("Column " + nameObjColumnName + " does not exist. All commands for this column are being skipped"));
+						return new UpdateContainer(new TrivialErrorUpdate("Column " + nameObjColumnName + " does not exist. " +
+								"All commands for this column are being skipped. You can add the column to the data or Worksheet and apply the model again."));
 						//return false;
 					}
 					
 					if (j == hNodeJSONRep.length()-1) {		// Found!
-						inpP.put(ClientJsonKeys.value.name(), node.getId());
+						if(node != null)
+							inpP.put(ClientJsonKeys.value.name(), node.getId());
+						else {
+							//Get the id of the last node in the table
+							ArrayList<String> allNodeIds = hTable.getOrderedNodeIds();
+							String lastNodeId = allNodeIds.get(allNodeIds.size()-1);
+							inpP.put(ClientJsonKeys.value.name(), lastNodeId);
+						}
 						hTable = workspace.
 								getWorksheet(worksheetId).getHeaders();
-					} else {
+					} else if(node != null) {
 						hTable = node.getNestedTable();
 					}
 				}
