@@ -329,8 +329,8 @@ public class GenerateCleaningRulesCommand extends WorksheetCommand {
 				String dummyValue = pretar;
 				if(pretar.indexOf("_FATAL_ERROR_")!= -1)
 				{
-					//dummyValue = org;
-					dummyValue = "#ERROR";
+					dummyValue = org;
+					//dummyValue = "#ERROR";
 				}
 				try
 				{
