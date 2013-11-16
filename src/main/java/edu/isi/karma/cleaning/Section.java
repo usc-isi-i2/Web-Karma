@@ -20,12 +20,9 @@ public class Section implements GrammarTreeNode {
 		this.tarStrings = tarStrings;
 		if(itInterpretor==null)
 			itInterpretor =  new Interpretor();
-		if(supermode == 0)
-			this.createTotalOrderVector();
-		else
-		{
-			this.reiniteRules();
-		}
+		/*if(supermode == 0)
+			this.createTotalOrderVector();*/
+		this.reiniteRules();
 		this.isinloop = isinloop;
 	}
 	public String verifySpace() {
