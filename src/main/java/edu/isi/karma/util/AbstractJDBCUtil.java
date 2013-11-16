@@ -38,7 +38,7 @@ public abstract class AbstractJDBCUtil {
 	.getLogger(AbstractJDBCUtil.class);
 
 	public enum DBType {
-		Oracle, MySQL, SQLServer, PostGIS
+		Oracle, MySQL, SQLServer, PostGIS, Sybase
 	}
 
 	protected abstract String getDriver();
