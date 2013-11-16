@@ -60,3 +60,6 @@ body {
 {
 	color:#ff0000;
 }
+#rdfGenerationErrorWindow {
+	background: none repeat scroll 0 0 #EEEEEF;
+}
