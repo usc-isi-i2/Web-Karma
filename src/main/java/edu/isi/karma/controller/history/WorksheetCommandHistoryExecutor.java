@@ -21,6 +21,7 @@
 
 package edu.isi.karma.controller.history;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,7 +39,8 @@ import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.history.CommandHistoryWriter.HistoryArguments;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
-import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.InfoUpdate;
+import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
@@ -53,6 +55,9 @@ public class WorksheetCommandHistoryExecutor {
 	private final Workspace workspace;
 	
 	private static Logger logger = LoggerFactory.getLogger(WorksheetCommandHistoryExecutor.class);
+	private static String[] commandsIgnoreNodeBefore = { "AddColumnCommand",
+		"SubmitPythonTransformationCommand"
+	};
 	
 	public WorksheetCommandHistoryExecutor(String worksheetId, Workspace workspace) {
 		super();
@@ -86,8 +91,14 @@ public class WorksheetCommandHistoryExecutor {
 		JSONArray inputParamArr = (JSONArray) commObject.get(HistoryArguments.inputParameters.name());
 		String commandName = (String)commObject.get(HistoryArguments.commandName.name());
 		logger.info("Command in history: " + commandName);
+		if(commandName.equals("AddColumnCommand")) {
+			logger.info("Need to debug this");
+		}
+			
 		// Change the hNode ids, vworksheet id to point to the current worksheet ids
-		if(normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr)) {
+		
+		UpdateContainer uc = normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName);
+		if(uc == null) { //No error
 			// Invoke the command
 			CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
 			if(cf != null && cf instanceof JSONInputCommandFactory) {
@@ -100,23 +111,33 @@ public class WorksheetCommandHistoryExecutor {
 						workspace.getCommandHistory().doCommand(comm, workspace);
 					} catch(Exception e) {
 						logger.error("Error executing command: "+ commandName + ". Please notify this error");
-						return new UpdateContainer(new ErrorUpdate("Error executing command " + commandName + " from history"));
+						//make these InfoUpdates so that the UI can still process the rest of the model
+						return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
 					}
 				}
 				else {
 					logger.error("Error occured while creating command (Could not create Command object): " 
 							+ commObject.get(HistoryArguments.commandName.name()));
-					return new UpdateContainer(new ErrorUpdate("Error executing command " + commandName + " from history"));
+					return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
 				}
 			}
-		} else {
-			return new UpdateContainer(new ErrorUpdate("null HTable while normalizing JSON input for the command " + commandName));
-		}
-		return null;
+		} 
+		return uc;
 	}
 	
-	private boolean normalizeCommandHistoryJsonInput(Workspace workspace, String worksheetId, 
-			JSONArray inputArr) throws JSONException {
+	private boolean ignoreIfBeforeColumnDoesntExist(String commandName) {
+		boolean ignore = false;
+		for(String ignoreCom : commandsIgnoreNodeBefore) {
+			if(commandName.equals(ignoreCom)) {
+				ignore = true;
+				break;
+			}
+		}
+		return ignore;
+	}
+	
+	private UpdateContainer normalizeCommandHistoryJsonInput(Workspace workspace, String worksheetId, 
+			JSONArray inputArr, String commandName) throws JSONException {
 		HTable hTable = workspace.getWorksheet(worksheetId).getHeaders();
 		for (int i = 0; i < inputArr.length(); i++) {
 			JSONObject inpP = inputArr.getJSONObject(i);
@@ -127,21 +148,30 @@ public class WorksheetCommandHistoryExecutor {
 				for (int j=0; j<hNodeJSONRep.length(); j++) {
 					JSONObject cNameObj = (JSONObject) hNodeJSONRep.get(j);
 					if(hTable == null) {
-						logger.error("null HTable while normalizing JSON input for the command.");
-						return false;
+						return new UpdateContainer(new TrivialErrorUpdate("null HTable while normalizing JSON input for the command " + commandName));
 					}
-					logger.debug("Column being normalized: "+ cNameObj.getString("columnName"));
-					HNode node = hTable.getHNodeFromColumnName(cNameObj.getString("columnName"));
-					if(node == null) {
-						logger.error("null HNode while normalizing JSON input for the command.");
-						return false;
+					String nameObjColumnName = cNameObj.getString("columnName");
+					logger.debug("Column being normalized: "+ nameObjColumnName);
+					HNode node = hTable.getHNodeFromColumnName(nameObjColumnName);
+					if(node == null && !ignoreIfBeforeColumnDoesntExist(commandName)) { //Because add column can happen even if the column after which it is to be added is not present
+						logger.info("null HNode " + nameObjColumnName + " while normalizing JSON input for the command " + commandName);
+						return new UpdateContainer(new TrivialErrorUpdate("Column " + nameObjColumnName + " does not exist. " +
+								"All commands for this column are being skipped. You can add the column to the data or Worksheet and apply the model again."));
+						//return false;
 					}
 					
 					if (j == hNodeJSONRep.length()-1) {		// Found!
-						inpP.put(ClientJsonKeys.value.name(), node.getId());
+						if(node != null)
+							inpP.put(ClientJsonKeys.value.name(), node.getId());
+						else {
+							//Get the id of the last node in the table
+							ArrayList<String> allNodeIds = hTable.getOrderedNodeIds();
+							String lastNodeId = allNodeIds.get(allNodeIds.size()-1);
+							inpP.put(ClientJsonKeys.value.name(), lastNodeId);
+						}
 						hTable = workspace.
 								getWorksheet(worksheetId).getHeaders();
-					} else {
+					} else if(node != null) {
 						hTable = node.getNestedTable();
 					}
 				}
@@ -149,6 +179,6 @@ public class WorksheetCommandHistoryExecutor {
 				inpP.put(ClientJsonKeys.value.name(), worksheetId);
 			}
 		}
-		return true;
+		return null;
 	}
 }
