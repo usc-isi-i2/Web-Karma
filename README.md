@@ -1,5 +1,6 @@
 Karma: A Data Integration Tool
 ================================
+[![Build Status](http://colo-vm41.isi.edu:8080/buildStatus/icon?job=WebKarmaBuildCI)](http://colo-vm41.isi.edu:8080/job/WebKarmaBuildCI/)
 
 Karma needs **Java 1.7, Maven 3.0**. Download Java SE from [http://www.oracle.com/technetwork/java/javase/downloads/index.html](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
