@@ -78,10 +78,11 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		HTable hTable = worksheet.getHeaders();
-		String hTableId = hTable.getId();
 		RepFactory f = workspace.getFactory();
 		HNode hNode = f.getHNode(hNodeId);
+		String hTableId = hNode.getHTableId();
+		HTable hTable = hNode.getHTable(f);
+		
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
 				workspace.getId());
 		// Invoke the add column command
