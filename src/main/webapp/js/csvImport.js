@@ -27,9 +27,13 @@ function showCSVImportOptions(responseJSON) {
   csvPreviewTable.append($("<tr>").append($("<td>").addClass("rowIndexCell").text("File Row Number")));
 	
   var headers = null;
-  if (responseJSON)
+  if (responseJSON) {
     headers = responseJSON["elements"][0]["headers"];
-	
+	var encoding = responseJSON["elements"][0]["encoding"];
+	$("#encoding").val(encoding);
+	var maxNumLines = responseJSON["elements"][0]["maxNumLines"];
+	$("#maxNumLines").val(maxNumLines);
+  }
   //Change the source name
   $("#CSVSourceName", csvImportDiv).text(responseJSON["elements"][0]["fileName"]);
 	
@@ -102,6 +106,8 @@ function CSVImportOptionsChanged(flag) {
   options["CSVHeaderLineIndex"] = $("#CSVHeaderLineIndex").val();
   options["startRowIndex"] = $("#startRowIndex").val();
   options["textQualifier"] = $("#textQualifier").val();
+  options["encoding"] = $("#encoding").val();
+  options["maxNumLines"] = $("#maxNumLines").val();
   options["workspaceId"] = $.workspaceGlobalInformation.id;
   options["interactionType"] = "generatePreview";
 	
@@ -139,4 +145,6 @@ function resetCSVDialogOptions() {
   $("#CSVHeaderLineIndex", csvImportDiv).val("1");
   $("#startRowIndex", csvImportDiv).val("2");
   $("#textQualifier", csvImportDiv).val("\"");
+  $("#encoding", csvImportDiv).val("\"");
+  $("#encoding", csvImportDiv).val("1000");
 }
