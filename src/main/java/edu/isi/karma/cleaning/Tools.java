@@ -124,7 +124,7 @@ public class Tools {
 		cfg.initeParameters();
 		DataCollection.config = cfg.getString();
 		Tools tools = new Tools();
-		tools.transformFile("/Users/bowu/Research/testdata/CSCI548_data/0_Data/raw/chicago/Titleofartwork_Chicago_well_form.xml.csv");
+		tools.transformFile("/Users/bowu/Research/testdata/CSCI548_data/0_Data/raw/oakland_painting/Dimensions_painting.json.csv");
 		//tools.transformFile("/Users/bowu/Research/50newdata/tmp/example.csv");
 		//tools.test1();
 	}

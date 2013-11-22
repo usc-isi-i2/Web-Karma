@@ -195,6 +195,7 @@ public class UtilTools {
 		dict.put("\\[", "\\\\[");
 		dict.put("\\/", "\\\\/");
 		dict.put("\\'", "\\\\'");
+		dict.put("\\|", "\\\\|");
 		dict.put("\\\"", "\\\\\"");
 		for (String key : dict.keySet()) {
 			s = s.replaceAll(key, dict.get(key));

@@ -377,6 +377,8 @@ public class Position implements GrammarTreeNode {
 			rMap.put("ANY", 1.0);
 		}
 		String reString = "";
+		String reString2 = "";
+		String reString3 = "";
 		SortedMap<Double, Vector<String>> sortedMap = new TreeMap<Double, Vector<String>>();
 		String negString = "";
 		for (String a : lMap.keySet()) {
@@ -385,15 +387,23 @@ public class Position implements GrammarTreeNode {
 					continue;
 				Double key = lMap.get(a) + rMap.get(b);
 				reString = String.format(
-						"indexOf(value,\'%s\',\'%s\',counter)", a, b);
+						"indexOf(value,\'%s\',\'%s\',1*counter)", a, b);
+				reString2 = String.format(
+						"indexOf(value,\'%s\',\'%s\',2*counter)", a, b);
+				reString3 = String.format(
+						"indexOf(value,\'%s\',\'%s\',3*counter)", a, b);
 				negString = String.format(
-						"indexOf(value,\'%s\',\'%s\',-counter)", a, b);
+						"indexOf(value,\'%s\',\'%s\',-1*counter)", a, b);
 				if (sortedMap.containsKey(key)) {
 					sortedMap.get(key).add(reString);
+					sortedMap.get(key).add(reString2);
+					sortedMap.get(key).add(reString3);
 					sortedMap.get(key).add(negString);
 				} else {
 					Vector<String> svec = new Vector<String>();
 					svec.add(reString);
+					svec.add(reString2);
+					svec.add(reString3);
 					svec.add(negString);
 					sortedMap.put(key, svec);
 				}

@@ -171,17 +171,23 @@ public class RecordClassifier2 implements PartitionClassifierType {
 			HashMap<String, Vector<String>> trainData = new HashMap<String, Vector<String>>();
 			Vector<String> test = new Vector<String>();
 			Vector<String> par1 = new Vector<String>();
-			par1.add("L: 11.5 in, Diam: .875 in");
-			par1.add("L: 9.5 in, W: 4.5 in");
+			par1.add("10 in HIGH x 8 in WIDE(25.40 cm HIGH x 20.32 cm WIDE)");
+			par1.add("18 in HIGH x 24 WIDE(45.72 cm HIGH x 60.96 WIDE)");
+			par1.add("47.5 in. HIGH x 38 in. WIDE");
+			par1.add("52 in. HIGH x 48 in. WIDE");
 			Vector<String> par2 = new Vector<String>();
-			par2.add("H: 40 in, W: 31 in");
-			par2.add("Neg Type: 120.00 mm");
+			par2.add("12 in HIGH x 7.75 in WIDE x 1.5 in DEEP(30.48 cm HIGH x 19.68 cm WIDE x 3.81 cm DEEP)");
+			par2.add("25.5 in. HIGH x 29.5 in. WIDE");
+			par2.add("3.87 in HIGH x 5.87 in WIDE(9.83 cm HIGH x 14.91 cm WIDE)");
+			par2.add("46 in HIGH x 33.5 in WIDE(116.84 cm HIGH x 85.09 cm WIDE)");
+			Vector<String> par3 = new Vector<String>();
+			par3.add("59.75 in WIDE(151.76 cm WIDE)");
 			trainData.put("c1", par1);
 			trainData.put("c2", par2);
-			// trainData.put("c3", par3);
+			trainData.put("c3", par3);
 			// trainData.put("c4", par4);
 			// trainData.put("c5", par5);
-			test.add("L: 13 in, W: 13.5 in");
+			test.add("47.5 in. HIGH x 38 in. WIDE");
 
 			RecordClassifier2 rc = new RecordClassifier2();
 			for (String key : trainData.keySet()) {
@@ -190,7 +196,7 @@ public class RecordClassifier2 implements PartitionClassifierType {
 				}
 			}
 			rc.learnClassifer();
-			logger.debug(rc.Classify(test.get(0)));
+			logger.info(rc.Classify(test.get(0)));
 		} catch (Exception ex) {
 			logger.error(ex.getMessage());
 		}
