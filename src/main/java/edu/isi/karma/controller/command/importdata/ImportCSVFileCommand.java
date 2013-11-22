@@ -36,6 +36,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.EncodingDetector;
 
 public class ImportCSVFileCommand extends ImportFileCommand implements IPreviewable {
 
@@ -49,7 +50,9 @@ public class ImportCSVFileCommand extends ImportFileCommand implements IPreviewa
     private char quoteCharacter = '"';
     // Escape character
     private char escapeCharacter = '\\';
-
+    private String encoding = null;
+    private int maxNumLines = 100;
+    
     protected enum InteractionType {
 
         generatePreview, importTable
@@ -78,6 +81,14 @@ public class ImportCSVFileCommand extends ImportFileCommand implements IPreviewa
         this.escapeCharacter = escapeCharacter;
     }
 
+    public void setEncoding(String encoding) {
+    	this.encoding = encoding;
+    }
+    
+    public void setMaxNumLines(int numLines) {
+    	this.maxNumLines = numLines;
+    }
+    
     public ImportCSVFileCommand(String id, File file) {
         super(id, file);
     }
@@ -107,7 +118,8 @@ public class ImportCSVFileCommand extends ImportFileCommand implements IPreviewa
     @Override
     protected Import createImport(Workspace workspace) {
         return new CSVFileImport(headerRowIndex,
-                dataStartRowIndex, delimiter, quoteCharacter, getFile(),
+                dataStartRowIndex, delimiter, quoteCharacter, encoding, maxNumLines,
+                getFile(),
                 workspace);
     }
 
@@ -117,7 +129,7 @@ public class ImportCSVFileCommand extends ImportFileCommand implements IPreviewa
             throws CommandException {
         UpdateContainer c = new UpdateContainer();
         c.add(new CSVImportPreviewUpdate(delimiter, quoteCharacter,
-                escapeCharacter, getFile(), headerRowIndex, dataStartRowIndex, id));
+                escapeCharacter, encoding, maxNumLines, getFile(), headerRowIndex, dataStartRowIndex, id));
         return c;
     }
 
@@ -166,6 +178,26 @@ public class ImportCSVFileCommand extends ImportFileCommand implements IPreviewa
             setDataStartRowIndex(2);
         }
 
+        String strEncoding = request.getParameter("encoding");
+        if(strEncoding == null || strEncoding == "") {
+        	try {
+        		strEncoding = EncodingDetector.detect(getFile());
+        	} catch(Exception e) {
+        		strEncoding = EncodingDetector.DEFAULT_ENCODING;
+        	}
+        }
+        setEncoding(strEncoding);
+        
+        String maxNumLines = request.getParameter("maxNumLines");
+        if(maxNumLines != null && maxNumLines != "") {
+        	try {
+                int num = Integer.parseInt(maxNumLines);
+                setMaxNumLines(num);
+            } catch (Throwable t) {
+                logger.error("Wrong user input for Data Number of Lines to import");
+                return null;
+            }
+        }
         /**
          * Send response based on the interaction type *
          */

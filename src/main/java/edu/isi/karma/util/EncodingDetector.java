@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.BOMInputStream;
 import org.mozilla.universalchardet.UniversalDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ import org.slf4j.LoggerFactory;
 public class EncodingDetector {
     
 	private static Logger logger = LoggerFactory.getLogger(EncodingDetector.class);
-    private final static String DEFAULT = StandardCharsets.UTF_8.name();
+    public final static String DEFAULT_ENCODING = StandardCharsets.UTF_8.name();
 
     public static String detect(InputStream is) throws IOException {
 
@@ -37,7 +38,7 @@ public class EncodingDetector {
         if (encoding != null) {
             logger.debug("Detected encoding = " + encoding);
         } else {
-            logger.debug("No encoding detected, using default: " + DEFAULT);
+            logger.debug("No encoding detected, using default: " + DEFAULT_ENCODING);
         }
 
         // (5)
@@ -45,20 +46,30 @@ public class EncodingDetector {
         
         return encoding;
     }
+    
+    public static String detect(File file) {
+        try {
+	        FileInputStream fis = new FileInputStream(file);
+	        
+	        String encoding = EncodingDetector.detect(fis);
+	        
+	        logger.info("Detected encoding for file: " + file.getName() + ": " + encoding);
+	        if (encoding == null) {
+	            encoding = DEFAULT_ENCODING;
+	        }
+	        return encoding;
+        } catch(Exception e) {
+        	logger.debug("Exception detecting encoding, using default: " + DEFAULT_ENCODING);
+        }
+        return DEFAULT_ENCODING;
+    }
 
-    public static InputStreamReader getInputStreamReader(File file) throws IOException {
+    public static InputStreamReader getInputStreamReader(File file, String encoding) throws IOException {
         
         FileInputStream fis = new FileInputStream(file);
-        
-        String encoding = EncodingDetector.detect(fis);
-        
-        fis = new FileInputStream(file);
-        
-        if (encoding == null) {
-            encoding = DEFAULT;
-        }
-
-        return new InputStreamReader(fis, encoding);
+        logger.info("Reading file: " + file + " using encoding: " + encoding);
+        BOMInputStream bis = new BOMInputStream(fis); //So that we can remove the BOM
+        return new InputStreamReader(bis, encoding);
     }
     
     public static String getString(File file) throws IOException {
@@ -71,7 +82,7 @@ public class EncodingDetector {
         fis = new FileInputStream(file);
         
         if (encoding == null) {
-            encoding = DEFAULT;
+            encoding = DEFAULT_ENCODING;
         }
         
         IOUtils.copy(fis, sw, encoding);
