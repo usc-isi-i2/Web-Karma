@@ -43,6 +43,7 @@ import edu.isi.karma.kr2rml.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
+import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
@@ -68,7 +69,8 @@ public class FileRdfGenerator extends RdfGenerator {
             JsonImport imp = new JsonImport(json, inputFile.getName(), workspace);
             worksheet = imp.generateWorksheet();
         } else if (inputType.equalsIgnoreCase("CSV")) {
-            Import fileImport = new CSVFileImport(1, 2, ',', '\"', inputFile, workspace);
+        	String encoding = EncodingDetector.detect(inputFile);
+            Import fileImport = new CSVFileImport(1, 2, ',', '\"', encoding, -1, inputFile, workspace);
 
             worksheet = fileImport.generateWorksheet();
         }

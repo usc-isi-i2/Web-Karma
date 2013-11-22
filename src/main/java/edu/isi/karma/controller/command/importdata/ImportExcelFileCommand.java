@@ -38,6 +38,7 @@ import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.imp.excel.ToCSV;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -90,7 +91,8 @@ public class ImportExcelFileCommand extends ImportFileCommand {
         // Each sheet is written to a separate CSV file
         if (!csvFiles.isEmpty()) {
             for (File csvFile : csvFiles) {
-                Import imp = new CSVFileImport(1, 2, ',', '"', csvFile,
+            	String encoding = EncodingDetector.detect(csvFile);
+                Import imp = new CSVFileImport(1, 2, ',', '"', encoding, -1, csvFile,
                         workspace);
 
                 try {
