@@ -11,6 +11,7 @@ import org.apache.mahout.math.Arrays;
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.cleaning.ExampleSelection;
 import edu.isi.karma.cleaning.InterpreterType;
+import edu.isi.karma.cleaning.MyLogger;
 import edu.isi.karma.cleaning.ProgSynthesis;
 import edu.isi.karma.cleaning.ProgramRule;
 import edu.isi.karma.cleaning.UtilTools;
@@ -108,6 +109,7 @@ public class Test {
 			Vector<String[]> entries = new Vector<String[]>();
 			try {				
 				if (f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
+					MyLogger.logsth("========"+f.getName()+"============\n");
 					HashMap<String, String[]> xHashMap = new HashMap<String, String[]>();
 					@SuppressWarnings("resource")
 					CSVReader cr = new CSVReader(new FileReader(f), ',','"','\0');

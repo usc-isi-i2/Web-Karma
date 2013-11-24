@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.Research.ConfigParameters;
+import edu.isi.karma.cleaning.Research.Prober;
 
 public class ProgSynthesis {
 	public static int time_limit = 20;
@@ -19,7 +20,7 @@ public class ProgSynthesis {
 	public PartitionClassifierType classifier;
 	public String[] vocab = null;
 	public HashMap<String, Boolean> legalParitions = new HashMap<String, Boolean>();
-
+	public MyLogger logger = new MyLogger();
 	public void inite(Vector<String[]> examples) {
 		for (int i = 0; i < examples.size(); i++) {
 			Ruler r = new Ruler();
@@ -225,6 +226,10 @@ public class ProgSynthesis {
 			t3 = System.currentTimeMillis();
 			learnspan += t2 - t1;
 			genspan += t3 - t2;
+		}
+		if(ConfigParameters.debug==1)
+		{
+			MyLogger.logsth(Prober.PartitionDisplay1(vp));
 		}
 		Traces.AllSegs.clear();
 		return cpr;
