@@ -80,24 +80,12 @@ public class DisplayModel {
 		return model;
 	}
 
-	public void setModel(DirectedWeightedMultigraph<Node, Link> model) {
-		this.model = model;
-	}
-
 	public HashMap<Node, Integer> getNodesLevel() {
 		return nodesLevel;
 	}
 
-	public void setNodesLevel(HashMap<Node, Integer> nodesLevel) {
-		this.nodesLevel = nodesLevel;
-	}
-
 	public HashMap<Node, Set<ColumnNode>> getNodesSpan() {
 		return nodesSpan;
-	}
-
-	public void setNodesSpan(HashMap<Node, Set<ColumnNode>> nodesSpan) {
-		this.nodesSpan = nodesSpan;
 	}
 
 	private void levelingCyclicGraph() {
@@ -138,7 +126,7 @@ public class DisplayModel {
 			}
 		}
 		
-		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes();
+		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes(false);
 		
 		// find in/out degree in each level
 		int k = 0;
@@ -159,6 +147,7 @@ public class DisplayModel {
 				int maxDegree = -1;
 				
 				for (Node u : nodes) {
+					
 					d = nodeToInDegree.get(u);
 					sum += d;
 					if (d > maxDegree) {
@@ -196,7 +185,7 @@ public class DisplayModel {
 		
 	}
 	
-	public HashMap<Integer, Set<Node>> getLevelToNodes() {
+	public HashMap<Integer, Set<Node>> getLevelToNodes(boolean considerColumnNodes) {
 
 		HashMap<Integer, Set<Node>> levelToNodes = 
 				new HashMap<Integer, Set<Node>>();
@@ -210,6 +199,10 @@ public class DisplayModel {
 				nodes = new HashSet<Node>();
 				levelToNodes.put(entry.getValue(), nodes);
 			}
+			
+			if (!considerColumnNodes && entry.getKey() instanceof ColumnNode)
+				continue;
+			
 			nodes.add(entry.getKey());
 			
 		}
@@ -251,7 +244,7 @@ public class DisplayModel {
 			nodesSpan.put(n, columnNodes);
 		}
 		
-		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes();
+		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes(true);
 		
 		int i = getMaxLevel(true);
 		while (i >= 0) {
@@ -370,7 +363,7 @@ public class DisplayModel {
 		
 		int maxLevel = this.model.vertexSet().size();
 
-		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes();
+		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes(false);
 
 		// find in/out degree in each level
 		int k = 0;
@@ -410,7 +403,10 @@ public class DisplayModel {
 					
 					overlap = nodesOverlap.get(u); // move the node with minimum number of overlaps (probably higher span) to the next level
 					sumOfOverlaps += overlap;
-					if (overlap < minOverlap || 
+					if ( 
+							(overlap > 0 && 
+							overlap < minOverlap) 
+							|| 
 							(overlap == minOverlap && 
 							this.nodesSpan.get(u) != null &&
 							this.nodesSpan.get(nodeWithMinOverlap) != null && 
@@ -456,7 +452,7 @@ public class DisplayModel {
 	
 	public void printLevels() {
 		for (Entry<Node, Integer> entry : this.nodesLevel.entrySet()) {
-			logger.debug(entry.getKey().getId() + " ---> " + entry.getValue().intValue());
+			logger.info(entry.getKey().getId() + " ---> " + entry.getValue().intValue());
 		}
 	}
 	
@@ -465,7 +461,7 @@ public class DisplayModel {
 			logger.debug(entry.getKey().getId() + " spans ---> ");
 			if (entry.getValue() != null)
 				for (ColumnNode columnNode : entry.getValue()) {
-					logger.debug("\t" + columnNode.getColumnName());
+					logger.info("\t" + columnNode.getColumnName());
 				}
 		}
 	}
