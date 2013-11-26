@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 
 public class DisplayModel {
@@ -314,10 +315,11 @@ public class DisplayModel {
 		List<Integer> n1SpanPositions = new ArrayList<Integer>();
 		List<Integer> n2SpanPositions = new ArrayList<Integer>();
 		
-		List<String> orderedNodeIds = this.hTable.getOrderedNodeIds();
+		ArrayList<HNode> orderedNodeIds = new ArrayList<HNode>();
+		this.hTable.getSortedLeafHNodes(orderedNodeIds);
 		if (orderedNodeIds != null)
 		for (int i = 0; i < orderedNodeIds.size(); i++) {
-			String hNodeId = orderedNodeIds.get(i);
+			String hNodeId = orderedNodeIds.get(i).getId();
 			if (n1NodeIds.contains(hNodeId))
 				n1SpanPositions.add(i);
 			if (n2NodeIds.contains(hNodeId))
