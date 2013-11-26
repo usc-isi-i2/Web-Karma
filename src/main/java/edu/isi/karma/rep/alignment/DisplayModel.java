@@ -61,7 +61,7 @@ public class DisplayModel {
 		this.nodesLevel = new HashMap<Node, Integer>();
 		this.nodesSpan = new HashMap<Node, Set<ColumnNode>>();
 		this.hTable = hTable;
-		
+
 		levelingCyclicGraph();
 //		printLevels();
 
@@ -314,8 +314,10 @@ public class DisplayModel {
 		List<Integer> n1SpanPositions = new ArrayList<Integer>();
 		List<Integer> n2SpanPositions = new ArrayList<Integer>();
 		
-		for (int i = 0; i < this.hTable.getOrderedNodeIds().size(); i++) {
-			String hNodeId = this.hTable.getOrderedNodeIds().get(i);
+		List<String> orderedNodeIds = this.hTable.getOrderedNodeIds();
+		if (orderedNodeIds != null)
+		for (int i = 0; i < orderedNodeIds.size(); i++) {
+			String hNodeId = orderedNodeIds.get(i);
 			if (n1NodeIds.contains(hNodeId))
 				n1SpanPositions.add(i);
 			if (n2NodeIds.contains(hNodeId))

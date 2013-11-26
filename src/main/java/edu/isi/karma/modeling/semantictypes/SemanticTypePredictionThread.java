@@ -94,22 +94,29 @@ public class SemanticTypePredictionThread implements Runnable {
 			
 			/** Remove the labels that are not in the ontology or are already used as the semantic type **/
 			List<String> removeLabels = new ArrayList<String>();
+			String domainUri, typeUri;
+			Label domain, type;
 			for (int i=0; i<labels.size(); i++) {
 				String label = labels.get(i);
 				/** Check if not in ontology **/
 				if (label.contains("|")) {
-					Label domainUri = ontologyManager.getUriLabel(label.split("\\|")[0]);
-					Label typeUri = ontologyManager.getUriLabel(label.split("\\|")[1]);
+					
+					domainUri = label.split("\\|")[0].trim();
+					typeUri = label.split("\\|")[1].trim();
+					
+					domain = ontologyManager.getUriLabel(domainUri);
+					type = ontologyManager.getUriLabel(typeUri);
 					
 					// Remove from the list if URI not present in the model
-					if (domainUri == null || typeUri == null) {
+					if (domain == null || type == null) {
 						removeLabels.add(label);
 						continue;
 					}
-									} else {
-					Label typeUri = ontologyManager.getUriLabel(label);
+									
+				} else {
+					domain = ontologyManager.getUriLabel(label);
 					// Remove from the list if URI not present in the model
-					if (typeUri == null) {
+					if (domain == null) {
 						removeLabels.add(label);
 						continue;
 					}

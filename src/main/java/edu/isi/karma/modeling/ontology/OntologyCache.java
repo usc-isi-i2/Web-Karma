@@ -446,6 +446,9 @@ class OntologyCache {
 	}
 
 	public Label getUriLabel(String uri) {
+		//FIXME
+		if (uri.startsWith(Namespaces.KARMA_DEV))
+			return new Label(uri, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
 		Label label = this.classes.get(uri);
 		if (label == null) label = this.properties.get(uri);
 		if (label == null) label = this.ontHandler.getUriLabel(uri);

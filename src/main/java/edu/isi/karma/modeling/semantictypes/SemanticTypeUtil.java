@@ -373,35 +373,41 @@ public class SemanticTypeUtil {
 		
 		/** Remove the labels that are not in the ontology or are already used as the semantic type **/
 		List<String> removeLabels = new ArrayList<String>();
+		String domainUri, typeUri;
+		Label domain, type;		
 		for (int i=0; i<labels.size(); i++) {
 			String label = labels.get(i);
 			SemanticType existingSemanticType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(path.getLeaf().getId());
 			/** Check if not in ontology **/
 			if (label.contains("|")) {
-				Label domainUri = ontMgr.getUriLabel(label.split("\\|")[0]);
-				Label typeUri = ontMgr.getUriLabel(label.split("\\|")[1]);
+
+				domainUri = label.split("\\|")[0].trim();
+				typeUri = label.split("\\|")[1].trim();
+				
+				domain = ontMgr.getUriLabel(domainUri);
+				type = ontMgr.getUriLabel(typeUri);
 				
 				// Remove from the list if URI not present in the model
-				if (domainUri == null || typeUri == null) {
+				if (domain == null || type == null) {
 					removeLabels.add(label);
 					continue;
 				}
 				// Check if it is being used as the semantic type already
 				if (existingSemanticType != null && 
-						existsInSemanticTypesCollection(typeUri, domainUri, existingSemanticType)) {
+						existsInSemanticTypesCollection(type, domain, existingSemanticType)) {
 						removeLabels.add(label);
 				}
 				
 			} else {
-				Label typeUri = ontMgr.getUriLabel(label);
+				domain = ontMgr.getUriLabel(label);
 				// Remove from the list if URI not present in the model
-				if (typeUri == null) {
+				if (domain == null) {
 					removeLabels.add(label);
 					continue;
 				}
 				// Check if it is being used as the semantic type already
 				if (existingSemanticType != null && 
-						existsInSemanticTypesCollection(typeUri, null, existingSemanticType)) {
+						existsInSemanticTypesCollection(domain, null, existingSemanticType)) {
 					removeLabels.add(label);
 				}
 			}
