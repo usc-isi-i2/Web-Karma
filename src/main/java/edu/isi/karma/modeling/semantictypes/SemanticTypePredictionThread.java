@@ -91,6 +91,38 @@ public class SemanticTypePredictionThread implements Runnable {
 
 			logger.debug("Examples: " + trainingExamples + " Type: " + labels
 					+ " ProbL " + scores);
+			
+			/** Remove the labels that are not in the ontology or are already used as the semantic type **/
+			List<String> removeLabels = new ArrayList<String>();
+			for (int i=0; i<labels.size(); i++) {
+				String label = labels.get(i);
+				/** Check if not in ontology **/
+				if (label.contains("|")) {
+					Label domainUri = ontologyManager.getUriLabel(label.split("\\|")[0]);
+					Label typeUri = ontologyManager.getUriLabel(label.split("\\|")[1]);
+					
+					// Remove from the list if URI not present in the model
+					if (domainUri == null || typeUri == null) {
+						removeLabels.add(label);
+						continue;
+					}
+									} else {
+					Label typeUri = ontologyManager.getUriLabel(label);
+					// Remove from the list if URI not present in the model
+					if (typeUri == null) {
+						removeLabels.add(label);
+						continue;
+					}
+				}
+			}
+			for (String removeLabel : removeLabels) {
+				int idx = labels.indexOf(removeLabel);
+				labels.remove(removeLabel);
+				scores.remove(idx);
+			}
+			if (labels.size() == 0) {
+				return;
+			}
 
 			CRFColumnModel columnModel = new CRFColumnModel(labels, scores);
 			worksheet.getCrfModel().addColumnModel(path.getLeaf().getId(),
