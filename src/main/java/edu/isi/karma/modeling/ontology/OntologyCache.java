@@ -521,14 +521,27 @@ class OntologyCache {
 		}
 	}
 	
+	private boolean isTopLevelClass(String c) {
+		
+		Set<String> superClasses = this.ontHandler.getSuperClasses(c, false).keySet();
+
+		if (superClasses == null || superClasses.isEmpty())
+			return true;
+		
+		for (String s : superClasses)
+			if (this.classes.containsKey(s))
+				return false;
+		
+		return true;
+	}
+	
 	private void buildClassHierarchy(OntologyTreeNode node) {
 		
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
 			for (String s : this.classes.keySet()) {
 				if (s.equalsIgnoreCase(Uris.THING_URI)) continue;
-				Set<String> superClasses = this.ontHandler.getSuperClasses(s, false).keySet();
-				if (superClasses == null || superClasses.size() == 0) {
+				if (isTopLevelClass(s)) {
 					Label label = this.classes.get(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					buildClassHierarchy(childNode);
@@ -550,13 +563,26 @@ class OntologyCache {
 		node.setChildren(children);
 	}
 	
+	private boolean isTopLevelProperty(String property) {
+		
+		Set<String> superProperties = this.ontHandler.getSuperProperties(property, false).keySet();
+
+		if (superProperties == null || superProperties.isEmpty())
+			return true;
+		
+		for (String s : superProperties)
+			if (this.properties.containsKey(s))
+				return false;
+		
+		return true;
+	}
+	
 	private void buildDataPropertyHierarchy(OntologyTreeNode node) {
 		
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
 			for (String s : this.dataProperties.keySet()) {
-				Set<String> superProperties = this.ontHandler.getSuperProperties(s, false).keySet();
-				if (superProperties == null || superProperties.size() == 0) {
+				if (isTopLevelProperty(s)) {
 					Label label = this.dataProperties.get(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					buildDataPropertyHierarchy(childNode);
@@ -584,8 +610,7 @@ class OntologyCache {
 		List<OntologyTreeNode> children = new ArrayList<OntologyTreeNode>();
 		if (node.getParent() == null) {
 			for (String s : this.objectProperties.keySet()) {
-				Set<String> superProperties = this.ontHandler.getSuperProperties(s, false).keySet();
-				if (superProperties == null || superProperties.size() == 0) {
+				if (isTopLevelProperty(s)) {
 					Label label = this.objectProperties.get(s);
 					OntologyTreeNode childNode = new OntologyTreeNode(label, node, null);
 					buildObjectPropertyHierarchy(childNode);
