@@ -622,7 +622,13 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
             headerDiv.append(pElem).append(nestedTableContainer.append(nestedTableHeaderContainer.append(nestedTable)));
         } else {
             headerDiv.addClass("wk-header").text(column["columnName"]).mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);
-            colWidthNumber = Math.floor(column.characterLength * 12 * 0.75);
+            // Pedro: limit cells to 30 chars wide. This should be smarter: if the table is not too wide, then allow more character.
+            // If we impose the limit, we should set the CSS to wrap rather than use ... ellipsis.
+            // We will need a smarter data structure so we can do two passes, first to compute the desired lenghts based on number of characters
+            // and then revisit to assign widths based on total demand for space.
+            var effectiveCharacterLength = Math.min(column.characterLength, 30);
+            //colWidthNumber = Math.floor(column.characterLength * 12 * 0.75);
+            colWidthNumber = Math.floor(effectiveCharacterLength * 12 * 0.75);
         }
 
         var colWidth = {};
