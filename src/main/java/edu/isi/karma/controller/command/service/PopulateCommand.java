@@ -169,7 +169,8 @@ public class PopulateCommand extends WorksheetCommand{
 		
 		InvocationManager invocatioManager;
 		try {
-			invocatioManager = new InvocationManager(getUrlColumnName(wk), requestIds, requestURLStrings);
+			String encoding = wk.getEncoding();
+			invocatioManager = new InvocationManager(getUrlColumnName(wk), requestIds, requestURLStrings, encoding);
 			logger.info("Requesting data with includeURL=" + true + ",includeInput=" + true + ",includeOutput=" + true);
 			Table serviceTable = invocatioManager.getServiceData(false, false, true);
 //			logger.debug(serviceTable.getPrintInfo());

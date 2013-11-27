@@ -24,9 +24,9 @@ public abstract class Import {
     private final RepFactory factory;
     private final Worksheet worksheet;
     
-    public Import(String worksheetName, Workspace workspace) {
+    public Import(String worksheetName, Workspace workspace, String encoding) {
         this.factory = workspace.getFactory();
-        this.worksheet = factory.createWorksheet(worksheetName, workspace);
+        this.worksheet = factory.createWorksheet(worksheetName, workspace, encoding);
     }
 
     public Import(RepFactory factory, Worksheet worksheet) {

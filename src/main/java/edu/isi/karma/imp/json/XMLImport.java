@@ -28,15 +28,15 @@ public class XMLImport extends Import {
     Import jsonImport;
     private static Logger logger = LoggerFactory.getLogger(XMLImport.class);
 
-    public XMLImport(File xmlFile, String worksheetName, Workspace workspace) {
-        super(worksheetName, workspace);
+    public XMLImport(File xmlFile, String worksheetName, Workspace workspace, String encoding, int maxNumLines) {
+        super(worksheetName, workspace, encoding);
 
         try {
-            String fileContents = FileUtil.readFileContentsToString(xmlFile);
+            String fileContents = FileUtil.readFileContentsToString(xmlFile, encoding);
 
             // Converting the XML to JSON
             JSONObject json = XML.toJSONObject(fileContents);
-            jsonImport = new JsonImport(json, this.getFactory(), this.getWorksheet());
+            jsonImport = new JsonImport(json, this.getFactory(), this.getWorksheet(), maxNumLines);
         } catch (JSONException ex) {
             logger.error("Error in populating the worksheet with XML");
         } catch (IOException ex) {

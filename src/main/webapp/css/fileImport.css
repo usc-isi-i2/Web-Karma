@@ -18,28 +18,74 @@
  * University of Southern California.  For more information, publications, 
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-package edu.isi.karma.controller.command.importdata;
 
-import javax.servlet.http.HttpServletRequest;
-
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.rep.Workspace;
-
-public class ImportServiceCommandFactory extends CommandFactory {
-	private enum Arguments {
-		serviceUrl, worksheetName, includeInputAttributes, encoding
-	}
-
-	@Override
-	public Command createCommand(HttpServletRequest request,
-			Workspace workspace) {
-		return new ImportServiceCommand(getNewId(workspace), 
-				request.getParameter(Arguments.serviceUrl.name()),
-				request.getParameter(Arguments.worksheetName.name()),
-				Boolean.parseBoolean(request.getParameter(Arguments.includeInputAttributes.name())),
-				request.getParameter(Arguments.encoding.name())
-				);
-	}
-
+#FileImportDiv {
+	width: 60%;
 }
+
+#FileImportDiv.button-form {
+	height: 24px;
+	width: 60px;
+}
+
+#FileImportDiv table {
+	border-width: 0px; 
+	border-spacing: 0px; 
+	border-collapse: collapse;
+}
+
+#FileImportOptionsTable td {
+	font-family: Helvetica, sans-serif;
+	text-align: left;
+	font-size: 12px;
+	height: 20px;
+	padding: 3px;
+}
+
+#FilePreviewTable td {
+	font-family: Arial, sans-serif;
+	text-align: left;
+	font-size: 10px;
+	padding: 2px;
+}
+
+#FilePreviewTable {
+	margin: 5px;
+}
+
+#FilePreviewTable th {
+	font-family: Arial, sans-serif;
+	text-align: left;
+	font-size: 12px;
+	border-collapse: collapse;
+	border: solid 1px #000000;
+	padding: 2px;
+}
+
+#FilePreviewTable th.ItalicColumnNames {
+	font-style: italic;
+}
+
+#FilePreviewTable td {
+	border: 1px solid #000000;
+	border-collapse: collapse;
+}
+
+#FilePreviewTable td.rowIndexCell {
+	border: 1px dotted #000000;
+	width: 60px;
+	text-align: center;
+}
+
+#FileImportDiv td.inputElement {
+	text-align: right;
+	padding-left: 20px;
+}
+
+#FileSourceName {
+	font-family: Helvetica;
+	font-size: 16px;
+}
+
+
+

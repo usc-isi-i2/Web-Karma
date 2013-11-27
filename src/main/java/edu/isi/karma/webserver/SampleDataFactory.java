@@ -52,7 +52,7 @@ public class SampleDataFactory {
 	public static Worksheet createSample1(Workspace workspace) {
 		RepFactory f = workspace.getFactory();
 
-		Worksheet w = f.createWorksheet("Complex Smaple Table", workspace);
+		Worksheet w = f.createWorksheet("Complex Smaple Table", workspace, "UTF-8");
 		String ss = w.addHNode("Social Security", f).getId();
 		String personContainer = w.addHNode("Person", f).getId();
 		String addressContainer = w.addHNode("Address", f).getId();
@@ -149,7 +149,7 @@ public class SampleDataFactory {
 	public static Worksheet createSample1small(Workspace workspace) {
 		RepFactory f = workspace.getFactory();
 
-		Worksheet w = f.createWorksheet("Complex Smaple Table", workspace);
+		Worksheet w = f.createWorksheet("Complex Smaple Table", workspace, "UTF-8");
 		String ss = w.addHNode("Social Security", f).getId();
 		String personContainer = w.addHNode("Person", f).getId();
 		String addressContainer = w.addHNode("Address", f).getId();
@@ -198,7 +198,7 @@ public class SampleDataFactory {
 			int numColumns) {
 
 		Worksheet w = wsp.getFactory().createWorksheet(
-				"Table (" + numRows + ", " + numColumns + ")", wsp);
+				"Table (" + numRows + ", " + numColumns + ")", wsp, "UTF-8");
 
 		for (int c = 1; c <= numColumns; c++) {
 			w.getHeaders().addHNode("Column " + c, w, wsp.getFactory());
@@ -223,7 +223,7 @@ public class SampleDataFactory {
 			r = new FileReader(fileName);
 			Object o = JSONUtil.createJson(r);
 			File f = new File(fileName);
-			JsonImport ji = new JsonImport(o, f.getName(), workspace);
+			JsonImport ji = new JsonImport(o, f.getName(), workspace, "UTF-8", -1);
 			Worksheet w = ji.generateWorksheet();
 			return w;
 		} catch (FileNotFoundException e) {
@@ -240,10 +240,10 @@ public class SampleDataFactory {
 			String fileName) {
 		File xmlFile = new File(fileName);
 		try {
-			String fileContents = FileUtil.readFileContentsToString(xmlFile);
+			String fileContents = FileUtil.readFileContentsToString(xmlFile, "UTF-8");
 			// Converting the XML to JSON
 			JSONObject json = XML.toJSONObject(fileContents);
-			JsonImport ji = new JsonImport(json, fileName, workspace);
+			JsonImport ji = new JsonImport(json, fileName, workspace, "UTF-8", -1);
 			Worksheet w = ji.generateWorksheet();
 			return w;
 		} catch (FileNotFoundException e) {
@@ -608,7 +608,7 @@ public class SampleDataFactory {
 		try {
 			Object o = JSONUtil.createJson(jsonString);
 			JSONUtil.writeJsonFile(o, name + ".json");
-			JsonImport ji = new JsonImport(o, name, workspace);
+			JsonImport ji = new JsonImport(o, name, workspace, "UTF-8", -1);
 			Worksheet w = ji.generateWorksheet();
 			return w;
 		} catch (JSONException e) {
@@ -620,7 +620,7 @@ public class SampleDataFactory {
 	public static Worksheet createSampleJson(Workspace workspace, int numRows) {
 		try {
 			Object o = JSONUtil.createJson(getSampleJsonString(numRows));
-			JsonImport ji = new JsonImport(o, "Sample JSON", workspace);
+			JsonImport ji = new JsonImport(o, "Sample JSON", workspace, "UTF-8", -1);
 			Worksheet w = ji.generateWorksheet();
 			return w;
 		} catch (JSONException e) {
@@ -644,7 +644,7 @@ public class SampleDataFactory {
 					.endObject();
 
 			JsonImport ji = new JsonImport(x.toString(),
-					"Funny Characters", workspace);
+					"Funny Characters", workspace, "UTF-8", -1);
 			Worksheet w = ji.generateWorksheet();
 			return w;
 		} catch (JSONException e) {
@@ -675,7 +675,7 @@ public class SampleDataFactory {
 			topA.endArray();
 
 			JsonImport ji = new JsonImport(x.toString(),
-					"Empty Nested Table 1", workspace);
+					"Empty Nested Table 1", workspace, "UTF-8", -1);
 			Worksheet w = ji.generateWorksheet();
 			return w;
 		} catch (JSONException e) {
@@ -705,7 +705,7 @@ public class SampleDataFactory {
 			topA.endArray();
 
 			JsonImport ji = new JsonImport(x.toString(),
-					"Empty Nested Table 2", workspace);
+					"Empty Nested Table 2", workspace, "UTF-8", -1);
 			Worksheet w = ji.generateWorksheet();
 			return w;
 		} catch (JSONException e) {
@@ -733,7 +733,7 @@ public class SampleDataFactory {
 			topA.endArray();
 
 			JsonImport ji = new JsonImport(x.toString(),
-					"Empty Nested Table 3", workspace);
+					"Empty Nested Table 3", workspace, "UTF-8", -1);
 			Worksheet w = ji.generateWorksheet();
 			return w;
 		} catch (JSONException e) {
@@ -765,7 +765,7 @@ public class SampleDataFactory {
 			topA.endArray();
 
 			JsonImport ji = new JsonImport(x.toString(),
-					"Empty Nested Table 4", workspace);
+					"Empty Nested Table 4", workspace, "UTF-8", -1);
 			Worksheet w = ji.generateWorksheet();
 			return w;
 		} catch (JSONException e) {
@@ -805,7 +805,7 @@ public class SampleDataFactory {
 			topA.endArray();
 
 			JsonImport ji = new JsonImport(x.toString(),
-					"Nested Table 1", workspace);
+					"Nested Table 1", workspace, "UTF-8", -1);
 			Worksheet w = ji.generateWorksheet();
 			return w;
 		} catch (JSONException e) {
@@ -879,7 +879,7 @@ public class SampleDataFactory {
 			topA.endArray();
 
 			JsonImport ji = new JsonImport(x.toString(),
-					"Nested Table 2", workspace);
+					"Nested Table 2", workspace, "UTF-8", -1);
 			Worksheet w = ji.generateWorksheet();
 			return w;
 		} catch (JSONException e) {

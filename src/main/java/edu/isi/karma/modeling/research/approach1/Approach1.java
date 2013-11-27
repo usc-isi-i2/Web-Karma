@@ -876,7 +876,7 @@ public class Approach1 {
 		File ff = new File(Params.ONTOLOGY_DIR);
 		File[] files = ff.listFiles();
 		for (File f : files) {
-			ontManager.doImport(f);
+			ontManager.doImport(f, "UTF-8");
 		}
 		ontManager.updateCache();
 

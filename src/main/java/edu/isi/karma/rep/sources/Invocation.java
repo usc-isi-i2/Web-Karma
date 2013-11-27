@@ -42,10 +42,13 @@ public class Invocation {
 	static Logger logger = LoggerFactory.getLogger(Invocation.class);
 	
 	private String requestId;
-
-	public Invocation(String requestId, Request request) {
+	private String encoding;
+	
+	public Invocation(String requestId, Request request, String encoding) {
 		this.requestId = requestId;
 		this.request = request;
+		this.encoding = encoding;
+		
 		updateRequest();
 	}
 	
@@ -182,7 +185,7 @@ public class Invocation {
 			StringBuffer outString = new StringBuffer();
 			BufferedReader in = new BufferedReader(
 					new InputStreamReader(
-							connection.getInputStream(), "UTF-8"));
+							connection.getInputStream(), encoding));
 			
 			String outLine;
 			while ((outLine = in.readLine()) != null) {

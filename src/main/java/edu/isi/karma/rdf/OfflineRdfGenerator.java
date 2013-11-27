@@ -55,6 +55,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
+import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -168,6 +169,9 @@ public class OfflineRdfGenerator {
 		String hostname = (String) cl.getValue("--hostname");
 		String username = (String) cl.getValue("--username");
 		String password = (String) cl.getValue("--password");
+		String encoding = (String) cl.getValue("--encoding");
+		if(encoding == null)
+			encoding = "UTF-8";
 		int portnumber = 0;
 		try {
 		    portnumber = Integer.parseInt(cl.getValue("--portnumber").toString());
@@ -201,7 +205,7 @@ public class OfflineRdfGenerator {
 		    return;
 		}
 		DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
-		        hostname, portnumber, username, password, dBorSIDName, tablename);
+		        hostname, portnumber, username, password, dBorSIDName, tablename, encoding);
 		
 		dbRdfGen.generateRDF(pw, model);
         pw.flush();
@@ -218,7 +222,17 @@ public class OfflineRdfGenerator {
 		    pw.close();
 		    return;
 		}
-		FileRdfGenerator.generateRdf(inputType, model, worksheetName, pw, inputFile);
+		String encoding = (String) cl.getValue("--encoding");
+		if(encoding == null) {
+			encoding = EncodingDetector.detect(inputFile);
+		}
+		
+		String sMaxNumLines = (String) cl.getValue("--maxNumLines");
+		int maxNumLines = -1;
+		if(sMaxNumLines != null) {
+			maxNumLines = Integer.parseInt(sMaxNumLines);
+		}
+		FileRdfGenerator.generateRdf(inputType, model, worksheetName, pw, inputFile, encoding, maxNumLines);
         pw.flush();
 	}
 
