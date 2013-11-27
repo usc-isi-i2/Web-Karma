@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 
 public class DisplayModel {
@@ -61,7 +62,7 @@ public class DisplayModel {
 		this.nodesLevel = new HashMap<Node, Integer>();
 		this.nodesSpan = new HashMap<Node, Set<ColumnNode>>();
 		this.hTable = hTable;
-		
+
 		levelingCyclicGraph();
 //		printLevels();
 
@@ -80,24 +81,12 @@ public class DisplayModel {
 		return model;
 	}
 
-	public void setModel(DirectedWeightedMultigraph<Node, Link> model) {
-		this.model = model;
-	}
-
 	public HashMap<Node, Integer> getNodesLevel() {
 		return nodesLevel;
 	}
 
-	public void setNodesLevel(HashMap<Node, Integer> nodesLevel) {
-		this.nodesLevel = nodesLevel;
-	}
-
 	public HashMap<Node, Set<ColumnNode>> getNodesSpan() {
 		return nodesSpan;
-	}
-
-	public void setNodesSpan(HashMap<Node, Set<ColumnNode>> nodesSpan) {
-		this.nodesSpan = nodesSpan;
 	}
 
 	private void levelingCyclicGraph() {
@@ -138,7 +127,7 @@ public class DisplayModel {
 			}
 		}
 		
-		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes();
+		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes(false);
 		
 		// find in/out degree in each level
 		int k = 0;
@@ -159,6 +148,7 @@ public class DisplayModel {
 				int maxDegree = -1;
 				
 				for (Node u : nodes) {
+					
 					d = nodeToInDegree.get(u);
 					sum += d;
 					if (d > maxDegree) {
@@ -196,7 +186,7 @@ public class DisplayModel {
 		
 	}
 	
-	public HashMap<Integer, Set<Node>> getLevelToNodes() {
+	public HashMap<Integer, Set<Node>> getLevelToNodes(boolean considerColumnNodes) {
 
 		HashMap<Integer, Set<Node>> levelToNodes = 
 				new HashMap<Integer, Set<Node>>();
@@ -210,6 +200,10 @@ public class DisplayModel {
 				nodes = new HashSet<Node>();
 				levelToNodes.put(entry.getValue(), nodes);
 			}
+			
+			if (!considerColumnNodes && entry.getKey() instanceof ColumnNode)
+				continue;
+			
 			nodes.add(entry.getKey());
 			
 		}
@@ -251,7 +245,7 @@ public class DisplayModel {
 			nodesSpan.put(n, columnNodes);
 		}
 		
-		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes();
+		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes(true);
 		
 		int i = getMaxLevel(true);
 		while (i >= 0) {
@@ -321,8 +315,11 @@ public class DisplayModel {
 		List<Integer> n1SpanPositions = new ArrayList<Integer>();
 		List<Integer> n2SpanPositions = new ArrayList<Integer>();
 		
-		for (int i = 0; i < this.hTable.getOrderedNodeIds().size(); i++) {
-			String hNodeId = this.hTable.getOrderedNodeIds().get(i);
+		ArrayList<HNode> orderedNodeIds = new ArrayList<HNode>();
+		this.hTable.getSortedLeafHNodes(orderedNodeIds);
+		if (orderedNodeIds != null)
+		for (int i = 0; i < orderedNodeIds.size(); i++) {
+			String hNodeId = orderedNodeIds.get(i).getId();
 			if (n1NodeIds.contains(hNodeId))
 				n1SpanPositions.add(i);
 			if (n2NodeIds.contains(hNodeId))
@@ -370,7 +367,7 @@ public class DisplayModel {
 		
 		int maxLevel = this.model.vertexSet().size();
 
-		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes();
+		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes(false);
 
 		// find in/out degree in each level
 		int k = 0;
@@ -410,7 +407,10 @@ public class DisplayModel {
 					
 					overlap = nodesOverlap.get(u); // move the node with minimum number of overlaps (probably higher span) to the next level
 					sumOfOverlaps += overlap;
-					if (overlap < minOverlap || 
+					if ( 
+							(overlap > 0 && 
+							overlap < minOverlap) 
+							|| 
 							(overlap == minOverlap && 
 							this.nodesSpan.get(u) != null &&
 							this.nodesSpan.get(nodeWithMinOverlap) != null && 
@@ -456,7 +456,7 @@ public class DisplayModel {
 	
 	public void printLevels() {
 		for (Entry<Node, Integer> entry : this.nodesLevel.entrySet()) {
-			logger.debug(entry.getKey().getId() + " ---> " + entry.getValue().intValue());
+			logger.info(entry.getKey().getId() + " ---> " + entry.getValue().intValue());
 		}
 	}
 	
@@ -465,7 +465,7 @@ public class DisplayModel {
 			logger.debug(entry.getKey().getId() + " spans ---> ");
 			if (entry.getValue() != null)
 				for (ColumnNode columnNode : entry.getValue()) {
-					logger.debug("\t" + columnNode.getColumnName());
+					logger.info("\t" + columnNode.getColumnName());
 				}
 		}
 	}
