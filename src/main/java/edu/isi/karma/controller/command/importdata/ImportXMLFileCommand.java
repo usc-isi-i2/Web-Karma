@@ -41,7 +41,7 @@ import edu.isi.karma.util.EncodingDetector;
 
 public class ImportXMLFileCommand extends ImportFileCommand implements IPreviewable {
 	private String encoding;
-	private int maxNumLines = 100;
+	private int maxNumLines = 1000;
 	
 	private static Logger logger = LoggerFactory
             .getLogger(ImportXMLFileCommand.class.getSimpleName());

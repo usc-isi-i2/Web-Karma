@@ -51,7 +51,7 @@ public class ImportCSVFileCommand extends ImportFileCommand implements IPreviewa
     // Escape character
     private char escapeCharacter = '\\';
     private String encoding = null;
-    private int maxNumLines = 100;
+    private int maxNumLines = 10000;
     
     protected enum InteractionType {
 

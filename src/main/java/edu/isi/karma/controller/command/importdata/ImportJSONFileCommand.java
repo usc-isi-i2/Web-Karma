@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 public class ImportJSONFileCommand extends ImportFileCommand implements IPreviewable {
 
 	private String encoding = null;
-	private int maxNumLines = 100;
+	private int maxNumLines = 1000;
 	
 	 private static Logger logger = LoggerFactory
 	            .getLogger(ImportJSONFileCommand.class.getSimpleName());

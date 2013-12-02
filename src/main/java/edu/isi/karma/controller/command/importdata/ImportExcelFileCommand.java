@@ -49,7 +49,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ImportExcelFileCommand extends ImportFileCommand implements IPreviewable {
 	private String encoding = null;
-    private int maxNumLines = 100;
+    private int maxNumLines = 1000;
     
     // Logger object
     private static Logger logger = LoggerFactory
