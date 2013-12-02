@@ -72,19 +72,11 @@ public class EncodingDetector {
         return new InputStreamReader(bis, encoding);
     }
     
-    public static String getString(File file) throws IOException {
+    public static String getString(File file, String encoding) throws IOException {
         StringWriter sw = new StringWriter();
         
         FileInputStream fis = new FileInputStream(file);
-        
-        String encoding = EncodingDetector.detect(fis);
-        
-        fis = new FileInputStream(file);
-        
-        if (encoding == null) {
-            encoding = DEFAULT_ENCODING;
-        }
-        
+        logger.info("Reading file: " + file + " using encoding: " + encoding);
         IOUtils.copy(fis, sw, encoding);
 
         return sw.toString();

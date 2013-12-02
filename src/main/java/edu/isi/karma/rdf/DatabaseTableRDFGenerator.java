@@ -61,12 +61,12 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 	private String password;
 	private String dBorSIDName;
 	private String tablename;
-	
+	private String encoding;
 	private static int DATABASE_TABLE_FETCH_SIZE = 10000;
 	
 	public DatabaseTableRDFGenerator(DBType dbType, String hostname,
 			int portnumber, String username, String password,
-			String dBorSIDName, String tablename) {
+			String dBorSIDName, String tablename, String encoding) {
 		super();
 		this.dbType = dbType;
 		this.hostname = hostname;
@@ -75,6 +75,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		this.password = password;
 		this.dBorSIDName = dBorSIDName;
 		this.tablename = tablename;
+		this.encoding = encoding;
 	}
 	
 	/*
@@ -105,7 +106,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 	     Workspace workspace = initializeWorkspace();
  	
 		RepFactory factory = workspace.getFactory();
-		Worksheet wk = factory.createWorksheet(tablename, workspace);
+		Worksheet wk = factory.createWorksheet(tablename, workspace, encoding);
 		List<String> headersList = addHeaders(wk, columnNames, factory);
 		
 		int counter = 0;
@@ -118,7 +119,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 			    removeWorkspace(workspace);
 			    workspace = initializeWorkspace();
 			    factory = workspace.getFactory();
-				wk = factory.createWorksheet(tablename, workspace);
+				wk = factory.createWorksheet(tablename, workspace, encoding);
 				headersList = addHeaders(wk, columnNames, factory);
 				
 			}

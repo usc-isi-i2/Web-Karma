@@ -59,10 +59,13 @@ public class InvocationManager {
 	private JsonArray jsonUrlAndOutputs;
 	private JsonArray jsonInputsAndOutputs;
 	
-	public InvocationManager(String urlColumnName, List<String> idList, List<String> requestURLStrings) 
+	private String encoding;
+	
+	public InvocationManager(String urlColumnName, List<String> idList, List<String> requestURLStrings, String encoding) 
 	throws MalformedURLException, KarmaException {
 		this.urlColumnName = (urlColumnName == null || urlColumnName.trim().length() == 0) ? "url" : urlColumnName;
 		this.idList = idList;
+		this.encoding = encoding;
 		requestURLs = URLManager.getURLsFromStrings(requestURLStrings);
 		if (requestURLs == null || requestURLs.size() == 0)
 			throw new KarmaException("Cannot model a service without any request example.");
@@ -113,7 +116,7 @@ public class InvocationManager {
 			if (idList != null)
 				requestId = idList.get(i);
 			Request request = new Request(url);
-			Invocation invocation = new Invocation(requestId, request);
+			Invocation invocation = new Invocation(requestId, request, encoding);
 			logger.info("Invoking the service " + request.getUrl().toString() + " ...");
 			invocation.invokeAPI();
 			invocations.add(invocation);
@@ -324,7 +327,7 @@ public class InvocationManager {
 //		ids.add("3");
 
 		try {
-			InvocationManager sb = new InvocationManager(null, ids, urls);
+			InvocationManager sb = new InvocationManager(null, ids, urls, "UTF-8");
 			Table tb = sb.getServiceData(false, false, true);
 			
 //			String str = tb.asCSV();

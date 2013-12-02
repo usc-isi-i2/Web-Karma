@@ -63,7 +63,7 @@ public class CSVFileImport extends Import {
             File csvFile,
             Workspace workspace) {
 
-        super(csvFile.getName(), workspace);
+        super(csvFile.getName(), workspace, encoding);
         this.headerRowIndex = headerRowIndex;
         this.dataStartRowIndex = dataStartRowIndex;
         this.delimiter = delimiter;
@@ -111,11 +111,13 @@ public class CSVFileImport extends Import {
 
             // Populate the model with data rows
             if (rowCount + 1 >= dataStartRowIndex) {
-                addRow(getWorksheet(), getFactory(), line, hNodeIdList, dataTable);
-                rowCount++;
-               
-                if(maxNumLines > 0 && (rowCount - dataStartRowIndex) >= maxNumLines-1) {
-                	break;
+                boolean added = addRow(getWorksheet(), getFactory(), line, hNodeIdList, dataTable);
+                if(added) {
+	                rowCount++;
+	               
+	                if(maxNumLines > 0 && (rowCount - dataStartRowIndex) >= maxNumLines-1) {
+	                	break;
+	                }
                 }
                 continue;
             }
@@ -153,7 +155,7 @@ public class CSVFileImport extends Import {
         return headersList;
     }
 
-    private void addRow(Worksheet worksheet, RepFactory fac, String line,
+    private boolean addRow(Worksheet worksheet, RepFactory fac, String line,
             ArrayList<String> hNodeIdList, Table dataTable) throws IOException {
         CSVReader reader = new CSVReader(new StringReader(line), delimiter,
                 quoteCharacter, escapeCharacter);
@@ -161,7 +163,7 @@ public class CSVFileImport extends Import {
         rowValues = reader.readNext();
         if (rowValues == null || rowValues.length == 0) {
             reader.close();
-            return;
+            return false;
         }
 
         Row row = dataTable.addRow(fac);
@@ -176,6 +178,7 @@ public class CSVFileImport extends Import {
             }
         }
         reader.close();
+        return true;
     }
 
     private ArrayList<String> addEmptyHeaders(Worksheet worksheet,

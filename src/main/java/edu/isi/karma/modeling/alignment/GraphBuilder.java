@@ -52,6 +52,7 @@ import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
 import edu.isi.karma.rep.alignment.SubClassLink;
+import edu.isi.karma.util.EncodingDetector;
 
 public class GraphBuilder {
 
@@ -959,7 +960,8 @@ public class GraphBuilder {
 				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf")) {
 					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
 					try {
-						mgr.doImport(ontology);
+						String encoding = EncodingDetector.detect(ontology);
+						mgr.doImport(ontology, encoding);
 					} catch (Exception t) {
 						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
 					}

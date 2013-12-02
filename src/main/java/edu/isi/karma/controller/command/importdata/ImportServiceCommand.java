@@ -46,18 +46,20 @@ public class ImportServiceCommand extends ImportCommand {
     private String serviceUrl;
     private String worksheetName;
     private boolean includeInputAttributes;
-
+    private String encoding;
+    
     public enum PreferencesKeys {
 
         ServiceUrl, WorksheetName
     }
 
     protected ImportServiceCommand(String id, String ServiceUrl, String worksheetName,
-            boolean includeInputAttributes) {
+            boolean includeInputAttributes, String encoding) {
         super(id);
         this.serviceUrl = ServiceUrl;
         this.worksheetName = worksheetName;
         this.includeInputAttributes = includeInputAttributes;
+        this.encoding = encoding;
     }
 
     @Override
@@ -90,10 +92,10 @@ public class ImportServiceCommand extends ImportCommand {
         List<String> ids = new ArrayList<String>();
         ids.add("1");
         try {
-            InvocationManager invocatioManager = new InvocationManager(null, ids, urls);
+            InvocationManager invocatioManager = new InvocationManager(null, ids, urls, encoding);
             String json = invocatioManager.getServiceJson(includeInputAttributes);
 			logger.debug(json);
-            Import imp = new JsonImport(json, worksheetName, workspace);
+            Import imp = new JsonImport(json, worksheetName, workspace, encoding, -1);
 
             Worksheet wsht = imp.generateWorksheet();
             c.add(new ImportServiceCommandPreferencesUpdate(serviceUrl, worksheetName));

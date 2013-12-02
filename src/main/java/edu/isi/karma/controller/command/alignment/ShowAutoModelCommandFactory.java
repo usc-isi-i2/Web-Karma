@@ -43,6 +43,7 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
+import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -84,7 +85,8 @@ public class ShowAutoModelCommandFactory extends CommandFactory implements
 		OntologyManager ontMgr = workspace.getOntologyManager();
 		File autoOtologyFile = new File(path);
 		logger.info("Loading ontology: " + autoOtologyFile.getAbsolutePath());
-		ontMgr.doImportAndUpdateCache(autoOtologyFile);
+		String encoding = EncodingDetector.detect(autoOtologyFile);
+		ontMgr.doImportAndUpdateCache(autoOtologyFile, encoding);
 		logger.info("Done loading ontology: "
 				+ autoOtologyFile.getAbsolutePath());
 		

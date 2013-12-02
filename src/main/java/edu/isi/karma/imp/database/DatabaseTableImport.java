@@ -52,8 +52,8 @@ public class DatabaseTableImport extends Import {
     //private static Logger logger = LoggerFactory.getLogger(DatabaseTableImport.class);
     public DatabaseTableImport(DBType dbType, String hostname, int portnumber,
             String username, String password, String dBorSIDName,
-            String tableName, Workspace workspace) {
-        super(tableName, workspace);
+            String tableName, Workspace workspace, String encoding) {
+        super(tableName, workspace, encoding);
         this.dbType = dbType;
         this.hostname = hostname;
         this.portnumber = portnumber;
