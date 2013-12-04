@@ -21,6 +21,9 @@
 
 package edu.isi.karma.controller.command.transformation;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -35,6 +38,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
+import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -45,6 +49,7 @@ import edu.isi.karma.webserver.WorkspaceRegistry;
 public class SubmitPythonTransformationCommand extends MutatingPythonTransformationCommand {
 	
 	protected AddColumnCommand addColCmd;
+	protected ArrayList<String> previousColumnValues;
 	
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitPythonTransformationCommand.class);
@@ -91,11 +96,23 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		{
 			if(null != hTable.getHNodeFromColumnName(newColumnName) )
 			{
-				logger.error("PyTransform failed because the new column "
-						+ newColumnName + " already exists!");
-				return new UpdateContainer(new ErrorUpdate(
-						"PyTransform failed because the new column "
-								+ newColumnName + " already exists!"));
+//				logger.error("PyTransform failed because the new column "
+//						+ newColumnName + " already exists!");
+//				return new UpdateContainer(new ErrorUpdate(
+//						"PyTransform failed because the new column "
+//								+ newColumnName + " already exists!"));
+				String nodeId = hTable.getHNodeIdFromColumnName(newColumnName);
+				
+				this.previousColumnValues = new ArrayList<String>();
+				Collection<Node> nodes = new ArrayList<Node>();
+				worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes);
+				for(Node node : nodes) {
+					previousColumnValues.add(node.getValue().asString());
+				}
+				
+				UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
+						hNode, ctrl, nodeId);
+				return c;
 			}
 			if (null == addColCmd) {
 				JSONArray addColumnInput = getAddColumnCommandInputJSON(hTableId);
@@ -143,7 +160,17 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		addColCmd.undoIt(workspace);
+		if(addColCmd != null) {
+			addColCmd.undoIt(workspace);
+			
+		} else if(this.previousColumnValues != null) {
+			Worksheet worksheet = workspace.getWorksheet(worksheetId);
+			RepFactory f = workspace.getFactory();
+			HNode hNode = f.getHNode(hNodeId);
+
+			worksheet.getDataTable().setCollectedNodeValues(hNode.getHNodePath(f), this.previousColumnValues, f);
+		}
+		
 		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
 		// TODO is it necessary to compute alignment and semantic types for everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));

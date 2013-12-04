@@ -409,7 +409,6 @@ and related projects, please see: http://www.isi.edu/integration
             <button id="cleanColumnButton">Transform</button>
             <button id="showChartButton">Show Chart</button>
             <button id="hideColumnButton" style="display: none">Hide</button>
-            <button id="editPyTransform">Edit PyTransform</button>
         </div>
         <div id="tableCellToolBarMenu" class="ui-corner-all" style="display: none">
             <button id="editCellButton">
@@ -1134,8 +1133,14 @@ and related projects, please see: http://www.isi.edu/integration
             <span class="error smallSizedFont" style="display: none">Please enter a valid name!</span>
         </div>
         <div id="pyTransformDialog" style="display: none">
-            <br><label class="smallSizedFont">Name of new column:</label>
-            <input type="text" class="smallSizedFont" id="pythonTransformNewColumnName">
+        	<input type="radio" name="pyTransformType" value="edit">
+        		<label class="smallSizedFont">Change existing column:</label>
+        		<span class="smallSizedFont" id="pythonTransformEditColumnName"></span>
+        	<br>
+        	<input type="radio" name="pyTransformType" value="new" checked="checked">
+            	<label class="smallSizedFont">Name of new column:</label>
+            	<input type="text" class="smallSizedFont" id="pythonTransformNewColumnName">
+            <br>
             <span class="error smallSizedFont" style="display: none" id="pyTransformColumnNameError">Please provide a new unique column name!</span>
             <br><br>
             <div id="transformCodeEditor"></div>

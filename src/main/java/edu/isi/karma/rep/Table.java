@@ -31,6 +31,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.rep.Node.NodeStatus;
+
 /**
  * @author szekely
  * 
@@ -201,6 +203,42 @@ public class Table extends RepEntity {
 		}
 	}
 
+	public void setCollectedNodeValues(HNodePath path, List<String> nodes, RepFactory factory) {
+		setCollectedNodeValues(path, nodes, rows, 0, factory);
+	}
+	
+	private void setCollectedNodeValues(HNodePath path, List<String> nodes,
+			List<Row> rows, int nodeIdx, RepFactory factory) {
+
+		RowIterator: for (Row r : rows) {
+
+			Node n = r.getNode(path.getFirst().getId());
+			if (n == null) {
+				continue RowIterator;
+			}
+			// Check if the path has only one HNode
+			if (path.getRest() == null || path.getRest().isEmpty()) {
+				n.setValue(nodes.get(nodeIdx++), NodeStatus.original, factory);
+				continue RowIterator;
+			}
+
+			// Check if the node has a nested table
+			if (n.hasNestedTable()) {
+				int numRows = n.getNestedTable().getNumRows();
+				if (numRows == 0)
+					continue RowIterator;
+
+				List<Row> rowsNestedTable = n.getNestedTable().getRows(0,
+						numRows);
+				if (rowsNestedTable != null && rowsNestedTable.size() != 0) {
+					setCollectedNodeValues(path.getRest(), nodes, rowsNestedTable, nodeIdx, factory);
+					continue RowIterator;
+				}
+			}
+
+		}
+	}
+	
 	/**
 	 * 
 	 * 
