@@ -98,6 +98,7 @@ public class JsonImport extends Import {
     @Override
     public Worksheet generateWorksheet() throws JSONException {
     	numObjects = 0;
+    	boolean importJson = false;
         if (json instanceof JSONArray) {
             JSONArray a = (JSONArray) json;
             for (int i = 0; i < a.length(); i++) {
@@ -106,14 +107,15 @@ public class JsonImport extends Import {
                 if(maxNumLines > 0 && numObjects >= maxNumLines)
             		break;
             }
+            importJson = true;
         } else if (json instanceof JSONObject) {
             addKeysAndValues((JSONObject) json, getWorksheet().getHeaders(),
                     getWorksheet().getDataTable());
-        } else {
-            throw new Error("Can only import objects or arrays.");
-        }
+            importJson = true;
+        } 
 
-        writeJsonFile(json);
+        if(importJson)
+        	writeJsonFile(json);
         return getWorksheet();
     }
 

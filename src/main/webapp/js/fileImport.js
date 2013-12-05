@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-function showFileImportOptions(responseJSON, command) {
+function showFileImportOptions(responseJSON, command, dialogVisible) {
   var previewTable = $("#FilePreviewTable");
   var importDiv = $("#FileImportDiv");
 
@@ -102,18 +102,24 @@ function showFileImportOptions(responseJSON, command) {
 	  $("#fileMaxName").html("lines");
   }
   
-  // Open the dialog
-  importDiv.dialog({
-    modal: true , 
-    width: 620, 
-    title: 'Import File Options',
-    buttons: {
-      "Cancel": function() {
-        $(this).dialog("close");
-      }, 
-      "Import":FileImportOptionsChanged
-    }
-  });
+  if(dialogVisible) {
+	  //It is already visible, dont try to reload it
+	  //else it prevents the cascaded events from happening
+	  //like onclick on import button after onchange of textfield happens
+  } else {
+	  // Open the dialog
+	  importDiv.dialog({
+	    modal: true , 
+	    width: 620, 
+	    title: 'Import File Options',
+	    buttons: {
+	      "Cancel": function() {
+	        $(this).dialog("close");
+	      }, 
+	      "Import":FileImportOptionsChanged
+	    }
+	  });
+  }
 }
 
 function FileImportOptionsChanged(flag) {
@@ -147,7 +153,7 @@ function FileImportOptionsChanged(flag) {
     complete : 
     function (xhr, textStatus) {
       if(!options["execute"]) {
-        showFileImportOptions($.parseJSON(xhr.responseText), command);
+        showFileImportOptions($.parseJSON(xhr.responseText), command, true);
       } else {
         var json = $.parseJSON(xhr.responseText);
         parse(json);
@@ -158,6 +164,7 @@ function FileImportOptionsChanged(flag) {
     }
   });	
 }
+
 
 function resetFileDialogOptions() {
   var importDiv = $("div#FileImportDiv");

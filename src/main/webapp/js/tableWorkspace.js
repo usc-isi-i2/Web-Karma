@@ -410,7 +410,6 @@ function styleAndAssignHandlersToWorksheetOptionButtons() {
 
     // in pytransform.js
     $("button#pyTransform").click(openPyTransformDialogBox);
-    $("button#editPyTransform").click(openEditPyTransformDialogBox);
     
     $("button#publishR2RML").click(function(event){
         optionsDiv.hide();
@@ -722,15 +721,6 @@ function openColumnHeadingOptions() {
     columnHeadingMenu.data("parentCellId", $(this).data("parentCellId"));
     
     var hNodeId = columnHeadingMenu.data("parentCellId");
-    var hNode = $("td#" + hNodeId);
-    if(hNode.data("pythonTransformation"))
-    {
-    	$("button#editPyTransform").show();
-    }
-    else
-    {
-    	$("button#editPyTransform").hide();
-    }
     
     columnHeadingMenu.css({"position":"absolute",
         "top":$(this).offset().top + 15,

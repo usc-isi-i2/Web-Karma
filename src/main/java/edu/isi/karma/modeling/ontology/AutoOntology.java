@@ -42,7 +42,6 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.vocabulary.XSD;
 
 import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 
@@ -67,7 +66,7 @@ public class AutoOntology {
 			dp.addRange(XSD.xstring);
 		}
 		
-		OntClass thingClass = autoOntology.createClass(Uris.THING_URI);
+//		OntClass thingClass = autoOntology.createClass(Uris.THING_URI);
 		ObjectProperty op = autoOntology.createObjectProperty(ns + "relatedTo");
 		op.addDomain(topClass);
 //		op.addRange(thingClass);

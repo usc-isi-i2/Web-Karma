@@ -128,7 +128,7 @@ public class SetMetaPropertyCommand extends Command {
 		oldGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
 		
 		/*** Add the appropriate nodes and links in alignment graph ***/
-		SemanticType newType = null;
+		newType = null;
 
 		/** Check if a semantic type already exists for the column **/
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);

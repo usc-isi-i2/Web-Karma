@@ -42,6 +42,9 @@ import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticType.Origin;
+import edu.isi.karma.util.RandomGUID;
 
 
 public class ModelReader {
@@ -87,12 +90,13 @@ public class ModelReader {
 
 		try {
 
-			serviceModels = importServiceModelsFromJGraphModels(Params.JGRAPHT_DIR, ".main.jgraph");
+//			serviceModels = importServiceModelsFromJGraphModels(Params.JGRAPHT_DIR, ".main.jgraph");
+			serviceModels = importServiceModels(Params.INPUT_DIR);
 			if (serviceModels != null) {
 				for (ServiceModel sm : serviceModels) {
 					sm.print();
 					sm.exportModelToGraphviz(Params.GRAPHVIS_DIR);
-//					GraphUtil.serialize(sm.getModel(), Params.JGRAPHT_DIR + sm.getServiceNameWithPrefix() + ".main.jgraph");
+					GraphUtil.serialize(sm.getModel(), Params.JGRAPHT_DIR + sm.getServiceNameWithPrefix() + ".main.jgraph");
 				}
 			}
 
@@ -384,9 +388,12 @@ public class ModelReader {
 
 			Node obj = uri2Classes.get(objStr);
 			if (obj == null) {
-				if (objStr.startsWith(attPrefix))
-					obj = new ColumnNode(objStr, null, null, "", null);
-				else if (objStr.indexOf(":") == -1 && objStr.indexOf("\"") != -1) {
+				if (objStr.startsWith(attPrefix)) {
+					obj = new ColumnNode(new RandomGUID().toString(), new RandomGUID().toString(), objStr, "", null);
+					SemanticType semanticType = new SemanticType(((ColumnNode)obj).getHNodeId(), new Label(predicateStr), subj.getLabel(), Origin.User, 1.0, false);
+					((ColumnNode)obj).setUserSelectedSemanticType(semanticType);
+
+				} else if (objStr.indexOf(":") == -1 && objStr.indexOf("\"") != -1) {
 //					String literalId = "lit:" + serviceId + "_l" + String.valueOf(countOfLiterals); 
 					obj = new LiteralNode(objStr, objStr, null);
 //					countOfLiterals ++;

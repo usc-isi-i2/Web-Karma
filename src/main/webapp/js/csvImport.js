@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-function showCSVImportOptions(responseJSON) {
+function showCSVImportOptions(responseJSON, dialogVisible) {
   var csvPreviewTable = $("#CSVPreviewTable");
   var csvImportDiv = $("#CSVImportDiv");
   // TODO Reset the CSV import options
@@ -83,18 +83,24 @@ function showCSVImportOptions(responseJSON) {
   // Attach the command ID
   csvImportDiv.data("commandId", responseJSON["elements"][0]["commandId"]);
 	
-  // Open the dialog
-  csvImportDiv.dialog({
-    modal: true , 
-    width: 820, 
-    title: 'Import CSV File Options',
-    buttons: {
-      "Cancel": function() {
-        $(this).dialog("close");
-      }, 
-      "Import":CSVImportOptionsChanged
-    }
-  });
+  if(dialogVisible) {
+	  //It is already visible, dont try to reload it
+	 //else it prevents the cascaded events from happening
+	 //like onclick on import button after onchange of textfield happens
+  } else {
+	  // Open the dialog
+	  csvImportDiv.dialog({
+	    modal: true , 
+	    width: 820, 
+	    title: 'Import CSV File Options',
+	    buttons: {
+	      "Cancel": function() {
+	        $(this).dialog("close");
+	      }, 
+	      "Import":CSVImportOptionsChanged
+	    }
+	  });
+  }
 }
 
 function CSVImportOptionsChanged(flag) {
@@ -128,7 +134,7 @@ function CSVImportOptionsChanged(flag) {
     complete : 
     function (xhr, textStatus) {
       if(!options["execute"]) {
-        showCSVImportOptions($.parseJSON(xhr.responseText));
+        showCSVImportOptions($.parseJSON(xhr.responseText), true);
       } else {
         var json = $.parseJSON(xhr.responseText);
         parse(json);
