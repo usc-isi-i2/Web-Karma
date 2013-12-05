@@ -1,6 +1,7 @@
 package edu.isi.karma.cleaning;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
@@ -16,6 +17,8 @@ public class ProgSynthesis {
 	public long genspan = 0;
 	public long ruleNo = 0;
 	public PartitionClassifierType classifier;
+	public String[] vocab = null;
+	public HashMap<String, Boolean> legalParitions = new HashMap<String, Boolean>();
 
 	public void inite(Vector<String[]> examples) {
 		for (int i = 0; i < examples.size(); i++) {
@@ -57,7 +60,7 @@ public class ProgSynthesis {
 
 	public double getCompScore(int i, int j, Vector<Partition> pars) {
 		Partition p = pars.get(i).mergewith(pars.get(j));
-		if (p == null) {
+		if (p == null || !isLegalPartition(p)) {
 			return -Double.MAX_VALUE;
 		}
 		int validCnt = 0;
@@ -66,12 +69,13 @@ public class ProgSynthesis {
 				continue;
 			}
 			Partition q = p.mergewith(pars.get(x));
-			if (q != null) {
+			if (q != null && isLegalPartition(p)) {
 				validCnt++;
 			}
 		}
 		return validCnt;
 	}
+
 	public Vector<Partition> initePartitions() {
 		Vector<Partition> pars = new Vector<Partition>();
 		// inite partition for each example
@@ -84,6 +88,33 @@ public class ProgSynthesis {
 			pars.add(pt);
 		}
 		return pars;
+	}
+
+	public boolean isLegalPartition(Partition p) {
+		String key = p.getHashKey();
+		if (legalParitions.containsKey(key)) {
+			return legalParitions.get(key);
+		}
+		// test whether its subset fails
+		for (String k : legalParitions.keySet()) {
+			if (!legalParitions.get(k)) // false
+			{
+				if (key.indexOf(k) != -1) {
+					return false;
+				}
+			}
+		}
+		Vector<Partition> xPar = new Vector<Partition>();
+		xPar.add(p);
+		Collection<ProgramRule> cpr = this.producePrograms(xPar);
+		if (cpr == null || cpr.size() == 0) {
+			legalParitions.put(key, false);
+			return false;
+		} else {
+			legalParitions.put(key, true);
+			return true;
+		}
+
 	}
 
 	public void mergePartitions(Vector<Partition> pars) {
@@ -102,6 +133,7 @@ public class ProgSynthesis {
 				}
 			}
 		}
+
 		if (pos[0] != -1 && pos[1] != -1)
 			UpdatePartitions(pos[0], pos[1], pars);
 	}
@@ -131,7 +163,7 @@ public class ProgSynthesis {
 	}
 
 	public Collection<ProgramRule> producePrograms(Vector<Partition> pars) {
-		Program prog = new Program(pars);
+		Program prog = new Program(pars, this.vocab);
 		HashSet<ProgramRule> rules = new HashSet<ProgramRule>();
 		int prog_cnt = 1;
 		int i = 0;
@@ -143,15 +175,13 @@ public class ProgSynthesis {
 			String xString = "";
 			int termCnt = 0;
 			boolean findRule = true;
-			while ((xString = this.validRule(r,pars)) != "GOOD" && findRule) {
-				if(xString.compareTo("NO_CLASIF")==0)
-				{
+			while ((xString = this.validRule(r, pars)) != "GOOD" && findRule) {
+				if (xString.compareTo("NO_CLASIF") == 0) {
 					return null; // indistinguishable classes.
 				}
 				if (termCnt == 10) {
 					termCnt = 0;
-					if((System.currentTimeMillis() - startTime)/1000 >= time_limit)
-					{
+					if ((System.currentTimeMillis() - startTime) / 1000 >= time_limit) {
 						findRule = false;
 						break;
 					}
@@ -187,7 +217,7 @@ public class ProgSynthesis {
 		long t3 = System.currentTimeMillis();
 		learnspan = (t2 - t1);
 		genspan = (t3 - t2);
-		if (cpr == null || cpr.size() == 0 ) {
+		if (cpr == null || cpr.size() == 0) {
 			t1 = System.currentTimeMillis();
 			vp = this.ProducePartitions(false);
 			t2 = System.currentTimeMillis();
@@ -200,24 +230,19 @@ public class ProgSynthesis {
 		return cpr;
 	}
 
-	public String validRule(ProgramRule p,Vector<Partition> vp) {
-		for(Partition px:vp)
-		{
+	public String validRule(ProgramRule p, Vector<Partition> vp) {
+		for (Partition px : vp) {
 			for (int i = 0; i < px.orgNodes.size(); i++) {
 				String s1 = UtilTools.print(px.orgNodes.get(i));
 				String labelString = p.getClassForValue(s1);
-				if(labelString.compareTo(px.label)!=0)
-				{
+				if (labelString.compareTo(px.label) != 0) {
 					return "NO_CLASIF";
 				}
 				InterpreterType worker = p.getWorkerForClass(labelString);
 				String s2 = "";
-				try
-				{
+				try {
 					s2 = new String(worker.execute(s1).getBytes(), "UTF-8");
-				}
-				catch(Exception e)
-				{
+				} catch (Exception e) {
 					return "DECODE_ERROR";
 				}
 				String s3 = UtilTools.print(px.tarNodes.get(i));

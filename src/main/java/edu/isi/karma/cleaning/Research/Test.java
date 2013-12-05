@@ -7,24 +7,30 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import org.apache.mahout.math.Arrays;
-import edu.isi.karma.cleaning.*;
+
+import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.cleaning.ExampleSelection;
 import edu.isi.karma.cleaning.InterpreterType;
 import edu.isi.karma.cleaning.ProgSynthesis;
 import edu.isi.karma.cleaning.ProgramRule;
 import edu.isi.karma.cleaning.UtilTools;
-import au.com.bytecode.opencsv.CSVReader;
 
 public class Test {
 	public static void test1()
 	{
 		Vector<String[]> examples = new Vector<String[]>();
-		String[] x7 = {"<_START>er stîget ûf, mit grôzer kraft<_END>", "stîget ûf, mit grôzer kraft"}; // 15th  element start.
-		//String[] x8 = {"<_START>Deborah Pugh, \"Egyptian Group Claims New Attacks,\" The Guardian (London), January 8, 1993. <_END>", "Egyptian Group Claims New Attacks"};
-		//String[] x9 = {"<_START>09:58 am<_END>", "09:58 AM"};
+		String[] x1 = {"<_START>50 x 40<_END>", "40"}; // 15th  element start.
+		String[] x2 = {"<_START>H: 23 1/4 in.<_END>", "23 1/4"};
+		String[] x3 = {"<_START>38 1/2 in.<_END>", "38 1/2"};
+		String[] x7 = {"<_START>27 x 54 in.<_END>", "54"}; // 15th  element start.
+		String[] x8 = {"<_START>35 3/4 x 29 7/8 in.<_END>", "29 7/8"};
+		String[] x9 = {"<_START>55 in.<_END>", "none"};
+		examples.add(x1);
+		examples.add(x2);
+		examples.add(x3);
 		examples.add(x7);
-		//examples.add(x8);
-		//examples.add(x9);	
+		examples.add(x8);
+		examples.add(x9);	
 		for(String[] elem:examples)
 		{
 			System.out.println("Examples inputed: "+Arrays.toString(elem));
@@ -33,7 +39,7 @@ public class Test {
 		psProgSynthesis.inite(examples);
 		Collection<ProgramRule> ps = psProgSynthesis.run_main();
 		ProgramRule pr = ps.iterator().next();
-		String val = "Sîne, klâwen durh die";
+		String val = "US$ 232.982 billion\"@en";
 		InterpreterType rule = pr.getRuleForValue(val);
 		System.out.println(rule.execute(val));
 	}
@@ -118,7 +124,6 @@ public class Test {
 						index++;
 					}
 					Vector<String> vob = UtilTools.buildDict(vtmp);
-					ProgramRule.setVocb(vob);
 					if (entries.size() <= 1)
 						continue;
 					ExampleSelection expsel = new ExampleSelection();
@@ -139,6 +144,7 @@ public class Test {
 						Vector<String> resultString = new Vector<String>();
 						xHashMap = new HashMap<String, String[]>();
 						ProgSynthesis psProgSynthesis = new ProgSynthesis();
+						psProgSynthesis.vocab = vob.toArray(new String[vob.size()]);
 						psProgSynthesis.inite(examples);
 						Vector<ProgramRule> pls = new Vector<ProgramRule>();
 						Collection<ProgramRule> ps = psProgSynthesis.run_main();

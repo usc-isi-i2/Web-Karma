@@ -38,11 +38,12 @@ public class RepFactory {
 	private final Map<String, Row> rows = new HashMap<String, Row>(1000);
 	private final Map<String, Node> nodes = new HashMap<String, Node>(10000);
 	private int id = 0;
-	public Worksheet createWorksheet(String tableName, Workspace workspace) {
+	
+	public Worksheet createWorksheet(String tableName, Workspace workspace, String encoding) {
 		String id = getNewId("WS");
 		HTable headers = createHTable(tableName);
 		Table dataTable = createTable(headers.getId(), id);
-		Worksheet ws = new Worksheet(id, headers, dataTable);
+		Worksheet ws = new Worksheet(id, headers, dataTable, encoding);
 		workspace.addWorksheet(ws);
 		worksheets.put(id, ws);
 		return ws;

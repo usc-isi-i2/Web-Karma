@@ -54,21 +54,21 @@ public class FileRdfGenerator extends RdfGenerator {
 	private static Logger logger = LoggerFactory.getLogger(FileRdfGenerator.class);
 	
     private static Worksheet generateWorksheetFromFile(File inputFile, String inputType,
-            Workspace workspace) throws JSONException, IOException, KarmaException, ClassNotFoundException {
+            Workspace workspace, String encoding, int maxNumLines) throws JSONException, IOException, KarmaException, ClassNotFoundException {
         Worksheet worksheet = null;
 
         if (inputType.equalsIgnoreCase("JSON")) {
             FileReader reader = new FileReader(inputFile);
             Object json = JSONUtil.createJson(reader);
-            JsonImport imp = new JsonImport(json, inputFile.getName(), workspace);
+            JsonImport imp = new JsonImport(json, inputFile.getName(), workspace, encoding, maxNumLines);
             worksheet = imp.generateWorksheet();
         } else if (inputType.equalsIgnoreCase("XML")) {
-            String fileContents = FileUtil.readFileContentsToString(inputFile);
+            String fileContents = FileUtil.readFileContentsToString(inputFile, encoding);
             JSONObject json = XML.toJSONObject(fileContents);
-            JsonImport imp = new JsonImport(json, inputFile.getName(), workspace);
+            JsonImport imp = new JsonImport(json, inputFile.getName(), workspace, encoding, maxNumLines);
             worksheet = imp.generateWorksheet();
         } else if (inputType.equalsIgnoreCase("CSV")) {
-            Import fileImport = new CSVFileImport(1, 2, ',', '\"', inputFile, workspace);
+            Import fileImport = new CSVFileImport(1, 2, ',', '\"', encoding, -1, inputFile, workspace);
 
             worksheet = fileImport.generateWorksheet();
         }
@@ -77,7 +77,7 @@ public class FileRdfGenerator extends RdfGenerator {
     }
 
 	public static void generateRdf(String inputType, Model model,
-			String worksheetName, PrintWriter pw, File inputFile)
+			String worksheetName, PrintWriter pw, File inputFile, String encoding, int maxNumLines)
 			throws IOException, JSONException, KarmaException {
 		logger.info("Generating worksheet from the data source ...");
 		Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
@@ -85,7 +85,7 @@ public class FileRdfGenerator extends RdfGenerator {
     		
 		Worksheet worksheet;
 		try {
-			worksheet = generateWorksheetFromFile(inputFile, inputType, workspace);
+			worksheet = generateWorksheetFromFile(inputFile, inputType, workspace, encoding, maxNumLines);
 		} catch (ClassNotFoundException e) {
 			throw new KarmaException("Unable to generate worksheet from file : " + e.getMessage());
 		}

@@ -25,11 +25,16 @@ package edu.isi.karma.controller.command.importdata;
 import java.io.File;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.IPreviewable;
+import edu.isi.karma.controller.command.importdata.ImportCSVFileCommand.InteractionType;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.ImportPropertiesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
@@ -38,21 +43,26 @@ import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.imp.excel.ToCSV;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
-public class ImportExcelFileCommand extends ImportFileCommand {
-
+public class ImportExcelFileCommand extends ImportFileCommand implements IPreviewable {
+	private String encoding = null;
+    private int maxNumLines = 1000;
+    
     // Logger object
     private static Logger logger = LoggerFactory
             .getLogger(ImportExcelFileCommand.class.getSimpleName());
 
     protected ImportExcelFileCommand(String id, File excelFile) {
         super(id, excelFile);
+        this.encoding = EncodingDetector.detect(excelFile);
     }
 
     protected ImportExcelFileCommand(String id, String revisedId, File uploadedFile) {
         super(id, revisedId, uploadedFile);
+        this.encoding = EncodingDetector.detect(uploadedFile);
     }
 
     @Override
@@ -90,7 +100,8 @@ public class ImportExcelFileCommand extends ImportFileCommand {
         // Each sheet is written to a separate CSV file
         if (!csvFiles.isEmpty()) {
             for (File csvFile : csvFiles) {
-                Import imp = new CSVFileImport(1, 2, ',', '"', csvFile,
+            	//this.encoding = EncodingDetector.detect(csvFile);
+                Import imp = new CSVFileImport(1, 2, ',', '"', encoding, maxNumLines, csvFile,
                         workspace);
 
                 try {
@@ -117,4 +128,68 @@ public class ImportExcelFileCommand extends ImportFileCommand {
     protected Import createImport(Workspace workspace) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    public void setEncoding(String encoding) {
+    	this.encoding = encoding;
+    }
+    
+    public void setMaxNumLines(int lines) {
+    	this.maxNumLines = lines;
+    }
+    
+    @Override
+    public UpdateContainer handleUserActions(HttpServletRequest request) {
+       
+        String strEncoding = request.getParameter("encoding");
+        if(strEncoding == null || strEncoding == "") {
+        	try {
+        		strEncoding = EncodingDetector.detect(getFile());
+        	} catch(Exception e) {
+        		strEncoding = EncodingDetector.DEFAULT_ENCODING;
+        	}
+        }
+        setEncoding(strEncoding);
+        
+        String maxNumLines = request.getParameter("maxNumLines");
+        if(maxNumLines != null && maxNumLines != "") {
+        	try {
+                int num = Integer.parseInt(maxNumLines);
+                setMaxNumLines(num);
+            } catch (Throwable t) {
+                logger.error("Wrong user input for Data Number of Lines to import");
+                return null;
+            }
+        }
+        /**
+         * Send response based on the interaction type *
+         */
+        UpdateContainer c = null;
+        InteractionType type = InteractionType.valueOf(request
+                .getParameter("interactionType"));
+        switch (type) {
+            case generatePreview: {
+                try {
+
+                    c = showPreview();
+                } catch (CommandException e) {
+                    logger.error(
+                            "Error occured while creating utput JSON for JSON Import",
+                            e);
+                }
+                return c;
+            }
+            case importTable:
+                return c;
+        }
+        return c;
+    }
+
+	@Override
+	public UpdateContainer showPreview() throws CommandException {
+		
+        UpdateContainer c = new UpdateContainer();
+        c.add(new ImportPropertiesUpdate(getFile(), encoding, maxNumLines, id));
+        return c;
+	   
+	}
 }

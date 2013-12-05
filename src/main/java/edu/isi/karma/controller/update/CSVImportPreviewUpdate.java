@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
+import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.view.VWorkspace;
 
 public class CSVImportPreviewUpdate extends AbstractUpdate {
@@ -58,6 +59,10 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 
 	private String commandId;
 
+	private String encoding;
+	
+	private int maxNumLines;
+	
 	private static Logger logger = LoggerFactory
 			.getLogger(CSVImportPreviewUpdate.class.getSimpleName());
 
@@ -70,7 +75,7 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 	}
 
 	public CSVImportPreviewUpdate(char delimiterChar, char quoteChar,
-			char escapeChar, File csvFile, int headerRowIndex,
+			char escapeChar, String encoding, int maxNumLines, File csvFile, int headerRowIndex,
 			int dataStartRowIndex, String id) {
 		this.csvFile = csvFile;
 		this.headerRowIndex = headerRowIndex;
@@ -79,6 +84,8 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 		this.escapeCharacter = escapeChar;
 		this.delimiter = delimiterChar;
 		this.commandId = id;
+		this.encoding = encoding;
+		this.maxNumLines = maxNumLines;
 	}
 
 	@Override
@@ -92,11 +99,19 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 		JSONStringer jsonStr = new JSONStringer();
 
 		try {
-			scanner = new Scanner(csvFile);
-			JSONWriter writer = jsonStr.object().key(JsonKeys.commandId.name())
-					.value(commandId).key(GenericJsonKeys.updateType.name())
-					.value("ImportCSVPreview").key(JsonKeys.fileName.name())
-					.value(csvFile.getName());
+			logger.info("CSVFileImportPreview: Got encoding: " + encoding);
+			
+			if(encoding == null) {
+				encoding = EncodingDetector.detect(csvFile);
+			}
+			scanner = new Scanner(csvFile, encoding);
+			JSONWriter writer = jsonStr.object()
+					.key(JsonKeys.commandId.name()).value(commandId)
+					.key(GenericJsonKeys.updateType.name()).value("ImportCSVPreview")
+					.key(JsonKeys.fileName.name()).value(csvFile.getName())
+					.key("encoding").value(encoding)
+					.key("maxNumLines").value(maxNumLines)
+					;
 
 			JSONArray dataRows = new JSONArray();
 			while (scanner.hasNextLine()) {
@@ -145,7 +160,8 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 						vals.add("");
 					// Add the row index
 					vals.add(0, Integer.toString(rowCount + 1));
-
+					reader.close();
+					
 					// Add to the data rows JSON
 					dataRows.put(vals);
 					rowCount++;

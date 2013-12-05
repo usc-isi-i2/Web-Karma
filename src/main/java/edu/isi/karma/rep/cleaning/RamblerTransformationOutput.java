@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.apache.hadoop.mapred.lib.InputSampler;
+
 import edu.isi.karma.cleaning.ProgSynthesis;
 import edu.isi.karma.cleaning.ProgramRule;
 
@@ -56,6 +58,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 			exps.add(tmp);
 		}
 		ProgSynthesis psProgSynthesis = new ProgSynthesis();
+		psProgSynthesis.vocab = this.input.getVocab();
 		psProgSynthesis.inite(exps);
 		Collection<ProgramRule> rules = psProgSynthesis.run_main();
 		if(rules == null ||rules.size() == 0)

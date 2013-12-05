@@ -125,6 +125,13 @@ div.rightOptionsToolbar {
     vertical-align: top;
 }
 
+div.showEncoding {
+	display: inline;
+    font-size: 14px;
+    padding-bottom: 7px;
+    padding-right: 5px;
+    vertical-align: middle;
+}
 div.toggleMapView {
     display: inline;
 	cursor: pointer;

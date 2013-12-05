@@ -42,7 +42,7 @@ import edu.isi.karma.view.VWorkspace;
 public class WorksheetListUpdate extends AbstractUpdate {
 
 	public enum JsonKeys {
-		worksheets, worksheetId, title, isUpToDate, isCollapsed
+		worksheets, worksheetId, title, isUpToDate, isCollapsed, encoding
 	}
 
 	public WorksheetListUpdate() {

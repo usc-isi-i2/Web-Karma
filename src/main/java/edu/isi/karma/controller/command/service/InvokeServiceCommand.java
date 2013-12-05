@@ -72,7 +72,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
-		
+		String encoding = wk.getEncoding();
 		// Clone the worksheet just before the invocation
 		Cloner cloner = new Cloner();
 		this.worksheetBeforeInvocation = cloner.deepClone(wk);
@@ -92,7 +92,7 @@ public class InvokeServiceCommand extends WorksheetCommand {
 
 		InvocationManager invocatioManager;
 		try {
-			invocatioManager = new InvocationManager(getUrlColumnName(wk), requestIds, requestURLStrings);
+			invocatioManager = new InvocationManager(getUrlColumnName(wk), requestIds, requestURLStrings, encoding);
 			logger.info("Requesting data with includeURL=" + false + ",includeInput=" + true + ",includeOutput=" + true);
 			
 			// This generate a flat table of the json results
@@ -140,12 +140,12 @@ public class InvokeServiceCommand extends WorksheetCommand {
 		return null;
 	}
 	
-	public Worksheet generateWorksheet(Workspace workspace, String title) throws KarmaException, IOException {
+	public Worksheet generateWorksheet(Workspace workspace, String title, String encoding) throws KarmaException, IOException {
 
 		if (workspace == null)
 			throw new KarmaException("Workspace is null.");
 		
-		Worksheet worksheet = workspace.getFactory().createWorksheet(title, workspace);
+		Worksheet worksheet = workspace.getFactory().createWorksheet(title, workspace, encoding);
 		
 		return worksheet;
 	}

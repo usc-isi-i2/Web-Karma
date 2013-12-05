@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-function showCSVImportOptions(responseJSON) {
+function showCSVImportOptions(responseJSON, dialogVisible) {
   var csvPreviewTable = $("#CSVPreviewTable");
   var csvImportDiv = $("#CSVImportDiv");
   // TODO Reset the CSV import options
@@ -27,9 +27,13 @@ function showCSVImportOptions(responseJSON) {
   csvPreviewTable.append($("<tr>").append($("<td>").addClass("rowIndexCell").text("File Row Number")));
 	
   var headers = null;
-  if (responseJSON)
+  if (responseJSON) {
     headers = responseJSON["elements"][0]["headers"];
-	
+	var encoding = responseJSON["elements"][0]["encoding"];
+	$("#encoding").val(encoding);
+	var maxNumLines = responseJSON["elements"][0]["maxNumLines"];
+	$("#maxNumLines").val(maxNumLines);
+  }
   //Change the source name
   $("#CSVSourceName", csvImportDiv).text(responseJSON["elements"][0]["fileName"]);
 	
@@ -79,18 +83,24 @@ function showCSVImportOptions(responseJSON) {
   // Attach the command ID
   csvImportDiv.data("commandId", responseJSON["elements"][0]["commandId"]);
 	
-  // Open the dialog
-  csvImportDiv.dialog({
-    modal: true , 
-    width: 820, 
-    title: 'Import CSV File Options',
-    buttons: {
-      "Cancel": function() {
-        $(this).dialog("close");
-      }, 
-      "Import":CSVImportOptionsChanged
-    }
-  });
+  if(dialogVisible) {
+	  //It is already visible, dont try to reload it
+	 //else it prevents the cascaded events from happening
+	 //like onclick on import button after onchange of textfield happens
+  } else {
+	  // Open the dialog
+	  csvImportDiv.dialog({
+	    modal: true , 
+	    width: 820, 
+	    title: 'Import CSV File Options',
+	    buttons: {
+	      "Cancel": function() {
+	        $(this).dialog("close");
+	      }, 
+	      "Import":CSVImportOptionsChanged
+	    }
+	  });
+  }
 }
 
 function CSVImportOptionsChanged(flag) {
@@ -102,6 +112,8 @@ function CSVImportOptionsChanged(flag) {
   options["CSVHeaderLineIndex"] = $("#CSVHeaderLineIndex").val();
   options["startRowIndex"] = $("#startRowIndex").val();
   options["textQualifier"] = $("#textQualifier").val();
+  options["encoding"] = $("#encoding").val();
+  options["maxNumLines"] = $("#maxNumLines").val();
   options["workspaceId"] = $.workspaceGlobalInformation.id;
   options["interactionType"] = "generatePreview";
 	
@@ -122,7 +134,7 @@ function CSVImportOptionsChanged(flag) {
     complete : 
     function (xhr, textStatus) {
       if(!options["execute"]) {
-        showCSVImportOptions($.parseJSON(xhr.responseText));
+        showCSVImportOptions($.parseJSON(xhr.responseText), true);
       } else {
         var json = $.parseJSON(xhr.responseText);
         parse(json);
@@ -139,4 +151,6 @@ function resetCSVDialogOptions() {
   $("#CSVHeaderLineIndex", csvImportDiv).val("1");
   $("#startRowIndex", csvImportDiv).val("2");
   $("#textQualifier", csvImportDiv).val("\"");
+  $("#encoding", csvImportDiv).val("\"");
+  $("#encoding", csvImportDiv).val("1000");
 }

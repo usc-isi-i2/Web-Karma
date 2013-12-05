@@ -21,8 +21,7 @@
 package edu.isi.karma.modeling.ontology;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
+import edu.isi.karma.util.EncodingDetector;
 
 public class OntologyManager  {
 	
@@ -87,7 +87,7 @@ public class OntologyManager  {
 			o.ontologyModelUpdated();
 	}
 	
-	public boolean doImportAndUpdateCache(File sourceFile) {
+	public boolean doImportAndUpdateCache(File sourceFile, String encoding) {
 
 		if (sourceFile == null) {
 			logger.debug("input file is null.");
@@ -102,7 +102,7 @@ public class OntologyManager  {
 		}
 		
 		try {
-			InputStream s = new FileInputStream(sourceFile);
+			InputStreamReader s = EncodingDetector.getInputStreamReader(sourceFile, encoding);
 			ontHandler.getOntModel().read(s, null);
 		} catch (Throwable t) {
 			logger.error("Error reading the OWL ontology file!", t);
@@ -120,7 +120,7 @@ public class OntologyManager  {
 		return true;
 	}
 	
-	public boolean doImport(File sourceFile) {
+	public boolean doImport(File sourceFile, String encoding) {
 
 		if (sourceFile == null) {
 			logger.debug("input file is null.");
@@ -135,7 +135,7 @@ public class OntologyManager  {
 		}
 		
 		try {
-			InputStream s = new FileInputStream(sourceFile);
+			InputStreamReader s = EncodingDetector.getInputStreamReader(sourceFile, encoding);
 			ontHandler.getOntModel().read(s, null);
 		} catch (Throwable t) {
 			logger.error("Error reading the OWL ontology file!", t);

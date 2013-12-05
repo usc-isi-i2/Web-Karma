@@ -47,13 +47,13 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.modeling.research.ComputeGED;
 import edu.isi.karma.modeling.research.GraphVizUtil;
 import edu.isi.karma.modeling.research.ModelReader;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.modeling.research.PatternContainment;
 import edu.isi.karma.modeling.research.SemanticLabel;
 import edu.isi.karma.modeling.research.ServiceModel;
-import edu.isi.karma.modeling.research.Util;
 import edu.isi.karma.modeling.research.approach1.SemanticLabelType;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
@@ -750,31 +750,9 @@ public class Approach2 {
 		File ff = new File(Params.ONTOLOGY_DIR);
 		File[] files = ff.listFiles();
 		for (File f : files) {
-			ontManager.doImport(f);
+			ontManager.doImport(f, "UTF-8");
 		}
 		ontManager.updateCache();
-		
-//		// experiment 1
-//		OntologyManager ontManager = new OntologyManager();
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "dbpedia_3.8.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "foaf.rdf"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "wgs84_pos.xml"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "rdf-schema.rdf"));
-//		ontManager.updateCache();
-
-		// experiment 2 - museum data
-//		OntologyManager ontManager = new OntologyManager();
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "100_rdf.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "105_Rdf-schema.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "120_dcterms.rdf"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "140_foaf.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "180_rdaGr2.rdf"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "190_ore.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "220_edm_from_xuming.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "230_saam-ont.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "250_skos.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "260_aac-ont.owl"));
-//		ontManager.updateCache();
 
 		for (int i = 0; i < serviceModels.size(); i++) {
 //		int i = 1; {
@@ -833,11 +811,8 @@ public class Approach2 {
 					
 			graphs.put("1-correct model", correctModel);
 			if (hypothesisModel != null) {
-				double distance = Util.getDistance(correctModel, hypothesisModel);
+				double distance = ComputeGED.getDistance(correctModel, hypothesisModel);
 
-//				double distance = new GraphMatching(Util.toGxl(correctModel), 
-//						Util.toGxl(m.getModel())).getDistance();
-					
 				String label = "distance:" + distance;
 					
 				graphs.put(label, hypothesisModel);
@@ -853,7 +828,6 @@ public class Approach2 {
 	public static void main(String[] args) {
 		
 		try {
-//			testSelectionOfBestMatch();
 			testApproach();
 		} catch (Exception e) {
 			e.printStackTrace();

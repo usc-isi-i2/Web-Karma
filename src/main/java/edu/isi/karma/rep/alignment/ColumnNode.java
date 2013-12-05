@@ -74,7 +74,7 @@ public class ColumnNode extends Node {
 	}
 	
 	public void setRdfLiteralType(String rdfLiteralType) {
-		if (rdfLiteralType != null) {
+		if (rdfLiteralType != null && rdfLiteralType.trim().length() > 0) {
 			rdfLiteralType = rdfLiteralType.replace(Prefixes.XSD + ":", Namespaces.XSD);
 			this.rdfLiteralType = new Label(rdfLiteralType, Namespaces.XSD, Prefixes.XSD);
 		} else {

@@ -30,6 +30,8 @@ public class JDBCUtilFactory {
 			return new SQLServerUtil();
 		else if(dbType == AbstractJDBCUtil.DBType.PostGIS)
 			return new PostGISUtil();
+		else if(dbType == AbstractJDBCUtil.DBType.Sybase)
+			return new SybaseUtil();
 		else return null;
 	}
 

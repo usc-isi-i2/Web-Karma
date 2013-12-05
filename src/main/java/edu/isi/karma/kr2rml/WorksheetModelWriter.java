@@ -58,6 +58,7 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.FileUtil;
 
 public class WorksheetModelWriter {
@@ -308,7 +309,8 @@ public class WorksheetModelWriter {
 			return;
 		}
 		try {
-			String historyJsonStr = FileUtil.readFileContentsToString(historyFile);
+			String encoding = EncodingDetector.detect(historyFile);
+			String historyJsonStr = FileUtil.readFileContentsToString(historyFile, encoding);
 			Value historyLiteral = f.createLiteral(historyJsonStr);
 			con.add(mappingRes, hasWorksheetHistoryUri, historyLiteral);
 		} catch (IOException e) {

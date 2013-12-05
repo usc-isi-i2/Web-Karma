@@ -290,6 +290,11 @@ public class WorksheetR2RMLJenaModelParser {
 	
 	private void addHNodeIdToPredObjectMapLink(ObjectMap objMap, PredicateObjectMap pom) {
 		TemplateTermSet objTermSet = objMap.getTemplate();
+		if(objTermSet == null)
+		{
+			logger.error("No matching object term set");
+			return;
+		}
 		for (TemplateTerm term:objTermSet.getAllTerms()) {
 			if (term instanceof ColumnTemplateTerm) {
 				String hNodeId = term.getTemplateTermValue();
@@ -418,6 +423,7 @@ public class WorksheetR2RMLJenaModelParser {
 							HNode hNode = hTable.getHNodeFromColumnName(cName);
 							if(hNode == null || hTable == null) {
 								logger.error("Error retrieving column: " + cName);
+								continue;
 							}
 							
 							if (i == strArr.length()-1) {		// Found!

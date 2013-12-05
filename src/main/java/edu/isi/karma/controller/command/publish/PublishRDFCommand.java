@@ -170,8 +170,7 @@ public class PublishRDFCommand extends Command {
 			}
 		} catch (Exception e1) {
 			logger.error("Error occured while generating RDF!", e1);
-			return new UpdateContainer(new ErrorUpdate(
-					"Error occured while generating RDF!"));
+			return new UpdateContainer(new ErrorUpdate("Error occured while generating RDF: " + e1.getMessage()));
 		}
 		try {
 			
@@ -195,10 +194,12 @@ public class PublishRDFCommand extends Command {
 				logger.info("Saved rdf to store");
 			} else {
 				logger.error("Falied to store rdf to karma_data store");
+				return new UpdateContainer(new ErrorUpdate("Error: Failed to store RDF to the triple store"));
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
+			return new UpdateContainer(new ErrorUpdate("Error occured while generating RDF: " + e.getMessage()));
 		}
 		
 		try {

@@ -53,17 +53,23 @@ public class CSVFileImport extends Import {
     private final char quoteCharacter;
     private final char escapeCharacter = '\\';
     private final File csvFile;
+    private final String encoding;
+    private final int maxNumLines;
     private static Logger logger = LoggerFactory.getLogger(CSVFileImport.class);
 
     public CSVFileImport(int headerRowIndex, int dataStartRowIndex,
-            char delimiter, char quoteCharacter, File csvFile,
+            char delimiter, char quoteCharacter, String encoding,
+            int maxNumLines,
+            File csvFile,
             Workspace workspace) {
 
-        super(csvFile.getName(), workspace);
+        super(csvFile.getName(), workspace, encoding);
         this.headerRowIndex = headerRowIndex;
         this.dataStartRowIndex = dataStartRowIndex;
         this.delimiter = delimiter;
         this.quoteCharacter = quoteCharacter;
+        this.encoding = encoding;
+        this.maxNumLines = maxNumLines;
         this.csvFile = csvFile;
     }
 
@@ -73,7 +79,7 @@ public class CSVFileImport extends Import {
 
         // Prepare the reader for reading file line by line
         
-        InputStreamReader isr = EncodingDetector.getInputStreamReader(csvFile);
+        InputStreamReader isr = EncodingDetector.getInputStreamReader(csvFile, encoding);
         
         BufferedReader br = new BufferedReader(isr);
 
@@ -95,6 +101,7 @@ public class CSVFileImport extends Import {
         // Populate the worksheet model
         String line = null;
         while ((line = br.readLine()) != null) {
+        	logger.debug("Read line: '" + line + "'");
             // Check for the header row
             if (rowCount + 1 == headerRowIndex) {
                 hNodeIdList = addHeaders(getWorksheet(), getFactory(), line);
@@ -104,8 +111,14 @@ public class CSVFileImport extends Import {
 
             // Populate the model with data rows
             if (rowCount + 1 >= dataStartRowIndex) {
-                addRow(getWorksheet(), getFactory(), line, hNodeIdList, dataTable);
-                rowCount++;
+                boolean added = addRow(getWorksheet(), getFactory(), line, hNodeIdList, dataTable);
+                if(added) {
+	                rowCount++;
+	               
+	                if(maxNumLines > 0 && (rowCount - dataStartRowIndex) >= maxNumLines-1) {
+	                	break;
+	                }
+                }
                 continue;
             }
 
@@ -142,7 +155,7 @@ public class CSVFileImport extends Import {
         return headersList;
     }
 
-    private void addRow(Worksheet worksheet, RepFactory fac, String line,
+    private boolean addRow(Worksheet worksheet, RepFactory fac, String line,
             ArrayList<String> hNodeIdList, Table dataTable) throws IOException {
         CSVReader reader = new CSVReader(new StringReader(line), delimiter,
                 quoteCharacter, escapeCharacter);
@@ -150,7 +163,7 @@ public class CSVFileImport extends Import {
         rowValues = reader.readNext();
         if (rowValues == null || rowValues.length == 0) {
             reader.close();
-            return;
+            return false;
         }
 
         Row row = dataTable.addRow(fac);
@@ -165,6 +178,7 @@ public class CSVFileImport extends Import {
             }
         }
         reader.close();
+        return true;
     }
 
     private ArrayList<String> addEmptyHeaders(Worksheet worksheet,
@@ -201,6 +215,7 @@ public class CSVFileImport extends Import {
                 scanner.nextLine();
             }
         }
+        scanner.close();
         return headersList;
     }
 

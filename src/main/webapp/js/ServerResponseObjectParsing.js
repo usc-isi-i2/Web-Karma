@@ -25,14 +25,28 @@ function parse(data) {
         "id" : data["workspaceId"]
     }
 
+    var isError = false;
+    var error = [];
+    var infos = [];
+    var trivialErrors = [];
+    
     // Check for errors
     $.each(data["elements"], function(i, element) {
+    	
         if(element["updateType"] == "KarmaError") {
-            $.sticky(element["Error"]);
-            return false;
+        	if(error[element["Error"]]) {
+        		//ignore;
+        	} else {
+	            $.sticky("<span class='karmaError'>" + element["Error"] + "</span>");
+	            isError = true;
+	            error[element["Error"]] = true;
+        	}
         }
     });
 
+    if(isError)
+    	return false;
+    
     /* Always add the charts from cleaning service in end, so pushing that CleaningServiceUpdate in the end of updates array (if present) */
     // Identify the index
     var cleaningUpdateIndex = -1;
@@ -83,6 +97,9 @@ function parse(data) {
                             }))
                         .append($("<div>")
                             .addClass("rightOptionsToolbar")
+                            .append($("<div>")
+                                .addClass("showEncoding")
+                                .text(worksheet["encoding"]))
                             .append($("<div>")
                                 .addClass("toggleMapView")
                                 .append($("<img>")
@@ -466,7 +483,15 @@ function parse(data) {
 
         }
         else if(element["updateType"] == "KarmaInfo") {
-            $.sticky(element["Info"]);
+        	if(infos[element["Info"]]) {
+        		//ignore;
+        	} else {
+	            $.sticky(element["Info"]);
+	            
+	            infos[element["Info"]] = true;
+        	}
+        } else if(element["updateType"] == "KarmaTrivialError") {
+        	trivialErrors.push(element["TrivialError"]);
         }
         else if(element["updateType"] == "FetchDataMiningModelsUpdate") {
 
@@ -519,6 +544,26 @@ function parse(data) {
             }
         }
     });
+    
+    if(trivialErrors.length > 0) {
+       var errorWindow = $("#rdfGenerationErrorWindow");
+       errorWindow.empty();
+
+       var errExists = [];
+        $.each(trivialErrors, function(index, errorMessage) {
+        	if(errExists[errorMessage]) {
+        		//do nothing
+        	} else {
+        		errorWindow.append("<b>Error # " + (index+1) + "</b><br>");
+        		errorWindow.append("<b>Description:</b> " + errorMessage + "<br>");
+        		errorWindow.append("<hr>");
+        		errExists[errorMessage] = true;
+        	}
+        });
+
+        errorWindow.dialog({title: "Error Report", width: 900});
+        
+    }
 }
 
 function addColumnHeadersRecurse(columns, headersTable, isOdd) {
@@ -580,7 +625,13 @@ function addColumnHeadersRecurse(columns, headersTable, isOdd) {
             headerDiv.append(pElem).append(nestedTableContainer.append(nestedTableHeaderContainer.append(nestedTable)));
         } else {
             headerDiv.addClass("wk-header").text(column["columnName"]).mouseenter(showColumnOptionButton).mouseleave(hideColumnOptionButton);
-            colWidthNumber = Math.floor(column.characterLength * 12 * 0.75);
+            // Pedro: limit cells to 30 chars wide. This should be smarter: if the table is not too wide, then allow more character.
+            // If we impose the limit, we should set the CSS to wrap rather than use ... ellipsis.
+            // We will need a smarter data structure so we can do two passes, first to compute the desired lenghts based on number of characters
+            // and then revisit to assign widths based on total demand for space.
+            var effectiveCharacterLength = Math.min(column.characterLength, 30);
+            //colWidthNumber = Math.floor(column.characterLength * 12 * 0.75);
+            colWidthNumber = Math.floor(effectiveCharacterLength * 12 * 0.75);
         }
 
         var colWidth = {};

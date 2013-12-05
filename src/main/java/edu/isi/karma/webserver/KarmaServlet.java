@@ -43,6 +43,7 @@ import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.rep.metadata.Tag;
 import edu.isi.karma.rep.metadata.TagsContainer.Color;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
+import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.VWorkspaceRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -98,7 +99,8 @@ public class KarmaServlet extends HttpServlet {
 				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf") || ontology.getName().endsWith(".xml")) {
 					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
 					try {
-						mgr.doImport(ontology);
+						String encoding = EncodingDetector.detect(ontology);
+						mgr.doImport(ontology, encoding);
 					} catch (Exception t) {
 						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
 					}

@@ -8,8 +8,9 @@ public class Program implements GrammarTreeNode {
 	public Vector<Partition> partitions = new Vector<Partition>();
 	public String cls = "";
 	public double score = 0.0;
+	public String[] vocab;
 	public PartitionClassifierType classifier;
-	public Program(Vector<Partition> pars)
+	public Program(Vector<Partition> pars, String[] vocab)
 	{
 		this.partitions = pars;
 		for(int i=0;i<this.partitions.size();i++)
@@ -18,6 +19,7 @@ public class Program implements GrammarTreeNode {
 			if(ConfigParameters.debug == 1)
 				System.out.println(this.partitions.get(i).toString());
 		}
+		this.vocab = vocab;
 		if(partitions.size()>1)
 			this.learnClassifier();
 	}
@@ -25,6 +27,7 @@ public class Program implements GrammarTreeNode {
 	{
 		PartitionClassifier pcf = new PartitionClassifier();
 		//PartitionClassifierType classifier= pcf.create(this.partitions);
+		pcf.vocabs = this.vocab;
 		PartitionClassifierType classifier= pcf.create2(this.partitions);
 		this.classifier = classifier;
 //		this.cls = pcf.clssettingString;

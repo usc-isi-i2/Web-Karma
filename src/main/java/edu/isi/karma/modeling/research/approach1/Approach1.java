@@ -48,12 +48,12 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.modeling.research.ComputeGED;
 import edu.isi.karma.modeling.research.GraphVizUtil;
 import edu.isi.karma.modeling.research.ModelReader;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.modeling.research.PatternContainment;
 import edu.isi.karma.modeling.research.ServiceModel;
-import edu.isi.karma.modeling.research.Util;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
@@ -449,7 +449,7 @@ public class Approach1 {
 		}
 	}
 	
-	private Set<SemanticTypeMapping> addLinkToAllDomainNodes(SemanticType semanticType, 
+	private Set<SemanticTypeMapping> findMatchingStructsInGraph(SemanticType semanticType, 
 			String domainUri, String propertyUri, String columnNodeName, Set<Node> addedNodes) {
 		
 		if (addedNodes == null)
@@ -465,20 +465,23 @@ public class Approach1 {
 					
 //					boolean propertyLinkExists = false;
 					int countOfExistingPropertyLinks = 0;
-					Set<Link> linkWithSameUris = this.graphBuilder.getUriToLinksMap().get(propertyUri);
-					if (linkWithSameUris != null)
-					for (Link l : linkWithSameUris) {
-						if (l.getSource().equals(source)) {
-							countOfExistingPropertyLinks ++;
-//							propertyLinkExists = true;
-//							break;
+					Set<Link> outgoingLinks = this.graphBuilder.getGraph().outgoingEdgesOf(source);
+					if (outgoingLinks != null) {
+						for (Link l : outgoingLinks) {
+							if (l.getLabel().getUri().equals(propertyUri)) {
+								if (l.getTarget() instanceof ColumnNode) {
+									SemanticTypeMapping mp = new SemanticTypeMapping(semanticType, (InternalNode)source, l, (ColumnNode)l.getTarget());
+									mappings.add(mp);
+									countOfExistingPropertyLinks ++;
+								}
+							}
 						}
 					}
 					
 					if (countOfExistingPropertyLinks >= 1)
 						continue;
 
-					String nodeId = new RandomGUID().toString();;
+					String nodeId = new RandomGUID().toString();
 					ColumnNode target = new ColumnNode(nodeId, nodeId, columnNodeName, null);
 					this.graphBuilder.addNodeWithoutUpdatingGraph(target);
 					addedNodes.add(target);
@@ -528,6 +531,45 @@ public class Approach1 {
 		return mappingStruct;
 	}
 	
+	private List<SemanticType> getCandidateSemanticTypes(ColumnNode n) {
+		
+		if (n == null)
+			return null;
+		
+		List<SemanticType> types = new ArrayList<>();
+		
+		List<SemanticType> crfSuggestions = n.getTopKSuggestions(4);
+		if (crfSuggestions != null)
+			types.addAll(crfSuggestions);
+		
+		SemanticType userSelectedType = n.getUserSelectedSemanticType();
+		boolean existInCRFTypes = false;
+		if (userSelectedType != null) {
+			if (crfSuggestions != null) {
+				for (SemanticType t : crfSuggestions) {
+					if (userSelectedType.getCrfModelLabelString().equalsIgnoreCase(t.getCrfModelLabelString()))
+						existInCRFTypes = true;
+				}
+			}
+			if (!existInCRFTypes) { // add to types if the correct type is not in CRF syggested types
+				double probability = 0.5;
+				logger.info("type " + userSelectedType.getCrfModelLabelString() + " is not among CRF suggested types.");
+				SemanticType newType = new SemanticType(
+						userSelectedType.getHNodeId(),
+						userSelectedType.getType(),
+						userSelectedType.getDomain(),
+						userSelectedType.getOrigin(),
+						probability,
+						false
+						);
+				types.add(newType);
+			}
+		}
+		
+		return types;
+		
+	}
+	
 	private CandidateSteinerSets getCandidateSteinerSets(List<ColumnNode> columnNodes, Set<Node> addedNodes) {
 
 		if (columnNodes == null || columnNodes.isEmpty())
@@ -540,35 +582,27 @@ public class Approach1 {
 			addedNodes = new HashSet<Node>();
 		
 		Set<SemanticTypeMapping> tempSemanticTypeMappings;
-		List<SemanticType> crfSuggestions;
-		String domainUri = "", linkUri = "";
+		List<SemanticType> candidateSemanticTypes;
+		String domainUri = "", linkUri = "", origin = "";
 		double confidence = 0.0;
 		
 		for (ColumnNode n : columnNodes) {
 			
-			crfSuggestions = n.getTopKSuggestions(4);
-			if (crfSuggestions == null || crfSuggestions.isEmpty())
-				continue;
+			candidateSemanticTypes = getCandidateSemanticTypes(n);
 			
 			logger.info("===== Column: " + n.getColumnName());
-			SemanticType userSelectedSemanticType = n.getUserSelectedSemanticType();
-			if (userSelectedSemanticType != null) {
-				domainUri = userSelectedSemanticType.getDomain().getUri();
-				linkUri = userSelectedSemanticType.getType().getUri();
-				confidence = userSelectedSemanticType.getConfidenceScore();
-			}
-			logger.info("======================= User Selected Semantic Type: " + domainUri + "|" + linkUri + "|" + confidence);
-			
+
 			Set<SemanticTypeMapping> semanticTypeMappings = new HashSet<SemanticTypeMapping>();
-			for (SemanticType semanticType: crfSuggestions) {
+			for (SemanticType semanticType: candidateSemanticTypes) {
 				
 				if (semanticType == null) continue;
 				
 				domainUri = semanticType.getDomain().getUri();
 				linkUri = semanticType.getType().getUri();
 				confidence = semanticType.getConfidenceScore();
+				origin = semanticType.getOrigin().toString();
 				
-				logger.info("======================= CRF Suggested Semantic Type: " + domainUri + "|" + linkUri + "|" + confidence);
+				logger.info("======================= Semantic Type: " + domainUri + "|" + linkUri + "|" + confidence + "|" + origin);
 
 				if (domainUri == null || domainUri.isEmpty()) {
 					logger.info("semantic type does not have any domain");
@@ -580,7 +614,7 @@ public class Approach1 {
 					continue;
 				}
 				
-				tempSemanticTypeMappings = addLinkToAllDomainNodes(semanticType, domainUri, linkUri, n.getColumnName(), addedNodes);
+				tempSemanticTypeMappings = findMatchingStructsInGraph(semanticType, domainUri, linkUri, n.getColumnName(), addedNodes);
 				
 				if (tempSemanticTypeMappings != null) 
 					semanticTypeMappings.addAll(tempSemanticTypeMappings);
@@ -876,34 +910,12 @@ public class Approach1 {
 		File ff = new File(Params.ONTOLOGY_DIR);
 		File[] files = ff.listFiles();
 		for (File f : files) {
-			ontManager.doImport(f);
+			ontManager.doImport(f, "UTF-8");
 		}
 		ontManager.updateCache();
 
-//		// experiment 1
-//		OntologyManager ontManager = new OntologyManager();
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "dbpedia_3.8.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "foaf.rdf"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "wgs84_pos.xml"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "rdf-schema.rdf"));
-//		ontManager.updateCache();
-
-		// experiment 2 - museum data
-//		OntologyManager ontManager = new OntologyManager();
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "100_rdf.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "105_Rdf-schema.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "120_dcterms.rdf"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "140_foaf.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "180_rdaGr2.rdf"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "190_ore.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "220_edm_from_xuming.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "230_saam-ont.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "250_skos.owl"));
-//		ontManager.doImport(new File(Params.ONTOLOGY_DIR + "260_aac-ont.owl"));
-//		ontManager.updateCache();
-
-//		for (int i = 0; i < serviceModels.size(); i++) {
-		int i = 0; {
+		for (int i = 0; i < serviceModels.size(); i++) {
+//		int i = 0; {
 			trainingData.clear();
 			int newServiceIndex = i;
 			ServiceModel newService = serviceModels.get(newServiceIndex);
@@ -969,11 +981,8 @@ public class Approach1 {
 					
 					RankedModel m = hypothesisList.get(k);
 
-					double distance = Util.getDistance(correctModel, m.getModel());
+					double distance = ComputeGED.getDistance(correctModel, m.getModel());
 
-//					double distance = new GraphMatching(Util.toGxl(correctModel), 
-//							Util.toGxl(m.getModel())).getDistance();
-					
 					String label = "candidate" + k + 
 							"--distance:" + distance +
 							"---" + m.getDescription();
@@ -991,7 +1000,6 @@ public class Approach1 {
 	public static void main(String[] args) {
 		
 		try {
-//			testSelectionOfBestMatch();
 			testApproach();
 		} catch (Exception e) {
 			e.printStackTrace();

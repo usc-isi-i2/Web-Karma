@@ -167,9 +167,13 @@ public class VWorksheet extends ViewEntity {
 				+ JSONUtil.json(WorksheetListUpdate.JsonKeys.isCollapsed, collapsed));
 
 		pw.println(newPref
+				+ JSONUtil.json(WorksheetListUpdate.JsonKeys.encoding,
+						worksheet.getEncoding()));
+		pw.println(newPref
 				+ JSONUtil.jsonLast(WorksheetListUpdate.JsonKeys.title,
 						worksheet.getTitle()));
 
+		
 		pw.println(prefix + "}");
 	}
 }

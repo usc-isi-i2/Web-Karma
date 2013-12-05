@@ -23,7 +23,7 @@ function openServiceImportDialog() {
     $("#serviceErrorRow").hide();
     getServicePreferences();
 	$("#ServiceImportDiv").dialog({ modal: true , title: 'Import from Service', width: 500,
-		height: 200, buttons: { "Cancel": function() { $(this).dialog("close"); },
+		height: 240, buttons: { "Cancel": function() { $(this).dialog("close"); },
 			"Import": importService}});
 }
 
@@ -43,7 +43,8 @@ function importService() {
     info["serviceUrl"] = url;
     info["worksheetName"] = worksheetName;
     info["includeInputAttributes"] = $('#includeInputAttributesService').is(':checked');
-
+    info["encoding"] = $("#serviceEncoding").val();
+    
     showWaitingSignOnScreen();
     var returned = $.ajax({
         url: "RequestController",
