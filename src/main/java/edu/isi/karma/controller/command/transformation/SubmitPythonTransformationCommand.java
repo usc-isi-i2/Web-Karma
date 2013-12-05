@@ -23,6 +23,7 @@ package edu.isi.karma.controller.command.transformation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,7 +50,7 @@ import edu.isi.karma.webserver.WorkspaceRegistry;
 public class SubmitPythonTransformationCommand extends MutatingPythonTransformationCommand {
 	
 	protected AddColumnCommand addColCmd;
-	protected ArrayList<String> previousColumnValues;
+	protected ArrayList<String> originalColumnValues;
 	
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitPythonTransformationCommand.class);
@@ -79,7 +80,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	public CommandType getCommandType() {
 		return CommandType.undoable;
 	}
-
+	
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
@@ -87,6 +88,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		HNode hNode = f.getHNode(hNodeId);
 		String hTableId = hNode.getHTableId();
 		HTable hTable = hNode.getHTable(f);
+		String nodeId = hTable.getHNodeIdFromColumnName(newColumnName);
 		
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
 				workspace.getId());
@@ -94,22 +96,16 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		logger.info(hNodeId);
 		try
 		{
-			if(null != hTable.getHNodeFromColumnName(newColumnName) )
+			saveColumnValues(workspace);
+			
+			
+			if(null != hTable.getHNodeFromColumnName(newColumnName) ) //Column name already exists
 			{
 //				logger.error("PyTransform failed because the new column "
 //						+ newColumnName + " already exists!");
 //				return new UpdateContainer(new ErrorUpdate(
 //						"PyTransform failed because the new column "
 //								+ newColumnName + " already exists!"));
-				String nodeId = hTable.getHNodeIdFromColumnName(newColumnName);
-				
-				this.previousColumnValues = new ArrayList<String>();
-				Collection<Node> nodes = new ArrayList<Node>();
-				worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes);
-				for(Node node : nodes) {
-					previousColumnValues.add(node.getValue().asString());
-				}
-				
 				UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
 						hNode, ctrl, nodeId);
 				return c;
@@ -162,13 +158,8 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	public UpdateContainer undoIt(Workspace workspace) {
 		if(addColCmd != null) {
 			addColCmd.undoIt(workspace);
-			
-		} else if(this.previousColumnValues != null) {
-			Worksheet worksheet = workspace.getWorksheet(worksheetId);
-			RepFactory f = workspace.getFactory();
-			HNode hNode = f.getHNode(hNodeId);
-
-			worksheet.getDataTable().setCollectedNodeValues(hNode.getHNodePath(f), this.previousColumnValues, f);
+		} else if(this.originalColumnValues != null) {
+			resetColumnValues(workspace);
 		}
 		
 		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId));
@@ -177,4 +168,30 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		return c;
 	}
 
+	protected void saveColumnValues(Workspace workspace) {
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		RepFactory f = workspace.getFactory();
+		HNode hNode = f.getHNode(hNodeId);
+		
+		this.originalColumnValues = new ArrayList<String>();
+		Collection<Node> nodes = new ArrayList<Node>();
+		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes);
+		for(Node node : nodes) {
+			originalColumnValues.add(node.getValue().asString());
+		}
+	}
+	
+	public void resetColumnValues(Workspace workspace) {
+		if(this.originalColumnValues != null) {
+			Worksheet worksheet = workspace.getWorksheet(worksheetId);
+			RepFactory f = workspace.getFactory();
+			HNode hNode = f.getHNode(hNodeId);
+	
+			worksheet.getDataTable().setCollectedNodeValues(hNode.getHNodePath(f), this.originalColumnValues, f);
+		}
+	}
+	
+	public ArrayList<String> getOriginalColumnValues() {
+		return this.originalColumnValues;
+	}
 }

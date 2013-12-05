@@ -78,11 +78,20 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
 				workspace.getId());
 		
+		
+		
 		this.previousPythonTransformationCommand = ctrl.getWorkspace().getCommandHistory().getCommand(previousCommandId);
 		if(previousPythonTransformationCommand == null || !(previousPythonTransformationCommand instanceof SubmitPythonTransformationCommand) )
 		{
 			logger.info("Previous Python Transformation Command Doesn't exist!");
+			this.saveColumnValues(workspace);
+		} else {
+			SubmitPythonTransformationCommand prevCommand = (SubmitPythonTransformationCommand)previousPythonTransformationCommand;
+			//Previous python command exists, lets reset the values, and then start again
+			this.originalColumnValues = prevCommand.getOriginalColumnValues();
+			this.resetColumnValues(workspace);
 		}
+		
 		try
 		{
 			UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
@@ -101,6 +110,12 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 	public UpdateContainer undoIt(Workspace workspace) {
 		
 		try {
+			if(previousPythonTransformationCommand instanceof SubmitPythonTransformationCommand)
+			{
+				SubmitPythonTransformationCommand prevCommand = (SubmitPythonTransformationCommand)previousPythonTransformationCommand;
+				//Previous python command exists, lets reset the values, and then start again
+				prevCommand.resetColumnValues(workspace);
+			}
 			return previousPythonTransformationCommand.doIt(workspace);
 		} catch (CommandException e) {
 			return new UpdateContainer(new ErrorUpdate("Error occured while  applying previous Python transformation to the column."));

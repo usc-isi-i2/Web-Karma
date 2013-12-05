@@ -142,8 +142,18 @@ function submitEditPythonTransform() {
 	    var hNode = $("td#" + hNodeId);
 	    var worksheetId = hNode.parents("div.Worksheet").attr("id");
 	    var columnName = $("#pythonTransformEditColumnName").val();
-	 
+	    
 	    $("div#pyTransformDialog").dialog("close");
+	    
+	    var prevTransCode = hNode.data("pythonTransformation");
+	    var newTransCode = 	ace.edit("transformCodeEditor").getValue();
+	    
+	    if(prevTransCode.trim() == newTransCode.trim()) {
+	    	console.log("Code has not changed, we do not need to perform an edit");
+	    	return;
+	    }
+	    
+	
     // prepare the JSON Object to be sent to the server
     var info = {};
     info["workspaceId"] = $.workspaceGlobalInformation.id;
@@ -151,7 +161,7 @@ function submitEditPythonTransform() {
 
     var newInfo = [];
     newInfo.push(getParamObject("newColumnName",columnName, "other"));
-    newInfo.push(getParamObject("transformationCode", ace.edit("transformCodeEditor").getValue(), "other"));
+    newInfo.push(getParamObject("transformationCode", newTransCode, "other"));
     newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
     newInfo.push(getParamObject("hNodeId", hNode.data("columnDerivedFrom"), "hNodeId"));
     
