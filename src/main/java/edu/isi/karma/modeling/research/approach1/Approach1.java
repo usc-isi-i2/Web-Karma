@@ -48,12 +48,11 @@ import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SteinerTree;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.research.ComputeGED;
 import edu.isi.karma.modeling.research.GraphVizUtil;
 import edu.isi.karma.modeling.research.ModelReader;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.modeling.research.PatternContainment;
-import edu.isi.karma.modeling.research.ServiceModel;
+import edu.isi.karma.modeling.research.SemanticModel;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
@@ -76,7 +75,7 @@ public class Approach1 {
 
 	private NodeIdFactory nodeIdFactory;
 	
-	private List<ServiceModel> trainingData;
+	private List<SemanticModel> trainingData;
 	private OntologyManager ontologyManager;
 	private GraphBuilder graphBuilder;
 	
@@ -84,7 +83,7 @@ public class Approach1 {
 
 	
 	private static final int MAX_CANDIDATES = 5;
-	private static final int MAX_STEINER_NODES_SETS = 100;
+	private static final int MAX_STEINER_NODES_SETS = 50;
 	
 	private HashMap<String, Integer> linkCountMap;
 	private Multimap<String, String> sourceToTargetLinks;
@@ -155,7 +154,7 @@ public class Approach1 {
 		}
 	}
 	
-	public Approach1(List<ServiceModel> trainingData, 
+	public Approach1(List<SemanticModel> trainingData, 
 			OntologyManager ontologyManager) {
 		
 		this.graphComponents = new HashSet<DirectedWeightedMultigraph<Node,Link>>();
@@ -193,15 +192,15 @@ public class Approach1 {
 		
 		// adding the patterns to the graph
 		
-		for (ServiceModel sm : this.trainingData) {
+		for (SemanticModel sm : this.trainingData) {
 			
-			if (sm.getModel() == null) 
+			if (sm.getGraph() == null) 
 				continue;
 			
 			patternId = sm.getId();
 			logger.info("adding pattern " + patternId + " to the graph ...");
 			
-			addPatternToGraph(patternId, sm.getModel());
+			addPatternToGraph(patternId, sm.getGraph());
 		}
 
 		// adding the links inferred from the ontology
@@ -333,9 +332,9 @@ public class Approach1 {
 	private void buildLinkCountMap() {
 		
 		String key, sourceUri, targetUri, linkUri;
-		for (ServiceModel sm : this.trainingData) {
+		for (SemanticModel sm : this.trainingData) {
 			
-			DirectedWeightedMultigraph<Node, Link> m = sm.getModel();
+			DirectedWeightedMultigraph<Node, Link> m = sm.getGraph();
 
 			for (Link link : m.edgeSet()) {
 
@@ -449,7 +448,7 @@ public class Approach1 {
 		}
 	}
 	
-	private Set<SemanticTypeMapping> findMatchingStructsInGraph(SemanticType semanticType, 
+	private Set<SemanticTypeMapping> findMatchingStructsInGraph(ColumnNode sourceColumn, SemanticType semanticType, 
 			String domainUri, String propertyUri, String columnNodeName, Set<Node> addedNodes) {
 		
 		if (addedNodes == null)
@@ -470,7 +469,8 @@ public class Approach1 {
 						for (Link l : outgoingLinks) {
 							if (l.getLabel().getUri().equals(propertyUri)) {
 								if (l.getTarget() instanceof ColumnNode) {
-									SemanticTypeMapping mp = new SemanticTypeMapping(semanticType, (InternalNode)source, l, (ColumnNode)l.getTarget());
+									SemanticTypeMapping mp = 
+											new SemanticTypeMapping(sourceColumn, semanticType, (InternalNode)source, l, (ColumnNode)l.getTarget());
 									mappings.add(mp);
 									countOfExistingPropertyLinks ++;
 								}
@@ -490,7 +490,7 @@ public class Approach1 {
 					Link link = new DataPropertyLink(linkId, new Label(propertyUri), false);
 					this.graphBuilder.addLink(source, target, link);
 					
-					SemanticTypeMapping mp = new SemanticTypeMapping(semanticType, (InternalNode)source, link, target);
+					SemanticTypeMapping mp = new SemanticTypeMapping(sourceColumn, semanticType, (InternalNode)source, link, target);
 					mappings.add(mp);
 				}
 			}
@@ -498,7 +498,7 @@ public class Approach1 {
 		return mappings;
 	}
 	
-	private SemanticTypeMapping addSemanticTypeStruct(SemanticType semanticType, String columnName, Set<Node> addedNodes) {
+	private SemanticTypeMapping addSemanticTypeStruct(ColumnNode sourceColumn, SemanticType semanticType, Set<Node> addedNodes) {
 
 		if (addedNodes == null) 
 			addedNodes = new HashSet<Node>();
@@ -514,7 +514,7 @@ public class Approach1 {
 		this.graphBuilder.addNode(source, addedNodes);
 		
 		nodeId = new RandomGUID().toString();
-		ColumnNode target = new ColumnNode(nodeId, nodeId, columnName, null);
+		ColumnNode target = new ColumnNode(nodeId, nodeId, sourceColumn.getColumnName(), null);
 		this.graphBuilder.addNodeWithoutUpdatingGraph(target);
 		addedNodes.add(target);
 
@@ -526,7 +526,7 @@ public class Approach1 {
 			link = new DataPropertyLink(linkId, new Label(semanticType.getType().getUri()), false);
 		this.graphBuilder.addLink(source, target, link);
 		
-		SemanticTypeMapping mappingStruct = new SemanticTypeMapping(semanticType, source, link, target);
+		SemanticTypeMapping mappingStruct = new SemanticTypeMapping(sourceColumn, semanticType, source, link, target);
 
 		return mappingStruct;
 	}
@@ -570,7 +570,7 @@ public class Approach1 {
 		
 	}
 	
-	private CandidateSteinerSets getCandidateSteinerSets(List<ColumnNode> columnNodes, Set<Node> addedNodes) {
+	private CandidateSteinerSets getCandidateSteinerSets(Set<ColumnNode> columnNodes, Set<Node> addedNodes) {
 
 		if (columnNodes == null || columnNodes.isEmpty())
 			return null;
@@ -614,14 +614,14 @@ public class Approach1 {
 					continue;
 				}
 				
-				tempSemanticTypeMappings = findMatchingStructsInGraph(semanticType, domainUri, linkUri, n.getColumnName(), addedNodes);
+				tempSemanticTypeMappings = findMatchingStructsInGraph(n, semanticType, domainUri, linkUri, n.getColumnName(), addedNodes);
 				
 				if (tempSemanticTypeMappings != null) 
 					semanticTypeMappings.addAll(tempSemanticTypeMappings);
 				
 				if (tempSemanticTypeMappings == null || tempSemanticTypeMappings.isEmpty()) // No struct in graph is matched with the semantic types, we add a new struct to the graph
 				{
-					SemanticTypeMapping mp = addSemanticTypeStruct(semanticType, n.getColumnName(), addedNodes);
+					SemanticTypeMapping mp = addSemanticTypeStruct(n, semanticType, addedNodes);
 					semanticTypeMappings.add(mp);
 				}
 			}
@@ -670,7 +670,7 @@ public class Approach1 {
 
 	}
 	
-	public List<RankedModel> hypothesize(List<ColumnNode> columnNodes) {
+	public List<SortableSemanticModel> hypothesize(Set<ColumnNode> columnNodes) {
 
 		Set<Node> addedNodes = new HashSet<Node>(); //They should be deleted from the graph after computing the semantic models
 		CandidateSteinerSets candidateSteinerSets = getCandidateSteinerSets(columnNodes, addedNodes);
@@ -689,7 +689,7 @@ public class Approach1 {
 		logger.info("time to update weights: " + (updateWightsElapsedTimeMillis/1000F));
 
 		
-		List<RankedModel> rankedModels = new ArrayList<RankedModel>();
+		List<SortableSemanticModel> sortableSemanticModels = new ArrayList<SortableSemanticModel>();
 		int count = 1;
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
 			logger.info("computing steiner tree for steiner nodes set " + count + " ...");
@@ -697,22 +697,28 @@ public class Approach1 {
 			DirectedWeightedMultigraph<Node, Link> tree = computeSteinerTree(sn.getNodes());
 			count ++;
 			if (tree != null) {
-				RankedModel r = new RankedModel(tree, sn);
-				rankedModels.add(r);
+				SemanticModel sm = new SemanticModel(new RandomGUID().toString(), 
+						tree,
+						columnNodes,
+						sn.getMappingToSourceColumns()
+						);
+				SortableSemanticModel sortableSemanticModel = 
+						new SortableSemanticModel(sm, sn);
+				sortableSemanticModels.add(sortableSemanticModel);
 			}
 			if (count == MAX_STEINER_NODES_SETS)
 				break;
 		}
 		
-		List<RankedModel> uniqueModels = new ArrayList<RankedModel>();
-		RankedModel current, previous;
-		if (rankedModels != null) {
-			Collections.sort(rankedModels);			
-			if (rankedModels.size() > 0)
-				uniqueModels.add(rankedModels.get(0));
-			for (int i = 1; i < rankedModels.size(); i++) {
-				current = rankedModels.get(i);
-				previous = rankedModels.get(i - 1);
+		List<SortableSemanticModel> uniqueModels = new ArrayList<SortableSemanticModel>();
+		SortableSemanticModel current, previous;
+		if (sortableSemanticModels != null) {
+			Collections.sort(sortableSemanticModels);			
+			if (sortableSemanticModels.size() > 0)
+				uniqueModels.add(sortableSemanticModels.get(0));
+			for (int i = 1; i < sortableSemanticModels.size(); i++) {
+				current = sortableSemanticModels.get(i);
+				previous = sortableSemanticModels.get(i - 1);
 				if (current.getScore() == previous.getScore() && current.getCost() == previous.getCost())
 					continue;
 				uniqueModels.add(current);
@@ -883,28 +889,16 @@ public class Approach1 {
 //        return Double.valueOf(twoDForm.format(d));
 //	}
 	
-	private static List<ColumnNode> getColumnNodes(
-			DirectedWeightedMultigraph<Node, Link> model) {
-		
-		List<ColumnNode> columnNodes = new ArrayList<ColumnNode>();
-
-		for (Node n : model.vertexSet()) 
-			if (n instanceof ColumnNode)
-				columnNodes.add((ColumnNode)n);
-			
-		return columnNodes;
-	}
-	
 	private static void testApproach() throws Exception {
 		
 //		String inputPath = Params.INPUT_DIR;
 		String outputPath = Params.OUTPUT_DIR;
 		String graphPath = Params.GRAPHS_DIR;
 		
-//		List<ServiceModel> serviceModels = ModelReader.importServiceModels(inputPath);
-		List<ServiceModel> serviceModels = ModelReader.importServiceModelsFromJGraphModels(Params.JGRAPHT_DIR, ".main.jgraph");
+//		List<SemanticModel> semanticModels = ModelReader.importSemanticModels(inputPath);
+		List<SemanticModel> semanticModels = ModelReader.importSemanticModelsFromSavedModels(Params.MODEL_DIR, ".main.model");
 
-		List<ServiceModel> trainingData = new ArrayList<ServiceModel>();
+		List<SemanticModel> trainingData = new ArrayList<SemanticModel>();
 		
 		OntologyManager ontManager = new OntologyManager();
 		File ff = new File(Params.ONTOLOGY_DIR);
@@ -914,21 +908,21 @@ public class Approach1 {
 		}
 		ontManager.updateCache();
 
-		for (int i = 0; i < serviceModels.size(); i++) {
+		for (int i = 0; i < semanticModels.size(); i++) {
 //		int i = 0; {
 			trainingData.clear();
-			int newServiceIndex = i;
-			ServiceModel newService = serviceModels.get(newServiceIndex);
+			int newSourceIndex = i;
+			SemanticModel newSource = semanticModels.get(newSourceIndex);
 			
 			logger.info("======================================================");
-			logger.info(newService.getServiceDescription());
+			logger.info(newSource.getDescription());
 			logger.info("======================================================");
 			
 //			int[] trainingModels = {0, 4};
 //			for (int n = 0; n < trainingModels.length; n++) { int j = trainingModels[n];
-			for (int j = 0; j < serviceModels.size(); j++) {
-				if (j != newServiceIndex) 
-					trainingData.add(serviceModels.get(j));
+			for (int j = 0; j < semanticModels.size(); j++) {
+				if (j != newSourceIndex) 
+					trainingData.add(semanticModels.get(j));
 			}
 			
 			Approach1 app = new Approach1(trainingData, ontManager);
@@ -956,10 +950,10 @@ public class Approach1 {
 	
 	//		GraphUtil.printGraph(graph);
 	
-			DirectedWeightedMultigraph<Node, Link> correctModel = newService.getModel();
+			SemanticModel correctModel = newSource;
 			// we just get the semantic labels of the correct model
-			List<ColumnNode> columnNodes = getColumnNodes(correctModel);
-			List<RankedModel> hypothesisList = app.hypothesize(columnNodes);
+			Set<ColumnNode> columnNodes = GraphUtil.getColumnNodes(correctModel.getGraph());
+			List<SortableSemanticModel> hypothesisList = app.hypothesize(columnNodes);
 //			if (hypothesis == null)
 //				continue;
 			
@@ -969,30 +963,33 @@ public class Approach1 {
 			if (hypothesisList != null)
 				for (int k = 0; k < hypothesisList.size() && k < 3; k++) {
 					
-					RankedModel m = hypothesisList.get(k);
-					GraphUtil.serialize(m.getModel(), 
-							Params.JGRAPHT_DIR + newService.getServiceNameWithPrefix() + ".app1.rank" + (k+1) + ".jgraph");
+					SortableSemanticModel m = hypothesisList.get(k);
+					new SemanticModel(m).serialize(Params.MODEL_DIR + 
+							newSource.getName() + 
+							".app1.rank" + 
+							(k+1) + 
+							".model");
 					
 				}
 			
-			graphs.put("1-correct model", correctModel);
+			graphs.put("1-correct model", correctModel.getGraph());
 			if (hypothesisList != null)
 				for (int k = 0; k < hypothesisList.size(); k++) {
 					
-					RankedModel m = hypothesisList.get(k);
+					SortableSemanticModel m = hypothesisList.get(k);
 
-					double distance = ComputeGED.getDistance(correctModel, m.getModel());
+					double distance = correctModel.getDistance(m);
 
 					String label = "candidate" + k + 
 							"--distance:" + distance +
 							"---" + m.getDescription();
 					
-					graphs.put(label, m.getModel());
+					graphs.put(label, m.getGraph());
 				}
 			
 			GraphVizUtil.exportJGraphToGraphvizFile(graphs, 
-					newService.getServiceDescription(), 
-					outputPath + serviceModels.get(i).getServiceNameWithPrefix() + ".app1.details.dot");
+					newSource.getDescription(), 
+					outputPath + semanticModels.get(i).getName() + ".app1.details.dot");
 			
 		}
 	}

@@ -106,13 +106,13 @@ public class PublishModelCommand extends Command{
 		// ****************************************************************
 		// ****************************************************************
 		// FIXME
-		String exportDir = Params.JGRAPHT_DIR;
+		String exportDir = Params.MODEL_DIR;
 		try {
 			String name = wk.getTitle();
 			if (name != null && name.indexOf('.') != -1) {
 				name = name.substring(0, name.lastIndexOf('.'));
 			}
-			GraphUtil.serialize(al.getSteinerTree(), exportDir + name + ".main.jgraph");
+			GraphUtil.serialize(al.getSteinerTree(), exportDir + name + ".main.model");
 		} catch (Exception e1) {
 //			logger.error("Ignore this error message. this is just for my own test!");
 //			e1.printStackTrace();

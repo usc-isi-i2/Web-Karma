@@ -73,6 +73,21 @@ public class GraphUtil {
     	return s;
 	}
 	
+	public static Set<ColumnNode> getColumnNodes(
+			DirectedWeightedMultigraph<Node, Link> model) {
+
+		if (model == null)
+			return new HashSet<ColumnNode>();
+		
+		Set<ColumnNode> columnNodes = new HashSet<ColumnNode>();
+
+		for (Node n : model.vertexSet()) 
+			if (n instanceof ColumnNode)
+				columnNodes.add((ColumnNode)n);
+			
+		return columnNodes;
+	}
+	
 	public static void printVertex(Node node, StringBuffer sb) {
 		
 		if (node == null) {

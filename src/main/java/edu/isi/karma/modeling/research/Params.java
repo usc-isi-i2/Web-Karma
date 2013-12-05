@@ -32,7 +32,7 @@ public class Params {
 	public static String OUTPUT_DIR = ROOT_DIR + "output/";
 
 	public static String GRAPHS_DIR = ROOT_DIR + "graph/";
-	public static String JGRAPHT_DIR = ROOT_DIR + "jgrapht/";
+	public static String MODEL_DIR = ROOT_DIR + "model/";
 	public static String GRAPHVIS_DIR = ROOT_DIR + "graphviz/";
 
 }

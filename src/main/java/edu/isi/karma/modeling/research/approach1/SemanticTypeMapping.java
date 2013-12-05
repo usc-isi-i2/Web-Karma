@@ -32,8 +32,13 @@ public class SemanticTypeMapping {
 	private InternalNode source;
 	private Link link;
 	private ColumnNode target;
+	private ColumnNode sourceColumn;
 	
-	public SemanticTypeMapping(SemanticType semanticType, InternalNode source, Link link, ColumnNode target) {
+	public SemanticTypeMapping(ColumnNode sourceColumn, 
+			SemanticType semanticType, 
+			InternalNode source, Link link, 
+			ColumnNode target) {
+		this.sourceColumn = sourceColumn;
 		this.semanticType = semanticType;
 		this.source = source;
 		this.link = link;
@@ -50,6 +55,10 @@ public class SemanticTypeMapping {
 
 	public ColumnNode getTarget() {
 		return target;
+	}
+	
+	public ColumnNode getSourceColumn() {
+		return sourceColumn;
 	}
 	
 	public double getConfidence() {
