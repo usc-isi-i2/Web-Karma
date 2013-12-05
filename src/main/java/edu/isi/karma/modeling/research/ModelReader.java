@@ -89,7 +89,7 @@ public class ModelReader {
 
 		try {
 
-//			serviceModels = importServiceModelsFromJGraphModels(Params.JGRAPHT_DIR, ".main.jgraph");
+//			semanticModels = importSemanticModelsFromSavedModels(Params.MODEL_DIR, ".main.model");
 			semanticModels = importSemanticModels(Params.INPUT_DIR);
 			if (semanticModels != null) {
 				for (SemanticModel sm : semanticModels) {

@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
@@ -39,14 +41,12 @@ import edu.isi.karma.rep.alignment.Node;
 
 public class ComputeGED {
 
-//	private static Logger logger = LoggerFactory.getLogger(ComputeGED.class);
+	private static Logger logger = LoggerFactory.getLogger(ComputeGED.class);
 
 	public static void main(String[] args) throws Exception {
 		computeGEDApp1();
 //		computeGEDApp2();
 	}
-	
-
 	
 	private static void computeGEDApp1() throws Exception {
 		
@@ -68,6 +68,9 @@ public class ComputeGED {
 		Multimap<String, File> index =
 				   Multimaps.index(fileSet, sameService);	
 	
+		double totalGEDRank1 = 0.0, totalGEDRank2 = 0.0, totalGEDRank3 = 0.0,
+				totalGEDKarmaInitial = 0.0, totalGEDKarmaFinal = 0.0;
+		
 		for (String s : index.keySet()) {
 			
 			System.out.println(s);
@@ -103,37 +106,49 @@ public class ComputeGED {
 
 			if (mKarmaInitial != null) {
 				distance = mMain.getDistance(mKarmaInitial);
+				totalGEDKarmaInitial += distance;
 				label = "1-Karma Initial" + "-distance:" + distance;
 				graphs.put(label, mKarmaInitial.getGraph());
 			}
 			
 			if (mKarmaFinal != null) {
 				distance = mMain.getDistance(mKarmaFinal);
+				totalGEDKarmaFinal += distance;
 				label = "3-Karma Final" + "-distance:" + distance;
 				graphs.put(label, mKarmaFinal.getGraph());
 			}
 			
 			if (mApp1Rank1 != null) {
 				distance = mMain.getDistance(mApp1Rank1);
+				totalGEDRank1 += distance;
 				label = "4-Rank1" + "-distance:" + distance;
 				graphs.put(label, mApp1Rank1.getGraph());
 			}
 			
 			if (mApp1Rank2 != null) {
 				distance = mMain.getDistance(mApp1Rank2);
+				totalGEDRank2 += distance;
 				label = "5-Rank2" + "-distance:" + distance;
 				graphs.put(label, mApp1Rank2.getGraph());
 			}
 
 			if (mApp1Rank3 != null) {
 				distance = mMain.getDistance(mApp1Rank3);
+				totalGEDRank3 += distance;
 				label = "6-Rank3" + "-distance:" + distance;
 				graphs.put(label, mApp1Rank3.getGraph());
 			}
 
-
 			GraphVizUtil.exportJGraphToGraphvizFile(graphs, s, Params.OUTPUT_DIR + s + ".app1.out.dot");
 		}
+		
+		logger.info("==============================================");
+		logger.info("total GED for Karma Initial Models: " + totalGEDKarmaInitial);
+		logger.info("total GED for Karma Final Models:   " + totalGEDKarmaFinal);
+		logger.info("total GED for Rank 1 Models:        " + totalGEDRank1);
+		logger.info("total GED for Rank 2 Models:        " + totalGEDRank2);
+		logger.info("total GED for Rank 3 Models:        " + totalGEDRank3);
+		logger.info("==============================================");
 	}
 	
 //	private static void computeGEDApp2() throws Exception {
