@@ -375,7 +375,7 @@
         	<systemProperties>
             <systemProperty>
                 <name>log4j.configuration</name>
-                <value>log4j-jetty.properties</value>
+                <value>log4j.properties</value>
             </systemProperty>
          </systemProperties>
 <!--         		<jettyXml> -->

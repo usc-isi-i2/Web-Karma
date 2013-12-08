@@ -28,11 +28,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author szekely
  * 
  */
-public class Row extends RepEntity implements Neighbor{
+public class Row extends RepEntity implements Neighbor {
+
+	private static Logger logger = LoggerFactory.getLogger(Row.class
+			.getSimpleName());
+
 	// My nodes, columns containing cells or nested tables, a map from HNode ids
 	// to Node.
 	private final Map<String, Node> nodes = new HashMap<String, Node>();
@@ -51,7 +58,7 @@ public class Row extends RepEntity implements Neighbor{
 		return nodes.get(hNodeId);
 	}
 
-	//mariam
+	// mariam
 	public void removeNode(String hNodeId) {
 		nodes.remove(hNodeId);
 		for (Node n : nodes.values()) {
@@ -193,7 +200,13 @@ public class Row extends RepEntity implements Neighbor{
 			// If the node has a value, we have to move the value to the
 			// nestedTable given that we cannot have both.
 			if (!node.getValue().isEmptyValue()) {
-				nestedTable.addOrphanValue(node.getValue(), factory);
+				logger.info("While adding nested table, found that column '"
+						+ factory.getColumnName(hNode.getId())
+						+ "' has a value: '" + node.getValue().asString()
+						+ "'.");
+				logger.info("Emptying value in node and trying to move it to the nested table.");
+				nestedTable.addOrphanValue(node.getValue(), node.getHNodeId(),
+						factory);
 			}
 		} else {
 			// The node may be in one of the nested tables. We have to look for
@@ -209,19 +222,17 @@ public class Row extends RepEntity implements Neighbor{
 
 	@Override
 	public boolean canReachNeighbor(String hNodeId) {
-		
-		return nodes.containsKey(hNodeId) || 
-				(belongsToTable.getNestedTableInNode() != null && belongsToTable.getNestedTableInNode().canReachNeighbor(hNodeId));
+
+		return nodes.containsKey(hNodeId)
+				|| (belongsToTable.getNestedTableInNode() != null && belongsToTable
+						.getNestedTableInNode().canReachNeighbor(hNodeId));
 	}
 
 	@Override
 	public Node getNeighbor(String hNodeId) {
-		if(nodes.containsKey(hNodeId))
-		{
+		if (nodes.containsKey(hNodeId)) {
 			return nodes.get(hNodeId);
-		}
-		else if(belongsToTable.getNestedTableInNode() != null)
-		{
+		} else if (belongsToTable.getNestedTableInNode() != null) {
 			return belongsToTable.getNestedTableInNode().getNeighbor(hNodeId);
 		}
 		return null;
@@ -232,13 +243,11 @@ public class Row extends RepEntity implements Neighbor{
 		String hTableId = belongsToTable.getHTableId();
 		HTable hTable = factory.getHTable(hTableId);
 		String hNodeId = hTable.getHNodeIdFromColumnName(columnName);
-		if(null != hNodeId)
-		{
+		if (null != hNodeId) {
 			return getNeighbor(hNodeId);
-		}
-		else if(belongsToTable.getNestedTableInNode() != null)
-		{
-			return belongsToTable.getNestedTableInNode().getNeighborByColumnName(columnName, factory);
+		} else if (belongsToTable.getNestedTableInNode() != null) {
+			return belongsToTable.getNestedTableInNode()
+					.getNeighborByColumnName(columnName, factory);
 		}
 		return null;
 	}

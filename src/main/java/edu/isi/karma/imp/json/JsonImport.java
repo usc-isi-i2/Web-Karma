@@ -52,129 +52,136 @@ import edu.isi.karma.util.JSONUtil;
 /**
  * @author szekely
  * @author mielvandersande
- *
+ * 
  */
 public class JsonImport extends Import {
 
-    private static Logger logger = LoggerFactory.getLogger(JsonImport.class);
-    private final Object json;
-    private int maxNumLines;
-    private int numObjects;
-    
-    public JsonImport(Object json, String worksheetName, Workspace workspace, String encoding, int maxNumLines) {
-        super(worksheetName, workspace, encoding);
-        this.json = json;
-        this.maxNumLines = maxNumLines;
-    }
+	private static Logger logger = LoggerFactory.getLogger(JsonImport.class);
+	private final Object json;
+	private int maxNumLines;
+	private int numObjects;
 
-    public JsonImport(File jsonFile, String worksheetName, Workspace workspace, String encoding, int maxNumLines) {
-        super(worksheetName, workspace, encoding);
+	public JsonImport(Object json, String worksheetName, Workspace workspace,
+			String encoding, int maxNumLines) {
+		super(worksheetName, workspace, encoding);
+		this.json = json;
+		this.maxNumLines = maxNumLines;
+	}
 
-        String fileContents = null;
-        try {
-            fileContents = FileUtil.readFileContentsToString(jsonFile, encoding);
-        } catch (IOException ex) {
-            logger.error("Error in reading the JSON file");
-        }
+	public JsonImport(File jsonFile, String worksheetName, Workspace workspace,
+			String encoding, int maxNumLines) {
+		super(worksheetName, workspace, encoding);
 
-        this.json = JSONUtil.createJson(fileContents);
-        this.maxNumLines = maxNumLines;
-    }
+		String fileContents = null;
+		try {
+			fileContents = FileUtil
+					.readFileContentsToString(jsonFile, encoding);
+		} catch (IOException ex) {
+			logger.error("Error in reading the JSON file");
+		}
 
-    public JsonImport(String jsonString, String worksheetName, Workspace workspace, String encoding, int maxNumLines) {
-        this(JSONUtil.createJson(jsonString), worksheetName, workspace, encoding, maxNumLines);
-    }
+		this.json = JSONUtil.createJson(fileContents);
+		this.maxNumLines = maxNumLines;
+	}
 
-    public JsonImport(String jsonString, RepFactory repFactory, Worksheet wk, int maxNumLines) {
-        this(JSONUtil.createJson(jsonString), repFactory, wk, maxNumLines);
-    }
-    
-    public JsonImport(Object json, RepFactory repFactory, Worksheet wk,int maxNumLines) {
-        super(repFactory, wk);
-        this.json = json;
-        this.maxNumLines = maxNumLines;
-    }
+	public JsonImport(String jsonString, String worksheetName,
+			Workspace workspace, String encoding, int maxNumLines) {
+		this(JSONUtil.createJson(jsonString), worksheetName, workspace,
+				encoding, maxNumLines);
+	}
 
-    @Override
-    public Worksheet generateWorksheet() throws JSONException {
-    	numObjects = 0;
-    	boolean importJson = false;
-        if (json instanceof JSONArray) {
-            JSONArray a = (JSONArray) json;
-            for (int i = 0; i < a.length(); i++) {
-            	addListElement(a.get(i), getWorksheet().getHeaders(),
-                        getWorksheet().getDataTable());
-                if(maxNumLines > 0 && numObjects >= maxNumLines)
-            		break;
-            }
-            importJson = true;
-        } else if (json instanceof JSONObject) {
-            addKeysAndValues((JSONObject) json, getWorksheet().getHeaders(),
-                    getWorksheet().getDataTable());
-            importJson = true;
-        } 
+	public JsonImport(String jsonString, RepFactory repFactory, Worksheet wk,
+			int maxNumLines) {
+		this(JSONUtil.createJson(jsonString), repFactory, wk, maxNumLines);
+	}
 
-        if(importJson)
-        	writeJsonFile(json);
-        return getWorksheet();
-    }
+	public JsonImport(Object json, RepFactory repFactory, Worksheet wk,
+			int maxNumLines) {
+		super(repFactory, wk);
+		this.json = json;
+		this.maxNumLines = maxNumLines;
+	}
 
+	@Override
+	public Worksheet generateWorksheet() throws JSONException {
+		numObjects = 0;
+		boolean importJson = false;
+		if (json instanceof JSONArray) {
+			JSONArray a = (JSONArray) json;
+			for (int i = 0; i < a.length(); i++) {
+				addListElement(a.get(i), getWorksheet().getHeaders(),
+						getWorksheet().getDataTable());
+				if (maxNumLines > 0 && numObjects >= maxNumLines)
+					break;
+			}
+			importJson = true;
+		} else if (json instanceof JSONObject) {
+			addKeysAndValues((JSONObject) json, getWorksheet().getHeaders(),
+					getWorksheet().getDataTable());
+			importJson = true;
+		}
 
-    private static void writeJsonFile(Object o) {
-        JSONUtil.writeJsonFile(o, "lastJsonImport.json");
-    }
+		if (importJson)
+			writeJsonFile(json);
+		return getWorksheet();
+	}
 
-    private void addObjectElement(String key, Object value, HTable headers,
-            Row row) throws JSONException {
-        HNode hNode = addHNode(headers, key);
-        
-        String hNodeId = hNode.getId();
+	private static void writeJsonFile(Object o) {
+		JSONUtil.writeJsonFile(o, "lastJsonImport.json");
+	}
 
-        if (value instanceof String) {
-        	if (((String) value).isEmpty() && hNode.hasNestedTable()) {
-        		addEmptyRow(row.getNode(hNodeId).getNestedTable(), hNode);
-        	}
-            row.setValue(hNodeId, (String) value, getFactory());
-        } else if (value instanceof Integer) {
-            row.setValue(hNodeId, value.toString(), getFactory());
-        } else if (value instanceof Double) {
-            row.setValue(hNodeId, value.toString(), getFactory());
-        } else if (value instanceof Long) {
-            row.setValue(hNodeId, value.toString(), getFactory());
-        } else if (value instanceof Boolean) {
-            row.setValue(hNodeId, value.toString(), getFactory());
-        } else if (value instanceof JSONObject) {
-        	if(maxNumLines <= 0 || numObjects < maxNumLines) {
-	            HTable nestedHTable = addNestedHTable(hNode, key, row);
-	            Table nestedTable = row.getNode(hNodeId).getNestedTable();
-	            addKeysAndValues((JSONObject) value, nestedHTable, nestedTable);
-        	}
-        } else if (value instanceof JSONArray) {
-        	if(maxNumLines <= 0 || numObjects < maxNumLines) {
-	            HTable nestedHTable = addNestedHTable(hNode, key, row);
-	            Table nestedTable = row.getNode(hNodeId).getNestedTable();
-	            JSONArray a = (JSONArray) value;
-	            for (int i = 0; i < a.length(); i++) {
-	                addListElement(a.get(i), nestedHTable, nestedTable);
-	            }
-        	}
-        } else if (value == JSONObject.NULL) {
-            // Ignore
-        } else {
-            throw new Error("Cannot handle " + key + ": " + value + " yet.");
-        }
-    }
+	private void addObjectElement(String key, Object value, HTable headers,
+			Row row) throws JSONException {
+		HNode hNode = addHNode(headers, key);
 
-    private void addEmptyRow(Table nestedTable, HNode hNode) {
+		String hNodeId = hNode.getId();
+
+		if (value instanceof String) {
+			if (((String) value).isEmpty() && hNode.hasNestedTable()) {
+				addEmptyRow(row.getNode(hNodeId).getNestedTable(), hNode);
+			}
+			row.setValue(hNodeId, (String) value, getFactory());
+		} else if (value instanceof Integer) {
+			row.setValue(hNodeId, value.toString(), getFactory());
+		} else if (value instanceof Double) {
+			row.setValue(hNodeId, value.toString(), getFactory());
+		} else if (value instanceof Long) {
+			row.setValue(hNodeId, value.toString(), getFactory());
+		} else if (value instanceof Boolean) {
+			row.setValue(hNodeId, value.toString(), getFactory());
+		} else if (value instanceof JSONObject) {
+			if (maxNumLines <= 0 || numObjects < maxNumLines) {
+				HTable nestedHTable = addNestedHTable(hNode, key, row);
+				Table nestedTable = row.getNode(hNodeId).getNestedTable();
+				addKeysAndValues((JSONObject) value, nestedHTable, nestedTable);
+			}
+		} else if (value instanceof JSONArray) {
+			if (maxNumLines <= 0 || numObjects < maxNumLines) {
+				HTable nestedHTable = addNestedHTable(hNode, key, row);
+				Table nestedTable = row.getNode(hNodeId).getNestedTable();
+				JSONArray a = (JSONArray) value;
+				for (int i = 0; i < a.length(); i++) {
+					addListElement(a.get(i), nestedHTable, nestedTable);
+				}
+			}
+		} else if (value == JSONObject.NULL) {
+			// Ignore
+		} else {
+			throw new Error("Cannot handle " + key + ": " + value + " yet.");
+		}
+	}
+
+	private void addEmptyRow(Table nestedTable, HNode hNode) {
 		HTable headersNestedTable = hNode.getNestedTable();
 		Row emptyRow = nestedTable.addRow(getFactory());
 		numObjects++;
-		 if(maxNumLines > 0 && numObjects >= maxNumLines)
-     		return;
-		 
-		for (HNode nestedHNode: headersNestedTable.getHNodes()) {
+		if (maxNumLines > 0 && numObjects >= maxNumLines)
+			return;
+
+		for (HNode nestedHNode : headersNestedTable.getHNodes()) {
 			if (nestedHNode.hasNestedTable()) {
-				addEmptyRow(emptyRow.getNode(nestedHNode.getId()).getNestedTable(), nestedHNode);
+				addEmptyRow(emptyRow.getNode(nestedHNode.getId())
+						.getNestedTable(), nestedHNode);
 			} else {
 				emptyRow.setValue(nestedHNode.getId(), "", getFactory());
 			}
@@ -182,118 +189,122 @@ public class JsonImport extends Import {
 	}
 
 	private void addKeysAndValues(JSONObject object, HTable nestedHTable,
-            Table nestedTable) throws JSONException {
-		if(maxNumLines > 0 && numObjects >= maxNumLines)
-     		return;
-		
-        Row nestedRow = nestedTable.addRow(getFactory());
-        numObjects++;
-//        if(maxNumLines > 0 && numObjects >= maxNumLines)
-//     		return;
-        
-        @SuppressWarnings("unchecked")
-        Iterator<String> it = object.sortedKeys();
-        while (it.hasNext()) {
-            String nestedKey = it.next();
-            addObjectElement(nestedKey, object.get(nestedKey), nestedHTable,
-                    nestedRow);
-        }
-    }
+			Table nestedTable) throws JSONException {
+		if (maxNumLines > 0 && numObjects >= maxNumLines)
+			return;
 
-    private void addListElement(Object listValue, HTable headers,
-            Table dataTable) throws JSONException {
-        if (listValue instanceof JSONObject) {
-        	if(maxNumLines <= 0 || numObjects < maxNumLines) {
-	            Row row = dataTable.addRow(getFactory());
-	            numObjects++;
-	
-	            
-	            JSONObject o = (JSONObject) listValue;
-	            @SuppressWarnings("unchecked")
-	            Iterator<String> it = o.sortedKeys();
-	            while (it.hasNext()) {
-	                String key = it.next();
-	                addObjectElement(key, o.get(key), headers, row);
-	            }
-        	}
-        } else if (isPrimitiveValue(listValue)) {
-            HNode hNode = addHNode(headers, "values");
-            String hNodeId = hNode.getId();
-            Row row = dataTable.addRow(getFactory());
-            numObjects++;
-            // TODO, conserve the types of the primitive types.
-            String value = "";
-            if (listValue instanceof String || listValue instanceof Boolean) {
-                value = (String) listValue;
-            } else if (listValue instanceof Double) {
-                value = Double.toString((Double) listValue);
-            } else if (listValue instanceof Integer) {
-                value = Integer.toString((Integer) listValue);
-            } else if (listValue instanceof Long) {
-                value = Long.toString((Long) listValue);
-            } else {
-                // Pedro 2012/09/14
-                logger.error("Unexpected value in JSON array:"
-                        + listValue.toString());
-            }
-            row.setValue(hNodeId, value, getFactory());
-        } else if (listValue instanceof JSONArray) {
-        	if(maxNumLines <= 0 || numObjects < maxNumLines) {
-	            HNode hNode = addHNode(headers, "nested array");
-	            String hNodeId = hNode.getId();
-	            Row row = dataTable.addRow(getFactory());
-	            numObjects++;
-	            if(maxNumLines > 0 && numObjects >= maxNumLines)
-	         		return;
-	            HTable nestedHTable = addNestedHTable(hNode, "nested array values", row);
-	            Table nestedTable = row.getNode(hNodeId).getNestedTable();
-	            JSONArray a = (JSONArray) listValue;
-	            for (int i = 0; i < a.length(); i++) {
-	                addListElement(a.get(i), nestedHTable, nestedTable);
-	            }
-        	}
-        } else {
-            logger.error("Cannot handle whatever case is not covered by the if statements. Sorry.");
-        }
+		Row nestedRow = nestedTable.addRow(getFactory());
+		numObjects++;
+		// if(maxNumLines > 0 && numObjects >= maxNumLines)
+		// return;
 
-    }
+		@SuppressWarnings("unchecked")
+		Iterator<String> it = object.sortedKeys();
+		while (it.hasNext()) {
+			String nestedKey = it.next();
+			addObjectElement(nestedKey, object.get(nestedKey), nestedHTable,
+					nestedRow);
+		}
+	}
 
-    private boolean isPrimitiveValue(Object value) {
-        return value instanceof String || value instanceof Boolean
-                || value instanceof Integer || value instanceof Double
-                || value instanceof Long;
-    }
+	private void addListElement(Object listValue, HTable headers,
+			Table dataTable) throws JSONException {
+		if (listValue instanceof JSONObject) {
+			if (maxNumLines <= 0 || numObjects < maxNumLines) {
+				Row row = dataTable.addRow(getFactory());
+				numObjects++;
 
-    private HTable addNestedHTable(HNode hNode, String key, Row row) {
-    	HTable ht = hNode.getNestedTable();
-        if (ht == null) {
-            ht = hNode.addNestedTable(createNestedTableName(key), getWorksheet(),
-                    getFactory());
-            
-            // Check for all the nodes that have value and nested tables
-            Collection<Node> nodes = new ArrayList<Node>();
-            getWorksheet().getDataTable().collectNodes(hNode.getHNodePath(getFactory()), nodes);
-            for (Node node:nodes) {
-            	if (node.getBelongsToRow() == row) break;
-            	
-            	// Add an empty row for each nested table that does not have any row
-            	if (node.getNestedTable().getNumRows() == 0) {
-            		addEmptyRow(node.getNestedTable(), hNode);
-            	}
-            }
-        }
-        return ht;
-    }
+				JSONObject o = (JSONObject) listValue;
+				@SuppressWarnings("unchecked")
+				Iterator<String> it = o.sortedKeys();
+				while (it.hasNext()) {
+					String key = it.next();
+					addObjectElement(key, o.get(key), headers, row);
+				}
+			}
+		} else if (isPrimitiveValue(listValue)) {
+			HNode hNode = addHNode(headers, HTable.VALUES_COLUMN);
+			String hNodeId = hNode.getId();
+			Row row = dataTable.addRow(getFactory());
+			numObjects++;
+			// TODO, conserve the types of the primitive types.
+			String value = "";
+			if (listValue instanceof String || listValue instanceof Boolean) {
+				value = (String) listValue;
+			} else if (listValue instanceof Double) {
+				value = Double.toString((Double) listValue);
+			} else if (listValue instanceof Integer) {
+				value = Integer.toString((Integer) listValue);
+			} else if (listValue instanceof Long) {
+				value = Long.toString((Long) listValue);
+			} else {
+				// Pedro 2012/09/14
+				logger.error("Unexpected value in JSON array:"
+						+ listValue.toString());
+			}
+			logger.info("Adding 'values' column to store value '" + value);
+			row.setValue(hNodeId, value, getFactory());
+		} else if (listValue instanceof JSONArray) {
+			if (maxNumLines <= 0 || numObjects < maxNumLines) {
+				HNode hNode = addHNode(headers, "nested array");
+				String hNodeId = hNode.getId();
+				Row row = dataTable.addRow(getFactory());
+				numObjects++;
+				if (maxNumLines > 0 && numObjects >= maxNumLines)
+					return;
+				HTable nestedHTable = addNestedHTable(hNode,
+						"nested array values", row);
+				Table nestedTable = row.getNode(hNodeId).getNestedTable();
+				JSONArray a = (JSONArray) listValue;
+				for (int i = 0; i < a.length(); i++) {
+					addListElement(a.get(i), nestedHTable, nestedTable);
+				}
+			}
+		} else {
+			logger.error("Cannot handle whatever case is not covered by the if statements. Sorry.");
+		}
 
-    private HNode addHNode(HTable headers, String key) {
-        HNode hn = headers.getHNodeFromColumnName(key);
-        if (hn == null) {
-            hn = headers.addHNode(key, getWorksheet(), getFactory());
-        }
-        return hn;
-    }
+	}
 
-    private String createNestedTableName(String key) {
-        return "Table for " + key;
-    }
+	private boolean isPrimitiveValue(Object value) {
+		return value instanceof String || value instanceof Boolean
+				|| value instanceof Integer || value instanceof Double
+				|| value instanceof Long;
+	}
+
+	private HTable addNestedHTable(HNode hNode, String key, Row row) {
+		HTable ht = hNode.getNestedTable();
+		if (ht == null) {
+			ht = hNode.addNestedTable(createNestedTableName(key),
+					getWorksheet(), getFactory());
+
+			// Check for all the nodes that have value and nested tables
+			Collection<Node> nodes = new ArrayList<Node>();
+			getWorksheet().getDataTable().collectNodes(
+					hNode.getHNodePath(getFactory()), nodes);
+			for (Node node : nodes) {
+				if (node.getBelongsToRow() == row)
+					break;
+
+				// Add an empty row for each nested table that does not have any
+				// row
+				if (node.getNestedTable().getNumRows() == 0) {
+					addEmptyRow(node.getNestedTable(), hNode);
+				}
+			}
+		}
+		return ht;
+	}
+
+	private HNode addHNode(HTable headers, String key) {
+		HNode hn = headers.getHNodeFromColumnName(key);
+		if (hn == null) {
+			hn = headers.addHNode(key, getWorksheet(), getFactory());
+		}
+		return hn;
+	}
+
+	private String createNestedTableName(String key) {
+		return "Table for " + key;
+	}
 }
