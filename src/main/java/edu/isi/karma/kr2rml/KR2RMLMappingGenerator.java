@@ -23,6 +23,7 @@ package edu.isi.karma.kr2rml;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -136,16 +137,22 @@ public class KR2RMLMappingGenerator {
 	
 	private void calculateColumnNodesCoveredByBlankNodes() {
 		DisplayModel dm = new DisplayModel(alignmentGraph);
-		HashMap<Node, Set<ColumnNode>> nodeCoverage = dm.getNodesSpan();
 		
 		for (Node treeNode:alignmentGraph.vertexSet()) {
 			if (treeNode instanceof InternalNode && subjectMapIndex.containsKey(treeNode.getId())) {
 				SubjectMap subjMap = subjectMapIndex.get(treeNode.getId());
+				
 				if (subjMap.isBlankNode()) {
-					Set<ColumnNode> columnNodesCovered = nodeCoverage.get(treeNode); 
 					List<String> hNodeIdsCovered = new ArrayList<String>();
-					for (ColumnNode columnNode:columnNodesCovered) {
-						hNodeIdsCovered.add(columnNode.getId());
+					Set<Link> links = dm.getModel().outgoingEdgesOf(treeNode);
+					Iterator<Link> linkIterator = links.iterator();
+					while(linkIterator.hasNext())
+					{
+						Node n = linkIterator.next().getTarget();	
+						if(n instanceof ColumnNode)
+						{
+							hNodeIdsCovered.add(((ColumnNode)n).getId());
+						}
 					}
 					
 					auxInfo.getBlankNodesColumnCoverage().put(treeNode.getId(), hNodeIdsCovered);
