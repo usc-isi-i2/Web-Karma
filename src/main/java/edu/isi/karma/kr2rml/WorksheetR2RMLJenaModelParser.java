@@ -44,9 +44,6 @@ import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNodePath;
-import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -394,10 +391,7 @@ public class WorksheetR2RMLJenaModelParser {
 	private void calculateColumnNodesCoveredByBlankNodes() throws JSONException {
 		Property termTypeProp = model.getProperty(Uris.RR_TERM_TYPE_URI);
 		Resource blankNodeRes = model.getResource(Uris.RR_BLANK_NODE_URI);
-		Property kmCoverColumnProp = model.getProperty(Uris.KM_BLANK_NODE_COVERS_COLUMN_URI);
 		Property kmBnodePrefixProp = model.getProperty(Uris.KM_BLANK_NODE_PREFIX_URI);
-		
-		List<HNodePath> allColPaths = worksheet.getHeaders().getAllPaths();
 		ResIterator blankNodeSubjMapItr = model.listResourcesWithProperty(termTypeProp, blankNodeRes);
 		
 		for (Resource subjMapRes:subjectMapResources) {
