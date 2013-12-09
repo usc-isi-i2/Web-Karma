@@ -23,6 +23,39 @@ function styleAndAssignHandlersToModelingVizElements() {
     var dropDownMenu = $("div#modelingClassDropDownMenu");
     $("button", dropDownMenu).button();
 
+    $("#addNodeIncomingLink").click(function() {
+    	console.log("Add Incoming Link");
+    	showIncomingOutgoingDialog("incoming");
+//    	showLinksForInternalNode(d, svg, d3.event);
+    });
+    
+    $("#incomingOutgoingClassKeyword").keyup(function(event) {
+        if(event.keyCode == 13){
+            $("#incomingOutgoingClassSearch").click();
+        }
+    });
+    $("#incomingOutgoingPropertyKeyword").keyup(function(event) {
+        if(event.keyCode == 13){
+            $("#incomingOutgoingPropertySearch").click();
+        }
+    });
+    
+    
+    $("#incomingOutgoingClassSearch").button().click(function(){
+        $("div#incomingOutgoingLinksClassDiv1").jstree("search", $("#incomingOutgoingClassKeyword").val());
+        $("div#incomingOutgoingLinksClassDiv2").jstree("search", $("#incomingOutgoingClassKeyword").val());
+    });
+    $("#incomingOutgoingPropertySearch").button().click(function(){
+        $("div#incomingOutgoingLinksPropertyDiv1").jstree("search", $("#incomingOutgoingPropertyKeyword").val());
+        $("div#incomingOutgoingLinksPropertyDiv2").jstree("search", $("#incomingOutgoingPropertyKeyword").val());
+    });
+    
+    
+    $("#addNodeOutgoingLink").click(function() {
+    	console.log("Add Outgoing Link");
+    	showIncomingOutgoingDialog("outgoing");
+    });
+    
     $("#invokeRubenReconciliationService").click(function() {
         console.log("I am clicked!!")
         dropDownMenu.hide();
@@ -469,8 +502,20 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .on("click", function(d){
             if(d["nodeType"] == "InternalNode") {
                 d["targetNodeId"] = d["id"];
-                showLinksForInternalNode(d, svg, d3.event);
+                console.log("Show links for Internal Node1: " + d.label + ":" + d.id + d.uri);
+                //dipsy: comment lien below later
+                //showLinksForInternalNode(d, svg, d3.event);
+                var menu = $("div#modelingClassDropDownMenu");
+                menu.data("nodeId", d.id);
+                menu.data("nodeDomain", d.nodeDomain);
+                menu.data("worksheetId", worksheetId);
+                menu.data("alignmentId", $(svg).data("alignmentId"));                
+                menu.css({"position":"absolute",
+                    "top":$(this).offset().top + 5,
+                    "left": $(this).offset().left + $(this).width()/2 - $(menu).width()/2}).show();
             }
+
+        
         });
         
     node.insert("rect", "text")
@@ -515,8 +560,19 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 changeSemanticType_d3(d, svg, d3.event);
             else if(d["nodeType"] == "InternalNode") {
                 d["targetNodeId"] = d["id"];
-                showLinksForInternalNode(d, svg, d3.event);
+                console.log("Show links for Internal Node2");
+               // showLinksForInternalNode(d, svg, d3.event);
+                var menu = $("div#modelingClassDropDownMenu");
+                menu.data("nodeId", d.id);
+                menu.data("nodeDomain", d.nodeDomain);
+                menu.data("worksheetId", worksheetId);
+                menu.data("alignmentId", $(svg).data("alignmentId"));       
+                menu.css({"position":"absolute",
+                    "top":$(this).offset().top + 5,
+                    "left": $(this).offset().left + $(this).width()/2 - $(menu).width()/2}).show();
             }
+
+        
         });
 
     node.insert("path")
@@ -1151,7 +1207,7 @@ function showChooseNodeDialog(event) {
         }, "Submit":submitInternalNodeChange }});
 }
 
-function showChooseLinkDialog() {
+function showChooseLinkDialog(event) {
     var optionsDiv = $("div#chooseLinkDialog");
     optionsDiv.data("currentEditedCell", $(this).parent());
     $(this).parents("tr.fixMe").removeClass("fixMe");
@@ -1419,17 +1475,366 @@ function populateLinksListFromServer() {
     });
 }
 
+function showIncomingOutgoingDialog(linkType) {
+	var linkTitle;
+	console.log("Link type::" + linkType)
+	if(linkType == "incoming") {
+		linkTitle = "Add Incoming Link";
+		$("#incomingOutgoingLinksDirection").html("from");
+	} else if(linkType == "outgoing") {
+		linkTitle = "Add Outgoing Link";
+		$("#incomingOutgoingLinksDirection").html("to");
+	} else if(linkType == "fromClass"){
+		linkTitle = "Change from Class";
+		$("#incomingOutgoingLinksDirection").html("from");
+	} else if(linkType == "toClass") {
+		linkTitle = "Change to Class";
+		$("#incomingOutgoingLinksDirection").html("to");
+	} else {
+		linkTitle = linkType;
+	}
+	
+	var optionsDiv = $("div#incomingOutgoingLinksDialog");
+	var menuDiv = $("#modelingClassDropDownMenu");
+
+    optionsDiv.data("workspaceId", $.workspaceGlobalInformation.id);
+    optionsDiv.data("nodeId",  $(menuDiv).data("nodeId"));
+    optionsDiv.data("nodeDomain",  $(menuDiv).data("nodeDomain"));
+    optionsDiv.data("alignmentId",  $(menuDiv).data("alignmentId"));
+    optionsDiv.data("worksheetId", $(menuDiv).data("worksheetId"));
+    optionsDiv.data("linkType", linkType);
+    
+    //Add the nodes in model followed by other nodes in incomingOutgoingLinksClassTable
+    populateClassListFromServer(optionsDiv);
+	
+	//Add the compatible properties followed by all other properties in incomingOutgoingLinksPropertyTable
+    populatePropertyListFromServer(optionsDiv);
+    
+	optionsDiv.dialog({width: 550, 
+						height: 480, 
+						position: [200, 200], 
+						title: linkTitle,
+						buttons: { 
+								"Cancel": function() { $(this).dialog("close"); }, 
+								"Submit":submitIncomingOutgoingLinksDialog }});
+}
 
 
+function submitIncomingOutgoingLinksDialog() {
+	var dialog = $("div#incomingOutgoingLinksDialog");
+	var startNode = dialog.data("nodeId");
+	var linkType = dialog.data("linkType");
+	
+	var classDiv = $("#incomingOutgoingLinksClassData");
+	var propertyDiv = $("#incomingOutgoingLinksPropertyData");
+	
+	 var info = new Object();
+	 info["workspaceId"] = dialog.data("workspaceId");
+	 info["command"] = "ChangeInternalNodeLinksCommand";
+
+	 // Prepare the input for command
+	 var newInfo = [];
+	 
+	// Put the old edge information
+	var initialEdges = [];
+	newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
+	    
+	newInfo.push(getParamObject("alignmentId", dialog.data("alignmentId"), "other"));
+	newInfo.push(getParamObject("worksheetId", dialog.data("worksheetId"), "worksheetId"));
+	 
+	 // Put the new edge information
+	 var newEdges = [];
+	 var newEdgeObj = {};
+	 
+	 var source, target;
+	 var property = propertyDiv.data("id");
+	    
+	if(linkType == "incoming") {
+		target = startNode;
+		source = classDiv.data("id");
+	} else if(linkType == "outgoing") {
+		source = startNode;
+		target = classDiv.data("id");
+	} else {
+		alert("Invalid linkType: " + linkType);
+		return;
+	}
+	
+	newEdgeObj["edgeSourceId"] = source;
+    newEdgeObj["edgeTargetId"] = target;
+    newEdgeObj["edgeId"] = property;
+    newEdges.push(newEdgeObj);
+    
+	newInfo.push(getParamObject("newEdges", newEdges, "other"));
+	info["newInfo"] = JSON.stringify(newInfo);
+	info["newEdges"] = newEdges;
+	
+	showLoading(dialog.data("worksheetId"));
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                parse(json);
+                hideLoading(dialog.data("worksheetId"));
+                dialog.dialog("close");
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while getting nodes list!");
+                hideLoading(dialog.data("worksheetId"));
+                dialog.dialog("close");
+            }
+    });
+}
+
+function populateClassListFromServer(dialog) {
+	var info = new Object();
+    info["workspaceId"] = dialog.data("workspaceId");
+    info["command"] = "GetInternalNodesListOfAlignmentCommand";
+    info["alignmentId"] = dialog.data("alignmentId");
+    info["nodesRange"] = "existingTreeNodes"; //allGraphNodes";
+    
+    $("#incomingOutgoingLinksClassData").data("label", "");
+    
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                var nodeModel = parseInternalNodeList(json, true);
+                
+                $("div#incomingOutgoingLinksErrorWindowBox").hide();
+                displayIncomingOutgoingClasses(nodeModel, $("#incomingOutgoingLinksClassDiv1"),
+                		$("#incomingOutgoingLinksClassDiv2"), $("#incomingOutgoingLinksClassData"), dialog);
+                
+                
+                //Now get all other nodes
+                info["nodesRange"] = "allGraphNodes";
+                $.ajax({
+                	url: "RequestController",
+                	type: "POST",
+                	data: info,
+                	dataType: "json",
+                	complete: 
+                		function(xhr, textStatus) {
+                			var json = $.parseJSON(xhr.responseText);
+                			var nodesInner = parseInternalNodeList(json, true);
+                			var nodeAll = [];
+                			$.each(nodesInner, function(index, node) {
+                				//console.log(node + ":" + nodeModel[0] + ": " + $.inArray(node, nodeModel));
+                				if($.inArray(node, nodeModel) == -1) {
+	                                nodeAll.push(node);
+                				}
+                            });
+                			displayIncomingOutgoingClasses(nodeAll, $("#incomingOutgoingLinksClassDiv2"), 
+                					$("#incomingOutgoingLinksClassDiv1"), $("#incomingOutgoingLinksClassData"), dialog);
+                		},
+                	error:
+                		function(xhr, textStatus) {
+                			alert("Error occured while getting nodes list!");
+                		}
+                });
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while getting nodes list!");
+            }
+    });
+}
+
+function parseInternalNodeList(json, sortNodes) {
+	var nodes = [];
+	$.each(json["elements"], function(index, element) {
+        if(element["updateType"] == "InternalNodesList") {
+            if(sortNodes) {
+	        	element["nodes"].sort(function(a,b) {
+	                return a["nodeLabel"].toUpperCase().localeCompare(b["nodeLabel"].toUpperCase());
+	            });
+            }
+            
+            $.each(element["nodes"], function(index2, node) {
+            	var nodeData = {data:node["nodeLabel"], metadata:{"uri": node["nodeUri"], "id" : node["nodeId"]}};
+            	nodes.push(nodeData);
+                
+            });
+        }
+    });
+	return nodes;
+}
 
 
+function displayIncomingOutgoingClasses(dataArray, treeDiv, otherTreeDiv, dataDiv, dialog) {
+	if(dataArray.length == 0) {
+        $(treeDiv).html("<i>none</i>");
+    } else {
+        $(treeDiv).jstree({
+            "json_data" : {
+                "data" : dataArray
+            },
+            "themes" : {
+                "theme" : "apple",
+                "url": "css/jstree-themes/apple/style.css",
+                "dots" : true,
+                "icons" : false
+            },
+            "search" : {
+                "show_only_matches": true
+            },
+            "plugins" : [ "themes", "json_data", "ui", "search"]
+        })
+        	.bind("select_node.jstree", function (e, data) {
+                dataDiv.data("label",data.rslt.obj.context.lastChild.wholeText);
+                dataDiv.data("uri",data.rslt.obj.data("uri"));
+                dataDiv.data("id", data.rslt.obj.data("id"))
+                var a = $.jstree._focused().get_selected();
+                $(otherTreeDiv).jstree("deselect_all");
+                $(treeDiv).jstree("open_node", a);
+                
+                refreshPropertyListFromServer(data.rslt.obj.data("uri"), dialog);
+            });
+
+    }
+}
 
 
+function populatePropertyListFromServer(dialog) {
+	var info = new Object();
+    info["workspaceId"] = dialog.data("workspaceId");
+    info["command"] = "GetDataPropertyHierarchyCommand";
+    
+    $("#incomingOutgoingLinksPropertyData").data("label", "");
+    $("#incomingOutgoingLinksPropertyDiv1").html("<i>&nbsp;</i>");
+    
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                var nodeModel = parseDataPropertyList(json, true);
+                
+                $("div#incomingOutgoingLinksErrorWindowBox").hide();
+                displayIncomingOutgoingProperty(nodeModel, $("#incomingOutgoingLinksPropertyDiv2"),
+                		$("#incomingOutgoingLinksPropertyDiv1"), $("#incomingOutgoingLinksPropertyData"));
+                
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while getting property list!");
+            }
+    });
+}
 
+function parseDataPropertyList(json, sortNodes) {
+	var nodes = [];
+	$.each(json["elements"], function(index, element) {
+        if(element["updateType"] == "DataPropertyListUpdate" || element["updateType"] == "DataPropertiesForClassUpdate") {
+            if(sortNodes) {
+	        	element["data"].sort(function(a,b) {
+	                return a["data"].toUpperCase().localeCompare(b["data"].toUpperCase());
+	            });
+            }
+            
+            $.each(element["data"], function(index2, node) {
+            	nodes.push(node["data"]);
+                
+            });
+        } else if(element["updateType"] == "LinksList") {
+        	 if(sortNodes) {
+ 	        	element["edges"].sort(function(a,b) {
+ 	                return a["edgeLabel"].toUpperCase().localeCompare(b["edgeLabel"].toUpperCase());
+ 	            });
+             }
+             
+             $.each(element["edges"], function(index2, node) {
+            	 var nodeData = {data:node["edgeLabel"], metadata:{"id": node["edgeId"]}};
+             	 nodes.push(nodeData);
+                 
+             });
+        }
+    });
+	return nodes;
+}
 
+function refreshPropertyListFromServer(selectedClass, dialog) {
+	//alert("Get compatibe properties for: " + selectedClass);
+	var info = new Object();
+    info["workspaceId"] = dialog.data("workspaceId");
+    info["command"] = "GetLinksOfAlignmentCommand";
+    info["alignmentId"] = dialog.data("alignmentId");
+    var linkType = dialog.data("linkType");
+    var startNodeClass = dialog.data("nodeDomain");
+    
+    info["linksRange"] = "linksWithDomainAndRange";
+    if(linkType == "incoming") {
+    	info["domain"] = selectedClass;
+    	info["range"] = startNodeClass;
+    } else if(linkType == "outgoing") {
+    	info["domain"] = startNodeClass;
+    	info["range"] = selectedClass;
+    }
+   // info["URI"] = selectedClass;
+    
+    //$("#incomingOutgoingLinksPropertyData").data("label", "");
+    $("#incomingOutgoingLinksPropertyDiv1").html("<i>&nbsp;</i>");
+    var returned = $.ajax({
+        url: "RequestController",
+        type: "POST",
+        data : info,
+        dataType : "json",
+        complete :
+            function (xhr, textStatus) {
+                var json = $.parseJSON(xhr.responseText);
+                var nodeModel = parseDataPropertyList(json, true);
+                
+                $("div#incomingOutgoingLinksErrorWindowBox").hide();
+                displayIncomingOutgoingProperty(nodeModel, $("#incomingOutgoingLinksPropertyDiv1"),
+                		$("#incomingOutgoingLinksPropertyDiv2"), $("#incomingOutgoingLinksPropertyData"));
+                
+            },
+        error :
+            function (xhr, textStatus) {
+                alert("Error occured while getting property list!");
+            }
+    });
+}
 
+function displayIncomingOutgoingProperty(dataArray, treeDiv, otherTreeDiv, dataDiv) {
+	if(dataArray.length == 0) {
+        $(treeDiv).html("<i>none</i>");
+    } else {
+        $(treeDiv).jstree({
+            "json_data" : {
+                "data" : dataArray
+            },
+            "themes" : {
+                "theme" : "apple",
+                "url": "css/jstree-themes/apple/style.css",
+                "dots" : true,
+                "icons" : false
+            },
+            "search" : {
+                "show_only_matches": true
+            },
+            "plugins" : [ "themes", "json_data", "ui", "search"]
+        })
+        	.bind("select_node.jstree", function (e, data) {
+                dataDiv.data("label",data.rslt.obj.context.lastChild.wholeText);
+                dataDiv.data("id",data.rslt.obj.data("id"));
+                var a = $.jstree._focused().get_selected();
+                $(otherTreeDiv).jstree("deselect_all");
+                $(treeDiv).jstree("open_node", a);
+            });
 
-
-
-
+    }
+}
 

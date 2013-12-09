@@ -257,6 +257,10 @@ class OntologyCache {
 		return properties;
 	}
 
+	public Label getPropertyLabel(String property) {
+		return properties.get(property);
+	}
+	
 	public HashMap<String, Label> getDataProperties() {
 		return dataProperties;
 	}

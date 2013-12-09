@@ -403,6 +403,60 @@ public class OntologyManager  {
 		return results;
 	}
 	
+	/**
+	 * This method takes @param domainUri and rangeClassUri and for returns all links/properties with this domain & range
+	 * If @param recursive is true, it also returns the children of the domains.
+	 * @param domainUri
+	 * @param rangeUri
+	 * @param recursive
+	 * @return
+	 */
+	public Map<String, Label> getPropertiesGivenDomainRange(String domainUri, String rangeUri, boolean recursive) {
+		
+		HashSet<String> objectProperties = ontCache.getDirectInObjectProperties().get(rangeUri);
+		if(recursive) {
+			HashSet<String> propRecursive = ontCache.getIndirectInObjectProperties().get(rangeUri);
+			if(propRecursive != null)
+				objectProperties.addAll(propRecursive);
+		}
+		HashMap<String, Label> results = new HashMap<String, Label>();
+		HashSet<String> direct = null;
+		HashSet<String> indirect = null;
+		
+		if (objectProperties == null)
+			return results;
+		
+		for (String op : objectProperties) {
+			boolean propAdded = false;
+			direct = ontCache.getPropertyDirectDomains().get(op);
+			if (direct != null) {
+				for(String directDomain : direct) {
+					if(directDomain.equals(domainUri)) {
+						results.put(op, ontCache.getPropertyLabel(op));
+						propAdded = true;
+						break;
+					}
+				}
+				//results.addAll(direct);
+			}
+			if(propAdded)
+				continue;
+			if (recursive) indirect = ontCache.getPropertyIndirectDomains().get(op);
+			if (indirect != null) {
+				//results.addAll(indirect);
+				for(String indirectDomain : indirect) {
+					if(indirectDomain.equals(domainUri)) {
+						results.put(op, ontCache.getPropertyLabel(op));
+						propAdded = true;
+						break;
+					}
+				}
+			}
+		}
+		
+		return results;
+	}
+	
 	public Map<String, String> getPrefixMap () {
 		Map<String, String> nsMap = ontHandler.getOntModel().getNsPrefixMap();
 		Map<String, String> prefixMap = new HashMap<String, String>();

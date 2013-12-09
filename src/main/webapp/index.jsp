@@ -277,7 +277,7 @@ and related projects, please see: http://www.isi.edu/integration
 
                 // Assign style and handler to the modeling class bubble options
                 styleAndAssignHandlersToModelingVizElements();
-
+              
                 // When the user changes header line index
                 $('.CSVImportOption').change(function() {
                     CSVImportOptionsChanged("preview");
@@ -1171,7 +1171,66 @@ and related projects, please see: http://www.isi.edu/integration
             </table>
         </div>
 
-
+		<div class="smallSizedFont" id="incomingOutgoingLinksDialog" style="display:none">
+			<div id="incomingOutgoingLinksBox" class="ui-corner-all">
+				<table width="100%">
+					<tr>
+						<td width="50%"><span id="incomingOutgoingLinksDirection">Direction</span> Class:</td>
+						<td>Property:</td>
+					</tr>
+					<tr>
+						<td valign="top">
+							<input type="text" id="incomingOutgoingClassKeyword" maxlength="100" size="20"/>
+				            <button id="incomingOutgoingClassSearch">
+				                Search
+				            </button>
+						</td>
+						
+						<td valign="top">
+							<input type="text" id="incomingOutgoingPropertyKeyword" maxlength="100" size="20"/>
+				            <button id="incomingOutgoingPropertySearch">
+				                Search
+				            </button>
+						</td>
+					</tr>
+					<tr>
+						<td valign="top">
+							<div id="incomingOutgoingLinksClassData" style="display:none">
+	                		</div>
+							<div id="incomingOutgoingLinksClassDiv1">
+	                		</div>
+	                		<div class="incomingOutgoingLinksSeparator">
+	                		</div>
+	                		<div id="incomingOutgoingLinksClassDiv2">
+	                		</div>
+						</td>
+						<td valign="top">
+							<div id="incomingOutgoingLinksPropertyData" style="display:none">
+	                		</div>
+							<div id="incomingOutgoingLinksPropertyDiv1">
+	                		</div>
+	                		<div class="incomingOutgoingLinksSeparator">
+	                		</div>
+	                		<div id="incomingOutgoingLinksPropertyDiv2">
+	                		</div>
+						</td>
+					</tr>
+				</table>
+            </div>
+            <div class="ui-widget" id="incomingOutgoingLinksErrorWindowBox" style="display: none">
+                <br>
+                <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+                    <p id="incomingOutgoingLinksErrorWindow">
+                        <span class="ui-icon ui-icon-alert"
+                              style="float: left; margin-right: .3em;"></span>
+                        <span id="incomingOutgoingLinksWindowText"></span>
+                    </p>
+                    <br />
+                </div>
+                <br />
+            </div>
+		</div>
+		
         <div class="smallSizedFont" id="currentLinksInternalNodeDialog" style="display: none">
             <div id="CurrentLinksBox" class="ui-corner-all">
                 <h3>Incoming Links:</h3>
@@ -1297,8 +1356,11 @@ and related projects, please see: http://www.isi.edu/integration
                 </table>
             </div>
         </div>
-        <div id="modelingClassDropDownMenu" class="ui-corner-all" style="display: none">
-            <button id="invokeRubenReconciliationService">Invoke Reconciliation Service</button>
+       
+        <div id="modelingClassDropDownMenu" class="ui-corner-all" style="display:none">
+        	<button id="addNodeIncomingLink">Add Incoming Link</button>
+        	<button id="addNodeOutgoingLink">Add Outgoing Link</button>
+        	<button id="invokeRubenReconciliationService">Invoke Reconciliation Service</button>
             <button id="invokeMachineLearningService">Invoke M/L Service</button>
         </div>
     </body>
