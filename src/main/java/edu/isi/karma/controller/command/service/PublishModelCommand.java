@@ -38,8 +38,6 @@ import edu.isi.karma.model.serialization.WebServiceLoader;
 import edu.isi.karma.model.serialization.WebServicePublisher;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.alignment.GraphUtil;
-import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.Link;
@@ -99,28 +97,6 @@ public class PublishModelCommand extends Command{
 		AlignmentManager mgr = AlignmentManager.Instance();
 		String alignmentId = mgr.constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment al = mgr.getAlignment(alignmentId);
-		
-		// ****************************************************************
-		// ****************************************************************
-		// mohsen: please ignore this part of the code, this is for my own test!
-		// ****************************************************************
-		// ****************************************************************
-		// FIXME
-		String exportDir = Params.JGRAPHT_DIR;
-		try {
-			String name = wk.getTitle();
-			if (name != null && name.indexOf('.') != -1) {
-				name = name.substring(0, name.lastIndexOf('.'));
-			}
-			GraphUtil.serialize(al.getSteinerTree(), exportDir + name + ".main.jgraph");
-		} catch (Exception e1) {
-//			logger.error("Ignore this error message. this is just for my own test!");
-//			e1.printStackTrace();
-		}
-		// ****************************************************************
-		// ****************************************************************
-		// ****************************************************************
-		// ****************************************************************
 		
 		if (al == null) { 
 			logger.error("The alignment model is null.");

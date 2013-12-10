@@ -30,16 +30,28 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import edu.isi.karma.modeling.research.SemanticModel;
 import edu.isi.karma.rep.alignment.Link;
-import edu.isi.karma.rep.alignment.Node;
 
-public class RankedModel implements Comparable<RankedModel>{
+public class SortableSemanticModel extends SemanticModel
+	implements Comparable<SortableSemanticModel>{
 
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private double cost;
+	private List<Coherence> coherence;
+	private SteinerNodes steinerNodes;
+	
+	// the number of patterns shared among all the links 
+	// private int frequency;
+	
 	private class Coherence implements Comparable<Coherence>{
 
 		private int linkCount;
@@ -66,22 +78,16 @@ public class RankedModel implements Comparable<RankedModel>{
 				return 0;
 		}
 	}
-	
-	private DirectedWeightedMultigraph<Node, Link> model;
-	private double cost;
-	private List<Coherence> coherence;
-	private SteinerNodes steinerNodes;
-	
-	// the number of patterns shared among all the links 
-//	private int frequency;
+
 //	private List<Integer> cohesion;
 	
-	public RankedModel(DirectedWeightedMultigraph<Node, Link> model, SteinerNodes steinerNodes) {
+	public SortableSemanticModel(SemanticModel semanticModel, SteinerNodes steinerNodes) {
 		
-		this.model = model; 
+		super(semanticModel);
+		
 		this.steinerNodes = steinerNodes;
 		
-		if (this.model != null && this.model.edgeSet().size() > 0) {
+		if (this.graph != null && this.graph.edgeSet().size() > 0) {
 			this.cost = this.computeCost();
 //			this.frequency = this.computeFrequency();
 //			this.cohesion = this.computeCohesion();
@@ -89,11 +95,11 @@ public class RankedModel implements Comparable<RankedModel>{
 		}
 	}
 	
-	public RankedModel(DirectedWeightedMultigraph<Node, Link> model) {
+	public SortableSemanticModel(SemanticModel semanticModel) {
 		
-		this.model = model; 
+		super(semanticModel);
 		
-		if (this.model != null && this.model.edgeSet().size() > 0) {
+		if (this.graph != null && this.graph.edgeSet().size() > 0) {
 			this.cost = this.computeCost();
 //			this.frequency = this.computeFrequency();
 //			this.cohesion = this.computeCohesion();
@@ -101,6 +107,10 @@ public class RankedModel implements Comparable<RankedModel>{
 		}
 	}
 
+	public SemanticModel getBaseModel() {
+		return new SemanticModel(this);
+	}
+	
 	public double getCost() {
 		return cost;
 	}
@@ -151,14 +161,10 @@ public class RankedModel implements Comparable<RankedModel>{
 //			s += String.valueOf(i);
 //		return s;
 //	}
-
-	public DirectedWeightedMultigraph<Node, Link> getModel() {
-		return model;
-	}
 	
 	private double computeCost() {
 		double cost = 0.0;
-		for (Link e : model.edgeSet()) {
+		for (Link e : this.graph.edgeSet()) {
 			cost += e.getWeight();
 		}
 		return cost;
@@ -191,7 +197,7 @@ public class RankedModel implements Comparable<RankedModel>{
 	
 	private List<Coherence> computeCoherence() {
 		
-		if (model == null || model.edgeSet().size() == 0)
+		if (this.graph == null || this.graph.edgeSet().size() == 0)
 			return null;
 		  
 		List<Coherence> coherence = new ArrayList<Coherence>();
@@ -200,7 +206,7 @@ public class RankedModel implements Comparable<RankedModel>{
 		HashMap<String, HashSet<String>> patternToLinks = new HashMap<String, HashSet<String>>();
 		HashMap<String, Integer> patternToFrequency = new HashMap<String, Integer>();
 		
-		for (Link e : model.edgeSet()) 
+		for (Link e : this.graph.edgeSet()) 
 			for (String s : e.getPatternIds()) {
 				
 				if (!patternIds.contains(s))
@@ -327,7 +333,7 @@ public class RankedModel implements Comparable<RankedModel>{
 //	}
 	
 	@Override
-	public int compareTo(RankedModel m) {
+	public int compareTo(SortableSemanticModel m) {
 		
 		double score1 = this.getSteinerNodes().getScore();
 		double score2 = m.getSteinerNodes().getScore();

@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
@@ -52,6 +53,7 @@ import edu.isi.karma.view.VWorkspace;
 public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 	private final String worksheetId;
 	private final DirectedWeightedMultigraph<Node, Link> alignmentGraph;
+	private final Alignment alignment;
 	
 	private static Logger logger = LoggerFactory.getLogger(AlignmentSVGVisualizationUpdate.class);
 
@@ -69,6 +71,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 	public AlignmentSVGVisualizationUpdate(String worksheetId, Alignment alignment) {
 		super();
 		this.worksheetId = worksheetId;
+		this.alignment = alignment;
 		this.alignmentGraph = alignment.getSteinerTree();
 	}
 	
@@ -229,15 +232,16 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 						linksArr.put(linkObj_holder);
 					} else if (link.getType() == LinkType.ObjectPropertySpecializationLink) {
 						ObjectPropertySpecializationLink opLink = (ObjectPropertySpecializationLink)link;
-						Link specializedLink = opLink.getSpecializedLink();
+						String specializedLinkId = opLink.getSpecializedLinkId();
 						
 						// Get height of the class instance node
-						int height = nodeHeightsMap.get(specializedLink.getTarget());
+						Node specializedLinkTarget = this.alignment.getNodeById(LinkIdFactory.getLinkTargetId(specializedLinkId));
+						int height = nodeHeightsMap.get(specializedLinkTarget);
 						
 						// Add 2 more holder nodes
 						// Start node
 						JSONArray hNodeIdsCoveredByVertex_holder = new JSONArray();
-						for(Node v : nodeCoverage.get(specializedLink.getTarget())) {
+						for(Node v : nodeCoverage.get(specializedLinkTarget)) {
 							if (v instanceof ColumnNode) {
 								ColumnNode cNode = (ColumnNode) v;
 								hNodeIdsCoveredByVertex_holder.put(cNode.getHNodeId());

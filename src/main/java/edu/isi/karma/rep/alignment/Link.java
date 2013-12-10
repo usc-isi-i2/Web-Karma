@@ -147,6 +147,10 @@ public abstract class Link extends DefaultWeightedEdge implements Comparable<Lin
 		return patternIds;
 	}
 
+	public void setPatternIds(Set<String> patternIds) {
+		this.patternIds = patternIds;
+	}
+	
 	@Override
     public boolean equals(Object obj) {
         if (obj == this) {

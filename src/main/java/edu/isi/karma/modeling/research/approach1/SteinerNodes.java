@@ -37,6 +37,9 @@ import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
+import edu.isi.karma.modeling.research.WeightTuning;
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.util.RandomGUID;
 
@@ -45,6 +48,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	private static final double MIN_CONFIDENCE = 1E-6;
 	
 	private Set<Node> nodes;
+	private Map<ColumnNode, ColumnNode> mappingToSourceColumns;
 	private int maxNodeCount;
 	private List<Double> confidenceList;
 	private List<CoherenceItem> coherenceList;
@@ -72,6 +76,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	
 	public SteinerNodes(int maxNodeCount) {
 		this.nodes = new HashSet<Node>();
+		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
 		this.maxNodeCount = maxNodeCount;
 		this.confidenceList = new Vector<Double>();
 		this.coherenceList = new ArrayList<CoherenceItem>();
@@ -83,6 +88,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	
 	public SteinerNodes(SteinerNodes steinerNodes) {
 		this.nodes = new HashSet<Node>(steinerNodes.getNodes());
+		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>(steinerNodes.getMappingToSourceColumns());
 		this.confidenceList = new Vector<Double>(steinerNodes.getConfidenceVector());
 		this.coherenceList = new ArrayList<CoherenceItem>(steinerNodes.getCoherenceList());
 		this.frequency = steinerNodes.getFrequency();
@@ -96,11 +102,15 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		return Collections.unmodifiableSet(this.nodes);
 	}
 	
+	public Map<ColumnNode, ColumnNode> getMappingToSourceColumns() {
+		return mappingToSourceColumns;
+	}
+
 	public int getMaxNodeCount() {
 		return maxNodeCount;
 	}
 
-	public boolean addNodes(Node n1, Node n2, double confidence) {
+	public boolean addNodes(ColumnNode sourceColumn, InternalNode n1, ColumnNode n2, double confidence) {
 		
 		if (this.nodes.contains(n1) && this.nodes.contains(n2))
 			return false;
@@ -108,6 +118,8 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		this.nodes.add(n1);
 		this.nodes.add(n2);
 		
+		this.mappingToSourceColumns.put(n2, sourceColumn);
+				
 		if (confidence <= 0 || confidence > 1)
 			confidence = MIN_CONFIDENCE;
 		
@@ -281,9 +293,9 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		double coherence = this.getCoherence();
 		//int frequency = this.getFrequency();
 		
-		double alpha = 1.0;
-		double beta = 1.0;
-		double gamma = 1.0;
+		double alpha = WeightTuning.getInstance().getCoherenceFactor();
+		double beta = WeightTuning.getInstance().getSizeFactor();
+		double gamma = WeightTuning.getInstance().getConfidenceFactor();
 		
 		this.score = alpha * coherence + 
 				beta * distnaceToMaxSize + 

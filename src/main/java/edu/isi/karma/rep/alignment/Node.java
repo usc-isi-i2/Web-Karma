@@ -20,7 +20,6 @@
  ******************************************************************************/
 package edu.isi.karma.rep.alignment;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,12 +30,7 @@ import com.rits.cloning.Cloner;
 
 import edu.isi.karma.util.RandomGUID;
 
-public abstract class Node implements Comparable<Node>, Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public abstract class Node implements Comparable<Node> {
 
 	static Logger logger = LoggerFactory.getLogger(Node.class);
 
@@ -102,6 +96,10 @@ public abstract class Node implements Comparable<Node>, Serializable {
 	
 	public Set<String> getPatternIds() {
 		return patternIds;
+	}
+
+	public void setPatternIds(Set<String> patternIds) {
+		this.patternIds = patternIds;
 	}
 
 	@Override

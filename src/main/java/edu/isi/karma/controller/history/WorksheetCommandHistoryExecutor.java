@@ -32,14 +32,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
-import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.history.CommandHistoryWriter.HistoryArguments;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
-import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNode;

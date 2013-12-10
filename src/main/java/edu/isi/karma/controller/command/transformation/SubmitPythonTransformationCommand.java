@@ -23,7 +23,6 @@ package edu.isi.karma.controller.command.transformation;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;

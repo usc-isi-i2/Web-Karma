@@ -22,6 +22,7 @@ package edu.isi.karma.rep.alignment;
 
 public enum LinkType {
 	None,
+	PlainLink,
 	DataPropertyLink,
 	ObjectPropertyLink,
 	SubClassLink,

@@ -62,7 +62,6 @@ public class GraphBuilder {
 	private OntologyManager ontologyManager;
 	
 	private NodeIdFactory nodeIdFactory;
-//	private LinkIdFactory linkIdFactory;
 	
 	private HashSet<String> visitedSourceTargetPairs; 
 	private HashSet<String> sourceToTargetLinkUris;
@@ -91,7 +90,6 @@ public class GraphBuilder {
 		
 		this.ontologyManager = ontologyManager;
 		this.nodeIdFactory = nodeIdFactory;
-//		this.linkIdFactory = linkIdFactory;
 
 		this.idToNodeMap = new HashMap<String, Node>();
 		this.idToLinkMap = new HashMap<String, Link>();
@@ -132,7 +130,6 @@ public class GraphBuilder {
 		this.sourceToTargetConnectivity = new HashSet<String>();
 
 		this.nodeIdFactory = new NodeIdFactory();
-//		this.linkIdFactory = new LinkIdFactory();
 		
 		for (Node node : this.graph.vertexSet()) {
 			
@@ -207,10 +204,6 @@ public class GraphBuilder {
 	public boolean isConnected(String nodeId1, String nodeId2) {
 		return this.sourceToTargetConnectivity.contains(nodeId1 + nodeId2);
 	}
-	
-//	public LinkIdFactory getLinkIdFactory() {
-//		return linkIdFactory;
-//	}
 
 	public OntologyManager getOntologyManager() {
 		return this.ontologyManager;
