@@ -502,18 +502,9 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .on("click", function(d){
             if(d["nodeType"] == "InternalNode") {
                 d["targetNodeId"] = d["id"];
-                console.log("Show links for Internal Node1: " + d.label + ":" + d.id + d.uri);
-                //dipsy: comment lien below later
-                //showLinksForInternalNode(d, svg, d3.event);
-                var menu = $("div#modelingClassDropDownMenu");
-                menu.data("nodeId", d.id);
-                menu.data("nodeDomain", d.nodeDomain);
-                menu.data("nodeLabel", d.label);
-                menu.data("worksheetId", worksheetId);
-                menu.data("alignmentId", $(svg).data("alignmentId"));                
-                menu.css({"position":"absolute",
-                    "top":$(this).offset().top + 5,
-                    "left": $(this).offset().left + $(this).width()/2 - $(menu).width()/2}).show();
+                d.worksheetId = worksheetId;
+                d.alignmentId = $(svg).data("alignmentId");
+                showClassPopupMenu(d, this, d3.event);
             }
 
         
@@ -561,17 +552,9 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 changeSemanticType_d3(d, svg, d3.event);
             else if(d["nodeType"] == "InternalNode") {
                 d["targetNodeId"] = d["id"];
-                console.log("Show links for Internal Node2");
-               // showLinksForInternalNode(d, svg, d3.event);
-                var menu = $("div#modelingClassDropDownMenu");
-                menu.data("nodeId", d.id);
-                menu.data("nodeLabel", d.label);
-                menu.data("nodeDomain", d.nodeDomain);
-                menu.data("worksheetId", worksheetId);
-                menu.data("alignmentId", $(svg).data("alignmentId"));       
-                menu.css({"position":"absolute",
-                    "top":$(this).offset().top + 5,
-                    "left": $(this).offset().left + $(this).width()/2 - $(menu).width()/2}).show();
+                d.worksheetId = worksheetId;
+                d.alignmentId = $(svg).data("alignmentId");
+                showClassPopupMenu(d, this, d3.event);
             }
 
         
@@ -1475,6 +1458,18 @@ function populateLinksListFromServer() {
                 alert("Error occurred while getting links list!");
             }
     });
+}
+
+function showClassPopupMenu(d, classObj, event) {
+	var menu = $("div#modelingClassDropDownMenu");
+    menu.data("nodeId", d.id);
+    menu.data("nodeDomain", d.nodeDomain);
+    menu.data("nodeLabel", d.label);
+    menu.data("worksheetId", d.worksheetId);
+    menu.data("alignmentId", d.alignmentId);         
+    menu.css({"position":"absolute",
+        "top":$(classObj).offset().top + 5,
+        "left": event.clientX}).show(); // + $(this).width()/2 - $(menu).width()/2}).show();
 }
 
 function showIncomingOutgoingDialog(linkType) {
