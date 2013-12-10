@@ -508,6 +508,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 var menu = $("div#modelingClassDropDownMenu");
                 menu.data("nodeId", d.id);
                 menu.data("nodeDomain", d.nodeDomain);
+                menu.data("nodeLabel", d.label);
                 menu.data("worksheetId", worksheetId);
                 menu.data("alignmentId", $(svg).data("alignmentId"));                
                 menu.css({"position":"absolute",
@@ -564,6 +565,7 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                // showLinksForInternalNode(d, svg, d3.event);
                 var menu = $("div#modelingClassDropDownMenu");
                 menu.data("nodeId", d.id);
+                menu.data("nodeLabel", d.label);
                 menu.data("nodeDomain", d.nodeDomain);
                 menu.data("worksheetId", worksheetId);
                 menu.data("alignmentId", $(svg).data("alignmentId"));       
@@ -1477,12 +1479,14 @@ function populateLinksListFromServer() {
 
 function showIncomingOutgoingDialog(linkType) {
 	var linkTitle;
+	var menuDiv = $("#modelingClassDropDownMenu");
+	
 	console.log("Link type::" + linkType)
 	if(linkType == "incoming") {
-		linkTitle = "Add Incoming Link";
+		linkTitle = "Add Incoming Link for " + $(menuDiv).data("nodeLabel");
 		$("#incomingOutgoingLinksDirection").html("from");
 	} else if(linkType == "outgoing") {
-		linkTitle = "Add Outgoing Link";
+		linkTitle = "Add Outgoing Link for " + $(menuDiv).data("nodeLabel");
 		$("#incomingOutgoingLinksDirection").html("to");
 	} else if(linkType == "fromClass"){
 		linkTitle = "Change from Class";
@@ -1495,8 +1499,7 @@ function showIncomingOutgoingDialog(linkType) {
 	}
 	
 	var optionsDiv = $("div#incomingOutgoingLinksDialog");
-	var menuDiv = $("#modelingClassDropDownMenu");
-
+	
     optionsDiv.data("workspaceId", $.workspaceGlobalInformation.id);
     optionsDiv.data("nodeId",  $(menuDiv).data("nodeId"));
     optionsDiv.data("nodeDomain",  $(menuDiv).data("nodeDomain"));
