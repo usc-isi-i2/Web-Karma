@@ -17,12 +17,14 @@ temp/
 *.project
 *.pyc
 *.swp
+*.json
+*.dot
 
 lastJsonImport.json
 src/main/webapp/UserPrefs/*.json
 UserUploadedFiles
 src/main/webapp/UserUploadedFiles/*
-*.json
+
 SampleData
 CRF_Model.txt
 log/*
