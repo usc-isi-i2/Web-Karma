@@ -37,6 +37,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
+import edu.isi.karma.modeling.research.WeightTuning;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Node;
@@ -292,9 +293,9 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		double coherence = this.getCoherence();
 		//int frequency = this.getFrequency();
 		
-		double alpha = 1.0;
-		double beta = 1.0;
-		double gamma = 1.0;
+		double alpha = WeightTuning.getInstance().getCoherenceFactor();
+		double beta = WeightTuning.getInstance().getSizeFactor();
+		double gamma = WeightTuning.getInstance().getConfidenceFactor();
 		
 		this.score = alpha * coherence + 
 				beta * distnaceToMaxSize + 

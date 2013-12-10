@@ -80,18 +80,18 @@ public class ComputeGED {
 			mApp1Rank1 = null; mApp1Rank2 = null; mApp1Rank3 = null; 
 			
 			for (File f : serviceFiles) {
-				if (f.getName().endsWith(".main.model")) {
-					try { mMain = SemanticModel.deserialize(f.getPath()); } catch (Exception e) {}
-				} else if (f.getName().endsWith(".karma.initial.model")) {
-					try { mKarmaInitial = SemanticModel.deserialize(f.getPath()); } catch (Exception e) {}
-				} else if (f.getName().endsWith(".karma.final.model")) {
-					try { mKarmaFinal = SemanticModel.deserialize(f.getPath()); } catch (Exception e) {}
-				} else if (f.getName().endsWith(".app1.rank1.model")) {
-					try { mApp1Rank1 = SemanticModel.deserialize(f.getPath()); } catch (Exception e) {}
-				} else if (f.getName().endsWith(".app1.rank2.model")) {
-					try { mApp1Rank2 = SemanticModel.deserialize(f.getPath()); } catch (Exception e) {}
-				} else if (f.getName().endsWith(".app1.rank3.model")) {
-					try { mApp1Rank3 = SemanticModel.deserialize(f.getPath()); } catch (Exception e) {}
+				if (f.getName().endsWith(Params.MODEL_MAIN_FILE_EXT)) {
+					try { mMain = SemanticModel.readJson(f.getPath()); } catch (Exception e) {}
+				} else if (f.getName().endsWith(Params.MODEL_KARMA_INITIAL_FILE_EXT)) {
+					try { mKarmaInitial = SemanticModel.readJson(f.getPath()); } catch (Exception e) {}
+				} else if (f.getName().endsWith(Params.MODEL_KARMA_FINAL_FILE_EXT)) {
+					try { mKarmaFinal = SemanticModel.readJson(f.getPath()); } catch (Exception e) {}
+				} else if (f.getName().endsWith(Params.MODEL_RANK1_FILE_EXT)) {
+					try { mApp1Rank1 = SemanticModel.readJson(f.getPath()); } catch (Exception e) {}
+				} else if (f.getName().endsWith(Params.MODEL_RANK2_FILE_EXT)) {
+					try { mApp1Rank2 = SemanticModel.readJson(f.getPath()); } catch (Exception e) {}
+				} else if (f.getName().endsWith(Params.MODEL_RANK3_FILE_EXT)) {
+					try { mApp1Rank3 = SemanticModel.readJson(f.getPath()); } catch (Exception e) {}
 				}					
 			}
 			

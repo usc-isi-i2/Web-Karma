@@ -27,21 +27,21 @@ import edu.isi.karma.modeling.Uris;
 
 public class ObjectPropertySpecializationLink extends Link {
 	
-	private final Link specializedLink;
+	private final String specializedLinkId;
 	private static final long serialVersionUID = 1L;
 	private static final Label label = 
 			new Label(Uris.OBJECTPROPERTY_SPECIALIZATION_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
 
-	public ObjectPropertySpecializationLink(String id, Link specializedLink) {
+	public ObjectPropertySpecializationLink(String id, String specializedLinkId) {
 		super(id, label, LinkType.ObjectPropertySpecializationLink);
-		this.specializedLink = specializedLink;
+		this.specializedLinkId = specializedLinkId;
 	}
 
 	public static Label getFixedLabel() {
 		return label;
 	}
 
-	public Link getSpecializedLink() {
-		return specializedLink;
+	public String getSpecializedLinkId() {
+		return specializedLinkId;
 	}
 }

@@ -243,9 +243,9 @@ public class Alignment implements OntologyUpdateListener {
 		return null;	
 	}
 	
-	public ObjectPropertySpecializationLink addObjectPropertySpecializationLink(Node source, Node target, Link specializedLink) {
+	public ObjectPropertySpecializationLink addObjectPropertySpecializationLink(Node source, Node target, String specializedLinkId) {
 		String id = LinkIdFactory.getLinkId(Uris.OBJECTPROPERTY_SPECIALIZATION_LINK_URI, source.getId(), target.getId());
-		ObjectPropertySpecializationLink link = new ObjectPropertySpecializationLink(id, specializedLink);
+		ObjectPropertySpecializationLink link = new ObjectPropertySpecializationLink(id, specializedLinkId);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;
 	}

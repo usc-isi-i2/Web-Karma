@@ -240,7 +240,7 @@ public class GenerateR2RMLModelCommand extends Command {
 				name = name.substring(0, name.lastIndexOf('.'));
 			}
 			SemanticModel sm = new SemanticModel(name, model);
-			sm.serialize(exportDir + name + ".main.model");
+			sm.writeJson(exportDir + name + Params.MODEL_MAIN_FILE_EXT);
 		} catch (Exception e1) {
 //			logger.error("Ignore this error message. this is just for my own test!");
 //			e1.printStackTrace();

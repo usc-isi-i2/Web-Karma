@@ -25,7 +25,7 @@ public class Params {
 
 	public static boolean RESEARCH_MODE = false;
 	
-	private static String DATASET_NAME = "ds2";
+	private static String DATASET_NAME = "ds1";
 	private static String ROOT_DIR = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-" + DATASET_NAME + "/";
 	
 	public static String ONTOLOGY_DIR = ROOT_DIR + "ontologies/";
@@ -36,5 +36,18 @@ public class Params {
 	public static String GRAPHS_DIR = ROOT_DIR + "graph/";
 	public static String MODEL_DIR = ROOT_DIR + "model/";
 	public static String GRAPHVIS_DIR = ROOT_DIR + "graphviz/";
+	
+	public static String GRAPH_FILE_EXT = ".graph.json";
+	
+	public static String MODEL_MAIN_FILE_EXT = ".model.main.json";
+	public static String MODEL_KARMA_INITIAL_FILE_EXT = ".model.karma.initial.json";
+	public static String MODEL_KARMA_FINAL_FILE_EXT = ".model.karma.final.json";
+	public static String MODEL_RANK1_FILE_EXT = ".model.rank1.json";
+	public static String MODEL_RANK2_FILE_EXT = ".model.rank2.json";
+	public static String MODEL_RANK3_FILE_EXT = ".model.rank3.json";
+
+	public static String GRAPHVIS_MAIN_FILE_EXT = ".main.dot";
+	public static String GRAPHVIS_OUT_FILE_EXT = ".out.dot";
+	public static String GRAPHVIS_OUT_DETAILS_FILE_EXT = ".out.details.dot";
 
 }

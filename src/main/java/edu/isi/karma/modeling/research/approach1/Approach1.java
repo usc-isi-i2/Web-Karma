@@ -53,6 +53,7 @@ import edu.isi.karma.modeling.research.ModelReader;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.modeling.research.PatternContainment;
 import edu.isi.karma.modeling.research.SemanticModel;
+import edu.isi.karma.modeling.research.WeightTuning;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
@@ -177,11 +178,11 @@ public class Approach1 {
 	}
 	
 	public void saveGraph(String fileName) throws Exception {
-		GraphUtil.serialize(this.graphBuilder.getGraph(), fileName);
+		GraphUtil.exportJson(this.graphBuilder.getGraph(), fileName);
 	}
 	
 	public void loadGraph(OntologyManager ontologyManager, String fileName) throws Exception {
-		DirectedWeightedMultigraph<Node, Link> graph = GraphUtil.deserialize(fileName);
+		DirectedWeightedMultigraph<Node, Link> graph = GraphUtil.importJson(fileName);
 		this.graphBuilder = new GraphBuilder(ontologyManager, graph);
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 	}
@@ -723,8 +724,6 @@ public class Approach1 {
 					continue;
 				uniqueModels.add(current);
 			}
-			if (uniqueModels.size() > MAX_CANDIDATES )
-				return uniqueModels.subList(0, MAX_CANDIDATES);
 		}
 		
 		return uniqueModels;
@@ -896,7 +895,7 @@ public class Approach1 {
 		String graphPath = Params.GRAPHS_DIR;
 		
 //		List<SemanticModel> semanticModels = ModelReader.importSemanticModels(inputPath);
-		List<SemanticModel> semanticModels = ModelReader.importSemanticModelsFromSavedModels(Params.MODEL_DIR, ".main.model");
+		List<SemanticModel> semanticModels = ModelReader.importSemanticModelsFromJsonFiles(Params.MODEL_DIR, Params.MODEL_MAIN_FILE_EXT);
 
 		List<SemanticModel> trainingData = new ArrayList<SemanticModel>();
 		
@@ -908,8 +907,8 @@ public class Approach1 {
 		}
 		ontManager.updateCache();
 
-		for (int i = 0; i < semanticModels.size(); i++) {
-//		int i = 0; {
+//		for (int i = 0; i < semanticModels.size(); i++) {
+		int i = 0; {
 			trainingData.clear();
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -927,10 +926,11 @@ public class Approach1 {
 			
 			Approach1 app = new Approach1(trainingData, ontManager);
 			
-			String graphName = graphPath + "graph" + String.valueOf(i+1);
+			String graphName = graphPath + semanticModels.get(i).getName() + Params.GRAPH_FILE_EXT;
 			if (new File(graphName).exists()) {
 				// read graph from file
 				try {
+					logger.info("loading the graph ...");
 					app.loadGraph(ontManager, graphName);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -954,29 +954,34 @@ public class Approach1 {
 			// we just get the semantic labels of the correct model
 			Set<ColumnNode> columnNodes = GraphUtil.getColumnNodes(correctModel.getGraph());
 			List<SortableSemanticModel> hypothesisList = app.hypothesize(columnNodes);
-//			if (hypothesis == null)
-//				continue;
+			List<SortableSemanticModel> topHypotheses = hypothesisList.size() > MAX_CANDIDATES ? 
+					hypothesisList.subList(0, MAX_CANDIDATES) : 
+					hypothesisList;
+
+			// Updating the weights
+//			WeightTuning.getInstance().updateWeights(hypothesisList, correctModel);
 			
 			Map<String, DirectedWeightedMultigraph<Node, Link>> graphs = 
 					new TreeMap<String, DirectedWeightedMultigraph<Node,Link>>();
 			
-			if (hypothesisList != null)
-				for (int k = 0; k < hypothesisList.size() && k < 3; k++) {
+			if (topHypotheses != null)
+				for (int k = 0; k < topHypotheses.size() && k < 3; k++) {
 					
-					SortableSemanticModel m = hypothesisList.get(k);
-					new SemanticModel(m).serialize(Params.MODEL_DIR + 
-							newSource.getName() + 
-							".app1.rank" + 
-							(k+1) + 
-							".model");
+					String fileExt = null;
+					if (k == 0) fileExt = Params.MODEL_RANK1_FILE_EXT;
+					else if (k == 1) fileExt = Params.MODEL_RANK2_FILE_EXT;
+					else if (k == 2) fileExt = Params.MODEL_RANK3_FILE_EXT;
+					SortableSemanticModel m = topHypotheses.get(k);
+					new SemanticModel(m).writeJson(Params.MODEL_DIR + 
+							newSource.getName() + fileExt);
 					
 				}
 			
 			graphs.put("1-correct model", correctModel.getGraph());
-			if (hypothesisList != null)
-				for (int k = 0; k < hypothesisList.size(); k++) {
+			if (topHypotheses != null)
+				for (int k = 0; k < topHypotheses.size(); k++) {
 					
-					SortableSemanticModel m = hypothesisList.get(k);
+					SortableSemanticModel m = topHypotheses.get(k);
 
 					double distance = correctModel.getDistance(m);
 
@@ -989,7 +994,7 @@ public class Approach1 {
 			
 			GraphVizUtil.exportJGraphToGraphvizFile(graphs, 
 					newSource.getDescription(), 
-					outputPath + semanticModels.get(i).getName() + ".app1.details.dot");
+					outputPath + semanticModels.get(i).getName() + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT);
 			
 		}
 	}

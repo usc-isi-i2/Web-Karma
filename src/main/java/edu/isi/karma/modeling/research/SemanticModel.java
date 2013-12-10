@@ -21,14 +21,14 @@
 
 package edu.isi.karma.modeling.research;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Serializable;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -40,20 +40,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticType.Origin;
 
-public class SemanticModel implements Serializable{
+public class SemanticModel {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
 	private static Logger logger = LoggerFactory.getLogger(SemanticModel.class);
 
 	protected String id;
@@ -72,6 +72,7 @@ public class SemanticModel implements Serializable{
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
 		for (ColumnNode c : this.sourceColumns)
 			this.mappingToSourceColumns.put(c, c);
+		this.setUserSelectedTypeForColumnNodes();
 	}
 	
 	public SemanticModel(
@@ -126,34 +127,58 @@ public class SemanticModel implements Serializable{
 		return sourceColumns;
 	}
 
-	public void serialize(String fileName) throws IOException {
-		if (graph == null) {
-			logger.error("The input graph is null.");
-			return;
-		}
+	private void setUserSelectedTypeForColumnNodes() {
 		
-		FileOutputStream f = new FileOutputStream(fileName);
-		ObjectOutputStream out = new ObjectOutputStream(f);
-
-		out.writeObject(this);
-		out.flush();
-		out.close();
+		if (this.graph == null || this.sourceColumns == null)
+			return;
+		
+		for (Node n : this.graph.vertexSet()) {
+			
+			if (!(n instanceof ColumnNode)) continue;
+			
+			ColumnNode cn = (ColumnNode)n;
+			
+			if (!this.sourceColumns.contains(cn)) continue;
+			
+			Set<Link> incomingLinks = this.graph.incomingEdgesOf(n);
+			if (incomingLinks != null && incomingLinks.size() == 1) {
+				Link link = incomingLinks.toArray(new Link[0])[0];
+				Node domain = link.getSource();
+				SemanticType st = new SemanticType(cn.getHNodeId(), link.getLabel(), domain.getLabel(), Origin.User, 1.0, false);
+				cn.setUserSelectedSemanticType(st);
+			} else
+				logger.debug("The column node " + ((ColumnNode)n).getColumnName() + " does not have any domain or it has more than one domain.");
+		}
 	}
 	
-	public static SemanticModel deserialize(String fileName) throws Exception
-	{
-//		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		FileInputStream f = new FileInputStream(fileName);
-        ObjectInputStream in = new ObjectInputStream(f);
-
-        Object obj  = in.readObject();
-        in.close();
-        
-        if (obj instanceof SemanticModel)
-        	return (SemanticModel)obj;
-        else 
-        	return null;
-	}
+//	public void serialize(String fileName) throws IOException {
+//		if (graph == null) {
+//			logger.error("The input graph is null.");
+//			return;
+//		}
+//		
+//		FileOutputStream f = new FileOutputStream(fileName);
+//		ObjectOutputStream out = new ObjectOutputStream(f);
+//
+//		out.writeObject(this);
+//		out.flush();
+//		out.close();
+//	}
+//	
+//	public static SemanticModel deserialize(String fileName) throws Exception
+//	{
+////		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+//		FileInputStream f = new FileInputStream(fileName);
+//        ObjectInputStream in = new ObjectInputStream(f);
+//
+//        Object obj  = in.readObject();
+//        in.close();
+//        
+//        if (obj instanceof SemanticModel)
+//        	return (SemanticModel)obj;
+//        else 
+//        	return null;
+//	}
 	
 	public void print() {
 		logger.info("id: " + this.getId());
@@ -162,9 +187,9 @@ public class SemanticModel implements Serializable{
 		logger.info(GraphUtil.graphToString(this.graph));
 	}
 	
-	public void exportModelToGraphviz(String exportDirectory) throws FileNotFoundException {
+	public void exportModelToGraphviz(String exportDirectory, String fileExtension) throws FileNotFoundException {
 		
-		OutputStream out = new FileOutputStream(exportDirectory + this.getName() + ".dot");
+		OutputStream out = new FileOutputStream(exportDirectory + this.getName() + fileExtension);
 		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
 		
 		graphViz.attr("fontcolor", "blue");
@@ -327,12 +352,97 @@ public class SemanticModel implements Serializable{
 		linkInsertion -= linkRelabeling;
 		linkDeletion -= linkRelabeling;
 
-		logger.info("node insertion cost: " + nodeInsertion);
-		logger.info("node deletion cost: " + nodeDeletion);
-		logger.info("link insertion cost: " + linkInsertion);
-		logger.info("link deletion cost: " + linkDeletion);
-		logger.info("link relabeling cost: " + linkRelabeling);
+		logger.debug("node insertion cost: " + nodeInsertion);
+		logger.debug("node deletion cost: " + nodeDeletion);
+		logger.debug("link insertion cost: " + linkInsertion);
+		logger.debug("link deletion cost: " + linkDeletion);
+		logger.debug("link relabeling cost: " + linkRelabeling);
 
 		return nodeInsertion + nodeDeletion + linkInsertion + linkDeletion + linkRelabeling;
 	}
+	
+	public void writeJson(String filename) throws IOException {
+		
+		File file = new File(filename);
+		if (!file.exists()) {
+			file.createNewFile();
+		}
+		
+		FileOutputStream out = new FileOutputStream(file); 
+		JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
+		writer.setIndent("    ");
+		try {
+			writeModel(writer);
+		} catch (Exception e) {
+			logger.error("error in writing the model in json!");
+	    	e.printStackTrace();
+	     } finally {
+			writer.close();
+		}
+		
+	}
+	
+	private void writeModel(JsonWriter writer) throws IOException {
+		String nullStr = null;
+		writer.beginObject();
+		writer.name("id").value(this.getId());
+		writer.name("name").value(this.getName());
+		writer.name("description").value(this.getDescription());
+		writer.name("graph");
+		if (this.graph == null) writer.value(nullStr);
+		else GraphUtil.writeGraph(this.graph, writer);
+		writer.endObject();
+	}
+
+	public static SemanticModel readJson(String filename) throws IOException {
+
+		File file = new File(filename);
+		if (!file.exists()) {
+			logger.error("cannot open the file " + filename);
+		}
+		
+		FileInputStream in = new FileInputStream(file);
+		JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+	    try {
+	    	return readModel(reader);
+	    } catch (Exception e) {
+	    	logger.error("error in reading the model from json!");
+	    	e.printStackTrace();
+	    	return null;
+	    } finally {
+	    	reader.close();
+	    }
+	}
+	
+	private static SemanticModel readModel(JsonReader reader) throws IOException {
+		
+		String id = null;
+		String name = null;
+		String description = null;
+		DirectedWeightedMultigraph<Node, Link> graph = null;
+		
+		reader.beginObject();
+	    while (reader.hasNext()) {
+	    	String key = reader.nextName();
+			if (key.equals("id") && reader.peek() != JsonToken.NULL) {
+				id = reader.nextString();
+			} else if (key.equals("name") && reader.peek() != JsonToken.NULL) {
+				name = reader.nextString();
+			} else if (key.equals("description") && reader.peek() != JsonToken.NULL) {
+				description = reader.nextString();
+			} else if (key.equals("graph") && reader.peek() != JsonToken.NULL) {
+				graph = GraphUtil.readGraph(reader);
+			} else {
+				reader.skipValue();
+			}
+		}
+    	reader.endObject();
+    	
+    	SemanticModel semanticModel = new SemanticModel(id, graph);
+    	semanticModel.setName(name);
+    	semanticModel.setDescription(description);
+    	
+    	return semanticModel;
+	}
+
 }

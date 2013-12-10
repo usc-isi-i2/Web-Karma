@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 
+import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.InternalNode;
@@ -94,8 +95,12 @@ public class ModelReader {
 			if (semanticModels != null) {
 				for (SemanticModel sm : semanticModels) {
 					sm.print();
-					sm.exportModelToGraphviz(Params.GRAPHVIS_DIR);
-					sm.serialize(Params.MODEL_DIR + sm.getName() + ".main.model");
+					sm.exportModelToGraphviz(Params.GRAPHVIS_DIR, Params.GRAPHVIS_MAIN_FILE_EXT);
+					sm.writeJson(Params.MODEL_DIR + sm.getName() + Params.MODEL_MAIN_FILE_EXT);
+					
+					// To test JsonReader and JsonWriter
+//					SemanticModel m = SemanticModel.readJson(Params.MODEL_DIR + sm.getName() + ".main.model.json");
+//					m.writeJson(Params.MODEL_DIR + sm.getName() + ".main.model2.json");
 				}
 			}
 
@@ -178,7 +183,7 @@ public class ModelReader {
 
 	}
 	
-	public static List<SemanticModel> importSemanticModelsFromSavedModels(String path, String fileExtension) throws Exception {
+	public static List<SemanticModel> importSemanticModelsFromJsonFiles(String path, String fileExtension) throws Exception {
 
 		File ff = new File(path);
 		File[] files = ff.listFiles();
@@ -187,7 +192,7 @@ public class ModelReader {
 		
 		for (File f : files) {
 			if (f.getName().endsWith(fileExtension)) {
-				SemanticModel model = SemanticModel.deserialize(f.getAbsolutePath());
+				SemanticModel model = SemanticModel.readJson(f.getAbsolutePath());
 				semanticModels.add(model);
 			}
 		}
@@ -402,9 +407,9 @@ public class ModelReader {
 			
 			Link e;
 			if (obj instanceof InternalNode)
-				e = new ObjectPropertyLink(predicateStr, new Label(predicateStr), ObjectPropertyType.None);
+				e = new ObjectPropertyLink(LinkIdFactory.getLinkId(predicateStr, subj.getId(), obj.getId()), new Label(predicateStr), ObjectPropertyType.None);
 			else
-				e = new DataPropertyLink(predicateStr, new Label(predicateStr));
+				e = new DataPropertyLink(LinkIdFactory.getLinkId(predicateStr, subj.getId(), obj.getId()), new Label(predicateStr));
 			graph.addEdge(subj, obj, e);
 			
 		}

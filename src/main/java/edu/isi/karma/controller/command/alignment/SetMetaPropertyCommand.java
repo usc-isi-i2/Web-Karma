@@ -182,7 +182,7 @@ public class SetMetaPropertyCommand extends Command {
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId, DataPropertyOfColumnLink.getFixedLabel(), classInstanceNode.getLabel(), SemanticType.Origin.User, 1.0, false);
 			} else if (propertyLink instanceof ObjectPropertyLink) {
-				alignment.addObjectPropertySpecializationLink(classInstanceNode, columnNode, propertyLink);
+				alignment.addObjectPropertySpecializationLink(classInstanceNode, columnNode, propertyLink.getId());
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId, ObjectPropertySpecializationLink.getFixedLabel(), classInstanceNode.getLabel(), SemanticType.Origin.User, 1.0, false);
 			}
