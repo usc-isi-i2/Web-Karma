@@ -139,7 +139,7 @@ public class ComputeGED {
 				graphs.put(label, mApp1Rank3.getGraph());
 			}
 
-			GraphVizUtil.exportJGraphToGraphvizFile(graphs, s, Params.OUTPUT_DIR + s + ".app1.out.dot");
+			GraphVizUtil.exportJGraphToGraphvizFile(graphs, s, Params.OUTPUT_DIR + s + Params.GRAPHVIS_OUT_FILE_EXT);
 		}
 		
 		logger.info("==============================================");

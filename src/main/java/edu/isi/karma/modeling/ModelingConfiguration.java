@@ -45,6 +45,10 @@ public class ModelingConfiguration {
     private static String karmaSourcePrefix;
     private static String karmaServicePrefix; 
 
+    private static String modelsJsonDir;
+    private static String modelsGraphvizDir;
+    private static String alignmentGraphPath; 
+
 	public static void load() {
         try {
             Properties modelingProperties = loadParams("modeling");
@@ -75,6 +79,10 @@ public class ModelingConfiguration {
 
             karmaSourcePrefix = modelingProperties.getProperty("karma.source.prefix");
             karmaServicePrefix = modelingProperties.getProperty("karma.service.prefix");
+
+            modelsJsonDir = modelingProperties.getProperty("models.json.dir");
+            modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir");
+            alignmentGraphPath = modelingProperties.getProperty("alignment.graph.path");
 
         } catch (IOException e) {
             logger.error("Error occured while reading config file ...");
@@ -158,7 +166,23 @@ public class ModelingConfiguration {
 			load();
 		return karmaServicePrefix.trim();
 	}
+
+	public static String getModelsJsonDir() {
+		if (modelsJsonDir == null)
+			load();
+		return modelsJsonDir;
+	}
+
+	public static String getModelsGraphvizDir() {
+		if (modelsGraphvizDir == null)
+			load();
+		return modelsGraphvizDir;
+	}
 	
-	
-	
+	public static String getAlignmentGraphPath() {
+		if (alignmentGraphPath == null)
+			load();
+		return alignmentGraphPath;
+	}
+
 }

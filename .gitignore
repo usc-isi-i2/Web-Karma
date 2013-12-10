@@ -34,6 +34,8 @@ src/main/webapp/publish/RDF/*.*
 src/main/webapp/publish/MDB/*.*
 src/main/webapp/publish/AutoOntology/*.*
 src/main/webapp/publish/R2RML/*.*
+src/main/webapp/publish/JSON/*.*
+src/main/webapp/publish/AlignmentGraph/*.*
 preloaded-ontologies/*
 src/main/webapp/RDF/*.rdf
 src/main/webapp/RDF/*.n3

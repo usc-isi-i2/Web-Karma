@@ -38,12 +38,6 @@ import edu.isi.karma.rep.alignment.Link;
 
 public class SortableSemanticModel extends SemanticModel
 	implements Comparable<SortableSemanticModel>{
-
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	
 	private double cost;
 	private List<Coherence> coherence;
@@ -207,7 +201,7 @@ public class SortableSemanticModel extends SemanticModel
 		HashMap<String, Integer> patternToFrequency = new HashMap<String, Integer>();
 		
 		for (Link e : this.graph.edgeSet()) 
-			for (String s : e.getPatternIds()) {
+			for (String s : e.getModelIds()) {
 				
 				if (!patternIds.contains(s))
 					patternIds.add(s);

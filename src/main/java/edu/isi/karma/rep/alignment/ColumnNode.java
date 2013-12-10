@@ -32,10 +32,6 @@ import edu.isi.karma.modeling.Prefixes;
 
 public class ColumnNode extends Node {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	private final String hNodeId;
 	private final String columnName;
 	private Label rdfLiteralType;

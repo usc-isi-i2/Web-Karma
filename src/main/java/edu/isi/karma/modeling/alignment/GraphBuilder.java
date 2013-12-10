@@ -58,8 +58,8 @@ public class GraphBuilder {
 
 	static Logger logger = LoggerFactory.getLogger(GraphBuilder.class);
 
-	private DirectedWeightedMultigraph<Node, Link> graph;
-	private OntologyManager ontologyManager;
+	protected DirectedWeightedMultigraph<Node, Link> graph;
+	protected OntologyManager ontologyManager;
 	
 	private NodeIdFactory nodeIdFactory;
 	
@@ -83,10 +83,11 @@ public class GraphBuilder {
 	private HashMap<LinkStatus, Set<Link>> statusToLinksMap;
 	
 	private HashMap<String, Set<String>> uriClosure;
+	private HashSet<String> modelIds;
 
 	// Constructor
 	
-	public GraphBuilder(OntologyManager ontologyManager, NodeIdFactory nodeIdFactory) { //, LinkIdFactory linkIdFactory) {
+	public GraphBuilder(OntologyManager ontologyManager, NodeIdFactory nodeIdFactory, boolean addThingNode) { //, LinkIdFactory linkIdFactory) {
 		
 		this.ontologyManager = ontologyManager;
 		this.nodeIdFactory = nodeIdFactory;
@@ -100,6 +101,7 @@ public class GraphBuilder {
 		this.statusToLinksMap = new HashMap<LinkStatus, Set<Link>>();
 		
 		this.uriClosure = new HashMap<String, Set<String>>();
+		this.modelIds = new HashSet<String>();
 		
 		this.graph = new DirectedWeightedMultigraph<Node, Link>(Link.class);
 		
@@ -107,12 +109,16 @@ public class GraphBuilder {
 		this.sourceToTargetLinkUris = new HashSet<String>();
 		this.sourceToTargetConnectivity = new HashSet<String>();
 			
-		this.initialGraph();
+		if (addThingNode) 
+			this.initialGraph();
 		
 		logger.debug("initial graph has been created.");
 	}
 	
 	public GraphBuilder(OntologyManager ontologyManager, DirectedWeightedMultigraph<Node, Link> graph) {
+		
+		if (graph == null)
+			return;
 		
 		this.graph = graph;
 		this.ontologyManager = ontologyManager;
@@ -130,12 +136,27 @@ public class GraphBuilder {
 		this.sourceToTargetConnectivity = new HashSet<String>();
 
 		this.nodeIdFactory = new NodeIdFactory();
+		this.uriClosure = new HashMap<String, Set<String>>();
+		this.modelIds = new HashSet<String>();
+		
+		logger.info("number of nodes: " + this.graph.vertexSet().size());
+		logger.info("number of links: " + this.graph.edgeSet().size());
 		
 		for (Node node : this.graph.vertexSet()) {
 			
-			if (node instanceof InternalNode)
+			if (node.getLabel() != null && 
+					node.getLabel().getUri().equalsIgnoreCase(Uris.THING_URI))
+				this.thingNode = node;
+			
+			// building NodeIdFactory
+			if (node instanceof InternalNode) {
 				nodeIdFactory.getNodeId(node.getLabel().getUri());
+//				this.computeUriClosure(node.getLabel().getUri());
+			}
 
+			if (node.getModelIds() != null)
+				this.modelIds.addAll(node.getModelIds());
+			
 			this.idToNodeMap.put(node.getId(), node);
 			
 			Set<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
@@ -186,14 +207,14 @@ public class GraphBuilder {
 			}
 			linksWithSameType.add(link);
 			
-			String key = source.getId() + target.getId() + link.getLabel().getUri();
-			sourceToTargetLinkUris.add(key);
-			
 			this.visitedSourceTargetPairs.add(source.getId() + target.getId());
+			this.sourceToTargetConnectivity.add(source.getId() + target.getId());
+			this.sourceToTargetConnectivity.add(target.getId() + source.getId());
+			String key = source.getId() + target.getId() + link.getLabel().getUri();
+			this.sourceToTargetLinkUris.add(key);
+			
 		}
 
-		this.uriClosure = new HashMap<String, Set<String>>();
-			
 		logger.debug("graph has been loaded.");
 	}
 	
@@ -245,6 +266,10 @@ public class GraphBuilder {
 		return statusToLinksMap;
 	}
 	
+	public Set<String> getModelIds() {
+		return Collections.unmodifiableSet(modelIds);
+	}
+
 	public Node getThingNode() {
 		return thingNode;
 	}
@@ -395,7 +420,11 @@ public class GraphBuilder {
 			}
 		}
 
-		sourceToTargetLinkUris.add(key);
+		this.sourceToTargetLinkUris.add(key);
+		
+		if (link.getModelIds() != null)
+			this.modelIds.addAll(link.getModelIds());
+
 		
 		logger.debug("exit>");		
 		return true;
@@ -604,6 +633,9 @@ public class GraphBuilder {
 			typeToNodesMap.put(node.getType(), nodesWithSameType);
 		}
 		nodesWithSameType.add(node);
+		
+		if (node.getModelIds() != null)
+			this.modelIds.addAll(node.getModelIds());
 					
 		logger.debug("exit>");		
 		return true;

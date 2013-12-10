@@ -126,8 +126,8 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		this.confidenceList.add(confidence);
 		this.confidence *= confidence;
 		
-		this.frequency += n1.getPatternIds().size();
-		this.frequency += n2.getPatternIds().size();
+		this.frequency += n1.getModelIds().size();
+		this.frequency += n2.getModelIds().size();
 		
 		this.computeCoherenceList();
 		this.computeCoherenceValue();
@@ -200,7 +200,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		int guidSize = new RandomGUID().toString().length();
 		
 		for (Node n : nodes) {
-			for (String p : n.getPatternIds()) {
+			for (String p : n.getModelIds()) {
 				
 				Integer size = patternSize.get(p);
 				if (size == null) 
@@ -225,7 +225,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		List<String> listOfNodesLargestPatterns = new ArrayList<String>();
 		
 		for (Node n : nodes) {
-			List<String> patternIds = new ArrayList<String>(n.getPatternIds());
+			List<String> patternIds = new ArrayList<String>(n.getModelIds());
 			Collections.sort(patternIds);
 			
 			String[] nodeMaxPatterns = new String[maxPatternSize];

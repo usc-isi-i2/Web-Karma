@@ -23,7 +23,6 @@ package edu.isi.karma.modeling.research;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -187,9 +186,9 @@ public class SemanticModel {
 		logger.info(GraphUtil.graphToString(this.graph));
 	}
 	
-	public void exportModelToGraphviz(String exportDirectory, String fileExtension) throws FileNotFoundException {
+	public void exportModelToGraphviz(String filename) throws Exception {
 		
-		OutputStream out = new FileOutputStream(exportDirectory + this.getName() + fileExtension);
+		OutputStream out = new FileOutputStream(filename);
 		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
 		
 		graphViz.attr("fontcolor", "blue");
@@ -202,6 +201,7 @@ public class SemanticModel {
 		gViz.id("cluster");
 		graphViz.subGraph(gViz);
 		graphViz.writeTo(out);
+		out.close();
 	}
 	
 	public double getDistance(SemanticModel sm) {

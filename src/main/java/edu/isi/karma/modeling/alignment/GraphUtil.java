@@ -319,6 +319,7 @@ public class GraphUtil {
 	}
 	
 	public static void exportJson(DirectedWeightedMultigraph<Node, Link> graph, String filename) throws IOException {
+		logger.info("exporting the graph to json ...");
 		File file = new File(filename);
 		if (!file.exists()) {
 			file.createNewFile();
@@ -335,7 +336,7 @@ public class GraphUtil {
 	     } finally {
 			writer.close();
 		}
-		
+		logger.info("export is done.");
 	}
 	
 	public static DirectedWeightedMultigraph<Node, Link> importJson(String filename) throws IOException {
@@ -416,9 +417,9 @@ public class GraphUtil {
 			}
 		}
 		
-		writer.name("patternIds");
-		if (node.getPatternIds() == null) writer.value(nullStr);
-		else writePatternIds(writer, node.getPatternIds());
+		writer.name("modelIds");
+		if (node.getModelIds() == null) writer.value(nullStr);
+		else writeModelIds(writer, node.getModelIds());
 		writer.endObject();
 	}
 
@@ -444,8 +445,8 @@ public class GraphUtil {
 		}
 		writer.name("status").value(link.getStatus().toString());
 		writer.name("keyInfo").value(link.getKeyType().toString());
-		writer.name("patternIds");
-		writePatternIds(writer, link.getPatternIds());
+		writer.name("modelIds");
+		writeModelIds(writer, link.getModelIds());
 		writer.name("weight").value(link.getWeight());
 		writer.endObject();
 	}
@@ -485,13 +486,13 @@ public class GraphUtil {
 		writer.endObject();
 	}
 	
-	private static void writePatternIds(JsonWriter writer, Set<String> patternIds) throws IOException {
+	private static void writeModelIds(JsonWriter writer, Set<String> modelIds) throws IOException {
 		
-		if (patternIds == null)
+		if (modelIds == null)
 			return;
 		
 		writer.beginArray();
-		for (String s : patternIds)
+		for (String s : modelIds)
 			writer.value(s);
 		writer.endArray();
 	}
@@ -552,7 +553,7 @@ public class GraphUtil {
 		Label rdfLiteralType = null;
 		SemanticType userSelectedSemanticType = null;
 		List<SemanticType> crfSuggestedSemanticTypes = null;
-		Set<String> patternIds = null;
+		Set<String> modelIds = null;
 		
 		reader.beginObject();
 	    while (reader.hasNext()) {
@@ -579,8 +580,8 @@ public class GraphUtil {
 			    	crfSuggestedSemanticTypes.add(semanticType);
 				}
 		    	reader.endArray();				
-			} else if (key.equals("patternIds") && reader.peek() != JsonToken.NULL) {
-				patternIds = readPatternIds(reader);
+			} else if (key.equals("modelIds") && reader.peek() != JsonToken.NULL) {
+				modelIds = readModelIds(reader);
 			} else {
 				reader.skipValue();
 			}
@@ -595,7 +596,7 @@ public class GraphUtil {
     		((ColumnNode)n).setUserSelectedSemanticType(userSelectedSemanticType);
     		((ColumnNode)n).setCrfSuggestedSemanticTypes(crfSuggestedSemanticTypes);
     	}
-		n.setPatternIds(patternIds);
+		n.setModelIds(modelIds);
     	
     	return n;
 	}
@@ -610,7 +611,7 @@ public class GraphUtil {
 		String specializedLinkId = null;
 		LinkStatus status = null;
 		LinkKeyInfo keyInfo = null;
-		Set<String> patternIds = null;
+		Set<String> modelIds = null;
 		if (weight == null) weight = new Double[1];
 
 		reader.beginObject();
@@ -632,8 +633,8 @@ public class GraphUtil {
 				status = LinkStatus.valueOf(reader.nextString());
 			} else if (key.equals("keyInfo") && reader.peek() != JsonToken.NULL) {
 				keyInfo = LinkKeyInfo.valueOf(reader.nextString());
-			} else if (key.equals("patternIds") && reader.peek() != JsonToken.NULL) {
-				patternIds = readPatternIds(reader);
+			} else if (key.equals("modelIds") && reader.peek() != JsonToken.NULL) {
+				modelIds = readModelIds(reader);
 			} else if (key.equals("weight") && reader.peek() != JsonToken.NULL) {
 				weight[0] = new Double(reader.nextDouble());
 			} else {
@@ -664,7 +665,7 @@ public class GraphUtil {
     	}
     	
     	l.setStatus(status);
-    	l.setPatternIds(patternIds);
+    	l.setModelIds(modelIds);
     	return l;
 	}
 	
@@ -733,16 +734,16 @@ public class GraphUtil {
     	return semanticType;	
     }
 	
-	private static Set<String> readPatternIds(JsonReader reader) throws IOException {
+	private static Set<String> readModelIds(JsonReader reader) throws IOException {
 		
-		Set<String> patternIds = new HashSet<String>();
+		Set<String> modelIds = new HashSet<String>();
 		
 		reader.beginArray();
 	    while (reader.hasNext()) {
-	    	patternIds.add(reader.nextString());
+	    	modelIds.add(reader.nextString());
 		}
     	reader.endArray();
     	
-    	return patternIds;
+    	return modelIds;
 	}
 }

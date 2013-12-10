@@ -19,14 +19,25 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.rep.alignment;
+package edu.isi.karma.modeling.alignment.learner;
 
+import edu.isi.karma.modeling.ontology.OntologyManager;
 
+public class ModelLearningGraphLoaderThread implements Runnable {
 
-public class InternalNode extends Node {
+	private OntologyManager ontologyManager;
 	
-	public InternalNode(String id, Label label) {
-		super(id, label, NodeType.InternalNode);
+	public ModelLearningGraphLoaderThread(OntologyManager ontologyManager) {
+		this.ontologyManager = ontologyManager;
 	}
 
+	@Override
+	public void run() {
+		
+		if (this.ontologyManager == null)
+			return;
+		
+		ModelLearningGraph.getInstance(this.ontologyManager);
+		
+	}
 }

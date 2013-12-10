@@ -95,7 +95,7 @@ public class ModelReader {
 			if (semanticModels != null) {
 				for (SemanticModel sm : semanticModels) {
 					sm.print();
-					sm.exportModelToGraphviz(Params.GRAPHVIS_DIR, Params.GRAPHVIS_MAIN_FILE_EXT);
+					sm.exportModelToGraphviz(Params.GRAPHVIS_DIR + sm.getName() + Params.GRAPHVIS_MAIN_FILE_EXT);
 					sm.writeJson(Params.MODEL_DIR + sm.getName() + Params.MODEL_MAIN_FILE_EXT);
 					
 					// To test JsonReader and JsonWriter

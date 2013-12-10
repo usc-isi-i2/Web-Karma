@@ -68,17 +68,15 @@ public class Alignment implements OntologyUpdateListener {
 	private Node root = null;
 	
 	private NodeIdFactory nodeIdFactory;
-//	private LinkIdFactory linkIdFactory;
 	
 	public Alignment(OntologyManager ontologyManager) {
 
 		this.nodeIdFactory = new NodeIdFactory();
-//		this.linkIdFactory = new LinkIdFactory();
 
 		ontologyManager.subscribeListener(this);
 
 		logger.debug("building initial graph ...");
-		graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory);//, linkIdFactory);
+		graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory, true);//, linkIdFactory);
 		
 	}
 	

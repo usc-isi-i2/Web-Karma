@@ -62,7 +62,7 @@ public class RankedSteinerSet implements Comparable<RankedSteinerSet>{
 		List<String> patternIds = new ArrayList<String>();
 		
 		for (Node n : nodes) 
-			for (String s : n.getPatternIds())
+			for (String s : n.getModelIds())
 				patternIds.add(s);
 		
 		Function<String, String> stringEqualiy = new Function<String, String>() {

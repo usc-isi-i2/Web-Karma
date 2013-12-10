@@ -257,7 +257,7 @@ public class GraphVizUtil {
 				n = new org.kohsuke.graphviz.Node();
 //				label = (uri == null || uri.trim().length() == 0?id:uri));
 				sourceLabel = (sourceLocalName == null || sourceLocalName.trim().length() == 0?sourceId:sourceLocalName);
-				if (showDescription) sourceLabel += " " + getPatterns(source.getPatternIds()); 
+				if (showDescription) sourceLabel += " " + getPatterns(source.getModelIds()); 
 				n.attr("label", sourceLabel);
 				nodeIndex.put(source, n);
 			
@@ -285,7 +285,7 @@ public class GraphVizUtil {
 //				label = (uri == null || uri.trim().length() == 0?id:uri));
 				targetLabel = (targetLocalName == null || targetLocalName.trim().length() == 0?targetId:targetLocalName);
 				if (target instanceof ColumnNode) targetLabel = ((ColumnNode)target).getColumnName();
-				if (showDescription) targetLabel += " " + getPatterns(target.getPatternIds()); 
+				if (showDescription) targetLabel += " " + getPatterns(target.getModelIds()); 
 				n.attr("label", targetLabel);
 				nodeIndex.put(target, n);
 			
@@ -313,7 +313,7 @@ public class GraphVizUtil {
 			if (showDescription) {
 				edgeLabel += "-(" + roundTwoDecimals(e.getWeight()) + ")-";
 				edgeLabel += " ";
-				edgeLabel += getPatterns(e.getPatternIds());
+				edgeLabel += getPatterns(e.getModelIds());
 			}
 
 			edge.attr("label", edgeLabel);

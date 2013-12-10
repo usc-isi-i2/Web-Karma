@@ -19,14 +19,14 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.rep.alignment;
+package edu.isi.karma.modeling.alignment.learner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public class ModelLearner {
 
-public class InternalNode extends Node {
-	
-	public InternalNode(String id, Label label) {
-		super(id, label, NodeType.InternalNode);
-	}
+	private static Logger logger = LoggerFactory.getLogger(ModelLearner.class);
+	private static ModelLearningGraph modelLearningGraph;
 
 }

@@ -53,7 +53,6 @@ import edu.isi.karma.modeling.research.ModelReader;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.modeling.research.PatternContainment;
 import edu.isi.karma.modeling.research.SemanticModel;
-import edu.isi.karma.modeling.research.WeightTuning;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
@@ -165,7 +164,7 @@ public class Approach1 {
 //		this.linkIdFactory = new LinkIdFactory();
 		this.nodeIdFactory = new NodeIdFactory();
 		
-		this.graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory);//, linkIdFactory);
+		this.graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory, false);//, linkIdFactory);
 		
 		this.linkCountMap = new HashMap<String, Integer>();
 		this.sourceToTargetLinks = ArrayListMultimap.create();	
@@ -216,8 +215,8 @@ public class Approach1 {
 			Set<String> mappedNodes = new HashSet<String>();
 			Set<String> mappedLinks = new HashSet<String>();
 			if (containment.containedIn(mappedNodes, mappedLinks)) {
-				for (String n : mappedNodes) this.graphBuilder.getIdToNodeMap().get(n).getPatternIds().add(patternId);
-				for (String l : mappedLinks) this.graphBuilder.getIdToLinkMap().get(l).getPatternIds().add(patternId);
+				for (String n : mappedNodes) this.graphBuilder.getIdToNodeMap().get(n).getModelIds().add(patternId);
+				for (String l : mappedLinks) this.graphBuilder.getIdToLinkMap().get(l).getModelIds().add(patternId);
 				return;
 			}
 		}
@@ -303,18 +302,18 @@ public class Approach1 {
 				link = new ObjectPropertyLink(id, e.getLabel(), ObjectPropertyType.None); 
 			
 			
-			link.getPatternIds().add(patternId);
+			link.getModelIds().add(patternId);
 			
 			if (this.graphBuilder.addLink(n1, n2, link)) {
 				component.addEdge(n1, n2, link);
 				this.graphBuilder.changeLinkWeight(link, ModelingParams.PATTERN_LINK_WEIGHT);
 			}
 			
-			if (!n1.getPatternIds().contains(patternId))
-				n1.getPatternIds().add(patternId);
+			if (!n1.getModelIds().contains(patternId))
+				n1.getModelIds().add(patternId);
 			
-			if (!n2.getPatternIds().contains(patternId))
-				n2.getPatternIds().add(patternId);
+			if (!n2.getModelIds().contains(patternId))
+				n2.getModelIds().add(patternId);
 
 		}
 		
