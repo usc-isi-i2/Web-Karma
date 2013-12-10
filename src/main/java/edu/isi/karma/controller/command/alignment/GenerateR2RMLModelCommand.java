@@ -50,7 +50,6 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.modeling.research.SemanticModel;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -149,27 +148,26 @@ public class GenerateR2RMLModelCommand extends Command {
 		// mohsen: my code to enable Karma to leran semantic models
 		// *****************************************************************************************
 		// *****************************************************************************************
-		if (Params.RESEARCH_MODE) {
-			SemanticModel semanticModel = new SemanticModel(worksheetName, alignment.getSteinerTree());
-			semanticModel.setName(worksheetName);
-			try {
-				semanticModel.writeJson(ModelingConfiguration.getModelsJsonDir() + 
-						semanticModel.getName() + 
-						".json");
-			} catch (Exception e) {
-				logger.error("error in exporting the model to JSON!");
-				e.printStackTrace();
-			}
-			try {
-				semanticModel.exportModelToGraphviz(ModelingConfiguration.getModelsGraphvizDir() + 
-						semanticModel.getName() + 
-						".dot");
-			} catch (Exception e) {
-				logger.error("error in exporting the model to GRAPHVIZ!");
-				e.printStackTrace();
-			}
-			ModelLearningGraph.getInstance(workspace.getOntologyManager()).addModelAndUpdateGraphJson(semanticModel);
+
+		SemanticModel semanticModel = new SemanticModel(worksheetName, alignment.getSteinerTree());
+		semanticModel.setName(worksheetName);
+		try {
+			semanticModel.writeJson(ModelingConfiguration.getModelsJsonDir() + 
+					semanticModel.getName() + 
+					".json");
+		} catch (Exception e) {
+			logger.error("error in exporting the model to JSON!");
+//			e.printStackTrace();
 		}
+		try {
+			semanticModel.exportGraphviz(ModelingConfiguration.getModelsGraphvizDir() + 
+					semanticModel.getName() + 
+					".dot", false);
+		} catch (Exception e) {
+			logger.error("error in exporting the model to GRAPHVIZ!");
+//			e.printStackTrace();
+		}
+		ModelLearningGraph.getInstance(workspace.getOntologyManager()).addModelAndUpdateGraphJson(semanticModel);
 		
 		// *****************************************************************************************
 		// *****************************************************************************************

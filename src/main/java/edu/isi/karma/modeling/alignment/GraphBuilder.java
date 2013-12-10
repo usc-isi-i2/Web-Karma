@@ -149,10 +149,13 @@ public class GraphBuilder {
 				this.thingNode = node;
 			
 			// building NodeIdFactory
-			if (node instanceof InternalNode) {
+			if (node.getLabel() != null) {
 				nodeIdFactory.getNodeId(node.getLabel().getUri());
-//				this.computeUriClosure(node.getLabel().getUri());
 			}
+
+//			if (node instanceof InternalNode) {
+//				this.computeUriClosure(node.getLabel().getUri());
+//			}
 
 			if (node.getModelIds() != null)
 				this.modelIds.addAll(node.getModelIds());

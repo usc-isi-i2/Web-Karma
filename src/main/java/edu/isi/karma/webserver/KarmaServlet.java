@@ -113,7 +113,7 @@ public class KarmaServlet extends HttpServlet {
 			logger.info("No directory for preloading ontologies exists.");
 		}
 		
-		new ModelLearningGraphLoaderThread(ontologyManager);
+		new ModelLearningGraphLoaderThread(ontologyManager).run();
 
 		// Loading a CSV file in each workspace
 //		File file = new File("./SampleData/CSV/Nation_Data.csv");

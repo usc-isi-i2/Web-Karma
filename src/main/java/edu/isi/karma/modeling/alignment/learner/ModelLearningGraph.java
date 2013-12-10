@@ -46,6 +46,7 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
 import edu.isi.karma.rep.alignment.SubClassLink;
+import edu.isi.karma.util.RandomGUID;
 
 public class ModelLearningGraph {
 
@@ -59,7 +60,8 @@ public class ModelLearningGraph {
 	public static synchronized ModelLearningGraph getInstance(OntologyManager _ontologyManager) {
 		if (instance == null || !_ontologyManager.equals(ontologyManager)) {
 			try {
-				instance = new ModelLearningGraph(ontologyManager);
+				ontologyManager = _ontologyManager;
+				instance = new ModelLearningGraph();
 			} catch (IOException e) {
 				logger.error("error in importing the main learning graph!");			
 				e.printStackTrace();
@@ -69,12 +71,10 @@ public class ModelLearningGraph {
 		return instance;
 	}
 	
-	public ModelLearningGraph(OntologyManager ontologyManager) throws IOException {
+	public ModelLearningGraph() throws IOException {
 		
 		File file = new File(ModelingConfiguration.getAlignmentGraphPath());
 		if (!file.exists()) {
-			this.nodeIdFactory = new NodeIdFactory();
-			this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
 			this.initializeFromJsonRepository();
 		} else {
 			DirectedWeightedMultigraph<Node, Link> graph =
@@ -86,6 +86,10 @@ public class ModelLearningGraph {
 	
 	public void initializeFromJsonRepository() {
 		logger.info("initializing the graph from models in the repository ...");
+		
+		this.nodeIdFactory = new NodeIdFactory();
+		this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
+
 		File ff = new File(ModelingConfiguration.getModelsJsonDir());
 		File[] files = ff.listFiles();
 		
@@ -131,6 +135,9 @@ public class ModelLearningGraph {
 			// FIXME
 			// we need to somehow update the graph, but I don't know how to do that yet.
 			// so, we rebuild the whole graph from scratch.
+			logger.info("the graph already includes the model and needs to be updated, we re-initialize the graph from the repository!");
+			initializeFromJsonRepository();
+			return;
 		}
 		
 		visitedNodes = new HashMap<Node, Node>();
@@ -153,7 +160,7 @@ public class ModelLearningGraph {
 					} else continue;
 				}
 				else {
-					String id = nodeIdFactory.getNodeId(source.getId());
+					String id = new RandomGUID().toString();
 					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), null);
 					if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) {
 						n1 = node;
@@ -173,7 +180,7 @@ public class ModelLearningGraph {
 					} else continue;
 				}
 				else {
-					String id = nodeIdFactory.getNodeId(target.getId());
+					String id = new RandomGUID().toString();
 					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), null);
 					if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) {
 						n2 = node;

@@ -189,12 +189,12 @@ public class GraphVizUtil {
 		return localName;
 	}
 	
-	private static String getPatterns(Set<String> patternIds) {
+	private static String getModelIds(Set<String> modelIds) {
 		String label = "";
-		if (patternIds == null || patternIds.size() == 0)
+		if (modelIds == null || modelIds.size() == 0)
 			return label;
 		label += "[";
-		for (String pId : patternIds)
+		for (String pId : modelIds)
 			label += pId + ",";
 		if (label.endsWith(","))
 			label = label.substring(0, label.length() - 1);
@@ -202,7 +202,7 @@ public class GraphVizUtil {
 		return label;
 	}
 	
-	public static org.kohsuke.graphviz.Graph exportJGraphToGraphviz(DirectedWeightedMultigraph<Node, Link> model, boolean showDescription) {
+	public static org.kohsuke.graphviz.Graph exportJGraphToGraphviz(DirectedWeightedMultigraph<Node, Link> model, boolean showLinkMetaData) {
 
 		org.kohsuke.graphviz.Graph gViz = new org.kohsuke.graphviz.Graph();
 
@@ -257,14 +257,10 @@ public class GraphVizUtil {
 				n = new org.kohsuke.graphviz.Node();
 //				label = (uri == null || uri.trim().length() == 0?id:uri));
 				sourceLabel = (sourceLocalName == null || sourceLocalName.trim().length() == 0?sourceId:sourceLocalName);
-				if (showDescription) sourceLabel += " " + getPatterns(source.getModelIds()); 
+				if (showLinkMetaData) sourceLabel += " " + getModelIds(source.getModelIds()); 
 				n.attr("label", sourceLabel);
 				nodeIndex.put(source, n);
 			
-//				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
-//					gViz.nodeWith(inputNodeStyle);
-//				else if (id.indexOf("att") != -1 && id.indexOf("o") != -1)  // output
-//					gViz.nodeWith(outputNodeStyle);
 				if (source instanceof ColumnNode)  // attribute
 					gViz.nodeWith(parameterNodeStyle);
 				else if (source instanceof LiteralNode)  // literal
@@ -285,14 +281,10 @@ public class GraphVizUtil {
 //				label = (uri == null || uri.trim().length() == 0?id:uri));
 				targetLabel = (targetLocalName == null || targetLocalName.trim().length() == 0?targetId:targetLocalName);
 				if (target instanceof ColumnNode) targetLabel = ((ColumnNode)target).getColumnName();
-				if (showDescription) targetLabel += " " + getPatterns(target.getModelIds()); 
+				if (showLinkMetaData) targetLabel += " " + getModelIds(target.getModelIds()); 
 				n.attr("label", targetLabel);
 				nodeIndex.put(target, n);
 			
-//				if (id.indexOf("att") != -1 && id.indexOf("i") != -1) // input
-//					gViz.nodeWith(inputNodeStyle);
-//				else if (id.indexOf("att") != -1 && id.indexOf("o") != -1)  // output
-//					gViz.nodeWith(outputNodeStyle);
 				if (target instanceof ColumnNode)  // attribute
 					gViz.nodeWith(parameterNodeStyle);
 				else if (target instanceof LiteralNode)  // literal
@@ -306,14 +298,14 @@ public class GraphVizUtil {
 			org.kohsuke.graphviz.Edge edge = new org.kohsuke.graphviz.Edge(nodeIndex.get(source), nodeIndex.get(target));
 			
 			String edgeId = e.getId();
-			String edgetUri = e.getLabel().getUri();
-			String edgeLocalName = getLocalName(edgetUri);
+			String edgeUri = e.getLabel().getUri();
+			String edgeLocalName = getLocalName(edgeUri);
 			String edgeLabel = (edgeLocalName == null?edgeId:edgeLocalName);
 
-			if (showDescription) {
+			if (showLinkMetaData) {
 				edgeLabel += "-(" + roundTwoDecimals(e.getWeight()) + ")-";
 				edgeLabel += " ";
-				edgeLabel += getPatterns(e.getModelIds());
+				edgeLabel += getModelIds(e.getModelIds());
 			}
 
 			edge.attr("label", edgeLabel);
@@ -364,6 +356,5 @@ public class GraphVizUtil {
 		graphViz.writeTo(out);
 
 	}
-	
-	
+
 }

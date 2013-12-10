@@ -23,7 +23,7 @@ package edu.isi.karma.modeling.research;
 
 public class Params {
 
-	public static boolean RESEARCH_MODE = false;
+	public static boolean RESEARCH_MODE = true;
 	
 	private static String DATASET_NAME = "ds1";
 	private static String ROOT_DIR = "/Users/mohsen/Dropbox/Service Modeling/iswc2013-" + DATASET_NAME + "/";

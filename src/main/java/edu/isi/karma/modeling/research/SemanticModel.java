@@ -186,17 +186,17 @@ public class SemanticModel {
 		logger.info(GraphUtil.graphToString(this.graph));
 	}
 	
-	public void exportModelToGraphviz(String filename) throws Exception {
+	public void exportGraphviz(String filename, boolean showLinkMetaData) throws IOException {
 		
 		OutputStream out = new FileOutputStream(filename);
 		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
 		
 		graphViz.attr("fontcolor", "blue");
 		graphViz.attr("remincross", "true");
-		graphViz.attr("label", this.getDescription());
+		graphViz.attr("label", this.getDescription() == null ? "" : this.getDescription());
 //		graphViz.attr("page", "8.5,11");
 
-		org.kohsuke.graphviz.Graph gViz = GraphVizUtil.exportJGraphToGraphviz(this.graph, true);
+		org.kohsuke.graphviz.Graph gViz = GraphVizUtil.exportJGraphToGraphviz(this.graph, showLinkMetaData);
 		gViz.attr("label", "model");
 		gViz.id("cluster");
 		graphViz.subGraph(gViz);
