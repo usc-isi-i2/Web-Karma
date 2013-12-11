@@ -21,6 +21,9 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,26 +35,44 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
+import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.modeling.alignment.Alignment;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.alignment.SemanticModel;
+import edu.isi.karma.modeling.alignment.learner.ModelLearner;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.ClassInstanceLink;
+import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.ColumnSubClassLink;
+import edu.isi.karma.rep.alignment.DataPropertyLink;
+import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
+import edu.isi.karma.rep.alignment.InternalNode;
+import edu.isi.karma.rep.alignment.Link;
+import edu.isi.karma.rep.alignment.LinkStatus;
+import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.NodeType;
+import edu.isi.karma.rep.alignment.ObjectPropertyLink;
+import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SubClassLink;
 
 public class ShowModelCommand extends WorksheetCommand {
 
 	private String worksheetName;
-	private final boolean addVWorksheetUpdate;
+//	private final boolean addVWorksheetUpdate;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(ShowModelCommand.class);
 
 	protected ShowModelCommand(String id, String worksheetId, boolean addVWorksheetUpdate) {
 		super(id, worksheetId);
-		this.addVWorksheetUpdate = addVWorksheetUpdate;
+//		this.addVWorksheetUpdate = addVWorksheetUpdate;
 		
 		/** NOTE Not saving this command in history for now since we are 
 		 * not letting CRF model assign semantic types automatically. This command 
@@ -84,33 +105,92 @@ public class ShowModelCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		
-		worksheetName = worksheet.getTitle();
-
-		// Get the Outlier Tag
-//		Tag outlierTag = vWorkspace.getWorkspace().getTagsContainer().getTag(TagName.Outlier);
-
-		// Generate the semantic types for the worksheet
-		OntologyManager ontMgr = workspace.getOntologyManager();
-		if(ontMgr.isEmpty())
+		OntologyManager ontologyManager = workspace.getOntologyManager();
+		if(ontologyManager.isEmpty())
 			return new UpdateContainer(new ErrorUpdate("No ontology loaded."));
 		
+		worksheetName = worksheet.getTitle();
 		
-		if (addVWorksheetUpdate) {
-			c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId));
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		if (alignment == null) {
+			logger.info("Alignment is NULL for " + worksheetId);
+			return new UpdateContainer(new ErrorUpdate(
+					"Please align the worksheet before generating R2RML Model!"));
 		}
-		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
-		c.add(new TagsUpdate());
+
+		Set<Node> alignmentColumnNodes = alignment.getNodesByType(NodeType.ColumnNode);
+		Set<ColumnNode> columnNodes = new HashSet<ColumnNode>();
+		if (alignmentColumnNodes != null)
+			for (Node n : alignmentColumnNodes)
+				columnNodes.add((ColumnNode)n);
+		ModelLearner modelLearner = new ModelLearner(ontologyManager, columnNodes);
+		modelLearner.learn();
+		SemanticModel model = modelLearner.getModel();
+		
+		HashMap<Node, Node> modelToAlignmentNode = new HashMap<Node, Node>();
+		if (model != null) {
+			for (Node n : model.getGraph().vertexSet()) {
+				if (n instanceof InternalNode) {
+					InternalNode iNode = alignment.addInternalNode(n.getLabel());
+					modelToAlignmentNode.put(n, iNode);
+				}
+				if (n instanceof ColumnNode) {
+					if (model.getMappingToSourceColumns() != null)
+						modelToAlignmentNode.put(n, model.getMappingToSourceColumns().get(n));
+				}
+			}
+			
+			Node source, target;
+			for (Link l : model.getGraph().edgeSet()) {
+				
+				if (!(l.getSource() instanceof InternalNode)) {
+					logger.error("column node cannot have an outgoing link!");
+					continue;
+				}
+
+				source = modelToAlignmentNode.get(l.getSource());
+				target = modelToAlignmentNode.get(l.getTarget());
+
+				Link newLink = null;
+				if (l instanceof DataPropertyLink)
+					newLink = alignment.addDataPropertyLink(source, target, l.getLabel(), false);
+				else if (l instanceof ObjectPropertyLink)
+					newLink = alignment.addObjectPropertyLink(source, target, l.getLabel());
+				else if (l instanceof SubClassLink)
+					newLink = alignment.addSubClassOfLink(source, target);
+				else if (l instanceof ClassInstanceLink)
+					newLink = alignment.addClassInstanceLink(source, target, l.getKeyType());
+				else if (l instanceof ColumnSubClassLink)
+					newLink = alignment.addColumnSubClassOfLink(source, target);
+				else if (l instanceof DataPropertyOfColumnLink)
+					newLink = alignment.addDataPropertyOfColumnLink(source, target, ((DataPropertyOfColumnLink)l).getSpecializedColumnHNodeId());
+				else if (l instanceof ObjectPropertySpecializationLink)
+					newLink = alignment.addObjectPropertySpecializationLink(source, target, ((ObjectPropertySpecializationLink)l).getSpecializedLinkId());
+				
+				if (!(target instanceof ColumnNode) && newLink != null)
+					alignment.changeLinkStatus(newLink.getId(), LinkStatus.ForcedByUser);
+
+			}
+		}
+		
+		alignment.align();
+		
 		try {
 			// Save the semantic types in the input parameter JSON
 			saveSemanticTypesInformation(worksheet, workspace, worksheet.getSemanticTypes().getListOfTypes());
-		
+			
+			// Add the visualization update
+			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+			c.add(new AlignmentSVGVisualizationUpdate(
+					worksheetId, alignment));
 		} catch (Exception e) {
 			logger.error("Error occured while generating the model Reason:.", e);
 			return new UpdateContainer(new ErrorUpdate(
 					"Error occured while generating the model for the source."));
 		}
-
+		c.add(new TagsUpdate());
+		
 		return c;
 	}
 

@@ -151,7 +151,7 @@ public class Alignment implements OntologyUpdateListener {
 	public int getLastIndexOfNodeUri(String uri) {
 		return this.nodeIdFactory.lastIndexOf(uri);
 	}
-
+	
 //	public int getLastIndexOfLinkUri(String uri) {
 //		return this.linkIdFactory.lastIndexOf(uri);
 //	}
