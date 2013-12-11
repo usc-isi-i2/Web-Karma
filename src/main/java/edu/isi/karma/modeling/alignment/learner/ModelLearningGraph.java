@@ -35,8 +35,8 @@ import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
+import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.research.SemanticModel;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.InternalNode;
@@ -51,17 +51,17 @@ import edu.isi.karma.util.RandomGUID;
 public class ModelLearningGraph {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelLearningGraph.class);
-	private static ModelLearningGraph instance = null;
 	
-	private static OntologyManager ontologyManager;
+	private static ModelLearningGraph instance = null;
+	private OntologyManager ontologyManager;
 	private GraphBuilder graphBuilder;
 	private NodeIdFactory nodeIdFactory; 
+	private long lastUpdateTime;
 
-	public static synchronized ModelLearningGraph getInstance(OntologyManager _ontologyManager) {
-		if (instance == null || !_ontologyManager.equals(ontologyManager)) {
+	public static synchronized ModelLearningGraph getInstance(OntologyManager ontologyManager) {
+		if (instance == null || !ontologyManager.equals(instance.ontologyManager)) {
 			try {
-				ontologyManager = _ontologyManager;
-				instance = new ModelLearningGraph();
+				instance = new ModelLearningGraph(ontologyManager);
 			} catch (IOException e) {
 				logger.error("error in importing the main learning graph!");			
 				e.printStackTrace();
@@ -70,8 +70,22 @@ public class ModelLearningGraph {
 		}
 		return instance;
 	}
+
+	public static ModelLearningGraph getEmptyInstance(OntologyManager ontologyManager) {
+		instance = new ModelLearningGraph(ontologyManager, true);
+		return instance;
+	}
+
+	private ModelLearningGraph(OntologyManager ontologyManager, boolean emptyInstance) {
+		this.ontologyManager = ontologyManager;
+		this.nodeIdFactory = new NodeIdFactory();
+		this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
+		this.lastUpdateTime = System.currentTimeMillis();
+	}
 	
-	public ModelLearningGraph() throws IOException {
+	private ModelLearningGraph(OntologyManager ontologyManager) throws IOException {
+		
+		this.ontologyManager = ontologyManager;
 		
 		File file = new File(ModelingConfiguration.getAlignmentGraphPath());
 		if (!file.exists()) {
@@ -82,6 +96,24 @@ public class ModelLearningGraph {
 			this.graphBuilder = new GraphBuilder(ontologyManager, graph);
 			this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 		}
+		this.lastUpdateTime = System.currentTimeMillis();
+	}
+
+	public void empty() {
+		this.nodeIdFactory = new NodeIdFactory();
+		this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
+	}
+	
+	public GraphBuilder getGraphBuilder() {
+		return this.graphBuilder;
+	}
+	
+	public NodeIdFactory getNodeIdFactory() {
+		return this.nodeIdFactory;
+	}
+	
+	public long getLastUpdateTime() {
+		return this.lastUpdateTime;
 	}
 	
 	public void initializeFromJsonRepository() {
@@ -103,6 +135,7 @@ public class ModelLearningGraph {
 			}
 		}
 		this.exportJson();
+		this.lastUpdateTime = System.currentTimeMillis();
 		logger.info("initialization is done.");
 	}
 	
@@ -114,12 +147,17 @@ public class ModelLearningGraph {
 		}
 	}
 	
+	public void addModel(SemanticModel model) {
+		this.addModelGraph(model);
+		this.graphBuilder.addClosureAndLinksOfNodes(model.getInternalNodes(), null);
+	}
+	
 	public void addModelAndUpdateGraphJson(SemanticModel model) {
 		this.addModel(model);
 		this.exportJson();
 	}
 	
-	public void addModel(SemanticModel model) {
+	private void addModelGraph(SemanticModel model) {
 		
 		HashMap<Node, Node> visitedNodes;
 		Node source, target;
@@ -155,14 +193,14 @@ public class ModelLearningGraph {
 				if (source instanceof InternalNode) {
 					String id = this.nodeIdFactory.getNodeId(source.getLabel().getUri());
 					InternalNode node = new InternalNode(id, new Label(source.getLabel()));
-					if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) {
+					if (this.graphBuilder.addNode(node)) {
 						n1 = node;
 					} else continue;
 				}
 				else {
 					String id = new RandomGUID().toString();
 					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), null);
-					if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) {
+					if (this.graphBuilder.addNode(node)) {
 						n1 = node;
 					} else continue;
 				}
@@ -175,14 +213,14 @@ public class ModelLearningGraph {
 				if (target instanceof InternalNode) {
 					String id = nodeIdFactory.getNodeId(target.getLabel().getUri());
 					InternalNode node = new InternalNode(id, new Label(target.getLabel()));
-					if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) {
+					if (this.graphBuilder.addNode(node)) {
 						n2 = node;
 					} else continue;
 				}
 				else {
 					String id = new RandomGUID().toString();
 					ColumnNode node = new ColumnNode(id, id, ((ColumnNode)target).getColumnName(), null);
-					if (this.graphBuilder.addNodeWithoutUpdatingGraph(node)) {
+					if (this.graphBuilder.addNode(node)) {
 						n2 = node;
 					} else continue;
 				}
@@ -215,5 +253,8 @@ public class ModelLearningGraph {
 				n2.getModelIds().add(modelId);
 
 		}
+		
+		this.lastUpdateTime = System.currentTimeMillis();
 	}
+
 }

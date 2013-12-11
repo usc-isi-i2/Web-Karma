@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research.approach1;
+package edu.isi.karma.modeling.alignment.learner;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -126,8 +126,8 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		this.confidenceList.add(confidence);
 		this.confidence *= confidence;
 		
-		this.frequency += n1.getModelIds().size();
-		this.frequency += n2.getModelIds().size();
+		this.frequency += n1.getModelIds() == null ? 0 : n1.getModelIds().size();
+		this.frequency += n2.getModelIds() == null ? 0 : n2.getModelIds().size();
 		
 		this.computeCoherenceList();
 		this.computeCoherenceValue();

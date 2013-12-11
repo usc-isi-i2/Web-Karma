@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research.approach1;
+package edu.isi.karma.modeling.alignment.learner;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import edu.isi.karma.modeling.research.SemanticModel;
+import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.rep.alignment.Link;
 
 public class SortableSemanticModel extends SemanticModel

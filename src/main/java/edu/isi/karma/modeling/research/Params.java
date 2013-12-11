@@ -45,6 +45,7 @@ public class Params {
 	public static String MODEL_RANK1_FILE_EXT = ".model.rank1.json";
 	public static String MODEL_RANK2_FILE_EXT = ".model.rank2.json";
 	public static String MODEL_RANK3_FILE_EXT = ".model.rank3.json";
+	public static String MODEL_APP2_FILE_EXT = ".model.rank1.json";
 
 	public static String GRAPHVIS_MAIN_FILE_EXT = ".dot";
 	public static String GRAPHVIS_OUT_FILE_EXT = ".out.dot";

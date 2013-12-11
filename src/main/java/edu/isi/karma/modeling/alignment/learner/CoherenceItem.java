@@ -19,9 +19,44 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research.approach1;
+package edu.isi.karma.modeling.alignment.learner;
 
-public enum SemanticLabelType {
-	Class,
-	DataProperty
+public class CoherenceItem implements Comparable<CoherenceItem>{
+
+	private int x; // explain this
+	private int y; // explain this
+	
+	public CoherenceItem(int x, int y) {		
+		this.x = x;
+		this.y = y;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	@Override
+	public int compareTo(CoherenceItem o) {
+		if (this.x > o.x)
+			return -1;
+		else if (this.x < o.x)
+			return 1;
+		else {
+			if (this.y > o.y)
+				return -1;
+			else if (this.y < o.y)
+				return 1;
+			else
+				return 0;
+		}
+	}
+
+	public double getDouble() {
+		return this.x * 10 + this.y;
+	}
+	
 }

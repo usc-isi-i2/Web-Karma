@@ -48,6 +48,9 @@ public class ModelingConfiguration {
     private static String modelsJsonDir;
     private static String modelsGraphvizDir;
     private static String alignmentGraphPath; 
+    
+    private static Integer maxCandidateModels;
+    private static Integer maxQueuedMappigs;
 
 	public static void load() {
         try {
@@ -83,6 +86,12 @@ public class ModelingConfiguration {
             modelsJsonDir = modelingProperties.getProperty("models.json.dir");
             modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir");
             alignmentGraphPath = modelingProperties.getProperty("alignment.graph.path");
+            
+            if(modelingProperties.getProperty("max.queued.mappings") != null)
+            	maxQueuedMappigs = Integer.parseInt(modelingProperties.getProperty("max.queued.mappings"));
+
+            if(modelingProperties.getProperty("max.candidate.models") != null)
+            	maxCandidateModels = Integer.parseInt(modelingProperties.getProperty("max.candidate.models"));
 
         } catch (IOException e) {
             logger.error("Error occured while reading config file ...");
@@ -185,4 +194,17 @@ public class ModelingConfiguration {
 		return alignmentGraphPath;
 	}
 
+	public static Integer getMaxCandidateModels() {
+		if (maxCandidateModels == null)
+			load();
+		return maxCandidateModels;
+	}
+
+	public static Integer getMaxQueuedMappigs() {
+		if (maxQueuedMappigs == null)
+			load();
+		return maxQueuedMappigs;
+	}
+
+	
 }

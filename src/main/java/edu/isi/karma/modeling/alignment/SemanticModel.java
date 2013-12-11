@@ -19,7 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research;
+package edu.isi.karma.modeling.alignment;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,7 +43,6 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
-import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Link;
@@ -67,7 +66,7 @@ public class SemanticModel {
 			DirectedWeightedMultigraph<Node, Link> graph) {
 		this.id = id;
 		this.graph = graph;
-		this.sourceColumns = GraphUtil.getColumnNodes(this.graph);
+		this.sourceColumns = this.getColumnNodes();
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
 		for (ColumnNode c : this.sourceColumns)
 			this.mappingToSourceColumns.put(c, c);
@@ -125,7 +124,27 @@ public class SemanticModel {
 	public Set<ColumnNode> getSourceColumns() {
 		return sourceColumns;
 	}
+	
+	public Set<InternalNode> getInternalNodes() {
+		Set<InternalNode> internalNodes = new HashSet<InternalNode>();
+		if (this.graph != null) {
+			for (Node n : this.graph.vertexSet())
+				if (n instanceof InternalNode)
+					internalNodes.add((InternalNode)n);
+		}
+		return internalNodes;
+	}
 
+	public Set<ColumnNode> getColumnNodes() {
+		Set<ColumnNode> columnNodes = new HashSet<ColumnNode>();
+		if (this.graph != null) {
+			for (Node n : this.graph.vertexSet())
+				if (n instanceof ColumnNode)
+					columnNodes.add((ColumnNode)n);
+		}
+		return columnNodes;
+	}
+	
 	private void setUserSelectedTypeForColumnNodes() {
 		
 		if (this.graph == null || this.sourceColumns == null)

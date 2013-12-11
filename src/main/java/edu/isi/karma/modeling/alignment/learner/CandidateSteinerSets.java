@@ -19,17 +19,19 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research.approach1;
+package edu.isi.karma.modeling.alignment.learner;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import edu.isi.karma.modeling.ModelingConfiguration;
+
+
 
 public class CandidateSteinerSets {
 	
-	private static final int MAX_SIZE = 1000;
 	private int maxNumberOfSteinerNodes;
 	private List<SteinerNodes> steinerSets;
 	
@@ -76,20 +78,10 @@ public class CandidateSteinerSets {
 			
 			this.steinerSets.clear();
 			
-			for (int i = 0; i < MAX_SIZE && i < newSteinerNodes.size(); i++)
+			for (int i = 0; i < ModelingConfiguration.getMaxQueuedMappigs() && i < newSteinerNodes.size(); i++)
 				this.steinerSets.add(newSteinerNodes.get(i));
 
 		}
-		
-//		for (SteinerNodes steinerNodes : this.steinerSets) {
-//			System.out.println("***********************************************");
-//			for (Node n : steinerNodes.getNodes()) {
-//				if (n instanceof ColumnNode)
-//					System.out.println("=========>" + ((ColumnNode)n).getColumnName());
-//				else
-//					System.out.println("=========>" + n.getId());
-//			}
-//		}
 		
 	}
 }

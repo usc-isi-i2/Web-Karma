@@ -179,7 +179,7 @@ public class Alignment implements OntologyUpdateListener {
 		
 		// use hNodeId as id of the node
 		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType, crfSuggestedSemanticTypes);
-		if (this.graphBuilder.addNode(node)) 
+		if (this.graphBuilder.addNodeAndUpdate(node)) 
 			return node;
 		return null;
 	}
@@ -188,12 +188,8 @@ public class Alignment implements OntologyUpdateListener {
 		
 		String id = nodeIdFactory.getNodeId(label.getUri());
 		InternalNode node = new InternalNode(id, label);
-		if (this.graphBuilder.addNode(node)) return node;
+		if (this.graphBuilder.addNodeAndUpdate(node)) return node;
 		return null;	
-	}
-
-	public void updateGraph() {
-		this.graphBuilder.updateGraph();
 	}
 	
 	// AddLink methods
