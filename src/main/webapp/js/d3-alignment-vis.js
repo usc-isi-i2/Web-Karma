@@ -1678,7 +1678,7 @@ function displayIncomingOutgoingClasses(dataArray, treeDiv, otherTreeDiv, dataDi
             },
             "themes" : {
                 "theme" : "apple",
-                "url": "css/jstree-themes/apple/style.css",
+                "url": "uiLibs/jquery/css/jstree-themes/apple/style.css",
                 "dots" : true,
                 "icons" : false
             },
@@ -1816,7 +1816,7 @@ function displayIncomingOutgoingProperty(dataArray, treeDiv, otherTreeDiv, dataD
             },
             "themes" : {
                 "theme" : "apple",
-                "url": "css/jstree-themes/apple/style.css",
+                "url": "uiLibs/jquery/css/jstree-themes/apple/style.css",
                 "dots" : true,
                 "icons" : false
             },

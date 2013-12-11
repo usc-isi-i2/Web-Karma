@@ -27,30 +27,33 @@ and related projects, please see: http://www.isi.edu/integration
 <html lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
         <title>Karma Data Integration</title>
         <!-- Date: 2011-08-01 -->
 
         <!-- CSS -->
-        <link rel="stylesheet" type="text/css" href="./css/jquery-ui-1.8.16.custom.css" />
+        
+        <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery-ui-1.8.16.custom.css" />
         <link rel="stylesheet" type="text/css" href="./css/TopMenuBar.css" />
         <link rel="stylesheet" type="text/css" href="./css/command_History.css" />
         <link rel="stylesheet" type="text/css" href="./css/tables_workspace.css" />
-        <link rel="stylesheet" type="text/css" href="./css/jquery.fileupload-ui.css" />
+        <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery.fileupload-ui.css" />
         <link rel="stylesheet" type="text/css" href="./css/CSVImport.css" />
         <link rel="stylesheet" type="text/css" href="./css/fileImport.css" />
         <link rel="stylesheet" type="text/css" href="./css/DatabaseImport.css" />
         <link rel="stylesheet" type="text/css" href="./css/ServiceImport.css" />
         <link rel="stylesheet" type="text/css" href="./css/headerParsingExample.css" />
         <link rel="stylesheet" type="text/css" href="./css/AlignmentHeaders.css" />
-        <link rel="stylesheet" type="text/css" href="./css/jquery.qtip.min.css" />
-        <link rel="stylesheet" type="text/css" href="./css/sticky.min.css" />
+        <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery.qtip.min.css" />
+        <link rel="stylesheet" type="text/css" href="./uiLibs/sticky/css/sticky.min.css" />
         <link rel="stylesheet" type="text/css" href="./css/cleaning.css" />
         <link rel="stylesheet" type="text/css" href="./css/alignment.css" />
         <link rel="stylesheet" type="text/css" href="./css/d3.css" />
         <link rel="stylesheet" type="text/css" href="./css/main.css" />
         <link rel="stylesheet" type="text/css" href="./css/pyTransform.css" />
         <link rel="stylesheet" type="text/css" href="./css/cleaningChart.css" />
-        <link rel="stylesheet/less" type="text/css" href="./css/styles-03d-fixed-pixel.less" />
+        <link rel="stylesheet/less" type="text/css" href="./uiLibs/less/css/styles-03d-fixed-pixel.less" />
 		<style type="text/css">
 			div.sticky {
     		/*	color: #555555; */
@@ -58,29 +61,29 @@ and related projects, please see: http://www.isi.edu/integration
 			}
 		</style>
         <!-- Third Party JavaScript files		 -->
-        <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
-        <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery-ui-1.8.16.custom.min.js"></script>
 
-        <script type="text/javascript" src="js/jquery.tmpl.min.js"></script>
-        <script type="text/javascript" src="js/jquery.hoverIntent.js"></script>
-        <script type="text/javascript" src="js/jquery.jstree.js"></script>
-        <script type="text/javascript" src="js/jquery.qtip.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.tmpl.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.hoverIntent.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.jstree.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.qtip.min.js"></script>
         <!-- 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script> -->
         <script type="text/javascript" src="https://www.google.com/jsapi?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script>
-        <script type="text/javascript" src="js/sticky.min.js"></script>
-        <script type="text/javascript" src="js/jquery.jeditable.js"></script>
-        <script type="text/javascript" src="js/json2.js"></script>
-        <script type="text/javascript" src="js/jquery.cookie.js"></script>
-        <script type="text/javascript" src="js/d3.v2.min.js"></script>
-        <script src="js/jquery.iframe-transport.js"></script>
-        <script src="js/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/sticky.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.jeditable.js"></script>
+        <script type="text/javascript" src="uiLibs/json/js/json2.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.cookie.js"></script>
+        <script type="text/javascript" src="uiLibs/d3/js/d3.v2.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.iframe-transport.js"></script>
+        <script type="text/javascript" src="uiLibs/ace/js/ace.js" charset="utf-8"></script>
 
-        <script src="js/jquery.fileupload.js"></script>
-        <script src="js/jquery.fileupload-ui.js"></script>
-        <script src="js/jquery.fileupload-jui.js"></script>
-        <script src="js/locale.js"></script>
-        <script type="text/javascript" src="js/less-1.4.1.min.js"></script>
-        <script type="text/javascript" src="js/modernizr.custom.59953.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload-ui.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload-jui.js"></script>
+        <script type="text/javascript" src="uiLibs/locale/js/locale.js"></script>
+        <script type="text/javascript" src="uiLibs/less/js/less-1.4.1.min.js"></script>
+        <script type="text/javascript" src="uiLibs/modernizr/js/modernizr.custom.59953.js"></script>
 
         <!-- Home grown JavaScript files -->
         <script type="text/javascript" src="js/table_manipulation.js"></script>

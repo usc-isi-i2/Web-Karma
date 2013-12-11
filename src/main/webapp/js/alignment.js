@@ -746,7 +746,7 @@ function populateTreeHierarchy(dataArray, treeDiv , dialogBox, submitHandler) {
             },
             "themes" : {
                 "theme" : "apple",
-                "url": "css/jstree-themes/apple/style.css",
+                "url": "uiLibs/jquery/css/jstree-themes/apple/style.css",
                 "dots" : true,
                 "icons" : false
             },
