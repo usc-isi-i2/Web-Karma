@@ -21,13 +21,8 @@
 
 package edu.isi.karma.modeling.alignment;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -40,7 +35,7 @@ import edu.isi.karma.rep.alignment.Node;
 
 public class GraphVizUtil {
 
-	public static org.kohsuke.graphviz.Graph exportJGrapPathToGraphviz(DijkstraShortestPath<Node, Link> path) {
+	public static org.kohsuke.graphviz.Graph convertJGrapPathToGraphviz(DijkstraShortestPath<Node, Link> path) {
 
 		org.kohsuke.graphviz.Graph gViz = new org.kohsuke.graphviz.Graph();
 
@@ -202,7 +197,11 @@ public class GraphVizUtil {
 		return label;
 	}
 	
-	public static org.kohsuke.graphviz.Graph exportJGraphToGraphviz(DirectedWeightedMultigraph<Node, Link> model, boolean showLinkMetaData) {
+	public static org.kohsuke.graphviz.Graph convertJGraphToGraphviz(
+			DirectedWeightedMultigraph<Node, Link> model, 
+			boolean onlyAddPatterns,
+			boolean showNodeMetaData,
+			boolean showLinkMetaData) {
 
 		org.kohsuke.graphviz.Graph gViz = new org.kohsuke.graphviz.Graph();
 
@@ -245,6 +244,10 @@ public class GraphVizUtil {
 		
 		for (Link e : model.edgeSet()) {
 			
+			if (onlyAddPatterns)
+				if (e.getModelIds() == null || e.getModelIds().isEmpty())
+					continue;
+			
 			Node source = e.getSource();
 			Node target = e.getTarget();
 			
@@ -257,7 +260,8 @@ public class GraphVizUtil {
 				n = new org.kohsuke.graphviz.Node();
 //				label = (uri == null || uri.trim().length() == 0?id:uri));
 				sourceLabel = (sourceLocalName == null || sourceLocalName.trim().length() == 0?sourceId:sourceLocalName);
-				if (showLinkMetaData) sourceLabel += " " + getModelIds(source.getModelIds()); 
+				if (showNodeMetaData) 
+					sourceLabel += " " + getModelIds(source.getModelIds()); 
 				n.attr("label", sourceLabel);
 				nodeIndex.put(source, n);
 			
@@ -281,7 +285,8 @@ public class GraphVizUtil {
 //				label = (uri == null || uri.trim().length() == 0?id:uri));
 				targetLabel = (targetLocalName == null || targetLocalName.trim().length() == 0?targetId:targetLocalName);
 				if (target instanceof ColumnNode) targetLabel = ((ColumnNode)target).getColumnName();
-				if (showLinkMetaData) targetLabel += " " + getModelIds(target.getModelIds()); 
+				if (showNodeMetaData) 
+					targetLabel += " " + getModelIds(target.getModelIds()); 
 				n.attr("label", targetLabel);
 				nodeIndex.put(target, n);
 			
@@ -315,46 +320,6 @@ public class GraphVizUtil {
 
 
 		return gViz;
-	}
-	
-	public static void exportJGraphToGraphvizFile(
-			DirectedWeightedMultigraph<Node, Link> model, String label, String exportPath) 
-					throws FileNotFoundException {
-		org.kohsuke.graphviz.Graph graphViz = exportJGraphToGraphviz(model, true);
-		graphViz.attr("fontcolor", "blue");
-		graphViz.attr("remincross", "true");
-		graphViz.attr("label", label);
-
-		OutputStream out = new FileOutputStream(exportPath);
-		graphViz.writeTo(out);
-	}
-
-	public static void exportJGraphToGraphvizFile(Map<String, DirectedWeightedMultigraph<Node, Link>> models, 
-			String label, String exportPath) throws FileNotFoundException {
-		
-		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
-		graphViz.attr("fontcolor", "blue");
-		graphViz.attr("remincross", "true");
-		graphViz.attr("label", label);
-		
-		org.kohsuke.graphviz.Graph cluster = null;
-		int counter = 0;
-		
-		boolean showLinkDescription;
-		if (models != null) {
-			for(Entry<String,DirectedWeightedMultigraph<Node, Link>> entry : models.entrySet()) {
-				if (entry.getKey() == "1-correct model") showLinkDescription = false; else showLinkDescription = true;
-				cluster = GraphVizUtil.exportJGraphToGraphviz(entry.getValue(), showLinkDescription);
-				cluster.id("cluster_" + counter);
-				cluster.attr("label", entry.getKey());
-				graphViz.subGraph(cluster);
-				counter++;
-			}
-		}
-
-		OutputStream out = new FileOutputStream(exportPath);
-		graphViz.writeTo(out);
-
 	}
 
 }

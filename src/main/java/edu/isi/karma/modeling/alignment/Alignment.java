@@ -63,6 +63,7 @@ public class Alignment implements OntologyUpdateListener {
 
 	static Logger logger = LoggerFactory.getLogger(Alignment.class);
 
+	private OntologyManager ontologyManager;
 	private GraphBuilder graphBuilder;
 	private DirectedWeightedMultigraph<Node, Link> steinerTree = null;
 	private Node root = null;
@@ -71,13 +72,29 @@ public class Alignment implements OntologyUpdateListener {
 	
 	public Alignment(OntologyManager ontologyManager) {
 
+		this.ontologyManager = ontologyManager;
 		this.nodeIdFactory = new NodeIdFactory();
 
-		ontologyManager.subscribeListener(this);
+		this.ontologyManager.subscribeListener(this);
 
 		logger.debug("building initial graph ...");
-		graphBuilder = new GraphBuilder(ontologyManager, nodeIdFactory, true);//, linkIdFactory);
+		graphBuilder = new GraphBuilder(this.ontologyManager, nodeIdFactory, true);
 		
+	}
+	
+	public void reset() {
+		Set<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
+		this.nodeIdFactory = new NodeIdFactory();
+		this.graphBuilder = new GraphBuilder(this.ontologyManager, nodeIdFactory, true);
+		this.root = null;
+		this.steinerTree = null;
+		if (columnNodes != null) {
+			for (Node n : columnNodes) {
+				ColumnNode cn = (ColumnNode)n;
+				this.addColumnNode(cn.getHNodeId(), cn.getColumnName(), cn.getRdfLiteralType(), cn.getCrfSuggestedSemanticTypes());
+			}
+		}
+		align();
 	}
 	
 	public boolean isEmpty() {
@@ -124,8 +141,8 @@ public class Alignment implements OntologyUpdateListener {
 		return this.graphBuilder.getIdToNodeMap().get(nodeId);
 	}
 	
-	public Set<Node> getNodesByUri(String uriString) {
-		return this.graphBuilder.getUriToNodesMap().get(uriString);
+	public Set<Node> getNodesByUri(String uri) {
+		return this.graphBuilder.getUriToNodesMap().get(uri);
 	}
 	
 	public Set<Node> getNodesByType(NodeType type) {
@@ -136,8 +153,8 @@ public class Alignment implements OntologyUpdateListener {
 		return this.graphBuilder.getIdToLinkMap().get(linkId);
 	}
 	
-	public Set<Link> getLinksByUri(String uriString) {
-		return this.graphBuilder.getUriToLinksMap().get(uriString);
+	public Set<Link> getLinksByUri(String uri) {
+		return this.graphBuilder.getUriToLinksMap().get(uri);
 	}
 	
 	public Set<Link> getLinksByType(LinkType type) {
@@ -175,7 +192,7 @@ public class Alignment implements OntologyUpdateListener {
 	
 	// AddNode methods
 	
-	public ColumnNode addColumnNode(String hNodeId, String columnName, String rdfLiteralType, List<SemanticType> crfSuggestedSemanticTypes) {
+	public ColumnNode addColumnNode(String hNodeId, String columnName, Label rdfLiteralType, List<SemanticType> crfSuggestedSemanticTypes) {
 		
 		// use hNodeId as id of the node
 		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType, crfSuggestedSemanticTypes);

@@ -96,7 +96,7 @@ public class ModelReader {
 			if (semanticModels != null) {
 				for (SemanticModel sm : semanticModels) {
 					sm.print();
-					sm.exportGraphviz(Params.GRAPHVIS_DIR + sm.getName() + Params.GRAPHVIS_MAIN_FILE_EXT, true);
+					sm.exportGraphviz(Params.GRAPHVIS_DIR + sm.getName() + Params.GRAPHVIS_MAIN_FILE_EXT, true, true);
 					sm.writeJson(Params.MODEL_DIR + sm.getName() + Params.MODEL_MAIN_FILE_EXT);
 					
 					// To test JsonReader and JsonWriter
@@ -387,7 +387,7 @@ public class ModelReader {
 			if (obj == null) {
 				if (objStr.startsWith(attPrefix)) {
 					id = new RandomGUID().toString();
-					obj = new ColumnNode(id, objStr, objStr, "", null);
+					obj = new ColumnNode(id, objStr, objStr, null, null);
 					SemanticType semanticType = new SemanticType(((ColumnNode)obj).getHNodeId(), 
 							new Label(predicateStr), 
 							subj.getLabel(), 

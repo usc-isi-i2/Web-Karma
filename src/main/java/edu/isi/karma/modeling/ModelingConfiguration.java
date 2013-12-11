@@ -47,7 +47,7 @@ public class ModelingConfiguration {
 
     private static String modelsJsonDir;
     private static String modelsGraphvizDir;
-    private static String alignmentGraphPath; 
+    private static String alignmentGraphDir; 
     
     private static Integer maxCandidateModels;
     private static Integer maxQueuedMappigs;
@@ -85,7 +85,7 @@ public class ModelingConfiguration {
 
             modelsJsonDir = modelingProperties.getProperty("models.json.dir");
             modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir");
-            alignmentGraphPath = modelingProperties.getProperty("alignment.graph.path");
+            alignmentGraphDir = modelingProperties.getProperty("alignment.graph.dir");
             
             if(modelingProperties.getProperty("max.queued.mappings") != null)
             	maxQueuedMappigs = Integer.parseInt(modelingProperties.getProperty("max.queued.mappings"));
@@ -188,10 +188,10 @@ public class ModelingConfiguration {
 		return modelsGraphvizDir;
 	}
 	
-	public static String getAlignmentGraphPath() {
-		if (alignmentGraphPath == null)
+	public static String getAlignmentGraphDir() {
+		if (alignmentGraphDir == null)
 			load();
-		return alignmentGraphPath;
+		return alignmentGraphDir;
 	}
 
 	public static Integer getMaxCandidateModels() {

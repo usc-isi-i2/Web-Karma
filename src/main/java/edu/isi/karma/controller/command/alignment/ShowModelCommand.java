@@ -98,7 +98,7 @@ public class ShowModelCommand extends WorksheetCommand {
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.notUndoable;
+		return CommandType.undoable;
 	}
 
 	@Override
@@ -119,6 +119,8 @@ public class ShowModelCommand extends WorksheetCommand {
 					"Please align the worksheet before generating R2RML Model!"));
 		}
 
+		alignment.reset();
+		
 		Set<Node> alignmentColumnNodes = alignment.getNodesByType(NodeType.ColumnNode);
 		Set<ColumnNode> columnNodes = new HashSet<ColumnNode>();
 		if (alignmentColumnNodes != null)
@@ -128,12 +130,27 @@ public class ShowModelCommand extends WorksheetCommand {
 		modelLearner.learn();
 		SemanticModel model = modelLearner.getModel();
 		
+		HashSet<String> alignmentNodeUris = new HashSet<String>();
 		HashMap<Node, Node> modelToAlignmentNode = new HashMap<Node, Node>();
+		Set<Node> nodesWithSameUri;
 		if (model != null) {
+			String uri;
 			for (Node n : model.getGraph().vertexSet()) {
 				if (n instanceof InternalNode) {
-					InternalNode iNode = alignment.addInternalNode(n.getLabel());
+					uri = n.getLabel().getUri();
+					InternalNode iNode;
+					
+					if (alignmentNodeUris.contains(uri)) {
+						iNode = alignment.addInternalNode(n.getLabel());
+					} else {
+						nodesWithSameUri = alignment.getNodesByUri(uri);
+						if (nodesWithSameUri != null && !nodesWithSameUri.isEmpty())
+							iNode = (InternalNode)nodesWithSameUri.iterator().next();
+						else
+							iNode = alignment.addInternalNode(n.getLabel());
+					}
 					modelToAlignmentNode.put(n, iNode);
+					alignmentNodeUris.add(uri);
 				}
 				if (n instanceof ColumnNode) {
 					if (model.getMappingToSourceColumns() != null)
@@ -151,6 +168,9 @@ public class ShowModelCommand extends WorksheetCommand {
 
 				source = modelToAlignmentNode.get(l.getSource());
 				target = modelToAlignmentNode.get(l.getTarget());
+				
+				if (source == null || target == null)
+					continue;
 
 				Link newLink = null;
 				if (l instanceof DataPropertyLink)
@@ -225,6 +245,38 @@ public class ShowModelCommand extends WorksheetCommand {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		return null;
+		
+		UpdateContainer c = new UpdateContainer();
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
+		OntologyManager ontologyManager = workspace.getOntologyManager();
+		if(ontologyManager.isEmpty())
+			return new UpdateContainer(new ErrorUpdate("No ontology loaded."));
+		
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		if (alignment == null) {
+			logger.info("Alignment is NULL for " + worksheetId);
+			return new UpdateContainer(new ErrorUpdate(
+					"Please align the worksheet before generating R2RML Model!"));
+		}
+
+		alignment.reset();
+		
+		try {
+			// Save the semantic types in the input parameter JSON
+			saveSemanticTypesInformation(worksheet, workspace, worksheet.getSemanticTypes().getListOfTypes());
+			
+			// Add the visualization update
+			c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
+			c.add(new AlignmentSVGVisualizationUpdate(
+					worksheetId, alignment));
+		} catch (Exception e) {
+			logger.error("Error occured while generating the model Reason:.", e);
+			return new UpdateContainer(new ErrorUpdate(
+					"Error occured while generating the model for the source."));
+		}
+		c.add(new TagsUpdate());
+		
+		return c;
 	}
 }

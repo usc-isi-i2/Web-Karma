@@ -315,17 +315,23 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		else return 0;
 	}
 	
-	public void print() {
+	public String getScoreDetailsString() {
 //		this.computeCoherenceList();
-		System.out.print("coherence list: ");
+		StringBuffer sb = new StringBuffer();
+		
+		sb.append("coherence list: ");
 		for (CoherenceItem ci : this.coherenceList) {
-			System.out.print("(" + ci.getX() + "," + ci.getY() + ")");
+			sb.append("(" + ci.getX() + "," + ci.getY() + ")");
 		}
-		System.out.println();
-		System.out.println("coherence value: " + this.coherence);
-		System.out.println("size: " + (double) (this.getNodeCount()));
-		System.out.println("total number of patterns: " + this.frequency);
-		System.out.println("final score: " + this.getScore());
+		sb.append("\n");
+		sb.append("coherence value: " + this.coherence);
+		sb.append("\n");
+		sb.append("size: " + (double) (this.getNodeCount()));
+		sb.append("\n");
+		sb.append("total number of patterns: " + this.frequency);
+		sb.append("\n");
+		sb.append("final score: " + this.getScore());
+		return sb.toString();
 	}
 		
 }

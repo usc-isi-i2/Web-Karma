@@ -205,7 +205,7 @@ public class SemanticModel {
 		logger.info(GraphUtil.graphToString(this.graph));
 	}
 	
-	public void exportGraphviz(String filename, boolean showLinkMetaData) throws IOException {
+	public void exportGraphviz(String filename, boolean showNodeMetaData, boolean showLinkMetaData) throws IOException {
 		
 		OutputStream out = new FileOutputStream(filename);
 		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
@@ -215,7 +215,7 @@ public class SemanticModel {
 		graphViz.attr("label", this.getDescription() == null ? "" : this.getDescription());
 //		graphViz.attr("page", "8.5,11");
 
-		org.kohsuke.graphviz.Graph gViz = GraphVizUtil.exportJGraphToGraphviz(this.graph, showLinkMetaData);
+		org.kohsuke.graphviz.Graph gViz = GraphVizUtil.convertJGraphToGraphviz(this.graph, false, showNodeMetaData, showLinkMetaData);
 		gViz.attr("label", "model");
 		gViz.id("cluster");
 		graphViz.subGraph(gViz);

@@ -116,7 +116,6 @@ public class GraphBuilder {
 		if (addThingNode) 
 			this.initialGraph();
 		
-		logger.debug("initial graph has been created.");
 	}
 	
 	public GraphBuilder(OntologyManager ontologyManager, DirectedWeightedMultigraph<Node, Link> graph) {
@@ -127,9 +126,6 @@ public class GraphBuilder {
 		
 		this.graph = graph;
 
-		logger.info("number of nodes: " + this.graph.vertexSet().size());
-		logger.info("number of links: " + this.graph.edgeSet().size());
-		
 		for (Node node : this.graph.vertexSet()) {
 			
 			if (node.getLabel() != null && 

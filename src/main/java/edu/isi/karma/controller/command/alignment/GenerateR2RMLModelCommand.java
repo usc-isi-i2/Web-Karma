@@ -162,7 +162,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		try {
 			semanticModel.exportGraphviz(ModelingConfiguration.getModelsGraphvizDir() + 
 					semanticModel.getName() + 
-					".dot", false);
+					".dot", false, false);
 		} catch (Exception e) {
 			logger.error("error in exporting the model to GRAPHVIZ!");
 //			e.printStackTrace();

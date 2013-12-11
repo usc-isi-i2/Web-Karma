@@ -36,7 +36,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
-import edu.isi.karma.modeling.alignment.GraphVizUtil;
+import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
@@ -141,7 +141,7 @@ public class ComputeGED {
 				graphs.put(label, mApp1Rank3.getGraph());
 			}
 
-			GraphVizUtil.exportJGraphToGraphvizFile(graphs, s, Params.OUTPUT_DIR + s + Params.GRAPHVIS_OUT_FILE_EXT);
+			GraphUtil.exportGraphviz(graphs, s, Params.OUTPUT_DIR + s + Params.GRAPHVIS_OUT_FILE_EXT);
 		}
 		
 		logger.info("==============================================");

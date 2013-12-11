@@ -44,7 +44,6 @@ import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
-import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
@@ -692,7 +691,7 @@ public class Approach1 {
 		int count = 1;
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
 			logger.info("computing steiner tree for steiner nodes set " + count + " ...");
-			sn.print();
+			logger.info(sn.getScoreDetailsString());
 			DirectedWeightedMultigraph<Node, Link> tree = computeSteinerTree(sn.getNodes());
 			count ++;
 			if (tree != null) {
@@ -990,8 +989,9 @@ public class Approach1 {
 					graphs.put(label, m.getGraph());
 				}
 			
-			GraphVizUtil.exportJGraphToGraphvizFile(graphs, 
-					newSource.getDescription(), 
+			GraphUtil.exportGraphviz(
+					graphs, 
+					newSource.getDescription(),
 					outputPath + semanticModels.get(i).getName() + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT);
 			
 		}

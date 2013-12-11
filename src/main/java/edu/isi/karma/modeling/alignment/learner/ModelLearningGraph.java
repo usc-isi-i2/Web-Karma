@@ -57,6 +57,9 @@ public class ModelLearningGraph {
 	private GraphBuilder graphBuilder;
 	private NodeIdFactory nodeIdFactory; 
 	private long lastUpdateTime;
+	
+	private static final String graphJsonName = ModelingConfiguration.getAlignmentGraphDir() + "graph.json";
+	private static final String graphGraphvizName = ModelingConfiguration.getAlignmentGraphDir() + "graph.dot";
 
 	public static synchronized ModelLearningGraph getInstance(OntologyManager ontologyManager) {
 		if (instance == null || !ontologyManager.equals(instance.ontologyManager)) {
@@ -87,23 +90,24 @@ public class ModelLearningGraph {
 		
 		this.ontologyManager = ontologyManager;
 		
-		File file = new File(ModelingConfiguration.getAlignmentGraphPath());
+		File file = new File(graphJsonName);
 		if (!file.exists()) {
 			this.initializeFromJsonRepository();
 		} else {
+			logger.info("loading the alignment graph from ...");
 			DirectedWeightedMultigraph<Node, Link> graph =
-					GraphUtil.importJson(ModelingConfiguration.getAlignmentGraphPath());
+					GraphUtil.importJson(graphJsonName);
 			this.graphBuilder = new GraphBuilder(ontologyManager, graph);
 			this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
+			logger.info("loading is done!");
+		}
+		if (this.graphBuilder.getGraph() != null) {
+			logger.info("number of nodes: " + this.graphBuilder.getGraph().vertexSet().size());
+			logger.info("number of links: " + this.graphBuilder.getGraph().edgeSet().size());
 		}
 		this.lastUpdateTime = System.currentTimeMillis();
 	}
 
-	public void empty() {
-		this.nodeIdFactory = new NodeIdFactory();
-		this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
-	}
-	
 	public GraphBuilder getGraphBuilder() {
 		return this.graphBuilder;
 	}
@@ -117,7 +121,7 @@ public class ModelLearningGraph {
 	}
 	
 	public void initializeFromJsonRepository() {
-		logger.info("initializing the graph from models in the repository ...");
+		logger.info("initializing the graph from models in the json repository ...");
 		
 		this.nodeIdFactory = new NodeIdFactory();
 		this.graphBuilder = new GraphBuilder(ontologyManager, this.nodeIdFactory, false);
@@ -135,15 +139,24 @@ public class ModelLearningGraph {
 			}
 		}
 		this.exportJson();
+		this.exportGraphviz();
 		this.lastUpdateTime = System.currentTimeMillis();
-		logger.info("initialization is done.");
+		logger.info("initialization is done!");
 	}
 	
 	public void exportJson() {
 		try {
-			GraphUtil.exportJson(this.graphBuilder.getGraph(), ModelingConfiguration.getAlignmentGraphPath());
+			GraphUtil.exportJson(this.graphBuilder.getGraph(), graphJsonName);
 		} catch (Exception e) {
-			logger.error("error in updating the alignment graph json!");
+			logger.error("error in exporting the alignment graph to json!");
+		}
+	}
+	
+	public void exportGraphviz() {
+		try {
+			GraphUtil.exportGraphviz(this.graphBuilder.getGraph(), "main graph", true, false, false, graphGraphvizName);
+		} catch (Exception e) {
+			logger.error("error in exporting the alignment graph to graphviz!");
 		}
 	}
 	
@@ -155,6 +168,7 @@ public class ModelLearningGraph {
 	public void addModelAndUpdateGraphJson(SemanticModel model) {
 		this.addModel(model);
 		this.exportJson();
+		this.exportGraphviz();
 	}
 	
 	private void addModelGraph(SemanticModel model) {

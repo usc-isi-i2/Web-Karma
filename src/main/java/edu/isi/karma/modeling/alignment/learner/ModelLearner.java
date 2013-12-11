@@ -41,7 +41,6 @@ import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
-import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkFrequency;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
@@ -152,8 +151,8 @@ public class ModelLearner {
 		List<SortableSemanticModel> sortableSemanticModels = new ArrayList<SortableSemanticModel>();
 		int count = 1;
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
-			logger.info("computing steiner tree for steiner nodes set " + count + " ...");
-			sn.print();
+			logger.debug("computing steiner tree for steiner nodes set " + count + " ...");
+			logger.debug(sn.getScoreDetailsString());
 			DirectedWeightedMultigraph<Node, Link> tree = computeSteinerTree(sn.getNodes());
 			count ++;
 			if (tree != null) {
@@ -202,17 +201,17 @@ public class ModelLearner {
 		long start = System.currentTimeMillis();
 		UndirectedGraph<Node, Link> undirectedGraph = new AsUndirectedGraph<Node, Link>(this.graphBuilder.getGraph());
 
-		logger.info("computing steiner tree ...");
+		logger.debug("computing steiner tree ...");
 		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodeList);
 		DirectedWeightedMultigraph<Node, Link> tree = 
 				(DirectedWeightedMultigraph<Node, Link>)GraphUtil.asDirectedGraph(steinerTree.getSteinerTree());
 		
-		logger.info(GraphUtil.graphToString(tree));
+		logger.debug(GraphUtil.graphToString(tree));
 		
 		long steinerTreeElapsedTimeMillis = System.currentTimeMillis() - start;
-		logger.info("total number of nodes in steiner tree: " + tree.vertexSet().size());
-		logger.info("total number of edges in steiner tree: " + tree.edgeSet().size());
-		logger.info("time to compute steiner tree: " + (steinerTreeElapsedTimeMillis/1000F));
+		logger.debug("total number of nodes in steiner tree: " + tree.vertexSet().size());
+		logger.debug("total number of edges in steiner tree: " + tree.edgeSet().size());
+		logger.debug("time to compute steiner tree: " + (steinerTreeElapsedTimeMillis/1000F));
 		
 		return tree;
 		
@@ -245,7 +244,7 @@ public class ModelLearner {
 			
 			candidateSemanticTypes = getCandidateSemanticTypes(n);
 			
-			logger.info("===== Column: " + n.getColumnName());
+			logger.debug("===== Column: " + n.getColumnName());
 
 			Set<SemanticTypeMapping> semanticTypeMappings = new HashSet<SemanticTypeMapping>();
 			for (SemanticType semanticType: candidateSemanticTypes) {
@@ -257,15 +256,15 @@ public class ModelLearner {
 				confidence = semanticType.getConfidenceScore();
 				origin = semanticType.getOrigin().toString();
 				
-				logger.info("======================= Semantic Type: " + domainUri + "|" + linkUri + "|" + confidence + "|" + origin);
+				logger.debug("======================= Semantic Type: " + domainUri + "|" + linkUri + "|" + confidence + "|" + origin);
 
 				if (domainUri == null || domainUri.isEmpty()) {
-					logger.info("semantic type does not have any domain");
+					logger.error("semantic type does not have any domain");
 					continue;
 				}
 
 				if (linkUri == null || linkUri.isEmpty()) {
-					logger.info("semantic type does not have any link");
+					logger.error("semantic type does not have any link");
 					continue;
 				}
 				
@@ -602,8 +601,9 @@ public class ModelLearner {
 					graphs.put(label, m.getGraph());
 				}
 			
-			GraphVizUtil.exportJGraphToGraphvizFile(graphs, 
-					newSource.getDescription(), 
+			GraphUtil.exportGraphviz(
+					graphs, 
+					newSource.getDescription(),
 					outputPath + semanticModels.get(i).getName() + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT);
 			
 		}

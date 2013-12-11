@@ -39,7 +39,7 @@ public class ColumnNode extends Node {
 	private List<SemanticType> crfSuggestedSemanticTypes;
 	private SemanticType userSelectedSemanticType;
 	
-	public ColumnNode(String id, String hNodeId, String columnName, String rdfLiteralType, List<SemanticType> crfSuggestedSemanticTypes) {
+	public ColumnNode(String id, String hNodeId, String columnName, Label rdfLiteralType, List<SemanticType> crfSuggestedSemanticTypes) {
 		super(id, new Label(hNodeId), NodeType.ColumnNode);
 		this.hNodeId = hNodeId;
 		this.columnName = columnName;

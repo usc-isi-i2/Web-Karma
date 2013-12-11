@@ -43,7 +43,6 @@ import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
-import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
@@ -60,10 +59,10 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
 import edu.isi.karma.rep.alignment.SubClassLink;
+import edu.isi.karma.util.RandomGUID;
 //import com.google.common.base.Function;
 //import com.google.common.collect.Multimap;
 //import com.google.common.collect.Multimaps;
-import edu.isi.karma.util.RandomGUID;
 
 public class Approach2 {
 
@@ -806,8 +805,9 @@ public class Approach2 {
 				graphs.put(label, hypothesisModel.getGraph());
 			}
 			
-			GraphVizUtil.exportJGraphToGraphvizFile(graphs, 
-					newService.getDescription(), 
+			GraphUtil.exportGraphviz(
+					graphs, 
+					newService.getDescription(),
 					outputPath + serviceModels.get(i).getName() + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT);
 			
 		}
