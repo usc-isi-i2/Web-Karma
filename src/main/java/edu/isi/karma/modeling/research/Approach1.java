@@ -568,7 +568,7 @@ public class Approach1 {
 		
 	}
 	
-	private CandidateSteinerSets getCandidateSteinerSets(Set<ColumnNode> columnNodes, Set<Node> addedNodes) {
+	private CandidateSteinerSets getCandidateSteinerSets(List<ColumnNode> columnNodes, Set<Node> addedNodes) {
 
 		if (columnNodes == null || columnNodes.isEmpty())
 			return null;
@@ -668,7 +668,7 @@ public class Approach1 {
 
 	}
 	
-	public List<SortableSemanticModel> hypothesize(Set<ColumnNode> columnNodes) {
+	public List<SortableSemanticModel> hypothesize(List<ColumnNode> columnNodes) {
 
 		Set<Node> addedNodes = new HashSet<Node>(); //They should be deleted from the graph after computing the semantic models
 		CandidateSteinerSets candidateSteinerSets = getCandidateSteinerSets(columnNodes, addedNodes);
@@ -949,7 +949,7 @@ public class Approach1 {
 	
 			SemanticModel correctModel = newSource;
 			// we just get the semantic labels of the correct model
-			Set<ColumnNode> columnNodes = correctModel.getColumnNodes();
+			List<ColumnNode> columnNodes = correctModel.getColumnNodes();
 			List<SortableSemanticModel> hypothesisList = app.hypothesize(columnNodes);
 			List<SortableSemanticModel> topHypotheses = hypothesisList.size() > MAX_CANDIDATES ? 
 					hypothesisList.subList(0, MAX_CANDIDATES) : 

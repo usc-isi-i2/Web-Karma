@@ -37,7 +37,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
-import edu.isi.karma.modeling.research.WeightTuning;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Node;
@@ -293,9 +292,9 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		double coherence = this.getCoherence();
 		//int frequency = this.getFrequency();
 		
-		double alpha = WeightTuning.getInstance().getCoherenceFactor();
-		double beta = WeightTuning.getInstance().getSizeFactor();
-		double gamma = WeightTuning.getInstance().getConfidenceFactor();
+		double alpha = 1.0;//WeightTuning.getInstance().getCoherenceFactor();
+		double beta = 0.2;//WeightTuning.getInstance().getSizeFactor();
+		double gamma = 0.6;//WeightTuning.getInstance().getConfidenceFactor();
 		
 		this.score = alpha * coherence + 
 				beta * distnaceToMaxSize + 
@@ -319,6 +318,19 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 //		this.computeCoherenceList();
 		StringBuffer sb = new StringBuffer();
 		
+		if (this.nodes != null)
+		for (Node n : this.nodes) {
+			if (n instanceof InternalNode)
+				sb.append(n.getLocalId());
+			else {
+				if (mappingToSourceColumns.containsKey((ColumnNode)n))
+					sb.append(mappingToSourceColumns.get((ColumnNode)n).getColumnName() );
+				else
+					sb.append( ((ColumnNode)n).getColumnName() );
+			}
+			sb.append("|");
+		}
+		sb.append("\n");
 		sb.append("coherence list: ");
 		for (CoherenceItem ci : this.coherenceList) {
 			sb.append("(" + ci.getX() + "," + ci.getY() + ")");

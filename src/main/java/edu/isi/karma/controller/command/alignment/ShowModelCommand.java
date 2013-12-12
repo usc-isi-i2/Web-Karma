@@ -20,11 +20,15 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
+import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,9 +46,11 @@ import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.learner.ModelLearner;
 import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
@@ -56,7 +62,6 @@ import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
@@ -65,6 +70,8 @@ import edu.isi.karma.rep.alignment.SubClassLink;
 public class ShowModelCommand extends WorksheetCommand {
 
 	private String worksheetName;
+	private Alignment initialAlignment = null;
+	private DirectedWeightedMultigraph<Node, Link> initialGraph = null;
 //	private final boolean addVWorksheetUpdate;
 
 	private static Logger logger = LoggerFactory
@@ -101,6 +108,7 @@ public class ShowModelCommand extends WorksheetCommand {
 		return CommandType.undoable;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer c = new UpdateContainer();
@@ -119,16 +127,32 @@ public class ShowModelCommand extends WorksheetCommand {
 					"Please align the worksheet before generating R2RML Model!"));
 		}
 
-		alignment.reset();
+		if (initialAlignment == null) {
+			initialAlignment = alignment.getAlignmentClone();
+			initialGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
+		} else {
+		// Replace the current alignment with the old alignment
+			alignment = initialAlignment;
+			alignment.setGraph(initialGraph);
+			alignment.align();
+			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
+		}
+
 		
-		Set<Node> alignmentColumnNodes = alignment.getNodesByType(NodeType.ColumnNode);
-		Set<ColumnNode> columnNodes = new HashSet<ColumnNode>();
-		if (alignmentColumnNodes != null)
-			for (Node n : alignmentColumnNodes)
-				columnNodes.add((ColumnNode)n);
+		List<ColumnNode> columnNodes = new LinkedList<ColumnNode>();
+		ArrayList<HNode> orderedNodeIds = new ArrayList<HNode>();
+		worksheet.getHeaders().getSortedLeafHNodes(orderedNodeIds);
+		if (orderedNodeIds != null)
+		for (int i = 0; i < orderedNodeIds.size(); i++) {
+			String hNodeId = orderedNodeIds.get(i).getId();
+			columnNodes.add(alignment.getColumnNodeByHNodeId(hNodeId));
+		}
+
 		ModelLearner modelLearner = new ModelLearner(ontologyManager, columnNodes);
 		modelLearner.learn();
 		SemanticModel model = modelLearner.getModel();
+		
+		logger.info(GraphUtil.graphToString(model.getGraph()));
 		
 		HashSet<String> alignmentNodeUris = new HashSet<String>();
 		HashMap<Node, Node> modelToAlignmentNode = new HashMap<Node, Node>();
@@ -260,7 +284,10 @@ public class ShowModelCommand extends WorksheetCommand {
 					"Please align the worksheet before generating R2RML Model!"));
 		}
 
-		alignment.reset();
+		alignment = initialAlignment;
+		alignment.setGraph(initialGraph);
+		alignment.align();
+		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		
 		try {
 			// Save the semantic types in the input parameter JSON

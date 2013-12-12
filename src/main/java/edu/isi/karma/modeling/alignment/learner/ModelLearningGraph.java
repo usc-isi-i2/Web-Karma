@@ -94,7 +94,7 @@ public class ModelLearningGraph {
 		if (!file.exists()) {
 			this.initializeFromJsonRepository();
 		} else {
-			logger.info("loading the alignment graph from ...");
+			logger.info("loading the alignment graph ...");
 			DirectedWeightedMultigraph<Node, Link> graph =
 					GraphUtil.importJson(graphJsonName);
 			this.graphBuilder = new GraphBuilder(ontologyManager, graph);

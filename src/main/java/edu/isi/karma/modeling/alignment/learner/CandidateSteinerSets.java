@@ -26,12 +26,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.modeling.ModelingConfiguration;
 
 
 
 public class CandidateSteinerSets {
 	
+	private static Logger logger = LoggerFactory.getLogger(CandidateSteinerSets.class);
 	private int maxNumberOfSteinerNodes;
 	private List<SteinerNodes> steinerSets;
 	
@@ -83,5 +87,9 @@ public class CandidateSteinerSets {
 
 		}
 		
+		for (SteinerNodes sn : this.steinerSets) {
+			logger.debug(sn.getScoreDetailsString());
+		}
+		logger.debug("***************************************************************");
 	}
 }

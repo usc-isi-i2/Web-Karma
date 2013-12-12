@@ -68,8 +68,6 @@ public class GraphBuilder {
 	private HashSet<String> sourceToTargetLinkUris;
 	private HashSet<String> sourceToTargetConnectivity; 
 
-	private Node thingNode;
-	
 	// HashMaps
 	
 	private HashMap<String, Node> idToNodeMap;
@@ -124,89 +122,28 @@ public class GraphBuilder {
 		if (graph == null)
 			return;
 		
-		this.graph = graph;
-
-		for (Node node : this.graph.vertexSet()) {
+		for (Node node : graph.vertexSet()) {
 			
-			if (node.getLabel() != null && 
-					node.getLabel().getUri().equalsIgnoreCase(Uris.THING_URI))
-				this.thingNode = node;
-			
+			this.addNode(node);
 			// building NodeIdFactory
 			if (node.getLabel() != null) {
 				nodeIdFactory.getNodeId(node.getLabel().getUri());
-			}
-
-			if (node instanceof InternalNode) {
-				this.uriClosure.put(node.getLabel().getUri(), null);
-//				this.computeUriClosure(node.getLabel().getUri());
-			}
-
-			if (node.getModelIds() != null)
-				this.modelIds.addAll(node.getModelIds());
-			
-			this.idToNodeMap.put(node.getId(), node);
-			
-			Set<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
-			if (nodesWithSameUri == null) {
-				nodesWithSameUri = new HashSet<Node>();
-				uriToNodesMap.put(node.getLabel().getUri(), nodesWithSameUri);
-			}
-			nodesWithSameUri.add(node);
-			
-			Set<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
-			if (nodesWithSameType == null) {
-				nodesWithSameType = new HashSet<Node>();
-				typeToNodesMap.put(node.getType(), nodesWithSameType);
-			}
-			nodesWithSameType.add(node);
-						
+			}						
 		}
 		
 		Node source;
 		Node target;
 		
-		for (Link link : this.graph.edgeSet()) {
+		for (Link link : graph.edgeSet()) {
 			
 			source = link.getSource();
 			target = link.getTarget();
 			
-			this.idToLinkMap.put(link.getId(), link);
-			
-			Set<Link> linksWithSameUri = uriToLinksMap.get(link.getLabel().getUri());
-			if (linksWithSameUri == null) {
-				linksWithSameUri = new HashSet<Link>();
-				uriToLinksMap.put(link.getLabel().getUri(), linksWithSameUri);
-			}
-			linksWithSameUri.add(link);
-			
-			Set<Link> linksWithSameStatus = statusToLinksMap.get(link.getStatus());
-			if (linksWithSameStatus == null) {
-				linksWithSameStatus = new HashSet<Link>();
-				statusToLinksMap.put(link.getStatus(), linksWithSameUri);
-			}
-			linksWithSameStatus.add(link);
-			
-			
-			Set<Link> linksWithSameType = typeToLinksMap.get(link.getType());
-			if (linksWithSameType == null) {
-				linksWithSameType = new HashSet<Link>();
-				typeToLinksMap.put(link.getType(), linksWithSameType);
-			}
-			linksWithSameType.add(link);
-			
-			this.visitedSourceTargetPairs.add(source.getId() + target.getId());
-			this.visitedSourceTargetPairs.add(target.getId() + source.getId());
-			
-			this.sourceToTargetConnectivity.add(source.getId() + target.getId());
-			this.sourceToTargetConnectivity.add(target.getId() + source.getId());
-			
-			String key = source.getId() + target.getId() + link.getLabel().getUri();
-			this.sourceToTargetLinkUris.add(key);
-			this.updateLinkCountMap(link);
-			
+			double w = link.getWeight();
+			if (this.addLink(source, target, link))
+				changeLinkWeight(link, w);
 		}
-
+		
 		logger.debug("graph has been loaded.");
 	}
 	
@@ -264,10 +201,6 @@ public class GraphBuilder {
 
 	public HashMap<String, Integer> getLinkCountMap() {
 		return linkCountMap;
-	}
-
-	public Node getThingNode() {
-		return thingNode;
 	}
 	
 	public void resetOntologyMaps() {
@@ -333,6 +266,60 @@ public class GraphBuilder {
 		return true;
 	}
 	
+	
+	public boolean addNode(Node node) {
+		
+		logger.debug("<enter");
+
+		if (node == null) {
+			logger.error("The node is null.");
+			return false;
+		}
+		
+		if (idToNodeMap.get(node.getId()) != null) {
+			logger.error("The node with id=" + node.getId() + " already exists in the graph.");
+			return false;
+		}
+		
+		if (node instanceof InternalNode) {
+			String uri = node.getLabel().getUri();
+			Label label = this.ontologyManager.getUriLabel(uri);
+			if (label == null) {
+				logger.error("The resource " + uri + " does not exist in the ontology.");
+				return false;
+			}
+			node.getLabel().setNs(label.getNs());
+			node.getLabel().setPrefix(label.getPrefix());
+		}
+		
+		
+		this.graph.addVertex(node);
+		
+		this.idToNodeMap.put(node.getId(), node);
+		
+		Set<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
+		if (nodesWithSameUri == null) {
+			nodesWithSameUri = new HashSet<Node>();
+			uriToNodesMap.put(node.getLabel().getUri(), nodesWithSameUri);
+		}
+		nodesWithSameUri.add(node);
+		
+		Set<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
+		if (nodesWithSameType == null) {
+			nodesWithSameType = new HashSet<Node>();
+			typeToNodesMap.put(node.getType(), nodesWithSameType);
+		}
+		nodesWithSameType.add(node);
+		
+		if (node.getModelIds() != null)
+			this.modelIds.addAll(node.getModelIds());
+					
+		this.uriClosure.put(node.getLabel().getUri(), null);
+
+		logger.debug("exit>");		
+		return true;
+	}
+	
 	public boolean addLink(Node source, Node target, Link link) {
 
 		logger.debug("<enter");
@@ -343,19 +330,38 @@ public class GraphBuilder {
 		}
 		
 		if (this.idToLinkMap.containsKey(link.getId())) {
-			logger.debug("The link with id=" + link.getId() + " already exists in the graph");
+			logger.error("The link with id=" + link.getId() + " already exists in the graph");
 			return false;
 		}
 		
+		if (!this.idToNodeMap.containsKey(source.getId())) {
+			logger.error("The link source " + link.getSource().getId() + " does not exist in the graph");
+			return false;
+		}
+
+		if (!this.idToNodeMap.containsKey(target.getId())) {
+			logger.error("The link target " + link.getTarget().getId() + " does not exist in the graph");
+			return false;
+		}
+
 		String key = source.getId() + target.getId() + link.getLabel().getUri();
 		// check to see if the link is duplicate or not
 		if (sourceToTargetLinkUris.contains(key))
 		{
-			logger.debug("There is already a link with label " + link.getLabel().getUri() + 
+			logger.error("There is already a link with label " + link.getLabel().getUri() + 
 					" from " + source.getId() + " to " + target.getId());
 			return false;
 		}
 
+		String uri = link.getLabel().getUri();
+		Label label = this.ontologyManager.getUriLabel(uri);
+		if (label == null) {
+			logger.error("The resource " + uri + " does not exist in the ontology.");
+			return false;
+		}
+		link.getLabel().setNs(label.getNs());
+		link.getLabel().setPrefix(label.getPrefix());
+			
 		this.graph.addEdge(source, target, link);
 		
 		this.sourceToTargetConnectivity.add(source.getId() + target.getId());
@@ -727,8 +733,8 @@ public class GraphBuilder {
 		if (!ModelingConfiguration.getManualAlignment()) {
 			String id = nodeIdFactory.getNodeId(Uris.THING_URI);
 			Label label = new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL);
-			thingNode = new InternalNode(id, label);			
-			addNode(thingNode);
+			Node thing = new InternalNode(id, label);
+			addNode(thing);
 		}
 		
 		logger.debug("exit>");
@@ -763,45 +769,6 @@ public class GraphBuilder {
 		count = this.linkCountMap.get(key);
 		if (count == null) this.linkCountMap.put(key, 1);
 		else this.linkCountMap.put(key, count.intValue() + 1);
-	}
-	
-	public boolean addNode(Node node) {
-		
-		logger.debug("<enter");
-
-		if (node == null) {
-			logger.debug("The node is null.");
-			return false;
-		}
-		
-		if (idToNodeMap.get(node.getId()) != null) {
-			logger.debug("The node with id=" + node.getId() + " already exists in the graph.");
-			return false;
-		}
-		
-		this.graph.addVertex(node);
-		
-		this.idToNodeMap.put(node.getId(), node);
-		
-		Set<Node> nodesWithSameUri = uriToNodesMap.get(node.getLabel().getUri());
-		if (nodesWithSameUri == null) {
-			nodesWithSameUri = new HashSet<Node>();
-			uriToNodesMap.put(node.getLabel().getUri(), nodesWithSameUri);
-		}
-		nodesWithSameUri.add(node);
-		
-		Set<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
-		if (nodesWithSameType == null) {
-			nodesWithSameType = new HashSet<Node>();
-			typeToNodesMap.put(node.getType(), nodesWithSameType);
-		}
-		nodesWithSameType.add(node);
-		
-		if (node.getModelIds() != null)
-			this.modelIds.addAll(node.getModelIds());
-					
-		logger.debug("exit>");		
-		return true;
 	}
 
 	private HashSet<String> getUriDirectConnections(String uri) {
@@ -931,7 +898,7 @@ public class GraphBuilder {
 		if (newAddedNodes == null) newAddedNodes = new HashSet<Node>();
 		
 		String uri = node.getLabel().getUri();
-		if (this.uriClosure.containsKey(uri)) // the closure is already computed and added to the graph.
+		if (this.uriClosure.get(uri) != null) // the closure is already computed and added to the graph.
 			return;
 
 		Set<String> uriClosure = computeUriClosure(uri);

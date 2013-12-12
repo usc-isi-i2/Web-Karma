@@ -30,6 +30,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -58,7 +60,7 @@ public class SemanticModel {
 	protected String name;
 	protected String description;
 	protected DirectedWeightedMultigraph<Node, Link> graph;
-	protected Set<ColumnNode> sourceColumns;
+	protected List<ColumnNode> sourceColumns;
 	protected Map<ColumnNode, ColumnNode> mappingToSourceColumns;
 	
 	public SemanticModel(
@@ -76,7 +78,7 @@ public class SemanticModel {
 	public SemanticModel(
 			String id,
 			DirectedWeightedMultigraph<Node, Link> graph,
-			Set<ColumnNode> sourceColumns,
+			List<ColumnNode> sourceColumns,
 			Map<ColumnNode, ColumnNode> mappingToSourceColumns) {
 		this.id = id;
 		this.graph = graph;
@@ -121,7 +123,7 @@ public class SemanticModel {
 		return mappingToSourceColumns;
 	}
 	
-	public Set<ColumnNode> getSourceColumns() {
+	public List<ColumnNode> getSourceColumns() {
 		return sourceColumns;
 	}
 	
@@ -135,8 +137,8 @@ public class SemanticModel {
 		return internalNodes;
 	}
 
-	public Set<ColumnNode> getColumnNodes() {
-		Set<ColumnNode> columnNodes = new HashSet<ColumnNode>();
+	public List<ColumnNode> getColumnNodes() {
+		List<ColumnNode> columnNodes = new LinkedList<ColumnNode>();
 		if (this.graph != null) {
 			for (Node n : this.graph.vertexSet())
 				if (n instanceof ColumnNode)

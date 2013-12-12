@@ -82,21 +82,6 @@ public class Alignment implements OntologyUpdateListener {
 		
 	}
 	
-	public void reset() {
-		Set<Node> columnNodes = this.getNodesByType(NodeType.ColumnNode);
-		this.nodeIdFactory = new NodeIdFactory();
-		this.graphBuilder = new GraphBuilder(this.ontologyManager, nodeIdFactory, true);
-		this.root = null;
-		this.steinerTree = null;
-		if (columnNodes != null) {
-			for (Node n : columnNodes) {
-				ColumnNode cn = (ColumnNode)n;
-				this.addColumnNode(cn.getHNodeId(), cn.getColumnName(), cn.getRdfLiteralType(), cn.getCrfSuggestedSemanticTypes());
-			}
-		}
-		align();
-	}
-	
 	public boolean isEmpty() {
 		return (this.graphBuilder.getGraph().edgeSet().size() == 0);
 	}
@@ -567,8 +552,7 @@ public class Alignment implements OntologyUpdateListener {
 		logger.debug("*** steiner tree before post processing step ***");
 		logger.info(GraphUtil.graphToString(this.steinerTree));
 //		logger.debug("selecting a root for the tree ...");
-		TreePostProcess treePostProcess = new TreePostProcess(this.graphBuilder, tree, 
-				getLinksByStatus(LinkStatus.ForcedByUser), this.graphBuilder.getThingNode());
+		TreePostProcess treePostProcess = new TreePostProcess(this.graphBuilder, tree, getLinksByStatus(LinkStatus.ForcedByUser));
 
 		this.steinerTree = treePostProcess.getTree();
 		this.root = treePostProcess.getRoot();

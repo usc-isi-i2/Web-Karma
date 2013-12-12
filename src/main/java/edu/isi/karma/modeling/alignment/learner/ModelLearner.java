@@ -58,6 +58,7 @@ import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.rep.alignment.SubClassLink;
 import edu.isi.karma.util.RandomGUID;
 
@@ -68,12 +69,12 @@ public class ModelLearner {
 	private OntologyManager ontologyManager = null;
 	private GraphBuilder graphBuilder = null;
 	private NodeIdFactory nodeIdFactory = null; 
-	private Set<ColumnNode> columnNodes = null;
+	private List<ColumnNode> columnNodes = null;
 	private SemanticModel semanticModel = null;
 	private long lastUpdateTimeOfGraph;
 	private ModelLearningGraph modelLearningGraph = null;
 
-	public ModelLearner(OntologyManager ontologyManager, Set<ColumnNode> columnNodes) {
+	public ModelLearner(OntologyManager ontologyManager, List<ColumnNode> columnNodes) {
 		if (ontologyManager == null || 
 				columnNodes == null || 
 				columnNodes.isEmpty()) {
@@ -224,7 +225,7 @@ public class ModelLearner {
 
 	}
 	
-	private CandidateSteinerSets getCandidateSteinerSets(Set<ColumnNode> columnNodes, Set<Node> addedNodes) {
+	private CandidateSteinerSets getCandidateSteinerSets(List<ColumnNode> columnNodes, Set<Node> addedNodes) {
 
 		if (columnNodes == null || columnNodes.isEmpty())
 			return null;
@@ -236,44 +237,47 @@ public class ModelLearner {
 			addedNodes = new HashSet<Node>();
 		
 		Set<SemanticTypeMapping> tempSemanticTypeMappings;
+		HashMap<ColumnNode, List<SemanticType>> columnSemanticTypes = new HashMap<ColumnNode, List<SemanticType>>();
+		HashMap<String, Integer> semanticTypesCount = new HashMap<String, Integer>();
 		List<SemanticType> candidateSemanticTypes;
-		String domainUri = "", linkUri = "", origin = "";
-		double confidence = 0.0;
+		String domainUri = "", propertyUri = "";
 		
 		for (ColumnNode n : columnNodes) {
 			
 			candidateSemanticTypes = getCandidateSemanticTypes(n);
+			columnSemanticTypes.put(n, candidateSemanticTypes);
+			
+			for (SemanticType semanticType: candidateSemanticTypes) {
+
+				if (semanticType == null || 
+						semanticType.getDomain() == null ||
+						semanticType.getType() == null) continue;
+
+				domainUri = semanticType.getDomain().getUri();
+				propertyUri = semanticType.getType().getUri();
+
+				Integer count = semanticTypesCount.get(domainUri + propertyUri);
+				if (count == null) semanticTypesCount.put(domainUri + propertyUri, 1);
+				else semanticTypesCount.put(domainUri + propertyUri, count.intValue() + 1);
+			}
+		}
+
+		for (ColumnNode n : columnNodes) {
+			
+			candidateSemanticTypes = columnSemanticTypes.get(n);
+			if (candidateSemanticTypes == null) continue;
 			
 			logger.debug("===== Column: " + n.getColumnName());
 
 			Set<SemanticTypeMapping> semanticTypeMappings = new HashSet<SemanticTypeMapping>();
 			for (SemanticType semanticType: candidateSemanticTypes) {
 				
-				if (semanticType == null) continue;
-				
-				domainUri = semanticType.getDomain().getUri();
-				linkUri = semanticType.getType().getUri();
-				confidence = semanticType.getConfidenceScore();
-				origin = semanticType.getOrigin().toString();
-				
-				logger.debug("======================= Semantic Type: " + domainUri + "|" + linkUri + "|" + confidence + "|" + origin);
-
-				if (domainUri == null || domainUri.isEmpty()) {
-					logger.error("semantic type does not have any domain");
-					continue;
-				}
-
-				if (linkUri == null || linkUri.isEmpty()) {
-					logger.error("semantic type does not have any link");
-					continue;
-				}
-				
-				tempSemanticTypeMappings = findMatchingStructsInGraph(n, semanticType, domainUri, linkUri, n.getColumnName(), addedNodes);
+				tempSemanticTypeMappings = findSemanticTypeInGraph(n, semanticType, semanticTypesCount, addedNodes);
 				
 				if (tempSemanticTypeMappings != null) 
 					semanticTypeMappings.addAll(tempSemanticTypeMappings);
 				
-				if (tempSemanticTypeMappings == null || tempSemanticTypeMappings.isEmpty()) // No struct in graph is matched with the semantic types, we add a new struct to the graph
+				if (tempSemanticTypeMappings == null || tempSemanticTypeMappings.isEmpty()) // No struct in graph is matched with the semantic type, we add a new struct to the graph
 				{
 					SemanticTypeMapping mp = addSemanticTypeStruct(n, semanticType, addedNodes);
 					semanticTypeMappings.add(mp);
@@ -283,19 +287,57 @@ public class ModelLearner {
 			candidateSteinerSets.updateSteinerSets(semanticTypeMappings);
 		}
 
-
-		
 		return candidateSteinerSets;
 	}
 	
-	private Set<SemanticTypeMapping> findMatchingStructsInGraph(ColumnNode sourceColumn, SemanticType semanticType, 
-			String domainUri, String propertyUri, String columnNodeName, Set<Node> addedNodes) {
+	private Set<SemanticTypeMapping> findSemanticTypeInGraph(ColumnNode sourceColumn, SemanticType semanticType, 
+			HashMap<String, Integer> semanticTypesCount, Set<Node> addedNodes) {
 		
+		logger.debug("finding matches for semantic type in the graph ... ");
+
 		if (addedNodes == null)
 			addedNodes = new HashSet<Node>();
 		
 		Set<SemanticTypeMapping> mappings = new HashSet<SemanticTypeMapping>();
+
+		if (semanticType == null) {
+			logger.error("semantic type is null.");
+			return mappings;
+			 
+		}
+		if (semanticType.getDomain() == null) {
+			logger.error("semantic type does not have any domain");
+			return mappings;
+		}
+
+		if (semanticType.getType() == null) {
+			logger.error("semantic type does not have any link");
+			return mappings;
+		}
+
+		String domainUri = semanticType.getDomain().getUri();
+		String propertyUri = semanticType.getType().getUri();
+		Double confidence = semanticType.getConfidenceScore();
+		Origin origin = semanticType.getOrigin();
 		
+		Integer countOfSemanticType = semanticTypesCount.get(domainUri + propertyUri);
+		if (countOfSemanticType == null) {
+			logger.error("count of semantic type should not be null or zero");
+			return mappings;
+		}
+		
+		if (domainUri == null || domainUri.isEmpty()) {
+			logger.error("semantic type does not have any domain");
+			return mappings;
+		}
+
+		if (propertyUri == null || propertyUri.isEmpty()) {
+			logger.error("semantic type does not have any link");
+			return mappings;
+		}
+
+		logger.debug("semantic type: " + domainUri + "|" + propertyUri + "|" + confidence + "|" + origin);
+
 		// add dataproperty to existing classes if sl is a data node mapping
 		Set<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(domainUri);
 		if (nodesWithSameUriOfDomain != null) {
@@ -318,17 +360,17 @@ public class ModelLearner {
 						}
 					}
 					
-					if (countOfExistingPropertyLinks >= 1)
+					if (countOfExistingPropertyLinks >= countOfSemanticType.intValue())
 						continue;
 
 					String nodeId = new RandomGUID().toString();
-					ColumnNode target = new ColumnNode(nodeId, nodeId, columnNodeName, null);
-					this.graphBuilder.addNode(target);
+					ColumnNode target = new ColumnNode(nodeId, nodeId, sourceColumn.getColumnName(), null);
+					if (!this.graphBuilder.addNode(target)) continue;;
 					addedNodes.add(target);
 					
 					String linkId = LinkIdFactory.getLinkId(propertyUri, source.getId(), target.getId());	
 					Link link = new DataPropertyLink(linkId, new Label(propertyUri), false);
-					this.graphBuilder.addLink(source, target, link);
+					if (!this.graphBuilder.addLink(source, target, link)) continue;;
 					
 					SemanticTypeMapping mp = new SemanticTypeMapping(sourceColumn, semanticType, (InternalNode)source, link, target);
 					mappings.add(mp);
@@ -340,31 +382,64 @@ public class ModelLearner {
 	
 	private SemanticTypeMapping addSemanticTypeStruct(ColumnNode sourceColumn, SemanticType semanticType, Set<Node> addedNodes) {
 
+		logger.debug("adding semantic type to the graph ... ");
+
 		if (addedNodes == null) 
 			addedNodes = new HashSet<Node>();
 
+		if (semanticType == null) {
+			logger.error("semantic type is null.");
+			return null;
+			 
+		}
+		if (semanticType.getDomain() == null) {
+			logger.error("semantic type does not have any domain");
+			return null;
+		}
+
+		if (semanticType.getType() == null) {
+			logger.error("semantic type does not have any link");
+			return null;
+		}
+
+		String domainUri = semanticType.getDomain().getUri();
+		String propertyUri = semanticType.getType().getUri();
+		Double confidence = semanticType.getConfidenceScore();
+		Origin origin = semanticType.getOrigin();
+		
+		if (domainUri == null || domainUri.isEmpty()) {
+			logger.error("semantic type does not have any domain");
+			return null;
+		}
+
+		if (propertyUri == null || propertyUri.isEmpty()) {
+			logger.error("semantic type does not have any link");
+			return null;
+		}
+
+		logger.debug("semantic type: " + domainUri + "|" + propertyUri + "|" + confidence + "|" + origin);
+		
 		InternalNode source = null;
-		String nodeId, domainUri, linkUri;
-		
-		domainUri = semanticType.getDomain().getUri();
-		linkUri = semanticType.getType().getUri();
-		
+		String nodeId;
+
 		nodeId = nodeIdFactory.getNodeId(domainUri);
 		source = new InternalNode(nodeId, new Label(domainUri));
-		this.graphBuilder.addNodeAndUpdate(source, addedNodes);
+		if (!this.graphBuilder.addNodeAndUpdate(source, addedNodes)) return null;
 		
 		nodeId = new RandomGUID().toString();
 		ColumnNode target = new ColumnNode(nodeId, nodeId, sourceColumn.getColumnName(), null);
-		this.graphBuilder.addNode(target);
+		if (!this.graphBuilder.addNode(target)) return null;
 		addedNodes.add(target);
 
-		String linkId = LinkIdFactory.getLinkId(linkUri, source.getId(), target.getId());	
+		String linkId = LinkIdFactory.getLinkId(propertyUri, source.getId(), target.getId());	
 		Link link;
-		if (linkUri.equalsIgnoreCase(ClassInstanceLink.getFixedLabel().getUri()))
+		if (propertyUri.equalsIgnoreCase(ClassInstanceLink.getFixedLabel().getUri()))
 			link = new ClassInstanceLink(linkId);
-		else
-			link = new DataPropertyLink(linkId, new Label(semanticType.getType().getUri()), false);
-		this.graphBuilder.addLink(source, target, link);
+		else {
+			Label label = this.ontologyManager.getUriLabel(propertyUri);
+			link = new DataPropertyLink(linkId, label, false);
+		}
+		if (!this.graphBuilder.addLink(source, target, link)) return null;
 		
 		SemanticTypeMapping mappingStruct = new SemanticTypeMapping(sourceColumn, semanticType, source, link, target);
 
@@ -378,34 +453,31 @@ public class ModelLearner {
 		
 		List<SemanticType> types = new ArrayList<>();
 		
-		List<SemanticType> crfSuggestions = n.getTopKSuggestions(4);
-		if (crfSuggestions != null)
-			types.addAll(crfSuggestions);
-		
 		SemanticType userSelectedType = n.getUserSelectedSemanticType();
-		boolean existInCRFTypes = false;
 		if (userSelectedType != null) {
-			if (crfSuggestions != null) {
-				for (SemanticType t : crfSuggestions) {
-					if (userSelectedType.getCrfModelLabelString().equalsIgnoreCase(t.getCrfModelLabelString()))
-						existInCRFTypes = true;
-				}
-			}
-			if (!existInCRFTypes) { // add to types if the correct type is not in CRF syggested types
-				double probability = 0.5;
-				logger.info("type " + userSelectedType.getCrfModelLabelString() + " is not among CRF suggested types.");
-				SemanticType newType = new SemanticType(
-						userSelectedType.getHNodeId(),
-						userSelectedType.getType(),
-						userSelectedType.getDomain(),
-						userSelectedType.getOrigin(),
-						probability,
-						false
-						);
-				types.add(newType);
+			double probability = 1.0;
+			logger.info("type " + userSelectedType.getCrfModelLabelString() + " is not among CRF suggested types.");
+			SemanticType newType = new SemanticType(
+					userSelectedType.getHNodeId(),
+					userSelectedType.getType(),
+					userSelectedType.getDomain(),
+					userSelectedType.getOrigin(),
+					probability,
+					false
+					);
+			types.add(newType);
+		}
+
+		List<SemanticType> crfSuggestions = n.getTopKSuggestions(4);
+		if (crfSuggestions != null) {
+			for (SemanticType st : crfSuggestions) {
+				if (userSelectedType != null &&
+					st.getCrfModelLabelString().equalsIgnoreCase(userSelectedType.getCrfModelLabelString()))
+					continue;
+				types.add(st);
 			}
 		}
-		
+	
 		return types;
 		
 	}
@@ -530,7 +602,7 @@ public class ModelLearner {
 			
 			modelLearningGraph = ModelLearningGraph.getEmptyInstance(ontologyManager);
 			SemanticModel correctModel = newSource;
-			Set<ColumnNode> columnNodes = correctModel.getColumnNodes();
+			List<ColumnNode> columnNodes = correctModel.getColumnNodes();
 			modelLearner = new ModelLearner(ontologyManager, columnNodes);
 			
 			String graphName = graphPath + semanticModels.get(i).getName() + Params.GRAPH_FILE_EXT;
