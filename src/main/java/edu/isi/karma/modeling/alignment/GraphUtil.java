@@ -160,7 +160,7 @@ public class GraphUtil {
 	public static String graphToString(Graph<Node, Link> graph) {
 		
 		if (graph == null) {
-			logger.error("The input graph is null.");
+			logger.debug("The input graph is null.");
 			return "";
 		}		
 
