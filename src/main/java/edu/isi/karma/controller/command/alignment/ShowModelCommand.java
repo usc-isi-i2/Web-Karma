@@ -72,6 +72,8 @@ public class ShowModelCommand extends WorksheetCommand {
 	private String worksheetName;
 	private Alignment initialAlignment = null;
 	private DirectedWeightedMultigraph<Node, Link> initialGraph = null;
+	private List<ColumnNode> columnNodes;
+	private Set<String> columnsWithoutSemanticType = null;
 //	private final boolean addVWorksheetUpdate;
 
 	private static Logger logger = LoggerFactory
@@ -130,22 +132,27 @@ public class ShowModelCommand extends WorksheetCommand {
 		if (initialAlignment == null) {
 			initialAlignment = alignment.getAlignmentClone();
 			initialGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
+			
+			columnNodes = new LinkedList<ColumnNode>();
+			columnsWithoutSemanticType = new HashSet<String>();
+			ArrayList<HNode> orderedNodeIds = new ArrayList<HNode>();
+			worksheet.getHeaders().getSortedLeafHNodes(orderedNodeIds);
+			if (orderedNodeIds != null)
+			for (int i = 0; i < orderedNodeIds.size(); i++) {
+				String hNodeId = orderedNodeIds.get(i).getId();
+				ColumnNode cn = alignment.getColumnNodeByHNodeId(hNodeId);
+				if (cn.getUserSelectedSemanticType() == null) { 
+					columnsWithoutSemanticType.add(hNodeId);
+					worksheet.getSemanticTypes().unassignColumnSemanticType(hNodeId);
+				}
+				columnNodes.add(cn);
+			}
 		} else {
 		// Replace the current alignment with the old alignment
 			alignment = initialAlignment;
 			alignment.setGraph(initialGraph);
 			alignment.align();
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
-		}
-
-		
-		List<ColumnNode> columnNodes = new LinkedList<ColumnNode>();
-		ArrayList<HNode> orderedNodeIds = new ArrayList<HNode>();
-		worksheet.getHeaders().getSortedLeafHNodes(orderedNodeIds);
-		if (orderedNodeIds != null)
-		for (int i = 0; i < orderedNodeIds.size(); i++) {
-			String hNodeId = orderedNodeIds.get(i).getId();
-			columnNodes.add(alignment.getColumnNodeByHNodeId(hNodeId));
 		}
 
 		ModelLearner modelLearner = new ModelLearner(ontologyManager, columnNodes);
@@ -211,6 +218,15 @@ public class ShowModelCommand extends WorksheetCommand {
 					newLink = alignment.addDataPropertyOfColumnLink(source, target, ((DataPropertyOfColumnLink)l).getSpecializedColumnHNodeId());
 				else if (l instanceof ObjectPropertySpecializationLink)
 					newLink = alignment.addObjectPropertySpecializationLink(source, target, ((ObjectPropertySpecializationLink)l).getSpecializedLinkId());
+				
+				if (newLink == null) // link already exist
+					continue;
+				
+				if (target instanceof ColumnNode) {
+					SemanticType st = new SemanticType(((ColumnNode)target).getHNodeId(), 
+							newLink.getLabel(), source.getLabel(), SemanticType.Origin.User, 1.0, false);
+					worksheet.getSemanticTypes().addType(st);
+				}
 				
 				if (!(target instanceof ColumnNode) && newLink != null)
 					alignment.changeLinkStatus(newLink.getId(), LinkStatus.ForcedByUser);
@@ -289,6 +305,12 @@ public class ShowModelCommand extends WorksheetCommand {
 		alignment.align();
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		
+		if (this.columnsWithoutSemanticType != null) {
+			for (String hNodeId : this.columnsWithoutSemanticType) {
+				worksheet.getSemanticTypes().unassignColumnSemanticType(hNodeId);
+			}
+		}
+
 		try {
 			// Save the semantic types in the input parameter JSON
 			saveSemanticTypesInformation(worksheet, workspace, worksheet.getSemanticTypes().getListOfTypes());

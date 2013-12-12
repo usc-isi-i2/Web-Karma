@@ -466,15 +466,15 @@ public class ModelLearner {
 					false
 					);
 			types.add(newType);
-		}
-
-		List<SemanticType> crfSuggestions = n.getTopKSuggestions(4);
-		if (crfSuggestions != null) {
-			for (SemanticType st : crfSuggestions) {
-				if (userSelectedType != null &&
-					st.getCrfModelLabelString().equalsIgnoreCase(userSelectedType.getCrfModelLabelString()))
-					continue;
-				types.add(st);
+		} else {
+			List<SemanticType> crfSuggestions = n.getTopKSuggestions(4);
+			if (crfSuggestions != null) {
+				for (SemanticType st : crfSuggestions) {
+					if (userSelectedType != null &&
+						st.getCrfModelLabelString().equalsIgnoreCase(userSelectedType.getCrfModelLabelString()))
+						continue;
+					types.add(st);
+				}
 			}
 		}
 	
