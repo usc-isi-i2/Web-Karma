@@ -283,6 +283,31 @@ public class WorksheetR2RMLJenaModelParser {
 			pom.setObject(objMap);
 			trMap.addPredicateObjectMap(pom);
 		}
+		
+		// If there are no poms, let's see if we can translate a template into a POM
+		// TODO clean this up.
+		if(trMap.getPredicateObjectMaps().isEmpty())
+		{
+			TemplateTermSet subjTemplTermSet = trMap.getSubject().getTemplate();
+			List<TemplateTerm> terms = subjTemplTermSet.getAllTerms();
+			if(terms != null && terms.size() == 1 && terms.get(0) instanceof ColumnTemplateTerm)
+			{
+				PredicateObjectMap pom = new PredicateObjectMap(trMap);
+				Predicate pred = new Predicate(Uris.CLASS_INSTANCE_LINK_URI + "-" + getNewPredicateId());
+				pred.getTemplate().addTemplateTermToSet(
+						new StringTemplateTerm(Uris.CLASS_INSTANCE_LINK_URI, true));
+				pom.setPredicate(pred);
+				StringTemplateTerm rdfLiteralTypeTerm = new StringTemplateTerm("", true);
+				TemplateTermSet rdfLiteralTypeTermSet = new TemplateTermSet();
+				rdfLiteralTypeTermSet.addTemplateTermToSet(rdfLiteralTypeTerm);
+				ObjectMap objMap = new ObjectMap(getNewObjectMapId(), 
+						subjTemplTermSet, rdfLiteralTypeTermSet);
+				pom.setObject(objMap);
+				trMap.addPredicateObjectMap(pom);
+				addHNodeIdToPredObjectMapLink(objMap, pom);
+				
+			}
+		}
 	}
 	
 	private void addHNodeIdToPredObjectMapLink(ObjectMap objMap, PredicateObjectMap pom) {
@@ -339,6 +364,7 @@ public class WorksheetR2RMLJenaModelParser {
 				String template = templNode.toString();
 				subjTemplTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
 						template, worksheet, factory);
+				
 			}
 			subjMap.setTemplate(subjTemplTermSet);
 			
