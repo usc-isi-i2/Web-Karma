@@ -52,6 +52,7 @@ import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 
+@Deprecated
 public class WorksheetR2RMLSesameModelParser {
 	private Worksheet worksheet;
 	private RepFactory factory;
