@@ -980,7 +980,7 @@ public class Approach1 {
 					
 					SortableSemanticModel m = topHypotheses.get(k);
 
-					double distance = correctModel.getDistance(m);
+					double distance = correctModel.evaluate(m).getDistance();
 
 					String label = "candidate" + k + 
 							"--distance:" + distance +

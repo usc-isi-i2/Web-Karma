@@ -171,67 +171,109 @@ public class SemanticModel {
 		}
 	}
 	
-//	public void serialize(String fileName) throws IOException {
-//		if (graph == null) {
-//			logger.error("The input graph is null.");
-//			return;
-//		}
-//		
-//		FileOutputStream f = new FileOutputStream(fileName);
-//		ObjectOutputStream out = new ObjectOutputStream(f);
-//
-//		out.writeObject(this);
-//		out.flush();
-//		out.close();
-//	}
-//	
-//	public static SemanticModel deserialize(String fileName) throws Exception
-//	{
-////		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-//		FileInputStream f = new FileInputStream(fileName);
-//        ObjectInputStream in = new ObjectInputStream(f);
-//
-//        Object obj  = in.readObject();
-//        in.close();
-//        
-//        if (obj instanceof SemanticModel)
-//        	return (SemanticModel)obj;
-//        else 
-//        	return null;
-//	}
-	
 	public void print() {
 		logger.info("id: " + this.getId());
 		logger.info("name: " + this.getName());
 		logger.info("description: " + this.getDescription());
 		logger.info(GraphUtil.graphToString(this.graph));
 	}
-	
-	public void exportGraphviz(String filename, boolean showNodeMetaData, boolean showLinkMetaData) throws IOException {
-		
-		OutputStream out = new FileOutputStream(filename);
-		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
-		
-		graphViz.attr("fontcolor", "blue");
-		graphViz.attr("remincross", "true");
-		graphViz.attr("label", this.getDescription() == null ? "" : this.getDescription());
-//		graphViz.attr("page", "8.5,11");
 
-		org.kohsuke.graphviz.Graph gViz = GraphVizUtil.convertJGraphToGraphviz(this.graph, false, showNodeMetaData, showLinkMetaData);
-		gViz.attr("label", "model");
-		gViz.id("cluster");
-		graphViz.subGraph(gViz);
-		graphViz.writeTo(out);
-		out.close();
+	public ModelEvaluation evaluate(SemanticModel baseModel) {
+
+		if (baseModel == null || baseModel.getGraph() == null || this.getGraph() == null)
+			return new ModelEvaluation(null, null, null);
+		
+		Double distance = getDistance(baseModel);
+		
+		int maxLength = 1;
+		List<GraphPath> basePaths = new LinkedList<GraphPath>();
+		List<GraphPath> modelPaths = new LinkedList<GraphPath>();
+		List<GraphPath> gpList;
+		String pathStr;
+		for (int i = 1; i <= maxLength; i++) {
+			gpList = GraphUtil.getPaths(baseModel.graph, i);
+			if (gpList != null) basePaths.addAll(gpList);
+			gpList = GraphUtil.getPaths(this.graph, i);
+			if (gpList != null) modelPaths.addAll(gpList);
+		}
+		Set<String> basePathString = new HashSet<String>();
+		Set<String> modelPathString = new HashSet<String>();
+		
+		Map<String, Integer> visitedPaths = new HashMap<String, Integer>();
+		Integer count;
+		for (GraphPath gp : basePaths) {
+			pathStr = getPathString(baseModel, gp);
+			count = visitedPaths.get(pathStr);
+			if (count == null) count = 1; else count++;
+			visitedPaths.put(pathStr, count);
+			if (pathStr != null && !pathStr.isEmpty()) 
+				basePathString.add("(" + count + ")" + pathStr);
+		}
+		visitedPaths.clear();
+		for (GraphPath gp : modelPaths) {
+			pathStr = getPathString(this, gp);
+			count = visitedPaths.get(pathStr);
+			if (count == null) count = 1; else count++;
+			visitedPaths.put(pathStr, count);
+			if (pathStr != null && !pathStr.isEmpty()) 
+				modelPathString.add("(" + count + ")" + pathStr);
+		}
+
+		Double precision = getPrecision(basePathString, modelPathString);
+		Double recall = getRecall(basePathString, modelPathString);
+		
+		return new ModelEvaluation(distance, precision, recall);
 	}
 	
-	public double getDistance(SemanticModel sm) {
+	private String getPathString(SemanticModel sm, GraphPath gp) {
+		
+		String str = "";
+		String separator = "|";
+		
+		if (gp == null || gp.getLength() == 0)
+			return null;
+		Node target;
+		
+		if (gp.getStartNode() == null || gp.getStartNode().getLabel() == null)
+			return null;
+		
+		str += gp.getStartNode().getLabel().getUri();
+		str += separator;
+		
+		for (Link l : gp.getLinks()) {
+			
+			target = l.getTarget();
+			if (target == null)
+				return null;
+			
+			str += l.getLabel().getUri();
+			str += separator;
+					
+			if (target instanceof InternalNode) {
+				if (target.getLabel() == null)
+					return null;
+				str += l.getLabel().getUri();
+				str += separator;
+			}
+			
+			if (target instanceof ColumnNode) {
+				ColumnNode cn = sm.mappingToSourceColumns.get((ColumnNode)target);
+				if (cn == null) return null;
+				str += cn.getId();
+				str += separator;
+			}
+			
+		}
+		return str;
+	}
+	
+	private Double getDistance(SemanticModel sm) {
 		
 		if (this.graph == null || sm.graph == null)
-			return -1.0;
+			return null;
 		
 		if (this.mappingToSourceColumns == null || sm.mappingToSourceColumns == null)
-			return -1.0;
+			return null;
 
 		SemanticModel mainModel = this;
 		SemanticModel targetModel = sm;
@@ -379,7 +421,47 @@ public class SemanticModel {
 		logger.debug("link deletion cost: " + linkDeletion);
 		logger.debug("link relabeling cost: " + linkRelabeling);
 
-		return nodeInsertion + nodeDeletion + linkInsertion + linkDeletion + linkRelabeling;
+		return (double)(nodeInsertion + nodeDeletion + linkInsertion + linkDeletion + linkRelabeling);
+	}
+	
+	private Double getPrecision(Set<String> correct, Set<String> result) {
+		
+		if (correct == null || result == null)
+			return null;
+		
+		int intersection = Sets.intersection(correct, result).size();
+		int resultSize = result.size();
+		
+		return resultSize == 0 ? 0 : (double) intersection / (double) resultSize;
+	}
+	
+	private Double getRecall(Set<String> correct, Set<String> result) {
+		
+		if (correct == null || result == null)
+			return null;
+		
+		int intersection = Sets.intersection(correct, result).size();
+		int correctSize = correct.size();
+		
+		return correctSize == 0 ? 0 : (double) intersection / (double) correctSize;	
+	}
+	
+	public void writeGraphviz(String filename, boolean showNodeMetaData, boolean showLinkMetaData) throws IOException {
+		
+		OutputStream out = new FileOutputStream(filename);
+		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
+		
+		graphViz.attr("fontcolor", "blue");
+		graphViz.attr("remincross", "true");
+		graphViz.attr("label", this.getDescription() == null ? "" : this.getDescription());
+//		graphViz.attr("page", "8.5,11");
+
+		org.kohsuke.graphviz.Graph gViz = GraphVizUtil.convertJGraphToGraphviz(this.graph, false, showNodeMetaData, showLinkMetaData);
+		gViz.attr("label", "model");
+		gViz.id("cluster");
+		graphViz.subGraph(gViz);
+		graphViz.writeTo(out);
+		out.close();
 	}
 	
 	public void writeJson(String filename) throws IOException {
@@ -409,12 +491,53 @@ public class SemanticModel {
 		writer.name("id").value(this.getId());
 		writer.name("name").value(this.getName());
 		writer.name("description").value(this.getDescription());
+		writer.name("sourceColumns");
+		if (this.sourceColumns == null) writer.value(nullStr);
+		else {
+			writer.beginArray();
+			for (ColumnNode cn : this.sourceColumns) {
+				writeSourceColumn(writer, cn);
+			}
+			writer.endArray();
+		}
+		writer.name("mappingToSourceColumns");
+		if (this.mappingToSourceColumns == null) writer.value(nullStr);
+		else {
+			writer.beginArray();
+			for (Entry<ColumnNode, ColumnNode> mapping : this.mappingToSourceColumns.entrySet()) {
+				writeMappingToSourceColumn(writer, mapping);
+			}
+			writer.endArray();
+		}
 		writer.name("graph");
 		if (this.graph == null) writer.value(nullStr);
 		else GraphUtil.writeGraph(this.graph, writer);
 		writer.endObject();
 	}
 
+	private void writeSourceColumn(JsonWriter writer, ColumnNode sourceColumn) throws IOException {
+		
+		if (sourceColumn == null)
+			return;
+		
+		writer.beginObject();
+		writer.name("id").value(sourceColumn.getId());
+		writer.name("hNodeId").value(sourceColumn.getHNodeId());
+		writer.name("columnName").value(sourceColumn.getColumnName());
+		writer.endObject();
+	}
+
+	private void writeMappingToSourceColumn(JsonWriter writer, Entry<ColumnNode, ColumnNode> mapping) throws IOException {
+		
+		if (mapping == null || mapping.getKey() == null || mapping.getValue() == null)
+			return;
+		
+		writer.beginObject();
+		writer.name("id").value(mapping.getKey().getId());
+		writer.name("sourceColumnId").value(mapping.getValue().getId());
+		writer.endObject();
+	}
+	
 	public static SemanticModel readJson(String filename) throws IOException {
 
 		File file = new File(filename);
@@ -441,6 +564,10 @@ public class SemanticModel {
 		String name = null;
 		String description = null;
 		DirectedWeightedMultigraph<Node, Link> graph = null;
+		List<ColumnNode> sourceColumns = null;
+		HashMap<String, ColumnNode> sourceColumnIds = null;
+
+		Map<String, String> mappingToSourceColumnsIds = null;
 		
 		reader.beginObject();
 	    while (reader.hasNext()) {
@@ -451,6 +578,28 @@ public class SemanticModel {
 				name = reader.nextString();
 			} else if (key.equals("description") && reader.peek() != JsonToken.NULL) {
 				description = reader.nextString();
+			} else if (key.equals("sourceColumns") && reader.peek() != JsonToken.NULL) {
+				sourceColumns = new LinkedList<ColumnNode>();
+				sourceColumnIds = new HashMap<String, ColumnNode>();
+				reader.beginArray();
+			    while (reader.hasNext()) {
+			    	ColumnNode cn = readSourceColumn(reader);
+			    	if (cn != null) {
+			    		sourceColumns.add(cn);
+			    		sourceColumnIds.put(cn.getId(), cn);
+			    	}
+				}
+		    	reader.endArray();				
+			} else if (key.equals("mappingToSourceColumns") && reader.peek() != JsonToken.NULL) {
+				mappingToSourceColumnsIds = new HashMap<String, String>();
+				Map <String, String> oneEntryMapping;
+				reader.beginArray();
+			    while (reader.hasNext()) {
+			    	oneEntryMapping = readMappingToSourceColumn(reader);
+			    	if (oneEntryMapping != null && oneEntryMapping.size() == 1)
+			    		mappingToSourceColumnsIds.putAll(oneEntryMapping);
+				}
+		    	reader.endArray();				
 			} else if (key.equals("graph") && reader.peek() != JsonToken.NULL) {
 				graph = GraphUtil.readGraph(reader);
 			} else {
@@ -459,11 +608,71 @@ public class SemanticModel {
 		}
     	reader.endObject();
     	
-    	SemanticModel semanticModel = new SemanticModel(id, graph);
+		Map<ColumnNode, ColumnNode> mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
+		if (graph != null && mappingToSourceColumnsIds != null && !mappingToSourceColumnsIds.isEmpty()) {
+			for (Node n : graph.vertexSet()) {
+				if (n instanceof ColumnNode) {
+					ColumnNode cn = (ColumnNode)n;
+					String sourceColumnId = mappingToSourceColumnsIds.get(cn.getId());
+					if (sourceColumnId != null) {
+						ColumnNode sourceColumn = sourceColumnIds.get(sourceColumnId);
+						if (sourceColumn != null)
+							mappingToSourceColumns.put(cn, sourceColumn);
+					}
+				}
+			}
+		}
+
+    	SemanticModel semanticModel = new SemanticModel(id, graph, sourceColumns, mappingToSourceColumns);
     	semanticModel.setName(name);
     	semanticModel.setDescription(description);
     	
     	return semanticModel;
 	}
+	
+	private static ColumnNode readSourceColumn(JsonReader reader) throws IOException {
+		String id = null;
+		String hNodeId = null;
+		String columnName = null;
+		
+		reader.beginObject();
+	    while (reader.hasNext()) {
+	    	String key = reader.nextName();
+			if (key.equals("id") && reader.peek() != JsonToken.NULL) {
+				id = reader.nextString();
+			} else if (key.equals("hNodeId") && reader.peek() != JsonToken.NULL) {
+				hNodeId = reader.nextString();
+			} else if (key.equals("columnName") && reader.peek() != JsonToken.NULL) {
+				columnName = reader.nextString();
+			} else {
+			  reader.skipValue();
+			}
+		}
+    	reader.endObject();
+    	
+    	ColumnNode cn = new ColumnNode(id, hNodeId, columnName, null);
+    	return cn;
+	}
 
+	private static Map<String, String> readMappingToSourceColumn(JsonReader reader) throws IOException {
+		String id = null;
+		String sourceColumnId = null;
+		
+		reader.beginObject();
+	    while (reader.hasNext()) {
+	    	String key = reader.nextName();
+			if (key.equals("id") && reader.peek() != JsonToken.NULL) {
+				id = reader.nextString();
+			} else if (key.equals("sourceColumnId") && reader.peek() != JsonToken.NULL) {
+				sourceColumnId = reader.nextString();
+			} else {
+			  reader.skipValue();
+			}
+		}
+    	reader.endObject();
+    	
+    	Map<String, String> mapping = new HashMap<String, String>();
+    	mapping.put(id, sourceColumnId);
+    	return mapping;
+	}
 }

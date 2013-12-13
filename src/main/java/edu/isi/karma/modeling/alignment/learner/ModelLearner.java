@@ -43,6 +43,7 @@ import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LinkFrequency;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
+import edu.isi.karma.modeling.alignment.ModelEvaluation;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.SteinerTree;
@@ -456,7 +457,7 @@ public class ModelLearner {
 		SemanticType userSelectedType = n.getUserSelectedSemanticType();
 		if (userSelectedType != null) {
 			double probability = 1.0;
-			logger.info("type " + userSelectedType.getCrfModelLabelString() + " is not among CRF suggested types.");
+			logger.debug("type " + userSelectedType.getCrfModelLabelString() + " is not among CRF suggested types.");
 			SemanticType newType = new SemanticType(
 					userSelectedType.getHNodeId(),
 					userSelectedType.getType(),
@@ -569,7 +570,7 @@ public class ModelLearner {
 		
 //		List<SemanticModel> semanticModels = ModelReader.importSemanticModels(inputPath);
 		List<SemanticModel> semanticModels = ModelReader.importSemanticModelsFromJsonFiles(Params.MODEL_DIR, Params.MODEL_MAIN_FILE_EXT);
-
+		
 		List<SemanticModel> trainingData = new ArrayList<SemanticModel>();
 		
 		OntologyManager ontologyManager = new OntologyManager();
@@ -583,8 +584,8 @@ public class ModelLearner {
 		ModelLearningGraph modelLearningGraph;
 		ModelLearner modelLearner;
 		
-//		for (int i = 0; i < semanticModels.size(); i++) {
-		int i = 0; {
+		for (int i = 0; i < semanticModels.size(); i++) {
+//		int i = 0; {
 			trainingData.clear();
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -658,17 +659,19 @@ public class ModelLearner {
 					
 				}
 			
+			ModelEvaluation me;
 			graphs.put("1-correct model", correctModel.getGraph());
 			if (topHypotheses != null)
 				for (int k = 0; k < topHypotheses.size(); k++) {
 					
 					SortableSemanticModel m = topHypotheses.get(k);
 
-					double distance = correctModel.getDistance(m);
+					me = m.evaluate(correctModel);
 
 					String label = "candidate" + k + 
-							"--distance:" + distance +
-							"---" + m.getDescription();
+							"-distance:" + me.getDistance() + 
+							"-precision:" + me.getPrecision() + 
+							"-recall:" + me.getRecall();
 					
 					graphs.put(label, m.getGraph());
 				}

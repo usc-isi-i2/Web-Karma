@@ -160,7 +160,7 @@ public class GenerateR2RMLModelCommand extends Command {
 //			e.printStackTrace();
 		}
 		try {
-			semanticModel.exportGraphviz(ModelingConfiguration.getModelsGraphvizDir() + 
+			semanticModel.writeGraphviz(ModelingConfiguration.getModelsGraphvizDir() + 
 					semanticModel.getName() + 
 					".dot", false, false);
 		} catch (Exception e) {

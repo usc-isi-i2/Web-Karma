@@ -95,7 +95,7 @@ public class WeightTuning {
 
 		double distance = 0.0;
 		for (SortableSemanticModel sm : rankedSemanticModels) {
-			distance = correctModel.getDistance(sm);
+			distance = correctModel.evaluate(sm).getDistance();
 			modelDistance.put(sm, distance);
 		}
 		

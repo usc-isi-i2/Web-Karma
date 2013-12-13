@@ -31,10 +31,11 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
@@ -177,38 +178,55 @@ public class GraphUtil {
 		
 	}
 	
-//	public static void serialize(DirectedWeightedMultigraph<Node, Link> graph, String fileName) throws Exception
-//	{
-//		
-//		if (graph == null) {
-//			logger.error("The input graph is null.");
-//			return;
-//		}		
-//
-////		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-//		FileOutputStream f = new FileOutputStream(fileName);
-//		ObjectOutputStream out = new ObjectOutputStream(f);
-//
-//		out.writeObject(graph);
-//		out.flush();
-//		out.close();
-//	}
-//	
-//	@SuppressWarnings("unchecked")
-//	public static DirectedWeightedMultigraph<Node, Link> deserialize(String fileName) throws Exception
-//	{
-////		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-//		FileInputStream f = new FileInputStream(fileName);
-//        ObjectInputStream in = new ObjectInputStream(f);
-//
-//        Object obj  = in.readObject();
-//        in.close();
-//        
-//        if (obj instanceof DirectedWeightedMultigraph<?, ?>)
-//        	return (DirectedWeightedMultigraph<Node, Link>)obj;
-//        else 
-//        	return null;
-//	}
+	public static List<GraphPath> getPaths(DirectedWeightedMultigraph<Node, Link> g, int length) {
+		
+		List<GraphPath> graphPaths = 
+				new LinkedList<GraphPath>();
+
+		if (g == null)
+			return graphPaths;
+
+		for (Node n : g.vertexSet()) {
+			List<GraphPath> gpList = getOutgoingPaths(g, n, length);
+			if (gpList != null) graphPaths.addAll(gpList);
+		}
+
+		return graphPaths;
+		
+	}
+	
+	public static List<GraphPath> getOutgoingPaths(DirectedWeightedMultigraph<Node, Link> g, Node n, int length) {
+		
+		List<GraphPath> graphPaths = 
+				new LinkedList<GraphPath>();
+
+		if (g == null || n == null || length <= 0 || !g.vertexSet().contains(n))
+			return graphPaths;
+		
+		Set<Link> outgoingLinks =  g.outgoingEdgesOf(n);
+		if (outgoingLinks == null || outgoingLinks.isEmpty())
+			return graphPaths;
+		
+		for (Link l : outgoingLinks) {
+			List<GraphPath> nextGraphPaths = getOutgoingPaths(g, l.getTarget(), length - 1);
+			if (nextGraphPaths == null || nextGraphPaths.isEmpty()) {
+				GraphPath gp = new GraphPath();
+				gp.addLink(l);
+				if (gp.getLength() == length)
+					graphPaths.add(gp);
+			} else {
+				for (GraphPath p : nextGraphPaths) {
+					GraphPath gp = new GraphPath(p);
+					gp.addLinkToHead(l);
+					if (gp.getLength() == length)
+						graphPaths.add(gp);
+				}
+			}
+		}
+		
+		return graphPaths;
+		
+	}
 	
 	public static Set<Node> getOutNeighbors(DirectedWeightedMultigraph<Node, Link> g, Node n) {
 		

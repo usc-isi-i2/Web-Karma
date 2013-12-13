@@ -798,7 +798,7 @@ public class Approach2 {
 					
 			graphs.put("1-correct model", correctModel.getGraph());
 			if (hypothesisModel != null) {
-				double distance = correctModel.getDistance(hypothesisModel);
+				double distance = correctModel.evaluate(hypothesisModel).getDistance();
 
 				String label = "distance:" + distance;
 					

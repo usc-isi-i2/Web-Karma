@@ -22,6 +22,7 @@
 package edu.isi.karma.modeling.research;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -37,6 +38,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.ModelEvaluation;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
@@ -70,8 +72,14 @@ public class ComputeGED {
 		Multimap<String, File> index =
 				   Multimaps.index(fileSet, sameService);	
 	
-		double totalGEDRank1 = 0.0, totalGEDRank2 = 0.0, totalGEDRank3 = 0.0,
-				totalGEDKarmaInitial = 0.0, totalGEDKarmaFinal = 0.0;
+		int countOfRank1Models = 0, countOfRank2Models = 0, countOfRank3Models = 0,
+				countOfKarmaInitialModels = 0, countOfKarmaFinalModels = 0;
+		double sumGEDRank1 = 0.0, sumGEDRank2 = 0.0, sumGEDRank3 = 0.0,
+				sumGEDKarmaInitial = 0.0, sumGEDKarmaFinal = 0.0;
+		double sumPrecisionRank1 = 0.0, sumPrecisionRank2 = 0.0, sumPrecisionRank3 = 0.0,
+				sumPrecisionKarmaInitial = 0.0, sumPrecisionKarmaFinal = 0.0;
+		double sumRecallRank1 = 0.0, sumRecallRank2 = 0.0, sumRecallRank3 = 0.0,
+				sumRecallKarmaInitial = 0.0, sumRecallKarmaFinal = 0.0;
 		
 		for (String s : index.keySet()) {
 			
@@ -98,59 +106,113 @@ public class ComputeGED {
 			}
 			
 			if (mMain == null) continue;
-			String label; double distance;
+			String label; ModelEvaluation me;
 			
 			Map<String, DirectedWeightedMultigraph<Node, Link>> graphs = 
 					new TreeMap<String, DirectedWeightedMultigraph<Node,Link>>();
 			
-			label = "0- Main";
+			label = "1- main";
 			graphs.put(label, mMain.getGraph());
 
 			if (mKarmaInitial != null) {
-				distance = mMain.getDistance(mKarmaInitial);
-				totalGEDKarmaInitial += distance;
-				label = "1-Karma Initial" + "-distance:" + distance;
+				me = mKarmaInitial.evaluate(mMain);
+				sumGEDKarmaInitial += me.getDistance();
+				sumPrecisionKarmaInitial += me.getPrecision();
+				sumRecallKarmaInitial += me.getRecall();
+				label = "2-karma initial" + 
+						"-distance:" + me.getDistance() + 
+						"-precision:" + me.getPrecision() + 
+						"-recall:" + me.getRecall();
 				graphs.put(label, mKarmaInitial.getGraph());
+				countOfKarmaInitialModels++;
 			}
 			
 			if (mKarmaFinal != null) {
-				distance = mMain.getDistance(mKarmaFinal);
-				totalGEDKarmaFinal += distance;
-				label = "3-Karma Final" + "-distance:" + distance;
+				me = mKarmaFinal.evaluate(mMain);
+				sumGEDKarmaFinal += me.getDistance();
+				sumPrecisionKarmaFinal += me.getPrecision();
+				sumRecallKarmaFinal += me.getRecall();
+				label = "3-karma final" + 
+						"-distance:" + me.getDistance() + 
+						"-precision:" + me.getPrecision() + 
+						"-recall:" + me.getRecall();
 				graphs.put(label, mKarmaFinal.getGraph());
+				countOfKarmaFinalModels++;
 			}
 			
 			if (mApp1Rank1 != null) {
-				distance = mMain.getDistance(mApp1Rank1);
-				totalGEDRank1 += distance;
-				label = "4-Rank1" + "-distance:" + distance;
+				me = mApp1Rank1.evaluate(mMain);
+				sumGEDRank1 += me.getDistance();
+				sumPrecisionRank1 += me.getPrecision();
+				sumRecallRank1 += me.getRecall();
+				label = "4-rank1" + 
+						"-distance:" + me.getDistance() + 
+						"-precision:" + me.getPrecision() + 
+						"-recall:" + me.getRecall();
 				graphs.put(label, mApp1Rank1.getGraph());
+				countOfRank1Models++;
 			}
 			
 			if (mApp1Rank2 != null) {
-				distance = mMain.getDistance(mApp1Rank2);
-				totalGEDRank2 += distance;
-				label = "5-Rank2" + "-distance:" + distance;
+				me = mApp1Rank2.evaluate(mMain);
+				sumGEDRank2 += me.getDistance();
+				sumPrecisionRank2 += me.getPrecision();
+				sumRecallRank2 += me.getRecall();
+				label = "5-rank2" + 
+						"-distance:" + me.getDistance() + 
+						"-precision:" + me.getPrecision() + 
+						"-recall:" + me.getRecall();
 				graphs.put(label, mApp1Rank2.getGraph());
+				countOfRank2Models++;
 			}
 
 			if (mApp1Rank3 != null) {
-				distance = mMain.getDistance(mApp1Rank3);
-				totalGEDRank3 += distance;
-				label = "6-Rank3" + "-distance:" + distance;
+				me = mApp1Rank3.evaluate(mMain);
+				sumGEDRank3 += me.getDistance();
+				sumPrecisionRank3 += me.getPrecision();
+				sumRecallRank3 += me.getRecall();
+				label = "6-rank3" + 
+						"-distance:" + me.getDistance() + 
+						"-precision:" + me.getPrecision() + 
+						"-recall:" + me.getRecall();
 				graphs.put(label, mApp1Rank3.getGraph());
+				countOfRank3Models++;
 			}
 
 			GraphUtil.exportGraphviz(graphs, s, Params.OUTPUT_DIR + s + Params.GRAPHVIS_OUT_FILE_EXT);
 		}
 		
-		logger.info("==============================================");
-		logger.info("total GED for Karma Initial Models: " + totalGEDKarmaInitial);
-		logger.info("total GED for Karma Final Models:   " + totalGEDKarmaFinal);
-		logger.info("total GED for Rank 1 Models:        " + totalGEDRank1);
-		logger.info("total GED for Rank 2 Models:        " + totalGEDRank2);
-		logger.info("total GED for Rank 3 Models:        " + totalGEDRank3);
-		logger.info("==============================================");
+		if (countOfKarmaInitialModels > 0) {
+			logger.info("total GED for karma initial models: " + sumGEDKarmaInitial);
+			logger.info("average precision for karma initial models: " + (sumPrecisionKarmaInitial/(double)countOfKarmaInitialModels));
+			logger.info("average recall for karma initial models: " + roundTwoDecimals(sumRecallKarmaInitial/(double)countOfKarmaInitialModels));
+		}
+		if (countOfKarmaFinalModels > 0) {
+			logger.info("total GED for karma final models:   " + sumGEDKarmaFinal);
+			logger.info("average precision for karma final models: " + roundTwoDecimals(sumPrecisionKarmaFinal/(double)countOfKarmaFinalModels));
+			logger.info("average recall for karma initial models: " + roundTwoDecimals(sumRecallKarmaFinal/(double)countOfKarmaFinalModels));
+		}
+		if (countOfRank1Models > 0) {
+			logger.info("total GED for rank1 models:   " + sumGEDRank1);
+			logger.info("average precision for rank1 models: " + roundTwoDecimals(sumPrecisionRank1/(double)countOfRank1Models));
+			logger.info("average recall for rank1 models: " + roundTwoDecimals(sumRecallRank1/(double)countOfRank1Models));
+		}
+		if (countOfRank2Models > 0) {
+			logger.info("total GED for rank2 models:   " + sumGEDRank2);
+			logger.info("average precision for rank2 models: " + roundTwoDecimals(sumPrecisionRank2/(double)countOfRank2Models));
+			logger.info("average recall for rank2 models: " + roundTwoDecimals(sumRecallRank2/(double)countOfRank2Models));
+		}
+		if (countOfRank3Models > 0) {
+			logger.info("total GED for rank3 models:   " + sumGEDRank3);
+			logger.info("average precision for rank3 models: " + roundTwoDecimals(sumPrecisionRank3/(double)countOfRank3Models));
+			logger.info("average recall for rank3 models: " + roundTwoDecimals(sumRecallRank3/(double)countOfRank3Models));
+		}
+
+	}
+
+	private static double roundTwoDecimals(double d) {
+        DecimalFormat twoDForm = new DecimalFormat("#.##");
+        return Double.valueOf(twoDForm.format(d));
 	}
 	
 //	private static void computeGEDApp2() throws Exception {
