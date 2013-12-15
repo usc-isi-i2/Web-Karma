@@ -720,6 +720,7 @@ and related projects, please see: http://www.isi.edu/integration
                         <option>xsd:integer</option>
                         <option>xsd:double</option>
                         <option>xsd:float</option>
+                         <option>xsd:date</option>
                         <option>xsd:time</option>
                         <option>xsd:dateTime</option>
                         <option>xsd:dateTimeStamp</option>
