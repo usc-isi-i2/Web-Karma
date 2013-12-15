@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphLoaderThread;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -89,28 +90,30 @@ public class KarmaServlet extends HttpServlet {
 		
 		WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
 		VWorkspaceRegistry.getInstance().registerVWorkspace(workspace.getId(), vwsp);
+		OntologyManager ontologyManager = workspace.getOntologyManager();
 		/** Check if any ontology needs to be preloaded **/
 		String preloadedOntDir = ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.PRELOADED_ONTOLOGY_DIRECTORY);
 		File ontDir = new File(preloadedOntDir);
 		if (ontDir.exists()) {
 			File[] ontologies = ontDir.listFiles();
-			OntologyManager mgr = workspace.getOntologyManager();
 			for (File ontology: ontologies) {
 				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf") || ontology.getName().endsWith(".xml")) {
 					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
 					try {
 						String encoding = EncodingDetector.detect(ontology);
-						mgr.doImport(ontology, encoding);
+						ontologyManager.doImport(ontology, encoding);
 					} catch (Exception t) {
 						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
 					}
 				}
 			}
 			// update the cache at the end when all files are added to the model
-			mgr.updateCache();
+			ontologyManager.updateCache();
 		} else {
 			logger.info("No directory for preloading ontologies exists.");
 		}
+		
+		new ModelLearningGraphLoaderThread(ontologyManager).run();
 
 		// Loading a CSV file in each workspace
 //		File file = new File("./SampleData/CSV/Nation_Data.csv");

@@ -44,9 +44,6 @@ import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNodePath;
-import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -286,6 +283,31 @@ public class WorksheetR2RMLJenaModelParser {
 			pom.setObject(objMap);
 			trMap.addPredicateObjectMap(pom);
 		}
+		
+		// If there are no poms, let's see if we can translate a template into a POM
+		// TODO clean this up.
+		if(trMap.getPredicateObjectMaps().isEmpty())
+		{
+			TemplateTermSet subjTemplTermSet = trMap.getSubject().getTemplate();
+			List<TemplateTerm> terms = subjTemplTermSet.getAllTerms();
+			if(terms != null && terms.size() == 1 && terms.get(0) instanceof ColumnTemplateTerm)
+			{
+				PredicateObjectMap pom = new PredicateObjectMap(trMap);
+				Predicate pred = new Predicate(Uris.CLASS_INSTANCE_LINK_URI + "-" + getNewPredicateId());
+				pred.getTemplate().addTemplateTermToSet(
+						new StringTemplateTerm(Uris.CLASS_INSTANCE_LINK_URI, true));
+				pom.setPredicate(pred);
+				StringTemplateTerm rdfLiteralTypeTerm = new StringTemplateTerm("", true);
+				TemplateTermSet rdfLiteralTypeTermSet = new TemplateTermSet();
+				rdfLiteralTypeTermSet.addTemplateTermToSet(rdfLiteralTypeTerm);
+				ObjectMap objMap = new ObjectMap(getNewObjectMapId(), 
+						subjTemplTermSet, rdfLiteralTypeTermSet);
+				pom.setObject(objMap);
+				trMap.addPredicateObjectMap(pom);
+				addHNodeIdToPredObjectMapLink(objMap, pom);
+				
+			}
+		}
 	}
 	
 	private void addHNodeIdToPredObjectMapLink(ObjectMap objMap, PredicateObjectMap pom) {
@@ -342,6 +364,7 @@ public class WorksheetR2RMLJenaModelParser {
 				String template = templNode.toString();
 				subjTemplTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
 						template, worksheet, factory);
+				
 			}
 			subjMap.setTemplate(subjTemplTermSet);
 			
@@ -394,56 +417,41 @@ public class WorksheetR2RMLJenaModelParser {
 	private void calculateColumnNodesCoveredByBlankNodes() throws JSONException {
 		Property termTypeProp = model.getProperty(Uris.RR_TERM_TYPE_URI);
 		Resource blankNodeRes = model.getResource(Uris.RR_BLANK_NODE_URI);
-		Property kmCoverColumnProp = model.getProperty(Uris.KM_BLANK_NODE_COVERS_COLUMN_URI);
 		Property kmBnodePrefixProp = model.getProperty(Uris.KM_BLANK_NODE_PREFIX_URI);
-		
-		List<HNodePath> allColPaths = worksheet.getHeaders().getAllPaths();
 		ResIterator blankNodeSubjMapItr = model.listResourcesWithProperty(termTypeProp, blankNodeRes);
+		
 		for (Resource subjMapRes:subjectMapResources) {
+			
 			if (model.contains(subjMapRes, termTypeProp, blankNodeRes)) {
+				List<String> columnsCoveredHnodeIds = new ArrayList<String>();
 				Resource blankNodeSubjRes = blankNodeSubjMapItr.next();
 				SubjectMap subjMap = this.subjectMapIndex.get(blankNodeSubjRes.getId().getLabelString());
 				subjMap.setAsBlankNode(true);
-				
-				// Get the column it covers
-				NodeIterator coverColItr = model.listObjectsOfProperty(blankNodeSubjRes, 
-						kmCoverColumnProp);
-				List<String> columnsCoveredHnodeIds = new ArrayList<String>();
-				while (coverColItr.hasNext()) {
-					RDFNode coveredColNode = coverColItr.next();
-					String coveredColStr = coveredColNode.asLiteral().getString();
-					// If hierarchical column
-					if (coveredColStr.startsWith("[") && coveredColStr.endsWith("]")) {
-						JSONArray strArr = new JSONArray(coveredColStr);
-						HTable hTable = worksheet.getHeaders();
-			    		for (int i=0; i<strArr.length(); i++) {
-							String cName = (String) strArr.get(i);
-							
-							logger.debug("Column being normalized: "+ cName);
-							HNode hNode = hTable.getHNodeFromColumnName(cName);
-							if(hNode == null || hTable == null) {
-								logger.error("Error retrieving column: " + cName);
-								continue;
-							}
-							
-							if (i == strArr.length()-1) {		// Found!
-								String hNodeId = hNode.getId();
-								columnsCoveredHnodeIds.add(hNodeId);
-							} else {
-								hTable = hNode.getNestedTable();
-							}
-			    		}
-					} 
-					// Single level column
-					else {
-						for (HNodePath path:allColPaths) {
-							HNode lastNode = path.getLeaf();
-							if (coveredColStr.equals(lastNode.getColumnName())) {
-								columnsCoveredHnodeIds.add(lastNode.getId());
+				TriplesMap mytm = null;
+				for(TriplesMap tm : r2rmlMapping.getTriplesMapList())
+				{
+					if(tm.getSubject().getId().equalsIgnoreCase(subjMap.getId()))
+					{
+						mytm = tm;
+						
+						List<PredicateObjectMap> poms = mytm.getPredicateObjectMaps();
+						for(PredicateObjectMap pom : poms )
+						{
+							TemplateTermSet templateTermSet = pom.getObject().getTemplate();
+							if(templateTermSet != null)
+							{
+								TemplateTerm term = templateTermSet.getAllTerms().get(0);
+								if(term!= null)
+								{
+									columnsCoveredHnodeIds.add(term.getTemplateTermValue());
+								}
 							}
 						}
+						break;
 					}
 				}
+				
+			
 				logger.debug("Adding columns for blank node" + subjMap.getId() + " List: " + 
 						columnsCoveredHnodeIds);
 				this.auxInfo.getBlankNodesColumnCoverage().put(subjMap.getId(), columnsCoveredHnodeIds);

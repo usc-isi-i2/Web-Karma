@@ -19,29 +19,25 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.rep.alignment;
+package edu.isi.karma.modeling.alignment.learner;
 
-import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.modeling.Prefixes;
-import edu.isi.karma.modeling.Uris;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 
-public class ObjectPropertySpecializationLink extends Link {
+public class ModelLearningGraphLoaderThread implements Runnable {
+
+	private OntologyManager ontologyManager;
 	
-	private final String specializedLinkId;
-	private static final long serialVersionUID = 1L;
-	private static final Label label = 
-			new Label(Uris.OBJECTPROPERTY_SPECIALIZATION_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
-
-	public ObjectPropertySpecializationLink(String id, String specializedLinkId) {
-		super(id, label, LinkType.ObjectPropertySpecializationLink);
-		this.specializedLinkId = specializedLinkId;
+	public ModelLearningGraphLoaderThread(OntologyManager ontologyManager) {
+		this.ontologyManager = ontologyManager;
 	}
 
-	public static Label getFixedLabel() {
-		return label;
-	}
-
-	public String getSpecializedLinkId() {
-		return specializedLinkId;
+	@Override
+	public void run() {
+		
+		if (this.ontologyManager == null)
+			return;
+		
+		ModelLearningGraph.getInstance(this.ontologyManager);
+		
 	}
 }

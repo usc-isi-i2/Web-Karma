@@ -19,17 +19,23 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research.approach1;
+package edu.isi.karma.modeling.alignment.learner;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.modeling.ModelingConfiguration;
+
+
 
 public class CandidateSteinerSets {
 	
-	private static final int MAX_SIZE = 1000;
+	private static Logger logger = LoggerFactory.getLogger(CandidateSteinerSets.class);
 	private int maxNumberOfSteinerNodes;
 	private List<SteinerNodes> steinerSets;
 	
@@ -55,7 +61,7 @@ public class CandidateSteinerSets {
 		if (this.steinerSets.size() == 0) {
 			for (SemanticTypeMapping stm : mappings) {
 				SteinerNodes sn = new SteinerNodes(maxNumberOfSteinerNodes);
-				sn.addNodes(stm.getSource(), stm.getTarget(), stm.getConfidence());
+				sn.addNodes(stm.getSourceColumn(), stm.getSource(), stm.getTarget(), stm.getConfidence());
 				this.steinerSets.add(sn);
 			}			
 		} else {
@@ -66,7 +72,7 @@ public class CandidateSteinerSets {
 					if (nodeSet.getNodes().contains(stm.getSource()) &&
 							nodeSet.getNodes().contains(stm.getTarget()))
 						continue;
-					sn.addNodes(stm.getSource(), stm.getTarget(), stm.getConfidence());
+					sn.addNodes(stm.getSourceColumn(), stm.getSource(), stm.getTarget(), stm.getConfidence());
 					newSteinerNodes.add(sn);
 				}
 			}
@@ -76,20 +82,14 @@ public class CandidateSteinerSets {
 			
 			this.steinerSets.clear();
 			
-			for (int i = 0; i < MAX_SIZE && i < newSteinerNodes.size(); i++)
+			for (int i = 0; i < ModelingConfiguration.getMaxQueuedMappigs() && i < newSteinerNodes.size(); i++)
 				this.steinerSets.add(newSteinerNodes.get(i));
 
 		}
 		
-//		for (SteinerNodes steinerNodes : this.steinerSets) {
-//			System.out.println("***********************************************");
-//			for (Node n : steinerNodes.getNodes()) {
-//				if (n instanceof ColumnNode)
-//					System.out.println("=========>" + ((ColumnNode)n).getColumnName());
-//				else
-//					System.out.println("=========>" + n.getId());
-//			}
-//		}
-		
+		for (SteinerNodes sn : this.steinerSets) {
+			logger.debug(sn.getScoreDetailsString());
+		}
+		logger.debug("***************************************************************");
 	}
 }

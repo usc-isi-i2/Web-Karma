@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * @author szekely
  * 
  */
-public class Node extends RepEntity implements Neighbor{
+public class Node extends RepEntity implements Neighbor {
 
 	private static Logger logger = LoggerFactory.getLogger(Node.class);
 
@@ -111,14 +111,16 @@ public class Node extends RepEntity implements Neighbor{
 	}
 
 	public void setValue(CellValue value, NodeStatus status, RepFactory factory) {
-		this.value = value;
-		this.status = status;
 		// Pedro 2012/09/14
 		if (nestedTable != null) {
-			logger.info("Node in column '" + factory.getColumnName(hNodeId)
-					+ "' contains both value and nested table: " + toString()
-					+ " -- setting value '" + value.asString() + "'");
-			nestedTable.addOrphanValue(value, factory);
+			logger.info("Node in column '"
+					+ factory.getColumnName(hNodeId)
+					+ "' contains a nested table and we are trying to set a value: '"
+					+ value.asString() + "'. Adding as orphan in nested table");
+			nestedTable.addOrphanValue(value, hNodeId, factory);
+		} else {
+			this.value = value;
+			this.status = status;
 		}
 	}
 
@@ -144,12 +146,14 @@ public class Node extends RepEntity implements Neighbor{
 			nestedTable.setNestedTableInNode(this);
 			// pedro 2012-09-15
 			if (!value.isEmptyValue()) {
-				logger.info("Node in column '"
+				logger.info("Adding nested table to node in column '"
 						+ factory.getColumnName(hNodeId)
-						+ "' contains both value and nested table: "
-						+ toString() + " -- setting value '" + value.asString()
-						+ "'");
-				nestedTable.addOrphanValue(value, factory);
+						+ "' already contains a value: '"
+						+ value.asString()
+						+ "'. Clearing value and adding as orphan in nested table. ");
+				CellValue orphanValue = value;
+				value = CellValue.getEmptyValue();
+				nestedTable.addOrphanValue(orphanValue, hNodeId, factory);
 			}
 		}
 	}
@@ -184,7 +188,6 @@ public class Node extends RepEntity implements Neighbor{
 			pw.println("<" + value.asString() + ">");
 		}
 	}
-	
 
 	@Override
 	public boolean canReachNeighbor(String hNodeId) {
@@ -195,10 +198,9 @@ public class Node extends RepEntity implements Neighbor{
 	public Node getNeighbor(String hNodeId) {
 		return belongsToRow.getNeighbor(hNodeId);
 	}
-	
+
 	@Override
-	public Node getNeighborByColumnName(String columnName, RepFactory factory)
-	{
+	public Node getNeighborByColumnName(String columnName, RepFactory factory) {
 		return belongsToRow.getNeighborByColumnName(columnName, factory);
 	}
 }

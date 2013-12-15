@@ -22,12 +22,11 @@
 package edu.isi.karma.modeling.research;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -39,8 +38,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 import edu.isi.karma.modeling.alignment.GraphUtil;
-import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.InternalNode;
+import edu.isi.karma.modeling.alignment.ModelEvaluation;
+import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.rep.alignment.Link;
 import edu.isi.karma.rep.alignment.Node;
 
@@ -53,121 +52,14 @@ public class ComputeGED {
 //		computeGEDApp2();
 	}
 	
-	public static double getDistance(DirectedWeightedMultigraph<Node, Link> targetGraph,
-			DirectedWeightedMultigraph<Node, Link> sourceGraph) {
-				
-		if (targetGraph == null || sourceGraph == null)
-			return -1.0;
-		
-		int nodeInsertion = 0, nodeDeletion = 0, linkInsertion = 0, linkDeletion = 0;
-		
-		HashMap<String, Integer> sourceNodes = new HashMap<String, Integer>();
-		HashMap<String, Integer> targetNodes = new HashMap<String, Integer>();
-
-		HashMap<String, Integer> sourceLinks = new HashMap<String, Integer>();
-		HashMap<String, Integer> targetLinks = new HashMap<String, Integer>();
-
-		String key;
-		Integer count = 0;
-		
-		// Adding the nodes to the maps
-		for (Node n : sourceGraph.vertexSet()) {
-			if (n instanceof InternalNode) key = n.getLabel().getUri();
-			else if (n instanceof ColumnNode) key = ((ColumnNode)n).getColumnName();
-			else continue;
-			
-			count = sourceNodes.get(key);
-			if (count == null) sourceNodes.put(key, 1);
-			else sourceNodes.put(key, ++count);
-		}
-		for (Node n : targetGraph.vertexSet()) {
-			if (n instanceof InternalNode) key = n.getLabel().getUri();
-			else if (n instanceof ColumnNode) key = ((ColumnNode)n).getColumnName();
-			else continue;
-			
-			count = targetNodes.get(key);
-			if (count == null) targetNodes.put(key, 1);
-			else targetNodes.put(key, ++count);
-		}
-		
-		// Adding the links to the maps
-		Node source, target;
-		for (Link l : sourceGraph.edgeSet()) {			
-			source = l.getSource();
-			target = l.getTarget();
-			
-			if (!(source instanceof InternalNode)) continue;
-			
-			key = source.getLabel().getUri();
-			key += l.getLabel().getUri();
-			if (target instanceof InternalNode) key += target.getLabel().getUri();
-			else if (target instanceof ColumnNode) key += ((ColumnNode)target).getColumnName();
-			else continue;
-			
-			count = sourceLinks.get(key);
-			if (count == null) sourceLinks.put(key, 1);
-			else sourceLinks.put(key, ++count);
-		}
-		for (Link l : targetGraph.edgeSet()) {
-			source = l.getSource();
-			target = l.getTarget();
-			
-			if (!(source instanceof InternalNode)) continue;
-			
-			key = source.getLabel().getUri();
-			key += l.getLabel().getUri();
-			if (target instanceof InternalNode) key += target.getLabel().getUri();
-			else if (target instanceof ColumnNode) key += ((ColumnNode)target).getColumnName();
-			else continue;
-			
-			count = targetLinks.get(key);
-			if (count == null) targetLinks.put(key, 1);
-			else targetLinks.put(key, ++count);
-		}
-		
-		int diff;
-		for (Entry<String, Integer> targetNodeEntry : targetNodes.entrySet()) {
-			count = sourceNodes.get(targetNodeEntry.getKey());
-			if (count == null) count = 0;
-			diff = targetNodeEntry.getValue() - count;
-			nodeInsertion += diff > 0? diff : 0;
-		}
-		for (Entry<String, Integer> sourceNodeEntry : sourceNodes.entrySet()) {
-			count = targetNodes.get(sourceNodeEntry.getKey());
-			if (count == null) count = 0;
-			diff = sourceNodeEntry.getValue() - count;
-			nodeDeletion += diff > 0? diff : 0;
-		}
-		
-		for (Entry<String, Integer> targetLinkEntry : sourceLinks.entrySet()) {
-			count = sourceNodes.get(targetLinkEntry.getKey());
-			if (count == null) count = 0;
-			diff = targetLinkEntry.getValue() - count;
-			linkInsertion += diff > 0? diff : 0;
-		}
-		for (Entry<String, Integer> sourceLinkEntry : targetLinks.entrySet()) {
-			count = targetNodes.get(sourceLinkEntry.getKey());
-			if (count == null) count = 0;
-			diff = sourceLinkEntry.getValue() - count;
-			linkDeletion += diff > 0? diff : 0;
-		}
-		
-		logger.info("node insertion cost: " + nodeInsertion);
-		logger.info("node deletion cost: " + nodeDeletion);
-		logger.info("link insertion cost: " + linkInsertion);
-		logger.info("link deletion cost: " + linkDeletion);
-
-		return nodeInsertion + nodeDeletion + linkInsertion + linkDeletion;
-	}
-	
 	private static void computeGEDApp1() throws Exception {
 		
-		File ff = new File(Params.JGRAPHT_DIR);
+		File ff = new File(Params.MODEL_DIR);
 		File[] files = ff.listFiles();
 		
-		DirectedWeightedMultigraph<Node, Link> gMain, 
-			gKarmaInitial, gKarmaFinal, 
-			gApp1Rank1, gApp1Rank2, gApp1Rank3;
+		SemanticModel mMain, 
+			mKarmaInitial, mKarmaFinal, 
+			mApp1Rank1, mApp1Rank2, mApp1Rank3;
 		
 		HashSet<File> fileSet = new HashSet<File>(Arrays.asList(files));
 		
@@ -180,72 +72,147 @@ public class ComputeGED {
 		Multimap<String, File> index =
 				   Multimaps.index(fileSet, sameService);	
 	
+		int countOfRank1Models = 0, countOfRank2Models = 0, countOfRank3Models = 0,
+				countOfKarmaInitialModels = 0, countOfKarmaFinalModels = 0;
+		double sumGEDRank1 = 0.0, sumGEDRank2 = 0.0, sumGEDRank3 = 0.0,
+				sumGEDKarmaInitial = 0.0, sumGEDKarmaFinal = 0.0;
+		double sumPrecisionRank1 = 0.0, sumPrecisionRank2 = 0.0, sumPrecisionRank3 = 0.0,
+				sumPrecisionKarmaInitial = 0.0, sumPrecisionKarmaFinal = 0.0;
+		double sumRecallRank1 = 0.0, sumRecallRank2 = 0.0, sumRecallRank3 = 0.0,
+				sumRecallKarmaInitial = 0.0, sumRecallKarmaFinal = 0.0;
+		
 		for (String s : index.keySet()) {
 			
 			System.out.println(s);
 			Collection<File> serviceFiles = index.get(s);
-			gMain = null; 
-			gKarmaInitial = null; gKarmaFinal = null; 
-			gApp1Rank1 = null; gApp1Rank2 = null; gApp1Rank3 = null; 
+			mMain = null; 
+			mKarmaInitial = null; mKarmaFinal = null; 
+			mApp1Rank1 = null; mApp1Rank2 = null; mApp1Rank3 = null; 
 			
 			for (File f : serviceFiles) {
-				if (f.getName().endsWith(".main.jgraph")) {
-					try { gMain = GraphUtil.deserialize(f.getPath()); } catch (Exception e) {}
-				} else if (f.getName().endsWith(".karma.initial.jgraph")) {
-					try { gKarmaInitial = GraphUtil.deserialize(f.getPath()); } catch (Exception e) {}
-				} else if (f.getName().endsWith(".karma.final.jgraph")) {
-					try { gKarmaFinal = GraphUtil.deserialize(f.getPath()); } catch (Exception e) {}
-				} else if (f.getName().endsWith(".app1.rank1.jgraph")) {
-					try { gApp1Rank1 = GraphUtil.deserialize(f.getPath()); } catch (Exception e) {}
-				} else if (f.getName().endsWith(".app1.rank2.jgraph")) {
-					try { gApp1Rank2 = GraphUtil.deserialize(f.getPath()); } catch (Exception e) {}
-				} else if (f.getName().endsWith(".app1.rank3.jgraph")) {
-					try { gApp1Rank3 = GraphUtil.deserialize(f.getPath()); } catch (Exception e) {}
+				if (f.getName().endsWith(Params.MODEL_MAIN_FILE_EXT)) {
+					try { mMain = SemanticModel.readJson(f.getPath()); } catch (Exception e) {}
+				} else if (f.getName().endsWith(Params.MODEL_KARMA_INITIAL_FILE_EXT)) {
+					try { mKarmaInitial = SemanticModel.readJson(f.getPath()); } catch (Exception e) {}
+				} else if (f.getName().endsWith(Params.MODEL_KARMA_FINAL_FILE_EXT)) {
+					try { mKarmaFinal = SemanticModel.readJson(f.getPath()); } catch (Exception e) {}
+				} else if (f.getName().endsWith(Params.MODEL_RANK1_FILE_EXT)) {
+					try { mApp1Rank1 = SemanticModel.readJson(f.getPath()); } catch (Exception e) {}
+				} else if (f.getName().endsWith(Params.MODEL_RANK2_FILE_EXT)) {
+					try { mApp1Rank2 = SemanticModel.readJson(f.getPath()); } catch (Exception e) {}
+				} else if (f.getName().endsWith(Params.MODEL_RANK3_FILE_EXT)) {
+					try { mApp1Rank3 = SemanticModel.readJson(f.getPath()); } catch (Exception e) {}
 				}					
 			}
 			
-			if (gMain == null) continue;
-			String label; double distance;
+			if (mMain == null) continue;
+			String label; ModelEvaluation me;
 			
 			Map<String, DirectedWeightedMultigraph<Node, Link>> graphs = 
 					new TreeMap<String, DirectedWeightedMultigraph<Node,Link>>();
 			
-			label = "0- Main";
-			graphs.put(label, gMain);
+			label = "1- main";
+			graphs.put(label, mMain.getGraph());
 
-			if (gKarmaInitial != null) {
-				distance = getDistance(gMain, gKarmaInitial);
-				label = "1-Karma Initial" + "-distance:" + distance;
-				graphs.put(label, gKarmaInitial);
+			if (mKarmaInitial != null) {
+				me = mKarmaInitial.evaluate(mMain);
+				sumGEDKarmaInitial += me.getDistance();
+				sumPrecisionKarmaInitial += me.getPrecision();
+				sumRecallKarmaInitial += me.getRecall();
+				label = "2-karma initial" + 
+						"-distance:" + me.getDistance() + 
+						"-precision:" + me.getPrecision() + 
+						"-recall:" + me.getRecall();
+				graphs.put(label, mKarmaInitial.getGraph());
+				countOfKarmaInitialModels++;
 			}
 			
-			if (gKarmaFinal != null) {
-				distance = getDistance(gMain, gKarmaFinal);
-				label = "3-Karma Final" + "-distance:" + distance;
-				graphs.put(label, gKarmaFinal);
+			if (mKarmaFinal != null) {
+				me = mKarmaFinal.evaluate(mMain);
+				sumGEDKarmaFinal += me.getDistance();
+				sumPrecisionKarmaFinal += me.getPrecision();
+				sumRecallKarmaFinal += me.getRecall();
+				label = "3-karma final" + 
+						"-distance:" + me.getDistance() + 
+						"-precision:" + me.getPrecision() + 
+						"-recall:" + me.getRecall();
+				graphs.put(label, mKarmaFinal.getGraph());
+				countOfKarmaFinalModels++;
 			}
 			
-			if (gApp1Rank1 != null) {
-				distance = getDistance(gMain, gApp1Rank1);
-				label = "4-Rank1" + "-distance:" + distance;
-				graphs.put(label, gApp1Rank1);
+			if (mApp1Rank1 != null) {
+				me = mApp1Rank1.evaluate(mMain);
+				sumGEDRank1 += me.getDistance();
+				sumPrecisionRank1 += me.getPrecision();
+				sumRecallRank1 += me.getRecall();
+				label = "4-rank1" + 
+						"-distance:" + me.getDistance() + 
+						"-precision:" + me.getPrecision() + 
+						"-recall:" + me.getRecall();
+				graphs.put(label, mApp1Rank1.getGraph());
+				countOfRank1Models++;
 			}
 			
-			if (gApp1Rank2 != null) {
-				distance = getDistance(gMain, gApp1Rank2);
-				label = "5-Rank2" + "-distance:" + distance;
-				graphs.put(label, gApp1Rank2);
+			if (mApp1Rank2 != null) {
+				me = mApp1Rank2.evaluate(mMain);
+				sumGEDRank2 += me.getDistance();
+				sumPrecisionRank2 += me.getPrecision();
+				sumRecallRank2 += me.getRecall();
+				label = "5-rank2" + 
+						"-distance:" + me.getDistance() + 
+						"-precision:" + me.getPrecision() + 
+						"-recall:" + me.getRecall();
+				graphs.put(label, mApp1Rank2.getGraph());
+				countOfRank2Models++;
 			}
 
-			if (gApp1Rank3 != null) {
-				distance = getDistance(gMain, gApp1Rank3);
-				label = "6-Rank3" + "-distance:" + distance;
-				graphs.put(label, gApp1Rank3);
+			if (mApp1Rank3 != null) {
+				me = mApp1Rank3.evaluate(mMain);
+				sumGEDRank3 += me.getDistance();
+				sumPrecisionRank3 += me.getPrecision();
+				sumRecallRank3 += me.getRecall();
+				label = "6-rank3" + 
+						"-distance:" + me.getDistance() + 
+						"-precision:" + me.getPrecision() + 
+						"-recall:" + me.getRecall();
+				graphs.put(label, mApp1Rank3.getGraph());
+				countOfRank3Models++;
 			}
 
-
-			GraphVizUtil.exportJGraphToGraphvizFile(graphs, s, Params.OUTPUT_DIR + s + ".app1.out.dot");
+			GraphUtil.exportGraphviz(graphs, s, Params.OUTPUT_DIR + s + Params.GRAPHVIS_OUT_FILE_EXT);
 		}
+		
+		if (countOfKarmaInitialModels > 0) {
+			logger.info("total GED for karma initial models: " + sumGEDKarmaInitial);
+			logger.info("average precision for karma initial models: " + (sumPrecisionKarmaInitial/(double)countOfKarmaInitialModels));
+			logger.info("average recall for karma initial models: " + roundTwoDecimals(sumRecallKarmaInitial/(double)countOfKarmaInitialModels));
+		}
+		if (countOfKarmaFinalModels > 0) {
+			logger.info("total GED for karma final models:   " + sumGEDKarmaFinal);
+			logger.info("average precision for karma final models: " + roundTwoDecimals(sumPrecisionKarmaFinal/(double)countOfKarmaFinalModels));
+			logger.info("average recall for karma initial models: " + roundTwoDecimals(sumRecallKarmaFinal/(double)countOfKarmaFinalModels));
+		}
+		if (countOfRank1Models > 0) {
+			logger.info("total GED for rank1 models:   " + sumGEDRank1);
+			logger.info("average precision for rank1 models: " + roundTwoDecimals(sumPrecisionRank1/(double)countOfRank1Models));
+			logger.info("average recall for rank1 models: " + roundTwoDecimals(sumRecallRank1/(double)countOfRank1Models));
+		}
+		if (countOfRank2Models > 0) {
+			logger.info("total GED for rank2 models:   " + sumGEDRank2);
+			logger.info("average precision for rank2 models: " + roundTwoDecimals(sumPrecisionRank2/(double)countOfRank2Models));
+			logger.info("average recall for rank2 models: " + roundTwoDecimals(sumRecallRank2/(double)countOfRank2Models));
+		}
+		if (countOfRank3Models > 0) {
+			logger.info("total GED for rank3 models:   " + sumGEDRank3);
+			logger.info("average precision for rank3 models: " + roundTwoDecimals(sumPrecisionRank3/(double)countOfRank3Models));
+			logger.info("average recall for rank3 models: " + roundTwoDecimals(sumRecallRank3/(double)countOfRank3Models));
+		}
+
+	}
+
+	private static double roundTwoDecimals(double d) {
+        DecimalFormat twoDForm = new DecimalFormat("#.##");
+        return Double.valueOf(twoDForm.format(d));
 	}
 	
 //	private static void computeGEDApp2() throws Exception {

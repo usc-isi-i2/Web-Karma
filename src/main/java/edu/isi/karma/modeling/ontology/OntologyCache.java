@@ -446,9 +446,6 @@ class OntologyCache {
 	}
 
 	public Label getUriLabel(String uri) {
-		//FIXME
-		if (uri.startsWith(Namespaces.KARMA_DEV))
-			return new Label(uri, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
 		Label label = this.classes.get(uri);
 		if (label == null) label = this.properties.get(uri);
 		if (label == null) label = this.ontHandler.getUriLabel(uri);
@@ -494,6 +491,19 @@ class OntologyCache {
 	}
 
 	private void loadProperties() {
+
+		this.properties.put(Uris.RDF_TYPE_URI, new Label(Uris.RDF_TYPE_URI, Namespaces.RDF, Prefixes.RDF));
+		
+		this.properties.put(Uris.RDFS_SUBCLASS_URI, new Label(Uris.RDFS_SUBCLASS_URI, Namespaces.RDFS, Prefixes.RDFS));
+		this.properties.put(Uris.RDFS_LABEL_URI, new Label(Uris.RDFS_LABEL_URI, Namespaces.RDFS, Prefixes.RDFS));
+		this.properties.put(Uris.RDFS_COMMENT_URI, new Label(Uris.RDFS_COMMENT_URI, Namespaces.RDFS, Prefixes.RDFS));
+		this.properties.put(Uris.RDFS_VALUE_URI, new Label(Uris.RDFS_VALUE_URI, Namespaces.RDFS, Prefixes.RDFS));
+		
+		this.properties.put(Uris.CLASS_INSTANCE_LINK_URI, new Label(Uris.CLASS_INSTANCE_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
+		this.properties.put(Uris.COLUMN_SUBCLASS_LINK_URI, new Label(Uris.COLUMN_SUBCLASS_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
+		this.properties.put(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI, new Label(Uris.DATAPROPERTY_OF_COLUMN_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
+		this.properties.put(Uris.OBJECTPROPERTY_SPECIALIZATION_LINK_URI, new Label(Uris.OBJECTPROPERTY_SPECIALIZATION_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
+		this.properties.put(Uris.PLAIN_LINK_URI, new Label(Uris.PLAIN_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV));
 		
 		ExtendedIterator<OntProperty> itrP = ontHandler.getOntModel().listAllOntProperties();
 		
@@ -1118,24 +1128,20 @@ class OntologyCache {
 		
 		List<String> uris = new ArrayList<String>();
 		
-		String labelUri = "http://www.w3.org/2000/01/rdf-schema#label";
-		String commentUri = "http://www.w3.org/2000/01/rdf-schema#comment";
-		String valueUri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#value";
-		
-		uris.add(labelUri);
-		uris.add(commentUri);
-		uris.add(valueUri);
+		uris.add(Uris.RDFS_LABEL_URI);
+		uris.add(Uris.RDFS_COMMENT_URI);
+		uris.add(Uris.RDFS_VALUE_URI);
 		
 		HashSet<String> temp;
 		
-		ontHandler.getOntModel().setNsPrefix("rdfs", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-		ontHandler.getOntModel().setNsPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		ontHandler.getOntModel().setNsPrefix(Prefixes.RDF, Namespaces.RDF);
+		ontHandler.getOntModel().setNsPrefix(Prefixes.RDFS, Namespaces.RDFS);
 		
 		for (String uri : uris) 
 			ontHandler.getOntModel().createDatatypeProperty(uri);
 
 		
-		// add label and comment property to the properties of all the classes
+		// add label, value, comment property to the properties of all the classes
 		for (String s : this.classes.keySet()) {
 			temp = indirectOutDataProperties.get(s);
 			if (temp == null) {
@@ -1151,11 +1157,10 @@ class OntologyCache {
 			temp = propertyIndirectDomains.get(uri);
 			if (temp == null) {
 				temp = new HashSet<String>();
-				propertyIndirectDomains.put(labelUri, temp);
+				propertyIndirectDomains.put(uri, temp);
 			}
 			for (String s : this.classes.keySet())
-				if (!temp.contains(s))
-					temp.add(s);
+				temp.add(s);
 		}
 		
 	}

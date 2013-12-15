@@ -36,7 +36,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 	
 	private final String hNodeId;
 	private final Label type;
-	private final Label clazz;
+	private final Label domain;
 	private final Origin origin;
 	private final boolean isPartOfKey; 
 	private final ConfidenceLevel confidenceLevel;
@@ -59,7 +59,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 		this.hNodeId = hNodeId;
 		this.type = type;
 		this.origin = origin;
-		this.clazz = domain;
+		this.domain = domain;
 		this.isPartOfKey = isPartOfKey;
 		this.confidenceScore = probability;
 		
@@ -76,7 +76,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 	}
 
 	public Label getDomain() {
-		return clazz;
+		return domain;
 	}
 	
 	public Label getType() {
@@ -102,7 +102,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 				+ confidenceLevel + "]";
 		else
 			return "SemanticType [hNodeId=" + hNodeId + ", type=" + type.getUri()
-					+ ", domain=" + clazz.getUri() + ", origin=" + origin
+					+ ", domain=" + domain.getUri() + ", origin=" + origin
 					+ ", isPartOfKey=" + isPartOfKey + ", confidenceLevel="
 					+ confidenceLevel + "]";
 	}
@@ -114,7 +114,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 	 * 		true if this type is a Class; false if it is a data property.
 	 */
 	public boolean isClass(){
-		if(clazz==null || clazz.getUri().trim().isEmpty())
+		if(domain==null || domain.getUri().trim().isEmpty())
 			return true;
 		//it is a data property
 		return false;
@@ -133,7 +133,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 		if(isClass())
 			typeObj.put(ClientJsonKeys.Domain.name(), "");
 		else
-			typeObj.put(ClientJsonKeys.Domain.name(), clazz.getUri());
+			typeObj.put(ClientJsonKeys.Domain.name(), domain.getUri());
 		typeObj.put(ClientJsonKeys.isPrimary.name(), isPartOfKey);
 		return typeObj;
 	}

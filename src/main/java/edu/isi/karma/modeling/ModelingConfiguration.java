@@ -45,6 +45,13 @@ public class ModelingConfiguration {
     private static String karmaSourcePrefix;
     private static String karmaServicePrefix; 
 
+    private static String modelsJsonDir;
+    private static String modelsGraphvizDir;
+    private static String alignmentGraphDir; 
+    
+    private static Integer maxCandidateModels;
+    private static Integer maxQueuedMappigs;
+
 	public static void load() {
         try {
             Properties modelingProperties = loadParams("modeling");
@@ -75,6 +82,16 @@ public class ModelingConfiguration {
 
             karmaSourcePrefix = modelingProperties.getProperty("karma.source.prefix");
             karmaServicePrefix = modelingProperties.getProperty("karma.service.prefix");
+
+            modelsJsonDir = modelingProperties.getProperty("models.json.dir");
+            modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir");
+            alignmentGraphDir = modelingProperties.getProperty("alignment.graph.dir");
+            
+            if(modelingProperties.getProperty("max.queued.mappings") != null)
+            	maxQueuedMappigs = Integer.parseInt(modelingProperties.getProperty("max.queued.mappings"));
+
+            if(modelingProperties.getProperty("max.candidate.models") != null)
+            	maxCandidateModels = Integer.parseInt(modelingProperties.getProperty("max.candidate.models"));
 
         } catch (IOException e) {
             logger.error("Error occured while reading config file ...");
@@ -158,7 +175,36 @@ public class ModelingConfiguration {
 			load();
 		return karmaServicePrefix.trim();
 	}
+
+	public static String getModelsJsonDir() {
+		if (modelsJsonDir == null)
+			load();
+		return modelsJsonDir;
+	}
+
+	public static String getModelsGraphvizDir() {
+		if (modelsGraphvizDir == null)
+			load();
+		return modelsGraphvizDir;
+	}
 	
-	
+	public static String getAlignmentGraphDir() {
+		if (alignmentGraphDir == null)
+			load();
+		return alignmentGraphDir;
+	}
+
+	public static Integer getMaxCandidateModels() {
+		if (maxCandidateModels == null)
+			load();
+		return maxCandidateModels;
+	}
+
+	public static Integer getMaxQueuedMappigs() {
+		if (maxQueuedMappigs == null)
+			load();
+		return maxQueuedMappigs;
+	}
+
 	
 }

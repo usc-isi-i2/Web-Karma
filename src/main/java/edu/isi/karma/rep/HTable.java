@@ -38,10 +38,11 @@ import edu.isi.karma.webserver.KarmaException;
  */
 public class HTable extends RepEntity {
 
-	// The name of the column to use to collect single values when a column has
-	// both values and nested tables.
-	static final String ORPHAN_COLUMN_NAME = "orphan";
-
+	/**
+	 * The name of the column where we store values of JSON arrays.
+	 */
+	public static final String VALUES_COLUMN = "values";
+	
 	// My name.
 	private String tableName;
 
@@ -307,28 +308,6 @@ public class HTable extends RepEntity {
 	 */
 	public void setParentHNode(HNode hNode) {
 		parentHNode = hNode;
-	}
-
-	/**
-	 * @param orphanColumnName
-	 * @param worksheet
-	 * @param factory
-	 * @return the added column. If an automatically generated column with the
-	 *         desired name already exists, we return it. Otherwise we create a
-	 *         new one. We make sure that the new column does not conflict with
-	 *         an existing column.
-	 */
-	HNode addAutomaticallyGeneratedColumn(String orphanColumnName,
-			Worksheet worksheet, RepFactory factory) {
-		HNode orphanHNode = getHNodeFromColumnName(HTable.ORPHAN_COLUMN_NAME);
-		if (orphanHNode == null || !orphanHNode.isAutomaticallyAdded()) {
-			// Create the new column
-			orphanHNode = addHNode(
-					getAutomaticallyAddedColumnName(HTable.ORPHAN_COLUMN_NAME),
-					true, worksheet, factory);
-		}
-
-		return orphanHNode;
 	}
 
 	/**

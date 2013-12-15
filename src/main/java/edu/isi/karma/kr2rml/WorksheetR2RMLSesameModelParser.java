@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -50,12 +49,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.Uris;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNodePath;
-import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 
+@Deprecated
 public class WorksheetR2RMLSesameModelParser {
 	private Worksheet worksheet;
 	private RepFactory factory;
@@ -332,57 +329,38 @@ public class WorksheetR2RMLSesameModelParser {
 			throws RepositoryException, JSONException {
 		URI termTypeUri = f.createURI(Uris.RR_TERM_TYPE_URI);
 		URI blankNodeUri = f.createURI(Uris.RR_BLANK_NODE_URI);
-		URI kmCoverColumnUri = f.createURI(Uris.KM_BLANK_NODE_COVERS_COLUMN_URI);
 		URI kmBnodePrefixUri = f.createURI(Uris.KM_BLANK_NODE_PREFIX_URI);
 		
 		RepositoryResult<Statement> blankNodeSubjectMapStmts = con.getStatements(null, termTypeUri, 
 				blankNodeUri, false);
-		List<HNodePath> allColPaths = worksheet.getHeaders().getAllPaths();
 		while (blankNodeSubjectMapStmts.hasNext()) {
 			Resource blankNodeSubjRes = blankNodeSubjectMapStmts.next().getSubject();
 			SubjectMap subjMap = this.subjectMapIndex.get(blankNodeSubjRes.stringValue());
 			subjMap.setAsBlankNode(true);
 			
-			// Get the column it covers
-			RepositoryResult<Statement> coverColStmts = con.getStatements(blankNodeSubjRes, 
-					kmCoverColumnUri, null, false);
 			List<String> columnsCoveredHnodeIds = new ArrayList<String>();
-			while (coverColStmts.hasNext()) {
-				Value colName = coverColStmts.next().getObject();
-				// If hierarchical column
-				if (colName.stringValue().startsWith("[") && colName.stringValue().endsWith("]")) {
-					System.out.println("Hierarchical column encountered!");
-					JSONArray strArr = new JSONArray(colName.stringValue());
-					HTable hTable = worksheet.getHeaders();
-		    		for (int i=0; i<strArr.length(); i++) {
-						String cName = (String) strArr.get(i);
-						
-						logger.debug("Column being normalized: "+ cName);
-						HNode hNode = hTable.getHNodeFromColumnName(cName);
-						if(hNode == null || hTable == null) {
-							logger.error("Error retrieving column: " + cName);
-						}
-						
-						if (i == strArr.length()-1) {		// Found!
-							String hNodeId = hNode.getId();
-							columnsCoveredHnodeIds.add(hNodeId);
-						} else {
-							hTable = hNode.getNestedTable();
-						}
-		    		}
-				} 
-				// Single level column
-				else {
-					for (HNodePath path:allColPaths) {
-						HNode lastNode = path.getLeaf();
-//						System.out.println("Last node col name: " + lastNode.getColumnName());
-						if (colName.stringValue().equals(lastNode.getColumnName())) {
-//							System.out.println("Matched column name: " + colName);
-							columnsCoveredHnodeIds.add(lastNode.getId());
+			TriplesMap mytm = null;
+			for(TriplesMap tm : r2rmlMapping.getTriplesMapList())
+			{
+				if(tm.getSubject().getId().equalsIgnoreCase(subjMap.getId()))
+				{
+					mytm = tm;
+					
+					List<PredicateObjectMap> poms = mytm.getPredicateObjectMaps();
+					for(PredicateObjectMap pom : poms )
+					{
+						TemplateTermSet templateTermSet = pom.getObject().getTemplate();
+						if(templateTermSet != null)
+						{
+							TemplateTerm term = templateTermSet.getAllTerms().get(0);
+							if(term!= null)
+							{
+								columnsCoveredHnodeIds.add(term.getTemplateTermValue());
+							}
 						}
 					}
+					break;
 				}
-//				System.out.println("Column name from RDF: " +colName.stringValue());
 			}
 			System.out.println("Adding columns for blank node" + subjMap.getId() + " List: " + columnsCoveredHnodeIds);
 			this.auxInfo.getBlankNodesColumnCoverage().put(subjMap.getId(), columnsCoveredHnodeIds);

@@ -19,9 +19,34 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-package edu.isi.karma.modeling.research.approach1;
+package edu.isi.karma.modeling.alignment;
 
-public enum MappingType {
-	ClassNode,
-	DataNode
+import java.text.DecimalFormat;
+
+public class ModelEvaluation {
+
+	private double precision;
+	private double recall;
+	private double distance;
+	
+	public ModelEvaluation(Double distance, Double precision, Double recall) {
+		this.distance = distance == null ? -1 : distance;
+		this.precision = precision == null ? 0 : precision;
+		this.recall = recall == null ? 0 : recall;;
+	}
+	public double getPrecision() {
+		return roundTwoDecimals(precision);
+	}
+	public double getRecall() {
+		return roundTwoDecimals(recall);
+	}
+	public double getDistance() {
+		return distance;
+	}
+	
+	private static double roundTwoDecimals(double d) {
+        DecimalFormat twoDForm = new DecimalFormat("#.##");
+        return Double.valueOf(twoDForm.format(d));
+	}
+	
 }

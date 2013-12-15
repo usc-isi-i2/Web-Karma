@@ -128,7 +128,6 @@ public class WorksheetModelWriter {
 			URI tableNameUri = f.createURI(Uris.RR_TABLENAME_URI);
 			URI classUri = f.createURI(Uris.RR_CLASS_URI);
 			
-			URI coversColUri = f.createURI(Uris.KM_BLANK_NODE_COVERS_COLUMN_URI);
 			URI bnNamePrefixUri = f.createURI(Uris.KM_BLANK_NODE_PREFIX_URI);
 			URI nodeIdUri = f.createURI(Uris.KM_NODE_ID_URI);
 			URI steinerTreeRootNodeUri = f.createURI(Uris.KM_STEINER_TREE_ROOT_NODE);
@@ -179,17 +178,7 @@ public class WorksheetModelWriter {
 				// Check if the subject map is a blank node
 				if (sjMap.isBlankNode()) {
 					con.add(sjBlankNode, termTypeUri, blankNodeUri);
-					// Add the information about the columns that it covers.
-					// This info is used in constructing the blank node's URI.
-					List<String> columnsCovered = auxInfo.getBlankNodesColumnCoverage().
-							get(sjMap.getId());
-					for (String colHnodeId:columnsCovered) {
-						HNode hNode = factory.getHNode(colHnodeId);
-						if (hNode != null) {
-							Value colNameVal = f.createLiteral(getR2RMLColNameRepresentation(hNode));
-							con.add(sjBlankNode, coversColUri, colNameVal);	
-						}
-					}
+					
 					// Add the prefix name for the blank node
 					String prefix = auxInfo.getBlankNodesUriPrefixMap().get(sjMap.getId());
 					Value prefixVal = f.createLiteral(prefix);
