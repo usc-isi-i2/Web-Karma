@@ -22,6 +22,8 @@
 package edu.isi.karma.kr2rml;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -68,17 +71,17 @@ public class WorksheetR2RMLJenaModelParser {
 	private static Logger logger = LoggerFactory.getLogger(WorksheetR2RMLJenaModelParser.class);
 	
 	
-	public WorksheetR2RMLJenaModelParser(Worksheet worksheet, Workspace workspace, Model model,
-			String sourceName) throws IOException, JSONException, KarmaException {
-		this.model = model;
-		this.sourceName = sourceName;
+	public WorksheetR2RMLJenaModelParser(Worksheet worksheet, Workspace workspace, R2RMLMappingIdentifier id) throws IOException, JSONException, KarmaException {
+		
+		this.model = loadSourceModelIntoJenaModel(id.getLocation());
+		this.sourceName = id.getName();
 		
 		this.worksheet = worksheet;
 		this.workspace = workspace;
 		this.factory = workspace.getFactory();
 		
 		
-		this.r2rmlMapping = new R2RMLMapping();
+		this.r2rmlMapping = new R2RMLMapping(id);
 		this.auxInfo = new KR2RMLMappingAuxillaryInformation();
 		this.subjectMapIndex = new HashMap<String, SubjectMap>();
 		this.triplesMapIndex = new HashMap<String, TriplesMap>();
@@ -102,7 +105,14 @@ public class WorksheetR2RMLJenaModelParser {
 		// Calculate the nodes covered by each InternalNode
 		calculateColumnNodesCoveredByBlankNodes();
 	}
-	
+
+    private static Model loadSourceModelIntoJenaModel(URL modelURL) throws IOException {
+        // Create an empty Model
+        Model model = ModelFactory.createDefaultModel();
+        InputStream s = modelURL.openStream();
+        model.read(s, null, "TURTLE");
+        return model;
+    }
 	private Resource getMappingResourceFromSourceName() throws KarmaException {
 		Property sourceNameProp = model.getProperty(Uris.KM_SOURCE_NAME_URI);
 		RDFNode node = model.createLiteral(sourceName);

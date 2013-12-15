@@ -32,13 +32,12 @@ import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.rdf.model.Model;
-
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
+import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -76,8 +75,8 @@ public class FileRdfGenerator extends RdfGenerator {
         return worksheet;
     }
 
-	public static void generateRdf(String inputType, Model model,
-			String worksheetName, PrintWriter pw, File inputFile, String encoding, int maxNumLines)
+	public static void generateRdf(String inputType, R2RMLMappingIdentifier id,
+			 PrintWriter pw, File inputFile, String encoding, int maxNumLines)
 			throws IOException, JSONException, KarmaException {
 		logger.info("Generating worksheet from the data source ...");
 		Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
@@ -95,7 +94,7 @@ public class FileRdfGenerator extends RdfGenerator {
 		 */
 		logger.info("Generating RDF...");
 		WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(
-		        worksheet, workspace, model, worksheetName);
+		        worksheet, workspace, id);
 
 		// Gets all the errors generated during the RDF generation
 		ErrorReport errorReport = new ErrorReport();

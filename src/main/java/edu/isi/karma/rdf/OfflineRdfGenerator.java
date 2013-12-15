@@ -24,15 +24,12 @@ package edu.isi.karma.rdf;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.sql.SQLException;
-import java.util.List;
 
 import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.Group;
@@ -46,13 +43,7 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.NodeIterator;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-
-import edu.isi.karma.modeling.Uris;
+import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.util.AbstractJDBCUtil.DBType;
 import edu.isi.karma.util.EncodingDetector;
@@ -92,8 +83,9 @@ public class OfflineRdfGenerator {
 
             String inputType = (String) cl.getValue("--sourcetype");
             String modelFilePath = (String) cl.getValue("--modelfilepath");
+            String modelURLString = (String) cl.getValue("--modelurl");
             String outputFilePath = (String) cl.getValue("--outputfile");
-            if (modelFilePath == null || outputFilePath == null || inputType == null) {
+            if ((modelURLString == null && modelFilePath == null) || outputFilePath == null || inputType == null) {
                 logger.error("Mandatory value missing. Please provide argument value "
                         + "for sourcetype, modelfilepath and outputfile.");
                 return;
@@ -102,11 +94,21 @@ public class OfflineRdfGenerator {
             /**
              * VALIDATE THE OPTIONS *
              */
-            File modelFile = new File(modelFilePath);
-            if (!modelFile.exists()) {
-                logger.error("File not found: " + modelFile.getAbsolutePath());
-                return;
+            URL modelURL = null;
+            if(modelFilePath != null)
+            {
+            	File modelFile = new File(modelFilePath);
+            	if (!modelFile.exists()) {
+            		logger.error("File not found: " + modelFile.getAbsolutePath());
+            		return;
+            	}
+            	modelURL = modelFile.toURI().toURL();
             }
+            else
+            {
+            	modelURL = new URL(modelURLString);
+            }
+            
             if (!inputType.equalsIgnoreCase("DB")
                     && !inputType.equalsIgnoreCase("CSV")
                     && !inputType.equalsIgnoreCase("XML")
@@ -123,17 +125,7 @@ public class OfflineRdfGenerator {
                     ContextParameter.USER_DIRECTORY_PATH, "src/main/webapp/");
             ServletContextParameterMap.setParameterValue(
                     ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "200");
-       	
-            /**
-             * LOAD THE R2RML MODEL FILE INTO A JENA MODEL *
-             */
-           logger.info("Loading the R2RML model file...");
-            Model model = loadSourceModelIntoJenaModel(modelFile);
-            String worksheetName = getWorksheetTitleFromJenaModel(model);
-            if (worksheetName == null) {
-                throw new KarmaException("No source name found in the model.");
-            }
-            logger.info("done");
+   
 
             /**
              * PREPATRE THE OUTPUT OBJECTS *
@@ -148,10 +140,10 @@ public class OfflineRdfGenerator {
             SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
             // Database table
             if (inputType.equals("DB")) {
-                generateRdfFromDatabaseTable(cl, model, pw);
+                generateRdfFromDatabaseTable(cl, modelURL, pw);
             } // File based worksheets such as JSON, XML, CSV
             else {
-                generateRdfFromFile(cl, inputType, model, worksheetName, pw);
+                generateRdfFromFile(cl, inputType, modelURL, pw);
             }
             pw.close();
             logger.info("done");
@@ -162,7 +154,7 @@ public class OfflineRdfGenerator {
         }
     }
 
-	private static void generateRdfFromDatabaseTable(CommandLine cl, Model model,
+	private static void generateRdfFromDatabaseTable(CommandLine cl, URL modelURL,
 			PrintWriter pw) throws IOException, JSONException, KarmaException,
 			SQLException, ClassNotFoundException {
 		String dbtypeStr = (String) cl.getValue("--dbtype");
@@ -204,15 +196,16 @@ public class OfflineRdfGenerator {
 		    pw.close();
 		    return;
 		}
+		R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
 		DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
 		        hostname, portnumber, username, password, dBorSIDName, tablename, encoding);
 		
-		dbRdfGen.generateRDF(pw, model);
+		dbRdfGen.generateRDF(pw, id);
         pw.flush();
 	}
 
 	private static void generateRdfFromFile(CommandLine cl, String inputType,
-			Model model, String worksheetName, PrintWriter pw)
+			URL modelURL, PrintWriter pw)
 			throws JSONException, IOException, KarmaException,
 			ClassNotFoundException, SQLException {
 		String sourceFilePath = (String) cl.getValue("--filepath");
@@ -232,32 +225,17 @@ public class OfflineRdfGenerator {
 		if(sMaxNumLines != null) {
 			maxNumLines = Integer.parseInt(sMaxNumLines);
 		}
-		FileRdfGenerator.generateRdf(inputType, model, worksheetName, pw, inputFile, encoding, maxNumLines);
+		
+		String sourceName = (String) cl.getValue("--sourcename");
+		if(sourceName == null)
+		{
+			logger.error("No source name provided");
+			return;
+		}
+		R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(sourceName, modelURL);
+		FileRdfGenerator.generateRdf(inputType, id, pw, inputFile, encoding, maxNumLines);
         pw.flush();
 	}
-
-
-    private static Model loadSourceModelIntoJenaModel(File modelFile) throws FileNotFoundException {
-        // Create an empty Model
-        Model model = ModelFactory.createDefaultModel();
-        InputStream s = new FileInputStream(modelFile);
-        model.read(s, null, "TURTLE");
-        return model;
-    }
-
-    private static String getWorksheetTitleFromJenaModel(Model model) throws KarmaException {
-        Property sourceNameProp = model.getProperty(Uris.KM_SOURCE_NAME_URI);
-        NodeIterator itr = model.listObjectsOfProperty(sourceNameProp);
-        List<RDFNode> list = itr.toList();
-
-        if (list.size() > 1) {
-            throw new KarmaException("More than one resource exists with source name.");
-        } else if (list.size() == 1) {
-            return list.get(0).toString();
-        } else {
-            return null;
-        }
-    }
 
     private static Group createCommandLineOptions() {
         DefaultOptionBuilder obuilder = new DefaultOptionBuilder();
@@ -270,6 +248,8 @@ public class OfflineRdfGenerator {
                 .withOption(buildOption("sourcetype", "type of source. Valid values: DB, CSV, JSON, XML", "sourcetype", obuilder, abuilder))
                 .withOption(buildOption("filepath", "location of the input file", "filepath", obuilder, abuilder))
                 .withOption(buildOption("modelfilepath", "location of the model file", "modelfilepath", obuilder, abuilder))
+                .withOption(buildOption("modelurl", "location of the model", "modelurl", obuilder, abuilder))
+                .withOption(buildOption("sourcename", "name of the source in the model to use", "sourcename", obuilder, abuilder))
                 .withOption(buildOption("outputfile", "location of the output file", "outputfile", obuilder, abuilder))
                 .withOption(buildOption("dbtype", "database type. Valid values: Oracle, MySQL, SQLServer, PostGIS", "dbtype", obuilder, abuilder))
                 .withOption(buildOption("hostname", "hostname for database connection", "hostname", obuilder, abuilder))

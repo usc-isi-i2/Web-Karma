@@ -21,6 +21,8 @@
 
 package edu.isi.karma.kr2rml;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -79,7 +81,16 @@ public class KR2RMLMappingGenerator {
 //		this.errorReport = errorReport;
 		this.semanticTypes = semanticTypes;
 		this.sourceNamespace = sourceNamespace;
-		this.r2rmlMapping = new R2RMLMapping();
+		R2RMLMappingIdentifier id = null;
+		try {
+			
+			//TODO create a reasonable URL from properties?
+			id = new R2RMLMappingIdentifier(sourceNamespace, new URL(""));
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.r2rmlMapping = new R2RMLMapping(id);
 		this.alignmentGraph = alignment.getSteinerTree();
 		this.steinerTreeRoot = alignment.GetTreeRoot();
 		this.auxInfo = new KR2RMLMappingAuxillaryInformation();

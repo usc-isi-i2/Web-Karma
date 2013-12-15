@@ -73,8 +73,8 @@ public class WorksheetR2RMLSesameModelParser {
 			throws RepositoryException, RDFParseException, IOException, JSONException {
 		this.worksheet = worksheet;
 		this.factory = factory;
-		
-		this.r2rmlMapping = new R2RMLMapping();
+		//TODO needs a valid id
+		this.r2rmlMapping = new R2RMLMapping(null);
 		this.auxInfo = new KR2RMLMappingAuxillaryInformation();
 		this.subjectMapIndex = new HashMap<String, SubjectMap>();
 		this.triplesMapIndex = new HashMap<String, TriplesMap>();
