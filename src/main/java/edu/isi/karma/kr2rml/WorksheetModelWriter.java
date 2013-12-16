@@ -29,9 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jetty.http.HttpMethod;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.BNode;
 import org.openrdf.model.Resource;
@@ -53,7 +51,6 @@ import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
@@ -92,6 +89,7 @@ public class WorksheetModelWriter {
 		/** Create resource for the mapping as a blank node **/
 		URI r2rmlMapUri = f.createURI(Uris.KM_R2RML_MAPPING_URI);
 		URI sourceNameUri = f.createURI(Uris.KM_SOURCE_NAME_URI);
+		URI modelVersion = f.createURI(Uris.KM_MODEL_VERSION_URI);
 		mappingRes = f.createBNode();
 		con.add(mappingRes, RDF.TYPE, r2rmlMapUri);
 		this.worksheetName = worksheetName;
@@ -101,6 +99,9 @@ public class WorksheetModelWriter {
 		// Add the timestamp
 		URI pubTime = f.createURI(Uris.KM_MODEL_PUBLICATION_TIME_URI);
 		con.add(mappingRes, pubTime, f.createLiteral(new Date().getTime()));
+		
+		// Add the version
+				con.add(mappingRes, modelVersion, f.createLiteral(KR2RMLVersion.getCurrent().toString()));
 	}
 	
 	public boolean writeR2RMLMapping(OntologyManager ontManager, KR2RMLMappingGenerator mappingGen)
@@ -264,23 +265,6 @@ public class WorksheetModelWriter {
 			con.close();
 		}
 		return true;
-	}
-
-	private String getR2RMLColNameRepresentation(HNode hNode) throws JSONException {
-		String colNameStr = "";
-		JSONArray colNameArr = hNode.getJSONArrayRepresentation(factory);
-		if (colNameArr.length() == 1) {
-			colNameStr = (String) 
-					(((JSONObject)colNameArr.get(0)).get("columnName"));
-		} else {
-			JSONArray colNames = new JSONArray();
-			for (int i=0; i<colNameArr.length();i++) {
-				colNames.put((String)
-						(((JSONObject)colNameArr.get(i)).get("columnName")));
-			}
-			colNameStr = colNames.toString();
-		}
-		return colNameStr;
 	}
 
 	public void close() throws RepositoryException {

@@ -31,16 +31,19 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
-import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 
 public class TemplateTermSetBuilder {
 
 	private static Logger logger = LoggerFactory.getLogger(TemplateTermSetBuilder.class);
+	private Worksheet worksheet;
 	
-	public static TemplateTermSet constructTemplateTermSetFromR2rmlTemplateString(
-			String templStr, Worksheet worksheet, 
-			RepFactory factory) throws JSONException {
+	public TemplateTermSetBuilder(Worksheet worksheet)
+	{
+		this.worksheet = worksheet;
+	}
+	public  TemplateTermSet constructTemplateTermSetFromR2rmlTemplateString(
+			String templStr) throws JSONException {
 		TemplateTermSet termSet = new TemplateTermSet();
 		
 		Pattern p = Pattern.compile("\\{\\\".*?\\\"\\}");
@@ -95,9 +98,8 @@ public class TemplateTermSetBuilder {
 		return termSet;
 	}
 	
-	public static TemplateTermSet constructTemplateTermSetFromR2rmlColumnString(
-			String colTermVal, Worksheet worksheet, 
-			RepFactory factory) throws JSONException {
+	public TemplateTermSet constructTemplateTermSetFromR2rmlColumnString(
+			String colTermVal) throws JSONException {
 		TemplateTermSet termSet = new TemplateTermSet();
 		HTable hTable = worksheet.getHeaders();
 		
@@ -131,7 +133,7 @@ public class TemplateTermSetBuilder {
 		return termSet;
 	}
 	
-	private static String removeR2rmlFormatting(String r2rmlColName) {
+	private String removeR2rmlFormatting(String r2rmlColName) {
 		if (r2rmlColName.startsWith("{\"") && r2rmlColName.endsWith("\"}"))
 			return r2rmlColName.substring(2, r2rmlColName.length()-2);
 		else return r2rmlColName;

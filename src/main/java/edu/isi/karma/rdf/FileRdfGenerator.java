@@ -36,6 +36,7 @@ import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLMapping;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.WorksheetR2RMLJenaModelParser;
@@ -93,8 +94,9 @@ public class FileRdfGenerator extends RdfGenerator {
 		 * GENERATE RDF FROM WORKSHEET OBJECT *
 		 */
 		logger.info("Generating RDF...");
-		WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(
-		        worksheet, workspace, id);
+		WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(id);
+		KR2RMLMapping mapping = parserTest.parse(worksheet, workspace);
+		
 
 		// Gets all the errors generated during the RDF generation
 		ErrorReport errorReport = new ErrorReport();
@@ -102,7 +104,7 @@ public class FileRdfGenerator extends RdfGenerator {
 		// RDF generation object initialization
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
 		        workspace.getFactory(), workspace.getOntologyManager(), pw,
-		        parserTest.getAuxInfo(), errorReport, false);
+		        mapping.getAuxInfo(), errorReport, false);
 
 		// Generate the rdf
 		rdfGen.generateRDF(false);

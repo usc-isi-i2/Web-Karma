@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLMapping;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.WorksheetR2RMLJenaModelParser;
@@ -155,16 +156,15 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 			Workspace workspace, R2RMLMappingIdentifier id, PrintWriter pw) 
 					throws IOException, JSONException, KarmaException {
 		// Generate RDF for the remaining rows
-		WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(
-				wk, workspace, id);
-		
+		WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(id);
+		KR2RMLMapping mapping = parserTest.parse(wk, workspace);
 		// Gets all the errors generated during the RDF generation
 		ErrorReport errorReport = new ErrorReport();
 		
 		// RDF generation object initialization
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(wk, 
 				workspace.getFactory(), workspace.getOntologyManager(), pw, 
-				parserTest.getAuxInfo(), errorReport, false);
+				mapping.getAuxInfo(), errorReport, false);
 
 		// Generate the rdf
 		rdfGen.generateRDF(false);
