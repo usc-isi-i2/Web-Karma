@@ -107,8 +107,8 @@ public class WorksheetModelWriter {
 	public boolean writeR2RMLMapping(OntologyManager ontManager, KR2RMLMappingGenerator mappingGen)
 			throws RepositoryException, JSONException {
 		/** Get the required data structures of R2RML **/
-		R2RMLMapping mapping = mappingGen.getR2RMLMapping();
-		KR2RMLMappingAuxillaryInformation auxInfo = mappingGen.getMappingAuxillaryInformation();
+		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
+		KR2RMLMappingAuxillaryInformation auxInfo = mapping.getAuxInfo();
 		List<TriplesMap> triplesMapList = mapping.getTriplesMapList();
 		
 		try {

@@ -43,6 +43,7 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLMapping;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -153,11 +154,12 @@ public class PublishRDFCommand extends Command {
 				alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
 				Boolean.valueOf(addInverseProperties), errorReport);
 		
-		logger.debug(mappingGen.getR2RMLMapping().toString());
+		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
+		logger.debug(mapping.toString());
 		
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
 				workspace.getFactory(), workspace.getOntologyManager(),
-				rdfFileLocalPath, false, mappingGen.getMappingAuxillaryInformation(), errorReport);
+				rdfFileLocalPath, false, mapping.getAuxInfo(), errorReport);
 		
 		// Generate the RDF using KR2RML data structures
 		try {
