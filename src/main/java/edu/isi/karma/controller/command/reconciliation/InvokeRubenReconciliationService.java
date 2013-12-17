@@ -45,6 +45,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.kr2rml.ErrorReport;
+import edu.isi.karma.kr2rml.KR2RMLMapping;
 import edu.isi.karma.kr2rml.KR2RMLMappingGenerator;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.ReportMessage;
@@ -122,7 +123,8 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 				workspace.getOntologyManager(), alignment, 
 				worksheet.getSemanticTypes(), rdfPrefix, rdfNamespace,
 				true, errorReport);
-		TriplesMap trMap = mappingGen.getTriplesMapForNodeId(alignmentNodeId);
+		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
+		TriplesMap trMap = mapping.getTriplesMapIndex().get(alignmentNodeId);
 		
 		// Remove the triple maps and info that we don't need
 //		filterTripleMapsAndAuxillaryInformation();
@@ -154,9 +156,10 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 				// Generate the RDF
 				StringWriter outRdf = new StringWriter();
 				PrintWriter pw = new PrintWriter(outRdf);
+				
 				KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
 						workspace.getFactory(), workspace.getOntologyManager(),
-						pw, mappingGen.getMappingAuxillaryInformation(), errorReport, false);
+						pw, mapping.getAuxInfo(), errorReport, false);
 				
 				rdfGen.generateTriplesForRow(row, new HashSet<String>(), new HashSet<String>(),
 						new HashMap<String, ReportMessage>(), new HashSet<String>());

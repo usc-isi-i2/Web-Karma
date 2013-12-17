@@ -205,7 +205,7 @@ public class InvokeDataMiningServiceCommand extends Command {
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
 			
 			SPARQLGeneratorUtil genObj = new SPARQLGeneratorUtil();
-			String query = genObj.get_query(mappingGen.getR2RMLMapping(), this.modelContext);
+			String query = genObj.get_query(mappingGen.getKR2RMLMapping(), this.modelContext);
 			
 			// execute the query on the triple store
 			TripleStoreUtil utilObj = new TripleStoreUtil();

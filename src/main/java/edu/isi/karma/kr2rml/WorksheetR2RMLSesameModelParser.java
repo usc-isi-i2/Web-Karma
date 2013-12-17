@@ -21,7 +21,6 @@
 
 package edu.isi.karma.kr2rml;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,8 +53,6 @@ import edu.isi.karma.rep.Worksheet;
 
 @Deprecated
 public class WorksheetR2RMLSesameModelParser {
-	private Worksheet worksheet;
-	private RepFactory factory;
 	private Repository myRepository;
 	private RepositoryConnection con;
 	private ValueFactory f;
@@ -69,28 +66,25 @@ public class WorksheetR2RMLSesameModelParser {
 	private int objectMapCounter = 1;
 	private static Logger logger = LoggerFactory.getLogger(WorksheetR2RMLSesameModelParser.class);
 	
-	public WorksheetR2RMLSesameModelParser(Worksheet worksheet, RepFactory factory, File modelFile) 
+	public WorksheetR2RMLSesameModelParser(Worksheet worksheet, RepFactory factory, R2RMLMappingIdentifier id) 
 			throws RepositoryException, RDFParseException, IOException, JSONException {
-		this.worksheet = worksheet;
-		this.factory = factory;
-		
-		this.r2rmlMapping = new R2RMLMapping();
+		this.r2rmlMapping = new R2RMLMapping(id);
 		this.auxInfo = new KR2RMLMappingAuxillaryInformation();
 		this.subjectMapIndex = new HashMap<String, SubjectMap>();
 		this.triplesMapIndex = new HashMap<String, TriplesMap>();
-		
+		TemplateTermSetBuilder templateTermSetBuilder = new TemplateTermSetBuilder(worksheet);
 		/** Initialize the repository **/
 		myRepository = new SailRepository(new MemoryStore());
 		myRepository.initialize();
 		con = myRepository.getConnection();
 		f = con.getValueFactory();
-		con.add(modelFile, "", RDFFormat.TURTLE);
+		con.add(id.getLocation(), "", RDFFormat.TURTLE);
 		
 		// Generate TriplesMap for each InternalNode in the tree
-		createSubjectMaps();
+		createSubjectMaps(templateTermSetBuilder);
 		
 		// Identify the object property links
-		createPredicateObjectMaps();
+		createPredicateObjectMaps(templateTermSetBuilder);
 		
 		// Calculate the nodes covered by each InternalNode
 		calculateColumnNodesCoveredByBlankNodes();
@@ -107,7 +101,7 @@ public class WorksheetR2RMLSesameModelParser {
 		return r2rmlMapping;
 	}
 
-	private void createPredicateObjectMaps() 
+	private void createPredicateObjectMaps(TemplateTermSetBuilder templateTermSetBuilder) 
 			throws RepositoryException, JSONException {
 		URI trTypeUri = f.createURI(Uris.RR_TRIPLESMAP_CLASS_URI);
 		
@@ -119,11 +113,11 @@ public class WorksheetR2RMLSesameModelParser {
 			Resource trMapRes = st.getSubject();
 			
 			// Add the predicate object maps
-			addPredicateObjectMapsForTripleMap(trMapRes);
+			addPredicateObjectMapsForTripleMap(trMapRes, templateTermSetBuilder);
 		}
 	}
 
-	private void createSubjectMaps() throws RepositoryException, 
+	private void createSubjectMaps(TemplateTermSetBuilder templateTermSetBuilder) throws RepositoryException, 
 			JSONException {
 		URI trTypeUri = f.createURI(Uris.RR_TRIPLESMAP_CLASS_URI);
 		
@@ -134,7 +128,7 @@ public class WorksheetR2RMLSesameModelParser {
 			Statement st = tripleMapsStmts.next();
 			Resource trMapRes = st.getSubject();
 			
-			SubjectMap subjMap = addSubjectMapForTripleMap(trMapRes);
+			SubjectMap subjMap = addSubjectMapForTripleMap(trMapRes, templateTermSetBuilder);
 			// Add the Triples map
 			TriplesMap trMap = new TriplesMap(trMapRes.stringValue(), subjMap);
 			this.triplesMapIndex.put(trMapRes.stringValue(), trMap);
@@ -143,7 +137,7 @@ public class WorksheetR2RMLSesameModelParser {
 	}
 
 
-	private void addPredicateObjectMapsForTripleMap(Resource trMapRes) 
+	private void addPredicateObjectMapsForTripleMap(Resource trMapRes, TemplateTermSetBuilder templateTermSetBuilder) 
 			throws RepositoryException, JSONException {
 		URI predObjMapMapUri = f.createURI(Uris.RR_PRED_OBJ_MAP_URI);
 		URI predUri = f.createURI(Uris.RR_PREDICATE_URI);
@@ -181,9 +175,9 @@ public class WorksheetR2RMLSesameModelParser {
 					pred.getTemplate().addTemplateTermToSet(
 							new StringTemplateTerm(predVal.stringValue(), true));
 				} else {
-					pred.setTemplate(TemplateTermSetBuilder.
+					pred.setTemplate(templateTermSetBuilder.
 							constructTemplateTermSetFromR2rmlTemplateString(
-									predVal.stringValue(), worksheet, factory));
+									predVal.stringValue()));
 				}
 			}
 			pom.setPredicate(pred);
@@ -230,8 +224,8 @@ public class WorksheetR2RMLSesameModelParser {
 						Statement objMapColStmt = objMapColStmts.next(); 
 						Value colVal = objMapColStmt.getObject();
 						objMap = new ObjectMap(getNewObjectMapId(), 
-								TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlColumnString(
-										colVal.stringValue(), worksheet, factory), rdfLiteralTypeTermSet);
+								templateTermSetBuilder.constructTemplateTermSetFromR2rmlColumnString(
+										colVal.stringValue()), rdfLiteralTypeTermSet);
 					}
 					// Check if anything needs to be added to the hNodeIdToPredicateObjectMap Map
 					addHNodeIdToPredObjectMapLink(objMap, pom);
@@ -266,7 +260,7 @@ public class WorksheetR2RMLSesameModelParser {
 		return "ObjectMap" + objectMapCounter++;
 	}
 
-	private SubjectMap addSubjectMapForTripleMap(Resource trMapRes) 
+	private SubjectMap addSubjectMapForTripleMap(Resource trMapRes, TemplateTermSetBuilder templateTermSetBuilder) 
 			throws RepositoryException, JSONException {
 		SubjectMap subjMap = null;
 		URI subjMapUri = f.createURI(Uris.RR_SUBJECTMAP_URI);
@@ -289,8 +283,8 @@ public class WorksheetR2RMLSesameModelParser {
 			while (templates.hasNext()) {
 				Statement templStmt = templates.next();
 				System.out.println("Template: " + templStmt.getObject().stringValue());
-				subjTemplTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
-						templStmt.getObject().stringValue(), worksheet, factory);
+				subjTemplTermSet = templateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
+						templStmt.getObject().stringValue());
 			}
 			subjMap.setTemplate(subjTemplTermSet);
 			
@@ -310,8 +304,8 @@ public class WorksheetR2RMLSesameModelParser {
 					typeTermSet.addTemplateTermToSet(uriTerm);
 					subjMap.addRdfsType(typeTermSet);
 				} else {
-					TemplateTermSet typeTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
-							typeStmt.getObject().stringValue(), worksheet, factory);
+					TemplateTermSet typeTermSet = templateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
+							typeStmt.getObject().stringValue());
 					subjMap.addRdfsType(typeTermSet);
 				}
 				
