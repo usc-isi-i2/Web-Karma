@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphLoaderThread;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
@@ -113,7 +114,8 @@ public class KarmaServlet extends HttpServlet {
 			logger.info("No directory for preloading ontologies exists.");
 		}
 		
-		new ModelLearningGraphLoaderThread(ontologyManager).run();
+		if (ModelingConfiguration.isLearnerEnabled())
+			new ModelLearningGraphLoaderThread(ontologyManager).run();
 
 		// Loading a CSV file in each workspace
 //		File file = new File("./SampleData/CSV/Nation_Data.csv");

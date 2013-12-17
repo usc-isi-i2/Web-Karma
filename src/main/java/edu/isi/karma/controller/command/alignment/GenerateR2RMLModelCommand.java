@@ -167,7 +167,9 @@ public class GenerateR2RMLModelCommand extends Command {
 			logger.error("error in exporting the model to GRAPHVIZ!");
 //			e.printStackTrace();
 		}
-		ModelLearningGraph.getInstance(workspace.getOntologyManager()).addModelAndUpdateGraphJson(semanticModel);
+
+		if (ModelingConfiguration.isLearnerEnabled())
+			ModelLearningGraph.getInstance(workspace.getOntologyManager()).addModelAndUpdateGraphJson(semanticModel);
 		
 		// *****************************************************************************************
 		// *****************************************************************************************
