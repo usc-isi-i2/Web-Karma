@@ -185,7 +185,7 @@ public class SemanticModel {
 		
 		Double distance = getDistance(baseModel);
 		
-		int maxLength = 1;
+		int maxLength = 2;
 		List<GraphPath> basePaths = new LinkedList<GraphPath>();
 		List<GraphPath> modelPaths = new LinkedList<GraphPath>();
 		List<GraphPath> gpList;

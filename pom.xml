@@ -19,6 +19,7 @@
     <geotools.version>
     	9.0-M0
     </geotools.version>
+    <powermock.version>1.5.2</powermock.version>
   </properties>
   
   <repositories>
@@ -146,7 +147,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>4.11</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -270,6 +271,18 @@
         	<artifactId>mahout-core</artifactId>
         	<version>0.5</version>
     	</dependency>
+    	<dependency>
+      		<groupId>org.powermock</groupId>
+      		<artifactId>powermock-module-junit4</artifactId>
+      		<version>${powermock.version}</version>
+      		<scope>test</scope>
+   		</dependency>
+   		<dependency>
+	      	<groupId>org.powermock</groupId>
+	      	<artifactId>powermock-api-mockito</artifactId>
+	      	<version>${powermock.version}</version>
+	      	<scope>test</scope>
+   		</dependency>
 		<!-- 
 		<dependency>
 			<groupId>com.esotericsoftware.kryo</groupId>

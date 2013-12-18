@@ -51,6 +51,8 @@ public class ModelingConfiguration {
     
     private static Integer maxCandidateModels;
     private static Integer maxQueuedMappigs;
+    
+    private static Boolean learnerEnabled;
 
 	public static void load() {
         try {
@@ -82,6 +84,9 @@ public class ModelingConfiguration {
 
             karmaSourcePrefix = modelingProperties.getProperty("karma.source.prefix");
             karmaServicePrefix = modelingProperties.getProperty("karma.service.prefix");
+
+            if(modelingProperties.getProperty("learner.enabled") != null)
+            	learnerEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learner.enabled"));
 
             modelsJsonDir = modelingProperties.getProperty("models.json.dir");
             modelsGraphvizDir = modelingProperties.getProperty("models.graphviz.dir");
@@ -204,6 +209,12 @@ public class ModelingConfiguration {
 		if (maxQueuedMappigs == null)
 			load();
 		return maxQueuedMappigs;
+	}
+
+	public static boolean isLearnerEnabled() {
+		if (learnerEnabled == null)
+			load();
+		return learnerEnabled;
 	}
 
 	

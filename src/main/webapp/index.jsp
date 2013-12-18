@@ -465,7 +465,7 @@ and related projects, please see: http://www.isi.edu/integration
                         			</select>
                         		</td>
                         		<td colspan='2'>Number of Lines to import:
-                        			<input type="textarea" id="maxNumLines" class="CSVImportOption" maxlength="5" size="5" value="100"/>
+                        			<input type="textarea" id="maxNumLines" class="CSVImportOption" maxlength="6" size="6" value="100"/>
                         	</tr>
                         </table>
                        
@@ -496,7 +496,7 @@ and related projects, please see: http://www.isi.edu/integration
                         			</select>
                         		</td>
                         		<td  id="colMaxNumLines">Number of <span id="fileMaxName">Lines</span> to import:
-                        			<input type="textarea" id="fileMaxNumLines" class="FileImportOption" maxlength="5" size="5" value="100"/>
+                        			<input type="textarea" id="fileMaxNumLines" class="FileImportOption" maxlength="6" size="6" value="100"/>
                         		</td>
                     		</tr>
                     	</table>
@@ -720,6 +720,7 @@ and related projects, please see: http://www.isi.edu/integration
                         <option>xsd:integer</option>
                         <option>xsd:double</option>
                         <option>xsd:float</option>
+                         <option>xsd:date</option>
                         <option>xsd:time</option>
                         <option>xsd:dateTime</option>
                         <option>xsd:dateTimeStamp</option>
