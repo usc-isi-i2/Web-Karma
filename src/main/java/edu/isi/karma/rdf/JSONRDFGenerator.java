@@ -2,6 +2,7 @@ package edu.isi.karma.rdf;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,11 +29,8 @@ public class JSONRDFGenerator {
 	
 	private Workspace workspace;
 	
-	private JSONRDFGenerator(List<R2RMLMappingIdentifier> modelIdentifiers) {
-		this.modelIdentifiers = new HashMap<>();
-		for(R2RMLMappingIdentifier mi : modelIdentifiers) {
-			this.modelIdentifiers.put(mi.getName(), mi);
-		}
+	private JSONRDFGenerator() {
+		this.modelIdentifiers = new HashMap<String, R2RMLMappingIdentifier>();
 		this.readModelParsers = new HashMap<String, WorksheetR2RMLJenaModelParser>();
 		this.workspace = WorkspaceManager.getInstance().createWorkspace();
 		WorkspaceRegistry.getInstance().register(new ExecutionController(this.workspace));
@@ -40,11 +38,14 @@ public class JSONRDFGenerator {
 	
 	private static JSONRDFGenerator instance = null;
 	public static JSONRDFGenerator getInstance() {
+		if(instance == null) {
+			instance = new JSONRDFGenerator();
+		}
 		return instance;
 	}
-	public static JSONRDFGenerator createInstance(List<R2RMLMappingIdentifier> modelIdentifiers) {
-		instance = new JSONRDFGenerator(modelIdentifiers);
-		return getInstance();
+	
+	public void addModel(R2RMLMappingIdentifier modelIdentifier) {
+		this.modelIdentifiers.put(modelIdentifier.getName(), modelIdentifier);
 	}
 	
 	public void generateRDF(String sourceName, String jsonData, boolean addProvenance, PrintWriter pw) throws KarmaException, JSONException, IOException {
