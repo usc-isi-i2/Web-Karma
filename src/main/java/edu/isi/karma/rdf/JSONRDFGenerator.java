@@ -7,7 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.Command.CommandTag;
+import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMapping;
@@ -23,7 +28,8 @@ import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 
 public class JSONRDFGenerator {
-	
+
+	private static Logger logger = LoggerFactory.getLogger(JSONRDFGenerator.class);
 	private HashMap<String, R2RMLMappingIdentifier> modelIdentifiers;
 	private HashMap<String, WorksheetR2RMLJenaModelParser> readModelParsers;
 	
@@ -66,14 +72,25 @@ public class JSONRDFGenerator {
 		}
 		
         //Generate mappping data for the worksheet using the model parser
-		KR2RMLMapping mapping = modelParser.parse(worksheet, workspace);
+		KR2RMLMapping mapping = modelParser.parse();
 		
+		WorksheetCommandHistoryExecutor wchr = new WorksheetCommandHistoryExecutor(worksheet.getId(), workspace);
+		try
+		{
+			List<CommandTag> tags = new ArrayList<CommandTag>();
+			tags.add(CommandTag.Transformation);
+			wchr.executeCommandsByTags(tags, mapping.getWorksheetHistory());
+		}
+		catch (CommandException | KarmaException e)
+		{
+			logger.error("Unable to execute column transformations", e);
+		}
 
 		//Generate RDF using the mapping data
 		ErrorReport errorReport = new ErrorReport();
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
 		        workspace.getFactory(), workspace.getOntologyManager(), pw,
-		        mapping.getAuxInfo(), errorReport, addProvenance);
+		        mapping, errorReport, addProvenance);
 		rdfGen.generateRDF(false);
 	}
 	
