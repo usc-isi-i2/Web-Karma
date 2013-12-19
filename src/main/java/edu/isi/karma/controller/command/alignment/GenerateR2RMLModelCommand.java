@@ -154,7 +154,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		try {
 			semanticModel.writeJson(ModelingConfiguration.getModelsJsonDir() + 
 					semanticModel.getName() + 
-					".json");
+					".model.json");
 		} catch (Exception e) {
 			logger.error("error in exporting the model to JSON!");
 //			e.printStackTrace();
@@ -162,7 +162,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		try {
 			semanticModel.writeGraphviz(ModelingConfiguration.getModelsGraphvizDir() + 
 					semanticModel.getName() + 
-					".dot", false, false);
+					".model.dot", false, false);
 		} catch (Exception e) {
 			logger.error("error in exporting the model to GRAPHVIZ!");
 //			e.printStackTrace();

@@ -189,6 +189,7 @@ public class ModelLearner {
 			}
 		}
 		
+		logger.info("results are ready ...");
 		return uniqueModels;
 
 	}
@@ -284,7 +285,8 @@ public class ModelLearner {
 				if (tempSemanticTypeMappings == null || tempSemanticTypeMappings.isEmpty()) // No struct in graph is matched with the semantic type, we add a new struct to the graph
 				{
 					SemanticTypeMapping mp = addSemanticTypeStruct(n, semanticType, addedNodes);
-					semanticTypeMappings.add(mp);
+					if (mp != null)
+						semanticTypeMappings.add(mp);
 				}
 			}
 			
@@ -623,13 +625,13 @@ public class ModelLearner {
 		ModelLearner modelLearner;
 		
 		for (int i = 0; i < semanticModels.size(); i++) {
-//		int i = 0; {
+//		int i = 10; {
 			trainingData.clear();
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
 			
 			logger.info("======================================================");
-			logger.info(newSource.getDescription());
+			logger.info(newSource.getName());
 			logger.info("======================================================");
 			
 //			int[] trainingModels = {0, 4};
@@ -661,6 +663,7 @@ public class ModelLearner {
 				for (SemanticModel sm : trainingData)
 					modelLearningGraph.addModel(sm);
 				modelLearner.graphBuilder = modelLearningGraph.getGraphBuilder();
+				modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 				// save graph to file
 				try {
 					GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName);
@@ -716,7 +719,7 @@ public class ModelLearner {
 			
 			GraphUtil.exportGraphviz(
 					graphs, 
-					newSource.getDescription(),
+					newSource.getName(),
 					outputPath + semanticModels.get(i).getName() + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT);
 			
 		}
