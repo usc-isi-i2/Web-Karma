@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +34,9 @@ import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.Command.CommandTag;
+import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.imp.json.JsonImport;
@@ -95,16 +100,27 @@ public class FileRdfGenerator extends RdfGenerator {
 		 */
 		logger.info("Generating RDF...");
 		WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(id);
-		KR2RMLMapping mapping = parserTest.parse(worksheet, workspace);
+		KR2RMLMapping mapping = parserTest.parse();
 		
 
 		// Gets all the errors generated during the RDF generation
 		ErrorReport errorReport = new ErrorReport();
 
+		WorksheetCommandHistoryExecutor wchr = new WorksheetCommandHistoryExecutor(worksheet.getId(), workspace);
+		try
+		{
+			List<CommandTag> tags = new ArrayList<CommandTag>();
+			tags.add(CommandTag.Transformation);
+			wchr.executeCommandsByTags(tags, mapping.getWorksheetHistory());
+		}
+		catch (CommandException | KarmaException e)
+		{
+			logger.error("Unable to execute column transformations", e);
+		}
 		// RDF generation object initialization
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
 		        workspace.getFactory(), workspace.getOntologyManager(), pw,
-		        mapping.getAuxInfo(), errorReport, false);
+		        mapping, errorReport, false);
 
 		// Generate the rdf
 		rdfGen.generateRDF(false);

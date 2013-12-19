@@ -120,7 +120,7 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
 		KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(
-				workspace.getOntologyManager(), alignment, 
+				workspace, alignment, 
 				worksheet.getSemanticTypes(), rdfPrefix, rdfNamespace,
 				true, errorReport);
 		KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
@@ -159,7 +159,7 @@ public class InvokeRubenReconciliationService extends WorksheetCommand {
 				
 				KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
 						workspace.getFactory(), workspace.getOntologyManager(),
-						pw, mapping.getAuxInfo(), errorReport, false);
+						pw, mapping, errorReport, false);
 				
 				rdfGen.generateTriplesForRow(row, new HashSet<String>(), new HashSet<String>(),
 						new HashMap<String, ReportMessage>(), new HashSet<String>());

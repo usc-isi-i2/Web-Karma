@@ -114,13 +114,13 @@ public class PublishRDFCellCommand extends Command {
 			// Generate the KR2RML data structures for the RDF generation
 			final ErrorReport errorReport = new ErrorReport();
 			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(
-					workspace.getOntologyManager(), 
+					workspace, 
 					alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
 					false, errorReport);
 			KR2RMLMapping mapping = mappingGen.getKR2RMLMapping();
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
 					workspace.getFactory(), workspace.getOntologyManager(),
-					pw, mapping.getAuxInfo(), errorReport, false);
+					pw, mapping, errorReport, false);
 			
 			// Create empty data structures
 			Set<String> existingTopRowTriples = new HashSet<String>();

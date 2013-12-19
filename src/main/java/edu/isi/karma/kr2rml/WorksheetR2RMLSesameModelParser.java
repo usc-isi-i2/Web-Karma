@@ -72,7 +72,7 @@ public class WorksheetR2RMLSesameModelParser {
 		this.auxInfo = new KR2RMLMappingAuxillaryInformation();
 		this.subjectMapIndex = new HashMap<String, SubjectMap>();
 		this.triplesMapIndex = new HashMap<String, TriplesMap>();
-		TemplateTermSetBuilder templateTermSetBuilder = new TemplateTermSetBuilder(worksheet);
+		TemplateTermSetBuilder templateTermSetBuilder = new TemplateTermSetBuilder();
 		/** Initialize the repository **/
 		myRepository = new SailRepository(new MemoryStore());
 		myRepository.initialize();
@@ -242,12 +242,12 @@ public class WorksheetR2RMLSesameModelParser {
 			if (term instanceof ColumnTemplateTerm) {
 				String hNodeId = term.getTemplateTermValue();
 				List<PredicateObjectMap> existingPomList = this.auxInfo.
-						getHNodeIdToPredObjLinks().get(hNodeId);  
+						getColumnNameToPredObjLinks().get(hNodeId);  
 				if (existingPomList == null) {
 					existingPomList = new ArrayList<PredicateObjectMap>();
 				}
 				existingPomList.add(pom);
-				this.auxInfo.getHNodeIdToPredObjLinks().put(hNodeId, existingPomList);
+				this.auxInfo.getColumnNameToPredObjLinks().put(hNodeId, existingPomList);
 			}
 		}
 	}
