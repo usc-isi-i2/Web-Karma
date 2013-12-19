@@ -1152,7 +1152,7 @@ function showChooseNodeDialog(event) {
         }, "Submit":submitInternalNodeChange }});
 }
 
-function showChooseLinkDialog() {
+function showChooseLinkDialog(event) {
     var optionsDiv = $("div#chooseLinkDialog");
     optionsDiv.data("currentEditedCell", $(this).parent());
     $(this).parents("tr.fixMe").removeClass("fixMe");
