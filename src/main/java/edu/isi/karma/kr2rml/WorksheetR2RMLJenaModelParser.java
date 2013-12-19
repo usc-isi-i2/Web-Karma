@@ -70,9 +70,9 @@ public class WorksheetR2RMLJenaModelParser {
 			throw new KarmaException("Resource not found in model for the source: " + id.getName());
 		}
 		
-		Property modelVersioneNameProp = model.getProperty(Uris.KM_MODEL_VERSION_URI);
-		Statement s = model.getProperty(mappingResource, modelVersioneNameProp);
-		TemplateTermSetBuilder templateTermSetBuilder = new TemplateTermSetBuilder();
+		Property modelVersionNameProp = model.getProperty(Uris.KM_MODEL_VERSION_URI);
+		Statement s = model.getProperty(mappingResource, modelVersionNameProp);
+		
 		KR2RMLVersion version = null;
 		try 
 		{
@@ -87,10 +87,10 @@ public class WorksheetR2RMLJenaModelParser {
 		loadWorksheetHistory(mappingResource, kr2rmlMapping);
 		
 		// Generate TriplesMap for each InternalNode in the tree
-		List<Resource> subjectResources = createSubjectMaps(mappingResource, kr2rmlMapping, templateTermSetBuilder);
+		List<Resource> subjectResources = createSubjectMaps(mappingResource, kr2rmlMapping);
 		
 		// Identify the object property links
-		createPredicateObjectMaps(mappingResource, kr2rmlMapping, templateTermSetBuilder);
+		createPredicateObjectMaps(mappingResource, kr2rmlMapping);
 		
 		// Calculate the nodes covered by each InternalNode
 		calculateColumnNodesCoveredByBlankNodes(kr2rmlMapping, subjectResources);
@@ -157,18 +157,18 @@ public class WorksheetR2RMLJenaModelParser {
 		return new JSONArray();
 	}
 
-	private void createPredicateObjectMaps(Resource mappingResource, KR2RMLMapping kr2rmlMapping, TemplateTermSetBuilder templateTermSetBuilder) throws JSONException {
+	private void createPredicateObjectMaps(Resource mappingResource, KR2RMLMapping kr2rmlMapping) throws JSONException {
 		Property hasTrMapUri = model.getProperty(Uris.KM_HAS_TRIPLES_MAP_URI);
 		
 		// Get all the triple maps
 		NodeIterator trMapsResItr = model.listObjectsOfProperty(mappingResource, hasTrMapUri);
 		while (trMapsResItr.hasNext()) {
 			// Add the predicate object maps
-			addPredicateObjectMapsForTripleMap(trMapsResItr.next().asResource(), kr2rmlMapping, templateTermSetBuilder);
+			addPredicateObjectMapsForTripleMap(trMapsResItr.next().asResource(), kr2rmlMapping);
 		}
 	}
 
-	private List<Resource> createSubjectMaps(Resource mappingResource, KR2RMLMapping kr2rmlMapping, TemplateTermSetBuilder templateTermSetBuilder) throws JSONException {
+	private List<Resource> createSubjectMaps(Resource mappingResource, KR2RMLMapping kr2rmlMapping) throws JSONException {
 		List<Resource> subjectMapResources = new ArrayList<Resource>();
 		Property hasTrMapUri = model.getProperty(Uris.KM_HAS_TRIPLES_MAP_URI);
 		
@@ -176,7 +176,7 @@ public class WorksheetR2RMLJenaModelParser {
 		NodeIterator trMapsResItr = model.listObjectsOfProperty(mappingResource, hasTrMapUri);
 		while (trMapsResItr.hasNext()) {
 			Resource trMapRes = trMapsResItr.next().asResource();
-			SubjectMap subjMap = addSubjectMapForTripleMap(trMapRes, kr2rmlMapping, templateTermSetBuilder, subjectMapResources);
+			SubjectMap subjMap = addSubjectMapForTripleMap(trMapRes, kr2rmlMapping, subjectMapResources);
 			
 			// Add the Triples map
 			TriplesMap trMap = new TriplesMap(trMapRes.getURI(), subjMap);
@@ -187,7 +187,7 @@ public class WorksheetR2RMLJenaModelParser {
 	}
 
 
-	private void addPredicateObjectMapsForTripleMap(Resource trMapRes, KR2RMLMapping kr2rmlMapping, TemplateTermSetBuilder templateTermSetBuilder) throws  JSONException {
+	private void addPredicateObjectMapsForTripleMap(Resource trMapRes, KR2RMLMapping kr2rmlMapping) throws  JSONException {
 		int predicateIdCounter = 0;
 		int objectMapCounter = 0;
 		Property predObjMapProp = model.getProperty(Uris.RR_PRED_OBJ_MAP_URI);
@@ -222,7 +222,7 @@ public class WorksheetR2RMLJenaModelParser {
 					pred.getTemplate().addTemplateTermToSet(
 							new StringTemplateTerm(((Resource) pomPredNode).getURI(), true));
 				} else {
-					pred.setTemplate(templateTermSetBuilder.
+					pred.setTemplate(TemplateTermSetBuilder.
 							constructTemplateTermSetFromR2rmlTemplateString(
 									pomPredNode.toString()));
 				}
@@ -267,7 +267,7 @@ public class WorksheetR2RMLJenaModelParser {
 					while (objMapColStmts.hasNext()) {
 						RDFNode colNode = objMapColStmts.next(); 
 						objMap = new ObjectMap(getNewObjectMapId(objectMapCounter++), 
-								templateTermSetBuilder.constructTemplateTermSetFromR2rmlColumnString(
+								TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlColumnString(
 										colNode.toString()), rdfLiteralTypeTermSet);
 					}
 					// Check if anything needs to be added to the columnNameToPredicateObjectMap Map
@@ -327,7 +327,7 @@ public class WorksheetR2RMLJenaModelParser {
 		return "ObjectMap" + objectMapCounter;
 	}
 
-	private SubjectMap addSubjectMapForTripleMap(Resource trMapRes, KR2RMLMapping kr2rmlMapping, TemplateTermSetBuilder templateTermSetBuilder, List<Resource> subjectMapResources) throws  JSONException {
+	private SubjectMap addSubjectMapForTripleMap(Resource trMapRes, KR2RMLMapping kr2rmlMapping, List<Resource> subjectMapResources) throws  JSONException {
 		SubjectMap subjMap = null;
 		Property subjMapProp = model.getProperty(Uris.RR_SUBJECTMAP_URI);
 		Property templateProp = model.getProperty(Uris.RR_TEMPLATE_URI);
@@ -350,7 +350,7 @@ public class WorksheetR2RMLJenaModelParser {
 			while (templateItr.hasNext()) {
 				RDFNode templNode = templateItr.next();
 				String template = templNode.toString();
-				subjTemplTermSet = templateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
+				subjTemplTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
 						template);
 				
 			}
@@ -368,7 +368,7 @@ public class WorksheetR2RMLJenaModelParser {
 					while (typeTemplItr.hasNext()) {
 						RDFNode templNode = typeTemplItr.next();
 						String template = templNode.toString();
-						TemplateTermSet typeTermSet = templateTermSetBuilder.
+						TemplateTermSet typeTermSet = TemplateTermSetBuilder.
 								constructTemplateTermSetFromR2rmlTemplateString(
 								template);
 						subjMap.addRdfsType(typeTermSet);
@@ -387,7 +387,7 @@ public class WorksheetR2RMLJenaModelParser {
 					typeTermSet.addTemplateTermToSet(uriTerm);
 					subjMap.addRdfsType(typeTermSet);
 				} else {
-					TemplateTermSet typeTermSet = templateTermSetBuilder.
+					TemplateTermSet typeTermSet = TemplateTermSetBuilder.
 							constructTemplateTermSetFromR2rmlTemplateString(
 							typeNode.toString());
 					subjMap.addRdfsType(typeTermSet);

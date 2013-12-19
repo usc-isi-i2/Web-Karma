@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.json.JSONException;
 import org.openrdf.model.Resource;
@@ -72,7 +70,6 @@ public class WorksheetR2RMLSesameModelParser {
 		this.auxInfo = new KR2RMLMappingAuxillaryInformation();
 		this.subjectMapIndex = new HashMap<String, SubjectMap>();
 		this.triplesMapIndex = new HashMap<String, TriplesMap>();
-		TemplateTermSetBuilder templateTermSetBuilder = new TemplateTermSetBuilder();
 		/** Initialize the repository **/
 		myRepository = new SailRepository(new MemoryStore());
 		myRepository.initialize();
@@ -81,10 +78,10 @@ public class WorksheetR2RMLSesameModelParser {
 		con.add(id.getLocation(), "", RDFFormat.TURTLE);
 		
 		// Generate TriplesMap for each InternalNode in the tree
-		createSubjectMaps(templateTermSetBuilder);
+		createSubjectMaps();
 		
 		// Identify the object property links
-		createPredicateObjectMaps(templateTermSetBuilder);
+		createPredicateObjectMaps();
 		
 		// Calculate the nodes covered by each InternalNode
 		calculateColumnNodesCoveredByBlankNodes();
@@ -101,7 +98,7 @@ public class WorksheetR2RMLSesameModelParser {
 		return r2rmlMapping;
 	}
 
-	private void createPredicateObjectMaps(TemplateTermSetBuilder templateTermSetBuilder) 
+	private void createPredicateObjectMaps() 
 			throws RepositoryException, JSONException {
 		URI trTypeUri = f.createURI(Uris.RR_TRIPLESMAP_CLASS_URI);
 		
@@ -113,11 +110,11 @@ public class WorksheetR2RMLSesameModelParser {
 			Resource trMapRes = st.getSubject();
 			
 			// Add the predicate object maps
-			addPredicateObjectMapsForTripleMap(trMapRes, templateTermSetBuilder);
+			addPredicateObjectMapsForTripleMap(trMapRes);
 		}
 	}
 
-	private void createSubjectMaps(TemplateTermSetBuilder templateTermSetBuilder) throws RepositoryException, 
+	private void createSubjectMaps() throws RepositoryException, 
 			JSONException {
 		URI trTypeUri = f.createURI(Uris.RR_TRIPLESMAP_CLASS_URI);
 		
@@ -128,7 +125,7 @@ public class WorksheetR2RMLSesameModelParser {
 			Statement st = tripleMapsStmts.next();
 			Resource trMapRes = st.getSubject();
 			
-			SubjectMap subjMap = addSubjectMapForTripleMap(trMapRes, templateTermSetBuilder);
+			SubjectMap subjMap = addSubjectMapForTripleMap(trMapRes);
 			// Add the Triples map
 			TriplesMap trMap = new TriplesMap(trMapRes.stringValue(), subjMap);
 			this.triplesMapIndex.put(trMapRes.stringValue(), trMap);
@@ -137,7 +134,7 @@ public class WorksheetR2RMLSesameModelParser {
 	}
 
 
-	private void addPredicateObjectMapsForTripleMap(Resource trMapRes, TemplateTermSetBuilder templateTermSetBuilder) 
+	private void addPredicateObjectMapsForTripleMap(Resource trMapRes) 
 			throws RepositoryException, JSONException {
 		URI predObjMapMapUri = f.createURI(Uris.RR_PRED_OBJ_MAP_URI);
 		URI predUri = f.createURI(Uris.RR_PREDICATE_URI);
@@ -175,7 +172,7 @@ public class WorksheetR2RMLSesameModelParser {
 					pred.getTemplate().addTemplateTermToSet(
 							new StringTemplateTerm(predVal.stringValue(), true));
 				} else {
-					pred.setTemplate(templateTermSetBuilder.
+					pred.setTemplate(TemplateTermSetBuilder.
 							constructTemplateTermSetFromR2rmlTemplateString(
 									predVal.stringValue()));
 				}
@@ -224,7 +221,7 @@ public class WorksheetR2RMLSesameModelParser {
 						Statement objMapColStmt = objMapColStmts.next(); 
 						Value colVal = objMapColStmt.getObject();
 						objMap = new ObjectMap(getNewObjectMapId(), 
-								templateTermSetBuilder.constructTemplateTermSetFromR2rmlColumnString(
+								TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlColumnString(
 										colVal.stringValue()), rdfLiteralTypeTermSet);
 					}
 					// Check if anything needs to be added to the hNodeIdToPredicateObjectMap Map
@@ -260,7 +257,7 @@ public class WorksheetR2RMLSesameModelParser {
 		return "ObjectMap" + objectMapCounter++;
 	}
 
-	private SubjectMap addSubjectMapForTripleMap(Resource trMapRes, TemplateTermSetBuilder templateTermSetBuilder) 
+	private SubjectMap addSubjectMapForTripleMap(Resource trMapRes) 
 			throws RepositoryException, JSONException {
 		SubjectMap subjMap = null;
 		URI subjMapUri = f.createURI(Uris.RR_SUBJECTMAP_URI);
@@ -282,8 +279,8 @@ public class WorksheetR2RMLSesameModelParser {
 					templateUri, null, false);
 			while (templates.hasNext()) {
 				Statement templStmt = templates.next();
-				System.out.println("Template: " + templStmt.getObject().stringValue());
-				subjTemplTermSet = templateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
+				logger.debug("Template: " + templStmt.getObject().stringValue());
+				subjTemplTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
 						templStmt.getObject().stringValue());
 			}
 			subjMap.setTemplate(subjTemplTermSet);
@@ -304,7 +301,7 @@ public class WorksheetR2RMLSesameModelParser {
 					typeTermSet.addTemplateTermToSet(uriTerm);
 					subjMap.addRdfsType(typeTermSet);
 				} else {
-					TemplateTermSet typeTermSet = templateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
+					TemplateTermSet typeTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
 							typeStmt.getObject().stringValue());
 					subjMap.addRdfsType(typeTermSet);
 				}
@@ -356,7 +353,7 @@ public class WorksheetR2RMLSesameModelParser {
 					break;
 				}
 			}
-			System.out.println("Adding columns for blank node" + subjMap.getId() + " List: " + columnsCoveredHnodeIds);
+			logger.debug("Adding columns for blank node" + subjMap.getId() + " List: " + columnsCoveredHnodeIds);
 			this.auxInfo.getBlankNodesColumnCoverage().put(subjMap.getId(), columnsCoveredHnodeIds);
 			
 			// Get the blank node prefix
@@ -369,69 +366,4 @@ public class WorksheetR2RMLSesameModelParser {
 		}
 	}
 
-	public static void main(String[] args) {
-		String str = "http://id.americanart.si.edu/linkeddata/conceptscheme}";
-		Pattern p = Pattern.compile("\\{\\\".*?\\\"\\}");
-	    Matcher matcher = p.matcher(str);
-	    if (matcher.find()) {
-	    	matcher.reset();
-	    	while (matcher.find()) {
-	    		System.out.println("Match: " + matcher.group());
-	    	}
-	    } else {
-	    	System.out.println("Only string!");
-	    }
-//		File modelFile = new File("/Users/shubhamgupta/Documents/eclipse/workspace/Web-Karma/src/" +
-//				"main/webapp/publish/R2RML/WSP1VW1-wells-small.csv-model.ttl");
-		
-		try {
-			
-////			RepositoryConnection con = myRepository.getConnection();
-////			ValueFactory f = myRepository.getValueFactory();
-//			con.add(modelFile, "", RDFFormat.TURTLE);
-//			
-//			// Get all the triple maps
-//			URI trTypeUri = f.createURI(Uris.RR_TRIPLESMAP_CLASS_URI);
-//			URI templateUri = f.createURI(Uris.RR_TEMPLATE_URI);
-//			URI subjMapUri = f.createURI(Uris.RR_SUBJECTMAP_URI);
-//			URI predUri = f.createURI(Uris.RR_PREDICATE_URI);
-//			URI objectMapUri = f.createURI(Uris.RR_OBJECTMAP_URI);
-//			URI columnUri = f.createURI(Uris.RR_COLUMN_URI);
-//			URI rfObjClassUri = f.createURI(Uris.RR_REF_OBJECT_MAP_URI);
-//			URI parentTriplesMapUri = f.createURI(Uris.RR_PARENT_TRIPLE_MAP_URI);
-//			URI predObjMapMapUri = f.createURI(Uris.RR_PRED_OBJ_MAP_URI);
-//			URI blankNodeUri = f.createURI(Uris.RR_BLANK_NODE_URI);
-//			URI termTypeUri = f.createURI(Uris.RR_TERM_TYPE_URI);
-//			
-//			URI coversColUri = f.createURI(Uris.KM_BLANK_NODE_COVERS_COLUMN_URI);
-//			URI bnNamePrefixUri = f.createURI(Uris.KM_BLANK_NODE_PREFIX_URI);
-			
-//			RepositoryResult<Statement> tripleMapsStmts = con.getStatements(null, RDF.TYPE, trTypeUri, false);
-//			while (tripleMapsStmts.hasNext()) {
-//				Statement st = tripleMapsStmts.next();
-//				Resource subj = st.getSubject();
-//				System.out.println(subj.stringValue());
-//				
-//				// Get the subject map
-//				RepositoryResult<Statement> subjMapStmts = con.getStatements(subj, subjMapUri, null, false);
-//				while (subjMapStmts.hasNext()) {
-//					Statement subjMapStmt = subjMapStmts.next();
-//					Resource subjMapBlankNode = (Resource) subjMapStmt.getObject();
-//					
-//					System.out.println(subjMapBlankNode.stringValue());
-//					
-//					// Get the subject template
-//					RepositoryResult<Statement> templates = con.getStatements(subjMapBlankNode, 
-//							templateUri, null, false);
-//					while (templates.hasNext()) {
-//						Statement templStmt = templates.next();
-//						System.out.println("Template: " + templStmt.getObject().stringValue());
-//					}
-//				}
-//			}
-//			
-		} catch (Exception t) {
-			t.printStackTrace();
-		}
-	}
 }

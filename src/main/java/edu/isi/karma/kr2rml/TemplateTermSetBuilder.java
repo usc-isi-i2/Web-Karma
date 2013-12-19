@@ -32,7 +32,7 @@ public class TemplateTermSetBuilder {
 
 	private static Logger logger = LoggerFactory.getLogger(TemplateTermSetBuilder.class);
 	
-	public  TemplateTermSet constructTemplateTermSetFromR2rmlTemplateString(
+	public static TemplateTermSet constructTemplateTermSetFromR2rmlTemplateString(
 			String templStr) throws JSONException {
 		TemplateTermSet termSet = new TemplateTermSet();
 		
@@ -65,7 +65,7 @@ public class TemplateTermSetBuilder {
 		return termSet;
 	}
 	
-	public TemplateTermSet constructTemplateTermSetFromR2rmlColumnString(
+	public static TemplateTermSet constructTemplateTermSetFromR2rmlColumnString(
 			String colTermVal) throws JSONException {
 		TemplateTermSet termSet = new TemplateTermSet();
 		
@@ -75,7 +75,7 @@ public class TemplateTermSetBuilder {
 		return termSet;
 	}
 	
-	private String removeR2rmlFormatting(String r2rmlColName) {
+	private static String removeR2rmlFormatting(String r2rmlColName) {
 		if (r2rmlColName.startsWith("{\"") && r2rmlColName.endsWith("\"}"))
 			return r2rmlColName.substring(2, r2rmlColName.length()-2);
 		else return r2rmlColName;
