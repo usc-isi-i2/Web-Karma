@@ -293,8 +293,8 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		//int frequency = this.getFrequency();
 		
 		double alpha = 1.0;//WeightTuning.getInstance().getCoherenceFactor();
-		double beta = 0.2;//WeightTuning.getInstance().getSizeFactor();
-		double gamma = 0.6;//WeightTuning.getInstance().getConfidenceFactor();
+		double beta = 0.5;//WeightTuning.getInstance().getSizeFactor();
+		double gamma = 0.8;//WeightTuning.getInstance().getConfidenceFactor();
 		
 		this.score = alpha * coherence + 
 				beta * distnaceToMaxSize + 

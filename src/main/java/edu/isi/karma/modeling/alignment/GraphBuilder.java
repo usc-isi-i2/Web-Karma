@@ -38,9 +38,9 @@ import edu.isi.karma.modeling.ModelingParams;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
+import edu.isi.karma.modeling.alignment.learner.SemanticTypeMapping;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DisplayModel;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
@@ -82,9 +82,13 @@ public class GraphBuilder {
 	private HashMap<LinkStatus, Set<Link>> statusToLinksMap;
 	
 	private HashMap<String, Set<String>> uriClosure;
-	private HashSet<String> modelIds;
 
+	
+	// To be used in matching semantic types with graph nodes
+	private HashSet<String> modelIds;
 	private HashMap<String, Integer> linkCountMap;
+	private HashMap<String, Integer> nodeDataPropertyCount; // nodeId + dataPropertyUri --> count
+	private HashMap<String, Set<SemanticTypeMapping>> semanticTypeMatches; // nodeUri + dataPropertyUri --> SemanticType Mapping
 
 	// Constructor
 	
@@ -102,8 +106,6 @@ public class GraphBuilder {
 		this.statusToLinksMap = new HashMap<LinkStatus, Set<Link>>();
 		
 		this.uriClosure = new HashMap<String, Set<String>>();
-		this.modelIds = new HashSet<String>();
-		this.linkCountMap = new HashMap<String, Integer>();
 
 		this.graph = new DirectedWeightedMultigraph<Node, Link>(Link.class);
 		
@@ -111,6 +113,11 @@ public class GraphBuilder {
 		this.sourceToTargetLinkUris = new HashSet<String>();
 		this.sourceToTargetConnectivity = new HashSet<String>();
 			
+		this.modelIds = new HashSet<String>();
+		this.linkCountMap = new HashMap<String, Integer>();
+		this.nodeDataPropertyCount = new HashMap<String, Integer>();
+		this.semanticTypeMatches = new HashMap<String, Set<SemanticTypeMapping>>();
+		
 		if (addThingNode) 
 			this.initialGraph();
 		
@@ -203,6 +210,14 @@ public class GraphBuilder {
 		return linkCountMap;
 	}
 	
+	public HashMap<String, Integer> getNodeDataPropertyCount() {
+		return nodeDataPropertyCount;
+	}
+
+	public HashMap<String, Set<SemanticTypeMapping>> getSemanticTypeMatches() {
+		return semanticTypeMatches;
+	}
+
 	public void resetOntologyMaps() {
 		String[] currentUris = this.uriClosure.keySet().toArray(new String[0]);
 		this.uriClosure.clear();
@@ -414,6 +429,23 @@ public class GraphBuilder {
 			}
 		}
 
+		if (source instanceof InternalNode && target instanceof ColumnNode) {
+			
+			key = source.getId() + link.getLabel().getUri();
+			Integer count = this.nodeDataPropertyCount.get(key);
+			if (count == null) this.nodeDataPropertyCount.put(key, 1);
+			else this.nodeDataPropertyCount.put(key, count.intValue() + 1);
+			
+			
+			key = source.getLabel().getUri() + link.getLabel().getUri();
+			Set<SemanticTypeMapping> SemanticTypeMappings = this.semanticTypeMatches.get(key);
+			if (SemanticTypeMappings == null) {
+				SemanticTypeMappings = new HashSet<SemanticTypeMapping>();
+				this.semanticTypeMatches.put(key, SemanticTypeMappings);
+			}
+			SemanticTypeMappings.add(new SemanticTypeMapping(null, null, (InternalNode)source, link, (ColumnNode)target));
+		}
+		
 		this.sourceToTargetLinkUris.add(key);
 		
 		if (link.getModelIds() != null)
@@ -743,24 +775,31 @@ public class GraphBuilder {
 	private void updateLinkCountMap(Link link) {
 
 		String key, sourceUri, targetUri, linkUri;
-
-		if (link instanceof DataPropertyLink) return;
+		Integer count;
+		Node source, target;
 		
-		sourceUri = link.getSource().getLabel().getUri();
-		targetUri = link.getTarget().getLabel().getUri();
+		source = link.getSource();
+		target = link.getTarget();
+		
+		sourceUri = source.getLabel().getUri();
+		targetUri = target.getLabel().getUri();
 		linkUri = link.getLabel().getUri();
-		
-		key = "domain:" + sourceUri + ",link:" + linkUri + ",range:" + targetUri;
-		Integer count = this.linkCountMap.get(key);
-		if (count == null) this.linkCountMap.put(key, 1);
-		else this.linkCountMap.put(key, count.intValue() + 1);
+
+//		if (link instanceof DataPropertyLink) return;
+
+		if (target instanceof InternalNode) {
+			key = "domain:" + sourceUri + ",link:" + linkUri + ",range:" + targetUri;
+			count = this.linkCountMap.get(key);
+			if (count == null) this.linkCountMap.put(key, 1);
+			else this.linkCountMap.put(key, count.intValue() + 1);
+			
+			key = "range:" + targetUri + ",link:" + linkUri ;
+			count = this.linkCountMap.get(key);
+			if (count == null) this.linkCountMap.put(key, 1);
+			else this.linkCountMap.put(key, count.intValue() + 1);
+		}
 		
 		key = "domain:" + sourceUri + ",link:" + linkUri;
-		count = this.linkCountMap.get(key);
-		if (count == null) this.linkCountMap.put(key, 1);
-		else this.linkCountMap.put(key, count.intValue() + 1);
-
-		key = "range:" + targetUri + ",link:" + linkUri ;
 		count = this.linkCountMap.get(key);
 		if (count == null) this.linkCountMap.put(key, 1);
 		else this.linkCountMap.put(key, count.intValue() + 1);
