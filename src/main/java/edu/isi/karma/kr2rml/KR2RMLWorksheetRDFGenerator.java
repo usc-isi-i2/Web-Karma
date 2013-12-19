@@ -511,7 +511,7 @@ public class KR2RMLWorksheetRDFGenerator {
 
 	private String getBlankNodeUri(String subjMapid, Node node) 
 			throws ValueNotFoundKarmaException, HNodeNotFoundKarmaException {
-//		System.out.println("Column values: " + columnValues);
+
 		StringBuilder output = new StringBuilder();
 		// Add the blank namespace
 		output.append(BLANK_NODE_PREFIX);
@@ -521,7 +521,7 @@ public class KR2RMLWorksheetRDFGenerator {
 		
 		// Add the node ids for tha columns covered
 		List<String> columnsCovered = this.kr2rmlMapping.getAuxInfo().getBlankNodesColumnCoverage().get(subjMapid);
-//		System.out.println("Blank node coverage: " + this.auxInfo.getBlankNodesColumnCoverage().get(subjMapid));
+
 		if (columnsCovered != null && !columnsCovered.isEmpty()) {
 			for (int i=0; i<columnsCovered.size(); i++) {
 				String hNodeId = this.getHNodeIdForColumnName(columnsCovered.get(i));
@@ -529,7 +529,6 @@ public class KR2RMLWorksheetRDFGenerator {
 					output.append("_" + node.getNeighbor(hNodeId).getId());
 				} else {
 					String columnName = this.factory.getHNode(hNodeId).getColumnName();
-//					System.out.println("Value not found for " + hNodeId + " Column name:" + columnName);
 					throw new ValueNotFoundKarmaException("Could not retrieve value while constructing " +
 							"blank URI of column:" + columnName + ". ", hNodeId);
 				}

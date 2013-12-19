@@ -84,7 +84,6 @@ public class KR2RMLMappingGenerator {
 
 		this.factory = workspace.getFactory();
 		this.ontMgr = workspace.getOntologyManager();
-//		this.errorReport = errorReport;
 		this.semanticTypes = semanticTypes;
 		this.sourceNamespace = sourceNamespace;
 		R2RMLMappingIdentifier id = null;
@@ -97,11 +96,6 @@ public class KR2RMLMappingGenerator {
 		this.alignmentGraph = alignment.getSteinerTree();
 		this.steinerTreeRoot = alignment.GetTreeRoot();
 		
-//		for (Node n : alignmentGraph.vertexSet()) {
-//			if (n instanceof ColumnNode) {
-//				System.out.println(n.getId() + " -----> " + ((ColumnNode)n).getRdfLiteralType());
-//			}
-//		}
 		// Generate the R2RML data structures
 		generateMappingFromSteinerTree(generateInverse);
 	}
