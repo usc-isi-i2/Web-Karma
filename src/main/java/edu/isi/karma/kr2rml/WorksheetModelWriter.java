@@ -151,9 +151,6 @@ public class WorksheetModelWriter {
 				// Add the subject map statements
 				SubjectMap sjMap = trMap.getSubject();
 				BNode sjBlankNode = f.createBNode();
-				Value templVal = f.createLiteral(sjMap.getTemplate()
-						.getR2rmlTemplateString(factory));
-				con.add(sjBlankNode, templateUri, templVal);
 				con.add(trMapUri, subjMapUri, sjBlankNode);
 
 				// Add the node id for the subject
@@ -184,6 +181,13 @@ public class WorksheetModelWriter {
 					String prefix = auxInfo.getBlankNodesUriPrefixMap().get(sjMap.getId());
 					Value prefixVal = f.createLiteral(prefix);
 					con.add(sjBlankNode, bnNamePrefixUri, prefixVal);
+				}
+				else
+				{
+					// Print out the template for anything that isn't a blank node
+					Value templVal = f.createLiteral(sjMap.getTemplate()
+							.getR2rmlTemplateString(factory));
+					con.add(sjBlankNode, templateUri, templVal);
 				}
 				
 				// Mark as Steiner tree root node if required
