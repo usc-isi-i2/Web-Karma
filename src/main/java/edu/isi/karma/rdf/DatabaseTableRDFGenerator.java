@@ -30,14 +30,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.controller.command.Command.CommandTag;
-import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.kr2rml.ErrorReport;
 import edu.isi.karma.kr2rml.KR2RMLMapping;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
@@ -165,17 +161,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		// Gets all the errors generated during the RDF generation
 		ErrorReport errorReport = new ErrorReport();
 		
-		WorksheetCommandHistoryExecutor wchr = new WorksheetCommandHistoryExecutor(wk.getId(), workspace);
-		try
-		{
-			List<CommandTag> tags = new ArrayList<CommandTag>();
-			tags.add(CommandTag.Transformation);
-			wchr.executeCommandsByTags(tags, new JSONArray(mapping.getWorksheetHistory().toString()));
-		}
-		catch (CommandException | KarmaException e)
-		{
-			logger.error("Unable to execute column transformations", e);
-		}
+		this.applyHistoryToWorksheet(workspace, wk, mapping);
 
 		// RDF generation object initialization
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(wk, 

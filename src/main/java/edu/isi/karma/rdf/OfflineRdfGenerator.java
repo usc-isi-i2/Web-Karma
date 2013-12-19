@@ -233,7 +233,8 @@ public class OfflineRdfGenerator {
 			return;
 		}
 		R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(sourceName, modelURL);
-		FileRdfGenerator.generateRdf(inputType, id, pw, inputFile, encoding, maxNumLines);
+		FileRdfGenerator rdfGenerator = new FileRdfGenerator();
+		rdfGenerator.generateRdf(inputType, id, pw, inputFile, encoding, maxNumLines);
         pw.flush();
 	}
 
