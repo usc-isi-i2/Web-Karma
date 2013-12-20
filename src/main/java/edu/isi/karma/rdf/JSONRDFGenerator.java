@@ -35,6 +35,7 @@ public class JSONRDFGenerator extends RdfGenerator {
 	private JSONRDFGenerator() {
 		this.modelIdentifiers = new HashMap<String, R2RMLMappingIdentifier>();
 		this.readModelParsers = new HashMap<String, WorksheetR2RMLJenaModelParser>();
+		
 	}
 	
 	private static JSONRDFGenerator instance = null;
