@@ -150,7 +150,7 @@ public class PublishRDFCommand extends Command {
 		
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
-		KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace.getOntologyManager(), 
+		KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, 
 				alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
 				Boolean.valueOf(addInverseProperties), errorReport);
 		
@@ -159,7 +159,7 @@ public class PublishRDFCommand extends Command {
 		
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
 				workspace.getFactory(), workspace.getOntologyManager(),
-				rdfFileLocalPath, false, mapping.getAuxInfo(), errorReport);
+				rdfFileLocalPath, false, mapping, errorReport);
 		
 		// Generate the RDF using KR2RML data structures
 		try {

@@ -56,7 +56,6 @@ import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.HTTPUtil;
@@ -200,8 +199,7 @@ public class InvokeDataMiningServiceCommand extends Command {
 			Worksheet worksheet = workspace.getWorksheet(worksheetId);
 			// Generate the KR2RML data structures for the RDF generation
 			final ErrorReport errorReport = new ErrorReport();
-			OntologyManager ontMgr = workspace.getOntologyManager();
-			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(ontMgr, alignment, 
+			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
 			
 			SPARQLGeneratorUtil genObj = new SPARQLGeneratorUtil();

@@ -42,18 +42,15 @@ import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.JSONUtil;
-import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
-import edu.isi.karma.webserver.WorkspaceRegistry;
 
 public class FileRdfGenerator extends RdfGenerator {
 
 	private static Logger logger = LoggerFactory.getLogger(FileRdfGenerator.class);
 	
-    private static Worksheet generateWorksheetFromFile(File inputFile, String inputType,
+    private Worksheet generateWorksheetFromFile(File inputFile, String inputType,
             Workspace workspace, String encoding, int maxNumLines) throws JSONException, IOException, KarmaException, ClassNotFoundException {
         Worksheet worksheet = null;
 
@@ -76,12 +73,11 @@ public class FileRdfGenerator extends RdfGenerator {
         return worksheet;
     }
 
-	public static void generateRdf(String inputType, R2RMLMappingIdentifier id,
+	public void generateRdf(String inputType, R2RMLMappingIdentifier id,
 			 PrintWriter pw, File inputFile, String encoding, int maxNumLines)
 			throws IOException, JSONException, KarmaException {
 		logger.info("Generating worksheet from the data source ...");
-		Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
-		WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
+		Workspace workspace = initializeWorkspace();
     		
 		Worksheet worksheet;
 		try {
@@ -95,21 +91,22 @@ public class FileRdfGenerator extends RdfGenerator {
 		 */
 		logger.info("Generating RDF...");
 		WorksheetR2RMLJenaModelParser parserTest = new WorksheetR2RMLJenaModelParser(id);
-		KR2RMLMapping mapping = parserTest.parse(worksheet, workspace);
+		KR2RMLMapping mapping = parserTest.parse();
 		
 
 		// Gets all the errors generated during the RDF generation
 		ErrorReport errorReport = new ErrorReport();
 
+		this.applyHistoryToWorksheet(workspace, worksheet, mapping);
+		
 		// RDF generation object initialization
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
 		        workspace.getFactory(), workspace.getOntologyManager(), pw,
-		        mapping.getAuxInfo(), errorReport, false);
+		        mapping, errorReport, false);
 
 		// Generate the rdf
 		rdfGen.generateRDF(false);
-		WorkspaceManager.getInstance().removeWorkspace(workspace.getId());
-		WorkspaceRegistry.getInstance().deregister(workspace.getId());
+		this.removeWorkspace(workspace);
 		workspace = null;
 	}
 }

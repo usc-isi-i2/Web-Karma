@@ -3,12 +3,15 @@ package edu.isi.karma.kr2rml;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
+
 public class KR2RMLMapping extends R2RMLMapping{
 	
 	private KR2RMLVersion version;
 	private KR2RMLMappingAuxillaryInformation auxInfo;
 	private Map<String, SubjectMap> subjectMapIndex;
 	private Map<String, TriplesMap> triplesMapIndex;
+	private JSONArray worksheetHistory;
 	
 	
 	public KR2RMLMapping(R2RMLMappingIdentifier id, KR2RMLVersion version)
@@ -35,6 +38,14 @@ public class KR2RMLMapping extends R2RMLMapping{
 
 	public Map<String, TriplesMap> getTriplesMapIndex() {
 		return triplesMapIndex;
+	}
+
+	public JSONArray getWorksheetHistory() {
+		return worksheetHistory;
+	}
+
+	public void setWorksheetHistory(JSONArray worksheetHistory) {
+		this.worksheetHistory = worksheetHistory;
 	}
 
 }
