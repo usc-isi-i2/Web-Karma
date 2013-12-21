@@ -194,12 +194,11 @@ public class GenerateR2RMLModelCommand extends Command {
 			
 			// Generate the KR2RML data structures for the RDF generation
 			final ErrorReport errorReport = new ErrorReport();
-			OntologyManager ontMgr = workspace.getOntologyManager();
-			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(ontMgr, alignment, 
+			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
 			
 			// Write the model
-			writeModel(workspace, ontMgr, mappingGen, worksheet, modelFileLocalPath);
+			writeModel(workspace, workspace.getOntologyManager(), mappingGen, worksheet, modelFileLocalPath);
 			
 			// Write the model to the triple store
 			TripleStoreUtil utilObj = new TripleStoreUtil();
