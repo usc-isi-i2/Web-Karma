@@ -38,187 +38,188 @@ import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
 
-public class ImportCSVFileCommand extends ImportFileCommand implements IPreviewable {
+public class ImportCSVFileCommand extends ImportFileCommand implements
+		IPreviewable {
 
-    // Index of the column headers row
-    private int headerRowIndex = 1;
-    // Index of the row from where data starts
-    private int dataStartRowIndex = 2;
-    // Column delimiter
-    private char delimiter = ',';
-    // Quote character
-    private char quoteCharacter = '"';
-    // Escape character
-    private char escapeCharacter = '\\';
-    private String encoding = null;
-    private int maxNumLines = 10000;
-    
-    protected enum InteractionType {
+	// Index of the column headers row
+	private int headerRowIndex = 1;
+	// Index of the row from where data starts
+	private int dataStartRowIndex = 2;
+	// Column delimiter
+	private char delimiter = ',';
+	// Quote character
+	private char quoteCharacter = '"';
+	// Escape character
+	private char escapeCharacter = '\\';
+	private String encoding = null;
+	private int maxNumLines = 10000;
 
-        generatePreview, importTable
-    }
-    // Logger object
-    private static Logger logger = LoggerFactory
-            .getLogger(ImportCSVFileCommand.class.getSimpleName());
+	protected enum InteractionType {
 
-    public void setHeaderRowIndex(int headerRowIndex) {
-        this.headerRowIndex = headerRowIndex;
-    }
+		generatePreview, importTable
+	}
 
-    public void setDataStartRowIndex(int dataStartRowIndex) {
-        this.dataStartRowIndex = dataStartRowIndex;
-    }
+	// Logger object
+	private static Logger logger = LoggerFactory
+			.getLogger(ImportCSVFileCommand.class.getSimpleName());
 
-    public void setDelimiter(char delimiter) {
-        this.delimiter = delimiter;
-    }
+	public void setHeaderRowIndex(int headerRowIndex) {
+		this.headerRowIndex = headerRowIndex;
+	}
 
-    public void setQuoteCharacter(char escapeCharacter) {
-        this.quoteCharacter = escapeCharacter;
-    }
+	public void setDataStartRowIndex(int dataStartRowIndex) {
+		this.dataStartRowIndex = dataStartRowIndex;
+	}
 
-    public void setEscapeCharacter(char escapeCharacter) {
-        this.escapeCharacter = escapeCharacter;
-    }
+	public void setDelimiter(char delimiter) {
+		this.delimiter = delimiter;
+	}
 
-    public void setEncoding(String encoding) {
-    	this.encoding = encoding;
-    }
-    
-    public void setMaxNumLines(int numLines) {
-    	this.maxNumLines = numLines;
-    }
-    
-    public ImportCSVFileCommand(String id, File file) {
-        super(id, file);
-    }
+	public void setQuoteCharacter(char escapeCharacter) {
+		this.quoteCharacter = escapeCharacter;
+	}
 
-    public ImportCSVFileCommand(String id, String revisedId, File file) {
-        super(id, revisedId, file);
-    }
+	public void setEscapeCharacter(char escapeCharacter) {
+		this.escapeCharacter = escapeCharacter;
+	}
 
-    @Override
-    public String getCommandName() {
-        return this.getClass().getSimpleName();
-    }
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
 
-    @Override
-    public String getTitle() {
-        return "Import CSV File";
-    }
+	public void setMaxNumLines(int numLines) {
+		this.maxNumLines = numLines;
+	}
 
-    @Override
-    public String getDescription() {
-        if (isExecuted()) {
-            return getFile().getName();
-        }
-        return "";
-    }
+	public ImportCSVFileCommand(String id, File file) {
+		super(id, file);
+	}
 
-    @Override
-    protected Import createImport(Workspace workspace) {
-        return new CSVFileImport(headerRowIndex,
-                dataStartRowIndex, delimiter, quoteCharacter, encoding, maxNumLines,
-                getFile(),
-                workspace);
-    }
+	public ImportCSVFileCommand(String id, String revisedId, File file) {
+		super(id, revisedId, file);
+	}
 
+	@Override
+	public String getCommandName() {
+		return this.getClass().getSimpleName();
+	}
 
-    @Override
-    public UpdateContainer showPreview()
-            throws CommandException {
-        UpdateContainer c = new UpdateContainer();
-        c.add(new CSVImportPreviewUpdate(delimiter, quoteCharacter,
-                escapeCharacter, encoding, maxNumLines, getFile(), headerRowIndex, dataStartRowIndex, id));
-        return c;
-    }
+	@Override
+	public String getTitle() {
+		return "Import CSV File";
+	}
 
-    @Override
-    public UpdateContainer handleUserActions(HttpServletRequest request) {
-        /**
-         * Set the parameters *
-         */
-        // Set the delimiter
-        if (request.getParameter("delimiter").equals("comma")) {
-            setDelimiter(',');
-        } else if (request.getParameter("delimiter").equals("tab")) {
-            setDelimiter('\t');
-        } else if (request.getParameter("delimiter").equals("space")) {
-            setDelimiter(' ');
-        } else {
-            // TODO What to do with manual text delimiter
-        }
+	@Override
+	public String getDescription() {
+		if (isExecuted()) {
+			return getFile().getName();
+		}
+		return "";
+	}
 
-        // Set the Header row index
-        String headerIndex = request.getParameter("CSVHeaderLineIndex");
-        if (headerIndex != "") {
-            try {
-                int index = Integer.parseInt(headerIndex);
-                setHeaderRowIndex(index);
-            } catch (Throwable t) {
-                // TODO How t do handle illegal user inputs?
-                logger.error("Wrong user input for CSV Header line index");
-                return null;
-            }
-        } else {
-            setHeaderRowIndex(0);
-        }
+	@Override
+	protected Import createImport(Workspace workspace) {
+		return new CSVFileImport(headerRowIndex, dataStartRowIndex, delimiter,
+				quoteCharacter, encoding, maxNumLines, getFile(), workspace);
+	}
 
-        // Set the data start row index
-        String dataIndex = request.getParameter("startRowIndex");
-        if (dataIndex != "") {
-            try {
-                int index = Integer.parseInt(dataIndex);
-                setDataStartRowIndex(index);
-            } catch (Throwable t) {
-                logger.error("Wrong user input for Data start line index");
-                return null;
-            }
-        } else {
-            setDataStartRowIndex(2);
-        }
+	@Override
+	public UpdateContainer showPreview() throws CommandException {
+		UpdateContainer c = new UpdateContainer();
+		c.add(new CSVImportPreviewUpdate(delimiter, quoteCharacter,
+				escapeCharacter, encoding, maxNumLines, getFile(),
+				headerRowIndex, dataStartRowIndex, id));
+		return c;
+	}
 
-        String strEncoding = request.getParameter("encoding");
-        if(strEncoding == null || strEncoding == "") {
-        	try {
-        		strEncoding = EncodingDetector.detect(getFile());
-        	} catch(Exception e) {
-        		strEncoding = EncodingDetector.DEFAULT_ENCODING;
-        	}
-        }
-        setEncoding(strEncoding);
-        
-        String maxNumLines = request.getParameter("maxNumLines");
-        if(maxNumLines != null && maxNumLines != "") {
-        	try {
-                int num = Integer.parseInt(maxNumLines);
-                setMaxNumLines(num);
-            } catch (Throwable t) {
-                logger.error("Wrong user input for Data Number of Lines to import");
-                return null;
-            }
-        }
-        /**
-         * Send response based on the interaction type *
-         */
-        UpdateContainer c = null;
-        InteractionType type = InteractionType.valueOf(request
-                .getParameter("interactionType"));
-        switch (type) {
-            case generatePreview: {
-                try {
+	@Override
+	public UpdateContainer handleUserActions(HttpServletRequest request) {
+		/**
+		 * Set the parameters *
+		 */
+		// Set the delimiter
+		if (request.getParameter("delimiter").equals("comma")) {
+			setDelimiter(',');
+		} else if (request.getParameter("delimiter").equals("tab")) {
+			setDelimiter('\t');
+		} else if (request.getParameter("delimiter").equals("space")) {
+			setDelimiter(' ');
+		} else if (request.getParameter("delimiter").equals("pipe")) {
+			setDelimiter('|');
+		} else {
+			// TODO What to do with manual text delimiter
+		}
 
-                    c = showPreview();
-                } catch (CommandException e) {
-                    logger.error(
-                            "Error occured while creating utput JSON for CSV Import",
-                            e);
-                }
-                return c;
-            }
-            case importTable:
-                return c;
-        }
-        return c;
-    }
+		// Set the Header row index
+		String headerIndex = request.getParameter("CSVHeaderLineIndex");
+		if (headerIndex != "") {
+			try {
+				int index = Integer.parseInt(headerIndex);
+				setHeaderRowIndex(index);
+			} catch (Throwable t) {
+				// TODO How t do handle illegal user inputs?
+				logger.error("Wrong user input for CSV Header line index");
+				return null;
+			}
+		} else {
+			setHeaderRowIndex(0);
+		}
+
+		// Set the data start row index
+		String dataIndex = request.getParameter("startRowIndex");
+		if (dataIndex != "") {
+			try {
+				int index = Integer.parseInt(dataIndex);
+				setDataStartRowIndex(index);
+			} catch (Throwable t) {
+				logger.error("Wrong user input for Data start line index");
+				return null;
+			}
+		} else {
+			setDataStartRowIndex(2);
+		}
+
+		String strEncoding = request.getParameter("encoding");
+		if (strEncoding == null || strEncoding == "") {
+			try {
+				strEncoding = EncodingDetector.detect(getFile());
+			} catch (Exception e) {
+				strEncoding = EncodingDetector.DEFAULT_ENCODING;
+			}
+		}
+		setEncoding(strEncoding);
+
+		String maxNumLines = request.getParameter("maxNumLines");
+		if (maxNumLines != null && maxNumLines != "") {
+			try {
+				int num = Integer.parseInt(maxNumLines);
+				setMaxNumLines(num);
+			} catch (Throwable t) {
+				logger.error("Wrong user input for Data Number of Lines to import");
+				return null;
+			}
+		}
+		/**
+		 * Send response based on the interaction type *
+		 */
+		UpdateContainer c = null;
+		InteractionType type = InteractionType.valueOf(request
+				.getParameter("interactionType"));
+		switch (type) {
+		case generatePreview: {
+			try {
+
+				c = showPreview();
+			} catch (CommandException e) {
+				logger.error(
+						"Error occured while creating utput JSON for CSV Import",
+						e);
+			}
+			return c;
+		}
+		case importTable:
+			return c;
+		}
+		return c;
+	}
 }

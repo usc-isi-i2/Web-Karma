@@ -154,7 +154,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		try {
 			semanticModel.writeJson(ModelingConfiguration.getModelsJsonDir() + 
 					semanticModel.getName() + 
-					".json");
+					".model.json");
 		} catch (Exception e) {
 			logger.error("error in exporting the model to JSON!");
 //			e.printStackTrace();
@@ -162,7 +162,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		try {
 			semanticModel.writeGraphviz(ModelingConfiguration.getModelsGraphvizDir() + 
 					semanticModel.getName() + 
-					".dot", false, false);
+					".model.dot", false, false);
 		} catch (Exception e) {
 			logger.error("error in exporting the model to GRAPHVIZ!");
 //			e.printStackTrace();
@@ -194,12 +194,11 @@ public class GenerateR2RMLModelCommand extends Command {
 			
 			// Generate the KR2RML data structures for the RDF generation
 			final ErrorReport errorReport = new ErrorReport();
-			OntologyManager ontMgr = workspace.getOntologyManager();
-			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(ontMgr, alignment, 
+			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
 			
 			// Write the model
-			writeModel(workspace, ontMgr, mappingGen, worksheet, modelFileLocalPath);
+			writeModel(workspace, workspace.getOntologyManager(), mappingGen, worksheet, modelFileLocalPath);
 			
 			// Write the model to the triple store
 			TripleStoreUtil utilObj = new TripleStoreUtil();

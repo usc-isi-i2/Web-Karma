@@ -28,10 +28,14 @@ public class R2RMLMapping {
 	
 	private List<TriplesMap> triplesMapList = new ArrayList<TriplesMap>();
 	private List<Prefix> prefixes = new ArrayList<Prefix>();
-	
+	private R2RMLMappingIdentifier id;
 //	private static Logger logger = LoggerFactory
 //			.getLogger(R2RMLMapping.class);
 	
+	public R2RMLMapping(R2RMLMappingIdentifier id) {
+		this.id = id;
+	}
+
 	public List<TriplesMap> getTriplesMapList() {
 		return triplesMapList;
 	}
@@ -43,7 +47,11 @@ public class R2RMLMapping {
 	public void addPrefix(Prefix prefix) {
 		prefixes.add(prefix);
 	}
-
+	
+	public R2RMLMappingIdentifier getId() {
+		return id;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();

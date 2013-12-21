@@ -24,23 +24,16 @@ package edu.isi.karma.kr2rml;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HTable;
-import edu.isi.karma.rep.RepFactory;
-import edu.isi.karma.rep.Worksheet;
 
 public class TemplateTermSetBuilder {
 
 	private static Logger logger = LoggerFactory.getLogger(TemplateTermSetBuilder.class);
 	
 	public static TemplateTermSet constructTemplateTermSetFromR2rmlTemplateString(
-			String templStr, Worksheet worksheet, 
-			RepFactory factory) throws JSONException {
+			String templStr) throws JSONException {
 		TemplateTermSet termSet = new TemplateTermSet();
 		
 		Pattern p = Pattern.compile("\\{\\\".*?\\\"\\}");
@@ -59,32 +52,9 @@ public class TemplateTermSetBuilder {
 		    	
 		    	String colTermVal = removeR2rmlFormatting(matcher.group());
 		    	logger.debug("Col name templ term: " + colTermVal);
-		    	HTable hTable = worksheet.getHeaders();
-		    	// If hierarchical columns
-		    	if (colTermVal.startsWith("[") && colTermVal.endsWith("]") && colTermVal.contains(",")) {
-		    		JSONArray strArr = new JSONArray(colTermVal);
-		    		for (int i=0; i<strArr.length(); i++) {
-						String cName = (String) strArr.get(i);
-						
-						logger.debug("Column being normalized: "+ cName);
-						HNode hNode = hTable.getHNodeFromColumnName(cName);
-						if(hNode == null || hTable == null) {
-							logger.error("Error retrieving column: " + cName);
-							return null;
-						}
-						
-						if (i == strArr.length()-1) {		// Found!
-							String hNodeId = hNode.getId();
-							termSet.addTemplateTermToSet(new ColumnTemplateTerm(hNodeId));
-						} else {
-							hTable = hNode.getNestedTable();
-						}
-		    		}
-		    	} else {
-		    		HNode hNode = hTable.getHNodeFromColumnName(colTermVal);
-		    		logger.debug("Column" + removeR2rmlFormatting(colTermVal));
-		    		termSet.addTemplateTermToSet(new ColumnTemplateTerm(hNode.getId()));
-		    	}
+		    	termSet.addTemplateTermToSet(new ColumnTemplateTerm(colTermVal));
+		    	
+		    	/**/
 		    	
 	    		startIndex = matcher.end();
 		      }
@@ -96,38 +66,12 @@ public class TemplateTermSetBuilder {
 	}
 	
 	public static TemplateTermSet constructTemplateTermSetFromR2rmlColumnString(
-			String colTermVal, Worksheet worksheet, 
-			RepFactory factory) throws JSONException {
+			String colTermVal) throws JSONException {
 		TemplateTermSet termSet = new TemplateTermSet();
-		HTable hTable = worksheet.getHeaders();
 		
-    	// If hierarchical columns
-    	if (colTermVal.startsWith("[") && colTermVal.endsWith("]")) {
-    		JSONArray strArr = new JSONArray(colTermVal);
-    		for (int i=0; i<strArr.length(); i++) {
-				String cName = (String) strArr.get(i);
-				
-				logger.debug("Column being normalized: "+ cName);
-				HNode hNode = hTable.getHNodeFromColumnName(cName);
-				if(hNode == null || hTable == null) {
-					logger.error("Error retrieving column: " + cName);
-					return null;
-				}
-				
-				if (i == strArr.length()-1) {		// Found!
-					String hNodeId = hNode.getId();
-					termSet.addTemplateTermToSet(new ColumnTemplateTerm(hNodeId));
-				} else {
-					hTable = hNode.getNestedTable();
-				}
-    		}
-    	} else {
-    		HNode hNode = hTable.getHNodeFromColumnName(
-    				removeR2rmlFormatting(colTermVal));
-    		logger.debug("Column" + removeR2rmlFormatting(colTermVal));
-    		termSet.addTemplateTermToSet(new ColumnTemplateTerm(hNode.getId()));
-    	}
-	    	
+		logger.debug("Column" + removeR2rmlFormatting(colTermVal));
+		termSet.addTemplateTermToSet(new ColumnTemplateTerm(colTermVal));
+		
 		return termSet;
 	}
 	
