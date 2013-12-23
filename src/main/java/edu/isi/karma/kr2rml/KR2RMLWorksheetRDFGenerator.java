@@ -37,8 +37,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +45,6 @@ import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
@@ -63,10 +60,9 @@ public class KR2RMLWorksheetRDFGenerator {
 	private ErrorReport errorReport;
 	private boolean addColumnContextInformation;
 	private KR2RMLMapping kr2rmlMapping;
+	private KR2RMLMappingColumnNameHNodeTranslator translator;
 	private Map<String, String> prefixToNamespaceMap;
 	private Map<String, String> hNodeToContextUriMap;
-	private Map<String, String> columnNameToHNodeId;
-	private Map<String, String> hNodeIdToColumnName;
 	private PrintWriter outWriter;
 	
 	private Logger logger = LoggerFactory.getLogger(KR2RMLWorksheetRDFGenerator.class);
@@ -85,10 +81,8 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.prefixToNamespaceMap = new HashMap<String, String>();
 		this.hNodeToContextUriMap = new HashMap<String, String>();
 		this.addColumnContextInformation = addColumnContextInformation;
-		this.columnNameToHNodeId = new HashMap<String,String>();
-		this.hNodeIdToColumnName = new HashMap<String,String>();
+		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);
 		populatePrefixToNamespaceMap();
-		populateHNodeIdAndColumnNameMaps();
 	}
 	
 	public KR2RMLWorksheetRDFGenerator(Worksheet worksheet, RepFactory factory, 
@@ -104,10 +98,8 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.prefixToNamespaceMap = new HashMap<String, String>();
 		this.hNodeToContextUriMap = new HashMap<String, String>();
 		this.addColumnContextInformation = addColumnContextInformation;
-		this.columnNameToHNodeId = new HashMap<String,String>();
-		this.hNodeIdToColumnName = new HashMap<String,String>();
+		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);
 		populatePrefixToNamespaceMap();
-		populateHNodeIdAndColumnNameMaps();
 	
 	}
 	
@@ -194,7 +186,9 @@ public class KR2RMLWorksheetRDFGenerator {
 	public void generateTriplesForCell(Node node, Set<String> existingTopRowTriples, 
 			String hNodeId, Set<String> predicatesCovered, 
 			Map<String, ReportMessage> predicatesFailed, Set<String> predicatesSuccessful) {
-		List<PredicateObjectMap> pomList = this.kr2rmlMapping.getAuxInfo().getColumnNameToPredObjLinks().get(hNodeIdToColumnName.get(hNodeId));
+		
+		String columnName = translator.getColumnNameForHNodeId(hNodeId);
+		List<PredicateObjectMap> pomList = this.kr2rmlMapping.getAuxInfo().getColumnNameToPredObjLinks().get(columnName);
 		if (pomList == null || pomList.isEmpty())
 			return;
 		
@@ -361,7 +355,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				if (templ.isSingleColumnTerm()) {
 					try
 					{
-						String hNodeId_val = getHNodeIdForColumnName(templ.getAllTerms().get(0).getTemplateTermValue());
+						String hNodeId_val = translator.getHNodeIdForColumnName(templ.getAllTerms().get(0).getTemplateTermValue());
 						String quad = constructQuadWithLiteralObject(subjUri, predicateUri, value,
 								rdfLiteralType, hNodeId_val);
 						if (!existingTopRowTriples.contains(quad)) {
@@ -387,65 +381,6 @@ public class KR2RMLWorksheetRDFGenerator {
 		predicatesSuccessful.add(pom.getPredicate().getId());
 		if (predicatesFailed.containsKey(pom.getPredicate().getId()))
 			predicatesFailed.remove(pom.getPredicate().getId());
-	}
-
-	private void populateHNodeIdAndColumnNameMaps()
-	{
-		for(String columnName : kr2rmlMapping.getAuxInfo().getColumnNameToPredObjLinks().keySet())
-		{
-			try
-			{
-				getHNodeIdForColumnName(columnName);
-			}
-			catch (HNodeNotFoundKarmaException ex)
-			{
-				logger.debug("Unable to find HNodeId for column name: " + columnName, ex);
-			}
-		}
-	}
-	private String getHNodeIdForColumnName(String templateTermValue) throws HNodeNotFoundKarmaException {
-		if(!this.columnNameToHNodeId.containsKey(templateTermValue))
-		{
-			try {
-				String hNodeId = translateColumnNameToHNodeId(templateTermValue);
-				columnNameToHNodeId.put(templateTermValue, hNodeId);
-				hNodeIdToColumnName.put(hNodeId, templateTermValue);
-				
-			} catch (JSONException e) {
-				throw new HNodeNotFoundKarmaException("Unable to find HNodeId for column name", templateTermValue);
-			}
-		}
-		return this.columnNameToHNodeId.get(templateTermValue);
-	}
-	
-	private String translateColumnNameToHNodeId(String colTermVal) throws JSONException
-	{
-		HTable hTable = worksheet.getHeaders();
-    	// If hierarchical columns
-    	if (colTermVal.startsWith("[") && colTermVal.endsWith("]") && colTermVal.contains(",")) {
-    		JSONArray strArr = new JSONArray(colTermVal);
-    		for (int i=0; i<strArr.length(); i++) {
-				String cName = (String) strArr.get(i);
-				
-				logger.debug("Column being normalized: "+ cName);
-				HNode hNode = hTable.getHNodeFromColumnName(cName);
-				if(hNode == null || hTable == null) {
-					logger.error("Error retrieving column: " + cName);
-					return null;
-				}
-				
-				if (i == strArr.length()-1) {		// Found!
-					return hNode.getId();
-				} else {
-					hTable = hNode.getNestedTable();
-				}
-    		}
-    	} else {
-    		HNode hNode = hTable.getHNodeFromColumnName(colTermVal);
-    		logger.debug("Column" +colTermVal);
-    		return hNode.getId();
-    	}
-    	return null;
 	}
 
 	private ReportMessage createReportMessage(String title, ValueNotFoundKarmaException ve, 
@@ -524,7 +459,7 @@ public class KR2RMLWorksheetRDFGenerator {
 
 		if (columnsCovered != null && !columnsCovered.isEmpty()) {
 			for (int i=0; i<columnsCovered.size(); i++) {
-				String hNodeId = this.getHNodeIdForColumnName(columnsCovered.get(i));
+				String hNodeId = translator.getHNodeIdForColumnName(columnsCovered.get(i));
 				if (node.canReachNeighbor(hNodeId)) {
 					output.append("_" + node.getNeighbor(hNodeId).getId());
 				} else {
@@ -547,7 +482,7 @@ public class KR2RMLWorksheetRDFGenerator {
 			} 
 			// Column template term
 			else if (term instanceof ColumnTemplateTerm) {
-				String hNodeId = this.getHNodeIdForColumnName(term.getTemplateTermValue());
+				String hNodeId = translator.getHNodeIdForColumnName(term.getTemplateTermValue());
 				if (node.canReachNeighbor(hNodeId)) {
 					Node neighborNode = node.getNeighbor(hNodeId);
 					if (neighborNode != null) {

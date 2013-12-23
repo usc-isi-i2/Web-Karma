@@ -24,24 +24,18 @@ package edu.isi.karma.kr2rml;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
@@ -61,15 +55,15 @@ import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 
 public class KR2RMLMappingGenerator {
 
-	private RepFactory factory;
 	private OntologyManager ontMgr;
 	private String sourceNamespace;
 //	private ErrorReport errorReport;
 	private KR2RMLMapping r2rmlMapping;
+	private KR2RMLMappingColumnNameHNodeTranslator translator;
 	private final Node steinerTreeRoot;
 	private SemanticTypes semanticTypes;
 	private DirectedWeightedMultigraph<Node, Link> alignmentGraph;
-	private Map<String, String> hNodeIdsToColumnName = new HashMap<String, String>();
+	
 	
 	// Internal data structures required
 	private int synonymIdCounter;
@@ -78,11 +72,11 @@ public class KR2RMLMappingGenerator {
 	private final static String REFOBJECT_MAP_PREFIX = "RefObjectMap";
 	private static Logger logger = LoggerFactory.getLogger(KR2RMLMappingGenerator.class);
 	
-	public KR2RMLMappingGenerator(Workspace workspace, Alignment alignment, 
+	public KR2RMLMappingGenerator(Workspace workspace, Worksheet worksheet, Alignment alignment, 
 			SemanticTypes semanticTypes, String sourcePrefix, String sourceNamespace, 
 			boolean generateInverse, ErrorReport errorReport) {
 
-		this.factory = workspace.getFactory();
+		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(workspace.getFactory(), worksheet);
 		this.ontMgr = workspace.getOntologyManager();
 		this.semanticTypes = semanticTypes;
 		this.sourceNamespace = sourceNamespace;
@@ -152,7 +146,8 @@ public class KR2RMLMappingGenerator {
 						Node n = linkIterator.next().getTarget();	
 						if(n instanceof ColumnNode)
 						{
-							columnsCovered.add(getHNodeIdToColumnNameMapping(((ColumnNode)n).getId()));
+							String columnName = translator.getColumnNameForHNodeId(((ColumnNode)n).getId());
+							columnsCovered.add(columnName);
 						}
 					}
 					
@@ -203,7 +198,7 @@ public class KR2RMLMappingGenerator {
 						if (tNode instanceof ColumnNode) {
 							ColumnNode cnode = (ColumnNode) tNode;
 							String hNodeId = cnode.getHNodeId();
-							String columnName = getHNodeIdToColumnNameMapping(hNodeId);
+							String columnName = translator.getColumnNameForHNodeId(hNodeId);
 							ColumnTemplateTerm cnTerm = new ColumnTemplateTerm(columnName);
 							
 							// Identify classInstance links to set the template
@@ -268,7 +263,7 @@ public class KR2RMLMappingGenerator {
 						if (specializedEdge != null) {
 							Node specializedEdgeTarget = specializedEdge.getTarget();
 							if (specializedEdgeTarget instanceof ColumnNode) {
-								String columnName = getHNodeIdToColumnNameMapping(((ColumnNode) specializedEdgeTarget).getHNodeId());
+								String columnName = translator.getColumnNameForHNodeId(((ColumnNode) specializedEdgeTarget).getHNodeId());
 								ColumnTemplateTerm cnTerm = 
 										new ColumnTemplateTerm(columnName);
 								pred.getTemplate().addTemplateTermToSet(cnTerm);
@@ -291,7 +286,7 @@ public class KR2RMLMappingGenerator {
 						// Create the object map
 						ColumnNode cnode = (ColumnNode) target;
 						String hNodeId = cnode.getHNodeId();
-						String columnName = this.getHNodeIdToColumnNameMapping(hNodeId);
+						String columnName = translator.getColumnNameForHNodeId(hNodeId);
 						ColumnTemplateTerm cnTerm = new ColumnTemplateTerm(columnName);
 						TemplateTermSet termSet = new TemplateTermSet();
 						termSet.addTemplateTermToSet(cnTerm);
@@ -312,7 +307,7 @@ public class KR2RMLMappingGenerator {
 						if (specializedEdge != null) {
 							Node specializedEdgeTarget = specializedEdge.getTarget();
 							if (specializedEdgeTarget instanceof ColumnNode) {
-								String targetColumnName = getHNodeIdToColumnNameMapping(((ColumnNode) specializedEdgeTarget).getHNodeId());
+								String targetColumnName = translator.getColumnNameForHNodeId(((ColumnNode) specializedEdgeTarget).getHNodeId());
 								ColumnTemplateTerm cnsplTerm = 
 										new ColumnTemplateTerm(targetColumnName);
 								pred.getTemplate().addTemplateTermToSet(cnsplTerm);
@@ -359,7 +354,7 @@ public class KR2RMLMappingGenerator {
 				PredicateObjectMap poMap = new PredicateObjectMap(subjTrMap);
 				
 				// Create the object map
-				String columnName = this.getHNodeIdToColumnNameMapping(hNodeId);
+				String columnName = translator.getColumnNameForHNodeId(hNodeId);
 				ColumnTemplateTerm cnTerm = new ColumnTemplateTerm(columnName);
 				TemplateTermSet termSet = new TemplateTermSet();
 				termSet.addTemplateTermToSet(cnTerm);
@@ -457,39 +452,7 @@ public class KR2RMLMappingGenerator {
 		return null;
 	}
 	
-	private String getHNodeIdToColumnNameMapping(String hNodeId)
-	{
-		
-		if(!this.hNodeIdsToColumnName.containsKey(hNodeId))
-		{
-			hNodeIdsToColumnName.put(hNodeId, translateHNodeIdToColumnName(hNodeId));
-		}
-		return hNodeIdsToColumnName.get(hNodeId);
-		
-	}
-	private String translateHNodeIdToColumnName(String hNodeId)
-	{
-		HNode hNode = factory.getHNode(hNodeId);
-		String colNameStr = "";
-		try {
-			JSONArray colNameArr = hNode.getJSONArrayRepresentation(factory);
-			if (colNameArr.length() == 1) {
-				colNameStr = (String) 
-						(((JSONObject)colNameArr.get(0)).get("columnName"));
-			} else {
-				JSONArray colNames = new JSONArray();
-				for (int i=0; i<colNameArr.length();i++) {
-					colNames.put((String)
-							(((JSONObject)colNameArr.get(i)).get("columnName")));
-				}
-				colNameStr = colNames.toString();
-			}
-			return colNameStr;
-		} catch (JSONException e) {
-			logger.debug("unable to find hnodeid to column name mapping for hnode: " + hNode.getId() + " " + hNode.getColumnName(), e);
-		}
-		return null;
-	}
+	
 	
 	private String getNewRefObjectMapId() {
 		return REFOBJECT_MAP_PREFIX + "_" + UUID.randomUUID();

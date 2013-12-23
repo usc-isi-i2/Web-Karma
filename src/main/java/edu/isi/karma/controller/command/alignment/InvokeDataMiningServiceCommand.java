@@ -199,7 +199,7 @@ public class InvokeDataMiningServiceCommand extends Command {
 			Worksheet worksheet = workspace.getWorksheet(worksheetId);
 			// Generate the KR2RML data structures for the RDF generation
 			final ErrorReport errorReport = new ErrorReport();
-			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, alignment, 
+			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, worksheet, alignment, 
 					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
 			
 			SPARQLGeneratorUtil genObj = new SPARQLGeneratorUtil();
