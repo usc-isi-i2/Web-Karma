@@ -36,7 +36,11 @@ public class WorksheetProperties {
 	public static String DEFAULT_GRAPH_NAME_PREFIX = "http://localhost/worksheets/";
 	
 	public enum Property {
-		serviceRequestMethod, serviceDataPostMethod, graphName, serviceUrl, hasServiceProperties
+		serviceRequestMethod, serviceDataPostMethod, graphName, serviceUrl, hasServiceProperties, sourceType
+	}
+	
+	public enum SourceTypes {
+		CSV, DB, JSON, XML
 	}
 	
 	public WorksheetProperties() {

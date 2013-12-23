@@ -46,6 +46,8 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.util.JSONUtil;
 
@@ -123,7 +125,9 @@ public class JsonImport extends Import {
 
 		if (importJson)
 			writeJsonFile(json);
-		return getWorksheet();
+		Worksheet ws = getWorksheet();
+		ws.getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.JSON.toString());
+		return ws;
 	}
 
 	private static void writeJsonFile(Object o) {

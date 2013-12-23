@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.webserver.KarmaException;
 
@@ -47,7 +49,9 @@ public class XMLImport extends Import {
 
     @Override
     public Worksheet generateWorksheet() throws JSONException, IOException, KarmaException, ClassNotFoundException {
-        return jsonImport.generateWorksheet();
+        jsonImport.generateWorksheet();
+        getWorksheet().getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.XML.toString());
+        return getWorksheet();
     }
 
 }

@@ -42,6 +42,8 @@ import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
 
@@ -125,6 +127,7 @@ public class CSVFileImport extends Import {
             rowCount++;
         }
         br.close();
+        getWorksheet().getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.CSV.toString());
         return getWorksheet();
     }
 
