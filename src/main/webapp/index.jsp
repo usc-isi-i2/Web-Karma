@@ -33,7 +33,7 @@ and related projects, please see: http://www.isi.edu/integration
         <!-- Date: 2011-08-01 -->
 
         <!-- CSS -->
-        
+        <link rel="stylesheet" type="text/css" href="./uiLibs/twitterBootstrap/css/bootstrap.min.css" media="screen">
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery-ui-themes/smoothness/jquery-ui.min.css" />
         <link rel="stylesheet" type="text/css" href="./css/TopMenuBar.css" />
         <link rel="stylesheet" type="text/css" href="./css/command_History.css" />
@@ -85,7 +85,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="uiLibs/locale/js/locale.js"></script>
         <script type="text/javascript" src="uiLibs/less/js/less-1.4.1.min.js"></script>
         <script type="text/javascript" src="uiLibs/modernizr/js/modernizr.custom.59953.js"></script>
-
+		
         <!-- Home grown JavaScript files -->
         <script type="text/javascript" src="js/table_manipulation.js"></script>
         <script type="text/javascript" src="js/ServerResponseObjectParsing.js"></script>
@@ -108,7 +108,8 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/cleaning-charts.js"></script>
         <script type="text/javascript" src="js/showModel.js"></script>
 
-
+		
+		
         <script type="text/javascript">
             /* Load and parse initial JSON */
             // Get the preferences Id from cookies if present
@@ -343,37 +344,35 @@ and related projects, please see: http://www.isi.edu/integration
 	</head>
 
 	<body>
-		<div id="banner">
-            <h1 class="karma-header">Karma <span id="karma-version"><jsp:include page="version.jsp"></jsp:include></span></h1>
-            <ul class="karma-header-links">
-              <li><a target="_blank" href="https://github.com/InformationIntegrationGroup/Web-Karma/wiki">User Guide</a></li>
-              <li><a target="_blank" href="http://isi.edu/integration/karma">Karma Home</a></li>
-              <li><a target="_blank" href="" id="sparql_end_point_link">OpenRDF</a></li>
-            </ul>
-        </div>
-		<table id="topMenuBar">
-			<tr>
-				<td>
-				<button id="importDatabaseTableButton" class="importButton" align="top">
-					Import Database Table
-				</button></td>
-				<td>
-				<button id="importFromServiceButton" class="importButton" align="top">
-					Import from Service
-				</button></td>
-				<td>
-				<button id="mergeButton" class="importButton" align="top" style="display: none">
-					Merge
-				</button></td>
-				<td>
-				<div class="container">
-					<!-- <input type="file" name="file1" id="uploadFile_JSON"> -->
-					<form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">
+	
+		<div class="container">
+		
+			<div class="navbar navbar-default" role="navigation">
+		        <div class="navbar-header">
+		          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		            <span class="sr-only">Toggle navigation</span>
+		            <span class="icon-bar"></span>
+		            <span class="icon-bar"></span>
+		            <span class="icon-bar"></span>
+		          </button>
+		          <a class="navbar-brand" href="#">Karma 
+		              	<span id="karma-version"><jsp:include page="version.jsp" /></a>
+		        </div>
+		        <div class="navbar-collapse collapse">
+		          <ul class="nav navbar-nav">
+		            <li class="dropdown">
+		              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span>&nbsp;Import <b class="caret"></b></a>
+		              <ul class="dropdown-menu">
+		                <li><a href="#" id="importDatabaseTableButton">Database Table</a></li>
+		                  <li><a href="#" id="importFromServiceButton" >From Service</a></li>
+		                  <li><a href="#">
+		                  <form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">
 						<!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
 						<div class="row fileupload-buttonbar">
 							<div class="span7">
 								<!-- The fileinput-button span is used to style the file input field as button -->
-								<span class="btn btn-success fileinput-button importButton"> <i class="icon-plus icon-white"></i> <span>Import File...</span>
+								<span class="btn btn-success fileinput-button importButton"> <i class="icon-plus icon-white"></i> 
+									<span>From File</span>
 									<input type="file" name="files[]" multiple>
 								</span>
 							</div>
@@ -389,13 +388,22 @@ and related projects, please see: http://www.isi.edu/integration
 								</div>
 							</div>
 						</div>
-					</form>
-				</div></td>
-			</tr>
-		</table>
-		<button id="resetButton" align="right">
-			Reset
-		</button>
+						</form>
+		                  </a></li>
+		              </ul>
+		            </li>
+		            <li><a href="#" id="resetButton">Reset</a></li>
+		          </ul>
+		          <ul class="nav navbar-nav navbar-right">
+		            <li><a target="_blank" href="https://github.com/InformationIntegrationGroup/Web-Karma/wiki">User Guide</a></li>
+			        <li><a target="_blank" href="http://isi.edu/integration/karma">Karma Home</a></li>
+			        <li><a target="_blank" href="" id="sparql_end_point_link">OpenRDF</a></li>
+		          </ul>
+		        </div>
+		      </div>
+			
+		</div>
+	
 		<div id="commHistoryAndWorkspace">
 			<div id="commandHistory" class="ui-corner-top">
 				<div id="titleCommand" class="ui-corner-top">
@@ -1367,5 +1375,8 @@ and related projects, please see: http://www.isi.edu/integration
         	<button id="invokeRubenReconciliationService">Invoke Reconciliation Service</button>
             <button id="invokeMachineLearningService">Invoke M/L Service</button>
         </div>
+        
+        
+        <script type="text/javascript" src="uiLibs/twitterBootstrap/js/bootstrap.min.js"></script>
     </body>
 </html>
