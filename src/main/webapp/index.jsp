@@ -34,10 +34,11 @@ and related projects, please see: http://www.isi.edu/integration
 
         <!-- CSS -->
         
-        <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery-ui-1.8.16.custom.css" />
+        <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery-ui-themes/smoothness/jquery-ui.min.css" />
         <link rel="stylesheet" type="text/css" href="./css/TopMenuBar.css" />
         <link rel="stylesheet" type="text/css" href="./css/command_History.css" />
         <link rel="stylesheet" type="text/css" href="./css/tables_workspace.css" />
+        <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery.fileupload.css" />
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery.fileupload-ui.css" />
         <link rel="stylesheet" type="text/css" href="./css/CSVImport.css" />
         <link rel="stylesheet" type="text/css" href="./css/fileImport.css" />
@@ -61,8 +62,8 @@ and related projects, please see: http://www.isi.edu/integration
 			}
 		</style>
         <!-- Third Party JavaScript files		 -->
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery-1.6.2.min.js"></script>
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery-ui-1.8.16.custom.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery-ui-1.10.3.custom.min.js"></script>
 
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.tmpl.min.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.hoverIntent.js"></script>
@@ -70,7 +71,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.qtip.min.js"></script>
         <!-- 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script> -->
         <script type="text/javascript" src="https://www.google.com/jsapi?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script>
-        <script type="text/javascript" src="uiLibs/jquery/js/sticky.min.js"></script>
+        <script type="text/javascript" src="uiLibs/sticky/js/sticky.min.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.jeditable.js"></script>
         <script type="text/javascript" src="uiLibs/json/js/json2.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.cookie.js"></script>
@@ -80,7 +81,7 @@ and related projects, please see: http://www.isi.edu/integration
 
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload.js"></script>
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload-ui.js"></script>
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload-jui.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload-jquery-ui.js"></script>
         <script type="text/javascript" src="uiLibs/locale/js/locale.js"></script>
         <script type="text/javascript" src="uiLibs/less/js/less-1.4.1.min.js"></script>
         <script type="text/javascript" src="uiLibs/modernizr/js/modernizr.custom.59953.js"></script>
