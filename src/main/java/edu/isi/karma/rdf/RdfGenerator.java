@@ -32,6 +32,7 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.Command.CommandTag;
 import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.kr2rml.KR2RMLMapping;
+import edu.isi.karma.modeling.ModelingConfiguration;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
@@ -44,14 +45,16 @@ public abstract class RdfGenerator {
 	private static Logger logger = LoggerFactory.getLogger(RdfGenerator.class);
 	
 	protected Workspace initializeWorkspace() {
+		
 		Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
-         WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
+        WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
+        ModelingConfiguration.setManualAlignment(true);
 		return workspace;
 	}
 
 	protected void removeWorkspace(Workspace workspace) {
 		WorkspaceManager.getInstance().removeWorkspace(workspace.getId());
-	     WorkspaceRegistry.getInstance().deregister(workspace.getId());
+	    WorkspaceRegistry.getInstance().deregister(workspace.getId());
 	}
 
 	protected void applyHistoryToWorksheet(Workspace workspace, Worksheet worksheet,
