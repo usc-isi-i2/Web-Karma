@@ -355,7 +355,7 @@ public class GraphUtil {
 		org.kohsuke.graphviz.Graph graphViz = new org.kohsuke.graphviz.Graph();
 		graphViz.attr("fontcolor", "blue");
 		graphViz.attr("remincross", "true");
-		graphViz.attr("label", label);
+		graphViz.attr("label", label == null ? "" : label);
 		
 		org.kohsuke.graphviz.Graph cluster = null;
 		int counter = 0;

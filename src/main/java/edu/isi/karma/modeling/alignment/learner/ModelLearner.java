@@ -134,6 +134,8 @@ public class ModelLearner {
 	public List<SortableSemanticModel> hypothesize() {
 
 		Set<Node> addedNodes = new HashSet<Node>(); //They should be deleted from the graph after computing the semantic models
+		
+		logger.info("finding candidate steiner sets ... ");
 		CandidateSteinerSets candidateSteinerSets = getCandidateSteinerSets(columnNodes, addedNodes);
 		
 		if (candidateSteinerSets == null) {
@@ -150,6 +152,7 @@ public class ModelLearner {
 		logger.info("time to update weights: " + (updateWightsElapsedTimeMillis/1000F));
 
 		
+		logger.info("computing steiner trees ...");
 		List<SortableSemanticModel> sortableSemanticModels = new ArrayList<SortableSemanticModel>();
 		int count = 1;
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
@@ -186,6 +189,7 @@ public class ModelLearner {
 			}
 		}
 		
+		logger.info("results are ready ...");
 		return uniqueModels;
 
 	}
@@ -281,7 +285,8 @@ public class ModelLearner {
 				if (tempSemanticTypeMappings == null || tempSemanticTypeMappings.isEmpty()) // No struct in graph is matched with the semantic type, we add a new struct to the graph
 				{
 					SemanticTypeMapping mp = addSemanticTypeStruct(n, semanticType, addedNodes);
-					semanticTypeMappings.add(mp);
+					if (mp != null)
+						semanticTypeMappings.add(mp);
 				}
 			}
 			
@@ -340,44 +345,79 @@ public class ModelLearner {
 		logger.debug("semantic type: " + domainUri + "|" + propertyUri + "|" + confidence + "|" + origin);
 
 		// add dataproperty to existing classes if sl is a data node mapping
-		Set<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(domainUri);
-		if (nodesWithSameUriOfDomain != null) {
-			for (Node source : nodesWithSameUriOfDomain) {
-				if (source instanceof InternalNode) {
-					
-//					boolean propertyLinkExists = false;
-					int countOfExistingPropertyLinks = 0;
-					Set<Link> outgoingLinks = this.graphBuilder.getGraph().outgoingEdgesOf(source);
-					if (outgoingLinks != null) {
-						for (Link l : outgoingLinks) {
-							if (l.getLabel().getUri().equals(propertyUri)) {
-								if (l.getTarget() instanceof ColumnNode) {
-									SemanticTypeMapping mp = 
-											new SemanticTypeMapping(sourceColumn, semanticType, (InternalNode)source, l, (ColumnNode)l.getTarget());
-									mappings.add(mp);
-									countOfExistingPropertyLinks ++;
-								}
-							}
-						}
-					}
-					
-					if (countOfExistingPropertyLinks >= countOfSemanticType.intValue())
-						continue;
+		Set<Node> foundInternalNodes = new HashSet<Node>();
+		Set<SemanticTypeMapping> semanticTypeMatches = this.graphBuilder.getSemanticTypeMatches().get(domainUri + propertyUri);
+		if (semanticTypeMatches != null) {
+			for (SemanticTypeMapping stm : semanticTypeMatches) {
 
-					String nodeId = new RandomGUID().toString();
-					ColumnNode target = new ColumnNode(nodeId, nodeId, sourceColumn.getColumnName(), null);
-					if (!this.graphBuilder.addNode(target)) continue;;
-					addedNodes.add(target);
-					
-					String linkId = LinkIdFactory.getLinkId(propertyUri, source.getId(), target.getId());	
-					Link link = new DataPropertyLink(linkId, new Label(propertyUri), false);
-					if (!this.graphBuilder.addLink(source, target, link)) continue;;
-					
-					SemanticTypeMapping mp = new SemanticTypeMapping(sourceColumn, semanticType, (InternalNode)source, link, target);
-					mappings.add(mp);
-				}
+				SemanticTypeMapping mp = 
+						new SemanticTypeMapping(sourceColumn, semanticType, stm.getSource(), stm.getLink(), stm.getTarget());
+				mappings.add(mp);
+				foundInternalNodes.add(stm.getSource());
+				
 			}
 		}
+		
+		logger.debug("adding data property to found internal nodes ...");
+		
+		Integer count;
+		for (Node source : foundInternalNodes) {
+			count = this.graphBuilder.getNodeDataPropertyCount().get(source.getId() + propertyUri);
+			if (count == null || count >= countOfSemanticType.intValue()) 
+				continue;
+			
+			String nodeId = new RandomGUID().toString();
+			ColumnNode target = new ColumnNode(nodeId, nodeId, sourceColumn.getColumnName(), null);
+			if (!this.graphBuilder.addNode(target)) continue;;
+			addedNodes.add(target);
+			
+			String linkId = LinkIdFactory.getLinkId(propertyUri, source.getId(), target.getId());	
+			Link link = new DataPropertyLink(linkId, new Label(propertyUri), false);
+			if (!this.graphBuilder.addLink(source, target, link)) continue;;
+			
+			SemanticTypeMapping mp = new SemanticTypeMapping(sourceColumn, semanticType, (InternalNode)source, link, target);
+			mappings.add(mp);
+		}
+		
+//		Set<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(domainUri);
+//		if (nodesWithSameUriOfDomain != null) {
+//			for (Node source : nodesWithSameUriOfDomain) {
+//				if (source instanceof InternalNode) {
+//					
+////					boolean propertyLinkExists = false;
+//					int countOfExistingPropertyLinks = 0;
+//					Set<Link> outgoingLinks = this.graphBuilder.getGraph().outgoingEdgesOf(source);
+//					if (outgoingLinks != null) {
+//						for (Link l : outgoingLinks) {
+//							if (l.getLabel().getUri().equals(propertyUri)) {
+//								if (l.getTarget() instanceof ColumnNode) {
+//									SemanticTypeMapping mp = 
+//											new SemanticTypeMapping(sourceColumn, semanticType, (InternalNode)source, l, (ColumnNode)l.getTarget());
+//									mappings.add(mp);
+//									countOfExistingPropertyLinks ++;
+//								}
+//							}
+//						}
+//					}
+//					
+//					if (countOfExistingPropertyLinks >= countOfSemanticType.intValue())
+//						continue;
+//
+//					String nodeId = new RandomGUID().toString();
+//					ColumnNode target = new ColumnNode(nodeId, nodeId, sourceColumn.getColumnName(), null);
+//					if (!this.graphBuilder.addNode(target)) continue;;
+//					addedNodes.add(target);
+//					
+//					String linkId = LinkIdFactory.getLinkId(propertyUri, source.getId(), target.getId());	
+//					Link link = new DataPropertyLink(linkId, new Label(propertyUri), false);
+//					if (!this.graphBuilder.addLink(source, target, link)) continue;;
+//					
+//					SemanticTypeMapping mp = new SemanticTypeMapping(sourceColumn, semanticType, (InternalNode)source, link, target);
+//					mappings.add(mp);
+//				}
+//			}
+//		}
+		
 		return mappings;
 	}
 	
@@ -585,13 +625,13 @@ public class ModelLearner {
 		ModelLearner modelLearner;
 		
 		for (int i = 0; i < semanticModels.size(); i++) {
-//		int i = 0; {
+//		int i = 10; {
 			trainingData.clear();
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
 			
 			logger.info("======================================================");
-			logger.info(newSource.getDescription());
+			logger.info(newSource.getName());
 			logger.info("======================================================");
 			
 //			int[] trainingModels = {0, 4};
@@ -623,6 +663,7 @@ public class ModelLearner {
 				for (SemanticModel sm : trainingData)
 					modelLearningGraph.addModel(sm);
 				modelLearner.graphBuilder = modelLearningGraph.getGraphBuilder();
+				modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 				// save graph to file
 				try {
 					GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName);
@@ -678,7 +719,7 @@ public class ModelLearner {
 			
 			GraphUtil.exportGraphviz(
 					graphs, 
-					newSource.getDescription(),
+					newSource.getName(),
 					outputPath + semanticModels.get(i).getName() + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT);
 			
 		}

@@ -56,7 +56,7 @@ public abstract class AbstractJDBCUtil {
 
 	public abstract ArrayList<String> getListOfTables(Connection conn) throws SQLException, ClassNotFoundException;
 
-	public Connection getConnection(String driver, String connectString) throws SQLException, ClassNotFoundException {
+	protected Connection getConnection(String driver, String connectString) throws SQLException, ClassNotFoundException {
 		Connection localConn = null;
 		Class.forName(driver);
 		localConn = DriverManager.getConnection(connectString);
@@ -92,18 +92,15 @@ public abstract class AbstractJDBCUtil {
 	public ArrayList<String> getListOfTables(DBType dbType, String hostname,
 			int portnumber, String username, String password, String dBorSIDName) 
 			throws SQLException, ClassNotFoundException {
-		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
-		Connection conn = getConnection(getDriver(), connectString);
-		
+		Connection conn = getConnection(hostname, portnumber, username, password, dBorSIDName);
 		return getListOfTables(conn);
 	}
 
 	public ArrayList<ArrayList<String>> getDataForTable(DBType dbType, String hostname,
 			int portnumber, String username, String password, String tableName, String dBorSIDName)
 			throws SQLException, ClassNotFoundException {
-		String connectString = getConnectString(hostname, portnumber, username, password, dBorSIDName);
-		Connection conn = getConnection(getDriver(), connectString);
-		
+
+		Connection conn = getConnection(hostname, portnumber, username, password, dBorSIDName);
 		return getDataForTable(conn, tableName);
 	}
 

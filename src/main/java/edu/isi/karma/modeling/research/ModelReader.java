@@ -91,8 +91,8 @@ public class ModelReader {
 
 		try {
 
-//			semanticModels = importSemanticModelsFromSavedModels(Params.MODEL_DIR, ".main.model");
-			semanticModels = importSemanticModels(Params.INPUT_DIR);
+			semanticModels = importSemanticModelsFromJsonFiles(Params.MODEL_DIR, Params.MODEL_MAIN_FILE_EXT);
+//			semanticModels = importSemanticModels(Params.INPUT_DIR);
 			if (semanticModels != null) {
 				for (SemanticModel sm : semanticModels) {
 					sm.print();

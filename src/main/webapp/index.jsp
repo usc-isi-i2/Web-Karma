@@ -447,6 +447,7 @@ and related projects, please see: http://www.isi.edu/integration
 		                                <option>comma</option>
 		                                <option>tab</option>
 		                                <option>space</option>
+		                                <option>pipe</option>
 		                            </select></td>
 		                        <td> Header Line Index:
 		                            <input type="textarea" value="1" id="CSVHeaderLineIndex" class="CSVImportOption" maxlength="3" size="2"/>
