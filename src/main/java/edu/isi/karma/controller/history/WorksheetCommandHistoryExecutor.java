@@ -21,6 +21,8 @@
 
 package edu.isi.karma.controller.history;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -107,6 +109,10 @@ public class WorksheetCommandHistoryExecutor {
 						workspace.getCommandHistory().doCommand(comm, workspace);
 					} catch(Exception e) {
 						logger.error("Error executing command: "+ commandName + ". Please notify this error");
+						StringWriter sw = new StringWriter();
+						PrintWriter pw = new PrintWriter(sw);
+						e.printStackTrace(pw);
+						logger.error(sw.toString());
 						//make these InfoUpdates so that the UI can still process the rest of the model
 						return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
 					}

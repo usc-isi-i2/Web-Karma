@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.alignment.ChangeInternalNodeLinksCommandFactory.Arguments;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -49,18 +50,19 @@ public class ChangeInternalNodeLinksCommand extends Command {
 	private final String alignmentId;
 	private JSONArray initialEdges;
 	private JSONArray newEdges;
-	
+
 	// Required for undo
-	private Alignment 	 oldAlignment;
+	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, Link> oldGraph;
-	
+
 	private StringBuilder descStr = new StringBuilder();
-	private static Logger logger = LoggerFactory.getLogger(ChangeInternalNodeLinksCommand.class);
-	
+	private static Logger logger = LoggerFactory
+			.getLogger(ChangeInternalNodeLinksCommand.class);
+
 	private enum JsonKeys {
 		edgeSourceId, edgeId, edgeTargetId
 	}
-	
+
 	public ChangeInternalNodeLinksCommand(String id, String worksheetId,
 			String alignmentId, JSONArray initialEdges, JSONArray newEdges) {
 		super(id);
@@ -68,7 +70,7 @@ public class ChangeInternalNodeLinksCommand extends Command {
 		this.alignmentId = alignmentId;
 		this.initialEdges = initialEdges;
 		this.newEdges = newEdges;
-		
+
 		addTag(CommandTag.Modeling);
 	}
 
@@ -95,56 +97,72 @@ public class ChangeInternalNodeLinksCommand extends Command {
 	@SuppressWarnings("unchecked")
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-//		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
-		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		logCommand(logger, workspace);
+		// String alignmentId =
+		// AlignmentManager.Instance().constructAlignmentId(workspace.getId(),
+		// worksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(
+				alignmentId);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		OntologyManager ontMgr = workspace.getOntologyManager();
-		
+
 		// Save the original alignment for undo
 		oldAlignment = alignment.getAlignmentClone();
-		oldGraph = (DirectedWeightedMultigraph<Node, Link>)alignment.getGraph().clone();
-		
-		// First delete the links that are not present in newEdges and present in intialEdges
+		oldGraph = (DirectedWeightedMultigraph<Node, Link>) alignment
+				.getGraph().clone();
+
+		// First delete the links that are not present in newEdges and present
+		// in intialEdges
 		try {
 			deleteLinks(alignment);
 			addNewLinks(alignment, ontMgr);
 			alignment.align();
-			
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		
+
 		return getAlignmentUpdateContainer(alignment, worksheet, workspace);
 	}
 
-	private void addNewLinks(Alignment alignment, OntologyManager ontMgr) throws JSONException {
-		for (int j=0; j<newEdges.length(); j++) {
+	private void addNewLinks(Alignment alignment, OntologyManager ontMgr)
+			throws JSONException {
+		for (int j = 0; j < newEdges.length(); j++) {
 			JSONObject newEdge = newEdges.getJSONObject(j);
-			
+
 			String sourceId = newEdge.getString(JsonKeys.edgeSourceId.name());
 			String targetId = newEdge.getString(JsonKeys.edgeTargetId.name());
 			String edgeUri = newEdge.getString(JsonKeys.edgeId.name());
-			
-			String linkId = LinkIdFactory.getLinkId(edgeUri, sourceId, targetId);
-			Link newLink = alignment.getLinkById(linkId); 
+
+			String linkId = LinkIdFactory
+					.getLinkId(edgeUri, sourceId, targetId);
+			Link newLink = alignment.getLinkById(linkId);
 			if (newLink == null) {
 				Node sourceNode = alignment.getNodeById(sourceId);
 				if (sourceNode == null) {
-					logger.error("NULL source node! Please notify this error.");
+					String errorMessage = "Error while adding new links: the new link goes FROM node '"
+							+ sourceId
+							+ "', but this node is in the alignment.";
+					logger.error(errorMessage);
 				}
 				Node targetNode = alignment.getNodeById(targetId);
 				if (targetNode == null) {
-					logger.error("NULL target node! Please notify this error.");
+					String errorMessage = "Error while adding new links: the new link goes TO node '"
+							+ targetId
+							+ "', but this node is in the alignment.";
+					logger.error(errorMessage);
 				}
 				Label linkLabel = ontMgr.getUriLabel(edgeUri);
-				
-				newLink = alignment.addObjectPropertyLink(sourceNode, targetNode, linkLabel);
-				alignment.changeLinkStatus(newLink.getId(), LinkStatus.ForcedByUser);
+
+				newLink = alignment.addObjectPropertyLink(sourceNode,
+						targetNode, linkLabel);
+				alignment.changeLinkStatus(newLink.getId(),
+						LinkStatus.ForcedByUser);
 			} else {
 				alignment.changeLinkStatus(linkId, LinkStatus.ForcedByUser);
 			}
 			// Add info to description string
-			if (j == newEdges.length()-1) {
+			if (j == newEdges.length() - 1) {
 				descStr.append(newLink.getLabel().getDisplayName());
 			} else {
 				descStr.append(newLink.getLabel().getDisplayName() + ",");
@@ -156,26 +174,29 @@ public class ChangeInternalNodeLinksCommand extends Command {
 		for (int i = 0; i < initialEdges.length(); i++) {
 			JSONObject initialEdge = initialEdges.getJSONObject(i);
 			boolean exists = false;
-			
-			for (int j=0; j<newEdges.length(); j++) {
+
+			for (int j = 0; j < newEdges.length(); j++) {
 				JSONObject newEdge = newEdges.getJSONObject(j);
 				if ((initialEdge.getString(JsonKeys.edgeSourceId.name())
 						.equals(newEdge.getString(JsonKeys.edgeSourceId.name())))
-						
-					&& (initialEdge.getString(JsonKeys.edgeTargetId.name())
-						.equals(newEdge.getString(JsonKeys.edgeTargetId.name())))
-						
-					&& initialEdge.getString(JsonKeys.edgeId.name())
-						.equals(newEdge.getString(JsonKeys.edgeId.name()))) {
+
+						&& (initialEdge.getString(JsonKeys.edgeTargetId.name())
+								.equals(newEdge.getString(JsonKeys.edgeTargetId
+										.name())))
+
+						&& initialEdge.getString(JsonKeys.edgeId.name())
+								.equals(newEdge.getString(JsonKeys.edgeId
+										.name()))) {
 					exists = true;
 				}
 			}
-			
+
 			if (!exists) {
-				String linkId = LinkIdFactory.getLinkId(initialEdge.getString(JsonKeys.edgeId.name()),
-						initialEdge.getString(JsonKeys.edgeSourceId.name()), 
+				String linkId = LinkIdFactory.getLinkId(
+						initialEdge.getString(JsonKeys.edgeId.name()),
+						initialEdge.getString(JsonKeys.edgeSourceId.name()),
 						initialEdge.getString(JsonKeys.edgeTargetId.name()));
-				
+
 				// alignment.changeLinkStatus(linkId, LinkStatus.Normal);
 				alignment.removeLink(linkId);
 			}
@@ -184,26 +205,40 @@ public class ChangeInternalNodeLinksCommand extends Command {
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		Worksheet worksheet = workspace
-				.getWorksheet(worksheetId);
+		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 
 		// Revert to the old alignment
-		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
+		AlignmentManager.Instance()
+				.addAlignmentToMap(alignmentId, oldAlignment);
 		oldAlignment.setGraph(oldGraph);
-		
+
 		// Get the alignment update
 		return getAlignmentUpdateContainer(oldAlignment, worksheet, workspace);
 	}
-	
-	//TODO this is in worksheetcommand
+
+	// TODO this is in worksheetcommand
 	private UpdateContainer getAlignmentUpdateContainer(Alignment alignment,
 			Worksheet worksheet, Workspace workspace) {
 		// Add the visualization update
 		UpdateContainer c = new UpdateContainer();
 		c.add(new SemanticTypesUpdate(worksheet, worksheetId, alignment));
-		c.add(new AlignmentSVGVisualizationUpdate(
-				worksheetId, alignment));
+		c.add(new AlignmentSVGVisualizationUpdate(worksheetId, alignment));
 		return c;
 	}
 
+	@Override
+	protected JSONObject getArgsJSON(Workspace workspace) {
+		JSONObject args = new JSONObject();
+		try {
+			args.put("command", getTitle())
+					.put(Arguments.alignmentId.name(), alignmentId)
+					.put(Arguments.initialEdges.name(), initialEdges)
+					.put(Arguments.worksheetId.name(),
+							formatWorsheetId(workspace, worksheetId))
+					.put(Arguments.newEdges.name(), newEdges);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return args;
+	}
 }
