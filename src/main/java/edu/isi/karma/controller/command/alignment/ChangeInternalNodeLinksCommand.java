@@ -142,14 +142,14 @@ public class ChangeInternalNodeLinksCommand extends Command {
 				if (sourceNode == null) {
 					String errorMessage = "Error while adding new links: the new link goes FROM node '"
 							+ sourceId
-							+ "', but this node is in the alignment.";
+							+ "', but this node is NOT in the alignment.";
 					logger.error(errorMessage);
 				}
 				Node targetNode = alignment.getNodeById(targetId);
 				if (targetNode == null) {
 					String errorMessage = "Error while adding new links: the new link goes TO node '"
 							+ targetId
-							+ "', but this node is in the alignment.";
+							+ "', but this node is NOT in the alignment.";
 					logger.error(errorMessage);
 				}
 				Label linkLabel = ontMgr.getUriLabel(edgeUri);
