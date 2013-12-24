@@ -229,7 +229,7 @@ public class OfflineRdfGenerator {
 		String sourceName = (String) cl.getValue("--sourcename");
 		if(sourceName == null)
 		{
-			logger.error("No source name provided");
+			logger.error("You need to supply a value for '--sourcename'");
 			return;
 		}
 		R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(sourceName, modelURL);
