@@ -365,14 +365,14 @@ and related projects, please see: http://www.isi.edu/integration
 		              <ul class="dropdown-menu">
 		                <li><a href="#" id="importDatabaseTableButton">Database Table</a></li>
 		                  <li><a href="#" id="importFromServiceButton" >From Service</a></li>
-		                  <li><a href="#"><form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form></a></li>
+		                  <li><a href="#" class="fileinput-button"><form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form></a></li>
 		                </ul>
 		            </li>
-		            <li><a href="#" id="resetButton">Reset</a></li>
-		            <li><a href="#">
+		            <li><a href="#" id="resetButton"><span class="glyphicon glyphicon-repeat"></span>&nbsp;Reset</a></li>
+		            <li>
 		            		<div class="span5 fileupload-progress fade">
 								<!-- The global progress bar -->
-								<div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+								<div class="progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
 									<div class="bar" style="width:0%;"></div>
 								</div>
 								<!-- The extended global progress information -->
@@ -380,7 +380,7 @@ and related projects, please see: http://www.isi.edu/integration
 									&nbsp;
 								</div>
 							</div>
-		            	</a>
+		            	
 		            </li>
 		          </ul>
 		          <ul class="nav navbar-nav navbar-right">
