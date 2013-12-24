@@ -365,19 +365,12 @@ and related projects, please see: http://www.isi.edu/integration
 		              <ul class="dropdown-menu">
 		                <li><a href="#" id="importDatabaseTableButton">Database Table</a></li>
 		                  <li><a href="#" id="importFromServiceButton" >From Service</a></li>
-		                  <li><a href="#">
-		                  <form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">
-						<!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
-						<div class="row fileupload-buttonbar">
-							<div class="span7">
-								<!-- The fileinput-button span is used to style the file input field as button -->
-								<span class="btn btn-success fileinput-button importButton"> <i class="icon-plus icon-white"></i> 
-									<span>From File</span>
-									<input type="file" name="files[]" multiple>
-								</span>
-							</div>
-							<!-- The global progress information -->
-							<div class="span5 fileupload-progress fade">
+		                  <li><a href="#"><form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form></a></li>
+		                </ul>
+		            </li>
+		            <li><a href="#" id="resetButton">Reset</a></li>
+		            <li><a href="#">
+		            		<div class="span5 fileupload-progress fade">
 								<!-- The global progress bar -->
 								<div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
 									<div class="bar" style="width:0%;"></div>
@@ -387,12 +380,8 @@ and related projects, please see: http://www.isi.edu/integration
 									&nbsp;
 								</div>
 							</div>
-						</div>
-						</form>
-		                  </a></li>
-		              </ul>
+		            	</a>
 		            </li>
-		            <li><a href="#" id="resetButton">Reset</a></li>
 		          </ul>
 		          <ul class="nav navbar-nav navbar-right">
 		            <li><a target="_blank" href="https://github.com/InformationIntegrationGroup/Web-Karma/wiki">User Guide</a></li>
