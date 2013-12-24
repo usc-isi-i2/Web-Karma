@@ -47,6 +47,8 @@ import org.openrdf.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatter;
+import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatterFactory;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
@@ -55,10 +57,13 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.FileUtil;
 
 public class WorksheetModelWriter {
+	
+	private KR2RMLColumnNameFormatter columnNameFormatter;
 	private PrintWriter writer;
 	private RepFactory factory;
 	private OntologyManager ontMgr;
@@ -101,7 +106,12 @@ public class WorksheetModelWriter {
 		con.add(mappingRes, pubTime, f.createLiteral(new Date().getTime()));
 		
 		// Add the version
-				con.add(mappingRes, modelVersion, f.createLiteral(KR2RMLVersion.getCurrent().toString()));
+		con.add(mappingRes, modelVersion, f.createLiteral(KR2RMLVersion.getCurrent().toString()));
+		
+		// Find source type
+		Worksheet ws = factory.getWorksheet(worksheetName);
+		String sourceType = ws.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.sourceType);
+		columnNameFormatter = KR2RMLColumnNameFormatterFactory.getFormatter(SourceTypes.valueOf(sourceType));
 	}
 	
 	public boolean writeR2RMLMapping(OntologyManager ontManager, KR2RMLMappingGenerator mappingGen)

@@ -29,7 +29,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -202,13 +205,22 @@ public class JsonImport extends Import {
 		// if(maxNumLines > 0 && numObjects >= maxNumLines)
 		// return;
 
-		@SuppressWarnings("unchecked")
-		Iterator<String> it = object.sortedKeys();
+		
+		Iterator<String> it = getSortedKeysIterator(object);
 		while (it.hasNext()) {
 			String nestedKey = it.next();
 			addObjectElement(nestedKey, object.get(nestedKey), nestedHTable,
 					nestedRow);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private Iterator<String> getSortedKeysIterator(JSONObject object) {
+		List<String> keys = new LinkedList<String>();
+		keys.addAll(object.keySet());
+		Collections.sort(keys);
+		Iterator<String> it = keys.iterator();
+		return it;
 	}
 
 	private void addListElement(Object listValue, HTable headers,
@@ -219,8 +231,7 @@ public class JsonImport extends Import {
 				numObjects++;
 
 				JSONObject o = (JSONObject) listValue;
-				@SuppressWarnings("unchecked")
-				Iterator<String> it = o.sortedKeys();
+				Iterator<String> it = getSortedKeysIterator(o);
 				while (it.hasNext()) {
 					String key = it.next();
 					addObjectElement(key, o.get(key), headers, row);

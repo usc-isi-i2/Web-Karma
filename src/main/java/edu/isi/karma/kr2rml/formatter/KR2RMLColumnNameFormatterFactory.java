@@ -4,7 +4,7 @@ import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 
 public class KR2RMLColumnNameFormatterFactory {
 
-	public KR2RMLColumnNameFormatter getFormatter(SourceTypes sourceType)
+	public static KR2RMLColumnNameFormatter getFormatter(SourceTypes sourceType)
 	{
 		switch(sourceType)
 		{

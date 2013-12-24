@@ -9,7 +9,6 @@ import java.io.IOException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +39,9 @@ public class XMLImport extends Import {
             JSONObject json = XML.toJSONObject(fileContents);
             jsonImport = new JsonImport(json, this.getFactory(), this.getWorksheet(), maxNumLines);
         } catch (JSONException ex) {
-            logger.error("Error in populating the worksheet with XML");
+            logger.error("Error in populating the worksheet with XML", ex);
         } catch (IOException ex) {
-            logger.error("Error in reading the XML file");
+            logger.error("Error in reading the XML file", ex);
         }
     }
 
