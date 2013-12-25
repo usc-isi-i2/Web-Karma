@@ -79,7 +79,7 @@ public class WorksheetModelWriter {
 			.getLogger(WorksheetModelWriter.class);
 	
 	public WorksheetModelWriter(PrintWriter writer, RepFactory factory, OntologyManager ontMgr, 
-			String worksheetName)
+			Worksheet worksheet)
 			throws RepositoryException {
 		this.writer = writer;
 		this.factory = factory;
@@ -97,7 +97,7 @@ public class WorksheetModelWriter {
 		URI modelVersion = f.createURI(Uris.KM_MODEL_VERSION_URI);
 		mappingRes = f.createBNode();
 		con.add(mappingRes, RDF.TYPE, r2rmlMapUri);
-		this.worksheetName = worksheetName;
+		this.worksheetName = worksheet.getTitle();
 		Value srcNameVal = f.createLiteral(worksheetName);
 		con.add(mappingRes, sourceNameUri, srcNameVal);
 		
@@ -109,9 +109,10 @@ public class WorksheetModelWriter {
 		con.add(mappingRes, modelVersion, f.createLiteral(KR2RMLVersion.getCurrent().toString()));
 		
 		// Find source type
-		Worksheet ws = factory.getWorksheet(worksheetName);
-		String sourceType = ws.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.sourceType);
+		String sourceType = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.sourceType);
 		columnNameFormatter = KR2RMLColumnNameFormatterFactory.getFormatter(SourceTypes.valueOf(sourceType));
+		URI sourceTypeURI = f.createURI(Uris.KM_SOURCE_TYPE_URI);
+		con.add(mappingRes, sourceTypeURI, f.createLiteral(sourceType));
 	}
 	
 	public boolean writeR2RMLMapping(OntologyManager ontManager, KR2RMLMappingGenerator mappingGen)
@@ -171,12 +172,12 @@ public class WorksheetModelWriter {
 				List<TemplateTermSet> rdfsTypes = sjMap.getRdfsType();
 				for (TemplateTermSet typeTermSet:rdfsTypes) {
 					if (typeTermSet.isSingleUriString()) {
-						URI sjTypeUri = f.createURI(typeTermSet.getR2rmlTemplateString(factory));
+						URI sjTypeUri = f.createURI(typeTermSet.getR2rmlTemplateString(factory, columnNameFormatter));
 						con.add(sjBlankNode, classUri, sjTypeUri);
 					} else {
 						if (typeTermSet.isSingleColumnTerm()) {
 							BNode typeBlankNode = f.createBNode();
-							String colRepr  = typeTermSet.getR2rmlTemplateString(factory);
+							String colRepr  = typeTermSet.getR2rmlTemplateString(factory, columnNameFormatter);
 							con.add(typeBlankNode, templateUri, f.createLiteral(colRepr));
 							con.add(sjBlankNode, classUri, typeBlankNode);
 						}
@@ -196,7 +197,7 @@ public class WorksheetModelWriter {
 				{
 					// Print out the template for anything that isn't a blank node
 					Value templVal = f.createLiteral(sjMap.getTemplate()
-							.getR2rmlTemplateString(factory));
+							.getR2rmlTemplateString(factory, columnNameFormatter));
 					con.add(sjBlankNode, templateUri, templVal);
 				}
 				
@@ -212,7 +213,7 @@ public class WorksheetModelWriter {
 					TemplateTermSet predTermSet = pom.getPredicate().getTemplate();
 					if (predTermSet.isSingleUriString()) {
 						URI predValUri = f.createURI(predTermSet
-								.getR2rmlTemplateString(factory));
+								.getR2rmlTemplateString(factory, columnNameFormatter));
 						
 						// Skip the class instance special meta property
 						if (predValUri.stringValue().equals(Uris.CLASS_INSTANCE_LINK_URI)) continue;
@@ -220,7 +221,7 @@ public class WorksheetModelWriter {
 						con.add(pomBlankNode, predUri, predValUri);
 					} else {
 						Value predValLiteratl = f.createLiteral(predTermSet.
-								getR2rmlTemplateString(factory));
+								getR2rmlTemplateString(factory, columnNameFormatter));
 						con.add(pomBlankNode, predUri, predValLiteratl);
 					}
 					
@@ -243,7 +244,7 @@ public class WorksheetModelWriter {
 						if (objTermSet.isSingleColumnTerm()) {
 							BNode cnBnode = f.createBNode();
 							Value cnVal = f.createLiteral(objTermSet.
-									getColumnNameR2RMLRepresentation(factory));
+									getColumnNameR2RMLRepresentation(factory, columnNameFormatter));
 							con.add(cnBnode, columnUri, cnVal);
 
 							if (rdfLiteralTypeTermSet != null && rdfLiteralTypeTermSet.isSingleUriString()) {

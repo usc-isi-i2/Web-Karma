@@ -256,7 +256,7 @@ public class GenerateR2RMLModelCommand extends Command {
 		parentDir.mkdirs();
 		PrintWriter writer = new PrintWriter(f, "UTF-8");
 		WorksheetModelWriter modelWriter = new WorksheetModelWriter(writer, 
-				workspace.getFactory(), ontMgr, worksheet.getTitle());
+				workspace.getFactory(), ontMgr, worksheet);
 
 		// Writer worksheet properties such as Service URL
 		modelWriter.writeWorksheetProperties(worksheet);

@@ -5,6 +5,9 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.jayway.jsonpath.internal.PathToken;
+import com.jayway.jsonpath.internal.PathTokenizer;
+
 public class KR2RMLJSONPathColumnNameFormatter extends
 		KR2RMLColumnNameFormatter {
 
@@ -12,7 +15,7 @@ public class KR2RMLJSONPathColumnNameFormatter extends
 	
 	@Override
 	protected String format(String columnName) {
-		StringBuilder result = new StringBuilder();
+		StringBuilder result = new StringBuilder("$.");
 		try {	
 			if (columnName.startsWith("[") && columnName.endsWith("]") && columnName.contains(",")) {
 	    		JSONArray strArr = new JSONArray(columnName);
@@ -38,22 +41,25 @@ public class KR2RMLJSONPathColumnNameFormatter extends
 	@Override
 	protected String removeFormatting(String formattedColumnName) {
 		
-		String[] components = formattedColumnName.split(".");
-		if(components.length == 1)
+		PathTokenizer pt = new PathTokenizer(formattedColumnName);
+	
+		JSONArray strArr = new JSONArray();
+		for(PathToken token : pt.getPathTokens())
 		{
-			//TODO test for array index
-			return formattedColumnName;
-		}
-		else
-		{
-			JSONArray strArr = new JSONArray();
-			for(String component : components)
+			if(token.getFragment().equalsIgnoreCase("$"))
 			{
-				//TODO test for array index
-				strArr.put(component);
+				continue;
 			}
-			return strArr.toString();
+			//TODO test for array index
+			strArr.put(token.getFragment());
 		}
+		if(strArr.length() == 1)
+		{
+			return strArr.getString(0);
+		}
+		
+		return strArr.toString();
+	
 	}
 
 

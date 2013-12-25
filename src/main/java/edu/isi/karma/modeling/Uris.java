@@ -70,6 +70,7 @@ public interface Uris {
 	public static final String KM_HAS_WORKSHEET_HISTORY_URI = Namespaces.KARMA_DEV + "hasWorksheetHistory";
 	public static final String KM_MODEL_PUBLICATION_TIME_URI = Namespaces.KARMA_DEV + "modelPublicationTime";
 	public static final String KM_MODEL_VERSION_URI = Namespaces.KARMA_DEV + "modelVersion";
+	public static final String KM_SOURCE_TYPE_URI = Namespaces.KARMA_DEV + "sourceType";
 	
 	public static final String PROV_ENTITY_URI = Namespaces.PROV + "Entity";
 	public static final String PROV_WAS_DERIVED_FROM_URI = Namespaces.PROV + "wasDerivedFrom";

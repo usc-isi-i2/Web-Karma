@@ -28,12 +28,20 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatter;
+import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatterFactory;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
+
 public class TemplateTermSetBuilder {
 
 	private static Logger logger = LoggerFactory.getLogger(TemplateTermSetBuilder.class);
 	
 	public static TemplateTermSet constructTemplateTermSetFromR2rmlTemplateString(
 			String templStr) throws JSONException {
+		return constructTemplateTermSetFromR2rmlTemplateString(templStr, KR2RMLColumnNameFormatterFactory.getFormatter(SourceTypes.CSV));
+	}
+	public static TemplateTermSet constructTemplateTermSetFromR2rmlTemplateString(
+			String templStr, KR2RMLColumnNameFormatter formatter) throws JSONException {
 		TemplateTermSet termSet = new TemplateTermSet();
 		
 		Pattern p = Pattern.compile("\\{\\\".*?\\\"\\}");
@@ -52,7 +60,7 @@ public class TemplateTermSetBuilder {
 		    	
 		    	String colTermVal = removeR2rmlFormatting(matcher.group());
 		    	logger.debug("Col name templ term: " + colTermVal);
-		    	termSet.addTemplateTermToSet(new ColumnTemplateTerm(colTermVal));
+		    	termSet.addTemplateTermToSet(new ColumnTemplateTerm(formatter.getColumnNameWithoutFormatting(colTermVal)));
 		    	
 		    	/**/
 		    	
@@ -67,10 +75,15 @@ public class TemplateTermSetBuilder {
 	
 	public static TemplateTermSet constructTemplateTermSetFromR2rmlColumnString(
 			String colTermVal) throws JSONException {
+		return constructTemplateTermSetFromR2rmlColumnString(colTermVal, KR2RMLColumnNameFormatterFactory.getFormatter(SourceTypes.CSV));
+	}
+	
+	public static TemplateTermSet constructTemplateTermSetFromR2rmlColumnString(
+			String colTermVal, KR2RMLColumnNameFormatter formatter) throws JSONException {
 		TemplateTermSet termSet = new TemplateTermSet();
 		
 		logger.debug("Column" + removeR2rmlFormatting(colTermVal));
-		termSet.addTemplateTermToSet(new ColumnTemplateTerm(colTermVal));
+		termSet.addTemplateTermToSet(new ColumnTemplateTerm(formatter.getColumnNameWithoutFormatting(colTermVal)));
 		
 		return termSet;
 	}

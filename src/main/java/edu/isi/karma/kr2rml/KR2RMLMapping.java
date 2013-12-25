@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.json.JSONArray;
 
+import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatter;
+
 public class KR2RMLMapping extends R2RMLMapping{
 	
 	private KR2RMLVersion version;
@@ -12,6 +14,7 @@ public class KR2RMLMapping extends R2RMLMapping{
 	private Map<String, SubjectMap> subjectMapIndex;
 	private Map<String, TriplesMap> triplesMapIndex;
 	private JSONArray worksheetHistory;
+	private KR2RMLColumnNameFormatter formatter;
 	
 	
 	public KR2RMLMapping(R2RMLMappingIdentifier id, KR2RMLVersion version)
@@ -46,6 +49,14 @@ public class KR2RMLMapping extends R2RMLMapping{
 
 	public void setWorksheetHistory(JSONArray worksheetHistory) {
 		this.worksheetHistory = worksheetHistory;
+	}
+
+	public void setColumnNameFormatter(KR2RMLColumnNameFormatter formatter) {
+		this.formatter = formatter;
+	}
+	public KR2RMLColumnNameFormatter getColumnNameFormatter()
+	{
+		return formatter;
 	}
 
 }

@@ -29,8 +29,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatter;
+import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatterFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.RepFactory;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 
 public class TemplateTermSet {
 	
@@ -80,6 +83,10 @@ public class TemplateTermSet {
 	}
 	
 	public String getR2rmlTemplateString(RepFactory factory) {
+		//TODO fix this
+		return getR2rmlTemplateString(factory, KR2RMLColumnNameFormatterFactory.getFormatter(SourceTypes.CSV));
+	}
+	public String getR2rmlTemplateString(RepFactory factory, KR2RMLColumnNameFormatter formatter) {
 		StringBuilder str = new StringBuilder();
 		for (TemplateTerm term:termSet) {
 			if (term instanceof StringTemplateTerm) {
@@ -101,20 +108,24 @@ public class TemplateTermSet {
 							}
 							colNameStr = colNames.toString();
 						}
-						str.append("{\"" + colNameStr + "\"}");
+						str.append("{\"" + formatter.getFormattedColumnName(colNameStr) + "\"}");
 					} catch (JSONException e) {
 						continue;
 					}
 				}
 				else {
-					str.append("{\"" + term.getTemplateTermValue() + "\"}");
+					str.append("{\"" + formatter.getFormattedColumnName(term.getTemplateTermValue()) + "\"}");
 				}
 			}
 		}
 		return str.toString();
 	}
 	
-	public String getColumnNameR2RMLRepresentation(RepFactory factory) {
+	public String getColumnNameR2RMLRepresentation(RepFactory factory)
+	{
+		return getColumnNameR2RMLRepresentation(factory, KR2RMLColumnNameFormatterFactory.getFormatter(SourceTypes.CSV));
+	}
+	public String getColumnNameR2RMLRepresentation(RepFactory factory, KR2RMLColumnNameFormatter formatter) {
 		StringBuilder str = new StringBuilder();
 		for (TemplateTerm term:termSet) {
 			if (term instanceof StringTemplateTerm) {
@@ -136,13 +147,13 @@ public class TemplateTermSet {
 							}
 							colNameStr = colNames.toString();
 						}
-						str.append(colNameStr);
+						str.append(formatter.getFormattedColumnName(colNameStr));
 					} catch (JSONException e) {
 						continue;
 					}
 				}
 				else {
-					str.append(term.getTemplateTermValue());
+					str.append(formatter.getFormattedColumnName(term.getTemplateTermValue()));
 				}
 			}
 		}
