@@ -27,30 +27,34 @@ and related projects, please see: http://www.isi.edu/integration
 <html lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
         <title>Karma Data Integration</title>
         <!-- Date: 2011-08-01 -->
 
         <!-- CSS -->
-        <link rel="stylesheet" type="text/css" href="./css/jquery-ui-1.8.16.custom.css" />
+        <link rel="stylesheet" type="text/css" href="./uiLibs/twitterBootstrap/css/bootstrap.min.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery-ui-themes/smoothness/jquery-ui.min.css" />
         <link rel="stylesheet" type="text/css" href="./css/TopMenuBar.css" />
         <link rel="stylesheet" type="text/css" href="./css/command_History.css" />
         <link rel="stylesheet" type="text/css" href="./css/tables_workspace.css" />
-        <link rel="stylesheet" type="text/css" href="./css/jquery.fileupload-ui.css" />
+        <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery.fileupload.css" />
+        <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery.fileupload-ui.css" />
         <link rel="stylesheet" type="text/css" href="./css/CSVImport.css" />
         <link rel="stylesheet" type="text/css" href="./css/fileImport.css" />
         <link rel="stylesheet" type="text/css" href="./css/DatabaseImport.css" />
         <link rel="stylesheet" type="text/css" href="./css/ServiceImport.css" />
         <link rel="stylesheet" type="text/css" href="./css/headerParsingExample.css" />
         <link rel="stylesheet" type="text/css" href="./css/AlignmentHeaders.css" />
-        <link rel="stylesheet" type="text/css" href="./css/jquery.qtip.min.css" />
-        <link rel="stylesheet" type="text/css" href="./css/sticky.min.css" />
+        <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery.qtip.min.css" />
+        <link rel="stylesheet" type="text/css" href="./uiLibs/sticky/css/sticky.min.css" />
         <link rel="stylesheet" type="text/css" href="./css/cleaning.css" />
         <link rel="stylesheet" type="text/css" href="./css/alignment.css" />
         <link rel="stylesheet" type="text/css" href="./css/d3.css" />
         <link rel="stylesheet" type="text/css" href="./css/main.css" />
         <link rel="stylesheet" type="text/css" href="./css/pyTransform.css" />
         <link rel="stylesheet" type="text/css" href="./css/cleaningChart.css" />
-        <link rel="stylesheet/less" type="text/css" href="./css/styles-03d-fixed-pixel.less" />
+        <link rel="stylesheet/less" type="text/css" href="./uiLibs/less/css/styles-03d-fixed-pixel.less" />
 		<style type="text/css">
 			div.sticky {
     		/*	color: #555555; */
@@ -58,30 +62,30 @@ and related projects, please see: http://www.isi.edu/integration
 			}
 		</style>
         <!-- Third Party JavaScript files		 -->
-        <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
-        <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery-ui-1.10.3.custom.min.js"></script>
 
-        <script type="text/javascript" src="js/jquery.tmpl.min.js"></script>
-        <script type="text/javascript" src="js/jquery.hoverIntent.js"></script>
-        <script type="text/javascript" src="js/jquery.jstree.js"></script>
-        <script type="text/javascript" src="js/jquery.qtip.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.tmpl.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.hoverIntent.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.jstree.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.qtip.min.js"></script>
         <!-- 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script> -->
         <script type="text/javascript" src="https://www.google.com/jsapi?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script>
-        <script type="text/javascript" src="js/sticky.min.js"></script>
-        <script type="text/javascript" src="js/jquery.jeditable.js"></script>
-        <script type="text/javascript" src="js/json2.js"></script>
-        <script type="text/javascript" src="js/jquery.cookie.js"></script>
-        <script type="text/javascript" src="js/d3.v2.min.js"></script>
-        <script src="js/jquery.iframe-transport.js"></script>
-        <script src="js/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" src="uiLibs/sticky/js/sticky.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.jeditable.js"></script>
+        <script type="text/javascript" src="uiLibs/json/js/json2.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.cookie.js"></script>
+        <script type="text/javascript" src="uiLibs/d3/js/d3.v2.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.iframe-transport.js"></script>
+        <script type="text/javascript" src="uiLibs/ace/js/ace.js" charset="utf-8"></script>
 
-        <script src="js/jquery.fileupload.js"></script>
-        <script src="js/jquery.fileupload-ui.js"></script>
-        <script src="js/jquery.fileupload-jui.js"></script>
-        <script src="js/locale.js"></script>
-        <script type="text/javascript" src="js/less-1.4.1.min.js"></script>
-        <script type="text/javascript" src="js/modernizr.custom.59953.js"></script>
-
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload-ui.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload-jquery-ui.js"></script>
+        <script type="text/javascript" src="uiLibs/locale/js/locale.js"></script>
+        <script type="text/javascript" src="uiLibs/less/js/less-1.4.1.min.js"></script>
+        <script type="text/javascript" src="uiLibs/modernizr/js/modernizr.custom.59953.js"></script>
+		
         <!-- Home grown JavaScript files -->
         <script type="text/javascript" src="js/table_manipulation.js"></script>
         <script type="text/javascript" src="js/ServerResponseObjectParsing.js"></script>
@@ -104,7 +108,8 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/cleaning-charts.js"></script>
         <script type="text/javascript" src="js/showModel.js"></script>
 
-
+		
+		
         <script type="text/javascript">
             /* Load and parse initial JSON */
             // Get the preferences Id from cookies if present
@@ -134,98 +139,7 @@ and related projects, please see: http://www.isi.edu/integration
                 $('#fileupload').fileupload({
                     url : "RequestController?workspaceId=" + $.workspaceGlobalInformation.id + "&command=ImportCSVFileCommand",
                     add : function(e, data) {
-                        var fileName = data.files[0].name;
-                        $("span#fileFormatError").hide();
-                        $("input:radio[name=FileFormatSelection]").attr("checked", false);
-                        
-                        /*
-                         * code for disabling revision functionality for ontologies
-                      
-                         $(":radio[name=FileFormatSelection]").change(function(){
-                            var disabled = $(":radio[name=FileFormatSelection]").val() == "Ontology";
-  
-                            disableRevision(disabled);
-                        });*/
-
-                        if(fileName.match(".csv$") || fileName.match(".tsv$") || fileName.match(".txt$") || fileName.match(".log$")) {
-                            $(":radio[name=FileFormatSelection][value=CSV]").attr("checked", true);
-                        } else if(fileName.match(".xml$")) {
-                            $(":radio[name=FileFormatSelection][value=XMLFile]").attr("checked", true);
-                        } else if(fileName.match(".xls$") || fileName.match(".xlsx$")) {
-                            $(":radio[name=FileFormatSelection][value=ExcelFile]").attr("checked", true);
-                        } else if(fileName.match(".owl$") || fileName.match(".rdf$")) {
-                            $(":radio[name=FileFormatSelection][value=Ontology]").attr("checked", true);
-                        } else if(fileName.match(".json$")) {
-                            $(":radio[name=FileFormatSelection][value=JSONFile]").attr("checked", true);
-                        }
-
-                        $("div#fileFormatSelectionDialog").dialog({
-                            width : 200,
-                            height : 250,
-                            title : "Confirm File Format",
-                            modal : true,
-                            open : function(event, ui) {
-                                $('.ui-dialog-buttonset  button:last').filter(":last").focus();
-                                
-                                var worksheets = $('.Worksheet');
-                                if (worksheets.size() > 0){
-                                    disableRevision(false);
-                  
-                                    worksheets.each(function(){
-                                        var item = $('<option />');
-                                        item.val($(this).attr('id'));
-                                        item.text($(this).find('.tableTitleTextDiv').text());
-
-                                        $('#revisedWorksheetSelector').append(item);
-                                    });
-                                } else {
-                                    disableRevision(true);
-                                }
-                            },
-                            buttons : {
-                                "Cancel" : function() {
-                                    $(this).dialog("close");
-                                },
-                                "Submit" : function() {
-                                    var selectedFormat = $("input:radio[name='FileFormatSelection']:checked").val();
-                                    if(selectedFormat == null || selectedFormat == "") {
-                                        $("span#fileFormatError").show();
-                                        return false;
-                                    }
-
-                                    var urlString = "RequestController?workspaceId=" + $.workspaceGlobalInformation.id;
-                                    
-                                    //MVS: add the id of the revised worksheet in the request
-                                    if ($("input:checkbox[name='RevisionCheck']").prop('checked')) {
-                                        urlString += "&revisedWorksheet=" + $('#revisedWorksheetSelector').val();
-                                    }
-                  
-                                    urlString += "&command=";
-
-                                    // Change the command according to the selected format
-                                    if(selectedFormat == "CSV") {
-                                        $('#fileupload').fileupload({
-                                            url : urlString + "ImportCSVFileCommand",
-                                            done : function(e, data) {
-                                                resetCSVDialogOptions();
-                                                showCSVImportOptions(data.result);
-                                            }
-                                        });
-                                    } else if(selectedFormat == "JSONFile" || selectedFormat == "XMLFile" || selectedFormat== "ExcelFile" || selectedFormat == "Ontology") {
-                                    	$('#fileupload').fileupload({
-	                                    	url : urlString + "Import" + selectedFormat + "Command",
-	                                        done : function(e, data) {
-	                                            resetFileDialogOptions();
-	                                            showFileImportOptions(data.result, selectedFormat);
-	                                        }
-                                    	});
-                                    } 
-
-                                    data.submit();
-                                    $(this).dialog("close");
-                                }
-                            }
-                        });
+                    	FileFormatSelectionDialog.getInstance().show(data);
                     },
                     done : function(e, data) {
                         parse(data.result);
@@ -339,44 +253,35 @@ and related projects, please see: http://www.isi.edu/integration
 	</head>
 
 	<body>
-		<div id="banner">
-            <h1 class="karma-header">Karma <span id="karma-version"><jsp:include page="version.jsp"></jsp:include></span></h1>
-            <ul class="karma-header-links">
-              <li><a target="_blank" href="https://github.com/InformationIntegrationGroup/Web-Karma/wiki">User Guide</a></li>
-              <li><a target="_blank" href="http://isi.edu/integration/karma">Karma Home</a></li>
-              <li><a target="_blank" href="" id="sparql_end_point_link">OpenRDF</a></li>
-            </ul>
-        </div>
-		<table id="topMenuBar">
-			<tr>
-				<td>
-				<button id="importDatabaseTableButton" class="importButton" align="top">
-					Import Database Table
-				</button></td>
-				<td>
-				<button id="importFromServiceButton" class="importButton" align="top">
-					Import from Service
-				</button></td>
-				<td>
-				<button id="mergeButton" class="importButton" align="top" style="display: none">
-					Merge
-				</button></td>
-				<td>
-				<div class="container">
-					<!-- <input type="file" name="file1" id="uploadFile_JSON"> -->
-					<form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">
-						<!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
-						<div class="row fileupload-buttonbar">
-							<div class="span7">
-								<!-- The fileinput-button span is used to style the file input field as button -->
-								<span class="btn btn-success fileinput-button importButton"> <i class="icon-plus icon-white"></i> <span>Import File...</span>
-									<input type="file" name="files[]" multiple>
-								</span>
-							</div>
-							<!-- The global progress information -->
-							<div class="span5 fileupload-progress fade">
+	
+		<div class="container">
+		
+			<div class="navbar navbar-default" role="navigation">
+		        <div class="navbar-header">
+		          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+		            <span class="sr-only">Toggle navigation</span>
+		            <span class="icon-bar"></span>
+		            <span class="icon-bar"></span>
+		            <span class="icon-bar"></span>
+		          </button>
+		          <a class="navbar-brand" href="#">Karma 
+		              	<span id="karma-version"><jsp:include page="version.jsp" /></a>
+		        </div>
+		        <div class="navbar-collapse collapse">
+		          <ul class="nav navbar-nav">
+		            <li class="dropdown">
+		              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span>&nbsp;Import <b class="caret"></b></a>
+		              <ul class="dropdown-menu">
+		                <li><a href="#" id="importDatabaseTableButton">Database Table</a></li>
+		                  <li><a href="#" id="importFromServiceButton" >From Service</a></li>
+		                  <li><a href="#" class="fileinput-button"><form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form></a></li>
+		                </ul>
+		            </li>
+		            <li><a href="#" id="resetButton"><span class="glyphicon glyphicon-repeat"></span>&nbsp;Reset</a></li>
+		            <li>
+		            		<div class="span5 fileupload-progress fade">
 								<!-- The global progress bar -->
-								<div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+								<div class="progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
 									<div class="bar" style="width:0%;"></div>
 								</div>
 								<!-- The extended global progress information -->
@@ -384,14 +289,24 @@ and related projects, please see: http://www.isi.edu/integration
 									&nbsp;
 								</div>
 							</div>
-						</div>
-					</form>
-				</div></td>
-			</tr>
-		</table>
-		<button id="resetButton" align="right">
-			Reset
-		</button>
+		            	
+		            </li>
+		          </ul>
+		          <ul class="nav navbar-nav navbar-right">
+		            <li><a target="_blank" href="https://github.com/InformationIntegrationGroup/Web-Karma/wiki">User Guide</a></li>
+			        <li><a target="_blank" href="http://isi.edu/integration/karma">Karma Home</a></li>
+			        <li><a target="_blank" href="" id="sparql_end_point_link">OpenRDF</a></li>
+		          </ul>
+		        </div>
+		      </div> <!--  end of navbar -->
+		      
+		      
+		      
+		      <jsp:include page="fileImport.jsp"></jsp:include>
+		      
+			
+		</div>
+	
 		<div id="commHistoryAndWorkspace">
 			<div id="commandHistory" class="ui-corner-top">
 				<div id="titleCommand" class="ui-corner-top">
@@ -429,84 +344,6 @@ and related projects, please see: http://www.isi.edu/integration
                 <span class="mediumSizedFont">RDF triples:</span>
                 <br />
                 <div id="rdfValue"></div>
-            </div>
-        </div>
-        <div id="CSVImportDiv" style="display: none">
-            <table id="CSVImportOptionsTable">
-                <tbody>
-                    <tr>
-                        <td id="importOptionsCell" colspan="5"><span id="CSVSourceName"></span></td>
-                    </tr>
-                    <tr>
-                        <td><span id="importOptionsHeader">Import Options</span></td>
-                        <td>
-                        <table>
-                        	<tr>
-                        		 <td> Column Delimiter:
-		                            <select id="delimiterSelector" class="CSVImportOption">
-		                                <option>comma</option>
-		                                <option>tab</option>
-		                                <option>space</option>
-		                            </select></td>
-		                        <td> Header Line Index:
-		                            <input type="textarea" value="1" id="CSVHeaderLineIndex" class="CSVImportOption" maxlength="3" size="2"/>
-		                        </td>
-		                        <td> Data Start Row Index:
-		                            <input type="textarea" id="startRowIndex" class="CSVImportOption" maxlength="3" size="2" value="2"/>
-		                        </td>
-		                        <td> Text Qualifier:
-		                            <input type="textarea" id="textQualifier" class="CSVImportOption" maxlength="3" size="2" value='"'/>
-		                        </td>
-                        	</tr>
-                        	<tr>
-                        		<td> Encoding:
-                        			<select id="encoding" class="CSVImportOption">
-                        				<%@include file="encoding.jsp" %>
-                        			</select>
-                        		</td>
-                        		<td colspan='2'>Number of Lines to import:
-                        			<input type="textarea" id="maxNumLines" class="CSVImportOption" maxlength="5" size="5" value="100"/>
-                        	</tr>
-                        </table>
-                       
-                     </tr>
-                </tbody>
-            </table>
-            <div id="previewTableDiv">
-                <span id="previewTableHeader">Preview (Only 5 rows shown)</span>
-                <br>
-                <table id="CSVPreviewTable"></table>
-            </div>
-        </div>
-        
-        <div id="FileImportDiv" style="display: none">
-            <table id="FileImportOptionsTable">
-                <tbody>
-                    <tr>
-                        <td id="importOptionsCell" colspan="5"><span id="FileSourceName"></span></td>
-                    </tr>
-                    <tr>
-                        <td><span id="importOptionsHeader">Import Options</span></td>
-                      	 <td>
-                        <table>
-                        	<tr>  
-                        		<td> Encoding:
-                        			<select id="fileEncoding" class="FileImportOption">
-                        				<%@include file="encoding.jsp" %>
-                        			</select>
-                        		</td>
-                        		<td  id="colMaxNumLines">Number of <span id="fileMaxName">Lines</span> to import:
-                        			<input type="textarea" id="fileMaxNumLines" class="FileImportOption" maxlength="5" size="5" value="100"/>
-                        		</td>
-                    		</tr>
-                    	</table>
-                    </tr>
-                </tbody>
-            </table>
-            <div id="filePreviewTableDiv">
-                <span id="previewTableHeader">Preview (Only 5 rows shown)</span>
-                <br>
-                <table id="FilePreviewTable"></table>
             </div>
         </div>
         
@@ -1079,38 +916,7 @@ and related projects, please see: http://www.isi.edu/integration
                 </tbody>
             </table>
         </div>
-        <div id="fileFormatSelectionDialog" style="display: none" class="smallSizedFont">
-            <div class="radio">
-                <ul>
-                    <li>
-                        <input type="radio" name="FileFormatSelection" value="CSV" id="CSVFileFormat" />
-                        <label for="CSVFileFormat">CSV Text File</label>
-                    </li>
-                    <li>
-                        <input type="radio" name="FileFormatSelection" value="JSONFile" id="JSONFileFormat" />
-                        <label for="JSONFileFormat">JSON</label>
-                    </li>
-                    <li>
-                        <input type="radio" name="FileFormatSelection" value="XMLFile" id="XMLFileFormat" />
-                        <label for="XMLFileFormat">XML</label>
-                    </li>
-                    <li>
-                        <input type="radio" name="FileFormatSelection" value="ExcelFile" id="XLSFileFormat" />
-                        <label for="XLSFileFormat">Excel Spreadsheet</label>
-                    </li>
-                    <li>
-                        <input type="radio" name="FileFormatSelection" value="Ontology" id="OWLFileFormat" />
-                        <label for="OWLFileFormat">OWL Ontology</label>
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <input name="RevisionCheck" type="checkbox" />
-                <label for="RevisionCheck">Revision of worksheet <select id="revisedWorksheetSelector"></select></label>
-            </div>
-            <div class="error" style="display: none" id="fileFormatError">Please select the file format!</div>
-
-        </div>
+        
         <div id="resetDialogDiv" style="display: none">
             <table>
                 <tr class="smallSizedFont" >
@@ -1363,5 +1169,8 @@ and related projects, please see: http://www.isi.edu/integration
         	<button id="invokeRubenReconciliationService">Invoke Reconciliation Service</button>
             <button id="invokeMachineLearningService">Invoke M/L Service</button>
         </div>
+        
+        
+        <script type="text/javascript" src="uiLibs/twitterBootstrap/js/bootstrap.min.js"></script>
     </body>
 </html>

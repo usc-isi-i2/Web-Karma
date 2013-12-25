@@ -502,17 +502,9 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
         .on("click", function(d){
             if(d["nodeType"] == "InternalNode") {
                 d["targetNodeId"] = d["id"];
-                console.log("Show links for Internal Node1: " + d.label + ":" + d.id + d.uri);
-                //dipsy: comment lien below later
-                //showLinksForInternalNode(d, svg, d3.event);
-                var menu = $("div#modelingClassDropDownMenu");
-                menu.data("nodeId", d.id);
-                menu.data("nodeDomain", d.nodeDomain);
-                menu.data("worksheetId", worksheetId);
-                menu.data("alignmentId", $(svg).data("alignmentId"));                
-                menu.css({"position":"absolute",
-                    "top":$(this).offset().top + 5,
-                    "left": $(this).offset().left + $(this).width()/2 - $(menu).width()/2}).show();
+                d.worksheetId = worksheetId;
+                d.alignmentId = $(svg).data("alignmentId");
+                showClassPopupMenu(d, this, d3.event);
             }
 
         
@@ -560,16 +552,9 @@ function displayAlignmentTree_ForceKarmaLayout(json) {
                 changeSemanticType_d3(d, svg, d3.event);
             else if(d["nodeType"] == "InternalNode") {
                 d["targetNodeId"] = d["id"];
-                console.log("Show links for Internal Node2");
-               // showLinksForInternalNode(d, svg, d3.event);
-                var menu = $("div#modelingClassDropDownMenu");
-                menu.data("nodeId", d.id);
-                menu.data("nodeDomain", d.nodeDomain);
-                menu.data("worksheetId", worksheetId);
-                menu.data("alignmentId", $(svg).data("alignmentId"));       
-                menu.css({"position":"absolute",
-                    "top":$(this).offset().top + 5,
-                    "left": $(this).offset().left + $(this).width()/2 - $(menu).width()/2}).show();
+                d.worksheetId = worksheetId;
+                d.alignmentId = $(svg).data("alignmentId");
+                showClassPopupMenu(d, this, d3.event);
             }
 
         
@@ -1475,14 +1460,28 @@ function populateLinksListFromServer() {
     });
 }
 
+function showClassPopupMenu(d, classObj, event) {
+	var menu = $("div#modelingClassDropDownMenu");
+    menu.data("nodeId", d.id);
+    menu.data("nodeDomain", d.nodeDomain);
+    menu.data("nodeLabel", d.label);
+    menu.data("worksheetId", d.worksheetId);
+    menu.data("alignmentId", d.alignmentId);         
+    menu.css({"position":"absolute",
+        "top":$(classObj).offset().top + 5,
+        "left": event.clientX}).show(); // + $(this).width()/2 - $(menu).width()/2}).show();
+}
+
 function showIncomingOutgoingDialog(linkType) {
 	var linkTitle;
+	var menuDiv = $("#modelingClassDropDownMenu");
+	
 	console.log("Link type::" + linkType)
 	if(linkType == "incoming") {
-		linkTitle = "Add Incoming Link";
+		linkTitle = "Add Incoming Link for " + $(menuDiv).data("nodeLabel");
 		$("#incomingOutgoingLinksDirection").html("from");
 	} else if(linkType == "outgoing") {
-		linkTitle = "Add Outgoing Link";
+		linkTitle = "Add Outgoing Link for " + $(menuDiv).data("nodeLabel");
 		$("#incomingOutgoingLinksDirection").html("to");
 	} else if(linkType == "fromClass"){
 		linkTitle = "Change from Class";
@@ -1495,8 +1494,7 @@ function showIncomingOutgoingDialog(linkType) {
 	}
 	
 	var optionsDiv = $("div#incomingOutgoingLinksDialog");
-	var menuDiv = $("#modelingClassDropDownMenu");
-
+	
     optionsDiv.data("workspaceId", $.workspaceGlobalInformation.id);
     optionsDiv.data("nodeId",  $(menuDiv).data("nodeId"));
     optionsDiv.data("nodeDomain",  $(menuDiv).data("nodeDomain"));
@@ -1680,7 +1678,7 @@ function displayIncomingOutgoingClasses(dataArray, treeDiv, otherTreeDiv, dataDi
             },
             "themes" : {
                 "theme" : "apple",
-                "url": "css/jstree-themes/apple/style.css",
+                "url": "uiLibs/jquery/css/jstree-themes/apple/style.css",
                 "dots" : true,
                 "icons" : false
             },
@@ -1818,7 +1816,7 @@ function displayIncomingOutgoingProperty(dataArray, treeDiv, otherTreeDiv, dataD
             },
             "themes" : {
                 "theme" : "apple",
-                "url": "css/jstree-themes/apple/style.css",
+                "url": "uiLibs/jquery/css/jstree-themes/apple/style.css",
                 "dots" : true,
                 "icons" : false
             },

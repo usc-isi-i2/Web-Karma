@@ -33,8 +33,8 @@ function attachOntologyOptionsRadioButtonHandlers() {
             $("#propertySearch").click();
         }
     });
-
-    $("input[name='isPrimaryGroup']:radio").live("change", (function(){
+   
+    $ (document ).on("change", "input[name='isPrimaryGroup']:radio",  (function(){
         // Make the semantic type as selected if it has not been yet
         var tr = $(this).parents("tr");
         if(!$("input[name='currentSemanticTypeCheckBoxGroup']:checkbox", tr).is(':checked')) {
@@ -746,7 +746,7 @@ function populateTreeHierarchy(dataArray, treeDiv , dialogBox, submitHandler) {
             },
             "themes" : {
                 "theme" : "apple",
-                "url": "css/jstree-themes/apple/style.css",
+                "url": "uiLibs/jquery/css/jstree-themes/apple/style.css",
                 "dots" : true,
                 "icons" : false
             },

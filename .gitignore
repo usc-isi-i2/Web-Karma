@@ -60,3 +60,5 @@ src/main/scripts/Lib/IDCTClassifier$py.class
 nbactions.xml
 *.n3
 *.ttl
+
+*.rdf
