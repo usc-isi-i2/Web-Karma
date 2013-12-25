@@ -139,98 +139,7 @@ and related projects, please see: http://www.isi.edu/integration
                 $('#fileupload').fileupload({
                     url : "RequestController?workspaceId=" + $.workspaceGlobalInformation.id + "&command=ImportCSVFileCommand",
                     add : function(e, data) {
-                        var fileName = data.files[0].name;
-                        $("span#fileFormatError").hide();
-                        $("input:radio[name=FileFormatSelection]").attr("checked", false);
-                        
-                        /*
-                         * code for disabling revision functionality for ontologies
-                      
-                         $(":radio[name=FileFormatSelection]").change(function(){
-                            var disabled = $(":radio[name=FileFormatSelection]").val() == "Ontology";
-  
-                            disableRevision(disabled);
-                        });*/
-
-                        if(fileName.match(".csv$") || fileName.match(".tsv$") || fileName.match(".txt$") || fileName.match(".log$")) {
-                            $(":radio[name=FileFormatSelection][value=CSV]").attr("checked", true);
-                        } else if(fileName.match(".xml$")) {
-                            $(":radio[name=FileFormatSelection][value=XMLFile]").attr("checked", true);
-                        } else if(fileName.match(".xls$") || fileName.match(".xlsx$")) {
-                            $(":radio[name=FileFormatSelection][value=ExcelFile]").attr("checked", true);
-                        } else if(fileName.match(".owl$") || fileName.match(".rdf$")) {
-                            $(":radio[name=FileFormatSelection][value=Ontology]").attr("checked", true);
-                        } else if(fileName.match(".json$")) {
-                            $(":radio[name=FileFormatSelection][value=JSONFile]").attr("checked", true);
-                        }
-
-                        $("div#fileFormatSelectionDialog").dialog({
-                            width : 200,
-                            height : 250,
-                            title : "Confirm File Format",
-                            modal : true,
-                            open : function(event, ui) {
-                                $('.ui-dialog-buttonset  button:last').filter(":last").focus();
-                                
-                                var worksheets = $('.Worksheet');
-                                if (worksheets.size() > 0){
-                                    disableRevision(false);
-                  
-                                    worksheets.each(function(){
-                                        var item = $('<option />');
-                                        item.val($(this).attr('id'));
-                                        item.text($(this).find('.tableTitleTextDiv').text());
-
-                                        $('#revisedWorksheetSelector').append(item);
-                                    });
-                                } else {
-                                    disableRevision(true);
-                                }
-                            },
-                            buttons : {
-                                "Cancel" : function() {
-                                    $(this).dialog("close");
-                                },
-                                "Submit" : function() {
-                                    var selectedFormat = $("input:radio[name='FileFormatSelection']:checked").val();
-                                    if(selectedFormat == null || selectedFormat == "") {
-                                        $("span#fileFormatError").show();
-                                        return false;
-                                    }
-
-                                    var urlString = "RequestController?workspaceId=" + $.workspaceGlobalInformation.id;
-                                    
-                                    //MVS: add the id of the revised worksheet in the request
-                                    if ($("input:checkbox[name='RevisionCheck']").prop('checked')) {
-                                        urlString += "&revisedWorksheet=" + $('#revisedWorksheetSelector').val();
-                                    }
-                  
-                                    urlString += "&command=";
-
-                                    // Change the command according to the selected format
-                                    if(selectedFormat == "CSV") {
-                                        $('#fileupload').fileupload({
-                                            url : urlString + "ImportCSVFileCommand",
-                                            done : function(e, data) {
-                                                resetCSVDialogOptions();
-                                                showCSVImportOptions(data.result);
-                                            }
-                                        });
-                                    } else if(selectedFormat == "JSONFile" || selectedFormat == "XMLFile" || selectedFormat== "ExcelFile" || selectedFormat == "Ontology") {
-                                    	$('#fileupload').fileupload({
-	                                    	url : urlString + "Import" + selectedFormat + "Command",
-	                                        done : function(e, data) {
-	                                            resetFileDialogOptions();
-	                                            showFileImportOptions(data.result, selectedFormat);
-	                                        }
-                                    	});
-                                    } 
-
-                                    data.submit();
-                                    $(this).dialog("close");
-                                }
-                            }
-                        });
+                    	FileFormatSelectionDialog.getInstance().show(data);
                     },
                     done : function(e, data) {
                         parse(data.result);
@@ -389,7 +298,12 @@ and related projects, please see: http://www.isi.edu/integration
 			        <li><a target="_blank" href="" id="sparql_end_point_link">OpenRDF</a></li>
 		          </ul>
 		        </div>
-		      </div>
+		      </div> <!--  end of navbar -->
+		      
+		      
+		      
+		      <jsp:include page="fileImport.jsp"></jsp:include>
+		      
 			
 		</div>
 	
@@ -430,84 +344,6 @@ and related projects, please see: http://www.isi.edu/integration
                 <span class="mediumSizedFont">RDF triples:</span>
                 <br />
                 <div id="rdfValue"></div>
-            </div>
-        </div>
-        <div id="CSVImportDiv" style="display: none">
-            <table id="CSVImportOptionsTable">
-                <tbody>
-                    <tr>
-                        <td id="importOptionsCell" colspan="5"><span id="CSVSourceName"></span></td>
-                    </tr>
-                    <tr>
-                        <td><span id="importOptionsHeader">Import Options</span></td>
-                        <td>
-                        <table>
-                        	<tr>
-                        		 <td> Column Delimiter:
-		                            <select id="delimiterSelector" class="CSVImportOption">
-		                                <option>comma</option>
-		                                <option>tab</option>
-		                                <option>space</option>
-		                            </select></td>
-		                        <td> Header Line Index:
-		                            <input type="textarea" value="1" id="CSVHeaderLineIndex" class="CSVImportOption" maxlength="3" size="2"/>
-		                        </td>
-		                        <td> Data Start Row Index:
-		                            <input type="textarea" id="startRowIndex" class="CSVImportOption" maxlength="3" size="2" value="2"/>
-		                        </td>
-		                        <td> Text Qualifier:
-		                            <input type="textarea" id="textQualifier" class="CSVImportOption" maxlength="3" size="2" value='"'/>
-		                        </td>
-                        	</tr>
-                        	<tr>
-                        		<td> Encoding:
-                        			<select id="encoding" class="CSVImportOption">
-                        				<%@include file="encoding.jsp" %>
-                        			</select>
-                        		</td>
-                        		<td colspan='2'>Number of Lines to import:
-                        			<input type="textarea" id="maxNumLines" class="CSVImportOption" maxlength="5" size="5" value="100"/>
-                        	</tr>
-                        </table>
-                       
-                     </tr>
-                </tbody>
-            </table>
-            <div id="previewTableDiv">
-                <span id="previewTableHeader">Preview (Only 5 rows shown)</span>
-                <br>
-                <table id="CSVPreviewTable"></table>
-            </div>
-        </div>
-        
-        <div id="FileImportDiv" style="display: none">
-            <table id="FileImportOptionsTable">
-                <tbody>
-                    <tr>
-                        <td id="importOptionsCell" colspan="5"><span id="FileSourceName"></span></td>
-                    </tr>
-                    <tr>
-                        <td><span id="importOptionsHeader">Import Options</span></td>
-                      	 <td>
-                        <table>
-                        	<tr>  
-                        		<td> Encoding:
-                        			<select id="fileEncoding" class="FileImportOption">
-                        				<%@include file="encoding.jsp" %>
-                        			</select>
-                        		</td>
-                        		<td  id="colMaxNumLines">Number of <span id="fileMaxName">Lines</span> to import:
-                        			<input type="textarea" id="fileMaxNumLines" class="FileImportOption" maxlength="5" size="5" value="100"/>
-                        		</td>
-                    		</tr>
-                    	</table>
-                    </tr>
-                </tbody>
-            </table>
-            <div id="filePreviewTableDiv">
-                <span id="previewTableHeader">Preview (Only 5 rows shown)</span>
-                <br>
-                <table id="FilePreviewTable"></table>
             </div>
         </div>
         
@@ -1080,38 +916,7 @@ and related projects, please see: http://www.isi.edu/integration
                 </tbody>
             </table>
         </div>
-        <div id="fileFormatSelectionDialog" style="display: none" class="smallSizedFont">
-            <div class="radio">
-                <ul>
-                    <li>
-                        <input type="radio" name="FileFormatSelection" value="CSV" id="CSVFileFormat" />
-                        <label for="CSVFileFormat">CSV Text File</label>
-                    </li>
-                    <li>
-                        <input type="radio" name="FileFormatSelection" value="JSONFile" id="JSONFileFormat" />
-                        <label for="JSONFileFormat">JSON</label>
-                    </li>
-                    <li>
-                        <input type="radio" name="FileFormatSelection" value="XMLFile" id="XMLFileFormat" />
-                        <label for="XMLFileFormat">XML</label>
-                    </li>
-                    <li>
-                        <input type="radio" name="FileFormatSelection" value="ExcelFile" id="XLSFileFormat" />
-                        <label for="XLSFileFormat">Excel Spreadsheet</label>
-                    </li>
-                    <li>
-                        <input type="radio" name="FileFormatSelection" value="Ontology" id="OWLFileFormat" />
-                        <label for="OWLFileFormat">OWL Ontology</label>
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <input name="RevisionCheck" type="checkbox" />
-                <label for="RevisionCheck">Revision of worksheet <select id="revisedWorksheetSelector"></select></label>
-            </div>
-            <div class="error" style="display: none" id="fileFormatError">Please select the file format!</div>
-
-        </div>
+        
         <div id="resetDialogDiv" style="display: none">
             <table>
                 <tr class="smallSizedFont" >
