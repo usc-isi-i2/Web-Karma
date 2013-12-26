@@ -1,0 +1,467 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY core-soa "http://www.semanticweb.org/ontologies/2010/01/core-soa.owl#" >
+    <!ENTITY ISum "http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum&#39;" >
+    <!ENTITY Aggregate_01 "http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#Aggregate_01&#39;" >
+    <!ENTITY IAggregate_01 "http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;" >
+    <!ENTITY InformationType2 "http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#InformationType&#39;" >
+    <!ENTITY IEnumerable "http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#Aggregate_01&#39;IEnumerable&#39;" >
+    <!ENTITY InformationType "http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#Aggregate_01&#39;testOne[IEnumerable&#39;source[InformationType]]&#39;" >
+]>
+
+
+<rdf:RDF xmlns="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#"
+     xml:base="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl"
+     xmlns:core-soa="http://www.semanticweb.org/ontologies/2010/01/core-soa.owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:InformationType="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#Aggregate_01&#39;testOne[IEnumerable&#39;source[InformationType]]&#39;"
+     xmlns:IEnumerable="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#Aggregate_01&#39;IEnumerable&#39;"
+     xmlns:InformationType2="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#InformationType&#39;"
+     xmlns:IAggregate_01="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;"
+     xmlns:ISum="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum&#39;"
+     xmlns:Aggregate_01="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#Aggregate_01&#39;"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl">
+        <owl:imports rdf:resource="http://www.semanticweb.org/ontologies/2010/01/core-soa.owl"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/01/core-soa.owl#hasInput -->
+
+    <owl:ObjectProperty rdf:about="&core-soa;hasInput"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/01/core-soa.owl#hasOutput -->
+
+    <owl:ObjectProperty rdf:about="&core-soa;hasOutput"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#hasNamedArgument -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#hasNamedArgument"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#has_value_type -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#has_value_type">
+        <rdfs:subPropertyOf rdf:resource="&owl;topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#topObjectProperty -->
+
+    <owl:ObjectProperty rdf:about="&owl;topObjectProperty"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#InformationTypeRealizationPointer -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#InformationTypeRealizationPointer">
+        <rdfs:domain rdf:resource="&core-soa;InformationType"/>
+        <rdfs:range rdf:resource="&xsd;anyURI"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#hasInputArgumentName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#hasInputArgumentName">
+        <rdfs:domain rdf:resource="&core-soa;InformationType"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#has_address -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#has_address">
+        <rdfs:range rdf:resource="&xsd;anyURI"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/01/core-soa.owl#Event -->
+
+    <owl:Class rdf:about="&core-soa;Event">
+        <rdfs:subClassOf rdf:resource="&core-soa;InformationType"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/01/core-soa.owl#InformationType -->
+
+    <owl:Class rdf:about="&core-soa;InformationType">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#has_address"/>
+                <owl:someValuesFrom rdf:resource="&xsd;anyURI"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#has_value_type"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ValueType"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/01/core-soa.owl#ServiceInterface -->
+
+    <owl:Class rdf:about="&core-soa;ServiceInterface"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#Double -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#Double">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ValueType"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#Function -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#Function">
+        <rdfs:subClassOf rdf:resource="&core-soa;InformationType"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregateGroup"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregateGroup -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregateGroup">
+        <rdfs:subClassOf rdf:resource="&core-soa;ServiceInterface"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&core-soa;hasInput"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#Function"/>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="&core-soa;hasInput"/>
+                                <owl:someValuesFrom rdf:resource="&core-soa;InformationType"/>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&core-soa;hasInput"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IEnumerable"/>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="&core-soa;hasInput"/>
+                                <owl:someValuesFrom rdf:resource="&core-soa;InformationType"/>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&core-soa;hasInput"/>
+                <owl:someValuesFrom rdf:resource="&core-soa;InformationType"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&core-soa;hasOutput"/>
+                <owl:someValuesFrom rdf:resource="&core-soa;InformationType"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IEnumerable -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IEnumerable">
+        <rdfs:subClassOf rdf:resource="&core-soa;InformationType"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregateGroup"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum_01 -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum_01">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&core-soa;hasInput"/>
+                <owl:someValuesFrom rdf:resource="&core-soa;InformationType"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&core-soa;hasOutput"/>
+                <owl:someValuesFrom rdf:resource="&core-soa;InformationType"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&core-soa;hasInput"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IEnumerable"/>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="&core-soa;hasInput"/>
+                                <owl:someValuesFrom rdf:resource="&core-soa;InformationType"/>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#Integer32Bit -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#Integer32Bit">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ValueType"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ValueType -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ValueType"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01"/>
+        <core-soa:hasInput rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[Function&#39;func]"/>
+        <core-soa:hasInput rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[IEnumerable&#39;source]"/>
+        <core-soa:hasInput rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[InformationType&#39;genericArg_01]"/>
+        <core-soa:hasOutput rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[InformationType&#39;genericArg_02]"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[Function&#39;func[InformationType&#39;genericArg_01]] -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[Function&#39;func[InformationType&#39;genericArg_01]]">
+        <rdf:type rdf:resource="&core-soa;InformationType"/>
+        <hasInputArgumentName>arg_01</hasInputArgumentName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[Function&#39;func[InformationType&#39;genericArg_02]] -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[Function&#39;func[InformationType&#39;genericArg_02]]">
+        <rdf:type rdf:resource="&core-soa;InformationType"/>
+        <hasInputArgumentName>arg_02</hasInputArgumentName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[Function&#39;func[InformationType&#39;genericArg_03]] -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[Function&#39;func[InformationType&#39;genericArg_03]]">
+        <rdf:type rdf:resource="&core-soa;InformationType"/>
+        <hasInputArgumentName>arg_03</hasInputArgumentName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[Function&#39;func] -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[Function&#39;func]">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#Function"/>
+        <hasInputArgumentName>func</hasInputArgumentName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[IEnumerable&#39;source[InformationType&#39;genericArg_01]] -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[IEnumerable&#39;source[InformationType&#39;genericArg_01]]">
+        <rdf:type rdf:resource="&core-soa;InformationType"/>
+        <hasInputArgumentName>arg_01</hasInputArgumentName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[IEnumerable&#39;source] -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[IEnumerable&#39;source]">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IEnumerable"/>
+        <hasInputArgumentName>source</hasInputArgumentName>
+        <core-soa:hasInput rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[IEnumerable&#39;source[InformationType&#39;genericArg_01]]"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[InformationType&#39;genericArg_01] -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[InformationType&#39;genericArg_01]">
+        <rdf:type rdf:resource="&core-soa;InformationType"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[InformationType&#39;genericArg_02] -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IAggregate_01&#39;testOne[InformationType&#39;genericArg_02]">
+        <rdf:type rdf:resource="&core-soa;InformationType"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum&#39;testTwo -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum&#39;testTwo">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum_01"/>
+        <has_address rdf:datatype="&xsd;anyURI">http://url_2</has_address>
+        <core-soa:hasInput rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum&#39;testTwo[IEnumerable&#39;source]"/>
+        <core-soa:hasInput rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum_01&#39;testTwo[InformationType&#39;genericArg_01]"/>
+        <core-soa:hasOutput rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum_01&#39;testTwo[InformationType&#39;genericArg_02]"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum&#39;testTwo[IEnumerable&#39;source] -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum&#39;testTwo[IEnumerable&#39;source]">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#IEnumerable"/>
+        <has_address rdf:datatype="&xsd;anyURI">http://url_1</has_address>
+        <hasInputArgumentName>source</hasInputArgumentName>
+        <core-soa:hasInput rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum_01&#39;testTwo[IEnumerable&#39;source[InformationType&#39;genericArg_01]]"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum_01&#39;testTwo[IEnumerable&#39;source[InformationType&#39;genericArg_01]] -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum_01&#39;testTwo[IEnumerable&#39;source[InformationType&#39;genericArg_01]]">
+        <rdf:type rdf:resource="&core-soa;InformationType"/>
+        <hasInputArgumentName>genericArg_01</hasInputArgumentName>
+        <has_value_type rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#myInteger32Bit"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum_01&#39;testTwo[InformationType&#39;genericArg_01] -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum_01&#39;testTwo[InformationType&#39;genericArg_01]">
+        <rdf:type rdf:resource="&core-soa;InformationType"/>
+        <hasInputArgumentName>genericArg_01</hasInputArgumentName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum_01&#39;testTwo[InformationType&#39;genericArg_02] -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#ISum_01&#39;testTwo[InformationType&#39;genericArg_02]">
+        <rdf:type rdf:resource="&core-soa;InformationType"/>
+        <hasInputArgumentName>genericArg_02</hasInputArgumentName>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#myInteger32Bit -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#myInteger32Bit">
+        <rdf:type rdf:resource="http://www.semanticweb.org/ontologies/2010/11/Ontology1291823796501.owl#Integer32Bit"/>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.1.0.1602) http://owlapi.sourceforge.net -->
+

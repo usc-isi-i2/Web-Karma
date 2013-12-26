@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#"
+     xml:base="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology">
+        <rdfs:comment>This ontology is a revision of the RDF Graph Modeling Language by Punin and Krishnamoorthy</rdfs:comment>
+        <owl:imports rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#DirectedGraph -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#DirectedGraph">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#GraphQuality"/>
+        <rdfs:comment>Definition: A Graph Quality that inheres in a Graph when the nodes of the graph are connected by edgs that have a direction associated with them</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#Edge -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#Edge">
+        <rdfs:label>Edge</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#InformationBearingEntity"/>
+        <rdfs:comment>Definition: An information bearing entity that links together two nodes</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#Graph -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#Graph">
+        <rdfs:label>Graph</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#InformationBearingEntity"/>
+        <rdfs:comment>An Information Bearing Entity that is a representation of a set of objects where some paris of objects are connected by links</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#GraphPartWeight -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#GraphPartWeight">
+        <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#Quality"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#GraphQuality -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#GraphQuality">
+        <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#Quality"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#Node -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#Node">
+        <rdfs:label>Node</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#InformationBearingEntity"/>
+        <rdfs:comment>An Information Bearing Entity that is part of a graph that represents an object</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#NodeRole -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#NodeRole">
+        <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#Role"/>
+        <rdfs:comment>Definition: A Role that inheres in a node within the context of a graph</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#SourceNodeRole -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#SourceNodeRole">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#NodeRole"/>
+        <rdfs:comment>Definition: A Node Role that inheres in a Node that is the eminating point for an edge</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#TargetNodeRole -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#TargetNodeRole">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#NodeRole"/>
+        <rdfs:comment>Definition: A Node Role that inheres in a node that is the terminus of an edge.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#UndirectedGraph -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#UndirectedGraph">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Application/GraphOntology#GraphQuality"/>
+        <rdfs:comment>Definition: A graph quality that inheres in a graph for which the relations between pairs of vertices are symmetric, so that each edge has no directional character (as opposed to a directed graph). Unless otherwise indicated by context, the term &quot;graph&quot; can usually be taken to mean &quot;undirected graph.&quot; (derived from: http://mathworld.wolfram.com/UndirectedGraph.html) </rdfs:comment>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+

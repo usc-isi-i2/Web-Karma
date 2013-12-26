@@ -822,12 +822,12 @@ public class GraphBuilder {
 		// In this case, in addition to the domain class, we add all of its children too.
 		
 		opDomainClasses = ontologyManager.getDomainsGivenRange(uri, true);
-		superClasses = ontologyManager.getSuperClasses(uri, false);
+//		superClasses = ontologyManager.getSuperClasses(uri, false);
 
 		if (opDomainClasses != null)
 			uriDirectConnections.addAll(opDomainClasses);
-		if (superClasses != null)
-			uriDirectConnections.addAll(superClasses.keySet());
+//		if (superClasses != null)
+//			uriDirectConnections.addAll(superClasses.keySet());
 
 		return uriDirectConnections;
 	}

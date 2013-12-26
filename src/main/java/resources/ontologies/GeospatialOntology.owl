@@ -1,0 +1,1441 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY oboInOwl "http://www.geneontology.org/formats/oboInOwl#" >
+    <!ENTITY ero "http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#"
+     xml:base="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
+     xmlns:ero="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#">
+    <owl:Ontology rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology">
+        <owl:versionInfo rdf:datatype="&xsd;string">Created with TopBraid Composer</owl:versionInfo>
+        <owl:imports rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Datatypes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#coincides_with -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#coincides_with">
+        <rdfs:label rdf:datatype="&xsd;string">coincides with</rdfs:label>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A spatial region sp1 coincides with some spatial region sp2 iff sp1 is a spatial part of sp2 and sp2 is a spatial part of sp1.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:range rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#connected_with -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#connected_with">
+        <rdfs:label rdf:datatype="&xsd;string">connected with</rdfs:label>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A spatial region sp1 is connected with some spatial region sp2 iff there exists some spatial region sp3 that is common to both sp1 and sp2.</rdfs:comment>
+        <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:range rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#disconnected_with -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#disconnected_with">
+        <rdfs:label rdf:datatype="&xsd;string">disconnected with</rdfs:label>
+        <rdfs:range rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#externally_connects_with -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#externally_connects_with">
+        <rdfs:label rdf:datatype="&xsd;string">externally connects with</rdfs:label>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A spatial region sp1 externally connects with some spatial region sp2 iff sp1 connects with sp2 and sp1 does not overlaps with sp2.</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_nontangential_proper_part -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_nontangential_proper_part">
+        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
+        <rdfs:label rdf:datatype="&xsd;string">has nontangential proper part</rdfs:label>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: Inverse of nontangential proper part of</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_spatial_proper_part"/>
+        <owl:inverseOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#nontangential_proper_part_of"/>
+        <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:range rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_spatial_part_of -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_spatial_part_of">
+        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
+        <rdfs:label rdf:datatype="&xsd;string">has spatial part of</rdfs:label>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: Inverse of spatial part of</rdfs:comment>
+        <owl:inverseOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#spatial_part_of"/>
+        <rdfs:range rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_spatial_proper_part -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_spatial_proper_part">
+        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
+        <rdfs:label rdf:datatype="&xsd;string">has spatial proper part</rdfs:label>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: Inverse of spatial proper part of</rdfs:comment>
+        <owl:inverseOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#spatial_proper_part_of"/>
+        <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:range rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_proper_part"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_tangential_proper_part -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_tangential_proper_part">
+        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
+        <rdfs:label rdf:datatype="&xsd;string">has tangential proper part</rdfs:label>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: Inverse of tangential proper part of</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_spatial_proper_part"/>
+        <rdfs:range rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#nontangential_proper_part_of -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#nontangential_proper_part_of">
+        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
+        <rdfs:label rdf:datatype="&xsd;string">nontangential proper part of</rdfs:label>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A spatial region sp1 is a nontangential proper part of some spatial region sp2 iff sp1 is a spatial proper part of sp2 and there does not exist a spatial region sp such that sp externally connects with sp1 and sp externally connects with sp2</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#spatial_proper_part_of"/>
+        <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:range rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#overlaps_with -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#overlaps_with">
+        <rdfs:label rdf:datatype="&xsd;string">overlaps with</rdfs:label>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A spatial region sp1 overlaps with some spatial region sp2 iff there exists some spatial region sp such that sp is a spatial part of sp1 and sp is a spatial part of sp2.</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#partially_overlaps_with -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#partially_overlaps_with">
+        <rdfs:label rdf:datatype="&xsd;string">partially overlaps with</rdfs:label>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A spatial region sp1 partially overlaps with some spatial region sp2 iff sp1 overlaps with sp2 and sp1 is not a spatial part of sp2 and sp2 is not a spatial part of sp1.</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#spatial_part_of -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#spatial_part_of">
+        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
+        <rdfs:label rdf:datatype="&xsd;string">spatial part of</rdfs:label>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A spatial region sp1 is a spatial part of some spatial region sp2 iff for every spatial region sp if sp is connected with sp1, then sp is connected with sp2.</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#spatial_proper_part_of -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#spatial_proper_part_of">
+        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
+        <rdfs:label rdf:datatype="&xsd;string">spatial proper part of</rdfs:label>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A spatial region sp1 is a spatial proper part of some spatial region sp2 iff sp1 is a spatial part of sp2 and sp2 is not a spatial part of sp1.</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#proper_part_of"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#tangential_proper_part_of -->
+
+    <owl:ObjectProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#tangential_proper_part_of">
+        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
+        <rdfs:label rdf:datatype="&xsd;string">tangential proper part of</rdfs:label>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A spatial region sp1 is a tangential proper part of some spatial region sp2 iff sp1 is a spatial proper part of sp2 and there exists some spatial region sp such that sp externally connects with sp1 and sp externally connects with sp2.</rdfs:comment>
+        <owl:inverseOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_tangential_proper_part"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#spatial_proper_part_of"/>
+        <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:range rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_latitude_value -->
+
+    <owl:DatatypeProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_latitude_value">
+        <rdfs:label rdf:datatype="&xsd;string">has latitude value</rdfs:label>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Datatype property that has as its range the latitude value from some geospatial location coordinates set expressed in decimal degrees.</rdfs:comment>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_longitude_value -->
+
+    <owl:DatatypeProperty rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_longitude_value">
+        <rdfs:label rdf:datatype="&xsd;string">has longitude value</rdfs:label>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Datatype property that has as its range the longitude value from some geospatial location coordinates set expressed in decimal degrees.</rdfs:comment>
+        <rdfs:range rdf:resource="&xsd;decimal"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Aimpoint -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Aimpoint">
+        <rdfs:label rdf:datatype="&xsd;string">Aimpoint</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&ero;has_role"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AimpointRole"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialLocation"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A GeospatiaLocation whose targetting will bring about the intended destruction or incapacitation of specified entities.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AimpointRole -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AimpointRole">
+        <rdfs:label rdf:datatype="&xsd;string">Aimpoint Role</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#Role"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Role of some GeospatiaLocation whose targetting will bring about the intended destruction or incapacitation of specified entities.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AreaOfInfluence -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AreaOfInfluence">
+        <rdfs:label rdf:datatype="&xsd;string">Area of Influence</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&ero;has_role"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AreaOfInfluenceRole"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialLocation"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AreaOfOperations"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Geospatial Location that contains an Organization&apos;s Area of Operations but also includes that Geospatial Region in which the Organization can influence the outcome of Events.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AreaOfInfluenceRole -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AreaOfInfluenceRole">
+        <rdfs:label rdf:datatype="&xsd;string">Area Of Influence Role</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#Role"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Role of some Geospatial Location that contains an Organization&apos;s Area of Operations but also includes that Geospatial Region in which the Organization can influence the outcome of Events.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AreaOfOperations -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AreaOfOperations">
+        <rdfs:label rdf:datatype="&xsd;string">Area of Operations</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&ero;has_role"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AreaOfOperationsRole"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialLocation"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AreaOfInfluence"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Geospatial Location in which the Intentional Acts performed by an Organization and relevant effects of these Acts have, are,  or will be occurring.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AreaOfOperationsRole -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AreaOfOperationsRole">
+        <rdfs:label rdf:datatype="&xsd;string">Area of Operations Role</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#Role"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Role of some Geospatial Location in which the Intentional Acts performed by an Organization and relevant effects of these Acts have, are,  or will be occurring.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Atmosphere -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Atmosphere">
+        <rdfs:label rdf:datatype="&xsd;string">Atmosphere</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AtmosphericFeature"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Atmospheric Feature that is composed of a layer of gases that surround a material body of sufficient mass and which are held in place by the gravity of the body (derived from http://en.wikipedia.org/wiki/Atmosphere)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AtmosphericFeature -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#AtmosphericFeature">
+        <rdfs:label rdf:datatype="&xsd;string">Atmospheric feature</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#Object"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Object that is a natural (i.e. not human made) part of the atmosphere (including the atmosphere itself as a non-proper part) having a relatively stable lifecycle and which has a location that can be distinguished from the surrounding portion of the atmosphere.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Bay -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Bay">
+        <rdfs:label rdf:datatype="&xsd;string">Bay</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Landform that is an area of water mostly surrounded by land (derived from http://en.wikipedia.org/wiki/Bay)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Beach -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Beach">
+        <rdfs:label>Beach</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is The shore of the sea or lake, sandy or pebbly, brought up by the waves (including the foreshore area). (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Bog -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Bog">
+        <rdfs:label>Bog</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A poorly drained or periodically flooded area, excluding tidal waters, with soil rich in plant residue. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#BoundingBoxEastPoint -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#BoundingBoxEastPoint">
+        <rdfs:label rdf:datatype="&xsd;string">Bounding Box East Point</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#BoundingBoxPoint"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#tangential_proper_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegionBoundingBox"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Zero Dimensional Region that is externally connected to the eastern boundary of some Geospatial Region Bounding Box.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#BoundingBoxNorthPoint -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#BoundingBoxNorthPoint">
+        <rdfs:label rdf:datatype="&xsd;string">Bounding Box North Point</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#BoundingBoxPoint"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#tangential_proper_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegionBoundingBox"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Zero Dimensional Region that is externally connected to the northern boundary of some Geospatial Region Bounding Box</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#BoundingBoxPoint -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#BoundingBoxPoint">
+        <rdfs:label rdf:datatype="&xsd;string">Bounding box point</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#nontangential_proper_part_of"/>
+                        <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegionBoundingBox"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#tangential_proper_part_of"/>
+                        <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegionBoundingBox"/>
+                    </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#ZeroDimensionalRegion"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A zero dimensional region that is either a tangential proper part or a nontangential proper part of some Geospatial Region Bounding Box. </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#BoundingBoxSouthPoint -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#BoundingBoxSouthPoint">
+        <rdfs:label rdf:datatype="&xsd;string">Bounding Box South Point</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#BoundingBoxPoint"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#tangential_proper_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegionBoundingBox"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Zero Dimensional Region that is externally connected to the southern boundary of some Geospatial Region Bounding Box</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#BoundingBoxWestPoint -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#BoundingBoxWestPoint">
+        <rdfs:label rdf:datatype="&xsd;string">Bounding Box West Point</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#BoundingBoxPoint"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#tangential_proper_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegionBoundingBox"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Zero Dimensional Region that is externally connected to the western boundary of some Geospatial Region Bounding Box</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Cave -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Cave">
+        <rdfs:label>Cave</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A natural subterranean chamber or series of chambers open to the Earth�s surface. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Channel -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Channel">
+        <rdfs:label>Channel</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is That part of a body of water, sometimes dredged, deep enough for navigation through an area otherwise not navigable. It is usually marked by a single or double line of navigational aids. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#City -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#City">
+        <rdfs:label rdf:datatype="&xsd;string">City</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#SubNationalEntity"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#proper_part_of"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Province"/>
+                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#State"/>
+                        </owl:unionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#CityPart -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#CityPart">
+        <rdfs:label rdf:datatype="&xsd;string">City Part</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#City"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeopoliticalEntityPart"/>
+        <rdfs:comment rdf:datatype="&xsd;string">A defined class composed of fiat sub-sections of a City. </rdfs:comment>
+        <rdfs:comment rdf:datatype="&xsd;string">This Class should be used for instances that are sections of a City demarcated by cultural, historic, demographic reasons, examples would be the French Quarter of New Orleans and the Flatbush neighorhood of New York City.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Cliff -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Cliff">
+        <rdfs:label>Cliff</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A steep, vertical, or overhanging face of rock or earth. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Coastline -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Coastline">
+        <rdfs:label>Coastline</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A line generally following the contact between a land mass and a body of water, based on the low water line, and used as a reference for measuring international boundaries such as Territorial Limits or Exclusive Economic Zone (EEZ). (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Continent -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Continent">
+        <rdfs:label>Continent</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegion"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Geospatial Region which is any of the world&apos;s main continuous expanses of land. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#CoralReef -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#CoralReef">
+        <rdfs:label>Coral Reef</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Ecosystem"/>
+        <rdfs:comment>Definition: A Ecosystem which is A rocky or coral elevation at or near enough to the surface of the sea to be a danger to surface navigation. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Country -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Country">
+        <rdfs:label>Country</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeopoliticalEntity"/>
+        <rdfs:comment>Definition: A GeopoliticalEntity with effective internal and external sovereignty over a GeospatialRegion and population which is not dependent on or subject to any other power or State.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#CountryPart -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#CountryPart">
+        <rdfs:label rdf:datatype="&xsd;string">Country Part</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Country"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeopoliticalEntityPart"/>
+        <rdfs:comment rdf:datatype="&xsd;string">A defined class composed of fiat sub-sections of a Country. </rdfs:comment>
+        <rdfs:comment rdf:datatype="&xsd;string">This class should be used for instances which are not proper SubNationalEntities like Cities, Provinces, and States. Rather examples would be regions of a country such as Southeastern United States, and Northern Iraq.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Desert -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Desert">
+        <rdfs:label>Desert</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Ecosystem"/>
+        <rdfs:comment>Definition: A Ecosystem that receives an extremely low amount of precipitation, less than enough to support growth of most plants. (derived from http://en.wikipedia.org/wiki/Desert)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Ecosystem -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Ecosystem">
+        <rdfs:label>Ecosystem</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeographicFeature"/>
+        <rdfs:comment>Definition: A Geographic Feature that is a biological environment consisting of all the organisms living in a particular area, as well as all the nonliving, physical components of the environment with which the organisms interact, such as air, soil, water, and sunlight. (derived from http://en.wikipedia.org/wiki/Ecosystem)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Fan -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Fan">
+        <rdfs:label>Fan</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A gently sloping fan shaped feature usually found near the lower termination of a canyon. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Fault -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Fault">
+        <rdfs:label>Fault</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A fracture in the Earth�s crust with displacement on one side of the fracture relative to the other. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Flume -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Flume">
+        <rdfs:label>Flume</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is An open, inclined channel which carries water for use in such operations as mining or logging. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Forest -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Forest">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Ecosystem"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeographicFeature -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeographicFeature">
+        <rdfs:label>Geographic Feature</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#Object"/>
+        <rdfs:comment>Definition: A PhysicalEntity that is a natural (i.e. not human made) topographical feature having a (relatively) stable location in some GeospatialRegion which can be designated by location-specific data.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeopoliticalEntity -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeopoliticalEntity">
+        <rdfs:label>Geopolitical Entity</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegion"/>
+        <rdfs:comment>Definition: A GeospatialRegion that is the whole region controlled by a single sovereign government.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeopoliticalEntityBorder -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeopoliticalEntityBorder">
+        <rdfs:label rdf:datatype="&xsd;string">Geopolitical Entity Border</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialBoundary"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Geospatial Boundary of some Geopolitical Entity (derived from http://en.wikipedia.org/wiki/International_border.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeopoliticalEntityPart -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeopoliticalEntityPart">
+        <rdfs:label rdf:datatype="&xsd;string">Geopolitical Entity Part</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeopoliticalEntity"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegion"/>
+        <rdfs:comment rdf:datatype="&xsd;string">A defined class composed of fiat sub-sections of Geopolitical Entity. </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialBoundary -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialBoundary">
+        <rdfs:label>Geospatial Boundary</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:comment>Definition: A PhysicalEntity that is the boundary of a GeospatialRegion.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialLocation -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialLocation">
+        <rdfs:label>Geospatial Location</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegion"/>
+        <rdfs:comment>Definition: A GeospatialRegion at which a Entity or Event is located</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegion -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegion">
+        <rdfs:label>Geospatial Region</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#SpatialRegion"/>
+        <rdfs:comment>Definition: A Spatial Region at or near the surface of the Earth.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegionBoundingBox -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegionBoundingBox">
+        <rdfs:label rdf:datatype="&xsd;string">Geospatial Region Bounding Box</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#has_nontangential_proper_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegion"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#TwoDimensionalRegion"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Two Dimensional Region having some Geospatial Region as a non-tangential proper part</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Glacier -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Glacier">
+        <rdfs:label>Glacier</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A large mass of snow and ice moving slowly down a slope or valley from above the snowline. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Gorge -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Gorge">
+        <rdfs:label>Gorge</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A long, narrow, deep erosion with steep banks. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Hill -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Hill">
+        <rdfs:label>Hill</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A small, isolated elevation, smaller than a mountain. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#IceCliff -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#IceCliff">
+        <rdfs:label>Ice cliff</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is The vertical face of a glacier or ice shelf. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#IceField -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#IceField">
+        <rdfs:label>IceField</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A large area permanently covered by snow or ice over land or water. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#IceShelf -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#IceShelf">
+        <rdfs:label>Ice Shelf</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A sheet of thick ice, with level or undulating surface, attached to the land but mostly afloat which is bounded on the seaward side by an Ice Cliff. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Island -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Island">
+        <rdfs:label>Island</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A land mass smaller than a continent and surrounded by water. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Isthmus -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Isthmus">
+        <rdfs:label rdf:datatype="&xsd;string">Isthmus</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Landform that is a narrow section of land in a body of water connecting two larger land areas (derived from ENVO_00000174)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Lagoon -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Lagoon">
+        <rdfs:label>Lagoon</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is Open body of water separated from the sea by a sand bank or coral reef. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Lake -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Lake">
+        <rdfs:label>Lake</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A body of water surrounded by land. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform">
+        <rdfs:label>Landform</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeographicFeature"/>
+        <rdfs:comment>Definition: A Geographic Feature that is a geomorphological unit characterized by its surface form and location in the landscape (derived from http://en.wikipedia.org/wiki/Landform).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Marsh -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Marsh">
+        <rdfs:label>Marsh</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is An area of wet, often spongy ground that is subject to frequent or tidal inundations, but not considered to be continually under water. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Moraine -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Moraine">
+        <rdfs:label>Moraine</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is An accumulation of soil and stone debris deposited by a glacier. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Mountain -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Mountain">
+        <rdfs:label>Mountain</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A natural elevation of the earth&apos;s surface rising more or less abruptly from the surrounding level, and attaining an altitude which, relatively to adjacent elevations, is impressive or notable. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#MountainPass -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#MountainPass">
+        <rdfs:label>Mountain Pass</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A natural route through a low place in a mountain range. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#NaturalFord -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#NaturalFord">
+        <rdfs:label>Natural Ford</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A shallow part of a body of water that can be crossed without bridging, boats, or rafts. A location in a water barrier where the physical characteristics of current, bottom, and approaches permit the passage of personnel and/or vehicles and other equipment that remain in contact with the bottom. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#NaturalHarbor -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#NaturalHarbor">
+        <rdfs:label>Natural Harbor</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A place of shelter for ships; where they may lie close to and sheltered by the shore or by works extended from it. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Ocean -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Ocean">
+        <rdfs:label rdf:datatype="&xsd;string">Ocean</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Ecosystem"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Ecosystem that is a major body of saline water, and a principal component of the hydrosphere. (derived from http://en.wikipedia.org/wiki/Ocean)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Peninsula -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Peninsula">
+        <rdfs:label rdf:datatype="&xsd;string">Peninsula</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Landform that is a body of land jutting out into and nearly surounded by water (derived from ENVO_00000305)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Plain -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Plain">
+        <rdfs:label rdf:datatype="&xsd;string">Plain</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Landform that is a region of uniform slope, comparatively level, and of considerable extent (derived from ENVO_00000086)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Plateau -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Plateau">
+        <rdfs:label rdf:datatype="&xsd;string">Plateau</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Landform that is an elevated and comparatively level expanse of land (derived from ENVO_00000182).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PointOfDestination -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PointOfDestination">
+        <rdfs:label xml:lang="en">PointOfDestination</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&ero;has_role"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PointOfDestinationRole"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Waypoint"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PointOfDestinationRole -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PointOfDestinationRole">
+        <rdfs:label xml:lang="en">PointOfDestinationRole</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#WaypointRole"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PointOfOrigin -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PointOfOrigin">
+        <rdfs:label xml:lang="en">PointOfOrigin</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&ero;has_role"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PointOfOriginRole"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Waypoint"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PointOfOriginRole -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PointOfOriginRole">
+        <rdfs:label xml:lang="en">PointOfOriginRole</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#WaypointRole"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PolarIce -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PolarIce">
+        <rdfs:label>Polar Ice</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is The heaviest, thickest form of ice over land or water. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Pond -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Pond">
+        <rdfs:label rdf:datatype="&xsd;string">Pond</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Landform that is a body of water, usually of smaller size than a lake (derived from ENVO_00000033)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PopulatedPlace -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PopulatedPlace">
+        <rdfs:label rdf:datatype="&xsd;string">Populated place</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialLocation"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Geospatial Location at which people live or have lived. (derived from http://en.wikipedia.org/wiki/Human_settlement)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PortOfEntry -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#PortOfEntry">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialLocation"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A port of entry is a geospatial location that fills the PortOfEntryRole (Source: http://answers.usa.gov/system/selfservice.controller?CONFIGURATION=1000&amp;PARTITION_ID=1&amp;CMD=VIEW_ARTICLE&amp;ARTICLE_ID=12326)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Province -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Province">
+        <rdfs:label rdf:datatype="&xsd;string">Province</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#SubNationalEntity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#ProvincePart -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#ProvincePart">
+        <rdfs:label rdf:datatype="&xsd;string">Province Part</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Province"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeopoliticalEntityPart"/>
+        <rdfs:comment rdf:datatype="&xsd;string">A defined class composed of fiat sub-sections of a Province. </rdfs:comment>
+        <rdfs:comment rdf:datatype="&xsd;string">This Class should be used for instances that are sections of a province demarcated by cultural, historic, or demographic reasons, examples would be the southwest area of Al Anbar Province and the Greater Montreal Area of Quebec.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Rainforest -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Rainforest">
+        <rdfs:label>Rainforest</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Forest"/>
+        <rdfs:comment>Definition: A type of Forest characterized by high rainfall (derivedfrom http://en.wikipedia.org/wiki/Rainforest)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Rapids -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Rapids">
+        <rdfs:label>Rapids</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A place in a stream or river where the current is swift and the surface is usually broken by boulders and rocks. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Ridge -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Ridge">
+        <rdfs:label rdf:datatype="&xsd;string">Ridge</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Landform that features a chain of mountains or hills that are of a continuous elevated crest for some distance. Ridges are usually termed hills or mountains as well, depending on size. (derived from http://en.wikipedia.org/wiki/Ridge)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#River -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#River">
+        <rdfs:label>River</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A natural flowing watercourse. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#RiverBank -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#RiverBank">
+        <rdfs:label>River Bank</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is The limit line between the water area of a river and the area of land. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Rock -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Rock">
+        <rdfs:label>Rock</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is An isolated rocky formation or a single large stone above or below the water surface. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#RockFormation -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#RockFormation">
+        <rdfs:label>Rock Formation</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A visual topographic outcrop, layers or beds of rock. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Route -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Route">
+        <rdfs:label rdf:datatype="&xsd;string">Route</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&ero;has_role"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#RouteRole"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialLocation"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Geospatial Location that is a course that may be followed from a point of origin to a destination in an Act of Travel.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#RouteRole -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#RouteRole">
+        <rdfs:label rdf:datatype="&xsd;string">Route Role</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#Role"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Role of some Geospatial Location that is a course that may be followed from a point of origin to a destination in an Act of Travel.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#SaltPan -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#SaltPan">
+        <rdfs:label>Salt Pan</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A flat area of natural surface salt deposits. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#SandDune -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#SandDune">
+        <rdfs:label>Sand Dune</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is Ridges or hills of sand. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#SatelliteLocation -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#SatelliteLocation">
+        <rdfs:label rdf:datatype="&xsd;string">Satellite Location</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&ero;has_role"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#SatelliteLocationRole"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialLocation"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Geospatial Location at which some members of the Organization are located and active but is not part of the Organization&apos;s Area of Influence.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#SatelliteLocationRole -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#SatelliteLocationRole">
+        <rdfs:label rdf:datatype="&xsd;string">Satellite Location Role</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#Role"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Role of some Geospatial Location at which some members of the Organization are located and active but is not part of the Organization&apos;s Area of Influence.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Sea -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Sea">
+        <rdfs:label rdf:datatype="&xsd;string">Sea</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A landform that is a large expanse of saline water connected with an ocean, also a large saline lake that lacks a natural outlet. (derived from http://en.wikipedia.org/wiki/Sea)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Shrubland -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Shrubland">
+        <rdfs:label rdf:datatype="&xsd;string">Shrubland</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Ecosystem"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Ecosystem characterized by vegetation dominated by shrubs, often also including grasses, herbs, and geophytes. (derived from http://en.wikipedia.org/wiki/Scrubland)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Spring -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Spring">
+        <rdfs:label>Spring</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A natural outflow of water from below the ground surface. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#StagingArea -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#StagingArea">
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialLocation"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A staging area is a geospatial location that fills the StagingAreaRole	(Source: http://en.wikipedia.org/wiki/Staging_area)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#State -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#State">
+        <rdfs:label rdf:datatype="&xsd;string">State</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#SubNationalEntity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#StatePart -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#StatePart">
+        <rdfs:label rdf:datatype="&xsd;string">State Part</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#State"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeopoliticalEntityPart"/>
+        <rdfs:comment rdf:datatype="&xsd;string">A defined class composed of fiat sub-sections of a State. </rdfs:comment>
+        <rdfs:comment rdf:datatype="&xsd;string">This Class should be used for instances that are sections of a State demarcated by cultural, historic, or demographic reasons, examples would be the Western New York Region and the Texas Panhandle.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#SubNationalEntity -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#SubNationalEntity">
+        <rdfs:label rdf:datatype="&xsd;string">Subnational Entity</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeopoliticalEntity"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#proper_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Country"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">A Geopolitical Entity that is part of a Country and which has a degree of autonomy of governance.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Subcontinent -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Subcontinent">
+        <rdfs:label rdf:datatype="&xsd;string">Subcontinent</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegion"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Geospatial Region that is a large, relatively self-contained landmass forming a subdivision of a continent (derived from http://en.wikipedia.org/wiki/Subcontinent).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Swamp -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Swamp">
+        <rdfs:label>Swamp</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A low lying saturated area covered with water all or most of the year, where accumulating dead vegetation does not rapidly decay. It can exist on flat-lying areas created by certain geomorphic environments. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Tundra -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Tundra">
+        <rdfs:label>Tundra</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Ecosystem"/>
+        <rdfs:comment>Definition: A Ecosystem which is A prairie-like region in the Arctic and Subarctic zones in which the subsoil is permanently frozen. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Valley -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Valley">
+        <rdfs:label>Valley</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A stretched-out groove in the land, usually formed by streams or rivers. A valley begins with high ground on three sides, and usually has a course of running water through it. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Volcano -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Volcano">
+        <rdfs:label>Volcano</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A mountain or hill, often conical, formed around a vent in the earth&apos;s crust through which molten rock, ash, or gases are or have been expelled. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Wadi -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Wadi">
+        <rdfs:label rdf:datatype="&xsd;string">Wadi</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Landform that is a valley or ravine, bounded by relatively steep banks, which in the rainy season becomes a watercourse (derived from ENVO_00000031).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Waterfall -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Waterfall">
+        <rdfs:label>Waterfall</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Landform"/>
+        <rdfs:comment>Definition: A Landform which is A vertical or nearly vertical descent of water. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Waypoint -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Waypoint">
+        <rdfs:label rdf:datatype="&xsd;string">Waypoint</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&ero;has_role"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#WaypointRole"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialLocation"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Route"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Geospatial Location that is part of some Route and used as a reference point in some Plan.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#WaypointRole -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#WaypointRole">
+        <rdfs:label rdf:datatype="&xsd;string">Waypoint Role</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#Role"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Role of some Geospatial Location that is part of some Route and used as a reference point in some Plan.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Wetland -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Wetland">
+        <rdfs:label>Wetland</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#Ecosystem"/>
+        <rdfs:comment>Definition: A Ecosystem which is A saturated area, at times covered with water. (derived from JC3IEDM version 3.0.2)</rdfs:comment>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.3.1957) http://owlapi.sourceforge.net -->
+

@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:dcam="http://purl.org/dc/dcam/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="http://purl.org/dc/elements/1.1/">
+  <owl:Ontology rdf:about="">
+    <rdfs:comment>To comment on this schema, please contact dcmifb@dublincore.org.</rdfs:comment>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Note that this version has been modified for TopBraid: references to properties from skos and dcterms have been removed.</owl:versionInfo>
+  </owl:Ontology>
+  <rdf:Property rdf:about="http://purl.org/dc/elements/1.1/relation">
+    <rdfs:label xml:lang="en-US">Relation</rdfs:label>
+    <rdfs:isDefinedBy rdf:resource=""/>
+    <rdfs:comment xml:lang="en-US">A related resource.</rdfs:comment>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://purl.org/dc/elements/1.1/description">
+    <rdfs:label xml:lang="en-US">Description</rdfs:label>
+    <rdfs:comment xml:lang="en-US">An account of the resource.</rdfs:comment>
+    <rdfs:isDefinedBy rdf:resource=""/>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://purl.org/dc/elements/1.1/language">
+    <rdfs:seeAlso rdf:resource="http://www.ietf.org/rfc/rfc4646.txt"/>
+    <rdfs:label xml:lang="en-US">Language</rdfs:label>
+    <rdfs:isDefinedBy rdf:resource=""/>
+    <rdfs:comment xml:lang="en-US">A language of the resource.</rdfs:comment>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://purl.org/dc/elements/1.1/identifier">
+    <rdfs:isDefinedBy rdf:resource=""/>
+    <rdfs:comment xml:lang="en-US">An unambiguous reference to the resource within a given context.</rdfs:comment>
+    <rdfs:label xml:lang="en-US">Identifier</rdfs:label>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://purl.org/dc/elements/1.1/subject">
+    <rdfs:label xml:lang="en-US">Subject</rdfs:label>
+    <rdfs:isDefinedBy rdf:resource=""/>
+    <rdfs:comment xml:lang="en-US">The topic of the resource.</rdfs:comment>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://purl.org/dc/elements/1.1/contributor">
+    <rdfs:label xml:lang="en-US">Contributor</rdfs:label>
+    <rdfs:isDefinedBy rdf:resource=""/>
+    <rdfs:comment xml:lang="en-US">An entity responsible for making contributions to the resource.</rdfs:comment>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://purl.org/dc/elements/1.1/coverage">
+    <rdfs:isDefinedBy rdf:resource=""/>
+    <rdfs:comment xml:lang="en-US">The spatial or temporal topic of the resource, the spatial applicability of the resource, or the jurisdiction under which the resource is relevant.</rdfs:comment>
+    <rdfs:label xml:lang="en-US">Coverage</rdfs:label>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://purl.org/dc/elements/1.1/rights">
+    <rdfs:label xml:lang="en-US">Rights</rdfs:label>
+    <rdfs:isDefinedBy rdf:resource=""/>
+    <rdfs:comment xml:lang="en-US">Information about rights held in and over the resource.</rdfs:comment>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://purl.org/dc/elements/1.1/format">
+    <rdfs:label xml:lang="en-US">Format</rdfs:label>
+    <rdfs:isDefinedBy rdf:resource=""/>
+    <rdfs:comment xml:lang="en-US">The file format, physical medium, or dimensions of the resource.</rdfs:comment>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://purl.org/dc/elements/1.1/type">
+    <rdfs:isDefinedBy rdf:resource=""/>
+    <rdfs:comment xml:lang="en-US">The nature or genre of the resource.</rdfs:comment>
+    <rdfs:label xml:lang="en-US">Type</rdfs:label>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://purl.org/dc/elements/1.1/creator">
+    <rdfs:comment xml:lang="en-US">An entity primarily responsible for making the resource.</rdfs:comment>
+    <rdfs:label xml:lang="en-US">Creator</rdfs:label>
+    <rdfs:isDefinedBy rdf:resource=""/>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://purl.org/dc/elements/1.1/date">
+    <rdfs:isDefinedBy rdf:resource=""/>
+    <rdfs:label xml:lang="en-US">Date</rdfs:label>
+    <rdfs:comment xml:lang="en-US">A point or period of time associated with an event in the lifecycle of the resource.</rdfs:comment>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://purl.org/dc/elements/1.1/publisher">
+    <rdfs:label xml:lang="en-US">Publisher</rdfs:label>
+    <rdfs:isDefinedBy rdf:resource=""/>
+    <rdfs:comment xml:lang="en-US">An entity responsible for making the resource available.</rdfs:comment>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://purl.org/dc/elements/1.1/source">
+    <rdfs:isDefinedBy rdf:resource=""/>
+    <rdfs:comment xml:lang="en-US">A related resource from which the described resource is derived.</rdfs:comment>
+    <rdfs:label xml:lang="en-US">Source</rdfs:label>
+  </rdf:Property>
+  <rdf:Property rdf:about="http://purl.org/dc/elements/1.1/title">
+    <rdfs:isDefinedBy rdf:resource=""/>
+    <rdfs:label xml:lang="en-US">Title</rdfs:label>
+    <rdfs:comment xml:lang="en-US">A name given to the resource.</rdfs:comment>
+  </rdf:Property>
+</rdf:RDF>
+
+<!-- Created with TopBraid -->

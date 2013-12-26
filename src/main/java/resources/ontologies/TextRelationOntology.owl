@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:nlp="http://www.cubrc.org/ontologies/KDD/Mid/TextRelationOntology#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:ero="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="http://www.cubrc.org/ontologies/KDD/Mid/TextRelationOntology">
+  <owl:Ontology rdf:about="">
+    <owl:imports rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology"/>
+    <owl:imports rdf:resource="http://purl.org/obo/owl/ro_bfo1-1_bridge"/>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Created with TopBraid Composer</owl:versionInfo>
+  </owl:Ontology>
+  <owl:ObjectProperty rdf:ID="nominal">
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:ID="modifier"/>
+    </rdfs:subPropertyOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="direct_object">
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:ID="clause"/>
+    </rdfs:subPropertyOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="relation"/>
+  <owl:ObjectProperty rdf:ID="subject">
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:about="#clause"/>
+    </rdfs:subPropertyOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="prepositional">
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:about="#modifier"/>
+    </rdfs:subPropertyOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="complement">
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:about="#clause"/>
+    </rdfs:subPropertyOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="genitive">
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:about="#modifier"/>
+    </rdfs:subPropertyOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="#modifier">
+    <rdfs:subPropertyOf rdf:resource="#relation"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="coordination">
+    <rdfs:subPropertyOf rdf:resource="#relation"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="appositional">
+    <rdfs:subPropertyOf rdf:resource="#modifier"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="#clause">
+    <rdfs:subPropertyOf rdf:resource="#relation"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="adjunct">
+    <rdfs:subPropertyOf rdf:resource="#clause"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="indirect_object">
+    <rdfs:subPropertyOf rdf:resource="#clause"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="nominal_coordination">
+    <rdfs:subPropertyOf rdf:resource="#coordination"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="adverbial">
+    <rdfs:subPropertyOf rdf:resource="#modifier"/>
+  </owl:ObjectProperty>
+</rdf:RDF>
+
+<!-- Created with TopBraid -->

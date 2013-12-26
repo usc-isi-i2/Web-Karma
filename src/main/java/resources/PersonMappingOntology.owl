@@ -1,0 +1,315 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="http://Map.org#"
+     xml:base="http://Map.org"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="http://PersonMap.org"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://PersonMap.org#has_attribute -->
+
+    <owl:ObjectProperty rdf:about="http://PersonMap.org#has_attribute">
+        <rdfs:range rdf:resource="http://PersonMap.org#Birth"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#Death"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#Document"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#EyeColor"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#HairColor"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#Height"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#Identification"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#LanguageSkill"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#LifeEvents"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#Marrage"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#Name"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#Nationality"/>
+        <rdfs:domain rdf:resource="http://PersonMap.org#Person"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#PhysicalAttribute"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#Sex"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#Skill"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#Weight"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://PersonMap.org#has_birth_date -->
+
+    <owl:ObjectProperty rdf:about="http://PersonMap.org#has_birth_date">
+        <rdfs:domain rdf:resource="http://PersonMap.org#Birth"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#BirthLocation"/>
+        <rdfs:subPropertyOf rdf:resource="http://PersonMap.org#has_date"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://PersonMap.org#has_birth_location -->
+
+    <owl:ObjectProperty rdf:about="http://PersonMap.org#has_birth_location">
+        <rdfs:domain rdf:resource="http://PersonMap.org#Birth"/>
+        <rdfs:range rdf:resource="http://PersonMap.org#BirthLocation"/>
+        <rdfs:subPropertyOf rdf:resource="http://PersonMap.org#has_location"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://PersonMap.org#has_date -->
+
+    <owl:ObjectProperty rdf:about="http://PersonMap.org#has_date"/>
+    
+
+
+    <!-- http://PersonMap.org#has_location -->
+
+    <owl:ObjectProperty rdf:about="http://PersonMap.org#has_location"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://PersonMap.org#has_value -->
+
+    <owl:DatatypeProperty rdf:about="http://PersonMap.org#has_value">
+        <rdfs:domain rdf:resource="http://PersonMap.org#Date"/>
+        <rdfs:domain rdf:resource="http://PersonMap.org#Location"/>
+        <rdfs:domain rdf:resource="http://PersonMap.org#Name"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://PersonMap.org#Associate -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Associate">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#PersonConnection"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#Birth -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Birth">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#LifeEvents"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#BirthDate -->
+
+    <owl:Class rdf:about="http://PersonMap.org#BirthDate">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#Date"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#BirthLocation -->
+
+    <owl:Class rdf:about="http://PersonMap.org#BirthLocation">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#Location"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#Date -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Date"/>
+    
+
+
+    <!-- http://PersonMap.org#Death -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Death">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#LifeEvents"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#Document -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Document">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#Identification"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#EyeColor -->
+
+    <owl:Class rdf:about="http://PersonMap.org#EyeColor">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#PhysicalAttribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#Family -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Family">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#PersonConnection"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#Father -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Father">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#Family"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#HairColor -->
+
+    <owl:Class rdf:about="http://PersonMap.org#HairColor">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#PhysicalAttribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#Height -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Height">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#PhysicalAttribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#Identification -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Identification"/>
+    
+
+
+    <!-- http://PersonMap.org#LanguageSkill -->
+
+    <owl:Class rdf:about="http://PersonMap.org#LanguageSkill">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#Skill"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#LifeEvents -->
+
+    <owl:Class rdf:about="http://PersonMap.org#LifeEvents"/>
+    
+
+
+    <!-- http://PersonMap.org#Location -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Location"/>
+    
+
+
+    <!-- http://PersonMap.org#Marrage -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Marrage">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#LifeEvents"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#Mother -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Mother">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#Family"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#Name -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Name">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#Identification"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#Nationality -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Nationality">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#PhysicalAttribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#Person -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Person"/>
+    
+
+
+    <!-- http://PersonMap.org#PersonConnection -->
+
+    <owl:Class rdf:about="http://PersonMap.org#PersonConnection"/>
+    
+
+
+    <!-- http://PersonMap.org#PhysicalAttribute -->
+
+    <owl:Class rdf:about="http://PersonMap.org#PhysicalAttribute"/>
+    
+
+
+    <!-- http://PersonMap.org#Sex -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Sex">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#PhysicalAttribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://PersonMap.org#Skill -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Skill"/>
+    
+
+
+    <!-- http://PersonMap.org#Weight -->
+
+    <owl:Class rdf:about="http://PersonMap.org#Weight">
+        <rdfs:subClassOf rdf:resource="http://PersonMap.org#PhysicalAttribute"/>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+

@@ -1,0 +1,884 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY swrl "http://www.w3.org/2003/11/swrl#" >
+    <!ENTITY swrlb "http://www.w3.org/2003/11/swrlb#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY oboInOwl "http://www.geneontology.org/formats/oboInOwl#" >
+    <!ENTITY event "http://www.cubrc.org/ontologies/KDD/Mid/EventOntology#" >
+    <!ENTITY airs "http://www.cubrc.org/ontologies/KDD/Mid/AIRSMidLevelOntology#" >
+    <!ENTITY info "http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#"
+     xml:base="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:event="http://www.cubrc.org/ontologies/KDD/Mid/EventOntology#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
+     xmlns:airs="http://www.cubrc.org/ontologies/KDD/Mid/AIRSMidLevelOntology#"
+     xmlns:info="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#">
+    <owl:Ontology rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology">
+        <owl:versionInfo rdf:datatype="&xsd;string">Created with TopBraid Composer</owl:versionInfo>
+        <owl:imports rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AIRSMidLevelOntology"/>
+        <owl:imports rdf:resource="http://www.w3.org/2003/11/swrl"/>
+        <owl:imports rdf:resource="http://www.w3.org/2003/11/swrlb"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Datatypes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ActOfBarring -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ActOfBarring">
+        <rdfs:label rdf:datatype="&xsd;string">Act Of Barring</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&event;ActOfDeclarativeCommunication"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Act of Declarative Communication in which an entity declares that the barred entity is prohobited from participation in some action, event, or other thing</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ActOfHoaxImprovisedExplosiveDeviceUse -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ActOfHoaxImprovisedExplosiveDeviceUse">
+        <rdfs:label rdf:datatype="&xsd;string">Act of hoax improvised explosive device use</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&event;ActOfDecoyUse"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#HoaxImprovisedExplosiveDevice"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Act of Decoy Use in which a Hoax Improvised Explosive Devices is emplaced in or delivered to a Target Location in order to elicit a response. (derived from the Weapons Technical Intelligence (WTI) Improvised Explosive Device (IED) Lexicon 3rd Edition May 2010)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ActOfImprovisedExplosiveDeviceUse -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ActOfImprovisedExplosiveDeviceUse">
+        <rdfs:label rdf:datatype="&xsd;string">Act of improvised explosive device use</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&event;ActOfExplosiveDeviceUse"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#DeliveryOfImprovisedExplosiveDeviceToTarget"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedExplosiveDevice"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Act of Explosive Device Use in which some Improvised Explosive Device is detonated in an attempt to cause harm to a Target of Persons and/or Artifacts.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AirborneDeliveryOfImprovisedExplosiveDeviceToTarget -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AirborneDeliveryOfImprovisedExplosiveDeviceToTarget">
+        <rdfs:label rdf:datatype="&xsd;string">Airborne delivery of improvised explosive device to target</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#DeliveryOfImprovisedExplosiveDeviceToTarget"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/ArtifactOntology#Aircraft"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Delivery of Improvised Explosive Device To Target in which some Improvised Explosive Device is delivered to the target location by aerodynamic means or buoyancy. (derived from the Weapons Technical Intelligence (WTI) Improvised Explosive Device (IED) Lexicon 3rd Edition May 2010)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AirborneImprovisedExplosiveDevice -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AirborneImprovisedExplosiveDevice">
+        <rdfs:label rdf:datatype="&xsd;string">Airborne improvised explosive device</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AirborneDeliveryOfImprovisedExplosiveDeviceToTarget"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedExplosiveDevice"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Improvised Explosive Device that is participant in some Airborne Delivery of Improvised Explosive Device to Target.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AlcoholFueledImprovisedIncendiaryWeapon -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AlcoholFueledImprovisedIncendiaryWeapon">
+        <rdfs:label xml:lang="en">AlcoholFueledImprovisedIncendiaryWeapon</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedIncendiaryWeapon"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AntiAircraftImprovisedExplosiveDevice -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AntiAircraftImprovisedExplosiveDevice">
+        <rdfs:label rdf:datatype="&xsd;string">Anti aircraft improvised explosive device</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ActOfImprovisedExplosiveDeviceUse"/>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+                                <owl:someValuesFrom>
+                                    <owl:Class>
+                                        <owl:intersectionOf rdf:parseType="Collection">
+                                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/ArtifactOntology#Aircraft"/>
+                                            <owl:Restriction>
+                                                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_role"/>
+                                                <owl:someValuesFrom rdf:resource="&event;TargetRole"/>
+                                            </owl:Restriction>
+                                        </owl:intersectionOf>
+                                    </owl:Class>
+                                </owl:someValuesFrom>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedExplosiveDevice"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Improvised Explosive Device primarily intended to damage or destroy aircraft and/or their payload as well as to kill or wound individuals inside the aircraft.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AntiGroundVehicleImprovisedExplosiveDevice -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AntiGroundVehicleImprovisedExplosiveDevice">
+        <rdfs:label rdf:datatype="&xsd;string">Anti vehicle improvised explosive device</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ActOfImprovisedExplosiveDeviceUse"/>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+                                <owl:someValuesFrom>
+                                    <owl:Class>
+                                        <owl:intersectionOf rdf:parseType="Collection">
+                                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/ArtifactOntology#GroundVehicle"/>
+                                            <owl:Restriction>
+                                                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_role"/>
+                                                <owl:someValuesFrom rdf:resource="&event;TargetRole"/>
+                                            </owl:Restriction>
+                                        </owl:intersectionOf>
+                                    </owl:Class>
+                                </owl:someValuesFrom>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedExplosiveDevice"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Improvised Explosive Device intended to damage or destroy vehicles - excluding armored vehicles and/or their cargo as well as to kill or wound individuals inside such vehicles.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AntiInfrastructureImprovisedExplosiveDevice -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AntiInfrastructureImprovisedExplosiveDevice">
+        <rdfs:label rdf:datatype="&xsd;string">Anti infrastructure improvised explosive device</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ActOfImprovisedExplosiveDeviceUse"/>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+                                <owl:someValuesFrom>
+                                    <owl:Class>
+                                        <owl:intersectionOf rdf:parseType="Collection">
+                                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/ArtifactOntology#FacilityByFunction"/>
+                                            <owl:Restriction>
+                                                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_role"/>
+                                                <owl:someValuesFrom rdf:resource="&event;TargetRole"/>
+                                            </owl:Restriction>
+                                        </owl:intersectionOf>
+                                    </owl:Class>
+                                </owl:someValuesFrom>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedExplosiveDevice"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Improvised Explosive Device intended to damage or destroy physical infrastructure.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AntiPersonnelImprovisedExplosiveDevice -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AntiPersonnelImprovisedExplosiveDevice">
+        <rdfs:label rdf:datatype="&xsd;string">Anti personnel improvised explosive device</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ActOfImprovisedExplosiveDeviceUse"/>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+                                <owl:someValuesFrom>
+                                    <owl:Class>
+                                        <owl:intersectionOf rdf:parseType="Collection">
+                                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+                                            <owl:Restriction>
+                                                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_role"/>
+                                                <owl:someValuesFrom rdf:resource="&event;TargetRole"/>
+                                            </owl:Restriction>
+                                        </owl:intersectionOf>
+                                    </owl:Class>
+                                </owl:someValuesFrom>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedExplosiveDevice"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Improvised Explosive Device primarily intended to kill or wound people.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AntiWatercraftImprovisedExplosiveDevice -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#AntiWatercraftImprovisedExplosiveDevice">
+        <rdfs:label rdf:datatype="&xsd;string">Anti watercraft improvised explosive device</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ActOfImprovisedExplosiveDeviceUse"/>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+                                <owl:someValuesFrom>
+                                    <owl:Class>
+                                        <owl:intersectionOf rdf:parseType="Collection">
+                                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/ArtifactOntology#Watercraft"/>
+                                            <owl:Restriction>
+                                                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_role"/>
+                                                <owl:someValuesFrom rdf:resource="&event;TargetRole"/>
+                                            </owl:Restriction>
+                                        </owl:intersectionOf>
+                                    </owl:Class>
+                                </owl:someValuesFrom>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedExplosiveDevice"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Improvised Explosive Device primarily intended to damage or destroy watercraft and/or their payload as well as to kill or wound individuals inside the watercraft.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#BarredOrganization -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#BarredOrganization">
+        <rdfs:label rdf:datatype="&xsd;string">Barred Organization</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#is_affected_by"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ActOfBarring"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Organization"/>
+        <rdfs:comment rdf:datatype="&xsd;string">An organization that has been barred from acting, participating in, or doing business with another individual or organization.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#DeliveryOfImprovisedExplosiveDeviceToTarget -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#DeliveryOfImprovisedExplosiveDeviceToTarget">
+        <rdfs:label rdf:datatype="&xsd;string">Delivery of improvised explosive device to target</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&event;IntentionalAct"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedExplosiveDevice"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Intentional Act in which some Improvised Explosive Device is brought to a location from which its detonation will cause the intended damage to the target.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#EmplacedImprovisedExplosiveDevice -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#EmplacedImprovisedExplosiveDevice">
+        <rdfs:label rdf:datatype="&xsd;string">Emplaced improvised explosive device</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#EmplacementOfImprovisedExplosiveDevice"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedExplosiveDevice"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Improvised Explosive Device that is participant in some Emplacement of Improvised Explosive Device.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#EmplacementOfImprovisedExplosiveDevice -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#EmplacementOfImprovisedExplosiveDevice">
+        <rdfs:label rdf:datatype="&xsd;string">Emplacement of improvised explosive device</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#DeliveryOfImprovisedExplosiveDeviceToTarget"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Intentional Act in which some Improvised Explosive Device is placed to await the arrival of the intended target (derived from the Weapons Technical Intelligence (WTI) Improvised Explosive Device (IED) Lexicon 3rd Edition May 2010).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#GasolineFueledImprovisedIncendiaryWeapon -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#GasolineFueledImprovisedIncendiaryWeapon">
+        <rdfs:label xml:lang="en">GasolineFueledImprovisedIncendiaryWeapon</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedIncendiaryWeapon"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#GroupOfChildrenKilled -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#GroupOfChildrenKilled">
+        <rdfs:label rdf:datatype="&xsd;string">Group Of Children Killed</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="&airs;Child"/>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                                <owl:someValuesFrom rdf:resource="&event;Killing"/>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="&airs;GroupOfChildren"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#GroupOfChildrenWounded -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#GroupOfChildrenWounded">
+        <rdfs:label rdf:datatype="&xsd;string">Group Of Children Wounded </rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="&airs;Child"/>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                                <owl:someValuesFrom rdf:resource="&event;Wounding"/>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="&airs;GroupOfChildren"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#GroupOfCiviliansKilled -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#GroupOfCiviliansKilled">
+        <rdfs:label rdf:datatype="&xsd;string">Group Of Civilians Killed</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Civilian"/>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                                <owl:someValuesFrom rdf:resource="&event;Killing"/>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#GroupOfCivilians"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#GroupOfCiviliansWounded -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#GroupOfCiviliansWounded">
+        <rdfs:label rdf:datatype="&xsd;string">Group Of Civilians Wounded</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Civilian"/>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                                <owl:someValuesFrom rdf:resource="&event;Wounding"/>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#GroupOfCivilians"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#GroupOfOrganizationMembersKilled -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#GroupOfOrganizationMembersKilled">
+        <rdfs:label rdf:datatype="&xsd;string">Group Of Organization Members Killed</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#OrganizationMember"/>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                                <owl:someValuesFrom rdf:resource="&event;Killing"/>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="&airs;GroupOfOrganizationMembers"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#GroupOfOrganizationMembersWounded -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#GroupOfOrganizationMembersWounded">
+        <rdfs:label rdf:datatype="&xsd;string">Group Of Organization Members Wounded</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:intersectionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#OrganizationMember"/>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                                <owl:someValuesFrom rdf:resource="&event;Wounding"/>
+                            </owl:Restriction>
+                        </owl:intersectionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="&airs;GroupOfOrganizationMembers"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#HoaxImprovisedExplosiveDevice -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#HoaxImprovisedExplosiveDevice">
+        <rdfs:label rdf:datatype="&xsd;string">Hoax improvised explosive device</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/ArtifactOntology#DecoyByFunction"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Decoy by Function that is a device fabricated to look like an Improvised Explosive Device and is intended to purposely simulate one in order to elicit a response. (derived from the Weapons Technical Intelligence (WTI) Improvised Explosive Device (IED) Lexicon 3rd Edition May 2010)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedExplosiveDevice -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedExplosiveDevice">
+        <rdfs:label rdf:datatype="&xsd;string">Improvised explosive device</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/ArtifactOntology#ExplosiveDeviceByFunction"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Explosive Device By Function placed or fabricated in an improvised manner incorporating destructive, lethal, noxious, pyrotechnic or incendiary chemicals and designed to destroy, incapacitate, harass or distract (derived from the Weapons Technical Intelligence (WTI) Improvised Explosive Device (IED) Lexicon 3rd Edition May 2010).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedIncendiaryWeapon -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedIncendiaryWeapon">
+        <rdfs:label xml:lang="en">ImprovisedIncendiaryWeapon</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/ArtifactOntology#IncendiaryWeapon"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#Perpetrator -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#Perpetrator">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#agent_in"/>
+                <owl:someValuesFrom rdf:resource="&event;CriminalAct"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#PersonborneDeliveryOfImprovisedExplosiveDeviceToTarget -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#PersonborneDeliveryOfImprovisedExplosiveDeviceToTarget">
+        <rdfs:label rdf:datatype="&xsd;string">Person-borne delivery of improvised explosive device to target</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#DeliveryOfImprovisedExplosiveDeviceToTarget"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Delivery of Improvised Explosive Device to Target in which some Improvised Explosive Device is placed at the target location by a person who carries the whole IED or principal IED components. (derived from the Weapons Technical Intelligence (WTI) Improvised Explosive Device (IED) Lexicon 3rd Edition May 2010)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#PersonborneImprovisedExplosiveDevice -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#PersonborneImprovisedExplosiveDevice">
+        <rdfs:label rdf:datatype="&xsd;string">Personborne improvised explosive device</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#PersonborneDeliveryOfImprovisedExplosiveDeviceToTarget"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedExplosiveDevice"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Improvised Explosive Device that is participant in some Personborne Delivery of Improvised Explosive Device to Target.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#PostalServiceDeliveryOfImprovisedExplosiveDeviceToTarget -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#PostalServiceDeliveryOfImprovisedExplosiveDeviceToTarget">
+        <rdfs:label rdf:datatype="&xsd;string">Postal service delivery of improvised explosive device to target</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#DeliveryOfImprovisedExplosiveDeviceToTarget"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Delivery of Improvised Explosive Device to Target in which some Improvised Explosive Device is delivered through the surreptitious use of some postal service (derived from the Weapons Technical Intelligence (WTI) Improvised Explosive Device (IED) Lexicon 3rd Edition May 2010)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#PrematureImprovisedExplosiveDeviceDetonation -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#PrematureImprovisedExplosiveDeviceDetonation">
+        <rdfs:label rdf:datatype="&xsd;string">Premature improvised explosive device detonation</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&event;UnintentionalAct"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedExplosiveDevice"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Unintentional Act in which an Improvised Explosive Device detonates unintentionally prior to the time of delivery to the Target (derived from Weapons Technical Intelligence (WTI) Improvised Explosive Device (IED) Lexicon 3rd Edition May 2010)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ProjectedDeliveryOfImprovisedExplosiveDeviceToTarget -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ProjectedDeliveryOfImprovisedExplosiveDeviceToTarget">
+        <rdfs:label rdf:datatype="&xsd;string">Projected delivery of improvised explosive device to target</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#DeliveryOfImprovisedExplosiveDeviceToTarget"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Delivery of Improvised Explosive Device to Target in which some improvised weapons system delivers the main charge of the IED through the air to its target. (derived from the Weapons Technical Intelligence (WTI) Improvised Explosive Device (IED) Lexicon 3rd Edition May 2010)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#SuicideBomber -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#SuicideBomber">
+        <rdfs:label rdf:datatype="&xsd;string">Suicide Bomber</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#SuicideBomberRole"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Terrorist"/>
+        <rdfs:comment rdf:datatype="&xsd;string">A Terrorist that is the bearer of some Suicide Bomber Role</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#SuicideBomberRole -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#SuicideBomberRole">
+        <rdfs:label rdf:datatype="&xsd;string">Suicide Bomber Role</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#TerroristRole"/>
+        <rdfs:comment rdf:datatype="&xsd;string">A Terrorist Role having as bearers Persons that are agents in Acts of Explosive Devices intended to cause Killing of others and Damage to Facilities which result in the death of the agent.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#UnexplodedExplosiveOrdnance -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#UnexplodedExplosiveOrdnance">
+        <rdfs:label rdf:datatype="&xsd;string">Unexploded explosive ordnance</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/ArtifactOntology#ExplosiveDeviceByFunction"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Explosive Device by Function which has been primed, fused, armed or otherwise prepared for action, and which has been fired, dropped, launched, projected, or placed in such a manner as to constitute a hazard to operations, installations, personnel, or material and remains unexploded either by malfunction or design or for any other cause, also referred to as an UXO (derived from Joint Publication 1-02, DOD Dictionary of Military and Associated Terms 08 November 2010, as amended through 15 May 2011).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#VehicleborneDeliveryOfImprovisedExplosiveDeviceToTarget -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#VehicleborneDeliveryOfImprovisedExplosiveDeviceToTarget">
+        <rdfs:label rdf:datatype="&xsd;string">Vehicleborne delivery of improvised explosive device to target</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#DeliveryOfImprovisedExplosiveDeviceToTarget"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/ArtifactOntology#GroundVehicle"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Delivery of Improvised Explosive Device to Target in which some Improvised Explosive Device is delivered to the target location by a Ground Vehicle (e.g. truck, car, motorcycle, moped, bicycle) (derived from the Weapons Technical Intelligence (WTI) Improvised Explosive Device (IED) Lexicon 3rd Edition May 2010)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#VehicleborneImprovisedExplosiveDevice -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#VehicleborneImprovisedExplosiveDevice">
+        <rdfs:label rdf:datatype="&xsd;string">Vehicleborne improvised explosive device</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#VehicleborneDeliveryOfImprovisedExplosiveDeviceToTarget"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedExplosiveDevice"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Improvised Explosive Device that is participant in some Vehicleborne Delivery of Improvised Explosive Device to Target.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#WaterborneDeliveryOfImprovisedExplosiveDeviceToTarget -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#WaterborneDeliveryOfImprovisedExplosiveDeviceToTarget">
+        <rdfs:label rdf:datatype="&xsd;string">Water-borne delivery of improvised explosive device to target</rdfs:label>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#DeliveryOfImprovisedExplosiveDeviceToTarget"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/ArtifactOntology#Watercraft"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: A Delivery of Improvised Explosive Device to Target in which some Improvised Explosive Device is placed at the target location by floating or propulsion on or below some body of water. (derived from the Weapons Technical Intelligence (WTI) Improvised Explosive Device (IED) Lexicon 3rd Edition May 2010)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#WaterborneImprovisedExplosiveDevice -->
+
+    <owl:Class rdf:about="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#WaterborneImprovisedExplosiveDevice">
+        <rdfs:label rdf:datatype="&xsd;string">Waterborne improvised explosive device</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#WaterborneDeliveryOfImprovisedExplosiveDeviceToTarget"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Domain/CounterterrorismOntology#ImprovisedExplosiveDevice"/>
+        <rdfs:comment rdf:datatype="&xsd;string">Definition: An Improvised Explosive Device that is participant in some Waterborne Delivery of Improvised Explosive Device to Target.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person -->
+
+    <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_role"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#CitizenRole"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_quality"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/QualityOntology#Weight"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_quality"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/QualityOntology#Height"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&info;designated_by"/>
+                <owl:someValuesFrom rdf:resource="&airs;PersonName"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#participates_in"/>
+                <owl:someValuesFrom rdf:resource="&event;Birth"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_quality"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/QualityOntology#Age"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_quality"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#BiologicalSex"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Terrorist -->
+
+    <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Terrorist">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#is_affiliated_with"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#TerroristOrganization"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#TerroristOrganization -->
+
+    <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#TerroristOrganization">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+                <owl:someValuesFrom rdf:resource="&airs;OrganizationalObjective"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.cubrc.org/ontologies/KDD/Mid/EventOntology#ActOfTerrorism -->
+
+    <rdf:Description rdf:about="&event;ActOfTerrorism">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="&info;prescribed_by"/>
+                <owl:someValuesFrom rdf:resource="&info;Objective"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_agent"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Terrorist"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.ifomis.org/bfo/1.1/span#ProcessualEntity -->
+
+    <rdf:Description rdf:about="http://www.ifomis.org/bfo/1.1/span#ProcessualEntity">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#occurs_at"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/GeospatialOntology#GeospatialRegion"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#occurs_on"/>
+                <owl:someValuesFrom rdf:resource="http://www.ifomis.org/bfo/1.1/span#ConnectedTemporalRegion"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.3.1957) http://owlapi.sourceforge.net -->
+

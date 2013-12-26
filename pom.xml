@@ -367,7 +367,12 @@
           <artifactId>juniversalchardet</artifactId>
           <version>1.0.3</version>
         </dependency>
-        
+	  <dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-core</artifactId>
+		  <version>3.0.3.RELEASE</version>
+	  </dependency>
+
   </dependencies>
   
   <build>

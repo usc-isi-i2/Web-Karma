@@ -1,0 +1,3165 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:info="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:ro="http://www.obofoundry.org/ro/ro.owl#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns="http://www.cubrc.org/ontologies/KDD/AlgorithmicOntology#"
+    xmlns:ito="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#"
+  xml:base="http://www.cubrc.org/ontologies/KDD/AlgorithmicOntology">
+  <owl:Ontology rdf:about="">
+    <owl:imports rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology"/>
+    <owl:imports rdf:resource="http://purl.org/obo/owl/ro_bfo1-1_bridge"/>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Created with TopBraid Composer</owl:versionInfo>
+  </owl:Ontology>
+  <owl:Class rdf:ID="WorkflowIdentifier">
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="Workflow"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designates"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Workflow identifier</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#DesignativeInformationContentEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="StandardDeviationComputingSystemAvailabilityMeasurementBearer">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Standard deviation computer system availability measurement bearer</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="StandardDeviationComputingSystemAvailabilityMeasurement"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="ProcessingSlotCountRatioMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_integer_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ProcessingSlotCountRatioMeasurement"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Processing slot count ratio measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="UnstructuredDataToRDFInputDataSet">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="ComputingFolder"/>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Unstructured data to RDFInput data set</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="InputDataElement"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="UnstructuredDataToRDFInputDataModel"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="UnionSetInputDataSet_Model">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Union set input data set Model</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="IContract">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/AIRSMetadataOntology#ObsoleteClass"/>
+  </owl:Class>
+  <owl:Class rdf:ID="IInvariant">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="IState"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="SetFunction">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#SoftwareFunction"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Software Function that is realized in the execution of some Subroutine that produces an output of a data set through operations on the input of one or more sets of data.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Set Function</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:ID="DataAssociationSubroutine">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data association subroutine</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="SoftwareSubroutine"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="StructuredDataToRDFSubroutineMeanHardDriveUsageMeasurement">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Structured data to RDFSubroutine mean hard drive usage measurement</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="MeanHardDriveUsageMeasurement"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="ExceptSetFunction">
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Except Set Function</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Set Function that is realized in the output of a set of elements that are members of one input set and not a member of the second.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="#SetFunction"/>
+  </owl:Class>
+  <owl:Class rdf:ID="MeanComputingSystemAvailabilityMeasurement">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#MeanRatioMeasurement"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mean computer system availability measurement</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:ID="ProcessingLoadRatioMeasurement">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationContentEntity"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Processing load ratio measurement</rdfs:label>
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_a_ratio_measurement_of"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <owl:Class rdf:ID="SoftwareSubroutineExecution"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+                <owl:someValuesFrom>
+                  <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                      <owl:Class rdf:ID="ComputingSystem"/>
+                      <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+                        <owl:someValuesFrom>
+                          <owl:Class rdf:ID="ProcessingSlot"/>
+                        </owl:someValuesFrom>
+                      </owl:Restriction>
+                    </owl:intersectionOf>
+                  </owl:Class>
+                </owl:someValuesFrom>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: The percentage of Processing Slots of a Computing System that were used during the execution of some software subroutine</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="TrustInputDataModel">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Trust input data model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="SoftwareSubroutineDecisionNodeNominalMeasurement">
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="#SoftwareSubroutine"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_a_nominal_measurement_of"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: A Nominal Measurement Information Content Entity that describes some Software Subroutine as either being or not being a decision node in some workflow.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Software subroutine decision node nominal measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#NominalMeasurementInformationContentEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="OutputDataElement">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElement"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Output data element</rdfs:label>
+    <owl:equivalentClass>
+      <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+          <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElement"/>
+          <owl:Restriction>
+            <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#is_output_of"/>
+            <owl:someValuesFrom>
+              <owl:Class rdf:about="#SoftwareSubroutineExecution"/>
+            </owl:someValuesFrom>
+          </owl:Restriction>
+        </owl:intersectionOf>
+      </owl:Class>
+    </owl:equivalentClass>
+  </owl:Class>
+  <owl:Class rdf:ID="DataSetMergeSubroutineExecution">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="DataSetMergeSubroutine"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_agent"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="DataSetMergeOutputDataSet"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_output"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="DataSetMergeInputDataSet"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_input"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data set merge subroutine execution</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#SoftwareSubroutineExecution"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="AbductiveRequeryInputData">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#InformationBearingEntity"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="AbductiveRequeryInputDataModel"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Abductive requery input data set</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#InputDataElement"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="SoftwareSubroutineExecutionTimeMeasurementBearer">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Software subroutine execution time measurement bearer</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="SoftwareSubroutineExecutionTimeMeasurement"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_text_value"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >&lt;1 millisecond</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="UnionSetFunction">
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Union Set Function</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Set Function that produces a set composed of all of the elements of two input data sets</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="#SetFunction"/>
+  </owl:Class>
+  <owl:Class rdf:ID="FileSizeRatioMeasurement">
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="FileSize"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_a_ratio_measurement_of"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: A Ratio Measurement Information Content Entity that measures the size of some computer file.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >File size ratio measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationContentEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="QueryInputData">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="QueryInputDataModel"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#InputDataElement"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Query input data set</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#InformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="DataSetMergeSubroutineMeanHardDriveUsageMeasurement">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#MeanHardDriveUsageMeasurement"/>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data set merge mean hard drive usage measurement</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:ID="ActOfComputingSystemUsage">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ComputingSystemRuntime"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#occurs_on"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/EventOntology#ActOfArtifactEmployment"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Act of computer system usage</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="#ComputingSystem"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="IntersectionSetFunction">
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Intersection Set Function</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Set Function that is realized in the output of a set of elements composed of the elements that are common to both input data sets.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="#SetFunction"/>
+  </owl:Class>
+  <owl:Class rdf:ID="DataElementMergeOutputDataElement">
+    <rdfs:subClassOf rdf:resource="#OutputDataElement"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data element merge output data element</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/AIRSMetadataOntology#contains_instance_of"/>
+        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+        >1</owl:qualifiedCardinality>
+        <owl:onClass rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="DataElementMergeOutputData_Model"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#ProcessingSlotCountRatioMeasurement">
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ProcessingSlotCount"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_a_ratio_measurement_of"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Processing slot count ratio measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationContentEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ComputingSystemAvailabilityRatioMeasurementBearer">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Computer system availability ratio measurement bearer</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ComputingSystemAvailabilityRatioMeasurement"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="AbductiveRequerySubroutineMeanHardDriveUsageMeasurement">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Abductive requery subroutine mean hard drive usage measurement</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#MeanHardDriveUsageMeasurement"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="StructuredDataToRDFSubroutineExecution">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="StructuredDataToRDFSubroutine"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_agent"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="StructuredDataToRDFOutputDataSet"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_output"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="StructuredDataToRDFInputDataSet"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_input"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Structured data to RDFSubroutine execution</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#SoftwareSubroutineExecution"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="UnionSetSubroutineExecution">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#SoftwareSubroutineExecution"/>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Union set subroutine execution</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: A Software Subroutine Execution that is the process of carrying out a Union Set Subroutine by a processing element.</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#realizes"/>
+        <owl:someValuesFrom rdf:resource="#UnionSetFunction"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_agent"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="UnionSetSubroutine"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_input"/>
+        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+        >2</owl:qualifiedCardinality>
+        <owl:onClass>
+          <owl:Class rdf:ID="UnionSetInputDataSet"/>
+        </owl:onClass>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_output"/>
+        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+        >1</owl:qualifiedCardinality>
+        <owl:onClass>
+          <owl:Class rdf:ID="UnionSetOutputDataSet"/>
+        </owl:onClass>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#StructuredDataToRDFSubroutine">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Structured data to RDFSubroutine</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#SoftwareSubroutine"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="DataElementMergeInputData_Model">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data element merge input data Model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="AbductiveRequerySubroutine">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Abductive requery subroutine</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#SoftwareSubroutine"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#StructuredDataToRDFInputDataSet">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#InputDataElement"/>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Structured data to RDFInput data set</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="StructuredDataToRDFInputDataModel"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="MeanSoftwareSubroutineExecutionMemoryUsageMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="MeanSoftwareSubroutineExecutionMemoryUsageMeasurement"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mean software subroutine execution memory usage measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="InformationBearingEntityAsInputRole">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="InformationBearingEntityRole"/>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Information bearing entity as input role</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:ID="DataAssociationSubroutineMeanHardDriveUsageMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"
+        >0</owl:hasValue>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="DataAssociationSubroutineMeanHardDriveUsageMeasurement"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data association subroutine mean hard drive usage measurement bearer</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="MeanHardDriveUsageMeasurementBearer"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="DataElementMergeInputDataElement">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#InputDataElement"/>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data element merge input data element</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/AIRSMetadataOntology#contains_instance_of"/>
+        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+        >1</owl:qualifiedCardinality>
+        <owl:onClass rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/AgentOntology#Person"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom rdf:resource="#DataElementMergeInputData_Model"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="SoftwareSubroutineDecisionNodeNominalMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_boolean_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#SoftwareSubroutineDecisionNodeNominalMeasurement"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Software subroutine decision node nominal measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#NominalMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ElementAtFunction">
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Element At Function</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Set Element Function that is realized in the output of a element that is at a specified index in a input set.</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="SetElementFunction"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="IAggregation">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="ILinq"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="StructuredDataToRDFSubroutineMeanHardDriveUsageMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"
+        >0</owl:hasValue>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#StructuredDataToRDFSubroutineMeanHardDriveUsageMeasurement"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Structured data to RDFSubroutine mean hard drive usage measurement bearer</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#MeanHardDriveUsageMeasurementBearer"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#UnionSetSubroutine">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Union set subroutine</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#SoftwareSubroutine"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ServiceInterface"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#prescribed_by"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_URI_value"/>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contains"/>
+        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+        >2</owl:qualifiedCardinality>
+        <owl:onClass>
+          <owl:Class rdf:about="#UnionSetInputDataSet"/>
+        </owl:onClass>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#UnionSetFunction"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_function"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contains"/>
+        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+        >1</owl:qualifiedCardinality>
+        <owl:onClass>
+          <owl:Class rdf:about="#UnionSetOutputDataSet"/>
+        </owl:onClass>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="SoftwareSubroutineUtilityIntervalMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_integer_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="SoftwareSubroutineUtilityIntervalMeasurement"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Software subroutine utility interval measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#IntervalMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:about="#AbductiveRequeryInputDataModel">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Abductive requery input data model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="DataElementMergeFunction">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="DataElementFunction"/>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data element merge function</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: A Data Element Function that identifies two or more data elements with some other single data element.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="#SoftwareSubroutineUtilityIntervalMeasurement">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#IntervalMeasurementInformationContentEntity"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Software subroutine utility measurement</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: An Interval Measurement Information Content Entity that measures the performance of a Software Subroutine against the amount of computing resources required to execute the subroutine. (I assume that the intervals between measures are equal (e.g. 10 - 20 is the same "distance" as between 20 - 30) and that therefore, this is an interval measurement rather than an ordinal measurement)</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="QuerySubroutineMeanHardDriveUsageMeasurement">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Query subroutine mean hard drive usage measurement</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#MeanHardDriveUsageMeasurement"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#UnionSetOutputDataSet">
+    <rdfs:subClassOf rdf:resource="#OutputDataElement"/>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Union set output data set</rdfs:label>
+    <owl:equivalentClass>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="#UnionSetInputDataSet"/>
+          <owl:Class rdf:about="#UnionSetInputDataSet"/>
+        </owl:unionOf>
+      </owl:Class>
+    </owl:equivalentClass>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="UnionSetOutputDataSet_Model"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#ComputingSystem">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ComputerHardDrive"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="SemiconductorMemory"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#ObjectAggregate"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Computing system</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: An Object Aggregate of hardware configured to work in providing computing services as a single system.</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="#ProcessingSlot"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#ComputingSystemRuntime">
+    <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/span#TemporalInterval"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Computing system uptime</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: A Temporal Interval during which a community of users are able to access a computing system, or in other words the duration of an Act of Computing System Usage.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="#SoftwareSubroutine">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_URI_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#SoftwareFunction"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#Software"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Software Subroutine</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: An Instrument By Function that is a portion of software that performs a specific task and is relatively independent of the remaining code. (derived from http://en.wikipedia.org/wiki/Subroutine)</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/ArtifactOntology#InstrumentByFunction"/>
+  </owl:Class>
+  <owl:Class rdf:ID="MeanSoftwareSubroutineExecutionTimeMeasurement">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mean software subroutine execution time measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#MeanRatioMeasurement"/>
+  </owl:Class>
+  <owl:Class rdf:about="#MeanSoftwareSubroutineExecutionMemoryUsageMeasurement">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mean software subroutine execution memory usage measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#MeanRatioMeasurement"/>
+  </owl:Class>
+  <owl:Class rdf:ID="PostconditionSpecification">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="#ServiceInterface"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Postcondition Specification</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Plan Specification of the set of States that are present after a Subroutine terminates.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#PlanSpecification"/>
+  </owl:Class>
+  <owl:Class rdf:ID="ICount">
+    <rdfs:subClassOf rdf:resource="#IAggregation"/>
+  </owl:Class>
+  <owl:Class rdf:ID="DataAssociationOutputDataModel">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data association output data model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="DistinctSetFunction">
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Distinct Set Function</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Set Function that is realized in the production of a data set composed of the unique elements of an input data set.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="#SetFunction"/>
+  </owl:Class>
+  <owl:Class rdf:ID="MapSubroutine">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: A Software Subroutine that transforms input key/value pairs to a set of intermediate key/value pairs.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="#SoftwareSubroutine"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mapper subroutine</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="#ComputerHardDrive">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: A Component By Function having the function of providing non-primary storage (i.e. not directly accessible by the CPU) and retrieval of digital information, primarily computer data (derived from http://en.wikipedia.org/wiki/Hard_drive).</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Computer hard drive</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/ArtifactOntology#ComponentByFunction"/>
+  </owl:Class>
+  <owl:Class rdf:ID="MeanProcessingLoadMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="MeanProcessingLoadMeasurement"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mean processing load measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="SoftwareSubroutineExecutionOrder">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: A quality of a SoftwareSubroutine in the context of a workflow by which the order in which the subroutines are executed is determined.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Software subroutine execution order</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#Quality"/>
+  </owl:Class>
+  <owl:Class rdf:ID="MeanSoftwareSubroutineExecutionTimeMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#MeanSoftwareSubroutineExecutionTimeMeasurement"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mean software subroutine execution time measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:about="#IState">
+    <rdfs:subClassOf rdf:resource="#IContract"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ProcessingSlotCount">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: A Component Count of the number of Processing Slots that were allocated to some Software Subroutine Execution.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Processing slot count</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#ComponentCount"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ProcessingSlot">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: An Object Aggregate that is a set of computing resources allocated for the execution of some software subroutine (e.g. 2GB of RAM, 1 CPU Core, 50GB of tmp disk space = 1 Processing Slot)</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Processing slot</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#ObjectAggregate"/>
+  </owl:Class>
+  <owl:Class rdf:about="#FileSize">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: The Size of a computer file.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >File size</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/QualityOntology#Size"/>
+  </owl:Class>
+  <owl:Class rdf:about="#StructuredDataToRDFOutputDataSet">
+    <rdfs:subClassOf rdf:resource="#OutputDataElement"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Structured data to RDFOutput data set</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="StructuredDataToRDFOutputDataModel"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="ComputingSystemUptime">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ComputingSystemRuntime"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: A Scattered Temporal Region composed of the set of Computing System Runtime of a given Computing system contained within a 1 year temporal interval.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Computing system uptime</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/span#ScatteredTemporalRegion"/>
+  </owl:Class>
+  <owl:Class rdf:about="#SoftwareSubroutineExecution">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#SoftwareProcess"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#SoftwareFunction"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#realizes"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: An Act of Instrument Use that is the process of carrying out an instruction by a processing element.</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ComputingSystem"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#occurs_on"/>
+        <owl:someValuesFrom rdf:resource="http://www.ifomis.org/bfo/1.1/span#TemporalInterval"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_agent"/>
+        <owl:someValuesFrom rdf:resource="#SoftwareSubroutine"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Software subroutine execution</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="#ComputingSystemAvailabilityRatioMeasurement">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationContentEntity"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Computer system availability ratio measurement</rdfs:label>
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ComputingSystemUptime"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_a_ratio_measurement_of"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+  </owl:Class>
+  <owl:Class rdf:about="#QueryInputDataModel">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Query input data model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="SoftwareSubroutineExecutionOrderOrdinalMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_integer_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="SoftwareSubroutineExecutionOrderOrdinalMeasurement"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Software subroutine execution order ordinal measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#OrdinalMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="StandardDeviationProcessingLoadMeasurement">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Standard deviation processing load measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#StandardDeviationRatioMeasurement"/>
+  </owl:Class>
+  <owl:Class rdf:ID="DataAssociationInputDataSet">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#InputDataElement"/>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data association input data set</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="DataAssociationInputDataModel"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="IGlobalModel">
+    <rdfs:subClassOf>
+      <owl:Class rdf:ID="IModel"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="QueryOutputDataModel">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Query output data model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#UnionSetOutputDataSet_Model">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Union set output data set Model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="SoftwareSubroutineExecutionMemoryUsageMeasurementBearer">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Software subroutine execution memory usage measurement bearer</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="SoftwareSubroutineExecutionMemoryUsageMeasurement"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="DataElementMergeSubroutine">
+    <rdfs:subClassOf rdf:resource="#SoftwareSubroutine"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data element merge subroutine</rdfs:label>
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_function"/>
+        <owl:someValuesFrom rdf:resource="#DataElementMergeFunction"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_URI_value"/>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contains"/>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+        >2</owl:minQualifiedCardinality>
+        <owl:onClass rdf:resource="#DataElementMergeInputDataElement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contains"/>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+        >1</owl:minQualifiedCardinality>
+        <owl:onClass rdf:resource="#DataElementMergeOutputDataElement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="FileSizeRatioMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#FileSizeRatioMeasurement"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >File size ratio measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="DataAssociationOutputDataSet">
+    <rdfs:subClassOf rdf:resource="#OutputDataElement"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data association output data set</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom rdf:resource="#DataAssociationOutputDataModel"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#UnstructuredDataToRDFInputDataModel">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Unstructured data to RDFInput data model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#StandardDeviationComputingSystemAvailabilityMeasurement">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Standard deviation computer system availability</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#StandardDeviationRatioMeasurement"/>
+  </owl:Class>
+  <owl:Class rdf:ID="QuerySubroutine">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Query subroutine</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#SoftwareSubroutine"/>
+  </owl:Class>
+  <owl:Class rdf:ID="StandardDeviationHardDriveUsageMeasurement">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Standard deviation hard drive usage measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#StandardDeviationRatioMeasurement"/>
+  </owl:Class>
+  <owl:Class rdf:about="#StructuredDataToRDFInputDataModel">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Structured data to RDFInput data model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="TrustInputDataSet">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#InputDataElement"/>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Trust input data set</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom rdf:resource="#TrustInputDataModel"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="UnstructuredDataToRDFOutputDataSet">
+    <rdfs:subClassOf rdf:resource="#OutputDataElement"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Unstructured data to RDFOutput data set</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="UnstructuredDataToRDFOutputDataModel"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="ProcessingElementFunction">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: A Function that is realized in actions of accepting digital data as input, processing that data according to some stored set of instructions and providing digital data as the resulting output.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Processing element</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#Function"/>
+  </owl:Class>
+  <owl:Class rdf:about="#StructuredDataToRDFOutputDataModel">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Structured data to RDFOutput data model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="StandardDeviationSoftwareSubroutineExecutionTimeMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="StandardDeviationSoftwareSubroutineExecutionTimeMeasurement"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Standard deviation software subroutine execution time measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:about="#SoftwareSubroutineExecutionMemoryUsageMeasurement">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationContentEntity"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Software subroutine execution memory usage measurement</rdfs:label>
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_a_ratio_measurement_of"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <owl:Class rdf:about="#SoftwareSubroutineExecution"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+                <owl:someValuesFrom>
+                  <owl:Class rdf:about="#SemiconductorMemory"/>
+                </owl:someValuesFrom>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </owl:equivalentClass>
+  </owl:Class>
+  <owl:Class rdf:ID="AIRSQueryToReQueryWorkflow">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <owl:Class rdf:about="#DataSetMergeSubroutine"/>
+              <owl:Restriction>
+                <owl:someValuesFrom>
+                  <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                      <owl:Class rdf:about="#SoftwareSubroutineExecutionOrderOrdinalMeasurement"/>
+                      <owl:Restriction>
+                        <owl:someValuesFrom>
+                          <owl:Class>
+                            <owl:intersectionOf rdf:parseType="Collection">
+                              <owl:Class rdf:about="#SoftwareSubroutineExecutionOrderOrdinalMeasurementBearer"/>
+                              <owl:Restriction>
+                                <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"
+                                >3</owl:hasValue>
+                                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_integer_value"/>
+                              </owl:Restriction>
+                            </owl:intersectionOf>
+                          </owl:Class>
+                        </owl:someValuesFrom>
+                        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                      </owl:Restriction>
+                    </owl:intersectionOf>
+                  </owl:Class>
+                </owl:someValuesFrom>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_measured_by_ordinal"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contains"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >AIRSQuery to re query workflow</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <owl:Class rdf:ID="UnstructuredDataToRDFSubroutine"/>
+              <owl:Restriction>
+                <owl:someValuesFrom>
+                  <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                      <owl:Class rdf:about="#SoftwareSubroutineExecutionOrderOrdinalMeasurement"/>
+                      <owl:Restriction>
+                        <owl:someValuesFrom>
+                          <owl:Class>
+                            <owl:intersectionOf rdf:parseType="Collection">
+                              <owl:Class rdf:about="#SoftwareSubroutineExecutionOrderOrdinalMeasurementBearer"/>
+                              <owl:Restriction>
+                                <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"
+                                >2</owl:hasValue>
+                                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_integer_value"/>
+                              </owl:Restriction>
+                            </owl:intersectionOf>
+                          </owl:Class>
+                        </owl:someValuesFrom>
+                        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                      </owl:Restriction>
+                    </owl:intersectionOf>
+                  </owl:Class>
+                </owl:someValuesFrom>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_measured_by_ordinal"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contains"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <owl:Class rdf:about="#QuerySubroutine"/>
+              <owl:Restriction>
+                <owl:someValuesFrom>
+                  <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                      <owl:Class rdf:about="#SoftwareSubroutineExecutionOrderOrdinalMeasurement"/>
+                      <owl:Restriction>
+                        <owl:someValuesFrom>
+                          <owl:Class>
+                            <owl:intersectionOf rdf:parseType="Collection">
+                              <owl:Class rdf:about="#SoftwareSubroutineExecutionOrderOrdinalMeasurementBearer"/>
+                              <owl:Restriction>
+                                <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"
+                                >1</owl:hasValue>
+                                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_integer_value"/>
+                              </owl:Restriction>
+                            </owl:intersectionOf>
+                          </owl:Class>
+                        </owl:someValuesFrom>
+                        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                      </owl:Restriction>
+                    </owl:intersectionOf>
+                  </owl:Class>
+                </owl:someValuesFrom>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_measured_by_ordinal"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contains"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <owl:Class rdf:about="#AbductiveRequerySubroutine"/>
+              <owl:Restriction>
+                <owl:someValuesFrom>
+                  <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                      <owl:Class rdf:about="#SoftwareSubroutineExecutionOrderOrdinalMeasurement"/>
+                      <owl:Restriction>
+                        <owl:someValuesFrom>
+                          <owl:Class>
+                            <owl:intersectionOf rdf:parseType="Collection">
+                              <owl:Class rdf:about="#SoftwareSubroutineExecutionOrderOrdinalMeasurementBearer"/>
+                              <owl:Restriction>
+                                <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"
+                                >6</owl:hasValue>
+                                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_integer_value"/>
+                              </owl:Restriction>
+                            </owl:intersectionOf>
+                          </owl:Class>
+                        </owl:someValuesFrom>
+                        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                      </owl:Restriction>
+                    </owl:intersectionOf>
+                  </owl:Class>
+                </owl:someValuesFrom>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_measured_by_ordinal"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contains"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#Workflow"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <owl:Class rdf:about="#StructuredDataToRDFSubroutine"/>
+              <owl:Restriction>
+                <owl:someValuesFrom>
+                  <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                      <owl:Class rdf:about="#SoftwareSubroutineExecutionOrderOrdinalMeasurement"/>
+                      <owl:Restriction>
+                        <owl:someValuesFrom>
+                          <owl:Class>
+                            <owl:intersectionOf rdf:parseType="Collection">
+                              <owl:Class rdf:about="#SoftwareSubroutineExecutionOrderOrdinalMeasurementBearer"/>
+                              <owl:Restriction>
+                                <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"
+                                >2</owl:hasValue>
+                                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_integer_value"/>
+                              </owl:Restriction>
+                            </owl:intersectionOf>
+                          </owl:Class>
+                        </owl:someValuesFrom>
+                        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                      </owl:Restriction>
+                    </owl:intersectionOf>
+                  </owl:Class>
+                </owl:someValuesFrom>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_measured_by_ordinal"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contains"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <owl:Class rdf:about="#DataAssociationSubroutine"/>
+              <owl:Restriction>
+                <owl:someValuesFrom>
+                  <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                      <owl:Class rdf:about="#SoftwareSubroutineExecutionOrderOrdinalMeasurement"/>
+                      <owl:Restriction>
+                        <owl:someValuesFrom>
+                          <owl:Class>
+                            <owl:intersectionOf rdf:parseType="Collection">
+                              <owl:Class rdf:about="#SoftwareSubroutineExecutionOrderOrdinalMeasurementBearer"/>
+                              <owl:Restriction>
+                                <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"
+                                >4</owl:hasValue>
+                                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_integer_value"/>
+                              </owl:Restriction>
+                            </owl:intersectionOf>
+                          </owl:Class>
+                        </owl:someValuesFrom>
+                        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                      </owl:Restriction>
+                    </owl:intersectionOf>
+                  </owl:Class>
+                </owl:someValuesFrom>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_measured_by_ordinal"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contains"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <owl:Class rdf:ID="TrustSubroutine"/>
+              <owl:Restriction>
+                <owl:someValuesFrom>
+                  <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                      <owl:Class rdf:about="#SoftwareSubroutineExecutionOrderOrdinalMeasurement"/>
+                      <owl:Restriction>
+                        <owl:someValuesFrom>
+                          <owl:Class>
+                            <owl:intersectionOf rdf:parseType="Collection">
+                              <owl:Class rdf:about="#SoftwareSubroutineExecutionOrderOrdinalMeasurementBearer"/>
+                              <owl:Restriction>
+                                <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"
+                                >5</owl:hasValue>
+                                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_integer_value"/>
+                              </owl:Restriction>
+                            </owl:intersectionOf>
+                          </owl:Class>
+                        </owl:someValuesFrom>
+                        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                      </owl:Restriction>
+                    </owl:intersectionOf>
+                  </owl:Class>
+                </owl:someValuesFrom>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_measured_by_ordinal"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contains"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#MeanProcessingLoadMeasurement">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#MeanRatioMeasurement"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mean processing load ratio measurement</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:ID="ProcessingLoadRatioMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ProcessingLoadRatioMeasurement"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Processing load ratio measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:about="#DataSetMergeOutputDataSet">
+    <rdfs:subClassOf rdf:resource="#OutputDataElement"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data set merge output data set</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="DataSetMergeOutputDataModel"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#ILinq">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/AIRSMetadataOntology#ObsoleteClass"/>
+  </owl:Class>
+  <owl:Class rdf:ID="StandardDeviationSoftwareSubroutineExecutionMemoryUsageMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="StandardDeviationSoftwareSubroutineExecutionMemoryUsageMeasurement"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Standard deviation software subroutine execution memory usage measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="MeanComputingSystemAvailabilityMeasurementBearer">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mean computer system availability measurement bearer</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#MeanComputingSystemAvailabilityMeasurement"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#ServiceInterface">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="PreconditionSpecification"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ObjectInvariantSpecification"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="PerformanceSpecification"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#PlanSpecification"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Plan Specification of the conditions prior to, during, and after the invocation of a subroutine under which the subroutine will operate as designed.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Service Interface</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#PostconditionSpecification"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#SoftwareSubroutine"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#prescribes"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="SideEffectSpecification"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="ExceptionConditionSpecification"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#DataElementMergeOutputData_Model">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data element merge output data Model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#InputDataElement">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElement"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Input data element</rdfs:label>
+    <owl:equivalentClass>
+      <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+          <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElement"/>
+          <owl:Restriction>
+            <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#is_input_of"/>
+            <owl:someValuesFrom rdf:resource="#SoftwareSubroutineExecution"/>
+          </owl:Restriction>
+        </owl:intersectionOf>
+      </owl:Class>
+    </owl:equivalentClass>
+  </owl:Class>
+  <owl:Class rdf:about="#DataSetMergeSubroutine">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data set merge subroutine</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#SoftwareSubroutine"/>
+  </owl:Class>
+  <owl:Class rdf:about="#SoftwareSubroutineExecutionTimeMeasurement">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationContentEntity"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Software subroutine execution time measurement</rdfs:label>
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_a_ratio_measurement_of"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <owl:Class rdf:about="#SoftwareSubroutineExecution"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#occurs_on"/>
+                <owl:someValuesFrom rdf:resource="http://www.ifomis.org/bfo/1.1/span#TemporalInterval"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </owl:equivalentClass>
+  </owl:Class>
+  <owl:Class rdf:about="#SoftwareSubroutineExecutionOrderOrdinalMeasurement">
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#SoftwareSubroutineExecutionOrder"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_a_ordinal_measurement_of"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Software subroutine execution order ordinal measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#OrdinalMeasurementInformationContentEntity"/>
+  </owl:Class>
+  <owl:Class rdf:about="#Workflow">
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:onClass rdf:resource="#SoftwareSubroutine"/>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+        >2</owl:minQualifiedCardinality>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contains"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: An Object Aggregate composed of more than one Software Subroutine that when executed combine to produce a prescribed output.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Workflow</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#ObjectAggregate"/>
+  </owl:Class>
+  <owl:Class rdf:about="#PerformanceSpecification">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ServiceInterface"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Performance Specification</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Plan Specification of the resources and time required by a Subroutine for normal execution.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#PlanSpecification"/>
+  </owl:Class>
+  <owl:Class rdf:ID="TrustSubroutineExecution">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="#TrustSubroutine"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_agent"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="TrustOutputDataSet"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_output"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#TrustInputDataSet"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_input"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Trust subroutine execution</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#SoftwareSubroutineExecution"/>
+  </owl:Class>
+  <owl:Class rdf:ID="SoftwareSubroutineIdentifierBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_text_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="SoftwareSubroutineIdentifier"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Software subroutine identifier bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#DesignativeInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="QueryOutputDataSet">
+    <rdfs:subClassOf rdf:resource="#OutputDataElement"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Query output data set</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom rdf:resource="#QueryOutputDataModel"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="QuerySubroutineMeanHardDriveUsageMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"
+        >0</owl:hasValue>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#QuerySubroutineMeanHardDriveUsageMeasurement"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Query subroutine mean hard drive usage measurement bearer</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#MeanHardDriveUsageMeasurementBearer"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="QuerySubroutineExecution">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#QuerySubroutine"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_agent"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#QueryOutputDataSet"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_output"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#QueryInputData"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_input"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Query subroutine execution</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#SoftwareSubroutineExecution"/>
+  </owl:Class>
+  <owl:Class rdf:about="#UnstructuredDataToRDFSubroutine">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Unstructured data to RDFSubroutine</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#SoftwareSubroutine"/>
+  </owl:Class>
+  <owl:Class rdf:about="#TrustSubroutine">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Trust subroutine</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#SoftwareSubroutine"/>
+  </owl:Class>
+  <owl:Class rdf:ID="OutputSpecification">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#PostconditionSpecification"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Plan Specification of the values, types, and meanings of the outputs of a Subroutine under normal execution.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Output Specification</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#PlanSpecification"/>
+  </owl:Class>
+  <owl:Class rdf:ID="DataElementMergeSubroutineExecution">
+    <rdfs:subClassOf rdf:resource="#SoftwareSubroutineExecution"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data element merge subroutine execution</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_input"/>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+        >2</owl:minQualifiedCardinality>
+        <owl:onClass rdf:resource="#DataElementMergeInputDataElement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_output"/>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+        >1</owl:minQualifiedCardinality>
+        <owl:onClass rdf:resource="#DataElementMergeOutputDataElement"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#realizes"/>
+        <owl:someValuesFrom rdf:resource="#DataElementMergeFunction"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_agent"/>
+        <owl:someValuesFrom rdf:resource="#DataElementMergeSubroutine"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#MeanHardDriveUsageMeasurement">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mean hard drive usage measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#MeanRatioMeasurement"/>
+  </owl:Class>
+  <owl:Class rdf:ID="DataAssociationSubroutineExecution">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#DataAssociationSubroutine"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_agent"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#DataAssociationOutputDataSet"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_output"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#DataAssociationInputDataSet"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_input"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data association subroutine execution</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#SoftwareSubroutineExecution"/>
+  </owl:Class>
+  <owl:Class rdf:about="#PreconditionSpecification">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#PlanSpecification"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Precondition Specification</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Plan Specification of the set of States under which a Subroutine is properly invoked.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="IDynamicModel">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#IModel"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="ElementAtOrDefaultFunction">
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Element At Or Default Function</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Set Element Function that is realized in the output of either a element at a specified index from a input set of elements or a default element if the index is out of range.</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#SetElementFunction"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="TrustSubroutineMeanHardDriveUsageMeasurement">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Trust subroutine mean hard drive usage measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#MeanHardDriveUsageMeasurement"/>
+  </owl:Class>
+  <owl:Class rdf:about="#TrustOutputDataSet">
+    <rdfs:subClassOf rdf:resource="#OutputDataElement"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Trust output data set</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="TrustOutputDataModel"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="MaximumSoftwareSubroutineExecutionMemoryUsageMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_integer_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="MaximumSoftwareSubroutineExecutionMemoryUsageMeasurement"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Maximum software subroutine execution memory usage measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:about="#DataSetMergeOutputDataModel">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data set merge output data model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="DataSetMergeInputDataModel">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data set merge input data model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#InformationBearingEntityRole">
+    <rdfs:subClassOf rdf:resource="http://www.ifomis.org/bfo/1.1/snap#Role"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Information bearing entity role</rdfs:label>
+    <owl:equivalentClass>
+      <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+          <rdf:Description rdf:about="http://www.ifomis.org/bfo/1.1/snap#Role"/>
+          <owl:Restriction>
+            <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#role_of"/>
+            <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#InformationBearingEntity"/>
+          </owl:Restriction>
+        </owl:intersectionOf>
+      </owl:Class>
+    </owl:equivalentClass>
+  </owl:Class>
+  <owl:Class rdf:ID="StandardDeviationHardDriveUsageMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#StandardDeviationHardDriveUsageMeasurementBearer"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Standard deviation hard drive usage measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="AbductiveRequerySubroutineExecution">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#AbductiveRequerySubroutine"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_agent"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="AbductiveRequeryOutputDataSet"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_output"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#AbductiveRequeryInputData"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_input"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Abductive requery subroutine execution</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#SoftwareSubroutineExecution"/>
+  </owl:Class>
+  <owl:Class rdf:ID="InputSpecification">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#PreconditionSpecification"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Plan Specification of the values, types and meanings of inputs to a Subroutine upon which the Subroutine and execute normally.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Input Specification</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#PlanSpecification"/>
+  </owl:Class>
+  <owl:Class rdf:about="#StandardDeviationSoftwareSubroutineExecutionMemoryUsageMeasurement">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Standard deviation software subroutine execution memory usage measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#StandardDeviationRatioMeasurement"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ExceptionConditionSpecification">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ServiceInterface"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Exception Condition Specification</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Plan Specification of the set of states under which a Subroutine cannot realize the Software Function for which it is designed.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#PlanSpecification"/>
+  </owl:Class>
+  <owl:Class rdf:ID="UnstructuredDataToRDFSubroutineMeanHardDriveUsageMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"
+        >0</owl:hasValue>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="UnstructuredDataToRDFSubroutineMeanHardDriveUsageMeasurement"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Unstructured data to RDFSubroutine mean hard drive usage measurement bearer</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#MeanHardDriveUsageMeasurementBearer"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="DataSetMergeSubroutineMeanHardDriveUsageMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"
+        >0</owl:hasValue>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#DataSetMergeSubroutineMeanHardDriveUsageMeasurement"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data set merge subroutine mean hard drive usage measurement bearer</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#MeanHardDriveUsageMeasurementBearer"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#StandardDeviationSoftwareSubroutineExecutionTimeMeasurement">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Standard deviation software subroutine execution time measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#StandardDeviationRatioMeasurement"/>
+  </owl:Class>
+  <owl:Class rdf:about="#AbductiveRequeryOutputDataSet">
+    <rdfs:subClassOf rdf:resource="#OutputDataElement"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Abductive requery output data set</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="AbductiveRequeryOutputDataModel"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="MapperCountRatioMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_integer_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="MapperCountRatioMeasurement"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mapper count ratio measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:about="#DataSetMergeInputDataSet">
+    <rdfs:subClassOf rdf:resource="#InputDataElement"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data set merge input data set</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+        <owl:someValuesFrom rdf:resource="#DataSetMergeInputDataModel"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#UnstructuredDataToRDFSubroutineMeanHardDriveUsageMeasurement">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Unstructured data to RDFSubroutine mean hard drive usage measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#MeanHardDriveUsageMeasurement"/>
+  </owl:Class>
+  <owl:Class rdf:about="#MapperCountRatioMeasurement">
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:ID="MapperCount"/>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_a_ratio_measurement_of"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mapper count ratio measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationContentEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="HardDriveUsageRatioMeasurement">
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <owl:Class rdf:about="#SoftwareSubroutineExecution"/>
+              <owl:Restriction>
+                <owl:someValuesFrom>
+                  <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                      <owl:Class rdf:about="#ComputingSystem"/>
+                      <owl:Restriction>
+                        <owl:someValuesFrom rdf:resource="#ComputerHardDrive"/>
+                        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+                      </owl:Restriction>
+                    </owl:intersectionOf>
+                  </owl:Class>
+                </owl:someValuesFrom>
+                <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#is_a_ratio_measurement_of"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Hard drive usage ratio measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationContentEntity"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ComputingFolder">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: A Component By Function that is a virtual container within a digital file system, in which groups of computer files and possibly other folders can be kept and organized. (derived from http://en.wikipedia.org/wiki/Folder_(computing))</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Computing folder</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#InformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:about="#AbductiveRequeryOutputDataModel">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Abductive requery output data model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#DataElementFunction">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#SoftwareFunction"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data element function</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:ID="InformationBearingEntityAsOutputRole">
+    <rdfs:subClassOf rdf:resource="#InformationBearingEntityRole"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Information bearing entity as output role</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="#SemiconductorMemory">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/ArtifactOntology#ComponentByFunction"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Semiconductor memory</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: A Component By Function that is an electronic data storage device, often used as computer memory, implemented on a semiconductor-based integrated circuit</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="#SideEffectSpecification">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ServiceInterface"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Side Effect Specification</rdfs:label>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Plan Specification of all Changes that a Subroutine makes to the environment in which it is invoked.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#PlanSpecification"/>
+  </owl:Class>
+  <owl:Class rdf:about="#MapperCount">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Definition: The number of map subroutines required to process data having a given file size. The count is normal provided by the FileSizeRatioMeasurement divided by 64MB.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mapper count</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#ComponentCount"/>
+  </owl:Class>
+  <owl:Class rdf:about="#SoftwareSubroutineIdentifier">
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#SoftwareSubroutine"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designates"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Software subroutine identifier</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#DesignativeInformationContentEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="HardDriveUsageRatioMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#HardDriveUsageRatioMeasurement"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Hard drive usage ratio measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:about="#DataAssociationInputDataModel">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data association input data model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#UnionSetInputDataSet">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#UnionSetInputDataSet_Model"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#contained_in"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Union set input data set</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#InputDataElement"/>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="UnstructuredDataToRDFSubroutineExecution">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#UnstructuredDataToRDFSubroutine"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_agent"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#UnstructuredDataToRDFOutputDataSet"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_output"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#UnstructuredDataToRDFInputDataSet"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#has_input"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Unstructured data to RDFSubroutine execution</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#SoftwareSubroutineExecution"/>
+  </owl:Class>
+  <owl:Class rdf:ID="StandardDeviationProcessingLoadMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#StandardDeviationProcessingLoadMeasurement"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Standard deviation processing load measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="WorkflowIdentifierBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_integer_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <owl:equivalentClass>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#WorkflowIdentifier"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </owl:equivalentClass>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Workflow identifier bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#DesignativeInformationBearingEntity"/>
+  </owl:Class>
+  <owl:Class rdf:about="#ObjectInvariantSpecification">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#ServiceInterface"/>
+        <owl:onProperty rdf:resource="http://www.obofoundry.org/ro/ro.owl#part_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Plan Specification of the set of States that a Subroutine is designed to leave unchanged during its execution.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Object Invariant Specification</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#PlanSpecification"/>
+  </owl:Class>
+  <owl:Class rdf:about="#SetElementFunction">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#SoftwareFunction"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Definition: A Software Function realized in the output of a single specific element from the input of a set of elements.</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2000/01/rdf-schema#Literal"
+    >Set Element Function</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:ID="AbductiveRequerySubroutineMeanHardDriveUsageMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"
+        >0</owl:hasValue>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#AbductiveRequerySubroutineMeanHardDriveUsageMeasurement"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Abductive requery subroutine mean hard drive usage measurement bearer</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#MeanHardDriveUsageMeasurementBearer"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="IInvariantVariable">
+    <rdfs:subClassOf rdf:resource="#IState"/>
+  </owl:Class>
+  <owl:Class rdf:about="#MaximumSoftwareSubroutineExecutionMemoryUsageMeasurement">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Maximum software subroutine execution memory usage measurement</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationContentEntity"/>
+  </owl:Class>
+  <owl:Class rdf:ID="TrustSubroutineMeanHardDriveUsageMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer"
+        >0</owl:hasValue>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#TrustSubroutineMeanHardDriveUsageMeasurement"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Trust subroutine mean hard drive usage measurement bearer</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="#MeanHardDriveUsageMeasurementBearer"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#DataAssociationSubroutineMeanHardDriveUsageMeasurement">
+    <rdfs:subClassOf rdf:resource="#MeanHardDriveUsageMeasurement"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Data association mean hard drive usage measurement</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="#TrustOutputDataModel">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Trust output data model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#UnstructuredDataToRDFOutputDataModel">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataSet"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Unstructured data to RDFOutput data model</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+              <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+                <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementNameBearer"/>
+              </owl:Restriction>
+            </owl:intersectionOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#IModel">
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/AIRSMetadataOntology#ObsoleteClass"/>
+  </owl:Class>
+  <owl:Class rdf:about="#MeanHardDriveUsageMeasurementBearer">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_decimal_value"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="#MeanHardDriveUsageMeasurement"/>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#bearer_of"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Mean hard drive usage measurement bearer</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#RatioMeasurementInformationBearingEntity"/>
+  </owl:Class>
+  <owl:ObjectProperty rdf:ID="merges_into_root"/>
+  <owl:ObjectProperty rdf:ID="hasValueType"/>
+  <owl:ObjectProperty rdf:ID="hasContract"/>
+  <owl:ObjectProperty rdf:ID="hasMaximum"/>
+  <owl:ObjectProperty rdf:ID="hasIndividual"/>
+  <owl:ObjectProperty rdf:ID="hasContainedWithin"/>
+  <owl:ObjectProperty rdf:ID="hasPosition"/>
+  <owl:ObjectProperty rdf:ID="hasGlobalContext"/>
+  <owl:ObjectProperty rdf:ID="hasOrder"/>
+  <owl:ObjectProperty rdf:ID="is_designated_by_bearer">
+    <owl:propertyChainAxiom rdf:parseType="Collection">
+      <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+      <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Upper/ExtendedRelationOntology#inheres_in"/>
+      <rdf:Description rdf:about="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#has_text_value"/>
+    </owl:propertyChainAxiom>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >is designated by bearer</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="hasMapping"/>
+  <owl:ObjectProperty rdf:ID="hasUniqueWithin"/>
+  <owl:ObjectProperty rdf:ID="hasSourceContainer"/>
+  <owl:ObjectProperty rdf:ID="hasMinimum"/>
+  <owl:ObjectProperty rdf:ID="hasValueTypeAlternative"/>
+  <owl:ObjectProperty rdf:ID="hasOperation"/>
+  <owl:ObjectProperty rdf:ID="hasContextAlternative"/>
+  <owl:ObjectProperty rdf:ID="hasContext"/>
+  <owl:ObjectProperty rdf:ID="hasResult"/>
+  <owl:ObjectProperty rdf:ID="hasProperty"/>
+  <owl:ObjectProperty rdf:ID="hasAction"/>
+  <owl:ObjectProperty rdf:ID="hasStateChange"/>
+  <owl:ObjectProperty rdf:ID="hasInvariant"/>
+  <owl:ObjectProperty rdf:ID="has_query_result"/>
+  <owl:ObjectProperty rdf:ID="hasInequality"/>
+  <owl:ObjectProperty rdf:ID="hasDecision"/>
+  <owl:ObjectProperty rdf:ID="hasVariable"/>
+  <owl:ObjectProperty rdf:ID="hasCriteria"/>
+  <owl:DatatypeProperty rdf:ID="requiresNullValue"/>
+  <owl:DatatypeProperty rdf:ID="hasModelNamespace"/>
+  <owl:DatatypeProperty rdf:ID="hasTimeCost">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#time"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="hasMemoryCost">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="requiresNonNullValue"/>
+  <owl:DatatypeProperty rdf:ID="hasCPUCost">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="is_decision_node">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="requiresValue"/>
+  <owl:DatatypeProperty rdf:ID="hasOutputArgumentName"/>
+  <owl:DatatypeProperty rdf:ID="hasUtility">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="has_mean">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="has_standard_deviation">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="hasAvailability">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:ID="hasInputArgumentName"/>
+  <InputSpecification rdf:ID="UnionSetInputSpecification_Instance">
+    <ro:part_of>
+      <ServiceInterface rdf:ID="UnionSetServiceInterface_Instance">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Union set service interface Instance</rdfs:label>
+        <ro:has_part rdf:resource="#UnionSetInputSpecification_Instance"/>
+        <ro:has_part>
+          <OutputSpecification rdf:ID="UnionSetOutputSpecification_Instance">
+            <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >Union set output specification Instance</rdfs:label>
+          </OutputSpecification>
+        </ro:has_part>
+        <ro:has_part>
+          <ObjectInvariantSpecification rdf:ID="UnionSetObjectInvariantSpecification_Instance">
+            <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+            >Union set object invariant specification Instance</rdfs:label>
+          </ObjectInvariantSpecification>
+        </ro:has_part>
+      </ServiceInterface>
+    </ro:part_of>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Union set input specification Instance</rdfs:label>
+    <info:prescribes rdf:resource="#UnionSetInputDataSet"/>
+  </InputSpecification>
+  <rdf:Statement rdf:ID="UnionSetOutputDataSet_NameConstraint">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Union set output data set Name constraint</rdfs:label>
+    <rdf:subject rdf:resource="#UnionSetOutputDataSet"/>
+    <rdf:predicate rdf:resource="http://www.w3.org/2000/01/rdf-schema#subClassOf"/>
+    <rdf:object>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationEntityOntology#designated_by"/>
+        <owl:someValuesFrom rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#DataElementName"/>
+      </owl:Restriction>
+    </rdf:object>
+  </rdf:Statement>
+  <rdf:Statement rdf:ID="UnionSetOutputDataSet_OutputConstraint1">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Union set output data set Output constraint1</rdfs:label>
+    <rdf:subject rdf:resource="#UnionSetOutputDataSet"/>
+    <rdf:predicate rdf:resource="http://www.w3.org/2002/07/owl#equivalentClass"/>
+    <rdf:object>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="#UnionSetInputDataSet"/>
+          <owl:Class rdf:about="#UnionSetInputDataSet"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdf:object>
+  </rdf:Statement>
+</rdf:RDF>
+
+<!-- Created with TopBraid -->
