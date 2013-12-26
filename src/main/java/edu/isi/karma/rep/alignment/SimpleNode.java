@@ -34,6 +34,7 @@ public class SimpleNode extends Node {
 	/**
 	 * 
 	 */
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 
 	public SimpleNode(String id, Label label) {

@@ -1,6 +1,5 @@
 package edu.isi.karma.rdf;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -15,16 +14,16 @@ import edu.isi.karma.kr2rml.KR2RMLMapping;
 import edu.isi.karma.kr2rml.KR2RMLWorksheetRDFGenerator;
 import edu.isi.karma.kr2rml.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.WorksheetR2RMLJenaModelParser;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
+
+//If running in offline mode, need to set manual.alignment=true in modeling.peoperties
 public class JSONRDFGenerator extends RdfGenerator {
 
 	private static Logger logger = LoggerFactory.getLogger(JSONRDFGenerator.class);
@@ -81,7 +80,7 @@ public class JSONRDFGenerator extends RdfGenerator {
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
 		        workspace.getFactory(), workspace.getOntologyManager(), pw,
 		        mapping, errorReport, addProvenance);
-		rdfGen.generateRDF(false);
+		rdfGen.generateRDF(true);
 		removeWorkspace(workspace);
 		logger.debug("Generated rdf for " + sourceName);
 	}
@@ -102,33 +101,6 @@ public class JSONRDFGenerator extends RdfGenerator {
                 ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "200");
 
         SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
-        
-		OntologyManager ontologyManager = workspace.getOntologyManager();
-		/** Check if any ontology needs to be preloaded **/
-		String preloadedOntDir = getRootFolder() + "preloaded-ontologies";
-		logger.info("Loading ontologies from dir: " + preloadedOntDir);
-		File ontDir = new File(preloadedOntDir);
-		if (ontDir.exists()) {
-			File[] ontologies = ontDir.listFiles();
-			for (File ontology: ontologies) {
-				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf") || ontology.getName().endsWith(".xml")) {
-					logger.info("Loading ontology file: " + ontology.getAbsolutePath());
-					try {
-						String encoding = EncodingDetector.detect(ontology);
-						ontologyManager.doImport(ontology, encoding);
-					} catch (Exception t) {
-						logger.error ("Error loading ontology: " + ontology.getAbsolutePath(), t);
-					}
-				}
-			}
-			// update the cache at the end when all files are added to the model
-			ontologyManager.updateCache();
-		} else {
-			logger.info("No directory for preloading ontologies exists.");
-		}
 	}
-	
-	private String getRootFolder() {
-		return getClass().getClassLoader().getResource(".").getPath() + "/../../";
-	}
+
 }

@@ -21,14 +21,13 @@
 
 package edu.isi.karma.rdf;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -41,12 +40,12 @@ import edu.isi.karma.util.EncodingDetector;
 
 /**
  * @author dipsy
- *
+ * 
  */
 public class TestJSONRDFGenerator {
 
 	JSONRDFGenerator rdfGen;
-	
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -68,12 +67,14 @@ public class TestJSONRDFGenerator {
 	public void setUp() throws Exception {
 		rdfGen = JSONRDFGenerator.getInstance();
 
-		//Add the models in
+		// Add the models in
 		R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(
-				"people-model", new File(getTestDataFolder() + "/people-model.ttl").toURI().toURL());
+				"people-model", new File(getTestDataFolder()
+						+ "/people-model.ttl").toURI().toURL());
 		rdfGen.addModel(modelIdentifier);
-		modelIdentifier = new R2RMLMappingIdentifier(
-				"cs548-events-model", new File(getTestDataFolder() + "/cs548-events-model.ttl").toURI().toURL());
+		modelIdentifier = new R2RMLMappingIdentifier("cs548-events-model",
+				new File(getTestDataFolder() + "/cs548-events-model.ttl")
+						.toURI().toURL());
 		rdfGen.addModel(modelIdentifier);
 	}
 
@@ -85,59 +86,66 @@ public class TestJSONRDFGenerator {
 	}
 
 	/**
-	 * Test method for {@link edu.isi.karma.rdf.JSONRDFGenerator#generateRDF(java.lang.String, java.lang.String, boolean, java.io.PrintWriter)}.
+	 * Test method for
+	 * {@link edu.isi.karma.rdf.JSONRDFGenerator#generateRDF(java.lang.String, java.lang.String, boolean, java.io.PrintWriter)}
+	 * .
 	 */
 	@Test
 	public void testGenerateRDF1() {
 		try {
-			
+
 			String filename = getTestDataFolder() + "/people.json";
 			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(filename), "utf-8");
-			
-			String outputFilePath = getTestDataFolder() + "/people.rdf";
-			System.out.println("Generate RDF: " + outputFilePath);
-			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
-	       BufferedWriter bw = new BufferedWriter(fw);
-	       PrintWriter pw = new PrintWriter(bw);
-	            
+			String jsonData = EncodingDetector.getString(new File(filename),
+					"utf-8");
+
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+
 			rdfGen.generateRDF("people-model", jsonData, true, pw);
-			String readRDF = EncodingDetector.getString(new File(outputFilePath), "utf-8");
-			assertNotEquals(readRDF.length(), 0);
-		} catch(Exception e) {
+			String rdf = sw.toString();
+
+			assertNotEquals(rdf.length(), 0);
+			String[] lines = rdf.split("\n");
+			assertEquals(102, lines.length);
+		} catch (Exception e) {
 			fail("Execption: " + e.getMessage());
 		}
 	}
-	
+
 	/**
-	 * Test method for {@link edu.isi.karma.rdf.JSONRDFGenerator#generateRDF(java.lang.String, java.lang.String, boolean, java.io.PrintWriter)}.
+	 * Test method for
+	 * {@link edu.isi.karma.rdf.JSONRDFGenerator#generateRDF(java.lang.String, java.lang.String, boolean, java.io.PrintWriter)}
+	 * .
 	 */
 	@Test
 	public void testGenerateRDF2() {
 		try {
-			
+
 			String filename = getTestDataFolder() + "/cs548-events.json";
 			System.out.println("Load json file: " + filename);
-			String jsonData = EncodingDetector.getString(new File(filename), "utf-8");
-			
-			String outputFilePath = getTestDataFolder() + "/cs548-events.rdf";
-			System.out.println("Generate RDF: " + outputFilePath);
-			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
-	       BufferedWriter bw = new BufferedWriter(fw);
-	       PrintWriter pw = new PrintWriter(bw);
-	            
+			String jsonData = EncodingDetector.getString(new File(filename),
+					"utf-8");
+
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+
 			rdfGen.generateRDF("cs548-events-model", jsonData, true, pw);
-			String readRDF = EncodingDetector.getString(new File(outputFilePath), "utf-8");
-			assertNotEquals(readRDF.length(), 0);
-		} catch(Exception e) {
+			String rdf = sw.toString();
+
+			assertNotEquals(rdf.length(), 0);
+			String[] lines = rdf.split("\n");
+			assertEquals(234, lines.length);
+		} catch (Exception e) {
 			fail("Execption: " + e.getMessage());
 		}
 	}
 
 	private String getRootFolder() {
-		return getClass().getClassLoader().getResource(".").getPath() + "/../../";
+		return getClass().getClassLoader().getResource(".").getPath()
+				+ "/../../";
 	}
-	
+
 	private String getTestDataFolder() {
 		return getRootFolder() + "src/test/karma-data";
 	}

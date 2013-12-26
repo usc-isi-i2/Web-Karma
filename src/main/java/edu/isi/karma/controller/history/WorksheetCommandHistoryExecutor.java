@@ -44,6 +44,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.Util;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.WorkspaceRegistry;
@@ -107,6 +108,7 @@ public class WorksheetCommandHistoryExecutor {
 						workspace.getCommandHistory().doCommand(comm, workspace);
 					} catch(Exception e) {
 						logger.error("Error executing command: "+ commandName + ". Please notify this error");
+						Util.logException(logger, e);
 						//make these InfoUpdates so that the UI can still process the rest of the model
 						return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
 					}

@@ -20,12 +20,16 @@
  ******************************************************************************/
 package edu.isi.karma.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+
+import org.slf4j.Logger;
 
 public class Util {
 	/**
@@ -34,7 +38,8 @@ public class Util {
 	 * @param input
 	 * @return
 	 */
-	public static HashMap<String, Double> sortHashMap(HashMap<String, Double> input) {
+	public static HashMap<String, Double> sortHashMap(
+			HashMap<String, Double> input) {
 		Map<String, Double> tempMap = new HashMap<String, Double>();
 		for (String wsState : input.keySet()) {
 			tempMap.put(wsState, input.get(wsState));
@@ -45,12 +50,19 @@ public class Util {
 		HashMap<String, Double> sortedMap = new LinkedHashMap<String, Double>();
 		TreeSet<Double> sortedSet = new TreeSet<Double>(mapValues);
 		Object[] sortedArray = sortedSet.toArray();
-		
+
 		int size = sortedArray.length;
-		for (int i = size-1; i >= 0; i--) {
+		for (int i = size - 1; i >= 0; i--) {
 			sortedMap.put(mapKeys.get(mapValues.indexOf(sortedArray[i])),
 					(Double) sortedArray[i]);
 		}
 		return sortedMap;
+	}
+
+	public static void logException(Logger logger, Exception e) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		e.printStackTrace(pw);
+		logger.error(sw.toString());
 	}
 }

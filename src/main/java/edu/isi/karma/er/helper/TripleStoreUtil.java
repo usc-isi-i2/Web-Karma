@@ -460,7 +460,7 @@ public class TripleStoreUtil {
 		if (tripleStoreUrl == null || tripleStoreUrl.isEmpty()) {
 			tripleStoreUrl = defaultDataRepoUrl;
 		}
-		JSONObject retVal = new JSONObject();
+		//JSONObject retVal = new JSONObject();
 		StringBuffer queryString = new StringBuffer();
 		queryString.append("SELECT ?x ?z ")
 			.append("WHERE { GRAPH <").append(graph.trim()).append("> { ")
