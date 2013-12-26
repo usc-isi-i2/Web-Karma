@@ -1,9 +1,9 @@
 package alignment.karma.mapping.translation;
 
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
-import java.io.FileWriter;
-import java.io.Writer;
+import java.io.*;
 
 /**
  * Class TranslateMapping
@@ -12,16 +12,17 @@ import java.io.Writer;
  */
 public class TranslateMapping
 {
-//	public static void main(String[] args) throws IOException
-//	{
-//		InputStream stringInputStream = new FileInputStream("/home/adam.czerniejewski/dataSets/PersonMapping.ttl");
-//		Model m = ModelFactory.createDefaultModel();;
-//		m.read(stringInputStream,null,"TTL");
-//		m.write(System.out,"RDF/XML");
-//		TranslateMapping tm = new TranslateMapping();
-//		tm.produceD2RQMapping(m, new FileWriter("test.n3"));
-//	}
-//	public static void main(String[] args) throws IOException
+	public static void main(String[] args) throws IOException
+	{
+		InputStream stringInputStream = new FileInputStream("/home/adam.czerniejewski/dataSets/PersonMapping.ttl");
+		Model m = ModelFactory.createDefaultModel();
+		m.read(stringInputStream, null, "TTL");
+		m.write(System.out, "RDF/XML");
+		TranslateMapping tm = new TranslateMapping();
+		tm.produceD2RQMapping(m, new FileWriter("test.n3"));
+	}
+
+	//	public static void main(String[] args) throws IOException
 //	{
 //		InputStream stringInputStream = new FileInputStream("/home/adam.czerniejewski/.airs/conf/sda/alignment/CUBRC-Interpol.n3");
 //		Model m = OntologyLoader.getInstance().getInstanceOntModel();
