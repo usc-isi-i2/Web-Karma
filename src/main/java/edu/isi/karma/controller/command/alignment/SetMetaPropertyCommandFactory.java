@@ -39,7 +39,7 @@ public class SetMetaPropertyCommandFactory extends CommandFactory implements JSO
 		isUriOfClass, isSubclassOfClass, isSpecializationForEdge
 	}
 	
-	private enum Arguments {
+	enum Arguments {
 		worksheetId, hNodeId, metaPropertyName, metaPropertyValue, trainAndShowUpdates, rdfLiteralType
 	}
 	

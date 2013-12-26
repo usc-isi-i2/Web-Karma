@@ -27,6 +27,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Entity;
 import edu.isi.karma.rep.Workspace;
@@ -84,24 +88,26 @@ public abstract class Command extends Entity {
 	 * Has this command been executed already?
 	 */
 	private boolean isExecuted = false;
-	
+
 	/**
-	 * Flag that should be unset if you don't want this command instance to be written into the history
+	 * Flag that should be unset if you don't want this command instance to be
+	 * written into the history
 	 */
 	private boolean saveInHistory = true;
-	
+
 	/**
-	 * Flag to tell if the command history should be written after this command has been executed
+	 * Flag to tell if the command history should be written after this command
+	 * has been executed
 	 */
 	private boolean writeWorksheetHistoryAfterCommandExecutes = true;
-	
+
 	private boolean appendToHistory = false;
-	
+
 	/**
 	 * List of tags for the command
 	 */
 	private List<CommandTag> tags = new ArrayList<CommandTag>();
-	
+
 	private String inputParameterJson;
 
 	public enum CommandTag {
@@ -119,19 +125,19 @@ public abstract class Command extends Entity {
 	public void setExecuted(boolean isExecuted) {
 		this.isExecuted = isExecuted;
 	}
-	
+
 	public boolean isSavedInHistory() {
 		return saveInHistory;
 	}
-	
+
 	public void saveInHistory(boolean flag) {
 		this.saveInHistory = flag;
 	}
-	
+
 	public void writeWorksheetHistoryAfterCommandExecutes(boolean flag) {
 		this.writeWorksheetHistoryAfterCommandExecutes = flag;
 	}
-	
+
 	public boolean writeWorksheetHistoryAfterCommandExecutes() {
 		return this.writeWorksheetHistoryAfterCommandExecutes;
 	}
@@ -185,5 +191,52 @@ public abstract class Command extends Entity {
 
 	public void setAppendToHistory(boolean appendToHistory) {
 		this.appendToHistory = appendToHistory;
+	}
+
+	// /////////////////////////////////////////////////////////////////////////////
+	//
+	// Methods to help with logging and error reporting.
+	//
+	// /////////////////////////////////////////////////////////////////////////////
+
+	protected void logCommand(Logger logger, Workspace workspace) {
+		try {
+			logger.info("Executing command:\n"
+					+ getArgsJSON(workspace).toString(4));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/*
+	 * Pedro
+	 * 
+	 * We should have an abstraction for Commands that operate on worksheets,
+	 * and this method should go there.
+	 */
+	protected String formatWorsheetId(Workspace workspace, String worksheetId) {
+		return worksheetId + " ("
+				+ workspace.getWorksheet(worksheetId).getTitle() + ")";
+	}
+
+	/*
+	 * Pedro
+	 * 
+	 * Return an HNodeId in a nice format for printing on command logs.
+	 */
+	protected String formatHNodeId(Workspace workspace, String hNodeId) {
+		return hNodeId + " (" + workspace.getFactory().getColumnName(hNodeId)
+				+ ")";
+	}
+
+	/*
+	 * Pedro
+	 * 
+	 * Meant to be overriden, but would need to define for all commands. We are
+	 * going to need a nicer way to record the inputs of commands to reason
+	 * about them, so perhaps this will also be easier and nicer to do.
+	 */
+	protected JSONObject getArgsJSON(Workspace workspace) {
+		return new JSONObject();
 	}
 }
