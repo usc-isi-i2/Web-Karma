@@ -1,3 +1,7 @@
+*.iml
+atlassian-ide-plugin.xml
+java_pid*.hprof
+
 bin
 target
 preloaded-library
