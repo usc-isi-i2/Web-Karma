@@ -5,10 +5,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,7 +63,7 @@ public class LightWeightOntologyLoader
 		prefixes.put(karma.getPrefix(),karma.getNamespace());
 		prefixes.put(kmdev.getPrefix(),kmdev.getNamespace());
 		prefixes.put(owl.getPrefix(),owl.getNamespace());
-		prefixes.put(personMappingOntology.getPrefix(),personMappingOntology.getNamespace());
+		prefixes.put(BadOntology.getPrefix(), BadOntology.getNamespace());
 		prefixes.put(r2rml.getPrefix(),r2rml.getNamespace());
 		prefixes.put(swrl.getPrefix(),swrl.getNamespace());
 		prefixes.put(xsd.getPrefix(),xsd.getNamespace());
@@ -97,5 +94,15 @@ public class LightWeightOntologyLoader
 		prefixes.put(swrlb.getPrefix(),swrlb.getNamespace());
 		prefixes.put(time.getPrefix(),time.getNamespace());
 		prefixes.put(xo.getPrefix(),xo.getNamespace());
+	}
+
+	public static void main(String[] args) throws IOException
+	{
+		File f = new File("bigOntologies.owl");
+		FileWriter fw = new FileWriter(f);
+		LightWeightOntologyLoader.initRootModel();
+		LightWeightOntologyLoader.getRootModel().write(fw, "RDF/XML", null);
+		fw.flush();
+		fw.close();
 	}
 }

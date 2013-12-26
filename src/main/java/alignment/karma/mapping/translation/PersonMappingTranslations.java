@@ -1,15 +1,21 @@
 package alignment.karma.mapping.translation;
 
-import alignment.karma.mapping.translation.ontologies.*;
+import alignment.karma.mapping.translation.ontologies.BadOntology;
 import alignment.karma.mapping.translation.ontologies.kdd.*;
+import alignment.karma.mapping.translation.ontologies.r2rml;
 import alignment.karma.mapping.translation.query.KarmaMappingSparqlQuery;
 import alignment.karma.mapping.translation.query.KarmaSparqlQueryVariable;
-import com.hp.hpl.jena.query.*;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 import java.util.ArrayList;
 import java.util.List;
+
+//import org.cubrc.airs.structured.alignment.karma.mapping.translation.ontologies.personMappingOntology;
 
 /**
  * Class PersonMappingTranslations
@@ -21,7 +27,7 @@ public class PersonMappingTranslations extends KarmaTranslations
 	private static Resource personResource;
 	public static void translatePersonMappings(Model model, D2rqMapping d2rqMapping)
 	{
-		StmtIterator stmtIterator = model.listStatements(null, r2rml.clazz, personMappingOntology.Person);
+		StmtIterator stmtIterator = model.listStatements(null, r2rml.clazz, BadOntology.Person);
 		if(stmtIterator.hasNext()) {
 			createPersonResource(d2rqMapping);
 			personNameTranslation(model,d2rqMapping);
@@ -41,9 +47,9 @@ public class PersonMappingTranslations extends KarmaTranslations
 
 	public static void personNameTranslation(Model karmaModel, D2rqMapping d2rqMapping) {
 		KarmaMappingSparqlQuery kQuery = new KarmaMappingSparqlQuery();
-		KarmaSparqlQueryVariable person = new KarmaSparqlQueryVariable(personMappingOntology.Person);
-		KarmaSparqlQueryVariable name = new KarmaSparqlQueryVariable(personMappingOntology.Name);
-		kQuery.addStatement(person,personMappingOntology.has_attribute,name);
+		KarmaSparqlQueryVariable person = new KarmaSparqlQueryVariable(BadOntology.Person);
+		KarmaSparqlQueryVariable name = new KarmaSparqlQueryVariable(BadOntology.PersonName);
+		kQuery.addStatement(person, BadOntology.person_properties, name);
 		kQuery.setSelectVariables(name);
 		QueryExecution qe = QueryExecutionFactory.create(kQuery.getQuery(),karmaModel);
 		ResultSet rs = qe.execSelect();
@@ -52,16 +58,16 @@ public class PersonMappingTranslations extends KarmaTranslations
 			d2rqMapping.createPropertyBridge(personResource,info.designated_by,personName);
 			Resource personNameBearer = d2rqMapping.createClassMap("PersonNameBearer",amo.PersonNameBearer);
 			d2rqMapping.createPropertyBridge(personName, ero.inheres_in,personNameBearer);
-			List<String> columnNames = getConnectedColumns(rs.next().get(name.variableName),personMappingOntology.has_value,karmaModel);
+			List<String> columnNames = getConnectedColumns(rs.next().get(name.variableName), BadOntology.has_value, karmaModel);
 			d2rqMapping.connectToColumn(personNameBearer,info.has_text_value,columnNames);
 		}
 	}
 
 	public static void personHeightTranslation(Model karmaModel, D2rqMapping d2rqMapping) {
 		KarmaMappingSparqlQuery kQuery = new KarmaMappingSparqlQuery();
-		KarmaSparqlQueryVariable person = new KarmaSparqlQueryVariable(personMappingOntology.Person);
-		KarmaSparqlQueryVariable height = new KarmaSparqlQueryVariable(personMappingOntology.Height);
-		kQuery.addStatement(person,personMappingOntology.has_attribute,height);
+		KarmaSparqlQueryVariable person = new KarmaSparqlQueryVariable(BadOntology.Person);
+		KarmaSparqlQueryVariable height = new KarmaSparqlQueryVariable(BadOntology.PersonHeight);
+		kQuery.addStatement(person, BadOntology.person_properties, height);
 		kQuery.setSelectVariables(height);
 		QueryExecution qe = QueryExecutionFactory.create(kQuery.getQuery(),karmaModel);
 		ResultSet rs = qe.execSelect();
@@ -72,16 +78,16 @@ public class PersonMappingTranslations extends KarmaTranslations
 			d2rqMapping.createPropertyBridge(heightQuality, info.is_measured_by, heightQualityMeasurement);
 			Resource heightQualityMeasurementBearer = d2rqMapping.createClassMap("HeightQualityMeasurement",info.RatioMeasurementInformationBearingEntity);
 			d2rqMapping.createPropertyBridge(heightQualityMeasurement, ero.inheres_in, heightQualityMeasurementBearer);
-			List<String> columnNames = getConnectedColumns(rs.next().get(height.variableName),personMappingOntology.has_value,karmaModel);
+			List<String> columnNames = getConnectedColumns(rs.next().get(height.variableName), BadOntology.has_value, karmaModel);
 			d2rqMapping.connectToColumn(heightQualityMeasurementBearer,info.has_text_value,columnNames);
 		}
 	}
 
 	public static void personWeightTranslation(Model karmaModel, D2rqMapping d2rqMapping) {
 		KarmaMappingSparqlQuery kQuery = new KarmaMappingSparqlQuery();
-		KarmaSparqlQueryVariable person = new KarmaSparqlQueryVariable(personMappingOntology.Person);
-		KarmaSparqlQueryVariable weigth = new KarmaSparqlQueryVariable(personMappingOntology.Weight);
-		kQuery.addStatement(person,personMappingOntology.has_attribute,weigth);
+		KarmaSparqlQueryVariable person = new KarmaSparqlQueryVariable(BadOntology.Person);
+		KarmaSparqlQueryVariable weigth = new KarmaSparqlQueryVariable(BadOntology.PersonWeight);
+		kQuery.addStatement(person, BadOntology.person_properties, weigth);
 		kQuery.setSelectVariables(weigth);
 		QueryExecution qe = QueryExecutionFactory.create(kQuery.getQuery(),karmaModel);
 		ResultSet rs = qe.execSelect();
@@ -92,16 +98,16 @@ public class PersonMappingTranslations extends KarmaTranslations
 			d2rqMapping.createPropertyBridge(weightQuality, info.is_measured_by, weightQualityMeasurement);
 			Resource weightQualityMeasurementBearer = d2rqMapping.createClassMap("WeightQualityMeasurement",info.RatioMeasurementInformationBearingEntity);
 			d2rqMapping.createPropertyBridge(weightQualityMeasurement, ero.inheres_in, weightQualityMeasurementBearer);
-			List<String> columnNames = getConnectedColumns(rs.next().get(weigth.variableName),personMappingOntology.has_value,karmaModel);
+			List<String> columnNames = getConnectedColumns(rs.next().get(weigth.variableName), BadOntology.has_value, karmaModel);
 			d2rqMapping.connectToColumn(weightQualityMeasurementBearer,info.has_text_value,columnNames);
 		}
 	}
 
 	public static void personHairColorTranslation(Model karmaModel, D2rqMapping d2rqMapping) {
 		KarmaMappingSparqlQuery kQuery = new KarmaMappingSparqlQuery();
-		KarmaSparqlQueryVariable person = new KarmaSparqlQueryVariable(personMappingOntology.Person);
-		KarmaSparqlQueryVariable hairColorKarma = new KarmaSparqlQueryVariable(personMappingOntology.HairColor);
-		kQuery.addStatement(person,personMappingOntology.has_attribute,hairColorKarma);
+		KarmaSparqlQueryVariable person = new KarmaSparqlQueryVariable(BadOntology.Person);
+		KarmaSparqlQueryVariable hairColorKarma = new KarmaSparqlQueryVariable(BadOntology.HairColor);
+		kQuery.addStatement(person, BadOntology.person_properties, hairColorKarma);
 		kQuery.setSelectVariables(hairColorKarma);
 		QueryExecution qe = QueryExecutionFactory.create(kQuery.getQuery(),karmaModel);
 		ResultSet rs = qe.execSelect();
@@ -110,7 +116,7 @@ public class PersonMappingTranslations extends KarmaTranslations
 			d2rqMapping.createPropertyBridge(personResource,ro.has_part,hair);
 			Resource hairColor = d2rqMapping.createClassMap("HairColor",quality.Color);
 			d2rqMapping.createPropertyBridge(hair,ero.has_quality,hairColor);
-			List<String> columnNames = getConnectedColumns(rs.next().get(hairColorKarma.variableName),personMappingOntology.has_value,karmaModel);
+			List<String> columnNames = getConnectedColumns(rs.next().get(hairColorKarma.variableName), BadOntology.has_value, karmaModel);
 			for(String columnName: columnNames) {
 				d2rqMapping.createPropertyBridge(hairColor, meta.is_mentioned_by, d2rqMapping.getDataElement(columnName));
 			}
@@ -120,9 +126,9 @@ public class PersonMappingTranslations extends KarmaTranslations
 
 	public static void personEyeColorTranslation(Model karmaModel, D2rqMapping d2rqMapping) {
 		KarmaMappingSparqlQuery kQuery = new KarmaMappingSparqlQuery();
-		KarmaSparqlQueryVariable person = new KarmaSparqlQueryVariable(personMappingOntology.Person);
-		KarmaSparqlQueryVariable eyeColorKarma = new KarmaSparqlQueryVariable(personMappingOntology.HairColor);
-		kQuery.addStatement(person,personMappingOntology.has_attribute,eyeColorKarma);
+		KarmaSparqlQueryVariable person = new KarmaSparqlQueryVariable(BadOntology.Person);
+		KarmaSparqlQueryVariable eyeColorKarma = new KarmaSparqlQueryVariable(BadOntology.HairColor);
+		kQuery.addStatement(person, BadOntology.person_properties, eyeColorKarma);
 		kQuery.setSelectVariables(eyeColorKarma);
 		QueryExecution qe = QueryExecutionFactory.create(kQuery.getQuery(),karmaModel);
 		ResultSet rs = qe.execSelect();
@@ -131,7 +137,7 @@ public class PersonMappingTranslations extends KarmaTranslations
 			d2rqMapping.createPropertyBridge(personResource,ro.has_part,eyes);
 			Resource eyesColor = d2rqMapping.createClassMap("SetOfEyesColor",quality.Color);
 			d2rqMapping.createPropertyBridge(eyes,ero.has_quality,eyesColor);
-			List<String> columnNames = getConnectedColumns(rs.next().get(eyeColorKarma.variableName),personMappingOntology.has_value,karmaModel);
+			List<String> columnNames = getConnectedColumns(rs.next().get(eyeColorKarma.variableName), BadOntology.has_value, karmaModel);
 			for(String columnName: columnNames) {
 				d2rqMapping.createPropertyBridge(eyesColor, meta.is_mentioned_by, d2rqMapping.getDataElement(columnName));
 			}
@@ -140,20 +146,23 @@ public class PersonMappingTranslations extends KarmaTranslations
 	}
 
 	public static void personBirthTranslation(Model karmaModel, D2rqMapping d2rqMapping) {
-		if(isThisAttributeMapped(karmaModel,personMappingOntology.Birth)) {
+		if (isThisAttributeMapped(karmaModel, BadOntology.Birth))
+		{
 			KarmaMappingSparqlQuery kQuery = new KarmaMappingSparqlQuery();
-			KarmaSparqlQueryVariable person = new KarmaSparqlQueryVariable(personMappingOntology.Person);
-			KarmaSparqlQueryVariable birth = new KarmaSparqlQueryVariable(personMappingOntology.Birth);
+			KarmaSparqlQueryVariable person = new KarmaSparqlQueryVariable(BadOntology.Person);
+			KarmaSparqlQueryVariable birth = new KarmaSparqlQueryVariable(BadOntology.Birth);
 			KarmaSparqlQueryVariable birthLocation = null;
 			KarmaSparqlQueryVariable birthDate = null;
-			kQuery.addStatement(person,personMappingOntology.has_attribute,birth);
-			if(isThisAttributeMapped(karmaModel,personMappingOntology.BirthLocation)) {
-				birthLocation = new KarmaSparqlQueryVariable(personMappingOntology.BirthLocation);
-				kQuery.addStatement(birth,personMappingOntology.has_birth_location,birthLocation);
+			kQuery.addStatement(person, BadOntology.person_properties, birth);
+			if (isThisAttributeMapped(karmaModel, BadOntology.BirthLocation))
+			{
+				birthLocation = new KarmaSparqlQueryVariable(BadOntology.BirthLocation);
+				kQuery.addStatement(birth, BadOntology.has_birth_location, birthLocation);
 			}
-			if(isThisAttributeMapped(karmaModel,personMappingOntology.BirthDate)) {
-				birthDate = new KarmaSparqlQueryVariable(personMappingOntology.BirthDate);
-				kQuery.addStatement(birth, personMappingOntology.has_birth_date, birthDate);
+			if (isThisAttributeMapped(karmaModel, BadOntology.BirthDate))
+			{
+				birthDate = new KarmaSparqlQueryVariable(BadOntology.BirthDate);
+				kQuery.addStatement(birth, BadOntology.has_birth_date, birthDate);
 			}
 			kQuery.setSelectVariables(birthDate,birthLocation);
 			QueryExecution qe = QueryExecutionFactory.create(kQuery.getQuery(),karmaModel);
@@ -172,7 +181,7 @@ public class PersonMappingTranslations extends KarmaTranslations
 						Resource geospatialLocationIdentiferBearer = d2rqMapping.createClassMap("BirthLocationIdentifierBearer",amo.GeospatialLocationIdentifierBearer);
 						d2rqMapping.createPropertyBridge(geospatialLocationIdentifier,ero.inheres_in,geospatialLocationIdentiferBearer);
 						//get columns
-						List<String> birthColumns = getConnectedColumns(qs.get(birthLocation.variableName), personMappingOntology.has_value, karmaModel);
+						List<String> birthColumns = getConnectedColumns(qs.get(birthLocation.variableName), BadOntology.has_value, karmaModel);
 						d2rqMapping.connectToColumn(geospatialLocationIdentiferBearer,info.has_text_value,birthColumns);
 					}
 					if(birthDate!=null) {
@@ -184,7 +193,7 @@ public class PersonMappingTranslations extends KarmaTranslations
 						Resource temporalIntervalIdentiferBearer = d2rqMapping.createClassMap("BirthDateIdentifierBearer",amo.TemporalIntervalIdentifierBearer);
 						d2rqMapping.createPropertyBridge(temporalIntervalIdentifier,ero.inheres_in,temporalIntervalIdentiferBearer);
 						//get columns
-						List<String> columnNames = getConnectedColumns(qs.get(birthDate.variableName), personMappingOntology.has_value, karmaModel);
+						List<String> columnNames = getConnectedColumns(qs.get(birthDate.variableName), BadOntology.has_value, karmaModel);
 						d2rqMapping.connectToColumn(temporalIntervalIdentiferBearer,info.has_text_value,columnNames);
 					}
 				}

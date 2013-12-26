@@ -1,7 +1,10 @@
 package alignment.karma.mapping.translation;
 
 import alignment.karma.mapping.translation.ontologies.*;
-import alignment.karma.mapping.translation.ontologies.kdd.*;
+import alignment.karma.mapping.translation.ontologies.kdd.info;
+import alignment.karma.mapping.translation.ontologies.kdd.ito;
+import alignment.karma.mapping.translation.ontologies.kdd.quality;
+import alignment.karma.mapping.translation.ontologies.kdd.ro;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -67,7 +70,7 @@ public class D2rqMapping
 	public void populateDataRowAndElements(Model model)
 	{
 		List<String> columnNames = new ArrayList<>();
-		List<Statement> stmts = model.listStatements(null,r2rml.column,(RDFNode)null).toList();
+		List<Statement> stmts = model.listStatements(null, r2rml.column, (RDFNode) null).toList();
 		for(Statement s:stmts) {
 			columnNames.add(s.getObject().asLiteral().getString());
 		}
@@ -117,9 +120,10 @@ public class D2rqMapping
 		dataElementUri.addProperty(d2rq.property, info.has_URI_value);
 		dataElementUri.addProperty(d2rq.pattern,dataServiceUrl+"&column="+columnName);
 	}
+
 	public void writeD2rqMapping(Writer w) {
-		d2rqMapping.setNsPrefix("map",baseUri);
 		d2rqMapping.setNsPrefixes(LightWeightOntologyLoader.getPrefixes());
+		d2rqMapping.setNsPrefix("map", baseUri);
 		d2rqMapping.write(w,"TURTLE");
 	}
 
