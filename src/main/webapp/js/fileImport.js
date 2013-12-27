@@ -197,49 +197,47 @@ var FileOptionsDialog = (function() {
 				dialog.data("commandId", responseJSON["elements"][0]["commandId"]);
 			}
 		}
-		
+
+        // Pedro added the if(index>0) to not show the index of the table.
+        // It is weird to have to do this, I guess the better solution is that
+        // the data that came from the server would not include the index.
+        // No big deal.
 		function generatePreview(headers, rows) {
-			var previewTable = $("#previewTable", dialog);
-			//previewTable.append($("<thead>").append("<tr>").append($("<th colspan='4'>").text("File Row Number")));
-			if(headers != null)  {
-			    var trTag = $("<tr>");
-			    $.each(headers, function(index, val) {
-			     
-			        trTag.append($("<th>").text(val));
-			      
-			    });
-			    previewTable.append(trTag);
-			  } else {
-			    // Put empty column names
-			    var trTag = $("<tr>");
-			    $.each(rows[0], function(index, val) {
-			      if(index == 0){
-			        trTag.append($("<th>").text("-"));
-			      } else {
-			        trTag.append($("<th>").text("Column_" + index));
-			      }
-						
-			    });
-			    previewTable.append(trTag);
-			  }
-			
-			
-			  $.each(rows, function(index, row) {
-			    var trTag = $("<tr>");
-			    $.each(row, function(index2, val) {
-			      var displayVal = val;
-			      if(displayVal.length > 20) {
-			        displayVal = displayVal.substring(0,20) + "...";
-			      }
-			      if(index2 == 0) {
-			        trTag.append($("<td>").addClass("rowIndexCell").text(displayVal));
-			      } else {
-			        trTag.append($("<td>").text(displayVal));
-			      }
-			    });
-			    previewTable.append(trTag);
-			  });
-			  
+            var previewTable = $("#previewTable", dialog);
+            //previewTable.append($("<thead>").append("<tr>").append($("<th colspan='4'>").text("File Row Number")));
+            if(headers != null)  {
+                var trTag = $("<tr>");
+                $.each(headers, function(index, val) {
+                    if (index > 0){
+                        trTag.append($("<th>").text(val));
+                    }
+                });
+                previewTable.append(trTag);
+            } else {
+                // Put empty column names
+                var trTag = $("<tr>");
+                $.each(rows[0], function(index, val) {
+                    if (index>0){
+                        trTag.append($("<th>").text("Column_" + index));
+                    }
+                });
+                previewTable.append(trTag);
+            }
+
+
+            $.each(rows, function(index, row) {
+                var trTag = $("<tr>");
+                $.each(row, function(index2, val) {
+                    if (index2 >0){
+                        var displayVal = val;
+                        if(displayVal.length > 20) {
+                            displayVal = displayVal.substring(0,20) + "...";
+                        }
+                        trTag.append($("<td>").text(displayVal));
+                    }
+                });
+                previewTable.append(trTag);
+            });
 			  
 		}
 		
