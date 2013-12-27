@@ -13,7 +13,7 @@
 	Dialog to select File Format: CSV/XML/..
 ----------------------------------------- 
  -->
-<div class="modal fade" id="fileFormatSelectionDialog">
+<div class="modal fade" data-keyboard="true" id="fileFormatSelectionDialog">
   <div class="modal-dialog">
 		<div class="modal-content">
 		     <div class="modal-header">
@@ -64,8 +64,8 @@
 					<div class="error" style="display: none" id="fileFormatError">Please select the file format!</div>
 			  </div>
 			  <div class="modal-footer">
-			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			        <button type="button" class="btn btn-primary" id="btnSave">Save changes</button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			        <button type="submit" class="btn btn-primary" id="btnSave">Next</button>
 			  </div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
@@ -78,7 +78,7 @@
  -->			
 
 <div class="modal fade" id="fileOptionsDialog">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-wide">
 		<div class="modal-content">
 		     <div class="modal-header">
 			      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -88,9 +88,9 @@
 			  		<form class="bs-example bs-example-form" role="form">
 			  			
 			        	<div class="row" id="optionsLine1">
-			        		<div class="col-lg-6">
+			        		<div class="col-sm-2">
 								<div class="form-group" id="colDelimiterSelector">
-									<label for="delimiterSelector">Column Delimiter</label>
+									<label for="delimiterSelector">Column delimiter</label>
 									<select id="delimiterSelector" class="form-control ImportOption">
 		                                <option>comma</option>
 		                                <option>tab</option>
@@ -98,29 +98,25 @@
 		                            </select>
 								</div>
 							</div>
-							<div class="col-lg-6">
+							<div class="col-sm-2">
 								<div class="form-group" id="colTextQualifier">
-									<label for="textQualifier">Text Qualifier</label>
+									<label for="textQualifier">Text qualifier</label>
 									<input class="form-control ImportOption" type="text" placeholder='"' id="textQualifier">
 								</div>
 							</div>
-			        	</div>
-			        	<div class="row" id="optionsLine2">
-			        		<div class="col-lg-6" id="colHeaderStartIndex">
+			        		<div class="col-sm-2" id="colHeaderStartIndex">
 			        			<div class="form-group">
-									<label for="headerStartIndex">Header Start Index</label>
-									<input class="form-control ImportOption" type="text" placeholder="1" id="headerStartIndex">
+									<label for="headerStartIndex">Header start index</label>
+									<input class="form-control ImportOption" type="number" placeholder="1" id="headerStartIndex" required>
 								</div>
 			        		</div>
-			        		<div class="col-lg-6" id="colStartRowIndex">
+			        		<div class="col-sm-2" id="colStartRowIndex">
 			        			<div class="form-group">
-									<label for="startRowIndex">Data Start Row Index</label>
-									<input class="form-control ImportOption" type="text" placeholder="2" id="startRowIndex">
+									<label for="startRowIndex">Data Start index</label>
+									<input class="form-control ImportOption" type="number" placeholder="2" id="startRowIndex" required>
 								</div>
 			        		</div>
-			        	</div>
-			        	<div class="row" id="optionsLine3">
-			        		<div class="col-lg-6" id="colEncoding">
+			        		<div class="col-sm-2" id="colEncoding">
 			        			<div class="form-group">
 									<label for="encoding">Encoding</label>
 									<select id="encoding" class="form-control ImportOption">
@@ -128,24 +124,24 @@
                         			</select>
 								</div>
 			        		</div>
-			        		<div class="col-lg-6" id="colMaxNumLines">
+			        		<div class="col-sm-2" id="colMaxNumLines">
 			        			<div class="form-group">
-									<label for="maxNumLines">Number of lines to import</label>
-									<input class="form-control ImportOption" type="text" placeholder="1" id="maxNumLines">
+									<label for="maxNumLines">Rows to import</label>
+									<input class="form-control ImportOption" type="number" placeholder="1" id="maxNumLines">
+                                    <span class="help-block">Enter 0 to import all rows</span>
 								</div>
 			        		</div>
 			        	</div>
 					</form>
+
 					<div id="previewTableDiv" style="overflow:auto">
-						<hr />
-		                <span class="label label-default">Preview (Top 5 Rows)</span>
-		                <br>
+		                <h4>Preview (Top 5 Rows)</h4>
 		                <table id="previewTable" class="table table-striped table-condensed"></table>
 		            </div>
 			  </div>
 			  <div class="modal-footer">
-			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			        <button type="button" class="btn btn-primary" id="btnSave">Save changes</button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			        <button type="submit" class="btn btn-primary" id="btnSave">Import</button>
 			  </div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->

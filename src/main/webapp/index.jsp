@@ -250,6 +250,12 @@ and related projects, please see: http://www.isi.edu/integration
 				// alert("Earth namespace loaded!");
 			}
 		</script>
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $("[data-toggle='tooltip']").tooltip();
+            })
+        </script>
 	</head>
 
 	<body>
@@ -270,14 +276,14 @@ and related projects, please see: http://www.isi.edu/integration
 		        <div class="navbar-collapse collapse">
 		          <ul class="nav navbar-nav">
 		            <li class="dropdown">
-		              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-plus"></span>&nbsp;Import <b class="caret"></b></a>
+		              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Import <b class="caret"></b></a>
 		              <ul class="dropdown-menu">
 		                <li><a href="#" id="importDatabaseTableButton">Database Table</a></li>
 		                  <li><a href="#" id="importFromServiceButton" >From Service</a></li>
 		                  <li><a href="#" class="fileinput-button"><form id="fileupload" action="ImportFileCommand" method="POST" enctype="multipart/form-data">From File<input type="file" name="files[]" multiple></form></a></li>
 		                </ul>
 		            </li>
-		            <li><a href="#" id="resetButton"><span class="glyphicon glyphicon-repeat"></span>&nbsp;Reset</a></li>
+		            <li><a href="#" id="resetButton" data-html='true' title='Delete all saved files,<br/>use with care!' data-toggle='tooltip' data-placement='bottom'>Reset ...</a></li>
 		            <li>
 		            		<div class="span5 fileupload-progress fade">
 								<!-- The global progress bar -->
@@ -293,9 +299,9 @@ and related projects, please see: http://www.isi.edu/integration
 		            </li>
 		          </ul>
 		          <ul class="nav navbar-nav navbar-right">
-		            <li><a target="_blank" href="https://github.com/InformationIntegrationGroup/Web-Karma/wiki">User Guide</a></li>
-			        <li><a target="_blank" href="http://isi.edu/integration/karma">Karma Home</a></li>
-			        <li><a target="_blank" href="" id="sparql_end_point_link">OpenRDF</a></li>
+		            <li><a target="_blank" href="https://github.com/InformationIntegrationGroup/Web-Karma/wiki" title='View user guide in GitHub' data-toggle='tooltip' data-placement='bottom'>User Guide</a></li>
+			        <li><a target="_blank" href="http://isi.edu/integration/karma" title='Open the Karma home page in a new window' data-toggle='tooltip' data-placement='bottom'>Karma Home</a></li>
+			        <li><a target="_blank" href="" id="sparql_end_point_link" title='Open RDF workbench in a new window' data-toggle='tooltip' data-placement='bottom'>OpenRDF</a></li>
 		          </ul>
 		        </div>
 		      </div> <!--  end of navbar -->

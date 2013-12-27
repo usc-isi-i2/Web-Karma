@@ -24,7 +24,7 @@ function showCSVImportOptions(responseJSON, dialogVisible) {
   var csvImportDiv = $("#CSVImportDiv");
   // TODO Reset the CSV import options
   $("tr", csvPreviewTable).remove();
-  csvPreviewTable.append($("<tr>").append($("<td>").addClass("rowIndexCell").text("File Row Number")));
+  //Pedro csvPreviewTable.append($("<tr>").append($("<td>").addClass("rowIndexCell").text("File Row Number")));
 	
   var headers = null;
   if (responseJSON) {

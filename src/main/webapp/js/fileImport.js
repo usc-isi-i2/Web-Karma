@@ -200,7 +200,7 @@ var FileOptionsDialog = (function() {
 		
 		function generatePreview(headers, rows) {
 			var previewTable = $("#previewTable", dialog);
-			previewTable.append($("<thead>").append("<tr>").append($("<th colspan='4'>").text("File Row Number")));
+			//previewTable.append($("<thead>").append("<tr>").append($("<th colspan='4'>").text("File Row Number")));
 			if(headers != null)  {
 			    var trTag = $("<tr>");
 			    $.each(headers, function(index, val) {
