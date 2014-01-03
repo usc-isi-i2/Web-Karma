@@ -248,9 +248,13 @@ public class WorksheetModelWriter {
 							con.add(cnBnode, columnUri, cnVal);
 
 							if (rdfLiteralTypeTermSet != null && rdfLiteralTypeTermSet.isSingleUriString()) {
-								Value cnRdfLiteralType = f.createLiteral(rdfLiteralTypeTermSet.
-									getR2rmlTemplateString(factory));
-								con.add(cnBnode, rdfLiteralTypeUri, cnRdfLiteralType);
+								String rdfLiteralTypeString = rdfLiteralTypeTermSet.
+										getR2rmlTemplateString(factory);
+								if(!rdfLiteralTypeString.isEmpty())
+								{
+									Value cnRdfLiteralType = f.createLiteral(rdfLiteralTypeString);
+									con.add(cnBnode, rdfLiteralTypeUri, cnRdfLiteralType);
+								}
 
 							}
 							
