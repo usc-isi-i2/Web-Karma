@@ -52,6 +52,9 @@ import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
+import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURITokenizer;
+import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURIValidator;
+import edu.isi.karma.transformation.tokenizer.PythonTransformationToken;
 
 public class KR2RMLMappingGenerator {
 
@@ -60,10 +63,11 @@ public class KR2RMLMappingGenerator {
 //	private ErrorReport errorReport;
 	private KR2RMLMapping r2rmlMapping;
 	private KR2RMLMappingColumnNameHNodeTranslator translator;
+	private PythonTransformationToTemplateTermSetBuilder transformationToTemplateTermSet;
 	private final Node steinerTreeRoot;
 	private SemanticTypes semanticTypes;
 	private DirectedWeightedMultigraph<Node, Link> alignmentGraph;
-	
+	private Worksheet worksheet;
 	
 	// Internal data structures required
 	private int synonymIdCounter;
@@ -76,7 +80,10 @@ public class KR2RMLMappingGenerator {
 			SemanticTypes semanticTypes, String sourcePrefix, String sourceNamespace, 
 			boolean generateInverse, ErrorReport errorReport) {
 
+		 
+		this.worksheet = worksheet;
 		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(workspace.getFactory(), worksheet);
+		this.transformationToTemplateTermSet = new PythonTransformationToTemplateTermSetBuilder(translator, workspace.getFactory());
 		this.ontMgr = workspace.getOntologyManager();
 		this.semanticTypes = semanticTypes;
 		this.sourceNamespace = sourceNamespace;
@@ -203,7 +210,23 @@ public class KR2RMLMappingGenerator {
 							
 							// Identify classInstance links to set the template
 							if (link instanceof ClassInstanceLink) {
-								subj.getTemplate().clear().addTemplateTermToSet(cnTerm);
+								
+								String pythonCommand = worksheet.getMetadataContainer().getColumnMetadata().getColumnPython(hNodeId);
+								List<PythonTransformationToken> tokens = PythonTransformationAsURITokenizer.tokenize(pythonCommand);
+								PythonTransformationAsURIValidator validator = new PythonTransformationAsURIValidator();
+								if(validator.validate(tokens))
+								{
+									subj.getTemplate().clear();
+									TemplateTermSet tts = this.transformationToTemplateTermSet.translate(tokens, hNodeId);
+									for(TemplateTerm term : tts.getAllTerms())
+									{
+										subj.getTemplate().addTemplateTermToSet(term);
+									}
+								}
+								else
+								{
+									subj.getTemplate().clear().addTemplateTermToSet(cnTerm);
+								}
 							}
 							
 							// Identify the isSubclassOfClass links to set the correct type
