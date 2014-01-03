@@ -15,7 +15,7 @@ public class KR2RMLJSONPathColumnNameFormatter extends
 	
 	@Override
 	protected String format(String columnName) {
-		StringBuilder result = new StringBuilder("$.");
+		StringBuilder result = new StringBuilder("$[*].");
 		try {	
 			if (columnName.startsWith("[") && columnName.endsWith("]") && columnName.contains(",")) {
 	    		JSONArray strArr = new JSONArray(columnName);
@@ -46,7 +46,11 @@ public class KR2RMLJSONPathColumnNameFormatter extends
 		JSONArray strArr = new JSONArray();
 		for(PathToken token : pt.getPathTokens())
 		{
-			if(token.getFragment().equalsIgnoreCase("$"))
+			if(token.getFragment().startsWith("$"))
+			{
+				continue;
+			}
+			if(token.getFragment().startsWith("[*]"))
 			{
 				continue;
 			}
