@@ -106,7 +106,7 @@ var FileFormatSelectionDialog = (function() {
         	var fileName = data.files[0].name;
             dialog.data("fileName", fileName);
             dialog.data("formData", data);
-            dialog.modal('show');
+            dialog.modal({keyboard:true, show:true});
         };
         
         
@@ -290,7 +290,7 @@ var FileOptionsDialog = (function() {
         	dialog.data("format", format);
         	showOptions(data);
             
-            dialog.modal('show');
+            dialog.modal({keyboard:true, show:true});
 		}
 		
 		return {

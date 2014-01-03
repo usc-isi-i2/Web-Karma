@@ -13,7 +13,7 @@
 	Dialog to select File Format: CSV/XML/..
 ----------------------------------------- 
  -->
-<div class="modal fade" data-keyboard="true" id="fileFormatSelectionDialog">
+<div class="modal fade" id="fileFormatSelectionDialog" tabindex="-1">
   <div class="modal-dialog">
 		<div class="modal-content">
 		     <div class="modal-header">
@@ -77,7 +77,7 @@
 ----------------------------------------- 
  -->			
 
-<div class="modal fade" id="fileOptionsDialog">
+<div class="modal fade" id="fileOptionsDialog" tabindex="-1">
   <div class="modal-dialog modal-wide">
 		<div class="modal-content">
 		     <div class="modal-header">
