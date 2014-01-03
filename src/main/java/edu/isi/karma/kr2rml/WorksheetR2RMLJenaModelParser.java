@@ -309,7 +309,7 @@ public class WorksheetR2RMLJenaModelParser {
 			if(subjTemplTermSet != null)
 			{
 				List<TemplateTerm> terms = subjTemplTermSet.getAllTerms();
-				if(terms != null && terms.size() == 1 && terms.get(0) instanceof ColumnTemplateTerm)
+				if(isValidTemplate(terms))
 				{
 					PredicateObjectMap pom = new PredicateObjectMap(trMap);
 					Predicate pred = new Predicate(Uris.CLASS_INSTANCE_LINK_URI + "-" + predicateIdCounter++);
@@ -327,6 +327,22 @@ public class WorksheetR2RMLJenaModelParser {
 					
 				}
 			}
+	}
+
+	private boolean isValidTemplate(List<TemplateTerm> terms) {
+		if(terms == null || terms.size() == 0)
+		{
+			return false;
+		}
+		
+		for(TemplateTerm term : terms)
+		{
+			if(term instanceof ColumnTemplateTerm)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private void addColumnNameToPredObjectMapLink(ObjectMap objMap, PredicateObjectMap pom, KR2RMLMapping kr2rmlMapping) {
