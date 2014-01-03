@@ -50,6 +50,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	
 	protected AddColumnCommand addColCmd;
 	protected ArrayList<String> originalColumnValues;
+	protected String pythonNodeId;
 	
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitPythonTransformationCommand.class);
@@ -57,7 +58,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	public SubmitPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
 			String worksheetId, String hNodeId, String errorDefaultValue) {
 		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue);
-		
+		this.pythonNodeId = hNodeId;
 	}
 
 	@Override
@@ -92,23 +93,22 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(
 				workspace.getId());
 		// Invoke the add column command
-		logger.info(hNodeId);
+		logger.info("SubmitPythonTranformation: " + hNodeId + ":" + nodeId);
 		try
 		{
-			saveColumnValues(workspace);
-			
-			
-			if(null != hTable.getHNodeFromColumnName(newColumnName) ) //Column name already exists
+			HNode newColumnNameHNode = hTable.getHNodeFromColumnName(newColumnName);
+			if(null != newColumnNameHNode ) //Column name already exists
 			{
-//				logger.error("PyTransform failed because the new column "
-//						+ newColumnName + " already exists!");
-//				return new UpdateContainer(new ErrorUpdate(
-//						"PyTransform failed because the new column "
-//								+ newColumnName + " already exists!"));
+				pythonNodeId = nodeId;
+				saveColumnValues(workspace);
+				logger.info("SubmitPythonTranformation: Tranform Existing Column" + hNodeId + ":" + nodeId);
 				UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
-						hNode, ctrl, nodeId);
+						newColumnNameHNode, ctrl, nodeId);
 				return c;
 			}
+			
+			saveColumnValues(workspace);
+			
 			if (null == addColCmd) {
 				JSONArray addColumnInput = getAddColumnCommandInputJSON(hTableId);
 				AddColumnCommandFactory addColumnFac = (AddColumnCommandFactory) ctrl
@@ -170,7 +170,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	protected void saveColumnValues(Workspace workspace) {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		RepFactory f = workspace.getFactory();
-		HNode hNode = f.getHNode(hNodeId);
+		HNode hNode = f.getHNode(pythonNodeId);
 		
 		this.originalColumnValues = new ArrayList<String>();
 		Collection<Node> nodes = new ArrayList<Node>();
@@ -184,7 +184,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		if(this.originalColumnValues != null) {
 			Worksheet worksheet = workspace.getWorksheet(worksheetId);
 			RepFactory f = workspace.getFactory();
-			HNode hNode = f.getHNode(hNodeId);
+			HNode hNode = f.getHNode(pythonNodeId);
 	
 			worksheet.getDataTable().setCollectedNodeValues(hNode.getHNodePath(f), this.originalColumnValues, f);
 		}

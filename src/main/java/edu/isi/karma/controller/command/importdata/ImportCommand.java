@@ -68,10 +68,10 @@ public abstract class ImportCommand extends Command {
 
             c.add(new WorksheetListUpdate());
             c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId()));
-        } catch (JSONException | IOException | KarmaException | ClassNotFoundException e) {
+        } catch (JSONException | IOException | KarmaException | NullPointerException | ClassNotFoundException e) {
             logger.error("Error occured while generating worksheet from " + getTitle() + "!", e);
             return new UpdateContainer(new ErrorUpdate(
-                    "Error occured while importing JSON File."));
+                    "Error occured while importing file."));
         }
 
         return c;
