@@ -108,13 +108,13 @@ public class TemplateTermSet {
 							}
 							colNameStr = colNames.toString();
 						}
-						str.append("{\"" + formatter.getFormattedColumnName(colNameStr) + "\"}");
+						str.append("{" + formatter.getFormattedColumnName(colNameStr) + "}");
 					} catch (JSONException e) {
 						continue;
 					}
 				}
 				else {
-					str.append("{\"" + formatter.getFormattedColumnName(term.getTemplateTermValue()) + "\"}");
+					str.append("{" + formatter.getFormattedColumnName(term.getTemplateTermValue()) + "}");
 				}
 			}
 		}

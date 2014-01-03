@@ -44,7 +44,7 @@ public class TemplateTermSetBuilder {
 			String templStr, KR2RMLColumnNameFormatter formatter) throws JSONException {
 		TemplateTermSet termSet = new TemplateTermSet();
 		
-		Pattern p = Pattern.compile("\\{\\\".*?\\\"\\}");
+		Pattern p = Pattern.compile("\\{\\\"?.*?\\\"?\\}");
 	    Matcher matcher = p.matcher(templStr);
 	    int startIndex = 0;
 	    
@@ -91,6 +91,8 @@ public class TemplateTermSetBuilder {
 	private static String removeR2rmlFormatting(String r2rmlColName) {
 		if (r2rmlColName.startsWith("{\"") && r2rmlColName.endsWith("\"}"))
 			return r2rmlColName.substring(2, r2rmlColName.length()-2);
+		else if (r2rmlColName.startsWith("{") && r2rmlColName.endsWith("}"))
+			return r2rmlColName.substring(1, r2rmlColName.length()-1);
 		else return r2rmlColName;
 	}
 }
