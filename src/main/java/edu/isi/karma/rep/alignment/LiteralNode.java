@@ -27,6 +27,7 @@ public class LiteralNode extends Node {
 	/**
 	 * 
 	 */
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 	private final String value;
 	private final Label datatype;

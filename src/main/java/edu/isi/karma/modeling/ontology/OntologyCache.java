@@ -128,12 +128,71 @@ class OntologyCache {
 	
 	public OntologyCache(OntologyHandler ontHandler) {
 		this.ontHandler = ontHandler;
+
+		allocateDataStructures();
 	}
 
 	public void init() {
 
 		logger.debug("start building the ontology cache ...");
 		
+		
+		long start = System.currentTimeMillis();
+		
+		// create a list of classes and properties of the model
+		this.loadClasses();
+		this.loadProperties();
+		
+		logger.debug("number of classes:" + classes.size());
+		logger.debug("number of all properties:" + properties.size());
+		logger.debug("number of data properties:" + dataProperties.size() );
+		logger.debug("number of object properties:" + objectProperties.size() );
+		// A = number of all properties including rdf:Property 
+		// B = number of properties defined as Data Property
+		// C = number of properties defined as Object Property
+		// properties = A
+		// dataproperties = A - C
+		// objectproperties = A - B
+		logger.debug("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
+		logger.debug("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
+
+		// create a hierarchy of classes and properties of the model
+		this.buildClassHierarchy(classHierarchy);
+		this.buildDataPropertyHierarchy(dataPropertyHierarchy);
+		this.buildObjectPropertyHierarchy(objectPropertyHierarchy);
+		
+		// build hashmaps for indirect subclass and subproperty relationships
+		this.buildSubClassesMaps();
+		this.buildSuperClassesMaps();
+		this.buildSubPropertiesMaps();
+		this.buildSuperPropertiesMaps();
+
+		// build hashmaps to include inverse(Of) properties
+		this.buildInverseProperties();
+		
+		// build some hashmaps that will be used in alignment
+		this.buildDataPropertiesMaps();
+		this.buildObjectPropertiesMaps();
+		// update hashmaps to include the subproperty relations  
+		this.updateMapsWithSubpropertyDefinitions();
+		
+		// classify different types of properties
+		this.classifyProperties();
+
+		// build connectivity hashmaps
+		this.buildConnectivityMaps();
+		
+		// build hashmaps to speed up adding links to the graph
+//		this.buildObjectPropertyDomainRangeMap();
+		
+		// add some common properties like rdfs:label, rdfs:comment, ...
+		this.addPropertiesOfRDFVocabulary();
+		
+		float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
+		logger.debug("time to build the ontology cache: " + elapsedTimeSec);
+	}
+
+	private void allocateDataStructures() {
 		this.classes = new HashMap<String, Label>();
 		this.properties = new HashMap<String, Label>();
 		this.dataProperties = new HashMap<String, Label>();
@@ -193,60 +252,6 @@ class OntologyCache {
 		this.connectedByIndirectProperties = new HashSet<String>();
 		this.connectedByDomainlessProperties = new HashSet<String>();
 		this.connectedByRangelessProperties = new HashSet<String>();
-		
-		long start = System.currentTimeMillis();
-		
-		// create a list of classes and properties of the model
-		this.loadClasses();
-		this.loadProperties();
-		
-		logger.debug("number of classes:" + classes.size());
-		logger.debug("number of all properties:" + properties.size());
-		logger.debug("number of data properties:" + dataProperties.size() );
-		logger.debug("number of object properties:" + objectProperties.size() );
-		// A = number of all properties including rdf:Property 
-		// B = number of properties defined as Data Property
-		// C = number of properties defined as Object Property
-		// properties = A
-		// dataproperties = A - C
-		// objectproperties = A - B
-		logger.debug("number of properties explicitly defined as owl:DatatypeProperty:" + (properties.size() - objectProperties.size()) );
-		logger.debug("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
-
-		// create a hierarchy of classes and properties of the model
-		this.buildClassHierarchy(classHierarchy);
-		this.buildDataPropertyHierarchy(dataPropertyHierarchy);
-		this.buildObjectPropertyHierarchy(objectPropertyHierarchy);
-		
-		// build hashmaps for indirect subclass and subproperty relationships
-		this.buildSubClassesMaps();
-		this.buildSuperClassesMaps();
-		this.buildSubPropertiesMaps();
-		this.buildSuperPropertiesMaps();
-
-		// build hashmaps to include inverse(Of) properties
-		this.buildInverseProperties();
-		
-		// build some hashmaps that will be used in alignment
-		this.buildDataPropertiesMaps();
-		this.buildObjectPropertiesMaps();
-		// update hashmaps to include the subproperty relations  
-		this.updateMapsWithSubpropertyDefinitions();
-		
-		// classify different types of properties
-		this.classifyProperties();
-
-		// build connectivity hashmaps
-		this.buildConnectivityMaps();
-		
-		// build hashmaps to speed up adding links to the graph
-//		this.buildObjectPropertyDomainRangeMap();
-		
-		// add some common properties like rdfs:label, rdfs:comment, ...
-		this.addPropertiesOfRDFVocabulary();
-		
-		float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
-		logger.debug("time to build the ontology cache: " + elapsedTimeSec);
 	}
 	
 	public HashMap<String, Label> getClasses() {

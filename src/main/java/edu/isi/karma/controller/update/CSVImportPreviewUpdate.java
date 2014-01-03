@@ -138,6 +138,7 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 					JSONArray arr = new JSONArray(headers);
 					writer.key(JsonKeys.headers.name()).value(arr);
 					rowCount++;
+					reader.close();
 					continue;
 				}
 

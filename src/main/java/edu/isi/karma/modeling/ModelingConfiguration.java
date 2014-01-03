@@ -217,5 +217,9 @@ public class ModelingConfiguration {
 		return learnerEnabled;
 	}
 
+	public static void setManualAlignment(Boolean newManualAlignment)
+	{
+		manualAlignment = newManualAlignment;
+	}
 	
 }
