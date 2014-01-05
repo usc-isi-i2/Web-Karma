@@ -21,6 +21,8 @@
 
 package edu.isi.karma.kr2rml;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,9 +32,11 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
@@ -55,6 +59,8 @@ import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURITokenizer;
 import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURIValidator;
 import edu.isi.karma.transformation.tokenizer.PythonTransformationToken;
+import edu.isi.karma.util.EncodingDetector;
+import edu.isi.karma.util.FileUtil;
 
 public class KR2RMLMappingGenerator {
 
@@ -68,10 +74,12 @@ public class KR2RMLMappingGenerator {
 	private SemanticTypes semanticTypes;
 	private DirectedWeightedMultigraph<Node, Link> alignmentGraph;
 	private Worksheet worksheet;
+	private Workspace workspace; 
 	
 	// Internal data structures required
 	private int synonymIdCounter;
-	
+	private int refObjectMapId = 1;
+	private int tripleMapId = 1;
 	private final static String TRIPLES_MAP_PREFIX = "TriplesMap";
 	private final static String REFOBJECT_MAP_PREFIX = "RefObjectMap";
 	private static Logger logger = LoggerFactory.getLogger(KR2RMLMappingGenerator.class);
@@ -80,7 +88,7 @@ public class KR2RMLMappingGenerator {
 			SemanticTypes semanticTypes, String sourcePrefix, String sourceNamespace, 
 			boolean generateInverse, ErrorReport errorReport) {
 
-		 
+		this.workspace = workspace;
 		this.worksheet = worksheet;
 		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(workspace.getFactory(), worksheet);
 		this.transformationToTemplateTermSet = new PythonTransformationToTemplateTermSetBuilder(translator, workspace.getFactory());
@@ -99,8 +107,30 @@ public class KR2RMLMappingGenerator {
 		
 		// Generate the R2RML data structures
 		generateMappingFromSteinerTree(generateInverse);
+		
+		getWorksheetHistory();
 	}
 	
+	private void getWorksheetHistory() {
+		String historyFilePath = HistoryJsonUtil.constructWorksheetHistoryJsonFilePath(
+				worksheet.getTitle(), workspace.getCommandPreferencesId());
+		File historyFile = new File(historyFilePath);
+		if (!historyFile.exists()) {
+			logger.error("Worksheet history file not found! Can't write worksheet history " +
+					"into R2RML model. Path:" + historyFile.getAbsolutePath());
+			return;
+		}
+		try {
+			String encoding = EncodingDetector.detect(historyFile);
+			String historyJsonStr = FileUtil.readFileContentsToString(historyFile, encoding);
+			r2rmlMapping.setWorksheetHistory(new JSONArray(historyJsonStr));
+		}
+		catch(IOException e)
+		{
+			logger.error("Unable to read worksheet history from file");
+		}
+	}
+
 	public Node getSteinerTreeRoot() {
 		return steinerTreeRoot;
 	}
@@ -478,11 +508,11 @@ public class KR2RMLMappingGenerator {
 	
 	
 	private String getNewRefObjectMapId() {
-		return REFOBJECT_MAP_PREFIX + "_" + UUID.randomUUID();
+		return REFOBJECT_MAP_PREFIX + "_" + refObjectMapId++;
 	}
 	
 	private String getNewTriplesMapId() {
-		return TRIPLES_MAP_PREFIX + "_" + UUID.randomUUID();
+		return TRIPLES_MAP_PREFIX + "_" + tripleMapId++;
 	}
 	
 }

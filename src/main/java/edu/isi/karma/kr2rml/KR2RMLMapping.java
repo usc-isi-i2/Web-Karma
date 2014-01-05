@@ -15,6 +15,7 @@ public class KR2RMLMapping extends R2RMLMapping{
 	private Map<String, TriplesMap> triplesMapIndex;
 	private JSONArray worksheetHistory;
 	private KR2RMLColumnNameFormatter formatter;
+	private boolean isR2RMLCompatible;
 	
 	
 	public KR2RMLMapping(R2RMLMappingIdentifier id, KR2RMLVersion version)
@@ -57,6 +58,14 @@ public class KR2RMLMapping extends R2RMLMapping{
 	public KR2RMLColumnNameFormatter getColumnNameFormatter()
 	{
 		return formatter;
+	}
+
+	public boolean isR2RMLCompatible() {
+		return isR2RMLCompatible;
+	}
+
+	public void setR2RMLCompatible(boolean isR2RMLCompatible) {
+		this.isR2RMLCompatible = isR2RMLCompatible;
 	}
 
 }
