@@ -50,7 +50,6 @@ and related projects, please see: http://www.isi.edu/integration
         <link rel="stylesheet" type="text/css" href="./css/TopMenuBar.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/command_History.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/tables_workspace.css?<jsp:include page='version.jsp' />" />
-        <link rel="stylesheet" type="text/css" href="./css/CSVImport.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/fileImport.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/DatabaseImport.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/ServiceImport.css?<jsp:include page='version.jsp' />" />
@@ -200,13 +199,7 @@ and related projects, please see: http://www.isi.edu/integration
                 // Assign style and handler to the modeling class bubble options
                 styleAndAssignHandlersToModelingVizElements();
               
-                // When the user changes header line index
-                $('.CSVImportOption').change(function() {
-                    CSVImportOptionsChanged("preview");
-                });
-                $('.FileImportOption').change(function() {
-                    FileImportOptionsChanged("preview");
-                });
+               
                 // Clear the workspace when closing the window
                 $(window).bind("beforeunload", function() {
                     var info = new Object();

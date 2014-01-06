@@ -78,7 +78,7 @@
  -->			
 
 <div class="modal fade" id="fileOptionsDialog" tabindex="-1">
-  <div class="modal-dialog modal-wide">
+  <div class="modal-dialog modal-wide" id='fileOptionsDialogInner'>
 		<div class="modal-content">
 		     <div class="modal-header">
 			      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -88,8 +88,8 @@
 			  		<form class="bs-example bs-example-form" role="form">
 			  			
 			        	<div class="row" id="optionsLine1">
-			        		<div class="col-sm-2">
-								<div class="form-group" id="colDelimiterSelector">
+			        		<div class="col-sm-2 fileOptions" id="colDelimiterSelector">
+								<div class="form-group">
 									<label for="delimiterSelector">Column delimiter</label>
 									<select id="delimiterSelector" class="form-control ImportOption">
 		                                <option>comma</option>
@@ -98,25 +98,25 @@
 		                            </select>
 								</div>
 							</div>
-							<div class="col-sm-2">
-								<div class="form-group" id="colTextQualifier">
+							<div class="col-sm-2 fileOptions"  id="colTextQualifier">
+								<div class="form-group">
 									<label for="textQualifier">Text qualifier</label>
 									<input class="form-control ImportOption" type="text" placeholder='"' id="textQualifier">
 								</div>
 							</div>
-			        		<div class="col-sm-2" id="colHeaderStartIndex">
+			        		<div class="col-sm-2 fileOptions" id="colHeaderStartIndex">
 			        			<div class="form-group">
 									<label for="headerStartIndex">Header start index</label>
 									<input class="form-control ImportOption" type="number" placeholder="1" id="headerStartIndex" required>
 								</div>
 			        		</div>
-			        		<div class="col-sm-2" id="colStartRowIndex">
+			        		<div class="col-sm-2 fileOptions" id="colStartRowIndex">
 			        			<div class="form-group">
 									<label for="startRowIndex">Data Start index</label>
 									<input class="form-control ImportOption" type="number" placeholder="2" id="startRowIndex" required>
 								</div>
 			        		</div>
-			        		<div class="col-sm-2" id="colEncoding">
+			        		<div class="col-sm-2 fileOptions" id="colEncoding">
 			        			<div class="form-group">
 									<label for="encoding">Encoding</label>
 									<select id="encoding" class="form-control ImportOption">
@@ -124,9 +124,9 @@
                         			</select>
 								</div>
 			        		</div>
-			        		<div class="col-sm-2" id="colMaxNumLines">
+			        		<div class="col-sm-2 fileOptions" id="colMaxNumLines">
 			        			<div class="form-group">
-									<label for="maxNumLines">Rows to import</label>
+									<label for="maxNumLines" id="lblMaxNumLines">Rows to import</label>
 									<input class="form-control ImportOption" type="number" placeholder="1" id="maxNumLines">
                                     <span class="help-block">Enter 0 to import all rows</span>
 								</div>

@@ -137,6 +137,13 @@ var FileOptionsDialog = (function() {
 
     function PrivateConstructor() {
     	var dialog = $("#fileOptionsDialog");
+    	var optionSettings = {
+    			"JSONFile": ["colEncoding", "colMaxNumLines"],
+    			"CSVFile" : ["colDelimiterSelector", "colTextQualifier", "colHeaderStartIndex", "colStartRowIndex", "colEncoding", "colMaxNumLines"],
+    			"XMLFile" : ["colEncoding", "colMaxNumLines"],
+    			"ExcelFile" : ["colEncoding", "colMaxNumLines"],
+    			"Ontology" : ["colEncoding", "colMaxNumLines"]
+    	};
     	
     	function init() {
 	    	//Initialize what happens when we show the dialog
@@ -174,6 +181,22 @@ var FileOptionsDialog = (function() {
 		function showOptions(responseJSON) {
 			console.log("ShowOptions: " + responseJSON);
 			dialog.data("formData", responseJSON);
+			var format = dialog.data("format");
+			console.log("Got format: " + format);
+			
+			//Show only options that are relevant to the format
+			$(".fileOptions").hide();
+			var optionSetting = optionSettings[format];
+			$.each(optionSetting, function(index, val) {
+				$("#" + val).show();
+			});
+			if(format == "JSONFile" || format == "XMLFile") {
+				$('#lblMaxNumLines').text("Objects to import");
+				$(".help-block", $("#colMaxNumLines")).text("Enter 0 to import all objects");
+			} else {
+				$('#lblMaxNumLines').text("Rows to import");
+				$(".help-block", $("#colMaxNumLines")).text("Enter 0 to import all rows");
+			}
 			
 			var headers = null;
 			var previewTable = $("#previewTable", dialog);
@@ -192,8 +215,12 @@ var FileOptionsDialog = (function() {
 					$("#colMaxNumLines").show();
 				
 				var rows = responseJSON["elements"][0]["rows"];
-				generatePreview(headers, rows);
-				
+				if(rows) {
+					generatePreview(headers, rows);
+					$("#previewTableDiv").show();
+				} else {
+					$("#previewTableDiv").hide();
+				}
 				dialog.data("commandId", responseJSON["elements"][0]["commandId"]);
 			}
 		}
@@ -243,15 +270,23 @@ var FileOptionsDialog = (function() {
 		
 		function reloadOptions(execute) {
 			var format = dialog.data("format");
+			var optionSetting = optionSettings[format];
 			var options = new Object();
 			options["command"] = "Import" + format + "Command";
 			options["commandId"] = dialog.data("commandId");
-			options["delimiter"] = $("#delimiterSelector").val();
-			options["CSVHeaderLineIndex"] = $("#headerStartIndex").val();
-			options["startRowIndex"] = $("#startRowIndex").val();
-			options["textQualifier"] = $("#textQualifier").val();
-			options["encoding"] = $("#encoding").val();
-			options["maxNumLines"] = $("#maxNumLines").val();
+			if($.inArray( "colDelimiterSelector", optionSetting ) != -1)
+				options["delimiter"] = $("#delimiterSelector").val();
+			if($.inArray( "colHeaderStartIndex", optionSetting ) != -1)
+				options["CSVHeaderLineIndex"] = $("#headerStartIndex").val();
+			if($.inArray( "colStartRowIndex", optionSetting ) != -1)
+				options["startRowIndex"] = $("#startRowIndex").val();
+			if($.inArray( "colTextQualifier", optionSetting ) != -1)
+				options["textQualifier"] = $("#textQualifier").val();
+			if($.inArray( "colEncoding", optionSetting ) != -1)
+				options["encoding"] = $("#encoding").val();
+			if($.inArray( "colMaxNumLines", optionSetting ) != -1)
+				options["maxNumLines"] = $("#maxNumLines").val();
+			
 			options["workspaceId"] = $.workspaceGlobalInformation.id;
 			options["interactionType"] = "generatePreview";
 			
@@ -271,11 +306,12 @@ var FileOptionsDialog = (function() {
 							    	console.log("Got json:" + json);
 							    	showOptions(json);
 				    			} else {
-				    				dialog.modal('hide');
 				    				var json = $.parseJSON(xhr.responseText);
 				    		        parse(json);
 				    		        hideWaitingSignOnScreen();
-				    		        showDialogToLoadModel();
+				    		        if(format !== "Ontology") 
+				    		        	showDialogToLoadModel(); //This is giving a JS error. Should go after conversion of this dialog to bootstrap
+				    		        dialog.modal('hide');
 				    			}
 				    		}
 				  });	
