@@ -33,12 +33,9 @@ and related projects, please see: http://www.isi.edu/integration
 		<meta http-equiv="expires" content="0" />
 		<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
 		<meta http-equiv="pragma" content="no-cache" />
-
         
         <title>Karma Data Integration</title>
-        <!-- Date: 2011-08-01 -->
-
-        <!-- CSS -->
+       
         <link rel="stylesheet" type="text/css" href="./uiLibs/twitterBootstrap/css/bootstrap.min.css" media="screen">
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery-ui-themes/smoothness/jquery-ui.min.css" />
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery.fileupload.css" />
@@ -68,195 +65,6 @@ and related projects, please see: http://www.isi.edu/integration
     			font-size: 14px;
 			}
 		</style>
-        <!-- Third Party JavaScript files		 -->
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery-1.10.2.min.js"></script>
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery-ui-1.10.3.custom.min.js"></script>
-
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery.tmpl.min.js"></script>
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery.hoverIntent.js"></script>
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery.jstree.js"></script>
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery.qtip.min.js"></script>
-        <!-- 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script> -->
-        <script type="text/javascript" src="https://www.google.com/jsapi?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script>
-        <script type="text/javascript" src="uiLibs/sticky/js/sticky.min.js"></script>
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery.jeditable.js"></script>
-        <script type="text/javascript" src="uiLibs/json/js/json2.js"></script>
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery.cookie.js"></script>
-        <script type="text/javascript" src="uiLibs/d3/js/d3.v2.min.js"></script>
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery.iframe-transport.js"></script>
-        <script type="text/javascript" src="uiLibs/ace/js/ace.js" charset="utf-8"></script>
-
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload.js"></script>
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload-ui.js"></script>
-        <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload-jquery-ui.js"></script>
-        <script type="text/javascript" src="uiLibs/locale/js/locale.js"></script>
-        <script type="text/javascript" src="uiLibs/less/js/less-1.4.1.min.js"></script>
-        <script type="text/javascript" src="uiLibs/modernizr/js/modernizr.custom.59953.js"></script>
-		
-        <!-- Home grown JavaScript files -->
-        <script type="text/javascript" src="js/table_manipulation.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/ServerResponseObjectParsing.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/commandHistory.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/tableWorkspace.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/publishRDF.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/publishDatabase.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/importFromService.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/pager.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/geospatial.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/databaseImportDialog.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/alignment.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/csvImport.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/fileImport.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/cleaning.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/services.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/d3-alignment-vis.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/reset-options.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/pytransform.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/cleaning-charts.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/showModel.js?<jsp:include page='version.jsp' />"></script>
-
-		
-		
-        <script type="text/javascript">
-            /* Load and parse initial JSON */
-            // Get the preferences Id from cookies if present
-            var bootupURL = "KarmaServlet?rand=" + (new Date()).valueOf();
-            if($.cookie("workspacePreferencesId") != null) {
-                bootupURL += "&hasPreferenceId=" + true + "&workspacePreferencesId=" + $.cookie("workspacePreferencesId");
-            } else {
-                bootupURL += "&hasPreferenceId=" + false;
-            }
-
-            $.getJSON(bootupURL, function(data) {
-                parse(data);
-
-                // Set the preferences workspace cookie if null
-                if($.cookie("workspacePreferencesId") == null)
-                    $.cookie("workspacePreferencesId", $.workspaceGlobalInformation.id, {
-                        expires : 7000
-                    });
-                
-                //MVS: disable or enable the revision checkbox + dropdown
-                function disableRevision (disabled){
-                    $('#revisedWorksheetSelector').prop('disabled', disabled);
-                    $("input:checkbox[name='RevisionCheck']").prop('disabled', disabled);
-                }
-
-                // Initialize the jQuery File Upload widget:
-                $('#fileupload').fileupload({
-                    url : "RequestController?workspaceId=" + $.workspaceGlobalInformation.id + "&command=ImportCSVFileCommand",
-                    add : function(e, data) {
-                    	FileFormatSelectionDialog.getInstance().show(data);
-                    },
-                    done : function(e, data) {
-                        parse(data.result);
-                    },
-                    fail : function(e, data) {
-                        $.sticky("File upload failed!");
-                    },
-                    dropZone : $(document)
-                });
-
-                // Enable iframe cross-domain access via redirect option:
-                $('#fileupload').fileupload('option', 'redirect', window.location.href.replace(/\/[^\/]*$/, '/cors/result.html?%s'));
-            }).error(function() {
-                alert("Trouble connecting to server!");
-            });
-
-        </script>
-        <script>
-            $(function() {
-                // Database Import div options
-                styleAndAssignHandlerstoDatabaseImportObjects();
-
-                // Service Import div options
-                styleAndAssignHandlerstoServiceImportObjects();
-
-                // Stylize the worksheet options div panel
-                styleAndAssignHandlersToWorksheetOptionButtons();
-
-                // Attach handlers to the ontology options table
-                attachOntologyOptionsRadioButtonHandlers();
-
-                // Assign style and handlers to table cell menu
-                styleAndAssignHandlersToTableCellMenu();
-
-                // Assign style and handlers to column heading menu
-                styleAndAssignHandlersToColumnHeadingMenu();
-
-                // Assign handler and style to the Reset options (in reset-options.js)
-                styleAndAssignHandlerToResetButton();
-
-                // Assign style and handler to the merge button
-                styleAndAssignHandlersToMergeButton();
-
-                // Assign style and handler to Python Transform windows elements (in pytransform.js)
-                styleAndAssignHandlersToPyTransformElements();
-
-                // Assign style and handler to select model for worksheet dialog (in showModel.js)
-                styleAndAssignHandlersToApplyModelDialog();
-
-                // Assign style and handler to the modeling class bubble options
-                styleAndAssignHandlersToModelingVizElements();
-              
-               
-                // Clear the workspace when closing the window
-                $(window).bind("beforeunload", function() {
-                    var info = new Object();
-                    info["workspaceId"] = $.workspaceGlobalInformation.id;
-                    info["command"] = "CloseWorkspaceCommand";
-
-                    var returned = $.ajax({
-                        url : "RequestController",
-                        type : "POST",
-                        data : info,
-                        dataType : "json",
-                        complete : function(xhr, textStatus) {
-                            // do nothing
-                        },
-                        error : function(xhr, textStatus) {
-                            // alert("Error while removing the workspace from server memory! " + textStatus);
-                        }
-                    });
-                });
-
-                // Prevent the backspace key from navigating back.
-                $(document).unbind('keydown').bind('keydown', function(event) {
-                    var doPrevent = false;
-                    if(event.keyCode === 8) {
-                        var d = event.srcElement || event.target;
-                        if((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD' || d.type.toUpperCase() === 'URL')) || d.tagName.toUpperCase() === 'TEXTAREA') {
-                            doPrevent = d.readOnly || d.disabled;
-                        } else {
-                            doPrevent = true;
-                        }
-						if(doPrevent) {
-							var ans = confirm("Are you sure you want to go back? You will lose all the progress.");
-							if(ans) {
-								// Go with normal behavior
-							} else {
-								event.preventDefault();
-							}
-						}
-					}
-				});
-                $('#sparql_end_point_link').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/');
-			});
-		</script>
-		<script type="text/javascript">
-			google.load("earth", "1", {
-				"callback" : earthCallback
-			});
-			function earthCallback() {
-				// alert("Earth namespace loaded!");
-			}
-		</script>
-
-        <script type="text/javascript">
-            $(document).ready(function(){
-                $("[data-toggle='tooltip']").tooltip();
-            })
-        </script>
 	</head>
 
 	<body>
@@ -1178,6 +986,148 @@ and related projects, please see: http://www.isi.edu/integration
         </div>
         
         
-        <script type="text/javascript" src="uiLibs/twitterBootstrap/js/bootstrap.min.js"></script>
+        <!--  Load all scripts last for faster page load -->
+        
+        <!-- Third Party JavaScript files		 -->
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery-ui-1.10.3.custom.min.js"></script>
+		<script type="text/javascript" src="uiLibs/twitterBootstrap/js/bootstrap.min.js"></script>
+		
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.tmpl.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.hoverIntent.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.jstree.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.qtip.min.js"></script>
+        <!-- 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script> -->
+        <script type="text/javascript" src="https://www.google.com/jsapi?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script>
+        <script type="text/javascript" src="uiLibs/sticky/js/sticky.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.jeditable.js"></script>
+        <script type="text/javascript" src="uiLibs/json/js/json2.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.cookie.js"></script>
+        <script type="text/javascript" src="uiLibs/d3/js/d3.v2.min.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.iframe-transport.js"></script>
+        <script type="text/javascript" src="uiLibs/ace/js/ace.js" charset="utf-8"></script>
+
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload-ui.js"></script>
+        <script type="text/javascript" src="uiLibs/jquery/js/jquery.fileupload-jquery-ui.js"></script>
+        <script type="text/javascript" src="uiLibs/locale/js/locale.js"></script>
+        <script type="text/javascript" src="uiLibs/less/js/less-1.4.1.min.js"></script>
+        <script type="text/javascript" src="uiLibs/modernizr/js/modernizr.custom.59953.js"></script>
+		
+        <!-- Home grown JavaScript files -->
+        <script type="text/javascript" src="js/initWS.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/table_manipulation.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/ServerResponseObjectParsing.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/commandHistory.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/tableWorkspace.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/publishRDF.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/publishDatabase.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/importFromService.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/pager.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/geospatial.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/databaseImportDialog.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/alignment.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/fileImport.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/cleaning.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/services.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/d3-alignment-vis.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/reset-options.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/pytransform.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/cleaning-charts.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/showModel.js?<jsp:include page='version.jsp' />"></script>
+        
+        <script>
+            $(function() {
+                // Database Import div options
+                styleAndAssignHandlerstoDatabaseImportObjects();
+
+                // Service Import div options
+                styleAndAssignHandlerstoServiceImportObjects();
+
+                // Stylize the worksheet options div panel
+                styleAndAssignHandlersToWorksheetOptionButtons();
+
+                // Attach handlers to the ontology options table
+                attachOntologyOptionsRadioButtonHandlers();
+
+                // Assign style and handlers to table cell menu
+                styleAndAssignHandlersToTableCellMenu();
+
+                // Assign style and handlers to column heading menu
+                styleAndAssignHandlersToColumnHeadingMenu();
+
+                // Assign handler and style to the Reset options (in reset-options.js)
+                styleAndAssignHandlerToResetButton();
+
+                // Assign style and handler to the merge button
+                styleAndAssignHandlersToMergeButton();
+
+                // Assign style and handler to Python Transform windows elements (in pytransform.js)
+                styleAndAssignHandlersToPyTransformElements();
+
+                // Assign style and handler to select model for worksheet dialog (in showModel.js)
+                styleAndAssignHandlersToApplyModelDialog();
+
+                // Assign style and handler to the modeling class bubble options
+                styleAndAssignHandlersToModelingVizElements();
+              
+               
+                // Clear the workspace when closing the window
+                $(window).bind("beforeunload", function() {
+                    var info = new Object();
+                    info["workspaceId"] = $.workspaceGlobalInformation.id;
+                    info["command"] = "CloseWorkspaceCommand";
+
+                    var returned = $.ajax({
+                        url : "RequestController",
+                        type : "POST",
+                        data : info,
+                        dataType : "json",
+                        complete : function(xhr, textStatus) {
+                            // do nothing
+                        },
+                        error : function(xhr, textStatus) {
+                            // alert("Error while removing the workspace from server memory! " + textStatus);
+                        }
+                    });
+                });
+
+                // Prevent the backspace key from navigating back.
+                $(document).unbind('keydown').bind('keydown', function(event) {
+                    var doPrevent = false;
+                    if(event.keyCode === 8) {
+                        var d = event.srcElement || event.target;
+                        if((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD' || d.type.toUpperCase() === 'URL')) || d.tagName.toUpperCase() === 'TEXTAREA') {
+                            doPrevent = d.readOnly || d.disabled;
+                        } else {
+                            doPrevent = true;
+                        }
+						if(doPrevent) {
+							var ans = confirm("Are you sure you want to go back? You will lose all the progress.");
+							if(ans) {
+								// Go with normal behavior
+							} else {
+								event.preventDefault();
+							}
+						}
+					}
+				});
+                $('#sparql_end_point_link').attr('href', 'http://'+window.location.host + '/openrdf-workbench/repositories/');
+			});
+		</script>
+		<script type="text/javascript">
+			google.load("earth", "1", {
+				"callback" : earthCallback
+			});
+			function earthCallback() {
+				// alert("Earth namespace loaded!");
+			}
+		</script>
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $("[data-toggle='tooltip']").tooltip();
+            })
+        </script>
     </body>
 </html>

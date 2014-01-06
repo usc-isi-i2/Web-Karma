@@ -1,3 +1,23 @@
+
+$('#fileupload').fileupload({
+    url : "RequestController?command=ImportFileCommand",
+    add : function(e, data) {
+    	console.log("add");
+    	FileFormatSelectionDialog.getInstance().show(data);
+    },
+    done : function(e, data) {
+    	console.log("done");
+        parse(data.result);
+    },
+    fail : function(e, data) {
+        $.sticky("File upload failed!");
+    },
+    dropZone : $(document)
+});
+//Enable iframe cross-domain access via redirect option:
+$('#fileupload').fileupload('option', 'redirect', window.location.href.replace(/\/[^\/]*$/, '/cors/result.html?%s'));
+
+
 var FileFormatSelectionDialog = (function() {
     var instance = null;
 
@@ -80,24 +100,6 @@ var FileFormatSelectionDialog = (function() {
             		FileOptionsDialog.getInstance().show(data.result, selectedFormat);
             	}
             });
-            // Change the command according to the selected format
-            /* if(selectedFormat == "CSV") {
-                $('#fileupload').fileupload({
-                    url : urlString + "ImportCSVFileCommand",
-                    done : function(e, data) {
-                        resetCSVDialogOptions();
-                        showCSVImportOptions(data.result);
-                    }
-                });
-            } else if(selectedFormat == "JSONFile" || selectedFormat == "XMLFile" || selectedFormat== "ExcelFile" || selectedFormat == "Ontology") {
-            	$('#fileupload').fileupload({
-                	url : urlString + "Import" + selectedFormat + "Command",
-                    done : function(e, data) {
-                        resetFileDialogOptions();
-                        showFileImportOptions(data.result, selectedFormat);
-                    }
-            	});
-            }  */
 
             data.submit();
         };
