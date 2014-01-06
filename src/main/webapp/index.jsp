@@ -118,7 +118,7 @@ and related projects, please see: http://www.isi.edu/integration
 		      
 		      
 		      <jsp:include page="fileImport.jsp"></jsp:include>
-		      
+		      <jsp:include page="serviceImport.jsp"></jsp:include>
 			
 		</div>
 	
@@ -233,44 +233,7 @@ and related projects, please see: http://www.isi.edu/integration
             <br>
         </div>
 
-        <div id="ServiceImportDiv" style="display: none">
-            <table>
-                <tbody>
-                    <tr>
-                        <td>Web Service URL:</td>
-                        <td>
-                            <input type="textarea" id="serviceUrl" value="" class="smallSizedFont" maxlength="300" size="50"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td> Worksheet Name:</td>
-                        <td>
-                            <input type="textarea" id="serviceWorksheetName" value="" class="smallSizedFont" maxlength="100" size="20"/>
-                        </td>
-                    </tr>
-                    <tr>
-                    	<td>Encoding:</td>
-                    	<td>
-                    		<select id="serviceEncoding" class="smallSizedFont">
-                    			<%@include file="encoding.jsp" %>
-                    		</select>
-                    	</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <input type="checkbox" id="includeInputAttributesService">
-                            <label for="includeInputAttributesService">Include input attributes in the output worksheet</label>
-                        </td>
-                    </tr>
-                    <tr id="serviceErrorRow" class="error" style="display: none">
-                        <td colspan="2">
-                            Please provide values for both text fields!
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <br>
-        </div>
+        
 
         <div id="ScrollHeadersPlaceholder"></div>
         <div id="WorksheetOptionsDiv" style="display: none">
@@ -1022,7 +985,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/tableWorkspace.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/publishRDF.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/publishDatabase.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/importFromService.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/serviceImport.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/pager.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/geospatial.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/databaseImportDialog.js?<jsp:include page='version.jsp' />"></script>
@@ -1041,8 +1004,6 @@ and related projects, please see: http://www.isi.edu/integration
                 // Database Import div options
                 styleAndAssignHandlerstoDatabaseImportObjects();
 
-                // Service Import div options
-                styleAndAssignHandlerstoServiceImportObjects();
 
                 // Stylize the worksheet options div panel
                 styleAndAssignHandlersToWorksheetOptionButtons();
