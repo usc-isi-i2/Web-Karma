@@ -72,7 +72,8 @@ public class BadOntology
 	public static final Resource PersonSkill = ResourceFactory.createResource("http://www.cubrc.org/BO#PersonSkill");
 	public static final Resource PersonWeight = ResourceFactory.createResource("http://www.cubrc.org/BO#PersonWeight");
 	public static final Resource Sex = ResourceFactory.createResource("http://www.cubrc.org/BO#Sex");
-
+	public static final Resource PersonPhoneNumber = ResourceFactory.createResource("http://www.cubrc.org/BO#PersonPhoneNumber");
+	public static final Resource PersonHome = ResourceFactory.createResource("http://www.cubrc.org/BO#PersonHome");
 	// DatatypeProperty
 	public static final Property has_value = ResourceFactory.createProperty("http://www.cubrc.org/BO#has_value");
 

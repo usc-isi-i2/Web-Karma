@@ -1,10 +1,7 @@
-package alignment.karma.mapping.translation;
+package alignment.karma.mapping.translation.translations.d2rq;
 
 import alignment.karma.mapping.translation.ontologies.*;
-import alignment.karma.mapping.translation.ontologies.kdd.info;
-import alignment.karma.mapping.translation.ontologies.kdd.ito;
-import alignment.karma.mapping.translation.ontologies.kdd.quality;
-import alignment.karma.mapping.translation.ontologies.kdd.ro;
+import alignment.karma.mapping.translation.ontologies.kdd.*;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -79,7 +76,7 @@ public class D2rqMapping
 		dataRow.addProperty(d2rq.dataStorage, dataSourceInformation);
 		dataRow.addProperty(d2rq.uriPattern,"DataRow"+ d2rqBasePattern);
 
-		Resource dataRowUri = d2rqMapping.createResource(baseUri+"DataRow_has_uri_value",d2rq.propertyBridge);
+		Resource dataRowUri = d2rqMapping.createResource(baseUri + "DataRow_has_uri_value", d2rq.PropertyBridge);
 		dataRowUri.addProperty(d2rq.belongsToClassMap,dataRow);
 		dataRowUri.addProperty(d2rq.datatype,xsd.String);
 		dataRowUri.addProperty(d2rq.property, info.has_URI_value);
@@ -92,29 +89,29 @@ public class D2rqMapping
 
 	private void populateDataElement(String columnName, Resource dataRow)
 	{
-		Resource dataElement = d2rqMapping.createResource(baseUri+columnName,d2rq.classMap);
+		Resource dataElement = d2rqMapping.createResource(baseUri + columnName, d2rq.ClassMap);
 		dataElement.addProperty(d2rq.clazz,ito.DataElement);
 		dataElement.addProperty(d2rq.dataStorage,dataSourceInformation);
 		dataElement.addProperty(d2rq.uriPattern,columnName+ d2rqBasePattern);
 		dataElementMap.put(columnName,dataElement);
 
-		Resource dataRowDataElement = d2rqMapping.createResource(baseUri + "DataRow_"+ columnName, d2rq.propertyBridge);
+		Resource dataRowDataElement = d2rqMapping.createResource(baseUri + "DataRow_" + columnName, d2rq.PropertyBridge);
 		dataRowDataElement.addProperty(d2rq.belongsToClassMap,dataRow);
 		dataRowDataElement.addProperty(d2rq.property, ro.has_part);
 		dataRowDataElement.addProperty(d2rq.refersToClassMap,dataElement);
 
-		Resource dataElementDataRow = d2rqMapping.createResource(baseUri + columnName+ "_DataRow" , d2rq.propertyBridge);
+		Resource dataElementDataRow = d2rqMapping.createResource(baseUri + columnName + "_DataRow", d2rq.PropertyBridge);
 		dataElementDataRow.addProperty(d2rq.belongsToClassMap,dataElement);
 		dataElementDataRow.addProperty(d2rq.property, ro.part_of);
 		dataElementDataRow.addProperty(d2rq.refersToClassMap,dataRow);
 
-		Resource dataElementValue = d2rqMapping.createResource(baseUri + columnName + "_textValue",d2rq.propertyBridge);
+		Resource dataElementValue = d2rqMapping.createResource(baseUri + columnName + "_textValue", d2rq.PropertyBridge);
 		dataElementValue.addProperty(d2rq.belongsToClassMap,dataElement);
 		dataElementValue.addProperty(d2rq.property, info.has_text_value);
 		dataElementValue.addProperty(d2rq.datatype,xsd.String);
 		dataElementValue.addProperty(d2rq.column,d2rqTableName+"."+columnName);
 
-		Resource dataElementUri = d2rqMapping.createResource(baseUri+columnName+"_has_uri_value",d2rq.propertyBridge);
+		Resource dataElementUri = d2rqMapping.createResource(baseUri + columnName + "_has_uri_value", d2rq.PropertyBridge);
 		dataElementUri.addProperty(d2rq.belongsToClassMap,dataRow);
 		dataElementUri.addProperty(d2rq.datatype,xsd.String);
 		dataElementUri.addProperty(d2rq.property, info.has_URI_value);
@@ -128,7 +125,7 @@ public class D2rqMapping
 	}
 
 	public Resource createClassMap(String classMapName, Resource rdfType) {
-		Resource classMap = d2rqMapping.createResource(baseUri+classMapName,d2rq.classMap);
+		Resource classMap = d2rqMapping.createResource(baseUri + classMapName, d2rq.ClassMap);
 		classMap.addProperty(d2rq.clazz,rdfType);
 		classMap.addProperty(d2rq.dataStorage,dataSourceInformation);
 		classMap.addProperty(d2rq.uriPattern,classMapName+ d2rqBasePattern);
@@ -144,7 +141,7 @@ public class D2rqMapping
 	 * @param objectClassmap ClassmapClassmap
 	 */
 	public void createPropertyBridge(Resource subjectClassmap, Property property, Resource objectClassmap) {
-		Resource propertyBridge = d2rqMapping.createResource(baseUri + subjectClassmap.getLocalName() +"_"+ objectClassmap.getLocalName(), d2rq.propertyBridge);
+		Resource propertyBridge = d2rqMapping.createResource(baseUri + subjectClassmap.getLocalName() + "_" + objectClassmap.getLocalName(), d2rq.PropertyBridge);
 		propertyBridge.addProperty(d2rq.belongsToClassMap,subjectClassmap);
 		propertyBridge.addProperty(d2rq.property, property);
 		propertyBridge.addProperty(d2rq.refersToClassMap,objectClassmap);
@@ -152,7 +149,7 @@ public class D2rqMapping
 		StmtIterator stmt = ontologyModel.listStatements(property.asResource(), owl.inverseOf,(RDFNode)null);
 		if(stmt.hasNext()) {
 			Resource inverseProperty = stmt.nextStatement().getObject().asResource();
-			Resource propertyBridgeInverse = d2rqMapping.createResource(baseUri + objectClassmap.getLocalName() +"_"+ subjectClassmap.getLocalName(), d2rq.propertyBridge);
+			Resource propertyBridgeInverse = d2rqMapping.createResource(baseUri + objectClassmap.getLocalName() + "_" + subjectClassmap.getLocalName(), d2rq.PropertyBridge);
 			propertyBridgeInverse.addProperty(d2rq.belongsToClassMap,objectClassmap);
 			propertyBridgeInverse.addProperty(d2rq.property, inverseProperty);
 			propertyBridgeInverse.addProperty(d2rq.refersToClassMap,subjectClassmap);
@@ -172,7 +169,7 @@ public class D2rqMapping
 
 	public void createPropertyBridge(Resource subjectClassmap, Property property, List<String> columnNames)
 	{
-		Resource propertyBridge = d2rqMapping.createResource(baseUri + subjectClassmap.getLocalName() +"_"+ property.getLocalName(), d2rq.propertyBridge);
+		Resource propertyBridge = d2rqMapping.createResource(baseUri + subjectClassmap.getLocalName() + "_" + property.getLocalName(), d2rq.PropertyBridge);
 		propertyBridge.addProperty(d2rq.belongsToClassMap,subjectClassmap);
 		propertyBridge.addProperty(d2rq.property, property);
 		propertyBridge.addProperty(d2rq.datatype, xsd.String);
@@ -187,8 +184,6 @@ public class D2rqMapping
 			propertyBridge.addProperty(d2rq.pattern,ResourceFactory.createPlainLiteral(pattern.toString().trim()));
 		}
 	}
-
-	private Resource colorTranslationTable;
 
 	public void addValueTranslationTable(Resource subject, Property predicate, translationTables tranlationTableType, List<String> columnNames)
 	{
@@ -207,6 +202,8 @@ public class D2rqMapping
 		switch (tranlationTableType) {
 			case Color:
 				return colorTranslationTable();
+			case EventType:
+				return eventTranslationTable();
 			default:
 				return null;
 		}
@@ -220,11 +217,23 @@ public class D2rqMapping
 		createPropertyBridge(subject,info.has_text_value, columnNames);
 	}
 
-	public enum translationTables {
-		Color
+	public void translationTableTypeTranslation(Resource subject, translationTables translationTableType, List<String> columnNames)
+	{
+		for (String columnName : columnNames)
+		{
+			createPropertyBridge(subject, meta.is_mentioned_by, getDataElement(columnName));
+		}
+		addValueTranslationTable(subject, RDF.type, translationTableType, columnNames);
 	}
 
-	public Resource colorTranslationTable()
+	public enum translationTables {
+		Color,
+		EventType
+	}
+
+	private Resource colorTranslationTable;
+
+	private Resource colorTranslationTable()
 	{
 		if(colorTranslationTable==null) {
 			Map<String,Resource> colorTranslations = new HashMap<>();
@@ -235,6 +244,36 @@ public class D2rqMapping
 			colorTranslationTable = createTranslationTable(colorTranslations,"Color");
 		}
 		return colorTranslationTable;
+	}
+
+	private Resource eventTypeTranslationTable;
+
+	private Resource eventTranslationTable()
+	{
+		if (eventTypeTranslationTable == null)
+		{
+			Map<String, Resource> translations = new HashMap<>();
+			translations.put("firearm", event.ActOfAttack);
+			translations.put("small arm", event.ActOfAttack);
+			translations.put("explosi", event.ActOfExplosiveDeviceUse);
+			translations.put("landmine", event.ActOfExplosiveDeviceUse);
+			translations.put("vbied", event.ActOfVehicleUse);
+			translations.put("vehicle", event.ActOfVehicleUse);
+			translations.put("vandal", event.ActOfVandalism);
+			translations.put("mortar", event.ActOfIndirectFire);
+			translations.put("artillery", event.ActOfIndirectFire);
+			translations.put("rpg", event.ActOfExplosiveDeviceUse);
+			translations.put("fire", event.ActOfArson);
+			translations.put("bomb", event.ActOfExplosiveDeviceUse);
+			translations.put("grenade", event.ActOfExplosiveDeviceUse);
+			translations.put("kidnap", event.ActOfKidnapping);
+			translations.put("abduct", event.ActOfKidnapping);
+			translations.put("assault", event.ActOfAssault);
+			translations.put("arson", event.ActOfArson);
+			translations.put("hazel", quality.Hazel);
+			eventTypeTranslationTable = createTranslationTable(translations, "EventType");
+		}
+		return eventTypeTranslationTable;
 	}
 
 	private Resource createTranslationTable(Map<String,Resource> translations, String translationTableName ){

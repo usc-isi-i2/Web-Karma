@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns="http://www.cubrc.org/ontologies/KDD/Mid/NaturalLanguageProcessing/EventRelationTaxonomy#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:ito="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology#"
+  xml:base="http://www.cubrc.org/ontologies/KDD/Mid/NaturalLanguageProcessing/EventRelationTaxonomy">
+  <owl:Ontology rdf:about="">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >This is NOT an ontology of the AIRS application. It is instead a helper file that allows results of NLP processing to be serialized into RDF.</rdfs:comment>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Created with TopBraid Composer</owl:versionInfo>
+    <owl:imports rdf:resource="http://www.cubrc.org/ontologies/KDD/Mid/InformationTechnologyOntology"/>
+  </owl:Ontology>
+  <owl:ObjectProperty rdf:ID="relation">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >relation</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="describedRoleOfEvent">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >described role of event</rdfs:label>
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:ID="eventRelation"/>
+    </rdfs:subPropertyOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="instrumentRoleOfEvent">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >instrument role of event</rdfs:label>
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:about="#eventRelation"/>
+    </rdfs:subPropertyOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="createdRoleOfEvent">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >created role of event</rdfs:label>
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:about="#eventRelation"/>
+    </rdfs:subPropertyOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="locationOfEvent">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >location of event</rdfs:label>
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:about="#eventRelation"/>
+    </rdfs:subPropertyOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="locativeRoleOfEvent">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >locative role of event</rdfs:label>
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:about="#eventRelation"/>
+    </rdfs:subPropertyOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="patientRoleOfEvent">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >patient role of event</rdfs:label>
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:about="#eventRelation"/>
+    </rdfs:subPropertyOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="agentRoleOfEvent">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >agent role of event</rdfs:label>
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:about="#eventRelation"/>
+    </rdfs:subPropertyOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="timeOfEvent">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >time of event</rdfs:label>
+    <rdfs:subPropertyOf>
+      <owl:ObjectProperty rdf:about="#eventRelation"/>
+    </rdfs:subPropertyOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="#eventRelation">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >event relation</rdfs:label>
+    <rdfs:subPropertyOf rdf:resource="#relation"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="targetRoleOfEvent">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >target role of event</rdfs:label>
+    <rdfs:subPropertyOf rdf:resource="#eventRelation"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="experiencerRoleOfEvent">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >experiencer role of event</rdfs:label>
+    <rdfs:subPropertyOf rdf:resource="#eventRelation"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="locatedRoleOfEvent">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >located role of event</rdfs:label>
+    <rdfs:subPropertyOf rdf:resource="#eventRelation"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="causerRoleOfEvent">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >causer role of event</rdfs:label>
+    <rdfs:subPropertyOf rdf:resource="#eventRelation"/>
+  </owl:ObjectProperty>
+</rdf:RDF>
+
+<!-- Created with TopBraid -->
