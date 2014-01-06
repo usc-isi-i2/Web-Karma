@@ -28,6 +28,12 @@ and related projects, please see: http://www.isi.edu/integration
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="cache-control" content="max-age=0" />
+		<meta http-equiv="cache-control" content="no-cache" />
+		<meta http-equiv="expires" content="0" />
+		<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+		<meta http-equiv="pragma" content="no-cache" />
+
         
         <title>Karma Data Integration</title>
         <!-- Date: 2011-08-01 -->
@@ -35,26 +41,28 @@ and related projects, please see: http://www.isi.edu/integration
         <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="./uiLibs/twitterBootstrap/css/bootstrap.min.css" media="screen">
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery-ui-themes/smoothness/jquery-ui.min.css" />
-        <link rel="stylesheet" type="text/css" href="./css/TopMenuBar.css" />
-        <link rel="stylesheet" type="text/css" href="./css/command_History.css" />
-        <link rel="stylesheet" type="text/css" href="./css/tables_workspace.css" />
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery.fileupload.css" />
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery.fileupload-ui.css" />
-        <link rel="stylesheet" type="text/css" href="./css/CSVImport.css" />
-        <link rel="stylesheet" type="text/css" href="./css/fileImport.css" />
-        <link rel="stylesheet" type="text/css" href="./css/DatabaseImport.css" />
-        <link rel="stylesheet" type="text/css" href="./css/ServiceImport.css" />
-        <link rel="stylesheet" type="text/css" href="./css/headerParsingExample.css" />
-        <link rel="stylesheet" type="text/css" href="./css/AlignmentHeaders.css" />
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery.qtip.min.css" />
         <link rel="stylesheet" type="text/css" href="./uiLibs/sticky/css/sticky.min.css" />
-        <link rel="stylesheet" type="text/css" href="./css/cleaning.css" />
-        <link rel="stylesheet" type="text/css" href="./css/alignment.css" />
-        <link rel="stylesheet" type="text/css" href="./css/d3.css" />
-        <link rel="stylesheet" type="text/css" href="./css/main.css" />
-        <link rel="stylesheet" type="text/css" href="./css/pyTransform.css" />
-        <link rel="stylesheet" type="text/css" href="./css/cleaningChart.css" />
         <link rel="stylesheet/less" type="text/css" href="./uiLibs/less/css/styles-03d-fixed-pixel.less" />
+        
+        <link rel="stylesheet" type="text/css" href="./css/TopMenuBar.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/command_History.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/tables_workspace.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/CSVImport.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/fileImport.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/DatabaseImport.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/ServiceImport.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/headerParsingExample.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/AlignmentHeaders.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/cleaning.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/alignment.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/d3.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/main.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/pyTransform.css?<jsp:include page='version.jsp' />" />
+        <link rel="stylesheet" type="text/css" href="./css/cleaningChart.css?<jsp:include page='version.jsp' />" />
+        
 		<style type="text/css">
 			div.sticky {
     		/*	color: #555555; */
@@ -87,26 +95,26 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="uiLibs/modernizr/js/modernizr.custom.59953.js"></script>
 		
         <!-- Home grown JavaScript files -->
-        <script type="text/javascript" src="js/table_manipulation.js"></script>
-        <script type="text/javascript" src="js/ServerResponseObjectParsing.js"></script>
-        <script type="text/javascript" src="js/commandHistory.js"></script>
-        <script type="text/javascript" src="js/tableWorkspace.js"></script>
-        <script type="text/javascript" src="js/publishRDF.js"></script>
-        <script type="text/javascript" src="js/publishDatabase.js"></script>
-        <script type="text/javascript" src="js/importFromService.js"></script>
-        <script type="text/javascript" src="js/pager.js"></script>
-        <script type="text/javascript" src="js/geospatial.js"></script>
-        <script type="text/javascript" src="js/databaseImportDialog.js"></script>
-        <script type="text/javascript" src="js/alignment.js"></script>
-        <script type="text/javascript" src="js/csvImport.js"></script>
-        <script type="text/javascript" src="js/fileImport.js"></script>
-        <script type="text/javascript" src="js/cleaning.js"></script>
-        <script type="text/javascript" src="js/services.js"></script>
-        <script type="text/javascript" src="js/d3-alignment-vis.js"></script>
-        <script type="text/javascript" src="js/reset-options.js"></script>
-        <script type="text/javascript" src="js/pytransform.js"></script>
-        <script type="text/javascript" src="js/cleaning-charts.js"></script>
-        <script type="text/javascript" src="js/showModel.js"></script>
+        <script type="text/javascript" src="js/table_manipulation.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/ServerResponseObjectParsing.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/commandHistory.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/tableWorkspace.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/publishRDF.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/publishDatabase.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/importFromService.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/pager.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/geospatial.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/databaseImportDialog.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/alignment.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/csvImport.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/fileImport.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/cleaning.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/services.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/d3-alignment-vis.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/reset-options.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/pytransform.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/cleaning-charts.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/showModel.js?<jsp:include page='version.jsp' />"></script>
 
 		
 		
