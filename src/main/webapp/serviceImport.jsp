@@ -19,14 +19,14 @@
 			        	
 						<div class="form-group">
 							<label for="serviceUrl">Web Service URL</label>
-							<input class="form-control" type="url" id="serviceUrl">
+							<input class="form-control" type="url" id="serviceUrl" pattern="https?://.+" required>
 						</div>
 					
 					
 					
 						<div class="form-group">
 							<label for="serviceWorksheetName">Worksheet Name</label>
-							<input class="form-control" type="text" id="serviceWorksheetName" maxlength="100">
+							<input class="form-control" type="text" id="serviceWorksheetName" maxlength="100" required>
 						</div>
 					
 					

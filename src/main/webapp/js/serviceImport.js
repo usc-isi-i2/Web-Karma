@@ -38,7 +38,6 @@ var ImportFromServiceDialog = (function() {
     		$('#btnSave', dialog).on('click', function (e) {
 				e.preventDefault();
 				saveDialog(e);
-                dialog.modal('hide');
 			});
     	}
     	
@@ -49,6 +48,7 @@ var ImportFromServiceDialog = (function() {
 
             if(!url || !worksheetName) {
                 $("#serviceErrorRow").show();
+                console.log("Service Errow: missing values");
                 return false;
             }
             

@@ -119,7 +119,7 @@ and related projects, please see: http://www.isi.edu/integration
 		      
 		      <jsp:include page="fileImport.jsp"></jsp:include>
 		      <jsp:include page="serviceImport.jsp"></jsp:include>
-			
+			  <jsp:include page="databaseImport.jsp"></jsp:include>
 		</div>
 	
 		<div id="commHistoryAndWorkspace">
@@ -164,74 +164,7 @@ and related projects, please see: http://www.isi.edu/integration
         
         <div id="tableCellEditDiv" style="display: none"></div>
         <div id="r2rmlModelNameDiv" style="display: none"> <textarea id="txtR2RMLModelName" style="width: 100%"> </textarea> </div>
-        <div id="DatabaseImportDiv" style="display: none">
-            <table>
-                <tbody>
-                    <tr>
-                        <td> Database Type:
-                            <select id="databaseTypeSelector" class="DatabaseImportOption">
-                                <option>SQLServer</option>
-                                <option>MySQL</option>
-                                <option>Oracle</option>
-                                <option>PostGIS</option>
-                                <option>Sybase</option>
-                            </select></td>
-                        <td> Host Name:
-                            <input type="textarea" id="DatabaseHostName" value="localhost" class="DatabaseImportOption" maxlength="40" size="10"/>
-                        </td>
-                        <td> Port Number:
-                            <input type="textarea" id="DatabasePortNumber" value="" class="DatabaseImportOption" maxlength="6" size="5"/>
-                        </td>
-                        <td> Username:
-                            <input type="textarea" id="DatabaseUsername" value="" class="DatabaseImportOption" maxlength="20" size="10"/>
-                        </td>
-                        <td> Password:
-                            <input type="password" id="DatabasePassword" value="" class="DatabaseImportOption" maxlength="20" size="10"/>
-                        </td>
-                        <td id="DBNameCell"><span>Database Name:</span>
-                            <input type="textarea" id="DatabaseName" value="" class="DatabaseImportOption" maxlength="20" size="10"/>
-                        </td>
-                        <td>
-                            <button id="DatabaseImportFieldsButton" type="button">
-                                OK
-                            </button></td>
-                    </tr>
-                </tbody>
-            </table>
-            <br>
-            <div class="ui-widget" id="DatabaseImportErrorWindow" style="display: none">
-                <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-                    <p>
-                        <span class="ui-icon ui-icon-alert"
-                              style="float: left; margin-right: .3em;"></span>
-                        <span id="DatabaseImportErrorWindowText"></span>
-                    </p>
-                    <br />
-                </div>
-            </div>
-            <!-- For showing databases and the tables -->
-            <table id="DatabaseImportTableListAndPreview">
-                <tr>
-                    <td> Choose Table: </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="text" id="databaseTableFilterTable" class="DatabaseImportOption dbTableColumn" size="12"/>
-                    </td>
-                    <td rowspan=2 id="DatabasePreviewCell"><span id="dbPreviewTableName"></span>
-                        <div id="DatabaseTablePreview">
-                            <table></table>
-                        </div></td>
-                </tr>
-                <tr>
-                    <td>
-                        <div id="DatabaseTablesList">
-                            <table></table>
-                        </div></td>
-                </tr>
-            </table>
-            <br>
-        </div>
+        
 
         
 
@@ -1001,11 +934,7 @@ and related projects, please see: http://www.isi.edu/integration
         
         <script>
             $(function() {
-                // Database Import div options
-                styleAndAssignHandlerstoDatabaseImportObjects();
-
-
-                // Stylize the worksheet options div panel
+               	// Stylize the worksheet options div panel
                 styleAndAssignHandlersToWorksheetOptionButtons();
 
                 // Attach handlers to the ontology options table
