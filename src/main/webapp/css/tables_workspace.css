@@ -20,12 +20,7 @@
  ******************************************************************************/
 
 #tablesWorkspace {
-	position:absolute;
-	top: 0px;
-	left: 280px;
-/*	width: 850px;*/
-	margin-bottom: 10px;
-	margin-top: 10px;
+
 	overflow: auto;
 }
 

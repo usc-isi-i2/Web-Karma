@@ -64,6 +64,25 @@ and related projects, please see: http://www.isi.edu/integration
     		/*	color: #555555; */
     			font-size: 14px;
 			}
+			
+			@media (min-width: 1600px) {
+			  .container {
+			    width: 1570px;
+			  }
+			}
+			
+			@media (min-width: 2048px) {
+			  .container {
+			    width: 2018px;
+			  }
+			}
+			
+			@media (min-width: 2560px) {
+			  .container {
+			    width: 2530px;
+			  }
+			}
+			
 		</style>
 	</head>
 
@@ -115,7 +134,18 @@ and related projects, please see: http://www.isi.edu/integration
 		        </div>
 		      </div> <!--  end of navbar -->
 		      
-		      
+		      <div class="row">
+			      <div id="commHistoryAndWorkspace">
+			      	<div class="col-sm-2">
+				      	<div class="ui-corner-top" id="commandHistory">
+				      		<div id="titleCommand" class="ui-corner-top"><span>Command History</span></div>
+				      	</div>
+			      	</div>
+			      	<div class="col-sm-10">
+			      		<div id="tablesWorkspace"></div>
+			      	 </div>
+			      </div>
+		      </div>
 		      
 		      <jsp:include page="fileImport.jsp"></jsp:include>
 		      <jsp:include page="serviceImport.jsp"></jsp:include>
@@ -124,14 +154,7 @@ and related projects, please see: http://www.isi.edu/integration
 			  
 		</div>
 	
-		<div id="commHistoryAndWorkspace">
-			<div id="commandHistory" class="ui-corner-top">
-				<div id="titleCommand" class="ui-corner-top">
-					<span>Command History</span>
-				</div>
-			</div>
-			<div id="tablesWorkspace"></div>
-		</div>
+		
 		<div id="columnHeadingDropDownMenu" class="ui-corner-all" style="display: none">
             <button id="addColumnButton">Add Column</button>
             <button id="pyTransform">PyTransform</button>
