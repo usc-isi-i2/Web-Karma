@@ -120,6 +120,8 @@ and related projects, please see: http://www.isi.edu/integration
 		      <jsp:include page="fileImport.jsp"></jsp:include>
 		      <jsp:include page="serviceImport.jsp"></jsp:include>
 			  <jsp:include page="databaseImport.jsp"></jsp:include>
+			  <jsp:include page="reset.jsp"></jsp:include>
+			  
 		</div>
 	
 		<div id="commHistoryAndWorkspace">
@@ -628,22 +630,7 @@ and related projects, please see: http://www.isi.edu/integration
             </table>
         </div>
         
-        <div id="resetDialogDiv" style="display: none">
-            <table>
-                <tr class="smallSizedFont" >
-                    <td>
-                        <input type="checkbox" id="forgetSemanticTypes"/>
-                    </td>
-                    <td><label for="forgetSemanticTypes">Semantic Types</label></td>
-                </tr>
-                <tr class="smallSizedFont">
-                    <td>
-                        <input type="checkbox" id="forgetModels"/>
-                    </td>
-                    <td><label for="forgetModels">Model Histories</label></td>
-                </tr>
-            </table>
-        </div>
+        
         <div id="renameColumnDiv" style="display: none">
             <span class="smallSizedFont">Enter new column name:</span><br>
             <input type="text" class="smallSizedFont" id="renameColumnNameInput" /><br/>
@@ -946,10 +933,7 @@ and related projects, please see: http://www.isi.edu/integration
                 // Assign style and handlers to column heading menu
                 styleAndAssignHandlersToColumnHeadingMenu();
 
-                // Assign handler and style to the Reset options (in reset-options.js)
-                styleAndAssignHandlerToResetButton();
-
-                // Assign style and handler to the merge button
+               // Assign style and handler to the merge button
                 styleAndAssignHandlersToMergeButton();
 
                 // Assign style and handler to Python Transform windows elements (in pytransform.js)
